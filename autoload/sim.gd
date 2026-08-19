@@ -75,6 +75,7 @@ func _aplicar_save_ou_iniciar() -> void:
 	ato = save.get("ato", 1)
 	nivel_casa_fiandeiras = save.get("nivel_casa_fiandeiras", 0)
 	Vila.restaurar(save.get("edificios", []))
+	Populacao.restaurar(save.get("populacao", {}))
 	Economia.restaurar(save.get("economia", {}))
 
 	_calcular_offline(agora)
@@ -146,6 +147,7 @@ func get_save_data() -> Dictionary:
 		"ato": ato,
 		"nivel_casa_fiandeiras": nivel_casa_fiandeiras,
 		"edificios": Vila.get_save_data(),
+		"populacao": Populacao.get_save_data(),
 		"economia": Economia.get_save_data(),
 	}
 

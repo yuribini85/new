@@ -4,14 +4,17 @@ extends Node2D
 ## zoom limitado 0.8x-1.6x, YSort automático via CanvasItem "ysort_enabled".
 
 const LOTE_SCENE := preload("res://scenes/lote.tscn")
+const TELA_ALDEOES_SCENE := preload("res://scenes/tela_aldeoes.tscn")
 const ZOOM_MIN := 0.8
 const ZOOM_MAX := 1.6
 
 @onready var _camera: Camera2D = $Camera2D
 @onready var _lotes_root: Node2D = $Lotes
 @onready var _debug_label: Label = $HudLayer/DebugLabel
+@onready var _botao_aldeoes: Button = $HudLayer/BotaoAldeoes
 
 var _zoom_atual := 1.0
+var _tela_aldeoes: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -44,6 +47,17 @@ func _ready() -> void:
 	t.start()
 	_atualizar_debug()
 
+	_botao_aldeoes.pressed.connect(_toggle_tela_aldeoes)
+
+
+func _toggle_tela_aldeoes() -> void:
+	if _tela_aldeoes != null:
+		_tela_aldeoes.queue_free()
+		_tela_aldeoes = null
+		return
+	_tela_aldeoes = TELA_ALDEOES_SCENE.instantiate()
+	add_child(_tela_aldeoes)
+
 
 func _aplicar_zoom() -> void:
 	# Camera2D.zoom do Godot é invertido (maior valor = mais afastado); "zoom" aqui
@@ -53,10 +67,13 @@ func _aplicar_zoom() -> void:
 
 func _atualizar_debug() -> void:
 	var r := Economia.recursos
-	_debug_label.text = "dia %d · %s · ato %d\ncomida %.1f · madeira %.1f · tecido %.1f · ouro %.1f\nfome %.1f (teto dep. %d)" % [
+	_debug_label.text = "dia %d · %s · ato %d\ncomida %.1f · madeira %.1f · tecido %.1f · ouro %.1f\nfome %.1f (teto dep. %d)\naldeões %d (Lar %d/%d · Alojamento %d/%d)" % [
 		Sim.dia_vila, Sim.nome_fase(Sim.fase_dia), Sim.ato,
 		r["comida"], r["madeira"], r["tecido"], r["ouro"],
 		Economia.indice_fome, Economia.teto_deposito(),
+		Populacao.orfaos.size(),
+		Populacao.contar_estado(Orfao.Estado.CRIANCA), Populacao.capacidade_lar(),
+		Populacao.contar_estado(Orfao.Estado.ADULTO_OCIOSO) + Populacao.contar_estado(Orfao.Estado.ALOCADO), Populacao.capacidade_alojamento(),
 	]
 
 

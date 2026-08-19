@@ -11,6 +11,8 @@ JSON de balanceamento, prontos para `res://data/`. Ajustáveis sem recompilar.
 | `mina.json` | 7 níveis e o que cada minério destrava |
 | `ato1.json` | Ordem de desbloqueio e custo do primeiro ato |
 | `vila_lotes_maquete.json` | Formato de trabalho da ferramenta de maquete |
+| `orfaos.json` | Nomes (germânicos, masc/fem) e mapa de aptidão → edifícios |
+| `cicatrizes.json` | As 20 cicatrizes de lançamento, transcritas de `design/cicatrizes_orfaos.md` |
 
 **Fonte:** `docs/ato1_balanceamento.md` e `design/pendencias_resolvidas.md`.
 Todos os números são chute calibrado — o que importa é a relação entre eles.

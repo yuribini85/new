@@ -55,11 +55,13 @@ func penalidade_fome() -> float:
 	return clampf(1.0 - (100.0 - indice_fome) * perda_por_ponto, piso, 1.0)
 
 
-## Só o líder produz por enquanto (n_pessoas=1) — módulo de População (5) ainda não
-## existe, então bônus de aptidão/cicatriz/item ficam em 1.0 (neutros).
-## design/economia.md #4 confirma: "nível 1 é o personagem-líder, sozinho".
+## Soma por pessoa (líder + órfãos alocados), cada um com seu bônus de aptidão.
+## design/economia.md #4: "nível 1 é o personagem-líder, sozinho" — o líder em si
+## ainda não é um Orfao (é conteúdo narrativo fixo, fora deste módulo), então conta
+## como 1 pessoa neutra (sem bônus de aptidão/cicatriz).
 func _produzir(penalidade: float) -> float:
 	var por_pessoa: float = Dados.economia().get("producao", {}).get("por_pessoa_por_seg", 0.2)
+	var bonus_aptidao_pct: float = Dados.ciclo().get("bonus_aptidao", 0.25)
 	var catalogo := Dados.catalogo_edificios_ato1()
 	var comida_produzida := 0.0
 
@@ -71,7 +73,16 @@ func _produzir(penalidade: float) -> float:
 		var recurso: String = MAPA_PRODUTO_PARA_RECURSO.get(produto, "")
 		if recurso == "":
 			continue
-		var producao: float = por_pessoa * 1 * penalidade
+
+		var grupo_aptidao := Populacao.aptidao_do_edificio(id)
+		var producao := por_pessoa * penalidade  # o líder: sempre 1 pessoa, sem bônus
+		for vaga in e.vagas_orfaos:
+			if vaga == null or vaga == "" or not Populacao.orfaos.has(vaga):
+				continue
+			var o: Orfao = Populacao.orfaos[vaga]
+			var bonus := (1.0 + bonus_aptidao_pct) if (grupo_aptidao != "" and o.aptidao == grupo_aptidao) else 1.0
+			producao += por_pessoa * bonus * penalidade
+
 		_adicionar(recurso, producao)
 		if recurso == "comida":
 			comida_produzida += producao
@@ -82,6 +93,8 @@ func _produzir(penalidade: float) -> float:
 func _consumir() -> float:
 	var cfg: Dictionary = Dados.economia().get("consumo_por_min", {})
 	var lider_por_min: float = cfg.get("lider", 1.5)
+	var crianca_por_min: float = cfg.get("crianca", 1.0)
+	var adulto_por_min: float = cfg.get("adulto", 1.5)
 	var fator_noite: float = cfg.get("noite_fator", 0.5)
 
 	var n_lideres := 0
@@ -89,7 +102,16 @@ func _consumir() -> float:
 		if Vila.edificios[id].nivel > 0:
 			n_lideres += 1
 
-	var consumo_por_seg: float = (lider_por_min / 60.0) * n_lideres
+	var consumo_por_min := lider_por_min * n_lideres
+	for id in Populacao.orfaos:
+		var o: Orfao = Populacao.orfaos[id]
+		match o.estado:
+			Orfao.Estado.CRIANCA:
+				consumo_por_min += crianca_por_min
+			Orfao.Estado.ADULTO_OCIOSO, Orfao.Estado.ALOCADO:
+				consumo_por_min += adulto_por_min
+
+	var consumo_por_seg: float = consumo_por_min / 60.0
 	if Sim.fase_dia == Sim.FaseDia.NOITE:
 		consumo_por_seg *= fator_noite
 

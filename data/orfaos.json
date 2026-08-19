@@ -1,0 +1,22 @@
+{
+ "nomes": {
+  "masculino": [
+   "Anselm", "Bertold", "Caspar", "Dietrich", "Emmerich", "Falk", "Gerhard",
+   "Hann", "Ilse", "Jost", "Konrad", "Lenz", "Mattes", "Niklas", "Otto",
+   "Reinhold", "Stefan", "Till", "Ulrich", "Wendel", "Wilhelm"
+  ],
+  "feminino": [
+   "Adela", "Berta", "Clara", "Dorte", "Elsa", "Frieda", "Gerta", "Hilde",
+   "Ida", "Johanna", "Katrin", "Lene", "Margit", "Nelda", "Ottilie",
+   "Rosa", "Sieglinde", "Thea", "Ulrike", "Vreni", "Wilma"
+  ]
+ },
+ "aptidoes_grupo": {
+  "campo": ["horta", "curral_dos_animais"],
+  "cozinha": ["padaria", "taberna"],
+  "agua": ["cabana_de_pesca"],
+  "oficina": ["vendedor_de_armas", "alfaiataria", "oficina_do_sapateiro"],
+  "bracos": ["cabana_do_lenhador", "cabana_do_construtor", "deposito"],
+  "letras": ["biblioteca"]
+ }
+}

@@ -1,0 +1,268 @@
+{
+ "sem_cicatriz_pct": 0.35,
+ "fonte": "design/cicatrizes_orfaos.md — versao de lancamento, 20 cicatrizes (15 visiveis, 5 ocultas)",
+ "cicatrizes": [
+  {
+   "id": "fome_antiga",
+   "nome": "Fome antiga",
+   "visivel": true,
+   "tags": { "origem": "FOME", "dominio": "FISICO" },
+   "incompativel_com": ["esconde_comida"],
+   "sinergia_com": [],
+   "efeito_texto": "Come 5x - trabalha 40% mais rapido - raro",
+   "frases": [
+    "Chegou comendo terra na entrada da vila. Não parou quando deram pão.",
+    "Guarda a côdea no bolso até endurecer, e come endurecida.",
+    "Come de pé, olhando a porta."
+   ]
+  },
+  {
+   "id": "sono_pesado",
+   "nome": "Sono pesado",
+   "visivel": true,
+   "tags": { "origem": "PERDA", "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "-15% de producao - imune a maldicao",
+   "frases": [
+    "Dormiu três dias depois que chegou. Acordou perguntando pela mãe, enterrada duas vezes.",
+    "Não acorda com trovão. Acorda quando alguém para de respirar perto dele."
+   ]
+  },
+  {
+   "id": "medo_da_mata",
+   "nome": "Medo da mata",
+   "visivel": true,
+   "tags": { "origem": "MATA", "dominio": "TRABALHO" },
+   "incompativel_com": [],
+   "sinergia_com": ["faro_de_bicho"],
+   "efeito_texto": "Nunca vai em expedicao - +20% em qualquer edificio",
+   "frases": [
+    "Foi encontrado dentro de um tronco oco. Levou quatro dias para sair.",
+    "Trabalha de costas para as árvores. Sempre.",
+    "Perguntaram o que viu lá dentro. Disse que nada, e que o nada olhou de volta."
+   ]
+  },
+  {
+   "id": "maos_leves",
+   "nome": "Mãos leves",
+   "visivel": true,
+   "tags": { "origem": "FOME", "dominio": "SOCIAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "-0,15 de comida por dia do deposito - +50% de chance de item especial",
+   "frases": [
+    "Aprendeu a pegar sem que vissem, quando pegar era a única forma de comer.",
+    "Devolve tudo quando é pego. Continua pegando."
+   ]
+  },
+  {
+   "id": "insonia",
+   "nome": "Insônia",
+   "visivel": true,
+   "tags": { "origem": "PERDA", "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": ["ouvinte"],
+   "efeito_texto": "Come 1,5x - continua produzindo a noite",
+   "frases": [
+    "Diz que ouve alguém chamando o nome dele lá fora. Espera acordado.",
+    "Dorme de dia, quando dá para ver quem se aproxima."
+   ]
+  },
+  {
+   "id": "teimosia",
+   "nome": "Teimosia",
+   "visivel": true,
+   "tags": { "origem": null, "dominio": "TRABALHO" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Demora um dia da vila para aceitar realocacao - nao morre na primeira expedicao",
+   "frases": [
+    "Mandaram ele ficar. Ele foi. Mandaram ele ir. Ele ficou. Está vivo por isso.",
+    "Faz do jeito dele. Depois faz do jeito certo, se sobrar tempo."
+   ]
+  },
+  {
+   "id": "lerdeza",
+   "nome": "Lerdeza",
+   "visivel": true,
+   "tags": { "origem": null, "dominio": "TRABALHO" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "-30% de velocidade - nunca comete erro: imune a perda por acidente",
+   "frases": [
+    "Faz tudo duas vezes para ter certeza. Foi assim que sobreviveu quando os outros correram.",
+    "Conta os passos até a porta. O número nunca muda, e isso o acalma."
+   ]
+  },
+  {
+   "id": "mao_pesada",
+   "nome": "Mão pesada",
+   "visivel": true,
+   "tags": { "origem": "FISICO", "dominio": "TRABALHO" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "+35% de producao - quebra o item especial do edificio ocasionalmente",
+   "frases": [
+    "Arrancou a porta da própria casa na noite do incêndio. Não sabe medir força.",
+    "Aperta a mão de quem cumprimenta até doer, e não entende por quê."
+   ]
+  },
+  {
+   "id": "silencio",
+   "nome": "Silêncio",
+   "visivel": true,
+   "tags": { "origem": "PERDA", "dominio": "SOCIAL" },
+   "incompativel_com": ["contador_de_historias"],
+   "sinergia_com": [],
+   "efeito_texto": "Nao pode ser lider e nao aparece em dialogo - nunca e levado pelo Flautista",
+   "frases": [
+    "Não fala desde que chegou. A música não pega quem não responde.",
+    "Escreve no chão com o dedo quando precisa dizer alguma coisa. Apaga depois."
+   ]
+  },
+  {
+   "id": "boa_memoria",
+   "nome": "Boa memória",
+   "visivel": true,
+   "tags": { "origem": "PERDA", "dominio": "SOCIAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "+25% na Biblioteca - perde moral quando uma expedicao volta com mortos: lembra de todos",
+   "frases": [
+    "Sabe de cor o caminho de onde veio. Recita quando está nervoso.",
+    "Diz o nome dos que não voltaram, na ordem, todo fim de dia."
+   ]
+  },
+  {
+   "id": "ossos_frageis",
+   "nome": "Ossos frágeis",
+   "visivel": true,
+   "tags": { "origem": "FISICO", "dominio": "EXPEDICAO" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Risco de morte dobrado em expedicao - +25% em qualquer edificio da vila",
+   "frases": [
+    "Foi puxado de baixo de alguma coisa. Ninguém explicou de baixo do quê.",
+    "Anda encostando nas paredes. Diz que é costume."
+   ]
+  },
+  {
+   "id": "faro_de_bicho",
+   "nome": "Faro de bicho",
+   "visivel": true,
+   "tags": { "origem": "MATA", "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "-20% de producao - reduz o crescimento de ratos enquanto alocado",
+   "frases": [
+    "Cresceu num celeiro com o que morava lá. Sente antes de ver.",
+    "Come agachado. Levanta a cabeça no meio, sem motivo, e volta a comer."
+   ]
+  },
+  {
+   "id": "coracao_grande",
+   "nome": "Coração grande",
+   "visivel": true,
+   "tags": { "origem": "PERDA", "dominio": "SOCIAL" },
+   "incompativel_com": [],
+   "sinergia_com": ["nao_deixa_ninguem_para_tras"],
+   "efeito_texto": "Reduz em 40% a perda de moral da vila por morte ou despedida - fica improdutivo por dias quando alguem morre",
+   "frases": [
+    "Foi o único que voltou para buscar os outros. Não trouxe ninguém, mas voltou.",
+    "Aprende o nome de todo mundo no primeiro dia. Faz questão."
+   ]
+  },
+  {
+   "id": "passos_leves",
+   "nome": "Passos leves",
+   "visivel": true,
+   "tags": { "origem": "MATA", "dominio": "EXPEDICAO" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "-20% de capacidade de carga - -40% de chance de morrer em expedicao",
+   "frases": [
+    "Aprendeu que galho seco faz mais barulho quando alguém está procurando você.",
+    "Entra em qualquer cômodo sem que ninguém perceba. Já levou tapa por isso."
+   ]
+  },
+  {
+   "id": "nao_deixa_ninguem_para_tras",
+   "nome": "Não deixa ninguém para trás",
+   "visivel": true,
+   "tags": { "origem": "PERDA", "dominio": "EXPEDICAO" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Expedicoes com ele demoram +30% - -70% de risco para os outros integrantes",
+   "frases": [
+    "Voltou carregando alguém que já não conseguia andar. Nunca disse de onde.",
+    "Conta a equipe antes de sair e depois de voltar. Em voz alta."
+   ]
+  },
+  {
+   "id": "boca_a_mais",
+   "nome": "Boca a mais",
+   "visivel": false,
+   "tags": { "origem": "FOME", "dominio": "SOCIAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Consome como dois - ao virar adulto, entram dois adultos",
+   "frases": [
+    "Chegou sozinho e sempre pede duas porções. Some com a segunda dentro do casaco.",
+    "Fala baixo à noite, virado para a parede."
+   ]
+  },
+  {
+   "id": "conta_ate_doze",
+   "nome": "Conta até doze",
+   "visivel": false,
+   "tags": { "origem": null, "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Sem efeito aparente - a contagem recomeca antes de certos ataques",
+   "frases": [
+    "Conta baixinho antes de dormir. Nunca passa de doze.",
+    "Parou no sete uma vez. Ficou olhando a porta até alguém acender a luz."
+   ]
+  },
+  {
+   "id": "nao_come_carne",
+   "nome": "Não come carne",
+   "visivel": false,
+   "tags": { "origem": "MATA", "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Recusa certas refeicoes - animais hostis raramente o atacam",
+   "frases": [
+    "Perguntaram uma vez por quê. Vomitou antes de responder.",
+    "Divide a própria parte com os cães, e os cães não chegam perto."
+   ]
+  },
+  {
+   "id": "nome_esquecido",
+   "nome": "Nome esquecido",
+   "visivel": false,
+   "tags": { "origem": "CATIVEIRO", "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Alguns eventos sobrenaturais nao conseguem seleciona-lo como alvo",
+   "frases": [
+    "Deu três nomes diferentes quando chegou. Nenhum parecia ser o dele.",
+    "Não responde de primeira quando chamam. Responde na segunda, e olha em volta antes."
+   ]
+  },
+  {
+   "id": "deixa_a_janela_aberta",
+   "nome": "Deixa a janela aberta",
+   "visivel": false,
+   "tags": { "origem": null, "dominio": "SOBRENATURAL" },
+   "incompativel_com": [],
+   "sinergia_com": [],
+   "efeito_texto": "Pequena perda de eficiencia no edificio - ocasionalmente encontra algo no parapeito",
+   "frases": [
+    "Toda noite abre a janela. Toda manhã confere o parapeito.",
+    "Disse que é para o ar. Ninguém perguntou de novo."
+   ]
+  }
+ ]
+}

@@ -70,6 +70,14 @@ func mina() -> Variant:
 	return get_dados("mina")
 
 
+func orfaos() -> Dictionary:
+	return get_dados("orfaos")
+
+
+func cicatrizes() -> Dictionary:
+	return get_dados("cicatrizes")
+
+
 ## Junta ato1.json (ordem de desbloqueio) com vila_lotes.json (posição/tamanho no mapa)
 ## num catálogo único por id. O módulo de Mapa consome isso para instanciar Edificio.
 func catalogo_edificios_ato1() -> Dictionary:
