@@ -303,10 +303,8 @@ func _tela_para_mundo(pos_tela: Vector2) -> Vector2:
 
 
 ## Detecção de clique manual (sem Area2D/picking de física — mais simples de
-## garantir e igual em desktop e touch). Ignora a faixa de botões do HUD no topo.
+## garantir e igual em desktop e touch).
 func _tentar_construir_em(pos_tela: Vector2) -> void:
-	if pos_tela.y < 210.0 * (get_viewport().get_visible_rect().size.y / 1920.0):
-		return
 	var pos_mundo := _tela_para_mundo(pos_tela)
 	for id in _lote_nodes:
 		if _lote_nodes[id].contem_ponto_mundo(pos_mundo):
@@ -315,8 +313,10 @@ func _tentar_construir_em(pos_tela: Vector2) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# _input (não _unhandled_input): os cliques de construção são resolvidos aqui
-	# manualmente, sem depender de picking de física de Area2D.
+	# _input, não _unhandled_input: mesmo sem Area2D nenhum, o picking de física do
+	# viewport consome o clique antes de _unhandled_input vê-lo (testado). Pra não
+	# construir "através" de um botão do HUD, checa se o mouse está sobre um
+	# Control antes de tratar como clique no mapa.
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_zoom_atual = clampf(_zoom_atual + 0.1, _zoom_min, ZOOM_MAX)
@@ -325,7 +325,8 @@ func _input(event: InputEvent) -> void:
 			_zoom_atual = clampf(_zoom_atual - 0.1, _zoom_min, ZOOM_MAX)
 			_aplicar_zoom()
 		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			_tentar_construir_em(event.position)
+			if get_viewport().gui_get_hovered_control() == null:
+				_tentar_construir_em(event.position)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			_arrastando = event.pressed
 			_ultimo_mouse_pos = event.position
