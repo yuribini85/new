@@ -7,6 +7,7 @@ extends Node2D
 const LOTE_SCENE := preload("res://scenes/lote.tscn")
 const TELA_ALDEOES_SCENE := preload("res://scenes/tela_aldeoes.tscn")
 const TELA_EXPEDICAO_SCENE := preload("res://scenes/tela_expedicao.tscn")
+const TELA_MERCADO_SCENE := preload("res://scenes/tela_mercado.tscn")
 const PERSONAGEM_SCENE := preload("res://scenes/personagem.tscn")
 const ZOOM_MIN := 0.4  # especificacao_tecnica_v1.md#4 previa 0.8, mas a vila ficou
                         # mais espalhada na prática — dobrado a pedido em playtest.
@@ -30,10 +31,12 @@ const COR_LIDER := Color(0.85, 0.7, 0.3)
 @onready var _debug_label: Label = $HudLayer/DebugLabel
 @onready var _botao_aldeoes: Button = $HudLayer/BotaoAldeoes
 @onready var _botao_expedicao: Button = $HudLayer/BotaoExpedicao
+@onready var _botao_mercado: Button = $HudLayer/BotaoMercado
 
 var _zoom_atual := 1.0
 var _tela_aldeoes: CanvasLayer = null
 var _tela_expedicao: CanvasLayer = null
+var _tela_mercado: CanvasLayer = null
 var _arrastando := false
 var _ultimo_mouse_pos := Vector2.ZERO
 var _tile: Vector2i
@@ -77,6 +80,7 @@ func _ready() -> void:
 
 	_botao_aldeoes.pressed.connect(_toggle_tela_aldeoes)
 	_botao_expedicao.pressed.connect(_toggle_tela_expedicao)
+	_botao_mercado.pressed.connect(_toggle_tela_mercado)
 
 
 func _toggle_tela_expedicao() -> void:
@@ -86,6 +90,15 @@ func _toggle_tela_expedicao() -> void:
 		return
 	_tela_expedicao = TELA_EXPEDICAO_SCENE.instantiate()
 	add_child(_tela_expedicao)
+
+
+func _toggle_tela_mercado() -> void:
+	if _tela_mercado != null:
+		_tela_mercado.queue_free()
+		_tela_mercado = null
+		return
+	_tela_mercado = TELA_MERCADO_SCENE.instantiate()
+	add_child(_tela_mercado)
 
 
 func _on_tick() -> void:

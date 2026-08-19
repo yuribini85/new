@@ -56,3 +56,10 @@ offset_top = 150.0
 offset_right = 460.0
 offset_bottom = 200.0
 text = "Expedição"
+
+[node name="BotaoMercado" type="Button" parent="HudLayer"]
+offset_left = 480.0
+offset_top = 150.0
+offset_right = 660.0
+offset_bottom = 200.0
+text = "Mercado"

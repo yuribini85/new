@@ -63,14 +63,7 @@ func _on_tick() -> void:
 func _n_trabalhadores_lenhador() -> int:
 	if not Vila.edificios.has(CENTRO_ID):
 		return 0
-	var e: Edificio = Vila.edificios[CENTRO_ID]
-	if e.nivel <= 0:
-		return 0
-	var n := 1  # líder
-	for v in e.vagas_orfaos:
-		if v != null and v != "":
-			n += 1
-	return n
+	return Vila.edificios[CENTRO_ID].n_trabalhadores()
 
 
 ## O ritmo do corte é só apresentação (mecanicas_para_godot.md #4: "a produção

@@ -45,7 +45,9 @@
  },
  "deposito": {
   "base": 200,
-  "por_nivel": 200
+  "por_nivel": 200,
+  "capacidade_sem_predio": 50,
+  "_capacidade_sem_predio_status": "placeholder nao documentado - sem isso a producao e descartada por inteiro antes do Deposito existir e o jogo trava (nada pra vender, nada pra construir)"
  },
  "producao": {
   "por_pessoa_por_seg": 0.2,

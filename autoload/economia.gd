@@ -5,8 +5,12 @@ extends Node
 signal recurso_mudou(recurso: String, valor: int)
 signal indice_fome_mudou(valor: float)
 
+## Capital inicial (placeholder, não especificado em nenhum documento): exatamente o
+## necessário pra pagar a primeira construção (Cabana do Lenhador, custo_n1=40 no
+## ato1.json, 40% em madeira pela regra #24) — sem isso o jogo trava no início, já
+## que ouro só entra por venda e não há nada pra vender antes do primeiro prédio.
 var recursos: Dictionary = {
-	"comida": 0.0, "madeira": 0.0, "tecido": 0.0, "ouro": 0.0, "folego": 0.0, "diamante": 0.0,
+	"comida": 0.0, "madeira": 16.0, "tecido": 0.0, "ouro": 40.0, "folego": 0.0, "diamante": 0.0,
 }
 var indice_fome: float = 100.0
 
@@ -34,15 +38,14 @@ func _on_tick() -> void:
 
 
 ## especificacao_tecnica_v1.md #24 / mecanicas_para_godot.md #1: 200 no nível 1,
-## +200 por nível; 0 se o Depósito ainda não foi construído (mesmo padrão do teto
-## de offline sem a Casa das Fiandeiras).
+## +200 por nível. Sem o Depósito construído, usa "capacidade_sem_predio" (placeholder
+## documentado em economia.json) em vez de 0 — descartar tudo sem depósito travava o
+## jogo (nada pra vender, nada pra construir com o que sobrasse do capital inicial).
 func teto_deposito() -> int:
-	if not Vila.edificios.has("deposito"):
-		return 0
-	var nivel: int = Vila.edificios["deposito"].nivel
-	if nivel <= 0:
-		return 0
 	var cfg: Dictionary = Dados.economia().get("deposito", {})
+	if not Vila.edificios.has("deposito") or Vila.edificios["deposito"].nivel <= 0:
+		return cfg.get("capacidade_sem_predio", 50)
+	var nivel: int = Vila.edificios["deposito"].nivel
 	var base: int = cfg.get("base", 200)
 	var por_nivel: int = cfg.get("por_nivel", 200)
 	return base + por_nivel * (nivel - 1)
@@ -128,6 +131,16 @@ func _atualizar_indice_fome(saldo_comida_por_seg: float) -> void:
 ## API pública para outros módulos (ex: fôlego de expedição) creditarem recursos.
 func creditar(recurso: String, quantidade: float) -> void:
 	_adicionar(recurso, quantidade)
+
+
+## API pública para outros módulos (ex: custo de construção) debitarem recursos.
+## Quem chama já checou que há saldo suficiente — aqui só clampa em 0 por segurança.
+func debitar(recurso: String, quantidade: float) -> void:
+	_remover(recurso, quantidade)
+
+
+func tem_saldo(recurso: String, quantidade: float) -> bool:
+	return recursos.get(recurso, 0.0) >= quantidade
 
 
 func _adicionar(recurso: String, quantidade: float) -> void:

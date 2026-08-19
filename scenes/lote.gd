@@ -42,6 +42,7 @@ func configurar(id: String, tile: Vector2i) -> void:
 	_area.input_event.connect(_on_input_event)
 	Vila.edificio_iniciou_obra.connect(_on_edificio_mudou)
 	Vila.edificio_construido.connect(_on_edificio_mudou)
+	Economia.recurso_mudou.connect(func(_r, _v): _atualizar())
 	_atualizar()
 
 
@@ -59,8 +60,17 @@ func _atualizar() -> void:
 	else:
 		_silhueta.color = COR_PRONTO
 
-	var status := "obra" if e.em_obra else ("ruína" if e.nivel == 0 else "nv %d" % e.nivel)
-	_label.text = "%s\n(%s)" % [e.nome, status]
+	if e.em_obra:
+		_label.text = "%s\n(obra)" % e.nome
+		return
+
+	var custo := Vila.custo_proximo_nivel(edificio_id)
+	var pode_pagar := Economia.tem_saldo("ouro", custo["ouro"]) and Economia.tem_saldo("madeira", custo["madeira"])
+	var nivel_texto := "ruína" if e.nivel == 0 else "nv %d" % e.nivel
+	_label.text = "%s\n(%s)\n%s %dg %dm" % [
+		e.nome, nivel_texto, ("toque p/ nv %d:" % (e.nivel + 1)), custo["ouro"], custo["madeira"],
+	]
+	_label.modulate = Color.WHITE if pode_pagar else Color(1, 0.6, 0.6)
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:

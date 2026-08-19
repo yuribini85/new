@@ -35,22 +35,51 @@ func get_save_data() -> Array:
 	return out
 
 
-## Inicia a obra de uma ruína para nível 1. O custo em ouro é checado pelo módulo de
-## Economia (ainda não existe) — aqui só a máquina de estado obra/nível, por timestamp,
-## igual ao resto do jogo (nunca por tick acumulado).
+signal construcao_recusada(id: String, motivo: String)
+
+
+## Custo em ouro (+ madeira, 40% do ouro, regra #24) do PRÓXIMO nível deste edifício.
+func custo_proximo_nivel(id: String) -> Dictionary:
+	var e: Edificio = edificios.get(id)
+	if e == null:
+		return {}
+	var cfg := Dados.economia()
+	var curva: float = cfg.get("curva_custo", 1.35)
+	var madeira_pct: float = cfg.get("madeira_pct_do_ouro", 0.4)
+	var ouro := e.custo_para_nivel(e.nivel + 1, curva)
+	return { "ouro": ouro, "madeira": int(round(ouro * madeira_pct)) }
+
+
+## Inicia a obra para o PRÓXIMO nível (ruína→1, ou nível N→N+1 num prédio já
+## construído). Cobra ouro + madeira na hora de começar a obra, não na conclusão —
+## padrão comum em city-builder/idle, evita o custo mudar no meio da obra.
 func construir(id: String) -> bool:
 	if not edificios.has(id):
 		return false
 	var e: Edificio = edificios[id]
-	if e.em_obra or e.nivel != Edificio.NIVEL_RUINA:
+	if e.em_obra:
+		construcao_recusada.emit(id, "em_obra")
 		return false
+
+	var custo := custo_proximo_nivel(id)
+	if not Economia.tem_saldo("ouro", custo["ouro"]) or not Economia.tem_saldo("madeira", custo["madeira"]):
+		construcao_recusada.emit(id, "sem_recursos")
+		return false
+
+	Economia.debitar("ouro", custo["ouro"])
+	Economia.debitar("madeira", custo["madeira"])
 
 	var obra: Dictionary = Dados.economia().get("obra", {})
 	var base_seg: float = obra.get("base_seg", 30.0)
-	# mecanicas_para_godot.md #2: tempo(n) = base_seg * multiplicador^(n-1); indo pra
-	# nível 1, expoente é 0, então tempo = base_seg.
+	var mult: float = obra.get("multiplicador_por_nivel", 1.6)
+	var reducao_por_construtor: float = obra.get("reducao_por_construtor", 0.15)
+	# mecanicas_para_godot.md #2: tempo(n) = base_seg * multiplicador^(n-1).
+	var tempo := base_seg * pow(mult, e.nivel + 1 - 1)
+	var n_construtores: int = edificios["cabana_do_construtor"].n_trabalhadores() if edificios.has("cabana_do_construtor") else 0
+	tempo *= clampf(1.0 - reducao_por_construtor * n_construtores, 0.2, 1.0)
+
 	e.em_obra = true
-	e.obra_termina_em = int(Time.get_unix_time_from_system() + base_seg)
+	e.obra_termina_em = int(Time.get_unix_time_from_system() + tempo)
 	edificio_iniciou_obra.emit(id)
 	SaveManager.request_save(Sim.get_save_data())
 	return true

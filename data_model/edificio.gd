@@ -43,6 +43,17 @@ func custo_para_nivel(n: int, curva: float) -> int:
 	return int(round(bruto / 5.0) * 5)
 
 
+## Líder (sempre presente uma vez construído) + órfãos alocados nas vagas.
+func n_trabalhadores() -> int:
+	if nivel <= 0:
+		return 0
+	var n := 1
+	for v in vagas_orfaos:
+		if v != null and v != "":
+			n += 1
+	return n
+
+
 func subir_nivel() -> void:
 	nivel += 1
 	_recalcular_vagas()
