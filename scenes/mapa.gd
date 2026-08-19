@@ -15,6 +15,7 @@ const COR_ARVORE_DE_PE := Color(0.22, 0.4, 0.2)
 const COR_ARVORE_TOCO := Color(0.32, 0.22, 0.14)
 const COR_ROTA := Color(0.85, 0.75, 0.4)
 const RAIO_CORTESIA := 40.0  # px em espaço de mundo; agentes mais perto que isso cedem
+const TEMPO_DENTRO_PREDIO := 1.5  # s — só apresentação, tempo "dentro" antes de voltar
 
 const COR_CRIANCA := Color(0.5, 0.65, 0.85)
 const COR_OCIOSO := Color(0.6, 0.6, 0.6)
@@ -49,12 +50,15 @@ var _distancia_arrasto := 0.0  # para distinguir toque/clique de arrasto real
 var _walkers_ativos: Dictionary = {}  # id -> posição atual (para cortesia)
 var _personagem_nodes: Dictionary = {}  # chave -> Node2D
 var _personagem_alvo: Dictionary = {}  # chave -> Vector2 (último destino conhecido)
+var _personagem_predio: Dictionary = {}  # chave -> String (id do prédio onde está agora)
 var _personagem_tweens: Dictionary = {}  # chave -> Tween (caminhada em curso)
+var _grid: AStarGrid2D  # navegação em espaço de célula — ruas são o que sobra fora dos lotes
 
 
 func _ready() -> void:
 	var lotes_json: Dictionary = Dados.vila_lotes()
 	_tile = Vector2i(lotes_json["tile"]["w"], lotes_json["tile"]["h"])
+	_construir_grid_navegacao(lotes_json)
 
 	var bounds_min := Vector2.INF
 	var bounds_max := -Vector2.INF
@@ -106,6 +110,68 @@ func _ready() -> void:
 	_botao_mercado.pressed.connect(_toggle_tela_mercado)
 
 
+## Marca a célula de cada lote (o footprint inteiro, construído ou não — o lote
+## reserva o terreno desde o início) como sólida. Tudo que sobra fora dos lotes
+## é rua, e é só por aí que os personagens podem andar.
+func _construir_grid_navegacao(lotes_json: Dictionary) -> void:
+	var gw: int = lotes_json["grid"]["w"]
+	var gh: int = lotes_json["grid"]["h"]
+	_grid = AStarGrid2D.new()
+	_grid.region = Rect2i(0, 0, gw, gh)
+	_grid.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
+	_grid.update()
+	for id in Vila.edificios:
+		var e: Edificio = Vila.edificios[id]
+		for dx in range(e.footprint.x):
+			for dy in range(e.footprint.y):
+				var c := e.celula + Vector2i(dx, dy)
+				if _grid.is_in_boundsv(c):
+					_grid.set_point_solid(c)
+
+
+## A célula de rua mais perto da borda do lote — é daqui que a caminhada do
+## personagem parte/chega, nunca atravessando o próprio prédio nem o vizinho.
+func _porta_edificio(id: String) -> Vector2i:
+	var e: Edificio = Vila.edificios[id]
+	var candidatas := [
+		Vector2i(e.celula.x + e.footprint.x / 2, e.celula.y + e.footprint.y),
+		Vector2i(e.celula.x + e.footprint.x / 2, e.celula.y - 1),
+		Vector2i(e.celula.x + e.footprint.x, e.celula.y + e.footprint.y / 2),
+		Vector2i(e.celula.x - 1, e.celula.y + e.footprint.y / 2),
+	]
+	for c in candidatas:
+		if _grid.is_in_boundsv(c) and not _grid.is_point_solid(c):
+			return c
+	return _celula_livre_proxima(e.celula)
+
+
+## Se a célula pedida cair em cima de um lote (ex.: uma árvore gerada bem na
+## borda), procura a célula de rua livre mais próxima em anéis crescentes.
+func _celula_livre_proxima(c: Vector2i) -> Vector2i:
+	if _grid.is_in_boundsv(c) and not _grid.is_point_solid(c):
+		return c
+	for raio in range(1, 6):
+		for dx in range(-raio, raio + 1):
+			for dy in range(-raio, raio + 1):
+				var cand := c + Vector2i(dx, dy)
+				if _grid.is_in_boundsv(cand) and not _grid.is_point_solid(cand):
+					return cand
+	return c
+
+
+## Caminho em pontos de mundo (projeção isométrica já aplicada) que passa só
+## pelas ruas entre os lotes. Se por algum motivo não houver caminho, cai para
+## uma reta direta em vez de travar a animação.
+func _caminho_mundo(origem_cel: Vector2i, destino_cel: Vector2i) -> PackedVector2Array:
+	var pontos := PackedVector2Array()
+	if _grid.is_in_boundsv(origem_cel) and _grid.is_in_boundsv(destino_cel):
+		for c in _grid.get_id_path(origem_cel, destino_cel):
+			pontos.append(Iso.cell_to_pos(c, _tile))
+	if pontos.size() < 2:
+		pontos = PackedVector2Array([Iso.cell_to_pos(origem_cel, _tile), Iso.cell_to_pos(destino_cel, _tile)])
+	return pontos
+
+
 func _toggle_tela_expedicao() -> void:
 	if _tela_expedicao != null:
 		_tela_expedicao.queue_free()
@@ -139,12 +205,12 @@ func _centro_edificio(e: Edificio) -> Vector2:
 ## está agora (Lar, Alojamento ou local de trabalho). Atualiza posição sem recriar
 ## os tokens que já existem, para não reiniciar a animação idle deles a cada tick.
 func _atualizar_personagens() -> void:
-	var desejados: Dictionary = {}  # chave -> {pos, cor}
+	var desejados: Dictionary = {}  # chave -> {pos, cor, predio}
 
 	for id in Vila.edificios:
 		var e: Edificio = Vila.edificios[id]
 		if e.nivel > 0:
-			desejados["lider_%s" % id] = {"pos": _centro_edificio(e), "cor": COR_LIDER}
+			desejados["lider_%s" % id] = {"pos": _centro_edificio(e), "cor": COR_LIDER, "predio": id}
 
 	for id in Populacao.orfaos:
 		var o: Orfao = Populacao.orfaos[id]
@@ -167,7 +233,7 @@ func _atualizar_personagens() -> void:
 			continue
 		var base := _centro_edificio(Vila.edificios[alvo_edificio])
 		var jitter := Vector2((abs(hash(id)) % 50) - 25, (abs(hash(id + "y")) % 30) - 15)
-		desejados[id] = {"pos": base + jitter, "cor": cor}
+		desejados[id] = {"pos": base + jitter, "cor": cor, "predio": alvo_edificio}
 
 	for chave in _personagem_nodes.keys():
 		if not desejados.has(chave):
@@ -177,6 +243,7 @@ func _atualizar_personagens() -> void:
 			_personagem_nodes[chave].queue_free()
 			_personagem_nodes.erase(chave)
 			_personagem_alvo.erase(chave)
+			_personagem_predio.erase(chave)
 
 	for chave in desejados:
 		var info: Dictionary = desejados[chave]
@@ -187,6 +254,7 @@ func _atualizar_personagens() -> void:
 			node.position = info["pos"]
 			_personagem_nodes[chave] = node
 			_personagem_alvo[chave] = info["pos"]
+			_personagem_predio[chave] = info["predio"]
 			continue
 
 		# Só anima a caminhada quando o alvo muda de verdade (ex.: órfão mudou de
@@ -196,12 +264,22 @@ func _atualizar_personagens() -> void:
 		if alvo_anterior.distance_to(info["pos"]) < 1.0:
 			continue
 
+		var predio_anterior: String = _personagem_predio.get(chave, info["predio"])
 		_personagem_alvo[chave] = info["pos"]
+		_personagem_predio[chave] = info["predio"]
 		if _personagem_tweens.has(chave):
 			_personagem_tweens[chave].kill()
 		var node = _personagem_nodes[chave]
 		var tw := create_tween()
-		tw.tween_property(node, "position", info["pos"], 1.2).set_trans(Tween.TRANS_SINE)
+		if predio_anterior != "" and predio_anterior != info["predio"]:
+			# Muda de prédio: caminha pelas ruas (nunca atravessando lotes) da
+			# porta de origem até a porta de destino, e só então entra no prédio.
+			var pontos := _caminho_mundo(_porta_edificio(predio_anterior), _porta_edificio(info["predio"]))
+			for p in pontos:
+				tw.tween_property(node, "position", p, 0.35).set_trans(Tween.TRANS_SINE)
+			tw.tween_property(node, "position", info["pos"], 0.35).set_trans(Tween.TRANS_SINE)
+		else:
+			tw.tween_property(node, "position", info["pos"], 1.2).set_trans(Tween.TRANS_SINE)
 		_personagem_tweens[chave] = tw
 
 
@@ -243,14 +321,12 @@ func _processar_rotas() -> void:
 		if _timers_rota[id] < intervalo:
 			continue
 
-		var origem := Iso.cell_to_pos(e.celula, _tile)
-		if _tem_vizinho_perto(origem):
+		var porta_origem := _porta_edificio(id)
+		if _tem_vizinho_perto(Iso.cell_to_pos(porta_origem, _tile)):
 			continue  # cortesia: alguém está por perto, tenta de novo no próximo tick
 
 		_timers_rota[id] = 0.0
-		var deposito_pos := Iso.cell_to_pos(Vila.edificios["deposito"].celula, _tile)
-		var borda := deposito_pos + Vector2(0, 40)  # borda, não o centro (mecanicas #4)
-		_spawn_walker(origem, borda)
+		_spawn_walker(porta_origem, _porta_edificio("deposito"))
 
 
 func _tem_vizinho_perto(pos: Vector2) -> bool:
@@ -278,39 +354,70 @@ func _processar_rota_lenhador() -> void:
 	if _timer_rota_lenhador < intervalo:
 		return
 
-	var origem := Iso.cell_to_pos(Vila.edificios[Floresta.CENTRO_ID].celula, _tile)
-	if _tem_vizinho_perto(origem):
+	var porta_origem := _porta_edificio(Floresta.CENTRO_ID)
+	if _tem_vizinho_perto(Iso.cell_to_pos(porta_origem, _tile)):
 		return  # cortesia: tenta de novo no próximo tick
 
 	_timer_rota_lenhador = 0.0
-	var destino: Vector2 = Iso.cell_to_pos(alvo.celula, _tile) + alvo.offset
-	_spawn_walker(origem, destino)
+	_spawn_walker(porta_origem, _celula_livre_proxima(alvo.celula), alvo.offset)
 
 
-## Caminho com curva (nunca reta convergente) da origem até o destino, e volta.
+## Caminha só pelas ruas (nunca atravessa um lote) da origem até o destino, e
+## volta. `destino_offset` desloca o ponto final além da célula (ex.: a árvore
+## específica dentro da própria célula) sem sair da rua durante o trajeto.
 ## mecanicas_para_godot.md #4.
-func _spawn_walker(origem: Vector2, borda: Vector2) -> void:
+func _spawn_walker(origem_cel: Vector2i, destino_cel: Vector2i, destino_offset: Vector2 = Vector2.ZERO) -> void:
+	var ida := _caminho_mundo(origem_cel, destino_cel)
+	if destino_offset != Vector2.ZERO:
+		ida.append(ida[-1] + destino_offset)
+	if ida.size() < 2:
+		return
+
 	var walker_id := _proximo_walker_id
 	_proximo_walker_id += 1
 
 	var marcador := Polygon2D.new()
 	marcador.color = COR_ROTA
 	marcador.polygon = PackedVector2Array([Vector2(-5, -5), Vector2(5, -5), Vector2(5, 5), Vector2(-5, 5)])
-	marcador.position = origem
+	marcador.position = ida[0]
 	_rotas_root.add_child(marcador)
-	_walkers_ativos[walker_id] = origem
+	_walkers_ativos[walker_id] = ida[0]
 
-	var meio := origem.lerp(borda, 0.5) + Vector2(borda.y - origem.y, origem.x - borda.x).normalized() * 30.0
+	var volta := ida.duplicate()
+	volta.reverse()
+
+	# Tempo total proporcional ao tamanho do caminho, pra não ficar nem
+	# instantâneo num trajeto longo nem arrastado num vizinho de porta.
+	var tempo_total := clampf(ida.size() * 0.35, 1.2, 6.0)
 
 	var tween := create_tween()
-	tween.tween_method(func(p): marcador.position = p; _walkers_ativos[walker_id] = p, origem, meio, 0.8)
-	tween.tween_method(func(p): marcador.position = p; _walkers_ativos[walker_id] = p, meio, borda, 0.8)
-	tween.tween_method(func(p): marcador.position = p; _walkers_ativos[walker_id] = p, borda, meio, 0.8)
-	tween.tween_method(func(p): marcador.position = p; _walkers_ativos[walker_id] = p, meio, origem, 0.8)
+	_encadear_trecho(tween, marcador, walker_id, ida, tempo_total)
+	# Ao chegar, "entra" no destino: some de vista por um tempo (como se
+	# estivesse lá dentro entregando/cortando) e só depois reaparece pra voltar.
+	tween.tween_callback(func():
+		marcador.visible = false
+		_walkers_ativos.erase(walker_id)
+	)
+	tween.tween_interval(TEMPO_DENTRO_PREDIO)
+	tween.tween_callback(func():
+		marcador.visible = true
+		_walkers_ativos[walker_id] = marcador.position
+	)
+	_encadear_trecho(tween, marcador, walker_id, volta, tempo_total)
 	tween.tween_callback(func():
 		_walkers_ativos.erase(walker_id)
 		marcador.queue_free()
 	)
+
+
+func _encadear_trecho(tween: Tween, marcador: Polygon2D, walker_id: int, pontos: PackedVector2Array, tempo_total: float) -> void:
+	if pontos.size() < 2:
+		return
+	var tempo_por_perna := tempo_total / float(pontos.size() - 1)
+	for i in range(1, pontos.size()):
+		var de: Vector2 = pontos[i - 1]
+		var ate: Vector2 = pontos[i]
+		tween.tween_method(func(p): marcador.position = p; _walkers_ativos[walker_id] = p, de, ate, tempo_por_perna)
 
 
 func _toggle_tela_aldeoes() -> void:
