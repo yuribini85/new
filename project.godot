@@ -13,13 +13,14 @@ config_version=5
 [application]
 
 config/name="The Way Back"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/mapa.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 
 [autoload]
 
 Dados="*res://autoload/dados.gd"
 SaveManager="*res://autoload/save_manager.gd"
+Vila="*res://autoload/vila.gd"
 Sim="*res://autoload/sim.gd"
 
 [display]

@@ -3,10 +3,12 @@ extends Node
 ## Um Timer de 1s dispara tudo; nenhuma lógica de jogo em _process.
 
 enum FaseDia { MANHA, TARDE, NOITE }
+const NOMES_FASE := ["MANHA", "TARDE", "NOITE"]
 
 signal fase_mudou(nova_fase: FaseDia)
 signal dia_mudou(novo_dia: int)
 signal offline_delta_calculado(delta_seg: int)
+signal tick  ## emitido a cada 1s, depois do relógio já atualizado — outros módulos penduram lógica aqui, nunca em _process.
 
 var tempo_jogo_seg: int = 0
 var tempo_unix_ultimo: int = 0
@@ -72,8 +74,13 @@ func _aplicar_save_ou_iniciar() -> void:
 	fase_dia = save.get("fase_dia", FaseDia.MANHA) as FaseDia
 	ato = save.get("ato", 1)
 	nivel_casa_fiandeiras = save.get("nivel_casa_fiandeiras", 0)
+	Vila.restaurar(save.get("edificios", []))
 
 	_calcular_offline(agora)
+
+
+func nome_fase(f: FaseDia) -> String:
+	return NOMES_FASE[f]
 
 
 ## especificacao_tecnica_v1.md #16-17 e #22 · mecanicas_para_godot.md#0-fundacao.
@@ -125,6 +132,8 @@ func _on_tick() -> void:
 		dia_mudou.emit(dia_vila)
 		SaveManager.request_save(get_save_data())
 
+	tick.emit()
+
 
 func get_save_data() -> Dictionary:
 	return {
@@ -135,6 +144,7 @@ func get_save_data() -> Dictionary:
 		"fase_dia": fase_dia,
 		"ato": ato,
 		"nivel_casa_fiandeiras": nivel_casa_fiandeiras,
+		"edificios": Vila.get_save_data(),
 	}
 
 

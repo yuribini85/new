@@ -52,6 +52,17 @@ func _recalcular_vagas() -> void:
 	vagas_orfaos.resize(maxi(0, nivel - 1))
 
 
+## Aplica o subconjunto mutável vindo do save (id/nome/zona/celula/footprint/custo_n1
+## vêm sempre do catálogo, nunca do save).
+func aplicar_estado_salvo(d: Dictionary) -> void:
+	nivel = d.get("nivel", nivel)
+	lider_id = d.get("lider_id", lider_id)
+	item_especial = d.get("item_especial", item_especial)
+	em_obra = d.get("em_obra", em_obra)
+	obra_termina_em = d.get("obra_termina_em", obra_termina_em)
+	_recalcular_vagas()
+
+
 func to_dict() -> Dictionary:
 	return {
 		"id": id,
