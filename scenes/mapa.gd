@@ -42,11 +42,14 @@ var _arrastando := false
 var _ultimo_mouse_pos := Vector2.ZERO
 var _tile: Vector2i
 var _timers_rota: Dictionary = {}  # edificio_id -> float acumulado
+var _timer_rota_lenhador: float = 0.0
 var _proximo_walker_id := 0
 var _lote_nodes: Dictionary = {}  # edificio_id -> Node2D (Lote)
 var _distancia_arrasto := 0.0  # para distinguir toque/clique de arrasto real
 var _walkers_ativos: Dictionary = {}  # id -> posição atual (para cortesia)
 var _personagem_nodes: Dictionary = {}  # chave -> Node2D
+var _personagem_alvo: Dictionary = {}  # chave -> Vector2 (último destino conhecido)
+var _personagem_tweens: Dictionary = {}  # chave -> Tween (caminhada em curso)
 
 
 func _ready() -> void:
@@ -124,6 +127,7 @@ func _toggle_tela_mercado() -> void:
 func _on_tick() -> void:
 	_redesenhar_floresta()
 	_processar_rotas()
+	_processar_rota_lenhador()
 	_atualizar_personagens()
 
 
@@ -167,8 +171,12 @@ func _atualizar_personagens() -> void:
 
 	for chave in _personagem_nodes.keys():
 		if not desejados.has(chave):
+			if _personagem_tweens.has(chave):
+				_personagem_tweens[chave].kill()
+				_personagem_tweens.erase(chave)
 			_personagem_nodes[chave].queue_free()
 			_personagem_nodes.erase(chave)
+			_personagem_alvo.erase(chave)
 
 	for chave in desejados:
 		var info: Dictionary = desejados[chave]
@@ -176,8 +184,25 @@ func _atualizar_personagens() -> void:
 			var node := PERSONAGEM_SCENE.instantiate()
 			_personagens_root.add_child(node)
 			node.configurar(info["cor"])
+			node.position = info["pos"]
 			_personagem_nodes[chave] = node
-		_personagem_nodes[chave].position = info["pos"]
+			_personagem_alvo[chave] = info["pos"]
+			continue
+
+		# Só anima a caminhada quando o alvo muda de verdade (ex.: órfão mudou de
+		# prédio) — o jitter em si é estável entre ticks, então isso não dispara
+		# a cada tick à toa.
+		var alvo_anterior: Vector2 = _personagem_alvo.get(chave, info["pos"])
+		if alvo_anterior.distance_to(info["pos"]) < 1.0:
+			continue
+
+		_personagem_alvo[chave] = info["pos"]
+		if _personagem_tweens.has(chave):
+			_personagem_tweens[chave].kill()
+		var node = _personagem_nodes[chave]
+		var tw := create_tween()
+		tw.tween_property(node, "position", info["pos"], 1.2).set_trans(Tween.TRANS_SINE)
+		_personagem_tweens[chave] = tw
 
 
 func _redesenhar_floresta() -> void:
@@ -218,11 +243,14 @@ func _processar_rotas() -> void:
 		if _timers_rota[id] < intervalo:
 			continue
 
-		if _tem_vizinho_perto(Iso.cell_to_pos(e.celula, _tile)):
+		var origem := Iso.cell_to_pos(e.celula, _tile)
+		if _tem_vizinho_perto(origem):
 			continue  # cortesia: alguém está por perto, tenta de novo no próximo tick
 
 		_timers_rota[id] = 0.0
-		_spawn_walker(e.celula)
+		var deposito_pos := Iso.cell_to_pos(Vila.edificios["deposito"].celula, _tile)
+		var borda := deposito_pos + Vector2(0, 40)  # borda, não o centro (mecanicas #4)
+		_spawn_walker(origem, borda)
 
 
 func _tem_vizinho_perto(pos: Vector2) -> bool:
@@ -232,13 +260,36 @@ func _tem_vizinho_perto(pos: Vector2) -> bool:
 	return false
 
 
-## Caminho com curva (nunca reta convergente) até a borda do Depósito, e volta.
-## mecanicas_para_godot.md #4.
-func _spawn_walker(origem_celula: Vector2i) -> void:
-	var origem := Iso.cell_to_pos(origem_celula, _tile)
-	var deposito_pos := Iso.cell_to_pos(Vila.edificios["deposito"].celula, _tile)
-	var borda := deposito_pos + Vector2(0, 40)  # borda, não o centro (mecanicas #4)
+## Rota específica do lenhador: da cabana até a árvore que está sendo cortada agora
+## (Floresta.arvore_alvo()), e volta — separada da entrega no Depósito (mecanicas #4).
+func _processar_rota_lenhador() -> void:
+	if not Vila.edificios.has(Floresta.CENTRO_ID) or Vila.edificios[Floresta.CENTRO_ID].nivel <= 0:
+		return
+	var alvo := Floresta.arvore_alvo()
+	if alvo == null:
+		return
 
+	var n: int = Vila.edificios[Floresta.CENTRO_ID].n_trabalhadores()
+	if n <= 0:
+		return
+	var intervalo := 6.0 / float(n)
+
+	_timer_rota_lenhador += 1.0
+	if _timer_rota_lenhador < intervalo:
+		return
+
+	var origem := Iso.cell_to_pos(Vila.edificios[Floresta.CENTRO_ID].celula, _tile)
+	if _tem_vizinho_perto(origem):
+		return  # cortesia: tenta de novo no próximo tick
+
+	_timer_rota_lenhador = 0.0
+	var destino: Vector2 = Iso.cell_to_pos(alvo.celula, _tile) + alvo.offset
+	_spawn_walker(origem, destino)
+
+
+## Caminho com curva (nunca reta convergente) da origem até o destino, e volta.
+## mecanicas_para_godot.md #4.
+func _spawn_walker(origem: Vector2, borda: Vector2) -> void:
 	var walker_id := _proximo_walker_id
 	_proximo_walker_id += 1
 

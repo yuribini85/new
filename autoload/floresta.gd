@@ -66,6 +66,24 @@ func _n_trabalhadores_lenhador() -> int:
 	return Vila.edificios[CENTRO_ID].n_trabalhadores()
 
 
+## A árvore de pé mais próxima da cabana — a próxima a ser cortada. Público para o
+## Mapa poder animar o lenhador indo até ela (mecanicas_para_godot.md #4).
+func arvore_alvo() -> Arvore:
+	if not Vila.edificios.has(CENTRO_ID):
+		return null
+	var centro: Vector2i = Vila.edificios[CENTRO_ID].celula
+	var alvo: Arvore = null
+	var menor_dist := INF
+	for a in arvores:
+		if a.estado != Arvore.Estado.DE_PE:
+			continue
+		var d: float = (a.celula - centro).length_squared()
+		if d < menor_dist:
+			menor_dist = d
+			alvo = a
+	return alvo
+
+
 ## O ritmo do corte é só apresentação (mecanicas_para_godot.md #4: "a produção
 ## acontece por tempo fixo no edifício; o trajeto é apresentação e não influencia
 ## número nenhum") — não altera a produção real de madeira, calculada pela Economia.
@@ -80,16 +98,7 @@ func _processar_corte() -> void:
 		return
 	_corte_acumulado_seg = 0.0
 
-	var centro: Vector2i = Vila.edificios[CENTRO_ID].celula
-	var alvo: Arvore = null
-	var menor_dist := INF
-	for a in arvores:
-		if a.estado != Arvore.Estado.DE_PE:
-			continue
-		var d: float = (a.celula - centro).length_squared()
-		if d < menor_dist:
-			menor_dist = d
-			alvo = a
+	var alvo := arvore_alvo()
 	if alvo != null:
 		alvo.estado = Arvore.Estado.TOCO
 
