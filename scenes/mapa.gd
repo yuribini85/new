@@ -69,16 +69,23 @@ func _ready() -> void:
 
 	if bounds_min.x != INF:
 		_camera.position = (bounds_min + bounds_max) / 2.0
-		# Câmera começa afastada o bastante pra mostrar a vila inteira, calculado a
-		# partir da posição real dos prédios — em vez de um zoom inicial fixo que
-		# podia deixar a vila maior que a tela.
-		var span := bounds_max - bounds_min
-		var viewport_size := get_viewport().get_visible_rect().size
-		var zoom_cam_necessario := maxf(span.x / viewport_size.x, span.y / viewport_size.y) * 1.15
-		_zoom_min = minf(_zoom_min, 1.0 / zoom_cam_necessario)
-		_zoom_atual = clampf(1.0 / zoom_cam_necessario, _zoom_min, ZOOM_MAX)
 	_aplicar_zoom()
 	_camera.make_current()
+
+	if bounds_min.x != INF:
+		# Espera o viewport assentar no tamanho final antes de calcular o zoom que
+		# cabe a vila inteira.
+		await get_tree().process_frame
+		await get_tree().process_frame
+		var span := bounds_max - bounds_min
+		var viewport_size := get_viewport().get_visible_rect().size
+		# Camera2D.zoom do Godot: valor MAIOR = mais PRÓXIMO (confirmado por teste
+		# direto — é o oposto do que a documentação sugere à primeira leitura).
+		# Pra caber `span` mundo dentro de `viewport_size` tela, zoom = viewport/span.
+		var zoom_para_caber := minf(viewport_size.x / span.x, viewport_size.y / span.y) / 1.15
+		_zoom_min = minf(_zoom_min, zoom_para_caber)
+		_zoom_atual = clampf(zoom_para_caber, _zoom_min, ZOOM_MAX)
+		_aplicar_zoom()
 
 	Sim.fase_mudou.connect(func(_f): _atualizar_debug())
 	Sim.dia_mudou.connect(func(_d): _atualizar_debug())
@@ -265,9 +272,9 @@ func _toggle_tela_aldeoes() -> void:
 
 
 func _aplicar_zoom() -> void:
-	# Camera2D.zoom do Godot é invertido (maior valor = mais afastado); "zoom" aqui
-	# é o fator de ampliação do jogador, então o mapeamento é 1/zoom_atual.
-	_camera.zoom = Vector2.ONE / _zoom_atual
+	# Camera2D.zoom: maior valor = mais próximo (testado e confirmado). _zoom_atual
+	# já representa isso diretamente, sem inversão.
+	_camera.zoom = Vector2.ONE * _zoom_atual
 
 
 func _atualizar_debug() -> void:
@@ -292,7 +299,7 @@ func _atualizar_debug() -> void:
 ## a posição e o zoom atuais da câmera.
 func _tela_para_mundo(pos_tela: Vector2) -> Vector2:
 	var centro := get_viewport().get_visible_rect().size / 2.0
-	return _camera.position + (pos_tela - centro) * _camera.zoom
+	return _camera.position + (pos_tela - centro) / _camera.zoom
 
 
 ## Detecção de clique manual (sem Area2D/picking de física — mais simples de
@@ -324,5 +331,5 @@ func _input(event: InputEvent) -> void:
 			_ultimo_mouse_pos = event.position
 	elif event is InputEventMouseMotion and _arrastando:
 		var delta: Vector2 = event.position - _ultimo_mouse_pos
-		_camera.position -= delta * _camera.zoom
+		_camera.position -= delta / _camera.zoom
 		_ultimo_mouse_pos = event.position
