@@ -1,0 +1,402 @@
+{
+ "grid": {
+  "w": 68,
+  "h": 56
+ },
+ "tile": {
+  "w": 256,
+  "h": 128
+ },
+ "lots": [
+  {
+   "id": "casa_de_joao_e_maria",
+   "name": "Casa de João e Maria",
+   "cell": [
+    8,
+    40
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "origem"
+  },
+  {
+   "id": "poco",
+   "name": "Poço",
+   "cell": [
+    18,
+    20
+   ],
+   "footprint": [
+    2,
+    2
+   ],
+   "zone": "origem"
+  },
+  {
+   "id": "cabana_do_lenhador",
+   "name": "Cabana do Lenhador",
+   "cell": [
+    16,
+    42
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "horta",
+   "name": "Horta",
+   "cell": [
+    18,
+    48
+   ],
+   "footprint": [
+    6,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "alojamento",
+   "name": "Alojamento",
+   "cell": [
+    17,
+    34
+   ],
+   "footprint": [
+    6,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "deposito",
+   "name": "Depósito",
+   "cell": [
+    27,
+    20
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "lar_dos_orfaos",
+   "name": "Lar dos Órfãos",
+   "cell": [
+    25,
+    34
+   ],
+   "footprint": [
+    6,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "curral_dos_animais",
+   "name": "Curral dos Animais",
+   "cell": [
+    10,
+    25
+   ],
+   "footprint": [
+    6,
+    6
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "mercado",
+   "name": "Mercado",
+   "cell": [
+    18,
+    26
+   ],
+   "footprint": [
+    6,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "cabana_do_construtor",
+   "name": "Cabana do Construtor",
+   "cell": [
+    48,
+    44
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "oficinas"
+  },
+  {
+   "id": "padaria",
+   "name": "Padaria",
+   "cell": [
+    33,
+    36
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "casa_das_fiandeiras",
+   "name": "Casa das Fiandeiras",
+   "cell": [
+    9,
+    18
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "gazebo",
+   "name": "Gazebo",
+   "cell": [
+    27,
+    26
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "taberna",
+   "name": "Taberna",
+   "cell": [
+    24,
+    13
+   ],
+   "footprint": [
+    6,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "moinho",
+   "name": "Moinho",
+   "cell": [
+    15,
+    13
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "alfaiataria",
+   "name": "Alfaiataria",
+   "cell": [
+    34,
+    24
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "oficinas"
+  },
+  {
+   "id": "oficina_do_sapateiro",
+   "name": "Oficina do Sapateiro",
+   "cell": [
+    34,
+    30
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "oficinas"
+  },
+  {
+   "id": "vendedor_de_armas",
+   "name": "Vendedor de Armas",
+   "cell": [
+    34,
+    18
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "oficinas"
+  },
+  {
+   "id": "biblioteca",
+   "name": "Biblioteca",
+   "cell": [
+    25,
+    40
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "cabana_do_herbalista",
+   "name": "Cabana do Herbalista",
+   "cell": [
+    40,
+    34
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "oficinas"
+  },
+  {
+   "id": "curandeiro",
+   "name": "Curandeiro",
+   "cell": [
+    40,
+    22
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "oficinas"
+  },
+  {
+   "id": "cabana_do_cacador",
+   "name": "Cabana do Caçador",
+   "cell": [
+    10,
+    7
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "cabana_da_expedicao",
+   "name": "Cabana da Expedição",
+   "cell": [
+    33,
+    44
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "vila"
+  },
+  {
+   "id": "cemiterio",
+   "name": "Cemitério",
+   "cell": [
+    50,
+    33
+   ],
+   "footprint": [
+    6,
+    6
+   ],
+   "zone": "origem"
+  },
+  {
+   "id": "mina",
+   "name": "Mina",
+   "cell": [
+    46,
+    6
+   ],
+   "footprint": [
+    6,
+    8
+   ],
+   "zone": "mina"
+  },
+  {
+   "id": "forja",
+   "name": "Forja",
+   "cell": [
+    37,
+    11
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "mina"
+  },
+  {
+   "id": "casa_dos_anoes",
+   "name": "Casa dos Anões",
+   "cell": [
+    49,
+    21
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "mina"
+  },
+  {
+   "id": "cabana_de_pesca",
+   "name": "Cabana de Pesca",
+   "cell": [
+    4,
+    11
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "lago"
+  },
+  {
+   "id": "lago",
+   "name": "Lago",
+   "cell": [
+    0,
+    0
+   ],
+   "footprint": [
+    10,
+    10
+   ],
+   "zone": "lago"
+  },
+  {
+   "id": "casa_de_doces_vitrificada",
+   "name": "Casa de Doces Vitrificada",
+   "cell": [
+    59,
+    1
+   ],
+   "footprint": [
+    4,
+    4
+   ],
+   "zone": "clareira"
+  }
+ ]
+}

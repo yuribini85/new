@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Way Back — Board</title>
+<style>
+:root{
+  --ink:#0f0c09;--ink2:#161210;--card:#141010;--parch:#d9cfb8;--bone:#efe7d4;
+  --stone:#8a8278;--moss:#7d8a5c;--ember:#a8492f;--rule:#2e2721;--gold:#b58a3c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--parch);
+  font:16px/1.55 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  background-image:radial-gradient(ellipse at 15% -20%,#1d1712 0%,#0f0c09 62%)}
+.wrap{max-width:1220px;margin:0 auto;padding:44px 26px 120px}
+
+header{border-bottom:1px solid var(--rule);padding-bottom:26px;margin-bottom:12px}
+h1{font-size:clamp(34px,5.5vw,54px);line-height:1;margin:0 0 6px;color:var(--bone);font-weight:400;letter-spacing:-.02em}
+.sub{color:var(--stone);font-style:italic;margin:0 0 26px;font-size:15px}
+
+/* barra de progresso geral */
+.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;border:1px solid var(--rule)}
+.ph{padding:12px 12px 14px;font-family:ui-sans-serif,system-ui,sans-serif}
+.ph b{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px;color:var(--bone)}
+.ph span{font-size:11.5px;color:#877f73;line-height:1.4;display:block}
+.done{background:#1b1a12}.done b{color:var(--moss)}
+.now{background:#231610}.now b{color:var(--ember)}
+.next{background:#141110}
+.later{background:#0e0b09}.later b{color:#5d564d}.later span{color:#4d473f}
+
+h2{font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ember);
+  font-family:ui-sans-serif,system-ui,sans-serif;font-weight:600;
+  margin:56px 0 14px;padding-top:20px;border-top:1px solid var(--rule)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px}
+.card{border:1px solid var(--rule);background:var(--card);padding:15px 16px 17px;position:relative}
+.card h3{margin:0 0 3px;font-size:17px;color:var(--bone);font-weight:400}
+.card .st{font:600 9.5px ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.card p{margin:9px 0 0;font-size:13.5px;color:#a1988a;line-height:1.5}
+.s-ok{color:var(--moss)}.s-wip{color:var(--gold)}.s-todo{color:var(--stone)}.s-block{color:var(--ember)}
+.card.ok{border-left:2px solid var(--moss)}
+.card.wip{border-left:2px solid var(--gold)}
+.card.todo{border-left:2px solid #3a332c}
+.card.block{border-left:2px solid var(--ember)}
+
+/* barras numéricas */
+.bars{border:1px solid var(--rule);padding:4px 0}
+.bar{display:grid;grid-template-columns:210px 1fr 96px;gap:14px;align-items:center;
+  padding:11px 16px;border-bottom:1px solid #211b16}
+.bar:last-child{border-bottom:none}
+.bar .lb{font-size:14.5px;color:var(--bone)}
+.bar .lb small{display:block;font:11px ui-sans-serif,system-ui,sans-serif;color:#6d665c;letter-spacing:.04em}
+.track{height:7px;background:#221c17}
+.fill{height:100%;background:var(--moss)}
+.fill.low{background:var(--ember)}
+.fill.mid{background:var(--gold)}
+.num{text-align:right;font:12px ui-monospace,Menlo,monospace;color:var(--stone)}
+
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:4px}
+th{text-align:left;font:600 10px ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--stone);padding:8px 12px 8px 0;border-bottom:1px solid var(--rule)}
+td{padding:10px 12px 10px 0;border-bottom:1px solid #201a16;color:#a1988a;vertical-align:top}
+td:first-child{color:var(--bone);white-space:nowrap}
+
+.next-list{counter-reset:n;list-style:none;padding:0;margin:0;max-width:80ch}
+.next-list li{counter-increment:n;position:relative;padding:13px 0 13px 46px;border-bottom:1px solid #201a16}
+.next-list li:before{content:counter(n);position:absolute;left:0;top:12px;
+  font:12px ui-monospace,Menlo,monospace;color:var(--ember);border:1px solid var(--rule);
+  width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.next-list b{color:var(--bone);font-weight:600}
+.next-list span{display:block;font-size:13.5px;color:#8e8578;margin-top:3px}
+
+.risk{border-left:2px solid var(--ember);padding:2px 0 2px 18px;margin:16px 0;max-width:78ch}
+.risk p{margin:0 0 6px;font-size:14.5px}
+.risk b{color:var(--bone)}
+footer{margin-top:70px;padding-top:18px;border-top:1px solid var(--rule);
+  color:#5a544b;font:12px ui-sans-serif,system-ui,sans-serif}
+@media(max-width:760px){
+  .phases{grid-template-columns:1fr 1fr}
+  .bar{grid-template-columns:1fr;gap:6px}
+  .num{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>The Way Back</h1>
+  <p class="sub">Board de projeto · idle isométrico · Godot 4.4 · vila Grimm</p>
+  <div class="phases">
+    <div class="ph done"><b>Conceito</b><span>Fechado. Premissa, tema e antagonista definidos.</span></div>
+    <div class="ph done"><b>Lore</b><span>Fechada. Elenco, geografia e cinco atos.</span></div>
+    <div class="ph done"><b>Sistemas</b><span>Fechados. Economia, eventos, monetização.</span></div>
+    <div class="ph now"><b>Produção de arte</b><span>Em curso. Catálogo pronto, geração em andamento.</span></div>
+    <div class="ph later"><b>Código</b><span>Não iniciado. Espec. pronta para o Codex.</span></div>
+  </div>
+</header>
+
+<h2>Estado por frente</h2>
+<div class="grid">
+
+  <div class="card ok"><h3>Premissa e antagonista</h3><span class="st s-ok">Fechado</span>
+  <p>A Fome como força que cria as condições dos contos. A Marca como evidência. Regra de que ela não cria maldade, só termina o serviço.</p></div>
+
+  <div class="card ok"><h3>Elenco</h3><span class="st s-ok">Fechado</span>
+  <p>João, Maria, Filha Sábia, Fiandeiras, sete anões, Pele-de-Urso e 16 líderes de edificação. Órfãos por roleta.</p></div>
+
+  <div class="card ok"><h3>Geografia</h3><span class="st s-ok">Fechado</span>
+  <p>Eixo de contaminação: casa no canto, vila crescendo em direção à mina, clareira no extremo. Poço, lago e fundo em projeção livre.</p></div>
+
+  <div class="card ok"><h3>Economia</h3><span class="st s-ok">Fechado</span>
+  <p>Ouro só de venda, dois insumos, seis recursos, curva de 1,35×. Fôlego, tiers da mina, teto de depósito e de alojamento.</p></div>
+
+  <div class="card ok"><h3>Eventos e maldições</h3><span class="st s-ok">Fechado</span>
+  <p>Seis maldições, demanda da Holle em três estados, ratos e Flautista recorrentes, uma maldição ativa por vez.</p></div>
+
+  <div class="card ok"><h3>Monetização</h3><span class="st s-ok">Fechado</span>
+  <p>Sem banner. Rumpelstiltskin em contrato, Músicos no gazebo, recuperação de órfão pelo poço, remoção definitiva de anúncio.</p></div>
+
+  <div class="card ok"><h3>Especificação técnica</h3><span class="st s-ok">Fechado</span>
+  <p>52 decisões respondidas: retrato 1080×1920, tick de 1s, offline por fórmula, JSON externo, quatro direções.</p></div>
+
+  <div class="card ok"><h3>Gerador de prompts</h3><span class="st s-ok">v51</span>
+  <p>30 edificações e 7 hostis, 320 blocos. Estágios variáveis por prédio e nomenclatura Godot embutida.</p></div>
+
+  <div class="card ok"><h3>Ferramenta de diálogo</h3><span class="st s-ok">Pronta</span>
+  <p>Editor com seis emoções, exportação JSON e CSV de tradução, e roteiro visual em cards.</p></div>
+
+  <div class="card wip"><h3>Arte de edificações</h3><span class="st s-wip">Em curso</span>
+  <p>12 validadas de 30. Prompts prontos para todas. É o maior bloco do projeto.</p></div>
+
+  <div class="card wip"><h3>Arte de personagens</h3><span class="st s-wip">Em curso</span>
+  <p>Turnarounds: 8 de 22. Retratos de diálogo: nenhum dos ~80 gerado.</p></div>
+
+  <div class="card todo"><h3>Ordem de desbloqueio</h3><span class="st s-todo">Aprovada, falta detalhar</span>
+  <p>Ato I fechado com 11 construções. Atos II e III esboçados, sem custos nem tempos.</p></div>
+
+  <div class="card block"><h3>Tabela de custos do Ato I</h3><span class="st s-block">Bloqueia o código</span>
+  <p>Custo inicial, curva, tempo de produção e o que cada nível destrava. Sem isso o Codex não tem o que balancear.</p></div>
+
+  <div class="card todo"><h3>Texto e diálogo</h3><span class="st s-todo">Não iniciado</span>
+  <p>~525 linhas estimadas. A ferramenta existe; o conteúdo não.</p></div>
+
+  <div class="card todo"><h3>Áudio</h3><span class="st s-todo">Não iniciado</span>
+  <p>Trilha em camadas, camada dos Músicos, 20 efeitos.</p></div>
+
+  <div class="card todo"><h3>Projeto Godot</h3><span class="st s-todo">Não iniciado</span>
+  <p>Sete módulos definidos, em ordem. Espera a tabela de custos.</p></div>
+
+</div>
+
+<h2>Números</h2>
+<div class="bars">
+  <div class="bar">
+    <div class="lb">Edificações validadas<small>arte aprovada / catálogo</small></div>
+    <div class="track"><div class="fill mid" style="width:40%"></div></div>
+    <div class="num">12 / 30</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Blocos de prompt<small>gerados e exportados</small></div>
+    <div class="track"><div class="fill" style="width:100%"></div></div>
+    <div class="num">320 / 320</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Imagens de edificação<small>30 prédios × estágios</small></div>
+    <div class="track"><div class="fill low" style="width:13%"></div></div>
+    <div class="num">~40 / 320</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Turnarounds de personagem<small>corpo inteiro, 3 vistas</small></div>
+    <div class="track"><div class="fill mid" style="width:36%"></div></div>
+    <div class="num">8 / 22</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Retratos de diálogo<small>emoções por personagem</small></div>
+    <div class="track"><div class="fill low" style="width:0%"></div></div>
+    <div class="num">0 / ~80</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Itens especiais<small>3 por edificação</small></div>
+    <div class="track"><div class="fill low" style="width:0%"></div></div>
+    <div class="num">0 / ~50</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Linhas de texto<small>diálogo, expedição, interface</small></div>
+    <div class="track"><div class="fill low" style="width:0%"></div></div>
+    <div class="num">0 / ~525</div>
+  </div>
+  <div class="bar">
+    <div class="lb">Decisões de design<small>respondidas nas rodadas</small></div>
+    <div class="track"><div class="fill" style="width:92%"></div></div>
+    <div class="num">~92%</div>
+  </div>
+</div>
+
+<h2>Documentos</h2>
+<table>
+<thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Estado</th></tr></thead>
+<tbody>
+<tr><td>the_way_back_lore_completa.txt</td><td>Ficção pura, 14 seções, sem sistema</td><td>Atual</td></tr>
+<tr><td>the_way_back_biblia.html</td><td>Lore + sistemas + economia + checklist de arte</td><td>Atual</td></tr>
+<tr><td>especificacao_tecnica_v1.md</td><td>52 decisões técnicas para o Codex</td><td>Aprovado</td></tr>
+<tr><td>economia.md</td><td>Cadeia, recursos, gargalos por ato</td><td>Atual</td></tr>
+<tr><td>duvidas_rodada2.md</td><td>Desbloqueio, 30 min iniciais, ritmo, texto</td><td>Parcialmente respondido</td></tr>
+<tr><td>grimm-forge-v51.html</td><td>Gerador de prompts, 320 blocos</td><td>Atual</td></tr>
+<tr><td>twb-dialogue-forge.html</td><td>Editor de diálogos com roteiro visual</td><td>Atual</td></tr>
+<tr><td>NOMENCLATURA_ASSETS.md</td><td>Convenção de nomes para o Godot</td><td>Atual</td></tr>
+<tr><td>catalogo_v51_prompts.zip</td><td>37 arquivos .txt, um por estrutura</td><td>Atual</td></tr>
+<tr><td>lore v2 · v3 · v4</td><td>Versões anteriores</td><td>Substituídos</td></tr>
+</tbody>
+</table>
+
+<h2>Próximos cinco passos</h2>
+<ol class="next-list">
+  <li><b>Tabela de custos e tempos do Ato I</b>
+    <span>Onze construções com custo inicial, curva, tempo de produção e o que cada nível destrava. É o único item que trava o início do código.</span></li>
+  <li><b>Terminar as respostas da rodada 2</b>
+    <span>Faltam: nomes germânicos ou aportuguesados, maldições simultâneas nos atos finais, slot extra de expedição, e o bloco 17.</span></li>
+  <li><b>Gerar os retratos de diálogo</b>
+    <span>Seis emoções para os seis que mais falam, três para os demais. Derivar dos turnarounds já aprovados para manter consistência.</span></li>
+  <li><b>Escrever os trinta minutos iniciais</b>
+    <span>Já coreografados minuto a minuto. Cerca de 60 blocos na ferramenta de diálogo.</span></li>
+  <li><b>Módulo 1 no Godot</b>
+    <span>Esqueleto de projeto, autoload de simulação, save em JSON com versão e proteção de relógio.</span></li>
+</ol>
+
+<h2>Riscos abertos</h2>
+<div class="risk">
+  <p><b>Volume de arte de edificação.</b> 320 imagens em 30 prédios é o maior custo do projeto e o que decide o cronograma. 12 validadas em várias sessões — vale medir o ritmo real antes de prometer prazo.</p>
+  <p><b>Monotonia das cabanas de ofício.</b> Sete edificações usam o mesmo molde 2×2×2, diferenciadas só por âncora e props. São 77 imagens de caixas parecidas. Dar a cada uma um traço estrutural fixo resolveria antes de gerar.</p>
+  <p><b>Perda permanente de aldeão.</b> É o sistema mais arriscado para o público de idle. As três proteções estão desenhadas — risco visível, nunca perda total, reposição garantida — mas só o teste com jogador confirma.</p>
+  <p><b>Escopo do Ato V.</b> A inversão exige comportamento de mundo que nenhum outro ato usa. Pode virar um jogo dentro do jogo se não for contido cedo.</p>
+</div>
+
+<footer>Board gerado a partir do estado atual dos documentos · atualizar a cada marco</footer>
+
+</div>
+</body>
+</html>

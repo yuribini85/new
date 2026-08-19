@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TWB — Tela de Aldeões</title>
+<style>
+:root{
+  --ink:#0d0a08;--panel:#15110e;--card:#1a1512;--cardhi:#241b14;
+  --parch:#cfc4ae;--bone:#efe7d4;--stone:#8a8278;
+  --moss:#8ba05e;--gold:#c9a24a;--red:#b8442f;
+  --rule:#3a2f26;--rule2:#4a3b2e;
+  --sans:ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#070605;color:var(--parch);font:15px/1.5 var(--serif);
+  display:flex;justify-content:center;padding:18px}
+.screen{width:1536px;max-width:100%;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+
+.frame{border:1px solid var(--rule2);background:var(--panel);position:relative;box-shadow:inset 0 0 60px #0008}
+.frame:before{content:"";position:absolute;inset:4px;border:1px solid #2a221b;pointer-events:none}
+
+/* HUD */
+.hud{grid-column:1;display:flex;align-items:center;padding:9px 14px;margin-bottom:-4px}
+.hres{display:flex;align-items:center;gap:7px;padding:0 15px;border-right:1px solid #2a221b}
+.hres:last-child{border-right:none}
+.hico{font-size:19px;line-height:1;filter:saturate(.7)}
+.hres b{display:block;font:600 17px/1.1 var(--serif);color:var(--bone)}
+.hres i{font-style:normal;font:9.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#6b6358}
+.hres.warn b{color:var(--red)}
+.hres.ok b{color:var(--moss)}
+
+/* LISTA */
+.left{grid-column:1;padding:18px 16px 0}
+.lhead{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px}
+h1{margin:0;font:400 38px/1 var(--serif);color:var(--bone);letter-spacing:.02em}
+.lcount{font:12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.lcount b{color:var(--gold);font-weight:600}
+.tabs{display:flex;gap:8px;margin:18px 0 12px}
+.tab{flex:1;text-align:center;padding:11px 8px;border:1px solid var(--rule);background:#120f0c;
+  font:12.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:#8f8779;cursor:pointer}
+.tab span{color:#5f584e;margin-left:6px;letter-spacing:0}
+.tab.on{border-color:var(--gold);background:linear-gradient(#2a1e14,#1d1510);color:var(--bone)}
+.tab.on span{color:var(--gold)}
+.sort{display:flex;align-items:center;gap:10px;padding:0 4px 10px;
+  font:11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#6b6358}
+.sort select{background:#151109;border:1px solid var(--rule);color:var(--parch);
+  font:12px var(--sans);letter-spacing:.08em;padding:6px 10px}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:8px 92px 1fr auto;align-items:center;
+  border-top:1px solid #241d17;background:var(--card);cursor:pointer}
+.row:last-child{border-bottom:1px solid #241d17}
+.row .bar{width:8px;height:100%;background:transparent}
+.row.idle .bar{background:var(--gold)}
+.row.sel{background:var(--cardhi);outline:1px solid var(--gold)}
+.row.child{opacity:.66}
+.pic{width:92px;height:92px;background:#0b0806;border-right:1px solid #241d17;
+  display:flex;align-items:center;justify-content:center;font:9px ui-monospace,monospace;color:#48413a}
+.who{padding:0 16px;min-width:0}
+.who .nm{font:400 24px/1.1 var(--serif);color:var(--bone)}
+.who .nm em{font:11px var(--sans);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:#5f584e;margin-left:9px}
+.who .sub{margin-top:5px;font:13.5px var(--serif)}
+.who .apt{color:var(--moss)}
+.who .sep{color:#3d362e;margin:0 9px}
+.who .scar{color:var(--red)}
+.who .grow{font:12px var(--sans);color:#6b6358;letter-spacing:.06em;margin-top:5px}
+.post{text-align:right;padding:0 20px;line-height:1.35}
+.post b{display:block;font:12.5px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--parch);font-weight:400}
+.post span{font:13px var(--serif);color:#6b6358}
+.post.free b{color:var(--gold)}
+.lfoot{display:flex;align-items:center;gap:14px;padding:14px 4px 16px}
+.lfoot .txt{flex:1;font:13px var(--serif);color:#7d746a}
+.cta{border:1px solid #7a3524;background:linear-gradient(#8f3f2b,#6d2e1f);color:#f2e4d8;
+  padding:13px 30px;font:13px var(--sans);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;gap:12px}
+
+/* FICHA */
+.right{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;min-height:1010px}
+.sh-top{display:grid;grid-template-columns:300px 1fr;border-bottom:1px solid var(--rule)}
+.sh-pic{height:400px;background:#0b0806;border-right:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:center;font:10px ui-monospace,monospace;color:#48413a;text-align:center}
+.sh-info{padding:22px 26px}
+.sh-nm{font:400 46px/1 var(--serif);color:var(--bone)}
+.sh-sub{margin-top:8px;font:13px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+.aptline{margin-top:14px;display:flex;align-items:center;gap:12px}
+.aptbox{border:1px solid #4a5432;background:#1a2013;color:var(--moss);
+  font:11.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:5px 11px}
+.aptline .det{font:14px var(--serif);color:var(--parch)}
+.scarbox{margin-top:20px;border:1px solid #4a2a20;background:#1b120f;padding:16px 18px}
+.scarbox .n{font:400 22px/1 var(--serif);letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.scarbox .story{font-style:italic;color:#bfb4a0;font-size:15.5px;line-height:1.45;margin:12px 0 15px}
+.eff{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.eff div{border:1px solid;padding:11px 13px;display:flex;align-items:center;gap:10px}
+.eff .bad{border-color:#5a2b1e;background:#1e100d}
+.eff .good{border-color:#3f4a2c;background:#151b10}
+.eff .val{font:600 19px/1 var(--serif)}
+.eff .bad .val{color:var(--red)}
+.eff .good .val{color:var(--moss)}
+.eff .lbl{font:10.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:#8a8278}
+.eff .sm{display:block;font:12px var(--serif);color:#7d746a;margin-top:2px;letter-spacing:0;text-transform:none}
+.sh-mid{display:grid;grid-template-columns:280px 1fr;flex:1;border-bottom:1px solid var(--rule)}
+.now{padding:20px 24px;border-right:1px solid var(--rule)}
+.sec{font:11px var(--sans);letter-spacing:.22em;text-transform:uppercase;color:#6b6358;margin-bottom:14px}
+.now .big{font:400 26px/1 var(--serif);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.now .bigsub{font:14px var(--serif);color:#7d746a;margin-top:6px}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-top:1px solid #241d17;margin-top:16px}
+.kv span{font:13.5px var(--serif);color:#8a8278}
+.kv b{font:400 16px var(--serif);color:var(--bone)}
+.kv b.dim{color:#6b6358}
+.posts{padding:20px 22px}
+.post-row{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;
+  border:1px solid #2a221b;background:#161210;padding:13px 15px;margin-bottom:8px;cursor:pointer}
+.post-row.best{border-color:var(--gold);background:#1e1710}
+.post-row .ico{font-size:22px;text-align:center;filter:saturate(.75)}
+.post-row .nm{font:400 19px/1 var(--serif);letter-spacing:.1em;text-transform:uppercase;color:var(--bone);
+  display:flex;align-items:center;gap:10px}
+.badge{font:9.5px var(--sans);letter-spacing:.14em;padding:3px 7px;border:1px solid var(--gold);color:var(--gold)}
+.post-row .cap{font:12.5px var(--serif);color:#7d746a;margin-top:4px}
+.post-row .cap em{font-style:normal;color:var(--moss)}
+.gain{text-align:right;white-space:nowrap}
+.gain .num{font:400 18px/1 var(--serif);color:#8a8278}
+.gain .num b{color:var(--moss);font-weight:400}
+.gain .unit{display:block;font:12px var(--serif);color:#6b6358;margin-top:4px}
+.full{display:flex;justify-content:space-between;padding:11px 15px;border:1px solid #241d17;
+  background:#120f0c;font:12.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:#5f584e}
+.sh-foot{padding:16px 22px 12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bigbtn{border:1px solid var(--rule2);background:#191410;padding:15px;text-align:center;cursor:pointer}
+.bigbtn b{display:block;font:400 19px/1 var(--serif);letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
+.bigbtn span{display:block;font:12.5px var(--serif);color:#7d746a;margin-top:6px}
+.note{padding:0 22px 18px;font:12.5px var(--serif);color:#5f584e;display:flex;gap:9px;align-items:center}
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <div class="frame hud">
+    <div class="hres warn"><span class="hico">🥖</span><div><b>412</b><i>comida</i></div></div>
+    <div class="hres"><span class="hico">🪵</span><div><b>1.204</b><i>madeira</i></div></div>
+    <div class="hres"><span class="hico">🪙</span><div><b>3.870</b><i>ouro</i></div></div>
+    <div class="hres"><span class="hico">💧</span><div><b>86</b><i>fôlego</i></div></div>
+    <div class="hres"><span class="hico">💠</span><div><b>12</b><i>diam.</i></div></div>
+    <div class="hres ok"><span class="hico">👥</span><div><b>18/24</b><i>gente</i></div></div>
+    <div class="hres"><span class="hico">📦</span><div><b>1,9k/3k</b><i>depósito</i></div></div>
+  </div>
+
+  <div class="frame left">
+    <div class="lhead">
+      <h1>Aldeões</h1>
+      <div class="lcount"><b>3</b> ociosos &nbsp;·&nbsp; 5 crianças</div>
+    </div>
+    <div class="tabs">
+      <div class="tab on">Todos <span>18</span></div>
+      <div class="tab">Ociosos <span>3</span></div>
+      <div class="tab">Trabalhando <span>10</span></div>
+      <div class="tab">Crianças <span>5</span></div>
+    </div>
+    <div class="sort">Ordenar por:
+      <select><option>Melhor posto</option><option>Nome</option><option>Consumo</option><option>Cicatriz</option><option>Chegada</option></select>
+    </div>
+    <div class="rows">
+      <div class="row idle sel"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Frieda</div><div class="sub"><span class="apt">cozinha</span><span class="sep">·</span><span class="scar">Fome antiga</span></div></div>
+        <div class="post free"><b>Ociosa</b><span>sem posto</span></div></div>
+      <div class="row idle"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Konrad</div><div class="sub"><span class="apt">braços</span><span class="sep">·</span><span class="scar">Lerdeza</span></div></div>
+        <div class="post free"><b>Ocioso</b><span>sem posto</span></div></div>
+      <div class="row"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Anselm</div><div class="sub"><span class="apt">oficina</span><span class="sep">·</span><span class="scar">Mão pesada</span></div></div>
+        <div class="post"><b>Forja</b><span>nível 3</span></div></div>
+      <div class="row"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Vreni</div><div class="sub"><span class="apt">campo</span><span class="sep">·</span><span class="scar">Medo da mata</span></div></div>
+        <div class="post"><b>Horta</b><span>nível 4</span></div></div>
+      <div class="row"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Bertold</div><div class="sub"><span class="apt">água</span><span class="sep">·</span><span class="scar">Passos leves</span></div></div>
+        <div class="post"><b>Pesca</b><span>nível 2</span></div></div>
+      <div class="row idle"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Hilde</div><div class="sub"><span class="apt">letras</span><span class="sep">·</span><span class="scar">Boa memória</span></div></div>
+        <div class="post free"><b>Ociosa</b><span>sem posto</span></div></div>
+      <div class="row child"><div class="bar"></div><div class="pic">retrato</div>
+        <div class="who"><div class="nm">Till <em>criança</em></div><div class="grow">⧗ adulto em 12 min</div></div>
+        <div class="post"><b>Lar</b><span>sem posto</span></div></div>
+    </div>
+    <div class="lfoot">
+      <div class="txt">3 ociosos &nbsp;·&nbsp; 4 vagas abertas na vila</div>
+      <div class="cta">Alocar todos <span style="font-size:15px">⚙</span></div>
+    </div>
+  </div>
+
+  <div class="frame right">
+    <div class="sh-top">
+      <div class="sh-pic">retrato<br>meio-corpo</div>
+      <div class="sh-info">
+        <div class="sh-nm">Frieda</div>
+        <div class="sh-sub">Adulta · chegou há 2 dias</div>
+        <div class="aptline"><span class="aptbox">cozinha</span><span class="det">Padaria +25% &nbsp;·&nbsp; Taberna +25%</span></div>
+        <div class="scarbox">
+          <div class="n">Fome antiga</div>
+          <div class="story">Chegou comendo terra na entrada da vila.<br>Não parou quando deram pão.</div>
+          <div class="eff">
+            <div class="bad"><span class="val">×5</span><span class="lbl">comida<span class="sm">consome muito mais</span></span></div>
+            <div class="good"><span class="val">+40%</span><span class="lbl">trabalho<span class="sm">trabalha mais rápido</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sh-mid">
+      <div class="now">
+        <div class="sec">Agora</div>
+        <div class="big">Ociosa</div>
+        <div class="bigsub">sem posto atribuído</div>
+        <div class="kv"><span>Consome</span><b>7,5 <span style="color:#6b6358;font-size:13px">/min</span></b></div>
+        <div class="kv"><span>Produção atual</span><b class="dim">0 <span style="font-size:13px">/min</span></b></div>
+        <div class="kv"><span>Risco em expedição</span><b>Normal</b></div>
+      </div>
+      <div class="posts">
+        <div class="sec">Melhores postos para Frieda</div>
+        <div class="post-row best"><div class="ico">🥖</div>
+          <div><div class="nm">Padaria <span class="badge">melhor</span></div><div class="cap">2 vagas · <em>aptidão +25%</em></div></div>
+          <div class="gain"><div class="num">14 → <b>17,5</b></div><span class="unit">pão /min</span></div></div>
+        <div class="post-row"><div class="ico">🍺</div>
+          <div><div class="nm">Taberna</div><div class="cap">1 vaga · <em>aptidão +25%</em></div></div>
+          <div class="gain"><div class="num">11 → <b>14,2</b></div><span class="unit">moedas /min</span></div></div>
+        <div class="post-row"><div class="ico">🐔</div>
+          <div><div class="nm">Curral</div><div class="cap">1 vaga</div></div>
+          <div class="gain"><div class="num">6 → <b>8,1</b></div><span class="unit">carne /min</span></div></div>
+        <div class="post-row"><div class="ico">⚒</div>
+          <div><div class="nm">Forja</div><div class="cap">3 vagas</div></div>
+          <div class="gain"><div class="num">7 → <b>9,1</b></div><span class="unit">ferramentas /min</span></div></div>
+        <div class="full"><span>2 postos cheios</span><span>Horta · Depósito</span></div>
+      </div>
+    </div>
+    <div class="sh-foot">
+      <div class="bigbtn"><b>Levar em expedição</b><span>risco normal</span></div>
+      <div class="bigbtn"><b>Chamar para beber</b><span>ouvir sua história</span></div>
+    </div>
+    <div class="note">ⓘ Expedições podem trazer recursos e eventos. Moradores no lar não podem ser enviados.</div>
+  </div>
+
+</div>
+</body>
+</html>

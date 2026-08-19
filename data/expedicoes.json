@@ -1,0 +1,66 @@
+{
+ "regioes": [
+  {
+   "id": "orla",
+   "nome": "Orla da mata",
+   "tier": 0,
+   "duracao_seg": 300,
+   "aldeoes": 0,
+   "folego": 5,
+   "risco": 0.0
+  },
+  {
+   "id": "trilha",
+   "nome": "Trilha velha",
+   "tier": 1,
+   "duracao_seg": 1200,
+   "aldeoes": 1,
+   "folego": 8,
+   "risco": 0.06
+  },
+  {
+   "id": "vale",
+   "nome": "Vale fundo",
+   "tier": 2,
+   "duracao_seg": 3600,
+   "aldeoes": 2,
+   "folego": 14,
+   "risco": 0.12
+  },
+  {
+   "id": "rio",
+   "nome": "Rio negro",
+   "tier": 3,
+   "duracao_seg": 10800,
+   "aldeoes": 3,
+   "folego": 25,
+   "risco": 0.2
+  },
+  {
+   "id": "mata_cega",
+   "nome": "Mata cega",
+   "tier": 4,
+   "duracao_seg": 28800,
+   "aldeoes": 5,
+   "folego": 40,
+   "risco": 0.3
+  }
+ ],
+ "travas": {
+  "max_mortes_fracao": 0.5,
+  "imortais": [
+   "maria",
+   "pele_de_urso"
+  ],
+  "nunca_primeiro": true
+ },
+ "folego_por_anao": [
+  40,
+  90,
+  160,
+  260,
+  400,
+  600
+ ],
+ "drop_item_especial": 0.04
+}

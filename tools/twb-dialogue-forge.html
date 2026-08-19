@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TWB — Dialogue Forge</title>
+<style>
+:root{
+  --ink:#100d0a;--ink2:#171310;--ink3:#1e1814;--parch:#d9cfb8;--bone:#efe7d4;
+  --stone:#8b8b80;--moss:#7d8a5c;--ember:#a8492f;--rule:#332b25;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--parch);
+  font:15px/1.55 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+.wrap{display:grid;grid-template-columns:300px minmax(0,1fr) 320px;height:100vh}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr;height:auto}}
+
+aside,section{overflow-y:auto;padding:20px}
+aside{border-right:1px solid var(--rule)}
+.right{border-left:1px solid var(--rule);border-right:none}
+
+h1{font-size:16px;letter-spacing:.2em;text-transform:uppercase;color:var(--bone);
+  font-weight:400;margin:0 0 4px}
+.sub{font-size:11px;color:var(--stone);letter-spacing:.1em;text-transform:uppercase;
+  font-family:ui-sans-serif,system-ui,sans-serif;margin:0 0 22px}
+h2{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ember);
+  font-family:ui-sans-serif,system-ui,sans-serif;margin:22px 0 8px;font-weight:600}
+
+label{display:block;font:600 10px/1.4 ui-sans-serif,system-ui,sans-serif;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin:12px 0 4px}
+input,select,textarea,button{font-family:inherit;font-size:14px;color:var(--parch);
+  background:var(--ink2);border:1px solid var(--rule);border-radius:0;padding:8px 10px;width:100%}
+textarea{resize:vertical;min-height:88px;line-height:1.5}
+input:focus,select,textarea:focus{outline:1px solid var(--moss)}
+button{cursor:pointer;background:var(--ink3);letter-spacing:.04em}
+button:hover{background:#2a221c;color:var(--bone)}
+button.primary{background:var(--ember);color:#160b07;border-color:var(--ember);font-weight:600}
+button.primary:hover{background:#c1573a}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;letter-spacing:.02em}
+
+/* nós */
+.node{border:1px solid var(--rule);background:#140f0c;padding:12px 14px;margin-bottom:10px;
+  display:grid;grid-template-columns:1fr auto;gap:10px;cursor:pointer}
+.node:hover{border-color:#4a3d33}
+.node.on{border-color:var(--ember);background:#191210}
+.node .who{font-size:15px;color:var(--bone)}
+.node .emo{font:600 9.5px ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--moss);margin-left:8px}
+.node .txt{font-size:13.5px;color:#a49a88;margin-top:4px}
+.node .act{font:11px ui-monospace,Menlo,monospace;color:var(--stone);margin-top:6px}
+.node .idx{font:11px ui-monospace,Menlo,monospace;color:#5f584e;align-self:start}
+.ctrls{display:flex;flex-direction:column;gap:4px}
+.ctrls button{width:30px;padding:3px 0;font-size:12px;line-height:1.2}
+
+.preview{border:1px solid var(--rule);padding:14px;background:#0c0907;margin-top:8px}
+.pv-name{font-size:13px;color:var(--bone);letter-spacing:.04em}
+.pv-emo{font:600 9.5px ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--moss)}
+.pv-txt{margin-top:8px;font-size:14px;color:#cdc3ad;min-height:60px}
+.pv-file{margin-top:10px;font:11px ui-monospace,Menlo,monospace;color:var(--stone);
+  word-break:break-all}
+.note{font-size:12px;color:var(--stone);line-height:1.45;margin:8px 0 0}
+.out{width:100%;min-height:200px;font-family:ui-monospace,Menlo,monospace;font-size:11px}
+.tag{display:inline-block;font:600 9.5px ui-sans-serif,system-ui,sans-serif;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--stone);border:1px solid var(--rule);padding:2px 6px;margin:0 4px 4px 0}
+.empty{color:#5f584e;font-style:italic;padding:30px 0;text-align:center}
+
+/* ---- roteiro visual ---- */
+#board{position:fixed;inset:0;background:var(--ink);z-index:50;overflow-y:auto;display:none}
+#board.on{display:block}
+.board-bar{position:sticky;top:0;background:var(--ink);border-bottom:1px solid var(--rule);
+  padding:14px 26px;display:flex;gap:10px;align-items:center;z-index:2}
+.board-bar .t{flex:1;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--bone);
+  font-family:ui-sans-serif,system-ui,sans-serif}
+.board-bar button{width:auto;padding:7px 14px;font-size:12px}
+.board-in{max-width:1180px;margin:0 auto;padding:26px 26px 90px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.card{border:1px solid var(--rule);background:#140f0c;display:flex;flex-direction:column}
+.card .top{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid #241e19;align-items:flex-start}
+.card .pic{width:74px;height:74px;flex:none;border:1px solid var(--rule);background:#0b0806;
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card .pic img{width:100%;height:100%;object-fit:cover}
+.card .pic span{font:9px ui-monospace,Menlo,monospace;color:#4a443c;text-align:center;padding:4px;line-height:1.3}
+.card .meta{min-width:0}
+.card .n{font:11px ui-monospace,Menlo,monospace;color:#5f584e}
+.card .nm{font-size:16px;color:var(--bone);margin-top:2px}
+.card .em{font:600 9.5px ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--moss);margin-top:3px}
+.card .body{padding:14px;font-size:14.5px;color:#cdc3ad;flex:1;line-height:1.5}
+.card .foot{padding:9px 14px;border-top:1px solid #241e19;
+  font:11px ui-monospace,Menlo,monospace;color:var(--stone)}
+.card .foot.none{color:#3d3730}
+@media print{
+  body{background:#fff;color:#111}
+  .wrap{display:none}
+  #board{position:static;display:block;background:#fff}
+  .board-bar{display:none}
+  .board-in{grid-template-columns:repeat(2,1fr);padding:0}
+  .card{border-color:#bbb;background:#fff;break-inside:avoid}
+  .card .nm,.card .body{color:#111}
+  .card .pic{border-color:#ccc;background:#f4f2ee}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ESQUERDA -->
+<aside>
+  <h1>Dialogue Forge</h1>
+  <p class="sub">The Way Back</p>
+
+  <label>Cena</label>
+  <input id="sceneId" class="mono" value="ato1.tutorial.lenhador" placeholder="ato1.tutorial.lenhador">
+  <p class="note">Vira o prefixo das chaves de tradução. Use pontos, sem acento, sem espaço.</p>
+
+  <h2>Novo bloco</h2>
+  <label>Personagem</label>
+  <select id="who"></select>
+  <label>Emoção</label>
+  <select id="emo"></select>
+  <label>Texto</label>
+  <textarea id="txt" placeholder="O que ele diz."></textarea>
+  <label>Ação depois da fala</label>
+  <select id="act"></select>
+  <input id="actArg" class="mono" placeholder="parâmetro (id, valor…)" style="margin-top:6px">
+  <div class="row" style="margin-top:12px">
+    <button class="primary" id="add">Adicionar</button>
+    <button id="upd" style="display:none">Salvar edição</button>
+  </div>
+
+  <h2>Prévia</h2>
+  <div class="preview">
+    <span class="pv-name" id="pvName">—</span> <span class="pv-emo" id="pvEmo"></span>
+    <div class="pv-txt" id="pvTxt">…</div>
+    <div class="pv-file" id="pvFile"></div>
+  </div>
+</aside>
+
+<!-- CENTRO -->
+<section>
+  <h1>Blocos</h1>
+  <p class="sub"><span id="count">0</span> blocos · clique para editar</p>
+  <div id="list"></div>
+</section>
+
+<!-- DIREITA -->
+<aside class="right">
+  <h1>Exportar</h1>
+  <p class="sub">Godot + tradução</p>
+
+  <div class="row">
+    <button id="expJson">JSON</button>
+    <button id="expCsv">CSV</button>
+  </div>
+  <button id="boardBtn" class="primary" style="margin-top:8px">Ver roteiro visual</button>
+  <div class="row" style="margin-top:8px">
+    <button id="save">Salvar projeto</button>
+    <button id="load">Abrir projeto</button>
+  </div>
+  <input type="file" id="file" accept=".json" style="display:none">
+  <button id="clear" style="margin-top:8px">Limpar tudo</button>
+
+  <h2>Saída</h2>
+  <textarea id="out" class="out" readonly></textarea>
+  <button id="copy" style="margin-top:8px">Copiar saída</button>
+
+  <h2>Retratos usados</h2>
+  <div id="assets"></div>
+
+  <h2>Regras</h2>
+  <p class="note">
+    Nenhum texto dentro de imagem. Nenhuma frase montada por concatenação — se precisar de um
+    nome no meio, use <span class="mono">{nome}</span> e substitua em runtime.
+    A caixa deve caber 40% mais texto que o português: alemão e russo estouram layout justo.
+  </p>
+</aside>
+
+</div>
+
+<div id="board">
+  <div class="board-bar">
+    <div class="t" id="boardTitle">Roteiro</div>
+    <button id="boardImgs">Carregar retratos</button>
+    <button id="boardHtml">Baixar HTML</button>
+    <button id="boardPrint">Imprimir / PDF</button>
+    <button id="boardClose">Fechar</button>
+  </div>
+  <div class="board-in" id="boardIn"></div>
+</div>
+<input type="file" id="imgDir" webkitdirectory directory multiple style="display:none">
+
+<script>
+const EMO = [
+  ['neutra','Neutra'],['duvida','Dúvida / desconfiança'],['curiosa','Curiosidade'],
+  ['raiva','Raiva'],['feliz','Felicidade'],['triste','Tristeza']
+];
+
+const CHARS = [
+  ['joao','João'],['maria','Maria'],['filha-sabia','A Filha Sábia'],
+  ['alfaiate','O Alfaiate Valente'],['rumpelstiltskin','Rumpelstiltskin'],
+  ['holle','Senhora Holle'],['flautista','O Flautista'],['diabo','O Diabo'],
+  ['pele-de-urso','Pele-de-Urso'],['menina-sem-maos','A Menina sem Mãos'],
+  ['anao','O Anão'],['chapeuzinho','Chapeuzinho (padaria)'],['rapunzel','Rapunzel (horta)'],
+  ['filha-do-moleiro','A Filha do Moleiro (moinho)'],['mestre-ladrao','O Mestre Ladrão (mercado)'],
+  ['cacador','O Caçador (caça)'],['menina-dos-taleres','A Menina dos Táleres (lar)'],
+  ['jovem-gigante','O Jovem Gigante (construtor)'],['joringel','Joringel (herbalista)'],
+  ['curandeiro','O Curandeiro'],['pastora','A Pastora de Gansos (curral)'],
+  ['mulher-do-pescador','A Mulher do Pescador (taberna)'],['pescador','O Pescador'],
+  ['luz-azul','O Homem da Luz Azul (armas)'],['irmaos-lenhadores','Os Irmãos Lenhadores'],
+  ['orfao','Órfão (genérico)'],['narrador','Narrador (sem retrato)']
+];
+
+const ACTS = [
+  ['none','— nenhuma —'],['next','Continuar'],['unlock','Destravar construção'],
+  ['highlight','Destacar alvo na tela'],['give','Dar recurso'],['take','Cobrar recurso'],
+  ['start_quest','Iniciar objetivo'],['end_quest','Concluir objetivo'],
+  ['open_screen','Abrir tela'],['spawn','Fazer surgir'],['cutscene','Tocar cutscene'],
+  ['wait','Esperar (segundos)'],['end','Fim da cena']
+];
+
+let nodes = [], editing = null;
+const $ = s => document.querySelector(s);
+
+function fill(sel, arr){
+  $(sel).innerHTML = arr.map(([v,l]) => `<option value="${v}">${l}</option>`).join('');
+}
+fill('#who', CHARS); fill('#emo', EMO); fill('#act', ACTS);
+
+const label = (arr,v) => (arr.find(x => x[0]===v) || [v,v])[1];
+const portrait = (who,emo) => who === 'narrador' ? '—' : `twb_chr_${who}_${emo}.png`;
+const pad = n => String(n).padStart(2,'0');
+const keyFor = i => `${$('#sceneId').value.trim() || 'cena'}.${pad(i+1)}`;
+
+function preview(){
+  const w = $('#who').value, e = $('#emo').value;
+  $('#pvName').textContent = label(CHARS,w);
+  $('#pvEmo').textContent = label(EMO,e);
+  $('#pvTxt').textContent = $('#txt').value || '…';
+  $('#pvFile').textContent = portrait(w,e);
+}
+['#who','#emo','#txt'].forEach(s => $(s).addEventListener('input', preview));
+preview();
+
+function render(){
+  const l = $('#list');
+  $('#count').textContent = nodes.length;
+  if(!nodes.length){ l.innerHTML = '<p class="empty">Nenhum bloco ainda.</p>'; renderAssets(); return; }
+  l.innerHTML = nodes.map((n,i) => `
+    <div class="node ${editing===i?'on':''}" data-i="${i}">
+      <div>
+        <div class="idx">${keyFor(i)}</div>
+        <div><span class="who">${label(CHARS,n.who)}</span><span class="emo">${label(EMO,n.emo)}</span></div>
+        <div class="txt">${n.txt.replace(/</g,'&lt;')}</div>
+        ${n.act && n.act!=='none' ? `<div class="act">▸ ${n.act}${n.arg?': '+n.arg:''}</div>` : ''}
+      </div>
+      <div class="ctrls">
+        <button data-mv="-1" data-i="${i}" title="Subir">↑</button>
+        <button data-mv="1" data-i="${i}" title="Descer">↓</button>
+        <button data-dup="${i}" title="Duplicar">⧉</button>
+        <button data-del="${i}" title="Apagar">✕</button>
+      </div>
+    </div>`).join('');
+  renderAssets();
+}
+
+function renderAssets(){
+  const set = [...new Set(nodes.filter(n => n.who!=='narrador').map(n => portrait(n.who,n.emo)))].sort();
+  $('#assets').innerHTML = set.length
+    ? set.map(f => `<div class="mono" style="color:#8b8b80;margin-bottom:3px">${f}</div>`).join('')
+    : '<p class="note">Nenhum ainda.</p>';
+}
+
+$('#list').addEventListener('click', ev => {
+  const b = ev.target.closest('button');
+  if(b){
+    if(b.dataset.mv){
+      const i = +b.dataset.i, j = i + (+b.dataset.mv);
+      if(j>=0 && j<nodes.length){ [nodes[i],nodes[j]] = [nodes[j],nodes[i]]; editing = null; render(); }
+      return;
+    }
+    if(b.dataset.dup !== undefined){
+      nodes.splice(+b.dataset.dup+1, 0, {...nodes[+b.dataset.dup]}); render(); return;
+    }
+    if(b.dataset.del !== undefined){
+      nodes.splice(+b.dataset.del,1); editing = null; $('#upd').style.display='none'; render(); return;
+    }
+  }
+  const node = ev.target.closest('.node');
+  if(node){
+    const i = +node.dataset.i, n = nodes[i];
+    $('#who').value = n.who; $('#emo').value = n.emo; $('#txt').value = n.txt;
+    $('#act').value = n.act; $('#actArg').value = n.arg;
+    editing = i; $('#upd').style.display = 'block'; preview(); render();
+  }
+});
+
+function collect(){
+  return { who:$('#who').value, emo:$('#emo').value, txt:$('#txt').value.trim(),
+           act:$('#act').value, arg:$('#actArg').value.trim() };
+}
+$('#add').onclick = () => {
+  const n = collect();
+  if(!n.txt && n.who!=='narrador') return alert('Escreva o texto.');
+  nodes.push(n); $('#txt').value=''; $('#actArg').value='';
+  editing = null; $('#upd').style.display='none'; preview(); render();
+};
+$('#upd').onclick = () => {
+  if(editing===null) return;
+  nodes[editing] = collect(); editing = null;
+  $('#upd').style.display='none'; $('#txt').value=''; $('#actArg').value='';
+  preview(); render();
+};
+$('#clear').onclick = () => { if(confirm('Apagar todos os blocos?')){ nodes=[]; editing=null; render(); } };
+
+$('#expJson').onclick = () => {
+  const scene = $('#sceneId').value.trim() || 'cena';
+  const data = {
+    scene,
+    nodes: nodes.map((n,i) => ({
+      id: keyFor(i),
+      speaker: n.who,
+      portrait: n.who==='narrador' ? null : portrait(n.who,n.emo),
+      emotion: n.emo,
+      text_key: keyFor(i),
+      action: n.act==='none' ? null : { type:n.act, arg:n.arg || null }
+    }))
+  };
+  $('#out').value = JSON.stringify(data, null, 2);
+};
+$('#expCsv').onclick = () => {
+  const rows = ['keys,pt_BR,en'];
+  nodes.forEach((n,i) => {
+    const esc = s => '"' + String(s).replace(/"/g,'""') + '"';
+    rows.push([keyFor(i), esc(n.txt), '""'].join(','));
+  });
+  $('#out').value = rows.join('\n');
+};
+$('#copy').onclick = async () => {
+  try { await navigator.clipboard.writeText($('#out').value); $('#copy').textContent='Copiado'; }
+  catch(e){ $('#copy').textContent='Selecione e copie'; }
+  setTimeout(()=>$('#copy').textContent='Copiar saída',1600);
+};
+$('#save').onclick = () => {
+  const blob = new Blob([JSON.stringify({scene:$('#sceneId').value, nodes},null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = ($('#sceneId').value.trim()||'cena').replace(/\./g,'_') + '_dialogo.json';
+  a.click(); URL.revokeObjectURL(a.href);
+};
+$('#load').onclick = () => $('#file').click();
+$('#file').onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if(d.scene) $('#sceneId').value = d.scene;
+      nodes = (d.nodes||[]).map(n => n.speaker
+        ? {who:n.speaker, emo:n.emotion||'neutra', txt:n.text||'', act:n.action?.type||'none', arg:n.action?.arg||''}
+        : n);
+      editing = null; render();
+    } catch(err){ alert('Arquivo inválido.'); }
+  };
+  r.readAsText(f);
+};
+/* ---------- roteiro visual ---------- */
+let IMGS = {};   // nome do arquivo -> dataURL
+
+function cardHTML(n,i,forExport){
+  const file = portrait(n.who,n.emo);
+  const src = IMGS[file];
+  const pic = n.who==='narrador'
+    ? '<span>sem<br>retrato</span>'
+    : (src ? `<img src="${src}" alt="">` : `<span>${file.replace('twb_chr_','').replace('.png','')}</span>`);
+  const act = (n.act && n.act!=='none')
+    ? `▸ ${n.act}${n.arg ? ': '+n.arg : ''}`
+    : '▸ sem ação';
+  return `<div class="card">
+    <div class="top">
+      <div class="pic">${pic}</div>
+      <div class="meta">
+        <div class="n">${keyFor(i)}</div>
+        <div class="nm">${label(CHARS,n.who)}</div>
+        <div class="em">${label(EMO,n.emo)}</div>
+      </div>
+    </div>
+    <div class="body">${n.txt.replace(/</g,'&lt;').replace(/\n/g,'<br>') || '—'}</div>
+    <div class="foot ${(!n.act||n.act==='none')?'none':''}">${act}</div>
+  </div>`;
+}
+
+function openBoard(){
+  const scene = $('#sceneId').value.trim() || 'cena';
+  $('#boardTitle').textContent = scene + ' · ' + nodes.length + ' blocos';
+  $('#boardIn').innerHTML = nodes.length
+    ? nodes.map((n,i)=>cardHTML(n,i)).join('')
+    : '<p class="empty">Nenhum bloco para mostrar.</p>';
+  $('#board').classList.add('on');
+}
+$('#boardBtn').onclick = openBoard;
+$('#boardClose').onclick = () => $('#board').classList.remove('on');
+$('#boardPrint').onclick = () => window.print();
+
+$('#boardImgs').onclick = () => $('#imgDir').click();
+$('#imgDir').onchange = e => {
+  const files = [...e.target.files].filter(f=>/\.(png|jpe?g|webp)$/i.test(f.name));
+  if(!files.length) return;
+  let left = files.length;
+  files.forEach(f => {
+    const r = new FileReader();
+    r.onload = () => { IMGS[f.name] = r.result; if(--left===0) openBoard(); };
+    r.readAsDataURL(f);
+  });
+};
+
+$('#boardHtml').onclick = () => {
+  const scene = $('#sceneId').value.trim() || 'cena';
+  const css = document.querySelector('style').textContent;
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>${scene}</title><style>${css}
+.wrap{display:none}#board{position:static;display:block}.board-bar{position:static}
+</style></head><body><div id="board" class="on">
+<div class="board-bar"><div class="t">${scene} · ${nodes.length} blocos</div></div>
+<div class="board-in">${nodes.map((n,i)=>cardHTML(n,i,true)).join('')}</div>
+</div></body></html>`;
+  const blob = new Blob([html],{type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = scene.replace(/\./g,'_') + '_roteiro.html';
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') $('#board').classList.remove('on');
+});
+
+$('#sceneId').addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

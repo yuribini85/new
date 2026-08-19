@@ -1,0 +1,39 @@
+{
+ "niveis": [
+  {
+   "n": 1,
+   "minerio": "pedra",
+   "abre": "infraestrutura"
+  },
+  {
+   "n": 2,
+   "minerio": "carvao",
+   "abre": "acende_forja"
+  },
+  {
+   "n": 3,
+   "minerio": "ferro",
+   "abre": "tier_1"
+  },
+  {
+   "n": 4,
+   "minerio": "bronze",
+   "abre": "tier_2"
+  },
+  {
+   "n": 5,
+   "minerio": "prata",
+   "abre": "tier_3, maos_de_prata"
+  },
+  {
+   "n": 6,
+   "minerio": "ouro",
+   "abre": "tier_4, torneira_ouro"
+  },
+  {
+   "n": 7,
+   "minerio": "pedra_branca",
+   "abre": "fim_de_jogo"
+  }
+ ]
+}

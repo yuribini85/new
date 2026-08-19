@@ -1,0 +1,237 @@
+SET: Mina — 8 SEPARATE IMAGES.
+Each numbered block below describes a DIFFERENT, INDEPENDENT image of the same building at a different level of development.
+Generate one image per block, one at a time. Treat each block as its own brief. Carry nothing from one block into another.
+The blocks are ordered from the most developed to the least, on purpose.
+
+================================================================
+IMAGE 2 OF 8
+SAVE AS: twb_bld_mina_t01.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 2 of 8 in a set of separate, independent images of this building. This block describes IMAGE 2 only, at development level 2 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: Crude and newly made: round unshaped timber, packed earth, rope lashings. Every element complete and in daily use. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 2:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, stone chimney, masonry chimney, stone footing, dressed stone, cut stone base, iron hinges, iron door bands, iron studs, sawn planks, shingles, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 3 OF 8
+SAVE AS: twb_bld_mina_t02.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 3 of 8 in a set of separate, independent images of this building. This block describes IMAGE 3 only, at development level 3 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: Rough sawn timber and undressed fieldstone, tidy and fully built. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 3:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, carved ornament, paint, painted trim, two storeys, upper floor, dressed ashlar, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 4 OF 8
+SAVE AS: twb_bld_mina_t03.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 4 of 8 in a set of separate, independent images of this building. This block describes IMAGE 4 only, at development level 4 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: Enlarged with a second section, properly framed and squared throughout. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 4:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, carved ornament, painted trim, tiled roof, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 5 OF 8
+SAVE AS: twb_bld_mina_t04.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 5 of 8 in a set of separate, independent images of this building. This block describes IMAGE 5 only, at development level 5 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: Squared planed timber and plain coursed stone, tight and orderly. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 5:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, carved ornament, painted trim, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 6 OF 8
+SAVE AS: twb_bld_mina_t05.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 6 of 8 in a set of separate, independent images of this building. This block describes IMAGE 6 only, at development level 6 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: A tall element added, framed as carefully as the rest. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 6:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 7 OF 8
+SAVE AS: twb_bld_mina_t06.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 7 of 8 in a set of separate, independent images of this building. This block describes IMAGE 7 only, at development level 7 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: Carved detail and painted trim over sound, complete construction. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 7:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 8 OF 8
+SAVE AS: twb_bld_mina_t07.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 8 of 8 in a set of separate, independent images of this building. This block describes IMAGE 8 only, at development level 8 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: Pale dressed stone and dark hardwood, precise and symmetrical. Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.
+
+CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 8:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, mixed roofing materials, thatch and shingles together, fish scale roof, fur-like roof, scalloped roof, patchwork roof, wavy roof planes, crooked ridge, dormer off centre, two different roofs, ruin, ruined, derelict, abandoned, roofless, open roof frame, exposed rafters, missing roof, hole in the roof, gap in the thatch, hole in the thatch, smoke hole, roof vent, opening in the roof, chimney hole, collapsed wall, broken beams, visible interior, open interior, cutaway, doll house view, overgrown, ivy, climbing plants, weeds, saplings growing inside, rot, decay, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+
+================================================================
+IMAGE 1 OF 8
+SAVE AS: twb_bld_mina_t00.png
+================================================================
+
+Isometric 2D game asset: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. IMAGE 1 of 8 in a set of separate, independent images of this building. This block describes IMAGE 1 only, at development level 1 of 8. A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows. It must never be mistaken for a plain house.
+
+BUILD: A RUIN. Only broken remnants and a grassed-over outline survive, low and small in mass.
+
+CLEAN EDGES: the asset ends a short step beyond the fallen remains, on bare ground that carries nothing else. The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, weathered grey-brown timber, muted moss green and dirty parchment daub. The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them. Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. A deep shadow band runs under every overhang, every board overlap and every projecting member. The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30° on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: a rectangular footprint 3 cells along one ground axis by 4 along the other, one cell being roughly a modest room about 3 m across. Above it: an upper level 2 over 2 of the 12 ground cells, grouped at one end. Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes.
+
+IDENTITY, constant at every stage: The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage. The footprint and the access side stay the same from stage to stage.
+
+INCLUDE, lying where it fell around the base: a caved-in excavation with snapped props under creeper, and beside it the bare skeleton of a wooden tower with no platform, its beams warped and rotted.
+
+FRAME: the asset fills 88–92% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. Transparent background. Square canvas, 1536×1536.
+
+NEGATIVE FIELD FOR IMAGE 1:
+lantern, lit lantern, lamp, torch, candle, brazier, sconce, light post, street lamp, hanging light, lamp bracket, lit window, glowing window, glowing glass, warm light spill, glow, bloom, god rays, lens flare, magical light, glowing runes, fire, flame, embers, sparks, smoke, steam, new goods, intact stock, undamaged contents, grass around the base, soil patch, ground pad, terrain, dirt island, scattered pebbles, moss on the ground, plants at the foot of the wall, diorama, scenic base, pedestal, tool, tools, hammer, axe, tongs, weapon, cloth draped over a bench, clutter, cropped, cut off, touching the canvas edge, filling the frame, banner, flag, pennant, weathervane, gilded finial, bright, sunlit, high key, washed out, pastel, orange, tan, golden, oversaturated, perspective, vanishing point, converging lines, foreshortening, tilted camera, top-down view, front view, cast shadow, drop shadow, vignette, frame, border, text, caption, watermark, signature, multiple views, before and after, side by side, variant grid, people, human figure, hands, animals, viking longhouse, dragon head finial, runes, skulls, bones, steampunk, chibi, cartoon, cel shading, flat vector, 3D render, CGI, plastic highlight, smooth gradient, airbrush, rim light, blurry, low detail
+
+

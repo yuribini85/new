@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Way Back — Bíblia de Lore e Sistemas</title>
+<style>
+:root{
+  --ink:#100d0a;
+  --ink-2:#1a1512;
+  --ink-3:#241d18;
+  --parch:#d9cfb8;
+  --parch-dim:#a1968237;
+  --stone:#8b8b80;
+  --moss:#7d8a5c;
+  --ember:#a8492f;
+  --bone:#efe7d4;
+  --rule:#3a3029;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--parch);
+  font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  font-size:17px;line-height:1.62;
+  background-image:radial-gradient(ellipse at 20% -10%, #1e1813 0%, #100d0a 60%);
+}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:0;max-width:1240px;margin:0 auto}
+
+/* NAV */
+nav{
+  position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+  padding:34px 18px 60px;border-right:1px solid var(--rule);
+}
+nav .brand{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);margin-bottom:26px;line-height:1.5}
+nav .brand b{display:block;color:var(--bone);font-size:15px;letter-spacing:.1em;margin-top:4px}
+nav a{
+  display:block;text-decoration:none;color:#9c9384;font-size:13.5px;
+  padding:5px 0 5px 12px;border-left:2px solid transparent;
+  font-family:ui-sans-serif,system-ui,sans-serif;letter-spacing:.01em;
+}
+nav a:hover,nav a:focus-visible{color:var(--bone);border-left-color:var(--ember);outline:none}
+nav .grp{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#5f584e;margin:20px 0 6px;font-family:ui-sans-serif,system-ui,sans-serif}
+
+main{padding:56px 46px 140px;min-width:0}
+
+/* HERO */
+.hero{border-bottom:1px solid var(--rule);padding-bottom:34px;margin-bottom:14px}
+h1{font-size:clamp(38px,6vw,64px);line-height:.98;margin:0 0 10px;color:var(--bone);font-weight:400;letter-spacing:-.015em}
+.sub{color:var(--stone);font-size:15px;font-style:italic;margin:0 0 30px}
+
+/* AXIS — signature */
+.axis{margin:26px 0 4px}
+.axis-bar{display:grid;grid-template-columns:1fr 1.6fr 1fr 1fr;gap:2px;border:1px solid var(--rule)}
+.axis-cell{padding:12px 12px 14px;font-family:ui-sans-serif,system-ui,sans-serif}
+.axis-cell b{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--bone);margin-bottom:3px}
+.axis-cell span{font-size:12px;color:#8d8578;line-height:1.4;display:block}
+.a1{background:#211a14}.a2{background:#1c1712}.a3{background:#181310}.a4{background:#0d0a08}
+.a4 b{color:var(--ember)}
+.axis-note{font-size:12.5px;color:var(--stone);margin-top:8px;font-family:ui-sans-serif,system-ui,sans-serif}
+
+h2{
+  font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--ember);
+  font-family:ui-sans-serif,system-ui,sans-serif;font-weight:600;
+  margin:64px 0 4px;padding-top:22px;border-top:1px solid var(--rule)
+}
+h3{font-size:26px;color:var(--bone);font-weight:400;margin:6px 0 16px;letter-spacing:-.01em}
+h4{font-size:17px;color:var(--bone);font-weight:400;margin:30px 0 6px}
+p{margin:0 0 14px;max-width:70ch}
+strong{color:var(--bone);font-weight:600}
+em{color:#c3b9a4}
+ul{margin:0 0 16px;padding-left:20px;max-width:70ch}
+li{margin-bottom:6px}
+a.inline{color:var(--moss)}
+
+.lead{font-size:19px;color:#c9bfa9;max-width:66ch}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:18px 0 8px}
+.card{border:1px solid var(--rule);padding:16px 16px 18px;background:#150f0c}
+.card h5{margin:0 0 2px;font-size:16px;color:var(--bone);font-weight:400}
+.card .khm{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--moss);margin-bottom:8px}
+.card p{font-size:14px;margin:0;color:#a49a88;line-height:1.5}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:14.5px}
+th{
+  text-align:left;font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--stone);font-weight:600;
+  padding:8px 12px 8px 0;border-bottom:1px solid var(--rule)
+}
+td{padding:11px 12px 11px 0;border-bottom:1px solid #241e19;vertical-align:top;color:#aba18f}
+td:first-child{color:var(--bone);white-space:nowrap}
+td .khm{display:block;font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;letter-spacing:.12em;color:var(--moss);text-transform:uppercase;margin-top:2px}
+
+/* MINE LADDER */
+.ladder{border-left:1px solid var(--rule);margin:18px 0 8px;padding-left:0}
+.rung{display:grid;grid-template-columns:52px 150px 1fr;gap:14px;padding:12px 0 12px 18px;border-bottom:1px solid #241e19;position:relative}
+.rung:before{content:"";position:absolute;left:-4px;top:22px;width:7px;height:7px;background:var(--rule);transform:rotate(45deg)}
+.rung.deep:before{background:var(--ember)}
+.rung .n{font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:.14em;color:var(--stone);padding-top:4px}
+.rung .mat{color:var(--bone);font-size:16px}
+.rung .use{font-size:14px;color:#a49a88;line-height:1.5}
+.rung.deep .mat{color:var(--ember)}
+
+/* ACTS */
+.act{border:1px solid var(--rule);padding:18px 20px;margin-bottom:12px;background:#140f0c}
+.act .tag{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ember);display:block;margin-bottom:4px}
+.act h5{margin:0 0 8px;font-size:22px;color:var(--bone);font-weight:400}
+.act p{font-size:14.5px;color:#a49a88;margin:0 0 8px}
+.act .beat{font-size:13.5px;color:var(--stone);font-family:ui-sans-serif,system-ui,sans-serif}
+
+/* CALLOUT */
+.call{border-left:2px solid var(--ember);padding:2px 0 2px 18px;margin:20px 0;max-width:68ch}
+.call p{color:#c9bfa9;margin:0}
+.rule-box{border:1px solid var(--rule);padding:16px 18px;margin:18px 0;background:#0d0a08}
+.rule-box p:last-child{margin-bottom:0}
+
+.open{color:var(--stone);font-size:14.5px}
+.open li{margin-bottom:9px}
+
+footer{margin-top:80px;padding-top:20px;border-top:1px solid var(--rule);color:#5f584e;font-size:12.5px;font-family:ui-sans-serif,system-ui,sans-serif}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr}
+  nav{position:static;height:auto;border-right:none;border-bottom:1px solid var(--rule);padding:22px 20px}
+  nav a{display:inline-block;margin-right:14px;border-left:none;padding-left:0}
+  nav a:hover{border-left:none;border-bottom:1px solid var(--ember)}
+  nav .grp{margin:14px 0 4px}
+  main{padding:32px 20px 90px}
+  .axis-bar{grid-template-columns:1fr 1fr}
+  .rung{grid-template-columns:40px 1fr;gap:8px}
+  .rung .use{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <div class="brand">Bíblia de projeto<b>The Way Back</b></div>
+  <div class="grp">Mundo</div>
+  <a href="#premissa">Premissa</a>
+  <a href="#fome">A Fome</a>
+  <a href="#marca">A Marca</a>
+  <a href="#mapa">Mapa e geografia</a>
+  <a href="#grid">Grid da vila</a>
+  <a href="#telas">Telas do jogo</a>
+  <div class="grp">Vila</div>
+  <a href="#vivo">A vila viva</a>
+  <a href="#defesa">Defesa</a>
+  <a href="#elenco">Elenco e edificações</a>
+  <a href="#orfaos">Órfãos</a>
+  <div class="grp">Sistemas</div>
+  <a href="#eixos">Os dois eixos</a>
+  <a href="#noturno">Ciclo noturno</a>
+  <a href="#offline">Offline · Fiandeiras</a>
+  <a href="#mina">Mina, forja, anões</a>
+  <a href="#expedicoes">Expedições</a>
+  <a href="#pergaminhos">Pergaminhos</a>
+  <a href="#dialogo">Diálogo e mochilas</a>
+  <a href="#holle">Demanda da Holle</a>
+  <a href="#eventos">Eventos e maldições</a>
+  <a href="#dinheiro">Monetização</a>
+  <div class="grp">Economia</div>
+  <a href="#recursos">Recursos e HUD</a>
+  <a href="#producao">Quem produz o quê</a>
+  <a href="#tiers">Tiers da mina</a>
+  <a href="#trabalho">Órfãos e trabalho</a>
+  <a href="#numeros">Números para 100h</a>
+  <div class="grp">Campanha</div>
+  <a href="#atos">Os cinco atos</a>
+  <a href="#grao">Grão, Dragão, plantio</a>
+  <div class="grp">Produção</div>
+  <div class="grp">Mundo vivo</div>
+  <a href="#rotas">Rotas e colisão</a>
+  <a href="#floresta">Floresta e coleta</a>
+  <a href="#noite">A noite</a>
+  <a href="#clima">Clima, luz e vento</a>
+  <a href="#filtro">Filtro de papel</a>
+  <div class="grp">Produção</div>
+  <a href="#arte">Direção de arte</a>
+  <a href="#assets">Checklist de imagens</a>
+  <a href="#aberto">Em aberto</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>The Way Back</h1>
+  <p class="sub">Idle isométrico · Godot · vila medieval Grimm · bíblia de lore e sistemas</p>
+
+  <div class="axis">
+    <div class="axis-bar">
+      <div class="axis-cell a1"><b>A casa</b><span>Canto do mapa. Nunca melhora. Origem.</span></div>
+      <div class="axis-cell a2"><b>A vila</b><span>Cresce afastando-se dela, em direção ao metal.</span></div>
+      <div class="axis-cell a3"><b>A mina</b><span>Encosta, torre, anões. Onde o metal está.</span></div>
+      <div class="axis-cell a4"><b>A clareira</b><span>Casa vitrificada. Epicentro. Onde termina.</span></div>
+    </div>
+    <p class="axis-note">O eixo de contaminação: a vila cresce na direção do perigo porque é onde estão os recursos. O jogador escolhe isso, lote por lote, sabendo.</p>
+  </div>
+</header>
+
+<h2 id="premissa">01 — Mundo</h2>
+<h3>Premissa</h3>
+<p class="lead">The Way Back começa depois do fim de João e Maria. As crianças escaparam da Bruxa, voltaram para casa e sobreviveram. O final feliz não durou.</p>
+<p>Os pais morrem. Os dois irmãos permanecem na antiga casa, isolados na borda da floresta. Com o tempo outras crianças começam a surgir — órfãos, abandonados, fugitivos e sobreviventes de acontecimentos que remetem aos contos dos Grimm. O abrigo vira assentamento; o assentamento vira vila.</p>
+
+<div class="grid">
+  <div class="card">
+    <h5>João — gestor</h5>
+    <div class="khm">KHM 15 · interlocutor</div>
+    <p>Lidera, administra, conta. Fala com o jogador dentro da vila e conduz o tutorial. Alto, magro demais, marcado pela fome da infância. Nunca lutou e não luta agora.</p>
+  </div>
+  <div class="card">
+    <h5>Maria — operacional</h5>
+    <div class="khm">KHM 15 · expedições</div>
+    <p>Caçadora de bruxas. Comanda as expedições e traz informação sobre criaturas e territórios. Fala quando volta — a chegada dela é evento.</p>
+  </div>
+</div>
+<p>Dois líderes natos com qualidades opostas. Discordam em público, e o jogador assiste.</p>
+
+<h2 id="fome">02</h2>
+<h3>A Fome</h3>
+<p>Força antiga que consome aquilo de que os seres vivos precisam para continuar existindo. Colheitas rendem menos; alimentos estragam; animais abandonam territórios; predadores se aproximam; pessoas roubam; famílias abandonam crianças; maldições retornam; caminhos mudam; comunidades desaparecem.</p>
+
+<div class="call"><p><strong>A Fome cria as condições para que os contos aconteçam.</strong> Não existe exército da Fome. Um lobo continua sendo um lobo, uma bruxa continua tendo objetivos próprios, o Diabo continua fazendo pactos. Ela altera o ambiente em que todos existem.</p></div>
+
+<h4>A Fome não cria maldade — termina o serviço em quem já tinha alguma</h4>
+<p><strong>A madrasta</strong> já tinha índole ruim. Corrompida, foi ela quem entregou João e Maria à floresta.</p>
+<p><strong>O pai</strong> resistiu mais. Foi afetado assim mesmo, cedeu, e morreu disso — emagreceu comendo, e o corpo trazia a Marca. João viu. Nunca soube ler o que era.</p>
+<p><strong>A Bruxa da casa de doces</strong> é o caso extremo e o mais antigo. Camponesa comum de índole ruim que se estabeleceu no epicentro. A Fome não a inventou: fez o resto. Abundância que não alimenta, apetite que não passa, e finalmente comer o que não se come.</p>
+<div class="rule-box"><p>Isso não a redime. Ela escolheu, e morreu por isso. O efeito pretendido é o jogador entender que aquilo pode acontecer com qualquer um — inclusive com alguém da vila que ele acabou de construir.</p></div>
+
+<h2 id="marca">03</h2>
+<h3>A Marca</h3>
+<p>Quem a Fome consome deixa marca no corpo. É o que transforma suspeita em evidência e sustenta a investigação inteira.</p>
+<p>O mesmo padrão aparece em escalas diferentes: na pele de quem morreu, nas folhas de árvores secas fora de época, nos ossos de animais achados intactos, na terra. Reconhecível sem legenda e sem depender de gore — sugestão de forma: rachadura pálida, como madeira ressecada.</p>
+<div class="call"><p>É a Marca que faz a vila concluir que existe <strong>um responsável</strong> e não um acaso. E é exatamente o que prepara o erro do Ato IV.</p></div>
+
+<h2 id="mapa">04</h2>
+<h3>Mapa e geografia</h3>
+<p>A disposição conta a história sem texto.</p>
+<ul>
+  <li><strong>A casa de João e Maria</strong> fica no canto extremo, longe da mina, com espaço em volta. Nunca pode ser melhorada. É a origem, não o centro.</li>
+  <li><strong>O gazebo</strong> ocupa o centro da praça.</li>
+  <li><strong>A mina e a torre</strong> ficam no lado oposto à casa, sobre encosta rochosa. A vila é mais densa desse lado — cresceu para lá.</li>
+  <li><strong>O poço da Senhora Holle</strong> fica no <strong>centro da vila</strong>, junto ao Mercado — praça de poço é onde a circulação de uma aldeia acontece, e ele é o portal da Holle e a origem das duas chuvas. Não é construído: já estava ali. <em>Nunca seca</em> — nem no Ato V, quando todos os outros secarem.</li>
+<li><strong>O Depósito</strong> fica no meio do caminho das oficinas, com anel livre em volta. É o centro de gravidade das rotas.</li>
+<li><strong>A Cabana do Construtor</strong> fica isolada, longe do resto: o Gigante quer distância. É o único prédio desenhado em escala errada — porta de dois andares, vigas grossas demais, ferramentas gigantes, e um objeto de tamanho humano por perto para dar comparação.</li>
+<li><strong>O Cemitério</strong> fica afastado da vila. Historicamente ficaria junto da casa, mas o jogador moderno estranha — e o afastamento serve melhor.</li>
+  <li><strong>O lago</strong> fica em outra direção, com a cabana de pesca na margem rasa. A Nixie mora no fundo e não tem relação com a Fome: tem território. É o que ensina que perigo e corrupção não são a mesma coisa.</li>
+  <li><strong>A clareira da casa de doces</strong> fica muito além da mina, no extremo oposto do mapa — <strong>fora de qualquer alcance visual da vila</strong>. A distância precisa justificar duas crianças se perderem: é mais que o dobro do caminho até a mina.</li>
+</ul>
+
+<h4>A casa de doces, décadas depois</h4>
+<p>Não parece mais doce. Açúcar velho cristaliza e escurece: a casa é preta e vítrea, endurecida, com o formato ainda reconhecível por baixo. Cheira mal. Não atrai mais ninguém — e é por isso que ninguém foi lá.</p>
+<p><strong>O Diabo está lá dentro, ao fim do Ato III.</strong> Não mora ali: está de passagem, sentado numa cadeira que trouxe. Não mente — diz a verdade de um jeito que o jogador entende mal, que é como ele sempre perde e sempre ganha. É ele quem confirma que o Dragão tem o Grão. Tecnicamente correto. O erro do Ato IV passa a ter autor.</p>
+
+<h2 id="grid">04b</h2>
+<h3>Grid da vila</h3>
+<div class="rule-box">
+<p><strong>Grade de 68 × 56 células.</strong> Tile isométrico de 256×128 px (proporção 2:1).
+Lotes em <strong>posições fixas</strong> — o jogador não escolhe onde construir, porque o eixo de
+contaminação depende da geografia e os trajetos entre mina e forja são arte autoral.</p>
+<p>Todos os lotes existem desde o primeiro minuto, visíveis como <strong>silhueta escura de ruína</strong>. O jogador vê o tamanho do que vem.</p>
+</div>
+<p>Zonas do terreno, da origem ao epicentro: <strong>lago</strong> (0–14 / 0–12) · <strong>origem</strong> (0–14 / 30–52) · <strong>vila</strong> (8–32 / 5–52) · <strong>oficinas</strong> (32–46 / 14–48) · <strong>mina</strong> (38–56 / 2–22) · <strong>clareira</strong> (56–66 / 0–10). O gradiente de solo vai de verde na origem a quase preto na clareira.</p>
+<table>
+<thead><tr><th>Lote</th><th>Célula</th><th>Footprint</th><th>Zona</th></tr></thead>
+<tbody>
+<tr><td>Casa de João e Maria</td><td>8, 40</td><td>4×4</td><td>origem</td></tr>
+<tr><td>Poço</td><td>18, 20</td><td>2×2</td><td>origem</td></tr>
+<tr><td>Cemitério</td><td>50, 33</td><td>6×6</td><td>origem</td></tr>
+<tr><td>Lago</td><td>0, 0</td><td>10×10</td><td>lago</td></tr>
+<tr><td>Cabana de Pesca</td><td>4, 11</td><td>4×4</td><td>lago</td></tr>
+<tr><td>Casa das Fiandeiras</td><td>9, 18</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Curral dos Animais</td><td>10, 25</td><td>6×6</td><td>vila</td></tr>
+<tr><td>Cabana do Caçador</td><td>10, 7</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Moinho</td><td>15, 13</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Cabana do Lenhador</td><td>16, 42</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Alojamento</td><td>17, 34</td><td>6×4</td><td>vila</td></tr>
+<tr><td>Horta</td><td>18, 48</td><td>6×4</td><td>vila</td></tr>
+<tr><td>Mercado</td><td>18, 26</td><td>6×4</td><td>vila</td></tr>
+<tr><td>Taberna</td><td>24, 13</td><td>6×4</td><td>vila</td></tr>
+<tr><td>Lar dos Órfãos</td><td>25, 34</td><td>6×4</td><td>vila</td></tr>
+<tr><td>Biblioteca</td><td>25, 40</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Depósito</td><td>27, 20</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Gazebo</td><td>27, 26</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Padaria</td><td>33, 36</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Cabana da Expedição</td><td>33, 44</td><td>4×4</td><td>vila</td></tr>
+<tr><td>Alfaiataria</td><td>34, 24</td><td>4×4</td><td>oficinas</td></tr>
+<tr><td>Oficina do Sapateiro</td><td>34, 30</td><td>4×4</td><td>oficinas</td></tr>
+<tr><td>Vendedor de Armas</td><td>34, 18</td><td>4×4</td><td>oficinas</td></tr>
+<tr><td>Cabana do Herbalista</td><td>40, 34</td><td>4×4</td><td>oficinas</td></tr>
+<tr><td>Curandeiro</td><td>40, 22</td><td>4×4</td><td>oficinas</td></tr>
+<tr><td>Cabana do Construtor</td><td>48, 44</td><td>4×4</td><td>oficinas</td></tr>
+<tr><td>Forja</td><td>37, 11</td><td>4×4</td><td>mina</td></tr>
+<tr><td>Mina</td><td>46, 6</td><td>6×8</td><td>mina</td></tr>
+<tr><td>Casa dos Anões</td><td>49, 21</td><td>4×4</td><td>mina</td></tr>
+<tr><td>Casa de Doces Vitrificada</td><td>59, 1</td><td>4×4</td><td>clareira</td></tr>
+</tbody>
+</table>
+<h4>O que a disposição comunica</h4>
+<ul>
+  <li><strong>A casa fica isolada</strong>, com vazio em volta — marco zero abandonado pelo crescimento. O vizinho mais próximo está a 8 células.</li>
+  <li><strong>O poço é central</strong>, junto ao Mercado: praça de poço é onde a circulação de uma aldeia acontece, e ele é o portal da Holle e a origem das duas chuvas.</li>
+  <li><strong>O Depósito fica no meio do cinturão de oficinas</strong>, com anel livre em volta — é o centro de gravidade das rotas, e todo produtor vai até ele.</li>
+  <li><strong>A Cabana do Construtor fica isolada no extremo</strong>: o Gigante quer distância.</li>
+  <li><strong>Mina, Forja e Casa dos Anões formam um triângulo</strong> com vão suficiente para o trajeto do minério ser visível.</li>
+  <li><strong>A clareira está a 64 células da casa</strong> — mais que o dobro da distância até a mina, fora de qualquer alcance visual. É o que justifica duas crianças se perderem.</li>
+</ul>
+<p class="beat" style="color:var(--stone);font-size:14px">Layout editável na ferramenta <em>twb-maquete-vila.html</em>, que exporta <code>vila_lotes.json</code> com célula, footprint e zona de cada lote — o arquivo que o Godot consome no lugar de posições inventadas.</p>
+
+<h2 id="telas">04c</h2>
+<h3>Telas do jogo</h3>
+<div class="rule-box">
+<p><strong>Orientação: paisagem 16:9.</strong> Substitui o retrato 1080×1920 da especificação técnica — o estudo visual inteiro foi validado em paisagem. Isso afeta o mapa, o pan da câmera e a área segura.</p>
+</div>
+<p><strong>HUD idêntico em todas as telas:</strong> comida, madeira, ouro, fôlego, diamante, gente em fração, depósito em fração. À direita, <strong>DIA 23 · Manhã</strong> com ícone de sol, e o botão de ajustes. À esquerda, a aba com o brasão da vila.</p>
+<p><strong>Estrutura comum:</strong> coluna esquerda com título, contexto e lista de categorias com contadores; centro com a arte grande e o conteúdo principal; coluna direita com o item selecionado, seus números e o botão de ação.</p>
+<table>
+<thead><tr><th>Tela</th><th>Conteúdo</th></tr></thead>
+<tbody>
+<tr><td>Biblioteca</td><td>Cards de contos com progresso de leitura, líder e aldeões designados, acelerar por diamante</td></tr>
+<tr><td>Construções</td><td>Categorias com contadores, arte do Gigante construindo, ficha do prédio com custo e tempo</td></tr>
+<tr><td>Bestiário</td><td>Grupos de criaturas, variantes descobertas, e <strong>observação em vez de atributos de combate</strong></td></tr>
+<tr><td>Preparar expedição</td><td>Região, expedicionários, mochilas com abas por pessoa, itens disponíveis</td></tr>
+<tr><td>Edifício</td><td>Arte, produção, capacidade, armazenamento, lista de trabalhadores, itens especiais encontrados</td></tr>
+<tr><td>Evento</td><td>Ilustração de meia tela, pedido com barras, prazo, consequência da falha</td></tr>
+<tr><td>Diálogo</td><td>Retrato de meio-corpo, nome, fala em serifa grande, botão continuar</td></tr>
+<tr><td>Aldeões</td><td>Lista com aptidão e cicatriz, ficha com micro-história e melhores postos</td></tr>
+</tbody>
+</table>
+
+<h4>Decisões fechadas no estudo de telas</h4>
+<ul>
+  <li><strong>Sem combate em lugar nenhum.</strong> O bestiário mostra o que a criatura faz, quando aparece, como afastar e onde foi vista. Nenhum atributo de vida, ataque ou defesa — expedição é loop textual.</li>
+  <li><strong>Uma mochila por expedicionário</strong>, com abas e retrato, e barra de ocupação total.</li>
+  <li><strong>Sem loja de melhorias por edifício.</strong> Melhoria vem de nível de mina e de item especial de expedição. Duas economias de upgrade seriam redundantes.</li>
+  <li><strong>Produção comparada, não percentual:</strong> a ficha do aldeão mostra <em>14 → 17,5</em>, e não "+25%". O jogador vê o resultado sem fazer conta.</li>
+  <li><strong>Selo "melhor"</strong> no primeiro posto sugerido — resolve a decisão em meio segundo para quem só quer alocar.</li>
+  <li><strong>"Chamar para beber — ouvir sua história"</strong> como rótulo do despacho. O gesto é de hospitalidade e o resultado é a partida.</li>
+  <li><strong>Líderes têm identidade fixa</strong>; nome sorteado é só de órfão.</li>
+</ul>
+<p>Um sistema apareceu no estudo e ficou <strong>guardado</strong>: contos com Ensinamentos, Objetivos e Recompensas — uma camada de missões por conto, boa demais para descartar e grande demais para entrar ao lado da biblioteca de leitura já fechada.</p>
+
+<h2 id="vivo">05 — Vila</h2>
+<h3>O atrativo é a vila viva</h3>
+<p>O interior das edificações <strong>não é animado</strong>. Clicar abre tela estática com informação. O valor visual está fora: sprites circulando, cada vez mais numerosos, fazendo coisas sozinhos.</p>
+<div class="rule-box">
+<p><strong>Prioridade de arte: trajetos e rotinas, não interiores.</strong></p>
+<p>O anão saindo da mina com minério e atravessando até a forja. O padeiro indo à forja buscar uma pá nova. O Pescador cruzando a vila inteira com o balde até a taberna. Maria saindo pelo portão e voltando. Cada oficina nova deve gerar um trajeto novo.</p>
+</div>
+
+<h2 id="defesa">06</h2>
+<h3>Defesa</h3>
+<p>Sem cercas e sem muralhas. <strong>Uma torre, ao lado da mina</strong> — ela existe para proteger os anões, que trabalham mais perto de onde o mal vem.</p>
+<ul>
+  <li>Resolve as ameaças <strong>passivamente</strong>: detecta, mira, dispara. O jogador assiste.</li>
+  <li>Alcance, cadência e alvos possíveis sobem com o nível, e vários níveis dependem de minério.</li>
+  <li>Enquanto a torre não alcança, <strong>o jogador enxota clicando</strong>. É a interação ativa dos primeiros minutos.</li>
+  <li>Depois, novos habitantes automatizam o que era clique. <strong>Evoluir a defesa é deixar de precisar clicar.</strong></li>
+</ul>
+<p>Nada disso dá retorno real. O único combate com recompensa são as expedições.</p>
+
+<h4>Nem tudo que parece perigoso é</h4>
+<p><strong>Gigantes atravessam o mapa</strong> e podem ser vistos da vila. Passam. Não atacam. O jogador vai passar a primeira vez em pânico e não acontece nada. O inverso também vale: o que é pequeno, familiar e inofensivo na aparência é o que faz estrago.</p>
+
+<h4>A fonte contraditória</h4>
+<p>A Filha Sábia lê os pergaminhos e monta o quadro. O <strong>Alfaiate</strong> conta outra versão — exagera a origem de tudo que vende e de tudo que viu, e às vezes está certo. As duas versões nunca coincidem inteiramente, e o jogo nunca diz qual vale.</p>
+<p class="beat" style="color:var(--stone);font-size:14px">O Lobo Mau foi removido do projeto: se Chapeuzinho é adulta, ele já está morto.</p>
+
+<h2 id="elenco">07</h2>
+<h3>Elenco e edificações</h3>
+
+<h4>Núcleo</h4>
+<table>
+<thead><tr><th>Personagem</th><th>Função</th></tr></thead>
+<tbody>
+<tr><td>João<span class="khm">KHM 15</span></td><td>Liderança, tutorial, interlocutor do jogador.</td></tr>
+<tr><td>Maria<span class="khm">KHM 15</span></td><td>Expedições, informação sobre criaturas, pergaminhos. Evolui visualmente como um edifício.</td></tr>
+<tr><td>A Filha Sábia<span class="khm">KHM 94</span></td><td>Biblioteca. Lê os pergaminhos, monta o quadro da investigação, discorda do jogador.</td></tr>
+<tr><td>As Três Fiandeiras<span class="khm">KHM 14</span></td><td>Casa das Fiandeiras — ganho offline. Nunca aparecem separadas.</td></tr>
+<tr><td>Os sete anões<span class="khm">KHM 53</span></td><td>Mina e forja. Anônimos, como no conto.</td></tr>
+</tbody>
+</table>
+
+<h4>Edificações</h4>
+<table>
+<thead><tr><th>Edificação</th><th>Personagem</th><th>Por quê</th></tr></thead>
+<tbody>
+<tr><td>Padaria</td><td>Chapeuzinho Vermelho, adulta<span class="khm">KHM 26</span></td><td>O conto começa com ela carregando bolo e pão numa cesta. Conhece a floresta, o que ajuda quando falta lenha.</td></tr>
+<tr><td>Horta</td><td>Rapunzel<span class="khm">KHM 12</span></td><td>O conto nasce de uma horta, e ela tem nome de planta.</td></tr>
+<tr><td>Moinho</td><td>A Filha do Moleiro<span class="khm">KHM 55</span></td><td>Ofício literal. Puxa Rumpelstiltskin junto, que passa a ter motivo de rondar.</td></tr>
+<tr><td>Mercado</td><td>O Mestre Ladrão<span class="khm">KHM 192</span></td><td>Volta rico à aldeia, compra tudo, não pergunta procedência. Ponto fixo, contra o ambulante.</td></tr>
+<tr><td>Cabana de Caça</td><td>O Caçador<span class="khm">KHM 26</span></td><td>Único adulto competente do conto; abre a barriga do lobo.</td></tr>
+<tr><td>Lar dos Órfãos</td><td>A Menina dos Táleres<span class="khm">KHM 153</span></td><td>Dá tudo o que tem, até a última roupa. O lar consome e não produz; a virtude dela é exatamente essa.</td></tr>
+<tr><td>Cabana do Construtor</td><td>O Jovem Gigante<span class="khm">KHM 90</span></td><td>Arranca a maior árvore da floresta e parte bigornas. Força demais para ferraria, certa para construção. Silhueta enorme na vila.</td></tr>
+<tr><td>Cabana do Lenhador</td><td>Os dois irmãos mais velhos<span class="khm">KHM 64</span></td><td>Os que se feriram cortando lenha no conto do Ganso de Ouro. Os incompetentes trabalham; o irmão bom deles guarda o que trazem.</td></tr>
+<tr><td>Depósito</td><td>A Menina sem Mãos<span class="khm">KHM 31</span></td><td>Conta e mede, não carrega. Chega sem mãos e o depósito rende parcial; no <strong>nível 5 da mina</strong> os anões forjam as mãos de prata para ela e ela assume por inteiro. Único objeto de metal claro da vila.</td></tr>
+<tr><td>Herbalista</td><td>Joringel<span class="khm">KHM 69</span></td><td>Procura por muito tempo a flor vermelho-sangue que desfaz encantamentos. Liga direto ao sistema de maldições.</td></tr>
+<tr><td>Curandeiro</td><td>O afilhado da Madrinha Morte<span class="khm">KHM 44</span></td><td>Enxerga quem vive e quem morre. <strong>Sabe ler a Marca</strong> — pode olhar um habitante e dizer que já está perdido.</td></tr>
+<tr><td>Rancho dos Animais</td><td>A Pastora de Gansos<span class="khm">KHM 89</span></td><td>Sai com um número e volta com o mesmo número, todo dia.</td></tr>
+<tr><td>Taberna</td><td>A Mulher do Pescador<span class="khm">KHM 19</span></td><td>Nunca satisfeita. Aumenta preço, expande sem parar, quer mais. O conto avisa como termina.</td></tr>
+<tr><td>Cabana de Pesca</td><td>O Pescador<span class="khm">KHM 19</span></td><td>Sozinho na margem, resignado, atravessando a vila todo dia para entregar à mulher. Nunca pesca no lado fundo do lago.</td></tr>
+<tr><td>Torre de Guarda</td><td>— sem morador</td><td>Não tem mecânica ativa. É o <strong>mostrador da mina</strong>: sobe junto, e a altura é o que permite avistar — e portanto alcançar — regiões mais distantes de expedição.</td></tr>
+<tr><td>Sapataria</td><td>Os Elfos<span class="khm">KHM 39</span></td><td>Trabalham à noite e vão embora se forem vistos. Detalhe visual, não sistema — o offline é das Fiandeiras.</td></tr>
+<tr><td>Vendedor de Armas</td><td>O Homem da Luz Azul<span class="khm">KHM 116</span></td><td>Veterano descartado pelo próprio lado, que nunca mais trabalhou de graça. Vende, não doa. A luz azul na banca é objeto memorável sem explicação.</td></tr>
+</tbody>
+</table>
+
+<div class="rule-box"><p><strong>Par oculto:</strong> Pele-de-Urso e o Homem da Luz Azul são os dois soldados dispensados da coleção, ambos deixados sem pagamento, ambos tendo resolvido isso por conta própria. Um guarda o estoque, o outro vende armas. Provavelmente se conhecem, e provavelmente não se falam.</p></div>
+
+<h4>Itinerantes e eventuais</h4>
+<div class="grid">
+  <div class="card"><h5>O Alfaiate Valente</h5><div class="khm">KHM 20 · diário</div><p>Passa uma vez por dia e vai embora antes do escuro. Faz oferta; recusar mexe no preço de amanhã. O estoque responde ao mundo e funciona como aviso do que vem. Exagera a origem de tudo — um item por dia é realmente o que ele diz.</p></div>
+  <div class="card"><h5>Os Músicos de Bremen</h5><div class="khm">KHM 27 · gazebo</div><p>Chegam quando o gazebo é restaurado ao nível 1, ao fim do Ato I.</p></div>
+  <div class="card"><h5>O Flautista</h5><div class="khm">Deutsche Sagen · recorrente</div><p>Evento de ratos. Cobra caro; se não for pago, leva os órfãos.</p></div>
+  <div class="card"><h5>A Senhora Holle</h5><div class="khm">KHM 24 · pelo poço</div><p>Juíza, não vilã. Duas demandas por ato: ouro no prazo, piche fora dele.</p></div>
+  <div class="card"><h5>Rumpelstiltskin</h5><div class="khm">KHM 55 · monetização</div><p>Contrato em balão de diálogo. O botão é Assinar.</p></div>
+  <div class="card"><h5>O Diabo</h5><div class="khm">Uma aparição · Ato III</div><p>Na casa vitrificada. Não mente, e é por isso que causa o erro.</p></div>
+  <div class="card"><h5>A Nixie do Lago</h5><div class="khm">KHM 181 · território</div><p>Perigo sem corrupção. Não tem relação com a Fome.</p></div>
+  <div class="card"><h5>Pele-de-Urso</h5><div class="khm">KHM 101 · expedição</div><p>Segundo imortal, recrutável e caro. Sob contrato de sete anos com o Diabo, não pode morrer antes de cumprir — justificativa sem magia. O jogador nunca sabe quantos anos faltam.</p></div>
+  <div class="card"><h5>Branca de Neve</h5><div class="khm">KHM 53 · descoberta</div><p>Não entra na vila. Está no caixão de vidro em algum lugar da floresta, e os anões sabem onde. Explica muito sobre por que eles não voltam.</p></div>
+</div>
+
+<h2 id="orfaos">08</h2>
+<h3>Os órfãos</h3>
+<p><strong>Nome e aparência gerados por roleta.</strong> Nenhum órfão é personagem escrito: são população com identidade aleatória — baratos, infinitos e, porque o jogador os recebe nomeados sem escolher, estranhamente memoráveis.</p>
+<h4>Alocação e vagas</h4>
+<p><strong>O nível do edifício é capacidade, não potência.</strong> Nível 1 é o líder sozinho; cada nível a partir do 2 abre uma vaga de órfão. A produção é <strong>linear</strong> pela soma das pessoas, mais os bônus individuais.</p>
+<p>Um edifício nível 5 com uma vaga preenchida <strong>rende como nível 1</strong>. Subir edifício sem ter gente é queimar ouro — a decisão passa a ser sempre "eu tenho aldeão sobrando para isso?".</p>
+<p><strong>Todos os líderes são imortais e não podem ser removidos</strong>, o que garante produção mínima em todas as frentes e elimina qualquer estado de zero absoluto. Órfãos são aceleração, nunca requisito.</p>
+<p><strong>Marcador flutuante de vaga aberta</strong> sobre o edifício no mapa — só quando houver adulto ocioso, um por edifício, com ícone distinto dos eventos. E contador de ociosos no HUD, junto da população.</p>
+<p>Alguns roubam comida. Isso não é bug de personalidade: é o eco da regra de que a Fome termina o serviço em quem já tinha índole. O jogador vai olhar para eles depois de saber da Bruxa.</p>
+
+<h2 id="eixos">09 — Sistemas</h2>
+<h3>Os dois eixos</h3>
+<p>A vila cresce por dentro (João); o alcance cresce por fora (Maria). O gargalo alterna entre os dois, e nenhum pode ser ignorado. É o que sustenta o jogo a longo prazo sem balanceamento artificial.</p>
+
+<h2 id="noturno">9b</h2>
+<h3>O ciclo noturno</h3>
+<div class="rule-box">
+<p><strong>Noite de 4 minutos em 20. A vila inteira para</strong> — líderes inclusive. Os órfãos voltam aos alojamentos e só saem de manhã, e o consumo de comida cai enquanto dormem.</p>
+<p>A produção base foi ajustada para <strong>1 a cada 5 segundos</strong> por pessoa, compensando a pausa. O offline usa fator médio de 0,8 em vez de simular ciclos.</p>
+</div>
+<p><strong>Os líderes se reúnem na taberna.</strong> É a única hora do dia em que o elenco inteiro está no mesmo lugar, e é onde os diálogos entre personagens acontecem. Ficam dentro — animar quinze sentados não se justifica. O que comunica é o <strong>prédio aceso</strong>: com a vila escura e os alojamentos apagados, a taberna é a única construção com todas as janelas iluminadas. A convergência dos trajetos ao anoitecer e a saída de manhã contam o resto.</p>
+<p>Por isso a taberna é um prédio grande, de dois andares e muitas janelas. Clicar nela à noite abre uma tela estática com o interior ilustrado.</p>
+<p><strong>A Vigília fica sozinha lá fora</strong>, trabalhando — e é a única que pode testemunhar o que passa pela vila de madrugada.</p>
+
+<h2 id="offline">10</h2>
+<h3>Offline — A Casa das Fiandeiras</h3>
+<p>Três velhas deformadas pelo próprio ofício: pé de pisar o pedal, lábio de molhar o fio, polegar de torcer. Aparecem quando há trabalho impossível pendente — que é o que acontece quando alguém fecha o jogo. Não falam, não negociam, não cobram ouro.</p>
+<div class="rule-box">
+<p><strong>O ganho offline só existe depois que a casa delas é construída.</strong> É a primeira grande conquista estrutural da partida.</p>
+<p><strong>Melhorar a casa aumenta o tempo máximo de acumulação offline.</strong> É o upgrade mais valioso do jogo, e o jogador entende isso na primeira vez que perde produção por ter dormido.</p>
+</div>
+<p><strong>Preço temático:</strong> reconhecimento público — serem admitidas e chamadas de tias diante de todos. <strong>Custo real:</strong> quem entrega o trabalho a elas perde a capacidade de fazê-lo sozinho. Aparecem sempre as três juntas — asset composto, não três NPCs.</p>
+
+<h2 id="mina">11</h2>
+<h3>Mina, forja e casa dos anões</h3>
+<p><strong>O gatilho.</strong> Um anão procura João. Quer reativar a mina e conta a história inteira: o que havia lá embaixo, por que os sete saíram, e que os outros seis se espalharam. É a fala que abre a mineração e o ciclo de busca.</p>
+<p><strong>Por que saíram:</strong> derivações da Fome chegaram ao fundo. Não fugiram juntos — cada um foi para onde sabia trabalhar, porque anão que não trabalha adoece. Estão dispersos por seguirem o ofício, não por estarem perdidos.</p>
+
+<h4>Os sete níveis</h4>
+<p>A mina <strong>não gera recurso passivo</strong>: desbloqueia capacidades em outros edifícios. Cada minério deve destravar um objeto concreto na mão de alguém, visível no sprite — nunca só um multiplicador.</p>
+<div class="ladder">
+  <div class="rung"><div class="n">I</div><div class="mat">Pedra</div><div class="use">Construção.</div></div>
+  <div class="rung"><div class="n">II</div><div class="mat">Carvão</div><div class="use">Acende a forja. Sem ele a forja existe mas não funciona — o nível 2 é obrigatório e ensina a dependência cedo.</div></div>
+  <div class="rung"><div class="n">III</div><div class="mat">Ferro</div><div class="use">Ferramenta de trabalho. Machado do lenhador, estrutura da torre.</div></div>
+  <div class="rung"><div class="n">IV</div><div class="mat">Bronze</div><div class="use">Cobre e estanho na mesma camada. O que precisa ser fundido em peça única: caldeirão, dobradiça, sino de alarme da torre.</div></div>
+  <div class="rung"><div class="n">V</div><div class="mat">Prata</div><div class="use">A pá do padeiro. E o que a torre precisa para atingir o que não é animal.</div></div>
+  <div class="rung"><div class="n">VI</div><div class="mat">Ouro</div><div class="use">Valor puro.</div></div>
+  <div class="rung deep"><div class="n">VII</div><div class="mat">Pedra branca</div><div class="use">A pedra que João usou para marcar o caminho de volta. Brilha ao luar. Não serve para economia nenhuma: serve para achar o caminho. É o material do que carrega o Grão na expedição final.</div></div>
+</div>
+<div class="call"><p><strong>Os anões nunca chegaram ao sétimo nível.</strong> Sabiam que existia. A coisa que os expulsou estava exatamente ali embaixo.</p></div>
+
+<h4>Tela da mina</h4>
+<p>Clicar abre tela dedicada com o nível atual e <strong>silhuetas escuras dos níveis futuros</strong>. É o painel de progressão de longo prazo do jogo inteiro — o jogador vê quanto falta e o que vem.</p>
+
+<h4>Ciclo de aquisição de anão</h4>
+<ul>
+  <li>Maria encontra o anão no mapa — região fixa, requisito de equipamento, <strong>nunca aleatório</strong>.</li>
+  <li>O jogador melhora a <strong>casa dos anões</strong> para abrir vaga.</li>
+  <li>O anão se instala.</li>
+  <li>A mina sobe um nível e ele passa a produzir automaticamente na mina e na forja.</li>
+</ul>
+<p><strong>O laço:</strong> o anão só é encontrado se Maria alcançar a região dele; o equipamento dela só existe se a mina produzir o metal. A cadeia é escalonada em degrau — o anão do nível 3 é alcançável com o que o nível 2 permitiu.</p>
+
+<h4>Casa dos anões e forja</h4>
+<p>A casa fica próxima da vila, também em ruínas. Conforme o conto: pequena, limpa, modesta, camas em fila. Quando o sétimo entra, está completa pela primeira vez em décadas.</p>
+<p>A forja vem logo após a mina e é operada pelos mesmos sete. Fica <strong>perto da mina, mas não encostada</strong> — o espaço entre as duas existe para o jogador ver os anões saindo com minério, atravessando, produzindo e voltando. O sapateiro, o Alfaiate e o vendedor de armas vão à forja buscar matéria-prima.</p>
+<div class="rule-box"><p><strong>Produção:</strong> mina e torre são um único asset composto, gerado junto em todos os sete estágios. Garante alinhamento isométrico, amarra a ligação narrativa e dá dois indicadores de progresso na mesma peça — a mina descendo a encosta, a torre subindo. A rocha e o terreno permanecem imutáveis entre os estágios.</p></div>
+
+<h2 id="expedicoes">12</h2>
+<h3>Expedições — modelo Melvor</h3>
+<p>Sem combate ativo. Loop com requisito, duração e resultado textual.</p>
+<ul>
+  <li><strong>Requisito</strong> de equipamento e preparo define quais regiões são alcançáveis.</li>
+  <li><strong>Regiões repetíveis</strong> rendem material e pergaminhos.</li>
+  <li><strong>Eventos únicos</strong> entregam anão, marco de história e pistas da Marca.</li>
+  <li><strong>Uma expedição por vez</strong>, porque Maria é uma pessoa. Órfãos crescidos podem virar exploradores e paralelizar depois.</li>
+  <li><strong>Falha sem perda:</strong> requisito insuficiente faz a expedição voltar cedo e vazia, com Maria explicando por que recuou. Perde-se tempo, nunca gente.</li>
+</ul>
+<div class="call"><p>O resultado tem duas camadas: uma linha fixa de dados, que o jogador lê em meio segundo na vigésima vez, e uma linha variável na voz da Maria, que é o que faz ele ler a vigésima primeira.</p></div>
+
+<h4>Maria como edifício evolutivo</h4>
+<p>Maria é selecionável e tem evoluções visuais como uma construção. Cada nível a mostra mais equipada e mais preparada — e <strong>os ferimentos e cicatrizes acompanham a progressão</strong>, acumulando conforme ela vai mais longe. É o retrato do custo: a vila fica mais bonita; ela não.</p>
+
+<h2 id="pergaminhos">13</h2>
+<h3>Pergaminhos</h3>
+<p>Maria traz das expedições; alguns podem ser comprados caro do Alfaiate.</p>
+<ul>
+  <li>Cada pergaminho tem <strong>percentual de sucesso</strong>: ao terminar a leitura pode ou não se revelar útil e virar upgrade permanente.</li>
+  <li><strong>A leitura ocupa a Filha Sábia</strong>, e ela lê um por vez.</li>
+  <li>Outros aldeões podem ser designados para <strong>ajudar na tradução</strong>, acelerando o processo. É onde a população excedente encontra função.</li>
+</ul>
+<p>Abrir com 15 a 20 pergaminhos; o resto é conteúdo de atualização. É aqui que os contos de Grimm existem — nos pergaminhos e nas ruínas, não nos lotes da vila.</p>
+
+<h2 id="dialogo">13b</h2>
+<h3>Diálogo e mochilas</h3>
+<h4>Caixas de diálogo</h4>
+<p>Padrão Dredge: retrato grande do personagem com a caixa de texto ancorada embaixo. Cada bloco é <strong>personagem + emoção + texto + ação</strong>.</p>
+<p><strong>Seis emoções</strong> — neutra, dúvida, curiosidade, raiva, felicidade, tristeza — para quem mais fala (João, Maria, Filha Sábia, Alfaiate, Rumpelstiltskin, Holle). Três para os líderes de edificação. Cerca de 80 retratos no total, derivados dos turnarounds aprovados.</p>
+<p><strong>Grunhido na troca de falante</strong>, um som curto por personagem, com pitch variando entre 0,92 e 1,08 a cada disparo. Toca só quando o falante muda, nunca a cada bloco — é o que separa "personagem tem voz" de "personagem tem soluço". O Narrador não tem som, e é isso que o deixa frio.</p>
+<div class="rule-box"><p><strong>Localização desde a primeira linha.</strong> Nenhum texto dentro de imagem, nenhuma frase montada por concatenação, e a caixa dimensionada para 40% mais texto que o português. Chaves semânticas em CSV, nunca a frase como chave.</p></div>
+
+<h4>Mochilas de expedição</h4>
+<p>Quebra-cabeça de encaixe com <strong>GLoot e GridConstraint</strong>, peças retangulares de tamanhos variados — sem formatos irregulares, que em tela de celular viram briga com o dedo.</p>
+<p><strong>O tamanho representa peso.</strong> Comida ocupa muito e é obrigatória; ferramenta ocupa pouco e é opcional. A decisão é levar mantimento para ir longe ou equipamento para chegar inteiro.</p>
+<ul>
+  <li>Maria é a referência e cresce com o nível dela. Pele-de-Urso um pouco menor. Órfão adulto em torno de metade, variando com o trauma.</li>
+  <li><strong>Cada órfão levado aumenta a capacidade, come da viagem e pode não voltar.</strong> O sistema se equilibra sozinho.</li>
+  <li>Em retrato: uma mochila visível por vez, com abas, e barra de <strong>ocupação total</strong> no topo.</li>
+</ul>
+<p><strong>O botão de preenchimento automático é destravado por pergaminho</strong> lido na biblioteca — sugestão de título: <em>Do preparo da viagem</em>. O jogador sente o atrito por horas e então o conhecimento remove o atrito, o que é melhor que dar de graça. Ele preenche só o essencial e <strong>nunca fica ótimo</strong>, ou a mecânica morre no dia em que aparece.</p>
+
+<h2 id="holle">14</h2>
+<h3>A demanda da Senhora Holle</h3>
+<p>Ela vem pelo poço. Não é vilã: é juíza. No conto, paga ouro a quem trabalha e piche a quem não.</p>
+<div class="grid">
+  <div class="card"><h5>Demanda aberta</h5><div class="khm">Estado 1</div><p>Pedido de produção com prazo. Produzível com o que a vila tem naquele ato, mas apertado — confortável não se sente, impossível se odeia.</p></div>
+  <div class="card"><h5>Entrega no prazo</h5><div class="khm">Estado 2 · recompensa</div><p>Chove ouro, mais um benefício extra. O evento vira algo que o jogador espera, não que teme.</p></div>
+  <div class="card"><h5>Prazo esgotado</h5><div class="khm">Estado 3 · piche</div><p>Produção da vila cai 30% e o piche fica visível sobre os telhados. Só encerra quando a entrega original for completada — o castigo é a mesma demanda com juros de tempo.</p></div>
+</div>
+<p><strong>Frequência: duas vezes por ato.</strong> Isso a torna ritmo, não assédio.</p>
+
+<h2 id="eventos">15</h2>
+<h3>Eventos e maldições</h3>
+<p>Maldição converte e trava; não destrói. Sem perda permanente de habitante. Vêm da floresta ou do que a vila fez — e o jogo nunca esclarece qual é qual.</p>
+<table>
+<thead><tr><th>Evento</th><th>Efeito</th><th>Eixo</th></tr></thead>
+<tbody>
+<tr><td>O irmão-cervo<span class="khm">KHM 11</span></td><td>Um habitante volta transformado em animal. Ocupa lote, não produz, não morre. Quebra longa e cara.</td><td>Tira a pessoa</td></tr>
+<tr><td>A pele que não sai<span class="khm">KHM 108</span></td><td>Um habitante cria espinhos ou casca. Produz muito mais e assusta todos: moral com teto enquanto estiver visível. O ritual de fogo o devolve à forma humana e custa o bônus.</td><td>Troca rendimento por moral</td></tr>
+<tr><td>O sono<span class="khm">KHM 50</span></td><td>Uma ala inteira adormece. Nada se perde, nada produz. Quebra por evento.</td><td>Tira uma área</td></tr>
+<tr><td>A chuva de piche<span class="khm">KHM 24</span></td><td>Consequência da demanda da Holle. Produção −30% até a entrega ser completada.</td><td>Tira produção</td></tr>
+<tr><td>Ratos e o Flautista<span class="khm">Deutsche Sagen</span></td><td>Os ratos aumentam e a produção cai de 5% a 50% conforme o volume. Só o Flautista resolve, e cobra caro; se não for pago, leva os órfãos, que somem no mapa e são recuperáveis por expedição.</td><td>Recorrente</td></tr>
+<tr><td>A casa que apodrece<span class="khm">KHM 15 · único</span></td><td>Ato III, na casa de João e Maria. A construção que nunca muda começa a ficar doce: madeira virando açúcar, telha virando bolacha. Só se resolve com a expedição à clareira.</td><td>Evento de história</td></tr>
+</tbody>
+</table>
+<div class="rule-box"><p><strong>Se não houver órfãos na vila, o Flautista não tem o que levar e não há penalidade.</strong> O jogador esperto vai perceber e usar. Essa esperteza é conteúdo, não exploit.</p></div>
+
+<h2 id="dinheiro">16</h2>
+<h3>Monetização</h3>
+<p><strong>Sem banner permanente.</strong> Toda oferta é diegética.</p>
+<p><strong>Rumpelstiltskin</strong> é a fonte de anúncio. Aparece com balão de diálogo em forma de contrato, e o botão é <strong>Assinar</strong> — assinar abre o anúncio. Ofertas: assista e receba o lucro de 1 hora; assista e receba um pergaminho sem expedição. Aparece só em gargalo real, nunca com a vila indo bem.</p>
+<p>Faz também uma oferta melhor e única: <strong>pagamento em dinheiro real que remove os anúncios para sempre e concede bonificação permanente.</strong> É o único que negocia com o jogador em vez de com a vila. Entrega sempre o que promete — e nunca cobra criança.</p>
+<p><strong>Os Músicos de Bremen</strong> no gazebo: por anúncio ou pagamento, tocam e a vila prospera ao dobro por um período.</p>
+
+<h2 id="recursos">17 — Economia</h2>
+<h3>Recursos e HUD</h3>
+<div class="rule-box">
+<p><strong>Ouro entra por venda.</strong> Nenhum edifício produz ouro — a vila fabrica e vende. Única exceção: a partir do <strong>nível 6 da mina</strong> há uma torneira modesta de ouro, tarde, como recompensa por ter chegado lá. Ela nunca pode render mais que a venda, ou as cinco linhas de produção perdem sentido de uma vez.</p>
+</div>
+<table>
+<thead><tr><th>Recurso</th><th>Origem</th><th>Serve para</th><th>Teto</th></tr></thead>
+<tbody>
+<tr><td>Comida</td><td>Curral, Horta, Padaria, Taberna, Pesca</td><td>Alimentar a população, pagar obras, venda</td><td>Depósito</td></tr>
+<tr><td>Madeira</td><td>Lenhador</td><td>Construção, insumo de escudo e arco, venda</td><td>Depósito</td></tr>
+<tr><td>Tecido</td><td>Só comprado do Alfaiate</td><td>Insumo de roupa e sapato</td><td>Depósito</td></tr>
+<tr><td>Ouro</td><td>Venda · mina nível 6</td><td>Construção, upgrades, tecido, Flautista, demandas</td><td>—</td></tr>
+<tr><td>Fôlego</td><td>Só de expedição</td><td>Distância de expedição e resgate de anão</td><td><strong>Sem teto</strong></td></tr>
+<tr><td>Diamante</td><td>Rumpelstiltskin · compra real</td><td>Itens à parte e acelerações</td><td>—</td></tr>
+</tbody>
+</table>
+<p><strong>Fôlego</strong> é acumulado entre viagens e é o oposto exato da Fome — quem está sendo consumido não tem fôlego. Cada anão exige um mínimo em caixa no momento de partir, o que obriga o jogador a poupar viagens antes de um resgate.</p>
+
+<h4>HUD — sete indicadores</h4>
+<p>Em linha, no topo: <strong>Comida</strong> (com índice), <strong>Madeira</strong>, <strong>Ouro</strong>, <strong>Fôlego</strong>, <strong>Diamante</strong>, <strong>População</strong> em fração (14/20, mostra vagas sem abrir tela) e <strong>Depósito</strong> em fração. Tecido fica fora — aparece só na tela do Alfaiate e das duas oficinas que o usam.</p>
+
+<h4>Fome e ratos são sprites, não números</h4>
+<p>Sprite é percebido pela periferia da visão; número exige leitura. Num idle, isso é a diferença entre notar o problema e descobrir tarde.</p>
+<ul>
+  <li><strong>Fome</strong> se mede pela vila: quanto mais baixo o índice, menos sprites circulando. A vila esvaziando é o medidor. É variável de spawn, não animação nova.</li>
+  <li><strong>Ratos</strong> aparecem pela vila toda, sem ponto específico, dividindo os caminhos com os aldeões. Sem alteração de cenário, sem pistas elaboradas — só densidade. Devem se mover mais rápido e mais irregularmente que os aldeões, ou viram parte da rotina em vez de intrusão.</li>
+</ul>
+<p><strong>O número continua acessível ao toque.</strong> Sprite no HUD para quem olha de relance, número exato para quem está otimizando.</p>
+
+<h2 id="producao">18</h2>
+<h3>Quem produz o quê</h3>
+<p>Cada edifício produz seu recurso final direto. <strong>Sem elos de transformação.</strong> A vila tem dois insumos e só: madeira e tecido.</p>
+<table>
+<thead><tr><th>Edifício</th><th>Produto</th><th>Consome</th></tr></thead>
+<tbody>
+<tr><td>Curral dos Animais</td><td>Carne</td><td>—</td></tr>
+<tr><td>Horta</td><td>Vegetais</td><td>—</td></tr>
+<tr><td>Padaria</td><td>Pão</td><td>—</td></tr>
+<tr><td>Taberna</td><td>Bebida</td><td>—</td></tr>
+<tr><td>Cabana de Pesca</td><td>Peixe</td><td>—</td></tr>
+<tr><td>Cabana do Lenhador</td><td>Madeira</td><td>—</td></tr>
+<tr><td>Vendedor de Armas</td><td>Espada</td><td>—</td></tr>
+<tr><td>Vendedor de Armas</td><td>Escudo</td><td>Madeira</td></tr>
+<tr><td>Vendedor de Armas</td><td>Arco e aljava</td><td>Madeira</td></tr>
+<tr><td>Alfaiataria</td><td>Conjunto de roupa</td><td>Tecido</td></tr>
+<tr><td>Sapataria</td><td>Sapato</td><td>Tecido</td></tr>
+</tbody>
+</table>
+<div class="call"><p><strong>A espada não consome insumo</strong> — o metal já foi pago quando o anão correspondente foi resgatado. É a linha de margem pura, a mais rentável por tempo e a que mais depende da mina.</p></div>
+
+<h4>O tecido e a permanência</h4>
+<p>Tecido não é produzido na vila. Só o Alfaiate vende, na passagem diária — cria compromisso de retorno, que é o motor de retenção. Duas proteções obrigatórias: ele traz <strong>lote generoso com desconto por volume</strong>, para que a falta não puna quem tem vida; e <strong>Rumpelstiltskin é a válvula</strong>, vendendo tecido por anúncio, mais caro que o justo. A monetização fica alinhada ao gargalo em vez de contra ele.</p>
+<p><em>A piada interna fica sem explicação: há três fiandeiras morando na vila e ninguém fia. Uma fala do João ou da Maria pode roçar nisso uma vez, sem resolver.</em></p>
+
+<h4>Itens especiais</h4>
+<p>Cada edificação tem <strong>três itens especiais</strong> encontráveis aleatoriamente em expedição — cerca de cinquenta no total. Devem ser <strong>únicos e visíveis no sprite</strong> do trabalhador: a pá nova na mão do padeiro é o que faz o drop valer. Bônus invisível não gera a memória do achado.</p>
+
+<h2 id="tiers">19</h2>
+<h3>Tiers da mina</h3>
+<p>Cada anão resgatado abre um tier <strong>em toda a vila de uma vez</strong> — armas, roupas, sapatos e ferramentas. É o que faz o resgate parecer um evento de vila, e não um upgrade de mina.</p>
+<div class="ladder">
+  <div class="rung"><div class="n">I</div><div class="mat">Pedra</div><div class="use">Infraestrutura. Nenhum item.</div></div>
+  <div class="rung"><div class="n">II</div><div class="mat">Carvão</div><div class="use">Acende a forja. Nenhum item, mas sem ele nada abaixo funciona.</div></div>
+  <div class="rung"><div class="n">III</div><div class="mat">Ferro</div><div class="use">Tier 1 de todas as cinco linhas.</div></div>
+  <div class="rung"><div class="n">IV</div><div class="mat">Bronze</div><div class="use">Tier 2 de todas as cinco linhas.</div></div>
+  <div class="rung"><div class="n">V</div><div class="mat">Prata</div><div class="use">Tier 3 de todas as cinco linhas. E as mãos de prata da Menina sem Mãos.</div></div>
+  <div class="rung"><div class="n">VI</div><div class="mat">Ouro</div><div class="use">Tier 4 de todas as cinco linhas. Abre a torneira modesta de ouro da mina.</div></div>
+  <div class="rung deep"><div class="n">VII</div><div class="mat">Pedra branca</div><div class="use">Não é upgrade: <strong>é o botão de fim.</strong> O recipiente do Grão e a última expedição. Os anões nunca chegaram até aqui — era exatamente onde estava o que os expulsou.</div></div>
+</div>
+
+<h2 id="trabalho">20</h2>
+<h3>Órfãos e trabalho</h3>
+<p><strong>Vagas:</strong> nível 1 de cada edifício é o personagem-líder, sozinho. Cada nível a partir do 2 abre uma vaga de órfão.</p>
+<p><strong>Ciclo:</strong> chega criança e ocupa vaga no Lar dos Órfãos (1 no nível 1, mais 1 por nível). Passa a infância sem trabalhar, mas comendo. Vira adulto e precisa de vaga em Alojamento para ser designado — ao sair do Lar, libera a vaga para a próxima criança.</p>
+<div class="call"><p>O gargalo alterna entre dois tetos: sem vaga no Lar, órfão nenhum chega; sem vaga no Alojamento, criança nenhuma cresce e o Lar entope. O jogador tem que crescer as duas coisas em compasso, e vai errar algumas vezes.</p></div>
+
+<h4>Cicatrizes</h4>
+<p>Cada órfão sorteia nome, aparência e cicatriz. <strong>Cicatrizes</strong>, não Marcas — a Marca é o que a Fome deixa nos corpos, e dois nomes iguais confundem.</p>
+<div class="rule-box">
+<p><strong>Não existe cura.</strong> A progressão é descobrir onde aquela pessoa funciona apesar da cicatriz, nunca apagá-la. Cada órfão é um pequeno problema de otimização, não uma unidade com +X%.</p>
+<p><strong>Nenhuma é puramente ruim.</strong> Sem compensação, o jogador descarta na taberna sem pensar e a decisão desaparece.</p>
+</div>
+<p><strong>20 no lançamento</strong> — 15 visíveis e 5 ocultas — e 12 guardadas para atualização. <strong>35% dos órfãos chegam sem cicatriz</strong>: se todos tiverem, o extraordinário vira ruído.</p>
+<p>Cada uma vem com <strong>duas ou três frases de origem sorteáveis</strong>, no registro do Darkest Dungeon. A frase nunca explica a cicatriz — conta o que aconteceu, e quem lê faz a ligação. Ninguém na vila comenta.</p>
+<p><strong>Tags controlam a geração:</strong> origem (FOME, MATA, PERDA, CATIVEIRO), domínio (FISICO, SOCIAL, TRABALHO, EXPEDICAO, SOBRENATURAL), mais incompatibilidade e sinergia. Cota por domínio impede que o sorteio produza uma população inteira de modificadores de produtividade.</p>
+<table>
+<thead><tr><th>Cicatriz</th><th>Custo</th><th>Compensação</th></tr></thead>
+<tbody>
+<tr><td>Fome antiga</td><td>Come 5×</td><td>Trabalha 40% mais rápido</td></tr>
+<tr><td>Sono pesado</td><td>−15% de produção</td><td>Imune a maldição</td></tr>
+<tr><td>Medo da mata</td><td>Nunca vai em expedição</td><td>+20% em qualquer edifício</td></tr>
+<tr><td>Mãos leves</td><td>Rouba comida do depósito</td><td>+50% de chance de item especial</td></tr>
+<tr><td>Vigília</td><td>Só trabalha à noite</td><td>Rende 3–4× no período · única testemunha da madrugada</td></tr>
+<tr><td>Teimosia</td><td>Demora um dia para aceitar realocação</td><td>Não morre na primeira expedição</td></tr>
+<tr><td>Lerdeza</td><td>−30% de velocidade</td><td>Nunca comete erro: imune a perda por acidente</td></tr>
+<tr><td>Mão pesada</td><td>Quebra o item especial do edifício</td><td>+35% de produção</td></tr>
+<tr><td>Silêncio</td><td>Não pode ser líder nem aparece em diálogo</td><td>Nunca é levado pelo Flautista</td></tr>
+<tr><td>Boa memória</td><td>Perde moral quando alguém morre: lembra de todos</td><td>+25% na Biblioteca</td></tr>
+<tr><td>Ossos frágeis</td><td>Risco de morte dobrado em expedição</td><td>+25% em qualquer edifício</td></tr>
+<tr><td>Faro de bicho</td><td>−20% de produção</td><td>Reduz o crescimento de ratos</td></tr>
+<tr><td>Coração grande</td><td>Improdutivo por dias quando alguém morre</td><td>−40% na perda de moral da vila</td></tr>
+<tr><td>Passos leves</td><td>−20% de carga</td><td>−40% de chance de morrer em expedição</td></tr>
+<tr><td>Não deixa ninguém para trás</td><td>Expedições +30% mais longas</td><td>−70% de risco para os outros</td></tr>
+<tr><td><em>Boca a mais</em> · oculta</td><td>Consome como dois</td><td>Ao virar adulto, entram dois adultos</td></tr>
+<tr><td><em>Conta até doze</em> · oculta</td><td>—</td><td>A contagem recomeça antes de certos ataques</td></tr>
+<tr><td><em>Não come carne</em> · oculta</td><td>Recusa certas refeições</td><td>Animais hostis raramente o atacam</td></tr>
+<tr><td><em>Nome esquecido</em> · oculta</td><td>—</td><td>Alguns eventos sobrenaturais não o selecionam</td></tr>
+<tr><td><em>Deixa a janela aberta</em> · oculta</td><td>Perda pequena de eficiência</td><td>Ocasionalmente encontra algo no parapeito</td></tr>
+</tbody>
+</table>
+<p><strong>Apego ficou de fora</strong> desta leva: relação entre dois órfãos específicos não é cicatriz, é sistema — exige rastrear o par, tratar a morte de um deles e mostrar isso na interface.</p>
+
+<h4>Morte em expedição</h4>
+<p>Conforme o nível da expedição aumenta, <strong>mais aldeões precisam ir com Maria</strong> — e adultos podem não voltar. Só Maria e Pele-de-Urso são imortais.</p>
+<p>É isso que dá giro à população e faz a roleta de traumas continuar importando na vigésima hora. E é decisão dura: mandar o que era ótimo padeiro, ou mandar o que come por cinco.</p>
+<div class="rule-box">
+<p><strong>Três proteções, sem as quais o sistema vira punição:</strong></p>
+<p>Risco visível por indivíduo antes de partir — o jogador manda sabendo. Nunca perda total: alguns podem cair, nunca todos, e Maria sempre volta com o relato. E reposição garantida, num ritmo que cubra as baixas sem depender de sorte.</p>
+</div>
+<p><strong>A redenção:</strong> um anúncio recupera <strong>um</strong> órfão abatido, com prazo curto — vale enquanto o relato da expedição está aberto. Um só, porque escolher entre dois mortos é uma cena melhor que qualquer diálogo. E vem pela <strong>Senhora Holle</strong>, pelo poço, não pela floresta: no conto ela devolve quem cai. Também explica por que o corpo nunca é encontrado.</p>
+
+<h4>Despachar — chamar para beber</h4>
+<p>Só adultos podem ser dispensados; criança nunca, porque é contra tudo o que o jogo propõe. A ação se chama <strong>chamar para beber na taberna</strong>: os dois sentam, bebem, o aldeão sai pela estrada, a Mulher do Pescador recolhe as canecas.</p>
+<p>Cena sempre igual — repetição é o que transforma isso em ritual, e ritual é o que faz o jogador sentir o peso na décima vez e não na primeira. Custo em moral que decai com o tempo, para que despachar em série doa mais que despachar uma vez.</p>
+
+<h2 id="numeros">21</h2>
+<h3>Números para 100 horas</h3>
+<div class="rule-box">
+<p><strong>A escala do ouro é a decisão que diferencia este jogo.</strong> Crescimento de custo de <strong>1,35× por nível</strong>, não 2×. O jogador nunca vê notação científica, nunca vê sufixos, e consegue fazer conta de cabeça a partida inteira.</p>
+<p>Espada tier 1 vende a 15 de ouro; tier 4 a 900. Primeiro upgrade custa 50; edifício nível 10 custa cerca de 12 mil; os últimos níveis ficam entre 300 e 500 mil. O total ganho nas 100 horas fica em torno de 4 milhões.</p>
+</div>
+<table>
+<thead><tr><th>Variável</th><th>Estimativa inicial</th></tr></thead>
+<tbody>
+<tr><td>Infância do órfão</td><td>45 min de tempo ativo</td></tr>
+<tr><td>Produtor de comida nível 1</td><td>Sustenta 3 bocas; +2 por nível</td></tr>
+<tr><td>Consumo</td><td>Criança 1 · adulto 1,5 · anão 2 · líder 1,5</td></tr>
+<tr><td>Gigante por obra</td><td>≈ 8 × o nível da construção</td></tr>
+<tr><td>Fôlego por expedição</td><td>Curta 5–8 · longa 25–40</td></tr>
+<tr><td>Fôlego por anão</td><td>40 · 90 · 160 · 260 · 400 · 600</td></tr>
+<tr><td>Índice de Fome</td><td>−0,8% de produção por ponto abaixo de 100; piso de 30%</td></tr>
+<tr><td>Drop de item especial</td><td>4% por expedição, pool de ~50</td></tr>
+<tr><td>Tecido</td><td>Lote de 20 por 120 de ouro; −15% acima de 50 un.</td></tr>
+</tbody>
+</table>
+<p>Todos são chutes de partida para serem corrigidos em teste. O que não deveria mudar é a curva de 1,35× e o piso de 30% no índice de fome.</p>
+
+<h2 id="atos">22 — Campanha</h2>
+<h3>Os cinco atos</h3>
+
+<div class="act">
+  <span class="tag">Ato I</span><h5>Fome</h5>
+  <p>Sobreviver. Casa, comida, madeira, primeiros órfãos, corvos, raposas, lobos, clique de enxotar, torre nível 1. A Casa das Fiandeiras é construída e o offline passa a existir. O gazebo é restaurado e os Músicos chegam.</p>
+  <p class="beat">O jogador pensa que está construindo uma vila.</p>
+</div>
+<div class="act">
+  <span class="tag">Ato II</span><h5>Floresta</h5>
+  <p>Explorar. Primeiras expedições, o anão procura João, mina, casa dos anões, forja, ruínas, primeiros pergaminhos, o Lobo aparece, ratos e Flautista, primeira demanda do poço. Um gigante atravessa o mapa e nada acontece.</p>
+  <p class="beat">O jogador percebe que há algo errado.</p>
+</div>
+<div class="act">
+  <span class="tag">Ato III</span><h5>Contos</h5>
+  <p>Compreender. Maldições, bruxas, criaturas maiores, a Marca se repete, o curandeiro lê nos corpos, a biblioteca monta o quadro. A casa de João e Maria apodrece e a expedição leva à clareira. O Diabo, na casa vitrificada. Descoberta do Grão. A mina desce; os anões vão sendo reunidos.</p>
+  <p class="beat">O jogador entende o inimigo — e acredita que ele tem rosto.</p>
+</div>
+<div class="act">
+  <span class="tag">Ato IV</span><h5>Dragão</h5>
+  <p>Preparar. Expedições profundas, forja avançada, equipamento especializado, território do Dragão. Dragão morto, Grão recuperado, e então a revelação.</p>
+  <p class="beat">O jogador acredita ter encontrado a solução.</p>
+</div>
+<div class="act">
+  <span class="tag">Ato V</span><h5>A Fome</h5>
+  <p>Defender e atacar. Corrupção crescente, ataques, crise de recursos, defesa da vila, proteção do Grão, sétimo nível da mina, a última expedição à clareira, plantio, confronto final. Os poços secam — menos o da Senhora Holle. E a música desaparece: o gazebo silencia.</p>
+  <p class="beat">Tudo o que foi construído passa a ter função.</p>
+</div>
+
+<h2 id="grao">23</h2>
+<h3>O Grão, o Dragão e o plantio</h3>
+<p>Não uma arma, não uma coroa, não um cristal. Um <strong>Grão</strong> — a semente que a Fome não consegue consumir. Quando a Fome apareceu antes, quase tudo foi consumido e uma única semente permaneceu intacta. Cresce onde nada cresce. É comida, semente, esperança e arma: o oposto exato dela.</p>
+
+<h4>A virada</h4>
+<p>O Grão está na região mais profunda da floresta, guardado por um Dragão. Tudo aponta para a mesma conclusão — e o Diabo confirma, sem mentir.</p>
+<div class="call"><p>O Dragão é derrotado. O jogador encontra o Grão. E então entende o erro: <strong>o Dragão não protegia o Grão do homem, protegia o Grão da Fome.</strong> Era uma das últimas criaturas antigas fortes o bastante para impedir que ela chegasse ali. O jogador acabou de destruir essa proteção.</p></div>
+<p>Antes <strong>a vila entrava na floresta</strong>. Agora <strong>a floresta vem até a vila</strong>.</p>
+
+<h4>Onde se planta, e por quê</h4>
+<p>O Grão não pode ser plantado na vila. Precisa ser plantado na clareira da casa de doces.</p>
+<ul>
+  <li><strong>Porque é solo consumido.</strong> A Fome já tirou dali tudo que havia. O Grão só prova o que é onde nada mais cresce.</li>
+  <li><strong>Porque a Fome tem um lugar de entrada.</strong> A clareira é onde ela chegou primeiro e onde a passagem continua aberta. Plantar ali não é semear: é fechar.</li>
+  <li><strong>Porque é o caminho de volta.</strong> João e Maria fizeram esse trajeto uma vez, crianças, fugindo. Fazem de novo, adultos, levando uma semente — e a pedra branca do sétimo nível é o que a carrega.</li>
+</ul>
+<p><strong>É a única expedição em que os dois vão juntos.</strong> O gestor sai da vila pela primeira vez, e a vila roda sozinha durante a viagem: o teste final de tudo que o jogador automatizou.</p>
+<p>E, coerente com Grimm, o confronto não se ganha por força acumulada. O equipamento levou a vila até lá. O que resolve é o que se descobriu no caminho.</p>
+
+<h2 id="rotas">24 — Mundo vivo</h2>
+<h3>Rotas e colisão</h3>
+<p>O atrativo visual do jogo são os trajetos. <strong>Todo produtor faz rota até o Depósito</strong>, que deixa de ser uma construção e vira o centro de gravidade da vila — o único ponto por onde todo mundo passa.</p>
+<ul>
+  <li><strong>Rotas nunca em linha reta.</strong> Caminhos com curva fazem os trajetos se sobreporem em trechos, e é no cruzamento que a vila parece viva. Retas convergindo viram asterisco.</li>
+  <li><strong>O sprite carrega algo visível.</strong> Ida vazio, volta com fardo — ou o contrário. Sem isso lê como gente andando, não como entrega.</li>
+  <li><strong>A frequência segue a produção.</strong> Um edifício nível 5 cheio manda alguém quatro vezes mais que um nível 1. O trânsito vira termômetro da economia sem nenhum número na tela.</li>
+  <li><strong>Anel livre em volta do Depósito</strong>, com ponto de entrega na borda e não no centro do prédio. Fila na porta é bonita; aglomerado sobreposto é bug visual.</li>
+</ul>
+
+<h4>Colisão — cortesia, não física</h4>
+<div class="rule-box">
+<p><strong>Nada de CharacterBody2D.</strong> Física com dezenas de agentes é cara e produz o pior sintoma: dois aldeões se empurrando para sempre num corredor.</p>
+<p>O método é <strong>detecção por proximidade com cedência por prioridade</strong>. Cada um verifica um raio curto à frente; quem tem prioridade menor para por meio segundo e segue. Anão carregando minério não para, criança sempre para, o Gigante nunca para e todo mundo desvia dele.</p>
+</div>
+<p>Duas proteções obrigatórias: desempate por id se dois pararem um para o outro, e <strong>atravessamento após dois segundos</strong> — sprite passando por cima é muito menos perceptível que aldeão congelado. E um atraso ligeiramente diferente em cada um faz a cena parecer decisão em vez de script.</p>
+
+<h2 id="floresta">25</h2>
+<h3>Floresta e coleta</h3>
+<p><strong>Lenhador, Pescador e Herbalista são os únicos que trabalham fora do prédio.</strong> Compartilham o mesmo código — buscar alvo mais próximo da cabana, caminhar, animar, voltar — mudando só o tipo de alvo e a animação.</p>
+
+<h4>Geração das árvores</h4>
+<ul>
+  <li><strong>Em grade, com deslocamento aleatório dentro da célula.</strong> Parece livre, comporta-se como grade — o que simplifica busca de alvo e impede construção onde há árvore.</li>
+  <li>Distribuição por distância mínima, mais densa longe da vila, rareando junto aos lotes. A clareira da vila sai de graça.</li>
+  <li><strong>Só as do raio de trabalho são entidades com estado.</strong> O resto é textura de terreno. Milhares de nós em YSort é o que derruba o desempenho.</li>
+  <li>Duas ou três variações com espelhamento e escala sorteada.</li>
+  <li><strong>Semente fixa salva no save</strong>, junto do estado de cada árvore cortada. Floresta que muda de cara ao reabrir arruína um jogo cuja graça é comparar com a memória.</li>
+</ul>
+
+<h4>Corte e regeneração</h4>
+<p>O Lenhador pega sempre a árvore cortável <strong>mais próxima da cabana</strong>, não dele. O desmatamento cresce em anel a partir do prédio, e o jogador vê o vazio se abrindo — que é prazeroso.</p>
+<div class="call"><p><strong>O corte é mais rápido que a reposição, de propósito.</strong> A regeneração sobe continuamente conforme a mata encolhe, e as duas taxas se encontram perto dos 30% restantes. Curva, não limiar: com limiar rígido o jogador percebe a regra; com curva ele só nota que ficou mais difícil abrir espaço.</p></div>
+<p>A reposição acontece preferencialmente <strong>no anel próximo à cabana</strong> — o piso precisa ser espacial e não só numérico, ou o Lenhador acaba andando dez minutos por tora.</p>
+<p><strong>A regeneração é noturna.</strong> Se o jogador desmatar agressivamente, a mata volta em massa numa única noite. Isso não é balanceamento: é comportamento. A floresta reage com mais força quanto mais se tira dela, e o jogo nunca comenta.</p>
+
+<h4>A animação de crescimento</h4>
+<p>Árvore que aparece de um frame para outro lê como erro de renderização. São necessários três ou quatro frames — broto até árvore — com <strong>um leve tremor no chão antes de começar</strong>, que é o que sinaliza intenção. Meio segundo basta.</p>
+<p>Em regeneração massiva, as brotações são <strong>escalonadas em onda</strong>, subindo da borda da mata em direção à vila. Simultâneas parecem spawn; em onda parecem avanço.</p>
+<p><strong>A mata que volta volta diferente:</strong> mais fina, mais torta, mais escura que a original. Não é a mesma floresta que estava ali.</p>
+
+<h4>Pescador e Herbalista</h4>
+<p>O <strong>Pescador</strong> tem ponto fixo na margem e deve ficar parado bastante tempo. Um homem imóvel com a vara na água é o oposto do movimento constante de todo mundo — se pescar rápido, vira mais uma formiga.</p>
+<p>O <strong>Herbalista</strong> colhe arbustos sem destruí-los: a moita fica, esvaziada, e volta a dar em algumas horas. Dois relacionamentos diferentes com a mesma floresta, percebidos sem explicação. Os arbustos também dão profundidade à borda da mata e são o primeiro elemento a regenerar depois de um corte — mato vem antes de árvore.</p>
+
+<h2 id="noite">26</h2>
+<h3>A noite</h3>
+<p>Sete camadas, cada uma com seu próprio limiar ligado ao índice de fome. Vila em ordem tem noite quase silenciosa; vila faminta tem noite insuportável. <strong>O jogador aprende a temer o escuro pelas próprias escolhas de gestão</strong>, não porque o jogo mandou.</p>
+<div class="grid">
+  <div class="card"><h5>Olhos</h5><div class="khm">entre os troncos</div><p>Pares de pontos claros, em número crescente. Somem quando o jogador aproxima o zoom.</p></div>
+  <div class="card"><h5>Sombras</h5><div class="khm">na linha das árvores</div><p>Formas escuras cruzando de um lado ao outro. Silhueta ambígua — nem pessoa nem animal. <strong>Nunca entram na vila.</strong></p></div>
+  <div class="card"><h5>Árvores que andam</h5><div class="khm">raras</div><p>Numa posição à noite, noutra de manhã. Nunca vistas em movimento: movimento visto é monstro, movimento percebido depois é assombro.</p></div>
+  <div class="card"><h5>Luzes falhando</h5><div class="khm">janelas</div><p>Oscilação lenta com falha funda ocasional, fase própria por janela. Instabilidade cresce com a fome. Apagão total de uma casa é reservado para os momentos ruins.</p></div>
+  <div class="card"><h5>Corvos</h5><div class="khm">termômetro</div><p>Voam baixo e escuros, quantidade ligada à fome. Distintos dos pássaros claros do dia.</p></div>
+  <div class="card"><h5>Lobos</h5><div class="khm">presença</div><p>Saem da mata, avançam alguns passos, param e voltam. Nunca chegam — e incomodam por isso.</p></div>
+  <div class="card"><h5>A bruxa</h5><div class="khm">irrepetível</div><p>Atravessa a vila inteira, entre as casas, grunhindo. Nada acontece, ninguém reage, nenhum diálogo no dia seguinte. O grunhido dela será reconhecido muito depois.</p></div>
+</div>
+<div class="rule-box">
+<p><strong>Nada disso tem consequência mecânica.</strong> Se um lobo eventualmente roubasse comida, o jogador ficaria acordado vigiando e a noite viraria tarefa. O corvo que se enxota clicando é o do dia, com aviso e efeito claro. Os da noite são só mundo.</p>
+<p><strong>E as mecânicas nunca mentem.</strong> Números sempre corretos, custo igual ao anunciado, expedição com o risco que mostrou. A estranheza vive na ficção e na imagem, nunca na matemática — se o jogador não puder confiar na planilha, ele para de jogar em vez de se arrepiar.</p>
+</div>
+<h4>Noites vazias</h4>
+<p>Cada noite tem um acontecimento único, e <strong>algumas não têm nada</strong>. Sem as vazias, o jogador aprende em três noites que sempre acontece algo e para de olhar. Com elas, nunca sabe se vale a pena — e por isso olha sempre.</p>
+<p>Regras: a lógica existe por baixo (ligada à fome, com sorteio por cima), para que teorias parcialmente corretas se formem; nunca mais de duas ou três vazias em sequência; e a primeira noite do jogador sempre tem algo. Alguns eventos são <strong>irrepetíveis</strong> — acontecem uma vez na partida inteira e nunca mais.</p>
+
+<h2 id="clima">27</h2>
+<h3>Clima, luz e vento</h3>
+
+<h4>Chuva — um shader, três configurações</h4>
+<p><strong>Shader de tela cheia, não partículas.</strong> Cobrir uma vila inteira com milhares de partículas derruba celular de entrada; um ColorRect com ruído procedural custa o mesmo independente da área. As partículas ficam só para os respingos no chão. <strong>A inclinação vende o isométrico</strong> — a queda acompanha o eixo da projeção.</p>
+<table>
+<thead><tr><th>Tipo</th><th>Leitura</th><th>Como</th></tr></thead>
+<tbody>
+<tr><td>Normal</td><td>Fina, rápida, quase incolor</td><td>Evento climático. ~20% dos dias, 3 a 8 min. Escurece a cena junto. Mais longa e fechada com fome alta.</td></tr>
+<tr><td>Ouro</td><td>Risco curto e grosso, queda lenta, com brilho</td><td>Demanda da Holle cumprida. Única coisa da tela que emite luz.</td></tr>
+<tr><td>Piche</td><td>Fio longo, queda muito lenta</td><td>Demanda perdida. A viscosidade vem da velocidade baixa somada ao risco longo.</td></tr>
+</tbody>
+</table>
+<p><strong>Chove sobre tudo</strong> — vila e floresta. Trava obrigatória: a chuva climática nunca começa com ouro ou piche ativo. Transições sempre por Tween: 1,5 s para entrar, 3 s para sair.</p>
+<p><strong>O piche deixa estado.</strong> Mancha escura sobre os telhados enquanto a penalidade durar, sumindo só quando a entrega é completada.</p>
+
+<h4>O poço como origem</h4>
+<div class="call"><p>O poço é o portal da Holle e o gerador das duas chuvas. A sequência: partículas subindo de dentro dele em coluna por 1,5 s, com brilho crescente na boca; então a chuva entra com máscara radial centrada no poço, expandindo até cobrir a tela em 2 s. O jogador lê como <em>aquilo veio dali</em> sem nada ser fisicamente simulado.</p>
+<p>O brilho fica aceso durante toda a chuva — dourado num caso, piche escorrendo pela pedra no outro.</p></div>
+<p>Som de chuva <strong>abafa a trilha</strong> em vez de tocar por cima: reduzir as camadas do gazebo enquanto chove faz a vila parecer encolhida. E as janelas acesas ficam mais visíveis, porque é o único momento em que a vila acesa contra o cinza fica bonita.</p>
+
+<h4>Sol, sombras e luz do dia</h4>
+<p>Os três vêm de <strong>um único ângulo de sol global</strong>.</p>
+<ul>
+  <li><strong>Sombras</strong> são cópia do sprite achatada, escurecida e inclinada, com o pé preso na base. Curtas ao meio-dia, longas e deitadas no fim da tarde. Mesma transformação para prédio, aldeão, árvore e rato. Opacidade mais baixa do que o instinto pede — sombra forte em paleta escura vira mancha.</li>
+  <li><strong>A luz do dia</strong> é um CanvasModulate percorrendo uma curva de cor: azulado frio no amanhecer, branco neutro ao meio-dia, âmbar na tarde, azul profundo à noite. É o que mais vende a passagem do tempo — e é o que dá sentido às janelas acesas.</li>
+  <li><strong>Aves do dia</strong>: bandos claros, altos e rápidos, um a cada poucos minutos, atravessando em uns oito segundos, com o ângulo acompanhando o vento. Ambientação neutra, deliberadamente distinta dos corvos escuros e baixos da noite. <strong>E projetam sombra</strong> — uma mancha pequena correndo pelo chão é um dos detalhes mais eficazes disponíveis.</li>
+</ul>
+
+<h4>Vento</h4>
+<p>Shader de vértice deslocando o topo do sprite com o pé fixo, proporcional à altura, com fase derivada da posição no mundo — sem isso a floresta inteira ondula junto e lê como erro. <strong>Um material só</strong>, aplicado a árvores, arbustos, capim, roupa no varal, o fardo do Alfaiate e as meadas das Fiandeiras.</p>
+<p>Por cima, folhas e poeira atravessando em duas velocidades, para o vento existir também sobre a vila.</p>
+<div class="rule-box"><p><strong>A intensidade é uma variável global</strong> que alimenta ao mesmo tempo o shader das árvores, as partículas e a inclinação da chuva. Ligada ao índice de fome e à aproximação do Ato V: vila em ordem tem brisa, vila em colapso tem vento constante. <strong>E quando a Fome chegar, o vento simplesmente para</strong> — o silêncio depois de horas de movimento é mais assustador que qualquer tempestade.</p></div>
+
+<h2 id="filtro">28</h2>
+<h3>Filtro de papel velho</h3>
+<p>Além do efeito estético, é um <strong>corretor de consistência</strong>: costura sprites gerados em sessões diferentes, com variações de tom, numa imagem só.</p>
+<p>Composição, em ordem de importância: textura de papel com fibra e grão em multiply leve; vinheta escurecendo os cantos; leve dessaturação com deslocamento para o âmbar; e grão sutil para quebrar a limpeza digital.</p>
+<div class="rule-box">
+<p><strong>A textura é fixa na tela, não no mundo.</strong> Se rolar junto com o pan, o jogador sente que está movendo o papel e enjoa. Fixa, o mundo desliza por baixo — como uma página real.</p>
+<p><strong>Sutil o bastante para cem horas.</strong> A régua: se o jogador consegue apontar onde está a textura, está forte demais. Comece com metade da intensidade que parecer certa.</p>
+</div>
+<p><strong>Fora do filtro:</strong> interface, retratos de diálogo e texto, num CanvasLayer acima. Texto sobre grão fica ilegível em celular, e retrato com papel por cima perde a expressão.</p>
+<p><strong>Uso narrativo:</strong> se o filtro escurece e amarela conforme o Ato V avança, o jogo inteiro parece uma página apodrecendo. Um parâmetro só, animado por Tween — e diz mais sobre a Fome do que qualquer evento.</p>
+
+<h2 id="arte">29 — Produção</h2>
+<h3>Direção de arte</h3>
+<ul>
+  <li><strong>Regra de cor:</strong> quem mora dentro puxa marrom quente; quem anda fora puxa cinza-esverdeado frio.</li>
+  <li><strong>Paleta:</strong> madeira umber escurecida, pedra cinza-fria, reboco pergaminho sujo, verde musgo apagado, telha envelhecida. Vermelho de telha como acento raro, nunca dominante.</li>
+  <li><strong>Renderização:</strong> nitidez de asset de jogo — bordas definidas, silhuetas claras, luz de dia encoberto. Não é pintura atmosférica escura, e não é jogo de fazenda saturado.</li>
+  <li><strong>Escala:</strong> figura humana em torno de um sétimo da altura de uma casa. Anões largos e baixos, crianças finas e altas — a distinção precisa vir de massa, não de detalhe.</li>
+  <li><strong>Teste obrigatório:</strong> reduzir a 64px de altura e converter em preto sólido. Se as silhuetas não forem distinguíveis, corrigir a pose, não o detalhe.</li>
+  <li><strong>Fiandeiras:</strong> três alturas e três contornos — média e plantada, alta e curvada em gancho, baixa e assimétrica com um braço estendido.</li>
+</ul>
+
+<h2 id="assets">30</h2>
+<h3>Checklist de imagens</h3>
+<p>Ordem de produção por dependência: o que trava outras coisas vem primeiro. Marcado <span style="color:var(--ember)">●</span> o que já existe.</p>
+
+<h4>Prioridade 1 — Trava tudo o resto</h4>
+<table>
+<thead><tr><th>Asset</th><th>Qtd.</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>Tile de terreno e caminhos</td><td>~12</td><td>Define a grade isométrica. Nada pode ser desenhado antes.</td></tr>
+<tr><td>Mina + Torre (asset composto)</td><td>8</td><td>Ruína + 7 níveis. Rocha e terreno imutáveis entre estágios; saltos de altura maiores em III, V e VII.</td></tr>
+<tr><td>Fundo distante</td><td>4</td><td>Copas de pinheiro fechando a borda, faixa de névoa, castelo da Bela Adormecida, montanha de vidro do Rinkrank. Projeção livre, silhueta baixa-saturação, base nunca toca chão visível.</td></tr>
+<tr><td>Casa de João e Maria</td><td>2</td><td>Estado normal e estado apodrecido (Ato III). Nunca evolui.</td></tr>
+</tbody>
+</table>
+
+<h4>Prioridade 2 — Edificações</h4>
+<p>Cada uma precisa de <strong>ruína + N níveis</strong>. Definir N antes de começar; a estimativa abaixo assume 5 níveis por edifício.</p>
+<table>
+<thead><tr><th>Grupo</th><th>Edificações</th><th>Sprites</th></tr></thead>
+<tbody>
+<tr><td>Comida</td><td>Curral, Horta, Padaria, Taberna, Cabana de Pesca</td><td>30</td></tr>
+<tr><td>Insumo e produção</td><td>Lenhador, Forja, Vendedor de Armas, Alfaiataria, Sapataria</td><td>30</td></tr>
+<tr><td>Estrutura</td><td>Depósito, Alojamento, Lar dos Órfãos, Cabana do Construtor</td><td>24</td></tr>
+<tr><td>Especiais</td><td>Biblioteca, Herbalista, Curandeiro, Cabana de Caça, Casa das Fiandeiras, Casa dos Anões, Mercado, Gazebo</td><td>48</td></tr>
+<tr><td>Fixos (sem níveis)</td><td>Poço da Holle, casa de doces vitrificada, lago</td><td>3</td></tr>
+</tbody>
+</table>
+<p class="beat" style="color:var(--stone);font-size:14px">Subtotal aproximado: <strong>135 sprites de edificação.</strong> É o maior bloco do projeto e onde o cronograma é decidido.</p>
+
+<h4>Prioridade 3 — Personagens</h4>
+<table>
+<thead><tr><th>Asset</th><th>Qtd.</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>Turnarounds já prontos <span style="color:var(--ember)">●</span></td><td>6</td><td>João, Maria, Alfaiate, três Fiandeiras, Filha Sábia, Pele-de-Urso</td></tr>
+<tr><td>Turnarounds restantes</td><td>~14</td><td>Um por líder de edificação</td></tr>
+<tr><td>Maria — evoluções</td><td>5–7</td><td>Mais equipada a cada nível; ferimentos e cicatrizes acumulam</td></tr>
+<tr><td>Menina sem Mãos</td><td>2</td><td>Sem mãos e com mãos de prata (nível 5 da mina)</td></tr>
+<tr><td>Anões</td><td>1–2</td><td>Anônimos. Um sprite genérico, talvez duas variações</td></tr>
+<tr><td>Órfãos — sistema de roleta</td><td>~30 peças</td><td>Corpo criança e adulto × variações de cabelo, roupa e tom. Combinatória, não sprites únicos</td></tr>
+<tr><td>Retratos de diálogo</td><td>~20</td><td>Todos os nomeados têm caixa de diálogo</td></tr>
+</tbody>
+</table>
+
+<h4>Prioridade 4 — Vida da vila</h4>
+<p>É o atrativo visual do jogo. Não é opcional.</p>
+<table>
+<thead><tr><th>Asset</th><th>Qtd.</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>Ciclos de caminhada</td><td>~8</td><td>Aldeão adulto, criança, anão. Direções isométricas</td></tr>
+<tr><td>Trajetos com carga</td><td>~6</td><td>Anão com minério, padeiro, pescador com balde, Alfaiate com fardo</td></tr>
+<tr><td><strong>Ratos</strong></td><td><strong>10</strong></td><td>Dez sprites de movimento diferentes, sorteados aleatoriamente. Velocidade e ritmo mais rápidos e irregulares que os aldeões</td></tr>
+<tr><td>Gigante atravessando o mapa</td><td>2–3</td><td>Passa e não ataca</td></tr>
+<tr><td>Animais do curral e fauna ambiente</td><td>~6</td><td>Gansos, cabras, corvos</td></tr>
+<tr><td><strong>Árvores</strong></td><td>~10</td><td>2–3 variações × de pé, cortada, toco, mais 3–4 frames de crescimento</td></tr>
+<tr><td>Arbustos do Herbalista</td><td>~4</td><td>Com carga e esvaziado</td></tr>
+<tr><td>Aves do dia</td><td>3</td><td>Bando claro, alto e rápido. Mais a sombra correndo no chão</td></tr>
+<tr><td>Lobos e sombras da noite</td><td>~5</td><td>Silhuetas ambíguas, sem detalhe</td></tr>
+<tr><td>A bruxa que atravessa</td><td>1 ciclo</td><td>Único efeito noturno que entra na vila. Lenta e curvada, o que reduz frames</td></tr>
+<tr><td>Sombras</td><td>—</td><td>Geradas por transformação do sprite, não desenhadas</td></tr>
+</tbody>
+</table>
+
+<h4>Prioridade 5 — Itens e interface</h4>
+<table>
+<thead><tr><th>Asset</th><th>Qtd.</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>Itens especiais de expedição</td><td>~50</td><td>Três por edificação. Precisam ser visíveis no sprite do trabalhador</td></tr>
+<tr><td>Ícones de recurso</td><td>7</td><td>Comida, madeira, tecido, ouro, fôlego, diamante, população</td></tr>
+<tr><td>Equipamento vendável</td><td>20</td><td>Cinco linhas × quatro tiers</td></tr>
+<tr><td>Tela da mina</td><td>1 + 7</td><td>Painel com silhuetas escuras dos níveis futuros</td></tr>
+<tr><td>Pergaminhos</td><td>2–3</td><td>Arte genérica com variação de selo</td></tr>
+<tr><td>Balão de contrato do Rumpelstiltskin</td><td>1</td><td>Botão &ldquo;Assinar&rdquo;</td></tr>
+<tr><td><strong>Retratos de diálogo</strong></td><td>~80</td><td>6 emoções para os 6 que mais falam, 3 para os demais</td></tr>
+<tr><td>Grunhidos</td><td>~22</td><td>Meio segundo por personagem. Narrador não tem</td></tr>
+<tr><td>Textura de papel e vinheta</td><td>2</td><td>Filtro global, fixo na tela</td></tr>
+<tr><td>Ícones de mochila e itens leváveis</td><td>~25</td><td>Retangulares, tamanho = peso</td></tr>
+</tbody>
+</table>
+
+<h4>Prioridade 6 — Cutscenes</h4>
+<p>Última coisa a ser produzida, e é onde a <strong>Marca</strong> finalmente precisa ter forma definida. Fora das cutscenes ela não é renderizada, o que a tira do caminho crítico.</p>
+<ul>
+  <li>Abertura — a fuga, a morte do pai</li>
+  <li>O anão procurando João</li>
+  <li>A casa apodrecendo — Ato III</li>
+  <li>O Diabo na casa vitrificada</li>
+  <li>A morte do Dragão e a revelação</li>
+  <li>O plantio na clareira</li>
+</ul>
+
+<h2 id="aberto">31</h2>
+<h3>Em aberto</h3>
+<ul class="open">
+  <li><strong>Quantos níveis por edificação.</strong> Trava o maior bloco de arte do projeto — 135 sprites na estimativa de cinco níveis.</li>
+  <li><strong>Duração da infância e taxa de chegada de órfãos</strong>, calibradas contra a taxa de morte em expedição. Se a reposição não cobrir as baixas, o jogador entra em espiral.</li>
+  <li><strong>Quantos traumas existem no total</strong>, e se algum é puramente negativo.</li>
+  <li><strong>Conteúdo das demandas da Senhora Holle</strong> por ato.</li>
+  <li><strong>Se a Taberna consome comida das outras fontes</strong> para produzir bebida — seria o único elo da vila, e talvez o único que valha a pena existir.</li>
+  <li><strong>A forma da Marca</strong> — resolvida junto com as cutscenes, fora do caminho crítico.</li>
+</ul>
+
+<footer>The Way Back · bíblia de lore e sistemas · documento vivo</footer>
+
+</main>
+</div>
+</body>
+</html>

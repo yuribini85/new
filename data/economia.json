@@ -1,0 +1,83 @@
+{
+ "recursos": {
+  "comida": {
+   "teto": "deposito",
+   "fontes": [
+    "curral",
+    "horta",
+    "padaria",
+    "taberna",
+    "pesca"
+   ]
+  },
+  "madeira": {
+   "teto": "deposito",
+   "fontes": [
+    "lenhador"
+   ]
+  },
+  "tecido": {
+   "teto": "deposito",
+   "fontes": [
+    "alfaiate_ambulante"
+   ]
+  },
+  "ouro": {
+   "teto": null,
+   "fontes": [
+    "venda",
+    "mina_nivel_6"
+   ]
+  },
+  "folego": {
+   "teto": null,
+   "fontes": [
+    "expedicao"
+   ]
+  },
+  "diamante": {
+   "teto": null,
+   "fontes": [
+    "compra",
+    "anuncio"
+   ]
+  }
+ },
+ "deposito": {
+  "base": 200,
+  "por_nivel": 200
+ },
+ "producao": {
+  "por_pessoa_por_seg": 0.2,
+  "linear": true
+ },
+ "indice_fome": {
+  "perda_por_ponto": 0.008,
+  "piso": 0.3,
+  "recuperacao": "imediata"
+ },
+ "consumo_por_min": {
+  "crianca": 1,
+  "adulto": 1.5,
+  "lider": 1.5,
+  "anao": 2,
+  "noite_fator": 0.5,
+  "ato4_multiplicador": 1.2
+ },
+ "curva_custo": 1.35,
+ "madeira_pct_do_ouro": 0.4,
+ "comida_gigante_por_nivel": 8,
+ "obra": {
+  "base_seg": 30,
+  "multiplicador_por_nivel": 1.6,
+  "reducao_por_construtor": 0.15
+ },
+ "precos_venda": {
+  "madeira": 1,
+  "vegetais": 1,
+  "carne": 2,
+  "pao": 3,
+  "espada_t1": 15,
+  "espada_t4": 900
+ }
+}

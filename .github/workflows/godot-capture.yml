@@ -1,0 +1,46 @@
+name: Godot capture
+
+# Roda em runner do GitHub (Linux), sem depender de nenhuma máquina local.
+# Importa o projeto headless e tira uma captura de tela, publicada como artifact
+# do workflow (aba "Actions" -> execução -> "Artifacts").
+#
+# Pré-requisito: precisa existir um project.godot na raiz do repo. Até o
+# Módulo 1 (esqueleto do projeto) ser commitado, este job falha no passo de
+# import — isso é esperado, não é um bug do workflow.
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch: {}
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Godot 4.4
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+
+      - name: Install xvfb (display virtual para rodar o Godot headless)
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Import assets
+        run: godot --headless --import
+
+      - name: Capture screenshot
+        run: |
+          mkdir -p captures
+          xvfb-run -a -s "-screen 0 1080x1920x24" \
+            godot --headless --write-movie captures/frame.png --fixed-fps 1 --quit-after 1
+
+      - name: Upload captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capture-${{ github.sha }}
+          path: captures/
+          retention-days: 30

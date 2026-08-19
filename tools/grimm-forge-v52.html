@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grimm Forge V16</title>
+<style>
+  :root{
+    --ink:#140B04;
+    --bark:#1E1509;
+    --panel:#271D10;
+    --panel2:#312414;
+    --line:#4A3823;
+    --leather:#523F26;
+    --ochre:#A18869;
+    --brass:#C8A46A;
+    --parch:#D6CFC2;
+    --moss:#8A9166;
+    --rust:#B4664A;
+    --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --body:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(120% 80% at 20% 0%, #2A1E10 0%, transparent 60%),
+      var(--ink);
+    color:var(--parch);
+    font-family:var(--body);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .wrap{max-width:1560px;margin:0 auto;padding:26px 22px 60px}
+
+  header{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px}
+  h1{
+    font-family:var(--display);
+    font-size:30px;font-weight:600;letter-spacing:.01em;
+    margin:0 0 4px;color:#EDE3D2;
+  }
+  h1 em{font-style:italic;color:var(--brass)}
+  .lede{color:var(--ochre);max-width:78ch;margin:0}
+  .calib{
+    display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;
+    font-family:var(--mono);font-size:11px;color:var(--ochre);
+  }
+  .calib b{color:var(--brass);font-weight:600}
+
+  .cols{display:grid;grid-template-columns:minmax(380px,1fr) minmax(380px,1fr) minmax(440px,1.15fr);gap:16px;align-items:start}
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--bark));
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px 16px 18px;
+  }
+  .card + .card{margin-top:16px}
+  .card h2{
+    font-family:var(--display);font-size:15px;font-weight:600;margin:0 0 2px;color:#EFE6D6;
+    display:flex;align-items:baseline;gap:9px;
+  }
+  .card h2 span{font-family:var(--mono);font-size:10px;color:var(--brass);letter-spacing:.12em}
+  .card > p.help{color:var(--ochre);font-size:12px;margin:0 0 14px}
+
+  label.tag{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ochre);margin:16px 0 6px}
+  select,input[type=text],textarea{
+    width:100%;background:#150E06;border:1px solid var(--line);color:var(--parch);
+    border-radius:3px;padding:9px 10px;font:inherit;outline:none;
+  }
+  textarea{min-height:64px;resize:vertical}
+  select:focus,textarea:focus,input:focus{border-color:var(--brass);box-shadow:0 0 0 2px rgba(200,164,106,.15)}
+  optgroup{color:var(--brass);background:#150E06}
+  option{color:var(--parch)}
+
+  .seg{display:flex;flex-wrap:wrap;gap:5px}
+  .seg button{
+    flex:1 1 auto;background:#1A1108;border:1px solid var(--line);color:var(--ochre);
+    padding:7px 9px;border-radius:3px;cursor:pointer;font:inherit;font-size:12px;
+  }
+  .seg button:hover{border-color:var(--leather);color:var(--parch)}
+  .seg button.on{background:var(--brass);border-color:var(--brass);color:#1A1108;font-weight:600}
+
+  .ladder{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+  .ladder button{padding:7px 0;font-family:var(--mono);font-size:11px}
+  .ladder.states{grid-template-columns:repeat(3,1fr)}
+
+  .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .dim{background:#150E06;border:1px solid var(--line);border-radius:3px;padding:8px 10px}
+  .dim .k{font-family:var(--mono);font-size:10px;color:var(--ochre);letter-spacing:.1em}
+  .dim .ctl{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+  .dim .v{font-family:var(--display);font-size:22px;color:#EFE6D6}
+  .dim button{width:24px;height:24px;background:#241809;border:1px solid var(--line);color:var(--brass);border-radius:3px;cursor:pointer;font-size:14px;line-height:1}
+  .dim button:hover{background:var(--leather)}
+
+  .stage{
+    margin-top:12px;border:1px solid var(--line);border-radius:3px;background:
+      radial-gradient(circle at 50% 42%,rgba(200,164,106,.05),transparent 60%),#120C05;
+    aspect-ratio:4/3;padding:8px;
+  }
+  #grid{width:100%;height:100%;display:block}
+  .cell{cursor:pointer}
+  .cell polygon{vector-effect:non-scaling-stroke;stroke:#5C4A31;stroke-width:1;fill:rgba(214,207,194,.02)}
+  .cell[data-f="top"] polygon{fill:rgba(214,207,194,.06)}
+  .cell:hover polygon{stroke:var(--brass);fill:rgba(200,164,106,.10)}
+  .cell.on polygon{fill:rgba(200,164,106,.30);stroke:#E3C486;stroke-width:1.7}
+  .cell.on[data-face="top"] polygon{fill:rgba(200,164,106,.42)}
+  .cell.on[data-face="left"] polygon{fill:rgba(200,164,106,.20)}
+  .cell.dim{opacity:.22}
+  .cell text{fill:#C9BFAE;font-family:var(--mono);font-size:11px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+  .cell.on text{fill:#2A1C0A;font-weight:700}
+
+  .rowbtn{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .btn{background:#1A1108;border:1px solid var(--line);color:var(--parch);padding:8px 11px;border-radius:3px;cursor:pointer;font:inherit;font-size:12px}
+  .btn:hover{border-color:var(--brass)}
+  .btn.primary{background:var(--brass);border-color:var(--brass);color:#1A1108;font-weight:600}
+  .btn.ghost{color:var(--ochre)}
+
+  .note{font-size:11.5px;color:var(--ochre);margin-top:9px;line-height:1.45}
+  .note b{color:var(--brass);font-weight:600}
+  .lock{
+    margin-top:10px;padding:9px 10px;border-left:2px solid var(--rust);background:rgba(180,102,74,.07);
+    font-size:11.5px;color:#D9C6B4;
+  }
+
+  .brief{margin-top:12px;padding:11px 12px;border:1px solid var(--line);background:#150E06;border-radius:3px;font-size:12.5px}
+  .brief .h{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--brass);text-transform:uppercase}
+  .brief p{margin:5px 0 0;color:#CFC5B4}
+  .brief p b{color:var(--parch);font-weight:600}
+
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:0}
+  .tabs button{
+    background:transparent;border:0;border-bottom:2px solid transparent;color:var(--ochre);
+    padding:8px 12px;cursor:pointer;font:inherit;font-size:12px;
+  }
+  .tabs button.on{color:var(--brass);border-bottom-color:var(--brass)}
+  pre.out{
+    margin:0;background:#0E0904;border:1px solid var(--line);border-top:0;border-radius:0 0 3px 3px;
+    padding:14px;max-height:66vh;overflow:auto;white-space:pre-wrap;word-break:break-word;
+    font-family:var(--mono);font-size:11.5px;line-height:1.6;color:#D8CFC0;
+  }
+  .status{font-family:var(--mono);font-size:11px;color:var(--moss);min-height:16px;margin-top:8px}
+
+  @media (max-width:1180px){.cols{grid-template-columns:1fr 1fr}}
+  @media (max-width:820px){.cols{grid-template-columns:1fr}.wrap{padding:16px 12px 40px}.ladder{grid-template-columns:repeat(6,1fr)}}
+  :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  @media (prefers-reduced-motion:no-preference){.cell polygon{transition:fill .12s ease,stroke .12s ease}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Grimm Forge <em>V18</em> — Só Afirmativo</h1>
+  <p class="lede">O prompt positivo descreve apenas o que existe. Toda proibição vive só no campo negativo, porque modelo de imagem não processa negação — ele desenha o substantivo.</p>
+  <div class="calib">
+    <span>Referência medida: <b>63,4%</b> da área abaixo de L70</span>
+    <span><b>0,9%</b> acima de L170</span>
+    <span>saturação média <b>138/255</b></span>
+    <span>8 famílias no eixo <b>âmbar–oliva</b></span>
+    <span>arestas em <b>26°–33°</b></span>
+    <span>ocupação de tela <b>95% × 84%</b></span>
+  </div>
+</header>
+
+<div class="cols">
+
+  <!-- ============ COLUNA 1 ============ -->
+  <div>
+    <div class="card">
+      <h2>Envelope <span>01</span></h2>
+      <p class="help">O envelope é fixo por edificação e não muda entre tiers. O crescimento acontece dentro dele.</p>
+
+      <label class="tag">Dimensões da grade</label>
+      <div class="dims">
+        <div class="dim"><div class="k">COLUNAS X</div><div class="ctl"><button data-d="x" data-s="-1">–</button><span class="v" id="vx">2</span><button data-d="x" data-s="1">+</button></div></div>
+        <div class="dim"><div class="k">LINHAS Y</div><div class="ctl"><button data-d="y" data-s="-1">–</button><span class="v" id="vy">2</span><button data-d="y" data-s="1">+</button></div></div>
+        <div class="dim"><div class="k">NÍVEIS Z</div><div class="ctl"><button data-d="z" data-s="-1">–</button><span class="v" id="vz">2</span><button data-d="z" data-s="1">+</button></div></div>
+      </div>
+
+      <div class="stage"><svg id="grid" aria-label="Envelope isométrico editável"></svg></div>
+
+      <label class="tag">Visualizar nível</label>
+      <div class="seg" id="segView"></div>
+
+      <div class="rowbtn">
+        <button class="btn" id="bPreset">Preencher pelo tier</button>
+        <button class="btn" id="bFill">Preencher tudo</button>
+        <button class="btn ghost" id="bClear">Limpar</button>
+      </div>
+
+      <div class="lock"><b>GEOMETRY LOCK.</b> Célula vazia = massa estrutural proibida. Célula superior exige apoio direto embaixo. Beiral e ripa podem ultrapassar minimamente, sem criar piso, varanda, anexo ou nova silhueta.</div>
+      <p class="note">O envelope não é mais anexado como imagem: ele é traduzido em texto dentro do prompt, em células e proporção de massa por estágio.</p>
+    </div>
+  </div>
+
+  <!-- ============ COLUNA 2 ============ -->
+  <div>
+    <div class="card">
+      <h2>Edificação <span>02</span></h2>
+      <label class="tag" for="sel">Catálogo</label>
+      <select id="sel"></select>
+
+      <label class="tag" id="labLadder">Tier visual</label>
+      <div class="ladder" id="ladder"></div>
+
+      <div class="brief" id="brief"></div>
+
+      <label class="tag">Estado de canteiro (em obra, sem andaime)</label>
+      <div class="seg" id="segSite">
+        <button data-v="no" class="on">Concluído</button>
+        <button data-v="yes">Em obra</button>
+      </div>
+      <p class="note" id="siteNote">Progresso lido por material entregue e amarrado, trecho de telhado aberto e viga de içamento — nunca por estrutura provisória.</p>
+
+      <label class="tag">Rótulo do estágio</label>
+      <div class="seg" id="segNaming">
+        <button data-v="image" class="on">IMAGE n de N</button>
+        <button data-v="tier">Tier Tn</button>
+      </div>
+      <p class="note">"IMAGE 3 de 11" deixa explícito que cada bloco é uma imagem separada. "T3" o modelo lê como etiqueta técnica e ignora.</p>
+
+      <label class="tag">Diretriz do catálogo (texto em português)</label>
+      <div class="seg" id="segCat">
+        <button data-v="no" class="on">Não incluir</button>
+        <button data-v="yes">Incluir</button>
+      </div>
+      <p class="note">Os textos do catálogo descrevem decadência em vários estágios e puxam a imagem para ruína. Mantenha desligado até o fechamento estar estável.</p>
+
+      <label class="tag">Comprimento do prompt</label>
+      <div class="seg" id="segLen">
+        <button data-v="compact" class="on">Compacto</button>
+        <button data-v="full">Com controle extra</button>
+      </div>
+      <p class="note" id="modeNote"></p>
+
+      <label class="tag">Camada narrativa</label>
+      <div class="seg" id="segAccent">
+        <button data-v="none" class="on">Grimm neutro</button>
+        <button data-v="temptation">Tentação</button>
+        <button data-v="omen">Presságio</button>
+      </div>
+
+      <label class="tag">Acesso principal</label>
+      <div class="seg" id="segDoor">
+        <button data-v="auto" class="on">Automático</button>
+        <button data-v="right">Face direita</button>
+        <button data-v="left">Face esquerda</button>
+        <button data-v="none">Sem porta</button>
+      </div>
+
+      <label class="tag">Fundo e formato</label>
+      <div class="seg" id="segBg">
+        <button data-v="alpha" class="on">Alpha</button>
+        <button data-v="white">Branco</button>
+        <button data-v="neutral">Cinza neutro</button>
+      </div>
+      <div class="seg" id="segFmt" style="margin-top:5px">
+        <button data-v="square" class="on">Quadrado</button>
+        <button data-v="portrait">Retrato</button>
+        <button data-v="landscape">Paisagem</button>
+      </div>
+
+      <label class="tag" for="extra">Acréscimo livre</label>
+      <textarea id="extra" placeholder="ex.: neve assentada no telhado, hera numa face, tábuas novas num trecho reparado…"></textarea>
+    </div>
+  </div>
+
+  <!-- ============ COLUNA 3 ============ -->
+  <div>
+    <div class="card" style="padding-bottom:14px">
+      <h2>Saída <span>03</span></h2>
+      <p class="help">Prompt positivo e negativo são blocos separados — metade dos modelos trata proibição inline como sugestão.</p>
+      <div class="tabs" id="tabs">
+        <button data-t="prompt" class="on">Prompt</button>
+        <button data-t="neg">Negativo</button>
+        <button data-t="params">Parâmetros</button>
+        <button data-t="qa">Checklist</button>
+      </div>
+      <pre class="out" id="out"></pre>
+      <div class="rowbtn">
+        <button class="btn primary" id="bCopy">Copiar aba atual</button>
+        <button class="btn" id="bCopyAll">Copiar pacote completo</button>
+        <button class="btn" id="bCopyLadder">Copiar plano de todos os tiers</button>
+        <button class="btn ghost" id="bTxt">Salvar .txt</button>
+      </div>
+      <div class="status" id="status"></div>
+      <div style="margin-top:10px;font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;opacity:.72">ARQUIVO: <span id="fname"></span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const CATALOG = {"buildings": {"Cabana do Lenhador": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "toras empilhadas e clareira aberta na mata.", "tiers": {"T0": "Toras apodrecidas espalhadas e cepo rachado tomado por musgo, mato invadindo a clareira.", "T1": "Volume mínimo de troncos descascados, cobertura de palha rala, chão de terra e serragem.", "T2": "Troncos calafetados com barro, cobertura de palha uniforme, primeira pilha organizada de toras.", "T3": "Anexo lateral aberto com toras cortadas em bitolas iguais, clareira ampliada e limpa.", "T4": "Base em pedra bruta contra a umidade, madeira tratada em tom mel, cepos alinhados.", "T5": "Segundo pavimento em madeira aparelhada, estoque de toras acumulado em duas fileiras.", "T6": "Entalhes de folhagem na madeira, cobertura de tabuinhas escuras, floreiras com silvestres.", "T7": "Madeira nobre avermelhada, pátio calçado, toras selecionadas empilhadas em geometria regular.", "T8": "Pedra clara na base e madeira nobre no corpo, pátio simétrico, estoque abundante e uniforme.", "T9": "Veios claros percorrendo a madeira, tronco ancestral petrificado incorporado ao volume, folhagem prateada.", "T10": "Madeira dourada de veio contínuo, toras âmbar translúcidas, vegetação perene fora de estação."}, "fp": [2, 2, 2], "req": "a stack of split logs against the wall and a plain chopping block", "allow": "sawn timber stacked by gauge, bark litter, a low split-rail edge", "en": "a woodcutter's cabin: a compact dwelling whose whole reason to exist is cutting and storing firewood"}, "Horta": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "canteiros retangulares em fileiras.", "tiers": {"T0": "Canteiros desfeitos em terra endurecida, cerca caída e apodrecida, mato seco dominando.", "T1": "Dois canteiros irregulares em terra revolvida, cerca de gravetos tortos, brotos esparsos.", "T2": "Quatro canteiros regulares, cerca de ripas retas, folhagem uniforme e verde.", "T3": "Canteiros duplicados com caminhos de terra entre eles, primeiras trepadeiras em suporte.", "T4": "Canteiros contidos por pedra baixa, caminhos de cascalho claro, cultivo em três cores.", "T5": "Terraceamento em dois níveis com muro de arrimo em pedra, área cultivada dobrada.", "T6": "Canteiros geométricos com bordadura florida, cerca pintada em verde-musgo, arcos vegetais.", "T7": "Muretas em pedra clara, cultivo denso em quatro quadrantes simétricos, caminhos tratados.", "T8": "Horta formal em pedra clara com bordaduras esculpidas e cultivo exuberante em camadas.", "T9": "Folhagem prateada entre as espécies comuns, frutos translúcidos, canteiros em pedra polida.", "T10": "Plantas de folhagem irisada e frutos cristalinos, floração contínua fora de estação."}, "fp": [3, 2, 1], "req": "raised planting beds in rows with a low fence", "allow": "climbing supports, watering vessels, seed frames", "en": "a vegetable garden: raised planting beds in rows behind a low fence, with only a tiny tool shelter"}, "Curral dos Animais": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "cercado de criação com cocho e abrigo.", "tiers": {"T0": "Campo tomado por mato seco, celeiro desabado em tábuas apodrecidas, fardos desfeitos.", "T1": "Faixa de trigo irregular, cercadura de galhos, volume de palha e barro para estocagem.", "T2": "Campo uniforme e retangular, celeiro vedado em madeira, fardos alinhados na borda.", "T3": "Dois campos com culturas diferentes, celeiro ampliado, área de secagem em terra batida.", "T4": "Celeiro com base em pedra e madeira em tom âmbar, pátio calçado, muretas nos campos.", "T5": "Celeiro acrescido de segundo pavimento de estocagem, campos em faixas regulares.", "T6": "Celeiro em vermelho profundo com entalhes de espiga, cercas brancas, cereal maduro dourado.", "T7": "Pedra clara e madeira nobre no celeiro, campos simétricos, colheita organizada no pátio.", "T8": "Complexo agrícola formal com celeiro monumental e campos vastos em faixas perfeitas.", "T9": "Espigas de tonalidade dourada intensa e porte descomunal, grãos com aparência cristalina.", "T10": "Celeiro com detalhes em ouro fosco, cereal irisado, colheita permanente e pólen suspenso."}, "fp": [3, 3, 2], "req": "a fenced livestock pen with a feeding trough and a low open shelter, held inside a low timber edge", "allow": "fodder bundles, straw bedding, water vessels", "en": "a livestock pen: a fenced yard for geese and goats with a feeding trough and a low open shelter, with no crop field"}, "Poço": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "círculo de pedra isolado.", "tiers": {"T0": "Anel de pedra desmoronado com metade das pedras caídas, boca tomada por trepadeira e limo.", "T1": "Anel baixo de pedras soltas sobre terra úmida, madeira torta atravessando o topo.", "T2": "Anel de pedra assentada regular, coroamento de madeira reta, terreno limpo em volta.", "T3": "Anel acrescido de pequena cobertura de palha, piso de lajes irregulares ao redor.", "T4": "Pedra aparelhada em tom claro, cobertura de tabuinhas, calçamento circular completo.", "T5": "Coroamento acrescido de pequena torre de pedra, musgo controlado nas juntas.", "T6": "Pedra entalhada com motivo de ondas, cobertura em verde-escuro, flores brancas na base.", "T7": "Pedra clara aparelhada com bordadura esculpida, calçada em mosaico radial.", "T8": "Poço monumental em mármore claro, mosaico elaborado, água de superfície espelhada.", "T9": "Água translúcida esverdeada, incrustações claras na pedra, nenúfares de folhagem prateada.", "T10": "Mármore branco com incrustações douradas, água irisada, nenúfares dourados e névoa baixa."}, "fp": [1, 1, 2], "req": "a stone ring with a crossbeam and a hanging bucket", "allow": "a stone paving ring, a rope coil, water vessels", "en": "a village well: a stone ring with a crossbeam and bucket, a tall narrow object, never a house"}, "Lago": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "espelho d'água com margem definida.", "tiers": {"T0": "Charco assoreado de água turva e margem desmoronada, troncos afundados e juncos secos.", "T1": "Poça irregular de água turva, margem de barro exposto, juncos ralos e tortos.", "T2": "Lâmina d'água limpa e definida, margem de grama firme, juncos uniformes.", "T3": "Lago ampliado com pequena enseada, passadiço rústico de troncos na borda.", "T4": "Margem contida por pedra bruta, água clara com fundo visível, vegetação aquática organizada.", "T5": "Dois níveis de espelho d'água conectados por queda baixa sobre pedra.", "T6": "Margem em pedra assentada com bordadura de flores aquáticas, água azul-esverdeada saturada.", "T7": "Contorno regular em pedra clara, ilhota central ajardinada, vegetação de margem tratada.", "T8": "Lago ornamental em mármore claro com bordadura esculpida e jardim aquático formal.", "T9": "Fundo cristalino visível, nenúfares prateados, superfície absolutamente parada.", "T10": "Água irisada com fundo de cristal, floração aquática dourada, névoa permanente e pétalas suspensas."}, "fp": [5, 5, 1], "req": "a defined water surface with a shaped bank and reeds", "allow": "a plank jetty, mooring posts, water plants", "en": "a fishing lake: a shaped water surface with a bank, reeds and a plank jetty"}, "Moinho": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "corpo cilíndrico com roda ou aspas.", "tiers": {"T0": "Corpo cilíndrico partido e desabado, roda quebrada e encravada no leito assoreado, hera cobrindo tudo.", "T1": "Corpo de tábuas irregulares junto ao curso d'água, roda de madeira tosca e desalinhada.", "T2": "Corpo cilíndrico vedado em madeira escura, roda regular, canal contido por pedras.", "T3": "Corpo acrescido de anexo de estocagem, canal revestido em madeira, grãos acumulados na base.", "T4": "Base em pedra assentada e corpo em madeira clara, roda reforçada em metal escuro.", "T5": "Corpo acrescido de mais um trecho cilíndrico, com aspas amplas substituindo o eixo baixo.", "T6": "Corpo pintado em branco e ocre com faixas entalhadas, aspas revestidas em tecido claro.", "T7": "Corpo em pedra clara aparelhada, aspas em madeira nobre, pátio de descarga calçado.", "T8": "Moinho monumental em pedra clara com ornamentos esculpidos e montes de farinha organizados.", "T9": "Pedra com filetes prateados, aspas em tecido pálido translúcido, farinha assentada como geada.", "T10": "Pedra branca com filetes dourados, aspas irisadas, farinha dourada cobrindo o terreno."}, "fp": [2, 2, 3], "req": "a large undershot wheel on one side, drawn as a complete circle hanging free beside the building, and grain sacks stacked at its foot", "allow": "a millstone, a loading chute, flour dust on surfaces", "en": "a watermill raised on stone piers with an open gap beneath it, dominated by a large undershot wheel hanging down into that gap, with grain sacks at its foot"}, "Oficina do Sapateiro": {"category": "TRANSFORMAÇÃO E OFÍCIOS", "anchor": "fachada com vitrine de calçados alinhados.", "tiers": {"T0": "Fachada desabada em tábuas podres, prateleira externa partida com pares mofados e desemparelhados.", "T1": "Volume de tábuas mal ajustadas, cobertura de palha, prateleira rasa com pares desemparelhados.", "T2": "Fachada vedada e pintada em marrom, prateleira externa organizada com pares iguais.", "T3": "Anexo lateral de estocagem, vitrine dupla, couro curtido empilhado ao lado.", "T4": "Base em pedra e madeira em tom mel, acabamento fino, calçados em couro claro expostos.", "T5": "Segundo pavimento sobre a oficina, vitrine acrescida de um nível de exposição.", "T6": "Fachada entalhada com motivo de laço, pintura em azul profundo, toldo de tecido listrado.", "T7": "Pedra clara e madeira nobre, vitrine ampla, calçados em couro tingido com fivelas metálicas.", "T8": "Fachada formal em mármore claro com ornamento esculpido e exposição em camadas.", "T9": "Calçados de fio prateado e material translúcido, tecidos de tom pálido, filetes claros na fachada.", "T10": "Fachada branca com filetes dourados, calçados cristalinos, tecidos irisados flutuando."}, "fp": [2, 2, 2], "req": "an external shelf displaying finished footwear", "allow": "stacked cured leather, a shutter counter, cloth awning", "en": "a shoemaker's workshop: a dwelling-sized building whose face carries an external display shelf of finished footwear"}, "Forja": {"category": "TRANSFORMAÇÃO E OFÍCIOS", "anchor": "massa maciça de pedra escurecida com estoque de metal bruto.", "tiers": {"T0": "Núcleo de pedra rachado e enegrecido meio desabado, escória endurecida e metal oxidado no chão.", "T1": "Núcleo baixo de pedras empilhadas com marcas escuras de calor, cobertura de tábuas curtas.", "T2": "Núcleo vedado em pedra assentada, área de trabalho coberta, metal bruto empilhado por bitola.", "T3": "Anexo lateral aberto para estocagem, dois núcleos de pedra, chão em lajes escuras.", "T4": "Alvenaria escura regular com contorno em pedra clara, barras de metal alinhadas.", "T5": "Volume acrescido de segundo pavimento com torre de tiragem em pedra escura.", "T6": "Pedra com relevos gravados, revestimento metálico oxidado, faixas em vermelho profundo.", "T7": "Basalto aparelhado com detalhes em metal polido, lingotes empilhados em ordem rigorosa.", "T8": "Complexo formal e simétrico em pedra escura e metal claro, estoque nobre organizado.", "T9": "Pedra negra atravessada por veios carmim frios, metal cristalizado em formações regulares.", "T10": "Veios dourados e carmim contínuos na pedra negra, lingotes de ouro e prata irisados."}, "fp": [2, 2, 2], "req": "a masonry forge core and metal stock stacked by gauge", "allow": "an anvil block, a quench trough, slag heap", "en": "a smithy: a masonry forge core dominating the volume, with metal stock stacked by gauge"}, "Alfaiataria": {"category": "TRANSFORMAÇÃO E OFÍCIOS", "anchor": "tecidos coloridos pendurados na fachada.", "tiers": {"T0": "Fachada desabada com varal partido e retalhos apodrecidos presos ao mato.", "T1": "Volume de madeira crua, cobertura de palha, retalhos simples estendidos na frente.", "T2": "Fachada vedada e pintada, panos inteiros e uniformes pendurados em varal reto.", "T3": "Anexo lateral com área coberta de secagem, tecidos em três cores.", "T4": "Base em pedra clara, madeira aparelhada, tecidos de trama fina em tons pastel.", "T5": "Segundo pavimento acrescido com galeria de secagem.", "T6": "Fachada entalhada, pintura em violeta, tecidos estampados e fitas coloridas.", "T7": "Pedra clara com detalhes em madeira nobre, sedas e brocados dispostos em cascata.", "T8": "Fachada formal em mármore claro com ornamento esculpido e tecidos nobres em camadas.", "T9": "Tecidos de trama prateada e bordados finos, véus translúcidos, filetes claros na fachada.", "T10": "Fachada branca com filetes dourados, sedas irisadas, bordados em ouro e véus suspensos."}, "fp": [2, 2, 2], "req": "cloth hung on a line across the façade", "allow": "bolts of fabric, a shutter counter, drying frames", "en": "a tailor's shop: a workshop whose facade is crossed by a line of hanging cloth"}, "Cabana do Construtor": {"category": "TRANSFORMAÇÃO E OFÍCIOS", "anchor": "pátio de materiais mais visível que a construção.", "tiers": {"T0": "Abrigo desabado com pátio tomado por entulho misturado, pedras rachadas e madeira apodrecida.", "T1": "Abrigo mínimo de tábuas soltas, pátio de terra com pedras e madeira desorganizadas.", "T2": "Abrigo vedado, pátio organizado com materiais separados por tipo.", "T3": "Anexo coberto de estocagem, pilhas regulares de pedra cortada e madeira aparelhada.", "T4": "Base de pedra, corpo em madeira tratada, pátio calçado com materiais alinhados.", "T5": "Segundo pavimento acrescido com plataforma de armazenagem, pátio ampliado.", "T6": "Fachada entalhada com motivo de esquadro, pintura em ocre, três qualidades de material visíveis.", "T7": "Pedra clara e madeira nobre, pátio simétrico com mármore e metal estocados.", "T8": "Estrutura formal em mármore claro com ornamento esculpido e materiais nobres organizados.", "T9": "Blocos de material translúcido e veios prateados, pedra polida com filetes claros.", "T10": "Pedra branca com detalhes dourados, materiais preciosos empilhados, blocos em suspensão estável."}, "fp": [2, 2, 2], "req": "a material yard with stone and timber sorted into separate piles", "allow": "cut blocks, mortar tubs, a hoisting beam", "en": "a builder's yard: a working shed beside sorted piles of stone and timber"}, "Gazebo": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "somente um palco — estrutura aberta e elevada, sem fechamento nem interior, em todos os tiers.", "tiers": {"T0": "Plataforma desabada com tábuas partidas e base de pedra deslocada, mato crescendo entre elas.", "T1": "Plataforma baixa de tábuas irregulares sobre pedras, contorno de terra batida.", "T2": "Plataforma nivelada em madeira vedada, degrau perimetral regular.", "T3": "Plataforma ampliada em formato octogonal, borda de ripas.", "T4": "Base em pedra assentada, piso em madeira clara aparelhada, borda torneada.", "T5": "Plataforma acrescida de cobertura leve apoiada sobre a base elevada.", "T6": "Borda entalhada com motivo musical, pintura em branco e verde, tecidos drapeados.", "T7": "Mármore claro com cobertura em madeira nobre, piso em mosaico radial.", "T8": "Palco formal em mármore com ornamento esculpido e cobertura elaborada.", "T9": "Pedra polida com filetes prateados, cobertura em tecido translúcido, pétalas assentadas.", "T10": "Pedra branca com filetes dourados, cobertura irisada, pétalas suspensas no ar."}, "fp": [2, 2, 2], "req": "a raised open platform with a perimeter step and no enclosure at any tier", "allow": "a light roof from T5, a low balustrade, drapery", "en": "a musicians' stage: an elaborate raised performance platform open to the sky, its deck completely clear, with a low rail behind and a broad stair at the front"}, "Alojamento": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "dormitório coletivo — capacidade, não conforto.", "tiers": {"T0": "Volume desabado de tábuas podres e barro esfarelado, cobertura caída, mato tomando o terreno.", "T1": "Volume único de tábuas e barro, cobertura de palha irregular, terreno de terra exposta.", "T2": "Corpo vedado e caiado, cobertura de palha uniforme, pequeno canteiro na frente.", "T3": "Anexo lateral, cobertura em duas águas, cercadura baixa de ripas.", "T4": "Base em pedra, corpo caiado com madeira escura aparente, cobertura de tabuinhas.", "T5": "Segundo pavimento acrescido, com avanço do nível superior sobre o inferior.", "T6": "Entalhes florais neutros, pintura em ocre e creme, floreiras e trepadeiras.", "T7": "Pedra clara e madeira nobre, cobertura em ardósia, jardim frontal cuidado.", "T8": "Casa formal em mármore claro com ornamento esculpido e jardim simétrico.", "T9": "Filetes prateados na fachada, cobertura azul-escura, vegetação de folhagem prateada.", "T10": "Fachada branca com filetes dourados, cobertura irisada, jardim de floração perene."}, "fp": [3, 2, 2], "req": "a long row of shuttered sleeping windows along one wall and a laundry line of plain cloth strung outside", "allow": "a small planted bed, a low fence, a woodpile", "en": "a dormitory: a plain communal sleeping house, longer than a family home, identified by its row of sleeping windows and a laundry line outside"}, "Taberna": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "balcão de bebida e mesas corridas ao ar livre.", "tiers": {"T0": "Corpo desabado com terraço partido, mesas tombadas e apodrecidas, hera cobrindo o conjunto.", "T1": "Volume de madeira crua, cobertura de palha, terreno de terra com bancos toscos de tronco.", "T2": "Corpo vedado e caiado, terraço externo em madeira nivelada, mesas corridas simples.", "T3": "Anexo lateral de hospedagem, terraço ampliado e coberto por palha.", "T4": "Base em pedra assentada, corpo caiado com madeira escura, terraço calçado.", "T5": "Segundo e terceiro pavimentos acrescidos, com nível superior avançado.", "T6": "Fachada entalhada, pintura em verde profundo e creme, bandeirolas, toldos e jardineiras.", "T7": "Pedra clara e madeira nobre, terraço em mosaico, pergolado com vinhas.", "T8": "Edifício formal em mármore claro com ornamento esculpido e terraço ajardinado.", "T9": "Vinhas de folhagem prateada com frutos âmbar, tecidos de tom pálido, filetes claros.", "T10": "Fachada branca com detalhes dourados, tecidos irisados, floração perene sobre o pergolado."}, "fp": [3, 2, 3], "req": "an outdoor terrace with long tables and benches and a shuttered drink counter on the front wall", "allow": "barrels at the wall, a pergola with vines, hanging cloth", "en": "a tavern: a drinking house whose front is an outdoor terrace of long tables and benches, with a shuttered drink counter on the wall"}, "Mercado": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "ponto fixo de compra e venda.", "tiers": {"T0": "Armações partidas com tecidos rasgados presos ao chão, caixotes quebrados e mato entre eles.", "T1": "Duas barracas tortas de galhos e panos remendados sobre terra batida.", "T2": "Quatro barracas regulares de tecido cru, chão de cascalho, mercadorias empilhadas por tipo.", "T3": "Fileira de seis barracas com estrutura de madeira reta, corredor central definido.", "T4": "Barracas sobre bases de pedra, tecidos em cores lisas, piso calçado em lajes.", "T5": "Feira acrescida de plataforma central elevada de pedra entre duas alas.", "T6": "Tecidos listrados em cores saturadas, bandeirolas, mercadorias variadas e vistosas.", "T7": "Estruturas fixas em pedra clara com coberturas de tecido nobre, piso em mosaico.", "T8": "Mercado formal em mármore claro com ornamento esculpido e mercadorias fartas.", "T9": "Coberturas em tecido translúcido, cristais e especiarias raras expostos, filetes prateados.", "T10": "Coberturas irisadas com bordado dourado, mercadorias cristalinas, pétalas suspensas."}, "fp": [3, 2, 2], "req": "cloth market stalls with goods stacked by type and no permanent building", "allow": "crates, sacks, hanging bunting cloth", "en": "a market: cloth-covered trading stalls with goods stacked by type, a permanent fixed trading post"}, "Casa de João e Maria": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "casa austera — identidade por azul acinzentado e trilha de pedrinhas claras.", "tiers": {"T0": "Volume desabado de tábuas cruas rachadas, trilha de pedrinhas dispersa e coberta de folhas secas.", "T1": "Volume torto de tábuas cruas e barro rachado, cobertura de palha rala, terreno pedregoso.", "T2": "Corpo vedado, cobertura remendada porém regular, cercadura mínima de gravetos.", "T3": "Anexo pequeno de estocagem, cobertura em duas águas, primeiro canteiro plantado.", "T4": "Base em pedra bruta, corpo caiado com madeira escura, caminho de terra firme.", "T5": "Sótão acrescido, com segunda cobertura menor sobre o anexo.", "T6": "Entalhes simples, pintura em azul acinzentado, floreiras modestas e trilha de pedrinhas claras.", "T7": "Pedra clara e madeira nobre, jardim organizado, cerca branca, trilha em pedra assentada.", "T8": "Casa formal em mármore claro com ornamento esculpido e jardim simétrico.", "T9": "Trilha de pedrinhas translúcidas, folhagem prateada no jardim, filetes claros na fachada.", "T10": "Fachada branca com filetes dourados, trilha cristalina, floração perene e mata afastada."}, "fp": [2, 2, 2], "req": "a pale pebble path leading to the closed door", "allow": "a small planted bed, a low graveyard-grey fence, stacked kindling", "en": "the Hansel and Gretel house: a small cottage reached by a pale pebble path"}, "Biblioteca": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "volume denso com prateleiras externas de volumes alinhados.", "tiers": {"T0": "Corpo desabado com prateleiras partidas e volumes empapados espalhados, mofo e mato.", "T1": "Volume baixo de madeira e barro, cobertura de palha, pilhas de papel protegidas por panos.", "T2": "Corpo vedado e caiado, prateleiras externas rasas com volumes alinhados.", "T3": "Anexo lateral de arquivo acrescido, cobertura em duas águas.", "T4": "Base em pedra assentada, fachada em pedra clara com madeira escura, acabamento cuidado.", "T5": "Segundo pavimento acrescido, com nível superior recuado.", "T6": "Relevos de folhas e volutas, pintura em verde-escuro e creme, tecidos com insígnia.", "T7": "Pedra clara simétrica com ornamento esculpido, jardim frontal contido.", "T8": "Edifício monumental em mármore com ornamento elaborado e jardim formal.", "T9": "Volumes de capa prateada expostos, filetes claros na pedra, páginas soltas assentadas no piso.", "T10": "Pedra branca com filetes dourados, volumes de capa dourada, páginas em suspensão estável."}, "fp": [2, 2, 3], "req": "external shelving with aligned volumes", "allow": "a covered reading step, document chests, cloth covers", "en": "a library: a tall building whose face carries external shelving with aligned volumes"}, "Cabana do Caçador": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "construção elevada sobre base de troncos, com plataforma de observação.", "tiers": {"T0": "Plataforma desabada sobre troncos apodrecidos, peles ressecadas presas ao mato, galhada partida.", "T1": "Abrigo mínimo de galhos e peles cruas, camuflado por mato alto.", "T2": "Corpo vedado em tábuas escuras, cobertura de palha densa, terreno limpo em torno.", "T3": "Estrutura elevada sobre base de troncos, plataforma externa de observação acrescida.", "T4": "Base em pedra bruta, madeira tratada em tom escuro, plataforma calçada.", "T5": "Segundo pavimento acrescido com posto de observação superior.", "T6": "Madeira entalhada com motivo de galhada, pintura verde-escura, troféus montados na fachada.", "T7": "Pedra escura e madeira nobre, plataforma panorâmica, peles nobres expostas.", "T8": "Estrutura formal em pedra escura com ornamento esculpido e troféus organizados.", "T9": "Peles prateadas, madeira com veios claros, galhada ancestral de porte descomunal montada acima.", "T10": "Madeira negra com filetes dourados, peles irisadas, galhada dourada colossal e folhagem prateada."}, "fp": [2, 2, 3], "req": "hides stretched taut on drying frames fixed to the wall, and a rack of curing pelts under the raised floor", "allow": "antlers mounted on the façade, drying frames, a rope ladder pulled up", "en": "a hunter's cabin raised high on stout log posts, with a railed lookout platform on one side and hides stretched on drying frames against its wall"}, "Cabana do Herbalista": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "feixes de ervas secando na fachada e canteiros medicinais.", "tiers": {"T0": "Corpo desabado com feixes secos e enegrecidos pendurados, canteiros tomados por mato bravo.", "T1": "Volume de barro e galhos, cobertura de palha, ervas amarradas penduradas na fachada.", "T2": "Corpo vedado e caiado, feixes organizados em fileira, canteiro de ervas na frente.", "T3": "Anexo aberto de secagem acrescido, canteiros duplicados em três espécies.", "T4": "Base em pedra, corpo caiado com madeira escura, canteiros contidos por mureta baixa.", "T5": "Segundo pavimento acrescido com galeria de secagem coberta.", "T6": "Entalhes de folha, pintura verde-oliva, trepadeiras densas e ervas floridas em variedade.", "T7": "Pedra clara e madeira nobre, jardim botânico simétrico em canteiros identificados.", "T8": "Estrutura formal em mármore claro com ornamento esculpido e jardim botânico em camadas.", "T9": "Ervas de folhagem prateada e flores translúcidas, filetes claros na fachada.", "T10": "Fachada branca com filetes dourados, ervas irisadas, pólen suspenso e floração perene."}, "fp": [2, 2, 2], "req": "bundles of drying herbs hanging in rows on the façade, and two raised herb beds held inside a low timber edge against the wall", "allow": "drying frames, clay vessels, climbing plants", "en": "a herbalist's cabin: a cottage whose whole façade is hung with rows of drying herb bundles, above raised herb beds set against the wall"}, "Curandeiro": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "construção caiada de branco com jardim medicinal e tecidos limpos.", "tiers": {"T0": "Corpo desabado com caiação descascada e panos rasgados presos ao entulho, canteiros secos.", "T1": "Volume simples de madeira crua e barro, cobertura de palha, panos brancos estendidos.", "T2": "Corpo vedado e caiado de branco, cobertura uniforme, canteiro de ervas medicinais.", "T3": "Anexo lateral de repouso acrescido, cercadura baixa e caminho de lajes.", "T4": "Base em pedra clara, fachada branca com madeira escura, acabamento asseado.", "T5": "Segundo pavimento acrescido com terraço de repouso.", "T6": "Relevo de folha e taça, pintura branca e azul-clara, tecidos limpos e jardim medicinal.", "T7": "Pedra clara simétrica com ornamento esculpido, jardim medicinal em canteiros geométricos.", "T8": "Edifício formal em mármore claro com ornamento elaborado e jardim em camadas.", "T9": "Plantas de folhagem prateada, tecidos de tom pálido translúcido, filetes claros na pedra.", "T10": "Pedra branca com filetes dourados, tecidos irisados, floração perene e névoa clara e serena."}, "fp": [2, 2, 2], "req": "clean pale cloth hung out and a medicinal bed", "allow": "a low bench, water vessels, a whitewashed wall", "en": "a healer's house: a clean pale cottage with washed cloth hung out and a medicinal bed"}, "Cemitério": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "campo de lápides com muro perimetral, ciprestes e portão de ferro. Estágio único.", "tiers": {"T0": "Lápides tombadas e rachadas em terreno afundado, muro desmoronado, mato bravo cobrindo tudo.", "T1": "Campo de lápides tortas de pedra bruta alinhadas em fileiras, muro baixo de pedra assentada, ciprestes escuros nos cantos, portão de ferro simples e caminho central de terra batida."}, "fp": [3, 3, 1], "req": "headstones in rows with a perimeter wall and cypress", "allow": "a gate, a gravel path, a small mausoleum from T5", "en": "a graveyard: headstones in rows inside a perimeter wall with cypress, with no dwelling"}, "Depósito": {"category": "ARMAZENAMENTO", "anchor": "galpão com pilhas de material sob cobertura.", "tiers": {"T0": "Cobertura desabada sobre pilhas apodrecidas, tábuas partidas e material inutilizado espalhado.", "T1": "Cobertura de palha sobre troncos, laterais abertas, materiais sem ordem no chão de terra.", "T2": "Corpo vedado em tábuas, cobertura uniforme, materiais separados por tipo.", "T3": "Anexo acrescido, piso de cascalho compactado, pilhas regulares.", "T4": "Base em pedra assentada, corpo em madeira tratada, piso calçado, estoque em blocos alinhados.", "T5": "Segundo pavimento acrescido com plataforma de estocagem.", "T6": "Fachada entalhada com marcas de inventário, pintura em ocre e marrom, tecidos sobre as pilhas.", "T7": "Pedra clara e madeira nobre, estoque abundante em geometria rigorosa.", "T8": "Galpão formal em mármore claro com ornamento esculpido e estoque farto organizado.", "T9": "Mercadorias translúcidas e cristalinas, filetes prateados na pedra.", "T10": "Pedra branca com filetes dourados, mercadorias irisadas, volume interno aparentemente maior que o externo."}, "fp": [2, 2, 2], "req": "sheltered stacks of material sorted by type", "allow": "crates, sacks, a hoisting beam, cloth covers over the piles", "en": "a storehouse: a wide sheltered building holding stacks of material sorted by type"}, "Lar dos Órfãos": {"category": "SISTEMA", "anchor": "casa comunal longa e baixa para crianças.", "tiers": {"T0": "Fundação de pedra afundada e vigas mestras partidas, patamar de acesso tomado por mato, degraus deslocados.", "T1": "Barracão único de troncos com portal largo de tábuas, degrau de terra batida, fachada ainda indefinida.", "T2": "Corpo vedado em madeira escura com fachada frontal reta, porta dupla fechada, patamar de pedra bruta.", "T3": "Anexo lateral de reuniões, cobertura em duas águas contínua, escadaria frontal de três degraus.", "T4": "Base em pedra assentada, madeira aparelhada em tom mel, patamar calçado e batente reforçado em ferro.", "T5": "Segundo pavimento com galeria frontal recuada, cumeeira alta dominante sobre o resto da aldeia.", "T6": "Entalhes de brasão da aldeia na verga, pintura em verde profundo e creme, gelosias e umbral trabalhado.", "T7": "Pedra clara aparelhada e madeira nobre, escadaria simétrica ampla, coroamento com frontão esculpido.", "T8": "Salão monumental em mármore claro com frontão elaborado, escadaria em três lances e pátio simétrico.", "T9": "Filetes prateados percorrendo a pedra, portas de veio claro, hera perene de folhagem prateada na fachada.", "T10": "Pedra branca com filetes dourados, portal dourado fechado, cumeeira irisada e patamar de acesso perene."}, "fp": [3, 2, 3], "req": "a long low communal house with a continuous roof, a row of small windows and low benches along the front wall", "allow": "a swing rope, low benches, a laundry line, small shoes by the door", "en": "an orphanage: a long low communal children's house, wide and welcoming rather than grand, with benches along its front wall"}, "Mina": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "boca escavada na encosta rochosa, descendo em patamares.", "tiers": {"T0": "Escavação desabada no barranco com escoras partidas cobertas de trepadeira.", "T1": "Boca rasa escorada em galhos torcidos, cascalho solto, trilha de terra.", "T2": "Boca reforçada em madeira quadrada, primeiro monte de rejeito separado.", "T3": "Segunda boca aberta mais abaixo na encosta, trilho de madeira descendo entre elas, carrinho de empurrar.", "T4": "Entrada revestida em pedra assentada, rejeito em terraços contidos, roldana de içamento sobre a boca.", "T5": "Estrutura de superfície em dois patamares acompanhando a encosta, trilho longo e duplo.", "T6": "Terceira boca funda na base da encosta, escoramento pesado, minério bruto empilhado em ordem.", "T7": "Complexo de mineração completo embutido na montanha, três bocas ativas ligadas por trilhos, pedra clara aparelhada na entrada."}, "fp": [3, 4, 4], "req": "an excavated timbered opening driven into a rocky slope with sorted spoil heaps, with a timber head frame over the main opening", "allow": "ore baskets, a timber head frame, a push cart, a rock face", "en": "a mine: a timbered opening driven into a rocky slope with sorted spoil heaps, descending the hillside in terraces as it grows"}, "Cabana de Pesca": {"category": "PRODUÇÃO PRIMÁRIA", "anchor": "cabana de margem com secadouro de redes e barco encalhado.", "tiers": {"T0": "Cabana desabada em tábuas podres na margem, redes apodrecidas presas ao mato, casco de barco partido meio enterrado na lama.", "T1": "Abrigo mínimo de tábuas soltas, cobertura de palha rala, rede estendida em varal torto, barco tosco de tronco escavado encalhado ao lado.", "T2": "Corpo vedado em tábuas escuras, cobertura uniforme, secadouro de redes reto e organizado, barco de tábuas calafetadas.", "T3": "Anexo aberto de salga acrescido, segundo secadouro, peixes pendurados em fileira sob a cobertura.", "T4": "Base em pedra bruta contra a umidade, madeira tratada em tom escuro, passadiço de tábuas ligando a cabana à água.", "T5": "Segundo pavimento acrescido para estocagem de sal e apetrechos, passadiço ampliado com poste de amarração.", "T6": "Madeira entalhada com motivo de escama e onda, pintura em azul-esverdeado profundo, boias e cordame em ordem.", "T7": "Pedra clara e madeira nobre, dois barcos alinhados, redes de trama fina em secadouros simétricos.", "T8": "Estrutura formal em pedra clara com ornamento esculpido, cais assentado e apetrechos fartos organizados.", "T9": "Redes de fio prateado, escamas translúcidas assentadas nas tábuas, filetes claros na pedra.", "T10": "Pedra branca com filetes dourados, redes irisadas, peixes de escama dourada pendurados e névoa parada sobre a água."}, "fp": [2, 2, 2], "req": "net drying frames standing along the wall and a flat-bottomed boat hauled up on the bank beside the building", "allow": "hanging fish, a plank walkway, mooring posts, salt barrels", "en": "a fisherman's shack: a small waterside cabin identified by net drying frames along its wall and a boat hauled up beside it"}, "Vendedor de Armas": {"category": "TRANSFORMAÇÃO E OFÍCIOS", "anchor": "fachada com armas expostas em suportes alinhados — venda, nunca produção.", "tiers": {"T0": "Fachada desabada com suportes partidos, lâminas oxidadas caídas no entulho, mato entre elas.", "T1": "Volume de tábuas mal ajustadas, cobertura de palha, duas lanças e um escudo tosco encostados na parede.", "T2": "Fachada vedada e escurecida, suporte externo de madeira com armas alinhadas por tipo.", "T3": "Anexo lateral de estocagem, segundo suporte de exposição, escudos pendurados em fileira.", "T4": "Base em pedra assentada, madeira tratada, armas de ferro em suportes regulares e balcão de atendimento.", "T5": "Segundo pavimento acrescido com galeria de exposição sobre o balcão.", "T6": "Fachada entalhada com motivo de lâmina, pintura em vermelho escuro e cinza, panos com insígnia.", "T7": "Pedra clara e madeira nobre, armas de acabamento fino em suportes simétricos, ferragem polida.", "T8": "Fachada formal em mármore claro com ornamento esculpido e exposição farta em camadas.", "T9": "Lâminas de aço claro com veios prateados, cabos de material translúcido, filetes claros na fachada.", "T10": "Fachada branca com filetes dourados, lâminas irisadas, guarnições em ouro e armas em suspensão estável."}, "fp": [2, 2, 2], "req": "an external rack on the front wall displaying finished weapons aligned by type, and a shuttered trading counter", "allow": "hanging shields, a lantern on a bracket, cloth awning, stacked spear shafts", "en": "a weapon seller's shop: a shop, not a forge, identified by an external rack of finished weapons on its front wall and a trading counter"}, "Casa das Fiandeiras": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "casebre baixo e torto com meadas de fio penduradas e rocas visíveis pela porta aberta.", "tiers": {"T0": "Casebre desabado com rocas partidas entre as tábuas podres, meadas apodrecidas presas ao mato.", "T1": "Volume baixo e torto de tábuas e barro, cobertura de palha irregular, uma meada de linho crua pendurada na porta.", "T2": "Corpo vedado e caiado, cobertura uniforme, três rocas visíveis pela porta aberta, meadas em varal reto.", "T3": "Anexo lateral de fiação acrescido, varal duplo de meadas, feixes de linho encostados na parede.", "T4": "Base em pedra bruta, madeira escura aparente, meadas de fio fino em ordem, fusos alinhados na soleira.", "T5": "Segundo pavimento acrescido com galeria de secagem de fio.", "T6": "Entalhes de roda e fuso na madeira, pintura em cinza-esverdeado, meadas em três tons pendendo em fileira.", "T7": "Pedra clara e madeira nobre, fio de trama fina em cascata, três rocas torneadas visíveis.", "T8": "Casa formal em pedra clara com ornamento esculpido e fio nobre organizado em camadas.", "T9": "Fio de fibra prateada, meadas translúcidas, filetes claros na pedra, fusos girando parados no ar.", "T10": "Pedra branca com filetes dourados, fio dourado contínuo, meadas irisadas e fusos em suspensão estável."}, "fp": [2, 2, 2], "req": "hanks of spun thread hung in rows outside the wall and three spinning wheels visible through the open door", "allow": "bundled flax against the wall, spindles on the sill, a low bench", "en": "the spinners' cottage: a low crooked cottage hung with hanks of thread, three spinning wheels visible through its open door"}, "Casa dos Anões": {"category": "NÚCLEO CIVIL E POPULAÇÃO", "anchor": "casa pequena, limpa e modesta — fila de camas e lugares à mesa contados.", "tiers": {"T0": "Casinha desabada com cobertura caída, camas partidas visíveis entre as tábuas podres, mato tomando a soleira.", "T1": "Volume pequeno de troncos e barro, cobertura de palha, uma cama e um lugar à mesa vistos pela porta.", "T2": "Corpo vedado e caiado, cobertura uniforme, duas camas em fila e dois bancos à mesa.", "T3": "Anexo lateral acrescido, três camas alinhadas, ferramentas de mineração penduradas em ordem na parede.", "T4": "Base em pedra assentada, madeira escura aparelhada, quatro camas iguais e prateleira de lanternas.", "T5": "Sótão acrescido com mais dois leitos, cobertura de tabuinhas escuras.", "T6": "Entalhes de picareta e montanha na verga, pintura em ocre e verde-escuro, seis lugares postos à mesa.", "T7": "Pedra clara e madeira nobre, sete camas iguais em fila perfeita, sete bancos à mesa.", "T8": "Casa formal em pedra clara com ornamento esculpido, sete leitos e utensílios em ordem rigorosa.", "T9": "Filetes prateados na pedra, roupa de cama pálida translúcida, lanternas acesas com luz fria.", "T10": "Pedra branca com filetes dourados, sete leitos irisados e lanternas douradas acesas em fila."}, "fp": [2, 2, 2], "req": "a row of identical small beds seen through the open door and mining tools hung in order on the outside wall", "allow": "a row of lanterns, small stools, a long table with counted places, boot pairs by the door", "en": "the dwarves' cottage: a small, tidy, modest house whose identity is a row of identical little beds and counted places at the table"}, "Casa de Doces Vitrificada": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "a casa da bruxa décadas depois — açúcar cristalizado, endurecido e enegrecido. Estágio único, sem evolução.", "tiers": {"T1": "Casa de superfície negra e vítrea, endurecida e brilhante como esmalte queimado, o formato de confeitaria ainda reconhecível sob a crosta: telhado ondulado, beirais escorridos e solidificados, cercadura de doces partidos e opacos. Fissuras claras percorrem a massa. Árvores mortas e sem folha em volta, chão estéril e rachado."}, "fp": [2, 2, 2], "req": "a black glassy vitrified body, hardened and glossy like burnt enamel, whose confection shape is still recognisable beneath the crust", "allow": "pale fissures in the mass, dripped eaves solidified in place, broken opaque candy trim, dead bare trees", "en": "the witch's candy cottage decades later: its sugar crystallised black and glassy, hardened and glossy, the confection shape still readable beneath the crust, standing in dead ground"}, "Cabana da Expedição": {"category": "SUPORTE, SABERES E OCULTO", "anchor": "posto de partida para a floresta — mapas, apetrechos de viagem e trilha saindo da aldeia. Estágio único.", "tiers": {"T0": "Posto desabado em tábuas podres na borda da mata, mastro de sinalização partido caído de lado, mochilas apodrecidas presas ao mato, trilha tomada por vegetação.", "T1": "Posto sólido e baixo em pedra bruta e madeira escura na borda da mata, com um alpendre aberto na frente onde um mapa grande está pregado numa prancha de madeira. Sob o alpendre, mochilas de viagem, cantis, rolos de corda e lanternas pendurados em ganchos, prontos para sair. Um mastro de sinalização alto ao lado com uma lanterna no topo. Uma trilha de terra batida marcada por estacas parte da construção em direção à mata."}, "fp": [2, 2, 2], "req": "an open front porch with a large map pinned to a board, travel packs, coils of rope and lanterns hung ready on hooks, and a marked trail of stakes leading away from the building", "allow": "a signal mast with a lantern, water flasks, a bench for gearing up, boot pairs", "en": "an expedition post: the departure point for the forest, identified by a pinned map under an open porch, travel gear hung ready, and a staked trail leading out of the village"}, "Padaria": {"category": "TRANSFORMAÇÃO E OFÍCIOS", "anchor": "fachada caiada com pães expostos.", "tiers": {"T0": "Forno de barro desmoronado e enegrecido, fachada caída, restos endurecidos sobre a prateleira partida.", "T1": "Volume baixo de barro e madeira, forno abaulado de barro cru anexo, cobertura de palha.", "T2": "Corpo vedado e caiado, forno de barro liso, pães simples na prateleira externa.", "T3": "Anexo de estocagem de grãos, dois fornos abaulados, área externa calçada.", "T4": "Base em pedra assentada, fachada caiada com contorno ocre, variedade de pães expostos.", "T5": "Segundo pavimento acrescido para estocagem, forno maior integrado ao volume.", "T6": "Pintura em creme e vermelho com entalhe de espiga, toldo listrado, doces expostos.", "T7": "Pedra clara com detalhe em madeira nobre, vitrine ampla de pães e tortas elaboradas.", "T8": "Fachada formal em mármore claro com ornamento esculpido e exposição farta em camadas.", "T9": "Crostas de tom dourado intenso, doces cristalizados, açúcar assentado como geada.", "T10": "Fachada branca com filetes dourados, pães irisados, confeitos de açúcar cristalino suspensos."}, "fp": [2, 2, 2], "req": "a shuttered serving counter on the front wall with loaves set out on it", "allow": "a firewood stack for the oven, grain sacks, cloth awning", "en": "a bakery: a village bake house identified by its shuttered serving counter of bread on the front wall and a tall stone chimney over the oven inside"}, "Torre do Vigia": {"category": "DEFESA E VIGIA", "anchor": "torre de vigia com braseiro de ferro no alto — altura e fogo, nunca mecanismo.", "tiers": {"T0": "Toco de muro de pedra seca na altura de um homem, estrutura de madeira desabada para dentro, dois postes partidos ainda de pé inclinados, vigas queimadas e entulho na base, trepadeira entre as pedras. Uma cesta de fogo de ferro enferrujada e partida caída ao lado.", "T1": "Base baixa de pedra seca de um pavimento com plataforma aberta de madeira tosca em cima, escada simples encostada na parede, guarda-corpo de varas sem aparelhar. Sem cobertura e sem fogo. Um cobertor enrolado e uma corneta pendurados num poste.", "T2": "Base de pedra seca com um segundo nível de madeira esquadriada, escada interna fechada, e na plataforma uma cesta de fogo de ferro preto sobre tripé baixo com chama pequena. Pilha de lenha rachada na plataforma e outra encostada na base.", "T3": "Três níveis: base de pedra, corpo de madeira com frestas estreitas, e ampla plataforma aberta com grande cesta de fogo de ferro sobre tripé pesado e chama alta. Braço de guindaste de madeira com corda e roldana para içar lenha pela parede externa. Duas pilhas grandes de lenha na base, uma coberta com lona.", "T4": "Quatro níveis, nitidamente mais alta: base de pedra, dois pavimentos de madeira, plataforma larga com cesta de fogo ardendo forte. Atrás da chama, grande folha de cobre martelado montada de pé em berço de madeira, levemente curvada, com barra longa de empurrar ao lado para ser girada à mão. Corda, roldana e lenha na borda.", "T5": "Cinco níveis: base de pedra, três pavimentos de madeira com aberturas estreitas e escada externa, e plataforma ampla sob cobertura simples de tabuinhas. Cesta de fogo muito grande ardendo alto e, atrás dela, espelho de cobre martelado curvo e superdimensionado em armação pivotante, com duas barras de empurrar para dois girarem juntos. Contrapeso de pedra pendurado em corda ao lado. Lenha empilhada em todos os níveis.", "T6": "Seis níveis, pedra da base agora cortada e fiada, madeira esquadriada e cavilhada. Cobertura de tabuinhas sobre a plataforma, espelho de cobre polido mais brilhante na armação pivotante, cesta de fogo mais alta, e galeria externa contornando a plataforma. Barril de água com aros de ferro e gancho de incêndio na parede.", "T7": "Sete níveis: base de pedra clara aparelhada, madeira escura curada acima, torreão de escada fechado num dos lados, plataforma ampla com galeria sob telhado íngreme de tabuinhas aberto em todos os lados. Espelho de cobre polido muito grande em pivô pesado, barras pareadas, cesta de fogo alta e clara. Mãos-francesas entalhadas sob a galeria.", "T8": "Oito níveis, imponente: metade inferior de pedra clara aparelhada com cordão entalhado, metade superior em madeira escura, torreão de escada, e plataforma ampla com galeria sob telhado ornamentado com pináculo. Grande espelho de cobre polido, armação de pivô duplo, cesta de fogo sobre suporte decorado. Lanternas de ferro penduradas ao longo do guarda-corpo.", "T9": "Nove níveis: pedra clara com detalhe entalhado, madeira escura curada, plataforma com galeria sob telhado íngreme decorado. O grande espelho agora é prateado — chapa refletora pálida, fria, quase branca, em armação entalhada pesada — atrás de uma grande cesta de fogo. Fios finos de prata percorrem as mãos-francesas e a borda do telhado. A luz que ele lança lê fria, não quente.", "T10": "Dez níveis, a construção mais alta da aldeia: pedra branca aparelhada com embutidos dourados, madeira escura, torreão de escada, plataforma ampla com galeria sob telhado ornamentado com pináculo dourado. Espelho prateado enorme em armação pivotante dourada atrás de grande cesta de fogo. Lanternas douradas ao longo da galeria, bandeirolas de pano cru nos cantos. Imponente, mas ainda feita à mão e tosca nas juntas."}, "fp": [2, 2, 10], "req": "a tall timber-and-stone watchtower with an open platform on top carrying a black iron fire basket burning with an open flame, and from the fourth level a large hammered copper mirror on a pivoting frame with a long wooden push-bar", "allow": "stacked firewood, a rope and pulley crane arm, an iron water barrel, hung lanterns, a stone counterweight", "en": "a watchtower: a tall hand-built tower of stone and timber whose identity is height and open fire — an iron fire basket on the open platform and, later, a hand-turned copper mirror behind it. No gears, no clockwork, no lens, no lamp"}}, "hostile": {"Toca das Raposas": {"anchor": "", "states": {"A": "Montículo de terra com bocas de túnel abertas, paliçada de ripas roubadas, tecidos saqueados em ocre e vermelho.", "B": "Paliçada arrebentada e montículo desmoronado em vários pontos, tecidos rasgados, túneis obstruídos.", "C": "Terreno aplainado com cicatrizes de túnel preenchidas, ripas empilhadas de lado, grama rebrotando."}, "fp": [3, 2, 1], "req": "an earth mound with open tunnel mouths and a palisade of stolen laths", "allow": "looted cloth in ochre and red, scattered spoil, gnawed stakes", "en": "a fox den: an earth mound pierced by tunnel mouths behind a palisade of stolen laths"}, "Ninhal dos Corvos": {"anchor": "", "states": {"A": "Árvores mortas carregadas de massa densa de gravetos negros com fitas e objetos furtados entrelaçados.", "B": "Massa de gravetos desfeita em grande parte, galhos partidos, fitas soltas presas ao tronco.", "C": "Tocos cortados e rentes ao solo, gravetos empilhados de lado, terreno limpo e capinado."}, "fp": [2, 2, 3], "req": "dead trees carrying a dense mass of black sticks with stolen objects woven in", "allow": "ribbons, bone-white twigs, torn cloth strips", "en": "a crow roost: dead trees carrying a dense mass of black sticks with stolen objects woven in"}, "Toca dos Lobos": {"anchor": "", "states": {"A": "Fenda rochosa com paliçada de estacas roídas, terra revolvida e rocha marcada por arranhões profundos.", "B": "Paliçada derrubada em trechos, entrada da fenda parcialmente bloqueada por pedras caídas.", "C": "Fenda selada com pedra assentada, terreno compactado e nivelado, vegetação rasteira rebrotando."}, "fp": [3, 2, 2], "req": "a rock cleft with a palisade of chewed stakes and deeply scratched stone", "allow": "turned earth, drag marks, stacked boulders", "en": "a wolf den: a rock cleft behind a palisade of chewed stakes, the stone deeply scratched"}, "Acampamento dos Gigantes": {"anchor": "", "states": {"A": "Megálitos apoiados formando abrigo, blocos toscamente lavrados com pintura tribal em ocre, terreno em cratera.", "B": "Megálitos tombados, blocos partidos ao meio, pintura descascada, cratera com pedras dispersas.", "C": "Blocos alinhados e reaproveitados como base, cratera preenchida e nivelada, grama tomando as juntas."}, "fp": [3, 3, 2], "req": "leaning megaliths forming a shelter, roughly hewn and tribally painted in ochre", "allow": "a cratered ground line, split blocks, oversized cordage", "en": "a giants' camp: leaning megaliths forming a shelter, roughly hewn and painted in tribal ochre"}, "Choupana das Bruxas": {"anchor": "", "states": {"A": "Corpo negro de madeira retorcida sobre raízes colossais, veios violeta, vegetação carnívora e canteiros venenosos.", "B": "Corpo rachado e inclinado, raízes partidas, veios violeta apagados, vegetação murchando.", "C": "Raízes cortadas e terreno queimado em cinza, solo revolvido e neutralizado com sal, brotos comuns."}, "fp": [2, 2, 3], "req": "a black twisted timber body standing on colossal roots with violet veining", "allow": "carnivorous plants, poison beds, tied bundles", "en": "a witches' hut: a black twisted timber body standing on colossal roots, veined with violet"}, "Cabana de Doce da Bruxa": {"anchor": "", "states": {"A": "Confeitaria irisada com glacê dourado, açúcar cristalino e cercadura de doces afiados em cor saturada.", "B": "Camadas desmoronadas e glacê escorrido, doces partidos, cor desbotando para tons opacos.", "C": "Restos endurecidos e sem cor dissolvidos no solo, terreno limpo com mancha clara residual."}, "fp": [2, 2, 2], "req": "an iridescent confection body with golden icing and a fence of sharpened sweets", "allow": "crystalline sugar crust, dripping glaze, saturated candy trim", "en": "the witch's candy cottage: an iridescent confection body with golden icing behind a fence of sharpened sweets"}, "Covil do Diabo": {"anchor": "", "states": {"A": "Fenda em rocha negra com veios carmim contínuos, cristais vermelhos irrompendo, crosta de enxofre.", "B": "Veios carmim interrompidos e opacos, cristais quebrados, crosta de enxofre esfarelando.", "C": "Fenda selada com basalto assentado, cristais removidos, terreno frio e rachado sem cor."}, "fp": [3, 2, 2], "req": "a black rock fissure with continuous crimson veining and erupting red crystal", "allow": "sulphur crust, cracked ground, heat-blackened stone", "en": "a devil's lair: a black rock fissure with continuous crimson veining and erupting red crystal"}}};
+
+const STAGES = {T0:'Ruína',T1:'Improviso',T2:'Consolidação',T3:'Ampliação',T4:'Qualificação',T5:'Verticalização',T6:'Ornamentação',T7:'Nobreza',T8:'Prestígio',T9:'Encantamento',T10:'Lendário'};
+const TIERS = Object.keys(STAGES);
+/* estágios por edificação — o padrão é a escada completa T0–T10 */
+const STAGE_SET = {
+  'Mina':['T0','T1','T2','T3','T4','T5','T6','T7'],
+  'Cemit\u00e9rio':['T0','T1'],
+  'Cabana da Expedi\u00e7\u00e3o':['T0','T1'],
+  'Casa de Doces Vitrificada':['T1'],
+  'Casa de Jo\u00e3o e Maria':['T0','T1']
+};
+function tiersFor(name){ return STAGE_SET[name] || TIERS; }
+
+/* ---------- nomenclatura de arquivo (Godot) ----------
+   twb_bld_<slug>_t00.png   edificação, estágio
+   twb_hos_<slug>_sa.png    estrutura hostil, estado
+   minúsculas, sem acento, sem espaço. underscore separa campos, hífen só dentro do slug. */
+function slugify(str){
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+            .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+function assetName(k){
+  const kk = k || key();
+  if(S.kind==='building'){
+    const n = String(tiersFor(S.name).indexOf(kk)).padStart(2,'0');
+    return 'twb_bld_'+slugify(S.name)+'_t'+n;
+  }
+  return 'twb_hos_'+slugify(S.name)+'_s'+kk.toLowerCase();
+}
+const HSTATES = {A:'Ativa',B:'Danificada',C:'Neutralizada'};
+const NO_DOOR = new Set(['Horta','Poço','Lago','Cemitério','Mina','Gazebo','Mercado']);
+// fração do envelope ocupada por tier
+const FILL = {T0:.18,T1:.20,T2:.30,T3:.44,T4:.52,T5:.64,T6:.70,T7:.78,T8:.88,T9:.96,T10:1};
+
+const S = {
+  kind:'building', name:'Cabana do Lenhador', tier:'T2', state:'A',
+  fp:[2,2,2], cells:new Set(), view:'all',
+  site:'no', len:'compact', catalog:'no', naming:'image', accent:'none', door:'auto', bg:'alpha', fmt:'square', extra:'', tab:'prompt'
+};
+
+const $ = s => document.querySelector(s);
+const item = () => S.kind==='building' ? CATALOG.buildings[S.name] : CATALOG.hostile[S.name];
+const key = () => S.kind==='building' ? S.tier : S.state;
+
+/* ---------- catálogo ---------- */
+function fillSelect(){
+  const sel=$('#sel'); sel.innerHTML='';
+  const groups={};
+  Object.entries(CATALOG.buildings).forEach(([n,b])=>{(groups[b.category]=groups[b.category]||[]).push(n)});
+  const order=['SISTEMA','PRODUÇÃO PRIMÁRIA','TRANSFORMAÇÃO E OFÍCIOS','NÚCLEO CIVIL E POPULAÇÃO','SUPORTE, SABERES E OCULTO','DEFESA E VIGIA','ARMAZENAMENTO'];
+  order.filter(c=>groups[c]).forEach(c=>{
+    const g=document.createElement('optgroup'); g.label=c;
+    groups[c].forEach(n=>{const o=document.createElement('option');o.value='b|'+n;o.textContent=n;g.appendChild(o)});
+    sel.appendChild(g);
+  });
+  const gh=document.createElement('optgroup'); gh.label='ESTRUTURAS HOSTIS';
+  Object.keys(CATALOG.hostile).forEach(n=>{const o=document.createElement('option');o.value='h|'+n;o.textContent=n;gh.appendChild(o)});
+  sel.appendChild(gh);
+  sel.value='b|'+S.name;
+}
+
+function loadItem(){
+  const it=item();
+  if(S.kind==='building' && !tiersFor(S.name).includes(S.tier)) S.tier = tiersFor(S.name).slice(-1)[0];
+  S.fp = (it.fp||[2,2,2]).slice();
+  applyPreset();
+  renderLadder(); renderView(); renderGrid(); renderBrief(); render();
+}
+
+/* ---------- ocupação ---------- */
+function cellId(x,y,z){return x+','+y+','+z}
+function allCells(){
+  const [X,Y,Z]=S.fp, a=[];
+  for(let z=0;z<Z;z++)for(let y=0;y<Y;y++)for(let x=0;x<X;x++)a.push([x,y,z]);
+  return a;
+}
+function pruneCells(){
+  const [X,Y,Z]=S.fp;
+  [...S.cells].forEach(id=>{const [x,y,z]=id.split(',').map(Number); if(x>=X||y>=Y||z>=Z) S.cells.delete(id)});
+  // suporte
+  let changed=true;
+  while(changed){ changed=false;
+    [...S.cells].forEach(id=>{const [x,y,z]=id.split(',').map(Number);
+      if(z>0 && !S.cells.has(cellId(x,y,z-1))){S.cells.delete(id);changed=true}});
+  }
+}
+function applyPreset(){
+  const [X,Y,Z]=S.fp, total=X*Y*Z;
+  const frac = S.kind==='building' ? (FILL[S.tier]||.6) : (S.state==='A'?.85:S.state==='B'?.55:.2);
+  let n=Math.max(1,Math.round(total*frac));
+  // ordem: nível baixo primeiro, depois proximidade da âncora (0,0)
+  const vert = S.kind==="building" && TOWER_SET.has(S.name);
+  const order=allCells().sort((a,b)=> vert ? ((a[0]+a[1])-(b[0]+b[1]) || a[2]-b[2] || a[0]-b[0]) : (a[2]-b[2] || (a[0]+a[1])-(b[0]+b[1]) || a[0]-b[0]));
+  S.cells.clear();
+  for(const [x,y,z] of order){
+    if(n<=0) break;
+    if(z>0 && !S.cells.has(cellId(x,y,z-1))) continue;
+    S.cells.add(cellId(x,y,z)); n--;
+  }
+  pruneCells();
+}
+function toggleCell(x,y,z){
+  const id=cellId(x,y,z);
+  if(S.cells.has(id)){
+    S.cells.delete(id);
+    for(let zz=z+1;zz<S.fp[2];zz++) S.cells.delete(cellId(x,y,zz));
+  } else {
+    for(let zz=0;zz<=z;zz++) S.cells.add(cellId(x,y,zz));
+  }
+  renderGrid(); render();
+}
+
+/* ---------- desenho isométrico ---------- */
+const DX=46, DY=27.5, ZH=55;
+function iso(x,y,z){return [(x-y)*DX, (x+y)*DY - z*ZH]}
+function renderGrid(){
+  const svg=$('#grid'); svg.innerHTML='';
+  const [X,Y,Z]=S.fp;
+  const cells=allCells().sort((a,b)=> (a[0]+a[1]+a[2])-(b[0]+b[1]+b[2]));
+  const NS='http://www.w3.org/2000/svg';
+  let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;
+  const geom=(x,y,z)=>({
+    A:iso(x,y,z),B:iso(x+1,y,z),C:iso(x+1,y+1,z),D:iso(x,y+1,z),
+    A2:iso(x,y,z+1),B2:iso(x+1,y,z+1),C2:iso(x+1,y+1,z+1),D2:iso(x,y+1,z+1)
+  });
+  const pts=a=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  cells.forEach(([x,y,z])=>{
+    const g=geom(x,y,z);
+    Object.values(g).forEach(p=>{minx=Math.min(minx,p[0]);maxx=Math.max(maxx,p[0]);miny=Math.min(miny,p[1]);maxy=Math.max(maxy,p[1])});
+    const grp=document.createElementNS(NS,'g');
+    grp.setAttribute('class','cell'+(S.cells.has(cellId(x,y,z))?' on':'')+((S.view!=='all'&&+S.view!==z)?' dim':''));
+    grp.dataset.id=cellId(x,y,z);
+    [['top',[g.A2,g.B2,g.C2,g.D2]],['left',[g.D2,g.C2,g.C,g.D]],['right',[g.C2,g.B2,g.B,g.C]]].forEach(([f,p])=>{
+      const poly=document.createElementNS(NS,'polygon');
+      poly.setAttribute('points',pts(p)); poly.setAttribute('data-face',f);
+      grp.appendChild(poly);
+    });
+    if(X*Y*Z<=27){
+      const c=[(g.A2[0]+g.C2[0])/2,(g.A2[1]+g.C2[1])/2];
+      const t=document.createElementNS(NS,'text');
+      t.setAttribute('x',c[0].toFixed(1)); t.setAttribute('y',c[1].toFixed(1));
+      t.textContent=(x+1)+'·'+(y+1);
+      grp.appendChild(t);
+    }
+    grp.addEventListener('click',()=>toggleCell(x,y,z));
+    svg.appendChild(grp);
+  });
+  const pad=18;
+  svg.setAttribute('viewBox',[minx-pad,miny-pad,(maxx-minx)+pad*2,(maxy-miny)+pad*2].join(' '));
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+}
+
+function renderView(){
+  const seg=$('#segView'); seg.innerHTML='';
+  const mk=(v,l)=>{const b=document.createElement('button');b.dataset.v=v;b.textContent=l;if(S.view===v)b.classList.add('on');
+    b.onclick=()=>{S.view=v;renderView();renderGrid()};seg.appendChild(b)};
+  mk('all','Todos');
+  for(let z=0;z<S.fp[2];z++) mk(String(z),'Nível '+(z+1));
+}
+
+function renderLadder(){
+  const l=$('#ladder'); l.innerHTML='';
+  if(S.kind==='building'){
+    l.className='ladder'; $('#labLadder').textContent='Tier visual';
+    tiersFor(S.name).forEach(t=>{const b=document.createElement('button');b.textContent=t;if(S.tier===t)b.classList.add('on');
+      b.onclick=()=>{S.tier=t;applyPreset();renderLadder();renderGrid();renderBrief();render()};l.appendChild(b)});
+  } else {
+    l.className='ladder states'; $('#labLadder').textContent='Estado da estrutura';
+    Object.entries(HSTATES).forEach(([k,v])=>{const b=document.createElement('button');b.textContent=k+' — '+v;if(S.state===k)b.classList.add('on');
+      b.onclick=()=>{S.state=k;applyPreset();renderLadder();renderGrid();renderBrief();render()};l.appendChild(b)});
+  }
+}
+
+function renderBrief(){
+  const it=item(), k=key();
+  const desc = S.kind==='building' ? it.tiers[k] : it.states[k];
+  const head = S.kind==='building' ? (k+' — '+STAGES[k]+' · '+it.category) : ('Estado '+k+' — '+HSTATES[k]+' · HOSTIL');
+  $('#brief').innerHTML =
+    '<div class="h">'+head+'</div>'+
+    (it.anchor?'<p><b>Âncora funcional:</b> '+it.anchor+'</p>':'')+
+    '<p><b>Diretriz do estágio:</b> '+desc+'</p>'+
+    '<p><b>Props exigidos:</b> '+(it.req||'—')+'</p>';
+}
+
+/* ---------- segmentos genéricos ---------- */
+function wire(sel,prop,after){
+  document.querySelectorAll(sel+' button').forEach(b=>b.onclick=()=>{
+    S[prop]=b.dataset.v;
+    document.querySelectorAll(sel+' button').forEach(x=>x.classList.toggle('on',x===b));
+    if(after) after(); render();
+  });
+}
+
+/* ---------- blocos de prompt ---------- */
+/* V14: prompt 100% afirmativo. Nenhuma nega\u00e7\u00e3o no positivo \u2014 toda proibi\u00e7\u00e3o vive s\u00f3 no campo negativo. */
+const NO_ROOF=new Set(['Horta','Lago','Cemit\u00e9rio','Po\u00e7o','Mina','Mercado','Gazebo']);
+const ROOFED={
+ T0:"A RUIN. Two low wall stubs of stacked logs and one leaning corner post survive; grass has taken the outline of the vanished walls. Low, small in mass, open to the sky.",
+ T1:"A single closed room. Four complete walls of stacked round logs chinked with earth, the bottom log resting straight on packed bare earth. A continuous thatch roof of even thickness covers both slopes from ridge to eave, its surface solid, dense and closed, hiding the structure beneath it. The ridge is capped with a bound bundle of straw held down by crossed poles, closing the roof along its whole length. A door of vertical planks hung on rope hinges with a carved wooden latch. Blank log walls elsewhere. Crude materials throughout, finished building.",
+ T2:"One closed room standing on a low fieldstone footing. Walls of rough sawn planks with earth-daubed panels between the posts. A continuous thatch roof, even and solid across both slopes. One plank door, one small shuttered window, a short stone chimney.",
+ T3:"A larger closed building with a second bay along one side, both covered by one continuous solid roof. Rough sawn plank walls on a fieldstone footing, two shuttered windows, a braced plank door.",
+ T4:"Squared planed timber walls with tight joints on a coursed stone footing. A roof of split oak shingles laid in even overlapping courses, closed across every slope. Three shuttered windows and an iron-braced door.",
+ T5:"Two full storeys enclosed under one continuous shingle roof, the upper floor jettied slightly over the lower. Squared timber framing with smooth plaster panels between the members.",
+ T6:"A carved and painted building: shaped door frame, carved barge boards, painted shutters, and a roof of fired clay tiles in regular rows, closed over every slope.",
+ T7:"Pale dressed stone at the base and dark hardwood above, precise joinery, a symmetrical facade, a clay tile roof in perfect repair.",
+ T8:"A monumental version of the same building: carved stone ornament, tall proportions, a crisp roof of dark slate laid in even courses, every surface new and perfectly maintained.",
+ T9:"The same building rendered in pale silvered timber and stone, with perennial foliage growing in ordered patterns across sound, smooth, whole surfaces.",
+ T10:"White stone with gilded fillets and iridescent roof tiles, absolute order, flawless finish."
+};
+const RUIN_REQ={
+ 'Mina':"a caved-in excavation with snapped props under creeper, and beside it the bare skeleton of a wooden tower with no platform, its beams warped and rotted",
+ 'Cabana de Pesca':"rotted net frames fallen flat along the wall and a split boat hull half sunk in the mud",
+ 'Vendedor de Armas':"a broken display rack fallen forward with rusted blades spilled across the ground beneath it",
+ 'Casa das Fiandeiras':"snapped spinning wheels lying among the rotted boards, with blackened hanks of thread caught in the weeds",
+ 'Casa dos An\u00f5es':"a row of small broken bed frames visible under the collapsed roof, and rusted mining tools fallen from the wall",
+ 'Alojamento':"a fallen laundry line with rotted cloth still tied to it, lying across the collapsed sleeping wall",
+ 'Lar dos \u00d3rf\u00e3os':"the long roof fallen inward along its whole length, with broken low benches spilled out along the front wall",
+ 'Curral dos Animais':"a collapsed pen fence lying flat and a split feeding trough half buried in dried mud",
+ 'Taberna':"long tables toppled and rotted across a broken terrace deck, with the drink counter fallen in",
+ 'Cabana da Expedi\u00e7\u00e3o':"a broken run of the stake palisade lying snapped and flattened against the base, its points rotted blunt",
+ 'Cabana do Ca\u00e7ador':"two snapped log posts still standing under a collapsed floor frame, with rotted drying racks fallen flat beneath them",
+ 'Cabana do Herbalista':"the rotted timber edging of the herb beds spilled open, the beds gone to rank weed, and a few blackened herb bundles fallen against the base",
+ 'Gazebo':"deck boards fallen through into the frame below, a snapped baluster run lying flat, and the broken lower steps of the stair",
+ 'Poço':"the collapsed ring of the well mouth and the rotted crossbeam lying across it",
+ 'Cemitério':"toppled headstones lying flat among the fallen stones of the wall",
+ 'Biblioteca':"broken shelving boards fallen outward, their volumes swollen and ruined beneath them",
+ 'Padeiro':"a collapsed serving counter of broken planks, old hardened loaves fallen and scattered across the ground around it, and burst flour sacks gone grey and flat",
+ 'Cabana do Lenhador':"a rotted log pile slumped and half sunk into the ground, and a split chopping block lying on its side",
+ 'Forja':"the low stub of the stone hearth with its hood gone, and rusted bar stock spilled across the ground beside it",
+ 'Estalagem':"broken trestle tables and benches lying overturned across the ground",
+ 'Horta':"the broken frames of the planting beds, their soil spilled and gone to weed",
+ 'Moinho':"the shattered hub of the wheel half sunk in the ground with its paddles scattered, and rotted grain sacks burst open and flattened",
+ 'Fazenda':"the collapsed timber edge of the crop strip, the cereal long gone to dry stubble, and rotted sheaves slumped flat on the ground"
+};
+const RUIN_NOTE=" Only a low stub of the chimney stonework survives at the wall line; nothing of it stands above that.";
+const CASTLE={
+ T0:"A RUIN: a broken length of curtain wall standing two courses high and the stump of one tower, the rest reduced to a grassed outline on the ground.",
+ T1:"A timber ring-work: a closed palisade of round logs enclosing a small yard, with one squat log tower over the gate. Everything standing and complete.",
+ T2:"The enclosure rebuilt as a low continuous wall of rough undressed fieldstone, with a square timber gate tower and a solid gate of planks.",
+ T3:"The wall raised higher with a covered walkway along its top and a second stone tower at one corner.",
+ T4:"Coursed plain stone throughout, a proper gatehouse flanked by two towers, each capped with a sound tiled roof.",
+ T5:"A tall keep rises inside the yard, standing well above the wall line, with the towers enclosed around it.",
+ T6:"Carved corbels, shaped window openings and painted shutters across keep and gatehouse, on sound stonework.",
+ T7:"Pale dressed ashlar throughout in precise coursing, symmetrical towers under steep tiled roofs.",
+ T8:"Monumental proportion, carved stone ornament at every crown, tall crisp towers, every surface new and perfectly maintained.",
+ T9:"Pale silvered stone with perennial foliage climbing the walls in ordered patterns, surfaces smooth and whole.",
+ T10:"White stone with gilded fillets and iridescent roofs, absolute order, flawless finish."
+};
+const MILL={
+ T0:"A RUIN: a broken stub of the mill body still standing on two leaning stone piers, the wheel gone but for its shattered hub hanging over the empty gap between them.",
+ T1:"A small closed body of stacked round logs under a solid thatch roof, carried on four squat stone piers that lift it clear of the ground with an open gap beneath. A crude UNDERSHOT paddle wheel of planks hangs on one side, its lowest paddles reaching down into that gap.",
+ T2:"A taller body of rough sawn timber on heavier stone piers with the open gap beneath, the plank UNDERSHOT wheel enlarged, its lower third reaching down between them.",
+ T3:"A second bay added along one side under one continuous roof, the whole carried on a row of stone piers above the open gap, the UNDERSHOT wheel raised on a heavier timber frame, grain sacks stacked at its foot.",
+ T4:"Squared planed timber over coursed stone piers, a well-fitted shingle roof, and a true spoked UNDERSHOT wheel reaching down into the open gap below.",
+ T5:"A full stone tower body rising well above the wheel on tall arched piers, an enclosed loading gallery bracketed out near the top, the UNDERSHOT wheel hanging in the gap beneath.",
+ T6:"Carved corbels, painted trim and shaped openings on a sound stone mill, the UNDERSHOT wheel framed in decorated timber above the open gap.",
+ T7:"Pale dressed stone throughout in precise coursing on slender arched piers, with a finely built UNDERSHOT wheel hanging between them.",
+ T8:"Monumental proportion, carved stone ornament, a crisp crown, tall arched piers, and a great UNDERSHOT wheel reaching down into the open gap, every surface new.",
+ T9:"Pale silvered stone with perennial foliage in ordered patterns, the UNDERSHOT wheel hanging clear between the piers.",
+ T10:"White stone with gilded fillets and an iridescent UNDERSHOT wheel above the open gap, absolute order."
+};
+const MILL_RACE=" THE WHEEL IS A COMPLETE CIRCLE. Draw it whole from top to bottom, the full round rim closed all the way round, the hub at its centre and every paddle in place, hanging free in the open air beside the building. Nothing covers, crops or interrupts any part of the wheel. ONE FLAT HORIZONTAL BASE LINE CLOSES THE BOTTOM OF THE ASSET. That line is the waterline where the river will sit on the map. The foot of every pier rests exactly on it, and the wheel is placed so that the lowest point of its rim just touches that same line, tangent to it. Nothing at all is drawn below that line: it is the bottom edge of the whole asset, and every part of the mill sits on it or above it. NO WATER IS DRAWN ANYWHERE IN THIS IMAGE: the mill is a dry asset, the open space between the piers is simply empty background, because the river is supplied by the map when the asset is placed. Every surface of stone and timber is dry.";
+
+const MASONRY_CORE={'Forja':'forge hearth'};
+const GAZEBO={
+ T0:"A RUIN: a broken stub of the raised platform with most of its deck boards fallen in and two snapped support posts, the rest a grassed outline.",
+ T1:"A low raised stage of rough planks carried on short log posts, its deck flat and clear, reached by two plank steps at the front. Nothing stands on the deck.",
+ T2:"A level stage deck of sawn planks on a fieldstone footing, with a low plain rail along the back and sides and the front left completely open, and a wider plank stair.",
+ T3:"A larger stage deck with a proper stair running the width of the front, and a low rail of plain balusters along the back and sides.",
+ T4:"A squared planed deck with a moulded edge board on a coursed stone plinth, turned balusters in the low rail, and a broad stone stair.",
+ T5:"The stage raised higher on a taller stone plinth, its deck boards laid in a chevron pattern, with a broad ceremonial stair across the front.",
+ T6:"Carved balusters, painted trim on the edge board, and an inlaid pattern worked into the deck boards.",
+ T7:"A pale dressed stone plinth and a dark hardwood deck in precise joinery, with a symmetrical stair across the front and a finely carved low rail.",
+ T8:"A monumental stone plinth with carved ornament along its face, a wide ceremonial stair, and a crisp new deck, every surface perfectly maintained.",
+ T9:"A pale silvered timber deck over smooth stone, with perennial foliage growing in ordered patterns along the edge of the plinth.",
+ T10:"A white stone plinth with gilded fillets and an iridescent inlay worked into the deck, absolute order, flawless finish."
+};
+const GAZEBO_OPEN=" IT IS A STAGE, OPEN TO THE SKY. There is no roof, no canopy, no cover, no awning, no pergola, and no post or column of any kind rising from the deck: the top surface of the deck is completely clear and unobstructed from above, because figures will be placed on it later. THE RAIL RUNS ALONG EXACTLY THREE OF THE FOUR SIDES OF THE DECK, continuous and unbroken from corner to corner on each of those three, turning both corners without any gap. The fourth side is the lower-right one facing the viewer: it carries the stair, and that stair opening is the ONLY place in the whole asset where the rail is absent. Nothing on the asset stands higher than that rail. The deck itself is the most detailed surface of the whole asset.";
+const STILT=new Set(['Cabana do Ca\u00e7ador','Cabana de Pesca']);
+const TOWER_SET=new Set(['Torre do Vigia']);
+const TOWER={
+ T0:"A RUIN: a stump of dry-stone wall no higher than a man, its timber frame collapsed inward, two snapped posts still standing at an angle, charred beams and rubble at the base.",
+ T1:"A rough dry-stone base one storey high carrying a simple OPEN timber platform, reached by a plain ladder leaning on the wall, with a low railing of untrimmed poles. No roof, no enclosure.",
+ T2:"The same base with a second level of squared timber above it and an enclosed ladder stair, the top still an OPEN working platform with a low rail.",
+ T3:"Three levels: dry-stone base, squared timber middle with narrow slit openings, and a broad OPEN platform on top, with a timber crane arm, rope and pulley on the outside wall.",
+ T4:"Four levels, noticeably taller: stone base, two timber storeys, and a wide OPEN platform with a heavy timber cradle standing on it.",
+ T5:"Five levels: stone base, three timber storeys with narrow openings and an external stair, and a broad OPEN platform under a simple shingled canopy carried on four posts.",
+ T6:"Six levels, the base stonework now cut and coursed and the timber squared and pegged, with an outer gallery running around the OPEN platform under its canopy.",
+ T7:"Seven levels: dressed pale stone base, dark seasoned timber above, an enclosed stair turret on one side, and a wide galleried OPEN platform under a steep shingled roof open on all sides.",
+ T8:"Eight levels: fully dressed pale stone lower half with a carved string course, dark timber upper half, stair turret, and a broad galleried platform under an ornamented roof with a finial.",
+ T9:"Nine levels of pale carved stone and dark seasoned timber, the galleried platform under a steep decorated roof, fine silver inlay tracing the brackets and the roof edge.",
+ T10:"Ten levels, the tallest structure of the village: white dressed stone with gilded inlay, dark timber, stair turret, wide galleried platform under an ornate roof with a gilded finial."
+};
+
+const OPEN={
+ T0:"A RUIN. Only broken remnants and a grassed-over outline survive, low and small in mass.",
+ T1:"Crude and newly made: round unshaped timber, packed earth, rope lashings. Every element complete and in daily use.",
+ T2:"Rough sawn timber and undressed fieldstone, tidy and fully built.",
+ T3:"Enlarged with a second section, properly framed and squared throughout.",
+ T4:"Squared planed timber and plain coursed stone, tight and orderly.",
+ T5:"A tall element added, framed as carefully as the rest.",
+ T6:"Carved detail and painted trim over sound, complete construction.",
+ T7:"Pale dressed stone and dark hardwood, precise and symmetrical.",
+ T8:"Monumental proportion with carved stone ornament, crisp and new.",
+ T9:"Pale silvered material with perennial foliage in ordered patterns across whole surfaces.",
+ T10:"White stone with gilded fillets and iridescent surfaces, flawless finish."
+};
+function occ(z){let n=0;const[X,Y]=S.fp;for(let y=0;y<Y;y++)for(let x=0;x<X;x++)if(S.cells.has(cellId(x,y,z)))n++;return n}
+function massDesc(){
+  const [X,Y,Z]=S.fp, base=X*Y;
+  const shape = X===Y ? "a square footprint "+X+" by "+Y+" cells"
+    : "a rectangular footprint "+X+" cells along one ground axis by "+Y+" along the other";
+  const parts=[];
+  for(let z=1;z<Z;z++){
+    const n=occ(z); if(!n) continue;
+    parts.push(n===base ? "a full upper level "+(z+1)
+      : "an upper level "+(z+1)+" over "+n+" of the "+base+" ground cells, grouped at one end");
+  }
+  const roofed = !NO_ROOF.has(S.name);
+  const tall = S.kind==="building" && TOWER_SET.has(S.name);
+  if(tall){let lv=0;for(let z=0;z<Z;z++) if(occ(z)) lv=z+1;
+    return shape+" at the base, and the shaft rises "+lv+" levels above that footprint, far taller than it is wide.";}
+  const levels = parts.length ? "Above it: "+parts.join("; ")+"." : (roofed?"A single storey, the roof sitting directly on the ground-floor walls.":"A single low level spread across the ground, with no roofed volume.");
+  return shape+", one cell being roughly a modest room about 3 m across. "+levels;
+}
+const BG={alpha:"Transparent background.",white:"Flat pure white background.",neutral:"Flat neutral mid-grey background."};
+const FMT={square:"Square canvas, 1536\u00d71536.",portrait:"Portrait canvas 3:4, 1280\u00d71706.",landscape:"Landscape canvas 4:3, 1706\u00d71280."};
+const ACCENT={none:"",
+  temptation:" A restrained Hansel-and-Gretel seduction sits in the architecture itself: trim slightly too perfect, pale icing-like mortar, one or two dulled candy accents on a credible structure.",
+  omen:" Unease sits in the architecture itself: a roofline like a hunched back, narrow watchful openings, a chimney leaning like a pointing finger."};
+let tierOverrideRuin=null;
+function doorText(){
+  const auto=NO_DOOR.has(S.name);
+  const d=S.door==="auto"?(auto?"none":"right"):S.door;
+  const k=tierOverrideRuin||key();
+  if(d==="none") return "The functional opening, gate, mouth or working edge faces the lower right, the same side at every stage.";
+  if(S.kind==="building" && k==="T0") return "The doorway stands empty on the lower-"+(d==="left"?"left":"right")+" face, a bare frame in the surviving wall.";
+  return "One closed plank door, 1.9 m tall, on the lower-"+(d==="left"?"left":"right")+" face, the same side at every stage.";
+}
+function siteBlock(){
+  if(S.site!=="yes") return "";
+  return " Mid-upgrade, shown only through delivered material lashed in sorted bundles against the base, one roof slope covered with new thatch tied in bundles at the ridge, and fresh pale material set against older material along a visible boundary line.";
+}
+function buildPrompt(tierOverride){
+  const it=item(), k=tierOverride||key();
+  tierOverrideRuin=k;
+  const TT = S.kind==="building" ? tiersFor(S.name) : Object.keys(HSTATES);
+  const idx = TT.indexOf(k)+1;
+  const tot = TT.length;
+  const stage = S.naming==="image"
+    ? ("IMAGE "+idx+" of "+tot+" in a set of separate, independent images of this building. This block describes IMAGE "+idx+" only, at development level "+idx+" of "+tot+".")
+    : ((S.kind==="building"?k+" of T0\u2013T10, "+STAGES[k]:"hostile state "+k+", "+HSTATES[k])+".");
+  const roofed = !NO_ROOF.has(S.name);
+  let build;
+  if(S.kind==="building") build = S.name==="Gazebo" ? GAZEBO[k]+(k!=="T0"?GAZEBO_OPEN:"") : S.name==="Moinho" ? MILL[k]+(k!=="T0"?MILL_RACE:"") : TOWER_SET.has(S.name) ? TOWER[k] : (roofed?ROOFED:OPEN)[k];
+  else build = (S.state==="A"
+    ? "AT FULL STRENGTH. The structure is complete, dense and in active use, standing at its tallest and most massive. Its defining material is at its most extreme and saturated, its edges sharpest, and the whole silhouette reads as a threat at a glance. Everything is whole and upright."
+    : S.state==="B"
+    ? "DAMAGED BUT STANDING. About a third of the mass has been torn away down one side, leaving a clean recent break with raw exposed material at the tear; the other two thirds remain complete, upright and solid, holding the same silhouette as the full-strength version. The defining material is duller and less saturated than at full strength. The broken pieces lie gathered against the base of what still stands."
+    : "NEUTRALISED. Only a low remnant survives, nothing standing higher than about waist height. The defining material has gone grey, dull and inert, all colour drained out of it, and the shape is settled and quiet. It still reads as the same structure, reduced.");
+  const core_mass = (S.kind==="building" && MASONRY_CORE[S.name] && k!=="T0")
+    ? " THE "+MASONRY_CORE[S.name].toUpperCase()+" AND ITS CHIMNEY ARE ONE FREE-STANDING STONE STACK ON THE GABLE END. Place it on the triangular end wall of the building, the short end facing the viewer, centred on that gable. The stack is a broad column, about a third as wide as the gable itself, and it is built onto the OUTER face of that gable, projecting forward from it by about half its own depth, with its own footing on the ground in front of the wall. The two roof slopes run away behind it and meet it only where the ridge arrives; no thatch touches its front or its sides, and nothing overlaps it anywhere. Read from bottom to top in one clear vertical run: the stone "+MASONRY_CORE[S.name]+" at waist height with its opening facing the viewer, then a tapered stone hood immediately above the opening gathering the full width into a square flue, then the flue rising straight past the eave and past the ridge to finish well above the roofline in an OPEN square flue mouth: the top of the stack is hollow, the square opening reading as a dark void framed by a projecting stone cap around its rim. Because verticals stay vertical in this projection, the cap and the opening sit at the SAME horizontal position on screen. The stack is the one mass allowed to stand proud of the building footprint, and it must read as a separate stone tower leaning against the end of the cabin. Everything else in the building is timber."
+    : "";
+  const shopfront = (S.kind==="building" && S.name==="Padeiro" && k!=="T0")
+    ? " THE BAKERY IS READ FROM ITS SHOPFRONT, NOT FROM THE OVEN. The domed clay oven stands INSIDE the building against the back wall and is never seen from outside; its only outward sign is a stone chimney rising from the roof slope directly above where it sits, finishing well above the ridge in an open square flue mouth. The visible front face carries a wide serving opening beside the door: a hinged plank shutter propped outward and upward on two poles to form a small awning, and beneath it a broad timber counter running along the wall with round loaves and long breads set out in rows. The opening behind the counter reads as flat darkness. Sacks of flour stand against the wall under the counter. This shopfront, and not any oven, is what identifies the building at a glance."
+    : "";
+  const ruinNote = (S.kind==="building" && k==="T0" && !NO_ROOF.has(S.name)) ? RUIN_NOTE : "";
+  const seal = (S.kind!=="building" || k==="T0") ? ""
+    : roofed
+      ? " The roof is ONE simple gabled form of a SINGLE material: the ridge runs straight along the long axis of the building, the two slopes are equal and flat planes, the eave lines run straight and parallel to the walls below, and the covering is laid in regular courses running parallel to the ridge. Any dormer is small against the slope and sits centred over the wall beneath it. The building is a sealed closed volume seen from outside: the upper part of the image is unbroken roof surface, "+(STILT.has(S.name)?"and every wall of the body is closed. The body does not touch the ground: it is carried high on stout log posts, and it is those posts, and only those, that meet the ground line. The shadowed underside of the raised floor is visible between them, and a plank stair climbs from the ground to the door.":"and the walls meet the ground line all round.")
+      : (S.name==="Gazebo dos M\u00fasicos" ? " Every part of it is whole, sound and well kept." : " Every part of it is whole, closed and sound, seen from outside, and it meets the ground line all round.");
+  const flavour = S.catalog==="yes" ? " Catalogue direction: "+(S.kind==="building"?it.tiers[k]:it.states[k]) : "";
+  const core =
+`Isometric 2D game asset: ${it.en||S.name}. ${stage} A single subject alone on an empty background, drawn small enough that a clear empty margin runs all the way around it.
+
+FUNCTION, unmistakable at every stage: ${it.en||''}. ${S.name==="Cabana de Morador" ? "It is the plain dwelling that every other building in this village is measured against." : "It must never be mistaken for a plain house."}
+
+BUILD: ${build}${ruinNote}${core_mass}${shopfront}${seal}
+
+${(S.kind==="building"&&k==="T0") ? "CLEAN EDGES: the asset ends a short step beyond the fallen remains, on bare ground that carries nothing else." : "CLEAN EDGES: the asset ends exactly where its own material ends, standing on bare swept ground that stops at its outer edge. Every surface is clear and uncluttered."} The whole thing is drawn small in the frame, leaving wide empty space along all four canvas edges.${siteBlock()}${ACCENT[S.accent]}${flavour}
+
+LOOK: ink-and-paint storybook illustration, warm brown-black pen line over opaque gouache-weight paint. Dark and low-key: most of the asset sits in shadow, with only small bright accents. Palette of dark umber timber, cold grey fieldstone, ${NO_ROOF.has(S.name) ? "weathered grey-brown timber" : "soaked grey-brown roof covering"}, muted moss green and dirty parchment daub. ${NO_ROOF.has(S.name) ? "The uppermost surfaces are the DARKEST large areas in the picture; whatever sits lower reads lighter than them." : "The roof is the DARKEST large surface in the picture, a wet-looking grey-brown; the walls read lighter than the roof."} Two thirds of the picture area sits in deep shadow values and highlights stay under one percent, confined to a few thread-thin edges. ${NO_ROOF.has(S.name) ? "A deep shadow band runs under every overhang, every board overlap and every projecting member." : "A deep shadow band runs under every eave, under every log overlap and under every projecting member."} The whole asset is painted under flat overcast daylight, every window and every glass surface a dark cold reflection, every hearth and oven cold. Ink is heaviest on the outer silhouette, the joints and the openings; hatching carries the shading. Surfaces read sound, dry and cared for.
+
+VIEW: true parallel isometric, both ground axes at 30\u00b0 on screen, verticals perfectly vertical, flat orthographic projection, identical camera for every asset in the set.
+
+SHAPE: ${massDesc()} ${NO_ROOF.has(S.name) ? "Board widths vary slightly and the outer edge line runs a little uneven, keeping it hand-built, while sills, main posts and the footprint sit exactly on the isometric axes." : "Board widths vary slightly and the eave line runs a little uneven, keeping it hand-built, while sills, wall plates, main posts and the footprint sit exactly on the isometric axes."}
+
+IDENTITY, constant at every stage: ${doorText()} The footprint and the access side stay the same from stage to stage${roofed?", and so does the chimney position once it exists; any chimney stands directly above the hearth or oven it serves, never at a distance from it":""}.
+
+${(S.kind==="building"&&k==="T0") ? "INCLUDE, lying where it fell around the base: "+(RUIN_REQ[S.name]||"the ruined remains of what this building once held, broken and half sunk into the ground") : "INCLUDE, set directly against the building and inside its footprint, never spread loose across the ground: "+(it.req||"only the structure itself")}.
+
+FRAME: the asset fills 88\u201392% of the canvas and is centred on its ground contact. An empty margin of at least 5% of the canvas width runs along the top, the bottom, the left and the right; the outline of the asset stays well clear of all four canvas edges. ${BG[S.bg]} ${FMT[S.fmt]}`;
+  if(S.len!=="full") return core + (S.extra.trim()?"\n\nAlso: "+S.extra.trim()+".":"");
+  return core + `
+
+EXTRA
+Read order at small size: silhouette, structural masses, material contrast, functional product, secondary detail. Keep quiet passages between dense ones.
+Allowed where it helps the function read: ${it.allow||"the structure alone"}.
+Progression priority: productive capacity and structural clarity first, material quality second, accumulated product third, ornament last. Every later stage is recognisably this same building, advanced.`+(S.extra.trim()?"\n\nAlso: "+S.extra.trim()+".":"");
+}
+function NEGfor(k){
+  const lights=["lantern","lit lantern","lamp","torch","candle","brazier","sconce","light post","street lamp","hanging light","lamp bracket","lit window","glowing window","glowing glass","warm light spill","glow","bloom","god rays","lens flare","magical light","glowing runes","fire","flame","embers","sparks","smoke","steam"];
+  const base=[
+   "grass around the base","soil patch","ground pad","terrain","dirt island","scattered pebbles","moss on the ground","plants at the foot of the wall","diorama","scenic base","pedestal",
+   "tool","tools","hammer","axe","tongs","weapon","cloth draped over a bench","clutter",
+   "cropped","cut off","touching the canvas edge","filling the frame",
+   "banner","flag","pennant","weathervane","gilded finial",
+   "bright","sunlit","high key","washed out","pastel","orange","tan","golden","oversaturated",
+   "perspective","vanishing point","converging lines","foreshortening","tilted camera","top-down view","front view",
+   "cast shadow","drop shadow","vignette","frame","border","text","caption","watermark","signature",
+   "multiple views","before and after","side by side","variant grid",
+   "people","human figure","hands","animals",
+   "viking longhouse","dragon head finial","runes","skulls","bones","steampunk","chibi","cartoon","cel shading","flat vector","3D render","CGI","plastic highlight","smooth gradient","airbrush","rim light",
+   "blurry","low detail"];
+  const notRuin=["mixed roofing materials","thatch and shingles together","fish scale roof","fur-like roof","scalloped roof","patchwork roof","wavy roof planes","crooked ridge","dormer off centre","two different roofs","ruin","ruined","derelict","abandoned","roofless","open roof frame","exposed rafters","missing roof","hole in the roof","gap in the thatch","hole in the thatch","smoke hole","roof vent","opening in the roof","chimney hole","collapsed wall","broken beams","visible interior","open interior","cutaway","doll house view","overgrown","ivy","climbing plants","weeds","saplings growing inside","rot","decay"];
+  const perTier={T1:["stone chimney","masonry chimney","stone footing","dressed stone","cut stone base","iron hinges","iron door bands","iron studs","sawn planks","shingles"],
+   T2:["carved ornament","paint","painted trim","two storeys","upper floor","dressed ashlar"],
+   T3:["carved ornament","painted trim","tiled roof"],
+   T4:["carved ornament","painted trim"]};
+  let extra=(S.kind==="building"&&perTier[k])?perTier[k].slice():[];
+  if(S.kind==="building" && S.name==="Moinho" && k!=="T0") extra=extra.concat(["wheel below the base line","parts below the ground line","piers at different heights","stepped base","wheel dipping below the piers","sunken foundation","cropped wheel","half wheel","wheel cut off","partial wheel","wheel sunk into the ground","wheel buried","wheel hidden behind the piers","water","river","stream","current","water surface","waves","ripples","foam","spray","splash","wet stone","reflection","overshot wheel","water wheel fed from above","wooden flume","launder","chute","aqueduct","waterfall","pond","stone walled channel","canal wall","masonry bank","retaining wall","river bank","embankment","enclosed channel"]);
+  if(S.kind==="building" && k==="T0") extra=extra.concat(["new goods","intact stock","undamaged contents"].concat(NO_ROOF.has(S.name)?[]:["intact chimney","tall chimney","standing chimney"]));
+  if(S.kind==="building" && S.name==="Padeiro" && k!=="T0") extra=extra.concat(["outdoor oven","oven mouth on the outside","oven built into the front wall","firewood stacked under the oven","bread paddle","peel","hanging shop sign","signboard","oven dome outside the building"]);
+  if(S.kind==="building" && MASONRY_CORE[S.name]) extra=extra.filter(x=>x!=="stone chimney"&&x!=="masonry chimney"&&x!=="stone footing");
+  if(S.kind==="building" && S.name==="Gazebo dos M\u00fasicos" && k!=="T0") extra=extra.concat(["roof","canopy","awning","cover overhead","pergola","posts rising from the deck","columns","finial","drapery","bunting","banner","walls","enclosed","closed sides","glazing","shutters","door","bandstand","anything above the deck","gap in the balustrade","missing rail section","rail on only two sides","open side without a stair","broken run of balusters"]);
+  const notRuinFilter = S.name==="Gazebo dos M\u00fasicos" ? (x=>x!=="visible interior"&&x!=="open interior"&&x!=="cutaway") : MASONRY_CORE[S.name] ? (x=>x!=="hole in the roof"&&x!=="opening in the roof"&&x!=="chimney hole"&&x!=="smoke hole"&&x!=="roof vent") : (x=>true);
+  if(S.kind==="building" && MASONRY_CORE[S.name] && k!=="T0") extra.push("stone walls","stone building","fully stone structure","detached chimney","chimney away from the hearth","chimney at the ridge","chimney on the opposite side of the roof","chimney offset from the hearth","freestanding chimney","fireplace without a hood","flue bending sideways","two separate stone masses","chimney hidden behind the roof","roof crossing in front of the chimney","chimney emerging from behind the ridge","thatch overlapping the chimney","interrupted stack","hood hidden under the eaves","chimney sunk into the roof","chimney flush with the wall","stack embedded in the thatch","roof wrapping around the chimney front","chimney in the middle of a long wall","chimney in a roof valley","thatch sloping down both sides of the chimney","chimney squeezed between roof slopes","short chimney","chimney barely above the roof");
+  return (S.kind==="building" && k!=="T0" ? lights.concat(extra,notRuin.filter(notRuinFilter),base) : lights.concat(extra,base)).join(", ");
+}
+const NEG_LABEL=()=>NEGfor(key());
+function buildParams(){
+  return `SEM ANEXO e SEM NEGA\u00c7\u00c3O NO POSITIVO. O prompt positivo s\u00f3 descreve o que existe; tudo que \u00e9 proibido vive apenas no campo negativo.
+
+CANVAS
+  ${FMT[S.fmt]}
+  Asset ocupa 88\u201392% da menor dimens\u00e3o, com margem limpa nos quatro lados.
+  Fundo: ${S.bg==="alpha"?"alpha real":S.bg==="white"?"branco chapado":"cinza neutro"}. Exportar PNG RGBA.
+
+POR QUE ISSO IMPORTA
+  Modelo de imagem n\u00e3o processa "sem telhado quebrado" \u2014 ele l\u00ea "telhado quebrado".
+  Cada palavra de ru\u00edna escrita no positivo, mesmo precedida de "no" ou "never", empurra a imagem para ru\u00edna.
+  A lista negativa do T1 em diante come\u00e7a com ru\u00edna, sem telhado, caibro exposto, interior vis\u00edvel.
+
+CONSIST\u00caNCIA ENTRE EST\u00c1GIOS
+  Mesma fam\u00edlia de seed para toda a escada de uma edifica\u00e7\u00e3o.
+  Gere T1 primeiro. Ele \u00e9 o mais dif\u00edcil; se ele fechar, os outros fecham.
+  O T0 \u00e9 o \u00fanico est\u00e1gio em que ru\u00edna \u00e9 permitida e a negativa dele n\u00e3o traz esses termos.
+
+ALVOS MEDIDOS DA REFER\u00caNCIA
+  Sombra profunda (L<70): 60\u201365%   Alta luz (L>170): abaixo de 1%   Lumin\u00e2ncia m\u00e9dia: ~61   Ocupa\u00e7\u00e3o: 88\u201392% com margem`;
+}
+function buildQA(){
+  const k=key();
+  return `CHECKLIST \u2014 ${S.name} \u00b7 ${S.kind==="building"?k+" \u2014 "+STAGES[k]:"estado "+k}
+
+FECHAMENTO${S.kind==="building"&&k!=="T0"?"":" (T0: ru\u00edna, ignore este bloco)"}
+  [ ] telhado cont\u00ednuo cobrindo as duas \u00e1guas
+  [ ] nenhum caibro \u00e0 mostra
+  [ ] interior invis\u00edvel de fora
+  [ ] quatro paredes fechadas encostando no ch\u00e3o
+
+PROGRESS\u00c3O
+  [ ] mais constru\u00eddo que o est\u00e1gio anterior
+  [ ] mesma porta, mesmo lado, mesma chamin\u00e9, mesmo footprint
+  [ ] material coerente com o est\u00e1gio (T1 sem pedra aparelhada, T2 sem ornamento)
+
+VALOR E COR
+  [ ] 60\u201365% da \u00e1rea abaixo de L70
+  [ ] menos de 1% acima de L170
+  [ ] lumin\u00e2ncia m\u00e9dia perto de 61
+  [ ] cinza frio presente na pedra
+
+LIMPEZA
+  [ ] sem entulho, lasca, machado ou t\u00e1bua solta
+  [ ] sem plataforma, pedestal ou ilha de ch\u00e3o
+  [ ] sem luminária de qualquer tipo
+  [ ] ocupa\u00e7\u00e3o de tela 88\u201392%, com margem`;
+}
+/* ---------- render ---------- */
+function render(){
+  $('#vx').textContent=S.fp[0]; $('#vy').textContent=S.fp[1]; $('#vz').textContent=S.fp[2];
+  $('#modeNote').textContent = S.len==='full'
+    ? 'Acrescenta ordem de leitura, props permitidos e prioridade de progressão. Use quando o modelo estiver inventando adereço.'
+    : 'Versão curta: só o que o modelo obedece de fato. Comece por aqui.';
+  const map={prompt:buildPrompt,neg:NEG_LABEL,params:buildParams,qa:buildQA};
+  const fn=$('#fname'); if(fn) fn.textContent = assetName()+'.png';
+  $('#out').textContent = map[S.tab]();
+}
+
+/* ---------- ações ---------- */
+function flash(m){const s=$('#status');s.textContent=m;setTimeout(()=>{if(s.textContent===m)s.textContent=''},2200)}
+async function copy(text,msg){try{await navigator.clipboard.writeText(text);flash(msg)}catch(e){flash('Não consegui copiar — selecione o texto e copie manualmente.')}}
+
+$('#bCopy').onclick=()=>copy($('#out').textContent,'Aba copiada.');
+$('#bCopyAll').onclick=()=>copy('### PROMPT\n'+buildPrompt()+'\n\n### NEGATIVE\n'+NEGfor(key())+'\n\n### PARAMS\n'+buildParams(),'Pacote completo copiado.');
+$('#bCopyLadder').onclick=()=>{
+  copy(ladderPack(),'Plano completo copiado \u2014 um bloco por imagem.');
+};
+function ladderPack(){
+  const keys = S.kind==='building' ? tiersFor(S.name).slice() : Object.keys(HSTATES);
+  const tot = keys.length;
+  const order = S.kind==='building' ? keys.slice(1).concat([keys[0]]) : keys;
+  let out = 'SET: '+S.name+' \u2014 '+tot+' SEPARATE IMAGES.\n'
+    +'Each numbered block below describes a DIFFERENT, INDEPENDENT image of the same building at a different level of development.\n'
+    +'Generate one image per block, one at a time. Treat each block as its own brief. Carry nothing from one block into another.\n'
+    +'The blocks are ordered from the most developed to the least, on purpose.\n\n';
+  order.forEach(k=>{
+    const i = keys.indexOf(k)+1;
+    out += '='.repeat(64)+'\nIMAGE '+i+' OF '+tot+'\nSAVE AS: '+assetName(k)+'.png\n'+'='.repeat(64)+'\n\n'
+        + buildPrompt(k) + '\n\nNEGATIVE FIELD FOR IMAGE '+i+':\n' + NEGfor(k) + '\n\n\n';
+  });
+  return out;
+}
+$('#bTxt').onclick=()=>{
+  const blob=new Blob([$('#out').textContent],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=assetName()+'_'+S.tab+'.txt';
+  a.click(); URL.revokeObjectURL(a.href); flash('Arquivo salvo.');
+};
+document.querySelectorAll('.dim button').forEach(b=>b.onclick=()=>{
+  const i={x:0,y:1,z:2}[b.dataset.d], s=+b.dataset.s;
+  const max=[4,4,5][i];
+  S.fp[i]=Math.min(max,Math.max(1,S.fp[i]+s));
+  pruneCells(); if(S.view!=='all' && +S.view>=S.fp[2]) S.view='all';
+  renderView(); renderGrid(); render();
+});
+$('#bPreset').onclick=()=>{applyPreset();renderGrid();render();flash('Ocupação padrão do estágio aplicada.')};
+$('#bFill').onclick=()=>{S.cells=new Set(allCells().map(c=>cellId(...c)));renderGrid();render()};
+$('#bClear').onclick=()=>{S.cells.clear();renderGrid();render()};
+
+$('#sel').onchange=e=>{
+  const [k,n]=e.target.value.split('|');
+  S.kind = k==='b'?'building':'hostile'; S.name=n;
+  loadItem();
+};
+$('#extra').oninput=e=>{S.extra=e.target.value;render()};
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  S.tab=b.dataset.t;
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  render();
+});
+wire('#segSite','site'); wire('#segLen','len'); wire('#segCat','catalog'); wire('#segNaming','naming'); wire('#segAccent','accent');
+wire('#segDoor','door'); wire('#segBg','bg'); wire('#segFmt','fmt');
+
+fillSelect(); loadItem();
+</script>
+</body>
+</html>

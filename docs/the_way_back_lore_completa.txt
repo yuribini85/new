@@ -1,0 +1,571 @@
+================================================================================
+THE WAY BACK
+LORE COMPLETA
+Idle isométrico · Godot 4.4 · vila medieval · contos dos Irmãos Grimm
+================================================================================
+
+--------------------------------------------------------------------------------
+1. PREMISSA
+--------------------------------------------------------------------------------
+
+The Way Back começa depois do fim de João e Maria.
+
+As crianças escaparam da Bruxa, voltaram para casa e sobreviveram. O final feliz
+não durou. Os pais morrem. Os dois irmãos permanecem na antiga casa, isolados na
+borda da floresta.
+
+Com o tempo outras crianças começam a surgir — órfãos, abandonados, fugitivos e
+sobreviventes de acontecimentos que remetem aos contos dos Grimm. O abrigo vira
+assentamento. O assentamento vira vila. E a vila eventualmente se torna uma das
+poucas comunidades capazes de sobreviver àquilo que está acontecendo com a
+floresta.
+
+Os dois irmãos se dividem conforme o que cada um se tornou.
+
+JOÃO ficou. Administra, conta, distribui, mantém a vila de pé. É ele quem fala
+com o jogador dentro dos muros e quem conduz o tutorial. Alto, magro demais,
+marcado pela fome da infância — alguém que foi engordado numa jaula e nunca mais
+encheu. Carrega no cinto um saquinho de migalhas que não serve para nada. Nunca
+lutou, e não luta agora.
+
+MARIA saiu. Matou uma bruxa aos oito anos, empurrada pelo medo, e transformou
+aquilo em ofício. Caça o que a floresta produz e comanda as expedições. Fala com
+o jogador quando volta — e a chegada dela é evento.
+
+Dois líderes natos com qualidades opostas: um gestor e um operacional. Eles
+discordam em público, e o jogador assiste.
+
+--------------------------------------------------------------------------------
+2. O ANTAGONISTA: A FOME
+--------------------------------------------------------------------------------
+
+A Fome é uma força antiga que consome aquilo de que os seres vivos precisam para
+continuar existindo.
+
+Onde ela se manifesta:
+  · colheitas produzem menos
+  · alimentos estragam
+  · animais abandonam seus territórios
+  · predadores se aproximam das aldeias
+  · pessoas começam a roubar
+  · famílias abandonam crianças
+  · criaturas sobrenaturais tornam-se mais agressivas
+  · antigas maldições retornam
+  · caminhos da floresta mudam
+  · comunidades desaparecem
+
+A FOME CRIA AS CONDIÇÕES PARA QUE OS CONTOS ACONTEÇAM.
+
+Isso permite reinterpretar boa parte do universo Grimm através de uma única crise
+sem dizer que todos os personagens trabalham para um vilão. Não existe exército
+da Fome. Um lobo continua sendo um lobo. Uma bruxa continua tendo objetivos
+próprios. Um gigante pode estar apenas defendendo território. Rumpelstiltskin
+continua interessado nos próprios acordos. O Diabo continua fazendo pactos. Frau
+Holle continua seguindo as próprias regras.
+
+A Fome altera o ambiente no qual todos eles existem. Alguns serão afetados.
+Alguns tentarão explorá-la. Alguns tentarão escapar. Alguns talvez saibam como
+combatê-la.
+
+--------------------------------------------------------------------------------
+2.1 A MARCA
+--------------------------------------------------------------------------------
+
+Quem a Fome consome deixa marca no corpo. É o que transforma suspeita em
+evidência e o que sustenta a investigação inteira.
+
+O mesmo padrão aparece em escalas diferentes: na pele de quem morreu, nas folhas
+de árvores secas fora de época, nos ossos de animais achados intactos e não
+devorados, na terra. Reconhecível sem legenda e sem depender de imagem violenta.
+
+É a Marca que faz a vila concluir que existe UM RESPONSÁVEL, e não um acaso. E é
+exatamente isso que prepara o erro do Ato IV.
+
+A forma definitiva da Marca só é renderizada em cutscenes; fora delas, não
+aparece no jogo.
+
+--------------------------------------------------------------------------------
+2.2 A FOME NÃO CRIA MALDADE — TERMINA O SERVIÇO EM QUEM JÁ TINHA ALGUMA
+--------------------------------------------------------------------------------
+
+A MADRASTA já tinha índole ruim. Corrompida, foi ela quem entregou João e Maria
+à floresta.
+
+O PAI resistiu mais. Foi afetado assim mesmo, cedeu, e morreu disso — emagreceu
+comendo, e o corpo trazia a Marca. João viu. Nunca soube ler o que era.
+
+A BRUXA DA CASA DE DOCES é o caso extremo e o mais antigo. Era uma camponesa
+comum, de índole ruim, que se estabeleceu no epicentro. A Fome não a inventou:
+fez o resto. Abundância que não alimenta, apetite que não passa, e finalmente
+comer o que não se come.
+
+Isso não a redime. Ela escolheu, e morreu por isso. O efeito pretendido é o
+jogador entender que aquilo pode acontecer com qualquer um — inclusive com
+alguém da vila que ele acabou de construir.
+
+--------------------------------------------------------------------------------
+3. A LIGAÇÃO COM JOÃO E MARIA
+--------------------------------------------------------------------------------
+
+João e Maria não são protagonistas aleatórios enfrentando a Fome. A história
+deles já era uma manifestação dela.
+
+No conto, a fome leva os adultos à decisão de abandonar as crianças na floresta.
+A casa da Bruxa apresenta a perversão oposta: existe comida em abundância, mas a
+comida é uma armadilha. Depois João é engordado para ser devorado.
+
+Toda a história já gira em torno de:
+
+    FOME → ABANDONO → COMIDA → TENTAÇÃO → CONSUMO → SOBREVIVÊNCIA
+
+Eles sobreviveram a uma pequena manifestação de algo muito maior sem compreender
+isso.
+
+--------------------------------------------------------------------------------
+4. GEOGRAFIA — O EIXO DE CONTAMINAÇÃO
+--------------------------------------------------------------------------------
+
+A disposição do mapa conta a história sem uma palavra de texto.
+
+    A CASA ──── A VILA ──── A MINA ──── A CLAREIRA
+    origem      cresce      o metal     epicentro
+                para lá
+
+A CASA DE JOÃO E MARIA fica no canto extremo, longe da mina, com espaço em volta.
+Nunca pode ser melhorada. É a origem, não o centro. É a única construção sem
+função mecânica: tocá-la abre o resumo da história até ali.
+
+O GAZEBO ocupa o centro da praça.
+
+A MINA E A TORRE ficam no lado oposto à casa, sobre encosta rochosa. A vila é
+visivelmente mais densa desse lado — cresceu para lá, porque é onde está o metal.
+A expansão é uma decisão moral visível: o jogador constrói na direção da coisa,
+lote por lote, sabendo.
+
+O POÇO DA SENHORA HOLLE fica perto da casa, no lado seguro. Não é construído: já
+estava ali. É o portal por onde ela vem, e NUNCA SECA — nem no Ato V, quando
+todos os outros secarem.
+
+O LAGO fica em outra direção, com a cabana de pesca na margem rasa. A Nixie mora
+no fundo e não tem relação com a Fome: tem território. É o que ensina ao jogador
+que perigo e corrupção não são a mesma coisa.
+
+A CLAREIRA DA CASA DE DOCES fica no canto mais distante, além da mina, entre
+árvores mortas.
+
+NO FUNDO, em projeção livre e inalcançáveis para sempre: o castelo da Bela
+Adormecida, massa horizontal afogada em espinheiro morto; e a montanha de vidro
+do Velho Rinkrank, vertical, lisa e pálida. Escuridão orgânica de um lado,
+claridade mineral do outro.
+
+--------------------------------------------------------------------------------
+4.1 A CASA DE DOCES, DÉCADAS DEPOIS
+--------------------------------------------------------------------------------
+
+Não parece mais doce. Açúcar velho cristaliza e escurece: a casa é preta e
+vítrea, endurecida e brilhante como esmalte queimado, com o formato de
+confeitaria ainda reconhecível sob a crosta. Fissuras claras percorrem a massa.
+Cheira mal. Não atrai mais ninguém — e é por isso que ninguém foi lá.
+
+O DIABO ESTÁ LÁ DENTRO, ao fim do Ato III. Não mora ali: está de passagem,
+sentado numa cadeira que trouxe. Ele não mente — diz a verdade de um jeito que o
+jogador entende mal, que é como ele sempre perde e sempre ganha. É ele quem
+confirma que o Dragão tem o Grão. Tecnicamente correto. O erro do Ato IV passa a
+ter autor.
+
+--------------------------------------------------------------------------------
+5. A VILA
+--------------------------------------------------------------------------------
+
+O atrativo visual do jogo não está dentro das construções: está fora. O interior
+não é animado, e clicar abre uma tela estática. O valor está nos sprites
+circulando, cada vez mais numerosos, fazendo coisas sozinhos.
+
+O anão saindo da mina com minério e atravessando até a forja. O padeiro indo
+buscar uma pá nova. O Pescador cruzando a vila inteira com o balde até a taberna,
+onde a mulher dele o espera. Maria saindo pelo portão e voltando dias depois.
+
+Cada oficina nova gera um trajeto novo. É assim que a vila fica viva.
+
+REGRA DE COR: quem mora dentro puxa para o marrom quente; quem anda fora puxa
+para o cinza-esverdeado frio.
+
+--------------------------------------------------------------------------------
+5.1 DEFESA
+--------------------------------------------------------------------------------
+
+Sem cercas e sem muralhas. Uma torre só, ao lado da mina — porque é ali que os
+anões trabalham, mais perto de onde o mal vem.
+
+A torre não tem mecânica ativa. Ela é o MOSTRADOR DA MINA: sobe um nível a cada
+nível que a mina desce, e a altura é o que permite avistar — e portanto alcançar
+— regiões mais distantes de expedição. Cada altura nova revela mais do horizonte.
+
+Enquanto a torre não alcança, o jogador enxota clicando: corvo na plantação,
+raposa no galinheiro. É a interação ativa dos primeiros minutos. Depois, novos
+habitantes automatizam o que era clique. Evoluir a defesa é deixar de precisar
+clicar.
+
+Nada disso dá retorno real. O único combate com recompensa são as expedições.
+
+--------------------------------------------------------------------------------
+5.2 NEM TUDO QUE PARECE PERIGOSO É
+--------------------------------------------------------------------------------
+
+Gigantes atravessam o mapa e podem ser vistos da vila. Passam. Não atacam. O
+jogador vai passar a primeira vez em pânico e não acontece nada.
+
+O inverso também vale: o que é pequeno, familiar e inofensivo na aparência é o
+que faz estrago. Nos contos, o perigo nunca se anuncia, e o que se anuncia
+raramente cumpre.
+
+--------------------------------------------------------------------------------
+6. O ELENCO
+--------------------------------------------------------------------------------
+
+NÚCLEO
+
+  JOÃO (KHM 15) — liderança, tutorial, interlocutor do jogador.
+
+  MARIA (KHM 15) — expedições, informação sobre criaturas, pergaminhos. Evolui
+  visualmente como um edifício: cada nível mais equipada e mais preparada, com
+  ferimentos e cicatrizes acumulando conforme vai mais longe. A vila fica mais
+  bonita; ela não.
+
+  A FILHA SÁBIA DO CAMPONÊS (KHM 94) — biblioteca. É a única pessoa da coleção
+  cuja característica definidora é entender coisas. Lê os pergaminhos, monta o
+  quadro da investigação, e discorda do jogador. Às vezes diz que aquele
+  pergaminho não deveria ser lido.
+
+  AS TRÊS FIANDEIRAS (KHM 14) — produção offline. Três velhas deformadas pelo
+  próprio ofício: uma com o pé enorme de pisar o pedal, uma com o lábio pendente
+  de molhar o fio, uma com o polegar chato de torcer. Aparecem quando há trabalho
+  impossível pendente. Não falam, não negociam, não cobram ouro. O preço é
+  reconhecimento público: serem admitidas e chamadas de tias diante de todos. E o
+  custo real é o do conto — quem entrega o trabalho a elas perde a capacidade de
+  fazê-lo sozinho. Aparecem sempre as três juntas.
+
+  OS SETE ANÕES (KHM 53) — mina e forja. Anônimos, como no conto original.
+
+EDIFICAÇÕES E SEUS DONOS
+
+  Padaria .............. Chapeuzinho Vermelho, adulta (KHM 26)
+  Horta ................ Rapunzel (KHM 12)
+  Moinho ............... A Filha do Moleiro (KHM 55)
+  Mercado .............. O Mestre Ladrão (KHM 192)
+  Cabana de Caça ....... O Caçador (KHM 26)
+  Lar dos Órfãos ....... A Menina dos Táleres (KHM 153)
+  Cabana do Construtor . O Jovem Gigante (KHM 90)
+  Cabana do Lenhador ... Os dois irmãos mais velhos (KHM 64)
+  Depósito ............. A Menina sem Mãos (KHM 31)
+  Herbalista ........... Joringel (KHM 69)
+  Curandeiro ........... O afilhado da Madrinha Morte (KHM 44)
+  Curral dos Animais ... A Pastora de Gansos (KHM 89)
+  Taberna .............. A Mulher do Pescador (KHM 19)
+  Cabana de Pesca ...... O Pescador (KHM 19)
+  Sapataria ............ Os Elfos (KHM 39)
+  Vendedor de Armas .... O Homem da Luz Azul (KHM 116)
+  Cabana da Expedição .. posto de partida, sem morador
+  Torre ................ sem morador — é o mostrador da mina
+
+NOTAS DE ELENCO
+
+  A MENINA SEM MÃOS chega e assume o depósito sem mãos. Conta, mede, sabe onde
+  está tudo, mas não carrega — e o depósito rende parcial. No nível 5 da mina, os
+  anões forjam as mãos de prata para ela. É a única vez em que a forja produz
+  algo que não é para vender. A partir daí ela opera por inteiro, e fica com o
+  único objeto de metal claro numa vila toda de terra e cinza.
+
+  O CURANDEIRO enxerga quem vive e quem morre. Ele sabe ler a Marca — pode olhar
+  um habitante e dizer que já está perdido.
+
+  A MULHER DO PESCADOR nunca está satisfeita: aumenta preço, expande sem parar,
+  quer mais. O conto avisa como termina. O marido dela atravessa a vila todo dia
+  com o balde, resignado, e nunca pesca no lado fundo do lago.
+
+  PELE-DE-URSO (KHM 101) acompanha as expedições. Está sob contrato de sete anos
+  com o Diabo e não pode morrer antes de cumpri-lo — justificativa de
+  imortalidade sem magia. O jogador nunca sabe quantos anos faltam.
+
+  BRANCA DE NEVE não entra na vila. Está no caixão de vidro em algum lugar da
+  floresta, e os anões sabem onde. Encontrar aquilo numa expedição explica muito
+  sobre por que eles não voltam.
+
+  O ALFAIATE VALENTE (KHM 20) passa uma vez por dia e vai embora antes do escuro.
+  Faz oferta; recusar mexe no preço de amanhã. O estoque dele responde ao mundo:
+  depois de uma maldição chega com o remédio duvidoso, antes do inverno com
+  cobertor caro. Exagera a origem de tudo que vende — e um item por dia é
+  realmente o que ele diz ser. É também a fonte contraditória contra a Filha
+  Sábia: ela lê, ele conta, e as versões nunca coincidem inteiramente.
+
+  OS MÚSICOS DE BREMEN (KHM 27) chegam quando o gazebo é restaurado, ao fim do
+  Ato I. Quando tocam, a vila prospera ao dobro — e a trilha ganha uma camada
+  inteira.
+
+  O FLAUTISTA (Deutsche Sagen) é evento recorrente. Os ratos crescem e a produção
+  cai. Só ele resolve, e cobra caro. Se não for pago, leva os órfãos, que saem
+  andando atrás da música e somem no mapa. Se não houver órfãos na vila, ele não
+  tem o que levar.
+
+  A SENHORA HOLLE (KHM 24) vem pelo poço. Não é vilã: é juíza. Faz duas demandas
+  de produção por ato, com prazo. Entrega no prazo: chove ouro. Prazo esgotado:
+  chove piche, e a produção cai até a entrega ser completada. É também quem
+  devolve, pelo poço, um órfão morto em expedição.
+
+  RUMPELSTILTSKIN (KHM 55) aparece só em gargalo real, com um balão de diálogo em
+  forma de contrato. O botão é ASSINAR. Entrega sempre o que promete, e nunca
+  cobra criança.
+
+  OS ÓRFÃOS têm nome, aparência e trauma sorteados. Nenhum é personagem escrito.
+  Alguns roubam comida — e isso não é defeito de personalidade: é o eco da regra
+  de que a Fome termina o serviço em quem já tinha índole. O jogador vai olhar
+  para eles de outro jeito depois de saber da Bruxa.
+
+--------------------------------------------------------------------------------
+7. A MINA E OS SETE ANÕES
+--------------------------------------------------------------------------------
+
+O GATILHO. Um anão procura João. Quer reativar a mina, e conta a história
+inteira: o que havia lá embaixo, por que os sete saíram, e que os outros seis se
+espalharam pela floresta.
+
+POR QUE SAÍRAM. Derivações da Fome chegaram ao fundo da mina. Eles não fugiram
+juntos — cada um foi para onde sabia trabalhar, porque anão que não trabalha
+adoece. Estão dispersos por seguirem o próprio ofício, não por estarem perdidos.
+Nenhum reabre aquela mina sozinho, e nenhum admite que quer voltar. É preciso que
+alguém de fora chegue e ofereça.
+
+OS SETE NÍVEIS. A mina não gera recurso passivo: destrava capacidades no resto da
+vila.
+
+    I    Pedra ............ infraestrutura
+    II   Carvão ........... acende a forja; sem ele nada abaixo funciona
+    III  Ferro ............ tier 1 de todas as linhas de produção
+    IV   Bronze ........... tier 2
+    V    Prata ............ tier 3 — e as mãos da Menina sem Mãos
+    VI   Ouro ............. tier 4
+    VII  Pedra branca ..... não é upgrade: é o fim do jogo
+
+A PEDRA BRANCA é a pedra que João usou para marcar o caminho de volta na primeira
+vez, quando brilhou ao luar e salvou os dois. Não serve para economia nenhuma.
+Serve para achar o caminho. É o material do recipiente que carrega o Grão na
+última expedição.
+
+OS ANÕES NUNCA CHEGARAM AO SÉTIMO NÍVEL. Sabiam que existia. A coisa que os
+expulsou estava exatamente ali embaixo.
+
+O CICLO. Maria encontra o anão numa região fixa do mapa — nunca aleatória. O
+jogador melhora a casa dos anões para abrir vaga. O anão se instala e passa a
+produzir. A mina sobe um nível, e cinco ou seis edifícios comemoram ao mesmo
+tempo.
+
+A CASA DOS ANÕES é pequena, limpa e modesta, com camas em fila, conforme o conto.
+Quando o sétimo entra, ela está completa pela primeira vez em décadas — e algo se
+reconstitui sem que ninguém diga nada.
+
+A FORJA fica perto da mina, mas não encostada. O espaço entre as duas existe para
+o jogador ver os anões saindo com minério, atravessando, produzindo e voltando.
+
+--------------------------------------------------------------------------------
+8. AS MALDIÇÕES
+--------------------------------------------------------------------------------
+
+Maldição converte e trava; não destrói. Ninguém morre. Vêm da floresta ou do que
+a vila fez — e o jogo nunca esclarece qual é qual. O jogador começa a suspeitar
+que algumas foram culpa dele, e essa dúvida vale mais que qualquer explicação.
+
+  O IRMÃO-CERVO (KHM 11) — um habitante volta de expedição transformado em
+  animal. Ocupa lote, não produz, não morre. Quebra longa e cara.
+
+  A PELE QUE NÃO SAI (KHM 108) — um habitante começa a criar espinhos ou casca.
+  Produz muito mais e assusta todo mundo: o moral tem teto enquanto ele estiver
+  visível. O ritual de fogo o devolve à forma humana e custa o bônus.
+
+  O SONO (KHM 50) — uma ala inteira adormece. Nada se perde, nada produz. Casas
+  escuras no meio da vila acesa.
+
+  A CHUVA DE PICHE (KHM 24) — consequência da demanda não cumprida da Senhora
+  Holle. A produção cai e o piche fica visível sobre os telhados até a entrega
+  original ser completada. O castigo é a mesma demanda, com juros de tempo.
+
+  A CASA QUE APODRECE (KHM 15) — evento único, no Ato III, na casa de João e
+  Maria. A construção que nunca muda começa a ficar doce: madeira virando açúcar,
+  telha virando bolacha. Só se resolve com uma expedição à clareira. É quando a
+  premissa do jogo volta a bater na porta — e é como o jogador conhece o lugar
+  onde tudo vai terminar.
+
+  RATOS E O FLAUTISTA — recorrente. Ver seção 6.
+
+--------------------------------------------------------------------------------
+9. O GRÃO
+--------------------------------------------------------------------------------
+
+Em determinado ponto as expedições trazem evidência suficiente. Ninguém conhece
+tudo: uma bruxa conhece um nome, um velho conhece uma história, um objeto de
+ruína traz outro fragmento, uma criatura muito antiga confirma que aquilo já
+aconteceu antes. O Alfaiate conta metade. O Curandeiro lê nos corpos. A Filha
+Sábia monta o quadro.
+
+E surge a conclusão: a floresta está sendo consumida, e a coisa tem nome.
+
+Até esse momento, o jogador estava apenas reagindo. Agora recebe um objetivo
+concreto. Existe algo capaz de sobreviver à Fome, mencionado em histórias muito
+antigas. Não uma arma. Não uma coroa. Não um cristal mágico.
+
+Um GRÃO.
+
+Uma semente que a Fome não consegue consumir. Quando ela apareceu antes,
+praticamente tudo foi consumido, mas uma única semente permaneceu intacta. Ela
+cresce onde nada mais cresce. A Fome não consegue fazê-la apodrecer. Enquanto ela
+existir, a Fome nunca poderá completar aquilo que começou.
+
+O Grão é comida, semente, esperança e arma ao mesmo tempo. É o oposto exato da
+Fome.
+
+--------------------------------------------------------------------------------
+10. O DRAGÃO E A VIRADA
+--------------------------------------------------------------------------------
+
+O Grão está na região mais profunda da floresta, e lá existe um Dragão. Durante
+grande parte do jogo, tudo leva à mesma conclusão: o Dragão possui aquilo de que
+precisamos. E o Diabo confirma, sem mentir.
+
+Isso estabelece o grande objetivo. As expedições precisam alcançar territórios
+progressivamente mais perigosos. O equipamento precisa evoluir. A mina precisa
+descer. Os sete precisam estar reunidos. A economia da vila precisa sustentar a
+jornada.
+
+Depois de dezenas de horas, o jogador finalmente alcança o Dragão. E o derrota.
+
+Chega ao lugar protegido. Encontra o Grão. E então entende o erro.
+
+O DRAGÃO NÃO ESTAVA PROTEGENDO O GRÃO DO HOMEM. ESTAVA PROTEGENDO O GRÃO DA FOME.
+
+Ele era uma das últimas criaturas antigas suficientemente poderosas para impedir
+que a Fome chegasse até aquele lugar. O jogador acabou de destruir essa proteção.
+
+--------------------------------------------------------------------------------
+11. A INVERSÃO
+--------------------------------------------------------------------------------
+
+O Grão chega à vila. Pode ser estudado. Pode ser plantado. Talvez produza a
+primeira colheita completamente imune à corrupção. Por alguns momentos parece que
+o problema foi resolvido.
+
+Então a floresta muda. A Fome agora sabe onde o Grão está, e começa a avançar
+diretamente em direção à vila.
+
+    ANTES: a vila entrava na floresta.
+    AGORA: a floresta vem até a vila.
+
+Torres, oficinas e alojamentos deixam de existir apenas como mecânica
+incremental. Os órfãos que chegaram indefesos agora são adultos: caçadores,
+ferreiros, agricultores, exploradores, curandeiros, artesãos. Tudo o que foi
+construído durante a campanha passa a ter finalidade.
+
+A presença da Fome é percebida primeiro através do mundo. Árvores morrem. Animais
+desaparecem. Poços secam — todos menos o da Senhora Holle. Produção diminui.
+Pessoas ficam desesperadas. Eventos tornam-se mais violentos.
+
+E a música desaparece: o gazebo silencia.
+
+--------------------------------------------------------------------------------
+12. O PLANTIO
+--------------------------------------------------------------------------------
+
+O Grão não pode ser plantado na vila. Precisa ser plantado onde tudo começou: a
+clareira da casa de doces.
+
+  PORQUE É SOLO CONSUMIDO. A Fome já tirou dali tudo que havia. O Grão só prova o
+  que é onde nada mais cresce. Plantar em terra boa não prova nada.
+
+  PORQUE A FOME TEM UM LUGAR DE ENTRADA. A clareira é onde ela chegou primeiro e
+  onde a passagem continua aberta. Plantar ali não é semear: é fechar.
+
+  PORQUE É O CAMINHO DE VOLTA. João e Maria fizeram esse trajeto uma vez,
+  crianças, fugindo. Fazem de novo, adultos, levando uma semente — carregada num
+  recipiente de pedra branca, a mesma pedra que marcou o caminho da primeira vez.
+
+É A ÚNICA EXPEDIÇÃO EM QUE OS DOIS VÃO JUNTOS. O gestor sai da vila pela primeira
+vez, e a vila roda sozinha durante a viagem: o teste final de tudo que o jogador
+automatizou.
+
+E, coerente com Grimm, o confronto não se ganha por força acumulada. Nos contos
+ninguém vence pela força — vence-se por astúcia, por um nome, por uma informação,
+por um empurrão. O equipamento levou a vila até lá. O que resolve é o que se
+descobriu no caminho.
+
+--------------------------------------------------------------------------------
+13. A CAMPANHA EM CINCO ATOS
+--------------------------------------------------------------------------------
+
+ATO I — FOME
+  Sobreviver. Casa, comida, madeira, primeiros órfãos, corvos, raposas, lobos.
+  O clique de enxotar. A Casa das Fiandeiras é construída e o ganho offline passa
+  a existir. O gazebo é restaurado e os Músicos chegam.
+  → O jogador pensa que está construindo uma vila.
+
+ATO II — FLORESTA
+  Explorar. Primeiras expedições. O anão procura João: mina, casa dos anões,
+  forja. Ruínas, primeiros pergaminhos, ratos e Flautista, a primeira demanda do
+  poço. Um gigante atravessa o mapa e nada acontece.
+  → O jogador percebe que existe algo errado.
+
+ATO III — CONTOS
+  Compreender. Maldições, bruxas, criaturas maiores. A Marca se repete. O
+  curandeiro lê nos corpos, a biblioteca monta o quadro. A casa de João e Maria
+  apodrece, e a expedição leva à clareira. O Diabo, na casa vitrificada. A
+  descoberta do Grão.
+  → O jogador entende o inimigo — e acredita que ele tem rosto.
+
+ATO IV — DRAGÃO
+  Preparar. Expedições profundas, forja avançada, equipamento especializado, o
+  território do Dragão. Dragão morto, Grão recuperado. E então a revelação.
+  → O jogador acredita ter encontrado a solução.
+
+ATO V — A FOME
+  Defender e atacar. Corrupção crescente, ataques, crise de recursos, defesa da
+  vila, proteção do Grão, o sétimo nível da mina, a última expedição à clareira,
+  o plantio, o confronto final.
+  → Tudo o que foi construído passa a ter função.
+
+--------------------------------------------------------------------------------
+14. O ARCO COMPLETO
+--------------------------------------------------------------------------------
+
+    Duas crianças foram abandonadas por causa da fome.
+              ↓
+    Sobreviveram à floresta.
+              ↓
+    Construíram uma casa para outras crianças abandonadas.
+              ↓
+    A casa virou uma vila.
+              ↓
+    Descobriram que os abandonos estavam aumentando.
+              ↓
+    Descobriram que a floresta estava mudando.
+              ↓
+    Descobriram a Marca, e concluíram que havia um culpado.
+              ↓
+    Encontraram uma maneira de combatê-la.
+              ↓
+    Mataram o guardião daquilo que precisavam.
+              ↓
+    Trouxeram o último Grão para casa.
+              ↓
+    Trouxeram a Fome junto com ele.
+              ↓
+    E voltaram, os dois, ao lugar de onde tinham fugido — para plantar.
+
+JOÃO E MARIA COMEÇARAM COMO DUAS CRIANÇAS TENTANDO SOBREVIVER À FOME. NO FINAL,
+LIDERAM UMA COMUNIDADE INTEIRA DE CRIANÇAS QUE O MESMO FENÔMENO TENTOU CONSUMIR.
+
+E o nome THE WAY BACK funciona em vários níveis: voltar para casa; crianças
+encontrando o caminho de volta; personagens dos contos reaparecendo; os sete
+anões voltando à mina que abandonaram; a pedra branca marcando de novo o caminho;
+João e Maria retornando à clareira que quase os matou — e, finalmente, a própria
+Fome retornando.
+
+================================================================================
+FIM
+================================================================================

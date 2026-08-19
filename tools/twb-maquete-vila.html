@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TWB — Maquete da Vila</title>
+<style>
+:root{--ink:#0f0c09;--ink2:#161210;--parch:#d9cfb8;--bone:#efe7d4;--stone:#8a8278;
+ --moss:#7d8a5c;--ember:#a8492f;--gold:#b58a3c;--rule:#2e2721}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--parch);overflow:hidden;
+ font:15px/1.5 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+.app{display:grid;grid-template-columns:262px 1fr 252px;height:100vh}
+aside{overflow-y:auto;padding:16px 16px 60px;border-right:1px solid var(--rule)}
+aside.r{border-right:none;border-left:1px solid var(--rule)}
+h1{font:400 15px/1.2 inherit;letter-spacing:.16em;text-transform:uppercase;color:var(--bone);margin:0 0 2px}
+.sub{font:11px ui-sans-serif,system-ui,sans-serif;color:var(--stone);letter-spacing:.08em;margin:0 0 18px}
+h2{font:600 10px ui-sans-serif,system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase;
+ color:var(--ember);margin:20px 0 8px}
+.b{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 9px;
+ border:1px solid var(--rule);background:#141010;margin-bottom:5px;cursor:pointer;font-size:13.5px}
+.b:hover{border-color:#4b3f34;color:var(--bone)}
+.b.sel{border-color:var(--ember);background:#1f1310;color:var(--bone)}
+.b.done{opacity:.42}
+.b small{font:10.5px ui-monospace,Menlo,monospace;color:var(--stone)}
+canvas{display:block;background:#0b0907;cursor:crosshair}
+.hint{font-size:12px;color:var(--stone);line-height:1.45;margin:10px 0 0}
+button{width:100%;font-family:inherit;font-size:13px;color:var(--parch);background:#1d1815;
+ border:1px solid var(--rule);padding:8px;cursor:pointer;margin-bottom:6px}
+button:hover{background:#291f19;color:var(--bone)}
+button.p{background:var(--ember);border-color:var(--ember);color:#150a07;font-weight:600}
+textarea{width:100%;height:190px;background:#0d0a08;color:var(--parch);border:1px solid var(--rule);
+ font:11px ui-monospace,Menlo,monospace;padding:8px;resize:vertical}
+.leg{display:flex;align-items:center;gap:8px;font-size:12px;color:#9b9285;margin-bottom:5px}
+.sw{width:13px;height:13px;flex:none;border:1px solid #00000060}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside>
+  <h1>Maquete</h1>
+  <p class="sub">The Way Back · vila</p>
+  <p class="hint">Clique numa construção e depois no terreno. Arraste para mover.
+  <b>R</b> gira, <b>Del</b> remove. Roda dá zoom, botão direito arrasta o mapa.</p>
+  <h2>A colocar</h2>
+  <div id="todo"></div>
+  <h2>Colocadas</h2>
+  <div id="done"></div>
+</aside>
+
+<canvas id="cv"></canvas>
+
+<aside class="r">
+  <h1>Zonas</h1>
+  <p class="sub">o eixo de contaminação</p>
+  <div class="leg"><span class="sw" style="background:#2a2f22"></span>Origem — a casa</div>
+  <div class="leg"><span class="sw" style="background:#221c17"></span>Vila</div>
+  <div class="leg"><span class="sw" style="background:#241d16"></span>Oficinas</div>
+  <div class="leg"><span class="sw" style="background:#2b1d14"></span>Mina e forja</div>
+  <div class="leg"><span class="sw" style="background:#191013"></span>Clareira</div>
+  <div class="leg"><span class="sw" style="background:#16222a"></span>Lago</div>
+
+  <h2>Ações</h2>
+  <button class="p" id="exp">Exportar posições</button>
+  <button id="expdl">Baixar vila_lotes.json</button>
+  <button id="save">Salvar maquete</button>
+  <button id="load">Abrir maquete</button>
+  <button class="p" id="rec">Layout recomendado</button>
+  <button id="auto">Preencher por zona</button>
+  <button id="clr">Limpar</button>
+  <input type="file" id="f" accept=".json" style="display:none">
+
+  <h2>Saída</h2>
+  <textarea id="out" readonly></textarea>
+
+  <h2>Regra</h2>
+  <p class="hint">A vila cresce da casa (canto inferior esquerdo) em direção à mina.
+  Densidade maior do lado da mina. Sem cercas. Forja perto da mina, mas com espaço
+  entre as duas para o trajeto dos anões.</p>
+</aside>
+</div>
+
+<script>
+let W=64,H=32; const GX=68,GY=56;      // célula isométrica e tamanho da grade
+let ZOOM=1, PANX=0, PANY=0;
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+let OX=0, OY=0;
+
+const ZONES=[
+ {n:'lago',    c:'#16222a', x0:0,  y0:0,  x1:12, y1:12},
+ {n:'origem',  c:'#2a2f22', x0:0,  y0:30, x1:14, y1:52},
+ {n:'vila',    c:'#221c17', x0:8,  y0:5,  x1:32, y1:52},
+ {n:'oficinas',c:'#241d16', x0:32, y0:14, x1:46, y1:48},
+ {n:'mina',    c:'#2b1d14', x0:38, y0:2,  x1:56, y1:22},
+ {n:'clareira',c:'#191013', x0:56, y0:0,  x1:66, y1:10}
+];
+
+const FLAT=new Set(['Lago','Cemitério','Horta','Poço']);
+const CAT=[
+ ['Casa de João e Maria',4,4,'origem'],['Poço',2,2,'origem'],
+ ['Cabana do Lenhador',4,4,'vila'],['Horta',6,4,'vila'],['Alojamento',6,4,'vila'],
+ ['Depósito',4,4,'vila'],['Lar dos Órfãos',6,4,'vila'],['Curral dos Animais',6,6,'vila'],
+ ['Mercado',6,4,'vila'],['Cabana do Construtor',4,4,'oficinas'],['Padaria',4,4,'vila'],
+ ['Casa das Fiandeiras',4,4,'vila'],['Gazebo',4,4,'vila'],['Taberna',6,4,'vila'],
+ ['Moinho',4,4,'vila'],['Alfaiataria',4,4,'oficinas'],['Oficina do Sapateiro',4,4,'oficinas'],
+ ['Vendedor de Armas',4,4,'oficinas'],['Biblioteca',4,4,'vila'],['Cabana do Herbalista',4,4,'oficinas'],
+ ['Curandeiro',4,4,'oficinas'],['Cabana do Caçador',4,4,'vila'],['Cabana da Expedição',4,4,'vila'],
+ ['Cemitério',6,6,'origem'],['Mina',6,8,'mina'],['Forja',4,4,'mina'],['Casa dos Anões',4,4,'mina'],
+ ['Cabana de Pesca',4,4,'lago'],['Lago',10,10,'lago'],
+ ['Casa de Doces Vitrificada',4,4,'clareira']
+];
+
+let items=CAT.map(([n,w,d,z])=>({n,w,d,z,x:null,y:null,r:0}));
+let sel=null, drag=null;
+
+function resize(){
+  cv.width=Math.max(400, window.innerWidth-514); cv.height=window.innerHeight;
+  // escala para a grade inteira caber com folga
+  const sx = (cv.width-40) / ((GX+GY)/2);
+  const sy = (cv.height-150) / ((GX+GY)/2);
+  W = Math.max(10, Math.min(72, Math.min(sx, sy*2))) * ZOOM;
+  H = W/2;
+  OX = cv.width/2 + (GY-GX)*W/4 + PANX;
+  OY = 90 + PANY;
+  draw();
+}
+addEventListener('resize',resize);
+
+const iso=(i,j)=>[OX+(i-j)*W/2, OY+(i+j)*H/2];
+function unIso(px,py){
+  const dx=px-OX, dy=py-OY;
+  return [Math.floor((dy/H + dx/W)), Math.floor((dy/H - dx/W))];
+}
+const fw=it=>it.r?it.d:it.w, fd=it=>it.r?it.w:it.d;
+
+function zoneAt(i,j){
+  for(const z of ZONES) if(i>=z.x0&&i<z.x1&&j>=z.y0&&j<z.y1) return z;
+  return null;
+}
+function fits(it,i,j,ignore){
+  if(i<0||j<0||i+fw(it)>GX||j+fd(it)>GY) return false;
+  for(const o of items){
+    if(o===ignore||o.x===null) continue;
+    if(i < o.x+fw(o) && i+fw(it) > o.x && j < o.y+fd(o) && j+fd(it) > o.y) return false;
+  }
+  return true;
+}
+
+function tile(i,j,fill,stroke){
+  const [x,y]=iso(i,j);
+  ctx.beginPath();
+  ctx.moveTo(x,y); ctx.lineTo(x+W/2,y+H/2); ctx.lineTo(x,y+H); ctx.lineTo(x-W/2,y+H/2);
+  ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill()}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke()}
+}
+
+function block(it,ok){
+  const i=it.x,j=it.y,w=fw(it),d=fd(it);
+  const p=[iso(i,j),iso(i+w,j),iso(i+w,j+d),iso(i,j+d)];
+  const h = FLAT.has(it.n) ? Math.max(3,W*0.09) : Math.min(w,d)*(W*0.10)+W*0.22;
+  // topo
+  ctx.beginPath();
+  ctx.moveTo(p[0][0],p[0][1]-h);ctx.lineTo(p[1][0],p[1][1]-h);
+  ctx.lineTo(p[2][0],p[2][1]-h);ctx.lineTo(p[3][0],p[3][1]-h);ctx.closePath();
+  ctx.fillStyle= it===sel?'#6d5a44': ok?'#4b4034':'#6b2a1e'; ctx.fill();
+  ctx.strokeStyle='#0d0a08';ctx.stroke();
+  // faces
+  [[p[3],p[2]],[p[2],p[1]]].forEach(([a,b],k)=>{
+    ctx.beginPath();
+    ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);
+    ctx.lineTo(b[0],b[1]-h);ctx.lineTo(a[0],a[1]-h);ctx.closePath();
+    ctx.fillStyle= it===sel? (k?'#4e4030':'#3d3226') : ok? (k?'#332b22':'#28211a') : '#4a1c14';
+    ctx.fill(); ctx.strokeStyle='#0d0a08'; ctx.stroke();
+  });
+  // rótulo
+  const cx=(p[0][0]+p[2][0])/2, cy=(p[0][1]+p[2][1])/2-h-6;
+  ctx.font='10px ui-sans-serif,system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.fillStyle= it===sel?'#efe7d4':'#9c9284';
+  const lbl = it.n.length>16 ? it.n.slice(0,15)+'…' : it.n;
+  ctx.fillStyle='#0b0907'; ctx.fillText(lbl, cx+1, cy+1);
+  ctx.fillStyle= it===sel?'#efe7d4':'#b0a695'; ctx.fillText(lbl, cx, cy);
+}
+
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  for(let j=0;j<GY;j++) for(let i=0;i<GX;i++){
+    const z=zoneAt(i,j);
+    tile(i,j, z?z.c:'#100d0b', '#1b1613');
+  }
+  const placed=items.filter(o=>o.x!==null).sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+  placed.forEach(o=>block(o, fits(o,o.x,o.y,o)));
+  renderLists();
+}
+
+function renderLists(){
+  const t=document.getElementById('todo'), d=document.getElementById('done');
+  const f=o=>`<div class="b ${o===sel?'sel':''}" data-n="${o.n}">
+    <span>${o.n}</span><small>${fw(o)}×${fd(o)}</small></div>`;
+  t.innerHTML=items.filter(o=>o.x===null).map(f).join('')||'<p class="hint">Todas colocadas.</p>';
+  d.innerHTML=items.filter(o=>o.x!==null).map(f).join('')||'<p class="hint">Nenhuma ainda.</p>';
+}
+document.querySelector('.app').addEventListener('click',e=>{
+  const b=e.target.closest('.b'); if(!b) return;
+  sel=items.find(o=>o.n===b.dataset.n); draw();
+});
+
+cv.addEventListener('mousedown',e=>{
+  const r=cv.getBoundingClientRect();
+  const [i,j]=unIso(e.clientX-r.left, e.clientY-r.top);
+  const hit=items.filter(o=>o.x!==null).reverse()
+    .find(o=> i>=o.x && i<o.x+fw(o) && j>=o.y && j<o.y+fd(o));
+  if(hit){ sel=hit; drag={dx:i-hit.x, dy:j-hit.y}; }
+  else if(sel){ if(fits(sel,i,j,sel)){ sel.x=i; sel.y=j; } }
+  draw();
+});
+cv.addEventListener('mousemove',e=>{
+  if(!drag||!sel) return;
+  const r=cv.getBoundingClientRect();
+  const [i,j]=unIso(e.clientX-r.left, e.clientY-r.top);
+  sel.x=i-drag.dx; sel.y=j-drag.dy; draw();
+});
+addEventListener('mouseup',()=>{drag=null;pan=null});
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  ZOOM = Math.max(0.5, Math.min(3, ZOOM * (e.deltaY<0?1.12:0.89)));
+  resize();
+},{passive:false});
+let pan=null;
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('pointerdown',e=>{ if(e.button===2) pan={x:e.clientX-PANX,y:e.clientY-PANY}; });
+cv.addEventListener('pointermove',e=>{
+  if(pan){ PANX=e.clientX-pan.x; PANY=e.clientY-pan.y; resize(); }
+});
+addEventListener('keydown',e=>{
+  if(!sel) return;
+  if(e.key.toLowerCase()==='r'){ sel.r=sel.r?0:1; draw(); }
+  if(e.key==='Delete'||e.key==='Backspace'){ sel.x=sel.y=null; draw(); }
+});
+
+/* Layout recomendado — posições autorais.
+   Eixo: casa e poço no canto esquerdo (origem) → vila adensando para a direita →
+   mina, forja e casa dos anões no canto direito → clareira no extremo → lago ao norte. */
+const REC={
+ // origem — o começo, com vazio em volta. Ninguém constrói colado.
+ 'Casa de João e Maria':[8,40,0], 'Poço':[4,45,0], 'Cemitério':[2,32,0],
+
+ // lago, ao norte e longe de tudo
+ 'Lago':[0,0,0], 'Cabana de Pesca':[4,11,0],
+
+ // primeiro anel — Ato I, esparso, do lado seguro
+ 'Cabana do Lenhador':[16,42,0], 'Horta':[18,48,0], 'Curral dos Animais':[10,25,0],
+ 'Alojamento':[17,34,0], 'Lar dos Órfãos':[17,28,0], 'Casa das Fiandeiras':[9,18,0],
+ 'Moinho':[15,13,0], 'Cabana do Caçador':[10,7,0],
+
+ // centro — praça, depósito no meio do caminho das oficinas
+ 'Gazebo':[27,26,0], 'Depósito':[27,20,0], 'Mercado':[26,33,0],
+ 'Biblioteca':[25,40,0], 'Taberna':[24,13,0],
+
+ // cinturão de oficinas — denso, do lado da mina
+ 'Vendedor de Armas':[34,18,0], 'Alfaiataria':[34,24,0], 'Oficina do Sapateiro':[34,30,0],
+ 'Curandeiro':[40,22,0], 'Cabana do Construtor':[40,28,0], 'Cabana do Herbalista':[40,34,0],
+ 'Padaria':[33,36,0], 'Cabana da Expedição':[33,44,0],
+
+ // mina, forja e anões — vão de 8 células entre mina e forja
+ 'Mina':[46,6,0], 'Forja':[40,12,0], 'Casa dos Anões':[47,16,0],
+
+ // clareira — muito além da mina, fora do alcance visual da vila
+ 'Casa de Doces Vitrificada':[59,1,0]
+};
+document.getElementById('rec').onclick=()=>{
+  items.forEach(o=>{o.x=o.y=null;o.r=0});
+  let falhas=[];
+  items.forEach(o=>{
+    const p=REC[o.n];
+    if(p && fits(o,p[0],p[1],o)){ o.x=p[0]; o.y=p[1]; o.r=p[2]||0; }
+    else falhas.push(o);
+  });
+  // o que não coube vai para o primeiro espaço livre da própria zona
+  const zs={}; ZONES.forEach(z=>zs[z.n]=z);
+  falhas.forEach(o=>{
+    const z=zs[o.z]||zs.vila;
+    outer: for(let j=z.y0;j<z.y1;j++) for(let i=z.x0;i<z.x1;i++)
+      if(fits(o,i,j,o)){ o.x=i;o.y=j; break outer; }
+  });
+  sel=null; draw();
+};
+
+document.getElementById('auto').onclick=()=>{
+  items.forEach(o=>{o.x=o.y=null});
+  const zs={}; ZONES.forEach(z=>zs[z.n]=z);
+  items.forEach(o=>{
+    const z=zs[o.z]||zs.vila;
+    outer: for(let j=z.y0;j<z.y1;j++) for(let i=z.x0;i<z.x1;i++)
+      if(fits(o,i,j,o)){ o.x=i;o.y=j; break outer; }
+  });
+  draw();
+};
+document.getElementById('clr').onclick=()=>{ items.forEach(o=>o.x=o.y=null); sel=null; draw(); };
+document.getElementById('exp').onclick=()=>{
+  const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  document.getElementById('out').value=JSON.stringify({
+    tile:{w:W,h:H}, grid:{x:GX,y:GY},
+    lots: items.filter(o=>o.x!==null).map(o=>({
+      id:slug(o.n), name:o.n, cell:[o.x,o.y], footprint:[fw(o),fd(o)], zone:o.z
+    }))
+  },null,1);
+};
+document.getElementById('expdl').onclick=()=>{
+  document.getElementById('exp').click();
+  const b=new Blob([document.getElementById('out').value],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+  a.download='vila_lotes.json'; a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById('save').onclick=()=>{
+  const b=new Blob([JSON.stringify(items)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+  a.download='maquete_vila.json'; a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById('load').onclick=()=>document.getElementById('f').click();
+document.getElementById('f').onchange=e=>{
+  const fl=e.target.files[0]; if(!fl) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ items=JSON.parse(rd.result); sel=null; draw(); }catch(x){ alert('Inválido.') } };
+  rd.readAsText(fl);
+};
+resize();
+</script>
+</body>
+</html>

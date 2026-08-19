@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Way Back — Inventário de Assets</title>
+<style>
+:root{
+  --ink:#0d0a08;--panel:#15110e;--card:#191410;--parch:#cfc4ae;--bone:#efe7d4;
+  --stone:#8a8278;--moss:#8ba05e;--gold:#c9a24a;--red:#b8442f;--rule:#332b23;
+  --sans:ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--parch);font:15.5px/1.6 var(--serif);
+  background-image:radial-gradient(ellipse at 18% -12%,#1c1712 0%,#0d0a08 60%)}
+.wrap{display:grid;grid-template-columns:246px minmax(0,1fr);max-width:1300px;margin:0 auto}
+
+nav{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:30px 16px 60px;
+  border-right:1px solid var(--rule)}
+nav .brand{font:11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-bottom:6px}
+nav .brand b{display:block;font:400 17px/1.2 var(--serif);color:var(--bone);letter-spacing:.04em;margin-top:4px}
+nav .tot{margin:18px 0 22px;padding:10px 12px;border:1px solid var(--rule);background:#120f0c}
+nav .tot b{display:block;font:400 28px/1 var(--serif);color:var(--gold)}
+nav .tot span{font:10px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#6b6358}
+nav a{display:flex;justify-content:space-between;gap:8px;text-decoration:none;color:#948b7e;
+  font:13px var(--sans);padding:6px 0 6px 11px;border-left:2px solid transparent}
+nav a:hover{color:var(--bone);border-left-color:var(--red)}
+nav a em{font-style:normal;font-family:var(--mono);font-size:11px;color:#5f584e}
+nav .grp{font:9.5px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:#5a534a;margin:18px 0 6px}
+
+main{padding:44px 40px 140px;min-width:0}
+h1{font:400 clamp(30px,4.6vw,48px)/1 var(--serif);color:var(--bone);margin:0 0 8px}
+.sub{color:var(--stone);font-style:italic;margin:0 0 26px}
+
+h2{font:600 11.5px var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--red);
+  margin:52px 0 4px;padding-top:20px;border-top:1px solid var(--rule);
+  display:flex;justify-content:space-between;align-items:baseline}
+h2 em{font-style:normal;font-family:var(--mono);font-size:12px;color:#6b6358;letter-spacing:0}
+h3{font:400 26px/1.15 var(--serif);color:var(--bone);margin:6px 0 12px}
+h4{font:400 17px var(--serif);color:var(--bone);margin:26px 0 6px}
+p{margin:0 0 12px;max-width:74ch}
+strong{color:var(--bone)}
+ul{margin:0 0 14px;padding-left:20px;max-width:74ch}
+li{margin-bottom:5px}
+
+.bar{display:flex;height:9px;border:1px solid var(--rule);margin:14px 0 22px;overflow:hidden}
+.bar div{height:100%}
+.b-done{background:var(--moss)}.b-part{background:var(--gold)}.b-todo{background:#241d17}
+.legend{display:flex;gap:20px;font:11px var(--sans);letter-spacing:.08em;color:#6b6358;margin:-14px 0 24px}
+.legend i{font-style:normal;display:inline-block;width:9px;height:9px;margin-right:6px}
+
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:10px 0 18px}
+th{text-align:left;font:600 10px var(--sans);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--stone);padding:8px 12px 8px 0;border-bottom:1px solid var(--rule)}
+td{padding:10px 12px 10px 0;border-bottom:1px solid #221c17;vertical-align:top;color:#a89e90}
+td:first-child{color:var(--bone)}
+td.n{font-family:var(--mono);font-size:12.5px;color:var(--gold);text-align:right;white-space:nowrap}
+.st{font:9.5px var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border:1px solid}
+.s-ok{color:var(--moss);border-color:#3f4a2c}
+.s-part{color:var(--gold);border-color:#4a4030}
+.s-todo{color:#6b6358;border-color:#332b23}
+
+pre{background:#0a0806;border:1px solid var(--rule);border-left:2px solid var(--red);
+  padding:15px 17px;overflow-x:auto;font:12.5px/1.6 var(--mono);color:#b8ae9d;margin:10px 0 18px;
+  white-space:pre-wrap}
+pre b{color:var(--gold);font-weight:400}
+.tip{border-left:2px solid var(--moss);padding:2px 0 2px 16px;margin:16px 0;max-width:72ch}
+.tip p{color:#bdb3a2;margin:0}
+.warn{border-left:2px solid var(--red);padding:2px 0 2px 16px;margin:16px 0;max-width:72ch}
+.warn p{color:#c9b4a6;margin:0 0 6px}
+.warn p:last-child{margin:0}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:14px 0}
+.card{border:1px solid var(--rule);background:var(--card);padding:13px 14px}
+.card h5{margin:0 0 3px;font:400 16px var(--serif);color:var(--bone)}
+.card .q{font:11px var(--mono);color:var(--gold);margin-bottom:6px}
+.card p{font-size:13px;color:#948b7e;margin:0;line-height:1.45}
+code{font:12.5px var(--mono);color:var(--gold);background:#120f0c;padding:1px 5px;border:1px solid #241d17}
+footer{margin-top:70px;padding-top:18px;border-top:1px solid var(--rule);color:#584f46;font:12px var(--sans)}
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr}
+  nav{position:static;height:auto;border-right:none;border-bottom:1px solid var(--rule)}
+  nav a{display:inline-flex;margin-right:12px;border-left:none;padding-left:0}
+  main{padding:26px 18px 90px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <div class="brand">Inventário de assets<b>The Way Back</b></div>
+  <div class="tot"><b>686</b><span>imagens no total</span></div>
+  <div class="grp">Base</div>
+  <a href="#regras">Regras gerais <em></em></a>
+  <a href="#terreno">Terreno e tiles <em>14</em></a>
+  <a href="#fundo">Fundo distante <em>4</em></a>
+  <div class="grp">Mundo</div>
+  <a href="#edif">Edificações <em>330</em></a>
+  <a href="#hostis">Hostis <em>21</em></a>
+  <a href="#floresta">Floresta <em>18</em></a>
+  <div class="grp">Gente</div>
+  <a href="#turn">Turnarounds <em>22</em></a>
+  <a href="#retratos">Retratos <em>80</em></a>
+  <a href="#maria">Maria evolutiva <em>6</em></a>
+  <a href="#orfaos">Órfãos <em>30</em></a>
+  <a href="#vida">Vida da vila <em>20</em></a>
+  <div class="grp">Bichos e efeitos</div>
+  <a href="#ratos">Ratos <em>10</em></a>
+  <a href="#fauna">Fauna e noite <em>16</em></a>
+  <div class="grp">Objetos</div>
+  <a href="#itens">Itens especiais <em>50</em></a>
+  <a href="#equip">Equipamento <em>20</em></a>
+  <a href="#icones">Ícones <em>30</em></a>
+  <div class="grp">Final</div>
+  <a href="#telas">Telas <em>9</em></a>
+  <a href="#cutscenes">Cutscenes <em>6</em></a>
+  <a href="#ordem">Ordem de ataque</a>
+</nav>
+
+<main>
+<h1>Inventário de assets</h1>
+<p class="sub">Tudo que falta gerar, com prompt pronto · atualizado antes de rodar o Codex</p>
+
+<div class="bar">
+  <div class="b-done" style="width:7%"></div>
+  <div class="b-part" style="width:4%"></div>
+  <div class="b-todo" style="width:89%"></div>
+</div>
+<div class="legend">
+  <span><i class="b-done"></i>pronto ~48</span>
+  <span><i class="b-part"></i>parcial ~28</span>
+  <span><i class="b-todo"></i>a gerar ~610</span>
+</div>
+
+<!-- ================= REGRAS ================= -->
+<h2 id="regras">00 <em>base de tudo</em></h2>
+<h3>Regras gerais</h3>
+<p>Estes dois blocos entram em <strong>todo</strong> prompt. São eles que fazem 686 imagens de
+sessões diferentes parecerem o mesmo jogo.</p>
+
+<h4>Bloco de estilo</h4>
+<pre>STYLE: hand-painted storybook illustration, Arthur Rackham inspired, fine ink
+linework with muted watercolour washes, crisp readable game asset. Restrained
+earthy palette: weathered dark umber timber, cold grey fieldstone, dirty
+parchment daub, dull moss green, aged shingle. Deep brick-red tile only as a
+rare accent. Overcast daylight, soft shadows, desaturated but always legible.
+NOT dark and murky, NOT bright and saturated, no lush green lawns, no neon,
+no gradients, no glow, no modern rendering, no anime, no cartoon exaggeration.</pre>
+
+<h4>Bloco técnico — assets de mundo</h4>
+<pre>TECHNICAL: true isometric projection, ground axes at 30 degrees, consistent
+camera angle across all assets, transparent background, no ground shadow, no
+scenery, no text, no labels, no UI, even flat lighting with no strong
+directional shadows.</pre>
+
+<div class="tip"><p><strong>Regra de cor:</strong> quem mora dentro puxa marrom quente; quem
+anda fora puxa cinza-esverdeado frio. Vale para personagem, prédio e objeto.</p></div>
+
+<div class="warn">
+<p><strong>Teste obrigatório antes de aprovar qualquer sprite:</strong> reduzir a 64px de
+altura e converter em preto sólido. Se a silhueta não for distinguível, corrigir a
+<strong>pose ou a massa</strong> — nunca o detalhe.</p>
+<p>Foi assim que as Fiandeiras foram resolvidas: três alturas e três contornos.</p>
+</div>
+
+<h4>Nomenclatura</h4>
+<pre>twb_bld_&lt;slug&gt;_t00.png     edificação, estágio 00–10
+twb_hos_&lt;slug&gt;_sa.png      estrutura hostil, estado a/b/c
+twb_chr_&lt;slug&gt;_&lt;var&gt;.png   personagem: turnaround, idle, walk_n, portrait_&lt;emocao&gt;
+twb_prp_&lt;slug&gt;_01.png      item, prop, ícone
+twb_env_&lt;slug&gt;_01.png      terreno, fundo, névoa
+twb_fx_&lt;slug&gt;_01.png       ratos, fumaça, partículas
+twb_ui_&lt;slug&gt;.png          interface</pre>
+
+<!-- ================= TERRENO ================= -->
+<h2 id="terreno">01 <em>14 imagens</em></h2>
+<h3>Terreno e tiles <span class="st s-todo">a gerar</span></h3>
+<p><strong>Trava todo o resto.</strong> Define a grade de 68×56 e o tile de 256×128. Nada pode
+ser desenhado antes.</p>
+<table>
+<thead><tr><th>Asset</th><th>Nota</th><th class="n">Qtd</th></tr></thead>
+<tbody>
+<tr><td>Terra batida</td><td>4 variações para quebrar repetição</td><td class="n">4</td></tr>
+<tr><td>Caminho</td><td>reto, curva, cruzamento, ponta</td><td class="n">4</td></tr>
+<tr><td>Grama seca</td><td>2 variações</td><td class="n">2</td></tr>
+<tr><td>Solo por zona</td><td>origem, oficinas, mina, clareira</td><td class="n">4</td></tr>
+</tbody>
+</table>
+<pre>Isometric ground tile, single diamond-shaped tile, 256x128 pixels, seamless and
+tileable on all four edges. <b>[packed dirt / worn path / dry grass]</b>, hand-painted with
+fine ink texture, muted earthy tones, subtle variation, no strong features that
+would repeat visibly. Flat even lighting, no shadow, no props, no vegetation.
+Top face only, correct isometric diamond shape with 2:1 proportion.</pre>
+<div class="tip"><p>Os solos por zona são o <strong>eixo de contaminação</strong>: verde na
+origem, marrom na vila, ocre nas oficinas, ocre queimado na mina, quase preto na clareira.
+Mesma textura, deslocamento de cor.</p></div>
+
+<!-- ================= FUNDO ================= -->
+<h2 id="fundo">02 <em>4 imagens</em></h2>
+<h3>Fundo distante <span class="st s-todo">a gerar</span></h3>
+<p>Projeção livre, nunca isométrica. <strong>Nada do fundo pode tocar chão visível</strong> — é
+a regra que impede a quebra de perspectiva.</p>
+<pre>Distant background silhouette layer for a game, NOT isometric, free perspective.
+<b>[A] a dense band of dark pine canopy tops, seen from slightly above, running
+horizontally, closing the far edge of the terrain.</b>
+<b>[B] a horizontal band of pale cold mist, soft and featureless, semi-transparent.</b>
+<b>[C] a vast sleeping castle swallowed by dead thorn briar, wide horizontal mass,
+flat dark silhouette, towers barely readable through the tangle.</b>
+<b>[D] a tall glass mountain, vertical, smooth and translucent, pale cold sheen,
+faceted like rough-cut crystal, no windows and no door.</b>
+
+Low contrast, low saturation, close in value to the sky. Nothing may be the
+darkest or the lightest element on screen. Base disappears into mist, never
+meets the ground. Transparent background, no foreground, no text.</pre>
+
+<!-- ================= EDIFICAÇÕES ================= -->
+<h2 id="edif">03 <em>330 imagens</em></h2>
+<h3>Edificações <span class="st s-part">12 de 30 validadas</span></h3>
+<p><strong>O maior bloco do projeto e o que decide o cronograma.</strong> 30 edificações ×
+11 estágios. Os prompts já existem e estão exportados em <code>catalogo_v51_prompts.zip</code>,
+um arquivo por construção, com <code>SAVE AS:</code> em cada bloco.</p>
+<table>
+<thead><tr><th>Situação</th><th>Construções</th><th class="n">Imagens</th></tr></thead>
+<tbody>
+<tr><td><span class="st s-ok">validadas</span></td><td>Lenhador, Horta, Forja, Padaria, Curral, Alojamento, Taberna, Mercado, Gazebo, Caçador, Herbalista, Casa de Maria</td><td class="n">~132</td></tr>
+<tr><td><span class="st s-part">prompt pronto</span></td><td>Depósito, Biblioteca, Curandeiro, Construtor, Alfaiataria, Sapataria, Moinho, Lar dos Órfãos, Casa de João e Maria, Poço, Lago</td><td class="n">121</td></tr>
+<tr><td><span class="st s-todo">novas</span></td><td>Cabana de Pesca, Vendedor de Armas, Casa das Fiandeiras, Casa dos Anões, Cabana da Expedição, Cemitério, Casa de Doces, Mina, Torre do Vigia</td><td class="n">~77</td></tr>
+</tbody>
+</table>
+<div class="warn">
+<p><strong>Risco de monotonia.</strong> Sete cabanas de ofício usam o mesmo molde 2×2×2 —
+são 77 imagens de caixas quadradas diferenciadas só por âncora e props.</p>
+<p>Correção antes de gerar: dar a cada uma um <strong>traço estrutural fixo</strong> — alpendre,
+marquise, telhado de duas águas contra quatro, parede de pedra, chaminé lateral. A silhueta
+precisa separar antes dos props.</p>
+</div>
+<h4>Exceções de estágio</h4>
+<ul>
+  <li><strong>Mina + Torre eram um asset composto</strong> e foram <strong>separadas</strong>. A Mina tem 8 estágios (ruína + 7 níveis de minério); a Torre do Vigia tem 11 e escada própria — os prompts dela estão em <code>torre_do_vigia.md</code>.</li>
+  <li><strong>Cemitério e Cabana da Expedição:</strong> ruína + estágio único = 2 cada.</li>
+  <li><strong>Casa de Doces Vitrificada:</strong> estágio único, sem evolução.</li>
+  <li><strong>Casa de João e Maria:</strong> 2 estados — normal e apodrecida no Ato III. Nunca evolui.</li>
+</ul>
+
+<!-- ================= HOSTIS ================= -->
+<h2 id="hostis">04 <em>21 imagens</em></h2>
+<h3>Estruturas hostis <span class="st s-todo">prompt pronto</span></h3>
+<p>Sete estruturas × 3 estados, já no catálogo: Toca das Raposas, Ninhal dos Corvos, Toca dos
+Lobos, Acampamento dos Gigantes, Choupana das Bruxas, Cabana de Doce da Bruxa, Covil do Diabo.</p>
+
+<!-- ================= FLORESTA ================= -->
+<h2 id="floresta">05 <em>18 imagens</em></h2>
+<h3>Floresta <span class="st s-todo">a gerar</span></h3>
+<table>
+<thead><tr><th>Asset</th><th>Nota</th><th class="n">Qtd</th></tr></thead>
+<tbody>
+<tr><td>Árvore de pé</td><td>3 variantes, espelháveis</td><td class="n">3</td></tr>
+<tr><td>Árvore nova</td><td>a que volta: fina, torta, escura</td><td class="n">2</td></tr>
+<tr><td>Crescimento</td><td>broto → árvore, 4 frames</td><td class="n">4</td></tr>
+<tr><td>Toco</td><td>recém-cortado e velho</td><td class="n">2</td></tr>
+<tr><td>Arbusto</td><td>com carga e esvaziado</td><td class="n">4</td></tr>
+<tr><td>Mato e pedras</td><td>preenchimento de borda</td><td class="n">3</td></tr>
+</tbody>
+</table>
+<pre>Isometric game asset, single <b>[pine tree / young crooked tree / tree stump /
+herb bush]</b> on transparent background. Hand-painted storybook illustration,
+Arthur Rackham inspired, fine ink linework with muted watercolour washes.
+Dark blue-green needles, weathered grey-brown bark, cold desaturated tones.
+Base anchored flat at the bottom for isometric ground placement.
+<b>For the young tree: visibly thinner, more crooked and darker than a mature one.</b>
+<b>For the bush: a low tangled shrub with small pale flowers and hanging leaves.</b>
+No ground, no shadow, no snow, no scenery, no text.</pre>
+
+<!-- ================= TURNAROUNDS ================= -->
+<h2 id="turn">06 <em>22 imagens</em></h2>
+<h3>Turnarounds <span class="st s-part">8 de 22</span></h3>
+<p><strong>Prontos:</strong> João, Maria, Alfaiate, as três Fiandeiras, Filha Sábia, Pele-de-Urso.</p>
+<p><strong>Faltam 14:</strong> Chapeuzinho adulta, Rapunzel, Filha do Moleiro, Mestre Ladrão,
+Caçador, Menina dos Táleres, Jovem Gigante, Joringel, Curandeiro, Pastora de Gansos, Mulher do
+Pescador, Pescador, Homem da Luz Azul, Menina sem Mãos (2 versões), Irmãos Lenhadores, anão
+genérico.</p>
+<pre>Character turnaround sheet, three views: front, side (profile, facing right),
+and back. Same character, identical proportions, clothing and props in all three
+views, aligned on the same horizontal baseline, evenly spaced, full body, feet
+visible.
+
+Character: <b>[descrição, idade, porte, expressão]</b>
+Key detail, visible in all three views: <b>[o objeto que define a função]</b>
+Clothing: <b>[roupa de aldeia, sem ornamento, sem armadura]</b>
+
+STYLE: hand-painted storybook illustration, Arthur Rackham inspired, fine ink
+linework with muted watercolour washes, earthy restrained palette. Grounded and
+understated. No cartoon exaggeration, no anime, not idealised, not heroic.
+
+TECHNICAL: transparent background, no shadow, no ground plane, no scenery, no
+text, even flat lighting, relaxed neutral standing pose, character sheet layout.
+Match the palette and rendering of the previous village character sheets.</pre>
+<div class="tip"><p>Gerar sempre <strong>na mesma sessão</strong> e pedir "same style and
+proportions as the previous image". A consistência entre personagens vale mais que a
+fidelidade de cada um isolado.</p></div>
+
+<!-- ================= RETRATOS ================= -->
+<h2 id="retratos">07 <em>80 imagens</em></h2>
+<h3>Retratos de diálogo <span class="st s-todo">nenhum gerado</span></h3>
+<p><strong>Bloco mais urgente depois das edificações</strong> — sem eles a ferramenta de
+diálogo não produz nada visível.</p>
+<ul>
+  <li><strong>Seis emoções</strong> para os seis que mais falam: João, Maria, Filha Sábia,
+  Alfaiate, Rumpelstiltskin, Senhora Holle. <em>36 imagens</em></li>
+  <li><strong>Três</strong> (neutra, feliz, triste) para os demais líderes. <em>~42</em></li>
+  <li><strong>Nenhum</strong> para o Narrador — e é isso que o deixa frio.</li>
+</ul>
+<pre>Half-body character portrait for a dialogue box, facing slightly to one side,
+head and shoulders to mid-torso, filling the frame.
+
+Character: <b>[mesma descrição do turnaround aprovado]</b>
+Expression: <b>[neutral and composed / wary and doubting, brow drawn / curious,
+head tilted, eyes wide / anger held back, jaw set / a small tired smile /
+grief, eyes lowered]</b>
+
+STYLE: hand-painted storybook illustration, Arthur Rackham inspired, fine ink
+linework with muted watercolour washes, earthy restrained palette, blurred
+village and pine forest faintly sketched behind.
+
+TECHNICAL: transparent background, no text, no frame, no border, soft even
+light, consistent with the character sheet of the same character.</pre>
+<div class="warn"><p>Gerar as <strong>seis emoções do mesmo personagem numa sessão só</strong>,
+uma após a outra, referenciando a anterior. Emoções geradas em dias diferentes viram seis
+pessoas parecidas.</p></div>
+
+<!-- ================= MARIA ================= -->
+<h2 id="maria">08 <em>6 imagens</em></h2>
+<h3>Maria evolutiva <span class="st s-part">1 de 6</span></h3>
+<p>Ela é selecionável e evolui como um edifício. Cada nível mais equipada — e
+<strong>os ferimentos e cicatrizes acumulam</strong>. A vila fica mais bonita; ela não.</p>
+<pre>Same character sheet as the approved Maria, at a later stage of her life.
+Progressive changes only, everything else identical:
+<b>t2:</b> a second knife, a heavier belt, one healed cut across the cheekbone.
+<b>t3:</b> reinforced leather over the shoulder, more iron nails on the bandolier,
+      a burn scar on the left hand.
+<b>t4:</b> a mismatched piece of scavenged armour, a second lantern, hair cut
+      shorter and uneven, a long scar down the forearm.
+<b>t5:</b> heavily patched and layered gear, everything worn and repaired, deep
+      lines in the face, an old wound that changed how she stands.
+<b>t6:</b> silver-bright fittings from the mine, colder palette, the most equipped
+      and the most damaged she has ever been.</pre>
+
+<!-- ================= ÓRFÃOS ================= -->
+<h2 id="orfaos">09 <em>30 peças</em></h2>
+<h3>Órfãos — sistema de peças <span class="st s-todo">a gerar</span></h3>
+<p><strong>Não são sprites únicos.</strong> A roleta de nome e aparência torna frame a frame
+impossível — seriam milhares de combinações. São camadas compostas em tempo de execução.</p>
+<table>
+<thead><tr><th>Camada</th><th>Variações</th><th class="n">Qtd</th></tr></thead>
+<tbody>
+<tr><td>Corpo criança</td><td>2 portes × 4 direções</td><td class="n">8</td></tr>
+<tr><td>Corpo adulto</td><td>2 portes × 4 direções</td><td class="n">8</td></tr>
+<tr><td>Cabelo</td><td>6 tipos, tingíveis</td><td class="n">6</td></tr>
+<tr><td>Roupa</td><td>6 tipos, tingíveis</td><td class="n">6</td></tr>
+<tr><td>Tom de pele</td><td>paleta, não sprite</td><td class="n">—</td></tr>
+<tr><td>Retrato de lista</td><td>peças de rosto</td><td class="n">~2</td></tr>
+</tbody>
+</table>
+<pre>Modular character layer for a 2D isometric game, single element on transparent
+background, designed to be composited over other layers.
+<b>[child body / adult body / hair type / clothing type]</b>, seen from
+<b>[north-east / north-west / south-east / south-west]</b>.
+Flat greyscale-friendly base so it can be tinted in engine.
+Same proportions, same anchor point and same pixel height across every layer.
+Hand-painted storybook style, fine ink linework, muted palette.
+No shadow, no background, no props, no face detail on body layers.</pre>
+
+<!-- ================= VIDA ================= -->
+<h2 id="vida">10 <em>20 imagens</em></h2>
+<h3>Vida da vila <span class="st s-todo">a gerar</span></h3>
+<p>É o atrativo visual do jogo. <strong>Não é opcional.</strong> Quatro direções, nunca oito.</p>
+<table>
+<thead><tr><th>Asset</th><th>Nota</th><th class="n">Qtd</th></tr></thead>
+<tbody>
+<tr><td>Ciclo de caminhada</td><td>adulto, criança, anão × 4 direções</td><td class="n">12</td></tr>
+<tr><td>Carga</td><td>anão com minério, padeiro, pescador com balde, Alfaiate com fardo</td><td class="n">4</td></tr>
+<tr><td>Trabalho</td><td>corte de lenha, pesca parada, colheita de erva</td><td class="n">3</td></tr>
+<tr><td>Gigante</td><td>caminhada lenta, atravessando</td><td class="n">1</td></tr>
+</tbody>
+</table>
+
+<!-- ================= RATOS ================= -->
+<h2 id="ratos">11 <em>10 imagens</em></h2>
+<h3>Ratos <span class="st s-todo">a gerar</span></h3>
+<p>Dez sprites de movimento sorteados aleatoriamente, aparecendo pela vila toda, sem ponto
+específico, dividindo os caminhos com os aldeões. <strong>Sem alteração de cenário e sem pistas
+elaboradas</strong> — só densidade.</p>
+<pre>Small isometric rat sprite for a 2D game, dark grey-brown fur, long tail,
+seen from a high three-quarter angle, on transparent background.
+Ten distinct movement variations: running fast, scurrying low, stopped and
+sniffing, turning, rearing up, dragging something, two together, one half
+hidden, walking slowly, darting.
+Hand-painted storybook style, fine ink linework, muted palette, small and
+readable at 32 pixels. No shadow, no background, no gore, not cute.</pre>
+<div class="tip"><p>No engine, eles devem se mover <strong>mais rápido e mais irregularmente</strong>
+que os aldeões. No mesmo ritmo, viram parte da rotina em vez de intrusão.</p></div>
+
+<!-- ================= FAUNA ================= -->
+<h2 id="fauna">12 <em>16 imagens</em></h2>
+<h3>Fauna e efeitos noturnos <span class="st s-todo">a gerar</span></h3>
+<table>
+<thead><tr><th>Asset</th><th>Nota</th><th class="n">Qtd</th></tr></thead>
+<tbody>
+<tr><td>Aves do dia</td><td>bando claro e alto, mais a sombra correndo no chão</td><td class="n">3</td></tr>
+<tr><td>Corvos da noite</td><td>escuros, baixos, ligados ao índice de fome</td><td class="n">3</td></tr>
+<tr><td>Lobos</td><td>saem da mata, param, voltam</td><td class="n">2</td></tr>
+<tr><td>Sombras</td><td>silhueta ambígua, nem pessoa nem animal</td><td class="n">3</td></tr>
+<tr><td>Olhos</td><td>pares de pontos claros entre troncos</td><td class="n">2</td></tr>
+<tr><td>Animais do curral</td><td>gansos e cabras</td><td class="n">2</td></tr>
+<tr><td>A bruxa que atravessa</td><td>única que entra na vila. Lenta e curvada, o que reduz frames</td><td class="n">1</td></tr>
+</tbody>
+</table>
+<pre>Isometric silhouette sprite for a night scene, <b>[a hunched ambiguous figure,
+neither clearly human nor clearly animal, too tall or too low / a wolf emerging
+from treeline / a pair of pale glowing eyes between trunks]</b>.
+Flat dark shape with almost no interior detail, soft edges, very low contrast
+against a dark background. Unsettling, never monstrous, never detailed.
+Transparent background, no text, no ground.</pre>
+
+<!-- ================= ITENS ================= -->
+<h2 id="itens">13 <em>50 imagens</em></h2>
+<h3>Itens especiais <span class="st s-todo">a gerar</span></h3>
+<p>Três por edificação, encontrados aleatoriamente em expedição. <strong>Precisam ser visíveis
+no sprite do trabalhador</strong> — a pá nova na mão do padeiro é o que faz o drop valer. Bônus
+invisível não gera a memória do achado.</p>
+<pre>Single object icon for a fantasy village game, centred on transparent
+background, three-quarter view.
+<b>[a heavy iron-headed axe with a worn haft / a long-handled baker's peel with
+a silver blade / a fine-toothed saw / a copper cauldron / a set of iron
+needles]</b>
+Aged, used, hand-made, with visible wear and repair. Hand-painted storybook
+illustration, fine ink linework, muted earthy palette, single light source.
+No background, no shadow, no text, no glow, no magical effect, not shiny,
+not new.</pre>
+
+<!-- ================= EQUIPAMENTO ================= -->
+<h2 id="equip">14 <em>20 imagens</em></h2>
+<h3>Equipamento vendável <span class="st s-todo">a gerar</span></h3>
+<p>Cinco linhas × quatro tiers: espada, escudo, arco com aljava, conjunto de roupa, sapato.
+Os tiers correspondem aos minérios: ferro, bronze, prata, ouro.</p>
+<pre>Single item icon on transparent background, three-quarter view, for a medieval
+village game.
+<b>[sword / shield / bow with quiver / set of clothes / pair of shoes]</b>
+made of <b>[rough iron, plain and functional / bronze, with simple cast detail /
+silver, finer work and pale sheen / gold-fitted, ornate but still hand-made]</b>.
+The four tiers must be recognisable as the same object improving, same
+silhouette, increasing refinement.
+Hand-painted storybook illustration, fine ink linework, muted palette.
+No glow, no magical effect, no text, no background.</pre>
+
+<!-- ================= ÍCONES ================= -->
+<h2 id="icones">15 <em>30 imagens</em></h2>
+<h3>Ícones de recurso e interface <span class="st s-todo">a gerar</span></h3>
+<table>
+<thead><tr><th>Grupo</th><th>Itens</th><th class="n">Qtd</th></tr></thead>
+<tbody>
+<tr><td>Recursos do HUD</td><td>comida, madeira, tecido, ouro, fôlego, diamante, gente, depósito</td><td class="n">8</td></tr>
+<tr><td>Aptidões</td><td>campo, cozinha, água, oficina, braços, letras</td><td class="n">6</td></tr>
+<tr><td>Cicatrizes</td><td>ícone por família, não por cicatriz</td><td class="n">6</td></tr>
+<tr><td>Categorias</td><td>edificação, criatura, conto, expedição</td><td class="n">4</td></tr>
+<tr><td>Estado</td><td>vaga aberta, maldição, evento, ocioso, alerta de rato</td><td class="n">6</td></tr>
+</tbody>
+</table>
+<pre>Set of engraved-style game UI icons on transparent background, all in the same
+visual family: single-weight ink line drawing, filled with one flat muted tone,
+no gradients, no colour beyond warm ochre and bone.
+<b>[bread loaf / stacked timber / coin / water drop / cut gem / two figures /
+wooden crate / wheat sheaf / cooking pot / fish / anvil / arm / open book]</b>
+Simple, symmetrical, readable at 32 pixels. Medieval woodcut feel, hand-cut,
+slightly irregular. No text, no frame, no shadow, no perspective.</pre>
+<div class="tip"><p>Gerar <strong>a folha inteira de uma vez</strong>, todos os ícones na mesma
+imagem. É a única forma de garantir peso de linha e escala consistentes.</p></div>
+
+<!-- ================= TELAS ================= -->
+<h2 id="telas">16 <em>9 telas</em></h2>
+<h3>Telas de interface <span class="st s-part">8 estudadas</span></h3>
+<p>Estudadas: biblioteca, construções, bestiário, expedição, edifício, evento, diálogo,
+aldeões. Os prompts de revisão estão em <code>prompts_revisao_telas.md</code>.</p>
+<div class="grid">
+  <div class="card"><h5>Correções pendentes</h5><div class="q">antes de refazer</div>
+  <p>Bestiário perde atributos de combate. Mochila ganha abas por expedicionário. Lenhador perde a loja de melhorias. Diamante volta ao HUD.</p></div>
+  <div class="card"><h5>Falta desenhar</h5><div class="q">1 tela</div>
+  <p>Tela da mina, com o nível atual e <strong>silhuetas escuras dos níveis futuros</strong> — o painel de progressão de longo prazo do jogo.</p></div>
+  <div class="card"><h5>Molduras</h5><div class="q">reutilizáveis</div>
+  <p>Painel de pergaminho, botão, aba, barra de progresso, caixa de diálogo. Gerar como folha única e fatiar em 9-slice.</p></div>
+</div>
+
+<!-- ================= CUTSCENES ================= -->
+<h2 id="cutscenes">17 <em>6 sequências</em></h2>
+<h3>Cutscenes <span class="st s-todo">por último</span></h3>
+<p>É onde a <strong>Marca</strong> finalmente precisa de forma definida. Fora delas ela não é
+renderizada — o que a tira do caminho crítico.</p>
+<ul>
+  <li>Abertura — a fuga, a casa, a morte do pai</li>
+  <li>O anão procurando João</li>
+  <li>A casa apodrecendo — Ato III</li>
+  <li>O Diabo na casa vitrificada</li>
+  <li>A morte do Dragão e a revelação</li>
+  <li>O plantio na clareira</li>
+</ul>
+<pre>Full-scene story illustration, landscape 16:9, no UI and no text.
+<b>[cena]</b>
+Hand-painted storybook illustration, Arthur Rackham inspired, ink linework with
+muted watercolour washes, earthy restrained palette, overcast or firelit.
+Cinematic composition, strong silhouette reading, figures small against the
+world. Grim and quiet, never gory, never violent on screen.</pre>
+
+<!-- ================= ORDEM ================= -->
+<h2 id="ordem">18 <em>plano</em></h2>
+<h3>Ordem de ataque</h3>
+<table>
+<thead><tr><th>Fase</th><th>O quê</th><th class="n">Imagens</th></tr></thead>
+<tbody>
+<tr><td>1 — destrava</td><td>Terreno, tiles, fundo distante</td><td class="n">18</td></tr>
+<tr><td>2 — Ato I jogável</td><td>11 edificações do Ato I × 11 estágios</td><td class="n">121</td></tr>
+<tr><td>3 — gente</td><td>Peças de órfão, caminhadas, 6 turnarounds do Ato I</td><td class="n">~56</td></tr>
+<tr><td>4 — fala</td><td>Retratos de João, Maria, Filha Sábia — 6 emoções cada</td><td class="n">18</td></tr>
+<tr><td>5 — interface</td><td>Ícones e molduras</td><td class="n">~40</td></tr>
+<tr><td>6 — vida</td><td>Ratos, floresta, fauna, efeitos noturnos</td><td class="n">44</td></tr>
+<tr><td>7 — resto</td><td>Demais edificações, retratos, itens, equipamento</td><td class="n">~380</td></tr>
+<tr><td>8 — final</td><td>Cutscenes</td><td class="n">6</td></tr>
+</tbody>
+</table>
+<div class="warn">
+<p><strong>As fases 1 a 5 somam ~253 imagens</strong> e entregam o Ato I inteiro jogável e
+bonito. É o corte natural do primeiro build.</p>
+<p>O resto — 430 imagens — é conteúdo dos atos II a V e pode ser produzido enquanto o Ato I
+já está sendo testado com jogador de verdade.</p>
+</div>
+
+<footer>The Way Back · inventário de assets · 686 imagens · documento vivo</footer>
+</main>
+</div>
+</body>
+</html>

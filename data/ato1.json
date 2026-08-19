@@ -1,0 +1,60 @@
+{
+ "ordem": [
+  {
+   "id": "cabana_do_lenhador",
+   "custo_n1": 40,
+   "produz": "madeira",
+   "destrava": "horta"
+  },
+  {
+   "id": "horta",
+   "custo_n1": 60,
+   "produz": "vegetais"
+  },
+  {
+   "id": "alojamento",
+   "custo_n1": 90,
+   "capacidade": "adultos"
+  },
+  {
+   "id": "deposito",
+   "custo_n1": 120,
+   "capacidade": "estoque"
+  },
+  {
+   "id": "lar_dos_orfaos",
+   "custo_n1": 150,
+   "capacidade": "criancas"
+  },
+  {
+   "id": "curral_dos_animais",
+   "custo_n1": 200,
+   "produz": "carne"
+  },
+  {
+   "id": "mercado",
+   "custo_n1": 260,
+   "funcao": "venda"
+  },
+  {
+   "id": "cabana_do_construtor",
+   "custo_n1": 340,
+   "funcao": "obras"
+  },
+  {
+   "id": "padaria",
+   "custo_n1": 430,
+   "produz": "pao"
+  },
+  {
+   "id": "casa_das_fiandeiras",
+   "custo_n1": 560,
+   "funcao": "offline"
+  },
+  {
+   "id": "gazebo",
+   "custo_n1": 700,
+   "funcao": "buff_musicos"
+  }
+ ]
+}

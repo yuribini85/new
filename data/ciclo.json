@@ -1,0 +1,38 @@
+{
+ "dia_seg": 1200,
+ "noite_seg": 240,
+ "tick_seg": 1,
+ "offline": {
+  "metodo": "formula_fechada",
+  "fator_noite": 0.8,
+  "fator_consumo": 0.85,
+  "teto_horas_por_nivel_fiandeiras": [
+   0,
+   2,
+   4,
+   6,
+   9,
+   12,
+   16,
+   20,
+   24
+  ],
+  "protecao_relogio": "max_time_seen",
+  "teto_dias": 30
+ },
+ "orfaos": {
+  "infancia_seg": 2700,
+  "infancia_atos_finais_seg": 1500,
+  "chegada_a_cada_seg": 1200,
+  "sem_cicatriz_pct": 0.35
+ },
+ "aptidoes": [
+  "campo",
+  "cozinha",
+  "agua",
+  "oficina",
+  "bracos",
+  "letras"
+ ],
+ "bonus_aptidao": 0.25
+}
