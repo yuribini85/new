@@ -41,12 +41,7 @@ func _ready() -> void:
 
 
 func _carregar_ciclo() -> void:
-	var file := FileAccess.open("res://data/ciclo.json", FileAccess.READ)
-	if file == null:
-		push_error("Sim: não achei res://data/ciclo.json")
-		return
-	_ciclo = JSON.parse_string(file.get_as_text())
-	file.close()
+	_ciclo = Dados.ciclo()
 	_dia_seg = _ciclo.get("dia_seg", _dia_seg)
 	_noite_seg = _ciclo.get("noite_seg", _noite_seg)
 	var offline: Dictionary = _ciclo.get("offline", {})

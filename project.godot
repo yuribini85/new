@@ -18,8 +18,9 @@ config/features=PackedStringArray("4.4", "GL Compatibility")
 
 [autoload]
 
-Sim="*res://autoload/sim.gd"
+Dados="*res://autoload/dados.gd"
 SaveManager="*res://autoload/save_manager.gd"
+Sim="*res://autoload/sim.gd"
 
 [display]
 
