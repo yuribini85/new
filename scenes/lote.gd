@@ -9,8 +9,6 @@ const COR_PRONTO := Color(0.24, 0.42, 0.26)
 
 @onready var _silhueta: Polygon2D = $Silhueta
 @onready var _label: Label = $Label
-@onready var _area: Area2D = $Area2D
-@onready var _colisao: CollisionShape2D = $Area2D/CollisionShape2D
 
 var edificio_id: String
 
@@ -32,14 +30,8 @@ func configurar(id: String, tile: Vector2i) -> void:
 	var centro := (p00 + p11) / 2.0
 
 	_silhueta.polygon = PackedVector2Array([p00, p10, p11, p01])
-
-	var forma := RectangleShape2D.new()
-	forma.size = (p11 - p00).abs() * 0.8
-	_colisao.position = centro
-	_colisao.shape = forma
 	_label.position = centro - _label.size / 2.0
 
-	_area.input_event.connect(_on_input_event)
 	Vila.edificio_iniciou_obra.connect(_on_edificio_mudou)
 	Vila.edificio_construido.connect(_on_edificio_mudou)
 	Economia.recurso_mudou.connect(func(_r, _v): _atualizar())
@@ -73,6 +65,7 @@ func _atualizar() -> void:
 	_label.modulate = Color.WHITE if pode_pagar else Color(1, 0.6, 0.6)
 
 
-func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		Vila.construir(edificio_id)
+## Detecção manual de clique (não usa Area2D/picking de física — mais simples de
+## garantir que funciona, e igual em desktop e mobile). Chamado pelo Mapa.
+func contem_ponto_mundo(pt: Vector2) -> bool:
+	return Geometry2D.is_point_in_polygon(to_local(pt), _silhueta.polygon)

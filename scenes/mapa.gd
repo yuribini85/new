@@ -9,8 +9,9 @@ const TELA_ALDEOES_SCENE := preload("res://scenes/tela_aldeoes.tscn")
 const TELA_EXPEDICAO_SCENE := preload("res://scenes/tela_expedicao.tscn")
 const TELA_MERCADO_SCENE := preload("res://scenes/tela_mercado.tscn")
 const PERSONAGEM_SCENE := preload("res://scenes/personagem.tscn")
-const ZOOM_MIN := 0.4  # especificacao_tecnica_v1.md#4 previa 0.8, mas a vila ficou
-                        # mais espalhada na prática — dobrado a pedido em playtest.
+const ZOOM_MIN := 0.15  # especificacao_tecnica_v1.md#4 previa 0.8; a vila real cobre
+                         # ~4700x4000px, então precisa de bem mais zoom-out que o
+                         # previsto pra caber tudo na tela — ajustado por playtest.
 const ZOOM_MAX := 1.6
 
 const COR_ARVORE_DE_PE := Color(0.22, 0.4, 0.2)
@@ -42,6 +43,8 @@ var _ultimo_mouse_pos := Vector2.ZERO
 var _tile: Vector2i
 var _timers_rota: Dictionary = {}  # edificio_id -> float acumulado
 var _proximo_walker_id := 0
+var _lote_nodes: Dictionary = {}  # edificio_id -> Node2D (Lote)
+var _distancia_arrasto := 0.0  # para distinguir toque/clique de arrasto real
 var _walkers_ativos: Dictionary = {}  # id -> posição atual (para cortesia)
 var _personagem_nodes: Dictionary = {}  # chave -> Node2D
 
@@ -59,6 +62,7 @@ func _ready() -> void:
 		lote.position = pos
 		_lotes_root.add_child(lote)
 		lote.configurar(id, _tile)
+		_lote_nodes[id] = lote
 		bounds_min = bounds_min.min(pos)
 		bounds_max = bounds_max.max(pos)
 
@@ -275,10 +279,28 @@ func _atualizar_debug() -> void:
 	]
 
 
+## Converte posição de tela (espaço do viewport) em posição de mundo, considerando
+## a posição e o zoom atuais da câmera.
+func _tela_para_mundo(pos_tela: Vector2) -> Vector2:
+	var centro := get_viewport().get_visible_rect().size / 2.0
+	return _camera.position + (pos_tela - centro) * _camera.zoom
+
+
+## Detecção de clique manual (sem Area2D/picking de física — mais simples de
+## garantir e igual em desktop e touch). Ignora a faixa de botões do HUD no topo.
+func _tentar_construir_em(pos_tela: Vector2) -> void:
+	if pos_tela.y < 210.0 * (get_viewport().get_visible_rect().size.y / 1920.0):
+		return
+	var pos_mundo := _tela_para_mundo(pos_tela)
+	for id in _lote_nodes:
+		if _lote_nodes[id].contem_ponto_mundo(pos_mundo):
+			Vila.construir(id)
+			return
+
+
 func _input(event: InputEvent) -> void:
-	# _input (não _unhandled_input) porque os lotes cobrem quase toda a tela com
-	# Area2D de clique e "consomem" o evento na detecção de física antes que
-	# _unhandled_input o veja.
+	# _input (não _unhandled_input): os cliques de construção são resolvidos aqui
+	# manualmente, sem depender de picking de física de Area2D.
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_zoom_atual = clampf(_zoom_atual + 0.1, ZOOM_MIN, ZOOM_MAX)
@@ -286,6 +308,8 @@ func _input(event: InputEvent) -> void:
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_zoom_atual = clampf(_zoom_atual - 0.1, ZOOM_MIN, ZOOM_MAX)
 			_aplicar_zoom()
+		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			_tentar_construir_em(event.position)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			_arrastando = event.pressed
 			_ultimo_mouse_pos = event.position
