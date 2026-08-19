@@ -65,6 +65,7 @@ func _aplicar_save_ou_iniciar() -> void:
 		dia_vila = 1
 		fase_dia = FaseDia.MANHA
 		ato = 1
+		Floresta.gerar_se_vazio()
 		return
 
 	tempo_jogo_seg = save.get("tempo_jogo_seg", 0)
@@ -77,6 +78,7 @@ func _aplicar_save_ou_iniciar() -> void:
 	Vila.restaurar(save.get("edificios", []))
 	Populacao.restaurar(save.get("populacao", {}))
 	Economia.restaurar(save.get("economia", {}))
+	Floresta.restaurar(save.get("floresta", {}))
 
 	_calcular_offline(agora)
 
@@ -149,6 +151,7 @@ func get_save_data() -> Dictionary:
 		"edificios": Vila.get_save_data(),
 		"populacao": Populacao.get_save_data(),
 		"economia": Economia.get_save_data(),
+		"floresta": Floresta.get_save_data(),
 	}
 
 

@@ -20,7 +20,13 @@ color = Color(0.07, 0.09, 0.08, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
+[node name="Floresta" type="Node2D" parent="."]
+y_sort_enabled = true
+
 [node name="Lotes" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Rotas" type="Node2D" parent="."]
 y_sort_enabled = true
 
 [node name="HudLayer" type="CanvasLayer" parent="."]

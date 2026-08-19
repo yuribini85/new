@@ -13,6 +13,7 @@ JSON de balanceamento, prontos para `res://data/`. Ajustáveis sem recompilar.
 | `vila_lotes_maquete.json` | Formato de trabalho da ferramenta de maquete |
 | `orfaos.json` | Nomes (germânicos, masc/fem) e mapa de aptidão → edifícios |
 | `cicatrizes.json` | As 20 cicatrizes de lançamento, transcritas de `design/cicatrizes_orfaos.md` |
+| `floresta.json` | Raio de trabalho, densidade e taxa de regeneração da floresta (placeholder) |
 
 **Fonte:** `docs/ato1_balanceamento.md` e `design/pendencias_resolvidas.md`.
 Todos os números são chute calibrado — o que importa é a relação entre eles.

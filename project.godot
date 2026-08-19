@@ -23,6 +23,7 @@ SaveManager="*res://autoload/save_manager.gd"
 Vila="*res://autoload/vila.gd"
 Populacao="*res://autoload/populacao.gd"
 Economia="*res://autoload/economia.gd"
+Floresta="*res://autoload/floresta.gd"
 Sim="*res://autoload/sim.gd"
 
 [display]

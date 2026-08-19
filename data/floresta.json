@@ -1,0 +1,9 @@
+{
+ "_status": "placeholder nao calibrado - docs/mecanicas_para_godot.md#5 nao da numeros para raio de trabalho, distancia minima ou taxa base de regeneracao",
+ "raio_trabalho_celulas": 10,
+ "distancia_minima_celulas": 2,
+ "arvores_por_celula_pct": 0.35,
+ "variantes": 4,
+ "taxa_reposicao_base_por_seg": 0.02,
+ "tempo_corte_seg": 8
+}
