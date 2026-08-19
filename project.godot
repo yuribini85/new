@@ -24,6 +24,7 @@ Vila="*res://autoload/vila.gd"
 Populacao="*res://autoload/populacao.gd"
 Economia="*res://autoload/economia.gd"
 Floresta="*res://autoload/floresta.gd"
+Expedicoes="*res://autoload/expedicoes.gd"
 Sim="*res://autoload/sim.gd"
 
 [display]

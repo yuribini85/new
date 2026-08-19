@@ -46,3 +46,10 @@ offset_top = 150.0
 offset_right = 220.0
 offset_bottom = 200.0
 text = "Aldeões"
+
+[node name="BotaoExpedicao" type="Button" parent="HudLayer"]
+offset_left = 240.0
+offset_top = 150.0
+offset_right = 460.0
+offset_bottom = 200.0
+text = "Expedição"

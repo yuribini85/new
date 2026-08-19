@@ -79,6 +79,7 @@ func _aplicar_save_ou_iniciar() -> void:
 	Populacao.restaurar(save.get("populacao", {}))
 	Economia.restaurar(save.get("economia", {}))
 	Floresta.restaurar(save.get("floresta", {}))
+	Expedicoes.restaurar(save.get("expedicoes", {}))
 
 	_calcular_offline(agora)
 
@@ -152,6 +153,7 @@ func get_save_data() -> Dictionary:
 		"populacao": Populacao.get_save_data(),
 		"economia": Economia.get_save_data(),
 		"floresta": Floresta.get_save_data(),
+		"expedicoes": Expedicoes.get_save_data(),
 	}
 
 

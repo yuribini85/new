@@ -6,6 +6,7 @@ extends Node2D
 
 const LOTE_SCENE := preload("res://scenes/lote.tscn")
 const TELA_ALDEOES_SCENE := preload("res://scenes/tela_aldeoes.tscn")
+const TELA_EXPEDICAO_SCENE := preload("res://scenes/tela_expedicao.tscn")
 const ZOOM_MIN := 0.8
 const ZOOM_MAX := 1.6
 
@@ -20,9 +21,11 @@ const RAIO_CORTESIA := 40.0  # px em espaço de mundo; agentes mais perto que is
 @onready var _rotas_root: Node2D = $Rotas
 @onready var _debug_label: Label = $HudLayer/DebugLabel
 @onready var _botao_aldeoes: Button = $HudLayer/BotaoAldeoes
+@onready var _botao_expedicao: Button = $HudLayer/BotaoExpedicao
 
 var _zoom_atual := 1.0
 var _tela_aldeoes: CanvasLayer = null
+var _tela_expedicao: CanvasLayer = null
 var _tile: Vector2i
 var _timers_rota: Dictionary = {}  # edificio_id -> float acumulado
 var _proximo_walker_id := 0
@@ -62,6 +65,16 @@ func _ready() -> void:
 	_redesenhar_floresta()
 
 	_botao_aldeoes.pressed.connect(_toggle_tela_aldeoes)
+	_botao_expedicao.pressed.connect(_toggle_tela_expedicao)
+
+
+func _toggle_tela_expedicao() -> void:
+	if _tela_expedicao != null:
+		_tela_expedicao.queue_free()
+		_tela_expedicao = null
+		return
+	_tela_expedicao = TELA_EXPEDICAO_SCENE.instantiate()
+	add_child(_tela_expedicao)
 
 
 func _on_tick() -> void:
@@ -172,14 +185,15 @@ func _atualizar_debug() -> void:
 	for a in Floresta.arvores:
 		if a.estado == Arvore.Estado.DE_PE:
 			em_pe += 1
-	_debug_label.text = "dia %d · %s · ato %d\ncomida %.1f · madeira %.1f · tecido %.1f · ouro %.1f\nfome %.1f (teto dep. %d)\naldeões %d (Lar %d/%d · Alojamento %d/%d)\nfloresta %d/%d de pé" % [
+	_debug_label.text = "dia %d · %s · ato %d\ncomida %.1f · madeira %.1f · tecido %.1f · ouro %.1f · fôlego %.1f\nfome %.1f (teto dep. %d)\naldeões %d (Lar %d/%d · Alojamento %d/%d)\nfloresta %d/%d de pé · expedição: %s" % [
 		Sim.dia_vila, Sim.nome_fase(Sim.fase_dia), Sim.ato,
-		r["comida"], r["madeira"], r["tecido"], r["ouro"],
+		r["comida"], r["madeira"], r["tecido"], r["ouro"], r["folego"],
 		Economia.indice_fome, Economia.teto_deposito(),
 		Populacao.orfaos.size(),
 		Populacao.contar_estado(Orfao.Estado.CRIANCA), Populacao.capacidade_lar(),
 		Populacao.contar_estado(Orfao.Estado.ADULTO_OCIOSO) + Populacao.contar_estado(Orfao.Estado.ALOCADO), Populacao.capacidade_alojamento(),
 		em_pe, Floresta.arvores.size(),
+		"em curso" if Expedicoes.atual != null else ("relatório pronto" if not Expedicoes.ultimo_relatorio.is_empty() else "nenhuma"),
 	]
 
 

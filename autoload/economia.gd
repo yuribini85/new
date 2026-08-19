@@ -125,6 +125,11 @@ func _atualizar_indice_fome(saldo_comida_por_seg: float) -> void:
 	indice_fome_mudou.emit(indice_fome)
 
 
+## API pública para outros módulos (ex: fôlego de expedição) creditarem recursos.
+func creditar(recurso: String, quantidade: float) -> void:
+	_adicionar(recurso, quantidade)
+
+
 func _adicionar(recurso: String, quantidade: float) -> void:
 	if quantidade <= 0.0:
 		return
