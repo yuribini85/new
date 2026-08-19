@@ -1,7 +1,6 @@
 extends CanvasLayer
 ## Tela de aldeões. especificacao_tecnica_v1.md #37: lista com filtro por estado,
-## toque abre um seletor de destino — simplificado aqui para alocar na primeira
-## vaga livre (o seletor manual completo é trabalho do módulo de Interface).
+## toque abre um seletor de destino com todos os prédios com vaga livre.
 
 enum Filtro { TODOS, OCIOSOS, ALOCADOS, CRIANCAS }
 var _filtro := Filtro.TODOS
@@ -82,15 +81,77 @@ func _criar_linha(o: Orfao) -> Button:
 func _on_linha_pressed(id: String) -> void:
 	var o: Orfao = Populacao.orfaos[id]
 	if o.estado == Orfao.Estado.ADULTO_OCIOSO:
-		_alocar_em_qualquer_vaga(id)
+		_abrir_seletor_destino(id)
 	elif o.estado == Orfao.Estado.ALOCADO:
 		Populacao.desalocar(id)
-	_atualizar()
+		_atualizar()
 
 
-func _alocar_em_qualquer_vaga(orfao_id: String) -> void:
+func _vagas_livres(e: Edificio) -> int:
+	var n := 0
+	for v in e.vagas_orfaos:
+		if v == null or v == "":
+			n += 1
+	return n
+
+
+## Lista todo prédio construído com vaga livre, pra escolher onde o aldeão vai
+## trabalhar — ex.: escolher a Cabana do Construtor de propósito pra acelerar obras,
+## em vez de cair sempre no primeiro prédio com vaga (especificacao_tecnica_v1.md #37).
+func _abrir_seletor_destino(orfao_id: String) -> void:
+	var o: Orfao = Populacao.orfaos[orfao_id]
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.75)
+	fundo.anchor_right = 1.0
+	fundo.anchor_bottom = 1.0
+	add_child(fundo)
+
+	var vbox := VBoxContainer.new()
+	vbox.offset_left = 40.0
+	vbox.offset_top = 200.0
+	vbox.offset_right = 1040.0
+	vbox.offset_bottom = 1700.0
+	fundo.add_child(vbox)
+
+	var titulo := Label.new()
+	titulo.text = "Alocar %s em:" % o.nome
+	titulo.add_theme_font_size_override("font_size", 28)
+	titulo.add_theme_color_override("font_color", Color(0.92, 0.92, 0.9, 1))
+	vbox.add_child(titulo)
+
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 1300)
+	vbox.add_child(scroll)
+	var lista := VBoxContainer.new()
+	lista.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(lista)
+
+	var encontrou_vaga := false
 	for id in Vila.edificios:
 		var e: Edificio = Vila.edificios[id]
-		if e.vagas_orfaos.find("") != -1 or e.vagas_orfaos.find(null) != -1:
-			if Populacao.alocar(orfao_id, id):
-				return
+		if e.nivel <= 0:
+			continue
+		var livres := _vagas_livres(e)
+		if livres <= 0:
+			continue
+		encontrou_vaga = true
+		var combina := Populacao.aptidao_do_edificio(id) == o.aptidao and o.aptidao != ""
+		var botao := Button.new()
+		botao.text = "%s%s — %d vaga(s) livre(s)" % [("★ " if combina else ""), e.nome, livres]
+		botao.pressed.connect(func():
+			Populacao.alocar(orfao_id, id)
+			fundo.queue_free()
+			_atualizar()
+		)
+		lista.add_child(botao)
+
+	if not encontrou_vaga:
+		var aviso := Label.new()
+		aviso.text = "Nenhum prédio com vaga livre no momento."
+		aviso.add_theme_color_override("font_color", Color(0.85, 0.6, 0.6, 1))
+		lista.add_child(aviso)
+
+	var cancelar := Button.new()
+	cancelar.text = "Cancelar"
+	cancelar.pressed.connect(func(): fundo.queue_free())
+	vbox.add_child(cancelar)

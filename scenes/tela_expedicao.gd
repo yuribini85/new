@@ -54,19 +54,27 @@ func _atualizar() -> void:
 		return
 
 	_titulo.text = "Expedições"
+	var ociosos := Populacao.contar_estado(Orfao.Estado.ADULTO_OCIOSO)
 	for r in Expedicoes.regioes():
 		var linha := HBoxContainer.new()
 		var info := Label.new()
-		var disponivel: bool = r["tier"] <= Expedicoes.tier_maximo_liberado()
+		var disponivel_tier: bool = r["tier"] <= Expedicoes.tier_maximo_liberado()
+		var necessario: int = r["aldeoes"]
+		var tem_equipe := ociosos >= necessario
+		var status := "disponível"
+		if not disponivel_tier:
+			status = "requer mina tier %d" % r["tier"]
+		elif not tem_equipe:
+			status = "faltam aldeões (%d/%d ociosos)" % [ociosos, necessario]
 		info.text = "%s · %ds · %d aldeões · risco %d%% · %s" % [
-			r["nome"], r["duracao_seg"], r["aldeoes"], int(r["risco"] * 100),
-			("disponível" if disponivel else "requer mina tier %d" % r["tier"]),
+			r["nome"], r["duracao_seg"], necessario, int(r["risco"] * 100), status,
 		]
 		linha.add_child(info)
 
-		if disponivel:
+		if disponivel_tier:
 			var botao := Button.new()
 			botao.text = "Enviar"
+			botao.disabled = not tem_equipe
 			botao.pressed.connect(_on_enviar_pressed.bind(r["id"]))
 			linha.add_child(botao)
 
@@ -84,6 +92,6 @@ func _on_enviar_pressed(regiao_id: String) -> void:
 			equipe.append(id)
 
 	if equipe.size() < necessario:
-		return  # sem aldeões ociosos suficientes; "preencher automático" simplificado
+		return  # o botão já vem desabilitado nesse caso (ver _atualizar)
 
 	Expedicoes.iniciar(regiao_id, equipe)
