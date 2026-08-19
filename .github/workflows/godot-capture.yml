@@ -32,10 +32,12 @@ jobs:
         run: godot --headless --import
 
       - name: Capture screenshot
+        # --headless usa um renderer dummy que não desenha nada (crasha com --write-movie).
+        # Sem --headless, mas sob xvfb-run (display virtual), o Godot renderiza de verdade.
         run: |
           mkdir -p captures
           xvfb-run -a -s "-screen 0 1080x1920x24" \
-            godot --headless --write-movie captures/frame.png --fixed-fps 1 --quit-after 1
+            godot --write-movie captures/frame.png --fixed-fps 1 --quit-after 3
 
       - name: Upload captures
         if: always()
