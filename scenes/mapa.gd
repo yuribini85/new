@@ -9,9 +9,6 @@ const TELA_ALDEOES_SCENE := preload("res://scenes/tela_aldeoes.tscn")
 const TELA_EXPEDICAO_SCENE := preload("res://scenes/tela_expedicao.tscn")
 const TELA_MERCADO_SCENE := preload("res://scenes/tela_mercado.tscn")
 const PERSONAGEM_SCENE := preload("res://scenes/personagem.tscn")
-const ZOOM_MIN := 0.15  # especificacao_tecnica_v1.md#4 previa 0.8; a vila real cobre
-                         # ~4700x4000px, então precisa de bem mais zoom-out que o
-                         # previsto pra caber tudo na tela — ajustado por playtest.
 const ZOOM_MAX := 1.6
 
 const COR_ARVORE_DE_PE := Color(0.22, 0.4, 0.2)
@@ -35,6 +32,9 @@ const COR_LIDER := Color(0.85, 0.7, 0.3)
 @onready var _botao_mercado: Button = $HudLayer/BotaoMercado
 
 var _zoom_atual := 1.0
+var _zoom_min := 0.15  # especificacao_tecnica_v1.md#4 previa 0.8; recalculado em
+                        # _ready() pra sempre caber a vila inteira, seja qual for
+                        # o tamanho real dela.
 var _tela_aldeoes: CanvasLayer = null
 var _tela_expedicao: CanvasLayer = null
 var _tela_mercado: CanvasLayer = null
@@ -58,16 +58,25 @@ func _ready() -> void:
 	for id in Vila.edificios:
 		var e: Edificio = Vila.edificios[id]
 		var pos := Iso.cell_to_pos(e.celula, _tile)
+		var pos_oposta := pos + Iso.cell_to_pos(e.footprint, _tile)  # canto oposto do footprint
 		var lote := LOTE_SCENE.instantiate()
 		lote.position = pos
 		_lotes_root.add_child(lote)
 		lote.configurar(id, _tile)
 		_lote_nodes[id] = lote
-		bounds_min = bounds_min.min(pos)
-		bounds_max = bounds_max.max(pos)
+		bounds_min = bounds_min.min(pos).min(pos_oposta)
+		bounds_max = bounds_max.max(pos).max(pos_oposta)
 
 	if bounds_min.x != INF:
 		_camera.position = (bounds_min + bounds_max) / 2.0
+		# Câmera começa afastada o bastante pra mostrar a vila inteira, calculado a
+		# partir da posição real dos prédios — em vez de um zoom inicial fixo que
+		# podia deixar a vila maior que a tela.
+		var span := bounds_max - bounds_min
+		var viewport_size := get_viewport().get_visible_rect().size
+		var zoom_cam_necessario := maxf(span.x / viewport_size.x, span.y / viewport_size.y) * 1.15
+		_zoom_min = minf(_zoom_min, 1.0 / zoom_cam_necessario)
+		_zoom_atual = clampf(1.0 / zoom_cam_necessario, _zoom_min, ZOOM_MAX)
 	_aplicar_zoom()
 	_camera.make_current()
 
@@ -303,10 +312,10 @@ func _input(event: InputEvent) -> void:
 	# manualmente, sem depender de picking de física de Area2D.
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_zoom_atual = clampf(_zoom_atual + 0.1, ZOOM_MIN, ZOOM_MAX)
+			_zoom_atual = clampf(_zoom_atual + 0.1, _zoom_min, ZOOM_MAX)
 			_aplicar_zoom()
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_zoom_atual = clampf(_zoom_atual - 0.1, ZOOM_MIN, ZOOM_MAX)
+			_zoom_atual = clampf(_zoom_atual - 0.1, _zoom_min, ZOOM_MAX)
 			_aplicar_zoom()
 		elif event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			_tentar_construir_em(event.position)

@@ -3,7 +3,8 @@ extends Node2D
 ## CLAUDE.md proíbe gerar arte; quando os assets de docs/NOMENCLATURA_ASSETS.md
 ## existirem, a Silhueta vira um Sprite2D com twb_bld_<id>_t<NN>.png.
 
-const COR_RUINA := Color(0.16, 0.14, 0.13)
+const COR_RUINA := Color(0.4, 0.36, 0.3)  # mais clara que o fundo (0.07-0.09) —
+                                           # antes tinha pouco contraste e "sumia"
 const COR_OBRA := Color(0.55, 0.47, 0.22)
 const COR_PRONTO := Color(0.24, 0.42, 0.26)
 
