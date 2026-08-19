@@ -17,10 +17,6 @@ var dia_vila: int = 1
 var fase_dia: FaseDia = FaseDia.MANHA
 var ato: int = 1
 
-## Nível da Casa das Fiandeiras (0 = não construída). Atualizado pelo módulo de Economia;
-## enquanto não existir, o teto de offline é 0h, como manda a especificação.
-var nivel_casa_fiandeiras: int = 0
-
 var _ciclo: Dictionary = {}
 var _dia_seg: int = 1200
 var _noite_seg: int = 240
@@ -74,7 +70,6 @@ func _aplicar_save_ou_iniciar() -> void:
 	dia_vila = save.get("dia_vila", 1)
 	fase_dia = save.get("fase_dia", FaseDia.MANHA) as FaseDia
 	ato = save.get("ato", 1)
-	nivel_casa_fiandeiras = save.get("nivel_casa_fiandeiras", 0)
 	Vila.restaurar(save.get("edificios", []))
 	Populacao.restaurar(save.get("populacao", {}))
 	Economia.restaurar(save.get("economia", {}))
@@ -101,10 +96,16 @@ func _calcular_offline(agora: int) -> void:
 	if bruto > _teto_dias * 86400:
 		bruto = _teto_dias * 86400
 
+	# Vila já foi restaurada (chamado depois, em _aplicar_save_ou_iniciar) — lê o
+	# nível de verdade, em vez de manter uma cópia que precisaria ser sincronizada.
+	var nivel_fiandeiras := 0
+	if Vila.edificios.has("casa_das_fiandeiras"):
+		nivel_fiandeiras = Vila.edificios["casa_das_fiandeiras"].nivel
+
 	var teto_seg := 0
-	if nivel_casa_fiandeiras > 0 and nivel_casa_fiandeiras < _teto_offline_horas.size():
-		teto_seg = int(_teto_offline_horas[nivel_casa_fiandeiras] * 3600)
-	elif nivel_casa_fiandeiras >= _teto_offline_horas.size():
+	if nivel_fiandeiras > 0 and nivel_fiandeiras < _teto_offline_horas.size():
+		teto_seg = int(_teto_offline_horas[nivel_fiandeiras] * 3600)
+	elif nivel_fiandeiras >= _teto_offline_horas.size():
 		teto_seg = int(_teto_offline_horas[-1] * 3600)
 
 	var delta: int = clampi(bruto, 0, teto_seg)
@@ -148,7 +149,6 @@ func get_save_data() -> Dictionary:
 		"dia_vila": dia_vila,
 		"fase_dia": fase_dia,
 		"ato": ato,
-		"nivel_casa_fiandeiras": nivel_casa_fiandeiras,
 		"edificios": Vila.get_save_data(),
 		"populacao": Populacao.get_save_data(),
 		"economia": Economia.get_save_data(),
