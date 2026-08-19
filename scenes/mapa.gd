@@ -7,7 +7,9 @@ extends Node2D
 const LOTE_SCENE := preload("res://scenes/lote.tscn")
 const TELA_ALDEOES_SCENE := preload("res://scenes/tela_aldeoes.tscn")
 const TELA_EXPEDICAO_SCENE := preload("res://scenes/tela_expedicao.tscn")
-const ZOOM_MIN := 0.8
+const PERSONAGEM_SCENE := preload("res://scenes/personagem.tscn")
+const ZOOM_MIN := 0.4  # especificacao_tecnica_v1.md#4 previa 0.8, mas a vila ficou
+                        # mais espalhada na prática — dobrado a pedido em playtest.
 const ZOOM_MAX := 1.6
 
 const COR_ARVORE_DE_PE := Color(0.22, 0.4, 0.2)
@@ -15,10 +17,16 @@ const COR_ARVORE_TOCO := Color(0.32, 0.22, 0.14)
 const COR_ROTA := Color(0.85, 0.75, 0.4)
 const RAIO_CORTESIA := 40.0  # px em espaço de mundo; agentes mais perto que isso cedem
 
+const COR_CRIANCA := Color(0.5, 0.65, 0.85)
+const COR_OCIOSO := Color(0.6, 0.6, 0.6)
+const COR_ALOCADO := Color(0.45, 0.75, 0.45)
+const COR_LIDER := Color(0.85, 0.7, 0.3)
+
 @onready var _camera: Camera2D = $Camera2D
 @onready var _lotes_root: Node2D = $Lotes
 @onready var _floresta_root: Node2D = $Floresta
 @onready var _rotas_root: Node2D = $Rotas
+@onready var _personagens_root: Node2D = $Personagens
 @onready var _debug_label: Label = $HudLayer/DebugLabel
 @onready var _botao_aldeoes: Button = $HudLayer/BotaoAldeoes
 @onready var _botao_expedicao: Button = $HudLayer/BotaoExpedicao
@@ -26,10 +34,13 @@ const RAIO_CORTESIA := 40.0  # px em espaço de mundo; agentes mais perto que is
 var _zoom_atual := 1.0
 var _tela_aldeoes: CanvasLayer = null
 var _tela_expedicao: CanvasLayer = null
+var _arrastando := false
+var _ultimo_mouse_pos := Vector2.ZERO
 var _tile: Vector2i
 var _timers_rota: Dictionary = {}  # edificio_id -> float acumulado
 var _proximo_walker_id := 0
 var _walkers_ativos: Dictionary = {}  # id -> posição atual (para cortesia)
+var _personagem_nodes: Dictionary = {}  # chave -> Node2D
 
 
 func _ready() -> void:
@@ -80,6 +91,60 @@ func _toggle_tela_expedicao() -> void:
 func _on_tick() -> void:
 	_redesenhar_floresta()
 	_processar_rotas()
+	_atualizar_personagens()
+
+
+func _centro_edificio(e: Edificio) -> Vector2:
+	return Iso.cell_to_pos(e.celula, _tile) + Iso.cell_to_pos(e.footprint, _tile) / 2.0
+
+
+## Um token por líder (um por prédio construído) e por órfão — posicionado onde ele
+## está agora (Lar, Alojamento ou local de trabalho). Atualiza posição sem recriar
+## os tokens que já existem, para não reiniciar a animação idle deles a cada tick.
+func _atualizar_personagens() -> void:
+	var desejados: Dictionary = {}  # chave -> {pos, cor}
+
+	for id in Vila.edificios:
+		var e: Edificio = Vila.edificios[id]
+		if e.nivel > 0:
+			desejados["lider_%s" % id] = {"pos": _centro_edificio(e), "cor": COR_LIDER}
+
+	for id in Populacao.orfaos:
+		var o: Orfao = Populacao.orfaos[id]
+		var alvo_edificio := ""
+		var cor := COR_OCIOSO
+		match o.estado:
+			Orfao.Estado.CRIANCA:
+				alvo_edificio = "lar_dos_orfaos"
+				cor = COR_CRIANCA
+			Orfao.Estado.ADULTO_OCIOSO:
+				alvo_edificio = "alojamento"
+				cor = COR_OCIOSO
+			Orfao.Estado.ALOCADO:
+				alvo_edificio = o.local_id
+				cor = COR_ALOCADO
+			_:
+				continue  # EM_EXPEDICAO / MORTO: fora do mapa
+
+		if not Vila.edificios.has(alvo_edificio):
+			continue
+		var base := _centro_edificio(Vila.edificios[alvo_edificio])
+		var jitter := Vector2((abs(hash(id)) % 50) - 25, (abs(hash(id + "y")) % 30) - 15)
+		desejados[id] = {"pos": base + jitter, "cor": cor}
+
+	for chave in _personagem_nodes.keys():
+		if not desejados.has(chave):
+			_personagem_nodes[chave].queue_free()
+			_personagem_nodes.erase(chave)
+
+	for chave in desejados:
+		var info: Dictionary = desejados[chave]
+		if not _personagem_nodes.has(chave):
+			var node := PERSONAGEM_SCENE.instantiate()
+			_personagens_root.add_child(node)
+			node.configurar(info["cor"])
+			_personagem_nodes[chave] = node
+		_personagem_nodes[chave].position = info["pos"]
 
 
 func _redesenhar_floresta() -> void:
@@ -197,11 +262,21 @@ func _atualizar_debug() -> void:
 	]
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+func _input(event: InputEvent) -> void:
+	# _input (não _unhandled_input) porque os lotes cobrem quase toda a tela com
+	# Area2D de clique e "consomem" o evento na detecção de física antes que
+	# _unhandled_input o veja.
+	if event is InputEventMouseButton:
+		if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_zoom_atual = clampf(_zoom_atual + 0.1, ZOOM_MIN, ZOOM_MAX)
 			_aplicar_zoom()
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_zoom_atual = clampf(_zoom_atual - 0.1, ZOOM_MIN, ZOOM_MAX)
 			_aplicar_zoom()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			_arrastando = event.pressed
+			_ultimo_mouse_pos = event.position
+	elif event is InputEventMouseMotion and _arrastando:
+		var delta: Vector2 = event.position - _ultimo_mouse_pos
+		_camera.position -= delta * _camera.zoom
+		_ultimo_mouse_pos = event.position

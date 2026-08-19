@@ -31,9 +31,11 @@ Sim="*res://autoload/sim.gd"
 
 window/size/viewport_width=1080
 window/size/viewport_height=1920
+window/size/window_width_override=540
+window/size/window_height_override=960
 window/handheld/orientation="portrait"
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep"
 
 [rendering]
 

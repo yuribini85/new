@@ -15,22 +15,29 @@ const COR_PRONTO := Color(0.24, 0.42, 0.26)
 var edificio_id: String
 
 
+## A posição do nó (definida por quem instancia) já é a projeção isométrica da
+## célula de origem do lote (canto, não centro). O contorno do losango precisa
+## projetar os 4 cantos do footprint pela mesma transformação — usar largura/altura
+## do footprint direto (sem projetar) desenha um losango com o ângulo errado para
+## qualquer footprint que não seja 1x1. Iso.gd faz a mesma conta que Mapa usa para
+## posicionar os lotes.
 func configurar(id: String, tile: Vector2i) -> void:
 	edificio_id = id
 	var e: Edificio = Vila.edificios[id]
 
-	var meia_largura := e.footprint.x * tile.x / 2.0
-	var meia_altura := e.footprint.y * tile.y / 2.0
-	_silhueta.polygon = PackedVector2Array([
-		Vector2(0, -meia_altura),
-		Vector2(meia_largura, 0),
-		Vector2(0, meia_altura),
-		Vector2(-meia_largura, 0),
-	])
+	var p00 := Vector2.ZERO
+	var p10 := Iso.cell_to_pos(Vector2i(e.footprint.x, 0), tile)
+	var p01 := Iso.cell_to_pos(Vector2i(0, e.footprint.y), tile)
+	var p11 := Iso.cell_to_pos(e.footprint, tile)
+	var centro := (p00 + p11) / 2.0
+
+	_silhueta.polygon = PackedVector2Array([p00, p10, p11, p01])
 
 	var forma := RectangleShape2D.new()
-	forma.size = Vector2(meia_largura, meia_altura) * 1.6
+	forma.size = (p11 - p00).abs() * 0.8
+	_colisao.position = centro
 	_colisao.shape = forma
+	_label.position = centro - _label.size / 2.0
 
 	_area.input_event.connect(_on_input_event)
 	Vila.edificio_iniciou_obra.connect(_on_edificio_mudou)

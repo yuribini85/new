@@ -29,6 +29,9 @@ y_sort_enabled = true
 [node name="Rotas" type="Node2D" parent="."]
 y_sort_enabled = true
 
+[node name="Personagens" type="Node2D" parent="."]
+y_sort_enabled = true
+
 [node name="HudLayer" type="CanvasLayer" parent="."]
 layer = 10
 
