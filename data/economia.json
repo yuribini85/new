@@ -54,7 +54,9 @@
  "indice_fome": {
   "perda_por_ponto": 0.008,
   "piso": 0.3,
-  "recuperacao": "imediata"
+  "recuperacao": "imediata",
+  "fator_variacao_por_seg": 1.0,
+  "_fator_variacao_por_seg_status": "placeholder nao calibrado - design/economia.md lista como numero pendente"
  },
  "consumo_por_min": {
   "crianca": 1,

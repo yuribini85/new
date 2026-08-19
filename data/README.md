@@ -14,3 +14,8 @@ JSON de balanceamento, prontos para `res://data/`. Ajustáveis sem recompilar.
 
 **Fonte:** `docs/ato1_balanceamento.md` e `design/pendencias_resolvidas.md`.
 Todos os números são chute calibrado — o que importa é a relação entre eles.
+
+**Placeholder pendente:** `economia.json#indice_fome.fator_variacao_por_seg` (1.0) — a
+taxa de subida/queda do Índice de Fome está listada em `design/economia.md` como número
+que ainda falta decidir. Implementado como `indice += saldo_comida_por_seg * fator`,
+autorizado como placeholder até ser calibrado por playtest.

@@ -52,7 +52,12 @@ func _aplicar_zoom() -> void:
 
 
 func _atualizar_debug() -> void:
-	_debug_label.text = "dia %d · %s · ato %d" % [Sim.dia_vila, Sim.nome_fase(Sim.fase_dia), Sim.ato]
+	var r := Economia.recursos
+	_debug_label.text = "dia %d · %s · ato %d\ncomida %.1f · madeira %.1f · tecido %.1f · ouro %.1f\nfome %.1f (teto dep. %d)" % [
+		Sim.dia_vila, Sim.nome_fase(Sim.fase_dia), Sim.ato,
+		r["comida"], r["madeira"], r["tecido"], r["ouro"],
+		Economia.indice_fome, Economia.teto_deposito(),
+	]
 
 
 func _unhandled_input(event: InputEvent) -> void:

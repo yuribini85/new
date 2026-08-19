@@ -21,6 +21,7 @@ config/features=PackedStringArray("4.4", "GL Compatibility")
 Dados="*res://autoload/dados.gd"
 SaveManager="*res://autoload/save_manager.gd"
 Vila="*res://autoload/vila.gd"
+Economia="*res://autoload/economia.gd"
 Sim="*res://autoload/sim.gd"
 
 [display]
