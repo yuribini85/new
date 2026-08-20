@@ -48,7 +48,7 @@ const COR_LIDER := Color(0.85, 0.7, 0.3)
 @onready var _botao_expedicao: Button = $HudLayer/BotaoExpedicao
 @onready var _botao_mercado: Button = $HudLayer/BotaoMercado
 @onready var _tint: ColorRect = $ClimaLayer/Tint
-@onready var _chuva: CPUParticles2D = $ClimaLayer/Chuva
+@onready var _chuva: Chuva = $ClimaLayer/Chuva
 
 var _zoom_atual := 1.0
 var _zoom_min := 0.15  # especificacao_tecnica_v1.md#4 previa 0.8; recalculado em
