@@ -287,7 +287,7 @@ func _atualizar_personagens() -> void:
 			continue
 		var base := _centro_edificio(Vila.edificios[alvo_edificio])
 		var jitter := Vector2((abs(hash(id)) % 50) - 25, (abs(hash(id + "y")) % 30) - 15)
-		desejados[id] = {"pos": base + jitter, "cor": cor, "predio": alvo_edificio}
+		desejados[id] = {"pos": base + jitter, "cor": cor, "predio": alvo_edificio, "crianca": o.estado == Orfao.Estado.CRIANCA}
 
 	for chave in _personagem_nodes.keys():
 		if not desejados.has(chave):
@@ -304,7 +304,7 @@ func _atualizar_personagens() -> void:
 		if not _personagem_nodes.has(chave):
 			var node := PERSONAGEM_SCENE.instantiate()
 			_personagens_root.add_child(node)
-			node.configurar(info["cor"])
+			node.configurar(info["cor"], info.get("crianca", false))
 			node.position = info["pos"]
 			_personagem_nodes[chave] = node
 			_personagem_alvo[chave] = info["pos"]
