@@ -1,8 +1,10 @@
 extends Node2D
 ## Token de personagem (líder ou órfão) no mapa. Usa a arte real quando existe em
-## res://art/chr/twb_chr_<slug>_idle.png (docs/NOMENCLATURA_ASSETS.md) — hoje
-## "aldeao" (adulto, qualquer papel) e "crianca"; cai no losango placeholder pra
-## qualquer papel sem arte ainda. A "caminhada" é procedural (Godot Tween — balanço
+## res://art/chr/twb_chr_<slug>_idle.png (docs/NOMENCLATURA_ASSETS.md) — líderes
+## primeiro tentam o retrato específico do próprio prédio
+## (twb_chr_lider_<edificio_id>_idle.png), depois caem no genérico "aldeao"/
+## "crianca"; sem nenhuma arte, cai no losango placeholder. A "caminhada" é
+## procedural (Godot Tween — balanço
 ## mais rápido e um leve esticão vertical), sem nenhum quadro de animação novo: o
 ## Mapa chama definir_andando(true) enquanto desloca esse token entre prédios pela
 ## rua, e definir_andando(false) quando ele chega e volta a ficar parado.
@@ -18,9 +20,15 @@ var _tween_balanco: Tween
 var _andando := false
 
 
-func configurar(cor: Color, crianca: bool = false) -> void:
-	var slug := "crianca" if crianca else "aldeao"
-	var caminho := "%stwb_chr_%s_idle.png" % [ART_DIR, slug]
+func configurar(cor: Color, crianca: bool = false, lider_de: String = "") -> void:
+	var caminho := ""
+	if lider_de != "":
+		var caminho_lider := "%stwb_chr_lider_%s_idle.png" % [ART_DIR, lider_de]
+		if ResourceLoader.exists(caminho_lider):
+			caminho = caminho_lider
+	if caminho == "":
+		var slug := "crianca" if crianca else "aldeao"
+		caminho = "%stwb_chr_%s_idle.png" % [ART_DIR, slug]
 	if ResourceLoader.exists(caminho):
 		var textura: Texture2D = load(caminho)
 		_sprite.texture = textura

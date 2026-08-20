@@ -304,7 +304,8 @@ func _atualizar_personagens() -> void:
 		if not _personagem_nodes.has(chave):
 			var node := PERSONAGEM_SCENE.instantiate()
 			_personagens_root.add_child(node)
-			node.configurar(info["cor"], info.get("crianca", false))
+			var lider_de: String = info["predio"] if chave.begins_with("lider_") else ""
+			node.configurar(info["cor"], info.get("crianca", false), lider_de)
 			node.position = info["pos"]
 			_personagem_nodes[chave] = node
 			_personagem_alvo[chave] = info["pos"]
