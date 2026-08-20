@@ -57,6 +57,11 @@ func _atualizar() -> void:
 		_label.text = "%s\n(obra)" % e.nome
 		return
 
+	if not e.disponivel:
+		_label.text = "%s\n(em breve)" % e.nome
+		_label.modulate = Color(0.7, 0.7, 0.7)
+		return
+
 	var custo := Vila.custo_proximo_nivel(edificio_id)
 	var pode_pagar := Economia.tem_saldo("ouro", custo["ouro"]) and Economia.tem_saldo("madeira", custo["madeira"])
 	var nivel_texto := "ruína" if e.nivel == 0 else "nv %d" % e.nivel

@@ -107,10 +107,12 @@ func _abrir_seletor_destino(orfao_id: String) -> void:
 	add_child(fundo)
 
 	var vbox := VBoxContainer.new()
-	vbox.offset_left = 40.0
-	vbox.offset_top = 200.0
-	vbox.offset_right = 1040.0
-	vbox.offset_bottom = 1700.0
+	vbox.anchor_right = 1.0
+	vbox.anchor_bottom = 1.0
+	vbox.offset_left = 60.0
+	vbox.offset_top = 60.0
+	vbox.offset_right = -60.0
+	vbox.offset_bottom = -60.0
 	fundo.add_child(vbox)
 
 	var titulo := Label.new()
@@ -120,7 +122,7 @@ func _abrir_seletor_destino(orfao_id: String) -> void:
 	vbox.add_child(titulo)
 
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 1300)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(scroll)
 	var lista := VBoxContainer.new()
 	lista.size_flags_horizontal = Control.SIZE_EXPAND_FILL

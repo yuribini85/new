@@ -109,3 +109,33 @@ func catalogo_edificios_ato1() -> Dictionary:
 			"funcao": definicao.get("funcao", ""),
 		}
 	return catalogo
+
+
+## Os 30 lotes inteiros do mapa (docs/the_way_back_biblia.html #04b: "todos os
+## lotes existem desde o primeiro minuto, visíveis como silhueta escura de
+## ruína"), mesmo os que ainda não têm custo/produção definidos em ato1.json —
+## esses ficam com disponivel=false: aparecem como ruína decorativa, mas nunca
+## constroem até um ato futuro trazer os dados deles.
+func catalogo_lotes_todos() -> Dictionary:
+	var ato1_por_id: Dictionary = {}
+	for definicao in ato1().get("ordem", []):
+		ato1_por_id[definicao["id"]] = definicao
+
+	var catalogo: Dictionary = {}
+	for lote in vila_lotes().get("lots", []):
+		var id: String = lote["id"]
+		var definicao: Dictionary = ato1_por_id.get(id, {})
+		catalogo[id] = {
+			"id": id,
+			"nome": lote.get("name", id),
+			"zona": lote.get("zone", ""),
+			"celula": Vector2i(lote["cell"][0], lote["cell"][1]),
+			"footprint": Vector2i(lote["footprint"][0], lote["footprint"][1]),
+			"custo_n1": definicao.get("custo_n1", 0),
+			"produz": definicao.get("produz", ""),
+			"destrava": definicao.get("destrava", ""),
+			"capacidade": definicao.get("capacidade", ""),
+			"funcao": definicao.get("funcao", ""),
+			"disponivel": not definicao.is_empty(),
+		}
+	return catalogo

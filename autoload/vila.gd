@@ -14,8 +14,10 @@ func _ready() -> void:
 	Sim.tick.connect(_on_tick)
 
 
+## Instancia os 30 lotes do mapa (biblia #04b), não só os do Ato I — o restante
+## fica com disponivel=false: visível como ruína, mas não constrói ainda.
 func _montar_a_partir_do_catalogo() -> void:
-	var catalogo := Dados.catalogo_edificios_ato1()
+	var catalogo := Dados.catalogo_lotes_todos()
 	for id in catalogo:
 		edificios[id] = Edificio.from_definicao(catalogo[id])
 
@@ -57,6 +59,9 @@ func construir(id: String) -> bool:
 	if not edificios.has(id):
 		return false
 	var e: Edificio = edificios[id]
+	if not e.disponivel:
+		construcao_recusada.emit(id, "indisponivel")
+		return false
 	if e.em_obra:
 		construcao_recusada.emit(id, "em_obra")
 		return false

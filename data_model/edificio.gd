@@ -11,6 +11,7 @@ var zona: String
 var celula: Vector2i
 var footprint: Vector2i
 var custo_n1: int
+var disponivel: bool = true  # false = ruína decorativa, sem dado de custo/produção ainda (ato futuro)
 
 var nivel: int = NIVEL_RUINA
 var lider_id: String = ""            # atribuído pelo módulo de População
@@ -30,6 +31,7 @@ static func from_definicao(def: Dictionary) -> Edificio:
 	e.celula = def.get("celula", Vector2i.ZERO)
 	e.footprint = def.get("footprint", Vector2i.ONE)
 	e.custo_n1 = def.get("custo_n1", 0)
+	e.disponivel = def.get("disponivel", true)
 	return e
 
 
