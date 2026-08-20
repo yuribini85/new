@@ -29,7 +29,7 @@ const DURACAO_TRANSICAO_TINT := 3.0
 ## pequena por tick de começar, dura um tempo aleatório e para. mecanicas_para_godot.md
 ## não define clima nenhum; isso é só ambientação (CLAUDE.md: "não invente balanceamento"
 ## não se aplica aqui porque não move nenhum número do jogo).
-const CHANCE_CHUVA_POR_TICK := 0.0015
+const CHANCE_CHUVA_POR_TICK := 0.02  # média ~50s de espera — perceptível numa sessão curta
 const DURACAO_CHUVA_MIN_SEG := 40.0
 const DURACAO_CHUVA_MAX_SEG := 100.0
 
