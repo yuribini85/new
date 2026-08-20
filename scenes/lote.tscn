@@ -8,6 +8,10 @@ script = ExtResource("1")
 [node name="Silhueta" type="Polygon2D" parent="."]
 color = Color(0.16, 0.14, 0.13, 1)
 
+[node name="Sprite" type="Sprite2D" parent="."]
+visible = false
+centered = false
+
 [node name="Label" type="Label" parent="."]
 offset_left = -80.0
 offset_top = -20.0

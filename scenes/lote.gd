@@ -1,7 +1,11 @@
 extends Node2D
-## Representação visual de um lote/edifício no mapa. Placeholder geométrico —
-## CLAUDE.md proíbe gerar arte; quando os assets de docs/NOMENCLATURA_ASSETS.md
-## existirem, a Silhueta vira um Sprite2D com twb_bld_<id>_t<NN>.png.
+## Representação visual de um lote/edifício no mapa. Placeholder geométrico por
+## padrão — CLAUDE.md proíbe gerar arte — mas quando existe um asset real em
+## res://art/bld/twb_bld_<id>_t<NN>.png (docs/NOMENCLATURA_ASSETS.md), a Sprite
+## substitui a Silhueta. Arte é opcional por prédio: os que não têm caem no losango.
+
+const ART_DIR := "res://art/bld/"
+const MAX_TIER_BUSCA := 10  # nenhum prédio da bíblia passa disso (mina vai até t07)
 
 const COR_RUINA := Color(0.4, 0.36, 0.3)  # mais clara que o fundo (0.07-0.09) —
                                            # antes tinha pouco contraste e "sumia"
@@ -9,9 +13,12 @@ const COR_OBRA := Color(0.55, 0.47, 0.22)
 const COR_PRONTO := Color(0.24, 0.42, 0.26)
 
 @onready var _silhueta: Polygon2D = $Silhueta
+@onready var _sprite: Sprite2D = $Sprite
 @onready var _label: Label = $Label
 
 var edificio_id: String
+var _p11: Vector2  # canto sul do losango (footprint) — âncora do chão da arte
+var _largura_diamante: float
 
 
 ## A posição do nó (definida por quem instancia) já é a projeção isométrica da
@@ -29,6 +36,8 @@ func configurar(id: String, tile: Vector2i) -> void:
 	var p01 := Iso.cell_to_pos(Vector2i(0, e.footprint.y), tile)
 	var p11 := Iso.cell_to_pos(e.footprint, tile)
 	var centro := (p00 + p11) / 2.0
+	_p11 = p11
+	_largura_diamante = p10.x - p01.x
 
 	_silhueta.polygon = PackedVector2Array([p00, p10, p11, p01])
 	_label.position = centro - _label.size / 2.0
@@ -53,6 +62,8 @@ func _atualizar() -> void:
 	else:
 		_silhueta.color = COR_PRONTO
 
+	_atualizar_sprite(e.nivel)
+
 	if e.em_obra:
 		_label.text = "%s\n(obra)" % e.nome
 		return
@@ -69,6 +80,37 @@ func _atualizar() -> void:
 		e.nome, nivel_texto, ("toque p/ nv %d:" % (e.nivel + 1)), custo["ouro"], custo["madeira"],
 	]
 	_label.modulate = Color.WHITE if pode_pagar else Color(1, 0.6, 0.6)
+
+
+## Troca a Silhueta (losango) por Sprite2D quando existe arte real pra esse
+## prédio/nível — nem todo prédio tem asset ainda, então cai no placeholder
+## quando não encontra nada. A âncora é o canto sul (_p11) do losango: a base
+## da imagem fica exatamente onde o chão do lote termina.
+func _atualizar_sprite(nivel: int) -> void:
+	var textura := _textura_para_nivel(nivel)
+	if textura == null:
+		_sprite.visible = false
+		_silhueta.visible = true
+		return
+
+	_silhueta.visible = false
+	_sprite.visible = true
+	_sprite.texture = textura
+	var escala: float = _largura_diamante / textura.get_width()
+	_sprite.scale = Vector2.ONE * escala
+	_sprite.position = _p11 - Vector2(textura.get_width() * escala / 2.0, textura.get_height() * escala)
+
+
+## Maior estágio de arte disponível até `nivel` (ruína = t00). Sem asset nenhum
+## pra esse id, retorna null e quem chamou cai no placeholder geométrico.
+func _textura_para_nivel(nivel: int) -> Texture2D:
+	var tier: int = clampi(nivel, 0, MAX_TIER_BUSCA)
+	while tier >= 0:
+		var caminho := "%stwb_bld_%s_t%02d.png" % [ART_DIR, edificio_id, tier]
+		if ResourceLoader.exists(caminho):
+			return load(caminho)
+		tier -= 1
+	return null
 
 
 ## Detecção manual de clique (não usa Area2D/picking de física — mais simples de
