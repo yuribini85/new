@@ -328,10 +328,14 @@ func _atualizar_personagens() -> void:
 		if predio_anterior != "" and predio_anterior != info["predio"]:
 			# Muda de prédio: caminha pelas ruas (nunca atravessando lotes) da
 			# porta de origem até a porta de destino, e só então entra no prédio.
+			# definir_andando(true) liga o balanço de passo (Tween procedural, sem
+			# sprite de perna nenhum) só durante esse trecho em trânsito.
+			node.definir_andando(true)
 			var pontos := _caminho_mundo(_porta_edificio(predio_anterior), _porta_edificio(info["predio"]))
 			for p in pontos:
 				tw.tween_property(node, "position", p, 0.35).set_trans(Tween.TRANS_SINE)
 			tw.tween_property(node, "position", info["pos"], 0.35).set_trans(Tween.TRANS_SINE)
+			tw.tween_callback(node.definir_andando.bind(false))
 		else:
 			tw.tween_property(node, "position", info["pos"], 1.2).set_trans(Tween.TRANS_SINE)
 		_personagem_tweens[chave] = tw
