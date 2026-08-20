@@ -17,6 +17,22 @@ const COR_ROTA := Color(0.85, 0.75, 0.4)
 const RAIO_CORTESIA := 40.0  # px em espaço de mundo; agentes mais perto que isso cedem
 const TEMPO_DENTRO_PREDIO := 1.5  # s — só apresentação, tempo "dentro" antes de voltar
 
+## Tingimento de tela por fase do dia — só apresentação, não altera número nenhum.
+## Sim.fase_dia (MANHA/TARDE/NOITE) já existe no autoload; aqui só animamos a
+## transição visual (docs pedem "animação da passagem do tempo").
+const COR_TINT_MANHA := Color(1.0, 0.85, 0.6, 0.10)
+const COR_TINT_TARDE := Color(1.0, 1.0, 1.0, 0.0)
+const COR_TINT_NOITE := Color(0.05, 0.08, 0.25, 0.5)
+const DURACAO_TRANSICAO_TINT := 3.0
+
+## Chuva: efeito de apresentação puro, sem gancho em nenhuma mecânica real — chance
+## pequena por tick de começar, dura um tempo aleatório e para. mecanicas_para_godot.md
+## não define clima nenhum; isso é só ambientação (CLAUDE.md: "não invente balanceamento"
+## não se aplica aqui porque não move nenhum número do jogo).
+const CHANCE_CHUVA_POR_TICK := 0.0015
+const DURACAO_CHUVA_MIN_SEG := 40.0
+const DURACAO_CHUVA_MAX_SEG := 100.0
+
 const COR_CRIANCA := Color(0.5, 0.65, 0.85)
 const COR_OCIOSO := Color(0.6, 0.6, 0.6)
 const COR_ALOCADO := Color(0.45, 0.75, 0.45)
@@ -31,6 +47,8 @@ const COR_LIDER := Color(0.85, 0.7, 0.3)
 @onready var _botao_aldeoes: Button = $HudLayer/BotaoAldeoes
 @onready var _botao_expedicao: Button = $HudLayer/BotaoExpedicao
 @onready var _botao_mercado: Button = $HudLayer/BotaoMercado
+@onready var _tint: ColorRect = $ClimaLayer/Tint
+@onready var _chuva: CPUParticles2D = $ClimaLayer/Chuva
 
 var _zoom_atual := 1.0
 var _zoom_min := 0.15  # especificacao_tecnica_v1.md#4 previa 0.8; recalculado em
@@ -53,6 +71,9 @@ var _personagem_alvo: Dictionary = {}  # chave -> Vector2 (último destino conhe
 var _personagem_predio: Dictionary = {}  # chave -> String (id do prédio onde está agora)
 var _personagem_tweens: Dictionary = {}  # chave -> Tween (caminhada em curso)
 var _grid: AStarGrid2D  # navegação em espaço de célula — ruas são o que sobra fora dos lotes
+var _tint_tween: Tween
+var _chovendo := false
+var _chuva_termina_em_seg := 0.0
 
 
 func _ready() -> void:
@@ -94,6 +115,9 @@ func _ready() -> void:
 		_zoom_atual = clampf(zoom_para_caber, _zoom_min, ZOOM_MAX)
 		_aplicar_zoom()
 
+	_tint.color = _cor_tint_para_fase(Sim.fase_dia)
+
+	Sim.fase_mudou.connect(func(f): _animar_tint(f))
 	Sim.fase_mudou.connect(func(_f): _atualizar_debug())
 	Sim.dia_mudou.connect(func(_d): _atualizar_debug())
 	Sim.tick.connect(_on_tick)
@@ -195,6 +219,36 @@ func _on_tick() -> void:
 	_processar_rotas()
 	_processar_rota_lenhador()
 	_atualizar_personagens()
+	_atualizar_clima()
+
+
+func _cor_tint_para_fase(fase: Sim.FaseDia) -> Color:
+	match fase:
+		Sim.FaseDia.MANHA:
+			return COR_TINT_MANHA
+		Sim.FaseDia.NOITE:
+			return COR_TINT_NOITE
+		_:
+			return COR_TINT_TARDE
+
+
+func _animar_tint(fase: Sim.FaseDia) -> void:
+	if _tint_tween != null:
+		_tint_tween.kill()
+	_tint_tween = create_tween()
+	_tint_tween.tween_property(_tint, "color", _cor_tint_para_fase(fase), DURACAO_TRANSICAO_TINT)
+
+
+## Chuva: só ambientação, sem ligação com nenhum número de produção/economia.
+func _atualizar_clima() -> void:
+	if _chovendo:
+		if Sim.tempo_jogo_seg >= _chuva_termina_em_seg:
+			_chovendo = false
+			_chuva.emitting = false
+	elif randf() < CHANCE_CHUVA_POR_TICK:
+		_chovendo = true
+		_chuva_termina_em_seg = Sim.tempo_jogo_seg + randf_range(DURACAO_CHUVA_MIN_SEG, DURACAO_CHUVA_MAX_SEG)
+		_chuva.emitting = true
 
 
 func _centro_edificio(e: Edificio) -> Vector2:
