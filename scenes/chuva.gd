@@ -21,6 +21,15 @@ var emitting := false:
 		visible = v
 		queue_redraw()
 
+## Acompanha _zoom_atual do Mapa (Camera2D.zoom: maior = mais perto — mecanicas
+## já confirmado nesse projeto). Sem isso a gota ficava do mesmo tamanho na tela
+## não importa o quão perto/longe a câmera estivesse, o que destoava do resto da
+## cena (que escala com o zoom).
+var escala_zoom := 1.0:
+	set(v):
+		escala_zoom = v
+		queue_redraw()
+
 
 func _ready() -> void:
 	for i in range(N_GOTAS):
@@ -35,7 +44,7 @@ func _process(delta: float) -> void:
 	if not emitting:
 		return
 	for g in _gotas:
-		g["pos"] += _direcao * g["vel"] * delta
+		g["pos"] += _direcao * g["vel"] * escala_zoom * delta
 		if g["pos"].y > 1960.0:
 			g["pos"] = _posicao_aleatoria(-200.0, -20.0)
 			g["vel"] = randf_range(VELOCIDADE_MIN, VELOCIDADE_MAX)
@@ -45,7 +54,9 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	if not emitting:
 		return
+	var comprimento := COMPRIMENTO * escala_zoom
+	var largura := LARGURA * escala_zoom
 	for g in _gotas:
 		var p1: Vector2 = g["pos"]
-		var p2: Vector2 = p1 - _direcao * COMPRIMENTO
-		draw_line(p1, p2, COR, LARGURA)
+		var p2: Vector2 = p1 - _direcao * comprimento
+		draw_line(p1, p2, COR, largura)

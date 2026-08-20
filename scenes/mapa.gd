@@ -487,6 +487,7 @@ func _aplicar_zoom() -> void:
 	# Camera2D.zoom: maior valor = mais próximo (testado e confirmado). _zoom_atual
 	# já representa isso diretamente, sem inversão.
 	_camera.zoom = Vector2.ONE * _zoom_atual
+	_chuva.escala_zoom = _zoom_atual
 
 
 func _atualizar_debug() -> void:
