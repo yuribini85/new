@@ -1,18 +1,35 @@
 extends Node2D
-## Cena principal, provisória. Só HUD de debug + controles manuais de estado —
-## ainda não há ilha desenhada, deslocamento nem edificações (bíblia #23.1: isso vem
-## depois, em camadas de runtime). Os botões mudam Quint.estado diretamente, sem passar
-## pela FilaTarefas (que ainda não tem produtor nenhum ligado a ela) — serve só pra
-## exercitar Tempo/Quint/Economia de ponta a ponta antes de existir qualquer arte ou mapa.
+## Cena principal. Ilha placeholder (bíblia #23.1: composição em camadas — aqui só
+## Mar + Ilha_Base rasos, sem Fundo_Atmosfera/Overlays_FX ainda) com o token de Quint
+## de verdade em cima, clicável: toca na ilha e ele caminha até lá (FSM muda pra
+## WALKING e volta pra IDLE ao chegar). HUD de debug + botões manuais de necessidade
+## continuam por cima pra testar Tempo/Quint/Economia sem precisar mirar clique.
 
+const QUINT_SCENE := preload("res://scenes/quint.tscn")
+
+@onready var _camera: Camera2D = $Camera2D
+@onready var _mundo_root: Node2D = $MundoRoot
+@onready var _ilha_base: Polygon2D = $MundoRoot/IlhaBase
 @onready var _debug_label: Label = $HudLayer/DebugLabel
 @onready var _botao_dormir: Button = $HudLayer/BotaoDormir
 @onready var _botao_comer: Button = $HudLayer/BotaoComer
 @onready var _botao_latrina: Button = $HudLayer/BotaoLatrina
 @onready var _botao_parar: Button = $HudLayer/BotaoParar
 
+var _quint: Node2D
+
 
 func _ready() -> void:
+	_ilha_base.polygon = _gerar_contorno_ilha()
+
+	_quint = QUINT_SCENE.instantiate()
+	_quint.position = Vector2.ZERO  # centro da ilha
+	_mundo_root.add_child(_quint)
+
+	_camera.position = Vector2.ZERO
+	_camera.zoom = Vector2.ONE
+	_camera.make_current()
+
 	_botao_dormir.pressed.connect(func(): Quint.mudar_estado(Quint.Estado.SLEEPING))
 	_botao_comer.pressed.connect(func(): Quint.mudar_estado(Quint.Estado.EATING))
 	_botao_latrina.pressed.connect(func(): Quint.mudar_estado(Quint.Estado.USING_LATRINE))
@@ -20,6 +37,38 @@ func _ready() -> void:
 
 	Tempo.tick.connect(_atualizar_debug)
 	_atualizar_debug()
+
+
+## Contorno fechado e determinístico (sem RNG — não precisa de seed nem save) com
+## harmônicos de baixa ordem e amplitude modesta (≤15% do raio-base) pra nunca
+## autointerseccionar. Substituir por Ilha_Base real (#23.1) quando existir asset.
+func _gerar_contorno_ilha() -> PackedVector2Array:
+	var pontos := PackedVector2Array()
+	var n := 20
+	for i in range(n):
+		var ang := TAU * i / float(n)
+		var raio_x := 340.0 + 40.0 * cos(ang * 3.0)
+		var raio_y := 480.0 + 55.0 * sin(ang * 2.0)
+		pontos.append(Vector2(cos(ang) * raio_x, sin(ang) * raio_y))
+	return pontos
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if get_viewport().gui_get_hovered_control() == null:
+			_tentar_andar_ate(event.position)
+
+
+func _tentar_andar_ate(pos_tela: Vector2) -> void:
+	var pos_mundo := _tela_para_mundo(pos_tela)
+	var pos_local_ilha := _ilha_base.to_local(pos_mundo)
+	if Geometry2D.is_point_in_polygon(pos_local_ilha, _ilha_base.polygon):
+		_quint.mover_para(pos_mundo)
+
+
+func _tela_para_mundo(pos_tela: Vector2) -> Vector2:
+	var centro := get_viewport().get_visible_rect().size / 2.0
+	return _camera.position + (pos_tela - centro) / _camera.zoom
 
 
 ## "Parar" resolve a necessidade que motivou o estado atual antes de voltar a IDLE —
@@ -33,10 +82,11 @@ func _on_parar_pressed() -> void:
 func _atualizar_debug() -> void:
 	var lxp := Economia.libras_xelins_pence()
 	var nomes_estado := {
-		Quint.Estado.IDLE: "ocioso", Quint.Estado.SLEEPING: "dormindo",
-		Quint.Estado.EATING: "comendo", Quint.Estado.USING_LATRINE: "na latrina",
+		Quint.Estado.IDLE: "ocioso", Quint.Estado.WALKING: "andando",
+		Quint.Estado.SLEEPING: "dormindo", Quint.Estado.EATING: "comendo",
+		Quint.Estado.USING_LATRINE: "na latrina",
 	}
-	_debug_label.text = "dia %d (%s) · %s · fase %s\nQuint: %s\nenergia %.0f%% · fome %.0f%% · latrina %.0f%%\n£%d s.%d d.%d\nquerosene %.1fL · kit %.1f · peixe %.1fkg" % [
+	_debug_label.text = "dia %d (%s) · %s · fase %s\nQuint: %s (toque na ilha pra andar)\nenergia %.0f%% · fome %.0f%% · latrina %.0f%%\n£%d s.%d d.%d\nquerosene %.1fL · kit %.1f · peixe %.1fkg" % [
 		Tempo.dia_geral, Tempo.dia_semana(), _visitante_texto(), Tempo.nome_fase(Tempo.fase_atual),
 		nomes_estado.get(Quint.estado, "?"),
 		Quint.energia, Quint.fome, Quint.latrina,

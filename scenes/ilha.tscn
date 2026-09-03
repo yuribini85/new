@@ -8,12 +8,20 @@ script = ExtResource("1")
 [node name="FundoLayer" type="CanvasLayer" parent="."]
 layer = -1
 
-[node name="Background" type="ColorRect" parent="FundoLayer"]
+[node name="Mar" type="ColorRect" parent="FundoLayer"]
 mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.08, 0.1, 0.13, 1)
+color = Color(0.07, 0.13, 0.22, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="MundoRoot" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="IlhaBase" type="Polygon2D" parent="MundoRoot"]
+color = Color(0.22, 0.3, 0.16, 1)
 
 [node name="HudLayer" type="CanvasLayer" parent="."]
 layer = 10
@@ -22,34 +30,34 @@ layer = 10
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 1000.0
-offset_bottom = 220.0
+offset_bottom = 240.0
 theme_override_colors/font_color = Color(0.9, 0.92, 0.95, 1)
 theme_override_font_sizes/font_size = 24
 
 [node name="BotaoDormir" type="Button" parent="HudLayer"]
 offset_left = 24.0
-offset_top = 240.0
+offset_top = 260.0
 offset_right = 220.0
-offset_bottom = 290.0
+offset_bottom = 310.0
 text = "Dormir"
 
 [node name="BotaoComer" type="Button" parent="HudLayer"]
 offset_left = 240.0
-offset_top = 240.0
+offset_top = 260.0
 offset_right = 420.0
-offset_bottom = 290.0
+offset_bottom = 310.0
 text = "Comer"
 
 [node name="BotaoLatrina" type="Button" parent="HudLayer"]
 offset_left = 440.0
-offset_top = 240.0
+offset_top = 260.0
 offset_right = 660.0
-offset_bottom = 290.0
+offset_bottom = 310.0
 text = "Usar latrina"
 
 [node name="BotaoParar" type="Button" parent="HudLayer"]
 offset_left = 680.0
-offset_top = 240.0
+offset_top = 260.0
 offset_right = 860.0
-offset_bottom = 290.0
+offset_bottom = 310.0
 text = "Parar / IDLE"
