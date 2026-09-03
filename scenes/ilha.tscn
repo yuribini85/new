@@ -17,11 +17,19 @@ color = Color(0.07, 0.13, 0.22, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
+[node name="TerrenoReal" type="Node2D" parent="."]
+
+[node name="Mar" type="Sprite2D" parent="TerrenoReal"]
+centered = false
+
+[node name="Rocha" type="Sprite2D" parent="TerrenoReal"]
+centered = false
+
+[node name="Vegetacao" type="Sprite2D" parent="TerrenoReal"]
+centered = false
+
 [node name="MundoRoot" type="Node2D" parent="."]
 y_sort_enabled = true
-
-[node name="IlhaBase" type="Polygon2D" parent="MundoRoot"]
-color = Color(0.22, 0.3, 0.16, 1)
 
 [node name="HudLayer" type="CanvasLayer" parent="."]
 layer = 10
