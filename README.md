@@ -60,8 +60,15 @@ archive_the_way_back/   projeto anterior deste repositório, intacto, fora de es
 - Bíblia: fechada, lida por completo (24 seções).
 - Arte: pipeline no Drive, maioria ainda em placeholder/mockup (pastas `TESTES`,
   `EXEMPLOS`, `AJUSTAR`) — nada sincronizado no repositório ainda.
-- Código: início da arquitetura — ver histórico de commits para o que já está implementado.
+- Código: primeira fatia da arquitetura (bíblia §22) implementada e não testada no editor
+  (sem Godot instalado neste ambiente): `Tempo` (TimeSystem — dia de 8 min em quatro fases,
+  agenda semanal de visitantes, offline por fórmula fechada), `Quint` (FSM central com os
+  15 estados de #17.1 + Energia/Fome/Latrina com as taxas de #18), `FilaTarefas` (TaskQueue
+  com a prioridade de #7.3), `Economia` (dinheiro em pence, estoques de querosene/Kit/
+  peixe) e `SaveManager`. `scenes/ilha.tscn` é só um HUD de debug com botões manuais de
+  estado — sem mapa, sem arte, sem deslocamento.
 
-**Próximo passo:** vertical slice do Ato 1 (bíblia §19): relógio central, FSM de Quint,
-necessidades, Casa, Latrina, save/offline, e só depois Boathouse/pesca, Depósito, Betsy,
-Farol e Oficina.
+**Próximo passo:** abrir no editor Godot e validar a fatia acima antes de continuar. Depois,
+seguindo a ordem de produção (§23.11): Casa (dormir/comer + Kit), Latrina compartilhada com
+fila real de ocupação, Boathouse + pesca automática, Depósito + estoques, Betsy (chegada,
+comércio, confiança), Farol e Oficina.
