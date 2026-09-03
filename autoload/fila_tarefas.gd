@@ -82,7 +82,7 @@ func _prioridade(t: Tarefa) -> int:
 
 
 func _necessidade_associada_critica(task_type: String) -> bool:
-	var alvo := Quint.necessidade_mais_critica()
+	var alvo: Variant = Quint.necessidade_mais_critica()
 	if alvo == null:
 		return false
 	match task_type:
