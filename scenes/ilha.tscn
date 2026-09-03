@@ -28,6 +28,9 @@ centered = false
 [node name="Vegetacao" type="Sprite2D" parent="TerrenoReal"]
 centered = false
 
+[node name="IlhaBase" type="Polygon2D" parent="."]
+color = Color(0.24, 0.28, 0.22, 1)
+
 [node name="Caminho" type="Line2D" parent="."]
 width = 10.0
 default_color = Color(0.55, 0.47, 0.35, 0.65)

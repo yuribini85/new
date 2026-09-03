@@ -1,23 +1,25 @@
 extends Node2D
-## Cena principal. Terreno real (bíblia #23.1: composição em camadas) — Mar +
-## Ilha_Base (rocha_caverna + vegetação), assets aprovados do Drive. A caminhabilidade
-## usa o canal alfa de verdade da rocha (pixel a pixel — CLAUDE.md: "referencie sempre
-## por asset aprovado", nada de polígono desenhado à mão por cima de um sprite real).
-## Fundo_Atmosfera fica de fora: as duas versões (dia/noite) estão marcadas REVISAR
-## ("fundido com o mar") no Drive, ainda não é asset aprovado.
+## Cena principal. A ilha de Dreadwick em si (o penhasco com farol, casas e caminho —
+## bíblia #16.1) ainda não tem asset aprovado no Drive, então é um placeholder
+## geométrico (contorno determinístico, sem RNG) — a Caverna Marítima
+## (art/cenario/ilha_base_rocha_caverna.png + vegetação + o recorte de mar que vem
+## junto dela) É um asset real, mas é um elemento de cenário à parte: fica pequena, no
+## fundo da visualização, atrás da ilha (correção do usuário — antes eu tinha esticado
+## a caverna pra cobrir a ilha inteira, o que não fazia sentido). Os três PNGs da
+## caverna share o mesmo canvas 1877x2500 e continuam colados na mesma escala/posição
+## entre si — só o tamanho e o lugar dela na cena mudaram.
 ##
-## Quint de verdade em cima, clicável: toca na rocha e ele caminha até lá (FSM muda
-## pra WALKING e volta pra IDLE ao chegar). Toque fora da rocha (mar/céu) não faz nada.
+## Quint de verdade em cima, clicável: toca na ilha e ele caminha até lá (FSM muda pra
+## WALKING e volta pra IDLE ao chegar). Toque fora da ilha não faz nada.
 
 const QUINT_SCENE := preload("res://scenes/quint.tscn")
 const EDIFICACAO_SCENE := preload("res://scenes/edificacao.tscn")
 const CENARIO_DIR := "res://art/cenario/"
-const ALTURA_ROCHA_MUNDO := 975.0  # escala de composição — não é regra de bíblia,
-                                     # só o tamanho que cabe bem no viewport do HUD.
-const LIMIAR_ALFA_CAMINHAVEL := 0.1
+const ALTURA_CAVERNA_MUNDO := 260.0  # elemento de fundo pequeno, não a ilha inteira
 
 @onready var _camera: Camera2D = $Camera2D
 @onready var _mundo_root: Node2D = $MundoRoot
+@onready var _ilha_base: Polygon2D = $IlhaBase
 @onready var _sprite_mar: Sprite2D = $TerrenoReal/Mar
 @onready var _sprite_rocha: Sprite2D = $TerrenoReal/Rocha
 @onready var _sprite_vegetacao: Sprite2D = $TerrenoReal/Vegetacao
@@ -29,11 +31,11 @@ const LIMIAR_ALFA_CAMINHAVEL := 0.1
 @onready var _botao_parar: Button = $HudLayer/BotaoParar
 
 var _quint: Node2D
-var _imagem_rocha: Image
 
 
 func _ready() -> void:
-	_posicionar_terreno_real()
+	_ilha_base.polygon = _gerar_contorno_ilha()
+	_posicionar_caverna_maritima()
 	_instanciar_edificacoes()
 
 	_quint = QUINT_SCENE.instantiate()
@@ -53,19 +55,34 @@ func _ready() -> void:
 	_atualizar_debug()
 
 
-## Mar + Ilha_Base — três PNGs aprovados, todos no mesmo canvas 1877x2500, alinhados
-## entre si pelo próprio pipeline de arte (mesma origem/escala pros três, sem precisar
-## de offset por imagem).
-func _posicionar_terreno_real() -> void:
-	var tex_rocha: Texture2D = load(CENARIO_DIR + "ilha_base_rocha_caverna.png")
-	_imagem_rocha = tex_rocha.get_image()
-	var usado := _imagem_rocha.get_used_rect()
-	var escala: float = ALTURA_ROCHA_MUNDO / float(usado.size.y)
+## Contorno fechado e determinístico (sem RNG — não precisa de seed nem save) com
+## harmônicos de baixa ordem e amplitude modesta (≤15% do raio-base) pra nunca
+## autointerseccionar. Cobre o mesmo intervalo vertical (~-580 a ~580) usado para
+## calibrar as edificações em data/edificacoes.json.
+func _gerar_contorno_ilha() -> PackedVector2Array:
+	var pontos := PackedVector2Array()
+	var n := 20
+	for i in range(n):
+		var ang := TAU * i / float(n)
+		var raio_x := 340.0 + 40.0 * cos(ang * 3.0)
+		var raio_y := 520.0 + 58.0 * sin(ang * 2.0)
+		pontos.append(Vector2(cos(ang) * raio_x, sin(ang) * raio_y))
+	return pontos
 
-	# Pé da formação (centro-x, base-y do retângulo não-transparente de verdade)
-	# perto do centro da tela, com folga pro HUD no topo.
+
+## Mar + Ilha_Base (rocha_caverna, vegetação) — três PNGs aprovados que representam a
+## Caverna Marítima, não a ilha inteira. Mantêm a mesma escala/posição entre si (o
+## alinhamento que já vinha correto do pipeline de arte), só numa escala pequena,
+## perto da base da ilha, atrás do contorno placeholder.
+func _posicionar_caverna_maritima() -> void:
+	var tex_rocha: Texture2D = load(CENARIO_DIR + "ilha_base_rocha_caverna.png")
+	var usado := tex_rocha.get_image().get_used_rect()
+	var escala: float = ALTURA_CAVERNA_MUNDO / float(usado.size.y)
+
 	var pes_canvas := Vector2(usado.position.x + usado.size.x / 2.0, usado.position.y + usado.size.y)
-	var alvo_mundo := Vector2(0.0, 420.0)
+	var alvo_mundo := Vector2(60.0, 500.0)  # perto da borda sul do contorno (~y 520-527 aqui) —
+	                                          # parte da caverna some atrás da ilha, parte
+	                                          # sai por baixo, visível contra o mar
 	var origem := alvo_mundo - pes_canvas * escala
 
 	for sprite in [_sprite_mar, _sprite_rocha, _sprite_vegetacao]:
@@ -78,8 +95,8 @@ func _posicionar_terreno_real() -> void:
 
 ## Um Edificacao por entrada de data/edificacoes.json, na posição lida da referência de
 ## composição (ver _status do JSON — placeholder de leiaute, não asset aprovado ainda).
-## "caverna_maritima" não ganha marcador: já é a boca da caverna de verdade na rocha
-## (conferida caminhável em _sobre_rocha) — só entra no traçado do caminho abaixo.
+## "caverna_maritima" não ganha marcador: já é o cenário real posicionado acima — só
+## entra no traçado do caminho abaixo.
 func _instanciar_edificacoes() -> void:
 	var cfg := Dados.edificacoes()
 	var por_id: Dictionary = {}
@@ -108,18 +125,9 @@ func _input(event: InputEvent) -> void:
 
 func _tentar_andar_ate(pos_tela: Vector2) -> void:
 	var pos_mundo := _tela_para_mundo(pos_tela)
-	if _sobre_rocha(pos_mundo):
+	var pos_local := _ilha_base.to_local(pos_mundo)
+	if Geometry2D.is_point_in_polygon(pos_local, _ilha_base.polygon):
 		_quint.mover_para(pos_mundo)
-
-
-## Pixel a pixel contra o alfa de verdade da rocha (mundo -> espaço local do sprite,
-## já descontando escala/posição) — a boca da caverna é opaca na arte (conferido:
-## alfa ~251/255, não é um buraco transparente), então caminha normalmente por cima.
-func _sobre_rocha(pos_mundo: Vector2) -> bool:
-	var local: Vector2 = (pos_mundo - _sprite_rocha.position) / _sprite_rocha.scale
-	if local.x < 0.0 or local.y < 0.0 or local.x >= _imagem_rocha.get_width() or local.y >= _imagem_rocha.get_height():
-		return false
-	return _imagem_rocha.get_pixel(int(local.x), int(local.y)).a > LIMIAR_ALFA_CAMINHAVEL
 
 
 func _tela_para_mundo(pos_tela: Vector2) -> Vector2:
@@ -142,7 +150,7 @@ func _atualizar_debug() -> void:
 		Quint.Estado.SLEEPING: "dormindo", Quint.Estado.EATING: "comendo",
 		Quint.Estado.USING_LATRINE: "na latrina",
 	}
-	_debug_label.text = "dia %d (%s) · %s · fase %s\nQuint: %s (toque na rocha pra andar)\nenergia %.0f%% · fome %.0f%% · latrina %.0f%%\n£%d s.%d d.%d\nquerosene %.1fL · kit %.1f · peixe %.1fkg" % [
+	_debug_label.text = "dia %d (%s) · %s · fase %s\nQuint: %s (toque na ilha pra andar)\nenergia %.0f%% · fome %.0f%% · latrina %.0f%%\n£%d s.%d d.%d\nquerosene %.1fL · kit %.1f · peixe %.1fkg" % [
 		Tempo.dia_geral, Tempo.dia_semana(), _visitante_texto(), Tempo.nome_fase(Tempo.fase_atual),
 		nomes_estado.get(Quint.estado, "?"),
 		Quint.energia, Quint.fome, Quint.latrina,
