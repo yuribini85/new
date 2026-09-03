@@ -59,17 +59,22 @@ archive_the_way_back/   projeto anterior deste repositório, intacto, fora de es
 
 - Bíblia: fechada, lida por completo (24 seções).
 - Arte: pipeline no Drive, maioria ainda em placeholder/mockup (pastas `TESTES`,
-  `EXEMPLOS`, `AJUSTAR`) — nada sincronizado no repositório ainda.
+  `EXEMPLOS`, `AJUSTAR`). Sincronizados no repositório os assets já aprovados: Quint
+  parado em três direções (`art/chr/quint_idle_{ne,nw,sw}_01.png` — a quarta, SE, está
+  marcada REVISAR no Drive e fica de fora até ser corrigida) e o cenário
+  (`art/cenario/`: mar, rocha/caverna e vegetação — Fundo_Atmosfera também está REVISAR,
+  de fora).
 - Código: Godot 4.4 instalado e usado pra validar cada commit (não só leitura de código).
   Arquitetura de fundação (bíblia §22) implementada e testada: `Tempo` (TimeSystem — dia
   de 8 min em quatro fases, agenda semanal de visitantes, offline por fórmula fechada),
   `Quint` (FSM central com os 15 estados de #17.1 + Energia/Fome/Latrina com as taxas de
   #18), `FilaTarefas` (TaskQueue com a prioridade de #7.3), `Economia` (dinheiro em pence,
-  estoques de querosene/Kit/peixe) e `SaveManager`. `scenes/ilha.tscn` já tem a primeira
-  presença física de verdade: uma ilha placeholder (contorno determinístico) com o token
-  de Quint em cima — toca na ilha e ele caminha até lá, FSM muda pra `WALKING` e volta pra
-  `IDLE` ao chegar, carrega `art/chr/quint_idle.png` automaticamente se existir. Confirmado
-  rodando o jogo de verdade (headless + Xvfb), não só por leitura.
+  estoques de querosene/Kit/peixe) e `SaveManager`. `scenes/ilha.tscn` já mostra a rocha
+  de verdade saindo do mar, com Quint em cima: toca na rocha e ele caminha até lá — a
+  colisão testa o alfa real da arte pixel a pixel, sem polígono desenhado à mão — troca
+  de sprite pela direção do movimento (NE/NW/SE/SW, pivô nos pés calculado a partir do
+  retângulo de pixels não-transparentes de cada pose). Confirmado rodando o jogo de
+  verdade (headless + Xvfb), com screenshot com zoom validando pivô/escala.
 
 **Próximo passo:** seguindo a ordem de produção (§23.11): Casa (dormir/comer + Kit), Latrina
 compartilhada com fila real de ocupação, Boathouse + pesca automática, Depósito + estoques,
