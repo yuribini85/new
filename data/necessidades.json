@@ -1,0 +1,22 @@
+{
+ "_fonte": "biblia #6.1 (necessidades), #18 (valores provisorios aprovados para prototipo)",
+ "desempate": ["latrina", "energia", "fome"],
+ "energia": {
+  "ganho_idle_pontos_por_seg": 0.05,
+  "ganho_pesca_pontos_por_seg": 0.125,
+  "ganho_trabalho_pesado_pontos_por_seg": 0.1,
+  "recuperacao_dormindo_pontos_por_seg": 0.3333333333
+ },
+ "fome": {
+  "ganho_pontos_por_seg": 0.04,
+  "recuperacao_comendo_pontos_por_seg": 0.4
+ },
+ "latrina": {
+  "ganho_pontos_por_seg": 0.02857142857
+ },
+ "kit_sobrevivencia_pontos_fome": 20,
+ "casa": {
+  "recuperacao_max_pct_inicial": 0.8,
+  "_status": "biblia #6.2: upgrades levam a 100% e aceleram regeneracao - curva de upgrade pendente"
+ }
+}

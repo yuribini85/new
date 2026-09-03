@@ -1,0 +1,29 @@
+{
+ "_fonte": "biblia #7.1-7.2: ciclo de tempo e agenda de visitantes",
+ "dia_seg": 480,
+ "fases": [
+  { "nome": "DIA_PLENO", "duracao_seg": 180 },
+  { "nome": "ENTARDECER", "duracao_seg": 60 },
+  { "nome": "NOITE_PLENA", "duracao_seg": 180 },
+  { "nome": "AMANHECER", "duracao_seg": 60 }
+ ],
+ "_fases_status": "canone de protótipo (biblia #7.1), pode ser revisto apos playtest",
+ "agenda_visitantes": {
+  "segunda": "betsy",
+  "terca": "duncan",
+  "quarta": "betsy",
+  "quinta": "duncan",
+  "sexta": "eddie",
+  "sabado": "betsy",
+  "domingo": null
+ },
+ "_janela_chegada_status": "biblia #7.2: chegada numa janela do periodo diurno, nao no mesmo segundo exato - janela exata nao definida, pendente",
+ "offline": {
+  "capacidade_inicial_seg": 7200,
+  "upgrades_seg": [7200, 10800, 14400, 18000],
+  "_upgrades_status": "biblia #7.4: 2h -> 3h -> 4h -> 5h; 6h/8h+ exigem investimento relevante; teto tardio pode chegar a 24h - custos e niveis intermediarios pendentes",
+  "teto_tardio_seg": 86400,
+  "eficiencia_inicial_pct": 0.45,
+  "_eficiencia_status": "biblia #18: eixo separado do tempo maximo, permanece abaixo de 100% - curva de melhoria pendente"
+ }
+}

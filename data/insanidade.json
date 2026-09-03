@@ -1,0 +1,18 @@
+{
+ "_fonte": "biblia #11, #18, #18.1 - sistema entra no Ato 2, valores provisorios aprovados para prototipo",
+ "ganho_base_seg_min": 30,
+ "ganho_base_seg_max": 60,
+ "_ganho_status": "'+1 a cada 30-60s sob pressao normal' (biblia #18) - eventos/radio/fauna/areas alteradas somam por cima, sem formula fechada ainda",
+ "penalidade_eficiencia": [
+  { "min": 0, "max": 20, "penalidade_pct_max": 0 },
+  { "min": 20, "max": 40, "penalidade_pct_max": 5 },
+  { "min": 40, "max": 60, "penalidade_pct_max": 12 },
+  { "min": 60, "max": 80, "penalidade_pct_max": 22 },
+  { "min": 80, "max": 99, "penalidade_pct_max": 35 }
+ ],
+ "_penalidade_status": "biblia #18.1: interpolar suavemente entre faixas, nunca degrau rigido",
+ "colapso_pct": 100,
+ "resistencia_ace": {
+  "_status": "biblia #11.2: reduz velocidade de ganho, nunca reduz insanidade ja acumulada - curva exata pendente (secao 20)"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "_fonte": "biblia #12.1-12.4: regua universal de CONFIANCA",
+ "faixas": [
+  { "min": 0, "max": 24, "estado": "desconhecido" },
+  { "min": 25, "max": 49, "estado": "conhecido" },
+  { "min": 50, "max": 74, "estado": "confiavel" },
+  { "min": 75, "max": 99, "estado": "alta_confianca" },
+  { "min": 100, "max": 100, "estado": "confianca_maxima" }
+ ],
+ "ganhos": {
+  "dialogo_relevante_min_pct": 2,
+  "dialogo_relevante_max_pct": 5,
+  "pedido_normal_min_pct": 5,
+  "pedido_normal_max_pct": 8,
+  "pedido_importante_pct": 10,
+  "comercio_rotineiro_apos_primeira_interacao_pct": 0
+ },
+ "automacao_comercial_pct": 75,
+ "skye_confianca_inicial_pct": 100
+}

@@ -1,0 +1,51 @@
+{
+ "_fonte": "biblia #9.3-9.5: catalogo canonico de 20 especies, pesos, valores e raridade",
+ "especies": [
+  { "id": "01", "nome": "Sardinha", "categoria": "comum", "chance_pct": 14, "peso_kg_min": 0.06, "peso_kg_max": 0.20, "valor_kg_normal_d": 12, "valor_kg_mutante_d": 48 },
+  { "id": "02", "nome": "Cavala", "categoria": "comum", "chance_pct": 12, "peso_kg_min": 0.25, "peso_kg_max": 1.40, "valor_kg_normal_d": 8, "valor_kg_mutante_d": 32 },
+  { "id": "03", "nome": "Carapau", "categoria": "comum", "chance_pct": 10, "peso_kg_min": 0.15, "peso_kg_max": 1.10, "valor_kg_normal_d": 7, "valor_kg_mutante_d": 28 },
+  { "id": "04", "nome": "Faneca", "categoria": "comum", "chance_pct": 9, "peso_kg_min": 0.25, "peso_kg_max": 1.80, "valor_kg_normal_d": 9, "valor_kg_mutante_d": 36 },
+  { "id": "05", "nome": "Linguado", "categoria": "comum", "chance_pct": 7.5, "peso_kg_min": 0.30, "peso_kg_max": 2.50, "valor_kg_normal_d": 11, "valor_kg_mutante_d": 44 },
+  { "id": "06", "nome": "Peixe-agulha", "categoria": "comum", "chance_pct": 6, "peso_kg_min": 0.25, "peso_kg_max": 1.30, "valor_kg_normal_d": 9, "valor_kg_mutante_d": 36 },
+  { "id": "07", "nome": "Escamudo", "categoria": "comum", "chance_pct": 6, "peso_kg_min": 0.60, "peso_kg_max": 6.00, "valor_kg_normal_d": 10, "valor_kg_mutante_d": 40 },
+  { "id": "08", "nome": "Bodião", "categoria": "incomum", "chance_pct": 5, "peso_kg_min": 0.30, "peso_kg_max": 2.50, "valor_kg_normal_d": 8, "valor_kg_mutante_d": 32 },
+  { "id": "09", "nome": "Abrótea", "categoria": "incomum", "chance_pct": 4.5, "peso_kg_min": 0.80, "peso_kg_max": 6.00, "valor_kg_normal_d": 12, "valor_kg_mutante_d": 48 },
+  { "id": "10", "nome": "Pescada", "categoria": "incomum", "chance_pct": 4, "peso_kg_min": 0.80, "peso_kg_max": 10.00, "valor_kg_normal_d": 14, "valor_kg_mutante_d": 56 },
+  { "id": "11", "nome": "Truta-marinha", "categoria": "incomum", "chance_pct": 3.5, "peso_kg_min": 0.70, "peso_kg_max": 7.00, "valor_kg_normal_d": 18, "valor_kg_mutante_d": 72 },
+  { "id": "12", "nome": "Robalo-legítimo", "categoria": "incomum", "chance_pct": 3.5, "peso_kg_min": 0.50, "peso_kg_max": 7.50, "valor_kg_normal_d": 16, "valor_kg_mutante_d": 64 },
+  { "id": "13", "nome": "Peixe-pipa", "categoria": "raro", "chance_pct": 2.5, "peso_kg_min": 0.02, "peso_kg_max": 0.12, "valor_kg_normal_d": 18, "valor_kg_mutante_d": 72 },
+  { "id": "14", "nome": "Badejo", "categoria": "incomum", "chance_pct": 3, "peso_kg_min": 1.50, "peso_kg_max": 15.00, "valor_kg_normal_d": 12, "valor_kg_mutante_d": 48 },
+  { "id": "15", "nome": "Salmão-do-Atlântico", "categoria": "raro", "chance_pct": 2.8, "peso_kg_min": 2.00, "peso_kg_max": 14.00, "valor_kg_normal_d": 24, "valor_kg_mutante_d": 96 },
+  { "id": "16", "nome": "Tubarão-cação", "categoria": "raro", "chance_pct": 2.3, "peso_kg_min": 2.00, "peso_kg_max": 8.00, "valor_kg_normal_d": 10, "valor_kg_mutante_d": 40 },
+  { "id": "17", "nome": "Arraia-linguado", "categoria": "raro", "chance_pct": 2, "peso_kg_min": 2.00, "peso_kg_max": 14.00, "valor_kg_normal_d": 14, "valor_kg_mutante_d": 56 },
+  { "id": "18", "nome": "Arraia-elétrica", "categoria": "raro", "chance_pct": 1, "peso_kg_min": 1.50, "peso_kg_max": 16.00, "valor_kg_normal_d": 20, "valor_kg_mutante_d": 80 },
+  { "id": "19", "nome": "Cação", "categoria": "raro", "chance_pct": 1.2, "peso_kg_min": 5.00, "peso_kg_max": 30.00, "valor_kg_normal_d": 16, "valor_kg_mutante_d": 64 },
+  { "id": "20", "nome": "Esturjão", "categoria": "ultrararo", "chance_pct": 0.2, "peso_kg_min": 25.00, "peso_kg_max": 120.00, "valor_kg_normal_d": 30, "valor_kg_mutante_d": 120 }
+ ],
+ "_categorias": "comum >= 6%; incomum 3-5.9%; raro 1-2.9%; ultrararo < 1%",
+ "descontinuadas": [
+  "Truta-marrom", "Lúcio", "Perca", "Grayling", "Truta-arco-íris", "Vendace", "Powan",
+  "Robalo (duplicado)"
+ ],
+ "_descontinuadas_status": "biblia #9.3: nao devem aparecer na colecao, nas tabelas de pesca nem no runtime",
+ "mutacao": {
+  "taxa_inicio_ato2_pct": 6,
+  "taxa_meio_ato2_pct": 14,
+  "taxa_fim_ato2_ato3_pct": 25,
+  "_regra": "mutacao calculada depois da especie: chance real de mutante = chance da especie x taxa de mutacao vigente (biblia #9.5)"
+ },
+ "venda": {
+  "betsy_compra": "normal",
+  "betsy_venda_minima_d": 1,
+  "duncan_compra": "mutante",
+  "duncan_multiplicador": 4,
+  "duncan_venda_minima_d": 12
+ },
+ "barco_inicial": {
+  "capacidade_kg": 20,
+  "autonomia_seg": 90
+ },
+ "captura_seg_min": 8,
+ "captura_seg_max": 15,
+ "_captura_status": "biblia #18: '1 peixe a cada 8-15s, ajustavel' - placeholder de prototipo, nao final"
+}
