@@ -10,6 +10,7 @@ extends Node2D
 ## pra WALKING e volta pra IDLE ao chegar). Toque fora da rocha (mar/céu) não faz nada.
 
 const QUINT_SCENE := preload("res://scenes/quint.tscn")
+const EDIFICACAO_SCENE := preload("res://scenes/edificacao.tscn")
 const CENARIO_DIR := "res://art/cenario/"
 const ALTURA_ROCHA_MUNDO := 975.0  # escala de composição — não é regra de bíblia,
                                      # só o tamanho que cabe bem no viewport do HUD.
@@ -20,6 +21,7 @@ const LIMIAR_ALFA_CAMINHAVEL := 0.1
 @onready var _sprite_mar: Sprite2D = $TerrenoReal/Mar
 @onready var _sprite_rocha: Sprite2D = $TerrenoReal/Rocha
 @onready var _sprite_vegetacao: Sprite2D = $TerrenoReal/Vegetacao
+@onready var _caminho: Line2D = $Caminho
 @onready var _debug_label: Label = $HudLayer/DebugLabel
 @onready var _botao_dormir: Button = $HudLayer/BotaoDormir
 @onready var _botao_comer: Button = $HudLayer/BotaoComer
@@ -32,9 +34,10 @@ var _imagem_rocha: Image
 
 func _ready() -> void:
 	_posicionar_terreno_real()
+	_instanciar_edificacoes()
 
 	_quint = QUINT_SCENE.instantiate()
-	_quint.position = Vector2(0.0, -100.0)  # em cima da rocha, boca da caverna logo abaixo
+	_quint.position = Vector2(0.0, -450.0)  # perto da Casa de Quint, no platô do farol
 	_mundo_root.add_child(_quint)
 
 	_camera.position = Vector2.ZERO
@@ -71,6 +74,30 @@ func _posicionar_terreno_real() -> void:
 	_sprite_mar.texture = load(CENARIO_DIR + "mar_frente_alpha.png")
 	_sprite_rocha.texture = tex_rocha
 	_sprite_vegetacao.texture = load(CENARIO_DIR + "ilha_base_vegetacao.png")
+
+
+## Um Edificacao por entrada de data/edificacoes.json, na posição lida da referência de
+## composição (ver _status do JSON — placeholder de leiaute, não asset aprovado ainda).
+## "caverna_maritima" não ganha marcador: já é a boca da caverna de verdade na rocha
+## (conferida caminhável em _sobre_rocha) — só entra no traçado do caminho abaixo.
+func _instanciar_edificacoes() -> void:
+	var cfg := Dados.edificacoes()
+	var por_id: Dictionary = {}
+	for def in cfg.get("edificacoes", []):
+		var pos: Array = def["posicao"]
+		por_id[def["id"]] = Vector2(pos[0], pos[1])
+		if def["id"] == "caverna_maritima":
+			continue
+		var no := EDIFICACAO_SCENE.instantiate()
+		no.position = Vector2(pos[0], pos[1])
+		_mundo_root.add_child(no)
+		no.configurar(def["id"], def["nome"])
+
+	var pontos := PackedVector2Array()
+	for id in cfg.get("ordem_caminho", []):
+		if por_id.has(id):
+			pontos.append(por_id[id])
+	_caminho.points = pontos
 
 
 func _input(event: InputEvent) -> void:

@@ -28,6 +28,10 @@ centered = false
 [node name="Vegetacao" type="Sprite2D" parent="TerrenoReal"]
 centered = false
 
+[node name="Caminho" type="Line2D" parent="."]
+width = 10.0
+default_color = Color(0.55, 0.47, 0.35, 0.65)
+
 [node name="MundoRoot" type="Node2D" parent="."]
 y_sort_enabled = true
 

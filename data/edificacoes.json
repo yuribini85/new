@@ -1,0 +1,63 @@
+{
+ "_fonte": "biblia #13 (lista de edificacoes) + duas imagens de referencia de composicao enviadas pelo usuario: uma sem anotacao e uma numerada (1-9) com linha do trajeto e pontos de parada, confirmando qual construcao e qual.",
+ "_status": "posicoes calibradas a partir da leitura visual da referencia numerada contra o topo/base de verdade da rocha carregada em cena (art/cenario/ilha_base_rocha_caverna.png: topo do platô em y=-555, base em y=420 - ver ilha.gd _posicionar_terreno_real). Ainda e leitura de imagem, nao coordenada exata - nenhuma construcao tem sprite aprovado no Drive (pastas Edificacoes/* vazias), tudo placeholder. Uma ambiguidade nao resolvida pela propria referencia: o marcador 4 esta rotulado 'Depósito / Oficina' junto (um so predio pros dois) e o marcador 7 'Galpão do Barco / Armazém' - tratado aqui como Oficina ocupando o mesmo lugar do Depósito (rotulo duplo) e Boathouse como o galpao do barco; se isso estiver errado, e a primeira coisa a corrigir.",
+ "ordem_caminho": [
+  "farol", "casa_quint", "latrina", "oficina", "casa_stewart", "estacao_thomas", "boathouse", "caverna_maritima", "pier_cais"
+ ],
+ "edificacoes": [
+  {
+   "id": "farol",
+   "nome": "Farol",
+   "posicao": [0, -555],
+   "_leitura": "marcador 1 na referencia numerada - topo do platô, domina o ápice (biblia #16.1)"
+  },
+  {
+   "id": "casa_quint",
+   "nome": "Casa de Quint",
+   "posicao": [-110, -545],
+   "_leitura": "marcador 2 'Casa Principal / Casa do Quint' - colada na base do farol"
+  },
+  {
+   "id": "latrina",
+   "nome": "Latrina",
+   "posicao": [140, -502],
+   "_leitura": "marcador 3 - casebre sobre esteios avançando sobre a borda (biblia #16.1: 'em balanço sobre o penhasco')"
+  },
+  {
+   "id": "oficina",
+   "nome": "Oficina",
+   "posicao": [-90, -339],
+   "_leitura": "marcador 4 'Depósito / Oficina' - telhado de vidro/estufa; tratado como Oficina (biblia #13: 'Área óptica' bate com a claraboia); Depósito pode compartilhar este mesmo prédio, ambiguidade da própria referência"
+  },
+  {
+   "id": "casa_stewart",
+   "nome": "Casa de Stewart",
+   "posicao": [80, -164],
+   "_leitura": "marcador 5 - casebre de pedra simples, sem chaminé acesa (biblia #4.2: fechada no Ato 1)"
+  },
+  {
+   "id": "estacao_thomas",
+   "nome": "Estação de Thomas",
+   "posicao": [-60, -106],
+   "_leitura": "marcador 6 - casebre pequeno com mastro/antena ao lado (biblia #4.3: instrumentação meteorológica)"
+  },
+  {
+   "id": "boathouse",
+   "nome": "Boathouse",
+   "posicao": [-120, 70],
+   "_leitura": "marcador 7 'Galpão do Barco / Armazém' - galpão duplo perto do pier"
+  },
+  {
+   "id": "caverna_maritima",
+   "nome": "Caverna Marítima",
+   "posicao": [100, 255],
+   "_leitura": "marcador 9 na referência numerada - a própria boca da caverna do asset ilha_base_rocha_caverna.png (já confirmada caminhável por alfa em ilha.gd); não está na lista de edificações da bíblia #13, é um marco/local, não um prédio com upgrade"
+  },
+  {
+   "id": "pier_cais",
+   "nome": "Pier / Cais",
+   "posicao": [-200, 332],
+   "_leitura": "marcador 8 - doca de madeira na base da rocha, avançando sobre o mar; não está na lista de edificações da bíblia #13 (provavelmente hotspot/área do Boathouse, não prédio próprio) - marcado aqui só como ponto de referência visual"
+  }
+ ]
+}

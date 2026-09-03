@@ -68,3 +68,7 @@ func confianca() -> Dictionary:
 
 func insanidade() -> Dictionary:
 	return get_dados("insanidade")
+
+
+func edificacoes() -> Dictionary:
+	return get_dados("edificacoes")
