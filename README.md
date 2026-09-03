@@ -78,11 +78,21 @@ Abrem direto no navegador, sem servidor:
 ## Estado atual
 
 - Design: fechado (~95%)
-- Arte: ~48 de 686 imagens
-- Código: não iniciado
+- Arte: 114 de 686 imagens
+- Código: protótipo jogável do Ato I. Módulos 1–7 implementados (fundação, dados, mapa,
+  economia, população, rotas/floresta, expedição — só a Orla da mata, sem mina) e testados
+  ponta a ponta. Onze edificações constroem e evoluem, órfãos chegam e são alocáveis pela
+  tela de aldeões, save/offline funcionam. Mina, anões, maldições e monetização ficam para
+  depois, por decisão de escopo (CLAUDE.md).
 
-**Próximo passo:** módulo 1 — esqueleto de projeto, autoload de simulação, save em JSON com
-versão e proteção de relógio. A ordem completa está no fim de `docs/mecanicas_para_godot.md`.
+**Pendências que dependem de número ainda não decidido** (documentadas em comentário no
+código correspondente, sem estimativa inventada): escalonamento da chegada de órfãos com o
+nível do Lar, cota por domínio no sorteio de cicatriz, preço de venda de comida (o estoque é
+unificado, mas o preço é por sub-bem — vegetais/carne/pão).
+
+**Próximo passo:** sem binário do Godot neste ambiente para testar interativamente — abrir no
+editor e validar visualmente antes de continuar. A ordem completa de implementação está no
+fim de `docs/mecanicas_para_godot.md`.
 
 ---
 
