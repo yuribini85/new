@@ -69,18 +69,23 @@ archive_the_way_back/   projeto anterior deste repositório, intacto, fora de es
   de 8 min em quatro fases, agenda semanal de visitantes, offline por fórmula fechada),
   `Quint` (FSM central com os 15 estados de #17.1 + Energia/Fome/Latrina com as taxas de
   #18), `FilaTarefas` (TaskQueue com a prioridade de #7.3), `Economia` (dinheiro em pence,
-  estoques de querosene/Kit/peixe) e `SaveManager`. `scenes/ilha.tscn` já mostra a rocha
-  de verdade saindo do mar, com Quint em cima: toca na rocha e ele caminha até lá — a
-  colisão testa o alfa real da arte pixel a pixel, sem polígono desenhado à mão — troca
-  de sprite pela direção do movimento (NE/NW/SE/SW, pivô nos pés calculado a partir do
-  retângulo de pixels não-transparentes de cada pose). As 8 edificações (`data/edificacoes.json`)
-  já estão posicionadas na rocha com um caminho ligando elas, a partir de duas referências
-  de composição que o usuário mandou (uma delas numerada, confirmando qual construção é
-  qual) — todas em placeholder (losango + rótulo), sem sprite aprovado ainda. Confirmado
-  rodando o jogo de verdade (headless + Xvfb): screenshot bate com a referência, e Quint
-  anda de verdade da Casa de Quint até a Casa de Stewart.
+  estoques de querosene/Kit/peixe) e `SaveManager`. `scenes/ilha.tscn`: a ilha de Dreadwick
+  em si (o penhasco com farol/casas/caminho) ainda não tem asset aprovado — é placeholder
+  geométrico (contorno determinístico). `art/cenario/ilha_base_rocha_caverna.png` (+
+  vegetação + o mar que já vem alinhado com ela no mesmo canvas) é a **Caverna Marítima**,
+  um elemento pequeno no fundo, atrás da ilha — não a ilha inteira (erro corrigido depois
+  de eu ter esticado ela por cima de tudo). Quint de verdade em cima, com sprite trocando
+  pela direção do movimento (NE/NW/SE/SW, pivô nos pés calculado a partir do retângulo de
+  pixels não-transparentes de cada pose), clicável: toca na ilha e ele caminha até lá. As
+  8 edificações (`data/edificacoes.json`) estão posicionadas no contorno com um caminho
+  ligando elas, a partir de duas referências de composição que o usuário mandou (uma delas
+  numerada, confirmando qual construção é qual) — todas em placeholder (losango + rótulo),
+  sem sprite aprovado ainda. Confirmado rodando o jogo de verdade (headless + Xvfb) a cada
+  mudança, com screenshot.
 
 **Próximo passo:** seguindo a ordem de produção (§23.11): Casa (dormir/comer + Kit), Latrina
 compartilhada com fila real de ocupação, Boathouse + pesca automática, Depósito + estoques,
-Betsy (chegada, comércio, confiança), Farol e Oficina. A ambiguidade Depósito/Oficina em
-`data/edificacoes.json` fica pendente de confirmação.
+Betsy (chegada, comércio, confiança), Farol e Oficina. Pendências pra confirmar com o
+usuário: a ambiguidade Depósito/Oficina em `data/edificacoes.json`, e se existe em algum
+lugar um asset da ilha de Dreadwick em si (não achei PSD de origem nem PNG pra ela no Drive
+— só a Caverna Marítima, que é uma peça separada).
