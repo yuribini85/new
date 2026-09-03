@@ -73,9 +73,14 @@ archive_the_way_back/   projeto anterior deste repositório, intacto, fora de es
   de verdade saindo do mar, com Quint em cima: toca na rocha e ele caminha até lá — a
   colisão testa o alfa real da arte pixel a pixel, sem polígono desenhado à mão — troca
   de sprite pela direção do movimento (NE/NW/SE/SW, pivô nos pés calculado a partir do
-  retângulo de pixels não-transparentes de cada pose). Confirmado rodando o jogo de
-  verdade (headless + Xvfb), com screenshot com zoom validando pivô/escala.
+  retângulo de pixels não-transparentes de cada pose). As 8 edificações (`data/edificacoes.json`)
+  já estão posicionadas na rocha com um caminho ligando elas, a partir de duas referências
+  de composição que o usuário mandou (uma delas numerada, confirmando qual construção é
+  qual) — todas em placeholder (losango + rótulo), sem sprite aprovado ainda. Confirmado
+  rodando o jogo de verdade (headless + Xvfb): screenshot bate com a referência, e Quint
+  anda de verdade da Casa de Quint até a Casa de Stewart.
 
 **Próximo passo:** seguindo a ordem de produção (§23.11): Casa (dormir/comer + Kit), Latrina
 compartilhada com fila real de ocupação, Boathouse + pesca automática, Depósito + estoques,
-Betsy (chegada, comércio, confiança), Farol e Oficina.
+Betsy (chegada, comércio, confiança), Farol e Oficina. A ambiguidade Depósito/Oficina em
+`data/edificacoes.json` fica pendente de confirmação.
