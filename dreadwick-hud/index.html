@@ -3,171 +3,116 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Dreadwick HUD — Canvas</title>
+<title>Dreadwick — HUD de Rotina</title>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0e10;font-family:Georgia,serif}
-#app{position:fixed;inset:0;background:radial-gradient(circle at 50% 42%,#30464d 0,#18262b 42%,#0b1012 77%)}
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-#debug{position:absolute;top:env(safe-area-inset-top,0);right:10px;margin-top:10px;padding:8px 10px;background:rgba(8,10,10,.62);border:1px solid rgba(230,220,200,.14);color:#d9d0bf;font:11px/1.45 Arial,sans-serif;z-index:2;pointer-events:none}
-#debug b{color:#fff0d3}
-#title{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);color:#bbb3a5;font:9px Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;z-index:2;pointer-events:none}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0e0f;color:#e8dfcf;font-family:Georgia,serif}body{touch-action:manipulation}#app{position:relative;width:100vw;height:100vh;background:radial-gradient(circle at 50% 42%,#33484f 0,#18262b 43%,#0b1012 76%)}#app:before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(5,7,7,.95) 0 18%,rgba(7,9,10,.35) 46%,rgba(5,7,8,.55) 100%);pointer-events:none}canvas{position:absolute;left:0;bottom:0;width:100%;height:72%;display:block}.title{position:absolute;top:max(16px,env(safe-area-inset-top));left:16px;font:9px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#bdb4a5;z-index:5}.mode{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;z-index:6;display:flex;gap:6px}.mode button{appearance:none;border:1px solid rgba(226,214,190,.24);background:rgba(12,15,15,.66);color:#bfb6a7;padding:7px 9px;font:9px Arial,sans-serif;letter-spacing:.08em;border-radius:3px}.mode button.on{color:#f0e5cf;border-color:#a89063;background:rgba(70,62,45,.7)}#status{position:absolute;left:14px;right:14px;top:48px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;z-index:5;font:10px Arial,sans-serif;color:#c9c0b2}.box{background:rgba(10,13,13,.48);border:1px solid rgba(229,218,196,.12);padding:8px 10px;backdrop-filter:blur(4px);max-width:48%}.box b{color:#eee4d2;font-weight:600}.queue{margin-top:4px;color:#a9a093}.queue span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.legend{position:absolute;left:50%;bottom:max(6px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:16px;z-index:7;font:8px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8f887d}.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}.blue{background:#25536e}.red{background:#81372c}.neutral{background:#827862}@media(min-width:700px){canvas{height:78%}.title{font-size:10px}.box{font-size:11px}.legend{font-size:9px}}
 </style>
 </head>
 <body>
 <div id="app">
-  <canvas id="c"></canvas>
-  <div id="title">Dreadwick Light Station · Canvas Test</div>
-  <div id="debug">
-    <div><b>Visitante:</b> <span id="dv"></span></div>
-    <div><b>Tarefa:</b> <span id="dt"></span></div>
-    <div><b>Hora:</b> <span id="dh"></span></div>
-    <div><b>Concluídas:</b> <span id="dd"></span></div>
+  <div class="title">Dreadwick Light Station · rotina de Quint</div>
+  <div class="mode"><button id="demo" class="on">1 MIN DEMO</button><button id="canon">8 MIN CANON</button></div>
+  <div id="status">
+    <div class="box"><b id="dayText">SEGUNDA · DIA 1</b><div id="clockText">06:00</div><div>Visitante: <b id="visitorText">BETSY</b></div></div>
+    <div class="box"><b id="stateText">Idle</b><div id="progressText">0%</div><div class="queue" id="queueText"></div></div>
   </div>
+  <canvas id="hud"></canvas>
+  <div class="legend"><span><i class="dot blue"></i>Jogador</span><span><i class="dot red"></i>Autoagendado</span><span><i class="dot neutral"></i>Deslocamento</span></div>
 </div>
 <script>
 (function(){
 'use strict';
-var DAY_MS=60000;
-var visitors=['THOMAS','BETSY','STEWART','MARGARET','DOUGLAS','EILEEN','ANGUS','MAIRI'];
-var tasks=[
- ['Limpar lente','player'],['Inspecionar gerador','auto'],['Reabastecer','player'],['Checar cais','auto'],['Patrulhar costa','player'],['Regular mecanismo','auto'],['Limpar vidros','player'],['Registrar clima','auto'],['Verificar rádio','player'],['Recolher suprimentos','auto']
+var canvas=document.getElementById('hud'),ctx=canvas.getContext('2d');
+var demoBtn=document.getElementById('demo'),canonBtn=document.getElementById('canon');
+var dayText=document.getElementById('dayText'),clockText=document.getElementById('clockText'),visitorText=document.getElementById('visitorText'),stateText=document.getElementById('stateText'),progressText=document.getElementById('progressText'),queueText=document.getElementById('queueText');
+var DAY_MIN=360; // mostrador solicitado: 06:00 -> 12:00
+var realDayMs=60000,start=Date.now(),pausedOffset=0;
+var weekdays=['SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO','DOMINGO'];
+var visitors=['BETSY','DUNCAN','BETSY','DUNCAN','EDDIE','BETSY','SEM VISITANTE'];
+// Durações são próprias de cada ação. travel é deslocamento físico, não tarefa.
+var baseTasks=[
+ {n:'Limpar lente',src:'auto',dur:22,travel:6},
+ {n:'Buscar querosene',src:'player',dur:34,travel:8},
+ {n:'Reabastecer farol',src:'player',dur:28,travel:7},
+ {n:'Registrar clima',src:'auto',dur:16,travel:5},
+ {n:'Checar cais',src:'player',dur:38,travel:9},
+ {n:'Regular mecanismo',src:'auto',dur:26,travel:6},
+ {n:'Separar pescado',src:'player',dur:31,travel:10},
+ {n:'Verificar rádio',src:'player',dur:20,travel:7},
+ {n:'Limpar vidros',src:'auto',dur:18,travel:5},
+ {n:'Guardar suprimentos',src:'player',dur:29,travel:8}
 ];
-var colors={player:'#214a64',auto:'#7d342a'};
-var canvas=document.getElementById('c');
-var ctx=canvas.getContext('2d',{alpha:false});
-var dv=document.getElementById('dv'),dt=document.getElementById('dt'),dh=document.getElementById('dh'),dd=document.getElementById('dd');
-var start=Date.now();
-var W=0,H=0,DPR=1;
-
-function resize(){
-  DPR=Math.min(window.devicePixelRatio||1,2);
-  W=Math.max(1,window.innerWidth); H=Math.max(1,window.innerHeight);
-  canvas.width=Math.round(W*DPR); canvas.height=Math.round(H*DPR);
-  canvas.style.width=W+'px'; canvas.style.height=H+'px';
-  ctx.setTransform(DPR,0,0,DPR,0,0);
+// Interrupção canônica: emergência sistêmica pausa e depois retoma a tarefa anterior.
+var emergency={n:'Latrina',src:'auto',dur:12,travel:4,critical:true,at:142}; // ~08:22
+var schedule=[];
+function buildSchedule(){
+ schedule=[];var t=8,emUsed=false;
+ for(var i=0;i<baseTasks.length;i++){
+   var task=Object.assign({},baseTasks[i]);
+   if(!emUsed && t+task.travel+task.dur>emergency.at){
+     var before=Math.max(4,emergency.at-t-task.travel);
+     schedule.push({kind:'travel',n:'Deslocamento',src:'neutral',start:t,end:t+task.travel,parent:task.n});t+=task.travel;
+     schedule.push({kind:'task',n:task.n,src:task.src,start:t,end:t+before,part:'pausada'});t+=before;
+     schedule.push({kind:'travel',n:'Deslocamento',src:'neutral',start:t,end:t+emergency.travel,parent:emergency.n});t+=emergency.travel;
+     schedule.push({kind:'task',n:emergency.n,src:'auto',start:t,end:t+emergency.dur,critical:true});t+=emergency.dur;
+     var remain=task.dur-before;
+     schedule.push({kind:'travel',n:'Retorno',src:'neutral',start:t,end:t+3,parent:task.n});t+=3;
+     schedule.push({kind:'task',n:task.n+' · retomada',src:task.src,start:t,end:t+remain,resume:true});t+=remain;
+     emUsed=true;
+   }else{
+     schedule.push({kind:'travel',n:'Deslocamento',src:'neutral',start:t,end:t+task.travel,parent:task.n});t+=task.travel;
+     schedule.push({kind:'task',n:task.n,src:task.src,start:t,end:t+task.dur});t+=task.dur;
+   }
+   if(i===3||i===7){schedule.push({kind:'idle',n:'Livre',src:'neutral',start:t,end:t+10});t+=10;}
+ }
 }
-
-function point(cx,cy,r,p){
-  var a=Math.PI-(Math.PI*p);
-  return {x:cx+r*Math.cos(a),y:cy-r*Math.sin(a)};
+buildSchedule();
+function nowSim(){var elapsed=(Date.now()-start)%realDayMs;return {day:Math.floor((Date.now()-start)/realDayMs),p:elapsed/realDayMs,min:(elapsed/realDayMs)*DAY_MIN};}
+function resize(){var d=Math.max(1,Math.min(2,window.devicePixelRatio||1));var r=canvas.getBoundingClientRect();canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);}window.addEventListener('resize',resize);resize();
+function arcPoint(cx,cy,r,p){var a=Math.PI-(Math.PI*p);return{x:cx+r*Math.cos(a),y:cy-r*Math.sin(a)}}
+function drawArc(cx,cy,r,p0,p1,w,color,alpha){ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=alpha==null?1:alpha;ctx.lineWidth=w;ctx.lineCap='butt';ctx.beginPath();ctx.arc(cx,cy,r,Math.PI-Math.PI*p0,Math.PI-Math.PI*p1,true);ctx.stroke();ctx.restore();}
+function roundRect(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke()}}
+function activeIndex(min){for(var i=0;i<schedule.length;i++)if(min>=schedule[i].start&&min<schedule[i].end)return i;return -1}
+function visibleTasks(idx){var out=[];for(var i=Math.max(0,idx);i<schedule.length&&out.length<4;i++)if(schedule[i].kind==='task')out.push(i);return out}
+function draw(){
+ var r=canvas.getBoundingClientRect(),W=r.width,H=r.height,cx=W/2,cy=H*1.02,R=Math.min(W*.54,H*.92),sim=nowSim(),p=sim.p,min=sim.min;
+ ctx.clearRect(0,0,W,H);
+ // metal frame
+ drawArc(cx,cy,R,.02,.98,42,'#373a35',1);drawArc(cx,cy,R-7,.02,.98,3,'#aa9c82',.85);drawArc(cx,cy,R-32,.04,.96,28,'#cfc2a9',1);
+ // inner day dial
+ drawArc(cx,cy,R-76,.06,.50,54,'#343a39',1);drawArc(cx,cy,R-76,.50,.94,54,'#d4c8b2',1);
+ // ticks
+ for(var i=0;i<=24;i++){var pp=.06+.88*i/24,a=arcPoint(cx,cy,R-101,pp),b=arcPoint(cx,cy,R-(i%4===0?122:114),pp);ctx.strokeStyle='#383831';ctx.lineWidth=i%4===0?2:1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+ // find queue state
+ var idx=activeIndex(min),vis=visibleTasks(idx<0?0:idx),visibleSet={};for(var q=0;q<vis.length;q++)visibleSet[vis[q]]=q;
+ // timeline: only current + 3 future tasks are strong; older/hidden remain subtle.
+ for(var s=0;s<schedule.length;s++){
+   var seg=schedule[s];if(seg.end<=0||seg.start>=DAY_MIN)continue;
+   var p0=.06+.88*(seg.start/DAY_MIN),p1=.06+.88*(Math.min(seg.end,DAY_MIN)/DAY_MIN);
+   if(seg.kind==='travel'){drawArc(cx,cy,R-18,p0,p1,12,'#827862',.46);continue}
+   if(seg.kind==='idle')continue;
+   var color=seg.src==='player'?'#25536e':'#81372c',strong=visibleSet[s]!=null||s===idx,alpha=seg.end<min?.18:(strong?.96:.24),width=s===idx?34:28;
+   drawArc(cx,cy,R-18,p0,p1,width,color,alpha);
+   if(strong){var mid=(p0+p1)/2,pt=arcPoint(cx,cy,R-18,mid);ctx.save();ctx.fillStyle='#f1e7d5';ctx.font=(s===idx?'bold ':'')+'11px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(seg.n.replace(' · retomada',''),pt.x,pt.y);ctx.restore()}
+ }
+ // passage needle independent from task durations
+ var np=.06+.88*p,tip=arcPoint(cx,cy,R-132,np);ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(cx+3,cy+3);ctx.lineTo(tip.x+3,tip.y+3);ctx.stroke();ctx.strokeStyle='#d7bd83';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tip.x,tip.y);ctx.stroke();ctx.fillStyle='#e1c78c';ctx.beginPath();ctx.arc(tip.x,tip.y,6,0,Math.PI*2);ctx.fill();
+ // central visitor disc
+ var coreR=R*.36;ctx.fillStyle='#cfc2aa';ctx.beginPath();ctx.arc(cx,cy,coreR,Math.PI,Math.PI*2);ctx.fill();ctx.strokeStyle='#5b5649';ctx.stroke();
+ var day=sim.day%7,visitor=visitors[day];ctx.fillStyle='#4f4a40';ctx.textAlign='center';ctx.font='10px Arial';ctx.fillText('VISITANTE',cx,cy-coreR*.67);ctx.fillStyle='#25251f';ctx.font='bold '+Math.max(22,Math.min(38,W*.055))+'px Georgia';ctx.fillText(visitor,cx,cy-coreR*.40);
+ // 6/moon and 12/sun
+ var l=arcPoint(cx,cy,R-105,.06),rr=arcPoint(cx,cy,R-105,.94);ctx.fillStyle='#2a2b25';ctx.font='bold 24px Georgia';ctx.fillText('6',l.x,l.y+16);ctx.fillText('12',rr.x,rr.y+16);ctx.font='22px Georgia';ctx.fillText('☾',l.x,l.y-14);ctx.fillText('☼',rr.x,rr.y-14);
+ // hub
+ ctx.fillStyle='#242722';ctx.beginPath();ctx.arc(cx,cy,30,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#a58a58';ctx.lineWidth=4;ctx.stroke();ctx.fillStyle='#b79a61';ctx.beginPath();ctx.arc(cx,cy,9,0,Math.PI*2);ctx.fill();
+ // DOM status
+ var hh=6+Math.floor(min/60),mm=Math.floor(min%60);clockText.textContent=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;dayText.textContent=weekdays[day]+' · DIA '+(sim.day+1);visitorText.textContent=visitor;
+ if(idx>=0){var cur=schedule[idx],pr=Math.max(0,Math.min(1,(min-cur.start)/(cur.end-cur.start)));stateText.textContent=cur.kind==='travel'?(cur.n+' → '+(cur.parent||'')):cur.kind==='idle'?'Idle':cur.n;progressText.textContent=cur.kind==='task'?Math.round(pr*100)+'% · '+Math.round(cur.end-min)+' min restantes':'';}else{stateText.textContent='Idle';progressText.textContent='';}
+ var qs=[];for(var z=0;z<vis.length;z++){var st=schedule[vis[z]],tag=st.src==='player'?'JOGADOR':'QUINT';qs.push((z===0?'ATUAL':'+'+z)+' · '+st.n+' · '+Math.round(st.end-st.start)+'min · '+tag)}queueText.innerHTML=qs.map(function(x){return '<span>'+x+'</span>'}).join('');
+ requestAnimationFrame(draw);
 }
-function arc(cx,cy,r,p0,p1){
-  ctx.beginPath();
-  ctx.arc(cx,cy,r,Math.PI-Math.PI*p0,Math.PI-Math.PI*p1,true);
-}
-function fitText(text,maxWidth,base){
-  var s=base;ctx.font=s+'px Georgia';
-  while(s>8 && ctx.measureText(text).width>maxWidth){s--;ctx.font=s+'px Georgia';}
-  return s;
-}
-function drawInstrument(p,dayIndex,current){
-  var mobile=W<700;
-  var scale=Math.min(W/1000,H/650);
-  if(mobile) scale=Math.min(W/760,H/650);
-  var cx=W/2;
-  var cy=H-(mobile?10:20);
-  var R=Math.min(W*(mobile?.72:.46),H*.62);
-  if(R<220) R=220;
-
-  // fog/world wash
-  ctx.fillStyle='#0b1012';ctx.fillRect(0,0,W,H);
-  var g=ctx.createRadialGradient(cx,H*.44,20,cx,H*.44,Math.max(W,H)*.75);
-  g.addColorStop(0,'#30464d');g.addColorStop(.45,'#17252a');g.addColorStop(1,'#090d0f');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-
-  // outer metal arcs
-  ctx.save();
-  ctx.lineCap='butt';
-  ctx.lineWidth=56;ctx.strokeStyle='#31352f';arc(cx,cy,R,.02,.98);ctx.stroke();
-  ctx.lineWidth=5;ctx.strokeStyle='#9c9078';arc(cx,cy,R+28,.02,.98);ctx.stroke();
-  ctx.lineWidth=2;ctx.strokeStyle='#c0b49a';arc(cx,cy,R+21,.02,.98);ctx.stroke();
-
-  // task band
-  var taskR=R-36;
-  for(var i=0;i<10;i++){
-    var a0=i/10+.008,a1=(i+1)/10-.008;
-    ctx.globalAlpha=i<current?.18:(i===current?1:.82);
-    ctx.lineWidth=i===current?52:42;
-    ctx.strokeStyle=colors[tasks[i][1]];
-    arc(cx,cy,taskR,a0,a1);ctx.stroke();
-    ctx.globalAlpha=1;
-
-    var mid=point(cx,cy,taskR,(i+.5)/10);
-    var fs=fitText(tasks[i][0],70,mobile?10:12);
-    ctx.font=fs+'px Georgia';ctx.fillStyle='#efe6d6';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(tasks[i][0],mid.x,mid.y);
-  }
-
-  // inner dial background
-  ctx.lineWidth=72;ctx.strokeStyle='#d2c6ae';arc(cx,cy,R-112,.04,.96);ctx.stroke();
-  ctx.lineWidth=62;ctx.strokeStyle='#2b302d';arc(cx,cy,R-154,.05,.95);ctx.stroke();
-
-  // day/night sectors
-  ctx.globalAlpha=.72;
-  ctx.lineWidth=48;ctx.strokeStyle='#30383a';arc(cx,cy,R-196,.06,.5);ctx.stroke();
-  ctx.strokeStyle='#c8bda6';arc(cx,cy,R-196,.5,.94);ctx.stroke();
-  ctx.globalAlpha=1;
-
-  // ticks
-  for(var t=0;t<=36;t++){
-    var tp=t/36;
-    var outer=point(cx,cy,R-178,tp);
-    var inner=point(cx,cy,R-(t%6===0?206:198),tp);
-    ctx.beginPath();ctx.moveTo(outer.x,outer.y);ctx.lineTo(inner.x,inner.y);
-    ctx.strokeStyle='#30322d';ctx.lineWidth=t%6===0?2:1;ctx.stroke();
-  }
-
-  // progress arc
-  ctx.lineWidth=7;ctx.strokeStyle='#5d584c';arc(cx,cy,R-232,0,1);ctx.stroke();
-  ctx.lineWidth=9;ctx.strokeStyle='#a98d59';ctx.lineCap='round';arc(cx,cy,R-232,0,p);ctx.stroke();ctx.lineCap='butt';
-
-  // moon/sun markers
-  var lp=point(cx,cy,R-220,.03),rp=point(cx,cy,R-220,.97);
-  ctx.textAlign='center';ctx.fillStyle='#222521';ctx.font='bold '+(mobile?25:31)+'px Georgia';
-  ctx.fillText('6',lp.x,lp.y+18);ctx.fillText('12',rp.x,rp.y+18);
-  ctx.font=(mobile?24:30)+'px Georgia';ctx.fillText('☾',lp.x,lp.y-18);ctx.fillText('☼',rp.x,rp.y-18);
-
-  // visitor core plate
-  var coreR=R-292;
-  if(coreR<105) coreR=105;
-  ctx.beginPath();ctx.arc(cx,cy,coreR,Math.PI,0);ctx.closePath();ctx.fillStyle='#cec1a9';ctx.fill();
-  ctx.strokeStyle='#4d4a40';ctx.lineWidth=2;ctx.stroke();
-
-  var visitor=visitors[dayIndex%visitors.length];
-  ctx.fillStyle='#282922';ctx.textAlign='center';
-  ctx.font=(mobile?10:12)+'px Arial';ctx.fillText('V I S I T A N T E',cx,cy-coreR*.62);
-  ctx.font='bold '+(mobile?24:34)+'px Georgia';ctx.fillText(visitor,cx,cy-coreR*.34);
-  ctx.font=(mobile?10:12)+'px Arial';ctx.fillText('DIA '+(dayIndex+1),cx,cy-coreR*.12);
-
-  // needle: direct Canvas drawing, no SVG/CSS transform
-  var tip=point(cx,cy,R-208,p);
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tip.x+3,tip.y+3);ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=9;ctx.lineCap='round';ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tip.x,tip.y);ctx.strokeStyle='#ead19a';ctx.lineWidth=5;ctx.stroke();
-  ctx.beginPath();ctx.arc(tip.x,tip.y,7,0,Math.PI*2);ctx.fillStyle='#f1d99f';ctx.fill();ctx.strokeStyle='#28251f';ctx.lineWidth=2;ctx.stroke();
-
-  // hub
-  ctx.beginPath();ctx.arc(cx,cy,34,0,Math.PI*2);ctx.fillStyle='#252824';ctx.fill();ctx.strokeStyle='#aa8a58';ctx.lineWidth=5;ctx.stroke();
-  ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.fillStyle='#b6955e';ctx.fill();
-  ctx.restore();
-}
-
-function frame(){
-  var elapsed=Date.now()-start;
-  var dayIndex=Math.floor(elapsed/DAY_MS);
-  var p=(elapsed%DAY_MS)/DAY_MS;
-  var current=Math.min(9,Math.floor(p*10));
-  var done=Math.floor(p*10);
-  var h=6+6*p,hh=Math.floor(h),mm=Math.floor((h-hh)*60);
-  var time=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
-  drawInstrument(p,dayIndex,current);
-  dv.textContent=visitors[dayIndex%visitors.length];dt.textContent=tasks[current][0];dh.textContent=time;dd.textContent=done+'/10';
-}
-
-resize();frame();
-window.addEventListener('resize',function(){resize();frame();});
-window.addEventListener('orientationchange',function(){setTimeout(function(){resize();frame();},250);});
-setInterval(frame,80);
+function setMode(ms){var sim=nowSim(),frac=sim.p;realDayMs=ms;start=Date.now()-frac*realDayMs;demoBtn.classList.toggle('on',ms===60000);canonBtn.classList.toggle('on',ms===480000)}
+demoBtn.onclick=function(){setMode(60000)};canonBtn.onclick=function(){setMode(480000)};
+requestAnimationFrame(draw);
 })();
 </script>
-</body>
-</html>
+</body></html>
