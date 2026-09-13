@@ -3,421 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Dreadwick HUD — Protótipo Visual</title>
+<title>Dreadwick HUD</title>
 <style>
-:root{
-  --ivory:#ded3bd;
-  --ivory2:#bfb29a;
-  --ink:#171a18;
-  --steel:#353934;
-  --steel2:#1b1e1b;
-  --edge:#817761;
-  --blue:#214a64;
-  --blue2:#153648;
-  --red:#7d342a;
-  --red2:#53231d;
-  --gold:#a48753;
-  --fog:#9ea7a7;
-}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
-body{
-  font-family:Georgia,"Times New Roman",serif;
-  background:
-    radial-gradient(circle at 50% 120%, rgba(161,176,178,.12), transparent 34%),
-    linear-gradient(#121719,#090c0d 68%,#070808);
-}
-#game{
-  position:relative;width:100vw;height:100vh;min-height:650px;overflow:hidden;
-}
-.world{
-  position:absolute;inset:0;
-  background:
-    linear-gradient(to top,rgba(5,7,7,.97) 0 21%,rgba(7,9,10,.75) 35%,rgba(10,13,14,.28) 58%,rgba(7,9,10,.5) 100%),
-    radial-gradient(ellipse at 50% 48%,#354a50 0%,#223238 30%,#121b1e 56%,#0a0f11 100%);
-}
-.world:before{
-  content:"";position:absolute;left:50%;top:27%;width:min(48vw,520px);height:min(31vw,330px);transform:translateX(-50%);
-  background:
-    radial-gradient(ellipse at 50% 83%,#111513 0 37%,transparent 38%),
-    linear-gradient(90deg, transparent 0 47.8%, #d7d0bd 47.8% 49.3%, #151715 49.3% 50.7%, #d7d0bd 50.7% 52.2%,transparent 52.2%);
-  opacity:.28;filter:blur(.3px);
-}
-.world:after{
-  content:"";position:absolute;inset:0;
-  background:
-    repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px);
-  mix-blend-mode:overlay;pointer-events:none
-}
-.header{
-  position:absolute;left:22px;right:22px;top:18px;display:flex;justify-content:space-between;
-  font:10px/1.2 Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#beb7aa;
-  z-index:10
-}
-.readout{
-  position:absolute;right:22px;top:50px;width:min(340px,58vw);
-  padding:12px 14px;background:rgba(12,15,15,.58);
-  border:1px solid rgba(226,215,193,.14);
-  box-shadow:inset 0 0 22px rgba(255,255,255,.02);
-  backdrop-filter:blur(5px);z-index:10;
-  font:11px/1.45 Arial,sans-serif;color:#c8c0b2
-}
-.readout b{font-weight:600;color:#f0e7d5}
-.readout .sep{height:1px;background:rgba(230,220,200,.12);margin:7px 0}
-
-.hud{
-  position:absolute;
-  left:50%;
-  bottom:-7.2vw;
-  transform:translateX(-50%);
-  width:min(1180px,126vw);
-  aspect-ratio:2.15/1;
-  z-index:5;
-  filter:drop-shadow(0 -15px 28px rgba(0,0,0,.58));
-}
-.frame,.ring,.dial,.core,.queue-labels{
-  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
-  border-radius:52% 52% 0 0 / 100% 100% 0 0;
-}
-.frame{
-  width:100%;height:100%;
-  background:
-    linear-gradient(#9c927d 0 1.6%,#494b46 1.7% 3.6%,#b2a58e 3.7% 4.8%,#2f322e 4.9% 100%);
-  border:1px solid #151715;
-}
-.frame:before{
-  content:"";position:absolute;inset:3.4% 2.4% 0;
-  border:1px solid rgba(222,211,188,.25);
-  border-radius:52% 52% 0 0/100% 100% 0 0
-}
-.frame:after{
-  content:"";position:absolute;inset:0;
-  border-radius:inherit;
-  background:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px);
-  mix-blend-mode:screen;pointer-events:none
-}
-.ring{
-  width:92%;height:91%;
-  overflow:hidden;
-  background:
-    radial-gradient(ellipse at 50% 100%,transparent 0 49%,rgba(0,0,0,.14) 49.5% 50.5%,transparent 51%),
-    linear-gradient(#d3c6ae 0 30%,#595952 30.2% 31.5%,#222521 31.7% 100%);
-  border:1px solid #1c1e1b;
-}
-.ring:before{
-  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
-  width:88%;height:82%;border-radius:52% 52% 0 0/100% 100% 0 0;
-  border-top:1px dashed rgba(45,43,37,.55);
-}
-.dial{
-  width:70%;height:71%;
-  background:
-    radial-gradient(circle at 50% 100%,#2c2f2b 0 11.8%,#d8ceba 12.2% 100%);
-  border:1px solid #34352f;
-  box-shadow:inset 0 0 55px rgba(0,0,0,.16);
-  overflow:hidden;
-}
-.dial:before{
-  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
-  width:87%;height:84%;border-radius:52% 52% 0 0/100% 100% 0 0;
-  background:conic-gradient(from 270deg at 50% 100%,
-    rgba(32,37,40,.18) 0deg 58deg,
-    rgba(184,157,94,.11) 58deg 122deg,
-    rgba(120,83,47,.18) 122deg 180deg,
-    transparent 180deg 360deg);
-  pointer-events:none
-}
-.core{
-  width:46%;height:45.5%;
-  background:
-    linear-gradient(rgba(255,255,255,.08),transparent 36%),
-    #cec2aa;
-  color:#252620;
-  border:1px solid #4b493f;
-  box-shadow:inset 0 0 34px rgba(0,0,0,.16);
-  padding-top:6.2%;
-  text-align:center
-}
-.core .cap{
-  font-size:clamp(8px,1vw,14px);letter-spacing:.44em;margin-left:.44em;color:#514f46
-}
-.core .name{
-  margin-top:.35em;font-size:clamp(20px,3vw,45px);letter-spacing:.06em;line-height:1
-}
-.core .sub{
-  margin-top:.9em;font:10px Arial,sans-serif;letter-spacing:.12em;color:#5f5a4e
-}
-.island{
-  position:relative;width:34%;height:18%;margin:.7em auto 0;border-top:1px solid rgba(0,0,0,.28)
-}
-.island:before{
-  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
-  width:82%;height:54%;background:#49473f;clip-path:polygon(0 100%,8% 73%,18% 66%,27% 45%,38% 53%,47% 31%,56% 50%,66% 38%,77% 58%,88% 63%,100% 100%)
-}
-.island:after{
-  content:"";position:absolute;left:50.5%;bottom:39%;width:2.2%;height:50%;background:#3c3b35;box-shadow:0 -6px 0 2px #3c3b35
-}
-
-.task{
-  position:absolute;
-  width:118px;height:60px;padding:7px 10px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:8px;
-  border:1px solid rgba(242,231,207,.34);
-  color:#f0e7d7;text-align:center;font-size:11px;line-height:1.05;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.22),0 4px 10px rgba(0,0,0,.22);
-  transform-origin:center;
-  transition:opacity .35s,filter .35s,transform .35s
-}
-.task small{
-  display:block;margin-top:4px;font:8px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;opacity:.72
-}
-.task.player{background:linear-gradient(var(--blue),var(--blue2))}
-.task.auto{background:linear-gradient(var(--red),var(--red2))}
-.task.active{
-  outline:2px solid #efe3c9;outline-offset:2px;filter:brightness(1.15);
-  box-shadow:0 0 0 1px rgba(0,0,0,.45),0 0 16px rgba(218,204,176,.24),inset 0 0 0 1px rgba(255,255,255,.08)
-}
-.task.done{opacity:.2;filter:saturate(.15) brightness(.75)}
-
-.tick{
-  position:absolute;left:50%;bottom:0;width:1px;height:100%;transform-origin:50% 100%;pointer-events:none
-}
-.tick:before{
-  content:"";position:absolute;top:3.5%;left:0;width:1px;height:4%;background:rgba(30,31,27,.55)
-}
-.tick.major:before{width:2px;height:7%;background:#22231f}
-.marker{
-  position:absolute;bottom:8.2%;width:72px;text-align:center;color:#282922;font-weight:bold;font-size:clamp(18px,2.7vw,37px)
-}
-.marker small{display:block;font-size:.54em;line-height:1;font-weight:normal;margin-bottom:2px}
-.marker.left{left:4.1%}.marker.right{right:4.1%}
-
-.day-arc{
-  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
-  width:90%;height:88%;border-radius:52% 52% 0 0/100% 100% 0 0;
-  pointer-events:none;
-}
-.day-arc:before{
-  content:"";position:absolute;inset:0;border-radius:inherit;
-  border-top:4px solid rgba(66,61,52,.22)
-}
-.needle{
-  position:absolute;left:50%;bottom:0;width:3px;height:87%;
-  background:linear-gradient(to top,#7e6943 0 13%,#252722 13% 100%);
-  transform-origin:50% 100%;
-  box-shadow:0 0 0 1px rgba(255,255,255,.08);
-  transition:transform .08s linear;
-}
-.needle:before{
-  content:"";position:absolute;left:-5px;top:-8px;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:16px solid #1f211e
-}
-.needle:after{
-  content:"";position:absolute;left:-2px;top:13%;width:7px;height:7px;border-radius:50%;background:#b1925b;box-shadow:0 0 0 2px #242622
-}
-.hub{
-  position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);
-  width:8.8%;aspect-ratio:1;border-radius:50%;
-  background:radial-gradient(circle,#b9955b 0 14%,#272925 16% 38%,#aa8c59 40% 45%,#22241f 47% 100%);
-  border:1px solid #111310;box-shadow:0 0 0 3px rgba(214,200,173,.18)
-}
-.time{
-  position:absolute;left:50%;bottom:8.1%;transform:translateX(-50%);
-  padding:5px 9px;border-radius:3px;background:#252824;color:#ded4c0;border:1px solid rgba(228,216,192,.2);
-  font:10px Arial,sans-serif;letter-spacing:.12em
-}
-.progress{
-  position:absolute;left:50%;bottom:3.6%;transform:translateX(-50%);
-  width:31%;height:4px;background:rgba(18,20,18,.35);overflow:hidden
-}
-.progress>span{display:block;height:100%;width:0;background:#9b875e}
-
-.legend{
-  position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
-  display:flex;gap:20px;font:9px Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:#8f897f;z-index:11
-}
-.legend i{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:2px;vertical-align:-1px}
-.legend .p i{background:var(--blue)} .legend .a i{background:var(--red)}
-
-.flash{
-  position:absolute;inset:0;background:#d7d0bd;opacity:0;pointer-events:none;z-index:20
-}
-.flash.on{animation:dayflash .9s ease}
-@keyframes dayflash{0%{opacity:0}35%{opacity:.12}100%{opacity:0}}
-
-@media(max-width:700px){
-  .hud{width:158vw;bottom:-10.4vw}
-  .task{width:90px;height:48px;font-size:8.5px;padding:5px 7px}
-  .task small{font-size:6.5px}
-  .readout{font-size:9px;top:47px}
-  .header{font-size:8px}
-  .legend{bottom:6px;font-size:7px}
-}
+html,body{margin:0;height:100%;background:#0b0f10;overflow:hidden;font-family:Georgia,serif;color:#e7dcc6}
+body{display:flex;align-items:center;justify-content:center}
+#wrap{position:relative;width:100vw;height:100vh;background:radial-gradient(circle at 50% 45%,#2d4148 0,#172328 42%,#0a0f11 76%)}
+#hud{position:absolute;left:50%;bottom:-2vh;transform:translateX(-50%);width:min(1100px,145vw);height:auto;filter:drop-shadow(0 -12px 28px rgba(0,0,0,.55))}
+#info{position:absolute;top:18px;right:18px;font:11px Arial,sans-serif;line-height:1.5;color:#cfc6b4;background:rgba(10,12,12,.55);border:1px solid rgba(230,220,200,.15);padding:10px 12px;backdrop-filter:blur(3px)}
+#info b{color:#f2e8d6}.top{position:absolute;left:18px;top:18px;font:10px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#bcb4a7}
+.taskText{font-size:18px;fill:#f0e7d6;text-anchor:middle;dominant-baseline:middle;pointer-events:none}.taskSub{font-size:10px;fill:#d0c4ae;text-anchor:middle;pointer-events:none}.dialText{fill:#272823;text-anchor:middle}.small{font-size:13px;letter-spacing:4px}.visitor{font-size:38px;font-weight:bold}.hour{font-size:31px;font-weight:bold}.time{font-size:20px;fill:#e7dcc6;text-anchor:middle;font-family:Arial,sans-serif}.tick{stroke:#373a33;stroke-width:1}.tick.major{stroke-width:2}.taskSeg{stroke:#1b1d1a;stroke-width:2}.taskSeg.active{stroke:#f3e6c9;stroke-width:5;filter:url(#glow)}.taskSeg.done{opacity:.22}.progressBase{fill:none;stroke:#5c584d;stroke-width:8}.progressFill{fill:none;stroke:#a88e59;stroke-width:8;stroke-linecap:round}.needle{stroke:#20231f;stroke-width:5;stroke-linecap:round}.needleAccent{stroke:#9b7f4e;stroke-width:2}.hubOuter{fill:#222521;stroke:#a38758;stroke-width:5}.hubInner{fill:#b3955c}.night{fill:#2a3030}.day{fill:#d4c8b1}.core{fill:#cfc2aa;stroke:#555247;stroke-width:2}
+@media(max-width:700px){#info{font-size:9px;top:44px;right:10px}.top{font-size:8px;left:10px}.taskText{font-size:13px}.taskSub{font-size:8px}.visitor{font-size:30px}.hour{font-size:26px}.time{font-size:16px}}
 </style>
 </head>
 <body>
-<div id="game">
-  <div class="world"></div>
-  <div class="header">
-    <div>Dreadwick Light Station · HUD de Rotina</div>
-    <div id="dayTop">Dia 1</div>
+<div id="wrap">
+  <div class="top">Dreadwick Light Station · HUD de Rotina</div>
+  <div id="info">
+    <div><b>Visitante:</b> <span id="iVisitor"></span></div>
+    <div><b>Em execução:</b> <span id="iTask"></span></div>
+    <div><b>Próxima:</b> <span id="iNext"></span></div>
+    <div><b>Concluídas:</b> <span id="iDone"></span></div>
   </div>
 
-  <div class="readout">
-    <div><b>Visitante na ilha</b> · <span id="sideVisitor"></span></div>
-    <div class="sep"></div>
-    <div><b>Em execução</b> · <span id="sideTask"></span></div>
-    <div><b>Próxima tarefa</b> · <span id="sideNext"></span></div>
-    <div><b>Fila concluída</b> · <span id="sideDone">0/10</span></div>
-  </div>
+  <svg id="hud" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#918773"/><stop offset=".08" stop-color="#3a3d38"/><stop offset=".13" stop-color="#b7aa91"/><stop offset=".18" stop-color="#30332e"/><stop offset="1" stop-color="#1d211e"/></linearGradient>
+    </defs>
 
-  <div class="hud">
-    <div class="frame"></div>
-    <div class="ring" id="ring"></div>
+    <path d="M40 540 A460 460 0 0 1 960 540 L900 540 A400 400 0 0 0 100 540 Z" fill="url(#metal)" stroke="#161815" stroke-width="3"/>
+    <path d="M95 540 A405 405 0 0 1 905 540 L835 540 A335 335 0 0 0 165 540 Z" fill="#d2c5ad" stroke="#23251f" stroke-width="2"/>
+    <path d="M165 540 A335 335 0 0 1 835 540 L790 540 A290 290 0 0 0 210 540 Z" fill="#252925" stroke="#171916" stroke-width="2"/>
 
-    <div class="dial" id="dial">
-      <div class="day-arc"></div>
-      <div class="marker left"><small>☾</small>6</div>
-      <div class="marker right"><small>☼</small>12</div>
-      <div class="needle" id="needle"></div>
-      <div class="time" id="time">06:00</div>
-      <div class="progress"><span id="progressFill"></span></div>
-    </div>
+    <path class="night" d="M210 540 A290 290 0 0 1 500 250 L500 540 Z" opacity=".52"/>
+    <path class="day" d="M500 250 A290 290 0 0 1 790 540 L500 540 Z" opacity=".92"/>
 
-    <div class="core">
-      <div class="cap">VISITANTE</div>
-      <div class="name" id="visitor"></div>
-      <div class="sub" id="dayCore"></div>
-      <div class="island"></div>
-    </div>
+    <g id="ticks"></g>
+    <g id="tasks"></g>
 
-    <div class="hub"></div>
-  </div>
+    <path class="progressBase" d="M245 540 A255 255 0 0 1 755 540"/>
+    <path id="progress" class="progressFill" d="M245 540 A255 255 0 0 1 755 540" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
 
-  <div class="legend">
-    <span class="p"><i></i>Jogador</span>
-    <span class="a"><i></i>Quint</span>
-  </div>
-  <div class="flash" id="flash"></div>
+    <text x="245" y="493" class="dialText hour">6</text>
+    <text x="245" y="454" class="dialText" style="font-size:30px">☾</text>
+    <text x="755" y="493" class="dialText hour">12</text>
+    <text x="755" y="454" class="dialText" style="font-size:30px">☼</text>
+
+    <g id="needle" transform="rotate(-72 500 540)">
+      <line x1="500" y1="540" x2="500" y2="285" class="needle"/>
+      <line x1="500" y1="540" x2="500" y2="315" class="needleAccent"/>
+      <polygon points="500,270 490,292 510,292" fill="#20231f"/>
+    </g>
+
+    <path d="M330 540 A170 170 0 0 1 670 540 L650 540 A150 150 0 0 0 350 540 Z" class="core"/>
+    <text x="500" y="420" class="dialText small">VISITANTE</text>
+    <text id="visitor" x="500" y="462" class="dialText visitor">THOMAS</text>
+    <text id="dayLabel" x="500" y="491" class="dialText" style="font-size:13px;font-family:Arial,sans-serif;letter-spacing:2px">DIA 1</text>
+    <text id="time" x="500" y="520" class="time">06:00</text>
+
+    <circle cx="500" cy="540" r="35" class="hubOuter"/>
+    <circle cx="500" cy="540" r="11" class="hubInner"/>
+  </svg>
 </div>
-
 <script>
-const DAY_MS = 60_000;
-const START_HOUR = 6;
-const END_HOUR = 12;
-
-const visitors = ["THOMAS","BETSY","STEWART","MARGARET","DOUGLAS","EILEEN","ANGUS","MAIRI"];
-
-const tasks = [
-  {name:"Limpar lente",type:"player",label:"Fila do jogador"},
-  {name:"Inspecionar gerador",type:"auto",label:"Quint"},
-  {name:"Reabastecer",type:"player",label:"Fila do jogador"},
-  {name:"Checar cais",type:"auto",label:"Quint"},
-  {name:"Patrulhar costa",type:"player",label:"Fila do jogador"},
-  {name:"Regular mecanismo",type:"auto",label:"Quint"},
-  {name:"Limpar vidros",type:"player",label:"Fila do jogador"},
-  {name:"Registrar clima",type:"auto",label:"Quint"},
-  {name:"Verificar rádio",type:"player",label:"Fila do jogador"},
-  {name:"Recolher suprimentos",type:"auto",label:"Quint"}
+const DAY_MS=60000;
+const visitors=['THOMAS','BETSY','STEWART','MARGARET','DOUGLAS','EILEEN','ANGUS','MAIRI'];
+const tasks=[
+ ['Limpar lente','player'],['Inspecionar gerador','auto'],['Reabastecer','player'],['Checar cais','auto'],['Patrulhar costa','player'],['Regular mecanismo','auto'],['Limpar vidros','player'],['Registrar clima','auto'],['Verificar rádio','player'],['Recolher suprimentos','auto']
 ];
+const colors={player:'#214a64',auto:'#7d342a'};
+const svgNS='http://www.w3.org/2000/svg';
+const ticks=document.getElementById('ticks');
+const taskG=document.getElementById('tasks');
+const needle=document.getElementById('needle');
+const progress=document.getElementById('progress');
+const visitor=document.getElementById('visitor');
+const dayLabel=document.getElementById('dayLabel');
+const time=document.getElementById('time');
+const iVisitor=document.getElementById('iVisitor');
+const iTask=document.getElementById('iTask');
+const iNext=document.getElementById('iNext');
+const iDone=document.getElementById('iDone');
+const startEpoch=Date.now();
 
-const ring = document.getElementById("ring");
-const dial = document.getElementById("dial");
-const needle = document.getElementById("needle");
-const timeEl = document.getElementById("time");
-const visitorEl = document.getElementById("visitor");
-const sideVisitor = document.getElementById("sideVisitor");
-const sideTask = document.getElementById("sideTask");
-const sideNext = document.getElementById("sideNext");
-const sideDone = document.getElementById("sideDone");
-const dayTop = document.getElementById("dayTop");
-const dayCore = document.getElementById("dayCore");
-const progressFill = document.getElementById("progressFill");
-const flash = document.getElementById("flash");
+function polar(cx,cy,r,a){const rad=(a-90)*Math.PI/180;return {x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)}}
+function arcPath(cx,cy,r,a0,a1){const p0=polar(cx,cy,r,a1),p1=polar(cx,cy,r,a0);const large=(a1-a0)<=180?0:1;return `M ${p0.x} ${p0.y} A ${r} ${r} 0 ${large} 0 ${p1.x} ${p1.y}`}
 
-let dayStart = performance.now();
-let dayIndex = 0;
-let lastDayIndex = 0;
-
-function ticks(){
-  for(let i=0;i<=48;i++){
-    const e=document.createElement("div");
-    e.className="tick "+(i%8===0?"major":"");
-    e.style.transform=`translateX(-50%) rotate(${-74 + (148*i/48)}deg)`;
-    dial.appendChild(e);
-  }
+for(let i=0;i<=36;i++){
+  const a=-72+144*i/36;
+  const p1=polar(500,540,276,a), p2=polar(500,540,i%6===0?252:260,a);
+  const l=document.createElementNS(svgNS,'line');l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);l.setAttribute('class','tick '+(i%6===0?'major':''));ticks.appendChild(l)
 }
 
-function tasksOnArc(){
-  tasks.forEach((t,i)=>{
-    const e=document.createElement("div");
-    e.className=`task ${t.type}`;
-    e.dataset.index=i;
-    e.innerHTML=`<span>${t.name}</span><small>${t.label}</small>`;
-
-    const angleDeg = 202 + (136*i/(tasks.length-1));
-    const a = angleDeg*Math.PI/180;
-    const x = 50 + Math.cos(a)*44.2;
-    const y = 96 + Math.sin(a)*39.2;
-    e.style.left=`calc(${x}% - 59px)`;
-    e.style.top=`calc(${y}% - 30px)`;
-    e.style.transform=`rotate(${angleDeg+90}deg)`;
-    ring.appendChild(e);
-  });
+const segs=[];
+for(let i=0;i<tasks.length;i++){
+  const a0=-70+i*14.1,a1=a0+11.8,mid=(a0+a1)/2;
+  const p=document.createElementNS(svgNS,'path');p.setAttribute('d',arcPath(500,540,372,a0,a1));p.setAttribute('fill','none');p.setAttribute('stroke',colors[tasks[i][1]]);p.setAttribute('stroke-width','54');p.setAttribute('stroke-linecap','round');p.setAttribute('class','taskSeg');taskG.appendChild(p);segs.push(p);
+  const tp=polar(500,540,372,mid);
+  const t=document.createElementNS(svgNS,'text');t.setAttribute('x',tp.x);t.setAttribute('y',tp.y-2);t.setAttribute('class','taskText');t.textContent=tasks[i][0];taskG.appendChild(t)
 }
 
-function setDayVisual(d){
-  const name=visitors[d%visitors.length];
-  visitorEl.textContent=name;
-  sideVisitor.textContent=name;
-  dayTop.textContent=`Dia ${d+1}`;
-  dayCore.textContent=`DIA ${d+1} · 06:00—12:00`;
+function update(){
+  const elapsed=Date.now()-startEpoch;
+  const dayIndex=Math.floor(elapsed/DAY_MS);
+  const p=(elapsed%DAY_MS)/DAY_MS;
+  const hour=6+6*p;
+  const hh=Math.floor(hour),mm=Math.floor((hour-hh)*60);
+  const current=Math.min(9,Math.floor(p*10));
+  const done=Math.floor(p*10);
+  needle.setAttribute('transform',`rotate(${-72+144*p} 500 540)`);
+  progress.setAttribute('stroke-dashoffset',String(100-100*p));
+  time.textContent=`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+  const v=visitors[dayIndex%visitors.length];
+  visitor.textContent=v; dayLabel.textContent=`DIA ${dayIndex+1}`; iVisitor.textContent=v;
+  iTask.textContent=tasks[current][0]; iNext.textContent=current<9?tasks[current+1][0]:'Encerramento do turno'; iDone.textContent=`${done}/10`;
+  segs.forEach((s,i)=>{s.setAttribute('class','taskSeg'+(i===current?' active':'')+(i<current?' done':''))});
 }
-
-function animate(now){
-  let elapsed=now-dayStart;
-  if(elapsed>=DAY_MS){
-    const jump=Math.floor(elapsed/DAY_MS);
-    dayIndex+=jump;
-    dayStart+=jump*DAY_MS;
-    elapsed=now-dayStart;
-  }
-
-  if(dayIndex!==lastDayIndex){
-    flash.classList.remove("on");
-    void flash.offsetWidth;
-    flash.classList.add("on");
-    setDayVisual(dayIndex);
-    lastDayIndex=dayIndex;
-  }
-
-  const p=Math.min(.999999,Math.max(0,elapsed/DAY_MS));
-  const hour=START_HOUR+(END_HOUR-START_HOUR)*p;
-  const hh=Math.floor(hour);
-  const mm=Math.floor((hour-hh)*60);
-  timeEl.textContent=`${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;
-
-  needle.style.transform=`rotate(${-72+144*p}deg)`;
-  progressFill.style.width=`${p*100}%`;
-
-  const current=Math.min(tasks.length-1,Math.floor(p*tasks.length));
-  const done=Math.floor(p*tasks.length);
-  document.querySelectorAll(".task").forEach((e,i)=>{
-    e.classList.toggle("active",i===current);
-    e.classList.toggle("done",i<current);
-  });
-
-  sideTask.textContent=tasks[current].name;
-  sideNext.textContent=current<tasks.length-1?tasks[current+1].name:"Encerramento do turno";
-  sideDone.textContent=`${Math.min(done,10)}/10`;
-
-  requestAnimationFrame(animate);
-}
-
-ticks();
-tasksOnArc();
-setDayVisual(0);
-requestAnimationFrame(animate);
+update();
+setInterval(update,50);
 </script>
 </body>
 </html>
