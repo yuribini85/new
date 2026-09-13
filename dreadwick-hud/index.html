@@ -3,112 +3,126 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Dreadwick — HUD de Rotina</title>
+<title>Dreadwick HUD</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0e0f;color:#e8dfcf;font-family:Georgia,serif}body{touch-action:manipulation}#app{position:relative;width:100vw;height:100vh;background:radial-gradient(circle at 50% 42%,#33484f 0,#18262b 43%,#0b1012 76%)}#app:before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(5,7,7,.95) 0 18%,rgba(7,9,10,.35) 46%,rgba(5,7,8,.55) 100%);pointer-events:none}canvas{position:absolute;left:0;bottom:0;width:100%;height:72%;display:block}.title{position:absolute;top:max(16px,env(safe-area-inset-top));left:16px;font:9px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#bdb4a5;z-index:5}.mode{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;z-index:6;display:flex;gap:6px}.mode button{appearance:none;border:1px solid rgba(226,214,190,.24);background:rgba(12,15,15,.66);color:#bfb6a7;padding:7px 9px;font:9px Arial,sans-serif;letter-spacing:.08em;border-radius:3px}.mode button.on{color:#f0e5cf;border-color:#a89063;background:rgba(70,62,45,.7)}#status{position:absolute;left:14px;right:14px;top:48px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;z-index:5;font:10px Arial,sans-serif;color:#c9c0b2}.box{background:rgba(10,13,13,.48);border:1px solid rgba(229,218,196,.12);padding:8px 10px;backdrop-filter:blur(4px);max-width:48%}.box b{color:#eee4d2;font-weight:600}.queue{margin-top:4px;color:#a9a093}.queue span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.legend{position:absolute;left:50%;bottom:max(6px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:16px;z-index:7;font:8px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#8f887d}.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}.blue{background:#25536e}.red{background:#81372c}.neutral{background:#827862}@media(min-width:700px){canvas{height:78%}.title{font-size:10px}.box{font-size:11px}.legend{font-size:9px}}
+:root{--ink:#1a1b18;--paper:#d7c9ad;--paper2:#bcae93;--metal:#3a3b36;--metal2:#20231f;--brass:#a88954;--brass2:#d7bd83;--blue:#24577a;--red:#8b372d;--cream:#efe5d2}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b0f10;font-family:Georgia,serif;color:var(--cream)}
+body{display:flex;align-items:center;justify-content:center}
+#app{position:relative;width:100vw;height:100vh;background:radial-gradient(circle at 50% 42%,#32464d 0,#19252a 42%,#0a0e10 78%);overflow:hidden}
+#topbar{position:absolute;z-index:10;top:max(14px,env(safe-area-inset-top));left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;font:10px/1.25 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#bdb4a6}
+#topbar .info{background:rgba(8,11,11,.58);border:1px solid rgba(230,219,198,.13);padding:8px 10px;backdrop-filter:blur(4px)}
+#topbar b{color:#efe4d0;font-weight:600}
+#hudWrap{position:absolute;left:50%;bottom:-1.7vh;transform:translateX(-50%);width:min(920px,118vw);aspect-ratio:1.75/1}
+#hud{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 14px 30px rgba(0,0,0,.55))}
+#taskLayer{position:absolute;inset:0;pointer-events:none}
+.taskCard{position:absolute;left:50%;top:0;width:132px;height:72px;transform-origin:50% 440px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 10px;border:2px solid #c8b48a;border-radius:14px;background:linear-gradient(#315f80,#1e4562);color:#f2e9d8;font:600 14px/1.08 Georgia,serif;box-shadow:inset 0 0 0 1px rgba(0,0,0,.32),0 3px 10px rgba(0,0,0,.35);opacity:.98}
+.taskCard.auto{background:linear-gradient(#9b463b,#6f2c26)}
+.taskCard.past{opacity:.18;filter:saturate(.5)}
+.taskCard.future{opacity:.72}
+.taskCard.current{height:82px;width:160px;border-width:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.35),0 0 18px rgba(222,193,130,.28),0 3px 10px rgba(0,0,0,.35)}
+.taskCard .sub{position:absolute;left:10px;right:10px;bottom:7px;height:5px;border-radius:4px;background:rgba(14,18,18,.65);overflow:hidden}
+.taskCard .fill{height:100%;width:0;background:var(--brass2)}
+.taskCard .dur{position:absolute;right:7px;top:5px;font:9px Arial,sans-serif;opacity:.72}
+.taskCard .label{max-width:122px}
+#legend{position:absolute;z-index:12;left:50%;bottom:max(7px,env(safe-area-inset-bottom));transform:translateX(-50%);font:8px Arial,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:#8e887e;display:flex;gap:14px;white-space:nowrap}
+#legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+#legend .p{background:var(--blue)}#legend .a{background:var(--red)}
+@media(max-width:600px){#hudWrap{width:138vw;bottom:-.8vh}.taskCard{width:110px;height:62px;font-size:11px;transform-origin:50% 375px}.taskCard.current{width:136px;height:72px}.taskCard .dur{font-size:8px}.taskCard .label{max-width:98px}}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="title">Dreadwick Light Station · rotina de Quint</div>
-  <div class="mode"><button id="demo" class="on">1 MIN DEMO</button><button id="canon">8 MIN CANON</button></div>
-  <div id="status">
-    <div class="box"><b id="dayText">SEGUNDA · DIA 1</b><div id="clockText">06:00</div><div>Visitante: <b id="visitorText">BETSY</b></div></div>
-    <div class="box"><b id="stateText">Idle</b><div id="progressText">0%</div><div class="queue" id="queueText"></div></div>
+  <div id="topbar">
+    <div class="info"><b id="dateText">SEGUNDA · DIA 1</b><br><span id="timeText">06:00</span></div>
+    <div class="info">Ação: <b id="actionText">—</b><br>Visitante: <b id="visitorText">BETSY</b></div>
   </div>
-  <canvas id="hud"></canvas>
-  <div class="legend"><span><i class="dot blue"></i>Jogador</span><span><i class="dot red"></i>Autoagendado</span><span><i class="dot neutral"></i>Deslocamento</span></div>
+  <div id="hudWrap">
+    <svg id="hud" viewBox="0 0 1000 570" aria-label="HUD semicircular de Dreadwick">
+      <defs>
+        <linearGradient id="metalOuter" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f816a"/><stop offset=".08" stop-color="#2c302d"/><stop offset=".15" stop-color="#b5a58a"/><stop offset=".23" stop-color="#292d29"/><stop offset="1" stop-color="#171a18"/></linearGradient>
+        <linearGradient id="paperGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e1d6c0"/><stop offset="1" stop-color="#cbbda2"/></linearGradient>
+        <linearGradient id="nightGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#283236"/><stop offset="1" stop-color="#111719"/></linearGradient>
+        <linearGradient id="dayGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9cbae"/><stop offset="1" stop-color="#efe2bf"/></linearGradient>
+      </defs>
+      <path d="M40 540 A460 460 0 0 1 960 540 L905 540 A405 405 0 0 0 95 540 Z" fill="url(#metalOuter)" stroke="#101311" stroke-width="4"/>
+      <path d="M84 540 A416 416 0 0 1 916 540 L870 540 A370 370 0 0 0 130 540 Z" fill="#1d211e" stroke="#a99165" stroke-width="4"/>
+      <path d="M126 540 A374 374 0 0 1 874 540 L833 540 A333 333 0 0 0 167 540 Z" fill="url(#paperGrad)" stroke="#3b3b34" stroke-width="2"/>
+      <path d="M112 540 A388 388 0 0 1 888 540" fill="none" stroke="#161a18" stroke-width="95"/>
+      <path d="M112 540 A388 388 0 0 1 888 540" fill="none" stroke="#b0915e" stroke-width="3" opacity=".8"/>
+      <path d="M132 540 A368 368 0 0 1 868 540" fill="none" stroke="#6f6553" stroke-width="1" opacity=".7"/>
+      <path d="M195 540 A305 305 0 0 1 500 235 L500 540 Z" fill="url(#nightGrad)" opacity=".96"/>
+      <path d="M500 235 A305 305 0 0 1 805 540 L500 540 Z" fill="url(#dayGrad)" opacity=".98"/>
+      <path d="M195 540 A305 305 0 0 1 805 540" fill="none" stroke="#272a25" stroke-width="2"/>
+      <g id="ticks"></g>
+      <text x="255" y="430" text-anchor="middle" font-size="44" fill="#eee4cf">☾</text>
+      <text x="255" y="488" text-anchor="middle" font-size="52" font-weight="700" fill="#eee4cf">6</text>
+      <text x="745" y="430" text-anchor="middle" font-size="42" fill="#2a2923">☼</text>
+      <text x="745" y="488" text-anchor="middle" font-size="52" font-weight="700" fill="#2a2923">12</text>
+      <path d="M334 540 A166 166 0 0 1 666 540 L646 540 A146 146 0 0 0 354 540 Z" fill="#d9ccb3" stroke="#595446" stroke-width="2"/>
+      <text x="500" y="389" text-anchor="middle" font-size="15" letter-spacing="4" fill="#4b463c">VISITANTE</text>
+      <line x1="420" y1="400" x2="580" y2="400" stroke="#786f5d" stroke-width="1"/>
+      <text id="visitorCore" x="500" y="445" text-anchor="middle" font-size="42" font-weight="700" fill="#25241f">BETSY</text>
+      <text id="dayCore" x="500" y="474" text-anchor="middle" font-size="14" letter-spacing="2" fill="#5d5648">SEGUNDA · DIA 1</text>
+      <text id="currentTaskCore" x="500" y="503" text-anchor="middle" font-size="13" fill="#4b463c">—</text>
+      <line id="needleShadow" x1="500" y1="540" x2="314" y2="420" stroke="#0d0f0e" stroke-width="8" stroke-linecap="round" opacity=".5"/>
+      <line id="needle" x1="500" y1="540" x2="314" y2="420" stroke="#d2b36e" stroke-width="4" stroke-linecap="round"/>
+      <circle id="needleTip" cx="314" cy="420" r="6" fill="#d2b36e" stroke="#302c24" stroke-width="2"/>
+      <circle cx="500" cy="540" r="20" fill="#242721" stroke="#a98b57" stroke-width="3"/>
+      <circle cx="500" cy="540" r="6" fill="#b6985e"/>
+    </svg>
+    <div id="taskLayer"></div>
+  </div>
+  <div id="legend"><span><i class="p"></i>Jogador</span><span><i class="a"></i>Quint</span></div>
 </div>
 <script>
 (function(){
 'use strict';
-var canvas=document.getElementById('hud'),ctx=canvas.getContext('2d');
-var demoBtn=document.getElementById('demo'),canonBtn=document.getElementById('canon');
-var dayText=document.getElementById('dayText'),clockText=document.getElementById('clockText'),visitorText=document.getElementById('visitorText'),stateText=document.getElementById('stateText'),progressText=document.getElementById('progressText'),queueText=document.getElementById('queueText');
-var DAY_MIN=360;
-var realDayMs=60000,start=Date.now();
-var weekdays=['SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO','DOMINGO'];
+var DAY_MS=60000;
+var start=Date.now();
 var visitors=['BETSY','DUNCAN','BETSY','DUNCAN','EDDIE','BETSY','SEM VISITANTE'];
-var baseTasks=[
- {n:'Limpar lente',src:'auto',dur:22,travel:6},
- {n:'Buscar querosene',src:'player',dur:34,travel:8},
- {n:'Reabastecer farol',src:'player',dur:28,travel:7},
- {n:'Registrar clima',src:'auto',dur:16,travel:5},
- {n:'Checar cais',src:'player',dur:38,travel:9},
- {n:'Regular mecanismo',src:'auto',dur:26,travel:6},
- {n:'Separar pescado',src:'player',dur:31,travel:10},
- {n:'Verificar rádio',src:'player',dur:20,travel:7},
- {n:'Limpar vidros',src:'auto',dur:18,travel:5},
- {n:'Guardar suprimentos',src:'player',dur:29,travel:8}
+var weekdays=['SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO','DOMINGO'];
+var tasks=[
+ {name:'Limpar lente',type:'auto',dur:22},
+ {name:'Buscar querosene',type:'player',dur:34},
+ {name:'Reabastecer farol',type:'player',dur:28},
+ {name:'Registrar clima',type:'auto',dur:16},
+ {name:'Checar cais',type:'player',dur:38},
+ {name:'Regular mecanismo',type:'auto',dur:26},
+ {name:'Separar pescado',type:'player',dur:31},
+ {name:'Verificar rádio',type:'player',dur:20},
+ {name:'Limpar vidros',type:'auto',dur:18},
+ {name:'Guardar suprimentos',type:'player',dur:29}
 ];
-var emergency={n:'Latrina',src:'auto',dur:12,travel:4,critical:true,at:142};
-var schedule=[];
-function buildSchedule(){
- schedule=[];var t=8,emUsed=false;
- for(var i=0;i<baseTasks.length;i++){
-   var task=Object.assign({},baseTasks[i]);
-   if(!emUsed && t+task.travel+task.dur>emergency.at){
-     var before=Math.max(4,emergency.at-t-task.travel);
-     schedule.push({kind:'travel',n:'Deslocamento',src:'neutral',start:t,end:t+task.travel,parent:task.n});t+=task.travel;
-     schedule.push({kind:'task',n:task.n,src:task.src,start:t,end:t+before,part:'pausada',fullDur:task.dur});t+=before;
-     schedule.push({kind:'travel',n:'Deslocamento',src:'neutral',start:t,end:t+emergency.travel,parent:emergency.n});t+=emergency.travel;
-     schedule.push({kind:'task',n:emergency.n,src:'auto',start:t,end:t+emergency.dur,critical:true,fullDur:emergency.dur});t+=emergency.dur;
-     var remain=task.dur-before;
-     schedule.push({kind:'travel',n:'Retorno',src:'neutral',start:t,end:t+3,parent:task.n});t+=3;
-     schedule.push({kind:'task',n:task.n+' · retomada',src:task.src,start:t,end:t+remain,resume:true,fullDur:task.dur});t+=remain;
-     emUsed=true;
-   }else{
-     schedule.push({kind:'travel',n:'Deslocamento',src:'neutral',start:t,end:t+task.travel,parent:task.n});t+=task.travel;
-     schedule.push({kind:'task',n:task.n,src:task.src,start:t,end:t+task.dur,fullDur:task.dur});t+=task.dur;
-   }
-   if(i===3||i===7){schedule.push({kind:'idle',n:'Livre',src:'neutral',start:t,end:t+10});t+=10;}
- }
-}
-buildSchedule();
-function nowSim(){var elapsed=(Date.now()-start)%realDayMs;return {day:Math.floor((Date.now()-start)/realDayMs),p:elapsed/realDayMs,min:(elapsed/realDayMs)*DAY_MIN};}
-function resize(){var d=Math.max(1,Math.min(2,window.devicePixelRatio||1));var r=canvas.getBoundingClientRect();canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);}window.addEventListener('resize',resize);resize();
-function arcPoint(cx,cy,r,p){var a=Math.PI-(Math.PI*p);return{x:cx+r*Math.cos(a),y:cy-r*Math.sin(a)}}
-function drawArc(cx,cy,r,p0,p1,w,color,alpha){if(p1<=p0)return;ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=alpha==null?1:alpha;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.arc(cx,cy,r,Math.PI-Math.PI*p0,Math.PI-Math.PI*p1,true);ctx.stroke();ctx.restore();}
-function activeIndex(min){for(var i=0;i<schedule.length;i++)if(min>=schedule[i].start&&min<schedule[i].end)return i;return -1}
-function nearestTaskIndex(idx){if(idx>=0&&schedule[idx]&&schedule[idx].kind==='task')return idx;for(var i=Math.max(0,idx);i<schedule.length;i++)if(schedule[i].kind==='task')return i;for(var j=Math.min(schedule.length-1,idx);j>=0;j--)if(schedule[j].kind==='task')return j;return -1}
-function taskIndicesAround(centerIdx){var tasks=[];for(var i=0;i<schedule.length;i++)if(schedule[i].kind==='task')tasks.push(i);var pos=tasks.indexOf(centerIdx);if(pos<0)pos=0;return {prev:pos>0?tasks[pos-1]:-1,current:tasks[pos],next:tasks.slice(pos+1,pos+4)};}
-function ease(t){t=Math.max(0,Math.min(1,t));return 1-Math.pow(1-t,3)}
-function drawTaskBlock(cx,cy,r,centerP,span,seg,isCurrent,alpha){var p0=centerP-span/2,p1=centerP+span/2,color=seg.src==='player'?'#25536e':'#81372c';drawArc(cx,cy,r,p0,p1,isCurrent?36:28,color,alpha);var pt=arcPoint(cx,cy,r,centerP);ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle='#f1e7d5';ctx.font=(isCurrent?'bold ':'')+(isCurrent?'12':'10')+'px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(seg.n.replace(' · retomada',''),pt.x,pt.y);ctx.restore();return {p0:p0,p1:p1};}
+var totalDur=tasks.reduce(function(a,t){return a+t.dur},0);
+var taskLayer=document.getElementById('taskLayer');
+var timeText=document.getElementById('timeText'),dateText=document.getElementById('dateText'),visitorText=document.getElementById('visitorText'),visitorCore=document.getElementById('visitorCore'),dayCore=document.getElementById('dayCore'),currentTaskCore=document.getElementById('currentTaskCore'),actionText=document.getElementById('actionText');
+var needle=document.getElementById('needle'),needleShadow=document.getElementById('needleShadow'),needleTip=document.getElementById('needleTip');
+var ticks=document.getElementById('ticks');
+var svgNS='http://www.w3.org/2000/svg';
+function polar(cx,cy,r,p){var a=Math.PI-Math.PI*p;return{x:cx+r*Math.cos(a),y:cy-r*Math.sin(a)}}
+for(var i=0;i<=24;i++){var p=.06+.88*i/24,a=polar(500,540,286,p),b=polar(500,540,i%4===0?263:270,p);var l=document.createElementNS(svgNS,'line');l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);l.setAttribute('stroke','#34362f');l.setAttribute('stroke-width',i%4===0?'2':'1');ticks.appendChild(l)}
+var cards=tasks.map(function(t){var el=document.createElement('div');el.className='taskCard '+(t.type==='auto'?'auto':'player');el.innerHTML='<span class="dur">'+t.dur+'m</span><span class="label">'+t.name+'</span><div class="sub"><div class="fill"></div></div>';taskLayer.appendChild(el);return el});
+function currentTaskIndex(dayProgress){var minute=dayProgress*totalDur,acc=0;for(var i=0;i<tasks.length;i++){acc+=tasks[i].dur;if(minute<acc)return i}return tasks.length-1}
+function taskProgress(dayProgress,idx){var minute=dayProgress*totalDur,acc=0;for(var i=0;i<idx;i++)acc+=tasks[i].dur;return Math.max(0,Math.min(1,(minute-acc)/tasks[idx].dur))}
 function draw(){
- var r=canvas.getBoundingClientRect(),W=r.width,H=r.height,cx=W/2,cy=H*1.02,R=Math.min(W*.54,H*.92),sim=nowSim(),p=sim.p,min=sim.min;
- ctx.clearRect(0,0,W,H);
- drawArc(cx,cy,R,.02,.98,42,'#373a35',1);drawArc(cx,cy,R-7,.02,.98,3,'#aa9c82',.85);drawArc(cx,cy,R-32,.04,.96,28,'#cfc2a9',1);
- drawArc(cx,cy,R-76,.06,.50,54,'#343a39',1);drawArc(cx,cy,R-76,.50,.94,54,'#d4c8b2',1);
- for(var i=0;i<=24;i++){var pp=.06+.88*i/24,a=arcPoint(cx,cy,R-101,pp),b=arcPoint(cx,cy,R-(i%4===0?122:114),pp);ctx.strokeStyle='#383831';ctx.lineWidth=i%4===0?2:1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
-
- var rawIdx=activeIndex(min),centerIdx=nearestTaskIndex(rawIdx),belt=taskIndicesAround(centerIdx),curTask=schedule[belt.current];
- var curDur=Math.max(1,curTask.end-curTask.start),curProg=Math.max(0,Math.min(1,(min-curTask.start)/curDur));
- var trans=ease(Math.min(1,Math.max(0,(min-curTask.start)/Math.max(2,curDur*.18))));
- var shift=(1-trans)*.13;
- var currentCenter=.50+shift;
- var currentSpan=Math.max(.12,Math.min(.24,(curTask.fullDur||curDur)/170));
- var currentBlock=drawTaskBlock(cx,cy,R-18,currentCenter,currentSpan,curTask,true,1);
- drawArc(cx,cy,R-18,currentBlock.p0,currentBlock.p0+(currentBlock.p1-currentBlock.p0)*curProg,9,'#d7bd83',1);
-
- if(belt.prev>=0){var prev=schedule[belt.prev],prevDur=Math.max(1,prev.fullDur||(prev.end-prev.start)),prevSpan=Math.max(.10,Math.min(.20,prevDur/180)),prevCenter=currentBlock.p0-.045-prevSpan/2;drawTaskBlock(cx,cy,R-18,prevCenter,prevSpan,prev,false,.18);}
- var cursor=currentBlock.p1+.05;
- for(var n=0;n<belt.next.length;n++){var seg=schedule[belt.next[n]],d=Math.max(1,seg.fullDur||(seg.end-seg.start)),sp=Math.max(.10,Math.min(.20,d/180)),cc=cursor+sp/2;drawTaskBlock(cx,cy,R-18,cc,sp,seg,false,.86-n*.16);cursor=cc+sp/2+.05;}
-
- var np=.06+.88*p,tip=arcPoint(cx,cy,R-132,np);ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(cx+2,cy+2);ctx.lineTo(tip.x+2,tip.y+2);ctx.stroke();ctx.strokeStyle='#d7bd83';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tip.x,tip.y);ctx.stroke();ctx.fillStyle='#e1c78c';ctx.beginPath();ctx.arc(tip.x,tip.y,5,0,Math.PI*2);ctx.fill();
-
- var coreR=R*.39;ctx.fillStyle='#cfc2aa';ctx.beginPath();ctx.arc(cx,cy,coreR,Math.PI,Math.PI*2);ctx.fill();ctx.strokeStyle='#5b5649';ctx.lineWidth=1.5;ctx.stroke();
- var day=sim.day%7,visitor=visitors[day];ctx.textAlign='center';ctx.fillStyle='#4f4a40';ctx.font='10px Arial';ctx.fillText('VISITANTE',cx,cy-coreR*.82);ctx.fillStyle='#25251f';ctx.font='bold '+Math.max(21,Math.min(35,W*.052))+'px Georgia';ctx.fillText(visitor,cx,cy-coreR*.57);ctx.fillStyle='#5a554a';ctx.font='11px Arial';ctx.fillText(weekdays[day]+' · DIA '+(sim.day+1),cx,cy-coreR*.36);
- var l=arcPoint(cx,cy,R-105,.06),rr=arcPoint(cx,cy,R-105,.94);ctx.fillStyle='#2a2b25';ctx.font='bold 24px Georgia';ctx.fillText('6',l.x,l.y+16);ctx.fillText('12',rr.x,rr.y+16);ctx.font='22px Georgia';ctx.fillText('☾',l.x,l.y-14);ctx.fillText('☼',rr.x,rr.y-14);
- ctx.fillStyle='#242722';ctx.beginPath();ctx.arc(cx,cy,17,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#a58a58';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#b79a61';ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fill();
-
- var hh=6+Math.floor(min/60),mm=Math.floor(min%60);clockText.textContent=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;dayText.textContent=weekdays[day]+' · DIA '+(sim.day+1);visitorText.textContent=visitor;
- if(rawIdx>=0){var cur=schedule[rawIdx],pr=Math.max(0,Math.min(1,(min-cur.start)/(cur.end-cur.start)));stateText.textContent=cur.kind==='travel'?(cur.n+' → '+(cur.parent||'')):cur.kind==='idle'?'Idle':cur.n;progressText.textContent=cur.kind==='task'?Math.round(pr*100)+'% · '+Math.round(cur.end-min)+' min restantes':'Tarefa em foco: '+curTask.n;}else{stateText.textContent='Idle';progressText.textContent='';}
- var list=[belt.current].concat(belt.next),qs=[];for(var z=0;z<list.length;z++){var st=schedule[list[z]],tag=st.src==='player'?'JOGADOR':'QUINT';qs.push((z===0?'ATUAL':'+'+z)+' · '+st.n.replace(' · retomada','')+' · '+Math.round(st.fullDur||(st.end-st.start))+'min · '+tag)}queueText.innerHTML=qs.map(function(x){return '<span>'+x+'</span>'}).join('');
- requestAnimationFrame(draw);
+  var elapsed=Date.now()-start,day=Math.floor(elapsed/DAY_MS),p=(elapsed%DAY_MS)/DAY_MS;
+  var idx=currentTaskIndex(p),local=taskProgress(p,idx);
+  var h=6+6*p,hh=Math.floor(h),mm=Math.floor((h-hh)*60);
+  timeText.textContent=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+  var wd=day%7,visitor=visitors[wd],dayLabel=weekdays[wd]+' · DIA '+(day+1);
+  dateText.textContent=dayLabel;visitorText.textContent=visitor;visitorCore.textContent=visitor;dayCore.textContent=dayLabel;currentTaskCore.textContent=tasks[idx].name;actionText.textContent=tasks[idx].name;
+  var tip=polar(500,540,245,.06+.88*p);needle.setAttribute('x2',tip.x);needle.setAttribute('y2',tip.y);needleShadow.setAttribute('x2',tip.x+3);needleShadow.setAttribute('y2',tip.y+3);needleTip.setAttribute('cx',tip.x);needleTip.setAttribute('cy',tip.y);
+  for(var i=0;i<cards.length;i++){
+    var rel=i-idx,pos=rel;if(local>.82){var u=(local-.82)/.18,s=u*u*(3-2*u);pos=rel-s}
+    var angle=pos*17,y=12+Math.min(58,Math.abs(pos)*9);
+    cards[i].style.top=y+'px';cards[i].style.transform='translateX(-50%) rotate('+angle+'deg) translateY('+(-Math.min(22,Math.abs(pos)*2))+'px)';
+    cards[i].classList.toggle('current',i===idx);cards[i].classList.toggle('past',i<idx);cards[i].classList.toggle('future',i>idx);cards[i].style.zIndex=String(20-Math.abs(rel));cards[i].querySelector('.fill').style.width=(i===idx?Math.round(local*100):i<idx?100:0)+'%';
+  }
+  requestAnimationFrame(draw)
 }
-function setMode(ms){var sim=nowSim(),total=sim.day+sim.p;realDayMs=ms;start=Date.now()-total*realDayMs;demoBtn.classList.toggle('on',ms===60000);canonBtn.classList.toggle('on',ms===480000)}
-demoBtn.onclick=function(){setMode(60000)};canonBtn.onclick=function(){setMode(480000)};
 requestAnimationFrame(draw);
 })();
 </script>
-</body></html>
+</body>
+</html>
