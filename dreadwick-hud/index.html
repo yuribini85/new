@@ -2,66 +2,27 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Dreadwick HUD</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Dreadwick HUD — Canvas</title>
 <style>
-html,body{margin:0;height:100%;background:#0b0f10;overflow:hidden;font-family:Georgia,serif;color:#e7dcc6}
-body{display:flex;align-items:center;justify-content:center}
-#wrap{position:relative;width:100vw;height:100vh;background:radial-gradient(circle at 50% 45%,#2d4148 0,#172328 42%,#0a0f11 76%)}
-#hud{position:absolute;left:50%;bottom:-2vh;transform:translateX(-50%);width:min(1100px,145vw);height:auto;filter:drop-shadow(0 -12px 28px rgba(0,0,0,.55))}
-#info{position:absolute;top:18px;right:18px;font:11px Arial,sans-serif;line-height:1.5;color:#cfc6b4;background:rgba(10,12,12,.55);border:1px solid rgba(230,220,200,.15);padding:10px 12px;z-index:20}
-#info b{color:#f2e8d6}.top{position:absolute;left:18px;top:18px;font:10px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#bcb4a7;z-index:20}
-.taskText{font-size:18px;fill:#f0e7d6;text-anchor:middle;dominant-baseline:middle;pointer-events:none}.dialText{fill:#272823;text-anchor:middle}.small{font-size:13px;letter-spacing:4px}.visitor{font-size:38px;font-weight:bold}.hour{font-size:31px;font-weight:bold}.time{font-size:20px;fill:#e7dcc6;text-anchor:middle;font-family:Arial,sans-serif}.tick{stroke:#373a33;stroke-width:1}.tick.major{stroke-width:2}.taskSeg{stroke:#1b1d1a;stroke-width:2}.progressBase{fill:none;stroke:#5c584d;stroke-width:8}.progressFill{fill:none;stroke:#a88e59;stroke-width:9;stroke-linecap:round}.hubOuter{fill:#222521;stroke:#a38758;stroke-width:5}.hubInner{fill:#b3955c}.night{fill:#2a3030}.day{fill:#d4c8b1}.core{fill:#cfc2aa;stroke:#555247;stroke-width:2}
-@media(max-width:700px){#info{font-size:9px;top:44px;right:10px}.top{font-size:8px;left:10px}.taskText{font-size:13px}.visitor{font-size:30px}.hour{font-size:26px}.time{font-size:16px}}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0e10;font-family:Georgia,serif}
+#app{position:fixed;inset:0;background:radial-gradient(circle at 50% 42%,#30464d 0,#18262b 42%,#0b1012 77%)}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#debug{position:absolute;top:env(safe-area-inset-top,0);right:10px;margin-top:10px;padding:8px 10px;background:rgba(8,10,10,.62);border:1px solid rgba(230,220,200,.14);color:#d9d0bf;font:11px/1.45 Arial,sans-serif;z-index:2;pointer-events:none}
+#debug b{color:#fff0d3}
+#title{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);color:#bbb3a5;font:9px Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;z-index:2;pointer-events:none}
 </style>
 </head>
 <body>
-<div id="wrap">
-  <div class="top">Dreadwick Light Station · HUD de Rotina</div>
-  <div id="info">
-    <div><b>Visitante:</b> <span id="iVisitor"></span></div>
-    <div><b>Em execução:</b> <span id="iTask"></span></div>
-    <div><b>Próxima:</b> <span id="iNext"></span></div>
-    <div><b>Concluídas:</b> <span id="iDone"></span></div>
+<div id="app">
+  <canvas id="c"></canvas>
+  <div id="title">Dreadwick Light Station · Canvas Test</div>
+  <div id="debug">
+    <div><b>Visitante:</b> <span id="dv"></span></div>
+    <div><b>Tarefa:</b> <span id="dt"></span></div>
+    <div><b>Hora:</b> <span id="dh"></span></div>
+    <div><b>Concluídas:</b> <span id="dd"></span></div>
   </div>
-
-  <svg id="hud" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#918773"/><stop offset=".08" stop-color="#3a3d38"/><stop offset=".13" stop-color="#b7aa91"/><stop offset=".18" stop-color="#30332e"/><stop offset="1" stop-color="#1d211e"/></linearGradient>
-    </defs>
-
-    <path d="M40 540 A460 460 0 0 1 960 540 L900 540 A400 400 0 0 0 100 540 Z" fill="url(#metal)" stroke="#161815" stroke-width="3"/>
-    <path d="M95 540 A405 405 0 0 1 905 540 L835 540 A335 335 0 0 0 165 540 Z" fill="#d2c5ad" stroke="#23251f" stroke-width="2"/>
-    <path d="M165 540 A335 335 0 0 1 835 540 L790 540 A290 290 0 0 0 210 540 Z" fill="#252925" stroke="#171916" stroke-width="2"/>
-
-    <path class="night" d="M210 540 A290 290 0 0 1 500 250 L500 540 Z" opacity=".52"/>
-    <path class="day" d="M500 250 A290 290 0 0 1 790 540 L500 540 Z" opacity=".92"/>
-
-    <g id="ticks"></g>
-    <g id="tasks"></g>
-
-    <path class="progressBase" d="M245 540 A255 255 0 0 1 755 540"/>
-    <path id="progress" class="progressFill" d="M245 540"/>
-
-    <text x="245" y="493" class="dialText hour">6</text>
-    <text x="245" y="454" class="dialText" style="font-size:30px">☾</text>
-    <text x="755" y="493" class="dialText hour">12</text>
-    <text x="755" y="454" class="dialText" style="font-size:30px">☼</text>
-
-    <path d="M330 540 A170 170 0 0 1 670 540 L650 540 A150 150 0 0 0 350 540 Z" class="core"/>
-    <text x="500" y="420" class="dialText small">VISITANTE</text>
-    <text id="visitor" x="500" y="462" class="dialText visitor">THOMAS</text>
-    <text id="dayLabel" x="500" y="491" class="dialText" style="font-size:13px;font-family:Arial,sans-serif;letter-spacing:2px">DIA 1</text>
-    <text id="time" x="500" y="520" class="time">06:00</text>
-
-    <!-- Needle is intentionally drawn after the core so it can never be hidden by the dial layers. -->
-    <line id="needleShadow" x1="500" y1="540" x2="258" y2="464" stroke="#111" stroke-width="9" stroke-linecap="round" opacity=".55"/>
-    <line id="needle" x1="500" y1="540" x2="258" y2="464" stroke="#d7bd83" stroke-width="5" stroke-linecap="round"/>
-    <circle id="needleTip" cx="258" cy="464" r="7" fill="#e2c98f" stroke="#28251f" stroke-width="3"/>
-
-    <circle cx="500" cy="540" r="35" class="hubOuter"/>
-    <circle cx="500" cy="540" r="11" class="hubInner"/>
-  </svg>
 </div>
 <script>
 (function(){
@@ -72,83 +33,140 @@ var tasks=[
  ['Limpar lente','player'],['Inspecionar gerador','auto'],['Reabastecer','player'],['Checar cais','auto'],['Patrulhar costa','player'],['Regular mecanismo','auto'],['Limpar vidros','player'],['Registrar clima','auto'],['Verificar rádio','player'],['Recolher suprimentos','auto']
 ];
 var colors={player:'#214a64',auto:'#7d342a'};
-var svgNS='http://www.w3.org/2000/svg';
-var ticks=document.getElementById('ticks');
-var taskG=document.getElementById('tasks');
-var needle=document.getElementById('needle');
-var needleShadow=document.getElementById('needleShadow');
-var needleTip=document.getElementById('needleTip');
-var progress=document.getElementById('progress');
-var visitor=document.getElementById('visitor');
-var dayLabel=document.getElementById('dayLabel');
-var timeEl=document.getElementById('time');
-var iVisitor=document.getElementById('iVisitor');
-var iTask=document.getElementById('iTask');
-var iNext=document.getElementById('iNext');
-var iDone=document.getElementById('iDone');
-var startEpoch=Date.now();
+var canvas=document.getElementById('c');
+var ctx=canvas.getContext('2d',{alpha:false});
+var dv=document.getElementById('dv'),dt=document.getElementById('dt'),dh=document.getElementById('dh'),dd=document.getElementById('dd');
+var start=Date.now();
+var W=0,H=0,DPR=1;
 
-function pointOnArc(cx,cy,r,progressValue){
-  var angle=Math.PI-(Math.PI*progressValue); // left -> top -> right
-  return {x:cx+r*Math.cos(angle),y:cy-r*Math.sin(angle)};
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  W=Math.max(1,window.innerWidth); H=Math.max(1,window.innerHeight);
+  canvas.width=Math.round(W*DPR); canvas.height=Math.round(H*DPR);
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
 }
 
-for(var i=0;i<=36;i++){
-  var p=i/36;
-  var a=pointOnArc(500,540,276,p);
-  var b=pointOnArc(500,540,(i%6===0?252:260),p);
-  var l=document.createElementNS(svgNS,'line');
-  l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);
-  l.setAttribute('class','tick '+(i%6===0?'major':''));ticks.appendChild(l);
+function point(cx,cy,r,p){
+  var a=Math.PI-(Math.PI*p);
+  return {x:cx+r*Math.cos(a),y:cy-r*Math.sin(a)};
+}
+function arc(cx,cy,r,p0,p1){
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,Math.PI-Math.PI*p0,Math.PI-Math.PI*p1,true);
+}
+function fitText(text,maxWidth,base){
+  var s=base;ctx.font=s+'px Georgia';
+  while(s>8 && ctx.measureText(text).width>maxWidth){s--;ctx.font=s+'px Georgia';}
+  return s;
+}
+function drawInstrument(p,dayIndex,current){
+  var mobile=W<700;
+  var scale=Math.min(W/1000,H/650);
+  if(mobile) scale=Math.min(W/760,H/650);
+  var cx=W/2;
+  var cy=H-(mobile?10:20);
+  var R=Math.min(W*(mobile?.72:.46),H*.62);
+  if(R<220) R=220;
+
+  // fog/world wash
+  ctx.fillStyle='#0b1012';ctx.fillRect(0,0,W,H);
+  var g=ctx.createRadialGradient(cx,H*.44,20,cx,H*.44,Math.max(W,H)*.75);
+  g.addColorStop(0,'#30464d');g.addColorStop(.45,'#17252a');g.addColorStop(1,'#090d0f');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  // outer metal arcs
+  ctx.save();
+  ctx.lineCap='butt';
+  ctx.lineWidth=56;ctx.strokeStyle='#31352f';arc(cx,cy,R,.02,.98);ctx.stroke();
+  ctx.lineWidth=5;ctx.strokeStyle='#9c9078';arc(cx,cy,R+28,.02,.98);ctx.stroke();
+  ctx.lineWidth=2;ctx.strokeStyle='#c0b49a';arc(cx,cy,R+21,.02,.98);ctx.stroke();
+
+  // task band
+  var taskR=R-36;
+  for(var i=0;i<10;i++){
+    var a0=i/10+.008,a1=(i+1)/10-.008;
+    ctx.globalAlpha=i<current?.18:(i===current?1:.82);
+    ctx.lineWidth=i===current?52:42;
+    ctx.strokeStyle=colors[tasks[i][1]];
+    arc(cx,cy,taskR,a0,a1);ctx.stroke();
+    ctx.globalAlpha=1;
+
+    var mid=point(cx,cy,taskR,(i+.5)/10);
+    var fs=fitText(tasks[i][0],70,mobile?10:12);
+    ctx.font=fs+'px Georgia';ctx.fillStyle='#efe6d6';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(tasks[i][0],mid.x,mid.y);
+  }
+
+  // inner dial background
+  ctx.lineWidth=72;ctx.strokeStyle='#d2c6ae';arc(cx,cy,R-112,.04,.96);ctx.stroke();
+  ctx.lineWidth=62;ctx.strokeStyle='#2b302d';arc(cx,cy,R-154,.05,.95);ctx.stroke();
+
+  // day/night sectors
+  ctx.globalAlpha=.72;
+  ctx.lineWidth=48;ctx.strokeStyle='#30383a';arc(cx,cy,R-196,.06,.5);ctx.stroke();
+  ctx.strokeStyle='#c8bda6';arc(cx,cy,R-196,.5,.94);ctx.stroke();
+  ctx.globalAlpha=1;
+
+  // ticks
+  for(var t=0;t<=36;t++){
+    var tp=t/36;
+    var outer=point(cx,cy,R-178,tp);
+    var inner=point(cx,cy,R-(t%6===0?206:198),tp);
+    ctx.beginPath();ctx.moveTo(outer.x,outer.y);ctx.lineTo(inner.x,inner.y);
+    ctx.strokeStyle='#30322d';ctx.lineWidth=t%6===0?2:1;ctx.stroke();
+  }
+
+  // progress arc
+  ctx.lineWidth=7;ctx.strokeStyle='#5d584c';arc(cx,cy,R-232,0,1);ctx.stroke();
+  ctx.lineWidth=9;ctx.strokeStyle='#a98d59';ctx.lineCap='round';arc(cx,cy,R-232,0,p);ctx.stroke();ctx.lineCap='butt';
+
+  // moon/sun markers
+  var lp=point(cx,cy,R-220,.03),rp=point(cx,cy,R-220,.97);
+  ctx.textAlign='center';ctx.fillStyle='#222521';ctx.font='bold '+(mobile?25:31)+'px Georgia';
+  ctx.fillText('6',lp.x,lp.y+18);ctx.fillText('12',rp.x,rp.y+18);
+  ctx.font=(mobile?24:30)+'px Georgia';ctx.fillText('☾',lp.x,lp.y-18);ctx.fillText('☼',rp.x,rp.y-18);
+
+  // visitor core plate
+  var coreR=R-292;
+  if(coreR<105) coreR=105;
+  ctx.beginPath();ctx.arc(cx,cy,coreR,Math.PI,0);ctx.closePath();ctx.fillStyle='#cec1a9';ctx.fill();
+  ctx.strokeStyle='#4d4a40';ctx.lineWidth=2;ctx.stroke();
+
+  var visitor=visitors[dayIndex%visitors.length];
+  ctx.fillStyle='#282922';ctx.textAlign='center';
+  ctx.font=(mobile?10:12)+'px Arial';ctx.fillText('V I S I T A N T E',cx,cy-coreR*.62);
+  ctx.font='bold '+(mobile?24:34)+'px Georgia';ctx.fillText(visitor,cx,cy-coreR*.34);
+  ctx.font=(mobile?10:12)+'px Arial';ctx.fillText('DIA '+(dayIndex+1),cx,cy-coreR*.12);
+
+  // needle: direct Canvas drawing, no SVG/CSS transform
+  var tip=point(cx,cy,R-208,p);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tip.x+3,tip.y+3);ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=9;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tip.x,tip.y);ctx.strokeStyle='#ead19a';ctx.lineWidth=5;ctx.stroke();
+  ctx.beginPath();ctx.arc(tip.x,tip.y,7,0,Math.PI*2);ctx.fillStyle='#f1d99f';ctx.fill();ctx.strokeStyle='#28251f';ctx.lineWidth=2;ctx.stroke();
+
+  // hub
+  ctx.beginPath();ctx.arc(cx,cy,34,0,Math.PI*2);ctx.fillStyle='#252824';ctx.fill();ctx.strokeStyle='#aa8a58';ctx.lineWidth=5;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.fillStyle='#b6955e';ctx.fill();
+  ctx.restore();
 }
 
-var segs=[];
-for(var j=0;j<tasks.length;j++){
-  var start=j/10+0.008,end=(j+1)/10-0.008;
-  var p1=pointOnArc(500,540,372,start),p2=pointOnArc(500,540,372,end);
-  var path=document.createElementNS(svgNS,'path');
-  path.setAttribute('d','M '+p1.x+' '+p1.y+' A 372 372 0 0 0 '+p2.x+' '+p2.y);
-  path.setAttribute('fill','none');path.setAttribute('stroke',colors[tasks[j][1]]);path.setAttribute('stroke-width','54');path.setAttribute('stroke-linecap','butt');path.setAttribute('opacity','1');
-  taskG.appendChild(path);segs.push(path);
-  var mid=pointOnArc(500,540,372,(j+.5)/10);
-  var txt=document.createElementNS(svgNS,'text');txt.setAttribute('x',mid.x);txt.setAttribute('y',mid.y+5);txt.setAttribute('class','taskText');txt.textContent=tasks[j][0];taskG.appendChild(txt);
-}
-
-function buildProgress(p){
-  if(p<=0){progress.setAttribute('d','M 245 540');return;}
-  var end=pointOnArc(500,540,255,p);
-  progress.setAttribute('d','M 245 540 A 255 255 0 '+(p>0.5?1:0)+' 0 '+end.x+' '+end.y);
-}
-
-function update(){
-  var elapsed=Date.now()-startEpoch;
+function frame(){
+  var elapsed=Date.now()-start;
   var dayIndex=Math.floor(elapsed/DAY_MS);
   var p=(elapsed%DAY_MS)/DAY_MS;
-  var hour=6+6*p;
-  var hh=Math.floor(hour),mm=Math.floor((hour-hh)*60);
   var current=Math.min(9,Math.floor(p*10));
   var done=Math.floor(p*10);
-
-  var tip=pointOnArc(500,540,258,p);
-  needle.setAttribute('x2',tip.x);needle.setAttribute('y2',tip.y);
-  needleShadow.setAttribute('x2',tip.x+3);needleShadow.setAttribute('y2',tip.y+3);
-  needleTip.setAttribute('cx',tip.x);needleTip.setAttribute('cy',tip.y);
-  buildProgress(p);
-
-  timeEl.textContent=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
-  var v=visitors[dayIndex%visitors.length];
-  visitor.textContent=v;dayLabel.textContent='DIA '+(dayIndex+1);iVisitor.textContent=v;
-  iTask.textContent=tasks[current][0];iNext.textContent=current<9?tasks[current+1][0]:'Encerramento do turno';iDone.textContent=done+'/10';
-
-  for(var k=0;k<segs.length;k++){
-    if(k<current){segs[k].setAttribute('opacity','.18');segs[k].setAttribute('stroke-width','54');}
-    else if(k===current){segs[k].setAttribute('opacity','1');segs[k].setAttribute('stroke-width','64');}
-    else{segs[k].setAttribute('opacity','.82');segs[k].setAttribute('stroke-width','54');}
-  }
+  var h=6+6*p,hh=Math.floor(h),mm=Math.floor((h-hh)*60);
+  var time=(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm;
+  drawInstrument(p,dayIndex,current);
+  dv.textContent=visitors[dayIndex%visitors.length];dt.textContent=tasks[current][0];dh.textContent=time;dd.textContent=done+'/10';
 }
 
-update();
-window.setInterval(update,100);
+resize();frame();
+window.addEventListener('resize',function(){resize();frame();});
+window.addEventListener('orientationchange',function(){setTimeout(function(){resize();frame();},250);});
+setInterval(frame,80);
 })();
 </script>
 </body>
