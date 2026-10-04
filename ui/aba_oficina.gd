@@ -2,6 +2,12 @@ extends Aba
 
 var _aviso := ""
 
+const NOMES_CATEGORIA := {
+	"aspiracao": "Aspiração", "lightweight": "Peso", "brake": "Freios", "muffler": "Escapamento",
+	"portpolish": "Polimento de dutos", "enginebalance": "Balanceamento", "displacement": "Cilindrada",
+	"computer": "Computador", "intercooler": "Intercooler",
+}
+
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Oficina")
@@ -24,9 +30,12 @@ func construir() -> void:
 	titulo("Peças")
 	var por_categoria := {}
 	for p in dados.lista("pecas"):
+		# Peças do GT2 são de um carro só: as dos outros nem aparecem.
+		if not p.get("carros_permitidos", []).is_empty() and not c.id in p["carros_permitidos"]:
+			continue
 		por_categoria.get_or_add(p["categoria"], []).append(p)
 	for cat in por_categoria:
-		texto(cat.capitalize(), Color(0.7, 0.8, 1.0))
+		texto(NOMES_CATEGORIA.get(cat, cat.capitalize()), Color(0.7, 0.8, 1.0))
 		for p in por_categoria[cat]:
 			var instalada: bool = c.pecas.get(cat, {}).get("id") == p["id"]
 			var possuida: bool = p["id"] in c.pecas_possuidas

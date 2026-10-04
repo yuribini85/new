@@ -77,6 +77,9 @@ func carregar(dir: String) -> void:
 		for item in lista:
 			_validar_item(arquivo, item)
 			_listas[arquivo][str(item.get("id"))] = item
+	var tem_usados := false
+	for c in _listas["carros"].values():
+		tem_usados = tem_usados or c.get("usado_dias") != null
 	for arquivo in OBJETOS:
 		_objetos[arquivo] = {}
 		var obj = _ler_json(dir + arquivo + ".json")
@@ -87,7 +90,8 @@ func carregar(dir: String) -> void:
 		for chave in OBJETOS[arquivo]:
 			if not obj.has(chave):
 				_erros.append("%s.json sem chave %s" % [arquivo, chave])
-			elif obj[chave] == null:
+			elif obj[chave] == null and not (chave.begins_with("usado_") and not tem_usados):
+				# Parâmetros de usados só importam se algum carro aparece no usado.
 				_pendencias.append("%s.json: %s" % [arquivo, chave])
 	_validar_referencias()
 

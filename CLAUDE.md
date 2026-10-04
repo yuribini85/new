@@ -25,7 +25,10 @@ apresente as opções já com a recomendada e o motivo, preferindo a solução d
 números de balanceamento, sugira o critério ou a fonte (ex.: valor do GT2 a extrair), não
 o valor inventado.
 
-**Balanceamento fica em JSON externo** (`data/`), nunca embutido no código.
+**Balanceamento fica em JSON externo** (`data/`), nunca embutido no código. Os números
+vêm do disco do GT2 pelo fluxo `tools/extrair_gt2.py` → `tools/importar_gt2.py` →
+`tools/calibrar_licencas.gd` (ver `data/README.md`). Não edite à mão os arquivos que o
+importador gera; ajuste a conversão no importador.
 
 **Simulação separada da visualização.** A corrida é resolvida sem renderizar; a tela só
 lê o resultado.

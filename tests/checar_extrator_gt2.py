@@ -125,9 +125,19 @@ def montar():
         "Chassis": [{"CarId": id_carro("hat93"), "Weight": 1050, "FrontGrip": 90, "RearGrip": 88},
                     {"CarId": id_carro("cup95"), "Weight": 1300, "FrontGrip": 95, "RearGrip": 99}],
         "Drivetrain": [{"CarId": id_carro("hat93"), "DrivetrainType": 1}, {"CarId": id_carro("cup95"), "DrivetrainType": 2}],
-        "Car": [{"CarId": id_carro("hat93"), "Engine": 0, "Chassis": 0, "Drivetrain": 0, "NameFirstPart": 0,
+        "Brake": [{"CarId": id_carro("hat93"), "Stage": 0, "BrakingPower": 40},
+                  {"CarId": id_carro("cup95"), "Stage": 0, "BrakingPower": 60},
+                  {"CarId": id_carro("hat93"), "Stage": 1, "BrakingPower": 50, "Price": 3500}],
+        "NATune": [{"CarId": id_carro("hat93"), "Stage": 1, "PowerMultiplier": 110, "Price": 4000}],
+        "TurbineKit": [{"CarId": id_carro("cup95"), "Stage": 2, "HighRPMPowerMultiplier": 140, "Price": 20000}],
+        "Lightweight": [{"CarId": id_carro("hat93"), "Stage": 1, "Weight": 945, "Price": 2500}],
+        "TiresFront": [{"CarId": id_carro("hat93"), "Stage": 0, "GripMultiplier": 100},
+                       {"CarId": id_carro("hat93"), "Stage": 1, "GripMultiplier": 110, "Price": 1000},
+                       {"CarId": id_carro("cup95"), "Stage": 0, "GripMultiplier": 120},
+                       {"CarId": id_carro("cup95"), "Stage": 1, "GripMultiplier": 126, "Price": 3000}],
+        "Car": [{"CarId": id_carro("hat93"), "Engine": 0, "Chassis": 0, "Drivetrain": 0, "Brake": 0, "NameFirstPart": 0,
                  "NameSecondPart": 1, "Year": 93, "Price": 17500},
-                {"CarId": id_carro("cup95"), "Engine": 1, "Chassis": 1, "Drivetrain": 1, "NameFirstPart": 2,
+                {"CarId": id_carro("cup95"), "Engine": 1, "Chassis": 1, "Drivetrain": 1, "Brake": 1, "NameFirstPart": 2,
                  "NameSecondPart": 3, "Year": 95, "Price": 52000}],
     })
     race = gtdt(ORDEM_GTMODE_RACE, {
@@ -167,6 +177,55 @@ def main():
                           ev[0]["premios_x100"], ev[0]["carros_premio"], ev[0]["adversarios"]) != (
                     "Copa Teste", "Pista Teste", "3", "B", "FF", "25 15 0 0 0 0", "cup95", "4 7"):
                 falhas.append(f"bruto={bruto}: eventos {ev}")
+    # Importador sobre a saída do extrator.
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = pathlib.Path(tmp)
+        img = tmp / "disco.iso"
+        img.write_bytes(iso("GT2.VOL", vol, False))
+        subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--disco", str(img), "--saida", str(tmp / "gt2")],
+                       capture_output=True, check=True)
+        (tmp / "ref.csv").write_text(
+            "id,nome,fabricante,arquetipo,categoria,tracao,ref_real,codigo_gt2\n"
+            "hayase_x,Hayase X,hayase,hatch,compacto,FF,Hatch Teste,hat93\n"
+            "hartwig_y,Hartwig Y,hartwig,cupe,cupe,FR,Cupe Turbo,cup95\n", encoding="utf-8")
+        dados = tmp / "data"
+        dados.mkdir()
+        for arq in ("economia", "carreira"):
+            (dados / f"{arq}.json").write_text((raiz / "data" / f"{arq}.json").read_text())
+        r = subprocess.run([sys.executable, str(raiz / "tools/importar_gt2.py"), "--gt2", str(tmp / "gt2"),
+                            "--ref", str(tmp / "ref.csv"), "--data", str(dados)], capture_output=True, text=True)
+        if r.returncode:
+            falhas.append(f"importador falhou: {r.stderr.strip()[-500:]}")
+        else:
+            import json
+            carregar = lambda n: json.loads((dados / f"{n}.json").read_text())
+            carros = {c["id"]: c for c in carregar("carros")}
+            x, y = carros["hayase_x"], carros["hartwig_y"]
+            if (x["potencia"], x["peso"], x["preco"], x["ano"], x["tracao"], y["tracao"]) != (160, 1050, 17500, 1993, "FF", "FR"):
+                falhas.append(f"importador carros: {x} {y}")
+            # aderência: médias 89 e 97, mediana 93; freio: 40 e 60, mediana 50
+            if (x["aderencia"], y["aderencia"], x["freio"], y["freio"]) != (round(89 / 93, 3), round(97 / 93, 3), 0.8, 1.0):
+                falhas.append(f"importador normalização: {x} {y}")
+            pecas = {p["id"]: p for p in carregar("pecas")}
+            esperado = {"hayase_x_natune_1": ("aspiracao", "potencia", 1.1, 4000),
+                        "hartwig_y_turbinekit_2": ("aspiracao", "potencia", 1.4, 20000),
+                        "hayase_x_lightweight_1": ("lightweight", "peso", 0.9, 2500),
+                        "hayase_x_brake_1": ("brake", "freio", 1.25, 3500)}
+            for pid, (cat, attr, val, preco) in esperado.items():
+                p = pecas.get(pid)
+                if not p or (p["categoria"], p["efeitos"][0]["atributo"], p["efeitos"][0]["valor"], p["preco"]) != (cat, attr, val, preco):
+                    falhas.append(f"importador peça {pid}: {p}")
+            pneus = {p["id"]: p for p in carregar("pneus")}
+            if pneus.get("gt2_pneu_1", {}).get("aderencia") != {"seco": 1.075, "chuva": 1.075} or pneus["gt2_pneu_1"]["preco"] != 2000:
+                falhas.append(f"importador pneus: {pneus}")
+            ev = carregar("eventos")
+            if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "B"} \
+                    or ev[0]["premios"] != [2500, 1500] or ev[0]["carro_premio"] != "hartwig_y" \
+                    or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
+                falhas.append(f"importador eventos: {ev}")
+            lic = carregar("licencas")
+            if [l["id"] for l in lic] != ["B", "A"] or lic[0]["testes"][0]["restricoes"] != {"potencia_max": 200}:
+                falhas.append(f"importador licenças: {lic}")
     # Modo --pasta com arquivos soltos (como sai de uma ferramenta de VOL).
     with tempfile.TemporaryDirectory() as tmp:
         pasta = pathlib.Path(tmp) / "vol"

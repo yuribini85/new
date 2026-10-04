@@ -1,6 +1,6 @@
 {
 	"saldo_inicial": null,
-	"fracao_revenda": null,
+	"fracao_revenda": 0.5,
 	"pneu_de_fabrica": null,
 	"usado_periodo_dias": null,
 	"usado_km_min": null,

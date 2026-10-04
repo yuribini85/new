@@ -46,7 +46,9 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `amostra_dt_s` | intervalo das amostras para a visualização | definido (técnico) |
 | `tempo_max_s` | trava de segurança da corrida | definido (técnico) |
 | `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | 6,0 (comprimento de um carro + margem; confirmar em playtest) |
-| `sigma_ruido` | desvio do ruído por volta para consistência 0 | **pendente** |
+| `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,0 — **a confirmar** (o GT2 não tem; sem ruído até o playtest) |
+| `cda_m2` | área frontal × coeficiente de arrasto, igual para todos | 0,6 — **a confirmar** (o GT2 não guarda arrasto de carro de rua) |
+| `densidade_ar_kg_m3` | densidade do ar | 1,225 (nível do mar) |
 | `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 (distribuição de peso típica; confirmar em playtest) |
 
 ## economia.json
@@ -54,7 +56,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | Chave | O que é | Estado |
 |---|---|---|
 | `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
-| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | **pendente** |
+| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | 0,5 — **a confirmar** no GT2 |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
 | `usado_periodo_dias` | de quantos em quantos dias o estoque de usados muda | **pendente** |
 | `usado_km_min`, `usado_km_max` | faixa da quilometragem sorteada | **pendente** |
@@ -124,3 +126,21 @@ título do jogo.
    arquivo `.gdignore` vazio na pasta para o Godot não importar o CSV como tradução.
 2. `tools/converter_carros.py referencia/carros.csv > data/carros.json`
 3. A coluna `ref_real` é descartada; só nome fictício e arquétipo entram no jogo.
+
+## Dados do GT2 (fonte de todo o balanceamento)
+
+Fluxo, a partir de uma cópia legítima do disco (Simulation Disc, SCUS-94488):
+
+```
+python3 tools/extrair_gt2.py --disco "Gran Turismo 2 (Simulation).bin"   # -> referencia/gt2/
+python3 tools/importar_gt2.py --sugerir      # liga cada carro nosso a um carro do GT2 (revise)
+python3 tools/importar_gt2.py                # -> data/carros, pecas, pneus, pilotos_ia, eventos, licencas...
+godot --headless --script res://tools/calibrar_licencas.gd   # tempos das licenças
+```
+
+`referencia/` nunca vai para o Git. O que entra em `data/` são os números convertidos
+para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.py`.
+
+**A confirmar** (não vêm do GT2): `fracao_revenda`, parâmetros de usados (a tabela de
+usados do GT2 ainda não é extraída), `teto_offline_s` (8 h, decisão de design),
+`sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).
