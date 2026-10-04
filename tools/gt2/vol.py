@@ -61,16 +61,32 @@ def ler_indice(vol: bytes) -> dict[str, tuple[int, int]]:
     return indice
 
 
-def extrair(vol: bytes, indice: dict, sufixo: str) -> tuple[str, bytes]:
-    """Primeiro arquivo cujo caminho termina em `sufixo` (com ou sem .gz), já descompactado."""
-    for nome, (inicio, tamanho) in sorted(indice.items()):
+def escolher(indice: dict, sufixo: str, regiao: str = "usa") -> str:
+    """Caminho do arquivo terminado em `sufixo` (com ou sem .gz).
+
+    Há uma cópia por região/idioma (usa_, eng_, jpn_...): prefere `regiao`_,
+    depois um sem prefixo, depois o primeiro em ordem alfabética.
+    """
+    candidatos = []
+    for nome in sorted(indice):
         base = nome[:-3] if nome.lower().endswith(".gz") else nome
-        if base.lower().endswith(sufixo.lower()):
-            dados = vol[inicio:inicio + tamanho]
-            if dados[:2] == b"\x1f\x8b":
-                dados = descompactar(dados)
-            return nome, dados
-    raise FileNotFoundError(f"nenhum arquivo terminado em {sufixo} no VOL")
+        folha = base.lower().rsplit("/", 1)[-1]
+        if folha.endswith(sufixo.lower()):
+            prioridade = 0 if folha.startswith(regiao.lower() + "_") else (1 if folha == sufixo.lower() else 2)
+            candidatos.append((prioridade, nome))
+    if not candidatos:
+        raise FileNotFoundError(f"nenhum arquivo terminado em {sufixo}")
+    return min(candidatos)[1]
+
+
+def extrair(vol: bytes, indice: dict, sufixo: str, regiao: str = "usa") -> tuple[str, bytes]:
+    """Conteúdo (descompactado) do arquivo escolhido por escolher()."""
+    nome = escolher(indice, sufixo, regiao)
+    inicio, tamanho = indice[nome]
+    dados = vol[inicio:inicio + tamanho]
+    if dados[:2] == b"\x1f\x8b":
+        dados = descompactar(dados)
+    return nome, dados
 
 
 def descompactar(dados: bytes) -> bytes:

@@ -32,13 +32,13 @@ def carregar_arquivos(args) -> dict[str, bytes]:
     """Retorna {'gtmode_data', 'gtmode_race', 'unistrdb'} em bytes, descompactados."""
     if args.pasta:
         pasta = pathlib.Path(args.pasta)
+        arquivos = {p.relative_to(pasta).as_posix(): p for p in pasta.rglob("*") if p.is_file()}
         def achar(sufixo):
-            for p in sorted(pasta.rglob("*")):
-                base = p.name[:-3] if p.name.lower().endswith(".gz") else p.name
-                if base.lower().endswith(sufixo):
-                    d = p.read_bytes()
-                    return p.name, gtvol.descompactar(d) if d[:2] == b"\x1f\x8b" else d
-            raise FileNotFoundError(f"nenhum *{sufixo} em {pasta}")
+            # Mesmo critério de região do VOL; aqui o "VOL" é a pasta.
+            indice = {nome: (0, 0) for nome in arquivos}
+            nome = gtvol.escolher(indice, sufixo, args.regiao)
+            d = arquivos[nome].read_bytes()
+            return nome, gtvol.descompactar(d) if d[:2] == b"\x1f\x8b" else d
     else:
         if args.disco:
             import disco as gtdisco
@@ -51,13 +51,14 @@ def carregar_arquivos(args) -> dict[str, bytes]:
             dados_vol = pathlib.Path(args.vol).read_bytes()
         indice = gtvol.ler_indice(dados_vol)
         def achar(sufixo):
-            return gtvol.extrair(dados_vol, indice, sufixo)
+            return gtvol.extrair(dados_vol, indice, sufixo, args.regiao)
 
-    nome_data, data = achar("gtmode_data.dat")
-    prefixo = nome_data.split("/")[-1].split("_")[0] + "_" if "_gtmode" in nome_data else ""
-    _, race = achar(f"{prefixo}gtmode_race.dat" if prefixo else "gtmode_race.dat")
-    _, unistr = achar(f"{prefixo}unistrdb.dat" if prefixo else "unistrdb.dat")
-    print(f"gtmode_data: {nome_data} ({len(data)} bytes)", file=sys.stderr)
+    lidos = {}
+    for chave, sufixo in (("gtmode_data", "gtmode_data.dat"), ("gtmode_race", "gtmode_race.dat"),
+                          ("unistrdb", "unistrdb.dat")):
+        nome, lidos[chave] = achar(sufixo)
+        print(f"{chave}: {nome} ({len(lidos[chave])} bytes)", file=sys.stderr)
+    data, race, unistr = lidos["gtmode_data"], lidos["gtmode_race"], lidos["unistrdb"]
     return {"gtmode_data": data, "gtmode_race": race, "unistrdb": unistr}
 
 
@@ -125,6 +126,7 @@ def main() -> int:
     g.add_argument("--vol")
     g.add_argument("--pasta")
     ap.add_argument("--saida", default="referencia/gt2")
+    ap.add_argument("--regiao", default="usa", help="prefixo preferido (usa, eng, jpn...)")
     args = ap.parse_args()
 
     arquivos = carregar_arquivos(args)

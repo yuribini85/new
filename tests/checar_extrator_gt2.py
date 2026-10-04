@@ -136,8 +136,9 @@ def montar():
                    "PrizeCars": [id_carro("cup95"), 0, 0, 0], "Opponent1": 4, "Opponent2": 7}],
         "EnemyCars": [{"CarId": id_carro("hat93")}],
     }, extra=ascii_tab(["Copa Teste", "Pista Teste"]))
-    vol = gtfs({"eng_gtmode_data.dat.gz": gzip.compress(data), "eng_gtmode_race.dat": race,
-                "eng_unistrdb.dat": unistr(nomes)})
+    # Cópias de outra região com lixo: o extrator deve preferir usa_.
+    vol = gtfs({"eng_gtmode_data.dat.gz": b"lixo", "usa_gtmode_data.dat.gz": gzip.compress(data),
+                "usa_gtmode_race.dat": race, "eng_unistrdb.dat": b"lixo", "usa_unistrdb.dat.gz": gzip.compress(unistr(nomes))})
     return vol
 
 
@@ -166,10 +167,23 @@ def main():
                           ev[0]["premios_x100"], ev[0]["carros_premio"], ev[0]["adversarios"]) != (
                     "Copa Teste", "Pista Teste", "3", "B", "FF", "25 15 0 0 0 0", "cup95", "4 7"):
                 falhas.append(f"bruto={bruto}: eventos {ev}")
+    # Modo --pasta com arquivos soltos (como sai de uma ferramenta de VOL).
+    with tempfile.TemporaryDirectory() as tmp:
+        pasta = pathlib.Path(tmp) / "vol"
+        (pasta / "carparam").mkdir(parents=True)
+        import vol as gtvol
+        indice = gtvol.ler_indice(vol)
+        for nome, (ini, tam) in indice.items():
+            (pasta / "carparam" / nome).write_bytes(vol[ini:ini + tam])
+        saida = pathlib.Path(tmp) / "saida"
+        r = subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--pasta", str(pasta),
+                            "--saida", str(saida)], capture_output=True, text=True)
+        if r.returncode or not (saida / "carros.csv").exists():
+            falhas.append(f"pasta: {r.stderr.strip()[-400:]}")
     for f in falhas:
         print("FAIL extrator GT2: " + f)
     if not falhas:
-        print("ok   extrator GT2 (disco sintético ISO e bruto)")
+        print("ok   extrator GT2 (disco sintético ISO, bruto e pasta)")
     return 1 if falhas else 0
 
 
