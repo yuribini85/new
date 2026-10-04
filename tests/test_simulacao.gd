@@ -82,3 +82,14 @@ func test_pneu_de_chuva_vence_na_chuva() -> void:
 	], 5)
 	igual(r["classificacao"], ["com_chuva", "so_seco"], "classificação na chuva")
 	d.free()
+
+
+func test_sem_amostras_da_o_mesmo_resultado() -> void:
+	var d := dados_fixture()
+	var ps := [_participante(d, "a", "forte", "erratico"), _participante(d, "b", "fraco", "erratico")]
+	var com := _correr(d, "oval", ps, 3, 9)
+	var sem := Simulacao.correr(d.pista("oval"), ps, 3, d.simulacao(), 9, false)
+	igual(sem["carros"], com["carros"], "mesmo resultado")
+	igual(sem["duracao"], com["duracao"], "mesma duração")
+	igual(sem["amostras"].size(), 1, "só a amostra final")
+	d.free()

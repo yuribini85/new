@@ -24,7 +24,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float) -> Stri
 	if repeticoes < 1:
 		return "repetições deve ser ao menos 1"
 	var semente := _nova_semente()
-	var teste := carreira.preparar(evento_id, uid, semente)
+	var teste := carreira.preparar(evento_id, uid, semente, false)
 	if teste.has("erro"):
 		return teste["erro"]
 	jogador.fila = {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente}
@@ -64,7 +64,7 @@ func processar(agora: float) -> Dictionary:
 
 	while not jogador.fila.is_empty():
 		var f: Dictionary = jogador.fila
-		var c := carreira.preparar(f["evento_id"], f["uid"], f["semente"])
+		var c := carreira.preparar(f["evento_id"], f["uid"], f["semente"], false)
 		if c.has("erro"):
 			rel["erro"] = c["erro"]
 			cancelar()

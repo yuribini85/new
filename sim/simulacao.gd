@@ -21,8 +21,10 @@ const PARAMS := [
 
 ## participantes: em ordem de grid, cada um
 ##   {"id": String, "atributos": Carro.atributos_efetivos(), "piloto": {ritmo, consistencia, agressividade}}
-## Retorna {"classificacao", "carros", "amostras", "comprimento"}.
-static func correr(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int) -> Dictionary:
+## Retorna {"classificacao", "carros", "amostras", "comprimento", "duracao"}.
+## com_amostras = false (offline) guarda só a amostra final; o resultado é o mesmo.
+static func correr(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int,
+		com_amostras: bool = true) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
 
@@ -71,53 +73,91 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 					float(a["velocidade_max"]) * KMH_PARA_MS, fator))
 		carros.append(c)
 
+	# Estado quente em arrays: o laço roda dezenas de milhares de vezes por
+	# corrida e o offline resolve muitas corridas de uma vez.
+	var total := carros.size()
+	var s_arr := PackedFloat64Array()
+	var v_arr := PackedFloat64Array()
+	var acel_arr := PackedFloat64Array()
+	var pot_arr := PackedFloat64Array()
+	var massa_arr := PackedFloat64Array()
+	for c in carros:
+		s_arr.append(c["s"])
+		v_arr.append(0.0)
+		acel_arr.append(c["acel_tracao"])
+		pot_arr.append(c["potencia_w"])
+		massa_arr.append(c["massa"])
+	var envs := []
+	for c in carros:
+		envs.append(c["envelopes"])
+	# Índices dos carros ainda correndo, mantidos em ordem de corrida.
+	var ativos: Array[int] = []
+	for k in total:
+		ativos.append(k)
+
 	var amostras := []
 	var proxima_amostra := 0.0
 	var t := 0.0
 	var tempo_max := float(params["tempo_max_s"])
-	var distancia_final := voltas * comprimento
+	var amostra_dt := float(params["amostra_dt_s"])
 
-	while t < tempo_max:
-		var ativos := carros.filter(func(c): return not c["terminou"])
-		if ativos.is_empty():
-			break
+	while t < tempo_max and not ativos.is_empty():
 		if t >= proxima_amostra:
-			amostras.append(_amostra(t, carros))
-			proxima_amostra += float(params["amostra_dt_s"])
+			if com_amostras:
+				amostras.append(_amostra(t, carros, s_arr))
+			proxima_amostra += amostra_dt
 
-		# Ordem de corrida antes do passo: o da frente resolve primeiro.
-		ativos.sort_custom(func(x, y): return x["s"] > y["s"])
-		var frente: Dictionary = {}
-		for c in ativos:
-			var s_antes: float = c["s"]
-			var volta := clampi(floori(s_antes / comprimento), 0, voltas - 1)
+		# Ordem de corrida antes do passo: o da frente resolve primeiro. A
+		# ordem muda pouco entre passos, então inserção é quase linear.
+		for k in range(1, ativos.size()):
+			var j := k
+			while j > 0 and s_arr[ativos[j - 1]] < s_arr[ativos[j]]:
+				var tmp := ativos[j - 1]
+				ativos[j - 1] = ativos[j]
+				ativos[j] = tmp
+				j -= 1
+
+		var frente := -1
+		var terminaram := false
+		for idx in ativos:
+			var s_antes := s_arr[idx]
+			var volta_atual := floori(s_antes / comprimento)
+			var volta := clampi(volta_atual, 0, voltas - 1)
 			var i := int(fposmod(s_antes, comprimento) / passo) % n
-			var env: PackedFloat64Array = c["envelopes"][volta]
+			var env: PackedFloat64Array = envs[idx][volta]
 			var limite := minf(env[i], env[(i + 1) % n])
-			var v: float = c["v"]
-			var acel: float = c["acel_tracao"]
+			var v := v_arr[idx]
+			var acel := acel_arr[idx]
 			if v > 0.0:
-				acel = minf(acel, c["potencia_w"] / (c["massa"] * v))
+				acel = minf(acel, pot_arr[idx] / (massa_arr[idx] * v))
 			var v_novo := minf(v + acel * dt, limite)
 			var s_novo := s_antes + (v + v_novo) * 0.5 * dt
 
-			if not frente.is_empty() and s_novo > frente["s"] - dmin:
-				if not _pode_passar(c, zonas[i], volta, v_novo, frente["v"], rng):
-					s_novo = maxf(s_antes, frente["s"] - dmin)
-					v_novo = minf(v_novo, frente["v"])
+			if frente >= 0 and s_novo > s_arr[frente] - dmin:
+				if not _pode_passar(carros[idx], zonas[i], volta, v_novo, v_arr[frente], rng):
+					s_novo = maxf(s_antes, s_arr[frente] - dmin)
+					v_novo = minf(v_novo, v_arr[frente])
 
-			c["s"] = s_novo
-			c["v"] = v_novo
-			_registrar_passagem(c, s_antes, s_novo, t, dt, comprimento, voltas)
-			frente = c
+			s_arr[idx] = s_novo
+			v_arr[idx] = v_novo
+			if floori(s_novo / comprimento) > volta_atual:
+				_registrar_passagem(carros[idx], s_antes, s_novo, t, dt, comprimento, voltas)
+				terminaram = terminaram or carros[idx]["terminou"]
+			frente = idx
+		if terminaram:
+			ativos = ativos.filter(func(k): return not carros[k]["terminou"])
 		t += dt
 
-	amostras.append(_amostra(t, carros))
+	for k in total:
+		carros[k]["s"] = s_arr[k]
+		carros[k]["v"] = v_arr[k]
+	amostras.append(_amostra(t, carros, s_arr))
 	return {
-		"classificacao": _classificar(carros, distancia_final),
+		"classificacao": _classificar(carros),
 		"carros": _resumo(carros),
 		"amostras": amostras,
 		"comprimento": comprimento,
+		"duracao": t,
 	}
 
 
@@ -134,8 +174,14 @@ static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio:
 			lim = minf(lim, sqrt(mu * G * raios[i]))
 		env[i] = lim * fator
 	var desacel := freio * mu * G * fator
-	for k in range(2 * n - 1, -1, -1):
-		var i := k % n
+	# O ponto de menor limite nunca é rebaixado pela frenagem; partindo dele,
+	# uma única volta para trás basta.
+	var inicio := 0
+	for i in n:
+		if env[i] < env[inicio]:
+			inicio = i
+	for k in range(n - 1, 0, -1):
+		var i := (inicio + k) % n
 		env[i] = minf(env[i], sqrt(env[(i + 1) % n] ** 2 + 2.0 * desacel * passo))
 	return env
 
@@ -165,15 +211,15 @@ static func _registrar_passagem(c: Dictionary, s_antes: float, s_novo: float, t:
 		c["tempo_total"] = cruzamento
 
 
-static func _amostra(t: float, carros: Array) -> Dictionary:
+static func _amostra(t: float, carros: Array, s_arr: PackedFloat64Array) -> Dictionary:
 	var s := {}
-	for c in carros:
-		s[c["id"]] = c["s"]
+	for k in carros.size():
+		s[carros[k]["id"]] = s_arr[k]
 	return {"t": t, "s": s}
 
 
 ## Quem terminou, por tempo; quem não terminou (tempo_max), pela distância.
-static func _classificar(carros: Array, distancia_final: float) -> Array:
+static func _classificar(carros: Array) -> Array:
 	var ordem := carros.duplicate()
 	ordem.sort_custom(func(x, y):
 		if x["terminou"] != y["terminou"]:

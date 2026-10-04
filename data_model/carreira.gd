@@ -26,7 +26,8 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 ## Simula sem alterar nada no jogador. Mesma semente, mesmo resultado — a fila
 ## offline depende disso para recalcular a corrida em andamento após o load.
 ## Retorna {"erro"} ou {"evento_id", "uid", "resultado", "duracao"}.
-func preparar(evento_id: String, uid: int, semente: int) -> Dictionary:
+## com_amostras = false (fila offline) dispensa as posições usadas só pela tela.
+func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
 	if ev.is_empty():
 		return {"erro": "evento %s não existe" % evento_id}
@@ -48,8 +49,8 @@ func preparar(evento_id: String, uid: int, semente: int) -> Dictionary:
 	})
 
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
-			dados.simulacao(), semente)
-	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["amostras"].back()["t"]}
+			dados.simulacao(), semente, com_amostras)
+	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}
 
 
 ## Paga prêmio, entrega carro-prêmio e conta o dia.
