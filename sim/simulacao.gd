@@ -84,12 +84,14 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 	var acel_arr := PackedFloat64Array()
 	var pot_arr := PackedFloat64Array()
 	var massa_arr := PackedFloat64Array()
+	var lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
 	for c in carros:
 		s_arr.append(c["s"])
 		v_arr.append(0.0)
 		acel_arr.append(c["acel_tracao"])
 		pot_arr.append(c["potencia_w"])
 		massa_arr.append(c["massa"])
+		lim_arr.append(0.0)
 	var envs := []
 	for c in carros:
 		envs.append(c["envelopes"])
@@ -135,9 +137,18 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 				acel = minf(acel, pot_arr[idx] / (massa_arr[idx] * v)) - k_arrasto * v * v / massa_arr[idx]
 			var v_novo := clampf(v + acel * dt, 0.0, limite)
 			var s_novo := s_antes + (v + v_novo) * 0.5 * dt
+			lim_arr[idx] = limite
 
 			if frente >= 0 and s_novo > s_arr[frente] - dmin:
-				if not _pode_passar(carros[idx], zonas[i], volta, v_novo, v_arr[frente], rng):
+				# Preso atrás, o carro anda na velocidade do da frente; "mais
+				# rápido" é ter mais potencial ali: limite maior (curva) ou mais
+				# aceleração na mesma velocidade (reta). Melhorar o carro nunca
+				# tira a chance de passar.
+				var vf := v_arr[frente]
+				var mais_rapido := limite > lim_arr[frente] + 0.05 \
+						or _acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto) \
+						> _acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto) + 0.01
+				if not _pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng):
 					s_novo = maxf(s_antes, s_arr[frente] - dmin)
 					v_novo = minf(v_novo, v_arr[frente])
 
@@ -191,14 +202,21 @@ static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio:
 
 ## Na entrada de cada zona, uma vez por volta, a agressividade decide se o
 ## piloto tenta a ultrapassagem. Só passa se estiver mais rápido.
-static func _pode_passar(c: Dictionary, zona: int, volta: int, v: float, v_frente: float,
+static func _pode_passar(c: Dictionary, zona: int, volta: int, mais_rapido: bool,
 		rng: RandomNumberGenerator) -> bool:
 	if zona < 0:
 		return false
 	var chave := "%d:%d" % [volta, zona]
 	if not c["rolagens"].has(chave):
 		c["rolagens"][chave] = rng.randf() < c["agressividade"]
-	return c["rolagens"][chave] and v > v_frente
+	return c["rolagens"][chave] and mais_rapido
+
+
+## Aceleração que o carro teria na velocidade v, sem ninguém na frente.
+static func _acel_livre(acel_tracao: float, potencia_w: float, massa: float, v: float, k_arrasto: float) -> float:
+	if v <= 0.0:
+		return acel_tracao
+	return minf(acel_tracao, potencia_w / (massa * v)) - k_arrasto * v * v / massa
 
 
 static func _registrar_passagem(c: Dictionary, s_antes: float, s_novo: float, t: float,

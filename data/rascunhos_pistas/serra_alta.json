@@ -14,7 +14,8 @@
   },
   {
    "tipo": "reta",
-   "comprimento_m": 170
+   "comprimento_m": 170,
+   "ultrapassagem": true
   },
   {
    "tipo": "curva_lenta",
@@ -24,7 +25,8 @@
   },
   {
    "tipo": "reta",
-   "comprimento_m": 170
+   "comprimento_m": 170,
+   "ultrapassagem": true
   },
   {
    "tipo": "curva_lenta",
@@ -52,7 +54,8 @@
   },
   {
    "tipo": "reta",
-   "comprimento_m": null
+   "comprimento_m": null,
+   "ultrapassagem": true
   },
   {
    "tipo": "curva_media",
@@ -72,7 +75,8 @@
   },
   {
    "tipo": "reta",
-   "comprimento_m": null
+   "comprimento_m": null,
+   "ultrapassagem": true
   },
   {
    "tipo": "curva_media",

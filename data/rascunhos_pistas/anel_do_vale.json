@@ -14,7 +14,8 @@
   },
   {
    "tipo": "reta",
-   "comprimento_m": 150
+   "comprimento_m": 150,
+   "ultrapassagem": true
   },
   {
    "tipo": "curva_media",
@@ -29,7 +30,8 @@
   },
   {
    "tipo": "reta",
-   "comprimento_m": null
+   "comprimento_m": null,
+   "ultrapassagem": true
   },
   {
    "tipo": "curva_lenta",
