@@ -8,6 +8,7 @@ const SUITES := [
 	preload("res://tests/test_pista.gd"),
 	preload("res://tests/test_simulacao.gd"),
 	preload("res://tests/test_concessionaria.gd"),
+	preload("res://tests/test_carreira.gd"),
 ]
 
 

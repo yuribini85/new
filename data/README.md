@@ -17,6 +17,8 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
+| `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcional `carro_premio` |
+| `carreira.json` | objeto `{piloto_jogador}`: id em `pilotos_ia.json` que pilota os carros do jogador |
 
 ## Unidades e semântica
 
@@ -56,3 +58,16 @@ sintéticos (só para teste) em `tests/fixtures/`.
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
 reinstalá-la é grátis; um pneu de cada composto por carro; nada é cobrado se a compra é
 recusada.
+
+## eventos.json
+
+- `condicao`: `seco` ou `chuva`, fixa por evento.
+- `restricoes` (todas opcionais, ver `data_model/elegibilidade.gd`): `potencia_max` (cv
+  efetivos, já com peças), `tracao`, `categoria`, `fabricante` (listas), `ano_min`,
+  `ano_max`, `licenca`.
+- `adversarios`: lista de `{carro, piloto, pecas?, pneus?}`; sem `pneus`, usa o de fábrica.
+- `premios`: dinheiro por posição (índice 0 = 1º). Posições além da lista não recebem.
+
+Regras fixas no código (`data_model/carreira.gd`), seguindo o GT2: o jogador larga em
+último; o prêmio em dinheiro é pago a cada disputa; o carro-prêmio só na primeira vitória;
+cada corrida disputada conta um dia.

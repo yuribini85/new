@@ -26,6 +26,8 @@ func test_referencias_invalidas_sao_erro() -> void:
 	d._listas["carros"]["x"] = {"id": "x", "fabricante": "nenhuma", "tracao": "AWD"}
 	d._objetos["economia"]["pneu_de_fabrica"] = "nenhum"
 	d._erros.clear()
+	d._listas["eventos"]["y"] = {"id": "y", "pista": "nenhuma", "condicao": "neve",
+		"restricoes": {"cor": "azul"}, "adversarios": [{"carro": "fraco", "piloto": "ninguem"}]}
 	d._validar_referencias()
-	igual(d.erros().size(), 3, "erros: %s" % [d.erros()])
+	igual(d.erros().size(), 7, "erros: %s" % [d.erros()])
 	d.free()

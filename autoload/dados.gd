@@ -6,6 +6,7 @@ extends Node
 const DATA_DIR := "res://data/"
 const CarroScript := preload("res://data_model/carro.gd")
 const PistaScript := preload("res://data_model/pista.gd")
+const ElegibilidadeScript := preload("res://data_model/elegibilidade.gd")
 const SimulacaoScript := preload("res://sim/simulacao.gd")
 
 ## arquivo -> campos obrigatórios de cada item da lista.
@@ -19,12 +20,14 @@ const ESQUEMAS := {
 	"pneus": ["id", "aderencia", "preco"],
 	"pistas": ["id", "funcao", "trechos"],
 	"pilotos_ia": ["id", "ritmo", "consistencia", "agressividade"],
+	"eventos": ["id", "nome", "pista", "voltas", "condicao", "restricoes", "adversarios", "premios"],
 }
 
 ## arquivo -> chaves obrigatórias do objeto.
 const OBJETOS := {
 	"simulacao": SimulacaoScript.PARAMS,
 	"economia": ["saldo_inicial", "fracao_revenda", "pneu_de_fabrica"],
+	"carreira": ["piloto_jogador"],
 }
 
 var _listas: Dictionary = {}  # arquivo -> {id -> item}
@@ -106,9 +109,30 @@ func _validar_referencias() -> void:
 		for e in p.get("efeitos", []):
 			if not e.get("atributo") in CarroScript.ATRIBUTOS or not e.get("op") in CarroScript.OPS:
 				_erros.append("pecas.json: '%s' efeito inválido %s" % [p["id"], e])
-	var pneu_fabrica = _objetos.get("economia", {}).get("pneu_de_fabrica")
-	if pneu_fabrica != null and not _listas["pneus"].has(str(pneu_fabrica)):
-		_erros.append("economia.json: pneu_de_fabrica inexistente %s" % pneu_fabrica)
+	_exigir("economia.json: pneu_de_fabrica", "pneus", _objetos.get("economia", {}).get("pneu_de_fabrica"))
+	_exigir("carreira.json: piloto_jogador", "pilotos_ia", _objetos.get("carreira", {}).get("piloto_jogador"))
+	for ev in _listas["eventos"].values():
+		var onde := "eventos.json: '%s'" % ev["id"]
+		_exigir(onde + " pista", "pistas", ev.get("pista"))
+		_exigir(onde + " carro_premio", "carros", ev.get("carro_premio"))
+		if ev.get("condicao") != null and not ev["condicao"] in ["seco", "chuva"]:
+			_erros.append(onde + " condição inválida %s" % ev["condicao"])
+		for chave in ev.get("restricoes", {}):
+			if not chave in ElegibilidadeScript.RESTRICOES:
+				_erros.append(onde + " restrição desconhecida %s" % chave)
+		for adv in ev.get("adversarios", []):
+			_exigir(onde + " adversário carro", "carros", adv.get("carro"))
+			_exigir(onde + " adversário piloto", "pilotos_ia", adv.get("piloto"))
+			for peca_id in adv.get("pecas", []):
+				_exigir(onde + " adversário peça", "pecas", peca_id)
+			for pneu_id in adv.get("pneus", []):
+				_exigir(onde + " adversário pneu", "pneus", pneu_id)
+
+
+## Erro se `id` (quando preenchido) não existe em `arquivo`.
+func _exigir(onde: String, arquivo: String, id: Variant) -> void:
+	if id != null and not _listas[arquivo].has(str(id)):
+		_erros.append("%s cita %s inexistente em %s.json" % [onde, id, arquivo])
 
 
 ## Valores que ainda precisam vir do estudo do GT2 ou de playtest.
@@ -158,3 +182,11 @@ func simulacao() -> Dictionary:
 
 func economia() -> Dictionary:
 	return _objetos["economia"]
+
+
+func carreira() -> Dictionary:
+	return _objetos["carreira"]
+
+
+func evento(id: String) -> Dictionary:
+	return item("eventos", id)

@@ -5,6 +5,12 @@ extends Node
 var economia: Economia
 var garagem: Garagem
 var concessionaria: Concessionaria
+## Ids de licença conquistadas.
+var licencas: Array = []
+## evento_id -> número de vitórias.
+var vitorias: Dictionary = {}
+## Corridas disputadas; cada uma conta um dia (rotação de usados).
+var dias: int = 0
 
 
 func _ready() -> void:
@@ -20,3 +26,6 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	economia = Economia.new(int(regras["saldo_inicial"]))
 	garagem = Garagem.new()
 	concessionaria = Concessionaria.new(economia, garagem, regras, pneu_por_id)
+	licencas = []
+	vitorias = {}
+	dias = 0

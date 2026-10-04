@@ -20,6 +20,11 @@ copiá-las para `data/`.
 **Não invente balanceamento.** Os números virão do estudo do GT2 e de playtest. Se faltar
 algum, pergunte em vez de estimar.
 
+**Toda pergunta de decisão vem com sugestão.** Ao precisar que o usuário decida algo,
+apresente as opções já com a recomendada e o motivo, preferindo a solução do GT2. Para
+números de balanceamento, sugira o critério ou a fonte (ex.: valor do GT2 a extrair), não
+o valor inventado.
+
 **Balanceamento fica em JSON externo** (`data/`), nunca embutido no código.
 
 **Simulação separada da visualização.** A corrida é resolvida sem renderizar; a tela só

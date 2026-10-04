@@ -1,0 +1,12 @@
+[
+	{"id": "aberto", "nome": "Aberto", "pista": "oval", "voltas": 3, "condicao": "seco",
+	 "restricoes": {}, "adversarios": [{"carro": "fraco", "piloto": "perfeito"}],
+	 "premios": [500, 100], "carro_premio": "forte"},
+	{"id": "ff_ate_120", "nome": "Copa FF", "pista": "oval", "voltas": 2, "condicao": "seco",
+	 "restricoes": {"tracao": ["FF"], "potencia_max": 120, "ano_max": 1995},
+	 "adversarios": [], "premios": [10]},
+	{"id": "licenciado", "nome": "Só licenciados", "pista": "oval", "voltas": 2, "condicao": "chuva",
+	 "restricoes": {"licenca": "b"},
+	 "adversarios": [{"carro": "forte", "piloto": "perfeito", "pecas": ["turbo"], "pneus": ["chuva"]}],
+	 "premios": [10, 5]}
+]
