@@ -9,7 +9,7 @@ progressão do Gran Turismo 2. O jogo ainda não existe.
 - `docs/plano_mvp.md` — escopo do primeiro build, sistemas, dados e ordem de implementação
 
 ## Testes
-`godot --headless --script res://tests/run_tests.gd` (depois de `godot --headless --import`).
+`tests/rodar.sh` (aceita o caminho do Godot como argumento). Falha também em erro de script.
 Testar antes de avançar de etapa. Fixtures de `tests/fixtures/` são sintéticas — nunca
 copiá-las para `data/`.
 

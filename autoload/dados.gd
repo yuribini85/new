@@ -4,6 +4,7 @@ extends Node
 ## CLAUDE.md: nenhum número é inventado — o que falta aparece em pendencias().
 
 const DATA_DIR := "res://data/"
+const CarroScript := preload("res://data_model/carro.gd")
 const PistaScript := preload("res://data_model/pista.gd")
 const SimulacaoScript := preload("res://sim/simulacao.gd")
 
@@ -20,8 +21,14 @@ const ESQUEMAS := {
 	"pilotos_ia": ["id", "ritmo", "consistencia", "agressividade"],
 }
 
+## arquivo -> chaves obrigatórias do objeto.
+const OBJETOS := {
+	"simulacao": SimulacaoScript.PARAMS,
+	"economia": ["saldo_inicial", "fracao_revenda", "pneu_de_fabrica"],
+}
+
 var _listas: Dictionary = {}  # arquivo -> {id -> item}
-var _simulacao: Dictionary = {}
+var _objetos: Dictionary = {}  # arquivo -> objeto
 var _pendencias: Array = []
 var _erros: Array = []
 
@@ -49,14 +56,19 @@ func carregar(dir: String) -> void:
 		for item in lista:
 			_validar_item(arquivo, item)
 			_listas[arquivo][str(item.get("id"))] = item
-	var sim = _ler_json(dir + "simulacao.json")
-	if sim is Dictionary:
-		_simulacao = sim
-		for chave in SimulacaoScript.PARAMS:
-			if sim.get(chave) == null:
-				_pendencias.append("simulacao.json: %s" % chave)
-	else:
-		_erros.append("simulacao.json deve ser um objeto")
+	for arquivo in OBJETOS:
+		_objetos[arquivo] = {}
+		var obj = _ler_json(dir + arquivo + ".json")
+		if not obj is Dictionary:
+			_erros.append("%s.json deve ser um objeto" % arquivo)
+			continue
+		_objetos[arquivo] = obj
+		for chave in OBJETOS[arquivo]:
+			if not obj.has(chave):
+				_erros.append("%s.json sem chave %s" % [arquivo, chave])
+			elif obj[chave] == null:
+				_pendencias.append("%s.json: %s" % [arquivo, chave])
+	_validar_referencias()
 
 
 func _ler_json(caminho: String) -> Variant:
@@ -81,6 +93,22 @@ func _validar_item(arquivo: String, item: Variant) -> void:
 	if arquivo == "pistas" and item.has("trechos"):
 		for e in PistaScript.validar(item):
 			_erros.append("pistas.json: '%s' %s" % [item.get("id"), e])
+
+
+## Ids citados em um arquivo precisam existir no arquivo de destino.
+func _validar_referencias() -> void:
+	for c in _listas["carros"].values():
+		if c.get("fabricante") != null and not _listas["fabricantes"].has(str(c["fabricante"])):
+			_erros.append("carros.json: '%s' cita fabricante inexistente %s" % [c["id"], c["fabricante"]])
+		if c.get("tracao") != null and not c["tracao"] in CarroScript.TRACOES:
+			_erros.append("carros.json: '%s' tração inválida %s" % [c["id"], c["tracao"]])
+	for p in _listas["pecas"].values():
+		for e in p.get("efeitos", []):
+			if not e.get("atributo") in CarroScript.ATRIBUTOS or not e.get("op") in CarroScript.OPS:
+				_erros.append("pecas.json: '%s' efeito inválido %s" % [p["id"], e])
+	var pneu_fabrica = _objetos.get("economia", {}).get("pneu_de_fabrica")
+	if pneu_fabrica != null and not _listas["pneus"].has(str(pneu_fabrica)):
+		_erros.append("economia.json: pneu_de_fabrica inexistente %s" % pneu_fabrica)
 
 
 ## Valores que ainda precisam vir do estudo do GT2 ou de playtest.
@@ -125,4 +153,8 @@ func pista(id: String) -> Pista:
 
 
 func simulacao() -> Dictionary:
-	return _simulacao
+	return _objetos["simulacao"]
+
+
+func economia() -> Dictionary:
+	return _objetos["economia"]

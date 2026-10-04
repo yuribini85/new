@@ -8,9 +8,10 @@ colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 ## Estado
 
-Etapas 1 e 2 da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
-validação dos dados, carro com peças e pneus, pista em trechos e simulação de corrida
-headless. Falta o balanceamento real — ver `data/README.md`.
+Etapas 1 a 3 da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
+validação dos dados, carro com peças e pneus, pista em trechos, simulação de corrida
+headless, saldo, garagem e concessionária de novos. Falta o balanceamento real — ver
+`data/README.md`. Ainda não há telas.
 
 ## Estrutura
 
@@ -18,6 +19,10 @@ headless. Falta o balanceamento real — ver `data/README.md`.
 autoload/dados.gd       carga e validação de data/*.json
 data_model/carro.gd     atributos efetivos com peças e escolha automática de pneu
 data_model/pista.gd     pista como lista de trechos tipados
+data_model/economia.gd  saldo
+data_model/garagem.gd   carros possuídos (coleção)
+data_model/concessionaria.gd  compra e venda de carros, peças e pneus
+autoload/jogador.gd     estado do jogador (saldo, garagem, concessionária)
 sim/simulacao.gd        corrida headless (envelope de velocidade + cortesia)
 data/                   balanceamento (vazio até o estudo do GT2)
 tests/                  testes e fixtures sintéticas
@@ -26,8 +31,7 @@ tests/                  testes e fixtures sintéticas
 ## Testes
 
 ```
-godot --headless --import
-godot --headless --script res://tests/run_tests.gd
+tests/rodar.sh            # ou: tests/rodar.sh /caminho/do/godot
 ```
 
 Rodam também no GitHub Actions a cada push e pull request.

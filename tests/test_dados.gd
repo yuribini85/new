@@ -17,4 +17,15 @@ func test_data_real_tem_formato_valido_e_lista_pendencias() -> void:
 	igual(d.erros(), [], "erros em data/")
 	verificar("carros.json vazio" in d.pendencias(), "carros vazio deveria ser pendência")
 	verificar("simulacao.json: sigma_ruido" in d.pendencias(), "sigma_ruido deveria ser pendência")
+	verificar("economia.json: saldo_inicial" in d.pendencias(), "saldo_inicial deveria ser pendência")
+	d.free()
+
+
+func test_referencias_invalidas_sao_erro() -> void:
+	var d := dados_fixture()
+	d._listas["carros"]["x"] = {"id": "x", "fabricante": "nenhuma", "tracao": "AWD"}
+	d._objetos["economia"]["pneu_de_fabrica"] = "nenhum"
+	d._erros.clear()
+	d._validar_referencias()
+	igual(d.erros().size(), 3, "erros: %s" % [d.erros()])
 	d.free()

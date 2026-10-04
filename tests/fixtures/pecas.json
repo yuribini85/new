@@ -1,8 +1,8 @@
 [
-	{"id": "turbo", "categoria": "motor", "preco": 1,
+	{"id": "turbo", "categoria": "motor", "preco": 200,
 	 "efeitos": [{"atributo": "potencia", "op": "mult", "valor": 1.5}, {"atributo": "peso", "op": "soma", "valor": 20}]},
-	{"id": "motor_fr", "categoria": "motor", "preco": 1, "tracao_permitida": ["FR"],
+	{"id": "motor_fr", "categoria": "motor", "preco": 300, "tracao_permitida": ["FR"],
 	 "efeitos": [{"atributo": "potencia", "op": "soma", "valor": 50}]},
-	{"id": "alivio", "categoria": "peso", "preco": 1,
+	{"id": "alivio", "categoria": "peso", "preco": 100,
 	 "efeitos": [{"atributo": "peso", "op": "mult", "valor": 0.5}]}
 ]

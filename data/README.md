@@ -16,6 +16,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `pistas.json` | lista de `{id, funcao, trechos}` |
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
+| `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
 
 ## Unidades e semântica
 
@@ -43,3 +44,15 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | **pendente** |
 | `sigma_ruido` | desvio do ruído por volta para consistência 0 | **pendente** |
 | `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração | **pendente** |
+
+## economia.json
+
+| Chave | O que é | Estado |
+|---|---|---|
+| `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
+| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | **pendente** |
+| `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
+
+Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
+reinstalá-la é grátis; um pneu de cada composto por carro; nada é cobrado se a compra é
+recusada.
