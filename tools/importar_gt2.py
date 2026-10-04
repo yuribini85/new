@@ -28,6 +28,8 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
                freios (Brake): BrakingPower ÷ o de fábrica.
                NATune e TurbineKit dividem a categoria "aspiracao" (no GT2
                são excludentes).
+  usados       .usedcar_usa: janelas [dia_inicio, dia_fim, preço] por período
+               de 10 dias (dia = corridas disputadas)
   pneus        por estágio de TiresFront: aderência = mediana de
                GripMultiplier do estágio ÷ o de fábrica; preço = mediana.
                O GT2 não tem chuva: chuva = seco.
@@ -177,6 +179,9 @@ def main() -> int:
             "freio": round(min(1.0, freio_fabrica.get(l["codigo_gt2"], freio_mediana) / freio_mediana), 3),
             "preco": int(n(c["preco"])), "ano": ano + 1900 if ano < 100 else ano,
         })
+        janelas = usados_do_carro(l["codigo_gt2"])
+        if janelas:
+            carros[-1]["usados"] = janelas
 
     pecas = []
     for codigo, id_nosso in nosso.items():
@@ -270,8 +275,23 @@ def main() -> int:
               f'{(c["potencia"] * motor * tb) if tb else 0:9.0f}  {c["peso"] * lw:8.0f}')
     print("\nCompare aspirado_max/turbo_max/peso_min com a lista de Connoy (NA MaxHP, Turbo MaxHP em hp,")
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
-    print("a_confirmar (não vêm do GT2): fracao_revenda, usados, teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
+    print("a_confirmar (não vêm do GT2): fracao_revenda, teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
+
+
+def usados_do_carro(codigo: str) -> list[list[int]]:
+    """Janelas [dia_inicio, dia_fim, preço] em que o carro está no usado do GT2.
+
+    Períodos seguidos com o mesmo preço viram uma janela só.
+    """
+    janelas: list[list[int]] = []
+    for u in sorted((u for u in ler("usados") if u["codigo"] == codigo), key=lambda u: int(u["periodo"])):
+        ini, preco = int(u["dia_inicio"]), int(u["preco"])
+        if janelas and janelas[-1][1] == ini - 1 and janelas[-1][2] == preco:
+            janelas[-1][1] = ini + 9
+        elif not janelas or janelas[-1][0] != ini:
+            janelas.append([ini, ini + 9, preco])
+    return janelas
 
 
 def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[list[dict], list[dict]]:

@@ -83,3 +83,37 @@ def ler_unistrdb(dados: bytes) -> list[str]:
         textos.append(dados[pos:pos + tam].decode("utf-16-le", "replace").rstrip("\0"))
         pos += tam
     return textos
+
+
+FABRICANTES_USADOS = [
+    "Acura", "Alfa Romeo", "Aston Martin", "Audi", "BMW", "Chevrolet", "Citroen", "Daihatsu", "Dodge", "Fiat",
+    "Ford", "Honda", "Fabricante12", "Jaguar", "Lancia", "Fabricante15", "Lister", "Lotus", "Mazda",
+    "Mercedes-Benz", "Fabricante20", "Mini MG", "Mitsubishi", "Nissan", "Opel", "Peugeot", "Plymouth",
+    "Renault", "RUF", "Shelby", "Subaru", "Suzuki", "Tommykaira", "Toyota", "TVR", "Vauxhall", "Vector",
+    "Venturi", "Volkswagen",
+]
+PERIODOS_USADOS = 60
+DIAS_POR_PERIODO = 10
+
+
+def ler_usados(dados: bytes) -> list[dict]:
+    """Concessionárias de usados (".usedcar_usa", cabeçalho "UCAR").
+
+    Formato (pez2k/gt2tools, GT2UsedCarEditor): 60 períodos de 10 dias; cada
+    um com 39 fabricantes (deslocamento u16 relativo ao período, contagem
+    u16); cada carro tem 8 bytes: id u32, preço u24, paleta u8.
+    """
+    if dados[:4] != b"UCAR":
+        raise ValueError("não é uma lista de usados (UCAR)")
+    linhas = []
+    for p in range(PERIODOS_USADOS):
+        inicio = struct.unpack_from("<I", dados, 8 + 4 * p)[0]
+        for f, fabricante in enumerate(FABRICANTES_USADOS):
+            desloc, qtd = struct.unpack_from("<HH", dados, inicio + 4 * f)
+            for k in range(qtd):
+                pos = inicio + desloc + 8 * k
+                car_id = struct.unpack_from("<I", dados, pos)[0]
+                preco = dados[pos + 4] | (dados[pos + 5] << 8) | (dados[pos + 6] << 16)
+                linhas.append({"periodo": p, "dia_inicio": p * DIAS_POR_PERIODO, "fabricante": fabricante,
+                               "codigo": id_para_nome(car_id), "preco": preco, "paleta": dados[pos + 7]})
+    return linhas

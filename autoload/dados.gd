@@ -31,10 +31,7 @@ const ESQUEMAS := {
 ## arquivo -> chaves obrigatórias do objeto.
 const OBJETOS := {
 	"simulacao": SimulacaoScript.PARAMS,
-	"economia": [
-		"saldo_inicial", "fracao_revenda", "pneu_de_fabrica",
-		"usado_periodo_dias", "usado_km_min", "usado_km_max", "usado_desconto_por_km", "usado_fracao_minima",
-	],
+	"economia": ["saldo_inicial", "fracao_revenda", "pneu_de_fabrica"],
 	"carreira": ["piloto_jogador", "teto_offline_s"],
 }
 
@@ -77,9 +74,6 @@ func carregar(dir: String) -> void:
 		for item in lista:
 			_validar_item(arquivo, item)
 			_listas[arquivo][str(item.get("id"))] = item
-	var tem_usados := false
-	for c in _listas["carros"].values():
-		tem_usados = tem_usados or c.get("usado_dias") != null
 	for arquivo in OBJETOS:
 		_objetos[arquivo] = {}
 		var obj = _ler_json(dir + arquivo + ".json")
@@ -90,8 +84,7 @@ func carregar(dir: String) -> void:
 		for chave in OBJETOS[arquivo]:
 			if not obj.has(chave):
 				_erros.append("%s.json sem chave %s" % [arquivo, chave])
-			elif obj[chave] == null and not (chave.begins_with("usado_") and not tem_usados):
-				# Parâmetros de usados só importam se algum carro aparece no usado.
+			elif obj[chave] == null:
 				_pendencias.append("%s.json: %s" % [arquivo, chave])
 	_validar_referencias()
 
@@ -133,9 +126,9 @@ func _validar_referencias() -> void:
 			_erros.append("carros.json: '%s' cita fabricante inexistente %s" % [c["id"], c["fabricante"]])
 		if c.get("tracao") != null and not c["tracao"] in CarroScript.TRACOES:
 			_erros.append("carros.json: '%s' tração inválida %s" % [c["id"], c["tracao"]])
-		var faixa = c.get("usado_dias")
-		if faixa != null and (not faixa is Array or faixa.size() != 2 or faixa[0] > faixa[1]):
-			_erros.append("carros.json: '%s' usado_dias deve ser [início, fim]" % c["id"])
+		for janela in c.get("usados", []):
+			if not janela is Array or janela.size() != 3 or janela[0] > janela[1] or janela[2] <= 0:
+				_erros.append("carros.json: '%s' usados deve ser [[dia_inicio, dia_fim, preco], ...]" % c["id"])
 	for p in _listas["pecas"].values():
 		for e in p.get("efeitos", []):
 			if not e.get("atributo") in CarroScript.ATRIBUTOS or not e.get("op") in CarroScript.OPS:

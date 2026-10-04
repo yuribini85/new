@@ -12,11 +12,19 @@
   "velocidade_max": 180,
   "preco": 400,
   "ano": 1990,
-  "usado_dias": [
-   0,
-   30
-  ],
-  "nome": "Fabricante A Leve"
+  "nome": "Fabricante A Leve",
+  "usados": [
+   [
+    0,
+    9,
+    150
+   ],
+   [
+    10,
+    30,
+    140
+   ]
+  ]
  },
  {
   "id": "forte",
@@ -31,10 +39,13 @@
   "velocidade_max": 250,
   "preco": 900,
   "ano": 1990,
-  "usado_dias": [
-   10,
-   20
-  ],
-  "nome": "Fabricante A Turbo"
+  "nome": "Fabricante A Turbo",
+  "usados": [
+   [
+    10,
+    20,
+    400
+   ]
+  ]
  }
 ]

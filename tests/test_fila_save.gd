@@ -77,7 +77,7 @@ func test_save_ida_e_volta() -> void:
 	j.concessionaria.comprar_peca(c, d.peca("turbo"))
 	j.concessionaria.comprar_peca(c, d.peca("motor_fr"))
 	j.concessionaria.comprar_pneu(c, d.pneu("chuva"))
-	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 0, d.economia(), j.usados_vendidos)[0]
+	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 0, j.usados_vendidos)[0]
 	j.concessionaria.comprar_usado(oferta, d.carro(oferta["carro_id"]), j.usados_vendidos)
 	j.licencas.append("b")
 	j.graus_licenca["b1"] = "prata"

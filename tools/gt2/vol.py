@@ -71,8 +71,11 @@ def escolher(indice: dict, sufixo: str, regiao: str = "usa") -> str:
     for nome in sorted(indice):
         base = nome[:-3] if nome.lower().endswith(".gz") else nome
         folha = base.lower().rsplit("/", 1)[-1]
-        if folha.endswith(sufixo.lower()):
-            prioridade = 0 if folha.startswith(regiao.lower() + "_") else (1 if folha == sufixo.lower() else 2)
+        s = sufixo.lower()
+        if folha.endswith(s) or folha.startswith(s + "_"):
+            # Região no prefixo (usa_gtmode_data.dat) ou no sufixo (.usedcar_usa).
+            da_regiao = folha.startswith(regiao.lower() + "_") or folha == f"{s}_{regiao.lower()}"
+            prioridade = 0 if da_regiao else (1 if folha == s else 2)
             candidatos.append((prioridade, nome))
     if not candidatos:
         raise FileNotFoundError(f"nenhum arquivo terminado em {sufixo}")

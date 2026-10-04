@@ -55,40 +55,27 @@ func test_melhor_grau_e_mantido() -> void:
 	d.free()
 
 
-func test_estoque_de_usados_por_faixa_de_dias() -> void:
+func test_estoque_de_usados_por_janela_de_dias() -> void:
 	var d := dados_fixture()
-	var regras: Dictionary = d.economia()
 	var carros: Array = d.lista("carros")
-	igual(Usados.estoque(carros, 5, regras, {}).map(func(o): return o["carro_id"]), ["fraco"], "dia 5")
-	igual(Usados.estoque(carros, 15, regras, {}).size(), 2, "dia 15")
-	igual(Usados.estoque(carros, 31, regras, {}), [], "dia 31")
+	igual(Usados.estoque(carros, 5, {}), [{"carro_id": "fraco", "preco": 150, "chave": "0:fraco"}], "dia 5")
+	igual(Usados.estoque(carros, 15, {}).map(func(o): return [o["carro_id"], o["preco"]]),
+			[["fraco", 140], ["forte", 400]], "dia 15: duas ofertas, da mais barata para a mais cara")
+	igual(Usados.estoque(carros, 31, {}), [], "dia 31")
 	d.free()
 
 
-func test_quilometragem_fixa_no_periodo_e_preco_com_desconto() -> void:
-	var d := dados_fixture()
-	var regras: Dictionary = d.economia()
-	var carros: Array = d.lista("carros")
-	var a: Dictionary = Usados.estoque(carros, 14, regras, {})[0]
-	var b: Dictionary = Usados.estoque(carros, 20, regras, {})[0]
-	igual(a, b, "mesmo período (dias 14-20)")
-	verificar(a["km"] >= 10000 and a["km"] <= 90000, "km na faixa: %d" % a["km"])
-	igual(a["preco"], int(floor(400 * maxf(1.0 - a["km"] * 0.00001, 0.3))), "preço")
-	d.free()
-
-
-func test_comprar_usado_tira_do_estoque_no_periodo() -> void:
+func test_comprar_usado_tira_do_estoque_na_janela() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
-	var regras: Dictionary = d.economia()
-	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 5, regras, j.usados_vendidos)[0]
+	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 5, j.usados_vendidos)[0]
 	var saldo: int = j.economia.saldo
 	var uid: int = j.concessionaria.comprar_usado(oferta, d.carro(oferta["carro_id"]), j.usados_vendidos)
 	verificar(uid > 0, "compra")
-	igual(j.economia.saldo, saldo - oferta["preco"], "débito")
-	igual(j.garagem.carro(uid).km, oferta["km"], "km do carro")
-	igual(Usados.estoque(d.lista("carros"), 5, regras, j.usados_vendidos), [], "saiu do estoque")
+	igual(j.economia.saldo, saldo - 150, "débito pelo preço da janela")
+	igual(Usados.estoque(d.lista("carros"), 5, j.usados_vendidos), [], "saiu do estoque")
 	igual(j.concessionaria.comprar_usado(oferta, d.carro(oferta["carro_id"]), j.usados_vendidos), -1, "não compra duas vezes")
-	igual(Usados.estoque(d.lista("carros"), 7, regras, j.usados_vendidos).size(), 1, "volta no período seguinte")
+	igual(Usados.estoque(d.lista("carros"), 10, j.usados_vendidos).filter(func(o): return o["carro_id"] == "fraco").size(),
+			1, "volta na janela seguinte")
 	j.free()
 	d.free()

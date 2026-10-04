@@ -10,7 +10,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | Arquivo | Formato |
 |---|---|
 | `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
-| `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usado_dias: [início, fim]` |
+| `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` |
 | `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos` |
 | `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
@@ -58,10 +58,6 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
 | `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | 0,5 — **a confirmar** no GT2 |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
-| `usado_periodo_dias` | de quantos em quantos dias o estoque de usados muda | **pendente** |
-| `usado_km_min`, `usado_km_max` | faixa da quilometragem sorteada | **pendente** |
-| `usado_desconto_por_km` | preço do usado = tabela × (1 − km × desconto) | **pendente** |
-| `usado_fracao_minima` | piso dessa fração | **pendente** |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
 reinstalá-la é grátis; um pneu de cada composto por carro; nada é cobrado se a compra é
@@ -89,9 +85,10 @@ Testes não contam dia.
 
 ## Usados
 
-Carro com `usado_dias` aparece no usado enquanto o dia do jogador estiver na faixa. A
-quilometragem é sorteada por carro e período e só afeta o preço. Comprado, sai do estoque
-até o período seguinte.
+Como no GT2: cada carro lista as janelas em que aparece na concessionária de usados e o
+preço de cada uma (`usados`). No GT2 são 60 períodos de 10 dias; o dia é o número de
+corridas disputadas. Comprado, o carro sai do estoque até a janela seguinte. Não há
+quilometragem (o GT2 não tem).
 
 ## Fila e offline
 
@@ -141,6 +138,5 @@ godot --headless --script res://tools/calibrar_licencas.gd   # tempos das licen�
 `referencia/` nunca vai para o Git. O que entra em `data/` são os números convertidos
 para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.py`.
 
-**A confirmar** (não vêm do GT2): `fracao_revenda`, parâmetros de usados (a tabela de
-usados do GT2 ainda não é extraída), `teto_offline_s` (8 h, decisão de design),
+**A confirmar** (não vêm do GT2): `fracao_revenda`, `teto_offline_s` (8 h, decisão de design),
 `sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).

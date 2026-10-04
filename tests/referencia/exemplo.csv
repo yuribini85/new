@@ -1,3 +1,3 @@
-id,nome,fabricante,arquetipo,categoria,tracao,potencia_cv,peso_kg,velocidade_max_kmh,preco,ano,aderencia,freio,usado_inicio,usado_fim,ref_real
-hayase_pika,Hayase Pika,hayase,hatch leve de entrada,compacto,FF,"76",800,165,9000,1989,,,0,40,NOME REAL QUE NÃO PODE VAZAR
-hartwig_strecke,Hartwig Strecke,hartwig,sedã esportivo de entrada,seda,FR,140,1200,210,25000,1991,1.0,0.9,,,OUTRO NOME REAL
+id,nome,fabricante,arquetipo,categoria,tracao,potencia_cv,peso_kg,velocidade_max_kmh,preco,ano,aderencia,freio,usado_inicio,usado_fim,usado_preco,ref_real
+hayase_pika,Hayase Pika,hayase,hatch leve de entrada,compacto,FF,"76",800,165,9000,1989,,,0,40,6500,NOME REAL QUE NÃO PODE VAZAR
+hartwig_strecke,Hartwig Strecke,hartwig,sedã esportivo de entrada,seda,FR,140,1200,210,25000,1991,1.0,0.9,,,,OUTRO NOME REAL

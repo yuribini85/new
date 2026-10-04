@@ -36,7 +36,6 @@ func comprar_usado(oferta: Dictionary, dados_carro: Dictionary, vendidos: Dictio
 		return -1
 	vendidos[oferta["chave"]] = true
 	var carro := Carro.new(dados_carro)
-	carro.km = int(oferta["km"])
 	carro.adicionar_pneu(_pneu_por_id.call(regras["pneu_de_fabrica"]))
 	return garagem.adicionar(carro)
 

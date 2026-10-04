@@ -18,9 +18,9 @@ if erros:
     falhas.append(f"erros inesperados: {erros}")
 if "NOME REAL" in json.dumps(carros):
     falhas.append("ref_real vazou para a saída")
-if carros[0]["aderencia"] is not None or carros[0]["usado_dias"] != [0, 40]:
+if carros[0]["aderencia"] is not None or carros[0].get("usados") != [[0, 40, 6500]]:
     falhas.append(f"opcionais do primeiro carro: {carros[0]}")
-if carros[1].get("usado_dias") is not None or carros[1]["freio"] != 0.9:
+if carros[1].get("usados") is not None or carros[1]["freio"] != 0.9:
     falhas.append(f"opcionais do segundo carro: {carros[1]}")
 _, erros = converter([{"id": "x", "nome": "X", "fabricante": "nenhuma", "arquetipo": "a", "categoria": "c",
                        "tracao": "AWD", "potencia_cv": "1", "peso_kg": "1", "velocidade_max_kmh": "1",

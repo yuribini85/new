@@ -1,10 +1,5 @@
 {
 	"saldo_inicial": 1000,
 	"fracao_revenda": 0.5,
-	"pneu_de_fabrica": "seco",
-	"usado_periodo_dias": 7,
-	"usado_km_min": 10000,
-	"usado_km_max": 90000,
-	"usado_desconto_por_km": 0.00001,
-	"usado_fracao_minima": 0.3
+	"pneu_de_fabrica": "seco"
 }

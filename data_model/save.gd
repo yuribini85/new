@@ -12,7 +12,6 @@ static func serializar(jogador: Node) -> Dictionary:
 		carros.append({
 			"id": c.id,
 			"uid": c.uid,
-			"km": c.km,
 			"pecas": c.pecas.values().map(func(p): return p["id"]),
 			"pecas_possuidas": c.pecas_possuidas,
 			"pneus": c.pneus.map(func(p): return p["id"]),
@@ -41,7 +40,6 @@ static func desserializar(s: Dictionary, jogador: Node, dados: Node) -> String:
 	jogador.economia.saldo = int(s["saldo"])
 	for cs in s["carros"]:
 		var c := Carro.new(dados.carro(cs["id"]))
-		c.km = int(cs["km"])
 		c.pecas_possuidas = cs["pecas_possuidas"]
 		for peca_id in cs["pecas"]:
 			c.instalar(dados.peca(peca_id))

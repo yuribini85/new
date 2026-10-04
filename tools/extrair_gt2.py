@@ -12,6 +12,7 @@ Saída em referencia/gt2/ (no .gitignore, nunca versionar):
                     peso, tração e índices das peças de fábrica
   eventos.csv       resumo por evento: nome, pista, voltas, licença,
                     restrições, prêmios, carros-prêmio, adversários
+  usados.csv        ofertas de usados: período (10 dias), fabricante, código, preço
 """
 from __future__ import annotations
 
@@ -55,11 +56,16 @@ def carregar_arquivos(args) -> dict[str, bytes]:
 
     lidos = {}
     for chave, sufixo in (("gtmode_data", "gtmode_data.dat"), ("gtmode_race", "gtmode_race.dat"),
-                          ("unistrdb", "unistrdb.dat")):
-        nome, lidos[chave] = achar(sufixo)
+                          ("unistrdb", "unistrdb.dat"), ("usados", ".usedcar")):
+        try:
+            nome, lidos[chave] = achar(sufixo)
+        except FileNotFoundError:
+            if chave == "usados":
+                print("aviso: lista de usados (.usedcar) não encontrada", file=sys.stderr)
+                continue
+            raise
         print(f"{chave}: {nome} ({len(lidos[chave])} bytes)", file=sys.stderr)
-    data, race, unistr = lidos["gtmode_data"], lidos["gtmode_race"], lidos["unistrdb"]
-    return {"gtmode_data": data, "gtmode_race": race, "unistrdb": unistr}
+    return lidos
 
 
 def gravar_csv(caminho: pathlib.Path, linhas: list[dict]) -> None:
@@ -134,6 +140,7 @@ def main() -> int:
     race, textos_race = tabelas.ler_gtmode_race(arquivos["gtmode_race"])
     nomes = tabelas.ler_unistrdb(arquivos["unistrdb"])
 
+    usados = tabelas.ler_usados(arquivos["usados"]) if "usados" in arquivos else []
     resumo_carros = resumir_carros(data, nomes)
     resumo_eventos = resumir_eventos(race, textos_race)
     saida = pathlib.Path(args.saida)
@@ -146,6 +153,7 @@ def main() -> int:
         gravar_csv(saida / f"{nome}.csv", linhas)
     gravar_csv(saida / "carros.csv", resumo_carros)
     gravar_csv(saida / "eventos.csv", resumo_eventos)
+    gravar_csv(saida / "usados.csv", usados)
     for nome, linhas in {**data, **race}.items():
         print(f"{nome:24s} {len(linhas):5d}", file=sys.stderr)
     print(f"Tabelas gravadas em {saida}/", file=sys.stderr)

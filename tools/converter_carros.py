@@ -9,7 +9,8 @@ Colunas obrigatórias:
   id, nome, fabricante, arquetipo, categoria, tracao, potencia_cv, peso_kg,
   velocidade_max_kmh, preco, ano
 Opcionais (vazias viram pendência no jogo):
-  aderencia, freio, usado_inicio, usado_fim, ref_real (descartada)
+  aderencia, freio, usado_inicio, usado_fim, usado_preco (uma janela de usado),
+  ref_real (descartada)
 
 Uso: tools/converter_carros.py referencia.csv > data/carros.json
 """
@@ -57,8 +58,9 @@ def converter(linhas, fabricantes):
             "ano": numero(l["ano"], int),
         }
         inicio, fim = numero(l.get("usado_inicio"), int), numero(l.get("usado_fim"), int)
-        if inicio is not None and fim is not None:
-            carro["usado_dias"] = [inicio, fim]
+        preco_usado = numero(l.get("usado_preco"), int)
+        if inicio is not None and fim is not None and preco_usado:
+            carro["usados"] = [[inicio, fim, preco_usado]]
         carros.append(carro)
     return carros, erros
 

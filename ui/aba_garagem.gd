@@ -15,8 +15,6 @@ func construir() -> void:
 		var ativo: bool = c.uid == jogador.carro_ativo
 		var venda := int(floor(float(c.base["preco"]) * float(regras["fracao_revenda"])))
 		var desc := ("▶ " if ativo else "") + ficha(c)
-		if c.km > 0:
-			desc += " · %s km" % dinheiro(c.km)
 		var em_fila: bool = not jogador.fila.is_empty() and jogador.fila["uid"] == c.uid
 		linha(desc, [
 			["Usar", func(): jogador.carro_ativo = c.uid, not ativo],

@@ -67,6 +67,27 @@ def unistr(textos):
     return bytes(r)
 
 
+def ucar(ofertas):
+    """ofertas: {periodo: [(indice_fabricante, codigo, preco)]}"""
+    out = bytearray(b"UCAR\0\0\0\0" + b"\0" * (4 * 61))
+    for p in range(60):
+        inicio = len(out)
+        struct.pack_into("<I", out, 8 + 4 * p, inicio)
+        por_fab = {}
+        for f, cod, preco in ofertas.get(p, []):
+            por_fab.setdefault(f, []).append((cod, preco))
+        indice = bytearray(4 * 39)
+        corpo = bytearray()
+        for f in range(39):
+            carros = por_fab.get(f, [])
+            struct.pack_into("<HH", indice, 4 * f, 4 * 39 + len(corpo), len(carros))
+            for cod, preco in carros:
+                corpo += struct.pack("<I", id_carro(cod)) + preco.to_bytes(3, "little") + b"\x07"
+        out += indice + corpo
+    struct.pack_into("<I", out, 8 + 4 * 60, len(out))
+    return bytes(out)
+
+
 def gtfs(arquivos):
     setor = 0x800
     nomes = list(arquivos)
@@ -148,7 +169,10 @@ def montar():
     }, extra=ascii_tab(["Copa Teste", "Pista Teste"]))
     # Cópias de outra região com lixo: o extrator deve preferir usa_.
     vol = gtfs({"eng_gtmode_data.dat.gz": b"lixo", "usa_gtmode_data.dat.gz": gzip.compress(data),
-                "usa_gtmode_race.dat": race, "eng_unistrdb.dat": b"lixo", "usa_unistrdb.dat.gz": gzip.compress(unistr(nomes))})
+                "usa_gtmode_race.dat": race, "eng_unistrdb.dat": b"lixo", "usa_unistrdb.dat.gz": gzip.compress(unistr(nomes)),
+                ".usedcar_jpn": b"lixo",
+                ".usedcar_usa": gzip.compress(ucar({0: [(11, "hat93", 9000)], 1: [(11, "hat93", 9000)],
+                                                    2: [(11, "hat93", 8800)], 5: [(23, "cup95", 30000)]}))})
     return vol
 
 
@@ -172,6 +196,11 @@ def main():
                       for c in carros]
             if obtido != esperado:
                 falhas.append(f"bruto={bruto}: carros {obtido}")
+            us = [(u["periodo"], u["dia_inicio"], u["fabricante"], u["codigo"], u["preco"])
+                  for u in csv.DictReader(open(saida / "usados.csv", encoding="utf-8"))]
+            if us != [("0", "0", "Honda", "hat93", "9000"), ("1", "10", "Honda", "hat93", "9000"),
+                      ("2", "20", "Honda", "hat93", "8800"), ("5", "50", "Nissan", "cup95", "30000")]:
+                falhas.append(f"bruto={bruto}: usados {us}")
             ev = list(csv.DictReader(open(saida / "eventos.csv", encoding="utf-8")))
             if not ev or (ev[0]["evento"], ev[0]["pista"], ev[0]["voltas"], ev[0]["licenca"], ev[0]["tracao"],
                           ev[0]["premios_x100"], ev[0]["carros_premio"], ev[0]["adversarios"]) != (
@@ -201,6 +230,8 @@ def main():
             carregar = lambda n: json.loads((dados / f"{n}.json").read_text())
             carros = {c["id"]: c for c in carregar("carros")}
             x, y = carros["hayase_x"], carros["hartwig_y"]
+            if x.get("usados") != [[0, 19, 9000], [20, 29, 8800]] or y.get("usados") != [[50, 59, 30000]]:
+                falhas.append(f"importador usados: {x.get('usados')} {y.get('usados')}")
             if (x["potencia"], x["peso"], x["preco"], x["ano"], x["tracao"], y["tracao"]) != (160, 1050, 17500, 1993, "FF", "FR"):
                 falhas.append(f"importador carros: {x} {y}")
             # aderência: médias 89 e 97, mediana 93; freio: 40 e 60, mediana 50

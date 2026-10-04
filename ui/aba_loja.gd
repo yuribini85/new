@@ -15,12 +15,12 @@ func construir() -> void:
 		])
 	separador()
 	titulo("Usados — dia %d" % jogador.dias)
-	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, dados.economia(), jogador.usados_vendidos)
+	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos)
 	if ofertas.is_empty():
 		texto("Nenhum usado hoje.")
 	for o in ofertas:
 		var c: Dictionary = dados.carro(o["carro_id"])
-		linha("%s · %s km · %d cv" % [c["nome"], dinheiro(o["km"]), c["potencia"]], [
+		linha("%s · %s · %d cv" % [c["nome"], c["tracao"], c["potencia"]], [
 			[dinheiro(o["preco"]), func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos)),
 				jogador.economia.pode_pagar(o["preco"])],
 		])
