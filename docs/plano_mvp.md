@@ -1,6 +1,6 @@
 # Gran Turismo Idle — plano operacional do primeiro build
 
-Desdobramento de `conceito.md` em sistemas, dados e ordem de trabalho. Estruturas abaixo
+Desdobramento de `docs/conceito.md` em sistemas, dados e ordem de trabalho. Estruturas abaixo
 são formato, não balanceamento: **nenhum número aqui é definitivo**. Os valores virão do
 estudo do GT2 e de playtest, sempre em JSON externo.
 
@@ -130,7 +130,7 @@ técnico real do projeto.
 
 ## 8. Decisões em aberto
 
-1. Engine: Godot 4.4 (mesma de The Way Back, reaproveita save/offline) ou outra?
+1. Engine: Godot 4.4 ou outra?
 2. O "idle" é offline de verdade (corridas acontecem sem o app aberto) ou só automático
    com o app aberto?
 3. Quantas corridas simultâneas o jogador pode ter (um carro por vez ou garagem inteira)?

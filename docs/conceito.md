@@ -1,8 +1,5 @@
 # Gran Turismo Idle Mobile — conceito
 
-> Projeto separado de The Way Back. Fica neste repositório só como registro.
-> Nada aqui altera o escopo, as regras ou os dados de The Way Back.
-
 ## Princípio central
 
 Preservar a estrutura de carreira, compra, coleção, preparação e progressão de um Gran

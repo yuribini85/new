@@ -1,40 +1,27 @@
 # Instruções para o agente
 
 ## O que este repositório é
-Material de design de um jogo idle isométrico para Godot 4.4. O jogo ainda não existe.
+Material de design de um jogo mobile idle de automobilismo inspirado na estrutura de
+progressão do Gran Turismo 2. O jogo ainda não existe.
 
 ## Leia antes de escrever qualquer código
-- `docs/mecanicas_para_godot.md` — especificação de implementação
-- `docs/especificacao_tecnica_v1.md` — decisões técnicas já tomadas
-- `docs/ato1_balanceamento.md` — números do primeiro ato
-- `data/*.json` — balanceamento consumível
+- `docs/conceito.md` — princípios e limites
+- `docs/plano_mvp.md` — escopo do primeiro build, sistemas, dados e ordem de implementação
 
 ## Regras de trabalho
 
-**Não gere arte.** A direção visual está fechada e há um pipeline próprio com 686 imagens
-catalogadas em `tools/twb-inventario-assets.html`. Use placeholders com a nomenclatura de
-`docs/NOMENCLATURA_ASSETS.md` e nunca invente assets.
+**Não altere as regras do README.** São decisões de design.
 
-**Não invente balanceamento.** Todo número vem de `data/`. Se faltar algum, pergunte em vez
-de estimar.
+**Não invente balanceamento.** Os números virão do estudo do GT2 e de playtest. Se faltar
+algum, pergunte em vez de estimar.
 
-**Não altere as dez regras do README.** Elas são decisões de design, não preferências.
+**Balanceamento fica em JSON externo** (`data/`), nunca embutido no código.
 
-**Escopo do primeiro build:** apenas o Ato I. Onze edificações, economia, população, tela de
-aldeões, primeira expedição. Sem mina, sem anões, sem maldições, sem monetização.
+**Simulação separada da visualização.** A corrida é resolvida sem renderizar; a tela só
+lê o resultado.
 
-**Balanceamento fica em JSON externo**, nunca embutido no código. É ajustado centenas de
-vezes.
+**Nada do GT2 entra no build:** nem código, modelos, texturas, nomes de carros, marcas
+ou traçados reconhecíveis. Campos de referência guardam o arquétipo, não o nome real.
 
-**Um nó genérico de edifício** configurado por dado, nunca uma cena por construção.
-
-## Ordem de implementação
-1. Fundação — autoload de simulação, ciclo do dia, save, offline
-2. Dados — carga dos JSON, modelo de edifício genérico
-3. Mapa — lotes fixos de `data/vila_lotes.json`, ruínas, construção
-4. Economia — recursos, produção, teto, índice de fome, venda
-5. População — órfãos, cicatrizes, alocação, tela de aldeões
-6. Rotas — sprites, colisão por cortesia, floresta e coleta
-7. Expedição — regiões, mochilas, risco, relatório
-
-Cada etapa depende só das anteriores. Testar antes de avançar.
+**Decisões em aberto** estão na seção 8 de `docs/plano_mvp.md`. Não assuma resposta para
+elas — pergunte.
