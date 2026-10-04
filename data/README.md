@@ -119,7 +119,8 @@ título do jogo.
 ## Carros a partir da referência do GT2
 
 1. Monte a tabela CSV descrita em `tools/converter_carros.py` (exemplo em
-   `tests/fixtures/referencia_exemplo.csv`). Guarde em `referencia/` ou como
-   `referencia*.csv` na raiz — os dois estão no `.gitignore`.
+   `tests/referencia/exemplo.csv`). Guarde em `referencia/` ou como
+   `referencia*.csv` na raiz — os dois estão no `.gitignore`. Dentro do projeto, ponha um
+   arquivo `.gdignore` vazio na pasta para o Godot não importar o CSV como tradução.
 2. `tools/converter_carros.py referencia/carros.csv > data/carros.json`
 3. A coluna `ref_real` é descartada; só nome fictício e arquétipo entram no jogo.

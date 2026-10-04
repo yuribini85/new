@@ -15,3 +15,6 @@ Thumbs.db
 # Tabelas de referência do GT2 (uso interno, nunca versionar)
 /referencia/
 /referencia*.csv
+
+# Python
+__pycache__/

@@ -10,7 +10,7 @@ sys.path.insert(0, str(raiz / "tools"))
 from converter_carros import converter  # noqa: E402
 
 fabricantes = {f["id"] for f in json.loads((raiz / "data/fabricantes.json").read_text())}
-with open(raiz / "tests/fixtures/referencia_exemplo.csv", newline="", encoding="utf-8") as f:
+with open(raiz / "tests/referencia/exemplo.csv", newline="", encoding="utf-8") as f:
     carros, erros = converter(list(csv.DictReader(f)), fabricantes)
 
 falhas = []
