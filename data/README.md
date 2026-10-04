@@ -9,7 +9,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 
 | Arquivo | Formato |
 |---|---|
-| `fabricantes.json` | lista de `{id, nome, escola}` |
+| `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
 | `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usado_dias: [início, fim]` |
 | `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos` |
 | `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
@@ -109,3 +109,17 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 Os rascunhos ficam em `data/rascunhos_pistas/`: curvas descritas por raio e ângulo, com
 duas retas de comprimento `null`. `tools/fechar_pista.py rascunho.json` calcula essas
 duas retas para a volta fechar e imprime a pista pronta para `pistas.json`.
+
+## Fabricantes do primeiro build
+
+`hayase` (Hayase Motor, Japão), `hartwig` (Hartwig, Alemanha), `ashcombe` (Ashcombe Cars,
+Reino Unido). Nomes fictícios; **busca de marca pendente** antes do lançamento, como o
+título do jogo.
+
+## Carros a partir da referência do GT2
+
+1. Monte a tabela CSV descrita em `tools/converter_carros.py` (exemplo em
+   `tests/fixtures/referencia_exemplo.csv`). Guarde em `referencia/` ou como
+   `referencia*.csv` na raiz — os dois estão no `.gitignore`.
+2. `tools/converter_carros.py referencia/carros.csv > data/carros.json`
+3. A coluna `ref_real` é descartada; só nome fictício e arquétipo entram no jogo.

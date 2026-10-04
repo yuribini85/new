@@ -1,1 +1,23 @@
-[]
+[
+ {
+  "id": "hayase",
+  "nome": "Hayase Motor",
+  "escola": "jp",
+  "pais": "Japão",
+  "historia": "Nasceu em 1952 fazendo motores de motocicleta; ficou conhecida pelos compactos leves e por insistir em motores de alta rotação quando ninguém mais acreditava neles."
+ },
+ {
+  "id": "hartwig",
+  "nome": "Hartwig",
+  "escola": "de",
+  "pais": "Alemanha",
+  "historia": "Oficina de carrocerias que virou fábrica no pós-guerra; seus sedãs de tração traseira são a referência de engenharia sóbria e durável."
+ },
+ {
+  "id": "ashcombe",
+  "nome": "Ashcombe Cars",
+  "escola": "uk",
+  "pais": "Reino Unido",
+  "historia": "Garagem de corrida de fim de semana que começou vendendo kits; até hoje faz poucos carros, leves e barulhentos, e quase faliu três vezes."
+ }
+]

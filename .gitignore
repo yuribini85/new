@@ -11,3 +11,7 @@ export_presets.cfg
 # OS
 Thumbs.db
 .DS_Store
+
+# Tabelas de referência do GT2 (uso interno, nunca versionar)
+/referencia/
+/referencia*.csv
