@@ -1,4 +1,4 @@
 {
-	"piloto_jogador": null,
-	"teto_offline_s": 28800
+ "piloto_jogador": "jogador",
+ "teto_offline_s": 28800
 }

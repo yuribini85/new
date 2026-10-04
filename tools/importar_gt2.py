@@ -13,25 +13,36 @@ Passos:
        Preenche os tempos das licenças com a própria simulação.
 
 Conversões (todas a partir de valores do GT2; ver data/README.md):
-  potência     Engine.DisplayedPower (ps; ps ≈ cv)
+  potência     pico da curva de torque do motor (Engine.TorqueCurve × rpm ×
+               PowerMultiplier/100), em ps. Bate com a lista de Connoy (garagem do
+               GT2) em ~1%; DisplayedPower é o número de concessionária, impreciso.
   peso         Chassis.Weight (kg)
-  preço, ano   Car.Price, 1900 + Car.Year
+  preço, ano   Car.Price, 1900 + Car.Year; carros de fora do Japão têm ano 0
+               no GT2 e usam a coluna ano de referencia/carros.csv
+  novo         só se o carro nunca aparece nos usados do GT2 (lá os modelos
+               antigos só se compram usados)
   tração       Drivetrain.DrivetrainType, códigos deduzidos da coluna
                tracao de referencia/carros.csv (falha se não forem coerentes)
   aderência    média de Chassis.FrontGrip/RearGrip ÷ mediana de todos os
                carros de rua (o carro mediano tem 1,0)
   freio        Brake.BrakingPower de fábrica ÷ mediana, no máximo 1,0
   peças        por carro (carros_permitidos), preço do GT2; efeito:
-               motor (PortPolish, EngineBalance, Displacement, Computer,
-               Muffler, Intercooler, NATune, TurbineKit): PowerMultiplier/100;
-               peso (Lightweight): Weight ÷ peso de fábrica;
+               motor: ganho percentual sobre a potência de fábrica, somado
+               (op "soma", em ps): PortPolish, EngineBalance, Displacement,
+               Computer, Muffler, Intercooler = PowerMultiplier + PowerbandScaling;
+               NATune = PowerMultiplier; TurbineKit = HighRPMPowerMultiplier.
+               Conferido contra Connoy: turbo máx. ~3%, aspirado máx. ~7% abaixo
+               (o GT2 ainda sobe a rotação, que o nosso modelo não tem);
+               peso (Lightweight): Weight é o peso final em ‰ do de fábrica
+               (bate exato com Connoy);
                freios (Brake): BrakingPower ÷ o de fábrica.
                NATune e TurbineKit dividem a categoria "aspiracao" (no GT2
                são excludentes).
   usados       .usedcar_usa: janelas [dia_inicio, dia_fim, preço] por período
                de 10 dias (dia = corridas disputadas)
-  pneus        por estágio de TiresFront: aderência = mediana de
-               GripMultiplier do estágio ÷ o de fábrica; preço = mediana.
+  pneus        por estágio de TiresFront: o grip é o 1º byte do composto
+               (TireCompound); aderência = grip do estágio ÷ o de fábrica
+               (mediana entre os nossos carros); preço = mediana. Sem terra.
                O GT2 não tem chuva: chuva = seco.
   eventos      voltas, licença, limite de ps, tração, prêmios (×100 fora do
                Japão), carro-prêmio quando é um dos nossos carros. A pista do
@@ -56,14 +67,24 @@ GT2 = RAIZ / "referencia" / "gt2"
 REF = RAIZ / "referencia" / "carros.csv"
 DATA = RAIZ / "data"
 
-# Pista do GT2 (trecho do nome, minúsculas) -> nossa pista pela função.
-PISTAS = [
-    ("speedway", "anel_do_vale"), ("high speed", "anel_do_vale"), ("grand valley", "anel_do_vale"),
-    ("seattle", "anel_do_vale"), ("test course", "anel_do_vale"),
-    ("trial mountain", "serra_alta"), ("deep forest", "serra_alta"), ("red rock", "serra_alta"),
-    ("apricot", "serra_alta"), ("tahiti", "serra_alta"), ("smokey", "serra_alta"),
-]
-PISTA_PADRAO = "parque_das_docas"  # técnicos: Autumn Ring, Mid-Field, Rome, Laguna Seca, Clubman...
+# Pista do GT2 (id interno) -> nossa pista pela função.
+PISTAS = {
+    "highway": "anel_do_vale", "s_speed": "anel_do_vale", "speed": "anel_do_vale", "seattle": "anel_do_vale",
+    "seatt_s": "anel_do_vale", "test_in2": "anel_do_vale", "circuit": "anel_do_vale",
+    "mountain": "serra_alta", "grindel": "serra_alta", "tahiti_t": "serra_alta", "parma": "serra_alta",
+}
+PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, roma_short, shortway, short, sprint2, testline, laguna, autumn
+
+# Séries do GT2 que entram no jogo (prefixo do código do evento -> nosso nome).
+# Fora: marca única (pista "none"), rali, endurance, testes de licença e as
+# que exigem licença internacional. O resto do evento vem do disco.
+SERIES = {
+    "SND": "Copa de Domingo", "CBM": "Copa Clube", "WLK": "Copa Peso-Leve",
+    "GJL": "Liga Regional I", "GUL": "Liga Regional II", "GBL": "Liga Regional III",
+    "GFL": "Liga Regional IV", "GGL": "Liga Regional V", "GIL": "Liga Regional VI", "GCC": "Liga Regional VII",
+    "FFC": "Desafio Tração Dianteira", "FRC": "Desafio Tração Traseira", "4WD": "Desafio 4x4",
+    "80S": "Copa Anos 80", "HTC": "Troféu 250", "WOS": "Copa Aberta 250", "SLS": "Copa 400", "PSC": "Série 400",
+}
 
 MOTOR = ["PortPolish", "EngineBalance", "Displacement", "Computer", "Muffler", "Intercooler"]
 NOMES_CATEGORIA = {
@@ -151,6 +172,11 @@ def main() -> int:
         sys.exit(f"códigos inexistentes no GT2: {faltando}")
     tab_car = {c["CarId"]: c for c in ler("Car", True)}
     partes = {nome: ler(nome) for nome in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake", "TiresFront", "Engine"]}
+    motores = partes["Engine"]
+    potencia = {cod: potencia_curva(motores[int(n(car["Engine"]))]) for cod, car in tab_car.items()
+                if int(n(car["Engine"])) < len(motores)}
+    for cod, c in resumo.items():
+        c["potencia_real"] = potencia.get(cod, n(c["potencia_ps"]))
     nosso = {l["codigo_gt2"]: l["id"] for l in ref}
 
     # Normalizações pela mediana dos carros de rua do jogo inteiro.
@@ -174,37 +200,44 @@ def main() -> int:
         carros.append({
             "id": l["id"], "nome": l["nome"], "fabricante": l["fabricante"], "arquetipo_ref": l["arquetipo"],
             "categoria": l["categoria"], "tracao": tracoes[c["tracao_tipo"]],
-            "potencia": int(n(c["potencia_ps"])), "peso": int(n(c["peso_kg"])),
+            "potencia": int(round(c["potencia_real"])), "peso": int(n(c["peso_kg"])),
             "aderencia": round(grip / grip_mediana, 3),
             "freio": round(min(1.0, freio_fabrica.get(l["codigo_gt2"], freio_mediana) / freio_mediana), 3),
-            "preco": int(n(c["preco"])), "ano": ano + 1900 if ano < 100 else ano,
+            "preco": int(n(c["preco"])),
+            "ano": (ano + 1900 if ano < 100 else ano) if ano > 0 else int(n(l.get("ano"))),
         })
         janelas = usados_do_carro(l["codigo_gt2"])
+        carros[-1]["novo"] = not janelas
         if janelas:
             carros[-1]["usados"] = janelas
 
     pecas = []
     for codigo, id_nosso in nosso.items():
-        peso_fabrica = n(resumo[codigo]["peso_kg"])
+        base_ps = resumo[codigo]["potencia_real"]
         for cat in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake"]:
             for p in partes[cat]:
                 if p["CarId"] != codigo or int(n(p["Stage"])) == 0 or int(n(p.get("Price"))) <= 0:
                     continue
                 estagio = int(n(p["Stage"]))
                 if cat == "Lightweight":
-                    if not 0 < n(p["Weight"]) < peso_fabrica:
+                    if not 0 < n(p["Weight"]) < 1000:
                         continue
-                    efeitos = [{"atributo": "peso", "op": "mult", "valor": round(n(p["Weight"]) / peso_fabrica, 4)}]
+                    efeitos = [{"atributo": "peso", "op": "mult", "valor": round(n(p["Weight"]) / 1000.0, 4)}]
                 elif cat == "Brake":
                     base = freio_fabrica.get(codigo, 0)
                     if base <= 0:
                         continue
                     efeitos = [{"atributo": "freio", "op": "mult", "valor": round(n(p["BrakingPower"]) / base, 4)}]
                 else:
-                    campo = "HighRPMPowerMultiplier" if cat == "TurbineKit" else "PowerMultiplier"
-                    if n(p[campo]) <= 0:
+                    if cat == "TurbineKit":
+                        pct = n(p["HighRPMPowerMultiplier"])
+                    elif cat == "NATune":
+                        pct = n(p["PowerMultiplier"])
+                    else:
+                        pct = n(p["PowerMultiplier"]) + n(p.get("PowerbandScaling"))
+                    if pct <= 0:
                         continue
-                    efeitos = [{"atributo": "potencia", "op": "mult", "valor": round(n(p[campo]) / 100.0, 4)}]
+                    efeitos = [{"atributo": "potencia", "op": "soma", "valor": round(base_ps * pct / 100.0, 1)}]
                 pecas.append({
                     "id": f"{id_nosso}_{cat.lower()}_{estagio}",
                     "nome": f"{NOMES_CATEGORIA[cat]} {estagio}",
@@ -212,25 +245,24 @@ def main() -> int:
                     "preco": int(n(p["Price"])), "carros_permitidos": [id_nosso], "efeitos": efeitos,
                 })
 
-    # Pneus: estágios de TiresFront dos nossos carros.
+    # Pneus: estágios de TiresFront dos nossos carros; grip no 1º byte do composto.
+    compostos = [int(c["_bruto"][:2], 16) for c in ler("TireCompound")]
+    grip_pneu = lambda p: compostos[int(n(p["TireCompound"]))] if int(n(p["TireCompound"])) < len(compostos) else 0
     por_estagio: dict[int, list[tuple[float, float]]] = {}
     fabrica_grip = {}
     for p in partes["TiresFront"]:
-        if p["CarId"] not in nosso:
-            continue
-        est = int(n(p["Stage"]))
-        if est == 0:
-            fabrica_grip[p["CarId"]] = n(p["GripMultiplier"])
+        if p["CarId"] in nosso and int(n(p["Stage"])) == 0:
+            fabrica_grip[p["CarId"]] = grip_pneu(p)
     for p in partes["TiresFront"]:
         est = int(n(p["Stage"]))
         base = fabrica_grip.get(p["CarId"], 0)
         if p["CarId"] not in nosso or est == ESTAGIO_TERRA or base <= 0:
             continue
-        por_estagio.setdefault(est, []).append((n(p["GripMultiplier"]) / base, n(p["Price"])))
+        por_estagio.setdefault(est, []).append((grip_pneu(p) / base, n(p["Price"])))
     pneus = []
     for est in sorted(por_estagio):
         ader = round(statistics.median(a for a, _ in por_estagio[est]), 3)
-        pneus.append({"id": f"gt2_pneu_{est}", "nome": NOMES_PNEU[est] if est < len(NOMES_PNEU) else f"Pneu {est}",
+        pneus.append({"id": f"pneu_{est}", "nome": NOMES_PNEU[est] if est < len(NOMES_PNEU) else f"Pneu {est}",
                       "preco": 0 if est == 0 else int(statistics.median(pr for _, pr in por_estagio[est])),
                       "aderencia": {"seco": ader, "chuva": ader}})
 
@@ -239,7 +271,8 @@ def main() -> int:
     for lic in ("B", "A"):
         limites = [e["restricoes"]["potencia_max"] for e in eventos
                    if e["restricoes"].get("licenca") == lic and "potencia_max" in e["restricoes"]]
-        restr = {"potencia_max": min(limites)} if limites else {}
+        # Mediana dos limites de potência dos eventos que a licença abre.
+        restr = {"potencia_max": int(statistics.median(limites))} if limites else {}
         licencas.append({"id": lic, "nome": f"Licença {lic}", "requisito": "B" if lic == "A" else None,
                          "testes": [{"id": f"{lic.lower()}{k + 1}", "pista": pista, "voltas": 1, "condicao": "seco",
                                      "restricoes": restr, "tempos": {"ouro": None, "prata": None, "bronze": None}}
@@ -252,7 +285,7 @@ def main() -> int:
     gravar("eventos", eventos)
     gravar("licencas", licencas)
     economia = json.load(open(DATA / "economia.json"))
-    economia.update({"saldo_inicial": 10000, "pneu_de_fabrica": "gt2_pneu_0"})
+    economia.update({"saldo_inicial": 10000, "pneu_de_fabrica": "pneu_0"})
     gravar("economia", economia)
     carreira = json.load(open(DATA / "carreira.json"))
     carreira["piloto_jogador"] = "jogador"
@@ -264,19 +297,24 @@ def main() -> int:
     print("\ncarro               ps   kg   preço  aspirado_max  turbo_max  peso_min")
     for c in carros:
         pc = [p for p in pecas if p["carros_permitidos"] == [c["id"]]]
-        motor = 1.0
-        for cat in MOTOR:
-            ms = [p["efeitos"][0]["valor"] for p in pc if p["categoria"] == cat.lower()]
-            motor *= max(ms) if ms else 1.0
-        na = max([p["efeitos"][0]["valor"] for p in pc if p["id"].count("_natune_")] or [1.0])
-        tb = max([p["efeitos"][0]["valor"] for p in pc if p["id"].count("_turbinekit_")] or [0.0])
+        def melhor(cat):
+            return max([p["efeitos"][0]["valor"] for p in pc if p["id"].startswith(f'{c["id"]}_{cat}_')] or [0.0])
+        motor = sum(melhor(cat.lower()) for cat in MOTOR)
+        na, tb = melhor("natune"), melhor("turbinekit")
         lw = min([p["efeitos"][0]["valor"] for p in pc if p["categoria"] == "lightweight"] or [1.0])
-        print(f'{c["id"]:18s} {c["potencia"]:4d} {c["peso"]:4d} {c["preco"]:7d}  {c["potencia"] * motor * na:12.0f}  '
-              f'{(c["potencia"] * motor * tb) if tb else 0:9.0f}  {c["peso"] * lw:8.0f}')
+        print(f'{c["id"]:18s} {c["potencia"]:4d} {c["peso"]:4d} {c["preco"]:7d}  {c["potencia"] + motor + na:12.0f}  '
+              f'{(c["potencia"] + motor + tb) if tb else 0:9.0f}  {c["peso"] * lw:8.0f}')
     print("\nCompare aspirado_max/turbo_max/peso_min com a lista de Connoy (NA MaxHP, Turbo MaxHP em hp,")
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
     print("a_confirmar (não vêm do GT2): fracao_revenda, teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
+
+
+def potencia_curva(motor: dict) -> float:
+    """Potência de pico (ps) pela curva de torque: T [0,01 kgf·m] × rpm / 716,2."""
+    pontos = [(n(motor.get(f"TorqueCurve{i}")), n(motor.get(f"TorqueCurveRPM{i}")) * 100) for i in range(1, 17)]
+    pico = max((t * r for t, r in pontos if r > 0), default=0.0)
+    return pico / 100.0 / 716.2 * n(motor.get("PowerMultiplier")) / 100.0
 
 
 def usados_do_carro(codigo: str) -> list[list[int]]:
@@ -301,8 +339,10 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
     por_id = {c["id"]: c for c in carros}
     pilotos = {"jogador": {"id": "jogador", "ritmo": 1.0, "consistencia": 1.0, "agressividade": 1.0}}
     eventos = []
+    etapas: dict[str, int] = {}
     for k, (b, r) in enumerate(zip(brutos, resumidos)):
-        if r["rally"] not in ("", "0") or r["licenca"] not in ("", "B", "A"):
+        serie = SERIES.get(r["evento"][:3])
+        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in ("", "B", "A"):
             continue
         restr = {}
         if n(r["limite_ps"]) > 0:
@@ -317,7 +357,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
             continue
         ia = [n(b[c]) for c in b if c.startswith("AIAcceleration")]
         ritmo = round(statistics.mean(ia) / 100.0, 3) if ia and statistics.mean(ia) > 0 else 1.0
-        id_piloto = f"gt2_ia_{int(round(ritmo * 100))}"
+        id_piloto = f"ia_{int(round(ritmo * 100))}"
         pilotos[id_piloto] = {"id": id_piloto, "ritmo": ritmo, "consistencia": 1.0, "agressividade": 1.0}
         adversarios = []
         for idx in r["adversarios"].split()[:5]:
@@ -326,17 +366,18 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
             if codigo in nosso and nosso[codigo] in [c["id"] for c in elegiveis]:
                 carro = nosso[codigo]
             else:
-                alvo = n(resumo.get(codigo, {}).get("potencia_ps", 0))
+                alvo = resumo.get(codigo, {}).get("potencia_real", 0.0)
                 carro = min(elegiveis, key=lambda c: abs(c["potencia"] - alvo))["id"]
             adversarios.append({"carro": carro, "piloto": id_piloto})
         premio_carros = [nosso[c] for c in r["carros_premio"].split() if c in nosso]
-        pista = next((nossa for trecho, nossa in PISTAS if trecho in r["pista"].lower()), PISTA_PADRAO)
+        pista = PISTAS.get(r["pista"].lower(), PISTA_PADRAO)
+        etapas[serie] = etapas.get(serie, 0) + 1
         eventos.append({
-            "id": f"gt2_{k:03d}", "nome": r["evento"], "pista": pista, "voltas": int(n(r["voltas"])) or 2,
+            "id": f"ev_{k:03d}", "nome": f"{serie} — etapa {etapas[serie]}", "pista": pista,
+            "voltas": int(n(r["voltas"])) or 2,
             "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [int(v) * 100 for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,
-            "pista_gt2": r["pista"],
         })
     return eventos, list(pilotos.values())
 

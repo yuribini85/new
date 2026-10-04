@@ -11,16 +11,13 @@ func test_fixtures_carregam_sem_erros_nem_pendencias() -> void:
 	d.free()
 
 
-func test_data_real_tem_formato_valido_e_lista_pendencias() -> void:
+func test_data_real_carrega_sem_erros_nem_pendencias() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	igual(d.erros(), [], "erros em data/")
-	verificar("carros.json vazio" in d.pendencias(), "carros vazio deveria ser pendência")
-	verificar("carreira.json: piloto_jogador" in d.pendencias(), "piloto_jogador deveria ser pendência")
-	verificar("economia.json: saldo_inicial" in d.pendencias(), "saldo_inicial deveria ser pendência")
-	verificar(not "economia.json: usado_km_min" in d.pendencias(), "sem carro usado, parâmetros de usados não pendem")
+	igual(d.pendencias(), [], "pendências em data/")
+	verificar(d.lista("carros").size() >= 17, "carros importados do GT2")
 	d.free()
-
 
 func test_referencias_invalidas_sao_erro() -> void:
 	var d := dados_fixture()

@@ -8,7 +8,20 @@ extends SceneTree
 const CAMINHO := "res://data/licencas.json"
 
 
-func _initialize() -> void:
+var _feito := false
+
+
+## Roda no primeiro quadro: em _initialize os autoloads ainda não carregaram
+## os dados, e um erro ali deixa o Godot aberto.
+func _process(_delta: float) -> bool:
+	if not _feito:
+		_feito = true
+		_calibrar()
+		quit()
+	return false
+
+
+func _calibrar() -> void:
 	var dados: Node = root.get_node("Dados")
 	var licencas: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
 	var piloto: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"])
@@ -33,4 +46,3 @@ func _initialize() -> void:
 	var f := FileAccess.open(CAMINHO, FileAccess.WRITE)
 	f.store_string(JSON.stringify(licencas, "\t") + "\n")
 	f.close()
-	quit()

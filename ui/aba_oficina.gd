@@ -35,6 +35,7 @@ func construir() -> void:
 			continue
 		por_categoria.get_or_add(p["categoria"], []).append(p)
 	for cat in por_categoria:
+		por_categoria[cat].sort_custom(func(a, b): return a["preco"] < b["preco"])
 		texto(NOMES_CATEGORIA.get(cat, cat.capitalize()), Color(0.7, 0.8, 1.0))
 		for p in por_categoria[cat]:
 			var instalada: bool = c.pecas.get(cat, {}).get("id") == p["id"]

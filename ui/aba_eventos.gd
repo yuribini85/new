@@ -34,10 +34,16 @@ func construir() -> void:
 	h.add_child(spin)
 	conteudo.add_child(h)
 	separador()
-	for ev in dados.lista("eventos"):
+	var ordem := {"": 0, "B": 1, "A": 2}
+	var eventos: Array = dados.lista("eventos")
+	eventos.sort_custom(func(a, b):
+		var la: int = ordem.get(a["restricoes"].get("licenca", ""), 3)
+		var lb: int = ordem.get(b["restricoes"].get("licenca", ""), 3)
+		return la < lb if la != lb else a["nome"] < b["nome"])
+	for ev in eventos:
 		var motivos := [] if c == null else Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas)
 		var premio := dinheiro(int(ev["premios"][0])) if not ev["premios"].is_empty() else "0"
-		var desc := "%s · %s · %d voltas · %s · 1º %s" % [ev["nome"], dados.pista(ev["pista"]).id, ev["voltas"], ev["condicao"], premio]
+		var desc := "%s · %s · %d voltas · %s · 1º %s" % [ev["nome"], nome_pista(ev["pista"]), ev["voltas"], ev["condicao"], premio]
 		if ev.get("carro_premio") != null and not jogador.vitorias.has(ev["id"]):
 			desc += " + carro"
 		if not motivos.is_empty():

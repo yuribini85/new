@@ -1,1 +1,100 @@
-[]
+[
+	{
+		"id": "B",
+		"nome": "Licença B",
+		"requisito": null,
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "b1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 250.0
+				},
+				"tempos": {
+					"bronze": 86.9,
+					"ouro": 75.82,
+					"prata": 81.36
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "b2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 250.0
+				},
+				"tempos": {
+					"bronze": 79.35,
+					"ouro": 72.26,
+					"prata": 75.81
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "b3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 250.0
+				},
+				"tempos": {
+					"bronze": 88.57,
+					"ouro": 83.37,
+					"prata": 85.97
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "A",
+		"nome": "Licença A",
+		"requisito": "B",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "a1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 300.0
+				},
+				"tempos": {
+					"bronze": 86.9,
+					"ouro": 70.82,
+					"prata": 78.86
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "a2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 300.0
+				},
+				"tempos": {
+					"bronze": 79.35,
+					"ouro": 67.9,
+					"prata": 73.63
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "a3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 300.0
+				},
+				"tempos": {
+					"bronze": 88.57,
+					"ouro": 79.59,
+					"prata": 84.08
+				},
+				"voltas": 1.0
+			}
+		]
+	}
+]

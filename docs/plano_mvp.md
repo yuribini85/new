@@ -168,3 +168,6 @@ técnico real do projeto.
 15. **Visualização:** retrato 720×1280; geometria derivada dos trechos (curvas com
     `sentido`); carro provisório desenhado por código em 16 direções, com tamanho fixo
     em pixels; telas com componentes padrão do Godot até a arte existir.
+16. **Dados do GT2:** `data/` vem do disco (SCUS-94488 v1.2) pelo extrator e importador
+    em `tools/`. Carros fictícios ligados a modelos do GT2; séries do GT2 renomeadas;
+    nenhum nome, marca ou traçado do GT2 no build.

@@ -55,7 +55,7 @@ func _process(_delta: float) -> void:
 		for i in ev["adversarios"].size():
 			var adv: Dictionary = ev["adversarios"][i]
 			_nomes["adv%d_%s" % [i, adv["carro"]]] = dados.carro(adv["carro"])["nome"]
-		_info.text = "%s · %d voltas · %s · faltam %d" % [ev["nome"], ev["voltas"], ev["condicao"], f["restantes"]]
+		_info.text = "%s · %s · %d voltas · faltam %d" % [ev["nome"], Aba.nome_pista(ev["pista"]), ev["voltas"], f["restantes"]]
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	var linhas := []
 	var ordem := _visual.ordem()

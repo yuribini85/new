@@ -42,7 +42,7 @@ def gtdt(ordem, registros, extra=b""):
     corpo = bytearray()
     base = len(cab)
     for i, nome in enumerate(ordem):
-        bloco = b"".join(empacotar(nome, r) if LAYOUTS[nome]["campos"] else b"\0" * LAYOUTS[nome]["tamanho"]
+        bloco = b"".join(empacotar(nome, r) if LAYOUTS[nome]["campos"] else r.get("_bruto", b"\0" * LAYOUTS[nome]["tamanho"])
                          for r in registros.get(nome, []))
         struct.pack_into("<II", cab, 8 * (i + 1), base + len(corpo), len(bloco))
         corpo += bloco
@@ -141,21 +141,26 @@ def iso(nome, dados, bruto):
 def montar():
     nomes = ["Hatch", "Teste '93", "Cupe", "Turbo"]
     data = gtdt(ORDEM_GTMODE_DATA, {
-        "Engine": [{"CarId": id_carro("hat93"), "DisplayedPower": 160, "MaxPowerRPM": 760},
-                   {"CarId": id_carro("cup95"), "DisplayedPower": 280, "MaxPowerRPM": 650}],
+        # Curva de torque de um ponto: 15,27 kgf·m a 7500 rpm = 160 ps; 33,42 a 6000 = 280 ps.
+        "Engine": [{"CarId": id_carro("hat93"), "DisplayedPower": 160, "MaxPowerRPM": 760, "PowerMultiplier": 100,
+                    "TorqueCurve1": 1527, "TorqueCurveRPM1": 75},
+                   {"CarId": id_carro("cup95"), "DisplayedPower": 280, "MaxPowerRPM": 650, "PowerMultiplier": 100,
+                    "TorqueCurve1": 3342, "TorqueCurveRPM1": 60}],
         "Chassis": [{"CarId": id_carro("hat93"), "Weight": 1050, "FrontGrip": 90, "RearGrip": 88},
                     {"CarId": id_carro("cup95"), "Weight": 1300, "FrontGrip": 95, "RearGrip": 99}],
         "Drivetrain": [{"CarId": id_carro("hat93"), "DrivetrainType": 1}, {"CarId": id_carro("cup95"), "DrivetrainType": 2}],
         "Brake": [{"CarId": id_carro("hat93"), "Stage": 0, "BrakingPower": 40},
                   {"CarId": id_carro("cup95"), "Stage": 0, "BrakingPower": 60},
                   {"CarId": id_carro("hat93"), "Stage": 1, "BrakingPower": 50, "Price": 3500}],
-        "NATune": [{"CarId": id_carro("hat93"), "Stage": 1, "PowerMultiplier": 110, "Price": 4000}],
-        "TurbineKit": [{"CarId": id_carro("cup95"), "Stage": 2, "HighRPMPowerMultiplier": 140, "Price": 20000}],
-        "Lightweight": [{"CarId": id_carro("hat93"), "Stage": 1, "Weight": 945, "Price": 2500}],
-        "TiresFront": [{"CarId": id_carro("hat93"), "Stage": 0, "GripMultiplier": 100},
-                       {"CarId": id_carro("hat93"), "Stage": 1, "GripMultiplier": 110, "Price": 1000},
-                       {"CarId": id_carro("cup95"), "Stage": 0, "GripMultiplier": 120},
-                       {"CarId": id_carro("cup95"), "Stage": 1, "GripMultiplier": 126, "Price": 3000}],
+        "NATune": [{"CarId": id_carro("hat93"), "Stage": 1, "PowerMultiplier": 10, "Price": 4000}],
+        "TurbineKit": [{"CarId": id_carro("cup95"), "Stage": 2, "HighRPMPowerMultiplier": 40, "Price": 20000}],
+        "Lightweight": [{"CarId": id_carro("hat93"), "Stage": 1, "Weight": 900, "Price": 2500}],
+        "TiresFront": [{"CarId": id_carro("hat93"), "Stage": 0, "TireCompound": 0},
+                       {"CarId": id_carro("hat93"), "Stage": 1, "TireCompound": 1, "Price": 1000},
+                       {"CarId": id_carro("cup95"), "Stage": 0, "TireCompound": 0},
+                       {"CarId": id_carro("cup95"), "Stage": 1, "TireCompound": 1, "Price": 3000}],
+        # Grip do composto no 1º byte: 145 (fábrica) e 150 (esportivo).
+        "TireCompound": [{"_bruto": bytes([145]) + b"\0" * 63}, {"_bruto": bytes([150]) + b"\0" * 63}],
         "Car": [{"CarId": id_carro("hat93"), "Engine": 0, "Chassis": 0, "Drivetrain": 0, "Brake": 0, "NameFirstPart": 0,
                  "NameSecondPart": 1, "Year": 93, "Price": 17500},
                 {"CarId": id_carro("cup95"), "Engine": 1, "Chassis": 1, "Drivetrain": 1, "Brake": 1, "NameFirstPart": 2,
@@ -166,7 +171,7 @@ def montar():
                    "DrivetrainRestriction": 1, "PrizeMoney1st": 25, "PrizeMoney2nd": 15,
                    "PrizeCars": [id_carro("cup95"), 0, 0, 0], "Opponent1": 4, "Opponent2": 7}],
         "EnemyCars": [{"CarId": id_carro("hat93")}],
-    }, extra=ascii_tab(["Copa Teste", "Pista Teste"]))
+    }, extra=ascii_tab(["SND0001", "mountain"]))
     # Cópias de outra região com lixo: o extrator deve preferir usa_.
     vol = gtfs({"eng_gtmode_data.dat.gz": b"lixo", "usa_gtmode_data.dat.gz": gzip.compress(data),
                 "usa_gtmode_race.dat": race, "eng_unistrdb.dat": b"lixo", "usa_unistrdb.dat.gz": gzip.compress(unistr(nomes)),
@@ -204,7 +209,7 @@ def main():
             ev = list(csv.DictReader(open(saida / "eventos.csv", encoding="utf-8")))
             if not ev or (ev[0]["evento"], ev[0]["pista"], ev[0]["voltas"], ev[0]["licenca"], ev[0]["tracao"],
                           ev[0]["premios_x100"], ev[0]["carros_premio"], ev[0]["adversarios"]) != (
-                    "Copa Teste", "Pista Teste", "3", "B", "FF", "25 15 0 0 0 0", "cup95", "4 7"):
+                    "SND0001", "mountain", "3", "B", "FF", "25 15 0 0 0 0", "cup95", "4 7"):
                 falhas.append(f"bruto={bruto}: eventos {ev}")
     # Importador sobre a saída do extrator.
     with tempfile.TemporaryDirectory() as tmp:
@@ -238,8 +243,8 @@ def main():
             if (x["aderencia"], y["aderencia"], x["freio"], y["freio"]) != (round(89 / 93, 3), round(97 / 93, 3), 0.8, 1.0):
                 falhas.append(f"importador normalização: {x} {y}")
             pecas = {p["id"]: p for p in carregar("pecas")}
-            esperado = {"hayase_x_natune_1": ("aspiracao", "potencia", 1.1, 4000),
-                        "hartwig_y_turbinekit_2": ("aspiracao", "potencia", 1.4, 20000),
+            esperado = {"hayase_x_natune_1": ("aspiracao", "potencia", 16.0, 4000),
+                        "hartwig_y_turbinekit_2": ("aspiracao", "potencia", 112.0, 20000),
                         "hayase_x_lightweight_1": ("lightweight", "peso", 0.9, 2500),
                         "hayase_x_brake_1": ("brake", "freio", 1.25, 3500)}
             for pid, (cat, attr, val, preco) in esperado.items():
@@ -247,10 +252,11 @@ def main():
                 if not p or (p["categoria"], p["efeitos"][0]["atributo"], p["efeitos"][0]["valor"], p["preco"]) != (cat, attr, val, preco):
                     falhas.append(f"importador peça {pid}: {p}")
             pneus = {p["id"]: p for p in carregar("pneus")}
-            if pneus.get("gt2_pneu_1", {}).get("aderencia") != {"seco": 1.075, "chuva": 1.075} or pneus["gt2_pneu_1"]["preco"] != 2000:
+            if pneus.get("pneu_1", {}).get("aderencia") != {"seco": 1.034, "chuva": 1.034} or pneus["pneu_1"]["preco"] != 2000:
                 falhas.append(f"importador pneus: {pneus}")
             ev = carregar("eventos")
             if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "B"} \
+                    or (ev[0]["nome"], ev[0]["pista"]) != ("Copa de Domingo — etapa 1", "serra_alta") \
                     or ev[0]["premios"] != [2500, 1500] or ev[0]["carro_premio"] != "hartwig_y" \
                     or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
                 falhas.append(f"importador eventos: {ev}")

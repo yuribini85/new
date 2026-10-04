@@ -8,6 +8,8 @@ func _init(d: Node, j: Node) -> void:
 func construir() -> void:
 	titulo("Novos")
 	for c in dados.lista("carros"):
+		if not c.get("novo", true):
+			continue  # como no GT2: modelos antigos só no usado
 		var preco := int(c["preco"])
 		var fab: String = dados.item("fabricantes", c["fabricante"]).get("nome", c["fabricante"])
 		linha("%s · %s · %s · %d cv · %d" % [c["nome"], fab, c["tracao"], c["potencia"], c["ano"]], [

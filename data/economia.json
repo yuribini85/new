@@ -1,5 +1,5 @@
 {
-	"saldo_inicial": null,
-	"fracao_revenda": 0.5,
-	"pneu_de_fabrica": null
+ "saldo_inicial": 10000,
+ "fracao_revenda": 0.5,
+ "pneu_de_fabrica": "pneu_0"
 }

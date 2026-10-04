@@ -1,1 +1,65 @@
-[]
+[
+ {
+  "id": "pneu_0",
+  "nome": "Pneu de fábrica",
+  "preco": 0,
+  "aderencia": {
+   "seco": 1.0,
+   "chuva": 1.0
+  }
+ },
+ {
+  "id": "pneu_1",
+  "nome": "Pneu esportivo",
+  "preco": 6000,
+  "aderencia": {
+   "seco": 1.034,
+   "chuva": 1.034
+  }
+ },
+ {
+  "id": "pneu_2",
+  "nome": "Pneu de corrida duro",
+  "preco": 10500,
+  "aderencia": {
+   "seco": 1.103,
+   "chuva": 1.103
+  }
+ },
+ {
+  "id": "pneu_3",
+  "nome": "Pneu de corrida médio",
+  "preco": 12500,
+  "aderencia": {
+   "seco": 1.138,
+   "chuva": 1.138
+  }
+ },
+ {
+  "id": "pneu_4",
+  "nome": "Pneu de corrida macio",
+  "preco": 15000,
+  "aderencia": {
+   "seco": 1.172,
+   "chuva": 1.172
+  }
+ },
+ {
+  "id": "pneu_5",
+  "nome": "Pneu de corrida supermacio",
+  "preco": 17500,
+  "aderencia": {
+   "seco": 1.207,
+   "chuva": 1.207
+  }
+ },
+ {
+  "id": "pneu_6",
+  "nome": "Pneu de simulação",
+  "preco": 2000,
+  "aderencia": {
+   "seco": 0.793,
+   "chuva": 0.793
+  }
+ }
+]

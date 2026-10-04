@@ -140,3 +140,17 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
 
 **A confirmar** (não vêm do GT2): `fracao_revenda`, `teto_offline_s` (8 h, decisão de design),
 `sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).
+
+## Estado atual de data/ (importado do GT2 americano, SCUS-94488 v1.2)
+
+- 17 carros ligados a modelos do GT2 (tabela de ligação em `referencia/carros.csv`, fora do
+  Git). Potência pela curva de torque; peso, preço, tração, grip e freio do disco.
+- 242 peças com preço e efeito do GT2; 7 compostos de pneu (fábrica a supermacio e o de
+  simulação; o de terra fica fora).
+- Usados: janelas e preços dos 60 períodos de 10 dias do GT2. Novos: só os carros que
+  nunca aparecem no usado.
+- 38 eventos de 18 séries sem licença, B e A (`SERIES` em `tools/importar_gt2.py`), com
+  voltas, limites, prêmios e adversários do GT2. Pista do GT2 vira a nossa pela função.
+- Licenças B e A: restrição = mediana dos limites dos eventos que abrem; tempos calibrados
+  pela simulação.
+- `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.

@@ -12,7 +12,8 @@ Todas as etapas (1 a 8) da ordem de implementação (`docs/plano_mvp.md`, seçã
 validação dos dados, carro com peças e pneus, pista em trechos, simulação de corrida
 headless, saldo, garagem, concessionária de novos, eventos com restrições de entrada,
 prêmios, carro-prêmio, licenças, usados, fila de repetições, progresso offline, save,
-corrida isométrica ao vivo e telas provisórias (sem arte). Falta o balanceamento real — ver
+corrida isométrica ao vivo e telas provisórias (sem arte). `data/` tem o balanceamento
+importado do disco do GT2: o jogo abre e é jogável. Falta o balanceamento real — ver
 `data/README.md`. Ainda não há telas.
 
 ## Estrutura

@@ -1,1 +1,3874 @@
-[]
+[
+ {
+  "id": "hayase_kobo_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 2.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 10000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 2.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2800,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 7.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 12500,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 83.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 38.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 20000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_kobo_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.6579
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_displacement_1",
+  "nome": "Aumento de cilindrada 1",
+  "categoria": "displacement",
+  "preco": 8000,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 11.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 15.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 17.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 12500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 39.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 43.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 95.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_pika_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 11.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 16.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 12500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_tsubame_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 10000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2800,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 4000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 20.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_natune_3",
+  "nome": "Preparação aspirada 3",
+  "categoria": "aspiracao",
+  "preco": 60000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 54.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 11500,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 34.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 12500,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 99.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 48.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 20000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_kaze_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 9.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 14.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 12500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 37.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 41.3
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 98.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 16.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_intercooler_2",
+  "nome": "Intercooler 2",
+  "categoria": "intercooler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 14.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_intercooler_1",
+  "nome": "Intercooler 1",
+  "categoria": "intercooler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 88.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 40000,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 144.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 43.3
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 16.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_intercooler_2",
+  "nome": "Intercooler 2",
+  "categoria": "intercooler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 14.5
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_intercooler_1",
+  "nome": "Intercooler 1",
+  "categoria": "intercooler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 88.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 39.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 40000,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 132.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 16000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 7.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 20.3
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 15.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_intercooler_1",
+  "nome": "Intercooler 1",
+  "categoria": "intercooler",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 7.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_intercooler_2",
+  "nome": "Intercooler 2",
+  "categoria": "intercooler",
+  "preco": 3500,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 17.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 40.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 45000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 142.3
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 14500,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 83.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 25000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_shiden_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 16.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 21.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_intercooler_2",
+  "nome": "Intercooler 2",
+  "categoria": "intercooler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 18.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_intercooler_1",
+  "nome": "Intercooler 1",
+  "categoria": "intercooler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 40000,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 86.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 56.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 29.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenrai_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 16000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 17.2
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 22.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_intercooler_2",
+  "nome": "Intercooler 2",
+  "categoria": "intercooler",
+  "preco": 3500,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 20.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_intercooler_1",
+  "nome": "Intercooler 1",
+  "categoria": "intercooler",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 45000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 102.9
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 28.6
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 14500,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 65.8
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 25000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_kumo_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 16000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_displacement_1",
+  "nome": "Aumento de cilindrada 1",
+  "categoria": "displacement",
+  "preco": 8500,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 18.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 9.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 24.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_intercooler_2",
+  "nome": "Intercooler 2",
+  "categoria": "intercooler",
+  "preco": 3500,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 21.1
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_intercooler_1",
+  "nome": "Intercooler 1",
+  "categoria": "intercooler",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 9.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 14500,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 123.7
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 57.3
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_turbinekit_4",
+  "nome": "Kit turbo 4",
+  "categoria": "aspiracao",
+  "preco": 74000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 256.4
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 45000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 184.0
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 25000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hayase_ryujin_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.0
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.0
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.5
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_natune_3",
+  "nome": "Preparação aspirada 3",
+  "categoria": "aspiracao",
+  "preco": 65000,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 100.1
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 35.0
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 12500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 63.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 40000,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 151.3
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 48.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 102.6
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hartwig_lauf_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 16000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.8
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 2000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 7.7
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 7.7
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 19.3
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 13.5
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 38.6
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 73.2
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_natune_3",
+  "nome": "Preparação aspirada 3",
+  "categoria": "aspiracao",
+  "preco": 75000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 104.1
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 25000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 6000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hartwig_strecke_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 5000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.1
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.4
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 5.4
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 13.6
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 9.5
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_turbinekit_3",
+  "nome": "Kit turbo 3",
+  "categoria": "aspiracao",
+  "preco": 40000,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 188.9
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 111.5
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 54.4
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "hartwig_gleiter_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 5500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 1.9
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 13500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 1.9
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_displacement_1",
+  "nome": "Aumento de cilindrada 1",
+  "categoria": "displacement",
+  "preco": 8000,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 1.2
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 1500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 2.5
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1600,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 2.5
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 4800,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 6.2
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 2900,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.3
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 92.5
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 4500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 45.3
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 5500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1200,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 22500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_wren_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 4800,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 6000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.6
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 16000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 3.6
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 2000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 8.4
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 4.8
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 12.0
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 57.6
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 36.0
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_turbinekit_1",
+  "nome": "Kit turbo 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 50.4
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_turbinekit_2",
+  "nome": "Kit turbo 2",
+  "categoria": "aspiracao",
+  "preco": 14500,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 94.8
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 6000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1500,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 25000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_kestrel_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_portpolish_1",
+  "nome": "Polimento de dutos 1",
+  "categoria": "portpolish",
+  "preco": 6000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 10.4
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_enginebalance_1",
+  "nome": "Balanceamento do motor 1",
+  "categoria": "enginebalance",
+  "preco": 16000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 10.4
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_computer_1",
+  "nome": "Computador de bordo 1",
+  "categoria": "computer",
+  "preco": 2000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 13.8
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_muffler_3",
+  "nome": "Escapamento 3",
+  "categoria": "muffler",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 34.6
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_muffler_2",
+  "nome": "Escapamento 2",
+  "categoria": "muffler",
+  "preco": 3000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 24.2
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_muffler_1",
+  "nome": "Escapamento 1",
+  "categoria": "muffler",
+  "preco": 1800,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 13.8
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_natune_1",
+  "nome": "Preparação aspirada 1",
+  "categoria": "aspiracao",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 41.5
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_natune_3",
+  "nome": "Preparação aspirada 3",
+  "categoria": "aspiracao",
+  "preco": 75000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 114.0
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_natune_2",
+  "nome": "Preparação aspirada 2",
+  "categoria": "aspiracao",
+  "preco": 13500,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 76.0
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_lightweight_1",
+  "nome": "Redução de peso 1",
+  "categoria": "lightweight",
+  "preco": 1500,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.98
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_lightweight_2",
+  "nome": "Redução de peso 2",
+  "categoria": "lightweight",
+  "preco": 6000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.95
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_lightweight_3",
+  "nome": "Redução de peso 3",
+  "categoria": "lightweight",
+  "preco": 25000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_brake_1",
+  "nome": "Freios 1",
+  "categoria": "brake",
+  "preco": 5000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "freio",
+    "op": "mult",
+    "valor": 1.8197
+   }
+  ]
+ }
+]

@@ -28,15 +28,26 @@ func _rodar() -> void:
 		return
 	var jogador := root.get_node("Jogador")
 	jogador.novo_jogo(dados.economia(), dados.pneu)
-	jogador.economia.creditar(5000)
 	jogador.carreira = Carreira.new(dados, jogador)
 	jogador.fila_ctrl = Fila.new(jogador.carreira, jogador, float(dados.carreira()["teto_offline_s"]))
-	var uid: int = jogador.concessionaria.comprar_carro(dados.carro("forte"))
-	jogador.concessionaria.comprar_carro(dados.carro("fraco"))
+	# Começo de carreira: o usado mais caro que o saldo inicial paga, e o
+	# primeiro evento em que ele pode correr. Funciona com qualquer data/.
+	var ofertas := Usados.estoque(dados.lista("carros"), 0, jogador.usados_vendidos)
+	ofertas = ofertas.filter(func(o): return jogador.economia.pode_pagar(o["preco"]))
+	var uid := -1
+	if not ofertas.is_empty():
+		var o: Dictionary = ofertas.back()
+		uid = jogador.concessionaria.comprar_usado(o, dados.carro(o["carro_id"]), jogador.usados_vendidos)
+	else:
+		for c in dados.lista("carros"):
+			uid = jogador.concessionaria.comprar_carro(c)
+			if uid > 0:
+				break
 	jogador.carro_ativo = uid
-	jogador.concessionaria.comprar_peca(jogador.garagem.carro(uid), dados.peca("turbo"))
-	# Corrida iniciada há 25 s para a captura mostrar carros em movimento.
-	jogador.fila_ctrl.iniciar("aberto", uid, 3, Time.get_unix_time_from_system() - 25.0)
+	for ev in dados.lista("eventos"):
+		# Corrida iniciada há 25 s para a captura mostrar carros em movimento.
+		if jogador.fila_ctrl.iniciar(ev["id"], uid, 3, Time.get_unix_time_from_system() - 25.0) == "":
+			break
 
 	var tela: Control = load("res://scenes/principal.tscn").instantiate()
 	root.add_child(tela)

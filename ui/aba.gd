@@ -93,3 +93,11 @@ func ficha(c: Carro, condicao := "seco") -> String:
 	if a["velocidade_max"] != INF:
 		t += " · %d km/h" % a["velocidade_max"]
 	return t
+
+
+## Nome legível de uma pista a partir do id ("serra_alta" -> "Serra Alta").
+static func nome_pista(id: String) -> String:
+	var palavras := []
+	for p in id.split("_"):
+		palavras.append(p if p in ["do", "da", "das", "de", "dos"] else p.capitalize())
+	return " ".join(palavras)

@@ -1,1 +1,14 @@
-[]
+[
+ {
+  "id": "jogador",
+  "ritmo": 1.0,
+  "consistencia": 1.0,
+  "agressividade": 1.0
+ },
+ {
+  "id": "ia_100",
+  "ritmo": 1.0,
+  "consistencia": 1.0,
+  "agressividade": 1.0
+ }
+]

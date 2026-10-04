@@ -1,1 +1,1593 @@
-[]
+[
+ {
+  "id": "ev_000",
+  "nome": "Desafio 4x4 — etapa 1",
+  "pista": "anel_do_vale",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "tracao": [
+    "4WD"
+   ],
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_005",
+  "nome": "Copa Anos 80 — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 3,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_022",
+  "nome": "Copa Clube — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_023",
+  "nome": "Copa Clube — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   6000,
+   3000,
+   2000,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_024",
+  "nome": "Copa Clube — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_073",
+  "nome": "Desafio Tração Dianteira — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "tracao": [
+    "FF"
+   ],
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_074",
+  "nome": "Desafio Tração Dianteira — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "tracao": [
+    "FF"
+   ],
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   6000,
+   3000,
+   2000,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_080",
+  "nome": "Desafio Tração Traseira — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "tracao": [
+    "FR"
+   ],
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_097",
+  "nome": "Liga Regional III — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_098",
+  "nome": "Liga Regional III — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_099",
+  "nome": "Liga Regional III — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_101",
+  "nome": "Liga Regional VII — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1500,
+   1000,
+   700,
+   400,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_102",
+  "nome": "Liga Regional VII — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1500,
+   1000,
+   700,
+   400,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_103",
+  "nome": "Liga Regional VII — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1500,
+   1000,
+   700,
+   400,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_104",
+  "nome": "Liga Regional IV — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_105",
+  "nome": "Liga Regional IV — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_106",
+  "nome": "Liga Regional V — etapa 1",
+  "pista": "anel_do_vale",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 220,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_107",
+  "nome": "Liga Regional V — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_108",
+  "nome": "Liga Regional V — etapa 3",
+  "pista": "anel_do_vale",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 450,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_109",
+  "nome": "Liga Regional VI — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_110",
+  "nome": "Liga Regional VI — etapa 2",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_111",
+  "nome": "Liga Regional I — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_112",
+  "nome": "Liga Regional I — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_113",
+  "nome": "Liga Regional I — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_142",
+  "nome": "Liga Regional II — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_lauf",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_143",
+  "nome": "Liga Regional II — etapa 2",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_144",
+  "nome": "Liga Regional II — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_brute",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_156",
+  "nome": "Troféu 250 — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_157",
+  "nome": "Troféu 250 — etapa 2",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_197",
+  "nome": "Série 400 — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_208",
+  "nome": "Copa 400 — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_211",
+  "nome": "Copa de Domingo — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   3000,
+   1000,
+   500,
+   400,
+   300,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_212",
+  "nome": "Copa de Domingo — etapa 2",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_tsubame",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   4000,
+   1500,
+   1000,
+   700,
+   400,
+   200
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_213",
+  "nome": "Copa de Domingo — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_shiden",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_238",
+  "nome": "Copa Peso-Leve — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 150
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   5000,
+   2000,
+   1500,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_239",
+  "nome": "Copa Peso-Leve — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 100,
+   "licenca": "B"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   6000,
+   3000,
+   2000,
+   1000,
+   500,
+   300
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_240",
+  "nome": "Copa Peso-Leve — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 100,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_241",
+  "nome": "Copa Aberta 250 — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 2,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "A"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kaze",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ashcombe_kestrel",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_lauf",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   7000,
+   5000,
+   2000,
+   1000,
+   700,
+   500
+  ],
+  "carro_premio": null
+ }
+]
