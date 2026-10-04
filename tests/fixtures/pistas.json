@@ -1,16 +1,92 @@
 [
-	{"id": "oval", "funcao": "alta_velocidade", "trechos": [
-		{"tipo": "reta", "comprimento_m": 500, "ultrapassagem": true},
-		{"tipo": "curva_media", "comprimento_m": 300, "raio_m": 100},
-		{"tipo": "reta", "comprimento_m": 500},
-		{"tipo": "curva_media", "comprimento_m": 300, "raio_m": 100},
-		{"tipo": "entrada_box", "comprimento_m": 50}
-	]},
-	{"id": "circulo", "funcao": "teste", "trechos": [
-		{"tipo": "curva_lenta", "comprimento_m": 400, "raio_m": 40}
-	]},
-	{"id": "sem_ultrapassagem", "funcao": "teste", "trechos": [
-		{"tipo": "reta", "comprimento_m": 600},
-		{"tipo": "curva_lenta", "comprimento_m": 200, "raio_m": 50}
-	]}
+ {
+  "id": "oval",
+  "funcao": "alta_velocidade",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 500,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "comprimento_m": 314.1592654,
+    "raio_m": 100
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 500
+   },
+   {
+    "tipo": "curva_media",
+    "comprimento_m": 314.1592654,
+    "raio_m": 100
+   },
+   {
+    "tipo": "entrada_box",
+    "comprimento_m": 50
+   }
+  ]
+ },
+ {
+  "id": "circulo",
+  "funcao": "teste",
+  "trechos": [
+   {
+    "tipo": "curva_lenta",
+    "comprimento_m": 251.3274123,
+    "raio_m": 40
+   }
+  ]
+ },
+ {
+  "id": "sem_ultrapassagem",
+  "funcao": "teste",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 300
+   },
+   {
+    "tipo": "curva_lenta",
+    "comprimento_m": 157.0796327,
+    "raio_m": 50
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 300
+   },
+   {
+    "tipo": "curva_lenta",
+    "comprimento_m": 157.0796327,
+    "raio_m": 50
+   }
+  ]
+ },
+ {
+  "id": "oito_direita",
+  "funcao": "teste",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 100
+   },
+   {
+    "tipo": "curva_media",
+    "comprimento_m": 125.6637061,
+    "raio_m": 40,
+    "sentido": "direita"
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 100
+   },
+   {
+    "tipo": "curva_media",
+    "comprimento_m": 125.6637061,
+    "raio_m": 40,
+    "sentido": "direita"
+   }
+  ]
+ }
 ]

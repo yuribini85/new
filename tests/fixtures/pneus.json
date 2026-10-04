@@ -1,4 +1,20 @@
 [
-	{"id": "seco", "preco": 50, "aderencia": {"seco": 1.0, "chuva": 0.5}},
-	{"id": "chuva", "preco": 80, "aderencia": {"seco": 0.8, "chuva": 0.9}}
+ {
+  "id": "seco",
+  "preco": 50,
+  "aderencia": {
+   "seco": 1.0,
+   "chuva": 0.5
+  },
+  "nome": "Pneu de rua"
+ },
+ {
+  "id": "chuva",
+  "preco": 80,
+  "aderencia": {
+   "seco": 0.8,
+   "chuva": 0.9
+  },
+  "nome": "Pneu de chuva"
+ }
 ]

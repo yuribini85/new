@@ -15,7 +15,7 @@ func _correr(d: Node, pista: String, participantes: Array, voltas: int, semente 
 func test_volta_lancada_no_circulo_bate_com_a_fisica() -> void:
 	var d := dados_fixture()
 	var r := _correr(d, "circulo", [_participante(d, "a", "forte", "perfeito")], 3)
-	var esperado := 400.0 / sqrt(1.0 * Simulacao.G * 40.0)
+	var esperado := 2.0 * PI * 40.0 / sqrt(1.0 * Simulacao.G * 40.0)
 	var voltas: Array = r["carros"]["a"]["voltas"]
 	igual(voltas.size(), 3, "voltas registradas")
 	perto(voltas[1], esperado, 0.05, "volta 2")
@@ -30,7 +30,7 @@ func test_ritmo_do_piloto_escala_a_volta() -> void:
 	var r := Simulacao.correr(d.pista("circulo"),
 			[{"id": "a", "atributos": _participante(d, "a", "forte", "perfeito")["atributos"], "piloto": piloto}],
 			2, d.simulacao(), 1)
-	perto(r["carros"]["a"]["voltas"][1], 400.0 / (sqrt(Simulacao.G * 40.0) * 0.9), 0.05, "volta a 90%")
+	perto(r["carros"]["a"]["voltas"][1], 2.0 * PI * 40.0 / (sqrt(Simulacao.G * 40.0) * 0.9), 0.05, "volta a 90%")
 	d.free()
 
 

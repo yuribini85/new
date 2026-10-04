@@ -10,9 +10,9 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | Arquivo | Formato |
 |---|---|
 | `fabricantes.json` | lista de `{id, nome, escola}` |
-| `carros.json` | lista de `{id, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usado_dias: [início, fim]` |
-| `pecas.json` | lista de `{id, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos` |
-| `pneus.json` | lista de `{id, aderencia: {seco, chuva}, preco}` |
+| `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usado_dias: [início, fim]` |
+| `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos` |
+| `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
@@ -30,9 +30,10 @@ sintéticos (só para teste) em `tests/fixtures/`.
 - `freio`: fração da aderência usada na frenagem (desaceleração = freio · aderência · g).
 - `efeitos` de peça: lista de `{atributo, op, valor}`, `op` = `soma` ou `mult`. Todas as
   somas são aplicadas antes das multiplicações. Uma peça por `categoria`.
-- `trechos`: `{tipo, comprimento_m, raio_m (curvas), ultrapassagem (bool),
-  pontos_trajetoria (visualização)}`. Tipos em `Pista.TIPOS`. Trechos de box ficam fora
-  da volta no primeiro build.
+- `trechos`: `{tipo, comprimento_m, raio_m (curvas), sentido ("esquerda" padrão ou
+  "direita"), ultrapassagem (bool)}`. Tipos em `Pista.TIPOS`. Trechos de box ficam fora
+  da volta no primeiro build. O traçado é derivado dos trechos (reta avança; trecho com
+  raio é arco) e precisa fechar a volta — conferir em `tools/editor_pista.tscn`.
 - Piloto: `ritmo` é a fração do limite que o piloto usa; `consistencia` (0–1) reduz o
   ruído por volta; `agressividade` (0–1) é a chance de tentar ultrapassar em cada zona.
 

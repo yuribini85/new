@@ -10,15 +10,18 @@ const ElegibilidadeScript := preload("res://data_model/elegibilidade.gd")
 const LicencasScript := preload("res://data_model/licencas.gd")
 const SimulacaoScript := preload("res://sim/simulacao.gd")
 
+## Tolerância para o traçado fechar (técnica, não é balanceamento).
+const FECHAMENTO_MAX_M := 1.0
+
 ## arquivo -> campos obrigatórios de cada item da lista.
 const ESQUEMAS := {
 	"fabricantes": ["id", "nome", "escola"],
 	"carros": [
-		"id", "fabricante", "arquetipo_ref", "categoria", "tracao",
+		"id", "nome", "fabricante", "arquetipo_ref", "categoria", "tracao",
 		"potencia", "peso", "aderencia", "freio", "velocidade_max", "preco", "ano",
 	],
-	"pecas": ["id", "categoria", "efeitos", "preco"],
-	"pneus": ["id", "aderencia", "preco"],
+	"pecas": ["id", "nome", "categoria", "efeitos", "preco"],
+	"pneus": ["id", "nome", "aderencia", "preco"],
 	"pistas": ["id", "funcao", "trechos"],
 	"pilotos_ia": ["id", "ritmo", "consistencia", "agressividade"],
 	"eventos": ["id", "nome", "pista", "voltas", "condicao", "restricoes", "adversarios", "premios"],
@@ -41,8 +44,18 @@ var _pendencias: Array = []
 var _erros: Array = []
 
 
+## Pasta efetivamente carregada. `--dados=<pasta>` depois de `--` na linha de
+## comando troca a pasta (ex.: res://tests/fixtures/ para ver as telas antes
+## do balanceamento existir). Nunca usar em build.
+var pasta := DATA_DIR
+
+
 func _ready() -> void:
-	carregar(DATA_DIR)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--dados="):
+			pasta = arg.trim_prefix("--dados=")
+			push_warning("Dados: usando %s em vez de %s" % [pasta, DATA_DIR])
+	carregar(pasta)
 	for e in _erros:
 		push_error("Dados: " + e)
 	for p in _pendencias:
@@ -99,8 +112,14 @@ func _validar_item(arquivo: String, item: Variant) -> void:
 		elif item[campo] == null:
 			_pendencias.append("%s.json: '%s'.%s" % [arquivo, item.get("id"), campo])
 	if arquivo == "pistas" and item.has("trechos"):
-		for e in PistaScript.validar(item):
+		var erros_pista := PistaScript.validar(item)
+		for e in erros_pista:
 			_erros.append("pistas.json: '%s' %s" % [item.get("id"), e])
+		if erros_pista.is_empty():
+			var p = PistaScript.new(item)
+			if p.erro_fechamento() > FECHAMENTO_MAX_M or p.erro_rumo() > 0.01:
+				_erros.append("pistas.json: '%s' não fecha (%.2f m, %.1f°) — use tools/editor_pista.tscn" % [
+					item.get("id"), p.erro_fechamento(), rad_to_deg(p.erro_rumo())])
 
 
 ## Ids citados em um arquivo precisam existir no arquivo de destino.

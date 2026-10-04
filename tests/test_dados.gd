@@ -7,7 +7,7 @@ func test_fixtures_carregam_sem_erros_nem_pendencias() -> void:
 	igual(d.pendencias(), [], "pendências")
 	igual(d.lista("carros").size(), 2, "carros")
 	igual(d.carro("forte")["tracao"], "FR", "tração")
-	igual(d.pista("oval").comprimento, 1600.0, "pista")
+	perto(d.pista("oval").comprimento, 1000.0 + 200.0 * PI, 1e-3, "pista")
 	d.free()
 
 

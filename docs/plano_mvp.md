@@ -164,3 +164,6 @@ técnico real do projeto.
     ausente acima de `teto_offline_s` é descartado e a fila continua de onde parou.
 14. **Save:** guarda só ids e estado do jogador; os números voltam de `data/` no load,
     então rebalancear não quebra saves.
+15. **Visualização:** retrato 720×1280; geometria derivada dos trechos (curvas com
+    `sentido`); carro provisório desenhado por código em 16 direções, com tamanho fixo
+    em pixels; telas com componentes padrão do Godot até a arte existir.

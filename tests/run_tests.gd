@@ -11,10 +11,24 @@ const SUITES := [
 	preload("res://tests/test_carreira.gd"),
 	preload("res://tests/test_licencas_usados.gd"),
 	preload("res://tests/test_fila_save.gd"),
+	preload("res://tests/test_telas.gd"),
 ]
 
 
-func _init() -> void:
+var _rodou := false
+
+
+## Roda no primeiro quadro: a árvore já está pronta e _ready() dos nós
+## adicionados pelos testes é chamado normalmente.
+func _process(_delta: float) -> bool:
+	if _rodou:
+		return false
+	_rodou = true
+	_rodar()
+	return false
+
+
+func _rodar() -> void:
 	var falhas := 0
 	var total := 0
 	for suite_script in SUITES:

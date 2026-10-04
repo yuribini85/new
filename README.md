@@ -8,11 +8,11 @@ colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 ## Estado
 
-Etapas 1 a 5, 7 e 8 da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
+Todas as etapas (1 a 8) da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
 validação dos dados, carro com peças e pneus, pista em trechos, simulação de corrida
 headless, saldo, garagem, concessionária de novos, eventos com restrições de entrada,
-prêmios, carro-prêmio, licenças, usados, fila de repetições, progresso offline e save.
-Falta a etapa 6 (visualização e telas). Falta o balanceamento real — ver
+prêmios, carro-prêmio, licenças, usados, fila de repetições, progresso offline, save,
+corrida isométrica ao vivo e telas provisórias (sem arte). Falta o balanceamento real — ver
 `data/README.md`. Ainda não há telas.
 
 ## Estrutura
@@ -31,6 +31,11 @@ data_model/usados.gd    estoque de usados por faixa de dias
 data_model/fila.gd      fila de repetições e progresso offline
 data_model/save.gd      serialização do estado do jogador
 autoload/save_manager.gd  grava/lê user://save.json e processa o offline ao abrir
+visual/                 projeção isométrica, sprite provisório (16 direções), corrida ao vivo
+ui/                     telas: garagem, loja, oficina, eventos, corrida, licenças
+scenes/principal.tscn   cena principal (retrato 720×1280)
+tools/editor_pista.tscn visualizador de pistas: traçado, zonas e fechamento da volta
+tools/captura_telas.gd  captura PNG de todas as telas com dados de teste
 autoload/jogador.gd     estado do jogador (saldo, garagem, licenças, vitórias, dias)
 sim/simulacao.gd        corrida headless (envelope de velocidade + cortesia)
 data/                   balanceamento (vazio até o estudo do GT2)
@@ -44,6 +49,17 @@ tests/rodar.sh            # ou: tests/rodar.sh /caminho/do/godot
 ```
 
 Rodam também no GitHub Actions a cada push e pull request.
+
+## Ver as telas antes do balanceamento
+
+Com `data/` vazio o jogo mostra a lista de pendências. Para navegar com os dados
+sintéticos dos testes:
+
+```
+godot -- --dados=res://tests/fixtures/
+```
+
+O save desse modo fica separado (`user://save_fixtures.json`).
 
 ## Documentos
 
