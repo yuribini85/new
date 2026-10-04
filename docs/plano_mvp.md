@@ -160,3 +160,7 @@ técnico real do projeto.
 12. **Eventos:** restrições do GT2 (potência efetiva, tração, categoria, fabricante, ano,
     licença); jogador larga em último; prêmio por posição a cada disputa; carro-prêmio só
     na primeira vitória.
+13. **Duração na fila:** uma corrida dura em tempo real o mesmo que dura simulada. O tempo
+    ausente acima de `teto_offline_s` é descartado e a fila continua de onde parou.
+14. **Save:** guarda só ids e estado do jogador; os números voltam de `data/` no load,
+    então rebalancear não quebra saves.

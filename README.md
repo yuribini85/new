@@ -8,11 +8,11 @@ colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 ## Estado
 
-Etapas 1 a 5 e 7 da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
+Etapas 1 a 5, 7 e 8 da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
 validação dos dados, carro com peças e pneus, pista em trechos, simulação de corrida
 headless, saldo, garagem, concessionária de novos, eventos com restrições de entrada,
-prêmios, carro-prêmio, licenças e usados. Falta a etapa 6 (visualização) e a 8 (save e
-offline). Falta o balanceamento real — ver
+prêmios, carro-prêmio, licenças, usados, fila de repetições, progresso offline e save.
+Falta a etapa 6 (visualização e telas). Falta o balanceamento real — ver
 `data/README.md`. Ainda não há telas.
 
 ## Estrutura
@@ -28,6 +28,9 @@ data_model/elegibilidade.gd   restrições de entrada dos eventos
 data_model/carreira.gd  disputa de eventos: grid, simulação, prêmios
 data_model/licencas.gd  testes de licença e concessão
 data_model/usados.gd    estoque de usados por faixa de dias
+data_model/fila.gd      fila de repetições e progresso offline
+data_model/save.gd      serialização do estado do jogador
+autoload/save_manager.gd  grava/lê user://save.json e processa o offline ao abrir
 autoload/jogador.gd     estado do jogador (saldo, garagem, licenças, vitórias, dias)
 sim/simulacao.gd        corrida headless (envelope de velocidade + cortesia)
 data/                   balanceamento (vazio até o estudo do GT2)

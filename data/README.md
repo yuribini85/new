@@ -19,7 +19,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
 | `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcional `carro_premio` |
 | `licencas.json` | lista de `{id, nome, testes}`, opcional `requisito` (id de outra licença) |
-| `carreira.json` | objeto `{piloto_jogador}`: id em `pilotos_ia.json` que pilota os carros do jogador |
+| `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
 ## Unidades e semântica
 
@@ -89,3 +89,10 @@ Testes não contam dia.
 Carro com `usado_dias` aparece no usado enquanto o dia do jogador estiver na faixa. A
 quilometragem é sorteada por carro e período e só afeta o preço. Comprado, sai do estoque
 até o período seguinte.
+
+## Fila e offline
+
+Um carro por vez, com número de repetições. Cada corrida dura em tempo real o mesmo que
+dura simulada. Ao abrir o jogo, as corridas concluídas durante a ausência são aplicadas
+em lote, até `teto_offline_s`; o excesso é descartado e a fila continua de onde parou.
+Carro vendido ou que deixou de ser elegível cancela a fila.

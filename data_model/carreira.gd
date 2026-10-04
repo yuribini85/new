@@ -15,10 +15,21 @@ func _init(dados_: Node, jogador_: Node) -> void:
 	jogador = jogador_
 
 
-## Retorna {"erro"} se não pôde correr, ou
-## {"classificacao", "posicao", "premio", "carro_premio_uid", "resultado"}.
+## Disputa e aplica o resultado na hora. Retorna {"erro"} ou o mesmo que aplicar().
 func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
+	var corrida := preparar(evento_id, uid, semente)
+	if corrida.has("erro"):
+		return corrida
+	return aplicar(corrida)
+
+
+## Simula sem alterar nada no jogador. Mesma semente, mesmo resultado — a fila
+## offline depende disso para recalcular a corrida em andamento após o load.
+## Retorna {"erro"} ou {"evento_id", "uid", "resultado", "duracao"}.
+func preparar(evento_id: String, uid: int, semente: int) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
+	if ev.is_empty():
+		return {"erro": "evento %s não existe" % evento_id}
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
 		return {"erro": "carro %d não está na garagem" % uid}
@@ -38,6 +49,15 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
 			dados.simulacao(), semente)
+	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["amostras"].back()["t"]}
+
+
+## Paga prêmio, entrega carro-prêmio e conta o dia.
+## Retorna {"evento_id", "classificacao", "posicao", "premio", "carro_premio_uid", "resultado"}.
+func aplicar(corrida: Dictionary) -> Dictionary:
+	var evento_id: String = corrida["evento_id"]
+	var ev: Dictionary = dados.evento(evento_id)
+	var r: Dictionary = corrida["resultado"]
 	var posicao: int = r["classificacao"].find("jogador") + 1
 	var premio := 0
 	if posicao <= ev["premios"].size():
@@ -55,6 +75,7 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 	jogador.dias += 1
 
 	return {
+		"evento_id": evento_id,
 		"classificacao": r["classificacao"],
 		"posicao": posicao,
 		"premio": premio,

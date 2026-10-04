@@ -18,6 +18,7 @@ func test_data_real_tem_formato_valido_e_lista_pendencias() -> void:
 	verificar("carros.json vazio" in d.pendencias(), "carros vazio deveria ser pendência")
 	verificar("simulacao.json: sigma_ruido" in d.pendencias(), "sigma_ruido deveria ser pendência")
 	verificar("economia.json: saldo_inicial" in d.pendencias(), "saldo_inicial deveria ser pendência")
+	verificar("carreira.json: teto_offline_s" in d.pendencias(), "teto_offline_s deveria ser pendência")
 	d.free()
 
 

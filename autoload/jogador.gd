@@ -5,6 +5,9 @@ extends Node
 var economia: Economia
 var garagem: Garagem
 var concessionaria: Concessionaria
+## Criados só quando todos os dados de carreira existem.
+var carreira: Carreira
+var fila_ctrl: Fila
 ## Ids de licença conquistadas.
 var licencas: Array = []
 ## teste_id -> melhor grau ("ouro", "prata", "bronze").
@@ -15,6 +18,11 @@ var usados_vendidos: Dictionary = {}
 var vitorias: Dictionary = {}
 ## Corridas disputadas; cada uma conta um dia (rotação de usados).
 var dias: int = 0
+## Fila de repetições (ver data_model/fila.gd).
+var fila: Dictionary = {}
+## Unix time da última vez que a fila foi processada.
+var ultimo_processamento: float = 0.0
+var contador_sementes: int = 0
 
 
 func _ready() -> void:
@@ -24,6 +32,9 @@ func _ready() -> void:
 		push_warning("Jogador: economia.json pendente, estado não criado")
 		return
 	novo_jogo(regras, dados.pneu)
+	if dados.carreira().get("teto_offline_s") != null:
+		carreira = Carreira.new(dados, self)
+		fila_ctrl = Fila.new(carreira, self, float(dados.carreira()["teto_offline_s"]))
 
 
 func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
@@ -33,5 +44,8 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	licencas = []
 	graus_licenca = {}
 	usados_vendidos = {}
+	fila = {}
+	ultimo_processamento = 0.0
+	contador_sementes = 0
 	vitorias = {}
 	dias = 0

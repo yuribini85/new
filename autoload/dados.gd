@@ -32,7 +32,7 @@ const OBJETOS := {
 		"saldo_inicial", "fracao_revenda", "pneu_de_fabrica",
 		"usado_periodo_dias", "usado_km_min", "usado_km_max", "usado_desconto_por_km", "usado_fracao_minima",
 	],
-	"carreira": ["piloto_jogador"],
+	"carreira": ["piloto_jogador", "teto_offline_s"],
 }
 
 var _listas: Dictionary = {}  # arquivo -> {id -> item}

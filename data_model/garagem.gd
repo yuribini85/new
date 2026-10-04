@@ -5,12 +5,13 @@ extends RefCounted
 signal mudou
 
 var carros: Dictionary = {}  # uid -> Carro
-var _proximo_uid: int = 1
+## Próximo uid a entregar; persistido no save para uids nunca se repetirem.
+var proximo_uid: int = 1
 
 
 func adicionar(carro: Carro) -> int:
-	carro.uid = _proximo_uid
-	_proximo_uid += 1
+	carro.uid = proximo_uid
+	proximo_uid += 1
 	carros[carro.uid] = carro
 	mudou.emit()
 	return carro.uid
