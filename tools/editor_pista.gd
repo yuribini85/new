@@ -13,6 +13,7 @@ const CORES := {
 var _pistas: Array = []
 var _pista: Pista
 var _info: Label
+var _escolha: OptionButton
 var _iso := false
 
 
@@ -22,11 +23,11 @@ func _ready() -> void:
 	_pistas = dados.lista("pistas")
 	var topo := HBoxContainer.new()
 	add_child(topo)
-	var escolha := OptionButton.new()
+	_escolha = OptionButton.new()
 	for p in _pistas:
-		escolha.add_item(p["id"])
-	escolha.item_selected.connect(_selecionar)
-	topo.add_child(escolha)
+		_escolha.add_item(p["id"])
+	_escolha.item_selected.connect(_selecionar)
+	topo.add_child(_escolha)
 	var iso := CheckButton.new()
 	iso.text = "Isométrico"
 	iso.toggled.connect(func(v): _iso = v; queue_redraw())
@@ -41,6 +42,7 @@ func _ready() -> void:
 
 
 func _selecionar(i: int) -> void:
+	_escolha.select(i)
 	_pista = Pista.new(_pistas[i])
 	var linhas := ["%s · %s · %.1f m" % [_pista.id, _pista.funcao, _pista.comprimento]]
 	linhas.append("Fechamento: %.2f m · rumo %.2f°  %s" % [_pista.erro_fechamento(), rad_to_deg(_pista.erro_rumo()),

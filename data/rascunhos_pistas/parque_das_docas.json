@@ -1,0 +1,68 @@
+{
+ "id": "parque_das_docas",
+ "funcao": "tecnico",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 550,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 32,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 260
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 58,
+   "angulo_graus": 60,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 65,
+   "angulo_graus": 45
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 26,
+   "angulo_graus": 120,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 320
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 78,
+   "angulo_graus": 75
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 39,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 72,
+   "angulo_graus": 120,
+   "sentido": "direita"
+  }
+ ]
+}

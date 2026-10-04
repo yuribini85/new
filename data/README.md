@@ -45,9 +45,9 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `dt_s` | passo de tempo | definido (técnico) |
 | `amostra_dt_s` | intervalo das amostras para a visualização | definido (técnico) |
 | `tempo_max_s` | trava de segurança da corrida | definido (técnico) |
-| `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | **pendente** |
+| `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | 6,0 (comprimento de um carro + margem; confirmar em playtest) |
 | `sigma_ruido` | desvio do ruído por volta para consistência 0 | **pendente** |
-| `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração | **pendente** |
+| `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 (distribuição de peso típica; confirmar em playtest) |
 
 ## economia.json
 
@@ -97,3 +97,15 @@ Um carro por vez, com número de repetições. Cada corrida dura em tempo real o
 dura simulada. Ao abrir o jogo, as corridas concluídas durante a ausência são aplicadas
 em lote, até `teto_offline_s`; o excesso é descartado e a fila continua de onde parou.
 Carro vendido ou que deixou de ser elegível cancela a fila.
+
+## Pistas do primeiro build
+
+| id | função | comprimento | ultrapassagem |
+|---|---|---|---|
+| `anel_do_vale` | alta velocidade | 2.941 m | reta principal e reta oposta |
+| `parque_das_docas` | técnico | 2.085 m | reta principal e reta antes da última curva |
+| `serra_alta` | montanha | 1.913 m | só a reta de largada |
+
+Os rascunhos ficam em `data/rascunhos_pistas/`: curvas descritas por raio e ângulo, com
+duas retas de comprimento `null`. `tools/fechar_pista.py rascunho.json` calcula essas
+duas retas para a volta fechar e imprime a pista pronta para `pistas.json`.

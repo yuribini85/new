@@ -19,4 +19,5 @@ if echo "$importacao$saida" | grep -qE 'SCRIPT ERROR|Parse Error|Compile Error';
 	echo "Erro de script durante os testes" >&2
 	exit 1
 fi
+python3 tests/checar_rascunhos.py || exit 1
 exit $status

@@ -1,1 +1,203 @@
-[]
+[
+ {
+  "id": "anel_do_vale",
+  "funcao": "alta_velocidade",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 900,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 200,
+    "comprimento_m": 314.1593
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 150
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 80,
+    "comprimento_m": 83.7758
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 250,
+    "sentido": "direita",
+    "comprimento_m": 130.8997
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 123.8526
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 30,
+    "comprimento_m": 47.1239
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 1034.1343,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 60,
+    "comprimento_m": 157.0796
+   }
+  ]
+ },
+ {
+  "id": "parque_das_docas",
+  "funcao": "tecnico",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 550,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 32,
+    "sentido": "direita",
+    "comprimento_m": 50.2655
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 260
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 58,
+    "sentido": "direita",
+    "comprimento_m": 60.7375
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 65,
+    "comprimento_m": 51.0509
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 182.6771
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 26,
+    "sentido": "direita",
+    "comprimento_m": 54.4543
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 320
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 78,
+    "comprimento_m": 102.1018
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 39,
+    "sentido": "direita",
+    "comprimento_m": 61.2611
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 241.172,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 72,
+    "sentido": "direita",
+    "comprimento_m": 150.7964
+   }
+  ]
+ },
+ {
+  "id": "serra_alta",
+  "funcao": "montanha",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 250,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 30,
+    "comprimento_m": 94.2478
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 170
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 30,
+    "sentido": "direita",
+    "comprimento_m": 94.2478
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 170
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 30,
+    "comprimento_m": 94.2478
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 140
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 30,
+    "sentido": "direita",
+    "comprimento_m": 94.2478
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 140
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 30,
+    "comprimento_m": 94.2478
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 212.888
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 40,
+    "comprimento_m": 62.8319
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 90,
+    "sentido": "direita",
+    "comprimento_m": 62.8319
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 90,
+    "comprimento_m": 62.8319
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 99.2982
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 45,
+    "comprimento_m": 70.6858
+   }
+  ]
+ }
+]
