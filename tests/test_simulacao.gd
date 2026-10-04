@@ -93,3 +93,30 @@ func test_sem_amostras_da_o_mesmo_resultado() -> void:
 	igual(sem["duracao"], com["duracao"], "mesma duração")
 	igual(sem["amostras"].size(), 1, "só a amostra final")
 	d.free()
+
+
+func test_arrasto_limita_a_velocidade_pela_potencia() -> void:
+	var d := dados_fixture()
+	var pista := Pista.new({"id": "longa", "trechos": [
+		{"tipo": "reta", "comprimento_m": 4000},
+		{"tipo": "curva_rapida", "comprimento_m": 500.0 * PI, "raio_m": 500},
+		{"tipo": "reta", "comprimento_m": 4000},
+		{"tipo": "curva_rapida", "comprimento_m": 500.0 * PI, "raio_m": 500},
+	]})
+	var c := Carro.new(d.carro("forte"))
+	c.base = c.base.duplicate()
+	c.base.erase("velocidade_max")
+	c.adicionar_pneu(d.pneu("seco"))
+	var params: Dictionary = d.simulacao().duplicate()
+	params["cda_m2"] = 0.6
+	params["densidade_ar_kg_m3"] = 1.2
+	var r := Simulacao.correr(pista, [{"id": "a", "atributos": c.atributos_efetivos("seco"), "piloto": d.piloto("perfeito")}],
+			1, params, 1)
+	var a: Array = r["amostras"]
+	var vmax := 0.0
+	for i in range(1, a.size()):
+		vmax = maxf(vmax, (a[i]["s"]["a"] - a[i - 1]["s"]["a"]) / (a[i]["t"] - a[i - 1]["t"]))
+	var teorica := pow(300.0 * Simulacao.CV_PARA_W / (0.5 * 1.2 * 0.6), 1.0 / 3.0)
+	verificar(vmax < teorica * 1.001, "não passa da velocidade terminal: %.1f > %.1f m/s" % [vmax, teorica])
+	verificar(vmax > teorica * 0.95, "chega perto da terminal numa reta de 4 km: %.1f de %.1f m/s" % [vmax, teorica])
+	d.free()

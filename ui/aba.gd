@@ -89,5 +89,7 @@ static func dinheiro(valor: int) -> String:
 
 func ficha(c: Carro, condicao := "seco") -> String:
 	var a := c.atributos_efetivos(condicao)
-	return "%s · %s · %d cv · %d kg · %d km/h" % [
-		c.base["nome"], c.base["tracao"], a["potencia"], a["peso"], a["velocidade_max"]]
+	var t := "%s · %s · %d cv · %d kg" % [c.base["nome"], c.base["tracao"], a["potencia"], a["peso"]]
+	if a["velocidade_max"] != INF:
+		t += " · %d km/h" % a["velocidade_max"]
+	return t

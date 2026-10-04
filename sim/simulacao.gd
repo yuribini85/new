@@ -12,7 +12,9 @@ const G := 9.81
 const CV_PARA_W := 735.5
 const KMH_PARA_MS := 1.0 / 3.6
 
-## Chaves obrigatórias em data/simulacao.json.
+## Chaves obrigatórias em data/simulacao.json. Opcionais: "cda_m2" e
+## "densidade_ar_kg_m3" ligam o arrasto aerodinâmico (velocidade máxima passa a
+## surgir da potência); sem elas, só o teto `velocidade_max` do carro limita.
 const PARAMS := [
 	"passo_m", "dt_s", "amostra_dt_s", "tempo_max_s",
 	"distancia_minima_m", "sigma_ruido", "fator_tracao",
@@ -32,6 +34,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 	var n := maxi(int(ceil(comprimento / float(params["passo_m"]))), 1)
 	var passo := comprimento / n
 	var dt := float(params["dt_s"])
+	var k_arrasto := 0.5 * float(params.get("densidade_ar_kg_m3", 0.0)) * float(params.get("cda_m2", 0.0))
 	var dmin := float(params["distancia_minima_m"])
 
 	# Geometria discretizada: raio (0 = sem limite de curva) e zona de ultrapassagem.
@@ -69,8 +72,8 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 		for volta in voltas:
 			var ruido := absf(rng.randfn(0.0, float(params["sigma_ruido"])))
 			var fator := maxf(float(piloto["ritmo"]) * (1.0 - ruido * (1.0 - float(piloto["consistencia"]))), 0.01)
-			c["envelopes"].append(_envelope(raios, passo, mu, float(a["freio"]),
-					float(a["velocidade_max"]) * KMH_PARA_MS, fator))
+			var teto := INF if a.get("velocidade_max") == null else float(a["velocidade_max"]) * KMH_PARA_MS
+			c["envelopes"].append(_envelope(raios, passo, mu, float(a["freio"]), teto, fator))
 		carros.append(c)
 
 	# Estado quente em arrays: o laço roda dezenas de milhares de vezes por
@@ -129,8 +132,8 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 			var v := v_arr[idx]
 			var acel := acel_arr[idx]
 			if v > 0.0:
-				acel = minf(acel, pot_arr[idx] / (massa_arr[idx] * v))
-			var v_novo := minf(v + acel * dt, limite)
+				acel = minf(acel, pot_arr[idx] / (massa_arr[idx] * v)) - k_arrasto * v * v / massa_arr[idx]
+			var v_novo := clampf(v + acel * dt, 0.0, limite)
 			var s_novo := s_antes + (v + v_novo) * 0.5 * dt
 
 			if frente >= 0 and s_novo > s_arr[frente] - dmin:

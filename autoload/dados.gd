@@ -18,7 +18,7 @@ const ESQUEMAS := {
 	"fabricantes": ["id", "nome", "escola"],
 	"carros": [
 		"id", "nome", "fabricante", "arquetipo_ref", "categoria", "tracao",
-		"potencia", "peso", "aderencia", "freio", "velocidade_max", "preco", "ano",
+		"potencia", "peso", "aderencia", "freio", "preco", "ano",
 	],
 	"pecas": ["id", "nome", "categoria", "efeitos", "preco"],
 	"pneus": ["id", "nome", "aderencia", "preco"],

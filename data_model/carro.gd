@@ -71,7 +71,8 @@ func escolher_pneu(condicao: String) -> Dictionary:
 func atributos_efetivos(condicao: String) -> Dictionary:
 	var attrs := {}
 	for a in ATRIBUTOS:
-		attrs[a] = float(base[a])
+		# velocidade_max é opcional: sem ela, o arrasto da simulação limita.
+		attrs[a] = INF if base.get(a) == null else float(base[a])
 	for op in OPS:
 		for categoria in pecas:
 			for efeito in pecas[categoria].get("efeitos", []):
