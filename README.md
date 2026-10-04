@@ -8,39 +8,44 @@ colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 ## Estado
 
-Todas as etapas (1 a 8) da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
-validação dos dados, carro com peças e pneus, pista em trechos, simulação de corrida
-headless, saldo, garagem, concessionária de novos, eventos com restrições de entrada,
-prêmios, carro-prêmio, licenças, usados, fila de repetições, progresso offline, save,
-corrida isométrica ao vivo e telas provisórias (sem arte). `data/` tem o balanceamento
-importado do disco do GT2: o jogo abre e é jogável. Falta o balanceamento real — ver
-`data/README.md`. Ainda não há telas.
+Demo jogável. As oito etapas da ordem de implementação (`docs/plano_mvp.md`, seção 6)
+estão feitas, `data/` tem o balanceamento importado do disco do GT2 e há telas
+provisórias para celular em retrato (sem arte).
+
+O que existe hoje:
+
+- concessionária de novos e usados (usados por período, como no GT2), garagem, oficina
+  com peças e pneus por carro, venda;
+- 38 eventos em 18 séries sem licença, B e A; licenças B e A por teste de tempo;
+- corrida resolvida pela simulação e reproduzida em isometria, em tempo real;
+- fila de repetições, progresso offline com teto, save com `.bak` e proteção contra
+  arquivo corrompido ou de versão antiga.
+
+Em aberto: o percurso inicial (20–30 min) ainda não foi fechado nem testado em celular;
+há pouca variação entre corridas (ruído zero e pilotos iguais) e alguns valores "a
+confirmar" em `data/README.md`.
+
+## Jogar
+
+Abra a pasta no Godot 4.4 (Importar → `project.godot`) e aperte F5. O save fica em
+`user://save.json` (no Windows, `%APPDATA%\Godot\app_userdata\Apex Garage\`).
 
 ## Estrutura
 
 ```
-autoload/dados.gd       carga e validação de data/*.json
-data_model/carro.gd     atributos efetivos com peças e escolha automática de pneu
-data_model/pista.gd     pista como lista de trechos tipados
-data_model/economia.gd  saldo
-data_model/garagem.gd   carros possuídos (coleção)
-data_model/concessionaria.gd  compra e venda de carros, peças e pneus
-data_model/elegibilidade.gd   restrições de entrada dos eventos
-data_model/carreira.gd  disputa de eventos: grid, simulação, prêmios
-data_model/licencas.gd  testes de licença e concessão
-data_model/usados.gd    estoque de usados por faixa de dias
-data_model/fila.gd      fila de repetições e progresso offline
-data_model/save.gd      serialização do estado do jogador
-autoload/save_manager.gd  grava/lê user://save.json e processa o offline ao abrir
-visual/                 projeção isométrica, sprite provisório (16 direções), corrida ao vivo
-ui/                     telas: garagem, loja, oficina, eventos, corrida, licenças
-scenes/principal.tscn   cena principal (retrato 720×1280)
-tools/editor_pista.tscn visualizador de pistas: traçado, zonas e fechamento da volta
-tools/captura_telas.gd  captura PNG de todas as telas com dados de teste
-autoload/jogador.gd     estado do jogador (saldo, garagem, licenças, vitórias, dias)
-sim/simulacao.gd        corrida headless (envelope de velocidade + cortesia)
-data/                   balanceamento (vazio até o estudo do GT2)
-tests/                  testes e fixtures sintéticas
+autoload/dados.gd             carga e validação de data/*.json
+autoload/jogador.gd           estado do jogador (saldo, garagem, licenças, vitórias, dias)
+autoload/save_manager.gd      save com .bak e proteção; processa o offline ao abrir
+data_model/                   carro, pista, economia, garagem, concessionária, elegibilidade,
+                              carreira, licenças, usados, fila, save
+sim/simulacao.gd              corrida headless (envelope de velocidade, arrasto, cortesia)
+visual/                       projeção isométrica, carro provisório (16 direções), corrida ao vivo
+ui/                           telas: garagem, loja, oficina, eventos, corrida, licenças
+scenes/principal.tscn         cena principal (retrato 720×1280)
+data/                         balanceamento (gerado do GT2; ver data/README.md)
+tools/                        extração e importação do GT2, calibração, editor de pistas,
+                              captura de telas, matriz de progressão
+tests/                        testes Godot e Python, fixtures sintéticas
 ```
 
 ## Testes
@@ -49,12 +54,17 @@ tests/                  testes e fixtures sintéticas
 tests/rodar.sh            # ou: tests/rodar.sh /caminho/do/godot
 ```
 
-Rodam também no GitHub Actions a cada push e pull request.
+Roda os testes Godot (fixtures sintéticas) e os das ferramentas Python (disco
+sintético). Também roda no GitHub Actions a cada push e pull request.
 
-## Ver as telas antes do balanceamento
+## Dados do GT2
 
-Com `data/` vazio o jogo mostra a lista de pendências. Para navegar com os dados
-sintéticos dos testes:
+`data/` é gerado a partir de uma cópia legítima do disco pelo fluxo
+`tools/extrair_gt2.py` → `tools/importar_gt2.py` → `tools/calibrar_licencas.gd`. Passo a
+passo, conversões e o que ainda está "a confirmar" em `data/README.md`.
+`tools/simular_progressao.gd` mostra a posição de cada carro de fábrica em cada evento.
+
+## Ver as telas com dados de teste
 
 ```
 godot -- --dados=res://tests/fixtures/

@@ -35,7 +35,7 @@ func construir() -> void:
 func titulo(texto: String) -> Label:
 	var l := Label.new()
 	l.text = texto
-	l.add_theme_font_size_override("font_size", 26)
+	l.add_theme_font_size_override("font_size", 36)
 	conteudo.add_child(l)
 	return l
 
@@ -60,7 +60,7 @@ func linha(descricao: String, botoes: Array = []) -> HBoxContainer:
 	for b in botoes:
 		var bt := Button.new()
 		bt.text = b[0]
-		bt.custom_minimum_size = Vector2(120, 56)
+		bt.custom_minimum_size = Vector2(150, 72)
 		bt.disabled = b.size() > 2 and not b[2]
 		bt.pressed.connect(func():
 			b[1].call()

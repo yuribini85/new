@@ -8,7 +8,7 @@ var dados: Node
 var jogador: Node
 var _visual: CorridaVisual
 var _info: Label
-var _classificacao: Label
+var _classificacao: RichTextLabel
 var _semente_mostrada := 0
 var _nomes := {}  # id do participante -> nome do carro
 
@@ -24,8 +24,10 @@ func _init(d: Node, j: Node) -> void:
 	_visual.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_visual.custom_minimum_size = Vector2(0, 520)
 	add_child(_visual)
-	_classificacao = Label.new()
-	_classificacao.add_theme_font_size_override("font_size", 22)
+	_classificacao = RichTextLabel.new()
+	_classificacao.bbcode_enabled = true
+	_classificacao.fit_content = true
+	_classificacao.scroll_active = false
 	add_child(_classificacao)
 
 
@@ -60,5 +62,9 @@ func _process(_delta: float) -> void:
 	var linhas := []
 	var ordem := _visual.ordem()
 	for i in ordem.size():
-		linhas.append("%d. %s" % [i + 1, _nomes.get(ordem[i], ordem[i])])
+		var id: String = ordem[i]
+		var nome: String = _nomes.get(id, id)
+		if id == "jogador":
+			nome = "[b]%s[/b]" % nome
+		linhas.append("%d [color=#%s]■[/color] %s" % [i + 1, _visual.cor_de(id).to_html(false), nome])
 	_classificacao.text = "\n".join(linhas)

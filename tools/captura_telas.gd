@@ -54,7 +54,7 @@ func _rodar() -> void:
 	var abas: TabContainer = tela._abas
 	var total := abas.get_tab_count()
 	for i in total:
-		abas.current_tab = i
+		tela._ir_para(i)
 		for k in 6:
 			await process_frame
 		var img := root.get_texture().get_image()

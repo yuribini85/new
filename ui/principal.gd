@@ -7,12 +7,19 @@ var jogador: Node
 var _saldo: Label
 var _abas: TabContainer
 var _todas: Array = []
+var _botoes: Array = []
+
+## Tamanhos para tela de celular em retrato (viewport 720 de largura).
+const FONTE := 30
+const FONTE_TITULO := 38
+const ALTURA_BOTAO := 76
 
 
 func _ready() -> void:
 	dados = get_node("/root/Dados")
 	jogador = get_node("/root/Jogador")
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	theme = _tema()
 	var fundo := ColorRect.new()
 	fundo.color = Color(0.09, 0.1, 0.12)
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -30,9 +37,10 @@ func _ready() -> void:
 		return
 
 	_saldo = Label.new()
-	_saldo.add_theme_font_size_override("font_size", 28)
+	_saldo.add_theme_font_size_override("font_size", FONTE_TITULO)
 	raiz.add_child(_saldo)
 	_abas = TabContainer.new()
+	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
 	_abas.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	raiz.add_child(_abas)
 	var eventos := preload("res://ui/aba_eventos.gd").new(dados, jogador)
@@ -47,7 +55,8 @@ func _ready() -> void:
 	for a in _todas:
 		_abas.add_child(a)
 		a.mudou.connect(atualizar)
-	eventos.correr_iniciado.connect(func(): _abas.current_tab = 4)
+	eventos.correr_iniciado.connect(func(): _ir_para(4))
+	raiz.add_child(_navegacao())
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid
 	atualizar()
@@ -65,6 +74,54 @@ func _ready() -> void:
 		add_child(d)
 		d.popup_centered()
 	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
+
+
+func _navegacao() -> GridContainer:
+	var grade := GridContainer.new()
+	grade.columns = 3
+	grade.add_theme_constant_override("h_separation", 8)
+	grade.add_theme_constant_override("v_separation", 8)
+	for i in _todas.size():
+		var b := Button.new()
+		b.text = _todas[i].name
+		b.toggle_mode = true
+		b.custom_minimum_size = Vector2(0, ALTURA_BOTAO)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.pressed.connect(_ir_para.bind(i))
+		grade.add_child(b)
+		_botoes.append(b)
+	_ir_para.call_deferred(0)
+	return grade
+
+
+func _ir_para(i: int) -> void:
+	_abas.current_tab = i
+	for k in _botoes.size():
+		_botoes[k].button_pressed = k == i
+
+
+func _tema() -> Theme:
+	var t := Theme.new()
+	t.default_font_size = FONTE
+	t.set_constant("separation", "VBoxContainer", 12)
+	t.set_constant("separation", "HBoxContainer", 12)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.2, 0.22, 0.26)
+	normal.set_corner_radius_all(10)
+	normal.set_content_margin_all(12)
+	var apertado := normal.duplicate()
+	apertado.bg_color = Color(0.95, 0.75, 0.15)
+	var desabilitado := normal.duplicate()
+	desabilitado.bg_color = Color(0.14, 0.15, 0.17)
+	t.set_stylebox("normal", "Button", normal)
+	t.set_stylebox("hover", "Button", normal)
+	t.set_stylebox("pressed", "Button", apertado)
+	t.set_stylebox("hover_pressed", "Button", apertado)
+	t.set_stylebox("disabled", "Button", desabilitado)
+	t.set_color("font_pressed_color", "Button", Color(0.1, 0.1, 0.1))
+	t.set_color("font_hover_pressed_color", "Button", Color(0.1, 0.1, 0.1))
+	t.set_color("font_disabled_color", "Button", Color(0.45, 0.45, 0.5))
+	return t
 
 
 func atualizar() -> void:

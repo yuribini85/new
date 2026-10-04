@@ -43,7 +43,8 @@ func construir() -> void:
 	for ev in eventos:
 		var motivos := [] if c == null else Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas)
 		var premio := dinheiro(int(ev["premios"][0])) if not ev["premios"].is_empty() else "0"
-		var desc := "%s · %s · %d voltas · %s · 1º %s" % [ev["nome"], nome_pista(ev["pista"]), ev["voltas"], ev["condicao"], premio]
+		var desc := "%s · %s · %d voltas%s · 1º %s" % [ev["nome"], nome_pista(ev["pista"]), ev["voltas"],
+				" · chuva" if ev["condicao"] == "chuva" else "", premio]
 		if ev.get("carro_premio") != null and not jogador.vitorias.has(ev["id"]):
 			desc += " + carro"
 		if not motivos.is_empty():
