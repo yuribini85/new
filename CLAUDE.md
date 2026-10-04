@@ -8,6 +8,11 @@ progressão do Gran Turismo 2. O jogo ainda não existe.
 - `docs/conceito.md` — princípios e limites
 - `docs/plano_mvp.md` — escopo do primeiro build, sistemas, dados e ordem de implementação
 
+## Testes
+`godot --headless --script res://tests/run_tests.gd` (depois de `godot --headless --import`).
+Testar antes de avançar de etapa. Fixtures de `tests/fixtures/` são sintéticas — nunca
+copiá-las para `data/`.
+
 ## Regras de trabalho
 
 **Não altere as regras do README.** São decisões de design.

@@ -1,0 +1,5 @@
+[
+	{"id": "perfeito", "ritmo": 1.0, "consistencia": 1.0, "agressividade": 1.0},
+	{"id": "timido", "ritmo": 1.0, "consistencia": 1.0, "agressividade": 0.0},
+	{"id": "erratico", "ritmo": 1.0, "consistencia": 0.0, "agressividade": 0.5}
+]

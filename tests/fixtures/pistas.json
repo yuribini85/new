@@ -1,0 +1,16 @@
+[
+	{"id": "oval", "funcao": "alta_velocidade", "trechos": [
+		{"tipo": "reta", "comprimento_m": 500, "ultrapassagem": true},
+		{"tipo": "curva_media", "comprimento_m": 300, "raio_m": 100},
+		{"tipo": "reta", "comprimento_m": 500},
+		{"tipo": "curva_media", "comprimento_m": 300, "raio_m": 100},
+		{"tipo": "entrada_box", "comprimento_m": 50}
+	]},
+	{"id": "circulo", "funcao": "teste", "trechos": [
+		{"tipo": "curva_lenta", "comprimento_m": 400, "raio_m": 40}
+	]},
+	{"id": "sem_ultrapassagem", "funcao": "teste", "trechos": [
+		{"tipo": "reta", "comprimento_m": 600},
+		{"tipo": "curva_lenta", "comprimento_m": 200, "raio_m": 50}
+	]}
+]

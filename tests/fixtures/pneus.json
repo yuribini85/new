@@ -1,0 +1,4 @@
+[
+	{"id": "seco", "preco": 1, "aderencia": {"seco": 1.0, "chuva": 0.5}},
+	{"id": "chuva", "preco": 1, "aderencia": {"seco": 0.8, "chuva": 0.9}}
+]

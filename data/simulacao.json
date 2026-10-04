@@ -1,0 +1,9 @@
+{
+	"passo_m": 1.0,
+	"dt_s": 0.05,
+	"amostra_dt_s": 0.1,
+	"tempo_max_s": 7200,
+	"distancia_minima_m": null,
+	"sigma_ruido": null,
+	"fator_tracao": null
+}

@@ -6,7 +6,31 @@ marca registrada.
 Preserva a estrutura de carreira de um Gran Turismo clássico — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
 colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
-**Este repositório é, por enquanto, material de design.** O jogo ainda não existe.
+## Estado
+
+Etapas 1 e 2 da ordem de implementação (`docs/plano_mvp.md`, seção 6) feitas: carga e
+validação dos dados, carro com peças e pneus, pista em trechos e simulação de corrida
+headless. Falta o balanceamento real — ver `data/README.md`.
+
+## Estrutura
+
+```
+autoload/dados.gd       carga e validação de data/*.json
+data_model/carro.gd     atributos efetivos com peças e escolha automática de pneu
+data_model/pista.gd     pista como lista de trechos tipados
+sim/simulacao.gd        corrida headless (envelope de velocidade + cortesia)
+data/                   balanceamento (vazio até o estudo do GT2)
+tests/                  testes e fixtures sintéticas
+```
+
+## Testes
+
+```
+godot --headless --import
+godot --headless --script res://tests/run_tests.gd
+```
+
+Rodam também no GitHub Actions a cada push e pull request.
 
 ## Documentos
 
