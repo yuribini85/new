@@ -29,6 +29,18 @@ func comprar_carro(dados_carro: Dictionary) -> int:
 	return garagem.adicionar(carro)
 
 
+## Compra uma oferta de Usados.estoque(). `vendidos` recebe a chave da oferta
+## para ela sumir do estoque no resto do período. Retorna o uid ou -1.
+func comprar_usado(oferta: Dictionary, dados_carro: Dictionary, vendidos: Dictionary) -> int:
+	if vendidos.has(oferta["chave"]) or not economia.debitar(int(oferta["preco"])):
+		return -1
+	vendidos[oferta["chave"]] = true
+	var carro := Carro.new(dados_carro)
+	carro.km = int(oferta["km"])
+	carro.adicionar_pneu(_pneu_por_id.call(regras["pneu_de_fabrica"]))
+	return garagem.adicionar(carro)
+
+
 ## Vende pelo preço de tabela vezes a fração de revenda. Peças não somam.
 func vender_carro(uid: int) -> int:
 	var carro := garagem.remover(uid)

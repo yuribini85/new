@@ -6,9 +6,14 @@ set -uo pipefail
 GODOT="${1:-godot}"
 cd "$(dirname "$0")/.."
 "$GODOT" --headless --import >/dev/null 2>&1
-saida="$("$GODOT" --headless --script res://tests/run_tests.gd 2>&1)"
+# timeout: se o runner não compila, o Godot fica aberto em vez de sair.
+saida="$(timeout 600 "$GODOT" --headless --script res://tests/run_tests.gd 2>&1)"
 status=$?
 echo "$saida" | grep -vE '^\s+at: push_warning|^WARNING: Dados pendente|^WARNING: Jogador'
+if [ $status -eq 124 ]; then
+	echo "Testes não terminaram em 600 s" >&2
+	exit 1
+fi
 if echo "$saida" | grep -qE 'SCRIPT ERROR|Parse Error|Compile Error'; then
 	echo "Erro de script durante os testes" >&2
 	exit 1

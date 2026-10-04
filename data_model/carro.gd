@@ -14,6 +14,8 @@ var uid: int = -1
 var base: Dictionary
 ## Peças compradas para este carro (ids). Reinstalar uma peça possuída é grátis.
 var pecas_possuidas: Array = []
+## Quilometragem de compra; 0 para novo. Só informativa (preço do usado).
+var km: int = 0
 ## categoria -> peça instalada. Uma peça por categoria, como no GT2.
 var pecas: Dictionary = {}
 ## Compostos possuídos. O piloto de IA escolhe sozinho conforme a condição.

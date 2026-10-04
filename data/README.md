@@ -10,7 +10,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | Arquivo | Formato |
 |---|---|
 | `fabricantes.json` | lista de `{id, nome, escola}` |
-| `carros.json` | lista de `{id, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}` |
+| `carros.json` | lista de `{id, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usado_dias: [início, fim]` |
 | `pecas.json` | lista de `{id, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos` |
 | `pneus.json` | lista de `{id, aderencia: {seco, chuva}, preco}` |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
@@ -18,6 +18,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
 | `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcional `carro_premio` |
+| `licencas.json` | lista de `{id, nome, testes}`, opcional `requisito` (id de outra licença) |
 | `carreira.json` | objeto `{piloto_jogador}`: id em `pilotos_ia.json` que pilota os carros do jogador |
 
 ## Unidades e semântica
@@ -54,6 +55,10 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
 | `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | **pendente** |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
+| `usado_periodo_dias` | de quantos em quantos dias o estoque de usados muda | **pendente** |
+| `usado_km_min`, `usado_km_max` | faixa da quilometragem sorteada | **pendente** |
+| `usado_desconto_por_km` | preço do usado = tabela × (1 − km × desconto) | **pendente** |
+| `usado_fracao_minima` | piso dessa fração | **pendente** |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
 reinstalá-la é grátis; um pneu de cada composto por carro; nada é cobrado se a compra é
@@ -71,3 +76,16 @@ recusada.
 Regras fixas no código (`data_model/carreira.gd`), seguindo o GT2: o jogador larga em
 último; o prêmio em dinheiro é pago a cada disputa; o carro-prêmio só na primeira vitória;
 cada corrida disputada conta um dia.
+
+## licencas.json
+
+Cada teste: `{id, pista, voltas, condicao, restricoes, tempos: {ouro, prata, bronze}}`,
+tempos em segundos. O jogador usa o próprio carro dentro da restrição. Licença concedida
+quando todos os testes têm ao menos bronze; o melhor grau de cada teste fica guardado.
+Testes não contam dia.
+
+## Usados
+
+Carro com `usado_dias` aparece no usado enquanto o dia do jogador estiver na faixa. A
+quilometragem é sorteada por carro e período e só afeta o preço. Comprado, sai do estoque
+até o período seguinte.

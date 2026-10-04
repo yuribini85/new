@@ -148,3 +148,15 @@ técnico real do projeto.
    italiana, 1 americana, 1 britânica, 1 francesa.
 7. **Nome provisório: Apex Garage.** Pendente de busca de marca registrada e nas lojas
    (App Store e Google Play) antes de ser fechado.
+
+### Decisões de implementação (aprovadas)
+
+8. **Ordem:** etapa 7 (usados, licenças, carros-prêmio) antes da 6 (visualização).
+9. **Licença:** testes com pista, voltas, condição e restrição fixas; tempos de ouro,
+   prata e bronze em `licencas.json`; concedida com todos os testes em bronze ou melhor.
+10. **Usados:** cada carro tem uma faixa de dias em que aparece; quilometragem sorteada
+    por período afeta só o preço.
+11. **Piloto do jogador:** perfil fixo (`carreira.json`), sem evolução.
+12. **Eventos:** restrições do GT2 (potência efetiva, tração, categoria, fabricante, ano,
+    licença); jogador larga em último; prêmio por posição a cada disputa; carro-prêmio só
+    na primeira vitória.

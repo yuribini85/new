@@ -7,6 +7,10 @@ var garagem: Garagem
 var concessionaria: Concessionaria
 ## Ids de licença conquistadas.
 var licencas: Array = []
+## teste_id -> melhor grau ("ouro", "prata", "bronze").
+var graus_licenca: Dictionary = {}
+## Chaves de ofertas de usados já compradas ("período:carro").
+var usados_vendidos: Dictionary = {}
 ## evento_id -> número de vitórias.
 var vitorias: Dictionary = {}
 ## Corridas disputadas; cada uma conta um dia (rotação de usados).
@@ -27,5 +31,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	garagem = Garagem.new()
 	concessionaria = Concessionaria.new(economia, garagem, regras, pneu_por_id)
 	licencas = []
+	graus_licenca = {}
+	usados_vendidos = {}
 	vitorias = {}
 	dias = 0

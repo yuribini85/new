@@ -7,6 +7,7 @@ const DATA_DIR := "res://data/"
 const CarroScript := preload("res://data_model/carro.gd")
 const PistaScript := preload("res://data_model/pista.gd")
 const ElegibilidadeScript := preload("res://data_model/elegibilidade.gd")
+const LicencasScript := preload("res://data_model/licencas.gd")
 const SimulacaoScript := preload("res://sim/simulacao.gd")
 
 ## arquivo -> campos obrigatórios de cada item da lista.
@@ -21,12 +22,16 @@ const ESQUEMAS := {
 	"pistas": ["id", "funcao", "trechos"],
 	"pilotos_ia": ["id", "ritmo", "consistencia", "agressividade"],
 	"eventos": ["id", "nome", "pista", "voltas", "condicao", "restricoes", "adversarios", "premios"],
+	"licencas": ["id", "nome", "testes"],
 }
 
 ## arquivo -> chaves obrigatórias do objeto.
 const OBJETOS := {
 	"simulacao": SimulacaoScript.PARAMS,
-	"economia": ["saldo_inicial", "fracao_revenda", "pneu_de_fabrica"],
+	"economia": [
+		"saldo_inicial", "fracao_revenda", "pneu_de_fabrica",
+		"usado_periodo_dias", "usado_km_min", "usado_km_max", "usado_desconto_por_km", "usado_fracao_minima",
+	],
 	"carreira": ["piloto_jogador"],
 }
 
@@ -105,6 +110,9 @@ func _validar_referencias() -> void:
 			_erros.append("carros.json: '%s' cita fabricante inexistente %s" % [c["id"], c["fabricante"]])
 		if c.get("tracao") != null and not c["tracao"] in CarroScript.TRACOES:
 			_erros.append("carros.json: '%s' tração inválida %s" % [c["id"], c["tracao"]])
+		var faixa = c.get("usado_dias")
+		if faixa != null and (not faixa is Array or faixa.size() != 2 or faixa[0] > faixa[1]):
+			_erros.append("carros.json: '%s' usado_dias deve ser [início, fim]" % c["id"])
 	for p in _listas["pecas"].values():
 		for e in p.get("efeitos", []):
 			if not e.get("atributo") in CarroScript.ATRIBUTOS or not e.get("op") in CarroScript.OPS:
@@ -117,9 +125,7 @@ func _validar_referencias() -> void:
 		_exigir(onde + " carro_premio", "carros", ev.get("carro_premio"))
 		if ev.get("condicao") != null and not ev["condicao"] in ["seco", "chuva"]:
 			_erros.append(onde + " condição inválida %s" % ev["condicao"])
-		for chave in ev.get("restricoes", {}):
-			if not chave in ElegibilidadeScript.RESTRICOES:
-				_erros.append(onde + " restrição desconhecida %s" % chave)
+		_validar_restricoes(onde, ev.get("restricoes", {}))
 		for adv in ev.get("adversarios", []):
 			_exigir(onde + " adversário carro", "carros", adv.get("carro"))
 			_exigir(onde + " adversário piloto", "pilotos_ia", adv.get("piloto"))
@@ -127,6 +133,29 @@ func _validar_referencias() -> void:
 				_exigir(onde + " adversário peça", "pecas", peca_id)
 			for pneu_id in adv.get("pneus", []):
 				_exigir(onde + " adversário pneu", "pneus", pneu_id)
+
+	for lic in _listas["licencas"].values():
+		var onde := "licencas.json: '%s'" % lic["id"]
+		_exigir(onde + " requisito", "licencas", lic.get("requisito"))
+		_validar_restricoes(onde, {})
+		for t in lic.get("testes", []):
+			_exigir(onde + " teste pista", "pistas", t.get("pista"))
+			_validar_restricoes(onde, t.get("restricoes", {}))
+			for campo in ["id", "voltas", "condicao", "tempos"]:
+				if not t.has(campo):
+					_erros.append("%s teste sem %s" % [onde, campo])
+			var tempos = t.get("tempos", {})
+			for g in LicencasScript.GRAUS:
+				if tempos is Dictionary and not tempos.has(g):
+					_erros.append("%s teste '%s' sem tempo de %s" % [onde, t.get("id"), g])
+				elif tempos is Dictionary and tempos[g] == null:
+					_pendencias.append("%s teste '%s' tempo de %s" % [onde, t.get("id"), g])
+
+
+func _validar_restricoes(onde: String, restricoes: Dictionary) -> void:
+	for chave in restricoes:
+		if not chave in ElegibilidadeScript.RESTRICOES:
+			_erros.append(onde + " restrição desconhecida %s" % chave)
 
 
 ## Erro se `id` (quando preenchido) não existe em `arquivo`.
