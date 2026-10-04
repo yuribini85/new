@@ -194,6 +194,10 @@ func lista(arquivo: String) -> Array:
 	return _listas[arquivo].values()
 
 
+func existe(arquivo: String, id: Variant) -> bool:
+	return _listas.has(arquivo) and _listas[arquivo].has(str(id))
+
+
 func item(arquivo: String, id: String) -> Dictionary:
 	if not _listas[arquivo].has(id):
 		push_error("Dados: '%s' não existe em %s.json" % [id, arquivo])

@@ -11,6 +11,11 @@ extends RefCounted
 var carreira: Carreira
 var jogador: Node
 var teto_offline_s: float
+## Corrida em andamento já simulada: a tela e o processamento a cada segundo
+## reusam o resultado em vez de simular de novo. Chave inclui os atributos do
+## carro, então uma peça instalada no meio invalida o cache.
+var _cache_chave := ""
+var _cache: Dictionary = {}
 
 
 func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
@@ -42,7 +47,7 @@ func corrida_atual(agora: float) -> Dictionary:
 	var f: Dictionary = jogador.fila
 	if f.is_empty():
 		return {}
-	var c := carreira.preparar(f["evento_id"], f["uid"], f["semente"])
+	var c := _preparar(f, true).duplicate()
 	if c.has("erro"):
 		return {}
 	c["decorrido"] = agora - float(f["inicio"])
@@ -64,7 +69,7 @@ func processar(agora: float) -> Dictionary:
 
 	while not jogador.fila.is_empty():
 		var f: Dictionary = jogador.fila
-		var c := carreira.preparar(f["evento_id"], f["uid"], f["semente"], false)
+		var c := _preparar(f, false)
 		if c.has("erro"):
 			rel["erro"] = c["erro"]
 			cancelar()
@@ -86,6 +91,20 @@ func processar(agora: float) -> Dictionary:
 			f["semente"] = _nova_semente()
 	jogador.ultimo_processamento = agora
 	return rel
+
+
+func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
+	var carro: Carro = jogador.garagem.carro(int(f["uid"]))
+	var assinatura := "" if carro == null else str(carro.atributos_efetivos("seco")) + str(carro.atributos_efetivos("chuva"))
+	var chave := "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura]
+	if chave == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
+		return _cache
+	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras)
+	c["com_amostras"] = com_amostras
+	if not c.has("erro"):
+		_cache_chave = chave
+		_cache = c
+	return c
 
 
 func _nova_semente() -> int:

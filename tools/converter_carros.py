@@ -18,6 +18,12 @@ import csv
 import json
 import sys
 
+# Saída em UTF-8 também no Windows (o console padrão lá é cp1252).
+for _fluxo in (sys.stdout, sys.stderr):
+    if hasattr(_fluxo, "reconfigure"):
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
+
 TRACOES = {"FF", "FR", "MR", "RR", "4WD"}
 OBRIGATORIAS = ["id", "nome", "fabricante", "arquetipo", "categoria", "tracao", "potencia_cv",
                 "peso_kg", "velocidade_max_kmh", "preco", "ano"]

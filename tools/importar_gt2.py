@@ -62,6 +62,11 @@ import pathlib
 import statistics
 import sys
 
+# Saída em UTF-8 também no Windows (o console padrão lá é cp1252).
+for _fluxo in (sys.stdout, sys.stderr):
+    if hasattr(_fluxo, "reconfigure"):
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 GT2 = RAIZ / "referencia" / "gt2"
 REF = RAIZ / "referencia" / "carros.csv"
@@ -284,10 +289,10 @@ def main() -> int:
     gravar("pilotos_ia", pilotos)
     gravar("eventos", eventos)
     gravar("licencas", licencas)
-    economia = json.load(open(DATA / "economia.json"))
+    economia = json.load(open(DATA / "economia.json", encoding="utf-8"))
     economia.update({"saldo_inicial": 10000, "pneu_de_fabrica": "pneu_0"})
     gravar("economia", economia)
-    carreira = json.load(open(DATA / "carreira.json"))
+    carreira = json.load(open(DATA / "carreira.json", encoding="utf-8"))
     carreira["piloto_jogador"] = "jogador"
     gravar("carreira", carreira)
 

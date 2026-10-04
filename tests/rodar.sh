@@ -3,6 +3,7 @@
 # uma função que quebra no meio não chega às asserções seguintes.
 # Uso: tests/rodar.sh [caminho-do-godot]
 set -uo pipefail
+export PYTHONUTF8=1
 GODOT="${1:-godot}"
 cd "$(dirname "$0")/.."
 importacao="$("$GODOT" --headless --import 2>&1)"

@@ -32,11 +32,51 @@ static func serializar(jogador: Node) -> Dictionary:
 	}
 
 
+const CHAVES := [
+	"versao", "saldo", "proximo_uid", "carros", "licencas", "graus_licenca", "usados_vendidos",
+	"vitorias", "dias", "fila", "ultimo_processamento", "contador_sementes",
+]
+
+
+## Confere o save inteiro contra data/ sem mexer em nada. "" se está bom.
+static func validar(s: Variant, dados: Node) -> String:
+	if not s is Dictionary:
+		return "save ilegível"
+	for chave in CHAVES:
+		if not s.has(chave):
+			return "save sem o campo %s" % chave
+	if typeof(s["versao"]) != TYPE_FLOAT or int(s["versao"]) != VERSAO:
+		return "versão de save %s não suportada (esperada %d)" % [s["versao"], VERSAO]
+	if not s["carros"] is Array or not s["fila"] is Dictionary:
+		return "save com estrutura inválida"
+	var uids := []
+	for cs in s["carros"]:
+		if not cs is Dictionary or not cs.has_all(["id", "uid", "pecas", "pecas_possuidas", "pneus"]):
+			return "carro do save com estrutura inválida"
+		if not dados.existe("carros", cs["id"]):
+			return "carro %s não existe mais em data/" % cs["id"]
+		for peca_id in cs["pecas"]:
+			if not dados.existe("pecas", peca_id):
+				return "peça %s não existe mais em data/" % peca_id
+		for pneu_id in cs["pneus"]:
+			if not dados.existe("pneus", pneu_id):
+				return "pneu %s não existe mais em data/" % pneu_id
+		uids.append(int(cs["uid"]))
+	var f: Dictionary = s["fila"]
+	if not f.is_empty():
+		if not f.has_all(["evento_id", "uid", "restantes", "inicio", "semente"]):
+			return "fila do save com estrutura inválida"
+		if not dados.existe("eventos", f["evento_id"]) or not int(f["uid"]) in uids:
+			return "fila do save aponta para evento ou carro inexistente"
+	return ""
+
+
 ## Recria o estado em `jogador` (que já deve ter passado por novo_jogo()).
-## Retorna "" ou o motivo de não conseguir carregar.
-static func desserializar(s: Dictionary, jogador: Node, dados: Node) -> String:
-	if int(s.get("versao", 0)) != VERSAO:
-		return "versão de save %s não suportada" % s.get("versao")
+## Retorna "" ou o motivo de não conseguir carregar; com erro, nada é alterado.
+static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
+	var erro := validar(s, dados)
+	if erro != "":
+		return erro
 	jogador.economia.saldo = int(s["saldo"])
 	for cs in s["carros"]:
 		var c := Carro.new(dados.carro(cs["id"]))

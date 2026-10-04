@@ -25,6 +25,12 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "gt2"))
 import tabelas  # noqa: E402
 import vol as gtvol  # noqa: E402
 
+# Saída em UTF-8 também no Windows (o console padrão lá é cp1252).
+for _fluxo in (sys.stdout, sys.stderr):
+    if hasattr(_fluxo, "reconfigure"):
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
+
 LICENCAS = {0: "", 1: "B", 2: "A", 3: "IC", 4: "IB", 5: "IA", 6: "S"}
 TRACOES_EVENTO = {0: "", 1: "FF", 2: "FR", 3: "MR", 4: "RR", 5: "4WD"}
 

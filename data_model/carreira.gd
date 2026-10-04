@@ -8,6 +8,8 @@ extends RefCounted
 
 var dados: Node
 var jogador: Node
+## Quantas corridas foram simuladas (para medir custo; ver Fila).
+var simulacoes := 0
 
 
 func _init(dados_: Node, jogador_: Node) -> void:
@@ -48,6 +50,7 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 		"piloto": dados.piloto(dados.carreira()["piloto_jogador"]),
 	})
 
+	simulacoes += 1
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
 			dados.simulacao(), semente, com_amostras)
 	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}

@@ -14,6 +14,12 @@ import json
 import math
 import sys
 
+# Saída em UTF-8 também no Windows (o console padrão lá é cp1252).
+for _fluxo in (sys.stdout, sys.stderr):
+    if hasattr(_fluxo, "reconfigure"):
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
+
 
 def fechar(pista):
     trechos = pista["trechos"]
@@ -63,4 +69,4 @@ def fechar(pista):
 
 
 if __name__ == "__main__":
-    print(json.dumps(fechar(json.load(open(sys.argv[1]))), ensure_ascii=False, indent=1))
+    print(json.dumps(fechar(json.load(open(sys.argv[1], encoding="utf-8"))), ensure_ascii=False, indent=1))

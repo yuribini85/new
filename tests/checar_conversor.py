@@ -5,11 +5,17 @@ import json
 import pathlib
 import sys
 
+# Saída em UTF-8 também no Windows (o console padrão lá é cp1252).
+for _fluxo in (sys.stdout, sys.stderr):
+    if hasattr(_fluxo, "reconfigure"):
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
 raiz = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(raiz / "tools"))
 from converter_carros import converter  # noqa: E402
 
-fabricantes = {f["id"] for f in json.loads((raiz / "data/fabricantes.json").read_text())}
+
+fabricantes = {f["id"] for f in json.loads((raiz / "data/fabricantes.json").read_text(encoding="utf-8"))}
 with open(raiz / "tests/referencia/exemplo.csv", newline="", encoding="utf-8") as f:
     carros, erros = converter(list(csv.DictReader(f)), fabricantes)
 

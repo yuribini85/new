@@ -98,3 +98,98 @@ func test_save_ida_e_volta() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+const SaveManagerScript := preload("res://autoload/save_manager.gd")
+const PASTA_TESTE := "user://teste_saves/"
+
+
+func _limpar_pasta() -> void:
+	DirAccess.make_dir_recursive_absolute(PASTA_TESTE)
+	for f in DirAccess.get_files_at(PASTA_TESTE):
+		DirAccess.remove_absolute(PASTA_TESTE + f)
+
+
+func _escrever(caminho: String, texto: String) -> void:
+	var f := FileAccess.open(caminho, FileAccess.WRITE)
+	f.store_string(texto)
+	f.close()
+
+
+func test_save_corrompido_usa_bak_e_preserva_o_original() -> void:
+	_limpar_pasta()
+	var d := dados_fixture()
+	var j := _jogador(d)
+	j.concessionaria.comprar_carro(d.carro("forte"))
+	var arq := PASTA_TESTE + "save.json"
+	SaveManagerScript.gravar(arq, Save.serializar(j))
+	j.concessionaria.comprar_carro(d.carro("fraco"))
+	SaveManagerScript.gravar(arq, Save.serializar(j))
+	verificar(FileAccess.file_exists(arq + ".bak"), "gravar guarda o anterior em .bak")
+	_escrever(arq, "{corrompido")
+	var k := _jogador(d)
+	var r: Dictionary = SaveManagerScript.carregar_protegido(arq, k, d)
+	igual(r["origem"], "bak", "recuperou do .bak")
+	igual(k.garagem.lista().size(), 1, "estado do save anterior (um carro)")
+	verificar(r["aviso"] != "", "avisa o jogador")
+	var erros := Array(DirAccess.get_files_at(PASTA_TESTE)).filter(func(f): return ".erro-" in f)
+	igual(erros.size(), 1, "o corrompido foi guardado, não apagado")
+	j.free()
+	k.free()
+	d.free()
+
+
+func test_save_e_bak_invalidos_comecam_do_zero_sem_apagar_nada() -> void:
+	_limpar_pasta()
+	var d := dados_fixture()
+	var arq := PASTA_TESTE + "save.json"
+	_escrever(arq, JSON.stringify({"versao": 99}))
+	_escrever(arq + ".bak", "lixo")
+	var k := _jogador(d)
+	var saldo: int = k.economia.saldo
+	var r: Dictionary = SaveManagerScript.carregar_protegido(arq, k, d)
+	igual(r["carregou"], false, "não carregou")
+	igual(k.economia.saldo, saldo, "estado intacto")
+	verificar("versão" in r["aviso"] or "campo" in r["aviso"], "aviso explica: " + r["aviso"])
+	igual(Array(DirAccess.get_files_at(PASTA_TESTE)).filter(func(f): return ".erro-" in f).size(), 2, "os dois guardados")
+	verificar(not FileAccess.file_exists(arq), "nada no lugar para ser sobrescrito por engano")
+	k.free()
+	d.free()
+
+
+func test_save_com_carro_que_saiu_de_data_nao_altera_estado() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	j.concessionaria.comprar_carro(d.carro("forte"))
+	var s := Save.serializar(j)
+	s = JSON.parse_string(JSON.stringify(s))
+	s["carros"][0]["id"] = "carro_removido"
+	var k := _jogador(d)
+	var saldo: int = k.economia.saldo
+	verificar("carro_removido" in Save.desserializar(s, k, d), "erro cita o carro")
+	igual(k.economia.saldo, saldo, "nada foi aplicado pela metade")
+	igual(k.garagem.lista().size(), 0, "garagem intacta")
+	j.free()
+	k.free()
+	d.free()
+
+
+func test_processar_antes_do_fim_nao_simula_de_novo() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	f.iniciar("aberto", uid, 2, 0.0)
+	var dur: float = f.corrida_atual(0.0)["duracao"]
+	var antes: int = f.carreira.simulacoes
+	for s in range(1, 60):
+		f.processar(float(s))  # um "segundo" de cada vez, longe do fim
+		f.corrida_atual(float(s))
+	igual(f.carreira.simulacoes, antes, "nenhuma simulação nova durante a corrida")
+	j.concessionaria.comprar_peca(j.garagem.carro(uid), d.peca("turbo"))
+	f.processar(61.0)
+	igual(f.carreira.simulacoes, antes + 1, "peça nova muda o carro: simula de novo")
+	f.processar(dur + 100.0)
+	igual(j.dias, 1, "a corrida é aplicada quando termina")
+	j.free()
+	d.free()

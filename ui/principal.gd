@@ -57,7 +57,14 @@ func _ready() -> void:
 	timer.autostart = true
 	timer.timeout.connect(_processar_fila)
 	add_child(timer)
-	_mostrar_relatorio(get_node("/root/SaveManager").relatorio_offline, "Enquanto você esteve fora")
+	var save_manager := get_node("/root/SaveManager")
+	if save_manager.aviso != "":
+		var d := AcceptDialog.new()
+		d.title = "Save"
+		d.dialog_text = save_manager.aviso
+		add_child(d)
+		d.popup_centered()
+	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
 
 
 func atualizar() -> void:

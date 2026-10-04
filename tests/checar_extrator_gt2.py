@@ -11,11 +11,19 @@ import struct
 import subprocess
 import sys
 import tempfile
+import os
 
+# Saída em UTF-8 também no Windows (o console padrão lá é cp1252).
+for _fluxo in (sys.stdout, sys.stderr):
+    if hasattr(_fluxo, "reconfigure"):
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
+AMBIENTE = {**os.environ, "PYTHONUTF8": "1"}
 raiz = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(raiz / "tools" / "gt2"))
 from layouts import LAYOUTS, ORDEM_GTMODE_DATA, ORDEM_GTMODE_RACE  # noqa: E402
 import tabelas  # noqa: E402
+
 
 CARS = "-0123456789abcdefghijklmnopqrstuvwxyz"
 
@@ -190,7 +198,7 @@ def main():
             img.write_bytes(iso("GT2.VOL", vol, bruto))
             saida = pathlib.Path(tmp) / "saida"
             r = subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--disco", str(img),
-                                "--saida", str(saida)], capture_output=True, text=True)
+                                "--saida", str(saida)], capture_output=True, encoding="utf-8", env=AMBIENTE)
             if r.returncode:
                 falhas.append(f"bruto={bruto}: extrator falhou: {r.stderr.strip()[-400:]}")
                 continue
@@ -217,7 +225,7 @@ def main():
         img = tmp / "disco.iso"
         img.write_bytes(iso("GT2.VOL", vol, False))
         subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--disco", str(img), "--saida", str(tmp / "gt2")],
-                       capture_output=True, check=True)
+                       capture_output=True, check=True, env=AMBIENTE)
         (tmp / "ref.csv").write_text(
             "id,nome,fabricante,arquetipo,categoria,tracao,ref_real,codigo_gt2\n"
             "hayase_x,Hayase X,hayase,hatch,compacto,FF,Hatch Teste,hat93\n"
@@ -225,14 +233,14 @@ def main():
         dados = tmp / "data"
         dados.mkdir()
         for arq in ("economia", "carreira"):
-            (dados / f"{arq}.json").write_text((raiz / "data" / f"{arq}.json").read_text())
+            (dados / f"{arq}.json").write_text((raiz / "data" / f"{arq}.json").read_text(encoding="utf-8"))
         r = subprocess.run([sys.executable, str(raiz / "tools/importar_gt2.py"), "--gt2", str(tmp / "gt2"),
-                            "--ref", str(tmp / "ref.csv"), "--data", str(dados)], capture_output=True, text=True)
+                            "--ref", str(tmp / "ref.csv"), "--data", str(dados)], capture_output=True, encoding="utf-8", env=AMBIENTE)
         if r.returncode:
             falhas.append(f"importador falhou: {r.stderr.strip()[-500:]}")
         else:
             import json
-            carregar = lambda n: json.loads((dados / f"{n}.json").read_text())
+            carregar = lambda n: json.loads((dados / f"{n}.json").read_text(encoding="utf-8"))
             carros = {c["id"]: c for c in carregar("carros")}
             x, y = carros["hayase_x"], carros["hartwig_y"]
             if x.get("usados") != [[0, 19, 9000], [20, 29, 8800]] or y.get("usados") != [[50, 59, 30000]]:
@@ -273,7 +281,7 @@ def main():
             (pasta / "carparam" / nome).write_bytes(vol[ini:ini + tam])
         saida = pathlib.Path(tmp) / "saida"
         r = subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--pasta", str(pasta),
-                            "--saida", str(saida)], capture_output=True, text=True)
+                            "--saida", str(saida)], capture_output=True, encoding="utf-8", env=AMBIENTE)
         if r.returncode or not (saida / "carros.csv").exists():
             falhas.append(f"pasta: {r.stderr.strip()[-400:]}")
     for f in falhas:
