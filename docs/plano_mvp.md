@@ -1,4 +1,4 @@
-# Gran Turismo Idle — plano operacional do primeiro build
+# Apex Garage — plano operacional do primeiro build
 
 Desdobramento de `docs/conceito.md` em sistemas, dados e ordem de trabalho. Estruturas abaixo
 são formato, não balanceamento: **nenhum número aqui é definitivo**. Os valores virão do
@@ -128,13 +128,23 @@ técnico real do projeto.
 - **Deriva para Motorsport Manager.** Qualquer decisão durante a corrida está fora. Se
   surgir pedido de estratégia de box, recusar no primeiro build.
 
-## 8. Decisões em aberto
+## 8. Decisões tomadas
 
-1. Engine: Godot 4.4 ou outra?
-2. O "idle" é offline de verdade (corridas acontecem sem o app aberto) ou só automático
-   com o app aberto?
-3. Quantas corridas simultâneas o jogador pode ter (um carro por vez ou garagem inteira)?
-4. Licenças: testes automáticos com o carro do jogador, ou só requisitos de progressão?
-5. Usados: estoque rotativo por tempo real ou por número de corridas?
-6. Número de fabricantes e escolas no lançamento.
-7. Nome definitivo do projeto (Gran Turismo é marca registrada; não pode ser o título).
+1. **Engine: Godot 4.4.** 2D isométrico e exportação mobile resolvidos; código de save e
+   offline de The Way Back (branch `backup/the-way-back`) pode ser adaptado.
+2. **Offline de verdade.** As corridas acontecem com o app fechado e são resolvidas em
+   lote na volta, pela simulação headless, com relatório de resultados, dinheiro e
+   prêmios. Há um teto de tempo offline; o valor é balanceamento, fica em JSON.
+3. **Um carro por vez, com fila de repetições.** O jogador escolhe evento, carro e número
+   de repetições; offline, a fila é consumida. Corridas simultâneas com vários carros
+   ficam fora do primeiro build.
+4. **Licença é teste de tempo com o carro do próprio jogador.** Tempo-alvo numa pista,
+   sob uma restrição de entrada. O resultado depende da compra e da preparação. Usa a
+   mesma simulação das corridas. Graus ouro, prata e bronze.
+5. **Usados giram por número de corridas**, não por tempo real. Cada corrida conta como
+   um dia, como no GT2. Imune a manipulação do relógio; a fila offline avança o estoque.
+6. **Fabricantes: 3 no primeiro build, 8 a 10 no lançamento.** Primeiro build: uma
+   japonesa, uma alemã e uma de outra escola. Lançamento: ~3 japonesas, 2 alemãs, 1
+   italiana, 1 americana, 1 britânica, 1 francesa.
+7. **Nome provisório: Apex Garage.** Pendente de busca de marca registrada e nas lojas
+   (App Store e Google Play) antes de ser fechado.

@@ -1,7 +1,9 @@
-# Gran Turismo Idle (nome provisório)
+# Apex Garage (nome provisório)
 
-Jogo mobile idle de automobilismo. Preserva a estrutura de carreira de um Gran Turismo
-clássico — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
+Jogo mobile idle de automobilismo, feito em Godot 4.4. O nome ainda depende de busca de
+marca registrada.
+
+Preserva a estrutura de carreira de um Gran Turismo clássico — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
 colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 **Este repositório é, por enquanto, material de design.** O jogo ainda não existe.
@@ -11,7 +13,7 @@ colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 | Arquivo | O que é |
 |---|---|
 | `docs/conceito.md` | Conceito, princípios e limites do projeto. |
-| `docs/plano_mvp.md` | Escopo do primeiro build, sistemas, modelo da simulação, dados, ordem de implementação, riscos e decisões em aberto. |
+| `docs/plano_mvp.md` | Escopo do primeiro build, sistemas, modelo da simulação, dados, ordem de implementação, riscos e decisões tomadas. |
 
 ## Regras do projeto
 

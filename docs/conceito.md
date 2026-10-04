@@ -1,4 +1,4 @@
-# Gran Turismo Idle Mobile — conceito
+# Apex Garage — conceito
 
 ## Princípio central
 
