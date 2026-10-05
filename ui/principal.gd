@@ -132,6 +132,9 @@ func atualizar() -> void:
 		Aba.dinheiro(jogador.economia.saldo), jogador.dias, jogador.garagem.lista().size()]
 	for a in _todas:
 		a.atualizar()
+	# Toda ação do jogador passa por aqui: salvar já. No navegador não há aviso
+	# confiável de fechamento, e uma compra não pode se perder.
+	get_node("/root/SaveManager").salvar()
 
 
 func _processar_fila() -> void:

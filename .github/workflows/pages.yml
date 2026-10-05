@@ -1,0 +1,57 @@
+name: Demo web
+
+# Exporta o jogo para web e publica no GitHub Pages, para testar no navegador
+# do celular. Precisa de Settings → Pages → Source: GitHub Actions.
+# Por padrão o GitHub só publica a partir da main (regra do ambiente
+# github-pages); para publicar de outra branch, libere-a em
+# Settings → Environments → github-pages.
+
+on:
+  push:
+    branches: [main, claude/eloquent-clarke-v7l68k]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Godot 4.4 com templates de exportação
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Importar projeto
+        run: godot --headless --import || true
+
+      - name: Exportar para web
+        run: |
+          mkdir -p build/web
+          godot --headless --export-release "Web" build/web/index.html
+          test -f build/web/index.pck
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  publicar:
+    needs: exportar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
