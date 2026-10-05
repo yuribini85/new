@@ -17,7 +17,8 @@ O que existe hoje:
 - concessionária de novos e usados (usados por período, como no GT2), garagem, oficina
   com peças e pneus por carro, venda;
 - 38 eventos em 18 séries sem licença, B e A; licenças B e A por teste de tempo;
-- corrida resolvida pela simulação e reproduzida em isometria, em tempo real;
+- corrida resolvida pela simulação e reproduzida em 3D isométrico (carros de blocos,
+  placeholders), em tempo real, com minimapa;
 - fila de repetições, progresso offline com teto, save com `.bak` e proteção contra
   arquivo corrompido ou de versão antiga.
 
@@ -39,7 +40,7 @@ autoload/save_manager.gd      save com .bak e proteção; processa o offline ao 
 data_model/                   carro, pista, economia, garagem, concessionária, elegibilidade,
                               carreira, licenças, usados, fila, save
 sim/simulacao.gd              corrida headless (envelope de velocidade, arrasto, cortesia)
-visual/                       projeção isométrica, carro provisório (16 direções), corrida ao vivo
+visual/                       corrida 3D e minimapa, carro de blocos, vitrine, ícones (placeholders)
 ui/                           telas: garagem, loja, oficina, eventos, corrida, licenças
 scenes/principal.tscn         cena principal (retrato 720×1280)
 data/                         balanceamento (gerado do GT2; ver data/README.md)

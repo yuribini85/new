@@ -50,8 +50,12 @@ func texto(t: String, cor := Color.WHITE) -> Label:
 
 
 ## Linha com descrição à esquerda e botões à direita. botoes: [[rótulo, Callable, habilitado]].
-func linha(descricao: String, botoes: Array = []) -> HBoxContainer:
+## `icone` (placeholder de carro ou pista, ver Icones) vai antes do texto.
+func linha(descricao: String, botoes: Array = [], icone: Control = null) -> HBoxContainer:
 	var h := HBoxContainer.new()
+	if icone != null:
+		icone.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(icone)
 	var l := Label.new()
 	l.text = descricao
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -72,6 +76,20 @@ func linha(descricao: String, botoes: Array = []) -> HBoxContainer:
 
 func separador() -> void:
 	conteudo.add_child(HSeparator.new())
+
+
+func icone_carro(base: Dictionary) -> Control:
+	return Icones.carro(base.get("categoria", ""), CarroBloco.cor_do_id(base.get("id", "")))
+
+
+## Pistas montadas uma vez por id (o traçado não muda durante o jogo).
+var _pistas_cache := {}
+
+
+func icone_pista(pista_id: String) -> Control:
+	if not _pistas_cache.has(pista_id):
+		_pistas_cache[pista_id] = dados.pista(pista_id)
+	return Icones.pista(_pistas_cache[pista_id])
 
 
 func carro_ativo() -> Carro:

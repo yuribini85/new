@@ -69,6 +69,23 @@ func test_garagem_vazia_sem_saldo_oferece_recomecar() -> void:
 	d.free()
 
 
+func test_corrida_3d_carros_lado_a_lado_nao_se_atravessam() -> void:
+	var ordem := ["a", "b", "c", "d"]
+	# b emparelhado com a (ultrapassagem), c a 3 m, d longe; a e d com uma
+	# volta de diferença no mesmo ponto também contam como vizinhos.
+	var s := {"a": 100.0, "b": 100.0, "c": 97.0, "d": 1100.0}
+	var f := Corrida3D.faixas(ordem, s, {}, 1000.0)
+	igual(f["a"], 0.0, "líder no traçado ideal")
+	for par in [["a", "b"], ["a", "c"], ["b", "c"], ["a", "d"]]:
+		verificar(absf(f[par[0]] - f[par[1]]) >= 2.0, "%s e %s em faixas diferentes: %s" % [par[0], par[1], f])
+	for id in f:
+		verificar(absf(f[id]) + 0.9 <= Corrida3D.LARGURA_PISTA_M * 0.5, "%s dentro da pista" % id)
+	igual(Corrida3D.contatos(ordem, s, f, 1000.0), [], "nas faixas finais, nenhum toque")
+	igual(Corrida3D.contatos(["a", "b"], {"a": 50.0, "b": 48.0}, {"a": 0.0, "b": 1.0}, 1000.0), [["a", "b"]], "toque na troca de faixa")
+	var sozinho := Corrida3D.faixas(["b"], {"b": 500.0}, {"b": 2.1}, 1000.0)
+	igual(sozinho["b"], 0.0, "sem vizinho volta ao traçado ideal")
+
+
 func test_visual_posiciona_carros_na_pista() -> void:
 	var d := dados_fixture()
 	var p: Pista = d.pista("oval")

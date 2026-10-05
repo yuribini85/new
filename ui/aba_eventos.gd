@@ -51,7 +51,7 @@ func construir() -> void:
 			desc += "\n  " + ", ".join(motivos)
 		linha(desc, [
 			["Correr", _correr.bind(ev["id"]), c != null and motivos.is_empty() and jogador.fila.is_empty()],
-		])
+		], icone_pista(ev["pista"]))
 
 
 func _correr(evento_id: String) -> void:

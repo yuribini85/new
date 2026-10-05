@@ -171,3 +171,10 @@ técnico real do projeto.
 16. **Dados do GT2:** `data/` vem do disco (SCUS-94488 v1.2) pelo extrator e importador
     em `tools/`. Carros fictícios ligados a modelos do GT2; séries do GT2 renomeadas;
     nenhum nome, marca ou traçado do GT2 no build.
+17. **Placeholders em blocos 3D** (pedido do usuário, substitui parte da 15): corrida em
+    3D com câmera ortográfica isométrica seguindo o jogador e minimapa da pista inteira;
+    carros de blocos (chassi, cabine, rodas) com proporção por categoria; oficina começa
+    pela escolha do carro, com vitrine girando como no GT2; ícones de carro e de pista
+    nas listas. A posição lateral é só visual (a simulação é em uma dimensão): carros
+    próximos abrem para faixas livres e não se atravessam; toque na troca de faixa
+    aparece como tranco, sem efeito no resultado. A arte final continua a da seção 5.

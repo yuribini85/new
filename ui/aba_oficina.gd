@@ -9,16 +9,49 @@ const NOMES_CATEGORIA := {
 }
 
 
+## Carro girando no topo (placeholder do GT2). Criada uma vez e reaproveitada
+## a cada reconstrução da tela.
+var _vitrine: VitrineCarro
+
+
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Oficina")
+	_vitrine = VitrineCarro.new()
+
+
+func atualizar() -> void:
+	if _vitrine.get_parent() != null:
+		_vitrine.get_parent().remove_child(_vitrine)
+	super()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and is_instance_valid(_vitrine) and _vitrine.get_parent() == null:
+		_vitrine.free()
 
 
 func construir() -> void:
-	var c := carro_ativo()
-	if c == null:
+	var lista: Array = jogador.garagem.lista()
+	if lista.is_empty():
 		titulo("Oficina")
-		texto("Escolha um carro na Garagem.")
+		texto("Nenhum carro. Compre o primeiro na Loja.")
 		return
+	if carro_ativo() == null:
+		jogador.carro_ativo = lista[0].uid
+	var c := carro_ativo()
+	# Como no GT2: primeiro se escolhe qual carro da garagem vai ser preparado.
+	var escolha := OptionButton.new()
+	escolha.custom_minimum_size = Vector2(0, 72)
+	for i in lista.size():
+		escolha.add_item(lista[i].base["nome"], lista[i].uid)
+		if lista[i].uid == c.uid:
+			escolha.select(i)
+	escolha.item_selected.connect(func(i):
+		jogador.carro_ativo = escolha.get_item_id(i)
+		mudou.emit())
+	conteudo.add_child(escolha)
+	_vitrine.mostrar(c.base.get("categoria", ""), CarroBloco.cor_do_id(c.id))
+	conteudo.add_child(_vitrine)
 	titulo(c.base["nome"])
 	texto("Seco: " + ficha(c, "seco"))
 	var chuva := c.atributos_efetivos("chuva")

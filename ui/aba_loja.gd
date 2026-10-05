@@ -27,7 +27,7 @@ func construir() -> void:
 		linha(desc, [
 			[dinheiro(o["preco"]), func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos)),
 				jogador.economia.pode_pagar(o["preco"])],
-		])
+		], icone_carro(c))
 	separador()
 	titulo("Novos")
 	for c in dados.lista("carros"):
@@ -37,7 +37,7 @@ func construir() -> void:
 		var fab: String = dados.item("fabricantes", c["fabricante"]).get("nome", c["fabricante"])
 		linha("%s · %s · %s · %d cv · %d" % [c["nome"], fab, c["tracao"], c["potencia"], c["ano"]], [
 			[dinheiro(preco), func(): _escolher(jogador.concessionaria.comprar_carro(c)), jogador.economia.pode_pagar(preco)],
-		])
+		], icone_carro(c))
 
 
 func _prever(ofertas: Array) -> Dictionary:

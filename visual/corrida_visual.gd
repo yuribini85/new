@@ -6,8 +6,10 @@ extends Control
 const LARGURA_PISTA_M := 12.0
 ## Pixels por metro dos carros e mínimo da largura da pista na tela: o sprite
 ## pré-renderizado tem tamanho fixo, independente do zoom da pista.
-const ESCALA_CARRO := 10.0
-const LARGURA_MIN_PX := 34.0
+## No minimapa da corrida 3D ficam menores e sem número.
+var escala_carro := 10.0
+var largura_min_px := 34.0
+var com_rotulos := true
 ## Cores de alto contraste, na ordem do grid. O jogador usa a primeira.
 const PALETA := [
 	Color(1.0, 0.82, 0.1), Color(0.25, 0.65, 1.0), Color(1.0, 0.35, 0.35), Color(0.4, 0.9, 0.45),
@@ -62,7 +64,7 @@ func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> voi
 	for i in ids.size():
 		var id: String = ids[i]
 		var sp := CarroSprite.new()
-		sp.escala = ESCALA_CARRO
+		sp.escala = escala_carro
 		sp.cor = cores.get(id, PALETA[i % PALETA.size()])
 		sp.destaque = id == "jogador"
 		_cores[id] = sp.cor
@@ -139,13 +141,13 @@ func _posicionar() -> void:
 		var sp: CarroSprite = _sprites[id]
 		sp.position = _tela(_pista.posicao_em(s))
 		sp.direcao = Iso.direcao(_pista.rumo_em(s) + _rotacao)
-		sp.rotulo = str(ordem_atual.find(id) + 1)
+		sp.rotulo = str(ordem_atual.find(id) + 1) if com_rotulos else ""
 
 
 func _draw() -> void:
 	if _contorno.size() < 2:
 		return
-	var largura := maxf(LARGURA_PISTA_M * _escala * 0.75, LARGURA_MIN_PX)
+	var largura := maxf(LARGURA_PISTA_M * _escala * 0.75, largura_min_px)
 	draw_polyline(_contorno, COR_BORDA, largura + 3.0, true)
 	draw_polyline(_contorno, COR_PISTA, largura, true)
 	var largada := _tela(_pista.posicao_em(0.0))

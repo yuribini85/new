@@ -30,7 +30,7 @@ func construir() -> void:
 			["Usar", func(): jogador.carro_ativo = c.uid, not ativo],
 			["Vender %s" % dinheiro(venda), _vender.bind(c.uid),
 				not em_fila and jogador.concessionaria.pode_vender(c.uid)],
-		])
+		], icone_carro(c.base))
 	if jogador.garagem.lista().size() == 1:
 		texto("O único carro da garagem não pode ser vendido.", Color(0.7, 0.8, 1.0))
 	_rodape()

@@ -28,7 +28,7 @@ func construir() -> void:
 				desc += "\n  " + ", ".join(motivos)
 			linha(desc, [
 				["Fazer", _fazer.bind(lic, t), c != null and not bloqueada and motivos.is_empty()],
-			])
+			], icone_pista(t["pista"]))
 
 
 func _fazer(lic: Dictionary, t: Dictionary) -> void:
