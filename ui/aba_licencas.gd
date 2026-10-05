@@ -65,6 +65,12 @@ func _cartao_licenca(c: Carro, lic: Dictionary) -> void:
 	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
 			else ["%d de %d testes" % [feitos, lic["testes"].size()], COR_INFO])
 	selos([estado, ["libera %d prova%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
+	var series := {}
+	for e in dados.lista("eventos"):
+		if e["restricoes"].get("licenca") == lic["id"]:
+			series[String(e["nome"]).split(" — ")[0]] = true
+	if not series.is_empty():
+		rotulo("Libera: " + ", ".join(series.keys()), FONTE_PEQUENA, COR_SECUNDARIA, v)
 	for t in lic["testes"]:
 		separador(v)
 		var topo := fileira(v)
@@ -106,3 +112,16 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 	set_deferred("scroll_vertical", 0)  # o resultado aparece no topo
 	_resultado = {"teste": t["id"], "tempo": r["tempo"], "grau": r["grau"], "tempos": t["tempos"],
 			"concedida": r["licenca_concedida"], "licenca": lic["nome"]}
+	avisar("Teste %s: %.2f s · %s" % [String(t["id"]).to_upper(), r["tempo"],
+			String(r["grau"]).to_upper() if r["grau"] != "" else "reprovado"], r["grau"] != "")
+	if r["licenca_concedida"]:
+		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"])
+		painel.emit("%s conquistada!" % lic["nome"], func(v):
+			rotulo("Agora você pode correr %d provas novas:" % liberadas.size(), 0, Color.WHITE, v)
+			var series := {}
+			for e in liberadas:
+				series[String(e["nome"]).split(" — ")[0]] = true
+			for nome in series:
+				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
+			rotulo("Elas aparecem em Eventos, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
+			[["Ver eventos", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])

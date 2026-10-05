@@ -67,6 +67,19 @@ func nome_participante(id: String, uid: int) -> String:
 	return dados.carro(id.split("_", true, 1)[1]).get("nome", id)
 
 
+## Atributos efetivos (com peças e pneus) de um participante na condição da
+## prova: o jogador pelo carro `uid`, o adversário pela definição do evento.
+func atributos_participante(evento_id: String, id: String, uid: int) -> Dictionary:
+	var ev: Dictionary = dados.evento(evento_id)
+	if id == "jogador":
+		var c: Carro = jogador.garagem.carro(uid)
+		return {} if c == null else c.atributos_efetivos(ev["condicao"])
+	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
+	if ev.is_empty() or i < 0 or i >= ev["adversarios"].size():
+		return {}
+	return _adversario(ev["adversarios"][i], i, ev["condicao"])["atributos"]
+
+
 ## Atributos de fábrica do carro de um adversário ("adv<i>_<carro>").
 func carro_participante(id: String) -> Dictionary:
 	return dados.carro(id.split("_", true, 1)[1]) if id.begins_with("adv") else {}
@@ -93,14 +106,31 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 			premiado.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 			carro_premio_uid = jogador.garagem.adicionar(premiado)
 	jogador.dias += 1
+	var tempo: float = r["carros"]["jogador"]["tempo_total"] if r["carros"]["jogador"]["terminou"] else 0.0
+	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
+	jogador.historico[evento_id] = _historico(anterior, posicao, tempo)
 
 	return {
+		"anterior": anterior,
+		"recorde": tempo > 0.0 and (anterior.is_empty() or anterior["melhor_tempo"] <= 0.0 or tempo < anterior["melhor_tempo"]),
 		"evento_id": evento_id,
 		"classificacao": r["classificacao"],
 		"posicao": posicao,
 		"premio": premio,
 		"carro_premio_uid": carro_premio_uid,
 		"resultado": r,
+	}
+
+
+static func _historico(h: Dictionary, posicao: int, tempo: float) -> Dictionary:
+	if h.is_empty():
+		return {"corridas": 1, "melhor_pos": posicao, "melhor_tempo": tempo, "ultima_pos": posicao, "ultimo_tempo": tempo}
+	return {
+		"corridas": int(h["corridas"]) + 1,
+		"melhor_pos": mini(int(h["melhor_pos"]), posicao),
+		"melhor_tempo": tempo if h["melhor_tempo"] <= 0.0 or (tempo > 0.0 and tempo < h["melhor_tempo"]) else h["melhor_tempo"],
+		"ultima_pos": posicao,
+		"ultimo_tempo": tempo,
 	}
 
 

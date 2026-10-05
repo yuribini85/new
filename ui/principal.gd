@@ -8,6 +8,7 @@ var _saldo: Label
 var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
+var _sobre: Sobreposicao
 
 ## Tamanhos para tela de celular em retrato (viewport 720 de largura).
 const FONTE := 30
@@ -67,6 +68,11 @@ func _ready() -> void:
 		jogador.fila_ctrl.adiantar(Time.get_unix_time_from_system())
 		_processar_fila())
 	raiz.add_child(_navegacao())
+	_sobre = Sobreposicao.new()
+	add_child(_sobre)
+	for a in _todas:
+		a.aviso.connect(_sobre.avisar)
+		a.painel.connect(_sobre.abrir)
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid
 	atualizar()
@@ -78,11 +84,7 @@ func _ready() -> void:
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
-		var d := AcceptDialog.new()
-		d.title = "Save"
-		d.dialog_text = save_manager.aviso
-		add_child(d)
-		d.popup_centered()
+		_sobre.abrir("Save", func(v): _todas[0].rotulo(save_manager.aviso, 0, Color.WHITE, v))
 	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
 
 
@@ -157,34 +159,92 @@ func atualizar() -> void:
 func _processar_fila() -> void:
 	if jogador.fila.is_empty():
 		return
+	var antes_vitorias: Dictionary = jogador.vitorias.duplicate()
 	var rel: Dictionary = jogador.fila_ctrl.processar(Time.get_unix_time_from_system())
-	if not rel["corridas"].is_empty() or rel["erro"] != "":
-		atualizar()
-		get_node("/root/SaveManager").salvar()
-		if rel["erro"] != "" or not rel["carros_premio"].is_empty():
-			_mostrar_relatorio(rel, "Resultado")
+	if rel["corridas"].is_empty() and rel["erro"] == "":
+		return
+	atualizar()
+	get_node("/root/SaveManager").salvar()
+	# Uma corrida terminando com o app aberto: aviso curto e a tela de Corrida
+	# mostra o resultado. Várias (voltou do segundo plano), erro ou carro-prêmio:
+	# relatório.
+	if rel["corridas"].size() == 1 and rel["erro"] == "" and rel["carros_premio"].is_empty():
+		var c: Dictionary = rel["corridas"][0]
+		_sobre.avisar("Corrida terminou: %dº de %d%s" % [c["posicao"], c["total"],
+				" · +%s Cr" % Aba.dinheiro(c["premio"]) if c["premio"] > 0 else ""], true)
+		if c["posicao"] == 1 and not antes_vitorias.has(c["evento_id"]):
+			_primeira_vitoria(c)
+		return
+	_mostrar_relatorio(rel, "Resultado das corridas")
 
 
+func _notification(what: int) -> void:
+	# Volta do segundo plano: aplica o que correu enquanto isso, na hora.
+	if what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN] and _sobre != null:
+		_processar_fila()
+
+
+func _primeira_vitoria(c: Dictionary) -> void:
+	var g: Aba = _todas[0]
+	_sobre.abrir("Primeira vitória!", func(v):
+		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
+		g.rotulo("Você venceu esta prova pela primeira vez. Prêmio: +%s Cr." % Aba.dinheiro(c["premio"]), 0, Color.WHITE, v)
+		g.rotulo("Próximo passo: tente uma prova que paga mais, ou prepare o carro na Oficina.", Aba.FONTE_PEQUENA + 2,
+				Aba.COR_SECUNDARIA, v))
+
+
+## Relatório de várias corridas (offline ou segundo plano): resumo e, sob
+## pedido, a lista de cada corrida.
 func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 	if rel.is_empty() or (rel["corridas"].is_empty() and rel["erro"] == ""):
 		return
-	var linhas := []
-	for c in rel["corridas"]:
-		linhas.append("%s: %dº · %s" % [dados.evento(c["evento_id"])["nome"], c["posicao"], Aba.dinheiro(c["premio"])])
-	if linhas.size() > 10:
-		linhas = linhas.slice(0, 5) + ["… mais %d corridas" % (linhas.size() - 5)]
-	linhas.append("Total: %s" % Aba.dinheiro(rel["premio_total"]))
-	for uid in rel["carros_premio"]:
-		linhas.append("Carro-prêmio: %s" % jogador.garagem.carro(uid).base["nome"])
-	if rel["erro"] != "":
-		linhas.append("Fila parada: " + rel["erro"])
-	if rel.get("tempo_perdido_s", 0.0) > 0.0:
-		linhas.append("Tempo além do limite offline não contou.")
-	var d := AcceptDialog.new()
-	d.title = titulo
-	d.dialog_text = "\n".join(linhas)
-	add_child(d)
-	d.popup_centered()
+	var g: Aba = _todas[0]
+	_sobre.abrir(titulo, func(v):
+		var corridas: Array = rel["corridas"]
+		if not corridas.is_empty():
+			var vitorias := corridas.filter(func(c): return c["posicao"] == 1).size()
+			var melhor: int = corridas.map(func(c): return c["posicao"]).min()
+			var resumo := g.cartao(Aba.COR_BOM, v)
+			g.rotulo("%d corrida%s · %d vitória%s · melhor %dº" % [corridas.size(), "" if corridas.size() == 1 else "s",
+					vitorias, "" if vitorias == 1 else "s", melhor], 0, Color.WHITE, resumo)
+			g.rotulo("+%s Cr em prêmios" % Aba.dinheiro(rel["premio_total"]), 34, Aba.COR_DESTAQUE, resumo)
+		for uid in rel["carros_premio"]:
+			var cp: Carro = jogador.garagem.carro(uid)
+			if cp != null:
+				var vc := g.cartao(Aba.COR_DESTAQUE, v)
+				g.rotulo("CARRO-PRÊMIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vc)
+				var h := g.fileira(vc)
+				h.add_child(g.icone_carro(cp.base))
+				g.rotulo(cp.base["nome"], 30, Color.WHITE, h)
+				g.rotulo("Já está na sua garagem.", Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vc)
+		if rel["erro"] != "":
+			var ve := g.cartao(Aba.COR_RUIM, v)
+			g.rotulo("A fila parou: " + rel["erro"], 0, Aba.COR_RUIM, ve)
+		if rel.get("tempo_perdido_s", 0.0) > 0.0:
+			var teto: float = float(dados.carreira().get("teto_offline_s", 0.0))
+			var vt := g.cartao(Aba.COR_INFO, v)
+			g.rotulo("Você ficou fora mais que o limite de %s. %s além disso não contaram; a fila continuou de onde parou." % [
+					_duracao(teto), _duracao(rel["tempo_perdido_s"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, vt)
+		if corridas.size() > 1:
+			var detalhes := VBoxContainer.new()
+			detalhes.visible = false
+			var b := Button.new()
+			b.text = "Ver cada corrida"
+			b.custom_minimum_size = Vector2(0, 68)
+			b.pressed.connect(func():
+				detalhes.visible = not detalhes.visible
+				b.text = "Esconder" if detalhes.visible else "Ver cada corrida")
+			v.add_child(b)
+			v.add_child(detalhes)
+			for c in corridas:
+				g.rotulo("%s · %dº · %s Cr" % [dados.evento(c["evento_id"]).get("nome", ""), c["posicao"],
+						Aba.dinheiro(c["premio"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, detalhes))
+
+
+static func _duracao(s: float) -> String:
+	if s >= 3600.0:
+		return "%d h %02d min" % [int(s) / 3600, (int(s) % 3600) / 60]
+	return "%d min" % maxi(1, int(s) / 60)
 
 
 func _tela_pendencias(raiz: VBoxContainer) -> void:

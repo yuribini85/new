@@ -1,0 +1,126 @@
+class_name Sobreposicao
+extends Control
+## Camada por cima das telas: avisos rápidos (confirmação de compra, motivo de
+## uma falha) e painéis roláveis (relatório offline, licença conquistada).
+## Substitui as janelas do Godot, que não rolavam nem quebravam linha.
+
+const DURACAO_AVISO := 2.6
+
+var _avisos: VBoxContainer
+var _painel_raiz: Control
+var _painel_conteudo: VBoxContainer
+var _painel_titulo: Label
+var _painel_botoes: HBoxContainer
+
+
+func _init() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Painel modal: fundo escurecido que segura o toque, cartão com rolagem.
+	_painel_raiz = Control.new()
+	_painel_raiz.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_painel_raiz.visible = false
+	add_child(_painel_raiz)
+	var escuro := ColorRect.new()
+	escuro.color = Color(0, 0, 0, 0.7)
+	escuro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_painel_raiz.add_child(escuro)
+	var margem := MarginContainer.new()
+	margem.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for lado in ["left", "right"]:
+		margem.add_theme_constant_override("margin_" + lado, 24)
+	for lado in ["top", "bottom"]:
+		margem.add_theme_constant_override("margin_" + lado, 90)
+	_painel_raiz.add_child(margem)
+	var cartao := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.12, 0.13, 0.16)
+	sb.set_corner_radius_all(18)
+	sb.set_content_margin_all(22)
+	sb.border_color = Aba.COR_DESTAQUE
+	sb.set_border_width_all(2)
+	cartao.add_theme_stylebox_override("panel", sb)
+	margem.add_child(cartao)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 14)
+	cartao.add_child(v)
+	_painel_titulo = Label.new()
+	_painel_titulo.add_theme_font_size_override("font_size", 38)
+	_painel_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(_painel_titulo)
+	var rolagem := ScrollContainer.new()
+	rolagem.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolagem.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	v.add_child(rolagem)
+	_painel_conteudo = VBoxContainer.new()
+	_painel_conteudo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_painel_conteudo.add_theme_constant_override("separation", 12)
+	rolagem.add_child(_painel_conteudo)
+	_painel_botoes = HBoxContainer.new()
+	_painel_botoes.add_theme_constant_override("separation", 12)
+	v.add_child(_painel_botoes)
+	# Avisos no topo, empilhados; somem sozinhos.
+	_avisos = VBoxContainer.new()
+	_avisos.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	_avisos.offset_left = 20
+	_avisos.offset_right = -20
+	_avisos.offset_top = 70
+	_avisos.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_avisos.add_theme_constant_override("separation", 8)
+	add_child(_avisos)
+
+
+## Aviso curto no topo. ok = false: em vermelho (falha, com o motivo).
+func avisar(texto: String, ok := true) -> void:
+	var p := PanelContainer.new()
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.1, 0.32, 0.18, 0.96) if ok else Color(0.42, 0.12, 0.1, 0.96)
+	sb.set_corner_radius_all(12)
+	sb.set_content_margin_all(14)
+	p.add_theme_stylebox_override("panel", sb)
+	var l := Label.new()
+	l.text = ("✓ " if ok else "✗ ") + texto
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.add_theme_font_size_override("font_size", 26)
+	p.add_child(l)
+	_avisos.add_child(p)
+	while _avisos.get_child_count() > 3:
+		var velho := _avisos.get_child(0)
+		_avisos.remove_child(velho)
+		velho.queue_free()
+	if is_inside_tree():
+		get_tree().create_timer(DURACAO_AVISO).timeout.connect(func():
+			if is_instance_valid(p):
+				p.queue_free())
+
+
+## Painel modal com rolagem. montar(vbox) preenche o conteúdo; botoes =
+## [[texto, Callable]] (vazio: só "OK"). Qualquer botão fecha o painel.
+func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
+	for c in _painel_conteudo.get_children():
+		c.queue_free()
+	for c in _painel_botoes.get_children():
+		c.queue_free()
+	_painel_titulo.text = titulo
+	montar.call(_painel_conteudo)
+	if botoes.is_empty():
+		botoes = [["OK", func(): pass]]
+	for b in botoes:
+		var bt := Button.new()
+		bt.text = b[0]
+		bt.custom_minimum_size = Vector2(0, 76)
+		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		bt.pressed.connect(func():
+			fechar()
+			b[1].call())
+		_painel_botoes.add_child(bt)
+	_painel_raiz.visible = true
+
+
+func fechar() -> void:
+	_painel_raiz.visible = false
+
+
+func aberto() -> bool:
+	return _painel_raiz.visible

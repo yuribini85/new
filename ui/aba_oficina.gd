@@ -1,6 +1,12 @@
 extends Aba
 
-var _aviso := ""
+## Em que parte da corrida cada atributo pesa.
+const AFETA := {
+	"potencia": "aceleração e velocidade nas retas",
+	"peso": "aceleração, curvas e frenagem",
+	"freio": "frenagem antes das curvas",
+}
+const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio"}
 
 ## O que cada grupo de peças faz, para a tela explicar antes do preço.
 const EXPLICA_CATEGORIA := {
@@ -74,11 +80,15 @@ func construir() -> void:
 	barra("Aderência", seco["aderencia"], 1.6, "%.2f seco" % seco["aderencia"], COR_BOM, ficha_v)
 	barra("Na chuva", chuva["aderencia"], 1.6, "%.2f" % chuva["aderencia"], COR_INFO, ficha_v)
 	barra("Freio", seco["freio"], 1.6, "%.2f" % seco["freio"], COR_RUIM, ficha_v)
-	if _aviso != "":
-		var v := cartao(COR_RUIM)
-		rotulo(_aviso, 0, COR_RUIM, v)
-		_aviso = ""
-	dica("Cada peça mostra o efeito antes da compra. Uma peça por grupo: a nova substitui a "
+	rotulo("Aderência vem dos pneus: pesa nas curvas e na frenagem.", FONTE_PEQUENA, COR_SECUNDARIA, ficha_v)
+	if not c.pecas.is_empty():
+		botao("Voltar ao de fábrica", func(): _fabrica(c), not _correndo(c), false, ficha_v)
+	if _correndo(c):
+		var vf := cartao(COR_BOM)
+		rotulo("Este carro está correndo na fila. Para mudar peças, espere a fila acabar ou pare-a em Eventos: "
+				+ "assim a corrida em andamento não muda no meio.", FONTE_PEQUENA + 2, Color.WHITE, vf)
+		botao("Ir para Eventos", func(): ir_para.emit(EVENTOS), true, false, vf)
+	dica("Cada peça mostra o antes → depois. Uma peça por grupo: a nova substitui a "
 			+ "instalada, e as já compradas reinstalam de graça. Atenção ao ⚠: mais potência "
 			+ "pode tirar o carro de provas com limite de cv.")
 	var provas_antes := Mecanico.provas_possiveis(dados, c)
@@ -99,12 +109,14 @@ func construir() -> void:
 		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), 30, COR_INFO, v)
 		if EXPLICA_CATEGORIA.has(cat):
 			rotulo(EXPLICA_CATEGORIA[cat], FONTE_PEQUENA, COR_SECUNDARIA, v)
+		var attr: String = AFETA_CATEGORIA.get(cat, "potencia")
+		selos([["Ajuda em: " + AFETA[attr], COR_INFO]], v)
 		for p in por_categoria[cat]:
 			_linha_peca(c, p, seco, provas_antes, v)
 	rotulo("PNEUS", FONTE_PEQUENA, COR_SECUNDARIA)
 	var vp := cartao()
-	rotulo("O piloto usa sozinho o melhor pneu que você tem para a condição da prova (seco ou chuva).",
-			FONTE_PEQUENA, COR_SECUNDARIA, vp)
+	rotulo("Mais aderência: curvas mais rápidas e frenagem mais curta. O piloto usa sozinho o melhor pneu "
+			+ "que você tem para a condição da prova (seco ou chuva).", FONTE_PEQUENA, COR_SECUNDARIA, vp)
 	for pn in dados.lista("pneus"):
 		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
 		var h := fileira(vp)
@@ -115,13 +127,17 @@ func construir() -> void:
 		selos([["seco ×%.2f" % pn["aderencia"]["seco"], COR_BOM], ["chuva ×%.2f" % pn["aderencia"]["chuva"], COR_INFO]]
 				+ ([["TEM", COR_DESTAQUE]] if tem else []), info)
 		if not tem:
-			var b := botao("%s Cr" % dinheiro(int(pn["preco"])), func(): _aviso = jogador.concessionaria.comprar_pneu(c, pn),
+			var b := botao("%s Cr" % dinheiro(int(pn["preco"])), _comprar_pneu.bind(c, pn),
 					jogador.economia.pode_pagar(int(pn["preco"])), false, h)
 			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	proximo_passo("Com o carro preparado, volte às provas.", "Ver eventos", EVENTOS)
 
 
-## Uma peça: nome, efeito calculado (copia o carro e instala) e o botão.
+func _correndo(c: Carro) -> bool:
+	return not jogador.fila.is_empty() and int(jogador.fila["uid"]) == c.uid
+
+
+## Uma peça: nome, antes → depois (copia o carro e instala) e o botão.
 func _linha_peca(c: Carro, p: Dictionary, antes: Dictionary, provas_antes: Array, pai: Control) -> void:
 	var cat: String = p["categoria"]
 	var instalada: bool = c.pecas.get(cat, {}).get("id") == p["id"]
@@ -137,24 +153,64 @@ func _linha_peca(c: Carro, p: Dictionary, antes: Dictionary, provas_antes: Array
 	else:
 		var teste := c.copiar()
 		teste.instalar(p)
-		var depois := teste.atributos_efetivos("seco")
-		var dcv: float = depois["potencia"] - antes["potencia"]
-		var dkg: float = depois["peso"] - antes["peso"]
-		var dfreio: float = depois["freio"] / maxf(antes["freio"], 1e-6) - 1.0
-		if absf(dcv) >= 0.5:
-			efeitos.append(["%+d cv" % roundi(dcv), COR_BOM if dcv > 0 else COR_RUIM])
-		if absf(dkg) >= 0.5:
-			efeitos.append(["%+d kg" % roundi(dkg), COR_BOM if dkg < 0 else COR_RUIM])
-		if absf(dfreio) >= 0.005:
-			efeitos.append(["freio %+d%%" % roundi(dfreio * 100.0), COR_BOM if dfreio > 0 else COR_RUIM])
+		efeitos += _diferencas(antes, teste.atributos_efetivos("seco"))
 		if possuida:
 			efeitos.append(["já comprada", COR_NEUTRA.lightened(0.3)])
-		var perde := provas_antes.filter(func(e): return not e in Mecanico.provas_possiveis(dados, teste))
+		var depois := Mecanico.provas_possiveis(dados, teste)
+		var perde := provas_antes.filter(func(e): return not e in depois)
 		if not perde.is_empty():
-			efeitos.append(["⚠ sai de %d prova%s" % [perde.size(), "" if perde.size() == 1 else "s"], COR_RUIM])
+			efeitos.append(["⚠ deixa de correr: " + ", ".join(perde.map(func(e): return dados.evento(e)["nome"])), COR_RUIM])
 	selos(efeitos, info)
-	if not instalada:
-		var b := botao("Instalar" if possuida else "%s Cr" % dinheiro(int(p["preco"])),
-				func(): _aviso = jogador.concessionaria.comprar_peca(c, p),
-				possuida or jogador.economia.pode_pagar(int(p["preco"])), false, h)
-		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var livre := not _correndo(c)
+	var b: Button
+	if instalada:
+		b = botao("Remover", _remover.bind(c, p), livre, false, h)
+	else:
+		b = botao("Instalar" if possuida else "%s Cr" % dinheiro(int(p["preco"])), _comprar_peca.bind(c, p, antes),
+				livre and (possuida or jogador.economia.pode_pagar(int(p["preco"]))), false, h)
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+
+## Selos "antes → depois" dos atributos que mudam.
+static func _diferencas(antes: Dictionary, depois: Dictionary) -> Array:
+	var r := []
+	if absf(depois["potencia"] - antes["potencia"]) >= 0.5:
+		r.append(["%d → %d cv" % [roundi(antes["potencia"]), roundi(depois["potencia"])],
+				COR_BOM if depois["potencia"] > antes["potencia"] else COR_RUIM])
+	if absf(depois["peso"] - antes["peso"]) >= 0.5:
+		r.append(["%d → %d kg" % [roundi(antes["peso"]), roundi(depois["peso"])],
+				COR_BOM if depois["peso"] < antes["peso"] else COR_RUIM])
+	if absf(depois["freio"] - antes["freio"]) >= 0.005:
+		r.append(["freio %.2f → %.2f" % [antes["freio"], depois["freio"]],
+				COR_BOM if depois["freio"] > antes["freio"] else COR_RUIM])
+	return r
+
+
+func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
+	var possuida: bool = p["id"] in c.pecas_possuidas
+	var motivo: String = jogador.concessionaria.comprar_peca(c, p)
+	if motivo != "":
+		avisar("Não instalou %s: %s." % [p["nome"], motivo], false)
+		return
+	var mudancas := _diferencas(antes, c.atributos_efetivos("seco")).map(func(x): return x[0])
+	avisar("%s %s%s." % ["Reinstalada:" if possuida else "Instalada:", p["nome"],
+			" (" + ", ".join(mudancas) + ")" if not mudancas.is_empty() else ""])
+
+
+func _remover(c: Carro, p: Dictionary) -> void:
+	c.remover(p["categoria"])
+	avisar("Removida: %s. Continua sua; reinstale de graça quando quiser." % p["nome"])
+
+
+func _fabrica(c: Carro) -> void:
+	for cat in c.pecas.keys():
+		c.remover(cat)
+	avisar("%s voltou à configuração de fábrica. As peças continuam suas." % c.base["nome"])
+
+
+func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
+	var motivo: String = jogador.concessionaria.comprar_pneu(c, pn)
+	if motivo != "":
+		avisar("Não comprou %s: %s." % [pn["nome"], motivo], false)
+	else:
+		avisar("Pneu comprado: %s. O piloto usa quando for o melhor para a prova." % pn["nome"])

@@ -52,7 +52,9 @@ func construir() -> void:
 		var venda := int(floor(float(c.base["preco"]) * float(regras["fracao_revenda"])))
 		var acoes := fileira(v)
 		if not ativo:
-			botao("Usar este", func(): jogador.carro_ativo = c.uid, true, true, acoes)
+			botao("Usar este", func():
+				jogador.carro_ativo = c.uid
+				avisar("Em uso: %s." % c.base["nome"]), true, true, acoes)
 		botao("Oficina", func():
 			jogador.carro_ativo = c.uid
 			ir_para.emit(OFICINA), true, false, acoes)
@@ -111,8 +113,10 @@ static func versao() -> String:
 
 func _vender(uid: int) -> void:
 	if not jogador.concessionaria.pode_vender(uid):
+		avisar("O único carro da garagem não pode ser vendido.", false)
 		return
-	jogador.concessionaria.vender_carro(uid)
+	var nome: String = jogador.garagem.carro(uid).base["nome"]
+	avisar("Vendido: %s por %s Cr." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])
 	if jogador.carro_ativo == uid:
 		jogador.carro_ativo = -1
 
@@ -134,3 +138,4 @@ func _recomecar() -> void:
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}
+	avisar("Carreira recomeçada com %s Cr." % dinheiro(jogador.economia.saldo))

@@ -28,6 +28,12 @@ var _lateral := {}  # id -> deslocamento atual (m, + = esquerda)
 var _s_anterior := {}
 var _tranco := {}  # id -> segundos restantes de tranco
 var _alvo_camera := Vector3.ZERO
+## Carro que a câmera segue ("jogador" por padrão). Se não existir, o jogador.
+var foco := "jogador"
+## Pista inteira na tela em vez de seguir um carro.
+var visao_geral := false
+var _centro_pista := Vector3.ZERO
+var _tamanho_geral := 200.0
 
 
 func _init() -> void:
@@ -130,9 +136,21 @@ func atualizar(delta: float) -> void:
 		var r: Label3D = _rotulos[id]
 		r.text = str(i + 1)
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
-	var foco: String = "jogador" if _carros.has("jogador") else (ordem[0] if not ordem.is_empty() else "")
-	if foco != "":
-		var novo: Vector3 = _carros[foco].position
+	# Na visão geral, carros e números maiores para continuarem visíveis.
+	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
+	for id in _carros:
+		_carros[id].scale = Vector3.ONE * escala
+		_rotulos[id].pixel_size = 0.045 * (escala * 1.6 if visao_geral else 1.0)
+		_rotulos[id].position = _carros[id].position + Vector3(0, ALTURA_MARCADOR * escala, 0)
+	if visao_geral:
+		_camera.size = _tamanho_geral
+		_alvo_camera = _centro_pista
+		_camera_imediata()
+		return
+	_camera.size = TAMANHO_CAMERA
+	var seguido: String = foco if _carros.has(foco) else ("jogador" if _carros.has("jogador") else (ordem[0] if not ordem.is_empty() else ""))
+	if seguido != "":
+		var novo: Vector3 = _carros[seguido].position
 		_alvo_camera = novo if delta <= 0.0 or _alvo_camera.distance_to(novo) > 40.0 \
 				else _alvo_camera.lerp(novo, clampf(delta * 5.0, 0.0, 1.0))
 		_camera_imediata()
@@ -189,6 +207,17 @@ func _construir_pista() -> void:
 	var caixa := Rect2(pts[0], Vector2.ZERO)
 	for p in pts:
 		caixa = caixa.expand(p)
+	# Enquadramento da visão geral: extensão do traçado na projeção da câmera
+	# (a mesma do minimapa) e a proporção da tela.
+	var proj := Rect2(Iso.para_tela(pts[0], 1.0), Vector2.ZERO)
+	for p in pts:
+		proj = proj.expand(Iso.para_tela(p, 1.0))
+	var aspecto := size.x / maxf(size.y, 1.0) if size.y > 0.0 else 1.4
+	_tamanho_geral = maxf(proj.size.y, proj.size.x / aspecto) / sqrt(2.0) * 1.15 + 20.0
+	var c_tela := proj.get_center()
+	# Inverso de Iso.para_tela: x + y = cx, (x - y)/2 = cy.
+	var meio := Vector2((c_tela.x + 2.0 * c_tela.y) * 0.5, (c_tela.x - 2.0 * c_tela.y) * 0.5)
+	_centro_pista = Vector3(meio.x, 0.0, -meio.y)
 	var grama := MeshInstance3D.new()
 	var plano := PlaneMesh.new()
 	plano.size = caixa.size + Vector2(400, 400)

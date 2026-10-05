@@ -10,6 +10,10 @@ extends ScrollContainer
 signal mudou
 ## Pede à tela principal para abrir outra aba (índices em ABAS).
 signal ir_para(indice: int)
+## Aviso curto no topo: confirmação (ok) ou motivo de uma falha.
+signal aviso(texto: String, ok: bool)
+## Painel modal com rolagem (Sobreposicao.abrir).
+signal painel(titulo: String, montar: Callable, botoes: Array)
 
 enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 
@@ -22,6 +26,8 @@ const COR_BOM := Color(0.36, 0.82, 0.47)
 const COR_RUIM := Color(1.0, 0.46, 0.4)
 const COR_INFO := Color(0.45, 0.7, 1.0)
 const COR_NEUTRA := Color(0.4, 0.42, 0.48)
+## Acima disto, o selo quebra linha em faixa própria.
+const LIMITE_SELO := 26
 
 var dados: Node
 var jogador: Node
@@ -130,15 +136,31 @@ func selo(t: String, cor: Color, pai: Control = null) -> PanelContainer:
 	return p
 
 
-## Fileira de selos que quebra linha: selos = [[texto, cor], ...].
-func selos(lista: Array, pai: Control = null) -> HFlowContainer:
+## Fileira de selos que quebra linha: selos = [[texto, cor], ...]. Textos
+## longos viram uma faixa própria com quebra de linha, para nunca alargar a tela.
+func selos(lista: Array, pai: Control = null) -> Control:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var h := HFlowContainer.new()
 	h.add_theme_constant_override("h_separation", 8)
 	h.add_theme_constant_override("v_separation", 6)
+	v.add_child(h)
 	for s in lista:
-		selo(s[0], s[1], h)
-	_pai(pai).add_child(h)
-	return h
+		if String(s[0]).length() > LIMITE_SELO:
+			var p := selo(s[0], s[1], v)
+			var l: Label = p.get_child(0)
+			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		else:
+			selo(s[0], s[1], h)
+	_pai(pai).add_child(v)
+	return v
+
+
+## Avisa a tela principal (aviso no topo).
+func avisar(t: String, ok := true) -> void:
+	aviso.emit(t, ok)
 
 
 ## Botão que executa a ação e reconstrói as telas. `primario` = cor de destaque.

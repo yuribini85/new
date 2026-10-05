@@ -3,7 +3,6 @@ extends Aba
 signal correr_iniciado
 
 var _repeticoes := 1
-var _aviso := ""
 ## Esconde as provas em que o carro em uso não pode entrar.
 var _so_possiveis := true
 
@@ -21,9 +20,6 @@ func construir() -> void:
 		proximo_passo("Você precisa de um carro em uso para correr.", "Ir para a Garagem", GARAGEM)
 		return
 	_carro_em_uso(c)
-	if _aviso != "":
-		rotulo(_aviso, 0, COR_RUIM, cartao(COR_RUIM))
-		_aviso = ""
 	if not jogador.fila.is_empty():
 		_fila()
 	else:
@@ -34,6 +30,7 @@ func construir() -> void:
 	var h := fileira()
 	rotulo("Mostrando: " + ("só as que posso correr" if _so_possiveis else "todas"), FONTE_PEQUENA, COR_SECUNDARIA, h)
 	botao("Ver todas" if _so_possiveis else "Só as minhas", func(): _so_possiveis = not _so_possiveis, true, false, h)
+	_recomendadas(c)
 	var algum := false
 	for g in GRUPOS:
 		var eventos: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca", "") == g[0])
@@ -79,14 +76,77 @@ func _carro_em_uso(c: Carro) -> void:
 
 func _fila() -> void:
 	var f: Dictionary = jogador.fila
+	var ev: Dictionary = dados.evento(f["evento_id"])
+	var carro: Carro = jogador.garagem.carro(int(f["uid"]))
 	var v := cartao(COR_BOM)
 	rotulo("CORRENDO AGORA", FONTE_PEQUENA, COR_BOM, v)
-	rotulo("%s · faltam %d corrida%s" % [dados.evento(f["evento_id"])["nome"], f["restantes"],
-			"" if f["restantes"] == 1 else "s"], 0, Color.WHITE, v)
-	rotulo("Com o app fechado a fila continua; os prêmios entram quando você volta.", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	rotulo("%s · faltam %d corrida%s" % [ev["nome"], f["restantes"], "" if f["restantes"] == 1 else "s"], 0, Color.WHITE, v)
+	var dur: float = jogador.fila_ctrl.duracao_atual()
+	if dur > 0.0:
+		var decorrido := clampf(Time.get_unix_time_from_system() - float(f["inicio"]), 0.0, dur)
+		var falta := dur * int(f["restantes"]) - decorrido
+		rotulo("Cada corrida ≈ %s · a fila termina em ≈ %s" % [_tempo(dur), _tempo(falta)], FONTE_PEQUENA + 2, Color.WHITE, v)
+	var ganho := _ganho_estimado(ev, f)
+	if ganho != "":
+		rotulo(ganho, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
+	if carro != null:
+		rotulo("%s está ocupado: dá para trocar de carro e olhar a loja, mas não mudar as peças dele nem vendê-lo até a fila acabar."
+				% carro.base["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v)
+	rotulo("Com o app fechado a fila continua (até %s); os prêmios entram quando você volta." % _tempo(
+			float(dados.carreira().get("teto_offline_s", 0.0))), FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var h := fileira(v)
 	botao("Acompanhar", func(): ir_para.emit(CORRIDA), true, true, h)
-	botao("Parar a fila", func(): jogador.fila_ctrl.cancelar(), true, false, h)
+	if int(f["restantes"]) > 1:
+		botao("Parar após esta", func():
+			jogador.fila_ctrl.parar_apos_atual()
+			avisar("A fila para quando esta corrida terminar."), true, false, h)
+	botao("Parar já", func():
+		jogador.fila_ctrl.cancelar()
+		avisar("Fila cancelada. A corrida em andamento não conta."), true, false, h)
+
+
+## Faixa de ganho pelas posições já obtidas nesta fila (ou na última vez nesta
+## prova). Estimativa, não promessa.
+func _ganho_estimado(ev: Dictionary, f: Dictionary) -> String:
+	var pos: Array = f.get("posicoes", [])
+	if pos.is_empty() and jogador.historico.has(ev["id"]):
+		pos = [jogador.historico[ev["id"]]["ultima_pos"]]
+	if pos.is_empty():
+		return "Ganho estimado: aparece depois da primeira corrida."
+	var premios: Array = ev["premios"]
+	var p := func(posicao: int) -> int: return int(premios[posicao - 1]) if posicao >= 1 and posicao <= premios.size() else 0
+	var n := int(f["restantes"])
+	var melhor: int = p.call(int(pos.min())) * n
+	var pior: int = p.call(int(pos.max())) * n
+	if melhor == pior:
+		return "Ganho estimado no resto da fila: ≈ %s Cr" % dinheiro(melhor)
+	return "Ganho estimado no resto da fila: %s a %s Cr (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
+
+
+static func _tempo(s: float) -> String:
+	if s >= 3600.0:
+		return "%d h %02d min" % [int(s) / 3600, (int(s) % 3600) / 60]
+	if s >= 60.0:
+		return "%d min %02d s" % [int(s) / 60, int(s) % 60]
+	return "%d s" % int(s)
+
+
+## Começo de carreira: as três provas mais fáceis em que o carro pode entrar
+## (menor prêmio do 1º lugar), antes da lista completa.
+func _recomendadas(c: Carro) -> void:
+	if jogador.vitorias.size() >= 3:
+		return
+	var possiveis: Array = dados.lista("eventos").filter(func(e):
+		return (Elegibilidade.motivos(c, e["restricoes"], jogador.licencas).is_empty() and not e["premios"].is_empty()
+				and not jogador.vitorias.has(e["id"])))
+	if possiveis.is_empty():
+		return
+	possiveis.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])
+	rotulo("RECOMENDADAS PARA COMEÇAR", FONTE_PEQUENA, COR_DESTAQUE)
+	rotulo("As de prêmio menor costumam ter rivais mais fracos.", FONTE_PEQUENA, COR_SECUNDARIA)
+	for ev in possiveis.slice(0, 3):
+		_cartao_evento(c, ev, [])
+	separador()
 
 
 func _repeticoes_ui() -> void:
@@ -121,7 +181,14 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		regras.append([r, COR_NEUTRA.lightened(0.3)])
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
 	if vitorias > 0:
-		regras.append(["Vencida ×%d" % vitorias, COR_BOM])
+		regras.push_front(["VENCIDA ×%d" % vitorias, COR_BOM])
+	elif not pode:
+		regras.push_front(["BLOQUEADA", COR_RUIM])
+	else:
+		regras.push_front(["PENDENTE", COR_INFO])
+	var h_: Dictionary = jogador.historico.get(ev["id"], {})
+	if not h_.is_empty():
+		regras.append(["melhor: %dº" % h_["melhor_pos"], COR_NEUTRA.lightened(0.3)])
 	selos(regras, v)
 	var premios: Array = ev["premios"]
 	var partes := []
@@ -161,6 +228,9 @@ func _regras(r: Dictionary) -> Array:
 
 
 func _correr(evento_id: String) -> void:
-	_aviso = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, _repeticoes, Time.get_unix_time_from_system())
-	if _aviso == "":
-		correr_iniciado.emit()
+	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, _repeticoes, Time.get_unix_time_from_system())
+	if motivo != "":
+		avisar("Não deu para correr: %s." % motivo, false)
+		return
+	avisar("Largada! %s%s." % [dados.evento(evento_id)["nome"], "" if _repeticoes == 1 else " ×%d" % _repeticoes])
+	correr_iniciado.emit()

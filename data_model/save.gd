@@ -25,6 +25,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"graus_licenca": jogador.graus_licenca,
 		"usados_vendidos": jogador.usados_vendidos,
 		"vitorias": jogador.vitorias,
+		"historico": jogador.historico,
 		"dias": jogador.dias,
 		"fila": jogador.fila,
 		"ultimo_processamento": jogador.ultimo_processamento,
@@ -94,12 +95,24 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	jogador.vitorias = {}
 	for k in s["vitorias"]:
 		jogador.vitorias[k] = int(s["vitorias"][k])
+	# Opcional: saves anteriores ao histórico carregam sem ele.
+	jogador.historico = {}
+	if s.get("historico") is Dictionary:
+		for k in s["historico"]:
+			var h: Dictionary = s["historico"][k]
+			jogador.historico[k] = {
+				"corridas": int(h.get("corridas", 0)), "melhor_pos": int(h.get("melhor_pos", 0)),
+				"melhor_tempo": float(h.get("melhor_tempo", 0.0)), "ultima_pos": int(h.get("ultima_pos", 0)),
+				"ultimo_tempo": float(h.get("ultimo_tempo", 0.0)),
+			}
 	jogador.dias = int(s["dias"])
 	jogador.fila = s["fila"]
 	if not jogador.fila.is_empty():
 		jogador.fila["uid"] = int(jogador.fila["uid"])
 		jogador.fila["restantes"] = int(jogador.fila["restantes"])
 		jogador.fila["semente"] = int(jogador.fila["semente"])
+		if jogador.fila.get("posicoes") is Array:
+			jogador.fila["posicoes"] = jogador.fila["posicoes"].map(func(x): return int(x))
 	jogador.ultimo_processamento = float(s["ultimo_processamento"])
 	jogador.contador_sementes = int(s["contador_sementes"])
 	return ""

@@ -16,6 +16,9 @@ var graus_licenca: Dictionary = {}
 var usados_vendidos: Dictionary = {}
 ## evento_id -> número de vitórias.
 var vitorias: Dictionary = {}
+## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
+## evolução e recorde pessoal por prova.
+var historico: Dictionary = {}
 ## Corridas disputadas; cada uma conta um dia (rotação de usados).
 var dias: int = 0
 ## Fila de repetições (ver data_model/fila.gd).
@@ -52,4 +55,5 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	ultimo_processamento = 0.0
 	contador_sementes = 0
 	vitorias = {}
+	historico = {}
 	dias = 0

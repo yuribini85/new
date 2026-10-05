@@ -51,6 +51,20 @@ func cancelar() -> void:
 	jogador.fila = {}
 
 
+## A fila acaba quando a corrida em andamento terminar.
+func parar_apos_atual() -> void:
+	if not jogador.fila.is_empty():
+		jogador.fila["restantes"] = 1
+
+
+## Duração (s) da corrida em andamento, ou 0. Base da estimativa da fila.
+func duracao_atual() -> float:
+	if jogador.fila.is_empty():
+		return 0.0
+	var c := _preparar(jogador.fila, false)
+	return 0.0 if c.has("erro") else float(c["duracao"])
+
+
 ## A corrida em andamento (para a visualização) ou {} se a fila está vazia.
 ## Inclui "decorrido": segundos desde o início dela.
 func corrida_atual(agora: float) -> Dictionary:
@@ -96,6 +110,9 @@ func processar(agora: float) -> Dictionary:
 		res["tempo_vencedor"] = cr[vencedor]["tempo_total"]
 		res["tempo_jogador"] = cr["jogador"]["tempo_total"]
 		res["total"] = res["classificacao"].size()
+		# Classificação completa com tempos, para a tela de resultado.
+		res["tabela"] = res["classificacao"].map(func(id): return {
+			"id": id, "tempo": cr[id]["tempo_total"], "terminou": cr[id]["terminou"]})
 		res.erase("resultado")
 		jogador.ultima_corrida = res
 		res["dia"] = jogador.dias
@@ -103,13 +120,15 @@ func processar(agora: float) -> Dictionary:
 		rel["premio_total"] += res["premio"]
 		if res["carro_premio_uid"] > 0:
 			rel["carros_premio"].append(res["carro_premio_uid"])
+		f["posicoes"] = f.get("posicoes", []) + [res["posicao"]]
 		f["restantes"] = int(f["restantes"]) - 1
 		if f["restantes"] <= 0:
 			cancelar()
 		else:
 			f["inicio"] = fim
 			f["semente"] = _nova_semente()
-	jogador.ultimo_processamento = agora
+	# Relógio voltando (ajuste manual, fuso) não pode virar "ausência" depois.
+	jogador.ultimo_processamento = maxf(float(jogador.ultimo_processamento), agora)
 	return rel
 
 

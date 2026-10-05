@@ -32,7 +32,7 @@ func construir() -> void:
 					COR_BOM if boa else COR_NEUTRA.lightened(0.3)])
 		var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
 		extra.append(["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)])
-		_cartao_carro(c, int(o["preco"]), extra, func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos)))
+		_cartao_carro(c, int(o["preco"]), extra, func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
 	if not prev.is_empty():
 		rotulo("Testes: de fábrica em %s." % prev["evento"], FONTE_PEQUENA, COR_SECUNDARIA)
 	separador()
@@ -43,7 +43,7 @@ func construir() -> void:
 			continue  # como no GT2: modelos antigos só no usado
 		var fab: String = dados.item("fabricantes", c["fabricante"]).get("nome", c["fabricante"])
 		_cartao_carro(c, int(c["preco"]), [[fab, COR_NEUTRA.lightened(0.3)], [str(c["ano"]), COR_NEUTRA.lightened(0.3)]],
-				func(): _escolher(jogador.concessionaria.comprar_carro(c)))
+				func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
 
 
 ## Cartão de oferta: ícone, nome, selos, potência e peso, preço.
@@ -88,7 +88,12 @@ func _prever(ofertas: Array) -> Dictionary:
 
 ## O primeiro carro já entra em uso, e a tela vai para a Garagem, que mostra o
 ## próximo passo.
-func _escolher(uid: int) -> void:
-	if uid > 0 and jogador.carro_ativo < 0:
+func _escolher(uid: int, c: Dictionary, preco: int) -> void:
+	if uid <= 0:
+		avisar("Não deu para comprar %s: %s." % [c["nome"], "saldo insuficiente" if not jogador.economia.pode_pagar(preco)
+				else "saiu do estoque"], false)
+		return
+	avisar("Comprado: %s por %s Cr. Já está na Garagem." % [c["nome"], dinheiro(preco)])
+	if jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
 		ir_para.emit(GARAGEM)

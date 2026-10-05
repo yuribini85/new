@@ -31,21 +31,32 @@ static func analisar(carreira: Carreira, evento_id: String, uid: int, maximo: in
 	var base := avaliar(carreira, evento_id, uid, carro, amostras)
 	var pode_antes := provas_possiveis(dados, carro)
 	var boas := []
-	for o in _candidatas(dados, jogador, carro):
-		var a := avaliar(carreira, evento_id, uid, o["carro"], amostras)
-		if a.is_empty() or a["media"] >= base["media"] - GANHO_MINIMO:
-			continue
-		var depois := provas_possiveis(dados, o["carro"])
-		o["perde"] = pode_antes.filter(func(id): return not id in depois).map(func(id): return dados.evento(id)["nome"])
-		o.merge(a)
-		o.erase("carro")
-		boas.append(o)
+	for o in candidatas(dados, jogador, carro):
+		if considerar(o, avaliar(carreira, evento_id, uid, o["carro"], amostras), base, pode_antes, dados):
+			boas.append(o)
+	return {"base": base, "opcoes": ordenar(boas, maximo)}
+
+
+## Completa a opção com a avaliação e as provas que ela tira; true se ela
+## melhora a posição média. Usado opção a opção pela tela (com progresso).
+static func considerar(o: Dictionary, a: Dictionary, base: Dictionary, pode_antes: Array, dados: Node) -> bool:
+	if a.is_empty() or a["media"] >= base["media"] - GANHO_MINIMO:
+		return false
+	var depois := provas_possiveis(dados, o["carro"])
+	o["perde"] = pode_antes.filter(func(id): return not id in depois).map(func(id): return dados.evento(id)["nome"])
+	o.merge(a)
+	o.erase("carro")
+	return true
+
+
+## Da maior melhora para a menor (empate: a mais barata), até `maximo`.
+static func ordenar(boas: Array, maximo: int) -> Array:
 	boas.sort_custom(func(x, y): return x["media"] < y["media"] if absf(x["media"] - y["media"]) > 0.01 else x["preco"] < y["preco"])
-	return {"base": base, "opcoes": boas.slice(0, maximo)}
+	return boas.slice(0, maximo)
 
 
 ## Peças e pneus que o saldo paga, cada um já montado numa cópia do carro.
-static func _candidatas(dados: Node, jogador: Node, carro: Carro) -> Array:
+static func candidatas(dados: Node, jogador: Node, carro: Carro) -> Array:
 	var r := []
 	for p in dados.lista("pecas"):
 		if carro.motivo_recusa(p) != "" or carro.pecas.get(p["categoria"], {}).get("id") == p["id"]:
