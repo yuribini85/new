@@ -16,6 +16,7 @@ static func serializar(jogador: Node) -> Dictionary:
 			"pecas_possuidas": c.pecas_possuidas,
 			"pneus": c.pneus.map(func(p): return p["id"]),
 			"cor": c.cor,
+			"ajuste_cambio": c.ajuste_cambio,
 		})
 	return {
 		"versao": VERSAO,
@@ -84,6 +85,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		var c := Carro.new(dados.carro(cs["id"]))
 		c.pecas_possuidas = cs["pecas_possuidas"]
 		c.cor = String(cs.get("cor", ""))  # opcional: saves antigos sem pintura
+		c.ajuste_cambio = String(cs.get("ajuste_cambio", ""))
 		for peca_id in cs["pecas"]:
 			c.instalar(dados.peca(peca_id))
 		for pneu_id in cs["pneus"]:

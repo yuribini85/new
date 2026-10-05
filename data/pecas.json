@@ -109,7 +109,12 @@
     "op": "soma",
     "valor": 83.5
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 2.06,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kobo_turbinekit_1",
@@ -125,7 +130,12 @@
     "op": "soma",
     "valor": 38.6
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.49,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kobo_lightweight_1",
@@ -190,6 +200,20 @@
     "valor": 1.6579
    }
   ]
+ },
+ {
+  "id": "hayase_kobo_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_pika_portpolish_1",
@@ -317,7 +341,11 @@
     "op": "soma",
     "valor": 17.5
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_pika_natune_2",
@@ -333,7 +361,11 @@
     "op": "soma",
     "valor": 39.8
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "hayase_pika_turbinekit_1",
@@ -349,7 +381,12 @@
     "op": "soma",
     "valor": 43.0
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.27,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_pika_turbinekit_2",
@@ -365,7 +402,12 @@
     "op": "soma",
     "valor": 95.5
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.6,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_pika_lightweight_1",
@@ -430,6 +472,20 @@
     "valor": 1.7042
    }
   ]
+ },
+ {
+  "id": "hayase_pika_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_tsubame_portpolish_1",
@@ -541,7 +597,11 @@
     "op": "soma",
     "valor": 12.8
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "hayase_tsubame_natune_1",
@@ -557,7 +617,11 @@
     "op": "soma",
     "valor": 8.0
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_tsubame_lightweight_3",
@@ -622,6 +686,20 @@
     "valor": 1.7576
    }
   ]
+ },
+ {
+  "id": "hayase_tsubame_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_kaze_portpolish_1",
@@ -733,7 +811,11 @@
     "op": "soma",
     "valor": 20.4
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kaze_natune_3",
@@ -749,7 +831,11 @@
     "op": "soma",
     "valor": 54.0
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 500,
+   "corte": 500
+  }
  },
  {
   "id": "hayase_kaze_natune_2",
@@ -765,7 +851,11 @@
     "op": "soma",
     "valor": 34.8
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "hayase_kaze_turbinekit_2",
@@ -781,7 +871,12 @@
     "op": "soma",
     "valor": 99.6
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.83,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kaze_turbinekit_1",
@@ -797,7 +892,12 @@
     "op": "soma",
     "valor": 48.0
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.4,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kaze_lightweight_2",
@@ -862,6 +962,20 @@
     "valor": 1.7576
    }
   ]
+ },
+ {
+  "id": "hayase_kaze_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_rin_portpolish_1",
@@ -973,7 +1087,11 @@
     "op": "soma",
     "valor": 14.2
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_rin_natune_2",
@@ -989,7 +1107,11 @@
     "op": "soma",
     "valor": 37.4
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "hayase_rin_turbinekit_1",
@@ -1005,7 +1127,12 @@
     "op": "soma",
     "valor": 41.3
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.32,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_rin_turbinekit_2",
@@ -1021,7 +1148,12 @@
     "op": "soma",
     "valor": 98.1
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.76,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_rin_lightweight_2",
@@ -1086,6 +1218,20 @@
     "valor": 1.7042
    }
   ]
+ },
+ {
+  "id": "hayase_rin_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_soryu_portpolish_1",
@@ -1229,7 +1375,12 @@
     "op": "soma",
     "valor": 88.7
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.43,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_soryu_turbinekit_3",
@@ -1245,7 +1396,12 @@
     "op": "soma",
     "valor": 144.4
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.7,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_soryu_turbinekit_1",
@@ -1261,7 +1417,12 @@
     "op": "soma",
     "valor": 43.3
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.21,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_soryu_lightweight_2",
@@ -1326,6 +1487,20 @@
     "valor": 1.8929
    }
   ]
+ },
+ {
+  "id": "hayase_soryu_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_raikou_portpolish_1",
@@ -1469,7 +1644,12 @@
     "op": "soma",
     "valor": 88.8
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.43,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_raikou_turbinekit_1",
@@ -1485,7 +1665,12 @@
     "op": "soma",
     "valor": 39.2
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.19,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_raikou_turbinekit_3",
@@ -1501,7 +1686,12 @@
     "op": "soma",
     "valor": 132.2
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.6400000000000001,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_raikou_lightweight_1",
@@ -1566,6 +1756,20 @@
     "valor": 1.9804
    }
   ]
+ },
+ {
+  "id": "hayase_raikou_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_shiden_portpolish_1",
@@ -1709,7 +1913,12 @@
     "op": "soma",
     "valor": 40.7
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.16,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_shiden_turbinekit_3",
@@ -1725,7 +1934,12 @@
     "op": "soma",
     "valor": 142.3
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.56,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_shiden_turbinekit_2",
@@ -1741,7 +1955,12 @@
     "op": "soma",
     "valor": 83.9
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.33,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_shiden_lightweight_2",
@@ -1806,6 +2025,20 @@
     "valor": 2.087
    }
   ]
+ },
+ {
+  "id": "hayase_shiden_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 11000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_tenrai_portpolish_1",
@@ -1949,7 +2182,12 @@
     "op": "soma",
     "valor": 86.4
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.32,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_tenrai_turbinekit_2",
@@ -1965,7 +2203,12 @@
     "op": "soma",
     "valor": 56.7
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.21,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_tenrai_turbinekit_1",
@@ -1981,7 +2224,12 @@
     "op": "soma",
     "valor": 29.7
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.11,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_tenrai_lightweight_2",
@@ -2046,6 +2294,20 @@
     "valor": 1.9804
    }
   ]
+ },
+ {
+  "id": "hayase_tenrai_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_kumo_portpolish_1",
@@ -2189,7 +2451,12 @@
     "op": "soma",
     "valor": 102.9
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.3599999999999999,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kumo_turbinekit_1",
@@ -2205,7 +2472,12 @@
     "op": "soma",
     "valor": 28.6
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.1,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kumo_turbinekit_2",
@@ -2221,7 +2493,12 @@
     "op": "soma",
     "valor": 65.8
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.23,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_kumo_lightweight_3",
@@ -2286,6 +2563,20 @@
     "valor": 1.9804
    }
   ]
+ },
+ {
+  "id": "hayase_kumo_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 11000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hayase_ryujin_portpolish_1",
@@ -2445,7 +2736,12 @@
     "op": "soma",
     "valor": 123.7
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.41,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_ryujin_turbinekit_1",
@@ -2461,7 +2757,12 @@
     "op": "soma",
     "valor": 57.3
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.19,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_ryujin_turbinekit_4",
@@ -2477,7 +2778,12 @@
     "op": "soma",
     "valor": 256.4
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.85,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_ryujin_turbinekit_3",
@@ -2493,7 +2799,12 @@
     "op": "soma",
     "valor": 184.0
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.6099999999999999,
+   "corte": 0
+  }
  },
  {
   "id": "hayase_ryujin_lightweight_1",
@@ -2558,6 +2869,20 @@
     "valor": 2.087
    }
   ]
+ },
+ {
+  "id": "hayase_ryujin_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 11000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hartwig_lauf_portpolish_1",
@@ -2669,7 +2994,11 @@
     "op": "soma",
     "valor": 100.1
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 500,
+   "corte": 500
+  }
  },
  {
   "id": "hartwig_lauf_natune_1",
@@ -2685,7 +3014,11 @@
     "op": "soma",
     "valor": 35.0
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_lauf_natune_2",
@@ -2701,7 +3034,11 @@
     "op": "soma",
     "valor": 63.8
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "hartwig_lauf_turbinekit_3",
@@ -2717,7 +3054,12 @@
     "op": "soma",
     "valor": 151.3
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 2.21,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_lauf_turbinekit_1",
@@ -2733,7 +3075,12 @@
     "op": "soma",
     "valor": 48.8
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.3900000000000001,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_lauf_turbinekit_2",
@@ -2749,7 +3096,12 @@
     "op": "soma",
     "valor": 102.6
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.8199999999999998,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_lauf_lightweight_3",
@@ -2814,6 +3166,20 @@
     "valor": 1.9804
    }
   ]
+ },
+ {
+  "id": "hartwig_lauf_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hartwig_strecke_portpolish_1",
@@ -2925,7 +3291,11 @@
     "op": "soma",
     "valor": 38.6
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_strecke_natune_2",
@@ -2941,7 +3311,11 @@
     "op": "soma",
     "valor": 73.2
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "hartwig_strecke_natune_3",
@@ -2957,7 +3331,11 @@
     "op": "soma",
     "valor": 104.1
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 500,
+   "corte": 500
+  }
  },
  {
   "id": "hartwig_strecke_lightweight_1",
@@ -3022,6 +3400,20 @@
     "valor": 2.087
    }
   ]
+ },
+ {
+  "id": "hartwig_strecke_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 11000,
+  "carros_permitidos": [
+   "hartwig_strecke"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "hartwig_gleiter_portpolish_1",
@@ -3133,7 +3525,12 @@
     "op": "soma",
     "valor": 188.9
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 2.3899999999999997,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_gleiter_turbinekit_2",
@@ -3149,7 +3546,12 @@
     "op": "soma",
     "valor": 111.5
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.8199999999999998,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_gleiter_turbinekit_1",
@@ -3165,7 +3567,12 @@
     "op": "soma",
     "valor": 54.4
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.4,
+   "corte": 0
+  }
  },
  {
   "id": "hartwig_gleiter_lightweight_3",
@@ -3230,6 +3637,20 @@
     "valor": 2.087
    }
   ]
+ },
+ {
+  "id": "hartwig_gleiter_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "hartwig_gleiter"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "ashcombe_wren_portpolish_1",
@@ -3357,7 +3778,12 @@
     "op": "soma",
     "valor": 92.5
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 2.49,
+   "corte": 0
+  }
  },
  {
   "id": "ashcombe_wren_turbinekit_1",
@@ -3373,7 +3799,12 @@
     "op": "soma",
     "valor": 45.3
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.73,
+   "corte": 0
+  }
  },
  {
   "id": "ashcombe_wren_lightweight_2",
@@ -3438,6 +3869,20 @@
     "valor": 1.5814
    }
   ]
+ },
+ {
+  "id": "ashcombe_wren_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 10500,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "ashcombe_kestrel_portpolish_1",
@@ -3549,7 +3994,11 @@
     "op": "soma",
     "valor": 57.6
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "ashcombe_kestrel_natune_1",
@@ -3565,7 +4014,11 @@
     "op": "soma",
     "valor": 36.0
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "ashcombe_kestrel_turbinekit_1",
@@ -3581,7 +4034,12 @@
     "op": "soma",
     "valor": 50.4
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.42,
+   "corte": 0
+  }
  },
  {
   "id": "ashcombe_kestrel_turbinekit_2",
@@ -3597,7 +4055,12 @@
     "op": "soma",
     "valor": 94.8
    }
-  ]
+  ],
+  "motor": {
+   "turbo_baixa": 1.0,
+   "turbo_alta": 1.79,
+   "corte": 0
+  }
  },
  {
   "id": "ashcombe_kestrel_lightweight_2",
@@ -3662,6 +4125,20 @@
     "valor": 1.5814
    }
   ]
+ },
+ {
+  "id": "ashcombe_kestrel_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 11000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  },
  {
   "id": "ashcombe_brute_portpolish_1",
@@ -3773,7 +4250,11 @@
     "op": "soma",
     "valor": 41.5
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 100,
+   "corte": 0
+  }
  },
  {
   "id": "ashcombe_brute_natune_3",
@@ -3789,7 +4270,11 @@
     "op": "soma",
     "valor": 114.0
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 500,
+   "corte": 500
+  }
  },
  {
   "id": "ashcombe_brute_natune_2",
@@ -3805,7 +4290,11 @@
     "op": "soma",
     "valor": 76.0
    }
-  ]
+  ],
+  "motor": {
+   "faixa_rpm": 300,
+   "corte": 300
+  }
  },
  {
   "id": "ashcombe_brute_lightweight_1",
@@ -3870,5 +4359,19 @@
     "valor": 1.8197
    }
   ]
+ },
+ {
+  "id": "ashcombe_brute_cambio",
+  "nome": "Câmbio ajustável",
+  "categoria": "cambio",
+  "preco": 11000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [],
+  "cambio": {
+   "final_min": 2.5,
+   "final_max": 5.5
+  }
  }
 ]

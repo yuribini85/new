@@ -6,7 +6,7 @@ const AFETA := {
 	"peso": "aceleração, curvas e frenagem",
 	"freio": "frenagem antes das curvas",
 }
-const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio"}
+const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio", "cambio": "cambio"}
 
 ## O que cada grupo de peças faz, para a tela explicar antes do preço.
 const EXPLICA_CATEGORIA := {
@@ -19,11 +19,12 @@ const EXPLICA_CATEGORIA := {
 	"displacement": "Motor maior: mais potência.",
 	"computer": "Nova central eletrônica: mais potência.",
 	"intercooler": "Resfria o ar do turbo: mais potência.",
+	"cambio": "Permite encurtar ou alongar a relação final.",
 }
 const NOMES_CATEGORIA := {
 	"aspiracao": "Aspiração", "lightweight": "Peso", "brake": "Freios", "muffler": "Escapamento",
 	"portpolish": "Polimento de dutos", "enginebalance": "Balanceamento", "displacement": "Cilindrada",
-	"computer": "Computador", "intercooler": "Intercooler",
+	"computer": "Computador", "intercooler": "Intercooler", "cambio": "Câmbio",
 }
 
 
@@ -51,14 +52,18 @@ func _notification(what: int) -> void:
 ## Grupo aberto: "motor", "chassi" ou "pneus" (mantido ao voltar).
 var _grupo := "motor"
 const GRUPOS := [["motor", "Motor"], ["chassi", "Chassi"], ["pneus", "Pneus"]]
-const CHASSI := ["lightweight", "brake"]
+const CHASSI := ["lightweight", "brake", "cambio"]
 ## O que a melhoria faz na pista, dito pela função.
 const FUNCAO := {
 	"potencia": "acelera mais forte e chega mais rápido no fim da reta",
 	"peso": "acelera, contorna e freia melhor",
 	"freio": "permite frear mais tarde antes das curvas",
 	"pneu": "contorna mais rápido e freia mais curto",
+	"cambio": "curto acelera mais forte e chega antes ao corte; longo vai mais longe nas retas",
 }
+
+## Ajustes do câmbio ajustável: [valor em Carro.ajuste_cambio, rótulo].
+const AJUSTES_CAMBIO := [["curto", "Curto"], ["", "Equilibrado"], ["longo", "Longo"]]
 
 
 func construir() -> void:
@@ -146,6 +151,28 @@ func _pecas(c: Carro, seco: Dictionary) -> void:
 			rotulo(FUNCAO[attr].capitalize().left(1) + FUNCAO[attr].substr(1) + ".", FONTE_PEQUENA, COR_SECUNDARIA, v)
 		for p in por_categoria[cat]:
 			_linha(v, c, p, seco, provas_antes)
+		if cat == "cambio" and c.pecas.has("cambio"):
+			_ajuste_cambio(v, c)
+
+
+## Curto / equilibrado / longo, com o câmbio ajustável instalado. Grátis e
+## reversível: a peça é a compra; o ajuste é escolha de cada prova.
+func _ajuste_cambio(pai: Control, c: Carro) -> void:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	for aj in AJUSTES_CAMBIO:
+		var b := Button.new()
+		b.text = aj[1]
+		b.toggle_mode = true
+		b.button_pressed = c.ajuste_cambio == aj[0]
+		b.disabled = _correndo(c)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.custom_minimum_size = Vector2(0, 64)
+		b.pressed.connect(func():
+			c.ajuste_cambio = aj[0]
+			mudou.emit())
+		h.add_child(b)
+	pai.add_child(h)
 
 
 ## Uma linha por peça: nome, ganho principal e estado; tocar abre a decisão.
@@ -180,7 +207,8 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	esq.add_child(nome)
 	var g := Label.new()
-	g.text = _ganho(antes, depois) if not instalada else "em uso"
+	g.text = "em uso" if instalada else ("curto · equilibrado · longo" if p["categoria"] == "cambio"
+			else _ganho(antes, depois))
 	g.add_theme_font_size_override("font_size", FONTE_PEQUENA)
 	g.add_theme_color_override("font_color", COR_BOM)
 	esq.add_child(g)

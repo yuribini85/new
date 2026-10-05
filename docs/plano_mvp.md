@@ -60,7 +60,8 @@ Tipos: `reta`, `curva_lenta`, `curva_media`, `curva_rapida`, `frenagem`, `aceler
 
 ### Resolução
 Para cada carro, para cada trecho: velocidade de entrada, velocidade-alvo do trecho
-(limitada por aderência em curva, por potência/peso em aceleração, por velocidade máxima
+(limitada por aderência em curva, pela força na roda — curva de torque do carro na melhor
+marcha, ver `data/README.md` — e pela tração em aceleração, por velocidade máxima
 em reta) e tempo gasto. Ruído controlado por `consistencia`. Ultrapassagem só em trechos
 marcados, decidida pela diferença de ritmo naquele trecho e por `agressividade`.
 
@@ -200,4 +201,8 @@ técnico real do projeto.
     limites provisórios +8% / −5%), que não é dificuldade: pneus, curvas e frenagem
     também contam. "Estimar desempenho" simula a prova com o carro em uso e mostra a
     faixa de posições, só quando o jogador pede.
-
+25. **Torque e câmbio na simulação.** A curva de torque e as marchas vêm do GT2; só a forma
+    é usada, escalada para a potência efetiva. O câmbio ajustável oferece curto,
+    equilibrado e longo (passo provisório). `tools/provas_profundidade.gd` verifica as três
+    provas de profundidade: menos potente que vence onde é adequado, ajuste que muda
+    com a pista e usado preparado que alcança carro mais caro.

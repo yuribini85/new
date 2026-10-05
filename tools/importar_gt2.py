@@ -38,6 +38,20 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
                freios (Brake): BrakingPower ÷ o de fábrica.
                NATune e TurbineKit dividem a categoria "aspiracao" (no GT2
                são excludentes).
+  motor        Engine: curva de torque (TorqueCurve × 0,01 kgf·m × 9,80665 ×
+               PowerMultiplier/100, em N·m) nas rotações TorqueCurveRPM × 100;
+               corte = RedlineRPM × 100. O pico de torque × rpm dá a potência acima.
+  câmbio       Gear de fábrica (índice em Car.Gear): relações e diferencial ÷ 1000.
+               O câmbio ajustável (Gear estágio 3) vira peça "cambio" com o preço
+               do GT2 e os limites MinFinalDriveRatio/MaxFinalDriveRatio.
+  roda         raio do pneu de fábrica (TiresFront → TireSize): aro em polegadas
+               ÷ 2 + largura × perfil. Interpretação a confirmar: largura em cm
+               (×10 mm) e perfil em passos de 5% (×5), o que dá 150–220 mm e
+               45–65%, faixas de pneus de rua.
+  forma do motor  NATune: PowerbandRPMIncrease e RPMIncrease (×100 rpm) deslocam
+               a curva e o corte; TurbineKit: o torque vai de LowRPMPowerMultiplier%
+               (giro baixo) a 100% + HighRPMPowerMultiplier% (giro alto). A
+               potência final continua a da conta acima; a forma muda onde ela está.
   usados       .usedcar_usa: janelas [dia_inicio, dia_fim, preço] por período
                de 10 dias (dia = corridas disputadas)
   pneus        por estágio de TiresFront: o grip é o 1º byte do composto
@@ -178,7 +192,8 @@ def main() -> int:
     if faltando:
         sys.exit(f"códigos inexistentes no GT2: {faltando}")
     tab_car = {c["CarId"]: c for c in ler("Car", True)}
-    partes = {nome: ler(nome) for nome in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake", "TiresFront", "Engine"]}
+    partes = {nome: ler(nome) for nome in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake", "TiresFront", "Engine",
+                                                     "Gear", "TireSize"]}
     motores = partes["Engine"]
     potencia = {cod: potencia_curva(motores[int(n(car["Engine"]))]) for cod, car in tab_car.items()
                 if int(n(car["Engine"])) < len(motores)}
@@ -213,6 +228,8 @@ def main() -> int:
             "preco": int(n(c["preco"])),
             "ano": (ano + 1900 if ano < 100 else ano) if ano > 0 else int(n(l.get("ano"))),
         })
+        car = tab_car[l["codigo_gt2"]]
+        carros[-1].update(motor_cambio_roda(car, partes))
         janelas = usados_do_carro(l["codigo_gt2"])
         carros[-1]["novo"] = not janelas
         if janelas:
@@ -245,11 +262,28 @@ def main() -> int:
                     if pct <= 0:
                         continue
                     efeitos = [{"atributo": "potencia", "op": "soma", "valor": round(base_ps * pct / 100.0, 1)}]
+                forma = {}
+                if cat == "NATune":
+                    forma = {"faixa_rpm": int(n(p["PowerbandRPMIncrease"])) * 100, "corte": int(n(p["RPMIncrease"])) * 100}
+                elif cat == "TurbineKit":
+                    forma = {"turbo_baixa": n(p["LowRPMPowerMultiplier"]) / 100.0,
+                             "turbo_alta": 1.0 + n(p["HighRPMPowerMultiplier"]) / 100.0,
+                             "corte": int(n(p["RedlineIncrease"])) * 100}
                 pecas.append({
                     "id": f"{id_nosso}_{cat.lower()}_{estagio}",
                     "nome": f"{NOMES_CATEGORIA[cat]} {estagio}",
                     "categoria": "aspiracao" if cat in ("NATune", "TurbineKit") else cat.lower(),
                     "preco": int(n(p["Price"])), "carros_permitidos": [id_nosso], "efeitos": efeitos,
+                })
+                if forma:
+                    pecas[-1]["motor"] = forma
+        # Câmbio ajustável (Gear estágio 3): limites do diferencial do GT2.
+        for g in partes["Gear"]:
+            if g["CarId"] == codigo and int(n(g["Stage"])) == 3 and int(n(g["Price"])) > 0:
+                pecas.append({
+                    "id": f"{id_nosso}_cambio", "nome": "Câmbio ajustável", "categoria": "cambio",
+                    "preco": int(n(g["Price"])), "carros_permitidos": [id_nosso], "efeitos": [],
+                    "cambio": {"final_min": n(g["MinFinalDriveRatio"]) / 1000.0, "final_max": n(g["MaxFinalDriveRatio"]) / 1000.0},
                 })
 
     # Pneus: estágios de TiresFront dos nossos carros; grip no 1º byte do composto.
@@ -325,6 +359,40 @@ def main() -> int:
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
     print("a_confirmar (não vêm do GT2): fracao_revenda, teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
+
+
+def motor_cambio_roda(car: dict, partes: dict) -> dict:
+    """Curva de torque (N·m por rpm), câmbio de fábrica e raio da roda (m)."""
+    r = {}
+    motores = partes["Engine"]
+    i = int(n(car["Engine"]))
+    if i < len(motores):
+        m = motores[i]
+        pts = int(n(m.get("TorqueCurvePoints"))) or 16
+        mult = n(m["PowerMultiplier"]) / 100.0
+        curva = [(int(n(m[f"TorqueCurveRPM{k}"])) * 100, round(n(m[f"TorqueCurve{k}"]) * 0.01 * 9.80665 * mult, 1))
+                 for k in range(1, pts + 1)]
+        curva = [c for c in curva if c[0] > 0]
+        r["motor"] = {"rpm": [c[0] for c in curva], "torque_nm": [c[1] for c in curva],
+                      "corte": int(n(m["RedlineRPM"])) * 100}
+    cambios = partes["Gear"]
+    i = int(n(car["Gear"]))
+    if i < len(cambios):
+        g = cambios[i]
+        nomes = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"]
+        rel = [n(g[f"{x}GearRatio"]) / 1000.0 for x in nomes if n(g[f"{x}GearRatio"]) > 0]
+        if rel:
+            r["cambio"] = {"relacoes": rel, "final": n(g["DefaultFinalDriveRatio"]) / 1000.0}
+    pneus = partes["TiresFront"]
+    i = int(n(car["TiresFront"]))
+    if i < len(pneus):
+        tam = partes["TireSize"]
+        w = int(n(pneus[i]["WheelSize"]))
+        if w < len(tam):
+            t = tam[w]
+            mm = n(t["DiameterInches"]) * 25.4 / 2.0 + n(t["WidthMM"]) * 10.0 * n(t["Profile"]) * 5.0 / 100.0
+            r["raio_roda"] = round(mm / 1000.0, 3)
+    return r
 
 
 def potencia_curva(motor: dict) -> float:

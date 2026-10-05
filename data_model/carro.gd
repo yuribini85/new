@@ -20,6 +20,12 @@ var pecas: Dictionary = {}
 var pneus: Array = []
 ## Pintura escolhida na garagem ("" = de fábrica). Só visual.
 var cor: String = ""
+## Ajuste do câmbio ajustável (peça "cambio"): "", "curto" ou "longo".
+var ajuste_cambio: String = ""
+
+## Fração do caminho do diferencial de fábrica até o limite do GT2 nos
+## ajustes curto/longo. Provisório (decisão de interface, não do GT2).
+const PASSO_CAMBIO := 0.5
 
 
 func _init(dados_carro: Dictionary) -> void:
@@ -89,7 +95,64 @@ func atributos_efetivos(condicao: String) -> Dictionary:
 		attrs["aderencia"] *= float(pneu["aderencia"][condicao])
 	attrs["tracao"] = base["tracao"]
 	attrs["pneu"] = pneu.get("id", "")
+	_motor_e_cambio(attrs)
 	return attrs
+
+
+## Curva de torque com as peças e o câmbio, para a simulação por marcha.
+## A forma vem das peças (aspirado estica a faixa e o corte; turbo leva o
+## ganho para o giro alto); a escala faz o pico de potência ser exatamente a
+## potência efetiva acima, para os números da tela e da regra das provas
+## baterem com o que a simulação usa.
+func _motor_e_cambio(attrs: Dictionary) -> void:
+	var motor: Dictionary = base.get("motor", {})
+	var cambio: Dictionary = base.get("cambio", {})
+	if motor.is_empty() or cambio.is_empty() or base.get("raio_roda") == null:
+		return
+	var rpm := PackedFloat64Array(motor["rpm"])
+	var tq := PackedFloat64Array(motor["torque_nm"])
+	var corte := float(motor["corte"])
+	var faixa := 0.0
+	var turbo_baixa := 1.0
+	var turbo_alta := 1.0
+	for cat in pecas:
+		var forma: Dictionary = pecas[cat].get("motor", {})
+		faixa += float(forma.get("faixa_rpm", 0.0))
+		corte += float(forma.get("corte", 0.0))
+		if forma.has("turbo_alta"):
+			turbo_baixa = float(forma["turbo_baixa"])
+			turbo_alta = float(forma["turbo_alta"])
+	var r0 := rpm[0]
+	var r1 := rpm[rpm.size() - 1]
+	for i in rpm.size():
+		var t := (rpm[i] - r0) / maxf(r1 - r0, 1.0)
+		rpm[i] += faixa * t
+		tq[i] *= lerpf(turbo_baixa, turbo_alta, smoothstep(0.3, 0.75, t))
+	corte = maxf(corte + faixa, rpm[0])
+	var pico := 0.0
+	for i in rpm.size():
+		if rpm[i] <= corte + 1.0:
+			pico = maxf(pico, tq[i] * rpm[i])
+	var alvo := float(attrs["potencia"]) / CV_POR_NM_RPM
+	if pico > 0.0:
+		for i in tq.size():
+			tq[i] *= alvo / pico
+	attrs["curva_rpm"] = rpm
+	attrs["curva_nm"] = tq
+	attrs["corte"] = corte
+	attrs["relacoes"] = PackedFloat64Array(cambio["relacoes"])
+	var final := float(cambio["final"])
+	var ajustavel: Dictionary = pecas.get("cambio", {}).get("cambio", {})
+	if not ajustavel.is_empty() and ajuste_cambio == "curto":
+		final += (float(ajustavel["final_max"]) - final) * PASSO_CAMBIO
+	elif not ajustavel.is_empty() and ajuste_cambio == "longo":
+		final -= (final - float(ajustavel["final_min"])) * PASSO_CAMBIO
+	attrs["final"] = final
+	attrs["raio_roda"] = float(base["raio_roda"])
+
+
+## cv = N·m × rpm × este fator (1 cv = 735,5 W; ω = rpm × 2π/60).
+const CV_POR_NM_RPM := TAU / 60.0 / 735.49875
 
 
 ## Cópia independente (mesmas peças instaladas e possuídas, mesmos pneus).
@@ -100,4 +163,5 @@ func copiar() -> Carro:
 	c.pecas_possuidas = pecas_possuidas.duplicate()
 	c.pneus = pneus.duplicate()
 	c.cor = cor
+	c.ajuste_cambio = ajuste_cambio
 	return c

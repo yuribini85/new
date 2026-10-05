@@ -120,3 +120,20 @@ func test_arrasto_limita_a_velocidade_pela_potencia() -> void:
 	verificar(vmax < teorica * 1.001, "não passa da velocidade terminal: %.1f > %.1f m/s" % [vmax, teorica])
 	verificar(vmax > teorica * 0.95, "chega perto da terminal numa reta de 4 km: %.1f de %.1f m/s" % [vmax, teorica])
 	d.free()
+
+
+func test_forca_por_marcha_nao_passa_do_cambio_ideal_e_para_no_corte() -> void:
+	var a := {"potencia": 100.0, "curva_rpm": PackedFloat64Array([1000, 4000, 7000]),
+			"curva_nm": PackedFloat64Array([80, 120, 90]), "corte": 7000.0,
+			"relacoes": PackedFloat64Array([3.0, 1.5, 1.0]), "final": 4.0, "raio_roda": 0.3}
+	var f := Simulacao.forca_por_velocidade(a)
+	verificar(f.size() > 10, "tabela preenchida")
+	var pico_w := 0.0
+	for i in 3:
+		pico_w = maxf(pico_w, a["curva_nm"][i] * a["curva_rpm"][i] * TAU / 60.0)
+	for k in range(1, f.size()):
+		verificar(f[k] <= pico_w / (k * Simulacao.PASSO_FORCA) + 1e-6, "força ≤ P/v em %d" % k)
+	# Última marcha no corte: 7000 rpm × raio ÷ (1,0 × 4,0) ≈ 55 m/s.
+	var v_corte := 7000.0 * TAU / 60.0 * 0.3 / 4.0
+	igual(f[int(v_corte / Simulacao.PASSO_FORCA) + 2], 0.0, "sem força depois do corte")
+	verificar(f[int(v_corte / Simulacao.PASSO_FORCA) - 2] > 0.0, "força antes do corte")

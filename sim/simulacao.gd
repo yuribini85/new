@@ -4,7 +4,7 @@ extends RefCounted
 ##
 ## Modelo quase estático: para cada carro e cada volta existe um envelope de
 ## velocidade — limite de curva sqrt(aderência·g·raio), velocidade máxima e
-## frenagem antecipada — e o carro acelera até ele limitado por potência e
+## frenagem antecipada — e o carro acelera até ele limitado pela força na roda (torque na melhor marcha) e
 ## tração. Ultrapassagem só em trechos marcados; fora deles o carro de trás
 ## respeita a distância mínima (cortesia). A visualização só lê `amostras`.
 
@@ -58,6 +58,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 			"id": p["id"],
 			"agressividade": float(piloto["agressividade"]),
 			"potencia_w": float(a["potencia"]) * CV_PARA_W,
+			"forca": forca_por_velocidade(a),
 			"massa": float(a["peso"]),
 			"acel_tracao": mu * G * float(params["fator_tracao"][a["tracao"]]),
 			"s": -g * dmin,
@@ -84,6 +85,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 	var acel_arr := PackedFloat64Array()
 	var pot_arr := PackedFloat64Array()
 	var massa_arr := PackedFloat64Array()
+	var forcas := []  # força motriz por faixa de velocidade (vazio: potência/v)
 	var lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
 	for c in carros:
 		s_arr.append(c["s"])
@@ -91,6 +93,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 		acel_arr.append(c["acel_tracao"])
 		pot_arr.append(c["potencia_w"])
 		massa_arr.append(c["massa"])
+		forcas.append(c["forca"])
 		lim_arr.append(0.0)
 	var envs := []
 	for c in carros:
@@ -134,7 +137,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 			var v := v_arr[idx]
 			var acel := acel_arr[idx]
 			if v > 0.0:
-				acel = minf(acel, pot_arr[idx] / (massa_arr[idx] * v)) - k_arrasto * v * v / massa_arr[idx]
+				acel = _acel_livre(acel, pot_arr[idx], massa_arr[idx], v, k_arrasto, forcas[idx])
 			var v_novo := clampf(v + acel * dt, 0.0, limite)
 			var s_novo := s_antes + (v + v_novo) * 0.5 * dt
 			lim_arr[idx] = limite
@@ -146,8 +149,8 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 				# tira a chance de passar.
 				var vf := v_arr[frente]
 				var mais_rapido := limite > lim_arr[frente] + 0.05 \
-						or _acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto) \
-						> _acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto) + 0.01
+						or _acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto, forcas[idx]) \
+						> _acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto, forcas[frente]) + 0.01
 				if not _pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng):
 					s_novo = maxf(s_antes, s_arr[frente] - dmin)
 					v_novo = minf(v_novo, v_arr[frente])
@@ -213,10 +216,60 @@ static func _pode_passar(c: Dictionary, zona: int, volta: int, mais_rapido: bool
 
 
 ## Aceleração que o carro teria na velocidade v, sem ninguém na frente.
-static func _acel_livre(acel_tracao: float, potencia_w: float, massa: float, v: float, k_arrasto: float) -> float:
+static func _acel_livre(acel_tracao: float, potencia_w: float, massa: float, v: float, k_arrasto: float,
+		forca: PackedFloat64Array = PackedFloat64Array()) -> float:
 	if v <= 0.0:
 		return acel_tracao
-	return minf(acel_tracao, potencia_w / (massa * v)) - k_arrasto * v * v / massa
+	var motriz := potencia_w / v
+	if not forca.is_empty():
+		var x := v / PASSO_FORCA
+		var i := mini(int(x), forca.size() - 2)
+		motriz = lerpf(forca[i], forca[i + 1], clampf(x - i, 0.0, 1.0))
+	return minf(acel_tracao, motriz / massa) - k_arrasto * v * v / massa
+
+
+## Faixas da tabela de força (m/s) e velocidade máxima coberta (~430 km/h).
+const PASSO_FORCA := 0.5
+const V_MAX_FORCA := 120.0
+
+
+## Força na roda (N) em cada velocidade, na melhor marcha: torque × relação ×
+## diferencial ÷ raio, só nas marchas em que o giro fica abaixo do corte. Abaixo
+## do primeiro ponto da curva vale o torque dele (embreagem patinando na
+## largada). Sem marcha válida, zero: o carro chegou ao corte na última.
+## Carro sem curva (fixtures, dados antigos): vazio, e a simulação usa P/v,
+## que equivale a um câmbio ideal.
+static func forca_por_velocidade(a: Dictionary) -> PackedFloat64Array:
+	var tabela := PackedFloat64Array()
+	if not a.has("curva_rpm"):
+		return tabela
+	var rpm: PackedFloat64Array = a["curva_rpm"]
+	var nm: PackedFloat64Array = a["curva_nm"]
+	var corte := float(a["corte"])
+	var final := float(a["final"])
+	var raio := float(a["raio_roda"])
+	var relacoes: PackedFloat64Array = a["relacoes"]
+	var n := int(V_MAX_FORCA / PASSO_FORCA) + 1
+	tabela.resize(n)
+	for k in n:
+		var v := k * PASSO_FORCA
+		var melhor := 0.0
+		for rel in relacoes:
+			var giro := v / raio * rel * final * 60.0 / TAU
+			if giro > corte:
+				continue
+			melhor = maxf(melhor, _torque(rpm, nm, giro) * rel * final / raio)
+		tabela[k] = melhor
+	return tabela
+
+
+static func _torque(rpm: PackedFloat64Array, nm: PackedFloat64Array, giro: float) -> float:
+	if giro <= rpm[0]:
+		return nm[0]
+	for i in range(1, rpm.size()):
+		if giro <= rpm[i]:
+			return lerpf(nm[i - 1], nm[i], (giro - rpm[i - 1]) / maxf(rpm[i] - rpm[i - 1], 1.0))
+	return nm[nm.size() - 1]
 
 
 static func _registrar_passagem(c: Dictionary, s_antes: float, s_novo: float, t: float,

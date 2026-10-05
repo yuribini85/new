@@ -34,6 +34,20 @@ sintéticos (só para teste) em `tests/fixtures/`.
   "direita"), ultrapassagem (bool)}`. Tipos em `Pista.TIPOS`. Trechos de box ficam fora
   da volta no primeiro build. O traçado é derivado dos trechos (reta avança; trecho com
   raio é arco) e precisa fechar a volta — conferir em `tools/editor_pista.tscn`.
+- `motor` do carro (opcional): `{rpm, torque_nm, corte}`. Curva da tabela Engine do GT2
+  (TorqueCurve × 0,01 kgf·m → N·m; TorqueCurveRPM × 100; RedlineRPM × 100). Na
+  simulação, a curva é escalada para que o pico de potência seja igual a `potencia`
+  com as peças. Usamos só a **forma**: não é o modelo físico do GT2.
+- `cambio` do carro: `{relacoes, final}` (tabela Gear, ÷ 1000). `raio_roda` em m, do
+  TireSize dianteiro (diâmetro do aro + 2 × largura × perfil; leitura a confirmar).
+  Com os três, a força na roda é torque × relação × diferencial ÷ raio na melhor marcha,
+  e no corte da última marcha o carro não acelera mais. Sem eles, a simulação usa
+  potência ÷ velocidade (câmbio ideal).
+- Peça `motor` (opcional): `faixa_rpm` e `corte` (rpm a somar, NATune) ou
+  `turbo_baixa`/`turbo_alta` (multiplicadores do torque no giro baixo e alto,
+  TurbineKit). Peça de categoria `cambio`: `{final_min, final_max}` (estágio 3 do Gear).
+  Os ajustes curto/longo andam `Carro.PASSO_CAMBIO` (0,5, **provisório**, decisão de
+  interface) do diferencial de fábrica até esses limites.
 - Piloto: `ritmo` é a fração do limite que o piloto usa; `consistencia` (0–1) reduz o
   ruído por volta; `agressividade` (0–1) é a chance de tentar ultrapassar em cada zona.
 
