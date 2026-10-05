@@ -113,6 +113,17 @@ func distancia(id: String) -> float:
 	return _bruta(id, tempo)
 
 
+## Instante em que o carro passou pela distância s (para a diferença em
+## segundos entre dois carros). -1 se ele ainda não passou.
+func tempo_em(id: String, s: float) -> float:
+	var serie: PackedFloat64Array = _s[id]
+	var i := serie.bsearch(s) - 1
+	if i < 0 or i + 1 >= serie.size():
+		return -1.0
+	var f := clampf((s - serie[i]) / maxf(serie[i + 1] - serie[i], 1e-6), 0.0, 1.0)
+	return lerpf(_tempos[i], _tempos[i + 1], f)
+
+
 func _bruta(id: String, t: float) -> float:
 	var serie: PackedFloat64Array = _s[id]
 	var i := clampi(_tempos.bsearch(t) - 1, 0, _tempos.size() - 1)

@@ -21,6 +21,8 @@ var _area: Control
 var _info: Label
 var _relogio: Label
 var _placar: Label
+var _hud: Label
+var _hud_volta: Label
 var _destaque: Label
 var _destaque_t := 0.0
 var _cameras: HBoxContainer
@@ -46,7 +48,7 @@ func _init(d: Node, j: Node) -> void:
 	_relogio = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
 	var area := Control.new()
 	_area = area
-	area.custom_minimum_size = Vector2(0, 480)
+	area.custom_minimum_size = Vector2(0, 640)
 	area.clip_contents = true
 	conteudo.add_child(area)
 	_visual3d = Corrida3D.new()
@@ -67,10 +69,26 @@ func _init(d: Node, j: Node) -> void:
 	_visual.com_rotulos = false
 	_visual.girar = false
 	fundo.add_child(_visual)
-	# Placar sobre a vista: volta, posição, distância para o da frente.
+	# Placar compacto sobre a pista: posição grande, volta e tempo; embaixo, a
+	# perseguição (diferença em segundos para o carro da frente, o ALVO).
+	var hud := VBoxContainer.new()
+	hud.position = Vector2(14, 10)
+	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud.add_theme_constant_override("separation", -8)
+	area.add_child(hud)
+	_hud = Label.new()
+	_hud.add_theme_font_size_override("font_size", 68)
+	_hud.add_theme_color_override("font_outline_color", Color.BLACK)
+	_hud.add_theme_constant_override("outline_size", 12)
+	hud.add_child(_hud)
+	_hud_volta = Label.new()
+	_hud_volta.add_theme_font_size_override("font_size", 26)
+	_hud_volta.add_theme_color_override("font_outline_color", Color.BLACK)
+	_hud_volta.add_theme_constant_override("outline_size", 8)
+	hud.add_child(_hud_volta)
 	_placar = _sobre_area(area, Control.PRESET_BOTTOM_WIDE, Color(0.05, 0.06, 0.08, 0.82), 30)
-	# Destaque de ultrapassagem: aparece e some.
-	_destaque = _sobre_area(area, Control.PRESET_TOP_LEFT, Color(0.1, 0.3, 0.16, 0.92), 28)
+	# Destaque: largada, ultrapassagem, chegada. Aparece e some.
+	_destaque = _sobre_area(area, Control.PRESET_CENTER_TOP, Color(0.1, 0.3, 0.16, 0.92), 32)
 	_destaque.get_parent().visible = false
 	_cameras = fileira()
 	for modo in [["Meu carro", "jogador"], ["Líder", "lider"], ["À frente", "frente"], ["Pista toda", "geral"]]:
@@ -87,6 +105,8 @@ func _init(d: Node, j: Node) -> void:
 	_classificacao.fit_content = true
 	_classificacao.scroll_active = false
 	_classificacao.meta_underlined = false
+	_classificacao.add_theme_font_size_override("normal_font_size", 24)
+	_classificacao.add_theme_font_size_override("bold_font_size", 24)
 	_classificacao.meta_clicked.connect(func(id): _camera(str(id)))
 	conteudo.add_child(_classificacao)
 	_painel = VBoxContainer.new()
@@ -118,12 +138,13 @@ func _sobre_area(area: Control, preset: int, cor: Color, fonte: int) -> Label:
 	if preset == Control.PRESET_BOTTOM_WIDE:
 		p.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	else:
-		p.offset_left = 10
-		p.offset_top = 10
+		p.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		p.offset_top = 150
 	var l := Label.new()
 	l.add_theme_font_size_override("font_size", fonte)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.custom_minimum_size.x = 300 if preset != Control.PRESET_BOTTOM_WIDE else 0
+	l.custom_minimum_size.x = 0
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	p.add_child(l)
 	area.add_child(p)
 	return l
@@ -438,18 +459,20 @@ func _process(delta: float) -> void:
 		_s_jogador = _visual.distancia("jogador")
 		if _visual.tempo < 2.0:
 			_sons.largada(true)
+			_mostrar_destaque("LARGADA!", true)
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	if _camera_modo in ["lider", "frente"]:
 		_visual3d.foco = _alvo_camera()
 	_visual3d.atualizar(delta)
 	var ev_atual: Dictionary = dados.evento(f["evento_id"])
-	_relogio.text = "%s · %s / %s · faltam %d corrida%s" % [nome_pista(ev_atual["pista"]),
-			_mmss(_visual.tempo), _mmss(_visual.duracao()), f["restantes"], "" if f["restantes"] == 1 else "s"]
+	_relogio.text = "%s · %d volta%s%s" % [nome_pista(ev_atual["pista"]), _voltas, "" if _voltas == 1 else "s",
+			" · faltam %d corridas" % f["restantes"] if f["restantes"] > 1 else ""]
 	var s_agora := _visual.distancia("jogador")
 	var meta := _pista.comprimento * _voltas if _pista != null else INF
 	if s_agora >= meta and not _chegou:
 		_chegou = true
 		_sons.chegada()
+		_mostrar_destaque("CHEGADA · %dº" % (_visual.ordem().find("jogador") + 1), true)
 	_sons.motor(not _chegou, (s_agora - _s_jogador) / maxf(delta, 1e-3) if delta > 0.0 else 0.0)
 	_s_jogador = s_agora
 	var ordem := _visual.ordem()
@@ -472,16 +495,26 @@ func _atualizar_placar(ordem: Array) -> void:
 		return
 	var s := _visual.distancia("jogador")
 	var volta := clampi(floori(maxf(s, 0.0) / _pista.comprimento) + 1, 1, _voltas)
-	var txt := "Volta %d/%d · %dº de %d" % [volta, _voltas, i + 1, ordem.size()]
-	if i > 0:
-		var gap := _visual.distancia(ordem[i - 1]) - s
-		txt += " · %d m atrás de %s" % [roundi(gap), _nomes.get(ordem[i - 1], "")]
-		if gap < DISPUTA_M:
-			txt += " · DISPUTA!"
+	_hud.text = "%dº/%d" % [i + 1, ordem.size()]
+	_hud.add_theme_color_override("font_color", COR_DESTAQUE if i == 0 else Color.WHITE)
+	_hud_volta.text = "VOLTA %d/%d · %s" % [volta, _voltas, _mmss(maxf(_visual.duracao() - _visual.tempo, 0.0))]
+	# A pergunta da corrida: consigo alcançar o carro da frente?
+	if _chegou:
+		_placar.text = "Você terminou em %dº" % (i + 1)
+		_visual3d.alvo = ""
+	elif i > 0:
+		var frente: String = ordem[i - 1]
+		_visual3d.alvo = frente
+		var t := _visual.tempo_em(frente, s)
+		var gap := _visual.tempo - t if t >= 0.0 else -1.0
+		var dist := _visual.distancia(frente) - s
+		_placar.text = "ALVO: %s · %s" % [_nomes.get(frente, ""), "%.1f s à frente" % gap if gap >= 0.0 else "%d m" % roundi(dist)]
+		if dist < DISPUTA_M:
+			_placar.text += " · DISPUTA!"
 	elif ordem.size() > 1:
-		txt += " · %d m à frente" % roundi(s - _visual.distancia(ordem[1]))
-	txt += " · termina em %s" % _mmss(maxf(_visual.duracao() - _visual.tempo, 0.0))
-	_placar.text = txt
+		_visual3d.alvo = ""
+		var t := _visual.tempo_em("jogador", _visual.distancia(ordem[1]))
+		_placar.text = "LIDERANDO · %s" % ("%.1f s de vantagem" % (_visual.tempo - t) if t >= 0.0 else "")
 
 
 ## Ultrapassagens do jogador: destaque por alguns segundos.
@@ -491,11 +524,7 @@ func _atualizar_destaque(ordem: Array, delta: float) -> void:
 		var ganhou := pos < _posicao_antes
 		# Ganhou: o ultrapassado está logo atrás. Perdeu: quem passou está logo à frente.
 		var outro: String = (ordem[pos] if pos < ordem.size() else "") if ganhou else (ordem[pos - 2] if pos >= 2 else "")
-		_destaque.text = ("Ultrapassou %s! Agora %dº" if ganhou else "Ultrapassado por %s · %dº") % [_nomes.get(outro, "um rival"), pos]
-		var sb: StyleBoxFlat = _destaque.get_parent().get_theme_stylebox("panel")
-		sb.bg_color = Color(0.1, 0.32, 0.18, 0.92) if ganhou else Color(0.42, 0.12, 0.1, 0.92)
-		_destaque.get_parent().visible = true
-		_destaque_t = DURACAO_DESTAQUE
+		_mostrar_destaque(("PASSOU %s! %dº" if ganhou else "Passado por %s · %dº") % [_nomes.get(outro, "um rival"), pos], ganhou)
 		_sons.ultrapassagem(ganhou)
 	_posicao_antes = pos
 	_ordem_antes = ordem
@@ -503,6 +532,14 @@ func _atualizar_destaque(ordem: Array, delta: float) -> void:
 		_destaque_t -= delta
 		if _destaque_t <= 0.0:
 			_destaque.get_parent().visible = false
+
+
+func _mostrar_destaque(texto: String, bom: bool) -> void:
+	_destaque.text = texto
+	var sb: StyleBoxFlat = _destaque.get_parent().get_theme_stylebox("panel")
+	sb.bg_color = Color(0.1, 0.32, 0.18, 0.92) if bom else Color(0.42, 0.12, 0.1, 0.92)
+	_destaque.get_parent().visible = true
+	_destaque_t = DURACAO_DESTAQUE
 
 
 static func _mmss(t: float) -> String:

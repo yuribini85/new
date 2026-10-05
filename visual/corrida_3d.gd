@@ -14,7 +14,7 @@ const LARGURA_PISTA_M := 12.0
 const FAIXAS_M := [0.0, 2.1, -2.1, 4.2, -4.2]
 const PROXIMIDADE_M := 5.5
 const VELOCIDADE_LATERAL := 3.0  # 1/s, aproximação da faixa-alvo
-const TAMANHO_CAMERA := 36.0
+const TAMANHO_CAMERA := 28.0
 const ALTURA_MARCADOR := 2.6
 
 var _fonte: CorridaVisual
@@ -44,6 +44,10 @@ const TEMAS := {
 }
 const TEMA_PADRAO := {"chao": Color(0.22, 0.45, 0.25), "ceu": Color(0.4, 0.6, 0.75), "props": "arvores"}
 var _tamanho_geral := 200.0
+var _proj := Rect2()
+## Carro que o jogador persegue: anel vermelho no chão e rótulo "ALVO".
+var alvo := ""
+var _anel_alvo: MeshInstance3D
 
 
 func _init() -> void:
@@ -154,7 +158,13 @@ func atualizar(delta: float) -> void:
 		_carros[id].scale = Vector3.ONE * escala
 		_rotulos[id].pixel_size = 0.045 * (escala * 1.6 if visao_geral else 1.0)
 		_rotulos[id].position = _carros[id].position + Vector3(0, ALTURA_MARCADOR * escala, 0)
+	if _anel_alvo != null:
+		_anel_alvo.visible = _carros.has(alvo) and not visao_geral
+		if _anel_alvo.visible:
+			_anel_alvo.position = _carros[alvo].position + Vector3(0, 0.05, 0)
+			_rotulos[alvo].text = "ALVO"
 	if visao_geral:
+		_enquadrar_geral()
 		_camera.size = _tamanho_geral
 		_alvo_camera = _centro_pista
 		_camera_imediata()
@@ -224,8 +234,8 @@ func _construir_pista() -> void:
 	var proj := Rect2(Iso.para_tela(pts[0], 1.0), Vector2.ZERO)
 	for p in pts:
 		proj = proj.expand(Iso.para_tela(p, 1.0))
-	var aspecto := size.x / maxf(size.y, 1.0) if size.y > 0.0 else 1.4
-	_tamanho_geral = maxf(proj.size.y, proj.size.x / aspecto) / sqrt(2.0) * 1.15 + 20.0
+	_proj = proj
+	_enquadrar_geral()
 	var c_tela := proj.get_center()
 	# Inverso de Iso.para_tela: x + y = cx, (x - y)/2 = cy.
 	var meio := Vector2((c_tela.x + 2.0 * c_tela.y) * 0.5, (c_tela.x - 2.0 * c_tela.y) * 0.5)
@@ -240,8 +250,22 @@ func _construir_pista() -> void:
 	var centro := caixa.get_center()
 	grama.position = Vector3(centro.x, -0.06, -centro.y)
 	_cena.add_child(grama)
-	_cena.add_child(_faixa(pts, LARGURA_PISTA_M + 2.0, -0.03, Color(0.88, 0.88, 0.88)))
-	_cena.add_child(_faixa(pts, LARGURA_PISTA_M, 0.0, Color(0.32, 0.33, 0.36)))
+	_cena.add_child(_faixa(pts, LARGURA_PISTA_M + 6.0, -0.04, tema["chao"].darkened(0.25)))  # área de escape
+	_cena.add_child(_faixa(pts, LARGURA_PISTA_M, 0.0, Color(0.27, 0.28, 0.31)))
+	_cena.add_child(_zebras())
+	for lado in [1.0, -1.0]:
+		_cena.add_child(_muro(pts, lado * (LARGURA_PISTA_M * 0.5 + 3.4)))
+	_anel_alvo = MeshInstance3D.new()
+	var tor := TorusMesh.new()
+	tor.inner_radius = 2.6
+	tor.outer_radius = 3.1
+	_anel_alvo.mesh = tor
+	var mat_alvo := CarroBloco._material(Color(1.0, 0.3, 0.25))
+	mat_alvo.emission_enabled = true
+	mat_alvo.emission = Color(1.0, 0.2, 0.15) * 0.7
+	_anel_alvo.material_override = mat_alvo
+	_anel_alvo.visible = false
+	_cena.add_child(_anel_alvo)
 	var largada := MeshInstance3D.new()
 	var caixa_l := BoxMesh.new()
 	caixa_l.size = Vector3(1.0, 0.02, LARGURA_PISTA_M)
@@ -347,6 +371,73 @@ static func _bloco(tam: Vector3, cor: Color) -> MeshInstance3D:
 	m.size = tam
 	mi.mesh = m
 	mi.material_override = CarroBloco._material(cor)
+	return mi
+
+
+## Visão geral: o traçado inteiro cabe na tela, qualquer que seja o tamanho
+## dela agora (recalculado: a tela pode ter mudado desde a montagem).
+func _enquadrar_geral() -> void:
+	var aspecto := size.x / size.y if size.y > 1.0 else 1.2
+	_tamanho_geral = maxf(_proj.size.y, _proj.size.x / aspecto) / sqrt(2.0) * 1.12 + 24.0
+
+
+## Zebras vermelhas e brancas nas bordas das curvas.
+func _zebras() -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_normal(Vector3.UP)
+	var passo := 3.0
+	var s := 0.0
+	var k := 0
+	while s < _pista.comprimento:
+		if float(_pista.trecho_em(s).get("raio_m", 0.0)) > 0.0:
+			var cor := Color(0.85, 0.12, 0.1) if k % 2 == 0 else Color(0.95, 0.95, 0.95)
+			for lado in [1.0, -1.0]:
+				var q := []
+				for ss in [s, s + passo]:
+					var p := _pista.posicao_em(ss)
+					var n: Vector2 = Vector2.from_angle(_pista.rumo_em(ss) + PI / 2.0) * lado
+					q.append(p + n * (LARGURA_PISTA_M * 0.5))
+					q.append(p + n * (LARGURA_PISTA_M * 0.5 + 1.2))
+				var v := q.map(func(p): return Vector3(p.x, 0.02, -p.y))
+				for idx in [0, 2, 1, 1, 2, 3]:
+					st.set_color(cor)
+					st.add_vertex(v[idx])
+		s += passo
+		k += 1
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = mat
+	return mi
+
+
+## Muro baixo ao longo da pista, a `deslocamento` m do eixo (lado pelo sinal).
+func _muro(pts: PackedVector2Array, deslocamento: float) -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n_pts := pts.size()
+	for i in n_pts - 1:
+		var a := pts[i]
+		var b := pts[i + 1]
+		var na := (pts[mini(i + 1, n_pts - 1)] - pts[maxi(i - 1, 0)]).normalized().orthogonal()
+		var nb := (pts[mini(i + 2, n_pts - 1)] - pts[i]).normalized().orthogonal()
+		var pa := a - na * deslocamento
+		var pb := b - nb * deslocamento
+		var cor := Color(0.82, 0.82, 0.84) if (i / 4) % 2 == 0 else Color(0.2, 0.35, 0.75)
+		var v := [Vector3(pa.x, 0.0, -pa.y), Vector3(pb.x, 0.0, -pb.y), Vector3(pb.x, 0.9, -pb.y), Vector3(pa.x, 0.9, -pa.y)]
+		for idx in [0, 1, 2, 0, 2, 3]:
+			st.set_color(cor)
+			st.add_vertex(v[idx])
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = mat
 	return mi
 
 
