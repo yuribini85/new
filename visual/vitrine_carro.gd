@@ -52,5 +52,5 @@ func mostrar(categoria: String, cor: Color) -> void:
 
 
 func _process(delta: float) -> void:
-	if is_visible_in_tree():
+	if is_visible_in_tree() and not Preferencias.reduzir_animacoes:
 		_carro.rotation.y += VELOCIDADE * delta

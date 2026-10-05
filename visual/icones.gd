@@ -4,9 +4,9 @@ extends RefCounted
 ## Desenhados no Control, sem imagem; a troca por arte mantém as chamadas.
 
 
-static func carro(categoria: String, cor: Color) -> Control:
+static func carro(categoria: String, cor: Color, tamanho := Vector2(124, 60)) -> Control:
 	var c := Control.new()
-	c.custom_minimum_size = Vector2(124, 60)
+	c.custom_minimum_size = tamanho
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.draw.connect(func(): _desenhar_carro(c, categoria, cor))
 	return c

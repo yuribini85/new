@@ -198,6 +198,10 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	if ev.get("carro_premio") != null and vitorias == 0:
 		txt += "\n+ carro na 1ª vitória: %s" % dados.carro(ev["carro_premio"]).get("nome", "")
 	rotulo(txt, FONTE_PEQUENA + 2, COR_DESTAQUE.lightened(0.2), v)
+	if ev.get("carro_premio") != null and vitorias == 0:
+		var b := botao("Ver o carro-prêmio", func(): ficha_modelo(dados.carro(ev["carro_premio"])), true, false, v)
+		b.custom_minimum_size = Vector2(0, 56)
+		b.add_theme_font_size_override("font_size", FONTE_PEQUENA)
 	var h := fileira(v)
 	if pode:
 		rotulo("✓ Seu carro pode correr", FONTE_PEQUENA, COR_BOM, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER

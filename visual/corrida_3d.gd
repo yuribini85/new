@@ -33,6 +33,16 @@ var foco := "jogador"
 ## Pista inteira na tela em vez de seguir um carro.
 var visao_geral := false
 var _centro_pista := Vector3.ZERO
+var _ambiente: Environment
+
+## Ambiente de cada pista (placeholder): cor do chão, do céu e o que fica em
+## volta. Pista sem tema usa o padrão.
+const TEMAS := {
+	"anel_do_vale": {"chao": Color(0.24, 0.47, 0.26), "ceu": Color(0.42, 0.62, 0.78), "props": "arvores"},
+	"parque_das_docas": {"chao": Color(0.36, 0.37, 0.4), "ceu": Color(0.55, 0.6, 0.68), "props": "cidade"},
+	"serra_alta": {"chao": Color(0.38, 0.4, 0.26), "ceu": Color(0.62, 0.7, 0.8), "props": "serra"},
+}
+const TEMA_PADRAO := {"chao": Color(0.22, 0.45, 0.25), "ceu": Color(0.4, 0.6, 0.75), "props": "arvores"}
 var _tamanho_geral := 200.0
 
 
@@ -48,6 +58,7 @@ func _init() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color(0.2, 0.42, 0.24)
+	_ambiente = env
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.6, 0.62, 0.66)
 	amb.environment = env
@@ -108,11 +119,11 @@ func atualizar(delta: float) -> void:
 		s[id] = _fonte.distancia(id)
 	var ordem := _fonte.ordem()
 	var alvo := faixas(ordem, s, _lateral, _pista.comprimento)
-	var k := clampf(delta * VELOCIDADE_LATERAL, 0.0, 1.0) if delta > 0.0 else 1.0
+	var k := clampf(delta * VELOCIDADE_LATERAL, 0.0, 1.0) if delta > 0.0 and not Preferencias.reduzir_animacoes else 1.0
 	var antes := _lateral.duplicate()
 	for id in _carros:
 		_lateral[id] = lerpf(_lateral[id], alvo[id], k)
-	for par in contatos(ordem, s, _lateral, _pista.comprimento):
+	for par in ([] if Preferencias.reduzir_animacoes else contatos(ordem, s, _lateral, _pista.comprimento)):
 		for id in par:
 			_tranco[id] = 0.35
 	for i in ordem.size():
@@ -151,7 +162,7 @@ func atualizar(delta: float) -> void:
 	var seguido: String = foco if _carros.has(foco) else ("jogador" if _carros.has("jogador") else (ordem[0] if not ordem.is_empty() else ""))
 	if seguido != "":
 		var novo: Vector3 = _carros[seguido].position
-		_alvo_camera = novo if delta <= 0.0 or _alvo_camera.distance_to(novo) > 40.0 \
+		_alvo_camera = novo if delta <= 0.0 or Preferencias.reduzir_animacoes or _alvo_camera.distance_to(novo) > 40.0 \
 				else _alvo_camera.lerp(novo, clampf(delta * 5.0, 0.0, 1.0))
 		_camera_imediata()
 
@@ -218,11 +229,13 @@ func _construir_pista() -> void:
 	# Inverso de Iso.para_tela: x + y = cx, (x - y)/2 = cy.
 	var meio := Vector2((c_tela.x + 2.0 * c_tela.y) * 0.5, (c_tela.x - 2.0 * c_tela.y) * 0.5)
 	_centro_pista = Vector3(meio.x, 0.0, -meio.y)
+	var tema: Dictionary = TEMAS.get(_pista.id, TEMA_PADRAO)
+	_ambiente.background_color = tema["ceu"]
 	var grama := MeshInstance3D.new()
 	var plano := PlaneMesh.new()
 	plano.size = caixa.size + Vector2(400, 400)
 	grama.mesh = plano
-	grama.material_override = CarroBloco._material(Color(0.22, 0.45, 0.25))
+	grama.material_override = CarroBloco._material(tema["chao"])
 	var centro := caixa.get_center()
 	grama.position = Vector3(centro.x, -0.06, -centro.y)
 	_cena.add_child(grama)
@@ -237,6 +250,103 @@ func _construir_pista() -> void:
 	largada.position = Vector3(p0.x, 0.01, -p0.y)
 	largada.rotation.y = _pista.rumo_em(0.0)
 	_cena.add_child(largada)
+	_arquibancada()
+	_decorar(pts, tema["props"])
+
+
+## Arquibancada ao lado da largada: referência para saber onde a volta começa.
+func _arquibancada() -> void:
+	var p0 := _pista.posicao_em(0.0)
+	var rumo := _pista.rumo_em(0.0)
+	var lado := Vector2.from_angle(rumo + PI / 2.0)
+	var base := p0 + lado * (LARGURA_PISTA_M * 0.5 + 8.0)
+	for degrau in 4:
+		var b := _bloco(Vector3(30.0, 1.2, 3.0), Color(0.75, 0.2, 0.2) if degrau % 2 == 0 else Color(0.9, 0.9, 0.9))
+		var q := base + lado * (degrau * 3.0)
+		b.position = Vector3(q.x, 0.6 + degrau * 1.2, -q.y)
+		b.rotation.y = rumo
+		_cena.add_child(b)
+
+
+## Objetos em volta da pista, longe do asfalto, sempre no mesmo lugar para a
+## mesma pista (semente pelo id).
+func _decorar(pts: PackedVector2Array, tipo: String) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(_pista.id)
+	var amostra := PackedVector2Array()
+	for i in range(0, pts.size(), 2):
+		amostra.append(pts[i])
+	var colocados := 0
+	for tentativa in 400:
+		if colocados >= 110:
+			break
+		var s := rng.randf() * _pista.comprimento
+		var rumo := _pista.rumo_em(s)
+		var lado := 1.0 if rng.randf() < 0.5 else -1.0
+		var dist := rng.randf_range(16.0, 70.0)
+		var p := _pista.posicao_em(s) + Vector2.from_angle(rumo + PI / 2.0) * lado * dist
+		var livre := true
+		for q in amostra:
+			if p.distance_squared_to(q) < 14.0 * 14.0:
+				livre = false
+				break
+		if not livre:
+			continue
+		colocados += 1
+		var n := _objeto(tipo, rng)
+		n.position.x = p.x
+		n.position.z = -p.y
+		n.rotation.y = rng.randf() * TAU
+		_cena.add_child(n)
+
+
+func _objeto(tipo: String, rng: RandomNumberGenerator) -> Node3D:
+	match tipo:
+		"cidade":
+			if rng.randf() < 0.35:
+				var cont := _bloco(Vector3(6.0, 2.6, 2.4), [Color(0.8, 0.3, 0.2), Color(0.2, 0.45, 0.7), Color(0.85, 0.65, 0.2)][rng.randi() % 3])
+				cont.position.y = 1.3
+				return cont
+			var h := rng.randf_range(6.0, 22.0)
+			var predio := _bloco(Vector3(rng.randf_range(8.0, 14.0), h, rng.randf_range(8.0, 14.0)),
+					Color(0.5, 0.52, 0.56).lerp(Color(0.7, 0.62, 0.52), rng.randf()))
+			predio.position.y = h * 0.5
+			return predio
+		"serra":
+			if rng.randf() < 0.4:
+				var pedra := _bloco(Vector3.ONE * rng.randf_range(2.0, 5.0), Color(0.45, 0.43, 0.4))
+				pedra.position.y = 0.8
+				return pedra
+			return _arvore(rng, Color(0.16, 0.32, 0.2), 1.3)
+	return _arvore(rng, Color(0.2, 0.5, 0.25), 1.0)
+
+
+func _arvore(rng: RandomNumberGenerator, cor: Color, alongar: float) -> Node3D:
+	var n := Node3D.new()
+	var tronco := _bloco(Vector3(0.6, 2.0, 0.6), Color(0.4, 0.28, 0.18))
+	tronco.position.y = 1.0
+	n.add_child(tronco)
+	var copa := MeshInstance3D.new()
+	var cone := CylinderMesh.new()
+	cone.top_radius = 0.0
+	cone.bottom_radius = rng.randf_range(2.0, 3.2)
+	cone.height = rng.randf_range(5.0, 8.0) * alongar
+	cone.radial_segments = 7
+	cone.rings = 1
+	copa.mesh = cone
+	copa.material_override = CarroBloco._material(cor)
+	copa.position.y = 2.0 + cone.height * 0.5
+	n.add_child(copa)
+	return n
+
+
+static func _bloco(tam: Vector3, cor: Color) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var m := BoxMesh.new()
+	m.size = tam
+	mi.mesh = m
+	mi.material_override = CarroBloco._material(cor)
+	return mi
 
 
 static func _faixa(pts: PackedVector2Array, largura: float, y: float, cor: Color) -> MeshInstance3D:

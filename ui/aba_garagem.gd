@@ -12,6 +12,7 @@ func construir() -> void:
 	var lista: Array = jogador.garagem.lista()
 	cabecalho("Garagem", "Seus carros. O carro EM USO é o que corre, vai à oficina e faz licenças.")
 	_resumo()
+	_objetivos()
 	if lista.is_empty():
 		if _sem_saida():
 			var v := cartao(COR_RUIM)
@@ -33,7 +34,7 @@ func construir() -> void:
 		var em_fila: bool = not jogador.fila.is_empty() and jogador.fila["uid"] == c.uid
 		var v := cartao(COR_DESTAQUE if ativo else Color.TRANSPARENT)
 		var topo := fileira(v)
-		var ic := icone_carro(c.base)
+		var ic := icone_carro(c.base, true)
 		ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		topo.add_child(ic)
 		var nome := VBoxContainer.new()
@@ -58,11 +59,70 @@ func construir() -> void:
 		botao("Oficina", func():
 			jogador.carro_ativo = c.uid
 			ir_para.emit(OFICINA), true, false, acoes)
+		botao("Ficha", func(): ficha_modelo(c.base), true, false, acoes)
 		botao("Vender %s" % dinheiro(venda), _vender.bind(c.uid),
 				not em_fila and jogador.concessionaria.pode_vender(c.uid), false, acoes)
 	if lista.size() == 1:
 		rotulo("O único carro da garagem não pode ser vendido: sem ele a carreira trava.", FONTE_PEQUENA, COR_SECUNDARIA)
+	var h := fileira()
+	botao("Coleção", _colecao, true, false, h)
+	entenda(h)
 	_rodape()
+
+
+## Objetivo atual da carreira com botão, e a lista com o que já foi feito.
+func _objetivos() -> void:
+	var lista := Objetivos.lista(jogador, dados)
+	var i := Objetivos.atual(lista)
+	if i >= lista.size():
+		return
+	var v := cartao(COR_DESTAQUE)
+	rotulo("OBJETIVO %d DE %d" % [i + 1, lista.size()], FONTE_PEQUENA, COR_DESTAQUE, v)
+	rotulo(lista[i]["texto"], 32, Color.WHITE, v)
+	var feitos := []
+	for k in lista.size():
+		if lista[k]["feito"]:
+			feitos.append(["✓ " + lista[k]["texto"], COR_BOM])
+	if not feitos.is_empty():
+		selos(feitos, v)
+	botao(lista[i]["botao"], func(): ir_para.emit(lista[i]["aba"]), true, true, v)
+
+
+## Coleção: todos os modelos por fabricante, com os que você tem, e as contas
+## por categoria e por época.
+func _colecao() -> void:
+	var tenho := {}
+	for c in jogador.garagem.lista():
+		tenho[c.id] = true
+	painel.emit("Coleção · %d de %d modelos" % [tenho.size(), dados.lista("carros").size()], func(v):
+		var por_cat := {}
+		var por_decada := {}
+		for c in dados.lista("carros"):
+			var cat: String = NOMES_CATEGORIA_CARRO.get(c.get("categoria", ""), c.get("categoria", ""))
+			var dec := "anos %d" % (int(c["ano"]) / 10 * 10 % 100)
+			for par in [[por_cat, cat], [por_decada, dec]]:
+				var d: Dictionary = par[0]
+				var k: Array = d.get(par[1], [0, 0])
+				d[par[1]] = [k[0] + (1 if tenho.has(c["id"]) else 0), k[1] + 1]
+		var resumo := []
+		for d in [por_cat, por_decada]:
+			for k in d:
+				resumo.append(["%s %d/%d" % [k, d[k][0], d[k][1]], COR_BOM if d[k][0] == d[k][1] else COR_NEUTRA.lightened(0.3)])
+		selos(resumo, v)
+		for fab in dados.lista("fabricantes"):
+			var vc := cartao(Color.TRANSPARENT, v)
+			var modelos: Array = dados.lista("carros").filter(func(c): return c["fabricante"] == fab["id"])
+			var tem: int = modelos.filter(func(c): return tenho.has(c["id"])).size()
+			rotulo("%s · %d/%d" % [fab["nome"], tem, modelos.size()], 30, COR_DESTAQUE, vc)
+			for c in modelos:
+				var h := fileira(vc)
+				var ic := icone_carro(c)
+				if not tenho.has(c["id"]):
+					ic.modulate = Color(0.35, 0.35, 0.4)
+				h.add_child(ic)
+				var l := rotulo("%s%s · %d" % ["✓ " if tenho.has(c["id"]) else "", c["nome"], c["ano"]], FONTE_PEQUENA + 2,
+						Color.WHITE if tenho.has(c["id"]) else COR_SECUNDARIA, h)
+				l.size_flags_vertical = Control.SIZE_SHRINK_CENTER, [])
 
 
 ## Números da carreira no topo: vitórias e licenças.
@@ -102,7 +162,35 @@ func _rodape() -> void:
 		botao("Cancelar", func(): _confirmar_recomeco = false, true, false, h)
 	else:
 		linha("", [["Recomeçar carreira", func(): _confirmar_recomeco = true]])
+	_preferencias()
 	rotulo("Versão %s" % versao(), FONTE_PEQUENA, COR_NEUTRA)
+
+
+func _preferencias() -> void:
+	var v := cartao()
+	rotulo("PREFERÊNCIAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var h := fileira(v)
+	rotulo("Volume", FONTE_PEQUENA + 2, Color.WHITE, h).size_flags_horizontal = Control.SIZE_FILL
+	var vol := HSlider.new()
+	vol.min_value = 0.0
+	vol.max_value = 1.0
+	vol.step = 0.05
+	vol.value = Preferencias.volume
+	vol.custom_minimum_size = Vector2(0, 48)
+	vol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	vol.drag_ended.connect(func(_mudou):
+		Preferencias.volume = vol.value
+		Preferencias.salvar())
+	h.add_child(vol)
+	var anim := CheckButton.new()
+	anim.text = "Reduzir animações"
+	anim.button_pressed = Preferencias.reduzir_animacoes
+	anim.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
+	anim.toggled.connect(func(ligado):
+		Preferencias.reduzir_animacoes = ligado
+		Preferencias.salvar())
+	v.add_child(anim)
 
 
 ## Commit publicado (versao.txt, gerado pelo workflow do Pages) ou "local".

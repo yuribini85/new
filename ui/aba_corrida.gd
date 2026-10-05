@@ -35,6 +35,9 @@ var _painel: VBoxContainer
 var _analise := {}  # {"chave", "base", "opcoes", "ms"}
 var _analisando := false
 var _em_andamento := false
+var _sons: Sons
+var _s_jogador := 0.0
+var _chegou := false
 
 
 func _init(d: Node, j: Node) -> void:
@@ -90,6 +93,8 @@ func _init(d: Node, j: Node) -> void:
 	_painel.add_theme_constant_override("separation", 14)
 	conteudo.add_child(_painel)
 	_camera_modo = "jogador"
+	_sons = Sons.new()
+	add_child(_sons)
 
 
 var _camera_modo := "jogador":
@@ -387,6 +392,8 @@ func _correr_de_novo() -> void:
 
 func _process(delta: float) -> void:
 	if not is_visible_in_tree() or jogador.fila_ctrl == null:
+		if _sons != null:
+			_sons.motor(false)
 		return
 	var f: Dictionary = jogador.fila
 	if f.is_empty() != not _em_andamento:
@@ -396,6 +403,7 @@ func _process(delta: float) -> void:
 		_visual3d.limpar()
 		_area.visible = false
 		_semente_mostrada = 0
+		_sons.motor(false)
 		_info.text = "Nenhuma corrida na fila."
 		_relogio.text = ""
 		_classificacao.text = ""
@@ -425,6 +433,10 @@ func _process(delta: float) -> void:
 			_nomes["adv%d_%s" % [i, adv["carro"]]] = dados.carro(adv["carro"])["nome"]
 		_info.text = ev["nome"]
 		_camera(_camera_modo)
+		_chegou = false
+		_s_jogador = _visual.distancia("jogador")
+		if _visual.tempo < 2.0:
+			_sons.largada(true)
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	if _camera_modo in ["lider", "frente"]:
 		_visual3d.foco = _alvo_camera()
@@ -432,6 +444,13 @@ func _process(delta: float) -> void:
 	var ev_atual: Dictionary = dados.evento(f["evento_id"])
 	_relogio.text = "%s · %s / %s · faltam %d corrida%s" % [nome_pista(ev_atual["pista"]),
 			_mmss(_visual.tempo), _mmss(_visual.duracao()), f["restantes"], "" if f["restantes"] == 1 else "s"]
+	var s_agora := _visual.distancia("jogador")
+	var meta := _pista.comprimento * _voltas if _pista != null else INF
+	if s_agora >= meta and not _chegou:
+		_chegou = true
+		_sons.chegada()
+	_sons.motor(not _chegou, (s_agora - _s_jogador) / maxf(delta, 1e-3) if delta > 0.0 else 0.0)
+	_s_jogador = s_agora
 	var ordem := _visual.ordem()
 	_atualizar_placar(ordem)
 	_atualizar_destaque(ordem, delta)
@@ -476,6 +495,7 @@ func _atualizar_destaque(ordem: Array, delta: float) -> void:
 		sb.bg_color = Color(0.1, 0.32, 0.18, 0.92) if ganhou else Color(0.42, 0.12, 0.1, 0.92)
 		_destaque.get_parent().visible = true
 		_destaque_t = DURACAO_DESTAQUE
+		_sons.ultrapassagem(ganhou)
 	_posicao_antes = pos
 	_ordem_antes = ordem
 	if _destaque_t > 0.0:

@@ -9,6 +9,8 @@ var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
 var _sobre: Sobreposicao
+## Objetivo atual da carreira; quando avança, o jogador é avisado.
+var _objetivo := -1
 
 ## Tamanhos para tela de celular em retrato (viewport 720 de largura).
 const FONTE := 30
@@ -21,6 +23,7 @@ func _ready() -> void:
 	jogador = get_node("/root/Jogador")
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_simbolos()
+	Preferencias.carregar()
 	theme = _tema()
 	var fundo := ColorRect.new()
 	fundo.color = Color(0.09, 0.1, 0.12)
@@ -151,6 +154,12 @@ func atualizar() -> void:
 			" · " + carro.base["nome"] if carro != null else ""]
 	for a in _todas:
 		a.atualizar()
+	var objetivos := Objetivos.lista(jogador, dados)
+	var atual := Objetivos.atual(objetivos)
+	if _objetivo >= 0 and atual > _objetivo and _sobre != null:
+		var proximo: String = objetivos[atual]["texto"] if atual < objetivos.size() else "todos cumpridos!"
+		_sobre.avisar("Objetivo cumprido: %s. Próximo: %s" % [objetivos[atual - 1]["texto"], proximo])
+	_objetivo = atual
 	# Toda ação do jogador passa por aqui: salvar já. No navegador não há aviso
 	# confiável de fechamento, e uma compra não pode se perder.
 	get_node("/root/SaveManager").salvar()

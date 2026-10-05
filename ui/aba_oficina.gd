@@ -51,6 +51,7 @@ func _notification(what: int) -> void:
 func construir() -> void:
 	var lista: Array = jogador.garagem.lista()
 	cabecalho("Oficina", "Prepare o carro: peças e pneus deixam ele mais rápido.")
+	entenda()
 	if lista.is_empty():
 		proximo_passo("Você ainda não tem carro para preparar.", "Ir para a Loja", LOJA)
 		return

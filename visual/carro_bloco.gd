@@ -33,6 +33,19 @@ func configurar(categoria: String, cor: Color) -> CarroBloco:
 	_caixa(Vector3(cab_c, f["hc"], largura * 0.86),
 			Vector3(comprimento * f["recuo"], base_y + f["h"] + f["hc"] * 0.5, 0),
 			vidro if f["teto"] else _material(Color(0.15, 0.15, 0.17)))
+	# Faróis e lanternas: dá para ver para que lado o carro anda.
+	var farol := _material(Color(1.0, 0.95, 0.7))
+	var lanterna := _material(Color(0.9, 0.1, 0.1))
+	for z in [-1.0, 1.0]:
+		_caixa(Vector3(0.06, 0.14, 0.3), Vector3(comprimento * 0.5, base_y + f["h"] * 0.6, z * largura * 0.32), farol)
+		_caixa(Vector3(0.06, 0.12, 0.3), Vector3(-comprimento * 0.5, base_y + f["h"] * 0.6, z * largura * 0.32), lanterna)
+	# Silhueta por categoria: aerofólio no cupê, santantônio no roadster.
+	if categoria == "cupe":
+		_caixa(Vector3(0.25, 0.06, largura * 0.9), Vector3(-comprimento * 0.46, base_y + f["h"] + 0.28, 0), pintura.duplicate())
+		for z in [-1.0, 1.0]:
+			_caixa(Vector3(0.08, 0.26, 0.08), Vector3(-comprimento * 0.46, base_y + f["h"] + 0.13, z * largura * 0.3), vidro)
+	elif categoria == "roadster":
+		_caixa(Vector3(0.1, 0.45, largura * 0.7), Vector3(-comprimento * 0.15, base_y + f["h"] + 0.22, 0), _material(Color(0.2, 0.2, 0.22)))
 	var pneu := _material(Color(0.08, 0.08, 0.09))
 	for x in [-1.0, 1.0]:
 		for z in [-1.0, 1.0]:

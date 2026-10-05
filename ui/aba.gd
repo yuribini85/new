@@ -101,6 +101,56 @@ func proximo_passo(t: String, botao_texto: String, indice: int, pai: Control = n
 	botao(botao_texto, func(): ir_para.emit(indice), true, true, v)
 
 
+## Painel com a ficha de um modelo: vitrine 3D, fabricante, números e como
+## conseguir (novo, usado, prêmio de qual prova).
+func ficha_modelo(base: Dictionary) -> void:
+	painel.emit(base["nome"], func(v):
+		var vit := VitrineCarro.new()
+		vit.mostrar(base.get("categoria", ""), CarroBloco.cor_do_id(base["id"]))
+		v.add_child(vit)
+		var fab: Dictionary = dados.item("fabricantes", base["fabricante"])
+		selos(selos_carro(base) + [[str(base["ano"]), COR_NEUTRA.lightened(0.3)]], v)
+		barras_carro({"potencia": float(base["potencia"]), "peso": float(base["peso"])}, v)
+		var como := []
+		if base.get("novo", true):
+			como.append("novo na Loja por %s Cr" % dinheiro(int(base["preco"])))
+		if not base.get("usados", []).is_empty():
+			como.append("usado em alguns períodos")
+		for ev in dados.lista("eventos"):
+			if ev.get("carro_premio") == base["id"]:
+				como.append("prêmio da 1ª vitória em %s" % ev["nome"])
+		if como.is_empty():
+			como.append("ainda não disponível")
+		var raro: bool = not base.get("novo", true) and base.get("usados", []).is_empty()
+		var vc := cartao(COR_DESTAQUE if raro else COR_INFO, v)
+		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_INFO, vc)
+		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
+		rotulo("Revenda: %s Cr" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
+		if not fab.is_empty():
+			var vf := cartao(Color.TRANSPARENT, v)
+			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, COR_DESTAQUE, vf)
+			rotulo(fab.get("historia", ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, vf), [])
+
+
+## Quanto a Loja paga por este modelo na venda (preço de tabela × fração).
+func revenda(base: Dictionary) -> int:
+	return int(floor(float(base["preco"]) * float(dados.economia()["fracao_revenda"])))
+
+
+## Botão pequeno que abre o painel "Entenda os números" (glossário).
+func entenda(pai: Control = null) -> void:
+	var b := botao("Entenda os números", func():
+		painel.emit("Entenda os números", func(v):
+			for g in Objetivos.glossario(dados):
+				var c := cartao(Color.TRANSPARENT, v)
+				rotulo(g[0], 30, COR_DESTAQUE, c)
+				rotulo(g[1], FONTE_PEQUENA + 3, Color.WHITE, c), []),
+			true, false, pai)
+	b.custom_minimum_size = Vector2(0, 56)
+	b.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_END
+
+
 func rotulo(t: String, tamanho := 0, cor := Color.WHITE, pai: Control = null) -> Label:
 	var l := Label.new()
 	l.text = t
@@ -273,8 +323,9 @@ func linha(descricao: String, botoes: Array = [], icone: Control = null, pai: Co
 
 # --- Placeholders e formatação ---------------------------------------------
 
-func icone_carro(base: Dictionary) -> Control:
-	return Icones.carro(base.get("categoria", ""), CarroBloco.cor_do_id(base.get("id", "")))
+func icone_carro(base: Dictionary, grande := false) -> Control:
+	return Icones.carro(base.get("categoria", ""), CarroBloco.cor_do_id(base.get("id", "")),
+			Vector2(180, 86) if grande else Vector2(124, 60))
 
 
 ## Pistas montadas uma vez por id (o traçado não muda durante o jogo).

@@ -12,6 +12,7 @@ func _init(d: Node, j: Node) -> void:
 
 func construir() -> void:
 	cabecalho("Loja", "Compre carros. O dinheiro vem dos prêmios das corridas.")
+	entenda()
 	if jogador.garagem.lista().is_empty():
 		dica("Comece por um usado: são mais baratos e alguns já vencem a primeira prova. "
 				+ "A ★ marca os que foram bem em corridas simuladas da prova mais fácil, de fábrica, "
@@ -51,19 +52,28 @@ func _cartao_carro(c: Dictionary, preco: int, extra: Array, comprar: Callable) -
 	var pode: bool = jogador.economia.pode_pagar(preco)
 	var v := cartao()
 	var topo := fileira(v)
-	var ic := icone_carro(c)
+	var ic := icone_carro(c, true)
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	topo.add_child(ic)
 	var nome := VBoxContainer.new()
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	topo.add_child(nome)
 	rotulo(c["nome"], 32, Color.WHITE, nome)
-	selos(selos_carro(c) + extra, nome)
+	var comp := []
+	var meu := carro_ativo()
+	if meu != null:
+		var a := meu.atributos_efetivos("seco")
+		var dcv := int(c["potencia"]) - roundi(a["potencia"])
+		var dkg := int(c["peso"]) - roundi(a["peso"])
+		comp.append(["vs %s: %+d cv, %+d kg" % [meu.base["nome"], dcv, dkg], COR_INFO])
+	comp.append(["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)])
+	selos(selos_carro(c) + extra + comp, nome)
 	barras_carro({"potencia": float(c["potencia"]), "peso": float(c["peso"])}, v)
 	var h := fileira(v)
 	var aviso := rotulo("" if pode else "Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo),
 			FONTE_PEQUENA, COR_RUIM, h)
 	aviso.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	botao("Ficha", func(): ficha_modelo(c), true, false, h)
 	botao("Comprar · %s Cr" % dinheiro(preco), comprar, pode, true, h)
 
 
