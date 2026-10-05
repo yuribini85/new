@@ -208,5 +208,49 @@
     "comprimento_m": 70.6858
    }
   ]
+ },
+ {
+  "id": "pista_de_testes",
+  "funcao": "velocidade_maxima",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 1200,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 250,
+    "comprimento_m": 392.6991
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 150
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 250,
+    "comprimento_m": 392.6991
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 1255.0,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 35,
+    "comprimento_m": 54.9779
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 525.0
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 90,
+    "comprimento_m": 141.3717
+   }
+  ]
  }
 ]
