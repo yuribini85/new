@@ -27,6 +27,17 @@ const DESENHOS := {
 		"cor_aro": Color(0.92, 0.92, 0.94), "aro": 0.7, "lama": 0.075, "largura_pneu": 0.28, "roda_mult": 1.05},
 	"hayase_soryu": {"hc": 0.43, "cab": 0.36, "recuo": -0.2, "queda_bico": 0.2, "asa": "aerofolio", "raios": 6,
 		"cor_aro": Color(0.45, 0.46, 0.5), "aro": 0.68, "lama": 0.05, "farol": "escamoteavel", "cunha": 0.04},
+	# Os outros modelos marcantes, para cada um ter cara própria no Mercado.
+	"hayase_kobo": {"c": 3.25, "hc": 0.82, "cab": 0.7, "recuo": -0.13, "queda_bico": 0.06, "raios": 4,
+		"cor_aro": Color(0.6, 0.62, 0.66), "aro": 0.5, "asa": "nenhuma"},
+	"ashcombe_wren": {"c": 3.15, "hc": 0.74, "cab": 0.64, "recuo": -0.15, "queda_bico": 0.1, "asa": "nenhuma"},
+	"hayase_kaze": {"c": 3.7, "cab": 0.2, "hc": 0.3, "farol": "redondo", "raios": 6, "aro": 0.6, "queda_bico": 0.18},
+	"ashcombe_kestrel": {"c": 3.45, "h": 0.46, "cab": 0.18, "hc": 0.26, "recuo": 0.06, "queda_bico": 0.16},
+	"hayase_rin": {"cunha": 0.12, "queda_bico": 0.03, "hc": 0.5, "cab": 0.42, "raios": 4},
+	"hayase_shiden": {"recuo": 0.06, "cab": 0.36, "hc": 0.4, "queda_bico": 0.24, "cunha": 0.06},
+	"hartwig_strecke": {"c": 4.85, "cab": 0.42, "recuo": -0.05, "hc": 0.58},
+	"hartwig_gleiter": {"recuo": -0.2, "cab": 0.36, "hc": 0.46, "queda_bico": 0.16, "asa": "labio"},
+	"hartwig_lauf": {"hc": 0.8, "cab": 0.66, "recuo": -0.14, "queda_bico": 0.08},
 }
 const PINTURAS := [
 	Color(0.85, 0.12, 0.12), Color(0.95, 0.95, 0.95), Color(0.12, 0.12, 0.14), Color(0.15, 0.35, 0.8),
@@ -111,7 +122,8 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 		var xb: float = c * f["recuo"] + c * f["cab"] * 0.05
 		var yb: float = cintura_em(f, xb)
 		for z in [-1.0, 1.0]:
-			_caixa(Vector3(0.15, f["hc"], 0.05), Vector3(xb, yb + f["hc"] * 0.5, z * l * 0.435), pintura)
+			# Coluna central acompanhando o vidro, que estreita para cima.
+			_caixa(Vector3(0.15, f["hc"] * 0.82, 0.05), Vector3(xb, yb + f["hc"] * 0.41, z * l * 0.44), pintura)
 			_caixa(Vector3(0.012, yb - 0.24, 0.02), Vector3(xb + 0.02, (yb + 0.2) * 0.5 + 0.02, z * l * 0.505), escuro)
 			_caixa(Vector3(0.14, 0.035, 0.02), Vector3(xb - 0.25, yb - 0.12, z * l * 0.507), escuro)
 	# Tomada de ar no capô (rali, muscle).
