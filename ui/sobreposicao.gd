@@ -135,6 +135,9 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 
 ## Cartão do tamanho do conteúdo, centrado (sem vazio quando há pouco a mostrar).
 func _ajustar() -> void:
+	# Espera o texto quebrar linha e as imagens assentarem antes de medir.
+	await get_tree().process_frame
+	await get_tree().process_frame
 	var altura_tela := size.y if size.y > 0.0 else 1280.0
 	var conteudo := _painel_conteudo.get_combined_minimum_size().y
 	var total := conteudo + _painel_titulo.get_combined_minimum_size().y + 76.0 + 44.0 + 28.0 + 6.0
