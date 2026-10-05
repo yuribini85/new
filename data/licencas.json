@@ -12,9 +12,9 @@
 					"potencia_max": 250.0
 				},
 				"tempos": {
-					"bronze": 86.9,
-					"ouro": 75.82,
-					"prata": 81.36
+					"bronze": 87.07,
+					"ouro": 75.9,
+					"prata": 81.49
 				},
 				"voltas": 1.0
 			},
@@ -26,9 +26,9 @@
 					"potencia_max": 250.0
 				},
 				"tempos": {
-					"bronze": 79.35,
-					"ouro": 72.26,
-					"prata": 75.81
+					"bronze": 79.6,
+					"ouro": 72.35,
+					"prata": 75.98
 				},
 				"voltas": 1.0
 			},
@@ -40,9 +40,9 @@
 					"potencia_max": 250.0
 				},
 				"tempos": {
-					"bronze": 88.57,
-					"ouro": 83.37,
-					"prata": 85.97
+					"bronze": 88.86,
+					"ouro": 83.53,
+					"prata": 86.2
 				},
 				"voltas": 1.0
 			}
@@ -61,9 +61,9 @@
 					"potencia_max": 300.0
 				},
 				"tempos": {
-					"bronze": 86.9,
-					"ouro": 70.82,
-					"prata": 78.86
+					"bronze": 87.07,
+					"ouro": 70.9,
+					"prata": 78.99
 				},
 				"voltas": 1.0
 			},
@@ -75,9 +75,9 @@
 					"potencia_max": 300.0
 				},
 				"tempos": {
-					"bronze": 79.35,
-					"ouro": 67.9,
-					"prata": 73.63
+					"bronze": 79.6,
+					"ouro": 68.01,
+					"prata": 73.81
 				},
 				"voltas": 1.0
 			},
@@ -89,9 +89,9 @@
 					"potencia_max": 300.0
 				},
 				"tempos": {
-					"bronze": 88.57,
-					"ouro": 79.59,
-					"prata": 84.08
+					"bronze": 88.86,
+					"ouro": 79.76,
+					"prata": 84.31
 				},
 				"voltas": 1.0
 			}

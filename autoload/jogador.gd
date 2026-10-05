@@ -23,6 +23,8 @@ var fila: Dictionary = {}
 ## Unix time da última vez que a fila foi processada.
 var ultimo_processamento: float = 0.0
 var contador_sementes: int = 0
+## Resumo da última corrida aplicada (relatório pós-corrida; não vai para o save).
+var ultima_corrida: Dictionary = {}
 ## Carro escolhido na garagem para oficina, eventos e licenças (estado de tela).
 var carro_ativo: int = -1
 

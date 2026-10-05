@@ -56,6 +56,9 @@ func _ready() -> void:
 		_abas.add_child(a)
 		a.mudou.connect(atualizar)
 	eventos.correr_iniciado.connect(func(): _ir_para(4))
+	_todas[4].pular.connect(func():
+		jogador.fila_ctrl.adiantar(Time.get_unix_time_from_system())
+		_processar_fila())
 	raiz.add_child(_navegacao())
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid

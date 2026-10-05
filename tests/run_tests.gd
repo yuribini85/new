@@ -12,6 +12,7 @@ const SUITES := [
 	preload("res://tests/test_licencas_usados.gd"),
 	preload("res://tests/test_fila_save.gd"),
 	preload("res://tests/test_telas.gd"),
+	preload("res://tests/test_percurso.gd"),
 ]
 
 

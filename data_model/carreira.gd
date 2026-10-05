@@ -29,11 +29,14 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 ## offline depende disso para recalcular a corrida em andamento após o load.
 ## Retorna {"erro"} ou {"evento_id", "uid", "resultado", "duracao"}.
 ## com_amostras = false (fila offline) dispensa as posições usadas só pela tela.
-func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true) -> Dictionary:
+## `hipotetico` simula outro carro no lugar do da garagem (Mecanico: "e se eu
+## comprasse esta peça?") sem alterar nada.
+func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true,
+		hipotetico: Carro = null) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
 	if ev.is_empty():
 		return {"erro": "evento %s não existe" % evento_id}
-	var carro: Carro = jogador.garagem.carro(uid)
+	var carro: Carro = hipotetico if hipotetico != null else jogador.garagem.carro(uid)
 	if carro == null:
 		return {"erro": "carro %d não está na garagem" % uid}
 	var motivos := Elegibilidade.motivos(carro, ev["restricoes"], jogador.licencas)
@@ -54,6 +57,19 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
 			dados.simulacao(), semente, com_amostras)
 	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}
+
+
+## Nome do carro de um participante ("jogador" ou "adv<i>_<carro>").
+func nome_participante(id: String, uid: int) -> String:
+	if id == "jogador":
+		var c: Carro = jogador.garagem.carro(uid)
+		return "Você" if c == null else "Você (%s)" % c.base["nome"]
+	return dados.carro(id.split("_", true, 1)[1]).get("nome", id)
+
+
+## Atributos de fábrica do carro de um adversário ("adv<i>_<carro>").
+func carro_participante(id: String) -> Dictionary:
+	return dados.carro(id.split("_", true, 1)[1]) if id.begins_with("adv") else {}
 
 
 ## Paga prêmio, entrega carro-prêmio e conta o dia.

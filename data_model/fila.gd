@@ -37,6 +37,16 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float) -> Stri
 	return ""
 
 
+## Faz a corrida em andamento terminar agora (botão de teste da demo).
+func adiantar(agora: float) -> void:
+	var f: Dictionary = jogador.fila
+	if f.is_empty():
+		return
+	var c := _preparar(f, false)
+	if not c.has("erro"):
+		f["inicio"] = agora - float(c["duracao"]) - 0.01
+
+
 func cancelar() -> void:
 	jogador.fila = {}
 
@@ -78,7 +88,17 @@ func processar(agora: float) -> Dictionary:
 		if fim > limite:
 			break
 		var res := carreira.aplicar(c)
+		# Resumo para o relatório pós-corrida, sem as amostras (pesadas).
+		var cr: Dictionary = res["resultado"]["carros"]
+		var vencedor: String = res["classificacao"][0]
+		res["uid"] = int(f["uid"])
+		res["vencedor"] = vencedor
+		res["tempo_vencedor"] = cr[vencedor]["tempo_total"]
+		res["tempo_jogador"] = cr["jogador"]["tempo_total"]
+		res["total"] = res["classificacao"].size()
 		res.erase("resultado")
+		jogador.ultima_corrida = res
+		res["dia"] = jogador.dias
 		rel["corridas"].append(res)
 		rel["premio_total"] += res["premio"]
 		if res["carro_premio_uid"] > 0:

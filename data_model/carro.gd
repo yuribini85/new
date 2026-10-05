@@ -88,3 +88,13 @@ func atributos_efetivos(condicao: String) -> Dictionary:
 	attrs["tracao"] = base["tracao"]
 	attrs["pneu"] = pneu.get("id", "")
 	return attrs
+
+
+## Cópia independente (mesmas peças instaladas e possuídas, mesmos pneus).
+func copiar() -> Carro:
+	var c := Carro.new(base)
+	c.uid = uid
+	c.pecas = pecas.duplicate()
+	c.pecas_possuidas = pecas_possuidas.duplicate()
+	c.pneus = pneus.duplicate()
+	return c

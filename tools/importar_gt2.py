@@ -101,6 +101,8 @@ NOMES_CATEGORIA = {
 NOMES_PNEU = ["Pneu de fábrica", "Pneu esportivo", "Pneu de corrida duro", "Pneu de corrida médio",
               "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu de simulação"]
 ESTAGIO_TERRA = 7
+CONSISTENCIA = 0.7
+AGRESSIVIDADE = 1.0
 
 
 def ler(nome: str, obrigatorio: bool = False) -> list[dict]:
@@ -342,7 +344,9 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
     resumidos = ler("eventos")
     inimigos = ler("EnemyCars")
     por_id = {c["id"]: c for c in carros}
-    pilotos = {"jogador": {"id": "jogador", "ritmo": 1.0, "consistencia": 1.0, "agressividade": 1.0}}
+    # Consistência e agressividade não existem no GT2; valores aprovados para a
+    # demo, iguais para jogador e IA (regra 5: a mesma IA para todos).
+    pilotos = {"jogador": {"id": "jogador", "ritmo": 1.0, "consistencia": CONSISTENCIA, "agressividade": AGRESSIVIDADE}}
     eventos = []
     etapas: dict[str, int] = {}
     for k, (b, r) in enumerate(zip(brutos, resumidos)):
@@ -363,7 +367,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
         ia = [n(b[c]) for c in b if c.startswith("AIAcceleration")]
         ritmo = round(statistics.mean(ia) / 100.0, 3) if ia and statistics.mean(ia) > 0 else 1.0
         id_piloto = f"ia_{int(round(ritmo * 100))}"
-        pilotos[id_piloto] = {"id": id_piloto, "ritmo": ritmo, "consistencia": 1.0, "agressividade": 1.0}
+        pilotos[id_piloto] = {"id": id_piloto, "ritmo": ritmo, "consistencia": CONSISTENCIA, "agressividade": AGRESSIVIDADE}
         adversarios = []
         for idx in r["adversarios"].split()[:5]:
             i = int(idx)
