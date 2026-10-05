@@ -186,6 +186,12 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		regras.push_front(["BLOQUEADA", COR_RUIM])
 	else:
 		regras.push_front(["PENDENTE", COR_INFO])
+	var serie := String(ev["nome"]).split(" — ")[0]
+	var etapas: Array = dados.lista("eventos").filter(func(e): return String(e["nome"]).split(" — ")[0] == serie)
+	if etapas.size() > 1:
+		var vencidas := etapas.filter(func(e): return jogador.vitorias.has(e["id"])).size()
+		regras.append(["série: %d de %d etapas vencidas" % [vencidas, etapas.size()],
+				COR_BOM if vencidas == etapas.size() else COR_NEUTRA.lightened(0.3)])
 	var h_: Dictionary = jogador.historico.get(ev["id"], {})
 	if not h_.is_empty():
 		regras.append(["melhor: %dº" % h_["melhor_pos"], COR_NEUTRA.lightened(0.3)])
