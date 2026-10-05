@@ -46,6 +46,7 @@ func _rodar() -> void:
 	jogador.carro_ativo = uid
 	for ev in dados.lista("eventos"):
 		# Corrida iniciada há 25 s para a captura mostrar carros em movimento.
+		jogador.vitorias[ev["id"]] = 1  # repetir exige a prova já vencida
 		if jogador.fila_ctrl.iniciar(ev["id"], uid, 3, Time.get_unix_time_from_system() - 25.0) == "":
 			break
 	# Termina a primeira corrida para o painel "Última corrida" aparecer; a

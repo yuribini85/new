@@ -22,6 +22,9 @@ var pneus: Array = []
 var cor: String = ""
 ## Ajuste do câmbio ajustável (peça "cambio"): "", "curto" ou "longo".
 var ajuste_cambio: String = ""
+## Configurações salvas pelo jogador: [{nome, pecas: [ids], ajuste_cambio}].
+## Só guardam escolhas entre peças já compradas; equipar é grátis.
+var configuracoes: Array = []
 
 ## Fração do caminho do diferencial de fábrica até o limite do GT2 nos
 ## ajustes curto/longo. Provisório (decisão de interface, não do GT2).
@@ -54,6 +57,47 @@ func instalar(peca: Dictionary) -> bool:
 
 func remover(categoria: String) -> void:
 	pecas.erase(categoria)
+
+
+## Peças instaladas (ids em ordem) e ajuste do câmbio: o que uma inscrição
+## na fila guarda e o que uma configuração salva contém.
+func configuracao() -> Dictionary:
+	var ids: Array = pecas.values().map(func(p): return p["id"])
+	ids.sort()
+	return {"pecas": ids, "ajuste_cambio": ajuste_cambio}
+
+
+## Cópia com a configuração montada. `peca_por_id` resolve ids (Dados.peca);
+## id desconhecido ou peça recusada fica de fora. Com "pneus" na configuração
+## (cópia da inscrição na fila) e `pneu_por_id`, os pneus também são os dela.
+func com_configuracao(cfg: Dictionary, peca_por_id: Callable, pneu_por_id: Callable = Callable()) -> Carro:
+	var c := copiar()
+	c.pecas = {}
+	for pid in cfg.get("pecas", []):
+		var p: Dictionary = peca_por_id.call(pid)
+		if not p.is_empty():
+			c.instalar(p)
+	c.ajuste_cambio = String(cfg.get("ajuste_cambio", ""))
+	if cfg.has("pneus") and pneu_por_id.is_valid():
+		c.pneus = []
+		for pid in cfg["pneus"]:
+			var pn: Dictionary = pneu_por_id.call(pid)
+			if not pn.is_empty():
+				c.adicionar_pneu(pn)
+	return c
+
+
+## Equipa uma configuração salva no próprio carro. Só peças já compradas
+## para ele entram; retorna as que ficaram de fora (ids).
+func equipar(cfg: Dictionary, peca_por_id: Callable) -> Array:
+	var fora := []
+	pecas = {}
+	for pid in cfg.get("pecas", []):
+		var p: Dictionary = peca_por_id.call(pid)
+		if p.is_empty() or not pid in pecas_possuidas or not instalar(p):
+			fora.append(pid)
+	ajuste_cambio = String(cfg.get("ajuste_cambio", ""))
+	return fora
 
 
 func adicionar_pneu(pneu: Dictionary) -> void:
@@ -164,4 +208,5 @@ func copiar() -> Carro:
 	c.pneus = pneus.duplicate()
 	c.cor = cor
 	c.ajuste_cambio = ajuste_cambio
+	c.configuracoes = configuracoes.duplicate(true)
 	return c

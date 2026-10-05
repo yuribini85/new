@@ -19,13 +19,14 @@ func test_fila_aplica_so_corridas_concluidas() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	igual(f.iniciar("aberto", uid, 3, 1000.0), "", "iniciar")
 	var dur: float = f.corrida_atual(1000.0)["duracao"]
 	var saldo: int = j.economia.saldo
 	var r := f.processar(1000.0 + dur * 2 + 0.5)
 	igual(r["corridas"].size(), 2, "duas concluídas (duração %.1f s)" % dur)
 	igual(r["premio_total"], 1000, "2 × 500")
-	igual(r["carros_premio"].size(), 1, "carro-prêmio só uma vez")
+	igual(r["carros_premio"].size(), 0, "prova já vencida: carro-prêmio não volta")
 	igual(j.economia.saldo, saldo + 1000, "saldo")
 	igual(j.fila["restantes"], 1, "resta uma")
 	igual(j.dias, 2, "dias")
@@ -42,6 +43,7 @@ func test_teto_offline_limita_e_descarta_o_excesso() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j, 600.0)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	f.iniciar("aberto", uid, 1000, 0.0)
 	var dur: float = f.corrida_atual(0.0)["duracao"]
 	var r := f.processar(100000.0)
@@ -58,6 +60,7 @@ func test_carro_vendido_cancela_a_fila() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	f.iniciar("aberto", uid, 5, 0.0)
 	j.economia.creditar(1000)
 	j.concessionaria.comprar_carro(d.carro("fraco"))  # o último carro não se vende
@@ -83,6 +86,7 @@ func test_save_ida_e_volta() -> void:
 	j.concessionaria.comprar_usado(oferta, d.carro(oferta["carro_id"]), j.usados_vendidos)
 	j.licencas.append("b")
 	j.graus_licenca["b1"] = "prata"
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	f.iniciar("aberto", uid, 4, 0.0)
 	f.processar(f.corrida_atual(0.0)["duracao"] + 1.0)
 
@@ -181,6 +185,7 @@ func test_processar_antes_do_fim_nao_simula_de_novo() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	f.iniciar("aberto", uid, 2, 0.0)
 	var dur: float = f.corrida_atual(0.0)["duracao"]
 	var antes: int = f.carreira.simulacoes
@@ -190,8 +195,47 @@ func test_processar_antes_do_fim_nao_simula_de_novo() -> void:
 	igual(f.carreira.simulacoes, antes, "nenhuma simulação nova durante a corrida")
 	j.concessionaria.comprar_peca(j.garagem.carro(uid), d.peca("turbo"))
 	f.processar(61.0)
-	igual(f.carreira.simulacoes, antes + 1, "peça nova muda o carro: simula de novo")
+	igual(f.carreira.simulacoes, antes, "peça nova depois da inscrição não muda a corrida programada")
 	f.processar(dur + 100.0)
 	igual(j.dias, 1, "a corrida é aplicada quando termina")
 	j.free()
+	d.free()
+
+
+func test_repetir_so_prova_vencida() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	verificar(f.iniciar("aberto", uid, 3, 0.0) != "", "desafio não repete")
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "desafio: uma inscrição")
+	j.free()
+	d.free()
+
+
+func test_fila_guarda_copia_da_preparacao() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	var c: Carro = j.garagem.carro(uid)
+	igual(j.concessionaria.comprar_peca(c, d.peca("turbo")), "", "turbo")
+	c.configuracoes.append({"nome": "turbo", "pecas": ["turbo"], "ajuste_cambio": ""})
+	c.remover(d.peca("turbo")["categoria"])
+	j.vitorias["aberto"] = 1
+	igual(f.iniciar("aberto", uid, 2, 0.0, c.configuracoes[0]), "", "inscrição com a preparação salva")
+	var antes: Dictionary = f.carro_inscrito(j.fila).atributos_efetivos("seco")
+	verificar(antes["potencia"] > c.atributos_efetivos("seco")["potencia"], "inscrito com turbo, garagem sem")
+	c.configuracoes[0]["pecas"] = []
+	c.instalar(d.peca("turbo"))
+	c.remover(d.peca("turbo")["categoria"])
+	igual(f.carro_inscrito(j.fila).atributos_efetivos("seco"), antes, "editar a configuração salva não muda a inscrição")
+	var estado: Dictionary = JSON.parse_string(JSON.stringify(Save.serializar(j)))
+	var k := _jogador(d)
+	igual(Save.desserializar(estado, k, d), "", "load")
+	igual(k.garagem.carro(uid).configuracoes.size(), 1, "configuração salva volta")
+	var fk := _fila(d, k)
+	igual(fk.carro_inscrito(k.fila).atributos_efetivos("seco"), antes, "inscrição volta do save")
+	j.free()
+	k.free()
 	d.free()

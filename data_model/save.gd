@@ -17,6 +17,7 @@ static func serializar(jogador: Node) -> Dictionary:
 			"pneus": c.pneus.map(func(p): return p["id"]),
 			"cor": c.cor,
 			"ajuste_cambio": c.ajuste_cambio,
+			"configuracoes": c.configuracoes,
 		})
 	return {
 		"versao": VERSAO,
@@ -71,6 +72,13 @@ static func validar(s: Variant, dados: Node) -> String:
 			return "fila do save com estrutura inválida"
 		if not dados.existe("eventos", f["evento_id"]) or not int(f["uid"]) in uids:
 			return "fila do save aponta para evento ou carro inexistente"
+		if f.get("config") is Dictionary:
+			for peca_id in f["config"].get("pecas", []):
+				if not dados.existe("pecas", peca_id):
+					return "peça %s não existe mais em data/" % peca_id
+			for pneu_id in f["config"].get("pneus", []):
+				if not dados.existe("pneus", pneu_id):
+					return "pneu %s não existe mais em data/" % pneu_id
 	return ""
 
 
@@ -86,6 +94,13 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		c.pecas_possuidas = cs["pecas_possuidas"]
 		c.cor = String(cs.get("cor", ""))  # opcional: saves antigos sem pintura
 		c.ajuste_cambio = String(cs.get("ajuste_cambio", ""))
+		# Opcional: configurações salvas; peça que saiu de data/ some da configuração.
+		if cs.get("configuracoes") is Array:
+			for cfg in cs["configuracoes"]:
+				if cfg is Dictionary:
+					c.configuracoes.append({"nome": String(cfg.get("nome", "")),
+							"pecas": Array(cfg.get("pecas", [])).filter(func(x): return dados.existe("pecas", x)),
+							"ajuste_cambio": String(cfg.get("ajuste_cambio", ""))})
 		for peca_id in cs["pecas"]:
 			c.instalar(dados.peca(peca_id))
 		for pneu_id in cs["pneus"]:

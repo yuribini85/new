@@ -10,7 +10,7 @@ var _avisos: VBoxContainer
 var _painel_raiz: Control
 var _painel_conteudo: VBoxContainer
 var _painel_titulo: Label
-var _painel_botoes: HBoxContainer
+var _painel_botoes: HFlowContainer
 var _margem: MarginContainer
 var _titulo_cor := Color.WHITE
 
@@ -59,8 +59,10 @@ func _init() -> void:
 	_painel_conteudo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_painel_conteudo.add_theme_constant_override("separation", 12)
 	rolagem.add_child(_painel_conteudo)
-	_painel_botoes = HBoxContainer.new()
-	_painel_botoes.add_theme_constant_override("separation", 12)
+	# Quebra linha quando os botões não cabem lado a lado (celular).
+	_painel_botoes = HFlowContainer.new()
+	_painel_botoes.add_theme_constant_override("h_separation", 12)
+	_painel_botoes.add_theme_constant_override("v_separation", 12)
 	v.add_child(_painel_botoes)
 	# Avisos no topo, empilhados; somem sozinhos.
 	_avisos = VBoxContainer.new()
@@ -113,7 +115,7 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 		var b: Array = botoes[i]
 		var bt := Button.new()
 		bt.text = b[0]
-		bt.custom_minimum_size = Vector2(0, 76)
+		bt.custom_minimum_size = Vector2(150, 76)
 		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		if i == 0 and botoes.size() > 1:
 			# A ação principal em destaque.
@@ -140,7 +142,8 @@ func _ajustar() -> void:
 	await get_tree().process_frame
 	var altura_tela := size.y if size.y > 0.0 else 1280.0
 	var conteudo := _painel_conteudo.get_combined_minimum_size().y
-	var total := conteudo + _painel_titulo.get_combined_minimum_size().y + 76.0 + 44.0 + 28.0 + 6.0
+	var total := conteudo + _painel_titulo.get_combined_minimum_size().y + _painel_botoes.get_combined_minimum_size().y \
+			+ 44.0 + 28.0 + 6.0
 	var margem := maxf(60.0, (altura_tela - total) * 0.5)
 	_margem.add_theme_constant_override("margin_top", int(margem))
 	_margem.add_theme_constant_override("margin_bottom", int(margem))

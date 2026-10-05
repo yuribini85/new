@@ -6,7 +6,13 @@ extends RefCounted
 ## todas as corridas que já teriam terminado são aplicadas em lote; o tempo
 ## ausente conta até `teto_offline_s` (data/carreira.json).
 ##
-## Estado em jogador.fila: {} ou {evento_id, uid, restantes, inicio, semente}.
+## Estado em jogador.fila: {} ou {evento_id, uid, restantes, inicio, semente,
+## config}. `config` é a cópia da preparação na inscrição (Carro.configuracao):
+## mexer no carro ou numa configuração salva depois não muda corridas já
+## programadas. Fila sem `config` (save antigo) usa o carro como está.
+##
+## Repetir (renda automática) só em prova já vencida; a primeira vitória é um
+## desafio, com uma inscrição por vez.
 
 var carreira: Carreira
 var jogador: Node
@@ -25,14 +31,25 @@ func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
 
 
 ## Começa a fila agora. Retorna "" ou o motivo (carro inelegível etc.).
-func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float) -> String:
+## `config` vazio: a preparação atual do carro.
+func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config: Dictionary = {}) -> String:
 	if repeticoes < 1:
 		return "repetições deve ser ao menos 1"
+	if repeticoes > 1 and not jogador.vitorias.has(evento_id):
+		return "repetir só depois de vencer a prova uma vez"
+	var carro: Carro = jogador.garagem.carro(uid)
+	if carro == null:
+		return "carro %d não está na garagem" % uid
+	var cfg: Dictionary = carro.configuracao() if config.is_empty() else config.duplicate(true)
+	cfg.erase("nome")
+	cfg["pneus"] = carro.pneus.map(func(p): return p["id"])
 	var semente := _nova_semente()
-	var teste := carreira.preparar(evento_id, uid, semente, false)
+	var f := {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente,
+			"config": cfg}
+	var teste := _preparar(f, false)
 	if teste.has("erro"):
 		return teste["erro"]
-	jogador.fila = {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente}
+	jogador.fila = f
 	jogador.ultimo_processamento = agora
 	return ""
 
@@ -132,13 +149,23 @@ func processar(agora: float) -> Dictionary:
 	return rel
 
 
-func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
+## Carro como foi inscrito: o da garagem com a configuração guardada na fila.
+func carro_inscrito(f: Dictionary) -> Carro:
 	var carro: Carro = jogador.garagem.carro(int(f["uid"]))
+	if carro != null and f.get("config") is Dictionary:
+		carro = carro.com_configuracao(f["config"], carreira.dados.peca, carreira.dados.pneu)
+	return carro
+
+
+func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
+	var carro := carro_inscrito(f)
 	var assinatura := "" if carro == null else str(carro.atributos_efetivos("seco")) + str(carro.atributos_efetivos("chuva"))
 	var chave := "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura]
 	if chave == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
 		return _cache
-	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras)
+	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras, carro)
+	if carro == null:
+		c = {"erro": "carro %d não está na garagem" % int(f["uid"])}
 	c["com_amostras"] = com_amostras
 	if not c.has("erro"):
 		_cache_chave = chave

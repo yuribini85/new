@@ -265,6 +265,10 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				_ir_para(2)
 				atualizar()],
 			["Outra prova", func(): _ir_para(3)]]
+		var carro_corrida: Carro = jogador.garagem.carro(c["uid"])
+		if not venceu and carro_corrida != null:
+			# Derrota: comparar preparações antes de gastar outra corrida inteira.
+			botoes.insert(1, ["Testar preparação", func(): g.testar_preparacao(c["evento_id"], carro_corrida)])
 		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
 		var alvo_obj: Array = Objetivos.lista(jogador, dados)
 		var i_obj := Objetivos.atual(alvo_obj)

@@ -30,6 +30,7 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 		abas.append(a)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
 	j.carro_ativo = uid
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	j.fila_ctrl.iniciar("aberto", uid, 2, Time.get_unix_time_from_system())
 	for a in abas:
 		a.atualizar()

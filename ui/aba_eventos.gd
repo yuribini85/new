@@ -3,6 +3,10 @@ extends Aba
 signal correr_iniciado
 
 var _repeticoes := 1
+## Preparação para a inscrição: -1 = a atual do carro; senão índice em
+## Carro.configuracoes. A fila guarda uma cópia dela.
+var _config := -1
+var _config_uid := -1
 ## Estimativas simuladas sob demanda: chave (prova + carro + peças) -> faixa,
 ## ou "..." enquanto calcula.
 var _estimativas := {}
@@ -21,11 +25,16 @@ func _init(d: Node, j: Node) -> void:
 
 func construir() -> void:
 	rotulo("Competições", FONTE_TITULO)
-	var c := carro_ativo()
-	if c == null:
+	var garagem := carro_ativo()
+	if garagem == null:
 		proximo_passo("Você precisa de um carro para correr.", "Ir para o Mercado", LOJA)
 		return
-	_carro_em_uso(c)
+	if _config_uid != garagem.uid or _config >= garagem.configuracoes.size():
+		_config = -1
+		_config_uid = garagem.uid
+	# Daqui em diante, o carro com a preparação escolhida para a inscrição.
+	var c := garagem if _config < 0 else garagem.com_configuracao(garagem.configuracoes[_config], dados.peca)
+	_carro_em_uso(garagem, c)
 	if not jogador.fila.is_empty():
 		_fila()
 	else:
@@ -81,9 +90,9 @@ func construir() -> void:
 
 
 ## Carro em uso numa linha: foto, nome e números; trocar leva à Garagem.
-func _carro_em_uso(c: Carro) -> void:
+func _carro_em_uso(garagem: Carro, c: Carro) -> void:
 	var h := fileira()
-	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c))
+	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(garagem))
 	img.custom_minimum_size = Vector2(130, 72)
 	h.add_child(img)
 	var a := c.atributos_efetivos("seco")
@@ -92,6 +101,21 @@ func _carro_em_uso(c: Carro) -> void:
 	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var b := botao_texto("Trocar", func(): ir_para.emit(GARAGEM), h)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if garagem.configuracoes.is_empty():
+		return
+	var hp := fileira()
+	rotulo("Preparação", FONTE_PEQUENA + 2, COR_SECUNDARIA, hp).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var o := OptionButton.new()
+	o.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	o.custom_minimum_size = Vector2(0, 60)
+	o.add_item("Atual (como está na Oficina)")
+	for cfg in garagem.configuracoes:
+		o.add_item(cfg["nome"])
+	o.select(_config + 1)
+	o.item_selected.connect(func(i):
+		_config = i - 1
+		mudou.emit())
+	hp.add_child(o)
 
 
 func _fila() -> void:
@@ -150,7 +174,7 @@ static func _tempo(s: float) -> String:
 
 func _repeticoes_ui() -> void:
 	var h := fileira()
-	rotulo("Repetir a prova", FONTE_PEQUENA + 2, COR_SECUNDARIA, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	rotulo("Renda: repetir vencidas", FONTE_PEQUENA + 2, COR_SECUNDARIA, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	botao("−", func(): _repeticoes = maxi(1, _repeticoes - 1), _repeticoes > 1, false, h).custom_minimum_size = Vector2(80, 60)
 	var n := Label.new()
 	n.text = "×%d" % _repeticoes
@@ -229,8 +253,11 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		else:
 			rotulo("Estimativa: %s\n%d corridas simuladas, preparação atual" % [Mecanico.texto_faixa(est), Mecanico.AMOSTRAS],
 					FONTE_PEQUENA, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		botao("Correr" if _repeticoes == 1 else "Correr ×%d" % _repeticoes, _correr.bind(ev["id"]),
-				jogador.fila.is_empty(), true, h)
+		var rotulo_correr := "Desafiar"
+		if vitorias > 0:
+			rotulo_correr = "Correr" if _repeticoes == 1 else "Correr ×%d" % _repeticoes
+		botao(rotulo_correr, _correr.bind(ev["id"]), jogador.fila.is_empty(), true, h)
+		botao_texto("Testar preparação", func(): testar_preparacao(ev["id"], carro_ativo()), v)
 	else:
 		rotulo("✗ " + "; ".join(motivos), FONTE_PEQUENA, COR_RUIM, h)
 
@@ -283,8 +310,7 @@ func _potencia_peso(c: Carro, ev: Dictionary) -> Array:
 
 ## Chave da estimativa: muda se o carro, as peças ou os pneus mudarem.
 static func _chave(ev: Dictionary, c: Carro) -> String:
-	return "%s|%d|%s|%s" % [ev["id"], c.uid, str(c.pecas.keys().map(func(k): return c.pecas[k]["id"])),
-			str(c.pneus.map(func(p): return p["id"]))]
+	return "%s|%d|%s|%s" % [ev["id"], c.uid, str(c.configuracao()), str(c.pneus.map(func(p): return p["id"]))]
 
 
 ## Simula a prova com o carro em uso (Mecanico.avaliar, mesmas sementes do
@@ -323,10 +349,16 @@ func _regras(r: Dictionary) -> Array:
 	return t
 
 
+## Prova vencida: renda automática (repete). Ainda não vencida: desafio,
+## uma inscrição. A fila guarda a preparação escolhida.
 func _correr(evento_id: String) -> void:
-	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, _repeticoes, Time.get_unix_time_from_system())
+	var garagem := carro_ativo()
+	var n := _repeticoes if jogador.vitorias.has(evento_id) else 1
+	var cfg: Dictionary = {} if _config < 0 or garagem == null else garagem.configuracoes[_config]
+	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, n, Time.get_unix_time_from_system(), cfg)
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
-	avisar("Largada! %s%s." % [dados.evento(evento_id)["nome"], "" if _repeticoes == 1 else " ×%d" % _repeticoes])
+	avisar("%s %s%s." % ["Largada!" if n > 1 or jogador.vitorias.has(evento_id) else "Desafio:",
+			dados.evento(evento_id)["nome"], "" if n == 1 else " ×%d" % n])
 	correr_iniciado.emit()

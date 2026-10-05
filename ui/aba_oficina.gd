@@ -95,9 +95,9 @@ func construir() -> void:
 	numeros([["%d" % seco["potencia"], "cv"], ["%d" % seco["peso"], "kg"], ["%.2f" % seco["aderencia"], "aderência"],
 			["%.2f" % seco["freio"], "freio"]])
 	if _correndo(c):
-		var vf := cartao(COR_BOM)
-		rotulo("Este carro está na fila de corrida. Peças só depois que a fila acabar (ou pare-a em Competições).",
-				FONTE_PEQUENA + 2, Color.WHITE, vf)
+		rotulo("Na fila de corrida: as corridas programadas usam a preparação da inscrição. O que mudar aqui vale para a próxima.",
+				FONTE_PEQUENA + 1, COR_INFO)
+	_configuracoes(c)
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
 	for g in GRUPOS:
@@ -117,8 +117,54 @@ func construir() -> void:
 	else:
 		_pecas(c, seco)
 	if not c.pecas.is_empty():
-		botao_texto("Voltar à configuração de fábrica", func(): _fabrica(c), null, not _correndo(c))
+		botao_texto("Voltar à configuração de fábrica", func(): _fabrica(c), null)
 	botao("Escolher uma prova", func(): ir_para.emit(EVENTOS), true, false)
+
+
+## Preparações salvas: o jogador constrói opções ("até 150 cv", "retas") e
+## troca entre elas de graça. Só peças já compradas para o carro.
+func _configuracoes(c: Carro) -> void:
+	var v := cartao()
+	rotulo("PREPARAÇÕES SALVAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var atual := c.configuracao()
+	if c.configuracoes.is_empty():
+		rotulo("Salve a preparação atual para voltar a ela depois, sem custo (ex.: \"até 150 cv\", \"retas\").",
+				FONTE_PEQUENA, COR_SECUNDARIA, v)
+	for i in c.configuracoes.size():
+		var cfg: Dictionary = c.configuracoes[i]
+		var em_uso: bool = cfg["pecas"] == atual["pecas"] and cfg["ajuste_cambio"] == atual["ajuste_cambio"]
+		var a := c.com_configuracao(cfg, dados.peca).atributos_efetivos("seco")
+		var h := fileira(v)
+		var l := rotulo("%s\n%d cv · %d kg · %d peça%s%s" % [cfg["nome"], a["potencia"], a["peso"], cfg["pecas"].size(),
+				"" if cfg["pecas"].size() == 1 else "s", " · em uso" if em_uso else ""],
+				FONTE_PEQUENA + 1, COR_BOM if em_uso else Color.WHITE, h)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		botao("Equipar", func():
+			var fora: Array = c.equipar(cfg, dados.peca)
+			avisar("Equipada: %s%s." % [cfg["nome"], "" if fora.is_empty() else " (faltam %d peça%s não compradas)" % [
+					fora.size(), "" if fora.size() == 1 else "s"]], fora.is_empty())
+			mudou.emit(), not em_uso, false, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		botao_texto("Apagar", func():
+			c.configuracoes.remove_at(i)
+			mudou.emit(), h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	botao_texto("Salvar a preparação atual", _salvar_configuracao.bind(c), v)
+
+
+func _salvar_configuracao(c: Carro) -> void:
+	var nome := LineEdit.new()
+	nome.text = "%d cv" % roundi(c.atributos_efetivos("seco")["potencia"])
+	nome.max_length = 24
+	nome.custom_minimum_size = Vector2(0, 64)
+	nome.select_all_on_focus = true
+	painel.emit("Salvar preparação", func(v):
+		rotulo("Nome (por exemplo, o limite de uma prova ou o tipo de pista):", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
+		v.add_child(nome), [["Salvar", func():
+			var cfg := c.configuracao()
+			cfg["nome"] = nome.text.strip_edges() if nome.text.strip_edges() != "" else "Preparação %d" % (c.configuracoes.size() + 1)
+			c.configuracoes.append(cfg)
+			avisar("Preparação salva: %s." % cfg["nome"])
+			mudou.emit()], ["Cancelar", func(): pass]])
 
 
 func _correndo(c: Carro) -> bool:
@@ -165,7 +211,6 @@ func _ajuste_cambio(pai: Control, c: Carro) -> void:
 		b.text = aj[1]
 		b.toggle_mode = true
 		b.button_pressed = c.ajuste_cambio == aj[0]
-		b.disabled = _correndo(c)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.custom_minimum_size = Vector2(0, 64)
 		b.pressed.connect(func():
@@ -246,7 +291,7 @@ static func _ganho(antes: Dictionary, depois: Dictionary) -> String:
 func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, perde: Array, instalada: bool,
 		possuida: bool) -> void:
 	var attr: String = AFETA_CATEGORIA.get(p["categoria"], "potencia")
-	var livre := not _correndo(c)
+	var livre := true
 	var botoes := []
 	if instalada:
 		botoes = [["Remover", func():
@@ -285,8 +330,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 		elif not jogador.economia.pode_pagar(int(p["preco"])):
 			rotulo("Custa %s Cr; faltam %s Cr." % [dinheiro(int(p["preco"])), dinheiro(int(p["preco"]) - jogador.economia.saldo)],
 					FONTE_PEQUENA + 2, COR_RUIM, v)
-		if not livre:
-			rotulo("O carro está na fila de corrida: espere a fila acabar.", FONTE_PEQUENA + 2, COR_RUIM, v), botoes)
+		pass, botoes)
 
 
 func _pneus(c: Carro) -> void:

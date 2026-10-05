@@ -491,3 +491,66 @@ static func nome_pista(id: String) -> String:
 	for p in id.split("_"):
 		palavras.append(p if p in ["do", "da", "das", "de", "dos"] else p.capitalize())
 	return " ".join(palavras)
+
+
+## Teste de preparação: compara duas preparações do carro na prova, sem
+## prêmio e sem contar dia (Mecanico.avaliar, mesmas sementes para as duas).
+## Opções: a atual, as salvas e a de fábrica. "Equipar" troca no carro.
+func testar_preparacao(evento_id: String, carro: Carro) -> void:
+	var opcoes := [["Atual", carro.configuracao()]]
+	for cfg in carro.configuracoes:
+		opcoes.append([cfg["nome"], cfg])
+	opcoes.append(["De fábrica", {"pecas": [], "ajuste_cambio": ""}])
+	var escolhas := [0, 1 if opcoes.size() > 1 else 0]
+	painel.emit("Testar preparação", func(v):
+		rotulo("%s · %s. Sem prêmio: só compara, com as mesmas %d corridas simuladas para as duas." % [
+				carro.base["nome"], dados.evento(evento_id)["nome"], Mecanico.AMOSTRAS], FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+		var resultado := VBoxContainer.new()
+		for k in 2:
+			var h := fileira(v)
+			rotulo("AB"[k], 30, COR_DESTAQUE, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			var o := OptionButton.new()
+			o.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			o.custom_minimum_size = Vector2(0, 60)
+			for op in opcoes:
+				o.add_item(op[0])
+			o.select(escolhas[k])
+			o.item_selected.connect(func(i): escolhas[k] = i)
+			h.add_child(o)
+		var comparar := botao("Comparar", func(): pass, true, true, v)
+		v.add_child(resultado)
+		comparar.pressed.connect(func():
+			for x in resultado.get_children():
+				x.queue_free()
+			rotulo("Comparando…", FONTE_PEQUENA + 2, COR_INFO, resultado)
+			await get_tree().process_frame
+			await get_tree().process_frame
+			for x in resultado.get_children():
+				x.queue_free()
+			var medias := []
+			for k in 2:
+				var op: Array = opcoes[escolhas[k]]
+				var montado := carro.com_configuracao(op[1], dados.peca)
+				var a := Mecanico.avaliar(jogador.carreira, evento_id, carro.uid, montado)
+				var at := montado.atributos_efetivos(dados.evento(evento_id)["condicao"])
+				if a.is_empty():
+					medias.append(INF)
+					rotulo("%s · %s: não pode correr esta prova." % ["AB"[k], op[0]], FONTE_PEQUENA + 2, COR_RUIM, resultado)
+				else:
+					medias.append(a["media"])
+					rotulo("%s · %s: %s (média %.1fº) · %d cv · %d kg" % ["AB"[k], op[0], Mecanico.texto_faixa(a["faixa"]),
+							a["media"], at["potencia"], at["peso"]], FONTE_PEQUENA + 2, Color.WHITE, resultado)
+			var melhor := -1
+			if absf(medias[0] - medias[1]) >= Mecanico.GANHO_MINIMO:
+				melhor = 0 if medias[0] < medias[1] else 1
+			if melhor < 0:
+				rotulo("Diferença pequena demais para separar as duas.", FONTE_PEQUENA + 2, COR_SECUNDARIA, resultado)
+				return
+			var op_m: Array = opcoes[escolhas[melhor]]
+			rotulo("Melhor aqui: %s." % op_m[0], FONTE_PEQUENA + 3, COR_BOM, resultado)
+			if op_m[1]["pecas"] != carro.configuracao()["pecas"] or op_m[1].get("ajuste_cambio", "") != carro.ajuste_cambio:
+				botao("Equipar %s" % op_m[0], func():
+					var fora: Array = carro.equipar(op_m[1], dados.peca)
+					avisar("Equipada: %s%s." % [op_m[0], "" if fora.is_empty() else " (sem %d peça%s não compradas)" % [
+							fora.size(), "" if fora.size() == 1 else "s"]], fora.is_empty())
+					mudou.emit(), true, false, resultado)))

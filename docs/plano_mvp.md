@@ -139,9 +139,12 @@ técnico real do projeto.
 3. **Um carro por vez, com fila de repetições.** O jogador escolhe evento, carro e número
    de repetições; offline, a fila é consumida. Corridas simultâneas com vários carros
    ficam fora do primeiro build.
-4. **Licença é teste de tempo com o carro do próprio jogador.** Tempo-alvo numa pista,
-   sob uma restrição de entrada. O resultado depende da compra e da preparação. Usa a
-   mesma simulação das corridas. Graus ouro, prata e bronze.
+4. **Licença é uma série de contratos de certificação do piloto automático**
+   (substitui o teste de tempo com o carro do jogador). A escola empresta carro e peças,
+   sem custo; o jogador monta a solução, envia para avaliação (execução automática, mesma
+   simulação das corridas) e recebe um diagnóstico ao concluir. Bronze cumpre o contrato e
+   libera a licença; prata e ouro acrescentam condições explícitas. Primeiros contratos:
+   "O pequeno contra o gigante", "O último crédito", "Dois circuitos, um carro".
 5. **Usados giram por número de corridas**, não por tempo real. Cada corrida conta como
    um dia, como no GT2. Imune a manipulação do relógio; a fila offline avança o estoque.
 6. **Fabricantes: 3 no primeiro build, 8 a 10 no lançamento.** Primeiro build: uma
@@ -206,3 +209,18 @@ técnico real do projeto.
     equilibrado e longo (passo provisório). `tools/provas_profundidade.gd` verifica as três
     provas de profundidade: menos potente que vence onde é adequado, ajuste que muda
     com a pista e usado preparado que alcança carro mais caro.
+26. **Renda e desafio separados.** Repetir uma prova (renda automática, fila com
+    repetições) só depois de vencê-la; antes disso, cada inscrição é um desafio de uma
+    corrida. Teste de preparação: compara duas preparações na prova, sem prêmio e sem
+    contar dia. Após uma derrota, o resultado oferece "Testar preparação".
+27. **Peças compradas × preparação equipada.** Peças pertencem ao carro; a preparação
+    equipada muda de graça e pode ser salva com nome por carro. A fila guarda uma cópia
+    da preparação (peças, câmbio e pneus) na inscrição: mexer no carro ou numa preparação
+    salva depois não muda corridas já programadas.
+28. **Campeonatos sem pontos neste build** (mantém a 20): rivais persistentes e progresso
+    das etapas vencidas, sem classificação acumulada.
+29. **Um carro por vez** (mantém a 3): sem ocupação de carros nem corridas paralelas; a
+    utilidade da coleção vem das restrições e das características das provas.
+30. **Hipótese de balanceamento, não regra:** uma compra importante custa de uma a duas
+    sessões. Antes de ajustar preços: definir a duração da sessão e medir a renda ativa e
+    offline.

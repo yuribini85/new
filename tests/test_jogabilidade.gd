@@ -83,6 +83,7 @@ func test_relogio_voltando_nao_aplica_nem_estraga_a_fila() -> void:
 	var j := _jogador(d)
 	j.economia.creditar(10000)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	igual(j.fila_ctrl.iniciar("aberto", uid, 2, 5000.0), "", "iniciar")
 	var r: Dictionary = j.fila_ctrl.processar(1000.0)  # relógio atrasado
 	igual(r["corridas"].size(), 0, "nada aplicado")
@@ -95,16 +96,19 @@ func test_relogio_voltando_nao_aplica_nem_estraga_a_fila() -> void:
 	d.free()
 
 
-func test_prova_que_deixa_de_aceitar_o_carro_para_a_fila_com_motivo() -> void:
+func test_peca_depois_da_inscricao_nao_tira_o_carro_da_prova() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.vitorias["ff_ate_120"] = 1  # repetir exige a prova já vencida
 	igual(j.fila_ctrl.iniciar("ff_ate_120", uid, 3, 0.0), "", "fraco cabe na Copa FF")
 	j.economia.creditar(1000)
 	igual(j.concessionaria.comprar_peca(j.garagem.carro(uid), d.peca("turbo")), "", "turbo")
 	var r: Dictionary = j.fila_ctrl.processar(100000.0)
-	verificar(String(r["erro"]).contains("potência"), "motivo da parada: %s" % r["erro"])
-	verificar(j.fila.is_empty(), "fila parada")
+	igual(r["erro"], "", "a inscrição guardou a preparação de antes do turbo")
+	igual(r["corridas"].size(), 3, "três corridas")
+	# A próxima inscrição usa a preparação nova e é recusada com o motivo.
+	verificar(j.fila_ctrl.iniciar("ff_ate_120", uid, 1, 100000.0).contains("potência"), "nova inscrição recusada")
 	j.free()
 	d.free()
 
@@ -113,6 +117,7 @@ func test_parar_apos_a_atual() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	j.fila_ctrl.iniciar("aberto", uid, 5, 0.0)
 	j.fila_ctrl.parar_apos_atual()
 	var r: Dictionary = j.fila_ctrl.processar(100000.0)
@@ -126,6 +131,7 @@ func test_historico_registra_evolucao_e_vai_para_o_save() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
 	j.fila_ctrl.iniciar("aberto", uid, 2, 0.0)
 	j.fila_ctrl.processar(100000.0)
 	var h: Dictionary = j.historico["aberto"]
