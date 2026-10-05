@@ -162,7 +162,16 @@ func _repeticoes_ui() -> void:
 func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var pode := motivos.is_empty()
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
-	var v := cartao()
+	var tipo := _tipo(ev)
+	var v := cartao(tipo[1])
+	# Faixa de identidade: tipo da série e dificuldade estimada para o seu carro.
+	var faixa := fileira(v)
+	var t := rotulo(tipo[0].to_upper(), FONTE_PEQUENA, tipo[1].lightened(0.35), faixa)
+	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if pode:
+		var dif := _dificuldade(c, ev)
+		if not dif.is_empty():
+			selo(dif[0], dif[1], faixa)
 	var topo := fileira(v)
 	var fundo := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
@@ -189,21 +198,63 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		etiquetas.append(["VENCIDA ×%d" % vitorias, COR_BOM])
 	for r in _regras(ev["restricoes"]).slice(0, 3):
 		etiquetas.append([r, COR_NEUTRA.lightened(0.3)])
-	if ev.get("carro_premio") != null and vitorias == 0:
-		etiquetas.append(["+ carro-prêmio", COR_INFO])
 	selos(etiquetas, v)
+	# Recompensa especial: o carro-prêmio aparece no cartão.
+	if ev.get("carro_premio") != null and vitorias == 0:
+		var cp: Dictionary = dados.carro(ev["carro_premio"])
+		var hp := fileira(v)
+		var img := icone_carro(cp)
+		img.custom_minimum_size = Vector2(150, 84)
+		hp.add_child(img)
+		var lp := rotulo("PRÊMIO ESPECIAL\n%s na 1ª vitória" % cp.get("nome", ""), FONTE_PEQUENA, COR_INFO.lightened(0.3), hp)
+		lp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var h := fileira(v)
 	if pode:
 		var hist: Dictionary = jogador.historico.get(ev["id"], {})
 		var l := rotulo("Seu melhor: %dº" % hist["melhor_pos"] if not hist.is_empty() else "", FONTE_PEQUENA,
 				COR_SECUNDARIA, h)
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		if ev.get("carro_premio") != null and vitorias == 0:
-			botao_texto("Ver o carro", func(): ficha_modelo(dados.carro(ev["carro_premio"])), h)
 		botao("Correr" if _repeticoes == 1 else "Correr ×%d" % _repeticoes, _correr.bind(ev["id"]),
 				jogador.fila.is_empty(), true, h)
 	else:
 		rotulo("✗ " + "; ".join(motivos), FONTE_PEQUENA, COR_RUIM, h)
+
+
+## Tipo da série pelo que ela exige: [nome, cor de identidade].
+func _tipo(ev: Dictionary) -> Array:
+	var r: Dictionary = ev["restricoes"]
+	if r.has("tracao"):
+		var t: String = r["tracao"][0]
+		return [{"FF": "Tração dianteira", "FR": "Tração traseira", "4WD": "Tração integral", "MR": "Motor central"}.get(t, "Tração " + t),
+				{"FF": Color(0.25, 0.6, 0.9), "FR": Color(0.9, 0.35, 0.3), "4WD": Color(0.85, 0.65, 0.2), "MR": Color(0.7, 0.4, 0.9)}.get(t, COR_INFO)]
+	if r.has("ano_max"):
+		return ["Clássicos", Color(0.8, 0.55, 0.3)]
+	if r.has("potencia_max") and float(r["potencia_max"]) <= 200.0:
+		return ["Potência limitada", Color(0.35, 0.75, 0.5)]
+	if r.has("potencia_max"):
+		return ["Até %d cv" % r["potencia_max"], Color(0.3, 0.7, 0.75)]
+	return ["Aberta", Color(0.75, 0.75, 0.8)]
+
+
+## Dificuldade estimada para o carro em uso: potência por peso dele contra a
+## mediana dos rivais da prova (atributos efetivos, com peças e pneus). É só
+## uma leitura rápida; "O que ajuda?" simula de verdade.
+func _dificuldade(c: Carro, ev: Dictionary) -> Array:
+	var meu := c.atributos_efetivos(ev["condicao"])
+	var rivais := []
+	for i in ev["adversarios"].size():
+		var a: Dictionary = jogador.carreira.atributos_participante(ev["id"], "adv%d_%s" % [i, ev["adversarios"][i]["carro"]], c.uid)
+		if not a.is_empty():
+			rivais.append(a["potencia"] / maxf(a["peso"], 1.0))
+	if rivais.is_empty():
+		return []
+	rivais.sort()
+	var razao: float = (meu["potencia"] / maxf(meu["peso"], 1.0)) / maxf(rivais[rivais.size() / 2], 1e-6)
+	if razao >= 1.08:
+		return ["Fácil para você", COR_BOM]
+	if razao >= 0.95:
+		return ["Equilibrada", COR_INFO]
+	return ["Difícil para você", COR_RUIM]
 
 
 ## Regras da prova em texto curto ("até 150 cv", "tração FF").

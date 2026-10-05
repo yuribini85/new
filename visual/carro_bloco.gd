@@ -12,9 +12,9 @@ extends Node3D
 ## Silhueta por categoria (m): comprimento, largura, altura da cintura, cabine
 ## (fração do comprimento, altura, recuo do centro) e se tem teto.
 const FORMAS := {
-	"compacto": {"c": 3.8, "l": 1.66, "h": 0.62, "cab": 0.56, "hc": 0.62, "recuo": -0.14, "teto": true},
-	"seda": {"c": 4.6, "l": 1.76, "h": 0.6, "cab": 0.46, "hc": 0.56, "recuo": -0.06, "teto": true},
-	"cupe": {"c": 4.35, "l": 1.74, "h": 0.54, "cab": 0.4, "hc": 0.48, "recuo": -0.14, "teto": true},
+	"compacto": {"c": 3.75, "l": 1.66, "h": 0.6, "cab": 0.62, "hc": 0.72, "recuo": -0.17, "teto": true},
+	"seda": {"c": 4.6, "l": 1.76, "h": 0.6, "cab": 0.44, "hc": 0.6, "recuo": -0.04, "teto": true},
+	"cupe": {"c": 4.35, "l": 1.74, "h": 0.52, "cab": 0.4, "hc": 0.46, "recuo": -0.14, "teto": true},
 	"roadster": {"c": 4.0, "l": 1.72, "h": 0.52, "cab": 0.22, "hc": 0.32, "recuo": -0.06, "teto": false},
 }
 const RAIO_RODA := 0.33
@@ -33,7 +33,7 @@ func configurar(categoria: String, cor: Color) -> CarroBloco:
 	return configurar_modelo({"id": categoria, "categoria": categoria}, cor)
 
 
-## Silhueta da categoria com as variações do modelo.
+## Silhueta da categoria com o desenho do modelo (ver forma()).
 func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 	for c in get_children():
 		c.queue_free()
@@ -45,72 +45,113 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 	var corpo := MeshInstance3D.new()
 	corpo.mesh = carroceria(f, cor)
 	add_child(corpo)
-	var cintura: float = r * 0.9 + f["h"]
+	var c := comprimento
+	var l := largura
+	var cint_frente := cintura_em(f, c * 0.45)
+	# Altura do bico (o capô cai até ele): faróis e grade ficam abaixo disto.
+	var bico: float = perfil(f, c * 0.47)[0]
+	var cint_tras := cintura_em(f, -c * 0.45)
 	var escuro := _material(Color(0.06, 0.06, 0.07))
-	var cromado := _material(Color(0.78, 0.8, 0.84))
-	cromado.metallic = 0.8
-	cromado.roughness = 0.25
-	_caixa(Vector3(0.05, 0.16, largura * 0.5), Vector3(comprimento * 0.5 + 0.005, r * 0.9 + f["h"] * 0.35, 0), escuro)
-	var farol := _material(Color(1.0, 0.96, 0.78))
+	var aro := _material(f["cor_aro"])
+	aro.metallic = 0.6
+	aro.roughness = 0.4
+	var cromado := _material(Color(0.72, 0.74, 0.78))
+	cromado.metallic = 0.6
+	cromado.roughness = 0.35
+	var pintura := _material(cor)
+	# Grade: larga com moldura (Hartwig), fenda fina (Hayase), redonda (Ashcombe).
+	match f["grade"]:
+		"larga":
+			_caixa(Vector3(0.05, 0.2, l * 0.56), Vector3(c * 0.5 + 0.005, bico - 0.2, 0), cromado)
+			_caixa(Vector3(0.06, 0.15, l * 0.5), Vector3(c * 0.5 + 0.01, bico - 0.2, 0), escuro)
+		"redonda":
+			_cilindro_em(0.12, 0.05, Vector3(c * 0.5 + 0.005, bico - 0.22, 0), escuro, Vector3(0, 0, PI / 2.0))
+		_:
+			_caixa(Vector3(0.05, 0.08, l * 0.44), Vector3(c * 0.5 + 0.005, bico - 0.22, 0), escuro)
+	# Faróis: escamoteáveis (anos 80, fechados: só uma linha), redondos ou finos.
+	var farol := _material(Color(1.0, 0.97, 0.85))
 	farol.emission_enabled = true
-	farol.emission = Color(1.0, 0.95, 0.75) * 0.6
-	var lanterna := _material(Color(0.85, 0.08, 0.08))
+	farol.emission = Color(1.0, 0.95, 0.8) * 0.35
+	var lanterna := _material(Color(0.8, 0.07, 0.07))
 	lanterna.emission_enabled = true
-	lanterna.emission = Color(0.6, 0.02, 0.02)
+	lanterna.emission = Color(0.5, 0.02, 0.02)
 	for z in [-1.0, 1.0]:
-		_caixa(Vector3(0.05, 0.11, 0.34), Vector3(comprimento * 0.5 - 0.01, cintura - 0.17, z * largura * 0.33), farol)
-		_caixa(Vector3(0.05, 0.1, 0.36), Vector3(-comprimento * 0.5 + 0.01, cintura - 0.12, z * largura * 0.33), lanterna)
+		match f["farol"]:
+			"escamoteavel":
+				_caixa(Vector3(0.3, 0.03, 0.42), Vector3(c * 0.42, perfil(f, c * 0.42)[0] + 0.005, z * l * 0.3), escuro)
+			"redondo":
+				_cilindro_em(0.1, 0.05, Vector3(c * 0.5, bico - 0.11, z * l * 0.32), farol, Vector3(0, 0, PI / 2.0))
+			_:
+				_caixa(Vector3(0.05, 0.09, 0.38), Vector3(c * 0.5 - 0.01, bico - 0.08, z * l * 0.31), farol)
+		_caixa(Vector3(0.05, 0.11 if f["lanterna_alta"] else 0.08, 0.42), Vector3(-c * 0.5 + 0.01, cint_tras - 0.1, z * l * 0.31), lanterna)
 		if f["teto"]:
-			var xr: float = comprimento * f["recuo"] + comprimento * f["cab"] * 0.36
-			_caixa(Vector3(0.12, 0.09, 0.14), Vector3(xr, cintura + 0.06, z * (largura * 0.5 + 0.05)), _material(cor.darkened(0.2)))
-	match f["estilo"]:
-		"cupe":
-			if f["aerofolio"]:
-				_caixa(Vector3(0.28, 0.05, largura * 0.92), Vector3(-comprimento * 0.47, cintura + 0.24, 0), _material(cor.darkened(0.1)))
-				for z in [-1.0, 1.0]:
-					_caixa(Vector3(0.08, 0.22, 0.06), Vector3(-comprimento * 0.47, cintura + 0.11, z * largura * 0.32), escuro)
-		"esportivo":
-			_caixa(Vector3(0.08, 0.38, largura * 0.62), Vector3(-comprimento * 0.13, cintura + 0.19, 0), escuro)
-		"hatch":
-			var xt: float = comprimento * f["recuo"] - comprimento * f["cab"] * 0.5
-			_caixa(Vector3(0.18, 0.04, largura * 0.8), Vector3(xt - 0.02, cintura + f["hc"] - 0.02, 0), _material(cor.darkened(0.15)))
+			var xr: float = c * f["recuo"] + c * f["cab"] * 0.36
+			_caixa(Vector3(0.12, 0.08, 0.12), Vector3(xr, cintura_em(f, xr) + 0.06, z * (l * 0.5 + 0.05)), pintura)
+		if f["tomadas_laterais"]:
+			var xt: float = c * f["recuo"] - c * f["cab"] * 0.55
+			_caixa(Vector3(0.45, 0.16, 0.04), Vector3(xt, cintura_em(f, xt) - 0.14, z * l * 0.5), escuro)
+		if f["escape_duplo"]:
+			_cilindro_em(0.05, 0.12, Vector3(-c * 0.5 - 0.03, 0.26, z * l * 0.22), cromado, Vector3(0, 0, PI / 2.0))
+	# Tomada de ar no capô (rali, muscle).
+	if f["tomada_capo"]:
+		var xc: float = c * f["recuo"] + c * f["cab"] * 0.5 + c * 0.1
+		_caixa(Vector3(0.5, 0.08, l * 0.32), Vector3(xc, cintura_em(f, xc) + 0.03, 0), escuro)
+	match f["asa"]:
+		"grande":
+			_caixa(Vector3(0.32, 0.05, l * 0.98), Vector3(-c * 0.46, cint_tras + 0.34, 0), pintura)
+			for z in [-1.0, 1.0]:
+				_caixa(Vector3(0.1, 0.32, 0.05), Vector3(-c * 0.46, cint_tras + 0.17, z * l * 0.3), escuro)
+		"aerofolio":
+			_caixa(Vector3(0.26, 0.05, l * 0.9), Vector3(-c * 0.47, cint_tras + 0.2, 0), pintura)
+			for z in [-1.0, 1.0]:
+				_caixa(Vector3(0.08, 0.18, 0.05), Vector3(-c * 0.47, cint_tras + 0.09, z * l * 0.3), escuro)
+		"labio":
+			_caixa(Vector3(0.16, 0.05, l * 0.86), Vector3(-c * 0.48, cint_tras + 0.03, 0), pintura)
+		"teto":
+			var xt: float = c * f["recuo"] - c * f["cab"] * 0.5
+			_caixa(Vector3(0.18, 0.04, l * 0.8), Vector3(xt - 0.02, cintura_em(f, xt) + f["hc"] - 0.02, 0), pintura)
+	if f["estilo"] == "esportivo":
+		_caixa(Vector3(0.08, 0.36, l * 0.6), Vector3(-c * 0.12, cintura_em(f, -c * 0.12) + 0.18, 0), escuro)
+	# Rodas: pneu, aro na cor do modelo e raios; traseiras maiores no muscle.
 	var pneu := _material(Color(0.07, 0.07, 0.08))
-	var entre: float = comprimento * f["entre_eixos"] * 0.5
-	for x in [-entre, entre]:
+	var entre: float = c * f["entre_eixos"] * 0.5
+	var desloc: float = c * f.get("eixos_desloc", 0.0)
+	for x in [-entre + desloc, entre + desloc]:
+		var rr: float = r * (f["roda_tras"] if x < desloc else 1.0)
 		for z in [-1.0, 1.0]:
 			var caixa_roda := MeshInstance3D.new()
-			caixa_roda.mesh = _cilindro(r + 0.06, 0.3)
+			caixa_roda.mesh = _cilindro(rr + 0.06, 0.3)
 			caixa_roda.material_override = escuro
 			caixa_roda.rotation = Vector3(PI / 2.0, 0, 0)
-			caixa_roda.position = Vector3(x, r + 0.02, z * (largura * 0.5 - 0.13))
+			caixa_roda.position = Vector3(x, rr + 0.02, z * (l * 0.5 - 0.13))
 			add_child(caixa_roda)
 			var roda := Node3D.new()
-			roda.position = Vector3(x, r, z * (largura * 0.5 - 0.1))
+			roda.position = Vector3(x, rr, z * (l * 0.5 - 0.1 + f["largura_pneu"] * 0.5 - 0.12))
 			add_child(roda)
 			var p := MeshInstance3D.new()
-			p.mesh = _cilindro(r, 0.24)
+			p.mesh = _cilindro(rr, f["largura_pneu"])
 			p.material_override = pneu
 			p.rotation = Vector3(PI / 2.0, 0, 0)
 			roda.add_child(p)
-			var aro := MeshInstance3D.new()
-			aro.mesh = _cilindro(r * 0.62, 0.02)
-			aro.material_override = cromado
-			aro.rotation = Vector3(PI / 2.0, 0, 0)
-			aro.position.z = z * 0.125
-			roda.add_child(aro)
+			var disco := MeshInstance3D.new()
+			disco.mesh = _cilindro(rr * f["aro"], 0.02)
+			disco.material_override = aro
+			disco.rotation = Vector3(PI / 2.0, 0, 0)
+			disco.position.z = z * (f["largura_pneu"] * 0.5 + 0.005)
+			roda.add_child(disco)
 			for k in int(f["raios"]):
 				var raio := MeshInstance3D.new()
 				var b := BoxMesh.new()
-				b.size = Vector3(r * 1.1, 0.06, 0.02)
+				b.size = Vector3(rr * f["aro"] * 1.9, 0.05, 0.02)
 				raio.mesh = b
 				raio.material_override = escuro
-				raio.position.z = z * 0.137
+				raio.position.z = z * (f["largura_pneu"] * 0.5 + 0.017)
 				raio.rotation.z = PI * k / float(f["raios"])
 				roda.add_child(raio)
 			_rodas.append(roda)
 	var sombra := MeshInstance3D.new()
 	var q := PlaneMesh.new()
-	q.size = Vector2(comprimento * 1.05, largura * 1.15)
+	q.size = Vector2(c * 1.05, l * 1.15)
 	sombra.mesh = q
 	var ms := StandardMaterial3D.new()
 	ms.albedo_color = Color(0, 0, 0, 0.45)
@@ -128,8 +169,15 @@ func girar_rodas(distancia: float) -> void:
 		roda.rotation.z -= distancia / RAIO_RODA
 
 
-## Forma completa do modelo: a da categoria mais variações tiradas dos números
-## do carro (sempre as mesmas para o mesmo carro).
+## Desenho do modelo, tirado dos dados dele (sempre o mesmo para o mesmo
+## carro): a categoria dá a silhueta; ano, tração, potência, peso e
+## fabricante dão proporções e detalhes.
+##   anos 80 (até 1990): linhas retas, cunha, faróis escamoteáveis no cupê
+##   motor central (MR): cabine avançada, traseira longa, tomadas laterais
+##   4x4 forte (>= 260 cv): rali, tomada no capô, asa grande, para-lamas largos
+##   tração traseira forte (>= 300 cv): muscle, capô longo, rodas traseiras
+##     maiores, escape duplo
+##   leve (<= 850 kg): pequeno e estreito, rodas pequenas
 static func forma(base: Dictionary) -> Dictionary:
 	var cat: String = base.get("categoria", "seda")
 	var f: Dictionary = FORMAS.get(cat, FORMAS["seda"]).duplicate()
@@ -138,33 +186,97 @@ static func forma(base: Dictionary) -> Dictionary:
 	rng.seed = hash(String(base.get("id", cat)))
 	var potencia := float(base.get("potencia", 150.0))
 	var peso := float(base.get("peso", 1100.0))
-	# Mais potência por kg: carro mais baixo, rodas maiores; mais peso: maior.
+	var ano := int(base.get("ano", 1995))
+	var tracao: String = base.get("tracao", "FF")
+	var fab: String = base.get("fabricante", "")
 	var esportividade := clampf((potencia / maxf(peso, 1.0) - 0.1) / 0.25, 0.0, 1.0)
 	var porte := clampf((peso - 700.0) / 800.0, 0.0, 1.0)
-	f["c"] = f["c"] * lerpf(0.94, 1.06, porte) * rng.randf_range(0.98, 1.02)
-	f["l"] = f["l"] * lerpf(0.97, 1.04, porte)
-	f["hc"] = f["hc"] * lerpf(1.04, 0.88, esportividade) * rng.randf_range(0.96, 1.04)
-	f["h"] = f["h"] * rng.randf_range(0.95, 1.05)
-	f["cab"] = f["cab"] * rng.randf_range(0.94, 1.06)
-	f["roda"] = RAIO_RODA * lerpf(0.92, 1.1, esportividade)
+	f["c"] = f["c"] * lerpf(0.92, 1.07, porte)
+	f["l"] = f["l"] * lerpf(0.94, 1.05, porte)
+	if f["estilo"] != "hatch":
+		f["hc"] = f["hc"] * lerpf(1.04, 0.86, esportividade)
+	f["cab"] = f["cab"] * rng.randf_range(0.96, 1.04)
+	f["roda"] = RAIO_RODA * lerpf(0.9, 1.08, esportividade)
+	f["roda_tras"] = 1.0
+	f["largura_pneu"] = lerpf(0.2, 0.3, esportividade)
+	f["aro"] = 0.62
 	f["raios"] = 5 if esportividade > 0.5 else (4 if rng.randf() < 0.5 else 6)
-	f["entre_eixos"] = rng.randf_range(0.6, 0.66)
-	f["aerofolio"] = cat == "cupe" and esportividade > 0.35
-	f["bico"] = rng.randf_range(0.0, 1.0)
+	f["entre_eixos"] = rng.randf_range(0.6, 0.65)
+	f["eixos_desloc"] = 0.0
+	f["queda_bico"] = lerpf(0.1, 0.2, rng.randf())
+	f["cunha"] = 0.0
+	f["lama"] = 0.035
+	f["asa"] = "teto" if f["estilo"] == "hatch" else ("aerofolio" if cat == "cupe" and esportividade > 0.35 else "nenhuma")
+	f["farol"] = "fino"
+	f["grade"] = "fenda"
+	f["tomada_capo"] = false
+	f["tomadas_laterais"] = false
+	f["escape_duplo"] = false
+	f["lanterna_alta"] = false
+	f["cor_aro"] = Color(0.72, 0.74, 0.78)
+	match fab:
+		"hartwig":
+			f["grade"] = "larga"
+			f["cor_aro"] = Color(0.32, 0.33, 0.36)
+			f["lanterna_alta"] = true
+			f["raios"] = 10
+			f["aro"] = 0.7
+		"ashcombe":
+			f["grade"] = "redonda"
+			f["farol"] = "redondo"
+			f["cor_aro"] = Color(0.85, 0.85, 0.82)
+			f["raios"] = 8
+	if ano <= 1990:
+		f["queda_bico"] = 0.05
+		f["cunha"] = 0.08
+		if cat == "cupe":
+			f["farol"] = "escamoteavel"
+		f["hc"] *= 1.04
+	if tracao == "MR":
+		f["recuo"] += 0.14
+		f["eixos_desloc"] = -0.02
+		f["tomadas_laterais"] = true
+		f["queda_bico"] = 0.22
+	if tracao == "4WD" and potencia >= 260.0:
+		f["tomada_capo"] = true
+		f["asa"] = "grande"
+		f["lama"] = 0.08
+		f["cor_aro"] = Color(0.85, 0.7, 0.25)
+		f["largura_pneu"] = 0.3
+	if tracao == "FR" and potencia >= 300.0:
+		f["recuo"] -= 0.1
+		f["tomada_capo"] = true
+		f["roda_tras"] = 1.12
+		f["escape_duplo"] = true
+		f["lama"] = 0.07
+		f["asa"] = "labio"
+		f["largura_pneu"] = 0.32
+	if peso <= 850.0:
+		f["c"] *= 0.9
+		f["l"] *= 0.92
+		f["hc"] *= 1.06
+		f["roda"] = RAIO_RODA * 0.86
+		f["largura_pneu"] = 0.18
 	return f
+
+
+## Altura da cintura em x: na cunha (anos 80) sobe da frente para trás.
+static func cintura_em(f: Dictionary, x: float) -> float:
+	var t: float = (x + f["c"] * 0.5) / f["c"]
+	return f.get("roda", RAIO_RODA) * 0.9 + f["h"] + f.get("cunha", 0.0) * (1.0 - t)
 
 
 ## Altura do topo da carroceria em x (m, do centro) e se ali é vidro.
 static func perfil(f: Dictionary, x: float) -> Array:
 	var c: float = f["c"]
-	var cintura: float = f.get("roda", RAIO_RODA) * 0.9 + f["h"]
-	var teto: float = cintura + f["hc"]
+	var cintura: float = cintura_em(f, x)
 	var xc: float = c * f["recuo"]
 	var lc: float = c * f["cab"]
 	var tras := xc - lc * 0.5
 	var frente := xc + lc * 0.5
+	var teto: float = cintura_em(f, xc) + f["hc"]
 	var t := (x + c * 0.5) / c
-	var queda: float = lerpf(0.1, 0.22, f.get("bico", 0.5))
+	var queda: float = f.get("queda_bico", 0.15)
 	var topo := cintura
 	if t < 0.05:
 		topo = lerpf(cintura - 0.1, cintura, t / 0.05)
@@ -184,8 +296,8 @@ static func perfil(f: Dictionary, x: float) -> Array:
 		if x > frente - descida:
 			return [lerpf(teto, cintura, (x - (frente - descida)) / descida), true]
 		return [teto, true]
-	if f.get("estilo", "") == "seda" and x < tras:
-		return [cintura + 0.05, false]
+	if f.get("estilo", "") == "seda" and x < tras and t > 0.05:
+		return [cintura + 0.1, false]  # porta-malas: o terceiro volume do sedã
 	return [topo, false]
 
 
@@ -195,10 +307,10 @@ static func carroceria(f: Dictionary, cor: Color) -> ArrayMesh:
 	var c: float = f["c"]
 	var l: float = f["l"]
 	var r: float = f.get("roda", RAIO_RODA)
-	var cintura: float = r * 0.9 + f["h"]
 	var y0 := 0.18
 	var estacoes := 36
 	var entre: float = c * f.get("entre_eixos", 0.62) * 0.5
+	var desloc: float = c * f.get("eixos_desloc", 0.0)
 	var secoes := []
 	var vidros := []
 	var topos := []
@@ -209,21 +321,22 @@ static func carroceria(f: Dictionary, cor: Color) -> ArrayMesh:
 		var topo: float = p[0]
 		var meia := l * 0.5 * (0.84 + 0.16 * sin(PI * clampf(t * 1.3 - 0.15, 0.0, 1.0)))
 		var lama := 0.0
-		for ex in [-entre, entre]:
+		for ex in [-entre + desloc, entre + desloc]:
 			lama = maxf(lama, 1.0 - clampf(absf(x - ex) / (r * 1.6), 0.0, 1.0))
-		var lado := meia * (1.0 + 0.035 * lama)
+		var lado: float = meia * (1.0 + float(f.get("lama", 0.035)) * lama)
+		var cintura := cintura_em(f, x)
 		var ombro := minf(topo, cintura)
 		var vid: bool = p[1] and topo > cintura + 0.02
 		secoes.append([
 			Vector3(x, y0, lado * 0.9), Vector3(x, y0 + 0.08, lado), Vector3(x, (y0 + ombro) * 0.5 + 0.05, lado),
 			Vector3(x, ombro - 0.02, lado * 0.98), Vector3(x, ombro, lado * 0.93),
-			Vector3(x, topo, lado * (0.74 if vid else 0.88)), Vector3(x, topo + (0.015 if vid else 0.0), 0.0),
+			Vector3(x, topo, lado * (0.8 if vid else 0.88)), Vector3(x, topo + (0.015 if vid else 0.0), 0.0),
 		])
 		vidros.append(vid)
 		topos.append(topo)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var cor_vidro := Color(0.08, 0.1, 0.13)
+	var cor_vidro := Color(0.13, 0.17, 0.23)
 	for i in estacoes:
 		var a: Array = secoes[i]
 		var b: Array = secoes[i + 1]
@@ -236,7 +349,8 @@ static func carroceria(f: Dictionary, cor: Color) -> ArrayMesh:
 				_quad(st, q, cor_q, lado < 0.0)
 	for ponta in [0, estacoes]:
 		var sec: Array = secoes[ponta]
-		var centro := Vector3(sec[0].x, (sec[0].y + sec[sec.size() - 1].y) * 0.5, 0.0)
+		# Leque a partir do centro da base: tampa cheia, sem buraco nem bico.
+		var centro := Vector3(sec[0].x, sec[0].y, 0.0)
 		for lado in [1.0, -1.0]:
 			for k in sec.size() - 1:
 				var tri := [centro, Vector3(sec[k].x, sec[k].y, sec[k].z * lado), Vector3(sec[k + 1].x, sec[k + 1].y, sec[k + 1].z * lado)]
@@ -247,8 +361,9 @@ static func carroceria(f: Dictionary, cor: Color) -> ArrayMesh:
 	st.generate_normals()
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
-	mat.roughness = 0.35
-	mat.metallic = 0.15
+	mat.roughness = 0.6
+	mat.metallic = 0.0
+	mat.metallic_specular = 0.25
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	var m := st.commit()
 	m.surface_set_material(0, mat)
@@ -297,5 +412,15 @@ static func _cilindro(raio: float, altura: float) -> CylinderMesh:
 static func _material(cor: Color) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = cor
-	m.roughness = 0.6
+	m.roughness = 0.65
+	m.metallic_specular = 0.25
 	return m
+
+
+func _cilindro_em(raio: float, altura: float, pos: Vector3, mat: Material, rot: Vector3) -> void:
+	var mi := MeshInstance3D.new()
+	mi.mesh = _cilindro(raio, altura)
+	mi.material_override = mat
+	mi.position = pos
+	mi.rotation = rot
+	add_child(mi)

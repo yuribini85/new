@@ -197,7 +197,7 @@ func _tema() -> Theme:
 	t.set_stylebox("disabled", "Button", desabilitado)
 	t.set_color("font_pressed_color", "Button", Color(0.1, 0.1, 0.1))
 	t.set_color("font_hover_pressed_color", "Button", Color(0.1, 0.1, 0.1))
-	t.set_color("font_disabled_color", "Button", Color(0.45, 0.45, 0.5))
+	t.set_color("font_disabled_color", "Button", Color(0.64, 0.65, 0.7))
 	return t
 
 

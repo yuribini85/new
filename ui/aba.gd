@@ -20,7 +20,7 @@ enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 const FONTE_PEQUENA := 23
 const FONTE_TITULO := 40
 const COR_CARTAO := Color(0.15, 0.16, 0.2)
-const COR_SECUNDARIA := Color(0.66, 0.69, 0.76)
+const COR_SECUNDARIA := Color(0.77, 0.79, 0.85)
 const COR_DESTAQUE := Color(0.96, 0.76, 0.16)
 const COR_BOM := Color(0.36, 0.82, 0.47)
 const COR_RUIM := Color(1.0, 0.46, 0.4)
@@ -167,6 +167,13 @@ func entrega(carro: Carro) -> void:
 			jogador.carro_ativo = carro.uid
 			ir_para.emit(GARAGEM)
 			mudou.emit()], ["Continuar comprando", func(): pass]])
+
+
+## Nome do modelo sem o fabricante ("Hayase Tsubame" -> "Tsubame"), para
+## miniaturas onde o espaço é curto.
+static func nome_curto(nome: String) -> String:
+	var partes := nome.split(" ", true, 1)
+	return partes[1] if partes.size() > 1 else nome
 
 
 ## Quanto a Loja paga por este modelo na venda (preço de tabela × fração).

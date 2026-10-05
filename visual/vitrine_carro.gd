@@ -25,16 +25,20 @@ func _init(altura := 300.0) -> void:
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color(0.07, 0.075, 0.09)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.45, 0.47, 0.52)
+	env.ambient_light_color = Color(0.5, 0.52, 0.58)
 	amb.environment = env
 	_mundo.add_child(amb)
 	var luz := DirectionalLight3D.new()
 	luz.rotation = Vector3(-0.85, 0.7, 0)
-	luz.light_energy = 1.1
+	luz.light_energy = 0.85
 	_mundo.add_child(luz)
 	var recorte := DirectionalLight3D.new()
 	recorte.rotation = Vector3(-0.3, PI + 0.6, 0)
-	recorte.light_energy = 0.5
+	recorte.light_energy = 0.45
+	var frente := DirectionalLight3D.new()
+	frente.rotation = Vector3(-0.2, 0.9, 0)
+	frente.light_energy = 0.3
+	_mundo.add_child(frente)
 	recorte.light_color = Color(0.7, 0.8, 1.0)
 	_mundo.add_child(recorte)
 	var piso := MeshInstance3D.new()
@@ -44,7 +48,7 @@ func _init(altura := 300.0) -> void:
 	disco.height = 0.06
 	disco.radial_segments = 48
 	piso.mesh = disco
-	piso.material_override = CarroBloco._material(Color(0.17, 0.18, 0.21))
+	piso.material_override = CarroBloco._material(Color(0.13, 0.135, 0.16))
 	piso.position.y = -0.04
 	_mundo.add_child(piso)
 	var anel := MeshInstance3D.new()
@@ -52,10 +56,8 @@ func _init(altura := 300.0) -> void:
 	t.inner_radius = 3.75
 	t.outer_radius = 3.9
 	anel.mesh = t
-	var mat_anel := CarroBloco._material(Aba.COR_DESTAQUE)
-	mat_anel.emission_enabled = true
-	mat_anel.emission = Aba.COR_DESTAQUE * 0.4
-	anel.material_override = mat_anel
+	# Borda discreta: o carro é o destaque, não a plataforma.
+	anel.material_override = CarroBloco._material(Color(0.24, 0.25, 0.29))
 	_mundo.add_child(anel)
 	var cam := Camera3D.new()
 	cam.fov = 30

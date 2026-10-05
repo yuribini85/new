@@ -153,7 +153,9 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	var perde := provas_antes.filter(func(e): return not e in Mecanico.provas_possiveis(dados, teste))
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, 84)
-	var direita := "INSTALADA" if instalada else ("já sua" if possuida else "%s Cr" % dinheiro(int(p["preco"])))
+	var pode_pagar: bool = possuida or jogador.economia.pode_pagar(int(p["preco"]))
+	var direita := "INSTALADA" if instalada else ("já sua" if possuida else ("%s Cr" % dinheiro(int(p["preco"]))
+			if pode_pagar else "faltam %s Cr" % dinheiro(int(p["preco"]) - jogador.economia.saldo)))
 	if not perde.is_empty() and not instalada:
 		direita = "⚠ " + direita
 	# Nome e ganho à esquerda (quebram linha), estado/preço à direita.
@@ -180,7 +182,8 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	h.add_child(esq)
 	var l := Label.new()
 	l.text = direita
-	l.add_theme_color_override("font_color", COR_RUIM if direita.begins_with("⚠") else (COR_BOM if instalada else Color.WHITE))
+	l.add_theme_color_override("font_color", COR_RUIM if direita.begins_with("⚠") or not pode_pagar
+			else (COR_BOM if instalada else Color.WHITE))
 	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(l)
 	b.add_child(h)

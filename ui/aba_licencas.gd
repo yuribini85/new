@@ -8,6 +8,8 @@ const CORES_GRAU := {
 }
 
 
+## Licenças com a lista de séries liberadas aberta.
+var _expandida := {}
 ## Primeiro toque em "Recomeçar carreira" só pede confirmação.
 var _confirmar_recomeco := false
 
@@ -100,9 +102,9 @@ func _colecao() -> void:
 			img.modulate = Color(0.25, 0.25, 0.3)
 		v.add_child(img)
 		var l := Label.new()
-		l.text = ("✓ " if tenho.has(c["id"]) else "") + c["nome"]
+		l.text = ("✓ " if tenho.has(c["id"]) else "") + nome_curto(c["nome"])
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		l.add_theme_font_size_override("font_size", 20)
+		l.add_theme_font_size_override("font_size", 23)
 		l.add_theme_color_override("font_color", Color.WHITE if tenho.has(c["id"]) else COR_SECUNDARIA)
 		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		l.clip_text = true
@@ -190,7 +192,12 @@ func _cartao_licenca(c: Carro, lic: Dictionary) -> void:
 		if e["restricoes"].get("licenca") == lic["id"]:
 			series[String(e["nome"]).split(" — ")[0]] = true
 	if not series.is_empty():
-		rotulo("Libera: " + ", ".join(series.keys()), FONTE_PEQUENA, COR_SECUNDARIA, v)
+		if _expandida.get(lic["id"], false):
+			rotulo("Libera: " + ", ".join(series.keys()), FONTE_PEQUENA, COR_SECUNDARIA, v)
+			botao_texto("Mostrar menos", func(): _expandida[lic["id"]] = false, v)
+		else:
+			botao_texto("Libera %d série%s · ver quais" % [series.size(), "" if series.size() == 1 else "s"],
+					func(): _expandida[lic["id"]] = true, v)
 	for t in lic["testes"]:
 		separador(v)
 		var topo := fileira(v)

@@ -93,7 +93,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	v.add_child(img)
 	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
 			["%d cv · %s" % [c["potencia"], c["tracao"]], 23, COR_SECUNDARIA],
-			["%s Cr" % dinheiro(preco), 32, Color.WHITE if pode else COR_NEUTRA.lightened(0.2)]]:
+			["%s Cr" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
 		var l := Label.new()
 		l.text = t[0]
 		l.add_theme_font_size_override("font_size", t[1])

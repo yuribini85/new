@@ -146,9 +146,9 @@ func _colecao_miniaturas(lista: Array, ativo: Carro) -> void:
 		img.custom_minimum_size = Vector2(180, 110)
 		v.add_child(img)
 		var l := Label.new()
-		l.text = c.base["nome"]
+		l.text = nome_curto(c.base["nome"])
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		l.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		l.add_theme_font_size_override("font_size", 25)
 		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		l.clip_text = true
 		l.custom_minimum_size.x = 180
