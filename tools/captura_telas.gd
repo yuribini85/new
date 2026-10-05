@@ -48,6 +48,11 @@ func _rodar() -> void:
 		# Corrida iniciada há 25 s para a captura mostrar carros em movimento.
 		if jogador.fila_ctrl.iniciar(ev["id"], uid, 3, Time.get_unix_time_from_system() - 25.0) == "":
 			break
+	# Termina a primeira corrida para o painel "Última corrida" aparecer; a
+	# segunda fica em andamento, iniciada há 25 s.
+	var agora := Time.get_unix_time_from_system()
+	jogador.fila_ctrl.adiantar(agora - 25.0)
+	jogador.fila_ctrl.processar(agora - 25.0)
 
 	var tela: Control = load("res://scenes/principal.tscn").instantiate()
 	root.add_child(tela)
