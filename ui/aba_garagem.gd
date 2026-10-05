@@ -142,9 +142,6 @@ func _resumo() -> void:
 func _sugestao() -> void:
 	if not jogador.fila.is_empty():
 		proximo_passo("Há uma corrida em andamento.", "Acompanhar corrida", CORRIDA)
-	elif jogador.vitorias.is_empty() and jogador.ultima_corrida.is_empty():
-		proximo_passo("Escolha uma prova em que seu carro possa correr e dispute o primeiro prêmio.",
-				"Ver eventos", EVENTOS)
 	elif not jogador.ultima_corrida.is_empty() and int(jogador.ultima_corrida.get("posicao", 1)) > 1:
 		proximo_passo("Você não venceu a última. Veja na Corrida o que ajuda (peças, pneus) ou prepare o carro.",
 				"Ver o que ajuda", CORRIDA)
