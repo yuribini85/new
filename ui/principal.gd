@@ -159,7 +159,7 @@ func _ir_para(i: int) -> void:
 ## Faixa "ao vivo" acima da navegação enquanto a fila corre (fora da Corrida).
 func _atualizar_ao_vivo() -> void:
 	var f: Dictionary = jogador.fila
-	_ao_vivo.visible = not f.is_empty() and _abas.current_tab != 4
+	_ao_vivo.visible = not f.is_empty() and not _abas.current_tab in [3, 4]
 	if not _ao_vivo.visible:
 		return
 	var dur: float = jogador.fila_ctrl.duracao_atual()
