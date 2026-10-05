@@ -19,6 +19,7 @@ func _ready() -> void:
 	dados = get_node("/root/Dados")
 	jogador = get_node("/root/Jogador")
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	_simbolos()
 	theme = _tema()
 	var fundo := ColorRect.new()
 	fundo.color = Color(0.09, 0.1, 0.12)
@@ -107,6 +108,15 @@ func _ir_para(i: int) -> void:
 	_abas.current_tab = i
 	for k in _botoes.size():
 		_botoes[k].button_pressed = k == i
+
+
+## A fonte padrão do Godot não tem ✓ ✗ ★ → ⚠ ■; no navegador não há fonte do
+## sistema para cobrir, e eles viravam quadrados. Reserva com esses glifos.
+static func _simbolos() -> void:
+	var f := ThemeDB.fallback_font
+	var reserva: Font = load("res://ui/fontes/simbolos.ttf")
+	if reserva != null and not reserva in f.fallbacks:
+		f.fallbacks = f.fallbacks + [reserva]
 
 
 func _tema() -> Theme:

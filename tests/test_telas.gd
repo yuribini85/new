@@ -133,6 +133,16 @@ func test_minimapa_na_mesma_orientacao_da_vista_3d() -> void:
 		perto(tela.length() / iso.length(), 1.0 / sqrt(2.0), 1e-3, "escala de %s" % p)
 
 
+func test_simbolos_da_interface_tem_glifo() -> void:
+	preload("res://ui/principal.gd")._simbolos()
+	var f := ThemeDB.fallback_font
+	for ch in ["✓", "✗", "★", "→", "⚠", "■", "−", "×", "º", "—"]:
+		var tem := f.has_char(ch.unicode_at(0))
+		for r in f.fallbacks:
+			tem = tem or r.has_char(ch.unicode_at(0))
+		verificar(tem, "glifo %s" % ch)
+
+
 func test_principal_sem_dados_mostra_pendencias() -> void:
 	var tela: Control = preload("res://scenes/principal.tscn").instantiate()
 	_raiz().add_child(tela)
