@@ -75,14 +75,14 @@ func _init() -> void:
 	_mundo.add_child(_cena)
 
 
-## categorias: id -> categoria do carro (CarroBloco.FORMAS).
-func mostrar(pista: Pista, fonte: CorridaVisual, categorias: Dictionary) -> void:
+## modelos: id -> dados do carro (data/carros.json), para a silhueta de cada um.
+func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary) -> void:
 	limpar()
 	_pista = pista
 	_fonte = fonte
 	_construir_pista()
 	for id in fonte.ordem():
-		var c := CarroBloco.new().configurar(categorias.get(id, "seda"), fonte.cor_de(id))
+		var c := CarroBloco.new().configurar_modelo(modelos.get(id, {"id": id, "categoria": "seda"}), fonte.cor_de(id))
 		_cena.add_child(c)
 		_carros[id] = c
 		var r := Label3D.new()
@@ -143,6 +143,7 @@ func atualizar(delta: float) -> void:
 			esterco += sin(t * 60.0) * 0.08
 			_tranco[id] = maxf(t - delta, 0.0)
 		c.rotation.y = rumo + esterco
+		c.girar_rodas(maxf(ds, 0.0))
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
 		r.text = str(i + 1)

@@ -1,199 +1,180 @@
 extends Aba
+## Garagem: o carro selecionado em destaque (vitrine girando, pintura), as três
+## informações que importam e as duas ações do caminho (preparar, correr).
+## Embaixo, a coleção em miniaturas para trocar de carro.
 
-## Primeiro toque em "Recomeçar carreira" só pede confirmação.
-var _confirmar_recomeco := false
+var _vitrine: VitrineCarro
 
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Garagem")
+	_vitrine = VitrineCarro.new(430.0)
+
+
+func atualizar() -> void:
+	if _vitrine.get_parent() != null:
+		_vitrine.get_parent().remove_child(_vitrine)
+	super()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and is_instance_valid(_vitrine) and _vitrine.get_parent() == null:
+		_vitrine.free()
 
 
 func construir() -> void:
 	var lista: Array = jogador.garagem.lista()
-	cabecalho("Garagem", "Seus carros. O carro EM USO é o que corre, vai à oficina e faz licenças.")
-	_resumo()
-	_objetivos()
+	_faixa_objetivo()
 	if lista.is_empty():
-		if _sem_saida():
-			var v := cartao(COR_RUIM)
-			rotulo("Sem carro e sem dinheiro para comprar um.", 0, COR_RUIM, v)
-			rotulo("Recomece a carreira do zero com o saldo inicial.", FONTE_PEQUENA + 3, Color.WHITE, v)
-			botao("Recomeçar carreira", _recomecar, true, true, v)
-			rotulo("Versão %s" % versao(), FONTE_PEQUENA, COR_NEUTRA)
-			return
-		dica("Aqui ficam os carros que você compra ou ganha. Você corre com um de cada vez; "
-				+ "melhore-o na Oficina e use os prêmios para comprar outros.")
-		proximo_passo("Compre seu primeiro carro. Na Loja, os usados com ★ foram bem nos testes da primeira prova.",
-				"Ir para a Loja", LOJA)
-		_rodape()
+		_vazia()
 		return
-	_sugestao()
-	var regras: Dictionary = dados.economia()
-	for c in lista:
-		var ativo: bool = c.uid == jogador.carro_ativo
-		var em_fila: bool = not jogador.fila.is_empty() and jogador.fila["uid"] == c.uid
-		var v := cartao(COR_DESTAQUE if ativo else Color.TRANSPARENT)
-		var topo := fileira(v)
-		var ic := icone_carro(c.base, true)
-		ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		topo.add_child(ic)
-		var nome := VBoxContainer.new()
-		nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		topo.add_child(nome)
-		rotulo(c.base["nome"], 32, Color.WHITE, nome)
-		var etiquetas := selos_carro(c.base)
-		if ativo:
-			etiquetas.push_front(["EM USO", COR_DESTAQUE])
-		if em_fila:
-			etiquetas.push_front(["CORRENDO", COR_BOM])
-		if not c.pecas.is_empty():
-			etiquetas.append(["%d peça%s" % [c.pecas.size(), "s" if c.pecas.size() > 1 else ""], COR_INFO])
-		selos(etiquetas, nome)
-		barras_carro(c.atributos_efetivos("seco"), v)
-		var venda := int(floor(float(c.base["preco"]) * float(regras["fracao_revenda"])))
-		var linha_acoes := acoes(v)
-		if not ativo:
-			botao("Usar este", func():
-				jogador.carro_ativo = c.uid
-				avisar("Em uso: %s." % c.base["nome"]), true, true, linha_acoes)
-		botao("Oficina", func():
-			jogador.carro_ativo = c.uid
-			ir_para.emit(OFICINA), true, false, linha_acoes)
-		botao("Ficha", func(): ficha_modelo(c.base), true, false, linha_acoes)
-		botao("Vender %s" % dinheiro(venda), _vender.bind(c.uid),
-				not em_fila and jogador.concessionaria.pode_vender(c.uid), false, linha_acoes)
-	if lista.size() == 1:
-		rotulo("O único carro da garagem não pode ser vendido: sem ele a carreira trava.", FONTE_PEQUENA, COR_SECUNDARIA)
+	if carro_ativo() == null:
+		jogador.carro_ativo = lista[0].uid
+	var c := carro_ativo()
+	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c))
+	conteudo.add_child(_vitrine)
+	var fab: Dictionary = dados.item("fabricantes", c.base["fabricante"])
+	rotulo(c.base["nome"], 46)
+	rotulo("%s · %d%s" % [fab.get("nome", ""), c.base["ano"], " · na fila de corrida" if _correndo(c) else ""],
+			FONTE_PEQUENA, COR_SECUNDARIA)
+	var a := c.atributos_efetivos("seco")
+	numeros([["%d" % a["potencia"], "cv"], ["%d" % a["peso"], "kg"], [c.base["tracao"], "tração"]]
+			+ ([["%d" % c.pecas.size(), "peças"]] if not c.pecas.is_empty() else []))
+	_pinturas(c)
 	var h := acoes()
-	botao("Coleção", _colecao, true, false, h)
-	entenda(h)
-	_rodape()
+	botao("Preparar", func(): ir_para.emit(OFICINA), true, true, h)
+	botao("Correr", func(): ir_para.emit(EVENTOS), true, false, h)
+	var sec := acoes()
+	botao_texto("Ficha completa", func(): ficha_modelo(c.base), sec)
+	botao_texto("Vender por %s Cr" % dinheiro(revenda(c.base)), _confirmar_venda.bind(c),
+			sec, not _correndo(c) and jogador.concessionaria.pode_vender(c.uid))
+	_colecao_miniaturas(lista, c)
 
 
-## Objetivo atual da carreira com botão, e a lista com o que já foi feito.
-func _objetivos() -> void:
+func _correndo(c: Carro) -> bool:
+	return not jogador.fila.is_empty() and int(jogador.fila["uid"]) == c.uid
+
+
+## Garagem vazia: chamada única para escolher o primeiro carro.
+func _vazia() -> void:
+	if _sem_saida():
+		var v := cartao(COR_RUIM)
+		rotulo("Sem carro e sem dinheiro para comprar um.", 0, COR_RUIM, v)
+		botao("Recomeçar carreira", _recomecar, true, true, v)
+		return
+	var v := cartao()
+	rotulo("Sua garagem está vazia", 40, Color.WHITE, v)
+	rotulo("Escolha o primeiro carro no Mercado. Os usados são mais baratos, e alguns já vencem a primeira prova.",
+			FONTE_PEQUENA + 3, COR_SECUNDARIA, v)
+	botao("Escolher meu primeiro carro", func(): ir_para.emit(LOJA), true, true, v)
+
+
+## Objetivo atual numa faixa fina que leva à tela certa.
+func _faixa_objetivo() -> void:
 	var lista := Objetivos.lista(jogador, dados)
 	var i := Objetivos.atual(lista)
 	if i >= lista.size():
 		return
-	var v := cartao(COR_DESTAQUE)
-	rotulo("OBJETIVO %d DE %d" % [i + 1, lista.size()], FONTE_PEQUENA, COR_DESTAQUE, v)
-	rotulo(lista[i]["texto"], 32, Color.WHITE, v)
-	var feitos := []
-	for k in lista.size():
-		if lista[k]["feito"]:
-			feitos.append(["✓ " + lista[k]["texto"], COR_BOM])
-	if not feitos.is_empty():
-		selos(feitos, v)
-	botao(lista[i]["botao"], func(): ir_para.emit(lista[i]["aba"]), true, true, v)
+	var b := Button.new()
+	b.text = "Objetivo %d/%d · %s  ›" % [i + 1, lista.size(), lista[i]["texto"]]
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.custom_minimum_size = Vector2(0, 58)
+	b.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
+	b.add_theme_color_override("font_color", COR_INFO.lightened(0.3))
+	b.clip_text = true
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(COR_INFO, 0.14)
+	sb.set_corner_radius_all(10)
+	sb.set_content_margin_all(10)
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(estado, sb)
+	b.pressed.connect(func():
+		ir_para.emit(lista[i]["aba"])
+		mudou.emit())
+	conteudo.add_child(b)
 
 
-## Coleção: todos os modelos por fabricante, com os que você tem, e as contas
-## por categoria e por época.
-func _colecao() -> void:
-	var tenho := {}
-	for c in jogador.garagem.lista():
-		tenho[c.id] = true
-	painel.emit("Coleção · %d de %d modelos" % [tenho.size(), dados.lista("carros").size()], func(v):
-		var por_cat := {}
-		var por_decada := {}
-		for c in dados.lista("carros"):
-			var cat: String = NOMES_CATEGORIA_CARRO.get(c.get("categoria", ""), c.get("categoria", ""))
-			var dec := "anos %d" % (int(c["ano"]) / 10 * 10 % 100)
-			for par in [[por_cat, cat], [por_decada, dec]]:
-				var d: Dictionary = par[0]
-				var k: Array = d.get(par[1], [0, 0])
-				d[par[1]] = [k[0] + (1 if tenho.has(c["id"]) else 0), k[1] + 1]
-		var resumo := []
-		for d in [por_cat, por_decada]:
-			for k in d:
-				resumo.append(["%s %d/%d" % [k, d[k][0], d[k][1]], COR_BOM if d[k][0] == d[k][1] else COR_NEUTRA.lightened(0.3)])
-		selos(resumo, v)
-		for fab in dados.lista("fabricantes"):
-			var vc := cartao(Color.TRANSPARENT, v)
-			var modelos: Array = dados.lista("carros").filter(func(c): return c["fabricante"] == fab["id"])
-			var tem: int = modelos.filter(func(c): return tenho.has(c["id"])).size()
-			rotulo("%s · %d/%d" % [fab["nome"], tem, modelos.size()], 30, COR_DESTAQUE, vc)
-			for c in modelos:
-				var h := fileira(vc)
-				var ic := icone_carro(c)
-				if not tenho.has(c["id"]):
-					ic.modulate = Color(0.35, 0.35, 0.4)
-				h.add_child(ic)
-				var l := rotulo("%s%s · %d" % ["✓ " if tenho.has(c["id"]) else "", c["nome"], c["ano"]], FONTE_PEQUENA + 2,
-						Color.WHITE if tenho.has(c["id"]) else COR_SECUNDARIA, h)
-				l.size_flags_vertical = Control.SIZE_SHRINK_CENTER, [])
+## Bolinhas de cor: pintura só visual, guardada no save.
+func _pinturas(c: Carro) -> void:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	var atual := CarroBloco.cor_do_carro(c)
+	for cor in CarroBloco.PINTURAS:
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(62, 62)
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = cor
+		sb.set_corner_radius_all(31)
+		var escolhida: bool = atual.is_equal_approx(cor)
+		sb.border_color = Color.WHITE if escolhida else Color(1, 1, 1, 0.15)
+		sb.set_border_width_all(5 if escolhida else 2)
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			b.add_theme_stylebox_override(estado, sb)
+		b.pressed.connect(func():
+			c.cor = cor.to_html(false)
+			mudou.emit())
+		h.add_child(b)
+	conteudo.add_child(h)
 
 
-## Números da carreira no topo: vitórias e licenças.
-func _resumo() -> void:
-	var vitorias := 0
-	for ev in jogador.vitorias:
-		vitorias += int(jogador.vitorias[ev])
-	var lic: String = ", ".join(jogador.licencas) if not jogador.licencas.is_empty() else "nenhuma"
-	selos([
-		["%d carro%s" % [jogador.garagem.lista().size(), "" if jogador.garagem.lista().size() == 1 else "s"], COR_NEUTRA.lightened(0.3)],
-		["%d vitória%s" % [vitorias, "" if vitorias == 1 else "s"], COR_BOM],
-		["Licenças: %s" % lic, COR_INFO],
-	])
+## Coleção em miniaturas (fotos): tocar troca o carro em destaque.
+func _colecao_miniaturas(lista: Array, ativo: Carro) -> void:
+	rotulo("SUA GARAGEM · %d carro%s" % [lista.size(), "" if lista.size() == 1 else "s"], FONTE_PEQUENA, COR_SECUNDARIA)
+	var rolagem := ScrollContainer.new()
+	rolagem.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolagem.custom_minimum_size = Vector2(0, 170)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	rolagem.add_child(h)
+	for c in lista:
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(190, 160)
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = COR_CARTAO
+		sb.set_corner_radius_all(12)
+		sb.border_color = COR_DESTAQUE if c.uid == ativo.uid else Color(1, 1, 1, 0.06)
+		sb.set_border_width_all(3)
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			b.add_theme_stylebox_override(estado, sb)
+		var v := VBoxContainer.new()
+		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.add_theme_constant_override("separation", 0)
+		b.add_child(v)
+		var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c))
+		img.custom_minimum_size = Vector2(180, 110)
+		v.add_child(img)
+		var l := Label.new()
+		l.text = c.base["nome"]
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		l.clip_text = true
+		l.custom_minimum_size.x = 180
+		v.add_child(l)
+		b.pressed.connect(func():
+			jogador.carro_ativo = c.uid
+			mudou.emit())
+		h.add_child(b)
+	var mais := Button.new()
+	mais.text = "+\nMercado"
+	mais.custom_minimum_size = Vector2(130, 160)
+	mais.pressed.connect(func():
+		ir_para.emit(LOJA)
+		mudou.emit())
+	h.add_child(mais)
+	conteudo.add_child(rolagem)
 
 
-## O que fazer agora, conforme o momento da carreira.
-func _sugestao() -> void:
-	if not jogador.fila.is_empty():
-		proximo_passo("Há uma corrida em andamento.", "Acompanhar corrida", CORRIDA)
-	elif not jogador.ultima_corrida.is_empty() and int(jogador.ultima_corrida.get("posicao", 1)) > 1:
-		proximo_passo("Você não venceu a última. Veja na Corrida o que ajuda (peças, pneus) ou prepare o carro.",
-				"Ver o que ajuda", CORRIDA)
-
-
-## Recomeçar sempre disponível (com confirmação) e versão publicada, para saber
-## se o navegador já carregou a atualização.
-func _rodape() -> void:
-	separador()
-	if _confirmar_recomeco:
-		var v := cartao(COR_RUIM)
-		rotulo("Apagar todo o progresso e voltar ao saldo inicial?", 0, Color.WHITE, v)
-		var h := acoes(v)
-		botao("Sim, recomeçar", _recomecar, true, false, h)
-		botao("Cancelar", func(): _confirmar_recomeco = false, true, false, h)
-	else:
-		linha("", [["Recomeçar carreira", func(): _confirmar_recomeco = true]])
-	_preferencias()
-	rotulo("Versão %s" % versao(), FONTE_PEQUENA, COR_NEUTRA)
-
-
-func _preferencias() -> void:
-	var v := cartao()
-	rotulo("PREFERÊNCIAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
-	var h := fileira(v)
-	rotulo("Volume", FONTE_PEQUENA + 2, Color.WHITE, h).size_flags_horizontal = Control.SIZE_FILL
-	var vol := HSlider.new()
-	vol.min_value = 0.0
-	vol.max_value = 1.0
-	vol.step = 0.05
-	vol.value = Preferencias.volume
-	vol.custom_minimum_size = Vector2(0, 48)
-	vol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	vol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	vol.drag_ended.connect(func(_mudou):
-		Preferencias.volume = vol.value
-		Preferencias.salvar())
-	h.add_child(vol)
-	var anim := CheckButton.new()
-	anim.text = "Reduzir animações"
-	anim.button_pressed = Preferencias.reduzir_animacoes
-	anim.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
-	anim.toggled.connect(func(ligado):
-		Preferencias.reduzir_animacoes = ligado
-		Preferencias.salvar())
-	v.add_child(anim)
-
-
-## Commit publicado (versao.txt, gerado pelo workflow do Pages) ou "local".
-static func versao() -> String:
-	var v := FileAccess.get_file_as_string("res://versao.txt").strip_edges()
-	return v if v != "" else "local"
+func _confirmar_venda(c: Carro) -> void:
+	painel.emit("Vender %s?" % c.base["nome"], func(v):
+		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
+		rotulo("Você recebe %s Cr. As peças instaladas não entram no valor." % dinheiro(revenda(c.base)),
+				FONTE_PEQUENA + 3, Color.WHITE, v),
+		[["Vender", func():
+			_vender(c.uid)
+			mudou.emit()], ["Cancelar", func(): pass]])
 
 
 func _vender(uid: int) -> void:
@@ -206,8 +187,7 @@ func _vender(uid: int) -> void:
 		jogador.carro_ativo = -1
 
 
-## Garagem vazia e nenhum carro (novo ou usado de hoje) cabe no saldo: saves
-## anteriores à regra do último carro podem ter ficado assim.
+## Garagem vazia e nenhum carro (novo ou usado de hoje) cabe no saldo.
 func _sem_saida() -> bool:
 	var precos := []
 	for c in dados.lista("carros"):
@@ -219,7 +199,6 @@ func _sem_saida() -> bool:
 
 
 func _recomecar() -> void:
-	_confirmar_recomeco = false
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}

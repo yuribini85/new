@@ -8,24 +8,144 @@ const CORES_GRAU := {
 }
 
 
+## Primeiro toque em "Recomeçar carreira" só pede confirmação.
+var _confirmar_recomeco := false
+
+
 func _init(d: Node, j: Node) -> void:
-	super(d, j, "Licenças")
+	super(d, j, "Carreira")
 
 
+## Carreira: objetivos, licenças, coleção e preferências num lugar só.
 func construir() -> void:
-	cabecalho("Licenças", "Testes de tempo que liberam provas maiores.")
+	_resumo()
+	_objetivos()
+	rotulo("LICENÇAS", FONTE_PEQUENA, COR_SECUNDARIA)
 	var c := carro_ativo()
 	if c == null:
-		proximo_passo("Os testes são feitos com o carro em uso.", "Ir para a Garagem", GARAGEM)
-		return
-	if jogador.licencas.is_empty():
-		dica("Cada teste é uma volta sozinho na pista com o seu carro em uso. Bata o tempo de "
-				+ "bronze, prata ou ouro. Com bronze ou melhor em todos os testes, a licença é sua. "
-				+ "Carro mais rápido (peças, pneus) faz tempo melhor.")
-	rotulo("Carro em uso: " + ficha(c), FONTE_PEQUENA, COR_SECUNDARIA)
-	_mostrar_resultado()
-	for lic in dados.lista("licencas"):
-		_cartao_licenca(c, lic)
+		rotulo("Os testes de licença são feitos com o carro em uso. Compre um carro primeiro.", FONTE_PEQUENA + 2, COR_SECUNDARIA)
+	else:
+		rotulo("Uma volta sozinho na pista com o %s. Bronze ou melhor em todos os testes dá a licença." % c.base["nome"],
+				FONTE_PEQUENA, COR_SECUNDARIA)
+		_mostrar_resultado()
+		for lic in dados.lista("licencas"):
+			_cartao_licenca(c, lic)
+	_colecao()
+	var h := acoes()
+	entenda(h)
+	_preferencias()
+	if _confirmar_recomeco:
+		var v := cartao(COR_RUIM)
+		rotulo("Apagar todo o progresso e voltar ao saldo inicial?", 0, Color.WHITE, v)
+		var hb := acoes(v)
+		botao("Sim, recomeçar", _recomecar, true, false, hb)
+		botao("Cancelar", func(): _confirmar_recomeco = false, true, false, hb)
+	else:
+		botao_texto("Recomeçar carreira", func(): _confirmar_recomeco = true)
+	rotulo("Versão %s" % versao(), FONTE_PEQUENA, COR_NEUTRA)
+
+
+func _resumo() -> void:
+	var vitorias := 0
+	for ev in jogador.vitorias:
+		vitorias += int(jogador.vitorias[ev])
+	numeros([["%d" % jogador.garagem.lista().size(), "carros"], ["%d" % vitorias, "vitórias"],
+			[", ".join(jogador.licencas) if not jogador.licencas.is_empty() else "—", "licenças"],
+			["%d" % jogador.dias, "dias"]])
+
+
+func _objetivos() -> void:
+	var lista := Objetivos.lista(jogador, dados)
+	var atual := Objetivos.atual(lista)
+	var v := cartao()
+	rotulo("OBJETIVOS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	for i in lista.size():
+		var o: Dictionary = lista[i]
+		var h := fileira(v)
+		var l := rotulo(("✓ " if o["feito"] else ("→ " if i == atual else "· ")) + o["texto"], FONTE_PEQUENA + 3,
+				COR_BOM if o["feito"] else (Color.WHITE if i == atual else COR_SECUNDARIA), h)
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		if i == atual:
+			var b := botao("Ir", func(): ir_para.emit(o["aba"]), true, true, h)
+			b.custom_minimum_size = Vector2(110, 60)
+
+
+## Coleção em fotos: os que você tem e os que ainda faltam (escurecidos);
+## tocar abre a ficha.
+func _colecao() -> void:
+	var tenho := {}
+	for c in jogador.garagem.lista():
+		tenho[c.id] = true
+	rotulo("COLEÇÃO · %d de %d modelos" % [tenho.size(), dados.lista("carros").size()], FONTE_PEQUENA, COR_SECUNDARIA)
+	var grade := GridContainer.new()
+	grade.columns = 3
+	grade.add_theme_constant_override("h_separation", 8)
+	grade.add_theme_constant_override("v_separation", 8)
+	for c in dados.lista("carros"):
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(0, 150)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = COR_CARTAO
+		sb.set_corner_radius_all(10)
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			b.add_theme_stylebox_override(estado, sb)
+		var v := VBoxContainer.new()
+		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(v)
+		var img := icone_carro(c)
+		img.custom_minimum_size = Vector2(0, 100)
+		if not tenho.has(c["id"]):
+			img.modulate = Color(0.25, 0.25, 0.3)
+		v.add_child(img)
+		var l := Label.new()
+		l.text = ("✓ " if tenho.has(c["id"]) else "") + c["nome"]
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.add_theme_font_size_override("font_size", 20)
+		l.add_theme_color_override("font_color", Color.WHITE if tenho.has(c["id"]) else COR_SECUNDARIA)
+		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		l.clip_text = true
+		v.add_child(l)
+		b.pressed.connect(func(): ficha_modelo(c))
+		grade.add_child(b)
+	conteudo.add_child(grade)
+
+
+func _preferencias() -> void:
+	var v := cartao()
+	rotulo("PREFERÊNCIAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var h := fileira(v)
+	rotulo("Volume", FONTE_PEQUENA + 2, Color.WHITE, h).size_flags_horizontal = Control.SIZE_FILL
+	var vol := HSlider.new()
+	vol.min_value = 0.0
+	vol.max_value = 1.0
+	vol.step = 0.05
+	vol.value = Preferencias.volume
+	vol.custom_minimum_size = Vector2(0, 48)
+	vol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	vol.drag_ended.connect(func(_mudou):
+		Preferencias.volume = vol.value
+		Preferencias.salvar())
+	h.add_child(vol)
+	var anim := CheckButton.new()
+	anim.text = "Reduzir animações"
+	anim.button_pressed = Preferencias.reduzir_animacoes
+	anim.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
+	anim.toggled.connect(func(ligado):
+		Preferencias.reduzir_animacoes = ligado
+		Preferencias.salvar())
+	v.add_child(anim)
+
+
+func _recomecar() -> void:
+	_confirmar_recomeco = false
+	jogador.novo_jogo(dados.economia(), dados.pneu)
+	jogador.carro_ativo = -1
+	jogador.ultima_corrida = {}
+	avisar("Carreira recomeçada com %s Cr." % dinheiro(jogador.economia.saldo))
+	ir_para.emit(GARAGEM)
 
 
 func _mostrar_resultado() -> void:

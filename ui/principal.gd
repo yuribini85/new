@@ -9,6 +9,13 @@ var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
 var _sobre: Sobreposicao
+var _voltar: Button
+var _ao_vivo: Button
+## Destinos da barra de baixo: [rótulo, índice da aba]. Oficina e Corrida são
+## telas internas (de Garagem e Competições), abertas pelo caminho do jogo.
+const DESTINOS := [["Garagem", 0], ["Mercado", 1], ["Competições", 3], ["Carreira", 5]]
+const PAI := {2: 0, 4: 3}
+const NOME_PAI := {2: "‹ Garagem", 4: "‹ Competições"}
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
 
@@ -41,12 +48,22 @@ func _ready() -> void:
 		_tela_pendencias(raiz)
 		return
 
+	var topo := HBoxContainer.new()
+	topo.add_theme_constant_override("separation", 12)
+	raiz.add_child(topo)
+	_voltar = Button.new()
+	_voltar.flat = true
+	_voltar.custom_minimum_size = Vector2(0, 56)
+	_voltar.add_theme_color_override("font_color", Aba.COR_INFO.lightened(0.2))
+	_voltar.pressed.connect(func(): _ir_para(PAI.get(_abas.current_tab, 0)))
+	topo.add_child(_voltar)
 	_saldo = Label.new()
 	_saldo.add_theme_font_size_override("font_size", FONTE_TITULO)
-	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+	_saldo.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_saldo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_saldo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_saldo.clip_text = true
-	raiz.add_child(_saldo)
+	topo.add_child(_saldo)
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
 	# Moldura sem layout: o tamanho mínimo das abas não passa para a tela. Se
@@ -77,6 +94,19 @@ func _ready() -> void:
 	_todas[4].pular.connect(func():
 		jogador.fila_ctrl.adiantar(Time.get_unix_time_from_system())
 		_processar_fila())
+	_ao_vivo = Button.new()
+	_ao_vivo.custom_minimum_size = Vector2(0, 64)
+	_ao_vivo.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_ao_vivo.clip_text = true
+	_ao_vivo.add_theme_font_size_override("font_size", 25)
+	var sb_vivo := StyleBoxFlat.new()
+	sb_vivo.bg_color = Color(0.1, 0.34, 0.2)
+	sb_vivo.set_corner_radius_all(10)
+	sb_vivo.set_content_margin_all(10)
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		_ao_vivo.add_theme_stylebox_override(estado, sb_vivo)
+	_ao_vivo.pressed.connect(func(): _ir_para(4))
+	raiz.add_child(_ao_vivo)
 	raiz.add_child(_navegacao())
 	_sobre = Sobreposicao.new()
 	add_child(_sobre)
@@ -91,6 +121,7 @@ func _ready() -> void:
 	timer.wait_time = 1.0
 	timer.autostart = true
 	timer.timeout.connect(_processar_fila)
+	timer.timeout.connect(_atualizar_ao_vivo)
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
@@ -98,28 +129,43 @@ func _ready() -> void:
 	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
 
 
-func _navegacao() -> GridContainer:
-	var grade := GridContainer.new()
-	grade.columns = 3
-	grade.add_theme_constant_override("h_separation", 8)
-	grade.add_theme_constant_override("v_separation", 8)
-	for i in _todas.size():
+func _navegacao() -> HBoxContainer:
+	var barra := HBoxContainer.new()
+	barra.add_theme_constant_override("separation", 8)
+	for d in DESTINOS:
 		var b := Button.new()
-		b.text = _todas[i].name
+		b.text = d[0]
 		b.toggle_mode = true
 		b.custom_minimum_size = Vector2(0, ALTURA_BOTAO)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.pressed.connect(_ir_para.bind(i))
-		grade.add_child(b)
+		b.add_theme_font_size_override("font_size", 26)
+		b.pressed.connect(_ir_para.bind(d[1]))
+		barra.add_child(b)
 		_botoes.append(b)
 	_ir_para.call_deferred(0)
-	return grade
+	return barra
 
 
 func _ir_para(i: int) -> void:
 	_abas.current_tab = i
+	var destino: int = PAI.get(i, i)
 	for k in _botoes.size():
-		_botoes[k].button_pressed = k == i
+		_botoes[k].button_pressed = DESTINOS[k][1] == destino
+	_voltar.text = NOME_PAI.get(i, "")
+	_voltar.visible = PAI.has(i)
+	_atualizar_ao_vivo()
+
+
+## Faixa "ao vivo" acima da navegação enquanto a fila corre (fora da Corrida).
+func _atualizar_ao_vivo() -> void:
+	var f: Dictionary = jogador.fila
+	_ao_vivo.visible = not f.is_empty() and _abas.current_tab != 4
+	if not _ao_vivo.visible:
+		return
+	var dur: float = jogador.fila_ctrl.duracao_atual()
+	var falta := maxf(dur - (Time.get_unix_time_from_system() - float(f["inicio"])), 0.0)
+	_ao_vivo.text = "●  AO VIVO · %s · %d:%02d   Assistir ›" % [dados.evento(f["evento_id"]).get("nome", ""),
+			int(falta) / 60, int(falta) % 60]
 
 
 ## A fonte padrão do Godot não tem ✓ ✗ ★ → ⚠ ■; no navegador não há fonte do
@@ -156,9 +202,9 @@ func _tema() -> Theme:
 
 
 func atualizar() -> void:
-	var carro: Carro = jogador.garagem.carro(jogador.carro_ativo)
-	_saldo.text = "%s Cr · Dia %d%s" % [Aba.dinheiro(jogador.economia.saldo), jogador.dias,
-			" · " + carro.base["nome"] if carro != null else ""]
+	_saldo.text = "%s Cr" % Aba.dinheiro(jogador.economia.saldo)
+	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+	_atualizar_ao_vivo()
 	for a in _todas:
 		a.atualizar()
 	var objetivos := Objetivos.lista(jogador, dados)
@@ -184,12 +230,8 @@ func _processar_fila() -> void:
 	# Uma corrida terminando com o app aberto: aviso curto e a tela de Corrida
 	# mostra o resultado. Várias (voltou do segundo plano), erro ou carro-prêmio:
 	# relatório.
-	if rel["corridas"].size() == 1 and rel["erro"] == "" and rel["carros_premio"].is_empty():
-		var c: Dictionary = rel["corridas"][0]
-		_sobre.avisar("Corrida terminou: %dº de %d%s" % [c["posicao"], c["total"],
-				" · +%s Cr" % Aba.dinheiro(c["premio"]) if c["premio"] > 0 else ""], true)
-		if c["posicao"] == 1 and not antes_vitorias.has(c["evento_id"]):
-			_primeira_vitoria(c)
+	if rel["corridas"].size() == 1 and rel["erro"] == "":
+		_resultado(rel["corridas"][0], not antes_vitorias.has(rel["corridas"][0]["evento_id"]))
 		return
 	_mostrar_relatorio(rel, "Resultado das corridas")
 
@@ -198,6 +240,64 @@ func _notification(what: int) -> void:
 	# Volta do segundo plano: aplica o que correu enquanto isso, na hora.
 	if what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN] and _sobre != null:
 		_processar_fila()
+
+
+## Resultado de uma corrida terminada com o app aberto: posição em destaque,
+## recompensa e a próxima decisão.
+func _resultado(c: Dictionary, primeira: bool) -> void:
+	var g: Aba = _todas[0]
+	var venceu: bool = c["posicao"] == 1
+	var ev: Dictionary = dados.evento(c["evento_id"])
+	var continua: bool = not jogador.fila.is_empty()
+	var botoes := []
+	if continua:
+		botoes = [["Assistir a próxima", func(): _ir_para(4)], ["Fechar", func(): pass]]
+	else:
+		botoes = [["Repetir", func():
+				var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Time.get_unix_time_from_system())
+				if m != "":
+					_sobre.avisar("Não deu para correr: %s." % m, false)
+				else:
+					_ir_para(4)
+				atualizar()],
+			["Preparar", func():
+				jogador.carro_ativo = c["uid"]
+				_ir_para(2)
+				atualizar()],
+			["Outra prova", func(): _ir_para(3)]]
+	_sobre.abrir("VITÓRIA!" if venceu else "Resultado", func(v):
+		var pos := Label.new()
+		pos.text = "%dº" % c["posicao"]
+		pos.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		pos.add_theme_font_size_override("font_size", 120)
+		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
+		v.add_child(pos)
+		g.rotulo("de %d · %s" % [c["total"], ev.get("nome", "")], Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v) \
+				.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if c["premio"] > 0:
+			var p := g.rotulo("+%s Cr" % Aba.dinheiro(c["premio"]), 48, Aba.COR_BOM, v)
+			p.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var marcos := []
+		if venceu and primeira:
+			marcos.append(["PRIMEIRA VITÓRIA NESTA PROVA", Aba.COR_DESTAQUE])
+		if c.get("recorde", false) and not c.get("anterior", {}).is_empty():
+			marcos.append(["RECORDE PESSOAL", Aba.COR_BOM])
+		if not c.get("anterior", {}).is_empty():
+			var dp: int = int(c["anterior"]["ultima_pos"]) - int(c["posicao"])
+			if dp != 0:
+				marcos.append(["%s %d posiç%s desde a última vez" % ["subiu" if dp > 0 else "caiu", absi(dp),
+						"ão" if absi(dp) == 1 else "ões"], Aba.COR_BOM if dp > 0 else Aba.COR_RUIM])
+		g.selos(marcos, v)
+		if c.get("carro_premio_uid", -1) > 0:
+			var cp: Carro = jogador.garagem.carro(c["carro_premio_uid"])
+			if cp != null:
+				var vc := g.cartao(Aba.COR_DESTAQUE, v)
+				g.rotulo("CARRO-PRÊMIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vc)
+				vc.add_child(Estudio.imagem(cp.base, CarroBloco.cor_do_carro(cp), Vector2(0, 200)))
+				g.rotulo(cp.base["nome"] + " já está na sua garagem.", 0, Color.WHITE, vc)
+		if not venceu:
+			g.rotulo("Veja em Competições › Corrida por que perdeu e o que ajuda.", Aba.FONTE_PEQUENA + 2,
+					Aba.COR_SECUNDARIA, v), botoes)
 
 
 func _primeira_vitoria(c: Dictionary) -> void:

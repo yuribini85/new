@@ -416,11 +416,12 @@ func _process(delta: float) -> void:
 		var ev: Dictionary = dados.evento(f["evento_id"])
 		_pista = dados.pista(ev["pista"])
 		_voltas = int(ev["voltas"])
-		_visual.mostrar(_pista, c["resultado"], {"jogador": Color(1.0, 0.85, 0.2)})
-		var categorias := {"jogador": jogador.garagem.carro(f["uid"]).base.get("categoria", "")}
+		var meu: Carro = jogador.garagem.carro(f["uid"])
+		_visual.mostrar(_pista, c["resultado"], {"jogador": CarroBloco.cor_do_carro(meu)})
+		var categorias := {"jogador": meu.base}
 		for i in ev["adversarios"].size():
 			var adv_id: String = ev["adversarios"][i]["carro"]
-			categorias["adv%d_%s" % [i, adv_id]] = dados.carro(adv_id).get("categoria", "")
+			categorias["adv%d_%s" % [i, adv_id]] = dados.carro(adv_id)
 		_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 		_visual3d.mostrar(_pista, _visual, categorias)
 		_area.visible = true

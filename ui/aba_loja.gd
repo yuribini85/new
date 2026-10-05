@@ -7,73 +7,104 @@ var _previsao := {}  # {"dia", "evento", "avaliacoes": {carro_id: Mecanico.avali
 
 
 func _init(d: Node, j: Node) -> void:
-	super(d, j, "Loja")
+	super(d, j, "Mercado")
+
+
+## "usados" ou "novos": a seção aberta (mantida ao voltar para o Mercado).
+var _secao := "usados"
 
 
 func construir() -> void:
-	cabecalho("Loja", "Compre carros. O dinheiro vem dos prêmios das corridas.")
-	entenda()
-	if jogador.garagem.lista().is_empty():
-		dica("Comece por um usado: são mais baratos e alguns já vencem a primeira prova. "
-				+ "A ★ marca os que foram bem em corridas simuladas da prova mais fácil, de fábrica, "
-				+ "sem nenhuma peça. É uma estimativa, não uma promessa.")
-	rotulo("USADOS · dia %d" % jogador.dias, FONTE_PEQUENA, COR_SECUNDARIA)
-	rotulo("O estoque muda conforme você corre (cada corrida é um dia), como no GT2.", FONTE_PEQUENA, COR_SECUNDARIA)
+	rotulo("Mercado", FONTE_TITULO)
 	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos)
-	if ofertas.is_empty():
-		rotulo("Nenhum usado hoje. Volte depois de algumas corridas.", 0, COR_SECUNDARIA)
-	var prev := _prever(ofertas)
-	for o in ofertas:
-		var c: Dictionary = dados.carro(o["carro_id"])
-		var extra := []
-		var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
-		if not a.is_empty():
-			var boa: bool = a["media"] <= 1.5
-			extra.append(["%s%s nos testes" % ["★ " if boa else "", Mecanico.texto_faixa(a["faixa"])],
-					COR_BOM if boa else COR_NEUTRA.lightened(0.3)])
-		var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
-		extra.append(["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)])
-		_cartao_carro(c, int(o["preco"]), extra, func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
-	if not prev.is_empty():
-		rotulo("Testes: de fábrica em %s." % prev["evento"], FONTE_PEQUENA, COR_SECUNDARIA)
-	separador()
-	rotulo("NOVOS", FONTE_PEQUENA, COR_SECUNDARIA)
-	rotulo("Sempre disponíveis. Modelos antigos só aparecem nos usados.", FONTE_PEQUENA, COR_SECUNDARIA)
-	for c in dados.lista("carros"):
-		if not c.get("novo", true):
-			continue  # como no GT2: modelos antigos só no usado
-		var fab: String = dados.item("fabricantes", c["fabricante"]).get("nome", c["fabricante"])
-		_cartao_carro(c, int(c["preco"]), [[fab, COR_NEUTRA.lightened(0.3)], [str(c["ano"]), COR_NEUTRA.lightened(0.3)]],
-				func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
+	var novos: Array = dados.lista("carros").filter(func(c): return c.get("novo", true))
+	var abas := HBoxContainer.new()
+	abas.add_theme_constant_override("separation", 8)
+	for s in [["usados", "Usados (%d)" % ofertas.size()], ["novos", "Novos (%d)" % novos.size()]]:
+		var b := Button.new()
+		b.text = s[1]
+		b.toggle_mode = true
+		b.button_pressed = _secao == s[0]
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.custom_minimum_size = Vector2(0, 64)
+		b.pressed.connect(func():
+			_secao = s[0]
+			mudou.emit())
+		abas.add_child(b)
+	conteudo.add_child(abas)
+	if _secao == "usados":
+		rotulo("Mudam conforme você corre (cada corrida é um dia). %s" % (
+				"★ = foi bem nos testes da prova mais fácil." if jogador.garagem.lista().is_empty() else ""),
+				FONTE_PEQUENA, COR_SECUNDARIA)
+		if ofertas.is_empty():
+			rotulo("Nenhum usado hoje. Volte depois de algumas corridas.", 0, COR_SECUNDARIA)
+		var prev := _prever(ofertas)
+		var grade := _grade()
+		for o in ofertas:
+			var c: Dictionary = dados.carro(o["carro_id"])
+			var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
+			var estrela: bool = not a.is_empty() and a["media"] <= 1.5
+			var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
+			var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
+			if not a.is_empty():
+				extras.push_front(["%s%s nos testes" % ["★ " if estrela else "", Mecanico.texto_faixa(a["faixa"])],
+						COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
+			_bloco(grade, c, int(o["preco"]), "★" if estrela else "", extras,
+					func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
+	else:
+		rotulo("Sempre disponíveis. Modelos antigos só aparecem nos usados.", FONTE_PEQUENA, COR_SECUNDARIA)
+		var grade := _grade()
+		for c in novos:
+			_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
 
 
-## Cartão de oferta: ícone, nome, selos, potência e peso, preço.
-func _cartao_carro(c: Dictionary, preco: int, extra: Array, comprar: Callable) -> void:
+func _grade() -> GridContainer:
+	var g := GridContainer.new()
+	g.columns = 2
+	g.add_theme_constant_override("h_separation", 10)
+	g.add_theme_constant_override("v_separation", 10)
+	conteudo.add_child(g)
+	return g
+
+
+## Bloco do catálogo: foto, nome, preço e o essencial (potência e tração).
+## Tocar abre a ficha, onde está o botão de compra.
+func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable) -> void:
 	var pode: bool = jogador.economia.pode_pagar(preco)
-	var v := cartao()
-	var topo := fileira(v)
-	var ic := icone_carro(c, true)
-	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	topo.add_child(ic)
-	var nome := VBoxContainer.new()
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	topo.add_child(nome)
-	rotulo(c["nome"], 32, Color.WHITE, nome)
-	var comp := []
-	var meu := carro_ativo()
-	if meu != null:
-		var a := meu.atributos_efetivos("seco")
-		var dcv := int(c["potencia"]) - roundi(a["potencia"])
-		var dkg := int(c["peso"]) - roundi(a["peso"])
-		comp.append(["vs %s: %+d cv, %+d kg" % [meu.base["nome"], dcv, dkg], COR_INFO])
-	comp.append(["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)])
-	selos(selos_carro(c) + extra + comp, nome)
-	barras_carro({"potencia": float(c["potencia"]), "peso": float(c["peso"])}, v)
-	if not pode:
-		rotulo("Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo), FONTE_PEQUENA, COR_RUIM, v)
-	var h := acoes(v)
-	botao("Ficha", func(): ficha_modelo(c), true, false, h)
-	botao("Comprar · %s Cr" % dinheiro(preco), comprar, pode, true, h)
+	var b := Button.new()
+	b.custom_minimum_size = Vector2(0, 250)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_CARTAO
+	sb.set_corner_radius_all(14)
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(estado, sb)
+	var v := VBoxContainer.new()
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	v.offset_left = 10
+	v.offset_right = -10
+	v.offset_top = 6
+	v.offset_bottom = -8
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_theme_constant_override("separation", 2)
+	b.add_child(v)
+	var img := icone_carro(c)
+	img.custom_minimum_size = Vector2(0, 120)
+	v.add_child(img)
+	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
+			["%d cv · %s" % [c["potencia"], c["tracao"]], 23, COR_SECUNDARIA],
+			["%s Cr" % dinheiro(preco), 32, Color.WHITE if pode else COR_NEUTRA.lightened(0.2)]]:
+		var l := Label.new()
+		l.text = t[0]
+		l.add_theme_font_size_override("font_size", t[1])
+		l.add_theme_color_override("font_color", t[2])
+		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		l.clip_text = true
+		v.add_child(l)
+	var falta := "" if pode else "Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo)
+	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
+			["Comprar · %s Cr" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false]))
+	grade.add_child(b)
 
 
 func _prever(ofertas: Array) -> Dictionary:
@@ -102,7 +133,6 @@ func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 		avisar("Não deu para comprar %s: %s." % [c["nome"], "saldo insuficiente" if not jogador.economia.pode_pagar(preco)
 				else "saiu do estoque"], false)
 		return
-	avisar("Comprado: %s por %s Cr. Já está na Garagem." % [c["nome"], dinheiro(preco)])
 	if jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
-		ir_para.emit(GARAGEM)
+	entrega(jogador.garagem.carro(uid))

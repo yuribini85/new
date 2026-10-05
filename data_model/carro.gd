@@ -18,6 +18,8 @@ var pecas_possuidas: Array = []
 var pecas: Dictionary = {}
 ## Compostos possuídos. O piloto de IA escolhe sozinho conforme a condição.
 var pneus: Array = []
+## Pintura escolhida na garagem ("" = de fábrica). Só visual.
+var cor: String = ""
 
 
 func _init(dados_carro: Dictionary) -> void:
@@ -97,4 +99,5 @@ func copiar() -> Carro:
 	c.pecas = pecas.duplicate()
 	c.pecas_possuidas = pecas_possuidas.duplicate()
 	c.pneus = pneus.duplicate()
+	c.cor = cor
 	return c

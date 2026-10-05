@@ -10,11 +10,11 @@ const GRUPOS := [["", "Sem licença"], ["B", "Licença B"], ["A", "Licença A"]]
 
 
 func _init(d: Node, j: Node) -> void:
-	super(d, j, "Eventos")
+	super(d, j, "Competições")
 
 
 func construir() -> void:
-	cabecalho("Eventos", "Escolha uma prova e dispute prêmios em dinheiro.")
+	cabecalho("Competições", "Escolha uma prova e dispute prêmios em dinheiro.")
 	var c := carro_ativo()
 	if c == null:
 		proximo_passo("Você precisa de um carro em uso para correr.", "Ir para a Garagem", GARAGEM)

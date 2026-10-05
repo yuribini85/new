@@ -45,10 +45,15 @@ func _init(dados_: Node, jogador_: Node, titulo_aba: String) -> void:
 	add_child(conteudo)
 
 
+## Reconstrói a tela mantendo a posição da lista (voltar não perde o lugar).
 func atualizar() -> void:
+	var posicao := scroll_vertical
 	for c in conteudo.get_children():
+		conteudo.remove_child(c)
 		c.queue_free()
 	construir()
+	if posicao > 0:
+		set_deferred("scroll_vertical", posicao)
 
 
 ## Implementado por cada aba.
@@ -103,17 +108,33 @@ func proximo_passo(t: String, botao_texto: String, indice: int, pai: Control = n
 
 ## Painel com a ficha de um modelo: vitrine 3D, fabricante, números e como
 ## conseguir (novo, usado, prêmio de qual prova).
-func ficha_modelo(base: Dictionary) -> void:
+## Ficha do modelo: vitrine grande, números, comparação com o carro em uso,
+## como conseguir e fabricante. `extras`: selos a mais ([[texto, cor]]);
+## `compra`: [texto, Callable, habilitado] vira o botão principal do painel.
+func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> void:
+	var botoes := [] if compra.is_empty() or not compra[2] else [[compra[0], func():
+		compra[1].call()
+		mudou.emit()], ["Fechar", func(): pass]]
 	painel.emit(base["nome"], func(v):
-		var vit := VitrineCarro.new()
-		vit.mostrar(base.get("categoria", ""), CarroBloco.cor_do_id(base["id"]))
+		var vit := VitrineCarro.new(320.0)
+		vit.mostrar_modelo(base, CarroBloco.cor_do_id(base["id"]))
 		v.add_child(vit)
 		var fab: Dictionary = dados.item("fabricantes", base["fabricante"])
-		selos(selos_carro(base) + [[str(base["ano"]), COR_NEUTRA.lightened(0.3)]], v)
-		barras_carro({"potencia": float(base["potencia"]), "peso": float(base["peso"])}, v)
+		rotulo("%s · %d · %s" % [fab.get("nome", ""), base["ano"], NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "")],
+				FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
+		numeros([["%d" % base["potencia"], "cv"], ["%d" % base["peso"], "kg"], [base["tracao"], "tração"]], v)
+		var meu := carro_ativo()
+		var comp := []
+		if meu != null and meu.id != base["id"]:
+			var a := meu.atributos_efetivos("seco")
+			comp.append(["vs seu %s: %+d cv, %+d kg" % [meu.base["nome"], int(base["potencia"]) - roundi(a["potencia"]),
+					int(base["peso"]) - roundi(a["peso"])], COR_INFO])
+		selos(extras + comp, v)
+		if not compra.is_empty() and not compra[2]:
+			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)
 		var como := []
 		if base.get("novo", true):
-			como.append("novo na Loja por %s Cr" % dinheiro(int(base["preco"])))
+			como.append("novo no Mercado por %s Cr" % dinheiro(int(base["preco"])))
 		if not base.get("usados", []).is_empty():
 			como.append("usado em alguns períodos")
 		for ev in dados.lista("eventos"):
@@ -122,14 +143,30 @@ func ficha_modelo(base: Dictionary) -> void:
 		if como.is_empty():
 			como.append("ainda não disponível")
 		var raro: bool = not base.get("novo", true) and base.get("usados", []).is_empty()
-		var vc := cartao(COR_DESTAQUE if raro else COR_INFO, v)
-		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_INFO, vc)
+		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
+		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
 		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
-		rotulo("Revenda: %s Cr" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
+		rotulo("Revenda depois: %s Cr" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
 		if not fab.is_empty():
 			var vf := cartao(Color.TRANSPARENT, v)
-			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, COR_DESTAQUE, vf)
-			rotulo(fab.get("historia", ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, vf), [])
+			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)
+			rotulo(fab.get("historia", ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, vf), botoes)
+
+
+## Entrega de um carro novo: o carro girando e o próximo passo.
+func entrega(carro: Carro) -> void:
+	painel.emit("Seu novo carro", func(v):
+		var vit := VitrineCarro.new(380.0)
+		vit.mostrar_modelo(carro.base, CarroBloco.cor_do_carro(carro))
+		v.add_child(vit)
+		var n := rotulo(carro.base["nome"], 44, Color.WHITE, v)
+		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var a := carro.atributos_efetivos("seco")
+		numeros([["%d" % a["potencia"], "cv"], ["%d" % a["peso"], "kg"], [carro.base["tracao"], "tração"]], v),
+		[["Ir para a garagem", func():
+			jogador.carro_ativo = carro.uid
+			ir_para.emit(GARAGEM)
+			mudou.emit()], ["Continuar comprando", func(): pass]])
 
 
 ## Quanto a Loja paga por este modelo na venda (preço de tabela × fração).
@@ -249,6 +286,52 @@ func acoes(pai: Control = null) -> HFlowContainer:
 	return h
 
 
+## Números grandes com a unidade embaixo: [[valor, unidade], ...].
+func numeros(lista: Array, pai: Control = null) -> HBoxContainer:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	for n in lista:
+		var v := VBoxContainer.new()
+		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		v.add_theme_constant_override("separation", -6)
+		var a := Label.new()
+		a.text = n[0]
+		a.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		a.add_theme_font_size_override("font_size", 40)
+		v.add_child(a)
+		var b := Label.new()
+		b.text = n[1]
+		b.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		b.add_theme_color_override("font_color", COR_SECUNDARIA)
+		v.add_child(b)
+		h.add_child(v)
+	_pai(pai).add_child(h)
+	return h
+
+
+## Botão discreto, só texto (ação secundária).
+func botao_texto(t: String, acao: Callable, pai: Control = null, habilitado := true) -> Button:
+	var b := Button.new()
+	b.text = t
+	b.flat = true
+	b.disabled = not habilitado
+	b.custom_minimum_size = Vector2(0, 56)
+	b.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
+	b.add_theme_color_override("font_color", COR_INFO.lightened(0.2))
+	b.pressed.connect(func():
+		acao.call()
+		mudou.emit())
+	_pai(pai).add_child(b)
+	return b
+
+
+## Commit publicado (versao.txt, gerado pelo workflow do Pages) ou "local".
+static func versao() -> String:
+	var v := FileAccess.get_file_as_string("res://versao.txt").strip_edges()
+	return v if v != "" else "local"
+
+
 func fileira(pai: Control = null) -> HBoxContainer:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 12)
@@ -337,9 +420,10 @@ func linha(descricao: String, botoes: Array = [], icone: Control = null, pai: Co
 
 # --- Placeholders e formatação ---------------------------------------------
 
-func icone_carro(base: Dictionary, grande := false) -> Control:
-	return Icones.carro(base.get("categoria", ""), CarroBloco.cor_do_id(base.get("id", "")),
-			Vector2(180, 86) if grande else Vector2(124, 60))
+## Foto do modelo (Estudio). `cor` vazia: pintura de fábrica.
+func icone_carro(base: Dictionary, grande := false, cor := Color(0, 0, 0, 0)) -> Control:
+	return Estudio.imagem(base, cor if cor.a > 0.0 else CarroBloco.cor_do_id(base.get("id", "")),
+			Vector2(200, 110) if grande else Vector2(140, 78))
 
 
 ## Pistas montadas uma vez por id (o traçado não muda durante o jogo).
