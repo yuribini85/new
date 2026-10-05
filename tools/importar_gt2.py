@@ -276,13 +276,23 @@ def main() -> int:
     eventos, pilotos = importar_eventos(nosso, resumo, carros)
     licencas = []
     for lic in ("B", "A"):
-        limites = [e["restricoes"]["potencia_max"] for e in eventos
-                   if e["restricoes"].get("licenca") == lic and "potencia_max" in e["restricoes"]]
-        # Mediana dos limites de potência dos eventos que a licença abre.
-        restr = {"potencia_max": int(statistics.median(limites))} if limites else {}
+        limites = sorted(e["restricoes"]["potencia_max"] for e in eventos
+                         if e["restricoes"].get("licenca") == lic and "potencia_max" in e["restricoes"])
+        if lic == "B":
+            # Mediana dos limites de potência dos eventos que a licença abre.
+            por_teste = [int(statistics.median(limites))] * 3 if limites else [None] * 3
+        else:
+            # A: mediana, quartil inferior e superior dos limites das provas A
+            # (o limite real mais próximo de cada um). Limites diferentes por
+            # teste: potência sozinha não resolve todos.
+            por_teste = [None] * 3
+            if limites:
+                q1, q2, q3 = statistics.quantiles(limites, n=4, method="inclusive")
+                por_teste = [min(limites, key=lambda x: abs(x - q)) for q in (q2, q1, q3)]
         licencas.append({"id": lic, "nome": f"Licença {lic}", "requisito": "B" if lic == "A" else None,
                          "testes": [{"id": f"{lic.lower()}{k + 1}", "pista": pista, "voltas": 1, "condicao": "seco",
-                                     "restricoes": restr, "tempos": {"ouro": None, "prata": None, "bronze": None}}
+                                     "restricoes": {"potencia_max": por_teste[k]} if por_teste[k] else {},
+                                     "tempos": {"ouro": None, "prata": None, "bronze": None}}
                                     for k, pista in enumerate(["anel_do_vale", "parque_das_docas", "serra_alta"])]})
 
     gravar("carros", carros)

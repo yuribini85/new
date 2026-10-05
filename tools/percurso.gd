@@ -70,6 +70,6 @@ static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 	for k in j.vitorias:
 		vitorias += int(j.vitorias[k])
 	var res := {"log": log, "tempo": tempo, "licenca_b": "B" in j.licencas, "ciclo": ciclo,
-			"saldo": j.economia.saldo, "vitorias": vitorias}
+			"saldo": j.economia.saldo, "vitorias": vitorias, "carro": j.garagem.carro(uid).copiar()}
 	j.free()
 	return res
