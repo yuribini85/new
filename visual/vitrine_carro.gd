@@ -93,10 +93,24 @@ func ambiente_garagem() -> void:
 	_garagem = true
 	_piso.visible = false
 	_anel.visible = false
+	# Ambiente escuro e o carro como ponto de luz: foco de cima sobre ele.
 	_luz.shadow_enabled = true
 	_luz.rotation = Vector3(-1.1, 0.5, 0)
-	var claro := CarroBloco._material(Color(0.42, 0.43, 0.46))
-	var escuro := CarroBloco._material(Color(0.3, 0.31, 0.34))
+	_luz.light_energy = 0.35
+	var ambiente: Environment = (_mundo.get_child(0) as WorldEnvironment).environment
+	ambiente.ambient_light_color = Color(0.3, 0.31, 0.35)
+	ambiente.background_color = Color(0.05, 0.05, 0.06)
+	var foco := SpotLight3D.new()
+	foco.position = Vector3(0.6, 5.5, 1.2)
+	foco.rotation = Vector3(-PI / 2.0 + 0.15, 0, 0)
+	foco.spot_angle = 38.0
+	foco.spot_range = 12.0
+	foco.light_energy = 3.2
+	foco.light_color = Color(1.0, 0.96, 0.9)
+	foco.shadow_enabled = true
+	_mundo.add_child(foco)
+	var claro := CarroBloco._material(Color(0.17, 0.175, 0.19))
+	var escuro := CarroBloco._material(Color(0.14, 0.145, 0.16))
 	for i in range(-6, 7):
 		for k in range(-6, 7):
 			var ladrilho := MeshInstance3D.new()
@@ -106,8 +120,8 @@ func ambiente_garagem() -> void:
 			ladrilho.material_override = claro if (i + k) % 2 == 0 else escuro
 			ladrilho.position = Vector3(i, -0.02, k)
 			_mundo.add_child(ladrilho)
-	var parede := CarroBloco._material(Color(0.62, 0.63, 0.66))
-	var faixa := CarroBloco._material(Color(0.85, 0.65, 0.12))
+	var parede := CarroBloco._material(Color(0.22, 0.23, 0.26))
+	var faixa := CarroBloco._material(Color(0.5, 0.38, 0.1))
 	for p in [[Vector3(13.0, 4.0, 0.2), Vector3(0, 2.0, -6.5)], [Vector3(0.2, 4.0, 13.0), Vector3(-6.5, 2.0, 0)]]:
 		_bloco(p[0], p[1], parede)
 		_bloco(Vector3(p[0].x, 0.25, p[0].z) + Vector3(0.02, 0, 0.02), p[1] + Vector3(0, -0.9, 0), faixa)
@@ -142,7 +156,7 @@ func ambiente_garagem() -> void:
 	var luz := OmniLight3D.new()
 	luz.position = Vector3(0, 3.3, 0)
 	luz.omni_range = 9.0
-	luz.light_energy = 0.8
+	luz.light_energy = 0.35
 	luz.light_color = Color(1.0, 0.93, 0.8)
 	_mundo.add_child(luz)
 

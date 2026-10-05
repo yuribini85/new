@@ -101,9 +101,11 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 			"escamoteavel":
 				_caixa(Vector3(0.3, 0.03, 0.42), Vector3(c * 0.42, perfil(f, c * 0.42)[0] + 0.005, z * l * 0.3), escuro)
 			"redondo":
+				_cilindro_em(0.12, 0.04, Vector3(c * 0.5 - 0.01, bico - 0.11, z * l * 0.32), cromado, Vector3(0, 0, PI / 2.0))
 				_cilindro_em(0.1, 0.05, Vector3(c * 0.5, bico - 0.11, z * l * 0.32), farol, Vector3(0, 0, PI / 2.0))
 			_:
-				_caixa(Vector3(0.05, 0.09, 0.38), Vector3(c * 0.5 - 0.01, bico - 0.08, z * l * 0.31), farol)
+				_caixa(Vector3(0.04, 0.13, 0.42), Vector3(c * 0.5 - 0.02, bico - 0.08, z * l * 0.31), cromado)
+				_caixa(Vector3(0.05, 0.09, 0.36), Vector3(c * 0.5 - 0.005, bico - 0.08, z * l * 0.31), farol)
 		_caixa(Vector3(0.05, 0.11 if f["lanterna_alta"] else 0.08, 0.42), Vector3(-c * 0.5 + 0.01, cint_tras - 0.1, z * l * 0.31), lanterna)
 		if f["teto"]:
 			var xr: float = c * f["recuo"] + c * f["cab"] * 0.36
@@ -126,6 +128,11 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 			_caixa(Vector3(0.15, f["hc"] * 0.82, 0.05), Vector3(xb, yb + f["hc"] * 0.41, z * l * 0.44), pintura)
 			_caixa(Vector3(0.012, yb - 0.24, 0.02), Vector3(xb + 0.02, (yb + 0.2) * 0.5 + 0.02, z * l * 0.505), escuro)
 			_caixa(Vector3(0.14, 0.035, 0.02), Vector3(xb - 0.25, yb - 0.12, z * l * 0.507), escuro)
+	if f["teto"]:
+		var lc: float = c * f["cab"]
+		var xcab: float = c * f["recuo"]
+		for z in [-1.0, 1.0]:
+			_caixa(Vector3(lc, 0.035, 0.02), Vector3(xcab, cintura_em(f, xcab) + 0.01, z * l * 0.468), escuro)
 	# Tomada de ar no capô (rali, muscle).
 	if f["tomada_capo"]:
 		var xc: float = c * f["recuo"] + c * f["cab"] * 0.5 + c * 0.1
@@ -147,7 +154,9 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 	if f["estilo"] == "esportivo":
 		_caixa(Vector3(0.08, 0.36, l * 0.6), Vector3(-c * 0.12, cintura_em(f, -c * 0.12) + 0.18, 0), escuro)
 	# Rodas: pneu, aro na cor do modelo e raios; traseiras maiores no muscle.
-	var pneu := _material(Color(0.07, 0.07, 0.08))
+	var pneu := _material(Color(0.11, 0.11, 0.12))
+	var lateral := _material(Color(0.2, 0.2, 0.22))
+	var cubo := _material(Color(0.15, 0.15, 0.17))
 	var entre: float = c * f["entre_eixos"] * 0.5
 	var desloc: float = c * f.get("eixos_desloc", 0.0)
 	for x in [-entre + desloc, entre + desloc]:
@@ -167,12 +176,24 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 			p.material_override = pneu
 			p.rotation = Vector3(PI / 2.0, 0, 0)
 			roda.add_child(p)
+			var flanco := MeshInstance3D.new()
+			flanco.mesh = _cilindro(rr * 0.92, 0.02)
+			flanco.material_override = lateral
+			flanco.rotation = Vector3(PI / 2.0, 0, 0)
+			flanco.position.z = z * (f["largura_pneu"] * 0.5 + 0.002)
+			roda.add_child(flanco)
 			var disco := MeshInstance3D.new()
-			disco.mesh = _cilindro(rr * f["aro"], 0.02)
+			disco.mesh = _cilindro(rr * minf(f["aro"] + 0.06, 0.8), 0.02)
 			disco.material_override = aro
 			disco.rotation = Vector3(PI / 2.0, 0, 0)
 			disco.position.z = z * (f["largura_pneu"] * 0.5 + 0.005)
 			roda.add_child(disco)
+			var centro := MeshInstance3D.new()
+			centro.mesh = _cilindro(rr * 0.16, 0.03)
+			centro.material_override = cubo
+			centro.rotation = Vector3(PI / 2.0, 0, 0)
+			centro.position.z = z * (f["largura_pneu"] * 0.5 + 0.02)
+			roda.add_child(centro)
 			for k in int(f["raios"]):
 				var raio := MeshInstance3D.new()
 				var b := BoxMesh.new()
@@ -376,14 +397,15 @@ static func carroceria(f: Dictionary, cor: Color) -> ArrayMesh:
 		topos.append(topo)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var cor_vidro := Color(0.13, 0.17, 0.23)
+	var cor_vidro := Color(0.14, 0.19, 0.27)
+	var cor_parabrisa := Color(0.26, 0.33, 0.43)
 	for i in estacoes:
 		var a: Array = secoes[i]
 		var b: Array = secoes[i + 1]
 		for k in a.size() - 1:
 			var eh_vidro: bool = (k == 4 and (vidros[i] or vidros[i + 1])) or (k == 5 and vidros[i] and vidros[i + 1]
 					and absf(float(topos[i]) - float(topos[i + 1])) > 0.01)
-			var cor_q := cor_vidro if eh_vidro else (Color(0.08, 0.08, 0.09) if k == 0 else (cor.darkened(0.12) if k == 1 else cor))
+			var cor_q := (cor_parabrisa if k == 5 else cor_vidro) if eh_vidro else (Color(0.08, 0.08, 0.09) if k == 0 else (cor.darkened(0.12) if k == 1 else cor))
 			for lado in [1.0, -1.0]:
 				var q := [a[k], b[k], b[k + 1], a[k + 1]].map(func(v): return Vector3(v.x, v.y, v.z * lado))
 				_quad(st, q, cor_q, lado < 0.0)
@@ -401,9 +423,9 @@ static func carroceria(f: Dictionary, cor: Color) -> ArrayMesh:
 	st.generate_normals()
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
-	mat.roughness = 0.6
+	mat.roughness = 0.5
 	mat.metallic = 0.0
-	mat.metallic_specular = 0.25
+	mat.metallic_specular = 0.32
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	var m := st.commit()
 	m.surface_set_material(0, mat)

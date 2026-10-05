@@ -173,7 +173,10 @@ func atualizar(delta: float) -> void:
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
 	for id in _carros:
 		_carros[id].scale = Vector3.ONE * escala
-		_rotulos[id].pixel_size = 0.045 * (escala * 1.6 if visao_geral else 1.0)
+		# Números dos rivais menores e translúcidos; VOCÊ e ALVO em destaque.
+		var forte: bool = id == "jogador" or id == self.alvo
+		_rotulos[id].pixel_size = (0.045 if forte else 0.032) * (escala * 1.6 if visao_geral else 1.0)
+		_rotulos[id].modulate.a = 1.0 if forte else 0.7
 		_rotulos[id].position = _carros[id].position + Vector3(0, ALTURA_MARCADOR * escala, 0)
 	var disputa := false
 	if _anel_alvo != null:
@@ -341,6 +344,7 @@ func _construir_pista() -> void:
 	_arquibancada()
 	_portico()
 	_bordas()
+	_placas_curva()
 	_decorar(pts, tema["props"])
 	_fundo(caixa, tema)
 
@@ -433,16 +437,62 @@ func _bordas() -> void:
 
 ## Arquibancada ao lado da largada: referência para saber onde a volta começa.
 func _arquibancada() -> void:
-	var p0 := _pista.posicao_em(0.0)
-	var rumo := _pista.rumo_em(0.0)
-	var lado := Vector2.from_angle(rumo + PI / 2.0)
-	var base := p0 + lado * (LARGURA_PISTA_M * 0.5 + 8.0)
-	for degrau in 4:
-		var b := _bloco(Vector3(30.0, 1.2, 3.0), Color(0.75, 0.2, 0.2) if degrau % 2 == 0 else Color(0.9, 0.9, 0.9))
-		var q := base + lado * (degrau * 3.0)
-		b.position = Vector3(q.x, 0.6 + degrau * 1.2, -q.y)
-		b.rotation.y = rumo
-		_cena.add_child(b)
+	var cores := [Color(0.75, 0.2, 0.2), Color(0.2, 0.4, 0.75), Color(0.85, 0.65, 0.15)]
+	for k in 3:
+		var s0 := -45.0 + k * 34.0
+		var p0 := _pista.posicao_em(s0)
+		var rumo := _pista.rumo_em(s0)
+		var lado := Vector2.from_angle(rumo + PI / 2.0)
+		var base := p0 + lado * (LARGURA_PISTA_M * 0.5 + 8.0)
+		for degrau in 4:
+			var b := _bloco(Vector3(30.0, 1.2, 3.0), cores[k] if degrau % 2 == 0 else Color(0.85, 0.85, 0.87))
+			var q := base + lado * (degrau * 3.0)
+			b.position = Vector3(q.x, 0.6 + degrau * 1.2, -q.y)
+			b.rotation.y = rumo
+			_cena.add_child(b)
+		var cobertura := _bloco(Vector3(31.0, 0.3, 13.0), Color(0.88, 0.88, 0.9))
+		var qc := base + lado * 4.5
+		cobertura.position = Vector3(qc.x, 7.6, -qc.y)
+		cobertura.rotation.y = rumo
+		_cena.add_child(cobertura)
+	# Prédio dos boxes do outro lado, com portas escuras.
+	var pb := _pista.posicao_em(0.0)
+	var rb := _pista.rumo_em(0.0)
+	var outro := Vector2.from_angle(rb - PI / 2.0)
+	var qb := pb + outro * (LARGURA_PISTA_M * 0.5 + 10.0)
+	var predio := _bloco(Vector3(70.0, 5.0, 8.0), Color(0.82, 0.83, 0.86))
+	predio.position = Vector3(qb.x, 2.5, -qb.y)
+	predio.rotation.y = rb
+	_cena.add_child(predio)
+	for k in 8:
+		var qp := pb + Vector2.from_angle(rb) * (-30.0 + k * 8.5) + outro * (LARGURA_PISTA_M * 0.5 + 5.95)
+		var porta := _bloco(Vector3(6.0, 3.6, 0.1), Color(0.15, 0.16, 0.18))
+		porta.position = Vector3(qp.x, 1.8, -qp.y)
+		porta.rotation.y = rb
+		_cena.add_child(porta)
+
+
+## Placas de 100 e 50 m antes de cada curva, por fora: o piloto (e quem
+## assiste) sabe que vem freada.
+func _placas_curva() -> void:
+	for i in _pista.trechos.size():
+		var t: Dictionary = _pista.trechos[i]
+		var anterior: Dictionary = _pista.trechos[i - 1]
+		if float(t.get("raio_m", 0.0)) <= 0.0 or float(anterior.get("raio_m", 0.0)) > 0.0:
+			continue
+		var fora := -1.0 if t.get("sentido", "esquerda") == "esquerda" else 1.0
+		for d in [100.0, 50.0]:
+			var s: float = float(_pista.inicios[i]) - d
+			var p := _pista.posicao_em(s) + Vector2.from_angle(_pista.rumo_em(s) + PI / 2.0) * fora * (LARGURA_PISTA_M * 0.5 + 2.4)
+			var placa := _bloco(Vector3(0.15, 1.3, 1.0), Color.WHITE)
+			placa.position = Vector3(p.x, 1.0, -p.y)
+			placa.rotation.y = _pista.rumo_em(s)
+			_cena.add_child(placa)
+			for k in int(d / 50.0):
+				var faixa := _bloco(Vector3(0.17, 0.16, 1.02), Color(0.1, 0.1, 0.12))
+				faixa.position = Vector3(p.x, 0.65 + k * 0.4, -p.y)
+				faixa.rotation.y = _pista.rumo_em(s)
+				_cena.add_child(faixa)
 
 
 ## Cenário de fundo, fora do traçado: colinas (vale), água, guindastes e
@@ -582,6 +632,17 @@ func _objeto(tipo: String, rng: RandomNumberGenerator, dist: float) -> Node3D:
 				pedra.position.y = 0.8
 				return pedra
 			return _arvore(rng, Color(0.16, 0.32, 0.2), 1.3)
+	if rng.randf() < 0.35:
+		var arbusto := MeshInstance3D.new()
+		var esf := SphereMesh.new()
+		esf.radius = rng.randf_range(1.2, 2.2)
+		esf.height = esf.radius * 1.3
+		esf.radial_segments = 8
+		esf.rings = 4
+		arbusto.mesh = esf
+		arbusto.material_override = CarroBloco._material(Color(0.22, 0.45, 0.2).darkened(rng.randf_range(0.0, 0.25)))
+		arbusto.position.y = esf.height * 0.4
+		return arbusto
 	return _arvore(rng, Color(0.2, 0.5, 0.25), 1.0)
 
 

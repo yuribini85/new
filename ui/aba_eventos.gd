@@ -169,10 +169,11 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var v := cartao(tipo[1])
 	# Faixa de identidade: tipo da série e dificuldade estimada para o seu carro.
 	var faixa := fileira(v)
-	faixa.add_child(_emblema(ev, tipo[1]))
 	var t := rotulo(tipo[0].to_upper(), FONTE_PEQUENA, tipo[1].lightened(0.35), faixa)
 	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	faixa.add_child(_etapas(ev))
+	var prog := rotulo(_progresso(ev), FONTE_PEQUENA, COR_SECUNDARIA, faixa)
+	prog.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	prog.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	var topo := fileira(v)
 	var fundo := PanelContainer.new()
@@ -226,60 +227,22 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		elif est is String:
 			rotulo("Estimando…", FONTE_PEQUENA, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		else:
-			rotulo("Nos testes: %s" % Mecanico.texto_faixa(est), FONTE_PEQUENA + 2, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			rotulo("Estimativa: %s\n%d corridas simuladas, preparação atual" % [Mecanico.texto_faixa(est), Mecanico.AMOSTRAS],
+					FONTE_PEQUENA, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		botao("Correr" if _repeticoes == 1 else "Correr ×%d" % _repeticoes, _correr.bind(ev["id"]),
 				jogador.fila.is_empty(), true, h)
 	else:
 		rotulo("✗ " + "; ".join(motivos), FONTE_PEQUENA, COR_RUIM, h)
 
 
-## Emblema da série: escudo com as iniciais, na cor do tipo.
-func _emblema(ev: Dictionary, cor: Color) -> Control:
-	var serie := String(ev["nome"]).split(" — ")[0]
-	var iniciais := ""
-	for p in serie.split(" "):
-		if p.length() > 2 and iniciais.length() < 2:
-			iniciais += p.left(1).to_upper()
-	var e := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = cor.darkened(0.25)
-	sb.border_color = cor.lightened(0.3)
-	sb.set_border_width_all(2)
-	sb.corner_radius_top_left = 8
-	sb.corner_radius_top_right = 8
-	sb.corner_radius_bottom_left = 18
-	sb.corner_radius_bottom_right = 18
-	sb.content_margin_left = 8
-	sb.content_margin_right = 8
-	e.add_theme_stylebox_override("panel", sb)
-	e.custom_minimum_size = Vector2(54, 50)
-	var l := Label.new()
-	l.text = iniciais
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	l.add_theme_font_size_override("font_size", 24)
-	e.add_child(l)
-	return e
-
-
-## Etapas da série como bolinhas: cheia = vencida; contorno amarelo = esta.
-func _etapas(ev: Dictionary) -> Control:
+## "Etapa 1 de 3 · 1/3 vencidas": onde esta prova fica na série.
+func _progresso(ev: Dictionary) -> String:
 	var serie := String(ev["nome"]).split(" — ")[0]
 	var etapas: Array = dados.lista("eventos").filter(func(e): return String(e["nome"]).split(" — ")[0] == serie)
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 6)
-	h.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	for e in etapas:
-		var p := Panel.new()
-		p.custom_minimum_size = Vector2(18, 18)
-		var sb := StyleBoxFlat.new()
-		sb.set_corner_radius_all(9)
-		sb.bg_color = COR_BOM if jogador.vitorias.has(e["id"]) else Color(0.25, 0.27, 0.31)
-		sb.border_color = COR_DESTAQUE if e["id"] == ev["id"] else Color(0, 0, 0, 0)
-		sb.set_border_width_all(3 if e["id"] == ev["id"] else 0)
-		p.add_theme_stylebox_override("panel", sb)
-		h.add_child(p)
-	return h
+	if etapas.size() <= 1:
+		return ""
+	var vencidas := etapas.filter(func(e): return jogador.vitorias.has(e["id"])).size()
+	return "Etapa %d de %d · %d/%d vencidas" % [etapas.find(ev) + 1, etapas.size(), vencidas, etapas.size()]
 
 
 ## Tipo da série pelo que ela exige: [nome, cor de identidade].

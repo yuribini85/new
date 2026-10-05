@@ -265,6 +265,19 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				_ir_para(2)
 				atualizar()],
 			["Outra prova", func(): _ir_para(3)]]
+		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
+		var alvo_obj: Array = Objetivos.lista(jogador, dados)
+		var i_obj := Objetivos.atual(alvo_obj)
+		var aba_obj: int = alvo_obj[i_obj]["aba"] if i_obj < alvo_obj.size() else -1
+		var primeiro := 0
+		if aba_obj == Aba.OFICINA or (not venceu and aba_obj != Aba.EVENTOS):
+			primeiro = 1
+		elif aba_obj == Aba.EVENTOS and venceu:
+			primeiro = 2
+		if primeiro > 0:
+			var b = botoes[primeiro]
+			botoes.remove_at(primeiro)
+			botoes.push_front(b)
 	var meu: Carro = jogador.garagem.carro(c["uid"])
 	var tabela: Array = c.get("tabela", [])
 	var objetivos := Objetivos.lista(jogador, dados)

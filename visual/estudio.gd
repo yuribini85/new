@@ -35,12 +35,12 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_CLEAR_COLOR
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.62, 0.64, 0.7)
+	env.ambient_light_color = Color(0.72, 0.74, 0.8)
 	amb.environment = env
 	mundo.add_child(amb)
 	var luz := DirectionalLight3D.new()
 	luz.rotation = Vector3(-0.8, 0.9, 0)
-	luz.light_energy = 0.9
+	luz.light_energy = 1.05
 	mundo.add_child(luz)
 	# Luz de recorte por trás: carro escuro não some no fundo escuro.
 	var recorte := DirectionalLight3D.new()
@@ -52,7 +52,7 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	mundo.add_child(carro)
 	carro.configurar_modelo(base, cor)
 	var cam := Camera3D.new()
-	cam.fov = 21
+	cam.fov = 19
 	mundo.add_child(cam)
 	cam.look_at_from_position(Vector3(4.3, 1.6, 5.8), Vector3(0, 0.5, 0))
 	add_child(vp)

@@ -231,9 +231,20 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 	painel.emit(p["nome"], func(v):
 		rotulo("Na pista: " + FUNCAO[attr] + ".", FONTE_PEQUENA + 3, Color.WHITE, v)
 		if not instalada:
-			numeros([["%d → %d" % [roundi(antes["potencia"]), roundi(depois["potencia"])], "cv"],
-					["%d → %d" % [roundi(antes["peso"]), roundi(depois["peso"])], "kg"],
-					["%.2f → %.2f" % [antes["freio"], depois["freio"]], "freio"]], v)
+			var muda := []
+			if absf(depois["potencia"] - antes["potencia"]) >= 0.5:
+				muda.append(["%d → %d" % [roundi(antes["potencia"]), roundi(depois["potencia"])],
+						"cv  (%+d)" % roundi(depois["potencia"] - antes["potencia"])])
+			if absf(depois["peso"] - antes["peso"]) >= 0.5:
+				muda.append(["%d → %d" % [roundi(antes["peso"]), roundi(depois["peso"])],
+						"kg  (%+d)" % roundi(depois["peso"] - antes["peso"])])
+			if absf(depois["freio"] - antes["freio"]) >= 0.005:
+				muda.append(["%.2f → %.2f" % [antes["freio"], depois["freio"]], "freio"])
+			numeros(muda, v)
+			if not possuida:
+				var custo := int(p["preco"])
+				rotulo("Custa %s Cr · saldo depois: %s Cr" % [dinheiro(custo), dinheiro(jogador.economia.saldo - custo)]
+						if jogador.economia.pode_pagar(custo) else "", FONTE_PEQUENA + 2, Color.WHITE, v)
 		if not perde.is_empty():
 			var vp := cartao(COR_RUIM, v)
 			rotulo("⚠ Deixa de poder correr:", FONTE_PEQUENA + 2, COR_RUIM, vp)

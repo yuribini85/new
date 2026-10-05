@@ -12,6 +12,10 @@ func _init(d: Node, j: Node) -> void:
 
 ## "usados" ou "novos": a seção aberta (mantida ao voltar para o Mercado).
 var _secao := "usados"
+## Filtros do catálogo (mantidos ao voltar).
+var _so_posso := false
+var _ordem := "preco"  # "preco" ou "potencia"
+var _tracao := ""
 
 
 func construir() -> void:
@@ -32,6 +36,7 @@ func construir() -> void:
 			mudou.emit())
 		abas.add_child(b)
 	conteudo.add_child(abas)
+	_filtros()
 	if _secao == "usados":
 		rotulo("Mudam conforme você corre (cada corrida é um dia). %s" % (
 				"★ = foi bem nos testes da prova mais fácil." if jogador.garagem.lista().is_empty() else ""),
@@ -40,7 +45,7 @@ func construir() -> void:
 			rotulo("Nenhum usado hoje. Volte depois de algumas corridas.", 0, COR_SECUNDARIA)
 		var prev := _prever(ofertas)
 		var grade := _grade()
-		for o in ofertas:
+		for o in _filtrar(ofertas.map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2]):
 			var c: Dictionary = dados.carro(o["carro_id"])
 			var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
 			var estrela: bool = not a.is_empty() and a["media"] <= 1.5
@@ -54,8 +59,48 @@ func construir() -> void:
 	else:
 		rotulo("Sempre disponíveis. Modelos antigos só aparecem nos usados.", FONTE_PEQUENA, COR_SECUNDARIA)
 		var grade := _grade()
-		for c in novos:
+		for c in _filtrar(novos.map(func(c): return [c, int(c["preco"]), c])).map(func(x): return x[2]):
 			_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
+
+
+## Fileira de filtros: só o que posso comprar, ordem e tração.
+func _filtros() -> void:
+	var h := HFlowContainer.new()
+	h.add_theme_constant_override("h_separation", 8)
+	h.add_theme_constant_override("v_separation", 8)
+	var chip := func(texto: String, ligado: bool, acao: Callable):
+		var b := Button.new()
+		b.text = texto
+		b.toggle_mode = true
+		b.button_pressed = ligado
+		b.custom_minimum_size = Vector2(0, 54)
+		b.add_theme_font_size_override("font_size", 23)
+		b.pressed.connect(func():
+			acao.call()
+			mudou.emit())
+		h.add_child(b)
+	chip.call("Posso comprar", _so_posso, func(): _so_posso = not _so_posso)
+	chip.call("Mais baratos" if _ordem == "preco" else "Mais potentes", true,
+			func(): _ordem = "potencia" if _ordem == "preco" else "preco")
+	for t in ["", "FF", "FR", "MR", "4WD"]:
+		chip.call("Todas" if t == "" else t, _tracao == t, func(): _tracao = t)
+	conteudo.add_child(h)
+
+
+func _passa(x: Array) -> bool:
+	return (not _so_posso or jogador.economia.pode_pagar(x[1])) and (_tracao == "" or x[0]["tracao"] == _tracao)
+
+
+## Aplica os filtros a [[carro, preço, item], ...].
+func _filtrar(itens: Array) -> Array:
+	var r := itens.filter(func(x): return _passa(x))
+	if _ordem == "preco":
+		r.sort_custom(func(a, b): return a[1] < b[1])
+	else:
+		r.sort_custom(func(a, b): return a[0]["potencia"] > b[0]["potencia"])
+	if r.is_empty():
+		rotulo("Nenhum carro com esses filtros.", FONTE_PEQUENA + 2, COR_SECUNDARIA)
+	return r
 
 
 func _grade() -> GridContainer:
