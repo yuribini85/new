@@ -51,6 +51,24 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	d.free()
 
 
+func test_garagem_vazia_sem_saldo_oferece_recomecar() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var g: Control = ABAS[0].new(d, j)
+	verificar(not g._sem_saida(), "saldo inicial compra carro")
+	j.economia.debitar(j.economia.saldo)
+	j.dias = 7
+	verificar(g._sem_saida(), "sem carro e sem saldo")
+	g._recomecar()
+	igual(j.economia.saldo, int(d.economia()["saldo_inicial"]), "saldo inicial de volta")
+	igual(j.dias, 0, "dia zero")
+	verificar(not g._sem_saida(), "volta a poder comprar")
+	g.free()
+	j.free()
+	d.free()
+
+
 func test_visual_posiciona_carros_na_pista() -> void:
 	var d := dados_fixture()
 	var p: Pista = d.pista("oval")
