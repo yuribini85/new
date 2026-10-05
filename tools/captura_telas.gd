@@ -65,6 +65,22 @@ func _rodar() -> void:
 			await process_frame
 		var img := root.get_texture().get_image()
 		img.save_png(_saida.path_join("%d_%s.png" % [i + 1, abas.get_tab_title(i).to_lower()]))
+	# Bancada do primeiro contrato, montada e avaliada.
+	var contratos: Array = dados.lista("contratos")
+	if not contratos.is_empty():
+		var carreira = tela._todas[5]
+		tela._ir_para(5)
+		carreira._abrir_bancada(contratos[0])
+		carreira._montagem = jogador.montagens.get(contratos[0]["id"], {"pecas": [], "ajuste_cambio": ""})
+		carreira._enviar(contratos[0])
+		carreira.atualizar()
+		for k in 6:
+			await process_frame
+		root.get_texture().get_image().save_png(_saida.path_join("%d_bancada.png" % (total + 1)))
+		carreira.scroll_vertical = 100000
+		for k in 6:
+			await process_frame
+		root.get_texture().get_image().save_png(_saida.path_join("%d_bancada_relatorio.png" % (total + 1)))
 	tela.queue_free()
 	await _capturar_pistas(dados, total + 1)
 	quit()

@@ -16,7 +16,8 @@ O que existe hoje:
 
 - concessionária de novos e usados (usados por período, como no GT2), garagem, oficina
   com peças e pneus por carro, venda;
-- 38 eventos em 18 séries sem licença, B e A; licenças B e A por teste de tempo;
+- 38 eventos em 18 séries sem licença, B e A; licença B por contratos de certificação
+  (carro e peças da escola) e A por teste de tempo;
 - corrida resolvida pela simulação e reproduzida em 3D isométrico (carro original
   gerado em código, ambiente por pista), em tempo real, com minimapa, placar e sons;
 - objetivos de carreira, "O que ajuda?", análise da derrota, coleção e fichas;

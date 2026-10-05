@@ -3,6 +3,9 @@ extends RefCounted
 ## tools/percursos_iniciais.gd): com o carro dado, corre as provas sem licença
 ## em ordem de prêmio, segue o "O que ajuda?" após cada derrota e tenta a
 ## licença B. O tempo conta só corrida.
+## A licença B vem dos contratos (data/contratos.json), que não dependem do carro
+## do jogador; aqui "licenca_b" mede se o carro dele já está pronto para as provas
+## B: bronze em todos os testes de tempo da B.
 
 const JogadorScript := preload("res://autoload/jogador.gd")
 
@@ -69,7 +72,11 @@ static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 	var vitorias := 0
 	for k in j.vitorias:
 		vitorias += int(j.vitorias[k])
-	var res := {"log": log, "tempo": tempo, "licenca_b": "B" in j.licencas, "ciclo": ciclo,
+	var res := {"log": log, "tempo": tempo, "licenca_b": _testes_b(d, j), "ciclo": ciclo,
 			"saldo": j.economia.saldo, "vitorias": vitorias, "carro": j.garagem.carro(uid).copiar()}
 	j.free()
 	return res
+
+
+static func _testes_b(d: Node, j: Node) -> bool:
+	return d.item("licencas", "B")["testes"].all(func(t): return j.graus_licenca.has(t["id"]))

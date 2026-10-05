@@ -12,6 +12,13 @@ const CORES_GRAU := {
 var _expandida := {}
 ## Primeiro toque em "Recomeçar carreira" só pede confirmação.
 var _confirmar_recomeco := false
+## Bancada de contrato aberta ("" = lista), a montagem em edição e o último
+## relatório dela.
+var _bancada := ""
+var _montagem := {}
+var _avaliacao := {}
+
+const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
 
 
 func _init(d: Node, j: Node) -> void:
@@ -20,17 +27,24 @@ func _init(d: Node, j: Node) -> void:
 
 ## Carreira: objetivos, licenças, coleção e preferências num lugar só.
 func construir() -> void:
+	if _bancada != "" and dados.existe("contratos", _bancada):
+		_tela_bancada(dados.item("contratos", _bancada))
+		return
+	_bancada = ""
 	_resumo()
 	_objetivos()
 	rotulo("LICENÇAS", FONTE_PEQUENA, COR_SECUNDARIA)
 	var c := carro_ativo()
-	if c == null:
-		rotulo("Os testes de licença são feitos com o carro em uso. Compre um carro primeiro.", FONTE_PEQUENA + 2, COR_SECUNDARIA)
-	else:
-		rotulo("Uma volta sozinho na pista com o %s. Bronze ou melhor em todos os testes dá a licença." % c.base["nome"],
-				FONTE_PEQUENA, COR_SECUNDARIA)
-		_mostrar_resultado()
-		for lic in dados.lista("licencas"):
+	_mostrar_resultado()
+	for lic in dados.lista("licencas"):
+		if not Contratos.da_licenca(dados, lic["id"]).is_empty():
+			_cartao_contratos(lic)
+		elif c == null:
+			rotulo("Os testes da %s são feitos com o carro em uso. Compre um carro primeiro." % lic["nome"],
+					FONTE_PEQUENA + 2, COR_SECUNDARIA)
+		else:
+			rotulo("%s: uma volta sozinho na pista com o %s. Bronze ou melhor em todos os testes dá a licença." % [
+					lic["nome"], c.base["nome"]], FONTE_PEQUENA, COR_SECUNDARIA)
 			_cartao_licenca(c, lic)
 	_colecao()
 	var h := acoes()
@@ -256,3 +270,211 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
 			rotulo("Elas aparecem em Eventos, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
 			[["Ver eventos", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
+
+
+
+# --- Contratos (decisão 4) --------------------------------------------------
+
+## Licença por contratos: cada contrato numa linha, com o melhor grau e a
+## entrada da bancada.
+func _cartao_contratos(lic: Dictionary) -> void:
+	var tem: bool = lic["id"] in jogador.licencas
+	var bloqueada: bool = lic.get("requisito") != null and not lic["requisito"] in jogador.licencas
+	var lista := Contratos.da_licenca(dados, lic["id"])
+	var feitos: int = lista.filter(func(ct): return jogador.graus_licenca.has(ct["id"])).size()
+	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
+	var v := cartao(COR_BOM if tem else (COR_NEUTRA if bloqueada else COR_INFO))
+	rotulo(lic["nome"], 34, Color.WHITE, v)
+	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
+			else ["%d de %d contratos" % [feitos, lista.size()], COR_INFO])
+	selos([estado, ["libera %d prova%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
+	rotulo("A escola empresta o carro e as peças, sem custo. Monte a solução e envie para avaliação; bronze em todos os contratos dá a licença.",
+			FONTE_PEQUENA, COR_SECUNDARIA, v)
+	for ct in lista:
+		separador(v)
+		var h := fileira(v)
+		var img := icone_carro(dados.carro(ct["carro"]))
+		img.custom_minimum_size = Vector2(120, 68)
+		h.add_child(img)
+		var info := VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(info)
+		var grau: String = jogador.graus_licenca.get(ct["id"], "")
+		rotulo(ct["nome"], 0, Color.WHITE, info)
+		rotulo("Seu melhor: %s" % (grau.to_upper() if grau != "" else "—"), FONTE_PEQUENA,
+				CORES_GRAU.get(grau, COR_SECUNDARIA), info)
+		var b := botao("Montar" if grau == "" else "Rever", _abrir_bancada.bind(ct), not bloqueada, grau == "", h)
+		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+
+func _abrir_bancada(ct: Dictionary) -> void:
+	_bancada = ct["id"]
+	var m: Dictionary = jogador.montagens.get(ct["id"], {})
+	_montagem = {"pecas": Array(m.get("pecas", [])).duplicate(), "ajuste_cambio": String(m.get("ajuste_cambio", ""))}
+	_avaliacao = {}
+	set_deferred("scroll_vertical", 0)
+	mudou.emit()
+
+
+## Bancada: o pedido, as medalhas, o carro da escola com a montagem, as peças
+## da escola por categoria e o relatório da última avaliação.
+func _tela_bancada(ct: Dictionary) -> void:
+	botao_texto("‹ Contratos", func():
+		_bancada = ""
+		mudou.emit())
+	rotulo(ct["nome"], FONTE_TITULO)
+	rotulo(ct.get("descricao", ""), FONTE_PEQUENA + 2, COR_SECUNDARIA)
+	var grau: String = jogador.graus_licenca.get(ct["id"], "")
+	var vm := cartao()
+	rotulo("MEDALHAS", FONTE_PEQUENA, COR_SECUNDARIA, vm)
+	var cond: Dictionary = ct["condicoes"]
+	for g in ["bronze", "prata", "ouro"]:
+		var partes := []
+		for chave in cond.get(g, {}):
+			partes.append(Contratos.texto_condicao(chave, cond[g][chave]))
+		var ganho: bool = grau != "" and Contratos.GRAUS.find(grau) <= Contratos.GRAUS.find(g)
+		rotulo("%s%s: %s%s" % ["✓ " if ganho else "", g.to_upper(), "cumprir o bronze e " if g != "bronze" else "",
+				"; ".join(partes)], FONTE_PEQUENA + 1, CORES_GRAU[g], vm)
+	for prova in ct["provas"]:
+		var h := fileira()
+		var ic := icone_pista(prova["pista"])
+		ic.custom_minimum_size = Vector2(110, 80)
+		h.add_child(ic)
+		var nomes: Array = prova["rivais"].map(func(r):
+			var b: Dictionary = dados.carro(r["carro"])
+			return "%s (%d cv, %d kg)" % [b["nome"], b["potencia"], b["peso"]])
+		var l := rotulo("%s · %d volta%s\nRival: %s" % [nome_pista(prova["pista"]), prova["voltas"],
+				"" if int(prova["voltas"]) == 1 else "s", ", ".join(nomes)], FONTE_PEQUENA + 1, Color.WHITE, h)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var carro := Contratos.carro_montado(dados, ct, _montagem)
+	var foto := icone_carro(carro.base, true)
+	foto.custom_minimum_size = Vector2(0, 170)
+	conteudo.add_child(foto)
+	rotulo("%s da escola" % carro.base["nome"], 30, Color.WHITE)
+	var a := carro.atributos_efetivos("seco")
+	numeros([["%d" % a["potencia"], "cv"], ["%d" % a["peso"], "kg"], ["%.2f" % a["aderencia"], "aderência"],
+			["%.2f" % a["freio"], "freio"]])
+	var custo := 0
+	for pid in carro.configuracao()["pecas"]:
+		custo += int(dados.peca(pid)["preco"])
+	rotulo("%d peça%s · preço de tabela %s Cr (a escola paga)" % [carro.pecas.size(), "" if carro.pecas.size() == 1 else "s",
+			dinheiro(custo)], FONTE_PEQUENA + 1, COR_SECUNDARIA)
+	_pecas_da_escola(ct, carro)
+	botao("Enviar para avaliação", _enviar.bind(ct), true, true)
+	if not _avaliacao.is_empty():
+		_relatorio(ct, _avaliacao)
+
+
+func _pecas_da_escola(ct: Dictionary, carro: Carro) -> void:
+	var por_cat := {}
+	for p in Contratos.pecas_escola(dados, ct):
+		por_cat.get_or_add(p["categoria"], []).append(p)
+	var v := cartao()
+	rotulo("PEÇAS DA ESCOLA · uma por categoria", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	for cat in por_cat:
+		por_cat[cat].sort_custom(func(x, y): return x["preco"] < y["preco"])
+		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), FONTE_PEQUENA + 2, Color.WHITE, v)
+		var f := HFlowContainer.new()
+		f.add_theme_constant_override("h_separation", 8)
+		f.add_theme_constant_override("v_separation", 8)
+		v.add_child(f)
+		var atual: String = carro.pecas.get(cat, {}).get("id", "")
+		var opcoes: Array = [{}] + por_cat[cat]
+		for p in opcoes:
+			var b := Button.new()
+			b.text = "Nenhuma" if p.is_empty() else "%s · %s Cr" % [p["nome"], dinheiro(int(p["preco"]))]
+			b.toggle_mode = true
+			b.button_pressed = (p.is_empty() and atual == "") or (not p.is_empty() and p["id"] == atual)
+			b.custom_minimum_size = Vector2(0, 58)
+			b.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+			b.pressed.connect(func():
+				var ids: Array = _montagem["pecas"].filter(func(x): return dados.peca(x)["categoria"] != cat)
+				if not p.is_empty():
+					ids.append(p["id"])
+				_montagem["pecas"] = ids
+				if cat == "cambio" and p.is_empty():
+					_montagem["ajuste_cambio"] = ""
+				mudou.emit())
+			f.add_child(b)
+		if cat == "cambio" and atual != "":
+			var h := HBoxContainer.new()
+			h.add_theme_constant_override("separation", 8)
+			for aj in [["curto", "Curto"], ["", "Equilibrado"], ["longo", "Longo"]]:
+				var b := Button.new()
+				b.text = aj[1]
+				b.toggle_mode = true
+				b.button_pressed = _montagem.get("ajuste_cambio", "") == aj[0]
+				b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				b.custom_minimum_size = Vector2(0, 58)
+				b.pressed.connect(func():
+					_montagem["ajuste_cambio"] = aj[0]
+					mudou.emit())
+				h.add_child(b)
+			v.add_child(h)
+
+
+func _enviar(ct: Dictionary) -> void:
+	var r := Contratos.new(dados, jogador).enviar(ct["id"], _montagem)
+	if r.has("erro"):
+		avisar(r["erro"], false)
+		return
+	_avaliacao = r
+	avisar("%s: %s" % [ct["nome"], String(r["grau"]).to_upper() if r["grau"] != "" else "não cumpriu"], r["grau"] != "")
+	if r["licenca_concedida"]:
+		var lic: Dictionary = dados.item("licencas", ct["licenca"])
+		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"])
+		painel.emit("%s conquistada!" % lic["nome"], func(v):
+			rotulo("Todos os contratos cumpridos. Agora você pode correr %d provas novas:" % liberadas.size(), 0, Color.WHITE, v)
+			var series := {}
+			for e in liberadas:
+				series[String(e["nome"]).split(" — ")[0]] = true
+			for nome in series:
+				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
+			rotulo("Elas aparecem em Competições, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
+			[["Ver competições", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
+
+
+## Relatório: grau, tempo contra cada rival, onde o tempo foi perdido (curvas
+## ou retas) e o que falta para o próximo grau.
+func _relatorio(ct: Dictionary, r: Dictionary) -> void:
+	var grau: String = r["grau"]
+	var v := cartao(CORES_GRAU.get(grau, COR_RUIM))
+	rotulo("RELATÓRIO DA AVALIAÇÃO", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	rotulo(grau.to_upper() if grau != "" else "NÃO CUMPRIU", 38, CORES_GRAU.get(grau, COR_RUIM), v)
+	for p in r["provas"]:
+		separador(v)
+		var melhor: Dictionary = p["rivais"][0]
+		for rv in p["rivais"]:
+			if rv["tempo"] < melhor["tempo"]:
+				melhor = rv
+		rotulo("%s: você %.2f s · %s %.2f s" % [nome_pista(p["pista"]), p["tempo"], nome_curto(melhor["nome"]), melhor["tempo"]],
+				FONTE_PEQUENA + 2, Color.WHITE, v)
+		var folga: float = p["folga"]
+		rotulo("%s %.2f s" % ["À frente por" if folga > 0.0 else "Atrás por", absf(folga)], FONTE_PEQUENA + 2,
+				COR_BOM if folga > 0.0 else COR_RUIM, v)
+		if p.has("diagnostico"):
+			var dg: Dictionary = p["diagnostico"]
+			rotulo("Contra o %s: curvas %s · retas %s" % [nome_curto(melhor["nome"]), _dif(dg["curvas"]), _dif(dg["retas"])],
+					FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+			if folga <= 0.0:
+				rotulo(_gargalo(dg), FONTE_PEQUENA + 1, COR_INFO, v)
+	var proximo := ""
+	for g in ["bronze", "prata", "ouro"]:
+		if grau == "" or Contratos.GRAUS.find(g) < Contratos.GRAUS.find(grau):
+			proximo = g
+			break
+	if proximo != "" and not r["graus"][proximo].is_empty():
+		rotulo("Para o %s falta: %s." % [proximo, "; ".join(r["graus"][proximo])], FONTE_PEQUENA + 2, Color.WHITE, v)
+
+
+## "+0,8 s" (mais lento) ou "−0,3 s" (mais rápido) que o rival.
+static func _dif(x: float) -> String:
+	return "%s%.1f s" % ["+" if x >= 0.0 else "−", absf(x)]
+
+
+## O gargalo pelo lado em que mais se perdeu tempo.
+static func _gargalo(dg: Dictionary) -> String:
+	if dg["curvas"] >= dg["retas"]:
+		return "Gargalo nas curvas: menos peso, freios e aderência ajudam mais que potência."
+	return "Gargalo nas retas: potência, câmbio e menos peso ajudam."

@@ -19,6 +19,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
 | `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcional `carro_premio` |
 | `licencas.json` | lista de `{id, nome, testes}`, opcional `requisito` (id de outra licença) |
+| `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
 ## Unidades e semântica
@@ -180,3 +181,21 @@ No DuckStation, num save de teste (nunca nos saves existentes; copie o memory ca
    `tools/importar_gt2.py` (não editar `economia.json` à mão); se variar (por exemplo, com
    a quilometragem), anote os casos e o critério muda.
 
+## contratos.json (licenças por contrato, decisão 4)
+
+`provas`: `[{pista, voltas, condicao, rivais: [{carro, pecas?}]}]`. Avaliação em
+`Contratos.avaliar`: cada carro corre sozinho, com o piloto do jogador e a semente fixa da
+bancada; vencer = tempo menor que o de todos os rivais. `condicoes`: `{bronze, prata,
+ouro}`, cada uma com `vencer`, `folga_s`, `custo_max`, `pecas_max` ou `sem_categorias`
+(prata e ouro somam ao bronze).
+
+Os carros, rivais, pistas e números são escolhidos por `tools/calibrar_contratos.gd` a
+partir dos dados. Voltas e limite de potência do carro da escola vêm dos testes da licença
+B (GT2). Critérios **provisórios** (confirmar em playtest), no topo da ferramenta:
+
+| Constante | Valor | Uso |
+|---|---|---|
+| `RAZAO_GIGANTE` | 1,3 | potência mínima do "gigante" em relação ao carro da escola |
+| `FOLGA_CUSTO_BRONZE` / `_PRATA` | 1,5 / 1,2 | teto de custo do bronze e da prata sobre o menor custo achado |
+| `FOLGA_MINIMA_DUPLA` | 0,2 s | folga mínima da solução de "Dois circuitos" |
+| prata por folga | metade da maior folga achada | "O pequeno contra o gigante" e "Dois circuitos" |

@@ -72,6 +72,17 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 	for a in abas:
 		var largura: float = a.conteudo.get_combined_minimum_size().x
 		verificar(largura <= LARGURA, "%s pede %.0f px (máx. %.0f)" % [a.name, largura, LARGURA])
+	# Bancada de cada contrato, com câmbio montado e relatório.
+	var carreira: Control = abas[5]
+	for ct in d.lista("contratos"):
+		carreira._abrir_bancada(ct)
+		var pecas: Array = Contratos.pecas_escola(d, ct).map(func(p): return p["id"])
+		carreira._montagem = {"pecas": pecas.filter(func(x): return d.peca(x)["categoria"] == "cambio"),
+				"ajuste_cambio": "curto"}
+		carreira._enviar(ct)
+		carreira.atualizar()
+		var lb: float = carreira.conteudo.get_combined_minimum_size().x
+		verificar(lb <= LARGURA, "bancada %s pede %.0f px (máx. %.0f)" % [ct["id"], lb, LARGURA])
 	for a in abas:
 		a.free()
 	j.free()

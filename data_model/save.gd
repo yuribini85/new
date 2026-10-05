@@ -26,6 +26,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"carros": carros,
 		"licencas": jogador.licencas,
 		"graus_licenca": jogador.graus_licenca,
+		"montagens": jogador.montagens,
 		"usados_vendidos": jogador.usados_vendidos,
 		"vitorias": jogador.vitorias,
 		"historico": jogador.historico,
@@ -110,6 +111,14 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	jogador.garagem.proximo_uid = int(s["proximo_uid"])
 	jogador.licencas = s["licencas"]
 	jogador.graus_licenca = s["graus_licenca"]
+	# Opcional: montagens dos contratos (saves anteriores aos contratos não têm).
+	jogador.montagens = {}
+	if s.get("montagens") is Dictionary:
+		for k in s["montagens"]:
+			var m = s["montagens"][k]
+			if m is Dictionary and dados.existe("contratos", k):
+				jogador.montagens[k] = {"pecas": Array(m.get("pecas", [])).filter(func(x): return dados.existe("pecas", x)),
+						"ajuste_cambio": String(m.get("ajuste_cambio", ""))}
 	jogador.usados_vendidos = s["usados_vendidos"]
 	jogador.vitorias = {}
 	for k in s["vitorias"]:

@@ -26,6 +26,7 @@ const ESQUEMAS := {
 	"pilotos_ia": ["id", "ritmo", "consistencia", "agressividade"],
 	"eventos": ["id", "nome", "pista", "voltas", "condicao", "restricoes", "adversarios", "premios"],
 	"licencas": ["id", "nome", "testes"],
+	"contratos": ["id", "licenca", "nome", "carro", "provas", "condicoes"],
 }
 
 ## arquivo -> chaves obrigatórias do objeto.
@@ -166,6 +167,25 @@ func _validar_referencias() -> void:
 					_erros.append("%s teste '%s' sem tempo de %s" % [onde, t.get("id"), g])
 				elif tempos is Dictionary and tempos[g] == null:
 					_pendencias.append("%s teste '%s' tempo de %s" % [onde, t.get("id"), g])
+
+
+	for ct in _listas["contratos"].values():
+		var onde := "contratos.json: '%s'" % ct["id"]
+		_exigir(onde + " licença", "licencas", ct.get("licenca"))
+		_exigir(onde + " carro", "carros", ct.get("carro"))
+		for pid in ct.get("pecas_escola", []):
+			_exigir(onde + " peça da escola", "pecas", pid)
+		for prova in ct.get("provas", []):
+			_exigir(onde + " pista", "pistas", prova.get("pista"))
+			if not prova.has("voltas") or prova.get("rivais", []).is_empty():
+				_erros.append(onde + " prova sem voltas ou sem rivais")
+			for rv in prova.get("rivais", []):
+				_exigir(onde + " rival", "carros", rv.get("carro"))
+				for pid in rv.get("pecas", []):
+					_exigir(onde + " peça do rival", "pecas", pid)
+		var cond = ct.get("condicoes", {})
+		if cond is Dictionary and not cond.has("bronze"):
+			_erros.append(onde + " sem condições de bronze")
 
 
 func _validar_restricoes(onde: String, restricoes: Dictionary) -> void:

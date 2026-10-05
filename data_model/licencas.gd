@@ -1,8 +1,9 @@
 class_name Licencas
 extends RefCounted
-## Testes de licença (docs/plano_mvp.md, decisão 4): tempo-alvo numa pista com
-## o carro do próprio jogador dentro de uma restrição. A licença é concedida
-## quando todos os testes têm ao menos bronze. Testes não contam dia.
+## Testes de tempo de licença: tempo-alvo numa pista com o carro do próprio
+## jogador dentro de uma restrição. Licença com contratos (data/contratos.json,
+## decisão 4) é concedida pelos contratos (ver Contratos) e ignora os testes;
+## sem contratos, quando todos os testes têm ao menos bronze. Não contam dia.
 
 const GRAUS := ["ouro", "prata", "bronze"]
 
@@ -44,7 +45,7 @@ func fazer_teste(licenca_id: String, teste_id: String, uid: int, semente: int) -
 				break
 	_guardar_melhor(teste_id, grau)
 	var concedida := false
-	if not licenca_id in jogador.licencas and _completa(lic):
+	if not licenca_id in jogador.licencas and Contratos.da_licenca(dados, licenca_id).is_empty() and _completa(lic):
 		jogador.licencas.append(licenca_id)
 		concedida = true
 	return {"tempo": tempo, "grau": grau, "licenca_concedida": concedida}

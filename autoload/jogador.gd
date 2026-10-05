@@ -12,6 +12,8 @@ var fila_ctrl: Fila
 var licencas: Array = []
 ## teste_id -> melhor grau ("ouro", "prata", "bronze").
 var graus_licenca: Dictionary = {}
+## contrato_id -> última montagem enviada {pecas: [ids], ajuste_cambio}.
+var montagens: Dictionary = {}
 ## Chaves de ofertas de usados já compradas ("período:carro").
 var usados_vendidos: Dictionary = {}
 ## evento_id -> número de vitórias.
@@ -50,6 +52,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	concessionaria = Concessionaria.new(economia, garagem, regras, pneu_por_id)
 	licencas = []
 	graus_licenca = {}
+	montagens = {}
 	usados_vendidos = {}
 	fila = {}
 	ultimo_processamento = 0.0

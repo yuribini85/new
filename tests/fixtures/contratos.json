@@ -1,0 +1,15 @@
+[
+	{
+		"id": "c_teste",
+		"licenca": "a",
+		"nome": "Contrato de teste",
+		"descricao": "Sintético: o fraco precisa de uma peça para vencer o fraco de fábrica.",
+		"carro": "fraco",
+		"provas": [{"pista": "oval", "voltas": 1, "condicao": "seco", "rivais": [{"carro": "fraco"}]}],
+		"condicoes": {
+			"bronze": {"vencer": true},
+			"prata": {"pecas_max": 1},
+			"ouro": {"sem_categorias": ["motor"]}
+		}
+	}
+]

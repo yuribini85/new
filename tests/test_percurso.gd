@@ -91,7 +91,9 @@ func test_percurso_inicial_ate_a_licenca_b() -> void:
 					break
 
 	print("\n  percurso (%.1f min):\n    " % (tempo / 60.0) + "\n    ".join(log))
-	verificar("B" in j.licencas, "licença B conquistada")
+	var testes_b: Array = d.item("licencas", "B")["testes"]
+	verificar(testes_b.all(func(t): return j.graus_licenca.has(t["id"])),
+			"carro pronto para as provas B (bronze nos testes de tempo; a licença vem dos contratos)")
 	verificar(tempo <= LIMITE_S, "dentro de 30 min de corrida: %.1f min" % (tempo / 60.0))
 	verificar(ciclo_completo, "houve derrota, compra e vitória na mesma prova")
 	j.free()

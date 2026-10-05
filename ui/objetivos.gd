@@ -51,5 +51,9 @@ static func glossario(dados: Node) -> Array:
 				+ ". Nas retas rápidas pesa mais a potência."],
 		["Aderência e pneus", "Quanto o pneu segura: curvas mais rápidas e frenagem mais curta. Há pneus para seco e para chuva; o piloto usa o melhor que você tiver."],
 		["Freio", "Freios melhores deixam frear mais tarde antes das curvas."],
+		["Câmbio", "O motor tem uma faixa de giro. Com o câmbio ajustável, curto acelera mais forte e chega antes ao limite; longo vai mais longe nas retas."],
+		["Desafio e renda", "Prova ainda não vencida: cada inscrição é um desafio de uma corrida. Depois de vencer, dá para repeti-la em fila para render créditos, inclusive com o app fechado."],
+		["Preparações", "Peças compradas ficam com o carro. Salve preparações com nome na Oficina e escolha qual usar ao se inscrever; a fila guarda a escolhida."],
+		["Contratos de licença", "A escola empresta o carro e as peças. Você monta, envia para avaliação e lê o relatório: onde perdeu tempo e o que falta para cada medalha."],
 		["Nos testes", "Faixas como \"1º–3º nos testes\" vêm de corridas simuladas com os rivais e a pista da prova. São estimativas: a corrida de verdade varia."],
 	]
