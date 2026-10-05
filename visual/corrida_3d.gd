@@ -60,6 +60,11 @@ var _proj := Rect2()
 ## Carro que o jogador persegue: anel vermelho no chão e rótulo "ALVO".
 var alvo := ""
 var _anel_alvo: MeshInstance3D
+var _anel_jogador: MeshInstance3D
+## Traço do seu carro até o alvo, quando ele está perto (disputa).
+var _traco: MeshInstance3D
+const DISPUTA_M := 12.0
+const TAMANHO_DISPUTA := 21.0
 
 
 func _init() -> void:
@@ -162,7 +167,7 @@ func atualizar(delta: float) -> void:
 		c.girar_rodas(maxf(ds, 0.0))
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
-		r.text = str(i + 1)
+		r.text = "VOCÊ" if id == "jogador" else str(i + 1)
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
@@ -170,18 +175,34 @@ func atualizar(delta: float) -> void:
 		_carros[id].scale = Vector3.ONE * escala
 		_rotulos[id].pixel_size = 0.045 * (escala * 1.6 if visao_geral else 1.0)
 		_rotulos[id].position = _carros[id].position + Vector3(0, ALTURA_MARCADOR * escala, 0)
+	var disputa := false
 	if _anel_alvo != null:
 		_anel_alvo.visible = _carros.has(alvo) and not visao_geral
 		if _anel_alvo.visible:
 			_anel_alvo.position = _carros[alvo].position + Vector3(0, 0.05, 0)
 			_rotulos[alvo].text = "ALVO"
+		_anel_jogador.visible = _carros.has("jogador") and not visao_geral
+		if _anel_jogador.visible:
+			_anel_jogador.position = _carros["jogador"].position + Vector3(0, 0.05, 0)
+		# Disputa: alvo a poucos metros; traço entre os dois e câmera mais perto.
+		disputa = _anel_alvo.visible and _carros.has("jogador") \
+				and _carros["jogador"].position.distance_to(_carros[alvo].position) < DISPUTA_M
+		_traco.visible = disputa
+		if disputa:
+			var a: Vector3 = _carros["jogador"].position
+			var b: Vector3 = _carros[alvo].position
+			_traco.position = (a + b) * 0.5 + Vector3(0, 0.08, 0)
+			_traco.scale = Vector3(a.distance_to(b), 1, 1)
+			_traco.rotation.y = atan2(-(b.z - a.z), b.x - a.x)
 	if visao_geral:
 		_enquadrar_geral()
 		_camera.size = _tamanho_geral
 		_alvo_camera = _centro_pista
 		_camera_imediata()
 		return
-	_camera.size = TAMANHO_CAMERA
+	var tamanho_alvo := TAMANHO_DISPUTA if disputa and foco == "jogador" else TAMANHO_CAMERA
+	_camera.size = tamanho_alvo if delta <= 0.0 or Preferencias.reduzir_animacoes \
+			else lerpf(_camera.size if _camera.size < 100.0 else TAMANHO_CAMERA, tamanho_alvo, clampf(delta * 1.5, 0.0, 1.0))
 	var seguido: String = foco if _carros.has(foco) else ("jogador" if _carros.has("jogador") else (ordem[0] if not ordem.is_empty() else ""))
 	if seguido != "":
 		var novo: Vector3 = _carros[seguido].position
@@ -287,6 +308,27 @@ func _construir_pista() -> void:
 	_anel_alvo.material_override = mat_alvo
 	_anel_alvo.visible = false
 	_cena.add_child(_anel_alvo)
+	_anel_jogador = MeshInstance3D.new()
+	var tor_j := TorusMesh.new()
+	tor_j.inner_radius = 2.5
+	tor_j.outer_radius = 2.9
+	_anel_jogador.mesh = tor_j
+	var mat_j := CarroBloco._material(Color(1.0, 0.8, 0.15))
+	mat_j.emission_enabled = true
+	mat_j.emission = Color(1.0, 0.75, 0.1) * 0.6
+	_anel_jogador.material_override = mat_j
+	_anel_jogador.visible = false
+	_cena.add_child(_anel_jogador)
+	_traco = MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(1.0, 0.04, 0.35)
+	_traco.mesh = bm
+	var mat_t := CarroBloco._material(Color(1.0, 0.55, 0.2))
+	mat_t.emission_enabled = true
+	mat_t.emission = Color(1.0, 0.5, 0.15) * 0.7
+	_traco.material_override = mat_t
+	_traco.visible = false
+	_cena.add_child(_traco)
 	var largada := MeshInstance3D.new()
 	var caixa_l := BoxMesh.new()
 	caixa_l.size = Vector3(1.0, 0.02, LARGURA_PISTA_M)
@@ -297,8 +339,96 @@ func _construir_pista() -> void:
 	largada.rotation.y = _pista.rumo_em(0.0)
 	_cena.add_child(largada)
 	_arquibancada()
+	_portico()
+	_bordas()
 	_decorar(pts, tema["props"])
 	_fundo(caixa, tema)
+
+
+## Pórtico de largada e chegada sobre a pista, com faixa quadriculada.
+func _portico() -> void:
+	var p0 := _pista.posicao_em(0.0)
+	var rumo := _pista.rumo_em(0.0)
+	var lado := Vector2.from_angle(rumo + PI / 2.0)
+
+	for k in [-1.0, 1.0]:
+		var q: Vector2 = p0 + lado * k * (LARGURA_PISTA_M * 0.5 + 1.6)
+		var poste := _bloco(Vector3(0.6, 7.5, 0.6), Color(0.3, 0.31, 0.34))
+		poste.position = Vector3(q.x, 3.75, -q.y)
+		_cena.add_child(poste)
+	var quadros := 12
+	for k in quadros:
+		var t := (float(k) + 0.5) / quadros * 2.0 - 1.0
+		var q := p0 + lado * t * (LARGURA_PISTA_M * 0.5 + 1.6)
+		var quadro := _bloco(Vector3(0.4, 1.4, (LARGURA_PISTA_M + 3.2) / quadros),
+				Color.WHITE if k % 2 == 0 else Color(0.08, 0.08, 0.09))
+		quadro.position = Vector3(q.x, 7.0, -q.y)
+		quadro.rotation.y = rumo
+		_cena.add_child(quadro)
+
+
+## Bordas: brita e pneus empilhados por fora das curvas; placas nas retas.
+func _bordas() -> void:
+	var brita := SurfaceTool.new()
+	brita.begin(Mesh.PRIMITIVE_TRIANGLES)
+	brita.set_normal(Vector3.UP)
+	var pneus := []
+	var placas := 0
+	var s := 0.0
+	var passo := 4.0
+	while s < _pista.comprimento:
+		var t := _pista.trecho_em(s)
+		var raio := float(t.get("raio_m", 0.0))
+		var rumo := _pista.rumo_em(s)
+		var p := _pista.posicao_em(s)
+		if raio > 0.0:
+			# Por fora da curva: o lado oposto ao sentido dela.
+			var fora := -1.0 if t.get("sentido", "esquerda") == "esquerda" else 1.0
+			var n := Vector2.from_angle(rumo + PI / 2.0) * fora
+			var n2 := Vector2.from_angle(_pista.rumo_em(s + passo) + PI / 2.0) * fora
+			var p2 := _pista.posicao_em(s + passo)
+			var q := [p + n * (LARGURA_PISTA_M * 0.5 + 1.2), p + n * (LARGURA_PISTA_M * 0.5 + 3.3),
+					p2 + n2 * (LARGURA_PISTA_M * 0.5 + 1.2), p2 + n2 * (LARGURA_PISTA_M * 0.5 + 3.3)]
+			for idx in [0, 2, 1, 1, 2, 3]:
+				brita.add_vertex(Vector3(q[idx].x, 0.015, -q[idx].y))
+			pneus.append(p + n * (LARGURA_PISTA_M * 0.5 + 2.8))
+		elif placas < 24 and fposmod(s, 140.0) < passo:
+			var lado := 1.0 if int(s / 140.0) % 2 == 0 else -1.0
+			var q := p + Vector2.from_angle(rumo + PI / 2.0) * lado * (LARGURA_PISTA_M * 0.5 + 5.5)
+			var cores := [Color(0.85, 0.15, 0.15), Color(0.15, 0.4, 0.85), Color(0.95, 0.75, 0.1), Color(0.15, 0.6, 0.35)]
+			var placa := _bloco(Vector3(0.3, 2.2, 8.0), cores[placas % cores.size()])
+			placa.position = Vector3(q.x, 1.6, -q.y)
+			placa.rotation.y = rumo + PI / 2.0
+			_cena.add_child(placa)
+			var faixa := _bloco(Vector3(0.32, 0.4, 8.0), Color.WHITE)
+			faixa.position = Vector3(q.x, 1.6, -q.y)
+			faixa.rotation.y = rumo + PI / 2.0
+			_cena.add_child(faixa)
+			placas += 1
+		s += passo
+	var mb := MeshInstance3D.new()
+	mb.mesh = brita.commit()
+	var mat_b := CarroBloco._material(Color(0.72, 0.66, 0.52))
+	mat_b.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mb.material_override = mat_b
+	_cena.add_child(mb)
+	# Pneus em MultiMesh: muitos objetos iguais, um só desenho.
+	if not pneus.is_empty():
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		var cil := CylinderMesh.new()
+		cil.top_radius = 0.45
+		cil.bottom_radius = 0.45
+		cil.height = 0.9
+		cil.radial_segments = 8
+		mm.mesh = cil
+		mm.instance_count = pneus.size()
+		for i in pneus.size():
+			mm.set_instance_transform(i, Transform3D(Basis(), Vector3(pneus[i].x, 0.45, -pneus[i].y)))
+		var mmi := MultiMeshInstance3D.new()
+		mmi.multimesh = mm
+		mmi.material_override = CarroBloco._material(Color(0.1, 0.1, 0.11))
+		_cena.add_child(mmi)
 
 
 ## Arquibancada ao lado da largada: referência para saber onde a volta começa.
