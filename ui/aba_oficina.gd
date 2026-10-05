@@ -133,12 +133,17 @@ func _pecas(c: Carro, seco: Dictionary) -> void:
 	if por_categoria.is_empty():
 		rotulo("Nenhuma peça deste grupo para este carro.", 0, COR_SECUNDARIA)
 	var provas_antes := Mecanico.provas_possiveis(dados, c)
+	# A função vale para o grupo inteiro: dita uma vez, no topo.
+	var attr_grupo: String = "potencia" if _grupo == "motor" else ""
+	if attr_grupo != "":
+		rotulo("Peças de motor: " + FUNCAO["potencia"] + ".", FONTE_PEQUENA + 2, COR_SECUNDARIA)
 	for cat in por_categoria:
 		por_categoria[cat].sort_custom(func(a, b): return a["preco"] < b["preco"])
 		var v := cartao()
 		var attr: String = AFETA_CATEGORIA.get(cat, "potencia")
 		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), 30, Color.WHITE, v)
-		rotulo(FUNCAO[attr].capitalize().left(1) + FUNCAO[attr].substr(1) + ".", FONTE_PEQUENA, COR_SECUNDARIA, v)
+		if attr != "potencia":
+			rotulo(FUNCAO[attr].capitalize().left(1) + FUNCAO[attr].substr(1) + ".", FONTE_PEQUENA, COR_SECUNDARIA, v)
 		for p in por_categoria[cat]:
 			_linha(v, c, p, seco, provas_antes)
 
@@ -152,7 +157,7 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	var depois := teste.atributos_efetivos("seco")
 	var perde := provas_antes.filter(func(e): return not e in Mecanico.provas_possiveis(dados, teste))
 	var b := Button.new()
-	b.custom_minimum_size = Vector2(0, 84)
+	b.custom_minimum_size = Vector2(0, 96)
 	var pode_pagar: bool = possuida or jogador.economia.pode_pagar(int(p["preco"]))
 	var direita := "INSTALADA" if instalada else ("já sua" if possuida else ("%s Cr" % dinheiro(int(p["preco"]))
 			if pode_pagar else "faltam %s Cr" % dinheiro(int(p["preco"]) - jogador.economia.saldo)))
@@ -171,8 +176,8 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	esq.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var nome := Label.new()
 	nome.text = p["nome"]
-	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	nome.clip_text = true
+	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	esq.add_child(nome)
 	var g := Label.new()
 	g.text = _ganho(antes, depois) if not instalada else "em uso"

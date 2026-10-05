@@ -256,7 +256,7 @@ func _tabela(u: Dictionary, pai: Control) -> void:
 	var t0: float = tabela[0]["tempo"]
 	for i in tabela.size():
 		var lin: Dictionary = tabela[i]
-		var nome: String = jogador.carreira.nome_participante(lin["id"], u["uid"])
+		var nome: String = jogador.carreira.rotulo_participante(u["evento_id"], lin["id"], u["uid"])
 		var tempo := _mmss_dec(lin["tempo"]) if lin["terminou"] else "não terminou"
 		var dif := "" if i == 0 or not lin["terminou"] else "  +%.1f s" % (lin["tempo"] - t0)
 		var cor := COR_DESTAQUE if lin["id"] == "jogador" else Color.WHITE
@@ -280,7 +280,7 @@ func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 		if a.is_empty() or meu.is_empty():
 			continue
 		var quem := "Vencedor" if id == u["vencedor"] else "Logo à frente"
-		rotulo("%s: %s" % [quem, carreira.nome_participante(id, u["uid"])], 0, Color.WHITE, v)
+		rotulo("%s: %s" % [quem, carreira.rotulo_participante(u["evento_id"], id, u["uid"])], 0, Color.WHITE, v)
 		selos(fatores(meu, a), v)
 	rotulo("Potência por peso pesa na aceleração e nas retas; aderência nas curvas e na frenagem; freio na "
 			+ "frenagem. Mais aderência vem de pneus; menos peso, de redução de peso.", FONTE_PEQUENA, COR_SECUNDARIA, v)
@@ -452,7 +452,8 @@ func _process(delta: float) -> void:
 		_nomes = {"jogador": "VOCÊ · " + jogador.garagem.carro(f["uid"]).base["nome"]}
 		for i in ev["adversarios"].size():
 			var adv: Dictionary = ev["adversarios"][i]
-			_nomes["adv%d_%s" % [i, adv["carro"]]] = dados.carro(adv["carro"])["nome"]
+			var pid := "adv%d_%s" % [i, adv["carro"]]
+			_nomes[pid] = "%s (%s)" % [Carreira.nome_piloto(ev["id"], pid), Aba.nome_curto(dados.carro(adv["carro"])["nome"])]
 		_info.text = ev["nome"]
 		_camera(_camera_modo)
 		_chegou = false

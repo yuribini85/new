@@ -11,6 +11,8 @@ var _painel_raiz: Control
 var _painel_conteudo: VBoxContainer
 var _painel_titulo: Label
 var _painel_botoes: HBoxContainer
+var _margem: MarginContainer
+var _titulo_cor := Color.WHITE
 
 
 func _init() -> void:
@@ -26,6 +28,7 @@ func _init() -> void:
 	escuro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_painel_raiz.add_child(escuro)
 	var margem := MarginContainer.new()
+	_margem = margem
 	margem.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
 		margem.add_theme_constant_override("margin_" + lado, 24)
@@ -106,16 +109,38 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 	montar.call(_painel_conteudo)
 	if botoes.is_empty():
 		botoes = [["OK", func(): pass]]
-	for b in botoes:
+	for i in botoes.size():
+		var b: Array = botoes[i]
 		var bt := Button.new()
 		bt.text = b[0]
 		bt.custom_minimum_size = Vector2(0, 76)
 		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if i == 0 and botoes.size() > 1:
+			# A ação principal em destaque.
+			var sb := StyleBoxFlat.new()
+			sb.bg_color = Aba.COR_DESTAQUE
+			sb.set_corner_radius_all(10)
+			sb.set_content_margin_all(12)
+			for estado in ["normal", "hover", "pressed", "focus"]:
+				bt.add_theme_stylebox_override(estado, sb)
+			for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+				bt.add_theme_color_override(c, Color(0.1, 0.1, 0.1))
 		bt.pressed.connect(func():
 			fechar()
 			b[1].call())
 		_painel_botoes.add_child(bt)
 	_painel_raiz.visible = true
+	_ajustar.call_deferred()
+
+
+## Cartão do tamanho do conteúdo, centrado (sem vazio quando há pouco a mostrar).
+func _ajustar() -> void:
+	var altura_tela := size.y if size.y > 0.0 else 1280.0
+	var conteudo := _painel_conteudo.get_combined_minimum_size().y
+	var total := conteudo + _painel_titulo.get_combined_minimum_size().y + 76.0 + 44.0 + 28.0 + 6.0
+	var margem := maxf(60.0, (altura_tela - total) * 0.5)
+	_margem.add_theme_constant_override("margin_top", int(margem))
+	_margem.add_theme_constant_override("margin_bottom", int(margem))
 
 
 func fechar() -> void:

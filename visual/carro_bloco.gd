@@ -18,6 +18,16 @@ const FORMAS := {
 	"roadster": {"c": 4.0, "l": 1.72, "h": 0.52, "cab": 0.22, "hc": 0.32, "recuo": -0.06, "teto": false},
 }
 const RAIO_RODA := 0.33
+## Os três carros iniciais desenhados à mão (só visual): cada um precisa ser
+## reconhecido de longe e dar vontade de escolher.
+const DESENHOS := {
+	"hayase_tsubame": {"hc": 0.76, "cab": 0.66, "recuo": -0.16, "queda_bico": 0.04, "asa": "teto", "raios": 4,
+		"cor_aro": Color(0.3, 0.31, 0.34), "aro": 0.66, "lama": 0.03, "farol": "fino"},
+	"hayase_pika": {"hc": 0.64, "cab": 0.6, "recuo": -0.18, "queda_bico": 0.12, "asa": "teto", "raios": 5,
+		"cor_aro": Color(0.92, 0.92, 0.94), "aro": 0.7, "lama": 0.075, "largura_pneu": 0.28, "roda_mult": 1.05},
+	"hayase_soryu": {"hc": 0.43, "cab": 0.36, "recuo": -0.2, "queda_bico": 0.2, "asa": "aerofolio", "raios": 6,
+		"cor_aro": Color(0.45, 0.46, 0.5), "aro": 0.68, "lama": 0.05, "farol": "escamoteavel", "cunha": 0.04},
+}
 const PINTURAS := [
 	Color(0.85, 0.12, 0.12), Color(0.95, 0.95, 0.95), Color(0.12, 0.12, 0.14), Color(0.15, 0.35, 0.8),
 	Color(0.98, 0.78, 0.1), Color(0.2, 0.6, 0.3), Color(0.6, 0.62, 0.66), Color(0.95, 0.45, 0.1),
@@ -92,6 +102,18 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 			_caixa(Vector3(0.45, 0.16, 0.04), Vector3(xt, cintura_em(f, xt) - 0.14, z * l * 0.5), escuro)
 		if f["escape_duplo"]:
 			_cilindro_em(0.05, 0.12, Vector3(-c * 0.5 - 0.03, 0.26, z * l * 0.22), cromado, Vector3(0, 0, PI / 2.0))
+	# Para-choques, placas, coluna central, maçanetas e frisos de porta.
+	for ponta in [1.0, -1.0]:
+		_caixa(Vector3(0.08, 0.11, l * 0.86), Vector3(ponta * (c * 0.5 + 0.01), 0.27, 0), escuro)
+		_caixa(Vector3(0.02, 0.1, 0.32), Vector3(ponta * (c * 0.5 + 0.055), 0.4 if ponta > 0 else cint_tras - 0.28, 0),
+				_material(Color(0.92, 0.92, 0.88)))
+	if f["teto"]:
+		var xb: float = c * f["recuo"] + c * f["cab"] * 0.05
+		var yb: float = cintura_em(f, xb)
+		for z in [-1.0, 1.0]:
+			_caixa(Vector3(0.15, f["hc"], 0.05), Vector3(xb, yb + f["hc"] * 0.5, z * l * 0.435), pintura)
+			_caixa(Vector3(0.012, yb - 0.24, 0.02), Vector3(xb + 0.02, (yb + 0.2) * 0.5 + 0.02, z * l * 0.505), escuro)
+			_caixa(Vector3(0.14, 0.035, 0.02), Vector3(xb - 0.25, yb - 0.12, z * l * 0.507), escuro)
 	# Tomada de ar no capô (rali, muscle).
 	if f["tomada_capo"]:
 		var xc: float = c * f["recuo"] + c * f["cab"] * 0.5 + c * 0.1
@@ -255,6 +277,12 @@ static func forma(base: Dictionary) -> Dictionary:
 		f["c"] *= 0.9
 		f["l"] *= 0.92
 		f["hc"] *= 1.06
+	var desenho: Dictionary = DESENHOS.get(String(base.get("id", "")), {})
+	for k in desenho:
+		if k == "roda_mult":
+			f["roda"] *= desenho[k]
+		else:
+			f[k] = desenho[k]
 		f["roda"] = RAIO_RODA * 0.86
 		f["largura_pneu"] = 0.18
 	return f

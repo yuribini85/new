@@ -265,18 +265,31 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				_ir_para(2)
 				atualizar()],
 			["Outra prova", func(): _ir_para(3)]]
+	var meu: Carro = jogador.garagem.carro(c["uid"])
+	var tabela: Array = c.get("tabela", [])
+	var objetivos := Objetivos.lista(jogador, dados)
+	var obj := Objetivos.atual(objetivos)
 	_sobre.abrir("VITÓRIA!" if venceu else "Resultado", func(v):
+		if meu != null:
+			v.add_child(Estudio.imagem(meu.base, CarroBloco.cor_do_carro(meu), Vector2(0, 170)))
 		var pos := Label.new()
-		pos.text = "%dº" % c["posicao"]
+		pos.text = "%dº de %d" % [c["posicao"], c["total"]]
 		pos.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		pos.add_theme_font_size_override("font_size", 120)
+		pos.add_theme_font_size_override("font_size", 72)
 		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
 		v.add_child(pos)
-		g.rotulo("de %d · %s" % [c["total"], ev.get("nome", "")], Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v) \
-				.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var nome_ev := g.rotulo(ev.get("nome", ""), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
+		nome_ev.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if tabela.size() >= 2:
+			var t0: float = tabela[0]["tempo"]
+			var dif := g.rotulo("%.1f s à frente do 2º" % (tabela[1]["tempo"] - t0) if venceu
+					else "%.1f s atrás do vencedor" % (c["tempo_jogador"] - t0), Aba.FONTE_PEQUENA + 3, Color.WHITE, v)
+			dif.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			_podio(v, tabela, c)
 		if c["premio"] > 0:
-			var p := g.rotulo("+%s Cr" % Aba.dinheiro(c["premio"]), 48, Aba.COR_BOM, v)
-			p.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			var saldo := g.rotulo("%s → %s Cr  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - c["premio"]),
+					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, v)
+			saldo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var marcos := []
 		if venceu and primeira:
 			marcos.append(["PRIMEIRA VITÓRIA NESTA PROVA", Aba.COR_DESTAQUE])
@@ -292,12 +305,54 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var cp: Carro = jogador.garagem.carro(c["carro_premio_uid"])
 			if cp != null:
 				var vc := g.cartao(Aba.COR_DESTAQUE, v)
-				g.rotulo("CARRO-PRÊMIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vc)
-				vc.add_child(Estudio.imagem(cp.base, CarroBloco.cor_do_carro(cp), Vector2(0, 200)))
-				g.rotulo(cp.base["nome"] + " já está na sua garagem.", 0, Color.WHITE, vc)
+				g.rotulo("CARRO-PRÊMIO: %s" % cp.base["nome"], Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vc)
+				vc.add_child(Estudio.imagem(cp.base, CarroBloco.cor_do_carro(cp), Vector2(0, 170)))
+		if obj < objetivos.size():
+			var lo := g.rotulo("Objetivo %d/%d: %s" % [obj + 1, objetivos.size(), objetivos[obj]["texto"]], Aba.FONTE_PEQUENA + 2,
+					Aba.COR_INFO.lightened(0.3), v)
+			lo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if not venceu:
-			g.rotulo("Veja em Competições › Corrida por que perdeu e o que ajuda.", Aba.FONTE_PEQUENA + 2,
-					Aba.COR_SECUNDARIA, v), botoes)
+			var dica := g.rotulo("Em Competições › Corrida: por que perdeu e o que ajuda.", Aba.FONTE_PEQUENA,
+					Aba.COR_SECUNDARIA, v)
+			dica.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER, botoes)
+
+
+## Pódio dos três primeiros: degraus de alturas diferentes, o jogador em ouro.
+func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
+	var h := HBoxContainer.new()
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 6)
+	v.add_child(h)
+	for pos in [2, 1, 3]:
+		if pos > tabela.size():
+			continue
+		var id: String = tabela[pos - 1]["id"]
+		var col := VBoxContainer.new()
+		col.alignment = BoxContainer.ALIGNMENT_END
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.add_theme_constant_override("separation", 2)
+		var nome := Label.new()
+		nome.text = "Você" if id == "jogador" else Carreira.nome_piloto(c["evento_id"], id)
+		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nome.add_theme_font_size_override("font_size", 23)
+		nome.add_theme_color_override("font_color", Aba.COR_DESTAQUE if id == "jogador" else Color.WHITE)
+		col.add_child(nome)
+		var degrau := PanelContainer.new()
+		degrau.custom_minimum_size = Vector2(0, {1: 90, 2: 64, 3: 46}[pos])
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Aba.COR_DESTAQUE.darkened(0.15) if id == "jogador" else Color(0.26, 0.28, 0.33)
+		sb.corner_radius_top_left = 8
+		sb.corner_radius_top_right = 8
+		degrau.add_theme_stylebox_override("panel", sb)
+		var n := Label.new()
+		n.text = "%dº" % pos
+		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		n.add_theme_font_size_override("font_size", 30)
+		n.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1) if id == "jogador" else Color.WHITE)
+		degrau.add_child(n)
+		col.add_child(degrau)
+		h.add_child(col)
 
 
 func _primeira_vitoria(c: Dictionary) -> void:

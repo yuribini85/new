@@ -129,6 +129,12 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> v
 			var a := meu.atributos_efetivos("seco")
 			comp.append(["vs seu %s: %+d cv, %+d kg" % [meu.base["nome"], int(base["potencia"]) - roundi(a["potencia"]),
 					int(base["peso"]) - roundi(a["peso"])], COR_INFO])
+			# Potência por peso: mais cv com muito mais peso pode não valer a pena.
+			comp.append(["potência/peso: %d cv por tonelada (o seu: %d)" % [roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
+					roundi(1000.0 * a["potencia"] / a["peso"])], COR_INFO])
+		else:
+			comp.append(["potência/peso: %d cv por tonelada" % roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
+					COR_NEUTRA.lightened(0.3)])
 		selos(extras + comp, v)
 		if not compra.is_empty() and not compra[2]:
 			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)

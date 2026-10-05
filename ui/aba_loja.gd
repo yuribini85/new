@@ -47,8 +47,8 @@ func construir() -> void:
 			var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
 			var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
 			if not a.is_empty():
-				extras.push_front(["%s%s nos testes" % ["★ " if estrela else "", Mecanico.texto_faixa(a["faixa"])],
-						COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
+				extras.push_front(["%s%s nos testes, de fábrica, em %s" % ["★ " if estrela else "",
+						Mecanico.texto_faixa(a["faixa"]), prev["evento"]], COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
 			_bloco(grade, c, int(o["preco"]), "★" if estrela else "", extras,
 					func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
 	else:

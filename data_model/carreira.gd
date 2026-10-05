@@ -59,6 +59,29 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}
 
 
+## Sobrenomes fictícios dos pilotos rivais (só apresentação: a simulação usa
+## o perfil do piloto do evento). Fixos por prova e posição no grid.
+const PILOTOS := ["Okada", "Brandt", "Moreau", "Ferraz", "Tanaka", "Kowalski", "Reyes", "Lindqvist",
+		"Hale", "Ito", "Novak", "Duarte", "Sato", "Keller", "Varga", "Lacroix", "Mendes", "Harlow"]
+
+
+## Piloto de um rival ("adv<i>_<carro>") nesta prova; "" para o jogador.
+static func nome_piloto(evento_id: String, id: String) -> String:
+	if not id.begins_with("adv"):
+		return ""
+	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
+	var base := posmod(hash(evento_id), PILOTOS.size())
+	# Passo primo com a lista: pilotos diferentes no mesmo grid.
+	return PILOTOS[(base + i * 7) % PILOTOS.size()]
+
+
+## "Piloto (carro)" para listas: distingue rivais com o mesmo modelo.
+func rotulo_participante(evento_id: String, id: String, uid: int) -> String:
+	if id == "jogador":
+		return nome_participante(id, uid)
+	return "%s (%s)" % [nome_piloto(evento_id, id), Aba.nome_curto(nome_participante(id, uid))]
+
+
 ## Nome do carro de um participante ("jogador" ou "adv<i>_<carro>").
 func nome_participante(id: String, uid: int) -> String:
 	if id == "jogador":

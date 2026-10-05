@@ -8,7 +8,8 @@ var _vitrine: VitrineCarro
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Garagem")
-	_vitrine = VitrineCarro.new(430.0)
+	_vitrine = VitrineCarro.new(470.0)
+	_vitrine.ambiente_garagem()
 
 
 func atualizar() -> void:

@@ -78,7 +78,9 @@ func _colecao() -> void:
 	var tenho := {}
 	for c in jogador.garagem.lista():
 		tenho[c.id] = true
-	rotulo("COLEÇÃO · %d de %d modelos" % [tenho.size(), dados.lista("carros").size()], FONTE_PEQUENA, COR_SECUNDARIA)
+	rotulo("COLEÇÃO · %d de %d modelos obtidos" % [tenho.size(), dados.lista("carros").size()], FONTE_PEQUENA, COR_SECUNDARIA)
+	rotulo("Todos os carros do jogo. Os escuros você ainda não tem; toque para ver como conseguir.",
+			FONTE_PEQUENA, COR_SECUNDARIA)
 	var grade := GridContainer.new()
 	grade.columns = 3
 	grade.add_theme_constant_override("h_separation", 8)
@@ -118,7 +120,9 @@ func _preferencias() -> void:
 	var v := cartao()
 	rotulo("PREFERÊNCIAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var h := fileira(v)
-	rotulo("Volume", FONTE_PEQUENA + 2, Color.WHITE, h).size_flags_horizontal = Control.SIZE_FILL
+	var lv := rotulo("Volume", FONTE_PEQUENA + 2, Color.WHITE, h)
+	lv.size_flags_horizontal = Control.SIZE_FILL
+	lv.autowrap_mode = TextServer.AUTOWRAP_OFF  # com quebra, saía uma letra por linha
 	var vol := HSlider.new()
 	vol.min_value = 0.0
 	vol.max_value = 1.0
