@@ -39,6 +39,10 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	abas[4]._process(0.0)
 	verificar(abas[4]._visual.duracao() > 0.0, "corrida ao vivo carregada")
 	abas[0]._vender(uid)
+	igual(j.carro_ativo, uid, "único carro não se vende")
+	j.economia.creditar(1000)
+	j.concessionaria.comprar_carro(d.carro("fraco"))
+	abas[0]._vender(uid)
 	igual(j.carro_ativo, -1, "vender o ativo limpa a seleção")
 	for a in abas:
 		a.atualizar()

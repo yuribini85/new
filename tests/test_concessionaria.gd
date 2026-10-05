@@ -45,13 +45,27 @@ func test_dois_do_mesmo_modelo_tem_uids_distintos() -> void:
 func test_vender_paga_fracao_do_preco_de_tabela() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
+	j.economia.creditar(400)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.concessionaria.comprar_carro(d.carro("fraco"))
 	j.concessionaria.comprar_peca(j.garagem.carro(uid), d.peca("turbo"))
-	igual(j.economia.saldo, 400, "1000 - 400 - 200")
+	igual(j.economia.saldo, 400, "1400 - 400 - 400 - 200")
 	igual(j.concessionaria.vender_carro(uid), 200, "400 * 0.5, peças não somam")
 	igual(j.economia.saldo, 600, "saldo após venda")
 	igual(j.garagem.carro(uid), null, "saiu da garagem")
 	igual(j.concessionaria.vender_carro(uid), 0, "vender de novo")
+	j.free()
+	d.free()
+
+
+func test_ultimo_carro_nao_pode_ser_vendido() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	verificar(not j.concessionaria.pode_vender(uid), "único carro")
+	igual(j.concessionaria.vender_carro(uid), 0, "venda recusada")
+	igual(j.economia.saldo, 600, "saldo intacto")
+	verificar(j.garagem.carro(uid) != null, "continua na garagem")
 	j.free()
 	d.free()
 

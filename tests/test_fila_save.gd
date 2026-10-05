@@ -59,6 +59,8 @@ func test_carro_vendido_cancela_a_fila() -> void:
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
 	f.iniciar("aberto", uid, 5, 0.0)
+	j.economia.creditar(1000)
+	j.concessionaria.comprar_carro(d.carro("fraco"))  # o último carro não se vende
 	j.concessionaria.vender_carro(uid)
 	var r := f.processar(3000.0)
 	verificar(r["erro"] != "", "erro reportado")

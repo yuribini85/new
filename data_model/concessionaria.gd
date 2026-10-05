@@ -41,13 +41,21 @@ func comprar_usado(oferta: Dictionary, dados_carro: Dictionary, vendidos: Dictio
 
 
 ## Vende pelo preço de tabela vezes a fração de revenda. Peças não somam.
+## O último carro da garagem não pode ser vendido: sem carro e sem saldo para
+## outro, a carreira trava. Retorna o valor creditado ou 0.
 func vender_carro(uid: int) -> int:
+	if not pode_vender(uid):
+		return 0
 	var carro := garagem.remover(uid)
 	if carro == null:
 		return 0
 	var valor := int(floor(float(carro.base["preco"]) * float(regras["fracao_revenda"])))
 	economia.creditar(valor)
 	return valor
+
+
+func pode_vender(uid: int) -> bool:
+	return garagem.carro(uid) != null and garagem.lista().size() > 1
 
 
 ## Compra (ou reinstala, se já possuída) e instala a peça. Retorna OK ou o motivo.
