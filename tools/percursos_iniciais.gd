@@ -27,8 +27,8 @@ func _rodar() -> void:
 	for c in d.lista("carros"):
 		if c.get("novo", true) and int(c["preco"]) <= saldo:
 			ofertas.append({"carro_id": c["id"], "preco": int(c["preco"])})
-	print("%-18s %7s %9s %6s %8s %9s %8s" % ["carro", "preço", "licença B", "ciclo", "vitórias", "saldo", "minutos"])
+	print("%-18s %7s %9s %6s %8s %9s %8s" % ["carro", "preço", "pronto B", "ciclo", "vitórias", "saldo", "minutos"])
 	for o in ofertas:
 		var r: Dictionary = Percurso.jogar(d, o, LIMITE_S)
-		print("%-18s %7d %9s %6s %8d %9d %8.1f" % [o["carro_id"], o["preco"], "sim" if r["licenca_b"] else "não",
+		print("%-18s %7d %9s %6s %8d %9d %8.1f" % [o["carro_id"], o["preco"], "sim" if r["pronto_b"] else "não",
 				"sim" if r["ciclo"] else "não", r["vitorias"], r["saldo"], r["tempo"] / 60.0])

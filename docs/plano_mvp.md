@@ -191,9 +191,10 @@ técnico real do projeto.
     (`SeriesChampBonus`) só existe nas séries internacionais (GT3, GT5, GTW, FRE), fora do
     jogo; a tabela de pontos não está nas tabelas. Os eventos mostram o progresso da série
     (etapas vencidas), sem prêmio extra inventado.
-21. **Preços e prêmios medidos antes de mexer.** `tools/custo_carros.gd` mede quantos
-    minutos de corrida cada carro custa no ritmo do jogador ao tirar a licença B. Ajuste,
-    se houver, entra no importador.
+21. **Preços e prêmios medidos antes de mexer.** `tools/medir_progressao.gd` mede, por
+    fase e por perfil de jogador (`tools/agente.gd`), créditos por minuto de corrida e de
+    renda, gastos e a tabela de compras; sessões e retornos usam os valores do playtest
+    de ritmo. Ajuste, se houver, entra no importador.
 22. **Licença A calibrada pelo percurso.** Limites dos testes pela mediana e quartis dos
     limites das provas A; tempos com o carro e o saldo do jogador ao tirar a B (bronze
     tolerante, prata com o carro do percurso, ouro com uma melhoria).

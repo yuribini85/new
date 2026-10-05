@@ -55,7 +55,7 @@ func _calibrar() -> void:
 			for o in Usados.estoque(_dados.lista("carros"), 0, {}):
 				if o["preco"] <= saldo:
 					var r: Dictionary = Percurso.jogar(_dados, o, 30.0 * 60.0)
-					if r["licenca_b"]:
+					if r["pronto_b"]:
 						na_b.append({"carro": r["carro"], "saldo": r["saldo"]})
 						print("percurso com %s: licença B com %d cv e %d Cr" % [o["carro_id"],
 								r["carro"].atributos_efetivos("seco")["potencia"], r["saldo"]])

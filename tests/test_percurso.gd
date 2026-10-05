@@ -125,3 +125,23 @@ func test_dados_reais_tem_peca_que_tira_carro_de_prova() -> void:
 	print("\n  caso real: " + achou)
 	verificar(achou != "", "algum carro real perde uma prova por causa de uma peça")
 	d.free()
+
+
+func test_agente_mede_por_fase_com_os_contratos() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var saldo := int(d.economia()["saldo_inicial"])
+	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)[0]
+	var ag = preload("res://tools/agente.gd").new(d, "sugestoes", 1)
+	var r: Dictionary = ag.jogar(oferta, 8.0 * 60.0)
+	ag.liberar()
+	verificar(r["marcos"].has("primeira_vitoria"), "venceu uma prova")
+	verificar("B" in r["licencas"], "licença B pelos contratos, depois da primeira vitória")
+	verificar(r["fases"].has("sem licença") and r["fases"].has("B"), "contabilidade por fase")
+	var bruto := 0
+	var gastos := 0
+	for f in r["fases"]:
+		bruto += int(r["fases"][f]["bruto"])
+		gastos += int(r["fases"][f]["gastos"])
+	igual(r["saldo"], saldo + bruto - gastos, "saldo = inicial + renda bruta − gastos")
+	d.free()

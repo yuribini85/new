@@ -7,9 +7,9 @@ extends Aba
 ## Pede para encerrar a corrida em andamento agora (fase de testes da demo).
 signal pular
 
-## Botão "Ver resultado" para testar a demo sem esperar a corrida em tempo
-## real. Desligar antes de publicar: o jogo é idle, a espera é parte dele.
-const PERMITIR_PULAR := true
+## Botão "Ver resultado" (Preferencias.permite_pular): testar a demo sem
+## esperar a corrida em tempo real. Desligado no teste de ritmo; desligar
+## antes de publicar: o jogo é idle, a espera é parte dele.
 ## Distância (m) para o placar chamar de disputa.
 const DISPUTA_M := 10.0
 const DURACAO_DESTAQUE := 2.5
@@ -184,7 +184,7 @@ func _construir_painel() -> void:
 	_cameras.visible = _em_andamento
 	if _em_andamento:
 		var h := acoes(_painel)
-		if PERMITIR_PULAR:
+		if Preferencias.permite_pular():
 			botao("Ver resultado (teste)", func(): pular.emit(), true, false, h)
 		botao("Voltar à garagem", func(): ir_para.emit(GARAGEM), true, false, h)
 		rotulo("A fila continua mesmo fora desta tela ou com o app fechado. Toque num carro da lista para segui-lo.",

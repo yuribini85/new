@@ -92,6 +92,7 @@ func _ready() -> void:
 			atualizar())
 	eventos.correr_iniciado.connect(func(): _ir_para(4))
 	_todas[4].pular.connect(func():
+		RegistroSessao.pulo()
 		jogador.fila_ctrl.adiantar(Time.get_unix_time_from_system())
 		_processar_fila())
 	_ao_vivo = Button.new()
@@ -122,11 +123,14 @@ func _ready() -> void:
 	timer.autostart = true
 	timer.timeout.connect(_processar_fila)
 	timer.timeout.connect(_atualizar_ao_vivo)
+	timer.timeout.connect(_registrar_fila)
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
 		_sobre.abrir("Save", func(v): _todas[0].rotulo(save_manager.aviso, 0, Color.WHITE, v))
 	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
+	_fila_vista = jogador.fila
+	RegistroSessao.inicio(jogador)
 
 
 func _navegacao() -> HBoxContainer:
@@ -148,6 +152,7 @@ func _navegacao() -> HBoxContainer:
 
 func _ir_para(i: int) -> void:
 	_abas.current_tab = i
+	RegistroSessao.tela(i)
 	var destino: int = PAI.get(i, i)
 	for k in _botoes.size():
 		_botoes[k].button_pressed = DESTINOS[k][1] == destino
@@ -240,6 +245,23 @@ func _notification(what: int) -> void:
 	# Volta do segundo plano: aplica o que correu enquanto isso, na hora.
 	if what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN] and _sobre != null:
 		_processar_fila()
+		_fila_vista = jogador.fila
+		RegistroSessao.inicio(jogador)
+		RegistroSessao.tela(_abas.current_tab)
+	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_CLOSE_REQUEST] \
+			and _sobre != null:
+		RegistroSessao.fim(jogador)
+
+
+## Fila nova programada nesta sessão (registro do playtest).
+var _fila_vista: Dictionary = {}
+
+
+func _registrar_fila() -> void:
+	if jogador.fila.is_empty() or is_same(jogador.fila, _fila_vista):
+		return
+	_fila_vista = jogador.fila
+	RegistroSessao.fila(jogador.fila, jogador.fila_ctrl.duracao_atual(), not jogador.vitorias.has(jogador.fila["evento_id"]))
 
 
 ## Resultado de uma corrida terminada com o app aberto: posição em destaque,

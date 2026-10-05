@@ -4,14 +4,16 @@ extends RefCounted
 ## em ordem de prêmio, segue o "O que ajuda?" após cada derrota e tenta a
 ## licença B. O tempo conta só corrida.
 ## A licença B vem dos contratos (data/contratos.json), que não dependem do carro
-## do jogador; aqui "licenca_b" mede se o carro dele já está pronto para as provas
+## do jogador; aqui "pronto_b" mede se o carro dele já está pronto para as provas
 ## B: bronze em todos os testes de tempo da B.
 
 const JogadorScript := preload("res://autoload/jogador.gd")
 
 
 ## oferta: item de Usados.estoque() ou {"carro_id", "preco"} de um novo.
-## Retorna {log, tempo, licenca_b, ciclo, saldo, vitorias}.
+## Retorna {log, tempo, pronto_b, ciclo, saldo, vitorias, carro}. Mede só o carro e
+## o dinheiro (testes de tempo antigos da B); para progressão e renda por fase,
+## use tools/medir_progressao.gd.
 static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
@@ -72,7 +74,7 @@ static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 	var vitorias := 0
 	for k in j.vitorias:
 		vitorias += int(j.vitorias[k])
-	var res := {"log": log, "tempo": tempo, "licenca_b": _testes_b(d, j), "ciclo": ciclo,
+	var res := {"log": log, "tempo": tempo, "pronto_b": _testes_b(d, j), "ciclo": ciclo,
 			"saldo": j.economia.saldo, "vitorias": vitorias, "carro": j.garagem.carro(uid).copiar()}
 	j.free()
 	return res

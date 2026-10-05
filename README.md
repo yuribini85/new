@@ -65,7 +65,8 @@ sintético). Também roda no GitHub Actions a cada push e pull request.
 `data/` é gerado a partir de uma cópia legítima do disco pelo fluxo
 `tools/extrair_gt2.py` → `tools/importar_gt2.py` → `tools/calibrar_licencas.gd`. Passo a
 passo, conversões e o que ainda está "a confirmar" em `data/README.md`.
-`tools/simular_progressao.gd` mostra a posição de cada carro de fábrica em cada evento.
+`tools/simular_progressao.gd` mostra a posição de cada carro de fábrica em cada evento;
+`tools/medir_progressao.gd`, a progressão e a renda por fase e por perfil de jogador.
 
 ## Ver as telas com dados de teste
 
@@ -81,6 +82,8 @@ O save desse modo fica separado (`user://save_fixtures.json`).
 |---|---|
 | `docs/conceito.md` | Conceito, princípios e limites do projeto. |
 | `docs/plano_mvp.md` | Escopo do primeiro build, sistemas, modelo da simulação, dados, ordem de implementação, riscos e decisões tomadas. |
+| `docs/playtest_percurso.md` | Roteiro do playtest: modalidades de clareza e de ritmo. |
+| `docs/medicao_progressao.md` | Progressão e renda por fase medidas pelo agente (`tools/medir_progressao.gd`). |
 
 ## Regras do projeto
 

@@ -187,3 +187,33 @@ func test_relatorio_de_retorno_comeca_pelo_plano() -> void:
 	verificar(textos.any(func(t): return t.begins_with("OBJETIVO")), "objetivo no relatório")
 	verificar(textos.any(func(t): return t.begins_with("Saldo:")), "saldo no relatório")
 	tela.free()
+
+
+func test_registro_de_sessao_do_playtest() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var modo := Preferencias.modo_teste
+	Preferencias.modo_teste = ""
+	RegistroSessao.inicio(j)
+	var antes := RegistroSessao.sessoes().size()
+	RegistroSessao.fim(j)
+	igual(RegistroSessao.sessoes().size(), antes, "desligado não grava")
+	Preferencias.modo_teste = "ritmo"
+	verificar(not Preferencias.permite_pular(), "teste de ritmo não pula")
+	RegistroSessao.inicio(j)
+	RegistroSessao.tela(4)
+	RegistroSessao.fila({"evento_id": "aberto", "restantes": 3}, 120.0, true)
+	RegistroSessao.pulo()
+	j.licencas.append("B")
+	RegistroSessao.fim(j)
+	var s: Dictionary = RegistroSessao.sessoes().back()
+	igual(s["modo"], "ritmo", "modo")
+	igual(s["filas"].size(), 1, "fila registrada")
+	igual(s["pulos"], 1, "pulo registrado")
+	igual([s["fase_inicio"], s["fase_fim"]], ["sem licença", "B"], "fase no início e no fim")
+	verificar(s["telas"].has("Corrida"), "tempo acompanhando a corrida")
+	RegistroSessao.limpar()
+	Preferencias.modo_teste = modo
+	j.free()
+	d.free()

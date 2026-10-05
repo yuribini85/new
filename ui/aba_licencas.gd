@@ -157,6 +157,54 @@ func _preferencias() -> void:
 		Preferencias.reduzir_animacoes = ligado
 		Preferencias.salvar())
 	v.add_child(anim)
+	_modo_teste(v)
+
+
+## Playtest (docs/playtest_percurso.md): modo e resumo do registro local.
+func _modo_teste(v: VBoxContainer) -> void:
+	separador(v)
+	rotulo("Modo de playtest", FONTE_PEQUENA + 2, Color.WHITE, v)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	for m in [["", "Desligado"], ["clareza", "Clareza"], ["ritmo", "Ritmo"]]:
+		var b := Button.new()
+		b.text = m[1]
+		b.toggle_mode = true
+		b.button_pressed = Preferencias.modo_teste == m[0]
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.custom_minimum_size = Vector2(0, 58)
+		b.pressed.connect(func():
+			if Preferencias.modo_teste != "":
+				RegistroSessao.fim(jogador)
+			Preferencias.modo_teste = m[0]
+			Preferencias.salvar()
+			RegistroSessao.inicio(jogador)
+			mudou.emit())
+		h.add_child(b)
+	v.add_child(h)
+	rotulo("Clareza: pode pular a corrida. Ritmo: sem pular, para medir sessão e renda. Ligado, o aparelho registra as sessões (só local).",
+			FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var sessoes := RegistroSessao.sessoes()
+	if sessoes.is_empty():
+		return
+	for i in sessoes.size():
+		var s: Dictionary = sessoes[i]
+		var dur: float = float(s["fim"]) - float(s["inicio"])
+		var corrida: float = float(s["telas"].get("Corrida", 0.0))
+		var minutos_fila := 0.0
+		for f in s["filas"]:
+			minutos_fila += float(f["duracao_s"]) * int(f["repeticoes"]) / 60.0
+		var aus: float = float(s["ausencia_antes_s"])
+		rotulo("Sessão %d (%s): %.0f min · assistindo %.0f min · %d fila%s (%.0f min) · %d pulo%s · %s→%s · %s→%s Cr%s" % [
+				i + 1, s["modo"], dur / 60.0, corrida / 60.0, s["filas"].size(), "" if s["filas"].size() == 1 else "s",
+				minutos_fila, s["pulos"], "" if s["pulos"] == 1 else "s", s["fase_inicio"], s["fase_fim"],
+				dinheiro(int(s["saldo_inicio"])), dinheiro(int(s["saldo_fim"])),
+				" · ausente %.0f min antes" % (aus / 60.0) if aus >= 0.0 else ""], FONTE_PEQUENA, COR_SECUNDARIA, v)
+	rotulo("Arquivo: %s" % ProjectSettings.globalize_path(RegistroSessao.CAMINHO), FONTE_PEQUENA - 2, COR_NEUTRA, v)
+	botao_texto("Apagar registro", func():
+		RegistroSessao.limpar()
+		RegistroSessao.inicio(jogador)
+		mudou.emit(), v)
 
 
 func _recomecar() -> void:
