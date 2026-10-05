@@ -1,9 +1,9 @@
 extends Aba
 
-## Previsão para quem está escolhendo o primeiro carro: posição média de cada
-## usado, de fábrica, na primeira prova sem licença (a de menor prêmio).
-## Calculada uma vez por dia de jogo.
-var _previsao := {}  # {"dia", "evento", "medias": {carro_id: float}}
+## Perspectiva para quem está escolhendo o primeiro carro: faixa de posição de
+## cada usado, de fábrica, em corridas simuladas da primeira prova sem licença
+## (a de menor prêmio). Estimativa, não promessa. Uma vez por dia de jogo.
+var _previsao := {}  # {"dia", "evento", "avaliacoes": {carro_id: Mecanico.avaliar()}}
 
 
 func _init(d: Node, j: Node) -> void:
@@ -17,13 +17,13 @@ func construir() -> void:
 		texto("Nenhum usado hoje.")
 	var prev := _prever(ofertas)
 	if not prev.is_empty():
-		texto("Posição média prevista de fábrica em %s:" % prev["evento"], Color(0.7, 0.8, 1.0))
+		texto("De fábrica em %s, nos testes:" % prev["evento"], Color(0.7, 0.8, 1.0))
 	for o in ofertas:
 		var c: Dictionary = dados.carro(o["carro_id"])
 		var desc := "%s · %s · %d cv" % [c["nome"], c["tracao"], c["potencia"]]
-		var m: float = prev.get("medias", {}).get(o["carro_id"], -1.0)
-		if m >= 0.0:
-			desc += " · %s%.1fº" % ["★ " if m <= 1.5 else "", m]
+		var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
+		if not a.is_empty():
+			desc += " · %s%s" % ["★ boa perspectiva · " if a["media"] <= 1.5 else "", Mecanico.texto_faixa(a["faixa"])]
 		linha(desc, [
 			[dinheiro(o["preco"]), func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos)),
 				jogador.economia.pode_pagar(o["preco"])],
@@ -50,12 +50,12 @@ func _prever(ofertas: Array) -> Dictionary:
 		return {}
 	sem_licenca.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])
 	var ev: Dictionary = sem_licenca[0]
-	var medias := {}
+	var avaliacoes := {}
 	for o in ofertas:
 		var c := Carro.new(dados.carro(o["carro_id"]))
 		c.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
-		medias[o["carro_id"]] = Mecanico._media(jogador.carreira, ev["id"], -1, c)
-	_previsao = {"dia": jogador.dias, "evento": ev["nome"], "medias": medias}
+		avaliacoes[o["carro_id"]] = Mecanico.avaliar(jogador.carreira, ev["id"], -1, c)
+	_previsao = {"dia": jogador.dias, "evento": ev["nome"], "avaliacoes": avaliacoes}
 	return _previsao
 
 

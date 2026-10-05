@@ -1,16 +1,23 @@
 extends SceneTree
-## Preenche os tempos de data/licencas.json com a própria simulação.
-## Para cada teste: cada carro de data/carros.json que cabe na restrição, de
-## fábrica (pneu de fábrica, piloto do jogador), em SEMENTES corridas. Ouro =
-## melhor média; bronze = pior tempo de qualquer carro em qualquer semente (com
-## a variação ligada, todo carro elegível passa no bronze); prata = a média.
+## Preenche os tempos de data/licencas.json com a própria simulação, em
+## SEMENTES corridas por configuração (piloto do jogador, pneu de fábrica):
+##   bronze  tolerante: pior tempo de qualquer carro elegível de fábrica, em
+##           qualquer semente. Serve de desbloqueio inicial.
+##   prata   percentil 75 do melhor carro inicial de fábrica (carro inicial =
+##           usado do dia 0 que cabe no saldo inicial). Escolher bem o carro.
+##   ouro    percentil 75 da melhor combinação carro inicial + uma melhoria
+##           (peça ou pneu) que caiba no saldo inicial. Preparar para o teste:
+##           pistas diferentes pedem peças diferentes.
+## Imprime também com que frequência o melhor carro de fábrica alcança o ouro.
 ## Uso: godot --headless --script res://tools/calibrar_licencas.gd
 
 const CAMINHO := "res://data/licencas.json"
-const SEMENTES := 5
-
+const SEMENTES := 20
+const PERCENTIL := 0.75
 
 var _feito := false
+var _dados: Node
+var _piloto: Dictionary
 
 
 ## Roda no primeiro quadro: em _initialize os autoloads ainda não carregaram
@@ -24,32 +31,93 @@ func _process(_delta: float) -> bool:
 
 
 func _calibrar() -> void:
-	var dados: Node = root.get_node("Dados")
+	_dados = root.get_node("Dados")
+	_piloto = _dados.piloto(_dados.carreira()["piloto_jogador"])
+	var saldo := int(_dados.economia()["saldo_inicial"])
+	var iniciais := []
+	for o in Usados.estoque(_dados.lista("carros"), 0, {}):
+		if o["preco"] <= saldo:
+			iniciais.append(_dados.carro(o["carro_id"]))
 	var licencas: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
-	var piloto: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"])
 	for lic in licencas:
+		var possui := [lic["id"], lic.get("requisito")]
 		for t in lic["testes"]:
-			var medias := []
-			var piores := []
-			for c in dados.lista("carros"):
-				var carro := Carro.new(c)
-				carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
-				if not Elegibilidade.motivos(carro, t.get("restricoes", {}), [lic["id"], lic.get("requisito")]).is_empty():
+			# Bronze: todos os carros elegíveis de fábrica.
+			var pior := 0.0
+			var elegiveis := 0
+			for c in _dados.lista("carros"):
+				var tempos := _tempos(_fabrica(c), t, possui)
+				if tempos.is_empty():
 					continue
-				var tempos := []
-				for semente in range(1, SEMENTES + 1):
-					var r := Simulacao.correr(dados.pista(t["pista"]), [{"id": "x", "atributos": carro.atributos_efetivos(t["condicao"]), "piloto": piloto}],
-							int(t["voltas"]), dados.simulacao(), semente, false)
-					tempos.append(r["carros"]["x"]["tempo_total"])
-				medias.append(tempos.reduce(func(a, b): return a + b) / tempos.size())
-				piores.append(tempos.max())
-			if medias.is_empty():
-				push_error("teste %s: nenhum carro cabe na restrição" % t["id"])
+				elegiveis += 1
+				pior = maxf(pior, tempos.back())
+			# Prata e ouro: carros iniciais, de fábrica e com uma melhoria.
+			var prata := INF
+			var ouro := INF
+			var melhor_fabrica := []
+			var receita := ""
+			for c in iniciais:
+				var base := _fabrica(c)
+				var tempos := _tempos(base, t, possui)
+				if tempos.is_empty():
+					continue
+				if _percentil(tempos) < prata:
+					prata = _percentil(tempos)
+					melhor_fabrica = tempos
+				for m in _melhorias(base, saldo):
+					var tm := _tempos(m["carro"], t, possui)
+					if not tm.is_empty() and _percentil(tm) < ouro:
+						ouro = _percentil(tm)
+						receita = "%s + %s" % [c["nome"], m["nome"]]
+			if elegiveis == 0 or prata == INF:
+				push_error("teste %s: nenhum carro (inicial) cabe na restrição" % t["id"])
 				continue
-			var ouro: float = snappedf(medias.min(), 0.01)
-			var bronze: float = snappedf(piores.max() + 0.01, 0.01)
-			t["tempos"] = {"ouro": ouro, "prata": snappedf((ouro + bronze) / 2.0, 0.01), "bronze": bronze}
-			print("%s: ouro %.2f · prata %.2f · bronze %.2f (%d carros)" % [t["id"], ouro, t["tempos"]["prata"], bronze, medias.size()])
+			ouro = minf(ouro, prata)
+			var bronze := snappedf(pior + 0.01, 0.01)
+			t["tempos"] = {"ouro": snappedf(ouro, 0.01), "prata": snappedf(prata, 0.01), "bronze": bronze}
+			var chance_ouro_fabrica := melhor_fabrica.filter(func(x): return x <= ouro).size() * 100.0 / melhor_fabrica.size()
+			print("%s: ouro %.2f (%s) · prata %.2f · bronze %.2f · melhor inicial de fábrica faz ouro em %.0f%% · %d elegíveis" % [
+				t["id"], ouro, receita, prata, bronze, chance_ouro_fabrica, elegiveis])
 	var f := FileAccess.open(CAMINHO, FileAccess.WRITE)
 	f.store_string(JSON.stringify(licencas, "\t") + "\n")
 	f.close()
+
+
+func _fabrica(c: Dictionary) -> Carro:
+	var carro := Carro.new(c)
+	carro.adicionar_pneu(_dados.pneu(_dados.economia()["pneu_de_fabrica"]))
+	return carro
+
+
+## Peças e pneus do carro até o orçamento, cada um numa cópia.
+func _melhorias(carro: Carro, orcamento: int) -> Array:
+	var r := []
+	for p in _dados.lista("pecas"):
+		if carro.motivo_recusa(p) == "" and int(p["preco"]) <= orcamento:
+			var c := carro.copiar()
+			c.instalar(p)
+			r.append({"nome": p["nome"], "carro": c})
+	for pn in _dados.lista("pneus"):
+		if int(pn["preco"]) > 0 and int(pn["preco"]) <= orcamento:
+			var c := carro.copiar()
+			c.adicionar_pneu(pn)
+			r.append({"nome": pn["nome"], "carro": c})
+	return r
+
+
+## Tempos ordenados em SEMENTES corridas; [] se o carro não cabe no teste.
+func _tempos(carro: Carro, t: Dictionary, licencas: Array) -> Array:
+	if not Elegibilidade.motivos(carro, t.get("restricoes", {}), licencas).is_empty():
+		return []
+	var r := []
+	for s in range(1, SEMENTES + 1):
+		var res := Simulacao.correr(_dados.pista(t["pista"]),
+				[{"id": "x", "atributos": carro.atributos_efetivos(t["condicao"]), "piloto": _piloto}],
+				int(t["voltas"]), _dados.simulacao(), s, false)
+		r.append(res["carros"]["x"]["tempo_total"])
+	r.sort()
+	return r
+
+
+func _percentil(tempos: Array) -> float:
+	return tempos[int(ceil(PERCENTIL * tempos.size())) - 1]

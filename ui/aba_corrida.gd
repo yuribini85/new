@@ -74,14 +74,18 @@ func _construir_painel() -> void:
 	if u["posicao"] > 1 and seu != null:
 		if _analise.get("dia", -1) != u["dia"]:
 			_botao("O que ajuda?", _analisar)
-		elif _analise["opcoes"].is_empty():
-			_rotulo("Nada que caiba no seu saldo melhora a posição média (%.1f). Tente outro evento ou junte prêmios." % _analise["base"])
 		else:
-			_rotulo("Posição média hoje: %.1f. Com:" % _analise["base"])
+			var hoje := Mecanico.texto_faixa(_analise["base"]["faixa"])
+			if _analise["opcoes"].is_empty():
+				_rotulo("Hoje: %s nos testes. Nada que caiba no seu saldo melhora isso; tente outra prova ou junte prêmios." % hoje)
+			else:
+				_rotulo("Estimativa em %d corridas simuladas. Hoje: %s nos testes. Com:" % [Mecanico.AMOSTRAS, hoje])
 			for o in _analise["opcoes"]:
 				var h := HBoxContainer.new()
 				var l := Label.new()
-				l.text = "%s → %.1f" % [o["nome"], o["media"]]
+				l.text = "%s → %s nos testes" % [o["nome"], Mecanico.texto_faixa(o["faixa"])]
+				if not o["perde"].is_empty():
+					l.text += "\n⚠ deixa de poder correr: %s" % ", ".join(o["perde"])
 				l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 				l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 				h.add_child(l)
