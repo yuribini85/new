@@ -56,7 +56,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | Chave | O que é | Estado |
 |---|---|---|
 | `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
-| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | 0,5 — **a confirmar** no GT2 |
+| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | 0,5 — **a confirmar** no GT2 (como medir: abaixo) |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
@@ -154,3 +154,15 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
 - Licenças B e A: restrição = mediana dos limites dos eventos que abrem; tempos calibrados
   pela simulação.
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
+
+## Como conferir a fração de revenda no GT2
+
+No DuckStation, num save de teste (nunca nos saves existentes; copie o memory card antes):
+
+1. Anote o preço de tabela de 3 a 5 carros (novo na concessionária ou no usado).
+2. Compre, vá à garagem, escolha vender e anote o valor oferecido, sem peças instaladas.
+3. Repita com um carro com peças, para confirmar que peças não entram no valor.
+4. Fração = valor de venda ÷ preço de tabela. Se for igual em todos, ela vai para
+   `tools/importar_gt2.py` (não editar `economia.json` à mão); se variar (por exemplo, com
+   a quilometragem), anote os casos e o critério muda.
+

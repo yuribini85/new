@@ -178,3 +178,21 @@ técnico real do projeto.
     nas listas. A posição lateral é só visual (a simulação é em uma dimensão): carros
     próximos abrem para faixas livres e não se atravessam; toque na troca de faixa
     aparece como tranco, sem efeito no resultado. A arte final continua a da seção 5.
+18. **Colisão só visual.** O toque entre carros aparece na tela e não muda o resultado:
+    no GT2 batida não tem dano, e a simulação já segura quem está atrás fora das zonas de
+    ultrapassagem.
+19. **Provas abertas como no GT2.** Só licenças travam provas; o começo é guiado por
+    objetivos e pelas "recomendadas para começar", sem esconder nada.
+20. **Sem campeonato por pontos.** No disco do GT2, o bônus de campeonato
+    (`SeriesChampBonus`) só existe nas séries internacionais (GT3, GT5, GTW, FRE), fora do
+    jogo; a tabela de pontos não está nas tabelas. Os eventos mostram o progresso da série
+    (etapas vencidas), sem prêmio extra inventado.
+21. **Preços e prêmios medidos antes de mexer.** `tools/custo_carros.gd` mede quantos
+    minutos de corrida cada carro custa no ritmo do jogador ao tirar a licença B. Ajuste,
+    se houver, entra no importador.
+22. **Licença A calibrada pelo percurso.** Limites dos testes pela mediana e quartis dos
+    limites das provas A; tempos com o carro e o saldo do jogador ao tirar a B (bronze
+    tolerante, prata com o carro do percurso, ouro com uma melhoria).
+23. **Carro original em código** (substitui os blocos da 17): carroceria contínua por
+    seções, com proporção por categoria, para validar o estilo antes da arte final.
+

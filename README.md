@@ -17,14 +17,15 @@ O que existe hoje:
 - concessionária de novos e usados (usados por período, como no GT2), garagem, oficina
   com peças e pneus por carro, venda;
 - 38 eventos em 18 séries sem licença, B e A; licenças B e A por teste de tempo;
-- corrida resolvida pela simulação e reproduzida em 3D isométrico (carros de blocos,
-  placeholders), em tempo real, com minimapa;
+- corrida resolvida pela simulação e reproduzida em 3D isométrico (carro original
+  gerado em código, ambiente por pista), em tempo real, com minimapa, placar e sons;
+- objetivos de carreira, "O que ajuda?", análise da derrota, coleção e fichas;
 - fila de repetições, progresso offline com teto, save com `.bak` e proteção contra
   arquivo corrompido ou de versão antiga.
 
-Em aberto: o percurso inicial (20–30 min) ainda não foi fechado nem testado em celular;
-há pouca variação entre corridas (ruído zero e pilotos iguais) e alguns valores "a
-confirmar" em `data/README.md`.
+Em aberto: playtest do percurso inicial em celular (roteiro em
+`docs/playtest_percurso.md`) e alguns valores "a confirmar" em `data/README.md` (fração de
+revenda: como medir no GT2 está lá).
 
 ## Jogar
 
