@@ -3,6 +3,9 @@ extends Aba
 signal correr_iniciado
 
 var _repeticoes := 1
+## Estimativas simuladas sob demanda: chave (prova + carro + peças) -> faixa,
+## ou "..." enquanto calcula.
+var _estimativas := {}
 ## Categoria aberta (mantida ao voltar): "voce", "", "B" ou "A".
 var _filtro := "voce"
 
@@ -168,10 +171,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var faixa := fileira(v)
 	var t := rotulo(tipo[0].to_upper(), FONTE_PEQUENA, tipo[1].lightened(0.35), faixa)
 	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	if pode:
-		var dif := _dificuldade(c, ev)
-		if not dif.is_empty():
-			selo(dif[0], dif[1], faixa)
+
 	var topo := fileira(v)
 	var fundo := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
@@ -198,6 +198,10 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		etiquetas.append(["VENCIDA ×%d" % vitorias, COR_BOM])
 	for r in _regras(ev["restricoes"]).slice(0, 3):
 		etiquetas.append([r, COR_NEUTRA.lightened(0.3)])
+	if pode:
+		var pp := _potencia_peso(c, ev)
+		if not pp.is_empty():
+			etiquetas.append(pp)
 	selos(etiquetas, v)
 	# Recompensa especial: o carro-prêmio aparece no cartão.
 	if ev.get("carro_premio") != null and vitorias == 0:
@@ -214,6 +218,13 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		var l := rotulo("Seu melhor: %dº" % hist["melhor_pos"] if not hist.is_empty() else "", FONTE_PEQUENA,
 				COR_SECUNDARIA, h)
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var est = _estimativas.get(_chave(ev, c))
+		if est == null:
+			botao_texto("Estimar desempenho", _estimar.bind(ev, c), h)
+		elif est is String:
+			rotulo("Estimando…", FONTE_PEQUENA, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		else:
+			rotulo("Nos testes: %s" % Mecanico.texto_faixa(est), FONTE_PEQUENA + 2, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		botao("Correr" if _repeticoes == 1 else "Correr ×%d" % _repeticoes, _correr.bind(ev["id"]),
 				jogador.fila.is_empty(), true, h)
 	else:
@@ -236,10 +247,11 @@ func _tipo(ev: Dictionary) -> Array:
 	return ["Aberta", Color(0.75, 0.75, 0.8)]
 
 
-## Dificuldade estimada para o carro em uso: potência por peso dele contra a
-## mediana dos rivais da prova (atributos efetivos, com peças e pneus). É só
-## uma leitura rápida; "O que ajuda?" simula de verdade.
-func _dificuldade(c: Carro, ev: Dictionary) -> Array:
+## Potência/peso do carro em uso frente à mediana dos rivais da prova
+## (atributos efetivos, com peças e pneus): Acima, Próxima ou Abaixo. Leitura
+## rápida, não dificuldade: pneus, curvas e frenagem também contam, e para
+## isso há "Estimar desempenho". Limites (+8% / −5%) provisórios.
+func _potencia_peso(c: Carro, ev: Dictionary) -> Array:
 	var meu := c.atributos_efetivos(ev["condicao"])
 	var rivais := []
 	for i in ev["adversarios"].size():
@@ -250,11 +262,31 @@ func _dificuldade(c: Carro, ev: Dictionary) -> Array:
 		return []
 	rivais.sort()
 	var razao: float = (meu["potencia"] / maxf(meu["peso"], 1.0)) / maxf(rivais[rivais.size() / 2], 1e-6)
-	if razao >= 1.08:
-		return ["Fácil para você", COR_BOM]
-	if razao >= 0.95:
-		return ["Equilibrada", COR_INFO]
-	return ["Difícil para você", COR_RUIM]
+	var nivel := "Acima" if razao >= 1.08 else ("Próxima" if razao >= 0.95 else "Abaixo")
+	return ["Potência/peso frente aos rivais: " + nivel,
+			{"Acima": COR_BOM, "Próxima": COR_INFO, "Abaixo": COR_RUIM}[nivel]]
+
+
+## Chave da estimativa: muda se o carro, as peças ou os pneus mudarem.
+static func _chave(ev: Dictionary, c: Carro) -> String:
+	return "%s|%d|%s|%s" % [ev["id"], c.uid, str(c.pecas.keys().map(func(k): return c.pecas[k]["id"])),
+			str(c.pneus.map(func(p): return p["id"]))]
+
+
+## Simula a prova com o carro em uso (Mecanico.avaliar, mesmas sementes do
+## "O que ajuda?") e mostra a faixa típica de posições. Sob demanda: a lista
+## abre rápido e só calcula o que o jogador pedir.
+func _estimar(ev: Dictionary, c: Carro) -> void:
+	var chave := _chave(ev, c)
+	_estimativas[chave] = "..."
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var a := Mecanico.avaliar(jogador.carreira, ev["id"], c.uid, c)
+	if a.is_empty():
+		_estimativas.erase(chave)
+	else:
+		_estimativas[chave] = a["faixa"]
+	mudou.emit()
 
 
 ## Regras da prova em texto curto ("até 150 cv", "tração FF").

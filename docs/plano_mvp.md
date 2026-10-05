@@ -195,4 +195,9 @@ técnico real do projeto.
     tolerante, prata com o carro do percurso, ouro com uma melhoria).
 23. **Carro original em código** (substitui os blocos da 17): carroceria contínua por
     seções, com proporção por categoria, para validar o estilo antes da arte final.
+24. **Leitura rápida e estimativa sob demanda nas competições.** O cartão mostra
+    "Potência/peso frente aos rivais: Acima / Próxima / Abaixo" (mediana dos rivais;
+    limites provisórios +8% / −5%), que não é dificuldade: pneus, curvas e frenagem
+    também contam. "Estimar desempenho" simula a prova com o carro em uso e mostra a
+    faixa de posições, só quando o jogador pede.
 
