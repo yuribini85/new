@@ -10,6 +10,12 @@ const LARGURA_PISTA_M := 12.0
 var escala_carro := 10.0
 var largura_min_px := 34.0
 var com_rotulos := true
+## Gira o traçado (múltiplos de 90°) para ocupar mais a tela. O minimapa não
+## gira, para ficar na mesma orientação da vista 3D.
+var girar := true
+## Depois da linha de chegada o carro segue rodando e freia, em vez de parar
+## em cima da linha (a simulação para de mover quem terminou).
+const DESACELERACAO_CHEGADA := 4.0  # m/s²
 ## Cores de alto contraste, na ordem do grid. O jogador usa a primeira.
 const PALETA := [
 	Color(1.0, 0.82, 0.1), Color(0.25, 0.65, 1.0), Color(1.0, 0.35, 0.35), Color(0.4, 0.9, 0.45),
@@ -35,6 +41,7 @@ var _contorno := PackedVector2Array()
 ## Giro do traçado (múltiplo de 90°) que mais aproveita a tela.
 var _rotacao := 0.0
 var _cores := {}  # id -> Color
+var _chegada := {}  # id -> {"t", "s", "v"} de quem terminou
 
 
 func _init() -> void:
@@ -55,6 +62,13 @@ func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> voi
 			if not _s.has(id):
 				_s[id] = PackedFloat64Array()
 			_s[id].append(a["s"][id])
+	_chegada = {}
+	for id in resultado.get("carros", {}):
+		var info: Dictionary = resultado["carros"][id]
+		if info["terminou"]:
+			var t: float = info["tempo_total"]
+			var s := _bruta(id, t)
+			_chegada[id] = {"t": t, "s": s, "v": maxf(s - _bruta(id, t - 1.0), 0.0)}
 	for c in _carros.get_children():
 		c.queue_free()
 	_sprites = {}
@@ -89,20 +103,38 @@ func duracao() -> float:
 	return _tempos[-1] if not _tempos.is_empty() else 0.0
 
 
-## Distância percorrida pelo carro no tempo atual (interpolada).
+## Distância percorrida pelo carro no tempo atual (interpolada); depois da
+## chegada, segue freando.
 func distancia(id: String) -> float:
+	var c: Dictionary = _chegada.get(id, {})
+	if not c.is_empty() and tempo > c["t"]:
+		var dt := minf(tempo - c["t"], c["v"] / DESACELERACAO_CHEGADA)
+		return c["s"] + c["v"] * dt - 0.5 * DESACELERACAO_CHEGADA * dt * dt
+	return _bruta(id, tempo)
+
+
+func _bruta(id: String, t: float) -> float:
 	var serie: PackedFloat64Array = _s[id]
-	var i := clampi(_tempos.bsearch(tempo) - 1, 0, _tempos.size() - 1)
+	var i := clampi(_tempos.bsearch(t) - 1, 0, _tempos.size() - 1)
 	if i + 1 >= _tempos.size():
 		return serie[i]
-	var f := clampf((tempo - _tempos[i]) / maxf(_tempos[i + 1] - _tempos[i], 1e-6), 0.0, 1.0)
+	var f := clampf((t - _tempos[i]) / maxf(_tempos[i + 1] - _tempos[i], 1e-6), 0.0, 1.0)
 	return lerpf(serie[i], serie[i + 1], f)
 
 
-## Ids na ordem de corrida no tempo atual.
+## Ids na ordem de corrida no tempo atual: quem já cruzou a chegada, pela
+## ordem de chegada; os outros, pela distância.
 func ordem() -> Array:
 	var ids := _s.keys()
-	ids.sort_custom(func(a, b): return distancia(a) > distancia(b))
+	var chegou := func(id): return _chegada.has(id) and tempo >= _chegada[id]["t"]
+	ids.sort_custom(func(a, b):
+		var ca: bool = chegou.call(a)
+		var cb: bool = chegou.call(b)
+		if ca != cb:
+			return ca
+		if ca:
+			return _chegada[a]["t"] < _chegada[b]["t"]
+		return distancia(a) > distancia(b))
 	return ids
 
 
@@ -112,7 +144,7 @@ func _enquadrar() -> void:
 	var pts := _pista.pontos(4.0)
 	var melhor := -1.0
 	var caixa_melhor := Rect2()
-	for k in 4:
+	for k in (4 if girar else 1):
 		var rot := k * PI / 2.0
 		var caixa := Rect2(Iso.para_tela(pts[0].rotated(rot), 1.0), Vector2.ZERO)
 		for p in pts:

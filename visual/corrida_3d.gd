@@ -139,7 +139,8 @@ func atualizar(delta: float) -> void:
 
 
 func _camera_imediata() -> void:
-	_camera.look_at_from_position(_alvo_camera + Vector3(70, 80, 70), _alvo_camera)
+	# 30° acima do chão: o mesmo 2:1 da projeção Iso do minimapa.
+	_camera.look_at_from_position(_alvo_camera + Vector3(70, 57.15, 70), _alvo_camera)
 
 
 ## Faixa lateral de cada carro: o da frente mantém a sua; quem está a menos de

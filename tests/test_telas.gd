@@ -101,6 +101,15 @@ func test_visual_posiciona_carros_na_pista() -> void:
 	v.mostrar(p, r)
 	v.tempo = v.duracao()
 	igual(v.ordem(), r["classificacao"], "ordem no fim = classificação")
+	var venc: String = r["classificacao"][0]
+	var chegada: float = r["carros"][venc]["tempo_total"]
+	verificar(chegada < v.duracao() - 1.0, "vencedor chega antes do fim")
+	var t_cheg := v.tempo
+	v.tempo = chegada + 0.01
+	var na_linha := v.distancia(venc)
+	v.tempo = minf(chegada + 2.0, v.duracao())
+	verificar(v.distancia(venc) > na_linha + 5.0, "depois da chegada o carro segue rodando: %.1f -> %.1f" % [na_linha, v.distancia(venc)])
+	v.tempo = t_cheg
 	v.tempo = 10.0
 	var a: Array = r["amostras"]
 	var i := int(10.0 / d.simulacao()["amostra_dt_s"])
@@ -110,6 +119,18 @@ func test_visual_posiciona_carros_na_pista() -> void:
 	igual(Iso.direcao(-PI / 8.0), 15, "rumo negativo")
 	v.free()
 	d.free()
+
+
+func test_minimapa_na_mesma_orientacao_da_vista_3d() -> void:
+	# A câmera da Corrida3D olha de (70, 57.15, 70); o plano (x, y) vai para
+	# (x, 0, -y). A projeção Iso do minimapa deve ser a mesma, sem espelhar.
+	var b := Basis.looking_at(-Vector3(70, 57.15, 70), Vector3.UP)
+	for p in [Vector2(10, 0), Vector2(0, 10), Vector2(7, -3)]:
+		var w := Vector3(p.x, 0.0, -p.y)
+		var tela := Vector2(w.dot(b.x), -w.dot(b.y))
+		var iso := Iso.para_tela(p, 1.0)
+		perto(tela.angle(), iso.angle(), 1e-3, "direção de %s" % p)
+		perto(tela.length() / iso.length(), 1.0 / sqrt(2.0), 1e-3, "escala de %s" % p)
 
 
 func test_principal_sem_dados_mostra_pendencias() -> void:

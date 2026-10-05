@@ -15,6 +15,7 @@ var jogador: Node
 ## Minimapa (pista inteira) e fonte das posições da vista 3D.
 var _visual: CorridaVisual
 var _visual3d: Corrida3D
+var _area: Control
 var _info: Label
 var _classificacao: RichTextLabel
 var _semente_mostrada := 0
@@ -32,6 +33,7 @@ func _init(d: Node, j: Node) -> void:
 	_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(_info)
 	var area := Control.new()
+	_area = area
 	area.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	area.custom_minimum_size = Vector2(0, 460)
 	area.clip_contents = true
@@ -40,7 +42,7 @@ func _init(d: Node, j: Node) -> void:
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	area.add_child(_visual3d)
 	var fundo := ColorRect.new()
-	fundo.color = Color(0.05, 0.06, 0.08, 0.6)
+	fundo.color = Color(0.05, 0.06, 0.08, 0.88)
 	fundo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	fundo.offset_left = -230
 	fundo.offset_bottom = 200
@@ -52,6 +54,7 @@ func _init(d: Node, j: Node) -> void:
 	_visual.escala_carro = 2.5
 	_visual.largura_min_px = 6.0
 	_visual.com_rotulos = false
+	_visual.girar = false
 	fundo.add_child(_visual)
 	_classificacao = RichTextLabel.new()
 	_classificacao.bbcode_enabled = true
@@ -171,6 +174,7 @@ func _process(delta: float) -> void:
 	if f.is_empty():
 		_visual.limpar()
 		_visual3d.limpar()
+		_area.visible = false
 		_semente_mostrada = 0
 		_info.text = "Nenhuma corrida na fila. Escolha um evento."
 		_classificacao.text = ""
@@ -189,6 +193,7 @@ func _process(delta: float) -> void:
 			categorias["adv%d_%s" % [i, adv_id]] = dados.carro(adv_id).get("categoria", "")
 		_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 		_visual3d.mostrar(pista, _visual, categorias)
+		_area.visible = true
 		_semente_mostrada = f["semente"]
 		_nomes = {"jogador": "VOCÊ · " + jogador.garagem.carro(f["uid"]).base["nome"]}
 		for i in ev["adversarios"].size():
