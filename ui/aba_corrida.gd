@@ -162,7 +162,7 @@ func _construir_painel() -> void:
 	_em_andamento = not jogador.fila.is_empty()
 	_cameras.visible = _em_andamento
 	if _em_andamento:
-		var h := fileira(_painel)
+		var h := acoes(_painel)
 		if PERMITIR_PULAR:
 			botao("Ver resultado (teste)", func(): pular.emit(), true, false, h)
 		botao("Voltar à garagem", func(): ir_para.emit(GARAGEM), true, false, h)
@@ -214,9 +214,9 @@ func _resultado(u: Dictionary) -> void:
 	if not venceu and seu != null:
 		_por_que(u, ev, seu)
 		_o_que_ajuda(u, seu)
-	var acoes := cartao(Color.TRANSPARENT, _painel)
-	rotulo("E AGORA?", FONTE_PEQUENA, COR_SECUNDARIA, acoes)
-	var h := fileira(acoes)
+	var fim := cartao(Color.TRANSPARENT, _painel)
+	rotulo("E AGORA?", FONTE_PEQUENA, COR_SECUNDARIA, fim)
+	var h := acoes(fim)
 	if not _em_andamento and seu != null:
 		botao("Repetir", _correr_de_novo, true, true, h)
 	botao("Preparar", func():

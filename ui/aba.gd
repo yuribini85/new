@@ -235,6 +235,20 @@ func botao(t: String, acao: Callable, habilitado := true, primario := false, pai
 	return b
 
 
+## Fileira de botões que quebra linha quando não cabe (nunca alarga a tela).
+## Os botões dentro dela se esticam para ocupar a linha.
+func acoes(pai: Control = null) -> HFlowContainer:
+	var h := HFlowContainer.new()
+	h.add_theme_constant_override("h_separation", 12)
+	h.add_theme_constant_override("v_separation", 10)
+	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.child_entered_tree.connect(func(n):
+		if n is Button:
+			n.size_flags_horizontal = Control.SIZE_EXPAND_FILL)
+	_pai(pai).add_child(h)
+	return h
+
+
 func fileira(pai: Control = null) -> HBoxContainer:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 12)

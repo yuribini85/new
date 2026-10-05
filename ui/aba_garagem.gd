@@ -51,20 +51,20 @@ func construir() -> void:
 		selos(etiquetas, nome)
 		barras_carro(c.atributos_efetivos("seco"), v)
 		var venda := int(floor(float(c.base["preco"]) * float(regras["fracao_revenda"])))
-		var acoes := fileira(v)
+		var linha_acoes := acoes(v)
 		if not ativo:
 			botao("Usar este", func():
 				jogador.carro_ativo = c.uid
-				avisar("Em uso: %s." % c.base["nome"]), true, true, acoes)
+				avisar("Em uso: %s." % c.base["nome"]), true, true, linha_acoes)
 		botao("Oficina", func():
 			jogador.carro_ativo = c.uid
-			ir_para.emit(OFICINA), true, false, acoes)
-		botao("Ficha", func(): ficha_modelo(c.base), true, false, acoes)
+			ir_para.emit(OFICINA), true, false, linha_acoes)
+		botao("Ficha", func(): ficha_modelo(c.base), true, false, linha_acoes)
 		botao("Vender %s" % dinheiro(venda), _vender.bind(c.uid),
-				not em_fila and jogador.concessionaria.pode_vender(c.uid), false, acoes)
+				not em_fila and jogador.concessionaria.pode_vender(c.uid), false, linha_acoes)
 	if lista.size() == 1:
 		rotulo("O único carro da garagem não pode ser vendido: sem ele a carreira trava.", FONTE_PEQUENA, COR_SECUNDARIA)
-	var h := fileira()
+	var h := acoes()
 	botao("Coleção", _colecao, true, false, h)
 	entenda(h)
 	_rodape()
@@ -157,7 +157,7 @@ func _rodape() -> void:
 	if _confirmar_recomeco:
 		var v := cartao(COR_RUIM)
 		rotulo("Apagar todo o progresso e voltar ao saldo inicial?", 0, Color.WHITE, v)
-		var h := fileira(v)
+		var h := acoes(v)
 		botao("Sim, recomeçar", _recomecar, true, false, h)
 		botao("Cancelar", func(): _confirmar_recomeco = false, true, false, h)
 	else:

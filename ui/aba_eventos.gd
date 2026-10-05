@@ -94,7 +94,7 @@ func _fila() -> void:
 				% carro.base["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v)
 	rotulo("Com o app fechado a fila continua (até %s); os prêmios entram quando você volta." % _tempo(
 			float(dados.carreira().get("teto_offline_s", 0.0))), FONTE_PEQUENA, COR_SECUNDARIA, v)
-	var h := fileira(v)
+	var h := acoes(v)
 	botao("Acompanhar", func(): ir_para.emit(CORRIDA), true, true, h)
 	if int(f["restantes"]) > 1:
 		botao("Parar após esta", func():

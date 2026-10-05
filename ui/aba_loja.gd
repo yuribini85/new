@@ -69,10 +69,9 @@ func _cartao_carro(c: Dictionary, preco: int, extra: Array, comprar: Callable) -
 	comp.append(["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)])
 	selos(selos_carro(c) + extra + comp, nome)
 	barras_carro({"potencia": float(c["potencia"]), "peso": float(c["peso"])}, v)
-	var h := fileira(v)
-	var aviso := rotulo("" if pode else "Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo),
-			FONTE_PEQUENA, COR_RUIM, h)
-	aviso.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if not pode:
+		rotulo("Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo), FONTE_PEQUENA, COR_RUIM, v)
+	var h := acoes(v)
 	botao("Ficha", func(): ficha_modelo(c), true, false, h)
 	botao("Comprar · %s Cr" % dinheiro(preco), comprar, pode, true, h)
 

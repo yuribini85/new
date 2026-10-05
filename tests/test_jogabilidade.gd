@@ -8,8 +8,9 @@ const ABAS := [
 	preload("res://ui/aba_oficina.gd"), preload("res://ui/aba_eventos.gd"),
 	preload("res://ui/aba_corrida.gd"), preload("res://ui/aba_licencas.gd"),
 ]
-## Largura útil do celular: 720 menos as margens da tela principal.
-const LARGURA := 720.0 - 32.0
+## Largura útil do celular: 720 menos as margens da tela principal e a barra
+## de rolagem (com folga para fontes um pouco mais largas no aparelho).
+const LARGURA := 720.0 - 32.0 - 40.0
 
 
 func _jogador(d: Node) -> Node:
@@ -31,16 +32,28 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 	d.carregar("res://data/")
 	var j := _jogador(d)
 	j.economia.creditar(200000)
+	# Estado de meio de carreira: três carros (botão "Usar este" nos outros),
+	# licenças, vitórias, peça instalada e fila correndo.
 	var ofertas := Usados.estoque(d.lista("carros"), 0, j.usados_vendidos)
-	var o: Dictionary = ofertas[0]
-	var uid: int = j.concessionaria.comprar_usado(o, d.carro(o["carro_id"]), j.usados_vendidos)
+	var uid := -1
+	for o in ofertas.slice(0, 3):
+		var u: int = j.concessionaria.comprar_usado(o, d.carro(o["carro_id"]), j.usados_vendidos)
+		if uid < 0:
+			uid = u
 	j.carro_ativo = uid
+	j.licencas = ["B", "A"]
+	for p in d.lista("pecas"):
+		if j.garagem.carro(uid).motivo_recusa(p) == "":
+			j.concessionaria.comprar_peca(j.garagem.carro(uid), p)
+			break
 	for ev in d.lista("eventos"):
 		if j.fila_ctrl.iniciar(ev["id"], uid, 1, 0.0) == "":
 			break
 	j.fila_ctrl.adiantar(10.0)
 	j.fila_ctrl.processar(10.0)
 	verificar(not j.ultima_corrida.is_empty(), "uma corrida disputada")
+	j.vitorias[j.ultima_corrida["evento_id"]] = 1
+	j.fila_ctrl.iniciar(j.ultima_corrida["evento_id"], uid, 3, Time.get_unix_time_from_system())
 	var abas := []
 	for script in ABAS:
 		var a: Control = script.new(d, j)
