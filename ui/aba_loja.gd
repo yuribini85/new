@@ -11,33 +11,60 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	titulo("Usados — dia %d" % jogador.dias)
+	cabecalho("Loja", "Compre carros. O dinheiro vem dos prêmios das corridas.")
+	if jogador.garagem.lista().is_empty():
+		dica("Comece por um usado: são mais baratos e alguns já vencem a primeira prova. "
+				+ "A ★ marca os que foram bem em corridas simuladas da prova mais fácil, de fábrica, "
+				+ "sem nenhuma peça. É uma estimativa, não uma promessa.")
+	rotulo("USADOS · dia %d" % jogador.dias, FONTE_PEQUENA, COR_SECUNDARIA)
+	rotulo("O estoque muda conforme você corre (cada corrida é um dia), como no GT2.", FONTE_PEQUENA, COR_SECUNDARIA)
 	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos)
 	if ofertas.is_empty():
-		texto("Nenhum usado hoje.")
+		rotulo("Nenhum usado hoje. Volte depois de algumas corridas.", 0, COR_SECUNDARIA)
 	var prev := _prever(ofertas)
-	if not prev.is_empty():
-		texto("De fábrica em %s, nos testes:" % prev["evento"], Color(0.7, 0.8, 1.0))
 	for o in ofertas:
 		var c: Dictionary = dados.carro(o["carro_id"])
-		var desc := "%s · %s · %d cv" % [c["nome"], c["tracao"], c["potencia"]]
+		var extra := []
 		var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
 		if not a.is_empty():
-			desc += " · %s%s" % ["★ boa perspectiva · " if a["media"] <= 1.5 else "", Mecanico.texto_faixa(a["faixa"])]
-		linha(desc, [
-			[dinheiro(o["preco"]), func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos)),
-				jogador.economia.pode_pagar(o["preco"])],
-		], icone_carro(c))
+			var boa: bool = a["media"] <= 1.5
+			extra.append(["%s%s nos testes" % ["★ " if boa else "", Mecanico.texto_faixa(a["faixa"])],
+					COR_BOM if boa else COR_NEUTRA.lightened(0.3)])
+		var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
+		extra.append(["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)])
+		_cartao_carro(c, int(o["preco"]), extra, func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos)))
+	if not prev.is_empty():
+		rotulo("Testes: de fábrica em %s." % prev["evento"], FONTE_PEQUENA, COR_SECUNDARIA)
 	separador()
-	titulo("Novos")
+	rotulo("NOVOS", FONTE_PEQUENA, COR_SECUNDARIA)
+	rotulo("Sempre disponíveis. Modelos antigos só aparecem nos usados.", FONTE_PEQUENA, COR_SECUNDARIA)
 	for c in dados.lista("carros"):
 		if not c.get("novo", true):
 			continue  # como no GT2: modelos antigos só no usado
-		var preco := int(c["preco"])
 		var fab: String = dados.item("fabricantes", c["fabricante"]).get("nome", c["fabricante"])
-		linha("%s · %s · %s · %d cv · %d" % [c["nome"], fab, c["tracao"], c["potencia"], c["ano"]], [
-			[dinheiro(preco), func(): _escolher(jogador.concessionaria.comprar_carro(c)), jogador.economia.pode_pagar(preco)],
-		], icone_carro(c))
+		_cartao_carro(c, int(c["preco"]), [[fab, COR_NEUTRA.lightened(0.3)], [str(c["ano"]), COR_NEUTRA.lightened(0.3)]],
+				func(): _escolher(jogador.concessionaria.comprar_carro(c)))
+
+
+## Cartão de oferta: ícone, nome, selos, potência e peso, preço.
+func _cartao_carro(c: Dictionary, preco: int, extra: Array, comprar: Callable) -> void:
+	var pode: bool = jogador.economia.pode_pagar(preco)
+	var v := cartao()
+	var topo := fileira(v)
+	var ic := icone_carro(c)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	topo.add_child(ic)
+	var nome := VBoxContainer.new()
+	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	topo.add_child(nome)
+	rotulo(c["nome"], 32, Color.WHITE, nome)
+	selos(selos_carro(c) + extra, nome)
+	barras_carro({"potencia": float(c["potencia"]), "peso": float(c["peso"])}, v)
+	var h := fileira(v)
+	var aviso := rotulo("" if pode else "Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo),
+			FONTE_PEQUENA, COR_RUIM, h)
+	aviso.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	botao("Comprar · %s Cr" % dinheiro(preco), comprar, pode, true, h)
 
 
 func _prever(ofertas: Array) -> Dictionary:
@@ -59,6 +86,9 @@ func _prever(ofertas: Array) -> Dictionary:
 	return _previsao
 
 
+## O primeiro carro já entra em uso, e a tela vai para a Garagem, que mostra o
+## próximo passo.
 func _escolher(uid: int) -> void:
 	if uid > 0 and jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
+		ir_para.emit(GARAGEM)

@@ -38,6 +38,9 @@ func _ready() -> void:
 
 	_saldo = Label.new()
 	_saldo.add_theme_font_size_override("font_size", FONTE_TITULO)
+	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+	_saldo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	_saldo.clip_text = true
 	raiz.add_child(_saldo)
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
@@ -55,6 +58,9 @@ func _ready() -> void:
 	for a in _todas:
 		_abas.add_child(a)
 		a.mudou.connect(atualizar)
+		a.ir_para.connect(func(i):
+			_ir_para(i)
+			atualizar())
 	eventos.correr_iniciado.connect(func(): _ir_para(4))
 	_todas[4].pular.connect(func():
 		jogador.fila_ctrl.adiantar(Time.get_unix_time_from_system())
@@ -128,8 +134,9 @@ func _tema() -> Theme:
 
 
 func atualizar() -> void:
-	_saldo.text = "Saldo %s · Dia %d · %d carros" % [
-		Aba.dinheiro(jogador.economia.saldo), jogador.dias, jogador.garagem.lista().size()]
+	var carro: Carro = jogador.garagem.carro(jogador.carro_ativo)
+	_saldo.text = "%s Cr · Dia %d%s" % [Aba.dinheiro(jogador.economia.saldo), jogador.dias,
+			" · " + carro.base["nome"] if carro != null else ""]
 	for a in _todas:
 		a.atualizar()
 	# Toda ação do jogador passa por aqui: salvar já. No navegador não há aviso

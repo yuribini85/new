@@ -58,7 +58,7 @@ func test_melhor_grau_e_mantido() -> void:
 func test_estoque_de_usados_por_janela_de_dias() -> void:
 	var d := dados_fixture()
 	var carros: Array = d.lista("carros")
-	igual(Usados.estoque(carros, 5, {}), [{"carro_id": "fraco", "preco": 150, "chave": "0:fraco"}], "dia 5")
+	igual(Usados.estoque(carros, 5, {}), [{"carro_id": "fraco", "preco": 150, "chave": "0:fraco", "fim": 9}], "dia 5")
 	igual(Usados.estoque(carros, 15, {}).map(func(o): return [o["carro_id"], o["preco"]]),
 			[["fraco", 140], ["forte", 400]], "dia 15: duas ofertas, da mais barata para a mais cara")
 	igual(Usados.estoque(carros, 31, {}), [], "dia 31")
