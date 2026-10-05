@@ -1,5 +1,8 @@
 extends Aba
 
+## Primeiro toque em "Recomeçar carreira" só pede confirmação.
+var _confirmar_recomeco := false
+
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Garagem")
@@ -12,8 +15,10 @@ func construir() -> void:
 			texto("Sem carro e sem saldo para comprar um. Recomece a carreira do zero.",
 				Color(1.0, 0.75, 0.4))
 			linha("", [["Recomeçar carreira", _recomecar]])
+			texto("Versão %s" % versao(), Color(0.5, 0.5, 0.55))
 		else:
 			texto("Nenhum carro. Compre o primeiro na Loja.")
+			_rodape()
 		return
 	var regras: Dictionary = dados.economia()
 	for c in jogador.garagem.lista():
@@ -28,6 +33,27 @@ func construir() -> void:
 		])
 	if jogador.garagem.lista().size() == 1:
 		texto("O único carro da garagem não pode ser vendido.", Color(0.7, 0.8, 1.0))
+	_rodape()
+
+
+## Recomeçar sempre disponível (com confirmação) e versão publicada, para saber
+## se o navegador já carregou a atualização.
+func _rodape() -> void:
+	separador()
+	if _confirmar_recomeco:
+		linha("Apagar todo o progresso e voltar ao saldo inicial?", [
+			["Sim, recomeçar", _recomecar],
+			["Cancelar", func(): _confirmar_recomeco = false],
+		])
+	else:
+		linha("", [["Recomeçar carreira", func(): _confirmar_recomeco = true]])
+	texto("Versão %s" % versao(), Color(0.5, 0.5, 0.55))
+
+
+## Commit publicado (versao.txt, gerado pelo workflow do Pages) ou "local".
+static func versao() -> String:
+	var v := FileAccess.get_file_as_string("res://versao.txt").strip_edges()
+	return v if v != "" else "local"
 
 
 func _vender(uid: int) -> void:
@@ -51,6 +77,7 @@ func _sem_saida() -> bool:
 
 
 func _recomecar() -> void:
+	_confirmar_recomeco = false
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}
