@@ -153,6 +153,15 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> v
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
 		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
 		rotulo("Revenda depois: %s Cr" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
+		if not base.get("usados", []).is_empty():
+			var desejado: bool = base["id"] in jogador.desejos
+			var bd := botao_texto("♥ Acompanhando nos usados (parar)" if desejado else "♡ Acompanhar nos usados", func():
+				if desejado:
+					jogador.desejos.erase(base["id"])
+				else:
+					jogador.desejos.append(base["id"])
+				mudou.emit(), vc)
+			bd.pressed.connect(func(): bd.text = "Feito: veja a agenda no Mercado")
 		if not fab.is_empty():
 			var vf := cartao(Color.TRANSPARENT, v)
 			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)

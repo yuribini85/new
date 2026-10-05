@@ -79,3 +79,24 @@ func test_comprar_usado_tira_do_estoque_na_janela() -> void:
 			1, "volta na janela seguinte")
 	j.free()
 	d.free()
+
+
+func test_agenda_e_proxima_oferta_dos_usados() -> void:
+	var d := dados_fixture()
+	var carros: Array = d.lista("carros")
+	var ag := Usados.agenda(carros, 0, 30)
+	igual(ag.map(func(o): return [o["carro_id"], o["inicio"]]), [["fraco", 10], ["forte", 10]], "abrem no dia 10, mais barato primeiro")
+	igual(Usados.agenda(carros, 0, 9), [], "nada abre antes do dia 10")
+	igual(Usados.proxima(d.carro("forte"), 3, {})["inicio"], 10, "forte: próxima janela no dia 10")
+	igual(Usados.proxima(d.carro("fraco"), 3, {})["inicio"], 0, "fraco: à venda agora")
+	igual(Usados.proxima(d.carro("fraco"), 3, {"0:fraco": true})["inicio"], 10, "comprado nesta janela: a próxima")
+	igual(Usados.proxima(d.carro("forte"), 21, {}), {}, "forte não volta depois do dia 20")
+	var j := _jogador(d)
+	j.desejos = ["forte"]
+	var estado: Dictionary = JSON.parse_string(JSON.stringify(Save.serializar(j)))
+	var k := _jogador(d)
+	igual(Save.desserializar(estado, k, d), "", "load")
+	igual(k.desejos, ["forte"], "desejos voltam do save")
+	j.free()
+	k.free()
+	d.free()

@@ -387,8 +387,28 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 	if rel.is_empty() or (rel["corridas"].is_empty() and rel["erro"] == ""):
 		return
 	var g: Aba = _todas[0]
+	var objetivos := Objetivos.lista(jogador, dados)
+	var i_obj := Objetivos.atual(objetivos)
+	var botoes := []
+	if i_obj < objetivos.size():
+		var aba_obj: int = objetivos[i_obj]["aba"]
+		botoes = [[objetivos[i_obj]["botao"], func(): _ir_para(aba_obj)], ["Fechar", func(): pass]]
 	_sobre.abrir(titulo, func(v):
 		var corridas: Array = rel["corridas"]
+		# Primeiro o plano: objetivo, dinheiro e o próximo obstáculo.
+		var vp := g.cartao(Aba.COR_INFO, v)
+		if i_obj < objetivos.size():
+			g.rotulo("OBJETIVO %d/%d" % [i_obj + 1, objetivos.size()], Aba.FONTE_PEQUENA, Aba.COR_INFO, vp)
+			g.rotulo(objetivos[i_obj]["texto"], 30, Color.WHITE, vp)
+		g.rotulo("Saldo: %s Cr" % Aba.dinheiro(jogador.economia.saldo), Aba.FONTE_PEQUENA + 3, Aba.COR_DESTAQUE, vp)
+		var obstaculo := Objetivos.proximo_obstaculo(jogador, dados)
+		if obstaculo != "":
+			g.rotulo(obstaculo, Aba.FONTE_PEQUENA + 2, Color.WHITE, vp)
+		for cid in jogador.desejos:
+			var p := Usados.proxima(dados.carro(cid), jogador.dias, jogador.usados_vendidos)
+			if not p.is_empty() and p["inicio"] <= jogador.dias:
+				g.rotulo("♥ %s à venda nos usados por %s Cr" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
+						Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vp)
 		if not corridas.is_empty():
 			var vitorias := corridas.filter(func(c): return c["posicao"] == 1).size()
 			var melhor: int = corridas.map(func(c): return c["posicao"]).min()
@@ -426,7 +446,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			v.add_child(detalhes)
 			for c in corridas:
 				g.rotulo("%s · %dº · %s Cr" % [dados.evento(c["evento_id"]).get("nome", ""), c["posicao"],
-						Aba.dinheiro(c["premio"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, detalhes))
+						Aba.dinheiro(c["premio"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, detalhes), botoes)
 
 
 static func _duracao(s: float) -> String:

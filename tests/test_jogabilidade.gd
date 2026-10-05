@@ -72,6 +72,12 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 	for a in abas:
 		var largura: float = a.conteudo.get_combined_minimum_size().x
 		verificar(largura <= LARGURA, "%s pede %.0f px (máx. %.0f)" % [a.name, largura, LARGURA])
+	# Agenda dos usados, com um modelo acompanhado.
+	j.desejos = [d.lista("carros")[0]["id"], d.lista("carros")[1]["id"]]
+	abas[1]._secao = "agenda"
+	abas[1].atualizar()
+	var la: float = abas[1].conteudo.get_combined_minimum_size().x
+	verificar(la <= LARGURA, "agenda pede %.0f px (máx. %.0f)" % [la, LARGURA])
 	# Bancada de cada contrato, com câmbio montado e relatório.
 	var carreira: Control = abas[5]
 	for ct in d.lista("contratos"):

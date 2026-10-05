@@ -165,3 +165,25 @@ func test_editor_de_pista_abre() -> void:
 	_raiz().add_child(editor)
 	verificar(editor.get_child_count() > 0, "editor montado")
 	editor.free()
+
+
+func test_relatorio_de_retorno_comeca_pelo_plano() -> void:
+	var tela: Control = preload("res://scenes/principal.tscn").instantiate()
+	_raiz().add_child(tela)
+	if tela._sobre == null:
+		tela.free()
+		return  # dados reais pendentes: a tela de pendências já é testada acima
+	var rel := {"corridas": [{"evento_id": tela.dados.lista("eventos")[0]["id"], "posicao": 2, "premio": 100}],
+			"premio_total": 100, "carros_premio": [], "erro": "", "tempo_perdido_s": 0.0}
+	tela._mostrar_relatorio(rel, "Enquanto você esteve fora")
+	verificar(tela._sobre.aberto(), "relatório aberto")
+	var textos := []
+	var pilha: Array = [tela._sobre]
+	while not pilha.is_empty():
+		var n: Node = pilha.pop_back()
+		if n is Label:
+			textos.append(n.text)
+		pilha.append_array(n.get_children())
+	verificar(textos.any(func(t): return t.begins_with("OBJETIVO")), "objetivo no relatório")
+	verificar(textos.any(func(t): return t.begins_with("Saldo:")), "saldo no relatório")
+	tela.free()

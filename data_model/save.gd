@@ -27,6 +27,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"licencas": jogador.licencas,
 		"graus_licenca": jogador.graus_licenca,
 		"montagens": jogador.montagens,
+		"desejos": jogador.desejos,
 		"usados_vendidos": jogador.usados_vendidos,
 		"vitorias": jogador.vitorias,
 		"historico": jogador.historico,
@@ -120,6 +121,9 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 				jogador.montagens[k] = {"pecas": Array(m.get("pecas", [])).filter(func(x): return dados.existe("pecas", x)),
 						"ajuste_cambio": String(m.get("ajuste_cambio", ""))}
 	jogador.usados_vendidos = s["usados_vendidos"]
+	# Opcional: lista de desejos (modelos que saíram de data/ somem).
+	jogador.desejos = Array(s.get("desejos", [])).filter(func(x): return dados.existe("carros", x)) \
+			if s.get("desejos") is Array else []
 	jogador.vitorias = {}
 	for k in s["vitorias"]:
 		jogador.vitorias[k] = int(s["vitorias"][k])

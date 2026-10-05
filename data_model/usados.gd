@@ -19,3 +19,31 @@ static func estoque(carros: Array, dia: int, vendidos: Dictionary) -> Array:
 				ofertas.append({"carro_id": c["id"], "preco": int(janela[2]), "chave": chave, "fim": int(janela[1])})
 	ofertas.sort_custom(func(a, b): return a["preco"] < b["preco"])
 	return ofertas
+
+
+## Próximas ofertas, das que começam mais cedo para as mais tarde: janelas
+## que ainda não abriram em `dia` e abrem até `dia + horizonte`.
+## [{carro_id, preco, inicio, fim}]. O estoque é fixo por dia de jogo, então a
+## agenda é exata (não é previsão).
+static func agenda(carros: Array, dia: int, horizonte: int) -> Array:
+	var r := []
+	for c in carros:
+		for janela in c.get("usados", []):
+			var ini := int(janela[0])
+			if ini > dia and ini <= dia + horizonte:
+				r.append({"carro_id": c["id"], "preco": int(janela[2]), "inicio": ini, "fim": int(janela[1])})
+	r.sort_custom(func(a, b): return a["inicio"] < b["inicio"] if a["inicio"] != b["inicio"] else a["preco"] < b["preco"])
+	return r
+
+
+## Próxima janela de um modelo a partir de `dia` (a aberta hoje conta), ou {}.
+static func proxima(carro: Dictionary, dia: int, vendidos: Dictionary) -> Dictionary:
+	var melhor := {}
+	for janela in carro.get("usados", []):
+		var ini := int(janela[0])
+		var fim := int(janela[1])
+		if fim < dia or vendidos.has("%d:%s" % [ini, carro["id"]]):
+			continue
+		if melhor.is_empty() or ini < melhor["inicio"]:
+			melhor = {"carro_id": carro["id"], "preco": int(janela[2]), "inicio": ini, "fim": fim}
+	return melhor

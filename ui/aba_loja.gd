@@ -24,7 +24,7 @@ func construir() -> void:
 	var novos: Array = dados.lista("carros").filter(func(c): return c.get("novo", true))
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
-	for s in [["usados", "Usados (%d)" % ofertas.size()], ["novos", "Novos (%d)" % novos.size()]]:
+	for s in [["usados", "Usados (%d)" % ofertas.size()], ["agenda", "Agenda"], ["novos", "Novos (%d)" % novos.size()]]:
 		var b := Button.new()
 		b.text = s[1]
 		b.toggle_mode = true
@@ -36,6 +36,9 @@ func construir() -> void:
 			mudou.emit())
 		abas.add_child(b)
 	conteudo.add_child(abas)
+	if _secao == "agenda":
+		_agenda()
+		return
 	_filtros()
 	if _secao == "usados":
 		rotulo("Mudam conforme você corre (cada corrida é um dia). %s" % (
@@ -51,6 +54,8 @@ func construir() -> void:
 			var estrela: bool = not a.is_empty() and a["media"] <= 1.5
 			var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
 			var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
+			if o["carro_id"] in jogador.desejos:
+				extras.push_front(["♥ acompanhado", COR_DESTAQUE])
 			if not a.is_empty():
 				extras.push_front(["%s%s nos testes, de fábrica, em %s" % ["★ " if estrela else "",
 						Mecanico.texto_faixa(a["faixa"]), prev["evento"]], COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
@@ -61,6 +66,63 @@ func construir() -> void:
 		var grade := _grade()
 		for c in _filtrar(novos.map(func(c): return [c, int(c["preco"]), c])).map(func(x): return x[2]):
 			_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
+
+
+## Corridas à frente que a agenda mostra (GT2: períodos de 10 dias; três deles).
+const HORIZONTE_AGENDA := 30
+
+
+## Agenda dos usados: os acompanhados (quando aparecem) e as próximas ofertas.
+## O estoque depende só do número de corridas, então a agenda é exata.
+func _agenda() -> void:
+	rotulo("Cada corrida é um dia. A agenda é exata: o estoque só muda com as corridas.", FONTE_PEQUENA, COR_SECUNDARIA)
+	var v := cartao(COR_DESTAQUE)
+	rotulo("ACOMPANHANDO", FONTE_PEQUENA, COR_DESTAQUE, v)
+	if jogador.desejos.is_empty():
+		rotulo("Abra a ficha de um modelo e toque em \"Acompanhar nos usados\".", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+	for cid in jogador.desejos:
+		var c: Dictionary = dados.carro(cid)
+		var p := Usados.proxima(c, jogador.dias, jogador.usados_vendidos)
+		var quando := "não volta aos usados" + (" (novo: %s Cr)" % dinheiro(int(c["preco"])) if c.get("novo", true) else "")
+		if not p.is_empty() and p["inicio"] <= jogador.dias:
+			quando = "à venda agora por %s Cr · sai em %d corrida%s" % [dinheiro(p["preco"]), p["fim"] - jogador.dias + 1,
+					"" if p["fim"] - jogador.dias + 1 == 1 else "s"]
+		elif not p.is_empty():
+			quando = "em %d corrida%s, por %s Cr" % [p["inicio"] - jogador.dias, "" if p["inicio"] - jogador.dias == 1 else "s",
+					dinheiro(p["preco"])]
+		var h := fileira(v)
+		var img := icone_carro(c)
+		img.custom_minimum_size = Vector2(110, 62)
+		h.add_child(img)
+		var l := rotulo("%s\n%s" % [c["nome"], quando], FONTE_PEQUENA + 1, Color.WHITE, h)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		botao_texto("Parar", func():
+			jogador.desejos.erase(cid)
+			mudou.emit(), h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var lista := Usados.agenda(dados.lista("carros"), jogador.dias, HORIZONTE_AGENDA)
+	rotulo("PRÓXIMAS OFERTAS · %d corridas à frente" % HORIZONTE_AGENDA, FONTE_PEQUENA, COR_SECUNDARIA)
+	if lista.is_empty():
+		rotulo("Nenhuma oferta nova nesse intervalo.", FONTE_PEQUENA + 2, COR_SECUNDARIA)
+	var inicio := -1
+	var vc: VBoxContainer = null
+	for o in lista:
+		if o["inicio"] != inicio:
+			inicio = o["inicio"]
+			vc = cartao()
+			var n: int = inicio - jogador.dias
+			rotulo("Em %d corrida%s" % [n, "" if n == 1 else "s"], 28, Color.WHITE, vc)
+		var c: Dictionary = dados.carro(o["carro_id"])
+		var h := fileira(vc)
+		var l := rotulo("%s%s · %d cv · %s" % ["♥ " if c["id"] in jogador.desejos else "", c["nome"], c["potencia"], c["tracao"]],
+				FONTE_PEQUENA + 1, COR_DESTAQUE if c["id"] in jogador.desejos else Color.WHITE, h)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		l.clip_text = true
+		l.autowrap_mode = TextServer.AUTOWRAP_OFF
+		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		var b := botao_texto("%s Cr" % dinheiro(o["preco"]), func(): ficha_modelo(c, [["à venda em %d corridas" % (o["inicio"] - jogador.dias),
+				COR_NEUTRA.lightened(0.3)]]), h)
+		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 
 ## Fileira de filtros: só o que posso comprar, ordem e tração.

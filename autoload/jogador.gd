@@ -14,6 +14,8 @@ var licencas: Array = []
 var graus_licenca: Dictionary = {}
 ## contrato_id -> última montagem enviada {pecas: [ids], ajuste_cambio}.
 var montagens: Dictionary = {}
+## Modelos acompanhados no Mercado (ids de carros): avisa quando aparecem nos usados.
+var desejos: Array = []
 ## Chaves de ofertas de usados já compradas ("período:carro").
 var usados_vendidos: Dictionary = {}
 ## evento_id -> número de vitórias.
@@ -53,6 +55,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	licencas = []
 	graus_licenca = {}
 	montagens = {}
+	desejos = []
 	usados_vendidos = {}
 	fila = {}
 	ultimo_processamento = 0.0

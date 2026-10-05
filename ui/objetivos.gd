@@ -16,15 +16,51 @@ static func lista(jogador: Node, dados: Node) -> Array:
 			vitorias_b = true
 	return [
 		{"texto": "Comprar o primeiro carro", "feito": not jogador.garagem.lista().is_empty(),
-			"aba": Aba.LOJA, "botao": "Ir para a Loja"},
+			"aba": Aba.LOJA, "botao": "Ir para o Mercado"},
 		{"texto": "Disputar uma prova", "feito": not jogador.historico.is_empty() or not jogador.vitorias.is_empty(),
-			"aba": Aba.EVENTOS, "botao": "Ver eventos"},
+			"aba": Aba.EVENTOS, "botao": "Ver competições"},
 		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.OFICINA, "botao": "Ir para a Oficina"},
-		{"texto": "Vencer uma prova", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver eventos"},
-		{"texto": "Conquistar a licença B", "feito": "B" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
-		{"texto": "Vencer uma prova da licença B", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver eventos"},
-		{"texto": "Conquistar a licença A", "feito": "A" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
+		{"texto": "Vencer uma prova", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver competições"},
+		{"texto": "Conquistar a licença B", "feito": "B" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver contratos"},
+		{"texto": "Vencer uma prova da licença B", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver competições"},
+		{"texto": "Conquistar a licença A", "feito": "A" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver contratos"},
 	]
+
+
+## O que está entre o jogador e o objetivo atual, numa frase (relatório de
+## retorno). Só lê o estado; "" se não há nada a dizer.
+static func proximo_obstaculo(jogador: Node, dados: Node) -> String:
+	var l := lista(jogador, dados)
+	var i := atual(l)
+	if i >= l.size():
+		return ""
+	var texto: String = l[i]["texto"]
+	if texto.begins_with("Conquistar a licença"):
+		var lic_id := texto.right(1)
+		var contratos := Contratos.da_licenca(dados, lic_id)
+		var faltam := contratos.filter(func(c): return not jogador.graus_licenca.has(c["id"]))
+		if not faltam.is_empty():
+			return "Contrato a cumprir: %s (%d de %d na licença %s)." % [faltam[0]["nome"],
+					contratos.size() - faltam.size(), contratos.size(), lic_id]
+	var carro: Carro = jogador.garagem.carro(jogador.carro_ativo)
+	if carro == null and not jogador.garagem.lista().is_empty():
+		carro = jogador.garagem.lista()[0]
+	if carro == null:
+		return ""
+	# A prova ainda não vencida de menor prêmio que o carro pode correr.
+	var alvo := {}
+	for ev in dados.lista("eventos"):
+		if jogador.vitorias.has(ev["id"]) or ev["premios"].is_empty():
+			continue
+		if not Elegibilidade.motivos(carro, ev["restricoes"], jogador.licencas).is_empty():
+			continue
+		if alvo.is_empty() or int(ev["premios"][0]) < int(alvo["premios"][0]):
+			alvo = ev
+	if alvo.is_empty():
+		return ""
+	var h: Dictionary = jogador.historico.get(alvo["id"], {})
+	return "Próxima prova a vencer com o %s: %s%s." % [carro.base["nome"], alvo["nome"],
+			" (seu melhor: %dº)" % h["melhor_pos"] if not h.is_empty() else ""]
 
 
 ## Índice do primeiro objetivo não cumprido (lista.size() se todos).
