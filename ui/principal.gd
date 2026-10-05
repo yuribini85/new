@@ -49,8 +49,15 @@ func _ready() -> void:
 	raiz.add_child(_saldo)
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
-	_abas.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	raiz.add_child(_abas)
+	# Moldura sem layout: o tamanho mínimo das abas não passa para a tela. Se
+	# algum conteúdo pedir mais largura que o celular, ele é cortado dentro da
+	# aba, mas o topo e a navegação nunca saem da tela.
+	var moldura := Control.new()
+	moldura.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	moldura.clip_contents = true
+	raiz.add_child(moldura)
+	_abas.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	moldura.add_child(_abas)
 	var eventos := preload("res://ui/aba_eventos.gd").new(dados, jogador)
 	_todas = [
 		preload("res://ui/aba_garagem.gd").new(dados, jogador),
