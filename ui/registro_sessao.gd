@@ -64,6 +64,18 @@ static func pulo() -> void:
 		_salvar()
 
 
+## Uma amostra de quadros por segundo por segundo; separa a tela de Corrida.
+static func quadros(fps: float, na_corrida: bool) -> void:
+	if not _aberta:
+		return
+	var s: Dictionary = _sessoes.back()
+	var chave := "fps_corrida" if na_corrida else "fps_menus"
+	var lista: Array = s.get_or_add(chave, [])
+	lista.append(int(fps))
+	if lista.size() > 600:
+		lista.pop_front()
+
+
 static func fim(jogador: Node) -> void:
 	if not _aberta:
 		return

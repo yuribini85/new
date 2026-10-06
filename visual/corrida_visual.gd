@@ -42,6 +42,12 @@ var _contorno := PackedVector2Array()
 var _rotacao := 0.0
 var _cores := {}  # id -> Color
 var _chegada := {}  # id -> {"t", "s", "v"} de quem terminou
+## Distância da chegada (m); 0 se o resultado não diz quantas voltas.
+var _fim := 0.0
+
+
+func fim() -> float:
+	return _fim
 
 
 func _init() -> void:
@@ -54,6 +60,7 @@ func _init() -> void:
 ## cores: id -> Color. Ids sem cor ganham uma derivada do id.
 func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> void:
 	_pista = pista
+	_fim = float(resultado.get("comprimento", pista.comprimento)) * int(resultado.get("voltas", 0))
 	_tempos = PackedFloat64Array()
 	_s = {}
 	for a in resultado["amostras"]:

@@ -1,5 +1,6 @@
 extends SceneTree
-## Fotos das pistas em 3D (visão do carro e pista toda), com uma corrida
+## Fotos das pistas em 3D (visão do carro, pista toda e o modo velocidade:
+## entrada e estabilizado), com uma corrida
 ## de verdade de cada uma. Revisão visual dos ambientes.
 ## Uso (precisa de display): godot --script res://tools/fotos_pistas.gd -- --saida=/pasta/
 
@@ -47,6 +48,23 @@ func _rodar() -> void:
 			for k in 6:
 				await process_frame
 			root.get_texture().get_image().save_png(saida.path_join("pista_%s_%s.png" % [ev["pista"], "geral" if modo else "carro"]))
+		v3.visao_geral = false
+		# Avança a corrida quadro a quadro até o modo velocidade; fotografa no meio
+		# da entrada e com ele estabilizado.
+		var meio := false
+		for k in 3000:
+			fonte.tempo += 1.0 / 30.0
+			v3.atualizar(1.0 / 30.0)
+			if v3.modo == "velocidade" and not meio and v3._b > 0.45:
+				meio = true
+				await process_frame
+				await process_frame
+				root.get_texture().get_image().save_png(saida.path_join("pista_%s_entrada.png" % ev["pista"]))
+			if v3.modo == "velocidade" and v3._t_modo > 0.8:
+				await process_frame
+				await process_frame
+				root.get_texture().get_image().save_png(saida.path_join("pista_%s_velocidade.png" % ev["pista"]))
+				break
 		v3.queue_free()
 		fonte.free()
 		feitas[ev["pista"]] = true

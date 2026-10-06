@@ -124,6 +124,7 @@ func _ready() -> void:
 	timer.timeout.connect(_processar_fila)
 	timer.timeout.connect(_atualizar_ao_vivo)
 	timer.timeout.connect(_registrar_fila)
+	timer.timeout.connect(_atualizar_fps)
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
@@ -251,6 +252,29 @@ func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_CLOSE_REQUEST] \
 			and _sobre != null:
 		RegistroSessao.fim(jogador)
+
+
+## Quadros por segundo no canto, só com o modo de playtest ligado: medir o
+## custo da corrida (modo velocidade) no aparelho de verdade.
+var _fps: Label
+
+
+func _atualizar_fps() -> void:
+	if Preferencias.modo_teste == "":
+		if _fps != null:
+			_fps.visible = false
+		return
+	if _fps == null:
+		_fps = Label.new()
+		_fps.add_theme_font_size_override("font_size", 20)
+		_fps.add_theme_color_override("font_color", Color(1, 1, 1, 0.8))
+		_fps.add_theme_constant_override("outline_size", 6)
+		_fps.position = Vector2(8, 4)
+		_fps.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_fps)
+	_fps.visible = true
+	_fps.text = "%d fps" % Engine.get_frames_per_second()
+	RegistroSessao.quadros(Engine.get_frames_per_second(), _abas.current_tab == 4)
 
 
 ## Fila nova programada nesta sessão (registro do playtest).

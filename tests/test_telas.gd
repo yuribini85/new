@@ -131,9 +131,9 @@ func test_visual_posiciona_carros_na_pista() -> void:
 
 
 func test_minimapa_na_mesma_orientacao_da_vista_3d() -> void:
-	# A câmera da Corrida3D olha de (70, 57.15, 70); o plano (x, y) vai para
-	# (x, 0, -y). A projeção Iso do minimapa deve ser a mesma, sem espelhar.
-	var b := Basis.looking_at(-Vector3(70, 57.15, 70), Vector3.UP)
+	# A vista normal da Corrida3D olha de cima, com o alto da tela para (-1, 0, -1);
+	# o plano (x, y) vai para (x, 0, -y). O minimapa deve ser a mesma, sem espelhar.
+	var b := Basis.looking_at(Vector3.DOWN, Vector3(-1, 0, -1).normalized())
 	for p in [Vector2(10, 0), Vector2(0, 10), Vector2(7, -3)]:
 		var w := Vector3(p.x, 0.0, -p.y)
 		var tela := Vector2(w.dot(b.x), -w.dot(b.y))
@@ -215,5 +215,44 @@ func test_registro_de_sessao_do_playtest() -> void:
 	verificar(s["telas"].has("Corrida"), "tempo acompanhando a corrida")
 	RegistroSessao.limpar()
 	Preferencias.modo_teste = modo
+	j.free()
+	d.free()
+
+
+func test_modo_velocidade_na_reta_e_desligado_por_reduzir_animacoes() -> void:
+	var d: Node = preload("res://autoload/dados.gd").new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(1000000)
+	j.licencas = ["B", "A"]
+	var ev: Dictionary = d.lista("eventos").filter(func(e): return e["pista"] == "pista_de_testes")[0]
+	var uid := -1
+	for c in d.lista("carros"):
+		var u: int = j.concessionaria.comprar_carro(c)
+		if u > 0 and Elegibilidade.motivos(j.garagem.carro(u), ev["restricoes"], j.licencas).is_empty():
+			uid = u
+			break
+	var r: Dictionary = Carreira.new(d, j).preparar(ev["id"], uid, 1)
+	verificar(not r.has("erro"), "corrida preparada")
+	var pista: Pista = d.pista(ev["pista"])
+	var reduzir := Preferencias.reduzir_animacoes
+	for desligado in [false, true]:
+		Preferencias.reduzir_animacoes = desligado
+		var fonte := CorridaVisual.new()
+		var v3 := Corrida3D.new()
+		v3.size = Vector2(720, 900)
+		_raiz().add_child(v3)
+		fonte.mostrar(pista, r["resultado"])
+		v3.mostrar(pista, fonte, {"jogador": j.garagem.carro(uid).base})
+		var viu := false
+		for k in 2400:
+			fonte.tempo += 1.0 / 20.0
+			v3.atualizar(1.0 / 20.0)
+			viu = viu or v3.modo == "velocidade"
+		verificar(viu != desligado, "modo velocidade %s" % ("desligado" if desligado else "na reta longa"))
+		v3.free()
+		fonte.free()
+	Preferencias.reduzir_animacoes = reduzir
 	j.free()
 	d.free()

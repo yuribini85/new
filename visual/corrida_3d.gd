@@ -98,6 +98,9 @@ func _init() -> void:
 	_mundo.add_child(_camera)
 	_cena = Node3D.new()
 	_mundo.add_child(_cena)
+	var efeito := ShaderMaterial.new()
+	efeito.shader = preload("res://visual/shaders/velocidade.gdshader")
+	material = efeito
 
 
 ## modelos: id -> dados do carro (data/carros.json), para a silhueta de cada um.
@@ -107,7 +110,12 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary) -> void:
 	_fonte = fonte
 	_construir_pista()
 	for id in fonte.ordem():
-		var c := CarroBloco.new().configurar_modelo(modelos.get(id, {"id": id, "categoria": "seda"}), fonte.cor_de(id))
+		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
+		# Arte em sprite (decisão 31) quando o modelo tem; senão, o carro em código.
+		var c: Node3D = CarroDesenho.new()
+		if not c.configurar(String(base.get("id", ""))):
+			c.free()
+			c = CarroBloco.new().configurar_modelo(base, fonte.cor_de(id))
 		_cena.add_child(c)
 		_carros[id] = c
 		var r := Label3D.new()
@@ -153,7 +161,7 @@ func atualizar(delta: float) -> void:
 			_tranco[id] = 0.35
 	for i in ordem.size():
 		var id: String = ordem[i]
-		var c: CarroBloco = _carros[id]
+		var c: Node3D = _carros[id]
 		var dist: float = s[id]
 		var rumo := _pista.rumo_em(dist)
 		var normal := Vector2.from_angle(rumo + PI / 2.0)
@@ -169,6 +177,8 @@ func atualizar(delta: float) -> void:
 			_tranco[id] = maxf(t - delta, 0.0)
 		c.rotation.y = rumo + esterco
 		c.girar_rodas(maxf(ds, 0.0))
+		if delta > 0.0:
+			_v[id] = lerpf(float(_v.get(id, 0.0)), maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
 		r.text = "VOCÊ" if id == "jogador" else str(i + 1)
@@ -205,26 +215,144 @@ func atualizar(delta: float) -> void:
 		_enquadrar_geral()
 		_camera.size = _tamanho_geral
 		_alvo_camera = _centro_pista
+		_mudar_modo("normal", true)
+		efeito_velocidade = 0.0
+		(material as ShaderMaterial).set_shader_parameter("intensidade", 0.0)
 		_camera_imediata()
 		return
-	var tamanho_alvo := TAMANHO_DISPUTA if disputa and foco == "jogador" else TAMANHO_CAMERA
-	_camera.size = tamanho_alvo if delta <= 0.0 or Preferencias.reduzir_animacoes \
-			else lerpf(_camera.size if _camera.size < 100.0 else TAMANHO_CAMERA, tamanho_alvo, clampf(delta * 1.5, 0.0, 1.0))
 	var seguido: String = foco if _carros.has(foco) else ("jogador" if _carros.has("jogador") else (ordem[0] if not ordem.is_empty() else ""))
-	if seguido != "":
-		var novo: Vector3 = _carros[seguido].position
-		_alvo_camera = novo if delta <= 0.0 or Preferencias.reduzir_animacoes or _alvo_camera.distance_to(novo) > 40.0 \
-				else _alvo_camera.lerp(novo, clampf(delta * 5.0, 0.0, 1.0))
-		_camera_imediata()
+	if seguido == "":
+		return
+	var disputa_seguida := disputa and foco == "jogador"
+	_mudar_modo(_decidir_modo(seguido, float(s[seguido]), disputa_seguida), delta <= 0.0)
+	_animar_modo(delta)
+	# O isométrico só está certo para quem aponta como o carro seguido (a câmera
+	# fica atrás dele); numa reta, os carros próximos também. Os outros seguem
+	# com o sprite de cima.
+	var rumo_seg := _pista.rumo_em(float(s[seguido]))
+	for id in _carros:
+		if _carros[id] is CarroDesenho:
+			var alinhado := smoothstep(0.82, 0.96, cos(angle_difference(_pista.rumo_em(float(s[id])), rumo_seg)))
+			_carros[id].mistura(_mistura_sprite() * alinhado)
+	var tamanho_alvo := TAMANHO_DISPUTA if modo == "foco" else TAMANHO_CAMERA
+	_tamanho_base = tamanho_alvo if delta <= 0.0 or Preferencias.reduzir_animacoes \
+			else lerpf(_tamanho_base, tamanho_alvo, clampf(delta * 1.5, 0.0, 1.0))
+	_camera.size = _tamanho_base / _zoom
+	_rumo_seguido = _pista.rumo_em(float(s[seguido]))
+	var novo: Vector3 = _carros[seguido].position
+	# No modo velocidade, a câmera mira um pouco à frente: mais pista livre adiante.
+	novo += Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido)) * _camera.size * 0.18 * _b
+	# Inclinada, a câmera gira com o carro: atraso no seguimento vira deslocamento
+	# grande na tela. Aí ela acompanha sem atraso.
+	_alvo_camera = novo if delta <= 0.0 or Preferencias.reduzir_animacoes or _b > 0.0 \
+			or _alvo_camera.distance_to(novo) > 40.0 else _alvo_camera.lerp(novo, clampf(delta * 5.0, 0.0, 1.0))
+	efeito_velocidade = _b * clampf((float(_v.get(seguido, 0.0)) - V_MIN) / (V_FORTE - V_MIN), 0.3, 1.0)
+	(material as ShaderMaterial).set_shader_parameter("intensidade",
+			0.0 if Preferencias.reduzir_animacoes else efeito_velocidade)
+	_camera_imediata()
 
 
 func _camera_imediata() -> void:
-	# 30° acima do chão: o mesmo 2:1 da projeção Iso do minimapa. Câmera
-	# ortográfica longe (a escala não muda): nada da pista fica atrás dela.
-	# Visão geral de pista grande: mais longe ainda, ou o chão perto da borda
-	# de baixo da tela passa para trás da câmera e é cortado.
-	var longe := maxf(12.0, _camera.size / 80.0)
-	_camera.look_at_from_position(_alvo_camera + Vector3(70, 57.15, 70) * longe, _alvo_camera)
+	# Normal: de cima, girada 45° (o alto da tela para (-1, 0, -1)), a mesma
+	# projeção do minimapa. Velocidade: 30° acima do chão, atrás do carro, na
+	# direção em que o sprite isométrico foi desenhado. _b passa de uma à outra.
+	# Câmera ortográfica longe (a escala não muda): nada fica atrás dela.
+	var elevacao := lerpf(PI / 2.0 - 0.0005, deg_to_rad(30.0), _b)
+	var guinada := lerp_angle(-PI / 4.0, _rumo_seguido + PI / 4.0, _b)
+	var h := Vector3(cos(guinada), 0.0, -sin(guinada))
+	var longe := 1400.0 * maxf(1.0, _camera.size / 960.0)
+	var tremor := Vector3.ZERO
+	if efeito_velocidade > 0.85 and not Preferencias.reduzir_animacoes:
+		tremor = Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)) * _camera.size * 0.0015
+	var alvo_c := _alvo_camera + tremor
+	_camera.look_at_from_position(alvo_c + (h * cos(elevacao) + Vector3.UP * sin(elevacao)) * longe, alvo_c, -h)
+
+
+# --- Modos de câmera (decisão 31) ---------------------------------------------
+
+## "normal" (de cima), "foco" (disputa, mais perto) ou "velocidade" (inclinada,
+## atrás do carro, sprite isométrico e efeito nas bordas).
+var modo := "normal"
+## Intensidade do efeito de tela (0..1), lida pela tela da corrida.
+var efeito_velocidade := 0.0
+var _b := 0.0  # 0 = de cima; 1 = velocidade
+var _zoom := 1.0
+var _tamanho_base := TAMANHO_CAMERA
+var _rumo_seguido := 0.0
+var _t_modo := 0.0
+var _espera := 0.0
+var _b_saida := 0.0
+var _zoom_saida := 1.0
+var _v := {}  # id -> velocidade suavizada (m/s)
+## Apresentação, não balanceamento: duração da entrada e da saída, tempo mínimo
+## entre duas entradas, quanto de reta (em segundos de percurso) justifica o
+## modo e velocidade a partir da qual ele faz sentido.
+const ENTRADA_S := 0.45
+const SAIDA_S := 0.5
+const ESPERA_S := 4.0
+const RETA_ENTRA_S := 3.0
+const RETA_SAI_S := 1.2
+const CHEGADA_S := 3.0
+const V_MIN := 22.0
+const V_FORTE := 60.0
+
+
+func _decidir_modo(id: String, s: float, disputa: bool) -> String:
+	var calmo := "foco" if disputa else "normal"
+	if Preferencias.reduzir_animacoes:
+		return calmo
+	var v: float = maxf(float(_v.get(id, 0.0)), 1.0)
+	var i := _pista.indice_em(s)
+	var t: Dictionary = _pista.trechos[i]
+	var reta := float(t.get("raio_m", 0.0)) <= 0.0
+	var resta := _pista.inicios[i] + float(t["comprimento_m"]) - fposmod(s, _pista.comprimento)
+	var fim := _fonte.fim() if _fonte != null else 0.0
+	var chegada := fim > 0.0 and s < fim and (fim - s) / v < CHEGADA_S
+	if modo == "velocidade":
+		if chegada or (reta and resta / v >= RETA_SAI_S):
+			return "velocidade"
+		return calmo
+	if _espera <= 0.0 and v >= V_MIN and (chegada or (reta and resta / v >= RETA_ENTRA_S)):
+		return "velocidade"
+	return calmo
+
+
+func _mudar_modo(novo: String, imediato: bool) -> void:
+	if novo == modo:
+		return
+	if modo == "velocidade":
+		_b_saida = _b
+		_zoom_saida = _zoom
+		_espera = ESPERA_S
+	modo = novo
+	_t_modo = 0.0
+	if imediato:
+		_b = 1.0 if novo == "velocidade" else 0.0
+		_zoom = 1.32 if novo == "velocidade" else 1.0
+
+
+## Entrada: aproxima com um pequeno passo além (1,00 → 1,38 → 1,32) enquanto
+## inclina; saída: volta suave, sem passo além.
+func _animar_modo(delta: float) -> void:
+	_t_modo += delta
+	_espera = maxf(_espera - delta, 0.0)
+	if modo == "velocidade":
+		var u := clampf(_t_modo / ENTRADA_S, 0.0, 1.0)
+		_b = maxf(_b, smoothstep(0.1, 0.9, u))
+		_zoom = lerpf(1.0, 1.38, smoothstep(0.0, 1.0, u / 0.7)) if u < 0.7 \
+				else lerpf(1.38, 1.32, smoothstep(0.0, 1.0, (u - 0.7) / 0.3))
+	else:
+		var u := clampf(_t_modo / SAIDA_S, 0.0, 1.0)
+		_b = lerpf(_b_saida, 0.0, smoothstep(0.0, 1.0, u))
+		_zoom = lerpf(_zoom_saida, 1.0, smoothstep(0.0, 1.0, u))
+		if u >= 1.0:
+			_b_saida = 0.0
+			_zoom_saida = 1.0
+
+
+## A troca de sprite acontece com a câmera já perto e quase inclinada.
+func _mistura_sprite() -> float:
+	return smoothstep(0.35, 0.75, _b)
 
 
 ## Faixa lateral de cada carro: o da frente mantém a sua; quem está a menos de
@@ -281,8 +409,8 @@ func _construir_pista() -> void:
 	_proj = proj
 	_enquadrar_geral()
 	var c_tela := proj.get_center()
-	# Inverso de Iso.para_tela: x + y = cx, (x - y)/2 = cy.
-	var meio := Vector2((c_tela.x + 2.0 * c_tela.y) * 0.5, (c_tela.x - 2.0 * c_tela.y) * 0.5)
+	# Inverso de Iso.para_tela: x + y = cx, x - y = cy.
+	var meio := Vector2((c_tela.x + c_tela.y) * 0.5, (c_tela.x - c_tela.y) * 0.5)
 	_centro_pista = Vector3(meio.x, 0.0, -meio.y)
 	var tema: Dictionary = TEMAS.get(_pista.id, TEMA_PADRAO)
 	_ambiente.background_color = tema["ceu"]

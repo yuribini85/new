@@ -200,6 +200,12 @@ func _modo_teste(v: VBoxContainer) -> void:
 				minutos_fila, s["pulos"], "" if s["pulos"] == 1 else "s", s["fase_inicio"], s["fase_fim"],
 				dinheiro(int(s["saldo_inicio"])), dinheiro(int(s["saldo_fim"])),
 				" · ausente %.0f min antes" % (aus / 60.0) if aus >= 0.0 else ""], FONTE_PEQUENA, COR_SECUNDARIA, v)
+		var fc: Array = s.get("fps_corrida", [])
+		if not fc.is_empty():
+			var o := fc.duplicate()
+			o.sort()
+			rotulo("    corrida: %d fps (mediana) · %d fps (pior 5%%)" % [o[o.size() / 2], o[int(o.size() * 0.05)]],
+					FONTE_PEQUENA, COR_SECUNDARIA, v)
 	rotulo("Arquivo: %s" % ProjectSettings.globalize_path(RegistroSessao.CAMINHO), FONTE_PEQUENA - 2, COR_NEUTRA, v)
 	botao_texto("Apagar registro", func():
 		RegistroSessao.limpar()
