@@ -110,3 +110,17 @@ Efeito no começo do jogo: a Copa de Domingo etapa 2, segunda prova de quem come
 é de velocidade máxima. Com os carros iniciais de fábrica ela não se vence só com peças
 baratas, e o jogador passa pelos contratos da B antes de voltar a ela. A identificação de
 testline como "retas muito longas" ainda está marcada como provável.
+
+## Resultado da pista B (circuito misto): critério não atendido
+
+Rascunho em `data/rascunhos_pistas/circuito_misto.json` (2.600 m: retas de 180 a 450 m,
+curvas de 25 a 150 m de raio, um "S"). Ordem dos 17 carros de fábrica (2 voltas, 3
+sementes): em **0 de 136 pares** o vencedor no misto difere ao mesmo tempo do Anel e das
+Docas. A ordem do misto fica entre a das duas.
+
+Causa: de fábrica, os carros têm aderência 0,98–1,00 e freio 0,90–1,00. A simulação só os
+separa por potência por peso (mais tração e câmbio). Qualquer traçado é uma mistura de
+retas e curvas, e a ordem segue a mesma escala. **Pista nova não cria ordem nova enquanto
+o chassi não entrar** (distribuição de peso, aderência dianteira e traseira, tração), que
+o disco tem (tabela Chassis). O misto fica fora de `pistas.json` e será testado de novo
+depois do chassi.

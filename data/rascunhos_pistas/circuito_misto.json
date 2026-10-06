@@ -1,0 +1,19 @@
+{
+ "id": "circuito_misto",
+ "funcao": "misto",
+ "trechos": [
+  {"tipo": "reta", "comprimento_m": 450, "ultrapassagem": true},
+  {"tipo": "curva_lenta", "raio_m": 30, "angulo_graus": 90},
+  {"tipo": "reta", "comprimento_m": 200},
+  {"tipo": "curva_media", "raio_m": 70, "angulo_graus": 60, "sentido": "direita"},
+  {"tipo": "curva_media", "raio_m": 70, "angulo_graus": 80},
+  {"tipo": "reta", "comprimento_m": 300},
+  {"tipo": "curva_rapida", "raio_m": 150, "angulo_graus": 70},
+  {"tipo": "reta", "comprimento_m": null, "ultrapassagem": true},
+  {"tipo": "curva_lenta", "raio_m": 25, "angulo_graus": 120},
+  {"tipo": "reta", "comprimento_m": 180},
+  {"tipo": "curva_media", "raio_m": 60, "angulo_graus": 50, "sentido": "direita"},
+  {"tipo": "reta", "comprimento_m": null},
+  {"tipo": "curva_rapida", "raio_m": 120, "angulo_graus": 110}
+ ]
+}
