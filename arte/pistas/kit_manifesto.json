@@ -1,0 +1,387 @@
+[
+ {
+  "nome": "agua",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "lake water seen from above, dark teal, calm"
+ },
+ {
+  "nome": "areia",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "sand/dirt run-off trap, warm beige with raked texture"
+ },
+ {
+  "nome": "arquibancada_modulo",
+  "tipo": "sprite",
+  "largura_px": 384,
+  "altura_px": 320,
+  "metros": [
+   12.0,
+   10.0
+  ],
+  "descricao": "one grandstand module seen from above: roof canopy along the TOP edge, rows of seats with a dark crowd descending toward the BOTTOM edge (the bottom edge faces the track); modules tile side by side, so left and right edges must connect cleanly"
+ },
+ {
+  "nome": "arvore_1",
+  "tipo": "sprite",
+  "largura_px": 308,
+  "altura_px": 308,
+  "metros": [
+   9.62,
+   9.62
+  ],
+  "descricao": "deciduous tree canopy seen from above, variation 1 (from small to large cluster)"
+ },
+ {
+  "nome": "arvore_2",
+  "tipo": "sprite",
+  "largura_px": 400,
+  "altura_px": 400,
+  "metros": [
+   12.5,
+   12.5
+  ],
+  "descricao": "deciduous tree canopy seen from above, variation 2 (from small to large cluster)"
+ },
+ {
+  "nome": "arvore_3",
+  "tipo": "sprite",
+  "largura_px": 492,
+  "altura_px": 492,
+  "metros": [
+   15.38,
+   15.38
+  ],
+  "descricao": "deciduous tree canopy seen from above, variation 3 (from small to large cluster)"
+ },
+ {
+  "nome": "arvore_4",
+  "tipo": "sprite",
+  "largura_px": 584,
+  "altura_px": 584,
+  "metros": [
+   18.25,
+   18.25
+  ],
+  "descricao": "deciduous tree canopy seen from above, variation 4 (from small to large cluster)"
+ },
+ {
+  "nome": "arvore_5",
+  "tipo": "sprite",
+  "largura_px": 676,
+  "altura_px": 676,
+  "metros": [
+   21.12,
+   21.12
+  ],
+  "descricao": "deciduous tree canopy seen from above, variation 5 (from small to large cluster)"
+ },
+ {
+  "nome": "arvore_6",
+  "tipo": "sprite",
+  "largura_px": 768,
+  "altura_px": 768,
+  "metros": [
+   24.0,
+   24.0
+  ],
+  "descricao": "deciduous tree canopy seen from above, variation 6 (from small to large cluster)"
+ },
+ {
+  "nome": "asfalto",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "race track asphalt, dark grey, fine aggregate grain, subtle wear and tyre marks"
+ },
+ {
+  "nome": "box_modulo",
+  "tipo": "sprite",
+  "largura_px": 320,
+  "altura_px": 256,
+  "metros": [
+   10.0,
+   8.0
+  ],
+  "descricao": "one pit garage module seen from above: flat roof, with a warm lit garage door strip along the BOTTOM edge (the bottom edge faces the track); modules tile side by side, so left and right edges must connect cleanly"
+ },
+ {
+  "nome": "brita",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "gravel trap, light grey-beige small stones"
+ },
+ {
+  "nome": "caminhao_1",
+  "tipo": "sprite",
+  "largura_px": 83,
+  "altura_px": 448,
+  "metros": [
+   2.59,
+   14.0
+  ],
+  "descricao": "team truck with long trailer seen from above, cab at the TOP, red cab, white trailer roof"
+ },
+ {
+  "nome": "caminhao_2",
+  "tipo": "sprite",
+  "largura_px": 83,
+  "altura_px": 384,
+  "metros": [
+   2.59,
+   12.0
+  ],
+  "descricao": "team truck with trailer seen from above, cab at the TOP, blue cab, light grey trailer roof"
+ },
+ {
+  "nome": "caminhao_3",
+  "tipo": "sprite",
+  "largura_px": 83,
+  "altura_px": 320,
+  "metros": [
+   2.59,
+   10.0
+  ],
+  "descricao": "short truck seen from above, cab at the TOP, dark cab, white box body"
+ },
+ {
+  "nome": "concreto",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "paddock / pit concrete slabs, neutral grey, faint joints"
+ },
+ {
+  "nome": "conteiner_1",
+  "tipo": "sprite",
+  "largura_px": 80,
+  "altura_px": 384,
+  "metros": [
+   2.5,
+   12.0
+  ],
+  "descricao": "shipping container seen from above, long axis vertical, rust red corrugated roof, 12 m"
+ },
+ {
+  "nome": "conteiner_2",
+  "tipo": "sprite",
+  "largura_px": 80,
+  "altura_px": 384,
+  "metros": [
+   2.5,
+   12.0
+  ],
+  "descricao": "shipping container seen from above, long axis vertical, blue corrugated roof, 12 m"
+ },
+ {
+  "nome": "conteiner_3",
+  "tipo": "sprite",
+  "largura_px": 80,
+  "altura_px": 192,
+  "metros": [
+   2.5,
+   6.0
+  ],
+  "descricao": "shipping container seen from above, long axis vertical, yellow corrugated roof, 6 m"
+ },
+ {
+  "nome": "escape",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "painted green run-off strip beside the track, flat paint with slight grain"
+ },
+ {
+  "nome": "grama_a",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "mown grass, mid green, soft painterly variation"
+ },
+ {
+  "nome": "grama_b",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "grass, darker and rougher than grama_a, to blend in patches"
+ },
+ {
+  "nome": "mata",
+  "tipo": "textura",
+  "largura_px": 512,
+  "altura_px": 512,
+  "metros": [
+   16.0,
+   16.0
+  ],
+  "descricao": "forest floor under trees, very dark green and brown"
+ },
+ {
+  "nome": "pinheiro_1",
+  "tipo": "sprite",
+  "largura_px": 231,
+  "altura_px": 231,
+  "metros": [
+   7.22,
+   7.22
+  ],
+  "descricao": "pine tree canopy seen from above, variation 1"
+ },
+ {
+  "nome": "pinheiro_2",
+  "tipo": "sprite",
+  "largura_px": 308,
+  "altura_px": 308,
+  "metros": [
+   9.62,
+   9.62
+  ],
+  "descricao": "pine tree canopy seen from above, variation 2"
+ },
+ {
+  "nome": "pinheiro_3",
+  "tipo": "sprite",
+  "largura_px": 384,
+  "altura_px": 384,
+  "metros": [
+   12.0,
+   12.0
+  ],
+  "descricao": "pine tree canopy seen from above, variation 3"
+ },
+ {
+  "nome": "portico",
+  "tipo": "sprite",
+  "largura_px": 64,
+  "altura_px": 512,
+  "metros": [
+   2.0,
+   16.0
+  ],
+  "descricao": "start/finish gantry seen from above: a long thin steel truss bridge, long axis vertical, spanning the track"
+ },
+ {
+  "nome": "poste",
+  "tipo": "sprite",
+  "largura_px": 128,
+  "altura_px": 128,
+  "metros": [
+   4.0,
+   4.0
+  ],
+  "descricao": "flood light pole seen from above: small dark base with a soft warm glow halo"
+ },
+ {
+  "nome": "rocha_1",
+  "tipo": "sprite",
+  "largura_px": 176,
+  "altura_px": 176,
+  "metros": [
+   5.5,
+   5.5
+  ],
+  "descricao": "boulder seen from above, variation 1"
+ },
+ {
+  "nome": "rocha_2",
+  "tipo": "sprite",
+  "largura_px": 282,
+  "altura_px": 282,
+  "metros": [
+   8.81,
+   8.81
+  ],
+  "descricao": "boulder seen from above, variation 2"
+ },
+ {
+  "nome": "rocha_3",
+  "tipo": "sprite",
+  "largura_px": 388,
+  "altura_px": 388,
+  "metros": [
+   12.12,
+   12.12
+  ],
+  "descricao": "boulder seen from above, variation 3"
+ },
+ {
+  "nome": "tenda_1",
+  "tipo": "sprite",
+  "largura_px": 256,
+  "altura_px": 192,
+  "metros": [
+   8.0,
+   6.0
+  ],
+  "descricao": "hospitality tent seen from above, white roof, rectangular"
+ },
+ {
+  "nome": "tenda_2",
+  "tipo": "sprite",
+  "largura_px": 192,
+  "altura_px": 192,
+  "metros": [
+   6.0,
+   6.0
+  ],
+  "descricao": "small square tent seen from above"
+ },
+ {
+  "nome": "torre",
+  "tipo": "sprite",
+  "largura_px": 224,
+  "altura_px": 224,
+  "metros": [
+   7.0,
+   7.0
+  ],
+  "descricao": "race control tower seen from above, square roof"
+ },
+ {
+  "nome": "zebra",
+  "tipo": "faixa",
+  "largura_px": 32,
+  "altura_px": 64,
+  "metros": [
+   1.0,
+   2.0
+  ],
+  "descricao": "race kerb segment seen from above: top half one red stripe, bottom half one white stripe, each 1 m long, slightly worn paint; it repeats along the track"
+ }
+]
