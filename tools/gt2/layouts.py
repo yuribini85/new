@@ -2,7 +2,7 @@
 
 Gerado a partir das estruturas documentadas por pez2k em gt2tools
 (https://github.com/pez2k/gt2tools, GT2DataSplitter/DataStructures), com
-autorização do dono do projeto Apex Garage para uso como referência.
+autorização do dono do projeto Second Drive (antes Apex Garage) para uso como referência.
 Cada campo: (nome, formato struct, quantidade). Tudo little-endian, sem
 preenchimento entre campos (Pack = 1). `None` = estrutura sem campos
 mapeados; só o tamanho é conhecido.

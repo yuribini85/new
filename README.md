@@ -1,7 +1,6 @@
-# Apex Garage (nome provisório)
+# Second Drive
 
-Jogo mobile idle de automobilismo, feito em Godot 4.4. O nome ainda depende de busca de
-marca registrada.
+Jogo mobile idle de automobilismo, feito em Godot 4.4.
 
 Preserva a estrutura de carreira de um Gran Turismo clássico — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
 colecionar — e substitui a pilotagem por corridas automáticas isométricas.
@@ -31,7 +30,7 @@ revenda: como medir no GT2 está lá).
 ## Jogar
 
 Abra a pasta no Godot 4.4 (Importar → `project.godot`) e aperte F5. O save fica em
-`user://save.json` (no Windows, `%APPDATA%\Godot\app_userdata\Apex Garage\`).
+`user://save.json` (no Windows, `%APPDATA%\Apex Garage\`; a pasta mantém o nome antigo para não perder saves).
 
 ## Estrutura
 

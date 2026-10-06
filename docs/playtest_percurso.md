@@ -20,7 +20,7 @@ pelo observador.
 ## Preparação (as duas)
 
 - Save zerado: apagar `save.json` e `save.json.bak` em
-  `%APPDATA%\Godot\app_userdata\Apex Garage\` (ou o equivalente no celular) e "Apagar
+  `%APPDATA%\Apex Garage\` (ou o equivalente no celular) e "Apagar
   registro" em Preferências.
 - Ligar o modo da modalidade **antes** de começar.
 - Celular em retrato, se possível; senão, a janela de 405×720 no PC.

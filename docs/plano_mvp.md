@@ -1,4 +1,4 @@
-# Apex Garage — plano operacional do primeiro build
+# Second Drive — plano operacional do primeiro build
 
 Desdobramento de `docs/conceito.md` em sistemas, dados e ordem de trabalho. Estruturas abaixo
 são formato, não balanceamento: **nenhum número aqui é definitivo**. Os valores virão do
@@ -150,8 +150,9 @@ técnico real do projeto.
 6. **Fabricantes: 3 no primeiro build, 8 a 10 no lançamento.** Primeiro build: uma
    japonesa, uma alemã e uma de outra escola. Lançamento: ~3 japonesas, 2 alemãs, 1
    italiana, 1 americana, 1 britânica, 1 francesa.
-7. **Nome provisório: Apex Garage.** Pendente de busca de marca registrada e nas lojas
-   (App Store e Google Play) antes de ser fechado.
+7. **Nome oficial: Second Drive** (antes Apex Garage, provisório). A pasta de dados do
+   aparelho continua "Apex Garage" para preservar os saves. Recomendada a busca de marca
+   registrada e nas lojas (App Store e Google Play) antes do lançamento.
 
 ### Decisões de implementação (aprovadas)
 
