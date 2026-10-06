@@ -448,8 +448,10 @@ static func cor_do_id(id: String) -> Color:
 
 
 ## Pintura do carro da garagem: a escolhida pelo jogador ou a de fábrica.
+## Sem pintura livre (decisão 31): a cor é a do modelo. Carro.cor fica no save
+## só por compatibilidade.
 static func cor_do_carro(carro: Carro) -> Color:
-	return Color.html(carro.cor) if carro.cor != "" else cor_do_id(carro.id)
+	return cor_do_id(carro.id)
 
 
 func _caixa(tam: Vector3, pos: Vector3, mat: Material) -> void:

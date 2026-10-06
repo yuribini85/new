@@ -20,6 +20,9 @@ static func foto(base: Dictionary, cor: Color) -> Texture2D:
 
 
 func _foto(base: Dictionary, cor: Color) -> Texture2D:
+	var arte := ArteCarro.textura(String(base.get("id", "")), "iso")
+	if arte != null:
+		return arte  # decisão 31: a foto é o próprio sprite isométrico
 	var chave := "%s|%s" % [base.get("id", ""), cor.to_html(false)]
 	if _fotos.has(chave):
 		return _fotos[chave]

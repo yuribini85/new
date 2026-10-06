@@ -1,5 +1,5 @@
 extends Aba
-## Garagem: o carro selecionado em destaque (vitrine girando, pintura), as três
+## Garagem: o carro selecionado em destaque (vitrine com o sprite isométrico), as três
 ## informações que importam e as duas ações do caminho (preparar, correr).
 ## Embaixo, a coleção em miniaturas para trocar de carro.
 
@@ -41,7 +41,6 @@ func construir() -> void:
 	var a := c.atributos_efetivos("seco")
 	numeros([["%d" % a["potencia"], "cv"], ["%d" % a["peso"], "kg"], [c.base["tracao"], "tração"]]
 			+ ([["%d" % c.pecas.size(), "peças"]] if not c.pecas.is_empty() else []))
-	_pinturas(c)
 	var h := acoes()
 	botao("Preparar", func(): ir_para.emit(OFICINA), true, true, h)
 	botao("Correr", func(): ir_para.emit(EVENTOS), true, false, h)
@@ -93,30 +92,6 @@ func _faixa_objetivo() -> void:
 		ir_para.emit(lista[i]["aba"])
 		mudou.emit())
 	conteudo.add_child(b)
-
-
-## Bolinhas de cor: pintura só visual, guardada no save.
-func _pinturas(c: Carro) -> void:
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 10)
-	h.alignment = BoxContainer.ALIGNMENT_CENTER
-	var atual := CarroBloco.cor_do_carro(c)
-	for cor in CarroBloco.PINTURAS:
-		var b := Button.new()
-		b.custom_minimum_size = Vector2(62, 62)
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = cor
-		sb.set_corner_radius_all(31)
-		var escolhida: bool = atual.is_equal_approx(cor)
-		sb.border_color = Color.WHITE if escolhida else Color(1, 1, 1, 0.15)
-		sb.set_border_width_all(5 if escolhida else 2)
-		for estado in ["normal", "hover", "pressed", "focus"]:
-			b.add_theme_stylebox_override(estado, sb)
-		b.pressed.connect(func():
-			c.cor = cor.to_html(false)
-			mudou.emit())
-		h.add_child(b)
-	conteudo.add_child(h)
 
 
 ## Coleção em miniaturas (fotos): tocar troca o carro em destaque.

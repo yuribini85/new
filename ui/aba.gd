@@ -442,7 +442,7 @@ func linha(descricao: String, botoes: Array = [], icone: Control = null, pai: Co
 
 # --- Placeholders e formatação ---------------------------------------------
 
-## Foto do modelo (Estudio). `cor` vazia: pintura de fábrica.
+## Foto do modelo: o sprite isométrico (decisão 31) ou, sem ele, o Estudio.
 func icone_carro(base: Dictionary, grande := false, cor := Color(0, 0, 0, 0)) -> Control:
 	return Estudio.imagem(base, cor if cor.a > 0.0 else CarroBloco.cor_do_id(base.get("id", "")),
 			Vector2(200, 110) if grande else Vector2(140, 78))

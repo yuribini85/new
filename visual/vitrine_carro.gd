@@ -1,7 +1,10 @@
 class_name VitrineCarro
 extends SubViewportContainer
-## Carro girando num estúdio (piso, luz de recorte, fundo escuro), como a
-## vitrine da garagem do GT2. Arrastar com o dedo gira o carro.
+## Carro num estúdio (piso, luz de recorte, fundo escuro), como a vitrine da
+## garagem do GT2. Com a arte em sprite (decisão 31), o carro é o isométrico
+## parado, a câmera fica no mesmo ângulo do desenho e os efeitos são de luz:
+## feixe passando pela carroceria, reflexo no piso, sombra e uma aproximação
+## curta ao trocar de carro. Sem sprite, o carro em código gira como antes.
 
 const VELOCIDADE := 0.35  # rad/s
 
@@ -72,6 +75,7 @@ func _init(altura := 300.0) -> void:
 	cam.fov = 30
 	_mundo.add_child(cam)
 	cam.look_at_from_position(Vector3(6.2, 2.4, 6.8), Vector3(0, 0.5, 0))
+	_camera = cam
 	_carro = CarroBloco.new()
 	_carro.rotation.y = -0.5
 	_mundo.add_child(_carro)
@@ -82,7 +86,86 @@ func mostrar(categoria: String, cor: Color) -> void:
 
 
 func mostrar_modelo(base: Dictionary, cor: Color) -> void:
-	_carro.configurar_modelo(base, cor)
+	var tex := ArteCarro.textura(String(base.get("id", "")), "iso")
+	if tex == null:
+		_sprite_modo(false)
+		_carro.configurar_modelo(base, cor)
+		return
+	_sprite_modo(true)
+	var novo: bool = _id != String(base.get("id", ""))
+	_id = String(base.get("id", ""))
+	for q in [_sprite, _reflexo]:
+		(q.material_override as ShaderMaterial).set_shader_parameter("textura", tex)
+		(q.mesh as QuadMesh).size = Vector2(tex.get_width(), tex.get_height()) / ArteCarro.PX_POR_M
+	# Reflexo: o mesmo desenho espelhado, encostado na linha das rodas.
+	var usado := tex.get_image().get_used_rect()
+	var baixo_m := (usado.end.y - tex.get_height() * 0.5) / ArteCarro.PX_POR_M
+	_reflexo.position = _sprite.position - _camera.transform.basis.y * (2.0 * baixo_m)
+	if novo and not Preferencias.reduzir_animacoes and is_inside_tree():
+		_aproximar = 0.0
+
+
+var _camera: Camera3D
+var _sprite: MeshInstance3D
+var _reflexo: MeshInstance3D
+var _sombra: MeshInstance3D
+var _id := ""
+## 0..1 da aproximação de entrada (1 = parada).
+var _aproximar := 1.0
+## Largura vista pela câmera no modo sprite (m): o carro ocupa ~2/3 dela.
+const LARGURA_VISTA_M := 6.6
+
+
+func _sprite_modo(ligado: bool) -> void:
+	_carro.visible = not ligado
+	if not ligado:
+		if _sprite != null:
+			_sprite.visible = false
+			_reflexo.visible = false
+			_sombra.visible = false
+		_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+		_camera.look_at_from_position(Vector3(6.2, 2.4, 6.8), Vector3(0, 0.5, 0))
+		return
+	# A mesma direção da câmera da corrida e do sprite isométrico.
+	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	_camera.keep_aspect = Camera3D.KEEP_WIDTH
+	_camera.size = LARGURA_VISTA_M
+	_camera.far = 200.0
+	_camera.look_at_from_position(Vector3(70, 57.15, 70).normalized() * 40.0 + Vector3(0, 0.6, 0), Vector3(0, 0.6, 0))
+	if _sprite == null:
+		_sprite = _quadro(0.0)
+		_reflexo = _quadro(0.28)
+		_sombra = MeshInstance3D.new()
+		var q := QuadMesh.new()
+		q.size = Vector2(4.6, 2.2)
+		q.orientation = PlaneMesh.FACE_Y
+		_sombra.mesh = q
+		var ms := StandardMaterial3D.new()
+		ms.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		ms.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		ms.albedo_color = Color(0, 0, 0, 0.45)
+		_sombra.material_override = ms
+		_sombra.rotation.y = PI / 2.0  # o carro do desenho aponta para +Z
+		_sombra.position.y = 0.03
+		_mundo.add_child(_sombra)
+	_sprite.visible = true
+	_reflexo.visible = true
+	_sombra.visible = true
+
+
+## Quadro virado para a câmera com o shader do sprite (reflexo > 0: espelhado).
+func _quadro(reflexo: float) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.mesh = QuadMesh.new()
+	var m := ShaderMaterial.new()
+	m.shader = preload("res://visual/shaders/brilho_carro.gdshader")
+	m.set_shader_parameter("reflexo", reflexo)
+	mi.material_override = m
+	_mundo.add_child(mi)
+	mi.transform.basis = _camera.transform.basis
+	m.render_priority = 0 if reflexo > 0.0 else 1  # o reflexo por baixo do carro
+	mi.position = Vector3(0, 0.6, 0) + _camera.transform.basis.z * (-0.05 if reflexo > 0.0 else 0.4)
+	return mi
 
 
 ## Troca o estúdio por uma oficina: piso de ladrilhos, paredes, armário,
@@ -172,6 +255,8 @@ func _bloco(tam: Vector3, pos: Vector3, mat: Material) -> void:
 
 
 func _gui_input(ev: InputEvent) -> void:
+	if _carro != null and not _carro.visible:
+		return  # sprite: sem girar
 	if ev is InputEventScreenDrag or (ev is InputEventMouseMotion and ev.button_mask & MOUSE_BUTTON_MASK_LEFT):
 		_angulo += ev.relative.x * 0.01
 		_carro.rotation.y = _angulo
@@ -179,6 +264,12 @@ func _gui_input(ev: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if _sprite != null and _sprite.visible:
+		# Aproximação curta ao trocar de carro (1,06 → 1,00).
+		if _aproximar < 1.0:
+			_aproximar = minf(_aproximar + delta / 0.5, 1.0)
+		_camera.size = LARGURA_VISTA_M * lerpf(1.06, 1.0, smoothstep(0.0, 1.0, _aproximar))
+		return
 	# Gira sozinho, exceto logo depois de o jogador girar com o dedo.
 	if not is_visible_in_tree() or Preferencias.reduzir_animacoes \
 			or Time.get_ticks_msec() / 1000.0 - _ultimo_toque < 3.0:
