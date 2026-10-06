@@ -6,7 +6,7 @@ extends RefCounted
 
 const PASTA := "res://arte/carros/"
 ## Escala dos sprites (px por metro), a mesma do gerador e da especificação.
-const PX_POR_M := 40.0
+const PX_POR_M := 160.0
 
 static var _cache := {}
 

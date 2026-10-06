@@ -8,9 +8,9 @@ extends SceneTree
 ## Uso (precisa de display): godot --path . --script res://tools/gerar_sprites.gd
 
 const PASTA := "res://arte/carros/"
-const PX_POR_M := 40.0
+const PX_POR_M := 160.0
 ## Tela do isométrico (px): cabe o maior carro na diagonal.
-const TELA_ISO := Vector2i(280, 200)
+const TELA_ISO := Vector2i(1120, 800)
 
 
 func _initialize() -> void:
