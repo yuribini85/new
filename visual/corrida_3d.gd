@@ -49,6 +49,10 @@ const TEMAS := {
 	"serra_alta": {"chao": Color(0.36, 0.4, 0.28), "ceu": Color(0.68, 0.73, 0.8), "props": "serra",
 		"luz": Color(0.85, 0.9, 1.0), "energia": 0.7, "sol": Vector3(-0.8, 2.2, 0), "ambiente": Color(0.62, 0.66, 0.74),
 		"asfalto": Color(0.34, 0.35, 0.37), "muro": [Color(0.9, 0.92, 0.95), Color(0.2, 0.38, 0.75)], "fundo": "montanhas", "neblina": 0.0},
+	# Campo de provas no planalto seco: meio-dia, chão claro, mesas ao longe.
+	"pista_de_testes": {"chao": Color(0.72, 0.62, 0.45), "ceu": Color(0.55, 0.75, 0.95), "props": "deserto",
+		"luz": Color(1.0, 0.98, 0.92), "energia": 1.15, "sol": Vector3(-1.35, 0.3, 0), "ambiente": Color(0.7, 0.68, 0.64),
+		"asfalto": Color(0.25, 0.25, 0.27), "muro": [Color(0.95, 0.95, 0.95), Color(0.1, 0.1, 0.12)], "fundo": "mesas", "neblina": 0.0},
 }
 const TEMA_PADRAO := {"chao": Color(0.22, 0.45, 0.25), "ceu": Color(0.4, 0.6, 0.75), "props": "arvores",
 	"luz": Color.WHITE, "energia": 1.0, "sol": Vector3(-1.0, 0.5, 0), "ambiente": Color(0.6, 0.62, 0.66),
@@ -90,7 +94,7 @@ func _init() -> void:
 	_camera = Camera3D.new()
 	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	_camera.size = TAMANHO_CAMERA
-	_camera.far = 6000.0
+	_camera.far = 12000.0  # pista de 4 km na visão geral: o chão some antes de 6000
 	_mundo.add_child(_camera)
 	_cena = Node3D.new()
 	_mundo.add_child(_cena)
@@ -217,7 +221,10 @@ func atualizar(delta: float) -> void:
 func _camera_imediata() -> void:
 	# 30° acima do chão: o mesmo 2:1 da projeção Iso do minimapa. Câmera
 	# ortográfica longe (a escala não muda): nada da pista fica atrás dela.
-	_camera.look_at_from_position(_alvo_camera + Vector3(70, 57.15, 70) * 12.0, _alvo_camera)
+	# Visão geral de pista grande: mais longe ainda, ou o chão perto da borda
+	# de baixo da tela passa para trás da câmera e é cortado.
+	var longe := maxf(12.0, _camera.size / 80.0)
+	_camera.look_at_from_position(_alvo_camera + Vector3(70, 57.15, 70) * longe, _alvo_camera)
 
 
 ## Faixa lateral de cada carro: o da frente mantém a sua; quem está a menos de
@@ -552,6 +559,23 @@ func _fundo(caixa: Rect2, tema: Dictionary) -> void:
 				lampada.position = Vector3(p.x, 7.1, -p.y)
 				_cena.add_child(lampada)
 				s += 70.0
+		"mesas":
+			# Mesas de topo plano ao longe, cor de rocha avermelhada.
+			for k in 8:
+				var ang := TAU * k / 8.0 + rng.randf() * 0.5
+				var p := centro + Vector2.from_angle(ang) * (raio + rng.randf_range(180.0, 320.0))
+				var h := rng.randf_range(40.0, 90.0)
+				var mesa := MeshInstance3D.new()
+				var cil := CylinderMesh.new()
+				cil.bottom_radius = rng.randf_range(90.0, 160.0)
+				cil.top_radius = cil.bottom_radius * 0.75
+				cil.height = h
+				cil.radial_segments = 8
+				cil.rings = 1
+				mesa.mesh = cil
+				mesa.material_override = CarroBloco._material(Color(0.7, 0.45, 0.32).lerp(Color(0.62, 0.58, 0.62), 0.35))
+				mesa.position = Vector3(p.x, h * 0.5 - 2.0, -p.y)
+				_cena.add_child(mesa)
 		"montanhas":
 			for k in 9:
 				var ang := TAU * k / 9.0 + rng.randf() * 0.4
@@ -590,8 +614,8 @@ func _decorar(pts: PackedVector2Array, tipo: String) -> void:
 	for i in range(0, pts.size(), 2):
 		amostra.append(pts[i])
 	var colocados := 0
-	for tentativa in 400:
-		if colocados >= 110:
+	for tentativa in 800:
+		if colocados >= maxi(110, int(_pista.comprimento / 25.0)):
 			break
 		var s := rng.randf() * _pista.comprimento
 		var rumo := _pista.rumo_em(s)
@@ -626,6 +650,17 @@ func _objeto(tipo: String, rng: RandomNumberGenerator, dist: float) -> Node3D:
 					Color(0.5, 0.52, 0.56).lerp(Color(0.7, 0.62, 0.52), rng.randf()))
 			predio.position.y = h * 0.5
 			return predio
+		"deserto":
+			# Placas de distância (marcas brancas) e pedras baixas: nada alto perto
+			# das retas, que são o assunto da pista.
+			if rng.randf() < 0.3 and dist < 40.0:
+				var placa := _bloco(Vector3(0.3, 2.4, 1.6), Color(0.95, 0.95, 0.95))
+				placa.position.y = 1.2
+				return placa
+			var rocha := _bloco(Vector3(rng.randf_range(1.5, 4.0), rng.randf_range(0.6, 1.8), rng.randf_range(1.5, 4.0)),
+					Color(0.6, 0.48, 0.36).darkened(rng.randf_range(0.0, 0.2)))
+			rocha.position.y = 0.4
+			return rocha
 		"serra":
 			if rng.randf() < 0.4:
 				var pedra := _bloco(Vector3.ONE * rng.randf_range(2.0, 5.0), Color(0.45, 0.43, 0.4))

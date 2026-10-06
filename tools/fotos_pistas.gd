@@ -1,5 +1,5 @@
 extends SceneTree
-## Fotos das três pistas em 3D (visão do carro e pista toda), com uma corrida
+## Fotos das pistas em 3D (visão do carro e pista toda), com uma corrida
 ## de verdade de cada uma. Revisão visual dos ambientes.
 ## Uso (precisa de display): godot --script res://tools/fotos_pistas.gd -- --saida=/pasta/
 

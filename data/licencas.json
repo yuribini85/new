@@ -62,8 +62,8 @@
 				},
 				"tempos": {
 					"bronze": 88.25,
-					"ouro": 69.67,
-					"prata": 73.25
+					"ouro": 71.06,
+					"prata": 72.3
 				},
 				"voltas": 1.0
 			},
@@ -76,8 +76,8 @@
 				},
 				"tempos": {
 					"bronze": 80.69,
-					"ouro": 66.89,
-					"prata": 69.06
+					"ouro": 67.66,
+					"prata": 69.03
 				},
 				"voltas": 1.0
 			},
@@ -90,8 +90,8 @@
 				},
 				"tempos": {
 					"bronze": 89.95,
-					"ouro": 78.01,
-					"prata": 79.14
+					"ouro": 78.39,
+					"prata": 79.95
 				},
 				"voltas": 1.0
 			}

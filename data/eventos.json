@@ -679,7 +679,7 @@
  {
   "id": "ev_106",
   "nome": "Liga Regional V — etapa 1",
-  "pista": "anel_do_vale",
+  "pista": "pista_de_testes",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -721,7 +721,7 @@
  {
   "id": "ev_107",
   "nome": "Liga Regional V — etapa 2",
-  "pista": "anel_do_vale",
+  "pista": "pista_de_testes",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -763,7 +763,7 @@
  {
   "id": "ev_108",
   "nome": "Liga Regional V — etapa 3",
-  "pista": "anel_do_vale",
+  "pista": "pista_de_testes",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -1348,7 +1348,7 @@
  {
   "id": "ev_212",
   "nome": "Copa de Domingo — etapa 2",
-  "pista": "parque_das_docas",
+  "pista": "pista_de_testes",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {},

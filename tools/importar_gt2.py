@@ -89,10 +89,12 @@ DATA = RAIZ / "data"
 # Pista do GT2 (id interno) -> nossa pista pela função.
 PISTAS = {
     "highway": "anel_do_vale", "s_speed": "anel_do_vale", "speed": "anel_do_vale", "seattle": "anel_do_vale",
-    "seatt_s": "anel_do_vale", "test_in2": "anel_do_vale", "circuit": "anel_do_vale",
+    "seatt_s": "anel_do_vale", "circuit": "anel_do_vale",
+    # Retas muito longas (docs/pistas_arquetipos.md, grupo 1).
+    "test_in2": "pista_de_testes", "testline": "pista_de_testes", "maxspeed": "pista_de_testes",
     "mountain": "serra_alta", "grindel": "serra_alta", "tahiti_t": "serra_alta", "parma": "serra_alta",
 }
-PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, roma_short, shortway, short, sprint2, testline, laguna, autumn
+PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, roma_short, shortway, short, sprint2, laguna, autumn
 
 # Séries do GT2 que entram no jogo (prefixo do código do evento -> nosso nome).
 # Fora: marca única (pista "none"), rali, endurance, testes de licença e as

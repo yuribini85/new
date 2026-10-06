@@ -40,6 +40,8 @@ var _tentativas := {}
 var _bloqueadas := {}
 var _renda := {}  # evento_id -> {cr, s, n}
 var _ultima_vencida := ""
+## Prova cuja derrota motivou a última compra (para o marco "ciclo").
+var _comprou_para := ""
 
 
 ## "Jogador" com saldo sem fim, só para listar o que existe acima do saldo.
@@ -79,6 +81,8 @@ func jogar(oferta: Dictionary, limite_s: float) -> Dictionary:
 			continue
 		if r["posicao"] == 1:
 			_ultima_vencida = ev["id"]
+			if _comprou_para == ev["id"] and not marcos.has("ciclo"):
+				marcos["ciclo"] = tempo  # derrota → compra → vitória na mesma prova
 			continue
 		_tentativas[_chave(ev["id"])] = _tentativas.get(_chave(ev["id"]), 0) + 1
 		var alvo := _sugestao(ev["id"])
@@ -90,6 +94,7 @@ func jogar(oferta: Dictionary, limite_s: float) -> Dictionary:
 			_bloqueadas[_chave(ev["id"])] = true
 			continue
 		_comprar_item(alvo)
+		_comprou_para = ev["id"]
 	var com_premio: Array = d.lista("eventos").filter(func(e): return not e["premios"].is_empty())
 	return {"perfil": perfil, "tempo": tempo, "marcos": marcos, "fases": fases, "compras": compras, "log": log,
 			"vencidas": com_premio.filter(func(e): return j.vitorias.has(e["id"])).size(), "provas": com_premio.size(),

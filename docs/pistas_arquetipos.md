@@ -102,5 +102,11 @@ no equilibrado mesmo preparados; Tsubame e Kaze, também. De fábrica, o câmbio
 acaba no equilíbrio com o arrasto, e por isso "Longo" não ajuda. Preparar o motor e
 alongar o câmbio é a combinação que a pista revela, como no GT2.
 
-Próximo passo da A, se aprovado: levar para cá os eventos de test_in2 e testline (hoje
-no Anel e nas Docas), dar tema visual, recalibrar licenças e contratos.
+**No jogo:** os 3 eventos de test_in2 (Liga Regional V, etapas 1 a 3) e o de testline
+(Copa de Domingo, etapa 2) correm aqui. O tema visual é um planalto seco com mesas ao
+longe. Licenças recalibradas; os contratos não mudaram.
+
+Efeito no começo do jogo: a Copa de Domingo etapa 2, segunda prova de quem começa, agora
+é de velocidade máxima. Com os carros iniciais de fábrica ela não se vence só com peças
+baratas, e o jogador passa pelos contratos da B antes de voltar a ela. A identificação de
+testline como "retas muito longas" ainda está marcada como provável.

@@ -119,7 +119,7 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 | `anel_do_vale` | alta velocidade | 2.941 m | reta principal e reta oposta |
 | `parque_das_docas` | técnico | 2.085 m | reta principal e reta antes da última curva |
 | `serra_alta` | montanha | 1.913 m | só a reta de largada |
-| `pista_de_testes` | velocidade máxima (experimental, sem eventos) | 4.112 m | reta principal e reta oposta |
+| `pista_de_testes` | velocidade máxima (retas muito longas) | 4.112 m | reta principal e reta oposta |
 
 Os rascunhos ficam em `data/rascunhos_pistas/`: curvas descritas por raio e ângulo, com
 duas retas de comprimento `null`. `tools/fechar_pista.py rascunho.json` calcula essas
@@ -166,7 +166,8 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
 - Usados: janelas e preços dos 60 períodos de 10 dias do GT2. Novos: só os carros que
   nunca aparecem no usado.
 - 38 eventos de 18 séries sem licença, B e A (`SERIES` em `tools/importar_gt2.py`), com
-  voltas, limites, prêmios e adversários do GT2. Pista do GT2 vira a nossa pela função.
+  voltas, limites, prêmios e adversários do GT2. Pista do GT2 vira a nossa pela função
+  (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
 - Licenças B e A: restrição = mediana dos limites dos eventos que abrem; tempos calibrados
   pela simulação.
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
