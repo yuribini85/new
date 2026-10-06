@@ -35,6 +35,10 @@ sintéticos (só para teste) em `tests/fixtures/`.
   "direita"), ultrapassagem (bool)}`. Tipos em `Pista.TIPOS`. Trechos de box ficam fora
   da volta no primeiro build. O traçado é derivado dos trechos (reta avança; trecho com
   raio é arco) e precisa fechar a volta — conferir em `tools/editor_pista.tscn`.
+- `peso_dianteiro` do carro (opcional): fração do peso no eixo dianteiro
+  (Chassis.FrontWeightDistribution ÷ 100). A tração usa o peso sobre o eixo motriz:
+  dianteiro (FF), traseiro (FR, MR, RR) ou todo (4WD). Transferência de carga na
+  aceleração ainda não entra: pede a altura do centro de gravidade, que o GT2 não guarda.
 - `motor` do carro (opcional): `{rpm, torque_nm, corte}`. Curva da tabela Engine do GT2
   (TorqueCurve × 0,01 kgf·m → N·m; TorqueCurveRPM × 100; RedlineRPM × 100). Na
   simulação, a curva é escalada para que o pico de potência seja igual a `potencia`
@@ -64,7 +68,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,0 — **a confirmar** (o GT2 não tem; sem ruído até o playtest) |
 | `cda_m2` | área frontal × coeficiente de arrasto, igual para todos | 0,6 — **a confirmar** (o GT2 não guarda arrasto de carro de rua) |
 | `densidade_ar_kg_m3` | densidade do ar | 1,225 (nível do mar) |
-| `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 (distribuição de peso típica; confirmar em playtest) |
+| `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração, **só para carro sem `peso_dianteiro`** (fixtures) | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 |
 
 ## economia.json
 

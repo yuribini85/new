@@ -60,7 +60,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 			"potencia_w": float(a["potencia"]) * CV_PARA_W,
 			"forca": forca_por_velocidade(a),
 			"massa": float(a["peso"]),
-			"acel_tracao": mu * G * float(params["fator_tracao"][a["tracao"]]),
+			"acel_tracao": mu * G * fator_tracao(a, params),
 			"s": -g * dmin,
 			"v": 0.0,
 			"envelopes": [],
@@ -226,6 +226,21 @@ static func _acel_livre(acel_tracao: float, potencia_w: float, massa: float, v: 
 		var i := mini(int(x), forca.size() - 2)
 		motriz = lerpf(forca[i], forca[i + 1], clampf(x - i, 0.0, 1.0))
 	return minf(acel_tracao, motriz / massa) - k_arrasto * v * v / massa
+
+
+## Fração do peso sobre o eixo motriz: com "peso_dianteiro" do carro (GT2),
+## dianteira para FF, traseira para FR/MR/RR e tudo no 4WD; sem ele, o fator
+## fixo por tração de data/simulacao.json.
+static func fator_tracao(a: Dictionary, params: Dictionary) -> float:
+	if a.get("peso_dianteiro") == null:
+		return float(params["fator_tracao"][a["tracao"]])
+	var pd := float(a["peso_dianteiro"])
+	match String(a["tracao"]):
+		"FF":
+			return pd
+		"4WD":
+			return 1.0
+	return 1.0 - pd
 
 
 ## Faixas da tabela de força (m/s) e velocidade máxima coberta (~430 km/h).

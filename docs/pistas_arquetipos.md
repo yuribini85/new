@@ -113,7 +113,7 @@ testline como "retas muito longas" ainda está marcada como provável.
 
 ## Resultado da pista B (circuito misto): critério não atendido
 
-Rascunho em `data/rascunhos_pistas/circuito_misto.json` (2.600 m: retas de 180 a 450 m,
+Rascunho em `data/rascunhos_pistas/em_teste/circuito_misto.json` (2.600 m: retas de 180 a 450 m,
 curvas de 25 a 150 m de raio, um "S"). Ordem dos 17 carros de fábrica (2 voltas, 3
 sementes): em **0 de 136 pares** o vencedor no misto difere ao mesmo tempo do Anel e das
 Docas. A ordem do misto fica entre a das duas.
@@ -124,3 +124,7 @@ retas e curvas, e a ordem segue a mesma escala. **Pista nova não cria ordem nov
 o chassi não entrar** (distribuição de peso, aderência dianteira e traseira, tração), que
 o disco tem (tabela Chassis). O misto fica fora de `pistas.json` e será testado de novo
 depois do chassi.
+
+Depois da distribuição de peso (tração pelo peso no eixo motriz) a ordem dos carros
+passou a variar mais entre as pistas: Brute (FR, 45% do peso atrás) cai na Serra, Kestrel
+(MR, 61% atrás) sobe, os 4WD ganham nas técnicas. O misto continua no meio: 0 de 136.

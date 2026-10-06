@@ -12,6 +12,7 @@
   "freio": 1.0,
   "preco": 14200,
   "ano": 1997,
+  "peso_dianteiro": 0.6,
   "motor": {
    "rpm": [
     800,
@@ -77,6 +78,7 @@
   "freio": 1.0,
   "preco": 9800,
   "ano": 1993,
+  "peso_dianteiro": 0.6,
   "motor": {
    "rpm": [
     1000,
@@ -364,6 +366,7 @@
   "freio": 1.0,
   "preco": 5600,
   "ano": 1991,
+  "peso_dianteiro": 0.6,
   "motor": {
    "rpm": [
     1000,
@@ -636,6 +639,7 @@
   "freio": 1.0,
   "preco": 5900,
   "ano": 1989,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1000,
@@ -931,6 +935,7 @@
   "freio": 1.0,
   "preco": 7200,
   "ano": 1983,
+  "peso_dianteiro": 0.6,
   "motor": {
    "rpm": [
     1000,
@@ -1149,6 +1154,7 @@
   "freio": 1.0,
   "preco": 8000,
   "ano": 1991,
+  "peso_dianteiro": 0.6,
   "motor": {
    "rpm": [
     1000,
@@ -1492,6 +1498,7 @@
   "freio": 1.0,
   "preco": 7400,
   "ano": 1990,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1000,
@@ -1812,6 +1819,7 @@
   "freio": 0.902,
   "preco": 18100,
   "ano": 1996,
+  "peso_dianteiro": 0.45,
   "motor": {
    "rpm": [
     1000,
@@ -2120,6 +2128,7 @@
   "freio": 1.0,
   "preco": 18500,
   "ano": 1995,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1000,
@@ -2418,6 +2427,7 @@
   "freio": 1.0,
   "preco": 23600,
   "ano": 1997,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1500,
@@ -2648,6 +2658,7 @@
   "freio": 0.902,
   "preco": 15100,
   "ano": 1989,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1500,
@@ -2938,6 +2949,7 @@
   "freio": 1.0,
   "preco": 29000,
   "ano": 1998,
+  "peso_dianteiro": 0.6,
   "motor": {
    "rpm": [
     1000,
@@ -2997,6 +3009,7 @@
   "freio": 0.902,
   "preco": 55310,
   "ano": 1998,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1000,
@@ -3054,6 +3067,7 @@
   "freio": 0.902,
   "preco": 47880,
   "ano": 1998,
+  "peso_dianteiro": 0.52,
   "motor": {
    "rpm": [
     1000,
@@ -3111,6 +3125,7 @@
   "freio": 1.0,
   "preco": 16830,
   "ano": 1998,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1000,
@@ -3169,6 +3184,7 @@
   "freio": 1.0,
   "preco": 39250,
   "ano": 1997,
+  "peso_dianteiro": 0.39,
   "motor": {
    "rpm": [
     1000,
@@ -3228,6 +3244,7 @@
   "freio": 1.0,
   "preco": 62410,
   "ano": 1993,
+  "peso_dianteiro": 0.55,
   "motor": {
    "rpm": [
     1000,

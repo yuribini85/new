@@ -137,3 +137,11 @@ func test_forca_por_marcha_nao_passa_do_cambio_ideal_e_para_no_corte() -> void:
 	var v_corte := 7000.0 * TAU / 60.0 * 0.3 / 4.0
 	igual(f[int(v_corte / Simulacao.PASSO_FORCA) + 2], 0.0, "sem força depois do corte")
 	verificar(f[int(v_corte / Simulacao.PASSO_FORCA) - 2] > 0.0, "força antes do corte")
+
+
+func test_tracao_pelo_peso_no_eixo_motriz() -> void:
+	var p := {"fator_tracao": {"FF": 0.6, "FR": 0.5, "MR": 0.55, "RR": 0.6, "4WD": 1.0}}
+	perto(Simulacao.fator_tracao({"tracao": "FR"}, p), 0.5, 1e-9, "sem peso_dianteiro: fator fixo")
+	perto(Simulacao.fator_tracao({"tracao": "FF", "peso_dianteiro": 0.62}, p), 0.62, 1e-9, "FF: peso na frente")
+	perto(Simulacao.fator_tracao({"tracao": "MR", "peso_dianteiro": 0.39}, p), 0.61, 1e-9, "MR: peso atrás")
+	perto(Simulacao.fator_tracao({"tracao": "4WD", "peso_dianteiro": 0.55}, p), 1.0, 1e-9, "4WD: todo o peso")

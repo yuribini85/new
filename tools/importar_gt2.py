@@ -23,6 +23,8 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
                antigos só se compram usados)
   tração       Drivetrain.DrivetrainType, códigos deduzidos da coluna
                tracao de referencia/carros.csv (falha se não forem coerentes)
+  peso dianteiro  Chassis.FrontWeightDistribution ÷ 100 (fração do peso no eixo
+               dianteiro): a tração usa o peso sobre o eixo motriz
   aderência    média de Chassis.FrontGrip/RearGrip ÷ mediana de todos os
                carros de rua (o carro mediano tem 1,0)
   freio        Brake.BrakingPower de fábrica ÷ mediana, no máximo 1,0
@@ -216,6 +218,7 @@ def main() -> int:
     freio_mediana = statistics.median([v for v in freio_fabrica.values() if v > 0] or [1.0])
 
     tracoes = deduzir_tracoes(ref, resumo)
+    chassis = {r["CarId"]: r for r in ler("Chassis")}
     carros = []
     for l in ref:
         c = resumo[l["codigo_gt2"]]
@@ -231,6 +234,9 @@ def main() -> int:
             "ano": (ano + 1900 if ano < 100 else ano) if ano > 0 else int(n(l.get("ano"))),
         })
         car = tab_car[l["codigo_gt2"]]
+        ch = chassis.get(l["codigo_gt2"], {})
+        if n(ch.get("FrontWeightDistribution", 0)) > 0:
+            carros[-1]["peso_dianteiro"] = round(n(ch["FrontWeightDistribution"]) / 100.0, 3)
         carros[-1].update(motor_cambio_roda(car, partes))
         janelas = usados_do_carro(l["codigo_gt2"])
         carros[-1]["novo"] = not janelas

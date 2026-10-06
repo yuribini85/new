@@ -138,6 +138,10 @@ func atributos_efetivos(condicao: String) -> Dictionary:
 	else:
 		attrs["aderencia"] *= float(pneu["aderencia"][condicao])
 	attrs["tracao"] = base["tracao"]
+	# Fração do peso no eixo dianteiro (GT2, Chassis); a simulação usa o peso
+	# sobre o eixo motriz para a tração. Opcional: sem ela, fator por tração.
+	if base.get("peso_dianteiro") != null:
+		attrs["peso_dianteiro"] = float(base["peso_dianteiro"])
 	attrs["pneu"] = pneu.get("id", "")
 	_motor_e_cambio(attrs)
 	return attrs
