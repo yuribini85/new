@@ -8,7 +8,7 @@ extends RefCounted
 ## Camadas, de baixo para cima: chão (duas texturas em manchas), areia e brita
 ## por fora das curvas, faixa de escape, asfalto, linhas brancas, zebras; pit
 ## lane, boxes, arquibancada, torre e pórtico na reta de largada; paddock no
-## lado de dentro; postes nas retas; mata em volta, mais densa longe da pista.
+## lado de dentro; postes no pátio dos boxes e no paddock; mata em volta, mais densa longe da pista.
 ## Sombras dos objetos geradas aqui, na direção da luz do tema.
 
 const PASTA := "res://arte/pistas/kit/"
@@ -25,7 +25,9 @@ const BRITA_M := 7.0
 const MARGEM_M := 240.0        # quanto de cenário em volta do traçado
 const MATA_MIN_M := 26.0       # sem árvores mais perto que isto do eixo
 const PASSO_ARVORE_M := 7.0
-const POSTE_A_CADA_M := 55.0
+const PASSO_CONTEINER_M := 22.0
+const POSTE_A_CADA_M := 40.0
+const ALTURA_MATA_M := 4.0     # altura da sombra das árvores (em unidades de sombra_dir)
 
 static var _cache_tex := {}
 static var _shader_alfa: Shader
@@ -73,7 +75,6 @@ func montar(cena: Node3D, pista: Pista, tema: Dictionary, largura: float) -> voi
 		_faixa_volta(minf(a, a + lado * 0.3), maxf(a, a + lado * 0.3), -0.015, branco)
 	_zebras()
 	_reta_de_largada(k)
-	_postes()
 	_mata(caixa, k)
 
 
@@ -267,38 +268,75 @@ func _reta_de_largada(k: Dictionary) -> void:
 	var b0 := _largura * 0.5 + ESCAPE_M
 	var a := s_ini + comp * 0.12
 	var b := s_ini + comp * 0.88
+	# Até onde cada lado está livre de outro trecho da pista (grampo, curva que
+	# volta): nada da reta de largada invade o resto do traçado.
+	var livre_fora := _livre(a, b, fora, b0 + 60.0)
+	var livre_dentro := _livre(a, b, dentro, b0 + 70.0)
 	# Pit lane e pátio dos boxes.
 	var conc := _mat("concreto", 16.0)
-	_faixa(minf(fora * (b0 + 1.0), fora * (b0 + 26.0)), maxf(fora * (b0 + 1.0), fora * (b0 + 26.0)), a, b, -0.02, conc)
-	_reservar(a - 10.0, b + 10.0, fora * b0, fora * (b0 + 60.0))
-	# Prédio dos boxes: módulos de 10 m ao longo da reta.
+	var pit := minf(b0 + 26.0, livre_fora)
+	_faixa(minf(fora * (b0 + 1.0), fora * pit), maxf(fora * (b0 + 1.0), fora * pit), a, b, -0.02, conc)
+	_reservar(a - 10.0, b + 10.0, fora * b0, fora * maxf(livre_fora, b0 + 1.0))
+	# Prédio dos boxes: módulos de 10 m encostados ao longo da reta. O eixo x do
+	# sprite segue a pista e a borda de baixo (portas) fica virada para ela: com
+	# o giro = rumo, a borda de baixo aponta para a direita do sentido da pista.
+	var vira := 0.0 if fora > 0.0 else PI
 	var s := a + 5.0
-	while s < b - 5.0:
-		_objeto("box_modulo", _ponto(s, fora * (b0 + 18.0)), _pista.rumo_em(s) + (PI / 2.0 if fora > 0.0 else -PI / 2.0), 5.0)
+	while s < b - 5.0 and livre_fora >= b0 + 22.0:
+		_objeto("box_modulo", _ponto(s, fora * (b0 + 18.0)), _pista.rumo_em(s) + vira, 5.0)
 		s += 10.0
-	_objeto("torre", _ponto(b + 2.0, fora * (b0 + 18.0)), _pista.rumo_em(b), 14.0)
-	# Arquibancada atrás dos boxes.
-	s = a + 20.0
-	while s < b - 20.0:
-		_objeto("arquibancada_modulo", _ponto(s, fora * (b0 + 34.0)), _pista.rumo_em(s) + (PI / 2.0 if fora > 0.0 else -PI / 2.0), 7.0)
+	if livre_fora >= b0 + 22.0:
+		_objeto("torre", _ponto(s + 1.5, fora * (b0 + 18.0)), _pista.rumo_em(s) + vira, 14.0)
+	# Arquibancada atrás dos boxes, em módulos de 12 m encostados, no terço do meio.
+	s = a + (b - a) * 0.3
+	while s < a + (b - a) * 0.7 and livre_fora >= b0 + 39.0:
+		_objeto("arquibancada_modulo", _ponto(s, fora * (b0 + 34.0)), _pista.rumo_em(s) + vira, 7.0)
 		s += 12.0
 	# Paddock dentro: pátio de concreto com caminhões e tendas em fileiras.
 	var p0 := dentro * (b0 + 14.0)
-	var p1 := dentro * (b0 + 70.0)
-	_faixa(minf(p0, p1), maxf(p0, p1), a + comp * 0.08, b - comp * 0.08, -0.02, conc)
-	_reservar(a, b, p0, p1)
+	var p1 := dentro * livre_dentro
+	if livre_dentro >= b0 + 34.0:
+		_faixa(minf(p0, p1), maxf(p0, p1), a + comp * 0.08, b - comp * 0.08, -0.02, conc)
+		_reservar(a, b, p0, p1)
+	# Duas fileiras com espaço entre os veículos; tendas em grupos no meio.
 	var fileira := 0
-	for lat in [b0 + 24.0, b0 + 42.0, b0 + 60.0]:
-		s = a + comp * 0.1 + fileira * 7.0
-		while s < b - comp * 0.1:
-			var nome := "tenda_%d" % (1 + _rng.randi() % 2) if _rng.randf() < 0.25 else "caminhao_%d" % (1 + _rng.randi() % 3)
+	for lat in [b0 + 28.0, b0 + 52.0]:
+		if lat + 6.0 > livre_dentro:
+			continue
+		s = a + comp * 0.12 + fileira * 9.0
+		while s < b - comp * 0.12:
+			var nome := "tenda_%d" % (1 + _rng.randi() % 2) if _rng.randf() < 0.3 else "caminhao_%d" % (1 + _rng.randi() % 3)
 			_objeto(nome, _ponto(s, dentro * lat), _pista.rumo_em(s) + PI / 2.0, 3.0)
-			s += _rng.randf_range(7.0, 13.0)
+			s += _rng.randf_range(16.0, 26.0)
 		fileira += 1
+	# Postes de iluminação: na beira do pátio dos boxes e no meio do paddock.
+	if k.get("postes", true):
+		s = a + 10.0
+		while s < b - 10.0:
+			_objeto("poste", _ponto(s, fora * (b0 + 1.0)), 0.0, 0.0, 0.4)
+			if livre_dentro >= b0 + 46.0:
+				_objeto("poste", _ponto(s + 20.0, dentro * (b0 + 40.0)), 0.0, 0.0, 0.4)
+			s += POSTE_A_CADA_M
 	# Pórtico sobre a largada.
 	var portico := kit("portico")
 	if portico != null:
-		_objeto("portico", _pista.posicao_em(0.0), _pista.rumo_em(0.0), 7.0, 0.6)
+		_objeto("portico", _pista.posicao_em(0.0), _pista.rumo_em(0.0), 7.0, 0.6, true)
+
+
+## Maior afastamento lateral (m), de b0 até ate, em que o lado continua longe de
+## qualquer outro trecho do traçado, com folga para escape e caixa de areia.
+func _livre(s0: float, s1: float, lado: float, ate: float) -> float:
+	var folga := _largura * 0.5 + ESCAPE_M + AREIA_M
+	var lat := _largura * 0.5 + ESCAPE_M
+	while lat < ate:
+		var s := s0
+		while s <= s1:
+			# O mais perto do ponto tem de ser a própria reta (a lat + folga).
+			if _distancia(_ponto(s, lado * (lat + 2.0 + folga))) < lat + 2.0 + folga - 1.0:
+				return lat
+			s += 8.0
+		lat += 2.0
+	return ate
 
 
 func _reservar(s0: float, s1: float, l0: float, l1: float) -> void:
@@ -321,27 +359,13 @@ func _reservado(p: Vector2) -> bool:
 	return false
 
 
-func _postes() -> void:
-	if not _tema["kit"].get("postes", true):
-		return
-	for i in _pista.trechos.size():
-		var t: Dictionary = _pista.trechos[i]
-		if float(t.get("raio_m", 0.0)) > 0.0:
-			continue
-		var s: float = _pista.inicios[i] + 20.0
-		var fim: float = _pista.inicios[i] + float(t["comprimento_m"]) - 20.0
-		var lado := 1.0
-		while s < fim:
-			_objeto("poste", _ponto(s, lado * (_largura * 0.5 + ESCAPE_M + 2.5)), 0.0, 0.0, 0.4)
-			lado = -lado
-			s += POSTE_A_CADA_M * 0.5
-
-
 # --- Objetos (sprites vistos de cima) ----------------------------------------
 
 ## Um objeto do kit no chão, girado, com sombra na direção da luz do tema.
 ## altura_m: o quanto a sombra se afasta (prédio alto, sombra longa).
-func _objeto(nome: String, p: Vector2, rumo: float, altura_m: float, y := 0.25) -> void:
+## suspenso: objeto no alto (pórtico): a sombra é a silhueta deslocada, solta
+## no chão, em vez de arrastada desde a base.
+func _objeto(nome: String, p: Vector2, rumo: float, altura_m: float, y := 0.25, suspenso := false) -> void:
 	var t := kit(nome)
 	if t == null:
 		return
@@ -356,12 +380,38 @@ func _objeto(nome: String, p: Vector2, rumo: float, altura_m: float, y := 0.25) 
 	_cena.add_child(mi)
 	if altura_m > 0.0:
 		var sombra := MeshInstance3D.new()
-		sombra.mesh = q
-		sombra.material_override = _mat_sprite(t, true)
 		var d: Vector2 = _tema.get("sombra_dir", Vector2(1.0, -0.6)) * altura_m
-		sombra.position = _v3(p + d, 0.05)
+		sombra.mesh = _quad_sombra(t, d.length())
+		sombra.material_override = _mat_sombra(t, d, q.size)
+		if suspenso:
+			sombra.material_override.set_shader_parameter("inicio", 1.0)
+		sombra.position = _v3(p, 0.05)
 		sombra.rotation.y = rumo
 		_cena.add_child(sombra)
+
+
+## Quadro da sombra: o do sprite com folga do arrasto para todos os lados.
+func _quad_sombra(t: Texture2D, arrasto_m: float) -> QuadMesh:
+	var q := QuadMesh.new()
+	q.size = Vector2(t.get_width(), t.get_height()) / PX_M + Vector2.ONE * arrasto_m * 2.0
+	q.orientation = PlaneMesh.FACE_Y
+	return q
+
+
+static var _shader_sombra: Shader
+
+
+## Sombra presa ao objeto: a silhueta arrastada d metros (shaders/sombra.gdshader).
+func _mat_sombra(t: Texture2D, d: Vector2, tamanho_m: Vector2) -> ShaderMaterial:
+	if _shader_sombra == null:
+		_shader_sombra = preload("res://visual/shaders/sombra.gdshader")
+	var m := ShaderMaterial.new()
+	m.shader = _shader_sombra
+	m.set_shader_parameter("textura", t)
+	m.set_shader_parameter("arrasto", Vector2(d.x, -d.y))
+	m.set_shader_parameter("folga", (tamanho_m + Vector2.ONE * d.length() * 2.0) / tamanho_m)
+	m.set_shader_parameter("alfa", float(_tema.get("sombra_alfa", 0.45)))
+	return m
 
 
 var _mats_sprite := {}
@@ -385,6 +435,25 @@ func _mat_sprite(t: Texture2D, sombra: bool) -> StandardMaterial3D:
 	return m
 
 
+## Pátio de contêineres: um bloco de 5 a 8 encostados lado a lado, do mesmo
+## comprimento, eixo longo na direção da reta de largada.
+func _bloco_conteineres(centro: Vector2, rumo0: float, nomes: Array, por_nome: Dictionary) -> void:
+	var curtos := nomes.filter(func(n): return kit(n) != null and kit(n).get_height() < 300)
+	var longos := nomes.filter(func(n): return kit(n) != null and kit(n).get_height() >= 300)
+	var grupo: Array = curtos if not curtos.is_empty() and (longos.is_empty() or _rng.randf() < 0.3) else longos
+	if grupo.is_empty():
+		return
+	var n := _rng.randi_range(5, 8)
+	var lado := Vector2.from_angle(rumo0 + PI / 2.0)
+	for i in n:
+		var p := centro + lado * (i - (n - 1) * 0.5) * 2.6
+		if _distancia(p) < MATA_MIN_M or _reservado(p):
+			continue
+		var nome: String = grupo[_rng.randi() % grupo.size()]
+		var giro := rumo0 + PI / 2.0 + (PI if _rng.randf() < 0.5 else 0.0)
+		por_nome.get_or_add(nome, []).append(Transform3D(Basis(Vector3.UP, giro), _v3(p, 0.3)))
+
+
 ## Mata: grade com sorteio, mais densa longe da pista, com clareiras (ruído).
 ## Um MultiMesh por variante, mais um para as sombras.
 func _mata(caixa: Rect2, k: Dictionary) -> void:
@@ -400,7 +469,10 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 	# girados só de 0° ou 180°, sem sorteio de posição dentro da célula.
 	var alinhado: bool = k.get("alinhado", false)
 	var rumo0 := _pista.rumo_em(0.0)
-	var passo := PASSO_ARVORE_M * (2.0 if alinhado else 1.0)
+	var passo := PASSO_CONTEINER_M if alinhado else PASSO_ARVORE_M
+	# Raras: sorteadas com chance baixa no lugar de uma árvore (rochas na mata).
+	var raras: Array = k.get("raras", [])
+	var chance_rara: float = k.get("chance_rara", 0.0)
 	var y := caixa.position.y
 	while y < caixa.end.y:
 		var x := caixa.position.x
@@ -413,34 +485,41 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 			if d < MATA_MIN_M or _reservado(p):
 				continue
 			var chance := smoothstep(MATA_MIN_M, MATA_MIN_M + 60.0, d) * densidade
-			chance *= smoothstep(-0.25, 0.15, clareira.get_noise_2d(p.x, p.y))
+			if alinhado:
+				# Pátios: zonas cheias de blocos, separadas por áreas vazias.
+				chance = 1.0 if clareira.get_noise_2d(p.x * 0.6, p.y * 0.6) > 0.05 and d > MATA_MIN_M + 10.0 else 0.0
+			else:
+				chance *= smoothstep(-0.25, 0.15, clareira.get_noise_2d(p.x, p.y))
 			if _rng.randf() > chance:
 				continue
-			var nome: String = nomes[_rng.randi() % nomes.size()]
+			if alinhado:
+				_bloco_conteineres(p, rumo0, nomes, por_nome)
+				continue
+			var lista_nomes: Array = raras if not raras.is_empty() and _rng.randf() < chance_rara else nomes
+			var nome: String = lista_nomes[_rng.randi() % lista_nomes.size()]
 			if kit(nome) == null:
 				continue
-			var giro := rumo0 + PI / 2.0 + (PI if _rng.randf() < 0.5 else 0.0) if alinhado else _rng.randf() * TAU
-			var escala := 1.0 if alinhado else _rng.randf_range(0.85, 1.25)
-			por_nome.get_or_add(nome, []).append(Transform3D(Basis(Vector3.UP, giro).scaled(Vector3.ONE * escala), _v3(p, 0.3)))
+			var escala := _rng.randf_range(0.85, 1.25)
+			por_nome.get_or_add(nome, []).append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * escala), _v3(p, 0.3)))
 		y += passo
-	var d_sombra: Vector2 = _tema.get("sombra_dir", Vector2(1.0, -0.6)) * 4.0
 	for nome in por_nome:
 		var t := kit(nome)
 		var q := QuadMesh.new()
 		q.size = Vector2(t.get_width(), t.get_height()) / PX_M
 		q.orientation = PlaneMesh.FACE_Y
+		var d_sombra: Vector2 = _tema.get("sombra_dir", Vector2(1.0, -0.6)) * float(k.get("altura_mata_m", ALTURA_MATA_M))
 		for sombra in [true, false]:
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
-			mm.mesh = q
+			mm.mesh = _quad_sombra(t, d_sombra.length()) if sombra else q
 			var lista: Array = por_nome[nome]
 			mm.instance_count = lista.size()
 			for i in lista.size():
 				var tr: Transform3D = lista[i]
 				if sombra:
-					tr.origin = tr.origin + Vector3(d_sombra.x, -0.2, -d_sombra.y)
+					tr.origin.y = 0.1
 				mm.set_instance_transform(i, tr)
 			var mmi := MultiMeshInstance3D.new()
 			mmi.multimesh = mm
-			mmi.material_override = _mat_sprite(t, sombra)
+			mmi.material_override = _mat_sombra(t, d_sombra, q.size) if sombra else _mat_sprite(t, false)
 			_cena.add_child(mmi)

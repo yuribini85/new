@@ -36,10 +36,13 @@ em `arte/pistas/kit/` mostram a orientação e a proporção.
 - Chão: duas texturas misturadas em manchas por ruído (`chao_a`, `chao_b` do tema).
 - Por fora das curvas: areia nas fechadas (raio até 90 m), brita nas médias (até 200 m).
 - Faixa de escape pintada, asfalto, linhas brancas e zebras (geradas, não desenhadas).
-- Reta de largada: pit lane de concreto, boxes em módulos de 10 m, torre, arquibancada atrás,
-  pórtico na linha; paddock do lado de dentro com caminhões e tendas em fileiras.
-- Postes nas retas; mata em volta, mais densa longe da pista, com clareiras.
-- Sombras de todos os objetos, na direção e intensidade do tema.
+- Reta de largada: pit lane de concreto, boxes em módulos de 10 m encostados (portas para a
+  pista), torre, arquibancada atrás, pórtico na linha; paddock do lado de dentro com caminhões
+  e tendas espaçados. Cada lado só ocupa o espaço livre de outros trechos do traçado.
+- Postes só no pátio dos boxes e no paddock; mata em volta, mais densa longe da pista, com
+  clareiras; objetos raros (rochas) com chance baixa; contêineres em blocos, dentro de pátios.
+- Sombras presas à base de cada objeto (silhueta arrastada na direção da luz do tema); objeto
+  suspenso (pórtico) tem a sombra solta no chão.
 
 Cada pista escolhe o tema em `Corrida3D.KITS` (chão, objetos de mata, densidade, postes,
 tinta, direção da sombra, vinheta). Pista nova usa um tema existente ou ganha um tema novo
@@ -57,7 +60,8 @@ com os mesmos arquivos.
    (use `--destino=/outra/pasta` para conferir sem tocar no kit do jogo). O relatório diz
    aprovado, corrigido (redimensionado, recortado, emenda refeita, magenta removido) ou
    reprovado; reprovado não substitui o arquivo atual.
-4. Conferir nas fotos das pistas (`tools/fotos_pistas.gd`) e pedir de novo o que destoar.
+4. Conferir nas fotos do cenário (`tools/fotos_cenario.gd`: largada, boxes, curva, mata e vista
+   média, câmera parada) e da corrida (`tools/fotos_pistas.gd`); pedir de novo o que destoar.
 
 `tools/gerar_kit_pista.gd` regenera o kit provisório; não rodar depois de importar a arte
 final.
