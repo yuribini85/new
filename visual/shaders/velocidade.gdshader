@@ -5,11 +5,14 @@ shader_type canvas_item;
 
 uniform float intensidade : hint_range(0.0, 1.0) = 0.0;
 uniform vec2 centro = vec2(0.5, 0.52);
+// Bordas escurecidas do tema (luz de fim de tarde da referência), sempre ativas.
+uniform float vinheta : hint_range(0.0, 1.0) = 0.0;
 
 void fragment() {
 	vec4 base = texture(TEXTURE, UV);
+	float escuro = 1.0 - vinheta * smoothstep(0.35, 0.85, length((UV - vec2(0.5)) * vec2(1.0, 0.8)));
 	if (intensidade <= 0.001) {
-		COLOR = base;
+		COLOR = vec4(base.rgb * escuro, base.a);
 	} else {
 		vec2 d = UV - centro;
 		float r = length(d * vec2(1.0, 1.4));
@@ -23,6 +26,6 @@ void fragment() {
 		float linha = step(0.975, fract(sin(floor(ang * 90.0) * 43758.5453 + floor(TIME * 14.0)) * 0.5 + 0.5));
 		c.rgb += linha * m * 0.07 * smoothstep(0.45, 0.8, r);
 		c.rgb = mix(c.rgb, (c.rgb - 0.5) * 1.08 + 0.5, intensidade * 0.7);
-		COLOR = c;
+		COLOR = vec4(c.rgb * escuro, c.a);
 	}
 }

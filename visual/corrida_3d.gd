@@ -54,6 +54,27 @@ const TEMAS := {
 		"luz": Color(1.0, 0.98, 0.92), "energia": 1.15, "sol": Vector3(-1.35, 0.3, 0), "ambiente": Color(0.7, 0.68, 0.64),
 		"asfalto": Color(0.25, 0.25, 0.27), "muro": [Color(0.95, 0.95, 0.95), Color(0.1, 0.1, 0.12)], "fundo": "mesas", "neblina": 0.0},
 }
+## Montagem pelo kit de arte (MontadorPista, docs/arte_pistas.md): texturas do
+## chão, árvores, luz (tinta), direção e força das sombras, bordas da tela.
+## O Anel segue a referência de estilo: autódromo na mata ao entardecer.
+const KITS := {
+	"anel_do_vale": {"kit": {"chao_a": "grama_a", "chao_b": "grama_b", "arvores": ["arvore_1", "arvore_2",
+			"arvore_3", "arvore_4", "arvore_5", "arvore_6"], "densidade": 1.0, "postes": true},
+		"tinta": Color(1.0, 0.86, 0.72), "sombra_dir": Vector2(1.6, -0.9), "sombra_alfa": 0.5,
+		"vinheta": 0.45, "fundo": Color(0.07, 0.09, 0.08)},
+	"serra_alta": {"kit": {"chao_a": "grama_b", "chao_b": "mata", "arvores": ["pinheiro_1", "pinheiro_2",
+			"pinheiro_3", "rocha_1", "rocha_2"], "densidade": 0.9, "postes": false},
+		"tinta": Color(0.92, 0.97, 1.05), "sombra_dir": Vector2(0.6, -0.5), "sombra_alfa": 0.4,
+		"vinheta": 0.3, "fundo": Color(0.08, 0.1, 0.1)},
+	"parque_das_docas": {"kit": {"chao_a": "concreto", "chao_b": "concreto", "escape": "concreto", "areia": "brita",
+			"arvores": ["conteiner_1", "conteiner_2", "conteiner_3"], "densidade": 0.7, "postes": true, "alinhado": true},
+		"tinta": Color(1.0, 0.82, 0.7), "sombra_dir": Vector2(1.8, -1.0), "sombra_alfa": 0.5,
+		"vinheta": 0.45, "fundo": Color(0.1, 0.1, 0.11)},
+	"pista_de_testes": {"kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",
+			"arvores": ["rocha_1", "rocha_2", "rocha_3"], "densidade": 0.18, "postes": false},
+		"tinta": Color(1.04, 1.0, 0.94), "sombra_dir": Vector2(0.4, -0.3), "sombra_alfa": 0.35,
+		"vinheta": 0.25, "fundo": Color(0.45, 0.38, 0.28)},
+}
 const TEMA_PADRAO := {"chao": Color(0.22, 0.45, 0.25), "ceu": Color(0.4, 0.6, 0.75), "props": "arvores",
 	"luz": Color.WHITE, "energia": 1.0, "sol": Vector3(-1.0, 0.5, 0), "ambiente": Color(0.6, 0.62, 0.66),
 	"asfalto": Color(0.27, 0.28, 0.31), "muro": [Color(0.82, 0.82, 0.84), Color(0.2, 0.35, 0.75)], "fundo": "", "neblina": 0.0}
@@ -422,6 +443,16 @@ func _construir_pista() -> void:
 	_luz.light_energy = tema["energia"]
 	_luz.rotation = tema["sol"]
 	_cores_muro = tema["muro"]
+	var montado: Dictionary = KITS.get(_pista.id, {})
+	var efeito := material as ShaderMaterial
+	if not montado.is_empty() and MontadorPista.disponivel():
+		# Cenário pelo kit de arte; os anéis, a linha de largada e os muros seguem daqui.
+		MontadorPista.new().montar(_cena, _pista, montado, LARGURA_PISTA_M)
+		_ambiente.background_color = montado.get("fundo", tema["ceu"])
+		efeito.set_shader_parameter("vinheta", float(montado.get("vinheta", 0.0)))
+		_marcadores()
+		return
+	efeito.set_shader_parameter("vinheta", 0.0)
 	var grama := MeshInstance3D.new()
 	var plano := PlaneMesh.new()
 	plano.size = caixa.size + Vector2(8000, 8000)
@@ -435,6 +466,17 @@ func _construir_pista() -> void:
 	_cena.add_child(_zebras())
 	for lado in [1.0, -1.0]:
 		_cena.add_child(_muro(pts, lado * (LARGURA_PISTA_M * 0.5 + 3.4)))
+	_marcadores()
+	_arquibancada()
+	_portico()
+	_bordas()
+	_placas_curva()
+	_decorar(pts, tema["props"])
+	_fundo(caixa, tema)
+
+
+## Anéis do jogador e do alvo, traço de disputa e linha de largada.
+func _marcadores() -> void:
 	_anel_alvo = MeshInstance3D.new()
 	var tor := TorusMesh.new()
 	tor.inner_radius = 2.6
@@ -476,12 +518,6 @@ func _construir_pista() -> void:
 	largada.position = Vector3(p0.x, 0.01, -p0.y)
 	largada.rotation.y = _pista.rumo_em(0.0)
 	_cena.add_child(largada)
-	_arquibancada()
-	_portico()
-	_bordas()
-	_placas_curva()
-	_decorar(pts, tema["props"])
-	_fundo(caixa, tema)
 
 
 ## Pórtico de largada e chegada sobre a pista, com faixa quadriculada.
