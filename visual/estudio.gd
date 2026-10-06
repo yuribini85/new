@@ -7,6 +7,8 @@ extends Node
 const TAMANHO := Vector2i(360, 200)
 
 static var _no: Estudio
+## Fração da tela do sprite isométrico que entra na foto (o maior carro cabe).
+const RECORTE_ISO := Vector2(0.74, 0.66)
 var _fotos := {}  # "id|cor" -> ViewportTexture
 
 
@@ -22,7 +24,16 @@ static func foto(base: Dictionary, cor: Color) -> Texture2D:
 func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	var arte := ArteCarro.textura(String(base.get("id", "")), "iso")
 	if arte != null:
-		return arte  # decisão 31: a foto é o próprio sprite isométrico
+		# Decisão 31: a foto é o próprio sprite isométrico, sem a margem vazia da
+		# tela. O recorte é o mesmo para todos: carro pequeno continua menor.
+		var chave_arte := "arte|%s" % base.get("id", "")
+		if not _fotos.has(chave_arte):
+			var a := AtlasTexture.new()
+			a.atlas = arte
+			var tam := Vector2(arte.get_size()) * RECORTE_ISO
+			a.region = Rect2(Vector2(arte.get_size()) * Vector2(0.5, 0.48) - tam * 0.5, tam)
+			_fotos[chave_arte] = a
+		return _fotos[chave_arte]
 	var chave := "%s|%s" % [base.get("id", ""), cor.to_html(false)]
 	if _fotos.has(chave):
 		return _fotos[chave]

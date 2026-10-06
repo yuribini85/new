@@ -71,6 +71,10 @@ func _encaixar(img: Image, geo: Dictionary, vista: String) -> Array:
 	var tela := Vector2i(int(geo["tela"][0]), int(geo["tela"][1]))
 	var alvo := Rect2i(int(geo["rect"][0]), int(geo["rect"][1]), int(geo["rect"][2]), int(geo["rect"][3]))
 	var escala := minf(float(alvo.size.x) / usado.size.x, float(alvo.size.y) / usado.size.y)
+	if vista == "topo":
+		# De cima, o comprimento manda (é a escala real do carro); a largura do
+		# desenho vem junto, desde que caiba na tela.
+		escala = minf(float(alvo.size.y) / usado.size.y, float(tela.x) / usado.size.x)
 	var novo := Vector2i(maxi(1, roundi(usado.size.x * escala)), maxi(1, roundi(usado.size.y * escala)))
 	recorte.resize(novo.x, novo.y, Image.INTERPOLATE_LANCZOS)
 	var final := Image.create(tela.x, tela.y, false, Image.FORMAT_RGBA8)
