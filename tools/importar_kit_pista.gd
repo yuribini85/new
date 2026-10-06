@@ -92,8 +92,12 @@ func _sprite(img: Image, it: Dictionary) -> Array:
 			Vector2i(img.get_width() - 1, img.get_height() - 1)]
 	if fracao < 0.08 or cantos.any(func(c): return img.get_pixelv(c).a > 0.1):
 		return ["reprovado", "sem fundo transparente (refazer com fundo transparente)", img]
-	var usado := img.get_used_rect()
+	var usado := _contorno(img)
 	var recorte := img.get_region(usado)
+	for y in recorte.get_height():
+		for x in recorte.get_width():
+			if recorte.get_pixel(x, y).a < 0.06:
+				recorte.set_pixel(x, y, Color(0, 0, 0, 0))
 	# Encaixa sem distorcer, centrado, no tamanho do manifesto.
 	var escala := minf(float(w) / usado.size.x, float(h) / usado.size.y)
 	var novo := Vector2i(maxi(1, roundi(usado.size.x * escala)), maxi(1, roundi(usado.size.y * escala)))
@@ -106,6 +110,24 @@ func _sprite(img: Image, it: Dictionary) -> Array:
 	if proporcao < 0.7 or proporcao > 1.43:
 		notas += "; proporção muito diferente da pedida (%.2f×), conferir" % proporcao
 	return ["corrigido", notas, final]
+
+
+## Retângulo do objeto: pixels de alfa alto, com folga de 1%. Resíduos quase
+## transparentes que o gerador deixa espalhados no fundo ficam de fora (o
+## get_used_rect os contaria e o objeto sairia menor e fora de proporção).
+static func _contorno(img: Image) -> Rect2i:
+	var mn := Vector2i(img.get_width(), img.get_height())
+	var mx := Vector2i(-1, -1)
+	for y in img.get_height():
+		for x in img.get_width():
+			if img.get_pixel(x, y).a > 0.25:
+				mn = mn.min(Vector2i(x, y))
+				mx = mx.max(Vector2i(x, y))
+	if mx.x < 0:
+		return img.get_used_rect()
+	var folga := maxi(1, roundi(maxf(img.get_width(), img.get_height()) * 0.01))
+	var r := Rect2i(mn - Vector2i(folga, folga), mx - mn + Vector2i(1, 1) + Vector2i(folga, folga) * 2)
+	return r.intersection(Rect2i(Vector2i.ZERO, img.get_size()))
 
 
 ## Fundo magenta chapado (os quatro cantos magenta): vira transparente, com

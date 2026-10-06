@@ -60,7 +60,7 @@ const TEMAS := {
 const KITS := {
 	"anel_do_vale": {"kit": {"chao_a": "grama_a", "chao_b": "grama_b", "arvores": ["arvore_1", "arvore_2",
 			"arvore_3", "arvore_4", "arvore_5", "arvore_6"], "densidade": 1.0, "postes": true},
-		"tinta": Color(1.0, 0.86, 0.72), "sombra_dir": Vector2(1.6, -0.9), "sombra_alfa": 0.5,
+		"tinta": Color(0.8, 0.68, 0.58), "sombra_dir": Vector2(1.6, -0.9), "sombra_alfa": 0.5,
 		"vinheta": 0.45, "fundo": Color(0.07, 0.09, 0.08)},
 	"serra_alta": {"kit": {"chao_a": "grama_b", "chao_b": "mata", "arvores": ["pinheiro_1", "pinheiro_2",
 			"pinheiro_3", "rocha_1", "rocha_2"], "densidade": 0.9, "postes": false},

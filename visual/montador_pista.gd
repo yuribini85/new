@@ -195,8 +195,9 @@ func _faixa(a: float, b: float, s0: float, s1: float, y: float, mat: Material, p
 			ponta = clampf(minf(s - s0, s1 - s) / pontas, 0.0, 1.0)
 		var pa := _ponto(s, a)
 		var pb := _ponto(s, b)
-		var ua := Vector2((s - s0) / 2.0, 0.0)
-		var ub := Vector2((s - s0) / 2.0, 1.0)
+		# UV de faixa (zebra): x atravessa a faixa, y corre ao longo (2 m por volta da textura).
+		var ua := Vector2(0.0, (s - s0) / 2.0)
+		var ub := Vector2(1.0, (s - s0) / 2.0)
 		var atual := [[_v3(pa, y), ponta, ua], [_v3(pb, y), ponta * (0.0 if alfa_externo else 1.0), ub]]
 		if not antes.is_empty():
 			for v in [antes[0], antes[1], atual[0], antes[1], atual[1], atual[0]]:
