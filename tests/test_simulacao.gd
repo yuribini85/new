@@ -145,3 +145,20 @@ func test_tracao_pelo_peso_no_eixo_motriz() -> void:
 	perto(Simulacao.fator_tracao({"tracao": "FF", "peso_dianteiro": 0.62}, p), 0.62, 1e-9, "FF: peso na frente")
 	perto(Simulacao.fator_tracao({"tracao": "MR", "peso_dianteiro": 0.39}, p), 0.61, 1e-9, "MR: peso atrás")
 	perto(Simulacao.fator_tracao({"tracao": "4WD", "peso_dianteiro": 0.55}, p), 1.0, 1e-9, "4WD: todo o peso")
+
+
+func test_diagnostico_separa_trafego_de_potencial() -> void:
+	var d := dados_fixture()
+	# Sem zona de ultrapassagem, o forte larga atrás do fraco e fica preso.
+	var r := Simulacao.correr(d.pista("sem_ultrapassagem"),
+			[_participante(d, "fraco", "fraco", "perfeito"), _participante(d, "forte", "forte", "perfeito")],
+			2, d.simulacao(), 1)
+	var dmin := float(d.simulacao()["distancia_minima_m"])
+	verificar(Diagnostico.colado(r, "forte", dmin) > 1.0, "forte preso atrás do fraco")
+	igual(Diagnostico.colado(r, "fraco", dmin), 0.0, "o da frente nunca está colado")
+	var ev := {"pista": "oval", "voltas": 1}
+	var p := Diagnostico.potencial(d, ev, _participante(d, "a", "fraco", "perfeito")["atributos"],
+			_participante(d, "b", "forte", "perfeito")["atributos"])
+	verificar(p["meu"] > p["rival"], "sozinho, o fraco é mais lento")
+	perto(p["curvas"] + p["retas"], p["meu"] - p["rival"], 0.3, "curvas + retas ≈ diferença total")
+	d.free()

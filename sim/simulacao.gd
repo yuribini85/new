@@ -174,6 +174,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 		"carros": _resumo(carros),
 		"amostras": amostras,
 		"comprimento": comprimento,
+		"voltas": voltas,
 		"duracao": t,
 	}
 

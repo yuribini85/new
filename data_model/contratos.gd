@@ -177,26 +177,14 @@ static func _faltam(cond: Dictionary, r: Dictionary, carro: Carro) -> Array:
 	return falta
 
 
-## Corrida sozinho; com diagnóstico, separa o tempo em curvas e retas (trecho
-## com raio é curva) pelas amostras da simulação.
+## Corrida sozinho; com diagnóstico, separa o tempo em curvas e retas
+## (Diagnostico.sozinho). Sem, só o tempo (mais rápido: sem amostras).
 static func _correr(dados_: Node, pista: Pista, carro: Carro, prova: Dictionary, piloto: Dictionary, semente: int,
 		com_diagnostico: bool) -> Dictionary:
-	var res := Simulacao.correr(pista, [{"id": "x", "atributos": carro.atributos_efetivos(prova.get("condicao", "seco")),
-			"piloto": piloto}], int(prova["voltas"]), dados_.simulacao(), semente, com_diagnostico)
-	var x: Dictionary = res["carros"]["x"]
-	var tempo: float = x["tempo_total"] if x["terminou"] else INF
-	var r := {"tempo": tempo, "curvas": 0.0, "retas": 0.0}
+	var attrs := carro.atributos_efetivos(prova.get("condicao", "seco"))
 	if com_diagnostico:
-		var amostras: Array = res["amostras"]
-		var fim := pista.comprimento * int(prova["voltas"])
-		for i in range(1, amostras.size()):
-			var s0: float = amostras[i - 1]["s"]["x"]
-			if s0 < 0.0 or s0 >= fim:
-				continue
-			var dt: float = amostras[i]["t"] - amostras[i - 1]["t"]
-			var t: Dictionary = pista.trecho_em(fposmod(s0, pista.comprimento))
-			if float(t.get("raio_m", 0.0)) > 0.0:
-				r["curvas"] += dt
-			else:
-				r["retas"] += dt
-	return r
+		return Diagnostico.sozinho(dados_, pista, attrs, int(prova["voltas"]), piloto, semente)
+	var res := Simulacao.correr(pista, [{"id": "x", "atributos": attrs, "piloto": piloto}], int(prova["voltas"]),
+			dados_.simulacao(), semente, false)
+	var x: Dictionary = res["carros"]["x"]
+	return {"tempo": x["tempo_total"] if x["terminou"] else INF, "curvas": 0.0, "retas": 0.0}

@@ -234,6 +234,7 @@ func _resultado(u: Dictionary) -> void:
 	_tabela(u, v)
 	if not venceu and seu != null:
 		_por_que(u, ev, seu)
+		_diagnostico_ui(u, ev, seu)
 		_o_que_ajuda(u, seu)
 	var fim := cartao(Color.TRANSPARENT, _painel)
 	rotulo("E AGORA?", FONTE_PEQUENA, COR_SECUNDARIA, fim)
@@ -267,7 +268,8 @@ func _tabela(u: Dictionary, pai: Control) -> void:
 ## frente, atributo a atributo (números do próprio jogo).
 func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 	var carreira: Carreira = jogador.carreira
-	var meu := carreira.atributos_participante(u["evento_id"], "jogador", u["uid"])
+	# O carro como foi inscrito (a preparação pode ter mudado depois).
+	var meu := _carro_da_corrida(u, seu).atributos_efetivos(ev["condicao"])
 	var tabela: Array = u.get("tabela", [])
 	var rivais := [u["vencedor"]]
 	var i_meu := tabela.map(func(x): return x["id"]).find("jogador")
@@ -284,6 +286,77 @@ func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 		selos(fatores(meu, a), v)
 	rotulo("Potência por peso pesa na aceleração e nas retas; aderência nas curvas e na frenagem; freio na "
 			+ "frenagem. Mais aderência vem de pneus; menos peso, de redução de peso.", FONTE_PEQUENA, COR_SECUNDARIA, v)
+
+
+## O carro como correu: o da garagem com a preparação guardada na inscrição.
+func _carro_da_corrida(u: Dictionary, seu: Carro) -> Carro:
+	if u.get("config") is Dictionary:
+		return seu.com_configuracao(u["config"], dados.peca, dados.pneu)
+	return seu
+
+
+## Diagnóstico sob demanda (Diagnostico): o potencial do carro sozinho na pista
+## contra o vencedor e o carro logo à frente, separado do tempo perdido no
+## tráfego da corrida, para não culpar a preparação pelo que foi tráfego.
+var _diag := {}
+
+
+func _diagnostico_ui(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
+	var v := cartao(COR_INFO, _painel)
+	rotulo("DIAGNÓSTICO", FONTE_PEQUENA, COR_INFO, v)
+	var chave := "%s|%d|%d" % [u["evento_id"], u.get("dia", 0), u.get("semente", 0)]
+	if _diag.get("chave", "") != chave:
+		rotulo("Separa o que é do carro (cada um sozinho na pista: curvas e retas) do que foi da corrida (tempo preso atrás de outro carro).",
+				FONTE_PEQUENA + 1, Color.WHITE, v)
+		botao("Diagnosticar", _diagnosticar.bind(u, ev, seu, chave), true, false, v)
+		return
+	rotulo("SEU CARRO SOZINHO NA PISTA (o que a preparação muda)", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	for c in _diag["comparacoes"]:
+		rotulo("%s · %s: você %s · ele %s" % [c["quem"], c["nome"], _mmss_dec(c["meu"]), _mmss_dec(c["rival"])],
+				FONTE_PEQUENA + 2, Color.WHITE, v)
+		rotulo("curvas %s · retas %s" % [_dif(c["curvas"]), _dif(c["retas"])], FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+		rotulo(Diagnostico.gargalo(c["curvas"], c["retas"]), FONTE_PEQUENA + 1, COR_INFO, v)
+	separador(v)
+	rotulo("NA CORRIDA (não depende da preparação)", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	if _diag.get("colado", -1.0) < 0.0:
+		rotulo("Não foi possível refazer esta corrida (save de antes do diagnóstico).", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+	else:
+		rotulo("%.0f s preso atrás de outro carro, sem conseguir passar." % _diag["colado"], FONTE_PEQUENA + 2, Color.WHITE, v)
+		rotulo("Depende da largada (você larga em último) e das zonas de ultrapassagem da pista.",
+				FONTE_PEQUENA, COR_SECUNDARIA, v)
+
+
+func _diagnosticar(u: Dictionary, ev: Dictionary, seu: Carro, chave: String) -> void:
+	var carreira: Carreira = jogador.carreira
+	var carro := _carro_da_corrida(u, seu)
+	var meu := carro.atributos_efetivos(ev["condicao"])
+	var tabela: Array = u.get("tabela", [])
+	var ids := [u["vencedor"]]
+	var i_meu := tabela.map(func(x): return x["id"]).find("jogador")
+	if i_meu > 1:
+		ids.append(tabela[i_meu - 1]["id"])
+	var comps := []
+	for id in ids:
+		var a := carreira.atributos_participante(u["evento_id"], id, u["uid"])
+		if a.is_empty():
+			continue
+		var p := Diagnostico.potencial(dados, ev, meu, a)
+		p["quem"] = "Vencedor" if id == u["vencedor"] else "Logo à frente"
+		p["nome"] = carreira.rotulo_participante(u["evento_id"], id, u["uid"])
+		comps.append(p)
+	var colado := -1.0
+	if u.has("semente"):
+		var r := carreira.preparar(u["evento_id"], u["uid"], int(u["semente"]), true, carro)
+		# Só vale se a corrida refeita é a mesma (mesma posição).
+		if not r.has("erro") and r["resultado"]["classificacao"].find("jogador") + 1 == int(u["posicao"]):
+			colado = Diagnostico.colado(r["resultado"], "jogador", float(dados.simulacao()["distancia_minima_m"]))
+	_diag = {"chave": chave, "comparacoes": comps, "colado": colado}
+	mudou.emit()
+
+
+## "+0,8 s" (mais lento) ou "−0,3 s" (mais rápido).
+static func _dif(x: float) -> String:
+	return "%s%.1f s" % ["+" if x >= 0.0 else "−", absf(x)]
 
 
 ## Selos de comparação: o que o rival tem a mais (vermelho) e você (verde).

@@ -123,6 +123,10 @@ func processar(agora: float) -> Dictionary:
 		var cr: Dictionary = res["resultado"]["carros"]
 		var vencedor: String = res["classificacao"][0]
 		res["uid"] = int(f["uid"])
+		# Para refazer esta corrida (diagnóstico): semente e preparação inscrita.
+		res["semente"] = int(f["semente"])
+		if f.get("config") is Dictionary:
+			res["config"] = f["config"].duplicate(true)
 		res["vencedor"] = vencedor
 		res["tempo_vencedor"] = cr[vencedor]["tempo_total"]
 		res["tempo_jogador"] = cr["jogador"]["tempo_total"]
