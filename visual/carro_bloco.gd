@@ -205,6 +205,7 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 				roda.add_child(raio)
 			_rodas.append(roda)
 	var sombra := MeshInstance3D.new()
+	sombra.name = "Sombra"
 	var q := PlaneMesh.new()
 	q.size = Vector2(c * 1.05, l * 1.15)
 	sombra.mesh = q
