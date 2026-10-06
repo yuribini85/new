@@ -26,6 +26,8 @@ const MARGEM_M := 240.0        # quanto de cenário em volta do traçado
 const MATA_MIN_M := 26.0       # sem árvores mais perto que isto do eixo
 const PASSO_ARVORE_M := 7.0
 const PASSO_CONTEINER_M := 22.0
+const ARVORE_ISOLADA := 0.025  # chance de árvore solta na faixa aberta perto da pista
+const FUNDO_ESCURO := 0.3      # quanto as copas escurecem no fundo da mata
 const POSTE_A_CADA_M := 40.0
 const ALTURA_MATA_M := 4.0     # altura da sombra das árvores (em unidades de sombra_dir)
 
@@ -41,7 +43,18 @@ var _largura: float
 var _rng := RandomNumberGenerator.new()
 var _grade := {}  # célula -> PackedVector2Array de pontos do eixo
 const CELULA_M := 40.0
-var _reservas: Array = []  # PackedVector2Array: áreas sem árvore (boxes, paddock)
+var _reservas: Array = []
+var _clareira: FastNoiseLite
+# Campo de distância ao eixo numa grade (alcance ilimitado, ao contrário de
+# _distancia) e a máscara do chão (R: água, G: chão de floresta), na mesma grade.
+var _campo := PackedFloat32Array()
+var _campo_origem := Vector2.ZERO
+var _campo_m := 4.0
+var _campo_tam := Vector2i.ZERO
+var _mascara: Image
+# Reta de largada: ponto do meio, normal para fora (lado dos boxes) e b0.
+var _largada_meio := Vector2.ZERO
+var _largada_fora := Vector2.ZERO  # PackedVector2Array: áreas sem árvore (boxes, paddock)
 
 
 static func kit(nome: String) -> Texture2D:
@@ -65,6 +78,12 @@ func montar(cena: Node3D, pista: Pista, tema: Dictionary, largura: float) -> voi
 	_indexar_eixo()
 	var k: Dictionary = tema["kit"]
 	var caixa := _caixa()
+	_clareira = FastNoiseLite.new()
+	_clareira.seed = hash(pista.id)
+	_clareira.frequency = 0.008
+	_lado_da_largada()
+	_campo_distancia(caixa)
+	_mascara_chao(k)
 	_chao(caixa, k)
 	_bordas_curvas(k)
 	_faixa_volta(-(_largura * 0.5 + ESCAPE_M), _largura * 0.5 + ESCAPE_M, -0.03, _mat(k.get("escape", "escape"), 16.0))
@@ -112,6 +131,116 @@ func _caixa() -> Rect2:
 		r = r.expand(_pista.posicao_em(s))
 		s += 10.0
 	return r.grow(MARGEM_M)
+
+
+## Campo de distância ao eixo (chanfro 3x3, duas passadas) na grade da máscara.
+func _campo_distancia(caixa: Rect2) -> void:
+	_campo_m = maxf(4.0, maxf(caixa.size.x, caixa.size.y) / 300.0)
+	_campo_origem = caixa.position
+	_campo_tam = Vector2i(ceili(caixa.size.x / _campo_m) + 1, ceili(caixa.size.y / _campo_m) + 1)
+	var w := _campo_tam.x
+	var h := _campo_tam.y
+	_campo.resize(w * h)
+	_campo.fill(1e9)
+	var s := 0.0
+	while s < _pista.comprimento:
+		var p := _pista.posicao_em(s)
+		var c := Vector2i(((p - _campo_origem) / _campo_m).round())
+		if c.x >= 0 and c.y >= 0 and c.x < w and c.y < h:
+			var centro := _campo_origem + Vector2(c) * _campo_m
+			_campo[c.y * w + c.x] = minf(_campo[c.y * w + c.x], centro.distance_to(p))
+		s += _campo_m * 0.5
+	var r := _campo_m
+	var dg := _campo_m * 1.41421
+	for y in h:
+		for x in w:
+			var i := y * w + x
+			var v := _campo[i]
+			if x > 0:
+				v = minf(v, _campo[i - 1] + r)
+			if y > 0:
+				v = minf(v, _campo[i - w] + r)
+				if x > 0:
+					v = minf(v, _campo[i - w - 1] + dg)
+				if x < w - 1:
+					v = minf(v, _campo[i - w + 1] + dg)
+			_campo[i] = v
+	for y in range(h - 1, -1, -1):
+		for x in range(w - 1, -1, -1):
+			var i := y * w + x
+			var v := _campo[i]
+			if x < w - 1:
+				v = minf(v, _campo[i + 1] + r)
+			if y < h - 1:
+				v = minf(v, _campo[i + w] + r)
+				if x < w - 1:
+					v = minf(v, _campo[i + w + 1] + dg)
+				if x > 0:
+					v = minf(v, _campo[i + w - 1] + dg)
+			_campo[i] = v
+
+
+## Distância ao eixo pelo campo (bilinear); longe da caixa, grande.
+func _dist_campo(p: Vector2) -> float:
+	var f := (p - _campo_origem) / _campo_m
+	var x0 := floori(f.x)
+	var y0 := floori(f.y)
+	if x0 < 0 or y0 < 0 or x0 >= _campo_tam.x - 1 or y0 >= _campo_tam.y - 1:
+		return 1e9
+	var tx := f.x - x0
+	var ty := f.y - y0
+	var w := _campo_tam.x
+	var a := lerpf(_campo[y0 * w + x0], _campo[y0 * w + x0 + 1], tx)
+	var b := lerpf(_campo[(y0 + 1) * w + x0], _campo[(y0 + 1) * w + x0 + 1], tx)
+	return lerpf(a, b, ty)
+
+
+## Chance de floresta densa no ponto (0..1): faixa aberta perto da pista,
+## mata fechada depois dela, com clareiras por ruído. A máscara do chão de
+## floresta e o sorteio das árvores usam a mesma conta.
+func _floresta(p: Vector2, d: float) -> float:
+	var k: Dictionary = _tema["kit"]
+	var aberto: float = k.get("aberto_m", MATA_MIN_M)
+	return smoothstep(aberto, aberto + 50.0, d) * smoothstep(-0.25, 0.15, _clareira.get_noise_2d(p.x, p.y)) \
+			* float(k.get("densidade", 1.0))
+
+
+## Água (cais): do lado dos boxes, além de uma linha paralela à reta de
+## largada, e longe de qualquer trecho do traçado.
+func _agua(p: Vector2, d: float) -> float:
+	var cfg: Dictionary = _tema["kit"].get("agua", {})
+	if cfg.is_empty():
+		return 0.0
+	var lateral := (p - _largada_meio).dot(_largada_fora)
+	var limite := _largura * 0.5 + ESCAPE_M + float(cfg.get("afastamento_m", 80.0))
+	return clampf((lateral - limite) / _campo_m + 0.5, 0.0, 1.0) * clampf((d - limite * 0.7) / _campo_m + 0.5, 0.0, 1.0)
+
+
+func _mascara_chao(k: Dictionary) -> void:
+	_mascara = null
+	var usar_mata: bool = k.has("chao_mata") and not k.get("alinhado", false)
+	if not usar_mata and not k.has("agua"):
+		return
+	_mascara = Image.create(_campo_tam.x, _campo_tam.y, false, Image.FORMAT_RGBA8)
+	for y in _campo_tam.y:
+		for x in _campo_tam.x:
+			var p := _campo_origem + Vector2(x, y) * _campo_m
+			var d := _campo[y * _campo_tam.x + x]
+			var agua := _agua(p, d)
+			# Chão de floresta um pouco além da borda das árvores.
+			var mata := _floresta(p, d + 12.0) if usar_mata else 0.0
+			_mascara.set_pixel(x, y, Color(agua, mata * (1.0 - agua), 0.0, 1.0))
+
+
+func _lado_da_largada() -> void:
+	var i0 := _pista.indice_em(0.5)
+	var reta: Dictionary = _pista.trechos[i0]
+	var comp := float(reta["comprimento_m"]) if float(reta.get("raio_m", 0.0)) <= 0.0 else 120.0
+	var s_meio: float = _pista.inicios[i0] + comp * 0.5
+	var normal := Vector2.from_angle(_pista.rumo_em(s_meio) + PI / 2.0)
+	_largada_meio = _pista.posicao_em(s_meio)
+	var dentro := 1.0 if (_caixa().get_center() - _largada_meio).dot(normal) > 0.0 else -1.0
+	_largada_fora = -normal * dentro
 
 
 ## Ponto deslocado do eixo: lateral > 0 à esquerda do sentido da pista.
@@ -174,7 +303,15 @@ func _chao(caixa: Rect2, k: Dictionary) -> void:
 	var plano := PlaneMesh.new()
 	plano.size = caixa.size + Vector2(6000, 6000)
 	mi.mesh = plano
-	mi.material_override = _mat(k.get("chao_a", "grama_a"), 16.0, false, k.get("chao_b", "grama_b"))
+	var m := _mat(k.get("chao_a", "grama_a"), 16.0, false, k.get("chao_b", "grama_b"))
+	if _mascara != null:
+		m.set_shader_parameter("usar_mascara", 1.0)
+		m.set_shader_parameter("mascara", ImageTexture.create_from_image(_mascara))
+		m.set_shader_parameter("mascara_origem", _campo_origem - Vector2.ONE * _campo_m * 0.5)
+		m.set_shader_parameter("mascara_tam", Vector2(_campo_tam) * _campo_m)
+		m.set_shader_parameter("textura_mata", kit(k.get("chao_mata", k.get("chao_b", "grama_b"))))
+		m.set_shader_parameter("textura_agua", kit("agua"))
+	mi.material_override = m
 	var c := caixa.get_center()
 	mi.position = Vector3(c.x, -0.06, -c.y)
 	_cena.add_child(mi)
@@ -430,6 +567,7 @@ func _mat_sprite(t: Texture2D, sombra: bool) -> StandardMaterial3D:
 		m.albedo_color = Color(0, 0, 0, float(_tema.get("sombra_alfa", 0.45)))
 	else:
 		m.albedo_color = Color(_tema.get("tinta", Color.WHITE))
+		m.vertex_color_use_as_albedo = true  # cor por instância da mata (fundo escuro)
 		m.render_priority = 1
 	_mats_sprite[chave] = m
 	return m
@@ -461,10 +599,9 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 	if nomes.is_empty():
 		return
 	var densidade: float = k.get("densidade", 1.0)
-	var clareira := FastNoiseLite.new()
-	clareira.seed = hash(_pista.id)
-	clareira.frequency = 0.008
+	var aberto: float = k.get("aberto_m", MATA_MIN_M)
 	var por_nome := {}
+	var cores := {}  # nome -> [Color]: copas mais escuras no fundo da mata
 	# Alinhado (pátio de contêineres): fileiras na direção da reta de largada,
 	# girados só de 0° ou 180°, sem sorteio de posição dentro da célula.
 	var alinhado: bool = k.get("alinhado", false)
@@ -481,15 +618,16 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 			if alinhado:
 				p = Vector2(x, y).rotated(rumo0)
 			x += passo
-			var d := _distancia(p)
-			if d < MATA_MIN_M or _reservado(p):
+			var d := _dist_campo(p)
+			if d < MATA_MIN_M or _reservado(p) or _agua(p, d) > 0.0:
 				continue
-			var chance := smoothstep(MATA_MIN_M, MATA_MIN_M + 60.0, d) * densidade
+			var chance: float
 			if alinhado:
 				# Pátios: zonas cheias de blocos, separadas por áreas vazias.
-				chance = 1.0 if clareira.get_noise_2d(p.x * 0.6, p.y * 0.6) > 0.05 and d > MATA_MIN_M + 10.0 else 0.0
+				chance = 1.0 if _clareira.get_noise_2d(p.x * 0.6, p.y * 0.6) > 0.05 and d > MATA_MIN_M + 10.0 else 0.0
 			else:
-				chance *= smoothstep(-0.25, 0.15, clareira.get_noise_2d(p.x, p.y))
+				# Mata fechada depois da faixa aberta; nela, só árvores isoladas.
+				chance = maxf(_floresta(p, d), ARVORE_ISOLADA * densidade if d < aberto else 0.0)
 			if _rng.randf() > chance:
 				continue
 			if alinhado:
@@ -500,6 +638,8 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 			if kit(nome) == null:
 				continue
 			var escala := _rng.randf_range(0.85, 1.25)
+			var fundo := smoothstep(aberto + 30.0, aberto + 180.0, d)
+			cores.get_or_add(nome, []).append(Color.WHITE.darkened(fundo * FUNDO_ESCURO + _rng.randf() * 0.08))
 			por_nome.get_or_add(nome, []).append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * escala), _v3(p, 0.3)))
 		y += passo
 	for nome in por_nome:
@@ -511,6 +651,7 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 		for sombra in [true, false]:
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.use_colors = not sombra and cores.has(nome)
 			mm.mesh = _quad_sombra(t, d_sombra.length()) if sombra else q
 			var lista: Array = por_nome[nome]
 			mm.instance_count = lista.size()
@@ -519,6 +660,8 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 				if sombra:
 					tr.origin.y = 0.1
 				mm.set_instance_transform(i, tr)
+				if mm.use_colors:
+					mm.set_instance_color(i, cores[nome][i])
 			var mmi := MultiMeshInstance3D.new()
 			mmi.multimesh = mm
 			mmi.material_override = _mat_sombra(t, d_sombra, q.size) if sombra else _mat_sprite(t, false)

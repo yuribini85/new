@@ -58,16 +58,17 @@ const TEMAS := {
 ## chão, árvores, luz (tinta), direção e força das sombras, bordas da tela.
 ## O Anel segue a referência de estilo: autódromo na mata ao entardecer.
 const KITS := {
-	"anel_do_vale": {"kit": {"chao_a": "grama_a", "chao_b": "grama_b", "arvores": ["arvore_1", "arvore_2",
+	"anel_do_vale": {"kit": {"chao_a": "grama_a", "chao_b": "grama_b", "chao_mata": "mata", "aberto_m": 70.0, "arvores": ["arvore_1", "arvore_2",
 			"arvore_3", "arvore_4", "arvore_5", "arvore_6"], "densidade": 1.0, "postes": true},
 		"tinta": Color(0.8, 0.68, 0.58), "sombra_dir": Vector2(1.6, -0.9), "sombra_alfa": 0.5,
 		"vinheta": 0.45, "fundo": Color(0.07, 0.09, 0.08)},
-	"serra_alta": {"kit": {"chao_a": "grama_b", "chao_b": "mata", "arvores": ["pinheiro_1", "pinheiro_2",
+	"serra_alta": {"kit": {"chao_a": "grama_b", "chao_b": "grama_a", "chao_mata": "mata", "aberto_m": 45.0, "arvores": ["pinheiro_1", "pinheiro_2",
 			"pinheiro_3"], "raras": ["rocha_1", "rocha_2"], "chance_rara": 0.06, "densidade": 0.9, "postes": false},
 		"tinta": Color(0.92, 0.97, 1.05), "sombra_dir": Vector2(0.6, -0.5), "sombra_alfa": 0.4,
 		"vinheta": 0.3, "fundo": Color(0.08, 0.1, 0.1)},
 	"parque_das_docas": {"kit": {"chao_a": "concreto", "chao_b": "concreto", "escape": "concreto", "areia": "brita",
-			"arvores": ["conteiner_1", "conteiner_2", "conteiner_3"], "densidade": 0.7, "postes": true, "alinhado": true, "altura_mata_m": 1.5},
+			"arvores": ["conteiner_1", "conteiner_2", "conteiner_3"], "densidade": 0.7, "postes": true, "alinhado": true, "altura_mata_m": 1.5,
+			"agua": {"afastamento_m": 70.0}},
 		"tinta": Color(1.0, 0.82, 0.7), "sombra_dir": Vector2(1.8, -1.0), "sombra_alfa": 0.5,
 		"vinheta": 0.45, "fundo": Color(0.1, 0.1, 0.11)},
 	"pista_de_testes": {"kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",

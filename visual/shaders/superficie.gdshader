@@ -16,6 +16,13 @@ uniform float escala_manchas = 90.0;
 uniform int modo_uv = 0;
 uniform vec4 tinta : source_color = vec4(1.0);
 uniform float borda_irregular = 0.0;
+// Máscara do chão (montador): R = água (cais), G = chão de floresta.
+uniform float usar_mascara = 0.0;
+uniform sampler2D mascara : filter_linear, repeat_disable;
+uniform vec2 mascara_origem = vec2(0.0);
+uniform vec2 mascara_tam = vec2(1.0);
+uniform sampler2D textura_mata : source_color, filter_linear_mipmap, repeat_enable;
+uniform sampler2D textura_agua : source_color, filter_linear_mipmap, repeat_enable;
 
 varying vec2 mundo;
 
@@ -29,6 +36,15 @@ void fragment() {
 	if (usar_b > 0.0) {
 		float m = texture(ruido, mundo / escala_manchas).r;
 		c = mix(c, texture(textura_b, uv * 0.73 + 0.31).rgb, smoothstep(0.42, 0.62, m) * usar_b);
+	}
+	if (usar_mascara > 0.0) {
+		vec4 m = texture(mascara, (vec2(mundo.x, -mundo.y) - mascara_origem) / mascara_tam);
+		c = mix(c, texture(textura_mata, uv * 0.9 + 0.17).rgb, m.g * 0.9);
+		float agua = smoothstep(0.45, 0.55, m.r);
+		// Borda do cais: faixa escura do lado de terra.
+		float cais = smoothstep(0.08, 0.3, m.r) * (1.0 - agua);
+		c = mix(c, c * 0.4, cais);
+		c = mix(c, texture(textura_agua, mundo / (metros * 2.0)).rgb, agua);
 	}
 	ALBEDO = c * tinta.rgb;
 	float a = COLOR.a;

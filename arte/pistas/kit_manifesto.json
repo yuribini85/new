@@ -228,7 +228,7 @@
    16.0,
    16.0
   ],
-  "descricao": "mown grass, mid green, soft painterly variation"
+  "descricao": "mown grass, mid green, soft painterly variation with organic random patches; NO directional pattern, NO stripes, NO diagonal or repeating motifs; must not look tiled when repeated many times"
  },
  {
   "nome": "grama_b",
@@ -239,7 +239,7 @@
    16.0,
    16.0
   ],
-  "descricao": "grass, darker and rougher than grama_a, to blend in patches"
+  "descricao": "rougher grass, clearly DARKER and slightly cooler green than grama_a (same palette, never yellow), organic random patches; NO directional pattern, NO stripes, NO diagonal or repeating motifs; blended in large patches with grama_a"
  },
  {
   "nome": "mata",
@@ -305,7 +305,7 @@
    4.0,
    4.0
   ],
-  "descricao": "flood light pole seen from above: small dark base with a soft warm glow halo"
+  "descricao": "flood light pole seen from directly above: a small dark round base (about 0.6 m) in the centre with a soft warm yellow-white glow halo fading radially to fully transparent at the edges; no arms, no cross shape, no fixtures"
  },
  {
   "nome": "rocha_1",

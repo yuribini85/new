@@ -9,7 +9,8 @@ Lê arte/pistas/kit_manifesto.json e escreve build/pedido_arte_pistas.zip com:
   kit_manifesto.json     a lista oficial (nome, tipo, tamanho, metros)
   referencia_estilo.png  docs/referencias/pista_estilo.png
   provisorios/*.png      o kit provisório: orientação e proporção de cada arquivo
-Uso: python3 tools/pacote_arte_pistas.py [--saida=caminho.zip]
+Uso: python3 tools/pacote_arte_pistas.py [--saida=caminho.zip] [--so=nome1,nome2]
+  --so: só esses arquivos (pedido de refação).
 """
 import json
 import sys
@@ -125,6 +126,12 @@ O que observar antes de mandar:
 Total: {n} arquivos ({t} texturas, {f} faixa, {s} objetos).
 """
 
+REFACAO = """REFAÇÃO: este pacote pede só os arquivos abaixo, para substituir os atuais (pasta
+atuais/ mostra a versão que precisa mudar). Mesmas regras do kit; mesma paleta e pincel
+dos arquivos já aprovados.
+
+"""
+
 ORDEM = {"textura": 0, "faixa": 1, "sprite": 2}
 GRUPO = [("arvore", 0), ("pinheiro", 0), ("rocha", 0), ("poste", 2)]
 
@@ -139,10 +146,18 @@ def chave(item):
 
 def main():
     saida = RAIZ / "build/pedido_arte_pistas.zip"
+    so = set()
     for a in sys.argv[1:]:
         if a.startswith("--saida="):
             saida = Path(a.split("=", 1)[1]).resolve()
+        elif a.startswith("--so="):
+            so = set(a.split("=", 1)[1].split(","))
     itens = sorted(json.loads(MANIFESTO.read_text(encoding="utf-8")), key=chave)
+    if so:
+        faltam = so - {i["nome"] for i in itens}
+        if faltam:
+            sys.exit("fora do manifesto: %s" % ", ".join(sorted(faltam)))
+        itens = [i for i in itens if i["nome"] in so]
     pedidos = [pedido(i) for i in itens]
     md = ["# Pedidos — kit de arte das pistas (Second Drive)", "",
           "Order: textures, kerb strip, trees and rocks, then buildings and props.", ""]
@@ -151,7 +166,10 @@ def main():
     cont = {t: sum(1 for i in itens if i["tipo"] == t) for t in ORDEM}
     saida.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(saida, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("LEIA-ME.txt", LEIA_ME.format(n=len(itens), t=cont["textura"], f=cont["faixa"], s=cont["sprite"]))
+        leia = LEIA_ME.format(n=len(itens), t=cont["textura"], f=cont["faixa"], s=cont["sprite"])
+        if so:
+            leia = REFACAO + leia
+        z.writestr("LEIA-ME.txt", leia)
         z.writestr("INSTRUCOES_AGENTE.txt", INSTRUCOES_AGENTE)
         z.writestr("PEDIDOS.md", "\n".join(md))
         z.writestr("pedidos.json", json.dumps(pedidos, indent=1, ensure_ascii=False))
@@ -160,7 +178,7 @@ def main():
         for i in itens:
             png = PROVISORIOS / (i["nome"] + ".png")
             if png.exists():
-                z.write(png, "provisorios/" + png.name)
+                z.write(png, ("atuais/" if so else "provisorios/") + png.name)
     print("%s: %d pedidos" % (saida, len(pedidos)))
 
 
