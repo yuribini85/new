@@ -32,6 +32,11 @@ const FOLGA_CUSTO_BRONZE := 1.5
 const FOLGA_CUSTO_PRATA := 1.2
 ## Folga mínima da solução de "Dois circuitos" (s): a prata precisa ter sentido.
 const FOLGA_MINIMA_DUPLA := 0.2
+## Prata de "Dois circuitos" por folga fixa (s), perceptível ao jogador: só entram
+## pares de rivais cuja solução alcança essa folga. PENDENTE do playtest de
+## clareza (a partir de que diferença o jogador percebe a vantagem); enquanto
+## for < 0, a prata é metade da folga da solução, como antes.
+const FOLGA_PRATA_DUPLA_S := -1.0
 
 var _feito := false
 var _dados: Node
@@ -167,7 +172,7 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 					if not especializa:
 						continue
 					var junto := _guloso_duplo(c, alvo)
-					if junto["deficit"] > -FOLGA_MINIMA_DUPLA:
+					if junto["deficit"] > -maxf(FOLGA_MINIMA_DUPLA, FOLGA_PRATA_DUPLA_S):
 						continue
 					var enxuta := _enxugar_duplo(c, alvo, junto)
 					return {
@@ -181,7 +186,7 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 						],
 						"condicoes": {
 							"bronze": {"vencer": true},
-							"prata": {"folga_s": _meia_folga(-junto["deficit"])},
+							"prata": {"folga_s": FOLGA_PRATA_DUPLA_S if FOLGA_PRATA_DUPLA_S > 0.0 else _meia_folga(-junto["deficit"])},
 							"ouro": {"pecas_max": enxuta["pecas"].size()},
 						},
 						"_referencia": {"junto": junto, "enxuta": enxuta},

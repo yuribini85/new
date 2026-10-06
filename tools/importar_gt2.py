@@ -50,7 +50,8 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
                ÷ 2 + largura × perfil. Interpretação a confirmar: largura em cm
                (×10 mm) e perfil em passos de 5% (×5), o que dá 150–220 mm e
                45–65%, faixas de pneus de rua.
-  forma do motor  NATune: PowerbandRPMIncrease e RPMIncrease (×100 rpm) deslocam
+  forma do motor  EngineBalance: RPMIncrease (×100 rpm) sobe o corte.
+               NATune: PowerbandRPMIncrease e RPMIncrease (×100 rpm) deslocam
                a curva e o corte; TurbineKit: o torque vai de LowRPMPowerMultiplier%
                (giro baixo) a 100% + HighRPMPowerMultiplier% (giro alto). A
                potência final continua a da conta acima; a forma muda onde ela está.
@@ -277,6 +278,9 @@ def main() -> int:
                     forma = {"turbo_baixa": n(p["LowRPMPowerMultiplier"]) / 100.0,
                              "turbo_alta": 1.0 + n(p["HighRPMPowerMultiplier"]) / 100.0,
                              "corte": int(n(p["RedlineIncrease"])) * 100}
+                elif int(n(p.get("RPMIncrease", 0))) > 0:
+                    # Balanceamento do motor: sobe o corte (mesma unidade da NATune).
+                    forma = {"corte": int(n(p["RPMIncrease"])) * 100}
                 pecas.append({
                     "id": f"{id_nosso}_{cat.lower()}_{estagio}",
                     "nome": f"{NOMES_CATEGORIA[cat]} {estagio}",

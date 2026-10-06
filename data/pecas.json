@@ -29,7 +29,10 @@
     "op": "soma",
     "valor": 2.4
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_kobo_computer_1",
@@ -245,7 +248,10 @@
     "op": "soma",
     "valor": 4.8
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_pika_displacement_1",
@@ -517,7 +523,10 @@
     "op": "soma",
     "valor": 4.8
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_tsubame_computer_1",
@@ -731,7 +740,10 @@
     "op": "soma",
     "valor": 3.6
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_kaze_computer_1",
@@ -1007,7 +1019,10 @@
     "op": "soma",
     "valor": 3.9
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_rin_computer_1",
@@ -1263,7 +1278,10 @@
     "op": "soma",
     "valor": 4.1
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_soryu_computer_1",
@@ -1532,7 +1550,10 @@
     "op": "soma",
     "valor": 4.1
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_raikou_computer_1",
@@ -1801,7 +1822,10 @@
     "op": "soma",
     "valor": 5.1
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_shiden_computer_1",
@@ -2070,7 +2094,10 @@
     "op": "soma",
     "valor": 5.4
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_tenrai_computer_1",
@@ -2339,7 +2366,10 @@
     "op": "soma",
     "valor": 5.7
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_kumo_computer_1",
@@ -2608,7 +2638,10 @@
     "op": "soma",
     "valor": 6.0
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hayase_ryujin_displacement_1",
@@ -2914,7 +2947,10 @@
     "op": "soma",
     "valor": 3.8
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hartwig_lauf_computer_1",
@@ -3211,7 +3247,10 @@
     "op": "soma",
     "valor": 5.8
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hartwig_strecke_computer_1",
@@ -3445,7 +3484,10 @@
     "op": "soma",
     "valor": 4.1
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "hartwig_gleiter_computer_1",
@@ -3682,7 +3724,10 @@
     "op": "soma",
     "valor": 1.9
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "ashcombe_wren_displacement_1",
@@ -3914,7 +3959,10 @@
     "op": "soma",
     "valor": 3.6
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "ashcombe_kestrel_computer_1",
@@ -4170,7 +4218,10 @@
     "op": "soma",
     "valor": 10.4
    }
-  ]
+  ],
+  "motor": {
+   "corte": 100
+  }
  },
  {
   "id": "ashcombe_brute_computer_1",

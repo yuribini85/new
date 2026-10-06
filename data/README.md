@@ -204,4 +204,5 @@ B (GT2). Critérios **provisórios** (confirmar em playtest), no topo da ferrame
 | `RAZAO_GIGANTE` | 1,3 | potência mínima do "gigante" em relação ao carro da escola |
 | `FOLGA_CUSTO_BRONZE` / `_PRATA` | 1,5 / 1,2 | teto de custo do bronze e da prata sobre o menor custo achado |
 | `FOLGA_MINIMA_DUPLA` | 0,2 s | folga mínima da solução de "Dois circuitos" |
+| `FOLGA_PRATA_DUPLA_S` | **pendente** (playtest de clareza) | prata de "Dois circuitos" por folga fixa; enquanto pendente, metade da folga da solução |
 | prata por folga | metade da maior folga achada | "O pequeno contra o gigante" e "Dois circuitos" |

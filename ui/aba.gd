@@ -549,6 +549,12 @@ func testar_preparacao(evento_id: String, carro: Carro) -> void:
 					medias.append(a["media"])
 					rotulo("%s · %s: %s (média %.1fº) · %d cv · %d kg" % ["AB"[k], op[0], Mecanico.texto_faixa(a["faixa"]),
 							a["media"], at["potencia"], at["peso"]], FONTE_PEQUENA + 2, Color.WHITE, resultado)
+			var cond: String = dados.evento(evento_id)["condicao"]
+			var aa := carro.com_configuracao(opcoes[escolhas[0]][1], dados.peca).atributos_efetivos(cond)
+			var ab := carro.com_configuracao(opcoes[escolhas[1]][1], dados.peca).atributos_efetivos(cond)
+			if GraficoMotor.tem_curva(aa):
+				resultado.add_child(GraficoMotor.new([{"rotulo": "A", "cor": COR_SECUNDARIA, "attrs": aa},
+						{"rotulo": "B", "cor": COR_DESTAQUE, "attrs": ab}], 170.0))
 			var melhor := -1
 			if absf(medias[0] - medias[1]) >= Mecanico.GANHO_MINIMO:
 				melhor = 0 if medias[0] < medias[1] else 1

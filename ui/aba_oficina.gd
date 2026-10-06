@@ -253,7 +253,7 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	esq.add_child(nome)
 	var g := Label.new()
 	g.text = "em uso" if instalada else ("curto · equilibrado · longo" if p["categoria"] == "cambio"
-			else _ganho(antes, depois))
+			else _ganho(antes, depois) + _forma_curta(antes, depois))
 	g.add_theme_font_size_override("font_size", FONTE_PEQUENA)
 	g.add_theme_color_override("font_color", COR_BOM)
 	esq.add_child(g)
@@ -273,6 +273,20 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 		b.add_theme_stylebox_override("normal", sb)
 	b.pressed.connect(_decidir.bind(c, p, antes, depois, perde, instalada, possuida))
 	pai.add_child(b)
+
+
+## " · giro alto", " · corte +500" etc.: a identidade da peça de motor na lista.
+static func _forma_curta(antes: Dictionary, depois: Dictionary) -> String:
+	var f := GraficoMotor.forma_do_ganho(antes, depois)
+	var partes := []
+	if f.contains("giro alto"):
+		partes.append("giro alto")
+	elif f.contains("giro baixo"):
+		partes.append("giro baixo")
+	var dc := float(depois.get("corte", 0.0)) - float(antes.get("corte", 0.0))
+	if dc >= 50.0:
+		partes.append("corte +%d" % roundi(dc))
+	return "" if partes.is_empty() else " · " + ", ".join(partes)
 
 
 static func _ganho(antes: Dictionary, depois: Dictionary) -> String:
@@ -303,6 +317,12 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 			mudou.emit()], ["Cancelar", func(): pass]]
 	painel.emit(p["nome"], func(v):
 		rotulo("Na pista: " + FUNCAO[attr] + ".", FONTE_PEQUENA + 3, Color.WHITE, v)
+		# Peça de motor: a forma do ganho na curva de potência (a que a corrida usa).
+		var forma := GraficoMotor.forma_do_ganho(antes, depois)
+		if not instalada and forma != "":
+			rotulo(forma + ".", FONTE_PEQUENA + 2, COR_INFO, v)
+			v.add_child(GraficoMotor.new([{"rotulo": "Agora", "cor": COR_SECUNDARIA, "attrs": antes},
+					{"rotulo": "Com a peça", "cor": COR_DESTAQUE, "attrs": depois}]))
 		if not instalada:
 			var muda := []
 			if absf(depois["potencia"] - antes["potencia"]) >= 0.5:

@@ -45,7 +45,7 @@ dizer "o que você tentaria agora?".
 | 5 | Compra | Comprou o sugerido, outra coisa ou nada? Explicou o motivo? Viu o aviso ⚠? |
 | 6 | Preparações | Salvou uma preparação? Entendeu que a fila guarda a da inscrição? |
 | 7 | Desafio e renda | Entendeu por que só a prova vencida repete? Programou uma fila de renda? |
-| 8 | Contratos | Achou os contratos? Leu o relatório (curvas/retas, o que falta)? Mudou a montagem por causa dele? |
+| 8 | Contratos | Achou os contratos? Leu o relatório (curvas/retas, o que falta)? Mudou a montagem por causa dele? Diante de "à frente por X s", chamou a vitória de clara? Anotar a menor folga que a pessoa trata como vantagem (define a prata de "Dois circuitos"). |
 | 9 | Fim | Em que ponto parou de querer jogar, se parou? |
 
 Sinal de problema: a pessoa compra algo e piora sem entender por quê; não confia nas

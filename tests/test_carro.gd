@@ -42,3 +42,12 @@ func test_pneu_de_chuva_e_usado_automaticamente() -> void:
 	perto(c.atributos_efetivos("chuva")["aderencia"], 0.9, 1e-6, "aderência na chuva")
 	igual(c.atributos_efetivos("seco")["pneu"], "seco", "escolha no seco")
 	d.free()
+
+
+func test_forma_do_ganho_na_curva() -> void:
+	var antes := {"curva_rpm": PackedFloat64Array([1000, 4000, 7000]), "curva_nm": PackedFloat64Array([100, 120, 100]), "corte": 7000.0}
+	var igual_ := {"curva_rpm": antes["curva_rpm"], "curva_nm": PackedFloat64Array([110, 132, 110]), "corte": 7000.0}
+	verificar(GraficoMotor.forma_do_ganho(antes, igual_).contains("por igual"), "10% em todo o giro: por igual")
+	var alto := {"curva_rpm": antes["curva_rpm"], "curva_nm": PackedFloat64Array([100, 130, 140]), "corte": 7500.0}
+	var f := GraficoMotor.forma_do_ganho(antes, alto)
+	verificar(f.contains("giro alto") and f.contains("corte sobe 500"), "turbo: giro alto e corte (%s)" % f)
