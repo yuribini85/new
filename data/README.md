@@ -191,8 +191,9 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
   os 420 que nunca aparecem no usado.
 - 103 eventos de 31 séries sem licença, B, A, IC, IB e IA (`SERIES` em
   `tools/importar_gt2.py`), com voltas, limites, prêmios, adversários (o carro do próprio
-  GT2) e carros-prêmio do disco. Fora: resistência (mais de 10 voltas), rali e terra, as
-  séries de marca e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
+  GT2) e carros-prêmio do disco. Resistência: as 7 provas do GT2 (30 a 99 voltas), prova
+  única, sem pit stop nem desgaste de pneu. Copas de marca: 94 provas (ver `eventos.json`).
+  Fora: rali e terra e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
 - Licenças B, A, IC, IB, IA: restrição = mediana (B) ou mediana e quartis (as outras) dos
   limites dos eventos que abrem; tempos calibrados pela simulação

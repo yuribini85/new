@@ -1606,6 +1606,126 @@
   "carro_premio": null
  },
  {
+  "id": "ev_061",
+  "nome": "Resistência do Vale",
+  "pista": "anel_do_vale",
+  "voltas": 60,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 700,
+   "licenca": "IA"
+  },
+  "adversarios": [
+   {
+    "carro": "aubrac_grive_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "ashcombe_saltire",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "pemberly_teal_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "cutler_kingfisher_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   500000,
+   150000,
+   100000,
+   50000,
+   30000,
+   10000
+  ],
+  "carro_premio": "hayase_kiri_corrida"
+ },
+ {
+  "id": "ev_062",
+  "nome": "Resistência do Vinhedo",
+  "pista": "circuito_misto",
+  "voltas": 90,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "IA"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_benibana_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_kurenai_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_kurogane_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   350000,
+   200000,
+   150000,
+   100000,
+   50000,
+   10000
+  ],
+  "carro_premio": "sanga_tsukikage_corrida_99"
+ },
+ {
   "id": "ev_063",
   "nome": "Copa Continental — etapa 1",
   "pista": "serra_curta",
@@ -1790,6 +1910,291 @@
    500
   ],
   "carro_premio": "hayase_suisei_corrida"
+ },
+ {
+  "id": "ev_066",
+  "nome": "Resistência da Serra Curta",
+  "pista": "serra_curta",
+  "voltas": 50,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "IB"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_usagi_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_fubuki_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   500000,
+   150000,
+   100000,
+   50000,
+   30000,
+   10000
+  ],
+  "carro_premio": "garrison_arroyo_corrida"
+ },
+ {
+  "id": "ev_067",
+  "nome": "Resistência das Docas",
+  "pista": "parque_das_docas",
+  "voltas": 99,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "IA"
+  },
+  "adversarios": [
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.09,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_98",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_99",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   300000,
+   200000,
+   150000,
+   100000,
+   50000,
+   10000
+  ],
+  "carro_premio": "kanaya_yamakaze_corrida"
+ },
+ {
+  "id": "ev_068",
+  "nome": "Resistência Expressa",
+  "pista": "anel_do_vale",
+  "voltas": 50,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "IA"
+  },
+  "adversarios": [
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_98",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_99",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   350000,
+   150000,
+   100000,
+   50000,
+   30000,
+   10000
+  ],
+  "carro_premio": "ashcombe_plover_corrida"
+ },
+ {
+  "id": "ev_069",
+  "nome": "Resistência do Anel",
+  "pista": "anel_do_vale",
+  "voltas": 40,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "IA"
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_ecume_corrida_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "garrison_boxcar",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_dustbowl",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_switchback_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.46,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_ironwood_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.45,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   150000,
+   100000,
+   50000,
+   30000,
+   20000,
+   10000
+  ],
+  "carro_premio": "whitlock_palomino"
+ },
+ {
+  "id": "ev_070",
+  "nome": "Resistência da Serra",
+  "pista": "serra_alta",
+  "voltas": 30,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "IB"
+  },
+  "adversarios": [
+   {
+    "carro": "ottavo_allodola",
+    "piloto": "ia_100",
+    "potencia_mult": 1.57
+   },
+   {
+    "carro": "pemberly_fieldfare_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38
+   },
+   {
+    "carro": "dunmere_ember",
+    "piloto": "ia_100",
+    "potencia_mult": 1.37
+   },
+   {
+    "carro": "vallon_faucon",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36
+   },
+   {
+    "carro": "varenna_falco",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31
+   }
+  ],
+  "premios": [
+   150000,
+   100000,
+   50000,
+   30000,
+   20000,
+   10000
+  ],
+  "carro_premio": "kanaya_kawasemi_corrida"
  },
  {
   "id": "ev_071",

@@ -814,7 +814,7 @@ func testar_preparacao(evento_id: String, carro: Carro) -> void:
 	painel.emit("Comparar montagens", func(v):
 		nota("icone_comparar", "%s · %s" % [nome_curto(carro.base["nome"]), dados.evento(evento_id)["nome"]],
 				"", v)
-		rotulo("Só compara: sem prêmio, %d corridas cada." % Mecanico.AMOSTRAS, FONTE_PEQUENA, COR_SECUNDARIA, v)
+		rotulo("Só compara: sem prêmio, %d corridas cada." % Mecanico.amostras_para(dados.evento(evento_id)), FONTE_PEQUENA, COR_SECUNDARIA, v)
 		var resultado := VBoxContainer.new()
 		for k in 2:
 			var h := fileira(v)

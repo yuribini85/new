@@ -292,7 +292,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			rotulo("Prevendo…", FONTE_PEQUENA, COR_INFO, col)
 		else:
 			nota("icone_prever", "Previsão: %s" % Mecanico.texto_faixa(est), "%d corridas simuladas com a montagem atual."
-					% Mecanico.AMOSTRAS, col, COR_INFO)
+					% Mecanico.amostras_para(ev), col, COR_INFO)
 		var rotulo_correr := "Correr"
 		if vitorias > 0:
 			rotulo_correr = "Correr de novo" if _repeticoes == 1 else "Correr de novo ×%d" % _repeticoes

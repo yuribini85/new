@@ -436,7 +436,7 @@ func _o_que_ajuda(u: Dictionary, seu: Carro) -> void:
 	var va := cartao(COR_INFO, _painel)
 	titulo_secao("O QUE MELHORA MEU RESULTADO?", "Simula esta corrida várias vezes com cada peça ou pneu que cabe no "
 			+ "seu saldo e mostra em que posição você tende a chegar. É uma previsão, não uma promessa. "
-			+ "%d corridas simuladas por opção." % Mecanico.AMOSTRAS, va, COR_INFO)
+			+ "%d corridas simuladas por opção." % Mecanico.amostras_para(dados.evento(u["evento_id"])), va, COR_INFO)
 	if _analisando:
 		rotulo("Analisando…", 0, COR_INFO, va)
 		return

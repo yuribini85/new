@@ -12,6 +12,19 @@ extends RefCounted
 const SEMENTE_BASE := 900000
 ## Corridas simuladas por opção. Escolhido com tools/validar_previsao.gd.
 const AMOSTRAS := 8
+## Provas longas (resistência) usam menos corridas: o total de voltas simuladas
+## fica perto de AMOSTRAS × VOLTAS_REFERENCIA, com no mínimo AMOSTRAS_MIN. Medido
+## nas 7 resistências (30 a 99 voltas): a posição quase não varia entre sementes
+## (12 sementes, 21 casos: 15 sempre iguais, os outros com uma posição diferente
+## em até 3 sementes), e 99 voltas custam ~1,2 s por corrida.
+const VOLTAS_REFERENCIA := 10
+const AMOSTRAS_MIN := 2
+
+
+## Corridas por opção para a prova: AMOSTRAS nas curtas, menos nas longas.
+static func amostras_para(ev: Dictionary) -> int:
+	var voltas := maxi(int(ev.get("voltas", 1)), 1)
+	return clampi(ceili(float(AMOSTRAS * VOLTAS_REFERENCIA) / voltas), AMOSTRAS_MIN, AMOSTRAS)
 ## Diferença mínima de posição média para contar como melhora.
 const GANHO_MINIMO := 0.25
 
@@ -79,8 +92,10 @@ static func candidatas(dados: Node, jogador: Node, carro: Carro) -> Array:
 ## Posições do carro em `amostras` corridas simuladas: {media, faixa, posicoes};
 ## {} se ele não pode correr o evento. A faixa descarta o melhor e o pior
 ## resultado (a partir de 5 amostras), para não prometer o caso de sorte.
-static func avaliar(carreira: Carreira, evento_id: String, uid: int, carro: Carro, amostras: int = AMOSTRAS,
+static func avaliar(carreira: Carreira, evento_id: String, uid: int, carro: Carro, amostras: int = -1,
 		semente_base: int = SEMENTE_BASE) -> Dictionary:
+	if amostras < 0:
+		amostras = amostras_para(carreira.dados.evento(evento_id))
 	var posicoes := []
 	for k in amostras:
 		var r := carreira.preparar(evento_id, uid, semente_base + k, false, carro)

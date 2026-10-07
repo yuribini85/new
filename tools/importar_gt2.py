@@ -116,9 +116,10 @@ PISTAS = {
 PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, shortway, short, sprint2
 
 # Séries do GT2 que entram no jogo (prefixo do código do evento -> nosso nome).
-# Fora: marca única (pista "none"), rali, resistência (mais de MAX_VOLTAS voltas),
-# testes de licença e a licença S (os eventos dela não têm pista no disco). O
-# resto do evento vem do disco.
+# Fora: rali, testes de licença e a licença S (os eventos dela não têm pista no
+# disco). As copas de marca entram à parte (Regulations). O resto do evento vem
+# do disco. Resistência (RESISTENCIA): prova única, com as voltas do GT2, sem
+# pit stop nem desgaste de pneu (o jogo não tem esses sistemas).
 SERIES = {
     "SND": "Copa de Domingo", "CBM": "Copa Clube", "WLK": "Copa Peso-Leve",
     "GJL": "Liga Regional I", "GUL": "Liga Regional II", "GBL": "Liga Regional III",
@@ -129,14 +130,20 @@ SERIES = {
     "STT": "Série 500", "EPL": "Copa Continental", "GT3": "Campeonato GT Leve", "GTC": "Campeonato GT Clube",
     "GT5": "Campeonato GT Pesado", "GTA": "Mundial de Estrelas", "GTW": "Liga Mundial GT", "TCN": "Copa Turismo",
     "TCT": "Copa Preparados",
+    # Resistência (nome pela nossa pista: highway, seattle e circuit viram o Anel do Vale).
+    "EGV": "Resistência do Vale", "ELS": "Resistência do Vinhedo", "EPS": "Resistência da Serra Curta",
+    "ERM": "Resistência das Docas", "ES5": "Resistência Expressa", "EST": "Resistência do Anel",
+    "ETM": "Resistência da Serra",
 }
+RESISTENCIA = {"EGV", "ELS", "EPS", "ERM", "ES5", "EST", "ETM"}
 LICENCAS = ["B", "A", "IC", "IB", "IA"]
 # Enquanto uma pista nova não está em data/pistas.json, os eventos dela vão para
 # a pista do mesmo grupo que já existe.
 PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "docas_curta": "parque_das_docas",
                     "circuito_misto": "parque_das_docas"}
 PISTAS_EXISTENTES: set[str] = set()
-MAX_VOLTAS = 10
+# Acima disso são os testes de licença do disco (255 voltas), que não entram.
+MAX_VOLTAS = 99
 # Copas de marca: CarRestrictionFlags do GT2.
 SO_RUA, SO_CORRIDA = 256, 512
 CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
@@ -568,7 +575,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         etapas[serie] = etapas.get(serie, 0) + 1
         largada = int(n(b.get("RollingStartSpeed")))
         eventos.append({
-            "id": f"ev_{k:03d}", "nome": serie if lista_marca else f"{serie} — etapa {etapas[serie]}", "pista": pista,
+            "id": f"ev_{k:03d}", "nome": serie if lista_marca or r["evento"][:3] in RESISTENCIA else f"{serie} — etapa {etapas[serie]}", "pista": pista,
             "voltas": int(n(r["voltas"])) or 2, **({"largada_kmh": largada} if largada > 0 else {}),
             "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [int(v) * 100 for v in r["premios_x100"].split() if int(v) > 0],
