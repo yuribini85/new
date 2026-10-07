@@ -20,7 +20,11 @@ Decisão 31 (`docs/plano_mvp.md`): cada modelo tem **dois sprites**, e nada mais
   da corrida. O carro aponta para baixo e à esquerda. Tela de 1120×800 px, carro centrado.
 - **Top-down:** frente para o alto da imagem, eixo do carro na vertical. Tela do
   tamanho do carro mais uma margem pequena.
-- **Cor:** uma por modelo (não há pintura livre no jogo).
+- **Cor:** carroceria **branca**; o jogo pinta por programação (`visual/shaders/pintura.gdshader`,
+  aprovado na Oficina de Pintura com tolerância 70%). Nada branco ou cinza-claro fora da
+  carroceria: lente do farol cinza-clara, placa cinza, interior cinza-escuro, frisos e
+  aerofólios de corrida pretos, sem faixas nem duas cores. Como no GT2, cada modelo tem
+  algumas cores de fábrica e a escolha é na compra (sem pintura livre depois).
 - **Nada reconhecível:** sem marcas, logotipos ou desenho de carro real.
 - **Estilo:** `docs/referencias/carro_estilo.webp` (low-poly facetado, sombreamento chapado,
   grão de pintura leve, cores sóbrias). A referência é de estilo, não de forma.
@@ -36,6 +40,17 @@ Decisão 31 (`docs/plano_mvp.md`): cada modelo tem **dois sprites**, e nada mais
 3. `godot --headless --path . --script res://tools/importar_carros.gd -- --origem=/pasta`
    recorta, encaixa na escala e na posição do provisório e avisa proporção estranha;
    `--destino=` confere sem tocar nos arquivos do jogo.
+4. `godot --headless --path . --script res://tools/medir_pintura.gd` grava
+   `arte/carros/pintura.json`: quais sprites têm carroceria branca e a faixa de brilho da
+   pintura de cada um (o shader usa). Sprite fora do arquivo aparece com a cor que veio.
+
+## Pintura
+
+`Pintura.textura(id, vista, cor)` (`visual/pintura.gd`) pinta o sprite branco uma vez por
+modelo, vista e cor, num SubViewport, e guarda a textura (com mipmaps). Pintura = pixel
+quase sem cor e claro (e a borda antisserrilhada cercada de pintura); cada um vira um tom
+da cor (sombra, meio-tom, luz) pela posição do brilho dele na faixa da pintura do sprite.
+Cores escuras: menos grão, mais contraste entre facetas e reflexo levemente frio.
 
 ## Provisórios
 

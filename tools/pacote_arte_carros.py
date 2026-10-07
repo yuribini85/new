@@ -6,7 +6,7 @@ Lê arte/carros/manifesto.json e escreve build/pedido_arte_carros.zip com:
   INSTRUCOES_AGENTE.txt   mensagem inicial para o agente, em inglês
   PEDIDOS.md              dois pedidos por carro (isométrico e de cima), em inglês
   pedidos.json            os mesmos pedidos, para uso em lote
-  manifesto.json          a lista oficial (id, descrição, cor)
+  manifesto.json          a lista oficial (id, descrição)
   referencia_estilo.webp  docs/referencias/carro_estilo.webp
   provisorios/*.png       os sprites provisórios: ângulo, orientação e proporção
 Uso: python3 tools/pacote_arte_carros.py [--saida=caminho.zip] [--so=id1,id2] [--so-faltando]
@@ -38,6 +38,18 @@ ESTILO = (
     "stripes with lettering or licence-plate characters (plates, if any, are blank)."
 )
 
+# Pintura por programação (docs/arte_carros.md): carroceria branca, recolorida pelo jogo.
+# O resto do carro não pode ser branco nem cinza-claro, senão vira pintura também.
+PINTURA = (
+    "PAINT: ALL the painted bodywork (bonnet, roof, doors, wings, painted bumper parts, mirror "
+    "caps, painted spoilers) in ONE flat pure white; the game recolours it. Keep the facet "
+    "shading as light greys; no coloured reflections on the paint. Nothing else on the car may "
+    "be white or light grey: windows dark grey tinted glass, interior dark grey (no coloured "
+    "seats), tyres black, wheels medium silver grey, unpainted trim, grilles, lower bumper and "
+    "any race aero parts black, headlights with a pale grey lens (not white), indicators amber, "
+    "tail lights red, number plate blank mid grey. No stripes or two-tone paint."
+)
+
 FUNDO = (
     "Fully TRANSPARENT background (PNG with alpha); if transparency is impossible, a flat pure "
     "magenta #FF00FF background with no gradient. No ground, no shadow under the car, no "
@@ -66,8 +78,8 @@ def pedido(item, vista):
     return {
         "arquivo": "%s_%s.png" % (item["id"], vista),
         "tela": TELA[vista],
-        "prompt": "Subject: %s. Factory paint colour: %s.\n%s\n%s\n%s" % (
-            item["descricao"], item["cor"], VISTA[vista], FUNDO, ESTILO),
+        "prompt": "Subject: %s.\n%s\n%s\n%s\n%s" % (
+            item["descricao"], PINTURA, VISTA[vista], FUNDO, ESTILO),
     }
 
 
@@ -77,7 +89,7 @@ Each car model needs exactly two images:
   <id>_topo.png  straight top-down view, front pointing up (the game rotates it on the track)
 
 Attached: referencia_estilo.webp (the target render style), manifesto.json (the official list of
-cars with a description and a factory colour), provisorios/ (crude placeholders showing the exact
+cars with a description), provisorios/ (crude placeholders showing the exact
 camera angle, orientation and proportions of each image), PEDIDOS.md (one prompt per image).
 
 Rules for every image:
@@ -87,6 +99,8 @@ Rules for every image:
 - Same render style as the reference for every car: faceted low-poly, flat shading, subtle
   painted grain, muted colours, soft light from the top-left.
 - The reference is style only: each car has its own shape from its description.
+- Paint every car WHITE: the game recolours the bodywork. Only the painted bodywork may be white
+  or light grey; headlight lenses pale grey, number plate mid grey, interior dark grey, trim black.
 - Original designs: nothing that copies a real car model; no text, logos, badges or plate numbers.
 - Make the iso image first, then the top-down image of the same car, keeping shape, colour and
   details identical between the two.
@@ -118,6 +132,9 @@ O que observar antes de mandar:
 - Ângulo igual ao dos provisórios: isométrico com o carro apontando para baixo e à esquerda;
   de cima com a frente para o alto, carro reto na vertical.
 - Mesmo carro nas duas imagens (forma, cor, detalhes).
+- Carroceria branca (o jogo pinta); farol com lente cinza-clara, placa cinza, interior cinza
+  escuro e frisos pretos. Nada branco fora da carroceria: confira na Oficina de Pintura
+  (máscara, tolerância 70%).
 - Sem sombra, sem chão, sem texto, logotipo, emblema ou placa escrita.
 - Nenhum carro parecido demais com um modelo real.
 - Mesmo estilo em todos os carros.
@@ -171,7 +188,7 @@ def gravar(itens, saida, refacao, extra, cabecalho, so=None):
           "For each car: the three-quarter image first, then the top-down image of the same car.", ""]
     for k, p in enumerate(pedidos, 1):
         md += ["## %d. %s" % (k, p["arquivo"]), "", "Canvas: %s" % p["tela"], "", "```", p["prompt"], "```", ""]
-    publico = [{"id": i["id"], "descricao": i["descricao"], "cor": i["cor"]} for i in itens]
+    publico = [{"id": i["id"], "descricao": i["descricao"]} for i in itens]
     saida.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(saida, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("LEIA-ME.txt", cabecalho + (REFACAO if refacao else "") + LEIA_ME.format(n=len(itens), i=len(pedidos)))
