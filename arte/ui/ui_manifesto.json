@@ -678,5 +678,293 @@
   "altura_px": 500,
   "descricao": "a race circuit winding through rolling vineyard hills at late afternoon, warm amber low sun, rows of vines, tall cypress trees, a small stone farmhouse, gentle elevation changes",
   "uso": "cartão da competição e carregamento da corrida"
+ },
+ {
+  "nome": "emblema_fab_hayase",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a folded paper fan, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hayase Motor"
+ },
+ {
+  "nome": "emblema_fab_hartwig",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: an oak leaf, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hartwig"
+ },
+ {
+  "nome": "emblema_fab_ashcombe",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a sailing ship, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ashcombe Cars"
+ },
+ {
+  "nome": "emblema_fab_arvelle",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: an arrowhead, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Arvelle"
+ },
+ {
+  "nome": "emblema_fab_varenna",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a racing horse silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Varenna"
+ },
+ {
+  "nome": "emblema_fab_wexmoor",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a heraldic lion silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Wexmoor"
+ },
+ {
+  "nome": "emblema_fab_vorhaus",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a stylized falcon head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Vorhaus"
+ },
+ {
+  "nome": "emblema_fab_ostwerk",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a shield with a diagonal band, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ostwerk"
+ },
+ {
+  "nome": "emblema_fab_bancroft",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a five-point star in a ring, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Bancroft"
+ },
+ {
+  "nome": "emblema_fab_morel",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a rooster silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Morel"
+ },
+ {
+  "nome": "emblema_fab_tomoe",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: three stacked waves, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Tomoe"
+ },
+ {
+  "nome": "emblema_fab_garrison",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a canyon outline, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Garrison Motors"
+ },
+ {
+  "nome": "emblema_fab_ottavo",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a trident, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ottavo"
+ },
+ {
+  "nome": "emblema_fab_whitlock",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a bison head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Whitlock"
+ },
+ {
+  "nome": "emblema_fab_hozuki",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a lightning bolt in a circle, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hozuki"
+ },
+ {
+  "nome": "emblema_fab_calderwood",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a thistle, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Calderwood"
+ },
+ {
+  "nome": "emblema_fab_castellani",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a cypress tree, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Castellani"
+ },
+ {
+  "nome": "emblema_fab_thornby",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a winged wheel, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Thornby"
+ },
+ {
+  "nome": "emblema_fab_pemberly",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a crown of laurel, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Pemberly"
+ },
+ {
+  "nome": "emblema_fab_mizuchi",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a crescent and a dot, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Mizuchi"
+ },
+ {
+  "nome": "emblema_fab_keldorf",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: an eagle wing, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Keldorf"
+ },
+ {
+  "nome": "emblema_fab_dunmere",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a stag head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Dunmere"
+ },
+ {
+  "nome": "emblema_fab_sanga",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a stylized mountain peak, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Sanga Motors"
+ },
+ {
+  "nome": "emblema_fab_lindauer",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a gear wheel and wing, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Lindauer"
+ },
+ {
+  "nome": "emblema_fab_saulieu",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a lavender sprig, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Saulieu"
+ },
+ {
+  "nome": "emblema_fab_ashby",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a wing and star, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ashby"
+ },
+ {
+  "nome": "emblema_fab_vallon",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a fleur shape (not a real logo), inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Vallon"
+ },
+ {
+  "nome": "emblema_fab_rauhe",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a bridge arch, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Rauhe"
+ },
+ {
+  "nome": "emblema_fab_cutler",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a rattlesnake coil, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Cutler"
+ },
+ {
+  "nome": "emblema_fab_hoshino",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a crane in flight, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hoshino"
+ },
+ {
+  "nome": "emblema_fab_kosame",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a cherry blossom silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Kosame"
+ },
+ {
+  "nome": "emblema_fab_tokiwa",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a rising sun arc, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Tokiwa Works"
+ },
+ {
+  "nome": "emblema_fab_kanaya",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: two crossed feathers, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Kanaya"
+ },
+ {
+  "nome": "emblema_fab_brayford",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a thistle, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Brayford"
+ },
+ {
+  "nome": "emblema_fab_kestrin",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a bison head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Kestrin"
+ },
+ {
+  "nome": "emblema_fab_aubrac",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a chevron pair, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Aubrac"
  }
 ]

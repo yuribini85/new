@@ -124,6 +124,13 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 | `parque_das_docas` | técnico | 2.085 m | reta principal e reta antes da última curva |
 | `serra_alta` | montanha | 1.913 m | só a reta de largada |
 | `pista_de_testes` | velocidade máxima (retas muito longas) | 4.112 m | reta principal e reta oposta |
+| `circuito_misto` (Colinas do Vinhedo) | misto permanente (grupo 4) | 2.600 m | reta principal e reta oposta |
+| `docas_curta` | técnico, versão curta | 1.457 m | três retas |
+| `anel_curto` | alta velocidade, versão curta | 2.101 m | reta principal e reta oposta |
+| `serra_curta` | montanha, versão curta | 1.356 m | reta de largada e duas retas finais |
+
+As versões curtas recebem os eventos das versões curtas do GT2 e usam o cenário da
+pista-mãe (`Corrida3D.TEMA_DE`).
 
 Os rascunhos ficam em `data/rascunhos_pistas/`: curvas descritas por raio e ângulo, com
 duas retas de comprimento `null`. `tools/fechar_pista.py rascunho.json` calcula essas
@@ -163,17 +170,32 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
 
 ## Estado atual de data/ (importado do GT2 americano, SCUS-94488 v1.2)
 
-- 17 carros ligados a modelos do GT2 (tabela de ligação em `referencia/carros.csv`, fora do
-  Git). Potência pela curva de torque; peso, preço, tração, grip e freio do disco.
-- 242 peças com preço e efeito do GT2; 7 compostos de pneu (fábrica a supermacio e o de
-  simulação; o de terra fica fora).
-- Usados: janelas e preços dos 60 períodos de 10 dias do GT2. Novos: só os carros que
-  nunca aparecem no usado.
-- 38 eventos de 18 séries sem licença, B e A (`SERIES` em `tools/importar_gt2.py`), com
-  voltas, limites, prêmios e adversários do GT2. Pista do GT2 vira a nossa pela função
+- **618 carros**, todos os do disco (538 de rua e 80 versões de corrida). Nome e fabricante
+  fictícios: `tools/gerar_referencia_carros.py` monta `referencia/carros.csv` (fora do Git)
+  com um fabricante inventado por fabricante do GT2 (36) e um nome por família de modelo,
+  no idioma da escola do fabricante; as versões da família vão por potência (base, S, GT,
+  GTS, R, SR, GX, SX; corrida = "Corrida") e levam o ano quando preciso. Os 17 do primeiro
+  build mantêm id, nome e fabricante. **Busca de marca pendente** antes do lançamento.
+- 7.717 peças com preço e efeito do GT2 (por carro); 7 compostos de pneu.
+- Usados: janelas e preços dos 60 períodos de 10 dias do GT2 (~140 por período). Novos:
+  os 420 que nunca aparecem no usado.
+- 103 eventos de 31 séries sem licença, B, A, IC, IB e IA (`SERIES` em
+  `tools/importar_gt2.py`), com voltas, limites, prêmios, adversários (o carro do próprio
+  GT2) e carros-prêmio do disco. Fora: resistência (mais de 10 voltas), rali e terra, as
+  séries de marca e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
-- Licenças B e A: restrição = mediana dos limites dos eventos que abrem; tempos calibrados
-  pela simulação.
+- Licenças B, A, IC, IB, IA: restrição = mediana (B) ou mediana e quartis (as outras) dos
+  limites dos eventos que abrem; tempos calibrados pela simulação
+  (`tools/calibrar_licencas.gd`). **Pendente:** o critério da ferramenta parte dos carros
+  iniciais (B) ou do jogador ao tirar a B (A); IC, IB e IA saíram com os tempos da B. Falta
+  decidir o ponto de partida de cada licença alta.
+- Lojas (como no GT2): uma concessionária de novos por fabricante, agrupadas por região
+  (Japão, Estados Unidos, Europa, pela escola do fabricante); usados em lotes por
+  fabricante (no GT2 só as marcas japonesas têm lote). As versões de corrida ficam na
+  concessionária do fabricante.
+- Contratos da B (`contratos.json`): mantidos da calibração com os 17 carros (os carros e
+  peças deles não mudaram). Recalibrar com os 618 pede restringir a busca de
+  `tools/calibrar_contratos.gd`, que é por pares de carros.
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
 
 ## Como conferir a fração de revenda no GT2

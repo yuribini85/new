@@ -12,9 +12,9 @@
 					"potencia_max": 250.0
 				},
 				"tempos": {
-					"bronze": 88.3,
-					"ouro": 74.94,
-					"prata": 77.71
+					"bronze": 121.28,
+					"ouro": 72.92,
+					"prata": 74.32
 				},
 				"voltas": 1.0
 			},
@@ -26,9 +26,9 @@
 					"potencia_max": 250.0
 				},
 				"tempos": {
-					"bronze": 80.74,
-					"ouro": 71.58,
-					"prata": 73.46
+					"bronze": 101.92,
+					"ouro": 69.29,
+					"prata": 70.9
 				},
 				"voltas": 1.0
 			},
@@ -40,9 +40,9 @@
 					"potencia_max": 250.0
 				},
 				"tempos": {
-					"bronze": 90.03,
-					"ouro": 83.18,
-					"prata": 84.51
+					"bronze": 108.53,
+					"ouro": 80.32,
+					"prata": 82.19
 				},
 				"voltas": 1.0
 			}
@@ -61,9 +61,9 @@
 					"potencia_max": 300.0
 				},
 				"tempos": {
-					"bronze": 88.3,
-					"ouro": 71.32,
-					"prata": 73.83
+					"bronze": 121.28,
+					"ouro": 70.85,
+					"prata": 73.76
 				},
 				"voltas": 1.0
 			},
@@ -75,9 +75,9 @@
 					"potencia_max": 300.0
 				},
 				"tempos": {
-					"bronze": 80.74,
-					"ouro": 67.55,
-					"prata": 70.89
+					"bronze": 101.92,
+					"ouro": 66.41,
+					"prata": 69.86
 				},
 				"voltas": 1.0
 			},
@@ -86,12 +86,159 @@
 				"id": "a3",
 				"pista": "serra_alta",
 				"restricoes": {
-					"potencia_max": 350.0
+					"potencia_max": 400.0
 				},
 				"tempos": {
-					"bronze": 90.03,
-					"ouro": 77.8,
-					"prata": 81.89
+					"bronze": 108.53,
+					"ouro": 75.83,
+					"prata": 80.05
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "IC",
+		"nome": "Licença IC",
+		"requisito": "A",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "ic1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 400.0
+				},
+				"tempos": {
+					"bronze": 121.28,
+					"ouro": 72.67,
+					"prata": 74.32
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "ic2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 400.0
+				},
+				"tempos": {
+					"bronze": 101.92,
+					"ouro": 69.29,
+					"prata": 70.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "ic3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 450.0
+				},
+				"tempos": {
+					"bronze": 108.53,
+					"ouro": 80.32,
+					"prata": 82.19
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "IB",
+		"nome": "Licença IB",
+		"requisito": "IC",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "ib1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 550.0
+				},
+				"tempos": {
+					"bronze": 121.28,
+					"ouro": 72.67,
+					"prata": 74.32
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "ib2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 500.0
+				},
+				"tempos": {
+					"bronze": 101.92,
+					"ouro": 69.29,
+					"prata": 70.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "ib3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 108.53,
+					"ouro": 80.32,
+					"prata": 82.19
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "IA",
+		"nome": "Licença IA",
+		"requisito": "IB",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "ia1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 121.28,
+					"ouro": 72.67,
+					"prata": 74.32
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "ia2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 101.92,
+					"ouro": 69.29,
+					"prata": 70.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "ia3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 108.53,
+					"ouro": 80.32,
+					"prata": 82.19
 				},
 				"voltas": 1.0
 			}
