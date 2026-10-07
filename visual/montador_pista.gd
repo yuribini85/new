@@ -629,7 +629,7 @@ func _mat_sprite(t: Texture2D, sombra: bool) -> StandardMaterial3D:
 
 ## Pátio de contêineres: um bloco de 5 a 8 encostados lado a lado, do mesmo
 ## comprimento, eixo longo na direção da reta de largada.
-func _bloco_conteineres(centro: Vector2, rumo0: float, nomes: Array, por_nome: Dictionary) -> void:
+func _bloco_conteineres(centro: Vector2, rumo0: float, nomes: Array, por_nome: Dictionary, cores: Dictionary) -> void:
 	var curtos := nomes.filter(func(n): return kit(n) != null and kit(n).get_height() < 300)
 	var longos := nomes.filter(func(n): return kit(n) != null and kit(n).get_height() >= 300)
 	var grupo: Array = curtos if not curtos.is_empty() and (longos.is_empty() or _rng.randf() < 0.3) else longos
@@ -644,6 +644,8 @@ func _bloco_conteineres(centro: Vector2, rumo0: float, nomes: Array, por_nome: D
 		var nome: String = grupo[_rng.randi() % grupo.size()]
 		var giro := rumo0 + PI / 2.0 + (PI if _rng.randf() < 0.5 else 0.0)
 		por_nome.get_or_add(nome, []).append(Transform3D(Basis(Vector3.UP, giro), _v3(p, 0.3)))
+		var claro := _claridade(_dist_campo(p))
+		cores.get_or_add(nome, []).append(Color(claro, claro, claro))
 
 
 ## Mata: grade com sorteio, mais densa longe da pista, com clareiras (ruído).
@@ -685,7 +687,7 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 			if _rng.randf() > chance:
 				continue
 			if alinhado:
-				_bloco_conteineres(p, rumo0, nomes, por_nome)
+				_bloco_conteineres(p, rumo0, nomes, por_nome, cores)
 				continue
 			var lista_nomes: Array = raras if not raras.is_empty() and _rng.randf() < chance_rara else nomes
 			var nome: String = lista_nomes[_rng.randi() % lista_nomes.size()]

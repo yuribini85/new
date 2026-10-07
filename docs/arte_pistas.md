@@ -50,12 +50,12 @@ Cada pista escolhe o tema em `Corrida3D.KITS` (chão, objetos de mata, densidade
 tinta, direção da sombra, vinheta). Pista nova usa um tema existente ou ganha um tema novo
 com os mesmos arquivos.
 
-## Direção de arte em teste: ilhas de luz e estilo chapado
+## Direção de arte: ilhas de luz e estilo chapado (em uso nas quatro pistas)
 
 Referência de princípios (não de cenas): Kentucky Route Zero. A pista e o que fica perto
 dela ficam iluminados; o mundo apaga até quase preto com a distância (`escuro` no tema:
 `perto_m`, `longe_m`, `minimo`). Postes e portas dos boxes deixam poças de luz quente no
-chão. Hoje isso está ligado só no Anel do Vale.
+chão.
 
 `MontadorChapado` monta a mesma pista sem arte pintada:
 - chão em cores lisas, apagando com a distância;
@@ -63,8 +63,16 @@ chão. Hoje isso está ligado só no Anel do Vale.
 - árvores e prédios como volumes facetados (`shaders/chapado.gdshader`);
 - as mesmas poças de luz.
 
-Liga com `"estilo": "chapado"` no tema. Para comparar sem mudar o jogo, as ferramentas de
-foto aceitam `--estilo=chapado`.
+Liga com `"estilo": "chapado"` no tema; as quatro pistas usam. Cada pista tem uma paleta
+(`"cores"` no tema):
+- Anel do Vale: âmbar ao entardecer;
+- Serra Alta: azul frio;
+- Parque das Docas: sódio laranja à noite;
+- Pista de Testes: ocre ao meio-dia.
+
+O kit pintado continua no repositório e o `MontadorPista` ainda o usa para as medidas dos
+objetos e as sombras; o estilo pintado volta tirando `"estilo"` do tema. Para comparar, as
+ferramentas de foto aceitam `--estilo=`.
 
 ## Fluxo de produção
 

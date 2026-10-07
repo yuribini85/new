@@ -7,7 +7,8 @@ extends MontadorPista
 ## cor, clara do lado da luz), poças de luz quente nos postes e nos boxes.
 ## Inspiração: ilhas de luz no escuro, poucas cores por lugar.
 
-## Cores de cada superfície (antes da tinta do tema).
+## Cores de cada superfície (antes da tinta do tema); o tema troca as que
+## quiser em "cores" (paleta por lugar).
 const CORES := {
 	"asfalto": Color(0.2, 0.2, 0.22), "escape": Color(0.24, 0.31, 0.21), "areia": Color(0.6, 0.5, 0.36),
 	"brita": Color(0.46, 0.44, 0.4), "concreto": Color(0.33, 0.33, 0.35), "agua": Color(0.08, 0.13, 0.16),
@@ -30,8 +31,12 @@ func _mat(nome: String, metros: float, alfa := false, nome_b := "") -> ShaderMat
 	var m := super(nome, metros, alfa, "")
 	m.set_shader_parameter("usar_b", 0.0)
 	m.set_shader_parameter("borda_seca", 1.0)
-	m.set_shader_parameter("textura", _zebra() if nome == "zebra" else _lisa(CORES.get(nome, Color(0.4, 0.4, 0.4))))
+	m.set_shader_parameter("textura", _zebra() if nome == "zebra" else _lisa(_cor_de(nome)))
 	return m
+
+
+func _cor_de(nome: String) -> Color:
+	return _tema.get("cores", {}).get(nome, CORES.get(nome, Color(0.4, 0.4, 0.4)))
 
 
 static func _lisa(c: Color) -> ImageTexture:
@@ -62,12 +67,18 @@ func _chao(caixa: Rect2, k: Dictionary) -> void:
 			var p := _campo_origem + Vector2(x, y) * _campo_m
 			var d := _campo[y * _campo_tam.x + x]
 			var mancha := _clareira.get_noise_2d(p.x * 1.7, p.y * 1.7) > 0.08
-			var c: Color = CORES["grama_a"] if mancha else CORES["grama_b"]
-			c = c.lerp(CORES["mata"], smoothstep(0.2, 0.6, _floresta(p, d + 12.0)))
+			var c: Color = _cor_de(k.get("chao_a", "grama_a")) if mancha else _cor_de(k.get("chao_b", "grama_b"))
+			if k.has("chao_mata"):
+				c = c.lerp(_cor_de(k["chao_mata"]), smoothstep(0.2, 0.6, _floresta(p, d + 12.0)))
 			var agua := _agua(p, d)
+			var claro := _claridade(d)
 			if agua > 0.5:
-				c = CORES["agua"]
-			c = COR_VAZIO.lerp(c, _claridade(d))
+				# Água: escura mas visível até longe (reflete as luzes do cais).
+				c = _cor_de("agua")
+				claro = maxf(claro, 0.6)
+			elif agua > 0.2:
+				c = _cor_de("cais")
+			c = Color(_tema.get("cor_vazio", COR_VAZIO)).lerp(c, claro)
 			img.set_pixel(x, y, c)
 	# Linha 0 da imagem é o y mínimo do mapa, que no mundo é o +z (borda de
 	# baixo do PlaneMesh): vira na vertical para casar com a UV do plano.
@@ -107,25 +118,55 @@ func _brilhante(c: Color) -> StandardMaterial3D:
 	return m
 
 
-## Árvores: copas facetadas (esfera de poucos lados, achatada).
+## Mata: volumes facetados por tipo. Árvore: esfera de poucos lados, achatada;
+## pinheiro: cone de seis lados; rocha: bloco de poucas faces; contêiner: caixa.
 func _mata_desenho(nome: String, t: Texture2D, lista: Array, cores: Array) -> void:
-	var raio := maxf(t.get_width(), t.get_height()) / PX_M * 0.4
-	var esfera := SphereMesh.new()
-	esfera.radius = raio
-	esfera.height = raio * 1.6
-	esfera.radial_segments = 7
-	esfera.rings = 3
+	var planta := Vector2(t.get_width(), t.get_height()) / PX_M
+	var raio := maxf(planta.x, planta.y) * 0.4
+	var forma: Mesh
+	var altura := raio * 0.3
+	var cor_base: Color = _tema.get("cores", {}).get("arvore", COR_ARVORE[hash(nome) % COR_ARVORE.size()])
+	if nome.begins_with("pinheiro"):
+		var cone := CylinderMesh.new()
+		cone.top_radius = 0.05
+		cone.bottom_radius = raio
+		cone.height = raio * 2.2
+		cone.radial_segments = 6
+		cone.rings = 1
+		forma = cone
+		altura = raio * 1.1
+		cor_base = _tema.get("cores", {}).get("pinheiro", Color(0.14, 0.24, 0.2))
+	elif nome.begins_with("rocha"):
+		var r := SphereMesh.new()
+		r.radius = raio * 0.8
+		r.height = raio * 0.9
+		r.radial_segments = 5
+		r.rings = 2
+		forma = r
+		altura = 0.0
+		cor_base = _tema.get("cores", {}).get("rocha", Color(0.46, 0.44, 0.41))
+	elif nome.begins_with("conteiner"):
+		var b := BoxMesh.new()
+		b.size = Vector3(planta.x * 0.95, 2.6, planta.y * 0.97)
+		forma = b
+		altura = 1.3
+		cor_base = {"conteiner_1": Color(0.62, 0.24, 0.17), "conteiner_2": Color(0.2, 0.34, 0.5),
+				"conteiner_3": Color(0.72, 0.56, 0.2)}.get(nome, Color(0.5, 0.5, 0.5))
+	else:
+		var esfera := SphereMesh.new()
+		esfera.radius = raio
+		esfera.height = raio * 1.6
+		esfera.radial_segments = 7
+		esfera.rings = 3
+		forma = esfera
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
-	mm.mesh = esfera
+	mm.mesh = forma
 	mm.instance_count = lista.size()
-	var cor_base: Color = COR_ARVORE[hash(nome) % COR_ARVORE.size()]
-	if nome.begins_with("rocha"):
-		cor_base = Color(0.45, 0.43, 0.4)
 	for i in lista.size():
 		var tr: Transform3D = lista[i]
-		tr.origin.y = raio * 0.3
+		tr.origin.y = altura
 		mm.set_instance_transform(i, tr)
 		mm.set_instance_color(i, cores[i] if i < cores.size() else Color.WHITE)
 	var mmi := MultiMeshInstance3D.new()
