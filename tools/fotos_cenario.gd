@@ -3,6 +3,7 @@ extends SceneTree
 ## cada pista: largada, boxes e paddock, a curva mais fechada, a mata e uma
 ## vista média. Revisão de composição (onde vai cada coisa, sombras, escala).
 ## Uso (precisa de display): godot --path . --script res://tools/fotos_cenario.gd -- --saida=/pasta/ [--pista=id]
+##   [--estilo=chapado]  (monta no estilo chapado, para comparar)
 
 func _initialize() -> void:
 	_rodar.call_deferred()
@@ -11,11 +12,14 @@ func _initialize() -> void:
 func _rodar() -> void:
 	var saida := "user://"
 	var so := ""
+	var estilo := ""
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--saida="):
 			saida = arg.trim_prefix("--saida=")
 		elif arg.begins_with("--pista="):
 			so = arg.trim_prefix("--pista=")
+		elif arg.begins_with("--estilo="):
+			estilo = arg.trim_prefix("--estilo=")
 	var d: Node = root.get_node("Dados")
 	for pid in Corrida3D.KITS:
 		if so != "" and pid != so:
@@ -26,6 +30,8 @@ func _rodar() -> void:
 		var fonte := CorridaVisual.new()
 		fonte.mostrar(pista, {"amostras": [{"t": 0.0, "s": {}}], "voltas": 1, "carros": {}})
 		var v3 := Corrida3D.new()
+		if estilo != "":
+			v3.estilo_forcado = estilo
 		v3.size = Vector2(720, 1280)
 		root.add_child(v3)
 		v3.mostrar(pista, fonte, {})
@@ -42,6 +48,7 @@ func _rodar() -> void:
 		var i0 := pista.indice_em(0.5)
 		var s_reta: float = pista.inicios[i0] + float(pista.trechos[i0]["comprimento_m"]) * 0.5
 		var fotos := {
+			"perto": [pista.posicao_em(s_curva), 45.0],
 			"largada": [pista.posicao_em(0.0), 110.0],
 			"boxes": [pista.posicao_em(s_reta), 260.0],
 			"curva": [pista.posicao_em(s_curva), 200.0],

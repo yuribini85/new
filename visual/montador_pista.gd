@@ -29,7 +29,9 @@ const PASSO_CONTEINER_M := 22.0
 const ARVORE_ISOLADA := 0.025  # chance de árvore solta na faixa aberta perto da pista
 const FUNDO_ESCURO := 0.3      # quanto as copas escurecem no fundo da mata
 const POSTE_A_CADA_M := 40.0
-const ALTURA_MATA_M := 4.0     # altura da sombra das árvores (em unidades de sombra_dir)
+const ALTURA_MATA_M := 4.0
+const LUZ_POSTE := Color(1.0, 0.72, 0.38, 0.32)
+const LUZ_BOX := Color(1.0, 0.7, 0.35, 0.4)     # altura da sombra das árvores (em unidades de sombra_dir)
 
 static var _cache_tex := {}
 static var _shader_alfa: Shader
@@ -45,6 +47,7 @@ var _grade := {}  # célula -> PackedVector2Array de pontos do eixo
 const CELULA_M := 40.0
 var _reservas: Array = []
 var _clareira: FastNoiseLite
+var _borda_irregular := 1.0  # 0 no estilo chapado: bordas retas
 # Campo de distância ao eixo numa grade (alcance ilimitado, ao contrário de
 # _distancia) e a máscara do chão (R: água, G: chão de floresta), na mesma grade.
 var _campo := PackedFloat32Array()
@@ -219,7 +222,7 @@ func _agua(p: Vector2, d: float) -> float:
 func _mascara_chao(k: Dictionary) -> void:
 	_mascara = null
 	var usar_mata: bool = k.has("chao_mata") and not k.get("alinhado", false)
-	if not usar_mata and not k.has("agua"):
+	if not usar_mata and not k.has("agua") and not _tema.has("escuro"):
 		return
 	_mascara = Image.create(_campo_tam.x, _campo_tam.y, false, Image.FORMAT_RGBA8)
 	for y in _campo_tam.y:
@@ -229,7 +232,47 @@ func _mascara_chao(k: Dictionary) -> void:
 			var agua := _agua(p, d)
 			# Chão de floresta um pouco além da borda das árvores.
 			var mata := _floresta(p, d + 12.0) if usar_mata else 0.0
-			_mascara.set_pixel(x, y, Color(agua, mata * (1.0 - agua), 0.0, 1.0))
+			_mascara.set_pixel(x, y, Color(agua, mata * (1.0 - agua), _claridade(d), 1.0))
+
+
+## Ilhas de luz (direção de arte, docs/arte_pistas.md): perto da pista, claro;
+## longe, o mundo apaga até quase preto. 1 = claro, `minimo` = mais escuro.
+func _claridade(d: float) -> float:
+	var e: Dictionary = _tema.get("escuro", {})
+	if e.is_empty():
+		return 1.0
+	return lerpf(1.0, float(e.get("minimo", 0.12)), smoothstep(float(e.get("perto_m", 60.0)), float(e.get("longe_m", 200.0)), d))
+
+
+static var _shader_luz: Shader
+
+
+## Poça de luz no chão (poste, boxes): disco somado, mais forte no centro.
+func _luz(p: Vector2, raio: float, cor: Color) -> void:
+	if not _tema.has("escuro"):
+		return
+	if _shader_luz == null:
+		_shader_luz = Shader.new()
+		_shader_luz.code = """shader_type spatial;
+render_mode unshaded, blend_add, depth_draw_never, cull_disabled;
+uniform vec4 cor : source_color;
+void fragment() {
+	float d = length(UV - 0.5) * 2.0;
+	float a = pow(clamp(1.0 - d, 0.0, 1.0), 1.8);
+	ALBEDO = cor.rgb * a * cor.a;
+}
+"""
+	var mi := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2.ONE * raio * 2.0
+	q.orientation = PlaneMesh.FACE_Y
+	mi.mesh = q
+	var m := ShaderMaterial.new()
+	m.shader = _shader_luz
+	m.set_shader_parameter("cor", cor)
+	mi.material_override = m
+	mi.position = _v3(p, 0.04)
+	_cena.add_child(mi)
 
 
 func _lado_da_largada() -> void:
@@ -357,9 +400,9 @@ func _faixa_volta(a: float, b: float, y: float, mat: Material) -> void:
 ## Areia por fora das curvas lentas, brita nas médias; borda externa irregular.
 func _bordas_curvas(k: Dictionary) -> void:
 	var areia := _mat(k.get("areia", "areia"), 16.0, true)
-	areia.set_shader_parameter("borda_irregular", 0.6)
+	areia.set_shader_parameter("borda_irregular", 0.6 * _borda_irregular)
 	var brita := _mat("brita", 12.0, true)
-	brita.set_shader_parameter("borda_irregular", 0.5)
+	brita.set_shader_parameter("borda_irregular", 0.5 * _borda_irregular)
 	for i in _pista.trechos.size():
 		var t: Dictionary = _pista.trechos[i]
 		var raio := float(t.get("raio_m", 0.0))
@@ -421,6 +464,7 @@ func _reta_de_largada(k: Dictionary) -> void:
 	var s := a + 5.0
 	while s < b - 5.0 and livre_fora >= b0 + 22.0:
 		_objeto("box_modulo", _ponto(s, fora * (b0 + 18.0)), _pista.rumo_em(s) + vira, 5.0)
+		_luz(_ponto(s, fora * (b0 + 12.0)), 7.0, LUZ_BOX)
 		s += 10.0
 	if livre_fora >= b0 + 22.0:
 		_objeto("torre", _ponto(s + 1.5, fora * (b0 + 18.0)), _pista.rumo_em(s) + vira, 14.0)
@@ -451,8 +495,10 @@ func _reta_de_largada(k: Dictionary) -> void:
 		s = a + 10.0
 		while s < b - 10.0:
 			_objeto("poste", _ponto(s, fora * (b0 + 1.0)), 0.0, 0.0, 0.4)
+			_luz(_ponto(s, fora * (b0 + 1.0)), 16.0, LUZ_POSTE)
 			if livre_dentro >= b0 + 46.0:
 				_objeto("poste", _ponto(s + 20.0, dentro * (b0 + 40.0)), 0.0, 0.0, 0.4)
+				_luz(_ponto(s + 20.0, dentro * (b0 + 40.0)), 22.0, LUZ_POSTE)
 			s += POSTE_A_CADA_M
 	# Pórtico sobre a largada.
 	var portico := kit("portico")
@@ -506,15 +552,9 @@ func _objeto(nome: String, p: Vector2, rumo: float, altura_m: float, y := 0.25, 
 	var t := kit(nome)
 	if t == null:
 		return
-	var mi := MeshInstance3D.new()
 	var q := QuadMesh.new()
 	q.size = Vector2(t.get_width(), t.get_height()) / PX_M
-	q.orientation = PlaneMesh.FACE_Y
-	mi.mesh = q
-	mi.material_override = _mat_sprite(t, false)
-	mi.position = _v3(p, y)
-	mi.rotation.y = rumo
-	_cena.add_child(mi)
+	_desenho_objeto(nome, t, p, rumo, y)
 	if altura_m > 0.0:
 		var sombra := MeshInstance3D.new()
 		var d: Vector2 = _tema.get("sombra_dir", Vector2(1.0, -0.6)) * altura_m
@@ -525,6 +565,20 @@ func _objeto(nome: String, p: Vector2, rumo: float, altura_m: float, y := 0.25, 
 		sombra.position = _v3(p, 0.05)
 		sombra.rotation.y = rumo
 		_cena.add_child(sombra)
+
+
+## O objeto em si (aqui, o sprite do kit deitado no chão); MontadorChapado
+## troca por volumes de cor chapada.
+func _desenho_objeto(nome: String, t: Texture2D, p: Vector2, rumo: float, y: float) -> void:
+	var mi := MeshInstance3D.new()
+	var q := QuadMesh.new()
+	q.size = Vector2(t.get_width(), t.get_height()) / PX_M
+	q.orientation = PlaneMesh.FACE_Y
+	mi.mesh = q
+	mi.material_override = _mat_sprite(t, false)
+	mi.position = _v3(p, y)
+	mi.rotation.y = rumo
+	_cena.add_child(mi)
 
 
 ## Quadro da sombra: o do sprite com folga do arrasto para todos os lados.
@@ -639,7 +693,8 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 				continue
 			var escala := _rng.randf_range(0.85, 1.25)
 			var fundo := smoothstep(aberto + 30.0, aberto + 180.0, d)
-			cores.get_or_add(nome, []).append(Color.WHITE.darkened(fundo * FUNDO_ESCURO + _rng.randf() * 0.08))
+			var claro := _claridade(d)
+			cores.get_or_add(nome, []).append(Color.WHITE.darkened(fundo * FUNDO_ESCURO + _rng.randf() * 0.08) * Color(claro, claro, claro))
 			por_nome.get_or_add(nome, []).append(Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * escala), _v3(p, 0.3)))
 		y += passo
 	for nome in por_nome:
@@ -648,21 +703,39 @@ func _mata(caixa: Rect2, k: Dictionary) -> void:
 		q.size = Vector2(t.get_width(), t.get_height()) / PX_M
 		q.orientation = PlaneMesh.FACE_Y
 		var d_sombra: Vector2 = _tema.get("sombra_dir", Vector2(1.0, -0.6)) * float(k.get("altura_mata_m", ALTURA_MATA_M))
-		for sombra in [true, false]:
-			var mm := MultiMesh.new()
-			mm.transform_format = MultiMesh.TRANSFORM_3D
-			mm.use_colors = not sombra and cores.has(nome)
-			mm.mesh = _quad_sombra(t, d_sombra.length()) if sombra else q
-			var lista: Array = por_nome[nome]
-			mm.instance_count = lista.size()
-			for i in lista.size():
-				var tr: Transform3D = lista[i]
-				if sombra:
-					tr.origin.y = 0.1
-				mm.set_instance_transform(i, tr)
-				if mm.use_colors:
-					mm.set_instance_color(i, cores[nome][i])
-			var mmi := MultiMeshInstance3D.new()
-			mmi.multimesh = mm
-			mmi.material_override = _mat_sombra(t, d_sombra, q.size) if sombra else _mat_sprite(t, false)
-			_cena.add_child(mmi)
+		_mata_desenho(nome, t, por_nome[nome], cores.get(nome, []))
+		# Sombras de todas as árvores deste tipo num MultiMesh só.
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = _quad_sombra(t, d_sombra.length())
+		var lista: Array = por_nome[nome]
+		mm.instance_count = lista.size()
+		for i in lista.size():
+			var tr: Transform3D = lista[i]
+			tr.origin.y = 0.1
+			mm.set_instance_transform(i, tr)
+		var mmi := MultiMeshInstance3D.new()
+		mmi.multimesh = mm
+		mmi.material_override = _mat_sombra(t, d_sombra, q.size)
+		_cena.add_child(mmi)
+
+
+## As árvores (ou objetos da mata) de um tipo: um MultiMesh do sprite, com cor
+## por instância. MontadorChapado troca por volumes facetados.
+func _mata_desenho(nome: String, t: Texture2D, lista: Array, cores: Array) -> void:
+	var q := QuadMesh.new()
+	q.size = Vector2(t.get_width(), t.get_height()) / PX_M
+	q.orientation = PlaneMesh.FACE_Y
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = not cores.is_empty()
+	mm.mesh = q
+	mm.instance_count = lista.size()
+	for i in lista.size():
+		mm.set_instance_transform(i, lista[i])
+		if mm.use_colors:
+			mm.set_instance_color(i, cores[i])
+	var mmi := MultiMeshInstance3D.new()
+	mmi.multimesh = mm
+	mmi.material_override = _mat_sprite(t, false)
+	_cena.add_child(mmi)

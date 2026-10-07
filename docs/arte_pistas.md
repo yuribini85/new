@@ -50,6 +50,22 @@ Cada pista escolhe o tema em `Corrida3D.KITS` (chão, objetos de mata, densidade
 tinta, direção da sombra, vinheta). Pista nova usa um tema existente ou ganha um tema novo
 com os mesmos arquivos.
 
+## Direção de arte em teste: ilhas de luz e estilo chapado
+
+Referência de princípios (não de cenas): Kentucky Route Zero. A pista e o que fica perto
+dela ficam iluminados; o mundo apaga até quase preto com a distância (`escuro` no tema:
+`perto_m`, `longe_m`, `minimo`). Postes e portas dos boxes deixam poças de luz quente no
+chão. Hoje isso está ligado só no Anel do Vale.
+
+`MontadorChapado` monta a mesma pista sem arte pintada:
+- chão em cores lisas, apagando com a distância;
+- pista e zebras em cor sólida, com bordas secas;
+- árvores e prédios como volumes facetados (`shaders/chapado.gdshader`);
+- as mesmas poças de luz.
+
+Liga com `"estilo": "chapado"` no tema. Para comparar sem mudar o jogo, as ferramentas de
+foto aceitam `--estilo=chapado`.
+
 ## Fluxo de produção
 
 1. `python3 tools/pacote_arte_pistas.py` gera `build/pedido_arte_pistas.zip`: instruções em

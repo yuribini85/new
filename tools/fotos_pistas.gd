@@ -3,6 +3,7 @@ extends SceneTree
 ## entrada e estabilizado), com uma corrida
 ## de verdade de cada uma. Revisão visual dos ambientes.
 ## Uso (precisa de display): godot --script res://tools/fotos_pistas.gd -- --saida=/pasta/
+##   [--pista=id] [--estilo=chapado]
 
 func _initialize() -> void:
 	_rodar.call_deferred()
@@ -10,9 +11,15 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	var saida := "user://"
+	var so := ""
+	var estilo := ""
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--saida="):
 			saida = arg.trim_prefix("--saida=")
+		elif arg.begins_with("--pista="):
+			so = arg.trim_prefix("--pista=")
+		elif arg.begins_with("--estilo="):
+			estilo = arg.trim_prefix("--estilo=")
 	var d: Node = root.get_node("Dados")
 	var j: Node = root.get_node("Jogador")
 	j.novo_jogo(d.economia(), d.pneu)
@@ -20,7 +27,7 @@ func _rodar() -> void:
 	j.economia.creditar(1000000)
 	var feitas := {}
 	for ev in d.lista("eventos"):
-		if feitas.has(ev["pista"]):
+		if feitas.has(ev["pista"]) or (so != "" and ev["pista"] != so):
 			continue
 		var uid := -1
 		for c in d.lista("carros"):
@@ -34,6 +41,7 @@ func _rodar() -> void:
 		var pista: Pista = d.pista(ev["pista"])
 		var fonte := CorridaVisual.new()
 		var v3 := Corrida3D.new()
+		v3.estilo_forcado = estilo
 		v3.size = Vector2(720, 900)
 		root.add_child(v3)
 		fonte.mostrar(pista, r["resultado"])

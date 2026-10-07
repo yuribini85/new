@@ -16,6 +16,8 @@ uniform float escala_manchas = 90.0;
 uniform int modo_uv = 0;
 uniform vec4 tinta : source_color = vec4(1.0);
 uniform float borda_irregular = 0.0;
+// Estilo chapado: borda seca (o alfa vira 0 ou 1), sem degradê.
+uniform float borda_seca = 0.0;
 // Máscara do chão (montador): R = água (cais), G = chão de floresta.
 uniform float usar_mascara = 0.0;
 uniform sampler2D mascara : filter_linear, repeat_disable;
@@ -45,12 +47,17 @@ void fragment() {
 		float cais = smoothstep(0.08, 0.3, m.r) * (1.0 - agua);
 		c = mix(c, c * 0.4, cais);
 		c = mix(c, texture(textura_agua, mundo / (metros * 2.0)).rgb, agua);
+		// B: claridade (ilhas de luz): longe da pista, o chão apaga.
+		c *= m.b;
 	}
 	ALBEDO = c * tinta.rgb;
 	float a = COLOR.a;
 	if (borda_irregular > 0.0) {
 		float n = texture(ruido, mundo / 9.0).r;
 		a = smoothstep(n * borda_irregular, n * borda_irregular + 0.15, a);
+	}
+	if (borda_seca > 0.0) {
+		a = step(0.5, a);
 	}
 	if (a < 0.999) {
 		ALPHA = a;

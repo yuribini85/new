@@ -49,6 +49,8 @@ var _alvo_camera := Vector3.ZERO
 var foco := "jogador"
 ## Pista inteira na tela em vez de seguir um carro.
 var visao_geral := false
+## Estilo de cenário forçado ("chapado"), para comparar sem mudar o tema.
+var estilo_forcado := ""
 var _centro_pista := Vector3.ZERO
 var _ambiente: Environment
 
@@ -78,7 +80,8 @@ const KITS := {
 	"anel_do_vale": {"kit": {"chao_a": "grama_a", "chao_b": "grama_b", "chao_mata": "mata", "aberto_m": 70.0, "arvores": ["arvore_1", "arvore_2",
 			"arvore_3", "arvore_4", "arvore_5", "arvore_6"], "densidade": 1.0, "postes": true},
 		"tinta": Color(0.8, 0.68, 0.58), "sombra_dir": Vector2(1.6, -0.9), "sombra_alfa": 0.5,
-		"vinheta": 0.45, "fundo": Color(0.07, 0.09, 0.08)},
+		"vinheta": 0.6, "fundo": Color(0.02, 0.025, 0.03),
+		"escuro": {"perto_m": 45.0, "longe_m": 170.0, "minimo": 0.1}},
 	"serra_alta": {"kit": {"chao_a": "grama_b", "chao_b": "grama_a", "chao_mata": "mata", "aberto_m": 45.0, "arvores": ["pinheiro_1", "pinheiro_2",
 			"pinheiro_3"], "raras": ["rocha_1", "rocha_2"], "chance_rara": 0.06, "densidade": 0.9, "postes": false},
 		"tinta": Color(0.92, 0.97, 1.05), "sombra_dir": Vector2(0.6, -0.5), "sombra_alfa": 0.4,
@@ -615,11 +618,14 @@ func _construir_pista() -> void:
 	_luz.light_energy = tema["energia"]
 	_luz.rotation = tema["sol"]
 	_cores_muro = tema["muro"]
-	var montado: Dictionary = KITS.get(_pista.id, {})
+	var montado: Dictionary = KITS.get(_pista.id, {}).duplicate()
+	if estilo_forcado != "" and not montado.is_empty():
+		montado["estilo"] = estilo_forcado
 	var efeito := material as ShaderMaterial
 	if not montado.is_empty() and MontadorPista.disponivel():
 		# Cenário pelo kit de arte; os anéis, a linha de largada e os muros seguem daqui.
-		MontadorPista.new().montar(_cena, _pista, montado, LARGURA_PISTA_M)
+		var montador: MontadorPista = MontadorChapado.new() if montado.get("estilo", "") == "chapado" else MontadorPista.new()
+		montador.montar(_cena, _pista, montado, LARGURA_PISTA_M)
 		_ambiente.background_color = montado.get("fundo", tema["ceu"])
 		efeito.set_shader_parameter("vinheta", float(montado.get("vinheta", 0.0)))
 		_marcadores()
