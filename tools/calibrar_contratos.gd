@@ -24,7 +24,14 @@ extends SceneTree
 ##   montagem para uma pista sozinha precisa perder na outra, e uma montagem só
 ##   precisa vencer nas duas com folga de ao menos FOLGA_MINIMA_DUPLA.
 ##   bronze: vencer as duas · prata: folga de metade da folga da solução · ouro: com as peças da solução enxuta.
-## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd
+## Licenças acima da B (--licenca=IC, IB ou IA): os mesmos três contratos, com
+## carros e pistas dos eventos que a licença libera (carro da escola: um rival
+## desses eventos dentro do limite da licença; rivais: os desses eventos e os
+## da licença seguinte; pistas: as desses eventos). O teto de "O último
+## crédito" é a soma dos prêmios de 1º lugar dos eventos da licença anterior
+## (na B, o saldo inicial). Os ids levam o prefixo da licença ("ic_...").
+## Só os contratos da licença pedida são trocados em contratos.json.
+## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=B]
 
 const CAMINHO := "res://data/contratos.json"
 const RAZAO_GIGANTE := 1.3
@@ -43,6 +50,9 @@ var _dados: Node
 var _piloto: Dictionary
 var _voltas := 1
 var _cache := {}
+var _pecas_carro := {}  # id do carro -> peças que servem nele
+var _licenca := "B"
+var _saldo_ref := 0
 
 
 func _process(_delta: float) -> bool:
@@ -56,15 +66,36 @@ func _process(_delta: float) -> bool:
 func _calibrar() -> void:
 	_dados = root.get_node("Dados")
 	_piloto = _dados.piloto(_dados.carreira()["piloto_jogador"])
-	var lic_b: Dictionary = _dados.item("licencas", "B")
-	_voltas = int(lic_b["testes"][0]["voltas"])
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--licenca="):
+			_licenca = a.trim_prefix("--licenca=")
+	var lic: Dictionary = _dados.item("licencas", _licenca)
+	_voltas = int(lic["testes"][0]["voltas"])
 	var limite := INF
-	for t in lic_b["testes"]:
+	for t in lic["testes"]:
 		limite = minf(limite, float(t.get("restricoes", {}).get("potencia_max", INF)))
 	var pistas: Array = _dados.lista("pistas").map(func(p): return p["id"])
 	var escola: Array = _dados.lista("carros").filter(func(c): return float(c["potencia"]) <= limite)
-	escola.sort_custom(func(a, b): return a["id"] < b["id"])
 	var todos: Array = _dados.lista("carros").duplicate()
+	_saldo_ref = int(_dados.economia()["saldo_inicial"])
+	if _licenca != "B":
+		var ordem: Array = _dados.lista("licencas").map(func(l): return l["id"])
+		var seguinte: String = ordem[ordem.find(_licenca) + 1] if ordem.find(_licenca) + 1 < ordem.size() else ""
+		var deste := _eventos_da(_licenca)
+		var rivais_aqui := _rivais(deste)
+		escola = rivais_aqui.filter(func(c): return float(c["potencia"]) <= limite)
+		todos = _rivais(deste + _eventos_da(seguinte))
+		pistas = []
+		for e in deste:
+			if not e["pista"] in pistas:
+				pistas.append(e["pista"])
+		_saldo_ref = 0
+		for e in _eventos_da(String(lic.get("requisito", ""))):
+			if not e["premios"].is_empty():
+				_saldo_ref += int(e["premios"][0])
+		print("%s: %d carros da escola, %d rivais, %d pistas, teto de custo %d Cr" % [_licenca, escola.size(),
+				todos.size(), pistas.size(), _saldo_ref])
+	escola.sort_custom(func(a, b): return a["id"] < b["id"])
 	todos.sort_custom(func(a, b): return a["id"] < b["id"])
 	var usados := []
 	var contratos := []
@@ -80,14 +111,37 @@ func _calibrar() -> void:
 	if not c3.is_empty():
 		contratos.append(c3)
 	for c in contratos:
+		c["licenca"] = _licenca
+		if _licenca != "B":
+			c["id"] = _licenca.to_lower() + "_" + c["id"]
 		print("%s: %s · %s" % [c["id"], c["carro"], JSON.stringify(c["condicoes"])])
 		for p in c["provas"]:
 			print("   %s contra %s" % [p["pista"], ", ".join(p["rivais"].map(func(r): return r["carro"]))])
 		print("   referência: %s" % JSON.stringify(c["_referencia"]))
 		c.erase("_referencia")
+	# Troca só os desta licença; os outros ficam como estão, na ordem das licenças.
+	var antigos: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO)) if FileAccess.file_exists(CAMINHO) else []
+	var ordem_lic: Array = _dados.lista("licencas").map(func(l): return l["id"])
+	var todos_contratos: Array = antigos.filter(func(c): return c["licenca"] != _licenca) + contratos
+	todos_contratos.sort_custom(func(a, b): return ordem_lic.find(a["licenca"]) < ordem_lic.find(b["licenca"]))
 	var f := FileAccess.open(CAMINHO, FileAccess.WRITE)
-	f.store_string(JSON.stringify(contratos, "\t") + "\n")
+	f.store_string(JSON.stringify(todos_contratos, "\t") + "\n")
 	f.close()
+
+
+func _eventos_da(lic: String) -> Array:
+	if lic == "":
+		return []
+	return _dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca", "") == lic)
+
+
+## Carros rivais dos eventos, sem repetir.
+func _rivais(eventos: Array) -> Array:
+	var ids := {}
+	for e in eventos:
+		for a in e["adversarios"]:
+			ids[a["carro"]] = true
+	return ids.keys().map(func(id): return _dados.carro(id))
 
 
 func _pequeno_contra_gigante(escola: Array, todos: Array, pistas: Array) -> Dictionary:
@@ -123,7 +177,7 @@ func _pequeno_contra_gigante(escola: Array, todos: Array, pistas: Array) -> Dict
 
 
 func _ultimo_credito(escola: Array, todos: Array, pistas: Array) -> Dictionary:
-	var saldo := int(_dados.economia()["saldo_inicial"])
+	var saldo := _saldo_ref
 	var melhor := {}
 	var melhor_custo := 0
 	for pista in pistas:
@@ -303,9 +357,11 @@ func _deficit(c: Dictionary, pecas: Array, ajuste: String, alvo: Dictionary) -> 
 ## na mesma categoria) e, com câmbio instalado, os ajustes.
 func _opcoes(c: Dictionary, pecas: Array, ajuste: String, proibidas: Array) -> Array:
 	var r := []
-	var carro := Carro.new(c)
-	for p in _dados.lista("pecas"):
-		if carro.motivo_recusa(p) != "" or p["categoria"] in proibidas or p["id"] in pecas:
+	if not _pecas_carro.has(c["id"]):
+		var carro := Carro.new(c)
+		_pecas_carro[c["id"]] = _dados.lista("pecas").filter(func(p): return carro.motivo_recusa(p) == "")
+	for p in _pecas_carro[c["id"]]:
+		if p["categoria"] in proibidas or p["id"] in pecas:
 			continue
 		var outras := pecas.filter(func(x): return _dados.peca(x)["categoria"] != p["categoria"])
 		r.append({"pecas": outras + [p["id"]], "ajuste": ajuste})
