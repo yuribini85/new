@@ -5,15 +5,24 @@ extends SubViewportContainer
 ## resultado já veio da Simulacao.
 ##
 ## A simulação é em uma dimensão (distância percorrida). A posição lateral é
-## só visual: quem está a menos de PROXIMIDADE_M de outro carro abre para uma
-## faixa livre, então os carros não se atravessam; na ultrapassagem ficam lado
-## a lado. Se dois carros chegam a se tocar na troca de faixa, o contato
-## aparece como um tranco no carro (sem efeito no resultado).
+## só visual: cada carro segue o traçado de corrida (Tracado: aberto, tangência
+## na zebra, aberto) e quem está a menos de PROXIMIDADE_M de outro abre para
+## uma faixa livre em volta dele, de preferência por dentro da próxima curva
+## (o bote da ultrapassagem); na ultrapassagem ficam lado a lado. Se dois
+## carros se tocam na troca de faixa, o contato aparece como batida: os dois
+## se afastam, giram, soltam faíscas e a câmera treme (sem efeito no resultado).
 
 const LARGURA_PISTA_M := 12.0
-const FAIXAS_M := [0.0, 2.1, -2.1, 4.2, -4.2]
-const PROXIMIDADE_M := 5.5
-const VELOCIDADE_LATERAL := 3.0  # 1/s, aproximação da faixa-alvo
+const FAIXAS_M := [0.0, 2.4, -2.4, 4.8, -4.8]
+const PROXIMIDADE_M := 8.0
+const VELOCIDADE_LATERAL := 2.2  # 1/s, aproximação da faixa-alvo
+## Batida: quanto cada carro é empurrado de lado (m), o giro (rad) e quanto dura.
+const BATIDA_EMPURRAO_M := 0.9
+const BATIDA_GIRO := 0.32
+const BATIDA_S := 0.6
+const BATIDA_INTERVALO_S := 6.0  # um carro não bate de novo antes disso
+## Deriva nas curvas: ângulo (rad) por g de aceleração lateral, por tração.
+const DERIVA := {"FR": 0.13, "MR": 0.12, "4WD": 0.08, "FF": 0.05}
 const TAMANHO_CAMERA := 28.0
 const ALTURA_MARCADOR := 2.6
 
@@ -25,6 +34,14 @@ var _camera: Camera3D
 var _carros := {}  # id -> CarroBloco
 var _rotulos := {}  # id -> Label3D
 var _lateral := {}  # id -> deslocamento atual (m, + = esquerda)
+var _off := {}  # id -> afastamento do traçado de corrida (m), suavizado
+var _tracado: Tracado
+var _tracao := {}  # id -> "FF", "FR", "MR", "4WD"
+var _giro_batida := {}  # id -> giro da batida que ainda resta (rad)
+var _em_contato := {}  # "a|b" -> true enquanto os dois se tocam
+var _ultima_batida := {}  # id -> _tempo da última batida
+var _tempo := 0.0
+var _tremor := 0.0  # segundos de câmera tremendo (batida do carro seguido)
 var _s_anterior := {}
 var _tranco := {}  # id -> segundos restantes de tranco
 var _alvo_camera := Vector3.ZERO
@@ -130,6 +147,7 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary) -> void:
 	limpar()
 	_pista = pista
 	_fonte = fonte
+	_tracado = Tracado.de(pista)
 	_construir_pista()
 	for id in fonte.ordem():
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
@@ -149,7 +167,9 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary) -> void:
 		r.modulate = fonte.cor_de(id).lightened(0.3)
 		_cena.add_child(r)
 		_rotulos[id] = r
-		_lateral[id] = 0.0
+		_lateral[id] = _tracado.lateral(fonte.distancia(id))
+		_off[id] = 0.0
+		_tracao[id] = String(base.get("tracao", "FF"))
 	atualizar(0.0)
 	_camera_imediata()
 
@@ -160,6 +180,9 @@ func limpar() -> void:
 	_carros = {}
 	_rotulos = {}
 	_lateral = {}
+	_off = {}
+	_giro_batida = {}
+	_em_contato = {}
 	_s_anterior = {}
 	_tranco = {}
 	_pista = null
@@ -169,18 +192,36 @@ func limpar() -> void:
 func atualizar(delta: float) -> void:
 	if _pista == null:
 		return
+	_tremor = maxf(_tremor - delta, 0.0)
+	_tempo += delta
 	var s := {}
 	for id in _carros:
 		s[id] = _fonte.distancia(id)
 	var ordem := _fonte.ordem()
-	var alvo := faixas(ordem, s, _lateral, _pista.comprimento)
+	# Traçado de corrida de cada carro e, para quem ataca, o lado de dentro da
+	# próxima curva.
+	var base := {}
+	var ataque := {}
+	for id in _carros:
+		base[id] = _tracado.lateral(float(s[id]))
+		ataque[id] = signf(_tracado.curvatura(float(s[id]) + 45.0))
+	var alvo := faixas(ordem, s, _off, _pista.comprimento, base, ataque)
 	var k := clampf(delta * VELOCIDADE_LATERAL, 0.0, 1.0) if delta > 0.0 and not Preferencias.reduzir_animacoes else 1.0
 	var antes := _lateral.duplicate()
 	for id in _carros:
-		_lateral[id] = lerpf(_lateral[id], alvo[id], k)
+		_off[id] = lerpf(_off[id], alvo[id], k)
+		_lateral[id] = clampf(float(base[id]) + float(_off[id]), -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+	var tocando := {}
 	for par in ([] if Preferencias.reduzir_animacoes else contatos(ordem, s, _lateral, _pista.comprimento)):
-		for id in par:
-			_tranco[id] = 0.35
+		var chave := "%s|%s" % par
+		tocando[chave] = true
+		if _em_contato.has(chave) or _tempo - float(_ultima_batida.get(par[0], -99.0)) < BATIDA_INTERVALO_S \
+				or _tempo - float(_ultima_batida.get(par[1], -99.0)) < BATIDA_INTERVALO_S:
+			continue
+		_bater(par[0], par[1], float(_lateral[par[0]]) - float(_lateral[par[1]]))
+		_ultima_batida[par[0]] = _tempo
+		_ultima_batida[par[1]] = _tempo
+	_em_contato = tocando
 	for i in ordem.size():
 		var id: String = ordem[i]
 		var c: Node3D = _carros[id]
@@ -189,14 +230,25 @@ func atualizar(delta: float) -> void:
 		var normal := Vector2.from_angle(rumo + PI / 2.0)
 		var p := _pista.posicao_em(dist) + normal * float(_lateral[id])
 		c.position = Vector3(p.x, 0.0, -p.y)
-		# Esterço visual da troca de faixa: ângulo entre o avanço e o desvio.
+		# Esterço visual: ângulo entre o avanço e o deslocamento de lado (o
+		# traçado e as trocas de faixa), mais a deriva da traseira nas curvas.
 		var ds: float = dist - float(_s_anterior.get(id, dist))
 		var dl: float = float(_lateral[id]) - float(antes[id])
-		var esterco := clampf(atan2(dl, maxf(ds, 0.05)), -0.35, 0.35) if delta > 0.0 else 0.0
+		var esterco := clampf(atan2(dl, maxf(ds, 0.05)), -0.45, 0.45) if delta > 0.0 else 0.0
+		var v: float = float(_v.get(id, 0.0))
+		var g_lateral := v * v * _tracado.curvatura(dist) / 9.8
+		esterco += clampf(g_lateral * float(DERIVA.get(_tracao.get(id, "FF"), 0.06)), -0.22, 0.22)
 		var t: float = _tranco.get(id, 0.0)
 		if t > 0.0:
-			esterco += sin(t * 60.0) * 0.08
+			esterco += sin(t * 55.0) * 0.07 * (t / BATIDA_S)
 			_tranco[id] = maxf(t - delta, 0.0)
+		var gb: float = _giro_batida.get(id, 0.0)
+		if gb != 0.0:
+			esterco += gb
+			_giro_batida[id] = gb * exp(-delta * 4.0) if absf(gb) > 0.005 else 0.0
+		# Na zebra (rodas de dentro sobre ela, na curva): trepida um pouco.
+		if absf(float(_lateral[id])) > Tracado.ABERTO_M + 0.2 and absf(_tracado.curvatura(dist)) > 0.002:
+			esterco += sin(Time.get_ticks_msec() * 0.09 + i) * 0.015
 		c.rotation.y = rumo + esterco
 		c.girar_rodas(maxf(ds, 0.0))
 		if delta > 0.0:
@@ -213,7 +265,12 @@ func atualizar(delta: float) -> void:
 		var forte: bool = id == "jogador" or id == self.alvo
 		_rotulos[id].pixel_size = (0.045 if forte else 0.032) * (escala * 1.6 if visao_geral else 1.0)
 		_rotulos[id].modulate.a = 1.0 if forte else 0.7
-		_rotulos[id].position = _carros[id].position + Vector3(0, ALTURA_MARCADOR * escala, 0)
+		# De cima, a altura não afasta o rótulo na tela: ele vai um pouco para o
+		# alto da tela, para não cobrir o carro.
+		var cima := _camera.global_basis.y * Vector3(1, 0, 1)
+		cima = cima.normalized() if cima.length() > 0.01 else Vector3.ZERO
+		_rotulos[id].position = _carros[id].position + Vector3(0, ALTURA_MARCADOR * escala, 0) \
+				+ cima * 2.6 * escala * (1.0 - _b)
 	var disputa := false
 	if _anel_alvo != null:
 		_anel_alvo.visible = _carros.has(alvo) and not visao_geral
@@ -261,9 +318,24 @@ func atualizar(delta: float) -> void:
 			else lerpf(_tamanho_base, tamanho_alvo, clampf(delta * 1.5, 0.0, 1.0))
 	_camera.size = _tamanho_base / _zoom
 	_rumo_seguido = _pista.rumo_em(float(s[seguido]))
+	var v_seg := float(_v.get(seguido, 0.0))
+	# Mais rápido, mais longe: a câmera abre com a velocidade.
+	_camera.size *= 1.0 + 0.22 * clampf(v_seg / V_FORTE, 0.0, 1.0)
 	var novo: Vector3 = _carros[seguido].position
-	# No modo velocidade, a câmera mira um pouco à frente: mais pista livre adiante.
-	novo += Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido)) * _camera.size * 0.18 * _b
+	var frente := Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido))
+	# A câmera mira à frente do carro (mais pista livre adiante), mais no modo
+	# velocidade.
+	novo += frente * (minf(v_seg * 0.18, 7.0) * (1.0 - _b) + _camera.size * 0.18 * _b)
+	# De cima, a câmera gira com o carro (a frente para o alto da tela), com
+	# atraso: nas curvas o mundo gira em volta dele.
+	var alvo_guinada := _rumo_seguido + PI
+	# Com "Reduzir animações", a câmera não gira: fica a 45°, como o minimapa.
+	if Preferencias.reduzir_animacoes:
+		_guinada_normal = -PI / 4.0
+	elif delta <= 0.0:
+		_guinada_normal = alvo_guinada
+	else:
+		_guinada_normal = lerp_angle(_guinada_normal, alvo_guinada, clampf(delta * 1.6, 0.0, 1.0))
 	# Inclinada, a câmera gira com o carro: atraso no seguimento vira deslocamento
 	# grande na tela. Aí ela acompanha sem atraso.
 	_alvo_camera = novo if delta <= 0.0 or Preferencias.reduzir_animacoes or _b > 0.0 \
@@ -275,17 +347,20 @@ func atualizar(delta: float) -> void:
 
 
 func _camera_imediata() -> void:
-	# Normal: de cima, girada 45° (o alto da tela para (-1, 0, -1)), a mesma
-	# projeção do minimapa. Velocidade: 30° acima do chão, atrás do carro, na
+	# Normal: de cima, girando com o carro seguido (_guinada_normal); na visão
+	# geral, girada 45° (o alto da tela para (-1, 0, -1)), a mesma projeção do
+	# minimapa. Velocidade: 30° acima do chão, atrás do carro, na
 	# direção em que o sprite isométrico foi desenhado. _b passa de uma à outra.
 	# Câmera ortográfica longe (a escala não muda): nada fica atrás dela.
 	var elevacao := lerpf(PI / 2.0 - 0.0005, deg_to_rad(30.0), _b)
-	var guinada := lerp_angle(-PI / 4.0, _rumo_seguido + PI / 4.0, _b)
+	var guinada := lerp_angle(-PI / 4.0 if visao_geral else _guinada_normal, _rumo_seguido + PI / 4.0, _b)
 	var h := Vector3(cos(guinada), 0.0, -sin(guinada))
 	var longe := 1400.0 * maxf(1.0, _camera.size / 960.0)
 	var tremor := Vector3.ZERO
 	if efeito_velocidade > 0.85 and not Preferencias.reduzir_animacoes:
 		tremor = Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)) * _camera.size * 0.0015
+	if _tremor > 0.0 and not Preferencias.reduzir_animacoes:
+		tremor += Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)) * 0.45 * minf(_tremor / 0.4, 1.0)
 	var alvo_c := _alvo_camera + tremor
 	_camera.look_at_from_position(alvo_c + (h * cos(elevacao) + Vector3.UP * sin(elevacao)) * longe, alvo_c, -h)
 
@@ -301,6 +376,7 @@ var _b := 0.0  # 0 = de cima; 1 = velocidade
 var _zoom := 1.0
 var _tamanho_base := TAMANHO_CAMERA
 var _rumo_seguido := 0.0
+var _guinada_normal := -PI / 4.0
 var _t_modo := 0.0
 var _espera := 0.0
 var _b_saida := 0.0
@@ -377,27 +453,86 @@ func _mistura_sprite() -> float:
 	return smoothstep(0.35, 0.75, _b)
 
 
-## Faixa lateral de cada carro: o da frente mantém a sua; quem está a menos de
-## PROXIMIDADE_M (na mesma volta ou não) de um carro já posicionado vai para a
-## faixa livre mais perto da atual, preferindo o traçado ideal (0).
-static func faixas(ordem: Array, s: Dictionary, atual: Dictionary, comprimento: float) -> Dictionary:
+## Batida entre a e b (dl = lateral de a menos a de b): os dois se afastam e
+## giram para lados opostos, faíscas no ponto do toque, câmera treme se o
+## carro seguido está na batida.
+func _bater(a: String, b: String, dl: float) -> void:
+	var lado := 1.0 if dl >= 0.0 else -1.0
+	_off[a] = float(_off[a]) + lado * BATIDA_EMPURRAO_M
+	_off[b] = float(_off[b]) - lado * BATIDA_EMPURRAO_M
+	_giro_batida[a] = lado * BATIDA_GIRO * randf_range(0.7, 1.0)
+	_giro_batida[b] = -lado * BATIDA_GIRO * randf_range(0.7, 1.0)
+	_tranco[a] = BATIDA_S
+	_tranco[b] = BATIDA_S
+	var seguido := foco if _carros.has(foco) else "jogador"
+	if a == seguido or b == seguido:
+		_tremor = 0.4
+	_faiscas((_carros[a].position + _carros[b].position) * 0.5 + Vector3(0, 0.4, 0))
+
+
+func _faiscas(onde: Vector3) -> void:
+	var f := CPUParticles3D.new()
+	f.one_shot = true
+	f.amount = 28
+	f.lifetime = 0.5
+	f.explosiveness = 1.0
+	f.direction = Vector3.UP
+	f.spread = 75.0
+	f.initial_velocity_min = 5.0
+	f.initial_velocity_max = 13.0
+	f.gravity = Vector3(0, -22, 0)
+	f.scale_amount_min = 0.6
+	f.scale_amount_max = 1.2
+	var q := QuadMesh.new()
+	q.size = Vector2(0.18, 0.18)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	m.albedo_color = Color(1.0, 0.78, 0.35)
+	m.vertex_color_use_as_albedo = true
+	q.material = m
+	f.mesh = q
+	var cores := Gradient.new()
+	cores.set_color(0, Color(1.0, 0.95, 0.7))
+	cores.set_color(1, Color(1.0, 0.35, 0.05, 0.0))
+	f.color_ramp = cores
+	f.position = onde
+	_cena.add_child(f)
+	f.emitting = true
+	get_tree().create_timer(1.2).timeout.connect(f.queue_free)
+
+
+## Afastamento de cada carro do seu traçado de corrida (base, m): o da frente
+## fica no traçado; quem está a menos de PROXIMIDADE_M (na mesma volta ou não)
+## de um carro já posicionado vai para a faixa livre mais perto da atual,
+## preferindo o traçado (0) e, entre as outras, o lado de dentro da próxima
+## curva (ataque: +1 esquerda, -1 direita). Livre = a posição final (base +
+## faixa, dentro da pista) a 2,2 m ou mais dos vizinhos.
+static func faixas(ordem: Array, s: Dictionary, atual: Dictionary, comprimento: float,
+		base: Dictionary = {}, ataque: Dictionary = {}) -> Dictionary:
 	var r := {}
+	var pos := {}
 	for id in ordem:
-		var cands: Array = FAIXAS_M.slice(1)
+		var b: float = base.get(id, 0.0)
 		var a: float = atual.get(id, 0.0)
-		cands.sort_custom(func(x, y): return absf(x - a) < absf(y - a))
+		var lado: float = ataque.get(id, 0.0)
+		var cands: Array = FAIXAS_M.slice(1)
+		cands.sort_custom(func(x, y):
+			return absf(x - a) + (0.6 if signf(x) != lado else 0.0) < absf(y - a) + (0.6 if signf(y) != lado else 0.0))
 		cands.push_front(0.0)
 		var escolhida: float = cands[0]
 		for f in cands:
+			var lat := clampf(b + f, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 			var livre := true
 			for outro in r:
-				if _perto(s[id], s[outro], comprimento, PROXIMIDADE_M) and absf(f - r[outro]) < 2.0:
+				if _perto(s[id], s[outro], comprimento, PROXIMIDADE_M) and absf(lat - pos[outro]) < 2.2:
 					livre = false
 					break
 			if livre:
 				escolhida = f
 				break
 		r[id] = escolhida
+		pos[id] = clampf(b + escolhida, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 	return r
 
 
@@ -408,7 +543,7 @@ static func contatos(ordem: Array, s: Dictionary, lateral: Dictionary, comprimen
 		for j in range(i + 1, ordem.size()):
 			var a: String = ordem[i]
 			var b: String = ordem[j]
-			if _perto(s[a], s[b], comprimento, 4.2) and absf(float(lateral[a]) - float(lateral[b])) < 1.75:
+			if _perto(s[a], s[b], comprimento, 4.0) and absf(float(lateral[a]) - float(lateral[b])) < 1.85:
 				r.append([a, b])
 	return r
 

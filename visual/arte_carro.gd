@@ -18,3 +18,19 @@ static func textura(id: String, vista: String) -> Texture2D:
 		var caminho := PASTA + chave + ".png"
 		_cache[chave] = load(caminho) if ResourceLoader.exists(caminho) else null
 	return _cache[chave]
+
+
+static var _rodas: Dictionary = {}
+
+
+## Rodas do sprite isométrico (arte/carros/rodas.json, gravado pelo importador):
+## duas elipses {c, a, b} em px; vazio se o modelo não tem.
+static func rodas(id: String) -> Array:
+	if _rodas.is_empty():
+		var caminho := PASTA + "rodas.json"
+		if FileAccess.file_exists(caminho):
+			var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(caminho))
+			_rodas = d if d is Dictionary else {"": []}
+		else:
+			_rodas = {"": []}
+	return _rodas.get(id, [])

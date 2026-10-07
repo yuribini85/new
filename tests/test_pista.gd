@@ -67,3 +67,18 @@ func test_importador_tira_magenta_e_refaz_emenda() -> void:
 	tex.fill_rect(Rect2i(0, 0, 64, 4), Color(0.9, 0.9, 0.9))
 	verificar(Importador._emenda(tex) > 0.06, "emenda ruim detectada")
 	verificar(Importador._emenda(Importador._repetivel(tex)) < 0.02, "repetível emenda")
+
+
+func test_tracado_de_corrida_aberto_tangencia_aberto() -> void:
+	var d := dados_fixture()
+	var p: Pista = d.pista("oval")
+	var t := Tracado.de(p)
+	# Primeira curva do oval: de 500 m a 500 + 100π m.
+	var meio := 500.0 + 50.0 * PI
+	var dentro := signf(t.curvatura(meio))
+	verificar(dentro != 0.0, "curva com lado de dentro")
+	verificar(t.lateral(meio) * dentro > 3.0, "tangência por dentro: %.2f" % t.lateral(meio))
+	verificar(t.lateral(440.0) * dentro < -2.0, "antes da curva, por fora: %.2f" % t.lateral(440.0))
+	for s in range(0, int(p.comprimento), 7):
+		verificar(absf(t.lateral(s)) <= Tracado.TANGENCIA_M + 0.001, "dentro da pista em %d" % s)
+	d.free()
