@@ -1,15 +1,19 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled, depth_draw_never, depth_test_disabled;
-// Sprite isométrico do carro na vitrine (decisão 31): um feixe de luz passa
-// devagar pela carroceria, de tempos em tempos. `reflexo` > 0 desenha o mesmo
+// Sprite isométrico do carro na vitrine (decisão 31): uma luz morna e larga
+// desliza devagar pela carroceria (uma passada de 12 s a cada 20 s, ~5 s sobre o carro), mais
+// forte nas partes claras (pintura e vidro com brilho) e quase nada no escuro. `reflexo` > 0 desenha o mesmo
 // sprite como reflexo no piso: cada coluna é espelhada na linha do chão (a reta
 // que passa pelo apoio das rodas, inclinada como o carro), borrada, mais fraca e
-// sumindo para longe do carro, sobre uma sombra de contato. O quadro do reflexo tem o dobro da altura do
-// sprite; a metade de cima coincide com ele.
+// sumindo para longe do carro, sobre uma sombra de contato. O quadro do
+// reflexo tem o dobro da altura do sprite; a metade de cima coincide com ele.
 
 uniform sampler2D textura : source_color, filter_linear_mipmap;
 uniform float reflexo = 0.0;
 uniform float brilho = 1.0;
+uniform float ciclo_s = 20.0;     // intervalo entre passadas
+uniform float passada_s = 12.0;    // duração de uma passada
+uniform vec3 cor_luz : source_color = vec3(1.0, 0.9, 0.74);
 // Linha do chão em UV do sprite: dois pontos (apoio das rodas).
 uniform vec2 chao_a = vec2(0.0, 1.0);
 uniform vec2 chao_b = vec2(1.0, 1.0);
@@ -42,10 +46,16 @@ void fragment() {
 		ALPHA = a;
 	} else {
 		vec4 c = texture(textura, UV);
-		// Feixe diagonal que atravessa a imagem a cada ~5 s.
-		float fase = mod(TIME * 0.22, 1.6) - 0.3;
-		float feixe = smoothstep(0.09, 0.0, abs(UV.x * 0.8 + UV.y * 0.35 - fase));
-		ALBEDO = c.rgb + vec3(feixe * 0.35 * brilho);
+		// Posição da luz ao longo da diagonal (o carro ocupa ~0,3 a 0,9 dela);
+		// acende e apaga suave nas pontas, sem salto.
+		float t = mod(TIME, ciclo_s) / passada_s;
+		float pos = mix(-0.1, 1.25, t);
+		float dist = UV.x * 0.8 + UV.y * 0.35 - pos;
+		float faixa = t < 1.0 ? exp(-dist * dist / 0.035) * sin(3.14159 * t) : 0.0;
+		// Pega nas partes claras, como reflexo em superfície lisa.
+		float lum = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+		float pega = smoothstep(0.2, 0.85, lum);
+		ALBEDO = c.rgb + cor_luz * faixa * pega * 0.16 * brilho;
 		ALPHA = c.a;
 	}
 }
