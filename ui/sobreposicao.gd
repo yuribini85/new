@@ -117,10 +117,6 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 		bt.text = b[0]
 		bt.custom_minimum_size = Vector2(150, 76)
 		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		# Terceiro item opcional: ícone da arte da interface.
-		if b.size() > 2 and b[2] is String and Aba.arte(b[2]) != null:
-			bt.icon = Aba.arte(b[2])
-			bt.add_theme_constant_override("icon_max_width", 40)
 		if i == 0 and botoes.size() > 1:
 			# A ação principal em destaque.
 			var sb := StyleBoxFlat.new()
@@ -131,6 +127,9 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 				bt.add_theme_stylebox_override(estado, sb)
 			for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 				bt.add_theme_color_override(c, Color(0.1, 0.1, 0.1))
+		# Terceiro item opcional: ícone da arte da interface.
+		if b.size() > 2 and b[2] is String:
+			Aba.com_icone(bt, b[2])
 		bt.pressed.connect(func():
 			fechar()
 			b[1].call())

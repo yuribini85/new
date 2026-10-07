@@ -116,9 +116,7 @@ func construir() -> void:
 		b.button_pressed = _grupo == g[0]
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.custom_minimum_size = Vector2(0, 76)
-		if arte(g[2]) != null:
-			b.icon = arte(g[2])
-			b.add_theme_constant_override("icon_max_width", 64)
+		com_icone(b, g[2], 96)
 		b.pressed.connect(func():
 			_grupo = g[0]
 			mudou.emit())
@@ -289,6 +287,9 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(l)
 	b.add_child(h)
+	# O botão não mede os filhos: cresce quando o nome quebra em duas linhas.
+	esq.minimum_size_changed.connect(func():
+		b.custom_minimum_size.y = maxf(96.0, esq.get_combined_minimum_size().y + 20.0))
 	if instalada:
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = Color(COR_BOM, 0.18)

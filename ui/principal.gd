@@ -23,7 +23,7 @@ var _objetivo := -1
 ## Tamanhos para tela de celular em retrato (viewport 720 de largura).
 const FONTE := 30
 const FONTE_TITULO := 38
-const ALTURA_BOTAO := 104
+const ALTURA_BOTAO := 124
 
 
 func _ready() -> void:
@@ -151,14 +151,14 @@ func _navegacao() -> HBoxContainer:
 		b.toggle_mode = true
 		b.custom_minimum_size = Vector2(0, ALTURA_BOTAO)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.add_theme_font_size_override("font_size", 22)
+		b.add_theme_font_size_override("font_size", 20)
 		b.clip_text = true
-		var ic := Aba.arte(d[2])
+		var ic := Aba.icone_reduzido(d[2], 78)
 		if ic != null:
 			b.icon = ic
 			b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-			b.add_theme_constant_override("icon_max_width", 58)
+			# O ícone diz para onde vai; o texto, menor, só confirma.
 		b.pressed.connect(_ir_para.bind(d[1]))
 		barra.add_child(b)
 		_botoes.append(b)

@@ -20,6 +20,10 @@ enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 
 const FONTE_PEQUENA := 23
 const FONTE_TITULO := 40
+## Botão com ícone: o ícone é o que o jogador lê primeiro (para onde vai), então
+## fica maior que o texto, que vem menor ao lado.
+const ICONE_BOTAO := 64
+const FONTE_BOTAO_ICONE := 26
 ## Paleta das telas de referência (docs/referencias/ui_*.webp).
 const COR_FUNDO := Color(0.078, 0.09, 0.11)
 const COR_CARTAO := Color(0.118, 0.133, 0.157)
@@ -431,16 +435,74 @@ func avisar(t: String, ok := true) -> void:
 	aviso.emit(t, ok)
 
 
+## Põe o ícone no botão, em cima e maior que o texto (ICONE_BOTAO); o texto
+## vem menor, embaixo, como na barra de navegação.
+static func com_icone(b: Button, nome_icone: String, tamanho := ICONE_BOTAO) -> void:
+	var tex := icone_reduzido(nome_icone, tamanho)
+	if tex == null:
+		return
+	# Ícone e texto num bloco centrado dentro do botão (o layout do próprio
+	# Button põe o ícone no topo e o texto no pé, com um vão no meio).
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 2)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var ic := TextureRect.new()
+	ic.texture = tex
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	ic.custom_minimum_size = tex.get_size()
+	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(ic)
+	var l := Label.new()
+	l.text = b.text
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.add_theme_font_size_override("font_size", FONTE_BOTAO_ICONE)
+	# Mesmas cores do texto do botão no tema (ui/principal.gd: _tema).
+	var cor := b.get_theme_color("font_color")
+	if b.disabled:
+		cor = Color(0.64, 0.65, 0.7)
+	elif b.toggle_mode and b.button_pressed:
+		cor = Color(0.1, 0.1, 0.1)
+	l.add_theme_color_override("font_color", cor)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(l)
+	b.tooltip_text = b.text
+	b.set_meta("rotulo", b.text)
+	b.text = ""
+	if b.disabled:
+		ic.modulate = Color(1, 1, 1, 0.45)
+	b.add_child(v)
+	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, tex.get_height() + FONTE_BOTAO_ICONE * 1.4 + 26.0)
+	b.custom_minimum_size.x = maxf(b.custom_minimum_size.x,
+			ThemeDB.fallback_font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, FONTE_BOTAO_ICONE).x + 28.0)
+
+
+static var _reduzidos := {}
+
+
+## Ícone já no tamanho do botão (largura `tamanho`, altura proporcional): o
+## botão calcula a própria altura pelo ícone de 256 px, não pelo limite.
+static func icone_reduzido(nome: String, tamanho: int) -> Texture2D:
+	var chave := "%s@%d" % [nome, tamanho]
+	if not _reduzidos.has(chave):
+		var tex := arte(nome)
+		if tex == null:
+			return null
+		var img := tex.get_image()
+		if img.is_compressed():
+			img.decompress()
+		var escala := float(tamanho) / maxi(img.get_width(), img.get_height())
+		img.resize(maxi(1, roundi(img.get_width() * escala)), maxi(1, roundi(img.get_height() * escala)), Image.INTERPOLATE_LANCZOS)
+		_reduzidos[chave] = ImageTexture.create_from_image(img)
+	return _reduzidos[chave]
+
+
 ## Botão que executa a ação e reconstrói as telas. `primario` = cor de destaque.
 func botao(t: String, acao: Callable, habilitado := true, primario := false, pai: Control = null,
 		nome_icone := "") -> Button:
 	var b := Button.new()
 	b.text = t
-	if nome_icone != "" and arte(nome_icone) != null:
-		b.icon = arte(nome_icone)
-		b.expand_icon = false
-		b.add_theme_constant_override("icon_max_width", 40)
-		b.add_theme_constant_override("h_separation", 10)
 	b.custom_minimum_size = Vector2(150, 72)
 	b.disabled = not habilitado
 	if primario and habilitado:
@@ -452,6 +514,7 @@ func botao(t: String, acao: Callable, habilitado := true, primario := false, pai
 			b.add_theme_stylebox_override(estado, sb)
 		for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 			b.add_theme_color_override(c, Color(0.1, 0.1, 0.1))
+	com_icone(b, nome_icone)
 	b.pressed.connect(func():
 		acao.call()
 		mudou.emit())

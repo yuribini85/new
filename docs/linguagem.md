@@ -91,6 +91,9 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
    continua para quem quiser ler.
 5. **Ícones fixos para conceitos**: o mesmo ícone em todas as telas para potência, peso,
    pneus, freios, tração, créditos, troféu, licença, melhorar, correr e comparar.
+6. **Ícone antes do texto nos botões**: o jogador entende para onde vai pelo ícone; ele
+   fica em cima e maior que o texto, que vem menor embaixo e só confirma (`Aba.com_icone`:
+   ícone de 64 px e texto de 26 nas ações; 78 px e texto de 20 na barra de navegação).
 
 ## Estado
 
