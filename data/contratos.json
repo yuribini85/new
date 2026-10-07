@@ -33,7 +33,7 @@
 						"carro": "ashcombe_brute"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -41,14 +41,14 @@
 		"carro": "ashcombe_kestrel",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 15000,
+				"custo_max": 15000.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 10000
+				"custo_max": 10000.0
 			},
 			"prata": {
-				"custo_max": 12000
+				"custo_max": 12000.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Ryujin gastando o mínimo.",
@@ -64,7 +64,7 @@
 						"carro": "hayase_ryujin"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -75,7 +75,7 @@
 				"vencer": true
 			},
 			"ouro": {
-				"pecas_max": 5
+				"pecas_max": 5.0
 			},
 			"prata": {
 				"folga_s": 0.1
@@ -94,7 +94,7 @@
 						"carro": "hayase_kumo"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			},
 			{
 				"condicao": "seco",
@@ -102,6 +102,115 @@
 				"rivais": [
 					{
 						"carro": "hayase_pika"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "pemberly_fieldfare_gts",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 0.3
+			}
+		},
+		"descricao": "O Pemberly Fieldfare GTS tem 190 cv; o rival, 686. Monte o carro da escola para chegar na frente.",
+		"id": "ic_pequeno_gigante",
+		"licenca": "IC",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "parque_das_docas",
+				"rivais": [
+					{
+						"carro": "kanaya_ruri_corrida_ii"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "hayase_sazanami",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 178500,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 119000
+			},
+			"prata": {
+				"custo_max": 142800
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Keldorf Wachtel S gastando o mínimo.",
+		"id": "ic_ultimo_credito",
+		"licenca": "IC",
+		"nome": "O último crédito",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "keldorf_wachtel_s"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "calderwood_fletcher",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 3
+			},
+			"prata": {
+				"folga_s": 0.2
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Mizuchi Chidori SR '98 em Anel do Vale e o Kanaya Yozora em Serra Alta.",
+		"id": "ic_dois_circuitos",
+		"licenca": "IC",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "mizuchi_chidori_sr_98"
+					}
+				],
+				"voltas": 1
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "kanaya_yozora"
 					}
 				],
 				"voltas": 1
