@@ -21,8 +21,8 @@ var _area: Control
 var _info: Label
 var _relogio: Label
 var _placar: Label
-var _hud: Label
-var _hud_volta: Label
+var _painel_hud: HudCorrida
+var _atributos_hud := {}  # atributos do carro inscrito (marcha e giro no HUD)
 var _destaque: Label
 var _destaque_t := 0.0
 var _cameras: HBoxContainer
@@ -55,7 +55,7 @@ func _init(d: Node, j: Node) -> void:
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	area.add_child(_visual3d)
 	var fundo := ColorRect.new()
-	fundo.color = Color(0.05, 0.06, 0.08, 0.88)
+	fundo.color = Color(0.03, 0.035, 0.045, 0.5)
 	fundo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	fundo.offset_left = -230
 	fundo.offset_bottom = 200
@@ -71,24 +71,12 @@ func _init(d: Node, j: Node) -> void:
 	fundo.add_child(_visual)
 	# Placar compacto sobre a pista: posição grande, volta e tempo; embaixo, a
 	# perseguição (diferença em segundos para o carro da frente, o ALVO).
-	var hud := VBoxContainer.new()
-	hud.position = Vector2(14, 10)
-	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hud.add_theme_constant_override("separation", -8)
-	area.add_child(hud)
-	_hud = Label.new()
-	_hud.add_theme_font_size_override("font_size", 68)
-	_hud.add_theme_color_override("font_outline_color", Color.BLACK)
-	_hud.add_theme_constant_override("outline_size", 12)
-	hud.add_child(_hud)
-	_hud_volta = Label.new()
-	_hud_volta.add_theme_font_size_override("font_size", 26)
-	_hud_volta.add_theme_color_override("font_outline_color", Color.BLACK)
-	_hud_volta.add_theme_constant_override("outline_size", 8)
-	hud.add_child(_hud_volta)
-	_placar = _sobre_area(area, Control.PRESET_BOTTOM_WIDE, Color(0.05, 0.06, 0.08, 0.82), 30)
+	_painel_hud = HudCorrida.new()
+	area.add_child(_painel_hud)
+	_placar = _sobre_area(area, Control.PRESET_CENTER_BOTTOM, Color(0.03, 0.035, 0.045, 0.55), 26)
+	_placar.get_parent().offset_bottom = -120
 	# Destaque: largada, ultrapassagem, chegada. Aparece e some.
-	_destaque = _sobre_area(area, Control.PRESET_CENTER_TOP, Color(0.1, 0.3, 0.16, 0.92), 32)
+	_destaque = _sobre_area(area, Control.PRESET_CENTER_TOP, Color(0.03, 0.035, 0.045, 0.7), 30)
 	_destaque.get_parent().visible = false
 	_cameras = fileira()
 	for modo in [["Meu carro", "jogador"], ["Líder", "lider"], ["À frente", "frente"], ["Pista toda", "geral"]]:
@@ -138,8 +126,15 @@ func _sobre_area(area: Control, preset: int, cor: Color, fonte: int) -> Label:
 	if preset == Control.PRESET_BOTTOM_WIDE:
 		p.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	else:
+		# Centrado: largura fixa, senão o texto quebra letra a letra.
 		p.grow_horizontal = Control.GROW_DIRECTION_BOTH
-		p.offset_top = 150
+		p.custom_minimum_size.x = 460
+		p.offset_left = -230
+		p.offset_right = 230
+		if preset == Control.PRESET_CENTER_BOTTOM:
+			p.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		else:
+			p.offset_top = 210
 	var l := Label.new()
 	l.add_theme_font_size_override("font_size", fonte)
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -523,6 +518,9 @@ func _process(delta: float) -> void:
 		_posicao_antes = 0
 		_ordem_antes = []
 		_nomes = {"jogador": "VOCÊ · " + jogador.garagem.carro(f["uid"]).base["nome"]}
+		# Motor e câmbio do carro como foi inscrito (para marcha e giro no HUD).
+		var inscrito: Carro = meu.com_configuracao(f["config"], dados.peca, dados.pneu) if f.get("config") is Dictionary else meu
+		_atributos_hud = inscrito.atributos_efetivos(ev.get("condicao", "seco"))
 		for i in ev["adversarios"].size():
 			var adv: Dictionary = ev["adversarios"][i]
 			var pid := "adv%d_%s" % [i, adv["carro"]]
@@ -569,9 +567,23 @@ func _atualizar_placar(ordem: Array) -> void:
 		return
 	var s := _visual.distancia("jogador")
 	var volta := clampi(floori(maxf(s, 0.0) / _pista.comprimento) + 1, 1, _voltas)
-	_hud.text = "%dº/%d" % [i + 1, ordem.size()]
-	_hud.add_theme_color_override("font_color", COR_DESTAQUE if i == 0 else Color.WHITE)
-	_hud_volta.text = "VOLTA %d/%d · %s" % [volta, _voltas, _mmss(maxf(_visual.duracao() - _visual.tempo, 0.0))]
+	# Tempos de volta: quando o carro cruzou o começo de cada volta.
+	var inicio_volta := _visual.tempo_em("jogador", (volta - 1) * _pista.comprimento) if volta > 1 else 0.0
+	var melhor := -1.0
+	for k in range(1, volta):
+		var a := _visual.tempo_em("jogador", (k - 1) * _pista.comprimento) if k > 1 else 0.0
+		var b := _visual.tempo_em("jogador", k * _pista.comprimento)
+		if a >= 0.0 and b > a:
+			melhor = b - a if melhor < 0.0 else minf(melhor, b - a)
+	# Velocidade pela distância andada no último meio segundo (o resultado da
+	# simulação), sem os saltos de quadro.
+	var v := maxf(_visual.distancia_em("jogador", _visual.tempo) - _visual.distancia_em("jogador", maxf(_visual.tempo - 0.5, 0.0)), 0.0) \
+			/ minf(0.5, maxf(_visual.tempo, 0.05))
+	var mg := Simulacao.marcha_e_giro(_atributos_hud, v) if not _atributos_hud.is_empty() else [0, 0.0]
+	_painel_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": _voltas,
+		"tempo_volta": _visual.tempo - maxf(inicio_volta, 0.0), "melhor": melhor, "kmh": v * 3.6,
+		"marcha": mg[0], "giro": mg[1], "corte": float(_atributos_hud.get("corte", 0.0)),
+		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0})
 	# A pergunta da corrida: consigo alcançar o carro da frente?
 	if _chegou:
 		_placar.text = "Você terminou em %dº" % (i + 1)
@@ -610,8 +622,12 @@ func _atualizar_destaque(ordem: Array, delta: float) -> void:
 
 func _mostrar_destaque(texto: String, bom: bool) -> void:
 	_destaque.text = texto
+	# Painel escuro e calmo; a cor está no texto e numa linha fina embaixo.
 	var sb: StyleBoxFlat = _destaque.get_parent().get_theme_stylebox("panel")
-	sb.bg_color = Color(0.1, 0.32, 0.18, 0.92) if bom else Color(0.42, 0.12, 0.1, 0.92)
+	sb.bg_color = Color(0.03, 0.035, 0.045, 0.7)
+	sb.border_color = COR_DESTAQUE if bom else COR_RUIM
+	sb.border_width_bottom = 3
+	_destaque.add_theme_color_override("font_color", COR_DESTAQUE if bom else COR_RUIM.lightened(0.2))
 	_destaque.get_parent().visible = true
 	_destaque_t = DURACAO_DESTAQUE
 

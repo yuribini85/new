@@ -279,6 +279,33 @@ static func forca_por_velocidade(a: Dictionary) -> PackedFloat64Array:
 	return tabela
 
 
+## Marcha (1 = primeira) e giro do motor na velocidade v (m/s): a marcha de
+## maior força que não passa do corte, a mesma regra da tabela de força.
+## [0, 0.0] sem motor e câmbio nos atributos. Para o HUD da corrida.
+static func marcha_e_giro(a: Dictionary, v: float) -> Array:
+	if not a.has("curva_rpm"):
+		return [0, 0.0]
+	var rpm: PackedFloat64Array = a["curva_rpm"]
+	var nm: PackedFloat64Array = a["curva_nm"]
+	var corte := float(a["corte"])
+	var final := float(a["final"])
+	var raio := float(a["raio_roda"])
+	var relacoes: PackedFloat64Array = a["relacoes"]
+	var melhor := -1.0
+	var r := [1, rpm[0]]
+	for i in relacoes.size():
+		var giro := v / raio * relacoes[i] * final * 60.0 / TAU
+		if giro > corte:
+			continue
+		var f := _torque(rpm, nm, maxf(giro, rpm[0])) * relacoes[i]
+		if f > melhor:
+			melhor = f
+			r = [i + 1, maxf(giro, rpm[0])]
+	if melhor < 0.0:
+		r = [relacoes.size(), corte]
+	return r
+
+
 static func _torque(rpm: PackedFloat64Array, nm: PackedFloat64Array, giro: float) -> float:
 	if giro <= rpm[0]:
 		return nm[0]
