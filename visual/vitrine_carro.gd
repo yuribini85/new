@@ -168,6 +168,26 @@ func _quadro(reflexo: float) -> MeshInstance3D:
 	return mi
 
 
+## Fundo pintado (arte da interface) no lugar do estúdio: a imagem fica atrás
+## do carro (fundo do próprio viewport), sem piso nem anel; o carro em sprite
+## mantém sombra e reflexo leve.
+func fundo_imagem(tex: Texture2D) -> void:
+	if tex == null:
+		return
+	_piso.visible = false
+	_anel.visible = false
+	var vp: SubViewport = get_child(0)
+	var t := TextureRect.new()
+	t.texture = tex
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vp.add_child(t)
+	vp.move_child(t, 0)
+	var ambiente: Environment = (_mundo.get_child(0) as WorldEnvironment).environment
+	ambiente.background_mode = Environment.BG_CANVAS
+
+
 ## Troca o estúdio por uma oficina: piso de ladrilhos, paredes, armário,
 ## pneus empilhados, bancada, luminária e sombra de verdade.
 func ambiente_garagem() -> void:

@@ -19,7 +19,7 @@ const EXPLICA_CATEGORIA := {
 	"displacement": "Motor maior: mais potência.",
 	"computer": "Nova central eletrônica: mais potência.",
 	"intercooler": "Resfria o ar do turbo: mais potência.",
-	"cambio": "Permite encurtar ou alongar a relação final.",
+	"cambio": "Permite escolher entre arrancada e velocidade final.",
 }
 const NOMES_CATEGORIA := {
 	"aspiracao": "Aspiração", "lightweight": "Peso", "brake": "Freios", "muffler": "Escapamento",
@@ -36,6 +36,7 @@ var _vitrine: VitrineCarro
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Oficina")
 	_vitrine = VitrineCarro.new()
+	_vitrine.fundo_imagem(Aba.arte("fundo_garagem"))
 
 
 func atualizar() -> void:
@@ -51,7 +52,16 @@ func _notification(what: int) -> void:
 
 ## Grupo aberto: "motor", "chassi" ou "pneus" (mantido ao voltar).
 var _grupo := "motor"
-const GRUPOS := [["motor", "Motor"], ["chassi", "Chassi"], ["pneus", "Pneus"]]
+const GRUPOS := [["motor", "Motor", "categoria_motor"], ["chassi", "Chassi", "categoria_chassi"],
+	["pneus", "Pneus", "categoria_pneus"]]
+## Miniatura (arte da interface) de cada categoria de peça e de cada pneu.
+const MINIATURA_PECA := {"aspiracao": "peca_aspiracao", "lightweight": "peca_peso", "brake": "peca_freios",
+	"muffler": "peca_escapamento", "portpolish": "peca_dutos", "enginebalance": "peca_balanceamento",
+	"displacement": "peca_cilindrada", "computer": "peca_computador", "intercooler": "peca_intercooler",
+	"cambio": "peca_cambio"}
+const MINIATURA_PNEU := {"pneu_0": "pneu_fabrica", "pneu_1": "pneu_esportivo", "pneu_2": "pneu_corrida_duro",
+	"pneu_3": "pneu_corrida_medio", "pneu_4": "pneu_corrida_macio", "pneu_5": "pneu_corrida_supermacio",
+	"pneu_6": "pneu_simulacao"}
 const CHASSI := ["lightweight", "brake", "cambio"]
 ## O que a melhoria faz na pista, dito pela função.
 const FUNCAO := {
@@ -59,18 +69,18 @@ const FUNCAO := {
 	"peso": "acelera, contorna e freia melhor",
 	"freio": "permite frear mais tarde antes das curvas",
 	"pneu": "contorna mais rápido e freia mais curto",
-	"cambio": "curto acelera mais forte e chega antes ao corte; longo vai mais longe nas retas",
+	"cambio": "Arrancada acelera mais forte; Velocidade final vai mais rápido no fim das retas",
 }
 
 ## Ajustes do câmbio ajustável: [valor em Carro.ajuste_cambio, rótulo].
-const AJUSTES_CAMBIO := [["curto", "Curto"], ["", "Equilibrado"], ["longo", "Longo"]]
+const AJUSTES_CAMBIO := [["curto", "Arrancada"], ["", "Equilibrado"], ["longo", "Velocidade final"]]
 
 
 func construir() -> void:
 	var lista: Array = jogador.garagem.lista()
 	if lista.is_empty():
 		rotulo("Oficina", FONTE_TITULO)
-		proximo_passo("Você ainda não tem carro para preparar.", "Ir para o Mercado", LOJA)
+		proximo_passo("Você ainda não tem carro para melhorar.", "Ir para o Mercado", LOJA)
 		return
 	if carro_ativo() == null:
 		jogador.carro_ativo = lista[0].uid
@@ -92,10 +102,9 @@ func construir() -> void:
 			mudou.emit())
 		topo.add_child(escolha)
 	var seco := c.atributos_efetivos("seco")
-	numeros([["%d" % seco["potencia"], "cv"], ["%d" % seco["peso"], "kg"], ["%.2f" % seco["aderencia"], "aderência"],
-			["%.2f" % seco["freio"], "freio"]])
+	atributos_carro(seco)
 	if _correndo(c):
-		rotulo("Na fila de corrida: as corridas programadas usam a preparação da inscrição. O que mudar aqui vale para a próxima.",
+		rotulo("Este carro está correndo: as corridas já marcadas usam a montagem do início. O que mudar aqui vale para as próximas.",
 				FONTE_PEQUENA + 1, COR_INFO)
 	_configuracoes(c)
 	var abas := HBoxContainer.new()
@@ -106,7 +115,10 @@ func construir() -> void:
 		b.toggle_mode = true
 		b.button_pressed = _grupo == g[0]
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.custom_minimum_size = Vector2(0, 64)
+		b.custom_minimum_size = Vector2(0, 76)
+		if arte(g[2]) != null:
+			b.icon = arte(g[2])
+			b.add_theme_constant_override("icon_max_width", 64)
 		b.pressed.connect(func():
 			_grupo = g[0]
 			mudou.emit())
@@ -117,18 +129,18 @@ func construir() -> void:
 	else:
 		_pecas(c, seco)
 	if not c.pecas.is_empty():
-		botao_texto("Voltar à configuração de fábrica", func(): _fabrica(c), null)
-	botao("Escolher uma prova", func(): ir_para.emit(EVENTOS), true, false)
+		botao_texto("Voltar ao carro de fábrica", func(): _fabrica(c), null)
+	botao("Escolher uma corrida", func(): ir_para.emit(EVENTOS), true, false)
 
 
 ## Preparações salvas: o jogador constrói opções ("até 150 cv", "retas") e
 ## troca entre elas de graça. Só peças já compradas para o carro.
 func _configuracoes(c: Carro) -> void:
 	var v := cartao()
-	rotulo("PREPARAÇÕES SALVAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	rotulo("MONTAGENS SALVAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var atual := c.configuracao()
 	if c.configuracoes.is_empty():
-		rotulo("Salve a preparação atual para voltar a ela depois, sem custo (ex.: \"até 150 cv\", \"retas\").",
+		rotulo("Guarde a montagem atual (peças e pneus) para voltar a ela depois, sem custo. Ex.: \"até 150 cv\", \"pista de retas\".",
 				FONTE_PEQUENA, COR_SECUNDARIA, v)
 	for i in c.configuracoes.size():
 		var cfg: Dictionary = c.configuracoes[i]
@@ -140,15 +152,15 @@ func _configuracoes(c: Carro) -> void:
 				FONTE_PEQUENA + 1, COR_BOM if em_uso else Color.WHITE, h)
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		botao("Equipar", func():
+		botao("Usar", func():
 			var fora: Array = c.equipar(cfg, dados.peca)
-			avisar("Equipada: %s%s." % [cfg["nome"], "" if fora.is_empty() else " (faltam %d peça%s não compradas)" % [
+			avisar("Em uso: %s%s." % [cfg["nome"], "" if fora.is_empty() else " (faltam %d peça%s não compradas)" % [
 					fora.size(), "" if fora.size() == 1 else "s"]], fora.is_empty())
 			mudou.emit(), not em_uso, false, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		botao_texto("Apagar", func():
 			c.configuracoes.remove_at(i)
 			mudou.emit(), h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	botao_texto("Salvar a preparação atual", _salvar_configuracao.bind(c), v)
+	botao_texto("Salvar a montagem atual", _salvar_configuracao.bind(c), v)
 
 
 func _salvar_configuracao(c: Carro) -> void:
@@ -157,13 +169,13 @@ func _salvar_configuracao(c: Carro) -> void:
 	nome.max_length = 24
 	nome.custom_minimum_size = Vector2(0, 64)
 	nome.select_all_on_focus = true
-	painel.emit("Salvar preparação", func(v):
-		rotulo("Nome (por exemplo, o limite de uma prova ou o tipo de pista):", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
+	painel.emit("Salvar montagem", func(v):
+		rotulo("Nome (por exemplo, o limite de uma corrida ou o tipo de pista):", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		v.add_child(nome), [["Salvar", func():
 			var cfg := c.configuracao()
-			cfg["nome"] = nome.text.strip_edges() if nome.text.strip_edges() != "" else "Preparação %d" % (c.configuracoes.size() + 1)
+			cfg["nome"] = nome.text.strip_edges() if nome.text.strip_edges() != "" else "Montagem %d" % (c.configuracoes.size() + 1)
 			c.configuracoes.append(cfg)
-			avisar("Preparação salva: %s." % cfg["nome"])
+			avisar("Montagem salva: %s." % cfg["nome"])
 			mudou.emit()], ["Cancelar", func(): pass]])
 
 
@@ -192,9 +204,21 @@ func _pecas(c: Carro, seco: Dictionary) -> void:
 		por_categoria[cat].sort_custom(func(a, b): return a["preco"] < b["preco"])
 		var v := cartao()
 		var attr: String = AFETA_CATEGORIA.get(cat, "potencia")
-		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), 30, Color.WHITE, v)
+		var cab := fileira(v)
+		if arte(MINIATURA_PECA.get(cat, "")) != null:
+			var mini := ilustracao(MINIATURA_PECA[cat], 96, cab, 0.0)
+			mini.custom_minimum_size = Vector2(144, 96)
+			mini.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var tc := VBoxContainer.new()
+		tc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tc.alignment = BoxContainer.ALIGNMENT_CENTER
+		tc.add_theme_constant_override("separation", 0)
+		cab.add_child(tc)
+		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), 30, Color.WHITE, tc)
 		if attr != "potencia":
-			rotulo(FUNCAO[attr].capitalize().left(1) + FUNCAO[attr].substr(1) + ".", FONTE_PEQUENA, COR_SECUNDARIA, v)
+			rotulo(FUNCAO[attr].capitalize().left(1) + FUNCAO[attr].substr(1) + ".", FONTE_PEQUENA, COR_SECUNDARIA, tc)
+		else:
+			rotulo(EXPLICA_CATEGORIA.get(cat, ""), FONTE_PEQUENA, COR_SECUNDARIA, tc)
 		for p in por_categoria[cat]:
 			_linha(v, c, p, seco, provas_antes)
 		if cat == "cambio" and c.pecas.has("cambio"):
@@ -252,7 +276,7 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	esq.add_child(nome)
 	var g := Label.new()
-	g.text = "em uso" if instalada else ("curto · equilibrado · longo" if p["categoria"] == "cambio"
+	g.text = "em uso" if instalada else ("arrancada · equilibrado · velocidade final" if p["categoria"] == "cambio"
 			else _ganho(antes, depois) + _forma_curta(antes, depois))
 	g.add_theme_font_size_override("font_size", FONTE_PEQUENA)
 	g.add_theme_color_override("font_color", COR_BOM)
@@ -312,7 +336,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 			_remover(c, p)
 			mudou.emit()], ["Fechar", func(): pass]]
 	elif livre and (possuida or jogador.economia.pode_pagar(int(p["preco"]))):
-		botoes = [["Instalar" if possuida else "Comprar · %s Cr" % dinheiro(int(p["preco"])), func():
+		botoes = [["Usar" if possuida else "Comprar e usar · %s Cr" % dinheiro(int(p["preco"])), func():
 			_comprar_peca(c, p, antes)
 			mudou.emit()], ["Cancelar", func(): pass]]
 	painel.emit(p["nome"], func(v):
@@ -346,7 +370,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 			rotulo("Instalada. Remover não devolve o dinheiro, mas a peça continua sua para reinstalar de graça.",
 					FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		elif possuida:
-			rotulo("Já é sua: reinstalar é grátis.", FONTE_PEQUENA + 2, COR_BOM, v)
+			rotulo("Já é sua: usar de novo é grátis.", FONTE_PEQUENA + 2, COR_BOM, v)
 		elif not jogador.economia.pode_pagar(int(p["preco"])):
 			rotulo("Custa %s Cr; faltam %s Cr." % [dinheiro(int(p["preco"])), dinheiro(int(p["preco"]) - jogador.economia.saldo)],
 					FONTE_PEQUENA + 2, COR_RUIM, v)
@@ -356,16 +380,21 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 func _pneus(c: Carro) -> void:
 	var v := cartao()
 	rotulo("Pneus", 30, Color.WHITE, v)
-	rotulo("Mais aderência: " + FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
+	rotulo("Pneu que segura mais: " + FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
 			FONTE_PEQUENA, COR_SECUNDARIA, v)
 	for pn in dados.lista("pneus"):
 		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
 		var h := fileira(v)
+		if arte(MINIATURA_PNEU.get(pn["id"], "")) != null:
+			var mini := ilustracao(MINIATURA_PNEU[pn["id"]], 84, h, 0.0)
+			mini.custom_minimum_size = Vector2(84, 84)
+			mini.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		var info := VBoxContainer.new()
 		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.alignment = BoxContainer.ALIGNMENT_CENTER
 		h.add_child(info)
 		rotulo(pn["nome"], 0, Color.WHITE, info)
-		rotulo("aderência ×%.2f" % pn["aderencia"]["seco"], FONTE_PEQUENA, COR_SECUNDARIA, info)
+		rotulo("aderência %d (curvas e frenagem)" % roundi(pn["aderencia"]["seco"] * 100.0), FONTE_PEQUENA, COR_SECUNDARIA, info)
 		if tem:
 			var l := rotulo("SEU", FONTE_PEQUENA, COR_BOM, h)
 			l.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -395,22 +424,22 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 	var possuida: bool = p["id"] in c.pecas_possuidas
 	var motivo: String = jogador.concessionaria.comprar_peca(c, p)
 	if motivo != "":
-		avisar("Não instalou %s: %s." % [p["nome"], motivo], false)
+		avisar("Não deu para usar %s: %s." % [p["nome"], motivo], false)
 		return
 	var mudancas := _diferencas(antes, c.atributos_efetivos("seco")).map(func(x): return x[0])
-	avisar("%s %s%s." % ["Reinstalada:" if possuida else "Instalada:", p["nome"],
+	avisar("%s %s%s." % ["Em uso de novo:" if possuida else "Em uso:", p["nome"],
 			" (" + ", ".join(mudancas) + ")" if not mudancas.is_empty() else ""])
 
 
 func _remover(c: Carro, p: Dictionary) -> void:
 	c.remover(p["categoria"])
-	avisar("Removida: %s. Continua sua; reinstale de graça quando quiser." % p["nome"])
+	avisar("Removida: %s. Continua sua; use de novo de graça quando quiser." % p["nome"])
 
 
 func _fabrica(c: Carro) -> void:
 	for cat in c.pecas.keys():
 		c.remover(cat)
-	avisar("%s voltou à configuração de fábrica. As peças continuam suas." % c.base["nome"])
+	avisar("%s voltou a ser de fábrica. As peças continuam suas." % c.base["nome"])
 
 
 func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
@@ -418,4 +447,4 @@ func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
 	if motivo != "":
 		avisar("Não comprou %s: %s." % [pn["nome"], motivo], false)
 	else:
-		avisar("Pneu comprado: %s. O piloto usa quando for o melhor para a prova." % pn["nome"])
+		avisar("Pneu comprado: %s. O piloto usa quando for o melhor para a corrida." % pn["nome"])

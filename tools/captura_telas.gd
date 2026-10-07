@@ -53,7 +53,7 @@ func _rodar() -> void:
 	# segunda fica em andamento, iniciada há 25 s.
 	var agora := Time.get_unix_time_from_system()
 	jogador.fila_ctrl.adiantar(agora - 25.0)
-	jogador.fila_ctrl.processar(agora - 25.0)
+	var rel: Dictionary = jogador.fila_ctrl.processar(agora - 25.0)
 
 	var tela: Control = load("res://scenes/principal.tscn").instantiate()
 	root.add_child(tela)
@@ -65,6 +65,20 @@ func _rodar() -> void:
 			await process_frame
 		var img := root.get_texture().get_image()
 		img.save_png(_saida.path_join("%d_%s.png" % [i + 1, abas.get_tab_title(i).to_lower()]))
+	# Competições rolada até os cartões; resultado de uma corrida.
+	tela._ir_para(3)
+	for k in 3:
+		await process_frame
+	tela._abas.get_child(3).scroll_vertical = 640
+	for k in 4:
+		await process_frame
+	root.get_texture().get_image().save_png(_saida.path_join("4_competições_cartoes.png"))
+	if not rel.get("corridas", []).is_empty():
+		tela._resultado(rel["corridas"][0], false)
+		for k in 8:
+			await process_frame
+		root.get_texture().get_image().save_png(_saida.path_join("%d_resultado.png" % (total + 1)))
+		tela._sobre.fechar()
 	# Bancada do primeiro contrato, montada e avaliada.
 	var contratos: Array = dados.lista("contratos")
 	if not contratos.is_empty():

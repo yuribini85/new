@@ -9,7 +9,10 @@ var _vitrine: VitrineCarro
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Garagem")
 	_vitrine = VitrineCarro.new(470.0)
-	_vitrine.ambiente_garagem()
+	if Aba.arte("fundo_garagem") != null:
+		_vitrine.fundo_imagem(Aba.arte("fundo_garagem"))
+	else:
+		_vitrine.ambiente_garagem()
 
 
 func atualizar() -> void:
@@ -36,14 +39,21 @@ func construir() -> void:
 	conteudo.add_child(_vitrine)
 	var fab: Dictionary = dados.item("fabricantes", c.base["fabricante"])
 	rotulo(c.base["nome"], 46)
-	rotulo("%s · %d%s" % [fab.get("nome", ""), c.base["ano"], " · na fila de corrida" if _correndo(c) else ""],
-			FONTE_PEQUENA, COR_SECUNDARIA)
+	var sub := fileira()
+	rotulo("%s · %d%s" % [fab.get("nome", ""), c.base["ano"], " · correndo agora" if _correndo(c) else ""],
+			FONTE_PEQUENA, COR_SECUNDARIA, sub)
+	icone(ICONE_TRACAO.get(c.base["tracao"], "icone_tracao_traseira"), 40, sub)
+	var lt := rotulo(NOMES_TRACAO_CURTO.get(c.base["tracao"], c.base["tracao"]), FONTE_PEQUENA, COR_SECUNDARIA, sub)
+	lt.autowrap_mode = TextServer.AUTOWRAP_OFF
+	lt.size_flags_horizontal = Control.SIZE_SHRINK_END
 	var a := c.atributos_efetivos("seco")
-	numeros([["%d" % a["potencia"], "cv"], ["%d" % a["peso"], "kg"], [c.base["tracao"], "tração"]]
-			+ ([["%d" % c.pecas.size(), "peças"]] if not c.pecas.is_empty() else []))
+	atributos_carro(a)
+	if not c.pecas.is_empty():
+		rotulo("%d peça%s instalada%s" % [c.pecas.size(), "" if c.pecas.size() == 1 else "s", "" if c.pecas.size() == 1 else "s"],
+				FONTE_PEQUENA, COR_SECUNDARIA)
 	var h := acoes()
-	botao("Preparar", func(): ir_para.emit(OFICINA), true, true, h)
-	botao("Correr", func(): ir_para.emit(EVENTOS), true, false, h)
+	botao("Melhorar o carro", func(): ir_para.emit(OFICINA), true, true, h, "icone_melhorar")
+	botao("Correr", func(): ir_para.emit(EVENTOS), true, false, h, "icone_correr")
 	var sec := acoes()
 	botao_texto("Ficha completa", func(): ficha_modelo(c.base), sec)
 	botao_texto("Vender por %s Cr" % dinheiro(revenda(c.base)), _confirmar_venda.bind(c),

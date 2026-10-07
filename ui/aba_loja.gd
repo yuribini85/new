@@ -19,12 +19,12 @@ var _tracao := ""
 
 
 func construir() -> void:
-	rotulo("Mercado", FONTE_TITULO)
+	cabecalho("Mercado", "Carros novos e usados. Os usados mudam a cada corrida.", "fundo_mercado")
 	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos)
 	var novos: Array = dados.lista("carros").filter(func(c): return c.get("novo", true))
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
-	for s in [["usados", "Usados (%d)" % ofertas.size()], ["agenda", "Agenda"], ["novos", "Novos (%d)" % novos.size()]]:
+	for s in [["usados", "Usados (%d)" % ofertas.size()], ["agenda", "Próximas ofertas"], ["novos", "Novos (%d)" % novos.size()]]:
 		var b := Button.new()
 		b.text = s[1]
 		b.toggle_mode = true
@@ -42,7 +42,7 @@ func construir() -> void:
 	_filtros()
 	if _secao == "usados":
 		rotulo("Mudam conforme você corre (cada corrida é um dia). %s" % (
-				"★ = foi bem nos testes da prova mais fácil." if jogador.garagem.lista().is_empty() else ""),
+				"★ = boa chance na corrida mais fácil." if jogador.garagem.lista().is_empty() else ""),
 				FONTE_PEQUENA, COR_SECUNDARIA)
 		if ofertas.is_empty():
 			rotulo("Nenhum usado hoje. Volte depois de algumas corridas.", 0, COR_SECUNDARIA)
@@ -55,7 +55,7 @@ func construir() -> void:
 			var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
 			var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
 			if o["carro_id"] in jogador.desejos:
-				extras.push_front(["♥ acompanhado", COR_DESTAQUE])
+				extras.push_front(["♥ avisando", COR_DESTAQUE])
 			if not a.is_empty():
 				extras.push_front(["%s%s nos testes, de fábrica, em %s" % ["★ " if estrela else "",
 						Mecanico.texto_faixa(a["faixa"]), prev["evento"]], COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
@@ -75,11 +75,11 @@ const HORIZONTE_AGENDA := 30
 ## Agenda dos usados: os acompanhados (quando aparecem) e as próximas ofertas.
 ## O estoque depende só do número de corridas, então a agenda é exata.
 func _agenda() -> void:
-	rotulo("Cada corrida é um dia. A agenda é exata: o estoque só muda com as corridas.", FONTE_PEQUENA, COR_SECUNDARIA)
+	rotulo("Cada corrida é um dia. As ofertas são exatas: o estoque só muda com as corridas.", FONTE_PEQUENA, COR_SECUNDARIA)
 	var v := cartao(COR_DESTAQUE)
-	rotulo("ACOMPANHANDO", FONTE_PEQUENA, COR_DESTAQUE, v)
+	rotulo("AVISAR QUANDO APARECER", FONTE_PEQUENA, COR_DESTAQUE, v)
 	if jogador.desejos.is_empty():
-		rotulo("Abra a ficha de um modelo e toque em \"Acompanhar nos usados\".", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+		rotulo("Abra a ficha de um modelo e toque em \"Avisar quando aparecer usado\".", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
 	for cid in jogador.desejos:
 		var c: Dictionary = dados.carro(cid)
 		var p := Usados.proxima(c, jogador.dias, jogador.usados_vendidos)

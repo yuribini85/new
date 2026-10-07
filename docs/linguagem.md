@@ -92,10 +92,28 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
 5. **Ícones fixos para conceitos**: o mesmo ícone em todas as telas para potência, peso,
    pneus, freios, tração, créditos, troféu, licença, melhorar, correr e comparar.
 
+## Estado
+
+O glossário e as mudanças de estrutura estão aplicados nas telas, junto com a arte:
+- abas com ícone;
+- atributos com ícone e barra;
+- oficina com miniaturas das peças e dos pneus;
+- cartões de corrida com banner, emblema, troféu e a barra "Seu carro x rivais";
+- resultado com palco, pódio com silhuetas e troféus;
+- cabeçalhos ilustrados.
+
+Falta: a dica de primeira vez (item 4 das mudanças de estrutura) e o botão principal do
+resultado escolhido pelo motivo da derrota (hoje vem do objetivo).
+
 ## Pacote de arte da interface
 
 `arte/ui/ui_manifesto.json` lista os arquivos. `python3 tools/pacote_arte_ui.py` gera
-`build/pedido_arte_ui.zip` para o agente de imagem.
+`build/pedido_arte_ui.zip` para o agente de imagem (`--so=` para refazer só alguns), e
+`tools/importar_ui.gd -- --origem=/pasta` importa:
+- ícones, emblemas e silhuetas: recorta e encaixa o desenho;
+- miniaturas, banners e fundos: corta ao centro na proporção pedida.
+
+O jogo lê os arquivos por nome (`Aba.arte`); arquivo que falta só tira a imagem.
 
 Estilo: o das três referências (grafite escuro, destaque âmbar, ilustração pintada ao
 entardecer). Nenhum texto na arte: os textos são do jogo (e mudam com o glossário).

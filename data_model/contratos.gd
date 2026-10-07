@@ -137,7 +137,7 @@ static func completa(dados_: Node, jogador_: Node, licenca_id: String) -> bool:
 static func texto_condicao(chave: String, valor: Variant) -> String:
 	match chave:
 		"vencer":
-			return "ser o mais rápido em todas as provas"
+			return "ser o mais rápido em todas as pistas"
 		"folga_s":
 			return "chegar %.1f s à frente do rival mais rápido" % float(valor)
 		"custo_max":

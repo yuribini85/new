@@ -74,5 +74,5 @@ static func gargalo(curvas: float, retas: float) -> String:
 	if curvas <= 0.05 and retas <= 0.05:
 		return "Sozinho na pista, seu carro não é mais lento: o resultado veio da corrida (largada, tráfego)."
 	if curvas >= retas:
-		return "Gargalo nas curvas: menos peso, freios e aderência (pneus) ajudam mais que potência."
-	return "Gargalo nas retas: potência, câmbio e menos peso ajudam."
+		return "Perde tempo nas curvas: menos peso, freios e pneus ajudam mais que potência."
+	return "Perde tempo nas retas: potência, câmbio e menos peso ajudam."

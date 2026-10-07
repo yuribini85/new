@@ -31,6 +31,7 @@ func construir() -> void:
 		_tela_bancada(dados.item("contratos", _bancada))
 		return
 	_bancada = ""
+	cabecalho("Carreira", "Licenças, objetivos e a sua coleção de carros.", "fundo_carreira")
 	_resumo()
 	_objetivos()
 	rotulo("LICENÇAS", FONTE_PEQUENA, COR_SECUNDARIA)
@@ -244,8 +245,8 @@ func _mostrar_resultado() -> void:
 		rotulo("Faltaram %.2f s para o %s." % [_resultado["tempo"] - float(tempos[proximo]), proximo],
 				FONTE_PEQUENA + 2, Color.WHITE, v)
 	if _resultado["concedida"]:
-		rotulo("Licença %s conquistada! Novas provas liberadas em Eventos." % _resultado["licenca"], 0, COR_BOM, v)
-		botao("Ver eventos", func(): ir_para.emit(EVENTOS), true, true, v)
+		rotulo("Licença %s conquistada! Novas corridas liberadas em Competições." % _resultado["licenca"], 0, COR_BOM, v)
+		botao("Ver competições", func(): ir_para.emit(EVENTOS), true, true, v)
 	_resultado = {}
 
 
@@ -258,7 +259,7 @@ func _cartao_licenca(c: Carro, lic: Dictionary) -> void:
 	rotulo(lic["nome"], 34, Color.WHITE, v)
 	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
 			else ["%d de %d testes" % [feitos, lic["testes"].size()], COR_INFO])
-	selos([estado, ["libera %d prova%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
+	selos([estado, ["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
 	var series := {}
 	for e in dados.lista("eventos"):
 		if e["restricoes"].get("licenca") == lic["id"]:
@@ -316,14 +317,14 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 	if r["licenca_concedida"]:
 		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"])
 		painel.emit("%s conquistada!" % lic["nome"], func(v):
-			rotulo("Agora você pode correr %d provas novas:" % liberadas.size(), 0, Color.WHITE, v)
+			rotulo("Agora você pode correr %d corridas novas:" % liberadas.size(), 0, Color.WHITE, v)
 			var series := {}
 			for e in liberadas:
 				series[String(e["nome"]).split(" — ")[0]] = true
 			for nome in series:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
-			rotulo("Elas aparecem em Eventos, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
-			[["Ver eventos", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
+			rotulo("Elas aparecem em Competições, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
+			[["Ver competições", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
 
 
 
@@ -340,9 +341,9 @@ func _cartao_contratos(lic: Dictionary) -> void:
 	var v := cartao(COR_BOM if tem else (COR_NEUTRA if bloqueada else COR_INFO))
 	rotulo(lic["nome"], 34, Color.WHITE, v)
 	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
-			else ["%d de %d contratos" % [feitos, lista.size()], COR_INFO])
-	selos([estado, ["libera %d prova%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
-	rotulo("A escola empresta o carro e as peças, sem custo. Monte a solução e envie para avaliação; bronze em todos os contratos dá a licença.",
+			else ["%d de %d missões" % [feitos, lista.size()], COR_INFO])
+	selos([estado, ["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
+	rotulo("A escola empresta o carro e as peças, sem custo. Monte o carro e teste a montagem; bronze em todas as missões dá a licença.",
 			FONTE_PEQUENA, COR_SECUNDARIA, v)
 	for ct in lista:
 		separador(v)
@@ -373,7 +374,7 @@ func _abrir_bancada(ct: Dictionary) -> void:
 ## Bancada: o pedido, as medalhas, o carro da escola com a montagem, as peças
 ## da escola por categoria e o relatório da última avaliação.
 func _tela_bancada(ct: Dictionary) -> void:
-	botao_texto("‹ Contratos", func():
+	botao_texto("‹ Missões", func():
 		_bancada = ""
 		mudou.emit())
 	rotulo(ct["nome"], FONTE_TITULO)
@@ -415,7 +416,7 @@ func _tela_bancada(ct: Dictionary) -> void:
 	rotulo("%d peça%s · preço de tabela %s Cr (a escola paga)" % [carro.pecas.size(), "" if carro.pecas.size() == 1 else "s",
 			dinheiro(custo)], FONTE_PEQUENA + 1, COR_SECUNDARIA)
 	_pecas_da_escola(ct, carro)
-	botao("Enviar para avaliação", _enviar.bind(ct), true, true)
+	botao("Testar montagem", _enviar.bind(ct), true, true)
 	if not _avaliacao.is_empty():
 		_relatorio(ct, _avaliacao)
 
@@ -454,7 +455,7 @@ func _pecas_da_escola(ct: Dictionary, carro: Carro) -> void:
 		if cat == "cambio" and atual != "":
 			var h := HBoxContainer.new()
 			h.add_theme_constant_override("separation", 8)
-			for aj in [["curto", "Curto"], ["", "Equilibrado"], ["longo", "Longo"]]:
+			for aj in [["curto", "Arrancada"], ["", "Equilibrado"], ["longo", "Velocidade final"]]:
 				var b := Button.new()
 				b.text = aj[1]
 				b.toggle_mode = true
@@ -479,7 +480,7 @@ func _enviar(ct: Dictionary) -> void:
 		var lic: Dictionary = dados.item("licencas", ct["licenca"])
 		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"])
 		painel.emit("%s conquistada!" % lic["nome"], func(v):
-			rotulo("Todos os contratos cumpridos. Agora você pode correr %d provas novas:" % liberadas.size(), 0, Color.WHITE, v)
+			rotulo("Todas as missões cumpridas. Agora você pode correr %d corridas novas:" % liberadas.size(), 0, Color.WHITE, v)
 			var series := {}
 			for e in liberadas:
 				series[String(e["nome"]).split(" — ")[0]] = true
@@ -494,7 +495,7 @@ func _enviar(ct: Dictionary) -> void:
 func _relatorio(ct: Dictionary, r: Dictionary) -> void:
 	var grau: String = r["grau"]
 	var v := cartao(CORES_GRAU.get(grau, COR_RUIM))
-	rotulo("RELATÓRIO DA AVALIAÇÃO", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	rotulo("RESULTADO DO TESTE", FONTE_PEQUENA, COR_SECUNDARIA, v)
 	rotulo(grau.to_upper() if grau != "" else "NÃO CUMPRIU", 38, CORES_GRAU.get(grau, COR_RUIM), v)
 	for p in r["provas"]:
 		separador(v)
@@ -530,5 +531,5 @@ static func _dif(x: float) -> String:
 ## O gargalo pelo lado em que mais se perdeu tempo.
 static func _gargalo(dg: Dictionary) -> String:
 	if dg["curvas"] >= dg["retas"]:
-		return "Gargalo nas curvas: menos peso, freios e aderência ajudam mais que potência."
-	return "Gargalo nas retas: potência, câmbio e menos peso ajudam."
+		return "Perde tempo nas curvas: menos peso, freios e pneus ajudam mais que potência."
+	return "Perde tempo nas retas: potência, câmbio e menos peso ajudam."

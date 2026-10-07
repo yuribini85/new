@@ -24,7 +24,7 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	rotulo("Competições", FONTE_TITULO)
+	cabecalho("Competições", "Corridas e campeonatos. Vença para ganhar créditos.", "fundo_competicoes")
 	var garagem := carro_ativo()
 	if garagem == null:
 		proximo_passo("Você precisa de um carro para correr.", "Ir para o Mercado", LOJA)
@@ -96,19 +96,20 @@ func _carro_em_uso(garagem: Carro, c: Carro) -> void:
 	img.custom_minimum_size = Vector2(130, 72)
 	h.add_child(img)
 	var a := c.atributos_efetivos("seco")
-	var l := rotulo("%s\n%d cv · %d kg · %s" % [c.base["nome"], a["potencia"], a["peso"], c.base["tracao"]],
+	var l := rotulo("%s\n%d cv · %d kg · %s" % [c.base["nome"], a["potencia"], a["peso"],
+			NOMES_TRACAO_CURTO.get(c.base["tracao"], c.base["tracao"])],
 			FONTE_PEQUENA + 2, Color.WHITE, h)
 	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var b := botao_texto("Trocar", func(): ir_para.emit(GARAGEM), h)
+	var b := botao_texto("Trocar de carro", func(): ir_para.emit(GARAGEM), h)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if garagem.configuracoes.is_empty():
 		return
 	var hp := fileira()
-	rotulo("Preparação", FONTE_PEQUENA + 2, COR_SECUNDARIA, hp).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	rotulo("Montagem", FONTE_PEQUENA + 2, COR_SECUNDARIA, hp).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var o := OptionButton.new()
 	o.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	o.custom_minimum_size = Vector2(0, 60)
-	o.add_item("Atual (como está na Oficina)")
+	o.add_item("Como está agora na Oficina")
 	for cfg in garagem.configuracoes:
 		o.add_item(cfg["nome"])
 	o.select(_config + 1)
@@ -129,21 +130,21 @@ func _fila() -> void:
 	if dur > 0.0:
 		var decorrido := clampf(Time.get_unix_time_from_system() - float(f["inicio"]), 0.0, dur)
 		var falta := dur * int(f["restantes"]) - decorrido
-		rotulo("Cada corrida ≈ %s · a fila termina em ≈ %s" % [_tempo(dur), _tempo(falta)], FONTE_PEQUENA + 2, Color.WHITE, v)
+		rotulo("Cada corrida ≈ %s · a sequência termina em ≈ %s" % [_tempo(dur), _tempo(falta)], FONTE_PEQUENA + 2, Color.WHITE, v)
 	var ganho := _ganho_estimado(ev, f)
 	if ganho != "":
 		rotulo(ganho, FONTE_PEQUENA + 2, COR_BOM, v)
 	rotulo("Continua com o app fechado (até %s)." % _tempo(float(dados.carreira().get("teto_offline_s", 0.0))),
 			FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var h := acoes(v)
-	botao("Assistir", func(): ir_para.emit(CORRIDA), true, true, h)
+	botao("Assistir", func(): ir_para.emit(CORRIDA), true, true, h, "icone_ao_vivo")
 	if int(f["restantes"]) > 1:
-		botao("Parar após esta", func():
+		botao("Parar no fim desta", func():
 			jogador.fila_ctrl.parar_apos_atual()
-			avisar("A fila para quando esta corrida terminar."), true, false, h)
-	botao("Parar já", func():
+			avisar("A sequência para quando esta corrida terminar."), true, false, h)
+	botao("Parar agora", func():
 		jogador.fila_ctrl.cancelar()
-		avisar("Fila cancelada. A corrida em andamento não conta."), true, false, h)
+		avisar("Sequência cancelada. A corrida em andamento não conta."), true, false, h)
 
 
 ## Faixa de ganho pelas posições já obtidas nesta fila (ou na última vez nesta
@@ -153,15 +154,15 @@ func _ganho_estimado(ev: Dictionary, f: Dictionary) -> String:
 	if pos.is_empty() and jogador.historico.has(ev["id"]):
 		pos = [jogador.historico[ev["id"]]["ultima_pos"]]
 	if pos.is_empty():
-		return "Ganho estimado: aparece depois da primeira corrida."
+		return "Ganho previsto: aparece depois da primeira corrida."
 	var premios: Array = ev["premios"]
 	var p := func(posicao: int) -> int: return int(premios[posicao - 1]) if posicao >= 1 and posicao <= premios.size() else 0
 	var n := int(f["restantes"])
 	var melhor: int = p.call(int(pos.min())) * n
 	var pior: int = p.call(int(pos.max())) * n
 	if melhor == pior:
-		return "Ganho estimado no resto da fila: ≈ %s Cr" % dinheiro(melhor)
-	return "Ganho estimado no resto da fila: %s a %s Cr (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
+		return "Ganho previsto até o fim: ≈ %s Cr" % dinheiro(melhor)
+	return "Ganho previsto até o fim: %s a %s Cr (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
 
 
 static func _tempo(s: float) -> String:
@@ -173,8 +174,12 @@ static func _tempo(s: float) -> String:
 
 
 func _repeticoes_ui() -> void:
-	var h := fileira()
-	rotulo("Renda: repetir vencidas", FONTE_PEQUENA + 2, COR_SECUNDARIA, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var v := cartao()
+	var t := fileira(v)
+	icone("icone_de_novo", 40, t)
+	rotulo("Corridas já vencidas: quantas vezes seguidas correr. Rende créditos, até com o app fechado.",
+			FONTE_PEQUENA, COR_SECUNDARIA, t)
+	var h := fileira(v)
 	botao("−", func(): _repeticoes = maxi(1, _repeticoes - 1), _repeticoes > 1, false, h).custom_minimum_size = Vector2(80, 60)
 	var n := Label.new()
 	n.text = "×%d" % _repeticoes
@@ -185,51 +190,79 @@ func _repeticoes_ui() -> void:
 	botao("×10", func(): _repeticoes = mini(999, _repeticoes * 10), true, false, h).custom_minimum_size = Vector2(90, 60)
 
 
-## Cartão da prova: imagem da pista, nome, requisitos curtos, prêmio e uma ação.
+## Cartão da corrida (referência ui_competicoes.webp): banner da pista com o
+## nome por cima, emblema do campeonato, traçado, prêmio com troféu, a barra
+## "seu carro x rivais" e a ação.
 func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var pode := motivos.is_empty()
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
 	var tipo := _tipo(ev)
 	var v := cartao(tipo[1])
-	# Faixa de identidade: tipo da série e dificuldade estimada para o seu carro.
 	var faixa := fileira(v)
-	var t := rotulo(tipo[0].to_upper(), FONTE_PEQUENA, tipo[1].lightened(0.35), faixa)
+	var t := rotulo(("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA"), FONTE_PEQUENA,
+			COR_BOM if vitorias > 0 else (tipo[1].lightened(0.35) if pode else COR_SECUNDARIA), faixa)
 	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var prog := rotulo(_progresso(ev), FONTE_PEQUENA, COR_SECUNDARIA, faixa)
 	prog.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	prog.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-
+	# Banner da pista com o nome e o lugar por cima.
+	var banner := ilustracao("banner_" + String(ev["pista"]), 190, v, 0.85)
+	if not pode:
+		banner.modulate = Color(0.6, 0.6, 0.62)
+	var sobre := HBoxContainer.new()
+	sobre.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	sobre.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	sobre.offset_left = 12
+	sobre.offset_right = -12
+	sobre.offset_bottom = -10
+	banner.add_child(sobre)
+	var emb := _emblema(ev)
+	if emb != "":
+		icone(emb, 74, sobre)
+	var nomes := VBoxContainer.new()
+	nomes.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nomes.add_theme_constant_override("separation", -2)
+	sobre.add_child(nomes)
+	var nl := rotulo(ev["nome"], 30, Color.WHITE, nomes)
+	nl.add_theme_constant_override("outline_size", 6)
+	nl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	var lp := rotulo("%s · %d volta%s · %s" % [nome_pista(ev["pista"]), ev["voltas"], "" if ev["voltas"] == 1 else "s", tipo[0]],
+			FONTE_PEQUENA, Color(0.9, 0.91, 0.94), nomes)
+	lp.add_theme_constant_override("outline_size", 5)
+	lp.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	# Traçado e prêmio.
 	var topo := fileira(v)
 	var fundo := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = FUNDO_PISTA.get(ev["pista"], COR_NEUTRA)
+	sb.bg_color = Color(0, 0, 0, 0.25)
 	sb.set_corner_radius_all(10)
 	sb.set_content_margin_all(6)
 	fundo.add_theme_stylebox_override("panel", sb)
 	var ic := icone_pista(ev["pista"])
-	ic.custom_minimum_size = Vector2(130, 96)
+	ic.custom_minimum_size = Vector2(120, 80)
 	fundo.add_child(ic)
 	fundo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	topo.add_child(fundo)
-	var info := VBoxContainer.new()
-	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info.add_theme_constant_override("separation", 2)
-	topo.add_child(info)
-	rotulo(ev["nome"], 28, Color.WHITE if pode else COR_SECUNDARIA, info)
-	rotulo("%s · %d volta%s" % [nome_pista(ev["pista"]), ev["voltas"], "" if ev["voltas"] == 1 else "s"],
-			FONTE_PEQUENA, COR_SECUNDARIA, info)
 	var premio: int = int(ev["premios"][0]) if not ev["premios"].is_empty() else 0
-	rotulo("1º lugar: %s Cr" % dinheiro(premio), 28, COR_BOM if pode else COR_SECUNDARIA, info)
+	var caixa_premio := HBoxContainer.new()
+	caixa_premio.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	caixa_premio.alignment = BoxContainer.ALIGNMENT_END
+	topo.add_child(caixa_premio)
+	icone("icone_trofeu_ouro", 56, caixa_premio)
+	var vp := VBoxContainer.new()
+	vp.add_theme_constant_override("separation", -4)
+	caixa_premio.add_child(vp)
+	var l1 := rotulo("1º lugar", FONTE_PEQUENA, COR_SECUNDARIA, vp)
+	l1.autowrap_mode = TextServer.AUTOWRAP_OFF
+	var l2 := rotulo("%s Cr" % dinheiro(premio), 34, COR_DESTAQUE if pode else COR_SECUNDARIA, vp)
+	l2.autowrap_mode = TextServer.AUTOWRAP_OFF
 	var etiquetas := []
-	if vitorias > 0:
-		etiquetas.append(["VENCIDA ×%d" % vitorias, COR_BOM])
 	for r in _regras(ev["restricoes"]).slice(0, 3):
 		etiquetas.append([r, COR_NEUTRA.lightened(0.3)])
+	if not etiquetas.is_empty():
+		selos(etiquetas, v)
 	if pode:
-		var pp := _potencia_peso(c, ev)
-		if not pp.is_empty():
-			etiquetas.append(pp)
-	selos(etiquetas, v)
+		_comparacao_rivais(c, ev, v)
 	# Recompensa especial: o carro-prêmio aparece no cartão.
 	if ev.get("carro_premio") != null and vitorias == 0:
 		var cp: Dictionary = dados.carro(ev["carro_premio"])
@@ -237,29 +270,84 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		var img := icone_carro(cp)
 		img.custom_minimum_size = Vector2(150, 84)
 		hp.add_child(img)
-		var lp := rotulo("PRÊMIO ESPECIAL\n%s na 1ª vitória" % cp.get("nome", ""), FONTE_PEQUENA, COR_INFO.lightened(0.3), hp)
-		lp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var lpr := rotulo("CARRO DE PRÊMIO\n%s, na 1ª vitória" % cp.get("nome", ""), FONTE_PEQUENA, COR_INFO.lightened(0.3), hp)
+		lpr.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var h := fileira(v)
 	if pode:
 		var hist: Dictionary = jogador.historico.get(ev["id"], {})
-		var l := rotulo("Seu melhor: %dº" % hist["melhor_pos"] if not hist.is_empty() else "", FONTE_PEQUENA,
-				COR_SECUNDARIA, h)
-		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var col := VBoxContainer.new()
+		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		col.add_theme_constant_override("separation", 0)
+		h.add_child(col)
+		if not hist.is_empty():
+			var hm := fileira(col)
+			icone("icone_cronometro", 34, hm)
+			rotulo("Seu melhor: %dº" % hist["melhor_pos"], FONTE_PEQUENA, COR_SECUNDARIA, hm)
 		var est = _estimativas.get(_chave(ev, c))
 		if est == null:
-			botao_texto("Estimar desempenho", _estimar.bind(ev, c), h)
+			botao_texto("Prever minha posição", _estimar.bind(ev, c), col)
 		elif est is String:
-			rotulo("Estimando…", FONTE_PEQUENA, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			rotulo("Prevendo…", FONTE_PEQUENA, COR_INFO, col)
 		else:
-			rotulo("Estimativa: %s\n%d corridas simuladas, preparação atual" % [Mecanico.texto_faixa(est), Mecanico.AMOSTRAS],
-					FONTE_PEQUENA, COR_INFO, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		var rotulo_correr := "Desafiar"
+			rotulo("Previsão: %s\n(%d corridas simuladas, montagem atual)" % [Mecanico.texto_faixa(est), Mecanico.AMOSTRAS],
+					FONTE_PEQUENA, COR_INFO, col)
+		var rotulo_correr := "Correr"
 		if vitorias > 0:
-			rotulo_correr = "Correr" if _repeticoes == 1 else "Correr ×%d" % _repeticoes
-		botao(rotulo_correr, _correr.bind(ev["id"]), jogador.fila.is_empty(), true, h)
-		botao_texto("Testar preparação", func(): testar_preparacao(ev["id"], carro_ativo()), v)
+			rotulo_correr = "Correr de novo" if _repeticoes == 1 else "Correr de novo ×%d" % _repeticoes
+		var bc := botao(rotulo_correr, _correr.bind(ev["id"]), jogador.fila.is_empty(), true, h, "icone_correr")
+		bc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		botao_texto("Comparar montagens", func(): testar_preparacao(ev["id"], carro_ativo()), v)
 	else:
-		rotulo("✗ " + "; ".join(motivos), FONTE_PEQUENA, COR_RUIM, h)
+		icone("icone_cadeado", 36, h)
+		rotulo("; ".join(motivos), FONTE_PEQUENA, COR_RUIM, h)
+
+
+## Emblema do campeonato pela família do nome (o nome vai escrito ao lado).
+static func _emblema(ev: Dictionary) -> String:
+	var n := String(ev["nome"])
+	for par in [["Copa", "emblema_copa"], ["Desafio", "emblema_desafio"], ["Liga", "emblema_liga"],
+			["Série", "emblema_serie"], ["Troféu", "emblema_trofeu"]]:
+		if n.begins_with(par[0]):
+			return par[1]
+	return ""
+
+
+## Seu carro x rivais (potência por peso, frente à mediana dos rivais): barra
+## de três faixas com o marcador e a palavra (mais fraco, parelho, mais forte).
+func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> void:
+	var r := _razao_rivais(c, ev)
+	if r < 0.0:
+		return
+	var nivel := 0 if r < 0.95 else (1 if r < 1.08 else 2)
+	var cor: Color = [COR_RUIM, COR_INFO, COR_BOM][nivel]
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(cor, 0.12)
+	sb.border_color = Color(cor, 0.7)
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(8)
+	sb.set_content_margin_all(8)
+	p.add_theme_stylebox_override("panel", sb)
+	pai.add_child(p)
+	var h := HBoxContainer.new()
+	p.add_child(h)
+	var l := rotulo("Seu carro x rivais", FONTE_PEQUENA, cor.lightened(0.3), h)
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	l.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var barra_c := Control.new()
+	barra_c.custom_minimum_size = Vector2(150, 30)
+	barra_c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var f := clampf((r - 0.8) / 0.4, 0.0, 1.0)
+	barra_c.draw.connect(func():
+		var w := barra_c.size.x
+		var y := barra_c.size.y * 0.5 - 6
+		for k in 3:
+			barra_c.draw_rect(Rect2(w * k / 3.0 + 2, y, w / 3.0 - 4, 12), Color([COR_RUIM, COR_INFO, COR_BOM][k], 0.25 if k != nivel else 0.9))
+		barra_c.draw_rect(Rect2(w * f - 2, y - 6, 4, 24), Color.WHITE))
+	h.add_child(barra_c)
+	var n := rotulo(["Mais fraco", "Parelho", "Mais forte"][nivel], FONTE_PEQUENA, cor.lightened(0.3), h)
+	n.autowrap_mode = TextServer.AUTOWRAP_OFF
+	n.size_flags_horizontal = Control.SIZE_SHRINK_END
 
 
 ## "Etapa 1 de 3 · 1/3 vencidas": onde esta prova fica na série.
@@ -277,7 +365,7 @@ func _tipo(ev: Dictionary) -> Array:
 	var r: Dictionary = ev["restricoes"]
 	if r.has("tracao"):
 		var t: String = r["tracao"][0]
-		return [{"FF": "Tração dianteira", "FR": "Tração traseira", "4WD": "Tração integral", "MR": "Motor central"}.get(t, "Tração " + t),
+		return [{"FF": "Tração dianteira", "FR": "Tração traseira", "4WD": "Tração 4x4", "MR": "Motor central"}.get(t, "Tração " + t),
 				{"FF": Color(0.25, 0.6, 0.9), "FR": Color(0.9, 0.35, 0.3), "4WD": Color(0.85, 0.65, 0.2), "MR": Color(0.7, 0.4, 0.9)}.get(t, COR_INFO)]
 	if r.has("ano_max"):
 		return ["Clássicos", Color(0.8, 0.55, 0.3)]
@@ -288,11 +376,11 @@ func _tipo(ev: Dictionary) -> Array:
 	return ["Aberta", Color(0.75, 0.75, 0.8)]
 
 
-## Potência/peso do carro em uso frente à mediana dos rivais da prova
-## (atributos efetivos, com peças e pneus): Acima, Próxima ou Abaixo. Leitura
-## rápida, não dificuldade: pneus, curvas e frenagem também contam, e para
-## isso há "Estimar desempenho". Limites (+8% / −5%) provisórios.
-func _potencia_peso(c: Carro, ev: Dictionary) -> Array:
+## Potência/peso do carro em uso dividida pela mediana dos rivais da prova
+## (atributos efetivos, com peças e pneus); -1 sem rivais. Leitura rápida, não
+## dificuldade: pneus, curvas e frenagem também contam, e para isso há "Prever
+## minha posição". Limites (+8% / −5%) provisórios.
+func _razao_rivais(c: Carro, ev: Dictionary) -> float:
 	var meu := c.atributos_efetivos(ev["condicao"])
 	var rivais := []
 	for i in ev["adversarios"].size():
@@ -300,12 +388,9 @@ func _potencia_peso(c: Carro, ev: Dictionary) -> Array:
 		if not a.is_empty():
 			rivais.append(a["potencia"] / maxf(a["peso"], 1.0))
 	if rivais.is_empty():
-		return []
+		return -1.0
 	rivais.sort()
-	var razao: float = (meu["potencia"] / maxf(meu["peso"], 1.0)) / maxf(rivais[rivais.size() / 2], 1e-6)
-	var nivel := "Acima" if razao >= 1.08 else ("Próxima" if razao >= 0.95 else "Abaixo")
-	return ["Potência/peso frente aos rivais: " + nivel,
-			{"Acima": COR_BOM, "Próxima": COR_INFO, "Abaixo": COR_RUIM}[nivel]]
+	return (meu["potencia"] / maxf(meu["peso"], 1.0)) / maxf(rivais[rivais.size() / 2], 1e-6)
 
 
 ## Chave da estimativa: muda se o carro, as peças ou os pneus mudarem.
@@ -335,15 +420,15 @@ func _regras(r: Dictionary) -> Array:
 	if r.has("potencia_max"):
 		t.append("até %d cv" % r["potencia_max"])
 	if r.has("tracao"):
-		t.append("tração " + "/".join(r["tracao"]))
+		t.append(" / ".join(r["tracao"].map(func(x): return NOMES_TRACAO_CURTO.get(x, x))))
 	if r.has("categoria"):
 		t.append("/".join(r["categoria"].map(func(x): return NOMES_CATEGORIA_CARRO.get(x, x))))
 	if r.has("fabricante"):
 		t.append("/".join(r["fabricante"].map(func(x): return dados.item("fabricantes", x).get("nome", x))))
 	if r.has("ano_min"):
-		t.append("de %d em diante" % r["ano_min"])
+		t.append("carros de %d em diante" % r["ano_min"])
 	if r.has("ano_max"):
-		t.append("até %d" % r["ano_max"])
+		t.append("carros até %d" % r["ano_max"])
 	if r.has("licenca"):
 		t.append("licença " + r["licenca"])
 	return t
@@ -359,6 +444,6 @@ func _correr(evento_id: String) -> void:
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
-	avisar("%s %s%s." % ["Largada!" if n > 1 or jogador.vitorias.has(evento_id) else "Desafio:",
+	avisar("%s %s%s." % ["Largada!" if n > 1 or jogador.vitorias.has(evento_id) else "Largada:",
 			dados.evento(evento_id)["nome"], "" if n == 1 else " ×%d" % n])
 	correr_iniciado.emit()

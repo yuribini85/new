@@ -13,7 +13,8 @@ var _voltar: Button
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba]. Oficina e Corrida são
 ## telas internas (de Garagem e Competições), abertas pelo caminho do jogo.
-const DESTINOS := [["Garagem", 0], ["Mercado", 1], ["Competições", 3], ["Carreira", 5]]
+const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"], ["Competições", 3, "aba_competicoes"],
+	["Carreira", 5, "aba_carreira"]]
 const PAI := {2: 0, 4: 3}
 const NOME_PAI := {2: "‹ Garagem", 4: "‹ Competições"}
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
@@ -22,7 +23,7 @@ var _objetivo := -1
 ## Tamanhos para tela de celular em retrato (viewport 720 de largura).
 const FONTE := 30
 const FONTE_TITULO := 38
-const ALTURA_BOTAO := 76
+const ALTURA_BOTAO := 104
 
 
 func _ready() -> void:
@@ -33,7 +34,7 @@ func _ready() -> void:
 	Preferencias.carregar()
 	theme = _tema()
 	var fundo := ColorRect.new()
-	fundo.color = Color(0.09, 0.1, 0.12)
+	fundo.color = Aba.COR_FUNDO
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fundo)
 	var margem := MarginContainer.new()
@@ -64,6 +65,13 @@ func _ready() -> void:
 	_saldo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_saldo.clip_text = true
 	topo.add_child(_saldo)
+	var moeda := TextureRect.new()
+	moeda.texture = Aba.arte("icone_creditos")
+	moeda.custom_minimum_size = Vector2(48, 48)
+	moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	topo.add_child(moeda)
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
 	# Moldura sem layout: o tamanho mínimo das abas não passa para a tela. Se
@@ -143,7 +151,14 @@ func _navegacao() -> HBoxContainer:
 		b.toggle_mode = true
 		b.custom_minimum_size = Vector2(0, ALTURA_BOTAO)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.add_theme_font_size_override("font_size", 26)
+		b.add_theme_font_size_override("font_size", 22)
+		b.clip_text = true
+		var ic := Aba.arte(d[2])
+		if ic != null:
+			b.icon = ic
+			b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+			b.add_theme_constant_override("icon_max_width", 58)
 		b.pressed.connect(_ir_para.bind(d[1]))
 		barra.add_child(b)
 		_botoes.append(b)
@@ -189,13 +204,16 @@ func _tema() -> Theme:
 	t.set_constant("separation", "VBoxContainer", 12)
 	t.set_constant("separation", "HBoxContainer", 12)
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.2, 0.22, 0.26)
+	normal.bg_color = Color(0.16, 0.18, 0.21)
+	normal.border_color = Color(1, 1, 1, 0.08)
+	normal.set_border_width_all(2)
 	normal.set_corner_radius_all(10)
 	normal.set_content_margin_all(12)
 	var apertado := normal.duplicate()
-	apertado.bg_color = Color(0.95, 0.75, 0.15)
+	apertado.bg_color = Aba.COR_DESTAQUE
+	apertado.border_color = Aba.COR_DESTAQUE.lightened(0.2)
 	var desabilitado := normal.duplicate()
-	desabilitado.bg_color = Color(0.14, 0.15, 0.17)
+	desabilitado.bg_color = Color(0.11, 0.12, 0.14)
 	t.set_stylebox("normal", "Button", normal)
 	t.set_stylebox("hover", "Button", normal)
 	t.set_stylebox("pressed", "Button", apertado)
@@ -297,24 +315,24 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	var continua: bool = not jogador.fila.is_empty()
 	var botoes := []
 	if continua:
-		botoes = [["Assistir a próxima", func(): _ir_para(4)], ["Fechar", func(): pass]]
+		botoes = [["Assistir a próxima", func(): _ir_para(4), "icone_ao_vivo"], ["Fechar", func(): pass]]
 	else:
-		botoes = [["Repetir", func():
+		botoes = [["Correr de novo", func():
 				var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Time.get_unix_time_from_system())
 				if m != "":
 					_sobre.avisar("Não deu para correr: %s." % m, false)
 				else:
 					_ir_para(4)
-				atualizar()],
-			["Preparar", func():
+				atualizar(), "icone_de_novo"],
+			["Melhorar o carro", func():
 				jogador.carro_ativo = c["uid"]
 				_ir_para(2)
-				atualizar()],
-			["Outra prova", func(): _ir_para(3)]]
+				atualizar(), "icone_melhorar"],
+			["Escolher outra corrida", func(): _ir_para(3), "aba_competicoes"]]
 		var carro_corrida: Carro = jogador.garagem.carro(c["uid"])
 		if not venceu and carro_corrida != null:
 			# Derrota: comparar preparações antes de gastar outra corrida inteira.
-			botoes.insert(1, ["Testar preparação", func(): g.testar_preparacao(c["evento_id"], carro_corrida)])
+			botoes.insert(1, ["Comparar montagens", func(): g.testar_preparacao(c["evento_id"], carro_corrida), "icone_comparar"])
 		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
 		var alvo_obj: Array = Objetivos.lista(jogador, dados)
 		var i_obj := Objetivos.atual(alvo_obj)
@@ -334,7 +352,13 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	var obj := Objetivos.atual(objetivos)
 	_sobre.abrir("VITÓRIA!" if venceu else "Resultado", func(v):
 		if meu != null:
-			v.add_child(Estudio.imagem(meu.base, CarroBloco.cor_do_carro(meu), Vector2(0, 170)))
+			# Palco (arte da interface) com o carro em cima.
+			var palco := g.ilustracao("fundo_resultado", 300, v, 0.25)
+			var foto := Estudio.imagem(meu.base, CarroBloco.cor_do_carro(meu), Vector2(0, 0))
+			foto.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			foto.offset_top = 20
+			foto.offset_bottom = -20
+			palco.add_child(foto)
 		var pos := Label.new()
 		pos.text = "%dº de %d" % [c["posicao"], c["total"]]
 		pos.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -350,12 +374,17 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			dif.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			_podio(v, tabela, c)
 		if c["premio"] > 0:
+			var hs := HBoxContainer.new()
+			hs.alignment = BoxContainer.ALIGNMENT_CENTER
+			v.add_child(hs)
+			g.icone("icone_creditos", 48, hs)
 			var saldo := g.rotulo("%s → %s Cr  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - c["premio"]),
-					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, v)
-			saldo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, hs)
+			saldo.autowrap_mode = TextServer.AUTOWRAP_OFF
+			saldo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		var marcos := []
 		if venceu and primeira:
-			marcos.append(["PRIMEIRA VITÓRIA NESTA PROVA", Aba.COR_DESTAQUE])
+			marcos.append(["PRIMEIRA VITÓRIA NESTA CORRIDA", Aba.COR_DESTAQUE])
 		if c.get("recorde", false) and not c.get("anterior", {}).is_empty():
 			marcos.append(["RECORDE PESSOAL", Aba.COR_BOM])
 		if not c.get("anterior", {}).is_empty():
@@ -368,14 +397,14 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var cp: Carro = jogador.garagem.carro(c["carro_premio_uid"])
 			if cp != null:
 				var vc := g.cartao(Aba.COR_DESTAQUE, v)
-				g.rotulo("CARRO-PRÊMIO: %s" % cp.base["nome"], Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vc)
+				g.rotulo("CARRO DE PRÊMIO: %s" % cp.base["nome"], Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vc)
 				vc.add_child(Estudio.imagem(cp.base, CarroBloco.cor_do_carro(cp), Vector2(0, 170)))
 		if obj < objetivos.size():
 			var lo := g.rotulo("Objetivo %d/%d: %s" % [obj + 1, objetivos.size(), objetivos[obj]["texto"]], Aba.FONTE_PEQUENA + 2,
 					Aba.COR_INFO.lightened(0.3), v)
 			lo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if not venceu:
-			var dica := g.rotulo("Em Competições › Corrida: por que perdeu e o que ajuda.", Aba.FONTE_PEQUENA,
+			var dica := g.rotulo("Por que perdi? Veja em Competições › Corrida.", Aba.FONTE_PEQUENA,
 					Aba.COR_SECUNDARIA, v)
 			dica.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER, botoes)
 
@@ -400,6 +429,14 @@ func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		nome.add_theme_font_size_override("font_size", 23)
 		nome.add_theme_color_override("font_color", Aba.COR_DESTAQUE if id == "jogador" else Color.WHITE)
 		col.add_child(nome)
+		var sil := TextureRect.new()
+		sil.texture = Aba.arte({1: "piloto_silhueta_3", 2: "piloto_silhueta_1", 3: "piloto_silhueta_2"}[pos])
+		sil.custom_minimum_size = Vector2(0, {1: 130, 2: 112, 3: 104}[pos])
+		sil.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		sil.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		if id == "jogador":
+			sil.modulate = Aba.COR_DESTAQUE.lightened(0.3)
+		col.add_child(sil)
 		var degrau := PanelContainer.new()
 		degrau.custom_minimum_size = Vector2(0, {1: 90, 2: 64, 3: 46}[pos])
 		var sb := StyleBoxFlat.new()
@@ -407,13 +444,24 @@ func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		sb.corner_radius_top_left = 8
 		sb.corner_radius_top_right = 8
 		degrau.add_theme_stylebox_override("panel", sb)
+		var dh := HBoxContainer.new()
+		dh.alignment = BoxContainer.ALIGNMENT_CENTER
+		dh.add_theme_constant_override("separation", 4)
+		degrau.add_child(dh)
+		var trofeu := TextureRect.new()
+		trofeu.texture = Aba.arte({1: "icone_trofeu_ouro", 2: "icone_trofeu_prata", 3: "icone_trofeu_bronze"}[pos])
+		trofeu.custom_minimum_size = Vector2(38, 38)
+		trofeu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		trofeu.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		trofeu.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		dh.add_child(trofeu)
 		var n := Label.new()
 		n.text = "%dº" % pos
 		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		n.add_theme_font_size_override("font_size", 30)
 		n.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1) if id == "jogador" else Color.WHITE)
-		degrau.add_child(n)
+		dh.add_child(n)
 		col.add_child(degrau)
 		h.add_child(col)
 
@@ -422,8 +470,8 @@ func _primeira_vitoria(c: Dictionary) -> void:
 	var g: Aba = _todas[0]
 	_sobre.abrir("Primeira vitória!", func(v):
 		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
-		g.rotulo("Você venceu esta prova pela primeira vez. Prêmio: +%s Cr." % Aba.dinheiro(c["premio"]), 0, Color.WHITE, v)
-		g.rotulo("Próximo passo: tente uma prova que paga mais, ou prepare o carro na Oficina.", Aba.FONTE_PEQUENA + 2,
+		g.rotulo("Você venceu esta corrida pela primeira vez. Prêmio: +%s Cr." % Aba.dinheiro(c["premio"]), 0, Color.WHITE, v)
+		g.rotulo("Próximo passo: tente uma corrida que paga mais, ou melhore o carro na Oficina.", Aba.FONTE_PEQUENA + 2,
 				Aba.COR_SECUNDARIA, v))
 
 
@@ -466,18 +514,18 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			var cp: Carro = jogador.garagem.carro(uid)
 			if cp != null:
 				var vc := g.cartao(Aba.COR_DESTAQUE, v)
-				g.rotulo("CARRO-PRÊMIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vc)
+				g.rotulo("CARRO DE PRÊMIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vc)
 				var h := g.fileira(vc)
 				h.add_child(g.icone_carro(cp.base))
 				g.rotulo(cp.base["nome"], 30, Color.WHITE, h)
 				g.rotulo("Já está na sua garagem.", Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vc)
 		if rel["erro"] != "":
 			var ve := g.cartao(Aba.COR_RUIM, v)
-			g.rotulo("A fila parou: " + rel["erro"], 0, Aba.COR_RUIM, ve)
+			g.rotulo("A sequência de corridas parou: " + rel["erro"], 0, Aba.COR_RUIM, ve)
 		if rel.get("tempo_perdido_s", 0.0) > 0.0:
 			var teto: float = float(dados.carreira().get("teto_offline_s", 0.0))
 			var vt := g.cartao(Aba.COR_INFO, v)
-			g.rotulo("Você ficou fora mais que o limite de %s. %s além disso não contaram; a fila continuou de onde parou." % [
+			g.rotulo("Você ficou fora mais que o limite de %s. %s além disso não contaram; a sequência continuou de onde parou." % [
 					_duracao(teto), _duracao(rel["tempo_perdido_s"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, vt)
 		if corridas.size() > 1:
 			var detalhes := VBoxContainer.new()

@@ -1,7 +1,8 @@
 class_name Aba
 extends ScrollContainer
 ## Base das abas: conteúdo rolável, reconstruído inteiro em atualizar().
-## Telas provisórias com componentes padrão do Godot e placeholders — sem arte.
+## Arte da interface em res://arte/ui/ (docs/linguagem.md): ícones, miniaturas,
+## banners e fundos; sem o arquivo, o componente aparece sem a imagem.
 ##
 ## Linguagem visual comum a todas as telas: cabeçalho com uma frase do que se
 ## faz ali, cartões, selos coloridos para estado, barras para atributos, uma
@@ -19,9 +20,11 @@ enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 
 const FONTE_PEQUENA := 23
 const FONTE_TITULO := 40
-const COR_CARTAO := Color(0.15, 0.16, 0.2)
+## Paleta das telas de referência (docs/referencias/ui_*.webp).
+const COR_FUNDO := Color(0.078, 0.09, 0.11)
+const COR_CARTAO := Color(0.118, 0.133, 0.157)
 const COR_SECUNDARIA := Color(0.77, 0.79, 0.85)
-const COR_DESTAQUE := Color(0.96, 0.76, 0.16)
+const COR_DESTAQUE := Color(0.95, 0.71, 0.19)
 const COR_BOM := Color(0.36, 0.82, 0.47)
 const COR_RUIM := Color(1.0, 0.46, 0.4)
 const COR_INFO := Color(0.45, 0.7, 1.0)
@@ -63,11 +66,167 @@ func construir() -> void:
 
 # --- Blocos de tela ---------------------------------------------------------
 
-## Título da tela e uma frase dizendo o que se faz nela.
-func cabecalho(t: String, subtitulo := "") -> void:
-	rotulo(t, FONTE_TITULO)
+## Título da tela e uma frase dizendo o que se faz nela. Com `fundo` (arte da
+## interface), o título vai sobre a ilustração, escurecida embaixo.
+func cabecalho(t: String, subtitulo := "", fundo := "") -> void:
+	var tex := arte(fundo) if fundo != "" else null
+	if tex == null:
+		rotulo(t, FONTE_TITULO)
+		if subtitulo != "":
+			rotulo(subtitulo, FONTE_PEQUENA, COR_SECUNDARIA)
+		return
+	var faixa := ilustracao(fundo, 230)
+	var v := VBoxContainer.new()
+	v.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	v.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	v.offset_left = 20
+	v.offset_right = -20
+	v.offset_bottom = -14
+	v.add_theme_constant_override("separation", 0)
+	faixa.add_child(v)
+	var l := rotulo(t.to_upper(), FONTE_TITULO + 6, Color.WHITE, v)
+	l.add_theme_constant_override("outline_size", 8)
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	if subtitulo != "":
-		rotulo(subtitulo, FONTE_PEQUENA, COR_SECUNDARIA)
+		rotulo(subtitulo, FONTE_PEQUENA, Color(0.9, 0.91, 0.94), v)
+
+
+# --- Arte da interface ------------------------------------------------------
+
+const PASTA_ARTE := "res://arte/ui/"
+static var _arte := {}
+
+
+## Textura da arte da interface (arte/ui/<nome>.png); null se não existe.
+static func arte(nome: String) -> Texture2D:
+	if not _arte.has(nome):
+		var caminho := PASTA_ARTE + nome + ".png"
+		_arte[nome] = load(caminho) if ResourceLoader.exists(caminho) else null
+	return _arte[nome]
+
+
+## Ícone da interface num quadrado de `tamanho` px.
+func icone(nome: String, tamanho := 44, pai: Control = null) -> TextureRect:
+	var t := TextureRect.new()
+	t.texture = arte(nome)
+	t.custom_minimum_size = Vector2(tamanho, tamanho)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if pai != null:
+		pai.add_child(t)
+	return t
+
+
+## Ilustração (banner, fundo, miniatura) cobrindo a largura, com altura fixa,
+## cantos arredondados e escurecida embaixo para texto por cima.
+func ilustracao(nome: String, altura: float, pai: Control = null, escurecer := 0.75) -> Control:
+	var caixa := Panel.new()
+	caixa.custom_minimum_size = Vector2(0, altura)
+	caixa.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	caixa.clip_contents = true
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_CARTAO
+	sb.set_corner_radius_all(12)
+	caixa.add_theme_stylebox_override("panel", sb)
+	var t := TextureRect.new()
+	t.texture = arte(nome)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	caixa.add_child(t)
+	if escurecer > 0.0:
+		var g := TextureRect.new()
+		var grad := GradientTexture2D.new()
+		grad.fill_from = Vector2(0, 0)
+		grad.fill_to = Vector2(0, 1)
+		var gr := Gradient.new()
+		gr.set_color(0, Color(COR_FUNDO, 0.0))
+		gr.set_color(1, Color(COR_FUNDO, escurecer))
+		grad.gradient = gr
+		g.texture = grad
+		g.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		g.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		g.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		caixa.add_child(g)
+	_pai(pai).add_child(caixa)
+	return caixa
+
+
+## Atributos do carro em quatro quadros (ícone, número, onde ajuda e barra),
+## como na referência da garagem. A barra é só leitura relativa ao catálogo.
+## `antes`: valores anteriores (mostra a diferença em verde/vermelho).
+func atributos_carro(a: Dictionary, pai: Control = null, antes: Dictionary = {}) -> GridContainer:
+	var max_cv := 1.0
+	var max_kg := 1.0
+	for c in dados.lista("carros"):
+		max_cv = maxf(max_cv, float(c["potencia"]))
+		max_kg = maxf(max_kg, float(c["peso"]))
+	var g := GridContainer.new()
+	g.columns = 2
+	g.add_theme_constant_override("h_separation", 10)
+	g.add_theme_constant_override("v_separation", 10)
+	g.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var itens := [
+		["icone_potencia", "%d" % a["potencia"], "cv · retas", a["potencia"] / (max_cv * 1.4), COR_DESTAQUE, "potencia", false],
+		["icone_peso", "%d" % a["peso"], "kg · menos é melhor", 1.0 - a["peso"] / (max_kg * 1.25), COR_INFO, "peso", true],
+		["icone_pneus", "%d" % roundi(a.get("aderencia", 1.0) * 100.0), "pneus · curvas", (a.get("aderencia", 1.0) - 0.7) / 0.8,
+				COR_BOM, "aderencia", false],
+		["icone_freios", "%d" % roundi(a.get("freio", 1.0) * 100.0), "freios · frenagem", (a.get("freio", 1.0) - 0.7) / 0.9,
+				COR_RUIM.lerp(COR_DESTAQUE, 0.5), "freio", false],
+	]
+	for it in itens:
+		var p := PanelContainer.new()
+		p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = COR_CARTAO
+		sb.border_color = Color(1, 1, 1, 0.06)
+		sb.set_border_width_all(2)
+		sb.set_corner_radius_all(10)
+		sb.set_content_margin_all(10)
+		p.add_theme_stylebox_override("panel", sb)
+		var v := VBoxContainer.new()
+		v.add_theme_constant_override("separation", 4)
+		p.add_child(v)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 10)
+		v.add_child(h)
+		icone(it[0], 52, h)
+		var tv := VBoxContainer.new()
+		tv.add_theme_constant_override("separation", -4)
+		h.add_child(tv)
+		var n := Label.new()
+		n.text = it[1]
+		n.add_theme_font_size_override("font_size", 36)
+		if antes.has(it[5]) and not is_equal_approx(float(antes[it[5]]), float(a[it[5]])):
+			var d := float(a[it[5]]) - float(antes[it[5]])
+			var melhora: bool = (d > 0.0) != bool(it[6])
+			n.add_theme_color_override("font_color", COR_BOM if melhora else COR_RUIM)
+		tv.add_child(n)
+		var u := Label.new()
+		u.text = it[2]
+		u.add_theme_font_size_override("font_size", FONTE_PEQUENA - 3)
+		u.add_theme_color_override("font_color", COR_SECUNDARIA)
+		tv.add_child(u)
+		var trilho := ProgressBar.new()
+		trilho.show_percentage = false
+		trilho.custom_minimum_size = Vector2(0, 10)
+		trilho.max_value = 1.0
+		trilho.value = clampf(it[3], 0.04, 1.0)
+		var fundo_b := StyleBoxFlat.new()
+		fundo_b.bg_color = Color(1, 1, 1, 0.08)
+		fundo_b.set_corner_radius_all(4)
+		var cheio := StyleBoxFlat.new()
+		cheio.bg_color = it[4]
+		cheio.set_corner_radius_all(4)
+		trilho.add_theme_stylebox_override("background", fundo_b)
+		trilho.add_theme_stylebox_override("fill", cheio)
+		v.add_child(trilho)
+		g.add_child(p)
+	_pai(pai).add_child(g)
+	return g
 
 
 ## Cartão com fundo arredondado; `acento` pinta a borda esquerda (estado).
@@ -130,10 +289,10 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> v
 			comp.append(["vs seu %s: %+d cv, %+d kg" % [meu.base["nome"], int(base["potencia"]) - roundi(a["potencia"]),
 					int(base["peso"]) - roundi(a["peso"])], COR_INFO])
 			# Potência por peso: mais cv com muito mais peso pode não valer a pena.
-			comp.append(["potência/peso: %d cv por tonelada (o seu: %d)" % [roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
+			comp.append(["potência por tonelada: %d cv (o seu: %d)" % [roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
 					roundi(1000.0 * a["potencia"] / a["peso"])], COR_INFO])
 		else:
-			comp.append(["potência/peso: %d cv por tonelada" % roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
+			comp.append(["potência por tonelada: %d cv" % roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
 					COR_NEUTRA.lightened(0.3)])
 		selos(extras + comp, v)
 		if not compra.is_empty() and not compra[2]:
@@ -155,13 +314,13 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> v
 		rotulo("Revenda depois: %s Cr" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
 		if not base.get("usados", []).is_empty():
 			var desejado: bool = base["id"] in jogador.desejos
-			var bd := botao_texto("♥ Acompanhando nos usados (parar)" if desejado else "♡ Acompanhar nos usados", func():
+			var bd := botao_texto("♥ Avisando quando aparecer usado (parar)" if desejado else "♡ Avisar quando aparecer usado", func():
 				if desejado:
 					jogador.desejos.erase(base["id"])
 				else:
 					jogador.desejos.append(base["id"])
 				mudou.emit(), vc)
-			bd.pressed.connect(func(): bd.text = "Feito: veja a agenda no Mercado")
+			bd.pressed.connect(func(): bd.text = "Feito: veja as próximas ofertas no Mercado")
 		if not fab.is_empty():
 			var vf := cartao(Color.TRANSPARENT, v)
 			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)
@@ -273,9 +432,15 @@ func avisar(t: String, ok := true) -> void:
 
 
 ## Botão que executa a ação e reconstrói as telas. `primario` = cor de destaque.
-func botao(t: String, acao: Callable, habilitado := true, primario := false, pai: Control = null) -> Button:
+func botao(t: String, acao: Callable, habilitado := true, primario := false, pai: Control = null,
+		nome_icone := "") -> Button:
 	var b := Button.new()
 	b.text = t
+	if nome_icone != "" and arte(nome_icone) != null:
+		b.icon = arte(nome_icone)
+		b.expand_icon = false
+		b.add_theme_constant_override("icon_max_width", 40)
+		b.add_theme_constant_override("h_separation", 10)
 	b.custom_minimum_size = Vector2(150, 72)
 	b.disabled = not habilitado
 	if primario and habilitado:
@@ -480,6 +645,11 @@ func ficha(c: Carro, condicao := "seco") -> String:
 
 
 const NOMES_CATEGORIA_CARRO := {"compacto": "Compacto", "seda": "Sedã", "cupe": "Cupê", "roadster": "Roadster"}
+## Ícone e nome curto de cada tração (público geral: sem sigla).
+const ICONE_TRACAO := {"FF": "icone_tracao_dianteira", "FR": "icone_tracao_traseira", "MR": "icone_tracao_central",
+	"RR": "icone_tracao_traseira", "4WD": "icone_tracao_4x4"}
+const NOMES_TRACAO_CURTO := {"FF": "Tração dianteira", "FR": "Tração traseira", "MR": "Motor central",
+	"RR": "Motor traseiro", "4WD": "Tração 4x4"}
 const NOMES_TRACAO := {
 	"FF": "Dianteira (FF)", "FR": "Traseira (FR)", "MR": "Motor central (MR)",
 	"RR": "Motor traseiro (RR)", "4WD": "Integral (4WD)",
@@ -506,13 +676,13 @@ static func nome_pista(id: String) -> String:
 ## prêmio e sem contar dia (Mecanico.avaliar, mesmas sementes para as duas).
 ## Opções: a atual, as salvas e a de fábrica. "Equipar" troca no carro.
 func testar_preparacao(evento_id: String, carro: Carro) -> void:
-	var opcoes := [["Atual", carro.configuracao()]]
+	var opcoes := [["Como está agora", carro.configuracao()]]
 	for cfg in carro.configuracoes:
 		opcoes.append([cfg["nome"], cfg])
 	opcoes.append(["De fábrica", {"pecas": [], "ajuste_cambio": ""}])
 	var escolhas := [0, 1 if opcoes.size() > 1 else 0]
-	painel.emit("Testar preparação", func(v):
-		rotulo("%s · %s. Sem prêmio: só compara, com as mesmas %d corridas simuladas para as duas." % [
+	painel.emit("Comparar montagens", func(v):
+		rotulo("%s · %s. Sem prêmio: só compara, com as mesmas %d corridas simuladas para cada montagem." % [
 				carro.base["nome"], dados.evento(evento_id)["nome"], Mecanico.AMOSTRAS], FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
 		var resultado := VBoxContainer.new()
 		for k in 2:
@@ -544,7 +714,7 @@ func testar_preparacao(evento_id: String, carro: Carro) -> void:
 				var at := montado.atributos_efetivos(dados.evento(evento_id)["condicao"])
 				if a.is_empty():
 					medias.append(INF)
-					rotulo("%s · %s: não pode correr esta prova." % ["AB"[k], op[0]], FONTE_PEQUENA + 2, COR_RUIM, resultado)
+					rotulo("%s · %s: não pode correr esta corrida." % ["AB"[k], op[0]], FONTE_PEQUENA + 2, COR_RUIM, resultado)
 				else:
 					medias.append(a["media"])
 					rotulo("%s · %s: %s (média %.1fº) · %d cv · %d kg" % ["AB"[k], op[0], Mecanico.texto_faixa(a["faixa"]),
@@ -564,8 +734,8 @@ func testar_preparacao(evento_id: String, carro: Carro) -> void:
 			var op_m: Array = opcoes[escolhas[melhor]]
 			rotulo("Melhor aqui: %s." % op_m[0], FONTE_PEQUENA + 3, COR_BOM, resultado)
 			if op_m[1]["pecas"] != carro.configuracao()["pecas"] or op_m[1].get("ajuste_cambio", "") != carro.ajuste_cambio:
-				botao("Equipar %s" % op_m[0], func():
+				botao("Usar %s" % op_m[0], func():
 					var fora: Array = carro.equipar(op_m[1], dados.peca)
-					avisar("Equipada: %s%s." % [op_m[0], "" if fora.is_empty() else " (sem %d peça%s não compradas)" % [
+					avisar("Em uso: %s%s." % [op_m[0], "" if fora.is_empty() else " (sem %d peça%s não compradas)" % [
 							fora.size(), "" if fora.size() == 1 else "s"]], fora.is_empty())
 					mudou.emit(), true, false, resultado)))

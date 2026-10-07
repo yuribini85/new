@@ -36,7 +36,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	if repeticoes < 1:
 		return "repetições deve ser ao menos 1"
 	if repeticoes > 1 and not jogador.vitorias.has(evento_id):
-		return "repetir só depois de vencer a prova uma vez"
+		return "correr de novo só depois de vencer a corrida uma vez"
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
 		return "carro %d não está na garagem" % uid
