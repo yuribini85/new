@@ -41,6 +41,7 @@ var _cameras: Control
 var _cameras_botoes: Array = []
 var _ocioso := 0.0
 var _status: Label
+var _status_linha: HBoxContainer
 var _status_t := 0.0
 var _semente_mostrada := 0
 var _nomes := {}  # id do participante -> nome do carro
@@ -99,8 +100,14 @@ func _init(d: Node, j: Node) -> void:
 	_cameras = _seletor_cameras()
 	conteudo.add_child(_cameras)
 	# Estado idle: forte no começo, depois discreto.
-	_status = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
-	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_status_linha = HBoxContainer.new()
+	_status_linha.alignment = BoxContainer.ALIGNMENT_CENTER
+	_status_linha.add_theme_constant_override("separation", 8)
+	conteudo.add_child(_status_linha)
+	icone("icone_app_fechado", 32, _status_linha)
+	_status = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA, _status_linha)
+	_status.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_status.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_painel = VBoxContainer.new()
 	_painel.add_theme_constant_override("separation", 14)
 	conteudo.add_child(_painel)
@@ -122,6 +129,9 @@ func _seletor_cameras() -> Control:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 2)
 	p.add_child(h)
+	# Ícone de câmera à esquerda: diz o que o seletor controla.
+	var ic := icone("icone_camera", 34, h)
+	ic.modulate.a = 0.8
 	var vazio := StyleBoxEmpty.new()
 	var marcado := StyleBoxFlat.new()
 	marcado.bg_color = COR_DESTAQUE
@@ -221,7 +231,7 @@ func _construir_painel() -> void:
 		c.queue_free()
 	_em_andamento = not jogador.fila.is_empty()
 	_cameras.visible = _em_andamento
-	_status.visible = _em_andamento
+	_status_linha.visible = _em_andamento
 	if _em_andamento:
 		# Ações excepcionais durante a corrida: links discretos, não botões.
 		var h := HBoxContainer.new()
@@ -770,8 +780,8 @@ func _atualizar_status(delta: float) -> void:
 	_status_t += delta
 	# Troca de texto no ponto mais apagado do fade (sem salto visível).
 	var longo := _status_t < 6.0
-	_status.text = "● CORRIDA EM ANDAMENTO · continua com o app fechado" if longo else "● ao vivo · continua com o app fechado"
-	_status.modulate.a = 1.0 - smoothstep(4.5, 6.0, _status_t) if longo else lerpf(0.0, 0.4, smoothstep(6.0, 7.5, _status_t))
+	_status.text = "CORRIDA EM ANDAMENTO · continua com o app fechado" if longo else "ao vivo · continua com o app fechado"
+	_status_linha.modulate.a = 1.0 - smoothstep(4.5, 6.0, _status_t) if longo else lerpf(0.0, 0.4, smoothstep(6.0, 7.5, _status_t))
 
 
 ## Seletor de câmera: perde contraste sem toque; volta ao tocar.

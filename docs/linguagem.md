@@ -135,8 +135,8 @@ O glossário e as mudanças de estrutura estão aplicados nas telas, junto com a
 - cabeçalhos ilustrados.
 
 Textos explicativos encurtados pela regra 7 (de 62 textos longos visíveis para 16, quase
-todos agora dentro dos painéis ⓘ). Ícones pedidos para isso: `icone_app_fechado`,
-`icone_camera`, `icone_trafego` (sem a arte, a linha aparece só com o texto).
+todos agora dentro dos painéis ⓘ). Ícones feitos para isso: `icone_app_fechado` (status da
+corrida e sequência), `icone_camera` (seletor de câmera), `icone_trafego` (diagnóstico).
 
 Falta: a dica de primeira vez (item 4 das mudanças de estrutura) e o botão principal do
 resultado escolhido pelo motivo da derrota (hoje vem do objetivo).
