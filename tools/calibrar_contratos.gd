@@ -44,6 +44,10 @@ const FOLGA_MINIMA_DUPLA := 0.2
 ## clareza (a partir de que diferença o jogador percebe a vantagem); enquanto
 ## for < 0, a prata é metade da folga da solução, como antes.
 const FOLGA_PRATA_DUPLA_S := -1.0
+## Orçamento de busca de "Dois circuitos": pares de rivais tentados por carro e par
+## de pistas, do mais fácil ao mais difícil (com 618 carros, todos os pares não
+## terminam). Limite da ferramenta, não do jogo.
+const PARES_MAX := 12
 
 var _feito := false
 var _dados: Node
@@ -99,14 +103,17 @@ func _calibrar() -> void:
 	todos.sort_custom(func(a, b): return a["id"] < b["id"])
 	var usados := []
 	var contratos := []
+	print("procurando: o pequeno contra o gigante")
 	var c1 := _pequeno_contra_gigante(escola, todos, pistas)
 	if not c1.is_empty():
 		contratos.append(c1)
 		usados.append(c1["carro"])
+	print("procurando: o último crédito")
 	var c2 := _ultimo_credito(escola.filter(func(c): return not c["id"] in usados), todos, pistas)
 	if not c2.is_empty():
 		contratos.append(c2)
 		usados.append(c2["carro"])
+	print("procurando: dois circuitos")
 	var c3 := _dois_circuitos(escola.filter(func(c): return not c["id"] in usados), todos, pistas)
 	if not c3.is_empty():
 		contratos.append(c3)
@@ -221,7 +228,7 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 			for c in escola:
 				var so1 := _guloso(c, p1, [])
 				var so2 := _guloso(c, p2, [])
-				for par in _pares_de_rivais(c, p1, p2, todos):
+				for par in _pares_de_rivais(c, p1, p2, todos).slice(0, PARES_MAX):
 					var r1: Dictionary = par[0]
 					var r2: Dictionary = par[1]
 					var alvo := {p1: _tempo(_montar(r1, []), p1), p2: _tempo(_montar(r2, []), p2)}
@@ -274,7 +281,17 @@ func _pares_de_rivais(c: Dictionary, p1: String, p2: String, todos: Array) -> Ar
 
 ## Montagem gulosa: a cada passo, a opção (peça de categoria vazia ou ajuste
 ## do câmbio) que mais reduz o tempo. `proibidas`: categorias fora.
+var _gulosos := {}
+
+
 func _guloso(c: Dictionary, pista: String, proibidas: Array) -> Dictionary:
+	var chave := "%s|%s|%s" % [c["id"], pista, str(proibidas)]
+	if not _gulosos.has(chave):
+		_gulosos[chave] = _guloso_calc(c, pista, proibidas)
+	return _gulosos[chave]
+
+
+func _guloso_calc(c: Dictionary, pista: String, proibidas: Array) -> Dictionary:
 	var pecas := []
 	var ajuste := ""
 	var t := _tempo(_montar(c, pecas, ajuste), pista)
