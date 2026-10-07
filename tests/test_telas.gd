@@ -219,23 +219,16 @@ func test_registro_de_sessao_do_playtest() -> void:
 	d.free()
 
 
-func test_modo_velocidade_na_reta_e_desligado_por_reduzir_animacoes() -> void:
-	var d: Node = preload("res://autoload/dados.gd").new()
-	d.carregar("res://data/")
-	var j: Node = JogadorScript.new()
-	j.novo_jogo(d.economia(), d.pneu)
-	j.economia.creditar(1000000)
-	j.licencas = ["B", "A"]
-	var ev: Dictionary = d.lista("eventos").filter(func(e): return e["pista"] == "pista_de_testes")[0]
-	var uid := -1
-	for c in d.lista("carros"):
-		var u: int = j.concessionaria.comprar_carro(c)
-		if u > 0 and Elegibilidade.motivos(j.garagem.carro(u), ev["restricoes"], j.licencas).is_empty():
-			uid = u
-			break
-	var r: Dictionary = Carreira.new(d, j).preparar(ev["id"], uid, 1)
-	verificar(not r.has("erro"), "corrida preparada")
-	var pista: Pista = d.pista(ev["pista"])
+func test_camera_isometrica_so_na_ultrapassagem_e_desligada_por_reduzir_animacoes() -> void:
+	var d := dados_fixture()
+	var pista: Pista = d.pista("oval")
+	# O jogador sai 10 m atrás do rival e mais rápido: passa em t = 2 s. Sozinho
+	# (sem rival por perto), nada de câmera inclinada.
+	var amostras := []
+	for k in 121:
+		var t := k * 0.1
+		amostras.append({"t": t, "s": {"jogador": 90.0 + 25.0 * t, "rival": 100.0 + 20.0 * t, "longe": 600.0 + 20.0 * t}})
+	var resultado := {"amostras": amostras, "voltas": 3, "carros": {}}
 	var reduzir := Preferencias.reduzir_animacoes
 	for desligado in [false, true]:
 		Preferencias.reduzir_animacoes = desligado
@@ -243,16 +236,19 @@ func test_modo_velocidade_na_reta_e_desligado_por_reduzir_animacoes() -> void:
 		var v3 := Corrida3D.new()
 		v3.size = Vector2(720, 900)
 		_raiz().add_child(v3)
-		fonte.mostrar(pista, r["resultado"])
-		v3.mostrar(pista, fonte, {"jogador": j.garagem.carro(uid).base})
-		var viu := false
-		for k in 2400:
+		fonte.mostrar(pista, resultado)
+		v3.mostrar(pista, fonte, {})
+		var viu_antes := false
+		var viu_longe := false
+		for k in 240:
 			fonte.tempo += 1.0 / 20.0
 			v3.atualizar(1.0 / 20.0)
-			viu = viu or v3.modo == "velocidade"
-		verificar(viu != desligado, "modo velocidade %s" % ("desligado" if desligado else "na reta longa"))
+			if v3.modo == "velocidade":
+				viu_antes = viu_antes or fonte.tempo < 2.0
+				viu_longe = viu_longe or fonte.tempo > 2.0 + Corrida3D.DEPOIS_S + 0.5
+		verificar(viu_antes != desligado, "câmera da ultrapassagem %s" % ("desligada" if desligado else "entra antes da passagem"))
+		verificar(not viu_longe, "sai depois da ultrapassagem")
 		v3.free()
 		fonte.free()
 	Preferencias.reduzir_animacoes = reduzir
-	j.free()
 	d.free()

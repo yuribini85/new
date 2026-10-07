@@ -120,6 +120,12 @@ func distancia(id: String) -> float:
 	return _bruta(id, tempo)
 
 
+## Distância do carro num instante qualquer da corrida (para prever o que
+## vem: a câmera da ultrapassagem entra antes dela acontecer).
+func distancia_em(id: String, t: float) -> float:
+	return _bruta(id, t)
+
+
 ## Instante em que o carro passou pela distância s (para a diferença em
 ## segundos entre dois carros). -1 se ele ainda não passou.
 func tempo_em(id: String, s: float) -> float:

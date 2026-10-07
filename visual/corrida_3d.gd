@@ -256,6 +256,8 @@ func atualizar(delta: float) -> void:
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
 		r.text = "VOCÊ" if id == "jogador" else str(i + 1)
+		# O seu carro já tem o anel; o rótulo só na visão geral, para achá-lo.
+		r.visible = id != "jogador" or visao_geral
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
@@ -322,6 +324,14 @@ func atualizar(delta: float) -> void:
 	# Mais rápido, mais longe: a câmera abre com a velocidade.
 	_camera.size *= 1.0 + 0.22 * clampf(v_seg / V_FORTE, 0.0, 1.0)
 	var novo: Vector3 = _carros[seguido].position
+	# Na ultrapassagem, a câmera enquadra os dois carros.
+	if modo == "velocidade" and _carros.has(_ultrapassado):
+		var gap := float(s[_ultrapassado]) - float(s[seguido])
+		var alvo_aperto := 1.0 - clampf(absf(gap) / 10.0, 0.0, 1.0)
+		_aperto = alvo_aperto if delta <= 0.0 else lerpf(_aperto, alvo_aperto, clampf(delta * 3.0, 0.0, 1.0))
+		novo = novo.lerp((novo + _carros[_ultrapassado].position) * 0.5, 0.6 * _b)
+	else:
+		_aperto = lerpf(_aperto, 0.0, clampf(delta * 3.0, 0.0, 1.0)) if delta > 0.0 else 0.0
 	var frente := Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido))
 	# A câmera mira à frente do carro (mais pista livre adiante), mais no modo
 	# velocidade.
@@ -381,37 +391,61 @@ var _t_modo := 0.0
 var _espera := 0.0
 var _b_saida := 0.0
 var _zoom_saida := 1.0
+var _ultrapassado := ""  # quem o carro seguido está passando (câmera da ultrapassagem)
+var _inicio_ultrapassagem := 0.0
+var _fim_ultrapassagem := 0.0
+var _aperto := 0.0  # 0..1: quão colados estão os dois (zoom da ultrapassagem)
 var _v := {}  # id -> velocidade suavizada (m/s)
 ## Apresentação, não balanceamento: duração da entrada e da saída, tempo mínimo
 ## entre duas entradas, quanto de reta (em segundos de percurso) justifica o
 ## modo e velocidade a partir da qual ele faz sentido.
 const ENTRADA_S := 0.45
 const SAIDA_S := 0.5
-const ESPERA_S := 4.0
-const RETA_ENTRA_S := 3.0
-const RETA_SAI_S := 1.2
-const CHEGADA_S := 3.0
+const ESPERA_S := 3.0
+## Câmera da ultrapassagem: entra quando o carro seguido está até
+## ULTRAPASSAGEM_GAP_M atrás de outro e vai passá-lo em até ANTECEDENCIA_S;
+## sai DEPOIS_S depois da passagem (ou em MAX_ULTRAPASSAGEM_S, se não vier).
+const ULTRAPASSAGEM_GAP_M := 14.0
+const ANTECEDENCIA_S := 1.8
+const DEPOIS_S := 1.3
+const MAX_ULTRAPASSAGEM_S := 5.0
 const V_MIN := 22.0
 const V_FORTE := 60.0
 
 
-func _decidir_modo(id: String, s: float, disputa: bool) -> String:
+func _decidir_modo(id: String, _s: float, disputa: bool) -> String:
 	var calmo := "foco" if disputa else "normal"
-	if Preferencias.reduzir_animacoes:
+	if Preferencias.reduzir_animacoes or _fonte == null:
 		return calmo
-	var v: float = maxf(float(_v.get(id, 0.0)), 1.0)
-	var i := _pista.indice_em(s)
-	var t: Dictionary = _pista.trechos[i]
-	var reta := float(t.get("raio_m", 0.0)) <= 0.0
-	var resta := _pista.inicios[i] + float(t["comprimento_m"]) - fposmod(s, _pista.comprimento)
-	var fim := _fonte.fim() if _fonte != null else 0.0
-	var chegada := fim > 0.0 and s < fim and (fim - s) / v < CHEGADA_S
+	var agora := _fonte.tempo
 	if modo == "velocidade":
-		if chegada or (reta and resta / v >= RETA_SAI_S):
+		# Fica até o carro seguido estar bem à frente do ultrapassado; sai antes
+		# se a ultrapassagem não se confirmou.
+		if _ultrapassado != "" and agora < _fim_ultrapassagem + DEPOIS_S \
+				and agora < _inicio_ultrapassagem + MAX_ULTRAPASSAGEM_S:
 			return "velocidade"
+		_ultrapassado = ""
 		return calmo
-	if _espera <= 0.0 and v >= V_MIN and (chegada or (reta and resta / v >= RETA_ENTRA_S)):
-		return "velocidade"
+	if _espera > 0.0:
+		return calmo
+	# Ultrapassagem a caminho: um carro logo à frente que o seguido vai passar
+	# nos próximos ANTECEDENCIA_S (o resultado já está decidido; a câmera só
+	# sabe antes).
+	var s_eu := _fonte.distancia_em(id, agora)
+	for outro in _carros:
+		if outro == id:
+			continue
+		var gap := _fonte.distancia_em(outro, agora) - s_eu
+		if gap <= 0.0 or gap > ULTRAPASSAGEM_GAP_M:
+			continue
+		var t := agora
+		while t < agora + ANTECEDENCIA_S:
+			t += 0.1
+			if _fonte.distancia_em(id, t) > _fonte.distancia_em(outro, t) + 0.5:
+				_ultrapassado = outro
+				_inicio_ultrapassagem = agora
+				_fim_ultrapassagem = t
+				return "velocidade"
 	return calmo
 
 
@@ -439,6 +473,8 @@ func _animar_modo(delta: float) -> void:
 		_b = maxf(_b, smoothstep(0.1, 0.9, u))
 		_zoom = lerpf(1.0, 1.38, smoothstep(0.0, 1.0, u / 0.7)) if u < 0.7 \
 				else lerpf(1.38, 1.32, smoothstep(0.0, 1.0, (u - 0.7) / 0.3))
+		# Lado a lado, a câmera fecha nos dois; depois da passagem, abre.
+		_zoom *= lerpf(1.0, 1.45, _aperto)
 	else:
 		var u := clampf(_t_modo / SAIDA_S, 0.0, 1.0)
 		_b = lerpf(_b_saida, 0.0, smoothstep(0.0, 1.0, u))
