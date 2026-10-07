@@ -89,26 +89,43 @@ GT2 = RAIZ / "referencia" / "gt2"
 REF = RAIZ / "referencia" / "carros.csv"
 DATA = RAIZ / "data"
 
-# Pista do GT2 (id interno) -> nossa pista pela função.
+# Pista do GT2 (id interno) -> nossa pista pela função (docs/pistas_arquetipos.md).
+# As versões curtas do GT2 vão para a versão curta da nossa pista do mesmo grupo.
 PISTAS = {
     "highway": "anel_do_vale", "s_speed": "anel_do_vale", "speed": "anel_do_vale", "seattle": "anel_do_vale",
-    "seatt_s": "anel_do_vale", "circuit": "anel_do_vale",
-    # Retas muito longas (docs/pistas_arquetipos.md, grupo 1).
+    "circuit": "anel_do_vale", "seatt_s": "anel_curto",
+    # Retas muito longas (grupo 1).
     "test_in2": "pista_de_testes", "testline": "pista_de_testes", "maxspeed": "pista_de_testes",
     "mountain": "serra_alta", "grindel": "serra_alta", "tahiti_t": "serra_alta", "parma": "serra_alta",
+    "new_parmas": "serra_curta",
+    # Misto permanente (grupo 4).
+    "laguna": "circuito_misto", "autumn": "circuito_misto",
+    "roma_short": "docas_curta",
 }
-PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, roma_short, shortway, short, sprint2, laguna, autumn
+PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, shortway, short, sprint2
 
 # Séries do GT2 que entram no jogo (prefixo do código do evento -> nosso nome).
-# Fora: marca única (pista "none"), rali, endurance, testes de licença e as
-# que exigem licença internacional. O resto do evento vem do disco.
+# Fora: marca única (pista "none"), rali, resistência (mais de MAX_VOLTAS voltas),
+# testes de licença e a licença S (os eventos dela não têm pista no disco). O
+# resto do evento vem do disco.
 SERIES = {
     "SND": "Copa de Domingo", "CBM": "Copa Clube", "WLK": "Copa Peso-Leve",
     "GJL": "Liga Regional I", "GUL": "Liga Regional II", "GBL": "Liga Regional III",
     "GFL": "Liga Regional IV", "GGL": "Liga Regional V", "GIL": "Liga Regional VI", "GCC": "Liga Regional VII",
     "FFC": "Desafio Tração Dianteira", "FRC": "Desafio Tração Traseira", "4WD": "Desafio 4x4",
     "80S": "Copa Anos 80", "HTC": "Troféu 250", "WOS": "Copa Aberta 250", "SLS": "Copa 400", "PSC": "Série 400",
+    "WGN": "Copa Grand Tour", "MRC": "Desafio Motor Central", "MSC": "Copa Livre", "PFL": "Série 550",
+    "STT": "Série 500", "EPL": "Copa Continental", "GT3": "Campeonato GT Leve", "GTC": "Campeonato GT Clube",
+    "GT5": "Campeonato GT Pesado", "GTA": "Mundial de Estrelas", "GTW": "Liga Mundial GT", "TCN": "Copa Turismo",
+    "TCT": "Copa Preparados",
 }
+LICENCAS = ["B", "A", "IC", "IB", "IA"]
+# Enquanto uma pista nova não está em data/pistas.json, os eventos dela vão para
+# a pista do mesmo grupo que já existe.
+PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "docas_curta": "parque_das_docas",
+                    "circuito_misto": "parque_das_docas"}
+PISTAS_EXISTENTES: set[str] = set()
+MAX_VOLTAS = 10
 
 MOTOR = ["PortPolish", "EngineBalance", "Displacement", "Computer", "Muffler", "Intercooler"]
 NOMES_CATEGORIA = {
@@ -189,6 +206,10 @@ def main() -> int:
     if args.sugerir:
         return sugerir()
 
+    global PISTAS_EXISTENTES
+    caminho_pistas = DATA / "pistas.json"
+    PISTAS_EXISTENTES = {p["id"] for p in json.load(open(caminho_pistas, encoding="utf-8"))} if caminho_pistas.exists() \
+            else set(PISTAS.values()) | {PISTA_PADRAO}
     ref = list(csv.DictReader(open(REF, encoding="utf-8")))
     if not ref or not all(l.get("codigo_gt2") for l in ref):
         sys.exit("preencha codigo_gt2 em referencia/carros.csv (tools/importar_gt2.py --sugerir)")
@@ -321,7 +342,7 @@ def main() -> int:
 
     eventos, pilotos = importar_eventos(nosso, resumo, carros)
     licencas = []
-    for lic in ("B", "A"):
+    for lic in LICENCAS:
         limites = sorted(e["restricoes"]["potencia_max"] for e in eventos
                          if e["restricoes"].get("licenca") == lic and "potencia_max" in e["restricoes"])
         if lic == "B":
@@ -335,7 +356,8 @@ def main() -> int:
             if limites:
                 q1, q2, q3 = statistics.quantiles(limites, n=4, method="inclusive")
                 por_teste = [min(limites, key=lambda x: abs(x - q)) for q in (q2, q1, q3)]
-        licencas.append({"id": lic, "nome": f"Licença {lic}", "requisito": "B" if lic == "A" else None,
+        anterior = LICENCAS[LICENCAS.index(lic) - 1] if lic != LICENCAS[0] else None
+        licencas.append({"id": lic, "nome": f"Licença {lic}", "requisito": anterior,
                          "testes": [{"id": f"{lic.lower()}{k + 1}", "pista": pista, "voltas": 1, "condicao": "seco",
                                      "restricoes": {"potencia_max": por_teste[k]} if por_teste[k] else {},
                                      "tempos": {"ouro": None, "prata": None, "bronze": None}}
@@ -441,7 +463,8 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
     etapas: dict[str, int] = {}
     for k, (b, r) in enumerate(zip(brutos, resumidos)):
         serie = SERIES.get(r["evento"][:3])
-        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in ("", "B", "A"):
+        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS \
+                or int(n(r["voltas"])) > MAX_VOLTAS:
             continue
         restr = {}
         if n(r["limite_ps"]) > 0:
@@ -470,6 +493,8 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
             adversarios.append({"carro": carro, "piloto": id_piloto})
         premio_carros = [nosso[c] for c in r["carros_premio"].split() if c in nosso]
         pista = PISTAS.get(r["pista"].lower(), PISTA_PADRAO)
+        if pista not in PISTAS_EXISTENTES:
+            pista = PISTA_DE_RESERVA.get(pista, PISTA_PADRAO)
         etapas[serie] = etapas.get(serie, 0) + 1
         eventos.append({
             "id": f"ev_{k:03d}", "nome": f"{serie} — etapa {etapas[serie]}", "pista": pista,

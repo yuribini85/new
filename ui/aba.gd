@@ -342,7 +342,8 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> v
 		vit.mostrar_modelo(base, CarroBloco.cor_do_id(base["id"]))
 		v.add_child(vit)
 		var fab: Dictionary = dados.item("fabricantes", base["fabricante"])
-		rotulo("%s · %d · %s" % [fab.get("nome", ""), base["ano"], NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "")],
+		rotulo("%s%s · %s" % [fab.get("nome", ""), " · %d" % base["ano"] if int(base["ano"]) > 0 else "",
+				NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "")],
 				FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		numeros([["%d" % base["potencia"], "cv"], ["%d" % base["peso"], "kg"], [base["tracao"], "tração"]], v)
 		var meu := carro_ativo()
@@ -786,8 +787,15 @@ func selos_carro(base: Dictionary) -> Array:
 	]
 
 
+## Nomes que não saem do id.
+const NOMES_PISTA := {"circuito_misto": "Colinas do Vinhedo", "docas_curta": "Parque das Docas (curta)",
+	"anel_curto": "Anel do Vale (curto)", "serra_curta": "Serra Alta (curta)"}
+
+
 ## Nome legível de uma pista a partir do id ("serra_alta" -> "Serra Alta").
 static func nome_pista(id: String) -> String:
+	if NOMES_PISTA.has(id):
+		return NOMES_PISTA[id]
 	var palavras := []
 	for p in id.split("_"):
 		palavras.append(p if p in ["do", "da", "das", "de", "dos"] else p.capitalize())

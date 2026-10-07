@@ -9,8 +9,12 @@ Lê arte/carros/manifesto.json e escreve build/pedido_arte_carros.zip com:
   manifesto.json          a lista oficial (id, descrição, cor)
   referencia_estilo.webp  docs/referencias/carro_estilo.webp
   provisorios/*.png       os sprites provisórios: ângulo, orientação e proporção
-Uso: python3 tools/pacote_arte_carros.py [--saida=caminho.zip] [--so=id1,id2]
+Uso: python3 tools/pacote_arte_carros.py [--saida=caminho.zip] [--so=id1,id2] [--so-faltando]
+                                         [--provisorios=/pasta] [--lote=N]
   --so: só esses carros (pedido de refação).
+  --so-faltando: só os carros sem arte em arte/carros/ (pedido novo, não refação).
+  --provisorios: pasta dos provisórios dos carros sem arte (gerar_sprites.gd --destino).
+  --lote: divide em pacotes de N carros (nome_01.zip, nome_02.zip...), na ordem do manifesto.
 """
 import json
 import sys
@@ -130,12 +134,33 @@ REFACAO = """REFAÇÃO: este pacote pede só os carros abaixo, para substituir a
 def main():
     saida = RAIZ / "build/pedido_arte_carros.zip"
     so = set()
+    so_faltando = False
+    lote = 0
+    extra = None
     for a in sys.argv[1:]:
         if a.startswith("--saida="):
             saida = Path(a.split("=", 1)[1]).resolve()
         elif a.startswith("--so="):
             so = set(a.split("=", 1)[1].split(","))
+        elif a == "--so-faltando":
+            so_faltando = True
+        elif a.startswith("--provisorios="):
+            extra = Path(a.split("=", 1)[1]).resolve()
+        elif a.startswith("--lote="):
+            lote = int(a.split("=", 1)[1])
     itens = json.loads(MANIFESTO.read_text(encoding="utf-8"))
+    if so_faltando:
+        itens = [i for i in itens if not (PROVISORIOS / ("%s_iso.png" % i["id"])).exists()]
+    if lote > 0:
+        for k in range(0, len(itens), lote):
+            parte = itens[k:k + lote]
+            gravar(parte, saida.with_name("%s_%02d.zip" % (saida.stem, k // lote + 1)), False, extra,
+                   "Lote %d de %d.\n\n" % (k // lote + 1, (len(itens) + lote - 1) // lote))
+        return
+    gravar(itens, saida, bool(so), extra, "", so)
+
+
+def gravar(itens, saida, refacao, extra, cabecalho, so=None):
     if so:
         faltam = so - {i["id"] for i in itens}
         if faltam:
@@ -149,7 +174,7 @@ def main():
     publico = [{"id": i["id"], "descricao": i["descricao"], "cor": i["cor"]} for i in itens]
     saida.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(saida, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("LEIA-ME.txt", (REFACAO if so else "") + LEIA_ME.format(n=len(itens), i=len(pedidos)))
+        z.writestr("LEIA-ME.txt", cabecalho + (REFACAO if refacao else "") + LEIA_ME.format(n=len(itens), i=len(pedidos)))
         z.writestr("INSTRUCOES_AGENTE.txt", INSTRUCOES_AGENTE)
         z.writestr("PEDIDOS.md", "\n".join(md))
         z.writestr("pedidos.json", json.dumps(pedidos, indent=1, ensure_ascii=False))
@@ -157,6 +182,8 @@ def main():
         z.write(REFERENCIA, "referencia_estilo.webp")
         for p in pedidos:
             png = PROVISORIOS / p["arquivo"]
+            if not png.exists() and extra is not None:
+                png = extra / p["arquivo"]
             if png.exists():
                 z.write(png, "provisorios/" + png.name)
     print("%s: %d carros, %d pedidos" % (saida, len(itens), len(pedidos)))

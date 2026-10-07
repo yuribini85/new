@@ -269,7 +269,9 @@ def main():
                     or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
                 falhas.append(f"importador eventos: {ev}")
             lic = carregar("licencas")
-            if [l["id"] for l in lic] != ["B", "A"] or lic[0]["testes"][0]["restricoes"] != {"potencia_max": 200}:
+            if [l["id"] for l in lic] != ["B", "A", "IC", "IB", "IA"] \
+                    or [l["requisito"] for l in lic] != [None, "B", "A", "IC", "IB"] \
+                    or lic[0]["testes"][0]["restricoes"] != {"potencia_max": 200}:
                 falhas.append(f"importador licenças: {lic}")
     # Modo --pasta com arquivos soltos (como sai de uma ferramenta de VOL).
     with tempfile.TemporaryDirectory() as tmp:

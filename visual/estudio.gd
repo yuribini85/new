@@ -1,7 +1,8 @@
 class_name Estudio
 extends Node
 ## Fotos dos carros para listas e catálogo: cada modelo (e pintura) é montado
-## uma vez num SubViewport que renderiza uma só vez; a textura fica em cache.
+## uma vez num SubViewport que renderiza uma só vez; a imagem fica em cache
+## numa textura comum e o viewport é liberado.
 ## Imagem própria do jogo, gerada do mesmo modelo 3D da corrida.
 
 const TAMANHO := Vector2i(360, 200)
@@ -70,9 +71,23 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	mundo.add_child(cam)
 	cam.look_at_from_position(Vector3(4.3, 1.6, 5.8), Vector3(0, 0.5, 0))
 	add_child(vp)
-	var tex := vp.get_texture()
+	# A foto vira uma textura comum e o viewport sai: centenas de carros sem
+	# sprite não podem manter centenas de viewports vivos. Até a cópia, a
+	# textura fica transparente (quem já a usa recebe a imagem depois).
+	var tex := ImageTexture.create_from_image(Image.create(TAMANHO.x, TAMANHO.y, false, Image.FORMAT_RGBA8))
 	_fotos[chave] = tex
+	_copiar(vp, tex)
 	return tex
+
+
+func _copiar(vp: SubViewport, tex: ImageTexture) -> void:
+	await RenderingServer.frame_post_draw
+	if is_instance_valid(vp):
+		var img := vp.get_texture().get_image()
+		if img != null and not img.is_empty():
+			img.convert(Image.FORMAT_RGBA8)
+			tex.update(img)
+		vp.queue_free()
 
 
 ## Retângulo com a foto, pronto para pôr numa lista.

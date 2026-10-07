@@ -128,3 +128,12 @@ depois do chassi.
 Depois da distribuição de peso (tração pelo peso no eixo motriz) a ordem dos carros
 passou a variar mais entre as pistas: Brute (FR, 45% do peso atrás) cai na Serra, Kestrel
 (MR, 61% atrás) sobe, os 4WD ganham nas técnicas. O misto continua no meio: 0 de 136.
+
+## Estado (importação completa do GT2)
+
+Feitas as duas propostas: a pista de testes (grupo 1) e o circuito misto, Colinas do Vinhedo
+(`circuito_misto`, grupo 4: laguna e autumn). As versões curtas do GT2 (roma_short, seatt_s,
+new_parmaS) ganharam versões curtas das nossas pistas do mesmo grupo (`docas_curta`,
+`anel_curto`, `serra_curta`), com o começo da pista-mãe e um atalho que fecha a volta.
+Todos os traçados são originais; só o comportamento do grupo vem do GT2.
+

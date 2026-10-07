@@ -16,6 +16,10 @@ var _secao := "usados"
 var _so_posso := false
 var _ordem := "preco"  # "preco" ou "potencia"
 var _tracao := ""
+var _marca := ""  # id do fabricante ("" = todas)
+## Cartões por vez (centenas de carros: a lista cresce sob pedido).
+const POR_PAGINA := 20
+var _limite := POR_PAGINA
 
 
 func construir() -> void:
@@ -33,6 +37,7 @@ func construir() -> void:
 		b.custom_minimum_size = Vector2(0, 64)
 		b.pressed.connect(func():
 			_secao = s[0]
+			_limite = POR_PAGINA
 			mudou.emit())
 		abas.add_child(b)
 	conteudo.add_child(abas)
@@ -48,7 +53,8 @@ func construir() -> void:
 		if ofertas.is_empty():
 			rotulo("Nenhum usado hoje.", 0, COR_SECUNDARIA)
 		var grade := _grade()
-		for o in _filtrar(ofertas.map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2]):
+		var lista := _filtrar(ofertas.map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2])
+		for o in lista.slice(0, _limite):
 			var c: Dictionary = dados.carro(o["carro_id"])
 			var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
 			var estrela: bool = not a.is_empty() and a["media"] <= 1.5
@@ -61,11 +67,14 @@ func construir() -> void:
 						COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
 			_bloco(grade, c, int(o["preco"]), "★" if estrela else "", extras,
 					func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
+		_mais(lista.size())
 	else:
 		nota("icone_ok", "Sempre disponíveis", "Os novos estão sempre à venda. Modelos antigos só aparecem nos usados.")
 		var grade := _grade()
-		for c in _filtrar(novos.map(func(c): return [c, int(c["preco"]), c])).map(func(x): return x[2]):
+		var lista := _filtrar(novos.map(func(c): return [c, int(c["preco"]), c])).map(func(x): return x[2])
+		for c in lista.slice(0, _limite):
 			_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
+		_mais(lista.size())
 
 
 ## Corridas à frente que a agenda mostra (GT2: períodos de 10 dias; três deles).
@@ -126,7 +135,16 @@ func _agenda() -> void:
 		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 
-## Fileira de filtros: só o que posso comprar, ordem e tração.
+## "Mostrar mais": a lista cresce POR_PAGINA de cada vez.
+func _mais(total: int) -> void:
+	if total <= _limite:
+		return
+	botao_texto("Mostrar mais (%d de %d)" % [_limite, total], func():
+		_limite += POR_PAGINA
+		mudou.emit())
+
+
+## Fileira de filtros: só o que posso comprar, ordem, tração e fabricante.
 func _filtros() -> void:
 	var h := HFlowContainer.new()
 	h.add_theme_constant_override("h_separation", 8)
@@ -140,6 +158,7 @@ func _filtros() -> void:
 		b.add_theme_font_size_override("font_size", 23)
 		b.pressed.connect(func():
 			acao.call()
+			_limite = POR_PAGINA
 			mudou.emit())
 		h.add_child(b)
 	chip.call("Posso comprar", _so_posso, func(): _so_posso = not _so_posso)
@@ -148,10 +167,28 @@ func _filtros() -> void:
 	for t in ["", "FF", "FR", "MR", "4WD"]:
 		chip.call("Todas" if t == "" else t, _tracao == t, func(): _tracao = t)
 	conteudo.add_child(h)
+	# Fabricante: como as concessionárias por marca do GT2.
+	var o := OptionButton.new()
+	o.custom_minimum_size = Vector2(0, 56)
+	o.add_theme_font_size_override("font_size", 23)
+	o.add_item("Todos os fabricantes")
+	var fabs: Array = dados.lista("fabricantes").duplicate()
+	fabs.sort_custom(func(a, b): return a["nome"] < b["nome"])
+	for f in fabs:
+		o.add_item(f["nome"])
+		o.set_item_metadata(o.item_count - 1, f["id"])
+		if f["id"] == _marca:
+			o.select(o.item_count - 1)
+	o.item_selected.connect(func(i):
+		_marca = "" if i == 0 else String(o.get_item_metadata(i))
+		_limite = POR_PAGINA
+		mudou.emit())
+	conteudo.add_child(o)
 
 
 func _passa(x: Array) -> bool:
-	return (not _so_posso or jogador.economia.pode_pagar(x[1])) and (_tracao == "" or x[0]["tracao"] == _tracao)
+	return (not _so_posso or jogador.economia.pode_pagar(x[1])) and (_tracao == "" or x[0]["tracao"] == _tracao) \
+			and (_marca == "" or x[0]["fabricante"] == _marca)
 
 
 ## Aplica os filtros a [[carro, preço, item], ...].
@@ -226,7 +263,11 @@ func _prever(ofertas: Array) -> Dictionary:
 	sem_licenca.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])
 	var ev: Dictionary = sem_licenca[0]
 	var avaliacoes := {}
-	for o in ofertas:
+	# Só ajuda na escolha do primeiro carro, e só entre os que o saldo paga
+	# (simular os ~140 usados do dia travaria a tela).
+	if not jogador.garagem.lista().is_empty():
+		return {}
+	for o in ofertas.filter(func(o): return jogador.economia.pode_pagar(int(o["preco"]))):
 		var c := Carro.new(dados.carro(o["carro_id"]))
 		c.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 		avaliacoes[o["carro_id"]] = Mecanico.avaliar(jogador.carreira, ev["id"], -1, c)

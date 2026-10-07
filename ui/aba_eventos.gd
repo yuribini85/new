@@ -13,10 +13,13 @@ var _estimativas := {}
 ## Categoria aberta (mantida ao voltar): "voce", "", "B" ou "A".
 var _filtro := "voce"
 
-const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["B", "Licença B"], ["A", "Licença A"]]
+const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["B", "Licença B"], ["A", "Licença A"],
+	["IC", "IC"], ["IB", "IB"], ["IA", "IA"]]
+const NIVEIS_LICENCA := ["B", "A", "IC", "IB", "IA"]
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
 const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas": Color(0.22, 0.24, 0.28),
-		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22)}
+		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22),
+		"circuito_misto": Color(0.3, 0.28, 0.16)}
 
 
 func _init(d: Node, j: Node) -> void:
@@ -43,7 +46,7 @@ func construir() -> void:
 	abas.add_theme_constant_override("h_separation", 8)
 	abas.add_theme_constant_override("v_separation", 8)
 	for g in GRUPOS:
-		var travada: bool = g[0] in ["B", "A"] and not g[0] in jogador.licencas
+		var travada: bool = g[0] in NIVEIS_LICENCA and not g[0] in jogador.licencas
 		var b := Button.new()
 		b.text = g[1]
 		b.toggle_mode = true
@@ -78,7 +81,7 @@ func construir() -> void:
 			if a[1].is_empty() != b[1].is_empty():
 				return a[1].is_empty()
 			return a[0]["nome"] < b[0]["nome"])
-	if _filtro in ["B", "A"] and not _filtro in jogador.licencas:
+	if _filtro in NIVEIS_LICENCA and not _filtro in jogador.licencas:
 		var v := cartao(COR_INFO)
 		nota("icone_cadeado", "Precisa da licença %s" % _filtro, "Os testes da licença ficam em Carreira.", v, Color.WHITE)
 		botao("Ver licenças", func(): ir_para.emit(LICENCAS), true, false, v)
@@ -205,7 +208,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	prog.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	prog.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# Banner da pista com o nome e o lugar por cima.
-	var banner := ilustracao("banner_" + String(ev["pista"]), 190, v, 0.85)
+	var banner := ilustracao("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])), 190, v, 0.85)
 	if not pode:
 		banner.modulate = Color(0.6, 0.6, 0.62)
 	var sobre := HBoxContainer.new()

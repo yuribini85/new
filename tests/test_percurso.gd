@@ -12,12 +12,28 @@ const LIMITE_S := 30.0 * 60.0
 
 func test_percurso_inicial_ate_a_licenca_b() -> void:
 	# Agente "sugestoes" (tools/agente.gd) com cada usado inicial que o saldo
-	# paga: segue o jogo como ele é (contratos da B, desafio e renda).
+	# paga E que o Mercado recomenda (★: posição média até 1,5 na corrida sem
+	# licença de menor prêmio, como em aba_loja._prever). Com o GT2 inteiro há
+	# dezenas de usados iniciais, e alguns não sustentam o começo, como no GT2;
+	# a promessa do jogo é sobre os recomendados.
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var saldo := int(d.economia()["saldo_inicial"])
 	var ofertas: Array = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)
 	verificar(not ofertas.is_empty(), "algum usado inicial cabe no saldo")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var carreira := Carreira.new(d, j)
+	var faceis: Array = d.lista("eventos").filter(func(e): return not e["restricoes"].has("licenca") and not e["premios"].is_empty())
+	faceis.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])
+	ofertas = ofertas.filter(func(o):
+		var c := Carro.new(d.carro(o["carro_id"]))
+		c.adicionar_pneu(d.pneu(d.economia()["pneu_de_fabrica"]))
+		var a := Mecanico.avaliar(carreira, faceis[0]["id"], -1, c)
+		return not a.is_empty() and float(a["media"]) <= 1.5)
+	j.free()
+	print("\n  recomendados: %d" % ofertas.size())
+	verificar(not ofertas.is_empty(), "o Mercado recomenda algum usado inicial")
 	var ciclo := false
 	for o in ofertas:
 		var ag = preload("res://tools/agente.gd").new(d, "sugestoes", hash(o["carro_id"]))

@@ -670,5 +670,13 @@
   "altura_px": 256,
   "descricao": "two small race cars seen from above, one right behind the other, nose to tail",
   "uso": "tempo preso atrás de outro carro"
+ },
+ {
+  "nome": "banner_circuito_misto",
+  "tipo": "banner",
+  "largura_px": 1200,
+  "altura_px": 500,
+  "descricao": "a race circuit winding through rolling vineyard hills at late afternoon, warm amber low sun, rows of vines, tall cypress trees, a small stone farmhouse, gentle elevation changes",
+  "uso": "cartão da competição e carregamento da corrida"
  }
 ]

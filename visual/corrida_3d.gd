@@ -68,6 +68,10 @@ const TEMAS := {
 	"serra_alta": {"chao": Color(0.36, 0.4, 0.28), "ceu": Color(0.68, 0.73, 0.8), "props": "serra",
 		"luz": Color(0.85, 0.9, 1.0), "energia": 0.7, "sol": Vector3(-0.8, 2.2, 0), "ambiente": Color(0.62, 0.66, 0.74),
 		"asfalto": Color(0.34, 0.35, 0.37), "muro": [Color(0.9, 0.92, 0.95), Color(0.2, 0.38, 0.75)], "fundo": "montanhas", "neblina": 0.0},
+	# Colinas de vinhedo no fim da tarde (circuito misto).
+	"circuito_misto": {"chao": Color(0.42, 0.45, 0.25), "ceu": Color(0.95, 0.72, 0.5), "props": "arvores",
+		"luz": Color(1.0, 0.85, 0.65), "energia": 1.0, "sol": Vector3(-0.7, 1.4, 0), "ambiente": Color(0.66, 0.62, 0.58),
+		"asfalto": Color(0.26, 0.26, 0.28), "muro": [Color(0.94, 0.92, 0.88), Color(0.55, 0.16, 0.18)], "fundo": "colinas", "neblina": 0.0},
 	# Campo de provas no planalto seco: meio-dia, chão claro, mesas ao longe.
 	"pista_de_testes": {"chao": Color(0.72, 0.62, 0.45), "ceu": Color(0.55, 0.75, 0.95), "props": "deserto",
 		"luz": Color(1.0, 0.98, 0.92), "energia": 1.15, "sol": Vector3(-1.35, 0.3, 0), "ambiente": Color(0.7, 0.68, 0.64),
@@ -104,6 +108,16 @@ const KITS := {
 		"tinta": Color(1.0, 0.76, 0.55), "sombra_dir": Vector2(1.8, -1.0), "sombra_alfa": 0.5,
 		"vinheta": 0.6, "fundo": Color(0.015, 0.02, 0.025),
 		"escuro": {"perto_m": 50.0, "longe_m": 190.0, "minimo": 0.12}},
+	# Misto: colinas de vinhedo ao entardecer; verde-oliva quente, ciprestes e
+	# árvores esparsas, luz âmbar baixa.
+	"circuito_misto": {"estilo": "chapado", "kit": {"chao_a": "grama_a", "chao_b": "grama_b", "chao_mata": "mata",
+			"aberto_m": 55.0, "arvores": ["pinheiro_1", "arvore_2", "pinheiro_2", "arvore_5"], "densidade": 0.6,
+			"postes": false},
+		"cores": {"grama_a": Color(0.42, 0.44, 0.24), "grama_b": Color(0.37, 0.39, 0.21), "mata": Color(0.15, 0.17, 0.09),
+			"escape": Color(0.4, 0.42, 0.24), "areia": Color(0.64, 0.53, 0.37), "pinheiro": Color(0.17, 0.23, 0.13)},
+		"tinta": Color(1.0, 0.84, 0.64), "sombra_dir": Vector2(1.9, -0.6), "sombra_alfa": 0.5,
+		"vinheta": 0.5, "fundo": Color(0.03, 0.025, 0.02),
+		"escuro": {"perto_m": 55.0, "longe_m": 200.0, "minimo": 0.2}},
 	# Testes: planalto seco ao meio-dia; claro, ocre, rochas, pouco escuro.
 	"pista_de_testes": {"estilo": "chapado", "kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",
 			"arvores": ["rocha_1", "rocha_2", "rocha_3"], "densidade": 0.18, "postes": false},
@@ -113,6 +127,8 @@ const KITS := {
 		"vinheta": 0.3, "fundo": Color(0.3, 0.25, 0.18), "cor_vazio": Color(0.3, 0.25, 0.18),
 		"escuro": {"perto_m": 80.0, "longe_m": 300.0, "minimo": 0.55}},
 }
+## Versões curtas usam o cenário da pista-mãe.
+const TEMA_DE := {"docas_curta": "parque_das_docas", "anel_curto": "anel_do_vale", "serra_curta": "serra_alta"}
 const TEMA_PADRAO := {"chao": Color(0.22, 0.45, 0.25), "ceu": Color(0.4, 0.6, 0.75), "props": "arvores",
 	"luz": Color.WHITE, "energia": 1.0, "sol": Vector3(-1.0, 0.5, 0), "ambiente": Color(0.6, 0.62, 0.66),
 	"asfalto": Color(0.27, 0.28, 0.31), "muro": [Color(0.82, 0.82, 0.84), Color(0.2, 0.35, 0.75)], "fundo": "", "neblina": 0.0}
@@ -662,7 +678,7 @@ func _construir_pista() -> void:
 	# Inverso de Iso.para_tela: x + y = cx, x - y = cy.
 	var meio := Vector2((c_tela.x + c_tela.y) * 0.5, (c_tela.x - c_tela.y) * 0.5)
 	_centro_pista = Vector3(meio.x, 0.0, -meio.y)
-	var tema: Dictionary = TEMAS.get(_pista.id, TEMA_PADRAO)
+	var tema: Dictionary = TEMAS.get(TEMA_DE.get(_pista.id, _pista.id), TEMA_PADRAO)
 	_ambiente.background_color = tema["ceu"]
 	_ambiente.ambient_light_color = tema["ambiente"]
 	_ambiente.fog_enabled = tema["neblina"] > 0.0
@@ -672,7 +688,7 @@ func _construir_pista() -> void:
 	_luz.light_energy = tema["energia"]
 	_luz.rotation = tema["sol"]
 	_cores_muro = tema["muro"]
-	var montado: Dictionary = KITS.get(_pista.id, {}).duplicate()
+	var montado: Dictionary = KITS.get(TEMA_DE.get(_pista.id, _pista.id), {}).duplicate()
 	if estilo_forcado != "" and not montado.is_empty():
 		montado["estilo"] = estilo_forcado
 	var efeito := material as ShaderMaterial

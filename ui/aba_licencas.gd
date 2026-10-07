@@ -87,17 +87,47 @@ func _objetivos() -> void:
 
 ## Coleção em fotos: os que você tem e os que ainda faltam (escurecidos);
 ## tocar abre a ficha.
+## Fabricante aberto na coleção ("" = nenhum): centenas de carros, um
+## fabricante por vez.
+var _colecao_aberta := ""
+
+
 func _colecao() -> void:
 	var tenho := {}
 	for c in jogador.garagem.lista():
 		tenho[c.id] = true
 	titulo_secao("COLEÇÃO · %d de %d" % [tenho.size(), dados.lista("carros").size()],
-			"Todos os carros do jogo. Os escuros você ainda não tem; toque para ver como conseguir.")
+			"Todos os carros do jogo, por fabricante. Os escuros você ainda não tem; toque para ver como conseguir.")
+	var por_fab := {}
+	for c in dados.lista("carros"):
+		por_fab.get_or_add(c["fabricante"], []).append(c)
+	var fabs: Array = dados.lista("fabricantes").filter(func(f): return por_fab.has(f["id"]))
+	fabs.sort_custom(func(a, b): return a["nome"] < b["nome"])
+	for f in fabs:
+		var carros: Array = por_fab[f["id"]]
+		var meus := carros.filter(func(c): return tenho.has(c["id"])).size()
+		var aberto: bool = _colecao_aberta == f["id"]
+		var b := Button.new()
+		b.text = "%s %s   %d de %d" % ["▾" if aberto else "▸", f["nome"], meus, carros.size()]
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.custom_minimum_size = Vector2(0, 60)
+		b.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
+		if meus > 0:
+			b.add_theme_color_override("font_color", COR_BOM)
+		b.pressed.connect(func():
+			_colecao_aberta = "" if aberto else String(f["id"])
+			mudou.emit())
+		conteudo.add_child(b)
+		if aberto:
+			_grade_colecao(carros, tenho)
+
+
+func _grade_colecao(carros: Array, tenho: Dictionary) -> void:
 	var grade := GridContainer.new()
 	grade.columns = 3
 	grade.add_theme_constant_override("h_separation", 8)
 	grade.add_theme_constant_override("v_separation", 8)
-	for c in dados.lista("carros"):
+	for c in carros:
 		var b := Button.new()
 		b.custom_minimum_size = Vector2(0, 150)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL

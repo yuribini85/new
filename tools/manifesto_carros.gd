@@ -7,7 +7,8 @@ extends SceneTree
 ## centro e dois semieixos da elipse, em px), projetando as rodas do carro em
 ## código com a mesma câmera do gerador; o importador refina pelo desenho.
 ## Só preenche o que falta: carro novo, rode gerar_sprites.gd e depois este.
-## Uso: godot --headless --path . --script res://tools/manifesto_carros.gd
+## Uso: godot --headless --path . --script res://tools/manifesto_carros.gd [-- --origem=/pasta]
+##   --origem: mede os provisórios dessa pasta para os carros sem sprite no jogo.
 
 const MANIFESTO := "res://arte/carros/manifesto.json"
 const Importador := preload("res://tools/importar_kit_pista.gd")
@@ -25,11 +26,17 @@ func _rodar() -> void:
 		for b in d.lista("carros"):
 			if not ids.has(b["id"]):
 				printerr("sem descrição no manifesto: %s" % b["id"])
+	var origem := ""
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--origem="):
+			origem = a.trim_prefix("--origem=").trim_suffix("/") + "/"
 	for it in itens:
 		for vista in ["topo", "iso"]:
 			if it.has(vista):
 				continue
 			var caminho := "res://arte/carros/%s_%s.png" % [it["id"], vista]
+			if not FileAccess.file_exists(caminho) and origem != "":
+				caminho = origem + "%s_%s.png" % [it["id"], vista]
 			if not FileAccess.file_exists(caminho):
 				printerr("sem sprite: %s" % caminho)
 				continue

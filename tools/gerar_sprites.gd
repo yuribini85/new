@@ -6,6 +6,9 @@ extends SceneTree
 ## Escala fixa (PX_POR_M) para todos os carros; fundo transparente; sem sombra
 ## (o jogo desenha a sombra). A arte final substitui estes arquivos, um a um.
 ## Uso (precisa de display): godot --path . --script res://tools/gerar_sprites.gd
+##   [-- --destino=/pasta] [--so-faltando]
+##   --destino: grava fora do jogo (ex.: provisórios só para o pacote de arte).
+##   --so-faltando: só os carros que ainda não têm sprite em arte/carros/.
 
 const PASTA := "res://arte/carros/"
 const PX_POR_M := 160.0
@@ -18,15 +21,24 @@ func _initialize() -> void:
 
 
 func _rodar() -> void:
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(PASTA))
+	var pasta := PASTA
+	var so_faltando := false
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--destino="):
+			pasta = a.trim_prefix("--destino=").trim_suffix("/") + "/"
+		elif a == "--so-faltando":
+			so_faltando = true
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(pasta))
 	var d: Node = root.get_node("Dados")
 	for b in d.lista("carros"):
+		if so_faltando and FileAccess.file_exists(PASTA + "%s_iso.png" % b["id"]):
+			continue
 		var forma := CarroBloco.forma(b)
 		var c: float = forma["c"]
 		var l: float = forma["l"]
 		var topo := Vector2i(int(ceil((l + 0.5) * PX_POR_M)), int(ceil((c + 0.4) * PX_POR_M)))
-		await _foto(b, PASTA + "%s_topo.png" % b["id"], topo, true)
-		await _foto(b, PASTA + "%s_iso.png" % b["id"], TELA_ISO, false)
+		await _foto(b, pasta + "%s_topo.png" % b["id"], topo, true)
+		await _foto(b, pasta + "%s_iso.png" % b["id"], TELA_ISO, false)
 		print("%s: topo %dx%d, iso %dx%d" % [b["id"], topo.x, topo.y, TELA_ISO.x, TELA_ISO.y])
 	quit()
 

@@ -40,7 +40,8 @@ func construir() -> void:
 	var fab: Dictionary = dados.item("fabricantes", c.base["fabricante"])
 	rotulo(c.base["nome"], 46)
 	var sub := fileira()
-	rotulo("%s · %d%s" % [fab.get("nome", ""), c.base["ano"], " · correndo agora" if _correndo(c) else ""],
+	rotulo("%s%s%s" % [fab.get("nome", ""), " · %d" % c.base["ano"] if int(c.base["ano"]) > 0 else "",
+			" · correndo agora" if _correndo(c) else ""],
 			FONTE_PEQUENA, COR_SECUNDARIA, sub)
 	icone(ICONE_TRACAO.get(c.base["tracao"], "icone_tracao_traseira"), 40, sub)
 	var lt := rotulo(NOMES_TRACAO_CURTO.get(c.base["tracao"], c.base["tracao"]), FONTE_PEQUENA, COR_SECUNDARIA, sub)
