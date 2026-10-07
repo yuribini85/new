@@ -3,7 +3,7 @@ extends SubViewportContainer
 ## Carro num estúdio (piso, luz de recorte, fundo escuro), como a vitrine da
 ## garagem do GT2. Com a arte em sprite (decisão 31), o carro é o isométrico
 ## parado, a câmera fica no mesmo ângulo do desenho e os efeitos são de luz:
-## feixe passando pela carroceria, reflexo no piso, sombra e uma aproximação
+## feixe passando pela carroceria, reflexo no piso, sombra de contato e uma aproximação
 ## curta ao trocar de carro. Sem sprite, o carro em código gira como antes.
 
 const VELOCIDADE := 0.35  # rad/s
@@ -94,21 +94,44 @@ func mostrar_modelo(base: Dictionary, cor: Color) -> void:
 	_sprite_modo(true)
 	var novo: bool = _id != String(base.get("id", ""))
 	_id = String(base.get("id", ""))
+	var tam := Vector2(tex.get_width(), tex.get_height()) / ArteCarro.PX_POR_M
 	for q in [_sprite, _reflexo]:
 		(q.material_override as ShaderMaterial).set_shader_parameter("textura", tex)
-		(q.mesh as QuadMesh).size = Vector2(tex.get_width(), tex.get_height()) / ArteCarro.PX_POR_M
-	# Reflexo: o mesmo desenho espelhado, encostado na linha das rodas.
-	var usado := tex.get_image().get_used_rect()
-	var baixo_m := (usado.end.y - tex.get_height() * 0.5) / ArteCarro.PX_POR_M
-	_reflexo.position = _sprite.position - _camera.transform.basis.y * (2.0 * baixo_m)
+	(_sprite.mesh as QuadMesh).size = tam
+	# Reflexo: quadro com o dobro da altura, a metade de cima sobre o sprite;
+	# o shader espelha cada coluna na linha do chão (apoio das rodas).
+	(_reflexo.mesh as QuadMesh).size = Vector2(tam.x, tam.y * 2.0)
+	_reflexo.position = _sprite.position - _camera.transform.basis.y * (tam.y * 0.5) \
+			- _camera.transform.basis.z * 0.45
+	var chao := _linha_chao(_id, tex)
+	var m: ShaderMaterial = _reflexo.material_override
+	m.set_shader_parameter("chao_a", chao[0])
+	m.set_shader_parameter("chao_b", chao[1])
 	if novo and not Preferencias.reduzir_animacoes and is_inside_tree():
 		_aproximar = 0.0
+
+
+## Linha do chão do sprite isométrico em UV: a reta pelo ponto mais baixo das
+## duas rodas visíveis (arte/carros/rodas.json); sem rodas, a base do desenho.
+static func _linha_chao(id: String, tex: Texture2D) -> Array:
+	var tam := Vector2(tex.get_width(), tex.get_height())
+	var rodas := ArteCarro.rodas(id)
+	if rodas.size() >= 2:
+		var p: Array = []
+		for r in rodas.slice(0, 2):
+			var c := Vector2(r["c"][0], r["c"][1])
+			var b := Vector2(r["b"][0], r["b"][1])
+			var a := Vector2(r["a"][0], r["a"][1])
+			p.append(Vector2(c.x, c.y + sqrt(a.y * a.y + b.y * b.y)) / tam)
+		if absf(p[0].x - p[1].x) > 0.05:
+			return p if p[0].x < p[1].x else [p[1], p[0]]
+	var y := float(tex.get_image().get_used_rect().end.y) / tam.y
+	return [Vector2(0.0, y), Vector2(1.0, y)]
 
 
 var _camera: Camera3D
 var _sprite: MeshInstance3D
 var _reflexo: MeshInstance3D
-var _sombra: MeshInstance3D
 var _id := ""
 ## 0..1 da aproximação de entrada (1 = parada).
 var _aproximar := 1.0
@@ -122,7 +145,6 @@ func _sprite_modo(ligado: bool) -> void:
 		if _sprite != null:
 			_sprite.visible = false
 			_reflexo.visible = false
-			_sombra.visible = false
 		_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
 		_camera.look_at_from_position(Vector3(6.2, 2.4, 6.8), Vector3(0, 0.5, 0))
 		return
@@ -135,25 +157,12 @@ func _sprite_modo(ligado: bool) -> void:
 	if _sprite == null:
 		_sprite = _quadro(0.0)
 		_reflexo = _quadro(0.28)
-		_sombra = MeshInstance3D.new()
-		var q := QuadMesh.new()
-		q.size = Vector2(4.6, 2.2)
-		q.orientation = PlaneMesh.FACE_Y
-		_sombra.mesh = q
-		var ms := StandardMaterial3D.new()
-		ms.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		ms.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		ms.albedo_color = Color(0, 0, 0, 0.45)
-		_sombra.material_override = ms
-		_sombra.rotation.y = PI / 2.0  # o carro do desenho aponta para +Z
-		_sombra.position.y = 0.03
-		_mundo.add_child(_sombra)
 	_sprite.visible = true
 	_reflexo.visible = true
-	_sombra.visible = true
 
 
-## Quadro virado para a câmera com o shader do sprite (reflexo > 0: espelhado).
+## Quadro virado para a câmera com o shader do sprite (reflexo > 0: reflexo
+## espelhado no piso e sombra de contato).
 func _quadro(reflexo: float) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = QuadMesh.new()
@@ -170,7 +179,7 @@ func _quadro(reflexo: float) -> MeshInstance3D:
 
 ## Fundo pintado (arte da interface) no lugar do estúdio: a imagem fica atrás
 ## do carro (fundo do próprio viewport), sem piso nem anel; o carro em sprite
-## mantém sombra e reflexo leve.
+## mantém sombra de contato e reflexo leve.
 func fundo_imagem(tex: Texture2D) -> void:
 	if tex == null:
 		return

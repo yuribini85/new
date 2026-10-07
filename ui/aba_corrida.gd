@@ -1,7 +1,7 @@
 extends Aba
 ## Corrida ao vivo: mostra a corrida em andamento da fila no tempo real.
 ## O resultado já está decidido pela simulação; a tela só o reproduz.
-## A vista 3D, o placar e a classificação são fixos; só o painel de baixo
+## A vista 3D e o HUD (com a classificação) são fixos; só o painel de baixo
 ## (resultado da última corrida e "O que ajuda?") é reconstruído.
 
 ## Pede para encerrar a corrida em andamento agora (fase de testes da demo).
@@ -26,9 +26,9 @@ var _atributos_hud := {}  # atributos do carro inscrito (marcha e giro no HUD)
 var _destaque: Label
 var _destaque_t := 0.0
 var _cameras: HBoxContainer
-var _classificacao: RichTextLabel
 var _semente_mostrada := 0
 var _nomes := {}  # id do participante -> nome do carro
+var _nomes_curtos := {}  # id -> nome na classificação do HUD
 var _pista: Pista
 var _voltas := 1
 var _posicao_antes := 0
@@ -54,8 +54,8 @@ func _init(d: Node, j: Node) -> void:
 	_visual3d = Corrida3D.new()
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	area.add_child(_visual3d)
-	var fundo := ColorRect.new()
-	fundo.color = Color(0.03, 0.035, 0.045, 0.5)
+	# Minimapa direto sobre a pista, sem caixa: o traçado tem sombra própria.
+	var fundo := Control.new()
 	fundo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	fundo.offset_left = -230
 	fundo.offset_bottom = 200
@@ -68,15 +68,19 @@ func _init(d: Node, j: Node) -> void:
 	_visual.largura_min_px = 6.0
 	_visual.com_rotulos = false
 	_visual.girar = false
+	_visual.sombra = true
 	fundo.add_child(_visual)
 	# Placar compacto sobre a pista: posição grande, volta e tempo; embaixo, a
 	# perseguição (diferença em segundos para o carro da frente, o ALVO).
 	_painel_hud = HudCorrida.new()
+	_painel_hud.escolhido.connect(_camera)
 	area.add_child(_painel_hud)
 	_placar = _sobre_area(area, Control.PRESET_CENTER_BOTTOM, Color(0.03, 0.035, 0.045, 0.55), 26)
 	_placar.get_parent().offset_bottom = -120
-	# Destaque: largada, ultrapassagem, chegada. Aparece e some.
-	_destaque = _sobre_area(area, Control.PRESET_CENTER_TOP, Color(0.03, 0.035, 0.045, 0.7), 30)
+	# Destaque: largada, ultrapassagem, chegada. Aparece no lugar do placar
+	# (a classificação ocupa a direita do topo) e some.
+	_destaque = _sobre_area(area, Control.PRESET_CENTER_BOTTOM, Color(0.03, 0.035, 0.045, 0.7), 30)
+	_destaque.get_parent().offset_bottom = -120
 	_destaque.get_parent().visible = false
 	_cameras = fileira()
 	for modo in [["Meu carro", "jogador"], ["Líder", "lider"], ["À frente", "frente"], ["Pista toda", "geral"]]:
@@ -88,15 +92,6 @@ func _init(d: Node, j: Node) -> void:
 		b.add_theme_font_size_override("font_size", FONTE_PEQUENA)
 		b.pressed.connect(_camera.bind(modo[1]))
 		_cameras.add_child(b)
-	_classificacao = RichTextLabel.new()
-	_classificacao.bbcode_enabled = true
-	_classificacao.fit_content = true
-	_classificacao.scroll_active = false
-	_classificacao.meta_underlined = false
-	_classificacao.add_theme_font_size_override("normal_font_size", 24)
-	_classificacao.add_theme_font_size_override("bold_font_size", 24)
-	_classificacao.meta_clicked.connect(func(id): _camera(str(id)))
-	conteudo.add_child(_classificacao)
 	_painel = VBoxContainer.new()
 	_painel.add_theme_constant_override("separation", 14)
 	conteudo.add_child(_painel)
@@ -182,7 +177,7 @@ func _construir_painel() -> void:
 		if Preferencias.permite_pular():
 			botao("Ver resultado (teste)", func(): pular.emit(), true, false, h)
 		botao("Voltar à garagem", func(): ir_para.emit(GARAGEM), true, false, h)
-		rotulo("As corridas continuam mesmo fora desta tela ou com o app fechado. Toque num carro da lista para a câmera seguir ele.",
+		rotulo("As corridas continuam mesmo fora desta tela ou com o app fechado. Toque num nome da classificação, sobre a pista, para a câmera seguir aquele carro.",
 				FONTE_PEQUENA, COR_SECUNDARIA, _painel)
 	var u: Dictionary = jogador.ultima_corrida
 	if u.is_empty():
@@ -495,7 +490,6 @@ func _process(delta: float) -> void:
 		_sons.motor(false)
 		_info.text = "Nenhuma corrida em andamento."
 		_relogio.text = ""
-		_classificacao.text = ""
 		return
 	var agora := Time.get_unix_time_from_system()
 	if f["semente"] != _semente_mostrada:
@@ -518,6 +512,7 @@ func _process(delta: float) -> void:
 		_posicao_antes = 0
 		_ordem_antes = []
 		_nomes = {"jogador": "VOCÊ · " + jogador.garagem.carro(f["uid"]).base["nome"]}
+		_nomes_curtos = {"jogador": "Você"}
 		# Motor e câmbio do carro como foi inscrito (para marcha e giro no HUD).
 		var inscrito: Carro = meu.com_configuracao(f["config"], dados.peca, dados.pneu) if f.get("config") is Dictionary else meu
 		_atributos_hud = inscrito.atributos_efetivos(ev.get("condicao", "seco"))
@@ -525,6 +520,7 @@ func _process(delta: float) -> void:
 			var adv: Dictionary = ev["adversarios"][i]
 			var pid := "adv%d_%s" % [i, adv["carro"]]
 			_nomes[pid] = "%s (%s)" % [Carreira.nome_piloto(ev["id"], pid), Aba.nome_curto(dados.carro(adv["carro"])["nome"])]
+			_nomes_curtos[pid] = Carreira.nome_piloto(ev["id"], pid)
 		_info.text = ev["nome"]
 		_camera(_camera_modo)
 		_chegou = false
@@ -550,15 +546,6 @@ func _process(delta: float) -> void:
 	var ordem := _visual.ordem()
 	_atualizar_placar(ordem)
 	_atualizar_destaque(ordem, delta)
-	var linhas := []
-	for i in ordem.size():
-		var id: String = ordem[i]
-		var nome: String = _nomes.get(id, id)
-		if id == "jogador":
-			nome = "[b]%s[/b]" % nome
-		var seguido := "  · câmera" if id == _visual3d.foco and not _visual3d.visao_geral else ""
-		linhas.append("[url=%s]%d [color=#%s]■[/color] %s%s[/url]" % [id, i + 1, _visual.cor_de(id).to_html(false), nome, seguido])
-	_classificacao.text = "\n".join(linhas)
 
 
 func _atualizar_placar(ordem: Array) -> void:
@@ -583,7 +570,10 @@ func _atualizar_placar(ordem: Array) -> void:
 	_painel_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": _voltas,
 		"tempo_volta": _visual.tempo - maxf(inicio_volta, 0.0), "melhor": melhor, "kmh": v * 3.6,
 		"marcha": mg[0], "giro": mg[1], "corte": float(_atributos_hud.get("corte", 0.0)),
-		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0})
+		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0,
+		"lista": ordem.map(func(id: String) -> Dictionary: return {"id": id, "nome": _nomes_curtos.get(id, id),
+			"cor": _visual.cor_de(id), "voce": id == "jogador",
+			"camera": id == _visual3d.foco and not _visual3d.visao_geral})})
 	# A pergunta da corrida: consigo alcançar o carro da frente?
 	if _chegou:
 		_placar.text = "Você terminou em %dº" % (i + 1)
@@ -618,6 +608,7 @@ func _atualizar_destaque(ordem: Array, delta: float) -> void:
 		_destaque_t -= delta
 		if _destaque_t <= 0.0:
 			_destaque.get_parent().visible = false
+			_placar.get_parent().visible = true
 
 
 func _mostrar_destaque(texto: String, bom: bool) -> void:
@@ -629,6 +620,7 @@ func _mostrar_destaque(texto: String, bom: bool) -> void:
 	sb.border_width_bottom = 3
 	_destaque.add_theme_color_override("font_color", COR_DESTAQUE if bom else COR_RUIM.lightened(0.2))
 	_destaque.get_parent().visible = true
+	_placar.get_parent().visible = false
 	_destaque_t = DURACAO_DESTAQUE
 
 

@@ -10,6 +10,8 @@ const LARGURA_PISTA_M := 12.0
 var escala_carro := 10.0
 var largura_min_px := 34.0
 var com_rotulos := true
+## Sombra suave sob o traçado, para ler o minimapa sem caixa por trás.
+var sombra := false
 ## Gira o traçado (múltiplos de 90°) para ocupar mais a tela. O minimapa não
 ## gira, para ficar na mesma orientação da vista 3D.
 var girar := true
@@ -204,6 +206,8 @@ func _draw() -> void:
 	if _contorno.size() < 2:
 		return
 	var largura := maxf(LARGURA_PISTA_M * _escala * 0.75, largura_min_px)
+	if sombra:
+		draw_polyline(_contorno, Color(0, 0, 0, 0.4), largura + 9.0, true)
 	draw_polyline(_contorno, COR_BORDA, largura + 3.0, true)
 	draw_polyline(_contorno, COR_PISTA, largura, true)
 	var largada := _tela(_pista.posicao_em(0.0))

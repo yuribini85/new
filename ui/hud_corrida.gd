@@ -3,24 +3,32 @@ extends Control
 ## Painel da corrida sobre a pista, com os dados do HUD do GT2 (posição,
 ## volta, tempo da volta, melhor volta, velocidade, marcha e conta-giros) num
 ## desenho calmo: tipografia limpa, linhas finas, sem caixas; o âmbar marca o
-## que é seu e o vermelho só a faixa de corte do motor.
+## que é seu e o vermelho só a faixa de corte do motor. À direita, sob o
+## minimapa, a classificação; tocar num nome leva a câmera para aquele carro.
+
+signal escolhido(id: String)
 
 const COR := Color(0.93, 0.92, 0.88)
 const SUAVE := Color(0.93, 0.92, 0.88, 0.62)
 const AMBAR := Color(0.95, 0.71, 0.19)
 const CORTE := Color(0.95, 0.36, 0.28)
 const SOMBRA := Color(0, 0, 0, 0.55)
+## Classificação: canto superior direito, abaixo do minimapa.
+const LISTA_TOPO := 214.0
+const LISTA_LARGURA := 220.0
+const LISTA_LINHA := 30.0
 
 var _d := {}
 
 
 func _init() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Só a classificação recebe toque (ver _has_point); o resto passa adiante.
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
 ## d: posicao, total, volta, voltas, tempo_volta, melhor (s ou -1), kmh, marcha,
-## giro, corte, giro_max.
+## giro, corte, giro_max; lista: [{id, nome, cor, voce, camera}] em ordem.
 func definir(d: Dictionary) -> void:
 	_d = d
 	queue_redraw()
@@ -35,6 +43,7 @@ func _texto(t: String, pos: Vector2, tam: int, cor: Color, alinhar := HORIZONTAL
 func _draw() -> void:
 	if _d.is_empty():
 		return
+	_lista()
 	var f := get_theme_default_font()
 	var x := 18.0
 	# Posição: o número grande, o total pequeno ao lado.
@@ -80,6 +89,50 @@ func _draw() -> void:
 		draw_line(Vector2(x0, y), Vector2(ax.call(giro), y), CORTE if giro >= corte - 150.0 else AMBAR, 5.0)
 		var rotulo := "×1000 rpm"
 		_texto(rotulo, Vector2(x1 - f.get_string_size(rotulo, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x, y - 14), 16, SUAVE)
+
+
+func _lista_rect() -> Rect2:
+	var n: int = _d.get("lista", []).size()
+	return Rect2(size.x - LISTA_LARGURA - 12.0, LISTA_TOPO, LISTA_LARGURA + 12.0, n * LISTA_LINHA + 8.0)
+
+
+func _has_point(p: Vector2) -> bool:
+	return _lista_rect().has_point(p)
+
+
+func _gui_input(e: InputEvent) -> void:
+	var toque: bool = (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) \
+			or (e is InputEventScreenTouch and e.pressed)
+	if not toque:
+		return
+	var i := floori((e.position.y - LISTA_TOPO) / LISTA_LINHA)
+	var lista: Array = _d.get("lista", [])
+	if i >= 0 and i < lista.size():
+		escolhido.emit(String(lista[i]["id"]))
+		accept_event()
+
+
+## Classificação: posição, cor do carro e nome; o seu em âmbar; o carro que a
+## câmera segue, marcado por uma linha fina à esquerda.
+func _lista() -> void:
+	var lista: Array = _d.get("lista", [])
+	var f := get_theme_default_font()
+	var x0 := size.x - LISTA_LARGURA
+	for i in lista.size():
+		var it: Dictionary = lista[i]
+		var y := LISTA_TOPO + (i + 1) * LISTA_LINHA - 6.0
+		var cor: Color = AMBAR if it.get("voce", false) else COR
+		if it.get("camera", false):
+			draw_line(Vector2(x0 - 10.0, y - 20.0), Vector2(x0 - 10.0, y + 4.0), Color(COR, 0.7), 2.0)
+		_texto("%d" % (i + 1), Vector2(x0, y), 22, cor if it.get("voce", false) else SUAVE, HORIZONTAL_ALIGNMENT_RIGHT, 26.0)
+		draw_rect(Rect2(x0 + 36.0, y - 15.0, 12.0, 12.0), it["cor"])
+		var nome: String = it["nome"]
+		var max_l := LISTA_LARGURA - 58.0
+		if f.get_string_size(nome, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x > max_l:
+			while nome.length() > 3 and f.get_string_size(nome + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x > max_l:
+				nome = nome.left(-1)
+			nome += "…"
+		_texto(nome, Vector2(x0 + 58.0, y), 22, cor)
 
 
 static func _tempo(t: float) -> String:
