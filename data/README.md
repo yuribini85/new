@@ -78,7 +78,7 @@ de fora: a simulação não tem esses termos por carro.
 | Chave | O que é | Estado |
 |---|---|---|
 | `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
-| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor | 0,5 — **a confirmar** no GT2 (como medir: abaixo) |
+| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor (conferido no GT2) | 0,5 — fração **a confirmar** no GT2 (como medir: abaixo) |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
