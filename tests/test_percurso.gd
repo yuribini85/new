@@ -12,10 +12,11 @@ const LIMITE_S := 30.0 * 60.0
 
 func test_percurso_inicial_ate_a_licenca_b() -> void:
 	# Agente "sugestoes" (tools/agente.gd) com cada usado inicial que o saldo
-	# paga E que o Mercado recomenda (★: posição média até 1,5 na corrida sem
-	# licença de menor prêmio, como em aba_loja._prever). Com o GT2 inteiro há
-	# dezenas de usados iniciais, e alguns não sustentam o começo, como no GT2;
-	# a promessa do jogo é sobre os recomendados.
+	# paga E que tem boa chance na primeira corrida aberta (posição média de
+	# fábrica até 1,5 na prova aberta sem licença de menor prêmio). O Mercado
+	# não recomenda nada, como no GT2: este filtro é só a conferência de que
+	# existem bons primeiros carros. Com o GT2 inteiro há dezenas de usados
+	# iniciais, e alguns não sustentam o começo, como no GT2.
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var saldo := int(d.economia()["saldo_inicial"])
@@ -32,8 +33,8 @@ func test_percurso_inicial_ate_a_licenca_b() -> void:
 		var a := Mecanico.avaliar(carreira, faceis[0]["id"], -1, c)
 		return not a.is_empty() and float(a["media"]) <= 1.5)
 	j.free()
-	print("\n  recomendados: %d" % ofertas.size())
-	verificar(not ofertas.is_empty(), "o Mercado recomenda algum usado inicial")
+	print("\n  bons iniciais: %d" % ofertas.size())
+	verificar(not ofertas.is_empty(), "há usado inicial com boa chance na primeira corrida")
 	var ciclo := false
 	for o in ofertas:
 		var ag = preload("res://tools/agente.gd").new(d, "sugestoes", hash(o["carro_id"]))

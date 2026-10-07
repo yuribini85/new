@@ -3,7 +3,6 @@ extends Aba
 ## Perspectiva para quem está escolhendo o primeiro carro: faixa de posição de
 ## cada usado, de fábrica, em corridas simuladas da primeira prova sem licença
 ## (a de menor prêmio). Estimativa, não promessa. Uma vez por dia de jogo.
-var _previsao := {}  # {"dia", "evento", "avaliacoes": {carro_id: Mecanico.avaliar()}}
 
 
 func _init(d: Node, j: Node) -> void:
@@ -220,31 +219,22 @@ func _topo_loja(nome: String, sub: String) -> void:
 		rotulo(sub, FONTE_PEQUENA, COR_SECUNDARIA, v).autowrap_mode = TextServer.AUTOWRAP_OFF
 
 
-## Um lote de usados (ou todos), com filtros e previsão na primeira compra.
+## Um lote de usados (ou todos), com filtros. Sem recomendação, como no GT2.
 func _lote(ofertas: Array) -> void:
 	var f: Dictionary = dados.item("fabricantes", _loja) if _loja != "todos" else {}
 	_topo_loja(f.get("nome", "Todos os lotes"), "Usados · " + f.get("pais", "todos os fabricantes"))
 	if _loja != "todos":
 		ofertas = ofertas.filter(func(o): return dados.carro(o["carro_id"])["fabricante"] == _loja)
 	_filtros()
-	var prev := _prever(ofertas)
-	if prev.has("evento"):
-		nota("icone_prever", "★ = boa chance na primeira corrida", "Previsão da posição de fábrica (sem peças) em %s."
-				% prev["evento"])
 	var grade := _grade()
 	var lista := _filtrar(ofertas.map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2])
 	for o in lista.slice(0, _limite):
 		var c: Dictionary = dados.carro(o["carro_id"])
-		var a: Dictionary = prev.get("avaliacoes", {}).get(o["carro_id"], {})
-		var estrela: bool = not a.is_empty() and a["media"] <= 1.5
 		var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
 		var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
 		if o["carro_id"] in jogador.desejos:
 			extras.push_front(["♥ avisando", COR_DESTAQUE])
-		if not a.is_empty():
-			extras.push_front(["%sprevisão %s" % ["★ " if estrela else "", Mecanico.texto_faixa(a["faixa"])],
-					COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
-		_bloco(grade, c, int(o["preco"]), "★" if estrela else "", extras,
+		_bloco(grade, c, int(o["preco"]), "", extras,
 				func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
 	_mais(lista.size())
 
@@ -419,29 +409,6 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
 			["Comprar · %s Cr" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false]))
 	grade.add_child(b)
-
-
-func _prever(ofertas: Array) -> Dictionary:
-	if jogador.carreira == null:
-		return {}
-	if _previsao.get("dia", -1) == jogador.dias:
-		return _previsao
-	var sem_licenca: Array = dados.lista("eventos").filter(Elegibilidade.aberta_sem_licenca)
-	if sem_licenca.is_empty():
-		return {}
-	sem_licenca.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])
-	var ev: Dictionary = sem_licenca[0]
-	var avaliacoes := {}
-	# Só ajuda na escolha do primeiro carro, e só entre os que o saldo paga
-	# (simular os ~140 usados do dia travaria a tela).
-	if not jogador.garagem.lista().is_empty():
-		return {}
-	for o in ofertas.filter(func(o): return jogador.economia.pode_pagar(int(o["preco"]))):
-		var c := Carro.new(dados.carro(o["carro_id"]))
-		c.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
-		avaliacoes[o["carro_id"]] = Mecanico.avaliar(jogador.carreira, ev["id"], -1, c)
-	_previsao = {"dia": jogador.dias, "evento": ev["nome"], "avaliacoes": avaliacoes}
-	return _previsao
 
 
 ## O primeiro carro já entra em uso, e a tela vai para a Garagem, que mostra o

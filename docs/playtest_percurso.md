@@ -38,7 +38,7 @@ dizer "o que você tentaria agora?".
 
 | # | Momento | Pergunta da observação |
 |---|---|---|
-| 1 | Mercado | Escolheu um usado com ★? Leu a faixa ("1º–2º nos testes")? Disse por que escolheu? |
+| 1 | Mercado | Em que lote entrou primeiro? Escolheu pelo preço, pela ficha ou pela marca? Disse por que escolheu? |
 | 2 | Garagem/Competições | Achou como correr? Quanto tempo da compra até a primeira corrida? |
 | 3 | Primeira corrida | Assistiu ou pulou? Entendeu a classificação e a cor do próprio carro? |
 | 4 | Primeira derrota | Leu o resultado? Usou "Testar preparação" ou "O que ajuda?" sem ser pedido? |
