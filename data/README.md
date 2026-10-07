@@ -78,7 +78,7 @@ de fora: a simulação não tem esses termos por carro.
 | Chave | O que é | Estado |
 |---|---|---|
 | `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
-| `fracao_revenda` | venda = preço de tabela × fração; peças não entram no valor (conferido no GT2) | 0,5 — fração **a confirmar** no GT2 (como medir: abaixo) |
+| `fracao_revenda` | venda = preço de tabela (novo) × fração, seja qual for o preço pago; peças não entram no valor | 0,25 — medido no GT2 (3 carros: 8.000→2.000, 6.400→1.600, 2.800→700) |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
@@ -175,7 +175,7 @@ godot --headless --script res://tools/calibrar_licencas.gd   # tempos das licen�
 `referencia/` nunca vai para o Git. O que entra em `data/` são os números convertidos
 para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.py`.
 
-**A confirmar** (não vêm do GT2): `fracao_revenda`, `teto_offline_s` (8 h, decisão de design),
+**A confirmar** (não vêm do GT2): `teto_offline_s` (8 h, decisão de design),
 `sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).
 
 ## Estado atual de data/ (importado do GT2 americano, SCUS-94488 v1.2)

@@ -144,6 +144,7 @@ PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "
 PISTAS_EXISTENTES: set[str] = set()
 # Acima disso são os testes de licença do disco (255 voltas), que não entram.
 MAX_VOLTAS = 99
+FRACAO_REVENDA = 0.25
 # Copas de marca: CarRestrictionFlags do GT2.
 SO_RUA, SO_CORRIDA = 256, 512
 CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
@@ -406,7 +407,9 @@ def main() -> int:
     gravar("eventos", eventos)
     gravar("licencas", licencas)
     economia = json.load(open(DATA / "economia.json", encoding="utf-8"))
-    economia.update({"saldo_inicial": 10000, "pneu_de_fabrica": "pneu_0"})
+    # Revenda medida no GT2 (DuckStation): venda = 25% do Car.Price, seja qual for o
+    # preço pago no usado; peças não entram (3 carros: 8000→2000, 6400→1600, 2800→700).
+    economia.update({"saldo_inicial": 10000, "pneu_de_fabrica": "pneu_0", "fracao_revenda": FRACAO_REVENDA})
     gravar("economia", economia)
     carreira = json.load(open(DATA / "carreira.json", encoding="utf-8"))
     carreira["piloto_jogador"] = "jogador"
@@ -427,7 +430,7 @@ def main() -> int:
               f'{(c["potencia"] + motor + tb) if tb else 0:9.0f}  {c["peso"] * lw:8.0f}')
     print("\nCompare aspirado_max/turbo_max/peso_min com a lista de Connoy (NA MaxHP, Turbo MaxHP em hp,")
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
-    print("a_confirmar (não vêm do GT2): fracao_revenda, teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
+    print("a_confirmar (não vêm do GT2): teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
 
 
