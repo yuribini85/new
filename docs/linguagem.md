@@ -95,6 +95,11 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
    fica em cima e maior que o texto, que vem menor embaixo e só confirma (`Aba.com_icone`:
    ícone de 64 px e texto de 26 nas ações; 78 px e texto de 20 na barra de navegação).
 
+7. **Explicação curta na tela, detalhe no ⓘ**: nada de parágrafo no fluxo da tela. Cada
+   explicação vira ícone + uma frase de até ~40 caracteres (`Aba.nota`); o porquê e o
+   detalhe ficam atrás do botão ⓘ, num painel (`Aba.botao_info`, `Aba.titulo_secao`).
+   Dentro de um painel não se usa ⓘ (abriria outro painel por cima).
+
 ## Estado
 
 O glossário e as mudanças de estrutura estão aplicados nas telas, junto com a arte:
@@ -104,6 +109,10 @@ O glossário e as mudanças de estrutura estão aplicados nas telas, junto com a
 - cartões de corrida com banner, emblema, troféu e a barra "Seu carro x rivais";
 - resultado com palco, pódio com silhuetas e troféus;
 - cabeçalhos ilustrados.
+
+Textos explicativos encurtados pela regra 7 (de 62 textos longos visíveis para 16, quase
+todos agora dentro dos painéis ⓘ). Ícones pedidos para isso: `icone_app_fechado`,
+`icone_camera`, `icone_trafego` (sem a arte, a linha aparece só com o texto).
 
 Falta: a dica de primeira vez (item 4 das mudanças de estrutura) e o botão principal do
 resultado escolhido pelo motivo da derrota (hoje vem do objetivo).

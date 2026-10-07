@@ -19,7 +19,7 @@ var _tracao := ""
 
 
 func construir() -> void:
-	cabecalho("Mercado", "Carros novos e usados. Os usados mudam a cada corrida.", "fundo_mercado")
+	cabecalho("Mercado", "Carros novos e usados", "fundo_mercado")
 	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos)
 	var novos: Array = dados.lista("carros").filter(func(c): return c.get("novo", true))
 	var abas := HBoxContainer.new()
@@ -41,12 +41,12 @@ func construir() -> void:
 		return
 	_filtros()
 	if _secao == "usados":
-		rotulo("Mudam conforme você corre (cada corrida é um dia). %s" % (
-				"★ = boa chance na corrida mais fácil." if jogador.garagem.lista().is_empty() else ""),
-				FONTE_PEQUENA, COR_SECUNDARIA)
-		if ofertas.is_empty():
-			rotulo("Nenhum usado hoje. Volte depois de algumas corridas.", 0, COR_SECUNDARIA)
 		var prev := _prever(ofertas)
+		nota("icone_ofertas", "Mudam a cada corrida", "Os usados mudam conforme você corre: cada corrida é um dia."
+				+ (" A previsão é a posição de fábrica (sem peças) em %s; ★ = boa chance." % prev["evento"]
+				if prev.has("evento") else ""))
+		if ofertas.is_empty():
+			rotulo("Nenhum usado hoje.", 0, COR_SECUNDARIA)
 		var grade := _grade()
 		for o in _filtrar(ofertas.map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2]):
 			var c: Dictionary = dados.carro(o["carro_id"])
@@ -57,12 +57,12 @@ func construir() -> void:
 			if o["carro_id"] in jogador.desejos:
 				extras.push_front(["♥ avisando", COR_DESTAQUE])
 			if not a.is_empty():
-				extras.push_front(["%s%s nos testes, de fábrica, em %s" % ["★ " if estrela else "",
-						Mecanico.texto_faixa(a["faixa"]), prev["evento"]], COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
+				extras.push_front(["%sprevisão %s" % ["★ " if estrela else "", Mecanico.texto_faixa(a["faixa"])],
+						COR_BOM if estrela else COR_NEUTRA.lightened(0.3)])
 			_bloco(grade, c, int(o["preco"]), "★" if estrela else "", extras,
 					func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
 	else:
-		rotulo("Sempre disponíveis. Modelos antigos só aparecem nos usados.", FONTE_PEQUENA, COR_SECUNDARIA)
+		nota("icone_ok", "Sempre disponíveis", "Os novos estão sempre à venda. Modelos antigos só aparecem nos usados.")
 		var grade := _grade()
 		for c in _filtrar(novos.map(func(c): return [c, int(c["preco"]), c])).map(func(x): return x[2]):
 			_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
@@ -75,11 +75,12 @@ const HORIZONTE_AGENDA := 30
 ## Agenda dos usados: os acompanhados (quando aparecem) e as próximas ofertas.
 ## O estoque depende só do número de corridas, então a agenda é exata.
 func _agenda() -> void:
-	rotulo("Cada corrida é um dia. As ofertas são exatas: o estoque só muda com as corridas.", FONTE_PEQUENA, COR_SECUNDARIA)
+	nota("icone_ofertas", "Cada corrida é um dia", "As ofertas são exatas: o estoque só muda com as corridas.")
 	var v := cartao(COR_DESTAQUE)
-	rotulo("AVISAR QUANDO APARECER", FONTE_PEQUENA, COR_DESTAQUE, v)
+	titulo_secao("AVISAR QUANDO APARECER", "Abra a ficha de um modelo e toque em \"Avisar quando aparecer usado\".",
+			v, COR_DESTAQUE)
 	if jogador.desejos.is_empty():
-		rotulo("Abra a ficha de um modelo e toque em \"Avisar quando aparecer usado\".", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+		nota("icone_avisar", "Nenhum modelo marcado", "", v)
 	for cid in jogador.desejos:
 		var c: Dictionary = dados.carro(cid)
 		var p := Usados.proxima(c, jogador.dias, jogador.usados_vendidos)

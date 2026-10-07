@@ -8,7 +8,16 @@ const AFETA := {
 }
 const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio", "cambio": "cambio"}
 
-## O que cada grupo de peças faz, para a tela explicar antes do preço.
+## O que cada grupo de peças faz, numa linha curta com o ícone do atributo;
+## EXPLICA_CATEGORIA é o detalhe, atrás do ⓘ.
+const CURTA_CATEGORIA := {
+	"aspiracao": "Turbo ou aspirado", "lightweight": "Mais leve: tudo melhora", "brake": "Freia mais tarde",
+	"muffler": "Escapamento esportivo", "portpolish": "Fluxo melhor no motor", "enginebalance": "Motor balanceado",
+	"displacement": "Motor maior", "computer": "Central eletrônica", "intercooler": "Ar do turbo mais frio",
+	"cambio": "Arrancada ou velocidade final",
+}
+const ICONE_ATRIBUTO := {"potencia": "icone_potencia", "peso": "icone_peso", "freio": "icone_freios",
+	"cambio": "icone_cambio"}
 const EXPLICA_CATEGORIA := {
 	"aspiracao": "Mais potência pela admissão (turbo ou preparação aspirada).",
 	"lightweight": "Tira peso: o carro acelera, freia e contorna melhor.",
@@ -104,8 +113,8 @@ func construir() -> void:
 	var seco := c.atributos_efetivos("seco")
 	atributos_carro(seco)
 	if _correndo(c):
-		rotulo("Este carro está correndo: as corridas já marcadas usam a montagem do início. O que mudar aqui vale para as próximas.",
-				FONTE_PEQUENA + 1, COR_INFO)
+		nota("icone_ao_vivo", "Correndo: muda só as próximas", "As corridas já marcadas usam a montagem do "
+				+ "início. O que mudar aqui vale para as próximas.", null, COR_INFO)
 	_configuracoes(c)
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
@@ -135,11 +144,9 @@ func construir() -> void:
 ## troca entre elas de graça. Só peças já compradas para o carro.
 func _configuracoes(c: Carro) -> void:
 	var v := cartao()
-	rotulo("MONTAGENS SALVAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	titulo_secao("MONTAGENS SALVAS", "Guarde a montagem atual (peças e pneus) para voltar a ela depois, sem custo. "
+			+ "Ex.: \"até 150 cv\", \"pista de retas\".", v)
 	var atual := c.configuracao()
-	if c.configuracoes.is_empty():
-		rotulo("Guarde a montagem atual (peças e pneus) para voltar a ela depois, sem custo. Ex.: \"até 150 cv\", \"pista de retas\".",
-				FONTE_PEQUENA, COR_SECUNDARIA, v)
 	for i in c.configuracoes.size():
 		var cfg: Dictionary = c.configuracoes[i]
 		var em_uso: bool = cfg["pecas"] == atual["pecas"] and cfg["ajuste_cambio"] == atual["ajuste_cambio"]
@@ -168,7 +175,7 @@ func _salvar_configuracao(c: Carro) -> void:
 	nome.custom_minimum_size = Vector2(0, 64)
 	nome.select_all_on_focus = true
 	painel.emit("Salvar montagem", func(v):
-		rotulo("Nome (por exemplo, o limite de uma corrida ou o tipo de pista):", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
+		rotulo("Nome (ex.: \"até 150 cv\"):", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		v.add_child(nome), [["Salvar", func():
 			var cfg := c.configuracao()
 			cfg["nome"] = nome.text.strip_edges() if nome.text.strip_edges() != "" else "Montagem %d" % (c.configuracoes.size() + 1)
@@ -197,7 +204,7 @@ func _pecas(c: Carro, seco: Dictionary) -> void:
 	# A função vale para o grupo inteiro: dita uma vez, no topo.
 	var attr_grupo: String = "potencia" if _grupo == "motor" else ""
 	if attr_grupo != "":
-		rotulo("Peças de motor: " + FUNCAO["potencia"] + ".", FONTE_PEQUENA + 2, COR_SECUNDARIA)
+		nota("icone_potencia", "Motor: mais potência", "Peças de motor: " + FUNCAO["potencia"] + ".")
 	for cat in por_categoria:
 		por_categoria[cat].sort_custom(func(a, b): return a["preco"] < b["preco"])
 		var v := cartao()
@@ -212,11 +219,14 @@ func _pecas(c: Carro, seco: Dictionary) -> void:
 		tc.alignment = BoxContainer.ALIGNMENT_CENTER
 		tc.add_theme_constant_override("separation", 0)
 		cab.add_child(tc)
-		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), 30, Color.WHITE, tc)
+		var ht := HBoxContainer.new()
+		tc.add_child(ht)
+		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), 30, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var detalhe: String = EXPLICA_CATEGORIA.get(cat, "")
 		if attr != "potencia":
-			rotulo(FUNCAO[attr].capitalize().left(1) + FUNCAO[attr].substr(1) + ".", FONTE_PEQUENA, COR_SECUNDARIA, tc)
-		else:
-			rotulo(EXPLICA_CATEGORIA.get(cat, ""), FONTE_PEQUENA, COR_SECUNDARIA, tc)
+			detalhe += " Na pista: " + FUNCAO[attr] + "."
+		botao_info(NOMES_CATEGORIA.get(cat, cat), detalhe, ht)
+		nota(ICONE_ATRIBUTO.get(attr, ""), CURTA_CATEGORIA.get(cat, ""), "", tc)
 		for p in por_categoria[cat]:
 			_linha(v, c, p, seco, provas_antes)
 		if cat == "cambio" and c.pecas.has("cambio"):
@@ -368,7 +378,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 			rotulo("⚠ Deixa de poder correr:", FONTE_PEQUENA + 2, COR_RUIM, vp)
 			rotulo(", ".join(perde.map(func(e): return dados.evento(e)["nome"])), FONTE_PEQUENA + 2, Color.WHITE, vp)
 		if instalada:
-			rotulo("Instalada. Remover não devolve o dinheiro, mas a peça continua sua para reinstalar de graça.",
+			rotulo("Remover não devolve o dinheiro; reinstalar é grátis.",
 					FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		elif possuida:
 			rotulo("Já é sua: usar de novo é grátis.", FONTE_PEQUENA + 2, COR_BOM, v)
@@ -381,8 +391,8 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 func _pneus(c: Carro) -> void:
 	var v := cartao()
 	rotulo("Pneus", 30, Color.WHITE, v)
-	rotulo("Pneu que segura mais: " + FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
-			FONTE_PEQUENA, COR_SECUNDARIA, v)
+	nota("icone_pneus", "Segura mais: curvas e frenagem", "Pneu que segura mais: " + FUNCAO["pneu"]
+			+ ". O piloto usa sozinho o melhor que você tiver.", v)
 	for pn in dados.lista("pneus"):
 		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
 		var h := fileira(v)
@@ -448,4 +458,4 @@ func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
 	if motivo != "":
 		avisar("Não comprou %s: %s." % [pn["nome"], motivo], false)
 	else:
-		avisar("Pneu comprado: %s. O piloto usa quando for o melhor para a corrida." % pn["nome"])
+		avisar("Pneu comprado: %s" % pn["nome"])

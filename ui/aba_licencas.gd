@@ -31,7 +31,7 @@ func construir() -> void:
 		_tela_bancada(dados.item("contratos", _bancada))
 		return
 	_bancada = ""
-	cabecalho("Carreira", "Licenças, objetivos e a sua coleção de carros.", "fundo_carreira")
+	cabecalho("Carreira", "Licenças, objetivos e coleção", "fundo_carreira")
 	_resumo()
 	_objetivos()
 	rotulo("LICENÇAS", FONTE_PEQUENA, COR_SECUNDARIA)
@@ -41,11 +41,9 @@ func construir() -> void:
 		if not Contratos.da_licenca(dados, lic["id"]).is_empty():
 			_cartao_contratos(lic)
 		elif c == null:
-			rotulo("Os testes da %s são feitos com o carro em uso. Compre um carro primeiro." % lic["nome"],
-					FONTE_PEQUENA + 2, COR_SECUNDARIA)
+			nota("icone_cadeado", "%s: compre um carro primeiro" % lic["nome"],
+					"Os testes da %s são feitos com o carro em uso." % lic["nome"])
 		else:
-			rotulo("%s: uma volta sozinho na pista com o %s. Bronze ou melhor em todos os testes dá a licença." % [
-					lic["nome"], c.base["nome"]], FONTE_PEQUENA, COR_SECUNDARIA)
 			_cartao_licenca(c, lic)
 	_colecao()
 	var h := acoes()
@@ -93,9 +91,8 @@ func _colecao() -> void:
 	var tenho := {}
 	for c in jogador.garagem.lista():
 		tenho[c.id] = true
-	rotulo("COLEÇÃO · %d de %d modelos obtidos" % [tenho.size(), dados.lista("carros").size()], FONTE_PEQUENA, COR_SECUNDARIA)
-	rotulo("Todos os carros do jogo. Os escuros você ainda não tem; toque para ver como conseguir.",
-			FONTE_PEQUENA, COR_SECUNDARIA)
+	titulo_secao("COLEÇÃO · %d de %d" % [tenho.size(), dados.lista("carros").size()],
+			"Todos os carros do jogo. Os escuros você ainda não tem; toque para ver como conseguir.")
 	var grade := GridContainer.new()
 	grade.columns = 3
 	grade.add_theme_constant_override("h_separation", 8)
@@ -183,8 +180,8 @@ func _modo_teste(v: VBoxContainer) -> void:
 			mudou.emit())
 		h.add_child(b)
 	v.add_child(h)
-	rotulo("Clareza: pode pular a corrida. Ritmo: sem pular, para medir sessão e renda. Ligado, o aparelho registra as sessões (só local).",
-			FONTE_PEQUENA, COR_SECUNDARIA, v)
+	nota("", "Só para testes", "Clareza: pode pular a corrida. Ritmo: sem pular, para medir sessão e renda. "
+			+ "Ligado, o aparelho registra as sessões (só local).", v)
 	var sessoes := RegistroSessao.sessoes()
 	if sessoes.is_empty():
 		return
@@ -245,7 +242,8 @@ func _mostrar_resultado() -> void:
 		rotulo("Faltaram %.2f s para o %s." % [_resultado["tempo"] - float(tempos[proximo]), proximo],
 				FONTE_PEQUENA + 2, Color.WHITE, v)
 	if _resultado["concedida"]:
-		rotulo("Licença %s conquistada! Novas corridas liberadas em Competições." % _resultado["licenca"], 0, COR_BOM, v)
+		nota("icone_licenca", "Licença %s conquistada!" % _resultado["licenca"], "Novas corridas liberadas em Competições.",
+				v, COR_BOM)
 		botao("Ver competições", func(): ir_para.emit(EVENTOS), true, true, v)
 	_resultado = {}
 
@@ -256,7 +254,11 @@ func _cartao_licenca(c: Carro, lic: Dictionary) -> void:
 	var feitos: int = lic["testes"].filter(func(t): return jogador.graus_licenca.has(t["id"])).size()
 	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
 	var v := cartao(COR_BOM if tem else (COR_NEUTRA if bloqueada else COR_INFO))
-	rotulo(lic["nome"], 34, Color.WHITE, v)
+	var ht := HBoxContainer.new()
+	v.add_child(ht)
+	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	botao_info(lic["nome"], "Uma volta sozinho na pista com o %s. Bronze ou melhor em todos os testes dá a licença."
+			% c.base["nome"], ht)
 	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
 			else ["%d de %d testes" % [feitos, lic["testes"].size()], COR_INFO])
 	selos([estado, ["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
@@ -323,7 +325,7 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 				series[String(e["nome"]).split(" — ")[0]] = true
 			for nome in series:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
-			rotulo("Elas aparecem em Competições, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
+			nota("icone_pista", "Em Competições › %s" % lic["nome"], "", v),
 			[["Ver competições", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
 
 
@@ -339,12 +341,15 @@ func _cartao_contratos(lic: Dictionary) -> void:
 	var feitos: int = lista.filter(func(ct): return jogador.graus_licenca.has(ct["id"])).size()
 	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
 	var v := cartao(COR_BOM if tem else (COR_NEUTRA if bloqueada else COR_INFO))
-	rotulo(lic["nome"], 34, Color.WHITE, v)
+	var ht := HBoxContainer.new()
+	v.add_child(ht)
+	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	botao_info(lic["nome"], "A escola empresta o carro e as peças, sem custo. Monte o carro e teste a montagem; "
+			+ "bronze em todas as missões dá a licença.", ht)
 	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
 			else ["%d de %d missões" % [feitos, lista.size()], COR_INFO])
 	selos([estado, ["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
-	rotulo("A escola empresta o carro e as peças, sem custo. Monte o carro e teste a montagem; bronze em todas as missões dá a licença.",
-			FONTE_PEQUENA, COR_SECUNDARIA, v)
+	nota("icone_licenca", "Carro e peças da escola, grátis", "", v)
 	for ct in lista:
 		separador(v)
 		var h := fileira(v)
@@ -381,15 +386,14 @@ func _tela_bancada(ct: Dictionary) -> void:
 	rotulo(ct.get("descricao", ""), FONTE_PEQUENA + 2, COR_SECUNDARIA)
 	var grau: String = jogador.graus_licenca.get(ct["id"], "")
 	var vm := cartao()
-	rotulo("MEDALHAS", FONTE_PEQUENA, COR_SECUNDARIA, vm)
+	titulo_secao("MEDALHAS", "Prata e ouro exigem também a condição do bronze.", vm)
 	var cond: Dictionary = ct["condicoes"]
 	for g in ["bronze", "prata", "ouro"]:
 		var partes := []
 		for chave in cond.get(g, {}):
 			partes.append(Contratos.texto_condicao(chave, cond[g][chave]))
 		var ganho: bool = grau != "" and Contratos.GRAUS.find(grau) <= Contratos.GRAUS.find(g)
-		rotulo("%s%s: %s%s" % ["✓ " if ganho else "", g.to_upper(), "cumprir o bronze e " if g != "bronze" else "",
-				"; ".join(partes)], FONTE_PEQUENA + 1, CORES_GRAU[g], vm)
+		nota("icone_medalha_" + g, "%s%s" % ["✓ " if ganho else "", "; ".join(partes)], "", vm, CORES_GRAU[g])
 	for prova in ct["provas"]:
 		var h := fileira()
 		var ic := icone_pista(prova["pista"])
@@ -408,13 +412,12 @@ func _tela_bancada(ct: Dictionary) -> void:
 	conteudo.add_child(foto)
 	rotulo("%s da escola" % carro.base["nome"], 30, Color.WHITE)
 	var a := carro.atributos_efetivos("seco")
-	numeros([["%d" % a["potencia"], "cv"], ["%d" % a["peso"], "kg"], ["%.2f" % a["aderencia"], "aderência"],
-			["%.2f" % a["freio"], "freio"]])
+	atributos_carro(a)
 	var custo := 0
 	for pid in carro.configuracao()["pecas"]:
 		custo += int(dados.peca(pid)["preco"])
-	rotulo("%d peça%s · preço de tabela %s Cr (a escola paga)" % [carro.pecas.size(), "" if carro.pecas.size() == 1 else "s",
-			dinheiro(custo)], FONTE_PEQUENA + 1, COR_SECUNDARIA)
+	nota("icone_montagem", "%d peça%s · a escola paga" % [carro.pecas.size(), "" if carro.pecas.size() == 1 else "s"],
+			"Preço de tabela da montagem: %s Cr. A escola empresta o carro e as peças." % dinheiro(custo))
 	_pecas_da_escola(ct, carro)
 	botao("Testar montagem", _enviar.bind(ct), true, true)
 	if not _avaliacao.is_empty():
@@ -426,7 +429,7 @@ func _pecas_da_escola(ct: Dictionary, carro: Carro) -> void:
 	for p in Contratos.pecas_escola(dados, ct):
 		por_cat.get_or_add(p["categoria"], []).append(p)
 	var v := cartao()
-	rotulo("PEÇAS DA ESCOLA · uma por categoria", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	titulo_secao("PEÇAS DA ESCOLA", "Escolha no máximo uma peça por categoria.", v)
 	for cat in por_cat:
 		por_cat[cat].sort_custom(func(x, y): return x["preco"] < y["preco"])
 		rotulo(NOMES_CATEGORIA.get(cat, cat.capitalize()), FONTE_PEQUENA + 2, Color.WHITE, v)
@@ -531,5 +534,5 @@ static func _dif(x: float) -> String:
 ## O gargalo pelo lado em que mais se perdeu tempo.
 static func _gargalo(dg: Dictionary) -> String:
 	if dg["curvas"] >= dg["retas"]:
-		return "Perde tempo nas curvas: menos peso, freios e pneus ajudam mais que potência."
-	return "Perde tempo nas retas: potência, câmbio e menos peso ajudam."
+		return "Perde nas curvas: peso, freios e pneus ajudam."
+	return "Perde nas retas: potência, câmbio e peso ajudam."

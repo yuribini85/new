@@ -253,6 +253,65 @@ func cartao(acento := Color.TRANSPARENT, pai: Control = null) -> VBoxContainer:
 	return v
 
 
+# --- Explicação curta -------------------------------------------------------
+# Regra (docs/linguagem.md): na tela, ícone + uma frase curta (até ~40
+# caracteres); o porquê e o detalhe ficam atrás do botão ⓘ, num painel.
+
+## Linha de nota: ícone, frase curta e, com `detalhe`, o botão ⓘ que abre o
+## texto completo (não usar `detalhe` dentro de um painel: abriria outro). Ícone que ainda não existe na arte: a linha fica sem ele.
+func nota(nome_icone: String, curta: String, detalhe := "", pai: Control = null, cor := COR_SECUNDARIA) -> HBoxContainer:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	if nome_icone != "" and arte(nome_icone) != null:
+		icone(nome_icone, 38, h)
+	var l := rotulo(curta, FONTE_PEQUENA + 1, cor, h)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if detalhe != "":
+		# Frase curta numa linha só, com o ⓘ colado nela (rótulo com quebra e
+		# sem expandir ficaria com largura zero: uma letra por linha).
+		l.autowrap_mode = TextServer.AUTOWRAP_OFF
+		l.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		botao_info(curta, detalhe, h)
+	_pai(pai).add_child(h)
+	return h
+
+
+## Título de seção (MAIÚSCULAS, pequeno) com ⓘ opcional ao lado.
+func titulo_secao(t: String, detalhe := "", pai: Control = null, cor := COR_SECUNDARIA) -> HBoxContainer:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	var l := rotulo(t, FONTE_PEQUENA, cor, h)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if detalhe != "":
+		l.autowrap_mode = TextServer.AUTOWRAP_OFF
+		l.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		botao_info(t.capitalize() if t == t.to_upper() else t, detalhe, h)
+	_pai(pai).add_child(h)
+	return h
+
+
+## Botão ⓘ: abre um painel com o detalhe. Área de toque de 56 px.
+func botao_info(titulo_painel: String, detalhe: String, pai: Control = null) -> Button:
+	var b := Button.new()
+	b.flat = true
+	b.focus_mode = Control.FOCUS_NONE
+	b.custom_minimum_size = Vector2(56, 56)
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	b.tooltip_text = "Saiba mais"
+	var tex := icone_reduzido("icone_info", 36)
+	if tex != null:
+		b.icon = tex
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	else:
+		b.text = "ⓘ"
+		b.add_theme_color_override("font_color", COR_INFO)
+	b.pressed.connect(func():
+		painel.emit(titulo_painel, func(v):
+			rotulo(detalhe, FONTE_PEQUENA + 3, Color.WHITE, v), []))
+	_pai(pai).add_child(b)
+	return b
+
+
 ## Caixa "como funciona": explica a tela para quem chega nela pela primeira vez.
 func dica(t: String, pai: Control = null) -> VBoxContainer:
 	var v := cartao(COR_INFO, pai)
@@ -745,8 +804,9 @@ func testar_preparacao(evento_id: String, carro: Carro) -> void:
 	opcoes.append(["De fábrica", {"pecas": [], "ajuste_cambio": ""}])
 	var escolhas := [0, 1 if opcoes.size() > 1 else 0]
 	painel.emit("Comparar montagens", func(v):
-		rotulo("%s · %s. Sem prêmio: só compara, com as mesmas %d corridas simuladas para cada montagem." % [
-				carro.base["nome"], dados.evento(evento_id)["nome"], Mecanico.AMOSTRAS], FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+		nota("icone_comparar", "%s · %s" % [nome_curto(carro.base["nome"]), dados.evento(evento_id)["nome"]],
+				"", v)
+		rotulo("Só compara: sem prêmio, %d corridas cada." % Mecanico.AMOSTRAS, FONTE_PEQUENA, COR_SECUNDARIA, v)
 		var resultado := VBoxContainer.new()
 		for k in 2:
 			var h := fileira(v)

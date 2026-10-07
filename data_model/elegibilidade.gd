@@ -20,7 +20,7 @@ static func motivos(carro: Carro, restricoes: Dictionary, licencas: Array) -> Ar
 	if restricoes.has("potencia_max"):
 		var potencia: float = carro.atributos_efetivos("seco")["potencia"]
 		if potencia > float(restricoes["potencia_max"]):
-			m.append("potência %d acima de %d cv" % [potencia, restricoes["potencia_max"]])
+			m.append("potência máx. %d cv (seu: %d)" % [restricoes["potencia_max"], potencia])
 	for chave in NOMES:
 		if restricoes.has(chave) and not base[chave] in restricoes[chave]:
 			m.append("%s %s não aceita" % [NOMES[chave], base[chave]])
@@ -29,5 +29,5 @@ static func motivos(carro: Carro, restricoes: Dictionary, licencas: Array) -> Ar
 	if restricoes.has("ano_max") and int(base["ano"]) > int(restricoes["ano_max"]):
 		m.append("ano %d depois de %d" % [base["ano"], restricoes["ano_max"]])
 	if restricoes.has("licenca") and not restricoes["licenca"] in licencas:
-		m.append("exige licença %s" % restricoes["licenca"])
+		m.append("licença %s" % restricoes["licenca"])
 	return m

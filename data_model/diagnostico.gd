@@ -72,7 +72,7 @@ static func colado(resultado: Dictionary, id: String, dmin: float) -> float:
 ## Frase do gargalo pelo lado em que mais se perde tempo (curvas ou retas).
 static func gargalo(curvas: float, retas: float) -> String:
 	if curvas <= 0.05 and retas <= 0.05:
-		return "Sozinho na pista, seu carro não é mais lento: o resultado veio da corrida (largada, tráfego)."
+		return "Carro no mesmo ritmo: foi a corrida (largada, tráfego)."
 	if curvas >= retas:
-		return "Perde tempo nas curvas: menos peso, freios e pneus ajudam mais que potência."
-	return "Perde tempo nas retas: potência, câmbio e menos peso ajudam."
+		return "Perde nas curvas: peso, freios e pneus ajudam."
+	return "Perde nas retas: potência, câmbio e peso ajudam."

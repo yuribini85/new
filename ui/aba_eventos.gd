@@ -24,7 +24,7 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	cabecalho("Competições", "Corridas e campeonatos. Vença para ganhar créditos.", "fundo_competicoes")
+	cabecalho("Competições", "Vença para ganhar créditos", "fundo_competicoes")
 	var garagem := carro_ativo()
 	if garagem == null:
 		proximo_passo("Você precisa de um carro para correr.", "Ir para o Mercado", LOJA)
@@ -80,11 +80,11 @@ func construir() -> void:
 			return a[0]["nome"] < b[0]["nome"])
 	if _filtro in ["B", "A"] and not _filtro in jogador.licencas:
 		var v := cartao(COR_INFO)
-		rotulo("Precisa da licença %s. Os testes ficam em Carreira." % _filtro, FONTE_PEQUENA + 2, Color.WHITE, v)
+		nota("icone_cadeado", "Precisa da licença %s" % _filtro, "Os testes da licença ficam em Carreira.", v, Color.WHITE)
 		botao("Ver licenças", func(): ir_para.emit(LICENCAS), true, false, v)
 	if lista.is_empty():
-		rotulo("Nenhuma prova aqui aceita o %s. Veja as outras categorias ou troque de carro." % c.base["nome"],
-				FONTE_PEQUENA + 2, COR_SECUNDARIA)
+		nota("icone_alerta", "Nenhuma aceita o %s" % nome_curto(c.base["nome"]),
+				"Veja as outras categorias ou troque de carro na Garagem.")
 	for l in lista:
 		_cartao_evento(c, l[0], l[1])
 
@@ -130,12 +130,12 @@ func _fila() -> void:
 	if dur > 0.0:
 		var decorrido := clampf(Time.get_unix_time_from_system() - float(f["inicio"]), 0.0, dur)
 		var falta := dur * int(f["restantes"]) - decorrido
-		rotulo("Cada corrida ≈ %s · a sequência termina em ≈ %s" % [_tempo(dur), _tempo(falta)], FONTE_PEQUENA + 2, Color.WHITE, v)
+		nota("icone_cronometro", "%s por corrida · fim em %s" % [_tempo(dur), _tempo(falta)], "", v, Color.WHITE)
 	var ganho := _ganho_estimado(ev, f)
 	if ganho != "":
 		rotulo(ganho, FONTE_PEQUENA + 2, COR_BOM, v)
-	rotulo("Continua com o app fechado (até %s)." % _tempo(float(dados.carreira().get("teto_offline_s", 0.0))),
-			FONTE_PEQUENA, COR_SECUNDARIA, v)
+	nota("icone_app_fechado", "Segue com o app fechado", "A sequência continua com o app fechado, até %s."
+			% _tempo(float(dados.carreira().get("teto_offline_s", 0.0))), v)
 	var h := acoes(v)
 	botao("Assistir", func(): ir_para.emit(CORRIDA), true, true, h, "icone_ao_vivo")
 	if int(f["restantes"]) > 1:
@@ -176,9 +176,8 @@ static func _tempo(s: float) -> String:
 func _repeticoes_ui() -> void:
 	var v := cartao()
 	var t := fileira(v)
-	icone("icone_de_novo", 40, t)
-	rotulo("Corridas já vencidas: quantas vezes seguidas correr. Rende créditos, até com o app fechado.",
-			FONTE_PEQUENA, COR_SECUNDARIA, t)
+	nota("icone_de_novo", "Vencidas: correr quantas vezes?", "Nas corridas que você já venceu, escolha quantas "
+			+ "vezes seguidas correr. Rende créditos, até com o app fechado.", t)
 	var h := fileira(v)
 	botao("−", func(): _repeticoes = maxi(1, _repeticoes - 1), _repeticoes > 1, false, h).custom_minimum_size = Vector2(80, 60)
 	var n := Label.new()
@@ -289,8 +288,8 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		elif est is String:
 			rotulo("Prevendo…", FONTE_PEQUENA, COR_INFO, col)
 		else:
-			rotulo("Previsão: %s\n(%d corridas simuladas, montagem atual)" % [Mecanico.texto_faixa(est), Mecanico.AMOSTRAS],
-					FONTE_PEQUENA, COR_INFO, col)
+			nota("icone_prever", "Previsão: %s" % Mecanico.texto_faixa(est), "%d corridas simuladas com a montagem atual."
+					% Mecanico.AMOSTRAS, col, COR_INFO)
 		var rotulo_correr := "Correr"
 		if vitorias > 0:
 			rotulo_correr = "Correr de novo" if _repeticoes == 1 else "Correr de novo ×%d" % _repeticoes
@@ -298,8 +297,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		bc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		botao_texto("Comparar montagens", func(): testar_preparacao(ev["id"], carro_ativo()), v)
 	else:
-		icone("icone_cadeado", 36, h)
-		rotulo("; ".join(motivos), FONTE_PEQUENA, COR_RUIM, h)
+		nota("icone_cadeado", " · ".join(motivos), "", h, COR_RUIM)
 
 
 ## Emblema do campeonato pela família do nome (o nome vai escrito ao lado).

@@ -177,12 +177,14 @@ func _construir_painel() -> void:
 		if Preferencias.permite_pular():
 			botao("Ver resultado (teste)", func(): pular.emit(), true, false, h)
 		botao("Voltar à garagem", func(): ir_para.emit(GARAGEM), true, false, h)
-		rotulo("As corridas continuam mesmo fora desta tela ou com o app fechado. Toque num nome da classificação, sobre a pista, para a câmera seguir aquele carro.",
-				FONTE_PEQUENA, COR_SECUNDARIA, _painel)
+		nota("icone_app_fechado", "Segue com o app fechado",
+				"As corridas continuam mesmo fora desta tela ou com o app fechado; o resultado espera por você.", _painel)
+		nota("icone_camera", "Toque num nome: a câmera vai nele",
+				"Na classificação sobre a pista, toque no nome de um piloto para a câmera seguir o carro dele.", _painel)
 	var u: Dictionary = jogador.ultima_corrida
 	if u.is_empty():
 		if not _em_andamento:
-			proximo_passo("Nenhuma corrida agora. Escolha uma em Competições; ela aparece aqui ao vivo.",
+			proximo_passo("Nenhuma corrida agora.",
 					"Escolher corrida", EVENTOS, _painel)
 		return
 	_resultado(u)
@@ -208,19 +210,18 @@ func _resultado(u: Dictionary) -> void:
 	selos(marcos, v)
 	if not anterior.is_empty():
 		var dp: int = int(anterior["ultima_pos"]) - int(u["posicao"])
-		var txt := "Antes: %dº%s. Agora: %dº" % [anterior["ultima_pos"],
-				" (melhor %dº)" % anterior["melhor_pos"] if anterior["melhor_pos"] != anterior["ultima_pos"] else "", u["posicao"]]
+		var txt := "Antes %dº → agora %dº" % [anterior["ultima_pos"], u["posicao"]]
 		if dp != 0:
-			txt += " (%s%d)" % ["subiu " if dp > 0 else "caiu ", absi(dp)]
+			txt += " (%s%d)" % ["▲" if dp > 0 else "▼", absi(dp)]
 		if anterior["ultimo_tempo"] > 0.0 and u["tempo_jogador"] > 0.0:
-			txt += " · %+.1f s em relação à última vez" % (u["tempo_jogador"] - anterior["ultimo_tempo"])
+			txt += " · %+.1f s" % (u["tempo_jogador"] - anterior["ultimo_tempo"])
 		rotulo(txt, FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 	if u.get("carro_premio_uid", -1) > 0:
 		var cp: Carro = jogador.garagem.carro(u["carro_premio_uid"])
 		if cp != null:
 			var h := fileira(v)
 			h.add_child(icone_carro(cp.base))
-			rotulo("Carro de prêmio: %s. Já está na sua garagem." % cp.base["nome"], FONTE_PEQUENA + 2, COR_DESTAQUE, h)
+			rotulo("Prêmio: %s, já na garagem" % cp.base["nome"], FONTE_PEQUENA + 2, COR_DESTAQUE, h)
 	_tabela(u, v)
 	if not venceu and seu != null:
 		_por_que(u, ev, seu)
@@ -266,7 +267,9 @@ func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 	if i_meu > 1:
 		rivais.append(tabela[i_meu - 1]["id"])
 	var v := cartao(COR_RUIM, _painel)
-	rotulo("POR QUE PERDI?", FONTE_PEQUENA, COR_RUIM, v)
+	titulo_secao("POR QUE PERDI?", "Potência ajuda na aceleração e nas retas (quanto mais leve o carro, melhor); "
+			+ "pneus, nas curvas e na frenagem; freios, na frenagem. Pneus melhores seguram mais; peças de redução "
+			+ "de peso deixam o carro mais leve.", v, COR_RUIM)
 	for id in rivais:
 		var a := carreira.atributos_participante(u["evento_id"], id, u["uid"])
 		if a.is_empty() or meu.is_empty():
@@ -274,8 +277,6 @@ func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 		var quem := "Vencedor" if id == u["vencedor"] else "Logo à frente"
 		rotulo("%s: %s" % [quem, carreira.rotulo_participante(u["evento_id"], id, u["uid"])], 0, Color.WHITE, v)
 		selos(fatores(meu, a), v)
-	rotulo("Potência ajuda na aceleração e nas retas (e quanto mais leve o carro, melhor); pneus ajudam nas curvas e na "
-			+ "frenagem; freios, na frenagem. Pneus melhores seguram mais; peças de redução de peso deixam o carro mais leve.", FONTE_PEQUENA, COR_SECUNDARIA, v)
 
 
 ## O carro como correu: o da garagem com a preparação guardada na inscrição.
@@ -293,27 +294,25 @@ var _diag := {}
 
 func _diagnostico_ui(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 	var v := cartao(COR_INFO, _painel)
-	rotulo("FOI O CARRO OU A CORRIDA?", FONTE_PEQUENA, COR_INFO, v)
+	titulo_secao("FOI O CARRO OU A CORRIDA?", "Separa o que é do carro (cada um sozinho na pista: curvas e retas) "
+			+ "do que foi da corrida (tempo preso atrás de outro carro).", v, COR_INFO)
 	var chave := "%s|%d|%d" % [u["evento_id"], u.get("dia", 0), u.get("semente", 0)]
 	if _diag.get("chave", "") != chave:
-		rotulo("Separa o que é do carro (cada um sozinho na pista: curvas e retas) do que foi da corrida (tempo preso atrás de outro carro).",
-				FONTE_PEQUENA + 1, Color.WHITE, v)
 		botao("Descobrir", _diagnosticar.bind(u, ev, seu, chave), true, false, v)
 		return
-	rotulo("SEU CARRO SOZINHO NA PISTA (o que melhorar o carro muda)", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	titulo_secao("SÓ O CARRO", "Cada carro sozinho na pista, sem tráfego: é o que melhorar o carro muda.", v)
 	for c in _diag["comparacoes"]:
 		rotulo("%s · %s: você %s · ele %s" % [c["quem"], c["nome"], _mmss_dec(c["meu"]), _mmss_dec(c["rival"])],
 				FONTE_PEQUENA + 2, Color.WHITE, v)
 		rotulo("curvas %s · retas %s" % [_dif(c["curvas"]), _dif(c["retas"])], FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
 		rotulo(Diagnostico.gargalo(c["curvas"], c["retas"]), FONTE_PEQUENA + 1, COR_INFO, v)
 	separador(v)
-	rotulo("NA CORRIDA (não depende do carro)", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	titulo_secao("NA CORRIDA", "O que não depende do carro: o tempo preso atrás de outro carro. Depende da largada "
+			+ "(você larga em último) e das zonas de ultrapassagem da pista.", v)
 	if _diag.get("colado", -1.0) < 0.0:
-		rotulo("Não dá para analisar esta corrida: ela é de uma versão antiga do jogo.", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
+		rotulo("Corrida de versão antiga: sem análise.", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
 	else:
-		rotulo("%.0f s preso atrás de outro carro, sem conseguir passar." % _diag["colado"], FONTE_PEQUENA + 2, Color.WHITE, v)
-		rotulo("Depende da largada (você larga em último) e das zonas de ultrapassagem da pista.",
-				FONTE_PEQUENA, COR_SECUNDARIA, v)
+		nota("icone_trafego", "%.0f s preso atrás de outro carro" % _diag["colado"], "", v, Color.WHITE)
 
 
 func _diagnosticar(u: Dictionary, ev: Dictionary, seu: Carro, chave: String) -> void:
@@ -375,20 +374,19 @@ static func fatores(meu: Dictionary, rival: Dictionary) -> Array:
 ## A análise vale enquanto carro, saldo e dia forem os mesmos.
 func _o_que_ajuda(u: Dictionary, seu: Carro) -> void:
 	var va := cartao(COR_INFO, _painel)
-	rotulo("O QUE MELHORA MEU RESULTADO?", FONTE_PEQUENA, COR_INFO, va)
+	titulo_secao("O QUE MELHORA MEU RESULTADO?", "Simula esta corrida várias vezes com cada peça ou pneu que cabe no "
+			+ "seu saldo e mostra em que posição você tende a chegar. É uma previsão, não uma promessa. "
+			+ "%d corridas simuladas por opção." % Mecanico.AMOSTRAS, va, COR_INFO)
 	if _analisando:
 		rotulo("Analisando…", 0, COR_INFO, va)
 		return
 	if _analise.get("chave", "") != _chave_analise(u, seu):
-		rotulo("Simula esta corrida várias vezes com cada peça ou pneu que cabe no seu saldo e mostra em que "
-				+ "posição você tende a chegar. É uma previsão, não uma promessa.", FONTE_PEQUENA + 2, Color.WHITE, va)
 		botao("Descobrir", _analisar, not _em_andamento or int(jogador.fila.get("uid", -1)) != seu.uid, true, va)
 		return
 	var hoje := Mecanico.texto_faixa(_analise["base"]["faixa"])
 	rotulo("Sem mudar nada, previsão: %s." % hoje, 0, Color.WHITE, va)
 	if _analise["opcoes"].is_empty():
-		rotulo("Nada que caiba no seu saldo melhora isso. Tente outra corrida ou junte prêmios.",
-				FONTE_PEQUENA + 2, COR_SECUNDARIA, va)
+		rotulo("Nada no seu saldo melhora isso.", FONTE_PEQUENA + 2, COR_SECUNDARIA, va)
 	for o in _analise["opcoes"]:
 		separador(va)
 		var h := fileira(va)
@@ -405,8 +403,6 @@ func _o_que_ajuda(u: Dictionary, seu: Carro) -> void:
 		var b := botao("Usar" if o["preco"] == 0 else "%s Cr" % dinheiro(o["preco"]),
 				_comprar.bind(o, seu), not _em_andamento or int(jogador.fila.get("uid", -1)) != seu.uid, false, h)
 		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	rotulo("%d corridas simuladas por opção · calculado em %.1f s" % [Mecanico.AMOSTRAS, _analise["ms"] / 1000.0],
-			FONTE_PEQUENA, COR_SECUNDARIA, va)
 
 
 func _chave_analise(u: Dictionary, seu: Carro) -> String:

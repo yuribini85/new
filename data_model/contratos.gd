@@ -137,13 +137,13 @@ static func completa(dados_: Node, jogador_: Node, licenca_id: String) -> bool:
 static func texto_condicao(chave: String, valor: Variant) -> String:
 	match chave:
 		"vencer":
-			return "ser o mais rápido em todas as pistas"
+			return "mais rápido em todas as pistas"
 		"folga_s":
-			return "chegar %.1f s à frente do rival mais rápido" % float(valor)
+			return "%.1f s à frente do rival" % float(valor)
 		"custo_max":
-			return "peças somando até %s Cr" % Aba.dinheiro(int(valor))
+			return "peças até %s Cr" % Aba.dinheiro(int(valor))
 		"pecas_max":
-			return "no máximo %d peça%s" % [int(valor), "" if int(valor) == 1 else "s"]
+			return "até %d peça%s" % [int(valor), "" if int(valor) == 1 else "s"]
 		"sem_categorias":
 			return "sem peças de potência" if Array(valor) == CATEGORIAS_POTENCIA else "sem peças de " + ", ".join(valor)
 	return chave

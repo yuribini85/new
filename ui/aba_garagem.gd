@@ -74,8 +74,7 @@ func _vazia() -> void:
 		return
 	var v := cartao()
 	rotulo("Sua garagem está vazia", 40, Color.WHITE, v)
-	rotulo("Escolha o primeiro carro no Mercado. Os usados são mais baratos, e alguns já vencem a primeira prova.",
-			FONTE_PEQUENA + 3, COR_SECUNDARIA, v)
+	nota("icone_comprar", "Comece por um usado", "Os usados são mais baratos, e alguns já vencem a primeira corrida.", v)
 	botao("Escolher meu primeiro carro", func(): ir_para.emit(LOJA), true, true, v)
 
 
@@ -156,8 +155,8 @@ func _colecao_miniaturas(lista: Array, ativo: Carro) -> void:
 func _confirmar_venda(c: Carro) -> void:
 	painel.emit("Vender %s?" % c.base["nome"], func(v):
 		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
-		rotulo("Você recebe %s Cr. As peças instaladas não entram no valor." % dinheiro(revenda(c.base)),
-				FONTE_PEQUENA + 3, Color.WHITE, v),
+		nota("icone_vender", "Você recebe %s Cr" % dinheiro(revenda(c.base)), "", v, Color.WHITE)
+		rotulo("Peças instaladas não entram no valor.", FONTE_PEQUENA, COR_SECUNDARIA, v),
 		[["Vender", func():
 			_vender(c.uid)
 			mudou.emit()], ["Cancelar", func(): pass]])

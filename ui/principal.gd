@@ -404,7 +404,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 					Aba.COR_INFO.lightened(0.3), v)
 			lo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if not venceu:
-			var dica := g.rotulo("Por que perdi? Veja em Competições › Corrida.", Aba.FONTE_PEQUENA,
+			var dica := g.rotulo("Por que perdi? Veja na tela da corrida.", Aba.FONTE_PEQUENA,
 					Aba.COR_SECUNDARIA, v)
 			dica.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER, botoes)
 
@@ -470,9 +470,8 @@ func _primeira_vitoria(c: Dictionary) -> void:
 	var g: Aba = _todas[0]
 	_sobre.abrir("Primeira vitória!", func(v):
 		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
-		g.rotulo("Você venceu esta corrida pela primeira vez. Prêmio: +%s Cr." % Aba.dinheiro(c["premio"]), 0, Color.WHITE, v)
-		g.rotulo("Próximo passo: tente uma corrida que paga mais, ou melhore o carro na Oficina.", Aba.FONTE_PEQUENA + 2,
-				Aba.COR_SECUNDARIA, v))
+		g.nota("icone_creditos", "Prêmio: +%s Cr" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
+		g.nota("icone_dica", "Agora: corrida que paga mais, ou Oficina", "", v))
 
 
 ## Relatório de várias corridas (offline ou segundo plano): resumo e, sob
@@ -525,8 +524,10 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 		if rel.get("tempo_perdido_s", 0.0) > 0.0:
 			var teto: float = float(dados.carreira().get("teto_offline_s", 0.0))
 			var vt := g.cartao(Aba.COR_INFO, v)
-			g.rotulo("Você ficou fora mais que o limite de %s. %s além disso não contaram; a sequência continuou de onde parou." % [
-					_duracao(teto), _duracao(rel["tempo_perdido_s"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, vt)
+			# Dentro de um painel: sem ⓘ (abriria outro painel por cima).
+			g.nota("icone_cronometro", "Limite fora do app: %s" % _duracao(teto), "", vt, Color.WHITE)
+			g.rotulo("%s além dele não contaram." % _duracao(rel["tempo_perdido_s"]), Aba.FONTE_PEQUENA + 1,
+					Aba.COR_SECUNDARIA, vt)
 		if corridas.size() > 1:
 			var detalhes := VBoxContainer.new()
 			detalhes.visible = false

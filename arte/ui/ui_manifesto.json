@@ -646,5 +646,29 @@
   "altura_px": 320,
   "descricao": "dark silhouette (single dark tone, slight rim light) of a racing driver in suit raising one fist",
   "uso": "pódio do resultado"
+ },
+ {
+  "nome": "icone_app_fechado",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "closed smartphone lying face down with a small crescent moon and a tiny race flag above it, meaning the game keeps running while the app is closed",
+  "uso": "corridas seguem com o app fechado"
+ },
+ {
+  "nome": "icone_camera",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "small film camera seen from the side with a short arrow pointing at a race car silhouette",
+  "uso": "câmera segue o carro tocado"
+ },
+ {
+  "nome": "icone_trafego",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "two small race cars seen from above, one right behind the other, nose to tail",
+  "uso": "tempo preso atrás de outro carro"
  }
 ]
