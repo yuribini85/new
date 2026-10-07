@@ -5,6 +5,9 @@ extends Control
 var dados: Node
 var jogador: Node
 var _saldo: Label
+var _meta: Array = []  # saldo e moeda: meta-jogo, somem durante a corrida
+var _nav: Control
+var _modo_corrida := false
 var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
@@ -72,6 +75,7 @@ func _ready() -> void:
 	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	topo.add_child(moeda)
+	_meta = [_saldo, moeda]
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
 	# Moldura sem layout: o tamanho mínimo das abas não passa para a tela. Se
@@ -116,7 +120,8 @@ func _ready() -> void:
 		_ao_vivo.add_theme_stylebox_override(estado, sb_vivo)
 	_ao_vivo.pressed.connect(func(): _ir_para(4))
 	raiz.add_child(_ao_vivo)
-	raiz.add_child(_navegacao())
+	_nav = _navegacao()
+	raiz.add_child(_nav)
 	_sobre = Sobreposicao.new()
 	add_child(_sobre)
 	for a in _todas:
@@ -131,6 +136,7 @@ func _ready() -> void:
 	timer.autostart = true
 	timer.timeout.connect(_processar_fila)
 	timer.timeout.connect(_atualizar_ao_vivo)
+	timer.timeout.connect(_foco_corrida)
 	timer.timeout.connect(_registrar_fila)
 	timer.timeout.connect(_atualizar_fps)
 	add_child(timer)
@@ -175,6 +181,20 @@ func _ir_para(i: int) -> void:
 	_voltar.text = NOME_PAI.get(i, "")
 	_voltar.visible = PAI.has(i)
 	_atualizar_ao_vivo()
+	_foco_corrida()
+
+
+## Assistindo a corrida: créditos somem (meta-jogo) e a navegação fica apagada
+## (continua tocável). Fade curto, nunca de uma vez.
+func _foco_corrida() -> void:
+	var assistindo: bool = _abas.current_tab == 4 and (not jogador.fila.is_empty() or _todas[4].em_silencio())
+	if assistindo == _modo_corrida:
+		return
+	_modo_corrida = assistindo
+	var t := create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE)
+	for n in _meta:
+		t.tween_property(n, "modulate:a", 0.0 if assistindo else 1.0, 0.5)
+	t.tween_property(_nav, "modulate:a", 0.4 if assistindo else 1.0, 0.5)
 
 
 ## Faixa "ao vivo" acima da navegação enquanto a fila corre (fora da Corrida).
@@ -255,6 +275,10 @@ func _processar_fila() -> void:
 	# mostra o resultado. Várias (voltou do segundo plano), erro ou carro-prêmio:
 	# relatório.
 	if rel["corridas"].size() == 1 and rel["erro"] == "":
+		# Assistindo: um silêncio depois da chegada antes do resultado (a tela da
+		# corrida fica parada na última imagem o mesmo tempo).
+		if _abas.current_tab == 4:
+			await get_tree().create_timer(_todas[4].SILENCIO_S).timeout
 		_resultado(rel["corridas"][0], not antes_vitorias.has(rel["corridas"][0]["evento_id"]))
 		return
 	_mostrar_relatorio(rel, "Resultado das corridas")

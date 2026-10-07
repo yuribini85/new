@@ -100,6 +100,30 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
    detalhe ficam atrás do botão ⓘ, num painel (`Aba.botao_info`, `Aba.titulo_secao`).
    Dentro de um painel não se usa ⓘ (abriria outro painel por cima).
 
+## Tela da corrida (apresentação)
+
+A simulação é automática; a tela a apresenta como uma corrida dirigida, não como um
+painel. Foco em camadas: corrida dominante; estado da corrida (HUD e eventos) em segundo;
+controles de câmera em terceiro; meta-jogo e navegação no fundo.
+
+- **Câmera AUTO** (padrão, `visual/diretor_camera.gd`): escolhe o plano pela situação, na
+  ordem chegada → ultrapassagem iminente → disputa de perto → aproximação do líder → última
+  volta → o seu carro; planos longe de você duram pouco. CARRO, LÍDER, À FRENTE e PISTA
+  continuam como escolha manual, num seletor único e baixo que perde contraste sem toque.
+- A câmera nunca para (deriva e zoom lentos). O anel no seu carro só aparece por um
+  instante quando a câmera chega nele; ALVO só na disputa de perto.
+- **HUD** (`ui/hud_corrida.gd`): posição (âmbar) → evento → volta → diferença para os
+  rivais (na classificação, "+0.8"). Velocidade, marcha e giro pequenos e apagados.
+  Disputa e chegada apagam o secundário por alguns segundos.
+- **Eventos** em texto sobre a cena, sem caixa, com entrada e saída lentas: LARGADA,
+  ULTRAPASSAGEM, PERDEU A POSIÇÃO, LÍDER, "<RIVAL> SE APROXIMA", ÚLTIMA VOLTA, MELHOR
+  VOLTA, LIDERANDO, CHEGADA. Poucos: os menores esperam 6 s desde o último; repetidos
+  se fundem.
+- **Chegada**: zoom lento, secundários somem, a posição final domina; a imagem fica
+  parada 2 s antes do resultado.
+- Durante a corrida, créditos somem e a navegação fica apagada. Âmbar só para a posição
+  do jogador, estado selecionado e acontecimento importante.
+
 ## Estado
 
 O glossário e as mudanças de estrutura estão aplicados nas telas, junto com a arte:

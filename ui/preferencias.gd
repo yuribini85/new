@@ -37,9 +37,9 @@ static func salvar() -> void:
 	aplicar()
 
 
-## "Ver resultado" na corrida: fora do teste de ritmo (a demo mantém o pulo).
+## "Ver resultado" na corrida: só no playtest de clareza (fora da interface final).
 static func permite_pular() -> bool:
-	return modo_teste != "ritmo"
+	return modo_teste == "clareza"
 
 
 static func aplicar() -> void:

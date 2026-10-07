@@ -120,8 +120,16 @@ var _luz: DirectionalLight3D
 var _cores_muro: Array = TEMA_PADRAO["muro"]
 var _tamanho_geral := 200.0
 var _proj := Rect2()
-## Carro que o jogador persegue: anel vermelho no chão e rótulo "ALVO".
+## Carro que o jogador persegue: na disputa (perto), anel vermelho no chão e
+## rótulo "ALVO".
 var alvo := ""
+## Segundo carro do enquadramento (diretor de câmera): a câmera mira entre o
+## seguido e ele e abre o bastante para os dois.
+var enquadrar_com := ""
+## 0..1: chegada do jogador; a câmera fecha devagar nele.
+var chegada := 0.0
+var _destaque_jogador := 0.0  # segundos restantes do anel temporário do jogador
+const DESTAQUE_S := 1.6
 var _anel_alvo: MeshInstance3D
 var _anel_jogador: MeshInstance3D
 ## Traço do seu carro até o alvo, quando ele está perto (disputa).
@@ -284,9 +292,9 @@ func atualizar(delta: float) -> void:
 	for id in _carros:
 		_carros[id].scale = Vector3.ONE * escala
 		# Números dos rivais menores e translúcidos; VOCÊ e ALVO em destaque.
-		var forte: bool = id == "jogador" or id == self.alvo
-		_rotulos[id].pixel_size = (0.045 if forte else 0.032) * (escala * 1.6 if visao_geral else 1.0)
-		_rotulos[id].modulate.a = 1.0 if forte else 0.7
+		var forte: bool = id == "jogador" or (id == self.alvo and _anel_alvo != null and _anel_alvo.visible)
+		_rotulos[id].pixel_size = (0.045 if forte else 0.026) * (escala * 1.6 if visao_geral else 1.0)
+		_rotulos[id].modulate.a = 1.0 if forte else 0.45
 		# De cima, a altura não afasta o rótulo na tela: ele vai um pouco para o
 		# alto da tela, para não cobrir o carro.
 		var cima := _camera.global_basis.y * Vector3(1, 0, 1)
@@ -295,16 +303,22 @@ func atualizar(delta: float) -> void:
 				+ cima * 2.6 * escala * (1.0 - _b)
 	var disputa := false
 	if _anel_alvo != null:
-		_anel_alvo.visible = _carros.has(alvo) and not visao_geral
-		if _anel_alvo.visible:
+		# Disputa: alvo a poucos metros; anel, rótulo ALVO, traço entre os dois e
+		# câmera mais perto. Fora dela, nenhum marcador no chão.
+		disputa = _carros.has(alvo) and _carros.has("jogador") and not visao_geral \
+				and _carros["jogador"].position.distance_to(_carros[alvo].position) < DISPUTA_M
+		_anel_alvo.visible = disputa
+		if disputa:
 			_anel_alvo.position = _carros[alvo].position + Vector3(0, 0.05, 0)
 			_rotulos[alvo].text = "ALVO"
-		_anel_jogador.visible = _carros.has("jogador") and not visao_geral
+		# Seu carro: anel só por um instante, quando a câmera chega nele.
+		_destaque_jogador = maxf(_destaque_jogador - delta, 0.0)
+		_anel_jogador.visible = _destaque_jogador > 0.0 and _carros.has("jogador") and not visao_geral
 		if _anel_jogador.visible:
+			var u := 1.0 - _destaque_jogador / DESTAQUE_S
 			_anel_jogador.position = _carros["jogador"].position + Vector3(0, 0.05, 0)
-		# Disputa: alvo a poucos metros; traço entre os dois e câmera mais perto.
-		disputa = _anel_alvo.visible and _carros.has("jogador") \
-				and _carros["jogador"].position.distance_to(_carros[alvo].position) < DISPUTA_M
+			_anel_jogador.scale = Vector3.ONE * lerpf(0.85, 1.25, smoothstep(0.0, 1.0, u))
+			(_anel_jogador.material_override as StandardMaterial3D).albedo_color.a = (1.0 - smoothstep(0.35, 1.0, u)) * 0.9
 		_traco.visible = disputa
 		if disputa:
 			var a: Vector3 = _carros["jogador"].position
@@ -336,6 +350,11 @@ func atualizar(delta: float) -> void:
 			var alinhado := smoothstep(0.82, 0.96, cos(angle_difference(_pista.rumo_em(float(s[id])), rumo_seg)))
 			_carros[id].mistura(_mistura_sprite() * alinhado)
 	var tamanho_alvo := TAMANHO_DISPUTA if modo == "foco" else TAMANHO_CAMERA
+	# Dois carros no quadro (diretor): abre o bastante para os dois.
+	var par := enquadrar_com if _carros.has(enquadrar_com) and enquadrar_com != seguido \
+			and _carros[seguido].position.distance_to(_carros[enquadrar_com].position) < 45.0 else ""
+	if par != "":
+		tamanho_alvo = maxf(TAMANHO_DISPUTA, _carros[seguido].position.distance_to(_carros[par].position) * 1.5 + 12.0)
 	_tamanho_base = tamanho_alvo if delta <= 0.0 or Preferencias.reduzir_animacoes \
 			else lerpf(_tamanho_base, tamanho_alvo, clampf(delta * 1.5, 0.0, 1.0))
 	_camera.size = _tamanho_base / _zoom
@@ -343,7 +362,19 @@ func atualizar(delta: float) -> void:
 	var v_seg := float(_v.get(seguido, 0.0))
 	# Mais rápido, mais longe: a câmera abre com a velocidade.
 	_camera.size *= 1.0 + 0.22 * clampf(v_seg / V_FORTE, 0.0, 1.0)
+	# Chegada: fecha devagar no carro.
+	_camera.size *= lerpf(1.0, 0.76, smoothstep(0.0, 1.0, chegada))
 	var novo: Vector3 = _carros[seguido].position
+	if par != "" and modo != "velocidade":
+		novo = (novo + _carros[par].position) * 0.5
+	# Respiração: a câmera nunca fica parada. Deriva lenta de lado e para a
+	# frente, e um zoom que vai e volta (períodos longos e diferentes, para não
+	# parecer um ciclo).
+	if not Preferencias.reduzir_animacoes:
+		var lado := Vector3(-sin(_rumo_seguido), 0.0, -cos(_rumo_seguido))
+		var fr := Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido))
+		novo += lado * sin(_tempo * TAU / 11.0) * 1.3 + fr * sin(_tempo * TAU / 17.0 + 1.0) * 1.1
+		_camera.size *= 1.0 + 0.045 * sin(_tempo * TAU / 13.0 + 2.0)
 	# Na ultrapassagem, a câmera enquadra os dois carros.
 	if modo == "velocidade" and _carros.has(_ultrapassado):
 		var gap := float(s[_ultrapassado]) - float(s[seguido])
@@ -374,6 +405,12 @@ func atualizar(delta: float) -> void:
 	(material as ShaderMaterial).set_shader_parameter("intensidade",
 			0.0 if Preferencias.reduzir_animacoes else efeito_velocidade)
 	_camera_imediata()
+
+
+## Anel no seu carro por DESTAQUE_S, crescendo e sumindo (a câmera chegou nele).
+func destacar_jogador() -> void:
+	if not Preferencias.reduzir_animacoes:
+		_destaque_jogador = DESTAQUE_S
 
 
 func _camera_imediata() -> void:
@@ -691,6 +728,7 @@ func _marcadores() -> void:
 	var mat_j := CarroBloco._material(Color(1.0, 0.8, 0.15))
 	mat_j.emission_enabled = true
 	mat_j.emission = Color(1.0, 0.75, 0.1) * 0.6
+	mat_j.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_anel_jogador.material_override = mat_j
 	_anel_jogador.visible = false
 	_cena.add_child(_anel_jogador)
