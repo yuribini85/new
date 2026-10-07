@@ -13,7 +13,7 @@ var _estimativas := {}
 ## Categoria aberta (mantida ao voltar): "voce", "", "B" ou "A".
 var _filtro := "voce"
 
-const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["B", "Licença B"], ["A", "Licença A"],
+const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["marca", "Marcas"], ["B", "Licença B"], ["A", "Licença A"],
 	["IC", "IC"], ["IB", "IB"], ["IA", "IA"]]
 const NIVEIS_LICENCA := ["B", "A", "IC", "IB", "IA"]
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
@@ -66,7 +66,7 @@ func construir() -> void:
 		if _filtro == "voce":
 			if motivos.is_empty() and not ev["premios"].is_empty():
 				lista.append([ev, motivos])
-		elif ev["restricoes"].get("licenca", "") == _filtro:
+		elif _grupo_evento(ev) == _filtro:
 			lista.append([ev, motivos])
 	if _filtro == "voce":
 		# Ainda não vencidas primeiro, da de prêmio menor (rivais mais fracos).
@@ -361,9 +361,16 @@ func _progresso(ev: Dictionary) -> String:
 	return "Etapa %d de %d · %d/%d vencidas" % [etapas.find(ev) + 1, etapas.size(), vencidas, etapas.size()]
 
 
+## Grupo da lista: copas de marca à parte; o resto pela licença exigida.
+static func _grupo_evento(ev: Dictionary) -> String:
+	return "marca" if ev["restricoes"].has("carros") else ev["restricoes"].get("licenca", "")
+
+
 ## Tipo da série pelo que ela exige: [nome, cor de identidade].
 func _tipo(ev: Dictionary) -> Array:
 	var r: Dictionary = ev["restricoes"]
+	if r.has("carros"):
+		return ["Copa de marca" + (" · corrida" if r.get("corrida", false) else ""), Color(0.85, 0.45, 0.2)]
 	if r.has("tracao"):
 		var t: String = r["tracao"][0]
 		return [{"FF": "Tração dianteira", "FR": "Tração traseira", "4WD": "Tração 4x4", "MR": "Motor central"}.get(t, "Tração " + t),
@@ -418,6 +425,11 @@ func _estimar(ev: Dictionary, c: Carro) -> void:
 ## Regras da prova em texto curto ("até 150 cv", "tração FF").
 func _regras(r: Dictionary) -> Array:
 	var t := []
+	if r.has("carros"):
+		var modelos: Array = r["carros"].map(func(x): return nome_curto(dados.item("carros", x).get("nome", x)))
+		t.append(", ".join(modelos.slice(0, 2)) + (" +%d" % (modelos.size() - 2) if modelos.size() > 2 else ""))
+	if r.has("corrida"):
+		t.append("versão de corrida" if r["corrida"] else "carro de rua")
 	if r.has("potencia_max"):
 		t.append("até %d cv" % r["potencia_max"])
 	if r.has("tracao"):

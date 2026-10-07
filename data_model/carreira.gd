@@ -55,7 +55,7 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 
 	simulacoes += 1
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
-			dados.simulacao(), semente, com_amostras)
+			dados.simulacao(), semente, com_amostras, float(ev.get("largada_kmh", 0.0)) / 3.6)
 	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}
 
 
@@ -166,8 +166,11 @@ func _adversario(adv: Dictionary, indice: int, condicao: String) -> Dictionary:
 		pneus = [dados.economia()["pneu_de_fabrica"]]
 	for pneu_id in pneus:
 		c.adicionar_pneu(dados.pneu(pneu_id))
+	var a := c.atributos_efetivos(condicao)
+	# Preparação do rival no GT2 (EnemyCars.PowerMultiplier): potência × fator.
+	a["potencia"] = float(a["potencia"]) * float(adv.get("potencia_mult", 1.0))
 	return {
 		"id": "adv%d_%s" % [indice, adv["carro"]],
-		"atributos": c.atributos_efetivos(condicao),
+		"atributos": a,
 		"piloto": dados.piloto(adv["piloto"]),
 	}

@@ -143,6 +143,8 @@ func _validar_referencias() -> void:
 		if ev.get("condicao") != null and not ev["condicao"] in ["seco", "chuva"]:
 			_erros.append(onde + " condição inválida %s" % ev["condicao"])
 		_validar_restricoes(onde, ev.get("restricoes", {}))
+		for carro_id in ev.get("restricoes", {}).get("carros", []):
+			_exigir(onde + " restrição carros", "carros", carro_id)
 		for adv in ev.get("adversarios", []):
 			_exigir(onde + " adversário carro", "carros", adv.get("carro"))
 			_exigir(onde + " adversário piloto", "pilotos_ia", adv.get("piloto"))

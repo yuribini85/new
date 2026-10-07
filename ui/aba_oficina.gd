@@ -6,7 +6,7 @@ const AFETA := {
 	"peso": "aceleração, curvas e frenagem",
 	"freio": "frenagem antes das curvas",
 }
-const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio", "cambio": "cambio"}
+const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio", "cambio": "cambio", "corrida": "peso"}
 
 ## O que cada grupo de peças faz, numa linha curta com o ícone do atributo;
 ## EXPLICA_CATEGORIA é o detalhe, atrás do ⓘ.
@@ -15,6 +15,7 @@ const CURTA_CATEGORIA := {
 	"muffler": "Escapamento esportivo", "portpolish": "Fluxo melhor no motor", "enginebalance": "Motor balanceado",
 	"displacement": "Motor maior", "computer": "Central eletrônica", "intercooler": "Ar do turbo mais frio",
 	"cambio": "Arrancada ou velocidade final",
+	"corrida": "Copas Corrida; sai das de rua",
 }
 const ICONE_ATRIBUTO := {"potencia": "icone_potencia", "peso": "icone_peso", "freio": "icone_freios",
 	"cambio": "icone_cambio"}
@@ -29,11 +30,12 @@ const EXPLICA_CATEGORIA := {
 	"computer": "Nova central eletrônica: mais potência.",
 	"intercooler": "Resfria o ar do turbo: mais potência.",
 	"cambio": "Permite escolher entre arrancada e velocidade final.",
+	"corrida": "Carroceria de corrida: mais leve e aceita nas copas de marca \"Corrida\". O carro deixa de entrar nas copas só de carro de rua.",
 }
 const NOMES_CATEGORIA := {
 	"aspiracao": "Aspiração", "lightweight": "Peso", "brake": "Freios", "muffler": "Escapamento",
 	"portpolish": "Polimento de dutos", "enginebalance": "Balanceamento", "displacement": "Cilindrada",
-	"computer": "Computador", "intercooler": "Intercooler", "cambio": "Câmbio",
+	"computer": "Computador", "intercooler": "Intercooler", "cambio": "Câmbio", "corrida": "Kit de corrida",
 }
 
 
@@ -71,7 +73,7 @@ const MINIATURA_PECA := {"aspiracao": "peca_aspiracao", "lightweight": "peca_pes
 const MINIATURA_PNEU := {"pneu_0": "pneu_fabrica", "pneu_1": "pneu_esportivo", "pneu_2": "pneu_corrida_duro",
 	"pneu_3": "pneu_corrida_medio", "pneu_4": "pneu_corrida_macio", "pneu_5": "pneu_corrida_supermacio",
 	"pneu_6": "pneu_simulacao"}
-const CHASSI := ["lightweight", "brake", "cambio"]
+const CHASSI := ["lightweight", "brake", "cambio", "corrida"]
 ## O que a melhoria faz na pista, dito pela função.
 const FUNCAO := {
 	"potencia": "acelera mais forte e chega mais rápido no fim da reta",

@@ -17,7 +17,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
-| `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcional `carro_premio` |
+| `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcionais `carro_premio`, `largada_kmh` |
 | `licencas.json` | lista de `{id, nome, testes}`, opcional `requisito` (id de outra licença) |
 | `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
@@ -51,6 +51,9 @@ sintéticos (só para teste) em `tests/fixtures/`.
 - Peça `motor` (opcional): `faixa_rpm` e `corte` (rpm a somar, NATune) ou
   `turbo_baixa`/`turbo_alta` (multiplicadores do torque no giro baixo e alto,
   TurbineKit). Peça de categoria `cambio`: `{final_min, final_max}` (estágio 3 do Gear).
+Peça de categoria `corrida` (kit de corrida, `RacingModify` estágio 1): preço e peso do
+GT2; muda a elegibilidade (copas "Corrida"). Pressão aerodinâmica e arrasto do kit ficam
+de fora: a simulação não tem esses termos por carro.
   Os ajustes curto/longo andam `Carro.PASSO_CAMBIO` (0,5, **provisório**, decisão de
   interface) do diferencial de fábrica até esses limites.
 - Piloto: `ritmo` é a fração do limite que o piloto usa; `consistencia` (0–1) reduz o
@@ -87,8 +90,15 @@ recusada.
 - `condicao`: `seco` ou `chuva`, fixa por evento.
 - `restricoes` (todas opcionais, ver `data_model/elegibilidade.gd`): `potencia_max` (cv
   efetivos, já com peças), `tracao`, `categoria`, `fabricante` (listas), `ano_min`,
-  `ano_max`, `licenca`.
-- `adversarios`: lista de `{carro, piloto, pecas?, pneus?}`; sem `pneus`, usa o de fábrica.
+  `ano_max`, `licenca`, `carros` (lista de ids: copas de marca do GT2, `Regulations`) e
+  `corrida` (`true`: só versão de corrida, isto é, carro com a peça `corrida` ou carro
+  `corrida` de fábrica; `false`: só carro de rua sem o kit; `CarRestrictionFlags` 512/256).
+- `largada_kmh`: largada lançada (`RollingStartSpeed` do GT2); sem ela, largada parada.
+- `adversarios`: lista de `{carro, piloto, pecas?, pneus?, potencia_mult?}`; sem `pneus`,
+  usa o de fábrica. `potencia_mult` e `pneus` são a preparação do rival no GT2
+  (`EnemyCars.PowerMultiplier` ÷ 100 e o estágio de `TiresFront`).
+- Copas de marca: prova única por modelo (nome sem "etapa"); o GT2 sorteia a pista, aqui
+  ela gira pelas pistas de corrida (`POOL_MARCA` no importador).
 - `premios`: dinheiro por posição (índice 0 = 1º). Posições além da lista não recebem.
 
 Regras fixas no código (`data_model/carreira.gd`), seguindo o GT2: o jogador larga em

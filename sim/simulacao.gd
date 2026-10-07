@@ -25,8 +25,9 @@ const PARAMS := [
 ##   {"id": String, "atributos": Carro.atributos_efetivos(), "piloto": {ritmo, consistencia, agressividade}}
 ## Retorna {"classificacao", "carros", "amostras", "comprimento", "duracao"}.
 ## com_amostras = false (offline) guarda só a amostra final; o resultado é o mesmo.
+## v_inicial_ms > 0: largada lançada (o grid já parte nessa velocidade).
 static func correr(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int,
-		com_amostras: bool = true) -> Dictionary:
+		com_amostras: bool = true, v_inicial_ms: float = 0.0) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
 
@@ -62,7 +63,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 			"massa": float(a["peso"]),
 			"acel_tracao": mu * G * fator_tracao(a, params),
 			"s": -g * dmin,
-			"v": 0.0,
+			"v": v_inicial_ms,
 			"envelopes": [],
 			"voltas": [],
 			"ultima_passagem": 0.0,
@@ -89,7 +90,7 @@ static func correr(pista: Pista, participantes: Array, voltas: int, params: Dict
 	var lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
 	for c in carros:
 		s_arr.append(c["s"])
-		v_arr.append(0.0)
+		v_arr.append(float(c["v"]))
 		acel_arr.append(c["acel_tracao"])
 		pot_arr.append(c["potencia_w"])
 		massa_arr.append(c["massa"])

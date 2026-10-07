@@ -64,9 +64,20 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
   eventos      voltas, licença, limite de ps, tração, prêmios (×100 fora do
                Japão), carro-prêmio quando é um dos nossos carros. A pista do
                GT2 vira uma das nossas pela função (PISTAS abaixo).
-               Adversários: o carro do EnemyCars se for um dos nossos; senão o
-               nosso carro elegível de potência mais próxima.
+               Adversários: o carro do EnemyCars com a preparação dele
+               (PowerMultiplier ÷ 100 multiplica a potência; pneu do estágio de
+               TiresFront). Largada lançada: RollingStartSpeed (km/h).
                Pilotos de IA: ritmo = média dos AI*Acceleration do evento/100.
+               Copas de marca (EligibleCarsRestriction ≠ 0): a lista de carros
+               vem de Regulations (índice base 1; EligibleCarIds são ids de
+               carro, ver gt2/tabelas.id_para_nome). CarRestrictionFlags 256 =
+               só carro de rua; 512 = versão de corrida (kit ou carro de
+               corrida). A pista é sorteada no GT2 (pool); aqui gira pelas
+               nossas pistas de corrida, na ordem dos eventos.
+  kit corrida  RacingModify estágio 1 (a carroceria de corrida do GT2): peça
+               "corrida" com o preço e o peso (Weight em % do de fábrica). A
+               pressão aerodinâmica (Downforce) e o arrasto (Drag) ficam de
+               fora: a simulação não tem esses termos por carro.
 Valores que o GT2 não tem ficam marcados como "a_confirmar" no diagnóstico.
 """
 from __future__ import annotations
@@ -126,6 +137,12 @@ PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "
                     "circuito_misto": "parque_das_docas"}
 PISTAS_EXISTENTES: set[str] = set()
 MAX_VOLTAS = 10
+# Copas de marca: CarRestrictionFlags do GT2.
+SO_RUA, SO_CORRIDA = 256, 512
+CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
+# Pistas de corrida para as copas de marca (o GT2 sorteia; a de testes fica de fora).
+POOL_MARCA = ["anel_do_vale", "parque_das_docas", "serra_alta", "circuito_misto", "anel_curto", "docas_curta",
+              "serra_curta"]
 
 MOTOR = ["PortPolish", "EngineBalance", "Displacement", "Computer", "Muffler", "Intercooler"]
 NOMES_CATEGORIA = {
@@ -133,6 +150,7 @@ NOMES_CATEGORIA = {
     "Displacement": "Aumento de cilindrada", "Computer": "Computador de bordo",
     "Muffler": "Escapamento", "Intercooler": "Intercooler", "NATune": "Preparação aspirada",
     "TurbineKit": "Kit turbo", "Lightweight": "Redução de peso", "Brake": "Freios",
+    "RacingModify": "Kit de corrida",
 }
 NOMES_PNEU = ["Pneu de fábrica", "Pneu esportivo", "Pneu de corrida duro", "Pneu de corrida médio",
               "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu de simulação"]
@@ -219,7 +237,7 @@ def main() -> int:
         sys.exit(f"códigos inexistentes no GT2: {faltando}")
     tab_car = {c["CarId"]: c for c in ler("Car", True)}
     partes = {nome: ler(nome) for nome in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake", "TiresFront", "Engine",
-                                                     "Gear", "TireSize"]}
+                                                     "Gear", "TireSize", "RacingModify"]}
     motores = partes["Engine"]
     potencia = {cod: potencia_curva(motores[int(n(car["Engine"]))]) for cod, car in tab_car.items()
                 if int(n(car["Engine"])) < len(motores)}
@@ -260,6 +278,8 @@ def main() -> int:
         if n(ch.get("FrontWeightDistribution", 0)) > 0:
             carros[-1]["peso_dianteiro"] = round(n(ch["FrontWeightDistribution"]) / 100.0, 3)
         carros[-1].update(motor_cambio_roda(car, partes))
+        if l["codigo_gt2"].endswith("r"):
+            carros[-1]["corrida"] = True  # carro de corrida de fábrica (vale nas copas "versão de corrida")
         janelas = usados_do_carro(l["codigo_gt2"])
         carros[-1]["novo"] = not janelas
         if janelas:
@@ -310,6 +330,15 @@ def main() -> int:
                 })
                 if forma:
                     pecas[-1]["motor"] = forma
+        # Kit de corrida (RacingModify): o estágio mais baixo com preço.
+        kits = sorted((p for p in partes["RacingModify"] if p["CarId"] == codigo and int(n(p["Stage"])) > 0
+                       and int(n(p["Price"])) > 0 and not codigo.endswith("r")), key=lambda p: int(n(p["Stage"])))
+        if kits and 0 < n(kits[0]["Weight"]) <= 100:
+            pecas.append({
+                "id": f"{id_nosso}_corrida", "nome": NOMES_CATEGORIA["RacingModify"], "categoria": "corrida",
+                "preco": int(n(kits[0]["Price"])), "carros_permitidos": [id_nosso],
+                "efeitos": [{"atributo": "peso", "op": "mult", "valor": round(n(kits[0]["Weight"]) / 100.0, 4)}],
+            })
         # Câmbio ajustável (Gear estágio 3): limites do diferencial do GT2.
         for g in partes["Gear"]:
             if g["CarId"] == codigo and int(n(g["Stage"])) == 3 and int(n(g["Price"])) > 0:
@@ -340,7 +369,7 @@ def main() -> int:
                       "preco": 0 if est == 0 else int(statistics.median(pr for _, pr in por_estagio[est])),
                       "aderencia": {"seco": ader, "chuva": ader}})
 
-    eventos, pilotos = importar_eventos(nosso, resumo, carros)
+    eventos, pilotos = importar_eventos(nosso, resumo, carros, {p["id"] for p in pneus})
     licencas = []
     for lic in LICENCAS:
         limites = sorted(e["restricoes"]["potencia_max"] for e in eventos
@@ -451,8 +480,10 @@ def usados_do_carro(codigo: str) -> list[list[int]]:
     return janelas
 
 
-def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[list[dict], list[dict]]:
+def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: set[str] = frozenset()) \
+        -> tuple[list[dict], list[dict]]:
     brutos = ler("Event")
+    pneus_gt2 = ler("TiresFront")
     resumidos = ler("eventos")
     inimigos = ler("EnemyCars")
     por_id = {c["id"]: c for c in carros}
@@ -461,12 +492,33 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
     pilotos = {"jogador": {"id": "jogador", "ritmo": 1.0, "consistencia": CONSISTENCIA, "agressividade": AGRESSIVIDADE}}
     eventos = []
     etapas: dict[str, int] = {}
+    regulamentos = ler("Regulations")
+    nomes = {c["id"]: c["nome"] for c in carros}
+    copas = 0
+    usados_marca: set[str] = set()
     for k, (b, r) in enumerate(zip(brutos, resumidos)):
         serie = SERIES.get(r["evento"][:3])
+        marca = int(n(r["restricao_carros"]))
+        lista_marca: list[str] = []
+        if marca > 0 and marca <= len(regulamentos):
+            codigos = [_codigo_carro(int(x)) for x in regulamentos[marca - 1]["EligibleCarIds"].split() if int(x)]
+            lista_marca = [nosso[c] for c in codigos if c in nosso]
+            if lista_marca:
+                serie = _nome_copa([nomes[c] for c in lista_marca])
         if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS \
-                or int(n(r["voltas"])) > MAX_VOLTAS:
+                or int(n(r["voltas"])) > MAX_VOLTAS or (marca > 0 and not lista_marca):
             continue
         restr = {}
+        if lista_marca:
+            restr["carros"] = lista_marca
+            flags = int(n(b.get("CarRestrictionFlags")))
+            if flags & (SO_RUA | SO_CORRIDA):
+                restr["corrida"] = bool(flags & SO_CORRIDA)
+                if restr["corrida"]:
+                    serie += " Corrida"
+            while serie in usados_marca:
+                serie += " II" if not serie.endswith(" II") else "I"
+            usados_marca.add(serie)
         if n(r["limite_ps"]) > 0:
             restr["potencia_max"] = int(n(r["limite_ps"]))
         if r["tracao"]:
@@ -474,7 +526,8 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
         if r["licenca"]:
             restr["licenca"] = r["licenca"]
         elegiveis = [c for c in carros
-                     if c["potencia"] <= restr.get("potencia_max", 10 ** 6) and c["tracao"] in restr.get("tracao", [c["tracao"]])]
+                     if c["potencia"] <= restr.get("potencia_max", 10 ** 6) and c["tracao"] in restr.get("tracao", [c["tracao"]])
+                     and c["id"] in restr.get("carros", [c["id"]])]
         if not elegiveis:
             continue
         ia = [n(b[c]) for c in b if c.startswith("AIAcceleration")]
@@ -484,26 +537,62 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict]) -> tuple[lis
         adversarios = []
         for idx in r["adversarios"].split()[:5]:
             i = int(idx)
-            codigo = inimigos[i]["CarId"] if i < len(inimigos) else ""
-            if codigo in nosso and nosso[codigo] in [c["id"] for c in elegiveis]:
+            ini = inimigos[i] if i < len(inimigos) else {}
+            codigo = ini.get("CarId", "")
+            # O rival é o do próprio GT2 (com a preparação dele abaixo).
+            if codigo in nosso:
                 carro = nosso[codigo]
             else:
                 alvo = resumo.get(codigo, {}).get("potencia_real", 0.0)
                 carro = min(elegiveis, key=lambda c: abs(c["potencia"] - alvo))["id"]
-            adversarios.append({"carro": carro, "piloto": id_piloto})
+            adv = {"carro": carro, "piloto": id_piloto}
+            # Preparação do rival (EnemyCars): multiplicador de potência e pneu.
+            mult = n(ini.get("PowerMultiplier")) / 100.0
+            if mult > 0 and abs(mult - 1.0) > 1e-6:
+                adv["potencia_mult"] = round(mult, 3)
+            pt = int(n(ini.get("TiresFront")))
+            if pt < len(pneus_gt2):
+                est = int(n(pneus_gt2[pt]["Stage"]))
+                if 0 < est != ESTAGIO_TERRA and f"pneu_{est}" in ids_pneus:
+                    adv["pneus"] = [f"pneu_{est}"]
+            adversarios.append(adv)
         premio_carros = [nosso[c] for c in r["carros_premio"].split() if c in nosso]
         pista = PISTAS.get(r["pista"].lower(), PISTA_PADRAO)
+        if lista_marca:
+            # O GT2 sorteia a pista das copas de marca; aqui ela gira pelas nossas.
+            pool = [p for p in POOL_MARCA if p in PISTAS_EXISTENTES] or [PISTA_PADRAO]
+            pista = pool[copas % len(pool)]
+            copas += 1
         if pista not in PISTAS_EXISTENTES:
             pista = PISTA_DE_RESERVA.get(pista, PISTA_PADRAO)
         etapas[serie] = etapas.get(serie, 0) + 1
+        largada = int(n(b.get("RollingStartSpeed")))
         eventos.append({
-            "id": f"ev_{k:03d}", "nome": f"{serie} — etapa {etapas[serie]}", "pista": pista,
-            "voltas": int(n(r["voltas"])) or 2,
+            "id": f"ev_{k:03d}", "nome": serie if lista_marca else f"{serie} — etapa {etapas[serie]}", "pista": pista,
+            "voltas": int(n(r["voltas"])) or 2, **({"largada_kmh": largada} if largada > 0 else {}),
             "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [int(v) * 100 for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,
         })
     return eventos, list(pilotos.values())
+
+
+def _codigo_carro(car_id: int) -> str:
+    """Id numérico de carro do GT2 para o código de 5 letras (ver gt2/tabelas.id_para_nome)."""
+    return "".join(CARACTERES_ID[(car_id >> (i * 6)) & 0x3F] for i in range(4, -1, -1)).lstrip("-")
+
+
+def _nome_copa(nomes: list[str]) -> str:
+    """Copa de marca pelos modelos da lista (fabricante + modelo, sem versão):
+    um modelo dá "Copa Marca Modelo"; dois, "Copa Marca A e B"; mais, as marcas."""
+    modelos = list(dict.fromkeys(tuple(x.replace(" Corrida", "").split()[:2]) for x in nomes))
+    marcas = list(dict.fromkeys(m[0] for m in modelos))
+    if len(modelos) == 1:
+        return "Copa " + " ".join(modelos[0])
+    if len(modelos) == 2:
+        a, b = modelos
+        return f"Copa {a[0]} {a[1]} e {b[1] if a[0] == b[0] else ' '.join(b)}"
+    return "Copa " + " e ".join(marcas[:2])
 
 
 def gravar(nome: str, obj) -> None:

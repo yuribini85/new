@@ -23,6 +23,13 @@ func test_restricoes() -> void:
 	igual(Elegibilidade.motivos(fraco, {"ano_min": 1991}, []).size(), 1, "ano_min")
 	igual(Elegibilidade.motivos(fraco, {"licenca": "b"}, []).size(), 1, "sem licença")
 	igual(Elegibilidade.motivos(fraco, {"licenca": "b"}, ["b"]), [], "com licença")
+	# Copas de marca: lista de modelos e versão de corrida (rua × corrida).
+	igual(Elegibilidade.motivos(fraco, {"carros": ["fraco"], "corrida": false}, []), [], "modelo da copa, de rua")
+	igual(Elegibilidade.motivos(forte, {"carros": ["fraco"]}, []).size(), 1, "modelo fora da copa")
+	igual(Elegibilidade.motivos(fraco, {"corrida": true}, []).size(), 1, "de rua não entra na copa corrida")
+	fraco.pecas["corrida"] = {"id": "kit", "categoria": "corrida", "preco": 0, "efeitos": []}
+	igual(Elegibilidade.motivos(fraco, {"corrida": true}, []), [], "com kit entra na copa corrida")
+	igual(Elegibilidade.motivos(fraco, {"corrida": false}, []).size(), 1, "com kit sai da copa de rua")
 	j.free()
 	d.free()
 

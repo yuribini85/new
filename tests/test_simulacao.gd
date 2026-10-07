@@ -24,6 +24,16 @@ func test_volta_lancada_no_circulo_bate_com_a_fisica() -> void:
 	d.free()
 
 
+func test_largada_lancada_tira_a_arrancada_da_volta_1() -> void:
+	var d := dados_fixture()
+	var v := sqrt(1.0 * Simulacao.G * 40.0)
+	var r := Simulacao.correr(d.pista("circulo"), [_participante(d, "a", "forte", "perfeito")], 2, d.simulacao(), 1,
+			true, v)
+	var voltas: Array = r["carros"]["a"]["voltas"]
+	perto(voltas[0], voltas[1], 0.05, "volta 1 lançada igual à volta 2")
+	d.free()
+
+
 func test_ritmo_do_piloto_escala_a_volta() -> void:
 	var d := dados_fixture()
 	var piloto := {"ritmo": 0.9, "consistencia": 1.0, "agressividade": 0.0}

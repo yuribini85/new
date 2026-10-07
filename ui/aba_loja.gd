@@ -426,7 +426,7 @@ func _prever(ofertas: Array) -> Dictionary:
 		return {}
 	if _previsao.get("dia", -1) == jogador.dias:
 		return _previsao
-	var sem_licenca: Array = dados.lista("eventos").filter(func(e): return not e["restricoes"].has("licenca") and not e["premios"].is_empty())
+	var sem_licenca: Array = dados.lista("eventos").filter(Elegibilidade.aberta_sem_licenca)
 	if sem_licenca.is_empty():
 		return {}
 	sem_licenca.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])

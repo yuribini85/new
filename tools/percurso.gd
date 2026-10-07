@@ -27,7 +27,7 @@ static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 	else:
 		uid = j.concessionaria.comprar_carro(d.carro(oferta["carro_id"]))
 	log.append("comprou %s por %d" % [oferta["carro_id"], oferta["preco"]])
-	var sem_licenca: Array = d.lista("eventos").filter(func(e): return not e["restricoes"].has("licenca") and not e["premios"].is_empty())
+	var sem_licenca: Array = d.lista("eventos").filter(Elegibilidade.aberta_sem_licenca)
 	sem_licenca.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0] if a["premios"][0] != b["premios"][0] else a["nome"] < b["nome"])
 	var ciclo := false
 	for ev in sem_licenca:

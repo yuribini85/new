@@ -24,7 +24,7 @@ func test_percurso_inicial_ate_a_licenca_b() -> void:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
 	var carreira := Carreira.new(d, j)
-	var faceis: Array = d.lista("eventos").filter(func(e): return not e["restricoes"].has("licenca") and not e["premios"].is_empty())
+	var faceis: Array = d.lista("eventos").filter(Elegibilidade.aberta_sem_licenca)
 	faceis.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0])
 	ofertas = ofertas.filter(func(o):
 		var c := Carro.new(d.carro(o["carro_id"]))

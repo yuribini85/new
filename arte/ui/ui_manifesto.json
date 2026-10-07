@@ -392,6 +392,14 @@
   "uso": "lista de peças da oficina"
  },
  {
+  "nome": "peca_corrida",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "racing body kit: wide front bumper with splitter, flared wheel arch and a tall rear wing, unpainted, no logos",
+  "uso": "lista de peças da oficina (kit de corrida)"
+ },
+ {
   "nome": "peca_freios",
   "tipo": "miniatura",
   "largura_px": 384,

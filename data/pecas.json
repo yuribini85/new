@@ -460,6 +460,22 @@
   ]
  },
  {
+  "id": "arvelle_hatchet_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "arvelle_hatchet_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "arvelle_hatchet_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -1231,6 +1247,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "arvelle_outlaw_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "arvelle_outlaw"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -2183,6 +2215,22 @@
   ]
  },
  {
+  "id": "arvelle_outlaw_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "arvelle_outlaw_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "arvelle_outlaw_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -2660,6 +2708,22 @@
   ]
  },
  {
+  "id": "varenna_lucciola_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "varenna_lucciola"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "varenna_lucciola_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -2896,6 +2960,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "varenna_falco_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "varenna_falco"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -3196,6 +3276,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "varenna_falco_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "varenna_falco_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -4154,6 +4250,22 @@
   ]
  },
  {
+  "id": "varenna_fiume_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "varenna_fiume"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "varenna_fiume_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -4387,6 +4499,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "varenna_fiume_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "varenna_fiume_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -5027,6 +5155,22 @@
   ]
  },
  {
+  "id": "wexmoor_rowan_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "wexmoor_rowan"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "wexmoor_rowan_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -5242,6 +5386,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "wexmoor_rowan_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "wexmoor_rowan_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -5953,6 +6113,22 @@
   ]
  },
  {
+  "id": "vorhaus_zeisig_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "vorhaus_zeisig"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "vorhaus_zeisig_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -6486,6 +6662,22 @@
   ]
  },
  {
+  "id": "vorhaus_taucher_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "vorhaus_taucher"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "vorhaus_taucher_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -6758,6 +6950,22 @@
   ]
  },
  {
+  "id": "vorhaus_specht_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "vorhaus_specht"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "vorhaus_specht_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -6991,6 +7199,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "ostwerk_habicht_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ostwerk_habicht"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -7291,6 +7515,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "ostwerk_luchs_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ostwerk_luchs"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -7828,6 +8068,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "ostwerk_falke_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ostwerk_falke"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -9017,6 +9273,22 @@
   ]
  },
  {
+  "id": "bancroft_longhorn_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_longhorn"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "bancroft_longhorn_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -9250,6 +9522,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "bancroft_longhorn_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_longhorn_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -9491,6 +9779,22 @@
   ]
  },
  {
+  "id": "bancroft_longhorn_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_longhorn_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "bancroft_longhorn_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -9724,6 +10028,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "bancroft_longhorn_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_longhorn_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -9965,6 +10285,22 @@
   ]
  },
  {
+  "id": "bancroft_sidewinder_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_sidewinder"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "bancroft_sidewinder_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -10198,6 +10534,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "bancroft_sidewinder_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_sidewinder_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -10439,6 +10791,22 @@
   ]
  },
  {
+  "id": "bancroft_sidewinder_s_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_sidewinder_s_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "bancroft_sidewinder_s_96_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -10672,6 +11040,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "bancroft_sidewinder_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_sidewinder_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -10913,6 +11297,22 @@
   ]
  },
  {
+  "id": "bancroft_sidewinder_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_sidewinder_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "bancroft_sidewinder_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -11150,6 +11550,22 @@
   ]
  },
  {
+  "id": "bancroft_sidewinder_gts_69_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "bancroft_sidewinder_gts_69"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "bancroft_sidewinder_gts_69_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -11383,6 +11799,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "morel_caillou_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "morel_caillou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -12313,6 +12745,22 @@
   ]
  },
  {
+  "id": "tomoe_niji_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_niji"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_niji_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -12560,6 +13008,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "tomoe_niji_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_niji_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -12815,6 +13279,22 @@
   ]
  },
  {
+  "id": "tomoe_niji_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_niji_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_niji_s_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -13009,6 +13489,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "tomoe_kogetsu_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogetsu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -13264,6 +13760,22 @@
   ]
  },
  {
+  "id": "tomoe_kogetsu_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogetsu_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_kogetsu_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -13511,6 +14023,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "tomoe_kogetsu_s_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogetsu_s_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -13766,6 +14294,22 @@
   ]
  },
  {
+  "id": "tomoe_kogetsu_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogetsu_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_kogetsu_s_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -14017,6 +14561,22 @@
   ]
  },
  {
+  "id": "tomoe_kogetsu_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogetsu_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_kogetsu_s_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -14215,6 +14775,22 @@
   ]
  },
  {
+  "id": "tomoe_kogarashi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogarashi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_kogarashi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -14409,6 +14985,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "tomoe_kogarashi_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_kogarashi_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -14883,6 +15475,22 @@
   ]
  },
  {
+  "id": "tomoe_hatsukaze_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_hatsukaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tomoe_hatsukaze_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -15098,6 +15706,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6579
+   }
+  ]
+ },
+ {
+  "id": "tomoe_hatsukaze_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "tomoe_hatsukaze_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -15349,6 +15973,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6579
+   }
+  ]
+ },
+ {
+  "id": "tomoe_hatsukaze_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "tomoe_hatsukaze_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -16534,6 +17174,22 @@
   ]
  },
  {
+  "id": "garrison_tumbleweed_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "garrison_tumbleweed"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "garrison_tumbleweed_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -16770,6 +17426,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "garrison_thunderhead_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "garrison_thunderhead"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -17011,6 +17683,22 @@
   ]
  },
  {
+  "id": "garrison_pecos_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "garrison_pecos"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "garrison_pecos_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -17244,6 +17932,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "garrison_pecos_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "garrison_pecos_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -17902,6 +18606,22 @@
   ]
  },
  {
+  "id": "garrison_arroyo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "garrison_arroyo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "garrison_arroyo_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -18139,6 +18859,22 @@
   ]
  },
  {
+  "id": "garrison_arroyo_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "garrison_arroyo_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "garrison_arroyo_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -18358,6 +19094,22 @@
   ]
  },
  {
+  "id": "ottavo_nebbia_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "ottavo_nebbia"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "ottavo_nebbia_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -18573,6 +19325,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "ottavo_rondine_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "ottavo_rondine"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -19305,6 +20073,22 @@
   ]
  },
  {
+  "id": "ottavo_faro_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "ottavo_faro"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "ottavo_faro_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -19552,6 +20336,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "ottavo_airone_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "ottavo_airone"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -21071,6 +21871,22 @@
   ]
  },
  {
+  "id": "whitlock_saddle_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "whitlock_saddle"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "whitlock_saddle_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -21304,6 +22120,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "whitlock_bootleg_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "whitlock_bootleg"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -22019,6 +22851,22 @@
   ]
  },
  {
+  "id": "whitlock_switchback_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "whitlock_switchback_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "whitlock_switchback_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -22256,6 +23104,22 @@
   ]
  },
  {
+  "id": "whitlock_switchback_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "whitlock_switchback_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "whitlock_switchback_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -22489,6 +23353,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "whitlock_badlands_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "whitlock_badlands"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -22940,6 +23820,22 @@
   ]
  },
  {
+  "id": "whitlock_bluff_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "whitlock_bluff"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "whitlock_bluff_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -23153,6 +24049,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_isaribi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_isaribi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -23394,6 +24306,22 @@
   ]
  },
  {
+  "id": "hozuki_isaribi_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_isaribi_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_isaribi_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -23607,6 +24535,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_isaribi_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_isaribi_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -24282,6 +25226,22 @@
   ]
  },
  {
+  "id": "hozuki_isaribi_gts_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_isaribi_gts_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_isaribi_gts_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -24515,6 +25475,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_isaribi_gts_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_isaribi_gts_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -24756,6 +25732,22 @@
   ]
  },
  {
+  "id": "hozuki_isaribi_gts_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_isaribi_gts_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_isaribi_gts_iii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -24989,6 +25981,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_isaribi_r_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_isaribi_r"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -25429,6 +26437,22 @@
   ]
  },
  {
+  "id": "hozuki_nowaki_91_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_nowaki_91"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_nowaki_91_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -25647,6 +26671,22 @@
   ]
  },
  {
+  "id": "hozuki_nowaki_92_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_nowaki_92"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_nowaki_92_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -25861,6 +26901,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "hozuki_nowaki_94_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_nowaki_94"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -26516,6 +27572,22 @@
   ]
  },
  {
+  "id": "hayase_tsubame_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tsubame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_tsubame_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -26745,6 +27817,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "hozuki_samidare_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -27024,6 +28112,22 @@
   ]
  },
  {
+  "id": "hayase_pika_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_pika"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_pika_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -27299,6 +28403,22 @@
   ]
  },
  {
+  "id": "hozuki_samidare_s_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_s_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_samidare_s_95_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -27532,6 +28652,22 @@
   ]
  },
  {
+  "id": "hozuki_samidare_s_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_s_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_samidare_s_96_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -27761,6 +28897,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hozuki_samidare_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -28036,6 +29188,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "hozuki_samidare_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -28574,6 +29742,22 @@
   ]
  },
  {
+  "id": "hozuki_samidare_gt_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_gt_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_samidare_gt_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -28845,6 +30029,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "hozuki_samidare_gt_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_samidare_gt_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -29480,6 +30680,22 @@
   ]
  },
  {
+  "id": "hozuki_harusame_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_harusame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_harusame_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -29693,6 +30909,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hozuki_harusame_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_harusame_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -29952,6 +31184,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "hozuki_harusame_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_harusame_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -30510,6 +31758,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hozuki_harusame_s_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_harusame_s_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -31348,6 +32612,22 @@
   ]
  },
  {
+  "id": "hozuki_madoka_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_madoka"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_madoka_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -31581,6 +32861,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_fubuki_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_fubuki"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -31822,6 +33118,22 @@
   ]
  },
  {
+  "id": "hozuki_fubuki_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_fubuki_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_fubuki_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -32055,6 +33367,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_fubuki_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_fubuki_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -32296,6 +33624,22 @@
   ]
  },
  {
+  "id": "hozuki_fubuki_90_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_fubuki_90"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_fubuki_90_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -32529,6 +33873,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_fubuki_92_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_fubuki_92"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -32770,6 +34130,22 @@
   ]
  },
  {
+  "id": "hozuki_byakko_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_byakko"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_byakko_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -33003,6 +34379,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_byakko_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_byakko_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -33244,6 +34636,22 @@
   ]
  },
  {
+  "id": "hozuki_byakko_s_94_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_byakko_s_94"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_byakko_s_94_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -33477,6 +34885,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hozuki_byakko_s_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_byakko_s_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -33955,6 +35379,22 @@
   ]
  },
  {
+  "id": "hozuki_byakko_gt_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_byakko_gt_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_byakko_gt_96_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -34192,6 +35632,22 @@
   ]
  },
  {
+  "id": "hozuki_byakko_gt_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_byakko_gt_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hozuki_byakko_gt_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -34425,6 +35881,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hozuki_hotaru_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hozuki_hotaru"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -35094,6 +36566,22 @@
   ]
  },
  {
+  "id": "hozuki_rindo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_rindo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_rindo_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -35307,6 +36795,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "hozuki_rindo_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hozuki_rindo_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -35528,6 +37032,22 @@
   ]
  },
  {
+  "id": "hozuki_rindo_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_rindo_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hozuki_rindo_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -35741,6 +37261,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "hozuki_rindo_s_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hozuki_rindo_s_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -36127,6 +37663,22 @@
     "atributo": "peso",
     "op": "mult",
     "valor": 0.89
+   }
+  ]
+ },
+ {
+  "id": "calderwood_dunlin_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "calderwood_dunlin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -37336,6 +38888,22 @@
   ]
  },
  {
+  "id": "castellani_torrente_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "castellani_torrente_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "castellani_torrente_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -37888,6 +39456,22 @@
   ]
  },
  {
+  "id": "castellani_zefiro_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "castellani_zefiro"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "castellani_zefiro_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -38107,6 +39691,22 @@
   ]
  },
  {
+  "id": "castellani_tufo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "castellani_tufo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "castellani_tufo_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -38280,6 +39880,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "thornby_keel_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "thornby_keel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -38521,6 +40137,22 @@
   ]
  },
  {
+  "id": "pemberly_bittern_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "pemberly_bittern"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "pemberly_bittern_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -38734,6 +40366,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "pemberly_bittern_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "pemberly_bittern_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -39216,6 +40864,22 @@
   ]
  },
  {
+  "id": "ashcombe_kestrel_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_kestrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "ashcombe_kestrel_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -39471,6 +41135,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "pemberly_fieldfare_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "pemberly_fieldfare_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -39734,6 +41414,22 @@
   ]
  },
  {
+  "id": "pemberly_fieldfare_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "pemberly_fieldfare_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "pemberly_fieldfare_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -39952,6 +41648,22 @@
   ]
  },
  {
+  "id": "pemberly_fieldfare_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "pemberly_fieldfare_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "pemberly_fieldfare_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -40010,6 +41722,22 @@
     "atributo": "peso",
     "op": "mult",
     "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "pemberly_fieldfare_r_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "pemberly_fieldfare_r"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -41179,6 +42907,22 @@
   ]
  },
  {
+  "id": "pemberly_sedge_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "pemberly_sedge"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "pemberly_sedge_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -41655,6 +43399,22 @@
   ]
  },
  {
+  "id": "mizuchi_suzaku_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_suzaku"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_suzaku_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -41891,6 +43651,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_suzaku_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_suzaku_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -42669,6 +44445,22 @@
   ]
  },
  {
+  "id": "mizuchi_arashi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_arashi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_arashi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -42962,6 +44754,22 @@
   ]
  },
  {
+  "id": "mizuchi_arashi_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_arashi_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_arashi_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -43177,6 +44985,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_hanabi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_hanabi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -43400,6 +45224,22 @@
   ]
  },
  {
+  "id": "mizuchi_hanabi_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_hanabi_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_hanabi_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -43615,6 +45455,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_hanabi_s_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_hanabi_s_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -43838,6 +45694,22 @@
   ]
  },
  {
+  "id": "mizuchi_hanabi_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_hanabi_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_hanabi_s_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -44057,6 +45929,22 @@
   ]
  },
  {
+  "id": "mizuchi_hanabi_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_hanabi_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_hanabi_s_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -44272,6 +46160,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_hanabi_s_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_hanabi_s_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -44555,6 +46459,22 @@
   ]
  },
  {
+  "id": "hayase_kaze_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_kaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_kaze_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -44830,6 +46750,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_awayuki_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_awayuki"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -45113,6 +47049,22 @@
   ]
  },
  {
+  "id": "mizuchi_awayuki_92_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_92"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_awayuki_92_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -45328,6 +47280,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_awayuki_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -45611,6 +47579,22 @@
   ]
  },
  {
+  "id": "mizuchi_awayuki_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_awayuki_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -45890,6 +47874,22 @@
   ]
  },
  {
+  "id": "mizuchi_awayuki_gt_93_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_gt_93"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_awayuki_gt_93_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -46165,6 +48165,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_awayuki_gt_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_gt_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -46643,6 +48659,22 @@
   ]
  },
  {
+  "id": "mizuchi_awayuki_gts_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_gts_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_awayuki_gts_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -46876,6 +48908,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_awayuki_gts_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_awayuki_gts_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -47618,6 +49666,22 @@
   ]
  },
  {
+  "id": "mizuchi_kagero_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "mizuchi_kagero"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_kagero_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -47886,6 +49950,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_kagero_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_kagero_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -48162,6 +50242,22 @@
   ]
  },
  {
+  "id": "mizuchi_kagero_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_kagero_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_kagero_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -48430,6 +50526,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_chidori"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -48706,6 +50818,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_chidori_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -48974,6 +51102,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_raikou_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_raikou"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -49250,6 +51394,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "mizuchi_chidori_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -49518,6 +51678,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -49794,6 +51970,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_r_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_r_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -50062,6 +52254,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_r_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -50338,6 +52546,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_r_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_r_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -50606,6 +52830,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_r_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -50882,6 +53122,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_r_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_r_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -51150,6 +53406,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_r_iv_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_iv"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -51426,6 +53698,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_r_v_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_v"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_r_v_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -51698,6 +53986,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_r_vi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_vi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_r_vi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -51966,6 +54270,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_r_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_r_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -52263,6 +54583,22 @@
   ]
  },
  {
+  "id": "mizuchi_chidori_sr_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_sr"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "mizuchi_chidori_sr_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -52552,6 +54888,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "mizuchi_chidori_sr_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "mizuchi_chidori_sr_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -54242,6 +56594,22 @@
   ]
  },
  {
+  "id": "keldorf_steinbock_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "keldorf_steinbock"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "keldorf_steinbock_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -54475,6 +56843,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "dunmere_ember_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "dunmere_ember"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -54714,6 +57098,22 @@
   ]
  },
  {
+  "id": "ashcombe_wren_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "ashcombe_wren"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "ashcombe_wren_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -54945,6 +57345,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "dunmere_merlin_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "dunmere_merlin_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -55186,6 +57602,22 @@
   ]
  },
  {
+  "id": "sanga_tsukikage_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_tsukikage"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukikage_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -55419,6 +57851,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukikage_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_tsukikage_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -55660,6 +58108,22 @@
   ]
  },
  {
+  "id": "sanga_tsukikage_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_tsukikage_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukikage_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -55893,6 +58357,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukikage_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_tsukikage_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -56190,6 +58670,22 @@
   ]
  },
  {
+  "id": "sanga_tsukikage_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukikage_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukikage_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -56479,6 +58975,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukikage_s_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukikage_s_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -56776,6 +59288,22 @@
   ]
  },
  {
+  "id": "sanga_tsukikage_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukikage_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukikage_s_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -57065,6 +59593,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukikage_s_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukikage_s_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -57362,6 +59906,22 @@
   ]
  },
  {
+  "id": "sanga_tsukikage_s_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukikage_s_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukikage_s_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -57655,6 +60215,22 @@
   ]
  },
  {
+  "id": "sanga_tsukikage_s_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukikage_s_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukikage_s_iii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -57927,6 +60503,22 @@
   ]
  },
  {
+  "id": "sanga_kamome_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_kamome"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_kamome_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -58144,6 +60736,22 @@
   ]
  },
  {
+  "id": "sanga_kamui_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_kamui"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "sanga_kamui_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -58357,6 +60965,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "sanga_kamui_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_kamui_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -58598,6 +61222,22 @@
   ]
  },
  {
+  "id": "sanga_kamui_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_kamui_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "sanga_kamui_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -58831,6 +61471,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "sanga_kamui_gt_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_kamui_gt_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -59072,6 +61728,22 @@
   ]
  },
  {
+  "id": "sanga_kamui_gt_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_kamui_gt_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "sanga_kamui_gt_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -59269,6 +61941,22 @@
   ]
  },
  {
+  "id": "sanga_tsukishiro_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "sanga_tsukishiro"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukishiro_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -59462,6 +62150,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukishiro_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "sanga_tsukishiro_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -59738,6 +62442,22 @@
   ]
  },
  {
+  "id": "sanga_tsukishiro_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukishiro_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_tsukishiro_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -59985,6 +62705,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukishiro_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukishiro_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -60257,6 +62993,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_tsukishiro_gts_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_tsukishiro_gts_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -60805,6 +63557,22 @@
   ]
  },
  {
+  "id": "hayase_tenrai_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenrai"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenrai_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -61073,6 +63841,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_usagi_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_usagi_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -61349,6 +64133,22 @@
   ]
  },
  {
+  "id": "sanga_usagi_gt_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_usagi_gt_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_usagi_gt_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -61617,6 +64417,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "sanga_usagi_gt_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_usagi_gt_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -61893,6 +64709,22 @@
   ]
  },
  {
+  "id": "sanga_usagi_gt_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_usagi_gt_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_usagi_gt_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -62165,6 +64997,22 @@
   ]
  },
  {
+  "id": "sanga_usagi_gt_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_usagi_gt_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_usagi_gt_iii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -62362,6 +65210,22 @@
   ]
  },
  {
+  "id": "sanga_kairo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "sanga_kairo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_kairo_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -62555,6 +65419,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_kairo_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "sanga_kairo_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -62831,6 +65711,22 @@
   ]
  },
  {
+  "id": "sanga_kairo_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_kairo_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_kairo_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -63103,6 +65999,22 @@
   ]
  },
  {
+  "id": "sanga_kairo_gt_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_kairo_gt_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "sanga_kairo_gt_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -63371,6 +66283,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "sanga_kairo_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "sanga_kairo_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -64177,6 +67105,22 @@
   ]
  },
  {
+  "id": "sanga_inazuma_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_inazuma"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "sanga_inazuma_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -64390,6 +67334,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "sanga_inazuma_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_inazuma_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -64611,6 +67571,22 @@
   ]
  },
  {
+  "id": "sanga_inazuma_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_inazuma_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "sanga_inazuma_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -64828,6 +67804,22 @@
   ]
  },
  {
+  "id": "sanga_inazuma_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_inazuma_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "sanga_inazuma_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -65041,6 +68033,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "sanga_inazuma_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "sanga_inazuma_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -65819,6 +68827,22 @@
   ]
  },
  {
+  "id": "hayase_kujaku_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_kujaku"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_kujaku_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -66055,6 +69079,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hayase_hibari_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_hibari"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -66299,6 +69339,22 @@
   ]
  },
  {
+  "id": "hayase_hibari_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_hibari_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_hibari_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -66535,6 +69591,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hayase_hibari_s_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_hibari_s_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -66811,6 +69883,22 @@
   ]
  },
  {
+  "id": "hayase_hibari_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_hibari_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_hibari_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -67079,6 +70167,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_hibari_gt_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_hibari_gt_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -67355,6 +70459,22 @@
   ]
  },
  {
+  "id": "hayase_hibari_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_hibari_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_hibari_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -67627,6 +70747,22 @@
   ]
  },
  {
+  "id": "hayase_hibari_gts_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_hibari_gts_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_hibari_gts_96_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -67895,6 +71031,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_hibari_gts_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_hibari_gts_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -68183,6 +71335,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_hokuto_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_hokuto"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -68480,6 +71648,22 @@
   ]
  },
  {
+  "id": "hayase_shinku_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_shinku"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_shinku_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -68713,6 +71897,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenku_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenku"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -68954,6 +72154,22 @@
   ]
  },
  {
+  "id": "hayase_tenku_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenku_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenku_95_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -69187,6 +72403,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenku_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenku_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -69428,6 +72660,22 @@
   ]
  },
  {
+  "id": "hayase_tenku_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenku_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenku_iii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -69665,6 +72913,22 @@
   ]
  },
  {
+  "id": "hayase_tenku_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenku_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenku_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -69898,6 +73162,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenku_iv_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_tenku_iv"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -70195,6 +73475,22 @@
   ]
  },
  {
+  "id": "hayase_tenku_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_tenku_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenku_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -70484,6 +73780,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenku_s_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_tenku_s_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -70781,6 +74093,22 @@
   ]
  },
  {
+  "id": "hayase_tenku_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_tenku_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenku_s_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -71070,6 +74398,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_tenku_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_tenku_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -71367,6 +74711,22 @@
   ]
  },
  {
+  "id": "hayase_tenku_s_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_tenku_s_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_tenku_s_iii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -71582,6 +74942,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "hayase_momiji_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_momiji"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -71835,6 +75211,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7576
+   }
+  ]
+ },
+ {
+  "id": "hayase_sazanami_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_sazanami"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -72115,6 +75507,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "hayase_komorebi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -72721,6 +76129,22 @@
   ]
  },
  {
+  "id": "hayase_ryujin_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_ryujin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_ryujin_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -73026,6 +76450,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_komorebi_s_90_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_90"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -73339,6 +76779,22 @@
   ]
  },
  {
+  "id": "hayase_komorebi_s_91_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_91"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_komorebi_s_91_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -73644,6 +77100,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_komorebi_s_93_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_93"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -73957,6 +77429,22 @@
   ]
  },
  {
+  "id": "hayase_komorebi_s_94_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_94"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_komorebi_s_94_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -74266,6 +77754,22 @@
   ]
  },
  {
+  "id": "hayase_komorebi_s_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_komorebi_s_95_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -74571,6 +78075,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_komorebi_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -75193,6 +78713,22 @@
   ]
  },
  {
+  "id": "hayase_komorebi_s_iii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_iii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_komorebi_s_iii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -75498,6 +79034,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_komorebi_s_iv_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_iv"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -75811,6 +79363,22 @@
   ]
  },
  {
+  "id": "hayase_komorebi_s_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_komorebi_s_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -76120,6 +79688,22 @@
   ]
  },
  {
+  "id": "hayase_komorebi_s_v_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_komorebi_s_v"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_komorebi_s_v_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -76388,6 +79972,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_kagaribi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_kagaribi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -76680,6 +80280,22 @@
   ]
  },
  {
+  "id": "hayase_yukimi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_yukimi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_yukimi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -76929,6 +80545,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_gekko_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_gekko"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -77221,6 +80853,22 @@
   ]
  },
  {
+  "id": "hayase_hagane_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_hagane"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_hagane_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -77509,6 +81157,22 @@
   ]
  },
  {
+  "id": "hayase_kasasagi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_kasasagi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_kasasagi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -77742,6 +81406,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_yukikaze_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_yukikaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -77983,6 +81663,22 @@
   ]
  },
  {
+  "id": "hayase_yukikaze_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_yukikaze_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_yukikaze_96_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -78220,6 +81916,22 @@
   ]
  },
  {
+  "id": "hayase_yukikaze_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_yukikaze_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_yukikaze_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -78439,6 +82151,22 @@
   ]
  },
  {
+  "id": "hayase_kobo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_kobo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_kobo_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -78654,6 +82382,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "hayase_jinrai_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_jinrai_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -79219,6 +82963,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_nadeshiko_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_nadeshiko_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -79809,6 +83569,22 @@
   ]
  },
  {
+  "id": "hayase_hisui_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_hisui"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_hisui_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -80046,6 +83822,22 @@
   ]
  },
  {
+  "id": "hayase_sawarabi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_sawarabi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_sawarabi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -80263,6 +84055,22 @@
   ]
  },
  {
+  "id": "hayase_kagura_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_kagura"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_kagura_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -80476,6 +84284,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "hayase_kagura_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_kagura_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -80748,6 +84572,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hayase_kagura_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_kagura_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -81699,6 +85539,22 @@
   ]
  },
  {
+  "id": "hayase_homura_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_homura"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_homura_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -81932,6 +85788,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "hayase_enju_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_enju"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -82176,6 +86048,22 @@
   ]
  },
  {
+  "id": "hayase_enju_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_enju_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_enju_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -82416,6 +86304,22 @@
   ]
  },
  {
+  "id": "hayase_enju_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_enju_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_enju_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -82652,6 +86556,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hayase_enju_gt_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_enju_gt_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -82928,6 +86848,22 @@
   ]
  },
  {
+  "id": "hayase_enju_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_enju_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_enju_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -83196,6 +87132,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "hayase_soryu_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_soryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -83472,6 +87424,22 @@
   ]
  },
  {
+  "id": "hayase_enju_sr_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_enju_sr"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_enju_sr_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -83744,6 +87712,22 @@
   ]
  },
  {
+  "id": "hayase_enju_sr_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_enju_sr_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_enju_sr_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -84012,6 +87996,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_akane_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_akane"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -84309,6 +88309,22 @@
   ]
  },
  {
+  "id": "hayase_akane_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_akane_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_akane_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -84577,6 +88593,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_akane_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_akane_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -84870,6 +88902,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hayase_akane_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_akane_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -85384,6 +89432,22 @@
   ]
  },
  {
+  "id": "hayase_akebono_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hayase_akebono"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hayase_akebono_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -85620,6 +89684,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "lindauer_nebel_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "lindauer_nebel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -86164,6 +90244,22 @@
   ]
  },
  {
+  "id": "lindauer_sperber_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "lindauer_sperber"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "lindauer_sperber_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -86397,6 +90493,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "lindauer_rauhreif_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "lindauer_rauhreif"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -86638,6 +90750,22 @@
   ]
  },
  {
+  "id": "saulieu_loriot_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "saulieu_loriot"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "saulieu_loriot_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -86871,6 +90999,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "saulieu_loriot_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "saulieu_loriot_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -87115,6 +91259,22 @@
   ]
  },
  {
+  "id": "saulieu_loriot_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "saulieu_loriot_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "saulieu_loriot_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -87351,6 +91511,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "saulieu_ecume_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "saulieu_ecume"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -87592,6 +91768,22 @@
   ]
  },
  {
+  "id": "saulieu_vague_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "saulieu_vague"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "saulieu_vague_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -87829,6 +92021,22 @@
   ]
  },
  {
+  "id": "saulieu_hirondelle_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "saulieu_hirondelle"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "saulieu_hirondelle_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -88062,6 +92270,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "saulieu_hirondelle_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "saulieu_hirondelle_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -89845,6 +94069,22 @@
   ]
  },
  {
+  "id": "vallon_rafale_d_est_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "vallon_rafale_d_est_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "vallon_rafale_d_est_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -90082,6 +94322,22 @@
   ]
  },
  {
+  "id": "vallon_galet_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "vallon_galet"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "vallon_galet_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -90315,6 +94571,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "vallon_faucon_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "vallon_faucon"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -92633,6 +96905,22 @@
   ]
  },
  {
+  "id": "cutler_ironwood_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "cutler_ironwood"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "cutler_ironwood_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -92866,6 +97154,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "cutler_ironwood_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "cutler_ironwood_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -93853,6 +98157,22 @@
   ]
  },
  {
+  "id": "hoshino_sango_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_sango"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_sango_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -94100,6 +98420,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_kaminari_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_kaminari"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -94355,6 +98691,22 @@
   ]
  },
  {
+  "id": "hoshino_senko_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_senko_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -94602,6 +98954,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_senko_93_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko_93"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -94878,6 +99246,22 @@
   ]
  },
  {
+  "id": "hoshino_senko_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_senko_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -95146,6 +99530,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_senko_s_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko_s_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -95422,6 +99822,22 @@
   ]
  },
  {
+  "id": "hoshino_senko_s_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko_s_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_senko_s_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -95694,6 +100110,22 @@
   ]
  },
  {
+  "id": "hoshino_senko_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_senko_s_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -95962,6 +100394,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_senko_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_senko_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -96641,6 +101089,22 @@
   ]
  },
  {
+  "id": "hoshino_kogane_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_kogane"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_kogane_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -96874,6 +101338,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_kogane_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_kogane_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -97129,6 +101609,22 @@
   ]
  },
  {
+  "id": "hoshino_tenma_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tenma_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -97376,6 +101872,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tenma_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -97631,6 +102143,22 @@
   ]
  },
  {
+  "id": "hoshino_tenma_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tenma_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -97878,6 +102406,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tenma_gt_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_gt_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -98154,6 +102698,22 @@
   ]
  },
  {
+  "id": "hayase_kumo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_kumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_kumo_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -98401,6 +102961,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tenma_gt_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_gt_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -98677,6 +103253,22 @@
   ]
  },
  {
+  "id": "hoshino_tenma_gt_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_gt_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tenma_gt_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -98924,6 +103516,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tenma_gt_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_gt_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -99196,6 +103804,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tenma_gt_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tenma_gt_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -99638,6 +104262,22 @@
   ]
  },
  {
+  "id": "hoshino_seiran_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hoshino_seiran"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hoshino_seiran_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -99853,6 +104493,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "hoshino_seiran_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hoshino_seiran_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -100108,6 +104764,22 @@
   ]
  },
  {
+  "id": "hoshino_tatsumaki_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tatsumaki_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -100355,6 +105027,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tatsumaki_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -100610,6 +105298,22 @@
   ]
  },
  {
+  "id": "hoshino_tatsumaki_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tatsumaki_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -100857,6 +105561,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tatsumaki_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -101112,6 +105832,22 @@
   ]
  },
  {
+  "id": "hoshino_tatsumaki_gt_95_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_gt_95"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tatsumaki_gt_95_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -101359,6 +106095,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tatsumaki_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -101635,6 +106387,22 @@
   ]
  },
  {
+  "id": "hoshino_tatsumaki_gts_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_gts_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tatsumaki_gts_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -101903,6 +106671,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hoshino_tatsumaki_gts_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_gts_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -102179,6 +106963,22 @@
   ]
  },
  {
+  "id": "hoshino_tatsumaki_gts_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_tatsumaki_gts_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_tatsumaki_gts_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -102426,6 +107226,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_sekirei_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_sekirei"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -102702,6 +107518,22 @@
   ]
  },
  {
+  "id": "hoshino_sekirei_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_sekirei_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_sekirei_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -102970,6 +107802,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hoshino_sekirei_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_sekirei_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -103246,6 +108094,22 @@
   ]
  },
  {
+  "id": "hoshino_sekirei_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_sekirei_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_sekirei_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -103518,6 +108382,22 @@
   ]
  },
  {
+  "id": "hoshino_aoi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hoshino_aoi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hoshino_aoi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -103765,6 +108645,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "kosame_hiryu_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_hiryu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -104020,6 +108916,22 @@
   ]
  },
  {
+  "id": "kosame_hiryu_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_hiryu_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kosame_hiryu_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -104267,6 +109179,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "kosame_hiryu_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_hiryu_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -104522,6 +109450,22 @@
   ]
  },
  {
+  "id": "kosame_hiryu_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_hiryu_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kosame_hiryu_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -104769,6 +109713,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "kosame_tsuyu_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_tsuyu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -105473,6 +110433,22 @@
   ]
  },
  {
+  "id": "kosame_mikage_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_mikage"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kosame_mikage_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -105720,6 +110696,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "kosame_mikage_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_mikage_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -105975,6 +110967,22 @@
   ]
  },
  {
+  "id": "kosame_mikage_s_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_mikage_s_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kosame_mikage_s_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -106222,6 +111230,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "kosame_mikage_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kosame_mikage_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -107490,6 +112514,22 @@
   ]
  },
  {
+  "id": "tokiwa_unabara_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "tokiwa_unabara"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "tokiwa_unabara_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -108187,6 +113227,22 @@
   ]
  },
  {
+  "id": "kanaya_ryusei_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_ryusei"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_ryusei_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -108442,6 +113498,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "kanaya_ryusei_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_ryusei_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -108746,6 +113818,22 @@
   ]
  },
  {
+  "id": "kanaya_yamakaze_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_yamakaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_yamakaze_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -108993,6 +114081,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_yamakaze_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_yamakaze_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -109527,6 +114631,22 @@
   ]
  },
  {
+  "id": "kanaya_zakuro_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_zakuro"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_zakuro_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -109820,6 +114940,22 @@
   ]
  },
  {
+  "id": "kanaya_zakuro_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_zakuro_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_zakuro_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -110071,6 +115207,22 @@
   ]
  },
  {
+  "id": "kanaya_wakaba_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_wakaba"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_wakaba_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -110284,6 +115436,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shinonome_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -110525,6 +115693,22 @@
   ]
  },
  {
+  "id": "kanaya_shinonome_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_shinonome_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -110738,6 +115922,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shinonome_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -110975,6 +116175,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shinonome_gt_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome_gt_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -111251,6 +116467,22 @@
   ]
  },
  {
+  "id": "kanaya_shinonome_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shinonome_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_shinonome_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -111484,6 +116716,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shinonome_r_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome_r"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -111725,6 +116973,22 @@
   ]
  },
  {
+  "id": "kanaya_shinonome_r_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome_r_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_shinonome_r_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -111958,6 +117222,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shinonome_r_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shinonome_r_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -112234,6 +117514,22 @@
   ]
  },
  {
+  "id": "kanaya_shinonome_sr_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shinonome_sr"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_shinonome_sr_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -112502,6 +117798,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shinonome_gx_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shinonome_gx"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -112778,6 +118090,22 @@
   ]
  },
  {
+  "id": "kanaya_shinonome_sx_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shinonome_sx"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_shinonome_sx_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -113014,6 +118342,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_kazane_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_kazane"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -113311,6 +118655,22 @@
   ]
  },
  {
+  "id": "kanaya_kazane_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_kazane_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_kazane_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -113583,6 +118943,22 @@
   ]
  },
  {
+  "id": "kanaya_kazane_s_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_kazane_s_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_kazane_s_ii_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -113796,6 +119172,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "kanaya_murakumo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_murakumo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -114143,6 +119535,22 @@
   ]
  },
  {
+  "id": "kanaya_fuyu_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_fuyu"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_fuyu_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -114402,6 +119810,22 @@
   ]
  },
  {
+  "id": "kanaya_fuyu_85_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_fuyu_85"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_fuyu_85_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -114619,6 +120043,22 @@
   ]
  },
  {
+  "id": "kanaya_fuyu_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_fuyu_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_fuyu_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -114832,6 +120272,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "kanaya_fuyu_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_fuyu_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -115116,6 +120572,22 @@
   ]
  },
  {
+  "id": "kanaya_shijima_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shijima"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_shijima_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -115392,6 +120864,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shijima_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_shijima_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -115717,6 +121205,22 @@
   ]
  },
  {
+  "id": "kanaya_shijima_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shijima_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_shijima_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -115950,6 +121454,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shijima_gt_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shijima_gt_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -116191,6 +121711,22 @@
   ]
  },
  {
+  "id": "kanaya_shijima_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shijima_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_shijima_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -116424,6 +121960,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shijima_r_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_shijima_r"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -117061,6 +122613,22 @@
   ]
  },
  {
+  "id": "kanaya_ginga_99_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_ginga_99"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_ginga_99_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -117297,6 +122865,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "kanaya_murasame_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_murasame"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -117538,6 +123122,22 @@
   ]
  },
  {
+  "id": "kanaya_murasame_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_murasame_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_murasame_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -117771,6 +123371,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "kanaya_murasame_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_murasame_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -118047,6 +123663,22 @@
   ]
  },
  {
+  "id": "hayase_shiden_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "hayase_shiden"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hayase_shiden_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -118319,6 +123951,22 @@
   ]
  },
  {
+  "id": "kanaya_murasame_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_murasame_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_murasame_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -118555,6 +124203,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_botan_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_botan"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -118831,6 +124495,22 @@
   ]
  },
  {
+  "id": "kanaya_botan_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_botan_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_botan_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -119099,6 +124779,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_gunjo_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_gunjo"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -119375,6 +125071,22 @@
   ]
  },
  {
+  "id": "kanaya_gunjo_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_gunjo_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_gunjo_96_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -119608,6 +125320,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.5814
+   }
+  ]
+ },
+ {
+  "id": "kanaya_yuzuki_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_yuzuki"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -119863,6 +125591,22 @@
   ]
  },
  {
+  "id": "kanaya_yuzuki_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_yuzuki_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_yuzuki_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -120110,6 +125854,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "kanaya_yuzuki_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_yuzuki_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -120365,6 +126125,22 @@
   ]
  },
  {
+  "id": "kanaya_yuzuki_gt_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_yuzuki_gt_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_yuzuki_gt_98_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -120598,6 +126374,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_asakaze_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_asakaze"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -120839,6 +126631,22 @@
   ]
  },
  {
+  "id": "kanaya_asakaze_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_asakaze_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_asakaze_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -121072,6 +126880,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_asakaze_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_asakaze_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -121344,6 +127168,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_asakaze_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_asakaze_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -121913,6 +127753,22 @@
   ]
  },
  {
+  "id": "kanaya_asakaze_gt_91_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_asakaze_gt_91"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_asakaze_gt_91_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -122202,6 +128058,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_asakaze_gt_96_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_asakaze_gt_96"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -122499,6 +128371,22 @@
   ]
  },
  {
+  "id": "kanaya_asakaze_gt_97_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_asakaze_gt_97"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_asakaze_gt_97_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -122788,6 +128676,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "kanaya_asakaze_gt_ii_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_asakaze_gt_ii"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -123831,6 +129735,22 @@
   ]
  },
  {
+  "id": "kanaya_tomoshibi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "kanaya_tomoshibi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "kanaya_tomoshibi_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -124086,6 +130006,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.7042
+   }
+  ]
+ },
+ {
+  "id": "hayase_rin_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hayase_rin"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -124349,6 +130285,22 @@
   ]
  },
  {
+  "id": "kanaya_yozora_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "kanaya_yozora"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_yozora_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -124566,6 +130518,22 @@
   ]
  },
  {
+  "id": "kanaya_yozora_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_yozora_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "kanaya_yozora_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -124779,6 +130747,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "kanaya_yozora_s_98_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_yozora_s_98"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -125019,6 +131003,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6173
+   }
+  ]
+ },
+ {
+  "id": "kanaya_shirasagi_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "kanaya_shirasagi"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -125437,6 +131437,22 @@
   ]
  },
  {
+  "id": "ashcombe_sorrel_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_sorrel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "ashcombe_sorrel_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -125650,6 +131666,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_saltire_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_saltire"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -126602,6 +132634,22 @@
   ]
  },
  {
+  "id": "ashcombe_curlew_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_curlew"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "ashcombe_curlew_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -126835,6 +132883,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_brute_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_brute"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -127076,6 +133140,22 @@
   ]
  },
  {
+  "id": "ashcombe_heron_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_heron"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "ashcombe_heron_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -127134,6 +133214,22 @@
     "atributo": "peso",
     "op": "mult",
     "valor": 0.92
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_heron_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_heron_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -127357,6 +133453,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8197
+   }
+  ]
+ },
+ {
+  "id": "ashcombe_quill_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "ashcombe_quill"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -127597,6 +133709,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.8929
+   }
+  ]
+ },
+ {
+  "id": "brayford_wold_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "brayford_wold"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -128015,6 +134143,22 @@
   ]
  },
  {
+  "id": "brayford_skerry_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "brayford_skerry"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "brayford_skerry_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -128248,6 +134392,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "brayford_rook_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "brayford_rook"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -129149,6 +135309,22 @@
   ]
  },
  {
+  "id": "aubrac_grive_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 85000,
+  "carros_permitidos": [
+   "aubrac_grive_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "aubrac_grive_s_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -129668,6 +135844,22 @@
   ]
  },
  {
+  "id": "hartwig_lauf_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hartwig_lauf"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hartwig_lauf_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -129904,6 +136096,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 2.087
+   }
+  ]
+ },
+ {
+  "id": "hartwig_graupel_s_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hartwig_graupel_s"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
@@ -130180,6 +136388,22 @@
   ]
  },
  {
+  "id": "hartwig_graupel_gt_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hartwig_graupel_gt"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
+   }
+  ]
+ },
+ {
   "id": "hartwig_graupel_gt_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -130420,6 +136644,22 @@
   ]
  },
  {
+  "id": "hartwig_graupel_gts_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hartwig_graupel_gts"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
+   }
+  ]
+ },
+ {
   "id": "hartwig_graupel_gts_cambio",
   "nome": "Câmbio ajustável",
   "categoria": "cambio",
@@ -130635,6 +136875,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.6579
+   }
+  ]
+ },
+ {
+  "id": "hartwig_bussard_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 80000,
+  "carros_permitidos": [
+   "hartwig_bussard"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.97
    }
   ]
  },
@@ -130875,6 +137131,22 @@
     "atributo": "freio",
     "op": "mult",
     "valor": 1.9804
+   }
+  ]
+ },
+ {
+  "id": "hartwig_wiesel_corrida",
+  "nome": "Kit de corrida",
+  "categoria": "corrida",
+  "preco": 82000,
+  "carros_permitidos": [
+   "hartwig_wiesel"
+  ],
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.96
    }
   ]
  },
