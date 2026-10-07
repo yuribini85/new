@@ -150,14 +150,19 @@ func _pequeno_contra_gigante(escola: Array, todos: Array, pistas: Array) -> Dict
 	for pista in pistas:
 		for c in escola:
 			var fabrica := _tempo(_montar(c, []), pista)
-			var sem_pot := _guloso(c, pista, Contratos.CATEGORIAS_POTENCIA)
-			var tudo := _guloso(c, pista, [])
+			var sem_pot := {}
+			var tudo := {}
 			for g in todos:
 				var razao := float(g["potencia"]) / float(c["potencia"])
 				if razao < RAZAO_GIGANTE or razao <= melhor_razao:
 					continue
 				var rival := _tempo(_montar(g, []), pista)
-				if fabrica <= rival or sem_pot["tempo"] >= rival or tudo["tempo"] >= rival:
+				if fabrica <= rival:
+					continue
+				if tudo.is_empty():  # montagens só quando há candidato (são as buscas caras)
+					sem_pot = _guloso(c, pista, Contratos.CATEGORIAS_POTENCIA)
+					tudo = _guloso(c, pista, [])
+				if sem_pot["tempo"] >= rival or tudo["tempo"] >= rival:
 					continue
 				melhor_razao = razao
 				melhor = {
@@ -288,11 +293,26 @@ func _guloso(c: Dictionary, pista: String, proibidas: Array) -> Dictionary:
 
 
 ## Mais barato que vence `rival`: a peça de maior ganho por crédito a cada passo.
+## O caminho não depende do rival (só onde parar): calculado uma vez por carro e pista.
 func _mais_barato(c: Dictionary, pista: String, rival: float) -> Dictionary:
+	for passo in _caminho_barato(c, pista):
+		if passo["tempo"] < rival:
+			return passo
+	return {}
+
+
+var _caminhos := {}
+
+
+func _caminho_barato(c: Dictionary, pista: String) -> Array:
+	var chave: String = c["id"] + "|" + pista
+	if _caminhos.has(chave):
+		return _caminhos[chave]
 	var pecas := []
 	var ajuste := ""
 	var t := _tempo(_montar(c, pecas, ajuste), pista)
-	while t >= rival:
+	var caminho := [{"pecas": pecas, "ajuste": ajuste, "custo": 0, "tempo": t}]
+	while true:
 		var melhor := {}
 		var melhor_razao := 0.0
 		for o in _opcoes(c, pecas, ajuste, []):
@@ -302,11 +322,13 @@ func _mais_barato(c: Dictionary, pista: String, rival: float) -> Dictionary:
 				melhor_razao = (t - tt) / custo
 				melhor = o
 		if melhor.is_empty():
-			return {}
+			break
 		pecas = melhor["pecas"]
 		ajuste = melhor["ajuste"]
 		t = _tempo(_montar(c, pecas, ajuste), pista)
-	return {"pecas": pecas, "ajuste": ajuste, "custo": _custo(pecas), "tempo": t}
+		caminho.append({"pecas": pecas, "ajuste": ajuste, "custo": _custo(pecas), "tempo": t})
+	_caminhos[chave] = caminho
+	return caminho
 
 
 ## Gulosa para as duas pistas: minimiza o pior déficit (tempo − rival).
