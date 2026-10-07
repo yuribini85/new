@@ -594,12 +594,16 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	var meu: Carro = jogador.garagem.carro(f["uid"])
 	_visual.mostrar(_pista, c["resultado"], {"jogador": CarroBloco.cor_do_carro(meu)})
 	var categorias := {"jogador": meu.base}
+	var pinturas := {"jogador": CarroBloco.cor_do_carro(meu)}
 	for i in ev["adversarios"].size():
 		var adv_id: String = ev["adversarios"][i]["carro"]
-		categorias["adv%d_%s" % [i, adv_id]] = dados.carro(adv_id)
+		var chave := "adv%d_%s" % [i, adv_id]
+		categorias[chave] = dados.carro(adv_id)
+		# Rival numa das cores do modelo, fixa por prova e posição no grid.
+		pinturas[chave] = Cores.sortear(adv_id, "%s|%d" % [ev["id"], i])
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	_visual3d.chegada = 0.0
-	_visual3d.mostrar(_pista, _visual, categorias)
+	_visual3d.mostrar(_pista, _visual, categorias, pinturas)
 	_area.visible = true
 	_semente_mostrada = f["semente"]
 	_segurar = 0.0

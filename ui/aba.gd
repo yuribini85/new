@@ -333,14 +333,25 @@ func proximo_passo(t: String, botao_texto: String, indice: int, pai: Control = n
 ## Ficha do modelo: vitrine grande, números, comparação com o carro em uso,
 ## como conseguir e fabricante. `extras`: selos a mais ([[texto, cor]]);
 ## `compra`: [texto, Callable, habilitado] vira o botão principal do painel.
-func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = []) -> void:
+## `cor`: pintura mostrada (usado: a cor dele); sem ela, a de fábrica.
+## `escolher_cor`: carro novo, como no GT2: as cores do modelo para escolher;
+## a escolhida fica em `cor_escolhida` (hex) para o Callable da compra.
+var cor_escolhida := ""
+
+
+func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor := Color(0, 0, 0, 0),
+		escolher_cor := false) -> void:
+	var inicial: Color = cor if cor.a > 0.0 else Cores.fabrica(String(base["id"]))
+	cor_escolhida = inicial.to_html(false)
 	var botoes := [] if compra.is_empty() or not compra[2] else [[compra[0], func():
 		compra[1].call()
 		mudou.emit()], ["Fechar", func(): pass]]
 	painel.emit(base["nome"], func(v):
 		var vit := VitrineCarro.new(320.0)
-		vit.mostrar_modelo(base, CarroBloco.cor_do_id(base["id"]))
+		vit.mostrar_modelo(base, inicial)
 		v.add_child(vit)
+		if escolher_cor:
+			_amostras_cor(base, vit, v)
 		var fab: Dictionary = dados.item("fabricantes", base["fabricante"])
 		rotulo("%s%s · %s" % [fab.get("nome", ""), " · %d" % base["ano"] if int(base["ano"]) > 0 else "",
 				NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "")],
@@ -732,8 +743,47 @@ func linha(descricao: String, botoes: Array = [], icone: Control = null, pai: Co
 
 ## Foto do modelo: o sprite isométrico (decisão 31) ou, sem ele, o Estudio.
 func icone_carro(base: Dictionary, grande := false, cor := Color(0, 0, 0, 0)) -> Control:
-	return Estudio.imagem(base, cor if cor.a > 0.0 else CarroBloco.cor_do_id(base.get("id", "")),
+	return Estudio.imagem(base, cor if cor.a > 0.0 else Cores.fabrica(String(base.get("id", ""))),
 			Vector2(200, 110) if grande else Vector2(140, 78))
+
+
+## Amostras das cores do modelo; tocar troca a vitrine e a cor da compra.
+func _amostras_cor(base: Dictionary, vit: VitrineCarro, pai: Control) -> void:
+	var chaves := Cores.chaves(String(base["id"]))
+	if chaves.size() < 2:
+		return
+	var nome := rotulo(Cores.nome(chaves[0]), FONTE_PEQUENA + 2, COR_SECUNDARIA, pai)
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var fila := HFlowContainer.new()
+	fila.alignment = FlowContainer.ALIGNMENT_CENTER
+	fila.add_theme_constant_override("h_separation", 12)
+	fila.add_theme_constant_override("v_separation", 12)
+	pai.add_child(fila)
+	var botoes := []
+	for k in chaves.size():
+		var cor := Cores.cor(chaves[k])
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(68, 68)
+		b.tooltip_text = Cores.nome(chaves[k])
+		botoes.append(b)
+		fila.add_child(b)
+		b.pressed.connect(func():
+			cor_escolhida = cor.to_html(false)
+			nome.text = Cores.nome(chaves[k])
+			vit.mostrar_modelo(base, cor)
+			for i in botoes.size():
+				_estilo_amostra(botoes[i], Cores.cor(chaves[i]), i == k))
+		_estilo_amostra(b, cor, k == 0)
+
+
+static func _estilo_amostra(b: Button, cor: Color, marcada: bool) -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = cor
+	sb.set_corner_radius_all(34)
+	sb.set_border_width_all(5 if marcada else 2)
+	sb.border_color = COR_DESTAQUE if marcada else Color(1, 1, 1, 0.35)
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(estado, sb)
 
 
 ## Pistas montadas uma vez por id (o traçado não muda durante o jogo).

@@ -52,6 +52,17 @@ quase sem cor e claro (e a borda antisserrilhada cercada de pintura); cada um vi
 da cor (sombra, meio-tom, luz) pela posição do brilho dele na faixa da pintura do sprite.
 Cores escuras: menos grão, mais contraste entre facetas e reflexo levemente frio.
 
+## Cores de cada modelo
+
+`python3 tools/gerar_cores.py` grava `arte/carros/cores.json`: a paleta (nome e cor) e as
+cores de cada modelo, a de fábrica primeiro. As cores do GT2 ficam nas paletas do modelo 3D
+de cada carro, fora das tabelas que o extrator lê; por isso a paleta é própria, por época
+(ano do carro) e categoria, embaralhada pela família (versões da mesma família têm as mesmas
+opções). Quantidade: a de cores diferentes do modelo nos usados do GT2, de 4 a 7 (sem dado,
+5); versão de corrida, 4 cores fortes. No jogo (`visual/cores.gd`): carro novo, o jogador
+escolhe na ficha antes de comprar; usado vem numa cor do modelo, fixa pela oferta; rivais
+variam entre as cores do modelo, fixas por prova e posição no grid.
+
 ## Provisórios
 
 `tools/gerar_sprites.gd` gera os dois arquivos de cada carro a partir do carro em

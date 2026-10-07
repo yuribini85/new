@@ -187,7 +187,8 @@ func _init() -> void:
 
 
 ## modelos: id -> dados do carro (data/carros.json), para a silhueta de cada um.
-func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary) -> void:
+## pinturas: id -> cor da carroceria (Cores); sem ela, a cor de identidade do placar.
+func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: Dictionary = {}) -> void:
 	limpar()
 	_pista = pista
 	_fonte = fonte
@@ -197,9 +198,9 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary) -> void:
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
 		# Arte em sprite (decisão 31) quando o modelo tem; senão, o carro em código.
 		var c: Node3D = CarroDesenho.new()
-		if not c.configurar(String(base.get("id", ""))):
+		if not c.configurar(String(base.get("id", "")), pinturas.get(id, Color(0, 0, 0, 0))):
 			c.free()
-			c = CarroBloco.new().configurar_modelo(base, fonte.cor_de(id))
+			c = CarroBloco.new().configurar_modelo(base, pinturas.get(id, fonte.cor_de(id)))
 		_cena.add_child(c)
 		_carros[id] = c
 		var r := Label3D.new()

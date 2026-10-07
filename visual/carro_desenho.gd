@@ -20,16 +20,21 @@ var _vista_iso := 0.0
 
 
 ## false se o modelo não tem os dois sprites (aí a corrida usa o CarroBloco).
-func configurar(id: String) -> bool:
+## `cor`: pintura do carro (só vale para sprites de carroceria branca).
+func configurar(id: String, cor := Color(0, 0, 0, 0)) -> bool:
 	var t := ArteCarro.textura(id, "topo")
 	var i := ArteCarro.textura(id, "iso")
 	if t == null or i == null:
 		return false
+	var silhueta := t
+	if cor.a > 0.0 and Pintura.pintavel(id):
+		t = Pintura.textura(id, "topo", cor)
+		i = Pintura.textura(id, "iso", cor)
 	var px := 1.0 / ArteCarro.PX_POR_M
 	# Sombra: a silhueta de cima, escura, fora da hierarquia de giro (top_level)
 	# para o deslocamento não girar com o carro.
 	_sombra = Sprite3D.new()
-	_sombra.texture = t
+	_sombra.texture = silhueta
 	_sombra.pixel_size = px * 1.03
 	_sombra.shaded = false
 	_sombra.modulate = Color(0.0, 0.0, 0.02, 0.55)

@@ -234,8 +234,11 @@ func _lote(ofertas: Array) -> void:
 		var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
 		if o["carro_id"] in jogador.desejos:
 			extras.push_front(["♥ avisando", COR_DESTAQUE])
+		# Usado: vem numa das cores do modelo, fixa pela oferta.
+		var cor_usado := Cores.sortear(String(c["id"]), String(o["chave"]))
 		_bloco(grade, c, int(o["preco"]), "", extras,
-				func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos), c, int(o["preco"])))
+				func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos, cor_usado.to_html(false)), c,
+						int(o["preco"])), cor_usado)
 	_mais(lista.size())
 
 
@@ -249,7 +252,9 @@ func _concessionaria(novos: Array) -> void:
 	var lista := _filtrar(novos.filter(func(c): return c["fabricante"] == _loja).map(func(c): return [c, int(c["preco"]), c])) \
 			.map(func(x): return x[2])
 	for c in lista.slice(0, _limite):
-		_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c), c, int(c["preco"])))
+		# Carro novo: a cor é escolhida na ficha (cor_escolhida), como no GT2.
+		_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c, cor_escolhida), c,
+				int(c["preco"])), Color(0, 0, 0, 0), true)
 	_mais(lista.size())
 
 
@@ -373,7 +378,8 @@ func _grade() -> GridContainer:
 
 ## Bloco do catálogo: foto, nome, preço e o essencial (potência e tração).
 ## Tocar abre a ficha, onde está o botão de compra.
-func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable) -> void:
+func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable,
+		cor := Color(0, 0, 0, 0), escolher_cor := false) -> void:
 	var pode: bool = jogador.economia.pode_pagar(preco)
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, 250)
@@ -392,7 +398,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_theme_constant_override("separation", 2)
 	b.add_child(v)
-	var img := icone_carro(c)
+	var img := icone_carro(c, false, cor)
 	img.custom_minimum_size = Vector2(0, 120)
 	v.add_child(img)
 	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
@@ -407,7 +413,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 		v.add_child(l)
 	var falta := "" if pode else "Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo)
 	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
-			["Comprar · %s Cr" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false]))
+			["Comprar · %s Cr" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor))
 	grade.add_child(b)
 
 

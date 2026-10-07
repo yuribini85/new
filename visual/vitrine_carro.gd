@@ -87,6 +87,8 @@ func mostrar(categoria: String, cor: Color) -> void:
 
 func mostrar_modelo(base: Dictionary, cor: Color) -> void:
 	var tex := ArteCarro.textura(String(base.get("id", "")), "iso")
+	if tex != null and Pintura.pintavel(String(base.get("id", ""))):
+		tex = Pintura.textura(String(base.get("id", "")), "iso", cor)
 	if tex == null:
 		_sprite_modo(false)
 		_carro.configurar_modelo(base, cor)

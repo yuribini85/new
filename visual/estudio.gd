@@ -27,10 +27,13 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	if arte != null:
 		# Decisão 31: a foto é o próprio sprite isométrico, sem a margem vazia da
 		# tela. O recorte é o mesmo para todos: carro pequeno continua menor.
-		var chave_arte := "arte|%s" % base.get("id", "")
+		var id := String(base.get("id", ""))
+		# Carroceria branca: a foto é o sprite pintado na cor pedida (Pintura).
+		var pintar := Pintura.pintavel(id) and cor.a > 0.0
+		var chave_arte := "arte|%s|%s" % [id, cor.to_html(false) if pintar else ""]
 		if not _fotos.has(chave_arte):
 			var a := AtlasTexture.new()
-			a.atlas = arte
+			a.atlas = Pintura.textura(id, "iso", cor) if pintar else arte
 			var tam := Vector2(arte.get_size()) * RECORTE_ISO
 			a.region = Rect2(Vector2(arte.get_size()) * Vector2(0.5, 0.48) - tam * 0.5, tam)
 			_fotos[chave_arte] = a

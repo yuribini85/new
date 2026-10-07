@@ -447,11 +447,10 @@ static func cor_do_id(id: String) -> Color:
 	return claras[posmod(id.hash(), claras.size())]
 
 
-## Pintura do carro da garagem: a escolhida pelo jogador ou a de fábrica.
-## Sem pintura livre (decisão 31): a cor é a do modelo. Carro.cor fica no save
-## só por compatibilidade.
+## Pintura do carro da garagem: a escolhida na compra (Carro.cor) ou a de
+## fábrica do modelo (Cores). Sem pintura livre depois, como no GT2.
 static func cor_do_carro(carro: Carro) -> Color:
-	return cor_do_id(carro.id)
+	return Cores.do_carro(carro)
 
 
 func _caixa(tam: Vector3, pos: Vector3, mat: Material) -> void:
