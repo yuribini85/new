@@ -150,14 +150,14 @@
 		"carro": "hayase_sazanami",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 7625,
+				"custo_max": 7625.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 5081
+				"custo_max": 5081.0
 			},
 			"prata": {
-				"custo_max": 6100
+				"custo_max": 6100.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Keldorf Wachtel S gastando o mínimo.",
@@ -173,7 +173,7 @@
 						"carro": "keldorf_wachtel_s"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -368,20 +368,20 @@
 		"carro": "hayase_komorebi_s_iv",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 345000.0,
+				"custo_max": 14735,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 230000.0
+				"custo_max": 9822
 			},
 			"prata": {
-				"custo_max": 276000.0
+				"custo_max": 11790
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Kurenai Corrida gastando o mínimo.",
 		"id": "pro_ultimo_credito",
 		"licenca": "PRO",
-		"nome": "O último crédito",
+		"nome": "O último giro",
 		"provas": [
 			{
 				"condicao": "seco",
@@ -391,7 +391,7 @@
 						"carro": "hayase_kurenai_corrida"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
