@@ -584,6 +584,10 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             "premios": [int(v) * 100 for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,
         })
+        bonus = int(n(r.get("bonus_campeonato_x100"))) * 100
+        if bonus > 0:
+            # SeriesChampBonus do GT2: pago ao campeão da série (decisão 35).
+            eventos[-1]["bonus_campeonato"] = bonus
     return eventos, list(pilotos.values())
 
 

@@ -4087,7 +4087,8 @@
    1000,
    500
   ],
-  "carro_premio": "hayase_raijin_corrida"
+  "carro_premio": "hayase_raijin_corrida",
+  "bonus_campeonato": 100000
  },
  {
   "id": "ev_120",
@@ -4384,7 +4385,8 @@
    3000,
    1500
   ],
-  "carro_premio": "hayase_kurenai_corrida"
+  "carro_premio": "hayase_kurenai_corrida",
+  "bonus_campeonato": 200000
  },
  {
   "id": "ev_125",
@@ -5155,7 +5157,8 @@
    2000,
    1000
   ],
-  "carro_premio": "kanaya_ruri_corrida"
+  "carro_premio": "kanaya_ruri_corrida",
+  "bonus_campeonato": 150000
  },
  {
   "id": "ev_138",

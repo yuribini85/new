@@ -63,7 +63,7 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	simulacoes += 1
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
 			dados.simulacao(), semente, com_amostras, float(ev.get("largada_kmh", 0.0)) / 3.6)
-	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}
+	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"], "semente": semente}
 
 
 ## Grid de equipes da corrida (decisão 36): uma vaga por equipe, primeiro as do
@@ -192,6 +192,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 			premiado.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 			carro_premio_uid = jogador.garagem.adicionar(premiado)
 	jogador.dias += 1
+	var campeonato: Dictionary = Campeonatos.registrar(self, evento_id, r["classificacao"], int(corrida.get("semente", -1)))
 	var tempo: float = r["carros"]["jogador"]["tempo_total"] if r["carros"]["jogador"]["terminou"] else 0.0
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
 	jogador.historico[evento_id] = _historico(anterior, posicao, tempo)
@@ -205,6 +206,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"premio": premio,
 		"carro_premio_uid": carro_premio_uid,
 		"resultado": r,
+		"campeonato": campeonato,
 	}
 
 

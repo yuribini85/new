@@ -30,6 +30,8 @@ static func serializar(jogador: Node) -> Dictionary:
 		"desejos": jogador.desejos,
 		"usados_vendidos": jogador.usados_vendidos,
 		"vitorias": jogador.vitorias,
+		"campeonatos": jogador.campeonatos,
+		"titulos": jogador.titulos,
 		"historico": jogador.historico,
 		"dias": jogador.dias,
 		"fila": jogador.fila,
@@ -137,6 +139,20 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 				"melhor_tempo": float(h.get("melhor_tempo", 0.0)), "ultima_pos": int(h.get("ultima_pos", 0)),
 				"ultimo_tempo": float(h.get("ultimo_tempo", 0.0)),
 			}
+	# Opcional: saves anteriores aos campeonatos (decisão 35) carregam sem eles.
+	jogador.campeonatos = {}
+	if s.get("campeonatos") is Dictionary:
+		for k in s["campeonatos"]:
+			var c = s["campeonatos"][k]
+			if c is Dictionary and c.get("pontos") is Dictionary:
+				var pts := {}
+				for q in c["pontos"]:
+					pts[q] = int(c["pontos"][q])
+				jogador.campeonatos[k] = {"etapa": int(c.get("etapa", 0)), "pontos": pts}
+	jogador.titulos = {}
+	if s.get("titulos") is Dictionary:
+		for k in s["titulos"]:
+			jogador.titulos[k] = int(s["titulos"][k])
 	jogador.dias = int(s["dias"])
 	jogador.fila = s["fila"]
 	if not jogador.fila.is_empty():

@@ -351,14 +351,22 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> void:
 	n.size_flags_horizontal = Control.SIZE_SHRINK_END
 
 
-## "Etapa 1 de 3 · 1/3 vencidas": onde esta prova fica na série.
+## "Etapa 2 de 3 · campeonato: 18 pts, 2º · vale pontos": onde esta prova fica
+## na série e na temporada do campeonato (Campeonatos).
 func _progresso(ev: Dictionary) -> String:
-	var serie := String(ev["nome"]).split(" — ")[0]
-	var etapas: Array = dados.lista("eventos").filter(func(e): return String(e["nome"]).split(" — ")[0] == serie)
-	if etapas.size() <= 1:
+	var serie := Campeonatos.serie(ev)
+	var etapas := Campeonatos.etapas(dados, serie)
+	if etapas.is_empty():
 		return ""
-	var vencidas := etapas.filter(func(e): return jogador.vitorias.has(e["id"])).size()
-	return "Etapa %d de %d · %d/%d vencidas" % [etapas.find(ev) + 1, etapas.size(), vencidas, etapas.size()]
+	var k := etapas.find(ev)
+	var est := Campeonatos.estado(jogador, serie)
+	var t := "Etapa %d de %d" % [k + 1, etapas.size()]
+	if int(est["etapa"]) > 0:
+		var tab := Campeonatos.tabela(est)
+		var i: int = tab.map(func(x): return x[0]).find("jogador")
+		t += " · campeonato: %d pts, %dº" % [int(est["pontos"].get("jogador", 0)), i + 1]
+	t += " · vale pontos" if k == int(est["etapa"]) else " · pontos: corra a etapa %d" % (int(est["etapa"]) + 1)
+	return t
 
 
 ## Grupo da lista: copas de marca à parte; o resto pela licença exigida.

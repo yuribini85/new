@@ -20,6 +20,9 @@ var desejos: Array = []
 var usados_vendidos: Dictionary = {}
 ## evento_id -> número de vitórias.
 var vitorias: Dictionary = {}
+## Temporadas em andamento e títulos (Campeonatos).
+var campeonatos: Dictionary = {}
+var titulos: Dictionary = {}
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
@@ -61,5 +64,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	ultimo_processamento = 0.0
 	contador_sementes = 0
 	vitorias = {}
+	campeonatos = {}
+	titulos = {}
 	historico = {}
 	dias = 0

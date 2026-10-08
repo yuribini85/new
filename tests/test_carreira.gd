@@ -116,3 +116,31 @@ func test_escalacao_por_equipes() -> void:
 	igual(c.nome_piloto("aberto", "adv0_fraco"), Carreira.sobrenome_fixo("aberto", 0), "sem semente: nome fixo")
 	j.free()
 	d.free()
+
+
+func test_campeonato_por_pontos() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var c := Carreira.new(d, j)
+	var ev := {"nome": "Copa — etapa 1", "premios": [500, 250, 100]}
+	igual(Campeonatos.pontos(ev, 1), 10, "1º: 10 pontos")
+	igual(Campeonatos.pontos(ev, 2), 5, "2º: proporcional ao prêmio")
+	igual(Campeonatos.pontos(ev, 4), 0, "fora dos prêmios: 0")
+	igual(Campeonatos.serie(ev), "Copa", "série pelo nome")
+	# Série de uma prova só não é campeonato.
+	igual(Campeonatos.registrar(c, "aberto", ["jogador", "adv0_fraco"], 1), {}, "prova única: sem campeonato")
+	igual(Campeonatos.registrar(c, "serie_2", ["jogador", "adv0_fraco"], 1), {}, "fora da vez não conta")
+	var r1: Dictionary = Campeonatos.registrar(c, "serie_1", ["adv0_fraco", "jogador"], 1)
+	igual(r1["pontos"], 5, "2º na etapa 1")
+	verificar(not r1["final"], "temporada continua")
+	var saldo: int = j.economia.saldo
+	var r2: Dictionary = Campeonatos.registrar(c, "serie_2", ["jogador", "adv0_fraco"], 2)
+	verificar(r2["final"], "última etapa fecha a temporada")
+	# 15 pts do jogador; o rival pontua pela equipe de cada corrida.
+	igual(int(r2["classificacao_final"][0][1]) >= 15, true, "líder com ao menos 15 pts")
+	if r2["campeao"]:
+		igual(j.economia.saldo, saldo + 300, "bônus de campeão pago")
+		igual(j.titulos.get("Copa Teste", 0), 1, "título registrado")
+	verificar(not j.campeonatos.has("Copa Teste"), "temporada recomeça")
+	j.free()
+	d.free()

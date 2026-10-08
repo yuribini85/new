@@ -416,6 +416,17 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			if dp != 0:
 				marcos.append(["%s %d posiç%s desde a última vez" % ["subiu" if dp > 0 else "caiu", absi(dp),
 						"ão" if absi(dp) == 1 else "ões"], Aba.COR_BOM if dp > 0 else Aba.COR_RUIM])
+		var camp: Dictionary = c.get("campeonato", {})
+		if not camp.is_empty():
+			if camp.get("final", false):
+				marcos.append(["CAMPEÃO: %s" % camp["serie"] if camp["campeao"] else
+						"%s: %dº no campeonato" % [camp["serie"], camp["posicao_final"]],
+						Aba.COR_DESTAQUE if camp["campeao"] else Aba.COR_INFO])
+				if int(camp.get("bonus", 0)) > 0:
+					marcos.append(["Bônus de campeão +%s Cr" % Aba.dinheiro(int(camp["bonus"])), Aba.COR_BOM])
+			else:
+				marcos.append(["Campeonato: +%d pts · etapa %d de %d" % [camp["pontos"], camp["etapa"], camp["total"]],
+						Aba.COR_INFO])
 		g.selos(marcos, v)
 		if c.get("carro_premio_uid", -1) > 0:
 			var cp: Carro = jogador.garagem.carro(c["carro_premio_uid"])

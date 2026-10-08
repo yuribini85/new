@@ -8,5 +8,10 @@
 	{"id": "licenciado", "nome": "Só licenciados", "pista": "oval", "voltas": 2, "condicao": "chuva",
 	 "restricoes": {"licenca": "b"},
 	 "adversarios": [{"carro": "forte", "piloto": "perfeito", "pecas": ["turbo"], "pneus": ["chuva"]}],
-	 "premios": [10, 5]}
+	 "premios": [10, 5]},
+	{"id": "serie_1", "nome": "Copa Teste — etapa 1", "pista": "oval", "voltas": 1, "condicao": "seco",
+	 "restricoes": {}, "adversarios": [{"carro": "fraco", "piloto": "perfeito"}], "premios": [100, 50]},
+	{"id": "serie_2", "nome": "Copa Teste — etapa 2", "pista": "oval", "voltas": 1, "condicao": "seco",
+	 "restricoes": {}, "adversarios": [{"carro": "fraco", "piloto": "perfeito"}], "premios": [100, 50],
+	 "bonus_campeonato": 300}
 ]
