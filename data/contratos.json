@@ -142,7 +142,7 @@
 						"carro": "kanaya_ruri_corrida_ii"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -150,14 +150,14 @@
 		"carro": "hayase_sazanami",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 178500,
+				"custo_max": 178500.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 119000
+				"custo_max": 119000.0
 			},
 			"prata": {
-				"custo_max": 142800
+				"custo_max": 142800.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Keldorf Wachtel S gastando o mínimo.",
@@ -173,7 +173,7 @@
 						"carro": "keldorf_wachtel_s"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -184,7 +184,7 @@
 				"vencer": true
 			},
 			"ouro": {
-				"pecas_max": 3
+				"pecas_max": 3.0
 			},
 			"prata": {
 				"folga_s": 0.2
@@ -203,7 +203,7 @@
 						"carro": "mizuchi_chidori_sr_98"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			},
 			{
 				"condicao": "seco",
@@ -211,6 +211,224 @@
 				"rivais": [
 					{
 						"carro": "kanaya_yozora"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "kanaya_yuzuki_s",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 3.1
+			}
+		},
+		"descricao": "O Kanaya Yuzuki S tem 103 cv; o rival, 441. Monte o carro da escola para chegar na frente.",
+		"id": "international_pequeno_gigante",
+		"licenca": "INTERNATIONAL",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "bancroft_sidewinder_gts"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "calderwood_fletcher",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 103500.0,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 69000.0
+			},
+			"prata": {
+				"custo_max": 82800.0
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Hayase Komorebi S IV gastando o mínimo.",
+		"id": "international_ultimo_credito",
+		"licenca": "INTERNATIONAL",
+		"nome": "O último crédito",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "pista_de_testes",
+				"rivais": [
+					{
+						"carro": "hayase_komorebi_s_iv"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "arvelle_outlaw_s_97",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 3.0
+			},
+			"prata": {
+				"folga_s": 0.7
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Hayase Raijin Corrida em Pista de Testes e o Kanaya Nagare Corrida em Serra Alta.",
+		"id": "international_dois_circuitos",
+		"licenca": "INTERNATIONAL",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "pista_de_testes",
+				"rivais": [
+					{
+						"carro": "hayase_raijin_corrida"
+					}
+				],
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "kanaya_nagare_corrida"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "pemberly_thrush",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 0.9
+			}
+		},
+		"descricao": "O Pemberly Thrush tem 204 cv; o rival, 700. Monte o carro da escola para chegar na frente.",
+		"id": "pro_pequeno_gigante",
+		"licenca": "PRO",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "circuito_misto",
+				"rivais": [
+					{
+						"carro": "kanaya_benibana_corrida"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "hayase_komorebi_s_iv",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 345000,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 230000
+			},
+			"prata": {
+				"custo_max": 276000
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Hayase Kurenai Corrida gastando o mínimo.",
+		"id": "pro_ultimo_credito",
+		"licenca": "PRO",
+		"nome": "O último crédito",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "hayase_kurenai_corrida"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "ashcombe_brute",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 2
+			},
+			"prata": {
+				"folga_s": 0.2
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Ashcombe Saltire em Colinas do Vinhedo e o Hayase Komorebi S V em Anel do Vale.",
+		"id": "pro_dois_circuitos",
+		"licenca": "PRO",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "circuito_misto",
+				"rivais": [
+					{
+						"carro": "ashcombe_saltire"
+					}
+				],
+				"voltas": 1
+			},
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "hayase_komorebi_s_v"
 					}
 				],
 				"voltas": 1
