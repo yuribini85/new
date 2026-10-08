@@ -274,7 +274,7 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	b.custom_minimum_size = Vector2(0, 96)
 	var pode_pagar: bool = possuida or jogador.economia.pode_pagar(int(p["preco"]))
 	# Preço total (vermelho se o saldo não cobre); peça já comprada: ícone de confirmado.
-	var direita := "INSTALADA" if instalada else ("" if possuida else "%s Cr" % dinheiro(int(p["preco"])))
+	var direita := "INSTALADA" if instalada else ("" if possuida else "%s G" % dinheiro(int(p["preco"])))
 	if not perde.is_empty() and not instalada:
 		direita = "⚠ " + direita
 	# Nome e ganho à esquerda (quebram linha), estado/preço à direita.
@@ -364,7 +364,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 			_remover(c, p)
 			mudou.emit()], ["Fechar", func(): pass]]
 	elif livre and (possuida or jogador.economia.pode_pagar(int(p["preco"]))):
-		botoes = [["Usar" if possuida else "Comprar e usar · %s Cr" % dinheiro(int(p["preco"])), func():
+		botoes = [["Usar" if possuida else "Comprar e usar · %s G" % dinheiro(int(p["preco"])), func():
 			_comprar_peca(c, p, antes)
 			mudou.emit()], ["Cancelar", func(): pass]]
 	painel.emit(p["nome"], func(v):
@@ -388,7 +388,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 			numeros(muda, v)
 			if not possuida:
 				var custo := int(p["preco"])
-				rotulo("Custa %s Cr · saldo depois: %s Cr" % [dinheiro(custo), dinheiro(jogador.economia.saldo - custo)]
+				rotulo("Custa %s G · saldo depois: %s G" % [dinheiro(custo), dinheiro(jogador.economia.saldo - custo)]
 						if jogador.economia.pode_pagar(custo) else "", FONTE_PEQUENA + 2, Color.WHITE, v)
 		if not perde.is_empty():
 			var vp := cartao(COR_RUIM, v)
@@ -400,7 +400,7 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 		elif possuida:
 			rotulo("Já é sua: usar de novo é grátis.", FONTE_PEQUENA + 2, COR_BOM, v)
 		elif not jogador.economia.pode_pagar(int(p["preco"])):
-			rotulo("Custa %s Cr; faltam %s Cr." % [dinheiro(int(p["preco"])), dinheiro(int(p["preco"]) - jogador.economia.saldo)],
+			rotulo("Custa %s G; faltam %s G." % [dinheiro(int(p["preco"])), dinheiro(int(p["preco"]) - jogador.economia.saldo)],
 					FONTE_PEQUENA + 2, COR_RUIM, v)
 		pass, botoes)
 
@@ -428,7 +428,7 @@ func _pneus(c: Carro) -> void:
 			l.size_flags_horizontal = Control.SIZE_SHRINK_END
 			l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		else:
-			var b := botao("%s Cr" % dinheiro(int(pn["preco"])), _comprar_pneu.bind(c, pn),
+			var b := botao("%s G" % dinheiro(int(pn["preco"])), _comprar_pneu.bind(c, pn),
 					jogador.economia.pode_pagar(int(pn["preco"])), false, h)
 			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 

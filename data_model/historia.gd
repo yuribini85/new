@@ -76,7 +76,7 @@ func disparar(trigger: String, ctx: Dictionary = {}) -> bool:
 ## (evento = id da prova, posicao, peca, carro). As falas mostram o que o
 ## jogador vê na tela, nunca um número inventado.
 func variaveis(ctx: Dictionary = {}) -> Dictionary:
-	var v := {"saldo": Aba.dinheiro(jogador.economia.saldo) + " Cr"}
+	var v := {"saldo": Aba.dinheiro(jogador.economia.saldo) + " G"}
 	var c: Carro = jogador.garagem.carro(jogador.carro_ativo) if jogador.garagem != null else null
 	if c != null:
 		v["carro"] = String(c.base["nome"])
@@ -90,7 +90,7 @@ func variaveis(ctx: Dictionary = {}) -> Dictionary:
 		v["pista"] = Aba.nome_pista(String(ev["pista"]))
 		v["voltas"] = str(int(ev["voltas"]))
 		if not ev.get("premios", []).is_empty():
-			v["premio"] = Aba.dinheiro(int(ev["premios"][0])) + " Cr"
+			v["premio"] = Aba.dinheiro(int(ev["premios"][0])) + " G"
 	if ctx.has("posicao"):
 		v["posicao"] = "%dº" % int(ctx["posicao"])
 	for k in ["peca", "carro"]:

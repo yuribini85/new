@@ -168,7 +168,7 @@ func _cartao_loja(grade: GridContainer, id: String, nome: String, pais: String, 
 		l.clip_text = true
 		t.add_child(l)
 	var info := Label.new()
-	info.text = "%d carro%s · desde %s Cr" % [n, "" if n == 1 else "s", dinheiro(desde)]
+	info.text = "%d carro%s · desde %s G" % [n, "" if n == 1 else "s", dinheiro(desde)]
 	info.add_theme_font_size_override("font_size", 21)
 	info.add_theme_color_override("font_color", COR_SECUNDARIA)
 	info.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -313,12 +313,12 @@ func _agenda() -> void:
 	for cid in jogador.desejos:
 		var c: Dictionary = dados.carro(cid)
 		var p := Usados.proxima(c, jogador.dias, jogador.usados_vendidos)
-		var quando := "não volta aos usados" + (" (novo: %s Cr)" % dinheiro(int(c["preco"])) if c.get("novo", true) else "")
+		var quando := "não volta aos usados" + (" (novo: %s G)" % dinheiro(int(c["preco"])) if c.get("novo", true) else "")
 		if not p.is_empty() and p["inicio"] <= jogador.dias:
-			quando = "à venda agora por %s Cr · sai em %d corrida%s" % [dinheiro(p["preco"]), p["fim"] - jogador.dias + 1,
+			quando = "à venda agora por %s G · sai em %d corrida%s" % [dinheiro(p["preco"]), p["fim"] - jogador.dias + 1,
 					"" if p["fim"] - jogador.dias + 1 == 1 else "s"]
 		elif not p.is_empty():
-			quando = "em %d corrida%s, por %s Cr" % [p["inicio"] - jogador.dias, "" if p["inicio"] - jogador.dias == 1 else "s",
+			quando = "em %d corrida%s, por %s G" % [p["inicio"] - jogador.dias, "" if p["inicio"] - jogador.dias == 1 else "s",
 					dinheiro(p["preco"])]
 		var h := fileira(v)
 		var img := icone_carro(c)
@@ -350,7 +350,7 @@ func _agenda() -> void:
 		l.clip_text = true
 		l.autowrap_mode = TextServer.AUTOWRAP_OFF
 		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		var b := botao_texto("%s Cr" % dinheiro(o["preco"]), func(): ficha_modelo(c, [["à venda em %d corridas" % (o["inicio"] - jogador.dias),
+		var b := botao_texto("%s G" % dinheiro(o["preco"]), func(): ficha_modelo(c, [["à venda em %d corridas" % (o["inicio"] - jogador.dias),
 				COR_NEUTRA.lightened(0.3)]]), h)
 		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
@@ -442,7 +442,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	v.add_child(img)
 	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
 			["%d cv · %d kg · %s" % [c["potencia"], c["peso"], c["tracao"]], 23, COR_SECUNDARIA],
-			["%s Cr" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
+			["%s G" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
 		var l := Label.new()
 		l.text = t[0]
 		l.add_theme_font_size_override("font_size", t[1])
@@ -450,9 +450,9 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		l.clip_text = true
 		v.add_child(l)
-	var falta := "" if pode else "Faltam %s Cr" % dinheiro(preco - jogador.economia.saldo)
-	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s Cr" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
-			["Comprar · %s Cr" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor))
+	var falta := "" if pode else "Faltam %s G" % dinheiro(preco - jogador.economia.saldo)
+	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s G" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
+			["Comprar · %s G" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor))
 	grade.add_child(b)
 
 

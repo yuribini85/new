@@ -25,6 +25,10 @@ sintéticos (só para teste) em `tests/fixtures/`.
 
 ## Unidades e semântica
 
+- Dinheiro em **Giros (G)**: todo valor em Cr do GT2 (preços, usados, prêmios, bônus de campeão,
+  saldo inicial) passa por `moeda()` no importador: × `FATOR_MOEDA` (0,0427), arredondado. As
+  proporções entre valores ficam as do GT2; os números (e o padrão de 00/000) não.
+
 - `tracao`: `FF`, `FR`, `MR`, `RR` ou `4WD`.
 - `potencia` em cv; `peso` em kg; `velocidade_max` em km/h.
 - `aderencia`: coeficiente de atrito do carro. Multiplicado pela aderência do pneu na
@@ -119,7 +123,7 @@ relógio (offline também), e a avaliação só depois do treino. Configuração
 `carreira.json` → `licencas`. Preço 0 (no GT2 a licença é grátis).
 
 Equipe do jogador (decisão 38, `carreira.json` → `equipe_jogador`): caixa único (o
-saldo); a cada corrida entra `patrocinio` e sai `custo_staff`. Valores em Cr;
+saldo); a cada corrida entra `patrocinio` e sai `custo_staff`. Valores em G;
 **pendentes do playtest** (`null` = 0 até lá; a aba Equipe mostra "a definir").
 `segundo_piloto`: quem entra na equipe na cena que libera, sem contrato nem salário
 (`provisorio` até o nome do Drive).

@@ -27,7 +27,7 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	cabecalho("Correr", "Vença para ganhar créditos", "fundo_competicoes")
+	cabecalho("Correr", "Vença para ganhar giros", "fundo_competicoes")
 	var garagem := carro_ativo()
 	if garagem == null:
 		proximo_passo("Você precisa de um carro para correr.", "Ir para o Mercado", LOJA)
@@ -174,8 +174,8 @@ func _ganho_estimado(ev: Dictionary, f: Dictionary) -> String:
 	var melhor: int = p.call(int(pos.min())) * n
 	var pior: int = p.call(int(pos.max())) * n
 	if melhor == pior:
-		return "Ganho previsto até o fim: ≈ %s Cr" % dinheiro(melhor)
-	return "Ganho previsto até o fim: %s a %s Cr (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
+		return "Ganho previsto até o fim: ≈ %s G" % dinheiro(melhor)
+	return "Ganho previsto até o fim: %s a %s G (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
 
 
 static func _tempo(s: float) -> String:
@@ -190,7 +190,7 @@ func _repeticoes_ui() -> void:
 	var v := cartao()
 	var t := fileira(v)
 	nota("icone_de_novo", "Vencidas: correr quantas vezes?", "Nas corridas que você já venceu, escolha quantas "
-			+ "vezes seguidas correr. Rende créditos, até com o app fechado.", t)
+			+ "vezes seguidas correr. Rende giros, até com o app fechado.", t)
 	var h := fileira(v)
 	botao("−", func(): _repeticoes = maxi(1, _repeticoes - 1), _repeticoes > 1, false, h).custom_minimum_size = Vector2(80, 60)
 	var n := Label.new()
@@ -267,7 +267,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	caixa_premio.add_child(vp)
 	var l1 := rotulo("1º lugar", FONTE_PEQUENA, COR_SECUNDARIA, vp)
 	l1.autowrap_mode = TextServer.AUTOWRAP_OFF
-	var l2 := rotulo("%s Cr" % dinheiro(premio), 34, COR_DESTAQUE if pode else COR_SECUNDARIA, vp)
+	var l2 := rotulo("%s G" % dinheiro(premio), 34, COR_DESTAQUE if pode else COR_SECUNDARIA, vp)
 	l2.autowrap_mode = TextServer.AUTOWRAP_OFF
 	var etiquetas := []
 	for r in _regras(ev["restricoes"]).slice(0, 3):

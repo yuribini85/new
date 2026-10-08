@@ -48,7 +48,7 @@ func construir() -> void:
 	Tipografia.acao_primaria(melhorar, "Melhorar o carro", COR_DESTAQUE, Color(0.1, 0.1, 0.1), ALTURA_TEXTO_ACAO, ALTURA_ACAO)
 	var vender := _acao(h, _confirmar_venda.bind(c))
 	vender.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid)
-	Tipografia.acao_neutra(vender, "Vender · %s Cr" % dinheiro(revenda(c.base)), ALTURA_TEXTO_ACAO - 2, ALTURA_ACAO)
+	Tipografia.acao_neutra(vender, "Vender · %s G" % dinheiro(revenda(c.base)), ALTURA_TEXTO_ACAO - 2, ALTURA_ACAO)
 	var ficha := _acao(conteudo, func(): ficha_modelo(c.base))
 	Tipografia.acao_secundaria(ficha, "Ficha completa ›", COR_INFO.lightened(0.2), 26, 64)
 	_colecao_miniaturas(lista, c)
@@ -271,7 +271,7 @@ func _colecao_miniaturas(lista: Array, ativo: Carro) -> void:
 func _confirmar_venda(c: Carro) -> void:
 	painel.emit("Vender %s?" % c.base["nome"], func(v):
 		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
-		nota("icone_vender", "Você recebe %s Cr" % dinheiro(revenda(c.base)), "", v, Color.WHITE)
+		nota("icone_vender", "Você recebe %s G" % dinheiro(revenda(c.base)), "", v, Color.WHITE)
 		rotulo("Peças instaladas não entram no valor.", FONTE_PEQUENA, COR_SECUNDARIA, v),
 		[["Vender", func():
 			_vender(c.uid)
@@ -283,7 +283,7 @@ func _vender(uid: int) -> void:
 		avisar("O único carro da garagem não pode ser vendido.", false)
 		return
 	var nome: String = jogador.garagem.carro(uid).base["nome"]
-	avisar("Vendido: %s por %s Cr." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])
+	avisar("Vendido: %s por %s G." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])
 	if jogador.carro_ativo == uid:
 		jogador.carro_ativo = -1
 
@@ -303,4 +303,4 @@ func _recomecar() -> void:
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}
-	avisar("Carreira recomeçada com %s Cr." % dinheiro(jogador.economia.saldo))
+	avisar("Carreira recomeçada com %s G." % dinheiro(jogador.economia.saldo))

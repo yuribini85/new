@@ -64,7 +64,7 @@ Sistema: Prova nova roda com o app aberto. Depois de vencida, dá para repetir c
 
 = SCN_A06 | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN_ADRIAN; capitulo=I; cenario=podio
 Adrian: Viu isso?
-Elena: Vi. Freou mais tarde que todo mundo. Valeu cada crédito.
+Elena: Vi. Freou mais tarde que todo mundo. Valeu cada giro.
 Marcus: Prêmio na conta.
 Sistema: Prêmios entram no saldo. Prova já vencida pode ser repetida, até com o app fechado.
 

@@ -66,7 +66,7 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
 | Contratos da licença / Enviar para avaliação | **Missões da licença** / **Testar montagem** | |
 | Acompanhar nos usados | **Avisar quando aparecer usado** | diz o efeito |
 | Agenda (mercado) | **Próximas ofertas** | |
-| Cr | **Cr** com ícone de moeda | curto e já visto |
+| Créditos (Cr) | **G** (Giros) com ícone de moeda | curto e sem rastro do GT2 |
 | Eventos (resto antigo) | **Competições** | um nome por aba |
 | Modo de playtest | some do jogo final (só em versão de teste) | é ferramenta |
 

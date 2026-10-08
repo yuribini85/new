@@ -45,7 +45,7 @@ func construir() -> void:
 func _caixa() -> void:
 	titulo_secao("Caixa", "por corrida")
 	var c := cartao()
-	rotulo("Caixa: %s Cr" % dinheiro(jogador.economia.saldo), 0, Color.WHITE, c)
+	rotulo("Caixa: %s G" % dinheiro(jogador.economia.saldo), 0, Color.WHITE, c)
 	var f := EquipeJogador.folha(dados, jogador)
 	_linha_folha(c, "Patrocínio", "patrocinio", int(f["patrocinio"]), "+")
 	_linha_folha(c, "Staff", "custo_staff", int(f["staff"]), "−")
@@ -53,7 +53,7 @@ func _caixa() -> void:
 
 
 func _linha_folha(pai: Control, texto: String, chave: String, v: int, sinal: String) -> void:
-	var t := "%s %s Cr" % [sinal, dinheiro(v)] if EquipeJogador.definido(dados, chave) else "a definir no playtest"
+	var t := "%s %s G" % [sinal, dinheiro(v)] if EquipeJogador.definido(dados, chave) else "a definir no playtest"
 	rotulo("%s: %s" % [texto, t], FONTE_PEQUENA + 2, COR_SECUNDARIA if not EquipeJogador.definido(dados, chave) else Color.WHITE, pai)
 
 

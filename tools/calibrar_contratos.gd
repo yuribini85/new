@@ -15,8 +15,8 @@ extends SceneTree
 ##   potência do carro da escola, que vence o carro de fábrica. Precisa ter
 ##   solução sem peças de potência (ouro). Escolhe o par de maior razão.
 ##   bronze: vencer · prata: folga de metade da maior folga encontrada · ouro: vencer sem peças de potência.
-## "O último crédito": rival que vence o carro de fábrica e só é batido com
-##   ao menos 2 peças, ao menor custo C achado (peça de mais ganho por crédito
+## "O último giro": rival que vence o carro de fábrica e só é batido com
+##   ao menos 2 peças, ao menor custo C achado (peça de mais ganho por giro
 ##   primeiro), com C até o saldo inicial. Escolhe o maior C.
 ##   bronze: vencer gastando até FOLGA_CUSTO_BRONZE × C · prata: até FOLGA_CUSTO_PRATA × C · ouro: até C.
 ## "Dois circuitos, um carro": duas pistas, um rival diferente em cada, que
@@ -28,7 +28,7 @@ extends SceneTree
 ## carros e pistas dos eventos que a licença libera (carro da escola: um rival
 ## desses eventos dentro do limite da licença; rivais: os desses eventos e os
 ## da licença seguinte; pistas: as desses eventos). O teto de "O último
-## crédito" é a soma dos prêmios de 1º lugar dos eventos da licença anterior
+## giro" é a soma dos prêmios de 1º lugar dos eventos da licença anterior
 ## (na primeira, o saldo inicial). Os ids levam o prefixo da licença ("pro_..."; os da antiga IC mantêm "ic_", que os saves já usam).
 ## Só os contratos da licença pedida são trocados em contratos.json.
 ## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=CLUB]
@@ -37,6 +37,8 @@ const CAMINHO := "res://data/contratos.json"
 const RAZAO_GIGANTE := 1.3
 const FOLGA_CUSTO_BRONZE := 1.5
 const FOLGA_CUSTO_PRATA := 1.2
+## Passo do arredondamento dos tetos de custo: 5 G (~100 Cr do GT2, o passo antigo).
+const PASSO_CUSTO := 5
 ## Folga mínima da solução de "Dois circuitos" (s): a prata precisa ter sentido.
 const FOLGA_MINIMA_DUPLA := 0.2
 ## Prata de "Dois circuitos" por folga fixa (s), perceptível ao jogador: só entram
@@ -110,7 +112,7 @@ func _calibrar() -> void:
 		for e in _eventos_da(String(lic.get("requisito", ""))):
 			if not e["premios"].is_empty():
 				_saldo_ref += int(e["premios"][0])
-		print("%s: %d carros da escola, %d rivais, %d pistas, teto de custo %d Cr" % [_licenca, escola.size(),
+		print("%s: %d carros da escola, %d rivais, %d pistas, teto de custo %d G" % [_licenca, escola.size(),
 				todos.size(), pistas.size(), _saldo_ref])
 	escola.sort_custom(func(a, b): return a["id"] < b["id"])
 	todos.sort_custom(func(a, b): return a["id"] < b["id"])
@@ -121,7 +123,7 @@ func _calibrar() -> void:
 	if not c1.is_empty():
 		contratos.append(c1)
 		usados.append(c1["carro"])
-	print("procurando: o último crédito (%d s)" % [Time.get_ticks_msec() / 1000])
+	print("procurando: o último giro (%d s)" % [Time.get_ticks_msec() / 1000])
 	var c2 := _ultimo_credito(escola.filter(func(c): return not c["id"] in usados), todos, pistas)
 	if not c2.is_empty():
 		contratos.append(c2)
@@ -219,7 +221,7 @@ func _ultimo_credito(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 					continue
 				melhor_custo = r["custo"]
 				melhor = {
-					"id": "ultimo_credito", "licenca": _licenca, "nome": "O último crédito",
+					"id": "ultimo_credito", "licenca": _licenca, "nome": "O último giro",
 					"descricao": "A escola paga as peças até um teto. Vença o %s gastando o mínimo." % g["nome"],
 					"carro": c["id"],
 					"provas": [{"pista": pista, "voltas": _voltas, "condicao": "seco", "rivais": [{"carro": g["id"]}]}],
@@ -355,7 +357,7 @@ func _guloso_calc(c: Dictionary, pista: String, proibidas: Array) -> Dictionary:
 	return {"pecas": pecas, "ajuste": ajuste, "tempo": t}
 
 
-## Mais barato que vence `rival`: a peça de maior ganho por crédito a cada passo.
+## Mais barato que vence `rival`: a peça de maior ganho por giro a cada passo.
 ## O caminho não depende do rival (só onde parar): calculado uma vez por carro e pista.
 func _mais_barato(c: Dictionary, pista: String, rival: float) -> Dictionary:
 	for passo in _caminho_barato(c, pista):
@@ -485,8 +487,9 @@ func _meia_folga(folga: float) -> float:
 	return floorf(folga * 0.5 * 10.0) / 10.0
 
 
-func _arredondar(cr: float) -> int:
-	return int(ceil(cr / 100.0)) * 100
+## Teto arredondado para cima no passo PASSO_CUSTO (em G).
+func _arredondar(g: float) -> int:
+	return int(ceil(g / PASSO_CUSTO)) * PASSO_CUSTO
 
 
 func _nome_pista(id: String) -> String:

@@ -42,7 +42,7 @@ static func config(dados: Node) -> Dictionary:
 	return dados.carreira().get("equipe_jogador", {})
 
 
-## Valor da gestão em Cr (0 enquanto pendente do playtest).
+## Valor da gestão em G (0 enquanto pendente do playtest).
 static func valor(dados: Node, chave: String) -> int:
 	var v = config(dados).get(chave)
 	return 0 if v == null else int(v)

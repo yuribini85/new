@@ -266,7 +266,7 @@ func _resultado(u: Dictionary) -> void:
 	if u.get("recorde", false) and not anterior.is_empty():
 		marcos.append(["RECORDE PESSOAL", COR_BOM])
 	if u["premio"] > 0:
-		marcos.append(["+%s Cr" % dinheiro(u["premio"]), COR_BOM])
+		marcos.append(["+%s G" % dinheiro(u["premio"]), COR_BOM])
 	selos(marcos, v)
 	if not anterior.is_empty():
 		var dp: int = int(anterior["ultima_pos"]) - int(u["posicao"])
@@ -456,11 +456,11 @@ func _o_que_ajuda(u: Dictionary, seu: Carro) -> void:
 		rotulo(o["nome"], 0, Color.WHITE, info)
 		var etiquetas := [["previsão: %s → %s" % [hoje, Mecanico.texto_faixa(o["faixa"])],
 				COR_BOM if o["faixa"][0] == 1 else COR_INFO],
-				["custa %s Cr" % dinheiro(o["preco"]) if o["preco"] > 0 else "já é sua: usar de novo", COR_NEUTRA.lightened(0.3)]]
+				["custa %s G" % dinheiro(o["preco"]) if o["preco"] > 0 else "já é sua: usar de novo", COR_NEUTRA.lightened(0.3)]]
 		if not o["perde"].is_empty():
 			etiquetas.append(["⚠ deixa de poder correr: %s" % ", ".join(o["perde"]), COR_RUIM])
 		selos(etiquetas, info)
-		var b := botao("Usar" if o["preco"] == 0 else "%s Cr" % dinheiro(o["preco"]),
+		var b := botao("Usar" if o["preco"] == 0 else "%s G" % dinheiro(o["preco"]),
 				_comprar.bind(o, seu), not _em_andamento or int(jogador.fila.get("uid", -1)) != seu.uid, false, h)
 		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 

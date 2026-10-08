@@ -526,7 +526,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)
 		var como := []
 		if base.get("novo", true):
-			como.append("novo no Mercado por %s Cr" % dinheiro(int(base["preco"])))
+			como.append("novo no Mercado por %s G" % dinheiro(int(base["preco"])))
 		if not base.get("usados", []).is_empty():
 			como.append("usado em alguns períodos")
 		for ev in dados.lista("eventos"):
@@ -543,7 +543,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
 		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
-		rotulo("Revenda depois: %s Cr" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
+		rotulo("Revenda depois: %s G" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
 		if not base.get("usados", []).is_empty():
 			var desejado: bool = base["id"] in jogador.desejos
 			var bd := botao_texto("♥ Avisando quando aparecer usado (parar)" if desejado else "♡ Avisar quando aparecer usado", func():

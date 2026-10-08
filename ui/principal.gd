@@ -221,7 +221,7 @@ func _ir_para(i: int) -> void:
 	_foco_corrida()
 
 
-## Assistindo a corrida: créditos somem (meta-jogo) e a navegação fica apagada
+## Assistindo a corrida: saldo some (meta-jogo) e a navegação fica apagada
 ## (continua tocável). Fade curto, nunca de uma vez.
 func _foco_corrida() -> void:
 	var assistindo: bool = _abas.current_tab == 4 and (not jogador.fila.is_empty() or _todas[4].em_silencio())
@@ -283,7 +283,7 @@ func _tema() -> Theme:
 
 
 func atualizar() -> void:
-	_saldo.text = "%s Cr" % Aba.dinheiro(jogador.economia.saldo)
+	_saldo.text = "%s G" % Aba.dinheiro(jogador.economia.saldo)
 	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
 	_atualizar_ao_vivo()
 	_atualizar_nav()
@@ -533,7 +533,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			v.add_child(hs)
 			g.icone("icone_creditos", 48, hs)
 			var liquido: int = int(c.get("folha", {}).get("patrocinio", 0)) - int(c.get("folha", {}).get("cobrado", 0))
-			var saldo := g.rotulo("%s → %s Cr  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - liquido - c["premio"]),
+			var saldo := g.rotulo("%s → %s G  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - liquido - c["premio"]),
 					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, hs)
 			saldo.autowrap_mode = TextServer.AUTOWRAP_OFF
 			saldo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -544,7 +544,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 					c["posicao_companheiro"]], Aba.COR_INFO])
 		var folha: Dictionary = c.get("folha", {})
 		if int(folha.get("patrocinio", 0)) > 0 or int(folha.get("cobrado", 0)) > 0:
-			marcos.append(["Equipe: patrocínio +%s · folha −%s Cr" % [Aba.dinheiro(int(folha["patrocinio"])),
+			marcos.append(["Equipe: patrocínio +%s · folha −%s G" % [Aba.dinheiro(int(folha["patrocinio"])),
 					Aba.dinheiro(int(folha["cobrado"]))], Aba.COR_INFO])
 		if venceu and primeira:
 			marcos.append(["PRIMEIRA VITÓRIA NESTA CORRIDA", Aba.COR_DESTAQUE])
@@ -562,7 +562,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 						"%s: %dº no campeonato" % [camp["serie"], camp["posicao_final"]],
 						Aba.COR_DESTAQUE if camp["campeao"] else Aba.COR_INFO])
 				if int(camp.get("bonus", 0)) > 0:
-					marcos.append(["Bônus de campeão +%s Cr" % Aba.dinheiro(int(camp["bonus"])), Aba.COR_BOM])
+					marcos.append(["Bônus de campeão +%s G" % Aba.dinheiro(int(camp["bonus"])), Aba.COR_BOM])
 			else:
 				marcos.append(["Campeonato: +%d pts · etapa %d de %d" % [camp["pontos"], camp["etapa"], camp["total"]],
 						Aba.COR_INFO])
@@ -653,7 +653,7 @@ func _primeira_vitoria(c: Dictionary) -> void:
 	var g: Aba = _todas[0]
 	_sobre.abrir("Primeira vitória!", func(v):
 		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
-		g.nota("icone_creditos", "Prêmio: +%s Cr" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
+		g.nota("icone_creditos", "Prêmio: +%s G" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
 		g.nota("icone_dica", "Agora: corrida que paga mais, ou Oficina", "", v))
 
 
@@ -676,14 +676,14 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 		if i_obj < objetivos.size():
 			g.rotulo("OBJETIVO %d/%d" % [i_obj + 1, objetivos.size()], Aba.FONTE_PEQUENA, Aba.COR_INFO, vp)
 			g.rotulo(objetivos[i_obj]["texto"], 30, Color.WHITE, vp)
-		g.rotulo("Saldo: %s Cr" % Aba.dinheiro(jogador.economia.saldo), Aba.FONTE_PEQUENA + 3, Aba.COR_DESTAQUE, vp)
+		g.rotulo("Saldo: %s G" % Aba.dinheiro(jogador.economia.saldo), Aba.FONTE_PEQUENA + 3, Aba.COR_DESTAQUE, vp)
 		var obstaculo := Objetivos.proximo_obstaculo(jogador, dados)
 		if obstaculo != "":
 			g.rotulo(obstaculo, Aba.FONTE_PEQUENA + 2, Color.WHITE, vp)
 		for cid in jogador.desejos:
 			var p := Usados.proxima(dados.carro(cid), jogador.dias, jogador.usados_vendidos)
 			if not p.is_empty() and p["inicio"] <= jogador.dias:
-				g.rotulo("♥ %s à venda nos usados por %s Cr" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
+				g.rotulo("♥ %s à venda nos usados por %s G" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
 						Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vp)
 		if not corridas.is_empty():
 			var vitorias := corridas.filter(func(c): return c["posicao"] == 1).size()
@@ -691,7 +691,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			var resumo := g.cartao(Aba.COR_BOM, v)
 			g.rotulo("%d corrida%s · %d vitória%s · melhor %dº" % [corridas.size(), "" if corridas.size() == 1 else "s",
 					vitorias, "" if vitorias == 1 else "s", melhor], 0, Color.WHITE, resumo)
-			g.rotulo("+%s Cr em prêmios" % Aba.dinheiro(rel["premio_total"]), 34, Aba.COR_DESTAQUE, resumo)
+			g.rotulo("+%s G em prêmios" % Aba.dinheiro(rel["premio_total"]), 34, Aba.COR_DESTAQUE, resumo)
 		for uid in rel["carros_premio"]:
 			var cp: Carro = jogador.garagem.carro(uid)
 			if cp != null:
@@ -726,7 +726,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			v.add_child(b)
 			v.add_child(detalhes)
 			for c in corridas:
-				g.rotulo("%s · %dº · %s Cr" % [dados.evento(c["evento_id"]).get("nome", ""), c["posicao"],
+				g.rotulo("%s · %dº · %s G" % [dados.evento(c["evento_id"]).get("nome", ""), c["posicao"],
 						Aba.dinheiro(c["premio"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, detalhes), botoes)
 
 
