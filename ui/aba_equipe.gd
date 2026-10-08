@@ -16,8 +16,18 @@ func construir() -> void:
 		return
 	cabecalho(String(eq["nome"]) + " Motorsport", "Sua equipe")
 	var logo := cartao(COR_DESTAQUE)
-	var nome := rotulo(String(eq["nome"]).to_upper(), 44, COR_DESTAQUE, logo)
-	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var tex := Assets.get_asset(String(eq["id"]), "logo")
+	if tex != null:
+		var img := TextureRect.new()
+		img.texture = tex
+		img.custom_minimum_size = Vector2(0, 180)
+		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		logo.add_child(img)
+	else:
+		# Placeholder (documento, seção 4): logo = texto da equipe.
+		var nome := rotulo(String(eq["nome"]).to_upper(), 44, COR_DESTAQUE, logo)
+		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_caixa()
 	_pilotos(eq)
 	titulo_secao("Conquistas")

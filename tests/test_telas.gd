@@ -274,3 +274,18 @@ func test_camera_isometrica_so_na_ultrapassagem_e_desligada_por_reduzir_animacoe
 		fonte.free()
 	Preferencias.reduzir_animacoes = reduzir
 	d.free()
+
+
+func test_assets_devolve_arte_ou_null_para_placeholder() -> void:
+	Assets.limpar()
+	igual(Assets.caminho("x", "ui"), "res://arte/ui/x.png", "caminho da interface")
+	igual(Assets.get_asset("nao_existe", "retrato"), null, "sem arquivo: placeholder")
+	verificar(Assets.get_asset("icone_creditos", "ui") != null, "arte da interface existente")
+	# Arquivo novo, ainda não importado: lido direto do disco.
+	var img := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+	img.fill(Color.RED)
+	img.save_png("user://teste_asset.png")
+	var tex := Assets._carregar("user://teste_asset.png")
+	verificar(tex != null and tex.get_width() == 4, "png novo lido do disco")
+	DirAccess.remove_absolute("user://teste_asset.png")
+	Assets.limpar()

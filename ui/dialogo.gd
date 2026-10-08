@@ -1,8 +1,8 @@
 class_name Dialogo
 extends Control
 ## Caixa de diálogo da história (decisão 32), embaixo da tela: retrato
-## (placeholder: quadrado na cor do personagem com as iniciais, até a arte
-## chegar), nome e texto. Tocar avança. Ações de tutorial no meio da cena saem
+## (Assets; sem o arquivo, quadrado na cor do personagem com as iniciais), nome
+## e texto. Tocar avança. Ações de tutorial no meio da cena saem
 ## pelo sinal `acao` quando a fala chega nelas. Cena que bloqueia escurece a
 ## tela e segura o toque; as outras deixam a tela usável por cima.
 ## Cenas pedidas durante outra entram na fila.
@@ -19,6 +19,7 @@ var _fundo: ColorRect
 var _caixa: PanelContainer
 var _retrato: ColorRect
 var _iniciais: Label
+var _foto: TextureRect
 var _nome: Label
 var _texto: Label
 
@@ -61,6 +62,13 @@ func _init(historia_: Historia) -> void:
 	_iniciais.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_iniciais.add_theme_font_size_override("font_size", 40)
 	_retrato.add_child(_iniciais)
+	# Retrato final (Assets): por cima do placeholder quando o arquivo existe.
+	_foto = TextureRect.new()
+	_foto.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_foto.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_foto.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_foto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_retrato.add_child(_foto)
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -133,6 +141,8 @@ func _mostrar() -> void:
 	_retrato.color = Color(String(p.get("cor", "#444444")))
 	var nome := String(p.get("nome", f["quem"]))
 	_iniciais.text = "".join(Array(nome.split(" ", false)).slice(0, 2).map(func(x): return String(x).substr(0, 1)))
+	_foto.texture = null if sistema else Assets.get_asset(String(f["quem"]), "retrato")
+	_iniciais.visible = _foto.texture == null
 	_nome.text = nome
 	_texto.text = String(f["texto"])
 	_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if sistema else HORIZONTAL_ALIGNMENT_LEFT
