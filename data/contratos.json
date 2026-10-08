@@ -259,20 +259,20 @@
 		"carro": "calderwood_fletcher",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 103500.0,
+				"custo_max": 4425,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 69000.0
+				"custo_max": 2947
 			},
 			"prata": {
-				"custo_max": 82800.0
+				"custo_max": 3540
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Komorebi S IV gastando o mínimo.",
 		"id": "international_ultimo_credito",
 		"licenca": "INTERNATIONAL",
-		"nome": "O último crédito",
+		"nome": "O último giro",
 		"provas": [
 			{
 				"condicao": "seco",
@@ -282,7 +282,7 @@
 						"carro": "hayase_komorebi_s_iv"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
@@ -368,14 +368,14 @@
 		"carro": "hayase_komorebi_s_iv",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 14735,
+				"custo_max": 14735.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 9822
+				"custo_max": 9822.0
 			},
 			"prata": {
-				"custo_max": 11790
+				"custo_max": 11790.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Kurenai Corrida gastando o mínimo.",
@@ -391,7 +391,7 @@
 						"carro": "hayase_kurenai_corrida"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
