@@ -262,11 +262,19 @@ func atualizar() -> void:
 	get_node("/root/SaveManager").salvar()
 
 
+## Decisão 34: prova inédita ou etapa de campeonato só corre com o app aberto.
+func _texto_recomecou(evento_id: String) -> String:
+	return "%s recomeçou agora: prova inédita e etapa de campeonato só correm com o app aberto." \
+			% dados.evento(evento_id).get("nome", evento_id)
+
+
 func _processar_fila() -> void:
 	if jogador.fila.is_empty():
 		return
 	var antes_vitorias: Dictionary = jogador.vitorias.duplicate()
 	var rel: Dictionary = jogador.fila_ctrl.processar(Time.get_unix_time_from_system())
+	if rel.has("recomecou"):
+		_todas[0].avisar(_texto_recomecou(rel["recomecou"]), true)
 	if rel["corridas"].is_empty() and rel["erro"] == "":
 		return
 	atualizar()
@@ -553,6 +561,9 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 				h.add_child(g.icone_carro(cp.base))
 				g.rotulo(cp.base["nome"], 30, Color.WHITE, h)
 				g.rotulo("Já está na sua garagem.", Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vc)
+		if rel.has("recomecou"):
+			var vr := g.cartao(Aba.COR_INFO, v)
+			g.rotulo(_texto_recomecou(rel["recomecou"]), Aba.FONTE_PEQUENA + 1, Color.WHITE, vr)
 		if rel["erro"] != "":
 			var ve := g.cartao(Aba.COR_RUIM, v)
 			g.rotulo("A sequência de corridas parou: " + rel["erro"], 0, Aba.COR_RUIM, ve)

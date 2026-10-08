@@ -1,6 +1,6 @@
 class_name Fila
 extends RefCounted
-## Fila de repetições e progresso offline (docs/plano_mvp.md, decisões 2 e 3).
+## Fila de repetições e progresso offline (docs/plano_mvp.md, decisões 2, 3 e 34).
 ## Um carro por vez: o jogador escolhe evento, carro e número de repetições.
 ## Cada corrida leva em tempo real o mesmo que leva simulada. Ao processar,
 ## todas as corridas que já teriam terminado são aplicadas em lote; o tempo
@@ -13,6 +13,10 @@ extends RefCounted
 ##
 ## Repetir (renda automática) só em prova já vencida; a primeira vitória é um
 ## desafio, com uma inscrição por vez.
+
+## Intervalo entre processamentos acima do qual houve ausência (app fechado ou
+## em segundo plano). Com o app aberto a fila processa a cada segundo. Técnico.
+const AUSENCIA_S := 5.0
 
 var carreira: Carreira
 var jogador: Node
@@ -62,6 +66,7 @@ func adiantar(agora: float) -> void:
 	var c := _preparar(f, false)
 	if not c.has("erro"):
 		f["inicio"] = agora - float(c["duracao"]) - 0.01
+		jogador.ultimo_processamento = maxf(float(jogador.ultimo_processamento), agora)  # app aberto
 
 
 func cancelar() -> void:
@@ -108,6 +113,8 @@ func processar(agora: float) -> Dictionary:
 		limite = agora
 		rel["tempo_perdido_s"] = excesso
 
+	var antes := float(jogador.ultimo_processamento)
+	var offline := ausencia > AUSENCIA_S
 	while not jogador.fila.is_empty():
 		var f: Dictionary = jogador.fila
 		var c := _preparar(f, false)
@@ -116,6 +123,12 @@ func processar(agora: float) -> Dictionary:
 			cancelar()
 			break
 		var fim := float(f["inicio"]) + float(c["duracao"])
+		if offline and fim > antes and importante(f):
+			# Decisão 34: prova inédita ou etapa de campeonato não corre com o app
+			# fechado; na volta, recomeça ao vivo.
+			f["inicio"] = agora
+			rel["recomecou"] = f["evento_id"]
+			break
 		if fim > limite:
 			break
 		var res := carreira.aplicar(c)
@@ -151,6 +164,18 @@ func processar(agora: float) -> Dictionary:
 	# Relógio voltando (ajuste manual, fuso) não pode virar "ausência" depois.
 	jogador.ultimo_processamento = maxf(float(jogador.ultimo_processamento), agora)
 	return rel
+
+
+## Corrida que só acontece com o app aberto (decisão 34): prova ainda não vencida
+## ou etapa que vale pontos na temporada do campeonato. Repetição de prova vencida
+## (renda) roda offline.
+func importante(f: Dictionary) -> bool:
+	var evento_id: String = f["evento_id"]
+	if not jogador.vitorias.has(evento_id):
+		return true
+	var ev: Dictionary = carreira.dados.evento(evento_id)
+	var lista := Campeonatos.etapas(carreira.dados, Campeonatos.serie(ev))
+	return not lista.is_empty() and lista.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"])
 
 
 ## Carro como foi inscrito: o da garagem com a configuração guardada na fila.

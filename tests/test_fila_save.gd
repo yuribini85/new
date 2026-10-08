@@ -239,3 +239,28 @@ func test_fila_guarda_copia_da_preparacao() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+func test_prova_inedita_nao_corre_offline() -> void:
+	# Decisão 34: prova não vencida não termina com o app fechado; recomeça ao vivo.
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	var fila := _fila(d, j)
+	igual(fila.iniciar("aberto", uid, 1, 1000.0), "", "inscrição")
+	var dur := fila.duracao_atual()
+	var rel: Dictionary = fila.processar(1000.0 + dur + 600.0)
+	igual(rel["corridas"].size(), 0, "nada aplicado na volta")
+	igual(rel.get("recomecou", ""), "aberto", "corrida recomeça")
+	perto(float(j.fila["inicio"]), 1000.0 + dur + 600.0, 0.01, "recomeça agora")
+	# Com o app aberto (processamento a cada segundo) ela termina.
+	var t := 1000.0 + dur + 600.0
+	while t < 1000.0 + 2.0 * dur + 601.0 and fila.processar(t)["corridas"].is_empty():
+		t += 1.0
+	verificar(j.fila.is_empty(), "termina online")
+	# Repetição de prova vencida corre offline.
+	j.vitorias["aberto"] = 1
+	igual(fila.iniciar("aberto", uid, 2, 5000.0), "", "repetição")
+	igual(fila.processar(5000.0 + 3.0 * dur)["corridas"].size(), 2, "repetições offline")
+	j.free()
+	d.free()
