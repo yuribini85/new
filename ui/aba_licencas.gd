@@ -43,18 +43,19 @@ func construir() -> void:
 	for lic in dados.lista("licencas"):
 		var st := l.estado(lic["id"], agora)
 		treinando = treinando or st == Licencas.TRAINING
-		_situacao(l, lic, st, agora)
+		var sit := _situacao(l, lic, st, agora)
 		if not st in [Licencas.READY, Licencas.COMPLETE]:
 			continue
+		# A avaliação entra no mesmo cartão da situação (sem repetir o cabeçalho).
 		if not Contratos.da_licenca(dados, lic["id"]).is_empty():
-			_cartao_contratos(lic)
+			_cartao_contratos(lic, sit)
 		elif lic["testes"].is_empty():
 			nota("icone_alerta", "Avaliação da %s em preparação" % lic["nome"], "", conteudo, COR_INFO)
 		elif c == null:
 			nota("icone_cadeado", "%s: compre um carro primeiro" % lic["nome"],
 					"Os testes da %s são feitos com o carro em uso." % lic["nome"])
 		else:
-			_cartao_licenca(c, lic)
+			_cartao_licenca(c, lic, sit)
 	if treinando:
 		# Relógio do treino na tela: reconstrói a cada segundo enquanto houver treino.
 		var t := Timer.new()
@@ -306,7 +307,8 @@ const TEXTO_ESTADO := {
 
 ## Situação da licença (decisão 33): estado, requisitos com status, treino e
 ## o que ela libera. A avaliação aparece abaixo só depois do treino.
-func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
+## Retorna o cartão, onde a avaliação entra em seguida.
+func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> VBoxContainer:
 	var cor: Color = {Licencas.COMPLETE: COR_BOM, Licencas.LOCKED: COR_NEUTRA}.get(st, COR_INFO)
 	var v := cartao(cor)
 	if st != Licencas.COMPLETE:
@@ -318,7 +320,7 @@ func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
 	selos([[TEXTO_ESTADO[st], cor if st != Licencas.LOCKED else COR_RUIM],
 			["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
 	if st == Licencas.COMPLETE:
-		return
+		return v
 	if st == Licencas.AVAILABLE:
 		historia("LICENCA_DISPONIVEL:" + String(lic["id"]))
 	elif st == Licencas.READY:
@@ -349,6 +351,7 @@ func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
 			rotulo("Treino: faltam %s" % _duracao(falta), FONTE_PEQUENA, COR_INFO, v)
 		Licencas.READY:
 			rotulo("Treino concluído: faça a avaliação abaixo.", FONTE_PEQUENA, COR_BOM, v)
+	return v
 
 
 static func _duracao(s: float) -> String:
@@ -360,20 +363,20 @@ static func _duracao(s: float) -> String:
 	return "%d s" % t
 
 
-func _cartao_licenca(c: Carro, lic: Dictionary) -> void:
+## `v`: o cartão da situação, onde os testes entram (sem cabeçalho próprio).
+func _cartao_licenca(c: Carro, lic: Dictionary, v: VBoxContainer) -> void:
 	var tem: bool = lic["id"] in jogador.licencas
 	var bloqueada: bool = lic.get("requisito") != null and not lic["requisito"] in jogador.licencas
 	var feitos: int = lic["testes"].filter(func(t): return jogador.graus_licenca.has(t["id"])).size()
-	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
-	var v := cartao(COR_BOM if tem else (COR_NEUTRA if bloqueada else COR_INFO))
+	separador(v)
 	var ht := HBoxContainer.new()
 	v.add_child(ht)
-	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var lt := rotulo("Testes" if tem else "Testes: %d de %d" % [feitos, lic["testes"].size()], FONTE_PEQUENA + 2,
+			COR_SECUNDARIA, ht)
+	lt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lt.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	botao_info(lic["nome"], "Uma volta sozinho na pista com o %s. Bronze ou melhor em todos os testes dá a licença."
 			% c.base["nome"], ht)
-	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
-			else ["%d de %d testes" % [feitos, lic["testes"].size()], COR_INFO])
-	selos([estado, ["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
 	var series := {}
 	for e in dados.lista("eventos"):
 		if e["restricoes"].get("licenca") == lic["id"]:
@@ -447,21 +450,21 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 
 ## Licença por contratos: cada contrato numa linha, com o melhor grau e a
 ## entrada da bancada.
-func _cartao_contratos(lic: Dictionary) -> void:
+## `v`: o cartão da situação, onde as missões entram (sem cabeçalho próprio).
+func _cartao_contratos(lic: Dictionary, v: VBoxContainer) -> void:
 	var tem: bool = lic["id"] in jogador.licencas
 	var bloqueada: bool = lic.get("requisito") != null and not lic["requisito"] in jogador.licencas
 	var lista := Contratos.da_licenca(dados, lic["id"])
 	var feitos: int = lista.filter(func(ct): return jogador.graus_licenca.has(ct["id"])).size()
-	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
-	var v := cartao(COR_BOM if tem else (COR_NEUTRA if bloqueada else COR_INFO))
+	separador(v)
 	var ht := HBoxContainer.new()
 	v.add_child(ht)
-	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var lt := rotulo("Missões" if tem else "Missões: %d de %d" % [feitos, lista.size()], FONTE_PEQUENA + 2,
+			COR_SECUNDARIA, ht)
+	lt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lt.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	botao_info(lic["nome"], "A escola empresta o carro e as peças, sem custo. Monte o carro e teste a montagem; "
 			+ "bronze em todas as missões dá a licença.", ht)
-	var estado := ["CONQUISTADA", COR_BOM] if tem else (["exige a licença %s" % lic["requisito"], COR_RUIM] if bloqueada
-			else ["%d de %d missões" % [feitos, lista.size()], COR_INFO])
-	selos([estado, ["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
 	nota("icone_licenca", "Carro e peças da escola, grátis", "", v)
 	for ct in lista:
 		separador(v)

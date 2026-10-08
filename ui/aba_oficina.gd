@@ -298,6 +298,9 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 			else _ganho(antes, depois) + _forma_curta(antes, depois))
 	g.add_theme_font_size_override("font_size", FONTE_PEQUENA)
 	g.add_theme_color_override("font_color", COR_BOM)
+	# Quebra linha: texto longo (câmbio) não empurra o preço para fora.
+	g.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	g.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	esq.add_child(g)
 	h.add_child(esq)
 	var l := Label.new()
