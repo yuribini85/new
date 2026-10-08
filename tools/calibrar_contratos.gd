@@ -7,7 +7,7 @@ extends SceneTree
 ## playtest; ver data/README.md):
 ##
 ## Comum: voltas e limite de potência do carro da escola vêm dos testes da
-## licença B (licencas.json). A escola oferece todas as peças do catálogo que
+## licença (licencas.json; sem testes, os da anterior). A escola oferece todas as peças do catálogo que
 ## servem no carro. Busca de montagem: gulosa (a peça que mais ajuda por vez)
 ## e depois enxuta (tira o que não faz falta) — o jogador pode achar melhor.
 ##
@@ -79,9 +79,17 @@ func _calibrar() -> void:
 		if a.begins_with("--licenca="):
 			_licenca = a.trim_prefix("--licenca=")
 	var lic: Dictionary = _dados.item("licencas", _licenca)
-	_voltas = int(lic["testes"][0]["voltas"])
+	# Sem testes do GT2 (ELITE): voltas e limite dos testes da licença anterior,
+	# a mesma regra do tempo de treino (Licencas.treino_s).
+	var testes: Array = lic.get("testes", [])
+	var ids: Array = _dados.lista("licencas").map(func(l): return l["id"])
+	var k := ids.find(_licenca)
+	while testes.is_empty() and k > 0:
+		k -= 1
+		testes = _dados.item("licencas", ids[k]).get("testes", [])
+	_voltas = int(testes[0]["voltas"])
 	var limite := INF
-	for t in lic["testes"]:
+	for t in testes:
 		limite = minf(limite, float(t.get("restricoes", {}).get("potencia_max", INF)))
 	var pistas: Array = _dados.lista("pistas").map(func(p): return p["id"])
 	var escola: Array = _dados.lista("carros").filter(func(c): return float(c["potencia"]) <= limite)
@@ -233,19 +241,20 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 			for c in escola:
 				var so1 := _guloso(c, p1, [])
 				var so2 := _guloso(c, p2, [])
+				var so1_em_p2 := _tempo(_montar(c, so1["pecas"], so1["ajuste"]), p2)
+				var so2_em_p1 := _tempo(_montar(c, so2["pecas"], so2["ajuste"]), p1)
 				var tentativas := 0
-				for par in _pares_de_rivais(c, p1, p2, todos):
+				for par in _pares_de_rivais(c, p1, p2, todos, so1["tempo"], so2["tempo"]):
 					if tentativas >= PARES_MAX:
 						break
 					var r1: Dictionary = par[0]
 					var r2: Dictionary = par[1]
-					var alvo := {p1: _tempo(_montar(r1, []), p1), p2: _tempo(_montar(r2, []), p2)}
+					var alvo := {p1: _fabrica(r1, p1), p2: _fabrica(r2, p2)}
 					# Se a melhor montagem só para uma pista não vence ali, a conjunta também não.
 					if so1["tempo"] >= alvo[p1] - FOLGA_MINIMA_DUPLA or so2["tempo"] >= alvo[p2] - FOLGA_MINIMA_DUPLA:
 						continue
 					# A melhor só para uma pista precisa perder na outra.
-					var especializa: bool = _tempo(_montar(c, so1["pecas"], so1["ajuste"]), p2) >= alvo[p2] \
-							or _tempo(_montar(c, so2["pecas"], so2["ajuste"]), p1) >= alvo[p1]
+					var especializa: bool = so1_em_p2 >= alvo[p2] or so2_em_p1 >= alvo[p1]
 					if not especializa:
 						continue
 					tentativas += 1
@@ -280,21 +289,40 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 
 ## Pares (rival na pista 1, rival na pista 2), diferentes, que vencem o carro de
 ## fábrica em sua pista, do par mais fácil (menor soma de vantagem) ao mais difícil.
-func _pares_de_rivais(c: Dictionary, p1: String, p2: String, todos: Array) -> Array:
-	var f1 := _tempo(_montar(c, []), p1)
-	var f2 := _tempo(_montar(c, []), p2)
-	var pares := []
+## Só entram rivais que a melhor montagem para a pista bate com folga (`so1`,
+## `so2`; senão a conjunta também não bate) — o mesmo corte que _dois_circuitos faz.
+func _pares_de_rivais(c: Dictionary, p1: String, p2: String, todos: Array, so1: float, so2: float) -> Array:
+	var f1 := _fabrica(c, p1)
+	var f2 := _fabrica(c, p2)
+	var lista1 := []
+	var lista2 := []
 	for a in todos:
-		var ta := _tempo(_montar(a, []), p1)
-		if a["id"] == c["id"] or ta >= f1:
+		if a["id"] == c["id"]:
 			continue
-		for b in todos:
-			var tb := _tempo(_montar(b, []), p2)
-			if b["id"] == c["id"] or b["id"] == a["id"] or tb >= f2:
-				continue
-			pares.append([a, b, (f1 - ta) + (f2 - tb)])
-	pares.sort_custom(func(x, y): return x[2] < y[2])
+		var ta := _fabrica(a, p1)
+		if ta < f1 and so1 < ta - FOLGA_MINIMA_DUPLA:
+			lista1.append([a, f1 - ta])
+		var tb := _fabrica(a, p2)
+		if tb < f2 and so2 < tb - FOLGA_MINIMA_DUPLA:
+			lista2.append([a, f2 - tb])
+	var pares := []
+	for x in lista1:
+		for y in lista2:
+			if x[0]["id"] != y[0]["id"]:
+				pares.append([x[0], y[0], x[1] + y[1]])
+	pares.sort_custom(func(u, v): return u[2] < v[2])
 	return pares
+
+
+## Tempo de fábrica de um carro numa pista (montar é caro: cache por id).
+var _fabricas := {}
+
+
+func _fabrica(c: Dictionary, pista: String) -> float:
+	var chave := "%s|%s" % [c["id"], pista]
+	if not _fabricas.has(chave):
+		_fabricas[chave] = _tempo(_montar(c, []), pista)
+	return _fabricas[chave]
 
 
 ## Montagem gulosa: a cada passo, a opção (peça de categoria vazia ou ajuste
