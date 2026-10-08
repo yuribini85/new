@@ -164,13 +164,12 @@ func _calibrar() -> void:
 ## Os carros já usados são os dos contratos que vêm antes dele (a ordem da busca).
 func _so_custo(escola: Array, todos: Array, pistas: Array) -> void:
 	var antigos: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
-	var prefixo := "" if _licenca == _dados.lista("licencas")[0]["id"] else _licenca.to_lower() + "_"
 	var i := -1
 	var usados := []
 	for k in antigos.size():
 		if antigos[k]["licenca"] != _licenca:
 			continue
-		if antigos[k]["id"] == prefixo + "ultimo_credito":
+		if String(antigos[k]["id"]).ends_with("ultimo_credito"):  # o prefixo varia (ic_ dos saves antigos)
 			i = k
 			break
 		usados.append(antigos[k]["carro"])
@@ -182,7 +181,7 @@ func _so_custo(escola: Array, todos: Array, pistas: Array) -> void:
 		push_error("%s: \"O último giro\" sem solução com os preços novos" % _licenca)
 		return
 	c["licenca"] = _licenca
-	c["id"] = prefixo + c["id"]
+	c["id"] = antigos[i]["id"]
 	print("%s: %s · %s (antes: %s · %s)" % [c["id"], c["carro"], JSON.stringify(c["condicoes"]), antigos[i]["carro"],
 			JSON.stringify(antigos[i]["condicoes"])])
 	if c["carro"] != antigos[i]["carro"]:
