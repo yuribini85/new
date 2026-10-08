@@ -18,10 +18,10 @@ var _destaque: Destaque
 const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE"]
 var _voltar: Button
 var _ao_vivo: Button
-## Destinos da barra de baixo: [rótulo, índice da aba]. Oficina e Corrida são
+## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
 ## telas internas (de Garagem e Competições), abertas pelo caminho do jogo.
 const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"], ["Competições", 3, "aba_competicoes"],
-	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "icone_piloto"]]
+	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"]]
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
@@ -182,6 +182,8 @@ func _navegacao() -> HBoxContainer:
 		b.add_theme_font_size_override("font_size", 20)
 		b.clip_text = true
 		var ic := Aba.icone_reduzido(d[2], 78)
+		if ic == null and d.size() > 3:
+			ic = Aba.icone_reduzido(d[3], 78)  # ícone provisório até a arte chegar
 		if ic != null:
 			b.icon = ic
 			b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
