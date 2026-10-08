@@ -311,7 +311,7 @@ func equipes_do_carro(carro_id: String) -> Array:
 
 static func texto_fator(v: float, curto := false) -> String:
 	var pct := roundi((v - 1.0) * 100.0)
-	return ("fábrica" if curto else "de fábrica") if pct == 0 else "%+d%%" % pct
+	return ("Original" if curto else "original") if pct == 0 else "%+d%%" % pct
 
 
 func atributos_carro(a: Dictionary, pai: Control = null, antes: Dictionary = {}) -> GridContainer:

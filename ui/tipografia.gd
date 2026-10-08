@@ -36,11 +36,12 @@ static func fonte(peso: String) -> Font:
 
 
 ## Ação principal: preenchida no ocre, texto escuro, caixa alta.
-static func acao_primaria(b: Button, texto: String, fundo := Aba.COR_DESTAQUE, cor := Color(0.1, 0.1, 0.1)) -> void:
+static func acao_primaria(b: Button, texto: String, fundo := Aba.COR_DESTAQUE, cor := Color(0.1, 0.1, 0.1),
+		tamanho := TAMANHO_PRIMARIA, altura := ALTURA_PRIMARIA) -> void:
 	b.text = texto.to_upper()
-	b.custom_minimum_size.y = ALTURA_PRIMARIA
+	b.custom_minimum_size.y = altura
 	b.add_theme_font_override("font", fonte("semibold"))
-	b.add_theme_font_size_override("font_size", TAMANHO_PRIMARIA)
+	b.add_theme_font_size_override("font_size", tamanho)
 	var normal := _caixa(fundo)
 	# Pressionado: um tom abaixo, sem animação.
 	var pressionado := _caixa(fundo.darkened(0.18))
@@ -57,13 +58,26 @@ static func acao_primaria(b: Button, texto: String, fundo := Aba.COR_DESTAQUE, c
 	b.add_theme_color_override("font_disabled_color", cor.lerp(fundo, 0.5))
 
 
+## Ação de mesmo peso que a principal mas sem o destaque (ex.: vender): fundo
+## escuro com borda fina, texto claro.
+static func acao_neutra(b: Button, texto: String, tamanho := TAMANHO_SECUNDARIA, altura := ALTURA_SECUNDARIA) -> void:
+	acao_primaria(b, texto, Aba.COR_CARTAO, Color(0.86, 0.87, 0.9), tamanho, altura)
+	for estado in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var sb: StyleBoxFlat = (b.get_theme_stylebox(estado) as StyleBoxFlat).duplicate()
+		sb.border_color = Color(1, 1, 1, 0.5 if estado == "focus" else 0.12)
+		sb.set_border_width_all(2)
+		b.add_theme_stylebox_override(estado, sb)
+	b.add_theme_color_override("font_disabled_color", Color(0.86, 0.87, 0.9, 0.4))
+
+
 ## Ação secundária: sem fundo, caixa alta, área de toque maior que o texto.
-static func acao_secundaria(b: Button, texto: String, cor := Color(0.86, 0.87, 0.9)) -> void:
+static func acao_secundaria(b: Button, texto: String, cor := Color(0.86, 0.87, 0.9),
+		tamanho := TAMANHO_SECUNDARIA, altura := ALTURA_SECUNDARIA) -> void:
 	b.text = texto.to_upper()
 	b.flat = true
-	b.custom_minimum_size.y = ALTURA_SECUNDARIA
+	b.custom_minimum_size.y = altura
 	b.add_theme_font_override("font", fonte("medium"))
-	b.add_theme_font_size_override("font_size", TAMANHO_SECUNDARIA)
+	b.add_theme_font_size_override("font_size", tamanho)
 	b.add_theme_color_override("font_color", cor)
 	b.add_theme_color_override("font_hover_color", cor)
 	b.add_theme_color_override("font_pressed_color", Aba.COR_DESTAQUE)
@@ -77,6 +91,12 @@ static func acao_secundaria(b: Button, texto: String, cor := Color(0.86, 0.87, 0
 	foco.border_color = Color(1, 1, 1, 0.5)
 	foco.border_width_bottom = 2
 	b.add_theme_stylebox_override("focus", foco)
+
+
+## Rótulo na família das ações (números, títulos curtos, rótulos em caixa alta).
+static func rotulo(l: Control, peso: String, tamanho: int) -> void:
+	l.add_theme_font_override("font", fonte(peso))
+	l.add_theme_font_size_override("font_size", tamanho)
 
 
 static func _caixa(cor: Color) -> StyleBoxFlat:

@@ -156,9 +156,8 @@ func _confirmar_novo() -> void:
 	v.add_child(d)
 	var apagar := Button.new()
 	# Vermelho mais fundo que o COR_RUIM: o branco precisa de contraste.
-	Tipografia.acao_primaria(apagar, "Apagar e começar", Aba.COR_RUIM.darkened(0.35), Color.WHITE)
-	apagar.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA
-	apagar.add_theme_font_size_override("font_size", Tipografia.TAMANHO_SECUNDARIA + 4)
+	Tipografia.acao_primaria(apagar, "Apagar e começar", Aba.COR_RUIM.darkened(0.35), Color.WHITE,
+			Tipografia.TAMANHO_SECUNDARIA + 4, Tipografia.ALTURA_SECUNDARIA)
 	apagar.pressed.connect(func():
 		get_node("/root/SaveManager").novo_jogo()
 		_entrar())

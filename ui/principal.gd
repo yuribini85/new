@@ -68,7 +68,7 @@ func _ready() -> void:
 	_voltar.pressed.connect(func(): _ir_para(PAI.get(_abas.current_tab, 0)))
 	topo.add_child(_voltar)
 	_saldo = Label.new()
-	_saldo.add_theme_font_size_override("font_size", FONTE_TITULO)
+	Tipografia.rotulo(_saldo, "semibold", FONTE_TITULO + 4)
 	_saldo.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_saldo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_saldo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -175,11 +175,12 @@ func _navegacao() -> HBoxContainer:
 	barra.add_theme_constant_override("separation", 8)
 	for d in DESTINOS:
 		var b := Button.new()
-		b.text = d[0]
+		b.text = String(d[0]).to_upper()
+		b.add_theme_font_override("font", Tipografia.fonte("medium"))
 		b.toggle_mode = true
 		b.custom_minimum_size = Vector2(0, ALTURA_BOTAO)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.add_theme_font_size_override("font_size", 20)
+		b.add_theme_font_size_override("font_size", 23)
 		b.clip_text = true
 		var ic := Aba.icone_reduzido(d[2], 78)
 		if ic == null and d.size() > 3:
@@ -203,7 +204,7 @@ func _atualizar_nav() -> void:
 		if DESTINOS[k][1] == ABA_EQUIPE:
 			_botoes[k].visible = cinco
 		# Cinco destinos: texto menor para os cinco caberem.
-		_botoes[k].add_theme_font_size_override("font_size", 17 if cinco else 20)
+		_botoes[k].add_theme_font_size_override("font_size", 20 if cinco else 23)
 
 
 func _ir_para(i: int) -> void:

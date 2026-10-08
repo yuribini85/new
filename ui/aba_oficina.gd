@@ -138,7 +138,7 @@ func construir() -> void:
 	else:
 		_pecas(c, seco)
 	if not c.pecas.is_empty():
-		botao_texto("Voltar ao carro de fábrica", func(): _fabrica(c), null)
+		botao_texto("Voltar ao carro original", func(): _fabrica(c), null)
 	botao("Escolher uma corrida", func(): ir_para.emit(EVENTOS), true, false)
 
 
@@ -470,7 +470,7 @@ func _remover(c: Carro, p: Dictionary) -> void:
 func _fabrica(c: Carro) -> void:
 	for cat in c.pecas.keys():
 		c.remover(cat)
-	avisar("%s voltou a ser de fábrica. As peças continuam suas." % c.base["nome"])
+	avisar("%s voltou ao original. As peças continuam suas." % c.base["nome"])
 
 
 func _comprar_pneu(c: Carro, pn: Dictionary) -> void:

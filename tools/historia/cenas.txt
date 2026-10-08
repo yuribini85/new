@@ -23,7 +23,7 @@ Elena: Abre a ficha antes de reclamar.
 [OPEN_GARAGE_TAB]
 [HIGHLIGHT_CAR_STATS]
 Elena: Potência e peso decidem a reta. Pneus e freios decidem a curva.
-Elena: "Fábrica" quer dizer que ninguém mexeu ainda.
+Elena: "Original" quer dizer que ninguém mexeu ainda.
 Adrian: E dá para mexer?
 Marcus: Temos {saldo}. É o preço de um jogo de freios.
 Elena: Então você já sabe o que comprar.
