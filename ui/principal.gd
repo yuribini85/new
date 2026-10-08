@@ -283,7 +283,7 @@ func _tema() -> Theme:
 
 
 func atualizar() -> void:
-	_saldo.text = "%s G" % Aba.dinheiro(jogador.economia.saldo)
+	_saldo.text = Aba.dinheiro(jogador.economia.saldo)  # o ícone da moeda ao lado já diz G
 	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
 	_atualizar_ao_vivo()
 	_atualizar_nav()
@@ -533,7 +533,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			v.add_child(hs)
 			g.icone("icone_creditos", 48, hs)
 			var liquido: int = int(c.get("folha", {}).get("patrocinio", 0)) - int(c.get("folha", {}).get("cobrado", 0))
-			var saldo := g.rotulo("%s → %s G  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - liquido - c["premio"]),
+			var saldo := g.rotulo("%s → %s  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - liquido - c["premio"]),
 					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, hs)
 			saldo.autowrap_mode = TextServer.AUTOWRAP_OFF
 			saldo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -653,7 +653,7 @@ func _primeira_vitoria(c: Dictionary) -> void:
 	var g: Aba = _todas[0]
 	_sobre.abrir("Primeira vitória!", func(v):
 		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
-		g.nota("icone_creditos", "Prêmio: +%s G" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
+		g.nota("icone_creditos", "Prêmio: +%s" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
 		g.nota("icone_dica", "Agora: corrida que paga mais, ou Oficina", "", v))
 
 
