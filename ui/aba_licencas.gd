@@ -206,6 +206,37 @@ func _preferencias() -> void:
 	_modo_teste(v)
 
 
+## Saves de teste (Cenarios): cada um num arquivo próprio; o seu jogo não muda.
+func _cenarios(v: VBoxContainer) -> void:
+	var sm := get_node("/root/SaveManager")
+	rotulo("Cenários de teste", FONTE_PEQUENA + 2, Color.WHITE, v)
+	if sm.cenario != "":
+		rotulo("Em uso: %s" % _nome_cenario(sm.cenario), FONTE_PEQUENA, COR_INFO, v)
+		botao("Voltar ao meu jogo", func():
+			sm.voltar_ao_jogo()
+			avisar("De volta ao seu jogo.")
+			ir_para.emit(GARAGEM), true, true, v)
+	for c in Cenarios.LISTA:
+		linha(String(c["nome"]), [["Abrir", _abrir_cenario.bind(c)]], null, v)
+		rotulo(String(c["detalhe"]), FONTE_PEQUENA - 2, COR_SECUNDARIA, v)
+
+
+func _abrir_cenario(c: Dictionary) -> void:
+	var erro: String = get_node("/root/SaveManager").usar_cenario(String(c["id"]))
+	if erro != "":
+		avisar("Não deu: %s." % erro, false)
+		return
+	avisar("Cenário: %s. Seu jogo ficou salvo." % c["nome"])
+	ir_para.emit(GARAGEM)
+
+
+static func _nome_cenario(id: String) -> String:
+	for c in Cenarios.LISTA:
+		if c["id"] == id:
+			return String(c["nome"])
+	return id
+
+
 ## Playtest (docs/playtest_percurso.md): modo e resumo do registro local.
 func _modo_teste(v: VBoxContainer) -> void:
 	separador(v)
@@ -230,6 +261,8 @@ func _modo_teste(v: VBoxContainer) -> void:
 	v.add_child(h)
 	nota("", "Só para testes", "Clareza: pode pular a corrida. Ritmo: sem pular, para medir sessão e renda. "
 			+ "Ligado, o aparelho registra as sessões (só local).", v)
+	if Preferencias.modo_teste != "":
+		_cenarios(v)
 	var sessoes := RegistroSessao.sessoes()
 	if sessoes.is_empty():
 		return

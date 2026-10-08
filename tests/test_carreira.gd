@@ -238,3 +238,30 @@ func test_equipe_folha_e_companheiro() -> void:
 	igual(j.economia.saldo, 0, "caixa não fica negativo")
 	j.free()
 	d.free()
+
+
+func test_cenarios_de_teste_montam() -> void:
+	var d := dados_fixture()
+	for c in Cenarios.LISTA:
+		var j: Node = JogadorScript.new()
+		igual(Cenarios.montar(d, j, c["id"]), "", "cenário %s monta" % c["id"])
+		match c["id"]:
+			"adrian_inicio", "adrian_ultima":
+				igual(j.personagem, "adrian", "%s: Adrian" % c["id"])
+			"elena_inicio":
+				igual(j.personagem, "elena", "Elena")
+				igual(j.garagem.lista().size(), 0, "garagem vazia depois do acidente")
+			"elena_primeira_compra":
+				igual(j.garagem.lista().size(), 1, "primeiro carro da Elena")
+			"second_driver":
+				verificar(not j.licencas.is_empty(), "licenças do cenário")
+			"segundo_piloto":
+				igual(j.garagem.lista().size(), 2, "dois carros")
+				verificar(j.carro_companheiro >= 0 and j.carro_companheiro != j.carro_ativo, "carro do companheiro")
+		if c["id"] == "adrian_ultima":
+			verificar(Prologo.deve_ultima_corrida(d, j), "próxima largada é a última do Adrian")
+		j.free()
+	var j2: Node = JogadorScript.new()
+	igual(Cenarios.montar(d, j2, "nenhum"), "cenário nenhum não existe", "cenário inválido")
+	j2.free()
+	d.free()

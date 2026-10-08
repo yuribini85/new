@@ -95,9 +95,8 @@ func avisar(texto: String, ok := true) -> void:
 		_avisos.remove_child(velho)
 		velho.queue_free()
 	if is_inside_tree():
-		get_tree().create_timer(DURACAO_AVISO).timeout.connect(func():
-			if is_instance_valid(p):
-				p.queue_free())
+		# Ligado ao próprio aviso: se ele já saiu (mais de 3), a ligação some junto.
+		get_tree().create_timer(DURACAO_AVISO).timeout.connect(p.queue_free)
 
 
 ## Painel modal com rolagem. montar(vbox) preenche o conteúdo; botoes =

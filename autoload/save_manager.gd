@@ -12,6 +12,11 @@ const CAMINHO_PADRAO := "user://save.json"
 ## Com --dados=<outra pasta>, o save fica separado para não misturar com o real.
 var caminho := CAMINHO_PADRAO
 
+## Cenário de teste em uso ("" = o jogo do jogador). Cada cenário grava no
+## próprio arquivo; o save do jogador fica intocado (Cenarios).
+var cenario := ""
+var _caminho_jogo := ""
+
 var relatorio_offline: Dictionary = {}
 ## Mensagem para o jogador quando o save não pôde ser usado ("" se tudo bem).
 var aviso := ""
@@ -41,6 +46,38 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
 		salvar()
+
+
+## Troca para um cenário de teste: grava o jogo atual no arquivo dele e monta
+## o cenário num arquivo próprio. "" ou o motivo.
+func usar_cenario(id: String) -> String:
+	var dados := get_node("/root/Dados")
+	var jogador := get_node("/root/Jogador")
+	salvar()
+	if cenario == "":
+		_caminho_jogo = caminho
+	var erro := Cenarios.montar(dados, jogador, id)
+	if erro != "":
+		voltar_ao_jogo()
+		return erro
+	cenario = id
+	caminho = "user://save_cenario_%s.json" % id
+	salvar()
+	return ""
+
+
+## Volta ao save do jogador (o cenário fica no arquivo dele).
+func voltar_ao_jogo() -> void:
+	if cenario == "" and _caminho_jogo == "":
+		return
+	salvar()
+	caminho = _caminho_jogo
+	cenario = ""
+	var dados := get_node("/root/Dados")
+	var jogador := get_node("/root/Jogador")
+	var r := carregar_protegido(caminho, jogador, dados)
+	if not r["carregou"]:
+		Prologo.iniciar(dados, jogador)
 
 
 func salvar() -> void:

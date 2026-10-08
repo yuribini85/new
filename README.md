@@ -7,25 +7,30 @@ colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 ## Estado
 
-Demo jogável. As oito etapas da ordem de implementação (`docs/plano_mvp.md`, seção 6)
-estão feitas, `data/` tem o balanceamento importado do disco do GT2 e há telas
-provisórias para celular em retrato (sem arte).
+Demo jogável com a história. As fases 1 a 9 do documento de implementação "Second
+Driver" estão feitas (decisões 32 a 38 em `docs/plano_mvp.md`); `data/` tem o
+balanceamento importado do disco do GT2; a arte final de personagens e equipes ainda vai
+chegar (hoje: placeholders).
 
 O que existe hoje:
 
-- concessionária de novos e usados (usados por período, como no GT2), garagem, oficina
-  com peças e pneus por carro, venda;
-- 38 eventos em 18 séries sem licença, B e A; licença B por contratos de certificação
-  (carro e peças da escola) e A por teste de tempo;
-- corrida resolvida pela simulação e reproduzida em 3D isométrico (carro original
-  gerado em código, ambiente por pista), em tempo real, com minimapa, placar e sons;
-- objetivos de carreira, "O que ajuda?", análise da derrota, coleção e fichas;
-- fila de repetições, progresso offline com teto, save com `.bak` e proteção contra
-  arquivo corrompido ou de versão antiga.
+- história como camada de dados: prólogo do Adrian, acidente, salto para a Elena,
+  Second Chance Motors, criação da Second Driver Motorsport; diálogos com tutorial
+  (abrir telas e destacar elementos) e flags;
+- concessionária de novos e usados, garagem, oficina com peças e pneus por carro,
+  pintura por cores do modelo, venda;
+- licenças CLUB a ELITE (treino por tempo, requisitos, avaliação por testes ou
+  contratos), eventos do GT2 com equipes e pilotos rivais, campeonatos por pontos,
+  resistência, copas de marca;
+- equipe do jogador: segundo piloto na mesma prova, caixa único, patrocínio e staff
+  (valores pendentes do playtest);
+- corrida resolvida pela simulação e reproduzida em 3D, com câmera automática, HUD,
+  minimapa e sons; fila de repetições (só repetição corre offline), save com `.bak`;
+- modo de playtest com registro local de sessões e cenários de teste (saves prontos em
+  pontos da história, num arquivo próprio: o save do jogador não muda).
 
-Em aberto: playtest do percurso inicial em celular (roteiro em
-`docs/playtest_percurso.md`) e alguns valores "a confirmar" em `data/README.md` (fração de
-revenda: como medir no GT2 está lá).
+Em aberto: playtest (patrocínio, staff, `fator_treino`), arte nova de personagens e
+equipes, e os valores "a confirmar" em `data/README.md`.
 
 ## Jogar
 
@@ -39,10 +44,12 @@ autoload/dados.gd             carga e validação de data/*.json
 autoload/jogador.gd           estado do jogador (saldo, garagem, licenças, vitórias, dias)
 autoload/save_manager.gd      save com .bak e proteção; processa o offline ao abrir
 data_model/                   carro, pista, economia, garagem, concessionária, elegibilidade,
-                              carreira, licenças, usados, fila, save
+                              carreira, licenças, usados, fila, save, campeonatos, história,
+                              prólogo, equipe do jogador, cenários de teste
 sim/simulacao.gd              corrida headless (envelope de velocidade, arrasto, cortesia)
 visual/                       corrida 3D e minimapa, carro de blocos, vitrine, ícones (placeholders)
-ui/                           telas: garagem, loja, oficina, eventos, corrida, licenças
+ui/                           telas: garagem, loja, oficina, eventos, corrida, carreira, equipe;
+                              diálogo e destaques do tutorial
 scenes/principal.tscn         cena principal (retrato 720×1280)
 data/                         balanceamento (gerado do GT2; ver data/README.md)
 tools/                        extração e importação do GT2, calibração, editor de pistas,
@@ -75,6 +82,13 @@ godot -- --dados=res://tests/fixtures/
 
 O save desse modo fica separado (`user://save_fixtures.json`).
 
+## Cenários de teste
+
+Carreira → Preferências → modo de playtest ligado → "Cenários de teste": Adrian no
+começo e antes da última corrida, Elena depois do acidente e com o primeiro carro,
+Second Driver criada e segundo piloto na equipe. Cada um grava em
+`user://save_cenario_<id>.json`; "Voltar ao meu jogo" retoma o save do jogador.
+
 ## Documentos
 
 | Arquivo | O que é |
@@ -83,6 +97,7 @@ O save desse modo fica separado (`user://save_fixtures.json`).
 | `docs/plano_mvp.md` | Escopo do primeiro build, sistemas, modelo da simulação, dados, ordem de implementação, riscos e decisões tomadas. |
 | `docs/playtest_percurso.md` | Roteiro do playtest: modalidades de clareza e de ritmo. |
 | `docs/medicao_progressao.md` | Progressão e renda por fase medidas pelo agente (`tools/medir_progressao.gd`). |
+| `docs/ids.md` | IDs de personagens, cenas, triggers, ações, flags, licenças, equipes e cenários (gerado por `tools/listar_ids.py`). |
 
 ## Regras do projeto
 
