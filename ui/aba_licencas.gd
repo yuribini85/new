@@ -314,6 +314,10 @@ func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
 			["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
 	if st == Licencas.COMPLETE:
 		return
+	if st == Licencas.AVAILABLE:
+		historia("LICENCA_DISPONIVEL:" + String(lic["id"]))
+	elif st == Licencas.READY:
+		historia("LICENCA_PRONTA")
 	for r in l.requisitos(lic["id"]):
 		rotulo("%s %s" % ["✓" if r["ok"] else "✗", r["texto"]], FONTE_PEQUENA, COR_BOM if r["ok"] else COR_RUIM, v)
 	var dur := l.treino_s(lic["id"])
@@ -326,6 +330,8 @@ func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
 				var erro := l.iniciar_treino(lic["id"], Time.get_unix_time_from_system())
 				if erro != "":
 					avisar(erro, false)
+				else:
+					historia("LICENCA_TREINO_INICIO")
 				mudou.emit()
 			botao("Iniciar treino", iniciar, true, true, h)
 		Licencas.TRAINING:
@@ -418,6 +424,7 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 	avisar("Teste %s: %.2f s · %s" % [String(t["id"]).to_upper(), r["tempo"],
 			String(r["grau"]).to_upper() if r["grau"] != "" else "reprovado"], r["grau"] != "")
 	if r["licenca_concedida"]:
+		historia("LICENCA_CONCEDIDA:" + String(lic["id"]))
 		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"])
 		painel.emit("%s conquistada!" % lic["nome"], func(v):
 			rotulo("Agora você pode correr %d corridas novas:" % liberadas.size(), 0, Color.WHITE, v)
@@ -581,6 +588,7 @@ func _enviar(ct: Dictionary) -> void:
 	_avaliacao = r
 	avisar("%s: %s" % [ct["nome"], String(r["grau"]).to_upper() if r["grau"] != "" else "não cumpriu"], r["grau"] != "")
 	if r["licenca_concedida"]:
+		historia("LICENCA_CONCEDIDA:" + String(ct["licenca"]))
 		var lic: Dictionary = dados.item("licencas", ct["licenca"])
 		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"])
 		painel.emit("%s conquistada!" % lic["nome"], func(v):

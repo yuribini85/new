@@ -1,0 +1,1732 @@
+[
+ {
+  "id": "SCN_A01",
+  "trigger": "GAME_START",
+  "falas": [
+   {
+    "quem": "adrian",
+    "texto": "Ele ainda puxa para a direita."
+   },
+   {
+    "quem": "elena",
+    "texto": "Você disse isso ontem."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Ontem puxava menos."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ontem você não acertou a zebra da quatro."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Detalhe."
+   },
+   {
+    "quem": "elena",
+    "texto": "Abre a ficha."
+   },
+   {
+    "acao": "OPEN_GARAGE_TAB"
+   },
+   {
+    "acao": "HIGHLIGHT_CAR_STATS"
+   },
+   {
+    "quem": "elena",
+    "texto": "Peso, potência, tração, pneus. Aprende esses quatro antes de comprar qualquer coisa."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Eu conheço meu carro."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então para de reclamar que ele puxa."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "STORY_STARTED",
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A02",
+  "trigger": "ABA:EVENTOS",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Tem prova curta em Howlside."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Prêmio?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Baixo."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Perfeito."
+   },
+   {
+    "quem": "elena",
+    "texto": "Você nem perguntou quem corre."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Se o prêmio é baixo, ninguém rápido."
+   },
+   {
+    "quem": "elena",
+    "texto": "Essa teoria vai durar pouco."
+   },
+   {
+    "acao": "HIGHLIGHT_EVENT_CARD"
+   },
+   {
+    "quem": "elena",
+    "texto": "Antes de entrar: licença, limite do carro e pneus."
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [
+   "EVENT_MENU_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A03",
+  "trigger": "EVENTO_SELECIONADO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Freio dianteiro acabou."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Acabou quanto?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "O suficiente."
+   },
+   {
+    "quem": "elena",
+    "texto": "Compra outro."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Tem opção mais barata?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Tem parede."
+   },
+   {
+    "acao": "OPEN_TUNE_SERVICE"
+   },
+   {
+    "acao": "HIGHLIGHT_BRAKES"
+   },
+   {
+    "quem": "elena",
+    "texto": "Não compra potência porque o número fica bonito. Compra o que resolve o problema."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A03B",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Agora dá."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Agora posso pedir motor?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Não."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [
+   "FIRST_TUNE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A04",
+  "trigger": "CORRIDA_INICIO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Três voltas."
+   },
+   {
+    "quem": "elena",
+    "texto": "Não tenta ganhar na primeira curva."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Então em qual?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Na última."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Finalmente um conselho útil."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_BRIEFED"
+  ],
+  "flags": [
+   "FIRST_RACE_BRIEFED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A05",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "adrian",
+    "texto": "Viu?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Vi."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Você pode demonstrar mais entusiasmo."
+   },
+   {
+    "quem": "elena",
+    "texto": "Posso."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ela não vai."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_DONE"
+  ],
+  "flags": [
+   "FIRST_RACE_DONE",
+   "FIRST_WIN_ADRIAN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "condicao": {
+   "posicao": 1
+  },
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A05B",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Terminamos."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Essa era a parte boa?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Você terminou. Agora sabe onde perdeu."
+   },
+   {
+    "quem": "elena",
+    "texto": "Corrida perdida também paga informação."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_DONE"
+  ],
+  "flags": [
+   "FIRST_RACE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "condicao": {
+   "posicao_min": 2
+  },
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A07",
+  "trigger": "EVENTO_BLOQUEADO",
+  "falas": [
+   {
+    "quem": "adrian",
+    "texto": "Estamos fora por quê?"
+   },
+   {
+    "quem": "elena",
+    "texto": "O regulamento."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Estranho reclamar de carro demais."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Só até a inscrição negar você."
+   },
+   {
+    "quem": "elena",
+    "texto": "Cada prova pede um carro. Não existe \"melhor carro\". Existe carro certo."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "EVENT_REQUIREMENTS_TUTORIAL_DONE"
+  ],
+  "flags": [
+   "EVENT_REQUIREMENTS_TUTORIAL_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A08",
+  "trigger": "CAMPEONATO_SELECIONADO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Isso não é corrida única."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Eu sei ler."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então lê os pontos."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Você gosta muito dessa frase."
+   },
+   {
+    "quem": "elena",
+    "texto": "Porque você lê pouco."
+   },
+   {
+    "quem": "elena",
+    "texto": "Você não precisa ganhar todas. Precisa parar de jogar fora resultado."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Essa foi pessoal."
+   },
+   {
+    "quem": "elena",
+    "texto": "Foi estatística."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "CHAMPIONSHIP_TUTORIAL_DONE"
+  ],
+  "flags": [
+   "CHAMPIONSHIP_TUTORIAL_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A10",
+  "trigger": "ABA:LICENCAS",
+  "falas": [
+   {
+    "quem": "elena",
+    "texto": "Você já tem Club e Sport. Para de olhar isso."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Só queria ver quanto custa a próxima."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Se precisa perguntar, não temos."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ADRIAN_LICENSE_CONTEXT"
+  ],
+  "flags": [
+   "ADRIAN_LICENSE_CONTEXT"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A11",
+  "trigger": "ULTIMA_CORRIDA_ADRIAN",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Temperatura traseira subindo."
+   },
+   {
+    "quem": "elena",
+    "texto": "Duas voltas e entra."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Três."
+   },
+   {
+    "quem": "elena",
+    "texto": "Duas."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Se eu entrar em duas, perco o grupo."
+   },
+   {
+    "quem": "elena",
+    "texto": "Se ficar três, perde pneu."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Então eu não perco."
+   },
+   {
+    "quem": "elena",
+    "texto": "Adrian."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Duas e meia."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Isso não existe."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Agora existe."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "LAST_RACE_STARTED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A12",
+  "trigger": "RADIO_ULTIMA_CORRIDA",
+  "falas": [
+   {
+    "quem": "elena",
+    "texto": "Temperatura não caiu."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Eu sei."
+   },
+   {
+    "quem": "elena",
+    "texto": "Box."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Mais uma."
+   },
+   {
+    "quem": "elena",
+    "texto": "Adrian."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Mais uma."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A13",
+  "trigger": "ACIDENTE",
+  "falas": [
+   {
+    "quem": "sistema",
+    "texto": "CORRIDA INTERROMPIDA"
+   },
+   {
+    "acao": "ACIDENTE_ADRIAN"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ADRIAN_DEAD",
+   "ADRIAN_CAR_DESTROYED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_B01",
+  "trigger": "POS_ACIDENTE",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Ligaram de novo."
+   },
+   {
+    "quem": "elena",
+    "texto": "Quem?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Seguro. Organização. Duas equipes."
+   },
+   {
+    "quem": "elena",
+    "texto": "Não atende."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Certo."
+   },
+   {
+    "quem": "elena",
+    "texto": "O carro?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não tem carro."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "EMPTY_GARAGE_SEEN"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "proxima": "SCN_B02",
+  "capitulo": "II"
+ },
+ {
+  "id": "SCN_B02",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "sistema",
+    "texto": "MESES DEPOIS"
+   },
+   {
+    "acao": "SALTO_TEMPORAL"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": true,
+  "uma_vez": true,
+  "proxima": "SCN_B03",
+  "capitulo": "II"
+ },
+ {
+  "id": "SCN_B03",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Você voltou."
+   },
+   {
+    "quem": "elena",
+    "texto": "Abri a porta."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Quanto você tem?"
+   },
+   {
+    "quem": "elena",
+    "texto": "O suficiente."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Isso nunca significa o suficiente."
+   },
+   {
+    "quem": "elena",
+    "texto": "É o que eu guardei."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Quer fazer o quê?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Comprar um carro."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Para vender depois?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Para correr."
+   },
+   {
+    "acao": "OPEN_DEALERSHIP"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELENA_RETURNED",
+   "SECOND_CHANCE_UNLOCKED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "II"
+ },
+ {
+  "id": "SCN_C01",
+  "trigger": "ABA:LOJA",
+  "falas": [
+   {
+    "quem": "vendedor",
+    "texto": "Primeiro carro?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Primeiro meu."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não escolhe por potência."
+   },
+   {
+    "quem": "elena",
+    "texto": "Peso."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Tração."
+   },
+   {
+    "quem": "elena",
+    "texto": "Preço de preparação."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Agora sim."
+   },
+   {
+    "acao": "HIGHLIGHT_USED_CAR_STATS"
+   },
+   {
+    "quem": "vendedor",
+    "texto": "Qualquer um desses sai hoje."
+   },
+   {
+    "quem": "elena",
+    "texto": "Hoje é importante."
+   }
+  ],
+  "requer": [
+   "SECOND_CHANCE_UNLOCKED"
+  ],
+  "proibe": [
+   "USED_DEALER_INTRO_SEEN"
+  ],
+  "flags": [
+   "USED_DEALER_INTRO_SEEN"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "III"
+ },
+ {
+  "id": "SCN_C05",
+  "trigger": "COMPRA_CARRO",
+  "falas": [
+   {
+    "quem": "vendedor",
+    "texto": "Quer garantia?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ele quer vender garantia."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu percebi."
+   },
+   {
+    "acao": "RETURN_TO_GARAGE"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ELENA_FIRST_CAR_BOUGHT"
+  ],
+  "flags": [
+   "ELENA_FIRST_CAR_BOUGHT"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "III"
+ },
+ {
+  "id": "SCN_D01",
+  "trigger": "LICENCA_EXIGIDA",
+  "falas": [
+   {
+    "quem": "sistema",
+    "texto": "LICENÇA CLUB EXIGIDA"
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu sei dirigir."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não foi isso que escreveram."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu ajudei Adrian a passar por metade disso."
+   },
+   {
+    "quem": "marcus",
+    "texto": "E o nome na licença era?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Abre."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "LICENSE_SYSTEM_UNLOCKED"
+  ],
+  "flags": [
+   "LICENSE_SYSTEM_UNLOCKED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "IV"
+ },
+ {
+  "id": "SCN_D02",
+  "trigger": "ABA:LICENCAS",
+  "falas": [
+   {
+    "quem": "responsavel",
+    "texto": "A Club tem treino e avaliação."
+   },
+   {
+    "quem": "elena",
+    "texto": "Quanto tempo?"
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Parte do treinamento continua enquanto você estiver fora."
+   },
+   {
+    "quem": "elena",
+    "texto": "E custa."
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Também."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Agora parece automobilismo."
+   },
+   {
+    "acao": "HIGHLIGHT_LICENSE_REQUIREMENTS"
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Você continua correndo o que já estiver liberado. O treinamento não precisa prender sua garagem."
+   }
+  ],
+  "requer": [
+   "LICENSE_SYSTEM_UNLOCKED"
+  ],
+  "proibe": [
+   "LICENSE_OFFLINE_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "LICENSE_OFFLINE_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "IV"
+ },
+ {
+  "id": "SCN_D03",
+  "trigger": "LICENCA_TREINO_INICIO",
+  "falas": [
+   {
+    "quem": "responsavel",
+    "texto": "Primeiro módulo iniciado."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então agora eu espero?"
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Agora você trabalha em outra coisa."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TRAINING_STARTED"
+  ],
+  "flags": [
+   "FIRST_TRAINING_STARTED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "IV"
+ },
+ {
+  "id": "SCN_D04",
+  "trigger": "LICENCA_PRONTA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Terminou."
+   },
+   {
+    "quem": "elena",
+    "texto": "O treino?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "O tempo. Agora falta você."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TRAINING_READY"
+  ],
+  "flags": [
+   "FIRST_TRAINING_READY"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "IV"
+ },
+ {
+  "id": "SCN_D05",
+  "trigger": "LICENCA_CONCEDIDA:CLUB",
+  "falas": [
+   {
+    "quem": "responsavel",
+    "texto": "Club aprovada."
+   },
+   {
+    "quem": "elena",
+    "texto": "Ótimo."
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Sport vem depois."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu sei."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ela já olhou o requisito."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELENA_CLUB_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "IV"
+ },
+ {
+  "id": "SCN_E01",
+  "trigger": "CORRIDA_INICIO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Não precisa provar nada na primeira."
+   },
+   {
+    "quem": "elena",
+    "texto": "Ótimo."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Normalmente alguém responde \"vou com calma\"."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu não respondi."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ELENA_FIRST_OFFICIAL_RACE"
+  ],
+  "flags": [
+   "ELENA_FIRST_OFFICIAL_RACE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "V"
+ },
+ {
+  "id": "SCN_E03",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Pronto."
+   },
+   {
+    "quem": "elena",
+    "texto": "O quê?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Agora você sabe."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu já sabia."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não do mesmo jeito."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ELENA_FIRST_WIN"
+  ],
+  "flags": [
+   "ELENA_FIRST_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "condicao": {
+   "posicao": 1
+  },
+  "capitulo": "V"
+ },
+ {
+  "id": "SCN_F01",
+  "trigger": "LICENCA_DISPONIVEL:SPORT",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Você já tem as vitórias."
+   },
+   {
+    "quem": "elena",
+    "texto": "Falta o treino."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Finalmente uma coisa que corrida não resolve sozinha."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SPORT_AVAILABLE_SEEN"
+  ],
+  "flags": [
+   "SPORT_AVAILABLE_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VI"
+ },
+ {
+  "id": "SCN_F03",
+  "trigger": "LICENCA_CONCEDIDA:SPORT",
+  "falas": [
+   {
+    "quem": "responsavel",
+    "texto": "Sport aprovada."
+   },
+   {
+    "quem": "elena",
+    "texto": "National?"
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Quando tiver resultados."
+   },
+   {
+    "quem": "marcus",
+    "texto": "E um campeonato."
+   },
+   {
+    "quem": "elena",
+    "texto": "Essa parte eu lembro."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELENA_SPORT_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VI"
+ },
+ {
+  "id": "SCN_G02",
+  "trigger": "GARAGEM_DOIS_CARROS",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Agora você tem escolha."
+   },
+   {
+    "quem": "elena",
+    "texto": "Agora eu tenho dois problemas."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Isso também."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_SECOND_CAR"
+  ],
+  "flags": [
+   "FIRST_SECOND_CAR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VII"
+ },
+ {
+  "id": "SCN_G03",
+  "trigger": "CAMPEONATO_VENCIDO",
+  "falas": [
+   {
+    "quem": "jornalista",
+    "texto": "Elena Cross. Primeira vitória de campeonato. Quanto do Adrian ainda existe no seu jeito de pilotar?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Não sei."
+   },
+   {
+    "quem": "jornalista",
+    "texto": "Vocês preparavam carros juntos."
+   },
+   {
+    "quem": "elena",
+    "texto": "Preparávamos."
+   },
+   {
+    "quem": "jornalista",
+    "texto": "Então existe influência."
+   },
+   {
+    "quem": "elena",
+    "texto": "Existe. Próxima."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "MEDIA_COMPARISON_STARTED"
+  ],
+  "flags": [
+   "MEDIA_COMPARISON_STARTED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VII"
+ },
+ {
+  "id": "SCN_H01",
+  "trigger": "CORRIDA_CONTRA:lucas_ward",
+  "falas": [
+   {
+    "quem": "lucas",
+    "texto": "Cross."
+   },
+   {
+    "quem": "elena",
+    "texto": "Ward."
+   },
+   {
+    "quem": "lucas",
+    "texto": "Seu irmão era rápido."
+   },
+   {
+    "quem": "elena",
+    "texto": "Era."
+   },
+   {
+    "quem": "lucas",
+    "texto": "Quase me pegou aqui."
+   },
+   {
+    "quem": "elena",
+    "texto": "Quase não aparece no resultado."
+   },
+   {
+    "quem": "lucas",
+    "texto": "Você é mesmo irmã dele."
+   },
+   {
+    "quem": "elena",
+    "texto": "Não precisava confirmar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "LUCAS_MET"
+  ],
+  "flags": [
+   "LUCAS_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VIII"
+ },
+ {
+  "id": "SCN_H02",
+  "trigger": "CORRIDA_CONTRA:lucas_ward",
+  "falas": [
+   {
+    "quem": "lucas",
+    "texto": "Você pilota diferente."
+   },
+   {
+    "quem": "elena",
+    "texto": "Todo mundo parece desapontado."
+   },
+   {
+    "quem": "lucas",
+    "texto": "Eu não."
+   },
+   {
+    "quem": "elena",
+    "texto": "Por quê?"
+   },
+   {
+    "quem": "lucas",
+    "texto": "Porque eu corro contra você."
+   }
+  ],
+  "requer": [
+   "LUCAS_MET"
+  ],
+  "proibe": [
+   "LUCAS_AFTER_RACE"
+  ],
+  "flags": [
+   "LUCAS_AFTER_RACE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VIII"
+ },
+ {
+  "id": "SCN_H03",
+  "trigger": "LICENCA_CONCEDIDA:NATIONAL",
+  "falas": [
+   {
+    "quem": "victor",
+    "texto": "Você está gastando muito para correr pouco."
+   },
+   {
+    "quem": "elena",
+    "texto": "Funciona."
+   },
+   {
+    "quem": "victor",
+    "texto": "Até parar de funcionar."
+   },
+   {
+    "quem": "elena",
+    "texto": "Veio dar conselho?"
+   },
+   {
+    "quem": "victor",
+    "texto": "Vim ver se os tempos eram reais."
+   },
+   {
+    "quem": "elena",
+    "texto": "E?"
+   },
+   {
+    "quem": "victor",
+    "texto": "São."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "VICTOR_MET"
+  ],
+  "flags": [
+   "VICTOR_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "VIII"
+ },
+ {
+  "id": "SCN_I03",
+  "trigger": "LICENCA_CONCEDIDA:INTERNATIONAL",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Agora eles vão ligar."
+   },
+   {
+    "quem": "elena",
+    "texto": "Quem?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Gente com carro melhor que o nosso."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELENA_INTERNATIONAL_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "proxima": "SCN_J01",
+  "capitulo": "IX"
+ },
+ {
+  "id": "SCN_J01",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "victor",
+    "texto": "Dois anos."
+   },
+   {
+    "quem": "elena",
+    "texto": "Como segundo carro."
+   },
+   {
+    "quem": "victor",
+    "texto": "Como segundo piloto."
+   },
+   {
+    "quem": "elena",
+    "texto": "Existe diferença?"
+   },
+   {
+    "quem": "victor",
+    "texto": "Uma enorme."
+   },
+   {
+    "quem": "victor",
+    "texto": "Lucas tem pontos, patrocinadores, desenvolvimento acumulado e responsabilidade de campeonato."
+   },
+   {
+    "quem": "elena",
+    "texto": "Se eu for mais rápida?"
+   },
+   {
+    "quem": "victor",
+    "texto": "Você ainda teria responsabilidades com a equipe."
+   },
+   {
+    "quem": "elena",
+    "texto": "Quem recebe a ordem?"
+   },
+   {
+    "quem": "victor",
+    "texto": "Você."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então não."
+   },
+   {
+    "quem": "victor",
+    "texto": "Não estou dizendo para sempre."
+   },
+   {
+    "quem": "elena",
+    "texto": "Só até você decidir."
+   },
+   {
+    "quem": "victor",
+    "texto": "É assim que funciona."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então não funciona para mim."
+   },
+   {
+    "quem": "victor",
+    "texto": "Vai jogar uma carreira fora por causa de uma palavra?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Não. Por causa do número antes dela."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "VICTOR_OFFER_REFUSED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "proxima": "SCN_K01",
+  "capitulo": "X"
+ },
+ {
+  "id": "SCN_K01",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Você recusou."
+   },
+   {
+    "quem": "elena",
+    "texto": "Sim."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Carro de fábrica."
+   },
+   {
+    "quem": "elena",
+    "texto": "Sim."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Salário."
+   },
+   {
+    "quem": "elena",
+    "texto": "Marcus."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Só catalogando perdas."
+   },
+   {
+    "quem": "elena",
+    "texto": "Vamos correr."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Com quem?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Com eles."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não. Quem somos nós?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Second Driver."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Isso é sério?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Agora é."
+   },
+   {
+    "quem": "sistema",
+    "texto": "SECOND DRIVER MOTORSPORT CRIADA"
+   },
+   {
+    "acao": "UNLOCK_TEAM_TAB"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "SECOND_DRIVER_CREATED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XI"
+ },
+ {
+  "id": "SCN_M01",
+  "trigger": "LICENCA_DISPONIVEL:PRO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Adrian nunca chegou nessa."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu sei."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não. Ele nunca chegou nem perto."
+   },
+   {
+    "quem": "elena",
+    "texto": "Isso ajuda."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Era a intenção."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "PRO_AVAILABLE_SEEN"
+  ],
+  "flags": [
+   "PRO_AVAILABLE_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XIII"
+ },
+ {
+  "id": "SCN_M03",
+  "trigger": "LICENCA_CONCEDIDA:PRO",
+  "falas": [
+   {
+    "quem": "sophie",
+    "texto": "Agora começamos a gastar dinheiro de verdade."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ela fala isso como se antes fosse brincadeira."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "PRO_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XIII"
+ },
+ {
+  "id": "SCN_P01",
+  "trigger": "LICENCA_DISPONIVEL:ELITE",
+  "falas": [
+   {
+    "quem": "sistema",
+    "texto": "CERTIFICAÇÃO ELITE DISPONÍVEL"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Essa é a que Adrian queria."
+   },
+   {
+    "quem": "elena",
+    "texto": "Ele tinha os requisitos?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Não."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então ele queria o nome."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Como todo mundo."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ELITE_AVAILABLE"
+  ],
+  "flags": [
+   "ELITE_AVAILABLE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XVI"
+ },
+ {
+  "id": "SCN_P03",
+  "trigger": "LICENCA_CONCEDIDA:ELITE",
+  "falas": [
+   {
+    "quem": "responsavel",
+    "texto": "Elite aprovada."
+   },
+   {
+    "quem": "elena",
+    "texto": "Pronto."
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Era isso?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Era."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELITE_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XVI"
+ },
+ {
+  "id": "SYS_01",
+  "trigger": "SEM_DINHEIRO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Não temos isso."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false
+ },
+ {
+  "id": "SYS_02",
+  "trigger": "EVENTO_BLOQUEADO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Bom carro. Corrida errada."
+   }
+  ],
+  "requer": [
+   "EVENT_REQUIREMENTS_TUTORIAL_DONE"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false
+ },
+ {
+  "id": "SYS_04",
+  "trigger": "POTENCIA_ACIMA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Você comprou potência que o regulamento não aceita."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false
+ },
+ {
+  "id": "SYS_09",
+  "trigger": "LICENCA_EM_TREINO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Treinamento ainda correndo."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false
+ },
+ {
+  "id": "SYS_10",
+  "trigger": "LICENCA_PRONTA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Seu papel ficou pronto. Agora falta dirigir."
+   }
+  ],
+  "requer": [
+   "FIRST_TRAINING_READY"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false
+ },
+ {
+  "id": "SYS_07",
+  "trigger": "COMPRA_CARRO_NOVO",
+  "falas": [
+   {
+    "quem": "sophie",
+    "texto": "Sem histórico."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Sem desculpa também."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_NEW_CAR"
+  ],
+  "flags": [
+   "FIRST_NEW_CAR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena"
+ },
+ {
+  "id": "SYS_ENDURANCE",
+  "trigger": "CORRIDA_RESISTENCIA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Velocidade ganha volta. Isso aqui ganha quem não quebra."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_ENDURANCE"
+  ],
+  "flags": [
+   "FIRST_ENDURANCE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true
+ }
+]

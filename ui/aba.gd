@@ -502,6 +502,11 @@ func selos(lista: Array, pai: Control = null) -> Control:
 
 
 ## Avisa a tela principal (aviso no topo).
+## Dispara um trigger da história (Historia); true se uma cena foi pedida.
+func historia(trigger: String, ctx: Dictionary = {}) -> bool:
+	return jogador.historia != null and jogador.historia.disparar(trigger, ctx)
+
+
 func avisar(t: String, ok := true) -> void:
 	aviso.emit(t, ok)
 

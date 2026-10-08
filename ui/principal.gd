@@ -12,6 +12,9 @@ var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
 var _sobre: Sobreposicao
+var _dialogo: Dialogo
+## Nome de cada aba no trigger da história (ABA:<nome>).
+const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS"]
 var _voltar: Button
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba]. Oficina e Corrida são
@@ -127,6 +130,14 @@ func _ready() -> void:
 	for a in _todas:
 		a.aviso.connect(_sobre.avisar)
 		a.painel.connect(_sobre.abrir)
+	if jogador.historia != null:
+		_dialogo = Dialogo.new(jogador.historia)
+		add_child(_dialogo)
+		jogador.historia.cena.connect(_dialogo.enfileirar)
+		_dialogo.acao.connect(_acao_tutorial)
+		_dialogo.terminou.connect(func(_c):
+			atualizar()
+			get_node("/root/SaveManager").salvar())
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid
 	atualizar()
@@ -146,6 +157,8 @@ func _ready() -> void:
 	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
 	_fila_vista = jogador.fila
 	RegistroSessao.inicio(jogador)
+	if jogador.historia != null:
+		jogador.historia.disparar("GAME_START")
 
 
 func _navegacao() -> HBoxContainer:
@@ -174,6 +187,8 @@ func _navegacao() -> HBoxContainer:
 
 func _ir_para(i: int) -> void:
 	_abas.current_tab = i
+	if jogador.historia != null:
+		jogador.historia.disparar("ABA:" + NOMES_ABA[i])
 	RegistroSessao.tela(i)
 	var destino: int = PAI.get(i, i)
 	for k in _botoes.size():
@@ -262,6 +277,22 @@ func atualizar() -> void:
 	get_node("/root/SaveManager").salvar()
 
 
+## Ações de tutorial das cenas (TutorialAction): abrir a tela certa. Os destaques
+## (HIGHLIGHT_*) ainda não têm âncora na interface e não fazem nada; as ações do
+## prólogo (acidente, salto temporal) vão para `historia_acao`.
+signal historia_acao(nome: String)
+
+
+func _acao_tutorial(nome: String) -> void:
+	var abas := {"OPEN_GARAGE_TAB": 0, "RETURN_TO_GARAGE": 0, "OPEN_DEALERSHIP": 1, "OPEN_TUNE_SERVICE": 2,
+			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5}
+	if abas.has(nome):
+		_ir_para(abas[nome])
+		atualizar()
+	else:
+		historia_acao.emit(nome)
+
+
 ## Decisão 34: prova inédita ou etapa de campeonato só corre com o app aberto.
 func _texto_recomecou(evento_id: String) -> String:
 	return "%s recomeçou agora: prova inédita e etapa de campeonato só correm com o app aberto." \
@@ -342,6 +373,9 @@ func _registrar_fila() -> void:
 ## recompensa e a próxima decisão.
 func _resultado(c: Dictionary, primeira: bool) -> void:
 	var g: Aba = _todas[0]
+	g.historia("CORRIDA_FIM", {"posicao": int(c["posicao"])})
+	if c.get("campeonato", {}).get("campeao", false):
+		g.historia("CAMPEONATO_VENCIDO")
 	var venceu: bool = c["posicao"] == 1
 	var ev: Dictionary = dados.evento(c["evento_id"])
 	var continua: bool = not jogador.fila.is_empty()

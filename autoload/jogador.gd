@@ -25,6 +25,12 @@ var campeonatos: Dictionary = {}
 var titulos: Dictionary = {}
 ## Treino de licença em andamento ou feito: {licença: início (segundos Unix)}.
 var treinos: Dictionary = {}
+## História (decisão 32): personagem jogável ("" = sem história, saves antigos),
+## flags e cenas vistas.
+var personagem: String = ""
+var flags: Dictionary = {}
+var dialogos_vistos: Dictionary = {}
+var historia: Historia
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
@@ -51,6 +57,7 @@ func _ready() -> void:
 	if dados.carreira().get("teto_offline_s") != null:
 		carreira = Carreira.new(dados, self)
 		fila_ctrl = Fila.new(carreira, self, float(dados.carreira()["teto_offline_s"]))
+	historia = Historia.new(dados, self)
 
 
 func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
@@ -69,5 +76,8 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	campeonatos = {}
 	titulos = {}
 	treinos = {}
+	personagem = ""
+	flags = {}
+	dialogos_vistos = {}
 	historico = {}
 	dias = 0

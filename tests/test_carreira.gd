@@ -144,3 +144,24 @@ func test_campeonato_por_pontos() -> void:
 	verificar(not j.campeonatos.has("Copa Teste"), "temporada recomeça")
 	j.free()
 	d.free()
+
+
+func test_historia_escolhe_cena_por_trigger_flags_e_condicao() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var h := Historia.new(d, j)
+	igual(h.cena_para("GAME_START"), {}, "sem personagem, sem história")
+	j.personagem = "ana"
+	var c := h.cena_para("GAME_START")
+	igual(c.get("id"), "boas_vindas", "abertura")
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 1}), {}, "exige a flag da abertura")
+	var prox := h.concluir(c)
+	igual(prox.get("id"), "segue", "cena encadeada")
+	verificar(j.flags.has("COMECOU"), "flag gravada")
+	igual(h.cena_para("GAME_START"), {}, "uma vez só")
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 2}), {}, "condição de posição")
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 1}).get("id"), "vitoria", "vitória")
+	h.concluir(h.cena_para("SEM_DINHEIRO"))
+	igual(h.cena_para("SEM_DINHEIRO").get("id"), "sempre", "repetível")
+	j.free()
+	d.free()

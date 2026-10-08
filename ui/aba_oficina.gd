@@ -438,7 +438,10 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 	var motivo: String = jogador.concessionaria.comprar_peca(c, p)
 	if motivo != "":
 		avisar("Não deu para usar %s: %s." % [p["nome"], motivo], false)
+		if not jogador.economia.pode_pagar(int(p["preco"])):
+			historia("SEM_DINHEIRO")
 		return
+	historia("PECA_COMPRADA")
 	var mudancas := _diferencas(antes, c.atributos_efetivos("seco")).map(func(x): return x[0])
 	avisar("%s %s%s." % ["Em uso de novo:" if possuida else "Em uso:", p["nome"],
 			" (" + ", ".join(mudancas) + ")" if not mudancas.is_empty() else ""])
@@ -461,3 +464,4 @@ func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
 		avisar("Não comprou %s: %s." % [pn["nome"], motivo], false)
 	else:
 		avisar("Pneu comprado: %s" % pn["nome"])
+		historia("PECA_COMPRADA")

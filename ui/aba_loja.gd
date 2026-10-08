@@ -423,7 +423,14 @@ func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 	if uid <= 0:
 		avisar("Não deu para comprar %s: %s." % [c["nome"], "saldo insuficiente" if not jogador.economia.pode_pagar(preco)
 				else "saiu do estoque"], false)
+		if not jogador.economia.pode_pagar(preco):
+			historia("SEM_DINHEIRO")
 		return
 	if jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
 	entrega(jogador.garagem.carro(uid))
+	historia("COMPRA_CARRO")
+	if preco == int(c.get("preco", -1)):
+		historia("COMPRA_CARRO_NOVO")
+	if jogador.garagem.lista().size() == 2:
+		historia("GARAGEM_DOIS_CARROS")

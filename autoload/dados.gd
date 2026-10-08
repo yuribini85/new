@@ -28,6 +28,8 @@ const ESQUEMAS := {
 	"licencas": ["id", "nome", "testes"],
 	"contratos": ["id", "licenca", "nome", "carro", "provas", "condicoes"],
 	"equipes": ["id", "nome", "pilotos"],
+	"personagens": ["id", "nome"],
+	"dialogos": ["id", "trigger", "falas"],
 }
 
 ## arquivo -> chaves obrigatórias do objeto.
@@ -173,6 +175,14 @@ func _validar_referencias() -> void:
 
 
 	_validar_equipes()
+	for c in _listas["dialogos"].values():
+		var onde := "dialogos.json: '%s'" % c["id"]
+		_exigir(onde + " próxima", "dialogos", c.get("proxima"))
+		for f in c["falas"]:
+			if f.has("quem"):
+				_exigir(onde + " fala", "personagens", f["quem"])
+			elif not f.has("acao"):
+				_erros.append(onde + " fala sem quem nem ação")
 
 	for ct in _listas["contratos"].values():
 		var onde := "contratos.json: '%s'" % ct["id"]

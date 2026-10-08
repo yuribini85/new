@@ -1,0 +1,8 @@
+[
+	{"id": "boas_vindas", "trigger": "GAME_START", "personagem": "ana", "flags": ["COMECOU"],
+	 "falas": [{"quem": "ana", "texto": "Olá."}, {"acao": "OPEN_GARAGE_TAB"}], "proxima": "segue"},
+	{"id": "segue", "trigger": "ENCADEADA", "falas": [{"quem": "sistema", "texto": "Depois."}]},
+	{"id": "vitoria", "trigger": "CORRIDA_FIM", "personagem": "ana", "requer": ["COMECOU"], "condicao": {"posicao": 1},
+	 "falas": [{"quem": "ana", "texto": "Ganhou."}]},
+	{"id": "sempre", "trigger": "SEM_DINHEIRO", "uma_vez": false, "falas": [{"quem": "ana", "texto": "Sem dinheiro."}]}
+]

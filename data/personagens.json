@@ -1,0 +1,12 @@
+[
+ {"id": "adrian", "nome": "Adrian Cross", "retrato": "res://arte/pilotos/adrian_cross.png", "cor": "#3a6ea5"},
+ {"id": "elena", "nome": "Elena Cross", "retrato": "res://arte/pilotos/elena_cross.png", "cor": "#d9a521"},
+ {"id": "marcus", "nome": "Marcus Reed", "retrato": "res://arte/personagens/marcus_reed.png", "cor": "#7a8a6a"},
+ {"id": "victor", "nome": "Victor Hale", "retrato": "res://arte/personagens/victor_hale.png", "cor": "#5a5f8a"},
+ {"id": "lucas", "nome": "Lucas Ward", "retrato": "res://arte/pilotos/lucas_ward.png", "cor": "#8a3a3a"},
+ {"id": "sophie", "nome": "Sophie Laurent", "retrato": "res://arte/personagens/sophie_laurent.png", "cor": "#6a5a8a"},
+ {"id": "vendedor", "nome": "Vendedor · Second Chance Motors", "retrato": "res://arte/personagens/vendedor.png", "cor": "#8a6a3a"},
+ {"id": "responsavel", "nome": "Vector Academy", "retrato": "res://arte/personagens/vector_academy.png", "cor": "#3a7a7a"},
+ {"id": "jornalista", "nome": "Jornalista", "retrato": "res://arte/personagens/jornalista.png", "cor": "#6a6a6a"},
+ {"id": "sistema", "nome": "", "retrato": "", "cor": "#000000"}
+]
