@@ -39,6 +39,9 @@ const LIMITE_SELO := 26
 var dados: Node
 var jogador: Node
 var conteudo: VBoxContainer
+## Âncoras dos destaques do tutorial (HIGHLIGHT_<nome> das cenas): nome ->
+## controle da tela atual. Refeitas a cada construir().
+var ancoras: Dictionary = {}
 
 
 func _init(dados_: Node, jogador_: Node, titulo_aba: String) -> void:
@@ -58,6 +61,7 @@ func atualizar() -> void:
 	for c in conteudo.get_children():
 		conteudo.remove_child(c)
 		c.queue_free()
+	ancoras = {}
 	construir()
 	if posicao > 0:
 		set_deferred("scroll_vertical", posicao)
@@ -65,6 +69,20 @@ func atualizar() -> void:
 
 ## Implementado por cada aba.
 func construir() -> void:
+	pass
+
+
+## Marca um controle como alvo do destaque `nome` (o primeiro registrado vale).
+## Um cartão marca o painel inteiro.
+func ancora(nome: String, c: Control) -> void:
+	if ancoras.has(nome):
+		return
+	ancoras[nome] = c.get_parent() if c is VBoxContainer and c.get_parent() is PanelContainer else c
+
+
+## Antes do destaque: a aba muda o que mostra para a âncora existir (ex.: a
+## Oficina abre o grupo do chassi para os freios). Implementado onde precisa.
+func preparar_destaque(_nome: String) -> void:
 	pass
 
 

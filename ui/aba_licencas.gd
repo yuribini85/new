@@ -309,6 +309,8 @@ const TEXTO_ESTADO := {
 func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
 	var cor: Color = {Licencas.COMPLETE: COR_BOM, Licencas.LOCKED: COR_NEUTRA}.get(st, COR_INFO)
 	var v := cartao(cor)
+	if st != Licencas.COMPLETE:
+		ancora("LICENSE_REQUIREMENTS", v)  # a próxima licença, não uma já feita
 	var ht := HBoxContainer.new()
 	v.add_child(ht)
 	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER

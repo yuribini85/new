@@ -277,6 +277,8 @@ func _cartao_usado(grade: GridContainer, o: Dictionary) -> void:
 	_bloco(grade, c, int(o["preco"]), "", extras,
 			func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos, cor_usado.to_html(false)), c,
 					int(o["preco"])), cor_usado)
+	if grade.get_child_count() == 1:
+		ancora("USED_CAR_STATS", grade.get_child(0))
 
 
 ## Concessionária de um fabricante: os novos dele; as versões de corrida por

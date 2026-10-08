@@ -48,7 +48,7 @@ func construir() -> void:
 	lt.autowrap_mode = TextServer.AUTOWRAP_OFF
 	lt.size_flags_horizontal = Control.SIZE_SHRINK_END
 	var a := c.atributos_efetivos("seco")
-	atributos_carro(a)
+	ancora("CAR_STATS", atributos_carro(a))
 	if not c.pecas.is_empty():
 		rotulo("%d peça%s instalada%s" % [c.pecas.size(), "" if c.pecas.size() == 1 else "s", "" if c.pecas.size() == 1 else "s"],
 				FONTE_PEQUENA, COR_SECUNDARIA)

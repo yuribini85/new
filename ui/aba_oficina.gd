@@ -190,6 +190,12 @@ func _correndo(c: Carro) -> bool:
 	return not jogador.fila.is_empty() and int(jogador.fila["uid"]) == c.uid
 
 
+## Destaque dos freios (tutorial): abre o grupo do chassi, onde eles ficam.
+func preparar_destaque(nome: String) -> void:
+	if nome == "BRAKES":
+		_grupo = "chassi"
+
+
 func _pecas(c: Carro, seco: Dictionary) -> void:
 	var por_categoria := {}
 	for p in dados.lista("pecas"):
@@ -210,6 +216,8 @@ func _pecas(c: Carro, seco: Dictionary) -> void:
 	for cat in por_categoria:
 		por_categoria[cat].sort_custom(func(a, b): return a["preco"] < b["preco"])
 		var v := cartao()
+		if cat == "brake":
+			ancora("BRAKES", v)
 		var attr: String = AFETA_CATEGORIA.get(cat, "potencia")
 		var cab := fileira(v)
 		if arte(MINIATURA_PECA.get(cat, "")) != null:

@@ -13,6 +13,7 @@ var _todas: Array = []
 var _botoes: Array = []
 var _sobre: Sobreposicao
 var _dialogo: Dialogo
+var _destaque: Destaque
 ## Nome de cada aba no trigger da história (ABA:<nome>).
 const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE"]
 var _voltar: Button
@@ -136,6 +137,8 @@ func _ready() -> void:
 	if jogador.historia != null:
 		_dialogo = Dialogo.new(jogador.historia)
 		add_child(_dialogo)
+		_destaque = Destaque.new()
+		add_child(_destaque)
 		jogador.historia.cena.connect(_dialogo.enfileirar)
 		_dialogo.acao.connect(_acao_tutorial)
 		_dialogo.terminou.connect(func(_c):
@@ -293,9 +296,9 @@ func atualizar() -> void:
 	get_node("/root/SaveManager").salvar()
 
 
-## Ações de tutorial das cenas (TutorialAction): abrir a tela certa. Os destaques
-## (HIGHLIGHT_*) ainda não têm âncora na interface e não fazem nada; as ações do
-## prólogo (acidente, salto temporal) vão para `historia_acao`.
+## Ações de tutorial das cenas (TutorialAction): abrir a tela certa ou destacar
+## um ponto dela (HIGHLIGHT_<âncora>, ver Aba.ancora); as ações do prólogo e da
+## equipe vão para `historia_acao`.
 signal historia_acao(nome: String)
 
 
@@ -305,8 +308,36 @@ func _acao_tutorial(nome: String) -> void:
 	if abas.has(nome):
 		_ir_para(abas[nome])
 		atualizar()
+	elif nome.begins_with("HIGHLIGHT_"):
+		_destacar(nome.trim_prefix("HIGHLIGHT_"))
 	else:
 		historia_acao.emit(nome)
+
+
+## Destaque do tutorial: a âncora na aba aberta (ou, sem ela lá, na primeira
+## aba que a tem), rolada para o alto da tela, acima da caixa de diálogo.
+func _destacar(nome: String) -> void:
+	var aba: Aba = _todas[_abas.current_tab]
+	aba.preparar_destaque(nome)
+	aba.atualizar()
+	if not aba.ancoras.has(nome):
+		for i in _todas.size():
+			_todas[i].preparar_destaque(nome)
+			_todas[i].atualizar()
+			if _todas[i].ancoras.has(nome):
+				_ir_para(i)
+				aba = _todas[i]
+				break
+	if not aba.ancoras.has(nome):
+		return  # tela sem o elemento agora (ex.: garagem vazia): só o diálogo
+	# Espera o layout para saber onde o elemento ficou.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var alvo: Control = aba.ancoras.get(nome)
+	if not is_instance_valid(alvo):
+		return
+	aba.scroll_vertical = maxi(int(alvo.global_position.y - aba.conteudo.global_position.y) - 24, 0)
+	_destaque.mostrar(alvo)
 
 
 ## Prólogo: durante a última corrida do Adrian, o rádio e depois o acidente.

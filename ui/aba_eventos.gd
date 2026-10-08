@@ -204,6 +204,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
 	var tipo := _tipo(ev)
 	var v := cartao(tipo[1])
+	ancora("EVENT_CARD", v)
 	var faixa := fileira(v)
 	var t := rotulo(("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA"), FONTE_PEQUENA,
 			COR_BOM if vitorias > 0 else (tipo[1].lightened(0.35) if pode else COR_SECUNDARIA), faixa)
