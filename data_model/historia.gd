@@ -65,8 +65,38 @@ func disparar(trigger: String, ctx: Dictionary = {}) -> bool:
 	var c := cena_para(trigger, ctx)
 	if c.is_empty():
 		return false
-	cena.emit(c)
+	var com_ctx := c.duplicate()
+	com_ctx["_ctx"] = ctx
+	cena.emit(com_ctx)
 	return true
+
+
+## Variáveis das falas ({saldo}, {carro}, {evento}, {serie}, {pista}, {voltas},
+## {premio}, {posicao}, {peca}): o estado do jogo e o contexto do trigger
+## (evento = id da prova, posicao, peca, carro). As falas mostram o que o
+## jogador vê na tela, nunca um número inventado.
+func variaveis(ctx: Dictionary = {}) -> Dictionary:
+	var v := {"saldo": Aba.dinheiro(jogador.economia.saldo) + " Cr"}
+	var c: Carro = jogador.garagem.carro(jogador.carro_ativo) if jogador.garagem != null else null
+	if c != null:
+		v["carro"] = String(c.base["nome"])
+	var ev_id := String(ctx.get("evento", ""))
+	if ev_id == "" and not jogador.fila.is_empty():
+		ev_id = String(jogador.fila.get("evento_id", ""))
+	if ev_id != "" and dados.existe("eventos", ev_id):
+		var ev: Dictionary = dados.evento(ev_id)
+		v["evento"] = String(ev["nome"])
+		v["serie"] = Campeonatos.serie(ev)
+		v["pista"] = Aba.nome_pista(String(ev["pista"]))
+		v["voltas"] = str(int(ev["voltas"]))
+		if not ev.get("premios", []).is_empty():
+			v["premio"] = Aba.dinheiro(int(ev["premios"][0])) + " Cr"
+	if ctx.has("posicao"):
+		v["posicao"] = "%dº" % int(ctx["posicao"])
+	for k in ["peca", "carro"]:
+		if ctx.has(k):
+			v[k] = String(ctx[k])
+	return v
 
 
 ## Cena terminada: marca como vista e grava as flags. Retorna a próxima ({} se não há).

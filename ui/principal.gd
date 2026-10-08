@@ -459,9 +459,9 @@ func _registrar_fila() -> void:
 ## recompensa e a próxima decisão.
 func _resultado(c: Dictionary, primeira: bool) -> void:
 	var g: Aba = _todas[0]
-	g.historia("CORRIDA_FIM", {"posicao": int(c["posicao"])})
+	g.historia("CORRIDA_FIM", {"posicao": int(c["posicao"]), "evento": c["evento_id"]})
 	if c.get("campeonato", {}).get("campeao", false):
-		g.historia("CAMPEONATO_VENCIDO")
+		g.historia("CAMPEONATO_VENCIDO", {"evento": c["evento_id"]})
 	var venceu: bool = c["posicao"] == 1
 	var ev: Dictionary = dados.evento(c["evento_id"])
 	var continua: bool = not jogador.fila.is_empty()

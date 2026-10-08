@@ -315,8 +315,9 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		var pede_licenca: bool = motivos.any(func(m): return String(m).begins_with("licença"))
 		var recusar := func() -> void:
 			avisar("Inscrição recusada: %s." % ", ".join(motivos), false)
-			if not (pede_licenca and historia("LICENCA_EXIGIDA")):
-				historia("EVENTO_BLOQUEADO")
+			var ctx := {"evento": ev["id"]}
+			if not (pede_licenca and historia("LICENCA_EXIGIDA", ctx)):
+				historia("EVENTO_BLOQUEADO", ctx)
 		botao_texto("Inscrever", recusar, v)
 
 
@@ -476,12 +477,13 @@ func _regras(r: Dictionary) -> Array:
 ## uma inscrição. A fila guarda a preparação escolhida.
 func _correr(evento_id: String) -> void:
 	# História: a primeira inscrição pode virar tutorial (ex.: freio antes da prova).
-	if historia("EVENTO_SELECIONADO"):
+	var ctx := {"evento": evento_id}
+	if historia("EVENTO_SELECIONADO", ctx):
 		return
 	var ev: Dictionary = dados.evento(evento_id)
 	var etapas := Campeonatos.etapas(dados, Campeonatos.serie(ev))
 	if not etapas.is_empty() and etapas.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"]):
-		historia("CAMPEONATO_SELECIONADO")
+		historia("CAMPEONATO_SELECIONADO", ctx)
 	var garagem := carro_ativo()
 	var n := _repeticoes if jogador.vitorias.has(evento_id) else 1
 	var cfg: Dictionary = {} if _config < 0 or garagem == null else garagem.configuracoes[_config]
@@ -493,8 +495,8 @@ func _correr(evento_id: String) -> void:
 			dados.evento(evento_id)["nome"], "" if n == 1 else " ×%d" % n])
 	correr_iniciado.emit()
 	if Prologo.deve_ultima_corrida(dados, jogador):
-		historia("ULTIMA_CORRIDA_ADRIAN")
-	historia("CORRIDA_INICIO")
+		historia("ULTIMA_CORRIDA_ADRIAN", ctx)
+	historia("CORRIDA_INICIO", ctx)
 	if dados.evento(evento_id)["restricoes"].get("licenca", "") == "ELITE":
 		historia("CORRIDA_RESISTENCIA")
 	for g in jogador.carreira.escalacao(evento_id, int(jogador.fila.get("semente", -1))):

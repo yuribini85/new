@@ -1,31 +1,47 @@
 [
  {
-  "id": "SCN_A01",
+  "id": "SCN_A00",
   "trigger": "GAME_START",
   "falas": [
    {
-    "quem": "adrian",
-    "texto": "Ele ainda puxa para a direita."
+    "quem": "sistema",
+    "texto": "Anel do Vale. Fim de temporada."
    },
    {
-    "quem": "elena",
-    "texto": "Você disse isso ontem."
+    "quem": "sistema",
+    "texto": "Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus cuida do resto."
    },
    {
-    "quem": "adrian",
-    "texto": "Ontem puxava menos."
-   },
+    "quem": "sistema",
+    "texto": "Daqui até a Elite são seis licenças. Ninguém da família passou da segunda."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "STORY_STARTED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "proxima": "SCN_A01",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A01",
+  "trigger": "ENCADEADA",
+  "falas": [
    {
     "quem": "marcus",
-    "texto": "Ontem você não acertou a zebra da quatro."
+    "texto": "{carro} lavado, tanque cheio. Pronto para a Copa de Domingo."
    },
    {
     "quem": "adrian",
-    "texto": "Detalhe."
+    "texto": "Pronto não. Ele freia cedo demais."
    },
    {
     "quem": "elena",
-    "texto": "Abre a ficha."
+    "texto": "Abre a ficha antes de reclamar."
    },
    {
     "acao": "OPEN_GARAGE_TAB"
@@ -35,21 +51,32 @@
    },
    {
     "quem": "elena",
-    "texto": "Peso, potência, tração, pneus. Aprende esses quatro antes de comprar qualquer coisa."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Eu conheço meu carro."
+    "texto": "Potência e peso decidem a reta. Pneus e freios decidem a curva."
    },
    {
     "quem": "elena",
-    "texto": "Então para de reclamar que ele puxa."
+    "texto": "\"Fábrica\" quer dizer que ninguém mexeu ainda."
+   },
+   {
+    "quem": "adrian",
+    "texto": "E dá para mexer?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Temos {saldo}. É o preço de um jogo de freios."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então você já sabe o que comprar."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Melhorar o carro e compre Freios 1."
    }
   ],
   "requer": [],
   "proibe": [],
   "flags": [
-   "STORY_STARTED",
    "GARAGE_TUTORIAL_SEEN"
   ],
   "bloqueia": true,
@@ -59,83 +86,15 @@
  },
  {
   "id": "SCN_A02",
-  "trigger": "ABA:EVENTOS",
-  "falas": [
-   {
-    "quem": "marcus",
-    "texto": "Tem prova curta em Howlside."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Prêmio?"
-   },
-   {
-    "quem": "marcus",
-    "texto": "Baixo."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Perfeito."
-   },
-   {
-    "quem": "elena",
-    "texto": "Você nem perguntou quem corre."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Se o prêmio é baixo, ninguém rápido."
-   },
-   {
-    "quem": "elena",
-    "texto": "Essa teoria vai durar pouco."
-   },
-   {
-    "acao": "HIGHLIGHT_EVENT_CARD"
-   },
-   {
-    "quem": "elena",
-    "texto": "Antes de entrar: licença, limite do carro e pneus."
-   }
-  ],
-  "requer": [
-   "GARAGE_TUTORIAL_SEEN"
-  ],
-  "proibe": [],
-  "flags": [
-   "EVENT_MENU_TUTORIAL_SEEN"
-  ],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "adrian",
-  "capitulo": "I"
- },
- {
-  "id": "SCN_A03",
   "trigger": "EVENTO_SELECIONADO",
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Freio dianteiro acabou."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Acabou quanto?"
-   },
-   {
-    "quem": "marcus",
-    "texto": "O suficiente."
+    "texto": "Calma. Com freio de fábrica, a curva vira parede."
    },
    {
     "quem": "elena",
-    "texto": "Compra outro."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Tem opção mais barata?"
-   },
-   {
-    "quem": "marcus",
-    "texto": "Tem parede."
+    "texto": "Primeiro os freios. A inscrição espera."
    },
    {
     "acao": "OPEN_TUNE_SERVICE"
@@ -144,8 +103,8 @@
     "acao": "HIGHLIGHT_BRAKES"
    },
    {
-    "quem": "elena",
-    "texto": "Não compra potência porque o número fica bonito. Compra o que resolve o problema."
+    "quem": "sistema",
+    "texto": "Compre Freios 1. Depois volte em Correr."
    }
   ],
   "requer": [],
@@ -159,20 +118,32 @@
   "capitulo": "I"
  },
  {
-  "id": "SCN_A03B",
+  "id": "SCN_A03",
   "trigger": "PECA_COMPRADA",
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Agora dá."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Agora posso pedir motor?"
+    "texto": "{peca} montado."
    },
    {
     "quem": "elena",
-    "texto": "Não."
+    "texto": "Agora ele freia mais tarde que metade do grid."
+   },
+   {
+    "quem": "adrian",
+    "texto": "E a outra metade?"
+   },
+   {
+    "quem": "elena",
+    "texto": "A outra metade tem piloto melhor."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Engraçada."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Correr na barra de baixo."
    }
   ],
   "requer": [],
@@ -189,27 +160,73 @@
  },
  {
   "id": "SCN_A04",
+  "trigger": "ABA:EVENTOS",
+  "falas": [
+   {
+    "quem": "elena",
+    "texto": "Cada cartão é uma prova: pista, voltas, prêmio e o que o regulamento aceita."
+   },
+   {
+    "acao": "HIGHLIGHT_EVENT_CARD"
+   },
+   {
+    "quem": "elena",
+    "texto": "A barra \"seu carro × rivais\" diz se dá para ganhar antes de você tentar."
+   },
+   {
+    "quem": "marcus",
+    "texto": "A Copa de Domingo tem três etapas. É um campeonato."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Fecho as três e a gente fala de motor."
+   },
+   {
+    "quem": "elena",
+    "texto": "Fecha as três e a gente fala."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha a Copa de Domingo — etapa 1 e toque em Correr."
+   }
+  ],
+  "requer": [
+   "FIRST_TUNE_DONE"
+  ],
+  "proibe": [
+   "EVENT_MENU_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "EVENT_MENU_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A05",
   "trigger": "CORRIDA_INICIO",
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Três voltas."
-   },
-   {
-    "quem": "elena",
-    "texto": "Não tenta ganhar na primeira curva."
+    "texto": "{voltas} voltas em {pista}."
    },
    {
     "quem": "adrian",
-    "texto": "Então em qual?"
+    "texto": "Alguma ordem de equipe?"
    },
    {
     "quem": "elena",
-    "texto": "Na última."
+    "texto": "Não. A corrida corre sozinha. O que decidimos na garagem já está no carro."
    },
    {
     "quem": "adrian",
-    "texto": "Finalmente um conselho útil."
+    "texto": "Então eu só acelero."
+   },
+   {
+    "quem": "elena",
+    "texto": "Você acelera. Eu anoto."
    }
   ],
   "requer": [],
@@ -225,28 +242,24 @@
   "capitulo": "I"
  },
  {
-  "id": "SCN_A05",
+  "id": "SCN_A06",
   "trigger": "CORRIDA_FIM",
   "falas": [
    {
     "quem": "adrian",
-    "texto": "Viu?"
+    "texto": "Viu isso?"
    },
    {
     "quem": "elena",
-    "texto": "Vi."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Você pode demonstrar mais entusiasmo."
-   },
-   {
-    "quem": "elena",
-    "texto": "Posso."
+    "texto": "Vi. Freou mais tarde que todo mundo. Valeu cada crédito."
    },
    {
     "quem": "marcus",
-    "texto": "Ela não vai."
+    "texto": "Prêmio na conta."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Prêmios entram no saldo. Prova já vencida pode ser repetida, até com o app fechado."
    }
   ],
   "requer": [],
@@ -266,24 +279,20 @@
   "capitulo": "I"
  },
  {
-  "id": "SCN_A05B",
+  "id": "SCN_A06B",
   "trigger": "CORRIDA_FIM",
   "falas": [
    {
-    "quem": "marcus",
-    "texto": "Terminamos."
-   },
-   {
     "quem": "adrian",
-    "texto": "Essa era a parte boa?"
+    "texto": "{posicao}. Não era o plano."
    },
    {
     "quem": "elena",
-    "texto": "Você terminou. Agora sabe onde perdeu."
+    "texto": "A tela da corrida mostra onde você perdeu tempo. Olha antes de culpar o carro."
    },
    {
-    "quem": "elena",
-    "texto": "Corrida perdida também paga informação."
+    "quem": "marcus",
+    "texto": "E corre de novo. Corrida perdida também paga."
    }
   ],
   "requer": [],
@@ -307,23 +316,15 @@
   "falas": [
    {
     "quem": "adrian",
-    "texto": "Estamos fora por quê?"
+    "texto": "Recusaram a inscrição."
    },
    {
     "quem": "elena",
-    "texto": "O regulamento."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Estranho reclamar de carro demais."
-   },
-   {
-    "quem": "marcus",
-    "texto": "Só até a inscrição negar você."
+    "texto": "O motivo está no cartão: potência, tração, modelo ou licença."
    },
    {
     "quem": "elena",
-    "texto": "Cada prova pede um carro. Não existe \"melhor carro\". Existe carro certo."
+    "texto": "Não existe melhor carro. Existe o carro certo para cada prova."
    }
   ],
   "requer": [],
@@ -344,35 +345,23 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Isso não é corrida única."
+    "texto": "{serie}. Conta pontos."
+   },
+   {
+    "quem": "elena",
+    "texto": "Corra as etapas em ordem. Fora de ordem vira corrida comum."
    },
    {
     "quem": "adrian",
-    "texto": "Eu sei ler."
+    "texto": "E se eu não ganhar todas?"
    },
    {
     "quem": "elena",
-    "texto": "Então lê os pontos."
+    "texto": "Campeão é quem soma mais. Constância ganha título."
    },
    {
-    "quem": "adrian",
-    "texto": "Você gosta muito dessa frase."
-   },
-   {
-    "quem": "elena",
-    "texto": "Porque você lê pouco."
-   },
-   {
-    "quem": "elena",
-    "texto": "Você não precisa ganhar todas. Precisa parar de jogar fora resultado."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Essa foi pessoal."
-   },
-   {
-    "quem": "elena",
-    "texto": "Foi estatística."
+    "quem": "sistema",
+    "texto": "Prova inédita e etapa de campeonato só correm com o app aberto."
    }
   ],
   "requer": [],
@@ -388,20 +377,24 @@
   "capitulo": "I"
  },
  {
-  "id": "SCN_A10",
+  "id": "SCN_A09",
   "trigger": "ABA:LICENCAS",
   "falas": [
    {
     "quem": "elena",
-    "texto": "Você já tem Club e Sport. Para de olhar isso."
+    "texto": "Club e Sport você já tem. A National pede vitórias e um título."
    },
    {
     "quem": "adrian",
-    "texto": "Só queria ver quanto custa a próxima."
+    "texto": "E a Elite?"
    },
    {
     "quem": "marcus",
-    "texto": "Se precisa perguntar, não temos."
+    "texto": "A Elite é onde a Apex Dominion corre. Ninguém daqui chega lá."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Ainda."
    }
   ],
   "requer": [],
@@ -410,6 +403,46 @@
   ],
   "flags": [
    "ADRIAN_LICENSE_CONTEXT"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A10",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "adrian",
+    "texto": "Fechei a {serie}."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Fechou. E o sábado à noite tem prova."
+   },
+   {
+    "quem": "elena",
+    "texto": "Amanhã a gente vê o motor. Hoje não."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Hoje sim."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha a próxima corrida."
+   }
+  ],
+  "requer": [
+   "FIRST_CHAMPIONSHIP_DONE"
+  ],
+  "proibe": [
+   "LAST_RACE_STARTED",
+   "CHAMPIONSHIP_CLOSED_TALK"
+  ],
+  "flags": [
+   "CHAMPIONSHIP_CLOSED_TALK"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -422,31 +455,15 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Temperatura traseira subindo."
+    "texto": "Pista quente hoje. O pneu traseiro vai sofrer."
    },
    {
     "quem": "elena",
-    "texto": "Duas voltas e entra."
+    "texto": "Ritmo, não ataque. Termina e amanhã a gente vê o motor."
    },
    {
     "quem": "adrian",
-    "texto": "Três."
-   },
-   {
-    "quem": "elena",
-    "texto": "Duas."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Se eu entrar em duas, perco o grupo."
-   },
-   {
-    "quem": "elena",
-    "texto": "Se ficar três, perde pneu."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Então eu não perco."
+    "texto": "Termino na frente."
    },
    {
     "quem": "elena",
@@ -454,15 +471,7 @@
    },
    {
     "quem": "adrian",
-    "texto": "Duas e meia."
-   },
-   {
-    "quem": "marcus",
-    "texto": "Isso não existe."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Agora existe."
+    "texto": "Na frente, Elena."
    }
   ],
   "requer": [],
@@ -481,27 +490,19 @@
   "falas": [
    {
     "quem": "elena",
-    "texto": "Temperatura não caiu."
+    "texto": "Saindo de traseira na três. Alivia."
    },
    {
     "quem": "adrian",
-    "texto": "Eu sei."
+    "texto": "Estou alcançando."
    },
    {
     "quem": "elena",
-    "texto": "Box."
+    "texto": "Alivia."
    },
    {
     "quem": "adrian",
-    "texto": "Mais uma."
-   },
-   {
-    "quem": "elena",
-    "texto": "Adrian."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Mais uma."
+    "texto": "Mais uma volta."
    }
   ],
   "requer": [],
@@ -517,8 +518,21 @@
   "trigger": "ACIDENTE",
   "falas": [
    {
+    "acao": "ESCURO"
+   },
+   {
+    "acao": "PAUSA"
+   },
+   {
     "quem": "sistema",
     "texto": "CORRIDA INTERROMPIDA"
+   },
+   {
+    "acao": "PAUSA"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Adrian Cross não saiu do carro."
    }
   ],
   "requer": [],
@@ -538,15 +552,7 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Ligaram de novo."
-   },
-   {
-    "quem": "elena",
-    "texto": "Quem?"
-   },
-   {
-    "quem": "marcus",
-    "texto": "Seguro. Organização. Duas equipes."
+    "texto": "Ligaram de novo. Seguro, federação, duas equipes."
    },
    {
     "quem": "elena",
@@ -554,15 +560,11 @@
    },
    {
     "quem": "marcus",
-    "texto": "Certo."
+    "texto": "O carro..."
    },
    {
     "quem": "elena",
-    "texto": "O carro?"
-   },
-   {
-    "quem": "marcus",
-    "texto": "Não tem carro."
+    "texto": "Eu sei."
    }
   ],
   "requer": [],
@@ -579,6 +581,9 @@
   "id": "SCN_B02",
   "trigger": "ENCADEADA",
   "falas": [
+   {
+    "acao": "PAUSA"
+   },
    {
     "quem": "sistema",
     "texto": "MESES DEPOIS"
@@ -600,44 +605,79 @@
   "trigger": "ENCADEADA",
   "falas": [
    {
-    "quem": "marcus",
-    "texto": "Você voltou."
-   },
-   {
-    "quem": "elena",
-    "texto": "Abri a porta."
+    "acao": "CLARO"
    },
    {
     "quem": "marcus",
-    "texto": "Quanto você tem?"
+    "texto": "Achei que você não voltava."
    },
    {
     "quem": "elena",
-    "texto": "O suficiente."
+    "texto": "Eu também."
    },
    {
     "quem": "marcus",
-    "texto": "Isso nunca significa o suficiente."
+    "texto": "A garagem está vazia. E as licenças eram dele."
    },
    {
     "quem": "elena",
-    "texto": "É o que eu guardei."
+    "texto": "Eu tenho {saldo} guardados."
    },
    {
     "quem": "marcus",
-    "texto": "Quer fazer o quê?"
+    "texto": "Dá para um usado. Second Chance Motors, do outro lado da rua."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELENA_RETURNED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "proxima": "SCN_B04",
+  "capitulo": "II"
+ },
+ {
+  "id": "SCN_B04",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Você sabe como funciona daqui para cima."
    },
    {
     "quem": "elena",
-    "texto": "Comprar um carro."
+    "texto": "Fala mesmo assim."
    },
    {
     "quem": "marcus",
-    "texto": "Para vender depois?"
+    "texto": "Seis licenças: Club, Sport, National, International, Pro e Elite. Cada uma abre provas maiores."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Quem treina e avalia é a Vector Academy."
    },
    {
     "quem": "elena",
-    "texto": "Para correr."
+    "texto": "E lá em cima?"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Apex Dominion. Victor Hale manda, Lucas Ward pilota."
+   },
+   {
+    "quem": "elena",
+    "texto": "Lucas correu contra o Adrian."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Todo mundo correu contra o Adrian."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então vamos."
    },
    {
     "acao": "OPEN_DEALERSHIP"
@@ -646,8 +686,8 @@
   "requer": [],
   "proibe": [],
   "flags": [
-   "ELENA_RETURNED",
-   "SECOND_CHANCE_UNLOCKED"
+   "SECOND_CHANCE_UNLOCKED",
+   "WORLD_EXPLAINED"
   ],
   "bloqueia": true,
   "uma_vez": true,
@@ -660,42 +700,30 @@
   "falas": [
    {
     "quem": "vendedor",
-    "texto": "Primeiro carro?"
+    "texto": "Second Chance Motors. Tudo aqui já teve outro dono."
    },
    {
     "quem": "elena",
-    "texto": "Primeiro meu."
+    "texto": "E tudo aqui cabe no meu saldo?"
    },
    {
-    "quem": "marcus",
-    "texto": "Não escolhe por potência."
-   },
-   {
-    "quem": "elena",
-    "texto": "Peso."
-   },
-   {
-    "quem": "marcus",
-    "texto": "Tração."
-   },
-   {
-    "quem": "elena",
-    "texto": "Preço de preparação."
-   },
-   {
-    "quem": "marcus",
-    "texto": "Agora sim."
+    "quem": "vendedor",
+    "texto": "O que está nesta fila, sim."
    },
    {
     "acao": "HIGHLIGHT_USED_CAR_STATS"
    },
    {
-    "quem": "vendedor",
-    "texto": "Qualquer um desses sai hoje."
+    "quem": "marcus",
+    "texto": "Não escolhe por potência. Olha peso e tração."
    },
    {
     "quem": "elena",
-    "texto": "Hoje é importante."
+    "texto": "E quanto sobra para preparar depois."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
    }
   ],
   "requer": [
@@ -713,23 +741,31 @@
   "capitulo": "III"
  },
  {
-  "id": "SCN_C05",
+  "id": "SCN_C02",
   "trigger": "COMPRA_CARRO",
   "falas": [
    {
     "quem": "vendedor",
-    "texto": "Quer garantia?"
+    "texto": "{carro}. Boa escolha... para o preço."
    },
    {
     "quem": "marcus",
-    "texto": "Ele quer vender garantia."
+    "texto": "Ele diz isso de todos."
    },
    {
     "quem": "elena",
-    "texto": "Eu percebi."
+    "texto": "Leva para a garagem."
    },
    {
     "acao": "RETURN_TO_GARAGE"
+   },
+   {
+    "quem": "elena",
+    "texto": "Sem licença, só provas abertas. Serve para começar."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Em Correr, as provas sem licença já estão liberadas."
    }
   ],
   "requer": [],
@@ -750,27 +786,19 @@
   "falas": [
    {
     "quem": "sistema",
-    "texto": "LICENÇA CLUB EXIGIDA"
+    "texto": "INSCRIÇÃO RECUSADA: PEDE LICENÇA"
    },
    {
     "quem": "elena",
-    "texto": "Eu sei dirigir."
+    "texto": "A licença do Adrian não vale para mim."
    },
    {
     "quem": "marcus",
-    "texto": "Não foi isso que escreveram."
+    "texto": "Licença é do piloto, não da garagem."
    },
    {
     "quem": "elena",
-    "texto": "Eu ajudei Adrian a passar por metade disso."
-   },
-   {
-    "quem": "marcus",
-    "texto": "E o nome na licença era?"
-   },
-   {
-    "quem": "elena",
-    "texto": "Abre."
+    "texto": "Então eu tiro a minha."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -794,34 +822,30 @@
   "falas": [
    {
     "quem": "responsavel",
-    "texto": "A Club tem treino e avaliação."
-   },
-   {
-    "quem": "elena",
-    "texto": "Quanto tempo?"
+    "texto": "Vector Academy. Licença Club."
    },
    {
     "quem": "responsavel",
-    "texto": "Parte do treinamento continua enquanto você estiver fora."
-   },
-   {
-    "quem": "elena",
-    "texto": "E custa."
+    "texto": "Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado."
    },
    {
     "quem": "responsavel",
-    "texto": "Também."
+    "texto": "Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é sua."
    },
    {
-    "quem": "marcus",
-    "texto": "Agora parece automobilismo."
+    "quem": "elena",
+    "texto": "Quanto custa?"
+   },
+   {
+    "quem": "responsavel",
+    "texto": "Nada. Aqui se paga com tempo."
    },
    {
     "acao": "HIGHLIGHT_LICENSE_REQUIREMENTS"
    },
    {
-    "quem": "responsavel",
-    "texto": "Você continua correndo o que já estiver liberado. O treinamento não precisa prender sua garagem."
+    "quem": "sistema",
+    "texto": "Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas."
    }
   ],
   "requer": [
@@ -844,15 +868,11 @@
   "falas": [
    {
     "quem": "responsavel",
-    "texto": "Primeiro módulo iniciado."
+    "texto": "Treino iniciado."
    },
    {
-    "quem": "elena",
-    "texto": "Então agora eu espero?"
-   },
-   {
-    "quem": "responsavel",
-    "texto": "Agora você trabalha em outra coisa."
+    "quem": "marcus",
+    "texto": "Enquanto isso, a gente corre o que dá."
    }
   ],
   "requer": [],
@@ -873,18 +893,14 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Terminou."
-   },
-   {
-    "quem": "elena",
-    "texto": "O treino?"
-   },
-   {
-    "quem": "marcus",
-    "texto": "O tempo. Agora falta você."
+    "texto": "O treino terminou. Agora é com você."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Faça as missões da avaliação."
    }
   ],
   "requer": [],
@@ -905,23 +921,19 @@
   "falas": [
    {
     "quem": "responsavel",
-    "texto": "Club aprovada."
-   },
-   {
-    "quem": "elena",
-    "texto": "Ótimo."
-   },
-   {
-    "quem": "responsavel",
-    "texto": "Sport vem depois."
-   },
-   {
-    "quem": "elena",
-    "texto": "Eu sei."
+    "texto": "Licença Club aprovada."
    },
    {
     "quem": "marcus",
-    "texto": "Ela já olhou o requisito."
+    "texto": "A primeira com o seu nome."
+   },
+   {
+    "quem": "elena",
+    "texto": "A primeira."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Novas provas liberadas em Correr › Club."
    }
   ],
   "requer": [],
@@ -940,19 +952,19 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Não precisa provar nada na primeira."
+    "texto": "Primeira largada sua desde..."
    },
    {
     "quem": "elena",
-    "texto": "Ótimo."
+    "texto": "Pode falar."
    },
    {
     "quem": "marcus",
-    "texto": "Normalmente alguém responde \"vou com calma\"."
+    "texto": "Desde a curva três."
    },
    {
     "quem": "elena",
-    "texto": "Eu não respondi."
+    "texto": "{voltas} voltas em {pista}. Vamos."
    }
   ],
   "requer": [],
@@ -973,23 +985,15 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Pronto."
+    "texto": "Primeira vitória."
    },
    {
     "quem": "elena",
-    "texto": "O quê?"
+    "texto": "Do carro."
    },
    {
     "quem": "marcus",
-    "texto": "Agora você sabe."
-   },
-   {
-    "quem": "elena",
-    "texto": "Eu já sabia."
-   },
-   {
-    "quem": "marcus",
-    "texto": "Não do mesmo jeito."
+    "texto": "Sua."
    }
   ],
   "requer": [],
@@ -1013,7 +1017,7 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Você já tem as vitórias."
+    "texto": "Os requisitos da Sport estão cumpridos."
    },
    {
     "quem": "elena",
@@ -1053,11 +1057,7 @@
    },
    {
     "quem": "responsavel",
-    "texto": "Quando tiver resultados."
-   },
-   {
-    "quem": "marcus",
-    "texto": "E um campeonato."
+    "texto": "Pede vitórias nas séries da Sport e um título de campeonato."
    },
    {
     "quem": "elena",

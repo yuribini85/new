@@ -2,209 +2,213 @@
 # = ID | trigger | opções (chave=valor; listas separadas por vírgula)
 # Nome: fala           [ACAO]           (Sistema: texto de sistema)
 # Opções: requer, proibe, flags, personagem, condicao, bloqueia, uma_vez, proxima, capitulo
+# Falas aceitam variáveis do jogo: {saldo} {carro} {evento} {serie} {pista} {voltas} {premio}
+# {posicao} {peca} (Historia.variaveis). Ações do próprio diálogo: [ESCURO] [CLARO] [PAUSA].
+# Regras do roteiro: cada fala que ensina diz o que o jogador vê na tela; cena de tutorial
+# termina com uma ordem clara do Sistema; nada de mecânica que o jogo não tem.
 
-= SCN_A01 | GAME_START | personagem=adrian; bloqueia=sim; flags=STORY_STARTED,GARAGE_TUTORIAL_SEEN; capitulo=I
-Adrian: Ele ainda puxa para a direita.
-Elena: Você disse isso ontem.
-Adrian: Ontem puxava menos.
-Marcus: Ontem você não acertou a zebra da quatro.
-Adrian: Detalhe.
-Elena: Abre a ficha.
+# ---------------------------------------------------------------- I. Prólogo
+= SCN_A00 | GAME_START | personagem=adrian; bloqueia=sim; flags=STORY_STARTED; proxima=SCN_A01; capitulo=I
+Sistema: Anel do Vale. Fim de temporada.
+Sistema: Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus cuida do resto.
+Sistema: Daqui até a Elite são seis licenças. Ninguém da família passou da segunda.
+
+= SCN_A01 | ENCADEADA | personagem=adrian; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; capitulo=I
+Marcus: {carro} lavado, tanque cheio. Pronto para a Copa de Domingo.
+Adrian: Pronto não. Ele freia cedo demais.
+Elena: Abre a ficha antes de reclamar.
 [OPEN_GARAGE_TAB]
 [HIGHLIGHT_CAR_STATS]
-Elena: Peso, potência, tração, pneus. Aprende esses quatro antes de comprar qualquer coisa.
-Adrian: Eu conheço meu carro.
-Elena: Então para de reclamar que ele puxa.
+Elena: Potência e peso decidem a reta. Pneus e freios decidem a curva.
+Elena: "Fábrica" quer dizer que ninguém mexeu ainda.
+Adrian: E dá para mexer?
+Marcus: Temos {saldo}. É o preço de um jogo de freios.
+Elena: Então você já sabe o que comprar.
+Sistema: Toque em Melhorar o carro e compre Freios 1.
 
-= SCN_A02 | ABA:EVENTOS | personagem=adrian; requer=GARAGE_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; capitulo=I
-Marcus: Tem prova curta em Howlside.
-Adrian: Prêmio?
-Marcus: Baixo.
-Adrian: Perfeito.
-Elena: Você nem perguntou quem corre.
-Adrian: Se o prêmio é baixo, ninguém rápido.
-Elena: Essa teoria vai durar pouco.
-[HIGHLIGHT_EVENT_CARD]
-Elena: Antes de entrar: licença, limite do carro e pneus.
-
-= SCN_A03 | EVENTO_SELECIONADO | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I
-Marcus: Freio dianteiro acabou.
-Adrian: Acabou quanto?
-Marcus: O suficiente.
-Elena: Compra outro.
-Adrian: Tem opção mais barata?
-Marcus: Tem parede.
+= SCN_A02 | EVENTO_SELECIONADO | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I
+Marcus: Calma. Com freio de fábrica, a curva vira parede.
+Elena: Primeiro os freios. A inscrição espera.
 [OPEN_TUNE_SERVICE]
 [HIGHLIGHT_BRAKES]
-Elena: Não compra potência porque o número fica bonito. Compra o que resolve o problema.
+Sistema: Compre Freios 1. Depois volte em Correr.
 
-= SCN_A03B | PECA_COMPRADA | personagem=adrian; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE; capitulo=I
-Marcus: Agora dá.
-Adrian: Agora posso pedir motor?
-Elena: Não.
+= SCN_A03 | PECA_COMPRADA | personagem=adrian; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE; capitulo=I
+Marcus: {peca} montado.
+Elena: Agora ele freia mais tarde que metade do grid.
+Adrian: E a outra metade?
+Elena: A outra metade tem piloto melhor.
+Adrian: Engraçada.
+Sistema: Toque em Correr na barra de baixo.
 
-= SCN_A04 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I
-Marcus: Três voltas.
-Elena: Não tenta ganhar na primeira curva.
-Adrian: Então em qual?
-Elena: Na última.
-Adrian: Finalmente um conselho útil.
+= SCN_A04 | ABA:EVENTOS | personagem=adrian; requer=FIRST_TUNE_DONE; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; capitulo=I
+Elena: Cada cartão é uma prova: pista, voltas, prêmio e o que o regulamento aceita.
+[HIGHLIGHT_EVENT_CARD]
+Elena: A barra "seu carro × rivais" diz se dá para ganhar antes de você tentar.
+Marcus: A Copa de Domingo tem três etapas. É um campeonato.
+Adrian: Fecho as três e a gente fala de motor.
+Elena: Fecha as três e a gente fala.
+Sistema: Escolha a Copa de Domingo — etapa 1 e toque em Correr.
 
-= SCN_A05 | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN_ADRIAN; capitulo=I
-Adrian: Viu?
-Elena: Vi.
-Adrian: Você pode demonstrar mais entusiasmo.
-Elena: Posso.
-Marcus: Ela não vai.
+= SCN_A05 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I
+Marcus: {voltas} voltas em {pista}.
+Adrian: Alguma ordem de equipe?
+Elena: Não. A corrida corre sozinha. O que decidimos na garagem já está no carro.
+Adrian: Então eu só acelero.
+Elena: Você acelera. Eu anoto.
 
-= SCN_A05B | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; capitulo=I
-Marcus: Terminamos.
-Adrian: Essa era a parte boa?
-Elena: Você terminou. Agora sabe onde perdeu.
-Elena: Corrida perdida também paga informação.
+= SCN_A06 | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN_ADRIAN; capitulo=I
+Adrian: Viu isso?
+Elena: Vi. Freou mais tarde que todo mundo. Valeu cada crédito.
+Marcus: Prêmio na conta.
+Sistema: Prêmios entram no saldo. Prova já vencida pode ser repetida, até com o app fechado.
+
+= SCN_A06B | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; capitulo=I
+Adrian: {posicao}. Não era o plano.
+Elena: A tela da corrida mostra onde você perdeu tempo. Olha antes de culpar o carro.
+Marcus: E corre de novo. Corrida perdida também paga.
 
 = SCN_A07 | EVENTO_BLOQUEADO | personagem=adrian; proibe=EVENT_REQUIREMENTS_TUTORIAL_DONE; flags=EVENT_REQUIREMENTS_TUTORIAL_DONE; capitulo=I
-Adrian: Estamos fora por quê?
-Elena: O regulamento.
-Adrian: Estranho reclamar de carro demais.
-Marcus: Só até a inscrição negar você.
-Elena: Cada prova pede um carro. Não existe "melhor carro". Existe carro certo.
+Adrian: Recusaram a inscrição.
+Elena: O motivo está no cartão: potência, tração, modelo ou licença.
+Elena: Não existe melhor carro. Existe o carro certo para cada prova.
 
 = SCN_A08 | CAMPEONATO_SELECIONADO | personagem=adrian; proibe=CHAMPIONSHIP_TUTORIAL_DONE; flags=CHAMPIONSHIP_TUTORIAL_DONE; capitulo=I
-Marcus: Isso não é corrida única.
-Adrian: Eu sei ler.
-Elena: Então lê os pontos.
-Adrian: Você gosta muito dessa frase.
-Elena: Porque você lê pouco.
-Elena: Você não precisa ganhar todas. Precisa parar de jogar fora resultado.
-Adrian: Essa foi pessoal.
-Elena: Foi estatística.
+Marcus: {serie}. Conta pontos.
+Elena: Corra as etapas em ordem. Fora de ordem vira corrida comum.
+Adrian: E se eu não ganhar todas?
+Elena: Campeão é quem soma mais. Constância ganha título.
+Sistema: Prova inédita e etapa de campeonato só correm com o app aberto.
 
-= SCN_A10 | ABA:LICENCAS | personagem=adrian; proibe=ADRIAN_LICENSE_CONTEXT; flags=ADRIAN_LICENSE_CONTEXT; capitulo=I
-Elena: Você já tem Club e Sport. Para de olhar isso.
-Adrian: Só queria ver quanto custa a próxima.
-Marcus: Se precisa perguntar, não temos.
+= SCN_A09 | ABA:LICENCAS | personagem=adrian; proibe=ADRIAN_LICENSE_CONTEXT; flags=ADRIAN_LICENSE_CONTEXT; capitulo=I
+Elena: Club e Sport você já tem. A National pede vitórias e um título.
+Adrian: E a Elite?
+Marcus: A Elite é onde a Apex Dominion corre. Ninguém daqui chega lá.
+Adrian: Ainda.
+
+= SCN_A10 | CORRIDA_FIM | personagem=adrian; requer=FIRST_CHAMPIONSHIP_DONE; proibe=LAST_RACE_STARTED,CHAMPIONSHIP_CLOSED_TALK; flags=CHAMPIONSHIP_CLOSED_TALK; capitulo=I
+Adrian: Fechei a {serie}.
+Marcus: Fechou. E o sábado à noite tem prova.
+Elena: Amanhã a gente vê o motor. Hoje não.
+Adrian: Hoje sim.
+Sistema: Escolha a próxima corrida.
 
 = SCN_A11 | ULTIMA_CORRIDA_ADRIAN | personagem=adrian; bloqueia=sim; flags=LAST_RACE_STARTED; capitulo=I
-Marcus: Temperatura traseira subindo.
-Elena: Duas voltas e entra.
-Adrian: Três.
-Elena: Duas.
-Adrian: Se eu entrar em duas, perco o grupo.
-Elena: Se ficar três, perde pneu.
-Adrian: Então eu não perco.
+Marcus: Pista quente hoje. O pneu traseiro vai sofrer.
+Elena: Ritmo, não ataque. Termina e amanhã a gente vê o motor.
+Adrian: Termino na frente.
 Elena: Adrian.
-Adrian: Duas e meia.
-Marcus: Isso não existe.
-Adrian: Agora existe.
+Adrian: Na frente, Elena.
 
 = SCN_A12 | RADIO_ULTIMA_CORRIDA | personagem=adrian; capitulo=I
-Elena: Temperatura não caiu.
-Adrian: Eu sei.
-Elena: Box.
-Adrian: Mais uma.
-Elena: Adrian.
-Adrian: Mais uma.
+Elena: Saindo de traseira na três. Alivia.
+Adrian: Estou alcançando.
+Elena: Alivia.
+Adrian: Mais uma volta.
 
 = SCN_A13 | ACIDENTE | bloqueia=sim; flags=ADRIAN_DEAD,ADRIAN_CAR_DESTROYED; proxima=SCN_B01; capitulo=I
+[ESCURO]
+[PAUSA]
 Sistema: CORRIDA INTERROMPIDA
+[PAUSA]
+Sistema: Adrian Cross não saiu do carro.
 
+# ---------------------------------------------------------------- II. Depois
 = SCN_B01 | ENCADEADA | bloqueia=sim; flags=EMPTY_GARAGE_SEEN; proxima=SCN_B02; capitulo=II
-Marcus: Ligaram de novo.
-Elena: Quem?
-Marcus: Seguro. Organização. Duas equipes.
+Marcus: Ligaram de novo. Seguro, federação, duas equipes.
 Elena: Não atende.
-Marcus: Certo.
-Elena: O carro?
-Marcus: Não tem carro.
+Marcus: O carro...
+Elena: Eu sei.
 
 = SCN_B02 | ENCADEADA | bloqueia=sim; proxima=SCN_B03; capitulo=II
+[PAUSA]
 Sistema: MESES DEPOIS
 [SALTO_TEMPORAL]
 
-= SCN_B03 | ENCADEADA | personagem=elena; bloqueia=sim; flags=ELENA_RETURNED,SECOND_CHANCE_UNLOCKED; capitulo=II
-Marcus: Você voltou.
-Elena: Abri a porta.
-Marcus: Quanto você tem?
-Elena: O suficiente.
-Marcus: Isso nunca significa o suficiente.
-Elena: É o que eu guardei.
-Marcus: Quer fazer o quê?
-Elena: Comprar um carro.
-Marcus: Para vender depois?
-Elena: Para correr.
+= SCN_B03 | ENCADEADA | personagem=elena; bloqueia=sim; flags=ELENA_RETURNED; proxima=SCN_B04; capitulo=II
+[CLARO]
+Marcus: Achei que você não voltava.
+Elena: Eu também.
+Marcus: A garagem está vazia. E as licenças eram dele.
+Elena: Eu tenho {saldo} guardados.
+Marcus: Dá para um usado. Second Chance Motors, do outro lado da rua.
+
+= SCN_B04 | ENCADEADA | personagem=elena; bloqueia=sim; flags=SECOND_CHANCE_UNLOCKED,WORLD_EXPLAINED; capitulo=II
+Marcus: Você sabe como funciona daqui para cima.
+Elena: Fala mesmo assim.
+Marcus: Seis licenças: Club, Sport, National, International, Pro e Elite. Cada uma abre provas maiores.
+Marcus: Quem treina e avalia é a Vector Academy.
+Elena: E lá em cima?
+Marcus: Apex Dominion. Victor Hale manda, Lucas Ward pilota.
+Elena: Lucas correu contra o Adrian.
+Marcus: Todo mundo correu contra o Adrian.
+Elena: Então vamos.
 [OPEN_DEALERSHIP]
 
+# ---------------------------------------------------------------- III. Second Chance
 = SCN_C01 | ABA:LOJA | personagem=elena; requer=SECOND_CHANCE_UNLOCKED; proibe=USED_DEALER_INTRO_SEEN; bloqueia=sim; flags=USED_DEALER_INTRO_SEEN; capitulo=III
-Vendedor: Primeiro carro?
-Elena: Primeiro meu.
-Marcus: Não escolhe por potência.
-Elena: Peso.
-Marcus: Tração.
-Elena: Preço de preparação.
-Marcus: Agora sim.
+Vendedor: Second Chance Motors. Tudo aqui já teve outro dono.
+Elena: E tudo aqui cabe no meu saldo?
+Vendedor: O que está nesta fila, sim.
 [HIGHLIGHT_USED_CAR_STATS]
-Vendedor: Qualquer um desses sai hoje.
-Elena: Hoje é importante.
+Marcus: Não escolhe por potência. Olha peso e tração.
+Elena: E quanto sobra para preparar depois.
+Sistema: Toque num carro para ver a ficha e comprar.
 
-= SCN_C05 | COMPRA_CARRO | personagem=elena; proibe=ELENA_FIRST_CAR_BOUGHT; flags=ELENA_FIRST_CAR_BOUGHT; capitulo=III
-Vendedor: Quer garantia?
-Marcus: Ele quer vender garantia.
-Elena: Eu percebi.
+= SCN_C02 | COMPRA_CARRO | personagem=elena; proibe=ELENA_FIRST_CAR_BOUGHT; flags=ELENA_FIRST_CAR_BOUGHT; capitulo=III
+Vendedor: {carro}. Boa escolha... para o preço.
+Marcus: Ele diz isso de todos.
+Elena: Leva para a garagem.
 [RETURN_TO_GARAGE]
+Elena: Sem licença, só provas abertas. Serve para começar.
+Sistema: Em Correr, as provas sem licença já estão liberadas.
 
+# ---------------------------------------------------------------- IV. Licença Club
 = SCN_D01 | LICENCA_EXIGIDA | personagem=elena; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; capitulo=IV
-Sistema: LICENÇA CLUB EXIGIDA
-Elena: Eu sei dirigir.
-Marcus: Não foi isso que escreveram.
-Elena: Eu ajudei Adrian a passar por metade disso.
-Marcus: E o nome na licença era?
-Elena: Abre.
+Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA
+Elena: A licença do Adrian não vale para mim.
+Marcus: Licença é do piloto, não da garagem.
+Elena: Então eu tiro a minha.
 [OPEN_LICENSE_CENTER]
 
 = SCN_D02 | ABA:LICENCAS | personagem=elena; requer=LICENSE_SYSTEM_UNLOCKED; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN; capitulo=IV
-Responsável: A Club tem treino e avaliação.
-Elena: Quanto tempo?
-Responsável: Parte do treinamento continua enquanto você estiver fora.
-Elena: E custa.
-Responsável: Também.
-Marcus: Agora parece automobilismo.
+Responsável: Vector Academy. Licença Club.
+Responsável: Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado.
+Responsável: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é sua.
+Elena: Quanto custa?
+Responsável: Nada. Aqui se paga com tempo.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
-Responsável: Você continua correndo o que já estiver liberado. O treinamento não precisa prender sua garagem.
+Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 
 = SCN_D03 | LICENCA_TREINO_INICIO | personagem=elena; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED; capitulo=IV
-Responsável: Primeiro módulo iniciado.
-Elena: Então agora eu espero?
-Responsável: Agora você trabalha em outra coisa.
+Responsável: Treino iniciado.
+Marcus: Enquanto isso, a gente corre o que dá.
 
 = SCN_D04 | LICENCA_PRONTA | personagem=elena; proibe=FIRST_TRAINING_READY; flags=FIRST_TRAINING_READY; capitulo=IV
-Marcus: Terminou.
-Elena: O treino?
-Marcus: O tempo. Agora falta você.
+Marcus: O treino terminou. Agora é com você.
 [OPEN_LICENSE_CENTER]
+Sistema: Faça as missões da avaliação.
 
 = SCN_D05 | LICENCA_CONCEDIDA:CLUB | personagem=elena; flags=ELENA_CLUB_COMPLETE; capitulo=IV
-Responsável: Club aprovada.
-Elena: Ótimo.
-Responsável: Sport vem depois.
-Elena: Eu sei.
-Marcus: Ela já olhou o requisito.
+Responsável: Licença Club aprovada.
+Marcus: A primeira com o seu nome.
+Elena: A primeira.
+Sistema: Novas provas liberadas em Correr › Club.
 
+# ---------------------------------------------------------------- V em diante
 = SCN_E01 | CORRIDA_INICIO | personagem=elena; proibe=ELENA_FIRST_OFFICIAL_RACE; flags=ELENA_FIRST_OFFICIAL_RACE; capitulo=V
-Marcus: Não precisa provar nada na primeira.
-Elena: Ótimo.
-Marcus: Normalmente alguém responde "vou com calma".
-Elena: Eu não respondi.
+Marcus: Primeira largada sua desde...
+Elena: Pode falar.
+Marcus: Desde a curva três.
+Elena: {voltas} voltas em {pista}. Vamos.
 
 = SCN_E03 | CORRIDA_FIM | personagem=elena; proibe=ELENA_FIRST_WIN; condicao=posicao:1; flags=ELENA_FIRST_WIN; capitulo=V
-Marcus: Pronto.
-Elena: O quê?
-Marcus: Agora você sabe.
-Elena: Eu já sabia.
-Marcus: Não do mesmo jeito.
+Marcus: Primeira vitória.
+Elena: Do carro.
+Marcus: Sua.
 
 = SCN_F01 | LICENCA_DISPONIVEL:SPORT | personagem=elena; proibe=SPORT_AVAILABLE_SEEN; flags=SPORT_AVAILABLE_SEEN; capitulo=VI
-Marcus: Você já tem as vitórias.
+Marcus: Os requisitos da Sport estão cumpridos.
 Elena: Falta o treino.
 Marcus: Finalmente uma coisa que corrida não resolve sozinha.
 [OPEN_LICENSE_CENTER]
@@ -212,8 +216,7 @@ Marcus: Finalmente uma coisa que corrida não resolve sozinha.
 = SCN_F03 | LICENCA_CONCEDIDA:SPORT | personagem=elena; flags=ELENA_SPORT_COMPLETE; capitulo=VI
 Responsável: Sport aprovada.
 Elena: National?
-Responsável: Quando tiver resultados.
-Marcus: E um campeonato.
+Responsável: Pede vitórias nas séries da Sport e um título de campeonato.
 Elena: Essa parte eu lembro.
 
 = SCN_G02 | GARAGEM_DOIS_CARROS | personagem=elena; proibe=FIRST_SECOND_CAR; flags=FIRST_SECOND_CAR; capitulo=VII

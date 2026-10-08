@@ -468,7 +468,7 @@ func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 	if jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
 	entrega(jogador.garagem.carro(uid))
-	historia("COMPRA_CARRO")
+	historia("COMPRA_CARRO", {"carro": String(c["nome"])})
 	if preco == int(c.get("preco", -1)):
 		historia("COMPRA_CARRO_NOVO")
 	if jogador.garagem.lista().size() == 2:

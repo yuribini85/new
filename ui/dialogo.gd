@@ -8,7 +8,10 @@ extends Control
 ## da entrada, completa a animação). Ações de tutorial no meio da cena saem pelo
 ## sinal `acao` quando a fala chega nelas; durante um destaque o personagem fica
 ## translúcido para o elemento destacado aparecer. Cenas pedidas durante outra
-## entram na fila.
+## entram na fila. Ações próprias do diálogo: [ESCURO] (a tela fica preta até [CLARO]
+## ou o fim da sequência) e [PAUSA] (um silêncio sem caixa). Falas aceitam variáveis do
+## jogo ({pista}, {saldo}...: Historia.variaveis) e, na primeira vez que alguém
+## fala, o nome vem com o papel (personagens.json → papel).
 
 signal acao(nome: String)
 ## Cena terminada (para a principal encadear a próxima e salvar).
@@ -19,6 +22,7 @@ const ENTRADA_S := 0.35
 const CAIXA_ATRASO_S := 0.2
 const CAIXA_S := 0.22
 const ALTURA_CORPO := 0.86  # fração da altura da tela
+const PAUSA_S := 1.6
 
 var historia: Historia
 var _fila: Array = []
@@ -33,6 +37,8 @@ var _texto: Label
 var _tween: Tween
 var _animando := false
 var _lado := 1.0  # de que lado o próximo personagem entra (alterna)
+var _translucido := false  # depois de um destaque, até o fim da cena
+var _escuro := false  # [ESCURO] vale até [CLARO] ou o fim da sequência de cenas
 
 
 func _init(historia_: Historia) -> void:
@@ -113,12 +119,16 @@ func _proxima() -> void:
 	if _fila.is_empty():
 		_cena = {}
 		_quem = ""
+		_escuro = false
 		visible = false
 		return
 	_cena = _fila.pop_front()
 	_i = 0
+	_translucido = false
 	visible = true
 	_fundo.visible = true
+	_fundo.color.a = 1.0 if _escuro else 0.62
+	_caixa.visible = true
 	_fundo.mouse_filter = Control.MOUSE_FILTER_STOP
 	_mostrar()
 
@@ -128,10 +138,37 @@ func _mostrar() -> void:
 	var falas: Array = _cena["falas"]
 	while _i < falas.size() and falas[_i].has("acao"):
 		var nome_acao := String(falas[_i]["acao"])
-		# Destaque: o personagem fica translúcido para o elemento aparecer.
-		_corpo.modulate.a = 0.25 if nome_acao.begins_with("HIGHLIGHT_") else 1.0
-		acao.emit(nome_acao)
 		_i += 1
+		match nome_acao:
+			"ESCURO":
+				# Tela preta (o acidente): segue no escuro até [CLARO].
+				_escuro = true
+				_corpo.visible = false
+				_quem = ""
+				create_tween().tween_property(_fundo, "color:a", 1.0, 0.8)
+				continue
+			"CLARO":
+				_escuro = false
+				create_tween().tween_property(_fundo, "color:a", 0.62, 0.8)
+				continue
+			"PAUSA":
+				# Silêncio: nada na tela por um instante, depois segue.
+				_caixa.visible = false
+				_animando = true
+				if _tween != null:
+					_tween.kill()
+				_tween = create_tween()
+				_tween.tween_interval(PAUSA_S)
+				_tween.tween_callback(func():
+					_caixa.visible = true
+					_animando = false
+					_mostrar())
+				return
+		# Destaque: o personagem fica translúcido para o elemento aparecer.
+		if nome_acao.begins_with("HIGHLIGHT_"):
+			_translucido = true
+			_corpo.modulate.a = 0.25
+		acao.emit(nome_acao)
 	if _i >= falas.size():
 		_fim()
 		return
@@ -140,8 +177,13 @@ func _mostrar() -> void:
 	var p := historia.personagem(quem)
 	var sistema := quem == "sistema"
 	_nome.text = String(p.get("nome", quem))
+	# Primeira vez que fala: nome e papel (quem é essa pessoa).
+	var flag := "APRESENTADO_" + quem.to_upper()
+	if not sistema and String(p.get("papel", "")) != "" and not historia.jogador.flags.has(flag):
+		_nome.text += " · " + String(p["papel"])
+		historia.jogador.flags[flag] = true
 	_nome.visible = not sistema and _nome.text != ""
-	_texto.text = String(f["texto"])
+	_texto.text = String(f["texto"]).format(historia.variaveis(_cena.get("_ctx", {})))
 	_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if sistema else HORIZONTAL_ALIGNMENT_LEFT
 	_layout()
 	if quem != _quem:
@@ -164,7 +206,7 @@ func _entrar(quem: String, sistema: bool) -> void:
 	_tween = create_tween()
 	if tex != null:
 		_corpo.position.x = x_final + _lado * tela.x
-		_corpo.modulate.a = 1.0
+		_corpo.modulate.a = 0.25 if _translucido else 1.0
 		_tween.tween_property(_corpo, "position:x", x_final, ENTRADA_S).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		_tween.tween_interval(CAIXA_ATRASO_S)
 	_tween.tween_property(_caixa, "modulate:a", 1.0, CAIXA_S)
