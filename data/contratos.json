@@ -469,7 +469,7 @@
 						"carro": "kanaya_benibana_corrida"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -477,20 +477,20 @@
 		"carro": "whitlock_switchback_gt",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 328500,
+				"custo_max": 14030,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 219000
+				"custo_max": 9352
 			},
 			"prata": {
-				"custo_max": 262800
+				"custo_max": 11225
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Aubrac Grive S gastando o mínimo.",
 		"id": "elite_ultimo_credito",
 		"licenca": "ELITE",
-		"nome": "O último crédito",
+		"nome": "O último giro",
 		"provas": [
 			{
 				"condicao": "seco",
@@ -511,7 +511,7 @@
 				"vencer": true
 			},
 			"ouro": {
-				"pecas_max": 4
+				"pecas_max": 4.0
 			},
 			"prata": {
 				"folga_s": 0.3
@@ -530,7 +530,7 @@
 						"carro": "kanaya_ruri_corrida_ii"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			},
 			{
 				"condicao": "seco",
@@ -540,7 +540,7 @@
 						"carro": "pemberly_teal_ii"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	}
