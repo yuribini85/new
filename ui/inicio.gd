@@ -32,11 +32,10 @@ func _ready() -> void:
 		add_child(img)
 	var v := VBoxContainer.new()
 	v.set_anchors_preset(Control.PRESET_FULL_RECT)
-	v.offset_left = 48
-	v.offset_right = -48
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	v.add_theme_constant_override("separation", 40)
+	v.add_theme_constant_override("separation", 56)
 	add_child(v)
+	_margens(v)
 	var logo := TextureRect.new()
 	logo.texture = Aba.arte("logo")
 	logo.custom_minimum_size = Vector2(0, 220)
@@ -57,11 +56,33 @@ func _ready() -> void:
 	_barra.add_theme_stylebox_override("fill", sb_c)
 	v.add_child(_barra)
 	_opcoes = VBoxContainer.new()
-	_opcoes.add_theme_constant_override("separation", 18)
+	# A área de toque do "Novo jogo" já dá o respiro entre os dois.
+	_opcoes.add_theme_constant_override("separation", 4)
 	_opcoes.modulate.a = 0.0
 	_opcoes.visible = false
 	v.add_child(_opcoes)
 	ResourceLoader.load_threaded_request(PRINCIPAL)
+
+
+## Margens laterais e áreas seguras do aparelho (entalhe, barra de gestos),
+## medidas em relação à janela e convertidas para a escala da tela. Fora do
+## celular a área segura é a do monitor e não conta.
+func _margens(c: Control) -> void:
+	var lateral := 56.0
+	var cima := 0.0
+	var baixo := 0.0
+	if OS.has_feature("mobile"):
+		var seguro := Rect2(DisplayServer.get_display_safe_area())
+		var janela := Rect2(DisplayServer.window_get_position(), DisplayServer.window_get_size())
+		if janela.size.x > 0 and seguro.size.x > 0:
+			var esc := get_viewport_rect().size.x / janela.size.x
+			cima = maxf(0.0, seguro.position.y - janela.position.y) * esc
+			baixo = maxf(0.0, janela.end.y - seguro.end.y) * esc
+			lateral = maxf(lateral, maxf(seguro.position.x - janela.position.x, janela.end.x - seguro.end.x) * esc)
+	c.offset_left = lateral
+	c.offset_right = -lateral
+	c.offset_top = cima
+	c.offset_bottom = -baixo
 
 
 func _process(delta: float) -> void:
@@ -85,19 +106,12 @@ func _mostrar_opcoes() -> void:
 	_barra.visible = false
 	var sm := get_node("/root/SaveManager")
 	var continuar := Button.new()
-	continuar.text = "Continuar" if sm.tinha_save else "Começar"
-	continuar.custom_minimum_size = Vector2(0, 128)
-	continuar.add_theme_font_size_override("font_size", 46)
-	_estilo(continuar, Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1))
+	Tipografia.acao_primaria(continuar, "Continuar" if sm.tinha_save else "Começar")
 	continuar.pressed.connect(_entrar)
 	_opcoes.add_child(continuar)
 	if sm.tinha_save:
 		var novo := Button.new()
-		novo.text = "Novo jogo"
-		novo.flat = true
-		novo.custom_minimum_size = Vector2(0, 64)
-		novo.add_theme_font_size_override("font_size", 26)
-		novo.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
+		Tipografia.acao_secundaria(novo, "Novo jogo")
 		novo.pressed.connect(_confirmar_novo)
 		_opcoes.add_child(novo)
 	_opcoes.visible = true
@@ -109,15 +123,21 @@ func _confirmar_novo() -> void:
 		return
 	_confirmacao = PanelContainer.new()
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.06, 0.07, 0.09, 0.97)
+	sb.bg_color = Color(0.06, 0.07, 0.09)
 	sb.border_color = Aba.COR_RUIM
 	sb.set_border_width_all(2)
 	sb.set_corner_radius_all(14)
 	sb.set_content_margin_all(24)
 	_confirmacao.add_theme_stylebox_override("panel", sb)
 	_confirmacao.custom_minimum_size = Vector2(600, 0)
+	# O menu some atrás do aviso: a decisão fica sozinha na tela.
 	var centro := CenterContainer.new()
 	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var escuro := ColorRect.new()
+	escuro.color = Color(0, 0, 0, 0.72)
+	escuro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(escuro)
+	centro.tree_exited.connect(escuro.queue_free)
 	add_child(centro)
 	centro.add_child(_confirmacao)
 	var v := VBoxContainer.new()
@@ -125,7 +145,8 @@ func _confirmar_novo() -> void:
 	_confirmacao.add_child(v)
 	var t := Label.new()
 	t.text = "Começar um novo jogo?"
-	t.add_theme_font_size_override("font_size", 34)
+	t.add_theme_font_override("font", Tipografia.fonte("semibold"))
+	t.add_theme_font_size_override("font_size", 40)
 	v.add_child(t)
 	var d := Label.new()
 	d.text = "Isso apaga o progresso salvo neste aparelho: carros, dinheiro, licenças, vitórias e a história. Não dá para desfazer."
@@ -134,19 +155,16 @@ func _confirmar_novo() -> void:
 	d.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
 	v.add_child(d)
 	var apagar := Button.new()
-	apagar.text = "Apagar e começar"
-	apagar.custom_minimum_size = Vector2(0, 88)
-	apagar.add_theme_font_size_override("font_size", 30)
-	_estilo(apagar, Aba.COR_RUIM, Color.WHITE)
+	# Vermelho mais fundo que o COR_RUIM: o branco precisa de contraste.
+	Tipografia.acao_primaria(apagar, "Apagar e começar", Aba.COR_RUIM.darkened(0.35), Color.WHITE)
+	apagar.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA
+	apagar.add_theme_font_size_override("font_size", Tipografia.TAMANHO_SECUNDARIA + 4)
 	apagar.pressed.connect(func():
 		get_node("/root/SaveManager").novo_jogo()
 		_entrar())
 	v.add_child(apagar)
 	var cancelar := Button.new()
-	cancelar.text = "Cancelar"
-	cancelar.flat = true
-	cancelar.custom_minimum_size = Vector2(0, 64)
-	cancelar.add_theme_font_size_override("font_size", 26)
+	Tipografia.acao_secundaria(cancelar, "Cancelar")
 	cancelar.pressed.connect(func():
 		centro.queue_free()
 		_confirmacao = null)
@@ -157,12 +175,3 @@ func _entrar() -> void:
 	var cena: PackedScene = ResourceLoader.load_threaded_get(PRINCIPAL)
 	get_tree().change_scene_to_packed(cena)
 
-
-static func _estilo(b: Button, fundo: Color, texto: Color) -> void:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = fundo
-	sb.set_corner_radius_all(16)
-	for estado in ["normal", "hover", "pressed", "focus"]:
-		b.add_theme_stylebox_override(estado, sb)
-	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		b.add_theme_color_override(c, texto)
