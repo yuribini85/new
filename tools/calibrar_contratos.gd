@@ -31,7 +31,10 @@ extends SceneTree
 ## giro" é a soma dos prêmios de 1º lugar dos eventos da licença anterior
 ## (na primeira, o saldo inicial). Os ids levam o prefixo da licença ("pro_..."; os da antiga IC mantêm "ic_", que os saves já usam).
 ## Só os contratos da licença pedida são trocados em contratos.json.
-## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=CLUB]
+## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=CLUB] [--so-custo]
+## --so-custo: refaz só "O último giro" (o único que depende de preços), com os
+## carros já usados pelos contratos atuais da licença; os outros ficam como estão.
+## Para quando os preços mudam sem mudar o resto (ex.: a conversão da moeda).
 
 const CAMINHO := "res://data/contratos.json"
 const RAZAO_GIGANTE := 1.3
@@ -77,9 +80,12 @@ func _process(_delta: float) -> bool:
 func _calibrar() -> void:
 	_dados = root.get_node("Dados")
 	_piloto = _dados.piloto(_dados.carreira()["piloto_jogador"])
+	var so_custo := false
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--licenca="):
 			_licenca = a.trim_prefix("--licenca=")
+		elif a == "--so-custo":
+			so_custo = true
 	var lic: Dictionary = _dados.item("licencas", _licenca)
 	# Sem testes do GT2 (ELITE): voltas e limite dos testes da licença anterior,
 	# a mesma regra do tempo de treino (Licencas.treino_s).
@@ -118,6 +124,9 @@ func _calibrar() -> void:
 	todos.sort_custom(func(a, b): return a["id"] < b["id"])
 	var usados := []
 	var contratos := []
+	if so_custo:
+		_so_custo(escola, todos, pistas)
+		return
 	print("procurando: o pequeno contra o gigante (%d s)" % [Time.get_ticks_msec() / 1000])
 	var c1 := _pequeno_contra_gigante(escola, todos, pistas)
 	if not c1.is_empty():
@@ -148,6 +157,44 @@ func _calibrar() -> void:
 	todos_contratos.sort_custom(func(a, b): return ordem_lic.find(a["licenca"]) < ordem_lic.find(b["licenca"]))
 	var f := FileAccess.open(CAMINHO, FileAccess.WRITE)
 	f.store_string(JSON.stringify(todos_contratos, "\t") + "\n")
+	f.close()
+
+
+## --so-custo: recalcula "O último giro" desta licença e troca só ele no arquivo.
+## Os carros já usados são os dos contratos que vêm antes dele (a ordem da busca).
+func _so_custo(escola: Array, todos: Array, pistas: Array) -> void:
+	var antigos: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
+	var prefixo := "" if _licenca == _dados.lista("licencas")[0]["id"] else _licenca.to_lower() + "_"
+	var i := -1
+	var usados := []
+	for k in antigos.size():
+		if antigos[k]["licenca"] != _licenca:
+			continue
+		if antigos[k]["id"] == prefixo + "ultimo_credito":
+			i = k
+			break
+		usados.append(antigos[k]["carro"])
+	if i < 0:
+		print("%s: sem \"O último giro\"; nada a fazer" % _licenca)
+		return
+	var c := _ultimo_credito(escola.filter(func(x): return not x["id"] in usados), todos, pistas)
+	if c.is_empty():
+		push_error("%s: \"O último giro\" sem solução com os preços novos" % _licenca)
+		return
+	c["licenca"] = _licenca
+	c["id"] = prefixo + c["id"]
+	print("%s: %s · %s (antes: %s · %s)" % [c["id"], c["carro"], JSON.stringify(c["condicoes"]), antigos[i]["carro"],
+			JSON.stringify(antigos[i]["condicoes"])])
+	if c["carro"] != antigos[i]["carro"]:
+		print("   ATENÇÃO: o carro mudou; os contratos seguintes da licença usavam o antigo como já usado")
+	c.erase("_referencia")
+	# Relê antes de gravar: outras licenças podem rodar em paralelo.
+	antigos = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
+	for k in antigos.size():
+		if antigos[k]["id"] == c["id"]:
+			antigos[k] = c
+	var f := FileAccess.open(CAMINHO, FileAccess.WRITE)
+	f.store_string(JSON.stringify(antigos, "\t") + "\n")
 	f.close()
 
 
