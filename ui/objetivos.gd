@@ -4,8 +4,49 @@ extends RefCounted
 ## tela abre. Só lê o estado do jogador; não dá prêmio nem muda nada.
 
 
-## [{texto, feito, aba, botao}] na ordem em que devem ser cumpridos.
+## [{texto, feito, aba, botao}] na ordem em que devem ser cumpridos. Com a
+## história (decisão 32), os objetivos seguem o que os personagens pedem: o
+## jogador novo nunca recebe duas ordens diferentes.
 static func lista(jogador: Node, dados: Node) -> Array:
+	if jogador.personagem == "adrian":
+		return _prologo(jogador, dados)
+	if jogador.personagem == "elena":
+		return _elena(jogador, dados) + _carreira(jogador, dados).slice(4)
+	return _carreira(jogador, dados)
+
+
+## Prólogo: os freios, a primeira etapa e o campeonato inteiro
+## (historia.json → adrian.campeonato).
+static func _prologo(jogador: Node, dados: Node) -> Array:
+	var serie := String(dados.historia().get("adrian", {}).get("campeonato", ""))
+	var etapas := Campeonatos.etapas(dados, serie)
+	var primeira := String(etapas[0]["nome"]) if not etapas.is_empty() else serie
+	var correu: bool = not etapas.is_empty() and jogador.historico.has(etapas[0]["id"])
+	return [
+		{"texto": "Comprar Freios 1 na Oficina", "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.OFICINA,
+			"botao": "Ir para a Oficina"},
+		{"texto": "Correr a %s" % primeira, "feito": correu, "aba": Aba.EVENTOS, "botao": "Ver corridas"},
+		{"texto": "Fechar a %s (%d etapas)" % [serie, etapas.size()], "feito": jogador.flags.has("FIRST_CHAMPIONSHIP_DONE"),
+			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
+		{"texto": "Correr a próxima prova", "feito": jogador.flags.has("LAST_RACE_STARTED"), "aba": Aba.EVENTOS,
+			"botao": "Ver corridas"},
+	]
+
+
+## Elena: o primeiro carro na Second Chance, a primeira corrida sem licença e
+## o treino da licença Club; depois, a carreira.
+static func _elena(jogador: Node, _dados: Node) -> Array:
+	return [
+		{"texto": "Comprar um carro na Second Chance Motors", "feito": not jogador.garagem.lista().is_empty(),
+			"aba": Aba.LOJA, "botao": "Ir para o Mercado"},
+		{"texto": "Disputar uma corrida sem licença", "feito": not jogador.historico.is_empty(), "aba": Aba.EVENTOS,
+			"botao": "Ver corridas"},
+		{"texto": "Começar o treino da licença Club", "feito": jogador.treinos.has("CLUB") or "CLUB" in jogador.licencas,
+			"aba": Aba.LICENCAS, "botao": "Ver licenças"},
+	]
+
+
+static func _carreira(jogador: Node, dados: Node) -> Array:
 	var tem_peca := false
 	for c in jogador.garagem.lista():
 		if not c.pecas.is_empty() or c.pneus.size() > 1:

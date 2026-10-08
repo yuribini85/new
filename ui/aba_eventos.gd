@@ -40,8 +40,8 @@ func construir() -> void:
 	_carro_em_uso(garagem, c)
 	if not jogador.fila.is_empty():
 		_fila()
-	else:
-		_repeticoes_ui()
+	elif not jogador.vitorias.is_empty():
+		_repeticoes_ui()  # só faz sentido depois da primeira vitória
 	# Filtros numa linha só, que rola de lado (em várias linhas ocupavam meia tela).
 	var faixa := ScrollContainer.new()
 	faixa.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

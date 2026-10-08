@@ -1,8 +1,19 @@
 {
- "adrian": {"carro": "fraco", "licencas": ["b"], "saldo_da_peca": "turbo"},
- "elena": {"saldo": "saldo_inicial"},
+ "adrian": {
+  "carro": "fraco",
+  "licencas": [
+   "b"
+  ],
+  "saldo_da_peca": "turbo",
+  "campeonato": "Copa Teste"
+ },
+ "elena": {
+  "saldo": "saldo_inicial"
+ },
  "ultima_corrida_apos": "FIRST_CHAMPIONSHIP_DONE",
  "radio_fracao": 0.4,
  "acidente_fracao": 0.6,
- "second_chance": {"carros": 3}
+ "second_chance": {
+  "carros": 3
+ }
 }

@@ -459,9 +459,6 @@ func _registrar_fila() -> void:
 ## recompensa e a próxima decisão.
 func _resultado(c: Dictionary, primeira: bool) -> void:
 	var g: Aba = _todas[0]
-	g.historia("CORRIDA_FIM", {"posicao": int(c["posicao"]), "evento": c["evento_id"]})
-	if c.get("campeonato", {}).get("campeao", false):
-		g.historia("CAMPEONATO_VENCIDO", {"evento": c["evento_id"]})
 	var venceu: bool = c["posicao"] == 1
 	var ev: Dictionary = dados.evento(c["evento_id"])
 	var continua: bool = not jogador.fila.is_empty()
@@ -498,6 +495,10 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var b = botoes[primeiro]
 			botoes.remove_at(primeiro)
 			botoes.push_front(b)
+	# A conversa sobre a corrida vem depois de o jogador ler o resultado (o
+	# personagem em cena cobriria o pódio): qualquer botão do painel a dispara.
+	for b in botoes:
+		b[1] = _depois_do_resultado.bind(c, b[1])
 	var meu: Carro = jogador.garagem.carro(c["uid"])
 	var tabela: Array = c.get("tabela", [])
 	var objetivos := Objetivos.lista(jogador, dados)
@@ -579,6 +580,14 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var dica := g.rotulo("Por que perdi? Veja na tela da corrida.", Aba.FONTE_PEQUENA,
 					Aba.COR_SECUNDARIA, v)
 			dica.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER, botoes)
+
+
+func _depois_do_resultado(c: Dictionary, acao: Callable) -> void:
+	var g: Aba = _todas[0]
+	acao.call()
+	g.historia("CORRIDA_FIM", {"posicao": int(c["posicao"]), "evento": c["evento_id"]})
+	if c.get("campeonato", {}).get("campeao", false):
+		g.historia("CAMPEONATO_VENCIDO", {"evento": c["evento_id"]})
 
 
 ## Pódio dos três primeiros: degraus de alturas diferentes, o jogador em ouro.

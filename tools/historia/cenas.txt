@@ -24,14 +24,16 @@ Elena: "Fábrica" quer dizer que ninguém mexeu ainda.
 Adrian: E dá para mexer?
 Marcus: Temos {saldo}. É o preço de um jogo de freios.
 Elena: Então você já sabe o que comprar.
-Sistema: Toque em Melhorar o carro e compre Freios 1.
+[OPEN_TUNE_SERVICE]
+[HIGHLIGHT_BRAKES]
+Sistema: Esta é a Oficina. Toque em Freios 1 e confirme a compra.
 
 = SCN_A02 | EVENTO_SELECIONADO | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I
 Marcus: Calma. Com freio de fábrica, a curva vira parede.
 Elena: Primeiro os freios. A inscrição espera.
 [OPEN_TUNE_SERVICE]
 [HIGHLIGHT_BRAKES]
-Sistema: Compre Freios 1. Depois volte em Correr.
+Sistema: Toque em Freios 1 e confirme a compra. Depois volte em Correr.
 
 = SCN_A03 | PECA_COMPRADA | personagem=adrian; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE; capitulo=I
 Marcus: {peca} montado.
@@ -41,21 +43,21 @@ Elena: A outra metade tem piloto melhor.
 Adrian: Engraçada.
 Sistema: Toque em Correr na barra de baixo.
 
-= SCN_A04 | ABA:EVENTOS | personagem=adrian; requer=FIRST_TUNE_DONE; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; capitulo=I
+= SCN_A04 | ABA:EVENTOS | personagem=adrian; requer=FIRST_TUNE_DONE; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,CHAMPIONSHIP_TUTORIAL_DONE; capitulo=I
 Elena: Cada cartão é uma prova: pista, voltas, prêmio e o que o regulamento aceita.
 [HIGHLIGHT_EVENT_CARD]
 Elena: A barra "seu carro × rivais" diz se dá para ganhar antes de você tentar.
-Marcus: A Copa de Domingo tem três etapas. É um campeonato.
+Marcus: A Copa de Domingo tem três etapas e conta pontos. Campeão é quem soma mais.
+Elena: Corra as etapas em ordem. Fora de ordem vira corrida comum.
 Adrian: Fecho as três e a gente fala de motor.
-Elena: Fecha as três e a gente fala.
 Sistema: Escolha a Copa de Domingo — etapa 1 e toque em Correr.
 
 = SCN_A05 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I
 Marcus: {voltas} voltas em {pista}.
 Adrian: Alguma ordem de equipe?
 Elena: Não. A corrida corre sozinha. O que decidimos na garagem já está no carro.
-Adrian: Então eu só acelero.
 Elena: Você acelera. Eu anoto.
+Sistema: Prova nova roda com o app aberto. Depois de vencida, dá para repetir com o app fechado.
 
 = SCN_A06 | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN_ADRIAN; capitulo=I
 Adrian: Viu isso?

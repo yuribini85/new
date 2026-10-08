@@ -70,8 +70,14 @@
     "texto": "Então você já sabe o que comprar."
    },
    {
+    "acao": "OPEN_TUNE_SERVICE"
+   },
+   {
+    "acao": "HIGHLIGHT_BRAKES"
+   },
+   {
     "quem": "sistema",
-    "texto": "Toque em Melhorar o carro e compre Freios 1."
+    "texto": "Esta é a Oficina. Toque em Freios 1 e confirme a compra."
    }
   ],
   "requer": [],
@@ -104,7 +110,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Compre Freios 1. Depois volte em Correr."
+    "texto": "Toque em Freios 1 e confirme a compra. Depois volte em Correr."
    }
   ],
   "requer": [],
@@ -175,15 +181,15 @@
    },
    {
     "quem": "marcus",
-    "texto": "A Copa de Domingo tem três etapas. É um campeonato."
+    "texto": "A Copa de Domingo tem três etapas e conta pontos. Campeão é quem soma mais."
+   },
+   {
+    "quem": "elena",
+    "texto": "Corra as etapas em ordem. Fora de ordem vira corrida comum."
    },
    {
     "quem": "adrian",
     "texto": "Fecho as três e a gente fala de motor."
-   },
-   {
-    "quem": "elena",
-    "texto": "Fecha as três e a gente fala."
    },
    {
     "quem": "sistema",
@@ -197,7 +203,8 @@
    "EVENT_MENU_TUTORIAL_SEEN"
   ],
   "flags": [
-   "EVENT_MENU_TUTORIAL_SEEN"
+   "EVENT_MENU_TUTORIAL_SEEN",
+   "CHAMPIONSHIP_TUTORIAL_DONE"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -221,12 +228,12 @@
     "texto": "Não. A corrida corre sozinha. O que decidimos na garagem já está no carro."
    },
    {
-    "quem": "adrian",
-    "texto": "Então eu só acelero."
-   },
-   {
     "quem": "elena",
     "texto": "Você acelera. Eu anoto."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Prova nova roda com o app aberto. Depois de vencida, dá para repetir com o app fechado."
    }
   ],
   "requer": [],

@@ -384,7 +384,8 @@ func _decidir(c: Carro, p: Dictionary, antes: Dictionary, depois: Dictionary, pe
 				muda.append(["%d → %d" % [roundi(antes["peso"]), roundi(depois["peso"])],
 						"kg  (%+d)" % roundi(depois["peso"] - antes["peso"])])
 			if absf(depois["freio"] - antes["freio"]) >= 0.005:
-				muda.append(["%.2f → %.2f" % [antes["freio"], depois["freio"]], "freio"])
+				muda.append(["%s → %s" % [texto_fator(antes["freio"], true), texto_fator(depois["freio"], true)],
+						"freio (frear mais tarde)"])
 			numeros(muda, v)
 			if not possuida:
 				var custo := int(p["preco"])
@@ -443,7 +444,7 @@ static func _diferencas(antes: Dictionary, depois: Dictionary) -> Array:
 		r.append(["%d → %d kg" % [roundi(antes["peso"]), roundi(depois["peso"])],
 				COR_BOM if depois["peso"] < antes["peso"] else COR_RUIM])
 	if absf(depois["freio"] - antes["freio"]) >= 0.005:
-		r.append(["freio %.2f → %.2f" % [antes["freio"], depois["freio"]],
+		r.append(["freio %s → %s" % [texto_fator(antes["freio"], true), texto_fator(depois["freio"], true)],
 				COR_BOM if depois["freio"] > antes["freio"] else COR_RUIM])
 	return r
 

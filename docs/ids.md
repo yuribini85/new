@@ -25,7 +25,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `SCN_A01` | `ENCADEADA` | I | `GARAGE_TUTORIAL_SEEN` |
 | `SCN_A02` | `EVENTO_SELECIONADO` | I | — |
 | `SCN_A03` | `PECA_COMPRADA` | I | `FIRST_TUNE_DONE` |
-| `SCN_A04` | `ABA:EVENTOS` | I | `EVENT_MENU_TUTORIAL_SEEN` |
+| `SCN_A04` | `ABA:EVENTOS` | I | `EVENT_MENU_TUTORIAL_SEEN`, `CHAMPIONSHIP_TUTORIAL_DONE` |
 | `SCN_A05` | `CORRIDA_INICIO` | I | `FIRST_RACE_BRIEFED` |
 | `SCN_A06` | `CORRIDA_FIM` | I | `FIRST_RACE_DONE`, `FIRST_WIN_ADRIAN` |
 | `SCN_A06B` | `CORRIDA_FIM` | I | `FIRST_RACE_DONE` |
@@ -90,7 +90,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `ADRIAN_DEAD` | cena SCN_A13 |
 | `ADRIAN_LICENSE_CONTEXT` | cena SCN_A09 |
 | `CHAMPIONSHIP_CLOSED_TALK` | cena SCN_A10 |
-| `CHAMPIONSHIP_TUTORIAL_DONE` | cena SCN_A08 |
+| `CHAMPIONSHIP_TUTORIAL_DONE` | cena SCN_A04 |
 | `DRIVER_HIRE_UNLOCKED` | cena SCN_N01 |
 | `ELENA_CLUB_COMPLETE` | cena SCN_D05 |
 | `ELENA_FIRST_CAR_BOUGHT` | cena SCN_C02 |
