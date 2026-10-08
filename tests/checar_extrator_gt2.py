@@ -6,6 +6,7 @@ Não usa dados do jogo: monta ISO 9660 -> GT2.VOL (GTFS) -> gtmode_*.dat
 """
 import csv
 import gzip
+import importlib.util
 import pathlib
 import struct
 import subprocess
@@ -243,29 +244,34 @@ def main():
             carregar = lambda n: json.loads((dados / f"{n}.json").read_text(encoding="utf-8"))
             carros = {c["id"]: c for c in carregar("carros")}
             x, y = carros["hayase_x"], carros["hartwig_y"]
-            if x.get("usados") != [[0, 19, 9000], [20, 29, 8800]] or y.get("usados") != [[50, 59, 30000]]:
+            # Dinheiro: os valores do disco sintético em Cr, convertidos para G pelo importador.
+            spec = importlib.util.spec_from_file_location("importar_gt2", raiz / "tools/importar_gt2.py")
+            imp = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(imp)
+            g = imp.moeda
+            if x.get("usados") != [[0, 19, g(9000)], [20, 29, g(8800)]] or y.get("usados") != [[50, 59, g(30000)]]:
                 falhas.append(f"importador usados: {x.get('usados')} {y.get('usados')}")
-            if (x["potencia"], x["peso"], x["preco"], x["ano"], x["tracao"], y["tracao"]) != (160, 1050, 17500, 1993, "FF", "FR"):
+            if (x["potencia"], x["peso"], x["preco"], x["ano"], x["tracao"], y["tracao"]) != (160, 1050, g(17500), 1993, "FF", "FR"):
                 falhas.append(f"importador carros: {x} {y}")
             # aderência: médias 89 e 97, mediana 93; freio: 40 e 60, mediana 50
             if (x["aderencia"], y["aderencia"], x["freio"], y["freio"]) != (round(89 / 93, 3), round(97 / 93, 3), 0.8, 1.0):
                 falhas.append(f"importador normalização: {x} {y}")
             pecas = {p["id"]: p for p in carregar("pecas")}
-            esperado = {"hayase_x_natune_1": ("aspiracao", "potencia", 16.0, 4000),
-                        "hartwig_y_turbinekit_2": ("aspiracao", "potencia", 112.0, 20000),
-                        "hayase_x_lightweight_1": ("lightweight", "peso", 0.9, 2500),
-                        "hayase_x_brake_1": ("brake", "freio", 1.25, 3500)}
+            esperado = {"hayase_x_natune_1": ("aspiracao", "potencia", 16.0, g(4000)),
+                        "hartwig_y_turbinekit_2": ("aspiracao", "potencia", 112.0, g(20000)),
+                        "hayase_x_lightweight_1": ("lightweight", "peso", 0.9, g(2500)),
+                        "hayase_x_brake_1": ("brake", "freio", 1.25, g(3500))}
             for pid, (cat, attr, val, preco) in esperado.items():
                 p = pecas.get(pid)
                 if not p or (p["categoria"], p["efeitos"][0]["atributo"], p["efeitos"][0]["valor"], p["preco"]) != (cat, attr, val, preco):
                     falhas.append(f"importador peça {pid}: {p}")
             pneus = {p["id"]: p for p in carregar("pneus")}
-            if pneus.get("pneu_1", {}).get("aderencia") != {"seco": 1.034, "chuva": 1.034} or pneus["pneu_1"]["preco"] != 2000:
+            if pneus.get("pneu_1", {}).get("aderencia") != {"seco": 1.034, "chuva": 1.034} or pneus["pneu_1"]["preco"] != g(2000):
                 falhas.append(f"importador pneus: {pneus}")
             ev = carregar("eventos")
             if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "CLUB"} \
                     or (ev[0]["nome"], ev[0]["pista"]) != ("Copa de Domingo — etapa 1", "serra_alta") \
-                    or ev[0]["premios"] != [2500, 1500] or ev[0]["carro_premio"] != "hartwig_y" \
+                    or ev[0]["premios"] != [g(2500), g(1500)] or ev[0]["carro_premio"] != "hartwig_y" \
                     or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
                 falhas.append(f"importador eventos: {ev}")
             lic = carregar("licencas")
