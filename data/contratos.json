@@ -360,7 +360,7 @@
 						"carro": "kanaya_benibana_corrida"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -368,14 +368,14 @@
 		"carro": "hayase_komorebi_s_iv",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 345000,
+				"custo_max": 345000.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 230000
+				"custo_max": 230000.0
 			},
 			"prata": {
-				"custo_max": 276000
+				"custo_max": 276000.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Kurenai Corrida gastando o mínimo.",
@@ -391,7 +391,7 @@
 						"carro": "hayase_kurenai_corrida"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
@@ -402,7 +402,7 @@
 				"vencer": true
 			},
 			"ouro": {
-				"pecas_max": 2
+				"pecas_max": 2.0
 			},
 			"prata": {
 				"folga_s": 0.2
@@ -421,7 +421,7 @@
 						"carro": "ashcombe_saltire"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			},
 			{
 				"condicao": "seco",
@@ -429,6 +429,115 @@
 				"rivais": [
 					{
 						"carro": "hayase_komorebi_s_v"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "pemberly_fieldfare_gt",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 0.6
+			}
+		},
+		"descricao": "O Pemberly Fieldfare GT tem 145 cv; o rival, 700. Monte o carro da escola para chegar na frente.",
+		"id": "elite_pequeno_gigante",
+		"licenca": "ELITE",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_curta",
+				"rivais": [
+					{
+						"carro": "kanaya_benibana_corrida"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "whitlock_switchback_gt",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 328500,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 219000
+			},
+			"prata": {
+				"custo_max": 262800
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Aubrac Grive S gastando o mínimo.",
+		"id": "elite_ultimo_credito",
+		"licenca": "ELITE",
+		"nome": "O último crédito",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "aubrac_grive_s"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "arvelle_outlaw_s_97",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 4
+			},
+			"prata": {
+				"folga_s": 0.3
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Kanaya Ruri Corrida II em Anel do Vale e o Pemberly Teal II em Serra Alta (curta).",
+		"id": "elite_dois_circuitos",
+		"licenca": "ELITE",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "kanaya_ruri_corrida_ii"
+					}
+				],
+				"voltas": 1
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_curta",
+				"rivais": [
+					{
+						"carro": "pemberly_teal_ii"
 					}
 				],
 				"voltas": 1
