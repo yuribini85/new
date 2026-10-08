@@ -58,10 +58,8 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	EquipeJogador.criar(j)
 	igual(EquipeJogador.dados_equipe(d, j).get("id"), "eq_jogador", "equipe do jogador criada")
 	j.flags["SECOND_CHANCE_UNLOCKED"] = true  # seção Second Chance no mercado
-	j.flags[EquipeJogador.FLAG_CONTRATAR] = true
-	abas[6].atualizar()  # lista de contratação
-	abas[6]._fazer_contratacao("livre_1")
-	igual(j.segundo_piloto, "livre_1", "contratação pela tela")
+	EquipeJogador.liberar_segundo(d, j)
+	igual(j.segundo_piloto, "livre_1", "segundo piloto na equipe")
 	for a in abas:
 		a.atualizar()
 		a.free()

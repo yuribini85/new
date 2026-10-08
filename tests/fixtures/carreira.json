@@ -4,6 +4,6 @@
 	"niveis": ["N1", "N2"],
 	"niveis_licenca": {"": "N1", "b": "N2"},
 	"segundo_piloto": {"chance": 0.3, "perda_consistencia": 0.2},
-	"equipe_jogador": {"patrocinio": 50, "custo_staff": 40, "salario_segundo_piloto": 30, "contratacao_segundo_piloto": 100,
-		"contrataveis": [{"id": "livre_1", "nome": "Livre Um"}]}
+	"equipe_jogador": {"patrocinio": 50, "custo_staff": 70,
+		"segundo_piloto": {"id": "livre_1", "nome": "Livre Um"}}
 }

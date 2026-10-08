@@ -320,7 +320,7 @@ Marcus: Era a intenção.
 Sophie: Agora começamos a gastar dinheiro de verdade.
 Marcus: Ela fala isso como se antes fosse brincadeira.
 
-= SCN_N01 | ENCADEADA | personagem=elena; bloqueia=sim; flags=DRIVER_HIRE_UNLOCKED; capitulo=XIV
+= SCN_N01 | ENCADEADA | personagem=elena; bloqueia=sim; flags=DRIVER_HIRE_UNLOCKED; proxima=SCN_N02; capitulo=XIV
 Sophie: Precisamos de outro piloto.
 Elena: Temos um.
 Sophie: Temos você.
@@ -329,7 +329,7 @@ Elena: Eu administro.
 Sophie: Não.
 [OPEN_DRIVER_HIRE]
 
-= SCN_N02 | PILOTO_CONTRATADO | personagem=elena; flags=SECOND_DRIVER_SECOND_CAR; capitulo=XIV
+= SCN_N02 | ENCADEADA | personagem=elena; flags=SECOND_DRIVER_SECOND_CAR; capitulo=XIV
 Marcus: Quem é o número um?
 Elena: Quem chegar na frente.
 Marcus: Mesmo carro?

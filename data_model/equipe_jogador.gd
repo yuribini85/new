@@ -6,12 +6,13 @@ extends RefCounted
 ## A equipe é a de equipes.json com "jogador": true; nome e pilotos vêm de lá.
 ##
 ## Gestão leve (decisão 38, carreira.json → equipe_jogador): caixa único (o
-## saldo do jogador); a cada corrida entra o patrocínio e saem o staff e o
-## salário do segundo piloto. Valores null são pendentes do playtest e valem 0.
-## Segundo piloto: contratado entre `contrataveis` depois da cena que libera
-## (flag DRIVER_HIRE_UNLOCKED); corre a mesma prova que a Elena como
-## companheiro, com o carro da garagem escolhido na aba Equipe, e o piloto do
-## jogador com a perda de consistência de segundo piloto (decisão 36).
+## saldo do jogador); a cada corrida entra o patrocínio e sai o staff. Valores
+## null são pendentes do playtest e valem 0.
+## Segundo piloto (`segundo_piloto` nos dados): sem contrato nem salário; entra
+## na equipe na cena que libera (flag DRIVER_HIRE_UNLOCKED) e só aparece na
+## prova, com o carro da garagem escolhido na aba Equipe e o piloto do jogador
+## com a perda de consistência de segundo piloto (decisão 36). Os ganhos são
+## da equipe: vale quem chegar na frente e os dois pontuam no campeonato.
 
 const FLAG := "SECOND_DRIVER_CREATED"
 const FLAG_CONTRATAR := "DRIVER_HIRE_UNLOCKED"
@@ -51,36 +52,25 @@ static func definido(dados: Node, chave: String) -> bool:
 	return config(dados).get(chave) != null
 
 
-static func pode_contratar(jogador: Node) -> bool:
-	return criada(jogador) and jogador.flags.has(FLAG_CONTRATAR) and jogador.segundo_piloto == ""
-
-
-## Contrata um piloto de `contrataveis`. "" ou o motivo.
-static func contratar(dados: Node, jogador: Node, piloto_id: String) -> String:
-	if not pode_contratar(jogador):
-		return "contratação indisponível"
-	if piloto(dados, piloto_id).is_empty():
-		return "piloto %s não está disponível" % piloto_id
-	if not jogador.economia.debitar(valor(dados, "contratacao_segundo_piloto")):
-		return "saldo insuficiente"
-	jogador.segundo_piloto = piloto_id
-	return ""
+## Segundo piloto entra na equipe (ação da cena que libera). Sem custo.
+static func liberar_segundo(dados: Node, jogador: Node) -> void:
+	jogador.flags[FLAG_CONTRATAR] = true
+	if criada(jogador) and jogador.segundo_piloto == "":
+		jogador.segundo_piloto = String(config(dados).get("segundo_piloto", {}).get("id", ""))
 
 
 static func piloto(dados: Node, piloto_id: String) -> Dictionary:
-	for p in config(dados).get("contrataveis", []):
-		if p["id"] == piloto_id:
-			return p
-	return {}
+	var p: Dictionary = config(dados).get("segundo_piloto", {})
+	return p if piloto_id != "" and p.get("id") == piloto_id else {}
 
 
-## Nome do segundo piloto contratado ("" se não há).
+## Nome do segundo piloto ("" se ainda não há).
 static func nome_segundo(dados: Node, jogador: Node) -> String:
 	return String(piloto(dados, jogador.segundo_piloto).get("nome", ""))
 
 
 ## Carro do companheiro para esta prova (-1 se ele não corre): piloto
-## contratado, carro escolhido na garagem, diferente do da Elena e elegível.
+## na equipe, carro escolhido na garagem, diferente do da Elena e elegível.
 static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid: int) -> int:
 	if not criada(jogador) or jogador.segundo_piloto == "":
 		return -1
@@ -102,16 +92,15 @@ static func piloto_corrida(dados: Node) -> Dictionary:
 	return p
 
 
-## Folha de uma corrida: {patrocinio, staff, salario, saldo} (saldo = líquido).
+## Folha de uma corrida: {patrocinio, staff, saldo} (saldo = líquido).
 static func folha(dados: Node, jogador: Node) -> Dictionary:
 	if not criada(jogador):
 		return {}
 	var f := {
 		"patrocinio": valor(dados, "patrocinio"),
 		"staff": valor(dados, "custo_staff"),
-		"salario": valor(dados, "salario_segundo_piloto") if jogador.segundo_piloto != "" else 0,
 	}
-	f["saldo"] = f["patrocinio"] - f["staff"] - f["salario"]
+	f["saldo"] = f["patrocinio"] - f["staff"]
 	return f
 
 
@@ -122,7 +111,7 @@ static func cobrar_corrida(dados: Node, jogador: Node) -> Dictionary:
 	if f.is_empty():
 		return {}
 	jogador.economia.creditar(int(f["patrocinio"]))
-	var custo: int = mini(int(f["staff"]) + int(f["salario"]), jogador.economia.saldo)
+	var custo: int = mini(int(f["staff"]), jogador.economia.saldo)
 	jogador.economia.debitar(custo)
 	f["cobrado"] = custo
 	return f

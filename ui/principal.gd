@@ -301,7 +301,7 @@ signal historia_acao(nome: String)
 
 func _acao_tutorial(nome: String) -> void:
 	var abas := {"OPEN_GARAGE_TAB": 0, "RETURN_TO_GARAGE": 0, "OPEN_DEALERSHIP": 1, "OPEN_TUNE_SERVICE": 2,
-			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5, "OPEN_TEAM_FINANCE": ABA_EQUIPE, "OPEN_DRIVER_HIRE": ABA_EQUIPE}
+			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5, "OPEN_TEAM_FINANCE": ABA_EQUIPE}
 	if abas.has(nome):
 		_ir_para(abas[nome])
 		atualizar()
@@ -332,6 +332,11 @@ func _acao_historia(nome: String) -> void:
 		Prologo.salto_temporal(dados, jogador)
 		atualizar()
 		get_node("/root/SaveManager").salvar()
+	elif nome == "OPEN_DRIVER_HIRE":
+		# Segundo piloto entra na equipe, sem contrato (decisão 38).
+		EquipeJogador.liberar_segundo(dados, jogador)
+		atualizar()
+		_ir_para(ABA_EQUIPE)
 	elif nome == "UNLOCK_TEAM_TAB":
 		# A Second Driver nasce na cena: nada é resetado, só a aba aparece.
 		EquipeJogador.criar(jogador)

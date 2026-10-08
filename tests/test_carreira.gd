@@ -198,7 +198,7 @@ func test_prologo_adrian_acidente_e_elena() -> void:
 	d.free()
 
 
-func test_equipe_folha_contratacao_e_companheiro() -> void:
+func test_equipe_folha_e_companheiro() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var c := Carreira.new(d, j)
@@ -206,12 +206,10 @@ func test_equipe_folha_contratacao_e_companheiro() -> void:
 	j.fila_ctrl = Fila.new(c, j, 3600.0)
 	igual(EquipeJogador.folha(d, j), {}, "sem equipe, sem folha")
 	EquipeJogador.criar(j)
-	igual(EquipeJogador.contratar(d, j, "livre_1"), "contratação indisponível", "só depois da cena que libera")
-	j.flags[EquipeJogador.FLAG_CONTRATAR] = true
-	igual(EquipeJogador.contratar(d, j, "ninguem"), "piloto ninguem não está disponível", "piloto da lista")
+	igual(EquipeJogador.nome_segundo(d, j), "", "sem segundo piloto antes da cena")
 	var saldo: int = j.economia.saldo
-	igual(EquipeJogador.contratar(d, j, "livre_1"), "", "contratado")
-	igual(j.economia.saldo, saldo - 100, "custo de contratação")
+	EquipeJogador.liberar_segundo(d, j)
+	igual(j.economia.saldo, saldo, "segundo piloto sem contrato")
 	igual(EquipeJogador.nome_segundo(d, j), "Livre Um", "nome do segundo piloto")
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
 	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), -1, "sem carro escolhido não corre")
@@ -230,7 +228,7 @@ func test_equipe_folha_contratacao_e_companheiro() -> void:
 	var r := c.aplicar(corrida)
 	igual(r["posicao"], mini(cl.find("jogador"), cl.find(EquipeJogador.ID)) + 1, "posição da equipe = a melhor")
 	var premio: int = r["premio"]
-	igual(r["folha"]["saldo"], 50 - 40 - 30, "folha: patrocínio − staff − salário")
+	igual(r["folha"]["saldo"], 50 - 70, "folha: patrocínio − staff, sem salário")
 	igual(j.economia.saldo, saldo + premio + 50 - 70, "prêmio e folha no caixa único")
 	verificar(c.rotulo_participante("aberto", EquipeJogador.ID, uid).begins_with("Livre Um"), "rótulo do companheiro")
 	# Sem dinheiro para a folha: cobra só o que há, sem saldo negativo.

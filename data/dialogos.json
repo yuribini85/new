@@ -1625,11 +1625,12 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "elena",
+  "proxima": "SCN_N02",
   "capitulo": "XIV"
  },
  {
   "id": "SCN_N02",
-  "trigger": "PILOTO_CONTRATADO",
+  "trigger": "ENCADEADA",
   "falas": [
    {
     "quem": "marcus",

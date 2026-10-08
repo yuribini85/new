@@ -254,9 +254,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     o principal e 30% o segundo, que pode ser até 20% pior.
 37. **Fora:** taxa de inscrição e quilometragem/condição (o GT2 não tem; mantém a 10).
     Equipe do jogador (finanças leves, 2º carro e piloto) só na fase 9 do documento.
-38. **Segundo piloto e gestão leve (fase 9):** o segundo piloto é companheiro na mesma
-    prova, com outro carro da garagem e a consistência de segundo piloto (36); vale para
-    a equipe quem chegar na frente (prêmio, vitória, carro-prêmio) e os dois pontuam no
-    campeonato. Caixa único: o saldo do jogador é o da equipe. Patrocínio, staff, salário
-    e contratação por corrida, com valores do playtest. Fora: taxa de inscrição e
-    manutenção (37).
+38. **Segundo piloto e gestão leve (fase 9):** o segundo piloto é só visual, com a
+    penalidade de segundo piloto (36): corre a mesma prova com outro carro da garagem,
+    sem contrato nem salário. Os ganhos são da equipe: vale quem chegar na frente
+    (prêmio, vitória, carro-prêmio) e os dois pontuam no campeonato. Caixa único: o
+    saldo do jogador é o da equipe. Patrocínio e staff por corrida, com valores do
+    playtest. Fora: taxa de inscrição e manutenção (37).

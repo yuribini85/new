@@ -39,8 +39,6 @@ func _caixa() -> void:
 	var f := EquipeJogador.folha(dados, jogador)
 	_linha_folha(c, "Patrocínio", "patrocinio", int(f["patrocinio"]), "+")
 	_linha_folha(c, "Staff", "custo_staff", int(f["staff"]), "−")
-	if jogador.segundo_piloto != "":
-		_linha_folha(c, "Salário do segundo piloto", "salario_segundo_piloto", int(f["salario"]), "−")
 	rotulo("Prêmios entram no mesmo caixa.", FONTE_PEQUENA, COR_SECUNDARIA, c)
 
 
@@ -56,33 +54,11 @@ func _pilotos(eq: Dictionary) -> void:
 			linha("%s · piloto principal" % p["nome"])
 	if jogador.segundo_piloto != "":
 		linha("%s · segundo piloto" % EquipeJogador.nome_segundo(dados, jogador))
+		nota("icone_piloto", "Corre com você", "Na mesma prova, com outro carro da garagem. "
+				+ "Vale para a equipe quem chegar na frente; os dois pontuam no campeonato.")
 		_carro_companheiro()
-	elif EquipeJogador.pode_contratar(jogador):
-		_contratar()
 	else:
-		nota("icone_info", "Segundo piloto", "Contratar um segundo piloto vem mais adiante na carreira.")
-
-
-## Contratação: os pilotos disponíveis e o custo (pendente do playtest = 0).
-func _contratar() -> void:
-	var custo := EquipeJogador.valor(dados, "contratacao_segundo_piloto")
-	nota("icone_piloto", "Contratar segundo piloto", "Ele corre a mesma prova que você, com outro carro da garagem. "
-			+ "Vale para a equipe quem chegar na frente; os dois pontuam no campeonato.")
-	for p in EquipeJogador.config(dados).get("contrataveis", []):
-		var preco := " · %s Cr" % dinheiro(custo) if custo > 0 else ""
-		linha(String(p["nome"]) + preco, [["Contratar", func(): _fazer_contratacao(String(p["id"]))]])
-
-
-func _fazer_contratacao(id: String) -> void:
-	var m := EquipeJogador.contratar(dados, jogador, id)
-	if m != "":
-		if m == "saldo insuficiente":
-			historia("SEM_DINHEIRO")
-		avisar("Não deu para contratar: %s." % m, false)
-		return
-	avisar("%s contratado." % EquipeJogador.nome_segundo(dados, jogador))
-	historia("PILOTO_CONTRATADO")
-	mudou.emit()
+		nota("icone_info", "Segundo piloto", "Um segundo piloto chega mais adiante na carreira.")
 
 
 ## Carro do segundo piloto: qualquer carro da garagem; corre se for elegível
