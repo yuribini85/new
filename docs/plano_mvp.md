@@ -234,3 +234,23 @@ técnico real do projeto.
     estados de câmera: normal (de cima), foco (disputa, mais perto) e velocidade
     (inclinada, atrás do carro, com o isométrico e efeitos nas bordas), desligados por
     "Reduzir animações".
+
+### Documento de implementação "Second Driver" (aprovadas em 2026-10-08)
+
+Origem: documento do usuário com prólogo (Adrian), salto para Elena, equipe Second Driver
+Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, vale isto:
+
+32. **História agora** (muda a regra 8 do README): diálogos e flags em dados; o
+    DialogueManager é o único sistema novo e faz também o tutorial (TutorialAction).
+33. **Licença híbrida** (muda a 4 e a 9): estados LOCKED → AVAILABLE → TRAINING (treino por
+    tempo, timestamp absoluto, conta offline) → READY_FOR_EVALUATION → COMPLETE. A
+    avaliação são os contratos de certificação. Requisitos combináveis com status na tela.
+    IDs CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO, ELITE ligados às licenças do GT2.
+34. **Offline só para repetição** (muda a 2): repetir prova já vencida roda offline; prova
+    inédita, campeonato e corrida da história só com o app aberto.
+35. **Campeonatos com pontos** (muda a 20 e a 28).
+36. **Equipes, pilotos e carros nas corridas:** cada rival é um carro de uma equipe; a
+    equipe tem piloto principal e segundo piloto; a cada corrida, 70% de chance de correr
+    o principal e 30% o segundo, que pode ser até 20% pior.
+37. **Fora:** taxa de inscrição e quilometragem/condição (o GT2 não tem; mantém a 10).
+    Equipe do jogador (finanças leves, 2º carro e piloto) só na fase 9 do documento.

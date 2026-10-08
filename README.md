@@ -93,7 +93,9 @@ O save desse modo fica separado (`user://save_fixtures.json`).
 5. A mesma IA controla o jogador e os adversários.
 6. Carros, fabricantes, pistas e arte são originais. Nenhuma marca, nome ou traçado real.
 7. O GT2 é referência de estudo a partir de cópia legítima. Nada dele é redistribuído.
-8. Lore só depois que o jogo funcionar, e sem sistema novo.
+8. A história (Adrian → Elena → Second Driver Motorsport) é uma camada de dados — diálogos
+   e flags — sobre os sistemas do jogo; o diálogo também é o tutorial. Aprovado pelo
+   usuário em 2026-10-08 (antes: "Lore só depois que o jogo funcionar, e sem sistema novo").
 
 ## Histórico
 
