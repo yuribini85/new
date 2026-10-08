@@ -1,4 +1,7 @@
 {
 	"piloto_jogador": "perfeito",
-	"teto_offline_s": 3600
+	"teto_offline_s": 3600,
+	"niveis": ["N1", "N2"],
+	"niveis_licenca": {"": "N1", "b": "N2"},
+	"segundo_piloto": {"chance": 0.3, "perda_consistencia": 0.2}
 }

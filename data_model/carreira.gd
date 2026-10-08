@@ -45,8 +45,15 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 
 	var condicao: String = ev["condicao"]
 	var participantes := []
+	var grid := escalacao(evento_id, semente)
 	for i in ev["adversarios"].size():
-		participantes.append(_adversario(ev["adversarios"][i], i, condicao))
+		var p := _adversario(ev["adversarios"][i], i, condicao)
+		if i < grid.size() and grid[i]["segundo"]:
+			# Segundo piloto da equipe (decisão 36): mesma IA, menos consistência.
+			var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
+			p["piloto"] = p["piloto"].duplicate()
+			p["piloto"]["consistencia"] = float(p["piloto"]["consistencia"]) * (1.0 - perda)
+		participantes.append(p)
 	participantes.append({
 		"id": "jogador",
 		"atributos": carro.atributos_efetivos(condicao),
@@ -59,27 +66,83 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"]}
 
 
-## Sobrenomes fictícios dos pilotos rivais (só apresentação: a simulação usa
-## o perfil do piloto do evento). Fixos por prova e posição no grid.
+## Grid de equipes da corrida (decisão 36): uma vaga por equipe, primeiro as do
+## nível da prova (licença -> nível em carreira.json), depois as dos níveis
+## vizinhos; em cada equipe, o segundo piloto corre com a chance de
+## carreira.json, senão o principal. Fixo pela prova e pela semente.
+## Lista na ordem dos adversários: {equipe, piloto: {id, nome}, segundo}.
+func escalacao(evento_id: String, semente: int) -> Array:
+	var ev: Dictionary = dados.evento(evento_id)
+	var cfg: Dictionary = dados.carreira()
+	var niveis: Array = cfg.get("niveis", [])
+	var equipes: Array = dados.lista("equipes").filter(func(e): return e.has("nivel"))
+	if ev.is_empty() or niveis.is_empty() or equipes.is_empty():
+		return []
+	var nivel: String = cfg.get("niveis_licenca", {}).get(String(ev["restricoes"].get("licenca", "")), niveis[0])
+	var alvo := niveis.find(nivel)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("%s|%d" % [evento_id, semente])
+	var ordem := []
+	for d in range(niveis.size()):
+		for lado in ([0] if d == 0 else [-1, 1]):
+			var k: int = alvo + d * lado
+			if k < 0 or k >= niveis.size():
+				continue
+			var grupo := equipes.filter(func(e): return e["nivel"] == niveis[k])
+			grupo.sort_custom(func(a, b): return a["id"] < b["id"])
+			for i in range(grupo.size() - 1, 0, -1):
+				var j := rng.randi_range(0, i)
+				var t = grupo[i]
+				grupo[i] = grupo[j]
+				grupo[j] = t
+			ordem.append_array(grupo)
+	var chance := float(cfg.get("segundo_piloto", {}).get("chance", 0.0))
+	var grid := []
+	for i in mini(ev["adversarios"].size(), ordem.size()):
+		var eq: Dictionary = ordem[i]
+		var segundo: bool = eq["pilotos"].size() > 1 and rng.randf() < chance
+		grid.append({"equipe": eq, "piloto": eq["pilotos"][1 if segundo else 0], "segundo": segundo})
+	return grid
+
+
+## Sobrenomes fictícios dos pilotos rivais quando não há equipes (só
+## apresentação). Fixos por prova e posição no grid.
 const PILOTOS := ["Okada", "Brandt", "Moreau", "Ferraz", "Tanaka", "Kowalski", "Reyes", "Lindqvist",
 		"Hale", "Ito", "Novak", "Duarte", "Sato", "Keller", "Varga", "Lacroix", "Mendes", "Harlow"]
 
 
-## Piloto de um rival ("adv<i>_<carro>") nesta prova; "" para o jogador.
-static func nome_piloto(evento_id: String, id: String) -> String:
+## Piloto de um rival ("adv<i>_<carro>") nesta corrida; "" para o jogador.
+## Com equipes, o da escalação da corrida (semente); sem, um sobrenome fixo.
+func nome_piloto(evento_id: String, id: String, semente: int = -1) -> String:
 	if not id.begins_with("adv"):
 		return ""
 	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
+	var grid := escalacao(evento_id, semente) if semente >= 0 else []
+	if i < grid.size():
+		return String(grid[i]["piloto"]["nome"])
+	return Carreira.sobrenome_fixo(evento_id, i)
+
+
+## Equipe do rival nesta corrida ({} sem equipes).
+func equipe_de(evento_id: String, id: String, semente: int) -> Dictionary:
+	if not id.begins_with("adv") or semente < 0:
+		return {}
+	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
+	var grid := escalacao(evento_id, semente)
+	return grid[i]["equipe"] if i < grid.size() else {}
+
+
+static func sobrenome_fixo(evento_id: String, i: int) -> String:
 	var base := posmod(hash(evento_id), PILOTOS.size())
 	# Passo primo com a lista: pilotos diferentes no mesmo grid.
 	return PILOTOS[(base + i * 7) % PILOTOS.size()]
 
 
 ## "Piloto (carro)" para listas: distingue rivais com o mesmo modelo.
-func rotulo_participante(evento_id: String, id: String, uid: int) -> String:
+func rotulo_participante(evento_id: String, id: String, uid: int, semente: int = -1) -> String:
 	if id == "jogador":
 		return nome_participante(id, uid)
-	return "%s (%s)" % [nome_piloto(evento_id, id), Aba.nome_curto(nome_participante(id, uid))]
+	return "%s (%s)" % [nome_piloto(evento_id, id, semente), Aba.nome_curto(nome_participante(id, uid))]
 
 
 ## Nome do carro de um participante ("jogador" ou "adv<i>_<carro>").

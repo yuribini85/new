@@ -448,7 +448,7 @@ func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", 2)
 		var nome := Label.new()
-		nome.text = "Você" if id == "jogador" else Carreira.nome_piloto(c["evento_id"], id)
+		nome.text = "Você" if id == "jogador" else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1)))
 		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		nome.add_theme_font_size_override("font_size", 23)
 		nome.add_theme_color_override("font_color", Aba.COR_DESTAQUE if id == "jogador" else Color.WHITE)

@@ -308,7 +308,7 @@ func _tabela(u: Dictionary, pai: Control) -> void:
 	var t0: float = tabela[0]["tempo"]
 	for i in tabela.size():
 		var lin: Dictionary = tabela[i]
-		var nome: String = jogador.carreira.rotulo_participante(u["evento_id"], lin["id"], u["uid"])
+		var nome: String = jogador.carreira.rotulo_participante(u["evento_id"], lin["id"], u["uid"], int(u.get("semente", -1)))
 		var tempo := _mmss_dec(lin["tempo"]) if lin["terminou"] else "não terminou"
 		var dif := "" if i == 0 or not lin["terminou"] else "  +%.1f s" % (lin["tempo"] - t0)
 		var cor := COR_DESTAQUE if lin["id"] == "jogador" else Color.WHITE
@@ -335,7 +335,7 @@ func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
 		if a.is_empty() or meu.is_empty():
 			continue
 		var quem := "Vencedor" if id == u["vencedor"] else "Logo à frente"
-		rotulo("%s: %s" % [quem, carreira.rotulo_participante(u["evento_id"], id, u["uid"])], 0, Color.WHITE, v)
+		rotulo("%s: %s" % [quem, carreira.rotulo_participante(u["evento_id"], id, u["uid"], int(u.get("semente", -1)))], 0, Color.WHITE, v)
 		selos(fatores(meu, a), v)
 
 
@@ -391,7 +391,7 @@ func _diagnosticar(u: Dictionary, ev: Dictionary, seu: Carro, chave: String) -> 
 			continue
 		var p := Diagnostico.potencial(dados, ev, meu, a)
 		p["quem"] = "Vencedor" if id == u["vencedor"] else "Logo à frente"
-		p["nome"] = carreira.rotulo_participante(u["evento_id"], id, u["uid"])
+		p["nome"] = carreira.rotulo_participante(u["evento_id"], id, u["uid"], int(u.get("semente", -1)))
 		comps.append(p)
 	var colado := -1.0
 	if u.has("semente"):
@@ -621,8 +621,11 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	for i in ev["adversarios"].size():
 		var adv: Dictionary = ev["adversarios"][i]
 		var pid := "adv%d_%s" % [i, adv["carro"]]
-		_nomes[pid] = "%s (%s)" % [Carreira.nome_piloto(ev["id"], pid), Aba.nome_curto(dados.carro(adv["carro"])["nome"])]
-		_nomes_curtos[pid] = Carreira.nome_piloto(ev["id"], pid)
+		var piloto: String = jogador.carreira.nome_piloto(ev["id"], pid, int(f.get("semente", -1)))
+		var equipe: Dictionary = jogador.carreira.equipe_de(ev["id"], pid, int(f.get("semente", -1)))
+		_nomes[pid] = "%s · %s" % [piloto, equipe["nome"]] if not equipe.is_empty() \
+				else "%s (%s)" % [piloto, Aba.nome_curto(dados.carro(adv["carro"])["nome"])]
+		_nomes_curtos[pid] = piloto
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
 	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
 	_diretor.reiniciar()

@@ -27,6 +27,7 @@ const ESQUEMAS := {
 	"eventos": ["id", "nome", "pista", "voltas", "condicao", "restricoes", "adversarios", "premios"],
 	"licencas": ["id", "nome", "testes"],
 	"contratos": ["id", "licenca", "nome", "carro", "provas", "condicoes"],
+	"equipes": ["id", "nome", "pilotos"],
 }
 
 ## arquivo -> chaves obrigatórias do objeto.
@@ -171,6 +172,8 @@ func _validar_referencias() -> void:
 					_pendencias.append("%s teste '%s' tempo de %s" % [onde, t.get("id"), g])
 
 
+	_validar_equipes()
+
 	for ct in _listas["contratos"].values():
 		var onde := "contratos.json: '%s'" % ct["id"]
 		_exigir(onde + " licença", "licencas", ct.get("licenca"))
@@ -188,6 +191,16 @@ func _validar_referencias() -> void:
 		var cond = ct.get("condicoes", {})
 		if cond is Dictionary and not cond.has("bronze"):
 			_erros.append(onde + " sem condições de bronze")
+
+
+func _validar_equipes() -> void:
+	var niveis: Array = _objetos.get("carreira", {}).get("niveis", [])
+	for eq in _listas["equipes"].values():
+		var onde := "equipes.json: '%s'" % eq["id"]
+		if eq.has("nivel") and not eq["nivel"] in niveis:
+			_erros.append("%s nível desconhecido %s" % [onde, eq["nivel"]])
+		if eq["pilotos"].is_empty() or not eq["pilotos"].all(func(p): return p.has("id") and p.has("nome")):
+			_erros.append(onde + " precisa de pilotos com id e nome")
 
 
 func _validar_restricoes(onde: String, restricoes: Dictionary) -> void:

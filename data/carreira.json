@@ -1,4 +1,24 @@
 {
  "piloto_jogador": "jogador",
- "teto_offline_s": 28800
+ "teto_offline_s": 28800,
+ "niveis_licenca": {
+  "": "CLUB",
+  "B": "SPORT",
+  "A": "NATIONAL",
+  "IC": "INTERNATIONAL",
+  "IB": "PRO",
+  "IA": "ELITE"
+ },
+ "niveis": [
+  "CLUB",
+  "SPORT",
+  "NATIONAL",
+  "INTERNATIONAL",
+  "PRO",
+  "ELITE"
+ ],
+ "segundo_piloto": {
+  "chance": 0.3,
+  "perda_consistencia": 0.2
+ }
 }

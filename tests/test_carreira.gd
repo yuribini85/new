@@ -92,3 +92,27 @@ func test_adversario_com_pecas_e_pneu_de_chuva() -> void:
 	igual(r["premio"], 5, "prêmio de 2º")
 	j.free()
 	d.free()
+
+
+func test_escalacao_por_equipes() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var c := Carreira.new(d, j)
+	var g1 := c.escalacao("aberto", 7)
+	igual(g1.size(), 1, "uma vaga por adversário")
+	igual(g1[0]["equipe"]["id"], "eq_azul", "prova sem licença: equipe do nível N1 primeiro")
+	igual(c.escalacao("aberto", 7), g1, "mesma semente, mesmo grid")
+	igual(c.escalacao("licenciado", 7)[0]["equipe"]["id"], "eq_verde", "licença b: nível N2")
+	var segundos := 0
+	for s in 400:
+		if c.escalacao("aberto", s)[0]["segundo"]:
+			segundos += 1
+	verificar(segundos > 90 and segundos < 150, "segundo piloto em ~30%% das corridas (%d/400)" % segundos)
+	# O segundo piloto corre com menos consistência; o nome sai da escalação.
+	var s2 := 0
+	while not c.escalacao("aberto", s2)[0]["segundo"]:
+		s2 += 1
+	igual(c.nome_piloto("aberto", "adv0_fraco", s2), "Azul Dois", "nome do segundo piloto")
+	igual(c.nome_piloto("aberto", "adv0_fraco"), Carreira.sobrenome_fixo("aberto", 0), "sem semente: nome fixo")
+	j.free()
+	d.free()

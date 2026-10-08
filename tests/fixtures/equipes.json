@@ -1,0 +1,8 @@
+[
+	{"id": "eq_azul", "nome": "Equipe Azul", "nivel": "N1",
+	 "pilotos": [{"id": "azul_1", "nome": "Azul Um"}, {"id": "azul_2", "nome": "Azul Dois"}]},
+	{"id": "eq_verde", "nome": "Equipe Verde", "nivel": "N2",
+	 "pilotos": [{"id": "verde_1", "nome": "Verde Um"}, {"id": "verde_2", "nome": "Verde Dois"}]},
+	{"id": "eq_jogador", "nome": "Equipe do Jogador", "jogador": true,
+	 "pilotos": [{"id": "voce", "nome": "Você"}]}
+]
