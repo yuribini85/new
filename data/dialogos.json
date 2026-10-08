@@ -856,13 +856,14 @@
    }
   ],
   "requer": [
-   "LICENSE_SYSTEM_UNLOCKED"
+   "ELENA_FIRST_CAR_BOUGHT"
   ],
   "proibe": [
    "LICENSE_OFFLINE_TUTORIAL_SEEN"
   ],
   "flags": [
-   "LICENSE_OFFLINE_TUTORIAL_SEEN"
+   "LICENSE_OFFLINE_TUTORIAL_SEEN",
+   "LICENSE_SYSTEM_UNLOCKED"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -987,6 +988,46 @@
   "capitulo": "V"
  },
  {
+  "id": "SCN_E02",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "elena",
+    "texto": "{posicao}."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Para um usado da Second Chance, não é ruim."
+   },
+   {
+    "quem": "elena",
+    "texto": "Prova aberta paga pouco. As melhores pedem licença."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Então começa o treino da Club. Ele corre sozinho enquanto você corre aqui."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Licenças ficam em Carreira."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ELENA_FIRST_RACE_DONE"
+  ],
+  "flags": [
+   "ELENA_FIRST_RACE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "condicao": {
+   "posicao_min": 2
+  },
+  "capitulo": "V"
+ },
+ {
   "id": "SCN_E03",
   "trigger": "CORRIDA_FIM",
   "falas": [
@@ -1001,6 +1042,18 @@
    {
     "quem": "marcus",
     "texto": "Sua."
+   },
+   {
+    "quem": "elena",
+    "texto": "Prova aberta paga pouco. As melhores pedem licença."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Então começa o treino da Club. Ele corre sozinho enquanto você corre aqui."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Licenças ficam em Carreira."
    }
   ],
   "requer": [],
@@ -1008,7 +1061,8 @@
    "ELENA_FIRST_WIN"
   ],
   "flags": [
-   "ELENA_FIRST_WIN"
+   "ELENA_FIRST_WIN",
+   "ELENA_FIRST_RACE_DONE"
   ],
   "bloqueia": false,
   "uma_vez": true,

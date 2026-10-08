@@ -95,9 +95,13 @@ func _palco(c: Carro) -> Control:
 	h.offset_bottom = -8
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(h)
+	# Pneus e freios: o ganho sobre o carro de fábrica (o modelo já tem a
+	# aderência e o freio dele; "-2%" num carro sem peça pareceria defeito).
+	var ganho := func(attr: String) -> float:
+		return float(a.get(attr, 1.0)) / maxf(float(c.base.get(attr, 1.0) if c.base.get(attr) != null else 1.0), 1e-6)
 	for it in [["icone_potencia", "%d" % a["potencia"], "cv"], ["icone_peso", "%d" % a["peso"], "kg"],
-			["icone_pneus", texto_fator(a.get("aderencia", 1.0), true), "pneus"],
-			["icone_freios", texto_fator(a.get("freio", 1.0), true), "freios"]]:
+			["icone_pneus", texto_fator(ganho.call("aderencia"), true), "pneus"],
+			["icone_freios", texto_fator(ganho.call("freio"), true), "freios"]]:
 		var cel := HBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.alignment = BoxContainer.ALIGNMENT_CENTER

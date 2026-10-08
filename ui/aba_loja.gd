@@ -415,7 +415,7 @@ func _grade() -> GridContainer:
 	return g
 
 
-## Bloco do catálogo: foto, nome, preço e o essencial (potência e tração).
+## Bloco do catálogo: foto, nome, preço e o essencial (potência, peso e tração).
 ## Tocar abre a ficha, onde está o botão de compra.
 func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable,
 		cor := Color(0, 0, 0, 0), escolher_cor := false) -> void:
@@ -441,7 +441,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	img.custom_minimum_size = Vector2(0, 120)
 	v.add_child(img)
 	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
-			["%d cv · %s" % [c["potencia"], c["tracao"]], 23, COR_SECUNDARIA],
+			["%d cv · %d kg · %s" % [c["potencia"], c["peso"], c["tracao"]], 23, COR_SECUNDARIA],
 			["%s Cr" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
 		var l := Label.new()
 		l.text = t[0]

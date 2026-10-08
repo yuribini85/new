@@ -173,7 +173,7 @@ Marcus: Licença é do piloto, não da garagem.
 Elena: Então eu tiro a minha.
 [OPEN_LICENSE_CENTER]
 
-= SCN_D02 | ABA:LICENCAS | personagem=elena; requer=LICENSE_SYSTEM_UNLOCKED; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN; capitulo=IV
+= SCN_D02 | ABA:LICENCAS | personagem=elena; requer=ELENA_FIRST_CAR_BOUGHT; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; capitulo=IV
 Responsável: Vector Academy. Licença Club.
 Responsável: Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado.
 Responsável: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é sua.
@@ -204,10 +204,20 @@ Elena: Pode falar.
 Marcus: Desde a curva três.
 Elena: {voltas} voltas em {pista}. Vamos.
 
-= SCN_E03 | CORRIDA_FIM | personagem=elena; proibe=ELENA_FIRST_WIN; condicao=posicao:1; flags=ELENA_FIRST_WIN; capitulo=V
+= SCN_E02 | CORRIDA_FIM | personagem=elena; proibe=ELENA_FIRST_RACE_DONE; condicao=posicao_min:2; flags=ELENA_FIRST_RACE_DONE; capitulo=V
+Elena: {posicao}.
+Marcus: Para um usado da Second Chance, não é ruim.
+Elena: Prova aberta paga pouco. As melhores pedem licença.
+Marcus: Então começa o treino da Club. Ele corre sozinho enquanto você corre aqui.
+Sistema: Licenças ficam em Carreira.
+
+= SCN_E03 | CORRIDA_FIM | personagem=elena; proibe=ELENA_FIRST_WIN; condicao=posicao:1; flags=ELENA_FIRST_WIN,ELENA_FIRST_RACE_DONE; capitulo=V
 Marcus: Primeira vitória.
 Elena: Do carro.
 Marcus: Sua.
+Elena: Prova aberta paga pouco. As melhores pedem licença.
+Marcus: Então começa o treino da Club. Ele corre sozinho enquanto você corre aqui.
+Sistema: Licenças ficam em Carreira.
 
 = SCN_F01 | LICENCA_DISPONIVEL:SPORT | personagem=elena; proibe=SPORT_AVAILABLE_SEEN; flags=SPORT_AVAILABLE_SEEN; capitulo=VI
 Marcus: Os requisitos da Sport estão cumpridos.

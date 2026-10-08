@@ -37,7 +37,7 @@ static func _prologo(jogador: Node, dados: Node) -> Array:
 ## o treino da licença Club; depois, a carreira.
 static func _elena(jogador: Node, _dados: Node) -> Array:
 	return [
-		{"texto": "Comprar um carro na Second Chance Motors", "feito": not jogador.garagem.lista().is_empty(),
+		{"texto": "Comprar um carro na Second Chance", "feito": not jogador.garagem.lista().is_empty(),
 			"aba": Aba.LOJA, "botao": "Ir para o Mercado"},
 		{"texto": "Disputar uma corrida sem licença", "feito": not jogador.historico.is_empty(), "aba": Aba.EVENTOS,
 			"botao": "Ver corridas"},
