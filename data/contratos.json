@@ -150,20 +150,20 @@
 		"carro": "hayase_sazanami",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 178500.0,
+				"custo_max": 7625,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 119000.0
+				"custo_max": 5081
 			},
 			"prata": {
-				"custo_max": 142800.0
+				"custo_max": 6100
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Keldorf Wachtel S gastando o mínimo.",
 		"id": "ic_ultimo_credito",
 		"licenca": "NATIONAL",
-		"nome": "O último crédito",
+		"nome": "O último giro",
 		"provas": [
 			{
 				"condicao": "seco",
@@ -173,7 +173,7 @@
 						"carro": "keldorf_wachtel_s"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
@@ -477,14 +477,14 @@
 		"carro": "whitlock_switchback_gt",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 14030,
+				"custo_max": 14030.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 9352
+				"custo_max": 9352.0
 			},
 			"prata": {
-				"custo_max": 11225
+				"custo_max": 11225.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Aubrac Grive S gastando o mínimo.",
@@ -500,7 +500,7 @@
 						"carro": "aubrac_grive_s"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},
