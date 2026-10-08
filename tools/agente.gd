@@ -103,10 +103,10 @@ func jogar(oferta: Dictionary, limite_s: float) -> Dictionary:
 
 
 func fase() -> String:
-	if "A" in j.licencas:
-		return "A"
-	if "B" in j.licencas:
-		return "B"
+	if "SPORT" in j.licencas:
+		return "SPORT"
+	if "CLUB" in j.licencas:
+		return "CLUB"
 	return "sem licença"
 
 
@@ -141,7 +141,7 @@ func _correr(evento_id: String, tipo: String) -> Dictionary:
 	h["n"] += 1
 	if r["posicao"] == 1 and not marcos.has("primeira_vitoria"):
 		marcos["primeira_vitoria"] = tempo
-	if r["posicao"] == 1 and d.evento(evento_id)["restricoes"].get("licenca") == "B" and not marcos.has("vitoria_b"):
+	if r["posicao"] == 1 and d.evento(evento_id)["restricoes"].get("licenca") == "CLUB" and not marcos.has("vitoria_b"):
 		marcos["vitoria_b"] = tempo
 	if r["carro_premio_uid"] > 0:
 		log.append("carro-prêmio em %s" % d.evento(evento_id)["nome"])
@@ -328,25 +328,32 @@ func _comprar_carro(o: Dictionary, motivo: String) -> void:
 	_tentativas.clear()
 
 
-## Contratos da B: sugestoes e renda depois da primeira vitória; explora logo.
+## Contratos da Club (a B do GT2): o treino começa logo (decisão 33; o relógio
+## é o tempo de corrida do agente); sugestoes e renda enviam depois da primeira
+## vitória, explora logo.
 func _talvez_contratos() -> void:
-	if "B" in j.licencas or marcos.has("contratos_b_falhou"):
+	if "CLUB" in j.licencas or marcos.has("contratos_b_falhou"):
 		return
+	var lic := Licencas.new(d, j)
+	if lic.estado("CLUB", tempo) == Licencas.AVAILABLE:
+		lic.iniciar_treino("CLUB", tempo)
 	if perfil != "explora" and not marcos.has("primeira_vitoria"):
+		return
+	if not lic.pode_avaliar("CLUB", tempo):
 		return
 	var ct := Contratos.new(d, j)
 	var envios := 0
-	for c in Contratos.da_licenca(d, "B"):
+	for c in Contratos.da_licenca(d, "CLUB"):
 		var m := _resolver_contrato(c)
 		envios += int(m["envios"])
-		ct.enviar(c["id"], m["montagem"])
+		ct.enviar(c["id"], m["montagem"], tempo)
 	marcos["envios_contratos_b"] = envios
-	if "B" in j.licencas:
+	if "CLUB" in j.licencas:
 		marcos["licenca_b"] = tempo
-		log.append("%.0f min: licença B pelos contratos (%d envios)" % [tempo / 60.0, envios])
+		log.append("%.0f min: licença Club pelos contratos (%d envios)" % [tempo / 60.0, envios])
 	else:
 		marcos["contratos_b_falhou"] = tempo
-		log.append("contratos da B não resolvidos")
+		log.append("contratos da Club não resolvidos")
 
 
 ## Montagem que cumpre o bronze: a cada envio, a opção que mais reduz o pior
@@ -390,10 +397,16 @@ static func _deficit(r: Dictionary) -> float:
 	return pior
 
 
-## Testes de tempo da A com o próprio carro: depois de vencer uma prova B
-## (explora: a cada tentativa, se já tem a B). Conta o tempo dos testes.
+## Testes de tempo da Sport (a A do GT2) com o próprio carro: treino assim que os
+## requisitos permitem; testes depois de vencer uma prova Club (explora: a cada
+## tentativa). Conta o tempo dos testes.
 func _talvez_licenca_a() -> void:
-	if "A" in j.licencas or not "B" in j.licencas:
+	if "SPORT" in j.licencas or not "CLUB" in j.licencas:
+		return
+	var lic := Licencas.new(d, j)
+	if lic.estado("SPORT", tempo) == Licencas.AVAILABLE:
+		lic.iniciar_treino("SPORT", tempo)
+	if not lic.pode_avaliar("SPORT", tempo):
 		return
 	if perfil != "explora" and not marcos.has("vitoria_b"):
 		return
@@ -401,16 +414,15 @@ func _talvez_licenca_a() -> void:
 	if tentou >= j.vitorias.size():
 		return  # uma tentativa por vitória nova
 	marcos["tentativas_a"] = j.vitorias.size()
-	var lic := Licencas.new(d, j)
-	for t in d.item("licencas", "A")["testes"]:
+	for t in d.item("licencas", "SPORT")["testes"]:
 		if j.graus_licenca.has(t["id"]):
 			continue
 		semente += 1
-		var r := lic.fazer_teste("A", t["id"], uid, hash("agente-a:%d" % semente))
+		var r := lic.fazer_teste("SPORT", t["id"], uid, hash("agente-a:%d" % semente), tempo)
 		if r.has("erro"):
 			return
 		tempo += float(r["tempo"])
 		_fase_stats()["tempo_s"] += float(r["tempo"])
-	if "A" in j.licencas:
+	if "SPORT" in j.licencas:
 		marcos["licenca_a"] = tempo
-		log.append("%.0f min: licença A" % (tempo / 60.0))
+		log.append("%.0f min: licença Sport" % (tempo / 60.0))

@@ -83,11 +83,13 @@ func test_agente_mede_por_fase_com_os_contratos() -> void:
 	var saldo := int(d.economia()["saldo_inicial"])
 	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)[0]
 	var ag = preload("res://tools/agente.gd").new(d, "sugestoes", 1)
-	var r: Dictionary = ag.jogar(oferta, 8.0 * 60.0)
+	# 12 min de corrida: o treino da Club (decisão 33, ~5,5 min) corre junto e a
+	# avaliação vem depois da primeira vitória.
+	var r: Dictionary = ag.jogar(oferta, 12.0 * 60.0)
 	ag.liberar()
 	verificar(r["marcos"].has("primeira_vitoria"), "venceu uma prova")
-	verificar("B" in r["licencas"], "licença B pelos contratos, depois da primeira vitória")
-	verificar(r["fases"].has("sem licença") and r["fases"].has("B"), "contabilidade por fase")
+	verificar("CLUB" in r["licencas"], "licença Club pelos contratos, depois da primeira vitória")
+	verificar(r["fases"].has("sem licença") and r["fases"].has("CLUB"), "contabilidade por fase")
 	var bruto := 0
 	var gastos := 0
 	for f in r["fases"]:

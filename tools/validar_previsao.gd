@@ -31,12 +31,12 @@ func _rodar() -> void:
 			max_casos = int(arg.trim_prefix("--casos="))
 	jog.novo_jogo(dados.economia(), dados.pneu)
 	jog.carreira = Carreira.new(dados, jog)
-	jog.licencas = ["B", "A"]
+	jog.licencas = ["CLUB", "SPORT"]
 	jog.economia.saldo = 20000  # orçamento de começo de carreira
 	# Casos determinísticos: carros x eventos sem licença ou B, intercalados.
 	var casos := []
 	for ev in dados.lista("eventos"):
-		if ev["restricoes"].get("licenca", "") == "A":
+		if ev["restricoes"].get("licenca", "") == "SPORT":
 			continue
 		for c in dados.lista("carros"):
 			casos.append([c["id"], ev["id"]])

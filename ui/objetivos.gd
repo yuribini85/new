@@ -12,7 +12,7 @@ static func lista(jogador: Node, dados: Node) -> Array:
 			tem_peca = true
 	var vitorias_b := false
 	for ev in dados.lista("eventos"):
-		if ev["restricoes"].get("licenca") == "B" and jogador.vitorias.has(ev["id"]):
+		if ev["restricoes"].get("licenca") == "CLUB" and jogador.vitorias.has(ev["id"]):
 			vitorias_b = true
 	return [
 		{"texto": "Comprar o primeiro carro", "feito": not jogador.garagem.lista().is_empty(),
@@ -21,9 +21,9 @@ static func lista(jogador: Node, dados: Node) -> Array:
 			"aba": Aba.EVENTOS, "botao": "Ver competições"},
 		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.OFICINA, "botao": "Ir para a Oficina"},
 		{"texto": "Vencer uma corrida", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver competições"},
-		{"texto": "Conquistar a licença B", "feito": "B" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver missões"},
-		{"texto": "Vencer uma corrida da licença B", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver competições"},
-		{"texto": "Conquistar a licença A", "feito": "A" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver missões"},
+		{"texto": "Conquistar a licença Club", "feito": "CLUB" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
+		{"texto": "Vencer uma corrida da licença Club", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver competições"},
+		{"texto": "Conquistar a licença Sport", "feito": "SPORT" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
 	]
 
 

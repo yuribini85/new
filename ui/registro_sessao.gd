@@ -95,10 +95,10 @@ static func limpar() -> void:
 
 
 static func fase(jogador: Node) -> String:
-	if "A" in jogador.licencas:
-		return "A"
-	if "B" in jogador.licencas:
-		return "B"
+	if "SPORT" in jogador.licencas:
+		return "SPORT"
+	if "CLUB" in jogador.licencas:
+		return "CLUB"
 	return "sem licença"
 
 

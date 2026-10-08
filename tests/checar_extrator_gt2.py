@@ -263,14 +263,14 @@ def main():
             if pneus.get("pneu_1", {}).get("aderencia") != {"seco": 1.034, "chuva": 1.034} or pneus["pneu_1"]["preco"] != 2000:
                 falhas.append(f"importador pneus: {pneus}")
             ev = carregar("eventos")
-            if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "B"} \
+            if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "CLUB"} \
                     or (ev[0]["nome"], ev[0]["pista"]) != ("Copa de Domingo — etapa 1", "serra_alta") \
                     or ev[0]["premios"] != [2500, 1500] or ev[0]["carro_premio"] != "hartwig_y" \
                     or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
                 falhas.append(f"importador eventos: {ev}")
             lic = carregar("licencas")
-            if [l["id"] for l in lic] != ["B", "A", "IC", "IB", "IA"] \
-                    or [l["requisito"] for l in lic] != [None, "B", "A", "IC", "IB"] \
+            if [l["id"] for l in lic] != ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"] \
+                    or [l["requisito"] for l in lic] != [None, "CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO"] \
                     or lic[0]["testes"][0]["restricoes"] != {"potencia_max": 200}:
                 falhas.append(f"importador licenças: {lic}")
     # Modo --pasta com arquivos soltos (como sai de uma ferramenta de VOL).

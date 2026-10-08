@@ -41,7 +41,7 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 		if uid < 0:
 			uid = u
 	j.carro_ativo = uid
-	j.licencas = ["B", "A"]
+	j.licencas = ["CLUB", "SPORT"]
 	for p in d.lista("pecas"):
 		if j.garagem.carro(uid).motivo_recusa(p) == "":
 			j.concessionaria.comprar_peca(j.garagem.carro(uid), p)

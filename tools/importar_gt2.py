@@ -136,7 +136,16 @@ SERIES = {
     "ETM": "Resistência da Serra",
 }
 RESISTENCIA = {"EGV", "ELS", "EPS", "ERM", "ES5", "EST", "ETM"}
-LICENCAS = ["B", "A", "IC", "IB", "IA"]
+LICENCAS_GT2 = ["B", "A", "IC", "IB", "IA"]
+# Licenças do jogo (decisão 33): CLUB=B, SPORT=A, NATIONAL=IC, INTERNATIONAL=IB,
+# PRO=IA; ELITE (a S do GT2, sem dados no disco) libera as resistências.
+LICENCA_DO_GT2 = {"B": "CLUB", "A": "SPORT", "IC": "NATIONAL", "IB": "INTERNATIONAL", "IA": "PRO"}
+LICENCAS = ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"]
+NOMES_LICENCA = {"CLUB": "Club", "SPORT": "Sport", "NATIONAL": "National", "INTERNATIONAL": "International",
+                 "PRO": "Pro", "ELITE": "Elite"}
+# Ids antigos dos testes (b1...) -> novos (club1...): o importador guarda os tempos
+# já calibrados ao trocar os ids.
+TESTE_ANTIGO = {k.lower(): v.lower() for k, v in LICENCA_DO_GT2.items()}
 # Enquanto uma pista nova não está em data/pistas.json, os eventos dela vão para
 # a pista do mesmo grupo que já existe.
 PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "docas_curta": "parque_das_docas",
@@ -378,11 +387,21 @@ def main() -> int:
                       "aderencia": {"seco": ader, "chuva": ader}})
 
     eventos, pilotos = importar_eventos(nosso, resumo, carros, {p["id"] for p in pneus})
+    # Tempos já calibrados (calibrar_licencas.gd) ficam, inclusive dos ids antigos.
+    caminho_lic = DATA / "licencas.json"
+    tempos_antigos = {}
+    if caminho_lic.exists():
+        for l in json.load(open(caminho_lic, encoding="utf-8")):
+            for t in l.get("testes", []):
+                tid = t["id"]
+                novo = TESTE_ANTIGO.get(tid.rstrip("0123456789"), tid.rstrip("0123456789")) + tid[len(tid.rstrip("0123456789")):]
+                if all(v is not None for v in t.get("tempos", {}).values()):
+                    tempos_antigos[novo] = t["tempos"]
     licencas = []
     for lic in LICENCAS:
         limites = sorted(e["restricoes"]["potencia_max"] for e in eventos
                          if e["restricoes"].get("licenca") == lic and "potencia_max" in e["restricoes"])
-        if lic == "B":
+        if lic == "CLUB":
             # Mediana dos limites de potência dos eventos que a licença abre.
             por_teste = [int(statistics.median(limites))] * 3 if limites else [None] * 3
         else:
@@ -394,11 +413,15 @@ def main() -> int:
                 q1, q2, q3 = statistics.quantiles(limites, n=4, method="inclusive")
                 por_teste = [min(limites, key=lambda x: abs(x - q)) for q in (q2, q1, q3)]
         anterior = LICENCAS[LICENCAS.index(lic) - 1] if lic != LICENCAS[0] else None
-        licencas.append({"id": lic, "nome": f"Licença {lic}", "requisito": anterior,
-                         "testes": [{"id": f"{lic.lower()}{k + 1}", "pista": pista, "voltas": 1, "condicao": "seco",
-                                     "restricoes": {"potencia_max": por_teste[k]} if por_teste[k] else {},
-                                     "tempos": {"ouro": None, "prata": None, "bronze": None}}
-                                    for k, pista in enumerate(["anel_do_vale", "parque_das_docas", "serra_alta"])]})
+        testes = [{"id": f"{lic.lower()}{k + 1}", "pista": pista, "voltas": 1, "condicao": "seco",
+                   "restricoes": {"potencia_max": por_teste[k]} if por_teste[k] else {},
+                   "tempos": tempos_antigos.get(f"{lic.lower()}{k + 1}", {"ouro": None, "prata": None, "bronze": None})}
+                  for k, pista in enumerate(["anel_do_vale", "parque_das_docas", "serra_alta"])]
+        if lic == "ELITE":
+            testes = []  # a S do GT2 não tem testes no disco: a avaliação são os contratos
+        licencas.append({"id": lic, "nome": f"Licença {NOMES_LICENCA[lic]}", "requisito": anterior,
+                         "gt2": next((k for k, v in LICENCA_DO_GT2.items() if v == lic), "S"), "preco": 0,
+                         "testes": testes})
 
     gravar("carros", carros)
     gravar("pecas", pecas)
@@ -515,7 +538,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             lista_marca = [nosso[c] for c in codigos if c in nosso]
             if lista_marca:
                 serie = _nome_copa([nomes[c] for c in lista_marca])
-        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS \
+        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS_GT2 \
                 or int(n(r["voltas"])) > MAX_VOLTAS or (marca > 0 and not lista_marca):
             continue
         restr = {}
@@ -533,8 +556,10 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             restr["potencia_max"] = int(n(r["limite_ps"]))
         if r["tracao"]:
             restr["tracao"] = [r["tracao"]]
-        if r["licenca"]:
-            restr["licenca"] = r["licenca"]
+        if r["evento"][:3] in RESISTENCIA:
+            restr["licenca"] = "ELITE"
+        elif r["licenca"]:
+            restr["licenca"] = LICENCA_DO_GT2[r["licenca"]]
         elegiveis = [c for c in carros
                      if c["potencia"] <= restr.get("potencia_max", 10 ** 6) and c["tracao"] in restr.get("tracao", [c["tracao"]])
                      and c["id"] in restr.get("carros", [c["id"]])]

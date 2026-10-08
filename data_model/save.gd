@@ -32,6 +32,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"vitorias": jogador.vitorias,
 		"campeonatos": jogador.campeonatos,
 		"titulos": jogador.titulos,
+		"treinos": jogador.treinos,
 		"historico": jogador.historico,
 		"dias": jogador.dias,
 		"fila": jogador.fila,
@@ -112,8 +113,18 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		c.uid = int(cs["uid"])
 		jogador.garagem.carros[c.uid] = c
 	jogador.garagem.proximo_uid = int(s["proximo_uid"])
-	jogador.licencas = s["licencas"]
-	jogador.graus_licenca = s["graus_licenca"]
+	# Saves anteriores à decisão 33 têm os ids do GT2 (B, A, IC...): migram.
+	jogador.licencas = []
+	for x in s["licencas"]:
+		jogador.licencas.append(String(x) if dados.existe("licencas", x) else Licencas.id_novo(String(x)))
+	jogador.graus_licenca = {}
+	var testes := {}
+	for lic in dados.lista("licencas"):
+		for t in lic["testes"]:
+			testes[t["id"]] = true
+	for k in s["graus_licenca"]:
+		var novo := Licencas.teste_novo(String(k))
+		jogador.graus_licenca[novo if not testes.has(k) and testes.has(novo) else String(k)] = s["graus_licenca"][k]
 	# Opcional: montagens dos contratos (saves anteriores aos contratos não têm).
 	jogador.montagens = {}
 	if s.get("montagens") is Dictionary:
@@ -149,6 +160,10 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 				for q in c["pontos"]:
 					pts[q] = int(c["pontos"][q])
 				jogador.campeonatos[k] = {"etapa": int(c.get("etapa", 0)), "pontos": pts}
+	jogador.treinos = {}
+	if s.get("treinos") is Dictionary:
+		for k in s["treinos"]:
+			jogador.treinos[Licencas.id_novo(k)] = float(s["treinos"][k])
 	jogador.titulos = {}
 	if s.get("titulos") is Dictionary:
 		for k in s["titulos"]:

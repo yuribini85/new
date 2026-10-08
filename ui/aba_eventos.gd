@@ -10,12 +10,12 @@ var _config_uid := -1
 ## Estimativas simuladas sob demanda: chave (prova + carro + peças) -> faixa,
 ## ou "..." enquanto calcula.
 var _estimativas := {}
-## Categoria aberta (mantida ao voltar): "voce", "", "B" ou "A".
+## Categoria aberta (mantida ao voltar): "voce", "", "marca" ou o id da licença.
 var _filtro := "voce"
 
-const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["marca", "Marcas"], ["B", "Licença B"], ["A", "Licença A"],
-	["IC", "IC"], ["IB", "IB"], ["IA", "IA"]]
-const NIVEIS_LICENCA := ["B", "A", "IC", "IB", "IA"]
+const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["marca", "Marcas"], ["CLUB", "Club"], ["SPORT", "Sport"],
+	["NATIONAL", "National"], ["INTERNATIONAL", "International"], ["PRO", "Pro"], ["ELITE", "Elite"]]
+const NIVEIS_LICENCA := ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"]
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
 const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas": Color(0.22, 0.24, 0.28),
 		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22),

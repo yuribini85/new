@@ -58,12 +58,14 @@ static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 						Mecanico.texto_faixa(a["base"]["faixa"]), Mecanico.texto_faixa(o["faixa"])])
 	var licencas := Licencas.new(d, j)
 	for lic in d.lista("licencas"):
-		if lic["id"] != "B":
+		if lic["id"] != "CLUB":
 			continue
+		# Ferramenta de medição: o treino da licença (decisão 33) conta como feito.
+		j.treinos["CLUB"] = -1.0e12
 		for t in lic["testes"]:
 			for tentativa in 3:
 				semente += 1
-				var r := licencas.fazer_teste("B", t["id"], uid, semente)
+				var r := licencas.fazer_teste("CLUB", t["id"], uid, semente)
 				if r.has("erro"):
 					log.append("teste %s: %s" % [t["id"], r["erro"]])
 					break
@@ -81,4 +83,4 @@ static func jogar(d: Node, oferta: Dictionary, limite_s: float) -> Dictionary:
 
 
 static func _testes_b(d: Node, j: Node) -> bool:
-	return d.item("licencas", "B")["testes"].all(func(t): return j.graus_licenca.has(t["id"]))
+	return d.item("licencas", "CLUB")["testes"].all(func(t): return j.graus_licenca.has(t["id"]))

@@ -23,7 +23,7 @@ func _rodar() -> void:
 	var d: Node = root.get_node("Dados")
 	var j: Node = root.get_node("Jogador")
 	j.novo_jogo(d.economia(), d.pneu)
-	j.licencas = ["B", "A"]
+	j.licencas = ["CLUB", "SPORT"]
 	j.economia.creditar(1000000)
 	var feitas := {}
 	for ev in d.lista("eventos"):

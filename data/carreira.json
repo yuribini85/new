@@ -3,11 +3,12 @@
  "teto_offline_s": 28800,
  "niveis_licenca": {
   "": "CLUB",
-  "B": "SPORT",
-  "A": "NATIONAL",
-  "IC": "INTERNATIONAL",
-  "IB": "PRO",
-  "IA": "ELITE"
+  "CLUB": "CLUB",
+  "SPORT": "SPORT",
+  "NATIONAL": "NATIONAL",
+  "INTERNATIONAL": "INTERNATIONAL",
+  "PRO": "PRO",
+  "ELITE": "ELITE"
  },
  "niveis": [
   "CLUB",
@@ -20,5 +21,10 @@
  "segundo_piloto": {
   "chance": 0.3,
   "perda_consistencia": 0.2
+ },
+ "licencas": {
+  "fator_treino": 1.0,
+  "fracao_series": 0.5,
+  "campeonato_desde": "NATIONAL"
  }
 }

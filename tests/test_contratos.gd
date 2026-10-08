@@ -6,6 +6,8 @@ const JogadorScript := preload("res://autoload/jogador.gd")
 func _jogador(d: Node) -> Node:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
+	# Treinos já feitos (decisão 33): estes testes cobrem a avaliação.
+	j.treinos = {"a": -1.0e12, "b": -1.0e12}
 	return j
 
 

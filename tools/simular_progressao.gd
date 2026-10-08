@@ -32,7 +32,7 @@ func _rodar() -> void:
 		var linha := "%-40s" % ev["nome"].substr(0, 40)
 		for c in carros:
 			jogador.novo_jogo(dados.economia(), dados.pneu)
-			jogador.licencas = ["B", "A"]
+			jogador.licencas = ["CLUB", "SPORT"]
 			var uid: int = jogador.garagem.adicionar(Carro.new(c))
 			jogador.garagem.carro(uid).adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 			var r: Dictionary = Carreira.new(dados, jogador).preparar(ev["id"], uid, semente, false)

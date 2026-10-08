@@ -30,7 +30,7 @@ func _process(_d: float) -> bool:
 			var pos := {}
 			for cfg in [null] + extras:
 				jog.novo_jogo(dados.economia(), dados.pneu)
-				jog.licencas = ["B", "A"]
+				jog.licencas = ["CLUB", "SPORT"]
 				var c := Carro.new(base)
 				c.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 				if cfg != null:

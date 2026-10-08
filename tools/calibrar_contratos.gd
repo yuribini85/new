@@ -55,7 +55,7 @@ var _piloto: Dictionary
 var _voltas := 1
 var _cache := {}
 var _pecas_carro := {}  # id do carro -> peças que servem nele
-var _licenca := "B"
+var _licenca := "CLUB"
 var _saldo_ref := 0
 
 
@@ -82,7 +82,7 @@ func _calibrar() -> void:
 	var escola: Array = _dados.lista("carros").filter(func(c): return float(c["potencia"]) <= limite)
 	var todos: Array = _dados.lista("carros").duplicate()
 	_saldo_ref = int(_dados.economia()["saldo_inicial"])
-	if _licenca != "B":
+	if _licenca != _dados.lista("licencas")[0]["id"]:
 		var ordem: Array = _dados.lista("licencas").map(func(l): return l["id"])
 		var seguinte: String = ordem[ordem.find(_licenca) + 1] if ordem.find(_licenca) + 1 < ordem.size() else ""
 		var deste := _eventos_da(_licenca)
@@ -119,7 +119,7 @@ func _calibrar() -> void:
 		contratos.append(c3)
 	for c in contratos:
 		c["licenca"] = _licenca
-		if _licenca != "B":
+		if _licenca != _dados.lista("licencas")[0]["id"]:
 			c["id"] = _licenca.to_lower() + "_" + c["id"]
 		print("%s: %s · %s" % [c["id"], c["carro"], JSON.stringify(c["condicoes"])])
 		for p in c["provas"]:
@@ -173,7 +173,7 @@ func _pequeno_contra_gigante(escola: Array, todos: Array, pistas: Array) -> Dict
 					continue
 				melhor_razao = razao
 				melhor = {
-					"id": "pequeno_gigante", "licenca": "B", "nome": "O pequeno contra o gigante",
+					"id": "pequeno_gigante", "licenca": _licenca, "nome": "O pequeno contra o gigante",
 					"descricao": "O %s tem %d cv; o rival, %d. Monte o carro da escola para chegar na frente." % [
 							c["nome"], c["potencia"], g["potencia"]],
 					"carro": c["id"],
@@ -206,7 +206,7 @@ func _ultimo_credito(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 					continue
 				melhor_custo = r["custo"]
 				melhor = {
-					"id": "ultimo_credito", "licenca": "B", "nome": "O último crédito",
+					"id": "ultimo_credito", "licenca": _licenca, "nome": "O último crédito",
 					"descricao": "A escola paga as peças até um teto. Vença o %s gastando o mínimo." % g["nome"],
 					"carro": c["id"],
 					"provas": [{"pista": pista, "voltas": _voltas, "condicao": "seco", "rivais": [{"carro": g["id"]}]}],
@@ -249,7 +249,7 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 						continue
 					var enxuta := _enxugar_duplo(c, alvo, junto)
 					return {
-						"id": "dois_circuitos", "licenca": "B", "nome": "Dois circuitos, um carro",
+						"id": "dois_circuitos", "licenca": _licenca, "nome": "Dois circuitos, um carro",
 						"descricao": "Uma preparação só para vencer o %s em %s e o %s em %s." % [
 								r1["nome"], _nome_pista(p1), r2["nome"], _nome_pista(p2)],
 						"carro": c["id"],

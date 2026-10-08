@@ -22,7 +22,7 @@
 		},
 		"descricao": "O Hayase Kaze tem 120 cv; o rival, 346. Monte o carro da escola para chegar na frente.",
 		"id": "pequeno_gigante",
-		"licenca": "B",
+		"licenca": "CLUB",
 		"nome": "O pequeno contra o gigante",
 		"provas": [
 			{
@@ -53,7 +53,7 @@
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Ryujin gastando o mínimo.",
 		"id": "ultimo_credito",
-		"licenca": "B",
+		"licenca": "CLUB",
 		"nome": "O último crédito",
 		"provas": [
 			{
@@ -83,7 +83,7 @@
 		},
 		"descricao": "Uma preparação só para vencer o Hayase Kumo em Anel do Vale e o Hayase Pika em Parque das Docas.",
 		"id": "dois_circuitos",
-		"licenca": "B",
+		"licenca": "CLUB",
 		"nome": "Dois circuitos, um carro",
 		"provas": [
 			{
@@ -131,7 +131,7 @@
 		},
 		"descricao": "O Pemberly Fieldfare GTS tem 190 cv; o rival, 686. Monte o carro da escola para chegar na frente.",
 		"id": "ic_pequeno_gigante",
-		"licenca": "IC",
+		"licenca": "NATIONAL",
 		"nome": "O pequeno contra o gigante",
 		"provas": [
 			{
@@ -162,7 +162,7 @@
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Keldorf Wachtel S gastando o mínimo.",
 		"id": "ic_ultimo_credito",
-		"licenca": "IC",
+		"licenca": "NATIONAL",
 		"nome": "O último crédito",
 		"provas": [
 			{
@@ -192,7 +192,7 @@
 		},
 		"descricao": "Uma preparação só para vencer o Mizuchi Chidori SR '98 em Anel do Vale e o Kanaya Yozora em Serra Alta.",
 		"id": "ic_dois_circuitos",
-		"licenca": "IC",
+		"licenca": "NATIONAL",
 		"nome": "Dois circuitos, um carro",
 		"provas": [
 			{

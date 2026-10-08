@@ -105,13 +105,15 @@ static func avaliar(dados_: Node, contrato: Dictionary, montagem: Dictionary, co
 
 ## Avalia, guarda o melhor grau e concede a licença quando todos os contratos
 ## dela têm ao menos bronze. Retorna avaliar() + {"licenca_concedida"}.
-func enviar(contrato_id: String, montagem: Dictionary) -> Dictionary:
+func enviar(contrato_id: String, montagem: Dictionary, agora: float = Time.get_unix_time_from_system()) -> Dictionary:
 	var contrato: Dictionary = dados.item("contratos", contrato_id)
 	if contrato.is_empty():
 		return {"erro": "contrato %s não existe" % contrato_id}
 	var lic: Dictionary = dados.item("licencas", contrato["licenca"])
 	if lic.get("requisito") != null and not lic["requisito"] in jogador.licencas:
 		return {"erro": "exige a licença %s" % lic["requisito"]}
+	if not Licencas.new(dados, jogador).pode_avaliar(lic["id"], agora):
+		return {"erro": "termine o treino da %s antes da avaliação" % lic.get("nome", lic["id"])}
 	jogador.montagens[contrato_id] = {"pecas": Array(montagem.get("pecas", [])).duplicate(),
 			"ajuste_cambio": String(montagem.get("ajuste_cambio", ""))}
 	var r := avaliar(dados, contrato, montagem)

@@ -76,7 +76,7 @@ func _calibrar() -> void:
 			var melhor_fabrica := []
 			var receita := ""
 			var pontos_de_partida := []
-			if lic["id"] == "A" and not na_b.is_empty():
+			if lic["id"] == "SPORT" and not na_b.is_empty():
 				pontos_de_partida = na_b
 			else:
 				for c in iniciais:

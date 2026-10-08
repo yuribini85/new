@@ -18,7 +18,8 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
 | `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcionais `carro_premio`, `largada_kmh` |
-| `licencas.json` | lista de `{id, nome, testes}`, opcional `requisito` (id de outra licença) |
+| `licencas.json` | lista de `{id, nome, testes}`, opcionais `requisito` (id de outra licença), `gt2`, `preco` |
+| `equipes.json` | lista de `{id, nome, pilotos: [{id, nome, retrato?}]}`, opcionais `nivel` (CLUB…ELITE), `numero`, `logo`, `jogador`, `dirigente` |
 | `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
@@ -106,6 +107,16 @@ Regras fixas no código (`data_model/carreira.gd`), seguindo o GT2: o jogador la
 cada corrida disputada conta um dia.
 
 ## licencas.json
+
+Licenças CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO e ELITE (decisão 33): CLUB=B, SPORT=A,
+NATIONAL=IC, INTERNATIONAL=IB, PRO=IA do GT2 (campo `gt2`); ELITE (a S, sem dados no
+disco) libera as 7 resistências e não tem testes (avaliação por contratos). Estados e
+regras em `data_model/licencas.gd`: requisitos (anterior; vencer em `fracao_series` das
+séries da anterior; a partir de `campeonato_desde`, um título da anterior quando ela tem
+campeonato), treino com duração = soma dos bronzes dos testes × `fator_treino` (**a
+confirmar** no playtest; sem testes, a da anterior), começado pelo jogador, contado pelo
+relógio (offline também), e a avaliação só depois do treino. Configuração em
+`carreira.json` → `licencas`. Preço 0 (no GT2 a licença é grátis).
 
 Cada teste: `{id, pista, voltas, condicao, restricoes, tempos: {ouro, prata, bronze}}`,
 tempos em segundos. O jogador usa o próprio carro dentro da restrição. Licença concedida
@@ -195,7 +206,7 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
   única, sem pit stop nem desgaste de pneu. Copas de marca: 94 provas (ver `eventos.json`).
   Fora: rali e terra e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
-- Licenças B, A, IC, IB, IA: restrição = mediana (B) ou mediana e quartis (as outras) dos
+- Licenças CLUB a PRO (B, A, IC, IB, IA do GT2): restrição = mediana (B) ou mediana e quartis (as outras) dos
   limites dos eventos que abrem; tempos calibrados pela simulação
   (`tools/calibrar_licencas.gd`). **Pendente:** o critério da ferramenta parte dos carros
   iniciais (B) ou do jogador ao tirar a B (A); IC, IB e IA saíram com os tempos da B. Falta

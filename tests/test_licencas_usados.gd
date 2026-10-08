@@ -7,6 +7,8 @@ func _jogador(d: Node) -> Node:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
 	j.economia.creditar(10000)
+	# Treinos já feitos (decisão 33): estes testes cobrem a avaliação.
+	j.treinos = {"a": -1.0e12, "b": -1.0e12}
 	return j
 
 
@@ -39,6 +41,29 @@ func test_requisito_restricao_e_reprovacao() -> void:
 	igual(r["grau"], "", "tempo impossível reprova")
 	igual(r["licenca_concedida"], false, "a não concedida")
 	verificar(not j.graus_licenca.has("a1"), "reprovação não registra grau")
+	j.free()
+	d.free()
+
+
+func test_estados_e_treino_da_licenca() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	j.treinos = {}
+	var l := Licencas.new(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	igual(l.estado("a", 0.0), Licencas.LOCKED, "a sem b: bloqueada")
+	igual(l.estado("b", 0.0), Licencas.AVAILABLE, "b disponível")
+	verificar(l.fazer_teste("b", "b1", uid, 1, 0.0).has("erro"), "sem treino não avalia")
+	igual(l.iniciar_treino("b", 100.0), "", "treino começa")
+	var dur := l.treino_s("b")
+	verificar(dur > 0.0, "treino tem duração")
+	igual(l.estado("b", 100.0 + dur * 0.5), Licencas.TRAINING, "no meio do treino")
+	perto(l.restante("b", 100.0 + dur * 0.5), dur * 0.5, 0.01, "tempo restante")
+	igual(l.estado("b", 100.0 + dur + 1.0), Licencas.READY, "treino feito: avaliação")
+	verificar(not l.fazer_teste("b", "b1", uid, 1, 100.0 + dur + 1.0).has("erro"), "avalia depois do treino")
+	igual(Licencas.id_novo("B"), "CLUB", "id antigo migra")
+	igual(Licencas.teste_novo("a2"), "sport2", "teste antigo migra")
+	igual(Licencas.teste_novo("ic_ultimo_credito"), "ic_ultimo_credito", "contrato fica")
 	j.free()
 	d.free()
 

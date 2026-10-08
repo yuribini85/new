@@ -37,14 +37,31 @@ func construir() -> void:
 	rotulo("LICENÇAS", FONTE_PEQUENA, COR_SECUNDARIA)
 	var c := carro_ativo()
 	_mostrar_resultado()
+	var l := Licencas.new(dados, jogador)
+	var agora := Time.get_unix_time_from_system()
+	var treinando := false
 	for lic in dados.lista("licencas"):
+		var st := l.estado(lic["id"], agora)
+		treinando = treinando or st == Licencas.TRAINING
+		_situacao(l, lic, st, agora)
+		if not st in [Licencas.READY, Licencas.COMPLETE]:
+			continue
 		if not Contratos.da_licenca(dados, lic["id"]).is_empty():
 			_cartao_contratos(lic)
+		elif lic["testes"].is_empty():
+			nota("icone_alerta", "Avaliação da %s em preparação" % lic["nome"], "", conteudo, COR_INFO)
 		elif c == null:
 			nota("icone_cadeado", "%s: compre um carro primeiro" % lic["nome"],
 					"Os testes da %s são feitos com o carro em uso." % lic["nome"])
 		else:
 			_cartao_licenca(c, lic)
+	if treinando:
+		# Relógio do treino na tela: reconstrói a cada segundo enquanto houver treino.
+		var t := Timer.new()
+		t.wait_time = 1.0
+		t.autostart = true
+		t.timeout.connect(func(): mudou.emit())
+		conteudo.add_child(t)
 	_colecao()
 	var h := acoes()
 	entenda(h)
@@ -278,6 +295,60 @@ func _mostrar_resultado() -> void:
 	_resultado = {}
 
 
+const TEXTO_ESTADO := {
+	Licencas.LOCKED: "BLOQUEADA", Licencas.AVAILABLE: "PRONTA PARA TREINAR", Licencas.TRAINING: "EM TREINO",
+	Licencas.READY: "AVALIAÇÃO ABERTA", Licencas.COMPLETE: "CONQUISTADA",
+}
+
+
+## Situação da licença (decisão 33): estado, requisitos com status, treino e
+## o que ela libera. A avaliação aparece abaixo só depois do treino.
+func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> void:
+	var cor: Color = {Licencas.COMPLETE: COR_BOM, Licencas.LOCKED: COR_NEUTRA}.get(st, COR_INFO)
+	var v := cartao(cor)
+	var ht := HBoxContainer.new()
+	v.add_child(ht)
+	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
+	selos([[TEXTO_ESTADO[st], cor if st != Licencas.LOCKED else COR_RUIM],
+			["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
+	if st == Licencas.COMPLETE:
+		return
+	for r in l.requisitos(lic["id"]):
+		rotulo("%s %s" % ["✓" if r["ok"] else "✗", r["texto"]], FONTE_PEQUENA, COR_BOM if r["ok"] else COR_RUIM, v)
+	var dur := l.treino_s(lic["id"])
+	match st:
+		Licencas.AVAILABLE:
+			var h := fileira(v)
+			rotulo("Treino: %s · grátis · continua com o app fechado" % _duracao(dur), FONTE_PEQUENA,
+					COR_SECUNDARIA, h).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var iniciar := func() -> void:
+				var erro := l.iniciar_treino(lic["id"], Time.get_unix_time_from_system())
+				if erro != "":
+					avisar(erro, false)
+				mudou.emit()
+			botao("Iniciar treino", iniciar, true, true, h)
+		Licencas.TRAINING:
+			var falta := l.restante(lic["id"], agora)
+			var barra := ProgressBar.new()
+			barra.custom_minimum_size = Vector2(0, 20)
+			barra.show_percentage = false
+			barra.value = 100.0 * (1.0 - falta / maxf(dur, 1.0))
+			v.add_child(barra)
+			rotulo("Treino: faltam %s" % _duracao(falta), FONTE_PEQUENA, COR_INFO, v)
+		Licencas.READY:
+			rotulo("Treino concluído: faça a avaliação abaixo.", FONTE_PEQUENA, COR_BOM, v)
+
+
+static func _duracao(s: float) -> String:
+	var t := ceili(s)
+	if t >= 3600:
+		return "%d h %02d min" % [t / 3600, (t % 3600) / 60]
+	if t >= 60:
+		return "%d min %02d s" % [t / 60, t % 60]
+	return "%d s" % t
+
+
 func _cartao_licenca(c: Carro, lic: Dictionary) -> void:
 	var tem: bool = lic["id"] in jogador.licencas
 	var bloqueada: bool = lic.get("requisito") != null and not lic["requisito"] in jogador.licencas
@@ -503,7 +574,7 @@ func _pecas_da_escola(ct: Dictionary, carro: Carro) -> void:
 
 
 func _enviar(ct: Dictionary) -> void:
-	var r := Contratos.new(dados, jogador).enviar(ct["id"], _montagem)
+	var r := Contratos.new(dados, jogador).enviar(ct["id"], _montagem, Time.get_unix_time_from_system())
 	if r.has("erro"):
 		avisar(r["erro"], false)
 		return

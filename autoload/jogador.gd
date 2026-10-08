@@ -23,6 +23,8 @@ var vitorias: Dictionary = {}
 ## Temporadas em andamento e títulos (Campeonatos).
 var campeonatos: Dictionary = {}
 var titulos: Dictionary = {}
+## Treino de licença em andamento ou feito: {licença: início (segundos Unix)}.
+var treinos: Dictionary = {}
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
@@ -66,5 +68,6 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	vitorias = {}
 	campeonatos = {}
 	titulos = {}
+	treinos = {}
 	historico = {}
 	dias = 0

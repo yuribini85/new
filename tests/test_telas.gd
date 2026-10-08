@@ -19,6 +19,7 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
 	j.economia.creditar(10000)
+	j.treinos = {"a": -1.0e12, "b": -1.0e12}  # treinos feitos: o teste cobre a avaliação pela tela
 	j.carreira = Carreira.new(d, j)
 	j.fila_ctrl = Fila.new(j.carreira, j, 3600.0)
 	var abas := []
@@ -205,13 +206,13 @@ func test_registro_de_sessao_do_playtest() -> void:
 	RegistroSessao.tela(4)
 	RegistroSessao.fila({"evento_id": "aberto", "restantes": 3}, 120.0, true)
 	RegistroSessao.pulo()
-	j.licencas.append("B")
+	j.licencas.append("CLUB")
 	RegistroSessao.fim(j)
 	var s: Dictionary = RegistroSessao.sessoes().back()
 	igual(s["modo"], "ritmo", "modo")
 	igual(s["filas"].size(), 1, "fila registrada")
 	igual(s["pulos"], 1, "pulo registrado")
-	igual([s["fase_inicio"], s["fase_fim"]], ["sem licença", "B"], "fase no início e no fim")
+	igual([s["fase_inicio"], s["fase_fim"]], ["sem licença", "CLUB"], "fase no início e no fim")
 	verificar(s["telas"].has("Corrida"), "tempo acompanhando a corrida")
 	RegistroSessao.limpar()
 	Preferencias.modo_teste = modo
