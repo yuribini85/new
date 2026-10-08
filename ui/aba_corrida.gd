@@ -697,11 +697,24 @@ func _atualizar_hud(ordem: Array) -> void:
 	# Tempos de volta: quando o carro cruzou o começo de cada volta.
 	var inicio_volta := _visual.tempo_em("jogador", (volta - 1) * _pista.comprimento) if volta > 1 else 0.0
 	var melhor := -1.0
+	var k_melhor := 0
 	for k in range(1, volta):
 		var a := _visual.tempo_em("jogador", (k - 1) * _pista.comprimento) if k > 1 else 0.0
 		var b := _visual.tempo_em("jogador", k * _pista.comprimento)
-		if a >= 0.0 and b > a:
-			melhor = b - a if melhor < 0.0 else minf(melhor, b - a)
+		if a >= 0.0 and b > a and (melhor < 0.0 or b - a < melhor):
+			melhor = b - a
+			k_melhor = k
+	# Diferença para a melhor volta no mesmo ponto da pista (s; negativo =
+	# adiantado). Sem volta completa ainda, não há referência.
+	var delta := 0.0
+	var tem_delta := false
+	if k_melhor > 0:
+		var no_trecho := s - (volta - 1) * _pista.comprimento
+		var ini_m := _visual.tempo_em("jogador", (k_melhor - 1) * _pista.comprimento) if k_melhor > 1 else 0.0
+		var t_m := _visual.tempo_em("jogador", (k_melhor - 1) * _pista.comprimento + no_trecho)
+		if ini_m >= 0.0 and t_m >= 0.0:
+			delta = (_visual.tempo - maxf(inicio_volta, 0.0)) - (t_m - ini_m)
+			tem_delta = true
 	# Velocidade pela distância andada no último meio segundo (o resultado da
 	# simulação), sem os saltos de quadro.
 	var v := maxf(_visual.distancia_em("jogador", _visual.tempo) - _visual.distancia_em("jogador", maxf(_visual.tempo - 0.5, 0.0)), 0.0) \
@@ -720,6 +733,7 @@ func _atualizar_hud(ordem: Array) -> void:
 			"ataque": id == atacante})
 	_painel_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": _voltas,
 		"tempo_volta": _visual.tempo - maxf(inicio_volta, 0.0), "melhor": melhor, "kmh": v * 3.6,
+		"delta": delta if tem_delta and not _chegou else INF,
 		"marcha": mg[0], "giro": mg[1], "corte": float(_atributos_hud.get("corte", 0.0)),
 		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0,
 		"lista": lista})

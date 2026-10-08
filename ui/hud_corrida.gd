@@ -128,45 +128,106 @@ func _draw() -> void:
 	_texto(pos, Vector2(x, 82), 80, AMBAR)
 	var w := f.get_string_size(pos, HORIZONTAL_ALIGNMENT_LEFT, -1, 80).x
 	_texto("/%d" % _d["total"], Vector2(x + w + 4, 82), 28, SUAVE)
-	# 3. Volta; o tempo da volta e a melhor, menores (secundários).
+	# 3. Volta (o tempo dela fica no cronômetro, embaixo).
 	_texto("VOLTA  %d/%d" % [_d["volta"], _d["voltas"]], Vector2(x, 120), 26, COR)
-	_texto(_tempo(float(_d["tempo_volta"])), Vector2(x, 150), 22, _a(SUAVE, _sec))
-	if float(_d.get("melhor", -1.0)) > 0.0:
-		_texto("melhor " + _tempo(float(_d["melhor"])), Vector2(x, 176), 20, _a(APAGADO, _sec))
 	_lista()
-	_motor()
+	_conta_giros()
+	_cronometro()
 	_desenhar_evento()
 
 
-## Velocidade, marcha e giro: embaixo à esquerda, pequenos e apagados.
-func _motor() -> void:
-	var f := get_theme_default_font()
-	var x := 18.0
-	var base_y := size.y - 34.0
-	var cor := _a(SUAVE, _sec)
-	var kmh := "%d" % roundi(float(_d["kmh"]))
-	_texto(kmh, Vector2(x, base_y), 40, cor)
-	var wk := f.get_string_size(kmh, HORIZONTAL_ALIGNMENT_LEFT, -1, 40).x
-	_texto("km/h", Vector2(x + wk + 5, base_y), 18, _a(APAGADO, _sec))
-	var gx := x + wk + 62.0
-	if int(_d.get("marcha", 0)) > 0:
-		_texto(str(_d["marcha"]), Vector2(gx, base_y), 34, cor)
-		_texto("ª", Vector2(gx + f.get_string_size(str(_d["marcha"]), HORIZONTAL_ALIGNMENT_LEFT, -1, 34).x + 1, base_y - 14),
-				16, _a(APAGADO, _sec))
-	# Giro: linha curta e fina sob os números; a faixa de corte só insinuada.
+## Instrumentos analógicos, minimalistas: arcos finos concêntricos, sem escala
+## nem números no mostrador; o ponteiro é uma linha fina com uma cápsula curta
+## em ocre junto ao eixo. Só o que a simulação calcula: giro, marcha e
+## velocidade no conta-giros; tempo da volta e diferença para a melhor volta no
+## cronômetro. Ficam no plano secundário: apagam com `_sec` na disputa e na
+## chegada.
+
+const GIRO_RAIO := 96.0
+const GIRO_ARCO := 135.0  # graus: da esquerda do eixo (180°) ao alto-direita (315°)
+const CRONO_RAIO := 52.0
+const CRONO_FENDA := 70.0  # graus abertos à direita (o "C")
+const ARCOS := 5  # linhas concêntricas
+const ARCO_PASSO := 4.0
+## Na disputa os instrumentos apagam, mas não somem (traço fino some antes do texto).
+const INST_MIN := 0.55
+
+
+func _alfa_inst() -> float:
+	return lerpf(INST_MIN, 1.0, _sec)
+
+
+func _centro_giro() -> Vector2:
+	return Vector2(22.0 + GIRO_RAIO, size.y - 30.0)
+
+
+func _txt_inst(t: String, pos: Vector2, tam: int, cor: Color, peso := "semibold", alinhar := HORIZONTAL_ALIGNMENT_LEFT) -> void:
+	var f := Tipografia.fonte(peso)
+	if alinhar == HORIZONTAL_ALIGNMENT_CENTER:
+		pos.x -= f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x / 2.0
+	draw_string_outline(f, pos, t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, 5, Color(SOMBRA, SOMBRA.a * cor.a))
+	draw_string(f, pos, t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, cor)
+
+
+## Arcos concêntricos de `de` a `ate` (rad), o de fora mais claro e grosso, e a
+## linha reta que fecha o fim do arco em direção ao eixo.
+func _arcos(c: Vector2, raio: float, de: float, ate: float, a: float, fecha := true) -> void:
+	for k in ARCOS:
+		var r := raio - k * ARCO_PASSO
+		draw_arc(c, r, de, ate, 64, _a(Color(COR, 0.62 - k * 0.09), a), 2.0 if k == 0 else 1.0, true)
+	if fecha:
+		var dir := Vector2(cos(ate), sin(ate))
+		draw_line(c + dir * (raio * 0.12), c + dir * raio, _a(Color(COR, 0.5), a), 1.5, true)
+
+
+## Ponteiro: linha fina cinza para fora e cápsula curta colorida junto ao eixo.
+func _ponteiro(c: Vector2, raio: float, ang: float, cor: Color, a: float) -> void:
+	var dir := Vector2(cos(ang), sin(ang))
+	var lado := Vector2(-dir.y, dir.x) * 3.0  # a linha corre ao lado da cápsula, como na referência
+	draw_line(c + dir * (raio * 0.2) + lado, c + dir * (raio * 0.72) + lado, _a(Color(COR, 0.35), a), 2.0, true)
+	draw_line(c + dir * (raio * 0.04), c + dir * (raio * 0.16), _a(cor, a), 6.0, true)
+
+
+## Conta-giros: arco até o giro máximo da escala; perto do corte o ponteiro
+## fica vermelho (hora de trocar). Marcha grande e velocidade ao lado do eixo.
+func _conta_giros() -> void:
+	var a := _alfa_inst()
+	var c := _centro_giro()
 	var giro_max := float(_d.get("giro_max", 0.0))
-	if giro_max <= 0.0:
-		return
-	var x0 := x
-	var x1 := x + 230.0
-	var y := size.y - 18.0
-	var ax := func(g: float) -> float: return lerpf(x0, x1, clampf(g / giro_max, 0.0, 1.0))
-	var corte := float(_d["corte"])
-	draw_line(Vector2(x0, y), Vector2(x1, y), _a(Color(COR, 0.18), _sec), 1.0)
-	draw_line(Vector2(ax.call(corte), y), Vector2(x1, y), _a(Color(CORTE, 0.35), _sec), 1.0)
-	var giro := float(_d["giro"])
-	var no_corte := giro >= corte - 150.0
-	draw_line(Vector2(x0, y), Vector2(ax.call(giro), y), _a(Color(CORTE, 0.7) if no_corte else Color(COR, 0.5), _sec), 2.0)
+	var de := PI
+	var ate := de + deg_to_rad(GIRO_ARCO)
+	_arcos(c, GIRO_RAIO, de, ate, a)
+	if giro_max > 0.0:
+		var corte := float(_d["corte"])
+		var giro := float(_d["giro"])
+		# Só o trecho do corte no arco de fora, em vermelho discreto.
+		draw_arc(c, GIRO_RAIO, lerpf(de, ate, corte / giro_max), ate, 16, _a(Color(CORTE, 0.8), a), 2.0, true)
+		var cor := Color(CORTE) if giro >= corte - 400.0 else AMBAR
+		_ponteiro(c, GIRO_RAIO, lerpf(de, ate, clampf(giro / giro_max, 0.0, 1.0)), cor, a)
+	var marcha := int(_d.get("marcha", 0))
+	_txt_inst(str(marcha) if marcha > 0 else "N", c + Vector2(GIRO_RAIO * 0.42, -GIRO_RAIO * 0.12), 40, _a(COR, a))
+	_txt_inst("%d km/h" % roundi(float(_d["kmh"])), c + Vector2(GIRO_RAIO * 0.42 + 30.0, -GIRO_RAIO * 0.12), 22,
+			_a(SUAVE, a), "medium")
+
+
+## Cronômetro em "C": o ponteiro dá uma volta por minuto. Ao lado, o tempo da
+## volta e a diferença para a melhor volta no mesmo ponto (ocre adiantado,
+## vermelho atrasado).
+func _cronometro() -> void:
+	var a := _alfa_inst()
+	var c := _centro_giro() + Vector2(GIRO_RAIO * 0.42 + 150.0 + CRONO_RAIO, -CRONO_RAIO + 8.0)
+	var fenda := deg_to_rad(CRONO_FENDA) / 2.0
+	_arcos(c, CRONO_RAIO, fenda, TAU - fenda, a, false)
+	var t := float(_d.get("tempo_volta", 0.0))
+	_ponteiro(c, CRONO_RAIO, -PI / 2.0 + TAU * fmod(t, 60.0) / 60.0, AMBAR, a)
+	var x := c.x + CRONO_RAIO + 14.0
+	_txt_inst(_tempo(t), Vector2(x, c.y + 2.0), 26, _a(SUAVE, a), "medium")
+	var delta := float(_d.get("delta", INF))
+	if delta != INF:
+		_txt_inst("%+.2f" % delta, Vector2(x, c.y - 26.0), 22, _a(Color(CORTE) if delta > 0.0 else AMBAR, a))
+	var melhor := float(_d.get("melhor", -1.0))
+	if melhor > 0.0:
+		_txt_inst("melhor " + _tempo(melhor), Vector2(x, c.y + 28.0), 18, _a(APAGADO, a), "regular")
 
 
 ## Evento no centro: texto direto sobre a cena, com uma faixa escura muito leve

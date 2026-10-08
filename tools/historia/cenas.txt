@@ -32,7 +32,7 @@ Elena: Então você já sabe o que comprar.
 Sistema: Esta é a Oficina. Toque em Freios 1 e confirme a compra.
 
 = SCN_A02 | EVENTO_SELECIONADO | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I; cenario=oficina_cross
-Marcus: Calma. Com freio de fábrica, a curva vira parede.
+Marcus: Calma. Com o freio original, a curva vira parede.
 Elena: Primeiro os freios. A inscrição espera.
 [OPEN_TUNE_SERVICE]
 [HIGHLIGHT_BRAKES]
