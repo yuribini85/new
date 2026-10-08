@@ -14,13 +14,15 @@ var _botoes: Array = []
 var _sobre: Sobreposicao
 var _dialogo: Dialogo
 ## Nome de cada aba no trigger da história (ABA:<nome>).
-const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS"]
+const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE"]
 var _voltar: Button
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba]. Oficina e Corrida são
 ## telas internas (de Garagem e Competições), abertas pelo caminho do jogo.
 const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"], ["Competições", 3, "aba_competicoes"],
-	["Carreira", 5, "aba_carreira"]]
+	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "icone_piloto"]]
+## Aba que só aparece quando a história libera (a equipe do jogador).
+const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
 const NOME_PAI := {2: "‹ Garagem", 4: "‹ Competições"}
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
@@ -98,6 +100,7 @@ func _ready() -> void:
 		eventos,
 		preload("res://ui/aba_corrida.gd").new(dados, jogador),
 		preload("res://ui/aba_licencas.gd").new(dados, jogador),
+		preload("res://ui/aba_equipe.gd").new(dados, jogador),
 	]
 	for a in _todas:
 		_abas.add_child(a)
@@ -150,6 +153,7 @@ func _ready() -> void:
 	timer.timeout.connect(_foco_corrida)
 	timer.timeout.connect(_registrar_fila)
 	timer.timeout.connect(_atualizar_fps)
+	timer.timeout.connect(_historia_corrida)
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
@@ -158,6 +162,7 @@ func _ready() -> void:
 	_fila_vista = jogador.fila
 	RegistroSessao.inicio(jogador)
 	if jogador.historia != null:
+		historia_acao.connect(_acao_historia)
 		jogador.historia.disparar("GAME_START")
 
 
@@ -183,6 +188,16 @@ func _navegacao() -> HBoxContainer:
 		_botoes.append(b)
 	_ir_para.call_deferred(0)
 	return barra
+
+
+## A aba Equipe fica oculta até a Second Driver existir (documento, seção 29).
+func _atualizar_nav() -> void:
+	var cinco := EquipeJogador.criada(jogador)
+	for k in _botoes.size():
+		if DESTINOS[k][1] == ABA_EQUIPE:
+			_botoes[k].visible = cinco
+		# Cinco destinos: texto menor para "Competições" caber.
+		_botoes[k].add_theme_font_size_override("font_size", 17 if cinco else 20)
 
 
 func _ir_para(i: int) -> void:
@@ -264,6 +279,7 @@ func atualizar() -> void:
 	_saldo.text = "%s Cr" % Aba.dinheiro(jogador.economia.saldo)
 	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
 	_atualizar_ao_vivo()
+	_atualizar_nav()
 	for a in _todas:
 		a.atualizar()
 	var objetivos := Objetivos.lista(jogador, dados)
@@ -291,6 +307,36 @@ func _acao_tutorial(nome: String) -> void:
 		atualizar()
 	else:
 		historia_acao.emit(nome)
+
+
+## Prólogo: durante a última corrida do Adrian, o rádio e depois o acidente.
+func _historia_corrida() -> void:
+	if jogador.historia == null or not Prologo.ultima_corrida_ativa(jogador):
+		return
+	var dur: float = jogador.fila_ctrl.duracao_atual()
+	if dur <= 0.0:
+		return
+	var feito: float = (Time.get_unix_time_from_system() - float(jogador.fila["inicio"])) / dur
+	var cfg: Dictionary = dados.historia()
+	if feito >= float(cfg.get("radio_fracao", 0.4)):
+		jogador.historia.disparar("RADIO_ULTIMA_CORRIDA")
+	if feito >= float(cfg.get("acidente_fracao", 0.6)):
+		Prologo.acidente(jogador)
+		jogador.historia.disparar("ACIDENTE")
+		atualizar()
+		get_node("/root/SaveManager").salvar()
+
+
+func _acao_historia(nome: String) -> void:
+	if nome == "SALTO_TEMPORAL":
+		Prologo.salto_temporal(dados, jogador)
+		atualizar()
+		get_node("/root/SaveManager").salvar()
+	elif nome == "UNLOCK_TEAM_TAB":
+		# A Second Driver nasce na cena: nada é resetado, só a aba aparece.
+		EquipeJogador.criar(jogador)
+		atualizar()
+		_ir_para(ABA_EQUIPE)
 
 
 ## Decisão 34: prova inédita ou etapa de campeonato só corre com o app aberto.

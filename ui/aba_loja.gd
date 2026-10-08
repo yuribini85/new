@@ -11,8 +11,10 @@ func _init(d: Node, j: Node) -> void:
 
 ## Lojas como no GT2: concessionárias de novos por fabricante, separadas por
 ## região; lotes de usados por fabricante; agenda das próximas ofertas.
-## "usados", "novos" ou "agenda": a seção aberta (mantida ao voltar).
+## "usados", "novos", "agenda" ou "second_chance" (prólogo): a seção aberta
+## (mantida ao voltar). Com a garagem vazia, a Second Chance abre primeiro.
 var _secao := "usados"
+var _second_chance_vista := false
 ## Região das concessionárias e loja aberta (id do fabricante; "" = a vitrine
 ## de lojas). "todos" nos usados = todos os lotes juntos.
 var _regiao := "jp"
@@ -38,7 +40,15 @@ func construir() -> void:
 	var novos: Array = dados.lista("carros").filter(func(c): return c.get("novo", true))
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
-	for s in [["usados", "Usados"], ["novos", "Concessionárias"], ["agenda", "Próximas ofertas"]]:
+	var secoes := [["usados", "Usados"], ["novos", "Concessionárias"], ["agenda", "Próximas ofertas"]]
+	# Prólogo: depois do acidente, Elena começa pela Second Chance Motors.
+	if jogador.flags.has("SECOND_CHANCE_UNLOCKED"):
+		secoes.push_front(["second_chance", "Second Chance"])
+		secoes[-1] = ["agenda", "Agenda"]  # quatro abas: cabe na largura
+		if not _second_chance_vista and jogador.garagem.lista().is_empty():
+			_second_chance_vista = true
+			_secao = "second_chance"
+	for s in secoes:
 		var b := Button.new()
 		b.text = s[1]
 		b.toggle_mode = true
@@ -53,7 +63,9 @@ func construir() -> void:
 			mudou.emit())
 		abas.add_child(b)
 	conteudo.add_child(abas)
-	if _secao == "agenda":
+	if _secao == "second_chance":
+		_second_chance(ofertas)
+	elif _secao == "agenda":
 		_agenda()
 	elif _secao == "usados":
 		if _loja == "":
@@ -221,25 +233,50 @@ func _topo_loja(nome: String, sub: String) -> void:
 
 ## Um lote de usados (ou todos), com filtros. Sem recomendação, como no GT2.
 func _lote(ofertas: Array) -> void:
-	var f: Dictionary = dados.item("fabricantes", _loja) if _loja != "todos" else {}
-	_topo_loja(f.get("nome", "Todos os lotes"), "Usados · " + f.get("pais", "todos os fabricantes"))
-	if _loja != "todos":
-		ofertas = ofertas.filter(func(o): return dados.carro(o["carro_id"])["fabricante"] == _loja)
+	_topo_loja_lote()
 	_filtros()
 	var grade := _grade()
-	var lista := _filtrar(ofertas.map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2])
+	var lista := _filtrar(_do_lote(ofertas).map(func(o): return [dados.carro(o["carro_id"]), int(o["preco"]), o])).map(func(x): return x[2])
 	for o in lista.slice(0, _limite):
-		var c: Dictionary = dados.carro(o["carro_id"])
-		var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
-		var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
-		if o["carro_id"] in jogador.desejos:
-			extras.push_front(["♥ avisando", COR_DESTAQUE])
-		# Usado: vem numa das cores do modelo, fixa pela oferta.
-		var cor_usado := Cores.sortear(String(c["id"]), String(o["chave"]))
-		_bloco(grade, c, int(o["preco"]), "", extras,
-				func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos, cor_usado.to_html(false)), c,
-						int(o["preco"])), cor_usado)
+		_cartao_usado(grade, o)
 	_mais(lista.size())
+
+
+## Second Chance Motors (prólogo): poucos usados que a poupança da Elena paga,
+## de perfis diferentes (Prologo.second_chance).
+func _second_chance(ofertas: Array) -> void:
+	nota("icone_ofertas", "Second Chance Motors", "Carros usados que cabem no seu saldo. Mudam a cada corrida, como os outros usados.")
+	var lista := Prologo.second_chance(dados, jogador, ofertas)
+	if lista.is_empty():
+		rotulo("Nenhum carro hoje que o saldo pague.", 0, COR_SECUNDARIA)
+		return
+	var grade := _grade()
+	for o in lista:
+		_cartao_usado(grade, o)
+
+
+func _topo_loja_lote() -> void:
+	var f: Dictionary = dados.item("fabricantes", _loja) if _loja != "todos" else {}
+	_topo_loja(f.get("nome", "Todos os lotes"), "Usados · " + f.get("pais", "todos os fabricantes"))
+
+
+func _do_lote(ofertas: Array) -> Array:
+	if _loja == "todos":
+		return ofertas
+	return ofertas.filter(func(o): return dados.carro(o["carro_id"])["fabricante"] == _loja)
+
+
+func _cartao_usado(grade: GridContainer, o: Dictionary) -> void:
+	var c: Dictionary = dados.carro(o["carro_id"])
+	var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
+	var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
+	if o["carro_id"] in jogador.desejos:
+		extras.push_front(["♥ avisando", COR_DESTAQUE])
+	# Usado: vem numa das cores do modelo, fixa pela oferta.
+	var cor_usado := Cores.sortear(String(c["id"]), String(o["chave"]))
+	_bloco(grade, c, int(o["preco"]), "", extras,
+			func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos, cor_usado.to_html(false)), c,
+					int(o["preco"])), cor_usado)
 
 
 ## Concessionária de um fabricante: os novos dele; as versões de corrida por

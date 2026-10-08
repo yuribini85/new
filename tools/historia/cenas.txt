@@ -106,11 +106,10 @@ Adrian: Mais uma.
 Elena: Adrian.
 Adrian: Mais uma.
 
-= SCN_A13 | ACIDENTE | bloqueia=sim; flags=ADRIAN_DEAD,ADRIAN_CAR_DESTROYED; capitulo=I
+= SCN_A13 | ACIDENTE | bloqueia=sim; flags=ADRIAN_DEAD,ADRIAN_CAR_DESTROYED; proxima=SCN_B01; capitulo=I
 Sistema: CORRIDA INTERROMPIDA
-[ACIDENTE_ADRIAN]
 
-= SCN_B01 | POS_ACIDENTE | bloqueia=sim; flags=EMPTY_GARAGE_SEEN; proxima=SCN_B02; capitulo=II
+= SCN_B01 | ENCADEADA | bloqueia=sim; flags=EMPTY_GARAGE_SEEN; proxima=SCN_B02; capitulo=II
 Marcus: Ligaram de novo.
 Elena: Quem?
 Marcus: Seguro. Organização. Duas equipes.

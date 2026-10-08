@@ -481,6 +481,8 @@ func _correr(evento_id: String) -> void:
 	avisar("%s %s%s." % ["Largada!" if n > 1 or jogador.vitorias.has(evento_id) else "Largada:",
 			dados.evento(evento_id)["nome"], "" if n == 1 else " ×%d" % n])
 	correr_iniciado.emit()
+	if Prologo.deve_ultima_corrida(dados, jogador):
+		historia("ULTIMA_CORRIDA_ADRIAN")
 	historia("CORRIDA_INICIO")
 	if dados.evento(evento_id)["restricoes"].get("licenca", "") == "ELITE":
 		historia("CORRIDA_RESISTENCIA")

@@ -519,9 +519,6 @@
    {
     "quem": "sistema",
     "texto": "CORRIDA INTERROMPIDA"
-   },
-   {
-    "acao": "ACIDENTE_ADRIAN"
    }
   ],
   "requer": [],
@@ -532,11 +529,12 @@
   ],
   "bloqueia": true,
   "uma_vez": true,
+  "proxima": "SCN_B01",
   "capitulo": "I"
  },
  {
   "id": "SCN_B01",
-  "trigger": "POS_ACIDENTE",
+  "trigger": "ENCADEADA",
   "falas": [
    {
     "quem": "marcus",

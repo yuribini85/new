@@ -24,14 +24,14 @@ extends SceneTree
 ##   montagem para uma pista sozinha precisa perder na outra, e uma montagem só
 ##   precisa vencer nas duas com folga de ao menos FOLGA_MINIMA_DUPLA.
 ##   bronze: vencer as duas · prata: folga de metade da folga da solução · ouro: com as peças da solução enxuta.
-## Licenças acima da B (--licenca=IC, IB ou IA): os mesmos três contratos, com
+## Licenças acima da primeira (--licenca=SPORT, NATIONAL, INTERNATIONAL, PRO ou ELITE): os mesmos três contratos, com
 ## carros e pistas dos eventos que a licença libera (carro da escola: um rival
 ## desses eventos dentro do limite da licença; rivais: os desses eventos e os
 ## da licença seguinte; pistas: as desses eventos). O teto de "O último
 ## crédito" é a soma dos prêmios de 1º lugar dos eventos da licença anterior
-## (na B, o saldo inicial). Os ids levam o prefixo da licença ("ic_...").
+## (na primeira, o saldo inicial). Os ids levam o prefixo da licença ("pro_..."; os da antiga IC mantêm "ic_", que os saves já usam).
 ## Só os contratos da licença pedida são trocados em contratos.json.
-## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=B]
+## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=CLUB]
 
 const CAMINHO := "res://data/contratos.json"
 const RAZAO_GIGANTE := 1.3
@@ -48,6 +48,11 @@ const FOLGA_PRATA_DUPLA_S := -1.0
 ## par de pistas, do par de rivais mais fácil ao mais difícil (com 618 carros, todos os pares não
 ## terminam). Limite da ferramenta, não do jogo.
 const PARES_MAX := 12
+## Orçamento total de montagens conjuntas de "Dois circuitos" (licenças altas têm
+## dezenas de carros × pares de pistas: sem teto a busca passa de duas horas).
+## Limite da ferramenta, não do jogo.
+const DUPLOS_MAX := 300
+var _duplos := 0
 
 var _feito := false
 var _dados: Node
@@ -244,6 +249,12 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 					if not especializa:
 						continue
 					tentativas += 1
+					_duplos += 1
+					if _duplos > DUPLOS_MAX:
+						push_warning("Dois circuitos: orçamento de %d montagens conjuntas esgotado" % DUPLOS_MAX)
+						return {}
+					if _duplos % 50 == 0:
+						print("  dois circuitos: %d montagens conjuntas (%d s)" % [_duplos, Time.get_ticks_msec() / 1000])
 					var junto := _guloso_duplo(c, alvo)
 					if junto["deficit"] > -maxf(FOLGA_MINIMA_DUPLA, FOLGA_PRATA_DUPLA_S):
 						continue

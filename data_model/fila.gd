@@ -171,6 +171,8 @@ func processar(agora: float) -> Dictionary:
 ## (renda) roda offline.
 func importante(f: Dictionary) -> bool:
 	var evento_id: String = f["evento_id"]
+	if Prologo.deve_ultima_corrida(carreira.dados, jogador):
+		return true  # corrida da história
 	if not jogador.vitorias.has(evento_id):
 		return true
 	var ev: Dictionary = carreira.dados.evento(evento_id)

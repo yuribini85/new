@@ -26,6 +26,11 @@ func _ready() -> void:
 		return  # dados pendentes
 	var r := carregar_protegido(caminho, jogador, dados)
 	aviso = r["aviso"]
+	if not r["carregou"] and not dados.historia().is_empty():
+		# Jogo novo: começa pelo prólogo do Adrian (decisão 32).
+		var erro := Prologo.iniciar(dados, jogador)
+		if erro != "":
+			push_warning("SaveManager: " + erro)
 	if r["aviso"] != "":
 		push_warning("SaveManager: " + r["aviso"])
 	if jogador.fila_ctrl != null and r["carregou"]:

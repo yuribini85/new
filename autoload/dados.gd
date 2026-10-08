@@ -37,6 +37,7 @@ const OBJETOS := {
 	"simulacao": SimulacaoScript.PARAMS,
 	"economia": ["saldo_inicial", "fracao_revenda", "pneu_de_fabrica"],
 	"carreira": ["piloto_jogador", "teto_offline_s"],
+	"historia": ["adrian", "elena", "ultima_corrida_apos", "radio_fracao", "acidente_fracao"],
 }
 
 var _listas: Dictionary = {}  # arquivo -> {id -> item}
@@ -280,6 +281,10 @@ func economia() -> Dictionary:
 
 func carreira() -> Dictionary:
 	return _objetos["carreira"]
+
+
+func historia() -> Dictionary:
+	return _objetos.get("historia", {})
 
 
 func evento(id: String) -> Dictionary:

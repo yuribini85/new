@@ -7,6 +7,7 @@ const ABAS := [
 	preload("res://ui/aba_garagem.gd"), preload("res://ui/aba_loja.gd"),
 	preload("res://ui/aba_oficina.gd"), preload("res://ui/aba_eventos.gd"),
 	preload("res://ui/aba_corrida.gd"), preload("res://ui/aba_licencas.gd"),
+	preload("res://ui/aba_equipe.gd"),
 ]
 
 
@@ -54,6 +55,9 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	j.concessionaria.comprar_carro(d.carro("fraco"))
 	abas[0]._vender(uid)
 	igual(j.carro_ativo, -1, "vender o ativo limpa a seleção")
+	EquipeJogador.criar(j)
+	igual(EquipeJogador.dados_equipe(d, j).get("id"), "eq_jogador", "equipe do jogador criada")
+	j.flags["SECOND_CHANCE_UNLOCKED"] = true  # seção Second Chance no mercado
 	for a in abas:
 		a.atualizar()
 		a.free()

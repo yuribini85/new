@@ -165,3 +165,34 @@ func test_historia_escolhe_cena_por_trigger_flags_e_condicao() -> void:
 	igual(h.cena_para("SEM_DINHEIRO").get("id"), "sempre", "repetível")
 	j.free()
 	d.free()
+
+
+func test_prologo_adrian_acidente_e_elena() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	igual(Prologo.iniciar(d, j), "", "começa como Adrian")
+	igual(j.personagem, "adrian", "personagem")
+	igual(j.licencas, ["b"], "licenças do Adrian")
+	igual(j.garagem.lista().size(), 1, "carro do Adrian")
+	igual(j.economia.saldo, 200, "saldo = preço da peça")
+	verificar(not Prologo.deve_ultima_corrida(d, j), "antes do primeiro campeonato")
+	j.flags["FIRST_CHAMPIONSHIP_DONE"] = true
+	verificar(Prologo.deve_ultima_corrida(d, j), "depois do primeiro campeonato")
+	j.vitorias["x"] = 1
+	j.fila = {"evento_id": "x"}
+	Prologo.acidente(j)
+	igual(j.garagem.lista().size(), 0, "carro destruído")
+	igual(j.fila, {}, "corrida interrompida")
+	verificar(j.flags.has("ADRIAN_CAR_DESTROYED"), "flag do acidente")
+	Prologo.salto_temporal(d, j)
+	igual(j.personagem, "elena", "Elena")
+	igual(j.licencas, [], "sem licença")
+	igual(j.vitorias, {}, "carreira do zero")
+	igual(j.economia.saldo, 1000, "poupança = saldo inicial")
+	verificar(j.flags.has("FIRST_CHAMPIONSHIP_DONE"), "flags continuam")
+	var ofertas := Usados.estoque(d.lista("carros"), 0, {})
+	var sc := Prologo.second_chance(d, j, ofertas)
+	verificar(sc.size() <= 3, "limite de carros da config")
+	verificar(sc.all(func(o): return int(o["preco"]) <= 1000), "só o que o saldo paga")
+	j.free()
+	d.free()

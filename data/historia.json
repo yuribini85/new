@@ -1,0 +1,8 @@
+{
+ "adrian": {"carro": "hayase_raikou", "licencas": ["CLUB", "SPORT"], "saldo_da_peca": "hayase_raikou_brake_1"},
+ "elena": {"saldo": "saldo_inicial"},
+ "ultima_corrida_apos": "FIRST_CHAMPIONSHIP_DONE",
+ "radio_fracao": 0.4,
+ "acidente_fracao": 0.6,
+ "second_chance": {"carros": 5}
+}

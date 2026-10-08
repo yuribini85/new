@@ -263,8 +263,11 @@ func _recomecar() -> void:
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}
+	if not dados.historia().is_empty():
+		Prologo.iniciar(dados, jogador)  # recomeça pelo prólogo (decisão 32)
 	avisar("Carreira recomeçada com %s Cr." % dinheiro(jogador.economia.saldo))
 	ir_para.emit(GARAGEM)
+	historia("GAME_START")
 
 
 func _mostrar_resultado() -> void:
