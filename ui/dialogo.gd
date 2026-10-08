@@ -405,7 +405,10 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 		var cat: Dictionary = historia.dados.historia().get("ilustracoes" if ilustracao else "cenarios", {}).get(id, {})
 		tex = Assets.get_asset(id, "ilustracao" if ilustracao else "cenario")
 		if tex == null and cat.has("provisorio"):
-			tex = Assets.get_asset(String(cat["provisorio"]), "ui")
+			var prov := String(cat["provisorio"])
+			# Provisória: outro cenário já pronto ("cenario:<id>") ou arte da interface.
+			tex = Assets.get_asset(prov.trim_prefix("cenario:"), "cenario") if prov.begins_with("cenario:") \
+					else Assets.get_asset(prov, "ui")
 			tom = TOM.get(String(cat.get("tom", "")), Color.WHITE)
 	if tex == null:
 		if _cenario.visible:

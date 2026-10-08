@@ -145,7 +145,7 @@ LEIA_ME = """Pedido de arte das cenas da história (cenários dos diálogos e il
 2. Cole os pedidos de PEDIDOS.md (ou use pedidos.json em lote).
 3. Junte os arquivos com os nomes e pastas exatos (ex.: arte/cenarios/garagem_cross.webp) e me mande o
    zip. Cada cena troca para a arte nova assim que o arquivo está no lugar; o que faltar continua com a
-   provisória (a arte da interface com um tom de cor).
+   provisória (outro cenário já pronto ou a arte da interface, com um tom de cor).
 """
 
 

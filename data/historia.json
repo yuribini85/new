@@ -17,7 +17,7 @@
  "second_chance": {
   "carros": 5
  },
- "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png) com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py.",
+ "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py.",
  "capitulos": {
   "I": "Fim de temporada",
   "II": "A garagem vazia",
@@ -47,12 +47,12 @@
   },
   "garagem_vazia": {
    "nome": "A garagem sem o carro",
-   "provisorio": "fundo_garagem",
+   "provisorio": "cenario:garagem_cross",
    "tom": "vazio"
   },
   "oficina_cross": {
    "nome": "Bancada da oficina",
-   "provisorio": "fundo_garagem"
+   "provisorio": "cenario:garagem_cross"
   },
   "box_largada": {
    "nome": "Box antes da largada",
@@ -60,7 +60,7 @@
   },
   "grid_noite": {
    "nome": "Grid da prova noturna",
-   "provisorio": "fundo_competicoes",
+   "provisorio": "cenario:box_largada",
    "tom": "noite"
   },
   "podio": {
@@ -77,12 +77,11 @@
   },
   "sala_imprensa": {
    "nome": "Sala de imprensa",
-   "provisorio": "fundo_carreira",
-   "tom": "frio"
+   "provisorio": "cenario:escritorio_apex"
   },
   "paddock_apex": {
    "nome": "Paddock da Apex Dominion",
-   "provisorio": "fundo_competicoes",
+   "provisorio": "cenario:box_largada",
    "tom": "frio"
   },
   "escritorio_apex": {
@@ -107,12 +106,11 @@
   },
   "capacete_na_bancada": {
    "nome": "O capacete do Adrian na bancada",
-   "provisorio": "fundo_garagem",
-   "tom": "vazio"
+   "provisorio": "cenario:garagem_cross_noite"
   },
   "elena_na_porta": {
    "nome": "Elena abre a garagem, meses depois",
-   "provisorio": "fundo_garagem",
+   "provisorio": "cenario:garagem_cross",
    "tom": "frio"
   },
   "licenca_club": {
@@ -121,7 +119,7 @@
   },
   "placa_second_driver": {
    "nome": "A placa da Second Driver",
-   "provisorio": "fundo_garagem"
+   "provisorio": "cenario:garagem_second_driver"
   },
   "elite": {
    "nome": "Elite",
