@@ -1,6 +1,6 @@
 extends Aba
-## Garagem: o carro selecionado em destaque (vitrine com o sprite isométrico), as três
-## informações que importam e as duas ações do caminho (preparar, correr).
+## Garagem: o carro selecionado em destaque (vitrine com o sprite isométrico) com a
+## ficha por cima, como HUD, e as duas ações do caminho (preparar, correr).
 ## Embaixo, a coleção em miniaturas para trocar de carro.
 
 var _vitrine: VitrineCarro
@@ -36,22 +36,7 @@ func construir() -> void:
 		jogador.carro_ativo = lista[0].uid
 	var c := carro_ativo()
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c))
-	conteudo.add_child(_vitrine)
-	var fab: Dictionary = dados.item("fabricantes", c.base["fabricante"])
-	rotulo(c.base["nome"], 46)
-	var sub := fileira()
-	rotulo("%s%s%s" % [fab.get("nome", ""), " · %d" % c.base["ano"] if int(c.base["ano"]) > 0 else "",
-			" · correndo agora" if _correndo(c) else ""],
-			FONTE_PEQUENA, COR_SECUNDARIA, sub)
-	icone(ICONE_TRACAO.get(c.base["tracao"], "icone_tracao_traseira"), 40, sub)
-	var lt := rotulo(NOMES_TRACAO_CURTO.get(c.base["tracao"], c.base["tracao"]), FONTE_PEQUENA, COR_SECUNDARIA, sub)
-	lt.autowrap_mode = TextServer.AUTOWRAP_OFF
-	lt.size_flags_horizontal = Control.SIZE_SHRINK_END
-	var a := c.atributos_efetivos("seco")
-	ancora("CAR_STATS", atributos_carro(a))
-	if not c.pecas.is_empty():
-		rotulo("%d peça%s instalada%s" % [c.pecas.size(), "" if c.pecas.size() == 1 else "s", "" if c.pecas.size() == 1 else "s"],
-				FONTE_PEQUENA, COR_SECUNDARIA)
+	ancora("CAR_STATS", _palco(c))
 	var h := acoes()
 	botao("Melhorar o carro", func(): ir_para.emit(OFICINA), true, true, h, "icone_melhorar")
 	botao("Correr", func(): ir_para.emit(EVENTOS), true, false, h, "icone_correr")
@@ -60,6 +45,91 @@ func construir() -> void:
 	botao_texto("Vender por %s Cr" % dinheiro(revenda(c.base)), _confirmar_venda.bind(c),
 			sec, not _correndo(c) and jogador.concessionaria.pode_vender(c.uid))
 	_colecao_miniaturas(lista, c)
+
+
+## A vitrine com a ficha por cima, como um HUD nos cantos da ambientação:
+## nome e fabricante em cima à esquerda, tração e peças à direita, os quatro
+## atributos numa faixa embaixo. Libera a tela sem precisar rolar.
+func _palco(c: Carro) -> Control:
+	var palco := Control.new()
+	palco.custom_minimum_size = _vitrine.custom_minimum_size
+	palco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	conteudo.add_child(palco)
+	_vitrine.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	palco.add_child(_vitrine)
+	var fab: Dictionary = dados.item("fabricantes", c.base["fabricante"])
+	# Canto de cima, à esquerda: nome e fabricante.
+	var tl := VBoxContainer.new()
+	tl.position = Vector2(18, 14)
+	tl.add_theme_constant_override("separation", -2)
+	tl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	palco.add_child(tl)
+	_hud_rotulo(c.base["nome"], 38, Color.WHITE, tl)
+	_hud_rotulo("%s%s%s" % [fab.get("nome", ""), " · %d" % c.base["ano"] if int(c.base["ano"]) > 0 else "",
+			" · correndo agora" if _correndo(c) else ""], FONTE_PEQUENA, COR_SECUNDARIA, tl)
+	# Canto de cima, à direita: tração e peças instaladas.
+	var tr := VBoxContainer.new()
+	tr.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	tr.offset_left = -260
+	tr.offset_right = -18
+	tr.offset_top = 16
+	tr.alignment = BoxContainer.ALIGNMENT_BEGIN
+	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	palco.add_child(tr)
+	var ht := HBoxContainer.new()
+	ht.alignment = BoxContainer.ALIGNMENT_END
+	ht.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tr.add_child(ht)
+	icone(ICONE_TRACAO.get(c.base["tracao"], "icone_tracao_traseira"), 36, ht)
+	_hud_rotulo(NOMES_TRACAO_CURTO.get(c.base["tracao"], c.base["tracao"]), FONTE_PEQUENA, COR_SECUNDARIA, ht)
+	if not c.pecas.is_empty():
+		var lp := _hud_rotulo("%d peça%s" % [c.pecas.size(), "" if c.pecas.size() == 1 else "s"], FONTE_PEQUENA,
+				COR_SECUNDARIA, tr)
+		lp.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	# Faixa de baixo: os quatro atributos.
+	var a := c.atributos_efetivos("seco")
+	var faixa := PanelContainer.new()
+	faixa.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	faixa.offset_top = -86
+	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(COR_FUNDO, 0.72)
+	sb.set_content_margin_all(8)
+	faixa.add_theme_stylebox_override("panel", sb)
+	palco.add_child(faixa)
+	var h := HBoxContainer.new()
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	faixa.add_child(h)
+	for it in [["icone_potencia", "%d" % a["potencia"], "cv"], ["icone_peso", "%d" % a["peso"], "kg"],
+			["icone_pneus", "%d" % roundi(a.get("aderencia", 1.0) * 100.0), "pneus"],
+			["icone_freios", "%d" % roundi(a.get("freio", 1.0) * 100.0), "freios"]]:
+		var cel := HBoxContainer.new()
+		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cel.alignment = BoxContainer.ALIGNMENT_CENTER
+		cel.add_theme_constant_override("separation", 6)
+		cel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(cel)
+		icone(it[0], 40, cel)
+		var tv := VBoxContainer.new()
+		tv.add_theme_constant_override("separation", -6)
+		tv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cel.add_child(tv)
+		_hud_rotulo(it[1], 30, Color.WHITE, tv)
+		_hud_rotulo(it[2], FONTE_PEQUENA - 5, COR_SECUNDARIA, tv)
+	return palco
+
+
+## Texto do HUD: contorno escuro para ler sobre a ilustração.
+func _hud_rotulo(t: String, tamanho: int, cor: Color, pai: Control) -> Label:
+	var l := Label.new()
+	l.text = t
+	l.add_theme_font_size_override("font_size", tamanho)
+	l.add_theme_color_override("font_color", cor)
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	l.add_theme_constant_override("outline_size", 8)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pai.add_child(l)
+	return l
 
 
 func _correndo(c: Carro) -> bool:
