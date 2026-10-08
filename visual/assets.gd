@@ -8,7 +8,9 @@ extends RefCounted
 ##
 ## Variantes: "retrato" (personagens.json ou piloto de equipes.json, campo
 ## `retrato`), "corpo" (corpo inteiro do diálogo: <pasta do retrato>/corpo/
-## <nome>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png).
+## <nome>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png), "cenario"
+## (fundo das cenas: arte/cenarios/<id>.webp) e "ilustracao" (quadro de um momento
+## da história: arte/cenas/<id>.webp); os ids estão em data/historia.json.
 
 static var _cache := {}
 
@@ -29,6 +31,10 @@ static func caminho(id: String, variante: String) -> String:
 			return "" if r == "" else r.get_base_dir().path_join("corpo").path_join(r.get_file().get_basename() + ".webp")
 		"ui":
 			return "res://arte/ui/%s.png" % id
+		"cenario":
+			return "res://arte/cenarios/%s.webp" % id
+		"ilustracao":
+			return "res://arte/cenas/%s.webp" % id
 		"retrato":
 			if dados == null:
 				return ""

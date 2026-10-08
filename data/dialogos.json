@@ -4,16 +4,23 @@
   "trigger": "GAME_START",
   "falas": [
    {
-    "quem": "sistema",
-    "texto": "Anel do Vale. Fim de temporada."
+    "acao": "ILUSTRACAO:anel_do_vale"
    },
    {
     "quem": "sistema",
-    "texto": "Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus cuida do resto."
+    "texto": "Anel do Vale. Última semana da temporada."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus, o mecânico, cuida do resto."
    },
    {
     "quem": "sistema",
     "texto": "Daqui até a Elite são seis licenças. Ninguém da família passou da segunda."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Ainda."
    }
   ],
   "requer": [],
@@ -88,7 +95,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "garagem_cross"
  },
  {
   "id": "SCN_A02",
@@ -121,7 +129,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "oficina_cross"
  },
  {
   "id": "SCN_A03",
@@ -162,7 +171,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "oficina_cross"
  },
  {
   "id": "SCN_A04",
@@ -246,7 +256,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "box_largada"
  },
  {
   "id": "SCN_A06",
@@ -283,7 +294,8 @@
   "condicao": {
    "posicao": 1
   },
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "podio"
  },
  {
   "id": "SCN_A06B",
@@ -315,7 +327,8 @@
   "condicao": {
    "posicao_min": 2
   },
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "box_largada"
  },
  {
   "id": "SCN_A07",
@@ -414,7 +427,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "garagem_cross"
  },
  {
   "id": "SCN_A10",
@@ -454,7 +468,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "garagem_cross_noite"
  },
  {
   "id": "SCN_A11",
@@ -489,7 +504,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I"
+  "capitulo": "I",
+  "cenario": "grid_noite"
  },
  {
   "id": "SCN_A12",
@@ -525,6 +541,9 @@
   "trigger": "ACIDENTE",
   "falas": [
    {
+    "acao": "TREMOR"
+   },
+   {
     "acao": "ESCURO"
    },
    {
@@ -533,6 +552,9 @@
    {
     "quem": "sistema",
     "texto": "CORRIDA INTERROMPIDA"
+   },
+   {
+    "acao": "ILUSTRACAO:acidente"
    },
    {
     "acao": "PAUSA"
@@ -557,6 +579,9 @@
   "id": "SCN_B01",
   "trigger": "ENCADEADA",
   "falas": [
+   {
+    "acao": "ILUSTRACAO:capacete_na_bancada"
+   },
    {
     "quem": "marcus",
     "texto": "Ligaram de novo. Seguro, federação, duas equipes."
@@ -615,12 +640,18 @@
     "acao": "CLARO"
    },
    {
+    "acao": "ILUSTRACAO:elena_na_porta"
+   },
+   {
     "quem": "marcus",
     "texto": "Achei que você não voltava."
    },
    {
     "quem": "elena",
     "texto": "Eu também."
+   },
+   {
+    "acao": "CENARIO:garagem_vazia"
    },
    {
     "quem": "marcus",
@@ -699,7 +730,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "II"
+  "capitulo": "II",
+  "cenario": "garagem_vazia"
  },
  {
   "id": "SCN_C01",
@@ -745,7 +777,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "III"
+  "capitulo": "III",
+  "cenario": "second_chance"
  },
  {
   "id": "SCN_C02",
@@ -785,7 +818,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "III"
+  "capitulo": "III",
+  "cenario": "second_chance"
  },
  {
   "id": "SCN_D01",
@@ -821,7 +855,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "IV"
+  "capitulo": "IV",
+  "cenario": "vector_academy"
  },
  {
   "id": "SCN_D02",
@@ -868,7 +903,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "IV"
+  "capitulo": "IV",
+  "cenario": "vector_academy"
  },
  {
   "id": "SCN_D03",
@@ -893,7 +929,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "IV"
+  "capitulo": "IV",
+  "cenario": "vector_academy"
  },
  {
   "id": "SCN_D04",
@@ -921,7 +958,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "IV"
+  "capitulo": "IV",
+  "cenario": "garagem_cross"
  },
  {
   "id": "SCN_D05",
@@ -930,6 +968,9 @@
    {
     "quem": "responsavel",
     "texto": "Licença Club aprovada."
+   },
+   {
+    "acao": "ILUSTRACAO:licenca_club"
    },
    {
     "quem": "marcus",
@@ -952,7 +993,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "IV"
+  "capitulo": "IV",
+  "cenario": "vector_academy"
  },
  {
   "id": "SCN_E01",
@@ -985,7 +1027,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "V"
+  "capitulo": "V",
+  "cenario": "box_largada"
  },
  {
   "id": "SCN_E02",
@@ -1025,7 +1068,8 @@
   "condicao": {
    "posicao_min": 2
   },
-  "capitulo": "V"
+  "capitulo": "V",
+  "cenario": "box_largada"
  },
  {
   "id": "SCN_E03",
@@ -1070,7 +1114,8 @@
   "condicao": {
    "posicao": 1
   },
-  "capitulo": "V"
+  "capitulo": "V",
+  "cenario": "podio"
  },
  {
   "id": "SCN_F01",
@@ -1102,7 +1147,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VI"
+  "capitulo": "VI",
+  "cenario": "garagem_cross"
  },
  {
   "id": "SCN_F03",
@@ -1133,7 +1179,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VI"
+  "capitulo": "VI",
+  "cenario": "vector_academy"
  },
  {
   "id": "SCN_G02",
@@ -1162,7 +1209,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VII"
+  "capitulo": "VII",
+  "cenario": "garagem_cross"
  },
  {
   "id": "SCN_G03",
@@ -1203,7 +1251,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VII"
+  "capitulo": "VII",
+  "cenario": "sala_imprensa"
  },
  {
   "id": "SCN_H01",
@@ -1252,7 +1301,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VIII"
+  "capitulo": "VIII",
+  "cenario": "paddock_apex"
  },
  {
   "id": "SCN_H02",
@@ -1291,7 +1341,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VIII"
+  "capitulo": "VIII",
+  "cenario": "paddock_apex"
  },
  {
   "id": "SCN_H03",
@@ -1336,7 +1387,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "VIII"
+  "capitulo": "VIII",
+  "cenario": "paddock_apex"
  },
  {
   "id": "SCN_I03",
@@ -1364,7 +1416,8 @@
   "uma_vez": true,
   "personagem": "elena",
   "proxima": "SCN_J01",
-  "capitulo": "IX"
+  "capitulo": "IX",
+  "cenario": "garagem_cross_noite"
  },
  {
   "id": "SCN_J01",
@@ -1448,7 +1501,8 @@
   "uma_vez": true,
   "personagem": "elena",
   "proxima": "SCN_K01",
-  "capitulo": "X"
+  "capitulo": "X",
+  "cenario": "escritorio_apex"
  },
  {
   "id": "SCN_K01",
@@ -1511,6 +1565,9 @@
     "texto": "Agora é."
    },
    {
+    "acao": "ILUSTRACAO:placa_second_driver"
+   },
+   {
     "quem": "sistema",
     "texto": "SECOND DRIVER MOTORSPORT CRIADA"
    },
@@ -1526,7 +1583,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "XI"
+  "capitulo": "XI",
+  "cenario": "garagem_cross_noite"
  },
  {
   "id": "SCN_L01",
@@ -1580,7 +1638,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "XII"
+  "capitulo": "XII",
+  "cenario": "garagem_second_driver"
  },
  {
   "id": "SCN_M01",
@@ -1620,7 +1679,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "XIII"
+  "capitulo": "XIII",
+  "cenario": "garagem_second_driver"
  },
  {
   "id": "SCN_M03",
@@ -1644,7 +1704,8 @@
   "uma_vez": true,
   "personagem": "elena",
   "proxima": "SCN_N01",
-  "capitulo": "XIII"
+  "capitulo": "XIII",
+  "cenario": "vector_academy"
  },
  {
   "id": "SCN_N01",
@@ -1687,7 +1748,8 @@
   "uma_vez": true,
   "personagem": "elena",
   "proxima": "SCN_N02",
-  "capitulo": "XIV"
+  "capitulo": "XIV",
+  "cenario": "garagem_second_driver"
  },
  {
   "id": "SCN_N02",
@@ -1726,7 +1788,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "XIV"
+  "capitulo": "XIV",
+  "cenario": "garagem_second_driver"
  },
  {
   "id": "SCN_P01",
@@ -1770,7 +1833,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "XVI"
+  "capitulo": "XVI",
+  "cenario": "garagem_second_driver"
  },
  {
   "id": "SCN_P03",
@@ -1779,6 +1843,9 @@
    {
     "quem": "responsavel",
     "texto": "Elite aprovada."
+   },
+   {
+    "acao": "ILUSTRACAO:elite"
    },
    {
     "quem": "elena",
@@ -1801,7 +1868,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
-  "capitulo": "XVI"
+  "capitulo": "XVI",
+  "cenario": "vector_academy"
  },
  {
   "id": "SYS_01",

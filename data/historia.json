@@ -16,5 +16,117 @@
  "acidente_fracao": 0.6,
  "second_chance": {
   "carros": 5
+ },
+ "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png) com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py.",
+ "capitulos": {
+  "I": "Fim de temporada",
+  "II": "A garagem vazia",
+  "III": "Second Chance",
+  "IV": "O nome dela",
+  "V": "De novo na pista",
+  "VI": "Sport",
+  "VII": "Dois carros",
+  "VIII": "Os de cima",
+  "IX": "International",
+  "X": "A oferta",
+  "XI": "Second Driver",
+  "XII": "A equipe",
+  "XIII": "Pro",
+  "XIV": "Segundo piloto",
+  "XVI": "Elite"
+ },
+ "cenarios": {
+  "garagem_cross": {
+   "nome": "Garagem da família Cross",
+   "provisorio": "fundo_garagem"
+  },
+  "garagem_cross_noite": {
+   "nome": "Garagem da família Cross, à noite",
+   "provisorio": "fundo_garagem",
+   "tom": "noite"
+  },
+  "garagem_vazia": {
+   "nome": "A garagem sem o carro",
+   "provisorio": "fundo_garagem",
+   "tom": "vazio"
+  },
+  "oficina_cross": {
+   "nome": "Bancada da oficina",
+   "provisorio": "fundo_garagem"
+  },
+  "box_largada": {
+   "nome": "Box antes da largada",
+   "provisorio": "fundo_competicoes"
+  },
+  "grid_noite": {
+   "nome": "Grid da prova noturna",
+   "provisorio": "fundo_competicoes",
+   "tom": "noite"
+  },
+  "podio": {
+   "nome": "Pódio",
+   "provisorio": "fundo_resultado"
+  },
+  "second_chance": {
+   "nome": "Second Chance Motors",
+   "provisorio": "fundo_mercado"
+  },
+  "vector_academy": {
+   "nome": "Vector Academy",
+   "provisorio": "fundo_carreira"
+  },
+  "sala_imprensa": {
+   "nome": "Sala de imprensa",
+   "provisorio": "fundo_carreira",
+   "tom": "frio"
+  },
+  "paddock_apex": {
+   "nome": "Paddock da Apex Dominion",
+   "provisorio": "fundo_competicoes",
+   "tom": "frio"
+  },
+  "escritorio_apex": {
+   "nome": "Escritório do Victor Hale",
+   "provisorio": "fundo_carreira",
+   "tom": "frio"
+  },
+  "garagem_second_driver": {
+   "nome": "Garagem da Second Driver",
+   "provisorio": "fundo_garagem"
+  }
+ },
+ "ilustracoes": {
+  "anel_do_vale": {
+   "nome": "Anel do Vale, fim de temporada",
+   "provisorio": "banner_anel_do_vale"
+  },
+  "acidente": {
+   "nome": "A curva três, depois",
+   "provisorio": "banner_serra_alta",
+   "tom": "noite"
+  },
+  "capacete_na_bancada": {
+   "nome": "O capacete do Adrian na bancada",
+   "provisorio": "fundo_garagem",
+   "tom": "vazio"
+  },
+  "elena_na_porta": {
+   "nome": "Elena abre a garagem, meses depois",
+   "provisorio": "fundo_garagem",
+   "tom": "frio"
+  },
+  "licenca_club": {
+   "nome": "A primeira licença com o nome dela",
+   "provisorio": "fundo_carreira"
+  },
+  "placa_second_driver": {
+   "nome": "A placa da Second Driver",
+   "provisorio": "fundo_garagem"
+  },
+  "elite": {
+   "nome": "Elite",
+   "provisorio": "fundo_resultado",
+   "tom": "noite"
+  }
  }
 }

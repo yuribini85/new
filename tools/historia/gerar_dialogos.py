@@ -3,7 +3,9 @@
 em data/dialogos.json. Não editar o JSON à mão: editar cenas.txt e rodar de novo.
 
 Cena: {id, trigger, falas: [{quem, texto} | {acao}], requer, proibe, flags,
-personagem?, condicao?, bloqueia, uma_vez, proxima?, capitulo?}
+personagem?, condicao?, bloqueia, uma_vez, proxima?, capitulo?, cenario?}
+Ações com argumento: [CENARIO:id] e [ILUSTRACAO:id] (data/historia.json → cenarios,
+ilustracoes); o id tem que existir lá.
 Uso: python3 tools/historia/gerar_dialogos.py
 """
 import json
@@ -42,24 +44,33 @@ def main() -> int:
                 elif k == "condicao":
                     ck, cv = v.split(":")
                     c["condicao"] = {ck: int(cv)}
-                elif k in ("personagem", "proxima", "capitulo"):
+                elif k in ("personagem", "proxima", "capitulo", "cenario"):
                     c[k] = v
                 else:
                     sys.exit(f"{FONTE.name}:{n}: opção desconhecida {k}")
             cenas.append(c)
             continue
-        m = re.fullmatch(r"\[([A-Z0-9_]+)\]", linha)
+        m = re.fullmatch(r"\[([A-Z0-9_]+)(?::([a-z0-9_]+))?\]", linha)
         if m:
-            cenas[-1]["falas"].append({"acao": m.group(1)})
+            cenas[-1]["falas"].append({"acao": m.group(1) + (":" + m.group(2) if m.group(2) else "")})
             continue
         quem, texto = linha.split(":", 1)
         if quem not in QUEM:
             sys.exit(f"{FONTE.name}:{n}: personagem desconhecido {quem}")
         cenas[-1]["falas"].append({"quem": QUEM[quem], "texto": texto.strip()})
     ids = {c["id"] for c in cenas}
+    historia = json.loads((RAIZ / "data/historia.json").read_text(encoding="utf-8"))
     for c in cenas:
         if c.get("proxima") and c["proxima"] not in ids:
             sys.exit(f"{c['id']}: próxima {c['proxima']} não existe")
+        usados = [("cenarios", c["cenario"])] if c.get("cenario") else []
+        for f in c["falas"]:
+            for tipo, chave in (("CENARIO:", "cenarios"), ("ILUSTRACAO:", "ilustracoes")):
+                if f.get("acao", "").startswith(tipo):
+                    usados.append((chave, f["acao"][len(tipo):]))
+        for chave, ident in usados:
+            if ident not in historia.get(chave, {}):
+                sys.exit(f"{c['id']}: {ident} não está em data/historia.json → {chave}")
     SAIDA.write_text(json.dumps(cenas, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"{len(cenas)} cenas, {sum(len(c['falas']) for c in cenas)} falas/ações")
     return 0

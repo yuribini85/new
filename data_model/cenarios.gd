@@ -69,6 +69,7 @@ static func _cenas_ate(dados: Node, jogador: Node, n: int, menos: Array = []) ->
 		if cap == 0 or cap > n or c["trigger"] in menos:
 			continue
 		jogador.dialogos_vistos[c["id"]] = true
+		jogador.flags["CAPITULO_" + String(c["capitulo"])] = true  # cartão do capítulo já visto
 		for f in c.get("flags", []):
 			jogador.flags[f] = true
 

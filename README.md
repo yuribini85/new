@@ -98,6 +98,7 @@ Second Driver criada e segundo piloto na equipe. Cada um grava em
 | `docs/playtest_percurso.md` | Roteiro do playtest: modalidades de clareza e de ritmo. |
 | `docs/medicao_progressao.md` | Progressão e renda por fase medidas pelo agente (`tools/medir_progressao.gd`). |
 | `tools/pacote_arte_equipe.py` | Gera `build/pedido_arte_equipe.zip`: retratos, logos das equipes e ícone da aba Equipe, com os nomes de arquivo que os dados já usam (`visual/assets.gd` mostra cada um assim que entra). |
+| `tools/pacote_arte_cenas.py` | Gera `build/pedido_arte_cenas.zip`: cenários dos diálogos e ilustrações dos momentos da história (`data/historia.json` → `cenarios`, `ilustracoes`), com a arte do jogo como referência de estilo. Até a arte chegar, cada cena usa a provisória do catálogo. |
 | `docs/ids.md` | IDs de personagens, cenas, triggers, ações, flags, licenças, equipes e cenários (gerado por `tools/listar_ids.py`). |
 
 ## Regras do projeto
