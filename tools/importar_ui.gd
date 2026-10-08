@@ -4,6 +4,7 @@ extends SceneTree
 ##   icone, emblema, silhueta: exige fundo transparente (ou magenta chapado),
 ##     recorta o desenho e encaixa no tamanho do manifesto, sem distorcer
 ##     (silhueta apoiada na borda de baixo);
+##   icone e emblema: o amarelo vira ocre (tools/ocre_ui.gd), menos medalhas e troféus;
 ##   miniatura, banner, fundo: corta ao centro na proporção do manifesto (o que
 ##     sobra nas bordas sai) e redimensiona.
 ## Relatório por arquivo; reprovado não substitui o atual.
@@ -12,6 +13,7 @@ extends SceneTree
 const MANIFESTO := "res://arte/ui/ui_manifesto.json"
 const DESTINO_PADRAO := "res://arte/ui/"
 const Kit := preload("res://tools/importar_kit_pista.gd")
+const Ocre := preload("res://tools/ocre_ui.gd")
 
 
 func _initialize() -> void:
@@ -48,6 +50,8 @@ func _initialize() -> void:
 		resumo[r[0]] += 1
 		print("%-10s %s: %s" % [r[0], nome, r[1]])
 		if r[0] == "importado":
+			if Ocre.aplica(nome, it["tipo"]):
+				Ocre.recolorir(r[2])  # o destaque da interface é ocre
 			(r[2] as Image).save_png(destino + nome + ".png")
 	print("\n%d importados · %d reprovados · %d faltando" % [resumo["importado"], resumo["reprovado"], resumo["faltando"]])
 	quit()

@@ -117,7 +117,7 @@ def pedidos(so=""):
             "prompt": ("Game UI icon for the 'Team' tab of a mobile racing game: two racing helmets side by "
                        "side, one slightly ahead. Same look as the other tab icons of the game: bold simple "
                        "silhouette, flat shapes with soft painted shading, thick dark outline (#1A1D22), "
-                       "mostly off-white with amber (#F2B530) details, light from the top-left, readable at "
+                       "mostly off-white with ochre (#C8892B) details, light from the top-left, readable at "
                        f"48 px on a dark background. No text. {TRANSPARENTE} "
                        f"Final size {TAM_ICONE[0]}x{TAM_ICONE[1]} px."),
         })

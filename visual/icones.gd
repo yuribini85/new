@@ -59,4 +59,4 @@ static func _desenhar_pista(c: Control, pts: PackedVector2Array) -> void:
 		linha.append(centro + Vector2(q.x, -q.y))
 	c.draw_polyline(linha, Color(0.85, 0.85, 0.85), 5.0, true)
 	c.draw_polyline(linha, Color(0.32, 0.33, 0.36), 3.0, true)
-	c.draw_circle(linha[0], 3.5, Color(1.0, 0.82, 0.1))
+	c.draw_circle(linha[0], 3.5, Aba.COR_DESTAQUE)

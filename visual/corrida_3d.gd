@@ -742,9 +742,9 @@ func _marcadores() -> void:
 	tor_j.inner_radius = 2.5
 	tor_j.outer_radius = 2.9
 	_anel_jogador.mesh = tor_j
-	var mat_j := CarroBloco._material(Color(1.0, 0.8, 0.15))
+	var mat_j := CarroBloco._material(Aba.COR_DESTAQUE)
 	mat_j.emission_enabled = true
-	mat_j.emission = Color(1.0, 0.75, 0.1) * 0.6
+	mat_j.emission = Aba.COR_DESTAQUE * 0.6
 	mat_j.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_anel_jogador.material_override = mat_j
 	_anel_jogador.visible = false

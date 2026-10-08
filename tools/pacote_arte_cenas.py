@@ -71,7 +71,7 @@ CENARIOS = {
                        "window over the track at dusk, minimalist desk with a single contract folder, a scale "
                        "model car, cold elegance.",
     "garagem_second_driver": "A small new independent team garage: second-hand equipment freshly painted in "
-                             "amber and graphite, two car bays, a whiteboard with diagrams (no readable text), "
+                             "ochre and graphite, two car bays, a whiteboard with diagrams (no readable text), "
                              "hopeful morning light.",
 }
 ILUSTRACOES = {
@@ -91,7 +91,7 @@ ILUSTRACOES = {
                     "a pair of racing gloves, warm light; the card shows only a photo silhouette and coloured "
                     "bands (no readable text).",
     "placa_second_driver": "A hand-painted sign being finished above the door of a small garage at dusk, the "
-                           "two words SECOND DRIVER in amber on graphite (the only text allowed; copy the "
+                           "two words SECOND DRIVER in ochre on graphite (the only text allowed; copy the "
                            "logo in referencia/logo.png), a paint can and a ladder below.",
     "elite": "The highest level reached: an empty starting grid of a huge circuit at night under "
              "floodlights, grandstands full of tiny lights, one small amber car on the front row.",

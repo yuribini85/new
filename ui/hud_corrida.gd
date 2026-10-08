@@ -16,7 +16,7 @@ signal escolhido(id: String)
 const COR := Color(0.93, 0.92, 0.88)
 const SUAVE := Color(0.93, 0.92, 0.88, 0.6)
 const APAGADO := Color(0.93, 0.92, 0.88, 0.42)
-const AMBAR := Color(0.95, 0.71, 0.19)
+const AMBAR := Aba.COR_DESTAQUE  # ocre, o mesmo do menu
 const CORTE := Color(0.95, 0.36, 0.28)
 const SOMBRA := Color(0, 0, 0, 0.6)
 ## Classificação: canto superior direito, abaixo do minimapa.
