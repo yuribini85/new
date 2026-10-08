@@ -35,6 +35,10 @@ extends SceneTree
 ## --so-custo: refaz só "O último giro" (o único que depende de preços), com os
 ## carros já usados pelos contratos atuais da licença; os outros ficam como estão.
 ## Para quando os preços mudam sem mudar o resto (ex.: a conversão da moeda).
+## --manter-par (com --so-custo): mantém o carro, o rival e a pista do contrato
+## atual e só refaz a montagem mais barata. Na licença Club a busca completa
+## (todos os carros × pistas) passa de duas horas; com os preços mudando todos na
+## mesma proporção, o par escolhido não muda (conferido nas outras licenças).
 
 const CAMINHO := "res://data/contratos.json"
 const RAZAO_GIGANTE := 1.3
@@ -81,11 +85,14 @@ func _calibrar() -> void:
 	_dados = root.get_node("Dados")
 	_piloto = _dados.piloto(_dados.carreira()["piloto_jogador"])
 	var so_custo := false
+	var manter_par := false
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--licenca="):
 			_licenca = a.trim_prefix("--licenca=")
 		elif a == "--so-custo":
 			so_custo = true
+		elif a == "--manter-par":
+			manter_par = true
 	var lic: Dictionary = _dados.item("licencas", _licenca)
 	# Sem testes do GT2 (ELITE): voltas e limite dos testes da licença anterior,
 	# a mesma regra do tempo de treino (Licencas.treino_s).
@@ -125,7 +132,7 @@ func _calibrar() -> void:
 	var usados := []
 	var contratos := []
 	if so_custo:
-		_so_custo(escola, todos, pistas)
+		_so_custo(escola, todos, pistas, manter_par)
 		return
 	print("procurando: o pequeno contra o gigante (%d s)" % [Time.get_ticks_msec() / 1000])
 	var c1 := _pequeno_contra_gigante(escola, todos, pistas)
@@ -162,7 +169,7 @@ func _calibrar() -> void:
 
 ## --so-custo: recalcula "O último giro" desta licença e troca só ele no arquivo.
 ## Os carros já usados são os dos contratos que vêm antes dele (a ordem da busca).
-func _so_custo(escola: Array, todos: Array, pistas: Array) -> void:
+func _so_custo(escola: Array, todos: Array, pistas: Array, manter_par := false) -> void:
 	var antigos: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
 	var i := -1
 	var usados := []
@@ -176,6 +183,11 @@ func _so_custo(escola: Array, todos: Array, pistas: Array) -> void:
 	if i < 0:
 		print("%s: sem \"O último giro\"; nada a fazer" % _licenca)
 		return
+	if manter_par:
+		var prova: Dictionary = antigos[i]["provas"][0]
+		escola = [_dados.carro(antigos[i]["carro"])]
+		todos = [_dados.carro(prova["rivais"][0]["carro"])]
+		pistas = [prova["pista"]]
 	var c := _ultimo_credito(escola.filter(func(x): return not x["id"] in usados), todos, pistas)
 	if c.is_empty():
 		push_error("%s: \"O último giro\" sem solução com os preços novos" % _licenca)
@@ -263,7 +275,10 @@ func _ultimo_credito(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 				if fabrica <= rival:
 					continue
 				var r := _mais_barato(c, pista, rival)
-				if r.is_empty() or r["pecas"].size() < 2 or r["custo"] > saldo or r["custo"] <= melhor_custo:
+				# Tolerância do arredondamento da moeda: cada peça pode ter subido até
+				# 0,5 G na conversão (importar_gt2.moeda), e o teto do GT2 era o saldo.
+				if r.is_empty() or r["pecas"].size() < 2 or r["custo"] > saldo + 0.5 * r["pecas"].size() \
+						or r["custo"] <= melhor_custo:
 					continue
 				melhor_custo = r["custo"]
 				melhor = {
