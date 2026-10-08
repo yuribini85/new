@@ -110,8 +110,8 @@ func _palco(c: Carro) -> Control:
 	# aderência e o freio dele; "-2%" num carro sem peça pareceria defeito).
 	var ganho := func(attr: String) -> float:
 		return float(a.get(attr, 1.0)) / maxf(float(c.base.get(attr, 1.0) if c.base.get(attr) != null else 1.0), 1e-6)
-	# Cada atributo: rótulo pequeno em caixa alta e, embaixo, ícone, valor
-	# grande e unidade.
+	# Cada atributo: rótulo pequeno em caixa alta e, embaixo, valor grande e
+	# unidade (sem ícone: o rótulo já diz o que é).
 	for it in [["POTÊNCIA", "icone_potencia", "%d" % a["potencia"], "cv"], ["PESO", "icone_peso", "%d" % a["peso"], "kg"],
 			["PNEUS", "icone_pneus", texto_fator(ganho.call("aderencia"), true), ""],
 			["FREIOS", "icone_freios", texto_fator(ganho.call("freio"), true), ""]]:
@@ -128,8 +128,6 @@ func _palco(c: Carro) -> Control:
 		linha.add_theme_constant_override("separation", 4)
 		linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cel.add_child(linha)
-		var ic := icone(it[1], 26, linha)
-		ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		Tipografia.rotulo(_hud_rotulo(it[2], 0, Color.WHITE, linha), "semibold", 34)
 		if it[3] != "":
 			var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, linha)
