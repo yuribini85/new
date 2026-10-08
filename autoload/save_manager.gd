@@ -17,6 +17,9 @@ var caminho := CAMINHO_PADRAO
 var cenario := ""
 var _caminho_jogo := ""
 
+## Havia save do jogador ao abrir (a tela inicial oferece "Continuar").
+var tinha_save := false
+
 var relatorio_offline: Dictionary = {}
 ## Mensagem para o jogador quando o save não pôde ser usado ("" se tudo bem).
 var aviso := ""
@@ -30,6 +33,7 @@ func _ready() -> void:
 	if jogador.economia == null:
 		return  # dados pendentes
 	var r := carregar_protegido(caminho, jogador, dados)
+	tinha_save = r["carregou"]
 	aviso = r["aviso"]
 	if not r["carregou"] and not dados.historia().is_empty():
 		# Jogo novo: começa pelo prólogo do Adrian (decisão 32).
@@ -46,6 +50,20 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
 		salvar()
+
+
+## Novo jogo pedido na tela inicial (o jogador confirmou apagar o progresso):
+## começa do zero pelo prólogo e grava. O save anterior fica no .bak.
+func novo_jogo() -> void:
+	var dados := get_node("/root/Dados")
+	var jogador := get_node("/root/Jogador")
+	jogador.novo_jogo(dados.economia(), dados.pneu)
+	jogador.carro_ativo = -1
+	jogador.ultima_corrida = {}
+	relatorio_offline = {}
+	if not dados.historia().is_empty():
+		Prologo.iniciar(dados, jogador)
+	salvar()
 
 
 ## Troca para um cenário de teste: grava o jogo atual no arquivo dele e monta
