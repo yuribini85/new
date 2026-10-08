@@ -26,11 +26,13 @@ const EVENTO_RIVAL_S := 20.0
 const RESPIRA_S := 0.45
 
 const CAMERAS := [["AUTO", "auto"], ["CARRO", "jogador"], ["LÍDER", "lider"], ["À FRENTE", "frente"],
-		["PISTA", "geral"]]
+		["PISTA", "geral"], ["DADOS", "dados"]]
 
 ## Minimapa (pista inteira) e fonte das posições da vista 3D.
 var _visual: CorridaVisual
 var _visual3d: Corrida3D
+var _vista: VistaDados  # câmera DADOS: a corrida em números, sem 3D
+var _tatica: Array = []  # curvas da pista para o carro inscrito (Tatica.curvas)
 var _minimapa: Control
 var _area: Control
 var _info: Label
@@ -94,6 +96,9 @@ func _init(d: Node, j: Node) -> void:
 	_visual.girar = false
 	_visual.sombra = true
 	_minimapa.add_child(_visual)
+	_vista = VistaDados.new()
+	_vista.visible = false
+	area.add_child(_vista)
 	_painel_hud = HudCorrida.new()
 	_painel_hud.escolhido.connect(_camera)
 	area.add_child(_painel_hud)
@@ -111,7 +116,8 @@ func _init(d: Node, j: Node) -> void:
 	_painel = VBoxContainer.new()
 	_painel.add_theme_constant_override("separation", 14)
 	conteudo.add_child(_painel)
-	_camera_modo = "auto"
+	Preferencias.carregar()
+	_camera_modo = "dados" if Preferencias.vista_corrida == "dados" else "auto"
 	_sons = Sons.new()
 	add_child(_sons)
 
@@ -168,6 +174,19 @@ func _camera(modo: String) -> void:
 	var antes := _visual3d.foco
 	_camera_modo = modo
 	_acordar()
+	# DADOS: a vista tática no lugar do 3D (que para de desenhar); a escolha
+	# fica para as próximas corridas.
+	var dados_on := modo == "dados"
+	_vista.visible = dados_on
+	_visual3d.visible = not dados_on
+	_minimapa.visible = not dados_on
+	_painel_hud.so_eventos = dados_on
+	_painel_hud.queue_redraw()
+	if Preferencias.vista_corrida != ("dados" if dados_on else ""):
+		Preferencias.vista_corrida = "dados" if dados_on else ""
+		Preferencias.salvar()
+	if dados_on:
+		return
 	_visual3d.visao_geral = modo == "geral"
 	_visual3d.enquadrar_com = ""
 	if modo == "auto":
@@ -181,7 +200,7 @@ func _camera(modo: String) -> void:
 func _alvo_camera() -> String:
 	var ordem := _visual.ordem()
 	match _camera_modo:
-		"jogador", "geral":
+		"jogador", "geral", "dados":
 			return "jogador"
 		"auto":
 			return _foco_auto
@@ -545,7 +564,8 @@ func _process(delta: float) -> void:
 		_sons.motor(false)
 		_painel_hud.secundario = 0.0
 		_visual3d.chegada = minf(_visual3d.chegada + delta / 3.0, 1.0)
-		_visual3d.atualizar(delta)
+		if _visual3d.visible:
+			_visual3d.atualizar(delta)
 		return
 	if f.is_empty() != not _em_andamento:
 		_construir_painel()
@@ -568,7 +588,8 @@ func _process(delta: float) -> void:
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
-	_visual3d.atualizar(delta)
+	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
+		_visual3d.atualizar(delta)
 	var s_agora := _visual.distancia("jogador")
 	var meta := _pista.comprimento * _voltas if _pista != null else INF
 	if s_agora >= meta and not _chegou:
@@ -622,6 +643,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	# Motor e câmbio do carro como foi inscrito (para marcha e giro no HUD).
 	var inscrito: Carro = meu.com_configuracao(f["config"], dados.peca, dados.pneu) if f.get("config") is Dictionary else meu
 	_atributos_hud = inscrito.atributos_efetivos(ev.get("condicao", "seco"))
+	_tatica = Tatica.curvas(_pista, _atributos_hud, dados.simulacao(), dados.curvas(_pista.id))
 	for i in ev["adversarios"].size():
 		var adv: Dictionary = ev["adversarios"][i]
 		var pid := "adv%d_%s" % [i, adv["carro"]]
@@ -737,6 +759,8 @@ func _atualizar_hud(ordem: Array) -> void:
 		"marcha": mg[0], "giro": mg[1], "corte": float(_atributos_hud.get("corte", 0.0)),
 		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0,
 		"lista": lista})
+	if _vista.visible:
+		_atualizar_vista(ordem, i, s, volta, melhor, delta if tem_delta and not _chegou else INF, v, mg)
 	# A tela respira: disputa de perto (à frente ou atrás) ou chegada apagam o
 	# que é secundário.
 	var perto := atacante != ""
@@ -746,6 +770,38 @@ func _atualizar_hud(ordem: Array) -> void:
 	_painel_hud.secundario = 0.0 if _chegou else (0.35 if perto else 1.0)
 	_minimapa.modulate.a = move_toward(_minimapa.modulate.a, 0.0 if _chegou else (0.55 if perto else 1.0),
 			get_process_delta_time() / 0.6)
+
+
+## Vista DADOS: os mesmos números do HUD, mais a próxima curva (Tatica), quem
+## está à frente e atrás e o progresso da volta de todos.
+func _atualizar_vista(ordem: Array, i: int, s: float, volta: int, melhor: float, delta: float, v: float, mg: Array) -> void:
+	var s_volta := fposmod(maxf(s, 0.0), _pista.comprimento)
+	var prox := {}
+	var p := Tatica.proxima(_tatica, s_volta, _pista.comprimento)
+	if not p.is_empty() and not _chegou:
+		prox = {"nome": p["curva"]["nome"], "estado": p["estado"], "distancia": p["distancia"],
+			"v_kmh": p["curva"]["v_kmh"], "sentido": p["curva"]["sentido"]}
+	var vizinhos := []
+	if i > 0:
+		var g := _gap(ordem[i - 1], "jogador")
+		vizinhos.append({"pos": i, "nome": _nomes_curtos.get(ordem[i - 1], ordem[i - 1]),
+			"sub": "à frente · %.1f s" % g if g >= 0.0 else "à frente"})
+	vizinhos.append({"pos": i + 1, "nome": "Você", "voce": true,
+		"sub": "líder" if i == 0 else "%dº de %d" % [i + 1, ordem.size()]})
+	if i + 1 < ordem.size():
+		var g := _gap("jogador", ordem[i + 1])
+		vizinhos.append({"pos": i + 2, "nome": _nomes_curtos.get(ordem[i + 1], ordem[i + 1]),
+			"sub": "atrás · %.1f s" % g if g >= 0.0 else "atrás"})
+	var progresso := []
+	for id in ordem:
+		progresso.append({"frac": fposmod(maxf(_visual.distancia(id), 0.0), _pista.comprimento) / _pista.comprimento,
+			"cor": _visual.cor_de(id), "voce": id == "jogador"})
+	_vista.definir({"pista_nome": nome_pista(_pista.id), "kmh": v * 3.6, "marcha": mg[0], "giro": mg[1],
+		"corte": float(_atributos_hud.get("corte", 0.0)),
+		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0,
+		"tempo_volta": _visual.tempo - maxf(_visual.tempo_em("jogador", (volta - 1) * _pista.comprimento) if volta > 1 else 0.0, 0.0),
+		"melhor": melhor, "delta": delta, "volta": volta, "voltas": _voltas, "proxima": prox,
+		"vizinhos": vizinhos, "progresso": progresso})
 
 
 ## Acontecimentos da corrida, poucos e com peso: ultrapassagem, perdeu a

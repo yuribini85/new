@@ -21,6 +21,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `licencas.json` | lista de `{id, nome, testes}`, opcionais `requisito` (id de outra licença), `gt2`, `preco` |
 | `equipes.json` | lista de `{id, nome, pilotos: [{id, nome, retrato?}]}`, opcionais `nivel` (CLUB…ELITE), `numero`, `logo`, `jogador`, `dirigente` |
 | `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
+| `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
 ## Unidades e semântica

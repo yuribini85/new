@@ -34,6 +34,8 @@ const INTERVALO_S := 6.0
 const INTERVALO_PRIO := 3
 
 var _d := {}
+## Vista DADOS: só os acontecimentos da corrida (o resto está na vista tática).
+var so_eventos := false
 ## Alvo de opacidade do que é secundário; _sec segue devagar.
 var secundario := 1.0
 var _sec := 1.0
@@ -119,6 +121,9 @@ static func _a(c: Color, a: float) -> Color:
 
 
 func _draw() -> void:
+	if so_eventos:
+		_desenhar_evento()
+		return
 	if _d.is_empty():
 		return
 	var f := get_theme_default_font()
@@ -274,6 +279,8 @@ func _lista_rect() -> Rect2:
 
 
 func _has_point(p: Vector2) -> bool:
+	if so_eventos:
+		return false
 	return _lista_rect().has_point(p)
 
 

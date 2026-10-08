@@ -68,6 +68,7 @@ func carregar(dir: String) -> void:
 	_listas.clear()
 	_pendencias.clear()
 	_erros.clear()
+	_objetos.erase("curvas")  # lido sob demanda (curvas())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -285,6 +286,15 @@ func carreira() -> Dictionary:
 
 func historia() -> Dictionary:
 	return _objetos.get("historia", {})
+
+
+## Nomes das curvas de cada pista, na ordem da volta (curvas.json, opcional:
+## sem o arquivo ou sem a pista, a vista tática diz "Curva N").
+func curvas(pista_id: String) -> Array:
+	if not _objetos.has("curvas"):
+		var c = _ler_json(pasta + "curvas.json") if FileAccess.file_exists(pasta + "curvas.json") else {}
+		_objetos["curvas"] = c if c is Dictionary else {}
+	return _objetos["curvas"].get(pista_id, [])
 
 
 func evento(id: String) -> Dictionary:

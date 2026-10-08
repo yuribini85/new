@@ -275,6 +275,8 @@ func _toque_cartao(ev: InputEvent) -> void:
 
 ## Mostra a fala atual; ações seguidas executam antes de parar na próxima fala.
 func _mostrar() -> void:
+	if _cena.is_empty():  # animação pendente de uma cena já pulada
+		return
 	var falas: Array = _cena["falas"]
 	while _i < falas.size() and falas[_i].has("acao"):
 		var nome_acao := String(falas[_i]["acao"])
@@ -492,6 +494,12 @@ func _toque(ev: InputEvent) -> void:
 func pular_cena() -> void:
 	if _cena.is_empty():
 		return
+	for tw in [_tween, _tw_cartao, _tw_texto]:
+		if tw != null:
+			tw.kill()
+	_cartao.visible = false
+	_caixa.visible = true
+	_animando = false
 	var falas: Array = _cena["falas"]
 	_i += 1
 	while _i < falas.size():
