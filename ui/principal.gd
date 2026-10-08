@@ -19,13 +19,13 @@ const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCA
 var _voltar: Button
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
-## telas internas (de Garagem e Competições), abertas pelo caminho do jogo.
-const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"], ["Competições", 3, "aba_competicoes"],
+## telas internas (de Garagem e Correr), abertas pelo caminho do jogo.
+const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"], ["Correr", 3, "aba_competicoes"],
 	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"]]
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
-const NOME_PAI := {2: "‹ Garagem", 4: "‹ Competições"}
+const NOME_PAI := {2: "‹ Garagem", 4: "‹ Correr"}
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
 
@@ -202,7 +202,7 @@ func _atualizar_nav() -> void:
 	for k in _botoes.size():
 		if DESTINOS[k][1] == ABA_EQUIPE:
 			_botoes[k].visible = cinco
-		# Cinco destinos: texto menor para "Competições" caber.
+		# Cinco destinos: texto menor para os cinco caberem.
 		_botoes[k].add_theme_font_size_override("font_size", 17 if cinco else 20)
 
 

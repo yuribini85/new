@@ -9,7 +9,7 @@ extends RefCounted
 ## aparelho, em user://registro_playtest.json; nada sai dele.
 
 const CAMINHO := "user://registro_playtest.json"
-const NOMES_TELA := ["Garagem", "Mercado", "Oficina", "Competições", "Corrida", "Carreira", "Equipe"]
+const NOMES_TELA := ["Garagem", "Mercado", "Oficina", "Correr", "Corrida", "Carreira", "Equipe"]
 
 static var _sessoes: Array = []
 static var _carregado := false

@@ -350,9 +350,9 @@ func _mostrar_resultado() -> void:
 		rotulo("Faltaram %.2f s para o %s." % [_resultado["tempo"] - float(tempos[proximo]), proximo],
 				FONTE_PEQUENA + 2, Color.WHITE, v)
 	if _resultado["concedida"]:
-		nota("icone_licenca", "Licença %s conquistada!" % _resultado["licenca"], "Novas corridas liberadas em Competições.",
+		nota("icone_licenca", "Licença %s conquistada!" % _resultado["licenca"], "Novas corridas liberadas em Correr.",
 				v, COR_BOM)
-		botao("Ver competições", func(): ir_para.emit(EVENTOS), true, true, v)
+		botao("Ver corridas", func(): ir_para.emit(EVENTOS), true, true, v)
 	_resultado = {}
 
 
@@ -498,8 +498,8 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 				series[String(e["nome"]).split(" — ")[0]] = true
 			for nome in series:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
-			nota("icone_pista", "Em Competições › %s" % lic["nome"], "", v),
-			[["Ver competições", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
+			nota("icone_pista", "Em Correr › %s" % lic["nome"], "", v),
+			[["Ver corridas", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
 
 
 
@@ -663,8 +663,8 @@ func _enviar(ct: Dictionary) -> void:
 				series[String(e["nome"]).split(" — ")[0]] = true
 			for nome in series:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
-			rotulo("Elas aparecem em Competições, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
-			[["Ver competições", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
+			rotulo("Elas aparecem em Correr, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
+			[["Ver corridas", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
 
 
 ## Relatório: grau, tempo contra cada rival, onde o tempo foi perdido (curvas

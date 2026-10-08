@@ -1,6 +1,7 @@
 extends Aba
 ## Garagem: o carro selecionado em destaque (vitrine com o sprite isométrico) com a
-## ficha por cima, como HUD, e as duas ações do caminho (preparar, correr).
+## ficha por cima, como HUD, e as ações do carro (melhorar, vender); correr fica
+## na barra de baixo.
 ## Embaixo, a coleção em miniaturas para trocar de carro.
 
 var _vitrine: VitrineCarro
@@ -37,19 +38,19 @@ func construir() -> void:
 	var c := carro_ativo()
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c))
 	ancora("CAR_STATS", _palco(c))
+	# Correr fica na barra de baixo; aqui, melhorar e vender.
 	var h := acoes()
 	botao("Melhorar o carro", func(): ir_para.emit(OFICINA), true, true, h, "icone_melhorar")
-	botao("Correr", func(): ir_para.emit(EVENTOS), true, false, h, "icone_correr")
-	var sec := acoes()
-	botao_texto("Ficha completa", func(): ficha_modelo(c.base), sec)
-	botao_texto("Vender por %s Cr" % dinheiro(revenda(c.base)), _confirmar_venda.bind(c),
-			sec, not _correndo(c) and jogador.concessionaria.pode_vender(c.uid))
+	botao("Vender · %s Cr" % dinheiro(revenda(c.base)), _confirmar_venda.bind(c),
+			not _correndo(c) and jogador.concessionaria.pode_vender(c.uid), false, h, "icone_vender")
+	botao_texto("Ficha completa", func(): ficha_modelo(c.base))
 	_colecao_miniaturas(lista, c)
 
 
 ## A vitrine com a ficha por cima, como um HUD nos cantos da ambientação:
 ## nome e fabricante em cima à esquerda, tração e peças à direita, os quatro
-## atributos numa faixa embaixo. Libera a tela sem precisar rolar.
+## atributos embaixo (pneus e freios em relação ao de fábrica). Libera a tela
+## sem precisar rolar.
 func _palco(c: Carro) -> Control:
 	var palco := Control.new()
 	palco.custom_minimum_size = _vitrine.custom_minimum_size
@@ -88,21 +89,15 @@ func _palco(c: Carro) -> Control:
 		lp.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# Faixa de baixo: os quatro atributos.
 	var a := c.atributos_efetivos("seco")
-	var faixa := PanelContainer.new()
-	faixa.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	faixa.offset_top = -86
-	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(COR_FUNDO, 0.72)
-	sb.set_content_margin_all(8)
-	faixa.add_theme_stylebox_override("panel", sb)
-	palco.add_child(faixa)
 	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	h.offset_top = -78
+	h.offset_bottom = -8
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	faixa.add_child(h)
+	palco.add_child(h)
 	for it in [["icone_potencia", "%d" % a["potencia"], "cv"], ["icone_peso", "%d" % a["peso"], "kg"],
-			["icone_pneus", "%d" % roundi(a.get("aderencia", 1.0) * 100.0), "pneus"],
-			["icone_freios", "%d" % roundi(a.get("freio", 1.0) * 100.0), "freios"]]:
+			["icone_pneus", texto_fator(a.get("aderencia", 1.0)), "pneus"],
+			["icone_freios", texto_fator(a.get("freio", 1.0)), "freios"]]:
 		var cel := HBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -179,6 +174,7 @@ func _colecao_miniaturas(lista: Array, ativo: Carro) -> void:
 	rotulo("SUA GARAGEM · %d carro%s" % [lista.size(), "" if lista.size() == 1 else "s"], FONTE_PEQUENA, COR_SECUNDARIA)
 	var rolagem := ScrollContainer.new()
 	rolagem.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolagem.scroll_deadzone = 100000  # o arrasto é o da aba (Aba._input)
 	rolagem.custom_minimum_size = Vector2(0, 170)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 10)
@@ -213,13 +209,6 @@ func _colecao_miniaturas(lista: Array, ativo: Carro) -> void:
 			jogador.carro_ativo = c.uid
 			mudou.emit())
 		h.add_child(b)
-	var mais := Button.new()
-	mais.text = "+\nMercado"
-	mais.custom_minimum_size = Vector2(130, 160)
-	mais.pressed.connect(func():
-		ir_para.emit(LOJA)
-		mudou.emit())
-	h.add_child(mais)
 	conteudo.add_child(rolagem)
 
 

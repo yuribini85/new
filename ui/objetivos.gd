@@ -18,11 +18,11 @@ static func lista(jogador: Node, dados: Node) -> Array:
 		{"texto": "Comprar o primeiro carro", "feito": not jogador.garagem.lista().is_empty(),
 			"aba": Aba.LOJA, "botao": "Ir para o Mercado"},
 		{"texto": "Disputar uma corrida", "feito": not jogador.historico.is_empty() or not jogador.vitorias.is_empty(),
-			"aba": Aba.EVENTOS, "botao": "Ver competições"},
+			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.OFICINA, "botao": "Ir para a Oficina"},
-		{"texto": "Vencer uma corrida", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver competições"},
+		{"texto": "Vencer uma corrida", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Conquistar a licença Club", "feito": "CLUB" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
-		{"texto": "Vencer uma corrida da licença Club", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver competições"},
+		{"texto": "Vencer uma corrida da licença Club", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Conquistar a licença Sport", "feito": "SPORT" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
 	]
 

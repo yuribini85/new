@@ -23,11 +23,11 @@ const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas"
 
 
 func _init(d: Node, j: Node) -> void:
-	super(d, j, "Competições")
+	super(d, j, "Correr")
 
 
 func construir() -> void:
-	cabecalho("Competições", "Vença para ganhar créditos", "fundo_competicoes")
+	cabecalho("Correr", "Vença para ganhar créditos", "fundo_competicoes")
 	var garagem := carro_ativo()
 	if garagem == null:
 		proximo_passo("Você precisa de um carro para correr.", "Ir para o Mercado", LOJA)
@@ -42,9 +42,15 @@ func construir() -> void:
 		_fila()
 	else:
 		_repeticoes_ui()
-	var abas := HFlowContainer.new()
-	abas.add_theme_constant_override("h_separation", 8)
-	abas.add_theme_constant_override("v_separation", 8)
+	# Filtros numa linha só, que rola de lado (em várias linhas ocupavam meia tela).
+	var faixa := ScrollContainer.new()
+	faixa.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	faixa.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	faixa.scroll_deadzone = 100000  # o arrasto é o da aba (Aba._input)
+	faixa.custom_minimum_size = Vector2(0, 64)
+	var abas := HBoxContainer.new()
+	abas.add_theme_constant_override("separation", 8)
+	faixa.add_child(abas)
 	for g in GRUPOS:
 		var travada: bool = g[0] in NIVEIS_LICENCA and not g[0] in jogador.licencas
 		var b := Button.new()
@@ -59,7 +65,7 @@ func construir() -> void:
 			_filtro = g[0]
 			mudou.emit())
 		abas.add_child(b)
-	conteudo.add_child(abas)
+	conteudo.add_child(faixa)
 	var lista := []
 	for ev in dados.lista("eventos"):
 		var motivos := Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas)

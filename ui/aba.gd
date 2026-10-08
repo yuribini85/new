@@ -77,10 +77,11 @@ func construir() -> void:
 
 # --- Rolagem pelo dedo -------------------------------------------------------
 # O dedo pode começar em qualquer ponto da aba, até em cima de um botão: depois
-# de LIMIAR_ARRASTO px na vertical o toque vira rolagem, e o botão não é
+# de LIMIAR_ARRASTO px o toque vira rolagem, e o botão não é
 # acionado (a soltura vai para fora da tela). Ao soltar, a lista ainda desliza
-# um pouco (inércia). Só o eixo vertical: arrasto de lado (listas horizontais)
-# e sliders seguem com o próprio arrasto. Apresentação, não balanceamento.
+# um pouco (inércia). Arrasto de lado rola a lista horizontal sob o dedo
+# (miniaturas, filtros); sliders seguem com o próprio arrasto. Apresentação,
+# não balanceamento.
 const LIMIAR_ARRASTO := 14.0
 const ATRITO := 4.0  # por segundo: quanto a inércia perde
 var _toque := false
@@ -89,6 +90,9 @@ var _inicio := Vector2.ZERO
 var _ultimo := Vector2.ZERO
 var _ultimo_t := 0.0
 var _velocidade := 0.0
+## O que o arrasto rola: esta aba (vertical) ou uma lista de lado dentro dela.
+var _alvo: ScrollContainer
+var _horizontal := false
 
 
 const FORA := Vector2(-10000, -10000)
@@ -122,7 +126,7 @@ func _input(e: InputEvent) -> void:
 	elif e is InputEventMouseMotion and _toque:
 		var d: Vector2 = e.position - _inicio
 		if not _arrastando:
-			if absf(d.y) < LIMIAR_ARRASTO or absf(d.y) < absf(d.x):
+			if maxf(absf(d.x), absf(d.y)) < LIMIAR_ARRASTO:
 				return
 			var sob := get_viewport().gui_get_hovered_control()
 			if sob != null and sob != self and not is_ancestor_of(sob):
@@ -130,6 +134,11 @@ func _input(e: InputEvent) -> void:
 				return
 			if sob is Range:
 				_toque = false  # slider segue com o próprio arrasto
+				return
+			_horizontal = absf(d.x) > absf(d.y)
+			_alvo = _lista_de_lado(sob) if _horizontal else self
+			if _alvo == null:
+				_toque = false  # de lado, fora de uma lista que rola de lado
 				return
 			_arrastando = true
 			_ultimo = e.position
@@ -139,20 +148,37 @@ func _input(e: InputEvent) -> void:
 			saiu.global_position = FORA
 			Input.parse_input_event(saiu)
 		var agora := Time.get_ticks_msec() / 1000.0
-		var dy: float = e.position.y - _ultimo.y
-		scroll_vertical -= int(round(dy))
+		var dv: float = (e.position.x - _ultimo.x) if _horizontal else (e.position.y - _ultimo.y)
+		_rolar(dv)
 		if agora > _ultimo_t:
-			_velocidade = lerpf(_velocidade, dy / (agora - _ultimo_t), 0.5)
+			_velocidade = lerpf(_velocidade, dv / (agora - _ultimo_t), 0.5)
 		_ultimo = e.position
 		_ultimo_t = agora
 		get_viewport().set_input_as_handled()
 
 
 func _process(delta: float) -> void:
-	if _toque or absf(_velocidade) < 20.0:
+	if _toque or absf(_velocidade) < 20.0 or not is_instance_valid(_alvo):
 		return
-	scroll_vertical -= int(round(_velocidade * delta))
+	_rolar(_velocidade * delta)
 	_velocidade *= exp(-ATRITO * delta)
+
+
+func _rolar(d: float) -> void:
+	if _horizontal:
+		_alvo.scroll_horizontal -= int(round(d))
+	else:
+		_alvo.scroll_vertical -= int(round(d))
+
+
+## Lista que rola de lado contendo o controle (miniaturas, filtros), ou null.
+func _lista_de_lado(c: Node) -> ScrollContainer:
+	var n := c
+	while n != null and n != self:
+		if n is ScrollContainer and n.horizontal_scroll_mode != ScrollContainer.SCROLL_MODE_DISABLED:
+			return n
+		n = n.get_parent()
+	return null
 
 
 ## Marca um controle como alvo do destaque `nome` (o primeiro registrado vale).
@@ -263,6 +289,31 @@ func ilustracao(nome: String, altura: float, pai: Control = null, escurecer := 0
 ## Atributos do carro em quatro quadros (ícone, número, onde ajuda e barra),
 ## como na referência da garagem. A barra é só leitura relativa ao catálogo.
 ## `antes`: valores anteriores (mostra a diferença em verde/vermelho).
+## Pneus e freios são fatores (1,0 = o carro de fábrica): mostrados como a
+## diferença para o de fábrica, que é o que o jogador compara.
+## Equipes rivais que correm com o modelo: as dos níveis das provas em que
+## ele está no grid (a escalação sorteia entre elas, decisão 36).
+func equipes_do_carro(carro_id: String) -> Array:
+	var cfg: Dictionary = dados.carreira()
+	var niveis: Array = cfg.get("niveis", [])
+	var mapa: Dictionary = cfg.get("niveis_licenca", {})
+	var usados := {}
+	for ev in dados.lista("eventos"):
+		if ev["adversarios"].any(func(x): return x["carro"] == carro_id):
+			var lic := String(ev["restricoes"].get("licenca", ""))
+			usados[String(mapa.get(lic, niveis[0] if not niveis.is_empty() else ""))] = true
+	var r := []
+	for e in dados.lista("equipes"):
+		if usados.has(String(e.get("nivel", ""))):
+			r.append(String(e["nome"]))
+	return r
+
+
+static func texto_fator(v: float) -> String:
+	var pct := roundi((v - 1.0) * 100.0)
+	return "de fábrica" if pct == 0 else "%+d%%" % pct
+
+
 func atributos_carro(a: Dictionary, pai: Control = null, antes: Dictionary = {}) -> GridContainer:
 	var max_cv := 1.0
 	var max_kg := 1.0
@@ -277,9 +328,9 @@ func atributos_carro(a: Dictionary, pai: Control = null, antes: Dictionary = {})
 	var itens := [
 		["icone_potencia", "%d" % a["potencia"], "cv · retas", a["potencia"] / (max_cv * 1.4), COR_DESTAQUE, "potencia", false],
 		["icone_peso", "%d" % a["peso"], "kg · menos é melhor", 1.0 - a["peso"] / (max_kg * 1.25), COR_INFO, "peso", true],
-		["icone_pneus", "%d" % roundi(a.get("aderencia", 1.0) * 100.0), "pneus · curvas", (a.get("aderencia", 1.0) - 0.7) / 0.8,
+		["icone_pneus", texto_fator(a.get("aderencia", 1.0)), "pneus · aderência", (a.get("aderencia", 1.0) - 0.7) / 0.8,
 				COR_BOM, "aderencia", false],
-		["icone_freios", "%d" % roundi(a.get("freio", 1.0) * 100.0), "freios · frenagem", (a.get("freio", 1.0) - 0.7) / 0.9,
+		["icone_freios", texto_fator(a.get("freio", 1.0)), "freios · frenagem", (a.get("freio", 1.0) - 0.7) / 0.9,
 				COR_RUIM.lerp(COR_DESTAQUE, 0.5), "freio", false],
 	]
 	for it in itens:
@@ -483,6 +534,11 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 				como.append("prêmio da 1ª vitória em %s" % ev["nome"])
 		if como.is_empty():
 			como.append("ainda não disponível")
+		var equipes := equipes_do_carro(String(base["id"]))
+		var ve := cartao(Color.TRANSPARENT, v)
+		rotulo("EQUIPES QUE CORREM COM ELE", FONTE_PEQUENA, COR_SECUNDARIA, ve)
+		rotulo(", ".join(equipes) + "." if not equipes.is_empty() else "Nenhuma equipe rival usa este modelo.",
+				FONTE_PEQUENA + 2, Color.WHITE, ve)
 		var raro: bool = not base.get("novo", true) and base.get("usados", []).is_empty()
 		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)

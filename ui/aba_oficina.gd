@@ -273,8 +273,8 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, 96)
 	var pode_pagar: bool = possuida or jogador.economia.pode_pagar(int(p["preco"]))
-	var direita := "INSTALADA" if instalada else ("já sua" if possuida else ("%s Cr" % dinheiro(int(p["preco"]))
-			if pode_pagar else "faltam %s Cr" % dinheiro(int(p["preco"]) - jogador.economia.saldo)))
+	# Preço total (vermelho se o saldo não cobre); peça já comprada: ícone de confirmado.
+	var direita := "INSTALADA" if instalada else ("" if possuida else "%s Cr" % dinheiro(int(p["preco"])))
 	if not perde.is_empty() and not instalada:
 		direita = "⚠ " + direita
 	# Nome e ganho à esquerda (quebram linha), estado/preço à direita.
@@ -303,6 +303,10 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	g.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	esq.add_child(g)
 	h.add_child(esq)
+	if possuida and not instalada:
+		var ok := icone("icone_ok", 44, h)
+		ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		ok.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var l := Label.new()
 	l.text = direita
 	l.add_theme_color_override("font_color", COR_RUIM if direita.begins_with("⚠") or not pode_pagar
