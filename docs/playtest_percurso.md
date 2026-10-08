@@ -63,6 +63,12 @@ Três a cinco pessoas acham os atritos grandes; **não** fixam uma duração com
 A hipótese "uma a duas sessões" vale para compras que abrem possibilidades (próximo
 carro de uma fase, peça que muda de prova), não para toda compra.
 
+Patrocínio e staff da equipe (decisão 38, `carreira.json` → `equipe_jogador`): o
+registro mostra a renda por nível de licença (Carreira → Preferências → "Renda por
+nível"): corridas, vitórias, Cr por corrida e por minuto de corrida, quantas com o app
+fechado. Os valores saem dessa medida nos níveis em que a equipe existe (a partir da
+INTERNATIONAL); o cenário "Segundo piloto na equipe" começa ali.
+
 ## Perguntas no fim (abertas, nesta ordem)
 
 1. O que você estava tentando fazer?

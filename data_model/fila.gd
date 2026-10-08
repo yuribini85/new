@@ -149,6 +149,9 @@ func processar(agora: float) -> Dictionary:
 		if f.get("config") is Dictionary:
 			res["config"] = f["config"].duplicate(true)
 		res["vencedor"] = vencedor
+		# Playtest (RegistroSessao): tempo de corrida e se rodou com o app fechado.
+		res["duracao"] = float(c["duracao"])
+		res["offline"] = offline
 		res["tempo_vencedor"] = cr[vencedor]["tempo_total"]
 		res["tempo_jogador"] = cr["jogador"]["tempo_total"]
 		res["total"] = res["classificacao"].size()

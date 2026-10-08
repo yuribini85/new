@@ -206,6 +206,29 @@ func _preferencias() -> void:
 	_modo_teste(v)
 
 
+## Renda por nível de licença, somando as sessões registradas: base medida
+## para decidir patrocínio e staff (decisão 38), sem estimar.
+func _renda(v: VBoxContainer, sessoes: Array) -> void:
+	var r := RegistroSessao.renda_por_nivel(sessoes)
+	if r.is_empty():
+		return
+	rotulo("Renda por nível (todas as sessões)", FONTE_PEQUENA + 2, Color.WHITE, v)
+	var ordem: Array = dados.carreira().get("niveis", [])
+	var niveis: Array = r.keys()
+	niveis.sort_custom(func(a, b): return ordem.find(a) < ordem.find(b))
+	for n in niveis:
+		var x: Dictionary = r[n]
+		var ganho: int = int(x["premio"]) + int(x["bonus"])
+		var minutos: float = float(x["duracao_s"]) / 60.0
+		rotulo("%s: %d corrida%s · %d%% vitórias · %s Cr por corrida · %s Cr por minuto de corrida%s%s" % [
+				n, x["corridas"], "" if x["corridas"] == 1 else "s", roundi(100.0 * x["vitorias"] / x["corridas"]),
+				dinheiro(roundi(float(ganho) / x["corridas"])),
+				dinheiro(roundi(ganho / minutos)) if minutos > 0.0 else "—",
+				" · %d com o app fechado" % x["offline"] if int(x["offline"]) > 0 else "",
+				" · folha da equipe %s Cr" % dinheiro(int(x["folha"])) if int(x["folha"]) != 0 else ""],
+				FONTE_PEQUENA, COR_SECUNDARIA, v)
+
+
 ## Saves de teste (Cenarios): cada um num arquivo próprio; o seu jogo não muda.
 func _cenarios(v: VBoxContainer) -> void:
 	var sm := get_node("/root/SaveManager")
@@ -285,6 +308,7 @@ func _modo_teste(v: VBoxContainer) -> void:
 			o.sort()
 			rotulo("    corrida: %d fps (mediana) · %d fps (pior 5%%)" % [o[o.size() / 2], o[int(o.size() * 0.05)]],
 					FONTE_PEQUENA, COR_SECUNDARIA, v)
+	_renda(v, sessoes)
 	rotulo("Arquivo: %s" % ProjectSettings.globalize_path(RegistroSessao.CAMINHO), FONTE_PEQUENA - 2, COR_NEUTRA, v)
 	botao_texto("Apagar registro", func():
 		RegistroSessao.limpar()

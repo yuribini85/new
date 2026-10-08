@@ -164,6 +164,7 @@ func _ready() -> void:
 	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
 	_fila_vista = jogador.fila
 	RegistroSessao.inicio(jogador)
+	RegistroSessao.corridas(save_manager.relatorio_offline, dados)
 	if jogador.historia != null:
 		historia_acao.connect(_acao_historia)
 		jogador.historia.disparar("GAME_START")
@@ -386,6 +387,7 @@ func _processar_fila() -> void:
 		return
 	var antes_vitorias: Dictionary = jogador.vitorias.duplicate()
 	var rel: Dictionary = jogador.fila_ctrl.processar(Time.get_unix_time_from_system())
+	RegistroSessao.corridas(rel, dados)
 	if rel.has("recomecou"):
 		_todas[0].avisar(_texto_recomecou(rel["recomecou"]), true)
 	if rel["corridas"].is_empty() and rel["erro"] == "":
@@ -408,10 +410,10 @@ func _processar_fila() -> void:
 func _notification(what: int) -> void:
 	# Volta do segundo plano: aplica o que correu enquanto isso, na hora.
 	if what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN] and _sobre != null:
+		RegistroSessao.inicio(jogador)  # antes da fila: as corridas de fora entram na sessão
+		RegistroSessao.tela(_abas.current_tab)
 		_processar_fila()
 		_fila_vista = jogador.fila
-		RegistroSessao.inicio(jogador)
-		RegistroSessao.tela(_abas.current_tab)
 	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_CLOSE_REQUEST] \
 			and _sobre != null:
 		RegistroSessao.fim(jogador)

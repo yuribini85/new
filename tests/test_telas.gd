@@ -216,6 +216,12 @@ func test_registro_de_sessao_do_playtest() -> void:
 	RegistroSessao.tela(4)
 	RegistroSessao.fila({"evento_id": "aberto", "restantes": 3}, 120.0, true)
 	RegistroSessao.pulo()
+	var rel := {"corridas": [
+		{"evento_id": "aberto", "posicao": 1, "total": 4, "premio": 300, "duracao": 60.0, "offline": false},
+		{"evento_id": "aberto", "posicao": 3, "total": 4, "premio": 100, "duracao": 60.0, "offline": true,
+			"folha": {"patrocinio": 50, "cobrado": 20}},
+	]}
+	RegistroSessao.corridas(rel, d)
 	j.licencas.append("CLUB")
 	RegistroSessao.fim(j)
 	var s: Dictionary = RegistroSessao.sessoes().back()
@@ -224,6 +230,11 @@ func test_registro_de_sessao_do_playtest() -> void:
 	igual(s["pulos"], 1, "pulo registrado")
 	igual([s["fase_inicio"], s["fase_fim"]], ["sem licença", "CLUB"], "fase no início e no fim")
 	verificar(s["telas"].has("Corrida"), "tempo acompanhando a corrida")
+	igual(s["corridas"].size(), 2, "corridas registradas")
+	var r := RegistroSessao.renda_por_nivel([s])
+	igual(r.keys(), ["N1"], "nível pela licença da prova")
+	igual([r["N1"]["corridas"], r["N1"]["vitorias"], r["N1"]["premio"], r["N1"]["offline"], r["N1"]["folha"]],
+			[2, 1, 400, 1, 30], "renda somada por nível")
 	RegistroSessao.limpar()
 	Preferencias.modo_teste = modo
 	j.free()
