@@ -137,8 +137,12 @@ func _fila() -> void:
 	var ganho := _ganho_estimado(ev, f)
 	if ganho != "":
 		rotulo(ganho, FONTE_PEQUENA + 2, COR_BOM, v)
-	nota("icone_app_fechado", "Segue com o app fechado", "A sequência continua com o app fechado, até %s."
-			% _tempo(float(dados.carreira().get("teto_offline_s", 0.0))), v)
+	if jogador.fila_ctrl.importante(f):
+		nota("icone_alerta", "Só com o app aberto", "Prova inédita, etapa de campeonato ou corrida da história: "
+				+ "se você fechar o app, ela recomeça quando voltar.", v)
+	else:
+		nota("icone_app_fechado", "Segue com o app fechado", "A sequência continua com o app fechado, até %s."
+				% _tempo(float(dados.carreira().get("teto_offline_s", 0.0))), v)
 	var h := acoes(v)
 	botao("Assistir", func(): ir_para.emit(CORRIDA), true, true, h, "icone_ao_vivo")
 	if int(f["restantes"]) > 1:

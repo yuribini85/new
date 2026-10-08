@@ -50,6 +50,14 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	var semente := _nova_semente()
 	var f := {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente,
 			"config": cfg}
+	# Segundo piloto da equipe (fase 9): inscrito junto, com a preparação de agora.
+	var cu := EquipeJogador.companheiro_para(carreira.dados, jogador, evento_id, uid)
+	if cu >= 0:
+		var cc: Carro = jogador.garagem.carro(cu)
+		var cfg2: Dictionary = cc.configuracao()
+		cfg2.erase("nome")
+		cfg2["pneus"] = cc.pneus.map(func(p): return p["id"])
+		f["companheiro"] = {"uid": cu, "config": cfg2}
 	var teste := _preparar(f, false)
 	if teste.has("erro"):
 		return teste["erro"]
@@ -188,13 +196,27 @@ func carro_inscrito(f: Dictionary) -> Carro:
 	return carro
 
 
+## Carro do companheiro como foi inscrito (null se ele não corre ou saiu da garagem).
+func companheiro_inscrito(f: Dictionary) -> Carro:
+	var cp = f.get("companheiro")
+	if not cp is Dictionary:
+		return null
+	var carro: Carro = jogador.garagem.carro(int(cp["uid"]))
+	if carro != null and cp.get("config") is Dictionary:
+		carro = carro.com_configuracao(cp["config"], carreira.dados.peca, carreira.dados.pneu)
+	return carro
+
+
 func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
 	var carro := carro_inscrito(f)
+	var comp := companheiro_inscrito(f)
 	var assinatura := "" if carro == null else str(carro.atributos_efetivos("seco")) + str(carro.atributos_efetivos("chuva"))
+	if comp != null:
+		assinatura += str(comp.atributos_efetivos("seco")) + str(comp.atributos_efetivos("chuva"))
 	var chave := "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura]
 	if chave == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
 		return _cache
-	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras, carro)
+	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras, carro, comp)
 	if carro == null:
 		c = {"erro": "carro %d não está na garagem" % int(f["uid"])}
 	c["com_amostras"] = com_amostras

@@ -297,6 +297,17 @@ Elena: Agora é.
 Sistema: SECOND DRIVER MOTORSPORT CRIADA
 [UNLOCK_TEAM_TAB]
 
+= SCN_L01 | ABA:EQUIPE | personagem=elena; requer=SECOND_DRIVER_CREATED; proibe=SOPHIE_MET; bloqueia=sim; flags=SOPHIE_MET; capitulo=XII
+Sophie: Você tem uma equipe.
+Elena: Tenho carros.
+Sophie: Esse é exatamente o problema.
+Elena: Precisamos do pacote aerodinâmico.
+Sophie: Precisamos pagar pessoas.
+Elena: O pacote vale três décimos.
+Sophie: Salários valem funcionários.
+[OPEN_TEAM_FINANCE]
+Sophie: Caixa, folha, patrocínio. Tudo passa por aqui agora.
+
 = SCN_M01 | LICENCA_DISPONIVEL:PRO | personagem=elena; proibe=PRO_AVAILABLE_SEEN; flags=PRO_AVAILABLE_SEEN; capitulo=XIII
 Marcus: Adrian nunca chegou nessa.
 Elena: Eu sei.
@@ -305,9 +316,26 @@ Elena: Isso ajuda.
 Marcus: Era a intenção.
 [OPEN_LICENSE_CENTER]
 
-= SCN_M03 | LICENCA_CONCEDIDA:PRO | personagem=elena; flags=PRO_COMPLETE; capitulo=XIII
+= SCN_M03 | LICENCA_CONCEDIDA:PRO | personagem=elena; flags=PRO_COMPLETE; proxima=SCN_N01; capitulo=XIII
 Sophie: Agora começamos a gastar dinheiro de verdade.
 Marcus: Ela fala isso como se antes fosse brincadeira.
+
+= SCN_N01 | ENCADEADA | personagem=elena; bloqueia=sim; flags=DRIVER_HIRE_UNLOCKED; capitulo=XIV
+Sophie: Precisamos de outro piloto.
+Elena: Temos um.
+Sophie: Temos você.
+Marcus: Ela quer dizer alguém que possa dirigir enquanto você administra.
+Elena: Eu administro.
+Sophie: Não.
+[OPEN_DRIVER_HIRE]
+
+= SCN_N02 | PILOTO_CONTRATADO | personagem=elena; flags=SECOND_DRIVER_SECOND_CAR; capitulo=XIV
+Marcus: Quem é o número um?
+Elena: Quem chegar na frente.
+Marcus: Mesmo carro?
+Elena: Mesmo pacote.
+Marcus: Mesma estratégia?
+Elena: Enquanto fizer sentido.
 
 = SCN_P01 | LICENCA_DISPONIVEL:ELITE | personagem=elena; proibe=ELITE_AVAILABLE; flags=ELITE_AVAILABLE; capitulo=XVI
 Sistema: CERTIFICAÇÃO ELITE DISPONÍVEL

@@ -301,7 +301,7 @@ signal historia_acao(nome: String)
 
 func _acao_tutorial(nome: String) -> void:
 	var abas := {"OPEN_GARAGE_TAB": 0, "RETURN_TO_GARAGE": 0, "OPEN_DEALERSHIP": 1, "OPEN_TUNE_SERVICE": 2,
-			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5}
+			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5, "OPEN_TEAM_FINANCE": ABA_EQUIPE, "OPEN_DRIVER_HIRE": ABA_EQUIPE}
 	if abas.has(nome):
 		_ir_para(abas[nome])
 		atualizar()
@@ -490,11 +490,20 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			hs.alignment = BoxContainer.ALIGNMENT_CENTER
 			v.add_child(hs)
 			g.icone("icone_creditos", 48, hs)
-			var saldo := g.rotulo("%s → %s Cr  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - c["premio"]),
+			var liquido: int = int(c.get("folha", {}).get("patrocinio", 0)) - int(c.get("folha", {}).get("cobrado", 0))
+			var saldo := g.rotulo("%s → %s Cr  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - liquido - c["premio"]),
 					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, hs)
 			saldo.autowrap_mode = TextServer.AUTOWRAP_OFF
 			saldo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		var marcos := []
+		if int(c.get("posicao_companheiro", 0)) > 0:
+			# Equipe: vale quem chegou na frente (fase 9).
+			marcos.append(["Você %dº · %s %dº" % [c["posicao_propria"], EquipeJogador.nome_segundo(dados, jogador),
+					c["posicao_companheiro"]], Aba.COR_INFO])
+		var folha: Dictionary = c.get("folha", {})
+		if int(folha.get("patrocinio", 0)) > 0 or int(folha.get("cobrado", 0)) > 0:
+			marcos.append(["Equipe: patrocínio +%s · folha −%s Cr" % [Aba.dinheiro(int(folha["patrocinio"])),
+					Aba.dinheiro(int(folha["cobrado"]))], Aba.COR_INFO])
 		if venceu and primeira:
 			marcos.append(["PRIMEIRA VITÓRIA NESTA CORRIDA", Aba.COR_DESTAQUE])
 		if c.get("recorde", false) and not c.get("anterior", {}).is_empty():
@@ -547,7 +556,8 @@ func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", 2)
 		var nome := Label.new()
-		nome.text = "Você" if id == "jogador" else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1)))
+		nome.text = "Você" if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador) if id == EquipeJogador.ID
+				else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1))))
 		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		nome.add_theme_font_size_override("font_size", 23)
 		nome.add_theme_color_override("font_color", Aba.COR_DESTAQUE if id == "jogador" else Color.WHITE)

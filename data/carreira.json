@@ -26,5 +26,32 @@
   "fator_treino": 1.0,
   "fracao_series": 0.5,
   "campeonato_desde": "NATIONAL"
+ },
+ "equipe_jogador": {
+  "_nota": "Valores por corrida em Cr. null = pendente do playtest (até lá vale 0).",
+  "patrocinio": null,
+  "custo_staff": null,
+  "salario_segundo_piloto": null,
+  "contratacao_segundo_piloto": null,
+  "contrataveis": [
+   {
+    "id": "jonas_reid",
+    "nome": "Jonas Reid",
+    "retrato": "res://arte/pilotos/jonas_reid.png",
+    "provisorio": true
+   },
+   {
+    "id": "tessa_quill",
+    "nome": "Tessa Quill",
+    "retrato": "res://arte/pilotos/tessa_quill.png",
+    "provisorio": true
+   },
+   {
+    "id": "milo_brandt",
+    "nome": "Milo Brandt",
+    "retrato": "res://arte/pilotos/milo_brandt.png",
+    "provisorio": true
+   }
+  ]
  }
 }

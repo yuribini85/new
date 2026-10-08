@@ -1468,6 +1468,60 @@
   "capitulo": "XI"
  },
  {
+  "id": "SCN_L01",
+  "trigger": "ABA:EQUIPE",
+  "falas": [
+   {
+    "quem": "sophie",
+    "texto": "Você tem uma equipe."
+   },
+   {
+    "quem": "elena",
+    "texto": "Tenho carros."
+   },
+   {
+    "quem": "sophie",
+    "texto": "Esse é exatamente o problema."
+   },
+   {
+    "quem": "elena",
+    "texto": "Precisamos do pacote aerodinâmico."
+   },
+   {
+    "quem": "sophie",
+    "texto": "Precisamos pagar pessoas."
+   },
+   {
+    "quem": "elena",
+    "texto": "O pacote vale três décimos."
+   },
+   {
+    "quem": "sophie",
+    "texto": "Salários valem funcionários."
+   },
+   {
+    "acao": "OPEN_TEAM_FINANCE"
+   },
+   {
+    "quem": "sophie",
+    "texto": "Caixa, folha, patrocínio. Tudo passa por aqui agora."
+   }
+  ],
+  "requer": [
+   "SECOND_DRIVER_CREATED"
+  ],
+  "proibe": [
+   "SOPHIE_MET"
+  ],
+  "flags": [
+   "SOPHIE_MET"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XII"
+ },
+ {
   "id": "SCN_M01",
   "trigger": "LICENCA_DISPONIVEL:PRO",
   "falas": [
@@ -1528,7 +1582,89 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "elena",
+  "proxima": "SCN_N01",
   "capitulo": "XIII"
+ },
+ {
+  "id": "SCN_N01",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "sophie",
+    "texto": "Precisamos de outro piloto."
+   },
+   {
+    "quem": "elena",
+    "texto": "Temos um."
+   },
+   {
+    "quem": "sophie",
+    "texto": "Temos você."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ela quer dizer alguém que possa dirigir enquanto você administra."
+   },
+   {
+    "quem": "elena",
+    "texto": "Eu administro."
+   },
+   {
+    "quem": "sophie",
+    "texto": "Não."
+   },
+   {
+    "acao": "OPEN_DRIVER_HIRE"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "DRIVER_HIRE_UNLOCKED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XIV"
+ },
+ {
+  "id": "SCN_N02",
+  "trigger": "PILOTO_CONTRATADO",
+  "falas": [
+   {
+    "quem": "marcus",
+    "texto": "Quem é o número um?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Quem chegar na frente."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Mesmo carro?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Mesmo pacote."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Mesma estratégia?"
+   },
+   {
+    "quem": "elena",
+    "texto": "Enquanto fizer sentido."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "SECOND_DRIVER_SECOND_CAR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "elena",
+  "capitulo": "XIV"
  },
  {
   "id": "SCN_P01",

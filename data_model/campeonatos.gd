@@ -69,14 +69,15 @@ static func registrar(carreira: Object, evento_id: String, classificacao: Array,
 		return {}
 	for pos in classificacao.size():
 		var id: String = classificacao[pos]
-		var quem := "jogador"
-		if id != "jogador":
+		var quem := "jogador"  # o companheiro pontua para a equipe do jogador
+		if id != "jogador" and id != EquipeJogador.ID:
 			var eq: Dictionary = carreira.equipe_de(evento_id, id, semente)
 			quem = String(eq.get("id", id.split("_", true, 1)[1]))
 		est["pontos"][quem] = int(est["pontos"].get(quem, 0)) + pontos(ev, pos + 1)
 	est["etapa"] = k + 1
 	var r := {"serie": nome_serie, "etapa": k + 1, "total": lista.size(),
-			"pontos": pontos(ev, classificacao.find("jogador") + 1), "final": false}
+			"pontos": pontos(ev, classificacao.find("jogador") + 1) + pontos(ev, classificacao.find(EquipeJogador.ID) + 1),
+			"final": false}
 	if k + 1 < lista.size():
 		jogador.campeonatos[nome_serie] = est
 		return r

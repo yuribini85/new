@@ -31,8 +31,10 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 ## com_amostras = false (fila offline) dispensa as posições usadas só pela tela.
 ## `hipotetico` simula outro carro no lugar do da garagem (Mecanico: "e se eu
 ## comprasse esta peça?") sem alterar nada.
+## `companheiro`: carro do segundo piloto da equipe (fase 9), que larga logo à
+## frente do jogador; null = só o jogador.
 func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true,
-		hipotetico: Carro = null) -> Dictionary:
+		hipotetico: Carro = null, companheiro: Carro = null) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
 	if ev.is_empty():
 		return {"erro": "evento %s não existe" % evento_id}
@@ -54,6 +56,12 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 			p["piloto"] = p["piloto"].duplicate()
 			p["piloto"]["consistencia"] = float(p["piloto"]["consistencia"]) * (1.0 - perda)
 		participantes.append(p)
+	if companheiro != null:
+		participantes.append({
+			"id": EquipeJogador.ID,
+			"atributos": companheiro.atributos_efetivos(condicao),
+			"piloto": EquipeJogador.piloto_corrida(dados),
+		})
 	participantes.append({
 		"id": "jogador",
 		"atributos": carro.atributos_efetivos(condicao),
@@ -63,7 +71,8 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	simulacoes += 1
 	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
 			dados.simulacao(), semente, com_amostras, float(ev.get("largada_kmh", 0.0)) / 3.6)
-	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"], "semente": semente}
+	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"], "semente": semente,
+			"companheiro": companheiro != null}
 
 
 ## Grid de equipes da corrida (decisão 36): uma vaga por equipe, primeiro as do
@@ -142,11 +151,16 @@ static func sobrenome_fixo(evento_id: String, i: int) -> String:
 func rotulo_participante(evento_id: String, id: String, uid: int, semente: int = -1) -> String:
 	if id == "jogador":
 		return nome_participante(id, uid)
+	if id == EquipeJogador.ID:
+		return "%s (%s)" % [EquipeJogador.nome_segundo(dados, jogador), Aba.nome_curto(nome_participante(id, uid))]
 	return "%s (%s)" % [nome_piloto(evento_id, id, semente), Aba.nome_curto(nome_participante(id, uid))]
 
 
-## Nome do carro de um participante ("jogador" ou "adv<i>_<carro>").
+## Nome do carro de um participante ("jogador", "companheiro" ou "adv<i>_<carro>").
 func nome_participante(id: String, uid: int) -> String:
+	if id == EquipeJogador.ID:
+		var cc: Carro = jogador.garagem.carro(jogador.carro_companheiro)
+		return "Companheiro" if cc == null else cc.base["nome"]
 	if id == "jogador":
 		var c: Carro = jogador.garagem.carro(uid)
 		return "Você" if c == null else "Você (%s)" % c.base["nome"]
@@ -157,8 +171,8 @@ func nome_participante(id: String, uid: int) -> String:
 ## prova: o jogador pelo carro `uid`, o adversário pela definição do evento.
 func atributos_participante(evento_id: String, id: String, uid: int) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
-	if id == "jogador":
-		var c: Carro = jogador.garagem.carro(uid)
+	if id == "jogador" or id == EquipeJogador.ID:
+		var c: Carro = jogador.garagem.carro(uid if id == "jogador" else jogador.carro_companheiro)
 		return {} if c == null else c.atributos_efetivos(ev["condicao"])
 	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
 	if ev.is_empty() or i < 0 or i >= ev["adversarios"].size():
@@ -177,7 +191,10 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var evento_id: String = corrida["evento_id"]
 	var ev: Dictionary = dados.evento(evento_id)
 	var r: Dictionary = corrida["resultado"]
-	var posicao: int = r["classificacao"].find("jogador") + 1
+	# Equipe (fase 9): vale quem chegar na frente, a Elena ou o companheiro.
+	var posicao_propria: int = r["classificacao"].find("jogador") + 1
+	var posicao_companheiro: int = r["classificacao"].find(EquipeJogador.ID) + 1
+	var posicao := posicao_propria if posicao_companheiro == 0 else mini(posicao_propria, posicao_companheiro)
 	var premio := 0
 	if posicao <= ev["premios"].size():
 		premio = int(ev["premios"][posicao - 1])
@@ -197,7 +214,8 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		jogador.flags["FIRST_CHAMPIONSHIP_DONE"] = true  # prólogo: a próxima é a última corrida
 	var tempo: float = r["carros"]["jogador"]["tempo_total"] if r["carros"]["jogador"]["terminou"] else 0.0
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
-	jogador.historico[evento_id] = _historico(anterior, posicao, tempo)
+	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo)
+	var folha := EquipeJogador.cobrar_corrida(dados, jogador)
 
 	return {
 		"anterior": anterior,
@@ -205,6 +223,9 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"evento_id": evento_id,
 		"classificacao": r["classificacao"],
 		"posicao": posicao,
+		"posicao_propria": posicao_propria,
+		"posicao_companheiro": posicao_companheiro,
+		"folha": folha,
 		"premio": premio,
 		"carro_premio_uid": carro_premio_uid,
 		"resultado": r,

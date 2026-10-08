@@ -31,6 +31,10 @@ var personagem: String = ""
 var flags: Dictionary = {}
 var dialogos_vistos: Dictionary = {}
 var historia: Historia
+## Equipe do jogador (fase 9): segundo piloto contratado ("" = nenhum) e o carro
+## da garagem que ele usa nas provas (-1 = nenhum).
+var segundo_piloto: String = ""
+var carro_companheiro: int = -1
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
@@ -77,6 +81,8 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	titulos = {}
 	treinos = {}
 	personagem = ""
+	segundo_piloto = ""
+	carro_companheiro = -1
 	flags = {}
 	dialogos_vistos = {}
 	historico = {}

@@ -34,6 +34,8 @@ static func serializar(jogador: Node) -> Dictionary:
 		"titulos": jogador.titulos,
 		"treinos": jogador.treinos,
 		"personagem": jogador.personagem,
+		"segundo_piloto": jogador.segundo_piloto,
+		"carro_companheiro": jogador.carro_companheiro,
 		"flags": jogador.flags,
 		"dialogos_vistos": jogador.dialogos_vistos,
 		"historico": jogador.historico,
@@ -164,6 +166,8 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 					pts[q] = int(c["pontos"][q])
 				jogador.campeonatos[k] = {"etapa": int(c.get("etapa", 0)), "pontos": pts}
 	jogador.personagem = String(s.get("personagem", ""))
+	jogador.segundo_piloto = String(s.get("segundo_piloto", ""))
+	jogador.carro_companheiro = int(s.get("carro_companheiro", -1))
 	jogador.flags = s["flags"].duplicate() if s.get("flags") is Dictionary else {}
 	jogador.dialogos_vistos = s["dialogos_vistos"].duplicate() if s.get("dialogos_vistos") is Dictionary else {}
 	jogador.treinos = {}
@@ -180,6 +184,8 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		jogador.fila["uid"] = int(jogador.fila["uid"])
 		jogador.fila["restantes"] = int(jogador.fila["restantes"])
 		jogador.fila["semente"] = int(jogador.fila["semente"])
+		if jogador.fila.get("companheiro") is Dictionary:
+			jogador.fila["companheiro"]["uid"] = int(jogador.fila["companheiro"]["uid"])
 		if jogador.fila.get("posicoes") is Array:
 			jogador.fila["posicoes"] = jogador.fila["posicoes"].map(func(x): return int(x))
 	jogador.ultimo_processamento = float(s["ultimo_processamento"])

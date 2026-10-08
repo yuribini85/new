@@ -118,6 +118,12 @@ confirmar** no playtest; sem testes, a da anterior), começado pelo jogador, con
 relógio (offline também), e a avaliação só depois do treino. Configuração em
 `carreira.json` → `licencas`. Preço 0 (no GT2 a licença é grátis).
 
+Equipe do jogador (decisão 38, `carreira.json` → `equipe_jogador`): caixa único (o
+saldo); a cada corrida entram `patrocinio` e saem `custo_staff` e, com segundo piloto,
+`salario_segundo_piloto`; `contratacao_segundo_piloto` é pago na contratação. Valores em
+Cr; **pendentes do playtest** (`null` = 0 até lá; a aba Equipe mostra "a definir").
+`contrataveis`: pilotos livres para a vaga (`provisorio` até os nomes do Drive).
+
 Cada teste: `{id, pista, voltas, condicao, restricoes, tempos: {ouro, prata, bronze}}`,
 tempos em segundos. O jogador usa o próprio carro dentro da restrição. Licença concedida
 quando todos os testes têm ao menos bronze; o melhor grau de cada teste fica guardado.

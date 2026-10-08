@@ -601,6 +601,10 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		categorias[chave] = dados.carro(adv_id)
 		# Rival numa das cores do modelo, fixa por prova e posição no grid.
 		pinturas[chave] = Cores.sortear(adv_id, "%s|%d" % [ev["id"], i])
+	var comp_carro: Carro = jogador.fila_ctrl.companheiro_inscrito(f)
+	if comp_carro != null:
+		categorias[EquipeJogador.ID] = comp_carro.base
+		pinturas[EquipeJogador.ID] = CarroBloco.cor_do_carro(comp_carro)
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	_visual3d.chegada = 0.0
 	_visual3d.mostrar(_pista, _visual, categorias, pinturas)
@@ -626,6 +630,12 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		_nomes[pid] = "%s · %s" % [piloto, equipe["nome"]] if not equipe.is_empty() \
 				else "%s (%s)" % [piloto, Aba.nome_curto(dados.carro(adv["carro"])["nome"])]
 		_nomes_curtos[pid] = piloto
+	# Segundo piloto da equipe (fase 9), com o carro e a cor dele.
+	var comp: Carro = jogador.fila_ctrl.companheiro_inscrito(f)
+	if comp != null:
+		var nome2 := EquipeJogador.nome_segundo(dados, jogador)
+		_nomes[EquipeJogador.ID] = "%s · %s" % [nome2, comp.base["nome"]]
+		_nomes_curtos[EquipeJogador.ID] = nome2
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
 	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
 	_diretor.reiniciar()
@@ -635,11 +645,12 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_t_chegada = 0.0
 	_s_jogador = _visual.distancia("jogador")
 	_status_t = 0.0
+	_offline_txt = _sufixo_offline()
 	if _visual.tempo < 2.0:
 		_sons.largada(true)
-		_painel_hud.evento("LARGADA", "continua com o app fechado", COR_DESTAQUE, 3)
+		_painel_hud.evento("LARGADA", _offline_txt, COR_DESTAQUE, 3)
 	else:
-		_painel_hud.evento("CORRIDA EM ANDAMENTO", "continua com o app fechado", Color.WHITE, 3)
+		_painel_hud.evento("CORRIDA EM ANDAMENTO", _offline_txt, Color.WHITE, 3)
 
 
 ## Câmera AUTO: o diretor escolhe o plano; nas outras, o alvo da escolha.
@@ -781,13 +792,23 @@ func _texto_dif(ordem: Array, pos: int) -> String:
 	return ""
 
 
+## Decisão 34: só repetição de prova vencida continua com o app fechado.
+## Calculado ao mostrar a corrida (importante() percorre os eventos).
+var _offline_txt := "continua com o app fechado"
+
+
+func _sufixo_offline() -> String:
+	var f: Dictionary = jogador.fila
+	return "só com o app aberto" if not f.is_empty() and jogador.fila_ctrl.importante(f) else "continua com o app fechado"
+
+
 ## "CORRIDA EM ANDAMENTO · continua com o app fechado": claro no começo, depois
 ## discreto (é estado, não opção).
 func _atualizar_status(delta: float) -> void:
 	_status_t += delta
 	# Troca de texto no ponto mais apagado do fade (sem salto visível).
 	var longo := _status_t < 6.0
-	_status.text = "CORRIDA EM ANDAMENTO · continua com o app fechado" if longo else "ao vivo · continua com o app fechado"
+	_status.text = ("CORRIDA EM ANDAMENTO · " if longo else "ao vivo · ") + _offline_txt
 	_status_linha.modulate.a = 1.0 - smoothstep(4.5, 6.0, _status_t) if longo else lerpf(0.0, 0.4, smoothstep(6.0, 7.5, _status_t))
 
 
