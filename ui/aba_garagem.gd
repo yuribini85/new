@@ -96,8 +96,8 @@ func _palco(c: Carro) -> Control:
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(h)
 	for it in [["icone_potencia", "%d" % a["potencia"], "cv"], ["icone_peso", "%d" % a["peso"], "kg"],
-			["icone_pneus", texto_fator(a.get("aderencia", 1.0)), "pneus"],
-			["icone_freios", texto_fator(a.get("freio", 1.0)), "freios"]]:
+			["icone_pneus", texto_fator(a.get("aderencia", 1.0), true), "pneus"],
+			["icone_freios", texto_fator(a.get("freio", 1.0), true), "freios"]]:
 		var cel := HBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.alignment = BoxContainer.ALIGNMENT_CENTER

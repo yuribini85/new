@@ -1,27 +1,38 @@
 class_name Dialogo
 extends Control
-## Caixa de diálogo da história (decisão 32), embaixo da tela: retrato
-## (Assets; sem o arquivo, quadrado na cor do personagem com as iniciais), nome
-## e texto. Tocar avança. Ações de tutorial no meio da cena saem
-## pelo sinal `acao` quando a fala chega nelas. Cena que bloqueia escurece a
-## tela e segura o toque; as outras deixam a tela usável por cima.
-## Cenas pedidas durante outra entram na fila.
+## Diálogo da história (decisão 32), em cena: a tela escurece, o personagem que
+## fala entra deslizando de lado em corpo inteiro (Assets, variante "corpo"),
+## ocupando quase toda a tela, e na sequência a caixa com nome e fala aparece no
+## centro, por cima dele. Quando outro personagem fala, o anterior sai e o novo
+## entra. Sem a arte (ou falas do sistema), só a caixa. Tocar avança (ou, no meio
+## da entrada, completa a animação). Ações de tutorial no meio da cena saem pelo
+## sinal `acao` quando a fala chega nelas; durante um destaque o personagem fica
+## translúcido para o elemento destacado aparecer. Cenas pedidas durante outra
+## entram na fila.
 
 signal acao(nome: String)
 ## Cena terminada (para a principal encadear a próxima e salvar).
 signal terminou(c: Dictionary)
+
+## Apresentação, não balanceamento.
+const ENTRADA_S := 0.35
+const CAIXA_ATRASO_S := 0.2
+const CAIXA_S := 0.22
+const ALTURA_CORPO := 0.86  # fração da altura da tela
 
 var historia: Historia
 var _fila: Array = []
 var _cena: Dictionary = {}
 var _i := 0
 var _fundo: ColorRect
+var _corpo: TextureRect
+var _quem := ""
 var _caixa: PanelContainer
-var _retrato: ColorRect
-var _iniciais: Label
-var _foto: TextureRect
 var _nome: Label
 var _texto: Label
+var _tween: Tween
+var _animando := false
+var _lado := 1.0  # de que lado o próximo personagem entra (alterna)
 
 
 func _init(historia_: Historia) -> void:
@@ -29,58 +40,44 @@ func _init(historia_: Historia) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_fundo = ColorRect.new()
-	_fundo.color = Color(0, 0, 0, 0.55)
+	_fundo.color = Color(0, 0, 0, 0.62)
 	_fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_fundo.gui_input.connect(_toque)
 	add_child(_fundo)
+	_corpo = TextureRect.new()
+	_corpo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_corpo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_corpo)
 	_caixa = PanelContainer.new()
-	_caixa.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	_caixa.offset_left = 16
-	_caixa.offset_right = -16
-	_caixa.offset_top = -330
-	_caixa.offset_bottom = -150
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.06, 0.07, 0.09, 0.96)
+	sb.bg_color = Color(0.06, 0.07, 0.09, 0.93)
 	sb.border_color = Aba.COR_DESTAQUE
 	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(12)
-	sb.set_content_margin_all(16)
+	sb.set_corner_radius_all(14)
+	sb.set_content_margin_all(22)
 	_caixa.add_theme_stylebox_override("panel", sb)
 	_caixa.gui_input.connect(_toque)
+	# No centro (um pouco abaixo do meio), crescendo para cima e para baixo.
+	_caixa.anchor_left = 0.0
+	_caixa.anchor_right = 1.0
+	_caixa.anchor_top = 0.58
+	_caixa.anchor_bottom = 0.58
+	_caixa.offset_left = 24
+	_caixa.offset_right = -24
+	_caixa.grow_vertical = Control.GROW_DIRECTION_BOTH
 	add_child(_caixa)
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 16)
-	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_caixa.add_child(h)
-	_retrato = ColorRect.new()
-	_retrato.custom_minimum_size = Vector2(120, 140)
-	_retrato.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(_retrato)
-	_iniciais = Label.new()
-	_iniciais.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_iniciais.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_iniciais.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_iniciais.add_theme_font_size_override("font_size", 40)
-	_retrato.add_child(_iniciais)
-	# Retrato final (Assets): por cima do placeholder quando o arquivo existe.
-	_foto = TextureRect.new()
-	_foto.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_foto.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_foto.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	_foto.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_retrato.add_child(_foto)
 	var v := VBoxContainer.new()
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(v)
+	v.add_theme_constant_override("separation", 8)
+	_caixa.add_child(v)
 	_nome = Label.new()
-	_nome.add_theme_font_size_override("font_size", 24)
+	_nome.add_theme_font_size_override("font_size", 26)
 	_nome.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
 	v.add_child(_nome)
 	_texto = Label.new()
 	_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_texto.add_theme_font_size_override("font_size", 30)
-	_texto.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_texto.add_theme_font_size_override("font_size", 32)
 	v.add_child(_texto)
 	var rodape := HBoxContainer.new()
 	v.add_child(rodape)
@@ -115,13 +112,14 @@ func enfileirar(c: Dictionary) -> void:
 func _proxima() -> void:
 	if _fila.is_empty():
 		_cena = {}
+		_quem = ""
 		visible = false
 		return
 	_cena = _fila.pop_front()
 	_i = 0
 	visible = true
-	_fundo.visible = bool(_cena.get("bloqueia", false))
-	_fundo.mouse_filter = Control.MOUSE_FILTER_STOP if _fundo.visible else Control.MOUSE_FILTER_IGNORE
+	_fundo.visible = true
+	_fundo.mouse_filter = Control.MOUSE_FILTER_STOP
 	_mostrar()
 
 
@@ -129,23 +127,60 @@ func _proxima() -> void:
 func _mostrar() -> void:
 	var falas: Array = _cena["falas"]
 	while _i < falas.size() and falas[_i].has("acao"):
-		acao.emit(String(falas[_i]["acao"]))
+		var nome_acao := String(falas[_i]["acao"])
+		# Destaque: o personagem fica translúcido para o elemento aparecer.
+		_corpo.modulate.a = 0.25 if nome_acao.begins_with("HIGHLIGHT_") else 1.0
+		acao.emit(nome_acao)
 		_i += 1
 	if _i >= falas.size():
 		_fim()
 		return
 	var f: Dictionary = falas[_i]
-	var p := historia.personagem(String(f["quem"]))
-	var sistema: bool = f["quem"] == "sistema"
-	_retrato.visible = not sistema
-	_retrato.color = Color(String(p.get("cor", "#444444")))
-	var nome := String(p.get("nome", f["quem"]))
-	_iniciais.text = "".join(Array(nome.split(" ", false)).slice(0, 2).map(func(x): return String(x).substr(0, 1)))
-	_foto.texture = null if sistema else Assets.get_asset(String(f["quem"]), "retrato")
-	_iniciais.visible = _foto.texture == null
-	_nome.text = nome
+	var quem := String(f["quem"])
+	var p := historia.personagem(quem)
+	var sistema := quem == "sistema"
+	_nome.text = String(p.get("nome", quem))
+	_nome.visible = not sistema and _nome.text != ""
 	_texto.text = String(f["texto"])
 	_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if sistema else HORIZONTAL_ALIGNMENT_LEFT
+	_layout()
+	if quem != _quem:
+		_entrar(quem, sistema)
+	_quem = quem
+
+
+## Personagem novo: o anterior sai, o novo entra deslizando, depois a caixa.
+func _entrar(quem: String, sistema: bool) -> void:
+	if _tween != null:
+		_tween.kill()
+	var tex: Texture2D = null if sistema else _textura(quem)
+	var tela := get_viewport_rect().size
+	_lado = -_lado
+	_corpo.texture = tex
+	_corpo.visible = tex != null
+	var x_final := _corpo.position.x
+	_caixa.modulate.a = 0.0
+	_animando = true
+	_tween = create_tween()
+	if tex != null:
+		_corpo.position.x = x_final + _lado * tela.x
+		_corpo.modulate.a = 1.0
+		_tween.tween_property(_corpo, "position:x", x_final, ENTRADA_S).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		_tween.tween_interval(CAIXA_ATRASO_S)
+	_tween.tween_property(_caixa, "modulate:a", 1.0, CAIXA_S)
+	_tween.tween_callback(func(): _animando = false)
+
+
+func _textura(quem: String) -> Texture2D:
+	return Assets.get_asset(quem, "corpo")
+
+
+## Corpo centrado embaixo, quase da altura da tela (a caixa vai por âncora).
+func _layout() -> void:
+	var tela := get_viewport_rect().size
+	var h := tela.y * ALTURA_CORPO
+	_corpo.size = Vector2(h * 2.0 / 3.0, h)
+	_corpo.position = Vector2((tela.x - _corpo.size.x) / 2.0, tela.y - h)
 
 
 func _toque(ev: InputEvent) -> void:
@@ -153,6 +188,9 @@ func _toque(ev: InputEvent) -> void:
 			or (ev is InputEventScreenTouch and ev.pressed)
 	if toque and not _cena.is_empty():
 		accept_event()
+		if _animando and _tween != null:
+			_tween.custom_step(10.0)  # completa a entrada
+			return
 		avancar()
 
 
@@ -180,4 +218,5 @@ func _fim() -> void:
 	terminou.emit(c)
 	if not proxima.is_empty():
 		_fila.push_front(proxima)
+	_quem = ""
 	_proxima()

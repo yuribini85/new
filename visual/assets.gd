@@ -7,7 +7,8 @@ extends RefCounted
 ## caminho que os dados já indicam, sem mexer nas telas.
 ##
 ## Variantes: "retrato" (personagens.json ou piloto de equipes.json, campo
-## `retrato`), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png).
+## `retrato`), "corpo" (corpo inteiro do diálogo: <pasta do retrato>/corpo/
+## <nome>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png).
 
 static var _cache := {}
 
@@ -23,6 +24,9 @@ static func get_asset(id: String, variante: String) -> Texture2D:
 static func caminho(id: String, variante: String) -> String:
 	var dados: Node = _dados()
 	match variante:
+		"corpo":
+			var r := caminho(id, "retrato")
+			return "" if r == "" else r.get_base_dir().path_join("corpo").path_join(r.get_file().get_basename() + ".webp")
 		"ui":
 			return "res://arte/ui/%s.png" % id
 		"retrato":
