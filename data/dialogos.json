@@ -101,10 +101,10 @@
    },
    {
     "quem": "marcus",
-    "texto": "Então abre a Oficina."
+    "texto": "Então toca nos freios."
    },
    {
-    "acao": "HIGHLIGHT_OFICINA"
+    "acao": "HIGHLIGHT_FREIOS"
    }
   ],
   "requer": [],
@@ -124,10 +124,10 @@
   "falas": [
    {
     "quem": "elena",
-    "texto": "Vamos. Toque em Oficina."
+    "texto": "Vamos. Toque em Freios."
    },
    {
-    "acao": "HIGHLIGHT_OFICINA"
+    "acao": "HIGHLIGHT_FREIOS"
    }
   ],
   "requer": [],
@@ -143,7 +143,7 @@
  },
  {
   "id": "SCN_A02",
-  "trigger": "ABA:OFICINA",
+  "trigger": "EVOLUCAO",
   "falas": [
    {
     "acao": "HIGHLIGHT_BRAKES"

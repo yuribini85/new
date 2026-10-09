@@ -25,8 +25,8 @@ static func _prologo(jogador: Node, dados: Node) -> Array:
 	var peca := String(dados.historia().get("adrian", {}).get("peca_demanda", ""))
 	var nome_peca := String(dados.peca(peca)["nome"]) if dados.existe("pecas", peca) else "a peça"
 	return [
-		{"texto": "Comprar %s na Oficina" % nome_peca, "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.OFICINA,
-			"botao": "Ir para a Oficina"},
+		{"texto": "Comprar %s na Garagem" % nome_peca, "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.GARAGEM,
+			"botao": "Ir para a Garagem"},
 		{"texto": "Correr a %s" % primeira, "feito": correu, "aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Fechar a %s (%d etapas)" % [serie, etapas.size()], "feito": jogador.flags.has("FIRST_CHAMPIONSHIP_DONE"),
 			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
@@ -62,7 +62,7 @@ static func _carreira(jogador: Node, dados: Node) -> Array:
 			"aba": Aba.LOJA, "botao": "Ir para as Lojas"},
 		{"texto": "Disputar uma corrida", "feito": not jogador.historico.is_empty() or not jogador.vitorias.is_empty(),
 			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
-		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.OFICINA, "botao": "Ir para a Oficina"},
+		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.GARAGEM, "botao": "Ir para a Garagem"},
 		{"texto": "Vencer uma corrida", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Conquistar a licença Club", "feito": "CLUB" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
 		{"texto": "Vencer uma corrida da licença Club", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver corridas"},

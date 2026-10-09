@@ -362,3 +362,38 @@ func test_chegada_para_em_fila() -> void:
 	verificar(v.distancia("b") - v.distancia("c") >= CorridaVisual.ESPACO_PARADO_M - 0.01, "c para atrás de b")
 	v.free()
 	d.free()
+
+
+func test_evolucao_da_garagem_abre_a_compra_da_categoria() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000)
+	var g: Control = ABAS[0].new(d, j)
+	g.size = Vector2(720, 1100)
+	_raiz().add_child(g)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.carro_ativo = uid
+	var c: Carro = j.garagem.carro(uid)
+	var p: Dictionary = d.lista("pecas").filter(func(x): return c.motivo_recusa(x).is_empty())[0]
+	var aberto := []
+	g.painel.connect(func(titulo, montar, _botoes): aberto.append([titulo, montar]))
+	g._abrir_categoria = String(p["categoria"])
+	g.atualizar()
+	igual(aberto.size(), 1, "a categoria abre a janela de compra")
+	var v := VBoxContainer.new()
+	_raiz().add_child(v)
+	aberto[0][1].call(v)
+	var comprar: Button = null
+	for b in v.find_children("*", "Button", true, false):
+		if b.text.ends_with(" G") and not b.disabled:
+			comprar = b
+			break
+	verificar(comprar != null, "estágio à venda com preço")
+	if comprar != null:
+		comprar.pressed.emit()
+		verificar(c.pecas.has(p["categoria"]), "comprar pela janela instala a peça")
+	v.free()
+	g.free()
+	j.free()
+	d.free()

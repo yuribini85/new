@@ -343,15 +343,6 @@ static func _forma_curta(antes: Dictionary, depois: Dictionary) -> String:
 	return "" if partes.is_empty() else " · " + ", ".join(partes)
 
 
-static func _ganho(antes: Dictionary, depois: Dictionary) -> String:
-	var dcv: float = depois["potencia"] - antes["potencia"]
-	if absf(dcv) >= 0.5:
-		return "%+d cv" % roundi(dcv)
-	var dkg: float = depois["peso"] - antes["peso"]
-	if absf(dkg) >= 0.5:
-		return "%+d kg" % roundi(dkg)
-	var df: float = depois["freio"] / maxf(antes["freio"], 1e-6) - 1.0
-	return "freio %+d%%" % roundi(df * 100.0) if absf(df) >= 0.005 else ""
 
 
 ## Decisão da peça: antes → depois em números grandes, o que muda na pista,
@@ -435,52 +426,13 @@ func _pneus(c: Carro) -> void:
 			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 
-## Selos "antes → depois" dos atributos que mudam.
-static func _diferencas(antes: Dictionary, depois: Dictionary) -> Array:
-	var r := []
-	if absf(depois["potencia"] - antes["potencia"]) >= 0.5:
-		r.append(["%d → %d cv" % [roundi(antes["potencia"]), roundi(depois["potencia"])],
-				COR_BOM if depois["potencia"] > antes["potencia"] else COR_RUIM])
-	if absf(depois["peso"] - antes["peso"]) >= 0.5:
-		r.append(["%d → %d kg" % [roundi(antes["peso"]), roundi(depois["peso"])],
-				COR_BOM if depois["peso"] < antes["peso"] else COR_RUIM])
-	if absf(depois["freio"] - antes["freio"]) >= 0.005:
-		r.append(["freio " + texto_fator(depois["freio"] / maxf(antes["freio"], 1e-6)),
-				COR_BOM if depois["freio"] > antes["freio"] else COR_RUIM])
-	return r
 
 
-func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
-	var possuida: bool = p["id"] in c.pecas_possuidas
-	var motivo: String = jogador.concessionaria.comprar_peca(c, p)
-	if motivo != "":
-		avisar("Não deu para usar %s: %s." % [p["nome"], motivo], false)
-		if not jogador.economia.pode_pagar(int(p["preco"])):
-			historia("SEM_DINHEIRO")
-		return
-	historia("PECA_COMPRADA", {"peca": String(p["nome"])})
-	if p["id"] == String(dados.historia().get("adrian", {}).get("peca_demanda", "")):
-		historia("DEMANDA_CONCLUIDA", {"peca": String(p["nome"])})
-	var mudancas := _diferencas(antes, c.atributos_efetivos("seco")).map(func(x): return x[0])
-	avisar("%s %s%s." % ["Em uso de novo:" if possuida else "Em uso:", p["nome"],
-			" (" + ", ".join(mudancas) + ")" if not mudancas.is_empty() else ""])
 
 
-func _remover(c: Carro, p: Dictionary) -> void:
-	c.remover(p["categoria"])
-	avisar("Removida: %s. Continua sua; use de novo de graça quando quiser." % p["nome"])
 
 
 func _fabrica(c: Carro) -> void:
 	for cat in c.pecas.keys():
 		c.remover(cat)
 	avisar("%s voltou ao original. As peças continuam suas." % c.base["nome"])
-
-
-func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
-	var motivo: String = jogador.concessionaria.comprar_pneu(c, pn)
-	if motivo != "":
-		avisar("Não comprou %s: %s." % [pn["nome"], motivo], false)
-	else:
-		avisar("Pneu comprado: %s" % pn["nome"])
-		historia("PECA_COMPRADA", {"peca": String(pn["nome"])})

@@ -7,7 +7,8 @@ extends RefCounted
 ## só, ainda não foi vista. A primeira que vale, na ordem do arquivo, é mostrada.
 ## Sem personagem (saves de antes da história), nada dispara.
 ##
-## Triggers: GAME_START, ABA:<GARAGEM|LOJA|OFICINA|EVENTOS|CORRIDA|LICENCAS|EQUIPE>,
+## Triggers: GAME_START, ABA:<GARAGEM|LOJA|OFICINA|EVENTOS|CORRIDA|LICENCAS|EQUIPE>, EVOLUCAO (janela
+## de compra de uma categoria da Evolução, na Garagem),
 ## EVENTO_SELECIONADO, CAMPEONATO_SELECIONADO, CORRIDA_INICIO, CORRIDA_FIM
 ## (contexto posicao), CORRIDA_CONTRA:<piloto>, EVENTO_BLOQUEADO, LICENCA_EXIGIDA,
 ## LICENCA_DISPONIVEL:<id>, LICENCA_TREINO_INICIO, LICENCA_PRONTA,

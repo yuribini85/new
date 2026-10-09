@@ -35,15 +35,15 @@ Adrian: Vocês pedem muita coisa. Também precisamos olhar quanto temos.
 [HIGHLIGHT_SALDO]
 Marcus: Sempre. Giro compra peça, carro e praticamente todo problema novo que aparece.
 Elena: Temos o suficiente.
-Marcus: Então abre a Oficina.
-[HIGHLIGHT_OFICINA]
+Marcus: Então toca nos freios.
+[HIGHLIGHT_FREIOS]
 
 = SCN_A01L | LEMBRETE | personagem=adrian; proibe=TUNE_TUTORIAL_SEEN,FIRST_TUNE_DONE; capitulo=I
-Elena: Vamos. Toque em Oficina.
-[HIGHLIGHT_OFICINA]
+Elena: Vamos. Toque em Freios.
+[HIGHLIGHT_FREIOS]
 
 # Tutorial 2 — primeira compra.
-= SCN_A02 | ABA:OFICINA | personagem=adrian; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; capitulo=I; lembrete=SCN_A02L
+= SCN_A02 | EVOLUCAO | personagem=adrian; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; capitulo=I; lembrete=SCN_A02L
 [HIGHLIGHT_BRAKES]
 Marcus: É esse aqui.
 Elena: {demanda}.

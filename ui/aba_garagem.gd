@@ -1,7 +1,7 @@
 extends Aba
 ## Garagem: o carro selecionado em destaque (vitrine com o sprite isométrico) com a
-## ficha por cima, como HUD, e as ações do carro (melhorar, vender); correr fica
-## na barra de baixo.
+## ficha por cima, como HUD, a Evolução (tocar numa categoria abre a compra) e
+## vender; correr fica na barra de baixo.
 ## Embaixo, a coleção em miniaturas para trocar de carro.
 
 var _vitrine: VitrineCarro
@@ -44,15 +44,13 @@ func construir() -> void:
 	ancora("CAR_STATS", _palco(c, lista))
 	# O palco é o cenário do topo (colado no cabeçalho); a missão vem logo abaixo.
 	_faixa_objetivo()
-	# Correr fica na barra de baixo; aqui, melhorar (principal) e vender.
+	# Melhorar é tocar na Evolução (abre a compra da categoria); correr fica na
+	# barra de baixo; aqui embaixo, vender.
+	_evolucao(c)
 	var h := acoes()
-	var melhorar := _acao(h, func(): ir_para.emit(OFICINA))
-	Tipografia.acao_primaria(melhorar, "Oficina", COR_DESTAQUE, Color(0.1, 0.1, 0.1), ALTURA_TEXTO_ACAO, ALTURA_ACAO)
-	ancora("OFICINA", melhorar)
 	var vender := _acao(h, _confirmar_venda.bind(c))
 	vender.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
 	Tipografia.acao_neutra(vender, "Vender · %s G" % dinheiro(revenda(c.base)), ALTURA_TEXTO_ACAO - 2, ALTURA_ACAO)
-	_evolucao(c)
 	_colecao(lista, c)
 
 
@@ -72,6 +70,12 @@ func _acao(pai: Control, acao: Callable) -> Button:
 const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
 		"lightweight", "corrida", "brake", "cambio"]
 const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
+## Cartões da ficha (potência, peso, velocidade máxima): altura, ícone, dentes
+## da barra e a cor do ícone com a barra vazia (cheia: COR_DESTAQUE).
+const ALTURA_FICHA := 104
+const TAMANHO_ICONE_FICHA := 44
+const DENTES_FICHA := 6
+const COR_ICONE_FICHA := Color("ece6da")
 ## Setas da coleção: o voltar do cabeçalho com metade do tamanho.
 const SETA := Vector2(Cabecalho.ALTURA * 0.95, Cabecalho.ALTURA) * 0.5
 
@@ -124,14 +128,13 @@ func _tetos_do_modelo(c: Carro) -> Dictionary:
 	return _tetos[c.id]
 
 
-## Barra da ficha: quanto do caminho entre o de fábrica e o teto do modelo o
-## carro já andou, em dentes. Sem caminho (nenhuma peça muda o número), cheia.
-static func _barra_teto(fabrica: float, atual: float, teto: float) -> BarraDentes:
-	var n := BarraDentes.MAX_DENTES
+## Quanto do caminho entre o de fábrica e o teto do modelo o carro já andou
+## (0 a 1). Sem caminho (nenhuma peça muda o número), 1.
+static func _fracao_teto(fabrica: float, atual: float, teto: float) -> float:
 	var faixa := teto - fabrica
 	if absf(faixa) < 1e-6 or not is_finite(faixa):
-		return BarraDentes.new(n, n)
-	return BarraDentes.new(clampi(roundi((atual - fabrica) / faixa * n), 0, n), n)
+		return 1.0
+	return clampf((atual - fabrica) / faixa, 0.0, 1.0)
 
 
 ## Pneus: os compostos comprados além do de fábrica.
@@ -198,48 +201,62 @@ func _palco(c: Carro, lista: Array) -> Control:
 	var vel := Simulacao.velocidade_maxima_kmh(a, dados.simulacao())
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	h.offset_top = -98
-	h.offset_bottom = -10
+	h.offset_left = 12
+	h.offset_right = -12
+	h.offset_top = -12 - ALTURA_FICHA
+	h.offset_bottom = -12
+	h.add_theme_constant_override("separation", 10)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(h)
-	# Cada atributo: rótulo pequeno em caixa alta e, embaixo, valor grande e
-	# unidade (sem ícone: o rótulo já diz o que é). O segundo item é a âncora
-	# do destaque do tutorial.
-	for it in [["POTÊNCIA", "POTENCIA", "%d" % a["potencia"], "cv",
-				_barra_teto(af["potencia"], a["potencia"], teto["potencia"])],
-			["PESO", "PESO", "%d" % a["peso"], "kg", _barra_teto(af["peso"], a["peso"], teto["peso"])],
-			["VEL. MÁX", "VELOCIDADE", "—" if not is_finite(vel) else "%d" % roundi(vel), "km/h",
-				_barra_teto(Simulacao.velocidade_maxima_kmh(af, dados.simulacao()), vel, teto["vel"])]]:
-		var cel := VBoxContainer.new()
-		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cel.add_theme_constant_override("separation", -2)
-		cel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		h.add_child(cel)
-		ancora(it[1], cel)
-		var titulo := _hud_rotulo(it[0], 0, COR_SECUNDARIA, cel)
-		Tipografia.rotulo(titulo, "medium", 18)
-		titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Cada atributo num cartão: ícone, valor grande e unidade, e a barra embaixo.
+	# O ícone vai do branco ao dourado conforme a barra enche.
+	for it in [["potencia", "POTENCIA", "%d" % a["potencia"], "cv",
+				_fracao_teto(af["potencia"], a["potencia"], teto["potencia"])],
+			["peso", "PESO", "%d" % a["peso"], "kg", _fracao_teto(af["peso"], a["peso"], teto["peso"])],
+			["velocidade", "VELOCIDADE", "—" if not is_finite(vel) else "%d" % roundi(vel), "km/h",
+				_fracao_teto(Simulacao.velocidade_maxima_kmh(af, dados.simulacao()), vel, teto["vel"])]]:
+		var cartao_ficha := PanelContainer.new()
+		cartao_ficha.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cartao_ficha.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var e := StyleBoxFlat.new()
+		e.bg_color = Color(COR_FUNDO, 0.82)
+		e.border_color = Color(1, 1, 1, 0.1)
+		e.set_border_width_all(1)
+		e.set_corner_radius_all(8)
+		e.content_margin_left = 12
+		e.content_margin_right = 12
+		e.content_margin_top = 10
+		e.content_margin_bottom = 12
+		cartao_ficha.add_theme_stylebox_override("panel", e)
+		h.add_child(cartao_ficha)
+		ancora(it[1], cartao_ficha)
+		var v := VBoxContainer.new()
+		v.add_theme_constant_override("separation", 8)
+		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cartao_ficha.add_child(v)
 		var linha := HBoxContainer.new()
-		linha.alignment = BoxContainer.ALIGNMENT_CENTER
-		linha.add_theme_constant_override("separation", 4)
+		linha.add_theme_constant_override("separation", 10)
 		linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cel.add_child(linha)
-		var valor := _hud_rotulo(it[2], 0, Color.WHITE, linha)
-		if String(it[2]).left(1) in "0123456789+-−":
-			Tipografia.numero(valor, 34)
-		else:
-			Tipografia.rotulo(valor, "semibold", 34)
-		if it[3] != "":
-			var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, linha)
-			Tipografia.rotulo(u, "regular", 22)
-			u.size_flags_vertical = Control.SIZE_SHRINK_END
-		var margem := MarginContainer.new()
-		margem.add_theme_constant_override("margin_left", 18)
-		margem.add_theme_constant_override("margin_right", 18)
-		margem.add_theme_constant_override("margin_top", 4)
-		margem.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		margem.add_child(it[4])
-		cel.add_child(margem)
+		v.add_child(linha)
+		var icone := TextureRect.new()
+		icone.texture = load("res://arte/ui/garagem/%s.png" % it[0])
+		icone.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icone.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icone.custom_minimum_size = Vector2(TAMANHO_ICONE_FICHA, TAMANHO_ICONE_FICHA)
+		icone.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		icone.modulate = COR_ICONE_FICHA.lerp(COR_DESTAQUE, it[4])
+		icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		linha.add_child(icone)
+		var num := VBoxContainer.new()
+		num.add_theme_constant_override("separation", -6)
+		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		linha.add_child(num)
+		var valor := _hud_rotulo(it[2], 0, Color.WHITE, num)
+		Tipografia.numero(valor, 32)
+		var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, num)
+		Tipografia.rotulo(u, "regular", 20)
+		var dentes := DENTES_FICHA
+		v.add_child(BarraDentes.new(roundi(it[4] * dentes), dentes, 7.0))
 	return palco
 
 
@@ -251,52 +268,186 @@ func _evolucao(c: Carro) -> void:
 	var g := GridContainer.new()
 	g.columns = 2
 	g.add_theme_constant_override("h_separation", 24)
-	g.add_theme_constant_override("v_separation", 10)
+	g.add_theme_constant_override("v_separation", 4)
 	v.add_child(g)
+	var itens := []
 	for cat in EVOLUCAO:
 		var pr := _progresso(c, [cat])
-		if pr[1] == 0:
-			continue
+		if pr[1] > 0:
+			itens.append([cat, NOMES_CATEGORIA.get(cat, cat), pr])
+	itens.append(["pneus", "Pneus", _progresso_pneus(c)])
+	for it in itens:
+		var b := Button.new()
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.flat = true
+		b.focus_mode = Control.FOCUS_NONE
+		var sb := StyleBoxEmpty.new()
+		sb.content_margin_top = 6
+		sb.content_margin_bottom = 6
+		for estado in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
+			b.add_theme_stylebox_override(estado, sb)
+		g.add_child(b)
+		if it[0] == "brake":
+			ancora("FREIOS", b)
+		elif it[0] == "pneus":
+			ancora("PNEUS", b)
 		var cel := VBoxContainer.new()
-		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.add_theme_constant_override("separation", 4)
-		g.add_child(cel)
-		if cat == "brake":
-			ancora("FREIOS", cel)
+		cel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(cel)
 		var linha := HBoxContainer.new()
+		linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cel.add_child(linha)
 		var nome := Label.new()
-		nome.text = NOMES_CATEGORIA.get(cat, cat)
+		nome.text = it[1]
 		nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		nome.clip_text = true
 		nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		Tipografia.rotulo(nome, "medium", 22)
 		linha.add_child(nome)
 		var conta := Label.new()
-		conta.text = "%d/%d" % pr
+		conta.text = "%d/%d" % it[2]
 		Tipografia.numero(conta, 20)
-		conta.add_theme_color_override("font_color", BarraDentes.ACESO if pr[0] > 0 else COR_SECUNDARIA)
+		conta.add_theme_color_override("font_color", BarraDentes.ACESO if it[2][0] > 0 else COR_SECUNDARIA)
 		linha.add_child(conta)
-		cel.add_child(BarraDentes.new(pr[0], pr[1]))
-	var pn := _progresso_pneus(c)
-	var cel_p := VBoxContainer.new()
-	cel_p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	cel_p.add_theme_constant_override("separation", 4)
-	g.add_child(cel_p)
-	ancora("PNEUS", cel_p)
-	var lp := HBoxContainer.new()
-	cel_p.add_child(lp)
-	var np := Label.new()
-	np.text = "Pneus"
-	np.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	Tipografia.rotulo(np, "medium", 22)
-	lp.add_child(np)
-	var cp := Label.new()
-	cp.text = "%d/%d" % pn
-	Tipografia.numero(cp, 20)
-	cp.add_theme_color_override("font_color", BarraDentes.ACESO if pn[0] > 0 else COR_SECUNDARIA)
-	lp.add_child(cp)
-	cel_p.add_child(BarraDentes.new(pn[0], pn[1]))
+		cel.add_child(BarraDentes.new(it[2][0], it[2][1]))
+		# O botão não mede os filhos: a altura vem do conteúdo.
+		var ajustar := func(): b.custom_minimum_size.y = cel.get_combined_minimum_size().y + 12.0
+		cel.minimum_size_changed.connect(ajustar)
+		ajustar.call()
+		cel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		cel.offset_top = 6
+		cel.offset_bottom = -6
+		b.pressed.connect(_abrir_evolucao.bind(c, it[0]))
+	if _abrir_categoria != "":
+		var cat := _abrir_categoria
+		_abrir_categoria = ""
+		_abrir_evolucao(c, cat)
+
+
+## Categoria a abrir na próxima construção (destaque do tutorial).
+var _abrir_categoria := ""
+
+
+## Destaque dos freios (tutorial): a janela de compra dos freios aberta.
+func preparar_destaque(nome: String) -> void:
+	if nome == "BRAKES":
+		_abrir_categoria = "brake"
+
+
+## Janela de compra de uma categoria da Evolução: cada estágio com o ganho
+## sobre a montagem atual e a ação (comprar, usar, remover). Substitui a Oficina.
+func _abrir_evolucao(c: Carro, cat: String) -> void:
+	painel.emit("Pneus" if cat == "pneus" else NOMES_CATEGORIA.get(cat, cat), func(v):
+		if cat == "pneus":
+			_janela_pneus(c, v)
+		else:
+			_janela_pecas(c, cat, v), [["Fechar", func(): pass]])
+	historia("EVOLUCAO")
+
+
+## Refaz a janela depois de uma compra (a tela inteira foi reconstruída).
+func _reabrir(c: Carro, cat: String) -> void:
+	var atual: Carro = jogador.garagem.carro(c.uid)
+	if atual != null:
+		(func(): _abrir_evolucao(atual, cat)).call_deferred()
+
+
+func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
+	var oficina := preload("res://ui/aba_oficina.gd")
+	var attr: String = oficina.AFETA_CATEGORIA.get(cat, "potencia")
+	rotulo(oficina.EXPLICA_CATEGORIA.get(cat, ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = \
+			TextServer.AUTOWRAP_WORD_SMART
+	rotulo("Na pista: " + oficina.FUNCAO[attr] + ".", FONTE_PEQUENA + 2, Color.WHITE, v).autowrap_mode = \
+			TextServer.AUTOWRAP_WORD_SMART
+	var pecas: Array = dados.lista("pecas").filter(func(p): return p["categoria"] == cat and c.motivo_recusa(p).is_empty())
+	pecas.sort_custom(func(a, b): return a["preco"] < b["preco"])
+	var antes := c.atributos_efetivos("seco")
+	# O ganho de cada estágio é sobre a categoria vazia (não sobre o estágio em
+	# uso): o 1 sempre mostra o que ele dá, mesmo com o 3 instalado.
+	var sem := c.copiar()
+	sem.remover(cat)
+	var base_cat := sem.atributos_efetivos("seco")
+	var provas_antes := Mecanico.provas_possiveis(dados, c)
+	# Correndo: as corridas já marcadas usam a montagem do início (como na Oficina).
+	var bloqueado := false
+	for p in pecas:
+		var instalada: bool = c.pecas.get(cat, {}).get("id") == p["id"]
+		var possuida: bool = p["id"] in c.pecas_possuidas
+		var teste := c.copiar()
+		teste.instalar(p)
+		var depois := teste.atributos_efetivos("seco")
+		var perde := provas_antes.filter(func(e): return not e in Mecanico.provas_possiveis(dados, teste)) \
+				if not instalada else []
+		var cartao_p := cartao(COR_BOM if instalada else Color.TRANSPARENT, v)
+		if p["id"] == String(dados.historia().get("adrian", {}).get("peca_demanda", "")) or (cat == "brake"
+				and not ancoras.has("BRAKES")):
+			ancora("BRAKES", cartao_p)
+		var h := fileira(cartao_p)
+		var info := VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.add_theme_constant_override("separation", -2)
+		h.add_child(info)
+		var nome := rotulo(p["nome"], 0, Color.WHITE, info)
+		nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var ganho := "arrancada · equilibrado · velocidade final" if cat == "cambio" else _ganho(base_cat, depois)
+		if instalada:
+			ganho = "em uso" + ("" if ganho == "" or cat == "cambio" else " · " + ganho)
+		rotulo(ganho, FONTE_PEQUENA, COR_BOM, info)
+		if not perde.is_empty():
+			var aviso_l := rotulo("⚠ Deixa de poder correr: " + ", ".join(perde.map(func(e): return dados.evento(e)["nome"])),
+					FONTE_PEQUENA, COR_RUIM, info)
+			aviso_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var acao: Button
+		if instalada:
+			acao = botao("Remover", func():
+				_remover(c, p)
+				_reabrir(c, cat), not bloqueado, false, h)
+		elif possuida:
+			acao = botao("Usar", func():
+				_comprar_peca(c, p, antes)
+				_reabrir(c, cat), not bloqueado, true, h)
+		else:
+			acao = botao("%s G" % dinheiro(int(p["preco"])), func():
+				_comprar_peca(c, p, antes)
+				_reabrir(c, cat), not bloqueado and jogador.economia.pode_pagar(int(p["preco"])), true, h)
+		acao.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		acao.custom_minimum_size = Vector2(170, 72)
+	if cat == "cambio" and c.pecas.has("cambio"):
+		var aj := HBoxContainer.new()
+		aj.add_theme_constant_override("separation", 8)
+		v.add_child(aj)
+		for a in oficina.AJUSTES_CAMBIO:
+			var b := botao(a[1], func():
+				c.ajuste_cambio = a[0]
+				_reabrir(c, cat), not bloqueado, c.ajuste_cambio == a[0], aj)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if _correndo(c):
+		rotulo("Correndo: o que mudar aqui vale para as próximas corridas.", FONTE_PEQUENA + 2, COR_INFO, v)
+
+
+func _janela_pneus(c: Carro, v: VBoxContainer) -> void:
+	var oficina := preload("res://ui/aba_oficina.gd")
+	rotulo("Pneu que segura mais: " + oficina.FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
+			FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	for pn in dados.lista("pneus"):
+		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
+		var h := fileira(cartao(COR_BOM if tem else Color.TRANSPARENT, v))
+		var info := VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.add_theme_constant_override("separation", -2)
+		h.add_child(info)
+		rotulo(pn["nome"], 0, Color.WHITE, info)
+		rotulo("aderência %d (curvas e frenagem)" % roundi(pn["aderencia"]["seco"] * 100.0), FONTE_PEQUENA, COR_SECUNDARIA, info)
+		if tem:
+			var l := rotulo("SEU", FONTE_PEQUENA, COR_BOM, h)
+			l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		else:
+			var b := botao("%s G" % dinheiro(int(pn["preco"])), func():
+				_comprar_pneu(c, pn)
+				_reabrir(c, "pneus"), jogador.economia.pode_pagar(int(pn["preco"])), true, h)
+			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			b.custom_minimum_size = Vector2(170, 72)
 
 
 ## Texto do HUD: contorno escuro para ler sobre a ilustração.

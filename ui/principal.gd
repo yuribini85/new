@@ -477,7 +477,7 @@ signal historia_acao(nome: String)
 
 
 func _acao_tutorial(nome: String) -> void:
-	var abas := {"OPEN_GARAGE_TAB": 0, "RETURN_TO_GARAGE": 0, "OPEN_DEALERSHIP": 1, "OPEN_TUNE_SERVICE": 2,
+	var abas := {"OPEN_GARAGE_TAB": 0, "RETURN_TO_GARAGE": 0, "OPEN_DEALERSHIP": 1, "OPEN_TUNE_SERVICE": 0,
 			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5, "OPEN_TEAM_FINANCE": ABA_EQUIPE}
 	if abas.has(nome):
 		_ir_para(abas[nome])
@@ -723,9 +723,9 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				else:
 					_ir_para(4)
 				atualizar(), "icone_de_novo"],
-			["Oficina", func():
+			["Melhorar o carro", func():
 				jogador.carro_ativo = c["uid"]
-				_ir_para(2)
+				_ir_para(0)
 				atualizar(), "icone_melhorar"],
 			["Escolher outra corrida", func(): _ir_para(3), "aba_competicoes"]]
 		var carro_corrida: Carro = jogador.garagem.carro(c["uid"])
@@ -737,7 +737,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		var i_obj := Objetivos.atual(alvo_obj)
 		var aba_obj: int = alvo_obj[i_obj]["aba"] if i_obj < alvo_obj.size() else -1
 		var primeiro := 0
-		if aba_obj == Aba.OFICINA or (not venceu and aba_obj != Aba.EVENTOS):
+		if aba_obj == Aba.GARAGEM or (not venceu and aba_obj != Aba.EVENTOS):
 			primeiro = 1
 		elif aba_obj == Aba.EVENTOS and venceu:
 			primeiro = 2
