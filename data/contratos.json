@@ -81,7 +81,7 @@
 				"folga_s": 0.1
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Hayase Kumo em Anel do Vale e o Hayase Pika em Parque das Docas.",
+		"descricao": "Uma preparação só para vencer o Hayase Kumo em Lago Sereno e o Hayase Pika em Cais Velho.",
 		"id": "dois_circuitos",
 		"licenca": "CLUB",
 		"nome": "Dois circuitos, um carro",
@@ -190,7 +190,7 @@
 				"folga_s": 0.2
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Mizuchi Chidori SR '98 em Anel do Vale e o Kanaya Yozora em Serra Alta.",
+		"descricao": "Uma preparação só para vencer o Mizuchi Chidori SR '98 em Lago Sereno e o Kanaya Yozora em Alto da Capela.",
 		"id": "ic_dois_circuitos",
 		"licenca": "NATIONAL",
 		"nome": "Dois circuitos, um carro",
@@ -299,7 +299,7 @@
 				"folga_s": 0.7
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Hayase Raijin Corrida em Oval do Planalto e o Kanaya Nagare Corrida em Serra Alta.",
+		"descricao": "Uma preparação só para vencer o Hayase Raijin Corrida em Oval do Planalto e o Kanaya Nagare Corrida em Alto da Capela.",
 		"id": "international_dois_circuitos",
 		"licenca": "INTERNATIONAL",
 		"nome": "Dois circuitos, um carro",
@@ -408,7 +408,7 @@
 				"folga_s": 0.2
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Ashcombe Saltire em Colinas do Vinhedo e o Hayase Komorebi S V em Anel do Vale.",
+		"descricao": "Uma preparação só para vencer o Ashcombe Saltire em Colinas do Vinhedo e o Hayase Komorebi S V em Lago Sereno.",
 		"id": "pro_dois_circuitos",
 		"licenca": "PRO",
 		"nome": "Dois circuitos, um carro",
@@ -517,7 +517,7 @@
 				"folga_s": 0.3
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Kanaya Ruri Corrida II em Anel do Vale e o Pemberly Teal II em Serra Alta (curta).",
+		"descricao": "Uma preparação só para vencer o Kanaya Ruri Corrida II em Lago Sereno e o Pemberly Teal II em Alto da Capela (curto).",
 		"id": "elite_dois_circuitos",
 		"licenca": "ELITE",
 		"nome": "Dois circuitos, um carro",

@@ -8,7 +8,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Anel do Vale. Última semana da temporada."
+    "texto": "Lago Sereno. Última semana da temporada."
    },
    {
     "quem": "sistema",
@@ -40,7 +40,7 @@
   "falas": [
    {
     "quem": "marcus",
-    "texto": "{carro} lavado, tanque cheio. Pronto para a Copa de Domingo."
+    "texto": "{carro} lavado, tanque cheio. Pronto para a Copa Primeira Marcha."
    },
    {
     "quem": "adrian",
@@ -191,7 +191,7 @@
    },
    {
     "quem": "marcus",
-    "texto": "A Copa de Domingo tem três etapas e conta pontos. Campeão é quem soma mais."
+    "texto": "A Copa Primeira Marcha tem três etapas e conta pontos. Campeão é quem soma mais."
    },
    {
     "quem": "elena",
@@ -203,7 +203,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Escolha a Copa de Domingo — Etapa 1 e toque em Disputar."
+    "texto": "Escolha a Copa Primeira Marcha — Etapa 1 e toque em Disputar."
    }
   ],
   "requer": [

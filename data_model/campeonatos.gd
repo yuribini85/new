@@ -11,6 +11,15 @@ extends RefCounted
 ## títulos em jogador.titulos: {série: quantidade}.
 
 const ESCALA := 10.0
+## Nomes antigos das séries (saves de antes da troca) -> nomes atuais.
+const RENOMEADAS := {
+	"Copa de Domingo": "Copa Primeira Marcha", "Copa Clube": "Copa dos Associados", "Copa Peso-Leve": "Copa Pena",
+	"Desafio Tração Dianteira": "Troféu Tração Dianteira", "Desafio Tração Traseira": "Troféu Tração Traseira",
+	"Desafio 4x4": "Troféu Tração Integral", "Copa Anos 80": "Encontro Retrô", "Copa Grand Tour": "Copa das Peruas",
+	"Desafio Motor Central": "Troféu Motor Central", "Campeonato GT Leve": "Categoria Prata",
+	"Campeonato GT Clube": "Categoria Bronze", "Campeonato GT Pesado": "Categoria Ouro",
+	"Mundial de Estrelas": "Torneio dos Campeões", "Liga Mundial GT": "Circuito Mundial",
+}
 
 
 static func serie(ev: Dictionary) -> String:

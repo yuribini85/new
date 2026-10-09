@@ -17,7 +17,7 @@ var sombra := false
 var girar := true
 ## Depois da linha de chegada o carro segue rodando e freia, em vez de parar
 ## em cima da linha (a simulação para de mover quem terminou).
-const DESACELERACAO_CHEGADA := 4.0  # m/s²
+const DESACELERACAO_CHEGADA := 9.0  # m/s²: para em poucos segundos, no escurecer do fim
 ## Cores de alto contraste, na ordem do grid. O jogador usa a primeira.
 const PALETA := [
 	Color(1.0, 0.82, 0.1), Color(0.25, 0.65, 1.0), Color(1.0, 0.35, 0.35), Color(0.4, 0.9, 0.45),

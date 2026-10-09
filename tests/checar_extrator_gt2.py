@@ -270,7 +270,7 @@ def main():
                 falhas.append(f"importador pneus: {pneus}")
             ev = carregar("eventos")
             if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "CLUB"} \
-                    or (ev[0]["nome"], ev[0]["pista"]) != ("Copa de Domingo — etapa 1", "serra_alta") \
+                    or (ev[0]["nome"], ev[0]["pista"]) != ("Copa Primeira Marcha — etapa 1", "serra_alta") \
                     or ev[0]["premios"] != [g(2500), g(1500)] or ev[0]["carro_premio"] != "hartwig_y" \
                     or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
                 falhas.append(f"importador eventos: {ev}")

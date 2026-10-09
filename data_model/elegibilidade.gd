@@ -46,7 +46,7 @@ static func versao_corrida(carro: Carro) -> bool:
 	return bool(carro.base.get("corrida", false)) or carro.pecas.has("corrida")
 
 
-## Prova aberta de entrada (como a Copa de Domingo do GT2): sem licença, sem
+## Prova aberta de entrada (como a prova de estreia do GT2): sem licença, sem
 ## lista de modelos e com prêmio. Referência para o "mais fácil" do Mercado.
 static func aberta_sem_licenca(ev: Dictionary) -> bool:
 	return not ev["restricoes"].has("licenca") and not ev["restricoes"].has("carros") and not ev["premios"].is_empty()

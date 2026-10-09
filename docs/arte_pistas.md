@@ -65,9 +65,9 @@ chão.
 
 Liga com `"estilo": "chapado"` no tema; as quatro pistas usam. Cada pista tem uma paleta
 (`"cores"` no tema):
-- Anel do Vale: âmbar ao entardecer;
-- Serra Alta: azul frio;
-- Parque das Docas: sódio laranja à noite;
+- Lago Sereno: âmbar ao entardecer;
+- Alto da Capela: azul frio;
+- Cais Velho: sódio laranja à noite;
 - Oval do Planalto (pista_de_testes): ocre ao meio-dia.
 
 O kit pintado continua no repositório e o `MontadorPista` ainda o usa para as medidas dos

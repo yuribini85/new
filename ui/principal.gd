@@ -319,7 +319,7 @@ func _tema() -> Theme:
 ## Avisos das telas. Assistindo a corrida, só os de erro: os outros cobririam o
 ## cabeçalho sem dar tempo de ler (a própria corrida já mostra a largada).
 func _avisar(texto: String, ok := true) -> void:
-	if ok and _abas.current_tab == 4 and not jogador.fila.is_empty():
+	if ok and _abas.current_tab == 4 and (not jogador.fila.is_empty() or _todas[4].em_silencio()):
 		return
 	_sobre.avisar(texto, ok)
 
@@ -446,7 +446,10 @@ func _processar_fila() -> void:
 		# Assistindo: um silêncio depois da chegada antes do resultado (a tela da
 		# corrida fica parada na última imagem o mesmo tempo).
 		if _abas.current_tab == 4:
-			await get_tree().create_timer(_todas[4].SILENCIO_S).timeout
+			var corrida = _todas[4]
+			await get_tree().create_timer(corrida.ESCURECER_EM_S).timeout
+			_sobre.escurecer(true, corrida.SILENCIO_S - corrida.ESCURECER_EM_S)
+			await get_tree().create_timer(corrida.SILENCIO_S - corrida.ESCURECER_EM_S).timeout
 		_resultado(rel["corridas"][0], not antes_vitorias.has(rel["corridas"][0]["evento_id"]))
 		return
 	_mostrar_relatorio(rel, "Resultado das corridas")

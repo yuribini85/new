@@ -1,7 +1,7 @@
 [
  {
   "id": "ev_000",
-  "nome": "Desafio 4x4 — etapa 1",
+  "nome": "Troféu Tração Integral — etapa 1",
   "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
@@ -66,7 +66,7 @@
  },
  {
   "id": "ev_001",
-  "nome": "Desafio 4x4 — etapa 2",
+  "nome": "Troféu Tração Integral — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
@@ -131,7 +131,7 @@
  },
  {
   "id": "ev_002",
-  "nome": "Desafio 4x4 — etapa 3",
+  "nome": "Troféu Tração Integral — etapa 3",
   "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
@@ -270,7 +270,7 @@
  },
  {
   "id": "ev_005",
-  "nome": "Copa Anos 80 — etapa 1",
+  "nome": "Encontro Retrô — etapa 1",
   "pista": "serra_alta",
   "voltas": 3,
   "condicao": "seco",
@@ -316,7 +316,7 @@
  },
  {
   "id": "ev_006",
-  "nome": "Copa Anos 80 — etapa 2",
+  "nome": "Encontro Retrô — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 3,
   "condicao": "seco",
@@ -378,7 +378,7 @@
  },
  {
   "id": "ev_007",
-  "nome": "Copa Anos 80 — etapa 3",
+  "nome": "Encontro Retrô — etapa 3",
   "pista": "pista_de_testes",
   "voltas": 3,
   "condicao": "seco",
@@ -440,7 +440,7 @@
  },
  {
   "id": "ev_008",
-  "nome": "Copa Anos 80 — etapa 4",
+  "nome": "Encontro Retrô — etapa 4",
   "pista": "anel_do_vale",
   "voltas": 3,
   "condicao": "seco",
@@ -502,7 +502,7 @@
  },
  {
   "id": "ev_009",
-  "nome": "Copa Anos 80 — etapa 5",
+  "nome": "Encontro Retrô — etapa 5",
   "pista": "serra_alta",
   "voltas": 3,
   "condicao": "seco",
@@ -1105,7 +1105,7 @@
  },
  {
   "id": "ev_022",
-  "nome": "Copa Clube — etapa 1",
+  "nome": "Copa dos Associados — etapa 1",
   "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
@@ -1149,7 +1149,7 @@
  },
  {
   "id": "ev_023",
-  "nome": "Copa Clube — etapa 2",
+  "nome": "Copa dos Associados — etapa 2",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
@@ -1193,7 +1193,7 @@
  },
  {
   "id": "ev_024",
-  "nome": "Copa Clube — etapa 3",
+  "nome": "Copa dos Associados — etapa 3",
   "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
@@ -1607,7 +1607,7 @@
  },
  {
   "id": "ev_061",
-  "nome": "Resistência do Vale",
+  "nome": "Resistência do Lago",
   "pista": "anel_do_vale",
   "voltas": 60,
   "largada_kmh": 80,
@@ -1913,7 +1913,7 @@
  },
  {
   "id": "ev_066",
-  "nome": "Resistência da Serra Curta",
+  "nome": "Resistência da Capela",
   "pista": "serra_curta",
   "voltas": 50,
   "largada_kmh": 80,
@@ -1976,7 +1976,7 @@
  },
  {
   "id": "ev_067",
-  "nome": "Resistência das Docas",
+  "nome": "Resistência do Cais",
   "pista": "parque_das_docas",
   "voltas": 99,
   "largada_kmh": 80,
@@ -2150,7 +2150,7 @@
  },
  {
   "id": "ev_070",
-  "nome": "Resistência da Serra",
+  "nome": "Resistência das Araucárias",
   "pista": "serra_alta",
   "voltas": 30,
   "largada_kmh": 80,
@@ -2258,7 +2258,7 @@
  },
  {
   "id": "ev_073",
-  "nome": "Desafio Tração Dianteira — etapa 1",
+  "nome": "Troféu Tração Dianteira — etapa 1",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
@@ -2308,7 +2308,7 @@
  },
  {
   "id": "ev_074",
-  "nome": "Desafio Tração Dianteira — etapa 2",
+  "nome": "Troféu Tração Dianteira — etapa 2",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
@@ -2358,7 +2358,7 @@
  },
  {
   "id": "ev_075",
-  "nome": "Desafio Tração Dianteira — etapa 3",
+  "nome": "Troféu Tração Dianteira — etapa 3",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
@@ -2561,7 +2561,7 @@
  },
  {
   "id": "ev_080",
-  "nome": "Desafio Tração Traseira — etapa 1",
+  "nome": "Troféu Tração Traseira — etapa 1",
   "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
@@ -2625,7 +2625,7 @@
  },
  {
   "id": "ev_081",
-  "nome": "Desafio Tração Traseira — etapa 2",
+  "nome": "Troféu Tração Traseira — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
@@ -2690,7 +2690,7 @@
  },
  {
   "id": "ev_082",
-  "nome": "Desafio Tração Traseira — etapa 3",
+  "nome": "Troféu Tração Traseira — etapa 3",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
@@ -4031,7 +4031,7 @@
  },
  {
   "id": "ev_119",
-  "nome": "Campeonato GT Leve — etapa 1",
+  "nome": "Categoria Prata — etapa 1",
   "pista": "parque_das_docas",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4092,7 +4092,7 @@
  },
  {
   "id": "ev_120",
-  "nome": "Campeonato GT Leve — etapa 2",
+  "nome": "Categoria Prata — etapa 2",
   "pista": "circuito_misto",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4152,7 +4152,7 @@
  },
  {
   "id": "ev_121",
-  "nome": "Campeonato GT Leve — etapa 3",
+  "nome": "Categoria Prata — etapa 3",
   "pista": "pista_de_testes",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4212,7 +4212,7 @@
  },
  {
   "id": "ev_122",
-  "nome": "Campeonato GT Leve — etapa 4",
+  "nome": "Categoria Prata — etapa 4",
   "pista": "serra_alta",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4272,7 +4272,7 @@
  },
  {
   "id": "ev_123",
-  "nome": "Campeonato GT Leve — etapa 5",
+  "nome": "Categoria Prata — etapa 5",
   "pista": "serra_curta",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4332,7 +4332,7 @@
  },
  {
   "id": "ev_124",
-  "nome": "Campeonato GT Pesado — etapa 1",
+  "nome": "Categoria Ouro — etapa 1",
   "pista": "circuito_misto",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4390,7 +4390,7 @@
  },
  {
   "id": "ev_125",
-  "nome": "Campeonato GT Pesado — etapa 2",
+  "nome": "Categoria Ouro — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4447,7 +4447,7 @@
  },
  {
   "id": "ev_126",
-  "nome": "Campeonato GT Pesado — etapa 3",
+  "nome": "Categoria Ouro — etapa 3",
   "pista": "parque_das_docas",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4504,7 +4504,7 @@
  },
  {
   "id": "ev_127",
-  "nome": "Campeonato GT Pesado — etapa 4",
+  "nome": "Categoria Ouro — etapa 4",
   "pista": "serra_alta",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4561,7 +4561,7 @@
  },
  {
   "id": "ev_128",
-  "nome": "Campeonato GT Pesado — etapa 5",
+  "nome": "Categoria Ouro — etapa 5",
   "pista": "serra_curta",
   "voltas": 5,
   "largada_kmh": 80,
@@ -4618,7 +4618,7 @@
  },
  {
   "id": "ev_129",
-  "nome": "Mundial de Estrelas — etapa 1",
+  "nome": "Torneio dos Campeões — etapa 1",
   "pista": "anel_do_vale",
   "voltas": 5,
   "condicao": "seco",
@@ -4678,7 +4678,7 @@
  },
  {
   "id": "ev_130",
-  "nome": "Mundial de Estrelas — etapa 2",
+  "nome": "Torneio dos Campeões — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 5,
   "condicao": "seco",
@@ -4738,7 +4738,7 @@
  },
  {
   "id": "ev_131",
-  "nome": "Mundial de Estrelas — etapa 3",
+  "nome": "Torneio dos Campeões — etapa 3",
   "pista": "parque_das_docas",
   "voltas": 5,
   "condicao": "seco",
@@ -4798,7 +4798,7 @@
  },
  {
   "id": "ev_132",
-  "nome": "Mundial de Estrelas — etapa 4",
+  "nome": "Torneio dos Campeões — etapa 4",
   "pista": "parque_das_docas",
   "voltas": 5,
   "condicao": "seco",
@@ -4858,7 +4858,7 @@
  },
  {
   "id": "ev_133",
-  "nome": "Mundial de Estrelas — etapa 5",
+  "nome": "Torneio dos Campeões — etapa 5",
   "pista": "circuito_misto",
   "voltas": 5,
   "condicao": "seco",
@@ -4918,7 +4918,7 @@
  },
  {
   "id": "ev_134",
-  "nome": "Campeonato GT Clube — etapa 1",
+  "nome": "Categoria Bronze — etapa 1",
   "pista": "parque_das_docas",
   "voltas": 3,
   "condicao": "seco",
@@ -4980,7 +4980,7 @@
  },
  {
   "id": "ev_135",
-  "nome": "Campeonato GT Clube — etapa 2",
+  "nome": "Categoria Bronze — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 3,
   "condicao": "seco",
@@ -5042,7 +5042,7 @@
  },
  {
   "id": "ev_136",
-  "nome": "Campeonato GT Clube — etapa 3",
+  "nome": "Categoria Bronze — etapa 3",
   "pista": "serra_alta",
   "voltas": 3,
   "condicao": "seco",
@@ -5104,7 +5104,7 @@
  },
  {
   "id": "ev_137",
-  "nome": "Liga Mundial GT — etapa 1",
+  "nome": "Circuito Mundial — etapa 1",
   "pista": "serra_alta",
   "voltas": 5,
   "condicao": "seco",
@@ -5162,7 +5162,7 @@
  },
  {
   "id": "ev_138",
-  "nome": "Liga Mundial GT — etapa 2",
+  "nome": "Circuito Mundial — etapa 2",
   "pista": "circuito_misto",
   "voltas": 5,
   "condicao": "seco",
@@ -5219,7 +5219,7 @@
  },
  {
   "id": "ev_139",
-  "nome": "Liga Mundial GT — etapa 3",
+  "nome": "Circuito Mundial — etapa 3",
   "pista": "serra_curta",
   "voltas": 5,
   "condicao": "seco",
@@ -5276,7 +5276,7 @@
  },
  {
   "id": "ev_140",
-  "nome": "Liga Mundial GT — etapa 4",
+  "nome": "Circuito Mundial — etapa 4",
   "pista": "parque_das_docas",
   "voltas": 5,
   "condicao": "seco",
@@ -5333,7 +5333,7 @@
  },
  {
   "id": "ev_141",
-  "nome": "Liga Mundial GT — etapa 5",
+  "nome": "Circuito Mundial — etapa 5",
   "pista": "serra_alta",
   "voltas": 5,
   "condicao": "seco",
@@ -6925,7 +6925,7 @@
  },
  {
   "id": "ev_180",
-  "nome": "Desafio Motor Central — etapa 1",
+  "nome": "Troféu Motor Central — etapa 1",
   "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
@@ -6989,7 +6989,7 @@
  },
  {
   "id": "ev_181",
-  "nome": "Desafio Motor Central — etapa 2",
+  "nome": "Troféu Motor Central — etapa 2",
   "pista": "pista_de_testes",
   "voltas": 2,
   "condicao": "seco",
@@ -7054,7 +7054,7 @@
  },
  {
   "id": "ev_182",
-  "nome": "Desafio Motor Central — etapa 3",
+  "nome": "Troféu Motor Central — etapa 3",
   "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
@@ -8644,7 +8644,7 @@
  },
  {
   "id": "ev_211",
-  "nome": "Copa de Domingo — etapa 1",
+  "nome": "Copa Primeira Marcha — etapa 1",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
@@ -8688,7 +8688,7 @@
  },
  {
   "id": "ev_212",
-  "nome": "Copa de Domingo — etapa 2",
+  "nome": "Copa Primeira Marcha — etapa 2",
   "pista": "pista_de_testes",
   "voltas": 2,
   "condicao": "seco",
@@ -8728,7 +8728,7 @@
  },
  {
   "id": "ev_213",
-  "nome": "Copa de Domingo — etapa 3",
+  "nome": "Copa Primeira Marcha — etapa 3",
   "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
@@ -9873,7 +9873,7 @@
  },
  {
   "id": "ev_235",
-  "nome": "Copa Grand Tour — etapa 1",
+  "nome": "Copa das Peruas — etapa 1",
   "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
@@ -9935,7 +9935,7 @@
  },
  {
   "id": "ev_236",
-  "nome": "Copa Grand Tour — etapa 2",
+  "nome": "Copa das Peruas — etapa 2",
   "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
@@ -9997,7 +9997,7 @@
  },
  {
   "id": "ev_237",
-  "nome": "Copa Grand Tour — etapa 3",
+  "nome": "Copa das Peruas — etapa 3",
   "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
@@ -10059,7 +10059,7 @@
  },
  {
   "id": "ev_238",
-  "nome": "Copa Peso-Leve — etapa 1",
+  "nome": "Copa Pena — etapa 1",
   "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
@@ -10105,7 +10105,7 @@
  },
  {
   "id": "ev_239",
-  "nome": "Copa Peso-Leve — etapa 2",
+  "nome": "Copa Pena — etapa 2",
   "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
@@ -10152,7 +10152,7 @@
  },
  {
   "id": "ev_240",
-  "nome": "Copa Peso-Leve — etapa 3",
+  "nome": "Copa Pena — etapa 3",
   "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",

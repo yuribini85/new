@@ -13,11 +13,22 @@ var _painel_titulo: Label
 var _painel_botoes: HFlowContainer
 var _margem: MarginContainer
 var _titulo_cor := Color.WHITE
+## Cortina preta do fim da corrida: escurece a tela antes do resultado e sai
+## quando o painel fecha.
+var _cortina: ColorRect
+var _tw_cortina: Tween
 
 
 func _init() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cortina = ColorRect.new()
+	_cortina.color = Color.BLACK
+	_cortina.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_cortina.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cortina.modulate.a = 0.0
+	_cortina.visible = false
+	add_child(_cortina)
 	# Painel modal: fundo escurecido que segura o toque, cartão com rolagem.
 	_painel_raiz = Control.new()
 	_painel_raiz.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -153,6 +164,19 @@ func _ajustar() -> void:
 
 func fechar() -> void:
 	_painel_raiz.visible = false
+	if _cortina.visible:
+		escurecer(false, 0.4)
+
+
+## Cortina: escurece (true) ou clareia a tela em `duracao` s.
+func escurecer(sim: bool, duracao: float) -> void:
+	if _tw_cortina != null:
+		_tw_cortina.kill()
+	_cortina.visible = true
+	_tw_cortina = create_tween().set_trans(Tween.TRANS_SINE)
+	_tw_cortina.tween_property(_cortina, "modulate:a", 1.0 if sim else 0.0, duracao)
+	if not sim:
+		_tw_cortina.tween_callback(func(): _cortina.visible = false)
 
 
 func aberto() -> bool:

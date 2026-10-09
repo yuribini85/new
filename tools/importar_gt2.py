@@ -125,19 +125,19 @@ PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, shortway, short, sprint2
 # do disco. Resistência (RESISTENCIA): prova única, com as voltas do GT2, sem
 # pit stop nem desgaste de pneu (o jogo não tem esses sistemas).
 SERIES = {
-    "SND": "Copa de Domingo", "CBM": "Copa Clube", "WLK": "Copa Peso-Leve",
+    "SND": "Copa Primeira Marcha", "CBM": "Copa dos Associados", "WLK": "Copa Pena",
     "GJL": "Liga Regional I", "GUL": "Liga Regional II", "GBL": "Liga Regional III",
     "GFL": "Liga Regional IV", "GGL": "Liga Regional V", "GIL": "Liga Regional VI", "GCC": "Liga Regional VII",
-    "FFC": "Desafio Tração Dianteira", "FRC": "Desafio Tração Traseira", "4WD": "Desafio 4x4",
-    "80S": "Copa Anos 80", "HTC": "Troféu 250", "WOS": "Copa Aberta 250", "SLS": "Copa 400", "PSC": "Série 400",
-    "WGN": "Copa Grand Tour", "MRC": "Desafio Motor Central", "MSC": "Copa Livre", "PFL": "Série 550",
-    "STT": "Série 500", "EPL": "Copa Continental", "GT3": "Campeonato GT Leve", "GTC": "Campeonato GT Clube",
-    "GT5": "Campeonato GT Pesado", "GTA": "Mundial de Estrelas", "GTW": "Liga Mundial GT", "TCN": "Copa Turismo",
+    "FFC": "Troféu Tração Dianteira", "FRC": "Troféu Tração Traseira", "4WD": "Troféu Tração Integral",
+    "80S": "Encontro Retrô", "HTC": "Troféu 250", "WOS": "Copa Aberta 250", "SLS": "Copa 400", "PSC": "Série 400",
+    "WGN": "Copa das Peruas", "MRC": "Troféu Motor Central", "MSC": "Copa Livre", "PFL": "Série 550",
+    "STT": "Série 500", "EPL": "Copa Continental", "GT3": "Categoria Prata", "GTC": "Categoria Bronze",
+    "GT5": "Categoria Ouro", "GTA": "Torneio dos Campeões", "GTW": "Circuito Mundial", "TCN": "Copa Turismo",
     "TCT": "Copa Preparados",
-    # Resistência (nome pela nossa pista: highway, seattle e circuit viram o Anel do Vale).
-    "EGV": "Resistência do Vale", "ELS": "Resistência do Vinhedo", "EPS": "Resistência da Serra Curta",
-    "ERM": "Resistência das Docas", "ES5": "Resistência Expressa", "EST": "Resistência do Anel",
-    "ETM": "Resistência da Serra",
+    # Resistência (nome pela nossa pista: highway, seattle e circuit viram o Lago Sereno).
+    "EGV": "Resistência do Lago", "ELS": "Resistência do Vinhedo", "EPS": "Resistência da Capela",
+    "ERM": "Resistência do Cais", "ES5": "Resistência Expressa", "EST": "Resistência do Anel",
+    "ETM": "Resistência das Araucárias",
 }
 RESISTENCIA = {"EGV", "ELS", "EPS", "ERM", "ES5", "EST", "ETM"}
 LICENCAS_GT2 = ["B", "A", "IC", "IB", "IA"]

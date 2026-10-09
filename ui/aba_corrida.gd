@@ -15,9 +15,11 @@ signal pular
 ## Seletor de câmera: some (perde contraste) depois deste tempo sem toque.
 const SELETOR_OCIOSO_S := 4.0
 const SELETOR_APAGADO := 0.3
-## Depois da chegada: silêncio visual antes do resultado (a tela principal
-## espera o mesmo antes de abrir o painel).
-const SILENCIO_S := 2.0
+## Depois da chegada: os carros seguem freando e a tela escurece antes do
+## resultado (a tela principal espera o mesmo antes de abrir o painel).
+const SILENCIO_S := 3.6
+## Começo e duração do escurecimento dentro do silêncio.
+const ESCURECER_EM_S := 1.0
 ## Eventos: aproximação vale quando a diferença cai abaixo disto (s), e o
 ## mesmo rival não gera outro aviso antes de EVENTO_RIVAL_S.
 const APROXIMA_S := 0.6
@@ -239,15 +241,12 @@ func _construir_painel() -> void:
 		c.queue_free()
 	_em_andamento = not jogador.fila.is_empty()
 	_cameras.visible = _em_andamento
-	if _em_andamento:
-		# Ações excepcionais durante a corrida: links discretos, não botões.
+	if _em_andamento and Preferencias.permite_pular():
+		# Só no teste: pular para o resultado (link discreto).
 		var h := HBoxContainer.new()
 		h.alignment = BoxContainer.ALIGNMENT_CENTER
 		_painel.add_child(h)
-		if Preferencias.permite_pular():
-			botao_texto("Ver resultado (teste)", func(): pular.emit(), h)
-		botao_texto("Voltar à garagem", func(): ir_para.emit(GARAGEM), h).add_theme_color_override("font_color",
-				COR_SECUNDARIA)
+		botao_texto("Ver resultado (teste)", func(): pular.emit(), h)
 	var u: Dictionary = jogador.ultima_corrida
 	if u.is_empty():
 		if not _em_andamento:
@@ -552,6 +551,8 @@ func _process(delta: float) -> void:
 		_sons.motor(false)
 		_painel_hud.secundario = 0.0
 		_visual3d.chegada = minf(_visual3d.chegada + delta / 3.0, 1.0)
+		# O tempo segue além do fim: quem cruzou a linha continua freando.
+		_visual.tempo += delta
 		if _visual3d.visible:
 			_visual3d.atualizar(delta)
 		return

@@ -31,7 +31,7 @@ e quantos estão entre os 38 importados.
 
 Medição com os 17 carros de fábrica (piloto do jogador, sem rivais):
 
-- No Anel do Vale (reta de 1.034 m, a maior das três), a velocidade máxima atingida fica
+- No Lago Sereno (reta de 1.034 m, a maior das três), a velocidade máxima atingida fica
   **20 a 70 km/h abaixo** do corte na última marcha, para todos os carros. Ninguém chega
   ao corte, então alongar a relação só tira força.
 - Em 11 dos 17 carros, o corte na última marcha coincide com a velocidade de equilíbrio
@@ -50,14 +50,14 @@ comportamento de cada grupo é o que importa para o desenho.
 | Grupo | Códigos | Comportamento | Hoje |
 |---|---|---|---|
 | 1. Retas muito longas | test_in2, testline?, maxspeed | duas retas de vários quilômetros e curvas rápidas e largas; velocidade final decide | Anel (não representa) |
-| 2. Rápida fluida | highway, speed, s_speed?, circuit?, seattle, seatt_s | retas longas (~1 km) e curvas de raio grande | **Anel do Vale** |
-| 3. Rua técnica | roma, roma_short, short?, shortway?, sprint2? | retas curtas e médias, muitas curvas de 90°, frenagens fortes | **Parque das Docas** |
+| 2. Rápida fluida | highway, speed, s_speed?, circuit?, seattle, seatt_s | retas longas (~1 km) e curvas de raio grande | **Lago Sereno** |
+| 3. Rua técnica | roma, roma_short, short?, shortway?, sprint2? | retas curtas e médias, muitas curvas de 90°, frenagens fortes | **Cais Velho** |
 | 4. Misto permanente | laguna, autumn | retas médias, curvas de raios variados, sequências de curvas, desníveis | Docas (não representa) |
-| 5. Montanha e estrada | mountain, grindel, tahiti_t, parma | curvas fechadas encadeadas, retas curtas | **Serra Alta** |
+| 5. Montanha e estrada | mountain, grindel, tahiti_t, parma | curvas fechadas encadeadas, retas curtas | **Alto da Capela** |
 
 ## Proposta: duas pistas novas
 
-**A. Pista de testes (grupo 1)**: a experimental, primeiro só headless.
+**A. Pista de testes, Oval do Planalto (grupo 1)**: a experimental, primeiro só headless.
 - Duas retas muito longas ligadas por curvas rápidas, e uma chicane ou curva lenta
   para a aceleração também contar.
 - Comprimento das retas: o mínimo para os carros com câmbio limitado pelo corte
@@ -91,7 +91,7 @@ corte. Sem eventos nem visual próprio por enquanto (usa o tema padrão).
 
 Melhor ajuste do câmbio ajustável (2 voltas, média de 3 sementes):
 
-| Preparação | Anel do Vale | Pista de testes |
+| Preparação | Lago Sereno | Oval do Planalto |
 |---|---|---|
 | De fábrica | curto em 12 carros, equilibrado em 5, longo em nenhum | equilibrado em 15, curto em 2, longo em nenhum |
 | Motor preparado (estágio mais forte de cada peça de potência) | equilibrado em 12, longo em 3, curto em 2 | **longo em 10**, equilibrado em 7 |
@@ -103,10 +103,10 @@ acaba no equilíbrio com o arrasto, e por isso "Longo" não ajuda. Preparar o mo
 alongar o câmbio é a combinação que a pista revela, como no GT2.
 
 **No jogo:** os 3 eventos de test_in2 (Liga Regional V, etapas 1 a 3) e o de testline
-(Copa de Domingo, etapa 2) correm aqui. O tema visual é um planalto seco com mesas ao
+(Copa Primeira Marcha, etapa 2) correm aqui. O tema visual é um planalto seco com mesas ao
 longe. Licenças recalibradas; os contratos não mudaram.
 
-Efeito no começo do jogo: a Copa de Domingo etapa 2, segunda prova de quem começa, agora
+Efeito no começo do jogo: a Copa Primeira Marcha etapa 2, segunda prova de quem começa, agora
 é de velocidade máxima. Com os carros iniciais de fábrica ela não se vence só com peças
 baratas, e o jogador passa pelos contratos da B antes de voltar a ela. A identificação de
 testline como "retas muito longas" ainda está marcada como provável.

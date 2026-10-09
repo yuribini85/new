@@ -11,13 +11,13 @@
 # ---------------------------------------------------------------- I. Prólogo
 = SCN_A00 | GAME_START | personagem=adrian; bloqueia=sim; flags=STORY_STARTED; proxima=SCN_A01; capitulo=I
 [ILUSTRACAO:anel_do_vale]
-Sistema: Anel do Vale. Última semana da temporada.
+Sistema: Lago Sereno. Última semana da temporada.
 Sistema: Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus, o mecânico, cuida do resto.
 Sistema: Daqui até a Elite são seis licenças. Ninguém da família passou da segunda.
 Adrian: Ainda.
 
 = SCN_A01 | ENCADEADA | personagem=adrian; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; capitulo=I; cenario=garagem_cross
-Marcus: {carro} lavado, tanque cheio. Pronto para a Copa de Domingo.
+Marcus: {carro} lavado, tanque cheio. Pronto para a Copa Primeira Marcha.
 Adrian: Pronto não. Ele freia cedo demais.
 Elena: Abre a ficha antes de reclamar.
 [OPEN_GARAGE_TAB]
@@ -50,10 +50,10 @@ Sistema: Toque em Correr na barra de baixo.
 Elena: Cada cartão é uma prova: pista, voltas, prêmio e o que o regulamento aceita.
 [HIGHLIGHT_EVENT_CARD]
 Elena: A barra "seu carro × rivais" diz se dá para ganhar antes de você tentar.
-Marcus: A Copa de Domingo tem três etapas e conta pontos. Campeão é quem soma mais.
+Marcus: A Copa Primeira Marcha tem três etapas e conta pontos. Campeão é quem soma mais.
 Elena: Corra as etapas em ordem. Fora de ordem vira corrida comum.
 Adrian: Fecho as três e a gente fala de motor.
-Sistema: Escolha a Copa de Domingo — Etapa 1 e toque em Disputar.
+Sistema: Escolha a Copa Primeira Marcha — Etapa 1 e toque em Disputar.
 
 = SCN_A05 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I; cenario=box_largada
 Marcus: {voltas} voltas em {pista}.

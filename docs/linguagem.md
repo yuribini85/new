@@ -39,7 +39,7 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
 | Hoje | Proposta | Por quê |
 | --- | --- | --- |
 | Prova / evento / corrida (uma largada) | **Corrida** | palavra de todo mundo |
-| Série, copa, etapas | **Campeonato** (nome próprio: "Copa de Domingo"), **etapa 2 de 3** | agrupa as corridas |
+| Série, copa, etapas | **Campeonato** (nome próprio: "Copa Primeira Marcha"), **etapa 2 de 3** | agrupa as corridas |
 | Desafiar | **Correr** | o jogador entende na hora |
 | Correr ×N (vencidas) / "Renda: repetir vencidas" | **Disputar de novo ×N** + linha "Rende créditos, até com o app fechado" | diz o ganho |
 | Repetir (resultado) | **Disputar de novo** | idem |

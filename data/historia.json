@@ -6,7 +6,7 @@
    "SPORT"
   ],
   "saldo_da_peca": "hayase_raikou_brake_1",
-  "campeonato": "Copa de Domingo"
+  "campeonato": "Copa Primeira Marcha"
  },
  "elena": {
   "saldo": "saldo_inicial"
@@ -96,7 +96,7 @@
  },
  "ilustracoes": {
   "anel_do_vale": {
-   "nome": "Anel do Vale, fim de temporada",
+   "nome": "Lago Sereno, fim de temporada",
    "provisorio": "banner_anel_do_vale"
   },
   "acidente": {

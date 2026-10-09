@@ -1000,17 +1000,20 @@ func selos_carro(base: Dictionary) -> Array:
 
 
 ## Nomes que não saem do id.
-const NOMES_PISTA := {"circuito_misto": "Colinas do Vinhedo", "pista_de_testes": "Oval do Planalto", "docas_curta": "Parque das Docas (curta)",
-	"anel_curto": "Anel do Vale (curto)", "serra_curta": "Serra Alta (curta)"}
+## Os ids são internos; o nome de cada pista é este (todas originais).
+const NOMES_PISTA := {"anel_do_vale": "Lago Sereno", "anel_curto": "Lago Sereno (curto)",
+	"parque_das_docas": "Cais Velho", "docas_curta": "Cais Velho (curto)",
+	"serra_alta": "Alto da Capela", "serra_curta": "Alto da Capela (curto)",
+	"pista_de_testes": "Oval do Planalto", "circuito_misto": "Colinas do Vinhedo"}
 
 
-## Nome legível de uma pista a partir do id ("serra_alta" -> "Serra Alta").
-## Nome da prova para a tela: "Copa de Domingo — Etapa 1" (nos dados a
+## Nome da prova para a tela: "Copa Primeira Marcha — Etapa 1" (nos dados a
 ## etapa vem em minúscula, que é a chave dos campeonatos).
 static func nome_evento(ev: Dictionary) -> String:
 	return String(ev.get("nome", "")).replace(" — etapa ", " — Etapa ")
 
 
+## Nome legível de uma pista (NOMES_PISTA; sem entrada, sai do id).
 static func nome_pista(id: String) -> String:
 	if NOMES_PISTA.has(id):
 		return NOMES_PISTA[id]

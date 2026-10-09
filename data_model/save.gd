@@ -164,7 +164,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 				var pts := {}
 				for q in c["pontos"]:
 					pts[q] = int(c["pontos"][q])
-				jogador.campeonatos[k] = {"etapa": int(c.get("etapa", 0)), "pontos": pts}
+				jogador.campeonatos[Campeonatos.RENOMEADAS.get(k, k)] = {"etapa": int(c.get("etapa", 0)), "pontos": pts}
 	jogador.personagem = String(s.get("personagem", ""))
 	jogador.segundo_piloto = String(s.get("segundo_piloto", ""))
 	jogador.carro_companheiro = int(s.get("carro_companheiro", -1))
@@ -177,7 +177,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	jogador.titulos = {}
 	if s.get("titulos") is Dictionary:
 		for k in s["titulos"]:
-			jogador.titulos[k] = int(s["titulos"][k])
+			jogador.titulos[Campeonatos.RENOMEADAS.get(k, k)] = int(s["titulos"][k])
 	jogador.dias = int(s["dias"])
 	jogador.fila = s["fila"]
 	if not jogador.fila.is_empty():
