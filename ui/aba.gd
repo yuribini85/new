@@ -525,7 +525,7 @@ func proximo_passo(t: String, botao_texto: String, indice: int, pai: Control = n
 
 
 ## Painel com a ficha de um modelo: vitrine 3D, fabricante, números e como
-## conseguir (novo, usado, prêmio de qual prova).
+## conseguir (a workshop que vende, prêmio de qual prova).
 ## Ficha do modelo: vitrine grande, números, comparação com o carro em uso,
 ## como conseguir e fabricante. `extras`: selos a mais ([[texto, cor]]);
 ## `compra`: [texto, Callable, habilitado] vira o botão principal do painel.
@@ -568,11 +568,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		selos(extras + comp, v)
 		if not compra.is_empty() and not compra[2]:
 			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)
-		var como := []
-		if base.get("novo", true):
-			como.append("novo nas Lojas por %s G" % dinheiro(int(base["preco"])))
-		if not base.get("usados", []).is_empty():
-			como.append("usado em alguns períodos")
+		var como := ["à venda na %s por %s G" % [workshop_de(String(base.get("fabricante", ""))), dinheiro(int(base["preco"]))]]
 		for ev in dados.lista("eventos"):
 			if ev.get("carro_premio") == base["id"]:
 				como.append("prêmio da 1ª vitória em %s" % ev["nome"])
@@ -583,20 +579,11 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		rotulo("EQUIPES QUE CORREM COM ELE", FONTE_PEQUENA, COR_SECUNDARIA, ve)
 		rotulo(", ".join(equipes) + "." if not equipes.is_empty() else "Nenhuma equipe rival usa este modelo.",
 				FONTE_PEQUENA + 2, Color.WHITE, ve)
-		var raro: bool = not base.get("novo", true) and base.get("usados", []).is_empty()
+		var raro := false
 		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
 		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
 		rotulo("Revenda depois: %s G" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
-		if not base.get("usados", []).is_empty():
-			var desejado: bool = base["id"] in jogador.desejos
-			var bd := botao_texto("♥ Avisando quando aparecer usado (parar)" if desejado else "♡ Avisar quando aparecer usado", func():
-				if desejado:
-					jogador.desejos.erase(base["id"])
-				else:
-					jogador.desejos.append(base["id"])
-				mudou.emit(), vc)
-			bd.pressed.connect(func(): bd.text = "Feito: veja as Lojas")
 		if not fab.is_empty():
 			var vf := cartao(Color.TRANSPARENT, v)
 			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)
@@ -854,6 +841,14 @@ func botao_texto(t: String, acao: Callable, pai: Control = null, habilitado := t
 
 
 ## Commit publicado (versao.txt, gerado pelo workflow do Pages) ou "local".
+## Nome da workshop que vende os carros do fabricante (Lojas).
+func workshop_de(fabricante: String) -> String:
+	for w in dados.workshops():
+		if fabricante in w.get("fabricantes", []):
+			return String(w["nome"])
+	return String(dados.item("fabricantes", fabricante).get("nome", "Lojas")) if dados.existe("fabricantes", fabricante) else "Lojas"
+
+
 static func versao() -> String:
 	var v := FileAccess.get_file_as_string("res://versao.txt").strip_edges()
 	return v if v != "" else "local"

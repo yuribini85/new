@@ -23,6 +23,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |
 | `carros_removidos.json` | objeto `{id que saiu: id que ficou}` (decisão 40). **Gerado** pelo importador; o save migra carros e peças por ele |
+| `workshops.json` | lista de `{id, nome, logo, fabricantes}` (decisão 42): as lojas e as marcas que cada uma vende; `logo` = prefixo dos arquivos em `arte/ui/workshops/`. Feito à mão (não vem do GT2) |
 | `monetizacao.json` | objeto `{aceleracao: {fator, duracao_s, teto_s}}` (decisão 39): corridas aceleradas pelo vídeo com recompensa. `teto_s` `null` = sem teto (pendente de playtest). Opcional; feito à mão (não vem do GT2) |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
@@ -30,7 +31,9 @@ sintéticos (só para teste) em `tests/fixtures/`.
 
 - Dinheiro em **Giros (G)**: todo valor em Cr do GT2 (preços, usados, prêmios, bônus de campeão,
   saldo inicial) passa por `moeda()` no importador: × `FATOR_MOEDA` (0,0427), arredondado. As
-  proporções entre valores ficam as do GT2; os números (e o padrão de 00/000) não.
+  proporções entre valores ficam as do GT2; os números (e o padrão de 00/000) não. Preços de
+  compra (carros, peças, pneus, usados) ainda × `FATOR_PRECO` (2, decisão 41): `preco_loja()`.
+- Voltas das provas: as do GT2 × `FATOR_VOLTAS` (2,5, decisão 41), arredondado.
 
 - `tracao`: `FF`, `FR`, `MR`, `RR` ou `4WD`.
 - `potencia` em cv; `peso` em kg; `velocidade_max` em km/h.

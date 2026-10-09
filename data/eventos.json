@@ -3,7 +3,7 @@
   "id": "ev_000",
   "nome": "Troféu Tração Integral — etapa 1",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -68,7 +68,7 @@
   "id": "ev_001",
   "nome": "Troféu Tração Integral — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -133,7 +133,7 @@
   "id": "ev_002",
   "nome": "Troféu Tração Integral — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 700,
@@ -198,7 +198,7 @@
   "id": "ev_003",
   "nome": "Copa Wexmoor Rowan",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -234,7 +234,7 @@
   "id": "ev_004",
   "nome": "Copa Wexmoor Rowan Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -270,7 +270,7 @@
   "id": "ev_005",
   "nome": "Encontro Retrô — etapa 1",
   "pista": "serra_alta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -316,7 +316,7 @@
   "id": "ev_006",
   "nome": "Encontro Retrô — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -378,7 +378,7 @@
   "id": "ev_007",
   "nome": "Encontro Retrô — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -440,7 +440,7 @@
   "id": "ev_008",
   "nome": "Encontro Retrô — etapa 4",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -502,7 +502,7 @@
   "id": "ev_009",
   "nome": "Encontro Retrô — etapa 5",
   "pista": "serra_alta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -564,7 +564,7 @@
   "id": "ev_010",
   "nome": "Copa Mizuchi Wadachi",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -597,7 +597,7 @@
   "id": "ev_011",
   "nome": "Copa Mizuchi e Hayase",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -649,7 +649,7 @@
   "id": "ev_012",
   "nome": "Copa Mizuchi Hanabi",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -696,7 +696,7 @@
   "id": "ev_013",
   "nome": "Copa Mizuchi Hanabi Corrida",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -762,7 +762,7 @@
   "id": "ev_014",
   "nome": "Copa Hayase e Mizuchi",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -811,7 +811,7 @@
   "id": "ev_015",
   "nome": "Copa Hayase Rin e Sazanami Corrida",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -876,7 +876,7 @@
   "id": "ev_016",
   "nome": "Copa Kanaya Murasame",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -908,7 +908,7 @@
   "id": "ev_017",
   "nome": "Copa Kanaya Murasame Corrida",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -936,7 +936,7 @@
   "id": "ev_018",
   "nome": "Copa Dunmere Merlin e Ashcombe Wren",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -973,7 +973,7 @@
   "id": "ev_019",
   "nome": "Copa Dunmere e Ashcombe Corrida",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1011,7 +1011,7 @@
   "id": "ev_020",
   "nome": "Copa Lindauer Sperber",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1043,7 +1043,7 @@
   "id": "ev_021",
   "nome": "Copa Lindauer Sperber Corrida",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1072,7 +1072,7 @@
   "id": "ev_022",
   "nome": "Copa dos Associados — etapa 1",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -1116,7 +1116,7 @@
   "id": "ev_023",
   "nome": "Copa dos Associados — etapa 2",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -1160,7 +1160,7 @@
   "id": "ev_024",
   "nome": "Copa dos Associados — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "licenca": "CLUB"
@@ -1206,7 +1206,7 @@
   "id": "ev_025",
   "nome": "Copa Bancroft Sidewinder",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1256,7 +1256,7 @@
   "id": "ev_026",
   "nome": "Copa Bancroft Sidewinder Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1323,7 +1323,7 @@
   "id": "ev_027",
   "nome": "Copa Garrison Pecos",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1359,7 +1359,7 @@
   "id": "ev_028",
   "nome": "Copa Garrison Pecos Corrida",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1395,7 +1395,7 @@
   "id": "ev_056",
   "nome": "Copa Garrison Arroyo",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1431,7 +1431,7 @@
   "id": "ev_057",
   "nome": "Copa Garrison Arroyo e Bison Corrida",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1470,7 +1470,7 @@
   "id": "ev_058",
   "nome": "Copa Whitlock Sagebrush",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1505,7 +1505,7 @@
   "id": "ev_059",
   "nome": "Copa Whitlock Saddle",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1537,7 +1537,7 @@
   "id": "ev_060",
   "nome": "Copa Whitlock Saddle Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1566,7 +1566,7 @@
   "id": "ev_061",
   "nome": "Resistência do Lago",
   "pista": "anel_do_vale",
-  "voltas": 60,
+  "voltas": 150,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1629,7 +1629,7 @@
   "id": "ev_062",
   "nome": "Resistência do Vinhedo",
   "pista": "circuito_misto",
-  "voltas": 90,
+  "voltas": 225,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1686,7 +1686,7 @@
   "id": "ev_063",
   "nome": "Copa Continental — etapa 1",
   "pista": "serra_curta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -1748,7 +1748,7 @@
   "id": "ev_064",
   "nome": "Copa Continental — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -1810,7 +1810,7 @@
   "id": "ev_065",
   "nome": "Copa Continental — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -1872,7 +1872,7 @@
   "id": "ev_066",
   "nome": "Resistência da Capela",
   "pista": "serra_curta",
-  "voltas": 50,
+  "voltas": 125,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1935,7 +1935,7 @@
   "id": "ev_067",
   "nome": "Resistência do Cais",
   "pista": "parque_das_docas",
-  "voltas": 99,
+  "voltas": 248,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1993,7 +1993,7 @@
   "id": "ev_068",
   "nome": "Resistência Expressa",
   "pista": "anel_do_vale",
-  "voltas": 50,
+  "voltas": 125,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -2050,7 +2050,7 @@
   "id": "ev_069",
   "nome": "Resistência do Anel",
   "pista": "anel_do_vale",
-  "voltas": 40,
+  "voltas": 100,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -2109,7 +2109,7 @@
   "id": "ev_070",
   "nome": "Resistência das Araucárias",
   "pista": "serra_alta",
-  "voltas": 30,
+  "voltas": 75,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -2157,7 +2157,7 @@
   "id": "ev_071",
   "nome": "Copa Morel Caillou",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2189,7 +2189,7 @@
   "id": "ev_072",
   "nome": "Copa Morel Caillou Corrida",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2217,7 +2217,7 @@
   "id": "ev_073",
   "nome": "Troféu Tração Dianteira — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -2267,7 +2267,7 @@
   "id": "ev_074",
   "nome": "Troféu Tração Dianteira — etapa 2",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -2317,7 +2317,7 @@
   "id": "ev_075",
   "nome": "Troféu Tração Dianteira — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -2367,7 +2367,7 @@
   "id": "ev_076",
   "nome": "Copa Saulieu Loriot e Ecume",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2408,7 +2408,7 @@
   "id": "ev_077",
   "nome": "Copa Saulieu Loriot",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2445,7 +2445,7 @@
   "id": "ev_078",
   "nome": "Copa Saulieu Loriot Corrida",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2482,7 +2482,7 @@
   "id": "ev_079",
   "nome": "Copa Saulieu Loriot e Ecume Corrida",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2519,7 +2519,7 @@
   "id": "ev_080",
   "nome": "Troféu Tração Traseira — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -2583,7 +2583,7 @@
   "id": "ev_081",
   "nome": "Troféu Tração Traseira — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 450,
@@ -2648,7 +2648,7 @@
   "id": "ev_082",
   "nome": "Troféu Tração Traseira — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -2713,7 +2713,7 @@
   "id": "ev_091",
   "nome": "Copa Vallon Rafale",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2745,7 +2745,7 @@
   "id": "ev_092",
   "nome": "Copa Vallon Rafale Corrida",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2781,7 +2781,7 @@
   "id": "ev_095",
   "nome": "Copa Vorhaus Specht",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2813,7 +2813,7 @@
   "id": "ev_096",
   "nome": "Copa Vorhaus Specht Corrida",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2843,7 +2843,7 @@
   "id": "ev_097",
   "nome": "Liga Regional III — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -2904,7 +2904,7 @@
   "id": "ev_098",
   "nome": "Liga Regional III — etapa 2",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -2966,7 +2966,7 @@
   "id": "ev_099",
   "nome": "Liga Regional III — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -3027,7 +3027,7 @@
   "id": "ev_100",
   "nome": "Copa Ostwerk e Hartwig",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3077,7 +3077,7 @@
   "id": "ev_101",
   "nome": "Liga Regional VII — etapa 1",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -3139,7 +3139,7 @@
   "id": "ev_102",
   "nome": "Liga Regional VII — etapa 2",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -3201,7 +3201,7 @@
   "id": "ev_103",
   "nome": "Liga Regional VII — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3263,7 +3263,7 @@
   "id": "ev_104",
   "nome": "Liga Regional IV — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -3325,7 +3325,7 @@
   "id": "ev_105",
   "nome": "Liga Regional IV — etapa 2",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3387,7 +3387,7 @@
   "id": "ev_106",
   "nome": "Liga Regional V — etapa 1",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 220,
@@ -3448,7 +3448,7 @@
   "id": "ev_107",
   "nome": "Liga Regional V — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3510,7 +3510,7 @@
   "id": "ev_108",
   "nome": "Liga Regional V — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 450,
@@ -3570,7 +3570,7 @@
   "id": "ev_109",
   "nome": "Liga Regional VI — etapa 1",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -3628,7 +3628,7 @@
   "id": "ev_110",
   "nome": "Liga Regional VI — etapa 2",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3690,7 +3690,7 @@
   "id": "ev_111",
   "nome": "Liga Regional I — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -3752,7 +3752,7 @@
   "id": "ev_112",
   "nome": "Liga Regional I — etapa 2",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3810,7 +3810,7 @@
   "id": "ev_113",
   "nome": "Liga Regional I — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -3867,7 +3867,7 @@
   "id": "ev_115",
   "nome": "Copa Hayase Gekko",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3899,7 +3899,7 @@
   "id": "ev_116",
   "nome": "Copa Hayase Gekko Corrida",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3927,7 +3927,7 @@
   "id": "ev_117",
   "nome": "Copa Lindauer Sperber II",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3959,7 +3959,7 @@
   "id": "ev_118",
   "nome": "Copa Lindauer Sperber Corrida II",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3989,7 +3989,7 @@
   "id": "ev_119",
   "nome": "Categoria Prata — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4050,7 +4050,7 @@
   "id": "ev_120",
   "nome": "Categoria Prata — etapa 2",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4110,7 +4110,7 @@
   "id": "ev_121",
   "nome": "Categoria Prata — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4170,7 +4170,7 @@
   "id": "ev_122",
   "nome": "Categoria Prata — etapa 4",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4230,7 +4230,7 @@
   "id": "ev_123",
   "nome": "Categoria Prata — etapa 5",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4290,7 +4290,7 @@
   "id": "ev_124",
   "nome": "Categoria Ouro — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4348,7 +4348,7 @@
   "id": "ev_125",
   "nome": "Categoria Ouro — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4405,7 +4405,7 @@
   "id": "ev_126",
   "nome": "Categoria Ouro — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4462,7 +4462,7 @@
   "id": "ev_127",
   "nome": "Categoria Ouro — etapa 4",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4519,7 +4519,7 @@
   "id": "ev_128",
   "nome": "Categoria Ouro — etapa 5",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4576,7 +4576,7 @@
   "id": "ev_129",
   "nome": "Torneio dos Campeões — etapa 1",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -4636,7 +4636,7 @@
   "id": "ev_130",
   "nome": "Torneio dos Campeões — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -4696,7 +4696,7 @@
   "id": "ev_131",
   "nome": "Torneio dos Campeões — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -4756,7 +4756,7 @@
   "id": "ev_132",
   "nome": "Torneio dos Campeões — etapa 4",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -4816,7 +4816,7 @@
   "id": "ev_133",
   "nome": "Torneio dos Campeões — etapa 5",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -4876,7 +4876,7 @@
   "id": "ev_134",
   "nome": "Categoria Bronze — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -4938,7 +4938,7 @@
   "id": "ev_135",
   "nome": "Categoria Bronze — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -5000,7 +5000,7 @@
   "id": "ev_136",
   "nome": "Categoria Bronze — etapa 3",
   "pista": "serra_alta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -5062,7 +5062,7 @@
   "id": "ev_137",
   "nome": "Circuito Mundial — etapa 1",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5120,7 +5120,7 @@
   "id": "ev_138",
   "nome": "Circuito Mundial — etapa 2",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5177,7 +5177,7 @@
   "id": "ev_139",
   "nome": "Circuito Mundial — etapa 3",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5234,7 +5234,7 @@
   "id": "ev_140",
   "nome": "Circuito Mundial — etapa 4",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5291,7 +5291,7 @@
   "id": "ev_141",
   "nome": "Circuito Mundial — etapa 5",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 13,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5348,7 +5348,7 @@
   "id": "ev_142",
   "nome": "Liga Regional II — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -5410,7 +5410,7 @@
   "id": "ev_143",
   "nome": "Liga Regional II — etapa 2",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -5472,7 +5472,7 @@
   "id": "ev_144",
   "nome": "Liga Regional II — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -5534,7 +5534,7 @@
   "id": "ev_145",
   "nome": "Copa Hartwig Wiesel",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5566,7 +5566,7 @@
   "id": "ev_146",
   "nome": "Copa Hartwig Lauf e Graupel",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5612,7 +5612,7 @@
   "id": "ev_147",
   "nome": "Copa Hartwig Lauf e Graupel Corrida",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5677,7 +5677,7 @@
   "id": "ev_148",
   "nome": "Copa Hartwig Wiesel Corrida",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5707,7 +5707,7 @@
   "id": "ev_149",
   "nome": "Copa Hayase Enju e Cutler Rattler",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5740,7 +5740,7 @@
   "id": "ev_150",
   "nome": "Copa Hayase Enju e Mizuchi Chidori Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5777,7 +5777,7 @@
   "id": "ev_151",
   "nome": "Copa Mizuchi Wadachi II",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5814,7 +5814,7 @@
   "id": "ev_152",
   "nome": "Copa Hayase e Hozuki",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5867,7 +5867,7 @@
   "id": "ev_153",
   "nome": "Copa Hayase Pika e Hozuki Samidare Corrida",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5934,7 +5934,7 @@
   "id": "ev_154",
   "nome": "Copa Arvelle Outlaw",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5983,7 +5983,7 @@
   "id": "ev_155",
   "nome": "Copa Arvelle e Hozuki",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6039,7 +6039,7 @@
   "id": "ev_156",
   "nome": "Troféu 250 — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -6085,7 +6085,7 @@
   "id": "ev_157",
   "nome": "Troféu 250 — etapa 2",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -6135,7 +6135,7 @@
   "id": "ev_158",
   "nome": "Troféu 250 — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -6196,7 +6196,7 @@
   "id": "ev_159",
   "nome": "Copa Varenna Falco e Lucciola",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6240,7 +6240,7 @@
   "id": "ev_160",
   "nome": "Copa Varenna Falco e Lucciola Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6287,7 +6287,7 @@
   "id": "ev_161",
   "nome": "Copa Ottavo Nebbia e Rondine",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6325,7 +6325,7 @@
   "id": "ev_162",
   "nome": "Copa Ottavo Nebbia e Rondine Corrida",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6362,7 +6362,7 @@
   "id": "ev_163",
   "nome": "Copa Castellani Torrente",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6403,7 +6403,7 @@
   "id": "ev_164",
   "nome": "Copa Castellani Torrente Corrida",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6433,7 +6433,7 @@
   "id": "ev_165",
   "nome": "Copa Kanaya e Pemberly",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6475,7 +6475,7 @@
   "id": "ev_166",
   "nome": "Copa Pemberly e Tokiwa",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6528,7 +6528,7 @@
   "id": "ev_167",
   "nome": "Copa Pemberly e Tokiwa Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6583,7 +6583,7 @@
   "id": "ev_168",
   "nome": "Copa Kanaya Yuzuki e Pemberly Sedge Corrida",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6620,7 +6620,7 @@
   "id": "ev_169",
   "nome": "Copa Tokiwa Unabara",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6652,7 +6652,7 @@
   "id": "ev_170",
   "nome": "Copa Tokiwa Unabara Corrida",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6681,7 +6681,7 @@
   "id": "ev_177",
   "nome": "Copa Hayase Tenrai e Sanga Usagi",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6730,7 +6730,7 @@
   "id": "ev_178",
   "nome": "Copa Sanga Inazuma",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6779,7 +6779,7 @@
   "id": "ev_179",
   "nome": "Copa Sanga Inazuma Corrida",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6840,7 +6840,7 @@
   "id": "ev_180",
   "nome": "Troféu Motor Central — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -6904,7 +6904,7 @@
   "id": "ev_181",
   "nome": "Troféu Motor Central — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -6969,7 +6969,7 @@
   "id": "ev_182",
   "nome": "Troféu Motor Central — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -7032,7 +7032,7 @@
   "id": "ev_183",
   "nome": "Copa Livre — etapa 1",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -7091,7 +7091,7 @@
   "id": "ev_184",
   "nome": "Copa Livre — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -7149,7 +7149,7 @@
   "id": "ev_185",
   "nome": "Copa Livre — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -7208,7 +7208,7 @@
   "id": "ev_186",
   "nome": "Copa Hayase",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7264,7 +7264,7 @@
   "id": "ev_187",
   "nome": "Copa Hayase Corrida",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7337,7 +7337,7 @@
   "id": "ev_188",
   "nome": "Copa Hayase e Tokiwa",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7390,7 +7390,7 @@
   "id": "ev_189",
   "nome": "Copa Hayase Corrida II",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7466,7 +7466,7 @@
   "id": "ev_190",
   "nome": "Copa Hayase Jinrai e Kobo",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7504,7 +7504,7 @@
   "id": "ev_191",
   "nome": "Copa Hayase Jinrai e Kobo Corrida",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7541,7 +7541,7 @@
   "id": "ev_192",
   "nome": "Copa Hayase Kagura",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7576,7 +7576,7 @@
   "id": "ev_193",
   "nome": "Copa Hayase Hokuto e Komorebi",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7614,7 +7614,7 @@
   "id": "ev_194",
   "nome": "Série 550 — etapa 1",
   "pista": "serra_alta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 550,
@@ -7675,7 +7675,7 @@
   "id": "ev_195",
   "nome": "Série 550 — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 550,
@@ -7736,7 +7736,7 @@
   "id": "ev_196",
   "nome": "Série 550 — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 550,
@@ -7797,7 +7797,7 @@
   "id": "ev_197",
   "nome": "Série 400 — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -7859,7 +7859,7 @@
   "id": "ev_198",
   "nome": "Série 400 — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 450,
@@ -7921,7 +7921,7 @@
   "id": "ev_199",
   "nome": "Série 400 — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -7983,7 +7983,7 @@
   "id": "ev_200",
   "nome": "Copa Hoshino Ibuki",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8011,7 +8011,7 @@
   "id": "ev_201",
   "nome": "Copa Tomoe Niji",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8054,7 +8054,7 @@
   "id": "ev_202",
   "nome": "Copa Tomoe Niji Corrida",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8100,7 +8100,7 @@
   "id": "ev_203",
   "nome": "Copa Tomoe Hatsukaze",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8143,7 +8143,7 @@
   "id": "ev_204",
   "nome": "Copa Tomoe Hatsukaze Corrida",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8190,7 +8190,7 @@
   "id": "ev_205",
   "nome": "Copa Hoshino Kogane",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8227,7 +8227,7 @@
   "id": "ev_206",
   "nome": "Copa Hoshino Kogane Corrida",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8264,7 +8264,7 @@
   "id": "ev_207",
   "nome": "Copa Hoshino e Hayase",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8313,7 +8313,7 @@
   "id": "ev_208",
   "nome": "Copa 400 — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -8375,7 +8375,7 @@
   "id": "ev_209",
   "nome": "Copa 400 — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8437,7 +8437,7 @@
   "id": "ev_210",
   "nome": "Copa 400 — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -8499,7 +8499,7 @@
   "id": "ev_211",
   "nome": "Copa Primeira Marcha — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -8543,7 +8543,7 @@
   "id": "ev_212",
   "nome": "Copa Primeira Marcha — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -8583,7 +8583,7 @@
   "id": "ev_213",
   "nome": "Copa Primeira Marcha — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -8626,7 +8626,7 @@
   "id": "ev_214",
   "nome": "Série 500 — etapa 1",
   "pista": "serra_curta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8688,7 +8688,7 @@
   "id": "ev_215",
   "nome": "Série 500 — etapa 2",
   "pista": "serra_alta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8750,7 +8750,7 @@
   "id": "ev_216",
   "nome": "Série 500 — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8812,7 +8812,7 @@
   "id": "ev_217",
   "nome": "Série 500 — etapa 4",
   "pista": "pista_de_testes",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8873,7 +8873,7 @@
   "id": "ev_218",
   "nome": "Série 500 — etapa 5",
   "pista": "parque_das_docas",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8934,7 +8934,7 @@
   "id": "ev_219",
   "nome": "Copa Kanaya Yamakaze e Shijima",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8978,7 +8978,7 @@
   "id": "ev_220",
   "nome": "Copa Kanaya Yamakaze e Shijima Corrida",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9032,7 +9032,7 @@
   "id": "ev_221",
   "nome": "Copa Turismo — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9093,7 +9093,7 @@
   "id": "ev_222",
   "nome": "Copa Turismo — etapa 2",
   "pista": "serra_alta",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9154,7 +9154,7 @@
   "id": "ev_223",
   "nome": "Copa Turismo — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9215,7 +9215,7 @@
   "id": "ev_224",
   "nome": "Copa Preparados — etapa 1",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9274,7 +9274,7 @@
   "id": "ev_225",
   "nome": "Copa Preparados — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9334,7 +9334,7 @@
   "id": "ev_226",
   "nome": "Copa Preparados — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 3,
+  "voltas": 8,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9395,7 +9395,7 @@
   "id": "ev_227",
   "nome": "Copa Kanaya Shinonome e Kirameki",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9449,7 +9449,7 @@
   "id": "ev_228",
   "nome": "Copa Kanaya Shinonome Corrida",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9519,7 +9519,7 @@
   "id": "ev_229",
   "nome": "Copa Kanaya Murasame II",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9548,7 +9548,7 @@
   "id": "ev_230",
   "nome": "Copa Kanaya Yuzuki",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9593,7 +9593,7 @@
   "id": "ev_231",
   "nome": "Copa Kanaya Shirasagi",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9625,7 +9625,7 @@
   "id": "ev_232",
   "nome": "Copa Kanaya Shirasagi Corrida",
   "pista": "circuito_misto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9654,7 +9654,7 @@
   "id": "ev_233",
   "nome": "Copa Ashcombe Quill",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9686,7 +9686,7 @@
   "id": "ev_234",
   "nome": "Copa Ashcombe Quill Corrida",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9715,7 +9715,7 @@
   "id": "ev_235",
   "nome": "Copa das Peruas — etapa 1",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -9777,7 +9777,7 @@
   "id": "ev_236",
   "nome": "Copa das Peruas — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -9839,7 +9839,7 @@
   "id": "ev_237",
   "nome": "Copa das Peruas — etapa 3",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -9901,7 +9901,7 @@
   "id": "ev_238",
   "nome": "Copa Pena — etapa 1",
   "pista": "docas_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 150
@@ -9947,7 +9947,7 @@
   "id": "ev_239",
   "nome": "Copa Pena — etapa 2",
   "pista": "anel_curto",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 100,
@@ -9994,7 +9994,7 @@
   "id": "ev_240",
   "nome": "Copa Pena — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 100,
@@ -10041,7 +10041,7 @@
   "id": "ev_241",
   "nome": "Copa Aberta 250 — etapa 1",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -10103,7 +10103,7 @@
   "id": "ev_242",
   "nome": "Copa Aberta 250 — etapa 2",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -10165,7 +10165,7 @@
   "id": "ev_243",
   "nome": "Copa Aberta 250 — etapa 3",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -10227,7 +10227,7 @@
   "id": "ev_244",
   "nome": "Copa Kosame Hiryu",
   "pista": "serra_curta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -10271,7 +10271,7 @@
   "id": "ev_245",
   "nome": "Copa Kosame Hiryu Corrida",
   "pista": "anel_do_vale",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -10323,7 +10323,7 @@
   "id": "ev_246",
   "nome": "Copa Kanaya Yuzuki II",
   "pista": "parque_das_docas",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -10355,7 +10355,7 @@
   "id": "ev_247",
   "nome": "Copa Kanaya Yuzuki Corrida",
   "pista": "serra_alta",
-  "voltas": 2,
+  "voltas": 5,
   "condicao": "seco",
   "restricoes": {
    "carros": [

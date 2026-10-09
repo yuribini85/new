@@ -160,6 +160,10 @@ PISTAS_EXISTENTES: set[str] = set()
 MAX_VOLTAS = 99
 FRACAO_REVENDA = 0.25
 FATOR_MOEDA = 0.0427  # Cr do GT2 → Giros (decisão do usuário: valores bem menores, sem rastro)
+# Decisão 41 (idle mais longo): voltas das provas ×2,5 (as de 2 viram 5) e preços
+# de compra ×2 em relação aos prêmios.
+FATOR_VOLTAS = 2.5
+FATOR_PRECO = 2
 # Copas de marca: CarRestrictionFlags do GT2.
 SO_RUA, SO_CORRIDA = 256, 512
 CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
@@ -322,7 +326,7 @@ def main() -> int:
             "potencia": int(round(c["potencia_real"])), "peso": int(n(c["peso_kg"])),
             "aderencia": round(grip / grip_mediana, 3),
             "freio": round(min(1.0, freio_fabrica.get(l["codigo_gt2"], freio_mediana) / freio_mediana), 3),
-            "preco": moeda(n(c["preco"])),
+            "preco": preco_loja(n(c["preco"])),
             "ano": (ano + 1900 if ano < 100 else ano) if ano > 0 else int(n(l.get("ano"))),
         })
         car = tab_car[l["codigo_gt2"]]
@@ -387,7 +391,7 @@ def main() -> int:
                     # Freio: o GT2 tem um só (o de fábrica conta como nível 1).
                     "nome": "Freios esportivos" if cat == "Brake" else f"{NOMES_CATEGORIA[cat]} {estagio}",
                     "categoria": "aspiracao" if cat in ("NATune", "TurbineKit") else cat.lower(),
-                    "preco": moeda(n(p["Price"])), "carros_permitidos": [id_nosso], "efeitos": efeitos,
+                    "preco": preco_loja(n(p["Price"])), "carros_permitidos": [id_nosso], "efeitos": efeitos,
                 })
                 if forma:
                     pecas[-1]["motor"] = forma
@@ -397,7 +401,7 @@ def main() -> int:
         if kits and 0 < n(kits[0]["Weight"]) <= 100:
             pecas.append({
                 "id": f"{id_nosso}_corrida", "nome": NOMES_CATEGORIA["RacingModify"], "categoria": "corrida",
-                "preco": moeda(n(kits[0]["Price"])), "carros_permitidos": [id_nosso],
+                "preco": preco_loja(n(kits[0]["Price"])), "carros_permitidos": [id_nosso],
                 "efeitos": [{"atributo": "peso", "op": "mult", "valor": round(n(kits[0]["Weight"]) / 100.0, 4)}],
             })
         # Câmbio ajustável (Gear estágio 3): limites do diferencial do GT2.
@@ -405,7 +409,7 @@ def main() -> int:
             if g["CarId"] == codigo and int(n(g["Stage"])) == 3 and int(n(g["Price"])) > 0:
                 pecas.append({
                     "id": f"{id_nosso}_cambio", "nome": "Câmbio ajustável", "categoria": "cambio",
-                    "preco": moeda(n(g["Price"])), "carros_permitidos": [id_nosso], "efeitos": [],
+                    "preco": preco_loja(n(g["Price"])), "carros_permitidos": [id_nosso], "efeitos": [],
                     "cambio": {"final_min": n(g["MinFinalDriveRatio"]) / 1000.0, "final_max": n(g["MaxFinalDriveRatio"]) / 1000.0},
                 })
 
@@ -427,7 +431,7 @@ def main() -> int:
     for est in sorted(por_estagio):
         ader = round(statistics.median(a for a, _ in por_estagio[est]), 3)
         pneus.append({"id": f"pneu_{est}", "nome": NOMES_PNEU[est] if est < len(NOMES_PNEU) else f"Pneu {est}",
-                      "preco": 0 if est == 0 else moeda(statistics.median(pr for _, pr in por_estagio[est])),
+                      "preco": 0 if est == 0 else preco_loja(statistics.median(pr for _, pr in por_estagio[est])),
                       "aderencia": {"seco": ader, "chuva": ader}})
 
     eventos, pilotos = importar_eventos(nosso, resumo, carros, {p["id"] for p in pneus})
@@ -603,6 +607,17 @@ def potencia_curva(motor: dict) -> float:
     return pico / 100.0 / 716.2 * n(motor.get("PowerMultiplier")) / 100.0
 
 
+def preco_loja(cr: float) -> int:
+    """Preço de compra (carro, peça, pneu, usado): moeda() × FATOR_PRECO. Prêmios,
+    bônus e saldo inicial ficam só com moeda() (decisão 41)."""
+    return moeda(cr) * FATOR_PRECO
+
+
+def voltas_jogo(voltas_gt2: int) -> int:
+    """Voltas da prova: as do GT2 × FATOR_VOLTAS, arredondado (decisão 41)."""
+    return int(voltas_gt2 * FATOR_VOLTAS + 0.5)
+
+
 def moeda(cr: float) -> int:
     """Valor em Cr do GT2 para Giros (FATOR_MOEDA); 0 continua 0."""
     return 0 if cr <= 0 else max(1, round(cr * FATOR_MOEDA))
@@ -615,7 +630,7 @@ def usados_do_carro(codigo: str) -> list[list[int]]:
     """
     janelas: list[list[int]] = []
     for u in sorted((u for u in ler("usados") if u["codigo"] == codigo), key=lambda u: int(u["periodo"])):
-        ini, preco = int(u["dia_inicio"]), moeda(int(u["preco"]))
+        ini, preco = int(u["dia_inicio"]), preco_loja(int(u["preco"]))
         if janelas and janelas[-1][1] == ini - 1 and janelas[-1][2] == preco:
             janelas[-1][1] = ini + 9
         elif not janelas or janelas[-1][0] != ini:
@@ -714,7 +729,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         largada = int(n(b.get("RollingStartSpeed")))
         eventos.append({
             "id": f"ev_{k:03d}", "nome": serie if lista_marca or r["evento"][:3] in RESISTENCIA else f"{serie} — etapa {etapas[serie]}", "pista": pista,
-            "voltas": int(n(r["voltas"])) or 2, **({"largada_kmh": largada} if largada > 0 else {}),
+            "voltas": voltas_jogo(int(n(r["voltas"])) or 2), **({"largada_kmh": largada} if largada > 0 else {}),
             "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [moeda(int(v) * 100) for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,

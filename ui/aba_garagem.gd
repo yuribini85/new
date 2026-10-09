@@ -173,7 +173,7 @@ func _vazia() -> void:
 		return
 	var v := cartao()
 	rotulo("Sua garagem está vazia", 40, Color.WHITE, v)
-	nota("icone_comprar", "Comece por um usado", "Os usados são mais baratos, e alguns já vencem a primeira corrida.", v)
+	nota("icone_comprar", "Comece por um carro barato", "Nas Lojas, cada workshop tem carros de todos os preços; os mais baratos já disputam a primeira corrida.", v)
 	botao("Escolher meu primeiro carro", func(): ir_para.emit(LOJA), true, true, v)
 
 
@@ -299,15 +299,9 @@ func _vender(uid: int) -> void:
 		jogador.carro_ativo = -1
 
 
-## Garagem vazia e nenhum carro (novo ou usado de hoje) cabe no saldo.
+## Garagem vazia e nenhum carro das Lojas cabe no saldo.
 func _sem_saida() -> bool:
-	var precos := []
-	for c in dados.lista("carros"):
-		if c.get("novo", true):
-			precos.append(int(c["preco"]))
-	for o in Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos):
-		precos.append(int(o["preco"]))
-	return precos.all(func(p): return not jogador.economia.pode_pagar(p))
+	return dados.lista("carros").all(func(c): return not jogador.economia.pode_pagar(int(c["preco"])))
 
 
 func _recomecar() -> void:

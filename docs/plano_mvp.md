@@ -283,3 +283,19 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     potência ±10% e peso ±5%) fica um. Dos 618 do GT2 ficam 386. Rivais, prêmios e
     copas usam o substituto; saves migram para ele. Regra no importador
     (`reduzir_frota`), não à mão.
+
+### Ritmo e lojas (decisões do usuário)
+
+41. **Idle mais longo:** as voltas das provas sobem ×2,5 (as de 2 voltas viram 5; as
+    demais na mesma proporção, resistência inclusive) e os preços de compra (carros,
+    peças, pneus) dobram em relação aos prêmios. No importador (`FATOR_VOLTAS`,
+    `FATOR_PRECO`); prêmios, bônus e saldo inicial não mudam.
+42. **Lojas = workshops, sem usados.** As 16 workshops (`data/workshops.json`, logos em
+    `arte/ui/workshops/`) revendem os carros de 1 a 4 marcas da mesma origem (Japão,
+    EUA, Europa), equilibrando o número de carros: a estrutura do GT2 (uma loja por
+    marca) agrupada. Toda a frota é vendida pelo preço de tabela, inclusive os modelos
+    que no GT2 só existiam usados. Sem usados nem agenda; a Second Chance Motors fica
+    só na história (garagem vazia da Elena).
+43. **Garagem com vagas:** começa com 4; cada ampliação dobra as vagas. A 1ª custa a
+    soma dos prêmios de 1º lugar das provas da licença Club × 2; cada uma seguinte
+    custa o dobro da anterior (`data/garagem.json`).

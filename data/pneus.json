@@ -11,7 +11,7 @@
  {
   "id": "pneu_1",
   "nome": "Pneu esportivo",
-  "preco": 299,
+  "preco": 598,
   "aderencia": {
    "seco": 1.034,
    "chuva": 1.034
@@ -20,7 +20,7 @@
  {
   "id": "pneu_2",
   "nome": "Pneu de corrida duro",
-  "preco": 470,
+  "preco": 940,
   "aderencia": {
    "seco": 1.103,
    "chuva": 1.103
@@ -29,7 +29,7 @@
  {
   "id": "pneu_3",
   "nome": "Pneu de corrida médio",
-  "preco": 555,
+  "preco": 1110,
   "aderencia": {
    "seco": 1.138,
    "chuva": 1.138
@@ -38,7 +38,7 @@
  {
   "id": "pneu_4",
   "nome": "Pneu de corrida macio",
-  "preco": 662,
+  "preco": 1324,
   "aderencia": {
    "seco": 1.172,
    "chuva": 1.172
@@ -47,7 +47,7 @@
  {
   "id": "pneu_5",
   "nome": "Pneu de corrida supermacio",
-  "preco": 769,
+  "preco": 1538,
   "aderencia": {
    "seco": 1.207,
    "chuva": 1.207
@@ -56,7 +56,7 @@
  {
   "id": "pneu_6",
   "nome": "Pneu de simulação",
-  "preco": 85,
+  "preco": 170,
   "aderencia": {
    "seco": 0.793,
    "chuva": 0.793

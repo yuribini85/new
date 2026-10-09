@@ -436,7 +436,7 @@
 		]
 	},
 	{
-		"carro": "pemberly_sedge",
+		"carro": "whitlock_badlands",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -453,10 +453,10 @@
 				]
 			},
 			"prata": {
-				"folga_s": 0.6
+				"folga_s": 1.3
 			}
 		},
-		"descricao": "O Pemberly Fieldfare GT tem 145 cv; o rival, 700. Monte o carro da escola para chegar na frente.",
+		"descricao": "O Whitlock Badlands tem 122 cv; o rival, 437. Monte o carro da escola para chegar na frente.",
 		"id": "elite_pequeno_gigante",
 		"licenca": "ELITE",
 		"nome": "O pequeno contra o gigante",
@@ -466,10 +466,10 @@
 				"pista": "serra_curta",
 				"rivais": [
 					{
-						"carro": "kanaya_benibana_corrida"
+						"carro": "ashcombe_saltire"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
@@ -477,14 +477,14 @@
 		"carro": "whitlock_switchback_gts",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 14030.0,
+				"custo_max": 14030,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 9352.0
+				"custo_max": 9352
 			},
 			"prata": {
-				"custo_max": 11225.0
+				"custo_max": 11225
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Aubrac Grive S gastando o mínimo.",
@@ -500,7 +500,7 @@
 						"carro": "aubrac_grive_s"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
@@ -511,13 +511,13 @@
 				"vencer": true
 			},
 			"ouro": {
-				"pecas_max": 4.0
+				"pecas_max": 4
 			},
 			"prata": {
 				"folga_s": 0.3
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Kanaya Ruri Corrida II em Lago Sereno e o Pemberly Teal II em Alto da Capela (curto).",
+		"descricao": "Uma preparação só para vencer o Kanaya Ruri Corrida II em Lago Sereno e o Pemberly Teal III em Alto da Capela (curto).",
 		"id": "elite_dois_circuitos",
 		"licenca": "ELITE",
 		"nome": "Dois circuitos, um carro",
@@ -530,7 +530,7 @@
 						"carro": "kanaya_ruri_corrida_ii"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			},
 			{
 				"condicao": "seco",
@@ -540,7 +540,7 @@
 						"carro": "pemberly_teal_iii"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	}

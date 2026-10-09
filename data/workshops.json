@@ -1,0 +1,149 @@
+[
+ {
+  "id": "relay_room_garage",
+  "nome": "Relay Room Garage",
+  "logo": "relay-room-garage",
+  "fabricantes": [
+   "hayase"
+  ]
+ },
+ {
+  "id": "return_chapter_customs",
+  "nome": "Return Chapter Customs",
+  "logo": "return-chapter-customs",
+  "fabricantes": [
+   "kanaya"
+  ]
+ },
+ {
+  "id": "brace_yard_works",
+  "nome": "Brace Yard Works",
+  "logo": "brace-yard-works",
+  "fabricantes": [
+   "hozuki",
+   "hoshino",
+   "tokiwa",
+   "kosame"
+  ]
+ },
+ {
+  "id": "spare_penny_repairs",
+  "nome": "Spare Penny Repairs",
+  "logo": "spare-penny-repairs",
+  "fabricantes": [
+   "sanga",
+   "mizuchi",
+   "tomoe"
+  ]
+ },
+ {
+  "id": "shared_grid_motors",
+  "nome": "Shared Grid Motors",
+  "logo": "shared-grid-motors",
+  "fabricantes": [
+   "whitlock"
+  ]
+ },
+ {
+  "id": "intake_borough_turbo",
+  "nome": "Intake Borough Turbo",
+  "logo": "intake-borough-turbo",
+  "fabricantes": [
+   "garrison",
+   "cutler"
+  ]
+ },
+ {
+  "id": "true_datum_works",
+  "nome": "True Datum Works",
+  "logo": "true-datum-works",
+  "fabricantes": [
+   "arvelle",
+   "bancroft",
+   "ashby",
+   "kestrin"
+  ]
+ },
+ {
+  "id": "blind_terminal_systems",
+  "nome": "Blind Terminal Systems",
+  "logo": "blind-terminal-systems",
+  "fabricantes": [
+   "varenna",
+   "dunmere"
+  ]
+ },
+ {
+  "id": "charge_folio_motors",
+  "nome": "Charge Folio Motors",
+  "logo": "charge-folio-motors",
+  "fabricantes": [
+   "hartwig",
+   "aubrac",
+   "thornby"
+  ]
+ },
+ {
+  "id": "third_notch_transmissions",
+  "nome": "Third Notch Transmissions",
+  "logo": "third-notch-transmissions",
+  "fabricantes": [
+   "saulieu",
+   "wexmoor"
+  ]
+ },
+ {
+  "id": "peel_district_customs",
+  "nome": "Peel District Customs",
+  "logo": "peel-district-customs",
+  "fabricantes": [
+   "ostwerk",
+   "morel"
+  ]
+ },
+ {
+  "id": "odd_bolt_customs",
+  "nome": "Odd Bolt Customs",
+  "logo": "odd-bolt-customs",
+  "fabricantes": [
+   "ashcombe",
+   "castellani"
+  ]
+ },
+ {
+  "id": "quiet_wake_engineering",
+  "nome": "Quiet Wake Engineering",
+  "logo": "quiet-wake-engineering",
+  "fabricantes": [
+   "calderwood",
+   "keldorf"
+  ]
+ },
+ {
+  "id": "late_turn_tuning",
+  "nome": "Late Turn Tuning",
+  "logo": "late-turn-tuning",
+  "fabricantes": [
+   "lindauer",
+   "ottavo"
+  ]
+ },
+ {
+  "id": "forge_13",
+  "nome": "Forge 13",
+  "logo": "forge-13",
+  "fabricantes": [
+   "rauhe",
+   "pemberly"
+  ]
+ },
+ {
+  "id": "upper_ledger_performance",
+  "nome": "Upper Ledger Performance",
+  "logo": "upper-ledger-performance",
+  "fabricantes": [
+   "vorhaus",
+   "vallon"
+  ]
+ }
+]

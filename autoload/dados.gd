@@ -72,6 +72,7 @@ func carregar(dir: String) -> void:
 	_objetos.erase("curvas")  # lido sob demanda (curvas())
 	_objetos.erase("monetizacao")  # idem (monetizacao())
 	_objetos.erase("carros_removidos")  # idem (substituto())
+	_objetos.erase("workshops")  # idem (workshops())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -298,6 +299,16 @@ func curvas(pista_id: String) -> Array:
 		var c = _ler_json(pasta + "curvas.json") if FileAccess.file_exists(pasta + "curvas.json") else {}
 		_objetos["curvas"] = c if c is Dictionary else {}
 	return _objetos["curvas"].get(pista_id, [])
+
+
+## Workshops das Lojas (decisão 42, workshops.json, opcional): [{id, nome,
+## logo, fabricantes}]. Sem o arquivo, [] (a tela faz uma por fabricante).
+func workshops() -> Array:
+	if not _objetos.has("workshops"):
+		var caminho := pasta + "workshops.json"
+		var w = _ler_json(caminho) if FileAccess.file_exists(caminho) else []
+		_objetos["workshops"] = w if w is Array else []
+	return _objetos["workshops"]
 
 
 ## Carro que saiu da frota (decisão 40, carros_removidos.json, gerado pelo
