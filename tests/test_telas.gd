@@ -289,3 +289,37 @@ func test_assets_devolve_arte_ou_null_para_placeholder() -> void:
 	verificar(tex != null and tex.get_width() == 4, "png novo lido do disco")
 	DirAccess.remove_absolute("user://teste_asset.png")
 	Assets.limpar()
+
+
+## Configurações (engrenagem) e o vídeo de teste montam sem erro; o vídeo só
+## dá a recompensa no fim.
+func test_configuracoes_e_video_montam() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var aba: Control = ABAS[5].new(d, j)
+	_raiz().add_child(aba)
+	var v := VBoxContainer.new()
+	aba.add_child(v)
+	var abriu := [false]
+	Configuracoes.montar(aba, v, j, func(): abriu[0] = true, func(): pass, func(vv): aba._modo_teste(vv))
+	verificar(v.get_child_count() > 10, "seções montadas")
+	var video := VideoRecompensa.new()
+	_raiz().add_child(video)
+	var r := []
+	video.terminou.connect(func(x): r.append(x))
+	video._process(1.0)
+	igual(r.size(), 0, "antes do fim, nada")
+	video._process(VideoRecompensa.DURACAO_TESTE_S)
+	igual(r, [true], "no fim, recompensa")
+	var cab := Cabecalho.new()
+	_raiz().add_child(cab)
+	cab.definir_aceleracao(1799.0, 2.0)
+	igual(cab._texto_marcador.text, "2×", "marcador aceso")
+	igual(cab._tempo_marcador.text, "29:59", "tempo que falta")
+	cab.definir_aceleracao(0.0, 2.0)
+	igual(cab._texto_marcador.text, "ACELERAR", "marcador parado")
+	cab.free()
+	aba.free()
+	j.free()
+	d.free()

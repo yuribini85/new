@@ -264,3 +264,62 @@ func test_prova_inedita_nao_corre_offline() -> void:
 	igual(fila.processar(5000.0 + 3.0 * dur)["corridas"].size(), 2, "repetições offline")
 	j.free()
 	d.free()
+
+
+## Decisão 39: com a aceleração, o relógio das corridas anda `fator` vezes mais
+## rápido só dentro da janela; o adiantado fica; vídeo novo soma tempo.
+func test_aceleracao_relogio_e_soma() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var regras := {"fator": 2.0, "duracao_s": 1800.0, "teto_s": null}
+	perto(Aceleracao.agora(j, 5000.0), 5000.0, 1e-6, "sem aceleração: relógio real")
+	igual(Aceleracao.ativar(j, regras, 1000.0), "", "ativar")
+	perto(Aceleracao.agora(j, 1000.0), 1000.0, 1e-6, "no início, sem salto")
+	perto(Aceleracao.agora(j, 1600.0), 2200.0, 1e-6, "600 s reais = 1200 s de corrida")
+	perto(Aceleracao.restante_s(j, 1600.0), 1200.0, 1e-6, "faltam 1200 s")
+	igual(Aceleracao.ativar(j, regras, 1600.0), "", "vídeo durante: soma")
+	perto(Aceleracao.restante_s(j, 1600.0), 3000.0, 1e-6, "1200 + 1800")
+	perto(Aceleracao.agora(j, 4600.0), 4600.0 + 3600.0, 1e-6, "fim da janela: 3600 s adiantados")
+	perto(Aceleracao.agora(j, 9000.0), 9000.0 + 3600.0, 1e-6, "depois: adiantado fica, anda 1×")
+	verificar(not Aceleracao.ativa(j, 9000.0), "terminou")
+	igual(Aceleracao.ativar(j, regras, 10000.0), "", "nova janela")
+	perto(Aceleracao.agora(j, 10000.0), 10000.0 + 3600.0, 1e-6, "nova janela não volta o relógio")
+	perto(Aceleracao.agora(j, 10100.0), 10100.0 + 3700.0, 1e-6, "e anda 2×")
+	var teto := {"fator": 2.0, "duracao_s": 1800.0, "teto_s": 2400.0}
+	var k := _jogador(d)
+	Aceleracao.ativar(k, teto, 0.0)
+	Aceleracao.ativar(k, teto, 0.0)
+	perto(Aceleracao.restante_s(k, 0.0), 2400.0, 1e-6, "teto limita a soma")
+	verificar(Aceleracao.ativar(k, teto, 0.0) != "", "no teto, recusa")
+	verificar(Aceleracao.ativar(k, {}, 0.0) != "", "sem regras, indisponível")
+	j.free()
+	k.free()
+	d.free()
+
+
+## A fila medida pelo relógio do jogo termina na metade do tempo real; o prêmio
+## é o mesmo; o estado da aceleração volta igual do save.
+func test_aceleracao_na_fila_e_no_save() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.vitorias["aberto"] = 1
+	Aceleracao.ativar(j, {"fator": 2.0, "duracao_s": 100000.0}, 0.0)
+	igual(f.iniciar("aberto", uid, 2, Aceleracao.agora(j, 0.0)), "", "iniciar")
+	var dur: float = f.duracao_atual()
+	var saldo: int = j.economia.saldo
+	var r := f.processar(Aceleracao.agora(j, dur * 0.5 + 0.1))
+	igual(r["corridas"].size(), 1, "uma corrida em metade do tempo real (duração %.1f s)" % dur)
+	igual(j.economia.saldo, saldo + 500, "prêmio igual")
+	var texto := JSON.stringify(Save.serializar(j))
+	var k := _jogador(d)
+	igual(Save.desserializar(JSON.parse_string(texto), k, d), "", "load")
+	igual(k.aceleracao, j.aceleracao, "aceleração no save")
+	var antigo: Dictionary = JSON.parse_string(texto)
+	antigo.erase("aceleracao")
+	igual(Save.desserializar(antigo, k, d), "", "save antigo sem aceleração")
+	verificar(k.aceleracao.is_empty(), "sem aceleração")
+	j.free()
+	k.free()
+	d.free()

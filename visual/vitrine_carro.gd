@@ -25,7 +25,7 @@ func _init(altura := 300.0) -> void:
 	custom_minimum_size = Vector2(0, altura)
 	var vp := SubViewport.new()
 	vp.own_world_3d = true
-	vp.msaa_3d = Viewport.MSAA_4X
+	vp.msaa_3d = Viewport.MSAA_DISABLED if Preferencias.efeitos_leves else Viewport.MSAA_4X
 	add_child(vp)
 	_mundo = Node3D.new()
 	vp.add_child(_mundo)
@@ -209,7 +209,7 @@ func ambiente_garagem() -> void:
 	_piso.visible = false
 	_anel.visible = false
 	# Ambiente escuro e o carro como ponto de luz: foco de cima sobre ele.
-	_luz.shadow_enabled = true
+	_luz.shadow_enabled = not Preferencias.efeitos_leves
 	_luz.rotation = Vector3(-1.1, 0.5, 0)
 	_luz.light_energy = 0.35
 	var ambiente: Environment = (_mundo.get_child(0) as WorldEnvironment).environment
@@ -222,7 +222,7 @@ func ambiente_garagem() -> void:
 	foco.spot_range = 12.0
 	foco.light_energy = 3.2
 	foco.light_color = Color(1.0, 0.96, 0.9)
-	foco.shadow_enabled = true
+	foco.shadow_enabled = not Preferencias.efeitos_leves
 	_mundo.add_child(foco)
 	var claro := CarroBloco._material(Color(0.17, 0.175, 0.19))
 	var escuro := CarroBloco._material(Color(0.14, 0.145, 0.16))

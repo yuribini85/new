@@ -76,6 +76,9 @@ func _ready() -> void:
 	_cabecalho = Cabecalho.new()
 	_cabecalho.definir_area_segura(AreaSegura.topo(get_viewport_rect().size.x))
 	_cabecalho.voltar.connect(_voltar_tela)
+	_cabecalho.configuracoes.connect(_abrir_configuracoes)
+	_cabecalho.acelerar.connect(_abrir_aceleracao)
+	_cabecalho.marcador.visible = not _regras_aceleracao().is_empty()
 	_ancoras["SALDO"] = _cabecalho.painel
 	_meta = [_cabecalho.painel]
 	_abas = TabContainer.new()
@@ -104,12 +107,13 @@ func _ready() -> void:
 		_abas.add_child(a)
 		a.mudou.connect(atualizar)
 		a.ir_para.connect(func(i):
+			_sobre.fechar()  # ex.: cenário aberto nas Configurações
 			_sujar_todas()
 			_ir_para(i))
 	eventos.correr_iniciado.connect(func(): _ir_para(4))
 	_todas[4].pular.connect(func():
 		RegistroSessao.pulo()
-		jogador.fila_ctrl.adiantar(Time.get_unix_time_from_system())
+		jogador.fila_ctrl.adiantar(Aceleracao.agora(jogador))
 		_processar_fila())
 	_ao_vivo = Button.new()
 	_ao_vivo.custom_minimum_size = Vector2(0, 64)
@@ -163,6 +167,8 @@ func _ready() -> void:
 	timer.timeout.connect(_atualizar_fps)
 	timer.timeout.connect(_historia_corrida)
 	timer.timeout.connect(_contar_lembrete)
+	timer.timeout.connect(_atualizar_aceleracao)
+	_atualizar_aceleracao()
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
@@ -247,10 +253,86 @@ func _ir_para(i: int, voltando := false) -> void:
 	var destino: int = PAI.get(i, i)
 	for k in _botoes.size():
 		_botoes[k].button_pressed = DESTINOS[k][1] == destino
-	_cabecalho.titulo.text = TITULOS[i].to_upper()
+	_cabecalho.definir_titulo(TITULOS[i].to_upper())
 	_cabecalho.definir_volta(not _historico.is_empty())
 	_atualizar_ao_vivo()
 	_foco_corrida()
+
+
+## Corridas aceleradas (decisão 39): regras de data/monetizacao.json.
+func _regras_aceleracao() -> Dictionary:
+	return dados.monetizacao().get("aceleracao", {})
+
+
+func _atualizar_aceleracao() -> void:
+	if _cabecalho != null:
+		_cabecalho.definir_aceleracao(Aceleracao.restante_s(jogador),
+				float(jogador.aceleracao.get("fator", _regras_aceleracao().get("fator", 2.0))))
+
+
+## Tela da aceleração (marcador do cabeçalho): o que faz, quanto falta, o vídeo
+## e a compra Sem anúncios.
+func _abrir_aceleracao() -> void:
+	var r := _regras_aceleracao()
+	if r.is_empty():
+		return
+	var fator := roundi(float(r["fator"]))
+	var minutos := roundi(float(r["duracao_s"]) / 60.0)
+	_sobre.abrir("Corridas aceleradas", func(v):
+		var aba: Aba = _todas[0]
+		var c := aba.cartao(Cabecalho.COR_NUMERO, v)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 14)
+		c.add_child(h)
+		var ic := IconeVetor.new("acelerar", Cabecalho.COR_NUMERO)
+		ic.custom_minimum_size = Vector2(56, 48)
+		h.add_child(ic)
+		var n := Label.new()
+		n.text = "%d×" % fator
+		Tipografia.numero(n, 56)
+		n.add_theme_color_override("font_color", Cabecalho.COR_NUMERO)
+		h.add_child(n)
+		var ativa := Aceleracao.ativa(jogador)
+		var st := aba.rotulo("Ativa: faltam %s" % Aceleracao.texto_tempo(Aceleracao.restante_s(jogador)) if ativa
+				else "Desligada", Aba.FONTE_PEQUENA + 2, Color.WHITE if ativa else Aba.COR_SECUNDARIA, h)
+		st.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		st.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		aba.rotulo("Cada vídeo deixa as corridas %d vezes mais rápidas por %d minutos. Os prêmios são os mesmos: "
+				% [fator, minutos] + "só o tempo de corrida passa mais depressa. Vale também com o app fechado, "
+				+ "e um vídeo novo soma tempo.", Aba.FONTE_PEQUENA, Color.WHITE, c)
+		Configuracoes.cartao_sem_anuncios(aba, v, _comprar_sem_anuncios),
+		[["Assistir vídeo · +%d min" % minutos, _assistir_video], ["Fechar", func(): pass]])
+
+
+## Vídeo com recompensa (por enquanto, o de teste): no fim, soma a aceleração.
+func _assistir_video() -> void:
+	var video := VideoRecompensa.new()
+	add_child(video)
+	video.terminou.connect(func(assistiu):
+		if not assistiu:
+			return
+		var erro := Aceleracao.ativar(jogador, _regras_aceleracao())
+		if erro != "":
+			_sobre.avisar("Não deu: %s." % erro, false)
+			return
+		get_node("/root/SaveManager").salvar()
+		_atualizar_aceleracao()
+		_sobre.avisar("Corridas %d× por mais %d min (faltam %s)." % [roundi(float(jogador.aceleracao["fator"])),
+				roundi(float(_regras_aceleracao()["duracao_s"]) / 60.0),
+				Aceleracao.texto_tempo(Aceleracao.restante_s(jogador))]))
+
+
+## Compra Sem anúncios: o lugar já existe; a compra real entra com a loja do
+## aparelho (depois do MVP).
+func _comprar_sem_anuncios() -> void:
+	_sobre.avisar("A compra Sem anúncios chega com a loja do aparelho, na versão final.", false)
+
+
+## Engrenagem do cabeçalho.
+func _abrir_configuracoes() -> void:
+	_sobre.abrir("Configurações", func(v):
+		Configuracoes.montar(_todas[5], v, jogador, _abrir_aceleracao, _comprar_sem_anuncios,
+				func(vv): _todas[5]._modo_teste(vv)))
 
 
 ## Voltar do cabeçalho: a última tela visitada (o estado dela fica como estava).
@@ -280,9 +362,11 @@ func _atualizar_ao_vivo() -> void:
 	if not _ao_vivo.visible:
 		return
 	var dur: float = jogador.fila_ctrl.duracao_atual()
-	var falta := maxf(dur - (Time.get_unix_time_from_system() - float(f["inicio"])), 0.0)
-	_ao_vivo.text = "●  AO VIVO · %s · %d:%02d   Assistir ›" % [dados.evento(f["evento_id"]).get("nome", ""),
-			int(falta) / 60, int(falta) % 60]
+	var falta := maxf(dur - (Aceleracao.agora(jogador) - float(f["inicio"])), 0.0)
+	if Aceleracao.ativa(jogador):  # tempo real que falta (o relógio da corrida anda mais rápido)
+		falta /= float(jogador.aceleracao["fator"])
+	_ao_vivo.text = "●  AO VIVO%s · %s · %d:%02d   Assistir ›" % [" %d×" % int(jogador.aceleracao["fator"]) if Aceleracao.ativa(jogador) else "",
+			dados.evento(f["evento_id"]).get("nome", ""), int(falta) / 60, int(falta) % 60]
 
 
 ## A fonte padrão do Godot não tem ✓ ✗ ★ → ⚠ ■; no navegador não há fonte do
@@ -502,7 +586,7 @@ func _historia_corrida() -> void:
 	var dur: float = jogador.fila_ctrl.duracao_atual()
 	if dur <= 0.0:
 		return
-	var feito: float = (Time.get_unix_time_from_system() - float(jogador.fila["inicio"])) / dur
+	var feito: float = (Aceleracao.agora(jogador) - float(jogador.fila["inicio"])) / dur
 	var cfg: Dictionary = dados.historia()
 	if feito >= float(cfg.get("radio_fracao", 0.4)):
 		jogador.historia.disparar("RADIO_ULTIMA_CORRIDA")
@@ -540,7 +624,7 @@ func _processar_fila() -> void:
 	if jogador.fila.is_empty():
 		return
 	var antes_vitorias: Dictionary = jogador.vitorias.duplicate()
-	var rel: Dictionary = jogador.fila_ctrl.processar(Time.get_unix_time_from_system())
+	var rel: Dictionary = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
 	RegistroSessao.corridas(rel, dados)
 	if rel.has("recomecou"):
 		_todas[0].avisar(_texto_recomecou(rel["recomecou"]), true)
@@ -629,7 +713,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		botoes = [["Assistir a próxima", func(): _ir_para(4), "icone_ao_vivo"], ["Fechar", func(): pass]]
 	else:
 		botoes = [["Disputar de novo", func():
-				var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Time.get_unix_time_from_system())
+				var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Aceleracao.agora(jogador))
 				if m != "":
 					_sobre.avisar("Não deu para correr: %s." % m, false)
 				else:

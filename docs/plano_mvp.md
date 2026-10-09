@@ -260,3 +260,16 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (prêmio, vitória, carro-prêmio) e os dois pontuam no campeonato. Caixa único: o
     saldo do jogador é o da equipe. Patrocínio e staff por corrida, com valores do
     playtest. Fora: taxa de inscrição e manutenção (37).
+
+### Monetização (decisão do usuário)
+
+39. **Corridas aceleradas por vídeo com recompensa; sem banner fixo.** O jogador assiste
+    a um anúncio por escolha e as corridas da fila andam 2× mais rápido por 30 minutos
+    (prêmios iguais: só o tempo encolhe, a economia do GT2 não muda). Cada vídeo soma
+    tempo; vale com o app fechado. Uma compra única **Sem anúncios** dá a aceleração sem
+    o vídeo. Sem banner permanente, sem anúncio forçado e sem vender carros ou Giros.
+    Fator e duração em `data/monetizacao.json`; teto diário de aceleração pendente
+    (critério: playtest, mantendo a compra importante em uma a duas sessões, item 30).
+    O anúncio real (plugin AdMob, Android/iOS) e a compra real entram depois do MVP;
+    até lá, o jogo mostra os mesmos lugares com um vídeo de teste e a compra
+    indisponível. Marcador da aceleração e engrenagem das configurações no cabeçalho.

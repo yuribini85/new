@@ -160,7 +160,7 @@ func _init() -> void:
 	stretch = true
 	var vp := SubViewport.new()
 	vp.own_world_3d = true
-	vp.msaa_3d = Viewport.MSAA_2X
+	vp.msaa_3d = Viewport.MSAA_DISABLED if Preferencias.efeitos_leves else Viewport.MSAA_2X
 	add_child(vp)
 	_mundo = Node3D.new()
 	vp.add_child(_mundo)
@@ -583,6 +583,8 @@ func _bater(a: String, b: String, dl: float) -> void:
 
 
 func _faiscas(onde: Vector3) -> void:
+	if Preferencias.efeitos_leves:
+		return
 	var f := CPUParticles3D.new()
 	f.one_shot = true
 	f.amount = 28
@@ -684,7 +686,7 @@ func _construir_pista() -> void:
 	var tema: Dictionary = TEMAS.get(TEMA_DE.get(_pista.id, _pista.id), TEMA_PADRAO)
 	_ambiente.background_color = tema["ceu"]
 	_ambiente.ambient_light_color = tema["ambiente"]
-	_ambiente.fog_enabled = tema["neblina"] > 0.0
+	_ambiente.fog_enabled = tema["neblina"] > 0.0 and not Preferencias.efeitos_leves
 	_ambiente.fog_density = tema["neblina"]
 	_ambiente.fog_light_color = tema["ceu"]
 	_luz.light_color = tema["luz"]

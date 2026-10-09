@@ -42,8 +42,10 @@ var historico: Dictionary = {}
 var dias: int = 0
 ## Fila de repetições (ver data_model/fila.gd).
 var fila: Dictionary = {}
-## Unix time da última vez que a fila foi processada.
+## Relógio das corridas (Aceleracao.agora) da última vez que a fila foi processada.
 var ultimo_processamento: float = 0.0
+## Corridas aceleradas (Aceleracao, decisão 39): {ganho, inicio, fim, fator}.
+var aceleracao: Dictionary = {}
 var contador_sementes: int = 0
 ## Resumo da última corrida aplicada (relatório pós-corrida; não vai para o save).
 var ultima_corrida: Dictionary = {}
@@ -75,6 +77,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	usados_vendidos = {}
 	fila = {}
 	ultimo_processamento = 0.0
+	aceleracao = {}
 	contador_sementes = 0
 	vitorias = {}
 	campeonatos = {}

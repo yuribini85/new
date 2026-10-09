@@ -6,8 +6,13 @@ extends Control
 ## Sans One, "GIROS"). O banner de cada tela vem colado logo abaixo da faixa
 ## (Aba.cenario_topo). A faixa começa no topo absoluto; os elementos ficam
 ## abaixo da área segura do aparelho (`definir_area_segura`).
+## À direita, a engrenagem das configurações. Pendurado sob o painel, o marcador
+## das corridas aceleradas (decisão 39): "ACELERAR" quando parado; aceso, com o
+## fator e o tempo que falta, quando ativo. Tocar abre a tela da aceleração.
 
 signal voltar
+signal configuracoes
+signal acelerar
 
 const PASTA := "res://arte/ui/cabecalho/"
 const ALTURA := 84  # faixa dos elementos (px da tela de 720)
@@ -16,6 +21,11 @@ const COR_TITULO := Color("e6ddcd")
 const COR_NUMERO := Color("c89b57")  # ocre dessaturado do pack
 const COR_ROTULO := Color("b9bbbe")
 const TAMANHO_NUMERO := 40
+const TAMANHO_TITULO := 54
+const TAMANHO_TITULO_MIN := 34
+## Marcador da aceleração (aba pendurada sob a faixa).
+const ALTURA_MARCADOR := 54
+const COR_APAGADO := Color("8d9094")
 const OPACIDADE_SEM_VOLTA := 0.8  # 20% de transparência, sem toque
 ## Quanto cada texto sobe (px) para o centro das letras cair no centro da faixa,
 ## junto com o voltar, a moeda e o painel. Medido na tela renderizada (a caixa
@@ -31,6 +41,14 @@ var botao_voltar: TextureButton
 var _fundo: ColorRect
 var _faixa: HBoxContainer
 var _area_segura := 0.0
+var marcador: Button
+var engrenagem: Button
+var _icone_marcador: IconeVetor
+var _caixa_marcador: HBoxContainer
+var _texto_marcador: Label
+var _tempo_marcador: Label
+var _ativo := false
+var _pulso := 0.0
 
 
 func _init() -> void:
@@ -61,7 +79,7 @@ func _init() -> void:
 	titulo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	titulo.clip_text = true
 	titulo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	Tipografia.rotulo(titulo, "semibold", 54)
+	Tipografia.rotulo(titulo, "semibold", TAMANHO_TITULO)
 	titulo.add_theme_color_override("font_color", COR_TITULO)
 	titulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_faixa.add_child(_centrado(titulo, DESVIO_TITULO))
@@ -123,7 +141,27 @@ func _init() -> void:
 	caixa_giros.custom_minimum_size.x = Tipografia.fonte("semibold").get_string_size("GIROS",
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x + 2.0
 	dentro.add_child(caixa_giros)
-	_espaco(12)
+	_espaco(4)
+	# Configurações: engrenagem na própria faixa, depois do painel.
+	engrenagem = Button.new()
+	engrenagem.flat = true
+	engrenagem.focus_mode = Control.FOCUS_NONE
+	engrenagem.custom_minimum_size = Vector2(ALTURA * 0.82, ALTURA)
+	engrenagem.tooltip_text = "Configurações"
+	engrenagem.pressed.connect(func(): configuracoes.emit())
+	var eng := IconeVetor.new("engrenagem", COR_ROTULO)
+	eng.cor_fundo = COR_FAIXA
+	eng.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	eng.offset_left = ALTURA * 0.14
+	eng.offset_right = -ALTURA * 0.14
+	eng.offset_top = ALTURA * 0.22
+	eng.offset_bottom = -ALTURA * 0.22
+	engrenagem.add_child(eng)
+	_faixa.add_child(engrenagem)
+	_espaco(6)
+	_criar_marcador()
+	titulo.resized.connect(_ajustar_titulo)
+	resized.connect(_posicionar)
 	_posicionar()
 
 
@@ -143,6 +181,101 @@ func _posicionar() -> void:
 	_faixa.offset_top = _area_segura
 	_faixa.offset_bottom = _area_segura + ALTURA
 	offset_bottom = altura_total()
+	if marcador != null:
+		var w := maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
+		marcador.size = Vector2(w, ALTURA_MARCADOR)
+		marcador.position = Vector2(size.x - w - 14.0, altura_total())
+
+
+## Título da tela, em fonte menor se não couber (a engrenagem tira espaço).
+func definir_titulo(texto: String) -> void:
+	titulo.text = texto
+	_ajustar_titulo()
+
+
+func _ajustar_titulo() -> void:
+	var livre := titulo.size.x
+	if livre <= 0.0:
+		return
+	var f := Tipografia.fonte("semibold")
+	var tam := TAMANHO_TITULO
+	while tam > TAMANHO_TITULO_MIN and f.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	titulo.add_theme_font_size_override("font_size", tam)
+
+
+## Aba pendurada sob a faixa: a mesma cor, cantos de baixo arredondados.
+func _criar_marcador() -> void:
+	marcador = Button.new()
+	marcador.focus_mode = Control.FOCUS_NONE
+	marcador.tooltip_text = "Corridas aceleradas"
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_FAIXA
+	sb.corner_radius_bottom_left = 12
+	sb.corner_radius_bottom_right = 12
+	sb.content_margin_left = 16
+	sb.content_margin_right = 18
+	sb.shadow_color = Color(0, 0, 0, 0.35)
+	sb.shadow_size = 6
+	sb.shadow_offset = Vector2(0, 3)
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		marcador.add_theme_stylebox_override(estado, sb)
+	marcador.pressed.connect(func(): acelerar.emit())
+	var h := HBoxContainer.new()
+	_caixa_marcador = h
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marcador.add_child(h)
+	_icone_marcador = IconeVetor.new("acelerar", COR_APAGADO)
+	_icone_marcador.custom_minimum_size = Vector2(32, 26)
+	_icone_marcador.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_icone_marcador)
+	_texto_marcador = Label.new()
+	_texto_marcador.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_texto_marcador.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(_texto_marcador)
+	_tempo_marcador = Label.new()
+	_tempo_marcador.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_tempo_marcador.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.numero(_tempo_marcador, 28)
+	_tempo_marcador.add_theme_color_override("font_color", COR_TITULO)
+	h.add_child(_tempo_marcador)
+	definir_aceleracao(0.0, 1.0)
+	add_child(marcador)
+
+
+## Estado do marcador: `restante_s` (tempo real que falta; 0 = parado) e o fator.
+func definir_aceleracao(restante_s: float, fator: float) -> void:
+	_ativo = restante_s > 0.0
+	if _ativo:
+		_texto_marcador.text = "%d×" % roundi(fator)
+		Tipografia.numero(_texto_marcador, 34)
+		_texto_marcador.add_theme_color_override("font_color", COR_NUMERO)
+		_tempo_marcador.text = Aceleracao.texto_tempo(restante_s)
+		_tempo_marcador.visible = true
+		_icone_marcador.cor = COR_NUMERO
+	else:
+		_texto_marcador.text = "ACELERAR"
+		Tipografia.rotulo(_texto_marcador, "semibold", 25)
+		_texto_marcador.add_theme_color_override("font_color", COR_ROTULO)
+		_tempo_marcador.visible = false
+		_icone_marcador.cor = COR_APAGADO
+		_icone_marcador.modulate.a = 1.0
+	set_process(_ativo)
+	_posicionar.call_deferred()
+
+
+## Ativo: o ícone respira devagar (parado com movimento reduzido).
+func _process(delta: float) -> void:
+	if Preferencias.reduzir_animacoes:
+		_icone_marcador.modulate.a = 1.0
+		return
+	_pulso = fmod(_pulso + delta, 2.4)
+	_icone_marcador.modulate.a = 0.7 + 0.3 * cos(TAU * _pulso / 2.4)
 
 
 ## Valor dos giros, encolhendo a fonte se não couber na moldura.

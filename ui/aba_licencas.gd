@@ -66,7 +66,6 @@ func construir() -> void:
 	_colecao()
 	var h := acoes()
 	entenda(h)
-	_preferencias()
 	if _confirmar_recomeco:
 		var v := cartao(COR_RUIM)
 		rotulo("Apagar todo o progresso e voltar ao saldo inicial?", 0, Color.WHITE, v)
@@ -176,36 +175,6 @@ func _grade_colecao(carros: Array, tenho: Dictionary) -> void:
 	conteudo.add_child(grade)
 
 
-func _preferencias() -> void:
-	var v := cartao()
-	rotulo("PREFERÊNCIAS", FONTE_PEQUENA, COR_SECUNDARIA, v)
-	var h := fileira(v)
-	var lv := rotulo("Volume", FONTE_PEQUENA + 2, Color.WHITE, h)
-	lv.size_flags_horizontal = Control.SIZE_FILL
-	lv.autowrap_mode = TextServer.AUTOWRAP_OFF  # com quebra, saía uma letra por linha
-	var vol := HSlider.new()
-	vol.min_value = 0.0
-	vol.max_value = 1.0
-	vol.step = 0.05
-	vol.value = Preferencias.volume
-	vol.custom_minimum_size = Vector2(0, 48)
-	vol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	vol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	vol.drag_ended.connect(func(_mudou):
-		Preferencias.volume = vol.value
-		Preferencias.salvar())
-	h.add_child(vol)
-	var anim := CheckButton.new()
-	anim.text = "Reduzir animações"
-	anim.button_pressed = Preferencias.reduzir_animacoes
-	anim.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
-	anim.toggled.connect(func(ligado):
-		Preferencias.reduzir_animacoes = ligado
-		Preferencias.salvar())
-	v.add_child(anim)
-	_modo_teste(v)
-
-
 ## Renda por nível de licença, somando as sessões registradas: base medida
 ## para decidir patrocínio e staff (decisão 38), sem estimar.
 func _renda(v: VBoxContainer, sessoes: Array) -> void:
@@ -260,7 +229,8 @@ static func _nome_cenario(id: String) -> String:
 	return id
 
 
-## Playtest (docs/playtest_percurso.md): modo e resumo do registro local.
+## Playtest (docs/playtest_percurso.md): modo e resumo do registro local. Fica
+## na tela de Configurações (engrenagem do cabeçalho).
 func _modo_teste(v: VBoxContainer) -> void:
 	separador(v)
 	rotulo("Modo de playtest", FONTE_PEQUENA + 2, Color.WHITE, v)

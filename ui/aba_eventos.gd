@@ -153,7 +153,7 @@ func _fila() -> void:
 	rotulo("%s · faltam %d corrida%s" % [ev["nome"], f["restantes"], "" if f["restantes"] == 1 else "s"], 0, Color.WHITE, v)
 	var dur: float = jogador.fila_ctrl.duracao_atual()
 	if dur > 0.0:
-		var decorrido := clampf(Time.get_unix_time_from_system() - float(f["inicio"]), 0.0, dur)
+		var decorrido := clampf(Aceleracao.agora(jogador) - float(f["inicio"]), 0.0, dur)
 		var falta := dur * int(f["restantes"]) - decorrido
 		nota("icone_cronometro", "%s por corrida · fim em %s" % [_tempo(dur), _tempo(falta)], "", v, Color.WHITE)
 	var ganho := _ganho_estimado(ev, f)
@@ -553,7 +553,7 @@ func _correr(evento_id: String) -> void:
 	var garagem := carro_ativo()
 	var n := _repeticoes if jogador.vitorias.has(evento_id) else 1
 	var cfg: Dictionary = {} if _config < 0 or garagem == null else garagem.configuracoes[_config]
-	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, n, Time.get_unix_time_from_system(), cfg)
+	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, n, Aceleracao.agora(jogador), cfg)
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return

@@ -533,7 +533,7 @@ func _comprar(o: Dictionary, carro: Carro) -> void:
 
 func _correr_de_novo() -> void:
 	var u: Dictionary = jogador.ultima_corrida
-	var motivo: String = jogador.fila_ctrl.iniciar(u["evento_id"], u["uid"], 1, Time.get_unix_time_from_system())
+	var motivo: String = jogador.fila_ctrl.iniciar(u["evento_id"], u["uid"], 1, Aceleracao.agora(jogador))
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 	else:
@@ -572,7 +572,7 @@ func _process(delta: float) -> void:
 		_info.text = "Nenhuma corrida em andamento."
 		_relogio.text = ""
 		return
-	var agora := Time.get_unix_time_from_system()
+	var agora := Aceleracao.agora(jogador)
 	if segurar_largada:
 		f["inicio"] = agora  # parada no grid: o relógio da corrida não anda
 	if f["semente"] != _semente_mostrada:
@@ -688,7 +688,7 @@ func liberar_largada() -> void:
 		return
 	segurar_largada = false
 	if not jogador.fila.is_empty():
-		jogador.fila["inicio"] = Time.get_unix_time_from_system()
+		jogador.fila["inicio"] = Aceleracao.agora(jogador)
 	_diretor.reiniciar()
 	_sons.largada(true)
 	_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)

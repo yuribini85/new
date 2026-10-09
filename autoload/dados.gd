@@ -69,6 +69,7 @@ func carregar(dir: String) -> void:
 	_pendencias.clear()
 	_erros.clear()
 	_objetos.erase("curvas")  # lido sob demanda (curvas())
+	_objetos.erase("monetizacao")  # idem (monetizacao())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -295,6 +296,15 @@ func curvas(pista_id: String) -> Array:
 		var c = _ler_json(pasta + "curvas.json") if FileAccess.file_exists(pasta + "curvas.json") else {}
 		_objetos["curvas"] = c if c is Dictionary else {}
 	return _objetos["curvas"].get(pista_id, [])
+
+
+## Monetização (decisão 39, monetizacao.json, opcional): {aceleracao: {fator,
+## duracao_s, teto_s}}. Sem o arquivo, a aceleração não aparece.
+func monetizacao() -> Dictionary:
+	if not _objetos.has("monetizacao"):
+		var m = _ler_json(pasta + "monetizacao.json") if FileAccess.file_exists(pasta + "monetizacao.json") else {}
+		_objetos["monetizacao"] = m if m is Dictionary else {}
+	return _objetos["monetizacao"]
 
 
 func evento(id: String) -> Dictionary:

@@ -43,7 +43,7 @@ func _ready() -> void:
 	if r["aviso"] != "":
 		push_warning("SaveManager: " + r["aviso"])
 	if jogador.fila_ctrl != null and r["carregou"]:
-		relatorio_offline = jogador.fila_ctrl.processar(Time.get_unix_time_from_system())
+		relatorio_offline = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
 		salvar()
 
 
