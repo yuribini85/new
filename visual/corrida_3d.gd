@@ -35,6 +35,21 @@ var _carros := {}  # id -> CarroBloco
 var _rotulos := {}  # id -> Label3D
 var _lateral := {}  # id -> deslocamento atual (m, + = esquerda)
 var _off := {}  # id -> afastamento do traçado de corrida (m), suavizado
+## Grid de largada: id -> {s, lateral} da vaga (a mesma posição da simulação,
+## um atrás do outro a cada distancia_minima_m, em lados alternados). Parado
+## na vaga, o carro fica nela; ao andar, vai para o traçado.
+var _vagas := {}
+## Vagas do grid: lado de cada coluna (m) e marcação (colchete branco).
+const GRID_LADO_M := 2.4
+const VAGA_LARGURA_M := 3.0
+const VAGA_FUNDO_M := 1.6
+const VAGA_TRACO_M := 0.22
+const XADREZ_M := 0.8  # lado de cada quadrado da linha de chegada
+## A linha de chegada e o pórtico ficam logo à frente da vaga da pole (que a
+## simulação põe em s = 0): o grid inteiro atrás da linha, como numa largada
+## de verdade. A diferença na hora de cruzar é imperceptível (décimos).
+const LINHA_CHEGADA_M := 3.6
+const PORTICO_M := LINHA_CHEGADA_M + 2.4  # o pórtico logo depois da linha (ela fica à vista)
 var _tracado: Tracado
 var _tracao := {}  # id -> "FF", "FR", "MR", "4WD"
 var _giro_batida := {}  # id -> giro da batida que ainda resta (rad)
@@ -221,6 +236,7 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 		_lateral[id] = _tracado.lateral(fonte.distancia(id))
 		_off[id] = 0.0
 		_tracao[id] = String(base.get("tracao", "FF"))
+	_grid()
 	atualizar(0.0)
 	_camera_imediata()
 
@@ -257,6 +273,12 @@ func atualizar(delta: float) -> void:
 		base[id] = _tracado.lateral(float(s[id]))
 		ataque[id] = signf(_tracado.curvatura(float(s[id]) + 45.0))
 	var alvo := faixas(ordem, s, _off, _pista.comprimento, base, ataque)
+	for id in _vagas:
+		# Ainda parado na vaga do grid: fica nela (sem deslizar de lado).
+		if absf(float(s[id]) - float(_vagas[id]["s"])) < 0.5:
+			alvo[id] = float(_vagas[id]["lateral"]) - float(base[id])
+			if delta <= 0.0 or float(_off[id]) == 0.0:
+				_off[id] = alvo[id]
 	var k := clampf(delta * VELOCIDADE_LATERAL, 0.0, 1.0) if delta > 0.0 and not Preferencias.reduzir_animacoes else 1.0
 	var antes := _lateral.duplicate()
 	for id in _carros:
@@ -767,21 +789,58 @@ func _marcadores() -> void:
 	_traco.material_override = mat_t
 	_traco.visible = false
 	_cena.add_child(_traco)
-	var largada := MeshInstance3D.new()
-	var caixa_l := BoxMesh.new()
-	caixa_l.size = Vector3(1.0, 0.02, LARGURA_PISTA_M)
-	largada.mesh = caixa_l
-	largada.material_override = CarroBloco._material(Color.WHITE)
-	var p0 := _pista.posicao_em(0.0)
-	largada.position = Vector3(p0.x, 0.01, -p0.y)
-	largada.rotation.y = _pista.rumo_em(0.0)
-	_cena.add_child(largada)
+	# Linha de chegada: faixa quadriculada pintada de borda a borda da pista.
+	var p0 := _pista.posicao_em(LINHA_CHEGADA_M)
+	var rumo := _pista.rumo_em(LINHA_CHEGADA_M)
+	var frente := Vector2.from_angle(rumo)
+	var lado := Vector2.from_angle(rumo + PI / 2.0)
+	var colunas := int(round(LARGURA_PISTA_M / XADREZ_M))
+	for linha in 2:
+		for k in colunas:
+			var q: Vector2 = p0 + frente * ((linha - 0.5) * XADREZ_M) \
+					+ lado * ((k + 0.5) * XADREZ_M - LARGURA_PISTA_M * 0.5)
+			var quadro := _bloco(Vector3(XADREZ_M, 0.02, XADREZ_M),
+					Color(0.94, 0.94, 0.92) if (k + linha) % 2 == 0 else Color(0.07, 0.07, 0.08))
+			quadro.position = Vector3(q.x, 0.012, -q.y)
+			quadro.rotation.y = rumo
+			_cena.add_child(quadro)
+
+
+## Grid de largada: uma vaga por carro onde a simulação o põe (s = -g ·
+## distancia_minima_m), em lados alternados como num grid de verdade; cada
+## vaga é um colchete branco pintado (traço na frente e dois para trás).
+func _grid() -> void:
+	_vagas = {}
+	var ordem := _fonte.ordem()
+	for g in ordem.size():
+		var id: String = ordem[g]
+		var s0 := _fonte.distancia_em(id, 0.0)
+		var lateral := GRID_LADO_M if g % 2 == 0 else -GRID_LADO_M
+		_vagas[id] = {"s": s0, "lateral": lateral}
+		var sv := fposmod(s0, _pista.comprimento)
+		var rumo := _pista.rumo_em(sv)
+		var frente := Vector2.from_angle(rumo)
+		var lado := Vector2.from_angle(rumo + PI / 2.0)
+		var centro := _pista.posicao_em(sv) + lado * lateral
+		var bico := centro + frente * 2.7  # à frente do carro (que tem ~4,3 m)
+		var tracos := [
+			[bico, Vector3(VAGA_TRACO_M, 0.02, VAGA_LARGURA_M)],
+			[bico - frente * (VAGA_FUNDO_M * 0.5) + lado * (VAGA_LARGURA_M * 0.5 - VAGA_TRACO_M * 0.5),
+					Vector3(VAGA_FUNDO_M, 0.02, VAGA_TRACO_M)],
+			[bico - frente * (VAGA_FUNDO_M * 0.5) - lado * (VAGA_LARGURA_M * 0.5 - VAGA_TRACO_M * 0.5),
+					Vector3(VAGA_FUNDO_M, 0.02, VAGA_TRACO_M)],
+		]
+		for t in tracos:
+			var b := _bloco(t[1], Color(0.92, 0.92, 0.9))
+			b.position = Vector3(t[0].x, 0.012, -t[0].y)
+			b.rotation.y = rumo
+			_cena.add_child(b)
 
 
 ## Pórtico de largada e chegada sobre a pista, com faixa quadriculada.
 func _portico() -> void:
-	var p0 := _pista.posicao_em(0.0)
-	var rumo := _pista.rumo_em(0.0)
+	var p0 := _pista.posicao_em(PORTICO_M)
+	var rumo := _pista.rumo_em(PORTICO_M)
 	var lado := Vector2.from_angle(rumo + PI / 2.0)
 
 	for k in [-1.0, 1.0]:

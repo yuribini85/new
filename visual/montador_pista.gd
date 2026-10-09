@@ -503,7 +503,8 @@ func _reta_de_largada(k: Dictionary) -> void:
 	# Pórtico sobre a largada.
 	var portico := kit("portico")
 	if portico != null:
-		_objeto("portico", _pista.posicao_em(0.0), _pista.rumo_em(0.0), 7.0, 0.6, true)
+		_objeto("portico", _pista.posicao_em(Corrida3D.PORTICO_M), _pista.rumo_em(Corrida3D.PORTICO_M),
+				7.0, 0.6, true)
 
 
 ## Maior afastamento lateral (m), de b0 até ate, em que o lado continua longe de
