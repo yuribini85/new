@@ -69,15 +69,13 @@ func _ready() -> void:
 ## celular a área segura é a do monitor e não conta.
 func _margens(c: Control) -> void:
 	var lateral := 56.0
-	var cima := 0.0
-	var baixo := 0.0
+	var cima := AreaSegura.topo(get_viewport_rect().size.x)
+	var baixo := AreaSegura.base(get_viewport_rect().size.x)
 	if OS.has_feature("mobile"):
 		var seguro := Rect2(DisplayServer.get_display_safe_area())
 		var janela := Rect2(DisplayServer.window_get_position(), DisplayServer.window_get_size())
 		if janela.size.x > 0 and seguro.size.x > 0:
 			var esc := get_viewport_rect().size.x / janela.size.x
-			cima = maxf(0.0, seguro.position.y - janela.position.y) * esc
-			baixo = maxf(0.0, janela.end.y - seguro.end.y) * esc
 			lateral = maxf(lateral, maxf(seguro.position.x - janela.position.x, janela.end.x - seguro.end.x) * esc)
 	c.offset_left = lateral
 	c.offset_right = -lateral

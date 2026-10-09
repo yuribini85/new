@@ -4,15 +4,17 @@ extends RefCounted
 ## botões e títulos curtos; o texto corrido segue na fonte padrão, que lê melhor
 ## em parágrafo. Começa na tela inicial; as outras telas adotam pelos mesmos
 ## tokens (acao_primaria, acao_secundaria).
-## Licença das fontes: ui/fontes/LICENCA-Barlow.txt (OFL).
+## Números (giros, prêmios, atributos, posição, velocidade): Racing Sans One.
+## Licenças das fontes: ui/fontes/LICENCA-Barlow.txt e LICENCA-RacingSansOne.txt (OFL).
 
 const ARQUIVOS := {
 	"semibold": "res://ui/fontes/BarlowCondensed-SemiBold.ttf",
 	"medium": "res://ui/fontes/BarlowCondensed-Medium.ttf",
 	"regular": "res://ui/fontes/BarlowCondensed-Regular.ttf",
+	"numero": "res://ui/fontes/RacingSansOne-Regular.ttf",
 }
 ## Espaço extra entre letras (px), proporcional à caixa alta condensada.
-const ESPACO_LETRAS := {"semibold": 2, "medium": 2, "regular": 1}
+const ESPACO_LETRAS := {"semibold": 2, "medium": 2, "regular": 1, "numero": 1}
 const TAMANHO_PRIMARIA := 50
 const TAMANHO_SECUNDARIA := 30
 const ALTURA_PRIMARIA := 108  # área de toque confortável (>= 88)
@@ -93,7 +95,18 @@ static func acao_secundaria(b: Button, texto: String, cor := Color(0.86, 0.87, 0
 	b.add_theme_stylebox_override("focus", foco)
 
 
-## Rótulo na família das ações (números, títulos curtos, rótulos em caixa alta).
+## Fonte dos números (Racing Sans One, desenho original, sem efeitos).
+static func fonte_numero() -> Font:
+	return fonte("numero")
+
+
+## Número na tela: Racing Sans One no tamanho pedido.
+static func numero(l: Control, tamanho: int) -> void:
+	l.add_theme_font_override("font", fonte_numero())
+	l.add_theme_font_size_override("font_size", tamanho)
+
+
+## Rótulo na família das ações (títulos curtos, rótulos em caixa alta).
 static func rotulo(l: Control, peso: String, tamanho: int) -> void:
 	l.add_theme_font_override("font", fonte(peso))
 	l.add_theme_font_size_override("font_size", tamanho)

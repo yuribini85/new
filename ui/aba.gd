@@ -42,6 +42,9 @@ var conteudo: VBoxContainer
 ## Âncoras dos destaques do tutorial (HIGHLIGHT_<nome> das cenas): nome ->
 ## controle da tela atual. Refeitas a cada construir().
 var ancoras: Dictionary = {}
+## Altura da faixa do cabeçalho (Cabecalho): o conteúdo começa abaixo dela.
+var topo_livre := 0.0
+const MARGEM_LATERAL := 16
 
 
 func _init(dados_: Node, jogador_: Node, titulo_aba: String) -> void:
@@ -55,7 +58,14 @@ func _init(dados_: Node, jogador_: Node, titulo_aba: String) -> void:
 	conteudo = VBoxContainer.new()
 	conteudo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	conteudo.add_theme_constant_override("separation", 14)
-	add_child(conteudo)
+	# A aba vai de borda a borda (o cenário sangra até a beira da tela); o
+	# conteúdo tem a margem lateral.
+	var lados := MarginContainer.new()
+	lados.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lados.add_theme_constant_override("margin_left", MARGEM_LATERAL)
+	lados.add_theme_constant_override("margin_right", MARGEM_LATERAL)
+	add_child(lados)
+	lados.add_child(conteudo)
 
 
 ## Reconstrói a tela mantendo a posição da lista (voltar não perde o lugar).
@@ -66,6 +76,7 @@ func atualizar() -> void:
 		c.queue_free()
 	ancoras = {}
 	construir()
+	_espaco_topo()
 	if posicao > 0:
 		set_deferred("scroll_vertical", posicao)
 
@@ -181,6 +192,36 @@ func _lista_de_lado(c: Node) -> ScrollContainer:
 	return null
 
 
+func reservar_topo(altura: float) -> void:
+	topo_livre = altura
+
+
+## Marca `c` como cenário do topo: sem cantos nem moldura, da beira à beira da
+## tela (os filhos de tela cheia passam a margem lateral).
+func cenario_topo(c: Control) -> void:
+	c.set_meta("cenario_topo", true)
+	c.clip_contents = false
+	if c is Panel:
+		c.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	for f in c.get_children():
+		if f is Control and f.anchor_left == 0.0 and f.anchor_right == 1.0 and f.anchor_top == 0.0 \
+				and f.anchor_bottom == 1.0:
+			f.offset_left = -MARGEM_LATERAL
+			f.offset_right = MARGEM_LATERAL
+
+
+## O conteúdo começa logo abaixo da faixa do cabeçalho; o cenário do topo
+## (banner, palco) fica colado nela, de borda a borda.
+func _espaco_topo() -> void:
+	if topo_livre <= 0.0 or conteudo.get_child_count() == 0:
+		return
+	var vazio := Control.new()
+	vazio.custom_minimum_size = Vector2(0, topo_livre - 14.0)  # 14: o espaço entre itens
+	vazio.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	conteudo.add_child(vazio)
+	conteudo.move_child(vazio, 0)
+
+
 ## Marca um controle como alvo do destaque `nome` (o primeiro registrado vale).
 ## Um cartão marca o painel inteiro.
 func ancora(nome: String, c: Control) -> void:
@@ -206,7 +247,9 @@ func cabecalho(t: String, subtitulo := "", fundo := "") -> void:
 		if subtitulo != "":
 			rotulo(subtitulo, FONTE_PEQUENA, COR_SECUNDARIA)
 		return
-	var faixa := ilustracao(fundo, 230)
+	# O título fica no cabeçalho; o banner é o cenário do topo, com a frase.
+	var faixa := ilustracao(fundo, 150 if subtitulo != "" else 120)
+	cenario_topo(faixa)
 	var v := VBoxContainer.new()
 	v.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	v.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -215,11 +258,10 @@ func cabecalho(t: String, subtitulo := "", fundo := "") -> void:
 	v.offset_bottom = -14
 	v.add_theme_constant_override("separation", 0)
 	faixa.add_child(v)
-	var l := rotulo(t.to_upper(), FONTE_TITULO + 6, Color.WHITE, v)
-	l.add_theme_constant_override("outline_size", 8)
-	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	if subtitulo != "":
-		rotulo(subtitulo, FONTE_PEQUENA, Color(0.9, 0.91, 0.94), v)
+		var l := rotulo(subtitulo, FONTE_PEQUENA + 2, Color(0.9, 0.91, 0.94), v)
+		l.add_theme_constant_override("outline_size", 6)
+		l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 
 
 # --- Arte da interface ------------------------------------------------------

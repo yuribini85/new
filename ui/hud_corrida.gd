@@ -110,8 +110,10 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 
-func _texto(t: String, pos: Vector2, tam: int, cor: Color, alinhar := HORIZONTAL_ALIGNMENT_LEFT, largura := -1.0) -> void:
-	var f := get_theme_default_font()
+func _texto(t: String, pos: Vector2, tam: int, cor: Color, alinhar := HORIZONTAL_ALIGNMENT_LEFT, largura := -1.0,
+		f: Font = null) -> void:
+	if f == null:
+		f = get_theme_default_font()
 	draw_string_outline(f, pos, t, alinhar, largura, tam, 6, Color(SOMBRA, SOMBRA.a * cor.a))
 	draw_string(f, pos, t, alinhar, largura, tam, cor)
 
@@ -126,13 +128,13 @@ func _draw() -> void:
 		return
 	if _d.is_empty():
 		return
-	var f := get_theme_default_font()
+	var f := Tipografia.fonte_numero()
 	var x := 18.0
 	# 1. Posição: o número grande em âmbar (é o seu), o total pequeno ao lado.
 	var pos := str(_d["posicao"])
-	_texto(pos, Vector2(x, 82), 80, AMBAR)
+	_texto(pos, Vector2(x, 82), 80, AMBAR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	var w := f.get_string_size(pos, HORIZONTAL_ALIGNMENT_LEFT, -1, 80).x
-	_texto("/%d" % _d["total"], Vector2(x + w + 4, 82), 28, SUAVE)
+	_texto("/%d" % _d["total"], Vector2(x + w + 4, 82), 28, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	# 3. Volta (o tempo dela fica no cronômetro, embaixo).
 	_texto("VOLTA  %d/%d" % [_d["volta"], _d["voltas"]], Vector2(x, 120), 26, COR)
 	_lista()
@@ -210,7 +212,7 @@ func _conta_giros() -> void:
 		var cor := Color(CORTE) if giro >= corte - 400.0 else AMBAR
 		_ponteiro(c, GIRO_RAIO, lerpf(de, ate, clampf(giro / giro_max, 0.0, 1.0)), cor, a)
 	var marcha := int(_d.get("marcha", 0))
-	_txt_inst(str(marcha) if marcha > 0 else "N", c + Vector2(GIRO_RAIO * 0.42, -GIRO_RAIO * 0.12), 40, _a(COR, a))
+	_txt_inst(str(marcha) if marcha > 0 else "N", c + Vector2(GIRO_RAIO * 0.42, -GIRO_RAIO * 0.12), 40, _a(COR, a), "numero")
 	_txt_inst("%d km/h" % roundi(float(_d["kmh"])), c + Vector2(GIRO_RAIO * 0.42 + 30.0, -GIRO_RAIO * 0.12), 22,
 			_a(SUAVE, a), "medium")
 
@@ -226,7 +228,7 @@ func _cronometro() -> void:
 	var t := float(_d.get("tempo_volta", 0.0))
 	_ponteiro(c, CRONO_RAIO, -PI / 2.0 + TAU * fmod(t, 60.0) / 60.0, AMBAR, a)
 	var x := c.x + CRONO_RAIO + 14.0
-	_txt_inst(_tempo(t), Vector2(x, c.y + 2.0), 26, _a(SUAVE, a), "medium")
+	_txt_inst(_tempo(t), Vector2(x, c.y + 2.0), 26, _a(SUAVE, a), "numero")
 	var delta := float(_d.get("delta", INF))
 	if delta != INF:
 		_txt_inst("%+.2f" % delta, Vector2(x, c.y - 26.0), 22, _a(Color(CORTE) if delta > 0.0 else AMBAR, a))

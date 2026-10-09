@@ -33,8 +33,8 @@ func _notification(what: int) -> void:
 
 func construir() -> void:
 	var lista: Array = jogador.garagem.lista()
-	_faixa_objetivo()
 	if lista.is_empty():
+		_faixa_objetivo()
 		_vazia()
 		return
 	if carro_ativo() == null:
@@ -42,6 +42,8 @@ func construir() -> void:
 	var c := carro_ativo()
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c))
 	ancora("CAR_STATS", _palco(c))
+	# O palco é o cenário do topo (colado no cabeçalho); a missão vem logo abaixo.
+	_faixa_objetivo()
 	# Correr fica na barra de baixo; aqui, melhorar (principal) e vender.
 	var h := acoes()
 	var melhorar := _acao(h, func(): ir_para.emit(OFICINA))
@@ -78,6 +80,7 @@ func _palco(c: Carro) -> Control:
 	conteudo.add_child(palco)
 	_vitrine.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	palco.add_child(_vitrine)
+	cenario_topo(palco)
 	var fab: Dictionary = dados.item("fabricantes", c.base["fabricante"])
 	# Cabeçalho: o nome em destaque; fabricante, ano, tração e peças numa
 	# linha só, embaixo dele. O canto direito fica para a ilustração.
@@ -131,7 +134,11 @@ func _palco(c: Carro) -> Control:
 		linha.add_theme_constant_override("separation", 4)
 		linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cel.add_child(linha)
-		Tipografia.rotulo(_hud_rotulo(it[2], 0, Color.WHITE, linha), "semibold", 34)
+		var valor := _hud_rotulo(it[2], 0, Color.WHITE, linha)
+		if String(it[2]).left(1) in "0123456789+-−":
+			Tipografia.numero(valor, 34)
+		else:
+			Tipografia.rotulo(valor, "semibold", 34)
 		if it[3] != "":
 			var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, linha)
 			Tipografia.rotulo(u, "regular", 22)

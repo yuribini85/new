@@ -275,7 +275,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		lp_pos.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		# Valor e, depois dele, a moeda (como o saldo no topo); 1º > 2º > 3º.
 		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
-		Tipografia.rotulo(lv, "semibold", [46, 34, 28][k])
+		Tipografia.numero(lv, [46, 34, 28][k])
 		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
 		lv.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		var moeda := icone("icone_creditos", [38, 30, 24][k], cel)

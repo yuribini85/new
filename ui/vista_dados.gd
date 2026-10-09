@@ -52,11 +52,11 @@ func _draw() -> void:
 	_t(String(_d.get("pista_nome", "")).to_upper(), Vector2(M, 44), 20, SUAVE, "medium")
 	_t("DADOS SIMULADOS", Vector2(direita, 44), 20, APAGADO, "medium", HORIZONTAL_ALIGNMENT_RIGHT)
 	# Velocidade grande; marcha à direita.
-	_t("%d" % roundi(float(_d.get("kmh", 0.0))), Vector2(M - 6, 200), 160, COR)
+	_t("%d" % roundi(float(_d.get("kmh", 0.0))), Vector2(M - 6, 200), 160, COR, "numero")
 	_t("KM/H", Vector2(M, 236), 20, SUAVE, "medium")
 	_t("MARCHA", Vector2(direita, 100), 20, SUAVE, "medium", HORIZONTAL_ALIGNMENT_RIGHT)
 	var marcha := int(_d.get("marcha", 0))
-	_t(str(marcha) if marcha > 0 else "N", Vector2(direita, 200), 104, destaque, "semibold", HORIZONTAL_ALIGNMENT_RIGHT)
+	_t(str(marcha) if marcha > 0 else "N", Vector2(direita, 200), 104, destaque, "numero", HORIZONTAL_ALIGNMENT_RIGHT)
 	# Giro: barra fina; o trecho do corte marcado, a barra fica vermelha perto dele.
 	var giro := float(_d.get("giro", 0.0))
 	var giro_max := float(_d.get("giro_max", 0.0))
@@ -95,7 +95,7 @@ func _draw() -> void:
 	_divisor(422)
 	# Volta, melhor e delta.
 	_t("VOLTA %d/%d" % [int(_d.get("volta", 1)), int(_d.get("voltas", 1))], Vector2(M, 458), 20, SUAVE, "medium")
-	_t(HudCorrida._tempo(float(_d.get("tempo_volta", 0.0))), Vector2(M, 500), 34, COR)
+	_t(HudCorrida._tempo(float(_d.get("tempo_volta", 0.0))), Vector2(M, 500), 34, COR, "numero")
 	var melhor := float(_d.get("melhor", -1.0))
 	_t("MELHOR", Vector2(size.x / 2.0, 458), 20, SUAVE, "medium", HORIZONTAL_ALIGNMENT_CENTER)
 	_t(HudCorrida._tempo(melhor) if melhor > 0.0 else "—", Vector2(size.x / 2.0, 500), 34, SUAVE, "medium",

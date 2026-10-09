@@ -30,6 +30,9 @@ vêm do disco do GT2 pelo fluxo `tools/extrair_gt2.py` → `tools/importar_gt2.p
 `tools/calibrar_licencas.gd` (ver `data/README.md`). Não edite à mão os arquivos que o
 importador gera; ajuste a conversão no importador.
 
+**Assets só com escala uniforme.** Nunca esticar nem estreitar uma imagem (mudar a
+proporção); para caber, escalar inteira ou recortar.
+
 **Simulação separada da visualização.** A corrida é resolvida sem renderizar; a tela só
 lê o resultado.
 

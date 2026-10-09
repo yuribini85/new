@@ -672,6 +672,16 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		_painel_hud.evento("CORRIDA EM ANDAMENTO", "", Color.WHITE, 3)
 
 
+## A corrida não reconstrói o conteúdo: o espaço do cabeçalho entra uma vez.
+func reservar_topo(altura: float) -> void:
+	super(altura)
+	var vazio := Control.new()
+	vazio.custom_minimum_size = Vector2(0, altura - 14.0)
+	vazio.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	conteudo.add_child(vazio)
+	conteudo.move_child(vazio, 0)
+
+
 ## Fim da cena da largada: a corrida começa agora.
 func liberar_largada() -> void:
 	if not segurar_largada:

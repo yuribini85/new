@@ -4,7 +4,10 @@ extends Control
 
 var dados: Node
 var jogador: Node
-var _saldo: Label
+var _cabecalho: Cabecalho
+## Telas visitadas (para o voltar do cabeçalho), a mais recente no fim.
+var _historico: Array[int] = []
+const HISTORICO_MAX := 20
 var _meta: Array = []  # saldo e moeda: meta-jogo, somem durante a corrida
 var _nav: Control
 var _modo_corrida := false
@@ -21,7 +24,6 @@ var _lembrete := {}
 const LEMBRETE_S := 8.0  # apresentação: quanto esperar antes de lembrar
 ## Nome de cada aba no trigger da história (ABA:<nome>).
 const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE"]
-var _voltar: Button
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
 ## telas internas (de Garagem e Correr), abertas pelo caminho do jogo.
@@ -30,7 +32,8 @@ const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"],
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
-const NOME_PAI := {2: "‹ Garagem", 4: "‹ Correr"}
+## Título de cada tela no cabeçalho.
+const TITULOS := ["Garagem", "Mercado", "Oficina", "Correr", "Corrida", "Carreira", "Equipe"]
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
 
@@ -51,49 +54,28 @@ func _ready() -> void:
 	fundo.color = Aba.COR_FUNDO
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fundo)
+	# As telas começam no topo absoluto (o cenário passa por trás do cabeçalho,
+	# que flutua por cima); só as laterais e o pé têm margem.
 	var margem := MarginContainer.new()
 	margem.set_anchors_preset(Control.PRESET_FULL_RECT)
-	for lado in ["left", "right", "top", "bottom"]:
-		margem.add_theme_constant_override("margin_" + lado, 16)
+	margem.add_theme_constant_override("margin_bottom", 16 + int(AreaSegura.base(get_viewport_rect().size.x)))
+	for lado in ["left", "right", "top"]:
+		margem.add_theme_constant_override("margin_" + lado, 0)
 	add_child(margem)
 	var raiz := VBoxContainer.new()
 	margem.add_child(raiz)
 
 	if jogador.economia == null or jogador.fila_ctrl == null:
+		for lado in ["left", "right", "top"]:
+			margem.add_theme_constant_override("margin_" + lado, 16)
 		_tela_pendencias(raiz)
 		return
 
-	var topo := HBoxContainer.new()
-	topo.add_theme_constant_override("separation", 12)
-	raiz.add_child(topo)
-	_voltar = Button.new()
-	_voltar.flat = true
-	_voltar.custom_minimum_size = Vector2(0, 56)
-	_voltar.add_theme_color_override("font_color", Aba.COR_INFO.lightened(0.2))
-	_voltar.pressed.connect(func(): _ir_para(PAI.get(_abas.current_tab, 0)))
-	topo.add_child(_voltar)
-	# Saldo e moeda juntos no canto (o destaque do tutorial envolve só os dois).
-	var conta := HBoxContainer.new()
-	conta.alignment = BoxContainer.ALIGNMENT_END
-	conta.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	conta.add_theme_constant_override("separation", 12)
-	topo.add_child(conta)
-	var caixa_saldo := HBoxContainer.new()
-	caixa_saldo.add_theme_constant_override("separation", 12)
-	conta.add_child(caixa_saldo)
-	_ancoras["SALDO"] = caixa_saldo
-	_saldo = Label.new()
-	Tipografia.rotulo(_saldo, "semibold", FONTE_TITULO + 4)
-	_saldo.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	caixa_saldo.add_child(_saldo)
-	var moeda := TextureRect.new()
-	moeda.texture = Aba.arte("icone_creditos")
-	moeda.custom_minimum_size = Vector2(48, 48)
-	moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	caixa_saldo.add_child(moeda)
-	_meta = [_saldo, moeda]
+	_cabecalho = Cabecalho.new()
+	_cabecalho.definir_area_segura(AreaSegura.topo(get_viewport_rect().size.x))
+	_cabecalho.voltar.connect(_voltar_tela)
+	_ancoras["SALDO"] = _cabecalho.painel
+	_meta = [_cabecalho.painel]
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
 	# Moldura sem layout: o tamanho mínimo das abas não passa para a tela. Se
@@ -116,6 +98,7 @@ func _ready() -> void:
 		preload("res://ui/aba_equipe.gd").new(dados, jogador),
 	]
 	for a in _todas:
+		a.reservar_topo(_cabecalho.altura_total())
 		_abas.add_child(a)
 		a.mudou.connect(atualizar)
 		a.ir_para.connect(func(i):
@@ -138,9 +121,17 @@ func _ready() -> void:
 	for estado in ["normal", "hover", "pressed", "focus"]:
 		_ao_vivo.add_theme_stylebox_override(estado, sb_vivo)
 	_ao_vivo.pressed.connect(func(): _ir_para(4))
-	raiz.add_child(_ao_vivo)
+	# Faixa ao vivo e navegação com a margem lateral (as telas vão até a beira).
+	var pe := MarginContainer.new()
+	pe.add_theme_constant_override("margin_left", 16)
+	pe.add_theme_constant_override("margin_right", 16)
+	raiz.add_child(pe)
+	var pe_v := VBoxContainer.new()
+	pe.add_child(pe_v)
+	pe_v.add_child(_ao_vivo)
 	_nav = _navegacao()
-	raiz.add_child(_nav)
+	pe_v.add_child(_nav)
+	add_child(_cabecalho)  # por cima das telas, abaixo de avisos e diálogos
 	_sobre = Sobreposicao.new()
 	add_child(_sobre)
 	for a in _todas:
@@ -238,9 +229,14 @@ func _atualizar_nav() -> void:
 		_botoes[k].add_theme_font_size_override("font_size", 20 if cinco else 23)
 
 
-func _ir_para(i: int) -> void:
+func _ir_para(i: int, voltando := false) -> void:
 	if _destaque != null:
 		_destaque.limpar()
+	# Histórico real de navegação: a tela de onde se saiu (não ao voltar).
+	if not voltando and i != _abas.current_tab and _cabecalho != null:
+		_historico.append(_abas.current_tab)
+		if _historico.size() > HISTORICO_MAX:
+			_historico.pop_front()
 	_abas.current_tab = i
 	if jogador.historia != null:
 		jogador.historia.disparar("ABA:" + NOMES_ABA[i])
@@ -248,10 +244,17 @@ func _ir_para(i: int) -> void:
 	var destino: int = PAI.get(i, i)
 	for k in _botoes.size():
 		_botoes[k].button_pressed = DESTINOS[k][1] == destino
-	_voltar.text = NOME_PAI.get(i, "")
-	_voltar.visible = PAI.has(i)
+	_cabecalho.titulo.text = TITULOS[i].to_upper()
+	_cabecalho.definir_volta(not _historico.is_empty())
 	_atualizar_ao_vivo()
 	_foco_corrida()
+
+
+## Voltar do cabeçalho: a última tela visitada (o estado dela fica como estava).
+func _voltar_tela() -> void:
+	if _historico.is_empty():
+		return
+	_ir_para(_historico.pop_back(), true)
 
 
 ## Assistindo a corrida: saldo some (meta-jogo) e a navegação fica apagada
@@ -341,8 +344,7 @@ func _avisar(texto: String, ok := true) -> void:
 
 
 func atualizar() -> void:
-	_saldo.text = Aba.dinheiro(jogador.economia.saldo)  # o ícone da moeda ao lado já diz G
-	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+	_cabecalho.definir_giros(Aba.dinheiro(jogador.economia.saldo))
 	_atualizar_ao_vivo()
 	_atualizar_nav()
 	for a in _todas:
@@ -653,7 +655,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		var pos := Label.new()
 		pos.text = "%dº de %d" % [c["posicao"], c["total"]]
 		pos.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		pos.add_theme_font_size_override("font_size", 72)
+		Tipografia.numero(pos, 76)
 		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
 		v.add_child(pos)
 		var nome_ev := g.rotulo(Aba.nome_evento(ev), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)

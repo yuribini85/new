@@ -83,7 +83,7 @@ func _resumo() -> void:
 	for ev in jogador.vitorias:
 		vitorias += int(jogador.vitorias[ev])
 	numeros([["%d" % jogador.garagem.lista().size(), "carros"], ["%d" % vitorias, "vitórias"],
-			[", ".join(jogador.licencas) if not jogador.licencas.is_empty() else "—", "licenças"],
+			["%d/%d" % [jogador.licencas.size(), dados.lista("licencas").size()], "licenças"],
 			["%d" % jogador.dias, "dias"]])
 
 
