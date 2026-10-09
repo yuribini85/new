@@ -145,23 +145,31 @@ func _init(historia_: Historia) -> void:
 	_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_texto.add_theme_font_size_override("font_size", 32)
 	v.add_child(_texto)
-	var rodape := HBoxContainer.new()
-	v.add_child(rodape)
-	var pular := Button.new()
-	pular.text = "Pular ›"
-	pular.flat = true
-	pular.add_theme_font_size_override("font_size", 20)
-	pular.pressed.connect(pular_cena)
-	rodape.add_child(pular)
 	var dica := Label.new()
 	dica.text = "toque para continuar ›"
 	dica.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dica.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	dica.add_theme_font_size_override("font_size", 18)
 	dica.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
-	rodape.add_child(dica)
+	v.add_child(dica)
 	_montar_cartao()
+	_montar_pular()
 	visible = false
+
+
+## "Pular" fora da caixa, no canto inferior direito da tela; por cima do
+## cartão de capítulo também (pula a cena inteira).
+func _montar_pular() -> void:
+	var pular := Button.new()
+	Tipografia.acao_secundaria(pular, "Pular ›", Color(0.93, 0.92, 0.88, 0.85), 30, 80)
+	pular.custom_minimum_size.x = 150
+	pular.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	pular.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	pular.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	pular.offset_right = -16
+	pular.offset_bottom = -16
+	pular.pressed.connect(pular_cena)
+	add_child(pular)
 
 
 ## Cartão de capítulo: tela preta, "Capítulo N" pequeno e o título grande.

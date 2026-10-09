@@ -509,7 +509,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	if continua:
 		botoes = [["Assistir a próxima", func(): _ir_para(4), "icone_ao_vivo"], ["Fechar", func(): pass]]
 	else:
-		botoes = [["Correr de novo", func():
+		botoes = [["Disputar de novo", func():
 				var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Time.get_unix_time_from_system())
 				if m != "":
 					_sobre.avisar("Não deu para correr: %s." % m, false)
@@ -582,7 +582,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		var marcos := []
 		if int(c.get("posicao_companheiro", 0)) > 0:
 			# Equipe: vale quem chegou na frente (fase 9).
-			marcos.append(["Você %dº · %s %dº" % [c["posicao_propria"], EquipeJogador.nome_segundo(dados, jogador),
+			marcos.append(["%s %dº · %s %dº" % [EquipeJogador.nome_jogador(dados, jogador), c["posicao_propria"], EquipeJogador.nome_segundo(dados, jogador),
 					c["posicao_companheiro"]], Aba.COR_INFO])
 		var folha: Dictionary = c.get("folha", {})
 		if int(folha.get("patrocinio", 0)) > 0 or int(folha.get("cobrado", 0)) > 0:
@@ -648,7 +648,7 @@ func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_theme_constant_override("separation", 2)
 		var nome := Label.new()
-		nome.text = "Você" if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador) if id == EquipeJogador.ID
+		nome.text = EquipeJogador.nome_jogador(dados, jogador) if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador) if id == EquipeJogador.ID
 				else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1))))
 		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		nome.add_theme_font_size_override("font_size", 23)

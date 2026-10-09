@@ -53,7 +53,7 @@ Elena: A barra "seu carro × rivais" diz se dá para ganhar antes de você tenta
 Marcus: A Copa de Domingo tem três etapas e conta pontos. Campeão é quem soma mais.
 Elena: Corra as etapas em ordem. Fora de ordem vira corrida comum.
 Adrian: Fecho as três e a gente fala de motor.
-Sistema: Escolha a Copa de Domingo — Etapa 1 e toque em Correr.
+Sistema: Escolha a Copa de Domingo — Etapa 1 e toque em Disputar.
 
 = SCN_A05 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I; cenario=box_largada
 Marcus: {voltas} voltas em {pista}.

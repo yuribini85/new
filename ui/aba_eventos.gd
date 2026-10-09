@@ -298,15 +298,38 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			var hm := fileira(col)
 			icone("icone_cronometro", 34, hm)
 			rotulo("Seu melhor: %dº" % hist["melhor_pos"], FONTE_PEQUENA, COR_SECUNDARIA, hm)
-		var rotulo_correr := "Correr"
+		var rotulo_correr := "Disputar"
 		if vitorias > 0:
-			rotulo_correr = "Correr de novo" if _repeticoes == 1 else "Correr de novo ×%d" % _repeticoes
-		# Correr: a ação do cartão, na largura toda. Contorno e texto na cor de
-		# destaque, a roda em chamas colada ao texto, os dois centrados.
+			rotulo_correr = "Disputar de novo" if _repeticoes == 1 else "Disputar de novo ×%d" % _repeticoes
+		# Disputar: a roda em chamas grande, fora do retângulo, e o botão com
+		# contorno e texto na cor de destaque ao lado. Tocar em qualquer um dos
+		# dois inscreve.
+		var linha := HBoxContainer.new()
+		linha.add_theme_constant_override("separation", 14)
+		v.add_child(linha)
+		var livre: bool = jogador.fila.is_empty()
+		var inscrever := func():
+			_correr(ev["id"])
+			mudou.emit()
+		var roda := TextureButton.new()
+		roda.texture_normal = icone_reduzido("icone_correr", 256)
+		roda.ignore_texture_size = true
+		roda.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+		roda.custom_minimum_size = Vector2(260, 220)
+		roda.disabled = not livre
+		roda.modulate.a = 1.0 if livre else 0.4
+		roda.pressed.connect(inscrever)
+		linha.add_child(roda)
 		var bc := Button.new()
 		bc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		bc.custom_minimum_size.y = 100
-		bc.disabled = not jogador.fila.is_empty()
+		bc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		bc.custom_minimum_size.y = 96
+		bc.disabled = not livre
+		bc.text = rotulo_correr.to_upper()
+		Tipografia.rotulo(bc, "semibold", 44 if rotulo_correr.length() <= 10 else 34)
+		for k_cor in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+			bc.add_theme_color_override(k_cor, COR_DESTAQUE)
+		bc.add_theme_color_override("font_disabled_color", Color(COR_DESTAQUE, 0.4))
 		var base := StyleBoxFlat.new()
 		base.bg_color = Color(COR_DESTAQUE, 0.08)
 		base.border_color = COR_DESTAQUE
@@ -321,31 +344,8 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			bc.add_theme_stylebox_override(estado, base)
 		bc.add_theme_stylebox_override("pressed", apertado)
 		bc.add_theme_stylebox_override("disabled", parado)
-		var miolo := HBoxContainer.new()
-		miolo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		miolo.alignment = BoxContainer.ALIGNMENT_CENTER
-		miolo.add_theme_constant_override("separation", 14)
-		miolo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		bc.add_child(miolo)
-		var roda := TextureRect.new()
-		roda.texture = icone_reduzido("icone_correr", 96)
-		roda.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
-		roda.custom_minimum_size = Vector2(96, 72)
-		roda.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		roda.modulate.a = 1.0 if not bc.disabled else 0.4
-		miolo.add_child(roda)
-		var txt := Label.new()
-		txt.text = rotulo_correr.to_upper()
-		txt.add_theme_color_override("font_color", Color(COR_DESTAQUE, 1.0 if not bc.disabled else 0.4))
-		Tipografia.rotulo(txt, "semibold", 44)
-		txt.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		txt.size_flags_vertical = Control.SIZE_FILL
-		txt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		miolo.add_child(txt)
-		bc.pressed.connect(func():
-			_correr(ev["id"])
-			mudou.emit())
-		v.add_child(bc)
+		bc.pressed.connect(inscrever)
+		linha.add_child(bc)
 	else:
 		nota("icone_cadeado", " · ".join(motivos), "", h, COR_RUIM)
 		var pede_licenca: bool = motivos.any(func(m): return String(m).begins_with("licença"))

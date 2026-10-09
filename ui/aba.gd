@@ -1000,7 +1000,7 @@ func selos_carro(base: Dictionary) -> Array:
 
 
 ## Nomes que não saem do id.
-const NOMES_PISTA := {"circuito_misto": "Colinas do Vinhedo", "docas_curta": "Parque das Docas (curta)",
+const NOMES_PISTA := {"circuito_misto": "Colinas do Vinhedo", "pista_de_testes": "Oval do Planalto", "docas_curta": "Parque das Docas (curta)",
 	"anel_curto": "Anel do Vale (curto)", "serra_curta": "Serra Alta (curta)"}
 
 

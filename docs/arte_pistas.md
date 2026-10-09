@@ -68,7 +68,7 @@ Liga com `"estilo": "chapado"` no tema; as quatro pistas usam. Cada pista tem um
 - Anel do Vale: âmbar ao entardecer;
 - Serra Alta: azul frio;
 - Parque das Docas: sódio laranja à noite;
-- Pista de Testes: ocre ao meio-dia.
+- Oval do Planalto (pista_de_testes): ocre ao meio-dia.
 
 O kit pintado continua no repositório e o `MontadorPista` ainda o usa para as medidas dos
 objetos e as sombras; o estilo pintado volta tirando `"estilo"` do tema. Para comparar, as

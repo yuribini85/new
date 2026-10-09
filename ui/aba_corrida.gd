@@ -42,9 +42,6 @@ var _atributos_hud := {}  # atributos do carro inscrito (marcha e giro no HUD)
 var _cameras: Control
 var _cameras_botoes: Array = []
 var _ocioso := 0.0
-var _status: Label
-var _status_linha: HBoxContainer
-var _status_t := 0.0
 var _semente_mostrada := 0
 var _nomes := {}  # id do participante -> nome do carro
 var _nomes_curtos := {}  # id -> nome na classificação do HUD
@@ -108,15 +105,6 @@ func _init(d: Node, j: Node) -> void:
 	area.add_child(_painel_hud)
 	_cameras = _seletor_cameras()
 	conteudo.add_child(_cameras)
-	# Estado idle: forte no começo, depois discreto.
-	_status_linha = HBoxContainer.new()
-	_status_linha.alignment = BoxContainer.ALIGNMENT_CENTER
-	_status_linha.add_theme_constant_override("separation", 8)
-	conteudo.add_child(_status_linha)
-	icone("icone_app_fechado", 32, _status_linha)
-	_status = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA, _status_linha)
-	_status.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	_status.autowrap_mode = TextServer.AUTOWRAP_OFF
 	_painel = VBoxContainer.new()
 	_painel.add_theme_constant_override("separation", 14)
 	conteudo.add_child(_painel)
@@ -139,9 +127,6 @@ func _seletor_cameras() -> Control:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 2)
 	p.add_child(h)
-	# Ícone de câmera à esquerda: diz o que o seletor controla.
-	var ic := icone("icone_camera", 34, h)
-	ic.modulate.a = 0.8
 	var vazio := StyleBoxEmpty.new()
 	var marcado := StyleBoxFlat.new()
 	marcado.bg_color = COR_DESTAQUE
@@ -254,7 +239,6 @@ func _construir_painel() -> void:
 		c.queue_free()
 	_em_andamento = not jogador.fila.is_empty()
 	_cameras.visible = _em_andamento
-	_status_linha.visible = _em_andamento
 	if _em_andamento:
 		# Ações excepcionais durante a corrida: links discretos, não botões.
 		var h := HBoxContainer.new()
@@ -314,7 +298,7 @@ func _resultado(u: Dictionary) -> void:
 	rotulo("E AGORA?", FONTE_PEQUENA, COR_SECUNDARIA, fim)
 	var h := acoes(fim)
 	if not _em_andamento and seu != null:
-		botao("Correr de novo", _correr_de_novo, true, true, h)
+		botao("Disputar de novo", _correr_de_novo, true, true, h)
 	botao("Melhorar o carro", func():
 		if seu != null:
 			jogador.carro_ativo = seu.uid
@@ -608,7 +592,6 @@ func _process(delta: float) -> void:
 	_s_jogador = s_agora
 	_atualizar_hud(ordem)
 	_eventos(ordem)
-	_atualizar_status(delta)
 
 
 ## Nova corrida na tela: minimapa, 3D, nomes, cabeçalho e diretor do zero.
@@ -642,8 +625,9 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_volta_antes = 0
 	_melhor_volta = -1.0
 	_avisado = {}
-	_nomes = {"jogador": "VOCÊ · " + meu.base["nome"]}
-	_nomes_curtos = {"jogador": "Você"}
+	var eu := EquipeJogador.nome_jogador(dados, jogador)
+	_nomes = {"jogador": "%s · %s" % [eu, meu.base["nome"]]}
+	_nomes_curtos = {"jogador": eu}
 	var minha := EquipeJogador.dados_equipe(dados, jogador)
 	_equipes = {"jogador": String(minha.get("nome", "")) if not minha.is_empty() else ""}
 	# Motor e câmbio do carro como foi inscrito (para marcha e giro no HUD).
@@ -674,13 +658,11 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_chegou = false
 	_t_chegada = 0.0
 	_s_jogador = _visual.distancia("jogador")
-	_status_t = 0.0
-	_offline_txt = _sufixo_offline()
 	if _visual.tempo < 2.0:
 		_sons.largada(true)
-		_painel_hud.evento("LARGADA", _offline_txt, COR_DESTAQUE, 3)
+		_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
 	else:
-		_painel_hud.evento("CORRIDA EM ANDAMENTO", _offline_txt, Color.WHITE, 3)
+		_painel_hud.evento("CORRIDA EM ANDAMENTO", "", Color.WHITE, 3)
 
 
 ## Câmera AUTO: o diretor escolhe o plano; nas outras, o alvo da escolha.
@@ -795,7 +777,7 @@ func _atualizar_vista(ordem: Array, i: int, s: float, volta: int, melhor: float,
 		var g := _gap(ordem[i - 1], "jogador")
 		vizinhos.append({"pos": i, "nome": _nomes_curtos.get(ordem[i - 1], ordem[i - 1]),
 			"sub": _sub(ordem[i - 1], "à frente · %.1f s" % g if g >= 0.0 else "à frente")})
-	vizinhos.append({"pos": i + 1, "nome": "Você", "voce": true,
+	vizinhos.append({"pos": i + 1, "nome": _nomes_curtos["jogador"], "voce": true,
 		"sub": _sub("jogador", "líder" if i == 0 else "%dº de %d" % [i + 1, ordem.size()])})
 	if i + 1 < ordem.size():
 		var g := _gap("jogador", ordem[i + 1])
@@ -875,26 +857,6 @@ func _texto_dif(ordem: Array, pos: int) -> String:
 		var g := _gap(ordem[pos - 2], "jogador")
 		return "−%.1f s" % g if g >= 0.0 else ""
 	return ""
-
-
-## Decisão 34: só repetição de prova vencida continua com o app fechado.
-## Calculado ao mostrar a corrida (importante() percorre os eventos).
-var _offline_txt := "continua com o app fechado"
-
-
-func _sufixo_offline() -> String:
-	var f: Dictionary = jogador.fila
-	return "só com o app aberto" if not f.is_empty() and jogador.fila_ctrl.importante(f) else "continua com o app fechado"
-
-
-## "CORRIDA EM ANDAMENTO · continua com o app fechado": claro no começo, depois
-## discreto (é estado, não opção).
-func _atualizar_status(delta: float) -> void:
-	_status_t += delta
-	# Troca de texto no ponto mais apagado do fade (sem salto visível).
-	var longo := _status_t < 6.0
-	_status.text = ("CORRIDA EM ANDAMENTO · " if longo else "ao vivo · ") + _offline_txt
-	_status_linha.modulate.a = 1.0 - smoothstep(4.5, 6.0, _status_t) if longo else lerpf(0.0, 0.4, smoothstep(6.0, 7.5, _status_t))
 
 
 ## Seletor de câmera: perde contraste sem toque; volta ao tocar.

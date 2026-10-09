@@ -64,6 +64,15 @@ static func piloto(dados: Node, piloto_id: String) -> Dictionary:
 	return p if piloto_id != "" and p.get("id") == piloto_id else {}
 
 
+## Nome do piloto do jogador (o personagem da história: Adrian ou Elena);
+## "Você" em jogo sem história.
+static func nome_jogador(dados: Node, jogador: Node) -> String:
+	var id := String(jogador.personagem)
+	if id != "" and dados.existe("personagens", id):
+		return String(dados.item("personagens", id)["nome"])
+	return "Você"
+
+
 ## Nome do segundo piloto ("" se ainda não há).
 static func nome_segundo(dados: Node, jogador: Node) -> String:
 	return String(piloto(dados, jogador.segundo_piloto).get("nome", ""))

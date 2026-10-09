@@ -129,7 +129,7 @@ static func glossario(dados: Node) -> Array:
 		["Aderência e pneus", "Quanto o pneu segura: curvas mais rápidas e frenagem mais curta. Há pneus para seco e para chuva; o piloto usa o melhor que você tiver."],
 		["Freio", "Freios melhores deixam frear mais tarde antes das curvas."],
 		["Câmbio", "O motor tem uma faixa de giro. Com o câmbio ajustável, Arrancada acelera mais forte e chega antes ao limite; Velocidade final vai mais longe nas retas."],
-		["Correr de novo e giros", "Corrida ainda não vencida: cada largada vale uma corrida. Depois de vencer, dá para correr de novo várias vezes seguidas para ganhar giros, inclusive com o app fechado."],
+		["Disputar de novo e giros", "Corrida ainda não vencida: cada largada vale uma corrida. Depois de vencer, dá para disputar de novo várias vezes seguidas para ganhar giros, inclusive com o app fechado."],
 		["Montagens", "Peças compradas ficam com o carro. Salve montagens com nome na Oficina e escolha qual usar ao entrar numa corrida; a sequência de corridas guarda a escolhida."],
 		["Missões da licença", "A escola empresta o carro e as peças. Você monta, testa e lê o resultado: onde perdeu tempo e o que falta para cada medalha."],
 		["Previsão", "Faixas como \"previsão 1º–3º\" vêm de corridas simuladas com os rivais e a pista. São previsões: a corrida de verdade varia."],

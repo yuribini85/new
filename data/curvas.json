@@ -6,6 +6,6 @@
  "docas_curta": ["Guindaste", "Ferrolho", "Armazém", "Retorno do Cais"],
  "serra_alta": ["Primeiro Laço", "Segundo Laço", "Terceiro Laço", "Quarto Laço", "Quinto Laço", "Mirante", "Pinheiros", "Descida do Sino", "Curva da Capela"],
  "serra_curta": ["Primeiro Laço", "Segundo Laço", "Terceiro Laço", "Mirante", "Curva da Capela"],
- "pista_de_testes": ["Inclinada Norte", "Inclinada Sul", "Chicane do Teste", "Retorno"],
+ "pista_de_testes": ["Inclinada Norte", "Inclinada Sul", "Chicane da Torre", "Retorno"],
  "circuito_misto": ["Primeira", "Ponte", "Arquibancada", "Curva Longa", "Gancho", "Paddock", "Última"]
 }

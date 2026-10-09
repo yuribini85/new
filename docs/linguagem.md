@@ -41,8 +41,8 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
 | Prova / evento / corrida (uma largada) | **Corrida** | palavra de todo mundo |
 | Série, copa, etapas | **Campeonato** (nome próprio: "Copa de Domingo"), **etapa 2 de 3** | agrupa as corridas |
 | Desafiar | **Correr** | o jogador entende na hora |
-| Correr ×N (vencidas) / "Renda: repetir vencidas" | **Correr de novo ×N** + linha "Rende créditos, até com o app fechado" | diz o ganho |
-| Repetir (resultado) | **Correr de novo** | idem |
+| Correr ×N (vencidas) / "Renda: repetir vencidas" | **Disputar de novo ×N** + linha "Rende créditos, até com o app fechado" | diz o ganho |
+| Repetir (resultado) | **Disputar de novo** | idem |
 | Preparar (botão) | **Melhorar o carro** | diz o objetivo |
 | Oficina (tela) | **Oficina** (mantém) | todo mundo sabe o que é |
 | Preparação / preparação salva | **Montagem** / **Montagens salvas** | "preparação" soa técnico |
@@ -76,7 +76,7 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
    - pódio dos 3 primeiros e a sua posição em destaque;
    - uma frase de motivo, saída do diagnóstico ("Perdeu nas retas: falta potência");
    - **um** botão principal, que muda com o motivo: "Melhorar o carro" se o carro é o
-     problema, "Correr de novo" se foi a corrida;
+     problema, "Disputar de novo" se foi a corrida;
    - os outros botões menores.
 2. **Cartão de competição** (referência `ui_competicoes.webp`):
    - banner da pista, desenho do traçado e prêmio do 1º lugar grande;
