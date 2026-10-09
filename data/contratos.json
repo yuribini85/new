@@ -256,20 +256,20 @@
 		]
 	},
 	{
-		"carro": "kanaya_kazane",
+		"carro": "kanaya_fuyu_85",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 4490.0,
+				"custo_max": 4470,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 2993.0
+				"custo_max": 2978
 			},
 			"prata": {
-				"custo_max": 3595.0
+				"custo_max": 3575
 			}
 		},
-		"descricao": "A escola paga as peças até um teto. Vença o Kanaya Asakaze GT '97 gastando o mínimo.",
+		"descricao": "A escola paga as peças até um teto. Vença o Castellani Torrente GT gastando o mínimo.",
 		"id": "international_ultimo_credito",
 		"licenca": "INTERNATIONAL",
 		"nome": "O último giro",
@@ -279,10 +279,10 @@
 				"pista": "pista_de_testes",
 				"rivais": [
 					{
-						"carro": "kanaya_asakaze_gt_97"
+						"carro": "castellani_torrente_gt"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
@@ -368,14 +368,14 @@
 		"carro": "sanga_tsukikage_s_iii",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 17490,
+				"custo_max": 17490.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 11658
+				"custo_max": 11658.0
 			},
 			"prata": {
-				"custo_max": 13990
+				"custo_max": 13990.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Hayase Kurenai Corrida gastando o mínimo.",
@@ -391,7 +391,7 @@
 						"carro": "hayase_kurenai_corrida"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},

@@ -61,9 +61,12 @@ func _medir() -> void:
 			saida[id] = {}
 		saida[id][vista] = [q.call(0.05), q.call(0.5), q.call(0.95)]
 		print("%s %s: pintura %d%%, faixa %s" % [id, vista, roundi(fracao * 100.0), str(saida[id][vista])])
-	# Só modelos com as duas vistas brancas (a corrida usa as duas).
+	# Só modelos com as vistas que existem todas brancas (a corrida usa as
+	# duas); sem a vista de cima ainda, vale a isométrica (na corrida entra o
+	# carro em código, já na cor).
 	for id in saida.keys():
-		if saida[id].size() < 2:
+		var tem_topo := FileAccess.file_exists(ArteCarro.PASTA + id + "_topo.png")
+		if not saida[id].has("iso") or (tem_topo and not saida[id].has("topo")):
 			saida.erase(id)
 	var arq := FileAccess.open(ArteCarro.PASTA + "pintura.json", FileAccess.WRITE)
 	arq.store_string(JSON.stringify(saida, "\t", true) + "\n")
