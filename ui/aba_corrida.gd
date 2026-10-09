@@ -58,6 +58,8 @@ var _painel: VBoxContainer
 var _analise := {}  # {"chave", "base", "opcoes", "ms"}
 var _analisando := false
 var _em_andamento := false
+var _vazio_topo: Control
+const ALTURA_MIN_AREA := 720.0
 var _sons: Sons
 var _s_jogador := 0.0
 var _chegou := false
@@ -73,13 +75,17 @@ func _init(d: Node, j: Node) -> void:
 	super(d, j, "Corrida")
 	_info = rotulo("", 30)
 	_relogio = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
+	# A corrida ocupa a tela: começa no topo absoluto (por trás do cabeçalho),
+	# vai de borda a borda e desce até o seletor de câmeras (_ajustar_area). O
+	# HUD e a vista DADOS começam abaixo do cabeçalho (topo_livre).
 	var area := Control.new()
 	_area = area
-	area.custom_minimum_size = Vector2(0, 720)
-	area.clip_contents = true
+	area.custom_minimum_size = Vector2(0, ALTURA_MIN_AREA)
 	conteudo.add_child(area)
 	_visual3d = Corrida3D.new()
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_visual3d.offset_left = -MARGEM_LATERAL
+	_visual3d.offset_right = MARGEM_LATERAL
 	area.add_child(_visual3d)
 	# Minimapa direto sobre a pista, sem caixa (o traçado tem sombra própria),
 	# no canto de baixo à direita: os cantos de cima são da posição e da volta.
@@ -105,6 +111,7 @@ func _init(d: Node, j: Node) -> void:
 	_vista.visible = false
 	area.add_child(_vista)
 	_painel_hud = HudCorrida.new()
+	_painel_hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_painel_hud.escolhido.connect(_camera)
 	area.add_child(_painel_hud)
 	_cameras = _seletor_cameras()
@@ -116,6 +123,7 @@ func _init(d: Node, j: Node) -> void:
 	_camera_modo = "dados" if Preferencias.vista_corrida == "dados" else "auto"
 	_sons = Sons.new()
 	add_child(_sons)
+	resized.connect(_ajustar_area)
 
 
 ## Seletor único e compacto: AUTO | CARRO | LÍDER | À FRENTE | PISTA. São
@@ -177,6 +185,7 @@ func _camera(modo: String) -> void:
 	_minimapa.visible = not dados_on
 	_painel_hud.so_eventos = dados_on
 	_painel_hud.queue_redraw()
+	_ajustar_area()
 	if Preferencias.vista_corrida != ("dados" if dados_on else ""):
 		Preferencias.vista_corrida = "dados" if dados_on else ""
 		Preferencias.salvar()
@@ -566,6 +575,7 @@ func _process(delta: float) -> void:
 		_visual.limpar()
 		_visual3d.limpar()
 		_area.visible = false
+		_ajustar_area()
 		_semente_mostrada = 0
 		_segurar = 0.0
 		_sons.motor(false)
@@ -624,6 +634,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_visual3d.chegada = 0.0
 	_visual3d.mostrar(_pista, _visual, categorias, pinturas)
 	_area.visible = true
+	_ajustar_area()
 	_semente_mostrada = f["semente"]
 	_segurar = 0.0
 	_painel_hud.limpar_evento()
@@ -660,6 +671,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_visual3d.nomes = _nomes_curtos
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
 	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
+	_painel_hud.titulo = "%s · %s" % [_info.text, nome_pista(_pista.id)]
 	_diretor.reiniciar()
 	_foco_auto = "jogador"
 	_camera(_camera_modo)
@@ -681,6 +693,27 @@ func reservar_topo(altura: float) -> void:
 	vazio.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	conteudo.add_child(vazio)
 	conteudo.move_child(vazio, 0)
+	_vazio_topo = vazio
+	_ajustar_area()
+
+
+## Com corrida na tela: a área começa no topo da aba (sem o espaço do
+## cabeçalho nem as linhas de texto, que vão para o HUD) e desce até o seletor
+## de câmeras. Sem corrida: o espaço e o texto de sempre.
+func _ajustar_area() -> void:
+	var correndo := _area.visible
+	if _vazio_topo != null:
+		_vazio_topo.visible = not correndo
+	_info.visible = not correndo
+	_relogio.visible = not correndo
+	# Abaixo do cabeçalho (o HUD 3D desvia do marcador da aceleração à direita;
+	# a vista DADOS, de cima a baixo na largura toda, começa abaixo dele).
+	var topo := topo_livre + (Cabecalho.ALTURA_MARCADOR + 6.0 if _camera_modo == "dados" else 0.0)
+	_painel_hud.offset_top = topo
+	_vista.offset_top = topo
+	if correndo:
+		var livre := size.y - _cameras.get_combined_minimum_size().y - 14.0 - 10.0
+		_area.custom_minimum_size.y = maxf(ALTURA_MIN_AREA, livre)
 
 
 ## Fim da cena da largada: a corrida começa agora.
