@@ -147,20 +147,20 @@
 		]
 	},
 	{
-		"carro": "hayase_sazanami",
+		"carro": "calderwood_fletcher",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 7625.0,
+				"custo_max": 8075,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 5081.0
+				"custo_max": 5382
 			},
 			"prata": {
-				"custo_max": 6100.0
+				"custo_max": 6460
 			}
 		},
-		"descricao": "A escola paga as peças até um teto. Vença o Keldorf Wachtel S gastando o mínimo.",
+		"descricao": "A escola paga as peças até um teto. Vença o Ashcombe Sorrel gastando o mínimo.",
 		"id": "ic_ultimo_credito",
 		"licenca": "NATIONAL",
 		"nome": "O último giro",
@@ -170,10 +170,10 @@
 				"pista": "anel_do_vale",
 				"rivais": [
 					{
-						"carro": "keldorf_wachtel_s"
+						"carro": "ashcombe_sorrel"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
 			}
 		]
 	},
@@ -477,14 +477,14 @@
 		"carro": "whitlock_switchback_gts",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 28060,
+				"custo_max": 28060.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 18704
+				"custo_max": 18704.0
 			},
 			"prata": {
-				"custo_max": 22445
+				"custo_max": 22445.0
 			}
 		},
 		"descricao": "A escola paga as peças até um teto. Vença o Aubrac Grive S gastando o mínimo.",
@@ -500,7 +500,7 @@
 						"carro": "aubrac_grive_s"
 					}
 				],
-				"voltas": 1
+				"voltas": 1.0
 			}
 		]
 	},

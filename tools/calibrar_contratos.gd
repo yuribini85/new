@@ -31,6 +31,9 @@ extends SceneTree
 ## giro" é a soma dos prêmios de 1º lugar dos eventos da licença anterior
 ## (na primeira, o saldo inicial). Os ids levam o prefixo da licença ("pro_..."; os da antiga IC mantêm "ic_", que os saves já usam).
 ## Só os contratos da licença pedida são trocados em contratos.json.
+## A primeira licença (Club) usa a mesma regra, com o saldo inicial como teto
+## de custo; --busca-completa volta à busca antiga entre todos os carros e
+## pistas (com a frota inteira passa de três horas).
 ## Uso: godot --headless --path . --script res://tools/calibrar_contratos.gd [-- --licenca=CLUB] [--so-custo]
 ## --so-custo: refaz só "O último giro" (o único que depende de preços), com os
 ## carros já usados pelos contratos atuais da licença; os outros ficam como estão.
@@ -86,6 +89,7 @@ func _calibrar() -> void:
 	_piloto = _dados.piloto(_dados.carreira()["piloto_jogador"])
 	var so_custo := false
 	var manter_par := false
+	var busca_completa := false
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--licenca="):
 			_licenca = a.trim_prefix("--licenca=")
@@ -93,6 +97,8 @@ func _calibrar() -> void:
 			so_custo = true
 		elif a == "--manter-par":
 			manter_par = true
+		elif a == "--busca-completa":
+			busca_completa = true
 	var lic: Dictionary = _dados.item("licencas", _licenca)
 	# Sem testes do GT2 (ELITE): voltas e limite dos testes da licença anterior,
 	# a mesma regra do tempo de treino (Licencas.treino_s).
@@ -110,7 +116,7 @@ func _calibrar() -> void:
 	var escola: Array = _dados.lista("carros").filter(func(c): return float(c["potencia"]) <= limite)
 	var todos: Array = _dados.lista("carros").duplicate()
 	_saldo_ref = int(_dados.economia()["saldo_inicial"])
-	if _licenca != _dados.lista("licencas")[0]["id"]:
+	if _licenca != _dados.lista("licencas")[0]["id"] or not busca_completa:
 		var ordem: Array = _dados.lista("licencas").map(func(l): return l["id"])
 		var seguinte: String = ordem[ordem.find(_licenca) + 1] if ordem.find(_licenca) + 1 < ordem.size() else ""
 		var deste := _eventos_da(_licenca)
@@ -121,10 +127,12 @@ func _calibrar() -> void:
 		for e in deste:
 			if not e["pista"] in pistas:
 				pistas.append(e["pista"])
-		_saldo_ref = 0
-		for e in _eventos_da(String(lic.get("requisito", ""))):
-			if not e["premios"].is_empty():
-				_saldo_ref += int(e["premios"][0])
+		var requisito: String = "" if lic.get("requisito") == null else String(lic["requisito"])
+		if requisito != "":
+			_saldo_ref = 0
+			for e in _eventos_da(requisito):
+				if not e["premios"].is_empty():
+					_saldo_ref += int(e["premios"][0])
 		print("%s: %d carros da escola, %d rivais, %d pistas, teto de custo %d G" % [_licenca, escola.size(),
 				todos.size(), pistas.size(), _saldo_ref])
 	escola.sort_custom(func(a, b): return a["id"] < b["id"])

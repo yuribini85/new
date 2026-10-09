@@ -240,7 +240,10 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
   fabricante (no GT2 só as marcas japonesas têm lote). As versões de corrida ficam na
   concessionária do fabricante.
 - Contratos (`contratos.json`): recalibrados por `tools/calibrar_contratos.gd`, licença por
-  licença, depois da redução da frota (os de antes usavam carros abertos que saíram).
+  licença, depois da redução da frota (os de antes usavam carros abertos que saíram) e,
+  em "O último giro", depois dos preços ×2 (`--so-custo`). A Club passou a usar a mesma
+  regra das outras (carros e pistas das provas que ela libera; teto de custo = saldo
+  inicial): a busca entre todos os carros não terminava em três horas.
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
 
 ## Como conferir a fração de revenda no GT2
