@@ -11,20 +11,37 @@ extends Control
 const PASTA := "res://arte/inicio/"
 const CAMADAS := ["camada_1_ceu", "camada_2_vale", "camada_3_autodromo", "camada_4_frente"]
 ## Deslocamento máximo de cada camada (px da tela de 720): automático e inclinação.
-const AMP_AUTO := [3.0, 7.0, 12.0, 20.0]
-const AMP_INCLINACAO := [4.0, 10.0, 18.0, 30.0]
+const AMP_AUTO := [4.0, 10.0, 18.0, 32.0]
+const AMP_INCLINACAO := [4.0, 10.0, 18.0, 28.0]
 const VERTICAL := 0.25  # oscilação vertical, fração da horizontal
 const CICLO_S := 36.0
 ## Inclinação: zona morta (tremor da mão), resposta suavizada e limite.
 const ZONA_MORTA := 0.03
 const SUAVIZAR := 2.5  # 1/s
 const INCLINACAO_MAX := 0.35  # fração da gravidade que leva ao deslocamento máximo
+const GRAUS_MAX := 20.0  # no navegador: inclinação (graus) que leva ao máximo
+## Lê a orientação no navegador (deviceorientation): o Godot web não entrega o
+## sensor. iOS pede permissão para isso; sem ela, fica só o automático.
+const JS_ORIENTACAO := "if(!window.__sdOri){window.__sdOri={b:null,g:null};" \
+		+ "window.addEventListener('deviceorientation',function(e){if(e.beta!==null){" \
+		+ "window.__sdOri.b=e.beta;window.__sdOri.g=e.gamma;}});}"
 
 var _camadas: Array[TextureRect] = []
 var _t := 0.0
 var _neutro := Vector3.ZERO
 var _inclinacao := Vector2.ZERO
 var _folga := 0.0
+var _neutro_web := Vector2.INF
+
+
+## Tamanho do retângulo das camadas em relação à tela (folga do maior
+## deslocamento): o shell web usa a mesma conta para o carregamento casar.
+static func escala_camadas(largura: float) -> float:
+	return (largura + 2.0 * folga()) / maxf(largura, 1.0)
+
+
+static func folga() -> float:
+	return AMP_AUTO[-1] + AMP_INCLINACAO[-1] + 4.0
 
 
 func _init() -> void:
@@ -40,13 +57,15 @@ func _init() -> void:
 		add_child(t)
 		_camadas.append(t)
 	resized.connect(_enquadrar)
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval(JS_ORIENTACAO, true)
 
 
 ## Todas as camadas no mesmo retângulo (a composição das quatro é uma só),
 ## maior que a tela pela folga do maior deslocamento, nas duas direções.
 func _enquadrar() -> void:
-	_folga = AMP_AUTO[-1] + AMP_INCLINACAO[-1] + 4.0
-	var escala := (size.x + 2.0 * _folga) / maxf(size.x, 1.0)
+	_folga = folga()
+	var escala := escala_camadas(size.x)
 	var tam := size * escala
 	for t in _camadas:
 		t.size = tam
@@ -72,6 +91,9 @@ func _notification(what: int) -> void:
 ## Orientação estimada pela gravidade (não a velocidade angular crua): a
 ## primeira leitura é a posição neutra; zona morta, suavização e limite.
 func _ler_inclinacao(delta: float) -> void:
+	if OS.has_feature("web"):
+		_ler_inclinacao_web(delta)
+		return
 	var g := Input.get_gravity()
 	if g.length() < 1.0:
 		g = Input.get_accelerometer()  # alguns navegadores só dão o acelerômetro
@@ -82,6 +104,21 @@ func _ler_inclinacao(delta: float) -> void:
 			_neutro = u
 		var d := u - _neutro
 		alvo = Vector2(d.x, -d.y) / INCLINACAO_MAX
+		if alvo.length() < ZONA_MORTA:
+			alvo = Vector2.ZERO
+		alvo = alvo.limit_length(1.0)
+	_inclinacao = _inclinacao.lerp(alvo, 1.0 - exp(-SUAVIZAR * delta))
+
+
+func _ler_inclinacao_web(delta: float) -> void:
+	var alvo := Vector2.ZERO
+	var g = JavaScriptBridge.eval("window.__sdOri?window.__sdOri.g:null", true)
+	var b = JavaScriptBridge.eval("window.__sdOri?window.__sdOri.b:null", true)
+	if g != null and b != null:
+		var v := Vector2(float(g), float(b))
+		if _neutro_web == Vector2.INF:
+			_neutro_web = v
+		alvo = (v - _neutro_web) / GRAUS_MAX
 		if alvo.length() < ZONA_MORTA:
 			alvo = Vector2.ZERO
 		alvo = alvo.limit_length(1.0)

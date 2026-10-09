@@ -38,40 +38,41 @@ body {
 #status {
 	position: absolute;
 	inset: 0;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	overflow: hidden;
 	/* --u: escala da tela do jogo (720 px de largura, stretch keep_width),
-	   calculada no script abaixo a partir da área visível. */
+	   calculada no script abaixo a partir da área visível. Posições iguais às
+	   da tela inicial do jogo (ui/inicio.gd): a troca não dá salto. */
 	--u: 0.5px;
-	gap: calc(56 * var(--u));
-	background-color: #14171c;
+	background-color: #1a2d49;
 	visibility: hidden;
 }
 
 #status-fundo {
 	position: absolute;
-	inset: 0;
-	background: #14171c url("data:image/jpeg;base64,{{FUNDO}}") center / cover no-repeat;
-	filter: brightness(0.35);
+	/* A paisagem fica maior que a tela pela folga do parallax, como no jogo. */
+	inset: -{{SOBRA}}%;
+	background: #1a2d49 url("data:image/jpeg;base64,{{FUNDO}}") center / cover no-repeat;
 }
 
 #status-logo {
-	position: relative;
+	position: absolute;
+	left: calc(56 * var(--u));
+	right: calc(56 * var(--u));
+	top: calc(env(safe-area-inset-top, 0px) + 17%);
 	width: calc(100% - 112 * var(--u));
-	max-width: calc(608 * var(--u));
-	height: calc(220 * var(--u));
+	height: calc(198 * var(--u));
 	object-fit: contain;
 }
 
 #status-barra {
-	position: relative;
-	width: calc(100% - 112 * var(--u));
-	max-width: calc(608 * var(--u));
-	height: calc(12 * var(--u));
-	border-radius: calc(6 * var(--u));
-	background: rgba(255, 255, 255, 0.08);
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	top: calc(env(safe-area-inset-top, 0px) + 44%);
+	width: calc(460 * var(--u));
+	height: calc(10 * var(--u));
+	border-radius: calc(5 * var(--u));
+	background: rgba(255, 255, 255, 0.12);
 	overflow: hidden;
 }
 
@@ -79,7 +80,7 @@ body {
 	height: 100%;
 	width: 0%;
 	border-radius: inherit;
-	background: #d6a23e;
+	background: #c9a054;
 	transition: width 0.25s ease-out;
 }
 
@@ -94,9 +95,11 @@ body {
 }
 
 #status-aviso {
-	position: relative;
+	position: absolute;
+	left: 2rem;
+	right: 2rem;
+	top: 55%;
 	display: none;
-	margin: 0 2rem;
 	padding: 1rem;
 	border: 1px solid #b0544a;
 	border-radius: 0.5rem;
