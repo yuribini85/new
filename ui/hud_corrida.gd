@@ -3,10 +3,13 @@ extends Control
 ## Painel da corrida sobre a pista, com os dados do HUD do GT2 num desenho
 ## calmo: tipografia limpa, linhas finas, sem caixas.
 ##
-## Hierarquia (o que se vê primeiro): posição; acontecimento da corrida (texto
-## de evento no centro, entra e sai); volta; diferença para os rivais (na
-## classificação). Velocidade, marcha e giro ficam em segundo plano, menores e
-## apagados. O âmbar só marca a posição do jogador e o que é importante.
+## Quatro cantos, o centro livre para a corrida (como os jogos de corrida
+## vistos de cima): em cima à esquerda, a posição e a classificação relativa
+## (líder, à frente, você, atrás); em cima à direita, a volta e os tempos em
+## faixas finas; embaixo à esquerda, o conta-giros (secundário); embaixo à
+## direita, o minimapa (aba_corrida). Um número grande por grupo, o resto
+## pequeno; faixas escuras translúcidas, sem moldura. O âmbar só marca o
+## jogador e o que é importante. Acontecimentos no centro, entram e saem.
 ##
 ## `secundario` (0..1) apaga o que é secundário quando a corrida pede foco
 ## (disputa, chegada); a mudança é gradual.
@@ -19,10 +22,17 @@ const APAGADO := Color(0.93, 0.92, 0.88, 0.42)
 const AMBAR := Aba.COR_DESTAQUE  # ocre, o mesmo do menu
 const CORTE := Color(0.95, 0.36, 0.28)
 const SOMBRA := Color(0, 0, 0, 0.6)
-## Classificação: canto superior direito, abaixo do minimapa.
-const LISTA_TOPO := 184.0
-const LISTA_LARGURA := 250.0
-const LISTA_LINHA := 44.0  # nome do piloto e, embaixo, a equipe
+## Classificação relativa: abaixo da posição, faixas finas.
+const LISTA_TOPO := 104.0
+const LISTA_LARGURA := 246.0
+const LISTA_LINHA := 34.0
+const LISTA_ESPACO := 4.0
+const LISTA_PULO := 10.0  # entre o líder e o grupo do jogador, quando não são vizinhos
+const FAIXA := Color(0, 0, 0, 0.42)
+const TEXTO_ESCURO := Color(0.09, 0.09, 0.1)
+## Volta e tempos: canto superior direito.
+const TEMPOS_LARGURA := 214.0
+const TEMPOS_LINHA := 28.0
 ## Evento: entra subindo um pouco, fica e sai devagar.
 const EVENTO_ENTRA_S := 0.4
 const EVENTO_SAI_S := 0.7
@@ -42,6 +52,7 @@ var _sec := 1.0
 var _evento := {}  # {"titulo", "sub", "cor", "prio", "t", "fica", "grande"}
 var _pendente := {}
 var _ultimo := -INF  # quando o último evento apareceu (s, relógio do sistema)
+var _linhas: Array = []  # [[Rect2, id]] da classificação desenhada (toque escolhe a câmera)
 
 
 func _init() -> void:
@@ -130,30 +141,64 @@ func _draw() -> void:
 		return
 	var f := Tipografia.fonte_numero()
 	var x := 18.0
-	# 1. Posição: o número grande em âmbar (é o seu), o total pequeno ao lado.
+	# Posição: o número grande em âmbar (é o seu); o rótulo e o total pequenos.
 	var pos := str(_d["posicao"])
-	_texto(pos, Vector2(x, 82), 80, AMBAR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
+	_texto(pos, Vector2(x, 84), 80, AMBAR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	var w := f.get_string_size(pos, HORIZONTAL_ALIGNMENT_LEFT, -1, 80).x
-	_texto("/%d" % _d["total"], Vector2(x + w + 4, 82), 28, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
-	# 3. Volta (o tempo dela fica no cronômetro, embaixo).
-	_texto("VOLTA  %d/%d" % [_d["volta"], _d["voltas"]], Vector2(x, 120), 26, COR)
+	_texto("POS", Vector2(x + w + 8, 50), 16, APAGADO, HORIZONTAL_ALIGNMENT_LEFT, -1.0, Tipografia.fonte("semibold"))
+	_texto("/%d" % _d["total"], Vector2(x + w + 6, 84), 28, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
+	_tempos()
 	_lista()
 	_conta_giros()
-	_cronometro()
 	_desenhar_evento()
+
+
+## Volta (número grande, total pequeno) e, embaixo, faixas finas com o tempo da
+## volta (e a diferença para a melhor no mesmo ponto) e a melhor volta.
+func _tempos() -> void:
+	var f := Tipografia.fonte_numero()
+	var direita := size.x - 18.0
+	var total := "/%d" % _d["voltas"]
+	var wt := f.get_string_size(total, HORIZONTAL_ALIGNMENT_LEFT, -1, 26).x
+	_texto(total, Vector2(direita - wt, 70), 26, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
+	var volta := str(_d["volta"])
+	var wv := f.get_string_size(volta, HORIZONTAL_ALIGNMENT_LEFT, -1, 56).x
+	_texto(volta, Vector2(direita - wt - 4 - wv, 70), 56, COR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
+	_texto("VOLTA", Vector2(direita - wt - 4 - wv - 90, 70), 16, APAGADO, HORIZONTAL_ALIGNMENT_RIGHT, 82.0,
+			Tipografia.fonte("semibold"))
+	var y := 84.0
+	var x0 := size.x - TEMPOS_LARGURA
+	var a := _alfa_inst()
+	var delta := float(_d.get("delta", INF))
+	_faixa_tempo(Rect2(x0, y, TEMPOS_LARGURA, TEMPOS_LINHA), "ATUAL", _tempo(float(_d.get("tempo_volta", 0.0))),
+			"" if delta == INF else "%+.2f" % delta, (Color(CORTE) if delta > 0.0 else AMBAR), a)
+	var melhor := float(_d.get("melhor", -1.0))
+	if melhor > 0.0:
+		_faixa_tempo(Rect2(x0, y + TEMPOS_LINHA + LISTA_ESPACO, TEMPOS_LARGURA, TEMPOS_LINHA), "MELHOR",
+				_tempo(melhor), "", COR, a)
+
+
+func _faixa_tempo(r: Rect2, rotulo: String, valor: String, extra: String, cor_extra: Color, a: float) -> void:
+	draw_rect(r, _a(FAIXA, a))
+	var base := r.position.y + r.size.y * 0.5 + 6.0
+	var fr := Tipografia.fonte("semibold")
+	draw_string(fr, Vector2(r.position.x + 10, base), rotulo, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, _a(APAGADO, a))
+	var fn := Tipografia.fonte_numero()
+	draw_string(fn, Vector2(r.position.x, base + 1), valor, HORIZONTAL_ALIGNMENT_RIGHT, r.size.x - 10, 19, _a(COR, a))
+	if extra != "":
+		var wv := fn.get_string_size(valor, HORIZONTAL_ALIGNMENT_LEFT, -1, 19).x
+		draw_string(fr, Vector2(r.position.x, base), extra, HORIZONTAL_ALIGNMENT_RIGHT, r.size.x - 18 - wv, 15,
+				_a(cor_extra, a))
 
 
 ## Instrumentos analógicos, minimalistas: arcos finos concêntricos, sem escala
 ## nem números no mostrador; o ponteiro é uma linha fina com uma cápsula curta
 ## em ocre junto ao eixo. Só o que a simulação calcula: giro, marcha e
-## velocidade no conta-giros; tempo da volta e diferença para a melhor volta no
-## cronômetro. Ficam no plano secundário: apagam com `_sec` na disputa e na
+## velocidade no conta-giros (os tempos da volta ficam nas faixas de cima). Fica no plano secundário: apagam com `_sec` na disputa e na
 ## chegada.
 
 const GIRO_RAIO := 96.0
 const GIRO_ARCO := 135.0  # graus: da esquerda do eixo (180°) ao alto-direita (315°)
-const CRONO_RAIO := 52.0
-const CRONO_FENDA := 70.0  # graus abertos à direita (o "C")
 const ARCOS := 5  # linhas concêntricas
 const ARCO_PASSO := 4.0
 ## Na disputa os instrumentos apagam, mas não somem (traço fino some antes do texto).
@@ -217,26 +262,6 @@ func _conta_giros() -> void:
 			_a(SUAVE, a), "medium")
 
 
-## Cronômetro em "C": o ponteiro dá uma volta por minuto. Ao lado, o tempo da
-## volta e a diferença para a melhor volta no mesmo ponto (ocre adiantado,
-## vermelho atrasado).
-func _cronometro() -> void:
-	var a := _alfa_inst()
-	var c := _centro_giro() + Vector2(GIRO_RAIO * 0.42 + 150.0 + CRONO_RAIO, -CRONO_RAIO + 8.0)
-	var fenda := deg_to_rad(CRONO_FENDA) / 2.0
-	_arcos(c, CRONO_RAIO, fenda, TAU - fenda, a, false)
-	var t := float(_d.get("tempo_volta", 0.0))
-	_ponteiro(c, CRONO_RAIO, -PI / 2.0 + TAU * fmod(t, 60.0) / 60.0, AMBAR, a)
-	var x := c.x + CRONO_RAIO + 14.0
-	_txt_inst(_tempo(t), Vector2(x, c.y + 2.0), 26, _a(SUAVE, a), "numero")
-	var delta := float(_d.get("delta", INF))
-	if delta != INF:
-		_txt_inst("%+.2f" % delta, Vector2(x, c.y - 26.0), 22, _a(Color(CORTE) if delta > 0.0 else AMBAR, a))
-	var melhor := float(_d.get("melhor", -1.0))
-	if melhor > 0.0:
-		_txt_inst("melhor " + _tempo(melhor), Vector2(x, c.y + 28.0), 18, _a(APAGADO, a), "regular")
-
-
 ## Evento no centro: texto direto sobre a cena, com uma faixa escura muito leve
 ## só para garantir a leitura. Entra subindo 10 px, sai devagar.
 func _desenhar_evento() -> void:
@@ -284,15 +309,13 @@ func _desenhar_evento() -> void:
 		_texto(String(_evento["sub"]), Vector2(0, cy + 34), tam_s, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x)
 
 
-func _lista_rect() -> Rect2:
-	var n: int = _d.get("lista", []).size()
-	return Rect2(size.x - LISTA_LARGURA - 16.0, LISTA_TOPO, LISTA_LARGURA + 16.0, n * LISTA_LINHA + 8.0)
-
-
 func _has_point(p: Vector2) -> bool:
 	if so_eventos:
 		return false
-	return _lista_rect().has_point(p)
+	for l in _linhas:
+		if (l[0] as Rect2).has_point(p):
+			return true
+	return false
 
 
 func _gui_input(e: InputEvent) -> void:
@@ -300,53 +323,84 @@ func _gui_input(e: InputEvent) -> void:
 			or (e is InputEventScreenTouch and e.pressed)
 	if not toque:
 		return
-	var i := floori((e.position.y - LISTA_TOPO) / LISTA_LINHA)
-	var lista: Array = _d.get("lista", [])
-	if i >= 0 and i < lista.size():
-		escolhido.emit(String(lista[i]["id"]))
-		accept_event()
+	for l in _linhas:
+		if (l[0] as Rect2).has_point(e.position):
+			escolhido.emit(String(l[1]))
+			accept_event()
+			return
 
 
-## Classificação: posição, cor do carro, nome e diferença para o líder. Só a
-## linha relevante fica clara: a sua (número em âmbar) e, por um momento, a de
-## quem está atacando você; as outras ficam neutras. Uma linha fina à esquerda
-## marca o carro que a câmera segue.
-func _lista() -> void:
-	var lista: Array = _d.get("lista", [])
-	var f := get_theme_default_font()
-	var x0 := size.x - LISTA_LARGURA
+## Linhas da classificação relativa: índices em `lista` (líder, à frente, você,
+## atrás), sem repetir; -1 marca o pulo entre o líder e o grupo.
+static func linhas_relativas(lista: Array) -> Array:
+	var eu := -1
 	for i in lista.size():
+		if lista[i].get("voce", false):
+			eu = i
+	if eu < 0:
+		return range(mini(lista.size(), 4))
+	var grupo: Array = []
+	for i in [eu - 1, eu, eu + 1]:
+		if i >= 0 and i < lista.size():
+			grupo.append(i)
+	if grupo[0] > 0:
+		if grupo[0] > 1:
+			grupo.push_front(-1)
+		grupo.push_front(0)
+	return grupo
+
+
+## Classificação relativa: faixas escuras translúcidas, sem moldura. A sua
+## linha invertida em âmbar (texto escuro). Diferença em segundos para você
+## (o líder, para o líder); vermelho em quem está atacando. Uma linha fina à
+## esquerda marca o carro que a câmera segue; tocar numa linha a leva para ele.
+func _lista() -> void:
+	_linhas = []
+	var lista: Array = _d.get("lista", [])
+	if lista.is_empty():
+		return
+	var gap_eu := 0.0
+	for it in lista:
+		if it.get("voce", false):
+			gap_eu = float(it.get("gap", 0.0))
+	var fn := Tipografia.fonte_numero()
+	var fr := Tipografia.fonte("semibold")
+	var x0 := 18.0
+	var y := LISTA_TOPO
+	for i in linhas_relativas(lista):
+		if i < 0:
+			y += LISTA_PULO
+			continue
 		var it: Dictionary = lista[i]
-		var y := LISTA_TOPO + i * LISTA_LINHA + 24.0  # linha do nome; a equipe vai embaixo
 		var voce: bool = it.get("voce", false)
 		var ataque: bool = it.get("ataque", false)
-		var forca := 1.0 if voce or ataque else lerpf(0.25, 0.55, _sec)
-		var cor := Color(COR, forca)
-		if it.get("camera", false):
-			draw_line(Vector2(x0 - 10.0, y - 20.0), Vector2(x0 - 10.0, y + 4.0), Color(COR, 0.6 * forca), 2.0)
-		_texto("%d" % (i + 1), Vector2(x0, y), 22, AMBAR if voce else cor, HORIZONTAL_ALIGNMENT_RIGHT, 24.0)
-		draw_rect(Rect2(x0 + 32.0, y - 14.0, 10.0, 10.0), Color(it["cor"], forca))
+		var r := Rect2(x0, y, LISTA_LARGURA, LISTA_LINHA)
+		_linhas.append([r, it["id"]])
+		var forca := 1.0 if voce or ataque else lerpf(0.6, 0.9, _sec)
+		draw_rect(r, AMBAR if voce else Color(FAIXA, FAIXA.a * forca))
+		draw_rect(Rect2(x0, y, 4.0, LISTA_LINHA), Color(it["cor"], forca))
+		if it.get("camera", false) and not voce:
+			draw_rect(Rect2(x0 - 6.0, y + 4.0, 2.0, LISTA_LINHA - 8.0), Color(COR, 0.7))
+		var cor := TEXTO_ESCURO if voce else Color(COR, forca)
+		var base := y + LISTA_LINHA * 0.5 + 7.0
+		draw_string(fn, Vector2(x0 + 8.0, base + 1.0), str(i + 1), HORIZONTAL_ALIGNMENT_RIGHT, 26.0, 20, cor)
 		var gap := float(it.get("gap", -1.0))
-		var gap_txt := "" if gap < 0.0 else ("+%.1f" % gap if gap < 60.0 else "+1 v")
-		var wg := f.get_string_size(gap_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x if gap_txt != "" else 0.0
+		var gap_txt := ""
+		if gap >= 0.0 and not voce:
+			var rel := gap - gap_eu  # negativo: à sua frente
+			gap_txt = "%+.1f" % rel if absf(rel) < 60.0 else ("+1 v" if rel > 0.0 else "-1 v")
+		var wg := fr.get_string_size(gap_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 17).x if gap_txt != "" else 0.0
 		var nome: String = it["nome"]
-		var max_l := LISTA_LARGURA - 52.0 - wg - 10.0
-		if f.get_string_size(nome, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x > max_l:
-			while nome.length() > 3 and f.get_string_size(nome + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x > max_l:
+		var max_l := LISTA_LARGURA - 46.0 - wg - 14.0
+		if fr.get_string_size(nome, HORIZONTAL_ALIGNMENT_LEFT, -1, 19).x > max_l:
+			while nome.length() > 3 and fr.get_string_size(nome + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 19).x > max_l:
 				nome = nome.left(-1)
 			nome += "…"
-		_texto(nome, Vector2(x0 + 52.0, y), 22, cor)
-		var equipe: String = it.get("equipe", "")
-		if equipe != "":
-			var eq_l := LISTA_LARGURA - 52.0
-			if f.get_string_size(equipe, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x > eq_l:
-				while equipe.length() > 3 and f.get_string_size(equipe + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x > eq_l:
-					equipe = equipe.left(-1)
-				equipe += "…"
-			_texto(equipe, Vector2(x0 + 52.0, y + 18.0), 16, Color(COR, forca * 0.6))
+		draw_string(fr, Vector2(x0 + 44.0, base), nome, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, cor)
 		if gap_txt != "":
-			_texto(gap_txt, Vector2(x0, y), 20, Color(CORTE, 0.95) if ataque else Color(COR, forca * 0.8),
-					HORIZONTAL_ALIGNMENT_RIGHT, LISTA_LARGURA)
+			draw_string(fr, Vector2(x0, base), gap_txt, HORIZONTAL_ALIGNMENT_RIGHT, LISTA_LARGURA - 10.0, 17,
+					Color(CORTE, 0.95) if ataque else Color(COR, forca * 0.75))
+		y += LISTA_LINHA + LISTA_ESPACO
 
 
 static func _tempo(t: float) -> String:

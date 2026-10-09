@@ -82,14 +82,14 @@ func _init(d: Node, j: Node) -> void:
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	area.add_child(_visual3d)
 	# Minimapa direto sobre a pista, sem caixa (o traçado tem sombra própria),
-	# menor para não disputar com a classificação.
+	# no canto de baixo à direita: os cantos de cima são da posição e da volta.
 	_minimapa = Control.new()
-	_minimapa.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	# Afastado das bordas: o traçado não encosta em cima nem do lado.
-	_minimapa.offset_left = -200
+	_minimapa.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	# Afastado das bordas: o traçado não encosta embaixo nem do lado.
+	_minimapa.offset_left = -190
 	_minimapa.offset_right = -16
-	_minimapa.offset_top = 18
-	_minimapa.offset_bottom = 180
+	_minimapa.offset_top = -170
+	_minimapa.offset_bottom = -16
 	_minimapa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	area.add_child(_minimapa)
 	_visual = CorridaVisual.new()
@@ -657,6 +657,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		_nomes[EquipeJogador.ID] = "%s · %s" % [nome2, comp.base["nome"]]
 		_nomes_curtos[EquipeJogador.ID] = nome2
 		_equipes[EquipeJogador.ID] = _equipes["jogador"]
+	_visual3d.nomes = _nomes_curtos
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
 	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
 	_diretor.reiniciar()

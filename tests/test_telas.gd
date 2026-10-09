@@ -323,3 +323,18 @@ func test_configuracoes_e_video_montam() -> void:
 	aba.free()
 	j.free()
 	d.free()
+
+
+## Classificação relativa do HUD: líder, à frente, você, atrás; pulo quando o
+## líder não é vizinho; sem repetir.
+func test_classificacao_relativa() -> void:
+	var l := func(eu: int, n: int) -> Array:
+		var a := []
+		for i in n:
+			a.append({"voce": i == eu})
+		return a
+	igual(HudCorrida.linhas_relativas(l.call(0, 6)), [0, 1], "líder: você e o de trás")
+	igual(HudCorrida.linhas_relativas(l.call(1, 6)), [0, 1, 2], "segundo: líder é o da frente")
+	igual(HudCorrida.linhas_relativas(l.call(2, 6)), [0, 1, 2, 3], "terceiro: sem pulo")
+	igual(HudCorrida.linhas_relativas(l.call(4, 6)), [0, -1, 3, 4, 5], "quinto: pulo depois do líder")
+	igual(HudCorrida.linhas_relativas(l.call(5, 6)), [0, -1, 4, 5], "último: sem ninguém atrás")

@@ -146,6 +146,9 @@ var enquadrar_com := ""
 var chegada := 0.0
 ## Sem os rótulos sobre os carros (a volta da abertura: só o carro).
 var sem_rotulos := false
+## id -> nome curto do piloto: o rótulo dos rivais é "posição nome" (como os
+## nomes que flutuam sobre os carros nos jogos de corrida de cima).
+var nomes: Dictionary = {}
 var _destaque_jogador := 0.0  # segundos restantes do anel temporário do jogador
 const DESTAQUE_S := 1.6
 var _anel_alvo: MeshInstance3D
@@ -211,7 +214,8 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 		r.pixel_size = 0.045
 		r.font_size = 48
 		r.outline_size = 14
-		r.modulate = fonte.cor_de(id).lightened(0.3)
+		r.modulate = Color(0.95, 0.94, 0.9)
+		r.outline_modulate = Color(0, 0, 0, 0.75)
 		_cena.add_child(r)
 		_rotulos[id] = r
 		_lateral[id] = _tracado.lateral(fonte.distancia(id))
@@ -302,18 +306,18 @@ func atualizar(delta: float) -> void:
 			_v[id] = lerpf(float(_v.get(id, 0.0)), maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
-		r.text = "VOCÊ" if id == "jogador" else str(i + 1)
-		# O seu carro já tem o anel; o rótulo só na visão geral, para achá-lo.
-		r.visible = (id != "jogador" or visao_geral) and not sem_rotulos
+		# Rivais: posição e nome. O seu carro: só a seta (destaca pela diferença).
+		r.text = "▼" if id == "jogador" else ("%d  %s" % [i + 1, nomes[id]] if nomes.has(id) else str(i + 1))
+		r.visible = not sem_rotulos
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
 	for id in _carros:
 		_carros[id].scale = Vector3.ONE * escala
-		# Números dos rivais menores e translúcidos; VOCÊ e ALVO em destaque.
+		# Rótulos dos rivais pequenos e um pouco translúcidos; a seta e o ALVO em destaque.
 		var forte: bool = id == "jogador" or (id == self.alvo and _anel_alvo != null and _anel_alvo.visible)
-		_rotulos[id].pixel_size = (0.045 if forte else 0.026) * (escala * 1.6 if visao_geral else 1.0)
-		_rotulos[id].modulate.a = 1.0 if forte else 0.45
+		_rotulos[id].pixel_size = (0.024 if forte else 0.0135) * (escala * 1.6 if visao_geral else 1.0)
+		_rotulos[id].modulate.a = 1.0 if forte else 0.8
 		# De cima, a altura não afasta o rótulo na tela: ele vai um pouco para o
 		# alto da tela, para não cobrir o carro.
 		var cima := _camera.global_basis.y * Vector3(1, 0, 1)
@@ -329,7 +333,7 @@ func atualizar(delta: float) -> void:
 		_anel_alvo.visible = disputa
 		if disputa:
 			_anel_alvo.position = _carros[alvo].position + Vector3(0, 0.05, 0)
-			_rotulos[alvo].text = "ALVO"
+			_rotulos[alvo].text = "ALVO · %s" % nomes[alvo] if nomes.has(alvo) else "ALVO"
 		# Seu carro: anel só por um instante, quando a câmera chega nele.
 		_destaque_jogador = maxf(_destaque_jogador - delta, 0.0)
 		_anel_jogador.visible = _destaque_jogador > 0.0 and _carros.has("jogador") and not visao_geral
