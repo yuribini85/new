@@ -14,7 +14,8 @@ Uso: python3 tools/pacote_arte_carros.py [--saida=caminho.zip] [--so=id1,id2] [-
   --so: só esses carros (pedido de refação).
   --so-faltando: só os carros sem arte em arte/carros/ (pedido novo, não refação).
   --provisorios: pasta dos provisórios dos carros sem arte (gerar_sprites.gd --destino).
-  --lote: divide em pacotes de N carros (nome_01.zip, nome_02.zip...), na ordem do manifesto.
+  --lote: divide em pacotes de N carros (nome_01.zip, nome_02.zip...), na ordem do manifesto;
+          com --so, só esses carros, como pedido novo.
 """
 import json
 import sys
@@ -169,6 +170,9 @@ def main():
     if so_faltando:
         itens = [i for i in itens if not (PROVISORIOS / ("%s_iso.png" % i["id"])).exists()]
     if lote > 0:
+        # Com --so, os lotes são só desses carros (pedido novo, não refação).
+        if so:
+            itens = [i for i in itens if i["id"] in so]
         for k in range(0, len(itens), lote):
             parte = itens[k:k + lote]
             gravar(parte, saida.with_name("%s_%02d.zip" % (saida.stem, k // lote + 1)), False, extra,
