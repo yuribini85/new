@@ -65,6 +65,8 @@ func construir() -> void:
 			_filtro = g[0]
 			mudou.emit())
 		abas.add_child(b)
+		if g[0] in NIVEIS_LICENCA:
+			ancora("LICENCA_" + g[0], b)
 	conteudo.add_child(faixa)
 	var lista := []
 	for ev in dados.lista("eventos"):
@@ -212,6 +214,11 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var tipo := _tipo(ev)
 	var v := cartao(tipo[1])
 	ancora("EVENT_CARD", v)
+	# A prova do tutorial (etapa 1 do campeonato do prólogo): cartão, etapas,
+	# competitividade e o botão, cada um com a sua âncora.
+	var tutorial: bool = ev["id"] == _evento_tutorial()
+	if tutorial:
+		ancora("COPA", v)
 	var faixa := fileira(v)
 	var t := rotulo(("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA"), FONTE_PEQUENA,
 			COR_BOM if vitorias > 0 else (tipo[1].lightened(0.35) if pode else COR_SECUNDARIA), faixa)
@@ -219,6 +226,8 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var prog := rotulo(_progresso(ev), FONTE_PEQUENA, COR_SECUNDARIA, faixa)
 	prog.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	prog.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	if tutorial:
+		ancora("ETAPAS", prog)
 	# Banner da pista com o nome e o lugar por cima.
 	var banner := ilustracao("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])), 190, v, 0.85)
 	if not pode:
@@ -277,7 +286,9 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	if not etiquetas.is_empty():
 		selos(etiquetas, v)
 	if pode:
-		_comparacao_rivais(c, ev, v)
+		var barra := _comparacao_rivais(c, ev, v)
+		if tutorial and barra != null:
+			ancora("COMPETITIVIDADE", barra)
 	# Recompensa especial: o carro-prêmio aparece no cartão.
 	if ev.get("carro_premio") != null and vitorias == 0:
 		var cp: Dictionary = dados.carro(ev["carro_premio"])
@@ -346,6 +357,8 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		bc.add_theme_stylebox_override("disabled", parado)
 		bc.pressed.connect(inscrever)
 		linha.add_child(bc)
+		if tutorial:
+			ancora("DISPUTAR", bc)
 	else:
 		nota("icone_cadeado", " · ".join(motivos), "", h, COR_RUIM)
 		var pede_licenca: bool = motivos.any(func(m): return String(m).begins_with("licença"))
@@ -359,10 +372,10 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 
 ## Seu carro x rivais (potência por peso, frente à mediana dos rivais): barra
 ## de três faixas com o marcador e a palavra (mais fraco, parelho, mais forte).
-func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> void:
+func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 	var r := _razao_rivais(c, ev)
 	if r < 0.0:
-		return
+		return null
 	var nivel := 0 if r < 0.95 else (1 if r < 1.08 else 2)
 	# Tons sóbrios (a faixa do nível fica mais viva; as outras, apagadas).
 	var tons := [Color(0.42, 0.33, 0.31), Color(0.66, 0.62, 0.5), Color(0.33, 0.47, 0.4)]
@@ -397,6 +410,15 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> void:
 		Tipografia.rotulo(l, "regular", 20)
 		l.autowrap_mode = TextServer.AUTOWRAP_OFF
 		l.horizontal_alignment = [HORIZONTAL_ALIGNMENT_LEFT, HORIZONTAL_ALIGNMENT_CENTER, HORIZONTAL_ALIGNMENT_RIGHT][k]
+	return v
+
+
+## Prova do tutorial de eventos: a etapa 1 do campeonato do prólogo (Adrian).
+func _evento_tutorial() -> String:
+	if jogador.personagem != "adrian":
+		return ""
+	var etapas := Campeonatos.etapas(dados, String(dados.historia().get("adrian", {}).get("campeonato", "")))
+	return String(etapas[0]["id"]) if not etapas.is_empty() else ""
 
 
 ## "Etapa 2 de 3 · campeonato: 18 pts, 2º · vale pontos": onde esta prova fica

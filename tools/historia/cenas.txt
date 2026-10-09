@@ -10,65 +10,125 @@
 
 # ---------------------------------------------------------------- I. Prólogo
 = SCN_A00 | GAME_START | personagem=adrian; bloqueia=sim; flags=STORY_STARTED; proxima=SCN_A01; capitulo=I
-[ILUSTRACAO:anel_do_vale]
-Sistema: Lago Sereno. Última semana da temporada.
-Sistema: Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus, o mecânico, cuida do resto.
-Sistema: Daqui até a Elite são seis licenças. Ninguém da família passou da segunda.
-Adrian: Ainda.
+[ILUSTRACAO:garagem_trio]
+Adrian: Ele ainda puxa pra direita.
+Elena: Você disse isso ontem.
+Adrian: Ontem puxava menos.
+Marcus: Ontem você não acertou a zebra da quatro.
+Adrian: Detalhe!
+Elena: Abre a ficha.
 
-= SCN_A01 | ENCADEADA | personagem=adrian; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; capitulo=I; cenario=garagem_cross
-Marcus: {carro} lavado, tanque cheio. Pronto para a Copa Primeira Marcha.
-Adrian: Pronto não. Ele freia cedo demais.
-Elena: Abre a ficha antes de reclamar.
+# Tutorial 1 — ficha do carro: cada atributo em destaque, o jogador toca para seguir.
+= SCN_A01 | ENCADEADA | personagem=adrian; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; capitulo=I; lembrete=SCN_A01L
 [OPEN_GARAGE_TAB]
-[HIGHLIGHT_CAR_STATS]
-Elena: Potência e peso decidem a reta. Pneus e freios decidem a curva.
-Elena: "Original" quer dizer que ninguém mexeu ainda.
-Adrian: E dá para mexer?
-Marcus: Temos {saldo}. É o preço de um jogo de freios.
-Elena: Então você já sabe o que comprar.
+[HIGHLIGHT_POTENCIA]
+Elena: Potência é uma das informações principais do carro. Aqui você vê quantos cavalos ele tem. Em geral, quanto mais potência, maior o potencial de velocidade.
+[HIGHLIGHT_PESO]
+Elena: Peso também importa. Quanto menos massa o carro precisa carregar, melhor ele acelera, freia e muda de direção.
+[HIGHLIGHT_PNEUS]
+Elena: Os pneus determinam quanto dessa força realmente chega ao chão. Pneus melhores significam mais aderência e mais consistência durante a corrida.
+[HIGHLIGHT_FREIOS]
+Elena: E freio não serve só para parar o carro. Quanto melhor ele freia, mais tarde você pode começar a desacelerar e mais velocidade leva até a curva.
+Marcus: Já que você falou nisso... deixei uma demanda aberta.
+[HIGHLIGHT_DEMANDA]
+Adrian: Vocês pedem muita coisa. Também precisamos olhar quanto temos.
+[HIGHLIGHT_SALDO]
+Marcus: Sempre. Giro compra peça, carro e praticamente todo problema novo que aparece.
+Elena: Temos o suficiente.
+Marcus: Então abre a Oficina.
+[HIGHLIGHT_OFICINA]
+
+= SCN_A01L | LEMBRETE | personagem=adrian; proibe=TUNE_TUTORIAL_SEEN,FIRST_TUNE_DONE; capitulo=I
+Elena: Vamos. Toque em Oficina.
+[HIGHLIGHT_OFICINA]
+
+# Tutorial 2 — primeira compra.
+= SCN_A02 | ABA:OFICINA | personagem=adrian; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; capitulo=I; lembrete=SCN_A02L
+[HIGHLIGHT_BRAKES]
+Marcus: É esse aqui.
+Elena: {demanda}.
+Marcus: Compra e eu instalo.
+[HIGHLIGHT_BRAKES]
+
+= SCN_A02L | LEMBRETE | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I
+Elena: O carro não vai instalar sozinho. Compre os {demanda}.
+[HIGHLIGHT_BRAKES]
+
+= SCN_A02B | EVENTO_SELECIONADO | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I; cenario=oficina_cross
+Marcus: Calma. Primeiro a demanda.
+Elena: {demanda} antes da inscrição.
 [OPEN_TUNE_SERVICE]
 [HIGHLIGHT_BRAKES]
-Sistema: Esta é a Oficina. Toque em Freios 1 e confirme a compra.
 
-= SCN_A02 | EVENTO_SELECIONADO | personagem=adrian; proibe=FIRST_TUNE_DONE; capitulo=I; cenario=oficina_cross
-Marcus: Calma. Com o freio original, a curva vira parede.
-Elena: Primeiro os freios. A inscrição espera.
-[OPEN_TUNE_SERVICE]
-[HIGHLIGHT_BRAKES]
-Sistema: Toque em Freios 1 e confirme a compra. Depois volte em Correr.
+# Cenas 2 e 3 — a peça instalada e o carro pronto.
+= SCN_A03 | DEMANDA_CONCLUIDA | personagem=adrian; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE; proxima=SCN_A03B; capitulo=I
+[OPEN_GARAGE_TAB]
+[ILUSTRACAO:marcus_e_o_carro]
+Marcus: {peca} instalados.
+[PAUSA]
 
-= SCN_A03 | PECA_COMPRADA | personagem=adrian; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE; capitulo=I; cenario=oficina_cross
-Marcus: {peca} montado.
+= SCN_A03B | ENCADEADA | personagem=adrian; bloqueia=sim; capitulo=I
+[ILUSTRACAO:adrian_entra_no_carro]
 Elena: Agora ele freia mais tarde que metade do grid.
 Adrian: E a outra metade?
 Elena: A outra metade tem piloto melhor.
 Adrian: Engraçada.
-Sistema: Toque em Correr na barra de baixo.
+[PAUSA]
+Adrian: Vamos correr.
+[HIGHLIGHT_NAV_EVENTOS]
 
-= SCN_A04 | ABA:EVENTOS | personagem=adrian; requer=FIRST_TUNE_DONE; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,CHAMPIONSHIP_TUTORIAL_DONE; capitulo=I
-Elena: Cada cartão é uma prova: pista, voltas, prêmio e o que o regulamento aceita.
-[HIGHLIGHT_EVENT_CARD]
-Elena: A barra "seu carro × rivais" diz se dá para ganhar antes de você tentar.
-Marcus: A Copa Primeira Marcha tem três etapas e conta pontos. Campeão é quem soma mais.
-Elena: Corra as etapas em ordem. Fora de ordem vira corrida comum.
-Adrian: Fecho as três e a gente fala de motor.
-Sistema: Escolha a Copa Primeira Marcha — Etapa 1 e toque em Disputar.
+# Tutorial 3 — eventos e copas.
+= SCN_A04 | ABA:EVENTOS | personagem=adrian; requer=FIRST_TUNE_DONE; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,CHAMPIONSHIP_TUTORIAL_DONE; capitulo=I; lembrete=SCN_A04L
+Elena: Aqui ficam as provas disponíveis. Antes de escolher uma, olha a licença exigida.
+[HIGHLIGHT_LICENCA_SPORT]
+Elena: O Adrian já tem a licença Sport.
+Elena: Então todas as provas que exigem Sport ou uma licença abaixo dela estão liberadas.
+[HIGHLIGHT_COMPETITIVIDADE]
+Elena: Essa barra estima o quanto o nosso carro está competitivo para essa prova.
+Marcus: Não garante vitória. Só evita entrar completamente no escuro.
+[HIGHLIGHT_COPA]
+Marcus: A Copa Primeira Marcha tem três etapas. Cada resultado soma pontos.
+Elena: No final, o campeão é quem tiver a maior pontuação.
+[HIGHLIGHT_ETAPAS]
+Elena: Para disputar a Copa de verdade, você precisa correr as etapas em ordem.
+Elena: Se escolher uma etapa fora da sequência, ela vira uma corrida comum e não conta para o campeonato.
+Adrian: Fecho as três e depois a gente conversa sobre motor.
+Elena: Você conversa.
+Marcus: Ela decide.
+[HIGHLIGHT_COPA]
+Adrian: Escolhe a Copa Primeira Marcha. Etapa 1.
+[HIGHLIGHT_DISPUTAR]
+Adrian: E toca em Disputar.
+[HIGHLIGHT_DISPUTAR]
 
-= SCN_A05 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I; cenario=box_largada
-Marcus: {voltas} voltas em {pista}.
+= SCN_A04L | LEMBRETE | personagem=adrian; proibe=FIRST_RACE_BRIEFED; capitulo=I
+Adrian: Copa Primeira Marcha, Etapa 1. Toca em Disputar.
+[HIGHLIGHT_DISPUTAR]
+
+# Na pista: o carro no grid, a corrida espera a conversa acabar e larga sozinha.
+= SCN_A05 | CORRIDA_INICIO | personagem=adrian; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; capitulo=I; segura_largada=sim
+Adrian: {voltas} voltas em {pista}.
 Adrian: Alguma ordem de equipe?
-Elena: Não. A corrida corre sozinha. O que decidimos na garagem já está no carro.
-Elena: Você acelera. Eu anoto.
-Sistema: Prova nova roda com o app aberto. Depois de vencida, dá para repetir com o app fechado.
+Elena: Não.
+Elena: A corrida corre sozinha. O que a gente decide na garagem já está no carro.
+Adrian: Então eu acelero e você anota.
+Elena: Basicamente.
+Adrian: As provas novas precisam rodar com o aplicativo aberto.
+[HIGHLIGHT_CAMERA_AUTO]
+Adrian: Depois que você vencer uma prova pela primeira vez, pode repetir ela no modo offline.
+Elena: Primeiro prova que consegue ganhar.
 
-= SCN_A06 | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN_ADRIAN; capitulo=I; cenario=podio
+# Cena 4 — resultado: a conversa na chegada, depois o painel do resultado.
+= SCN_A06 | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN_ADRIAN; capitulo=I
+[ILUSTRACAO:box_depois_da_corrida]
 Adrian: Viu isso?
-Elena: Vi. Freou mais tarde que todo mundo. Valeu cada giro.
+Elena: Vi.
+Adrian: Freei mais tarde que todo mundo.
+Elena: Valeu cada Giro.
 Marcus: Prêmio na conta.
-Sistema: Prêmios entram no saldo. Prova já vencida pode ser repetida, até com o app fechado.
 
-= SCN_A06B | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; capitulo=I; cenario=box_largada
+= SCN_A06B | CORRIDA_FIM | personagem=adrian; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; capitulo=I
+[ILUSTRACAO:box_depois_da_corrida]
 Adrian: {posicao}. Não era o plano.
 Elena: A tela da corrida mostra onde você perdeu tempo. Olha antes de culpar o carro.
 Marcus: E corre de novo. Corrida perdida também paga.
@@ -85,10 +145,18 @@ Adrian: E se eu não ganhar todas?
 Elena: Campeão é quem soma mais. Constância ganha título.
 Sistema: Prova inédita e etapa de campeonato só correm com o app aberto.
 
-= SCN_A09 | ABA:LICENCAS | personagem=adrian; proibe=ADRIAN_LICENSE_CONTEXT; flags=ADRIAN_LICENSE_CONTEXT; capitulo=I; cenario=garagem_cross
-Elena: Club e Sport você já tem. A National pede vitórias e um título.
+# Tutorial opcional — a carreira (licenças) na primeira visita.
+= SCN_A09 | ABA:LICENCAS | personagem=adrian; proibe=ADRIAN_LICENSE_CONTEXT; flags=ADRIAN_LICENSE_CONTEXT; capitulo=I
+[HIGHLIGHT_LIC_SPORT]
+Elena: As licenças Club e Sport você já tem.
+[HIGHLIGHT_LIC_NATIONAL]
+Elena: A próxima é a National.
+Elena: Ela exige mais vitórias e pelo menos um título.
+[HIGHLIGHT_LIC_ELITE]
 Adrian: E a Elite?
-Marcus: A Elite é onde a Apex Dominion corre. Ninguém daqui chega lá.
+Marcus: Elite é onde a Apex Dominion corre.
+[PAUSA]
+Marcus: Ninguém daqui consegue disputar com eles.
 Adrian: Ainda.
 
 = SCN_A10 | CORRIDA_FIM | personagem=adrian; requer=FIRST_CHAMPIONSHIP_DONE; proibe=LAST_RACE_STARTED,CHAMPIONSHIP_CLOSED_TALK; flags=CHAMPIONSHIP_CLOSED_TALK; capitulo=I; cenario=garagem_cross_noite

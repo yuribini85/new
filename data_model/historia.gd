@@ -11,10 +11,12 @@ extends RefCounted
 ## EVENTO_SELECIONADO, CAMPEONATO_SELECIONADO, CORRIDA_INICIO, CORRIDA_FIM
 ## (contexto posicao), CORRIDA_CONTRA:<piloto>, EVENTO_BLOQUEADO, LICENCA_EXIGIDA,
 ## LICENCA_DISPONIVEL:<id>, LICENCA_TREINO_INICIO, LICENCA_PRONTA,
-## LICENCA_CONCEDIDA:<id>, COMPRA_CARRO, PECA_COMPRADA, GARAGEM_DOIS_CARROS,
+## LICENCA_CONCEDIDA:<id>, COMPRA_CARRO, PECA_COMPRADA, DEMANDA_CONCLUIDA (a peça
+## da demanda do prólogo comprada), GARAGEM_DOIS_CARROS,
 ## CAMPEONATO_VENCIDO, SEM_DINHEIRO, POTENCIA_ACIMA, LICENCA_EM_TREINO e os do
 ## prólogo (ULTIMA_CORRIDA_ADRIAN, RADIO_ULTIMA_CORRIDA, ACIDENTE, POS_ACIDENTE).
-## ENCADEADA: só vem pela "proxima" de outra cena.
+## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
+## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
 
 ## Uma cena pedida: a interface (principal.gd) mostra.
 signal cena(c: Dictionary)
@@ -34,7 +36,7 @@ func ativa() -> bool:
 
 ## Primeira cena que vale para o trigger ({} se nenhuma).
 func cena_para(trigger: String, ctx: Dictionary = {}) -> Dictionary:
-	if not ativa() or trigger == "ENCADEADA":
+	if not ativa() or trigger in ["ENCADEADA", "LEMBRETE"]:
 		return {}
 	for c in dados.lista("dialogos"):
 		if c["trigger"] == trigger and vale(c, ctx):
@@ -72,7 +74,7 @@ func disparar(trigger: String, ctx: Dictionary = {}) -> bool:
 
 
 ## Variáveis das falas ({saldo}, {carro}, {evento}, {serie}, {pista}, {voltas},
-## {premio}, {posicao}, {peca}): o estado do jogo e o contexto do trigger
+## {premio}, {posicao}, {peca}, {demanda}): o estado do jogo e o contexto do trigger
 ## (evento = id da prova, posicao, peca, carro). As falas mostram o que o
 ## jogador vê na tela, nunca um número inventado.
 func variaveis(ctx: Dictionary = {}) -> Dictionary:
@@ -93,6 +95,10 @@ func variaveis(ctx: Dictionary = {}) -> Dictionary:
 			v["premio"] = Aba.dinheiro(int(ev["premios"][0])) + " G"
 	if ctx.has("posicao"):
 		v["posicao"] = "%dº" % int(ctx["posicao"])
+	# A peça da primeira demanda do prólogo (historia.json → adrian.peca_demanda).
+	var demanda := String(dados.historia().get("adrian", {}).get("peca_demanda", ""))
+	if dados.existe("pecas", demanda):
+		v["demanda"] = String(dados.peca(demanda)["nome"])
 	for k in ["peca", "carro"]:
 		if ctx.has(k):
 			v[k] = String(ctx[k])

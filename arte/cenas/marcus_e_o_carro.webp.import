@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhbd6h6jmxqab"
-path="res://.godot/imported/elena_cross.webp-eb1620688b04d354e7220f6dafd359cc.ctex"
+uid="uid://csin32grm4wp0"
+path="res://.godot/imported/marcus_e_o_carro.webp-b8b2e0f32ed0ae45998e2889168e325a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/corpo/elena_cross.webp"
-dest_files=["res://.godot/imported/elena_cross.webp-eb1620688b04d354e7220f6dafd359cc.ctex"]
+source_file="res://arte/cenas/marcus_e_o_carro.webp"
+dest_files=["res://.godot/imported/marcus_e_o_carro.webp-b8b2e0f32ed0ae45998e2889168e325a.ctex"]
 
 [params]
 

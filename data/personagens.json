@@ -1,6 +1,6 @@
 [
- {"id": "adrian", "nome": "Adrian Cross", "retrato": "res://arte/pilotos/adrian_cross.png", "cor": "#3a6ea5", "papel": "piloto"},
- {"id": "elena", "nome": "Elena Cross", "retrato": "res://arte/pilotos/elena_cross.png", "cor": "#d9a521", "papel": "irmã do Adrian, acerta o carro"},
+ {"id": "adrian", "nome": "Adrian Cross", "retrato": "", "cor": "#3a6ea5", "papel": "piloto"},
+ {"id": "elena", "nome": "Elena Cross", "retrato": "", "cor": "#d9a521", "papel": "irmã do Adrian, acerta o carro"},
  {"id": "marcus", "nome": "Marcus Reed", "retrato": "res://arte/personagens/marcus_reed.png", "cor": "#7a8a6a", "papel": "mecânico da família"},
  {"id": "victor", "nome": "Victor Hale", "retrato": "res://arte/personagens/victor_hale.png", "cor": "#5a5f8a", "papel": "diretor da Apex Dominion"},
  {"id": "lucas", "nome": "Lucas Ward", "retrato": "res://arte/pilotos/lucas_ward.png", "cor": "#8a3a3a", "papel": "piloto da Apex Dominion"},

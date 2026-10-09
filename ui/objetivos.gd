@@ -22,8 +22,10 @@ static func _prologo(jogador: Node, dados: Node) -> Array:
 	var etapas := Campeonatos.etapas(dados, serie)
 	var primeira := Aba.nome_evento(etapas[0]) if not etapas.is_empty() else serie
 	var correu: bool = not etapas.is_empty() and jogador.historico.has(etapas[0]["id"])
+	var peca := String(dados.historia().get("adrian", {}).get("peca_demanda", ""))
+	var nome_peca := String(dados.peca(peca)["nome"]) if dados.existe("pecas", peca) else "a peça"
 	return [
-		{"texto": "Comprar Freios 1 na Oficina", "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.OFICINA,
+		{"texto": "Comprar %s na Oficina" % nome_peca, "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.OFICINA,
 			"botao": "Ir para a Oficina"},
 		{"texto": "Correr a %s" % primeira, "feito": correu, "aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Fechar a %s (%d etapas)" % [serie, etapas.size()], "feito": jogador.flags.has("FIRST_CHAMPIONSHIP_DONE"),

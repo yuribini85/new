@@ -8,12 +8,12 @@
    {
     "id": "elena_cross",
     "nome": "Elena Cross",
-    "retrato": "res://arte/pilotos/elena_cross.png"
+    "retrato": ""
    },
    {
     "id": "adrian_cross",
     "nome": "Adrian Cross",
-    "retrato": "res://arte/pilotos/adrian_cross.png"
+    "retrato": ""
    }
   ],
   "jogador": true

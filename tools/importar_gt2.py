@@ -346,7 +346,8 @@ def main() -> int:
                     forma = {"corte": int(n(p["RPMIncrease"])) * 100}
                 pecas.append({
                     "id": f"{id_nosso}_{cat.lower()}_{estagio}",
-                    "nome": f"{NOMES_CATEGORIA[cat]} {estagio}",
+                    # Freio: o GT2 tem um só (o de fábrica conta como nível 1).
+                    "nome": "Freios esportivos" if cat == "Brake" else f"{NOMES_CATEGORIA[cat]} {estagio}",
                     "categoria": "aspiracao" if cat in ("NATune", "TurbineKit") else cat.lower(),
                     "preco": moeda(n(p["Price"])), "carros_permitidos": [id_nosso], "efeitos": efeitos,
                 })

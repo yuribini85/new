@@ -208,7 +208,7 @@
  },
  {
   "id": "arvelle_hatchet_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -445,7 +445,7 @@
  },
  {
   "id": "arvelle_hatchet_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -740,7 +740,7 @@
  },
  {
   "id": "arvelle_hatchet_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -999,7 +999,7 @@
  },
  {
   "id": "arvelle_hatchet_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -1236,7 +1236,7 @@
  },
  {
   "id": "arvelle_outlaw_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -1489,7 +1489,7 @@
  },
  {
   "id": "arvelle_outlaw_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -1726,7 +1726,7 @@
  },
  {
   "id": "arvelle_outlaw_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -1963,7 +1963,7 @@
  },
  {
   "id": "arvelle_outlaw_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -2200,7 +2200,7 @@
  },
  {
   "id": "arvelle_outlaw_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -2456,7 +2456,7 @@
  },
  {
   "id": "varenna_grillo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -2693,7 +2693,7 @@
  },
  {
   "id": "varenna_lucciola_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -2949,7 +2949,7 @@
  },
  {
   "id": "varenna_falco_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -3265,7 +3265,7 @@
  },
  {
   "id": "varenna_falco_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -3521,7 +3521,7 @@
  },
  {
   "id": "varenna_ghiaia_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -3758,7 +3758,7 @@
  },
  {
   "id": "varenna_ghiaia_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -3995,7 +3995,7 @@
  },
  {
   "id": "varenna_ghiaia_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -4235,7 +4235,7 @@
  },
  {
   "id": "varenna_fiume_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -4488,7 +4488,7 @@
  },
  {
   "id": "varenna_fiume_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -4744,7 +4744,7 @@
  },
  {
   "id": "varenna_tempesta_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -4921,7 +4921,7 @@
  },
  {
   "id": "wexmoor_heath_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -5140,7 +5140,7 @@
  },
  {
   "id": "wexmoor_rowan_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -5375,7 +5375,7 @@
  },
  {
   "id": "wexmoor_rowan_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -5589,7 +5589,7 @@
  },
  {
   "id": "wexmoor_shrike_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -5861,7 +5861,7 @@
  },
  {
   "id": "vorhaus_uhu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -6098,7 +6098,7 @@
  },
  {
   "id": "vorhaus_zeisig_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -6354,7 +6354,7 @@
  },
  {
   "id": "vorhaus_dachs_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -6647,7 +6647,7 @@
  },
  {
   "id": "vorhaus_taucher_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -6935,7 +6935,7 @@
  },
  {
   "id": "vorhaus_specht_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -7188,7 +7188,7 @@
  },
  {
   "id": "ostwerk_habicht_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -7504,7 +7504,7 @@
  },
  {
   "id": "ostwerk_luchs_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -7757,7 +7757,7 @@
  },
  {
   "id": "ostwerk_reiher_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -8057,7 +8057,7 @@
  },
  {
   "id": "ostwerk_falke_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -8310,7 +8310,7 @@
  },
  {
   "id": "hartwig_strecke_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -8547,7 +8547,7 @@
  },
  {
   "id": "ostwerk_kranich_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -8784,7 +8784,7 @@
  },
  {
   "id": "ostwerk_gischt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -9021,7 +9021,7 @@
  },
  {
   "id": "ostwerk_elster_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -9258,7 +9258,7 @@
  },
  {
   "id": "bancroft_longhorn_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -9511,7 +9511,7 @@
  },
  {
   "id": "bancroft_longhorn_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -9764,7 +9764,7 @@
  },
  {
   "id": "bancroft_longhorn_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -10017,7 +10017,7 @@
  },
  {
   "id": "bancroft_longhorn_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -10270,7 +10270,7 @@
  },
  {
   "id": "bancroft_sidewinder_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -10523,7 +10523,7 @@
  },
  {
   "id": "bancroft_sidewinder_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -10776,7 +10776,7 @@
  },
  {
   "id": "bancroft_sidewinder_s_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -11029,7 +11029,7 @@
  },
  {
   "id": "bancroft_sidewinder_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -11282,7 +11282,7 @@
  },
  {
   "id": "bancroft_sidewinder_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -11535,7 +11535,7 @@
  },
  {
   "id": "bancroft_sidewinder_gts_69_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -11788,7 +11788,7 @@
  },
  {
   "id": "morel_caillou_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -12041,7 +12041,7 @@
  },
  {
   "id": "morel_givre_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -12281,7 +12281,7 @@
  },
  {
   "id": "morel_bruyere_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -12479,7 +12479,7 @@
  },
  {
   "id": "tomoe_tsurara_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -12730,7 +12730,7 @@
  },
  {
   "id": "tomoe_niji_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -12997,7 +12997,7 @@
  },
  {
   "id": "tomoe_niji_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -13264,7 +13264,7 @@
  },
  {
   "id": "tomoe_niji_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -13478,7 +13478,7 @@
  },
  {
   "id": "tomoe_kogetsu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -13745,7 +13745,7 @@
  },
  {
   "id": "tomoe_kogetsu_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -14012,7 +14012,7 @@
  },
  {
   "id": "tomoe_kogetsu_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -14279,7 +14279,7 @@
  },
  {
   "id": "tomoe_kogetsu_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -14546,7 +14546,7 @@
  },
  {
   "id": "tomoe_kogetsu_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -14760,7 +14760,7 @@
  },
  {
   "id": "tomoe_kogarashi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -14974,7 +14974,7 @@
  },
  {
   "id": "tomoe_kogarashi_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -15241,7 +15241,7 @@
  },
  {
   "id": "tomoe_kogarashi_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -15460,7 +15460,7 @@
  },
  {
   "id": "tomoe_hatsukaze_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -15695,7 +15695,7 @@
  },
  {
   "id": "tomoe_hatsukaze_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -15962,7 +15962,7 @@
  },
  {
   "id": "tomoe_hatsukaze_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -16229,7 +16229,7 @@
  },
  {
   "id": "tomoe_sora_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -16448,7 +16448,7 @@
  },
  {
   "id": "garrison_highline_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -16685,7 +16685,7 @@
  },
  {
   "id": "garrison_boxcar_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -16922,7 +16922,7 @@
  },
  {
   "id": "garrison_driftwood_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -17159,7 +17159,7 @@
  },
  {
   "id": "garrison_tumbleweed_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -17415,7 +17415,7 @@
  },
  {
   "id": "garrison_thunderhead_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -17668,7 +17668,7 @@
  },
  {
   "id": "garrison_pecos_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -17921,7 +17921,7 @@
  },
  {
   "id": "garrison_pecos_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -18114,7 +18114,7 @@
  },
  {
   "id": "garrison_canyon_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -18354,7 +18354,7 @@
  },
  {
   "id": "garrison_gulch_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -18591,7 +18591,7 @@
  },
  {
   "id": "garrison_arroyo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -18844,7 +18844,7 @@
  },
  {
   "id": "garrison_arroyo_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -19079,7 +19079,7 @@
  },
  {
   "id": "ottavo_nebbia_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -19314,7 +19314,7 @@
  },
  {
   "id": "ottavo_rondine_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -19549,7 +19549,7 @@
  },
  {
   "id": "ottavo_brina_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -19786,7 +19786,7 @@
  },
  {
   "id": "ottavo_allodola_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -20058,7 +20058,7 @@
  },
  {
   "id": "ottavo_faro_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -20325,7 +20325,7 @@
  },
  {
   "id": "ottavo_airone_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -20581,7 +20581,7 @@
  },
  {
   "id": "whitlock_granite_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -20821,7 +20821,7 @@
  },
  {
   "id": "whitlock_granite_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -21058,7 +21058,7 @@
  },
  {
   "id": "whitlock_granite_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -21337,7 +21337,7 @@
  },
  {
   "id": "whitlock_sagebrush_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -21577,7 +21577,7 @@
  },
  {
   "id": "whitlock_sagebrush_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -21856,7 +21856,7 @@
  },
  {
   "id": "whitlock_saddle_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -22109,7 +22109,7 @@
  },
  {
   "id": "whitlock_bootleg_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -22362,7 +22362,7 @@
  },
  {
   "id": "whitlock_switchback_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -22599,7 +22599,7 @@
  },
  {
   "id": "whitlock_switchback_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -22836,7 +22836,7 @@
  },
  {
   "id": "whitlock_switchback_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -23089,7 +23089,7 @@
  },
  {
   "id": "whitlock_switchback_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -23342,7 +23342,7 @@
  },
  {
   "id": "whitlock_badlands_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -23588,7 +23588,7 @@
  },
  {
   "id": "whitlock_cottonwood_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -23805,7 +23805,7 @@
  },
  {
   "id": "whitlock_bluff_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -24038,7 +24038,7 @@
  },
  {
   "id": "hozuki_isaribi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -24291,7 +24291,7 @@
  },
  {
   "id": "hozuki_isaribi_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -24524,7 +24524,7 @@
  },
  {
   "id": "hozuki_isaribi_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -24757,7 +24757,7 @@
  },
  {
   "id": "hozuki_isaribi_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -24974,7 +24974,7 @@
  },
  {
   "id": "hozuki_isaribi_gts_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -25211,7 +25211,7 @@
  },
  {
   "id": "hozuki_isaribi_gts_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -25464,7 +25464,7 @@
  },
  {
   "id": "hozuki_isaribi_gts_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -25717,7 +25717,7 @@
  },
  {
   "id": "hozuki_isaribi_gts_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -25970,7 +25970,7 @@
  },
  {
   "id": "hozuki_isaribi_r_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -26204,7 +26204,7 @@
  },
  {
   "id": "hozuki_nowaki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -26422,7 +26422,7 @@
  },
  {
   "id": "hozuki_nowaki_91_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -26656,7 +26656,7 @@
  },
  {
   "id": "hozuki_nowaki_92_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -26890,7 +26890,7 @@
  },
  {
   "id": "hozuki_nowaki_94_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -27123,7 +27123,7 @@
  },
  {
   "id": "hozuki_tsumuji_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -27340,7 +27340,7 @@
  },
  {
   "id": "hozuki_tsumuji_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -27557,7 +27557,7 @@
  },
  {
   "id": "hayase_tsubame_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -27806,7 +27806,7 @@
  },
  {
   "id": "hozuki_samidare_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -28097,7 +28097,7 @@
  },
  {
   "id": "hayase_pika_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -28388,7 +28388,7 @@
  },
  {
   "id": "hozuki_samidare_s_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -28637,7 +28637,7 @@
  },
  {
   "id": "hozuki_samidare_s_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -28886,7 +28886,7 @@
  },
  {
   "id": "hozuki_samidare_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -29177,7 +29177,7 @@
  },
  {
   "id": "hozuki_samidare_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -29452,7 +29452,7 @@
  },
  {
   "id": "hozuki_samidare_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -29727,7 +29727,7 @@
  },
  {
   "id": "hozuki_samidare_gt_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -30018,7 +30018,7 @@
  },
  {
   "id": "hozuki_samidare_gt_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -30231,7 +30231,7 @@
  },
  {
   "id": "hozuki_samidare_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -30448,7 +30448,7 @@
  },
  {
   "id": "hozuki_hiiragi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -30665,7 +30665,7 @@
  },
  {
   "id": "hozuki_harusame_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -30898,7 +30898,7 @@
  },
  {
   "id": "hozuki_harusame_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -31173,7 +31173,7 @@
  },
  {
   "id": "hozuki_harusame_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -31468,7 +31468,7 @@
  },
  {
   "id": "hozuki_harusame_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -31747,7 +31747,7 @@
  },
  {
   "id": "hozuki_harusame_s_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -31940,7 +31940,7 @@
  },
  {
   "id": "hozuki_harusame_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -32159,7 +32159,7 @@
  },
  {
   "id": "hozuki_oboro_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -32378,7 +32378,7 @@
  },
  {
   "id": "hozuki_oboro_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -32597,7 +32597,7 @@
  },
  {
   "id": "hozuki_madoka_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -32850,7 +32850,7 @@
  },
  {
   "id": "hozuki_fubuki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -33103,7 +33103,7 @@
  },
  {
   "id": "hozuki_fubuki_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -33356,7 +33356,7 @@
  },
  {
   "id": "hozuki_fubuki_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -33609,7 +33609,7 @@
  },
  {
   "id": "hozuki_fubuki_90_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -33862,7 +33862,7 @@
  },
  {
   "id": "hozuki_fubuki_92_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -34115,7 +34115,7 @@
  },
  {
   "id": "hozuki_byakko_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -34368,7 +34368,7 @@
  },
  {
   "id": "hozuki_byakko_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -34621,7 +34621,7 @@
  },
  {
   "id": "hozuki_byakko_s_94_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -34874,7 +34874,7 @@
  },
  {
   "id": "hozuki_byakko_s_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -35127,7 +35127,7 @@
  },
  {
   "id": "hozuki_byakko_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -35364,7 +35364,7 @@
  },
  {
   "id": "hozuki_byakko_gt_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -35617,7 +35617,7 @@
  },
  {
   "id": "hozuki_byakko_gt_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -35870,7 +35870,7 @@
  },
  {
   "id": "hozuki_hotaru_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -36083,7 +36083,7 @@
  },
  {
   "id": "hozuki_hotaru_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -36334,7 +36334,7 @@
  },
  {
   "id": "hozuki_kohaku_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -36551,7 +36551,7 @@
  },
  {
   "id": "hozuki_rindo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -36784,7 +36784,7 @@
  },
  {
   "id": "hozuki_rindo_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -37017,7 +37017,7 @@
  },
  {
   "id": "hozuki_rindo_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -37250,7 +37250,7 @@
  },
  {
   "id": "hozuki_rindo_s_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -37506,7 +37506,7 @@
  },
  {
   "id": "calderwood_fletcher_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -37873,7 +37873,7 @@
  },
  {
   "id": "calderwood_moorland_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -38110,7 +38110,7 @@
  },
  {
   "id": "calderwood_quarry_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -38329,7 +38329,7 @@
  },
  {
   "id": "calderwood_gale_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -38601,7 +38601,7 @@
  },
  {
   "id": "castellani_torrente_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -38873,7 +38873,7 @@
  },
  {
   "id": "castellani_torrente_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -39161,7 +39161,7 @@
  },
  {
   "id": "castellani_torrente_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -39441,7 +39441,7 @@
  },
  {
   "id": "castellani_zefiro_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -39676,7 +39676,7 @@
  },
  {
   "id": "castellani_tufo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -39869,7 +39869,7 @@
  },
  {
   "id": "thornby_keel_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -40122,7 +40122,7 @@
  },
  {
   "id": "pemberly_bittern_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -40355,7 +40355,7 @@
  },
  {
   "id": "pemberly_bittern_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -40590,7 +40590,7 @@
  },
  {
   "id": "pemberly_bittern_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -40849,7 +40849,7 @@
  },
  {
   "id": "ashcombe_kestrel_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -41124,7 +41124,7 @@
  },
  {
   "id": "pemberly_fieldfare_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -41399,7 +41399,7 @@
  },
  {
   "id": "pemberly_fieldfare_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -41633,7 +41633,7 @@
  },
  {
   "id": "pemberly_fieldfare_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -42006,7 +42006,7 @@
  },
  {
   "id": "pemberly_teal_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -42299,7 +42299,7 @@
  },
  {
   "id": "pemberly_teal_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -42592,7 +42592,7 @@
  },
  {
   "id": "pemberly_teal_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -42892,7 +42892,7 @@
  },
  {
   "id": "pemberly_sedge_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -43147,7 +43147,7 @@
  },
  {
   "id": "pemberly_thrush_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -43384,7 +43384,7 @@
  },
  {
   "id": "mizuchi_suzaku_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -43640,7 +43640,7 @@
  },
  {
   "id": "mizuchi_suzaku_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -43907,7 +43907,7 @@
  },
  {
   "id": "mizuchi_wadachi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -44158,7 +44158,7 @@
  },
  {
   "id": "mizuchi_wadachi_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -44430,7 +44430,7 @@
  },
  {
   "id": "mizuchi_arashi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -44739,7 +44739,7 @@
  },
  {
   "id": "mizuchi_arashi_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -44974,7 +44974,7 @@
  },
  {
   "id": "mizuchi_hanabi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -45209,7 +45209,7 @@
  },
  {
   "id": "mizuchi_hanabi_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -45444,7 +45444,7 @@
  },
  {
   "id": "mizuchi_hanabi_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -45679,7 +45679,7 @@
  },
  {
   "id": "mizuchi_hanabi_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -45914,7 +45914,7 @@
  },
  {
   "id": "mizuchi_hanabi_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -46149,7 +46149,7 @@
  },
  {
   "id": "mizuchi_hanabi_s_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -46444,7 +46444,7 @@
  },
  {
   "id": "hayase_kaze_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -46739,7 +46739,7 @@
  },
  {
   "id": "mizuchi_awayuki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -47034,7 +47034,7 @@
  },
  {
   "id": "mizuchi_awayuki_92_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -47269,7 +47269,7 @@
  },
  {
   "id": "mizuchi_awayuki_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -47564,7 +47564,7 @@
  },
  {
   "id": "mizuchi_awayuki_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -47859,7 +47859,7 @@
  },
  {
   "id": "mizuchi_awayuki_gt_93_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -48154,7 +48154,7 @@
  },
  {
   "id": "mizuchi_awayuki_gt_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -48407,7 +48407,7 @@
  },
  {
   "id": "mizuchi_awayuki_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -48644,7 +48644,7 @@
  },
  {
   "id": "mizuchi_awayuki_gts_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -48897,7 +48897,7 @@
  },
  {
   "id": "mizuchi_awayuki_gts_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -49192,7 +49192,7 @@
  },
  {
   "id": "mizuchi_awayuki_r_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -49411,7 +49411,7 @@
  },
  {
   "id": "mizuchi_awayuki_sr_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -49651,7 +49651,7 @@
  },
  {
   "id": "mizuchi_kagero_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -49939,7 +49939,7 @@
  },
  {
   "id": "mizuchi_kagero_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -50227,7 +50227,7 @@
  },
  {
   "id": "mizuchi_kagero_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -50515,7 +50515,7 @@
  },
  {
   "id": "mizuchi_chidori_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -50803,7 +50803,7 @@
  },
  {
   "id": "mizuchi_chidori_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -51091,7 +51091,7 @@
  },
  {
   "id": "hayase_raikou_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -51379,7 +51379,7 @@
  },
  {
   "id": "mizuchi_chidori_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -51667,7 +51667,7 @@
  },
  {
   "id": "mizuchi_chidori_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -51955,7 +51955,7 @@
  },
  {
   "id": "mizuchi_chidori_r_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -52243,7 +52243,7 @@
  },
  {
   "id": "mizuchi_chidori_r_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -52531,7 +52531,7 @@
  },
  {
   "id": "mizuchi_chidori_r_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -52819,7 +52819,7 @@
  },
  {
   "id": "mizuchi_chidori_r_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -53107,7 +53107,7 @@
  },
  {
   "id": "mizuchi_chidori_r_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -53395,7 +53395,7 @@
  },
  {
   "id": "mizuchi_chidori_r_iv_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -53683,7 +53683,7 @@
  },
  {
   "id": "mizuchi_chidori_r_v_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -53971,7 +53971,7 @@
  },
  {
   "id": "mizuchi_chidori_r_vi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -54259,7 +54259,7 @@
  },
  {
   "id": "mizuchi_chidori_r_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -54568,7 +54568,7 @@
  },
  {
   "id": "mizuchi_chidori_sr_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -54877,7 +54877,7 @@
  },
  {
   "id": "mizuchi_chidori_sr_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -55186,7 +55186,7 @@
  },
  {
   "id": "mizuchi_chidori_sr_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -55405,7 +55405,7 @@
  },
  {
   "id": "keldorf_kolkrabe_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -55642,7 +55642,7 @@
  },
  {
   "id": "keldorf_wachtel_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -55859,7 +55859,7 @@
  },
  {
   "id": "keldorf_wachtel_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -56099,7 +56099,7 @@
  },
  {
   "id": "hartwig_gleiter_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -56339,7 +56339,7 @@
  },
  {
   "id": "keldorf_sturm_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -56579,7 +56579,7 @@
  },
  {
   "id": "keldorf_steinbock_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -56832,7 +56832,7 @@
  },
  {
   "id": "dunmere_ember_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -57083,7 +57083,7 @@
  },
  {
   "id": "ashcombe_wren_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -57334,7 +57334,7 @@
  },
  {
   "id": "dunmere_merlin_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -57587,7 +57587,7 @@
  },
  {
   "id": "sanga_tsukikage_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -57840,7 +57840,7 @@
  },
  {
   "id": "sanga_tsukikage_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -58093,7 +58093,7 @@
  },
  {
   "id": "sanga_tsukikage_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -58346,7 +58346,7 @@
  },
  {
   "id": "sanga_tsukikage_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -58655,7 +58655,7 @@
  },
  {
   "id": "sanga_tsukikage_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -58964,7 +58964,7 @@
  },
  {
   "id": "sanga_tsukikage_s_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -59273,7 +59273,7 @@
  },
  {
   "id": "sanga_tsukikage_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -59582,7 +59582,7 @@
  },
  {
   "id": "sanga_tsukikage_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -59891,7 +59891,7 @@
  },
  {
   "id": "sanga_tsukikage_s_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -60200,7 +60200,7 @@
  },
  {
   "id": "sanga_tsukikage_s_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -60488,7 +60488,7 @@
  },
  {
   "id": "sanga_kamome_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -60721,7 +60721,7 @@
  },
  {
   "id": "sanga_kamui_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -60954,7 +60954,7 @@
  },
  {
   "id": "sanga_kamui_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -61207,7 +61207,7 @@
  },
  {
   "id": "sanga_kamui_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -61460,7 +61460,7 @@
  },
  {
   "id": "sanga_kamui_gt_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -61713,7 +61713,7 @@
  },
  {
   "id": "sanga_kamui_gt_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -61926,7 +61926,7 @@
  },
  {
   "id": "sanga_tsukishiro_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -62139,7 +62139,7 @@
  },
  {
   "id": "sanga_tsukishiro_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -62427,7 +62427,7 @@
  },
  {
   "id": "sanga_tsukishiro_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -62694,7 +62694,7 @@
  },
  {
   "id": "sanga_tsukishiro_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -62982,7 +62982,7 @@
  },
  {
   "id": "sanga_tsukishiro_gts_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -63270,7 +63270,7 @@
  },
  {
   "id": "sanga_usagi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -63542,7 +63542,7 @@
  },
  {
   "id": "hayase_tenrai_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -63830,7 +63830,7 @@
  },
  {
   "id": "sanga_usagi_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -64118,7 +64118,7 @@
  },
  {
   "id": "sanga_usagi_gt_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -64406,7 +64406,7 @@
  },
  {
   "id": "sanga_usagi_gt_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -64694,7 +64694,7 @@
  },
  {
   "id": "sanga_usagi_gt_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -64982,7 +64982,7 @@
  },
  {
   "id": "sanga_usagi_gt_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -65195,7 +65195,7 @@
  },
  {
   "id": "sanga_kairo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -65408,7 +65408,7 @@
  },
  {
   "id": "sanga_kairo_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -65696,7 +65696,7 @@
  },
  {
   "id": "sanga_kairo_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -65984,7 +65984,7 @@
  },
  {
   "id": "sanga_kairo_gt_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -66272,7 +66272,7 @@
  },
  {
   "id": "sanga_kairo_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -66622,7 +66622,7 @@
  },
  {
   "id": "sanga_yanagi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -66873,7 +66873,7 @@
  },
  {
   "id": "sanga_yanagi_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -67090,7 +67090,7 @@
  },
  {
   "id": "sanga_inazuma_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -67323,7 +67323,7 @@
  },
  {
   "id": "sanga_inazuma_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -67556,7 +67556,7 @@
  },
  {
   "id": "sanga_inazuma_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -67789,7 +67789,7 @@
  },
  {
   "id": "sanga_inazuma_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -68022,7 +68022,7 @@
  },
  {
   "id": "sanga_inazuma_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -68289,7 +68289,7 @@
  },
  {
   "id": "sanga_mizore_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -68540,7 +68540,7 @@
  },
  {
   "id": "sanga_mizore_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -68812,7 +68812,7 @@
  },
  {
   "id": "hayase_kujaku_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -69068,7 +69068,7 @@
  },
  {
   "id": "hayase_hibari_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -69324,7 +69324,7 @@
  },
  {
   "id": "hayase_hibari_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -69580,7 +69580,7 @@
  },
  {
   "id": "hayase_hibari_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -69868,7 +69868,7 @@
  },
  {
   "id": "hayase_hibari_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -70156,7 +70156,7 @@
  },
  {
   "id": "hayase_hibari_gt_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -70444,7 +70444,7 @@
  },
  {
   "id": "hayase_hibari_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -70732,7 +70732,7 @@
  },
  {
   "id": "hayase_hibari_gts_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -71020,7 +71020,7 @@
  },
  {
   "id": "hayase_hibari_gts_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -71324,7 +71324,7 @@
  },
  {
   "id": "hayase_hokuto_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -71633,7 +71633,7 @@
  },
  {
   "id": "hayase_shinku_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -71886,7 +71886,7 @@
  },
  {
   "id": "hayase_tenku_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -72139,7 +72139,7 @@
  },
  {
   "id": "hayase_tenku_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -72392,7 +72392,7 @@
  },
  {
   "id": "hayase_tenku_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -72645,7 +72645,7 @@
  },
  {
   "id": "hayase_tenku_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -72898,7 +72898,7 @@
  },
  {
   "id": "hayase_tenku_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -73151,7 +73151,7 @@
  },
  {
   "id": "hayase_tenku_iv_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -73460,7 +73460,7 @@
  },
  {
   "id": "hayase_tenku_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -73769,7 +73769,7 @@
  },
  {
   "id": "hayase_tenku_s_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -74078,7 +74078,7 @@
  },
  {
   "id": "hayase_tenku_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -74387,7 +74387,7 @@
  },
  {
   "id": "hayase_tenku_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -74696,7 +74696,7 @@
  },
  {
   "id": "hayase_tenku_s_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -74931,7 +74931,7 @@
  },
  {
   "id": "hayase_momiji_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -75200,7 +75200,7 @@
  },
  {
   "id": "hayase_sazanami_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -75496,7 +75496,7 @@
  },
  {
   "id": "hayase_komorebi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -75805,7 +75805,7 @@
  },
  {
   "id": "hayase_komorebi_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -76114,7 +76114,7 @@
  },
  {
   "id": "hayase_ryujin_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -76439,7 +76439,7 @@
  },
  {
   "id": "hayase_komorebi_s_90_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -76764,7 +76764,7 @@
  },
  {
   "id": "hayase_komorebi_s_91_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -77089,7 +77089,7 @@
  },
  {
   "id": "hayase_komorebi_s_93_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -77414,7 +77414,7 @@
  },
  {
   "id": "hayase_komorebi_s_94_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -77739,7 +77739,7 @@
  },
  {
   "id": "hayase_komorebi_s_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -78064,7 +78064,7 @@
  },
  {
   "id": "hayase_komorebi_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -78389,7 +78389,7 @@
  },
  {
   "id": "hayase_komorebi_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -78698,7 +78698,7 @@
  },
  {
   "id": "hayase_komorebi_s_iii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -79023,7 +79023,7 @@
  },
  {
   "id": "hayase_komorebi_s_iv_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -79348,7 +79348,7 @@
  },
  {
   "id": "hayase_komorebi_s_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -79673,7 +79673,7 @@
  },
  {
   "id": "hayase_komorebi_s_v_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -79961,7 +79961,7 @@
  },
  {
   "id": "hayase_kagaribi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -80265,7 +80265,7 @@
  },
  {
   "id": "hayase_yukimi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -80534,7 +80534,7 @@
  },
  {
   "id": "hayase_gekko_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -80838,7 +80838,7 @@
  },
  {
   "id": "hayase_hagane_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -81142,7 +81142,7 @@
  },
  {
   "id": "hayase_kasasagi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -81395,7 +81395,7 @@
  },
  {
   "id": "hayase_yukikaze_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -81648,7 +81648,7 @@
  },
  {
   "id": "hayase_yukikaze_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -81901,7 +81901,7 @@
  },
  {
   "id": "hayase_yukikaze_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -82136,7 +82136,7 @@
  },
  {
   "id": "hayase_kobo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -82371,7 +82371,7 @@
  },
  {
   "id": "hayase_jinrai_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -82659,7 +82659,7 @@
  },
  {
   "id": "hayase_nadeshiko_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -82952,7 +82952,7 @@
  },
  {
   "id": "hayase_nadeshiko_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -83261,7 +83261,7 @@
  },
  {
   "id": "hayase_nadeshiko_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -83554,7 +83554,7 @@
  },
  {
   "id": "hayase_hisui_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -83807,7 +83807,7 @@
  },
  {
   "id": "hayase_sawarabi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -84040,7 +84040,7 @@
  },
  {
   "id": "hayase_kagura_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -84273,7 +84273,7 @@
  },
  {
   "id": "hayase_kagura_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -84561,7 +84561,7 @@
  },
  {
   "id": "hayase_kagura_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -85039,7 +85039,7 @@
  },
  {
   "id": "hayase_kiri_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -85252,7 +85252,7 @@
  },
  {
   "id": "hayase_kiri_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -85524,7 +85524,7 @@
  },
  {
   "id": "hayase_homura_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -85777,7 +85777,7 @@
  },
  {
   "id": "hayase_enju_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -86033,7 +86033,7 @@
  },
  {
   "id": "hayase_enju_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -86289,7 +86289,7 @@
  },
  {
   "id": "hayase_enju_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -86545,7 +86545,7 @@
  },
  {
   "id": "hayase_enju_gt_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -86833,7 +86833,7 @@
  },
  {
   "id": "hayase_enju_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -87121,7 +87121,7 @@
  },
  {
   "id": "hayase_soryu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -87409,7 +87409,7 @@
  },
  {
   "id": "hayase_enju_sr_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -87697,7 +87697,7 @@
  },
  {
   "id": "hayase_enju_sr_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -87985,7 +87985,7 @@
  },
  {
   "id": "hayase_akane_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -88294,7 +88294,7 @@
  },
  {
   "id": "hayase_akane_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -88582,7 +88582,7 @@
  },
  {
   "id": "hayase_akane_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -88891,7 +88891,7 @@
  },
  {
   "id": "hayase_akane_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -89200,7 +89200,7 @@
  },
  {
   "id": "hayase_akane_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -89417,7 +89417,7 @@
  },
  {
   "id": "hayase_akebono_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -89673,7 +89673,7 @@
  },
  {
   "id": "lindauer_nebel_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -89929,7 +89929,7 @@
  },
  {
   "id": "lindauer_kauz_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -90229,7 +90229,7 @@
  },
  {
   "id": "lindauer_sperber_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -90482,7 +90482,7 @@
  },
  {
   "id": "lindauer_rauhreif_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -90735,7 +90735,7 @@
  },
  {
   "id": "saulieu_loriot_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -90988,7 +90988,7 @@
  },
  {
   "id": "saulieu_loriot_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -91244,7 +91244,7 @@
  },
  {
   "id": "saulieu_loriot_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -91500,7 +91500,7 @@
  },
  {
   "id": "saulieu_ecume_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -91753,7 +91753,7 @@
  },
  {
   "id": "saulieu_vague_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -92006,7 +92006,7 @@
  },
  {
   "id": "saulieu_hirondelle_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -92259,7 +92259,7 @@
  },
  {
   "id": "saulieu_hirondelle_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -92512,7 +92512,7 @@
  },
  {
   "id": "saulieu_hirondelle_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -92749,7 +92749,7 @@
  },
  {
   "id": "ashby_dustbowl_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -92986,7 +92986,7 @@
  },
  {
   "id": "ashby_stockade_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -93223,7 +93223,7 @@
  },
  {
   "id": "ashby_tailwind_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -93400,7 +93400,7 @@
  },
  {
   "id": "ashby_juniper_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -93637,7 +93637,7 @@
  },
  {
   "id": "ashby_redrock_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -93814,7 +93814,7 @@
  },
  {
   "id": "vallon_rafale_d_est_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -94054,7 +94054,7 @@
  },
  {
   "id": "vallon_rafale_d_est_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -94307,7 +94307,7 @@
  },
  {
   "id": "vallon_galet_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -94560,7 +94560,7 @@
  },
  {
   "id": "vallon_faucon_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -94806,7 +94806,7 @@
  },
  {
   "id": "rauhe_fink_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -95036,7 +95036,7 @@
  },
  {
   "id": "rauhe_fink_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -95266,7 +95266,7 @@
  },
  {
   "id": "rauhe_fink_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -95496,7 +95496,7 @@
  },
  {
   "id": "rauhe_fink_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -95726,7 +95726,7 @@
  },
  {
   "id": "rauhe_fink_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -95956,7 +95956,7 @@
  },
  {
   "id": "rauhe_fink_r_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -96186,7 +96186,7 @@
  },
  {
   "id": "rauhe_fink_sr_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -96416,7 +96416,7 @@
  },
  {
   "id": "rauhe_fink_gx_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -96653,7 +96653,7 @@
  },
  {
   "id": "cutler_ozark_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -96890,7 +96890,7 @@
  },
  {
   "id": "cutler_ironwood_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -97143,7 +97143,7 @@
  },
  {
   "id": "cutler_ironwood_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -97396,7 +97396,7 @@
  },
  {
   "id": "cutler_kingfisher_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -97633,7 +97633,7 @@
  },
  {
   "id": "cutler_kingfisher_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -97870,7 +97870,7 @@
  },
  {
   "id": "cutler_rattler_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -98142,7 +98142,7 @@
  },
  {
   "id": "hoshino_sango_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -98409,7 +98409,7 @@
  },
  {
   "id": "hoshino_kaminari_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -98676,7 +98676,7 @@
  },
  {
   "id": "hoshino_senko_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -98943,7 +98943,7 @@
  },
  {
   "id": "hoshino_senko_93_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -99231,7 +99231,7 @@
  },
  {
   "id": "hoshino_senko_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -99519,7 +99519,7 @@
  },
  {
   "id": "hoshino_senko_s_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -99807,7 +99807,7 @@
  },
  {
   "id": "hoshino_senko_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -100095,7 +100095,7 @@
  },
  {
   "id": "hoshino_senko_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -100383,7 +100383,7 @@
  },
  {
   "id": "hoshino_senko_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -100618,7 +100618,7 @@
  },
  {
   "id": "hoshino_yoake_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -100837,7 +100837,7 @@
  },
  {
   "id": "hoshino_yoake_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -101074,7 +101074,7 @@
  },
  {
   "id": "hoshino_kogane_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -101327,7 +101327,7 @@
  },
  {
   "id": "hoshino_kogane_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -101594,7 +101594,7 @@
  },
  {
   "id": "hoshino_tenma_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -101861,7 +101861,7 @@
  },
  {
   "id": "hoshino_tenma_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -102128,7 +102128,7 @@
  },
  {
   "id": "hoshino_tenma_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -102395,7 +102395,7 @@
  },
  {
   "id": "hoshino_tenma_gt_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -102683,7 +102683,7 @@
  },
  {
   "id": "hayase_kumo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -102950,7 +102950,7 @@
  },
  {
   "id": "hoshino_tenma_gt_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -103238,7 +103238,7 @@
  },
  {
   "id": "hoshino_tenma_gt_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -103505,7 +103505,7 @@
  },
  {
   "id": "hoshino_tenma_gt_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -103793,7 +103793,7 @@
  },
  {
   "id": "hoshino_tenma_gt_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -104028,7 +104028,7 @@
  },
  {
   "id": "hoshino_ibuki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -104247,7 +104247,7 @@
  },
  {
   "id": "hoshino_seiran_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -104482,7 +104482,7 @@
  },
  {
   "id": "hoshino_seiran_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -104749,7 +104749,7 @@
  },
  {
   "id": "hoshino_tatsumaki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -105016,7 +105016,7 @@
  },
  {
   "id": "hoshino_tatsumaki_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -105283,7 +105283,7 @@
  },
  {
   "id": "hoshino_tatsumaki_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -105550,7 +105550,7 @@
  },
  {
   "id": "hoshino_tatsumaki_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -105817,7 +105817,7 @@
  },
  {
   "id": "hoshino_tatsumaki_gt_95_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -106084,7 +106084,7 @@
  },
  {
   "id": "hoshino_tatsumaki_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -106372,7 +106372,7 @@
  },
  {
   "id": "hoshino_tatsumaki_gts_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -106660,7 +106660,7 @@
  },
  {
   "id": "hoshino_tatsumaki_gts_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -106948,7 +106948,7 @@
  },
  {
   "id": "hoshino_tatsumaki_gts_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -107215,7 +107215,7 @@
  },
  {
   "id": "hoshino_sekirei_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -107503,7 +107503,7 @@
  },
  {
   "id": "hoshino_sekirei_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -107791,7 +107791,7 @@
  },
  {
   "id": "hoshino_sekirei_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -108079,7 +108079,7 @@
  },
  {
   "id": "hoshino_sekirei_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -108367,7 +108367,7 @@
  },
  {
   "id": "hoshino_aoi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -108634,7 +108634,7 @@
  },
  {
   "id": "kosame_hiryu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -108901,7 +108901,7 @@
  },
  {
   "id": "kosame_hiryu_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -109168,7 +109168,7 @@
  },
  {
   "id": "kosame_hiryu_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -109435,7 +109435,7 @@
  },
  {
   "id": "kosame_hiryu_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -109702,7 +109702,7 @@
  },
  {
   "id": "kosame_tsuyu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -109916,7 +109916,7 @@
  },
  {
   "id": "kosame_mozu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -110167,7 +110167,7 @@
  },
  {
   "id": "kosame_matsuri_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -110418,7 +110418,7 @@
  },
  {
   "id": "kosame_mikage_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -110685,7 +110685,7 @@
  },
  {
   "id": "kosame_mikage_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -110952,7 +110952,7 @@
  },
  {
   "id": "kosame_mikage_s_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -111219,7 +111219,7 @@
  },
  {
   "id": "kosame_mikage_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -111475,7 +111475,7 @@
  },
  {
   "id": "tokiwa_seiryu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -111736,7 +111736,7 @@
  },
  {
   "id": "tokiwa_seiryu_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -112008,7 +112008,7 @@
  },
  {
   "id": "tokiwa_mizuho_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -112280,7 +112280,7 @@
  },
  {
   "id": "tokiwa_mizuho_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -112499,7 +112499,7 @@
  },
  {
   "id": "tokiwa_unabara_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -112734,7 +112734,7 @@
  },
  {
   "id": "tokiwa_urara_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -112953,7 +112953,7 @@
  },
  {
   "id": "tokiwa_takane_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -113212,7 +113212,7 @@
  },
  {
   "id": "kanaya_ryusei_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -113487,7 +113487,7 @@
  },
  {
   "id": "kanaya_ryusei_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -113803,7 +113803,7 @@
  },
  {
   "id": "kanaya_yamakaze_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -114070,7 +114070,7 @@
  },
  {
   "id": "kanaya_yamakaze_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -114323,7 +114323,7 @@
  },
  {
   "id": "kanaya_tobi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -114616,7 +114616,7 @@
  },
  {
   "id": "kanaya_zakuro_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -114925,7 +114925,7 @@
  },
  {
   "id": "kanaya_zakuro_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -115192,7 +115192,7 @@
  },
  {
   "id": "kanaya_wakaba_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -115425,7 +115425,7 @@
  },
  {
   "id": "kanaya_shinonome_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -115678,7 +115678,7 @@
  },
  {
   "id": "kanaya_shinonome_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -115911,7 +115911,7 @@
  },
  {
   "id": "kanaya_shinonome_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -116164,7 +116164,7 @@
  },
  {
   "id": "kanaya_shinonome_gt_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -116452,7 +116452,7 @@
  },
  {
   "id": "kanaya_shinonome_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -116705,7 +116705,7 @@
  },
  {
   "id": "kanaya_shinonome_r_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -116958,7 +116958,7 @@
  },
  {
   "id": "kanaya_shinonome_r_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -117211,7 +117211,7 @@
  },
  {
   "id": "kanaya_shinonome_r_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -117499,7 +117499,7 @@
  },
  {
   "id": "kanaya_shinonome_sr_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -117787,7 +117787,7 @@
  },
  {
   "id": "kanaya_shinonome_gx_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -118075,7 +118075,7 @@
  },
  {
   "id": "kanaya_shinonome_sx_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -118331,7 +118331,7 @@
  },
  {
   "id": "kanaya_kazane_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -118640,7 +118640,7 @@
  },
  {
   "id": "kanaya_kazane_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -118928,7 +118928,7 @@
  },
  {
   "id": "kanaya_kazane_s_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -119161,7 +119161,7 @@
  },
  {
   "id": "kanaya_murakumo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -119520,7 +119520,7 @@
  },
  {
   "id": "kanaya_fuyu_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -119795,7 +119795,7 @@
  },
  {
   "id": "kanaya_fuyu_85_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -120028,7 +120028,7 @@
  },
  {
   "id": "kanaya_fuyu_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -120261,7 +120261,7 @@
  },
  {
   "id": "kanaya_fuyu_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -120557,7 +120557,7 @@
  },
  {
   "id": "kanaya_shijima_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -120853,7 +120853,7 @@
  },
  {
   "id": "kanaya_shijima_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -121190,7 +121190,7 @@
  },
  {
   "id": "kanaya_shijima_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -121443,7 +121443,7 @@
  },
  {
   "id": "kanaya_shijima_gt_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -121696,7 +121696,7 @@
  },
  {
   "id": "kanaya_shijima_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -121949,7 +121949,7 @@
  },
  {
   "id": "kanaya_shijima_r_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -122202,7 +122202,7 @@
  },
  {
   "id": "kanaya_sekka_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -122379,7 +122379,7 @@
  },
  {
   "id": "kanaya_ginga_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -122598,7 +122598,7 @@
  },
  {
   "id": "kanaya_ginga_99_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -122854,7 +122854,7 @@
  },
  {
   "id": "kanaya_murasame_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -123107,7 +123107,7 @@
  },
  {
   "id": "kanaya_murasame_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -123360,7 +123360,7 @@
  },
  {
   "id": "kanaya_murasame_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -123648,7 +123648,7 @@
  },
  {
   "id": "hayase_shiden_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -123936,7 +123936,7 @@
  },
  {
   "id": "kanaya_murasame_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -124192,7 +124192,7 @@
  },
  {
   "id": "kanaya_botan_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -124480,7 +124480,7 @@
  },
  {
   "id": "kanaya_botan_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -124768,7 +124768,7 @@
  },
  {
   "id": "kanaya_gunjo_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -125056,7 +125056,7 @@
  },
  {
   "id": "kanaya_gunjo_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -125309,7 +125309,7 @@
  },
  {
   "id": "kanaya_yuzuki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -125576,7 +125576,7 @@
  },
  {
   "id": "kanaya_yuzuki_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -125843,7 +125843,7 @@
  },
  {
   "id": "kanaya_yuzuki_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -126110,7 +126110,7 @@
  },
  {
   "id": "kanaya_yuzuki_gt_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -126363,7 +126363,7 @@
  },
  {
   "id": "kanaya_asakaze_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -126616,7 +126616,7 @@
  },
  {
   "id": "kanaya_asakaze_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -126869,7 +126869,7 @@
  },
  {
   "id": "kanaya_asakaze_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -127157,7 +127157,7 @@
  },
  {
   "id": "kanaya_asakaze_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -127466,7 +127466,7 @@
  },
  {
   "id": "kanaya_asakaze_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -127738,7 +127738,7 @@
  },
  {
   "id": "kanaya_asakaze_gt_91_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -128047,7 +128047,7 @@
  },
  {
   "id": "kanaya_asakaze_gt_96_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -128356,7 +128356,7 @@
  },
  {
   "id": "kanaya_asakaze_gt_97_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -128665,7 +128665,7 @@
  },
  {
   "id": "kanaya_asakaze_gt_ii_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -128918,7 +128918,7 @@
  },
  {
   "id": "kanaya_hakucho_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -129155,7 +129155,7 @@
  },
  {
   "id": "kanaya_shizuku_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -129427,7 +129427,7 @@
  },
  {
   "id": "kanaya_kagami_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -129720,7 +129720,7 @@
  },
  {
   "id": "kanaya_tomoshibi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -129995,7 +129995,7 @@
  },
  {
   "id": "hayase_rin_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -130270,7 +130270,7 @@
  },
  {
   "id": "kanaya_yozora_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -130503,7 +130503,7 @@
  },
  {
   "id": "kanaya_yozora_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -130736,7 +130736,7 @@
  },
  {
   "id": "kanaya_yozora_s_98_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -130992,7 +130992,7 @@
  },
  {
   "id": "kanaya_shirasagi_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -131185,7 +131185,7 @@
  },
  {
   "id": "kanaya_kirameki_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -131422,7 +131422,7 @@
  },
  {
   "id": "ashcombe_sorrel_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -131655,7 +131655,7 @@
  },
  {
   "id": "ashcombe_saltire_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -131908,7 +131908,7 @@
  },
  {
   "id": "ashcombe_fen_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -132145,7 +132145,7 @@
  },
  {
   "id": "ashcombe_fen_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -132382,7 +132382,7 @@
  },
  {
   "id": "ashcombe_fen_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -132619,7 +132619,7 @@
  },
  {
   "id": "ashcombe_curlew_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -132872,7 +132872,7 @@
  },
  {
   "id": "ashcombe_brute_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -133125,7 +133125,7 @@
  },
  {
   "id": "ashcombe_heron_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -133442,7 +133442,7 @@
  },
  {
   "id": "ashcombe_quill_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -133698,7 +133698,7 @@
  },
  {
   "id": "brayford_wold_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -133891,7 +133891,7 @@
  },
  {
   "id": "brayford_yarrow_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -134128,7 +134128,7 @@
  },
  {
   "id": "brayford_skerry_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -134381,7 +134381,7 @@
  },
  {
   "id": "brayford_rook_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -134594,7 +134594,7 @@
  },
  {
   "id": "kestrin_prairie_hawk_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -134803,7 +134803,7 @@
  },
  {
   "id": "kestrin_drifter_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -135096,7 +135096,7 @@
  },
  {
   "id": "aubrac_grive_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -135294,7 +135294,7 @@
  },
  {
   "id": "aubrac_grive_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 214,
   "carros_permitidos": [
@@ -135529,7 +135529,7 @@
  },
  {
   "id": "hartwig_pirol_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -135829,7 +135829,7 @@
  },
  {
   "id": "hartwig_lauf_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -136085,7 +136085,7 @@
  },
  {
   "id": "hartwig_graupel_s_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -136373,7 +136373,7 @@
  },
  {
   "id": "hartwig_graupel_gt_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -136629,7 +136629,7 @@
  },
  {
   "id": "hartwig_graupel_gts_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [
@@ -136864,7 +136864,7 @@
  },
  {
   "id": "hartwig_bussard_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 192,
   "carros_permitidos": [
@@ -137120,7 +137120,7 @@
  },
  {
   "id": "hartwig_wiesel_brake_1",
-  "nome": "Freios 1",
+  "nome": "Freios esportivos",
   "categoria": "brake",
   "preco": 205,
   "carros_permitidos": [

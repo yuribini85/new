@@ -3,7 +3,11 @@
 em data/dialogos.json. Não editar o JSON à mão: editar cenas.txt e rodar de novo.
 
 Cena: {id, trigger, falas: [{quem, texto} | {acao}], requer, proibe, flags,
-personagem?, condicao?, bloqueia, uma_vez, proxima?, capitulo?, cenario?}
+personagem?, condicao?, bloqueia, uma_vez, proxima?, capitulo?, cenario?,
+lembrete?, segura_largada?}
+lembrete=ID: se o jogador não fizer o que a cena pede em alguns segundos, a cena
+ID (trigger LEMBRETE) aparece, enquanto ainda valer. segura_largada=sim: a
+corrida fica parada no grid até a cena acabar.
 Ações com argumento: [CENARIO:id] e [ILUSTRACAO:id] (data/historia.json → cenarios,
 ilustracoes); o id tem que existir lá.
 Uso: python3 tools/historia/gerar_dialogos.py
@@ -39,12 +43,14 @@ def main() -> int:
                     c[k] = [x.strip() for x in v.split(",") if x.strip()]
                 elif k == "bloqueia":
                     c["bloqueia"] = v == "sim"
+                elif k == "segura_largada":
+                    c["segura_largada"] = v == "sim"
                 elif k == "repetivel":
                     c["uma_vez"] = v != "sim"
                 elif k == "condicao":
                     ck, cv = v.split(":")
                     c["condicao"] = {ck: int(cv)}
-                elif k in ("personagem", "proxima", "capitulo", "cenario"):
+                elif k in ("personagem", "proxima", "capitulo", "cenario", "lembrete"):
                     c[k] = v
                 else:
                     sys.exit(f"{FONTE.name}:{n}: opção desconhecida {k}")
@@ -63,6 +69,8 @@ def main() -> int:
     for c in cenas:
         if c.get("proxima") and c["proxima"] not in ids:
             sys.exit(f"{c['id']}: próxima {c['proxima']} não existe")
+        if c.get("lembrete") and c["lembrete"] not in ids:
+            sys.exit(f"{c['id']}: lembrete {c['lembrete']} não existe")
         usados = [("cenarios", c["cenario"])] if c.get("cenario") else []
         for f in c["falas"]:
             for tipo, chave in (("CENARIO:", "cenarios"), ("ILUSTRACAO:", "ilustracoes")):

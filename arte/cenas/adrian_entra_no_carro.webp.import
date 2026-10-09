@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://culs42u1bo4do"
-path="res://.godot/imported/adrian_cross.webp-640ecfbf987842f9e3f7f8d7d937c35d.ctex"
+uid="uid://cumtswhgah566"
+path="res://.godot/imported/adrian_entra_no_carro.webp-3a7d92b487cc5e1149adf0361e35cf70.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/corpo/adrian_cross.webp"
-dest_files=["res://.godot/imported/adrian_cross.webp-640ecfbf987842f9e3f7f8d7d937c35d.ctex"]
+source_file="res://arte/cenas/adrian_entra_no_carro.webp"
+dest_files=["res://.godot/imported/adrian_entra_no_carro.webp-3a7d92b487cc5e1149adf0361e35cf70.ctex"]
 
 [params]
 

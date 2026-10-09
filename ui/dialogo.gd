@@ -16,6 +16,10 @@ extends Control
 ## sequência), [PAUSA] (um silêncio sem caixa), [TREMOR] (a tela treme),
 ## [CENARIO:id] (troca o fundo) e [ILUSTRACAO:id] (um quadro de tela cheia do
 ## momento; as falas seguem embaixo, sem o personagem, até o próximo cenário).
+## Sobre uma ilustração com `focos` (historia.json: ponto de cada personagem no
+## quadro, 0..1), a câmera chega um pouco mais perto e desliza de leve na direção
+## de quem fala. Num destaque, o fundo escuro do diálogo sai (o destaque escurece
+## o resto da tela) e a caixa desce.
 ## Falas aceitam variáveis do jogo ({pista}, {saldo}...: Historia.variaveis) e,
 ## na primeira vez que alguém fala, o nome vem com o papel (personagens.json →
 ## papel).
@@ -36,6 +40,9 @@ const ZOOM_CENARIO := 1.07  # zoom lento do fundo
 const ZOOM_S := 22.0
 const FAIXA := 0.07  # faixas de cinema, fração da altura
 const CARTAO_S := 2.4  # cartão de capítulo, inteiro
+const ZOOM_FOCO := 1.1  # aproximação sobre ilustração com focos
+const FOCO_PUXA := 0.35  # quanto do caminho até quem fala a câmera anda
+const FOCO_S := 1.1
 const TOM := {"noite": Color(0.42, 0.48, 0.7), "vazio": Color(0.58, 0.58, 0.6), "frio": Color(0.74, 0.8, 0.92)}
 ## Ações que o próprio diálogo executa (não vão para a principal).
 const LOCAIS := ["ESCURO", "CLARO", "PAUSA", "TREMOR"]
@@ -62,6 +69,7 @@ var _tween: Tween
 var _tw_texto: Tween
 var _tw_cartao: Tween
 var _tw_zoom: Tween
+var _focos := {}  # quem -> Vector2 (0..1) na ilustração atual
 var _animando := false
 var _lado := 1.0  # de que lado o próximo personagem entra (alterna)
 var _translucido := false  # depois de um destaque, até o fim da cena
@@ -167,7 +175,7 @@ func _montar_pular() -> void:
 	pular.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	pular.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	pular.offset_right = -16
-	pular.offset_bottom = -16
+	pular.offset_bottom = -156  # acima da barra de navegação
 	pular.pressed.connect(pular_cena)
 	add_child(pular)
 
@@ -226,12 +234,15 @@ func _proxima() -> void:
 		return
 	_cena = _fila.pop_front()
 	_i = 0
-	_translucido = false
+	# Na largada (segura_largada) o grid aparece: sem personagem, fundo leve.
+	var na_pista: bool = _cena.get("segura_largada", false)
+	_translucido = na_pista
 	visible = true
 	_fundo.visible = true
-	_fundo.color.a = 1.0 if _escuro else 0.62
+	_fundo.color.a = 1.0 if _escuro else (0.3 if na_pista else 0.62)
 	_caixa.visible = true
 	_fundo.mouse_filter = Control.MOUSE_FILTER_STOP
+	_posicionar_caixa(_ilustrando or na_pista)
 	_trocar_cenario(String(_cena.get("cenario", "")))
 	if not _capitulo_novo():
 		_mostrar()
@@ -330,7 +341,9 @@ func _mostrar() -> void:
 			_trocar_cenario("")
 		if nome_acao.begins_with("HIGHLIGHT_"):
 			_translucido = true
-			_corpo.modulate.a = 0.25
+			_corpo.visible = false  # o tutorial mostra o jogo, sem o personagem
+			_posicionar_caixa(true)
+			create_tween().tween_property(_fundo, "color:a", 0.0, 0.3)
 		acao.emit(nome_acao)
 	if _i >= falas.size():
 		_fim()
@@ -350,6 +363,8 @@ func _mostrar() -> void:
 	_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if sistema else HORIZONTAL_ALIGNMENT_LEFT
 	_layout()
 	var atraso := 0.0
+	if _focos.has(quem):
+		_focar(_focos[quem])
 	if quem != _quem:
 		atraso = _entrar(quem, sistema)
 	_quem = quem
@@ -362,7 +377,7 @@ func _mostrar() -> void:
 func _entrar(quem: String, sistema: bool) -> float:
 	if _tween != null:
 		_tween.kill()
-	var tex: Texture2D = null if sistema or _ilustrando else _textura(quem)
+	var tex: Texture2D = null if sistema or _ilustrando or _translucido else _textura(quem)
 	var tela := get_viewport_rect().size
 	_lado = -_lado
 	_corpo.texture = tex
@@ -433,20 +448,60 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 		return
 	_cenario.texture = tex
 	_cenario.self_modulate = tom
+	_focos = {}
+	if ilustracao:
+		var cat_f: Dictionary = historia.dados.historia().get("ilustracoes", {}).get(id, {})
+		for k in cat_f.get("focos", {}):
+			var p: Array = cat_f["focos"][k]
+			_focos[k] = Vector2(float(p[0]), float(p[1]))
 	_cenario.visible = true
 	_vinheta.visible = true
 	_cenario.modulate.a = 0.0
 	var tw := create_tween().set_parallel()
 	tw.tween_property(_cenario, "modulate:a", 1.0, CENARIO_S * (2.0 if ilustracao else 1.0))
 	tw.tween_property(_vinheta, "modulate:a", 1.0, CENARIO_S)
-	# Zoom lento: o quadro respira.
+	# Zoom lento: o quadro respira. Com focos, a câmera fica um pouco mais perto
+	# e segue quem fala (_focar).
 	if _tw_zoom != null:
 		_tw_zoom.kill()
-	_cenario.pivot_offset = get_viewport_rect().size / 2.0
-	_cenario.scale = Vector2.ONE
-	_tw_zoom = create_tween()
-	_tw_zoom.tween_property(_cenario, "scale", Vector2.ONE * ZOOM_CENARIO, ZOOM_S).set_trans(Tween.TRANS_SINE)
+	_cenario.position = Vector2.ZERO
+	if _focos.is_empty():
+		_cenario.pivot_offset = get_viewport_rect().size / 2.0
+		_cenario.scale = Vector2.ONE
+		_tw_zoom = create_tween()
+		_tw_zoom.tween_property(_cenario, "scale", Vector2.ONE * ZOOM_CENARIO, ZOOM_S).set_trans(Tween.TRANS_SINE)
+	else:
+		_cenario.pivot_offset = Vector2.ZERO
+		_cenario.scale = Vector2.ONE * ZOOM_FOCO
+		_cenario.position = _posicao_foco(Vector2(0.5, 0.5))
 	_faixas_cinema(true)
+
+
+## Desloca a câmera de leve para o ponto `foco` (0..1 na ilustração).
+func _focar(foco: Vector2) -> void:
+	if not _cenario.visible or Preferencias.reduzir_animacoes:
+		return
+	if _tw_zoom != null:
+		_tw_zoom.kill()
+	_tw_zoom = create_tween()
+	_tw_zoom.tween_property(_cenario, "position", _posicao_foco(foco), FOCO_S) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+
+## Posição do quadro (escala ZOOM_FOCO, pivô no canto) que puxa o centro da
+## tela FOCO_PUXA do caminho até `foco`, sem mostrar borda.
+func _posicao_foco(foco: Vector2) -> Vector2:
+	var tela := get_viewport_rect().size
+	var tex := _cenario.texture
+	if tex == null:
+		return Vector2.ZERO
+	# A ilustração cobre a tela (KEEP_ASPECT_COVERED): onde o ponto cai nela.
+	var ts := Vector2(tex.get_size())
+	var k := maxf(tela.x / ts.x, tela.y / ts.y)
+	var ponto := (tela - ts * k) / 2.0 + foco * ts * k
+	var alvo := (tela / 2.0).lerp(ponto, FOCO_PUXA)
+	var pos := tela / 2.0 - alvo * ZOOM_FOCO
+	return Vector2(clampf(pos.x, tela.x - tela.x * ZOOM_FOCO, 0.0), clampf(pos.y, tela.y - tela.y * ZOOM_FOCO, 0.0))
 
 
 func _faixas_cinema(ligar: bool) -> void:
@@ -459,6 +514,14 @@ func _faixas_cinema(ligar: bool) -> void:
 ## Sobre uma ilustração, a caixa desce para o quadro aparecer.
 func _posicionar_caixa(embaixo: bool) -> void:
 	_caixa.anchor_top = 0.8 if embaixo else 0.58
+	_caixa.anchor_bottom = _caixa.anchor_top
+
+
+## Destaque em `r` (coordenadas da tela): a caixa vai para a metade oposta.
+func evitar(r: Rect2) -> void:
+	if _cena.is_empty():
+		return
+	_caixa.anchor_top = 0.2 if r.get_center().y > get_viewport_rect().size.y * 0.5 else 0.8
 	_caixa.anchor_bottom = _caixa.anchor_top
 
 

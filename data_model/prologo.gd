@@ -1,7 +1,7 @@
 class_name Prologo
 extends RefCounted
 ## Prólogo da história (decisão 32; data/historia.json): o jogo novo começa com
-## Adrian (licenças Club e Sport, o carro dele e o dinheiro de uma peça). Depois
+## Adrian (licenças Club e Sport, o carro dele e o dinheiro da primeira peça). Depois
 ## do primeiro campeonato (flag de `ultima_corrida_apos`), a próxima largada é a
 ## última corrida dele: rádio em `radio_fracao` da corrida e acidente em
 ## `acidente_fracao` — a corrida é interrompida sem resultado e a garagem fica
@@ -11,6 +11,8 @@ extends RefCounted
 
 
 ## Começa um jogo novo como Adrian. "" ou o motivo de não poder (dados faltando).
+## O carro dele (`carro`, na cor `cor`) já vem com o pneu `pneu`; o freio é o de
+## fábrica, e a primeira demanda é comprar `peca_demanda`.
 static func iniciar(dados: Node, jogador: Node) -> String:
 	var cfg: Dictionary = dados.historia().get("adrian", {})
 	if cfg.is_empty() or not dados.existe("carros", cfg.get("carro", "")):
@@ -20,10 +22,34 @@ static func iniciar(dados: Node, jogador: Node) -> String:
 	jogador.licencas = Array(cfg.get("licencas", [])).duplicate()
 	var carro := Carro.new(dados.carro(cfg["carro"]))
 	carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
+	if dados.existe("pneus", String(cfg.get("pneu", ""))):
+		carro.adicionar_pneu(dados.pneu(cfg["pneu"]))
+	if String(cfg.get("cor", "")) != "":
+		carro.cor = "#" + Cores.cor(cfg["cor"]).to_html(false)
 	jogador.carro_ativo = jogador.garagem.adicionar(carro)
-	var peca: String = cfg.get("saldo_da_peca", "")
-	jogador.economia.saldo = int(dados.peca(peca)["preco"]) if dados.existe("pecas", peca) else 0
+	jogador.economia.saldo = saldo_inicial(dados, cfg["carro"], String(cfg.get("peca_demanda", "")))
 	return ""
+
+
+## Giros do começo (critério do usuário): a peça da demanda mais a peça mais
+## barata do carro, menos 1 — sobra dinheiro, mas não para uma segunda compra.
+static func saldo_inicial(dados: Node, carro_id: String, peca_id: String) -> int:
+	if not dados.existe("pecas", peca_id):
+		return 0
+	var mais_barata := -1
+	for p in dados.lista("pecas"):
+		var permitidos: Array = p.get("carros_permitidos", [])
+		if p["id"] == peca_id or (not permitidos.is_empty() and not carro_id in permitidos):
+			continue
+		if mais_barata < 0 or int(p["preco"]) < mais_barata:
+			mais_barata = int(p["preco"])
+	return int(dados.peca(peca_id)["preco"]) + maxi(mais_barata - 1, 0)
+
+
+## O carro do Adrian não pode ser vendido no prólogo (só sai no acidente).
+static func carro_travado(dados: Node, jogador: Node, carro: Carro) -> bool:
+	return jogador.personagem == "adrian" and carro != null \
+			and carro.id == String(dados.historia().get("adrian", {}).get("carro", ""))
 
 
 ## A próxima largada do Adrian é a última corrida.

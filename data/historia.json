@@ -1,11 +1,14 @@
 {
  "adrian": {
-  "carro": "hayase_raikou",
+  "carro": "bancroft_sidewinder",
+  "cor": "creme",
+  "pneu": "pneu_1",
+  "pista_volta": "serra_curta",
   "licencas": [
    "CLUB",
    "SPORT"
   ],
-  "saldo_da_peca": "hayase_raikou_brake_1",
+  "peca_demanda": "bancroft_sidewinder_brake_1",
   "campeonato": "Copa Primeira Marcha"
  },
  "elena": {
@@ -17,7 +20,7 @@
  "second_chance": {
   "carros": 5
  },
- "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py.",
+ "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py. focos (ilustrações): ponto de cada personagem no quadro (0..1, x e y); a câmera do diálogo puxa de leve para quem fala.",
  "capitulos": {
   "I": "Fim de temporada",
   "II": "A garagem vazia",
@@ -125,6 +128,62 @@
    "nome": "Elite",
    "provisorio": "fundo_resultado",
    "tom": "noite"
+  },
+  "garagem_trio": {
+   "nome": "A garagem dos Cross, à noite",
+   "provisorio": "cenario:garagem_cross_noite",
+   "focos": {
+    "adrian": [
+     0.17,
+     0.55
+    ],
+    "elena": [
+     0.87,
+     0.5
+    ],
+    "marcus": [
+     0.52,
+     0.66
+    ]
+   }
+  },
+  "marcus_e_o_carro": {
+   "nome": "Marcus e o carro pronto",
+   "provisorio": "cenario:garagem_cross_noite",
+   "focos": {
+    "marcus": [
+     0.28,
+     0.5
+    ]
+   }
+  },
+  "adrian_entra_no_carro": {
+   "nome": "Adrian entra no carro",
+   "provisorio": "cenario:garagem_cross",
+   "focos": {
+    "adrian": [
+     0.6,
+     0.5
+    ],
+    "elena": [
+     0.86,
+     0.5
+    ]
+   }
+  },
+  "box_depois_da_corrida": {
+   "nome": "No box, depois da chegada",
+   "provisorio": "cenario:box_largada",
+   "focos": {
+    "adrian": [
+     0.54,
+     0.45
+    ],
+    "elena": [
+     0.83,
+     0.52
+    ]
+   }
   }
  }
 }

@@ -144,6 +144,8 @@ var alvo := ""
 var enquadrar_com := ""
 ## 0..1: chegada do jogador; a câmera fecha devagar nele.
 var chegada := 0.0
+## Sem os rótulos sobre os carros (a volta da abertura: só o carro).
+var sem_rotulos := false
 var _destaque_jogador := 0.0  # segundos restantes do anel temporário do jogador
 const DESTAQUE_S := 1.6
 var _anel_alvo: MeshInstance3D
@@ -302,7 +304,7 @@ func atualizar(delta: float) -> void:
 		var r: Label3D = _rotulos[id]
 		r.text = "VOCÊ" if id == "jogador" else str(i + 1)
 		# O seu carro já tem o anel; o rótulo só na visão geral, para achá-lo.
-		r.visible = id != "jogador" or visao_geral
+		r.visible = (id != "jogador" or visao_geral) and not sem_rotulos
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0

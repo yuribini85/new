@@ -4,23 +4,31 @@
   "trigger": "GAME_START",
   "falas": [
    {
-    "acao": "ILUSTRACAO:anel_do_vale"
-   },
-   {
-    "quem": "sistema",
-    "texto": "Lago Sereno. Última semana da temporada."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Adrian Cross pilota. A irmã, Elena, acerta o carro. Marcus, o mecânico, cuida do resto."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Daqui até a Elite são seis licenças. Ninguém da família passou da segunda."
+    "acao": "ILUSTRACAO:garagem_trio"
    },
    {
     "quem": "adrian",
-    "texto": "Ainda."
+    "texto": "Ele ainda puxa pra direita."
+   },
+   {
+    "quem": "elena",
+    "texto": "Você disse isso ontem."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Ontem puxava menos."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ontem você não acertou a zebra da quatro."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Detalhe!"
+   },
+   {
+    "quem": "elena",
+    "texto": "Abre a ficha."
    }
   ],
   "requer": [],
@@ -39,52 +47,64 @@
   "trigger": "ENCADEADA",
   "falas": [
    {
-    "quem": "marcus",
-    "texto": "{carro} lavado, tanque cheio. Pronto para a Copa Primeira Marcha."
-   },
-   {
-    "quem": "adrian",
-    "texto": "Pronto não. Ele freia cedo demais."
-   },
-   {
-    "quem": "elena",
-    "texto": "Abre a ficha antes de reclamar."
-   },
-   {
     "acao": "OPEN_GARAGE_TAB"
    },
    {
-    "acao": "HIGHLIGHT_CAR_STATS"
+    "acao": "HIGHLIGHT_POTENCIA"
    },
    {
     "quem": "elena",
-    "texto": "Potência e peso decidem a reta. Pneus e freios decidem a curva."
+    "texto": "Potência é uma das informações principais do carro. Aqui você vê quantos cavalos ele tem. Em geral, quanto mais potência, maior o potencial de velocidade."
+   },
+   {
+    "acao": "HIGHLIGHT_PESO"
    },
    {
     "quem": "elena",
-    "texto": "\"Original\" quer dizer que ninguém mexeu ainda."
+    "texto": "Peso também importa. Quanto menos massa o carro precisa carregar, melhor ele acelera, freia e muda de direção."
    },
    {
-    "quem": "adrian",
-    "texto": "E dá para mexer?"
+    "acao": "HIGHLIGHT_PNEUS"
+   },
+   {
+    "quem": "elena",
+    "texto": "Os pneus determinam quanto dessa força realmente chega ao chão. Pneus melhores significam mais aderência e mais consistência durante a corrida."
+   },
+   {
+    "acao": "HIGHLIGHT_FREIOS"
+   },
+   {
+    "quem": "elena",
+    "texto": "E freio não serve só para parar o carro. Quanto melhor ele freia, mais tarde você pode começar a desacelerar e mais velocidade leva até a curva."
    },
    {
     "quem": "marcus",
-    "texto": "Temos {saldo}. É o preço de um jogo de freios."
+    "texto": "Já que você falou nisso... deixei uma demanda aberta."
+   },
+   {
+    "acao": "HIGHLIGHT_DEMANDA"
+   },
+   {
+    "quem": "adrian",
+    "texto": "Vocês pedem muita coisa. Também precisamos olhar quanto temos."
+   },
+   {
+    "acao": "HIGHLIGHT_SALDO"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Sempre. Giro compra peça, carro e praticamente todo problema novo que aparece."
    },
    {
     "quem": "elena",
-    "texto": "Então você já sabe o que comprar."
+    "texto": "Temos o suficiente."
    },
    {
-    "acao": "OPEN_TUNE_SERVICE"
+    "quem": "marcus",
+    "texto": "Então abre a Oficina."
    },
    {
-    "acao": "HIGHLIGHT_BRAKES"
-   },
-   {
-    "quem": "sistema",
-    "texto": "Esta é a Oficina. Toque em Freios 1 e confirme a compra."
+    "acao": "HIGHLIGHT_OFICINA"
    }
   ],
   "requer": [],
@@ -96,29 +116,108 @@
   "uma_vez": true,
   "personagem": "adrian",
   "capitulo": "I",
-  "cenario": "garagem_cross"
+  "lembrete": "SCN_A01L"
+ },
+ {
+  "id": "SCN_A01L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "elena",
+    "texto": "Vamos. Toque em Oficina."
+   },
+   {
+    "acao": "HIGHLIGHT_OFICINA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "TUNE_TUTORIAL_SEEN",
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
  },
  {
   "id": "SCN_A02",
+  "trigger": "ABA:OFICINA",
+  "falas": [
+   {
+    "acao": "HIGHLIGHT_BRAKES"
+   },
+   {
+    "quem": "marcus",
+    "texto": "É esse aqui."
+   },
+   {
+    "quem": "elena",
+    "texto": "{demanda}."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Compra e eu instalo."
+   },
+   {
+    "acao": "HIGHLIGHT_BRAKES"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [
+   "TUNE_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I",
+  "lembrete": "SCN_A02L"
+ },
+ {
+  "id": "SCN_A02L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "elena",
+    "texto": "O carro não vai instalar sozinho. Compre os {demanda}."
+   },
+   {
+    "acao": "HIGHLIGHT_BRAKES"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A02B",
   "trigger": "EVENTO_SELECIONADO",
   "falas": [
    {
     "quem": "marcus",
-    "texto": "Calma. Com o freio original, a curva vira parede."
+    "texto": "Calma. Primeiro a demanda."
    },
    {
     "quem": "elena",
-    "texto": "Primeiro os freios. A inscrição espera."
+    "texto": "{demanda} antes da inscrição."
    },
    {
     "acao": "OPEN_TUNE_SERVICE"
    },
    {
     "acao": "HIGHLIGHT_BRAKES"
-   },
-   {
-    "quem": "sistema",
-    "texto": "Toque em Freios 1 e confirme a compra. Depois volte em Correr."
    }
   ],
   "requer": [],
@@ -134,11 +233,41 @@
  },
  {
   "id": "SCN_A03",
-  "trigger": "PECA_COMPRADA",
+  "trigger": "DEMANDA_CONCLUIDA",
   "falas": [
    {
+    "acao": "OPEN_GARAGE_TAB"
+   },
+   {
+    "acao": "ILUSTRACAO:marcus_e_o_carro"
+   },
+   {
     "quem": "marcus",
-    "texto": "{peca} montado."
+    "texto": "{peca} instalados."
+   },
+   {
+    "acao": "PAUSA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [
+   "FIRST_TUNE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
+  "proxima": "SCN_A03B",
+  "capitulo": "I"
+ },
+ {
+  "id": "SCN_A03B",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "acao": "ILUSTRACAO:adrian_entra_no_carro"
    },
    {
     "quem": "elena",
@@ -157,22 +286,23 @@
     "texto": "Engraçada."
    },
    {
-    "quem": "sistema",
-    "texto": "Toque em Correr na barra de baixo."
+    "acao": "PAUSA"
+   },
+   {
+    "quem": "adrian",
+    "texto": "Vamos correr."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
    }
   ],
   "requer": [],
-  "proibe": [
-   "FIRST_TUNE_DONE"
-  ],
-  "flags": [
-   "FIRST_TUNE_DONE"
-  ],
-  "bloqueia": false,
+  "proibe": [],
+  "flags": [],
+  "bloqueia": true,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I",
-  "cenario": "oficina_cross"
+  "capitulo": "I"
  },
  {
   "id": "SCN_A04",
@@ -180,30 +310,80 @@
   "falas": [
    {
     "quem": "elena",
-    "texto": "Cada cartão é uma prova: pista, voltas, prêmio e o que o regulamento aceita."
+    "texto": "Aqui ficam as provas disponíveis. Antes de escolher uma, olha a licença exigida."
    },
    {
-    "acao": "HIGHLIGHT_EVENT_CARD"
+    "acao": "HIGHLIGHT_LICENCA_SPORT"
    },
    {
     "quem": "elena",
-    "texto": "A barra \"seu carro × rivais\" diz se dá para ganhar antes de você tentar."
+    "texto": "O Adrian já tem a licença Sport."
+   },
+   {
+    "quem": "elena",
+    "texto": "Então todas as provas que exigem Sport ou uma licença abaixo dela estão liberadas."
+   },
+   {
+    "acao": "HIGHLIGHT_COMPETITIVIDADE"
+   },
+   {
+    "quem": "elena",
+    "texto": "Essa barra estima o quanto o nosso carro está competitivo para essa prova."
    },
    {
     "quem": "marcus",
-    "texto": "A Copa Primeira Marcha tem três etapas e conta pontos. Campeão é quem soma mais."
+    "texto": "Não garante vitória. Só evita entrar completamente no escuro."
+   },
+   {
+    "acao": "HIGHLIGHT_COPA"
+   },
+   {
+    "quem": "marcus",
+    "texto": "A Copa Primeira Marcha tem três etapas. Cada resultado soma pontos."
    },
    {
     "quem": "elena",
-    "texto": "Corra as etapas em ordem. Fora de ordem vira corrida comum."
+    "texto": "No final, o campeão é quem tiver a maior pontuação."
+   },
+   {
+    "acao": "HIGHLIGHT_ETAPAS"
+   },
+   {
+    "quem": "elena",
+    "texto": "Para disputar a Copa de verdade, você precisa correr as etapas em ordem."
+   },
+   {
+    "quem": "elena",
+    "texto": "Se escolher uma etapa fora da sequência, ela vira uma corrida comum e não conta para o campeonato."
    },
    {
     "quem": "adrian",
-    "texto": "Fecho as três e a gente fala de motor."
+    "texto": "Fecho as três e depois a gente conversa sobre motor."
    },
    {
-    "quem": "sistema",
-    "texto": "Escolha a Copa Primeira Marcha — Etapa 1 e toque em Disputar."
+    "quem": "elena",
+    "texto": "Você conversa."
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ela decide."
+   },
+   {
+    "acao": "HIGHLIGHT_COPA"
+   },
+   {
+    "quem": "adrian",
+    "texto": "Escolhe a Copa Primeira Marcha. Etapa 1."
+   },
+   {
+    "acao": "HIGHLIGHT_DISPUTAR"
+   },
+   {
+    "quem": "adrian",
+    "texto": "E toca em Disputar."
+   },
+   {
+    "acao": "HIGHLIGHT_DISPUTAR"
    }
   ],
   "requer": [
@@ -219,6 +399,29 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
+  "capitulo": "I",
+  "lembrete": "SCN_A04L"
+ },
+ {
+  "id": "SCN_A04L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "adrian",
+    "texto": "Copa Primeira Marcha, Etapa 1. Toca em Disputar."
+   },
+   {
+    "acao": "HIGHLIGHT_DISPUTAR"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_BRIEFED"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "adrian",
   "capitulo": "I"
  },
  {
@@ -226,7 +429,7 @@
   "trigger": "CORRIDA_INICIO",
   "falas": [
    {
-    "quem": "marcus",
+    "quem": "adrian",
     "texto": "{voltas} voltas em {pista}."
    },
    {
@@ -235,15 +438,34 @@
    },
    {
     "quem": "elena",
-    "texto": "Não. A corrida corre sozinha. O que decidimos na garagem já está no carro."
+    "texto": "Não."
    },
    {
     "quem": "elena",
-    "texto": "Você acelera. Eu anoto."
+    "texto": "A corrida corre sozinha. O que a gente decide na garagem já está no carro."
    },
    {
-    "quem": "sistema",
-    "texto": "Prova nova roda com o app aberto. Depois de vencida, dá para repetir com o app fechado."
+    "quem": "adrian",
+    "texto": "Então eu acelero e você anota."
+   },
+   {
+    "quem": "elena",
+    "texto": "Basicamente."
+   },
+   {
+    "quem": "adrian",
+    "texto": "As provas novas precisam rodar com o aplicativo aberto."
+   },
+   {
+    "acao": "HIGHLIGHT_CAMERA_AUTO"
+   },
+   {
+    "quem": "adrian",
+    "texto": "Depois que você vencer uma prova pela primeira vez, pode repetir ela no modo offline."
+   },
+   {
+    "quem": "elena",
+    "texto": "Primeiro prova que consegue ganhar."
    }
   ],
   "requer": [],
@@ -257,27 +479,34 @@
   "uma_vez": true,
   "personagem": "adrian",
   "capitulo": "I",
-  "cenario": "box_largada"
+  "segura_largada": true
  },
  {
   "id": "SCN_A06",
   "trigger": "CORRIDA_FIM",
   "falas": [
    {
+    "acao": "ILUSTRACAO:box_depois_da_corrida"
+   },
+   {
     "quem": "adrian",
     "texto": "Viu isso?"
    },
    {
     "quem": "elena",
-    "texto": "Vi. Freou mais tarde que todo mundo. Valeu cada giro."
+    "texto": "Vi."
+   },
+   {
+    "quem": "adrian",
+    "texto": "Freei mais tarde que todo mundo."
+   },
+   {
+    "quem": "elena",
+    "texto": "Valeu cada Giro."
    },
    {
     "quem": "marcus",
     "texto": "Prêmio na conta."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Prêmios entram no saldo. Prova já vencida pode ser repetida, até com o app fechado."
    }
   ],
   "requer": [],
@@ -294,13 +523,15 @@
   "condicao": {
    "posicao": 1
   },
-  "capitulo": "I",
-  "cenario": "podio"
+  "capitulo": "I"
  },
  {
   "id": "SCN_A06B",
   "trigger": "CORRIDA_FIM",
   "falas": [
+   {
+    "acao": "ILUSTRACAO:box_depois_da_corrida"
+   },
    {
     "quem": "adrian",
     "texto": "{posicao}. Não era o plano."
@@ -327,8 +558,7 @@
   "condicao": {
    "posicao_min": 2
   },
-  "capitulo": "I",
-  "cenario": "box_largada"
+  "capitulo": "I"
  },
  {
   "id": "SCN_A07",
@@ -401,8 +631,25 @@
   "trigger": "ABA:LICENCAS",
   "falas": [
    {
+    "acao": "HIGHLIGHT_LIC_SPORT"
+   },
+   {
     "quem": "elena",
-    "texto": "Club e Sport você já tem. A National pede vitórias e um título."
+    "texto": "As licenças Club e Sport você já tem."
+   },
+   {
+    "acao": "HIGHLIGHT_LIC_NATIONAL"
+   },
+   {
+    "quem": "elena",
+    "texto": "A próxima é a National."
+   },
+   {
+    "quem": "elena",
+    "texto": "Ela exige mais vitórias e pelo menos um título."
+   },
+   {
+    "acao": "HIGHLIGHT_LIC_ELITE"
    },
    {
     "quem": "adrian",
@@ -410,7 +657,14 @@
    },
    {
     "quem": "marcus",
-    "texto": "A Elite é onde a Apex Dominion corre. Ninguém daqui chega lá."
+    "texto": "Elite é onde a Apex Dominion corre."
+   },
+   {
+    "acao": "PAUSA"
+   },
+   {
+    "quem": "marcus",
+    "texto": "Ninguém daqui consegue disputar com eles."
    },
    {
     "quem": "adrian",
@@ -427,8 +681,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "adrian",
-  "capitulo": "I",
-  "cenario": "garagem_cross"
+  "capitulo": "I"
  },
  {
   "id": "SCN_A10",

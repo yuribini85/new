@@ -174,7 +174,7 @@ func test_prologo_adrian_acidente_e_elena() -> void:
 	igual(j.personagem, "adrian", "personagem")
 	igual(j.licencas, ["b"], "licenças do Adrian")
 	igual(j.garagem.lista().size(), 1, "carro do Adrian")
-	igual(j.economia.saldo, 200, "saldo = preço da peça")
+	igual(j.economia.saldo, 299, "saldo = peça da demanda + a mais barata - 1")
 	verificar(not Prologo.deve_ultima_corrida(d, j), "antes do primeiro campeonato")
 	j.flags["FIRST_CHAMPIONSHIP_DONE"] = true
 	verificar(Prologo.deve_ultima_corrida(d, j), "depois do primeiro campeonato")

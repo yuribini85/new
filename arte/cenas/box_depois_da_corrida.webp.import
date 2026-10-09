@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://detymg1xvo413"
-path="res://.godot/imported/adrian_cross.png-0b6e23b86856f1d0fea794523b8187c7.ctex"
+uid="uid://s5hhtxr3lq5k"
+path="res://.godot/imported/box_depois_da_corrida.webp-76a158b37d60d0bf4fdebc8f73182582.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/adrian_cross.png"
-dest_files=["res://.godot/imported/adrian_cross.png-0b6e23b86856f1d0fea794523b8187c7.ctex"]
+source_file="res://arte/cenas/box_depois_da_corrida.webp"
+dest_files=["res://.godot/imported/box_depois_da_corrida.webp-76a158b37d60d0bf4fdebc8f73182582.ctex"]
 
 [params]
 

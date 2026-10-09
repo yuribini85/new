@@ -14,6 +14,11 @@ var _botoes: Array = []
 var _sobre: Sobreposicao
 var _dialogo: Dialogo
 var _destaque: Destaque
+## Âncoras fora das abas (topo e navegação) para os destaques do tutorial.
+var _ancoras := {}
+## Cena com lembrete esperando: {"id", "t"} (segundos desde o fim da cena).
+var _lembrete := {}
+const LEMBRETE_S := 8.0  # apresentação: quanto esperar antes de lembrar
 ## Nome de cada aba no trigger da história (ABA:<nome>).
 const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE"]
 var _voltar: Button
@@ -67,20 +72,27 @@ func _ready() -> void:
 	_voltar.add_theme_color_override("font_color", Aba.COR_INFO.lightened(0.2))
 	_voltar.pressed.connect(func(): _ir_para(PAI.get(_abas.current_tab, 0)))
 	topo.add_child(_voltar)
+	# Saldo e moeda juntos no canto (o destaque do tutorial envolve só os dois).
+	var conta := HBoxContainer.new()
+	conta.alignment = BoxContainer.ALIGNMENT_END
+	conta.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	conta.add_theme_constant_override("separation", 12)
+	topo.add_child(conta)
+	var caixa_saldo := HBoxContainer.new()
+	caixa_saldo.add_theme_constant_override("separation", 12)
+	conta.add_child(caixa_saldo)
+	_ancoras["SALDO"] = caixa_saldo
 	_saldo = Label.new()
 	Tipografia.rotulo(_saldo, "semibold", FONTE_TITULO + 4)
 	_saldo.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_saldo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_saldo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	_saldo.clip_text = true
-	topo.add_child(_saldo)
+	caixa_saldo.add_child(_saldo)
 	var moeda := TextureRect.new()
 	moeda.texture = Aba.arte("icone_creditos")
 	moeda.custom_minimum_size = Vector2(48, 48)
 	moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	topo.add_child(moeda)
+	caixa_saldo.add_child(moeda)
 	_meta = [_saldo, moeda]
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
@@ -135,15 +147,15 @@ func _ready() -> void:
 		a.aviso.connect(_avisar)
 		a.painel.connect(_sobre.abrir)
 	if jogador.historia != null:
-		_dialogo = Dialogo.new(jogador.historia)
-		add_child(_dialogo)
+		# O destaque fica abaixo do diálogo: o resto da tela escurece, a caixa não.
 		_destaque = Destaque.new()
 		add_child(_destaque)
+		_dialogo = Dialogo.new(jogador.historia)
+		add_child(_dialogo)
 		jogador.historia.cena.connect(_dialogo.enfileirar)
+		jogador.historia.cena.connect(_cena_pedida)
 		_dialogo.acao.connect(_acao_tutorial)
-		_dialogo.terminou.connect(func(_c):
-			atualizar()
-			get_node("/root/SaveManager").salvar())
+		_dialogo.terminou.connect(_cena_terminou)
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid
 	atualizar()
@@ -157,6 +169,7 @@ func _ready() -> void:
 	timer.timeout.connect(_registrar_fila)
 	timer.timeout.connect(_atualizar_fps)
 	timer.timeout.connect(_historia_corrida)
+	timer.timeout.connect(_contar_lembrete)
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
@@ -167,7 +180,7 @@ func _ready() -> void:
 	RegistroSessao.corridas(save_manager.relatorio_offline, dados)
 	if jogador.historia != null:
 		historia_acao.connect(_acao_historia)
-		jogador.historia.disparar("GAME_START")
+		_abertura()
 
 
 func _navegacao() -> HBoxContainer:
@@ -210,6 +223,7 @@ func _navegacao() -> HBoxContainer:
 		b.pressed.connect(_ir_para.bind(d[1]))
 		barra.add_child(b)
 		_botoes.append(b)
+		_ancoras["NAV_" + NOMES_ABA[d[1]]] = b
 	_ir_para.call_deferred(0)
 	return barra
 
@@ -225,6 +239,8 @@ func _atualizar_nav() -> void:
 
 
 func _ir_para(i: int) -> void:
+	if _destaque != null:
+		_destaque.limpar()
 	_abas.current_tab = i
 	if jogador.historia != null:
 		jogador.historia.disparar("ABA:" + NOMES_ABA[i])
@@ -361,8 +377,13 @@ func _acao_tutorial(nome: String) -> void:
 
 
 ## Destaque do tutorial: a âncora na aba aberta (ou, sem ela lá, na primeira
-## aba que a tem), rolada para o alto da tela, acima da caixa de diálogo.
+## aba que a tem), rolada para o alto da tela, acima da caixa de diálogo. As do
+## topo e da navegação (SALDO, NAV_<ABA>) valem em qualquer tela.
 func _destacar(nome: String) -> void:
+	if _ancoras.has(nome):
+		_destaque.mostrar(_ancoras[nome])
+		_dialogo.evitar(_ancoras[nome].get_global_rect())
+		return
 	var aba: Aba = _todas[_abas.current_tab]
 	aba.preparar_destaque(nome)
 	aba.atualizar()
@@ -382,8 +403,72 @@ func _destacar(nome: String) -> void:
 	var alvo: Control = aba.ancoras.get(nome)
 	if not is_instance_valid(alvo):
 		return
-	aba.scroll_vertical = maxi(int(alvo.global_position.y - aba.conteudo.global_position.y) - 24, 0)
-	_destaque.mostrar(alvo)
+	# Rola só se o elemento não está inteiro na tela (a corrida não sai do lugar).
+	if not aba.get_global_rect().encloses(alvo.get_global_rect()):
+		aba.scroll_vertical = maxi(int(alvo.global_position.y - aba.conteudo.global_position.y) - 24, 0)
+		await get_tree().process_frame
+		if not is_instance_valid(alvo):
+			return
+	# Reconstruída a aba, o destaque acha o controle novo pela mesma âncora.
+	_destaque.mostrar(alvo, func(): return aba.ancoras.get(nome) if aba.is_visible_in_tree() else null)
+	_dialogo.evitar(alvo.get_global_rect())
+
+
+## Uma cena começa: a da largada segura a corrida no grid até acabar.
+func _cena_pedida(c: Dictionary) -> void:
+	if c.get("segura_largada", false):
+		_todas[4].segurar_largada = true
+
+
+## Cena terminada: salva; o destaque fica só se ela acabou nele (o jogador tem
+## de tocar ali); a cena com lembrete começa a contar; a largada é liberada.
+func _cena_terminou(c: Dictionary) -> void:
+	var falas: Array = c.get("falas", [])
+	var ultima := String(falas[-1].get("acao", "")) if not falas.is_empty() else ""
+	if not ultima.begins_with("HIGHLIGHT_"):
+		_destaque.limpar()
+	if c.get("lembrete") != null:
+		_lembrete = {"id": c["lembrete"], "t": 0.0}
+	if c.get("segura_largada", false):
+		_todas[4].liberar_largada()
+	atualizar()
+	get_node("/root/SaveManager").salvar()
+
+
+## Lembrete: o jogador não fez o que a cena pediu em LEMBRETE_S; a cena do
+## lembrete aparece se ainda vale (as flags dela dizem quando não precisa mais).
+func _contar_lembrete() -> void:
+	if _lembrete.is_empty() or _dialogo == null or _dialogo.ocupado():
+		return
+	_lembrete["t"] += 1.0
+	if _lembrete["t"] < LEMBRETE_S:
+		return
+	var id: String = _lembrete["id"]
+	_lembrete = {}
+	if dados.existe("dialogos", id) and jogador.historia.vale(dados.item("dialogos", id)):
+		_dialogo.enfileirar(dados.item("dialogos", id))
+
+
+## Espera o diálogo (e as cenas encadeadas) acabar e chama `depois`.
+func _quando_dialogo_acabar(depois: Callable) -> void:
+	while _dialogo != null and _dialogo.ocupado():
+		await _dialogo.terminou
+		await get_tree().process_frame
+	depois.call()
+
+
+## Jogo novo com a história: a volta do Adrian sozinho na pista e, no fim
+## dela, a primeira cena (GAME_START). Só uma vez (flag VOLTA_ABERTURA).
+func _abertura() -> void:
+	var h: Historia = jogador.historia
+	if jogador.personagem != "adrian" or jogador.flags.has("VOLTA_ABERTURA") or h.cena_para("GAME_START").is_empty():
+		h.disparar("GAME_START")
+		return
+	var volta := VoltaAbertura.new(dados, jogador)
+	add_child(volta)
+	volta.terminou.connect(func():
+		jogador.flags["VOLTA_ABERTURA"] = true
+		h.disparar("GAME_START"))
 
 
 ## Prólogo: durante a última corrida do Adrian, o rádio e depois o acidente.
@@ -450,7 +535,14 @@ func _processar_fila() -> void:
 			await get_tree().create_timer(corrida.ESCURECER_EM_S).timeout
 			_sobre.escurecer(true, corrida.SILENCIO_S - corrida.ESCURECER_EM_S)
 			await get_tree().create_timer(corrida.SILENCIO_S - corrida.ESCURECER_EM_S).timeout
-		_resultado(rel["corridas"][0], not antes_vitorias.has(rel["corridas"][0]["evento_id"]))
+		var c: Dictionary = rel["corridas"][0]
+		var primeira: bool = not antes_vitorias.has(c["evento_id"])
+		# A conversa da chegada vem antes do resultado, sobre a tela escura.
+		if jogador.historia != null and jogador.historia.disparar("CORRIDA_FIM",
+				{"posicao": int(c["posicao"]), "evento": c["evento_id"]}):
+			_quando_dialogo_acabar(_resultado.bind(c, primeira))
+		else:
+			_resultado(c, primeira)
 		return
 	_mostrar_relatorio(rel, "Resultado das corridas")
 
@@ -541,8 +633,8 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var b = botoes[primeiro]
 			botoes.remove_at(primeiro)
 			botoes.push_front(b)
-	# A conversa sobre a corrida vem depois de o jogador ler o resultado (o
-	# personagem em cena cobriria o pódio): qualquer botão do painel a dispara.
+	# A conversa da chegada já veio antes do painel; a do título de campeão vem
+	# depois que o jogador lê o resultado (qualquer botão do painel).
 	for b in botoes:
 		b[1] = _depois_do_resultado.bind(c, b[1])
 	var meu: Carro = jogador.garagem.carro(c["uid"])
@@ -566,6 +658,10 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		v.add_child(pos)
 		var nome_ev := g.rotulo(Aba.nome_evento(ev), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
 		nome_ev.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if float(c.get("tempo_jogador", 0.0)) > 0.0:
+			var tempo := g.rotulo("Tempo %s" % HudCorrida._tempo(float(c["tempo_jogador"])), Aba.FONTE_PEQUENA + 3,
+					Color.WHITE, v)
+			tempo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if tabela.size() >= 2:
 			var t0: float = tabela[0]["tempo"]
 			var dif := g.rotulo("%.1f s à frente do 2º" % (tabela[1]["tempo"] - t0) if venceu
@@ -631,7 +727,6 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 func _depois_do_resultado(c: Dictionary, acao: Callable) -> void:
 	var g: Aba = _todas[0]
 	acao.call()
-	g.historia("CORRIDA_FIM", {"posicao": int(c["posicao"]), "evento": c["evento_id"]})
 	if c.get("campeonato", {}).get("campeao", false):
 		g.historia("CAMPEONATO_VENCIDO", {"evento": c["evento_id"]})
 

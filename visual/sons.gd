@@ -41,6 +41,11 @@ func motor(ligado: bool, velocidade := 0.0) -> void:
 	_motor.pitch_scale = clampf(0.6 + velocidade / 40.0, 0.5, 3.0)
 
 
+## Volume do motor, 0..1 (entrada e saída suaves da abertura).
+func volume_motor(f: float) -> void:
+	_motor.volume_db = -14.0 + linear_to_db(maxf(f, 0.001))
+
+
 func largada(final := false) -> void:
 	_tocar(_bipe_longo if final else _bipe_curto)
 

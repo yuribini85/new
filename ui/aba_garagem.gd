@@ -46,8 +46,9 @@ func construir() -> void:
 	var h := acoes()
 	var melhorar := _acao(h, func(): ir_para.emit(OFICINA))
 	Tipografia.acao_primaria(melhorar, "Oficina", COR_DESTAQUE, Color(0.1, 0.1, 0.1), ALTURA_TEXTO_ACAO, ALTURA_ACAO)
+	ancora("OFICINA", melhorar)
 	var vender := _acao(h, _confirmar_venda.bind(c))
-	vender.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid)
+	vender.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
 	Tipografia.acao_neutra(vender, "Vender · %s G" % dinheiro(revenda(c.base)), ALTURA_TEXTO_ACAO - 2, ALTURA_ACAO)
 	var ficha := _acao(conteudo, func(): ficha_modelo(c.base))
 	Tipografia.acao_secundaria(ficha, "Ficha completa ›", COR_INFO.lightened(0.2), 26, 64)
@@ -112,14 +113,16 @@ func _palco(c: Carro) -> Control:
 		return float(a.get(attr, 1.0)) / maxf(float(c.base.get(attr, 1.0) if c.base.get(attr) != null else 1.0), 1e-6)
 	# Cada atributo: rótulo pequeno em caixa alta e, embaixo, valor grande e
 	# unidade (sem ícone: o rótulo já diz o que é).
-	for it in [["POTÊNCIA", "icone_potencia", "%d" % a["potencia"], "cv"], ["PESO", "icone_peso", "%d" % a["peso"], "kg"],
-			["PNEUS", "icone_pneus", texto_fator(ganho.call("aderencia"), true), ""],
-			["FREIOS", "icone_freios", texto_fator(ganho.call("freio"), true), ""]]:
+	# A âncora de cada um (POTENCIA, PESO, PNEUS, FREIOS) é o destaque do tutorial.
+	for it in [["POTÊNCIA", "POTENCIA", "%d" % a["potencia"], "cv"], ["PESO", "PESO", "%d" % a["peso"], "kg"],
+			["PNEUS", "PNEUS", texto_fator(ganho.call("aderencia"), true), ""],
+			["FREIOS", "FREIOS", texto_fator(ganho.call("freio"), true), ""]]:
 		var cel := VBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.add_theme_constant_override("separation", -2)
 		cel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		h.add_child(cel)
+		ancora(it[1], cel)
 		var titulo := _hud_rotulo(it[0], 0, COR_SECUNDARIA, cel)
 		Tipografia.rotulo(titulo, "medium", 18)
 		titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -222,6 +225,7 @@ func _faixa_objetivo() -> void:
 		ir_para.emit(lista[i]["aba"])
 		mudou.emit())
 	conteudo.add_child(b)
+	ancora("DEMANDA", b)
 
 
 ## Coleção em miniaturas (fotos): tocar troca o carro em destaque.

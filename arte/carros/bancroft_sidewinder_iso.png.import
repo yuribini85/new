@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b3rkco6n5og0v"
-path="res://.godot/imported/elena_cross.png-7f77f939b5eb68d0f52f40066b7b20c1.ctex"
+uid="uid://bttv30ajlkywm"
+path="res://.godot/imported/bancroft_sidewinder_iso.png-63107df92a18816b2d17f9049b337e60.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/elena_cross.png"
-dest_files=["res://.godot/imported/elena_cross.png-7f77f939b5eb68d0f52f40066b7b20c1.ctex"]
+source_file="res://arte/carros/bancroft_sidewinder_iso.png"
+dest_files=["res://.godot/imported/bancroft_sidewinder_iso.png-63107df92a18816b2d17f9049b337e60.ctex"]
 
 [params]
 

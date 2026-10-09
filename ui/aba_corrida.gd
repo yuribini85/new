@@ -65,6 +65,8 @@ var _t_chegada := 0.0
 var _segurar := 0.0  # segundos parados na última imagem depois do fim
 var _diretor := DiretorCamera.new()
 var _foco_auto := "jogador"
+## Cena da largada (segura_largada): a corrida fica no grid até ela acabar.
+var segurar_largada := false
 
 
 func _init(d: Node, j: Node) -> void:
@@ -148,6 +150,8 @@ func _seletor_cameras() -> Control:
 			b.add_theme_stylebox_override(estado, marcado)
 		b.pressed.connect(_camera.bind(c[1]))
 		h.add_child(b)
+		if c[1] == "auto":
+			ancora("CAMERA_AUTO", b)
 		_cameras_botoes.append(b)
 	return p
 
@@ -569,6 +573,8 @@ func _process(delta: float) -> void:
 		_relogio.text = ""
 		return
 	var agora := Time.get_unix_time_from_system()
+	if segurar_largada:
+		f["inicio"] = agora  # parada no grid: o relógio da corrida não anda
 	if f["semente"] != _semente_mostrada:
 		var c: Dictionary = jogador.fila_ctrl.corrida_atual(agora)
 		if c.is_empty():
@@ -664,6 +670,18 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
 	else:
 		_painel_hud.evento("CORRIDA EM ANDAMENTO", "", Color.WHITE, 3)
+
+
+## Fim da cena da largada: a corrida começa agora.
+func liberar_largada() -> void:
+	if not segurar_largada:
+		return
+	segurar_largada = false
+	if not jogador.fila.is_empty():
+		jogador.fila["inicio"] = Time.get_unix_time_from_system()
+	_diretor.reiniciar()
+	_sons.largada(true)
+	_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
 
 
 ## Câmera AUTO: o diretor escolhe o plano; nas outras, o alvo da escolha.
