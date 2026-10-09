@@ -269,7 +269,9 @@ func _linha(pai: Control, c: Carro, p: Dictionary, antes: Dictionary, provas_ant
 	var teste := c.copiar()
 	teste.instalar(p)
 	var depois := teste.atributos_efetivos("seco")
-	var perde := provas_antes.filter(func(e): return not e in Mecanico.provas_possiveis(dados, teste))
+	# Uma vez por peça (dentro do filtro, recalculava a lista para cada prova).
+	var depois_provas := Mecanico.provas_possiveis(dados, teste)
+	var perde := provas_antes.filter(func(e): return not e in depois_provas)
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, 96)
 	var pode_pagar: bool = possuida or jogador.economia.pode_pagar(int(p["preco"]))

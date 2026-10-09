@@ -28,6 +28,8 @@ static var _cache := {}
 static func fonte(peso: String) -> Font:
 	if not _cache.has(peso):
 		var base: Font = load(ARQUIVOS[peso])
+		if base is FontFile:
+			base.allow_system_fallback = false  # ver Principal._simbolos
 		var v := FontVariation.new()
 		v.base_font = base
 		v.spacing_glyph = ESPACO_LETRAS[peso]

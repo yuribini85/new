@@ -195,6 +195,7 @@ func fundo_imagem(tex: Texture2D) -> void:
 	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	vp.add_child(t)
 	vp.move_child(t, 0)
+	_pedir_quadro()
 	var ambiente: Environment = (_mundo.get_child(0) as WorldEnvironment).environment
 	ambiente.background_mode = Environment.BG_CANVAS
 
@@ -292,18 +293,44 @@ func _gui_input(ev: InputEvent) -> void:
 		_angulo += ev.relative.x * 0.01
 		_carro.rotation.y = _angulo
 		_ultimo_toque = Time.get_ticks_msec() / 1000.0
+		_pedir_quadro()
+
+
+## Desenha o 3D só quando algo se mexe: parado (sprite, animação reduzida),
+## um quadro basta e a vitrine não gasta GPU a cada quadro.
+func _animando(sim: bool) -> void:
+	var vp: SubViewport = get_child(0)
+	if sim:
+		vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	elif vp.render_target_update_mode == SubViewport.UPDATE_ALWAYS:
+		vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+
+
+## Um quadro novo (troca de carro, fundo, tamanho, giro com o dedo).
+func _pedir_quadro() -> void:
+	var vp: SubViewport = get_child(0)
+	if vp.render_target_update_mode != SubViewport.UPDATE_ALWAYS:
+		vp.render_target_update_mode = SubViewport.UPDATE_ONCE
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED or what == NOTIFICATION_VISIBILITY_CHANGED:
+		_pedir_quadro()
 
 
 func _process(delta: float) -> void:
 	if _sprite != null and _sprite.visible:
 		# Aproximação curta ao trocar de carro (1,06 → 1,00).
+		_animando(_aproximar < 1.0)
 		if _aproximar < 1.0:
 			_aproximar = minf(_aproximar + delta / 0.5, 1.0)
 		_camera.size = LARGURA_VISTA_M * lerpf(1.06, 1.0, smoothstep(0.0, 1.0, _aproximar))
 		return
 	# Gira sozinho, exceto logo depois de o jogador girar com o dedo.
-	if not is_visible_in_tree() or Preferencias.reduzir_animacoes \
-			or Time.get_ticks_msec() / 1000.0 - _ultimo_toque < 3.0:
+	var parado: bool = not is_visible_in_tree() or Preferencias.reduzir_animacoes \
+			or Time.get_ticks_msec() / 1000.0 - _ultimo_toque < 3.0
+	_animando(not parado)
+	if parado:
 		return
 	if _garagem:
 		# Na garagem o carro fica parado para ser observado: só balança devagar.

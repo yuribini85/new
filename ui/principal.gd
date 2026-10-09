@@ -7,6 +7,8 @@ var jogador: Node
 var _cabecalho: Cabecalho
 ## Telas visitadas (para o voltar do cabeçalho), a mais recente no fim.
 var _historico: Array[int] = []
+## Telas que precisam ser refeitas antes de aparecer (atualizar).
+var _sujas := {}
 const HISTORICO_MAX := 20
 var _meta: Array = []  # saldo e moeda: meta-jogo, somem durante a corrida
 var _nav: Control
@@ -102,8 +104,8 @@ func _ready() -> void:
 		_abas.add_child(a)
 		a.mudou.connect(atualizar)
 		a.ir_para.connect(func(i):
-			_ir_para(i)
-			atualizar())
+			_sujar_todas()
+			_ir_para(i))
 	eventos.correr_iniciado.connect(func(): _ir_para(4))
 	_todas[4].pular.connect(func():
 		RegistroSessao.pulo()
@@ -238,6 +240,7 @@ func _ir_para(i: int, voltando := false) -> void:
 		if _historico.size() > HISTORICO_MAX:
 			_historico.pop_front()
 	_abas.current_tab = i
+	_reconstruir(i)
 	if jogador.historia != null:
 		jogador.historia.disparar("ABA:" + NOMES_ABA[i])
 	RegistroSessao.tela(i)
@@ -289,6 +292,12 @@ static func _simbolos() -> void:
 	var reserva: Font = load("res://ui/fontes/simbolos.ttf")
 	if reserva != null and not reserva in f.fallbacks:
 		f.fallbacks = f.fallbacks + [reserva]
+	# Sem procurar nas fontes do sistema: cada glifo que falta (▸, ✓, ›) fazia
+	# a busca a cada texto montado e deixava as telas lentas. Os símbolos vêm da
+	# fonte de reserva do jogo.
+	for fonte in [f, reserva]:
+		if fonte is FontFile:
+			fonte.allow_system_fallback = false
 
 
 func _tema() -> Theme:
@@ -343,12 +352,25 @@ func _avisar(texto: String, ok := true) -> void:
 	_sobre.avisar(texto, ok)
 
 
+## Estado mudou: a tela visível é refeita já; as outras só ficam marcadas e se
+## refazem quando forem abertas (refazer as sete a cada toque levava segundos).
 func atualizar() -> void:
+	_sujar_todas()
+	_reconstruir(_abas.current_tab)
+
+
+func _reconstruir(i: int) -> void:
+	if _sujas.has(i):
+		_sujas.erase(i)
+		_todas[i].atualizar()
+
+
+func _sujar_todas() -> void:
+	for i in _todas.size():
+		_sujas[i] = true
 	_cabecalho.definir_giros(Aba.dinheiro(jogador.economia.saldo))
 	_atualizar_ao_vivo()
 	_atualizar_nav()
-	for a in _todas:
-		a.atualizar()
 	var objetivos := Objetivos.lista(jogador, dados)
 	var atual := Objetivos.atual(objetivos)
 	if _objetivo >= 0 and atual > _objetivo and _sobre != null:

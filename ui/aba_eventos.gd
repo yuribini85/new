@@ -12,6 +12,10 @@ var _config_uid := -1
 var _estimativas := {}
 ## Categoria aberta (mantida ao voltar): "voce", "", "marca" ou o id da licença.
 var _filtro := "voce"
+## Cartões mostrados de uma vez (cada um custa ~10 ms para montar; a lista toda
+## travava a troca de tela). "Mostrar mais" acrescenta outro lote.
+const LOTE := 12
+var _limite := LOTE
 
 const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["marca", "Marcas"], ["CLUB", "Club"], ["SPORT", "Sport"],
 	["NATIONAL", "National"], ["INTERNATIONAL", "International"], ["PRO", "Pro"], ["ELITE", "Elite"]]
@@ -63,6 +67,7 @@ func construir() -> void:
 			b.add_theme_color_override("font_color", COR_SECUNDARIA)
 		b.pressed.connect(func():
 			_filtro = g[0]
+			_limite = LOTE
 			mudou.emit())
 		abas.add_child(b)
 		if g[0] in NIVEIS_LICENCA:
@@ -96,8 +101,17 @@ func construir() -> void:
 	if lista.is_empty():
 		nota("icone_alerta", "Nenhuma aceita o %s" % nome_curto(c.base["nome"]),
 				"Veja as outras categorias ou troque de carro na Garagem.")
-	for l in lista:
+	for l in lista.slice(0, _limite):
 		_cartao_evento(c, l[0], l[1])
+	if lista.size() > _limite:
+		var resto := lista.size() - _limite
+		var mais := Button.new()
+		Tipografia.acao_secundaria(mais, "Mostrar mais %d corrida%s" % [mini(resto, LOTE), "" if resto == 1 else "s"],
+				COR_INFO.lightened(0.2), 28, 88)
+		mais.pressed.connect(func():
+			_limite += LOTE
+			mudou.emit())
+		conteudo.add_child(mais)
 
 
 ## Carro em uso numa linha: foto, nome e números; trocar leva à Garagem.
