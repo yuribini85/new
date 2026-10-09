@@ -11,6 +11,8 @@ config/use_custom_user_dir=true
 config/custom_user_dir_name="Apex Garage"
 run/main_scene="res://scenes/inicio.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/bg_color=Color(0.078, 0.09, 0.11, 1)
+boot_splash/show_image=false
 
 [autoload]
 

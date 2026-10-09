@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<title>$GODOT_PROJECT_NAME</title>
+		<style>
+/* Tela de carregamento da versão web: a mesma composição da tela inicial do
+   jogo (ui/inicio.gd: garagem escurecida, logo e barra), para a passagem do
+   navegador para o jogo não ter corte. Gerado por tools/gerar_shell_web.gd a
+   partir de web/shell_modelo.html; não editar web/shell.html à mão. */
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	color: #e8e2d4;
+	background-color: #14171c;
+	overflow: hidden;
+	touch-action: none;
+}
+
+#canvas {
+	display: block;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+#status {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	/* --u: escala da tela do jogo (720 px de largura, stretch keep_width),
+	   calculada no script abaixo a partir da área visível. */
+	--u: 0.5px;
+	gap: calc(56 * var(--u));
+	background-color: #14171c;
+	visibility: hidden;
+}
+
+#status-fundo {
+	position: absolute;
+	inset: 0;
+	background: #14171c url("data:image/jpeg;base64,{{FUNDO}}") center / cover no-repeat;
+	filter: brightness(0.35);
+}
+
+#status-logo {
+	position: relative;
+	width: calc(100% - 112 * var(--u));
+	max-width: calc(608 * var(--u));
+	height: calc(220 * var(--u));
+	object-fit: contain;
+}
+
+#status-barra {
+	position: relative;
+	width: calc(100% - 112 * var(--u));
+	max-width: calc(608 * var(--u));
+	height: calc(12 * var(--u));
+	border-radius: calc(6 * var(--u));
+	background: rgba(255, 255, 255, 0.08);
+	overflow: hidden;
+}
+
+#status-preenche {
+	height: 100%;
+	width: 0%;
+	border-radius: inherit;
+	background: #d6a23e;
+	transition: width 0.25s ease-out;
+}
+
+#status-barra.indeterminada #status-preenche {
+	width: 30%;
+	animation: vai 1.2s ease-in-out infinite;
+}
+
+@keyframes vai {
+	from { transform: translateX(-100%); }
+	to { transform: translateX(340%); }
+}
+
+#status-aviso {
+	position: relative;
+	display: none;
+	margin: 0 2rem;
+	padding: 1rem;
+	border: 1px solid #b0544a;
+	border-radius: 0.5rem;
+	background: #2a1c1e;
+	color: #e8e2d4;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	line-height: 1.3;
+	text-align: center;
+}
+		</style>
+		$GODOT_HEAD_INCLUDE
+	</head>
+	<body>
+		<canvas id="canvas">
+			Seu navegador não suporta canvas.
+		</canvas>
+
+		<noscript>
+			Seu navegador não suporta JavaScript.
+		</noscript>
+
+		<div id="status">
+			<div id="status-fundo"></div>
+			<img id="status-logo" src="data:image/png;base64,{{LOGO}}" alt="Second Driver">
+			<div id="status-barra" class="indeterminada"><div id="status-preenche"></div></div>
+			<div id="status-aviso"></div>
+		</div>
+
+		<script src="$GODOT_URL"></script>
+		<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+
+(function () {
+	const status = document.getElementById('status');
+	const barra = document.getElementById('status-barra');
+	const preenche = document.getElementById('status-preenche');
+	const aviso = document.getElementById('status-aviso');
+	function escala() {
+		// Mesma regra do jogo: a largura da tela vale 720 unidades.
+		status.style.setProperty('--u', (status.clientWidth / 720) + 'px');
+	}
+	escala();
+	window.addEventListener('resize', escala);
+	status.style.visibility = 'visible';
+
+	function falha(err) {
+		console.error(err);
+		const texto = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'Erro desconhecido.');
+		aviso.textContent = '';
+		texto.split('\n').forEach((linha) => {
+			aviso.appendChild(document.createTextNode(linha));
+			aviso.appendChild(document.createElement('br'));
+		});
+		barra.style.display = 'none';
+		aviso.style.display = 'block';
+	}
+
+	const faltando = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+	if (faltando.length !== 0) {
+		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+			let registro;
+			try {
+				registro = navigator.serviceWorker.getRegistration();
+			} catch (err) {
+				registro = Promise.reject(new Error('Falha ao registrar o service worker.'));
+			}
+			Promise.race([
+				registro.then((r) => (r != null ? Promise.reject(new Error('O service worker já existe.')) : r))
+					.then(() => engine.installServiceWorker()),
+				new Promise((resolve) => setTimeout(() => resolve(), 2000)),
+			]).then(() => window.location.reload()).catch((err) => console.error(err));
+		} else {
+			falha('Este navegador não tem recursos necessários para o jogo:\n' + faltando.join('\n'));
+		}
+		return;
+	}
+	engine.startGame({
+		'onProgress': function (atual, total) {
+			if (atual > 0 && total > 0) {
+				barra.classList.remove('indeterminada');
+				preenche.style.width = (100 * atual / total).toFixed(1) + '%';
+			}
+		},
+	}).then(() => {
+		// O jogo abre na tela inicial com a mesma composição: só some.
+		status.remove();
+	}, falha);
+}());
+		</script>
+	</body>
+</html>
