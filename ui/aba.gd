@@ -28,7 +28,7 @@ const FONTE_BOTAO_ICONE := 26
 const COR_FUNDO := Color(0.078, 0.09, 0.11)
 const COR_CARTAO := Color(0.118, 0.133, 0.157)
 const COR_SECUNDARIA := Color(0.77, 0.79, 0.85)
-const COR_DESTAQUE := Color("c8892b")  # ocre
+const COR_DESTAQUE := Color("d6a23e")  # ocre mostarda
 const COR_BOM := Color(0.36, 0.82, 0.47)
 const COR_RUIM := Color(1.0, 0.46, 0.4)
 const COR_INFO := Color(0.45, 0.7, 1.0)
@@ -1005,6 +1005,12 @@ const NOMES_PISTA := {"circuito_misto": "Colinas do Vinhedo", "docas_curta": "Pa
 
 
 ## Nome legível de uma pista a partir do id ("serra_alta" -> "Serra Alta").
+## Nome da prova para a tela: "Copa de Domingo — Etapa 1" (nos dados a
+## etapa vem em minúscula, que é a chave dos campeonatos).
+static func nome_evento(ev: Dictionary) -> String:
+	return String(ev.get("nome", "")).replace(" — etapa ", " — Etapa ")
+
+
 static func nome_pista(id: String) -> String:
 	if NOMES_PISTA.has(id):
 		return NOMES_PISTA[id]

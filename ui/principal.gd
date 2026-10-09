@@ -182,6 +182,23 @@ func _navegacao() -> HBoxContainer:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_size_override("font_size", 23)
 		b.clip_text = true
+		# Selecionado: sem fundo; só um filete ocre em cima e o texto em ocre.
+		var vazio := StyleBoxFlat.new()
+		vazio.bg_color = Color(0, 0, 0, 0)
+		vazio.set_content_margin_all(8)
+		var marcado := vazio.duplicate()
+		marcado.border_color = Aba.COR_DESTAQUE
+		marcado.border_width_top = 3
+		marcado.expand_margin_left = -28
+		marcado.expand_margin_right = -28
+		for estado in ["normal", "hover", "focus", "disabled"]:
+			b.add_theme_stylebox_override(estado, vazio)
+		for estado in ["pressed", "hover_pressed"]:
+			b.add_theme_stylebox_override(estado, marcado)
+		b.add_theme_color_override("font_color", Color(0.7, 0.73, 0.78))
+		b.add_theme_color_override("font_hover_color", Color(0.7, 0.73, 0.78))
+		b.add_theme_color_override("font_pressed_color", Aba.COR_DESTAQUE)
+		b.add_theme_color_override("font_hover_pressed_color", Aba.COR_DESTAQUE)
 		var ic := Aba.icone_reduzido(d[2], 78)
 		if ic == null and d.size() > 3:
 			ic = Aba.icone_reduzido(d[3], 78)  # ícone provisório até a arte chegar
@@ -279,6 +296,23 @@ func _tema() -> Theme:
 	t.set_color("font_pressed_color", "Button", Color(0.1, 0.1, 0.1))
 	t.set_color("font_hover_pressed_color", "Button", Color(0.1, 0.1, 0.1))
 	t.set_color("font_disabled_color", "Button", Color(0.64, 0.65, 0.7))
+	# Barra de rolagem lateral: 3× a padrão, para achar e arrastar com o dedo.
+	var trilho := StyleBoxFlat.new()
+	trilho.bg_color = Color(1, 1, 1, 0.04)
+	trilho.set_corner_radius_all(6)
+	trilho.content_margin_left = 6
+	trilho.content_margin_right = 6
+	var pega := StyleBoxFlat.new()
+	pega.bg_color = Color(1, 1, 1, 0.28)
+	pega.set_corner_radius_all(6)
+	pega.content_margin_left = 6
+	pega.content_margin_right = 6
+	var pega_ativa := pega.duplicate()
+	pega_ativa.bg_color = Color(Aba.COR_DESTAQUE, 0.8)
+	t.set_stylebox("scroll", "VScrollBar", trilho)
+	t.set_stylebox("grabber", "VScrollBar", pega)
+	t.set_stylebox("grabber_highlight", "VScrollBar", pega)
+	t.set_stylebox("grabber_pressed", "VScrollBar", pega_ativa)
 	return t
 
 
@@ -519,7 +553,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		pos.add_theme_font_size_override("font_size", 72)
 		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
 		v.add_child(pos)
-		var nome_ev := g.rotulo(ev.get("nome", ""), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
+		var nome_ev := g.rotulo(Aba.nome_evento(ev), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
 		nome_ev.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if tabela.size() >= 2:
 			var t0: float = tabela[0]["tempo"]

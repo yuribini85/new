@@ -20,7 +20,7 @@ MANIFESTO = RAIZ / "arte/ui/ui_manifesto.json"
 REFERENCIAS = sorted((RAIZ / "docs/referencias").glob("ui_*.webp"))
 
 PALETA = ("Palette of the attached reference screens: dark graphite and navy (#14171C, #1E2228), "
-          "warm off-white (#E8E2D4) and ochre accent (#C8892B).")
+          "warm off-white (#E8E2D4) and ochre accent (#D6A23E).")
 SEM_TEXTO = "No text, letters, numbers, logos, brands or readable signs anywhere in the image."
 TRANSPARENTE = ("Fully TRANSPARENT background (PNG with alpha); if transparency is impossible, a flat pure "
                 "magenta #FF00FF background with no gradient. No shadow on the background.")

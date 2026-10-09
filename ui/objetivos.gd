@@ -20,7 +20,7 @@ static func lista(jogador: Node, dados: Node) -> Array:
 static func _prologo(jogador: Node, dados: Node) -> Array:
 	var serie := String(dados.historia().get("adrian", {}).get("campeonato", ""))
 	var etapas := Campeonatos.etapas(dados, serie)
-	var primeira := String(etapas[0]["nome"]) if not etapas.is_empty() else serie
+	var primeira := Aba.nome_evento(etapas[0]) if not etapas.is_empty() else serie
 	var correu: bool = not etapas.is_empty() and jogador.historico.has(etapas[0]["id"])
 	return [
 		{"texto": "Comprar Freios 1 na Oficina", "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.OFICINA,
