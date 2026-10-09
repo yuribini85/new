@@ -22,9 +22,8 @@ const APAGADO := Color(0.93, 0.92, 0.88, 0.42)
 const AMBAR := Aba.COR_DESTAQUE  # ocre, o mesmo do menu
 const CORTE := Color(0.95, 0.36, 0.28)
 const SOMBRA := Color(0, 0, 0, 0.6)
-## O HUD começa logo abaixo do cabeçalho: a primeira linha é o nome da prova
-## (à esquerda; à direita fica o marcador da aceleração pendurado); os cantos
-## descem Y0.
+## O HUD começa logo abaixo do cabeçalho; os cantos descem Y0 para a volta
+## (à direita) não ficar sob o marcador da aceleração pendurado nele.
 const Y0 := 44.0
 ## Classificação relativa: abaixo da posição, faixas finas.
 const LISTA_TOPO := 104.0 + Y0
@@ -56,8 +55,6 @@ var _sec := 1.0
 var _evento := {}  # {"titulo", "sub", "cor", "prio", "t", "fica", "grande"}
 var _pendente := {}
 var _ultimo := -INF  # quando o último evento apareceu (s, relógio do sistema)
-## Prova e pista, numa linha discreta no alto.
-var titulo := ""
 var _linhas: Array = []  # [[Rect2, id]] da classificação desenhada (toque escolhe a câmera)
 
 
@@ -148,13 +145,6 @@ func _draw() -> void:
 	var f := Tipografia.fonte_numero()
 	var x := 18.0
 	# Posição: o número grande em âmbar (é o seu); o rótulo e o total pequenos.
-	if titulo != "":
-		var ft := Tipografia.fonte("semibold")
-		var t := titulo
-		var cabe := size.x - 290.0  # o marcador da aceleração fica à direita
-		while t.length() > 3 and ft.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 19).x > cabe:
-			t = t.left(-2) + "…"
-		_texto(t, Vector2(x, 32), 19, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, ft)
 	var pos := str(_d["posicao"])
 	_texto(pos, Vector2(x, 84 + Y0), 80, AMBAR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	var w := f.get_string_size(pos, HORIZONTAL_ALIGNMENT_LEFT, -1, 80).x

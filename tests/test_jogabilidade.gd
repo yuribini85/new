@@ -60,18 +60,6 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 		a.size = Vector2(LARGURA, 1100)
 		_raiz().add_child(a)
 		abas.append(a)
-	var corrida: Control = abas[4]
-	var u: Dictionary = j.ultima_corrida
-	# Análise com uma opção de nome e lista de provas bem longos.
-	corrida._analise = {"chave": corrida._chave_analise(u, j.garagem.carro(uid)), "ms": 100,
-		"base": {"faixa": [3, 5]}, "opcoes": [{"tipo": "peca", "item": d.lista("pecas")[0], "preco": 1000,
-		"nome": "Kit turbo de competição com nome muito comprido para testar quebra",
-		"faixa": [1, 2], "perde": d.lista("eventos").slice(0, 8).map(func(e): return e["nome"])}]}
-	# Diagnóstico da última corrida aberto (se ela foi derrota, o cartão aparece).
-	var ev_u: Dictionary = d.evento(u["evento_id"])
-	corrida._diagnosticar(u, ev_u, j.garagem.carro(uid), "%s|%d|%d" % [u["evento_id"], u.get("dia", 0), u.get("semente", 0)])
-	verificar(corrida._diag.has("comparacoes"), "diagnóstico calculado")
-	verificar(float(corrida._diag["colado"]) >= 0.0, "corrida refeita igual (mesma semente e preparação)")
 	for a in abas:
 		a.atualizar()
 	for a in abas:

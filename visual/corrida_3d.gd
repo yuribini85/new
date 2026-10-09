@@ -285,7 +285,8 @@ func atualizar(delta: float) -> void:
 		_off[id] = lerpf(_off[id], alvo[id], k)
 		_lateral[id] = clampf(float(base[id]) + float(_off[id]), -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 	var tocando := {}
-	for par in ([] if Preferencias.reduzir_animacoes else contatos(ordem, s, _lateral, _pista.comprimento)):
+	# Sem batidas depois da chegada (os carros param em fila, ver CorridaVisual).
+	for par in ([] if Preferencias.reduzir_animacoes or chegada > 0.0 else contatos(ordem, s, _lateral, _pista.comprimento)):
 		var chave := "%s|%s" % par
 		tocando[chave] = true
 		if _em_contato.has(chave) or _tempo - float(_ultima_batida.get(par[0], -99.0)) < BATIDA_INTERVALO_S \

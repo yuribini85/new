@@ -18,6 +18,7 @@ var girar := true
 ## Depois da linha de chegada o carro segue rodando e freia, em vez de parar
 ## em cima da linha (a simulação para de mover quem terminou).
 const DESACELERACAO_CHEGADA := 9.0  # m/s²: para em poucos segundos, no escurecer do fim
+const ESPACO_PARADO_M := 8.0  # parados depois da chegada: um atrás do outro, sem encostar
 ## Cores de alto contraste, na ordem do grid. O jogador usa a primeira.
 const PALETA := [
 	Color(1.0, 0.82, 0.1), Color(0.25, 0.65, 1.0), Color(1.0, 0.35, 0.35), Color(0.4, 0.9, 0.45),
@@ -77,7 +78,21 @@ func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> voi
 		if info["terminou"]:
 			var t: float = info["tempo_total"]
 			var s := _bruta(id, t)
-			_chegada[id] = {"t": t, "s": s, "v": maxf(s - _bruta(id, t - 1.0), 0.0)}
+			_chegada[id] = {"t": t, "s": s, "v": maxf(s - _bruta(id, t - 1.0), 0.0), "a": DESACELERACAO_CHEGADA}
+	# Depois da linha, ninguém para em cima de quem chegou antes: cada um para
+	# ESPACO_PARADO_M atrás do anterior (freia mais forte se precisar).
+	var ordem_chegada: Array = _chegada.keys()
+	ordem_chegada.sort_custom(func(a, b): return _chegada[a]["t"] < _chegada[b]["t"])
+	var limite := INF
+	for id in ordem_chegada:
+		var c: Dictionary = _chegada[id]
+		var v: float = c["v"]
+		var para: float = c["s"] + v * v / (2.0 * DESACELERACAO_CHEGADA)
+		if para > limite - ESPACO_PARADO_M:
+			var folga := maxf(limite - ESPACO_PARADO_M - float(c["s"]), 1.0)
+			c["a"] = maxf(DESACELERACAO_CHEGADA, v * v / (2.0 * folga))
+			para = c["s"] + v * v / (2.0 * float(c["a"]))
+		limite = para
 	for c in _carros.get_children():
 		c.queue_free()
 	_sprites = {}
@@ -117,8 +132,9 @@ func duracao() -> float:
 func distancia(id: String) -> float:
 	var c: Dictionary = _chegada.get(id, {})
 	if not c.is_empty() and tempo > c["t"]:
-		var dt := minf(tempo - c["t"], c["v"] / DESACELERACAO_CHEGADA)
-		return c["s"] + c["v"] * dt - 0.5 * DESACELERACAO_CHEGADA * dt * dt
+		var a: float = c.get("a", DESACELERACAO_CHEGADA)
+		var dt := minf(tempo - c["t"], c["v"] / a)
+		return c["s"] + c["v"] * dt - 0.5 * a * dt * dt
 	return _bruta(id, tempo)
 
 

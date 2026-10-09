@@ -57,10 +57,10 @@ var _volta_antes := 0
 var _melhor_volta := -1.0
 var _avisado := {}  # rival -> tempo do último aviso de aproximação
 var _painel: VBoxContainer
-var _analise := {}  # {"chave", "base", "opcoes", "ms"}
 var _analisando := false
 var _em_andamento := false
 var _vazio_topo: Control
+var _nome_prova: Label
 const ALTURA_MIN_AREA := 720.0
 var _sons: Sons
 var _s_jogador := 0.0
@@ -75,6 +75,7 @@ var segurar_largada := false
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Corrida")
+	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER  # a corrida cabe na tela: sem rolagem
 	_info = rotulo("", 30)
 	_relogio = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
 	# A corrida ocupa a tela: começa no topo absoluto (por trás do cabeçalho),
@@ -116,6 +117,12 @@ func _init(d: Node, j: Node) -> void:
 	_painel_hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_painel_hud.escolhido.connect(_camera)
 	area.add_child(_painel_hud)
+	# Nome da prova e da pista no pé da corrida, logo acima das câmeras.
+	_nome_prova = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
+	_nome_prova.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_nome_prova.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_nome_prova.clip_text = true
+	_nome_prova.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_cameras = _seletor_cameras()
 	conteudo.add_child(_cameras)
 	_painel = VBoxContainer.new()
@@ -269,293 +276,10 @@ func _construir_painel() -> void:
 		h.alignment = BoxContainer.ALIGNMENT_CENTER
 		_painel.add_child(h)
 		botao_texto("Ver resultado (teste)", func(): pular.emit(), h)
-	var u: Dictionary = jogador.ultima_corrida
-	if u.is_empty():
-		if not _em_andamento:
-			proximo_passo("Nenhuma corrida agora.",
-					"Escolher corrida", EVENTOS, _painel)
-		return
-	_resultado(u)
-
-
-func _resultado(u: Dictionary) -> void:
-	var ev: Dictionary = dados.evento(u["evento_id"])
-	var carreira: Carreira = jogador.carreira
-	var seu: Carro = jogador.garagem.carro(u["uid"])
-	var venceu: bool = u["posicao"] == 1
-	var anterior: Dictionary = u.get("anterior", {})
-	var v := cartao(COR_BOM if venceu else COR_RUIM, _painel)
-	rotulo("ÚLTIMA CORRIDA · " + ev.get("nome", ""), FONTE_PEQUENA, COR_SECUNDARIA, v)
-	rotulo("%dº de %d%s" % [u["posicao"], u["total"], "  · VITÓRIA!" if venceu else ""], 44,
-			COR_DESTAQUE if venceu else Color.WHITE, v)
-	var marcos := []
-	if venceu and (anterior.is_empty() or int(anterior.get("melhor_pos", 0)) > 1):
-		marcos.append(["PRIMEIRA VITÓRIA NESTA CORRIDA", COR_DESTAQUE])
-	if u.get("recorde", false) and not anterior.is_empty():
-		marcos.append(["RECORDE PESSOAL", COR_BOM])
-	if u["premio"] > 0:
-		marcos.append(["+%s G" % dinheiro(u["premio"]), COR_BOM])
-	selos(marcos, v)
-	if not anterior.is_empty():
-		var dp: int = int(anterior["ultima_pos"]) - int(u["posicao"])
-		var txt := "Antes %dº → agora %dº" % [anterior["ultima_pos"], u["posicao"]]
-		if dp != 0:
-			txt += " (%s%d)" % ["▲" if dp > 0 else "▼", absi(dp)]
-		if anterior["ultimo_tempo"] > 0.0 and u["tempo_jogador"] > 0.0:
-			txt += " · %+.1f s" % (u["tempo_jogador"] - anterior["ultimo_tempo"])
-		rotulo(txt, FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
-	if u.get("carro_premio_uid", -1) > 0:
-		var cp: Carro = jogador.garagem.carro(u["carro_premio_uid"])
-		if cp != null:
-			var h := fileira(v)
-			h.add_child(icone_carro(cp.base))
-			rotulo("Prêmio: %s, já na garagem" % cp.base["nome"], FONTE_PEQUENA + 2, COR_DESTAQUE, h)
-	_tabela(u, v)
-	if not venceu and seu != null:
-		_por_que(u, ev, seu)
-		_diagnostico_ui(u, ev, seu)
-		_o_que_ajuda(u, seu)
-	var fim := cartao(Color.TRANSPARENT, _painel)
-	rotulo("E AGORA?", FONTE_PEQUENA, COR_SECUNDARIA, fim)
-	var h := acoes(fim)
-	if not _em_andamento and seu != null:
-		botao("Disputar de novo", _correr_de_novo, true, true, h)
-	botao("Oficina", func():
-		if seu != null:
-			jogador.carro_ativo = seu.uid
-		ir_para.emit(OFICINA), true, false, h)
-	botao("Escolher outra corrida", func(): ir_para.emit(EVENTOS), true, false, h)
-
-
-## Classificação completa: posição, carro, tempo e diferença para o vencedor.
-func _tabela(u: Dictionary, pai: Control) -> void:
-	var tabela: Array = u.get("tabela", [])
-	if tabela.is_empty():
-		return
-	rotulo("CLASSIFICAÇÃO", FONTE_PEQUENA, COR_SECUNDARIA, pai)
-	var t0: float = tabela[0]["tempo"]
-	for i in tabela.size():
-		var lin: Dictionary = tabela[i]
-		var nome: String = jogador.carreira.rotulo_participante(u["evento_id"], lin["id"], u["uid"], int(u.get("semente", -1)))
-		var tempo := _mmss_dec(lin["tempo"]) if lin["terminou"] else "não terminou"
-		var dif := "" if i == 0 or not lin["terminou"] else "  +%.1f s" % (lin["tempo"] - t0)
-		var cor := COR_DESTAQUE if lin["id"] == "jogador" else Color.WHITE
-		rotulo("%dº  %s  ·  %s%s" % [i + 1, nome, tempo, dif], FONTE_PEQUENA + 2, cor, pai)
-
-
-## Por que perdeu: compara o seu carro com o vencedor e com o carro logo à
-## frente, atributo a atributo (números do próprio jogo).
-func _por_que(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
-	var carreira: Carreira = jogador.carreira
-	# O carro como foi inscrito (a preparação pode ter mudado depois).
-	var meu := _carro_da_corrida(u, seu).atributos_efetivos(ev["condicao"])
-	var tabela: Array = u.get("tabela", [])
-	var rivais := [u["vencedor"]]
-	var i_meu := tabela.map(func(x): return x["id"]).find("jogador")
-	if i_meu > 1:
-		rivais.append(tabela[i_meu - 1]["id"])
-	var v := cartao(COR_RUIM, _painel)
-	titulo_secao("POR QUE PERDI?", "Potência ajuda na aceleração e nas retas (quanto mais leve o carro, melhor); "
-			+ "pneus, nas curvas e na frenagem; freios, na frenagem. Pneus melhores seguram mais; peças de redução "
-			+ "de peso deixam o carro mais leve.", v, COR_RUIM)
-	for id in rivais:
-		var a := carreira.atributos_participante(u["evento_id"], id, u["uid"])
-		if a.is_empty() or meu.is_empty():
-			continue
-		var quem := "Vencedor" if id == u["vencedor"] else "Logo à frente"
-		rotulo("%s: %s" % [quem, carreira.rotulo_participante(u["evento_id"], id, u["uid"], int(u.get("semente", -1)))], 0, Color.WHITE, v)
-		selos(fatores(meu, a), v)
-
-
-## O carro como correu: o da garagem com a preparação guardada na inscrição.
-func _carro_da_corrida(u: Dictionary, seu: Carro) -> Carro:
-	if u.get("config") is Dictionary:
-		return seu.com_configuracao(u["config"], dados.peca, dados.pneu)
-	return seu
-
-
-## Diagnóstico sob demanda (Diagnostico): o potencial do carro sozinho na pista
-## contra o vencedor e o carro logo à frente, separado do tempo perdido no
-## tráfego da corrida, para não culpar a preparação pelo que foi tráfego.
-var _diag := {}
-
-
-func _diagnostico_ui(u: Dictionary, ev: Dictionary, seu: Carro) -> void:
-	var v := cartao(COR_INFO, _painel)
-	titulo_secao("FOI O CARRO OU A CORRIDA?", "Separa o que é do carro (cada um sozinho na pista: curvas e retas) "
-			+ "do que foi da corrida (tempo preso atrás de outro carro).", v, COR_INFO)
-	var chave := "%s|%d|%d" % [u["evento_id"], u.get("dia", 0), u.get("semente", 0)]
-	if _diag.get("chave", "") != chave:
-		botao("Descobrir", _diagnosticar.bind(u, ev, seu, chave), true, false, v)
-		return
-	titulo_secao("SÓ O CARRO", "Cada carro sozinho na pista, sem tráfego: é o que melhorar o carro muda.", v)
-	for c in _diag["comparacoes"]:
-		rotulo("%s · %s: você %s · ele %s" % [c["quem"], c["nome"], _mmss_dec(c["meu"]), _mmss_dec(c["rival"])],
-				FONTE_PEQUENA + 2, Color.WHITE, v)
-		rotulo("curvas %s · retas %s" % [_dif(c["curvas"]), _dif(c["retas"])], FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
-		rotulo(Diagnostico.gargalo(c["curvas"], c["retas"]), FONTE_PEQUENA + 1, COR_INFO, v)
-	separador(v)
-	titulo_secao("NA CORRIDA", "O que não depende do carro: o tempo preso atrás de outro carro. Depende da largada "
-			+ "(você larga em último) e das zonas de ultrapassagem da pista.", v)
-	if _diag.get("colado", -1.0) < 0.0:
-		rotulo("Corrida de versão antiga: sem análise.", FONTE_PEQUENA + 1, COR_SECUNDARIA, v)
-	else:
-		nota("icone_trafego", "%.0f s preso atrás de outro carro" % _diag["colado"], "", v, Color.WHITE)
-
-
-func _diagnosticar(u: Dictionary, ev: Dictionary, seu: Carro, chave: String) -> void:
-	var carreira: Carreira = jogador.carreira
-	var carro := _carro_da_corrida(u, seu)
-	var meu := carro.atributos_efetivos(ev["condicao"])
-	var tabela: Array = u.get("tabela", [])
-	var ids := [u["vencedor"]]
-	var i_meu := tabela.map(func(x): return x["id"]).find("jogador")
-	if i_meu > 1:
-		ids.append(tabela[i_meu - 1]["id"])
-	var comps := []
-	for id in ids:
-		var a := carreira.atributos_participante(u["evento_id"], id, u["uid"])
-		if a.is_empty():
-			continue
-		var p := Diagnostico.potencial(dados, ev, meu, a)
-		p["quem"] = "Vencedor" if id == u["vencedor"] else "Logo à frente"
-		p["nome"] = carreira.rotulo_participante(u["evento_id"], id, u["uid"], int(u.get("semente", -1)))
-		comps.append(p)
-	var colado := -1.0
-	if u.has("semente"):
-		var r := carreira.preparar(u["evento_id"], u["uid"], int(u["semente"]), true, carro)
-		# Só vale se a corrida refeita é a mesma (mesma posição).
-		if not r.has("erro") and r["resultado"]["classificacao"].find("jogador") + 1 == int(u["posicao"]):
-			colado = Diagnostico.colado(r["resultado"], "jogador", float(dados.simulacao()["distancia_minima_m"]))
-	_diag = {"chave": chave, "comparacoes": comps, "colado": colado}
-	mudou.emit()
-
-
-## "+0,8 s" (mais lento) ou "−0,3 s" (mais rápido).
-static func _dif(x: float) -> String:
-	return "%s%.1f s" % ["+" if x >= 0.0 else "−", absf(x)]
-
-
-## Selos de comparação: o que o rival tem a mais (vermelho) e você (verde).
-static func fatores(meu: Dictionary, rival: Dictionary) -> Array:
-	var r := []
-	var pp_meu: float = meu["potencia"] / maxf(meu["peso"], 1.0)
-	var pp_rival: float = rival["potencia"] / maxf(rival["peso"], 1.0)
-	var d := pp_rival / maxf(pp_meu, 1e-6) - 1.0
-	if absf(d) >= 0.02:
-		r.append(["%s %d%% mais potência por kg" % ["ele tem" if d > 0 else "você tem", roundi(absf(d) * 100.0 if d > 0
-				else (pp_meu / pp_rival - 1.0) * 100.0)], COR_RUIM if d > 0 else COR_BOM])
-	var da: float = rival["aderencia"] / maxf(meu["aderencia"], 1e-6) - 1.0
-	if absf(da) >= 0.01:
-		r.append(["aderência: %s" % ("ele +%d%%" % roundi(da * 100.0) if da > 0 else "você +%d%%" % roundi(
-				(meu["aderencia"] / rival["aderencia"] - 1.0) * 100.0)), COR_RUIM if da > 0 else COR_BOM])
-	var df: float = rival["freio"] / maxf(meu["freio"], 1e-6) - 1.0
-	if absf(df) >= 0.01:
-		r.append(["freio: %s" % ("ele +%d%%" % roundi(df * 100.0) if df > 0 else "você +%d%%" % roundi(
-				(meu["freio"] / rival["freio"] - 1.0) * 100.0)), COR_RUIM if df > 0 else COR_BOM])
-	r.append(["ele %d cv · %d kg · %s" % [rival["potencia"], rival["peso"], rival["tracao"]], COR_NEUTRA.lightened(0.3)])
-	r.append(["você %d cv · %d kg · %s" % [meu["potencia"], meu["peso"], meu["tracao"]], COR_DESTAQUE])
-	return r
-
-
-## "O que ajuda?": simula esta prova com cada peça ou pneu que cabe no saldo.
-## A análise vale enquanto carro, saldo e dia forem os mesmos.
-func _o_que_ajuda(u: Dictionary, seu: Carro) -> void:
-	var va := cartao(COR_INFO, _painel)
-	titulo_secao("O QUE MELHORA MEU RESULTADO?", "Simula esta corrida várias vezes com cada peça ou pneu que cabe no "
-			+ "seu saldo e mostra em que posição você tende a chegar. É uma previsão, não uma promessa. "
-			+ "%d corridas simuladas por opção." % Mecanico.amostras_para(dados.evento(u["evento_id"])), va, COR_INFO)
-	if _analisando:
-		rotulo("Analisando…", 0, COR_INFO, va)
-		return
-	if _analise.get("chave", "") != _chave_analise(u, seu):
-		botao("Descobrir", _analisar, not _em_andamento or int(jogador.fila.get("uid", -1)) != seu.uid, true, va)
-		return
-	var hoje := Mecanico.texto_faixa(_analise["base"]["faixa"])
-	rotulo("Sem mudar nada, previsão: %s." % hoje, 0, Color.WHITE, va)
-	if _analise["opcoes"].is_empty():
-		rotulo("Nada no seu saldo melhora isso.", FONTE_PEQUENA + 2, COR_SECUNDARIA, va)
-	for o in _analise["opcoes"]:
-		separador(va)
-		var h := fileira(va)
-		var info := VBoxContainer.new()
-		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		h.add_child(info)
-		rotulo(o["nome"], 0, Color.WHITE, info)
-		var etiquetas := [["previsão: %s → %s" % [hoje, Mecanico.texto_faixa(o["faixa"])],
-				COR_BOM if o["faixa"][0] == 1 else COR_INFO],
-				["custa %s G" % dinheiro(o["preco"]) if o["preco"] > 0 else "já é sua: usar de novo", COR_NEUTRA.lightened(0.3)]]
-		if not o["perde"].is_empty():
-			etiquetas.append(["⚠ deixa de poder correr: %s" % ", ".join(o["perde"]), COR_RUIM])
-		selos(etiquetas, info)
-		var b := botao("Usar" if o["preco"] == 0 else "%s G" % dinheiro(o["preco"]),
-				_comprar.bind(o, seu), not _em_andamento or int(jogador.fila.get("uid", -1)) != seu.uid, false, h)
-		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-
-
-func _chave_analise(u: Dictionary, seu: Carro) -> String:
-	return "%s|%d|%d|%s|%s" % [u["evento_id"], u["dia"], jogador.economia.saldo, str(seu.pecas.keys().map(func(k): return seu.pecas[k]["id"])),
-			str(seu.pneus.map(func(p): return p["id"]))]
-
-
-## Análise opção por opção, devolvendo o controle à tela entre elas para
-## mostrar o progresso (no celular pode levar alguns segundos).
-func _analisar() -> void:
-	var u: Dictionary = jogador.ultima_corrida
-	var carro: Carro = jogador.garagem.carro(u["uid"])
-	if carro == null or _analisando:
-		return
-	_analisando = true
-	var inicio := Time.get_ticks_msec()
-	for c in _painel.get_children():
-		c.queue_free()
-	var v := cartao(COR_INFO, _painel)
-	rotulo("O QUE MELHORA MEU RESULTADO?", FONTE_PEQUENA, COR_INFO, v)
-	var progresso := rotulo("Instalando…", 0, Color.WHITE, v)
-	var barra_p := ProgressBar.new()
-	barra_p.custom_minimum_size = Vector2(0, 24)
-	barra_p.show_percentage = false
-	v.add_child(barra_p)
-	await get_tree().process_frame
-	var carreira: Carreira = jogador.carreira
-	var base := Mecanico.avaliar(carreira, u["evento_id"], u["uid"], carro)
-	var pode_antes := Mecanico.provas_possiveis(dados, carro)
-	var cands := Mecanico.candidatas(dados, jogador, carro)
-	var boas := []
-	for i in cands.size():
-		if not is_instance_valid(progresso):
-			break
-		progresso.text = "Testando %d de %d: %s" % [i + 1, cands.size(), cands[i]["nome"]]
-		barra_p.value = 100.0 * i / maxf(cands.size(), 1.0)
-		await get_tree().process_frame
-		var o: Dictionary = cands[i]
-		if Mecanico.considerar(o, Mecanico.avaliar(carreira, u["evento_id"], u["uid"], o["carro"]), base, pode_antes, dados):
-			boas.append(o)
-	_analise = {"chave": _chave_analise(u, carro), "base": base, "opcoes": Mecanico.ordenar(boas, 3),
-			"ms": Time.get_ticks_msec() - inicio}
-	_analisando = false
-	_construir_painel()
-
-
-func _comprar(o: Dictionary, carro: Carro) -> void:
-	var motivo := ""
-	if o["tipo"] == "peca":
-		motivo = jogador.concessionaria.comprar_peca(carro, o["item"])
-	else:
-		motivo = jogador.concessionaria.comprar_pneu(carro, o["item"])
-	if motivo != "":
-		avisar("Não deu: %s." % motivo, false)
-	else:
-		avisar("%s instalado em %s. Corra de novo para conferir." % [o["nome"], carro.base["nome"]])
-
-
-func _correr_de_novo() -> void:
-	var u: Dictionary = jogador.ultima_corrida
-	var motivo: String = jogador.fila_ctrl.iniciar(u["evento_id"], u["uid"], 1, Aceleracao.agora(jogador))
-	if motivo != "":
-		avisar("Não deu para correr: %s." % motivo, false)
-	else:
-		avisar("Largada! %s." % dados.evento(u["evento_id"])["nome"])
+	# O resultado de cada corrida aparece na janela do resultado (principal);
+	# aqui, sem corrida, só o próximo passo.
+	if not _em_andamento and not _area.visible:
+		proximo_passo("Nenhuma corrida agora.", "Escolher corrida", EVENTOS, _painel)
 
 
 func _process(delta: float) -> void:
@@ -583,8 +307,10 @@ func _process(delta: float) -> void:
 	if f.is_empty():
 		_visual.limpar()
 		_visual3d.limpar()
-		_area.visible = false
-		_ajustar_area()
+		if _area.visible:
+			_area.visible = false
+			_ajustar_area()
+			_construir_painel()  # agora sim o próximo passo (na chegada, a imagem parada)
 		_semente_mostrada = 0
 		_segurar = 0.0
 		_sons.motor(false)
@@ -680,7 +406,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_visual3d.nomes = _nomes_curtos
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
 	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
-	_painel_hud.titulo = "%s · %s" % [_info.text, nome_pista(_pista.id)]
+	_nome_prova.text = "%s · %s" % [_info.text, nome_pista(_pista.id)]
 	_diretor.reiniciar()
 	_foco_auto = "jogador"
 	_camera(_camera_modo)
@@ -715,13 +441,15 @@ func _ajustar_area() -> void:
 		_vazio_topo.visible = not correndo
 	_info.visible = not correndo
 	_relogio.visible = not correndo
+	_nome_prova.visible = correndo
 	# Abaixo do cabeçalho (o HUD 3D desvia do marcador da aceleração à direita;
 	# a vista DADOS, de cima a baixo na largura toda, começa abaixo dele).
 	var topo := topo_livre + (Cabecalho.ALTURA_MARCADOR + 6.0 if _camera_modo == "dados" else 0.0)
 	_painel_hud.offset_top = topo
 	_vista.offset_top = topo
 	if correndo:
-		var livre := size.y - _cameras.get_combined_minimum_size().y - 14.0 - 10.0
+		var livre := size.y - _cameras.get_combined_minimum_size().y - _nome_prova.get_combined_minimum_size().y \
+				- 2.0 * 14.0 - 10.0
 		_area.custom_minimum_size.y = maxf(ALTURA_MIN_AREA, livre)
 
 

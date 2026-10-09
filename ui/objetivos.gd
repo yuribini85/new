@@ -40,7 +40,7 @@ static func _prologo(jogador: Node, dados: Node) -> Array:
 static func _elena(jogador: Node, _dados: Node) -> Array:
 	return [
 		{"texto": "Comprar um carro na Second Chance", "feito": not jogador.garagem.lista().is_empty(),
-			"aba": Aba.LOJA, "botao": "Ir para o Mercado"},
+			"aba": Aba.LOJA, "botao": "Ir para as Lojas"},
 		{"texto": "Disputar uma corrida sem licença", "feito": not jogador.historico.is_empty(), "aba": Aba.EVENTOS,
 			"botao": "Ver corridas"},
 		{"texto": "Começar o treino da licença Club", "feito": jogador.treinos.has("CLUB") or "CLUB" in jogador.licencas,
@@ -59,7 +59,7 @@ static func _carreira(jogador: Node, dados: Node) -> Array:
 			vitorias_b = true
 	return [
 		{"texto": "Comprar o primeiro carro", "feito": not jogador.garagem.lista().is_empty(),
-			"aba": Aba.LOJA, "botao": "Ir para o Mercado"},
+			"aba": Aba.LOJA, "botao": "Ir para as Lojas"},
 		{"texto": "Disputar uma corrida", "feito": not jogador.historico.is_empty() or not jogador.vitorias.is_empty(),
 			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.OFICINA, "botao": "Ir para a Oficina"},

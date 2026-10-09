@@ -176,6 +176,8 @@ func _process(delta: float) -> void:
 
 
 func _rolar(d: float) -> void:
+	if _alvo == self and vertical_scroll_mode == ScrollContainer.SCROLL_MODE_SHOW_NEVER:
+		return  # tela sem rolagem (Corrida)
 	if _horizontal:
 		_alvo.scroll_horizontal -= int(round(d))
 	else:
@@ -568,7 +570,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)
 		var como := []
 		if base.get("novo", true):
-			como.append("novo no Mercado por %s G" % dinheiro(int(base["preco"])))
+			como.append("novo nas Lojas por %s G" % dinheiro(int(base["preco"])))
 		if not base.get("usados", []).is_empty():
 			como.append("usado em alguns períodos")
 		for ev in dados.lista("eventos"):
@@ -594,7 +596,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 				else:
 					jogador.desejos.append(base["id"])
 				mudou.emit(), vc)
-			bd.pressed.connect(func(): bd.text = "Feito: veja as próximas ofertas no Mercado")
+			bd.pressed.connect(func(): bd.text = "Feito: veja as Lojas")
 		if not fab.is_empty():
 			var vf := cartao(Color.TRANSPARENT, v)
 			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)

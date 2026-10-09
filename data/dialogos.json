@@ -1058,7 +1058,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Em Correr, as provas sem licença já estão liberadas."
+    "texto": "Em Corridas, as provas sem licença já estão liberadas."
    }
   ],
   "requer": [],
@@ -1235,7 +1235,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Novas provas liberadas em Correr › Club."
+    "texto": "Novas provas liberadas em Corridas › Club."
    }
   ],
   "requer": [],

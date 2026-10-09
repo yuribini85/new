@@ -31,10 +31,10 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	cabecalho("Correr", "Vença para ganhar giros", "fundo_competicoes")
+	cabecalho("Corridas", "Vença para ganhar giros", "fundo_competicoes")
 	var garagem := carro_ativo()
 	if garagem == null:
-		proximo_passo("Você precisa de um carro para correr.", "Ir para o Mercado", LOJA)
+		proximo_passo("Você precisa de um carro para correr.", "Ir para as Lojas", LOJA)
 		return
 	if _config_uid != garagem.uid or _config >= garagem.configuracoes.size():
 		_config = -1

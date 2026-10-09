@@ -338,3 +338,27 @@ func test_classificacao_relativa() -> void:
 	igual(HudCorrida.linhas_relativas(l.call(2, 6)), [0, 1, 2, 3], "terceiro: sem pulo")
 	igual(HudCorrida.linhas_relativas(l.call(4, 6)), [0, -1, 3, 4, 5], "quinto: pulo depois do líder")
 	igual(HudCorrida.linhas_relativas(l.call(5, 6)), [0, -1, 4, 5], "último: sem ninguém atrás")
+
+
+## Depois da linha, quem chega atrás para atrás de quem chegou antes (sem
+## empilhar os carros): cada um com ESPACO_PARADO_M de folga.
+func test_chegada_para_em_fila() -> void:
+	var d := dados_fixture()
+	var pista: Pista = d.pista(d.lista("pistas")[0]["id"])
+	var amostras := []
+	for k in 201:
+		var t := k * 0.1
+		# Os três a 40 m/s, separados por 2 m: chegam quase juntos.
+		amostras.append({"t": t, "s": {"a": 40.0 * t, "b": 40.0 * t - 2.0, "c": 40.0 * t - 4.0}})
+	var fim := 600.0
+	var r := {"amostras": amostras, "voltas": 1, "comprimento": fim, "carros": {
+		"a": {"terminou": true, "tempo_total": fim / 40.0},
+		"b": {"terminou": true, "tempo_total": (fim + 2.0) / 40.0},
+		"c": {"terminou": true, "tempo_total": (fim + 4.0) / 40.0}}}
+	var v := CorridaVisual.new()
+	v.mostrar(pista, r)
+	v.tempo = 60.0
+	verificar(v.distancia("a") - v.distancia("b") >= CorridaVisual.ESPACO_PARADO_M - 0.01, "b para atrás de a")
+	verificar(v.distancia("b") - v.distancia("c") >= CorridaVisual.ESPACO_PARADO_M - 0.01, "c para atrás de b")
+	v.free()
+	d.free()

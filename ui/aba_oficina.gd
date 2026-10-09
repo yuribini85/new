@@ -91,7 +91,7 @@ func construir() -> void:
 	var lista: Array = jogador.garagem.lista()
 	if lista.is_empty():
 		rotulo("Oficina", FONTE_TITULO)
-		proximo_passo("Você ainda não tem carro para melhorar.", "Ir para o Mercado", LOJA)
+		proximo_passo("Você ainda não tem carro para melhorar.", "Ir para as Lojas", LOJA)
 		return
 	if carro_ativo() == null:
 		jogador.carro_ativo = lista[0].uid

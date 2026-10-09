@@ -29,13 +29,13 @@ const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCA
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
 ## telas internas (de Garagem e Correr), abertas pelo caminho do jogo.
-const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Mercado", 1, "aba_mercado"], ["Correr", 3, "aba_competicoes"],
+const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Lojas", 1, "aba_mercado"], ["Corridas", 3, "aba_competicoes"],
 	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"]]
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
 ## Título de cada tela no cabeçalho.
-const TITULOS := ["Garagem", "Mercado", "Oficina", "Correr", "Corrida", "Carreira", "Equipe"]
+const TITULOS := ["Garagem", "Lojas", "Oficina", "Corridas", "Corrida", "Carreira", "Equipe"]
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
 

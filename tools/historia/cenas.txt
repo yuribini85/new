@@ -239,7 +239,7 @@ Marcus: Ele diz isso de todos.
 Elena: Leva para a garagem.
 [RETURN_TO_GARAGE]
 Elena: Sem licença, só provas abertas. Serve para começar.
-Sistema: Em Correr, as provas sem licença já estão liberadas.
+Sistema: Em Corridas, as provas sem licença já estão liberadas.
 
 # ---------------------------------------------------------------- IV. Licença Club
 = SCN_D01 | LICENCA_EXIGIDA | personagem=elena; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; capitulo=IV; cenario=vector_academy
@@ -272,7 +272,7 @@ Responsável: Licença Club aprovada.
 [ILUSTRACAO:licenca_club]
 Marcus: A primeira com o seu nome.
 Elena: A primeira.
-Sistema: Novas provas liberadas em Correr › Club.
+Sistema: Novas provas liberadas em Corridas › Club.
 
 # ---------------------------------------------------------------- V em diante
 = SCN_E01 | CORRIDA_INICIO | personagem=elena; proibe=ELENA_FIRST_OFFICIAL_RACE; flags=ELENA_FIRST_OFFICIAL_RACE; capitulo=V; cenario=box_largada
