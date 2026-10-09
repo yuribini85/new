@@ -129,6 +129,12 @@ func test_arrasto_limita_a_velocidade_pela_potencia() -> void:
 	var teorica := pow(300.0 * Simulacao.CV_PARA_W / (0.5 * 1.2 * 0.6), 1.0 / 3.0)
 	verificar(vmax < teorica * 1.001, "não passa da velocidade terminal: %.1f > %.1f m/s" % [vmax, teorica])
 	verificar(vmax > teorica * 0.95, "chega perto da terminal numa reta de 4 km: %.1f de %.1f m/s" % [vmax, teorica])
+	# A velocidade máxima da ficha da garagem é a mesma terminal do modelo.
+	var ficha := Simulacao.velocidade_maxima_kmh(c.atributos_efetivos("seco"), params)
+	verificar(absf(ficha * Simulacao.KMH_PARA_MS - teorica) < 0.5, "ficha: %.1f de %.1f m/s" % [ficha * Simulacao.KMH_PARA_MS, teorica])
+	var com_teto := c.atributos_efetivos("seco")
+	com_teto["velocidade_max"] = 150.0
+	igual(Simulacao.velocidade_maxima_kmh(com_teto, params), 150.0, "o teto do carro limita a ficha")
 	d.free()
 
 

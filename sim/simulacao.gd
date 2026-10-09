@@ -230,6 +230,37 @@ static func _acel_livre(acel_tracao: float, potencia_w: float, massa: float, v: 
 	return minf(acel_tracao, motriz / massa) - k_arrasto * v * v / massa
 
 
+## Velocidade máxima (km/h) do modelo da corrida: onde a força na roda (ou P/v
+## sem câmbio) iguala o arrasto, limitada pelo teto `velocidade_max` do carro.
+## INF quando nada limita (sem arrasto nem teto). Para a ficha da garagem.
+static func velocidade_maxima_kmh(a: Dictionary, params: Dictionary) -> float:
+	var teto := INF if a.get("velocidade_max") == null else float(a["velocidade_max"])
+	var k_arrasto := 0.5 * float(params.get("densidade_ar_kg_m3", 0.0)) * float(params.get("cda_m2", 0.0))
+	var forca := forca_por_velocidade(a)
+	if k_arrasto <= 0.0 and forca.is_empty():
+		return teto
+	var potencia_w := float(a["potencia"]) * CV_PARA_W
+	var sobra := func(v: float) -> float:
+		var motriz := potencia_w / v
+		if not forca.is_empty():
+			var x := v / PASSO_FORCA
+			var i := mini(int(x), forca.size() - 2)
+			motriz = lerpf(forca[i], forca[i + 1], clampf(x - i, 0.0, 1.0))
+		return motriz - k_arrasto * v * v
+	var anterior := PASSO_FORCA
+	var s_ant: float = sobra.call(anterior)
+	var v := anterior + PASSO_FORCA
+	while v <= V_MAX_FORCA:
+		var s: float = sobra.call(v)
+		if s <= 0.0:
+			var cruza := anterior + (v - anterior) * s_ant / maxf(s_ant - s, 1e-9)
+			return minf(cruza / KMH_PARA_MS, teto)
+		anterior = v
+		s_ant = s
+		v += PASSO_FORCA
+	return minf(V_MAX_FORCA / KMH_PARA_MS, teto)
+
+
 ## Fração do peso sobre o eixo motriz: com "peso_dianteiro" do carro (GT2),
 ## dianteira para FF, traseira para FR/MR/RR e tudo no 4WD; sem ele, o fator
 ## fixo por tração de data/simulacao.json.

@@ -68,10 +68,6 @@ func _acao(pai: Control, acao: Callable) -> Button:
 	return b
 
 
-## Peças de cada atributo do palco (as barras dentadas mostram quanto já foi
-## comprado do que existe para o carro).
-const PECAS_POTENCIA := ["aspiracao", "muffler", "portpolish", "enginebalance", "displacement", "computer", "intercooler"]
-const PECAS_PESO := ["lightweight", "corrida"]
 ## Todas as categorias compráveis, na ordem da seção Evolução.
 const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
 		"lightweight", "corrida", "brake", "cambio"]
@@ -93,6 +89,51 @@ func _progresso(c: Carro, categorias: Array) -> Array:
 	return [feitos, total]
 
 
+## Teto de cada número da ficha por modelo: {potencia, peso, vel} com a melhor
+## peça de cada categoria (mais potência; no empate, menos peso) e o melhor
+## ajuste do câmbio para a velocidade. Calculado uma vez por modelo.
+static var _tetos := {}
+
+
+func _tetos_do_modelo(c: Carro) -> Dictionary:
+	if _tetos.has(c.id):
+		return _tetos[c.id]
+	var m := c.copiar()
+	m.pecas = {}
+	m.ajuste_cambio = ""
+	var por_categoria := {}
+	for p in dados.lista("pecas"):
+		if c.motivo_recusa(p).is_empty():
+			por_categoria.get_or_add(p["categoria"], []).append(p)
+	for cat in por_categoria:
+		var melhor := {}
+		var nota := [-INF, INF]
+		for p in por_categoria[cat]:
+			m.pecas[cat] = p
+			var a := m.atributos_efetivos("seco")
+			if a["potencia"] > nota[0] or (a["potencia"] == nota[0] and a["peso"] < nota[1]):
+				nota = [a["potencia"], a["peso"]]
+				melhor = p
+		m.pecas[cat] = melhor
+	var a := m.atributos_efetivos("seco")
+	var vel := 0.0
+	for ajuste in ["", "curto", "longo"]:
+		m.ajuste_cambio = ajuste
+		vel = maxf(vel, Simulacao.velocidade_maxima_kmh(m.atributos_efetivos("seco"), dados.simulacao()))
+	_tetos[c.id] = {"potencia": float(a["potencia"]), "peso": float(a["peso"]), "vel": vel}
+	return _tetos[c.id]
+
+
+## Barra da ficha: quanto do caminho entre o de fábrica e o teto do modelo o
+## carro já andou, em dentes. Sem caminho (nenhuma peça muda o número), cheia.
+static func _barra_teto(fabrica: float, atual: float, teto: float) -> BarraDentes:
+	var n := BarraDentes.MAX_DENTES
+	var faixa := teto - fabrica
+	if absf(faixa) < 1e-6 or not is_finite(faixa):
+		return BarraDentes.new(n, n)
+	return BarraDentes.new(clampi(roundi((atual - fabrica) / faixa * n), 0, n), n)
+
+
 ## Pneus: os compostos comprados além do de fábrica.
 func _progresso_pneus(c: Carro) -> Array:
 	var fabrica: String = dados.economia().get("pneu_de_fabrica", "")
@@ -102,8 +143,8 @@ func _progresso_pneus(c: Carro) -> Array:
 
 
 ## A vitrine com a ficha por cima, como um HUD: o nome em cima, setas para
-## passar pelos carros da coleção e os quatro atributos embaixo (pneus e
-## freios em relação ao de fábrica), cada um com a barra da evolução.
+## passar pelos carros da coleção e, embaixo, potência, peso e velocidade
+## máxima, cada um com a barra de quanto falta para o teto do modelo.
 func _palco(c: Carro, lista: Array) -> Control:
 	var palco := Control.new()
 	palco.custom_minimum_size = _vitrine.custom_minimum_size
@@ -146,25 +187,29 @@ func _palco(c: Carro, lista: Array) -> Control:
 				jogador.carro_ativo = alvo.uid
 				mudou.emit())
 			palco.add_child(b)
-	# Faixa de baixo: os quatro atributos.
+	# Faixa de baixo: os resultados das peças (a Evolução embaixo mostra as
+	# peças em si). Cada barra: do de fábrica até o teto do modelo.
 	var a := c.atributos_efetivos("seco")
+	var fab := c.copiar()
+	fab.pecas = {}
+	fab.ajuste_cambio = ""
+	var af := fab.atributos_efetivos("seco")
+	var teto := _tetos_do_modelo(c)
+	var vel := Simulacao.velocidade_maxima_kmh(a, dados.simulacao())
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	h.offset_top = -98
 	h.offset_bottom = -10
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(h)
-	# Pneus e freios: o ganho sobre o carro de fábrica (o modelo já tem a
-	# aderência e o freio dele; "-2%" num carro sem peça pareceria defeito).
-	var ganho := func(attr: String) -> float:
-		return float(a.get(attr, 1.0)) / maxf(float(c.base.get(attr, 1.0) if c.base.get(attr) != null else 1.0), 1e-6)
 	# Cada atributo: rótulo pequeno em caixa alta e, embaixo, valor grande e
-	# unidade (sem ícone: o rótulo já diz o que é).
-	# A âncora de cada um (POTENCIA, PESO, PNEUS, FREIOS) é o destaque do tutorial.
-	for it in [["POTÊNCIA", "POTENCIA", "%d" % a["potencia"], "cv", _progresso(c, PECAS_POTENCIA)],
-			["PESO", "PESO", "%d" % a["peso"], "kg", _progresso(c, PECAS_PESO)],
-			["PNEUS", "PNEUS", texto_fator(ganho.call("aderencia"), true), "", _progresso_pneus(c)],
-			["FREIOS", "FREIOS", texto_fator(ganho.call("freio"), true), "", _progresso(c, ["brake"])]]:
+	# unidade (sem ícone: o rótulo já diz o que é). O segundo item é a âncora
+	# do destaque do tutorial.
+	for it in [["POTÊNCIA", "POTENCIA", "%d" % a["potencia"], "cv",
+				_barra_teto(af["potencia"], a["potencia"], teto["potencia"])],
+			["PESO", "PESO", "%d" % a["peso"], "kg", _barra_teto(af["peso"], a["peso"], teto["peso"])],
+			["VEL. MÁX", "VELOCIDADE", "—" if not is_finite(vel) else "%d" % roundi(vel), "km/h",
+				_barra_teto(Simulacao.velocidade_maxima_kmh(af, dados.simulacao()), vel, teto["vel"])]]:
 		var cel := VBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.add_theme_constant_override("separation", -2)
@@ -193,7 +238,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 		margem.add_theme_constant_override("margin_right", 18)
 		margem.add_theme_constant_override("margin_top", 4)
 		margem.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		margem.add_child(BarraDentes.new(it[4][0], it[4][1]))
+		margem.add_child(it[4])
 		cel.add_child(margem)
 	return palco
 
@@ -216,6 +261,8 @@ func _evolucao(c: Carro) -> void:
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cel.add_theme_constant_override("separation", 4)
 		g.add_child(cel)
+		if cat == "brake":
+			ancora("FREIOS", cel)
 		var linha := HBoxContainer.new()
 		cel.add_child(linha)
 		var nome := Label.new()
@@ -236,6 +283,7 @@ func _evolucao(c: Carro) -> void:
 	cel_p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cel_p.add_theme_constant_override("separation", 4)
 	g.add_child(cel_p)
+	ancora("PNEUS", cel_p)
 	var lp := HBoxContainer.new()
 	cel_p.add_child(lp)
 	var np := Label.new()
