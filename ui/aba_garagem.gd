@@ -45,7 +45,7 @@ func construir() -> void:
 	# Correr fica na barra de baixo; aqui, melhorar (principal) e vender.
 	var h := acoes()
 	var melhorar := _acao(h, func(): ir_para.emit(OFICINA))
-	Tipografia.acao_primaria(melhorar, "Melhorar o carro", COR_DESTAQUE, Color(0.1, 0.1, 0.1), ALTURA_TEXTO_ACAO, ALTURA_ACAO)
+	Tipografia.acao_primaria(melhorar, "Oficina", COR_DESTAQUE, Color(0.1, 0.1, 0.1), ALTURA_TEXTO_ACAO, ALTURA_ACAO)
 	var vender := _acao(h, _confirmar_venda.bind(c))
 	vender.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid)
 	Tipografia.acao_neutra(vender, "Vender · %s G" % dinheiro(revenda(c.base)), ALTURA_TEXTO_ACAO - 2, ALTURA_ACAO)

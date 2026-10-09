@@ -519,7 +519,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				else:
 					_ir_para(4)
 				atualizar(), "icone_de_novo"],
-			["Melhorar o carro", func():
+			["Oficina", func():
 				jogador.carro_ativo = c["uid"]
 				_ir_para(2)
 				atualizar(), "icone_melhorar"],

@@ -298,7 +298,7 @@ func _resultado(u: Dictionary) -> void:
 	var h := acoes(fim)
 	if not _em_andamento and seu != null:
 		botao("Disputar de novo", _correr_de_novo, true, true, h)
-	botao("Melhorar o carro", func():
+	botao("Oficina", func():
 		if seu != null:
 			jogador.carro_ativo = seu.uid
 		ir_para.emit(OFICINA), true, false, h)

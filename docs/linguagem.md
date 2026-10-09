@@ -43,7 +43,7 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
 | Desafiar | **Correr** | o jogador entende na hora |
 | Correr ×N (vencidas) / "Renda: repetir vencidas" | **Disputar de novo ×N** + linha "Rende créditos, até com o app fechado" | diz o ganho |
 | Repetir (resultado) | **Disputar de novo** | idem |
-| Preparar (botão) | **Melhorar o carro** | diz o objetivo |
+| Preparar (botão) | **Oficina** | diz o objetivo |
 | Oficina (tela) | **Oficina** (mantém) | todo mundo sabe o que é |
 | Preparação / preparação salva | **Montagem** / **Montagens salvas** | "preparação" soa técnico |
 | Testar preparação | **Comparar montagens** | é o que faz |
@@ -75,7 +75,7 @@ Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem
 1. **Resultado** (referência `ui_resultado.webp`):
    - pódio dos 3 primeiros e a sua posição em destaque;
    - uma frase de motivo, saída do diagnóstico ("Perdeu nas retas: falta potência");
-   - **um** botão principal, que muda com o motivo: "Melhorar o carro" se o carro é o
+   - **um** botão principal, que muda com o motivo: "Oficina" se o carro é o
      problema, "Disputar de novo" se foi a corrida;
    - os outros botões menores.
 2. **Cartão de competição** (referência `ui_competicoes.webp`):
