@@ -82,10 +82,34 @@ def tom(c: dict) -> str:
     return ", ".join(partes)
 
 
+def podar(itens: list[dict], carros: list[dict]) -> tuple[list[dict], int]:
+    """Tira do manifesto os carros que saíram da frota (decisão 40). Quem pedia
+    "o mesmo desenho" de um que saiu passa a pedir o do substituto, se for do
+    mesmo modelo; senão a frase sai."""
+    ficam = {c["id"]: c for c in carros}
+    removidos = RAIZ / "data/carros_removidos.json"
+    subst = json.loads(removidos.read_text(encoding="utf-8")) if removidos.exists() else {}
+    familia = lambda i: " ".join(ficam[i]["nome"].split()[:2]) if i in ficam else ""
+    novos = []
+    for it in itens:
+        if it["id"] not in ficam:
+            continue
+        m = re.search(r"; same basic body design as ([a-z0-9_]+) \(a variant of the same model\)", it["descricao"])
+        if m and m.group(1) not in ficam:
+            outro = subst.get(m.group(1), "")
+            if outro and outro != it["id"] and familia(outro) == familia(it["id"]):
+                it["descricao"] = it["descricao"].replace(m.group(1), outro)
+            else:
+                it["descricao"] = it["descricao"].replace(m.group(0), "")
+        novos.append(it)
+    return novos, len(itens) - len(novos)
+
+
 def main() -> int:
     itens = json.loads(MANIFESTO.read_text(encoding="utf-8"))
-    tem = {i["id"] for i in itens}
     carros = json.loads(CARROS.read_text(encoding="utf-8"))
+    itens, saiu = podar(itens, carros)
+    tem = {i["id"] for i in itens}
     ref = {l["id"]: l for l in csv.DictReader(open(REF, encoding="utf-8"))}
     rng = random.Random(7)
     # Família = nome sem a versão (fabricante + modelo): o primeiro define o desenho.
@@ -116,7 +140,7 @@ def main() -> int:
                       "cor": rng.choice(PINTURA_CORRIDA) if corrida else rng.choice(CORES)})
         novos += 1
     MANIFESTO.write_text(json.dumps(itens, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"{novos} carros descritos; manifesto com {len(itens)}")
+    print(f"{novos} carros descritos, {saiu} que saíram da frota tirados; manifesto com {len(itens)}")
     return 0
 
 

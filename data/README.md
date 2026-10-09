@@ -22,6 +22,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `equipes.json` | lista de `{id, nome, pilotos: [{id, nome, retrato?}]}`, opcionais `nivel` (CLUB…ELITE), `numero`, `logo`, `jogador`, `dirigente` |
 | `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |
+| `carros_removidos.json` | objeto `{id que saiu: id que ficou}` (decisão 40). **Gerado** pelo importador; o save migra carros e peças por ele |
 | `monetizacao.json` | objeto `{aceleracao: {fator, duracao_s, teto_s}}` (decisão 39): corridas aceleradas pelo vídeo com recompensa. `teto_s` `null` = sem teto (pendente de playtest). Opcional; feito à mão (não vem do GT2) |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}`: piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
@@ -203,15 +204,22 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
 
 ## Estado atual de data/ (importado do GT2 americano, SCUS-94488 v1.2)
 
-- **618 carros**, todos os do disco (538 de rua e 80 versões de corrida). Nome e fabricante
+- **386 carros** (319 de rua e 67 versões de corrida), dos 618 do disco menos os
+  abertos e os repetidos (decisão 40, `reduzir_frota` no importador): sai todo carro sem
+  capota (46) e, de cada grupo do mesmo modelo, mesma tração, de rua ou de corrida, com
+  potência ±10% e peso ±5%, fica um (186 saem). Fica o que tem arte ou está na história;
+  senão um vendido novo; senão o mais novo; senão o mais potente. Rivais, carros-prêmio e
+  copas de marca usam o substituto; `carros_removidos.json` (gerado) leva cada id que saiu
+  ao que ficou, e o save migra por ele (`Save.migrar_frota`). Nome e fabricante
   fictícios: `tools/gerar_referencia_carros.py` monta `referencia/carros.csv` (fora do Git)
   com um fabricante inventado por fabricante do GT2 (36) e um nome por família de modelo,
   no idioma da escola do fabricante; as versões da família vão por potência (base, S, GT,
   GTS, R, SR, GX, SX; corrida = "Corrida") e levam o ano quando preciso. Os 17 do primeiro
   build mantêm id, nome e fabricante. **Busca de marca pendente** antes do lançamento.
-- 7.717 peças com preço e efeito do GT2 (por carro); 7 compostos de pneu.
+- 4.701 peças com preço e efeito do GT2 (por carro); 7 compostos de pneu (medianas sobre os
+  618 do disco. como antes da redução).
 - Usados: janelas e preços dos 60 períodos de 10 dias do GT2 (~140 por período). Novos:
-  os 420 que nunca aparecem no usado.
+  os 313 que nunca aparecem no usado.
 - 103 eventos de 31 séries sem licença, B, A, IC, IB e IA (`SERIES` em
   `tools/importar_gt2.py`), com voltas, limites, prêmios, adversários (o carro do próprio
   GT2) e carros-prêmio do disco. Resistência: as 7 provas do GT2 (30 a 99 voltas), prova
@@ -227,9 +235,8 @@ para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.
   (Japão, Estados Unidos, Europa, pela escola do fabricante); usados em lotes por
   fabricante (no GT2 só as marcas japonesas têm lote). As versões de corrida ficam na
   concessionária do fabricante.
-- Contratos da B (`contratos.json`): mantidos da calibração com os 17 carros (os carros e
-  peças deles não mudaram). Recalibrar com os 618 pede restringir a busca de
-  `tools/calibrar_contratos.gd`, que é por pares de carros.
+- Contratos (`contratos.json`): recalibrados por `tools/calibrar_contratos.gd`, licença por
+  licença, depois da redução da frota (os de antes usavam carros abertos que saíram).
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
 
 ## Como conferir a fração de revenda no GT2

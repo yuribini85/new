@@ -273,3 +273,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     O anúncio real (plugin AdMob, Android/iOS) e a compra real entram depois do MVP;
     até lá, o jogo mostra os mesmos lugares com um vídeo de teste e a compra
     indisponível. Marcador da aceleração e engrenagem das configurações no cabeçalho.
+
+### Frota (decisão do usuário)
+
+40. **Frota sem carros abertos e sem repetidos.** Sem capota o piloto aparece, e as
+    corridas não desenham piloto: todo carro aberto sai. Num jogo idle, carros do mesmo
+    modelo com números quase iguais não têm função diferente: de cada grupo (mesmo
+    modelo, inclusive vendido por duas marcas; mesma tração; de rua ou de corrida;
+    potência ±10% e peso ±5%) fica um. Dos 618 do GT2 ficam 386. Rivais, prêmios e
+    copas usam o substituto; saves migram para ele. Regra no importador
+    (`reduzir_frota`), não à mão.

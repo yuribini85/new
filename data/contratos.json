@@ -1,6 +1,6 @@
 [
 	{
-		"carro": "hayase_kaze",
+		"carro": "hayase_rin",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -30,7 +30,7 @@
 				"pista": "serra_alta",
 				"rivais": [
 					{
-						"carro": "ashcombe_brute"
+						"carro": "ashcombe_quill"
 					}
 				],
 				"voltas": 1.0
@@ -38,7 +38,7 @@
 		]
 	},
 	{
-		"carro": "ashcombe_kestrel",
+		"carro": "pemberly_sedge",
 		"condicoes": {
 			"bronze": {
 				"custo_max": 645,
@@ -109,7 +109,7 @@
 		]
 	},
 	{
-		"carro": "pemberly_fieldfare_gts",
+		"carro": "tokiwa_urara",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -248,7 +248,7 @@
 				"pista": "anel_do_vale",
 				"rivais": [
 					{
-						"carro": "bancroft_sidewinder_gts"
+						"carro": "bancroft_sidewinder_gt"
 					}
 				],
 				"voltas": 1.0
@@ -279,7 +279,7 @@
 				"pista": "pista_de_testes",
 				"rivais": [
 					{
-						"carro": "hayase_komorebi_s_iv"
+						"carro": "hayase_komorebi_s_v"
 					}
 				],
 				"voltas": 1.0
@@ -327,7 +327,7 @@
 		]
 	},
 	{
-		"carro": "pemberly_thrush",
+		"carro": "tokiwa_unabara",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -365,7 +365,7 @@
 		]
 	},
 	{
-		"carro": "hayase_komorebi_s_iv",
+		"carro": "hayase_komorebi_s_v",
 		"condicoes": {
 			"bronze": {
 				"custo_max": 14735.0,
@@ -396,7 +396,7 @@
 		]
 	},
 	{
-		"carro": "ashcombe_brute",
+		"carro": "ashcombe_quill",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -436,7 +436,7 @@
 		]
 	},
 	{
-		"carro": "pemberly_fieldfare_gt",
+		"carro": "pemberly_sedge",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -474,7 +474,7 @@
 		]
 	},
 	{
-		"carro": "whitlock_switchback_gt",
+		"carro": "whitlock_switchback_gts",
 		"condicoes": {
 			"bronze": {
 				"custo_max": 14030.0,
@@ -537,7 +537,7 @@
 				"pista": "serra_curta",
 				"rivais": [
 					{
-						"carro": "pemberly_teal_ii"
+						"carro": "pemberly_teal_iii"
 					}
 				],
 				"voltas": 1.0

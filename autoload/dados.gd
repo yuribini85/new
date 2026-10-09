@@ -65,11 +65,13 @@ func _ready() -> void:
 
 
 func carregar(dir: String) -> void:
+	pasta = dir  # os arquivos lidos sob demanda (curvas, frota, monetização) vêm da mesma pasta
 	_listas.clear()
 	_pendencias.clear()
 	_erros.clear()
 	_objetos.erase("curvas")  # lido sob demanda (curvas())
 	_objetos.erase("monetizacao")  # idem (monetizacao())
+	_objetos.erase("carros_removidos")  # idem (substituto())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -296,6 +298,16 @@ func curvas(pista_id: String) -> Array:
 		var c = _ler_json(pasta + "curvas.json") if FileAccess.file_exists(pasta + "curvas.json") else {}
 		_objetos["curvas"] = c if c is Dictionary else {}
 	return _objetos["curvas"].get(pista_id, [])
+
+
+## Carro que saiu da frota (decisão 40, carros_removidos.json, gerado pelo
+## importador): o id que ficou no lugar dele; "" se o carro não saiu.
+func substituto(id: String) -> String:
+	if not _objetos.has("carros_removidos"):
+		var caminho := pasta + "carros_removidos.json"
+		var m = _ler_json(caminho) if FileAccess.file_exists(caminho) else {}
+		_objetos["carros_removidos"] = m if m is Dictionary else {}
+	return String(_objetos["carros_removidos"].get(id, ""))
 
 
 ## Monetização (decisão 39, monetizacao.json, opcional): {aceleracao: {fator,

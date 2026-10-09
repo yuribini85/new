@@ -70,9 +70,9 @@ código, já nesta especificação. A arte final substitui o arquivo de mesmo no
 muda código. Uso: `godot --path . --script res://tools/gerar_sprites.gd` (precisa de
 display; no servidor, `xvfb-run`).
 
-## Carros do GT2 inteiro (618)
+## Carros do GT2 (frota de 386, decisão 40)
 
-Os 601 carros novos não têm sprite: no jogo aparecem como o carro em código (placeholder),
+Os carros sem sprite próprio (todos menos os do primeiro build): no jogo aparecem como o carro em código (placeholder),
 que já segue a categoria, o ano e os números de cada um. Os provisórios deles **não** entram
 em `arte/carros/` (seriam ~1.200 imagens no build); ficam só no pedido de arte:
 
@@ -85,6 +85,8 @@ python3 tools/pacote_arte_carros.py --so-faltando --provisorios=/tmp/prov --lote
 ```
 
 Versões da mesma família pedem o mesmo desenho da primeira (a descrição diz qual).
-**Tamanho:** com a arte final nesta especificação (160 px/m), 618 carros somam centenas de MB.
+O manifesto só tem os carros da frota: `descrever_carros.py` tira os que saíram (abertos e
+repetidos). A arte de quatro que saíram (três abertos e um repetido) ficou em `arte/carros/` sem uso.
+**Tamanho:** com a arte final nesta especificação (160 px/m), 386 carros somam centenas de MB.
 Antes de importar em massa, decidir compressão (WebP com perdas) ou escala menor no build.
 

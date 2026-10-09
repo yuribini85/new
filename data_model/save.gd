@@ -53,6 +53,45 @@ const CHAVES := [
 ]
 
 
+## Carros que saíram da frota (decisão 40) viram o substituto, com as mesmas
+## peças (categoria e estágio) quando o carro novo as tem. Num save que veio de
+## JSON, antes de validar.
+static func migrar_frota(s: Variant, dados: Node) -> void:
+	if not s is Dictionary or not s.get("carros") is Array:
+		return
+	for cs in s["carros"]:
+		if not cs is Dictionary or dados.existe("carros", cs.get("id", "")):
+			continue
+		var novo: String = dados.substituto(String(cs.get("id", "")))
+		if novo == "":
+			continue
+		var velho := String(cs["id"])
+		cs["id"] = novo
+		# A mesma peça (categoria e estágio) no carro novo, quando ele tem.
+		for chave in ["pecas", "pecas_possuidas"]:
+			if cs.get(chave) is Array:
+				var lista := []
+				for p in cs[chave]:
+					var q := String(p)
+					if q.begins_with(velho + "_"):
+						q = novo + q.trim_prefix(velho)
+					if dados.existe("pecas", q) and not q in lista:
+						lista.append(q)
+				cs[chave] = lista
+		if cs.get("configuracoes") is Array:
+			cs["configuracoes"] = []
+	if s.get("desejos") is Array:
+		var d := []
+		for x in s["desejos"]:
+			var id: String = String(x) if dados.existe("carros", x) else dados.substituto(String(x))
+			if id != "" and not id in d:
+				d.append(id)
+		s["desejos"] = d
+	var f = s.get("fila")
+	if f is Dictionary and f.get("config") is Dictionary:
+		f["config"]["pecas"] = Array(f["config"].get("pecas", [])).filter(func(p): return dados.existe("pecas", p))
+
+
 ## Confere o save inteiro contra data/ sem mexer em nada. "" se está bom.
 static func validar(s: Variant, dados: Node) -> String:
 	if not s is Dictionary:
@@ -96,6 +135,7 @@ static func validar(s: Variant, dados: Node) -> String:
 ## Recria o estado em `jogador` (que já deve ter passado por novo_jogo()).
 ## Retorna "" ou o motivo de não conseguir carregar; com erro, nada é alterado.
 static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
+	migrar_frota(s, dados)
 	var erro := validar(s, dados)
 	if erro != "":
 		return erro

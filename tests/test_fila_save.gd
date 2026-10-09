@@ -323,3 +323,25 @@ func test_aceleracao_na_fila_e_no_save() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+## Decisão 40: carro que saiu da frota vira o substituto no save; peças que o
+## carro novo não tem saem; o resto do save carrega igual.
+func test_save_com_carro_removido_migra_para_o_substituto() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	j.concessionaria.comprar_peca(j.garagem.carro(uid), d.peca("turbo"))
+	var s: Dictionary = JSON.parse_string(JSON.stringify(Save.serializar(j)))
+	s["carros"][0]["id"] = "antigo"
+	s["carros"][0]["pecas_possuidas"].append("antigo_motor_1")
+	s["desejos"] = ["antigo", "forte", "sumiu"]
+	var k := _jogador(d)
+	igual(Save.desserializar(s, k, d), "", "carrega")
+	var c: Carro = k.garagem.carro(uid)
+	igual(c.id, "forte", "substituto")
+	verificar(c.pecas_possuidas.has("turbo") and not c.pecas_possuidas.has("antigo_motor_1"), "peças")
+	igual(k.desejos, ["forte"], "desejos sem repetir nem sumidos")
+	j.free()
+	k.free()
+	d.free()

@@ -91,6 +91,7 @@ import csv
 import difflib
 import json
 import pathlib
+import re
 import statistics
 import sys
 
@@ -178,6 +179,31 @@ NOMES_PNEU = ["Pneu de fábrica", "Pneu esportivo", "Pneu de corrida duro", "Pne
               "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu de simulação"]
 ESTAGIO_TERRA = 7
 CONSISTENCIA = 0.7
+
+# Frota (decisão 40): sem carros abertos (sem capota o piloto aparece, e nas
+# corridas não há piloto desenhado) e sem repetidos (num jogo idle, carros do
+# mesmo modelo com números quase iguais não têm função diferente).
+# Aberto: categoria roadster, menos os fechados que caíram nela; mais os
+# conversíveis que caíram em outra categoria. Os fechados da roadster passam a
+# cupê (a silhueta do jogo tem teto).
+FECHADOS_NA_ROADSTER = {"ashcombe_heron", "ashcombe_plover_corrida", "ashcombe_saltire", "ashcombe_sorrel",
+                        "cutler_ozark_corrida", "pemberly_fieldfare_r", "pemberly_sedge", "whitlock_switchback_gt",
+                        "whitlock_switchback_gts"}
+ABERTOS_FORA_DA_ROADSTER = {"garrison_arroyo_ii", "kanaya_ginga", "kanaya_ginga_99", "pemberly_thrush",
+                            "wexmoor_rowan_ii"}
+# Repetido: mesmo modelo (pelo nome de referência, sem marca, preparador e ano:
+# pega também o mesmo carro vendido por duas marcas), mesma tração, os dois de
+# rua ou os dois de corrida, potência e peso dentro destas folgas (critério
+# "médio", escolhido pelo usuário). Fica um por grupo: o que tem arte própria ou
+# está na história; senão um vendido novo; senão o mais novo; senão o mais potente.
+FOLGA_POTENCIA = 0.10
+FOLGA_PESO = 0.05
+PALAVRAS_DE_MARCA = {
+    "acura", "honda", "mazda", "eunos", "efini", "nissan", "infiniti", "toyota", "mitsubishi", "subaru", "suzuki",
+    "daihatsu", "isuzu", "dodge", "chrysler", "plymouth", "chevrolet", "ford", "shelby", "bmw", "mercedes", "benz",
+    "lotus", "tvr", "mini", "alfa", "romeo", "audi", "vw", "volkswagen", "renault", "peugeot", "citroen", "fiat",
+    "lancia", "opel", "vauxhall", "rover", "mg", "aston", "martin", "jaguar", "venturi", "mugen", "spoon",
+    "tommykaira", "nismo", "trd", "sti", "the"}
 AGRESSIVIDADE = 1.0
 
 
@@ -266,6 +292,7 @@ def main() -> int:
     for cod, c in resumo.items():
         c["potencia_real"] = potencia.get(cod, n(c["potencia_ps"]))
     nosso = {l["codigo_gt2"]: l["id"] for l in ref}
+    nosso_original = dict(nosso)
 
     # Normalizações pela mediana dos carros de rua do jogo inteiro.
     grips = [(n(c["aderencia_dianteira"]) + n(c["aderencia_traseira"])) / 2 for c in resumo.values()
@@ -280,6 +307,9 @@ def main() -> int:
     freio_mediana = statistics.median([v for v in freio_fabrica.values() if v > 0] or [1.0])
 
     tracoes = deduzir_tracoes(ref, resumo)
+    for l in ref:
+        if l["id"] in FECHADOS_NA_ROADSTER:
+            l["categoria"] = "cupe"
     chassis = {r["CarId"]: r for r in ler("Chassis")}
     carros = []
     for l in ref:
@@ -307,8 +337,16 @@ def main() -> int:
         if janelas:
             carros[-1]["usados"] = janelas
 
+    carros, substituto = reduzir_frota(carros, ref)
+    # Carro que saiu: rivais, prêmios e copas usam o que ficou no lugar dele;
+    # as peças dele saem junto.
+    ficam = {c["id"] for c in carros}
+    nosso = {cod: substituto.get(i, i) for cod, i in nosso.items()}
+
     pecas = []
     for codigo, id_nosso in nosso.items():
+        if id_nosso not in ficam or id_nosso != nosso_original[codigo]:
+            continue
         base_ps = resumo[codigo]["potencia_real"]
         for cat in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake"]:
             for p in partes[cat]:
@@ -430,6 +468,8 @@ def main() -> int:
                          "testes": testes})
 
     gravar("carros", carros)
+    # Saves com carros que saíram passam para o substituto (Save).
+    gravar("carros_removidos", dict(sorted(substituto.items())))
     gravar("pecas", pecas)
     gravar("pneus", pneus)
     gravar("pilotos_ia", pilotos)
@@ -461,6 +501,65 @@ def main() -> int:
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
     print("a_confirmar (não vêm do GT2): teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
+
+
+def reduzir_frota(carros: list[dict], ref: list[dict]) -> tuple[list[dict], dict[str, str]]:
+    """Tira os abertos e os repetidos (decisão 40). Devolve os carros que ficam e
+    {id que saiu: id que fica no lugar}."""
+    real = {l["id"]: l.get("ref_real", "") for l in ref}
+    corrida = lambda c: bool(c.get("corrida"))
+    aberto = lambda c: (c["categoria"] == "roadster" and c["id"] not in FECHADOS_NA_ROADSTER) \
+        or c["id"] in ABERTOS_FORA_DA_ROADSTER
+    protegidos = {p.stem.removesuffix("_iso") for p in (RAIZ / "arte" / "carros").glob("*_iso.png")}
+    caminho_hist = DATA / "historia.json"
+    if caminho_hist.exists():
+        protegidos |= set(re.findall(r'"carro": "([a-z0-9_]+)"', caminho_hist.read_text(encoding="utf-8")))
+
+    def modelo(c: dict) -> str:
+        for t in re.findall(r"[a-z0-9\-]+", real[c["id"]].lower()):
+            if t not in PALAVRAS_DE_MARCA and not re.fullmatch(r"\d\d", t):
+                return t
+        return c["id"]
+
+    def perto(a: dict, b: dict) -> bool:
+        return abs(a["potencia"] - b["potencia"]) <= FOLGA_POTENCIA * max(b["potencia"], 1) \
+            and abs(a["peso"] - b["peso"]) <= FOLGA_PESO * b["peso"]
+
+    abertos = [c for c in carros if aberto(c)]
+    por_modelo: dict[tuple, list[dict]] = {}
+    for c in carros:
+        if not aberto(c):
+            por_modelo.setdefault((modelo(c), c["tracao"], corrida(c)), []).append(c)
+    substituto: dict[str, str] = {}
+    ficam: list[dict] = []
+    for lista in por_modelo.values():
+        grupos: list[list[dict]] = []
+        for c in sorted(lista, key=lambda c: (c["potencia"], c["id"])):
+            for g in grupos:
+                if all(perto(c, o) for o in g):
+                    g.append(c)
+                    break
+            else:
+                grupos.append([c])
+        for g in grupos:
+            fica = max(g, key=lambda c: (c["id"] in protegidos, c.get("novo", False), c["ano"], c["potencia"], c["id"]))
+            ficam.append(fica)
+            for c in g:
+                if c is not fica:
+                    substituto[c["id"]] = fica["id"]
+    # Aberto: o fechado que ficou mais parecido em desempenho (de rua ou de
+    # corrida como ele; a mesma tração conta a favor).
+    for c in abertos:
+        par = min((o for o in ficam if corrida(o) == corrida(c)),
+                  key=lambda o: (abs(o["potencia"] - c["potencia"]) / max(c["potencia"], 1)
+                                 + abs(o["peso"] - c["peso"]) / c["peso"] + (0.0 if o["tracao"] == c["tracao"] else 0.25),
+                                 o["id"]))
+        substituto[c["id"]] = par["id"]
+    ordem = {c["id"]: i for i, c in enumerate(carros)}
+    ficam.sort(key=lambda c: ordem[c["id"]])
+    print(f"frota: {len(carros)} → {len(ficam)} ({len(abertos)} abertos e "
+          f"{len(carros) - len(ficam) - len(abertos)} repetidos saem)")
+    return ficam, substituto
 
 
 def motor_cambio_roda(car: dict, partes: dict) -> dict:
@@ -546,7 +645,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         lista_marca: list[str] = []
         if marca > 0 and marca <= len(regulamentos):
             codigos = [_codigo_carro(int(x)) for x in regulamentos[marca - 1]["EligibleCarIds"].split() if int(x)]
-            lista_marca = [nosso[c] for c in codigos if c in nosso]
+            lista_marca = list(dict.fromkeys(nosso[c] for c in codigos if c in nosso))
             if lista_marca:
                 serie = _nome_copa([nomes[c] for c in lista_marca])
         if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS_GT2 \
