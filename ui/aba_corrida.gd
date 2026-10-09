@@ -48,6 +48,7 @@ var _status_t := 0.0
 var _semente_mostrada := 0
 var _nomes := {}  # id do participante -> nome do carro
 var _nomes_curtos := {}  # id -> nome na classificação do HUD
+var _equipes := {}  # id -> nome da equipe (vazio: sem equipe)
 var _pista: Pista
 var _voltas := 1
 var _posicao_antes := 0
@@ -83,8 +84,11 @@ func _init(d: Node, j: Node) -> void:
 	# menor para não disputar com a classificação.
 	_minimapa = Control.new()
 	_minimapa.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	_minimapa.offset_left = -195
-	_minimapa.offset_bottom = 172
+	# Afastado das bordas: o traçado não encosta em cima nem do lado.
+	_minimapa.offset_left = -200
+	_minimapa.offset_right = -16
+	_minimapa.offset_top = 18
+	_minimapa.offset_bottom = 180
 	_minimapa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	area.add_child(_minimapa)
 	_visual = CorridaVisual.new()
@@ -640,6 +644,8 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_avisado = {}
 	_nomes = {"jogador": "VOCÊ · " + meu.base["nome"]}
 	_nomes_curtos = {"jogador": "Você"}
+	var minha := EquipeJogador.dados_equipe(dados, jogador)
+	_equipes = {"jogador": String(minha.get("nome", "")) if not minha.is_empty() else ""}
 	# Motor e câmbio do carro como foi inscrito (para marcha e giro no HUD).
 	var inscrito: Carro = meu.com_configuracao(f["config"], dados.peca, dados.pneu) if f.get("config") is Dictionary else meu
 	_atributos_hud = inscrito.atributos_efetivos(ev.get("condicao", "seco"))
@@ -652,12 +658,14 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		_nomes[pid] = "%s · %s" % [piloto, equipe["nome"]] if not equipe.is_empty() \
 				else "%s (%s)" % [piloto, Aba.nome_curto(dados.carro(adv["carro"])["nome"])]
 		_nomes_curtos[pid] = piloto
+		_equipes[pid] = String(equipe.get("nome", ""))
 	# Segundo piloto da equipe (fase 9), com o carro e a cor dele.
 	var comp: Carro = jogador.fila_ctrl.companheiro_inscrito(f)
 	if comp != null:
 		var nome2 := EquipeJogador.nome_segundo(dados, jogador)
 		_nomes[EquipeJogador.ID] = "%s · %s" % [nome2, comp.base["nome"]]
 		_nomes_curtos[EquipeJogador.ID] = nome2
+		_equipes[EquipeJogador.ID] = _equipes["jogador"]
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
 	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
 	_diretor.reiniciar()
@@ -750,7 +758,8 @@ func _atualizar_hud(ordem: Array) -> void:
 			atacante = ordem[i + 1]
 	var lista := []
 	for id in ordem:
-		lista.append({"id": id, "nome": _nomes_curtos.get(id, id), "cor": _visual.cor_de(id), "voce": id == "jogador",
+		lista.append({"id": id, "nome": _nomes_curtos.get(id, id), "equipe": _equipes.get(id, ""),
+			"cor": _visual.cor_de(id), "voce": id == "jogador",
 			"camera": id == _visual3d.foco and not _visual3d.visao_geral, "gap": _gap_lider(ordem, id),
 			"ataque": id == atacante})
 	_painel_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": _voltas,
@@ -785,13 +794,13 @@ func _atualizar_vista(ordem: Array, i: int, s: float, volta: int, melhor: float,
 	if i > 0:
 		var g := _gap(ordem[i - 1], "jogador")
 		vizinhos.append({"pos": i, "nome": _nomes_curtos.get(ordem[i - 1], ordem[i - 1]),
-			"sub": "à frente · %.1f s" % g if g >= 0.0 else "à frente"})
+			"sub": _sub(ordem[i - 1], "à frente · %.1f s" % g if g >= 0.0 else "à frente")})
 	vizinhos.append({"pos": i + 1, "nome": "Você", "voce": true,
-		"sub": "líder" if i == 0 else "%dº de %d" % [i + 1, ordem.size()]})
+		"sub": _sub("jogador", "líder" if i == 0 else "%dº de %d" % [i + 1, ordem.size()])})
 	if i + 1 < ordem.size():
 		var g := _gap("jogador", ordem[i + 1])
 		vizinhos.append({"pos": i + 2, "nome": _nomes_curtos.get(ordem[i + 1], ordem[i + 1]),
-			"sub": "atrás · %.1f s" % g if g >= 0.0 else "atrás"})
+			"sub": _sub(ordem[i + 1], "atrás · %.1f s" % g if g >= 0.0 else "atrás")})
 	var progresso := []
 	for id in ordem:
 		progresso.append({"frac": fposmod(maxf(_visual.distancia(id), 0.0), _pista.comprimento) / _pista.comprimento,
@@ -802,6 +811,12 @@ func _atualizar_vista(ordem: Array, i: int, s: float, volta: int, melhor: float,
 		"tempo_volta": _visual.tempo - maxf(_visual.tempo_em("jogador", (volta - 1) * _pista.comprimento) if volta > 1 else 0.0, 0.0),
 		"melhor": melhor, "delta": delta, "volta": volta, "voltas": _voltas, "proxima": prox,
 		"vizinhos": vizinhos, "progresso": progresso})
+
+
+## Linha de baixo na vista DADOS: a equipe (quando há) e a situação.
+func _sub(id: String, situacao: String) -> String:
+	var eq: String = _equipes.get(id, "")
+	return situacao if eq == "" else "%s · %s" % [eq, situacao]
 
 
 ## Acontecimentos da corrida, poucos e com peso: ultrapassagem, perdeu a

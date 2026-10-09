@@ -49,7 +49,7 @@ static func _desenhar_pista(c: Control, pts: PackedVector2Array) -> void:
 	var caixa := Rect2(pts[0], Vector2.ZERO)
 	for p in pts:
 		caixa = caixa.expand(p)
-	var margem := 6.0
+	var margem := 8.0  # mais que meia linha (5 px) e a sombra: o traçado nunca encosta
 	var esc := minf((c.size.x - 2 * margem) / maxf(caixa.size.x, 1.0), (c.size.y - 2 * margem) / maxf(caixa.size.y, 1.0))
 	var centro := c.size * 0.5
 	var linha := PackedVector2Array()

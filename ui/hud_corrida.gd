@@ -22,7 +22,7 @@ const SOMBRA := Color(0, 0, 0, 0.6)
 ## Classificação: canto superior direito, abaixo do minimapa.
 const LISTA_TOPO := 184.0
 const LISTA_LARGURA := 250.0
-const LISTA_LINHA := 30.0
+const LISTA_LINHA := 44.0  # nome do piloto e, embaixo, a equipe
 ## Evento: entra subindo um pouco, fica e sai devagar.
 const EVENTO_ENTRA_S := 0.4
 const EVENTO_SAI_S := 0.7
@@ -249,6 +249,15 @@ func _desenhar_evento() -> void:
 		return
 	var grande: bool = _evento["grande"]
 	var cy := size.y * (0.5 if grande else 0.68) + (1.0 - smoothstep(0.0, EVENTO_ENTRA_S, t)) * 10.0
+	if so_eventos and not grande:
+		# Vista DADOS: o aviso ocupa, por um momento, o bloco da próxima curva
+		# (VistaDados, de 312 a 422), com fundo opaco, sem cobrir os números.
+		draw_rect(Rect2(0, 314, size.x, 106), Color(VistaDados.FUNDO, a))
+		cy = 368.0 + (1.0 - smoothstep(0.0, EVENTO_ENTRA_S, t)) * 10.0
+		_texto(String(_evento["titulo"]), Vector2(0, cy), 36, Color(_evento["cor"], a), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		if String(_evento["sub"]) != "":
+			_texto(String(_evento["sub"]), Vector2(0, cy + 34), 26, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		return
 	var tam_t := 30 if grande else 36
 	var tam_s := 110 if grande else 26
 	# Faixa: escura no meio, transparente nas pontas.
@@ -306,7 +315,7 @@ func _lista() -> void:
 	var x0 := size.x - LISTA_LARGURA
 	for i in lista.size():
 		var it: Dictionary = lista[i]
-		var y := LISTA_TOPO + (i + 1) * LISTA_LINHA - 6.0
+		var y := LISTA_TOPO + i * LISTA_LINHA + 24.0  # linha do nome; a equipe vai embaixo
 		var voce: bool = it.get("voce", false)
 		var ataque: bool = it.get("ataque", false)
 		var forca := 1.0 if voce or ataque else lerpf(0.25, 0.55, _sec)
@@ -325,6 +334,14 @@ func _lista() -> void:
 				nome = nome.left(-1)
 			nome += "…"
 		_texto(nome, Vector2(x0 + 52.0, y), 22, cor)
+		var equipe: String = it.get("equipe", "")
+		if equipe != "":
+			var eq_l := LISTA_LARGURA - 52.0
+			if f.get_string_size(equipe, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x > eq_l:
+				while equipe.length() > 3 and f.get_string_size(equipe + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x > eq_l:
+					equipe = equipe.left(-1)
+				equipe += "…"
+			_texto(equipe, Vector2(x0 + 52.0, y + 18.0), 16, Color(COR, forca * 0.6))
 		if gap_txt != "":
 			_texto(gap_txt, Vector2(x0, y), 20, Color(CORTE, 0.95) if ataque else Color(COR, forca * 0.8),
 					HORIZONTAL_ALIGNMENT_RIGHT, LISTA_LARGURA)

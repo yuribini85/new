@@ -233,10 +233,10 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	# Traçado no canto de cima, à direita, sobre a ilustração.
 	var tracado := icone_pista(ev["pista"])
 	tracado.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	tracado.offset_left = -132
-	tracado.offset_right = -12
-	tracado.offset_top = 10
-	tracado.offset_bottom = 90
+	tracado.offset_left = -130
+	tracado.offset_right = -18
+	tracado.offset_top = 18
+	tracado.offset_bottom = 96
 	tracado.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner.add_child(tracado)
 	var nomes := VBoxContainer.new()
@@ -301,17 +301,47 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		var rotulo_correr := "Correr"
 		if vitorias > 0:
 			rotulo_correr = "Correr de novo" if _repeticoes == 1 else "Correr de novo ×%d" % _repeticoes
-		# Correr: a ação do cartão, na largura toda, ícone à esquerda do texto.
+		# Correr: a ação do cartão, na largura toda. Contorno e texto na cor de
+		# destaque, a roda em chamas colada ao texto, os dois centrados.
 		var bc := Button.new()
 		bc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		bc.custom_minimum_size.y = 100
 		bc.disabled = not jogador.fila.is_empty()
-		# Sem o preenchimento ocre: a roda em chamas, grande, é o destaque.
-		Tipografia.acao_neutra(bc, rotulo_correr, 34, 96)
-		for k_cor in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-			bc.add_theme_color_override(k_cor, COR_DESTAQUE)
-		bc.icon = icone_reduzido("icone_correr", 120)
-		bc.expand_icon = false
-		bc.add_theme_constant_override("h_separation", 14)
+		var base := StyleBoxFlat.new()
+		base.bg_color = Color(COR_DESTAQUE, 0.08)
+		base.border_color = COR_DESTAQUE
+		base.set_border_width_all(2)
+		base.set_corner_radius_all(Tipografia.RAIO)
+		var apertado := base.duplicate()
+		apertado.bg_color = Color(COR_DESTAQUE, 0.25)
+		var parado := base.duplicate()
+		parado.border_color = Color(COR_DESTAQUE, 0.3)
+		parado.bg_color = Color(0, 0, 0, 0)
+		for estado in ["normal", "hover", "focus"]:
+			bc.add_theme_stylebox_override(estado, base)
+		bc.add_theme_stylebox_override("pressed", apertado)
+		bc.add_theme_stylebox_override("disabled", parado)
+		var miolo := HBoxContainer.new()
+		miolo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		miolo.alignment = BoxContainer.ALIGNMENT_CENTER
+		miolo.add_theme_constant_override("separation", 14)
+		miolo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bc.add_child(miolo)
+		var roda := TextureRect.new()
+		roda.texture = icone_reduzido("icone_correr", 96)
+		roda.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		roda.custom_minimum_size = Vector2(96, 72)
+		roda.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		roda.modulate.a = 1.0 if not bc.disabled else 0.4
+		miolo.add_child(roda)
+		var txt := Label.new()
+		txt.text = rotulo_correr.to_upper()
+		txt.add_theme_color_override("font_color", Color(COR_DESTAQUE, 1.0 if not bc.disabled else 0.4))
+		Tipografia.rotulo(txt, "semibold", 44)
+		txt.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		txt.size_flags_vertical = Control.SIZE_FILL
+		txt.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		miolo.add_child(txt)
 		bc.pressed.connect(func():
 			_correr(ev["id"])
 			mudou.emit())
@@ -491,8 +521,6 @@ func _correr(evento_id: String) -> void:
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
-	avisar("%s %s%s." % ["Largada!" if n > 1 or jogador.vitorias.has(evento_id) else "Largada:",
-			dados.evento(evento_id)["nome"], "" if n == 1 else " ×%d" % n])
 	correr_iniciado.emit()
 	if Prologo.deve_ultima_corrida(dados, jogador):
 		historia("ULTIMA_CORRIDA_ADRIAN", ctx)

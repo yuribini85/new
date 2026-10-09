@@ -132,7 +132,7 @@ func _ready() -> void:
 	_sobre = Sobreposicao.new()
 	add_child(_sobre)
 	for a in _todas:
-		a.aviso.connect(_sobre.avisar)
+		a.aviso.connect(_avisar)
 		a.painel.connect(_sobre.abrir)
 	if jogador.historia != null:
 		_dialogo = Dialogo.new(jogador.historia)
@@ -316,6 +316,14 @@ func _tema() -> Theme:
 	return t
 
 
+## Avisos das telas. Assistindo a corrida, só os de erro: os outros cobririam o
+## cabeçalho sem dar tempo de ler (a própria corrida já mostra a largada).
+func _avisar(texto: String, ok := true) -> void:
+	if ok and _abas.current_tab == 4 and not jogador.fila.is_empty():
+		return
+	_sobre.avisar(texto, ok)
+
+
 func atualizar() -> void:
 	_saldo.text = Aba.dinheiro(jogador.economia.saldo)  # o ícone da moeda ao lado já diz G
 	_saldo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
@@ -327,7 +335,7 @@ func atualizar() -> void:
 	var atual := Objetivos.atual(objetivos)
 	if _objetivo >= 0 and atual > _objetivo and _sobre != null:
 		var proximo: String = objetivos[atual]["texto"] if atual < objetivos.size() else "todos cumpridos!"
-		_sobre.avisar("Objetivo cumprido: %s. Próximo: %s" % [objetivos[atual - 1]["texto"], proximo])
+		_avisar("Objetivo cumprido: %s. Próximo: %s" % [objetivos[atual - 1]["texto"], proximo])
 	_objetivo = atual
 	# Toda ação do jogador passa por aqui: salvar já. No navegador não há aviso
 	# confiável de fechamento, e uma compra não pode se perder.
