@@ -19,7 +19,7 @@ var _fundo: Texture2D
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Oficina")
 	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER  # tudo cabe: sem rolagem
-	_vitrine = VitrineCarro.new(470.0)
+	_vitrine = VitrineCarro.new(ALTURA_PALCO)
 	_fundo = Aba.arte("fundo_garagem")
 	if _fundo != null:
 		_vitrine.fundo_transparente()
@@ -66,8 +66,8 @@ func construir() -> void:
 	var c := carro_ativo()
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c))
 	ancora("CAR_STATS", _palco(c, lista))
-	# O palco é o cenário do topo (colado no cabeçalho); a missão vem logo abaixo.
-	_faixa_objetivo()
+	# O palco é o cenário do topo (colado no cabeçalho); sem a faixa da missão,
+	# o palco cresce e o carro respira.
 	# Melhorar é tocar na Evolução (abre a compra da categoria); correr fica na
 	# barra de baixo; os carros e a venda, na janela GARAGEM do cabeçalho.
 	_evolucao(c)
@@ -78,9 +78,15 @@ func construir() -> void:
 const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
 		"lightweight", "corrida", "brake", "cambio"]
 const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
-## Nome do carro no palco (fonte) e altura da diagonal ocre na frente dele.
+## Nome do carro no palco (fonte) e altura da diagonal ocre na frente dele;
+## a linha fica na altura das abas penduradas, à esquerda delas.
 const TAMANHO_NOME := 34
 const ALTURA_NOME := 40
+const TOPO_NOME := 4
+const RESERVA_ABAS := 380
+const OPACIDADE_SETAS := 0.5
+## Altura do palco (carro e ficha): ocupa o espaço que sobra até a Evolução.
+const ALTURA_PALCO := 560.0
 ## Cartões da ficha (potência, peso, velocidade máxima): altura, ícone, dentes
 ## da barra e a cor do ícone com a barra vazia (cheia: COR_DESTAQUE).
 const ALTURA_FICHA := 128
@@ -171,8 +177,8 @@ func _palco(c: Carro, lista: Array) -> Control:
 	var tl := VBoxContainer.new()
 	tl.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	tl.offset_left = 20
-	tl.offset_right = -20
-	tl.offset_top = Cabecalho.ALTURA_MARCADOR + 8  # abaixo das abas penduradas (GARAGEM, ACELERAR)
+	tl.offset_right = -RESERVA_ABAS  # à esquerda das abas penduradas (GARAGEM, ACELERAR)
+	tl.offset_top = TOPO_NOME  # na altura delas
 	tl.add_theme_constant_override("separation", -4)
 	tl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(tl)
@@ -191,6 +197,9 @@ func _palco(c: Carro, lista: Array) -> Control:
 	linha_nome.add_child(diag)
 	var nome_carro := _hud_rotulo(c.base["nome"], 0, Color.WHITE, linha_nome)
 	Tipografia.rotulo(nome_carro, "semibold", TAMANHO_NOME)
+	nome_carro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nome_carro.clip_text = true
+	nome_carro.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	nome_carro.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if _correndo(c):
 		Tipografia.rotulo(_hud_rotulo("correndo agora", 0, Color(0.86, 0.87, 0.9), tl), "medium", 26)
@@ -202,6 +211,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 			b.ignore_texture_size = true
 			b.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
 			b.flip_h = lado > 0
+			b.modulate.a = OPACIDADE_SETAS
 			b.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT if lado < 0 else Control.PRESET_CENTER_RIGHT)
 			b.offset_top = -SETA.y / 2.0
 			b.offset_bottom = SETA.y / 2.0
@@ -304,6 +314,8 @@ func _evolucao(c: Carro) -> void:
 		if pr[1] > 0:
 			itens.append([cat, NOMES_CATEGORIA.get(cat, cat), pr])
 	itens.append(["pneus", "Pneus", _progresso_pneus(c)])
+	var demanda := String(dados.historia().get("adrian", {}).get("peca_demanda", ""))
+	var cat_demanda := String(dados.peca(demanda).get("categoria", "")) if dados.existe("pecas", demanda) else ""
 	for it in itens:
 		var b := Button.new()
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -315,6 +327,9 @@ func _evolucao(c: Carro) -> void:
 		for estado in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
 			b.add_theme_stylebox_override(estado, sb)
 		g.add_child(b)
+		# A demanda do Marcus (prólogo) aponta para a categoria da peça pedida.
+		if it[0] == cat_demanda:
+			ancora("DEMANDA", b)
 		if it[0] == "brake":
 			ancora("FREIOS", b)
 		elif it[0] == "pneus":
