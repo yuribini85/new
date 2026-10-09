@@ -35,6 +35,9 @@ const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Lojas", 1, "aba_mercado"], [
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
 ## Título de cada tela no cabeçalho.
+## Janela do resultado: fecha sozinha depois disso (se o jogador deixar).
+const FECHAR_RESULTADO_S := 30.0
+var _resultado_aberto := 0
 const TITULOS := ["Garagem", "Lojas", "Oficina", "Corridas", "Corrida", "Carreira", "Equipe"]
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
@@ -747,89 +750,162 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		b[1] = _depois_do_resultado.bind(c, b[1])
 	var meu: Carro = jogador.garagem.carro(c["uid"])
 	var tabela: Array = c.get("tabela", [])
-	var objetivos := Objetivos.lista(jogador, dados)
-	var obj := Objetivos.atual(objetivos)
+	var token := Time.get_ticks_usec()
+	_resultado_aberto = token
 	_sobre.abrir("VITÓRIA!" if venceu else "Resultado", func(v):
-		if meu != null:
-			# Palco (arte da interface) com o carro em cima.
-			var palco := g.ilustracao("fundo_resultado", 300, v, 0.25)
-			var foto := Estudio.imagem(meu.base, CarroBloco.cor_do_carro(meu), Vector2(0, 0))
-			foto.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			foto.offset_top = 20
-			foto.offset_bottom = -20
-			palco.add_child(foto)
+		v.add_theme_constant_override("separation", 8)
+		var nome_ev := g.rotulo(Aba.nome_evento(ev), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
+		nome_ev.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		# Troféu da posição (ouro, prata, bronze); dali para baixo, o pódio apagado.
+		var trofeu := TextureRect.new()
+		trofeu.texture = Aba.arte({1: "icone_trofeu_ouro", 2: "icone_trofeu_prata", 3: "icone_trofeu_bronze"}.get(
+				int(c["posicao"]), "icone_podio"))
+		trofeu.custom_minimum_size = Vector2(0, 120)
+		trofeu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		trofeu.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		if int(c["posicao"]) > 3:
+			trofeu.modulate = Color(1, 1, 1, 0.35)
+		v.add_child(trofeu)
 		var pos := Label.new()
 		pos.text = "%dº de %d" % [c["posicao"], c["total"]]
 		pos.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		Tipografia.numero(pos, 76)
+		Tipografia.numero(pos, 64)
 		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
 		v.add_child(pos)
-		var nome_ev := g.rotulo(Aba.nome_evento(ev), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
-		nome_ev.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		if float(c.get("tempo_jogador", 0.0)) > 0.0:
-			var tempo := g.rotulo("Tempo %s" % HudCorrida._tempo(float(c["tempo_jogador"])), Aba.FONTE_PEQUENA + 3,
-					Color.WHITE, v)
-			tempo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		if tabela.size() >= 2:
-			var t0: float = tabela[0]["tempo"]
-			var dif := g.rotulo("%.1f s à frente do 2º" % (tabela[1]["tempo"] - t0) if venceu
-					else "%.1f s atrás do vencedor" % (c["tempo_jogador"] - t0), Aba.FONTE_PEQUENA + 3, Color.WHITE, v)
-			dif.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			_podio(v, tabela, c)
-		if c["premio"] > 0:
-			var hs := HBoxContainer.new()
-			hs.alignment = BoxContainer.ALIGNMENT_CENTER
-			v.add_child(hs)
-			g.icone("icone_creditos", 48, hs)
-			var liquido: int = int(c.get("folha", {}).get("patrocinio", 0)) - int(c.get("folha", {}).get("cobrado", 0))
-			var saldo := g.rotulo("%s → %s  (+%s)" % [Aba.dinheiro(jogador.economia.saldo - liquido - c["premio"]),
-					Aba.dinheiro(jogador.economia.saldo), Aba.dinheiro(c["premio"])], 30, Aba.COR_BOM, hs)
-			saldo.autowrap_mode = TextServer.AUTOWRAP_OFF
-			saldo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		var ganho := Label.new()
+		ganho.text = "+%s G" % Aba.dinheiro(int(c["premio"])) if int(c["premio"]) > 0 else "Sem prêmio"
+		ganho.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		Tipografia.numero(ganho, 34)
+		ganho.add_theme_color_override("font_color", Aba.COR_BOM if int(c["premio"]) > 0 else Aba.COR_SECUNDARIA)
+		v.add_child(ganho)
 		var marcos := []
-		if int(c.get("posicao_companheiro", 0)) > 0:
-			# Equipe: vale quem chegou na frente (fase 9).
-			marcos.append(["%s %dº · %s %dº" % [EquipeJogador.nome_jogador(dados, jogador), c["posicao_propria"], EquipeJogador.nome_segundo(dados, jogador),
-					c["posicao_companheiro"]], Aba.COR_INFO])
-		var folha: Dictionary = c.get("folha", {})
-		if int(folha.get("patrocinio", 0)) > 0 or int(folha.get("cobrado", 0)) > 0:
-			marcos.append(["Equipe: patrocínio +%s · folha −%s G" % [Aba.dinheiro(int(folha["patrocinio"])),
-					Aba.dinheiro(int(folha["cobrado"]))], Aba.COR_INFO])
-		if venceu and primeira:
-			marcos.append(["PRIMEIRA VITÓRIA NESTA CORRIDA", Aba.COR_DESTAQUE])
-		if c.get("recorde", false) and not c.get("anterior", {}).is_empty():
-			marcos.append(["RECORDE PESSOAL", Aba.COR_BOM])
-		if not c.get("anterior", {}).is_empty():
-			var dp: int = int(c["anterior"]["ultima_pos"]) - int(c["posicao"])
-			if dp != 0:
-				marcos.append(["%s %d posiç%s desde a última vez" % ["subiu" if dp > 0 else "caiu", absi(dp),
-						"ão" if absi(dp) == 1 else "ões"], Aba.COR_BOM if dp > 0 else Aba.COR_RUIM])
 		var camp: Dictionary = c.get("campeonato", {})
-		if not camp.is_empty():
-			if camp.get("final", false):
-				marcos.append(["CAMPEÃO: %s" % camp["serie"] if camp["campeao"] else
-						"%s: %dº no campeonato" % [camp["serie"], camp["posicao_final"]],
-						Aba.COR_DESTAQUE if camp["campeao"] else Aba.COR_INFO])
-				if int(camp.get("bonus", 0)) > 0:
-					marcos.append(["Bônus de campeão +%s G" % Aba.dinheiro(int(camp["bonus"])), Aba.COR_BOM])
-			else:
-				marcos.append(["Campeonato: +%d pts · etapa %d de %d" % [camp["pontos"], camp["etapa"], camp["total"]],
-						Aba.COR_INFO])
-		g.selos(marcos, v)
-		if c.get("carro_premio_uid", -1) > 0:
-			var cp: Carro = jogador.garagem.carro(c["carro_premio_uid"])
-			if cp != null:
-				var vc := g.cartao(Aba.COR_DESTAQUE, v)
-				g.rotulo("CARRO DE PRÊMIO: %s" % cp.base["nome"], Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vc)
-				vc.add_child(Estudio.imagem(cp.base, CarroBloco.cor_do_carro(cp), Vector2(0, 170)))
-		if obj < objetivos.size():
-			var lo := g.rotulo("Objetivo %d/%d: %s" % [obj + 1, objetivos.size(), objetivos[obj]["texto"]], Aba.FONTE_PEQUENA + 2,
-					Aba.COR_INFO.lightened(0.3), v)
-			lo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		if not venceu:
-			var dica := g.rotulo("Por que perdi? Veja na tela da corrida.", Aba.FONTE_PEQUENA,
-					Aba.COR_SECUNDARIA, v)
-			dica.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER, botoes)
+		if camp.get("final", false) and camp.get("campeao", false):
+			marcos.append(["CAMPEÃO: %s" % camp["serie"], Aba.COR_DESTAQUE])
+		if c.get("carro_premio_uid", -1) > 0 and jogador.garagem.carro(c["carro_premio_uid"]) != null:
+			marcos.append(["CARRO DE PRÊMIO: %s" % jogador.garagem.carro(c["carro_premio_uid"]).base["nome"], Aba.COR_DESTAQUE])
+		if not marcos.is_empty():
+			g.selos(marcos, v)
+		_lista_resultado(v, tabela, c)
+		_fechamento_automatico(v, token, _depois_do_resultado.bind(c, func(): pass)), botoes)
+
+
+## Competidores na ordem de chegada: posição, emblema da equipe, piloto e tempo
+## (diferença para o vencedor); a sua linha em destaque.
+func _lista_resultado(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
+	var t0: float = float(tabela[0]["tempo"]) if not tabela.is_empty() else 0.0
+	for i in tabela.size():
+		var it: Dictionary = tabela[i]
+		var id: String = it["id"]
+		var voce: bool = id == "jogador" or id == EquipeJogador.ID
+		var linha := PanelContainer.new()
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Aba.COR_DESTAQUE if id == "jogador" else Color(0, 0, 0, 0.28)
+		sb.set_corner_radius_all(4)
+		sb.content_margin_left = 8
+		sb.content_margin_right = 10
+		linha.add_theme_stylebox_override("panel", sb)
+		v.add_child(linha)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 10)
+		linha.add_child(h)
+		var cor := Color(0.1, 0.1, 0.1) if id == "jogador" else Color.WHITE
+		var n := Label.new()
+		n.text = str(i + 1)
+		n.custom_minimum_size = Vector2(30, 0)
+		Tipografia.numero(n, 22)
+		n.add_theme_color_override("font_color", cor)
+		h.add_child(n)
+		h.add_child(_emblema_equipe(_equipe_no_resultado(id, c), 34))
+		var nome := Label.new()
+		nome.text = EquipeJogador.nome_jogador(dados, jogador) if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador)
+				if id == EquipeJogador.ID else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1))))
+		nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		nome.clip_text = true
+		nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		nome.add_theme_font_size_override("font_size", 22)
+		nome.add_theme_color_override("font_color", cor)
+		h.add_child(nome)
+		var tempo := Label.new()
+		tempo.text = "—" if not it.get("terminou", true) else (HudCorrida._tempo(float(it["tempo"])) if i == 0
+				else "+%.1f s" % (float(it["tempo"]) - t0))
+		Tipografia.numero(tempo, 20)
+		tempo.add_theme_color_override("font_color", cor if voce else Color(cor, 0.8))
+		h.add_child(tempo)
+
+
+func _equipe_no_resultado(id: String, c: Dictionary) -> Dictionary:
+	if id == "jogador" or id == EquipeJogador.ID:
+		return EquipeJogador.dados_equipe(dados, jogador)
+	return jogador.carreira.equipe_de(c["evento_id"], id, int(c.get("semente", -1)))
+
+
+## Emblema da equipe: a logo, se existir; senão um círculo na cor da equipe com
+## o número dela.
+func _emblema_equipe(eq: Dictionary, tamanho: int) -> Control:
+	var caminho := String(eq.get("logo", ""))
+	if caminho != "" and ResourceLoader.exists(caminho):
+		var t := TextureRect.new()
+		t.texture = load(caminho)
+		t.custom_minimum_size = Vector2(tamanho, tamanho)
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		return t
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(tamanho, tamanho)
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color.from_hsv(float(posmod(hash(String(eq.get("id", ""))), 360)) / 360.0, 0.45, 0.5) \
+			if not eq.is_empty() else Color(0.3, 0.31, 0.34)
+	sb.set_corner_radius_all(tamanho / 2)
+	p.add_theme_stylebox_override("panel", sb)
+	var l := Label.new()
+	l.text = str(int(eq["numero"])) if eq.has("numero") else String(eq.get("nome", "?")).left(1)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	Tipografia.numero(l, int(tamanho * 0.5))
+	p.add_child(l)
+	return p
+
+
+## Barra que esvazia em FECHAR_RESULTADO_S e fecha a janela; a caixa liga e
+## desliga o fechamento automático (fica nas preferências).
+func _fechamento_automatico(v: VBoxContainer, token: int, ao_fechar: Callable) -> void:
+	var barra := ProgressBar.new()
+	barra.show_percentage = false
+	barra.max_value = FECHAR_RESULTADO_S
+	barra.value = FECHAR_RESULTADO_S
+	barra.custom_minimum_size = Vector2(0, 10)
+	v.add_child(barra)
+	var caixa := CheckBox.new()
+	caixa.text = "Fechar sozinha em %d s" % int(FECHAR_RESULTADO_S)
+	caixa.button_pressed = Preferencias.fechar_resultado
+	caixa.add_theme_font_size_override("font_size", Aba.FONTE_PEQUENA)
+	for estado in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
+		caixa.add_theme_stylebox_override(estado, StyleBoxEmpty.new())
+	for cor in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
+		caixa.add_theme_color_override(cor, Aba.COR_SECUNDARIA)
+	v.add_child(caixa)
+	var contar := func():
+		var tw := barra.create_tween()
+		barra.value = FECHAR_RESULTADO_S
+		tw.tween_property(barra, "value", 0.0, FECHAR_RESULTADO_S)
+		tw.finished.connect(func():
+			if _resultado_aberto == token and _sobre.aberto() and Preferencias.fechar_resultado:
+				_sobre.fechar()
+				ao_fechar.call())
+		barra.set_meta("tween", tw)
+	caixa.toggled.connect(func(ligado):
+		Preferencias.fechar_resultado = ligado
+		Preferencias.salvar()
+		if barra.has_meta("tween"):
+			(barra.get_meta("tween") as Tween).kill()
+		barra.modulate.a = 1.0 if ligado else 0.35
+		if ligado:
+			contar.call())
+	barra.modulate.a = 1.0 if Preferencias.fechar_resultado else 0.35
+	if Preferencias.fechar_resultado:
+		contar.call()
 
 
 func _depois_do_resultado(c: Dictionary, acao: Callable) -> void:
@@ -837,64 +913,6 @@ func _depois_do_resultado(c: Dictionary, acao: Callable) -> void:
 	acao.call()
 	if c.get("campeonato", {}).get("campeao", false):
 		g.historia("CAMPEONATO_VENCIDO", {"evento": c["evento_id"]})
-
-
-## Pódio dos três primeiros: degraus de alturas diferentes, o jogador em ouro.
-func _podio(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
-	var h := HBoxContainer.new()
-	h.alignment = BoxContainer.ALIGNMENT_CENTER
-	h.add_theme_constant_override("separation", 6)
-	v.add_child(h)
-	for pos in [2, 1, 3]:
-		if pos > tabela.size():
-			continue
-		var id: String = tabela[pos - 1]["id"]
-		var col := VBoxContainer.new()
-		col.alignment = BoxContainer.ALIGNMENT_END
-		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		col.add_theme_constant_override("separation", 2)
-		var nome := Label.new()
-		nome.text = EquipeJogador.nome_jogador(dados, jogador) if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador) if id == EquipeJogador.ID
-				else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1))))
-		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		nome.add_theme_font_size_override("font_size", 23)
-		nome.add_theme_color_override("font_color", Aba.COR_DESTAQUE if id == "jogador" else Color.WHITE)
-		col.add_child(nome)
-		var sil := TextureRect.new()
-		sil.texture = Aba.arte({1: "piloto_silhueta_3", 2: "piloto_silhueta_1", 3: "piloto_silhueta_2"}[pos])
-		sil.custom_minimum_size = Vector2(0, {1: 130, 2: 112, 3: 104}[pos])
-		sil.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		sil.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		if id == "jogador":
-			sil.modulate = Aba.COR_DESTAQUE.lightened(0.3)
-		col.add_child(sil)
-		var degrau := PanelContainer.new()
-		degrau.custom_minimum_size = Vector2(0, {1: 90, 2: 64, 3: 46}[pos])
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Aba.COR_DESTAQUE.darkened(0.15) if id == "jogador" else Color(0.26, 0.28, 0.33)
-		sb.corner_radius_top_left = 8
-		sb.corner_radius_top_right = 8
-		degrau.add_theme_stylebox_override("panel", sb)
-		var dh := HBoxContainer.new()
-		dh.alignment = BoxContainer.ALIGNMENT_CENTER
-		dh.add_theme_constant_override("separation", 4)
-		degrau.add_child(dh)
-		var trofeu := TextureRect.new()
-		trofeu.texture = Aba.arte({1: "icone_trofeu_ouro", 2: "icone_trofeu_prata", 3: "icone_trofeu_bronze"}[pos])
-		trofeu.custom_minimum_size = Vector2(38, 38)
-		trofeu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		trofeu.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		trofeu.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		dh.add_child(trofeu)
-		var n := Label.new()
-		n.text = "%dº" % pos
-		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		n.add_theme_font_size_override("font_size", 30)
-		n.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1) if id == "jogador" else Color.WHITE)
-		dh.add_child(n)
-		col.add_child(degrau)
-		h.add_child(col)
 
 
 func _primeira_vitoria(c: Dictionary) -> void:

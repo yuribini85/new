@@ -14,6 +14,8 @@ static var reduzir_animacoes := false
 static var efeitos_leves := false
 ## Limita a 30 quadros por segundo (economiza bateria).
 static var limitar_fps := false
+## Janela do resultado fecha sozinha (30 s); a caixa na própria janela muda.
+static var fechar_resultado := true
 ## Vista da corrida preferida: "" (a câmera 3D, AUTO) ou "dados" (vista tática,
 ## sem 3D). A última escolha vale para as próximas corridas.
 static var vista_corrida := ""
@@ -33,6 +35,7 @@ static func carregar() -> void:
 		reduzir_animacoes = bool(cfg.get_value("tela", "reduzir_animacoes", reduzir_animacoes))
 		efeitos_leves = bool(cfg.get_value("tela", "efeitos_leves", efeitos_leves))
 		limitar_fps = bool(cfg.get_value("tela", "limitar_fps", limitar_fps))
+		fechar_resultado = bool(cfg.get_value("tela", "fechar_resultado", fechar_resultado))
 		vista_corrida = String(cfg.get_value("tela", "vista_corrida", vista_corrida))
 		modo_teste = String(cfg.get_value("teste", "modo", modo_teste))
 		if not modo_teste in ["", "clareza", "ritmo"]:
@@ -46,6 +49,7 @@ static func salvar() -> void:
 	cfg.set_value("tela", "reduzir_animacoes", reduzir_animacoes)
 	cfg.set_value("tela", "efeitos_leves", efeitos_leves)
 	cfg.set_value("tela", "limitar_fps", limitar_fps)
+	cfg.set_value("tela", "fechar_resultado", fechar_resultado)
 	cfg.set_value("tela", "vista_corrida", vista_corrida)
 	cfg.set_value("teste", "modo", modo_teste)
 	cfg.save(CAMINHO)
