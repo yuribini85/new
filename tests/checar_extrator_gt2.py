@@ -248,7 +248,7 @@ def main():
             spec = importlib.util.spec_from_file_location("importar_gt2", raiz / "tools/importar_gt2.py")
             imp = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(imp)
-            g = imp.moeda
+            g = imp.preco_loja  # preços de compra (decisão 41: moeda × FATOR_PRECO)
             if x.get("usados") != [[0, 19, g(9000)], [20, 29, g(8800)]] or y.get("usados") != [[50, 59, g(30000)]]:
                 falhas.append(f"importador usados: {x.get('usados')} {y.get('usados')}")
             if (x["potencia"], x["peso"], x["preco"], x["ano"], x["tracao"], y["tracao"]) != (160, 1050, g(17500), 1993, "FF", "FR"):
@@ -271,7 +271,7 @@ def main():
             ev = carregar("eventos")
             if len(ev) != 1 or ev[0]["restricoes"] != {"potencia_max": 200, "tracao": ["FF"], "licenca": "CLUB"} \
                     or (ev[0]["nome"], ev[0]["pista"]) != ("Copa Primeira Marcha — etapa 1", "serra_alta") \
-                    or ev[0]["premios"] != [g(2500), g(1500)] or ev[0]["carro_premio"] != "hartwig_y" \
+                    or ev[0]["premios"] != [imp.moeda(2500), imp.moeda(1500)] or ev[0]["carro_premio"] != "hartwig_y" \
                     or [a["carro"] for a in ev[0]["adversarios"]] != ["hayase_x", "hayase_x"]:
                 falhas.append(f"importador eventos: {ev}")
             lic = carregar("licencas")
