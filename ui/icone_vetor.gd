@@ -1,8 +1,11 @@
 class_name IconeVetor
 extends Control
 ## Ícone desenhado por código (provisório até a arte do pack): "engrenagem"
-## (configurações) e "acelerar" (corridas aceleradas, dois triângulos). Escala
-## com o tamanho, sem esticar: o desenho usa o menor lado.
+## (configurações), "acelerar" (corridas aceleradas, dois triângulos) e os das
+## câmeras da corrida: "camera" (AUTO, o diretor), "seta" (o seu carro, a
+## mesma seta que fica sobre ele), "coroa" (líder), "frente" (o carro à
+## frente), "pista" (visão geral) e "dados" (vista tática). Escala com o
+## tamanho, sem esticar: o desenho usa o menor lado.
 
 var tipo := ""
 var cor := Color.WHITE:
@@ -28,6 +31,19 @@ func _draw() -> void:
 			_engrenagem(c, lado * 0.5)
 		"acelerar":
 			_acelerar(c, lado * 0.5)
+		"camera":
+			_camera(c, lado * 0.5)
+		"seta":
+			_poligono(c, lado * 0.5, [[-0.62, -0.42], [0.62, -0.42], [0.0, 0.58]])
+		"coroa":
+			_poligono(c, lado * 0.5, [[-0.82, 0.55], [-0.82, -0.42], [-0.4, 0.04], [0.0, -0.62], [0.4, 0.04],
+					[0.82, -0.42], [0.82, 0.55]])
+		"frente":
+			_frente(c, lado * 0.5)
+		"pista":
+			_pista(c, lado * 0.5)
+		"dados":
+			_dados(c, lado * 0.5)
 
 
 func _engrenagem(c: Vector2, r: float) -> void:
@@ -53,3 +69,43 @@ func _acelerar(c: Vector2, r: float) -> void:
 		var x0 := c.x - w + k * w
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(x0, c.y - h), Vector2(x0 + w, c.y), Vector2(x0, c.y + h)]), cor)
+
+
+func _poligono(c: Vector2, r: float, pontos: Array) -> void:
+	var p := PackedVector2Array()
+	for q in pontos:
+		p.append(c + Vector2(q[0], q[1]) * r)
+	draw_colored_polygon(p, cor)
+
+
+func _traco(r: float) -> float:
+	return maxf(2.0, r * 0.16)
+
+
+func _camera(c: Vector2, r: float) -> void:
+	draw_rect(Rect2(c + Vector2(-0.95, -0.5) * r, Vector2(1.2, 1.0) * r), cor)
+	_poligono(c, r, [[0.32, 0.0], [0.95, -0.48], [0.95, 0.48]])
+
+
+func _frente(c: Vector2, r: float) -> void:
+	for k in 2:
+		var y := -0.5 + k * 0.55
+		draw_polyline(PackedVector2Array([c + Vector2(-0.62, y + 0.45) * r, c + Vector2(0.0, y) * r,
+				c + Vector2(0.62, y + 0.45) * r]), cor, _traco(r), true)
+
+
+func _pista(c: Vector2, r: float) -> void:
+	var p := PackedVector2Array()
+	for i in 33:
+		var a := TAU * i / 32.0
+		p.append(c + Vector2(cos(a) * 0.86, sin(a) * 0.52) * r)
+	draw_polyline(p, cor, _traco(r), true)
+	draw_circle(c + Vector2(0.86, 0.0) * r, r * 0.17, cor)
+
+
+func _dados(c: Vector2, r: float) -> void:
+	var w := 0.4 * r
+	var base := c.y + 0.62 * r
+	for k in 3:
+		var h: float = [0.62, 1.2, 0.86][k] * r
+		draw_rect(Rect2(c.x + (-0.8 + k * 0.6) * r, base - h, w, h), cor)

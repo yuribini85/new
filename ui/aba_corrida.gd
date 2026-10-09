@@ -27,8 +27,10 @@ const EVENTO_RIVAL_S := 20.0
 ## Disputa (s): a tela "respira" (secundários apagam) com alguém a menos disto.
 const RESPIRA_S := 0.45
 
-const CAMERAS := [["AUTO", "auto"], ["CARRO", "jogador"], ["LÍDER", "lider"], ["À FRENTE", "frente"],
-		["PISTA", "geral"], ["DADOS", "dados"]]
+## Câmeras: nome (só na dica do mouse), modo e ícone. Sem texto no botão: o
+## jogador descobre tocando.
+const CAMERAS := [["Automática", "auto", "camera"], ["Seu carro", "jogador", "seta"], ["Líder", "lider", "coroa"],
+		["À frente", "frente", "frente"], ["Pista inteira", "geral", "pista"], ["Dados", "dados", "dados"]]
 
 ## Minimapa (pista inteira) e fonte das posições da vista 3D.
 var _visual: CorridaVisual
@@ -126,9 +128,9 @@ func _init(d: Node, j: Node) -> void:
 	resized.connect(_ajustar_area)
 
 
-## Seletor único e compacto: AUTO | CARRO | LÍDER | À FRENTE | PISTA. São
-## filtros de acompanhamento, não ações: baixos, num fundo só, o escolhido em
-## âmbar (estado selecionado).
+## Seletor único e compacto, só ícones: automática, seu carro, líder, à
+## frente, pista inteira e dados. São filtros de acompanhamento, não ações:
+## baixos, num fundo só, o escolhido em âmbar (ícone escuro).
 func _seletor_cameras() -> Control:
 	var p := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
@@ -145,13 +147,18 @@ func _seletor_cameras() -> Control:
 	marcado.set_corner_radius_all(8)
 	for c in CAMERAS:
 		var b := Button.new()
-		b.text = c[0]
+		b.tooltip_text = c[0]
 		b.toggle_mode = true
 		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(0, 44)
+		b.custom_minimum_size = Vector2(0, 60)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.add_theme_font_size_override("font_size", 19)
-		b.add_theme_color_override("font_color", COR_SECUNDARIA)
+		var ic := IconeVetor.new(c[2], COR_SECUNDARIA)
+		ic.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		ic.offset_left = -21
+		ic.offset_right = 21
+		ic.offset_top = -19
+		ic.offset_bottom = 19
+		b.add_child(ic)
 		for estado in ["normal", "hover", "focus", "disabled"]:
 			b.add_theme_stylebox_override(estado, vazio)
 		for estado in ["pressed", "hover_pressed"]:
@@ -168,7 +175,9 @@ var _camera_modo := "auto":
 	set(v):
 		_camera_modo = v
 		for i in _cameras_botoes.size():
-			_cameras_botoes[i].button_pressed = CAMERAS[i][1] == v
+			var marcado: bool = CAMERAS[i][1] == v
+			_cameras_botoes[i].button_pressed = marcado
+			(_cameras_botoes[i].get_child(0) as IconeVetor).cor = Color(0.1, 0.1, 0.1) if marcado else COR_SECUNDARIA
 
 
 ## "auto", "jogador", "lider", "frente", "geral" ou o id de um participante
