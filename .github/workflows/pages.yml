@@ -47,6 +47,11 @@ jobs:
           # do jogo é pedido com a versão no endereço para vir sempre o novo.
           sed -i "s/\"executable\":\"index\",/\"executable\":\"index\",\"mainPack\":\"index.pck?v=$v\",/" build/web/index.html
           grep -q "index.pck?v=$v" build/web/index.html
+          # A página confere esta versão ao abrir e recarrega se houver outra
+          # mais nova (navegador interno de app guarda cache por muito tempo).
+          echo "$v" > build/web/versao.txt
+          sed -i "s/__VERSAO__/$v/" build/web/index.html
+          grep -q "var v = '$v'" build/web/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:

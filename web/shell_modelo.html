@@ -128,6 +128,29 @@ body {
 			<div id="status-aviso"></div>
 		</div>
 
+		<script>
+// Versão publicada mais nova que esta página (cache do navegador, ou do
+// navegador interno de outro app): recarrega já na nova. __VERSAO__ é trocado
+// pelo commit na publicação (.github/workflows/pages.yml).
+(function () {
+	var v = '__VERSAO__';
+	if (v.indexOf('__') === 0) return;
+	fetch('versao.txt?t=' + Date.now(), { cache: 'no-store' })
+		.then(function (r) { return r.ok ? r.text() : ''; })
+		.then(function (t) {
+			t = t.trim();
+			if (t && t !== v && location.search !== '?v=' + t) location.replace(location.pathname + '?v=' + t);
+		})
+		.catch(function () {});
+}());
+// iPhone: o Safari só entrega a inclinação (parallax da tela inicial) depois de
+// uma permissão pedida num toque. Pede no primeiro toque, uma vez.
+window.addEventListener('touchend', function () {
+	if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
+		DeviceOrientationEvent.requestPermission().catch(function () {});
+	}
+}, { once: true, capture: true });
+		</script>
 		<script src="$GODOT_URL"></script>
 		<script>
 const GODOT_CONFIG = $GODOT_CONFIG;
