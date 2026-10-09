@@ -43,6 +43,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"fila": jogador.fila,
 		"ultimo_processamento": jogador.ultimo_processamento,
 		"aceleracao": jogador.aceleracao,
+		"ampliacoes_garagem": jogador.ampliacoes_garagem,
 		"contador_sementes": jogador.contador_sementes,
 	}
 
@@ -230,6 +231,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		if jogador.fila.get("posicoes") is Array:
 			jogador.fila["posicoes"] = jogador.fila["posicoes"].map(func(x): return int(x))
 	jogador.ultimo_processamento = float(s["ultimo_processamento"])
+	jogador.ampliacoes_garagem = int(s.get("ampliacoes_garagem", 0))  # opcional (decisão 43)
 	# Opcional: saves anteriores à aceleração (decisão 39) carregam sem ela.
 	jogador.aceleracao = {}
 	var ac = s.get("aceleracao")

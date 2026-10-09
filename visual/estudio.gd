@@ -84,6 +84,14 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 
 
 func _copiar(vp: SubViewport, tex: ImageTexture) -> void:
+	# Foto pedida antes de o estúdio entrar na árvore (ao abrir o jogo, na
+	# Garagem): espera ele entrar e só então desenha uma vez.
+	var arvore := Engine.get_main_loop() as SceneTree
+	while is_instance_valid(vp) and not vp.is_inside_tree():
+		await arvore.process_frame
+	if not is_instance_valid(vp):
+		return
+	vp.render_target_update_mode = SubViewport.UPDATE_ONCE
 	await RenderingServer.frame_post_draw
 	if is_instance_valid(vp):
 		var img := vp.get_texture().get_image()

@@ -23,7 +23,7 @@ func _init(economia_: Economia, garagem_: Garagem, regras_: Dictionary, pneu_por
 ## Compra um carro novo; ele chega com o pneu de fábrica. Retorna o uid ou -1.
 ## `cor`: pintura escolhida (hex); vazia = a de fábrica do modelo.
 func comprar_carro(dados_carro: Dictionary, cor := "") -> int:
-	if not economia.debitar(int(dados_carro["preco"])):
+	if garagem.cheia() or not economia.debitar(int(dados_carro["preco"])):
 		return -1
 	var carro := Carro.new(dados_carro)
 	carro.cor = cor
@@ -34,7 +34,7 @@ func comprar_carro(dados_carro: Dictionary, cor := "") -> int:
 ## Compra uma oferta de Usados.estoque(). `vendidos` recebe a chave da oferta
 ## para ela sumir do estoque no resto do período. Retorna o uid ou -1.
 func comprar_usado(oferta: Dictionary, dados_carro: Dictionary, vendidos: Dictionary, cor := "") -> int:
-	if vendidos.has(oferta["chave"]) or not economia.debitar(int(oferta["preco"])):
+	if vendidos.has(oferta["chave"]) or garagem.cheia() or not economia.debitar(int(oferta["preco"])):
 		return -1
 	vendidos[oferta["chave"]] = true
 	var carro := Carro.new(dados_carro)

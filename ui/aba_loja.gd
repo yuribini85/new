@@ -307,8 +307,8 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 ## próximo passo.
 func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 	if uid <= 0:
-		avisar("Não deu para comprar %s: %s." % [c["nome"], "saldo insuficiente" if not jogador.economia.pode_pagar(preco)
-				else "saiu do estoque"], false)
+		avisar("Não deu para comprar %s: %s." % [c["nome"], "garagem cheia (amplie na Garagem)" if jogador.garagem.cheia()
+				else ("saldo insuficiente" if not jogador.economia.pode_pagar(preco) else "saiu do estoque")], false)
 		if not jogador.economia.pode_pagar(preco):
 			historia("SEM_DINHEIRO")
 		return

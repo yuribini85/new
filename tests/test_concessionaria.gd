@@ -108,3 +108,28 @@ func test_pneu_de_chuva_comprado_uma_vez() -> void:
 	igual(c.atributos_efetivos("chuva")["pneu"], "chuva", "usado na chuva")
 	j.free()
 	d.free()
+
+
+## Decisão 43: vagas dobram a cada ampliação; a 1ª custa 2 × a soma dos 1º
+## prêmios das provas da licença do preço, e cada seguinte o dobro. Garagem
+## cheia não compra; carro-prêmio entra mesmo assim.
+func test_vagas_da_garagem() -> void:
+	var d := dados_fixture()
+	var j: Node = preload("res://autoload/jogador.gd").new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(100000)
+	j.garagem.vagas = VagasGaragem.capacidade(d, 0)
+	igual(j.garagem.vagas, 2, "começa com 2")
+	igual(VagasGaragem.preco(d, 0), 20, "2 × o 1º prêmio da prova da licença b (10)")
+	igual(VagasGaragem.preco(d, 1), 40, "a seguinte, o dobro")
+	verificar(j.concessionaria.comprar_carro(d.carro("fraco")) > 0, "1º carro")
+	verificar(j.concessionaria.comprar_carro(d.carro("fraco")) > 0, "2º carro")
+	verificar(j.garagem.cheia(), "cheia")
+	igual(j.concessionaria.comprar_carro(d.carro("fraco")), -1, "cheia: não compra")
+	var saldo: int = j.economia.saldo
+	igual(VagasGaragem.ampliar(d, j), "", "amplia")
+	igual(j.garagem.vagas, 4, "dobrou")
+	igual(j.economia.saldo, saldo - 20, "pagou")
+	verificar(j.concessionaria.comprar_carro(d.carro("fraco")) > 0, "com vaga, compra")
+	j.free()
+	d.free()

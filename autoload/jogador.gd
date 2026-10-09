@@ -46,6 +46,8 @@ var fila: Dictionary = {}
 var ultimo_processamento: float = 0.0
 ## Corridas aceleradas (Aceleracao, decisão 39): {ganho, inicio, fim, fator}.
 var aceleracao: Dictionary = {}
+## Ampliações da garagem compradas (VagasGaragem, decisão 43).
+var ampliacoes_garagem: int = 0
 var contador_sementes: int = 0
 ## Resumo da última corrida aplicada (relatório pós-corrida; não vai para o save).
 var ultima_corrida: Dictionary = {}
@@ -78,6 +80,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	fila = {}
 	ultimo_processamento = 0.0
 	aceleracao = {}
+	ampliacoes_garagem = 0
 	contador_sementes = 0
 	vitorias = {}
 	campeonatos = {}

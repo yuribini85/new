@@ -7,6 +7,13 @@ signal mudou
 var carros: Dictionary = {}  # uid -> Carro
 ## Próximo uid a entregar; persistido no save para uids nunca se repetirem.
 var proximo_uid: int = 1
+## Vagas (VagasGaragem): comprar carro com a garagem cheia não dá. 0 = sem
+## limite. Carro-prêmio entra mesmo cheia (prêmio não se recusa).
+var vagas: int = 0
+
+
+func cheia() -> bool:
+	return vagas > 0 and carros.size() >= vagas
 
 
 func adicionar(carro: Carro) -> int:

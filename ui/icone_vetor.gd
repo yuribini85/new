@@ -44,6 +44,14 @@ func _draw() -> void:
 			_pista(c, lado * 0.5)
 		"dados":
 			_dados(c, lado * 0.5)
+		"grade":
+			for k in 4:
+				var q := c + Vector2(-0.82 + (k % 2) * 0.92, -0.82 + (k / 2) * 0.92) * lado * 0.5
+				draw_rect(Rect2(q, Vector2(0.72, 0.72) * lado * 0.5), cor)
+		"lista":
+			for k in 3:
+				var y := c.y + (-0.7 + k * 0.7) * lado * 0.5
+				draw_rect(Rect2(Vector2(c.x - 0.85 * lado * 0.5, y - 0.12 * lado * 0.5), Vector2(1.7, 0.26) * lado * 0.5), cor)
 
 
 func _engrenagem(c: Vector2, r: float) -> void:

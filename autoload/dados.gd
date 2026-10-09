@@ -73,6 +73,7 @@ func carregar(dir: String) -> void:
 	_objetos.erase("monetizacao")  # idem (monetizacao())
 	_objetos.erase("carros_removidos")  # idem (substituto())
 	_objetos.erase("workshops")  # idem (workshops())
+	_objetos.erase("garagem")  # idem (garagem())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -299,6 +300,16 @@ func curvas(pista_id: String) -> Array:
 		var c = _ler_json(pasta + "curvas.json") if FileAccess.file_exists(pasta + "curvas.json") else {}
 		_objetos["curvas"] = c if c is Dictionary else {}
 	return _objetos["curvas"].get(pista_id, [])
+
+
+## Vagas da garagem (decisão 43, garagem.json, opcional). Sem o arquivo, {}
+## (garagem sem limite).
+func garagem() -> Dictionary:
+	if not _objetos.has("garagem"):
+		var caminho := pasta + "garagem.json"
+		var g = _ler_json(caminho) if FileAccess.file_exists(caminho) else {}
+		_objetos["garagem"] = g if g is Dictionary else {}
+	return _objetos["garagem"]
 
 
 ## Workshops das Lojas (decisão 42, workshops.json, opcional): [{id, nome,

@@ -442,6 +442,7 @@ func _avisar(texto: String, ok := true) -> void:
 ## Estado mudou: a tela visível é refeita já; as outras só ficam marcadas e se
 ## refazem quando forem abertas (refazer as sete a cada toque levava segundos).
 func atualizar() -> void:
+	jogador.garagem.vagas = VagasGaragem.capacidade(dados, jogador.ampliacoes_garagem)
 	_sujar_todas()
 	_reconstruir(_abas.current_tab)
 
