@@ -1,0 +1,98 @@
+class_name PaisagemParallax
+extends Control
+## Paisagem da tela inicial em quatro camadas (arte/inicio/): céu e montanhas,
+## vales e água, autódromo, vegetação e cerca. Parallax híbrido: um movimento
+## automático lento e contínuo (ciclo de CICLO_S, sem salto no fim) somado à
+## inclinação do aparelho quando há sensor. A camada mais próxima mexe mais.
+## Cada camada é escalada por inteiro (sem esticar) com folga suficiente para
+## nunca mostrar a borda. Movimento reduzido nas preferências: tudo parado.
+## Apresentação, não balanceamento: amplitudes e tempos são de composição.
+
+const PASTA := "res://arte/inicio/"
+const CAMADAS := ["camada_1_ceu", "camada_2_vale", "camada_3_autodromo", "camada_4_frente"]
+## Deslocamento máximo de cada camada (px da tela de 720): automático e inclinação.
+const AMP_AUTO := [3.0, 7.0, 12.0, 20.0]
+const AMP_INCLINACAO := [4.0, 10.0, 18.0, 30.0]
+const VERTICAL := 0.25  # oscilação vertical, fração da horizontal
+const CICLO_S := 36.0
+## Inclinação: zona morta (tremor da mão), resposta suavizada e limite.
+const ZONA_MORTA := 0.03
+const SUAVIZAR := 2.5  # 1/s
+const INCLINACAO_MAX := 0.35  # fração da gravidade que leva ao deslocamento máximo
+
+var _camadas: Array[TextureRect] = []
+var _t := 0.0
+var _neutro := Vector3.ZERO
+var _inclinacao := Vector2.ZERO
+var _folga := 0.0
+
+
+func _init() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	clip_contents = true
+	for k in CAMADAS.size():
+		var t := TextureRect.new()
+		t.texture = load(PASTA + CAMADAS[k] + ".webp")
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(t)
+		_camadas.append(t)
+	resized.connect(_enquadrar)
+
+
+## Todas as camadas no mesmo retângulo (a composição das quatro é uma só),
+## maior que a tela pela folga do maior deslocamento, nas duas direções.
+func _enquadrar() -> void:
+	_folga = AMP_AUTO[-1] + AMP_INCLINACAO[-1] + 4.0
+	var escala := (size.x + 2.0 * _folga) / maxf(size.x, 1.0)
+	var tam := size * escala
+	for t in _camadas:
+		t.size = tam
+	_posicionar()
+
+
+func _process(delta: float) -> void:
+	if not is_visible_in_tree() or Preferencias.reduzir_animacoes:
+		return
+	_t = fmod(_t + delta, CICLO_S)
+	_ler_inclinacao(delta)
+	_posicionar()
+
+
+func _notification(what: int) -> void:
+	# Fora de foco (outra aba, app em segundo plano): pausa.
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		set_process(false)
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_APPLICATION_RESUMED:
+		set_process(true)
+
+
+## Orientação estimada pela gravidade (não a velocidade angular crua): a
+## primeira leitura é a posição neutra; zona morta, suavização e limite.
+func _ler_inclinacao(delta: float) -> void:
+	var g := Input.get_gravity()
+	if g.length() < 1.0:
+		g = Input.get_accelerometer()  # alguns navegadores só dão o acelerômetro
+	var alvo := Vector2.ZERO
+	if g.length() > 1.0:
+		var u := g.normalized()
+		if _neutro == Vector3.ZERO:
+			_neutro = u
+		var d := u - _neutro
+		alvo = Vector2(d.x, -d.y) / INCLINACAO_MAX
+		if alvo.length() < ZONA_MORTA:
+			alvo = Vector2.ZERO
+		alvo = alvo.limit_length(1.0)
+	_inclinacao = _inclinacao.lerp(alvo, 1.0 - exp(-SUAVIZAR * delta))
+
+
+func _posicionar() -> void:
+	var fase := TAU * _t / CICLO_S
+	# Lemniscata suave: volta ao início sem salto, sem parar nos extremos.
+	var auto := Vector2(sin(fase), VERTICAL * sin(2.0 * fase))
+	for k in _camadas.size():
+		var d: Vector2 = auto * AMP_AUTO[k] + _inclinacao * AMP_INCLINACAO[k]
+		d = d.clamp(Vector2(-_folga, -_folga), Vector2(_folga, _folga))
+		_camadas[k].position = (size - _camadas[k].size) / 2.0 + d

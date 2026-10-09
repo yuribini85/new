@@ -5,8 +5,16 @@ extends Control
 ## porque apaga o progresso. Sem save, a opção grande é "Começar".
 
 const PRINCIPAL := "res://scenes/principal.tscn"
-## Tempo mínimo do logo na tela (s): apresentação, não balanceamento.
+## Composição (apresentação, não balanceamento): tempo mínimo do logo (s),
+## posições em fração da altura e medidas em px da tela de 720.
 const LOGO_MIN_S := 1.2
+const TOPO_LOGO := 0.17
+const ALTURA_LOGO := 198.0
+const TOPO_ACOES := 0.44
+const LARGURA_BOTAO := 460.0
+const ALTURA_BOTAO := 96.0
+## Ocre do botão principal um pouco menos saturado que o da interface.
+static var OCRE := Color.from_hsv(Aba.COR_DESTAQUE.h, Aba.COR_DESTAQUE.s * 0.82, Aba.COR_DESTAQUE.v * 0.96)
 
 var _barra: ProgressBar
 var _opcoes: VBoxContainer
@@ -18,50 +26,75 @@ var _pronto := false
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var fundo := ColorRect.new()
-	fundo.color = Aba.COR_FUNDO
+	fundo.color = Color("1a2d49")  # o céu da paisagem, enquanto ela carrega
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fundo)
-	var arte := Aba.arte("fundo_garagem")
-	if arte != null:
-		var img := TextureRect.new()
-		img.texture = arte
-		img.set_anchors_preset(Control.PRESET_FULL_RECT)
-		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		img.modulate = Color(0.35, 0.35, 0.38)
-		add_child(img)
-	var v := VBoxContainer.new()
-	v.set_anchors_preset(Control.PRESET_FULL_RECT)
-	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	v.add_theme_constant_override("separation", 56)
-	add_child(v)
-	_margens(v)
+	# Paisagem em camadas com parallax (logo, botões e versão ficam parados).
+	add_child(PaisagemParallax.new())
+	var ui := Control.new()
+	ui.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(ui)
+	_margens(ui)
+	# Logo ~10% menor que antes, no terço de cima: a paisagem respira embaixo.
 	var logo := TextureRect.new()
 	logo.texture = Aba.arte("logo")
-	logo.custom_minimum_size = Vector2(0, 220)
 	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	v.add_child(logo)
+	logo.anchor_left = 0.0
+	logo.anchor_right = 1.0
+	logo.anchor_top = TOPO_LOGO
+	logo.anchor_bottom = TOPO_LOGO
+	logo.offset_bottom = ALTURA_LOGO
+	ui.add_child(logo)
+	# Ações mais abaixo, com mais ar entre elas e o logo; o pé fica livre.
+	var acoes := VBoxContainer.new()
+	acoes.anchor_left = 0.0
+	acoes.anchor_right = 1.0
+	acoes.anchor_top = TOPO_ACOES
+	acoes.anchor_bottom = TOPO_ACOES
+	acoes.add_theme_constant_override("separation", 0)
+	ui.add_child(acoes)
 	_barra = ProgressBar.new()
-	_barra.custom_minimum_size = Vector2(0, 12)
+	_barra.custom_minimum_size = Vector2(LARGURA_BOTAO, 10)
+	_barra.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_barra.show_percentage = false
 	_barra.max_value = 1.0
 	var sb_f := StyleBoxFlat.new()
-	sb_f.bg_color = Color(1, 1, 1, 0.08)
-	sb_f.set_corner_radius_all(6)
+	sb_f.bg_color = Color(1, 1, 1, 0.12)
+	sb_f.set_corner_radius_all(5)
 	var sb_c := StyleBoxFlat.new()
-	sb_c.bg_color = Aba.COR_DESTAQUE
-	sb_c.set_corner_radius_all(6)
+	sb_c.bg_color = OCRE
+	sb_c.set_corner_radius_all(5)
 	_barra.add_theme_stylebox_override("background", sb_f)
 	_barra.add_theme_stylebox_override("fill", sb_c)
-	v.add_child(_barra)
+	acoes.add_child(_barra)
 	_opcoes = VBoxContainer.new()
-	# A área de toque do "Novo jogo" já dá o respiro entre os dois.
-	_opcoes.add_theme_constant_override("separation", 4)
+	_opcoes.add_theme_constant_override("separation", 14)
 	_opcoes.modulate.a = 0.0
 	_opcoes.visible = false
-	v.add_child(_opcoes)
+	acoes.add_child(_opcoes)
+	_versao()
 	ResourceLoader.load_threaded_request(PRINCIPAL)
+
+
+## Versão no canto de baixo, discreta e parada (application/config/version).
+func _versao() -> void:
+	var v := String(ProjectSettings.get_setting("application/config/version", ""))
+	if v == "":
+		return
+	var l := Label.new()
+	l.text = "v" + v
+	Tipografia.rotulo(l, "regular", 20)
+	l.add_theme_color_override("font_color", Color(0.78, 0.8, 0.84, 0.55))
+	l.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	l.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	var base := AreaSegura.base(get_viewport_rect().size.x)
+	l.offset_left = 20.0
+	l.offset_bottom = -(20.0 + base)
+	l.offset_top = l.offset_bottom - 28.0
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(l)
 
 
 ## Margens laterais e áreas seguras do aparelho (entalhe, barra de gestos),
@@ -104,12 +137,25 @@ func _mostrar_opcoes() -> void:
 	_barra.visible = false
 	var sm := get_node("/root/SaveManager")
 	var continuar := Button.new()
-	Tipografia.acao_primaria(continuar, "Continuar" if sm.tinha_save else "Começar")
+	Tipografia.acao_primaria(continuar, "Continuar" if sm.tinha_save else "Começar", OCRE, Color(0.1, 0.1, 0.1),
+			46, ALTURA_BOTAO)
+	# Mais sóbrio: largura contida e cantos menos arredondados.
+	continuar.custom_minimum_size.x = LARGURA_BOTAO
+	continuar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	for estado in ["normal", "hover", "pressed", "focus", "disabled"]:
+		var sb: StyleBoxFlat = (continuar.get_theme_stylebox(estado) as StyleBoxFlat).duplicate()
+		sb.set_corner_radius_all(4)
+		continuar.add_theme_stylebox_override(estado, sb)
 	continuar.pressed.connect(_entrar)
 	_opcoes.add_child(continuar)
 	if sm.tinha_save:
 		var novo := Button.new()
-		Tipografia.acao_secundaria(novo, "Novo jogo")
+		Tipografia.acao_secundaria(novo, "Novo jogo", Color(0.95, 0.93, 0.89), 30, 88)
+		novo.custom_minimum_size.x = LARGURA_BOTAO
+		novo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		# Contraste sobre a paisagem sem caixa: uma sombra curta no texto.
+		novo.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
+		novo.add_theme_constant_override("shadow_offset_y", 2)
 		novo.pressed.connect(_confirmar_novo)
 		_opcoes.add_child(novo)
 	_opcoes.visible = true
