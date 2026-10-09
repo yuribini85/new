@@ -45,11 +45,9 @@ const VAGA_LARGURA_M := 3.0
 const VAGA_FUNDO_M := 1.6
 const VAGA_TRACO_M := 0.22
 const XADREZ_M := 0.8  # lado de cada quadrado da linha de chegada
-## A linha de chegada e o pórtico ficam logo à frente da vaga da pole (que a
-## simulação põe em s = 0): o grid inteiro atrás da linha, como numa largada
-## de verdade. A diferença na hora de cruzar é imperceptível (décimos).
-const LINHA_CHEGADA_M := 3.6
-const PORTICO_M := LINHA_CHEGADA_M + 2.4  # o pórtico logo depois da linha (ela fica à vista)
+## Linha de chegada e pórtico: MontadorPista.LINHA_CHEGADA_M e PORTICO_M.
+const LINHA_CHEGADA_M := MontadorPista.LINHA_CHEGADA_M
+const PORTICO_M := MontadorPista.PORTICO_M
 var _tracado: Tracado
 var _tracao := {}  # id -> "FF", "FR", "MR", "4WD"
 var _giro_batida := {}  # id -> giro da batida que ainda resta (rad)

@@ -11,6 +11,11 @@ extends RefCounted
 ## lado de dentro; postes no pátio dos boxes e no paddock; mata em volta, mais densa longe da pista.
 ## Sombras dos objetos geradas aqui, na direção da luz do tema.
 
+## A linha de chegada e o pórtico ficam logo à frente da vaga da pole (que a
+## simulação põe em s = 0): o grid inteiro atrás da linha, como numa largada
+## de verdade. A diferença na hora de cruzar é imperceptível (décimos).
+const LINHA_CHEGADA_M := 3.6
+const PORTICO_M := LINHA_CHEGADA_M + 2.4  # o pórtico logo depois da linha (ela fica à vista)
 const PASTA := "res://arte/pistas/kit/"
 ## Escala do kit (px por metro).
 const PX_M := 32.0
@@ -503,7 +508,7 @@ func _reta_de_largada(k: Dictionary) -> void:
 	# Pórtico sobre a largada.
 	var portico := kit("portico")
 	if portico != null:
-		_objeto("portico", _pista.posicao_em(Corrida3D.PORTICO_M), _pista.rumo_em(Corrida3D.PORTICO_M),
+		_objeto("portico", _pista.posicao_em(PORTICO_M), _pista.rumo_em(PORTICO_M),
 				7.0, 0.6, true)
 
 
