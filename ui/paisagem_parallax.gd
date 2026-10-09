@@ -32,6 +32,9 @@ var _neutro := Vector3.ZERO
 var _inclinacao := Vector2.ZERO
 var _folga := 0.0
 var _neutro_web := Vector2.INF
+## Diagnóstico (web, endereço com ?diag=1): camadas, deslocamentos e sensor na tela.
+var _diag: Label
+var _diag_t := 0.0
 
 
 ## Tamanho do retângulo das camadas em relação à tela (folga do maior
@@ -59,6 +62,17 @@ func _init() -> void:
 	resized.connect(_enquadrar)
 	if OS.has_feature("web"):
 		JavaScriptBridge.eval(JS_ORIENTACAO, true)
+		if str(JavaScriptBridge.eval("location.search", true)).contains("diag"):
+			_diag = Label.new()
+			_diag.add_theme_font_size_override("font_size", 18)
+			_diag.add_theme_color_override("font_color", Color.YELLOW)
+			_diag.add_theme_color_override("font_outline_color", Color.BLACK)
+			_diag.add_theme_constant_override("outline_size", 6)
+			_diag.position = Vector2(12, 12)
+			_diag.size = Vector2(696, 0)
+			_diag.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
+			_diag.z_index = 10
+			add_child(_diag)
 
 
 ## Todas as camadas no mesmo retângulo (a composição das quatro é uma só),
@@ -73,6 +87,11 @@ func _enquadrar() -> void:
 
 
 func _process(delta: float) -> void:
+	if _diag != null:
+		_diag_t += delta
+		if _diag_t > 0.3:
+			_diag_t = 0.0
+			_diagnostico()
 	if not is_visible_in_tree() or Preferencias.reduzir_animacoes:
 		return
 	_t = fmod(_t + delta, CICLO_S)
@@ -123,6 +142,20 @@ func _ler_inclinacao_web(delta: float) -> void:
 			alvo = Vector2.ZERO
 		alvo = alvo.limit_length(1.0)
 	_inclinacao = _inclinacao.lerp(alvo, 1.0 - exp(-SUAVIZAR * delta))
+
+
+func _diagnostico() -> void:
+	var linhas := ["DIAG parallax  t=%.1f  tela=%s  reduzir=%s" % [_t, str(size.round()), str(Preferencias.reduzir_animacoes)]]
+	for k in _camadas.size():
+		var c := _camadas[k]
+		var tx := c.texture
+		linhas.append("%d %s idx=%d tex=%s pos=%s" % [k + 1, CAMADAS[k].get_slice("_", 2), c.get_index(),
+				str(tx.get_size()) if tx != null else "NULA", str(c.position.round())])
+	var g = JavaScriptBridge.eval("window.__sdOri?JSON.stringify(window.__sdOri):'sem listener'", true)
+	var perm = JavaScriptBridge.eval("(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function')?'pede permissao':'sem permissao'", true)
+	linhas.append("sensor=%s  %s  inclinacao=%s" % [str(g), str(perm), str(_inclinacao.snapped(Vector2(0.01, 0.01)))])
+	linhas.append(str(JavaScriptBridge.eval("navigator.userAgent", true)))
+	_diag.text = "\n".join(linhas)
 
 
 func _posicionar() -> void:
