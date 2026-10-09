@@ -139,7 +139,11 @@ body {
 		.then(function (r) { return r.ok ? r.text() : ''; })
 		.then(function (t) {
 			t = t.trim();
-			if (t && t !== v && location.search !== '?v=' + t) location.replace(location.pathname + '?v=' + t);
+			if (!t || t === v) return;
+		var q = new URLSearchParams(location.search);
+		if (q.get('v') === t) return;
+		q.set('v', t);  // mantém os outros parâmetros (ex.: ?diag=1)
+		location.replace(location.pathname + '?' + q.toString());
 		})
 		.catch(function () {});
 }());
