@@ -94,6 +94,17 @@ body {
 	to { transform: translateX(340%); }
 }
 
+#status-etapa {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: calc(env(safe-area-inset-top, 0px) + 44% + 24 * var(--u));
+	color: rgba(232, 226, 212, 0.7);
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	font-size: calc(22 * var(--u));
+	text-align: center;
+}
+
 #status-aviso {
 	position: absolute;
 	left: 2rem;
@@ -125,6 +136,7 @@ body {
 			<div id="status-fundo"></div>
 			<img id="status-logo" src="data:image/png;base64,{{LOGO}}" alt="Second Driver">
 			<div id="status-barra" class="indeterminada"><div id="status-preenche"></div></div>
+			<div id="status-etapa"></div>
 			<div id="status-aviso"></div>
 		</div>
 
@@ -143,6 +155,7 @@ body {
 		var q = new URLSearchParams(location.search);
 		if (q.get('v') === t) return;
 		q.set('v', t);  // mantém os outros parâmetros (ex.: ?diag=1)
+		try { sessionStorage.removeItem('sd_carregando'); } catch (e) {}  // recarga nossa, não queda
 		location.replace(location.pathname + '?' + q.toString());
 		})
 		.catch(function () {});
@@ -166,6 +179,25 @@ const engine = new Engine(GODOT_CONFIG);
 	const barra = document.getElementById('status-barra');
 	const preenche = document.getElementById('status-preenche');
 	const aviso = document.getElementById('status-aviso');
+	const etapa = document.getElementById('status-etapa');
+	let nota = '';
+	function mostrarEtapa(texto) {
+		etapa.textContent = texto + nota;
+	}
+	// Erros de script durante o carregamento vão para a tela (no celular não
+	// há console para ver).
+	window.addEventListener('error', function (e) { falha('Erro: ' + (e.message || e)); });
+	window.addEventListener('unhandledrejection', function (e) { falha('Erro: ' + (e.reason && e.reason.message || e.reason)); });
+	// O Safari do iPhone fecha e recarrega a página quando ela passa do limite
+	// de memória: parece um carregamento infinito. Marca o início e, se a
+	// página voltar sem ter terminado, avisa.
+	let quedas = 0;
+	try {
+		quedas = Number(sessionStorage.getItem('sd_quedas') || 0);
+		if (sessionStorage.getItem('sd_carregando')) quedas += 1;
+		sessionStorage.setItem('sd_quedas', String(quedas));
+		sessionStorage.setItem('sd_carregando', '1');
+	} catch (e) {}
 	function escala() {
 		// Mesma regra do jogo: a largura da tela vale 720 unidades.
 		status.style.setProperty('--u', (status.clientWidth / 720) + 'px');
@@ -183,7 +215,9 @@ const engine = new Engine(GODOT_CONFIG);
 			aviso.appendChild(document.createElement('br'));
 		});
 		barra.style.display = 'none';
+		etapa.style.display = 'none';
 		aviso.style.display = 'block';
+		try { sessionStorage.removeItem('sd_carregando'); } catch (e) {}
 	}
 
 	const faltando = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
@@ -205,15 +239,26 @@ const engine = new Engine(GODOT_CONFIG);
 		}
 		return;
 	}
+	if (quedas > 0) {
+		nota = ' · o navegador fechou o jogo ' + quedas + 'x no carregamento';
+	}
+	mostrarEtapa('Baixando…');
 	engine.startGame({
 		'onProgress': function (atual, total) {
 			if (atual > 0 && total > 0) {
 				barra.classList.remove('indeterminada');
 				preenche.style.width = (100 * atual / total).toFixed(1) + '%';
+				mostrarEtapa(atual < total
+					? 'Baixando ' + Math.floor(100 * atual / total) + '% (' + (atual / 1048576).toFixed(0) + ' de ' + (total / 1048576).toFixed(0) + ' MB)'
+					: 'Iniciando o jogo…');
 			}
 		},
 	}).then(() => {
 		// O jogo abre na tela inicial com a mesma composição: só some.
+		try {
+			sessionStorage.removeItem('sd_carregando');
+			sessionStorage.removeItem('sd_quedas');
+		} catch (e) {}
 		status.remove();
 	}, falha);
 }());
