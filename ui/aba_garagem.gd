@@ -78,10 +78,13 @@ func construir() -> void:
 const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
 		"lightweight", "corrida", "brake", "cambio"]
 const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
+## Nome do carro no palco (fonte) e altura da diagonal ocre na frente dele.
+const TAMANHO_NOME := 34
+const ALTURA_NOME := 40
 ## Cartões da ficha (potência, peso, velocidade máxima): altura, ícone, dentes
 ## da barra e a cor do ícone com a barra vazia (cheia: COR_DESTAQUE).
-const ALTURA_FICHA := 104
-const TAMANHO_ICONE_FICHA := 44
+const ALTURA_FICHA := 128
+const TAMANHO_ICONE_FICHA := 88
 const DENTES_FICHA := 6
 const COR_ICONE_FICHA := Color("ece6da")
 ## Setas da coleção: o voltar do cabeçalho com metade do tamanho.
@@ -173,7 +176,22 @@ func _palco(c: Carro, lista: Array) -> Control:
 	tl.add_theme_constant_override("separation", -4)
 	tl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(tl)
-	Tipografia.rotulo(_hud_rotulo(c.base["nome"], 0, Color.WHITE, tl), "semibold", 48)
+	# Nome com a diagonal ocre do cabeçalho na frente (a mesma do painel de giros).
+	var linha_nome := HBoxContainer.new()
+	linha_nome.add_theme_constant_override("separation", 10)
+	linha_nome.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tl.add_child(linha_nome)
+	var diag := TextureRect.new()
+	diag.texture = load(Cabecalho.PASTA + "diagonal.png")
+	diag.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	diag.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	diag.custom_minimum_size = Vector2(ALTURA_NOME * 88.0 / 119.0, ALTURA_NOME)
+	diag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	diag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	linha_nome.add_child(diag)
+	var nome_carro := _hud_rotulo(c.base["nome"], 0, Color.WHITE, linha_nome)
+	Tipografia.rotulo(nome_carro, "semibold", TAMANHO_NOME)
+	nome_carro.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if _correndo(c):
 		Tipografia.rotulo(_hud_rotulo("correndo agora", 0, Color(0.86, 0.87, 0.9), tl), "medium", 26)
 	if lista.size() > 1:
