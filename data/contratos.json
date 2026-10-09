@@ -1,6 +1,6 @@
 [
 	{
-		"carro": "hayase_rin",
+		"carro": "kosame_hiryu_98",
 		"condicoes": {
 			"bronze": {
 				"vencer": true
@@ -17,10 +17,10 @@
 				]
 			},
 			"prata": {
-				"folga_s": 0.8
+				"folga_s": 4.2
 			}
 		},
-		"descricao": "O Hayase Kaze tem 120 cv; o rival, 346. Monte o carro da escola para chegar na frente.",
+		"descricao": "O Kosame Hiryu '98 tem 64 cv; o rival, 311. Monte o carro da escola para chegar na frente.",
 		"id": "pequeno_gigante",
 		"licenca": "CLUB",
 		"nome": "O pequeno contra o gigante",
@@ -30,10 +30,41 @@
 				"pista": "serra_alta",
 				"rivais": [
 					{
-						"carro": "ashcombe_quill"
+						"carro": "cutler_ironwood_ii"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "castellani_tufo",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 645,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 428
+			},
+			"prata": {
+				"custo_max": 515
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Hartwig Strecke gastando o mínimo.",
+		"id": "ultimo_credito",
+		"licenca": "CLUB",
+		"nome": "O último giro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "parque_das_docas",
+				"rivais": [
+					{
+						"carro": "hartwig_strecke"
+					}
+				],
+				"voltas": 1
 			}
 		]
 	},
@@ -41,70 +72,39 @@
 		"carro": "pemberly_sedge",
 		"condicoes": {
 			"bronze": {
-				"custo_max": 645.0,
 				"vencer": true
 			},
 			"ouro": {
-				"custo_max": 428.0
-			},
-			"prata": {
-				"custo_max": 515.0
-			}
-		},
-		"descricao": "A escola paga as peças até um teto. Vença o Hayase Ryujin gastando o mínimo.",
-		"id": "ultimo_credito",
-		"licenca": "CLUB",
-		"nome": "O último giro",
-		"provas": [
-			{
-				"condicao": "seco",
-				"pista": "anel_do_vale",
-				"rivais": [
-					{
-						"carro": "hayase_ryujin"
-					}
-				],
-				"voltas": 1.0
-			}
-		]
-	},
-	{
-		"carro": "hayase_raikou",
-		"condicoes": {
-			"bronze": {
-				"vencer": true
-			},
-			"ouro": {
-				"pecas_max": 5.0
+				"pecas_max": 2
 			},
 			"prata": {
 				"folga_s": 0.1
 			}
 		},
-		"descricao": "Uma preparação só para vencer o Hayase Kumo em Lago Sereno e o Hayase Pika em Cais Velho.",
+		"descricao": "Uma preparação só para vencer o Hayase Komorebi S V em Cais Velho e o Vorhaus Dachs em Alto da Capela.",
 		"id": "dois_circuitos",
 		"licenca": "CLUB",
 		"nome": "Dois circuitos, um carro",
 		"provas": [
 			{
 				"condicao": "seco",
-				"pista": "anel_do_vale",
-				"rivais": [
-					{
-						"carro": "hayase_kumo"
-					}
-				],
-				"voltas": 1.0
-			},
-			{
-				"condicao": "seco",
 				"pista": "parque_das_docas",
 				"rivais": [
 					{
-						"carro": "hayase_pika"
+						"carro": "hayase_komorebi_s_v"
 					}
 				],
-				"voltas": 1.0
+				"voltas": 1
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "vorhaus_dachs"
+					}
+				],
+				"voltas": 1
 			}
 		]
 	},
