@@ -1,23 +1,47 @@
 extends Aba
-## Garagem: o carro selecionado em destaque (vitrine com o sprite isométrico) com a
-## ficha por cima, como HUD, a Evolução (tocar numa categoria abre a compra) e
-## vender; correr fica na barra de baixo.
-## Embaixo, a coleção em miniaturas para trocar de carro.
+## Oficina (antes "Garagem"): o carro selecionado em destaque (vitrine com o
+## sprite isométrico) com a ficha por cima, como HUD, e a Evolução (tocar numa
+## categoria abre a compra), sem rolagem, sobre o cenário que passa por trás de
+## tudo. Os carros, as vagas e a venda ficam na janela GARAGEM, aberta pela aba
+## pendurada no cabeçalho; correr fica na barra de baixo.
 
 var _vitrine: VitrineCarro
 
-## Apresentação da garagem (não balanceamento).
-const ALTURA_ACAO := 80
-const ALTURA_TEXTO_ACAO := 30
+## Apresentação da Oficina (não balanceamento).
+## Escurecimento do cenário abaixo do palco (leitura da Evolução).
+const VEU_FUNDO := 0.55
+
+
+## Cenário pintado atrás da tela inteira (palco, missão e Evolução).
+var _fundo: Texture2D
 
 
 func _init(d: Node, j: Node) -> void:
-	super(d, j, "Garagem")
+	super(d, j, "Oficina")
+	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER  # tudo cabe: sem rolagem
 	_vitrine = VitrineCarro.new(470.0)
-	if Aba.arte("fundo_garagem") != null:
-		_vitrine.fundo_imagem(Aba.arte("fundo_garagem"))
+	_fundo = Aba.arte("fundo_garagem")
+	if _fundo != null:
+		_vitrine.fundo_transparente()
 	else:
 		_vitrine.ambiente_garagem()
+	resized.connect(queue_redraw)
+
+
+## O cenário cobre a tela com escala uniforme (recorta, nunca estica), com o
+## centro da imagem no centro do palco, onde o carro fica no chão.
+func _draw() -> void:
+	if _fundo == null:
+		return
+	var tam := _fundo.get_size()
+	var cy := _vitrine.get_global_rect().get_center().y - get_global_rect().position.y \
+			if _vitrine.is_inside_tree() else size.y * 0.3
+	var escala := maxf(size.x / tam.x, maxf(2.0 * cy, 2.0 * (size.y - cy)) / tam.y)
+	var r := Rect2(Vector2(size.x * 0.5, cy) - tam * escala * 0.5, tam * escala)
+	draw_texture_rect(_fundo, r, false)
+	# Véu: a Evolução e a missão leem por cima do cenário.
+	var veu_y := _vitrine.get_global_rect().end.y - get_global_rect().position.y if _vitrine.is_inside_tree() else 0.0
+	draw_rect(Rect2(0, veu_y, size.x, size.y - veu_y), Color(COR_FUNDO, VEU_FUNDO))
 
 
 func atualizar() -> void:
@@ -45,25 +69,9 @@ func construir() -> void:
 	# O palco é o cenário do topo (colado no cabeçalho); a missão vem logo abaixo.
 	_faixa_objetivo()
 	# Melhorar é tocar na Evolução (abre a compra da categoria); correr fica na
-	# barra de baixo; aqui embaixo, vender.
+	# barra de baixo; os carros e a venda, na janela GARAGEM do cabeçalho.
 	_evolucao(c)
-	var h := acoes()
-	var vender := _acao(h, _confirmar_venda.bind(c))
-	vender.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
-	Tipografia.acao_neutra(vender, "Vender · %s G" % dinheiro(revenda(c.base)), ALTURA_TEXTO_ACAO - 2, ALTURA_ACAO)
-	_colecao(lista, c)
-
-
-## Botão de ação da garagem: executa e reconstrói (como Aba.botao), com o
-## visual vindo dos tokens de Tipografia.
-func _acao(pai: Control, acao: Callable) -> Button:
-	var b := Button.new()
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.pressed.connect(func():
-		acao.call()
-		mudou.emit())
-	pai.add_child(b)
-	return b
+	queue_redraw.call_deferred()
 
 
 ## Todas as categorias compráveis, na ordem da seção Evolução.
@@ -161,7 +169,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 	tl.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	tl.offset_left = 20
 	tl.offset_right = -20
-	tl.offset_top = 12
+	tl.offset_top = Cabecalho.ALTURA_MARCADOR + 8  # abaixo das abas penduradas (GARAGEM, ACELERAR)
 	tl.add_theme_constant_override("separation", -4)
 	tl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(tl)
@@ -264,6 +272,8 @@ func _palco(c: Carro, lista: Array) -> Control:
 ## comprado (barra dentada e a conta).
 func _evolucao(c: Carro) -> void:
 	var v := cartao()
+	# Cartão translúcido: o cenário passa por trás.
+	(v.get_parent().get_theme_stylebox("panel") as StyleBoxFlat).bg_color = Color(COR_CARTAO, 0.72)
 	Tipografia.rotulo(rotulo("EVOLUÇÃO", 0, COR_SECUNDARIA, v), "medium", 20)
 	var g := GridContainer.new()
 	g.columns = 2
@@ -493,14 +503,14 @@ func _faixa_objetivo() -> void:
 	b.custom_minimum_size = Vector2(0, 52)
 	b.clip_text = true
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(1, 1, 1, 0.04)
+	sb.bg_color = Color(0, 0, 0, 0.45)
 	sb.border_color = COR_DESTAQUE
 	sb.border_width_left = 4
 	sb.set_corner_radius_all(6)
 	sb.content_margin_left = 16
 	sb.content_margin_right = 12
 	var sb_toque := sb.duplicate()
-	sb_toque.bg_color = Color(1, 1, 1, 0.1)
+	sb_toque.bg_color = Color(0, 0, 0, 0.6)
 	for estado in ["normal", "hover", "focus"]:
 		b.add_theme_stylebox_override(estado, sb)
 	b.add_theme_stylebox_override("pressed", sb_toque)
@@ -539,13 +549,25 @@ func _faixa_objetivo() -> void:
 	ancora("DEMANDA", b)
 
 
-## Coleção: ícones (fotos em grade) ou lista (para garagens grandes); tocar
-## troca o carro em destaque. Vagas e a ampliação (VagasGaragem) logo acima.
-func _colecao(lista: Array, ativo: Carro) -> void:
+## Janela GARAGEM (aba pendurada no cabeçalho): vagas e ampliação no topo,
+## os carros em ícones ou lista; tocar num carro o leva para a Oficina; cada
+## um pode ser vendido aqui.
+func abrir_garagem() -> void:
+	painel.emit("Garagem", func(v):
+		var lista: Array = jogador.garagem.lista()
+		_colecao(v, lista, carro_ativo()), [["Fechar", func(): pass]])
+
+
+func _reabrir_garagem() -> void:
+	abrir_garagem.call_deferred()
+
+
+## Coleção: ícones (fotos em grade) ou lista (para garagens grandes).
+func _colecao(pai: VBoxContainer, lista: Array, ativo: Carro) -> void:
 	var cab := HBoxContainer.new()
-	conteudo.add_child(cab)
+	pai.add_child(cab)
 	var cap: int = jogador.garagem.vagas
-	var titulo := rotulo("SUA GARAGEM · %d%s CARRO%s" % [lista.size(), "/%d" % cap if cap > 0 else "",
+	var titulo := rotulo("%d%s CARRO%s" % [lista.size(), "/%d" % cap if cap > 0 else "",
 			"" if lista.size() == 1 and cap <= 0 else "S"], 0, COR_SECUNDARIA, cab)
 	Tipografia.rotulo(titulo, "medium", 22)
 	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -567,25 +589,32 @@ func _colecao(lista: Array, ativo: Carro) -> void:
 		b.pressed.connect(func():
 			Preferencias.garagem_lista = modo[1]
 			Preferencias.salvar()
-			mudou.emit())
+			_reabrir_garagem())
 		cab.add_child(b)
-	_ampliacao()
+	_ampliacao(pai)
+	if lista.is_empty():
+		rotulo("Nenhum carro ainda: compre nas Lojas.", FONTE_PEQUENA + 2, COR_SECUNDARIA, pai)
+		return
 	if Preferencias.garagem_lista:
 		for c in lista:
-			_linha_carro(c, c.uid == ativo.uid)
+			_linha_carro(pai, c, ativo != null and c.uid == ativo.uid)
 		return
 	var g := GridContainer.new()
 	g.columns = 3
 	g.add_theme_constant_override("h_separation", 10)
 	g.add_theme_constant_override("v_separation", 10)
-	conteudo.add_child(g)
+	pai.add_child(g)
 	for c in lista:
+		var cel := VBoxContainer.new()
+		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cel.add_theme_constant_override("separation", 4)
+		g.add_child(cel)
+		var em_uso: bool = ativo != null and c.uid == ativo.uid
 		var b := Button.new()
 		b.custom_minimum_size = Vector2(0, 146)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.add_theme_stylebox_override("normal", _estilo_item(c.uid == ativo.uid))
-		for estado in ["hover", "pressed", "focus"]:
-			b.add_theme_stylebox_override(estado, _estilo_item(c.uid == ativo.uid))
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			b.add_theme_stylebox_override(estado, _estilo_item(em_uso))
 		var v := VBoxContainer.new()
 		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -601,10 +630,26 @@ func _colecao(lista: Array, ativo: Carro) -> void:
 		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		l.clip_text = true
 		v.add_child(l)
-		b.pressed.connect(func():
-			jogador.carro_ativo = c.uid
-			mudou.emit())
-		g.add_child(b)
+		b.pressed.connect(_escolher.bind(c))
+		cel.add_child(b)
+		_botao_vender(cel, c)
+
+
+## Escolher um carro na janela: ele vai para a Oficina e a janela fecha.
+func _escolher(c: Carro) -> void:
+	jogador.carro_ativo = c.uid
+	fechar_painel.emit()
+	mudou.emit()
+
+
+func _botao_vender(pai: Control, c: Carro) -> Button:
+	var b := Button.new()
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
+	Tipografia.acao_neutra(b, "Vender · %s G" % dinheiro(revenda(c.base)), 20, 52)
+	b.pressed.connect(_confirmar_venda.bind(c))
+	pai.add_child(b)
+	return b
 
 
 func _estilo_item(ativo: bool) -> StyleBoxFlat:
@@ -618,10 +663,14 @@ func _estilo_item(ativo: bool) -> StyleBoxFlat:
 	return sb
 
 
-## Uma linha da lista: foto pequena, nome e o essencial.
-func _linha_carro(c: Carro, ativo: bool) -> void:
+## Uma linha da lista: foto pequena, nome, o essencial e vender.
+func _linha_carro(pai: Control, c: Carro, ativo: bool) -> void:
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 10)
+	pai.add_child(linha)
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, 84)
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for estado in ["normal", "hover", "pressed", "focus"]:
 		b.add_theme_stylebox_override(estado, _estilo_item(ativo))
 	var h := HBoxContainer.new()
@@ -632,31 +681,35 @@ func _linha_carro(c: Carro, ativo: bool) -> void:
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(h)
 	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c))
-	img.custom_minimum_size = Vector2(120, 76)
+	img.custom_minimum_size = Vector2(110, 76)
 	h.add_child(img)
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.alignment = BoxContainer.ALIGNMENT_CENTER
+	info.add_theme_constant_override("separation", -2)
+	info.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(info)
 	var nome := Label.new()
 	nome.text = c.base["nome"]
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	nome.clip_text = true
 	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	Tipografia.rotulo(nome, "medium", 24)
-	h.add_child(nome)
+	Tipografia.rotulo(nome, "medium", 22)
+	info.add_child(nome)
 	var a := c.atributos_efetivos("seco")
 	var num := Label.new()
 	num.text = "%d cv · %d kg" % [roundi(a["potencia"]), roundi(a["peso"])]
-	num.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	Tipografia.numero(num, 20)
+	Tipografia.numero(num, 18)
 	num.add_theme_color_override("font_color", COR_SECUNDARIA)
-	h.add_child(num)
-	b.pressed.connect(func():
-		jogador.carro_ativo = c.uid
-		mudou.emit())
-	conteudo.add_child(b)
+	info.add_child(num)
+	b.pressed.connect(_escolher.bind(c))
+	linha.add_child(b)
+	var vender := _botao_vender(linha, c)
+	vender.size_flags_horizontal = Control.SIZE_SHRINK_END
+	vender.custom_minimum_size = Vector2(180, 84)
 
 
 ## Ampliar a garagem: dobra as vagas, cada vez mais caro (VagasGaragem).
-func _ampliacao() -> void:
+func _ampliacao(pai: Control) -> void:
 	var cap: int = jogador.garagem.vagas
 	if cap <= 0:
 		return
@@ -664,7 +717,7 @@ func _ampliacao() -> void:
 	var nova := VagasGaragem.capacidade(dados, jogador.ampliacoes_garagem + 1)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 10)
-	conteudo.add_child(h)
+	pai.add_child(h)
 	var info := rotulo("Garagem cheia: amplie para comprar outro carro." if jogador.garagem.cheia()
 			else "%d vaga%s livre%s." % [cap - jogador.garagem.lista().size(), "" if cap - jogador.garagem.lista().size() == 1 else "s",
 			"" if cap - jogador.garagem.lista().size() == 1 else "s"], FONTE_PEQUENA, COR_RUIM if jogador.garagem.cheia()
@@ -676,7 +729,8 @@ func _ampliacao() -> void:
 		if erro != "":
 			avisar("Não deu: %s." % erro, false)
 		else:
-			avisar("Garagem com %d vagas." % jogador.garagem.vagas), jogador.economia.pode_pagar(preco), false, h)
+			avisar("Garagem com %d vagas." % jogador.garagem.vagas)
+		_reabrir_garagem(), jogador.economia.pode_pagar(preco), false, h)
 	b.custom_minimum_size = Vector2(0, 60)
 
 
@@ -687,7 +741,8 @@ func _confirmar_venda(c: Carro) -> void:
 		rotulo("Peças instaladas não entram no valor.", FONTE_PEQUENA, COR_SECUNDARIA, v),
 		[["Vender", func():
 			_vender(c.uid)
-			mudou.emit()], ["Cancelar", func(): pass]])
+			mudou.emit()
+			_reabrir_garagem()], ["Cancelar", _reabrir_garagem]])
 
 
 func _vender(uid: int) -> void:

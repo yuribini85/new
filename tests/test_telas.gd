@@ -397,3 +397,33 @@ func test_evolucao_da_garagem_abre_a_compra_da_categoria() -> void:
 	g.free()
 	j.free()
 	d.free()
+
+
+func test_janela_garagem_escolhe_e_vende() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000)
+	var g: Control = ABAS[0].new(d, j)
+	_raiz().add_child(g)
+	var a: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	var b: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.carro_ativo = a
+	g.atualizar()
+	var aberto := []
+	g.painel.connect(func(_t, montar, _b): aberto.append(montar))
+	g.abrir_garagem()
+	var v := VBoxContainer.new()
+	_raiz().add_child(v)
+	aberto[-1].call(v)
+	var vender := v.find_children("*", "Button", true, false).filter(func(x): return x.text.begins_with("VENDER") \
+			or x.text.begins_with("Vender"))
+	igual(vender.size(), 2, "cada carro tem o seu vender")
+	g._escolher(j.garagem.carro(b))
+	igual(j.carro_ativo, b, "escolher na janela leva o carro para a Oficina")
+	g._vender(a)
+	verificar(j.garagem.carro(a) == null, "vendido pela janela")
+	v.free()
+	g.free()
+	j.free()
+	d.free()

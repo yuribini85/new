@@ -200,6 +200,18 @@ func fundo_imagem(tex: Texture2D) -> void:
 	ambiente.background_mode = Environment.BG_CANVAS
 
 
+## Sem fundo: o viewport fica transparente e a tela por trás aparece (a
+## Oficina pinta o cenário atrás de tudo); o sprite mantém sombra e reflexo.
+func fundo_transparente() -> void:
+	_piso.visible = false
+	_anel.visible = false
+	var vp: SubViewport = get_child(0)
+	vp.transparent_bg = true
+	var ambiente: Environment = (_mundo.get_child(0) as WorldEnvironment).environment
+	ambiente.background_mode = Environment.BG_CLEAR_COLOR
+	_pedir_quadro()
+
+
 ## Troca o estúdio por uma oficina: piso de ladrilhos, paredes, armário,
 ## pneus empilhados, bancada, luminária e sombra de verdade.
 func ambiente_garagem() -> void:

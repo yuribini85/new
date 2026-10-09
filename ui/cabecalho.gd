@@ -9,10 +9,12 @@ extends Control
 ## À direita, a engrenagem das configurações. Pendurado sob o painel, o marcador
 ## das corridas aceleradas (decisão 39): "ACELERAR" quando parado; aceso, com o
 ## fator e o tempo que falta, quando ativo. Tocar abre a tela da aceleração.
+## Na Oficina, outra aba pendurada ao lado: GARAGEM (os carros, as vagas e a venda).
 
 signal voltar
 signal configuracoes
 signal acelerar
+signal garagem
 
 const PASTA := "res://arte/ui/cabecalho/"
 const ALTURA := 84  # faixa dos elementos (px da tela de 720)
@@ -42,6 +44,7 @@ var _fundo: ColorRect
 var _faixa: HBoxContainer
 var _area_segura := 0.0
 var marcador: Button
+var aba_garagem: Button
 var engrenagem: Button
 var _icone_marcador: IconeVetor
 var _caixa_marcador: HBoxContainer
@@ -160,6 +163,7 @@ func _init() -> void:
 	_faixa.add_child(engrenagem)
 	_espaco(6)
 	_criar_marcador()
+	_criar_aba_garagem()
 	titulo.resized.connect(_ajustar_titulo)
 	resized.connect(_posicionar)
 	_posicionar()
@@ -185,6 +189,11 @@ func _posicionar() -> void:
 		var w := maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
 		marcador.size = Vector2(w, ALTURA_MARCADOR)
 		marcador.position = Vector2(size.x - w - 14.0, altura_total())
+		if aba_garagem != null:
+			var wg: float = (aba_garagem.get_child(0) as Control).get_combined_minimum_size().x + 34.0
+			aba_garagem.size = Vector2(wg, ALTURA_MARCADOR)
+			var direita := marcador.position.x - 10.0 if marcador.visible else size.x - 14.0
+			aba_garagem.position = Vector2(direita - wg, altura_total())
 
 
 ## Título da tela, em fonte menor se não couber (a engrenagem tira espaço).
@@ -246,6 +255,42 @@ func _criar_marcador() -> void:
 	h.add_child(_tempo_marcador)
 	definir_aceleracao(0.0, 1.0)
 	add_child(marcador)
+
+
+## Aba GARAGEM, pendurada à esquerda do marcador (só na Oficina).
+func _criar_aba_garagem() -> void:
+	aba_garagem = Button.new()
+	aba_garagem.focus_mode = Control.FOCUS_NONE
+	aba_garagem.tooltip_text = "Seus carros"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_garagem.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_garagem.pressed.connect(func(): garagem.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_garagem.add_child(h)
+	var ic := IconeVetor.new("grade", COR_APAGADO)
+	ic.custom_minimum_size = Vector2(26, 26)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(ic)
+	var t := Label.new()
+	t.text = "GARAGEM"
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	aba_garagem.visible = false
+	add_child(aba_garagem)
+
+
+func mostrar_garagem(sim: bool) -> void:
+	aba_garagem.visible = sim
+	_posicionar()
 
 
 ## Estado do marcador: `restante_s` (tempo real que falta; 0 = parado) e o fator.

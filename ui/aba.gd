@@ -15,6 +15,8 @@ signal ir_para(indice: int)
 signal aviso(texto: String, ok: bool)
 ## Painel modal com rolagem (Sobreposicao.abrir).
 signal painel(titulo: String, montar: Callable, botoes: Array)
+## Fecha o painel aberto (ex.: escolher um carro na janela da garagem).
+signal fechar_painel
 
 enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 

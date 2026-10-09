@@ -29,7 +29,7 @@ const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCA
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
 ## telas internas (de Garagem e Correr), abertas pelo caminho do jogo.
-const DESTINOS := [["Garagem", 0, "aba_garagem"], ["Lojas", 1, "aba_mercado"], ["Corridas", 3, "aba_competicoes"],
+const DESTINOS := [["Oficina", 0, "aba_garagem"], ["Lojas", 1, "aba_mercado"], ["Corridas", 3, "aba_competicoes"],
 	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"]]
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
@@ -38,7 +38,7 @@ const PAI := {2: 0, 4: 3}
 ## Janela do resultado: fecha sozinha depois disso (se o jogador deixar).
 const FECHAR_RESULTADO_S := 30.0
 var _resultado_aberto := 0
-const TITULOS := ["Garagem", "Lojas", "Oficina", "Corridas", "Corrida", "Carreira", "Equipe"]
+const TITULOS := ["Oficina", "Lojas", "Oficina", "Corridas", "Corrida", "Carreira", "Equipe"]
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
 
@@ -81,6 +81,7 @@ func _ready() -> void:
 	_cabecalho.voltar.connect(_voltar_tela)
 	_cabecalho.configuracoes.connect(_abrir_configuracoes)
 	_cabecalho.acelerar.connect(_abrir_aceleracao)
+	_cabecalho.garagem.connect(func(): _todas[0].abrir_garagem())
 	_cabecalho.marcador.visible = not _regras_aceleracao().is_empty()
 	_ancoras["SALDO"] = _cabecalho.painel
 	_meta = [_cabecalho.painel]
@@ -146,6 +147,7 @@ func _ready() -> void:
 	for a in _todas:
 		a.aviso.connect(_avisar)
 		a.painel.connect(_sobre.abrir)
+		a.fechar_painel.connect(_sobre.fechar)
 	if jogador.historia != null:
 		# O destaque fica abaixo do diálogo: o resto da tela escurece, a caixa não.
 		_destaque = Destaque.new()
@@ -258,6 +260,7 @@ func _ir_para(i: int, voltando := false) -> void:
 		_botoes[k].button_pressed = DESTINOS[k][1] == destino
 	_cabecalho.definir_titulo(TITULOS[i].to_upper())
 	_cabecalho.definir_volta(not _historico.is_empty())
+	_cabecalho.mostrar_garagem(i == 0)
 	_atualizar_ao_vivo()
 	_foco_corrida()
 
