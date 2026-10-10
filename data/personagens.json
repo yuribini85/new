@@ -1,5 +1,5 @@
 [
- {"id": "mara", "nome": "Mara Hayes", "retrato": "", "cor": "#b0703a", "papel": "mecânica veterana da oficina"},
+ {"id": "mara", "nome": "Mara Hayes", "retrato": "res://arte/personagens/mara_hayes.png", "cor": "#b0703a", "papel": "mecânica veterana da oficina"},
  {"id": "piloto_casa", "nome": "Theo Lane", "retrato": "", "cor": "#4a7a9a", "papel": "piloto da oficina (nome provisório)"},
  {"id": "dono", "nome": "", "retrato": "", "cor": "#000000", "papel": "o jogador, novo dono da oficina"},
  {"id": "adrian", "nome": "Adrian Cross", "retrato": "", "cor": "#3a6ea5", "papel": "piloto"},

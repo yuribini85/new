@@ -8,7 +8,7 @@ extends RefCounted
 ##
 ## Variantes: "retrato" (personagens.json ou piloto de equipes.json, campo
 ## `retrato`), "corpo" (corpo inteiro do diálogo: <pasta do retrato>/corpo/
-## <nome>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png), "cenario"
+## <nome>.webp; com id "<personagem>@<pose>", <nome>_<pose>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png), "cenario"
 ## (fundo das cenas: arte/cenarios/<id>.webp) e "ilustracao" (quadro de um momento
 ## da história: arte/cenas/<id>.webp); os ids estão em data/historia.json.
 
@@ -27,8 +27,10 @@ static func caminho(id: String, variante: String) -> String:
 	var dados: Node = _dados()
 	match variante:
 		"corpo":
-			var r := caminho(id, "retrato")
-			return "" if r == "" else r.get_base_dir().path_join("corpo").path_join(r.get_file().get_basename() + ".webp")
+			var pose := id.get_slice("@", 1) if "@" in id else ""
+			var r := caminho(id.get_slice("@", 0), "retrato")
+			return "" if r == "" else r.get_base_dir().path_join("corpo").path_join(
+					r.get_file().get_basename() + ("_" + pose if pose != "" else "") + ".webp")
 		"ui":
 			return "res://arte/ui/%s.png" % id
 		"cenario":

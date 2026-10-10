@@ -11,6 +11,8 @@ corridas (data/historia.json).
 lembrete=ID: se o jogador não fizer o que a cena pede em alguns segundos, a cena
 ID (trigger LEMBRETE) aparece, enquanto ainda valer. segura_largada=sim: a
 corrida fica parada no grid até a cena acabar.
+Fala com pose: "Mara[pensativa]: texto" (arte corpo/<retrato>_<pose>.webp; sem
+o arquivo, o corpo base).
 Ações com argumento: [CENARIO:id] e [ILUSTRACAO:id] (data/historia.json → cenarios,
 ilustracoes); o id tem que existir lá.
 Uso: python3 tools/historia/gerar_dialogos.py
@@ -69,9 +71,15 @@ def main() -> int:
             cenas[-1]["falas"].append({"acao": m.group(1) + (":" + m.group(2) if m.group(2) else "")})
             continue
         quem, texto = linha.split(":", 1)
+        m = re.fullmatch(r"(.+)\[([a-z_]+)\]", quem)
+        pose = m.group(2) if m else ""
+        quem = m.group(1) if m else quem
         if quem not in QUEM:
             sys.exit(f"{FONTE.name}:{n}: personagem desconhecido {quem}")
-        cenas[-1]["falas"].append({"quem": QUEM[quem], "texto": texto.strip()})
+        fala = {"quem": QUEM[quem], "texto": texto.strip()}
+        if pose:
+            fala["pose"] = pose
+        cenas[-1]["falas"].append(fala)
     ids = {c["id"] for c in cenas}
     historia = json.loads((RAIZ / "data/historia.json").read_text(encoding="utf-8"))
     for c in cenas:

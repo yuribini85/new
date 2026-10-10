@@ -2280,11 +2280,13 @@
    },
    {
     "quem": "mara",
-    "texto": "O antigo deixou as chaves, as dívidas e esse carro."
+    "texto": "O antigo deixou as chaves, as dívidas e esse carro.",
+    "pose": "gesto"
    },
    {
     "quem": "mara",
-    "texto": "As chaves funcionam."
+    "texto": "As chaves funcionam.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -2486,11 +2488,13 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você cuida da oficina. Alguém precisa assumir o volante."
+    "texto": "Você cuida da oficina. Alguém precisa assumir o volante.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
-    "texto": "{piloto}. Corre pelo que a gente montar."
+    "texto": "{piloto}. Corre pelo que a gente montar.",
+    "pose": "gesto"
    },
    {
     "quem": "piloto_casa",
@@ -2498,7 +2502,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Pelo prêmio também."
+    "texto": "Pelo prêmio também.",
+    "pose": "firme"
    },
    {
     "acao": "HIGHLIGHT_COPA"
@@ -2562,7 +2567,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{serie}. Conta pontos."
+    "texto": "{serie}. Conta pontos.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
@@ -2594,11 +2600,13 @@
    },
    {
     "quem": "mara",
-    "texto": "A gente prepara. O piloto corre."
+    "texto": "A gente prepara. O piloto corre.",
+    "pose": "firme"
    },
    {
     "quem": "mara",
-    "texto": "Depois, a conta aparece nos resultados."
+    "texto": "Depois, a conta aparece nos resultados.",
+    "pose": "pensativa"
    },
    {
     "quem": "sistema",
@@ -2623,7 +2631,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Ganhar é bom. Saber quanto custou é melhor."
+    "texto": "Ganhar é bom. Saber quanto custou é melhor.",
+    "pose": "pensativa"
    },
    {
     "quem": "mara",
@@ -2655,11 +2664,13 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{posicao}. Corrida perdida também paga."
+    "texto": "{posicao}. Corrida perdida também paga.",
+    "pose": "decepcao"
    },
    {
     "quem": "mara",
-    "texto": "A tela da corrida mostra onde ele perdeu tempo. Olhe antes de culpar o carro."
+    "texto": "A tela da corrida mostra onde ele perdeu tempo. Olhe antes de culpar o carro.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
@@ -2690,11 +2701,13 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença."
+    "texto": "Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
-    "texto": "Não existe melhor carro. Existe o carro certo para cada prova."
+    "texto": "Não existe melhor carro. Existe o carro certo para cada prova.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -2718,7 +2731,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Licença é do piloto, não da oficina."
+    "texto": "Licença é do piloto, não da oficina.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
@@ -2758,7 +2772,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Quanto custa?"
+    "texto": "Quanto custa?",
+    "pose": "pensativa"
    },
    {
     "quem": "responsavel",
@@ -2813,7 +2828,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "O treino acabou. Falta a avaliação."
+    "texto": "O treino acabou. Falta a avaliação.",
+    "pose": "gesto"
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -2844,7 +2860,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Mais provas disponíveis. E mais gente querendo tirar vantagem de nós."
+    "texto": "Mais provas disponíveis. E mais gente querendo tirar vantagem de nós.",
+    "pose": "alerta"
    },
    {
     "quem": "sistema",
@@ -2871,7 +2888,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Provas maiores. Contas maiores também."
+    "texto": "Provas maiores. Contas maiores também.",
+    "pose": "pensativa"
    }
   ],
   "requer": [],
@@ -2894,7 +2912,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora a gente aparece na lista dos outros."
+    "texto": "Agora a gente aparece na lista dos outros.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -2917,7 +2936,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Com essa, a oficina pode inscrever uma equipe."
+    "texto": "Com essa, a oficina pode inscrever uma equipe.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
@@ -2951,11 +2971,13 @@
    },
    {
     "quem": "mara",
-    "texto": "Um carro só não segura esse nível."
+    "texto": "Um carro só não segura esse nível.",
+    "pose": "firme"
    },
    {
     "quem": "mara",
-    "texto": "Achei alguém para o segundo. Escolha o carro dele na Equipe."
+    "texto": "Achei alguém para o segundo. Escolha o carro dele na Equipe.",
+    "pose": "gesto"
    },
    {
     "acao": "OPEN_DRIVER_HIRE"
@@ -2981,7 +3003,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Lembra do carro que veio com as chaves?"
+    "texto": "Lembra do carro que veio com as chaves?",
+    "pose": "pensativa"
    },
    {
     "quem": "mara",
@@ -3004,7 +3027,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Bom resultado. Agora vamos ver se conseguimos repetir."
+    "texto": "Bom resultado. Agora vamos ver se conseguimos repetir.",
+    "pose": "firme"
    },
    {
     "quem": "sistema",
@@ -3033,7 +3057,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Dois carros. Duas contas."
+    "texto": "Dois carros. Duas contas.",
+    "pose": "pensativa"
    }
   ],
   "requer": [],
@@ -3053,7 +3078,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Título. Guarde o troféu longe da graxa."
+    "texto": "Título. Guarde o troféu longe da graxa.",
+    "pose": "gesto"
    }
   ],
   "requer": [],
@@ -3073,7 +3099,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Eu lembro quando a gente tinha um único carro."
+    "texto": "Eu lembro quando a gente tinha um único carro.",
+    "pose": "pensativa"
    }
   ],
   "requer": [],
@@ -3094,7 +3121,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Mais espaço. Não significa que a gente precise preencher tudo hoje."
+    "texto": "Mais espaço. Não significa que a gente precise preencher tudo hoje.",
+    "pose": "alerta"
    }
   ],
   "requer": [],
@@ -3112,7 +3140,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Não deu. Olhe os números antes de trocar metade do carro."
+    "texto": "Não deu. Olhe os números antes de trocar metade do carro.",
+    "pose": "decepcao"
    }
   ],
   "requer": [
@@ -3138,7 +3167,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "A garagem ainda funciona. O caixa, nem tanto."
+    "texto": "A garagem ainda funciona. O caixa, nem tanto.",
+    "pose": "alerta"
    },
    {
     "quem": "sistema",
@@ -3159,7 +3189,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Bonito carro. Espero que você tenha deixado dinheiro pro resto."
+    "texto": "Bonito carro. Espero que você tenha deixado dinheiro pro resto.",
+    "pose": "alerta"
    }
   ],
   "requer": [],
@@ -3176,7 +3207,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Não temos isso."
+    "texto": "Não temos isso.",
+    "pose": "decepcao"
    }
   ],
   "requer": [],
@@ -3192,7 +3224,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Bom carro. Corrida errada."
+    "texto": "Bom carro. Corrida errada.",
+    "pose": "firme"
    }
   ],
   "requer": [
@@ -3210,7 +3243,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Essa potência o regulamento não aceita."
+    "texto": "Essa potência o regulamento não aceita.",
+    "pose": "alerta"
    }
   ],
   "requer": [],
@@ -3242,7 +3276,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Papel pronto. Agora falta dirigir."
+    "texto": "Papel pronto. Agora falta dirigir.",
+    "pose": "gesto"
    }
   ],
   "requer": [
@@ -3260,7 +3295,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Velocidade ganha volta. Isso aqui ganha quem não quebra."
+    "texto": "Velocidade ganha volta. Isso aqui ganha quem não quebra.",
+    "pose": "alerta"
    }
   ],
   "requer": [],

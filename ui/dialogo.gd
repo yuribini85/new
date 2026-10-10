@@ -34,6 +34,7 @@ const CAIXA_ATRASO_S := 0.2
 const CAIXA_S := 0.22
 const ALTURA_CORPO := 0.86  # fração da altura da tela
 const PAUSA_S := 1.6
+const POSE_S := 0.18  # troca de pose do mesmo personagem
 const LETRAS_POR_S := 55.0
 const CENARIO_S := 0.6  # troca de fundo
 const ZOOM_CENARIO := 1.07  # zoom lento do fundo
@@ -58,6 +59,7 @@ var _cenario_id := ""
 var _ilustrando := false
 var _corpo: TextureRect
 var _quem := ""
+var _pose := ""  # pose do corpo mostrado (falas "Nome[pose]: ...")
 var _faixas: Array[ColorRect] = []
 var _caixa: PanelContainer
 var _nome: Label
@@ -228,6 +230,7 @@ func _proxima() -> void:
 	if _fila.is_empty():
 		_cena = {}
 		_quem = ""
+		_pose = ""
 		_escuro = false
 		_trocar_cenario("")
 		visible = false
@@ -312,6 +315,7 @@ func _mostrar() -> void:
 				_escuro = true
 				_corpo.visible = false
 				_quem = ""
+				_pose = ""
 				_trocar_cenario("")
 				create_tween().tween_property(_fundo, "color:a", 1.0, 0.8)
 				continue
@@ -365,19 +369,23 @@ func _mostrar() -> void:
 	var atraso := 0.0
 	if _focos.has(quem):
 		_focar(_focos[quem])
+	var pose := String(f.get("pose", ""))
 	if quem != _quem:
-		atraso = _entrar(quem, sistema)
+		atraso = _entrar(quem, sistema, pose)
+	elif pose != _pose and _corpo.visible:
+		_trocar_pose(quem, pose)
 	_quem = quem
+	_pose = pose
 	_digitar(atraso)
 
 
 ## Personagem novo: o anterior sai, o novo entra deslizando, depois a caixa.
 ## Devolve quanto tempo falta para a caixa aparecer. Sobre uma ilustração, sem
 ## corpo: o quadro é o personagem.
-func _entrar(quem: String, sistema: bool) -> float:
+func _entrar(quem: String, sistema: bool, pose := "") -> float:
 	if _tween != null:
 		_tween.kill()
-	var tex: Texture2D = null if sistema or _ilustrando or _translucido else _textura(quem)
+	var tex: Texture2D = null if sistema or _ilustrando or _translucido else _textura(quem, pose)
 	var tela := get_viewport_rect().size
 	_lado = -_lado
 	_corpo.texture = tex
@@ -423,6 +431,7 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 	if _ilustrando:
 		_corpo.visible = false
 		_quem = ""
+		_pose = ""
 	_posicionar_caixa(_ilustrando)
 	var tex: Texture2D = null
 	var tom := Color.WHITE
@@ -533,8 +542,22 @@ func _tremer() -> void:
 	tw.tween_property(self, "position", Vector2.ZERO, 0.04)
 
 
-func _textura(quem: String) -> Texture2D:
-	return Assets.get_asset(quem, "corpo")
+## Corpo do personagem na pose da fala (sem a arte da pose, o corpo base).
+func _textura(quem: String, pose := "") -> Texture2D:
+	var tex: Texture2D = Assets.get_asset(quem + "@" + pose, "corpo") if pose != "" else null
+	return tex if tex != null else Assets.get_asset(quem, "corpo")
+
+
+## Mesmo personagem, outra pose: troca no lugar, com um piscar curto de brilho.
+func _trocar_pose(quem: String, pose: String) -> void:
+	var tex := _textura(quem, pose)
+	if tex == null or tex == _corpo.texture:
+		return
+	_corpo.texture = tex
+	if not Preferencias.reduzir_animacoes:
+		var alfa := 0.25 if _translucido else 1.0  # o alvo, não o atual (trocas seguidas)
+		_corpo.modulate.a = alfa * 0.55
+		create_tween().tween_property(_corpo, "modulate:a", alfa, POSE_S)
 
 
 ## Corpo centrado embaixo, quase da altura da tela (a caixa vai por âncora).
@@ -594,4 +617,5 @@ func _fim() -> void:
 	if not proxima.is_empty():
 		_fila.push_front(proxima)
 	_quem = ""
+	_pose = ""
 	_proxima()
