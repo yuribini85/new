@@ -18,7 +18,11 @@ extends RefCounted
 ## Limites e estágios vêm do estudo (eliminação a 100%, ré a ~90%, cinco
 ## estágios visuais); velocidades e tempos estão em data/arena.json.
 ##
-## IA (a mesma para todos): mantém um alvo por `alvo_s`, mira a quina traseira
+## Pilotos com jeitos diferentes (data/arena.json → perfis, sorteado por luta):
+## alvo (acaso, perto, fraco), mira (traseira ou meio), velocidade, quando
+## protege a frente, erro de mira e impaciência (sem acertar ninguém por um
+## tempo, vai direto no meio do alvo, mais rápido).
+## IA (as mesmas regras para todos): mantém um alvo por `alvo_s`, mira a quina traseira
 ## dele onde ele vai estar (antecedência pela própria velocidade), vira aos
 ## poucos e reduz até `v_curva_kmh` quanto maior o erro de rumo (ataca até
 ## `v_ataque_kmh` alinhada); com o muro à frente em `olhar_muro_s`, vira para o
@@ -74,6 +78,9 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"consist": float(p.get("piloto", {}).get("consistencia", 0.9)),
 			"alvo": -1, "t_alvo": 0.0, "t_travado": 0.0, "t_recua": 0.0, "re": false,
 		}
+		c["perfil"] = _perfil(p, params, rng)
+		c["t_sem_golpe"] = 0.0
+		c["desvio"] = Vector2.ZERO
 		c["I"] = c["m"] * (c["L"] * c["L"] + c["W"] * c["W"]) / 12.0
 		c["resist"] = 0.5 * c["m"] * v_ref * v_ref
 		carros.append(c)
@@ -115,7 +122,18 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 	if c["acel_fixo"] != null:
 		c["cmd_acel"] = float(c["acel_fixo"])
 		return
-	c["re"] = FRENTE.any(func(r): return c["dano"][r] >= float(params["limite_re"]))
+	var perfil: Dictionary = c["perfil"]
+	c["re"] = FRENTE.any(func(r): return c["dano"][r] >= float(perfil.get("limite_re", params["limite_re"])))
+	c["t_sem_golpe"] += dt
+	# Impaciente: tempo demais sem acertar ninguém → vai direto no meio do alvo,
+	# mais rápido (quebra o "balé" de dois carros rodeando um ao outro).
+	# No duelo final a paciência cai pela metade; impaciente esquece a ré (a
+	# traseira não elimina: dois carros em ré nunca se acabariam).
+	var restantes: int = carros.reduce(func(n, x): return n + (0 if x["eliminado"] else 1), 0)
+	var paciencia := float(perfil.get("impaciencia_s", 999.0)) * (0.5 if restantes <= 2 else 1.0)
+	var impaciente: bool = c["t_sem_golpe"] > paciencia
+	if impaciente:
+		c["re"] = false
 	# Recuperação: recua no sentido contrário ao ataque, sem virar.
 	if c["t_recua"] > 0.0:
 		c["t_recua"] -= dt
@@ -131,19 +149,22 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 				vivos.append(j)
 		if vivos.is_empty():
 			return
-		c["alvo"] = vivos[rng.randi_range(0, vivos.size() - 1)]
-		c["t_alvo"] = float(params["alvo_s"])
+		c["alvo"] = _escolher_alvo(carros, c, vivos, String(perfil.get("alvo", "acaso")), rng)
+		c["t_alvo"] = float(params["alvo_s"]) * float(perfil.get("alvo_s_mult", 1.0)) * rng.randf_range(0.6, 1.4)
+		# Cada escolha de alvo vem com um erro de mira próprio (m).
+		c["desvio"] = Vector2.from_angle(rng.randf() * TAU) * rng.randf() * float(perfil.get("imprecisao_m", 0.0))
 	var a: Dictionary = carros[c["alvo"]]
 	var dist: float = (a["pos"] - c["pos"]).length()
 	var antecedencia := minf(dist / maxf(c["vel"].length(), 1.0), float(params["antecedencia_max_s"]))
 	# Mira a quina traseira do alvo (o que o faz girar e poupa a própria frente
 	# de um frontal), onde ele vai estar.
-	var mira: Vector2 = a["pos"] - Vector2.from_angle(a["rumo"]) * a["L"] * float(params.get("mira_traseira", 0.35)) \
-			+ a["vel"] * antecedencia
+	var traseira := 0.0 if impaciente else float(perfil.get("mira_traseira", params.get("mira_traseira", 0.35)))
+	var mira: Vector2 = a["pos"] - Vector2.from_angle(a["rumo"]) * a["L"] * traseira + a["vel"] * antecedencia \
+			+ c["desvio"]
 	var rumo_alvo: float = (mira - c["pos"]).angle()
 	if c["re"]:
 		rumo_alvo += PI  # a traseira aponta para o alvo
-	var v_alvo := float(params["v_ataque_kmh"]) * KMH
+	var v_alvo := float(params["v_ataque_kmh"]) * KMH * float(perfil.get("v_mult", 1.0)) * (1.2 if impaciente else 1.0)
 	# Muro à frente: a posição prevista sai da arena → vira para o centro e reduz.
 	var raio := float(params["raio_m"])
 	var previsto: Vector2 = c["pos"] + c["vel"] * float(params["olhar_muro_s"])
@@ -172,6 +193,33 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 			c["t_recua"] = float(params["recuperacao_s"])
 	else:
 		c["t_travado"] = 0.0
+
+
+## Perfil do piloto na arena: o do participante ("perfil": id em
+## params.perfis) ou um sorteado pela semente da luta. {} sem perfis nos dados.
+static func _perfil(p: Dictionary, params: Dictionary, rng: RandomNumberGenerator) -> Dictionary:
+	var perfis: Dictionary = params.get("perfis", {})
+	if perfis.is_empty():
+		return {}
+	var id := String(p.get("perfil", ""))
+	if not perfis.has(id):
+		var ids := perfis.keys()
+		ids.sort()
+		id = ids[rng.randi_range(0, ids.size() - 1)]
+	var r: Dictionary = perfis[id].duplicate()
+	r["id"] = id
+	return r
+
+
+## Alvo pelo jeito do piloto: ao acaso, o mais perto ou o mais danificado.
+static func _escolher_alvo(carros: Array, c: Dictionary, vivos: Array, modo: String, rng: RandomNumberGenerator) -> int:
+	if modo == "perto":
+		vivos.sort_custom(func(x, y): return (carros[x]["pos"] - c["pos"]).length() < (carros[y]["pos"] - c["pos"]).length())
+		return vivos[0]
+	if modo == "fraco":
+		vivos.sort_custom(func(x, y): return _total(carros[x]["dano"]) > _total(carros[y]["dano"]))
+		return vivos[0]
+	return vivos[rng.randi_range(0, vivos.size() - 1)]
 
 
 ## Integra: força motriz (potência limitada pela aderência), giro limitado pela
@@ -312,6 +360,8 @@ static func _impulso(a: Dictionary, b: Dictionary, ponto: Vector2, nrm: Vector2,
 	var energia := 0.5 * m_ef * vn * vn
 	_danificar(a, ponto, energia, "" if b.is_empty() else String(b["id"]), params, eventos, t)
 	if not b.is_empty():
+		a["t_sem_golpe"] = 0.0
+		b["t_sem_golpe"] = 0.0
 		_danificar(b, ponto, energia, String(a["id"]), params, eventos, t)
 
 
@@ -393,6 +443,7 @@ static func _resultado(carros: Array, eventos: Array, amostras: Array, t: float)
 	for c in carros:
 		res[c["id"]] = {"dano": c["dano"], "eliminado": c["eliminado"], "eliminado_em": c["eliminado_em"],
 				"por": c["por"], "sobreviveu_s": c.get("sobreviveu_s", t), "eliminou": c["eliminou"],
+				"perfil": String(c["perfil"].get("id", "")),
 				"giros": eventos.filter(func(e): return e["tipo"] == "giro" and e["por"] == c["id"]).size()}
 	return {"classificacao": ordem.map(func(c): return c["id"]), "carros": res, "eventos": eventos,
 			"amostras": amostras, "duracao": t}

@@ -1,5 +1,5 @@
 {
- "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato. IA: ataca até v_ataque_kmh alinhada e reduz até v_curva_kmh quanto maior o erro de rumo; olha olhar_muro_s à frente e vira para o centro com margem_muro_m; mira a quina traseira do alvo (mira_traseira, fração do comprimento); encostado por travado_s recua recuperacao_s. Carreira (ArenaCarreira): abre com licenca_minima; rivais de potência parecida; pontos por giro provocado (pelo maior giro de cada golpe), eliminação e vitória; o prêmio de referência (média do 1º lugar das corridas da licença mínima) paga pontos_referencia pontos. Pontos e pontos_referencia provisórios até o playtest.",
+ "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato. IA: ataca até v_ataque_kmh alinhada e reduz até v_curva_kmh quanto maior o erro de rumo; olha olhar_muro_s à frente e vira para o centro com margem_muro_m; mira a quina traseira do alvo (mira_traseira, fração do comprimento); encostado por travado_s recua recuperacao_s. Carreira (ArenaCarreira): abre com licenca_minima; rivais de potência parecida; pontos por giro provocado (pelo maior giro de cada golpe), eliminação e vitória; o prêmio de referência (média do 1º lugar das corridas da licença mínima) paga pontos_referencia pontos. Pontos e pontos_referencia provisórios até o playtest. perfis: jeito de cada piloto, sorteado por luta (alvo: acaso/perto/fraco; mira_traseira; v_mult sobre v_ataque; limite_re próprio; alvo_s_mult; imprecisao_m: erro de mira; impaciencia_s: sem acertar ninguém por esse tempo, vai no meio do alvo 20% mais rápido). Valores provisórios.",
  "raio_m": 45.0,
  "dt_s": 0.0333333,
  "amostra_dt_s": 0.1,
@@ -35,5 +35,47 @@
  "v_curva_kmh": 18.0,
  "olhar_muro_s": 1.0,
  "margem_muro_m": 5.0,
- "mira_traseira": 0.35
+ "mira_traseira": 0.35,
+ "perfis": {
+  "cacador": {
+   "nome": "Caçador",
+   "alvo": "acaso",
+   "mira_traseira": 0.4,
+   "v_mult": 1.0,
+   "limite_re": 0.9,
+   "alvo_s_mult": 1.0,
+   "imprecisao_m": 0.8,
+   "impaciencia_s": 9.0
+  },
+  "carneiro": {
+   "nome": "Carneiro",
+   "alvo": "perto",
+   "mira_traseira": 0.0,
+   "v_mult": 1.15,
+   "limite_re": 0.97,
+   "alvo_s_mult": 1.6,
+   "imprecisao_m": 1.4,
+   "impaciencia_s": 6.0
+  },
+  "oportunista": {
+   "nome": "Oportunista",
+   "alvo": "fraco",
+   "mira_traseira": 0.25,
+   "v_mult": 1.05,
+   "limite_re": 0.88,
+   "alvo_s_mult": 0.7,
+   "imprecisao_m": 0.6,
+   "impaciencia_s": 8.0
+  },
+  "cauteloso": {
+   "nome": "Cauteloso",
+   "alvo": "acaso",
+   "mira_traseira": 0.4,
+   "v_mult": 0.85,
+   "limite_re": 0.7,
+   "alvo_s_mult": 1.2,
+   "imprecisao_m": 1.0,
+   "impaciencia_s": 12.0
+  }
+ }
 }
