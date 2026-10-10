@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d28d05su5rgxw"
-path="res://.godot/imported/camada_3_autodromo.webp-fb82152a071c83e1c9193b8fbe40da70.ctex"
+uid="uid://b8ind7tp8ejkv"
+path="res://.godot/imported/camada_3_pista.webp-d85ff72bb0b2bb01055b21a32b742c37.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/inicio/camada_3_autodromo.webp"
-dest_files=["res://.godot/imported/camada_3_autodromo.webp-fb82152a071c83e1c9193b8fbe40da70.ctex"]
+source_file="res://arte/inicio/camada_3_pista.webp"
+dest_files=["res://.godot/imported/camada_3_pista.webp-d85ff72bb0b2bb01055b21a32b742c37.ctex"]
 
 [params]
 

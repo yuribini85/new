@@ -48,3 +48,13 @@ A Arena hoje é só o botão "em breve". Para construir preciso que você decida
 - Diário de conversas (Configurações → História → Diário).
 - Som de fundo da oficina nas cenas com fundo de oficina ou garagem.
 - A largada espera qualquer conversa acabar (3‑2‑1 só depois).
+
+## E. Recebido no pacote "Assets separados" (integrado)
+
+- A1 logo Wreckage Motorsport (aba Equipe; o logo já traz MOTORSPORT, a tela não repete).
+- A4 tela inicial (4 camadas novas: céu, horizonte, pista, primeiro plano).
+- A5 ícone do app (`arte/ui/icone.png`, 1024 px).
+- A7 asfalto: "escuro" como base e "rachado" em manchas; as duas texturas foram
+  emendadas para repetir sem costura e reduzidas para 512 px (escala uniforme).
+- Pendentes: A2/A3 (segundo piloto), A6 (Mara satisfeita — a imagem recebida é de outra
+  personagem), B e C.

@@ -9,7 +9,7 @@ extends Control
 ## Apresentação, não balanceamento: amplitudes e tempos são de composição.
 
 const PASTA := "res://arte/inicio/"
-const CAMADAS := ["camada_1_ceu", "camada_2_vale", "camada_3_autodromo", "camada_4_frente"]
+const CAMADAS := ["camada_1_ceu", "camada_2_horizonte", "camada_3_pista", "camada_4_frente"]
 ## Deslocamento máximo de cada camada (px da tela de 720): automático e inclinação.
 const AMP_AUTO := [4.0, 10.0, 18.0, 32.0]
 const AMP_INCLINACAO := [4.0, 10.0, 18.0, 28.0]

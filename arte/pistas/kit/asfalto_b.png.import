@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dq8nm5v08et8p"
-path="res://.godot/imported/camada_2_vale.webp-3e2377857394afc1b55e0c7a736e9571.ctex"
+uid="uid://del6c8yr1wxkr"
+path="res://.godot/imported/asfalto_b.png-46978796829443bdfed4b5003c7cfaa1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/inicio/camada_2_vale.webp"
-dest_files=["res://.godot/imported/camada_2_vale.webp-3e2377857394afc1b55e0c7a736e9571.ctex"]
+source_file="res://arte/pistas/kit/asfalto_b.png"
+dest_files=["res://.godot/imported/asfalto_b.png-46978796829443bdfed4b5003c7cfaa1.ctex"]
 
 [params]
 

@@ -41,7 +41,9 @@ func _topo(eq: Dictionary) -> void:
 	v.add_theme_constant_override("separation", 0)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faixa.add_child(v)
-	var tex := Assets.get_asset(String(eq["id"]), "logo") if String(eq.get("logo", "")) != "" else null
+	# O logo do dado da equipe (a campanha pode trocar: historia.json → equipe).
+	var arquivo := String(eq.get("logo", ""))
+	var tex: Texture2D = load(arquivo) if arquivo != "" and ResourceLoader.exists(arquivo) else null
 	if tex != null:
 		var img := TextureRect.new()
 		img.texture = tex
@@ -61,6 +63,7 @@ func _topo(eq: Dictionary) -> void:
 		nome.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 		v.add_child(nome)
 	var sub := Label.new()
+	sub.visible = tex == null or eq.get("subtitulo", true)  # o logo já pode trazer o "MOTORSPORT"
 	sub.text = "M O T O R S P O R T"
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	Tipografia.rotulo(sub, "medium", 24)

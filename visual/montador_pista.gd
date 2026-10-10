@@ -96,7 +96,7 @@ func montar(cena: Node3D, pista: Pista, tema: Dictionary, largura: float) -> voi
 	_chao(caixa, k)
 	_bordas_curvas(k)
 	_faixa_volta(-(_largura * 0.5 + ESCAPE_M), _largura * 0.5 + ESCAPE_M, -0.03, _mat(k.get("escape", "escape"), 16.0))
-	_faixa_volta(-_largura * 0.5, _largura * 0.5, -0.02, _mat("asfalto", 16.0))
+	_faixa_volta(-_largura * 0.5, _largura * 0.5, -0.02, _mat("asfalto", 16.0, false, "asfalto_b"))
 	var branco := _cor(Color(0.9, 0.9, 0.88))
 	for lado in [-1.0, 1.0]:
 		var a: float = lado * (_largura * 0.5 - 0.55)

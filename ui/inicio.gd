@@ -26,7 +26,7 @@ var _pronto := false
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var fundo := ColorRect.new()
-	fundo.color = Color("1a2d49")  # o céu da paisagem, enquanto ela carrega
+	fundo.color = Color("1b222c")  # o céu da paisagem, enquanto ela carrega
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(fundo)
 	# Paisagem em camadas com parallax (logo, botões e versão ficam parados).
