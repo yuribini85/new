@@ -41,7 +41,7 @@ func _topo(eq: Dictionary) -> void:
 	v.add_theme_constant_override("separation", 0)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faixa.add_child(v)
-	var tex := Assets.get_asset(String(eq["id"]), "logo")
+	var tex := Assets.get_asset(String(eq["id"]), "logo") if String(eq.get("logo", "")) != "" else null
 	if tex != null:
 		var img := TextureRect.new()
 		img.texture = tex

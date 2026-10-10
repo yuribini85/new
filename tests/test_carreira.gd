@@ -236,6 +236,8 @@ func test_campanha_do_dono_e_comentarios() -> void:
 	var precos: Array = d.lista("carros").map(func(c): return int(c["preco"]))
 	verificar(h.carro_caro(precos.max() + 1) and not h.carro_caro(precos.min()), "carro caro pelo percentil")
 	igual(int(Save.serializar(j).get("ultima_reativa", -1)), 10, "intervalo vai para o save")
+	EquipeJogador.criar(j)
+	igual(EquipeJogador.dados_equipe(d, j).get("nome"), "Oficina", "nome da equipe da campanha")
 	j.free()
 	d.free()
 

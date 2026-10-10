@@ -318,3 +318,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 47. **Arena:** só o botão na barra de baixo, com ícone genérico e sem tela, até o modo
     existir. Sem regras de perda, reparo ou integridade de piloto por enquanto.
 
+48. **Equipe da campanha do dono: Wreckage Motorsport** (`historia.json` → `dono.equipe`;
+    saves antigos seguem Second Driver). Aprovados também: o comentário de compra cara
+    acima do percentil 90 dos preços do catálogo e o tutorial de corridas na primeira
+    prova que o carro em uso já pode correr.

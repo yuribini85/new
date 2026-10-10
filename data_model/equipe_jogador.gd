@@ -28,13 +28,20 @@ static func criar(jogador: Node) -> void:
 	jogador.flags[FLAG] = true
 
 
-## Dados da equipe do jogador ({} antes de criada ou sem equipe nos dados).
+## Dados da equipe do jogador ({} antes de criada ou sem equipe nos dados). A
+## campanha pode trocar nome e logo (historia.json → <personagem>.equipe; logo
+## "" = o nome em texto).
 static func dados_equipe(dados: Node, jogador: Node) -> Dictionary:
 	if not criada(jogador):
 		return {}
 	for e in dados.lista("equipes"):
 		if e.get("jogador", false):
-			return e
+			var troca: Dictionary = dados.historia().get(String(jogador.personagem), {}).get("equipe", {})
+			if troca.is_empty():
+				return e
+			var r: Dictionary = e.duplicate()
+			r.merge(troca, true)
+			return r
 	return {}
 
 
