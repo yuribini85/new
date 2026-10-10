@@ -203,10 +203,10 @@ func _posicionar() -> void:
 	offset_bottom = altura_total()
 	if marcador != null:
 		# Da direita para a esquerda: a bandeira (voltar à corrida), ACELERAR e,
-		# na Oficina, GARAGEM; no mapa das Lojas, NOMES; dentro de uma loja, a
-		# volta ao mapa.
+		# na Oficina, GARAGEM; no mapa das Lojas, NOMES. Dentro de uma loja, a
+		# volta ao mapa vem antes de todas, no canto direito.
 		var direita := size.x - 14.0
-		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes, aba_mapa]:
+		for aba in [aba_mapa, aba_corrida, marcador, aba_garagem, aba_nomes]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
@@ -389,12 +389,17 @@ func _criar_aba_mapa() -> void:
 	h.add_theme_constant_override("separation", 8)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	aba_mapa.add_child(h)
-	var seta := Label.new()
-	seta.text = "‹"
-	seta.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# A seta do voltar do cabeçalho, recortada da caixa, em escala uniforme.
+	var recorte := AtlasTexture.new()
+	recorte.atlas = load(PASTA + "voltar.png")
+	recorte.region = Rect2(38, 34, 46, 54)
+	var seta := TextureRect.new()
+	seta.texture = recorte
+	seta.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	seta.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	seta.custom_minimum_size = Vector2(22, 26)
+	seta.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	Tipografia.rotulo(seta, "semibold", 34)
-	seta.add_theme_color_override("font_color", COR_NUMERO)
 	h.add_child(seta)
 	var t := Label.new()
 	t.text = "MAPA DAS LOJAS"

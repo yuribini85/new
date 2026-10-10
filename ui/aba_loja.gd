@@ -244,13 +244,18 @@ func _cartao_usado(grade: GridContainer, o: Dictionary) -> void:
 		ancora("USED_CAR_STATS", grade.get_child(0))
 
 
-## "Mostrar mais": a lista cresce POR_PAGINA de cada vez.
+## MOSTRAR TODOS: a lista começa com POR_PAGINA carros; o botão abre o resto.
 func _mais(total: int) -> void:
 	if total <= _limite:
 		return
-	botao_texto("Mostrar mais (%d de %d)" % [_limite, total], func():
-		_limite += POR_PAGINA
+	var b := Button.new()
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.focus_mode = Control.FOCUS_NONE
+	Tipografia.acao_neutra(b, "MOSTRAR TODOS", 28, 84)
+	b.pressed.connect(func():
+		_limite = total
 		mudou.emit())
+	conteudo.add_child(b)
 
 
 ## Fileira de filtros: só o que posso comprar e a ordem.
@@ -312,8 +317,6 @@ const LARGURA_NOME_BLOCO := 290.0
 func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable,
 		cor := Color(0, 0, 0, 0), escolher_cor := false, comprado := false) -> void:
 	var pode: bool = jogador.economia.pode_pagar(preco)
-	if comprado:
-		extras = extras + [["já na sua garagem", COR_BOM]]
 	var falta := "" if pode else "Faltam %s giros" % dinheiro(preco - jogador.economia.saldo)
 	var abrir := func(): ficha_modelo(c, extras + [["revenda %s giros" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
 			["Comprar · %s" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor)
