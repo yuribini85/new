@@ -86,6 +86,7 @@ func _ready() -> void:
 		_todas[1].mostrar_nomes = not _todas[1].mostrar_nomes
 		_cabecalho.definir_nomes(_todas[1].mostrar_nomes)
 		_todas[1].atualizar())
+	_cabecalho.mapa.connect(func(): _todas[1].voltar_ao_mapa())
 	_cabecalho.corrida.connect(func():
 		if jogador.fila.is_empty():
 			_sobre.avisar("Nenhuma corrida em andamento.", false)
@@ -272,6 +273,7 @@ func _ir_para(i: int, voltando := false) -> void:
 	_cabecalho.definir_volta(not _historico.is_empty())
 	_cabecalho.mostrar_garagem(i == 0)
 	_cabecalho.mostrar_nomes(i == 1 and _todas[1].no_mapa())
+	_cabecalho.mostrar_mapa(i == 1 and not _todas[1].no_mapa())
 	_cabecalho.mostrar_corrida(i != 4)
 	_atualizar_ao_vivo()
 	_foco_corrida()
@@ -474,8 +476,9 @@ func _reconstruir(i: int) -> void:
 	if _sujas.has(i):
 		_sujas.erase(i)
 		_todas[i].atualizar()
-	# NOMES só no mapa das Lojas (fora de uma loja aberta).
+	# NOMES só no mapa das Lojas; dentro de uma loja, a volta ao mapa.
 	_cabecalho.mostrar_nomes(i == 1 and _todas[1].no_mapa())
+	_cabecalho.mostrar_mapa(i == 1 and not _todas[1].no_mapa())
 
 
 func _sujar_todas() -> void:

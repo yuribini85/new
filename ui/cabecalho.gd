@@ -18,6 +18,7 @@ signal acelerar
 signal garagem
 signal corrida
 signal nomes
+signal mapa
 
 const PASTA := "res://arte/ui/cabecalho/"
 const ALTURA := 84  # faixa dos elementos (px da tela de 720)
@@ -52,6 +53,7 @@ var _dentro_painel: HBoxContainer
 var _caixa_numero: Control
 var aba_corrida: Button
 var aba_nomes: Button
+var aba_mapa: Button
 var _icone_nomes: IconeVetor
 var _icone_corrida: IconeVetor
 var engrenagem: Button
@@ -177,6 +179,7 @@ func _init() -> void:
 	_criar_aba_corrida()
 	_criar_aba_garagem()
 	_criar_aba_nomes()
+	_criar_aba_mapa()
 	titulo.resized.connect(_ajustar_titulo)
 	resized.connect(_posicionar)
 	_posicionar()
@@ -200,9 +203,10 @@ func _posicionar() -> void:
 	offset_bottom = altura_total()
 	if marcador != null:
 		# Da direita para a esquerda: a bandeira (voltar à corrida), ACELERAR e,
-		# na Oficina, GARAGEM; no mapa das Lojas, NOMES.
+		# na Oficina, GARAGEM; no mapa das Lojas, NOMES; dentro de uma loja, a
+		# volta ao mapa.
 		var direita := size.x - 14.0
-		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes]:
+		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes, aba_mapa]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
@@ -367,6 +371,46 @@ func _criar_aba_nomes() -> void:
 	h.add_child(t)
 	aba_nomes.visible = false
 	add_child(aba_nomes)
+
+
+## Aba ‹ MAPA DAS LOJAS: dentro de uma loja, volta ao mapa.
+func _criar_aba_mapa() -> void:
+	aba_mapa = Button.new()
+	aba_mapa.focus_mode = Control.FOCUS_NONE
+	aba_mapa.tooltip_text = "Voltar ao mapa das lojas"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_mapa.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_mapa.pressed.connect(func(): mapa.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 8)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_mapa.add_child(h)
+	var seta := Label.new()
+	seta.text = "‹"
+	seta.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(seta, "semibold", 34)
+	seta.add_theme_color_override("font_color", COR_NUMERO)
+	h.add_child(seta)
+	var t := Label.new()
+	t.text = "MAPA DAS LOJAS"
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	aba_mapa.visible = false
+	add_child(aba_mapa)
+
+
+func mostrar_mapa(sim: bool) -> void:
+	if aba_mapa.visible != sim:
+		aba_mapa.visible = sim
+		_posicionar()
 
 
 func definir_nomes(ligado: bool) -> void:

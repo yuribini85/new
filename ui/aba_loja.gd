@@ -186,13 +186,15 @@ func _vitrine(ws: Array, second_chance: bool) -> void:
 			mudou.emit())
 
 
+## Volta ao mapa (aba ‹ MAPA DAS LOJAS do cabeçalho).
+func voltar_ao_mapa() -> void:
+	_loja = ""
+	_limite = POR_PAGINA
+	mudou.emit()
+
+
 ## Dentro da workshop: a logo grande numa placa e, embaixo, os carros.
 func _topo_workshop(w: Dictionary) -> void:
-	var voltar := botao_texto("‹ Mapa das lojas", func():
-		_loja = ""
-		_limite = POR_PAGINA
-		mudou.emit())
-	voltar.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	# A concessionária grande com o nome ao lado (a mesma linha do mapa/coleção).
 	var n := _carros_da(w).size() if w.has("fabricantes") else 0
 	linha_workshop(w if not w.is_empty() else {"nome": "Second Chance Motors", "logo": ""},
