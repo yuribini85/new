@@ -15,6 +15,9 @@ uniform vec2 roda_b[2];
 uniform float usar_rodas = 0.0;
 uniform float giro = 0.0;    // ângulo andado (rad)
 uniform float borrao = 0.0;  // abertura do borrão de movimento (rad)
+// Imagem-fantasma (troca de câmera): o desenho clareia na direção desta cor.
+uniform float clarear = 0.0;
+uniform vec3 cor_clara = vec3(1.0);
 
 void vertex() {
 	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
@@ -51,6 +54,6 @@ void fragment() {
 		c = roda(px, roda_c[0], roda_a[0], roda_b[0], c);
 		c = roda(px, roda_c[1], roda_a[1], roda_b[1], c);
 	}
-	ALBEDO = c.rgb * modulacao.rgb;
+	ALBEDO = mix(c.rgb * modulacao.rgb, cor_clara, clarear);
 	ALPHA = c.a * modulacao.a;
 }

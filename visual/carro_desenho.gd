@@ -81,6 +81,39 @@ func dimensoes() -> Vector2:
 	return Vector2(_topo.texture.get_height(), _topo.texture.get_width()) * _topo.pixel_size
 
 
+## Imagens-fantasma (efeito de anime na troca para a câmera isométrica):
+## cópias do sprite isométrico em `posicoes` (as posições recentes do carro,
+## da mais nova para a mais velha), tingidas de `cor`, cada uma mais apagada.
+## forca 0 esconde.
+var _fantasmas: Array = []
+
+
+func fantasmas(posicoes: Array, forca: float, cor: Color) -> void:
+	if _iso == null:
+		return
+	while _fantasmas.size() < posicoes.size():
+		var f := MeshInstance3D.new()
+		f.mesh = _iso.mesh
+		var m: ShaderMaterial = _mat_iso.duplicate()
+		f.material_override = m
+		f.top_level = true
+		add_child(f)
+		_fantasmas.append(f)
+	for k in _fantasmas.size():
+		var f: MeshInstance3D = _fantasmas[k]
+		f.visible = forca > 0.001 and k < posicoes.size()
+		if not f.visible:
+			continue
+		f.global_transform = (posicoes[k] as Transform3D) * _iso.transform
+		var m: ShaderMaterial = f.material_override
+		var a := forca * (1.0 - float(k) / float(posicoes.size() + 1)) * 0.8
+		m.set_shader_parameter("modulacao", Color(1, 1, 1, a))
+		m.set_shader_parameter("clarear", 0.6)
+		m.set_shader_parameter("cor_clara", Vector3(cor.r, cor.g, cor.b))
+		m.set_shader_parameter("giro", _giro)
+		m.render_priority = _mat_iso.render_priority - 1
+
+
 ## Ordem de desenho entre os carros em sprite (k maior = mais à frente na
 ## tela): a sombra embaixo de todos, o de cima e o isométrico por k.
 func ordem_desenho(k: int) -> void:

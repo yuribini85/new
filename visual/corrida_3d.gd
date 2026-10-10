@@ -255,6 +255,11 @@ func limpar() -> void:
 	_s_anterior = {}
 	_tranco = {}
 	_freio = {}
+	_historico = []
+	_copias_bloco = []
+	_mats_bloco = []
+	_fantasma = 0.0
+	_fantasma_de = ""
 	_fumaca = {}
 	_esteira = {}
 	_rastro_pts = {}
@@ -368,6 +373,7 @@ func atualizar(delta: float) -> void:
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	_apagar_marcas()
 	_vacuo(s)
+	_imagens_fantasma(delta)
 	_ordenar_sprites(ordem)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := 1.0
@@ -647,6 +653,8 @@ func _decidir_modo(id: String, _s: float, disputa: bool) -> String:
 func _mudar_modo(novo: String, imediato: bool) -> void:
 	if novo == modo:
 		return
+	if novo == "velocidade" and not imediato and not Preferencias.reduzir_animacoes:
+		_fantasma = FANTASMA_S
 	if modo == "velocidade":
 		_b_saida = _b
 		_zoom_saida = _zoom
@@ -918,6 +926,92 @@ func _separar(s: Dictionary, base: Dictionary, delta: float) -> void:
 func _ciclo(d: float) -> float:
 	var c := _pista.comprimento
 	return fposmod(d + c * 0.5, c) - c * 0.5
+
+
+## Imagens-fantasma na troca de câmera (de cima para a isométrica): o carro
+## seguido deixa cópias tingidas nas posições dos últimos instantes, que somem
+## em FANTASMA_S.
+const FANTASMA_S := 0.9
+const FANTASMA_N := 4
+const FANTASMA_PASSO_S := 0.06  # distância no tempo entre duas cópias
+const FANTASMA_COR := Color(0.55, 0.85, 1.0)
+var _fantasma := 0.0
+var _historico := []  # [tempo, Transform3D] do carro seguido
+var _fantasma_de := ""
+
+
+func _imagens_fantasma(delta: float) -> void:
+	var seguido: String = foco if _carros.has(foco) else "jogador"
+	if not _carros.has(seguido):
+		return
+	if seguido != _fantasma_de:
+		if _carros.has(_fantasma_de) and _carros[_fantasma_de] is CarroDesenho:
+			_carros[_fantasma_de].fantasmas([], 0.0, FANTASMA_COR)
+		for copia in _copias_bloco:
+			copia.queue_free()
+		_copias_bloco.clear()
+		_mats_bloco.clear()
+		_historico.clear()
+		_fantasma_de = seguido
+	var c: Node3D = _carros[seguido]
+	_historico.append([_tempo, c.global_transform])
+	while not _historico.is_empty() and _tempo - float(_historico[0][0]) > FANTASMA_PASSO_S * (FANTASMA_N + 1):
+		_historico.pop_front()
+	_fantasma = maxf(_fantasma - delta, 0.0)
+	if _fantasma <= 0.0:
+		if c is CarroDesenho:
+			c.fantasmas([], 0.0, FANTASMA_COR)
+		_fantasmas_bloco([], 0.0)
+		return
+	var posicoes := []
+	for k in range(1, FANTASMA_N + 1):
+		var alvo := _tempo - FANTASMA_PASSO_S * k
+		var melhor: Transform3D = _historico[0][1]
+		for h in _historico:
+			if float(h[0]) <= alvo:
+				melhor = h[1]
+		posicoes.append(melhor)
+	# Só com a câmera já inclinando; some no fim do tempo.
+	var forca := smoothstep(0.1, 0.5, _mistura_sprite()) * smoothstep(0.0, FANTASMA_S * 0.5, _fantasma)
+	if c is CarroDesenho:
+		c.fantasmas(posicoes, forca, FANTASMA_COR)
+	else:
+		_fantasmas_bloco(posicoes, forca)
+
+
+## Carro de blocos (3D): cópias da malha com um material claro translúcido.
+var _copias_bloco: Array = []
+var _mats_bloco: Array = []
+
+
+func _fantasmas_bloco(posicoes: Array, forca: float) -> void:
+	var c: Node3D = _carros.get(_fantasma_de)
+	if forca > 0.001 and c != null and _copias_bloco.size() < posicoes.size():
+		for k in range(_copias_bloco.size(), posicoes.size()):
+			var mat := StandardMaterial3D.new()
+			mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mat.albedo_color = Color(FANTASMA_COR, 0.0)
+			mat.no_depth_test = true
+			var copia := Node3D.new()
+			copia.top_level = true
+			for m in c.find_children("*", "MeshInstance3D", true, false):
+				if m.get_parent() is CPUParticles3D or not m.visible:
+					continue
+				var mi := MeshInstance3D.new()
+				mi.mesh = (m as MeshInstance3D).mesh
+				mi.material_override = mat
+				mi.transform = c.global_transform.affine_inverse() * m.global_transform
+				copia.add_child(mi)
+			_cena.add_child(copia)
+			_copias_bloco.append(copia)
+			_mats_bloco.append(mat)
+	for k in _copias_bloco.size():
+		var copia: Node3D = _copias_bloco[k]
+		copia.visible = forca > 0.001 and k < posicoes.size()
+		if copia.visible:
+			copia.global_transform = posicoes[k]
+			(_mats_bloco[k] as StandardMaterial3D).albedo_color.a = forca * (1.0 - float(k) / float(posicoes.size() + 1)) * 0.45
 
 
 ## Sprites transparentes se desenham pela ordem dada, não pela profundidade
