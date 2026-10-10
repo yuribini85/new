@@ -109,7 +109,7 @@ func _ready() -> void:
 	_todas = [
 		preload("res://ui/aba_garagem.gd").new(dados, jogador),
 		preload("res://ui/aba_loja.gd").new(dados, jogador),
-		preload("res://ui/aba_oficina.gd").new(dados, jogador),
+		Aba.new(dados, jogador, "Oficina antiga"),  # índice 2 reservado (a Oficina antiga saiu)
 		eventos,
 		preload("res://ui/aba_corrida.gd").new(dados, jogador),
 		preload("res://ui/aba_licencas.gd").new(dados, jogador),
@@ -752,10 +752,6 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				_ir_para(0)
 				atualizar(), "icone_melhorar"],
 			["Escolher outra corrida", func(): _ir_para(3), "aba_competicoes"]]
-		var carro_corrida: Carro = jogador.garagem.carro(c["uid"])
-		if not venceu and carro_corrida != null:
-			# Derrota: comparar preparações antes de gastar outra corrida inteira.
-			botoes.insert(1, ["Comparar montagens", func(): g.testar_preparacao(c["evento_id"], carro_corrida), "icone_comparar"])
 		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
 		var alvo_obj: Array = Objetivos.lista(jogador, dados)
 		var i_obj := Objetivos.atual(alvo_obj)

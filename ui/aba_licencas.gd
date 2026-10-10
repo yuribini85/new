@@ -16,7 +16,7 @@ var _bancada := ""
 var _montagem := {}
 var _avaliacao := {}
 
-const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
+const NOMES_CATEGORIA := PecasTexto.NOMES_CATEGORIA
 ## Brasão da licença atual no topo (altura, px) e o da próxima no cartão.
 const ALTURA_BRASAO := 230.0
 const BRASAO_CARTAO := 190.0

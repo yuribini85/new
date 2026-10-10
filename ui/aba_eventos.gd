@@ -2,10 +2,6 @@ extends Aba
 
 signal correr_iniciado
 
-## Preparação para a inscrição: -1 = a atual do carro; senão índice em
-## Carro.configuracoes. A fila guarda uma cópia dela.
-var _config := -1
-var _config_uid := -1
 ## Estimativas simuladas sob demanda: chave (prova + carro + peças) -> faixa,
 ## ou "..." enquanto calcula.
 var _estimativas := {}
@@ -45,11 +41,7 @@ func construir() -> void:
 		proximo_passo("Você precisa de um carro para correr.", "Ir para as Lojas", LOJA)
 		return
 	_topo_carro(garagem)
-	if _config_uid != garagem.uid or _config >= garagem.configuracoes.size():
-		_config = -1
-		_config_uid = garagem.uid
-	# Daqui em diante, o carro com a preparação escolhida para a inscrição.
-	var c := garagem if _config < 0 else garagem.com_configuracao(garagem.configuracoes[_config], dados.peca)
+	var c := garagem
 	if not jogador.fila.is_empty():
 		_fila()
 	# Dois filtros: as ainda não vencidas (padrão) e todas.
@@ -551,7 +543,7 @@ func _correr(evento_id: String) -> void:
 		historia("CAMPEONATO_SELECIONADO", ctx)
 	var garagem := carro_ativo()
 	var n := 1
-	var cfg: Dictionary = {} if _config < 0 or garagem == null else garagem.configuracoes[_config]
+	var cfg: Dictionary = {}
 	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, n, Aceleracao.agora(jogador), cfg)
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)

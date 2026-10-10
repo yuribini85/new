@@ -5,7 +5,7 @@ extends "res://tests/base_teste.gd"
 const JogadorScript := preload("res://autoload/jogador.gd")
 const ABAS := [
 	preload("res://ui/aba_garagem.gd"), preload("res://ui/aba_loja.gd"),
-	preload("res://ui/aba_oficina.gd"), preload("res://ui/aba_eventos.gd"),
+	preload("res://ui/aba_garagem.gd"), preload("res://ui/aba_eventos.gd"),  # índice 2: a Oficina antiga saiu
 	preload("res://ui/aba_corrida.gd"), preload("res://ui/aba_licencas.gd"),
 ]
 ## Largura útil do celular: 720 menos as margens da tela principal e a barra

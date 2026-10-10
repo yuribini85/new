@@ -74,7 +74,7 @@ func construir() -> void:
 ## Todas as categorias compráveis, na ordem da seção Evolução.
 const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
 		"lightweight", "corrida", "brake", "cambio"]
-const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
+const NOMES_CATEGORIA := PecasTexto.NOMES_CATEGORIA
 ## Nome do carro no palco (fonte) e altura da diagonal ocre na frente dele;
 ## a linha fica na altura das abas penduradas, à esquerda delas.
 const TAMANHO_NOME := 34
@@ -413,11 +413,10 @@ func _reabrir(c: Carro, cat: String) -> void:
 
 
 func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
-	var oficina := preload("res://ui/aba_oficina.gd")
-	var attr: String = oficina.AFETA_CATEGORIA.get(cat, "potencia")
-	rotulo(oficina.EXPLICA_CATEGORIA.get(cat, ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = \
+	var attr: String = PecasTexto.AFETA_CATEGORIA.get(cat, "potencia")
+	rotulo(PecasTexto.EXPLICA_CATEGORIA.get(cat, ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = \
 			TextServer.AUTOWRAP_WORD_SMART
-	rotulo("Na pista: " + oficina.FUNCAO[attr] + ".", FONTE_PEQUENA + 2, Color.WHITE, v).autowrap_mode = \
+	rotulo("Na pista: " + PecasTexto.FUNCAO[attr] + ".", FONTE_PEQUENA + 2, Color.WHITE, v).autowrap_mode = \
 			TextServer.AUTOWRAP_WORD_SMART
 	var pecas: Array = dados.lista("pecas").filter(func(p): return p["categoria"] == cat and c.motivo_recusa(p).is_empty())
 	pecas.sort_custom(func(a, b): return a["preco"] < b["preco"])
@@ -476,7 +475,7 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 		var aj := HBoxContainer.new()
 		aj.add_theme_constant_override("separation", 8)
 		v.add_child(aj)
-		for a in oficina.AJUSTES_CAMBIO:
+		for a in PecasTexto.AJUSTES_CAMBIO:
 			var b := botao(a[1], func():
 				c.ajuste_cambio = a[0]
 				_reabrir(c, cat), not bloqueado, c.ajuste_cambio == a[0], aj)
@@ -486,8 +485,7 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 
 
 func _janela_pneus(c: Carro, v: VBoxContainer) -> void:
-	var oficina := preload("res://ui/aba_oficina.gd")
-	rotulo("Pneu que segura mais: " + oficina.FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
+	rotulo("Pneu que segura mais: " + PecasTexto.FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
 			FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	for pn in dados.lista("pneus"):
 		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
