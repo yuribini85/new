@@ -127,7 +127,13 @@ func _ready() -> void:
 			_sobre.fechar()  # ex.: cenário aberto nas Configurações
 			_sujar_todas()
 			_ir_para(i))
-	eventos.correr_iniciado.connect(func(): _ir_para(4))
+	_todas[4].dialogo_aberto = func() -> bool: return _dialogo != null and _dialogo.ocupado()
+	eventos.correr_iniciado.connect(func():
+		# Conversa aberta na inscrição (ex.: a do campeonato): o grid espera.
+		if _dialogo != null and _dialogo.ocupado():
+			_todas[4].segurar()
+			_quando_dialogo_acabar(_todas[4].liberar_largada)
+		_ir_para(4))
 	_todas[4].pular.connect(func():
 		RegistroSessao.pulo()
 		jogador.fila_ctrl.adiantar(Aceleracao.agora(jogador))
@@ -565,10 +571,12 @@ func _destacar(nome: String) -> void:
 		_dialogo.evitar(alvo.get_global_rect())
 
 
-## Uma cena começa: a da largada segura a corrida no grid até acabar.
+## Uma cena começa: a da largada, ou qualquer uma pedida antes de a corrida
+## largar, segura a corrida no grid até a fila de conversas acabar.
 func _cena_pedida(c: Dictionary) -> void:
-	if c.get("segura_largada", false):
-		_todas[4].segurar_largada = true
+	var corrida = _todas[4]
+	if c.get("segura_largada", false) or corrida.antes_da_largada():
+		corrida.segurar()
 
 
 ## Cena terminada: salva; o destaque fica só se ela acabou nele (o jogador tem
@@ -580,8 +588,10 @@ func _cena_terminou(c: Dictionary) -> void:
 		_destaque.limpar()
 	if c.get("lembrete") != null:
 		_lembrete = {"id": c["lembrete"], "t": 0.0}
-	if c.get("segura_largada", false):
-		_todas[4].liberar_largada()
+	if _todas[4].segurar_largada:
+		# Depois de o diálogo passar para a próxima da fila (aqui a cena ainda
+		# conta como aberta): libera só quando não houver mais nenhuma.
+		(func(): _quando_dialogo_acabar(_todas[4].liberar_largada)).call_deferred()
 	atualizar()
 	get_node("/root/SaveManager").salvar()
 

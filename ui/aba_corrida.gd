@@ -69,8 +69,11 @@ var _t_chegada := 0.0
 var _segurar := 0.0  # segundos parados na última imagem depois do fim
 var _diretor := DiretorCamera.new()
 var _foco_auto := "jogador"
-## Cena da largada (segura_largada): a corrida fica no grid até ela acabar.
+## Conversa antes da largada: a corrida fica no grid até a fila de conversas
+## acabar (principal.gd segura e libera); depois, o 3-2-1.
 var segurar_largada := false
+## Há conversa na tela? (a principal liga ao diálogo; sem ela, nunca)
+var dialogo_aberto := func() -> bool: return false
 
 
 ## Velocidade máxima do carro inscrito (km/h): o HUD doura o número perto dela.
@@ -440,6 +443,8 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_s_jogador = _visual.distancia("jogador")
 	_atraso = 0.0
 	_pausa = 0.0
+	if _visual.tempo < 0.5 and not segurar_largada and dialogo_aberto.call():
+		segurar()  # a corrida nova não larga debaixo de uma conversa
 	if _visual.tempo < 0.5 and not segurar_largada:
 		# Corrida começando agora com a tela aberta: 3-2-1 no grid.
 		_contagem = CONTAGEM_S
@@ -504,16 +509,34 @@ func _contar(delta: float) -> void:
 			_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
 
 
-## Fim da cena da largada: a corrida começa agora.
+## A corrida ainda não largou (inscrita agora, no 3-2-1 ou parada no grid).
+func antes_da_largada() -> bool:
+	if jogador.fila.is_empty():
+		return false
+	return segurar_largada or _contagem > 0.0 \
+			or Aceleracao.agora(jogador) - float(jogador.fila.get("inicio", 0.0)) < 0.5
+
+
+## Para no grid (uma conversa abriu): a contagem some até a conversa acabar.
+func segurar() -> void:
+	segurar_largada = true
+	_contagem = -1.0
+	if _painel_hud != null:
+		_painel_hud.contagem = -1.0
+
+
+## Fim das conversas: o 3-2-1 no grid e a largada.
 func liberar_largada() -> void:
 	if not segurar_largada:
 		return
 	segurar_largada = false
-	if not jogador.fila.is_empty():
-		jogador.fila["inicio"] = Aceleracao.agora(jogador)
+	if jogador.fila.is_empty():
+		return
+	jogador.fila["inicio"] = Aceleracao.agora(jogador)
 	_diretor.reiniciar()
-	_sons.largada(true)
-	_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
+	_contagem = CONTAGEM_S
+	_painel_hud.contagem = _contagem
+	_sons.largada(false)
 
 
 ## Câmera AUTO: o diretor escolhe o plano; nas outras, o alvo da escolha.
