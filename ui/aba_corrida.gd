@@ -440,7 +440,6 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_s_jogador = _visual.distancia("jogador")
 	_atraso = 0.0
 	_pausa = 0.0
-	_marcha_antes = 0
 	if _visual.tempo < 0.5 and not segurar_largada:
 		# Corrida começando agora com a tela aberta: 3-2-1 no grid.
 		_contagem = CONTAGEM_S
@@ -519,8 +518,12 @@ func liberar_largada() -> void:
 
 ## Câmera AUTO: o diretor escolhe o plano; nas outras, o alvo da escolha.
 func _dirigir(ordem: Array) -> void:
+	# Largada (contagem, cena segurando o grid ou a abertura do diretor): de
+	# cima, enquadrando o grid inteiro.
+	_visual3d.enquadrar_grid = _contagem > 0.0 or segurar_largada
 	if _camera_modo == "auto":
 		var plano := _diretor.atualizar(_visual, _pista.comprimento * _voltas, _pista.comprimento, _voltas)
+		_visual3d.enquadrar_grid = _visual3d.enquadrar_grid or plano["motivo"] == "abertura"
 		var antes := _foco_auto
 		_foco_auto = plano["foco"]
 		_visual3d.visao_geral = plano["geral"]
@@ -616,11 +619,9 @@ func _atualizar_hud(ordem: Array) -> void:
 			get_process_delta_time() / 0.6)
 
 
-## Som que acompanha o seu carro: motor pelo giro, estalo na redução, pneu e
+## Som que acompanha o seu carro: motor pelo giro, pneu e
 ## zebra pelo 3D, torcida na reta final da última volta com disputa de perto
 ## (e na chegada).
-var _marcha_antes := 0
-
 
 func _som_da_corrida(mg: Array, i: int, ordem: Array, s: float, volta: int) -> void:
 	if _chegou:
@@ -630,9 +631,6 @@ func _som_da_corrida(mg: Array, i: int, ordem: Array, s: float, volta: int) -> v
 	if corte > 0.0:
 		var escala := ceilf((corte + 600.0) / 1000.0) * 1000.0
 		_sons.motor_giro(float(mg[1]) / escala)
-	if int(mg[0]) < _marcha_antes and int(mg[0]) > 0:
-		_sons.reducao()
-	_marcha_antes = int(mg[0])
 	_sons.pneu(_visual3d.cantando("jogador"), _visual3d.na_zebra("jogador"))
 	var torcida := 0.0
 	if volta == _voltas:

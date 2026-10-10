@@ -22,7 +22,6 @@ var _bipe_longo: AudioStreamWAV
 var _subida: AudioStreamWAV
 var _descida: AudioStreamWAV
 var _chegada: AudioStreamWAV
-var _estalo: AudioStreamWAV
 var _aviso: AudioStreamWAV
 var _volume := 1.0  # volume_motor (abertura)
 var _giro := -1.0  # fração do giro (0..1); < 0: o tom segue a velocidade
@@ -33,7 +32,14 @@ const MUDO_DB := -60.0
 
 const PASTA := "res://arte/sons/"
 ## Volume (dB) do motor gravado e do pneu gravado quando cantando.
-const MOTOR_DB := -9.0
+const MOTOR_DB := -10.0
+## Tom (pitch) do motor gravado no giro mínimo e no máximo da escala.
+const MOTOR_TOM_MIN := 1.15
+const MOTOR_TOM_MAX := 2.6
+## Quanto o tom anda por segundo atrás do alvo (desce rápido na troca, sobe
+## acompanhando o giro).
+const MOTOR_TOM_RAPIDEZ := 9.0
+var _tom_alvo := -1.0
 const PNEU_DB := -8.0
 var _gravado := false
 
@@ -66,7 +72,6 @@ func _init() -> void:
 	_subida = _varredura(520.0, 880.0, 0.18)
 	_descida = _varredura(520.0, 300.0, 0.2)
 	_chegada = _varredura(660.0, 1320.0, 0.5)
-	_estalo = _estalos()
 	_aviso = _dois_bipes()
 
 
@@ -88,6 +93,7 @@ func motor(ligado: bool, velocidade := 0.0) -> void:
 		_alvos[_pneu] = MUDO_DB
 		_alvos[_zebra] = MUDO_DB
 		_giro = -1.0
+		_tom_alvo = -1.0
 		return
 	for p in ([_motor] if _gravado else [_motor, _motor_alto]):
 		if not p.playing:
@@ -100,9 +106,11 @@ func motor(ligado: bool, velocidade := 0.0) -> void:
 func motor_giro(fracao: float) -> void:
 	_giro = clampf(fracao, 0.0, 1.0)
 	if _gravado:
-		# Uma camada só: a gravação já tem corpo; o tom faz o giro.
-		_motor.pitch_scale = lerpf(0.7, 2.1, _giro)
-		_alvos[_motor] = MOTOR_DB + lerpf(-4.0, 0.0, _giro)
+		# Uma camada só: a gravação já tem corpo; o tom faz o giro. Tom base
+		# alto (abaixo de ~1 a gravação soa como trator); a troca de marcha
+		# desliza o tom em vez de saltar (_process).
+		_tom_alvo = lerpf(MOTOR_TOM_MIN, MOTOR_TOM_MAX, _giro)
+		_alvos[_motor] = MOTOR_DB + lerpf(-3.0, 0.0, _giro)
 		return
 	_motor.pitch_scale = lerpf(0.55, 1.75, _giro)
 	_motor_alto.pitch_scale = lerpf(0.6, 1.9, _giro)
@@ -129,6 +137,8 @@ func _ligar(p: AudioStreamPlayer, db: float) -> void:
 
 ## Volumes seguem os alvos (sem cortes secos); laço mudo para de tocar.
 func _process(delta: float) -> void:
+	if _gravado and _tom_alvo > 0.0:
+		_motor.pitch_scale = lerpf(_motor.pitch_scale, _tom_alvo, 1.0 - exp(-delta * MOTOR_TOM_RAPIDEZ))
 	for p in _alvos:
 		var alvo: float = _alvos[p] + (linear_to_db(maxf(_volume, 0.001)) if p == _motor or p == _motor_alto else 0.0)
 		p.volume_db = move_toward(p.volume_db, alvo, delta * 90.0)
@@ -152,11 +162,6 @@ func ultrapassagem(ganhou: bool) -> void:
 
 func chegada() -> void:
 	_tocar(_chegada)
-
-
-## Redução de marcha: estalos do escapamento.
-func reducao() -> void:
-	_tocar(_estalo)
 
 
 func ultima_volta() -> void:
@@ -226,26 +231,6 @@ static func _ruido(dur: float, amp: float, brilho: float, trem := 0.0, ondas := 
 		var borda := minf(1.0, minf(t / 0.02, (dur - t) / 0.02))
 		dados.encode_s16(i * 2, int(clampf(x * amp * lerpf(0.6, 1.0, borda), -1.0, 1.0) * 32767.0))
 	return _wav(dados, true, n)
-
-
-## Três estalos curtos de escapamento (ruído com queda rápida).
-static func _estalos() -> AudioStreamWAV:
-	var dur := 0.32
-	var n := int(TAXA * dur)
-	var dados := PackedByteArray()
-	dados.resize(n * 2)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 11
-	var inicios := [0.0, 0.09, 0.2]
-	for i in n:
-		var t := float(i) / TAXA
-		var x := 0.0
-		for t0 in inicios:
-			var u: float = t - t0
-			if u >= 0.0:
-				x += rng.randf_range(-1.0, 1.0) * exp(-u * 70.0) * (0.9 if t0 == 0.0 else 0.6)
-		dados.encode_s16(i * 2, int(clampf(x * 0.5, -1.0, 1.0) * 32767.0))
-	return _wav(dados, false, n)
 
 
 ## Aviso da última volta: dois bipes subindo.

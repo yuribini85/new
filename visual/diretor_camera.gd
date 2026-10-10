@@ -11,7 +11,7 @@ extends RefCounted
 ##
 ## Apresentação, não balanceamento: os tempos abaixo são de ritmo de câmera.
 
-const ABERTURA_S := 2.5  # pista toda no começo da corrida
+const ABERTURA_S := 2.5  # grid de cima no começo da corrida (Corrida3D.enquadrar_grid)
 const MIN_PLANO_S := 4.0  # um plano dura pelo menos isto (salvo prioridade maior)
 const TROCA_MIN_S := 1.5  # nem prioridade maior corta antes disto
 const MAX_FORA_S := 8.0  # longe do jogador, no máximo isto
@@ -81,8 +81,8 @@ func _no_jogador() -> Dictionary:
 
 func _candidato(f: CorridaVisual, t: float, meta: float, comprimento: float, voltas: int) -> Dictionary:
 	var ordem := f.ordem()
-	if t < ABERTURA_S and _inicio == -INF or (t < ABERTURA_S and plano["geral"]):
-		return {"foco": "jogador", "com": "", "geral": true, "motivo": "abertura", "prio": 9}
+	if t < ABERTURA_S and _inicio == -INF or (t < ABERTURA_S and plano["motivo"] == "abertura"):
+		return {"foco": "jogador", "com": "", "geral": false, "motivo": "abertura", "prio": 9}
 	var s := {}
 	for id in ordem:
 		s[id] = f.distancia(id)

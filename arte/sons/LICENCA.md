@@ -12,5 +12,5 @@ O README de cada kit declara os sons como CC0.
 | moeda.ogg | KenneyNL/Starter-Kit-3D-Platformer — sounds/coin.ogg |
 | toque.ogg | KenneyNL/Starter-Kit-City-Builder — sounds/toggle.ogg |
 
-Bipes da largada, ultrapassagem, chegada, estalos de escapamento, zebra e
+Bipes da largada, ultrapassagem, chegada, zebra e
 torcida continuam gerados em código (`visual/sons.gd`).

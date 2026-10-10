@@ -403,6 +403,9 @@ func atualizar(delta: float) -> void:
 			_traco.position = (a + b) * 0.5 + Vector3(0, 0.08, 0)
 			_traco.scale = Vector3(a.distance_to(b), 1, 1)
 			_traco.rotation.y = atan2(-(b.z - a.z), b.x - a.x)
+	if enquadrar_grid and not visao_geral and not _carros.is_empty():
+		_camera_grid(s, ordem, delta)
+		return
 	if visao_geral:
 		_enquadrar_geral()
 		_camera.size = _tamanho_geral
@@ -486,6 +489,50 @@ func atualizar(delta: float) -> void:
 	efeito_velocidade = maxf(efeito_velocidade, RETA_EFEITO * smoothstep(0.84, 0.97, frac) * reta)
 	(material as ShaderMaterial).set_shader_parameter("intensidade",
 			0.0 if Preferencias.reduzir_animacoes else efeito_velocidade)
+	_camera_imediata()
+
+
+## Largada: câmera de cima, com a frente do grid para o alto da tela,
+## enquadrando todos os carros (com folga), sem efeito de velocidade.
+var enquadrar_grid := false
+const GRID_FOLGA_M := 9.0
+
+
+func _camera_grid(s: Dictionary, ordem: Array, delta: float) -> void:
+	var lider: String = ordem[0] if not ordem.is_empty() else "jogador"
+	_rumo_seguido = _pista.rumo_em(float(s.get(lider, 0.0)))
+	var frente := Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido))
+	var lado := Vector3(-sin(_rumo_seguido), 0.0, -cos(_rumo_seguido))
+	# Caixa dos carros nos eixos do grid (comprimento e largura).
+	var mn := Vector2(INF, INF)
+	var mx := Vector2(-INF, -INF)
+	var soma := Vector3.ZERO
+	for id in _carros:
+		var p: Vector3 = _carros[id].position
+		soma += p
+		var q := Vector2(p.dot(frente), p.dot(lado))
+		mn = mn.min(q)
+		mx = mx.max(q)
+	var centro := soma / float(_carros.size())
+	var meio := (mn + mx) * 0.5
+	centro += frente * (meio.x - centro.dot(frente)) + lado * (meio.y - centro.dot(lado))
+	var aspecto := size.x / size.y if size.y > 1.0 else 0.6
+	# Altura da tela = comprimento do grid; a largura cabe pelo aspecto.
+	var alvo_tamanho := maxf(mx.x - mn.x + 2.0 * GRID_FOLGA_M, (mx.y - mn.y + 2.0 * GRID_FOLGA_M) / aspecto)
+	alvo_tamanho = maxf(alvo_tamanho, TAMANHO_CAMERA)
+	var k := clampf(delta * 2.5, 0.0, 1.0) if delta > 0.0 else 1.0
+	_tamanho_base = lerpf(_tamanho_base, alvo_tamanho, k)
+	_camera.size = _tamanho_base
+	_mudar_modo("normal", true)
+	_b = 0.0
+	_zoom = 1.0
+	_guinada_normal = _rumo_seguido + PI
+	_alvo_camera = centro
+	efeito_velocidade = 0.0
+	(material as ShaderMaterial).set_shader_parameter("intensidade", 0.0)
+	for id in _carros:
+		if _carros[id] is CarroDesenho:
+			_carros[id].mistura(0.0)
 	_camera_imediata()
 
 
