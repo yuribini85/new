@@ -261,6 +261,7 @@ Segundo piloto da equipe do jogador: `jonas_reid` (Jonas Reid, provisório).
 | id | nome |
 |---|---|
 | `dono_inicio` | Oficina: começo |
+| `dono_arena` | Oficina: arena aberta |
 | `adrian_inicio` | Adrian: começo |
 | `adrian_ultima` | Adrian: antes da última corrida |
 | `elena_inicio` | Elena: depois do acidente |
