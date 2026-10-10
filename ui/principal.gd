@@ -545,7 +545,9 @@ func _destacar(nome: String) -> void:
 				break
 	if not aba.ancoras.has(nome):
 		return  # tela sem o elemento agora (ex.: garagem vazia): só o diálogo
-	# Espera o layout para saber onde o elemento ficou.
+	# Espera o layout para saber onde o elemento ficou (se a cena acabar no
+	# meio, o destaque atrasado não mexe na caixa da cena seguinte).
+	var cena_id = _dialogo._cena.get("id")
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var alvo: Control = aba.ancoras.get(nome)
@@ -559,7 +561,8 @@ func _destacar(nome: String) -> void:
 			return
 	# Reconstruída a aba, o destaque acha o controle novo pela mesma âncora.
 	_destaque.mostrar(alvo, func(): return aba.ancoras.get(nome) if aba.is_visible_in_tree() else null)
-	_dialogo.evitar(alvo.get_global_rect())
+	if _dialogo._cena.get("id") == cena_id:
+		_dialogo.evitar(alvo.get_global_rect())
 
 
 ## Uma cena começa: a da largada segura a corrida no grid até acabar.

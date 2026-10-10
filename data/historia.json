@@ -69,6 +69,9 @@
    "nome": "Bancada da oficina",
    "provisorio": "cenario:garagem_cross"
   },
+  "oficina_mara": {
+   "nome": "A oficina da Mara, fim de tarde"
+  },
   "box_largada": {
    "nome": "Box antes da largada",
    "provisorio": "fundo_competicoes"

@@ -2276,7 +2276,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você é o novo dono."
+    "texto": "Você é o novo dono.",
+    "pose": "cruzados"
    },
    {
     "quem": "mara",
@@ -2299,7 +2300,7 @@
   "uma_vez": true,
   "personagem": "dono",
   "proxima": "CW_P02",
-  "cenario": "oficina_cross"
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_P02",
@@ -2538,7 +2539,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "lembrete": "CW_P04L"
+  "lembrete": "CW_P04L",
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_P04L",
@@ -2959,7 +2961,8 @@
   ],
   "bloqueia": true,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_T02",
@@ -2972,7 +2975,7 @@
    {
     "quem": "mara",
     "texto": "Um carro só não segura esse nível.",
-    "pose": "firme"
+    "pose": "cruzados"
    },
    {
     "quem": "mara",
@@ -2991,7 +2994,8 @@
   ],
   "bloqueia": true,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_T03",
@@ -3091,7 +3095,8 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_R11",
@@ -3225,7 +3230,7 @@
    {
     "quem": "mara",
     "texto": "Bom carro. Corrida errada.",
-    "pose": "firme"
+    "pose": "cruzados"
    }
   ],
   "requer": [

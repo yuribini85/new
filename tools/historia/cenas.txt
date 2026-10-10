@@ -1,7 +1,7 @@
 # Cenas da Bíblia de Diálogos (Google Drive, pasta Second Driver). Formato:
 # = ID | trigger | opções (chave=valor; listas separadas por vírgula)
 # Nome: fala           [ACAO]           (Sistema: texto de sistema)
-# Nome[pose]: fala — pose do corpo (Mara: gesto, pensativa, explica, firme, decepcao, alerta;
+# Nome[pose]: fala — pose do corpo (Mara: cruzados, gesto, pensativa, explica, firme, decepcao, alerta;
 # sem pose, a neutra).
 # Opções: requer, proibe, flags, personagem (um ou lista: adrian,elena), condicao (posicao,
 # posicao_min, quantidade_min), bloqueia, repetivel, reativa, proxima, capitulo, cenario, lembrete
@@ -477,8 +477,8 @@ Marcus: Velocidade ganha volta. Isso aqui ganha quem não quebra.
 # curtas, sem melodrama. Saves com Adrian/Elena seguem as cenas acima.
 
 # ---------------------------------------------------------------- Prólogo
-= CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; proxima=CW_P02; cenario=oficina_cross
-Mara: Você é o novo dono.
+= CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; proxima=CW_P02; cenario=oficina_mara
+Mara[cruzados]: Você é o novo dono.
 Mara[gesto]: O antigo deixou as chaves, as dívidas e esse carro.
 Mara[firme]: As chaves funcionam.
 
@@ -523,7 +523,7 @@ Sistema: Vá para Corridas.
 [HIGHLIGHT_NAV_EVENTOS]
 
 # Quem dirige: o piloto da casa (fixo; contratação fica para depois).
-= CW_P04 | ABA:EVENTOS | personagem=dono; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,PILOT_MET; lembrete=CW_P04L
+= CW_P04 | ABA:EVENTOS | personagem=dono; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,PILOT_MET; lembrete=CW_P04L; cenario=oficina_mara
 Mara[explica]: Você cuida da oficina. Alguém precisa assumir o volante.
 Mara[gesto]: {piloto}. Corre pelo que a gente montar.
 Piloto: E pelo prêmio.
@@ -605,16 +605,16 @@ Responsável: National aprovada.
 Mara[firme]: Agora a gente aparece na lista dos outros.
 
 # A equipe da oficina nasce com a International; o segundo piloto chega com a Pro.
-= CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,SECOND_DRIVER_CREATED
+= CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,SECOND_DRIVER_CREATED; cenario=oficina_mara
 Responsável: International aprovada.
 Mara[explica]: Com essa, a oficina pode inscrever uma equipe.
 Mara: Caixa, folha e patrocínio passam a contar por corrida.
 [UNLOCK_TEAM_TAB]
 Sistema: A aba Equipe está liberada.
 
-= CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE,DRIVER_HIRE_UNLOCKED
+= CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE,DRIVER_HIRE_UNLOCKED; cenario=oficina_mara
 Responsável: Pro aprovada.
-Mara[firme]: Um carro só não segura esse nível.
+Mara[cruzados]: Um carro só não segura esse nível.
 Mara[gesto]: Achei alguém para o segundo. Escolha o carro dele na Equipe.
 [OPEN_DRIVER_HIRE]
 
@@ -631,7 +631,7 @@ Sistema: Prova vencida pode correr de novo, inclusive com o app fechado.
 = CW_G01 | GARAGEM_DOIS_CARROS | personagem=dono; proibe=FIRST_SECOND_CAR; flags=FIRST_SECOND_CAR
 Mara[pensativa]: Dois carros. Duas contas.
 
-= CW_G02 | CAMPEONATO_VENCIDO | personagem=dono; proibe=FIRST_TITLE_TALK; flags=FIRST_TITLE_TALK
+= CW_G02 | CAMPEONATO_VENCIDO | personagem=dono; proibe=FIRST_TITLE_TALK; flags=FIRST_TITLE_TALK; cenario=oficina_mara
 Mara[gesto]: Título. Guarde o troféu longe da graxa.
 
 = CW_R11 | COLECAO | personagem=dono; condicao=quantidade_min:5; flags=COLLECTION_FIVE
@@ -657,7 +657,7 @@ Mara[alerta]: Bonito carro. Espero que você tenha deixado dinheiro pro resto.
 Mara[decepcao]: Não temos isso.
 
 = CW_SYS02 | EVENTO_BLOQUEADO | personagem=dono; requer=EVENT_REQUIREMENTS_TUTORIAL_DONE; repetivel=sim
-Mara[firme]: Bom carro. Corrida errada.
+Mara[cruzados]: Bom carro. Corrida errada.
 
 = CW_SYS04 | POTENCIA_ACIMA | personagem=dono; repetivel=sim
 Mara[alerta]: Essa potência o regulamento não aceita.
