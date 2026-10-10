@@ -268,6 +268,8 @@ func cabecalho(t: String, subtitulo := "", fundo := "") -> void:
 		l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 
 
+## Altura da linha de workshop (Lojas e Coleção).
+const ALTURA_LINHA_WORKSHOP := 112.0
 ## Véu sobre a imagem do cartão com fundo: à esquerda, no meio e à direita (opacidade).
 const VEU_CARTAO := [0.15, 0.7, 0.85]
 
@@ -314,6 +316,87 @@ func cartao_com_fundo(tex: Texture2D, aceso := true, pai: Control = null) -> VBo
 	v.add_theme_constant_override("separation", 10)
 	m.add_child(v)
 	return v
+
+
+## Linha de uma workshop (Lojas e Coleção): a ilustração da concessionária à
+## esquerda, o nome em duas partes ("Relay Room" grande, "GARAGE" espaçado),
+## o texto da direita com a seta e, com `progresso` >= 0, a barra fina na
+## largura toda embaixo. Toque: `acao`.
+func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso := -1.0, pai: Control = null) -> Button:
+	var b := Button.new()
+	b.custom_minimum_size = Vector2(0, ALTURA_LINHA_WORKSHOP + (10.0 if progresso >= 0.0 else 0.0))
+	b.focus_mode = Control.FOCUS_NONE
+	var sb := StyleBoxEmpty.new()
+	var sb_toque := StyleBoxFlat.new()
+	sb_toque.bg_color = Color(1, 1, 1, 0.05)
+	for estado in ["normal", "hover", "focus"]:
+		b.add_theme_stylebox_override(estado, sb)
+	b.add_theme_stylebox_override("pressed", sb_toque)
+	var v := VBoxContainer.new()
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	v.offset_bottom = -8
+	v.add_theme_constant_override("separation", 6)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(v)
+	var h := HBoxContainer.new()
+	h.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	h.add_theme_constant_override("separation", 16)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(h)
+	var img := TextureRect.new()
+	img.texture = arte("workshops/%s_loja" % String(w.get("logo", "")))
+	img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	img.custom_minimum_size = Vector2(ALTURA_LINHA_WORKSHOP * 1.45, 0)
+	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(img)
+	var nomes := VBoxContainer.new()
+	nomes.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nomes.alignment = BoxContainer.ALIGNMENT_CENTER
+	nomes.add_theme_constant_override("separation", -4)
+	nomes.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(nomes)
+	var partes := String(w.get("nome", "")).rsplit(" ", true, 1)
+	var n1 := Label.new()
+	n1.text = partes[0] if partes.size() > 1 else String(w.get("nome", ""))
+	Tipografia.rotulo(n1, "semibold", 34)
+	n1.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+	n1.clip_text = true
+	n1.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	n1.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	nomes.add_child(n1)
+	if partes.size() > 1:
+		var n2 := Label.new()
+		n2.text = " ".join(Array(partes[1].to_upper().split("")))  # espaçado, como na marca
+		Tipografia.rotulo(n2, "medium", 16)
+		n2.add_theme_color_override("font_color", COR_SECUNDARIA)
+		n2.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		nomes.add_child(n2)
+	var d := Label.new()
+	d.text = direita + "   ›"
+	Tipografia.rotulo(d, "medium", 22)
+	d.add_theme_color_override("font_color", COR_SECUNDARIA)
+	d.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(d)
+	if progresso >= 0.0:
+		var barra := Control.new()
+		barra.custom_minimum_size = Vector2(0, 6)
+		barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		barra.draw.connect(func():
+			barra.draw_rect(Rect2(Vector2.ZERO, barra.size), Color(1, 1, 1, 0.12))
+			barra.draw_rect(Rect2(Vector2.ZERO, Vector2(barra.size.x * clampf(progresso, 0.0, 1.0), barra.size.y)),
+					BarraDentes.ACESO))
+		v.add_child(barra)
+	else:
+		var filete := ColorRect.new()
+		filete.color = Color(1, 1, 1, 0.08)
+		filete.custom_minimum_size = Vector2(0, 1)
+		filete.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.add_child(filete)
+	b.pressed.connect(acao)
+	_pai(pai).add_child(b)
+	return b
 
 
 ## Selo (brasão) da licença: arte/ui/licencas/<id>.png; null sem arte.

@@ -67,49 +67,21 @@ func _carros_da(w: Dictionary) -> Array:
 	return dados.lista("carros").filter(func(c): return c["fabricante"] in fabs)
 
 
-## Grade das workshops: a logo de cada uma numa placa clara.
+## Lista das workshops: a concessionária, o nome e quantos carros vende.
 func _vitrine(ws: Array, second_chance: bool) -> void:
-	var grade := _grade()
 	if second_chance:
-		_placa(grade, "second_chance", "Second Chance Motors", "", "Usados que o seu saldo paga")
+		linha_workshop({"nome": "Second Chance Motors", "logo": ""}, "USADOS", func():
+			_loja = "second_chance"
+			mudou.emit())
 	for w in ws:
 		var n := _carros_da(w).size()
 		if n == 0:
 			continue
-		_placa(grade, String(w["id"]), String(w["nome"]), String(w.get("logo", "")),
-				"%d carro%s" % [n, "" if n == 1 else "s"])
-
-
-func _placa(grade: GridContainer, id: String, nome: String, logo: String, info: String) -> void:
-	var b := Button.new()
-	b.custom_minimum_size = Vector2(0, 250)
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = COR_PLACA
-	sb.set_corner_radius_all(10)
-	for estado in ["normal", "hover", "pressed", "focus"]:
-		b.add_theme_stylebox_override(estado, sb)
-	var v := VBoxContainer.new()
-	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	v.offset_left = 10
-	v.offset_right = -10
-	v.offset_top = 6
-	v.offset_bottom = -8
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	b.add_child(v)
-	v.add_child(_logo(logo, nome, 196.0))
-	var l := Label.new()
-	l.text = info
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	Tipografia.rotulo(l, "semibold", 21)
-	l.add_theme_color_override("font_color", COR_PLACA_TEXTO)
-	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(l)
-	b.pressed.connect(func():
-		_loja = id
-		_limite = POR_PAGINA
-		mudou.emit())
-	grade.add_child(b)
+		var id := String(w["id"])
+		linha_workshop(w, "%d CARRO%s" % [n, "" if n == 1 else "S"], func():
+			_loja = id
+			_limite = POR_PAGINA
+			mudou.emit())
 
 
 ## A logo da workshop (só escala, sem esticar); sem arte, o nome em letras.

@@ -132,7 +132,7 @@ func _objetivos() -> void:
 			b.custom_minimum_size = Vector2(110, 60)
 
 
-## Coleção por workshop: a logo de cada uma numa grade, com a barra de
+## Coleção por workshop, em lista (a mesma linha das Lojas) com a barra de
 ## quanto da frota dela você tem; tocar abre os carros (os que faltam, em
 ## silhueta preta com "descobrir").
 func _colecao() -> void:
@@ -141,66 +141,13 @@ func _colecao() -> void:
 		tenho[c.id] = true
 	var titulo := rotulo("COLEÇÃO · %d de %d" % [tenho.size(), dados.lista("carros").size()], 0, COR_SECUNDARIA)
 	Tipografia.rotulo(titulo, "medium", 22)
-	var grade := GridContainer.new()
-	grade.columns = 3
-	grade.add_theme_constant_override("h_separation", 10)
-	grade.add_theme_constant_override("v_separation", 10)
-	conteudo.add_child(grade)
 	for w in dados.workshops():
 		var carros: Array = dados.lista("carros").filter(func(c): return c["fabricante"] in w.get("fabricantes", []))
 		if carros.is_empty():
 			continue
 		var meus := carros.filter(func(c): return tenho.has(c["id"])).size()
-		var b := Button.new()
-		b.custom_minimum_size = Vector2(0, 150)
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = COR_CARTAO
-		sb.set_corner_radius_all(10)
-		for estado in ["normal", "hover", "pressed", "focus"]:
-			b.add_theme_stylebox_override(estado, sb)
-		var v := VBoxContainer.new()
-		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		v.offset_left = 12
-		v.offset_right = -12
-		v.offset_top = 10
-		v.offset_bottom = -12
-		v.add_theme_constant_override("separation", 8)
-		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		b.add_child(v)
-		v.add_child(_logo_workshop(w, 92.0))
-		v.add_child(BarraDentes.new(meus, carros.size(), 8.0))
-		var n := Label.new()
-		n.text = "%d/%d" % [meus, carros.size()]
-		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		Tipografia.numero(n, 18)
-		n.add_theme_color_override("font_color", BarraDentes.ACESO if meus > 0 else COR_SECUNDARIA)
-		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.add_child(n)
-		b.pressed.connect(_abrir_workshop.bind(w, carros, tenho))
-		grade.add_child(b)
-
-
-## Logo branca da workshop (só escala); sem arte, o nome.
-func _logo_workshop(w: Dictionary, altura: float) -> Control:
-	var caminho := "res://arte/ui/workshops/%s_logo_branca.png" % String(w.get("logo", ""))
-	if String(w.get("logo", "")) != "" and ResourceLoader.exists(caminho):
-		var t := TextureRect.new()
-		t.texture = load(caminho)
-		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		t.custom_minimum_size = Vector2(0, altura)
-		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		return t
-	var l := Label.new()
-	l.text = String(w.get("nome", ""))
-	l.custom_minimum_size = Vector2(0, altura)
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	Tipografia.rotulo(l, "semibold", 24)
-	return l
+		linha_workshop(w, "%d/%d" % [meus, carros.size()], _abrir_workshop.bind(w, carros, tenho),
+				float(meus) / carros.size())
 
 
 ## Os carros da workshop em grade: os seus com foto e nome (tocar abre a
