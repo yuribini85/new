@@ -888,6 +888,7 @@ func _ampliacao() -> Array:
 			avisar("Não deu: %s." % erro, false)
 		else:
 			avisar("Garagem com %d vagas." % jogador.garagem.vagas)
+			Sons.tocar_ui(self, "moeda", -4.0)
 		mudou.emit()
 		_reabrir_garagem(), "giros"]
 
@@ -913,6 +914,7 @@ func _vender(uid: int) -> void:
 		return
 	var nome: String = jogador.garagem.carro(uid).base["nome"]
 	avisar("Vendido: %s por %s giros." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])
+	Sons.tocar_ui(self, "moeda", -4.0, 1.12)
 	if jogador.carro_ativo == uid:
 		jogador.carro_ativo = -1
 

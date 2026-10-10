@@ -4,9 +4,10 @@ extends Node
 ## do jogador, bipes da largada, chegada e ultrapassagem. Em AudioStreamWAV
 ## porque a exportação web sem threads não toca AudioStreamGenerator.
 ##
-## Motor em duas camadas que seguem o giro (o tom cai na troca de marcha): o
-## grave sempre, o agudo subindo com o giro. Por cima, laços de ruído que só
-## aparecem quando pedidos: pneu cantando, zebra e a torcida.
+## Motor e pneu gravados (arte/sons, CC0 da Kenney); o tom do motor segue o
+## giro (cai na troca de marcha). Sem os arquivos, voltam os gerados: motor
+## em duas camadas e chiado. Zebra, torcida e bipes são sempre gerados.
+## Sons de interface curtos (moeda, toque, batida): Sons.tocar_ui().
 
 const TAXA := 22050
 
@@ -30,10 +31,31 @@ var _alvos := {}
 const MUDO_DB := -60.0
 
 
+const PASTA := "res://arte/sons/"
+## Volume (dB) do motor gravado e do pneu gravado quando cantando.
+const MOTOR_DB := -9.0
+const PNEU_DB := -8.0
+var _gravado := false
+
+
+## Laço gravado (ou null sem o arquivo).
+static func _arquivo(nome: String, laco: bool) -> AudioStream:
+	var caminho := PASTA + nome + ".ogg"
+	if not ResourceLoader.exists(caminho):
+		return null
+	var s: AudioStream = load(caminho)
+	if laco and s is AudioStreamOggVorbis:
+		(s as AudioStreamOggVorbis).loop = true
+	return s
+
+
 func _init() -> void:
-	_motor = _laco(_onda(90.0, 1.0, 0.18, true, true), -14.0)  # 1 s: o laço fecha sem estalo
+	var motor := _arquivo("motor", true)
+	_gravado = motor != null
+	_motor = _laco(motor if _gravado else _onda(90.0, 1.0, 0.18, true, true), MOTOR_DB if _gravado else -14.0)
 	_motor_alto = _laco(_onda(180.0, 1.0, 0.12, true, true), MUDO_DB)
-	_pneu = _laco(_ruido(1.0, 0.22, 0.55), MUDO_DB)
+	var pneu := _arquivo("pneu", true)
+	_pneu = _laco(pneu if pneu != null else _ruido(1.0, 0.22, 0.55), MUDO_DB)
 	_zebra = _laco(_ruido(1.0, 0.3, 0.15, 28.0), MUDO_DB)
 	_torcida = _laco(_ruido(2.0, 0.2, 0.9, 0.0, true), MUDO_DB)
 	_efeito = AudioStreamPlayer.new()
@@ -67,7 +89,7 @@ func motor(ligado: bool, velocidade := 0.0) -> void:
 		_alvos[_zebra] = MUDO_DB
 		_giro = -1.0
 		return
-	for p in [_motor, _motor_alto]:
+	for p in ([_motor] if _gravado else [_motor, _motor_alto]):
 		if not p.playing:
 			p.play()
 	if _giro < 0.0:
@@ -77,6 +99,11 @@ func motor(ligado: bool, velocidade := 0.0) -> void:
 ## Giro do motor (0..1 da escala): o tom das duas camadas e o volume do agudo.
 func motor_giro(fracao: float) -> void:
 	_giro = clampf(fracao, 0.0, 1.0)
+	if _gravado:
+		# Uma camada só: a gravação já tem corpo; o tom faz o giro.
+		_motor.pitch_scale = lerpf(0.7, 2.1, _giro)
+		_alvos[_motor] = MOTOR_DB + lerpf(-4.0, 0.0, _giro)
+		return
 	_motor.pitch_scale = lerpf(0.55, 1.75, _giro)
 	_motor_alto.pitch_scale = lerpf(0.6, 1.9, _giro)
 	_alvos[_motor_alto] = lerpf(-34.0, -15.0, _giro * _giro)
@@ -84,7 +111,7 @@ func motor_giro(fracao: float) -> void:
 
 ## Pneu cantando (freada forte ou arrancada) e rodas na zebra.
 func pneu(cantando: bool, zebra: bool) -> void:
-	_ligar(_pneu, -17.0 if cantando else MUDO_DB)
+	_ligar(_pneu, (PNEU_DB if _gravado else -17.0) if cantando else MUDO_DB)
 	_ligar(_zebra, -20.0 if zebra else MUDO_DB)
 
 
@@ -139,6 +166,28 @@ func ultima_volta() -> void:
 func _tocar(s: AudioStream) -> void:
 	_efeito.stream = s
 	_efeito.play()
+
+
+static var _curtos := {}  # nome -> AudioStream (ou null sem o arquivo)
+
+
+## Som curto de arte/sons (moeda, toque, batida) num tocador próprio que some
+## ao acabar. Sem o arquivo, não toca nada.
+static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0) -> void:
+	if no == null or not no.is_inside_tree():
+		return
+	if not _curtos.has(nome):
+		_curtos[nome] = _arquivo(nome, false)
+	var s: AudioStream = _curtos[nome]
+	if s == null:
+		return
+	var p := AudioStreamPlayer.new()
+	p.stream = s
+	p.volume_db = db
+	p.pitch_scale = tom
+	p.finished.connect(p.queue_free)
+	no.get_tree().root.add_child(p)
+	p.play()
 
 
 ## Tom de `freq` Hz por `dur` s; dente de serra suave (motor) ou seno.

@@ -1303,6 +1303,7 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 		if not jogador.economia.pode_pagar(int(p["preco"])):
 			historia("SEM_DINHEIRO")
 		return
+	Sons.tocar_ui(self, "moeda", -4.0)
 	historia("PECA_COMPRADA", {"peca": String(p["nome"])})
 	if p["id"] == String(dados.historia().get("adrian", {}).get("peca_demanda", "")):
 		historia("DEMANDA_CONCLUIDA", {"peca": String(p["nome"])})
@@ -1322,4 +1323,5 @@ func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
 		avisar("Não comprou %s: %s." % [pn["nome"], motivo], false)
 	else:
 		avisar("Pneu comprado: %s" % pn["nome"])
+		Sons.tocar_ui(self, "moeda", -4.0)
 		historia("PECA_COMPRADA", {"peca": String(pn["nome"])})

@@ -236,6 +236,7 @@ func _navegacao() -> HBoxContainer:
 			b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 			# O ícone diz para onde vai; o texto, menor, só confirma.
 		b.pressed.connect(_ir_para.bind(d[1]))
+		b.pressed.connect(func(): Sons.tocar_ui(self, "toque", -6.0))
 		barra.add_child(b)
 		_botoes.append(b)
 		_ancoras["NAV_" + NOMES_ABA[d[1]]] = b
@@ -803,6 +804,8 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		Tipografia.numero(ganho, 34)
 		ganho.add_theme_color_override("font_color", Aba.COR_BOM if int(c["premio"]) > 0 else Aba.COR_SECUNDARIA)
 		v.add_child(ganho)
+		if int(c["premio"]) > 0:
+			Sons.tocar_ui(self, "moeda", -2.0)
 		var marcos := []
 		var camp: Dictionary = c.get("campeonato", {})
 		if camp.get("final", false) and camp.get("campeao", false):

@@ -423,6 +423,7 @@ func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 		if not jogador.economia.pode_pagar(preco):
 			historia("SEM_DINHEIRO")
 		return
+	Sons.tocar_ui(self, "moeda", -4.0)
 	if jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
 	entrega(jogador.garagem.carro(uid))

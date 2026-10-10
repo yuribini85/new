@@ -631,6 +631,7 @@ func _bater(a: String, b: String, dl: float) -> void:
 	var seguido := foco if _carros.has(foco) else "jogador"
 	if a == seguido or b == seguido:
 		_tremor = 0.4
+	Sons.tocar_ui(self, "batida", -4.0 if a == seguido or b == seguido else -16.0, randf_range(0.9, 1.1))
 	_faiscas((_carros[a].position + _carros[b].position) * 0.5 + Vector3(0, 0.4, 0))
 
 
