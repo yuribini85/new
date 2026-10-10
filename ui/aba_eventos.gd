@@ -121,10 +121,12 @@ func _topo_carro(garagem: Carro) -> void:
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	h.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	h.offset_left = 16
+	# A imagem do carro tem margem transparente: o quadro sai pela esquerda e o
+	# nome começa logo depois do desenho, com o resto da largura.
+	h.offset_left = -70
 	h.offset_right = -16
 	h.offset_bottom = -8
-	h.add_theme_constant_override("separation", 14)
+	h.add_theme_constant_override("separation", -50)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faixa.add_child(h)
 	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem))
@@ -134,8 +136,21 @@ func _topo_carro(garagem: Carro) -> void:
 	nome.text = garagem.base["nome"]
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART  # ao lado do carro grande: quebra em linhas
-	Tipografia.rotulo(nome, "semibold", 34)
+	nome.clip_text = true
+	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(nome, "semibold", 48)
+	# O nome ocupa o espaço que sobra: a maior fonte (até 48) que cabe nele.
+	# (largura que sobra ao lado do carro, com folga para o contorno das letras)
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 16.0 - (-70.0 + 510.0 - 50.0) - 14.0
+	var tam := 48
+	var f := nome.get_theme_font("font")
+	while tam > 30 and f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	nome.add_theme_font_size_override("font_size", tam)
+	if f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		# Nem na menor fonte cabe numa linha: quebra em duas.
+		nome.clip_text = false
+		nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	nome.add_theme_constant_override("outline_size", 6)
 	nome.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 	h.add_child(nome)
