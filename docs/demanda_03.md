@@ -56,5 +56,7 @@ A Arena hoje é só o botão "em breve". Para construir preciso que você decida
 - A5 ícone do app (`arte/ui/icone.png`, 1024 px).
 - A7 asfalto: "escuro" como base e "rachado" em manchas; as duas texturas foram
   emendadas para repetir sem costura e reduzidas para 512 px (escala uniforme).
-- Pendentes: A2/A3 (segundo piloto), A6 (Mara satisfeita — a imagem recebida é de outra
-  personagem), B e C.
+- Theo novo (low-poly, macacão azul e branco, braços cruzados) como arte principal; a
+  versão anterior ficou como pose "bolsos".
+- A6 cancelado: a Mara segue com as 8 poses que já tem (decisão do usuário).
+- Pendentes: A2/A3 (segundo piloto), B e C.
