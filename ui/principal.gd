@@ -30,7 +30,10 @@ var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
 ## telas internas (de Garagem e Correr), abertas pelo caminho do jogo.
 const DESTINOS := [["Oficina", 0, "aba_garagem"], ["Lojas", 1, "aba_mercado"], ["Corridas", 3, "aba_competicoes"],
-	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"]]
+	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"], ["Arena", ARENA, "aba_arena", "icone_estrela"]]
+## Arena: modo ainda não implementado (decisão do usuário: o botão já fica na
+## barra, com ícone genérico; tocar só avisa). Não leva a nenhuma aba.
+const ARENA := -1
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
@@ -235,10 +238,14 @@ func _navegacao() -> HBoxContainer:
 			b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 			# O ícone diz para onde vai; o texto, menor, só confirma.
-		b.pressed.connect(_ir_para.bind(d[1]))
 		b.pressed.connect(func(): Sons.tocar_ui(self, "toque", -6.0))
 		barra.add_child(b)
 		_botoes.append(b)
+		if d[1] == ARENA:
+			b.toggle_mode = false
+			b.pressed.connect(func(): _sobre.avisar("Arena: em breve.", true))
+			continue
+		b.pressed.connect(_ir_para.bind(d[1]))
 		_ancoras["NAV_" + NOMES_ABA[d[1]]] = b
 	_ir_para.call_deferred(0)
 	return barra
@@ -250,8 +257,8 @@ func _atualizar_nav() -> void:
 	for k in _botoes.size():
 		if DESTINOS[k][1] == ABA_EQUIPE:
 			_botoes[k].visible = cinco
-		# Cinco destinos: texto menor para os cinco caberem.
-		_botoes[k].add_theme_font_size_override("font_size", 20 if cinco else 23)
+		# Seis destinos (com a Equipe): texto menor para caberem.
+		_botoes[k].add_theme_font_size_override("font_size", 17 if cinco else 20)
 
 
 func _ir_para(i: int, voltando := false) -> void:
