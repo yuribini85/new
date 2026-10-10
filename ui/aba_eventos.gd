@@ -21,6 +21,8 @@ const TITULO_CARTAO_MIN := 26
 const SELO_CARTAO := 84.0
 var _limite := LOTE
 
+## Fundo do botão de corrida bloqueada.
+const COR_BLOQUEIO := Color(0.66, 0.17, 0.15)
 const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS CORRIDAS"]]
 ## Altura do topo (cenário com o carro atual).
 const ALTURA_TOPO_CARRO := 342.0
@@ -373,15 +375,20 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		if tutorial:
 			ancora("DISPUTAR", bc)
 	else:
-		var h := fileira(v)
-		nota("icone_cadeado", " · ".join(motivos), "", h, COR_RUIM)
+		# Bloqueada: o motivo no lugar do DISPUTAR, num botão vermelho. Tocar
+		# explica a recusa (e a história pode comentar).
 		var pede_licenca: bool = motivos.any(func(m): return String(m).begins_with("licença"))
-		var recusar := func() -> void:
+		var br := Button.new()
+		Tipografia.acao_primaria(br, " · ".join(motivos), COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 28, 72)
+		br.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		br.icon = icone_reduzido("icone_cadeado", 34)
+		br.add_theme_constant_override("h_separation", 12)
+		br.pressed.connect(func() -> void:
 			avisar("Inscrição recusada: %s." % ", ".join(motivos), false)
 			var ctx := {"evento": ev["id"]}
 			if not (pede_licenca and historia("LICENCA_EXIGIDA", ctx)):
-				historia("EVENTO_BLOQUEADO", ctx)
-		botao_texto("Inscrever", recusar, v)
+				historia("EVENTO_BLOQUEADO", ctx))
+		v.add_child(br)
 
 
 ## "1º: 10 pts · você: 2º, 18 pts" na etapa que vale; nas outras, qual vale.
