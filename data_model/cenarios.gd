@@ -8,6 +8,8 @@ extends RefCounted
 
 const LISTA := [
 	{"id": "dono_inicio", "nome": "Oficina: começo", "detalhe": "Jogo novo, campanha do dono com a Mara."},
+	{"id": "dono_arena", "nome": "Oficina: arena aberta",
+		"detalhe": "Licenças até a National e 3 carros na garagem: a Arena já abre."},
 	{"id": "adrian_inicio", "nome": "Adrian: começo", "detalhe": "Jogo novo, prólogo do Adrian."},
 	{"id": "adrian_ultima", "nome": "Adrian: antes da última corrida",
 		"detalhe": "Primeiro campeonato feito: a próxima largada é a última dele."},
@@ -33,6 +35,19 @@ static func montar(dados: Node, jogador: Node, id: String) -> String:
 	match id:
 		"dono_inicio":
 			pass
+		"dono_arena":
+			# O prólogo e as licenças vistos; a Mara apresenta a Arena na 1ª visita.
+			for c in dados.lista("dialogos"):
+				if c.get("personagem") is String and c["personagem"] == "dono" and not String(c["id"]).begins_with("CW_P07") \
+						and c["trigger"] != "ABA:ARENA" and not String(c["trigger"]).begins_with("ARENA") \
+						and not String(c["id"]).begins_with("CW_T"):  # equipe e Pro/Elite ainda não
+					jogador.dialogos_vistos[c["id"]] = true
+					for f in c.get("flags", []):
+						jogador.flags[f] = true
+			_licencas_ate(dados, jogador, "NATIONAL")
+			jogador.flags["NATIONAL_COMPLETE"] = true
+			_comprar_usado(dados, jogador)
+			_comprar_usado(dados, jogador)
 		"adrian_inicio":
 			pass
 		"adrian_ultima":
@@ -100,6 +115,8 @@ static func _comprar_usado(dados: Node, jogador: Node) -> int:
 		var tem: Array = jogador.garagem.lista().map(func(c): return c.id)
 		var modelos: Array = dados.lista("carros").filter(func(m): return not m["id"] in tem)
 		modelos.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
+		if modelos.is_empty():
+			return jogador.carro_ativo  # todos os modelos já na garagem (dados de teste)
 		var carro := Carro.new(modelos[0])
 		carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 		uid = jogador.garagem.adicionar(carro)

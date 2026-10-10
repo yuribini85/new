@@ -319,6 +319,8 @@ func test_cenarios_de_teste_montam() -> void:
 		match c["id"]:
 			"dono_inicio":
 				igual(j.personagem, "dono", "dono_inicio: dono")
+			"dono_arena":
+				verificar(j.garagem.lista().size() >= 2, "arena: 2+ carros")
 			"adrian_inicio", "adrian_ultima":
 				igual(j.personagem, "adrian", "%s: Adrian" % c["id"])
 			"elena_inicio":
