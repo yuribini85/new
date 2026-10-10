@@ -25,15 +25,14 @@ var _ancoras := {}
 var _lembrete := {}
 const LEMBRETE_S := 8.0  # apresentação: quanto esperar antes de lembrar
 ## Nome de cada aba no trigger da história (ABA:<nome>).
-const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE"]
+const NOMES_ABA := ["GARAGEM", "LOJA", "OFICINA", "EVENTOS", "CORRIDA", "LICENCAS", "EQUIPE", "ARENA"]
 var _ao_vivo: Button
 ## Destinos da barra de baixo: [rótulo, índice da aba, ícone, ícone provisório?]. Oficina e Corrida são
 ## telas internas (de Garagem e Correr), abertas pelo caminho do jogo.
 const DESTINOS := [["Oficina", 0, "aba_garagem"], ["Lojas", 1, "aba_mercado"], ["Corridas", 3, "aba_competicoes"],
-	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"], ["Arena", ARENA, "aba_arena", "icone_estrela"]]
-## Arena: modo ainda não implementado (decisão do usuário: o botão já fica na
-## barra, com ícone genérico; tocar só avisa). Não leva a nenhuma aba.
-const ARENA := -1
+	["Carreira", 5, "aba_carreira"], ["Equipe", 6, "aba_equipe", "icone_piloto"], ["Arena", ABA_ARENA, "aba_arena", "icone_estrela"]]
+## Arena (decisão 49): a inscrição; a luta abre por cima de tudo (LutaArena).
+const ABA_ARENA := 7
 ## Aba que só aparece quando a história libera (a equipe do jogador).
 const ABA_EQUIPE := 6
 const PAI := {2: 0, 4: 3}
@@ -41,7 +40,7 @@ const PAI := {2: 0, 4: 3}
 ## Janela do resultado: fecha sozinha depois disso (se o jogador deixar).
 const FECHAR_RESULTADO_S := 30.0
 var _resultado_aberto := 0
-const TITULOS := ["Oficina", "Lojas", "Oficina", "Corridas", "Corrida", "Carreira", "Equipe"]
+const TITULOS := ["Oficina", "Lojas", "Oficina", "Corridas", "Corrida", "Carreira", "Equipe", "Arena"]
 ## Objetivo atual da carreira; quando avança, o jogador é avisado.
 var _objetivo := -1
 
@@ -118,6 +117,7 @@ func _ready() -> void:
 		preload("res://ui/aba_corrida.gd").new(dados, jogador),
 		preload("res://ui/aba_licencas.gd").new(dados, jogador),
 		preload("res://ui/aba_equipe.gd").new(dados, jogador),
+		preload("res://ui/aba_arena.gd").new(dados, jogador),
 	]
 	for a in _todas:
 		a.reservar_topo(_cabecalho.altura_total())
@@ -128,6 +128,7 @@ func _ready() -> void:
 			_sujar_todas()
 			_ir_para(i))
 	_todas[4].dialogo_aberto = func() -> bool: return _dialogo != null and _dialogo.ocupado()
+	_todas[ABA_ARENA].luta.connect(_abrir_luta)
 	eventos.correr_iniciado.connect(func():
 		# Conversa aberta na inscrição (ex.: a do campeonato): o grid espera.
 		if _dialogo != null and _dialogo.ocupado():
@@ -247,10 +248,6 @@ func _navegacao() -> HBoxContainer:
 		b.pressed.connect(func(): Sons.tocar_ui(self, "toque", -6.0))
 		barra.add_child(b)
 		_botoes.append(b)
-		if d[1] == ARENA:
-			b.toggle_mode = false
-			b.pressed.connect(func(): _sobre.avisar("Arena: em breve.", true))
-			continue
 		b.pressed.connect(_ir_para.bind(d[1]))
 		_ancoras["NAV_" + NOMES_ABA[d[1]]] = b
 	_ir_para.call_deferred(0)
@@ -360,6 +357,19 @@ func _assistir_video() -> void:
 ## aparelho (depois do MVP).
 func _comprar_sem_anuncios() -> void:
 	_sobre.avisar("A compra Sem anúncios chega com a loja do aparelho, na versão final.", false)
+
+
+## Luta da arena (já resolvida e aplicada): por cima de tudo; no fim, a
+## conversa do resultado e a tela atualizada.
+func _abrir_luta(dados_luta: Dictionary) -> void:
+	var luta := LutaArena.new(dados_luta, dados.arena())
+	add_child(luta)
+	luta.acabou.connect(func(f: Dictionary):
+		if jogador.historia != null:
+			var t := "ARENA_PERDA" if f["perdeu"] else ("ARENA_VITORIA" if f["posicao"] == 1 else "ARENA_FIM")
+			jogador.historia.disparar(t)
+		_sujar_todas()
+		atualizar())
 
 
 ## Engrenagem do cabeçalho.

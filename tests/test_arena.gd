@@ -119,3 +119,60 @@ func test_combate_com_ia_termina_e_repete_igual() -> void:
 	verificar(impactos.size() >= 4, "a IA procura briga (%d impactos)" % impactos.size())
 	print("  arena com IA: %.0f s, %d impactos, %d eliminados, classificação %s" % [a["duracao"], impactos.size(),
 			a["eventos"].filter(func(e): return e["tipo"] == "eliminado").size(), a["classificacao"]])
+
+
+const JogadorScript := preload("res://autoload/jogador.gd")
+
+
+func _jogador_real(d: Node, n_carros: int) -> Node:
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var ids := ["bancroft_sidewinder"]
+	for c in d.lista("carros"):
+		if ids.size() >= n_carros:
+			break
+		if not c["id"] in ids:
+			ids.append(c["id"])
+	for k in n_carros:
+		var car := Carro.new(d.carro(ids[k]))
+		car.adicionar_pneu(d.pneu(d.economia()["pneu_de_fabrica"]))
+		var uid: int = j.garagem.adicionar(car)
+		if k == 0:
+			j.carro_ativo = uid
+	return j
+
+
+## Decisão 49: abre com a licença mínima, só com 2 carros; eliminado sai da
+## garagem; pontos viram giros pelo prêmio de referência.
+func test_arena_na_carreira() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j := _jogador_real(d, 1)
+	verificar(ArenaCarreira.bloqueio(d, j).begins_with("Abre com"), "sem a licença: fechada")
+	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
+	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "com 1 carro: não entra")
+	j.free()
+	j = _jogador_real(d, 2)
+	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
+	igual(ArenaCarreira.bloqueio(d, j), "", "com 2 carros e a licença: entra")
+	var uid: int = j.carro_ativo
+	var m := ArenaCarreira.montar(d, j, uid, 7)
+	igual(m["participantes"].size(), 1 + int(d.arena()["rivais"]), "jogador + rivais")
+	verificar(m["nomes"]["r1"] != "", "rival com nome de piloto")
+	# Derrota forçada: o carro do jogador eliminado.
+	var res := {"classificacao": ["r1", "jogador"], "eventos": [
+			{"t": 1.0, "tipo": "giro", "carro": "r1", "por": "jogador", "graus": 90},
+			{"t": 1.2, "tipo": "giro", "carro": "r1", "por": "jogador", "graus": 180}],
+		"carros": {"jogador": {"eliminado": true, "eliminou": 0}, "r1": {"eliminado": false, "eliminou": 1}}}
+	var pts := ArenaCarreira.pontos(res, "jogador", d.arena())
+	igual(pts, int(d.arena()["pontos"]["giro_180"]), "giro conta pelo maior limite do golpe")
+	var saldo: int = j.economia.saldo
+	var f := ArenaCarreira.aplicar(d, j, uid, res)
+	verificar(f["perdeu"], "eliminado: perdeu")
+	igual(j.garagem.lista().size(), 1, "o carro saiu da garagem")
+	verificar(j.carro_ativo != uid and j.carro_ativo >= 0, "outro carro em uso")
+	igual(j.economia.saldo, saldo + f["premio"], "pontos pagos mesmo perdendo")
+	igual(int(j.arena["lutas"]), 1, "luta registrada")
+	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "sobrou 1 carro: não entra mais")
+	j.free()
+	d.free()

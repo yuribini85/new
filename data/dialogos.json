@@ -3300,6 +3300,148 @@
   }
  },
  {
+  "id": "CW_P07",
+  "trigger": "ABA:ARENA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Tem outra maneira de ganhar dinheiro por aqui.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "Pagam mais porque alguns carros não voltam.",
+    "pose": "alerta"
+   },
+   {
+    "quem": "mara",
+    "texto": "Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Arena: o último de pé vence. Carro eliminado sai da garagem para sempre."
+   }
+  ],
+  "requer": [
+   "NATIONAL_COMPLETE"
+  ],
+  "proibe": [
+   "ARENA_INTRO"
+  ],
+  "flags": [
+   "ARENA_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_R06",
+  "trigger": "ARENA_INSCRICAO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Aqui, segundo lugar pode custar o carro inteiro.",
+    "pose": "alerta"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_FIRST_ENTRY"
+  ],
+  "flags": [
+   "ARENA_FIRST_ENTRY"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R07",
+  "trigger": "ARENA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Voltou inteiro o bastante pra reconhecer. Já é alguma coisa.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_SURVIVED"
+  ],
+  "flags": [
+   "ARENA_SURVIVED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_A01",
+  "trigger": "ARENA_VITORIA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Último de pé. Agora tira ele dali antes que alguém tenha ideias.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_FIRST_WIN"
+  ],
+  "flags": [
+   "ARENA_FIRST_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R09",
+  "trigger": "ARENA_PERDA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "O carro acabou. Pelo menos o piloto saiu andando.",
+    "pose": "decepcao"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_FIRST_LOSS"
+  ],
+  "flags": [
+   "ARENA_FIRST_LOSS"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R09B",
+  "trigger": "ARENA_PERDA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Mais um pro ferro-velho.",
+    "pose": "decepcao"
+   }
+  ],
+  "requer": [
+   "ARENA_FIRST_LOSS"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
   "id": "CW_R01",
   "trigger": "CORRIDA_FIM",
   "falas": [

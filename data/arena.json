@@ -1,5 +1,5 @@
 {
- "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato.",
+ "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato. Carreira (ArenaCarreira): abre com licenca_minima; rivais de potência parecida; pontos por giro provocado (pelo maior giro de cada golpe), eliminação e vitória; o prêmio de referência (média do 1º lugar das corridas da licença mínima) paga pontos_referencia pontos. Pontos e pontos_referencia provisórios até o playtest.",
  "raio_m": 45.0,
  "dt_s": 0.0333333,
  "amostra_dt_s": 0.1,
@@ -16,5 +16,19 @@
  "travado_s": 1.0,
  "recuperacao_s": 1.2,
  "v_travado_kmh": 4.0,
- "giros_graus": [90, 180, 360]
+ "giros_graus": [
+  90,
+  180,
+  360
+ ],
+ "licenca_minima": "NATIONAL",
+ "rivais": 3,
+ "pontos": {
+  "giro_90": 1,
+  "giro_180": 2,
+  "giro_360": 4,
+  "eliminacao": 3,
+  "vencer": 5
+ },
+ "pontos_referencia": 8
 }

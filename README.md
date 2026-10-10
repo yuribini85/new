@@ -23,6 +23,8 @@ O que existe hoje:
 - licenças CLUB a ELITE (treino por tempo, requisitos, avaliação por testes ou
   contratos), eventos do GT2 com equipes e pilotos rivais, campeonatos por pontos,
   resistência, copas de marca;
+- arena de destruição (Chrome & Wreckage): abre com a licença National, só com 2 carros na
+  garagem; luta resolvida na inscrição, dano em seis regiões, carro eliminado sai da garagem;
 - equipe do jogador: segundo piloto na mesma prova, caixa único, patrocínio e staff
   (valores pendentes do playtest);
 - corrida resolvida pela simulação e reproduzida em 3D, com câmera automática, HUD,

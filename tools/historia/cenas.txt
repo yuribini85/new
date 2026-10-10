@@ -668,6 +668,28 @@ Mara[pensativa]: Dez provas vencidas. A parede de troféus já não está vazia.
 = CW_M05 | VITORIA | personagem=dono; condicao=quantidade_min:25; flags=TWENTY_FIVE_WINS
 Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
 
+# ---------------------------------------------------------------- Arena (decisão 49)
+= CW_P07 | ABA:ARENA | personagem=dono; requer=NATIONAL_COMPLETE; proibe=ARENA_INTRO; flags=ARENA_INTRO; cenario=oficina_mara
+Mara[cruzados]: Tem outra maneira de ganhar dinheiro por aqui.
+Mara[alerta]: Pagam mais porque alguns carros não voltam.
+Mara[explica]: Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem.
+Sistema: Arena: o último de pé vence. Carro eliminado sai da garagem para sempre.
+
+= CW_R06 | ARENA_INSCRICAO | personagem=dono; proibe=ARENA_FIRST_ENTRY; flags=ARENA_FIRST_ENTRY
+Mara[alerta]: Aqui, segundo lugar pode custar o carro inteiro.
+
+= CW_R07 | ARENA_FIM | personagem=dono; proibe=ARENA_SURVIVED; flags=ARENA_SURVIVED
+Mara[pensativa]: Voltou inteiro o bastante pra reconhecer. Já é alguma coisa.
+
+= CW_A01 | ARENA_VITORIA | personagem=dono; proibe=ARENA_FIRST_WIN; flags=ARENA_FIRST_WIN
+Mara[firme]: Último de pé. Agora tira ele dali antes que alguém tenha ideias.
+
+= CW_R09 | ARENA_PERDA | personagem=dono; proibe=ARENA_FIRST_LOSS; flags=ARENA_FIRST_LOSS
+Mara[decepcao]: O carro acabou. Pelo menos o piloto saiu andando.
+
+= CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim
+Mara[decepcao]: Mais um pro ferro-velho.
+
 # ---------------------------------------------------------------- Comentários de contexto
 # reativa=sim: no máximo um a cada historia.json → reativa_intervalo_corridas corridas.
 = CW_R01 | CORRIDA_FIM | personagem=dono; requer=FIRST_WIN; proibe=FIRST_LOSS_TALK; condicao=posicao_min:2; flags=FIRST_LOSS_TALK; reativa=sim
