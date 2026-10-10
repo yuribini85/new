@@ -17,6 +17,7 @@ signal configuracoes
 signal acelerar
 signal garagem
 signal corrida
+signal nomes
 
 const PASTA := "res://arte/ui/cabecalho/"
 const ALTURA := 84  # faixa dos elementos (px da tela de 720)
@@ -50,6 +51,8 @@ var aba_garagem: Button
 var _dentro_painel: HBoxContainer
 var _caixa_numero: Control
 var aba_corrida: Button
+var aba_nomes: Button
+var _icone_nomes: IconeVetor
 var _icone_corrida: IconeVetor
 var engrenagem: Button
 var _icone_marcador: IconeVetor
@@ -173,6 +176,7 @@ func _init() -> void:
 	_criar_marcador()
 	_criar_aba_corrida()
 	_criar_aba_garagem()
+	_criar_aba_nomes()
 	titulo.resized.connect(_ajustar_titulo)
 	resized.connect(_posicionar)
 	_posicionar()
@@ -196,9 +200,9 @@ func _posicionar() -> void:
 	offset_bottom = altura_total()
 	if marcador != null:
 		# Da direita para a esquerda: a bandeira (voltar à corrida), ACELERAR e,
-		# na Oficina, GARAGEM.
+		# na Oficina, GARAGEM; no mapa das Lojas, NOMES.
 		var direita := size.x - 14.0
-		for aba in [aba_corrida, marcador, aba_garagem]:
+		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
@@ -331,6 +335,49 @@ func definir_corrida(ativa: bool) -> void:
 func mostrar_corrida(sim: bool) -> void:
 	aba_corrida.visible = sim
 	_posicionar()
+
+
+## Aba NOMES (mapa das Lojas): mostra ou esconde os nomes das lojas sobre
+## elas; ✓ com os nomes à vista, ✗ sem (começa assim).
+func _criar_aba_nomes() -> void:
+	aba_nomes = Button.new()
+	aba_nomes.focus_mode = Control.FOCUS_NONE
+	aba_nomes.tooltip_text = "Nomes das lojas"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_nomes.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_nomes.pressed.connect(func(): nomes.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_nomes.add_child(h)
+	_icone_nomes = IconeVetor.new("x", COR_APAGADO)
+	_icone_nomes.custom_minimum_size = Vector2(24, 24)
+	_icone_nomes.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_icone_nomes)
+	var t := Label.new()
+	t.text = "NOMES"
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	aba_nomes.visible = false
+	add_child(aba_nomes)
+
+
+func definir_nomes(ligado: bool) -> void:
+	_icone_nomes.tipo = "check" if ligado else "x"
+	_icone_nomes.cor = COR_NUMERO if ligado else COR_APAGADO
+
+
+func mostrar_nomes(sim: bool) -> void:
+	if aba_nomes.visible != sim:
+		aba_nomes.visible = sim
+		_posicionar()
 
 
 func mostrar_garagem(sim: bool) -> void:

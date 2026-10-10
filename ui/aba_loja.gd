@@ -29,6 +29,7 @@ const PASTA_LOGOS := "res://arte/ui/workshops/"
 
 
 func construir() -> void:
+	_no_mapa = false
 	# Prólogo: depois do acidente, Elena começa pela Second Chance Motors.
 	# Só enquanto a garagem está vazia: é a loja da história (o primeiro carro da Elena).
 	var second_chance: bool = jogador.flags.has("SECOND_CHANCE_UNLOCKED") and jogador.garagem.lista().is_empty()
@@ -75,13 +76,23 @@ func _carros_da(w: Dictionary) -> Array:
 ## Mapa das lojas (arte/ui/mapa_lojas.png): a estrada da costa com as seis
 ## concessionárias; cada uma é uma área de toque que abre a loja. Áreas em
 ## fração da imagem [x0, y0, x1, y1], na ordem de data/workshops.json.
+## Nomes das lojas escritos sobre elas no mapa (aba NOMES do cabeçalho).
+var mostrar_nomes := false
+var _no_mapa := false
+
 const AREAS_MAPA := [
 	[0.085, 0.128, 0.447, 0.258], [0.606, 0.263, 0.925, 0.362], [0.112, 0.326, 0.468, 0.458],
 	[0.606, 0.487, 0.940, 0.616], [0.064, 0.610, 0.542, 0.736], [0.542, 0.807, 0.935, 0.909],
 ]
 
 
+## O mapa está na tela (nenhuma loja aberta): o cabeçalho mostra NOMES.
+func no_mapa() -> bool:
+	return _no_mapa
+
+
 func _mapa(ws: Array, second_chance: bool) -> void:
+	_no_mapa = true
 	var tex := arte("mapa_lojas")
 	var mapa := Control.new()
 	mapa.custom_minimum_size = Vector2(0, (720.0 - 2.0 * MARGEM_LATERAL) * tex.get_height() / tex.get_width())
@@ -121,6 +132,29 @@ func _mapa(ws: Array, second_chance: bool) -> void:
 			mudou.emit())
 		t.add_child(b)
 		ancora("LOJA_" + id, b)
+		if mostrar_nomes:
+			# Placa com o nome sobre a loja, no alto da área dela.
+			var placa := PanelContainer.new()
+			var sb := StyleBoxFlat.new()
+			sb.bg_color = Color(COR_FUNDO, 0.82)
+			sb.border_color = COR_DESTAQUE
+			sb.set_border_width_all(2)
+			sb.set_corner_radius_all(8)
+			sb.content_margin_left = 12
+			sb.content_margin_right = 12
+			sb.content_margin_top = 2
+			sb.content_margin_bottom = 4
+			placa.add_theme_stylebox_override("panel", sb)
+			placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			var l := Label.new()
+			l.text = String(w["nome"]).to_upper()
+			Tipografia.rotulo(l, "semibold", 24)
+			l.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+			l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			placa.add_child(l)
+			placa.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+			placa.grow_horizontal = Control.GROW_DIRECTION_BOTH
+			b.add_child(placa)
 	if second_chance:
 		var sc := Button.new()
 		Tipografia.acao_primaria(sc, "Second Chance Motors · usados", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 64)

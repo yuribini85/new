@@ -51,6 +51,15 @@ func _draw() -> void:
 				draw_rect(Rect2(q, Vector2(0.72, 0.72) * lado * 0.5), cor)
 		"bandeira":
 			_bandeira(c, lado * 0.5)
+		"check":
+			var r := lado * 0.5
+			draw_polyline(PackedVector2Array([c + Vector2(-0.7, 0.0) * r, c + Vector2(-0.2, 0.5) * r,
+					c + Vector2(0.75, -0.55) * r]), cor, maxf(r * 0.28, 2.0), true)
+		"x":
+			var r := lado * 0.5
+			var w := maxf(r * 0.28, 2.0)
+			draw_line(c + Vector2(-0.6, -0.6) * r, c + Vector2(0.6, 0.6) * r, cor, w, true)
+			draw_line(c + Vector2(0.6, -0.6) * r, c + Vector2(-0.6, 0.6) * r, cor, w, true)
 		"lista":
 			for k in 3:
 				var y := c.y + (-0.7 + k * 0.7) * lado * 0.5
