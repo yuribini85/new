@@ -246,7 +246,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	corpo.add_theme_constant_override("separation", 14)
 	v.add_child(corpo)
 	# Faixa da esquerda: a imagem da pista aparece mais forte (o fundo do cartão
-	# é ela inteira); estado no canto de cima, traçado no de baixo.
+	# é ela inteira); estado no canto de cima e o traçado embaixo dele.
 	var banner := Control.new()
 	banner.custom_minimum_size = Vector2(LARGURA_IMAGEM_CARTAO, ALTURA_IMAGEM_CARTAO)
 	banner.size_flags_vertical = Control.SIZE_FILL
@@ -266,10 +266,11 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	estado.position = Vector2(0, 0)
 	banner.add_child(estado)
 	var tracado := icone_pista(ev["pista"])
-	tracado.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	tracado.offset_left = -84
-	tracado.offset_right = 0
-	tracado.offset_top = -56
+	# Traçado grande no centro da faixa, abaixo do estado.
+	tracado.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tracado.offset_left = 6
+	tracado.offset_right = -6
+	tracado.offset_top = 44
 	tracado.offset_bottom = 0
 	tracado.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner.add_child(tracado)

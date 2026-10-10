@@ -57,6 +57,5 @@ static func _desenhar_pista(c: Control, pts: PackedVector2Array) -> void:
 		# y da pista cresce para cima (rumo anti-horário); na tela, para baixo.
 		var q := (p - caixa.get_center()) * esc
 		linha.append(centro + Vector2(q.x, -q.y))
-	c.draw_polyline(linha, Color(0.85, 0.85, 0.85), 5.0, true)
-	c.draw_polyline(linha, Color(0.32, 0.33, 0.36), 3.0, true)
-	c.draw_circle(linha[0], 3.5, Aba.COR_DESTAQUE)
+	# Contorno claro e fino, sem marcador de largada.
+	c.draw_polyline(linha, Color(0.88, 0.88, 0.88, 0.9), 3.0, true)
