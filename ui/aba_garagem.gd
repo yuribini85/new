@@ -81,7 +81,7 @@ const TAMANHO_NOME := 34
 const TAMANHO_NOME_MIN := 24
 const ALTURA_NOME := 40
 const TOPO_NOME := 4
-const RESERVA_ABAS := 420
+const RESERVA_ABAS := 456
 const OPACIDADE_SETAS := 0.5
 ## Quanto o carro em sprite sobe no palco (px).
 const SUBIR_SPRITE := 60.0

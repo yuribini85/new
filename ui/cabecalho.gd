@@ -9,7 +9,7 @@ extends Control
 ## À direita, a engrenagem das configurações. Pendurado sob o painel, o marcador
 ## das corridas aceleradas (decisão 39): "ACELERAR" quando parado; aceso, com o
 ## fator e o tempo que falta, quando ativo. Tocar abre a tela da aceleração.
-## Ao lado, a bandeira (voltar à corrida em andamento) e, na Oficina, GARAGEM
+## À direita dele, a bandeira (voltar à corrida em andamento); à esquerda, na Oficina, GARAGEM
 ## (os carros, as vagas e a venda).
 
 signal voltar
@@ -47,6 +47,8 @@ var _faixa: HBoxContainer
 var _area_segura := 0.0
 var marcador: Button
 var aba_garagem: Button
+var _dentro_painel: HBoxContainer
+var _caixa_numero: Control
 var aba_corrida: Button
 var _icone_corrida: IconeVetor
 var engrenagem: Button
@@ -120,6 +122,7 @@ func _init() -> void:
 	dentro.offset_left = h_painel * 0.75  # depois da borda inclinada
 	dentro.offset_right = -h_painel * 0.22
 	dentro.add_theme_constant_override("separation", 8)
+	dentro.alignment = BoxContainer.ALIGNMENT_CENTER  # moeda, número e GIROS juntos
 	dentro.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	painel.add_child(dentro)
 	var moeda := TextureRect.new()
@@ -131,13 +134,14 @@ func _init() -> void:
 	moeda.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dentro.add_child(moeda)
 	numero = Label.new()
-	numero.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	numero.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	Tipografia.numero(numero, TAMANHO_NUMERO)
 	numero.add_theme_color_override("font_color", COR_NUMERO)
 	numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	dentro.add_child(_centrado(numero, DESVIO_NUMERO))
+	_caixa_numero = _centrado(numero, DESVIO_NUMERO)
+	dentro.add_child(_caixa_numero)
+	_dentro_painel = dentro
 	var giros := Label.new()
 	giros.text = "GIROS"
 	giros.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -191,16 +195,15 @@ func _posicionar() -> void:
 	_faixa.offset_bottom = _area_segura + ALTURA
 	offset_bottom = altura_total()
 	if marcador != null:
-		var w := maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
-		marcador.size = Vector2(w, ALTURA_MARCADOR)
-		marcador.position = Vector2(size.x - w - 14.0, altura_total())
-		# Da direita para a esquerda: ACELERAR, a bandeira (voltar à corrida) e,
+		# Da direita para a esquerda: a bandeira (voltar à corrida), ACELERAR e,
 		# na Oficina, GARAGEM.
-		var direita := marcador.position.x - 10.0 if marcador.visible else size.x - 14.0
-		for aba in [aba_corrida, aba_garagem]:
+		var direita := size.x - 14.0
+		for aba in [aba_corrida, marcador, aba_garagem]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
+			if aba == marcador:
+				wa = maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
 			aba.size = Vector2(wa, ALTURA_MARCADOR)
 			aba.position = Vector2(direita - wa, altura_total())
 			direita -= wa + 10.0
@@ -283,6 +286,10 @@ func _criar_aba_garagem() -> void:
 	h.add_theme_constant_override("separation", 10)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	aba_garagem.add_child(h)
+	var ic := IconeVetor.new("grade", COR_APAGADO)
+	ic.custom_minimum_size = Vector2(26, 26)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(ic)
 	var t := Label.new()
 	t.text = "GARAGEM"
 	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -365,11 +372,19 @@ func _process(delta: float) -> void:
 func definir_giros(texto: String) -> void:
 	numero.text = texto
 	var f := Tipografia.fonte_numero()
-	var livre := maxf(numero.size.x, 110.0)
+	# Espaço do número: o painel menos a moeda, GIROS e os vãos (o trio fica
+	# junto, no centro do painel).
+	var livre := 150.0
+	if _dentro_painel != null and _dentro_painel.size.x > 0.0:
+		livre = _dentro_painel.size.x - 16.0
+		for k in _dentro_painel.get_children():
+			if k != _caixa_numero:
+				livre -= (k as Control).get_combined_minimum_size().x
 	var tam := TAMANHO_NUMERO
 	while tam > 20 and f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
 		tam -= 2
 	numero.add_theme_font_size_override("font_size", tam)
+	_caixa_numero.custom_minimum_size.x = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + 4.0
 
 
 ## Voltar habilitado só quando há tela anterior; sem ela, 80% de opacidade.

@@ -73,13 +73,11 @@ func _engrenagem(c: Vector2, r: float) -> void:
 	draw_circle(c, r * 0.32, cor_fundo)
 
 
-## Bandeira quadriculada de chegada no mastro.
+## Bandeira quadriculada de chegada (sem mastro).
 func _bandeira(c: Vector2, r: float) -> void:
-	var x0 := c.x - r * 0.78
-	draw_rect(Rect2(Vector2(x0, c.y - r * 0.92), Vector2(r * 0.16, r * 1.84)), cor)
-	var topo := Vector2(x0 + r * 0.16, c.y - r * 0.9)
-	var w := r * 1.42
-	var h := r * 1.02
+	var w := r * 1.8
+	var h := r * 1.3
+	var topo := c - Vector2(w, h) * 0.5
 	draw_rect(Rect2(topo, Vector2(w, h)), cor, false, maxf(r * 0.08, 1.0))
 	var n := Vector2i(4, 3)
 	var q := Vector2(w / n.x, h / n.y)
