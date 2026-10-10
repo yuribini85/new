@@ -294,85 +294,119 @@ func _filtrar(itens: Array) -> Array:
 func _grade() -> GridContainer:
 	var g := GridContainer.new()
 	g.columns = 2
-	g.add_theme_constant_override("h_separation", 10)
-	g.add_theme_constant_override("v_separation", 10)
+	g.add_theme_constant_override("h_separation", 14)
+	g.add_theme_constant_override("v_separation", 14)
 	conteudo.add_child(g)
 	return g
 
 
-## Bloco do catálogo: foto, nome, preço e o essencial (potência e peso). Já
-## comprado: marcado. Tocar abre a ficha, onde está o botão de compra.
+## Bloco do catálogo, no padrão da Garagem: selo JÁ COMPRADO, o carro
+## grande, nome, potência e peso, e o COMPRAR no rodapé. Tocar no cartão ou
+## no rodapé abre a ficha, onde a compra é confirmada.
+const ALTURA_BLOCO := 420
+const LARGURA_NOME_BLOCO := 290.0
+
+
 func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable,
 		cor := Color(0, 0, 0, 0), escolher_cor := false, comprado := false) -> void:
 	var pode: bool = jogador.economia.pode_pagar(preco)
+	if comprado:
+		extras = extras + [["já na sua garagem", COR_BOM]]
+	var falta := "" if pode else "Faltam %s giros" % dinheiro(preco - jogador.economia.saldo)
+	var abrir := func(): ficha_modelo(c, extras + [["revenda %s giros" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
+			["Comprar · %s" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor)
 	var b := Button.new()
-	b.custom_minimum_size = Vector2(0, 250)
+	b.custom_minimum_size = Vector2(0, ALTURA_BLOCO)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.focus_mode = Control.FOCUS_NONE
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = COR_CARTAO
-	sb.set_corner_radius_all(14)
+	sb.set_corner_radius_all(8)
+	sb.border_color = COR_BOM if comprado else Color(1, 1, 1, 0.08)
+	sb.set_border_width_all(2)
 	for estado in ["normal", "hover", "pressed", "focus"]:
 		b.add_theme_stylebox_override(estado, sb)
+	b.pressed.connect(abrir)
+	grade.add_child(b)
 	var v := VBoxContainer.new()
 	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	v.offset_left = 10
-	v.offset_right = -10
-	v.offset_top = 6
-	v.offset_bottom = -8
+	v.offset_left = 6
+	v.offset_right = -6
+	v.offset_top = 10
+	v.offset_bottom = -6
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", 2)
+	v.add_theme_constant_override("separation", 0)
 	b.add_child(v)
+	var topo := HBoxContainer.new()
+	topo.custom_minimum_size = Vector2(0, 36)
+	topo.add_theme_constant_override("separation", 8)
+	topo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(topo)
+	if comprado:
+		var vao := Control.new()
+		vao.custom_minimum_size = Vector2(10, 0)
+		vao.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		topo.add_child(vao)
+		var ok := IconeVetor.new("check", COR_BOM)
+		ok.custom_minimum_size = Vector2(28, 28)
+		ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		ok.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		topo.add_child(ok)
+		var l := Label.new()
+		l.text = "JÁ COMPRADO"
+		Tipografia.rotulo(l, "semibold", 24)
+		l.add_theme_color_override("font_color", COR_BOM)
+		topo.add_child(l)
 	var img := icone_carro(c, false, cor)
-	img.custom_minimum_size = Vector2(0, 120)
+	img.custom_minimum_size = Vector2(0, 200)
+	img.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(img)
-	# Como o cartão de corrida: nome em Barlow, números em Racing Sans e o
-	# preço com a moeda de giros.
 	var nome := Label.new()
 	nome.text = c["nome"] + ("  " + marca if marca != "" else "")
-	Tipografia.rotulo(nome, "semibold", 28)
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	nome.custom_minimum_size = Vector2(0, 52)
+	Tipografia.rotulo(nome, "semibold", 34)
 	nome.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+	var f := nome.get_theme_font("font")
+	var tam := 34
+	while tam > 20 and f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > LARGURA_NOME_BLOCO:
+		tam -= 2
+	nome.add_theme_font_size_override("font_size", tam)
 	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	nome.clip_text = true
+	nome.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(nome)
+	# Potência e peso como no cartão de corrida: números em Racing Sans.
 	var nums := HBoxContainer.new()
+	nums.alignment = BoxContainer.ALIGNMENT_CENTER
+	nums.custom_minimum_size = Vector2(0, 44)
 	nums.add_theme_constant_override("separation", 6)
 	nums.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(nums)
-	for par in [["%d" % c["potencia"], "cv"], ["%d" % c["peso"], "kg"]]:
+	for k in 2:
+		var par: Array = [["%d" % c["potencia"], "cv"], ["%d" % c["peso"], "kg"]][k]
 		var n := Label.new()
 		n.text = par[0]
-		Tipografia.numero(n, 22)
+		Tipografia.numero(n, 30)
 		n.add_theme_color_override("font_color", Color(0.86, 0.87, 0.9))
 		nums.add_child(n)
 		var u := Label.new()
-		u.text = par[1] + "  "
-		Tipografia.rotulo(u, "regular", 18)
+		u.text = par[1] + ("   " if k == 0 else "")
+		Tipografia.rotulo(u, "regular", 22)
 		u.add_theme_color_override("font_color", COR_SECUNDARIA)
 		u.size_flags_vertical = Control.SIZE_SHRINK_END
 		nums.add_child(u)
-	var p_h := HBoxContainer.new()
-	p_h.add_theme_constant_override("separation", 6)
-	p_h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(p_h)
-	var moeda_i := icone("cabecalho/icone_giros", 26, p_h)
-	moeda_i.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var pr := Label.new()
-	pr.text = dinheiro(preco)
-	Tipografia.numero(pr, 30)
-	pr.add_theme_color_override("font_color", COR_DESTAQUE if pode else Color(0.62, 0.63, 0.68))
-	p_h.add_child(pr)
-	for x in [nome, pr]:
-		x.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if comprado:
-		var selo_c := selo("JÁ COMPRADO", COR_BOM)
-		selo_c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		selo_c.position = Vector2(10, 8)
-		b.add_child(selo_c)
-		extras = extras + [["já na sua garagem", COR_BOM]]
-	var falta := "" if pode else "Faltam %s giros" % dinheiro(preco - jogador.economia.saldo)
-	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s giros" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
-			["Comprar · %s" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor))
-	grade.add_child(b)
+	var compra := Button.new()
+	compra.focus_mode = Control.FOCUS_NONE
+	Tipografia.acao_neutra(compra, "COMPRAR · %s" % dinheiro(preco), 24, 64)
+	if not pode:
+		for c_fonte in ["font_color", "font_hover_color", "font_pressed_color"]:
+			compra.add_theme_color_override(c_fonte, Color(0.62, 0.63, 0.68, 0.6))
+	moeda(compra, 24)
+	compra.pressed.connect(abrir)
+	v.add_child(compra)
 
 
 ## O primeiro carro já entra em uso, e a tela vai para a Garagem, que mostra o
