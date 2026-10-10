@@ -30,6 +30,8 @@ var treinos: Dictionary = {}
 var personagem: String = ""
 var flags: Dictionary = {}
 var dialogos_vistos: Dictionary = {}
+## Corrida (dias) do último comentário de contexto da história (cenas reativa).
+var ultima_reativa: int = -1000
 var historia: Historia
 ## Equipe do jogador (fase 9): segundo piloto contratado ("" = nenhum) e o carro
 ## da garagem que ele usa nas provas (-1 = nenhum).
@@ -91,5 +93,6 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	carro_companheiro = -1
 	flags = {}
 	dialogos_vistos = {}
+	ultima_reativa = -1000
 	historico = {}
 	dias = 0

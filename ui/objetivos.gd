@@ -12,6 +12,8 @@ static func lista(jogador: Node, dados: Node) -> Array:
 		return _prologo(jogador, dados)
 	if jogador.personagem == "elena":
 		return _elena(jogador, dados) + _carreira(jogador, dados).slice(4)
+	if jogador.personagem == "dono":
+		return _dono(jogador, dados) + _carreira(jogador, dados).slice(1)
 	return _carreira(jogador, dados)
 
 
@@ -46,6 +48,16 @@ static func _elena(jogador: Node, _dados: Node) -> Array:
 		{"texto": "Começar o treino da licença Club", "feito": jogador.treinos.has("CLUB") or "CLUB" in jogador.licencas,
 			"aba": Aba.LICENCAS, "botao": "Ver licenças"},
 	]
+
+
+## Dono da oficina (Chrome & Wreckage): o carro já está na garagem; o primeiro
+## pedido da Mara é a peça da demanda (historia.json → dono.peca_demanda).
+static func _dono(jogador: Node, dados: Node) -> Array:
+	var peca := Prologo.demanda(dados, jogador)
+	if not dados.existe("pecas", peca):
+		return []
+	return [{"texto": "Comprar %s na Garagem" % dados.peca(peca)["nome"], "feito": jogador.flags.has("FIRST_TUNE_DONE"),
+		"aba": Aba.GARAGEM, "botao": "Ir para a Garagem"}]
 
 
 static func _carreira(jogador: Node, dados: Node) -> Array:

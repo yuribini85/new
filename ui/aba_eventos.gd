@@ -448,8 +448,16 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 	return v
 
 
-## Prova do tutorial de eventos: a etapa 1 do campeonato do prólogo (Adrian).
+## Prova do tutorial de eventos: a etapa 1 do campeonato do prólogo (Adrian);
+## para o dono da oficina, a primeira prova que o carro em uso já pode correr.
 func _evento_tutorial() -> String:
+	if jogador.personagem == "dono" and not jogador.flags.has("FIRST_RACE_DONE"):
+		var c: Carro = jogador.garagem.carro(jogador.carro_ativo)
+		if c != null:
+			for ev in dados.lista("eventos"):
+				if Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas).is_empty():
+					return String(ev["id"])
+		return ""
 	if jogador.personagem != "adrian":
 		return ""
 	var etapas := Campeonatos.etapas(dados, String(dados.historia().get("adrian", {}).get("campeonato", "")))

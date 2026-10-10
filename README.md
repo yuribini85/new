@@ -1,4 +1,4 @@
-# Second Drive
+# Chrome & Wreckage
 
 Jogo mobile idle de automobilismo, feito em Godot 4.4.
 
@@ -14,9 +14,10 @@ chegar (hoje: placeholders).
 
 O que existe hoje:
 
-- história como camada de dados: prólogo do Adrian, acidente, salto para a Elena,
-  Second Chance Motors, criação da Second Driver Motorsport; diálogos com tutorial
-  (abrir telas e destacar elementos) e flags;
+- história como camada de dados: jogo novo na campanha do dono da oficina, guiado pela
+  Mara Hayes (Chrome & Wreckage), com o piloto da casa ao volante; saves antigos seguem a
+  história anterior (Adrian → Elena → Second Driver Motorsport); diálogos com tutorial
+  (abrir telas e destacar elementos), flags e comentários de contexto com limite;
 - concessionária de novos e usados, garagem, oficina com peças e pneus por carro,
   pintura por cores do modelo, venda;
 - licenças CLUB a ELITE (treino por tempo, requisitos, avaliação por testes ou
@@ -111,9 +112,11 @@ Second Driver criada e segundo piloto na equipe. Cada um grava em
 5. A mesma IA controla o jogador e os adversários.
 6. Carros, fabricantes, pistas e arte são originais. Nenhuma marca, nome ou traçado real.
 7. O GT2 é referência de estudo a partir de cópia legítima. Nada dele é redistribuído.
-8. A história (Adrian → Elena → Second Driver Motorsport) é uma camada de dados — diálogos
-   e flags — sobre os sistemas do jogo; o diálogo também é o tutorial. Aprovado pelo
-   usuário em 2026-10-08 (antes: "Lore só depois que o jogo funcionar, e sem sistema novo").
+8. A história (Chrome & Wreckage: o jogador é o dono da oficina e Mara Hayes o guia; saves
+   antigos seguem Adrian → Elena → Second Driver Motorsport) é uma camada de dados —
+   diálogos e flags — sobre os sistemas do jogo; o diálogo também é o tutorial. Aprovado
+   pelo usuário em 2026-10-08 e trocado para Chrome & Wreckage em 2026-10-10 (antes: "Lore
+   só depois que o jogo funcionar, e sem sistema novo").
 
 ## Histórico
 

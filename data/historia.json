@@ -14,6 +14,18 @@
  "elena": {
   "saldo": "saldo_inicial"
  },
+ "_nota_campanha": "Chrome & Wreckage: jogo novo começa pela campanha de nova_campanha. dono = o jogador é o novo dono da oficina, Mara Hayes guia e o piloto fixo dirige; mesma montagem inicial do Adrian (carro, pneu, primeira peça e o critério de saldo), sem licenças. Saves com Adrian/Elena seguem a história deles. reativa_intervalo_corridas: no máximo um comentário de contexto a cada N corridas (decisão do usuário: 1 a cada 3). carro_caro_percentil: compra de carro acima desse percentil dos preços do catálogo dispara o comentário (proposta, ajustar no playtest).",
+ "nova_campanha": "dono",
+ "dono": {
+  "carro": "bancroft_sidewinder",
+  "cor": "creme",
+  "pneu": "pneu_1",
+  "licencas": [],
+  "peca_demanda": "bancroft_sidewinder_brake_1",
+  "piloto": "piloto_casa"
+ },
+ "reativa_intervalo_corridas": 3,
+ "carro_caro_percentil": 0.9,
  "ultima_corrida_apos": "FIRST_CHAMPIONSHIP_DONE",
  "radio_fracao": 0.4,
  "acidente_fracao": 0.6,

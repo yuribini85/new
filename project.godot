@@ -6,7 +6,7 @@ config_version=5
 
 [application]
 
-config/name="Second Drive"
+config/name="Chrome & Wreckage"
 config/version="0.1.0-alpha.1"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Apex Garage"

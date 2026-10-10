@@ -1,9 +1,10 @@
 # Cenas da Bíblia de Diálogos (Google Drive, pasta Second Driver). Formato:
 # = ID | trigger | opções (chave=valor; listas separadas por vírgula)
 # Nome: fala           [ACAO]           (Sistema: texto de sistema)
-# Opções: requer, proibe, flags, personagem, condicao, bloqueia, uma_vez, proxima, capitulo, cenario
+# Opções: requer, proibe, flags, personagem (um ou lista: adrian,elena), condicao (posicao,
+# posicao_min, quantidade_min), bloqueia, repetivel, reativa, proxima, capitulo, cenario, lembrete
 # Falas aceitam variáveis do jogo: {saldo} {carro} {evento} {serie} {pista} {voltas} {premio}
-# {posicao} {peca} (Historia.variaveis). Ações do próprio diálogo: [ESCURO] [CLARO] [PAUSA] [TREMOR]
+# {posicao} {peca} {demanda} {piloto} (Historia.variaveis). Ações do próprio diálogo: [ESCURO] [CLARO] [PAUSA] [TREMOR]
 # [CENARIO:id] [ILUSTRACAO:id]. Opção cenario=id: o fundo da cena (ids em data/historia.json).
 # Regras do roteiro: cada fala que ensina diz o que o jogador vê na tela; cena de tutorial
 # termina com uma ordem clara do Sistema; nada de mecânica que o jogo não tem.
@@ -446,24 +447,224 @@ Elena: Pronto.
 Responsável: Era isso?
 Elena: Era.
 
-= SYS_01 | SEM_DINHEIRO | repetivel=sim
+= SYS_01 | SEM_DINHEIRO | personagem=adrian,elena; repetivel=sim
 Marcus: Não temos isso.
 
-= SYS_02 | EVENTO_BLOQUEADO | requer=EVENT_REQUIREMENTS_TUTORIAL_DONE; repetivel=sim
+= SYS_02 | EVENTO_BLOQUEADO | personagem=adrian,elena; requer=EVENT_REQUIREMENTS_TUTORIAL_DONE; repetivel=sim
 Marcus: Bom carro. Corrida errada.
 
-= SYS_04 | POTENCIA_ACIMA | repetivel=sim
+= SYS_04 | POTENCIA_ACIMA | personagem=adrian,elena; repetivel=sim
 Marcus: Você comprou potência que o regulamento não aceita.
 
-= SYS_09 | LICENCA_EM_TREINO | repetivel=sim
+= SYS_09 | LICENCA_EM_TREINO | personagem=adrian,elena; repetivel=sim
 Marcus: Treinamento ainda correndo.
 
-= SYS_10 | LICENCA_PRONTA | requer=FIRST_TRAINING_READY; repetivel=sim
+= SYS_10 | LICENCA_PRONTA | personagem=adrian,elena; requer=FIRST_TRAINING_READY; repetivel=sim
 Marcus: Seu papel ficou pronto. Agora falta dirigir.
 
 = SYS_07 | COMPRA_CARRO_NOVO | personagem=elena; proibe=FIRST_NEW_CAR; flags=FIRST_NEW_CAR
 Sophie: Sem histórico.
 Marcus: Sem desculpa também.
 
-= SYS_ENDURANCE | CORRIDA_RESISTENCIA | proibe=FIRST_ENDURANCE; flags=FIRST_ENDURANCE
+= SYS_ENDURANCE | CORRIDA_RESISTENCIA | personagem=adrian,elena; proibe=FIRST_ENDURANCE; flags=FIRST_ENDURANCE
 Marcus: Velocidade ganha volta. Isso aqui ganha quem não quebra.
+
+# ================================================================ CHROME & WRECKAGE
+# Campanha do dono (jogo novo; historia.json → nova_campanha). O jogador é o novo dono
+# de uma oficina; Mara Hayes, mecânica veterana, guia; o piloto da casa dirige. Falas
+# curtas, sem melodrama. Saves com Adrian/Elena seguem as cenas acima.
+
+# ---------------------------------------------------------------- Prólogo
+= CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; proxima=CW_P02; cenario=oficina_cross
+Mara: Você é o novo dono.
+Mara: O antigo deixou as chaves, as dívidas e esse carro.
+Mara: As chaves funcionam.
+
+# Ficha do carro: cada atributo em destaque; termina pedindo os freios.
+= CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L
+[OPEN_GARAGE_TAB]
+[HIGHLIGHT_POTENCIA]
+Mara: Potência. O que o motor entrega.
+[HIGHLIGHT_PESO]
+Mara: Peso. O que ele tem de carregar. Mais leve acelera, freia e vira melhor.
+[HIGHLIGHT_PNEUS]
+Mara: Pneus. Quanto disso chega ao chão.
+[HIGHLIGHT_FREIOS]
+Mara: O motor pega. Os freios ainda precisam convencer.
+[HIGHLIGHT_DEMANDA]
+Mara: Deixei anotado o que ele pede primeiro.
+[HIGHLIGHT_SALDO]
+Mara: Veja o caixa antes de gastar o que não temos.
+Sistema: Toque em Freios.
+[HIGHLIGHT_FREIOS]
+
+= CW_P02L | LEMBRETE | personagem=dono; proibe=TUNE_TUTORIAL_SEEN,FIRST_TUNE_DONE
+Mara: Freios. Toque ali.
+[HIGHLIGHT_FREIOS]
+
+= CW_P03 | EVOLUCAO | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; lembrete=CW_P03L
+[HIGHLIGHT_BRAKES]
+Mara: Peça nova não faz milagre. Mas freio ruim faz estrago.
+Mara: {demanda}. Cabe no caixa.
+Sistema: Compre os {demanda}.
+[HIGHLIGHT_BRAKES]
+
+= CW_P03L | LEMBRETE | personagem=dono; proibe=FIRST_TUNE_DONE
+Mara: O carro não se monta sozinho. {demanda}.
+[HIGHLIGHT_BRAKES]
+
+= CW_P03B | DEMANDA_CONCLUIDA | personagem=dono; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE
+[OPEN_GARAGE_TAB]
+Mara: {peca} instalados.
+Mara: Agora ele freia. Falta alguém para dirigir.
+Sistema: Vá para Corridas.
+[HIGHLIGHT_NAV_EVENTOS]
+
+# Quem dirige: o piloto da casa (fixo; contratação fica para depois).
+= CW_P04 | ABA:EVENTOS | personagem=dono; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,PILOT_MET; lembrete=CW_P04L
+Mara: Você cuida da oficina. Alguém precisa assumir o volante.
+Mara: {piloto}. Corre pelo que a gente montar.
+Piloto: E pelo prêmio.
+Mara: Pelo prêmio também.
+[HIGHLIGHT_COPA]
+Mara: Sem licença, só as provas abertas. Esta o carro já pode correr.
+[HIGHLIGHT_COMPETITIVIDADE]
+Mara: Essa barra compara o carro com o grid. Não garante nada. Evita entrar no escuro.
+Sistema: Toque em Disputar.
+[HIGHLIGHT_DISPUTAR]
+
+= CW_P04L | LEMBRETE | personagem=dono; proibe=FIRST_RACE_BRIEFED
+Mara: A prova está ali. Toque em Disputar.
+[HIGHLIGHT_DISPUTAR]
+
+= CW_C01 | CAMPEONATO_SELECIONADO | personagem=dono; proibe=CHAMPIONSHIP_TUTORIAL_DONE; flags=CHAMPIONSHIP_TUTORIAL_DONE
+Mara: {serie}. Conta pontos.
+Mara: Etapas em ordem. Fora de ordem vira corrida comum.
+Mara: Campeão é quem soma mais. Constância ganha título.
+
+# Na pista: o grid espera a conversa acabar.
+= CW_P05 | CORRIDA_INICIO | personagem=dono; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; segura_largada=sim
+Mara: {voltas} voltas em {pista}.
+Mara: A gente prepara. O piloto corre.
+Mara: Depois, a conta aparece nos resultados.
+Sistema: Prova inédita só corre com o app aberto. Depois de vencida, ela pode se repetir com o app fechado.
+
+# Resultado da primeira prova: uma variante para vitória e outra para o resto.
+= CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN
+Mara: Ganhar é bom. Saber quanto custou é melhor.
+Mara: As licenças abrem as portas certas. Os troféus mantêm elas abertas.
+Sistema: Licenças ficam em Carreira.
+
+= CW_P06B | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE
+Mara: {posicao}. Corrida perdida também paga.
+Mara: A tela da corrida mostra onde ele perdeu tempo. Olhe antes de culpar o carro.
+Mara: As licenças abrem as portas certas. Os troféus mantêm elas abertas.
+Sistema: Licenças ficam em Carreira.
+
+= CW_E01 | EVENTO_BLOQUEADO | personagem=dono; proibe=EVENT_REQUIREMENTS_TUTORIAL_DONE; flags=EVENT_REQUIREMENTS_TUTORIAL_DONE
+Mara: Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença.
+Mara: Não existe melhor carro. Existe o carro certo para cada prova.
+
+# ---------------------------------------------------------------- Licenças
+= CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
+Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA
+Mara: Licença é do piloto, não da oficina.
+Mara: Quem treina e avalia é a Vector Academy.
+[OPEN_LICENSE_CENTER]
+
+= CW_L02 | ABA:LICENCAS | personagem=dono; requer=FIRST_RACE_DONE; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; cenario=vector_academy
+Responsável: Vector Academy. Licença Club.
+Responsável: Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado.
+Responsável: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é dele.
+Mara: Quanto custa?
+Responsável: Nada. Aqui se paga com tempo.
+[HIGHLIGHT_LICENSE_REQUIREMENTS]
+Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
+
+= CW_L03 | LICENCA_TREINO_INICIO | personagem=dono; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED
+Mara: Treino rodando. A oficina não para por isso.
+
+= CW_L04 | LICENCA_PRONTA | personagem=dono; proibe=FIRST_TRAINING_READY; flags=FIRST_TRAINING_READY
+Mara: O treino acabou. Falta a avaliação.
+[OPEN_LICENSE_CENTER]
+Sistema: Faça as missões da avaliação.
+
+= CW_R10 | LICENCA_CONCEDIDA:CLUB | personagem=dono; flags=CLUB_COMPLETE; cenario=vector_academy
+Responsável: Licença Club aprovada.
+Mara: Mais provas disponíveis. E mais gente querendo tirar vantagem de nós.
+Sistema: Novas provas liberadas em Corridas › Club.
+
+= CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
+Responsável: Sport aprovada.
+Mara: Provas maiores. Contas maiores também.
+
+= CW_R10C | LICENCA_CONCEDIDA:NATIONAL | personagem=dono; flags=NATIONAL_COMPLETE; cenario=vector_academy
+Responsável: National aprovada.
+Mara: Agora a gente aparece na lista dos outros.
+
+# A equipe da oficina nasce com a International; o segundo piloto chega com a Pro.
+= CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,SECOND_DRIVER_CREATED
+Responsável: International aprovada.
+Mara: Com essa, a oficina pode inscrever uma equipe.
+Mara: Caixa, folha e patrocínio passam a contar por corrida.
+[UNLOCK_TEAM_TAB]
+Sistema: A aba Equipe está liberada.
+
+= CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE,DRIVER_HIRE_UNLOCKED
+Responsável: Pro aprovada.
+Mara: Um carro só não segura esse nível.
+Mara: Achei alguém para o segundo. Escolha o carro dele na Equipe.
+[OPEN_DRIVER_HIRE]
+
+= CW_T03 | LICENCA_CONCEDIDA:ELITE | personagem=dono; flags=ELITE_COMPLETE; cenario=vector_academy
+Responsável: Elite aprovada.
+Mara: Lembra do carro que veio com as chaves?
+Mara: Eu lembro.
+
+# ---------------------------------------------------------------- Marcos
+= CW_R02 | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=FIRST_WIN; condicao=posicao:1; flags=FIRST_WIN
+Mara: Bom resultado. Agora vamos ver se conseguimos repetir.
+Sistema: Prova vencida pode correr de novo, inclusive com o app fechado.
+
+= CW_G01 | GARAGEM_DOIS_CARROS | personagem=dono; proibe=FIRST_SECOND_CAR; flags=FIRST_SECOND_CAR
+Mara: Dois carros. Duas contas.
+
+= CW_G02 | CAMPEONATO_VENCIDO | personagem=dono; proibe=FIRST_TITLE_TALK; flags=FIRST_TITLE_TALK
+Mara: Título. Guarde o troféu longe da graxa.
+
+= CW_R11 | COLECAO | personagem=dono; condicao=quantidade_min:5; flags=COLLECTION_FIVE
+Mara: Eu lembro quando a gente tinha um único carro.
+
+= CW_R12 | GARAGEM_AMPLIADA | personagem=dono; flags=GARAGE_EXPANDED
+Mara: Mais espaço. Não significa que a gente precise preencher tudo hoje.
+
+# ---------------------------------------------------------------- Comentários de contexto
+# reativa=sim: no máximo um a cada historia.json → reativa_intervalo_corridas corridas.
+= CW_R01 | CORRIDA_FIM | personagem=dono; requer=FIRST_WIN; proibe=FIRST_LOSS_TALK; condicao=posicao_min:2; flags=FIRST_LOSS_TALK; reativa=sim
+Mara: Não deu. Olhe os números antes de trocar metade do carro.
+
+= CW_R03 | CAIXA_BAIXO | personagem=dono; repetivel=sim; reativa=sim
+Mara: A garagem ainda funciona. O caixa, nem tanto.
+Sistema: Prova já vencida rende giros de novo, inclusive com o app fechado.
+
+= CW_R04 | COMPRA_CARRO_CARA | personagem=dono; repetivel=sim; reativa=sim
+Mara: Bonito carro. Espero que você tenha deixado dinheiro pro resto.
+
+# ---------------------------------------------------------------- Respostas do sistema (Mara)
+= CW_SYS01 | SEM_DINHEIRO | personagem=dono; repetivel=sim
+Mara: Não temos isso.
+
+= CW_SYS02 | EVENTO_BLOQUEADO | personagem=dono; requer=EVENT_REQUIREMENTS_TUTORIAL_DONE; repetivel=sim
+Mara: Bom carro. Corrida errada.
+
+= CW_SYS04 | POTENCIA_ACIMA | personagem=dono; repetivel=sim
+Mara: Essa potência o regulamento não aceita.
+
+= CW_SYS09 | LICENCA_EM_TREINO | personagem=dono; repetivel=sim
+Mara: O treino ainda está correndo.
+
+= CW_SYS10 | LICENCA_PRONTA | personagem=dono; requer=FIRST_TRAINING_READY; repetivel=sim
+Mara: Papel pronto. Agora falta dirigir.
+
+= CW_SYS_ENDURANCE | CORRIDA_RESISTENCIA | personagem=dono; proibe=FIRST_ENDURANCE; flags=FIRST_ENDURANCE
+Mara: Velocidade ganha volta. Isso aqui ganha quem não quebra.

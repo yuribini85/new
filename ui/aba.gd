@@ -1304,9 +1304,11 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 			historia("SEM_DINHEIRO")
 		return
 	Sons.tocar_ui(self, "moeda", -4.0)
-	historia("PECA_COMPRADA", {"peca": String(p["nome"])})
-	if p["id"] == String(dados.historia().get("adrian", {}).get("peca_demanda", "")):
-		historia("DEMANDA_CONCLUIDA", {"peca": String(p["nome"])})
+	var falou := historia("PECA_COMPRADA", {"peca": String(p["nome"])})
+	if p["id"] == Prologo.demanda(dados, jogador):
+		falou = historia("DEMANDA_CONCLUIDA", {"peca": String(p["nome"])}) or falou
+	if not falou and jogador.historia != null and jogador.historia.caixa_baixo():
+		historia("CAIXA_BAIXO")
 	var mudancas := _diferencas(antes, c.atributos_efetivos("seco")).map(func(x): return x[0])
 	avisar("%s %s%s." % ["Em uso de novo:" if possuida else "Em uso:", p["nome"],
 			" (" + ", ".join(mudancas) + ")" if not mudancas.is_empty() else ""])

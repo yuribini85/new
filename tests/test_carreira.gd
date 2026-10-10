@@ -198,6 +198,75 @@ func test_prologo_adrian_acidente_e_elena() -> void:
 	d.free()
 
 
+## Chrome & Wreckage: o dono da oficina começa com o carro e a peça da
+## demanda, sem licença; quem corre é o piloto da campanha. Cenas valem para
+## listas de personagens, comentários de contexto respeitam o intervalo em
+## corridas e a condição de quantidade.
+func test_campanha_do_dono_e_comentarios() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	igual(Prologo.iniciar(d, j, "dono"), "", "começa como dono")
+	igual(j.personagem, "dono", "personagem")
+	igual(j.licencas, [], "sem licença")
+	igual(j.garagem.lista().size(), 1, "carro da oficina")
+	igual(j.economia.saldo, 299, "saldo pelo mesmo critério do Adrian")
+	igual(Prologo.demanda(d, j), "turbo", "peça da demanda")
+	igual(EquipeJogador.nome_jogador(d, j), "Beto", "o piloto da campanha corre")
+	verificar(not Prologo.deve_ultima_corrida(d, j), "sem a última corrida do Adrian")
+	var h := Historia.new(d, j)
+	j.historia = h
+	j.flags["DUPLA"] = true
+	igual(h.cena_para("SEM_DINHEIRO").get("id"), "dupla", "cena com lista de personagens")
+	j.personagem = "elena"
+	igual(h.cena_para("SEM_DINHEIRO").get("id"), "sempre", "fora da lista, a próxima")
+	j.personagem = "dono"
+	j.dias = 10
+	h.concluir(h.cena_para("CAIXA_BAIXO"))
+	igual(j.ultima_reativa, 10, "comentário marca a corrida")
+	igual(h.cena_para("CAIXA_BAIXO"), {}, "não repete antes do intervalo")
+	j.dias = 13
+	igual(h.cena_para("CAIXA_BAIXO").get("id"), "comentario", "volta depois de 3 corridas")
+	igual(h.cena_para("COLECAO", {"quantidade": 1}), {}, "coleção abaixo do marco")
+	igual(h.cena_para("COLECAO", {"quantidade": 2}).get("id"), "colecao", "marco da coleção")
+	igual(h.colecao(), 1, "um modelo na garagem")
+	j.economia.saldo = 0
+	verificar(h.caixa_baixo(), "sem dinheiro para a peça mais barata")
+	j.economia.saldo = 1000000
+	verificar(not h.caixa_baixo(), "com dinheiro")
+	var precos: Array = d.lista("carros").map(func(c): return int(c["preco"]))
+	verificar(h.carro_caro(precos.max() + 1) and not h.carro_caro(precos.min()), "carro caro pelo percentil")
+	igual(int(Save.serializar(j).get("ultima_reativa", -1)), 10, "intervalo vai para o save")
+	j.free()
+	d.free()
+
+
+## Cenas reais: o jogo novo é a campanha do dono; Adrian e Elena seguem com as
+## cenas deles, e as falas do Marcus de sistema não aparecem para o dono.
+func test_cenas_reais_da_campanha_do_dono() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	if d.historia().is_empty():
+		d.free()
+		return
+	igual(Prologo.campanha(d), "dono", "jogo novo é Chrome & Wreckage")
+	var j: Node = JogadorScript.new()
+	igual(Prologo.iniciar(d, j), "", "começa")
+	var h := Historia.new(d, j)
+	j.historia = h
+	igual(h.cena_para("GAME_START").get("id"), "CW_P01", "abertura da Mara")
+	var sem: Dictionary = h.cena_para("SEM_DINHEIRO")
+	igual(sem["falas"][0]["quem"], "mara", "sem dinheiro: Mara")
+	for c in d.lista("dialogos"):
+		if String(c["id"]).begins_with("CW_"):
+			for f in c["falas"]:
+				verificar(f.get("quem", "mara") in ["mara", "piloto_casa", "responsavel", "sistema"],
+						"%s: só Mara, piloto, academia ou sistema" % c["id"])
+	j.personagem = "elena"
+	verificar(String(h.cena_para("SEM_DINHEIRO").get("id", "")) == "SYS_01", "Elena segue com o Marcus")
+	j.free()
+	d.free()
+
+
 func test_equipe_folha_e_companheiro() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
@@ -246,6 +315,8 @@ func test_cenarios_de_teste_montam() -> void:
 		var j: Node = JogadorScript.new()
 		igual(Cenarios.montar(d, j, c["id"]), "", "cenário %s monta" % c["id"])
 		match c["id"]:
+			"dono_inicio":
+				igual(j.personagem, "dono", "dono_inicio: dono")
 			"adrian_inicio", "adrian_ultima":
 				igual(j.personagem, "adrian", "%s: Adrian" % c["id"])
 			"elena_inicio":

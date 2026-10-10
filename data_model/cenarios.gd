@@ -7,6 +7,7 @@ extends RefCounted
 ## save do jogador: o SaveManager troca para um arquivo próprio do cenário.
 
 const LISTA := [
+	{"id": "dono_inicio", "nome": "Oficina: começo", "detalhe": "Jogo novo, campanha do dono com a Mara."},
 	{"id": "adrian_inicio", "nome": "Adrian: começo", "detalhe": "Jogo novo, prólogo do Adrian."},
 	{"id": "adrian_ultima", "nome": "Adrian: antes da última corrida",
 		"detalhe": "Primeiro campeonato feito: a próxima largada é a última dele."},
@@ -26,10 +27,12 @@ const TRIGGERS_ULTIMA := ["ULTIMA_CORRIDA_ADRIAN", "RADIO_ULTIMA_CORRIDA", "ACID
 
 ## Monta o cenário no jogador. "" ou o motivo de não dar.
 static func montar(dados: Node, jogador: Node, id: String) -> String:
-	var erro := Prologo.iniciar(dados, jogador)
+	var erro := Prologo.iniciar(dados, jogador, "dono" if id.begins_with("dono") else "adrian")
 	if erro != "":
 		return erro
 	match id:
+		"dono_inicio":
+			pass
 		"adrian_inicio":
 			pass
 		"adrian_ultima":

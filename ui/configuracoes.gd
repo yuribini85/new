@@ -71,7 +71,7 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 			[["Sim, recomeçar", aba._recomecar], ["Cancelar", func(): pass]]), v)
 
 	_secao(aba, v, "SOBRE")
-	aba.rotulo("Second Driver v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
+	aba.rotulo("Chrome & Wreckage v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
 			Aba.versao()], Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)
 
 

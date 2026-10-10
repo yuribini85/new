@@ -330,7 +330,7 @@ func _evolucao(c: Carro) -> void:
 		if pr[1] > 0:
 			itens.append([cat, NOMES_CATEGORIA.get(cat, cat), pr])
 	itens.append(["pneus", "Pneus", _progresso_pneus(c)])
-	var demanda := String(dados.historia().get("adrian", {}).get("peca_demanda", ""))
+	var demanda := Prologo.demanda(dados, jogador)
 	var cat_demanda := String(dados.peca(demanda).get("categoria", "")) if dados.existe("pecas", demanda) else ""
 	for it in itens:
 		var b := Button.new()
@@ -540,7 +540,7 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 		elif p["id"] in c.pecas_possuidas:
 			texto += "   ✓"
 		var b := _item_evolucao(v, c, cat, String(p["id"]), texto, "uso" if instalada else "", p["id"] == escolhido.get("id"))
-		if p["id"] == String(dados.historia().get("adrian", {}).get("peca_demanda", "")) or (cat == "brake"
+		if p["id"] == Prologo.demanda(dados, jogador) or (cat == "brake"
 				and not ancoras.has("BRAKES")):
 			ancora("BRAKES", b)
 	if cat == "cambio" and c.pecas.has("cambio"):
@@ -889,6 +889,7 @@ func _ampliacao() -> Array:
 		else:
 			avisar("Garagem com %d vagas." % jogador.garagem.vagas)
 			Sons.tocar_ui(self, "moeda", -4.0)
+			historia("GARAGEM_AMPLIADA")
 		mudou.emit()
 		_reabrir_garagem(), "giros"]
 

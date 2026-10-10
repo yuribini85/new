@@ -4,7 +4,10 @@ em data/dialogos.json. Não editar o JSON à mão: editar cenas.txt e rodar de n
 
 Cena: {id, trigger, falas: [{quem, texto} | {acao}], requer, proibe, flags,
 personagem?, condicao?, bloqueia, uma_vez, proxima?, capitulo?, cenario?,
-lembrete?, segura_largada?}
+lembrete?, segura_largada?, reativa?}
+personagem=a,b: a cena vale para qualquer um deles (lista). reativa=sim:
+comentário de contexto, no máximo um a cada `reativa_intervalo_corridas`
+corridas (data/historia.json).
 lembrete=ID: se o jogador não fizer o que a cena pede em alguns segundos, a cena
 ID (trigger LEMBRETE) aparece, enquanto ainda valer. segura_largada=sim: a
 corrida fica parada no grid até a cena acabar.
@@ -20,7 +23,7 @@ import sys
 RAIZ = pathlib.Path(__file__).resolve().parent.parent.parent
 FONTE = RAIZ / "tools/historia/cenas.txt"
 SAIDA = RAIZ / "data/dialogos.json"
-QUEM = {"Adrian": "adrian", "Elena": "elena", "Marcus": "marcus", "Victor": "victor", "Lucas": "lucas",
+QUEM = {"Mara": "mara", "Piloto": "piloto_casa", "Adrian": "adrian", "Elena": "elena", "Marcus": "marcus", "Victor": "victor", "Lucas": "lucas",
         "Sophie": "sophie", "Vendedor": "vendedor", "Responsável": "responsavel", "Jornalista": "jornalista",
         "Sistema": "sistema"}
 
@@ -43,6 +46,8 @@ def main() -> int:
                     c[k] = [x.strip() for x in v.split(",") if x.strip()]
                 elif k == "bloqueia":
                     c["bloqueia"] = v == "sim"
+                elif k == "reativa":
+                    c["reativa"] = v == "sim"
                 elif k == "segura_largada":
                     c["segura_largada"] = v == "sim"
                 elif k == "repetivel":
@@ -50,7 +55,10 @@ def main() -> int:
                 elif k == "condicao":
                     ck, cv = v.split(":")
                     c["condicao"] = {ck: int(cv)}
-                elif k in ("personagem", "proxima", "capitulo", "cenario", "lembrete"):
+                elif k == "personagem":
+                    ps = [x.strip() for x in v.split(",") if x.strip()]
+                    c[k] = ps[0] if len(ps) == 1 else ps
+                elif k in ("proxima", "capitulo", "cenario", "lembrete"):
                     c[k] = v
                 else:
                     sys.exit(f"{FONTE.name}:{n}: opção desconhecida {k}")

@@ -100,6 +100,8 @@ func _linha_folha(pai: Control, texto: String, chave: String, v: int, sinal: Str
 func _pilotos(eq: Dictionary) -> void:
 	titulo_secao("PILOTOS")
 	var c := cartao()
+	if Prologo.piloto(dados, jogador) != "":
+		_linha_piloto(c, EquipeJogador.nome_jogador(dados, jogador), "PILOTO PRINCIPAL")
 	for p in eq.get("pilotos", []):
 		if String(p["id"]).begins_with(String(jogador.personagem) + "_"):
 			_linha_piloto(c, String(p["nome"]), "PILOTO PRINCIPAL")

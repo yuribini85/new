@@ -10,6 +10,14 @@
  "elena": {
   "saldo": "saldo_inicial"
  },
+ "dono": {
+  "carro": "fraco",
+  "licencas": [],
+  "peca_demanda": "turbo",
+  "piloto": "beto"
+ },
+ "reativa_intervalo_corridas": 3,
+ "carro_caro_percentil": 0.5,
  "ultima_corrida_apos": "FIRST_CHAMPIONSHIP_DONE",
  "radio_fracao": 0.4,
  "acidente_fracao": 0.6,

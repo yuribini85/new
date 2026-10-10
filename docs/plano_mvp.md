@@ -150,7 +150,8 @@ técnico real do projeto.
 6. **Fabricantes: 3 no primeiro build, 8 a 10 no lançamento.** Primeiro build: uma
    japonesa, uma alemã e uma de outra escola. Lançamento: ~3 japonesas, 2 alemãs, 1
    italiana, 1 americana, 1 britânica, 1 francesa.
-7. **Nome oficial: Second Drive** (antes Apex Garage, provisório). A pasta de dados do
+7. **Nome oficial: Second Drive** (antes Apex Garage, provisório; trocado para Chrome &
+   Wreckage pela decisão 44). A pasta de dados do
    aparelho continua "Apex Garage" para preservar os saves. Recomendada a busca de marca
    registrada e nas lojas (App Store e Google Play) antes do lançamento.
 
@@ -300,3 +301,20 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 43. **Garagem com vagas:** começa com 4; cada ampliação dobra as vagas. A 1ª custa a
     soma dos prêmios de 1º lugar das provas da licença Club × 2; cada uma seguinte
     custa o dobro da anterior (`data/garagem.json`).
+
+### Chrome & Wreckage (decisões do usuário, 2026-10-10)
+
+44. **Nome: Chrome & Wreckage.** A pasta de dados do aparelho continua "Apex Garage"
+    (saves preservados).
+45. **Campanha do dono para jogos novos.** O jogador é o novo dono de uma oficina; Mara
+    Hayes, mecânica veterana, é a guia (falas curtas). Quem corre é um piloto fixo
+    apresentado por ela (contratação fica para depois). Começa com a mesma montagem do
+    Adrian (carro, pneu, primeira peça e o critério de saldo), sem licenças. Equipe na
+    International e segundo piloto na Pro. Saves com Adrian ou Elena seguem a história
+    deles. Dados em `data/historia.json` → `nova_campanha`, `dono`.
+46. **Comentários de contexto:** no máximo um a cada 3 corridas
+    (`reativa_intervalo_corridas`). Caixa baixo = o saldo não paga a peça mais barata do
+    carro em uso. Só a Mara fala por enquanto; sem tela de histórico dos carros.
+47. **Arena:** só o botão na barra de baixo, com ícone genérico e sem tela, até o modo
+    existir. Sem regras de perda, reparo ou integridade de piloto por enquanto.
+

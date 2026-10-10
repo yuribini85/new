@@ -8,17 +8,31 @@ extends RefCounted
 ## vazia. No salto temporal, Elena volta sem licença, sem carro e com a
 ## poupança (`elena.saldo`: "saldo_inicial" = o saldo inicial do GT2).
 ## As frações são momentos da apresentação, não balanceamento.
+##
+## Chrome & Wreckage: o jogo novo usa a campanha de `nova_campanha` (padrão
+## "adrian"). Em "dono", o jogador é o novo dono de uma oficina e Mara Hayes o
+## guia; o carro, o pneu, as licenças e a primeira peça vêm de historia.json →
+## dono, com a mesma montagem do Adrian, e quem dirige é o piloto `piloto`
+## (personagens.json). Saves com Adrian ou Elena seguem a história deles.
 
 
-## Começa um jogo novo como Adrian. "" ou o motivo de não poder (dados faltando).
-## O carro dele (`carro`, na cor `cor`) já vem com o pneu `pneu`; o freio é o de
-## fábrica, e a primeira demanda é comprar `peca_demanda`.
-static func iniciar(dados: Node, jogador: Node) -> String:
-	var cfg: Dictionary = dados.historia().get("adrian", {})
+## Campanha de um jogo novo (id em historia.json e em jogador.personagem).
+static func campanha(dados: Node) -> String:
+	return String(dados.historia().get("nova_campanha", "adrian"))
+
+
+## Começa um jogo novo pela campanha (`id`; "" = a de nova_campanha). "" ou o
+## motivo de não poder (dados faltando). O carro (`carro`, na cor `cor`) já vem
+## com o pneu `pneu`; o freio é o de fábrica, e a primeira demanda é comprar
+## `peca_demanda`.
+static func iniciar(dados: Node, jogador: Node, id := "") -> String:
+	if id == "":
+		id = campanha(dados)
+	var cfg: Dictionary = dados.historia().get(id, {})
 	if cfg.is_empty() or not dados.existe("carros", cfg.get("carro", "")):
-		return "historia.json sem o carro do Adrian"
+		return "historia.json sem o carro de " + id
 	jogador.novo_jogo(dados.economia(), dados.pneu)
-	jogador.personagem = "adrian"
+	jogador.personagem = id
 	jogador.licencas = Array(cfg.get("licencas", [])).duplicate()
 	var carro := Carro.new(dados.carro(cfg["carro"]))
 	carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
@@ -44,6 +58,21 @@ static func saldo_inicial(dados: Node, carro_id: String, peca_id: String) -> int
 		if mais_barata < 0 or int(p["preco"]) < mais_barata:
 			mais_barata = int(p["preco"])
 	return int(dados.peca(peca_id)["preco"]) + maxi(mais_barata - 1, 0)
+
+
+## Peça da primeira demanda do personagem ("" se ele não tem).
+static func demanda(dados: Node, jogador: Node) -> String:
+	if String(jogador.personagem) == "":
+		return ""
+	return String(dados.historia().get(String(jogador.personagem), {}).get("peca_demanda", ""))
+
+
+## Piloto que dirige pelo jogador na campanha (id em personagens.json; "" se
+## quem dirige é o próprio personagem).
+static func piloto(dados: Node, jogador: Node) -> String:
+	if String(jogador.personagem) == "":
+		return ""
+	return String(dados.historia().get(String(jogador.personagem), {}).get("piloto", ""))
 
 
 ## O carro do Adrian não pode ser vendido no prólogo (só sai no acidente).

@@ -427,8 +427,14 @@ func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 	if jogador.carro_ativo < 0:
 		jogador.carro_ativo = uid
 	entrega(jogador.garagem.carro(uid))
-	historia("COMPRA_CARRO", {"carro": String(c["nome"])})
+	var falou := historia("COMPRA_CARRO", {"carro": String(c["nome"])})
 	if preco == int(c.get("preco", -1)):
-		historia("COMPRA_CARRO_NOVO")
+		falou = historia("COMPRA_CARRO_NOVO") or falou
 	if jogador.garagem.lista().size() == 2:
-		historia("GARAGEM_DOIS_CARROS")
+		falou = historia("GARAGEM_DOIS_CARROS") or falou
+	# Comentários de contexto: só um, e só se nada mais falou nesta compra.
+	var h: Historia = jogador.historia
+	if h != null and not falou:
+		var _f := historia("COLECAO", {"quantidade": h.colecao()}) \
+				or (h.carro_caro(preco) and historia("COMPRA_CARRO_CARA", {"carro": String(c["nome"])})) \
+				or (h.caixa_baixo() and historia("CAIXA_BAIXO"))
