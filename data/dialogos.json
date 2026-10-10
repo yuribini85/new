@@ -2853,6 +2853,63 @@
   "personagem": "dono"
  },
  {
+  "id": "CW_L05",
+  "trigger": "LICENCA_DISPONIVEL:SPORT",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Os requisitos da Sport estão cumpridos.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Falta o treino. Esse a corrida não resolve sozinha."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SPORT_AVAILABLE_SEEN"
+  ],
+  "flags": [
+   "SPORT_AVAILABLE_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_L06",
+  "trigger": "LICENCA_DISPONIVEL:NATIONAL",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "National disponível.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Daqui para cima, vitória solta não basta. Pede título.",
+    "pose": "firme"
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "NATIONAL_AVAILABLE_SEEN"
+  ],
+  "flags": [
+   "NATIONAL_AVAILABLE_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_R10",
   "trigger": "LICENCA_CONCEDIDA:CLUB",
   "falas": [

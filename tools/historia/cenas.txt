@@ -591,6 +591,16 @@ Mara[gesto]: O treino acabou. Falta a avaliação.
 [OPEN_LICENSE_CENTER]
 Sistema: Faça as missões da avaliação.
 
+= CW_L05 | LICENCA_DISPONIVEL:SPORT | personagem=dono; proibe=SPORT_AVAILABLE_SEEN; flags=SPORT_AVAILABLE_SEEN
+Mara[gesto]: Os requisitos da Sport estão cumpridos.
+Mara: Falta o treino. Esse a corrida não resolve sozinha.
+[OPEN_LICENSE_CENTER]
+
+= CW_L06 | LICENCA_DISPONIVEL:NATIONAL | personagem=dono; proibe=NATIONAL_AVAILABLE_SEEN; flags=NATIONAL_AVAILABLE_SEEN
+Mara[explica]: National disponível.
+Mara[firme]: Daqui para cima, vitória solta não basta. Pede título.
+[OPEN_LICENSE_CENTER]
+
 = CW_R10 | LICENCA_CONCEDIDA:CLUB | personagem=dono; flags=CLUB_COMPLETE; cenario=vector_academy
 Responsável: Licença Club aprovada.
 Mara[alerta]: Mais provas disponíveis. E mais gente querendo tirar vantagem de nós.

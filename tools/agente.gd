@@ -13,6 +13,11 @@ extends RefCounted
 ##   renda      como sugestoes, mas compra a opção de maior ganho por crédito e
 ##              junta dinheiro na prova vencida de maior Cr por minuto já visto.
 ##
+## Campanha (jogar_campanha): começa como o jogo novo da história (o carro e o
+## saldo do Prologo) e compra primeiro a peça da demanda, como a cena pede.
+## `ouvinte` (opcional) recebe cada ação (corrida, carro, peca, treino,
+## licenca) com o contexto, para o playtest da história (tools/playtest_campanha.gd).
+##
 ## Contabilidade: renda bruta (prêmios), gastos (carros, peças, pneus) e saldo,
 ## por fase (sem licença, B, A). Tempo = só corrida (a fila); decisões, menus e
 ## contratos não contam tempo aqui: isso vem do playtest de ritmo.
@@ -42,6 +47,12 @@ var _renda := {}  # evento_id -> {cr, s, n}
 var _ultima_vencida := ""
 ## Prova cuja derrota motivou a última compra (para o marco "ciclo").
 var _comprou_para := ""
+var ouvinte := Callable()
+
+
+func _avisar(acao: String, ctx: Dictionary) -> void:
+	if ouvinte.is_valid():
+		ouvinte.call(acao, ctx)
 
 
 ## "Jogador" com saldo sem fim, só para listar o que existe acima do saldo.
@@ -66,6 +77,26 @@ func liberar() -> void:
 ## `limite_s` de corrida ou até não ter prova a vencer nem carro que ajude.
 func jogar(oferta: Dictionary, limite_s: float) -> Dictionary:
 	_comprar_carro(oferta, "carro inicial")
+	return _laco(limite_s)
+
+
+## Jogo novo pela campanha `id` (historia.json): o carro da campanha e a peça
+## da demanda comprada antes da primeira prova.
+func jogar_campanha(id: String, limite_s: float) -> Dictionary:
+	var erro := Prologo.iniciar(d, j, id)
+	if erro != "":
+		return {"erro": erro}
+	j.carreira = Carreira.new(d, j)
+	uid = j.carro_ativo
+	_avisar("inicio", {})
+	var demanda := Prologo.demanda(d, j)
+	if d.existe("pecas", demanda):
+		var p: Dictionary = d.peca(demanda)
+		_comprar_item({"tipo": "peca", "item": p, "nome": String(p["nome"]), "preco": int(p["preco"])})
+	return _laco(limite_s)
+
+
+func _laco(limite_s: float) -> Dictionary:
 	while tempo < limite_s:
 		_talvez_contratos()
 		_talvez_licenca_a()
@@ -120,6 +151,7 @@ func _chave(evento_id: String) -> String:
 
 
 func _correr(evento_id: String, tipo: String) -> Dictionary:
+	_avisar("largada", {"evento": evento_id, "tipo": tipo})
 	semente += 1
 	var r: Dictionary = j.carreira.disputar(evento_id, uid, hash("agente:%s:%d" % [perfil, semente]))
 	if r.has("erro"):
@@ -145,6 +177,8 @@ func _correr(evento_id: String, tipo: String) -> Dictionary:
 		marcos["vitoria_b"] = tempo
 	if r["carro_premio_uid"] > 0:
 		log.append("carro-prêmio em %s" % d.evento(evento_id)["nome"])
+	_avisar("corrida", {"evento": evento_id, "posicao": int(r["posicao"]), "tipo": tipo,
+			"campeao": bool(r.get("campeonato", {}).get("campeao", false))})
 	return r
 
 
@@ -256,6 +290,7 @@ func _comprar_item(o: Dictionary) -> void:
 		_fase_stats()["gastos"] += int(o["preco"])
 		log.append("%.0f min: comprou %s (%d)" % [tempo / 60.0, o["nome"], o["preco"]])
 		_tentativas.clear()
+		_avisar("peca", {"id": String(o["item"]["id"]), "peca": String(o["nome"])})
 
 
 ## Sem prova a vencer com este carro: outro carro da garagem que tenha prova a
@@ -326,6 +361,8 @@ func _comprar_carro(o: Dictionary, motivo: String) -> void:
 	_fase_stats()["gastos"] += int(o["preco"])
 	log.append("%.0f min: %s, %s (%d)" % [tempo / 60.0, motivo, o["carro_id"], o["preco"]])
 	_tentativas.clear()
+	j.carro_ativo = uid
+	_avisar("carro", {"carro_id": String(o["carro_id"]), "preco": int(o["preco"]), "novo": not o.has("chave")})
 
 
 ## Contratos da Club (a B do GT2): o treino começa logo (decisão 33; o relógio
@@ -337,10 +374,12 @@ func _talvez_contratos() -> void:
 	var lic := Licencas.new(d, j)
 	if lic.estado("CLUB", tempo) == Licencas.AVAILABLE:
 		lic.iniciar_treino("CLUB", tempo)
+		_avisar("treino", {"licenca": "CLUB"})
 	if perfil != "explora" and not marcos.has("primeira_vitoria"):
 		return
 	if not lic.pode_avaliar("CLUB", tempo):
 		return
+	_avisar("pronta", {"licenca": "CLUB"})
 	var ct := Contratos.new(d, j)
 	var envios := 0
 	for c in Contratos.da_licenca(d, "CLUB"):
@@ -349,6 +388,7 @@ func _talvez_contratos() -> void:
 		ct.enviar(c["id"], m["montagem"], tempo)
 	marcos["envios_contratos_b"] = envios
 	if "CLUB" in j.licencas:
+		_avisar("licenca", {"licenca": "CLUB"})
 		marcos["licenca_b"] = tempo
 		log.append("%.0f min: licença Club pelos contratos (%d envios)" % [tempo / 60.0, envios])
 	else:
@@ -406,8 +446,12 @@ func _talvez_licenca_a() -> void:
 	var lic := Licencas.new(d, j)
 	if lic.estado("SPORT", tempo) == Licencas.AVAILABLE:
 		lic.iniciar_treino("SPORT", tempo)
+		_avisar("treino", {"licenca": "SPORT"})
 	if not lic.pode_avaliar("SPORT", tempo):
 		return
+	if not marcos.has("pronta_a"):
+		marcos["pronta_a"] = tempo
+		_avisar("pronta", {"licenca": "SPORT"})
 	if perfil != "explora" and not marcos.has("vitoria_b"):
 		return
 	var tentou := int(marcos.get("tentativas_a", 0))
@@ -424,5 +468,6 @@ func _talvez_licenca_a() -> void:
 		tempo += float(r["tempo"])
 		_fase_stats()["tempo_s"] += float(r["tempo"])
 	if "SPORT" in j.licencas:
+		_avisar("licenca", {"licenca": "SPORT"})
 		marcos["licenca_a"] = tempo
 		log.append("%.0f min: licença Sport" % (tempo / 60.0))
