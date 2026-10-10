@@ -82,6 +82,11 @@ func _ready() -> void:
 	_cabecalho.configuracoes.connect(_abrir_configuracoes)
 	_cabecalho.acelerar.connect(_abrir_aceleracao)
 	_cabecalho.garagem.connect(func(): _todas[0].abrir_garagem())
+	_cabecalho.corrida.connect(func():
+		if jogador.fila.is_empty():
+			_sobre.avisar("Nenhuma corrida em andamento.", false)
+		else:
+			_ir_para(4))
 	_cabecalho.marcador.visible = not _regras_aceleracao().is_empty()
 	_ancoras["SALDO"] = _cabecalho.painel
 	_meta = [_cabecalho.painel]
@@ -261,6 +266,7 @@ func _ir_para(i: int, voltando := false) -> void:
 	_cabecalho.definir_titulo(TITULOS[i].to_upper())
 	_cabecalho.definir_volta(not _historico.is_empty())
 	_cabecalho.mostrar_garagem(i == 0)
+	_cabecalho.mostrar_corrida(i != 4)
 	_atualizar_ao_vivo()
 	_foco_corrida()
 
@@ -364,6 +370,7 @@ func _foco_corrida() -> void:
 ## Faixa "ao vivo" acima da navegação enquanto a fila corre (fora da Corrida).
 func _atualizar_ao_vivo() -> void:
 	var f: Dictionary = jogador.fila
+	_cabecalho.definir_corrida(not f.is_empty())
 	_ao_vivo.visible = not f.is_empty() and not _abas.current_tab in [3, 4]
 	if not _ao_vivo.visible:
 		return

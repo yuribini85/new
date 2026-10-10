@@ -78,10 +78,13 @@ const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
 ## Nome do carro no palco (fonte) e altura da diagonal ocre na frente dele;
 ## a linha fica na altura das abas penduradas, à esquerda delas.
 const TAMANHO_NOME := 34
+const TAMANHO_NOME_MIN := 24
 const ALTURA_NOME := 40
 const TOPO_NOME := 4
-const RESERVA_ABAS := 380
+const RESERVA_ABAS := 420
 const OPACIDADE_SETAS := 0.5
+## Quanto o carro em sprite sobe no palco (px).
+const SUBIR_SPRITE := 60.0
 ## Altura do palco (carro e ficha): ocupa o espaço que sobra até a Evolução.
 const ALTURA_PALCO := 560.0
 ## Cartões da ficha (potência, peso, velocidade máxima): altura, ícone, dentes
@@ -170,6 +173,11 @@ func _palco(c: Carro, lista: Array) -> Control:
 	_vitrine.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	palco.add_child(_vitrine)
 	cenario_topo(palco)
+	# A arte dos carros é desenhada num ângulo mais alto que o carro 3D: o
+	# sprite sobe para assentar no chão iluminado do cenário.
+	var subir := SUBIR_SPRITE if ArteCarro.textura(c.id, "iso") != null else 0.0
+	_vitrine.offset_top = -subir
+	_vitrine.offset_bottom = -subir
 	# Cabeçalho: só o nome (e se está correndo agora).
 	var tl := VBoxContainer.new()
 	tl.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
@@ -193,7 +201,16 @@ func _palco(c: Carro, lista: Array) -> Control:
 	diag.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	linha_nome.add_child(diag)
 	var nome_carro := _hud_rotulo(c.base["nome"], 0, Color.WHITE, linha_nome)
-	Tipografia.rotulo(nome_carro, "semibold", TAMANHO_NOME)
+	# Nome longo: a fonte diminui até caber ao lado das abas (depois, "…").
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 20.0 - RESERVA_ABAS - ALTURA_NOME * 88.0 / 119.0 - 10.0
+	var tam := TAMANHO_NOME
+	Tipografia.rotulo(nome_carro, "semibold", tam)
+	# Mede com a fonte do próprio rótulo (com o espaçamento entre letras).
+	var fonte_nome := nome_carro.get_theme_font("font")
+	while tam > TAMANHO_NOME_MIN and fonte_nome.get_string_size(c.base["nome"],
+			HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	nome_carro.add_theme_font_size_override("font_size", tam)
 	nome_carro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome_carro.clip_text = true
 	nome_carro.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS

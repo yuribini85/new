@@ -1,7 +1,8 @@
 class_name IconeVetor
 extends Control
 ## Ícone desenhado por código (provisório até a arte do pack): "engrenagem"
-## (configurações), "acelerar" (corridas aceleradas, dois triângulos) e os das
+## (configurações), "acelerar" (corridas aceleradas, dois triângulos), "bandeira"
+## (voltar à corrida, quadriculada) e os das
 ## câmeras da corrida: "camera" (AUTO, o diretor), "seta" (o seu carro, a
 ## mesma seta que fica sobre ele), "coroa" (líder), "frente" (o carro à
 ## frente), "pista" (visão geral) e "dados" (vista tática). Escala com o
@@ -48,6 +49,8 @@ func _draw() -> void:
 			for k in 4:
 				var q := c + Vector2(-0.82 + (k % 2) * 0.92, -0.82 + (k / 2) * 0.92) * lado * 0.5
 				draw_rect(Rect2(q, Vector2(0.72, 0.72) * lado * 0.5), cor)
+		"bandeira":
+			_bandeira(c, lado * 0.5)
 		"lista":
 			for k in 3:
 				var y := c.y + (-0.7 + k * 0.7) * lado * 0.5
@@ -68,6 +71,22 @@ func _engrenagem(c: Vector2, r: float) -> void:
 	draw_colored_polygon(pontos, cor)
 	draw_circle(c, interno * 0.98, cor)
 	draw_circle(c, r * 0.32, cor_fundo)
+
+
+## Bandeira quadriculada de chegada no mastro.
+func _bandeira(c: Vector2, r: float) -> void:
+	var x0 := c.x - r * 0.78
+	draw_rect(Rect2(Vector2(x0, c.y - r * 0.92), Vector2(r * 0.16, r * 1.84)), cor)
+	var topo := Vector2(x0 + r * 0.16, c.y - r * 0.9)
+	var w := r * 1.42
+	var h := r * 1.02
+	draw_rect(Rect2(topo, Vector2(w, h)), cor, false, maxf(r * 0.08, 1.0))
+	var n := Vector2i(4, 3)
+	var q := Vector2(w / n.x, h / n.y)
+	for i in n.x:
+		for j in n.y:
+			if (i + j) % 2 == 0:
+				draw_rect(Rect2(topo + Vector2(i * q.x, j * q.y), q), cor)
 
 
 func _acelerar(c: Vector2, r: float) -> void:

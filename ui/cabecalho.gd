@@ -9,12 +9,14 @@ extends Control
 ## À direita, a engrenagem das configurações. Pendurado sob o painel, o marcador
 ## das corridas aceleradas (decisão 39): "ACELERAR" quando parado; aceso, com o
 ## fator e o tempo que falta, quando ativo. Tocar abre a tela da aceleração.
-## Na Oficina, outra aba pendurada ao lado: GARAGEM (os carros, as vagas e a venda).
+## Ao lado, a bandeira (voltar à corrida em andamento) e, na Oficina, GARAGEM
+## (os carros, as vagas e a venda).
 
 signal voltar
 signal configuracoes
 signal acelerar
 signal garagem
+signal corrida
 
 const PASTA := "res://arte/ui/cabecalho/"
 const ALTURA := 84  # faixa dos elementos (px da tela de 720)
@@ -45,6 +47,8 @@ var _faixa: HBoxContainer
 var _area_segura := 0.0
 var marcador: Button
 var aba_garagem: Button
+var aba_corrida: Button
+var _icone_corrida: IconeVetor
 var engrenagem: Button
 var _icone_marcador: IconeVetor
 var _caixa_marcador: HBoxContainer
@@ -163,6 +167,7 @@ func _init() -> void:
 	_faixa.add_child(engrenagem)
 	_espaco(6)
 	_criar_marcador()
+	_criar_aba_corrida()
 	_criar_aba_garagem()
 	titulo.resized.connect(_ajustar_titulo)
 	resized.connect(_posicionar)
@@ -189,11 +194,16 @@ func _posicionar() -> void:
 		var w := maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
 		marcador.size = Vector2(w, ALTURA_MARCADOR)
 		marcador.position = Vector2(size.x - w - 14.0, altura_total())
-		if aba_garagem != null:
-			var wg: float = (aba_garagem.get_child(0) as Control).get_combined_minimum_size().x + 34.0
-			aba_garagem.size = Vector2(wg, ALTURA_MARCADOR)
-			var direita := marcador.position.x - 10.0 if marcador.visible else size.x - 14.0
-			aba_garagem.position = Vector2(direita - wg, altura_total())
+		# Da direita para a esquerda: ACELERAR, a bandeira (voltar à corrida) e,
+		# na Oficina, GARAGEM.
+		var direita := marcador.position.x - 10.0 if marcador.visible else size.x - 14.0
+		for aba in [aba_corrida, aba_garagem]:
+			if aba == null or not aba.visible:
+				continue
+			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
+			aba.size = Vector2(wa, ALTURA_MARCADOR)
+			aba.position = Vector2(direita - wa, altura_total())
+			direita -= wa + 10.0
 
 
 ## Título da tela, em fonte menor se não couber (a engrenagem tira espaço).
@@ -273,10 +283,6 @@ func _criar_aba_garagem() -> void:
 	h.add_theme_constant_override("separation", 10)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	aba_garagem.add_child(h)
-	var ic := IconeVetor.new("grade", COR_APAGADO)
-	ic.custom_minimum_size = Vector2(26, 26)
-	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	h.add_child(ic)
 	var t := Label.new()
 	t.text = "GARAGEM"
 	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -286,6 +292,38 @@ func _criar_aba_garagem() -> void:
 	h.add_child(t)
 	aba_garagem.visible = false
 	add_child(aba_garagem)
+
+
+## Aba da bandeira: volta para a corrida em andamento (acesa quando há uma).
+func _criar_aba_corrida() -> void:
+	aba_corrida = Button.new()
+	aba_corrida.focus_mode = Control.FOCUS_NONE
+	aba_corrida.tooltip_text = "Voltar à corrida"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_corrida.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_corrida.pressed.connect(func(): corrida.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_corrida.add_child(h)
+	_icone_corrida = IconeVetor.new("bandeira", COR_APAGADO)
+	_icone_corrida.custom_minimum_size = Vector2(34, 30)
+	_icone_corrida.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_icone_corrida)
+	add_child(aba_corrida)
+
+
+## Bandeira acesa (ocre) com corrida em andamento; apagada sem.
+func definir_corrida(ativa: bool) -> void:
+	_icone_corrida.cor = COR_NUMERO if ativa else COR_APAGADO
+
+
+func mostrar_corrida(sim: bool) -> void:
+	aba_corrida.visible = sim
+	_posicionar()
 
 
 func mostrar_garagem(sim: bool) -> void:
