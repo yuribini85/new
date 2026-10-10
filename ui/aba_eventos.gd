@@ -15,6 +15,11 @@ var _filtro := "voce"
 ## Cartões mostrados de uma vez (cada um custa ~10 ms para montar; a lista toda
 ## travava a troca de tela). "Mostrar mais" acrescenta outro lote.
 const LOTE := 12
+## Cartão horizontal da corrida: imagem da pista à esquerda e o título.
+const LARGURA_IMAGEM_CARTAO := 210.0
+const ALTURA_IMAGEM_CARTAO := 200.0
+const TITULO_CARTAO := 40
+const TITULO_CARTAO_MIN := 26
 var _limite := LOTE
 
 const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["marca", "Marcas"], ["CLUB", "Club"], ["SPORT", "Sport"],
@@ -218,162 +223,144 @@ func _repeticoes_ui() -> void:
 	botao("×10", func(): _repeticoes = mini(999, _repeticoes * 10), true, false, h).custom_minimum_size = Vector2(90, 60)
 
 
-## Cartão da corrida (referência ui_competicoes.webp): banner da pista com o
-## nome por cima e o traçado no canto, os prêmios do 1º
-## ao 3º com a moeda, a barra "seu carro x rivais" e o botão Correr na largura
-## toda.
+## Cartão da corrida, horizontal (vários por tela): à esquerda a imagem da
+## pista com o estado e o traçado; à direita a série (ou o tipo), o título
+## grande (a etapa no campeonato; o nome na prova avulsa), pista, voltas e
+## regras, os pontos do campeonato, os prêmios, a competitividade e o seu
+## melhor; embaixo, Disputar na largura toda.
 func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var pode := motivos.is_empty()
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
 	var tipo := _tipo(ev)
-	var v := cartao(tipo[1])
+	var v := cartao()
 	ancora("EVENT_CARD", v)
 	# A prova do tutorial (etapa 1 do campeonato do prólogo): cartão, etapas,
 	# competitividade e o botão, cada um com a sua âncora.
 	var tutorial: bool = ev["id"] == _evento_tutorial()
 	if tutorial:
 		ancora("COPA", v)
-	var faixa := fileira(v)
-	var t := rotulo(("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA"), FONTE_PEQUENA,
-			COR_BOM if vitorias > 0 else (tipo[1].lightened(0.35) if pode else COR_SECUNDARIA), faixa)
-	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var prog := rotulo(_progresso(ev), FONTE_PEQUENA, COR_SECUNDARIA, faixa)
-	prog.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	prog.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	if tutorial:
-		ancora("ETAPAS", prog)
-	# Banner da pista com o nome e o lugar por cima.
-	var banner := ilustracao("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])), 190, v, 0.85)
+	var corpo := HBoxContainer.new()
+	corpo.add_theme_constant_override("separation", 14)
+	v.add_child(corpo)
+	# Imagem da pista: estado no canto de cima, traçado no de baixo.
+	var banner := ilustracao("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])), ALTURA_IMAGEM_CARTAO,
+			corpo, 0.0)
+	banner.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	banner.size_flags_vertical = Control.SIZE_FILL
+	banner.custom_minimum_size.x = LARGURA_IMAGEM_CARTAO
 	if not pode:
 		banner.modulate = Color(0.6, 0.6, 0.62)
-	var sobre := HBoxContainer.new()
-	sobre.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	sobre.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	sobre.offset_left = 12
-	sobre.offset_right = -12
-	sobre.offset_bottom = -10
-	banner.add_child(sobre)
-	# Traçado no canto de cima, à direita, sobre a ilustração.
+	var estado := Label.new()
+	estado.text = ("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA")
+	Tipografia.rotulo(estado, "semibold", 18)
+	estado.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
+	var sb_estado := StyleBoxFlat.new()
+	sb_estado.bg_color = COR_BOM if vitorias > 0 else (COR_DESTAQUE if pode else COR_NEUTRA)
+	sb_estado.content_margin_left = 10
+	sb_estado.content_margin_right = 10
+	sb_estado.content_margin_top = 2
+	sb_estado.content_margin_bottom = 2
+	estado.add_theme_stylebox_override("normal", sb_estado)
+	estado.position = Vector2(10, 10)
+	banner.add_child(estado)
 	var tracado := icone_pista(ev["pista"])
-	tracado.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	tracado.offset_left = -130
-	tracado.offset_right = -18
-	tracado.offset_top = 18
-	tracado.offset_bottom = 96
+	tracado.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	tracado.offset_left = -92
+	tracado.offset_right = -8
+	tracado.offset_top = -64
+	tracado.offset_bottom = -8
 	tracado.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	banner.add_child(tracado)
-	var nomes := VBoxContainer.new()
-	nomes.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	nomes.add_theme_constant_override("separation", -2)
-	sobre.add_child(nomes)
-	var nl := rotulo(nome_evento(ev), 30, Color.WHITE, nomes)
-	nl.add_theme_constant_override("outline_size", 6)
-	nl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
-	var lp := rotulo("%s · %d volta%s · %s" % [nome_pista(ev["pista"]), ev["voltas"], "" if ev["voltas"] == 1 else "s", tipo[0]],
-			FONTE_PEQUENA, Color(0.9, 0.91, 0.94), nomes)
-	lp.add_theme_constant_override("outline_size", 5)
-	lp.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
-	# Prêmios do 1º ao 3º, cada um com a moeda (o ícone já diz G).
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 4)
+	corpo.add_child(col)
+	# Série (ou tipo) e a etapa: no campeonato, o título é a etapa.
+	var serie := Campeonatos.serie(ev)
+	var etapas := Campeonatos.etapas(dados, serie)
+	var k_etapa := etapas.find(ev)
+	var sobre := rotulo((serie if not etapas.is_empty() else tipo[0]).to_upper(), 0, COR_SECUNDARIA, col)
+	Tipografia.rotulo(sobre, "medium", 18)
+	sobre.autowrap_mode = TextServer.AUTOWRAP_OFF
+	sobre.clip_text = true
+	sobre.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	var titulo := Label.new()
+	titulo.text = ("ETAPA %d/%d" % [k_etapa + 1, etapas.size()]) if not etapas.is_empty() else nome_evento(ev).to_upper()
+	titulo.clip_text = true
+	titulo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(titulo, "semibold", TITULO_CARTAO)
+	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if pode else COR_SECUNDARIA)
+	col.add_child(titulo)
+	# O título diminui até caber (nome longo de prova avulsa).
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 32.0 - LARGURA_IMAGEM_CARTAO - 14.0
+	var tam := TITULO_CARTAO
+	var fonte_titulo := titulo.get_theme_font("font")
+	while tam > TITULO_CARTAO_MIN and fonte_titulo.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	titulo.add_theme_font_size_override("font_size", tam)
+	var linha := [nome_pista(ev["pista"]), "%d volta%s" % [ev["voltas"], "" if ev["voltas"] == 1 else "s"]]
+	linha.append_array(_regras(ev["restricoes"]).slice(0, 2))
+	var lp := rotulo(" · ".join(linha), FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col)
+	lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if not etapas.is_empty():
+		var prog := rotulo(_progresso_curto(ev, etapas, k_etapa), FONTE_PEQUENA - 2, COR_DESTAQUE.lightened(0.2), col)
+		prog.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if tutorial:
+			ancora("ETAPAS", prog)
+	# Prêmios do 1º ao 3º, cada um com a moeda (o ícone já diz giros).
 	var premios := HBoxContainer.new()
-	premios.add_theme_constant_override("separation", 10)
-	v.add_child(premios)
+	premios.add_theme_constant_override("separation", 6)
+	col.add_child(premios)
 	for k in mini(3, ev["premios"].size()):
 		var cel := HBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cel.alignment = BoxContainer.ALIGNMENT_CENTER
-		cel.add_theme_constant_override("separation", 6)
+		cel.add_theme_constant_override("separation", 4)
 		premios.add_child(cel)
 		var lp_pos := rotulo("%dº" % (k + 1), 0, COR_SECUNDARIA, cel)
-		Tipografia.rotulo(lp_pos, "medium", 24)
+		Tipografia.rotulo(lp_pos, "medium", 18)
 		lp_pos.autowrap_mode = TextServer.AUTOWRAP_OFF
-		lp_pos.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		# Valor e, depois dele, a moeda (como o saldo no topo); 1º > 2º > 3º.
-		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
-		Tipografia.numero(lv, [46, 34, 28][k])
-		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
-		lv.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		var moeda := icone("icone_creditos", [38, 30, 24][k], cel)
+		lp_pos.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		var moeda := icone("icone_creditos", 22, cel)
 		moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var etiquetas := []
-	for r in _regras(ev["restricoes"]).slice(0, 3):
-		etiquetas.append([r, COR_NEUTRA.lightened(0.3)])
-	if not etiquetas.is_empty():
-		selos(etiquetas, v)
+		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
+		Tipografia.numero(lv, [30, 24, 22][k])
+		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
+		lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if pode:
-		var barra := _comparacao_rivais(c, ev, v)
+		var barra := _comparacao_rivais(c, ev, col)
 		if tutorial and barra != null:
 			ancora("COMPETITIVIDADE", barra)
+	var hist: Dictionary = jogador.historico.get(ev["id"], {})
+	if not hist.is_empty():
+		var melhor := "SEU MELHOR  %dº" % int(hist["melhor_pos"])
+		if float(hist.get("melhor_tempo", 0.0)) > 0.0:
+			melhor += " · " + _tempo_curto(float(hist["melhor_tempo"]))
+		Tipografia.rotulo(rotulo(melhor, 0, COR_SECUNDARIA, col), "medium", 18)
 	# Recompensa especial: o carro-prêmio aparece no cartão.
 	if ev.get("carro_premio") != null and vitorias == 0:
 		var cp: Dictionary = dados.carro(ev["carro_premio"])
 		var hp := fileira(v)
 		var img := icone_carro(cp)
-		img.custom_minimum_size = Vector2(150, 84)
+		img.custom_minimum_size = Vector2(120, 68)
 		hp.add_child(img)
 		var lpr := rotulo("CARRO DE PRÊMIO\n%s, na 1ª vitória" % cp.get("nome", ""), FONTE_PEQUENA, COR_INFO.lightened(0.3), hp)
 		lpr.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var h := fileira(v)
 	if pode:
-		var hist: Dictionary = jogador.historico.get(ev["id"], {})
-		var col := VBoxContainer.new()
-		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		col.add_theme_constant_override("separation", 0)
-		h.add_child(col)
-		if not hist.is_empty():
-			var hm := fileira(col)
-			icone("icone_cronometro", 34, hm)
-			rotulo("Seu melhor: %dº" % hist["melhor_pos"], FONTE_PEQUENA, COR_SECUNDARIA, hm)
 		var rotulo_correr := "Disputar"
 		if vitorias > 0:
 			rotulo_correr = "Disputar de novo" if _repeticoes == 1 else "Disputar de novo ×%d" % _repeticoes
-		# Disputar: a roda em chamas grande, fora do retângulo, e o botão com
-		# contorno e texto na cor de destaque ao lado. Tocar em qualquer um dos
-		# dois inscreve.
-		var linha := HBoxContainer.new()
-		linha.add_theme_constant_override("separation", 14)
-		v.add_child(linha)
-		var livre: bool = jogador.fila.is_empty()
-		var inscrever := func():
-			_correr(ev["id"])
-			mudou.emit()
-		var roda := TextureButton.new()
-		roda.texture_normal = icone_reduzido("icone_correr", 256)
-		roda.ignore_texture_size = true
-		roda.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-		roda.custom_minimum_size = Vector2(260, 220)
-		roda.disabled = not livre
-		roda.modulate.a = 1.0 if livre else 0.4
-		roda.pressed.connect(inscrever)
-		linha.add_child(roda)
+		var livre_fila: bool = jogador.fila.is_empty()
 		var bc := Button.new()
-		bc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		bc.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		bc.custom_minimum_size.y = 96
-		bc.disabled = not livre
-		bc.text = rotulo_correr.to_upper()
-		Tipografia.rotulo(bc, "semibold", 44 if rotulo_correr.length() <= 10 else 34)
-		for k_cor in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-			bc.add_theme_color_override(k_cor, COR_DESTAQUE)
-		bc.add_theme_color_override("font_disabled_color", Color(COR_DESTAQUE, 0.4))
-		var base := StyleBoxFlat.new()
-		base.bg_color = Color(COR_DESTAQUE, 0.08)
-		base.border_color = COR_DESTAQUE
-		base.set_border_width_all(2)
-		base.set_corner_radius_all(Tipografia.RAIO)
-		var apertado := base.duplicate()
-		apertado.bg_color = Color(COR_DESTAQUE, 0.25)
-		var parado := base.duplicate()
-		parado.border_color = Color(COR_DESTAQUE, 0.3)
-		parado.bg_color = Color(0, 0, 0, 0)
-		for estado in ["normal", "hover", "focus"]:
-			bc.add_theme_stylebox_override(estado, base)
-		bc.add_theme_stylebox_override("pressed", apertado)
-		bc.add_theme_stylebox_override("disabled", parado)
-		bc.pressed.connect(inscrever)
-		linha.add_child(bc)
+		bc.disabled = not livre_fila
+		Tipografia.acao_primaria(bc, rotulo_correr + "   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+		bc.pressed.connect(func():
+			_correr(ev["id"])
+			mudou.emit())
+		v.add_child(bc)
 		if tutorial:
 			ancora("DISPUTAR", bc)
 	else:
+		var h := fileira(v)
 		nota("icone_cadeado", " · ".join(motivos), "", h, COR_RUIM)
 		var pede_licenca: bool = motivos.any(func(m): return String(m).begins_with("licença"))
 		var recusar := func() -> void:
@@ -382,6 +369,27 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			if not (pede_licenca and historia("LICENCA_EXIGIDA", ctx)):
 				historia("EVENTO_BLOQUEADO", ctx)
 		botao_texto("Inscrever", recusar, v)
+
+
+## "1º: 10 pts · você: 2º, 18 pts" na etapa que vale; nas outras, qual vale.
+func _progresso_curto(ev: Dictionary, etapas: Array, k: int) -> String:
+	var est := Campeonatos.estado(jogador, Campeonatos.serie(ev))
+	var t := "1º: %d pts" % Campeonatos.pontos(ev, 1)
+	if int(est["etapa"]) > 0:
+		var tab := Campeonatos.tabela(est)
+		var i: int = tab.map(func(x): return x[0]).find("jogador")
+		t += " · você: %dº, %d pts" % [i + 1, int(est["pontos"].get("jogador", 0))]
+	if k != int(est["etapa"]):
+		t += " · pontos: corra a etapa %d" % (int(est["etapa"]) + 1)
+	return t
+
+
+## "1:42,3" (min:s,décimo) ou "42,3 s".
+static func _tempo_curto(s: float) -> String:
+	var d := roundi(s * 10.0)
+	if d >= 600:
+		return "%d:%02d,%d" % [d / 600, (d / 10) % 60, d % 10]
+	return "%d,%d s" % [d / 10, d % 10]
 
 
 ## Seu carro x rivais (potência por peso, frente à mediana dos rivais): barra
@@ -394,19 +402,19 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 	# Tons sóbrios (a faixa do nível fica mais viva; as outras, apagadas).
 	var tons := [Color(0.42, 0.33, 0.31), Color(0.66, 0.62, 0.5), Color(0.33, 0.47, 0.4)]
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 6)
+	v.add_theme_constant_override("separation", 0)
 	pai.add_child(v)
 	var topo := HBoxContainer.new()
 	v.add_child(topo)
-	var t := rotulo("COMPETITIVIDADE", 0, COR_SECUNDARIA, topo)
-	Tipografia.rotulo(t, "medium", 20)
+	var t := rotulo("SEU CARRO", 0, COR_SECUNDARIA, topo)
+	Tipografia.rotulo(t, "medium", 18)
 	t.autowrap_mode = TextServer.AUTOWRAP_OFF
 	var n := rotulo(["MAIS FRACO", "PARELHO", "MAIS FORTE"][nivel], 0, tons[nivel].lightened(0.35), topo)
-	Tipografia.rotulo(n, "semibold", 22)
+	Tipografia.rotulo(n, "semibold", 20)
 	n.autowrap_mode = TextServer.AUTOWRAP_OFF
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var barra_c := Control.new()
-	barra_c.custom_minimum_size = Vector2(150, 26)
+	barra_c.custom_minimum_size = Vector2(150, 22)
 	barra_c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var f := clampf((r - 0.8) / 0.4, 0.0, 1.0)
 	barra_c.draw.connect(func():
@@ -417,13 +425,6 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 					Color(tons[k], 1.0 if k == nivel else 0.55))
 		barra_c.draw_rect(Rect2(w * f - 1.5, y - 7, 3, 22), Color.WHITE))
 	v.add_child(barra_c)
-	var base := HBoxContainer.new()
-	v.add_child(base)
-	for k in 3:
-		var l := rotulo(["Inferior", "Equilibrado", "Superior"][k], 0, COR_SECUNDARIA, base)
-		Tipografia.rotulo(l, "regular", 20)
-		l.autowrap_mode = TextServer.AUTOWRAP_OFF
-		l.horizontal_alignment = [HORIZONTAL_ALIGNMENT_LEFT, HORIZONTAL_ALIGNMENT_CENTER, HORIZONTAL_ALIGNMENT_RIGHT][k]
 	return v
 
 
@@ -433,24 +434,6 @@ func _evento_tutorial() -> String:
 		return ""
 	var etapas := Campeonatos.etapas(dados, String(dados.historia().get("adrian", {}).get("campeonato", "")))
 	return String(etapas[0]["id"]) if not etapas.is_empty() else ""
-
-
-## "Etapa 2 de 3 · campeonato: 18 pts, 2º · vale pontos": onde esta prova fica
-## na série e na temporada do campeonato (Campeonatos).
-func _progresso(ev: Dictionary) -> String:
-	var serie := Campeonatos.serie(ev)
-	var etapas := Campeonatos.etapas(dados, serie)
-	if etapas.is_empty():
-		return ""
-	var k := etapas.find(ev)
-	var est := Campeonatos.estado(jogador, serie)
-	var t := "Etapa %d de %d" % [k + 1, etapas.size()]
-	if int(est["etapa"]) > 0:
-		var tab := Campeonatos.tabela(est)
-		var i: int = tab.map(func(x): return x[0]).find("jogador")
-		t += " · campeonato: %d pts, %dº" % [int(est["pontos"].get("jogador", 0)), i + 1]
-	t += " · vale pontos" if k == int(est["etapa"]) else " · pontos: corra a etapa %d" % (int(est["etapa"]) + 1)
-	return t
 
 
 ## Grupo da lista: copas de marca à parte; o resto pela licença exigida.
