@@ -600,7 +600,6 @@ func _vazia() -> void:
 		return
 	var v := cartao()
 	rotulo("Sua garagem está vazia", 40, Color.WHITE, v)
-	nota("icone_comprar", "Comece por um carro barato", "Nas Lojas, cada workshop tem carros de todos os preços; os mais baratos já disputam a primeira corrida.", v)
 	botao("Escolher meu primeiro carro", func(): ir_para.emit(LOJA), true, true, v)
 
 
