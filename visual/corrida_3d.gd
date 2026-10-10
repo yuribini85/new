@@ -256,6 +256,10 @@ func limpar() -> void:
 	_tranco = {}
 	_freio = {}
 	_fumaca = {}
+	_esteira = {}
+	_rastro_pts = {}
+	_intensidade = {}
+	_rear = {}
 	_luzes = {}
 	_giro_vis = {}
 	_pontos = {}
@@ -710,7 +714,18 @@ const FUMACA_ARRANCADA := 5.5
 const FUMACA_V_MAX := 8.0  # m/s: acima disso a arrancada não solta fumaça
 var _freio := {}  # id -> intensidade da luz (0..1), suavizada
 var _luzes := {}  # id -> StandardMaterial3D das lanternas
-var _fumaca := {}  # id -> CPUParticles3D
+## Esteira de fumaça: uma fita macia no chão atrás de cada carro, pelo
+## caminho que ele fez nos últimos ESTEIRA_S; fina e quase transparente com o
+## carro andando, mais larga e densa na freada e na arrancada fortes.
+const ESTEIRA_S := 0.7
+const ESTEIRA_PONTOS := 22
+const ESTEIRA_BASE := 0.45  # intensidade andando (0..1)
+const ESTEIRA_ALFA := 0.34  # alfa no pico da intensidade, junto ao carro
+var _fumaca := {}  # id -> true enquanto canta pneu (freada/arrancada forte)
+var _esteira := {}  # id -> MeshInstance3D com ImmediateMesh
+var _rastro_pts := {}  # id -> Array de [Vector3, tempo, intensidade]
+var _intensidade := {}  # id -> intensidade atual (suavizada)
+var _rear := {}  # id -> distância da traseira ao centro (m)
 
 
 func _criar_efeitos(id: String, c: Node3D) -> void:
@@ -736,44 +751,85 @@ func _criar_efeitos(id: String, c: Node3D) -> void:
 	_freio[id] = 0.0
 	if Preferencias.efeitos_leves:
 		return
-	var f := CPUParticles3D.new()
-	f.emitting = false
-	f.amount = 10
-	f.lifetime = 0.65
-	f.local_coords = false
-	f.direction = Vector3.UP
-	f.spread = 35.0
-	f.initial_velocity_min = 0.4
-	f.initial_velocity_max = 1.0
-	f.gravity = Vector3(0, 0.6, 0)
-	f.damping_min = 1.0
-	f.damping_max = 2.0
-	f.scale_amount_min = 0.8
-	f.scale_amount_max = 1.4
-	var curva := Curve.new()
-	curva.add_point(Vector2(0.0, 0.4))
-	curva.add_point(Vector2(1.0, 1.6))
-	f.scale_amount_curve = curva
-	f.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
-	f.emission_box_extents = Vector3(0.15, 0.05, dim.y * 0.42)
-	var q := QuadMesh.new()
-	q.size = Vector2(0.55, 0.55)
-	var mf := StandardMaterial3D.new()
-	mf.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mf.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mf.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	mf.vertex_color_use_as_albedo = true
-	mf.albedo_texture = _brilho(true)
-	q.material = mf
-	f.mesh = q
-	var cores := Gradient.new()
-	cores.set_color(0, Color(0.86, 0.85, 0.83, 0.0))
-	cores.add_point(0.15, Color(0.86, 0.85, 0.83, 0.26))
-	cores.set_color(cores.get_point_count() - 1, Color(0.8, 0.8, 0.8, 0.0))
-	f.color_ramp = cores
-	f.position = Vector3(-dim.x * 0.42, 0.15, 0.0)
-	c.add_child(f)
-	_fumaca[id] = f
+	_criar_esteira(id, dim)
+
+
+func _criar_esteira(id: String, dim: Vector2) -> void:
+	var m := MeshInstance3D.new()
+	m.mesh = ImmediateMesh.new()
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.albedo_texture = _faixa_macia()
+	mat.render_priority = 1
+	m.material_override = mat
+	m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_cena.add_child(m)
+	_esteira[id] = m
+	_rastro_pts[id] = []
+	_rear[id] = dim.x * 0.45
+
+
+## Guarda o ponto atrás do carro e redesenha a fita: largura cresce e alfa cai
+## com a idade de cada ponto; a intensidade de cada ponto é a de quando ele
+## foi deixado (a parte da freada fica mais densa).
+func _atualizar_esteira(id: String) -> void:
+	var c: Node3D = _carros[id]
+	var pts: Array = _rastro_pts[id]
+	var atras := Vector3(-cos(c.rotation.y), 0.0, sin(c.rotation.y))
+	var p := c.position + atras * float(_rear[id]) * c.scale.x + Vector3(0, 0.25, 0)
+	var inten := float(_intensidade[id])
+	if pts.is_empty() or (pts[-1][0] as Vector3).distance_to(p) > 0.35:
+		pts.append([p, _tempo, inten])
+	else:
+		pts[-1] = [p, _tempo, maxf(inten, float(pts[-1][2]))]
+	while not pts.is_empty() and _tempo - float(pts[0][1]) > ESTEIRA_S:
+		pts.pop_front()
+	while pts.size() > ESTEIRA_PONTOS * 3:
+		pts.pop_front()
+	var im: ImmediateMesh = _esteira[id].mesh
+	im.clear_surfaces()
+	if pts.size() < 2 or not c.visible:
+		return
+	im.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
+	for i in pts.size():
+		var a: Vector3 = pts[i][0]
+		var b: Vector3 = pts[mini(i + 1, pts.size() - 1)][0] if i < pts.size() - 1 else pts[i][0] + (pts[i][0] - pts[i - 1][0])
+		var dir := (b - a)
+		dir.y = 0.0
+		if dir.length() < 0.001:
+			dir = atras * -1.0
+		var lado := Vector3(-dir.z, 0.0, dir.x).normalized()
+		var idade := clampf((_tempo - float(pts[i][1])) / ESTEIRA_S, 0.0, 1.0)
+		var forca := float(pts[i][2])
+		var largura := lerpf(0.9, 2.6, idade) * lerpf(0.8, 1.3, forca) * c.scale.x
+		# Junto ao carro entra suave; some com a idade.
+		var alfa := ESTEIRA_ALFA * forca * smoothstep(0.0, 0.12, idade) * (1.0 - smoothstep(0.35, 1.0, idade))
+		var cor := Color(0.87, 0.86, 0.84, alfa)
+		var y := a + Vector3(0, idade * 0.4, 0)
+		im.surface_set_color(cor)
+		im.surface_set_uv(Vector2(0.0, idade))
+		im.surface_add_vertex(y + lado * largura * 0.5)
+		im.surface_set_color(cor)
+		im.surface_set_uv(Vector2(1.0, idade))
+		im.surface_add_vertex(y - lado * largura * 0.5)
+	im.surface_end()
+
+
+## Textura da fita: opaca no meio, some nas bordas (em u).
+static var _textura_faixa: Texture2D
+static func _faixa_macia() -> Texture2D:
+	if _textura_faixa == null:
+		var img := Image.create(64, 4, false, Image.FORMAT_RGBA8)
+		for x in 64:
+			var u := (x + 0.5) / 64.0
+			var k := pow(sin(PI * u), 1.5)
+			for y in 4:
+				img.set_pixel(x, y, Color(1, 1, 1, k))
+		_textura_faixa = ImageTexture.create_from_image(img)
+	return _textura_faixa
 
 
 ## Mancha redonda suave (lanternas e fumaça), feita uma vez.
@@ -949,7 +1005,7 @@ var _na_zebra := {}  # id -> rodas sobre a zebra (para o som)
 
 ## Para o som: o carro está cantando pneu (fumaça ou marca) / na zebra.
 func cantando(id: String) -> bool:
-	return bool(_marcando.get(id, false)) or (_fumaca.has(id) and (_fumaca[id] as CPUParticles3D).emitting)
+	return bool(_marcando.get(id, false)) or bool(_fumaca.get(id, false))
 
 
 func na_zebra(id: String) -> bool:
@@ -1089,9 +1145,14 @@ func _efeitos_pista(id: String, a: float, v: float, delta: float) -> void:
 	var freando := -a > (FREIO_OFF if aceso else FREIO_ON) and v > 3.0 and chegada < 1.0
 	_freio[id] = move_toward(float(_freio[id]), 1.0 if freando else 0.0, delta / (0.06 if freando else 0.25))
 	(_luzes[id] as StandardMaterial3D).albedo_color.a = float(_freio[id]) * 0.95
-	if _fumaca.has(id):
-		var fumaca := (-a > FUMACA_FREADA and v > 8.0) or (a > FUMACA_ARRANCADA and v < FUMACA_V_MAX and v > 0.5)
-		(_fumaca[id] as CPUParticles3D).emitting = fumaca and not Preferencias.reduzir_animacoes
+	if _esteira.has(id):
+		var forte := (-a > FUMACA_FREADA and v > 8.0) or (a > FUMACA_ARRANCADA and v < FUMACA_V_MAX and v > 0.5)
+		_fumaca[id] = forte
+		var alvo := 0.0
+		if v > 3.0 and chegada < 1.0 and not Preferencias.reduzir_animacoes:
+			alvo = 1.0 if forte else ESTEIRA_BASE
+		_intensidade[id] = move_toward(float(_intensidade.get(id, 0.0)), alvo, delta * (4.0 if alvo > float(_intensidade.get(id, 0.0)) else 1.5))
+		_atualizar_esteira(id)
 
 
 func _faiscas(onde: Vector3) -> void:
