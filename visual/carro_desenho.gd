@@ -16,6 +16,7 @@ var _iso: MeshInstance3D
 var _mat_iso: ShaderMaterial
 var _sombra: Sprite3D
 var _giro := 0.0
+var _borrao := 0.0
 var _vista_iso := 0.0
 
 
@@ -107,7 +108,9 @@ func girar_rodas(distancia: float) -> void:
 		return
 	_giro = fmod(_giro + distancia / RAIO_RODA_M, TAU)
 	_mat_iso.set_shader_parameter("giro", _giro)
-	_mat_iso.set_shader_parameter("borrao", clampf(distancia / RAIO_RODA_M, 0.0, 1.6))
+	# Borrão suavizado (a distância por quadro oscila): abre até ~1/3 de volta.
+	_borrao = lerpf(_borrao, clampf(distancia / RAIO_RODA_M * 1.5, 0.0, 2.1), 0.25)
+	_mat_iso.set_shader_parameter("borrao", _borrao)
 	_posicionar_sombra()
 
 
