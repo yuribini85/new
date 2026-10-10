@@ -69,7 +69,42 @@ func _init() -> void:
 ## ordem (gap: s atrás do líder; ataque: está atacando o jogador).
 func definir(d: Dictionary) -> void:
 	_d = d
+	_mover_agulha()
 	queue_redraw()
+
+
+## Agulha viva: segue o giro por uma mola pouco amortecida (passa um pouco do
+## ponto na troca de marcha e volta) e treme de leve, mais forte em giro alto.
+## Só visual: o giro da simulação não muda.
+const AGULHA_MOLA := 260.0
+const AGULHA_AMORTECIMENTO := 0.42
+const AGULHA_TREMOR := 0.018  # fração da escala, no giro máximo
+var _agulha := 0.0
+var _agulha_v := 0.0
+var _agulha_t := -1.0
+
+
+func _mover_agulha() -> void:
+	var giro_max := float(_d.get("giro_max", 0.0))
+	if giro_max <= 0.0:
+		return
+	var agora := Time.get_ticks_msec() / 1000.0
+	var dt := clampf(agora - _agulha_t, 0.0, 0.05) if _agulha_t >= 0.0 else 0.0
+	_agulha_t = agora
+	var giro := float(_d.get("giro", 0.0))
+	var u := clampf(giro / giro_max, 0.0, 1.0)
+	var tremor := (sin(agora * 31.0) + 0.6 * sin(agora * 53.7 + 1.3) + 0.35 * sin(agora * 89.1)) / 1.95
+	var alvo := u + tremor * AGULHA_TREMOR * (0.35 + 0.65 * u)
+	if dt <= 0.0:
+		_agulha = alvo
+		return
+	var amort := 2.0 * sqrt(AGULHA_MOLA) * AGULHA_AMORTECIMENTO
+	var passos := 4
+	var h := dt / passos
+	for k in passos:
+		_agulha_v += ((alvo - _agulha) * AGULHA_MOLA - _agulha_v * amort) * h
+		_agulha += _agulha_v * h
+	_agulha = clampf(_agulha, -0.02, 1.04)
 
 
 ## Acontecimento da corrida: título e linha de baixo, no centro. Um por vez:
@@ -258,7 +293,7 @@ func _conta_giros() -> void:
 		# Só o trecho do corte no arco de fora, em vermelho discreto.
 		draw_arc(c, GIRO_RAIO, lerpf(de, ate, corte / giro_max), ate, 16, _a(Color(CORTE, 0.8), a), 2.0, true)
 		var cor := Color(CORTE) if giro >= corte - 400.0 else AMBAR
-		_ponteiro(c, GIRO_RAIO, lerpf(de, ate, clampf(giro / giro_max, 0.0, 1.0)), cor, a)
+		_ponteiro(c, GIRO_RAIO, lerpf(de, ate, _agulha), cor, a)
 	var marcha := int(_d.get("marcha", 0))
 	_txt_inst(str(marcha) if marcha > 0 else "N", c + Vector2(GIRO_RAIO * 0.42, -GIRO_RAIO * 0.12), 40, _a(COR, a), "numero")
 	_txt_inst("%d km/h" % roundi(float(_d["kmh"])), c + Vector2(GIRO_RAIO * 0.42 + 30.0, -GIRO_RAIO * 0.12), 22,

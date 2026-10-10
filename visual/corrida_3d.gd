@@ -327,9 +327,10 @@ func atualizar(delta: float) -> void:
 			_v[id] = lerpf(float(_v.get(id, 0.0)), maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
-		# Rivais: posição e nome. O seu carro: só a seta (destaca pela diferença).
-		r.text = "▼" if id == "jogador" else ("%d  %s" % [i + 1, nomes[id]] if nomes.has(id) else str(i + 1))
-		r.visible = not sem_rotulos
+		# Sem nome, número nem seta sobre os carros: a classificação do HUD e os
+		# anéis no chão bastam (decisão de polimento da corrida).
+		r.text = ""
+		r.visible = false
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
@@ -354,7 +355,6 @@ func atualizar(delta: float) -> void:
 		_anel_alvo.visible = disputa
 		if disputa:
 			_anel_alvo.position = _carros[alvo].position + Vector3(0, 0.05, 0)
-			_rotulos[alvo].text = "ALVO · %s" % nomes[alvo] if nomes.has(alvo) else "ALVO"
 		# Seu carro: anel só por um instante, quando a câmera chega nele.
 		_destaque_jogador = maxf(_destaque_jogador - delta, 0.0)
 		_anel_jogador.visible = _destaque_jogador > 0.0 and _carros.has("jogador") and not visao_geral
