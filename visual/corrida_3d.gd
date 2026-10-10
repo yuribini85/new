@@ -15,7 +15,10 @@ extends SubViewportContainer
 const LARGURA_PISTA_M := 12.0
 const FAIXAS_M := [0.0, 2.4, -2.4, 4.8, -4.8]
 const PROXIMIDADE_M := 8.0
-const VELOCIDADE_LATERAL := 2.2  # 1/s, aproximação da faixa-alvo
+const VELOCIDADE_LATERAL := 1.5  # 1/s, aproximação da faixa-alvo
+## Rapidez (1/s) com que o carro gira até o ângulo do traçado.
+const GIRO_SUAVE := 7.0
+var _giro_vis := {}  # id -> ângulo mostrado (rad)
 ## Batida: quanto cada carro é empurrado de lado (m), o giro (rad) e quanto dura.
 const BATIDA_EMPURRAO_M := 0.9
 const BATIDA_GIRO := 0.32
@@ -254,6 +257,8 @@ func limpar() -> void:
 	_freio = {}
 	_fumaca = {}
 	_luzes = {}
+	_giro_vis = {}
+	_pontos = {}
 	_v_max = {}
 	_rastros = {}
 	_marcas = null
@@ -293,6 +298,7 @@ func atualizar(delta: float) -> void:
 	for id in _carros:
 		_off[id] = lerpf(_off[id], alvo[id], k)
 		_lateral[id] = clampf(float(base[id]) + float(_off[id]), -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+	_separar(s, base, delta)
 	var tocando := {}
 	# Sem batidas depois da chegada (os carros param em fila, ver CorridaVisual).
 	for par in ([] if Preferencias.reduzir_animacoes or chegada > 0.0 else contatos(ordem, s, _lateral, _pista.comprimento)):
@@ -317,7 +323,7 @@ func atualizar(delta: float) -> void:
 		# traçado e as trocas de faixa), mais a deriva da traseira nas curvas.
 		var ds: float = dist - float(_s_anterior.get(id, dist))
 		var dl: float = float(_lateral[id]) - float(antes[id])
-		var esterco := clampf(atan2(dl, maxf(ds, 0.05)), -0.45, 0.45) if delta > 0.0 else 0.0
+		var esterco := clampf(atan2(dl, maxf(ds, 0.05)), -0.3, 0.3) if delta > 0.0 else 0.0
 		var v: float = float(_v.get(id, 0.0))
 		var g_lateral := v * v * _tracado.curvatura(dist) / 9.8
 		esterco += clampf(g_lateral * float(DERIVA.get(_tracao.get(id, "FF"), 0.06)), -0.22, 0.22)
@@ -333,7 +339,14 @@ func atualizar(delta: float) -> void:
 		_na_zebra[id] = absf(float(_lateral[id])) > Tracado.ABERTO_M + 0.2 and absf(_tracado.curvatura(dist)) > 0.002
 		if _na_zebra[id]:
 			esterco += sin(Time.get_ticks_msec() * 0.09 + i) * 0.015
-		c.rotation.y = rumo + esterco
+		# Giro suave: o rumo do traçado tem quinas e o esterço oscila quadro a
+		# quadro; o carro vira com atraso curto, sem saltos de ângulo.
+		var giro_alvo := rumo + esterco
+		if delta > 0.0 and _giro_vis.has(id) and not Preferencias.reduzir_animacoes:
+			_giro_vis[id] = lerp_angle(float(_giro_vis[id]), giro_alvo, 1.0 - exp(-delta * GIRO_SUAVE))
+		else:
+			_giro_vis[id] = giro_alvo
+		c.rotation.y = float(_giro_vis[id])
 		c.girar_rodas(maxf(ds, 0.0))
 		if delta > 0.0:
 			var v_antes := float(_v.get(id, 0.0))
@@ -350,8 +363,10 @@ func atualizar(delta: float) -> void:
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
 	_apagar_marcas()
 	_vacuo(s)
+	_ordenar_sprites(ordem)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
-	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
+	var escala := 1.0
+	_mostrar_pontos(visao_geral)
 	for id in _carros:
 		_carros[id].scale = Vector3.ONE * escala
 		# Rótulos dos rivais pequenos e um pouco translúcidos; a seta e o ALVO em destaque.
@@ -643,9 +658,9 @@ func _bater(a: String, b: String, dl: float) -> void:
 const FREIO_ON := 3.5
 const FREIO_OFF := 1.5
 ## Fumaça: freada forte, ou arrancada forte em baixa velocidade.
-const FUMACA_FREADA := 9.0
-const FUMACA_ARRANCADA := 4.5
-const FUMACA_V_MAX := 11.0  # m/s: acima disso a arrancada não solta fumaça
+const FUMACA_FREADA := 10.0
+const FUMACA_ARRANCADA := 5.5
+const FUMACA_V_MAX := 8.0  # m/s: acima disso a arrancada não solta fumaça
 var _freio := {}  # id -> intensidade da luz (0..1), suavizada
 var _luzes := {}  # id -> StandardMaterial3D das lanternas
 var _fumaca := {}  # id -> CPUParticles3D
@@ -676,18 +691,18 @@ func _criar_efeitos(id: String, c: Node3D) -> void:
 		return
 	var f := CPUParticles3D.new()
 	f.emitting = false
-	f.amount = 24
-	f.lifetime = 0.9
+	f.amount = 10
+	f.lifetime = 0.65
 	f.local_coords = false
 	f.direction = Vector3.UP
 	f.spread = 35.0
-	f.initial_velocity_min = 0.6
-	f.initial_velocity_max = 1.6
+	f.initial_velocity_min = 0.4
+	f.initial_velocity_max = 1.0
 	f.gravity = Vector3(0, 0.6, 0)
 	f.damping_min = 1.0
 	f.damping_max = 2.0
-	f.scale_amount_min = 1.0
-	f.scale_amount_max = 2.2
+	f.scale_amount_min = 0.8
+	f.scale_amount_max = 1.4
 	var curva := Curve.new()
 	curva.add_point(Vector2(0.0, 0.4))
 	curva.add_point(Vector2(1.0, 1.6))
@@ -695,7 +710,7 @@ func _criar_efeitos(id: String, c: Node3D) -> void:
 	f.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
 	f.emission_box_extents = Vector3(0.15, 0.05, dim.y * 0.42)
 	var q := QuadMesh.new()
-	q.size = Vector2(0.7, 0.7)
+	q.size = Vector2(0.55, 0.55)
 	var mf := StandardMaterial3D.new()
 	mf.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mf.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -705,8 +720,9 @@ func _criar_efeitos(id: String, c: Node3D) -> void:
 	q.material = mf
 	f.mesh = q
 	var cores := Gradient.new()
-	cores.set_color(0, Color(0.92, 0.92, 0.94, 0.55))
-	cores.set_color(1, Color(0.85, 0.86, 0.9, 0.0))
+	cores.set_color(0, Color(0.86, 0.85, 0.83, 0.0))
+	cores.add_point(0.15, Color(0.86, 0.85, 0.83, 0.26))
+	cores.set_color(cores.get_point_count() - 1, Color(0.8, 0.8, 0.8, 0.0))
 	f.color_ramp = cores
 	f.position = Vector3(-dim.x * 0.42, 0.15, 0.0)
 	c.add_child(f)
@@ -741,6 +757,121 @@ static func _brilho(so_alfa := false) -> Texture2D:
 	return _textura_brilho
 
 
+## Carros não se atravessam: dois que se sobrepõem no comprimento (Δs menor
+## que SEPARA_COMPRIMENTO_M) e estão mais perto de lado que SEPARA_LADO_M são
+## empurrados para os lados, suavemente, dentro da pista. Só visual: a posição
+## na pista (s) é a da simulação.
+const SEPARA_COMPRIMENTO_M := 4.8
+const SEPARA_LADO_M := 2.3
+const SEPARA_RAPIDEZ := 6.0  # 1/s
+
+
+func _separar(s: Dictionary, base: Dictionary, delta: float) -> void:
+	if _fonte == null or chegada >= 1.0:
+		return
+	var ids := _carros.keys()
+	var k := clampf(delta * SEPARA_RAPIDEZ, 0.0, 1.0) if delta > 0.0 else 1.0
+	for _passo in 3:
+		var empurra := {}
+		for i in ids.size():
+			for j in range(i + 1, ids.size()):
+				var a: String = ids[i]
+				var b: String = ids[j]
+				var ds := absf(_ciclo(float(s[a]) - float(s[b])))
+				if ds >= SEPARA_COMPRIMENTO_M:
+					continue
+				var dl := float(_lateral[a]) - float(_lateral[b])
+				if absf(dl) >= SEPARA_LADO_M:
+					continue
+				# Quanto falta, pesado pela sobreposição no comprimento.
+				var falta := (SEPARA_LADO_M - absf(dl)) * (1.0 - ds / SEPARA_COMPRIMENTO_M) * 0.5
+				var lado := signf(dl) if absf(dl) > 0.01 else (1.0 if a < b else -1.0)
+				empurra[a] = float(empurra.get(a, 0.0)) + lado * falta
+				empurra[b] = float(empurra.get(b, 0.0)) - lado * falta
+		if empurra.is_empty():
+			return
+		for id in empurra:
+			var novo := clampf(float(_lateral[id]) + float(empurra[id]) * k, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+			_lateral[id] = novo
+			_off[id] = novo - float(base[id])
+
+
+## Diferença de distância na volta (para quem está uma volta à frente).
+func _ciclo(d: float) -> float:
+	var c := _pista.comprimento
+	return fposmod(d + c * 0.5, c) - c * 0.5
+
+
+## Sprites transparentes se desenham pela ordem dada, não pela profundidade
+## real: quem está mais perto da câmera fica por cima (empate, no chão visto
+## de cima: o que vai à frente na corrida).
+func _ordenar_sprites(ordem: Array) -> void:
+	var f := -_camera.global_basis.z
+	var o := _camera.global_position
+	var lista := []
+	for id in _carros:
+		if _carros[id] is CarroDesenho:
+			var prof := snappedf((_carros[id].global_position - o).dot(f), 0.05)
+			lista.append([prof, ordem.find(id), id])
+	lista.sort_custom(func(a, b): return a[0] > b[0] if a[0] != b[0] else a[1] > b[1])
+	for k in lista.size():
+		var id: String = lista[k][2]
+		_carros[id].ordem_desenho(k)
+		if _luzes.has(id):
+			(_luzes[id] as StandardMaterial3D).render_priority = 41 + 2 * k
+
+
+## Visão geral: cada carro vira um ponto na cor dele (o seu, ocre com borda
+## clara), do mesmo tamanho na tela; os carros em si somem.
+const PONTO_FRACAO := 0.011  # raio do ponto em fração do tamanho da câmera
+var _pontos := {}  # id -> MeshInstance3D
+
+
+func _mostrar_pontos(sim: bool) -> void:
+	for id in _carros:
+		_carros[id].visible = not sim
+		if sim and not _pontos.has(id):
+			_pontos[id] = _criar_ponto(id)
+		if _pontos.has(id):
+			_pontos[id].visible = sim
+	if not sim:
+		return
+	var r := maxf(_camera.size * PONTO_FRACAO, 1.2)
+	for id in _pontos:
+		_pontos[id].position = _carros[id].position + Vector3(0, 0.3, 0)
+		_pontos[id].scale = Vector3(r, 1.0, r) * (1.25 if id == "jogador" else 1.0)
+
+
+func _criar_ponto(id: String) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var disco := CylinderMesh.new()
+	disco.top_radius = 1.0
+	disco.bottom_radius = 1.0
+	disco.height = 0.05
+	disco.radial_segments = 24
+	m.mesh = disco
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Aba.COR_DESTAQUE if id == "jogador" else _fonte.cor_de(id)
+	mat.no_depth_test = true
+	mat.render_priority = 120 if id == "jogador" else 110
+	m.material_override = mat
+	# Borda: um disco escuro (rivais) ou claro (você) um pouco maior, por baixo.
+	var borda := MeshInstance3D.new()
+	borda.mesh = disco
+	var mb := StandardMaterial3D.new()
+	mb.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mb.albedo_color = Color(1, 1, 1) if id == "jogador" else Color(0.05, 0.05, 0.06)
+	mb.no_depth_test = true
+	mb.render_priority = 119 if id == "jogador" else 109
+	borda.material_override = mb
+	borda.scale = Vector3(1.3, 1.0, 1.3)
+	borda.position.y = -0.01
+	m.add_child(borda)
+	_cena.add_child(m)
+	return m
+
+
 ## Linhas de velocidade nas retas: intensidade máxima e velocidade mínima
 ## de referência (m/s) antes de o carro mostrar a dele.
 const RETA_EFEITO := 0.32
@@ -748,10 +879,10 @@ const RETA_V_MIN := 25.0
 var _v_max := {}  # id -> maior velocidade vista (m/s)
 
 ## Marcas de pneu: na freada forte, traços escuros no chão que somem devagar.
-const MARCA_FREADA := 6.5  # m/s²
+const MARCA_FREADA := 8.5  # m/s²
 const MARCA_PASSO_M := 0.7
 const MARCAS_MAX := 240
-const MARCA_DURA_S := 7.0
+const MARCA_DURA_S := 5.0
 var _marcas: MultiMeshInstance3D
 var _marca_i := 0
 var _marca_t := PackedFloat32Array()
@@ -784,7 +915,7 @@ func _criar_marcas() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
 	var q := QuadMesh.new()
-	q.size = Vector2(MARCA_PASSO_M, 0.24)
+	q.size = Vector2(MARCA_PASSO_M, 0.11)
 	q.orientation = PlaneMesh.FACE_Y
 	mm.mesh = q
 	mm.instance_count = MARCAS_MAX
@@ -835,8 +966,9 @@ func _apagar_marcas() -> void:
 		var idade := _tempo - _marca_t[k]
 		if idade < 0.0 or idade > MARCA_DURA_S + 1.0:
 			continue
-		var a := 0.42 * (1.0 - smoothstep(MARCA_DURA_S * 0.4, MARCA_DURA_S, idade))
-		_marcas.multimesh.set_instance_color(k, Color(0.03, 0.03, 0.035, a))
+		# Entra suave (não "pinta" de uma vez) e some devagar.
+		var a := 0.2 * smoothstep(0.0, 0.25, idade) * (1.0 - smoothstep(MARCA_DURA_S * 0.3, MARCA_DURA_S, idade))
+		_marcas.multimesh.set_instance_color(k, Color(0.05, 0.045, 0.04, a))
 
 
 func _criar_rastro(id: String, c: Node3D) -> void:

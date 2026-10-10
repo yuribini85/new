@@ -532,22 +532,23 @@ func _lista() -> void:
 	var fr := Tipografia.fonte("semibold")
 	var x0 := 18.0
 	var y := LISTA_TOPO
-	for i in linhas_relativas(lista):
-		if i < 0:
-			y += LISTA_PULO
-			continue
+	# Todos os competidores, em ordem; com muitos, as linhas encolhem para caber
+	# até a altura do conta-giros.
+	var livre := size.y - LISTA_TOPO - GIRO_RAIO - 90.0
+	var linha := clampf(livre / maxf(lista.size(), 1.0) - LISTA_ESPACO, 22.0, LISTA_LINHA)
+	for i in lista.size():
 		var it: Dictionary = lista[i]
 		var voce: bool = it.get("voce", false)
 		var ataque: bool = it.get("ataque", false)
-		var r := Rect2(x0, y, LISTA_LARGURA, LISTA_LINHA)
+		var r := Rect2(x0, y, LISTA_LARGURA, linha)
 		_linhas.append([r, it["id"]])
 		var forca := 1.0 if voce or ataque else lerpf(0.6, 0.9, _sec)
 		draw_rect(r, AMBAR if voce else Color(FAIXA, FAIXA.a * forca))
-		draw_rect(Rect2(x0, y, 4.0, LISTA_LINHA), Color(it["cor"], forca))
+		draw_rect(Rect2(x0, y, 4.0, linha), Color(it["cor"], forca))
 		if it.get("camera", false) and not voce:
-			draw_rect(Rect2(x0 - 6.0, y + 4.0, 2.0, LISTA_LINHA - 8.0), Color(COR, 0.7))
+			draw_rect(Rect2(x0 - 6.0, y + 4.0, 2.0, linha - 8.0), Color(COR, 0.7))
 		var cor := TEXTO_ESCURO if voce else Color(COR, forca)
-		var base := y + LISTA_LINHA * 0.5 + 7.0
+		var base := y + linha * 0.5 + 7.0
 		draw_string(fn, Vector2(x0 + 8.0, base + 1.0), str(i + 1), HORIZONTAL_ALIGNMENT_RIGHT, 26.0, 20, cor)
 		var gap := float(it.get("gap", -1.0))
 		var gap_txt := ""
@@ -565,7 +566,7 @@ func _lista() -> void:
 		if gap_txt != "":
 			draw_string(fr, Vector2(x0, base), gap_txt, HORIZONTAL_ALIGNMENT_RIGHT, LISTA_LARGURA - 10.0, 17,
 					Color(CORTE, 0.95) if ataque else Color(COR, forca * 0.75))
-		y += LISTA_LINHA + LISTA_ESPACO
+		y += linha + LISTA_ESPACO
 	if _d.get("ultima", false) and not _linhas.is_empty():
 		# Última volta: contorno ocre na classificação, pulsando devagar.
 		var pulso := 0.55 + 0.45 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.4)

@@ -80,6 +80,16 @@ func dimensoes() -> Vector2:
 	return Vector2(_topo.texture.get_height(), _topo.texture.get_width()) * _topo.pixel_size
 
 
+## Ordem de desenho entre os carros em sprite (k maior = mais à frente na
+## tela): a sombra embaixo de todos, o de cima e o isométrico por k.
+func ordem_desenho(k: int) -> void:
+	if _topo == null:
+		return
+	_sombra.render_priority = 0
+	_topo.render_priority = 10 + 2 * k
+	_mat_iso.render_priority = 40 + 2 * k
+
+
 ## 0 = só o de cima; 1 = só o isométrico; no meio, alfa cruzado.
 func mistura(b: float) -> void:
 	if _topo == null:
