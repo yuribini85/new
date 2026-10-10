@@ -628,6 +628,10 @@ func nota(nome_icone: String, curta: String, detalhe := "", pai: Control = null,
 		l.autowrap_mode = TextServer.AUTOWRAP_OFF
 		l.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		botao_info(curta, detalhe, h)
+	else:
+		# Sem ⓘ: o texto ocupa a largura toda e quebra linha nela.
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_pai(pai).add_child(h)
 	return h
 
