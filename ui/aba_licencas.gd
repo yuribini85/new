@@ -10,8 +10,6 @@ const CORES_GRAU := {
 
 ## Licenças com a lista de séries liberadas aberta.
 var _expandida := {}
-## Primeiro toque em "Recomeçar carreira" só pede confirmação.
-var _confirmar_recomeco := false
 ## Bancada de contrato aberta ("" = lista), a montagem em edição e o último
 ## relatório dela.
 var _bancada := ""
@@ -19,71 +17,103 @@ var _montagem := {}
 var _avaliacao := {}
 
 const NOMES_CATEGORIA := preload("res://ui/aba_oficina.gd").NOMES_CATEGORIA
+## Brasão da licença atual no topo (altura, px) e o da próxima no cartão.
+const ALTURA_BRASAO := 230.0
+const BRASAO_CARTAO := 190.0
 
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Carreira")
 
 
-## Carreira: objetivos, licenças, coleção e preferências num lugar só.
+## Carreira: o brasão da licença atual, os objetivos, o cartão da próxima
+## licença (só ela) e a coleção por workshop. Recomeçar e a versão ficam nas
+## Configurações.
 func construir() -> void:
 	if _bancada != "" and dados.existe("contratos", _bancada):
 		_tela_bancada(dados.item("contratos", _bancada))
 		return
 	_bancada = ""
-	cabecalho("Carreira", "Licenças, objetivos e coleção", "fundo_carreira")
-	_resumo()
-	_objetivos()
-	rotulo("LICENÇAS", FONTE_PEQUENA, COR_SECUNDARIA)
-	var c := carro_ativo()
-	_mostrar_resultado()
 	var l := Licencas.new(dados, jogador)
 	var agora := Time.get_unix_time_from_system()
-	var treinando := false
+	_brasao()
+	_mostrar_resultado()
+	_objetivos()
+	var c := carro_ativo()
+	var proxima := {}
 	for lic in dados.lista("licencas"):
-		var st := l.estado(lic["id"], agora)
-		treinando = treinando or st == Licencas.TRAINING
-		var sit := _situacao(l, lic, st, agora)
-		if not st in [Licencas.READY, Licencas.COMPLETE]:
-			continue
-		# A avaliação entra no mesmo cartão da situação (sem repetir o cabeçalho).
-		if not Contratos.da_licenca(dados, lic["id"]).is_empty():
-			_cartao_contratos(lic, sit)
-		elif lic["testes"].is_empty():
-			nota("icone_alerta", "Avaliação da %s em preparação" % lic["nome"], "", conteudo, COR_INFO)
-		elif c == null:
-			nota("icone_cadeado", "%s: compre um carro primeiro" % lic["nome"],
-					"Os testes da %s são feitos com o carro em uso." % lic["nome"])
-		else:
-			_cartao_licenca(c, lic, sit)
-	if treinando:
-		# Relógio do treino na tela: reconstrói a cada segundo enquanto houver treino.
-		var t := Timer.new()
-		t.wait_time = 1.0
-		t.autostart = true
-		t.timeout.connect(func(): mudou.emit())
-		conteudo.add_child(t)
+		if l.estado(lic["id"], agora) != Licencas.COMPLETE:
+			proxima = lic
+			break
+	if not proxima.is_empty():
+		var st := l.estado(proxima["id"], agora)
+		var v := _cartao_proxima(l, proxima, st, agora)
+		if st in [Licencas.READY]:
+			# A avaliação entra no mesmo cartão (sem repetir o cabeçalho).
+			if not Contratos.da_licenca(dados, proxima["id"]).is_empty():
+				_cartao_contratos(proxima, v)
+			elif proxima["testes"].is_empty():
+				nota("icone_alerta", "Avaliação da %s em preparação" % proxima["nome"], "", v, COR_INFO)
+			elif c == null:
+				nota("icone_cadeado", "%s: compre um carro primeiro" % proxima["nome"],
+						"Os testes da %s são feitos com o carro em uso." % proxima["nome"], v)
+			else:
+				_cartao_licenca(c, proxima, v)
+		if st == Licencas.TRAINING:
+			# Relógio do treino na tela: reconstrói a cada segundo enquanto treina.
+			var t := Timer.new()
+			t.wait_time = 1.0
+			t.autostart = true
+			t.timeout.connect(func(): mudou.emit())
+			conteudo.add_child(t)
 	_colecao()
-	var h := acoes()
-	entenda(h)
-	if _confirmar_recomeco:
-		var v := cartao(COR_RUIM)
-		rotulo("Apagar todo o progresso e voltar ao saldo inicial?", 0, Color.WHITE, v)
-		var hb := acoes(v)
-		botao("Sim, recomeçar", _recomecar, true, false, hb)
-		botao("Cancelar", func(): _confirmar_recomeco = false, true, false, hb)
-	else:
-		botao_texto("Recomeçar carreira", func(): _confirmar_recomeco = true)
-	rotulo("Versão %s" % versao(), FONTE_PEQUENA, COR_NEUTRA)
 
 
-func _resumo() -> void:
-	var vitorias := 0
-	for ev in jogador.vitorias:
-		vitorias += int(jogador.vitorias[ev])
-	numeros([["%d" % jogador.garagem.lista().size(), "carros"], ["%d" % vitorias, "vitórias"],
-			["%d/%d" % [jogador.licencas.size(), dados.lista("licencas").size()], "licenças"],
-			["%d" % jogador.dias, "dias"]])
+## Licença mais alta conquistada (vazio sem nenhuma).
+func _licenca_atual() -> Dictionary:
+	var atual := {}
+	for lic in dados.lista("licencas"):
+		if lic["id"] in jogador.licencas:
+			atual = lic
+	return atual
+
+
+## Topo: o brasão da licença atual sobre o cenário, com o nome embaixo. Sem
+## licença, o brasão da primeira, apagado.
+func _brasao() -> void:
+	var atual := _licenca_atual()
+	var mostrar: Dictionary = atual if not atual.is_empty() else (dados.lista("licencas")[0] if not dados.lista("licencas").is_empty() else {})
+	var faixa := ilustracao("fundo_carreira", ALTURA_BRASAO + 140.0)
+	cenario_topo(faixa)
+	var v := VBoxContainer.new()
+	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	v.offset_top = 70  # abaixo das abas penduradas do cabeçalho
+	v.offset_bottom = -10
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 4)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	faixa.add_child(v)
+	var tex := selo_licenca(String(mostrar.get("id", "")))
+	if tex != null:
+		var t := TextureRect.new()
+		t.texture = tex
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		t.custom_minimum_size = Vector2(0, ALTURA_BRASAO)
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if atual.is_empty():
+			t.modulate = Color(0.35, 0.35, 0.38)
+		v.add_child(t)
+		if not atual.is_empty():
+			ancora("LIC_" + String(atual["id"]), t)
+	var nome := Label.new()
+	nome.text = String(atual.get("nome", "Sem licença")).to_upper()
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	Tipografia.rotulo(nome, "semibold", 40)
+	nome.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if not atual.is_empty() else COR_SECUNDARIA)
+	nome.add_theme_constant_override("outline_size", 6)
+	nome.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+	v.add_child(nome)
 
 
 func _objetivos() -> void:
@@ -102,49 +132,25 @@ func _objetivos() -> void:
 			b.custom_minimum_size = Vector2(110, 60)
 
 
-## Coleção em fotos: os que você tem e os que ainda faltam (escurecidos);
-## tocar abre a ficha.
-## Fabricante aberto na coleção ("" = nenhum): centenas de carros, um
-## fabricante por vez.
-var _colecao_aberta := ""
-
-
+## Coleção por workshop: a logo de cada uma numa grade, com a barra de
+## quanto da frota dela você tem; tocar abre os carros (os que faltam, em
+## silhueta preta com "descobrir").
 func _colecao() -> void:
 	var tenho := {}
 	for c in jogador.garagem.lista():
 		tenho[c.id] = true
-	titulo_secao("COLEÇÃO · %d de %d" % [tenho.size(), dados.lista("carros").size()],
-			"Todos os carros do jogo, por fabricante. Os escuros você ainda não tem; toque para ver como conseguir.")
-	var por_fab := {}
-	for c in dados.lista("carros"):
-		por_fab.get_or_add(c["fabricante"], []).append(c)
-	var fabs: Array = dados.lista("fabricantes").filter(func(f): return por_fab.has(f["id"]))
-	fabs.sort_custom(func(a, b): return a["nome"] < b["nome"])
-	for f in fabs:
-		var carros: Array = por_fab[f["id"]]
-		var meus := carros.filter(func(c): return tenho.has(c["id"])).size()
-		var aberto: bool = _colecao_aberta == f["id"]
-		var b := Button.new()
-		b.text = "%s %s   %d de %d" % ["▾" if aberto else "▸", f["nome"], meus, carros.size()]
-		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.custom_minimum_size = Vector2(0, 60)
-		b.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
-		if meus > 0:
-			b.add_theme_color_override("font_color", COR_BOM)
-		b.pressed.connect(func():
-			_colecao_aberta = "" if aberto else String(f["id"])
-			mudou.emit())
-		conteudo.add_child(b)
-		if aberto:
-			_grade_colecao(carros, tenho)
-
-
-func _grade_colecao(carros: Array, tenho: Dictionary) -> void:
+	var titulo := rotulo("COLEÇÃO · %d de %d" % [tenho.size(), dados.lista("carros").size()], 0, COR_SECUNDARIA)
+	Tipografia.rotulo(titulo, "medium", 22)
 	var grade := GridContainer.new()
 	grade.columns = 3
-	grade.add_theme_constant_override("h_separation", 8)
-	grade.add_theme_constant_override("v_separation", 8)
-	for c in carros:
+	grade.add_theme_constant_override("h_separation", 10)
+	grade.add_theme_constant_override("v_separation", 10)
+	conteudo.add_child(grade)
+	for w in dados.workshops():
+		var carros: Array = dados.lista("carros").filter(func(c): return c["fabricante"] in w.get("fabricantes", []))
+		if carros.is_empty():
+			continue
+		var meus := carros.filter(func(c): return tenho.has(c["id"])).size()
 		var b := Button.new()
 		b.custom_minimum_size = Vector2(0, 150)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -155,24 +161,89 @@ func _grade_colecao(carros: Array, tenho: Dictionary) -> void:
 			b.add_theme_stylebox_override(estado, sb)
 		var v := VBoxContainer.new()
 		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		v.offset_left = 12
+		v.offset_right = -12
+		v.offset_top = 10
+		v.offset_bottom = -12
+		v.add_theme_constant_override("separation", 8)
 		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(v)
-		var img := icone_carro(c)
-		img.custom_minimum_size = Vector2(0, 100)
-		if not tenho.has(c["id"]):
-			img.modulate = Color(0.25, 0.25, 0.3)
-		v.add_child(img)
-		var l := Label.new()
-		l.text = ("✓ " if tenho.has(c["id"]) else "") + nome_curto(c["nome"])
-		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		l.add_theme_font_size_override("font_size", 23)
-		l.add_theme_color_override("font_color", Color.WHITE if tenho.has(c["id"]) else COR_SECUNDARIA)
-		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		l.clip_text = true
-		v.add_child(l)
-		b.pressed.connect(func(): ficha_modelo(c))
+		v.add_child(_logo_workshop(w, 92.0))
+		v.add_child(BarraDentes.new(meus, carros.size(), 8.0))
+		var n := Label.new()
+		n.text = "%d/%d" % [meus, carros.size()]
+		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		Tipografia.numero(n, 18)
+		n.add_theme_color_override("font_color", BarraDentes.ACESO if meus > 0 else COR_SECUNDARIA)
+		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.add_child(n)
+		b.pressed.connect(_abrir_workshop.bind(w, carros, tenho))
 		grade.add_child(b)
-	conteudo.add_child(grade)
+
+
+## Logo branca da workshop (só escala); sem arte, o nome.
+func _logo_workshop(w: Dictionary, altura: float) -> Control:
+	var caminho := "res://arte/ui/workshops/%s_logo_branca.png" % String(w.get("logo", ""))
+	if String(w.get("logo", "")) != "" and ResourceLoader.exists(caminho):
+		var t := TextureRect.new()
+		t.texture = load(caminho)
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		t.custom_minimum_size = Vector2(0, altura)
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		return t
+	var l := Label.new()
+	l.text = String(w.get("nome", ""))
+	l.custom_minimum_size = Vector2(0, altura)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(l, "semibold", 24)
+	return l
+
+
+## Os carros da workshop em grade: os seus com foto e nome (tocar abre a
+## ficha); os que faltam em silhueta preta, com "descobrir".
+func _abrir_workshop(w: Dictionary, carros: Array, tenho: Dictionary) -> void:
+	painel.emit(String(w.get("nome", "")), func(pv):
+		var g := GridContainer.new()
+		g.columns = 3
+		g.add_theme_constant_override("h_separation", 8)
+		g.add_theme_constant_override("v_separation", 8)
+		pv.add_child(g)
+		for c in carros:
+			var meu: bool = tenho.has(c["id"])
+			var b := Button.new()
+			b.custom_minimum_size = Vector2(0, 140)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.disabled = not meu
+			var sb := StyleBoxFlat.new()
+			sb.bg_color = COR_CARTAO.lightened(0.04)
+			sb.set_corner_radius_all(10)
+			for estado in ["normal", "hover", "pressed", "focus", "disabled"]:
+				b.add_theme_stylebox_override(estado, sb)
+			var v := VBoxContainer.new()
+			v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			b.add_child(v)
+			var img := icone_carro(c)
+			img.custom_minimum_size = Vector2(0, 96)
+			if not meu:
+				img.modulate = Color(0, 0, 0)  # silhueta 100% preta
+			v.add_child(img)
+			var l := Label.new()
+			l.text = nome_curto(c["nome"]) if meu else "DESCOBRIR"
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			Tipografia.rotulo(l, "medium" if meu else "semibold", 20)
+			l.add_theme_color_override("font_color", Color.WHITE if meu else COR_SECUNDARIA)
+			l.add_theme_color_override("font_disabled_color", COR_SECUNDARIA)
+			l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			l.clip_text = true
+			v.add_child(l)
+			if meu:
+				b.pressed.connect(func(): ficha_modelo(c))
+			g.add_child(b), [["Fechar", func(): pass]])
 
 
 ## Renda por nível de licença, somando as sessões registradas: base medida
@@ -287,7 +358,6 @@ func _modo_teste(v: VBoxContainer) -> void:
 
 
 func _recomecar() -> void:
-	_confirmar_recomeco = false
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}
@@ -332,53 +402,75 @@ const TEXTO_ESTADO := {
 }
 
 
-## Situação da licença (decisão 33): estado, requisitos com status, treino e
-## o que ela libera. A avaliação aparece abaixo só depois do treino.
-## Retorna o cartão, onde a avaliação entra em seguida.
-func _situacao(l: Licencas, lic: Dictionary, st: String, agora: float) -> VBoxContainer:
-	var cor: Color = {Licencas.COMPLETE: COR_BOM, Licencas.LOCKED: COR_NEUTRA}.get(st, COR_INFO)
-	var v := cartao(cor)
-	if st != Licencas.COMPLETE:
-		ancora("LICENSE_REQUIREMENTS", v)  # a próxima licença, não uma já feita
+## Cartão da próxima licença (decisão 33), no formato do cartão de corrida:
+## o brasão à esquerda; à direita o nome, o que libera, os requisitos e o
+## treino; embaixo, a ação (iniciar o treino) ou o andamento. A avaliação
+## entra em seguida, no mesmo cartão. Retorna a coluna do cartão.
+func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> VBoxContainer:
+	var v := cartao_com_fundo(arte("fundo_carreira"), st != Licencas.LOCKED)
+	ancora("LICENSE_REQUIREMENTS", v)
 	ancora("LIC_" + String(lic["id"]), v)
-	var ht := HBoxContainer.new()
-	v.add_child(ht)
-	rotulo(lic["nome"], 34, Color.WHITE, ht).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
-	selos([[TEXTO_ESTADO[st], cor if st != Licencas.LOCKED else COR_RUIM],
-			["libera %d corrida%s" % [provas, "" if provas == 1 else "s"], COR_NEUTRA.lightened(0.3)]], v)
-	if st == Licencas.COMPLETE:
-		return v
 	if st == Licencas.AVAILABLE:
 		historia("LICENCA_DISPONIVEL:" + String(lic["id"]))
 	elif st == Licencas.READY:
 		historia("LICENCA_PRONTA")
-	for r in l.requisitos(lic["id"]):
-		rotulo("%s %s" % ["✓" if r["ok"] else "✗", r["texto"]], FONTE_PEQUENA, COR_BOM if r["ok"] else COR_RUIM, v)
+	var corpo := HBoxContainer.new()
+	corpo.add_theme_constant_override("separation", 14)
+	v.add_child(corpo)
+	var esq := VBoxContainer.new()
+	esq.custom_minimum_size = Vector2(170, 0)
+	esq.alignment = BoxContainer.ALIGNMENT_CENTER
+	corpo.add_child(esq)
+	var tex := selo_licenca(String(lic["id"]))
+	if tex != null:
+		var t := TextureRect.new()
+		t.texture = tex
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		t.custom_minimum_size = Vector2(170, BRASAO_CARTAO)
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if st == Licencas.LOCKED:
+			t.modulate = Color(0.45, 0.45, 0.48)
+		esq.add_child(t)
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 4)
+	corpo.add_child(col)
+	var sobre := rotulo("PRÓXIMA LICENÇA · " + TEXTO_ESTADO[st], 0, COR_SECUNDARIA, col)
+	Tipografia.rotulo(sobre, "medium", 18)
+	sobre.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var titulo := Label.new()
+	titulo.text = String(lic["nome"]).to_upper()
+	Tipografia.rotulo(titulo, "semibold", 40)
+	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+	col.add_child(titulo)
+	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
 	var dur := l.treino_s(lic["id"])
+	rotulo("Libera %d corrida%s · treino de %s" % [provas, "" if provas == 1 else "s", _duracao(dur)], FONTE_PEQUENA,
+			Color(0.86, 0.87, 0.9), col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	for r in l.requisitos(lic["id"]):
+		var lr := rotulo("%s %s" % ["✓" if r["ok"] else "✗", r["texto"]], FONTE_PEQUENA - 2, COR_BOM if r["ok"] else COR_RUIM, col)
+		lr.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	match st:
 		Licencas.AVAILABLE:
-			var h := fileira(v)
-			rotulo("Treino: %s · grátis · continua com o app fechado" % _duracao(dur), FONTE_PEQUENA,
-					COR_SECUNDARIA, h).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			var iniciar := func() -> void:
+			rotulo("Grátis · continua com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
+			var b := Button.new()
+			Tipografia.acao_primaria(b, "Iniciar treino   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+			b.pressed.connect(func():
 				var erro := l.iniciar_treino(lic["id"], Time.get_unix_time_from_system())
 				if erro != "":
 					avisar(erro, false)
 				else:
 					historia("LICENCA_TREINO_INICIO")
-				mudou.emit()
-			botao("Iniciar treino", iniciar, true, true, h)
+				mudou.emit())
+			v.add_child(b)
 		Licencas.TRAINING:
 			var falta := l.restante(lic["id"], agora)
-			var barra := ProgressBar.new()
-			barra.custom_minimum_size = Vector2(0, 20)
-			barra.show_percentage = false
-			barra.value = 100.0 * (1.0 - falta / maxf(dur, 1.0))
-			v.add_child(barra)
-			rotulo("Treino: faltam %s" % _duracao(falta), FONTE_PEQUENA, COR_INFO, v)
+			var barra := BarraDentes.new(roundi(10.0 * (1.0 - falta / maxf(dur, 1.0))), 10, 10.0)
+			col.add_child(barra)
+			rotulo("Treino: faltam %s" % _duracao(falta), FONTE_PEQUENA, COR_INFO, col)
 		Licencas.READY:
-			rotulo("Treino concluído: faça a avaliação abaixo.", FONTE_PEQUENA, COR_BOM, v)
+			rotulo("Treino concluído: faça a avaliação abaixo.", FONTE_PEQUENA, COR_BOM, col)
 	return v
 
 

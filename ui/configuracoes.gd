@@ -63,6 +63,13 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 
 	testes.call(v)  # traz o próprio separador e título (Modo de playtest)
 
+	_secao(aba, v, "CARREIRA")
+	# Recomeçar pede confirmação numa janela própria (apaga todo o progresso).
+	aba.botao_texto("Recomeçar carreira", func():
+		aba.painel.emit("Recomeçar carreira?", func(pv):
+			aba.rotulo("Apagar todo o progresso e voltar ao saldo inicial?", Aba.FONTE_PEQUENA + 2, Color.WHITE, pv),
+			[["Sim, recomeçar", aba._recomecar], ["Cancelar", func(): pass]]), v)
+
 	_secao(aba, v, "SOBRE")
 	aba.rotulo("Second Driver v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
 			Aba.versao()], Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)

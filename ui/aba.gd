@@ -268,6 +268,59 @@ func cabecalho(t: String, subtitulo := "", fundo := "") -> void:
 		l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
 
 
+## Véu sobre a imagem do cartão com fundo: à esquerda, no meio e à direita (opacidade).
+const VEU_CARTAO := [0.15, 0.7, 0.85]
+
+
+## Cartão com uma imagem atrás dele todo (escala uniforme, recortada):
+## mais visível à esquerda, coberta por um véu que escurece para a direita,
+## onde ficam os textos. Retorna a coluna do conteúdo (margem de 16).
+func cartao_com_fundo(tex: Texture2D, aceso := true, pai: Control = null) -> VBoxContainer:
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_CARTAO
+	sb.set_corner_radius_all(14)
+	p.add_theme_stylebox_override("panel", sb)
+	p.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW  # cantos arredondados na imagem
+	_pai(pai).add_child(p)
+	if tex != null:
+		var t := TextureRect.new()
+		t.texture = tex
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if not aceso:
+			t.modulate = Color(0.6, 0.6, 0.62)
+		p.add_child(t)
+		var veu := TextureRect.new()
+		var grad := GradientTexture2D.new()
+		var g := Gradient.new()
+		g.offsets = PackedFloat32Array([0.0, 0.3, 0.45, 1.0])
+		g.colors = PackedColorArray([Color(COR_CARTAO, VEU_CARTAO[0]), Color(COR_CARTAO, VEU_CARTAO[0]),
+				Color(COR_CARTAO, VEU_CARTAO[1]), Color(COR_CARTAO, VEU_CARTAO[2])])
+		grad.gradient = g
+		grad.fill_from = Vector2(0, 0)
+		grad.fill_to = Vector2(1, 0)
+		veu.texture = grad
+		veu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		veu.stretch_mode = TextureRect.STRETCH_SCALE  # degradê: esticar é o próprio desenho, não uma imagem
+		veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		p.add_child(veu)
+	var m := MarginContainer.new()
+	for lado in ["left", "right", "top", "bottom"]:
+		m.add_theme_constant_override("margin_" + lado, 16)
+	p.add_child(m)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 10)
+	m.add_child(v)
+	return v
+
+
+## Selo (brasão) da licença: arte/ui/licencas/<id>.png; null sem arte.
+static func selo_licenca(id: String) -> Texture2D:
+	return arte("licencas/" + id.to_lower())
+
+
 # --- Arte da interface ------------------------------------------------------
 
 const PASTA_ARTE := "res://arte/ui/"

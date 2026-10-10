@@ -21,8 +21,8 @@ const LARGURA_IMAGEM_CARTAO := 210.0
 const ALTURA_IMAGEM_CARTAO := 200.0
 const TITULO_CARTAO := 40
 const TITULO_CARTAO_MIN := 26
-## Véu sobre a imagem do cartão: à esquerda, no meio e à direita (opacidade).
-const VEU_CARTAO := [0.15, 0.7, 0.85]
+## Selo da licença exigida, no canto do cartão (px).
+const SELO_CARTAO := 84.0
 var _limite := LOTE
 
 const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS CORRIDAS"]]
@@ -224,8 +224,26 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
 	var tipo := _tipo(ev)
 	var tex := arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
-	var v := _cartao_com_fundo(tex, pode)
+	var v := cartao_com_fundo(tex, pode)
 	ancora("EVENT_CARD", v)
+	# Selo da licença exigida no canto de cima, à direita, por cima do cartão.
+	var selo := selo_licenca(String(ev["restricoes"].get("licenca", "")))
+	if selo != null:
+		var cima := Control.new()
+		cima.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.get_parent().get_parent().add_child(cima)  # o painel do cartão: ocupa ele todo
+		var t := TextureRect.new()
+		t.texture = selo
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		t.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+		t.offset_left = -10 - SELO_CARTAO
+		t.offset_right = -10
+		t.offset_top = 8
+		t.offset_bottom = 8 + SELO_CARTAO
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cima.add_child(t)
+		ancora("LICENCA_" + String(ev["restricoes"]["licenca"]), t)  # tutorial: "olha a licença exigida"
 	# A prova do tutorial (etapa 1 do campeonato do prólogo): cartão, etapas,
 	# competitividade e o botão, cada um com a sua âncora.
 	var tutorial: bool = ev["id"] == _evento_tutorial()
@@ -284,23 +302,24 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if pode else COR_SECUNDARIA)
 	col.add_child(titulo)
 	# O título diminui até caber (nome longo de prova avulsa).
-	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 32.0 - LARGURA_IMAGEM_CARTAO - 14.0
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 32.0 - LARGURA_IMAGEM_CARTAO - 14.0 - (SELO_CARTAO if selo != null else 0.0)
 	var tam := TITULO_CARTAO
 	var fonte_titulo := titulo.get_theme_font("font")
 	while tam > TITULO_CARTAO_MIN and fonte_titulo.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
 		tam -= 2
 	titulo.add_theme_font_size_override("font_size", tam)
 	var linha := [nome_pista(ev["pista"]), "%d volta%s" % [ev["voltas"], "" if ev["voltas"] == 1 else "s"]]
+	# A licença exigida é o selo no canto (sem selo, vai escrita na linha).
 	var lic := String(ev["restricoes"].get("licenca", ""))
-	if lic != "":
+	if lic != "" and selo == null:
 		linha.append("licença " + lic.capitalize())
 	var sem_lic: Dictionary = ev["restricoes"].duplicate()
 	sem_lic.erase("licenca")
 	linha.append_array(_regras(sem_lic).slice(0, 2))
 	var lp := rotulo(" · ".join(linha), FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col)
 	lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	if lic != "":
-		ancora("LICENCA_" + lic, lp)  # tutorial: "olha a licença exigida"
+	if lic != "" and selo == null:
+		ancora("LICENCA_" + lic, lp)
 	if not etapas.is_empty():
 		var prog := rotulo(_progresso_curto(ev, etapas, k_etapa), FONTE_PEQUENA - 2, COR_DESTAQUE.lightened(0.2), col)
 		prog.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -371,50 +390,6 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			if not (pede_licenca and historia("LICENCA_EXIGIDA", ctx)):
 				historia("EVENTO_BLOQUEADO", ctx)
 		botao_texto("Inscrever", recusar, v)
-
-
-## Cartão com a imagem da pista atrás dele todo (escala uniforme, recortada):
-## mais visível à esquerda, coberta por um véu que escurece para a direita,
-## onde ficam os textos. Retorna a coluna do conteúdo (margem de 16).
-func _cartao_com_fundo(tex: Texture2D, aceso: bool) -> VBoxContainer:
-	var p := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = COR_CARTAO
-	sb.set_corner_radius_all(14)
-	p.add_theme_stylebox_override("panel", sb)
-	p.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW  # cantos arredondados na imagem
-	conteudo.add_child(p)
-	if tex != null:
-		var t := TextureRect.new()
-		t.texture = tex
-		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		if not aceso:
-			t.modulate = Color(0.6, 0.6, 0.62)
-		p.add_child(t)
-		var veu := TextureRect.new()
-		var grad := GradientTexture2D.new()
-		var g := Gradient.new()
-		g.offsets = PackedFloat32Array([0.0, 0.3, 0.45, 1.0])
-		g.colors = PackedColorArray([Color(COR_CARTAO, VEU_CARTAO[0]), Color(COR_CARTAO, VEU_CARTAO[0]),
-				Color(COR_CARTAO, VEU_CARTAO[1]), Color(COR_CARTAO, VEU_CARTAO[2])])
-		grad.gradient = g
-		grad.fill_from = Vector2(0, 0)
-		grad.fill_to = Vector2(1, 0)
-		veu.texture = grad
-		veu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		veu.stretch_mode = TextureRect.STRETCH_SCALE  # degradê: esticar é o próprio desenho, não uma imagem
-		veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		p.add_child(veu)
-	var m := MarginContainer.new()
-	for lado in ["left", "right", "top", "bottom"]:
-		m.add_theme_constant_override("margin_" + lado, 16)
-	p.add_child(m)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 10)
-	m.add_child(v)
-	return v
 
 
 ## "1º: 10 pts · você: 2º, 18 pts" na etapa que vale; nas outras, qual vale.
