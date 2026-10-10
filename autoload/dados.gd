@@ -302,6 +302,17 @@ func curvas(pista_id: String) -> Array:
 	return _objetos["curvas"].get(pista_id, [])
 
 
+## Arena de destruição (decisões 49-50, arena.json, opcional). Sem o arquivo
+## ou com chave faltando, {} (a arena não abre).
+func arena() -> Dictionary:
+	if not _objetos.has("arena"):
+		var caminho := pasta + "arena.json"
+		var a = _ler_json(caminho) if FileAccess.file_exists(caminho) else {}
+		var ok: bool = a is Dictionary and Arena.PARAMS.all(func(k): return a.has(k))
+		_objetos["arena"] = a if ok else {}
+	return _objetos["arena"]
+
+
 ## Vagas da garagem (decisão 43, garagem.json, opcional). Sem o arquivo, {}
 ## (garagem sem limite).
 func garagem() -> Dictionary:

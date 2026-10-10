@@ -1,0 +1,20 @@
+{
+ "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato.",
+ "raio_m": 45.0,
+ "dt_s": 0.0333333,
+ "amostra_dt_s": 0.1,
+ "tempo_max_s": 180.0,
+ "restituicao": 0.25,
+ "atrito_contato": 0.35,
+ "v_ref_kmh": 70.0,
+ "v_min_dano_kmh": 6.0,
+ "limite_eliminacao": 1.0,
+ "limite_re": 0.9,
+ "estagios": 5,
+ "alvo_s": 4.0,
+ "antecedencia_max_s": 1.5,
+ "travado_s": 1.0,
+ "recuperacao_s": 1.2,
+ "v_travado_kmh": 4.0,
+ "giros_graus": [90, 180, 360]
+}

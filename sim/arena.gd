@@ -1,0 +1,381 @@
+class_name Arena
+extends RefCounted
+## Arena de destruição resolvida sem renderizar (decisões 49–50; estudo
+## Destruction Derby em docs/). Plano 2D, passo fixo e semente: o mesmo
+## resultado com e sem amostras, como a corrida (Simulacao).
+##
+## Carro: cápsula (segmento entre os eixos + raio = meia largura), massa = peso,
+## posição, rumo e velocidade contínuos. Contato carro–carro e carro–muro (o
+## muro é um círculo de raio `raio_m`): impulso na normal com restituição e
+## atrito; o ponto do contato fora do centro gira o carro.
+##
+## Dano em seis regiões (FRENTE_E, FRENTE_D, LADO_E, LADO_D, TRAS_E, TRAS_D),
+## de 0 a 1: a energia do impacto E = ½·m_efetiva·v_normal² (v_normal = velocidade
+## de aproximação no ponto de contato) dividida pela resistência da região,
+## ½·m·v_ref² do próprio carro (o carro mais pesado aguenta mais). Cada contato
+## novo cobra uma vez; encostado não cobra de novo. Uma região da frente em
+## `limite_eliminacao` elimina: o carro para de andar e fica como obstáculo.
+## Limites e estágios vêm do estudo (eliminação a 100%, ré a ~90%, cinco
+## estágios visuais); velocidades e tempos estão em data/arena.json.
+##
+## IA (a mesma para todos): mantém um alvo por `alvo_s`, mira onde ele vai
+## estar (antecedência pela própria velocidade), vira aos poucos e alivia o
+## acelerador quanto maior o erro de rumo; com a frente em `limite_re`, ataca
+## de ré para poupar a frente; travado encostado por `travado_s`, recua
+## `recuperacao_s` no sentido contrário ao ataque.
+
+const G := 9.81
+const CV_PARA_W := 735.5
+const KMH := 1.0 / 3.6
+const REGIOES := ["frente_e", "frente_d", "lado_e", "lado_d", "tras_e", "tras_d"]
+const FRENTE := [0, 1]
+## Medidas do carro quando os dados não têm (m).
+const COMPRIMENTO_M := 4.4
+const LARGURA_M := 1.75
+## Chaves obrigatórias em data/arena.json.
+const PARAMS := ["raio_m", "dt_s", "amostra_dt_s", "tempo_max_s", "restituicao", "atrito_contato",
+	"v_ref_kmh", "v_min_dano_kmh", "limite_eliminacao", "limite_re", "estagios", "alvo_s",
+	"antecedencia_max_s", "travado_s", "recuperacao_s", "v_travado_kmh"]
+
+
+## participantes: [{id, atributos (Carro.atributos_efetivos), piloto {ritmo,
+## consistencia, agressividade}}], opcionais para testes: pos (Vector2), rumo,
+## vel (Vector2), acelerador (fixo; sem IA).
+## Retorna {classificacao, carros{id: {dano[6], eliminado, eliminado_em, por,
+## sobreviveu_s, giros (provocados), eliminou}}, eventos (impacto, giro,
+## eliminado), amostras, duracao}.
+static func correr(participantes: Array, params: Dictionary, semente: int, com_amostras := true) -> Dictionary:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = semente
+	var dt := float(params["dt_s"])
+	var raio := float(params["raio_m"])
+	var v_ref := float(params["v_ref_kmh"]) * KMH
+	var carros := []
+	var n := participantes.size()
+	for i in n:
+		var p: Dictionary = participantes[i]
+		var a: Dictionary = p["atributos"]
+		var ang := TAU * i / maxf(n, 1)
+		var m := float(a["peso"])
+		var c := {
+			"id": p["id"], "m": m, "L": float(a.get("comprimento", COMPRIMENTO_M)),
+			"W": float(a.get("largura", LARGURA_M)),
+			"pot": float(a["potencia"]) * CV_PARA_W, "mu": float(a["aderencia"]),
+			"pos": p.get("pos", Vector2.from_angle(ang) * raio * 0.6),
+			"rumo": float(p.get("rumo", ang + PI)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
+			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,
+			"por": "", "ultimo_golpe": "", "giro_acum": 0.0, "giros": 0, "eliminou": 0,
+			"acel_fixo": p.get("acelerador", null), "agress": float(p.get("piloto", {}).get("agressividade", 0.5)),
+			"consist": float(p.get("piloto", {}).get("consistencia", 0.9)),
+			"alvo": -1, "t_alvo": 0.0, "t_travado": 0.0, "t_recua": 0.0, "re": false,
+		}
+		c["I"] = c["m"] * (c["L"] * c["L"] + c["W"] * c["W"]) / 12.0
+		c["resist"] = 0.5 * c["m"] * v_ref * v_ref
+		carros.append(c)
+	var contatos := {}  # "i:j" ou "i:muro" -> true enquanto encostados
+	var eventos := []
+	var amostras := []
+	var t := 0.0
+	var t_amostra := 0.0
+	var tempo_max := float(params["tempo_max_s"])
+	while t < tempo_max:
+		for i in n:
+			_dirigir(carros, i, params, rng, dt)
+		for c in carros:
+			_mover(c, dt)
+		_colisoes(carros, contatos, params, eventos, t)
+		_giros(carros, params, eventos, t)
+		t += dt
+		for c in carros:
+			if not c["eliminado"]:
+				c["sobreviveu_s"] = t
+		if com_amostras and t >= t_amostra:
+			t_amostra += float(params["amostra_dt_s"])
+			amostras.append(_amostra(carros, t))
+		var vivos := carros.filter(func(c): return not c["eliminado"])
+		if vivos.size() <= 1:
+			break
+	if not com_amostras or amostras.is_empty() or amostras[-1]["t"] < t:
+		amostras.append(_amostra(carros, t))
+	return _resultado(carros, eventos, amostras, t)
+
+
+## IA: alvo, interceptação, ré com a frente quase destruída e recuperação.
+static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumberGenerator, dt: float) -> void:
+	var c: Dictionary = carros[i]
+	c["cmd_acel"] = 0.0
+	c["cmd_giro"] = 0.0
+	if c["eliminado"]:
+		return
+	if c["acel_fixo"] != null:
+		c["cmd_acel"] = float(c["acel_fixo"])
+		return
+	c["re"] = FRENTE.any(func(r): return c["dano"][r] >= float(params["limite_re"]))
+	# Recuperação: recua no sentido contrário ao ataque, sem virar.
+	if c["t_recua"] > 0.0:
+		c["t_recua"] -= dt
+		c["cmd_acel"] = 1.0 if c["re"] else -1.0
+		return
+	# Alvo: mantido por alvo_s; troca antes se ele foi eliminado.
+	c["t_alvo"] -= dt
+	var alvo_ok: bool = c["alvo"] >= 0 and not carros[c["alvo"]]["eliminado"]
+	if c["t_alvo"] <= 0.0 or not alvo_ok:
+		var vivos := []
+		for j in carros.size():
+			if j != i and not carros[j]["eliminado"]:
+				vivos.append(j)
+		if vivos.is_empty():
+			return
+		c["alvo"] = vivos[rng.randi_range(0, vivos.size() - 1)]
+		c["t_alvo"] = float(params["alvo_s"])
+	var a: Dictionary = carros[c["alvo"]]
+	var dist: float = (a["pos"] - c["pos"]).length()
+	var antecedencia := minf(dist / maxf(c["vel"].length(), 1.0), float(params["antecedencia_max_s"]))
+	var mira: Vector2 = a["pos"] + a["vel"] * antecedencia
+	var rumo_alvo: float = (mira - c["pos"]).angle()
+	if c["re"]:
+		rumo_alvo += PI  # a traseira aponta para o alvo
+	# Erro de rumo com um pouco de imprecisão (consistência do piloto).
+	var erro := wrapf(rumo_alvo - float(c["rumo"]), -PI, PI) + rng.randfn(0.0, (1.0 - c["consist"]) * 0.2)
+	c["cmd_giro"] = clampf(erro * 2.0, -1.0, 1.0)
+	var forca := lerpf(0.75, 1.0, c["agress"]) * clampf(1.0 - absf(erro) / PI, 0.25, 1.0)
+	c["cmd_acel"] = -forca if c["re"] else forca
+	# Travado: quase parado e encostado em alguém ou no muro.
+	if c["vel"].length() < float(params["v_travado_kmh"]) * KMH and c.get("encostado", false):
+		c["t_travado"] += dt
+		if c["t_travado"] >= float(params["travado_s"]):
+			c["t_travado"] = 0.0
+			c["t_recua"] = float(params["recuperacao_s"])
+	else:
+		c["t_travado"] = 0.0
+
+
+## Integra: força motriz (potência limitada pela aderência), giro limitado pela
+## velocidade e aderência lateral que tira o escorregamento aos poucos.
+static func _mover(c: Dictionary, dt: float) -> void:
+	var frente := Vector2.from_angle(c["rumo"])
+	var lado := frente.orthogonal()
+	var v_long: float = c["vel"].dot(frente)
+	var v_lat: float = c["vel"].dot(lado)
+	var aderencia: float = c["mu"] * G
+	if not c["eliminado"]:
+		var f := absf(c["cmd_acel"]) * minf(c["pot"] / maxf(absf(v_long), 3.0), c["mu"] * c["m"] * G)
+		v_long += signf(c["cmd_acel"]) * f / c["m"] * dt
+		# Giro: taxa máxima pela velocidade (raio mínimo ~ entre-eixos) e pela aderência.
+		var taxa_max := minf(absf(v_long) / (c["L"] * 0.6), aderencia / maxf(absf(v_long), 1.0))
+		var alvo_w: float = c["cmd_giro"] * taxa_max * signf(v_long if absf(v_long) > 0.1 else 1.0)
+		c["w"] = move_toward(c["w"], alvo_w, 8.0 * dt)
+	else:
+		c["w"] = move_toward(c["w"], 0.0, 2.0 * dt)
+	# Rolagem e arrasto simples; destroço freia mais.
+	v_long = move_toward(v_long, 0.0, (0.15 if not c["eliminado"] else 0.6) * G * dt)
+	v_lat = move_toward(v_lat, 0.0, aderencia * dt)
+	c["vel"] = frente * v_long + lado * v_lat
+	c["pos"] += c["vel"] * dt
+	var dr: float = c["w"] * dt
+	c["rumo"] = wrapf(c["rumo"] + dr, -PI, PI)
+	c["giro_acum"] += dr
+
+
+## Segmento da cápsula (entre os centros das pontas) em coordenadas do mundo.
+static func _segmento(c: Dictionary) -> Array:
+	var meio: float = c["L"] * 0.5 - c["W"] * 0.5
+	var f := Vector2.from_angle(c["rumo"]) * meio
+	return [c["pos"] - f, c["pos"] + f]
+
+
+static func _mais_proximos(p1: Vector2, q1: Vector2, p2: Vector2, q2: Vector2) -> Array:
+	var d1 := q1 - p1
+	var d2 := q2 - p2
+	var r := p1 - p2
+	var a := d1.dot(d1)
+	var e := d2.dot(d2)
+	var f := d2.dot(r)
+	var s := 0.0
+	var u := 0.0
+	var cc := d1.dot(r)
+	var b := d1.dot(d2)
+	var den := a * e - b * b
+	if den > 1e-9:
+		s = clampf((b * f - cc * e) / den, 0.0, 1.0)
+	u = (b * s + f) / e if e > 1e-9 else 0.0
+	if u < 0.0:
+		u = 0.0
+		s = clampf(-cc / a, 0.0, 1.0) if a > 1e-9 else 0.0
+	elif u > 1.0:
+		u = 1.0
+		s = clampf((b - cc) / a, 0.0, 1.0) if a > 1e-9 else 0.0
+	return [p1 + d1 * s, p2 + d2 * u]
+
+
+static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, eventos: Array, t: float) -> void:
+	var raio := float(params["raio_m"])
+	for c in carros:
+		c["encostado"] = false
+	var tocando := {}
+	for i in carros.size():
+		var a: Dictionary = carros[i]
+		var sa := _segmento(a)
+		# Muro: cada ponta da cápsula contra o círculo.
+		for ponta in sa:
+			var dist: float = ponta.length() + a["W"] * 0.5
+			if dist > raio:
+				var nrm: Vector2 = -ponta.normalized()  # aponta para dentro
+				var ponto: Vector2 = ponta - nrm * a["W"] * 0.5
+				a["pos"] += nrm * (dist - raio)
+				var chave := "%d:muro" % i
+				tocando[chave] = true
+				a["encostado"] = true
+				_impulso(a, {}, ponto, nrm, params, eventos, t, not contatos.has(chave))
+		for j in range(i + 1, carros.size()):
+			var b: Dictionary = carros[j]
+			var sb := _segmento(b)
+			var pp := _mais_proximos(sa[0], sa[1], sb[0], sb[1])
+			var dlt: Vector2 = pp[0] - pp[1]
+			var dist := dlt.length()
+			var soma: float = (a["W"] + b["W"]) * 0.5
+			if dist >= soma:
+				continue
+			var nrm := dlt / dist if dist > 1e-6 else Vector2.from_angle(a["rumo"]).orthogonal()
+			var pen := soma - dist
+			var ma: float = a["m"]
+			var mb: float = b["m"]
+			a["pos"] += nrm * pen * mb / (ma + mb)
+			b["pos"] -= nrm * pen * ma / (ma + mb)
+			var ponto: Vector2 = pp[1] + nrm * b["W"] * 0.5
+			var chave := "%d:%d" % [i, j]
+			tocando[chave] = true
+			a["encostado"] = true
+			b["encostado"] = true
+			_impulso(a, b, ponto, nrm, params, eventos, t, not contatos.has(chave))
+	contatos.clear()
+	contatos.merge(tocando)
+
+
+## Impulso no ponto de contato (normal de b para a); dano só em contato novo.
+static func _impulso(a: Dictionary, b: Dictionary, ponto: Vector2, nrm: Vector2, params: Dictionary,
+		eventos: Array, t: float, novo: bool) -> void:
+	var ra: Vector2 = ponto - a["pos"]
+	var va: Vector2 = a["vel"] + Vector2(-ra.y, ra.x) * a["w"]
+	var vb := Vector2.ZERO
+	var rb := Vector2.ZERO
+	if not b.is_empty():
+		rb = ponto - b["pos"]
+		vb = b["vel"] + Vector2(-rb.y, rb.x) * b["w"]
+	var vrel := va - vb
+	var vn := vrel.dot(nrm)
+	if vn >= 0.0:
+		return  # já se afastando
+	var inv_a: float = 1.0 / a["m"] + pow(ra.cross(nrm), 2) / a["I"]
+	var inv_b: float = 0.0 if b.is_empty() else 1.0 / b["m"] + pow(rb.cross(nrm), 2) / b["I"]
+	var e := float(params["restituicao"])
+	var jn := -(1.0 + e) * vn / (inv_a + inv_b)
+	# Atrito no contato (Coulomb, limitado pela normal): o que faz girar de lado.
+	var tang := nrm.orthogonal()
+	var vt := vrel.dot(tang)
+	var inv_ta: float = 1.0 / a["m"] + pow(ra.cross(tang), 2) / a["I"]
+	var inv_tb: float = 0.0 if b.is_empty() else 1.0 / b["m"] + pow(rb.cross(tang), 2) / b["I"]
+	var jt := clampf(-vt / (inv_ta + inv_tb), -float(params["atrito_contato"]) * jn, float(params["atrito_contato"]) * jn)
+	var imp := nrm * jn + tang * jt
+	a["vel"] += imp / a["m"]
+	a["w"] += ra.cross(imp) / a["I"]
+	if not b.is_empty():
+		b["vel"] -= imp / b["m"]
+		b["w"] -= rb.cross(imp) / b["I"]
+	if not novo or -vn < float(params["v_min_dano_kmh"]) * KMH:
+		return
+	var m_ef: float = a["m"] if b.is_empty() else a["m"] * b["m"] / (a["m"] + b["m"])
+	var energia := 0.5 * m_ef * vn * vn
+	_danificar(a, ponto, energia, "" if b.is_empty() else String(b["id"]), params, eventos, t)
+	if not b.is_empty():
+		_danificar(b, ponto, energia, String(a["id"]), params, eventos, t)
+
+
+## Região pelo ponto do contato no referencial do carro: terços do comprimento
+## (frente, lado, traseira) e o lado pelo sinal.
+static func regiao(c: Dictionary, ponto: Vector2) -> int:
+	var local: Vector2 = (ponto - c["pos"]).rotated(-float(c["rumo"]))
+	var lado := 0 if local.y > 0.0 else 1  # y>0: esquerda (ângulos crescem no sentido anti-horário)
+	if local.x > c["L"] / 6.0:
+		return 0 + lado
+	if local.x < -c["L"] / 6.0:
+		return 4 + lado
+	return 2 + lado
+
+
+static func _danificar(c: Dictionary, ponto: Vector2, energia: float, quem: String, params: Dictionary,
+		eventos: Array, t: float) -> void:
+	if c["eliminado"]:
+		return
+	var r := regiao(c, ponto)
+	var antes: float = c["dano"][r]
+	c["dano"][r] = minf(antes + energia / c["resist"], 1.0)
+	if quem != "":
+		c["ultimo_golpe"] = quem
+		c["giro_acum"] = 0.0  # conta o giro provocado a partir deste golpe
+		c["giros_feitos"] = []
+	eventos.append({"t": t, "tipo": "impacto", "carro": c["id"], "por": quem, "regiao": REGIOES[r],
+			"dano": c["dano"][r] - antes})
+	if r in FRENTE and c["dano"][r] >= float(params["limite_eliminacao"]):
+		c["eliminado"] = true
+		c["eliminado_em"] = t
+		c["por"] = quem if quem != "" else String(c["ultimo_golpe"])
+		eventos.append({"t": t, "tipo": "eliminado", "carro": c["id"], "por": c["por"]})
+
+
+## Giro provocado: depois de um golpe de outro carro, cada limite de
+## `giros_graus` passado conta uma vez para quem bateu.
+static func _giros(carros: Array, params: Dictionary, eventos: Array, t: float) -> void:
+	for c in carros:
+		if c["ultimo_golpe"] == "" or c["eliminado"]:
+			continue
+		var graus := absf(rad_to_deg(float(c["giro_acum"])))
+		for limite in params.get("giros_graus", []):
+			if graus >= float(limite) and not int(limite) in c.get("giros_feitos", []):
+				c["giros_feitos"] = c.get("giros_feitos", []) + [int(limite)]
+				eventos.append({"t": t, "tipo": "giro", "carro": c["id"], "por": c["ultimo_golpe"], "graus": int(limite)})
+
+
+## Estágio visual (0..estagios-1) de um valor de dano.
+static func estagio(dano: float, estagios: int) -> int:
+	return mini(int(dano * estagios), estagios - 1)
+
+
+static func _amostra(carros: Array, t: float) -> Dictionary:
+	var a := {"t": t}
+	for c in carros:
+		a[c["id"]] = {"pos": c["pos"], "rumo": c["rumo"], "dano": c["dano"].duplicate(), "eliminado": c["eliminado"],
+				"re": c.get("re", false)}
+	return a
+
+
+## Classificação: quem sobrou primeiro; depois os eliminados do último para o
+## primeiro (quem durou mais fica na frente). Eliminações creditadas a quem deu o
+## golpe final; giros contam a partir do último golpe recebido.
+static func _resultado(carros: Array, eventos: Array, amostras: Array, t: float) -> Dictionary:
+	for c in carros:
+		if c["por"] != "":
+			for o in carros:
+				if o["id"] == c["por"]:
+					o["eliminou"] += 1
+	var ordem := carros.duplicate()
+	ordem.sort_custom(func(x, y):
+		if x["eliminado"] != y["eliminado"]:
+			return not x["eliminado"]
+		if x["eliminado"]:
+			return x["eliminado_em"] > y["eliminado_em"]
+		return _total(x["dano"]) < _total(y["dano"]))
+	var res := {}
+	for c in carros:
+		res[c["id"]] = {"dano": c["dano"], "eliminado": c["eliminado"], "eliminado_em": c["eliminado_em"],
+				"por": c["por"], "sobreviveu_s": c.get("sobreviveu_s", t), "eliminou": c["eliminou"],
+				"giros": eventos.filter(func(e): return e["tipo"] == "giro" and e["por"] == c["id"]).size()}
+	return {"classificacao": ordem.map(func(c): return c["id"]), "carros": res, "eventos": eventos,
+			"amostras": amostras, "duracao": t}
+
+
+static func _total(d: PackedFloat32Array) -> float:
+	var s := 0.0
+	for x in d:
+		s += x
+	return s

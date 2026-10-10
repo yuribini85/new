@@ -322,3 +322,19 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     saves antigos seguem Second Driver). Aprovados também: o comentário de compra cara
     acima do percentil 90 dos preços do catálogo e o tutorial de corridas na primeira
     prova que o carro em uso já pode correr.
+
+### Arena (decisões do usuário, 2026-10-10; estudo Destruction Derby)
+
+49. **Arena: perda do carro sempre.** Carro eliminado na arena sai da garagem para
+    sempre. Só pode se inscrever quem tem **ao menos 2 carros** na garagem (nunca se
+    perde o único carro). Prêmio por pontos (giros provocados de 90°/180°/360°,
+    eliminações e sobrevivência), conversão para giros pelo critério do prêmio das
+    corridas da mesma licença; sem reparo na primeira versão (quem sobrevive volta
+    inteiro); só o carro sofre (nada com o piloto); abre com a licença National;
+    qualquer carro da garagem, o peso conta no dano.
+50. **Simulação da arena** (`sim/arena.gd`, `data/arena.json`): 2D, passo fixo e
+    semente; dano em seis regiões pela energia do impacto (½·m_efetiva·v_normal²)
+    sobre a resistência ½·m·v_ref²; eliminação com uma região da frente a 100% e ré
+    para proteger a frente a 90% (limites do estudo); cinco estágios visuais. Valores
+    de velocidade, raio e tempos provisórios até o playtest (com v_ref 70 km/h, lutas
+    de 4 carros de ~30–50 s).
