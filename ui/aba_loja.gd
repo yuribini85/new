@@ -76,6 +76,8 @@ func _carros_da(w: Dictionary) -> Array:
 ## Mapa das lojas (arte/ui/mapa_lojas.png): a estrada da costa com as seis
 ## concessionárias; cada uma é uma área de toque que abre a loja. Áreas em
 ## fração da imagem [x0, y0, x1, y1], na ordem de data/workshops.json.
+## Ajuste vertical da placa do nome de cada loja (px; + desce), na ordem das áreas.
+const AJUSTE_NOME_MAPA := [40.0, 0.0, 0.0, -30.0, 0.0, 0.0]
 ## Nomes das lojas escritos sobre elas no mapa (aba NOMES do cabeçalho).
 var mostrar_nomes := false
 var _no_mapa := false
@@ -154,6 +156,8 @@ func _mapa(ws: Array, second_chance: bool) -> void:
 			placa.add_child(l)
 			placa.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 			placa.grow_horizontal = Control.GROW_DIRECTION_BOTH
+			placa.offset_top += AJUSTE_NOME_MAPA[i]
+			placa.offset_bottom += AJUSTE_NOME_MAPA[i]
 			b.add_child(placa)
 	if second_chance:
 		var sc := Button.new()
