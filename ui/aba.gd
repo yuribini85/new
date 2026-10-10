@@ -1168,6 +1168,12 @@ static func moeda(b: Button, tamanho := 30) -> Button:
 	b.expand_icon = true
 	b.add_theme_constant_override("icon_max_width", tamanho)
 	b.add_theme_constant_override("h_separation", 8)
+	# Em botão ocre a moeda dourada sumiria: fica escura, como o texto.
+	var sb := b.get_theme_stylebox("normal") as StyleBoxFlat
+	if sb != null and sb.bg_color.is_equal_approx(COR_DESTAQUE):
+		for estado in ["icon_normal_color", "icon_hover_color", "icon_pressed_color", "icon_focus_color",
+				"icon_hover_pressed_color"]:
+			b.add_theme_color_override(estado, Color(0.1, 0.1, 0.1))
 	return b
 
 

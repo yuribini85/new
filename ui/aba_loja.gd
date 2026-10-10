@@ -325,16 +325,44 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	var img := icone_carro(c, false, cor)
 	img.custom_minimum_size = Vector2(0, 120)
 	v.add_child(img)
-	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
-			["%d cv · %d kg" % [c["potencia"], c["peso"]], 23, COR_SECUNDARIA],
-			["%s giros" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
-		var l := Label.new()
-		l.text = t[0]
-		l.add_theme_font_size_override("font_size", t[1])
-		l.add_theme_color_override("font_color", t[2])
-		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		l.clip_text = true
-		v.add_child(l)
+	# Como o cartão de corrida: nome em Barlow, números em Racing Sans e o
+	# preço com a moeda de giros.
+	var nome := Label.new()
+	nome.text = c["nome"] + ("  " + marca if marca != "" else "")
+	Tipografia.rotulo(nome, "semibold", 28)
+	nome.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	nome.clip_text = true
+	v.add_child(nome)
+	var nums := HBoxContainer.new()
+	nums.add_theme_constant_override("separation", 6)
+	nums.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(nums)
+	for par in [["%d" % c["potencia"], "cv"], ["%d" % c["peso"], "kg"]]:
+		var n := Label.new()
+		n.text = par[0]
+		Tipografia.numero(n, 22)
+		n.add_theme_color_override("font_color", Color(0.86, 0.87, 0.9))
+		nums.add_child(n)
+		var u := Label.new()
+		u.text = par[1] + "  "
+		Tipografia.rotulo(u, "regular", 18)
+		u.add_theme_color_override("font_color", COR_SECUNDARIA)
+		u.size_flags_vertical = Control.SIZE_SHRINK_END
+		nums.add_child(u)
+	var p_h := HBoxContainer.new()
+	p_h.add_theme_constant_override("separation", 6)
+	p_h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(p_h)
+	var moeda_i := icone("cabecalho/icone_giros", 26, p_h)
+	moeda_i.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var pr := Label.new()
+	pr.text = dinheiro(preco)
+	Tipografia.numero(pr, 30)
+	pr.add_theme_color_override("font_color", COR_DESTAQUE if pode else Color(0.62, 0.63, 0.68))
+	p_h.add_child(pr)
+	for x in [nome, pr]:
+		x.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if comprado:
 		var selo_c := selo("JÁ COMPRADO", COR_BOM)
 		selo_c.mouse_filter = Control.MOUSE_FILTER_IGNORE
