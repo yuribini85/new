@@ -260,6 +260,7 @@ func limpar() -> void:
 	_rastro_pts = {}
 	_intensidade = {}
 	_rear = {}
+	_largura_carro = {}
 	_luzes = {}
 	_giro_vis = {}
 	_pontos = {}
@@ -717,15 +718,16 @@ var _luzes := {}  # id -> StandardMaterial3D das lanternas
 ## Esteira de fumaça: uma fita macia no chão atrás de cada carro, pelo
 ## caminho que ele fez nos últimos ESTEIRA_S; fina e quase transparente com o
 ## carro andando, mais larga e densa na freada e na arrancada fortes.
-const ESTEIRA_S := 0.7
+const ESTEIRA_S := 0.45
 const ESTEIRA_PONTOS := 22
 const ESTEIRA_BASE := 0.45  # intensidade andando (0..1)
-const ESTEIRA_ALFA := 0.34  # alfa no pico da intensidade, junto ao carro
+const ESTEIRA_ALFA := 0.22  # alfa no pico da intensidade, junto ao carro
 var _fumaca := {}  # id -> true enquanto canta pneu (freada/arrancada forte)
 var _esteira := {}  # id -> MeshInstance3D com ImmediateMesh
 var _rastro_pts := {}  # id -> Array de [Vector3, tempo, intensidade]
 var _intensidade := {}  # id -> intensidade atual (suavizada)
 var _rear := {}  # id -> distância da traseira ao centro (m)
+var _largura_carro := {}  # id -> largura do carro (m)
 
 
 func _criar_efeitos(id: String, c: Node3D) -> void:
@@ -770,6 +772,7 @@ func _criar_esteira(id: String, dim: Vector2) -> void:
 	_esteira[id] = m
 	_rastro_pts[id] = []
 	_rear[id] = dim.x * 0.45
+	_largura_carro[id] = dim.y
 
 
 ## Guarda o ponto atrás do carro e redesenha a fita: largura cresce e alfa cai
@@ -793,6 +796,16 @@ func _atualizar_esteira(id: String) -> void:
 	im.clear_surfaces()
 	if pts.size() < 2 or not c.visible:
 		return
+	# Intensidade suavizada entre pontos vizinhos (nenhum trecho destoa).
+	var suave := PackedFloat32Array()
+	suave.resize(pts.size())
+	for i in pts.size():
+		var soma := 0.0
+		var n := 0.0
+		for j in range(maxi(i - 3, 0), mini(i + 4, pts.size())):
+			soma += float(pts[j][2])
+			n += 1.0
+		suave[i] = soma / n
 	im.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
 	for i in pts.size():
 		var a: Vector3 = pts[i][0]
@@ -803,12 +816,14 @@ func _atualizar_esteira(id: String) -> void:
 			dir = atras * -1.0
 		var lado := Vector3(-dir.z, 0.0, dir.x).normalized()
 		var idade := clampf((_tempo - float(pts[i][1])) / ESTEIRA_S, 0.0, 1.0)
-		var forca := float(pts[i][2])
-		var largura := lerpf(0.9, 2.6, idade) * lerpf(0.8, 1.3, forca) * c.scale.x
+		var forca := suave[i]
+		# Na proporção do carro: sai com metade da largura dele e abre até a
+		# largura inteira (um pouco mais na freada forte).
+		var largura := float(_largura_carro[id]) * lerpf(0.5, 1.0, idade) * lerpf(0.9, 1.15, forca) * c.scale.x
 		# Junto ao carro entra suave; some com a idade.
-		var alfa := ESTEIRA_ALFA * forca * smoothstep(0.0, 0.12, idade) * (1.0 - smoothstep(0.35, 1.0, idade))
+		var alfa := ESTEIRA_ALFA * forca * smoothstep(0.0, 0.2, idade) * (1.0 - smoothstep(0.25, 1.0, idade))
 		var cor := Color(0.87, 0.86, 0.84, alfa)
-		var y := a + Vector3(0, idade * 0.4, 0)
+		var y := a + Vector3(0, idade * 0.2, 0)
 		im.surface_set_color(cor)
 		im.surface_set_uv(Vector2(0.0, idade))
 		im.surface_add_vertex(y + lado * largura * 0.5)
@@ -1151,7 +1166,8 @@ func _efeitos_pista(id: String, a: float, v: float, delta: float) -> void:
 		var alvo := 0.0
 		if v > 3.0 and chegada < 1.0 and not Preferencias.reduzir_animacoes:
 			alvo = 1.0 if forte else ESTEIRA_BASE
-		_intensidade[id] = move_toward(float(_intensidade.get(id, 0.0)), alvo, delta * (4.0 if alvo > float(_intensidade.get(id, 0.0)) else 1.5))
+		# Sobe e desce devagar: sem degraus de densidade ao longo da fita.
+		_intensidade[id] = move_toward(float(_intensidade.get(id, 0.0)), alvo, delta * (1.8 if alvo > float(_intensidade.get(id, 0.0)) else 0.9))
 		_atualizar_esteira(id)
 
 
