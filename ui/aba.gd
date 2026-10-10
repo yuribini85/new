@@ -636,18 +636,41 @@ func nota(nome_icone: String, curta: String, detalhe := "", pai: Control = null,
 	return h
 
 
-## Título de seção (MAIÚSCULAS, pequeno) com ⓘ opcional ao lado.
-func titulo_secao(t: String, detalhe := "", pai: Control = null, cor := COR_SECUNDARIA) -> HBoxContainer:
+## Título de seção padrão do jogo: a diagonal ocre do cabeçalho na frente e
+## o texto em Barlow semibold grande. O que vem depois de " · " (uma contagem,
+## por exemplo) fica menor, em ocre, ao lado. ⓘ opcional no fim.
+const TAMANHO_TITULO_SECAO := 38
+
+
+func titulo_secao(t: String, detalhe := "", pai: Control = null, cor := Color(0.93, 0.91, 0.87)) -> HBoxContainer:
 	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 8)
-	var l := rotulo(t, FONTE_PEQUENA, cor, h)
-	if t == t.to_upper():
-		Tipografia.rotulo(l, "medium", 22)  # título de seção: a mesma voz dos outros
+	h.add_theme_constant_override("separation", 12)
+	h.custom_minimum_size.y = 56
+	var alto := TAMANHO_TITULO_SECAO + 4.0
+	var diag := TextureRect.new()
+	diag.texture = load(Cabecalho.PASTA + "diagonal.png")
+	diag.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	diag.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	diag.custom_minimum_size = Vector2(alto * 88.0 / 119.0, alto)
+	diag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	diag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(diag)
+	var partes := t.split(" · ", true, 1)
+	var l := Label.new()
+	l.text = partes[0].to_upper()
+	Tipografia.rotulo(l, "semibold", TAMANHO_TITULO_SECAO)
+	l.add_theme_color_override("font_color", cor)
 	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(l)
+	if partes.size() > 1:
+		var extra := Label.new()
+		extra.text = partes[1].to_upper()
+		Tipografia.rotulo(extra, "medium", 26)
+		extra.add_theme_color_override("font_color", COR_DESTAQUE)
+		extra.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(extra)
 	if detalhe != "":
-		l.autowrap_mode = TextServer.AUTOWRAP_OFF
-		l.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		botao_info(t.capitalize() if t == t.to_upper() else t, detalhe, h)
+		botao_info(partes[0].capitalize(), detalhe, h)
 	_pai(pai).add_child(h)
 	return h
 
