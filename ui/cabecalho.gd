@@ -204,9 +204,13 @@ func _posicionar() -> void:
 	if marcador != null:
 		# Da direita para a esquerda: a bandeira (voltar à corrida), ACELERAR e,
 		# na Oficina, GARAGEM; no mapa das Lojas, NOMES. Dentro de uma loja, a
-		# volta ao mapa vem antes de todas, no canto direito.
+		# volta ao mapa fica sozinha no canto esquerdo.
 		var direita := size.x - 14.0
-		for aba in [aba_mapa, aba_corrida, marcador, aba_garagem, aba_nomes]:
+		if aba_mapa != null and aba_mapa.visible:
+			var wm: float = (aba_mapa.get_child(0) as Control).get_combined_minimum_size().x + 34.0
+			aba_mapa.size = Vector2(wm, ALTURA_MARCADOR)
+			aba_mapa.position = Vector2(14.0, altura_total())
+		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
