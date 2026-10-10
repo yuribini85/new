@@ -539,7 +539,8 @@ Sistema: Toque em Disputar.
 Mara: A prova está ali. Toque em Disputar.
 [HIGHLIGHT_DISPUTAR]
 
-= CW_C01 | CAMPEONATO_SELECIONADO | personagem=dono; proibe=CHAMPIONSHIP_TUTORIAL_DONE; flags=CHAMPIONSHIP_TUTORIAL_DONE
+# Depois da primeira corrida (antes dela já há a apresentação e a largada).
+= CW_C01 | CAMPEONATO_SELECIONADO | personagem=dono; requer=FIRST_RACE_DONE; proibe=CHAMPIONSHIP_TUTORIAL_DONE; flags=CHAMPIONSHIP_TUTORIAL_DONE
 Mara[explica]: {serie}. Conta pontos.
 Mara: Etapas em ordem. Fora de ordem vira corrida comum.
 Mara: Campeão é quem soma mais. Constância ganha título.

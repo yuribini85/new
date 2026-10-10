@@ -2581,7 +2581,9 @@
     "texto": "Campeão é quem soma mais. Constância ganha título."
    }
   ],
-  "requer": [],
+  "requer": [
+   "FIRST_RACE_DONE"
+  ],
   "proibe": [
    "CHAMPIONSHIP_TUTORIAL_DONE"
   ],
