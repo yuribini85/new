@@ -971,12 +971,12 @@ func numeros(lista: Array, pai: Control = null) -> HBoxContainer:
 		var a := Label.new()
 		a.text = n[0]
 		a.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		a.add_theme_font_size_override("font_size", 40)
+		Tipografia.numero(a, 40)
 		v.add_child(a)
 		var b := Label.new()
 		b.text = n[1]
 		b.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		b.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		Tipografia.rotulo(b, "medium", FONTE_PEQUENA)
 		b.add_theme_color_override("font_color", COR_SECUNDARIA)
 		v.add_child(b)
 		h.add_child(v)
