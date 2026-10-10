@@ -27,7 +27,7 @@ var _limite := LOTE
 
 const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS CORRIDAS"]]
 ## Altura do topo (cenário com o carro atual).
-const ALTURA_TOPO_CARRO := 150.0
+const ALTURA_TOPO_CARRO := 246.0
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
 const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas": Color(0.22, 0.24, 0.28),
 		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22),
@@ -128,7 +128,7 @@ func _topo_carro(garagem: Carro) -> void:
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faixa.add_child(h)
 	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem))
-	img.custom_minimum_size = Vector2(170, 96)
+	img.custom_minimum_size = Vector2(340, 192)
 	h.add_child(img)
 	var nome := Label.new()
 	nome.text = garagem.base["nome"]
