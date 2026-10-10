@@ -1,0 +1,978 @@
+[
+ {
+  "nome": "icone_potencia",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "engine block seen at three-quarter, simple and bold",
+  "uso": "atributo potência (retas)"
+ },
+ {
+  "nome": "icone_peso",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "heavy round-topped weight with a handle, no letters on it",
+  "uso": "atributo peso"
+ },
+ {
+  "nome": "icone_pneus",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "racing tyre with a spoked wheel, seen from the side",
+  "uso": "atributo pneus/aderência (curvas)"
+ },
+ {
+  "nome": "icone_freios",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "brake disc with a caliper",
+  "uso": "atributo freios (frenagem)"
+ },
+ {
+  "nome": "icone_cambio",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "gear stick with a short H-pattern hint",
+  "uso": "câmbio"
+ },
+ {
+  "nome": "icone_tracao_dianteira",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "simple top view of a car outline with the two FRONT wheels highlighted in amber",
+  "uso": "tração dianteira"
+ },
+ {
+  "nome": "icone_tracao_traseira",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "simple top view of a car outline with the two REAR wheels highlighted in amber",
+  "uso": "tração traseira"
+ },
+ {
+  "nome": "icone_tracao_central",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "simple top view of a car outline with a small engine block in the middle and the rear wheels highlighted in amber",
+  "uso": "motor central"
+ },
+ {
+  "nome": "icone_tracao_4x4",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "simple top view of a car outline with all four wheels highlighted in amber",
+  "uso": "tração 4x4"
+ },
+ {
+  "nome": "icone_creditos",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "small stack of gold coins",
+  "uso": "créditos (Cr)"
+ },
+ {
+  "nome": "icone_trofeu_ouro",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "gold trophy cup",
+  "uso": "1º lugar, prêmio"
+ },
+ {
+  "nome": "icone_trofeu_prata",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "silver trophy cup",
+  "uso": "2º lugar"
+ },
+ {
+  "nome": "icone_trofeu_bronze",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "bronze trophy cup",
+  "uso": "3º lugar"
+ },
+ {
+  "nome": "icone_medalha_ouro",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "gold medal with a ribbon",
+  "uso": "medalha de licença"
+ },
+ {
+  "nome": "icone_medalha_prata",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "silver medal with a ribbon",
+  "uso": "medalha de licença"
+ },
+ {
+  "nome": "icone_medalha_bronze",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "bronze medal with a ribbon",
+  "uso": "medalha de licença"
+ },
+ {
+  "nome": "icone_licenca",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "driving licence card with a small helmet emblem, no letters",
+  "uso": "licenças"
+ },
+ {
+  "nome": "icone_correr",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "checkered flag waving",
+  "uso": "botão Correr"
+ },
+ {
+  "nome": "icone_melhorar",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "wrench",
+  "uso": "botão Melhorar o carro"
+ },
+ {
+  "nome": "icone_comparar",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "two cars side by side with a small balance scale above",
+  "uso": "Comparar montagens"
+ },
+ {
+  "nome": "icone_prever",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "small bar chart with an upward arrow",
+  "uso": "Prever minha posição"
+ },
+ {
+  "nome": "icone_montagem",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "bookmark ribbon over a wrench",
+  "uso": "montagens salvas"
+ },
+ {
+  "nome": "icone_info",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "letter-free info symbol: a circle with a small dot and vertical bar",
+  "uso": "ajuda"
+ },
+ {
+  "nome": "icone_dica",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "light bulb",
+  "uso": "dica"
+ },
+ {
+  "nome": "icone_objetivo",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "clipboard with a check mark",
+  "uso": "objetivo"
+ },
+ {
+  "nome": "icone_ofertas",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "calendar page",
+  "uso": "próximas ofertas"
+ },
+ {
+  "nome": "icone_avisar",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "bell",
+  "uso": "avisar quando aparecer usado"
+ },
+ {
+  "nome": "icone_comprar",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "shopping cart",
+  "uso": "comprar"
+ },
+ {
+  "nome": "icone_vender",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "price tag",
+  "uso": "vender"
+ },
+ {
+  "nome": "icone_trocar",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "two horizontal arrows pointing in opposite directions",
+  "uso": "trocar de carro"
+ },
+ {
+  "nome": "icone_de_novo",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "circular arrow (repeat)",
+  "uso": "correr de novo"
+ },
+ {
+  "nome": "icone_cronometro",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "stopwatch",
+  "uso": "tempo, recorde"
+ },
+ {
+  "nome": "icone_cadeado",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "closed padlock",
+  "uso": "bloqueado (precisa de licença)"
+ },
+ {
+  "nome": "icone_ok",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "check mark in a circle",
+  "uso": "feito"
+ },
+ {
+  "nome": "icone_alerta",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "warning triangle with an exclamation-like bar and dot",
+  "uso": "aviso"
+ },
+ {
+  "nome": "icone_ao_vivo",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "small broadcast tower with signal waves",
+  "uso": "corrida ao vivo"
+ },
+ {
+  "nome": "icone_pista",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "map pin over a small winding road",
+  "uso": "pista"
+ },
+ {
+  "nome": "icone_podio",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "three-step podium",
+  "uso": "classificação"
+ },
+ {
+  "nome": "icone_estrela",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "star",
+  "uso": "recomendado"
+ },
+ {
+  "nome": "icone_piloto",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "racing helmet",
+  "uso": "piloto, carreira"
+ },
+ {
+  "nome": "aba_garagem",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "garage building with a roll-up door",
+  "uso": "barra de abas"
+ },
+ {
+  "nome": "aba_mercado",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "car with a price tag",
+  "uso": "barra de abas"
+ },
+ {
+  "nome": "aba_competicoes",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "trophy cup",
+  "uso": "barra de abas"
+ },
+ {
+  "nome": "aba_carreira",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "racing helmet",
+  "uso": "barra de abas"
+ },
+ {
+  "nome": "categoria_motor",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "car engine bay close-up",
+  "uso": "aba da oficina"
+ },
+ {
+  "nome": "categoria_chassi",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "bare car chassis frame with suspension",
+  "uso": "aba da oficina"
+ },
+ {
+  "nome": "categoria_pneus",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "stack of racing tyres",
+  "uso": "aba da oficina"
+ },
+ {
+  "nome": "peca_aspiracao",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "turbocharger with intake piping",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_peso",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "lightweight carbon bonnet panel and drilled bracket",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_corrida",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "racing body kit: wide front bumper with splitter, flared wheel arch and a tall rear wing, unpainted, no logos",
+  "uso": "lista de peças da oficina (kit de corrida)"
+ },
+ {
+  "nome": "peca_freios",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "big brake kit: drilled disc and red caliper",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_escapamento",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "sport exhaust manifold and muffler",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_dutos",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "polished cylinder head intake ports",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_balanceamento",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "balanced crankshaft",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_cilindrada",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "engine block with large pistons",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_computador",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "engine control unit box with a connector",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_intercooler",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "front-mount intercooler core",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "peca_cambio",
+  "tipo": "miniatura",
+  "largura_px": 384,
+  "altura_px": 256,
+  "descricao": "manual gearbox with exposed gears",
+  "uso": "lista de peças da oficina"
+ },
+ {
+  "nome": "pneu_fabrica",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "plain road tyre on a steel wheel",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "pneu_esportivo",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "sport road tyre with a sporty alloy wheel",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "pneu_corrida_duro",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "slick racing tyre with a WHITE sidewall band",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "pneu_corrida_medio",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "slick racing tyre with a YELLOW sidewall band",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "pneu_corrida_macio",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "slick racing tyre with a RED sidewall band",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "pneu_corrida_supermacio",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "slick racing tyre with a PURPLE sidewall band",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "pneu_simulacao",
+  "tipo": "miniatura",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "grooved wet-weather racing tyre with a BLUE sidewall band",
+  "uso": "aba de pneus"
+ },
+ {
+  "nome": "banner_anel_do_vale",
+  "tipo": "banner",
+  "largura_px": 1200,
+  "altura_px": 500,
+  "descricao": "a race circuit in a forest valley at dusk, low wide view across the track with red and white kerbs, pine and broadleaf trees, a pit building with warm lights",
+  "uso": "cartão da competição e carregamento da corrida"
+ },
+ {
+  "nome": "banner_serra_alta",
+  "tipo": "banner",
+  "largura_px": 1200,
+  "altura_px": 500,
+  "descricao": "a mountain race circuit on a high plateau, cool overcast light, pine forest and rocks, distant peaks",
+  "uso": "cartão da competição e carregamento da corrida"
+ },
+ {
+  "nome": "banner_parque_das_docas",
+  "tipo": "banner",
+  "largura_px": 1200,
+  "altura_px": 500,
+  "descricao": "a street-style race circuit in a harbour at night, shipping containers, cranes, quay water, warm street lights",
+  "uso": "cartão da competição e carregamento da corrida"
+ },
+ {
+  "nome": "banner_pista_de_testes",
+  "tipo": "banner",
+  "largura_px": 1200,
+  "altura_px": 500,
+  "descricao": "a test track on a dry desert plateau at midday, sand, scattered rocks, a small control tower, distant mesas",
+  "uso": "cartão da competição e carregamento da corrida"
+ },
+ {
+  "nome": "fundo_garagem",
+  "tipo": "fundo",
+  "largura_px": 1080,
+  "altura_px": 1080,
+  "descricao": "interior of a small private garage at dusk: open roll-up door with warm evening light, concrete floor with a clear empty space in the centre for a car, hanging lamp, tool chest, tyres stacked",
+  "uso": "atrás do carro na garagem"
+ },
+ {
+  "nome": "fundo_competicoes",
+  "tipo": "fundo",
+  "largura_px": 1080,
+  "altura_px": 420,
+  "descricao": "dark racing paddock at night with grandstand lights, wide and calm",
+  "uso": "topo da tela de competições"
+ },
+ {
+  "nome": "fundo_resultado",
+  "tipo": "fundo",
+  "largura_px": 1080,
+  "altura_px": 900,
+  "descricao": "small podium stage at night under spotlights, checkered motifs, empty space in the upper middle for a car",
+  "uso": "tela de resultado"
+ },
+ {
+  "nome": "fundo_mercado",
+  "tipo": "fundo",
+  "largura_px": 1080,
+  "altura_px": 420,
+  "descricao": "used-car lot and showroom at dusk, rows of covered cars, warm lights",
+  "uso": "topo do mercado"
+ },
+ {
+  "nome": "fundo_carreira",
+  "tipo": "fundo",
+  "largura_px": 1080,
+  "altura_px": 420,
+  "descricao": "driving school building next to a race track at dusk, cones and a small grandstand",
+  "uso": "topo da carreira e das licenças"
+ },
+ {
+  "nome": "emblema_copa",
+  "tipo": "emblema",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "round shield badge with laurel leaves",
+  "uso": "campeonatos (o jogo tinge e escreve o nome)"
+ },
+ {
+  "nome": "emblema_desafio",
+  "tipo": "emblema",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "pointed shield badge with crossed checkered flags",
+  "uso": "campeonatos (o jogo tinge e escreve o nome)"
+ },
+ {
+  "nome": "emblema_liga",
+  "tipo": "emblema",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "hexagonal badge with a stylised road",
+  "uso": "campeonatos (o jogo tinge e escreve o nome)"
+ },
+ {
+  "nome": "emblema_serie",
+  "tipo": "emblema",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "rectangular plate badge with speed stripes",
+  "uso": "campeonatos (o jogo tinge e escreve o nome)"
+ },
+ {
+  "nome": "emblema_trofeu",
+  "tipo": "emblema",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "star-topped badge with a trophy silhouette",
+  "uso": "campeonatos (o jogo tinge e escreve o nome)"
+ },
+ {
+  "nome": "piloto_silhueta_1",
+  "tipo": "silhueta",
+  "largura_px": 256,
+  "altura_px": 320,
+  "descricao": "dark silhouette (single dark tone, slight rim light) of a standing racing driver in suit holding a helmet under the arm",
+  "uso": "pódio do resultado"
+ },
+ {
+  "nome": "piloto_silhueta_2",
+  "tipo": "silhueta",
+  "largura_px": 256,
+  "altura_px": 320,
+  "descricao": "dark silhouette (single dark tone, slight rim light) of a racing driver in suit with arms crossed, helmet on",
+  "uso": "pódio do resultado"
+ },
+ {
+  "nome": "piloto_silhueta_3",
+  "tipo": "silhueta",
+  "largura_px": 256,
+  "altura_px": 320,
+  "descricao": "dark silhouette (single dark tone, slight rim light) of a racing driver in suit raising one fist",
+  "uso": "pódio do resultado"
+ },
+ {
+  "nome": "icone_app_fechado",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "closed smartphone lying face down with a small crescent moon and a tiny race flag above it, meaning the game keeps running while the app is closed",
+  "uso": "corridas seguem com o app fechado"
+ },
+ {
+  "nome": "icone_camera",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "small film camera seen from the side with a short arrow pointing at a race car silhouette",
+  "uso": "câmera segue o carro tocado"
+ },
+ {
+  "nome": "icone_trafego",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "two small race cars seen from above, one right behind the other, nose to tail",
+  "uso": "tempo preso atrás de outro carro"
+ },
+ {
+  "nome": "banner_circuito_misto",
+  "tipo": "banner",
+  "largura_px": 1200,
+  "altura_px": 500,
+  "descricao": "a race circuit winding through rolling vineyard hills at late afternoon, warm amber low sun, rows of vines, tall cypress trees, a small stone farmhouse, gentle elevation changes",
+  "uso": "cartão da competição e carregamento da corrida"
+ },
+ {
+  "nome": "emblema_fab_hayase",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a folded paper fan, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hayase Motor"
+ },
+ {
+  "nome": "emblema_fab_hartwig",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: an oak leaf, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hartwig"
+ },
+ {
+  "nome": "emblema_fab_ashcombe",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a sailing ship, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ashcombe Cars"
+ },
+ {
+  "nome": "emblema_fab_arvelle",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: an arrowhead, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Arvelle"
+ },
+ {
+  "nome": "emblema_fab_varenna",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a racing horse silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Varenna"
+ },
+ {
+  "nome": "emblema_fab_wexmoor",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a heraldic lion silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Wexmoor"
+ },
+ {
+  "nome": "emblema_fab_vorhaus",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a stylized falcon head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Vorhaus"
+ },
+ {
+  "nome": "emblema_fab_ostwerk",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a shield with a diagonal band, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ostwerk"
+ },
+ {
+  "nome": "emblema_fab_bancroft",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a five-point star in a ring, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Bancroft"
+ },
+ {
+  "nome": "emblema_fab_morel",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a rooster silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Morel"
+ },
+ {
+  "nome": "emblema_fab_tomoe",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: three stacked waves, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Tomoe"
+ },
+ {
+  "nome": "emblema_fab_garrison",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a canyon outline, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Garrison Motors"
+ },
+ {
+  "nome": "emblema_fab_ottavo",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a trident, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ottavo"
+ },
+ {
+  "nome": "emblema_fab_whitlock",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a bison head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Whitlock"
+ },
+ {
+  "nome": "emblema_fab_hozuki",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a lightning bolt in a circle, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hozuki"
+ },
+ {
+  "nome": "emblema_fab_calderwood",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a thistle, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Calderwood"
+ },
+ {
+  "nome": "emblema_fab_castellani",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a cypress tree, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Castellani"
+ },
+ {
+  "nome": "emblema_fab_thornby",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a winged wheel, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Thornby"
+ },
+ {
+  "nome": "emblema_fab_pemberly",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a crown of laurel, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Pemberly"
+ },
+ {
+  "nome": "emblema_fab_mizuchi",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a crescent and a dot, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Mizuchi"
+ },
+ {
+  "nome": "emblema_fab_keldorf",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: an eagle wing, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Keldorf"
+ },
+ {
+  "nome": "emblema_fab_dunmere",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a stag head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Dunmere"
+ },
+ {
+  "nome": "emblema_fab_sanga",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a stylized mountain peak, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Sanga Motors"
+ },
+ {
+  "nome": "emblema_fab_lindauer",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a gear wheel and wing, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Lindauer"
+ },
+ {
+  "nome": "emblema_fab_saulieu",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a lavender sprig, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Saulieu"
+ },
+ {
+  "nome": "emblema_fab_ashby",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a wing and star, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Ashby"
+ },
+ {
+  "nome": "emblema_fab_vallon",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a fleur shape (not a real logo), inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Vallon"
+ },
+ {
+  "nome": "emblema_fab_rauhe",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a bridge arch, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Rauhe"
+ },
+ {
+  "nome": "emblema_fab_cutler",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a rattlesnake coil, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Cutler"
+ },
+ {
+  "nome": "emblema_fab_hoshino",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a crane in flight, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Hoshino"
+ },
+ {
+  "nome": "emblema_fab_kosame",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a cherry blossom silhouette, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Kosame"
+ },
+ {
+  "nome": "emblema_fab_tokiwa",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a rising sun arc, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Tokiwa Works"
+ },
+ {
+  "nome": "emblema_fab_kanaya",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: two crossed feathers, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Kanaya"
+ },
+ {
+  "nome": "emblema_fab_brayford",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a thistle, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Brayford"
+ },
+ {
+  "nome": "emblema_fab_kestrin",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a bison head, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Kestrin"
+ },
+ {
+  "nome": "emblema_fab_aubrac",
+  "tipo": "icone",
+  "largura_px": 256,
+  "altura_px": 256,
+  "descricao": "emblem of a fictional car maker: a chevron pair, inside a simple metallic badge outline; abstract, no letters, not resembling any real car brand logo",
+  "uso": "loja e concessionária de Aubrac"
+ }
+]

@@ -1,0 +1,51 @@
+[
+ {
+  "id": "fraco",
+  "fabricante": "fab_a",
+  "arquetipo_ref": "teste",
+  "categoria": "teste",
+  "tracao": "FF",
+  "potencia": 100,
+  "peso": 1000,
+  "aderencia": 1.0,
+  "freio": 1.0,
+  "velocidade_max": 180,
+  "preco": 400,
+  "ano": 1990,
+  "nome": "Fabricante A Leve",
+  "usados": [
+   [
+    0,
+    9,
+    150
+   ],
+   [
+    10,
+    30,
+    140
+   ]
+  ]
+ },
+ {
+  "id": "forte",
+  "fabricante": "fab_a",
+  "arquetipo_ref": "teste",
+  "categoria": "teste",
+  "tracao": "FR",
+  "potencia": 300,
+  "peso": 1000,
+  "aderencia": 1.0,
+  "freio": 1.0,
+  "velocidade_max": 250,
+  "preco": 900,
+  "ano": 1990,
+  "nome": "Fabricante A Turbo",
+  "usados": [
+   [
+    10,
+    20,
+    400
+   ]
+  ]
+ }
+]

@@ -1,0 +1,235 @@
+class_name CorridaVisual
+extends Control
+## Mostra uma corrida já resolvida pela Simulacao. Só lê `amostras`: a posição
+## de cada carro no tempo vira ponto na pista e índice de sprite pelo rumo.
+
+const LARGURA_PISTA_M := 12.0
+## Pixels por metro dos carros e mínimo da largura da pista na tela: o sprite
+## pré-renderizado tem tamanho fixo, independente do zoom da pista.
+## No minimapa da corrida 3D ficam menores e sem número.
+var escala_carro := 10.0
+var largura_min_px := 34.0
+var com_rotulos := true
+## Sombra suave sob o traçado, para ler o minimapa sem caixa por trás.
+var sombra := false
+## Gira o traçado (múltiplos de 90°) para ocupar mais a tela. O minimapa não
+## gira, para ficar na mesma orientação da vista 3D.
+var girar := true
+## Depois da linha de chegada o carro segue rodando e freia, em vez de parar
+## em cima da linha (a simulação para de mover quem terminou).
+const DESACELERACAO_CHEGADA := 9.0  # m/s²: para em poucos segundos, no escurecer do fim
+const ESPACO_PARADO_M := 8.0  # parados depois da chegada: um atrás do outro, sem encostar
+## Cores de alto contraste, na ordem do grid. O jogador usa a primeira.
+const PALETA := [
+	Color(1.0, 0.82, 0.1), Color(0.25, 0.65, 1.0), Color(1.0, 0.35, 0.35), Color(0.4, 0.9, 0.45),
+	Color(0.85, 0.45, 1.0), Color(1.0, 0.6, 0.2), Color(0.3, 0.95, 0.95), Color(0.95, 0.95, 0.95),
+]
+const COR_PISTA := Color(0.32, 0.33, 0.36)
+const COR_BORDA := Color(0.85, 0.85, 0.85)
+
+## Segundos desde a largada. Quem controla é o dono (tela de corrida).
+var tempo := 0.0:
+	set(v):
+		tempo = v
+		_posicionar()
+
+var _pista: Pista
+var _tempos := PackedFloat64Array()
+var _s := {}  # id -> PackedFloat64Array
+var _sprites := {}  # id -> CarroSprite
+var _carros: Node2D
+var _escala := 1.0
+var _origem := Vector2.ZERO
+var _contorno := PackedVector2Array()
+## Giro do traçado (múltiplo de 90°) que mais aproveita a tela.
+var _rotacao := 0.0
+var _cores := {}  # id -> Color
+var _chegada := {}  # id -> {"t", "s", "v"} de quem terminou
+## Distância da chegada (m); 0 se o resultado não diz quantas voltas.
+var _fim := 0.0
+
+
+func fim() -> float:
+	return _fim
+
+
+func _init() -> void:
+	_carros = Node2D.new()
+	_carros.y_sort_enabled = true
+	add_child(_carros)
+	resized.connect(_enquadrar)
+
+
+## cores: id -> Color. Ids sem cor ganham uma derivada do id.
+func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> void:
+	_pista = pista
+	_fim = float(resultado.get("comprimento", pista.comprimento)) * int(resultado.get("voltas", 0))
+	_tempos = PackedFloat64Array()
+	_s = {}
+	for a in resultado["amostras"]:
+		_tempos.append(a["t"])
+		for id in a["s"]:
+			if not _s.has(id):
+				_s[id] = PackedFloat64Array()
+			_s[id].append(a["s"][id])
+	_chegada = {}
+	for id in resultado.get("carros", {}):
+		var info: Dictionary = resultado["carros"][id]
+		if info["terminou"]:
+			var t: float = info["tempo_total"]
+			var s := _bruta(id, t)
+			_chegada[id] = {"t": t, "s": s, "v": maxf(s - _bruta(id, t - 1.0), 0.0), "a": DESACELERACAO_CHEGADA}
+	# Depois da linha, ninguém para em cima de quem chegou antes: cada um para
+	# ESPACO_PARADO_M atrás do anterior (freia mais forte se precisar).
+	var ordem_chegada: Array = _chegada.keys()
+	ordem_chegada.sort_custom(func(a, b): return _chegada[a]["t"] < _chegada[b]["t"])
+	var limite := INF
+	for id in ordem_chegada:
+		var c: Dictionary = _chegada[id]
+		var v: float = c["v"]
+		var para: float = c["s"] + v * v / (2.0 * DESACELERACAO_CHEGADA)
+		if para > limite - ESPACO_PARADO_M:
+			var folga := maxf(limite - ESPACO_PARADO_M - float(c["s"]), 1.0)
+			c["a"] = maxf(DESACELERACAO_CHEGADA, v * v / (2.0 * folga))
+			para = c["s"] + v * v / (2.0 * float(c["a"]))
+		limite = para
+	for c in _carros.get_children():
+		c.queue_free()
+	_sprites = {}
+	_cores = {}
+	var ids: Array = _s.keys()
+	ids.sort_custom(func(a, b): return a == "jogador" or (b != "jogador" and a < b))
+	for i in ids.size():
+		var id: String = ids[i]
+		var sp := CarroSprite.new()
+		sp.escala = escala_carro
+		sp.cor = cores.get(id, PALETA[i % PALETA.size()])
+		sp.destaque = id == "jogador"
+		_cores[id] = sp.cor
+		_carros.add_child(sp)
+		_sprites[id] = sp
+	_enquadrar()
+
+
+func limpar() -> void:
+	_pista = null
+	for c in _carros.get_children():
+		c.queue_free()
+	_sprites = {}
+	queue_redraw()
+
+
+func cor_de(id: String) -> Color:
+	return _cores.get(id, Color.WHITE)
+
+
+func duracao() -> float:
+	return _tempos[-1] if not _tempos.is_empty() else 0.0
+
+
+## Distância percorrida pelo carro no tempo atual (interpolada); depois da
+## chegada, segue freando.
+func distancia(id: String) -> float:
+	var c: Dictionary = _chegada.get(id, {})
+	if not c.is_empty() and tempo > c["t"]:
+		var a: float = c.get("a", DESACELERACAO_CHEGADA)
+		var dt := minf(tempo - c["t"], c["v"] / a)
+		return c["s"] + c["v"] * dt - 0.5 * a * dt * dt
+	return _bruta(id, tempo)
+
+
+## Distância do carro num instante qualquer da corrida (para prever o que
+## vem: a câmera da ultrapassagem entra antes dela acontecer).
+func distancia_em(id: String, t: float) -> float:
+	return _bruta(id, t)
+
+
+## Instante em que o carro passou pela distância s (para a diferença em
+## segundos entre dois carros). -1 se ele ainda não passou.
+func tempo_em(id: String, s: float) -> float:
+	var serie: PackedFloat64Array = _s[id]
+	var i := serie.bsearch(s) - 1
+	if i < 0 or i + 1 >= serie.size():
+		return -1.0
+	var f := clampf((s - serie[i]) / maxf(serie[i + 1] - serie[i], 1e-6), 0.0, 1.0)
+	return lerpf(_tempos[i], _tempos[i + 1], f)
+
+
+func _bruta(id: String, t: float) -> float:
+	var serie: PackedFloat64Array = _s[id]
+	var i := clampi(_tempos.bsearch(t) - 1, 0, _tempos.size() - 1)
+	if i + 1 >= _tempos.size():
+		return serie[i]
+	var f := clampf((t - _tempos[i]) / maxf(_tempos[i + 1] - _tempos[i], 1e-6), 0.0, 1.0)
+	return lerpf(serie[i], serie[i + 1], f)
+
+
+## Ids na ordem de corrida no tempo atual: quem já cruzou a chegada, pela
+## ordem de chegada; os outros, pela distância.
+func ordem() -> Array:
+	var ids := _s.keys()
+	var chegou := func(id): return _chegada.has(id) and tempo >= _chegada[id]["t"]
+	ids.sort_custom(func(a, b):
+		var ca: bool = chegou.call(a)
+		var cb: bool = chegou.call(b)
+		if ca != cb:
+			return ca
+		if ca:
+			return _chegada[a]["t"] < _chegada[b]["t"]
+		return distancia(a) > distancia(b))
+	return ids
+
+
+func _enquadrar() -> void:
+	if _pista == null or size.x <= 0.0:
+		return
+	var pts := _pista.pontos(4.0)
+	var melhor := -1.0
+	var caixa_melhor := Rect2()
+	for k in (4 if girar else 1):
+		var rot := k * PI / 2.0
+		var caixa := Rect2(Iso.para_tela(pts[0].rotated(rot), 1.0), Vector2.ZERO)
+		for p in pts:
+			caixa = caixa.expand(Iso.para_tela(p.rotated(rot), 1.0))
+		caixa = caixa.grow(LARGURA_PISTA_M)
+		var e := minf(size.x / caixa.size.x, size.y / caixa.size.y)
+		if e > melhor + 1e-6:
+			melhor = e
+			caixa_melhor = caixa
+			_rotacao = rot
+	_escala = melhor
+	_origem = size * 0.5 - caixa_melhor.get_center() * _escala
+	_contorno = PackedVector2Array()
+	for p in pts:
+		_contorno.append(_tela(p))
+	_posicionar()
+	queue_redraw()
+
+
+func _posicionar() -> void:
+	if _pista == null:
+		return
+	var ordem_atual := ordem()
+	for id in _sprites:
+		var s := distancia(id)
+		var sp: CarroSprite = _sprites[id]
+		sp.position = _tela(_pista.posicao_em(s))
+		sp.direcao = Iso.direcao(_pista.rumo_em(s) + _rotacao)
+		sp.rotulo = str(ordem_atual.find(id) + 1) if com_rotulos else ""
+
+
+func _draw() -> void:
+	if _contorno.size() < 2:
+		return
+	var largura := maxf(LARGURA_PISTA_M * _escala * 0.75, largura_min_px)
+	if sombra:
+		draw_polyline(_contorno, Color(0, 0, 0, 0.4), largura + 9.0, true)
+	draw_polyline(_contorno, COR_BORDA, largura + 3.0, true)
+	draw_polyline(_contorno, COR_PISTA, largura, true)
+	var largada := _tela(_pista.posicao_em(0.0))
+	var normal := Iso.para_tela(Vector2.from_angle(_pista.rumo_em(0.0) + PI / 2.0 + _rotacao), 1.0).normalized() * largura * 0.5
+	draw_line(largada - normal, largada + normal, Color.WHITE, 3.0)
+
+
+func _tela(p: Vector2) -> Vector2:
+	return _origem + Iso.para_tela(p.rotated(_rotacao), _escala)

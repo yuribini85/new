@@ -1,0 +1,397 @@
+[
+ {
+  "id": "eq01_second_driver",
+  "numero": 1,
+  "nome": "Second Driver",
+  "logo": "res://arte/equipes/logo_eq01.png",
+  "pilotos": [
+   {
+    "id": "elena_cross",
+    "nome": "Elena Cross",
+    "retrato": ""
+   },
+   {
+    "id": "adrian_cross",
+    "nome": "Adrian Cross",
+    "retrato": ""
+   }
+  ],
+  "jogador": true
+ },
+ {
+  "id": "eq02_vortex_motorsport",
+  "numero": 2,
+  "nome": "Vortex Motorsport",
+  "nivel": "PRO",
+  "logo": "res://arte/equipes/logo_eq02.png",
+  "pilotos": [
+   {
+    "id": "lucien_vale",
+    "nome": "Lucien Vale",
+    "retrato": "res://arte/pilotos/lucien_vale.png"
+   },
+   {
+    "id": "mara_voss",
+    "nome": "Mara Voss",
+    "retrato": "res://arte/pilotos/mara_voss.png"
+   }
+  ]
+ },
+ {
+  "id": "eq03_kaze_dynamics",
+  "numero": 3,
+  "nome": "Kaze Dynamics",
+  "nivel": "INTERNATIONAL",
+  "logo": "res://arte/equipes/logo_eq03.png",
+  "pilotos": [
+   {
+    "id": "ren_kaito",
+    "nome": "Ren Kaito",
+    "retrato": "res://arte/pilotos/ren_kaito.png"
+   },
+   {
+    "id": "hana_mori",
+    "nome": "Hana Mori",
+    "retrato": "res://arte/pilotos/hana_mori.png"
+   }
+  ]
+ },
+ {
+  "id": "eq04_ironclad_racing",
+  "numero": 4,
+  "nome": "Ironclad Racing",
+  "nivel": "NATIONAL",
+  "logo": "res://arte/equipes/logo_eq04.png",
+  "pilotos": [
+   {
+    "id": "bram_holt",
+    "nome": "Bram Holt",
+    "retrato": "res://arte/pilotos/bram_holt.png"
+   },
+   {
+    "id": "soren_pike",
+    "nome": "Soren Pike",
+    "retrato": "res://arte/pilotos/soren_pike.png"
+   }
+  ]
+ },
+ {
+  "id": "eq05_apex_dominion",
+  "numero": 5,
+  "nome": "Apex Dominion",
+  "nivel": "ELITE",
+  "logo": "res://arte/equipes/logo_eq05.png",
+  "pilotos": [
+   {
+    "id": "lucas_ward",
+    "nome": "Lucas Ward",
+    "retrato": "res://arte/pilotos/lucas_ward.png"
+   },
+   {
+    "id": "cassian_roe",
+    "nome": "Cassian Roe",
+    "retrato": "res://arte/pilotos/cassian_roe.png"
+   },
+   {
+    "id": "nyra_sol",
+    "nome": "Nyra Sol",
+    "retrato": "res://arte/pilotos/nyra_sol.png"
+   }
+  ],
+  "dirigente": "Victor Hale"
+ },
+ {
+  "id": "eq06_redline_union",
+  "numero": 6,
+  "nome": "Redline Union",
+  "nivel": "SPORT",
+  "logo": "res://arte/equipes/logo_eq06.png",
+  "pilotos": [
+   {
+    "id": "dario_kest",
+    "nome": "Dario Kest",
+    "retrato": "res://arte/pilotos/dario_kest.png",
+    "provisorio": true
+   },
+   {
+    "id": "lena_brook",
+    "nome": "Lena Brook",
+    "retrato": "res://arte/pilotos/lena_brook.png",
+    "provisorio": true
+   }
+  ]
+ },
+ {
+  "id": "eq07_northstar_works",
+  "numero": 7,
+  "nome": "Northstar Works",
+  "nivel": "INTERNATIONAL",
+  "logo": "res://arte/equipes/logo_eq07.png",
+  "pilotos": [
+   {
+    "id": "erik_halden",
+    "nome": "Erik Halden",
+    "retrato": "res://arte/pilotos/erik_halden.png"
+   },
+   {
+    "id": "liv_arnesen",
+    "nome": "Liv Arnesen",
+    "retrato": "res://arte/pilotos/liv_arnesen.png",
+    "provisorio": true
+   }
+  ]
+ },
+ {
+  "id": "eq08_black_circuit",
+  "numero": 8,
+  "nome": "Black Circuit",
+  "nivel": "NATIONAL",
+  "logo": "res://arte/equipes/logo_eq08.png",
+  "pilotos": [
+   {
+    "id": "marek_stone",
+    "nome": "Marek Stone",
+    "retrato": "res://arte/pilotos/marek_stone.png",
+    "provisorio": true
+   },
+   {
+    "id": "ivy_corran",
+    "nome": "Ivy Corran",
+    "retrato": "res://arte/pilotos/ivy_corran.png",
+    "provisorio": true
+   }
+  ]
+ },
+ {
+  "id": "eq09_helix_racing",
+  "numero": 9,
+  "nome": "Helix Racing",
+  "nivel": "NATIONAL",
+  "logo": "res://arte/equipes/logo_eq09.png",
+  "pilotos": [
+   {
+    "id": "tomas_reyl",
+    "nome": "Tomas Reyl",
+    "retrato": "res://arte/pilotos/tomas_reyl.png",
+    "provisorio": true
+   },
+   {
+    "id": "sasha_imre",
+    "nome": "Sasha Imre",
+    "retrato": "res://arte/pilotos/sasha_imre.png",
+    "provisorio": true
+   }
+  ]
+ },
+ {
+  "id": "eq10_ember_works",
+  "numero": 10,
+  "nome": "Ember Works",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/logo_eq10.png",
+  "pilotos": [
+   {
+    "id": "gus_harrow",
+    "nome": "Gus Harrow",
+    "retrato": "res://arte/pilotos/gus_harrow.png",
+    "provisorio": true
+   },
+   {
+    "id": "pia_lund",
+    "nome": "Pia Lund",
+    "retrato": "res://arte/pilotos/pia_lund.png",
+    "provisorio": true
+   }
+  ]
+ },
+ {
+  "id": "eq11_white_fang_racing",
+  "numero": 11,
+  "nome": "White Fang Racing",
+  "nivel": "INTERNATIONAL",
+  "logo": "res://arte/equipes/logo_eq11.png",
+  "pilotos": [
+   {
+    "id": "viktor_ren",
+    "nome": "Viktor Ren",
+    "retrato": "res://arte/pilotos/viktor_ren.png"
+   },
+   {
+    "id": "yuna_kess",
+    "nome": "Yuna Kess",
+    "retrato": "res://arte/pilotos/yuna_kess.png"
+   }
+  ]
+ },
+ {
+  "id": "eq12_brassline_motorsport",
+  "numero": 12,
+  "nome": "Brassline Motorsport",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/logo_eq12.png",
+  "pilotos": [
+   {
+    "id": "oscar_flint",
+    "nome": "Oscar Flint",
+    "retrato": "res://arte/pilotos/oscar_flint.png"
+   },
+   {
+    "id": "mina_rowe",
+    "nome": "Mina Rowe",
+    "retrato": "res://arte/pilotos/mina_rowe.png"
+   }
+  ]
+ },
+ {
+  "id": "eq13_tempest_garage",
+  "numero": 13,
+  "nome": "Tempest Garage",
+  "nivel": "SPORT",
+  "logo": "res://arte/equipes/logo_eq13.png",
+  "pilotos": [
+   {
+    "id": "noel_mercer",
+    "nome": "Noel Mercer",
+    "retrato": "res://arte/pilotos/noel_mercer.png"
+   },
+   {
+    "id": "zara_keene",
+    "nome": "Zara Keene",
+    "retrato": "res://arte/pilotos/zara_keene.png"
+   }
+  ]
+ },
+ {
+  "id": "eq14_crown_vector",
+  "numero": 14,
+  "nome": "Crown Vector",
+  "nivel": "PRO",
+  "logo": "res://arte/equipes/logo_eq14.png",
+  "pilotos": [
+   {
+    "id": "elias_wren",
+    "nome": "Elias Wren",
+    "retrato": "res://arte/pilotos/elias_wren.png"
+   },
+   {
+    "id": "celeste_armand",
+    "nome": "Celeste Armand",
+    "retrato": "res://arte/pilotos/celeste_armand.png"
+   }
+  ]
+ },
+ {
+  "id": "eq15_gravelborn",
+  "numero": 15,
+  "nome": "Gravelborn",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/logo_eq15.png",
+  "pilotos": [
+   {
+    "id": "rafe_calder",
+    "nome": "Rafe Calder",
+    "retrato": "res://arte/pilotos/rafe_calder.png"
+   },
+   {
+    "id": "nika_stroud",
+    "nome": "Nika Stroud",
+    "retrato": "res://arte/pilotos/nika_stroud.png"
+   }
+  ]
+ },
+ {
+  "id": "eq16_meridian_gp",
+  "numero": 16,
+  "nome": "Meridian GP",
+  "nivel": "ELITE",
+  "logo": "res://arte/equipes/logo_eq16.png",
+  "pilotos": [
+   {
+    "id": "theo_maren",
+    "nome": "Theo Maren",
+    "retrato": "res://arte/pilotos/theo_maren.png"
+   },
+   {
+    "id": "selene_ward",
+    "nome": "Selene Ward",
+    "retrato": "res://arte/pilotos/selene_ward.png"
+   }
+  ]
+ },
+ {
+  "id": "eq17_obsidian_crest",
+  "numero": 17,
+  "nome": "Obsidian Crest",
+  "nivel": "ELITE",
+  "logo": "res://arte/equipes/logo_eq17.png",
+  "pilotos": [
+   {
+    "id": "magnus_rell",
+    "nome": "Magnus Rell",
+    "retrato": "res://arte/pilotos/magnus_rell.png"
+   },
+   {
+    "id": "ines_vale",
+    "nome": "Ines Vale",
+    "retrato": "res://arte/pilotos/ines_vale.png"
+   }
+  ]
+ },
+ {
+  "id": "eq18_copperhead_racing",
+  "numero": 18,
+  "nome": "Copperhead Racing",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/logo_eq18.png",
+  "pilotos": [
+   {
+    "id": "ash_mercer",
+    "nome": "Ash Mercer",
+    "retrato": "res://arte/pilotos/ash_mercer.png"
+   },
+   {
+    "id": "cleo_vane",
+    "nome": "Cleo Vane",
+    "retrato": "res://arte/pilotos/cleo_vane.png"
+   }
+  ]
+ },
+ {
+  "id": "eq19_cold_harbor",
+  "numero": 19,
+  "nome": "Cold Harbor",
+  "nivel": "SPORT",
+  "logo": "res://arte/equipes/logo_eq19.png",
+  "pilotos": [
+   {
+    "id": "finn_sutter",
+    "nome": "Finn Sutter",
+    "retrato": "res://arte/pilotos/finn_sutter.png"
+   },
+   {
+    "id": "kaia_rehn",
+    "nome": "Kaia Rehn",
+    "retrato": "res://arte/pilotos/kaia_rehn.png"
+   }
+  ]
+ },
+ {
+  "id": "eq20_storm_division",
+  "numero": 20,
+  "nome": "Storm Division",
+  "nivel": "PRO",
+  "logo": "res://arte/equipes/logo_eq20.png",
+  "pilotos": [
+   {
+    "id": "rex_arden",
+    "nome": "Rex Arden",
+    "retrato": "res://arte/pilotos/rex_arden.png"
+   },
+   {
+    "id": "mira_holt",
+    "nome": "Mira Holt",
+    "retrato": "res://arte/pilotos/mira_holt.png"
+   }
+  ]
+ }
+]

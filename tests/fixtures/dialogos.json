@@ -1,0 +1,11 @@
+[
+	{"id": "boas_vindas", "trigger": "GAME_START", "personagem": "ana", "flags": ["COMECOU"],
+	 "falas": [{"quem": "ana", "texto": "Olá."}, {"acao": "OPEN_GARAGE_TAB"}], "proxima": "segue"},
+	{"id": "segue", "trigger": "ENCADEADA", "falas": [{"quem": "sistema", "texto": "Depois."}]},
+	{"id": "vitoria", "trigger": "CORRIDA_FIM", "personagem": "ana", "requer": ["COMECOU"], "condicao": {"posicao": 1},
+	 "falas": [{"quem": "ana", "texto": "Ganhou."}]},
+	{"id": "dupla", "trigger": "SEM_DINHEIRO", "personagem": ["dono", "ana"], "requer": ["DUPLA"], "falas": [{"quem": "ana", "texto": "Lista."}]},
+	{"id": "comentario", "trigger": "CAIXA_BAIXO", "uma_vez": false, "reativa": true, "falas": [{"quem": "ana", "texto": "Caixa."}]},
+	{"id": "colecao", "trigger": "COLECAO", "condicao": {"quantidade_min": 2}, "falas": [{"quem": "ana", "texto": "Dois."}]},
+	{"id": "sempre", "trigger": "SEM_DINHEIRO", "uma_vez": false, "falas": [{"quem": "ana", "texto": "Sem dinheiro."}]}
+]

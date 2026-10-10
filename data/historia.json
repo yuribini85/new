@@ -1,0 +1,214 @@
+{
+ "adrian": {
+  "carro": "bancroft_sidewinder",
+  "cor": "creme",
+  "pneu": "pneu_1",
+  "pista_volta": "serra_curta",
+  "licencas": [
+   "CLUB",
+   "SPORT"
+  ],
+  "peca_demanda": "bancroft_sidewinder_brake_1",
+  "campeonato": "Copa Primeira Marcha"
+ },
+ "elena": {
+  "saldo": "saldo_inicial"
+ },
+ "_nota_campanha": "Chrome & Wreckage: jogo novo começa pela campanha de nova_campanha. dono = o jogador é o novo dono da oficina, Mara Hayes guia e o piloto fixo dirige; mesma montagem inicial do Adrian (carro, pneu, primeira peça e o critério de saldo), sem licenças. Saves com Adrian/Elena seguem a história deles. reativa_intervalo_corridas: no máximo um comentário de contexto a cada N corridas (decisão do usuário: 1 a cada 3). carro_caro_percentil: compra de carro acima desse percentil dos preços do catálogo dispara o comentário (aprovado pelo usuário; ajustável no playtest). dono.equipe: nome e logo da equipe na campanha (logo vazio = nome em texto; a tela completa com MOTORSPORT).",
+ "nova_campanha": "dono",
+ "dono": {
+  "carro": "bancroft_sidewinder",
+  "cor": "creme",
+  "pneu": "pneu_1",
+  "licencas": [],
+  "peca_demanda": "bancroft_sidewinder_brake_1",
+  "piloto": "piloto_casa",
+  "equipe": {
+   "nome": "Wreckage",
+   "logo": ""
+  }
+ },
+ "reativa_intervalo_corridas": 3,
+ "carro_caro_percentil": 0.9,
+ "ultima_corrida_apos": "FIRST_CHAMPIONSHIP_DONE",
+ "radio_fracao": 0.4,
+ "acidente_fracao": 0.6,
+ "second_chance": {
+  "carros": 5
+ },
+ "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py. focos (ilustrações): ponto de cada personagem no quadro (0..1, x e y); a câmera do diálogo puxa de leve para quem fala. som (cenários): fundo acústico em laço durante a cena (Sons.ambiente: \"oficina\").",
+ "capitulos": {
+  "I": "Fim de temporada",
+  "II": "A garagem vazia",
+  "III": "Second Chance",
+  "IV": "O nome dela",
+  "V": "De novo na pista",
+  "VI": "Sport",
+  "VII": "Dois carros",
+  "VIII": "Os de cima",
+  "IX": "International",
+  "X": "A oferta",
+  "XI": "Second Driver",
+  "XII": "A equipe",
+  "XIII": "Pro",
+  "XIV": "Segundo piloto",
+  "XVI": "Elite"
+ },
+ "cenarios": {
+  "garagem_cross": {
+   "nome": "Garagem da família Cross",
+   "provisorio": "fundo_garagem",
+   "som": "oficina"
+  },
+  "garagem_cross_noite": {
+   "nome": "Garagem da família Cross, à noite",
+   "provisorio": "fundo_garagem",
+   "tom": "noite",
+   "som": "oficina"
+  },
+  "garagem_vazia": {
+   "nome": "A garagem sem o carro",
+   "provisorio": "cenario:garagem_cross",
+   "tom": "vazio",
+   "som": "oficina"
+  },
+  "oficina_cross": {
+   "nome": "Bancada da oficina",
+   "provisorio": "cenario:garagem_cross",
+   "som": "oficina"
+  },
+  "oficina_mara": {
+   "nome": "A oficina da Mara, fim de tarde",
+   "som": "oficina"
+  },
+  "box_largada": {
+   "nome": "Box antes da largada",
+   "provisorio": "fundo_competicoes"
+  },
+  "grid_noite": {
+   "nome": "Grid da prova noturna",
+   "provisorio": "cenario:box_largada",
+   "tom": "noite"
+  },
+  "podio": {
+   "nome": "Pódio",
+   "provisorio": "fundo_resultado"
+  },
+  "second_chance": {
+   "nome": "Second Chance Motors",
+   "provisorio": "fundo_mercado"
+  },
+  "vector_academy": {
+   "nome": "Vector Academy",
+   "provisorio": "fundo_carreira"
+  },
+  "sala_imprensa": {
+   "nome": "Sala de imprensa",
+   "provisorio": "cenario:escritorio_apex"
+  },
+  "paddock_apex": {
+   "nome": "Paddock da Apex Dominion",
+   "provisorio": "cenario:box_largada",
+   "tom": "frio"
+  },
+  "escritorio_apex": {
+   "nome": "Escritório do Victor Hale",
+   "provisorio": "fundo_carreira",
+   "tom": "frio"
+  },
+  "garagem_second_driver": {
+   "nome": "Garagem da Second Driver",
+   "provisorio": "fundo_garagem",
+   "som": "oficina"
+  }
+ },
+ "ilustracoes": {
+  "anel_do_vale": {
+   "nome": "Lago Sereno, fim de temporada",
+   "provisorio": "banner_anel_do_vale"
+  },
+  "acidente": {
+   "nome": "A curva três, depois",
+   "provisorio": "banner_serra_alta",
+   "tom": "noite"
+  },
+  "capacete_na_bancada": {
+   "nome": "O capacete do Adrian na bancada",
+   "provisorio": "cenario:garagem_cross_noite"
+  },
+  "elena_na_porta": {
+   "nome": "Elena abre a garagem, meses depois",
+   "provisorio": "cenario:garagem_cross",
+   "tom": "frio"
+  },
+  "licenca_club": {
+   "nome": "A primeira licença com o nome dela",
+   "provisorio": "fundo_carreira"
+  },
+  "placa_second_driver": {
+   "nome": "A placa da Second Driver",
+   "provisorio": "cenario:garagem_second_driver"
+  },
+  "elite": {
+   "nome": "Elite",
+   "provisorio": "fundo_resultado",
+   "tom": "noite"
+  },
+  "garagem_trio": {
+   "nome": "A garagem dos Cross, à noite",
+   "provisorio": "cenario:garagem_cross_noite",
+   "focos": {
+    "adrian": [
+     0.17,
+     0.55
+    ],
+    "elena": [
+     0.87,
+     0.5
+    ],
+    "marcus": [
+     0.52,
+     0.66
+    ]
+   }
+  },
+  "marcus_e_o_carro": {
+   "nome": "Marcus e o carro pronto",
+   "provisorio": "cenario:garagem_cross_noite",
+   "focos": {
+    "marcus": [
+     0.28,
+     0.5
+    ]
+   }
+  },
+  "adrian_entra_no_carro": {
+   "nome": "Adrian entra no carro",
+   "provisorio": "cenario:garagem_cross",
+   "focos": {
+    "adrian": [
+     0.6,
+     0.5
+    ],
+    "elena": [
+     0.86,
+     0.5
+    ]
+   }
+  },
+  "box_depois_da_corrida": {
+   "nome": "No box, depois da chegada",
+   "provisorio": "cenario:box_largada",
+   "focos": {
+    "adrian": [
+     0.54,
+     0.45
+    ],
+    "elena": [
+     0.83,
+     0.52
+    ]
+   }
+  }
+ }
+}

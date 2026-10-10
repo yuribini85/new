@@ -1,0 +1,15 @@
+[
+ {"id": "mara", "nome": "Mara Hayes", "retrato": "res://arte/personagens/mara_hayes.png", "cor": "#b0703a", "papel": "mecânica veterana da oficina"},
+ {"id": "piloto_casa", "nome": "Theo Lane", "retrato": "res://arte/personagens/theo_lane.png", "cor": "#4a7a9a", "papel": "piloto da oficina"},
+ {"id": "dono", "nome": "", "retrato": "", "cor": "#000000", "papel": "o jogador, novo dono da oficina"},
+ {"id": "adrian", "nome": "Adrian Cross", "retrato": "", "cor": "#3a6ea5", "papel": "piloto"},
+ {"id": "elena", "nome": "Elena Cross", "retrato": "", "cor": "#d9a521", "papel": "irmã do Adrian, acerta o carro"},
+ {"id": "marcus", "nome": "Marcus Reed", "retrato": "res://arte/personagens/marcus_reed.png", "cor": "#7a8a6a", "papel": "mecânico da família"},
+ {"id": "victor", "nome": "Victor Hale", "retrato": "res://arte/personagens/victor_hale.png", "cor": "#5a5f8a", "papel": "diretor da Apex Dominion"},
+ {"id": "lucas", "nome": "Lucas Ward", "retrato": "res://arte/pilotos/lucas_ward.png", "cor": "#8a3a3a", "papel": "piloto da Apex Dominion"},
+ {"id": "sophie", "nome": "Sophie Laurent", "retrato": "res://arte/personagens/sophie_laurent.png", "cor": "#6a5a8a", "papel": "finanças da equipe"},
+ {"id": "vendedor", "nome": "Vendedor · Second Chance Motors", "retrato": "res://arte/personagens/vendedor.png", "cor": "#8a6a3a"},
+ {"id": "responsavel", "nome": "Vector Academy", "retrato": "res://arte/personagens/vector_academy.png", "cor": "#3a7a7a", "papel": "instrutora de licenças"},
+ {"id": "jornalista", "nome": "Jornalista", "retrato": "res://arte/personagens/jornalista.png", "cor": "#6a6a6a"},
+ {"id": "sistema", "nome": "", "retrato": "", "cor": "#000000"}
+]

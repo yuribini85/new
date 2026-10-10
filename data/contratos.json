@@ -1,0 +1,547 @@
+[
+	{
+		"carro": "kosame_hiryu_98",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 4.2
+			}
+		},
+		"descricao": "O Kosame Hiryu '98 tem 64 cv; o rival, 311. Monte o carro da escola para chegar na frente.",
+		"id": "pequeno_gigante",
+		"licenca": "CLUB",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "cutler_ironwood_ii"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "castellani_tufo",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 645,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 428
+			},
+			"prata": {
+				"custo_max": 515
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Hartwig Strecke gastando o mínimo.",
+		"id": "ultimo_credito",
+		"licenca": "CLUB",
+		"nome": "O último giro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "parque_das_docas",
+				"rivais": [
+					{
+						"carro": "hartwig_strecke"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "pemberly_sedge",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 2
+			},
+			"prata": {
+				"folga_s": 0.1
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Hayase Komorebi S V em Cais Velho e o Vorhaus Dachs em Alto da Capela.",
+		"id": "dois_circuitos",
+		"licenca": "CLUB",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "parque_das_docas",
+				"rivais": [
+					{
+						"carro": "hayase_komorebi_s_v"
+					}
+				],
+				"voltas": 1
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "vorhaus_dachs"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "kanaya_yuzuki_s",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 2.4
+			}
+		},
+		"descricao": "O Kanaya Yuzuki S tem 103 cv; o rival, 360. Monte o carro da escola para chegar na frente.",
+		"id": "ic_pequeno_gigante",
+		"licenca": "NATIONAL",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "wexmoor_rowan"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "calderwood_fletcher",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 8075.0,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 5382.0
+			},
+			"prata": {
+				"custo_max": 6460.0
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Ashcombe Sorrel gastando o mínimo.",
+		"id": "ic_ultimo_credito",
+		"licenca": "NATIONAL",
+		"nome": "O último giro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "ashcombe_sorrel"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "calderwood_fletcher",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 3.0
+			},
+			"prata": {
+				"folga_s": 0.2
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Mizuchi Chidori SR '98 em Lago Sereno e o Kanaya Fuyu '85 em Alto da Capela.",
+		"id": "ic_dois_circuitos",
+		"licenca": "NATIONAL",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "mizuchi_chidori_sr_98"
+					}
+				],
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "kanaya_fuyu_85"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "kanaya_yuzuki_s",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 1.9
+			}
+		},
+		"descricao": "O Kanaya Yuzuki S tem 103 cv; o rival, 437. Monte o carro da escola para chegar na frente.",
+		"id": "international_pequeno_gigante",
+		"licenca": "INTERNATIONAL",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "ashcombe_saltire"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "kanaya_fuyu_85",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 4470,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 2978
+			},
+			"prata": {
+				"custo_max": 3575
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Castellani Torrente GT gastando o mínimo.",
+		"id": "international_ultimo_credito",
+		"licenca": "INTERNATIONAL",
+		"nome": "O último giro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "pista_de_testes",
+				"rivais": [
+					{
+						"carro": "castellani_torrente_gt"
+					}
+				],
+				"voltas": 1
+			}
+		]
+	},
+	{
+		"carro": "arvelle_outlaw_s_97",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 3.0
+			},
+			"prata": {
+				"folga_s": 0.7
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Hayase Raijin Corrida em Oval do Planalto e o Kanaya Nagare Corrida em Alto da Capela.",
+		"id": "international_dois_circuitos",
+		"licenca": "INTERNATIONAL",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "pista_de_testes",
+				"rivais": [
+					{
+						"carro": "hayase_raijin_corrida"
+					}
+				],
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_alta",
+				"rivais": [
+					{
+						"carro": "kanaya_nagare_corrida"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "hozuki_samidare_gt_98",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 0.9
+			}
+		},
+		"descricao": "O Hozuki Samidare GT '98 tem 183 cv; o rival, 644. Monte o carro da escola para chegar na frente.",
+		"id": "pro_pequeno_gigante",
+		"licenca": "PRO",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_curta",
+				"rivais": [
+					{
+						"carro": "kestrin_drifter"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "sanga_tsukikage_s_iii",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 17490.0,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 11658.0
+			},
+			"prata": {
+				"custo_max": 13990.0
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Hayase Kurenai Corrida gastando o mínimo.",
+		"id": "pro_ultimo_credito",
+		"licenca": "PRO",
+		"nome": "O último giro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_curta",
+				"rivais": [
+					{
+						"carro": "hayase_kurenai_corrida"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "ashcombe_sorrel",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 2.0
+			},
+			"prata": {
+				"folga_s": 0.1
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Ashcombe Saltire em Colinas do Vinhedo e o Garrison Arroyo em Lago Sereno.",
+		"id": "pro_dois_circuitos",
+		"licenca": "PRO",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "circuito_misto",
+				"rivais": [
+					{
+						"carro": "ashcombe_saltire"
+					}
+				],
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "garrison_arroyo"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "whitlock_badlands",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"sem_categorias": [
+					"aspiracao",
+					"muffler",
+					"portpolish",
+					"enginebalance",
+					"displacement",
+					"computer",
+					"intercooler"
+				]
+			},
+			"prata": {
+				"folga_s": 1.3
+			}
+		},
+		"descricao": "O Whitlock Badlands tem 122 cv; o rival, 437. Monte o carro da escola para chegar na frente.",
+		"id": "elite_pequeno_gigante",
+		"licenca": "ELITE",
+		"nome": "O pequeno contra o gigante",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "serra_curta",
+				"rivais": [
+					{
+						"carro": "ashcombe_saltire"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "whitlock_switchback_gts",
+		"condicoes": {
+			"bronze": {
+				"custo_max": 28060.0,
+				"vencer": true
+			},
+			"ouro": {
+				"custo_max": 18704.0
+			},
+			"prata": {
+				"custo_max": 22445.0
+			}
+		},
+		"descricao": "A escola paga as peças até um teto. Vença o Aubrac Grive S gastando o mínimo.",
+		"id": "elite_ultimo_credito",
+		"licenca": "ELITE",
+		"nome": "O último giro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "aubrac_grive_s"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"carro": "arvelle_outlaw_s_97",
+		"condicoes": {
+			"bronze": {
+				"vencer": true
+			},
+			"ouro": {
+				"pecas_max": 4.0
+			},
+			"prata": {
+				"folga_s": 0.3
+			}
+		},
+		"descricao": "Uma preparação só para vencer o Kanaya Ruri Corrida II em Lago Sereno e o Pemberly Teal III em Alto da Capela (curto).",
+		"id": "elite_dois_circuitos",
+		"licenca": "ELITE",
+		"nome": "Dois circuitos, um carro",
+		"provas": [
+			{
+				"condicao": "seco",
+				"pista": "anel_do_vale",
+				"rivais": [
+					{
+						"carro": "kanaya_ruri_corrida_ii"
+					}
+				],
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"pista": "serra_curta",
+				"rivais": [
+					{
+						"carro": "pemberly_teal_iii"
+					}
+				],
+				"voltas": 1.0
+			}
+		]
+	}
+]

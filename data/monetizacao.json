@@ -1,0 +1,7 @@
+{
+ "aceleracao": {
+  "fator": 2.0,
+  "duracao_s": 1800,
+  "teto_s": null
+ }
+}

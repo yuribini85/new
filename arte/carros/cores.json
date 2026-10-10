@@ -1,0 +1,4439 @@
+{
+ "paleta": {
+  "branco": {
+   "nome": "Branco",
+   "cor": "#f2f2ee"
+  },
+  "branco_perola": {
+   "nome": "Branco pérola",
+   "cor": "#ece8dc"
+  },
+  "prata": {
+   "nome": "Prata",
+   "cor": "#b8bcc2"
+  },
+  "cinza_claro": {
+   "nome": "Cinza-claro",
+   "cor": "#9aa0a6"
+  },
+  "chumbo": {
+   "nome": "Chumbo",
+   "cor": "#5a5f66"
+  },
+  "grafite": {
+   "nome": "Grafite",
+   "cor": "#4a4f57"
+  },
+  "preto": {
+   "nome": "Preto",
+   "cor": "#141518"
+  },
+  "vermelho": {
+   "nome": "Vermelho",
+   "cor": "#c8102e"
+  },
+  "vermelho_classico": {
+   "nome": "Vermelho clássico",
+   "cor": "#b3261e"
+  },
+  "vinho": {
+   "nome": "Vinho",
+   "cor": "#6e1423"
+  },
+  "bordo": {
+   "nome": "Bordô",
+   "cor": "#5a1a24"
+  },
+  "azul_escuro": {
+   "nome": "Azul-escuro",
+   "cor": "#1d2f5c"
+  },
+  "azul_meia_noite": {
+   "nome": "Azul meia-noite",
+   "cor": "#18223f"
+  },
+  "azul": {
+   "nome": "Azul",
+   "cor": "#1d4f9c"
+  },
+  "azul_perolado": {
+   "nome": "Azul perolado",
+   "cor": "#2f5f9e"
+  },
+  "celeste": {
+   "nome": "Celeste",
+   "cor": "#7fb2dd"
+  },
+  "turquesa": {
+   "nome": "Turquesa",
+   "cor": "#1f7a7a"
+  },
+  "verde_ingles": {
+   "nome": "Verde inglês",
+   "cor": "#1f4d34"
+  },
+  "verde_escuro": {
+   "nome": "Verde-escuro",
+   "cor": "#1f6b3a"
+  },
+  "verde_claro": {
+   "nome": "Verde-claro",
+   "cor": "#7bb26a"
+  },
+  "amarelo": {
+   "nome": "Amarelo",
+   "cor": "#f2c300"
+  },
+  "mostarda": {
+   "nome": "Mostarda",
+   "cor": "#c9a227"
+  },
+  "laranja": {
+   "nome": "Laranja",
+   "cor": "#e8601c"
+  },
+  "creme": {
+   "nome": "Creme",
+   "cor": "#e9dfc4"
+  },
+  "champanhe": {
+   "nome": "Champanhe",
+   "cor": "#c9b48a"
+  },
+  "marrom": {
+   "nome": "Marrom",
+   "cor": "#5e4030"
+  },
+  "roxo": {
+   "nome": "Roxo",
+   "cor": "#5b2a86"
+  }
+ },
+ "modelos": {
+  "arvelle_hatchet": [
+   "vinho",
+   "branco",
+   "azul_perolado",
+   "branco_perola",
+   "prata"
+  ],
+  "arvelle_hatchet_98": [
+   "azul_escuro",
+   "branco",
+   "azul_perolado",
+   "branco_perola",
+   "prata"
+  ],
+  "arvelle_hatchet_s": [
+   "verde_escuro",
+   "branco",
+   "azul_perolado",
+   "branco_perola",
+   "prata"
+  ],
+  "arvelle_hatchet_s_98": [
+   "branco",
+   "azul_perolado",
+   "branco_perola",
+   "prata",
+   "vermelho"
+  ],
+  "arvelle_outlaw": [
+   "prata",
+   "roxo",
+   "azul",
+   "verde_escuro",
+   "preto"
+  ],
+  "arvelle_outlaw_s": [
+   "creme",
+   "roxo",
+   "azul",
+   "verde_escuro",
+   "preto"
+  ],
+  "arvelle_outlaw_s_97": [
+   "preto",
+   "roxo",
+   "azul",
+   "verde_escuro",
+   "amarelo"
+  ],
+  "arvelle_outlaw_s_ii": [
+   "branco_perola",
+   "roxo",
+   "azul",
+   "verde_escuro",
+   "preto"
+  ],
+  "arvelle_outlaw_gt": [
+   "bordo",
+   "roxo",
+   "azul",
+   "verde_escuro",
+   "preto"
+  ],
+  "varenna_grillo": [
+   "branco",
+   "grafite",
+   "azul_perolado",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "varenna_lucciola": [
+   "turquesa",
+   "grafite",
+   "azul_perolado",
+   "vinho",
+   "prata"
+  ],
+  "varenna_lucciola_corrida": [
+   "azul",
+   "laranja",
+   "verde_escuro",
+   "branco"
+  ],
+  "varenna_falco": [
+   "branco",
+   "turquesa",
+   "preto",
+   "chumbo",
+   "vinho"
+  ],
+  "varenna_falco_s": [
+   "prata",
+   "turquesa",
+   "preto",
+   "chumbo",
+   "vinho"
+  ],
+  "varenna_ghiaia": [
+   "cinza_claro",
+   "vermelho",
+   "chumbo",
+   "turquesa",
+   "branco"
+  ],
+  "varenna_ghiaia_s": [
+   "cinza_claro",
+   "vermelho",
+   "chumbo",
+   "turquesa",
+   "branco"
+  ],
+  "varenna_ghiaia_gt": [
+   "prata",
+   "vermelho",
+   "chumbo",
+   "turquesa",
+   "branco"
+  ],
+  "varenna_fiume": [
+   "laranja",
+   "celeste",
+   "vinho",
+   "azul",
+   "branco"
+  ],
+  "varenna_fiume_s": [
+   "prata",
+   "celeste",
+   "vinho",
+   "azul",
+   "amarelo"
+  ],
+  "varenna_tempesta": [
+   "creme",
+   "vermelho",
+   "celeste",
+   "vinho",
+   "preto"
+  ],
+  "wexmoor_heath": [
+   "cinza_claro",
+   "branco_perola",
+   "turquesa",
+   "azul_perolado",
+   "branco"
+  ],
+  "wexmoor_rowan": [
+   "branco",
+   "vermelho",
+   "verde_escuro",
+   "branco_perola",
+   "prata"
+  ],
+  "wexmoor_rowan_ii": [
+   "bordo",
+   "vermelho",
+   "verde_escuro",
+   "branco_perola",
+   "prata"
+  ],
+  "wexmoor_shrike": [
+   "preto",
+   "branco_perola",
+   "amarelo",
+   "azul_meia_noite",
+   "vermelho"
+  ],
+  "vorhaus_uhu": [
+   "laranja",
+   "azul_meia_noite",
+   "preto",
+   "prata",
+   "branco_perola"
+  ],
+  "vorhaus_zeisig": [
+   "bordo",
+   "chumbo",
+   "grafite",
+   "branco",
+   "amarelo"
+  ],
+  "vorhaus_dachs": [
+   "branco",
+   "verde_claro",
+   "azul_meia_noite",
+   "amarelo",
+   "turquesa"
+  ],
+  "vorhaus_taucher": [
+   "bordo",
+   "preto",
+   "celeste",
+   "chumbo",
+   "roxo"
+  ],
+  "vorhaus_specht": [
+   "bordo",
+   "preto",
+   "azul",
+   "branco",
+   "branco_perola"
+  ],
+  "vorhaus_specht_corrida": [
+   "amarelo",
+   "branco",
+   "laranja",
+   "verde_escuro"
+  ],
+  "ostwerk_habicht": [
+   "branco",
+   "azul_perolado",
+   "roxo",
+   "grafite",
+   "celeste"
+  ],
+  "ostwerk_luchs": [
+   "laranja",
+   "turquesa",
+   "amarelo",
+   "branco_perola",
+   "preto"
+  ],
+  "ostwerk_reiher": [
+   "branco",
+   "turquesa",
+   "prata",
+   "grafite",
+   "vermelho"
+  ],
+  "ostwerk_falke": [
+   "creme",
+   "prata",
+   "azul_meia_noite",
+   "azul",
+   "vinho"
+  ],
+  "hartwig_strecke": [
+   "preto",
+   "prata",
+   "chumbo",
+   "amarelo",
+   "vermelho"
+  ],
+  "ostwerk_kranich": [
+   "azul_escuro",
+   "branco_perola",
+   "preto",
+   "turquesa",
+   "vermelho"
+  ],
+  "ostwerk_gischt": [
+   "chumbo",
+   "branco",
+   "vinho",
+   "azul_perolado",
+   "vermelho"
+  ],
+  "ostwerk_elster": [
+   "cinza_claro",
+   "amarelo",
+   "branco_perola",
+   "turquesa",
+   "prata"
+  ],
+  "bancroft_longhorn": [
+   "azul_escuro",
+   "prata",
+   "verde_escuro",
+   "grafite",
+   "azul_perolado"
+  ],
+  "bancroft_longhorn_97": [
+   "creme",
+   "prata",
+   "verde_escuro",
+   "grafite",
+   "azul_perolado"
+  ],
+  "bancroft_longhorn_s": [
+   "preto",
+   "prata",
+   "marrom",
+   "creme",
+   "verde_ingles"
+  ],
+  "bancroft_longhorn_gt": [
+   "bordo",
+   "prata",
+   "verde_escuro",
+   "grafite",
+   "azul_perolado"
+  ],
+  "bancroft_sidewinder": [
+   "chumbo",
+   "champanhe",
+   "prata",
+   "azul_escuro",
+   "vinho"
+  ],
+  "bancroft_sidewinder_s": [
+   "creme",
+   "vermelho",
+   "celeste",
+   "azul_perolado",
+   "preto"
+  ],
+  "bancroft_sidewinder_s_96": [
+   "amarelo",
+   "vermelho",
+   "celeste",
+   "azul_perolado",
+   "preto"
+  ],
+  "bancroft_sidewinder_gt": [
+   "preto",
+   "vermelho",
+   "celeste",
+   "azul_perolado",
+   "grafite"
+  ],
+  "bancroft_sidewinder_gts": [
+   "bordo",
+   "prata",
+   "creme",
+   "verde_ingles",
+   "mostarda"
+  ],
+  "bancroft_sidewinder_gts_69": [
+   "bordo",
+   "prata",
+   "creme",
+   "verde_ingles",
+   "mostarda"
+  ],
+  "morel_caillou": [
+   "verde_ingles",
+   "prata",
+   "verde_escuro",
+   "vermelho",
+   "azul_perolado"
+  ],
+  "morel_givre": [
+   "branco_perola",
+   "champanhe",
+   "verde_escuro",
+   "celeste",
+   "branco"
+  ],
+  "morel_bruyere": [
+   "preto",
+   "branco",
+   "vinho",
+   "grafite",
+   "branco_perola"
+  ],
+  "morel_bruyere_corrida": [
+   "prata",
+   "verde_escuro",
+   "laranja",
+   "vermelho"
+  ],
+  "tomoe_tsurara": [
+   "prata",
+   "branco_perola",
+   "azul_perolado",
+   "azul_meia_noite",
+   "turquesa"
+  ],
+  "tomoe_niji": [
+   "bordo",
+   "verde_claro",
+   "verde_escuro",
+   "amarelo",
+   "branco"
+  ],
+  "tomoe_niji_s": [
+   "branco",
+   "verde_claro",
+   "verde_escuro",
+   "amarelo"
+  ],
+  "tomoe_niji_s_98": [
+   "grafite",
+   "verde_claro",
+   "verde_escuro",
+   "amarelo",
+   "branco"
+  ],
+  "tomoe_kogetsu": [
+   "verde_ingles",
+   "branco_perola",
+   "branco",
+   "grafite",
+   "celeste",
+   "turquesa"
+  ],
+  "tomoe_kogetsu_s": [
+   "champanhe",
+   "branco_perola",
+   "branco",
+   "grafite",
+   "celeste",
+   "turquesa"
+  ],
+  "tomoe_kogetsu_s_97": [
+   "creme",
+   "branco_perola",
+   "branco",
+   "grafite",
+   "celeste",
+   "turquesa"
+  ],
+  "tomoe_kogetsu_s_98": [
+   "cinza_claro",
+   "branco_perola",
+   "branco",
+   "grafite",
+   "celeste"
+  ],
+  "tomoe_kogetsu_s_ii": [
+   "vinho",
+   "branco_perola",
+   "branco",
+   "grafite",
+   "celeste"
+  ],
+  "tomoe_kogarashi": [
+   "azul_meia_noite",
+   "azul_perolado",
+   "vermelho",
+   "preto"
+  ],
+  "tomoe_kogarashi_97": [
+   "bordo",
+   "azul_perolado",
+   "vermelho",
+   "preto"
+  ],
+  "tomoe_kogarashi_s": [
+   "azul_meia_noite",
+   "azul_perolado",
+   "vermelho",
+   "turquesa",
+   "preto"
+  ],
+  "tomoe_hatsukaze": [
+   "branco_perola",
+   "azul_perolado",
+   "grafite",
+   "chumbo",
+   "preto"
+  ],
+  "tomoe_hatsukaze_ii": [
+   "chumbo",
+   "azul_perolado",
+   "grafite",
+   "celeste",
+   "preto"
+  ],
+  "tomoe_hatsukaze_s": [
+   "laranja",
+   "azul_perolado",
+   "grafite",
+   "chumbo",
+   "preto"
+  ],
+  "tomoe_hatsukaze_corrida": [
+   "azul",
+   "laranja",
+   "verde_escuro",
+   "branco"
+  ],
+  "tomoe_sora": [
+   "laranja",
+   "roxo",
+   "chumbo",
+   "champanhe",
+   "prata"
+  ],
+  "garrison_highline": [
+   "prata",
+   "azul",
+   "preto",
+   "grafite",
+   "azul_perolado"
+  ],
+  "garrison_boxcar": [
+   "bordo",
+   "prata",
+   "marrom",
+   "azul",
+   "mostarda"
+  ],
+  "garrison_driftwood": [
+   "chumbo",
+   "prata",
+   "branco",
+   "azul",
+   "celeste"
+  ],
+  "garrison_tumbleweed": [
+   "turquesa",
+   "preto",
+   "roxo",
+   "azul_meia_noite",
+   "vinho"
+  ],
+  "garrison_tumbleweed_corrida": [
+   "amarelo",
+   "azul",
+   "vermelho",
+   "branco"
+  ],
+  "garrison_thunderhead": [
+   "vinho",
+   "celeste",
+   "preto",
+   "branco",
+   "champanhe"
+  ],
+  "garrison_pecos": [
+   "azul_meia_noite",
+   "amarelo",
+   "azul_perolado",
+   "vinho",
+   "prata"
+  ],
+  "garrison_pecos_ii": [
+   "chumbo",
+   "amarelo",
+   "azul_perolado",
+   "azul_meia_noite",
+   "prata"
+  ],
+  "garrison_canyon": [
+   "grafite",
+   "azul_meia_noite",
+   "preto",
+   "verde_escuro",
+   "azul"
+  ],
+  "garrison_bison_corrida": [
+   "branco",
+   "laranja",
+   "amarelo",
+   "vermelho"
+  ],
+  "garrison_gulch": [
+   "preto",
+   "prata",
+   "azul_perolado",
+   "grafite",
+   "branco"
+  ],
+  "garrison_arroyo": [
+   "turquesa",
+   "roxo",
+   "branco_perola",
+   "prata",
+   "vinho"
+  ],
+  "garrison_arroyo_ii": [
+   "cinza_claro",
+   "roxo",
+   "branco_perola",
+   "prata",
+   "vinho"
+  ],
+  "garrison_arroyo_corrida": [
+   "azul",
+   "amarelo",
+   "laranja",
+   "branco"
+  ],
+  "garrison_arroyo_corrida_ii": [
+   "vermelho",
+   "amarelo",
+   "laranja",
+   "branco"
+  ],
+  "ottavo_nebbia": [
+   "azul_escuro",
+   "branco",
+   "prata",
+   "preto",
+   "azul_meia_noite"
+  ],
+  "ottavo_rondine": [
+   "champanhe",
+   "mostarda",
+   "verde_escuro",
+   "preto",
+   "celeste"
+  ],
+  "ottavo_brina": [
+   "cinza_claro",
+   "verde_escuro",
+   "celeste",
+   "azul_perolado",
+   "preto"
+  ],
+  "ottavo_allodola": [
+   "branco",
+   "roxo",
+   "grafite",
+   "verde_escuro",
+   "turquesa"
+  ],
+  "ottavo_faro": [
+   "prata",
+   "branco_perola",
+   "azul_meia_noite",
+   "verde_escuro",
+   "turquesa"
+  ],
+  "ottavo_airone": [
+   "creme",
+   "azul_perolado",
+   "amarelo",
+   "branco_perola",
+   "prata"
+  ],
+  "whitlock_granite": [
+   "bordo",
+   "branco_perola",
+   "branco",
+   "preto",
+   "vinho"
+  ],
+  "whitlock_granite_99": [
+   "vinho",
+   "branco_perola",
+   "branco",
+   "preto",
+   "grafite"
+  ],
+  "whitlock_granite_s": [
+   "vinho",
+   "branco",
+   "mostarda",
+   "verde_ingles",
+   "marrom"
+  ],
+  "whitlock_shamrock_corrida": [
+   "verde_escuro",
+   "amarelo",
+   "laranja",
+   "branco"
+  ],
+  "whitlock_sagebrush": [
+   "branco_perola",
+   "azul_perolado",
+   "vermelho",
+   "grafite",
+   "preto"
+  ],
+  "whitlock_sagebrush_s": [
+   "grafite",
+   "azul_perolado",
+   "vermelho",
+   "branco_perola",
+   "preto"
+  ],
+  "whitlock_sagebrush_corrida": [
+   "amarelo",
+   "branco",
+   "verde_escuro",
+   "azul"
+  ],
+  "whitlock_wildfire": [
+   "bordo",
+   "vermelho",
+   "branco",
+   "amarelo",
+   "verde_ingles"
+  ],
+  "whitlock_wildfire_corrida": [
+   "amarelo",
+   "laranja",
+   "vermelho",
+   "branco"
+  ],
+  "whitlock_palomino": [
+   "prata",
+   "turquesa",
+   "branco_perola",
+   "vermelho",
+   "azul_perolado"
+  ],
+  "whitlock_saddle": [
+   "prata",
+   "grafite",
+   "roxo",
+   "verde_claro",
+   "celeste"
+  ],
+  "whitlock_bootleg": [
+   "celeste",
+   "vinho",
+   "amarelo",
+   "grafite",
+   "branco"
+  ],
+  "whitlock_switchback": [
+   "champanhe",
+   "roxo",
+   "branco",
+   "vinho",
+   "preto"
+  ],
+  "whitlock_switchback_s": [
+   "prata",
+   "roxo",
+   "branco",
+   "vinho",
+   "preto"
+  ],
+  "whitlock_switchback_gt": [
+   "branco",
+   "azul_perolado",
+   "turquesa",
+   "prata",
+   "preto"
+  ],
+  "whitlock_switchback_gts": [
+   "chumbo",
+   "azul_perolado",
+   "turquesa",
+   "prata",
+   "preto"
+  ],
+  "whitlock_badlands": [
+   "bordo",
+   "vermelho",
+   "grafite",
+   "azul_perolado",
+   "prata"
+  ],
+  "whitlock_cottonwood": [
+   "azul_meia_noite",
+   "prata",
+   "amarelo",
+   "grafite",
+   "azul_escuro"
+  ],
+  "whitlock_yucca_corrida": [
+   "vermelho",
+   "laranja",
+   "amarelo",
+   "branco"
+  ],
+  "whitlock_bluff": [
+   "verde_escuro",
+   "chumbo",
+   "azul_meia_noite",
+   "roxo",
+   "preto"
+  ],
+  "hozuki_isaribi": [
+   "branco_perola",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "preto",
+   "grafite"
+  ],
+  "hozuki_isaribi_s": [
+   "vermelho",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "preto",
+   "grafite"
+  ],
+  "hozuki_isaribi_gt": [
+   "azul_meia_noite",
+   "vinho",
+   "amarelo",
+   "verde_escuro",
+   "preto"
+  ],
+  "hozuki_isaribi_gts": [
+   "branco_perola",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "hozuki_isaribi_gts_ii": [
+   "amarelo",
+   "vinho",
+   "azul_meia_noite",
+   "verde_escuro",
+   "preto"
+  ],
+  "hozuki_isaribi_gts_97": [
+   "grafite",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "preto",
+   "turquesa"
+  ],
+  "hozuki_isaribi_gts_98": [
+   "preto",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "verde_escuro"
+  ],
+  "hozuki_isaribi_gts_iii": [
+   "champanhe",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "hozuki_isaribi_r": [
+   "branco",
+   "vinho",
+   "amarelo",
+   "azul_meia_noite",
+   "verde_escuro"
+  ],
+  "hozuki_nowaki": [
+   "verde_ingles",
+   "branco",
+   "vinho",
+   "vermelho",
+   "verde_escuro"
+  ],
+  "hozuki_nowaki_91": [
+   "chumbo",
+   "branco",
+   "vinho",
+   "vermelho"
+  ],
+  "hozuki_nowaki_92": [
+   "azul_escuro",
+   "branco",
+   "vinho",
+   "vermelho"
+  ],
+  "hozuki_nowaki_94": [
+   "laranja",
+   "branco",
+   "vinho",
+   "vermelho"
+  ],
+  "hozuki_tsumuji": [
+   "verde_escuro",
+   "prata",
+   "branco",
+   "verde_claro",
+   "preto"
+  ],
+  "hozuki_tsumuji_s": [
+   "verde_escuro",
+   "prata",
+   "branco",
+   "verde_claro",
+   "preto"
+  ],
+  "hayase_tsubame": [
+   "vermelho",
+   "turquesa",
+   "vinho",
+   "preto"
+  ],
+  "hozuki_samidare_s": [
+   "champanhe",
+   "turquesa",
+   "amarelo",
+   "preto"
+  ],
+  "hayase_pika": [
+   "branco",
+   "verde_claro",
+   "amarelo",
+   "vinho",
+   "grafite"
+  ],
+  "hozuki_samidare_s_95": [
+   "prata",
+   "azul_perolado",
+   "celeste",
+   "branco_perola",
+   "vinho"
+  ],
+  "hozuki_samidare_s_96": [
+   "amarelo",
+   "turquesa",
+   "champanhe",
+   "branco_perola",
+   "celeste",
+   "preto"
+  ],
+  "hozuki_samidare_s_98": [
+   "azul_meia_noite",
+   "turquesa",
+   "champanhe",
+   "amarelo",
+   "preto"
+  ],
+  "hozuki_samidare_s_ii": [
+   "verde_escuro",
+   "azul_perolado",
+   "celeste",
+   "branco_perola",
+   "preto"
+  ],
+  "hozuki_samidare_gt": [
+   "creme",
+   "azul_perolado",
+   "celeste",
+   "branco_perola",
+   "preto"
+  ],
+  "hozuki_samidare_gt_97": [
+   "celeste",
+   "azul_perolado",
+   "branco_perola",
+   "preto"
+  ],
+  "hozuki_samidare_gt_98": [
+   "azul_escuro",
+   "azul_perolado",
+   "celeste",
+   "branco_perola",
+   "preto"
+  ],
+  "hozuki_samidare_gts": [
+   "cinza_claro",
+   "azul_perolado",
+   "celeste",
+   "branco_perola",
+   "preto"
+  ],
+  "hozuki_hiiragi": [
+   "creme",
+   "verde_escuro",
+   "azul_meia_noite",
+   "azul",
+   "branco"
+  ],
+  "hozuki_harusame": [
+   "celeste",
+   "amarelo",
+   "vinho",
+   "preto",
+   "vermelho"
+  ],
+  "hozuki_harusame_ii": [
+   "cinza_claro",
+   "amarelo",
+   "celeste",
+   "vinho",
+   "preto",
+   "vermelho",
+   "azul"
+  ],
+  "hozuki_harusame_s": [
+   "branco_perola",
+   "amarelo",
+   "celeste",
+   "vinho",
+   "preto"
+  ],
+  "hozuki_harusame_s_ii": [
+   "verde_escuro",
+   "amarelo",
+   "celeste",
+   "vinho",
+   "preto"
+  ],
+  "hozuki_harusame_s_iii": [
+   "laranja",
+   "amarelo",
+   "celeste",
+   "preto"
+  ],
+  "hozuki_harusame_gt": [
+   "azul_escuro",
+   "celeste",
+   "roxo",
+   "vinho",
+   "prata"
+  ],
+  "hozuki_oboro": [
+   "prata",
+   "preto",
+   "verde_claro",
+   "grafite",
+   "celeste",
+   "amarelo",
+   "azul_meia_noite"
+  ],
+  "hozuki_oboro_s": [
+   "amarelo",
+   "preto",
+   "verde_claro",
+   "grafite",
+   "celeste"
+  ],
+  "hozuki_madoka": [
+   "azul_escuro",
+   "vinho",
+   "amarelo",
+   "verde_claro",
+   "prata"
+  ],
+  "hozuki_uguisu_corrida": [
+   "azul",
+   "amarelo",
+   "laranja",
+   "branco"
+  ],
+  "hozuki_fubuki": [
+   "laranja",
+   "celeste",
+   "azul_perolado",
+   "preto",
+   "roxo"
+  ],
+  "hozuki_fubuki_ii": [
+   "vermelho",
+   "celeste",
+   "azul_perolado",
+   "preto",
+   "roxo"
+  ],
+  "hozuki_fubuki_iii": [
+   "champanhe",
+   "celeste",
+   "azul_perolado",
+   "preto",
+   "roxo"
+  ],
+  "hozuki_fubuki_90": [
+   "bordo",
+   "celeste",
+   "azul_perolado",
+   "preto",
+   "roxo",
+   "vinho",
+   "turquesa"
+  ],
+  "hozuki_fubuki_92": [
+   "amarelo",
+   "celeste",
+   "azul_perolado",
+   "preto",
+   "roxo",
+   "vinho",
+   "turquesa"
+  ],
+  "hozuki_fubuki_corrida": [
+   "vermelho",
+   "laranja",
+   "branco",
+   "verde_escuro"
+  ],
+  "hozuki_fubuki_corrida_99": [
+   "vermelho",
+   "laranja",
+   "branco",
+   "verde_escuro"
+  ],
+  "hozuki_byakko": [
+   "vermelho",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "azul_perolado",
+   "roxo",
+   "preto"
+  ],
+  "hozuki_byakko_s": [
+   "azul_escuro",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "hozuki_byakko_s_94": [
+   "cinza_claro",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "azul_perolado",
+   "roxo",
+   "preto"
+  ],
+  "hozuki_byakko_s_96": [
+   "creme",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "azul_perolado",
+   "roxo",
+   "preto"
+  ],
+  "hozuki_byakko_gt": [
+   "branco_perola",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "hozuki_byakko_gt_96": [
+   "grafite",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "hozuki_byakko_gt_98": [
+   "bordo",
+   "vinho",
+   "turquesa",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "hozuki_asagiri_corrida": [
+   "vermelho",
+   "azul",
+   "amarelo",
+   "branco"
+  ],
+  "hozuki_hotaru": [
+   "azul_escuro",
+   "verde_ingles",
+   "verde_escuro",
+   "branco",
+   "amarelo"
+  ],
+  "hozuki_hotaru_s": [
+   "turquesa",
+   "verde_ingles",
+   "verde_escuro",
+   "branco",
+   "amarelo"
+  ],
+  "hozuki_hotaru_corrida": [
+   "prata",
+   "branco",
+   "azul",
+   "amarelo"
+  ],
+  "hozuki_natsuzora_corrida": [
+   "verde_escuro",
+   "amarelo",
+   "azul",
+   "branco"
+  ],
+  "hozuki_kohaku": [
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "vinho",
+   "verde_escuro"
+  ],
+  "hozuki_rindo": [
+   "azul_meia_noite",
+   "branco",
+   "turquesa",
+   "amarelo"
+  ],
+  "hozuki_rindo_95": [
+   "creme",
+   "branco",
+   "turquesa",
+   "amarelo"
+  ],
+  "hozuki_rindo_s": [
+   "verde_escuro",
+   "branco",
+   "turquesa",
+   "amarelo",
+   "prata"
+  ],
+  "hozuki_rindo_s_95": [
+   "verde_escuro",
+   "branco",
+   "turquesa",
+   "amarelo"
+  ],
+  "hozuki_rindo_corrida": [
+   "amarelo",
+   "laranja",
+   "verde_escuro",
+   "branco"
+  ],
+  "calderwood_fletcher": [
+   "verde_escuro",
+   "azul_perolado",
+   "roxo",
+   "grafite",
+   "branco"
+  ],
+  "calderwood_dunlin": [
+   "preto",
+   "turquesa",
+   "azul_perolado",
+   "prata",
+   "grafite"
+  ],
+  "calderwood_moorland": [
+   "champanhe",
+   "azul_meia_noite",
+   "celeste",
+   "vinho",
+   "preto"
+  ],
+  "calderwood_tarn_corrida": [
+   "verde_escuro",
+   "laranja",
+   "vermelho",
+   "branco"
+  ],
+  "calderwood_quarry": [
+   "verde_escuro",
+   "vinho",
+   "amarelo",
+   "branco_perola",
+   "preto"
+  ],
+  "calderwood_gale": [
+   "branco",
+   "azul_perolado",
+   "branco_perola",
+   "verde_escuro",
+   "prata"
+  ],
+  "castellani_torrente": [
+   "verde_ingles",
+   "branco",
+   "roxo",
+   "amarelo",
+   "celeste"
+  ],
+  "castellani_torrente_s": [
+   "prata",
+   "branco",
+   "roxo",
+   "amarelo",
+   "celeste"
+  ],
+  "castellani_torrente_gt": [
+   "verde_ingles",
+   "branco",
+   "roxo",
+   "amarelo",
+   "celeste"
+  ],
+  "castellani_torrente_corrida": [
+   "amarelo",
+   "verde_escuro",
+   "laranja",
+   "branco"
+  ],
+  "castellani_zefiro": [
+   "amarelo",
+   "azul_meia_noite",
+   "branco_perola",
+   "roxo",
+   "preto"
+  ],
+  "castellani_tufo": [
+   "preto",
+   "branco",
+   "verde_escuro",
+   "grafite",
+   "celeste"
+  ],
+  "thornby_keel": [
+   "vinho",
+   "grafite",
+   "celeste",
+   "amarelo",
+   "prata"
+  ],
+  "pemberly_bittern": [
+   "grafite",
+   "creme",
+   "verde_ingles",
+   "vermelho_classico",
+   "prata"
+  ],
+  "pemberly_bittern_s": [
+   "branco",
+   "creme",
+   "verde_escuro",
+   "marrom",
+   "mostarda"
+  ],
+  "pemberly_bittern_gt": [
+   "preto",
+   "vinho",
+   "prata",
+   "amarelo",
+   "creme"
+  ],
+  "ashcombe_kestrel": [
+   "laranja",
+   "verde_escuro",
+   "preto",
+   "azul_perolado",
+   "branco"
+  ],
+  "pemberly_fieldfare_s": [
+   "vermelho",
+   "azul",
+   "azul_meia_noite",
+   "vinho",
+   "preto"
+  ],
+  "pemberly_fieldfare_gt": [
+   "bordo",
+   "azul",
+   "azul_meia_noite",
+   "vinho",
+   "preto"
+  ],
+  "pemberly_fieldfare_gts": [
+   "azul_escuro",
+   "azul",
+   "azul_meia_noite",
+   "vinho",
+   "preto"
+  ],
+  "pemberly_fieldfare_r": [
+   "creme",
+   "azul",
+   "azul_meia_noite",
+   "vinho",
+   "preto"
+  ],
+  "pemberly_teal": [
+   "preto",
+   "celeste",
+   "turquesa",
+   "prata",
+   "vermelho"
+  ],
+  "pemberly_teal_ii": [
+   "branco_perola",
+   "celeste",
+   "turquesa",
+   "prata",
+   "vermelho"
+  ],
+  "pemberly_teal_iii": [
+   "grafite",
+   "celeste",
+   "turquesa",
+   "prata",
+   "vermelho"
+  ],
+  "pemberly_teal_corrida": [
+   "branco",
+   "amarelo",
+   "vermelho",
+   "laranja"
+  ],
+  "pemberly_sedge": [
+   "prata",
+   "vermelho",
+   "vermelho_classico",
+   "grafite",
+   "vinho"
+  ],
+  "pemberly_thrush": [
+   "verde_ingles",
+   "preto",
+   "branco_perola",
+   "grafite",
+   "roxo"
+  ],
+  "mizuchi_suzaku": [
+   "grafite",
+   "roxo",
+   "amarelo",
+   "turquesa",
+   "branco"
+  ],
+  "mizuchi_suzaku_99": [
+   "verde_escuro",
+   "amarelo",
+   "celeste",
+   "grafite",
+   "preto"
+  ],
+  "mizuchi_wadachi": [
+   "azul_escuro",
+   "amarelo",
+   "verde_escuro",
+   "preto"
+  ],
+  "mizuchi_wadachi_ii": [
+   "celeste",
+   "amarelo",
+   "verde_escuro",
+   "preto"
+  ],
+  "mizuchi_hiten_corrida": [
+   "vermelho",
+   "amarelo",
+   "laranja",
+   "branco"
+  ],
+  "mizuchi_arashi": [
+   "grafite",
+   "roxo",
+   "azul_perolado",
+   "branco"
+  ],
+  "mizuchi_arashi_s": [
+   "branco_perola",
+   "roxo",
+   "azul_perolado",
+   "branco"
+  ],
+  "mizuchi_hanabi": [
+   "champanhe",
+   "prata",
+   "grafite",
+   "vermelho",
+   "vinho",
+   "verde_claro",
+   "azul_meia_noite"
+  ],
+  "mizuchi_hanabi_s": [
+   "preto",
+   "prata",
+   "grafite",
+   "vermelho",
+   "vinho"
+  ],
+  "mizuchi_hanabi_s_97": [
+   "preto",
+   "prata",
+   "grafite",
+   "vermelho",
+   "vinho",
+   "verde_claro",
+   "azul_meia_noite"
+  ],
+  "mizuchi_hanabi_s_ii": [
+   "champanhe",
+   "prata",
+   "grafite",
+   "vermelho",
+   "vinho",
+   "verde_claro",
+   "azul_meia_noite"
+  ],
+  "mizuchi_hanabi_s_98": [
+   "azul_meia_noite",
+   "prata",
+   "grafite",
+   "vermelho"
+  ],
+  "mizuchi_hanabi_s_99": [
+   "champanhe",
+   "prata",
+   "grafite",
+   "vermelho",
+   "vinho"
+  ],
+  "hayase_kaze": [
+   "verde_escuro",
+   "branco",
+   "azul_escuro",
+   "preto",
+   "vermelho_classico"
+  ],
+  "mizuchi_awayuki": [
+   "champanhe",
+   "vermelho",
+   "creme",
+   "preto"
+  ],
+  "mizuchi_awayuki_92": [
+   "chumbo",
+   "vermelho",
+   "creme",
+   "preto"
+  ],
+  "mizuchi_awayuki_s": [
+   "prata",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite"
+  ],
+  "mizuchi_awayuki_gt": [
+   "azul_escuro",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite",
+   "turquesa",
+   "verde_escuro"
+  ],
+  "mizuchi_awayuki_gt_93": [
+   "preto",
+   "vermelho",
+   "creme",
+   "grafite",
+   "turquesa",
+   "verde_escuro",
+   "branco"
+  ],
+  "mizuchi_awayuki_gt_ii": [
+   "vinho",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite",
+   "turquesa"
+  ],
+  "mizuchi_awayuki_gts": [
+   "celeste",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite"
+  ],
+  "mizuchi_awayuki_gts_98": [
+   "champanhe",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite"
+  ],
+  "mizuchi_awayuki_gts_ii": [
+   "amarelo",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite"
+  ],
+  "mizuchi_awayuki_r": [
+   "turquesa",
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite"
+  ],
+  "mizuchi_awayuki_sr": [
+   "vermelho",
+   "creme",
+   "preto",
+   "grafite",
+   "turquesa"
+  ],
+  "mizuchi_kagero": [
+   "verde_ingles",
+   "vermelho",
+   "champanhe",
+   "branco",
+   "preto",
+   "prata",
+   "cinza_claro"
+  ],
+  "mizuchi_kagero_s": [
+   "turquesa",
+   "grafite",
+   "vinho",
+   "branco",
+   "branco_perola"
+  ],
+  "mizuchi_kagero_gt": [
+   "branco_perola",
+   "grafite",
+   "vinho",
+   "branco"
+  ],
+  "mizuchi_chidori": [
+   "azul_escuro",
+   "preto",
+   "champanhe",
+   "vinho",
+   "azul"
+  ],
+  "mizuchi_chidori_s": [
+   "creme",
+   "branco",
+   "prata",
+   "verde_escuro",
+   "vinho",
+   "verde_ingles"
+  ],
+  "hayase_raikou": [
+   "vermelho",
+   "branco",
+   "azul_perolado",
+   "prata",
+   "branco_perola"
+  ],
+  "mizuchi_chidori_gt": [
+   "vermelho",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_gts": [
+   "turquesa",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r": [
+   "chumbo",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_r_96": [
+   "prata",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_r_ii": [
+   "celeste",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r_iii": [
+   "turquesa",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r_97": [
+   "branco_perola",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r_iv": [
+   "amarelo",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r_v": [
+   "branco_perola",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r_vi": [
+   "laranja",
+   "branco",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "mizuchi_chidori_r_98": [
+   "creme",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_sr": [
+   "creme",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_sr_98": [
+   "turquesa",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_sr_99": [
+   "vinho",
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "amarelo"
+  ],
+  "mizuchi_chidori_corrida": [
+   "verde_escuro",
+   "azul",
+   "laranja",
+   "branco"
+  ],
+  "mizuchi_chidori_corrida_ii": [
+   "azul",
+   "laranja",
+   "amarelo",
+   "branco"
+  ],
+  "mizuchi_chidori_corrida_iii": [
+   "prata",
+   "azul",
+   "laranja",
+   "amarelo"
+  ],
+  "keldorf_rabe_corrida": [
+   "azul",
+   "vermelho",
+   "branco",
+   "laranja"
+  ],
+  "keldorf_kolkrabe": [
+   "laranja",
+   "roxo",
+   "verde_escuro",
+   "vermelho",
+   "preto"
+  ],
+  "keldorf_wachtel": [
+   "verde_escuro",
+   "branco_perola",
+   "azul_meia_noite",
+   "vermelho",
+   "prata"
+  ],
+  "keldorf_wachtel_s": [
+   "laranja",
+   "branco_perola",
+   "azul_meia_noite",
+   "vermelho",
+   "prata"
+  ],
+  "hartwig_gleiter": [
+   "azul_perolado",
+   "prata",
+   "grafite",
+   "turquesa",
+   "celeste"
+  ],
+  "keldorf_sturm_s": [
+   "verde_ingles",
+   "preto",
+   "azul_meia_noite",
+   "roxo",
+   "branco_perola"
+  ],
+  "keldorf_steinbock": [
+   "turquesa",
+   "azul_meia_noite",
+   "vermelho",
+   "verde_escuro",
+   "branco"
+  ],
+  "dunmere_ember": [
+   "champanhe",
+   "creme",
+   "roxo",
+   "vermelho",
+   "prata"
+  ],
+  "ashcombe_wren": [
+   "verde_claro",
+   "branco",
+   "amarelo",
+   "celeste",
+   "grafite"
+  ],
+  "dunmere_merlin_s": [
+   "branco_perola",
+   "branco",
+   "turquesa",
+   "verde_claro",
+   "grafite"
+  ],
+  "dunmere_wherry_corrida": [
+   "verde_escuro",
+   "branco",
+   "vermelho",
+   "laranja"
+  ],
+  "sanga_tsukikage": [
+   "vermelho",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco",
+   "roxo"
+  ],
+  "sanga_tsukikage_95": [
+   "vermelho",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_97": [
+   "celeste",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_99": [
+   "champanhe",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_s": [
+   "celeste",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco",
+   "roxo"
+  ],
+  "sanga_tsukikage_s_95": [
+   "verde_ingles",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_s_ii": [
+   "grafite",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_s_97": [
+   "branco_perola",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_s_99": [
+   "azul_meia_noite",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_s_iii": [
+   "branco_perola",
+   "turquesa",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "sanga_tsukikage_corrida": [
+   "vermelho",
+   "amarelo",
+   "azul",
+   "branco"
+  ],
+  "sanga_tsukikage_corrida_99": [
+   "branco",
+   "amarelo",
+   "azul",
+   "laranja"
+  ],
+  "sanga_kamome": [
+   "laranja",
+   "vinho",
+   "prata",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "sanga_kamui": [
+   "preto",
+   "celeste",
+   "azul",
+   "grafite",
+   "turquesa",
+   "branco"
+  ],
+  "sanga_kamui_s": [
+   "laranja",
+   "celeste",
+   "preto",
+   "azul",
+   "grafite"
+  ],
+  "sanga_kamui_gt": [
+   "champanhe",
+   "celeste",
+   "preto",
+   "azul",
+   "grafite",
+   "turquesa",
+   "branco"
+  ],
+  "sanga_kamui_gt_97": [
+   "verde_ingles",
+   "celeste",
+   "preto",
+   "azul",
+   "grafite"
+  ],
+  "sanga_kamui_gt_ii": [
+   "vinho",
+   "celeste",
+   "preto",
+   "azul",
+   "grafite"
+  ],
+  "sanga_kamui_corrida": [
+   "azul",
+   "laranja",
+   "vermelho",
+   "branco"
+  ],
+  "sanga_tsukishiro": [
+   "champanhe",
+   "celeste",
+   "amarelo",
+   "verde_escuro",
+   "preto"
+  ],
+  "sanga_tsukishiro_s": [
+   "grafite",
+   "celeste",
+   "amarelo",
+   "verde_escuro",
+   "vinho",
+   "preto",
+   "champanhe"
+  ],
+  "sanga_tsukishiro_gt": [
+   "grafite",
+   "celeste",
+   "amarelo",
+   "verde_escuro",
+   "preto"
+  ],
+  "sanga_tsukishiro_gts": [
+   "vermelho",
+   "celeste",
+   "amarelo",
+   "verde_escuro",
+   "vinho",
+   "preto",
+   "champanhe"
+  ],
+  "sanga_tsukishiro_gts_99": [
+   "champanhe",
+   "celeste",
+   "amarelo",
+   "verde_escuro",
+   "preto"
+  ],
+  "sanga_usagi": [
+   "branco_perola",
+   "branco",
+   "vermelho",
+   "vinho",
+   "verde_escuro"
+  ],
+  "hayase_tenrai": [
+   "prata",
+   "chumbo",
+   "champanhe",
+   "roxo",
+   "verde_escuro"
+  ],
+  "sanga_usagi_gt": [
+   "prata",
+   "branco",
+   "vermelho",
+   "branco_perola",
+   "vinho"
+  ],
+  "sanga_usagi_gt_98": [
+   "preto",
+   "branco",
+   "vermelho",
+   "branco_perola",
+   "vinho"
+  ],
+  "sanga_usagi_gt_ii": [
+   "verde_escuro",
+   "branco",
+   "vermelho",
+   "branco_perola"
+  ],
+  "sanga_usagi_gt_99": [
+   "verde_ingles",
+   "branco",
+   "vermelho",
+   "branco_perola",
+   "vinho"
+  ],
+  "sanga_usagi_gt_iii": [
+   "champanhe",
+   "branco",
+   "vermelho",
+   "branco_perola",
+   "vinho"
+  ],
+  "sanga_usagi_corrida": [
+   "azul",
+   "amarelo",
+   "vermelho",
+   "branco"
+  ],
+  "sanga_usagi_corrida_98": [
+   "amarelo",
+   "azul",
+   "vermelho",
+   "branco"
+  ],
+  "sanga_usagi_corrida_99": [
+   "verde_escuro",
+   "amarelo",
+   "azul",
+   "branco"
+  ],
+  "sanga_kairo": [
+   "vinho",
+   "roxo",
+   "champanhe",
+   "branco_perola",
+   "amarelo",
+   "chumbo",
+   "prata"
+  ],
+  "sanga_kairo_s": [
+   "prata",
+   "roxo",
+   "champanhe",
+   "branco_perola",
+   "amarelo"
+  ],
+  "sanga_kairo_gt": [
+   "verde_escuro",
+   "roxo",
+   "champanhe",
+   "branco_perola",
+   "amarelo",
+   "chumbo",
+   "prata"
+  ],
+  "sanga_kairo_gt_98": [
+   "azul_meia_noite",
+   "roxo",
+   "champanhe",
+   "branco_perola",
+   "prata"
+  ],
+  "sanga_kairo_gts": [
+   "verde_escuro",
+   "roxo",
+   "champanhe",
+   "branco_perola",
+   "prata"
+  ],
+  "sanga_kikyo": [
+   "prata",
+   "vinho",
+   "turquesa",
+   "branco",
+   "azul_perolado"
+  ],
+  "sanga_yanagi": [
+   "amarelo",
+   "vinho",
+   "branco_perola",
+   "vermelho",
+   "prata"
+  ],
+  "sanga_yanagi_s": [
+   "amarelo",
+   "vinho",
+   "branco_perola",
+   "vermelho",
+   "prata",
+   "roxo",
+   "turquesa"
+  ],
+  "sanga_inazuma": [
+   "azul_escuro",
+   "prata",
+   "branco",
+   "verde_escuro",
+   "vermelho",
+   "verde_claro",
+   "turquesa"
+  ],
+  "sanga_inazuma_96": [
+   "vermelho",
+   "prata",
+   "branco",
+   "verde_escuro",
+   "verde_claro",
+   "turquesa",
+   "amarelo"
+  ],
+  "sanga_inazuma_97": [
+   "azul_escuro",
+   "prata",
+   "branco",
+   "verde_escuro",
+   "vermelho"
+  ],
+  "sanga_inazuma_ii": [
+   "bordo",
+   "prata",
+   "branco",
+   "verde_escuro",
+   "vermelho"
+  ],
+  "sanga_inazuma_98": [
+   "azul_meia_noite",
+   "prata",
+   "branco",
+   "verde_escuro",
+   "vermelho"
+  ],
+  "sanga_mizore": [
+   "azul_escuro",
+   "champanhe",
+   "amarelo",
+   "azul_perolado",
+   "chumbo",
+   "vinho",
+   "branco"
+  ],
+  "sanga_mizore_98": [
+   "grafite",
+   "champanhe",
+   "amarelo",
+   "azul_perolado",
+   "branco"
+  ],
+  "sanga_akatsuki_corrida": [
+   "prata",
+   "azul",
+   "vermelho",
+   "branco"
+  ],
+  "hayase_kujaku": [
+   "champanhe",
+   "vinho",
+   "amarelo",
+   "branco"
+  ],
+  "hayase_hibari": [
+   "branco_perola",
+   "branco",
+   "azul",
+   "turquesa",
+   "vermelho"
+  ],
+  "hayase_hibari_s": [
+   "azul_escuro",
+   "branco",
+   "azul",
+   "turquesa",
+   "vermelho",
+   "preto"
+  ],
+  "hayase_hibari_s_97": [
+   "creme",
+   "branco",
+   "azul",
+   "turquesa",
+   "vermelho",
+   "preto"
+  ],
+  "hayase_hibari_gt": [
+   "creme",
+   "branco",
+   "azul",
+   "turquesa"
+  ],
+  "hayase_hibari_gt_96": [
+   "azul_escuro",
+   "branco",
+   "azul",
+   "turquesa",
+   "vermelho"
+  ],
+  "hayase_hibari_gts": [
+   "vermelho",
+   "branco",
+   "azul",
+   "turquesa",
+   "preto",
+   "roxo"
+  ],
+  "hayase_hibari_gts_96": [
+   "vermelho",
+   "branco",
+   "azul",
+   "turquesa",
+   "preto",
+   "roxo"
+  ],
+  "hayase_hibari_gts_98": [
+   "preto",
+   "branco",
+   "azul",
+   "turquesa",
+   "vermelho",
+   "roxo"
+  ],
+  "hayase_hokuto": [
+   "turquesa",
+   "vermelho",
+   "azul",
+   "prata",
+   "amarelo"
+  ],
+  "hayase_shinku": [
+   "azul_escuro",
+   "vermelho",
+   "azul_perolado",
+   "verde_escuro",
+   "celeste",
+   "preto"
+  ],
+  "hayase_tenku": [
+   "cinza_claro",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_tenku_95": [
+   "verde_ingles",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_tenku_ii": [
+   "verde_ingles",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_tenku_iii": [
+   "vermelho",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_tenku_98": [
+   "celeste",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo"
+  ],
+  "hayase_tenku_iv": [
+   "verde_ingles",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo"
+  ],
+  "hayase_tenku_s": [
+   "chumbo",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_tenku_s_95": [
+   "turquesa",
+   "vinho",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata",
+   "preto"
+  ],
+  "hayase_tenku_s_ii": [
+   "laranja",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_tenku_s_98": [
+   "bordo",
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo"
+  ],
+  "hayase_tenku_s_iii": [
+   "vinho",
+   "turquesa",
+   "branco",
+   "amarelo",
+   "azul_perolado"
+  ],
+  "hayase_kurenai_corrida": [
+   "vermelho",
+   "amarelo",
+   "azul",
+   "branco"
+  ],
+  "hayase_kurogane_corrida": [
+   "prata",
+   "azul",
+   "laranja",
+   "branco"
+  ],
+  "hayase_momiji": [
+   "cinza_claro",
+   "chumbo",
+   "champanhe",
+   "prata",
+   "preto"
+  ],
+  "hayase_oborozuki_corrida": [
+   "azul",
+   "amarelo",
+   "laranja",
+   "branco"
+  ],
+  "hayase_sazanami": [
+   "branco",
+   "mostarda",
+   "azul",
+   "amarelo"
+  ],
+  "hayase_tsubasa_corrida": [
+   "verde_escuro",
+   "amarelo",
+   "azul",
+   "branco"
+  ],
+  "hayase_komorebi": [
+   "branco_perola",
+   "laranja",
+   "celeste",
+   "prata"
+  ],
+  "hayase_komorebi_s": [
+   "azul_meia_noite",
+   "prata",
+   "roxo",
+   "preto",
+   "amarelo"
+  ],
+  "hayase_ryujin": [
+   "chumbo",
+   "azul_escuro",
+   "amarelo",
+   "cinza_claro",
+   "branco"
+  ],
+  "hayase_komorebi_s_90": [
+   "bordo",
+   "prata",
+   "vinho",
+   "grafite"
+  ],
+  "hayase_komorebi_s_91": [
+   "turquesa",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "hayase_komorebi_s_93": [
+   "cinza_claro",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "turquesa"
+  ],
+  "hayase_komorebi_s_94": [
+   "turquesa",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "hayase_komorebi_s_95": [
+   "azul_escuro",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "turquesa"
+  ],
+  "hayase_komorebi_s_ii": [
+   "creme",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "turquesa"
+  ],
+  "hayase_komorebi_s_97": [
+   "azul_escuro",
+   "prata",
+   "roxo",
+   "preto",
+   "amarelo",
+   "azul_perolado",
+   "grafite"
+  ],
+  "hayase_komorebi_s_iii": [
+   "turquesa",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "hayase_komorebi_s_iv": [
+   "turquesa",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste",
+   "roxo",
+   "azul_meia_noite"
+  ],
+  "hayase_komorebi_s_99": [
+   "vermelho",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste"
+  ],
+  "hayase_komorebi_s_v": [
+   "azul_meia_noite",
+   "prata",
+   "vinho",
+   "grafite",
+   "celeste"
+  ],
+  "hayase_kagaribi": [
+   "amarelo",
+   "branco",
+   "grafite",
+   "azul"
+  ],
+  "hayase_yukimi": [
+   "grafite",
+   "celeste",
+   "preto",
+   "azul_meia_noite",
+   "azul_perolado",
+   "turquesa",
+   "vermelho"
+  ],
+  "hayase_gekko": [
+   "vermelho",
+   "vinho",
+   "prata",
+   "celeste",
+   "verde_escuro",
+   "azul_meia_noite",
+   "azul"
+  ],
+  "hayase_hagane": [
+   "azul_escuro",
+   "vermelho",
+   "turquesa",
+   "branco_perola",
+   "amarelo",
+   "branco"
+  ],
+  "hayase_kasasagi": [
+   "amarelo",
+   "branco_perola",
+   "azul",
+   "turquesa",
+   "grafite",
+   "preto",
+   "vermelho"
+  ],
+  "hayase_yukikaze": [
+   "azul_escuro",
+   "turquesa",
+   "verde_escuro",
+   "vinho",
+   "grafite",
+   "branco",
+   "azul"
+  ],
+  "hayase_yukikaze_96": [
+   "champanhe",
+   "turquesa",
+   "verde_escuro",
+   "vinho",
+   "grafite",
+   "branco",
+   "azul"
+  ],
+  "hayase_yukikaze_s": [
+   "grafite",
+   "turquesa",
+   "verde_escuro",
+   "vinho",
+   "branco"
+  ],
+  "hayase_suisei_corrida": [
+   "verde_escuro",
+   "branco",
+   "laranja",
+   "azul"
+  ],
+  "hayase_kobo": [
+   "celeste",
+   "azul_perolado",
+   "branco",
+   "vermelho",
+   "azul_meia_noite"
+  ],
+  "hayase_jinrai_s": [
+   "preto",
+   "vermelho",
+   "prata",
+   "vinho"
+  ],
+  "hayase_nadeshiko": [
+   "creme",
+   "azul",
+   "turquesa",
+   "roxo",
+   "preto"
+  ],
+  "hayase_nadeshiko_s": [
+   "branco",
+   "azul",
+   "turquesa",
+   "roxo",
+   "azul_perolado"
+  ],
+  "hayase_nadeshiko_s_ii": [
+   "vinho",
+   "azul",
+   "turquesa",
+   "roxo",
+   "preto"
+  ],
+  "hayase_hisui": [
+   "turquesa",
+   "amarelo",
+   "roxo",
+   "azul",
+   "prata"
+  ],
+  "hayase_mikazuki_corrida": [
+   "prata",
+   "branco",
+   "amarelo",
+   "azul"
+  ],
+  "hayase_nishiki_corrida": [
+   "prata",
+   "amarelo",
+   "verde_escuro",
+   "laranja"
+  ],
+  "hayase_sawarabi": [
+   "champanhe",
+   "celeste",
+   "amarelo",
+   "roxo",
+   "preto"
+  ],
+  "hayase_kagura": [
+   "preto",
+   "azul_perolado",
+   "celeste",
+   "roxo",
+   "azul"
+  ],
+  "hayase_kagura_s": [
+   "creme",
+   "azul_perolado",
+   "celeste",
+   "roxo",
+   "prata"
+  ],
+  "hayase_kagura_gt": [
+   "branco",
+   "azul_perolado",
+   "celeste",
+   "roxo"
+  ],
+  "hayase_tobiuo": [
+   "laranja",
+   "verde_escuro",
+   "grafite",
+   "branco",
+   "azul"
+  ],
+  "hayase_yaiba": [
+   "verde_ingles",
+   "roxo",
+   "verde_escuro",
+   "azul",
+   "prata"
+  ],
+  "hayase_yaiba_corrida": [
+   "vermelho",
+   "laranja",
+   "verde_escuro",
+   "branco"
+  ],
+  "hayase_uzushio": [
+   "branco",
+   "prata",
+   "verde_escuro",
+   "branco_perola",
+   "vinho"
+  ],
+  "hayase_kiri": [
+   "preto",
+   "azul_perolado",
+   "amarelo",
+   "azul",
+   "grafite"
+  ],
+  "hayase_kiri_98": [
+   "turquesa",
+   "azul_perolado",
+   "amarelo",
+   "azul",
+   "preto"
+  ],
+  "hayase_kiri_corrida": [
+   "amarelo",
+   "branco",
+   "verde_escuro",
+   "vermelho"
+  ],
+  "hayase_kiri_corrida_98": [
+   "prata",
+   "branco",
+   "verde_escuro",
+   "vermelho"
+  ],
+  "hayase_homura": [
+   "vermelho",
+   "branco_perola",
+   "preto",
+   "azul_meia_noite",
+   "azul"
+  ],
+  "hayase_tokage_corrida": [
+   "branco",
+   "amarelo",
+   "azul",
+   "vermelho"
+  ],
+  "hayase_enju": [
+   "azul_meia_noite",
+   "vinho",
+   "cinza_claro",
+   "preto",
+   "champanhe",
+   "branco",
+   "azul_escuro"
+  ],
+  "hayase_enju_s": [
+   "vinho",
+   "verde_escuro",
+   "turquesa",
+   "preto",
+   "grafite",
+   "azul_meia_noite",
+   "branco"
+  ],
+  "hayase_enju_gt": [
+   "grafite",
+   "verde_escuro",
+   "turquesa",
+   "preto",
+   "azul_meia_noite"
+  ],
+  "hayase_enju_gt_99": [
+   "turquesa",
+   "verde_escuro",
+   "preto",
+   "grafite",
+   "azul_meia_noite"
+  ],
+  "hayase_enju_gts": [
+   "grafite",
+   "vinho",
+   "cinza_claro",
+   "preto",
+   "champanhe",
+   "branco",
+   "azul_escuro"
+  ],
+  "hayase_soryu": [
+   "grafite",
+   "verde_escuro",
+   "branco_perola",
+   "azul",
+   "amarelo",
+   "roxo",
+   "branco"
+  ],
+  "hayase_enju_sr": [
+   "turquesa",
+   "verde_escuro",
+   "preto",
+   "grafite",
+   "azul_meia_noite"
+  ],
+  "hayase_enju_sr_99": [
+   "verde_ingles",
+   "verde_escuro",
+   "turquesa",
+   "preto",
+   "grafite"
+  ],
+  "hayase_akane": [
+   "celeste",
+   "azul_perolado",
+   "amarelo",
+   "azul",
+   "vinho",
+   "prata"
+  ],
+  "hayase_akane_s": [
+   "azul_meia_noite",
+   "celeste",
+   "azul_perolado",
+   "prata"
+  ],
+  "hayase_akane_s_98": [
+   "turquesa",
+   "celeste",
+   "azul_perolado",
+   "amarelo",
+   "prata"
+  ],
+  "hayase_akane_s_ii": [
+   "creme",
+   "celeste",
+   "azul_perolado",
+   "amarelo",
+   "prata"
+  ],
+  "hayase_akane_gt": [
+   "champanhe",
+   "celeste",
+   "azul_perolado",
+   "amarelo",
+   "prata"
+  ],
+  "hayase_akebono": [
+   "turquesa",
+   "roxo",
+   "celeste",
+   "branco_perola",
+   "prata"
+  ],
+  "hayase_minamo_corrida": [
+   "azul",
+   "verde_escuro",
+   "branco",
+   "vermelho"
+  ],
+  "hayase_raijin_corrida": [
+   "verde_escuro",
+   "azul",
+   "vermelho",
+   "branco"
+  ],
+  "hayase_tsubaki_corrida": [
+   "prata",
+   "amarelo",
+   "branco",
+   "laranja"
+  ],
+  "lindauer_nebel": [
+   "celeste",
+   "vinho",
+   "azul_perolado",
+   "prata",
+   "preto"
+  ],
+  "lindauer_lerche_corrida": [
+   "prata",
+   "branco",
+   "laranja",
+   "azul"
+  ],
+  "lindauer_kauz": [
+   "verde_ingles",
+   "amarelo",
+   "vinho",
+   "branco",
+   "vermelho"
+  ],
+  "lindauer_sperber": [
+   "azul_meia_noite",
+   "verde_escuro",
+   "prata",
+   "grafite",
+   "roxo"
+  ],
+  "lindauer_sperber_corrida": [
+   "azul",
+   "laranja",
+   "amarelo",
+   "branco"
+  ],
+  "lindauer_rauhreif": [
+   "cinza_claro",
+   "verde_escuro",
+   "grafite",
+   "vinho",
+   "branco"
+  ],
+  "saulieu_loriot": [
+   "preto",
+   "amarelo",
+   "prata",
+   "branco_perola",
+   "vinho"
+  ],
+  "saulieu_loriot_s": [
+   "verde_escuro",
+   "amarelo",
+   "prata",
+   "branco_perola",
+   "vinho"
+  ],
+  "saulieu_loriot_gt": [
+   "azul_meia_noite",
+   "amarelo",
+   "prata",
+   "branco_perola",
+   "vinho"
+  ],
+  "saulieu_ecume": [
+   "vinho",
+   "celeste",
+   "preto",
+   "azul_perolado",
+   "branco"
+  ],
+  "saulieu_ecume_corrida": [
+   "branco",
+   "verde_escuro",
+   "amarelo",
+   "azul"
+  ],
+  "saulieu_ecume_corrida_ii": [
+   "verde_escuro",
+   "amarelo",
+   "azul",
+   "branco"
+  ],
+  "saulieu_vague": [
+   "laranja",
+   "verde_claro",
+   "roxo",
+   "prata",
+   "preto"
+  ],
+  "saulieu_hirondelle": [
+   "cinza_claro",
+   "grafite",
+   "verde_escuro",
+   "branco_perola",
+   "branco"
+  ],
+  "saulieu_hirondelle_ii": [
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "branco_perola",
+   "amarelo"
+  ],
+  "saulieu_hirondelle_s": [
+   "verde_ingles",
+   "grafite",
+   "verde_escuro",
+   "branco_perola",
+   "branco"
+  ],
+  "ashby_dustbowl": [
+   "chumbo",
+   "azul",
+   "preto",
+   "amarelo",
+   "vermelho"
+  ],
+  "ashby_stockade": [
+   "preto",
+   "azul",
+   "prata",
+   "branco",
+   "verde_ingles"
+  ],
+  "ashby_tailwind": [
+   "azul_escuro",
+   "prata",
+   "verde_escuro",
+   "azul",
+   "preto"
+  ],
+  "ashby_juniper": [
+   "branco_perola",
+   "vinho",
+   "celeste",
+   "azul",
+   "branco"
+  ],
+  "ashby_redrock": [
+   "azul_escuro",
+   "prata",
+   "preto",
+   "marrom",
+   "verde_escuro"
+  ],
+  "vallon_rafale_d_est": [
+   "celeste",
+   "turquesa",
+   "amarelo",
+   "prata",
+   "vermelho"
+  ],
+  "vallon_rafale_d_est_s": [
+   "azul_escuro",
+   "turquesa",
+   "amarelo",
+   "prata",
+   "vermelho"
+  ],
+  "vallon_sillage": [
+   "azul_meia_noite",
+   "turquesa",
+   "chumbo",
+   "vinho",
+   "preto"
+  ],
+  "vallon_galet": [
+   "laranja",
+   "amarelo",
+   "prata",
+   "grafite",
+   "branco"
+  ],
+  "vallon_faucon": [
+   "preto",
+   "branco",
+   "azul",
+   "grafite",
+   "roxo"
+  ],
+  "rauhe_fink": [
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto",
+   "branco"
+  ],
+  "rauhe_fink_s": [
+   "champanhe",
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto"
+  ],
+  "rauhe_fink_s_ii": [
+   "amarelo",
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto"
+  ],
+  "rauhe_fink_gt": [
+   "laranja",
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto"
+  ],
+  "rauhe_fink_gts": [
+   "amarelo",
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto"
+  ],
+  "rauhe_fink_r": [
+   "cinza_claro",
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto"
+  ],
+  "rauhe_fink_sr": [
+   "turquesa",
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto"
+  ],
+  "rauhe_fink_gx": [
+   "verde_escuro",
+   "branco_perola",
+   "vermelho",
+   "preto",
+   "branco"
+  ],
+  "cutler_ozark": [
+   "vinho",
+   "celeste",
+   "mostarda",
+   "verde_ingles",
+   "preto"
+  ],
+  "cutler_ozark_corrida": [
+   "amarelo",
+   "azul",
+   "laranja",
+   "branco"
+  ],
+  "cutler_ironwood": [
+   "verde_ingles",
+   "branco",
+   "creme",
+   "marrom",
+   "prata"
+  ],
+  "cutler_ironwood_ii": [
+   "branco_perola",
+   "branco",
+   "creme",
+   "marrom",
+   "prata"
+  ],
+  "cutler_kingfisher": [
+   "vinho",
+   "vermelho_classico",
+   "creme",
+   "vermelho",
+   "preto"
+  ],
+  "cutler_kingfisher_ii": [
+   "prata",
+   "vermelho_classico",
+   "creme",
+   "vermelho",
+   "mostarda"
+  ],
+  "cutler_rattler": [
+   "branco_perola",
+   "branco",
+   "vinho",
+   "azul_perolado",
+   "amarelo"
+  ],
+  "hoshino_sango": [
+   "vermelho",
+   "chumbo",
+   "turquesa",
+   "branco"
+  ],
+  "hoshino_shiokaze_corrida": [
+   "vermelho",
+   "amarelo",
+   "verde_escuro",
+   "branco"
+  ],
+  "hoshino_kaminari": [
+   "creme",
+   "roxo",
+   "chumbo",
+   "vermelho",
+   "branco"
+  ],
+  "hoshino_senko": [
+   "azul_meia_noite",
+   "vinho",
+   "chumbo",
+   "verde_escuro",
+   "branco"
+  ],
+  "hoshino_senko_93": [
+   "azul_meia_noite",
+   "vinho",
+   "chumbo",
+   "verde_escuro",
+   "branco"
+  ],
+  "hoshino_senko_s": [
+   "vermelho",
+   "vinho",
+   "chumbo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "turquesa",
+   "branco"
+  ],
+  "hoshino_senko_s_96": [
+   "verde_escuro",
+   "vinho",
+   "chumbo",
+   "azul_meia_noite",
+   "turquesa",
+   "grafite",
+   "branco"
+  ],
+  "hoshino_senko_s_97": [
+   "vinho",
+   "chumbo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "turquesa",
+   "branco"
+  ],
+  "hoshino_senko_s_98": [
+   "turquesa",
+   "vinho",
+   "chumbo",
+   "azul_meia_noite",
+   "branco"
+  ],
+  "hoshino_senko_s_ii": [
+   "grafite",
+   "vinho",
+   "chumbo",
+   "azul_meia_noite",
+   "branco"
+  ],
+  "hoshino_yoake": [
+   "chumbo",
+   "grafite",
+   "branco",
+   "branco_perola",
+   "vermelho"
+  ],
+  "hoshino_yoake_ii": [
+   "turquesa",
+   "grafite",
+   "branco",
+   "branco_perola",
+   "vermelho"
+  ],
+  "hoshino_amagumo_corrida": [
+   "branco",
+   "laranja",
+   "azul",
+   "verde_escuro"
+  ],
+  "hoshino_amagumo_corrida_ii": [
+   "branco",
+   "laranja",
+   "azul",
+   "verde_escuro"
+  ],
+  "hoshino_kogane": [
+   "laranja",
+   "turquesa",
+   "preto",
+   "branco"
+  ],
+  "hoshino_kogane_ii": [
+   "preto",
+   "branco",
+   "roxo",
+   "celeste",
+   "branco_perola",
+   "azul_perolado"
+  ],
+  "hoshino_tenma": [
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "azul_meia_noite",
+   "turquesa"
+  ],
+  "hoshino_tenma_s": [
+   "celeste",
+   "prata",
+   "grafite",
+   "verde_escuro"
+  ],
+  "hoshino_tenma_gt": [
+   "celeste",
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "hoshino_tenma_gt_96": [
+   "branco",
+   "prata",
+   "grafite",
+   "verde_escuro"
+  ],
+  "hayase_kumo": [
+   "verde_ingles",
+   "vermelho",
+   "turquesa",
+   "preto"
+  ],
+  "hoshino_tenma_gt_97": [
+   "amarelo",
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "hoshino_tenma_gt_98": [
+   "celeste",
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "hoshino_tenma_gt_ii": [
+   "azul_escuro",
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "hoshino_tenma_gt_99": [
+   "cinza_claro",
+   "prata",
+   "grafite",
+   "verde_escuro",
+   "azul_meia_noite"
+  ],
+  "hoshino_ibuki": [
+   "celeste",
+   "verde_claro",
+   "prata",
+   "creme"
+  ],
+  "hoshino_seiran": [
+   "verde_escuro",
+   "preto",
+   "verde_claro",
+   "amarelo"
+  ],
+  "hoshino_seiran_ii": [
+   "azul_escuro",
+   "preto",
+   "verde_claro",
+   "amarelo"
+  ],
+  "hoshino_tatsumaki": [
+   "creme",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola"
+  ],
+  "hoshino_tatsumaki_98": [
+   "turquesa",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola",
+   "celeste"
+  ],
+  "hoshino_tatsumaki_s": [
+   "bordo",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola",
+   "celeste"
+  ],
+  "hoshino_tatsumaki_gt": [
+   "champanhe",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola"
+  ],
+  "hoshino_tatsumaki_gt_95": [
+   "vinho",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola"
+  ],
+  "hoshino_tatsumaki_gts": [
+   "prata",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola"
+  ],
+  "hoshino_tatsumaki_gts_97": [
+   "celeste",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola"
+  ],
+  "hoshino_tatsumaki_gts_98": [
+   "branco",
+   "azul_meia_noite",
+   "branco_perola",
+   "celeste",
+   "chumbo"
+  ],
+  "hoshino_tatsumaki_gts_99": [
+   "amarelo",
+   "azul_meia_noite",
+   "branco",
+   "branco_perola",
+   "celeste"
+  ],
+  "hoshino_sekirei": [
+   "cinza_claro",
+   "roxo",
+   "grafite",
+   "branco"
+  ],
+  "hoshino_sekirei_97": [
+   "prata",
+   "roxo",
+   "grafite",
+   "azul_perolado"
+  ],
+  "hoshino_sekirei_98": [
+   "celeste",
+   "roxo",
+   "grafite",
+   "azul_perolado",
+   "branco"
+  ],
+  "hoshino_sekirei_99": [
+   "vermelho",
+   "roxo",
+   "grafite",
+   "azul_perolado",
+   "branco"
+  ],
+  "hoshino_aoi": [
+   "prata",
+   "verde_escuro",
+   "vermelho",
+   "champanhe",
+   "amarelo"
+  ],
+  "kosame_hiryu": [
+   "celeste",
+   "preto",
+   "vinho",
+   "azul_perolado"
+  ],
+  "kosame_hiryu_97": [
+   "prata",
+   "preto",
+   "vinho",
+   "azul_perolado"
+  ],
+  "kosame_hiryu_ii": [
+   "grafite",
+   "preto",
+   "vinho",
+   "azul_perolado"
+  ],
+  "kosame_hiryu_98": [
+   "laranja",
+   "preto",
+   "vinho",
+   "azul_perolado",
+   "celeste"
+  ],
+  "kosame_tsuyu": [
+   "prata",
+   "vinho",
+   "roxo",
+   "celeste"
+  ],
+  "kosame_mozu": [
+   "celeste",
+   "branco",
+   "preto",
+   "azul_meia_noite"
+  ],
+  "kosame_shirakumo_corrida": [
+   "branco",
+   "amarelo",
+   "azul",
+   "vermelho"
+  ],
+  "kosame_kazahana_corrida": [
+   "amarelo",
+   "branco",
+   "vermelho",
+   "verde_escuro"
+  ],
+  "kosame_matsuri": [
+   "vermelho",
+   "turquesa",
+   "roxo",
+   "branco",
+   "celeste"
+  ],
+  "kosame_mikage": [
+   "vinho",
+   "verde_escuro",
+   "preto",
+   "branco_perola"
+  ],
+  "kosame_mikage_s": [
+   "creme",
+   "verde_escuro",
+   "preto",
+   "branco_perola",
+   "champanhe",
+   "vinho"
+  ],
+  "kosame_mikage_s_97": [
+   "cinza_claro",
+   "verde_escuro",
+   "preto",
+   "branco_perola",
+   "champanhe",
+   "vinho",
+   "vermelho"
+  ],
+  "kosame_mikage_s_98": [
+   "celeste",
+   "verde_escuro",
+   "preto",
+   "branco_perola",
+   "champanhe"
+  ],
+  "tokiwa_seiryu": [
+   "grafite",
+   "vermelho",
+   "azul",
+   "preto",
+   "branco"
+  ],
+  "tokiwa_seiryu_s": [
+   "azul_escuro",
+   "prata",
+   "vermelho",
+   "vinho",
+   "azul"
+  ],
+  "tokiwa_mizuho": [
+   "branco",
+   "roxo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "azul"
+  ],
+  "tokiwa_mizuho_s": [
+   "turquesa",
+   "roxo",
+   "azul_meia_noite",
+   "verde_escuro",
+   "prata"
+  ],
+  "tokiwa_unabara": [
+   "laranja",
+   "celeste",
+   "roxo",
+   "branco_perola",
+   "prata"
+  ],
+  "tokiwa_kazaguruma": [
+   "preto",
+   "azul",
+   "vermelho",
+   "branco_perola",
+   "celeste"
+  ],
+  "tokiwa_urara": [
+   "amarelo",
+   "branco_perola",
+   "turquesa",
+   "verde_escuro",
+   "branco"
+  ],
+  "tokiwa_takane": [
+   "celeste",
+   "amarelo",
+   "branco_perola",
+   "vinho",
+   "prata"
+  ],
+  "kanaya_ryusei": [
+   "branco",
+   "mostarda",
+   "amarelo",
+   "celeste",
+   "azul"
+  ],
+  "kanaya_ryusei_ii": [
+   "amarelo",
+   "mostarda",
+   "celeste",
+   "azul",
+   "prata"
+  ],
+  "kanaya_yamakaze": [
+   "verde_ingles",
+   "verde_escuro",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "kanaya_yamakaze_s": [
+   "chumbo",
+   "verde_escuro",
+   "amarelo",
+   "azul_perolado",
+   "prata"
+  ],
+  "kanaya_yamakaze_corrida": [
+   "verde_escuro",
+   "laranja",
+   "vermelho",
+   "branco"
+  ],
+  "kanaya_tobi": [
+   "chumbo",
+   "turquesa",
+   "vinho",
+   "vermelho",
+   "branco"
+  ],
+  "kanaya_zakuro": [
+   "turquesa",
+   "amarelo",
+   "branco_perola",
+   "branco"
+  ],
+  "kanaya_zakuro_97": [
+   "verde_ingles",
+   "amarelo",
+   "branco_perola",
+   "turquesa",
+   "branco"
+  ],
+  "kanaya_nagare_corrida": [
+   "vermelho",
+   "azul",
+   "branco",
+   "verde_escuro"
+  ],
+  "kanaya_wakaba": [
+   "azul_meia_noite",
+   "azul_perolado",
+   "celeste",
+   "verde_escuro",
+   "preto"
+  ],
+  "kanaya_yamabiko_corrida": [
+   "prata",
+   "vermelho",
+   "laranja",
+   "verde_escuro"
+  ],
+  "kanaya_yamabiko_corrida_99": [
+   "verde_escuro",
+   "vermelho",
+   "laranja",
+   "branco"
+  ],
+  "kanaya_shinonome": [
+   "amarelo",
+   "celeste",
+   "azul",
+   "turquesa",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_shinonome_s": [
+   "celeste",
+   "grafite",
+   "azul_escuro",
+   "preto"
+  ],
+  "kanaya_shinonome_gt": [
+   "branco_perola",
+   "celeste",
+   "azul",
+   "turquesa",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_shinonome_gt_97": [
+   "vermelho",
+   "celeste",
+   "azul",
+   "turquesa",
+   "preto",
+   "branco_perola"
+  ],
+  "kanaya_shinonome_gts": [
+   "celeste",
+   "grafite",
+   "azul_escuro",
+   "preto"
+  ],
+  "kanaya_shinonome_r": [
+   "branco",
+   "celeste",
+   "azul",
+   "turquesa",
+   "vermelho"
+  ],
+  "kanaya_shinonome_r_99": [
+   "vermelho",
+   "celeste",
+   "azul",
+   "turquesa",
+   "preto"
+  ],
+  "kanaya_shinonome_r_ii": [
+   "vermelho",
+   "celeste",
+   "azul",
+   "turquesa",
+   "preto"
+  ],
+  "kanaya_shinonome_sr": [
+   "turquesa",
+   "celeste",
+   "azul",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_shinonome_gx": [
+   "creme",
+   "celeste",
+   "azul",
+   "turquesa",
+   "preto"
+  ],
+  "kanaya_shinonome_sx": [
+   "verde_ingles",
+   "celeste",
+   "azul",
+   "turquesa",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_shinonome_corrida": [
+   "prata",
+   "branco",
+   "vermelho",
+   "amarelo"
+  ],
+  "kanaya_benibana_corrida": [
+   "amarelo",
+   "laranja",
+   "verde_escuro",
+   "branco"
+  ],
+  "kanaya_kazane": [
+   "laranja",
+   "turquesa",
+   "azul_perolado",
+   "prata",
+   "preto"
+  ],
+  "kanaya_kazane_s": [
+   "azul_meia_noite",
+   "turquesa",
+   "azul_perolado",
+   "prata",
+   "preto"
+  ],
+  "kanaya_kazane_s_ii": [
+   "preto",
+   "turquesa",
+   "azul_perolado",
+   "prata",
+   "champanhe"
+  ],
+  "kanaya_umikaze_corrida": [
+   "verde_escuro",
+   "laranja",
+   "branco",
+   "azul"
+  ],
+  "kanaya_umikaze_corrida_98": [
+   "verde_escuro",
+   "laranja",
+   "branco",
+   "azul"
+  ],
+  "kanaya_murakumo": [
+   "cinza_claro",
+   "branco",
+   "preto",
+   "champanhe",
+   "amarelo",
+   "roxo"
+  ],
+  "kanaya_kawasemi_corrida": [
+   "verde_escuro",
+   "branco",
+   "laranja",
+   "amarelo"
+  ],
+  "kanaya_ruri": [
+   "champanhe",
+   "roxo",
+   "celeste",
+   "branco_perola",
+   "branco"
+  ],
+  "kanaya_ruri_corrida": [
+   "prata",
+   "branco",
+   "amarelo",
+   "verde_escuro"
+  ],
+  "kanaya_ruri_corrida_98": [
+   "amarelo",
+   "branco",
+   "verde_escuro",
+   "vermelho"
+  ],
+  "kanaya_ruri_corrida_99": [
+   "prata",
+   "branco",
+   "amarelo",
+   "verde_escuro"
+  ],
+  "kanaya_ruri_corrida_ii": [
+   "vermelho",
+   "branco",
+   "amarelo",
+   "verde_escuro"
+  ],
+  "kanaya_fuyu": [
+   "verde_ingles",
+   "verde_claro",
+   "azul_escuro",
+   "branco"
+  ],
+  "kanaya_fuyu_85": [
+   "laranja",
+   "verde_claro",
+   "azul_escuro",
+   "branco"
+  ],
+  "kanaya_fuyu_s": [
+   "vinho",
+   "turquesa",
+   "preto",
+   "verde_escuro",
+   "celeste",
+   "prata"
+  ],
+  "kanaya_fuyu_s_98": [
+   "verde_ingles",
+   "turquesa",
+   "preto",
+   "verde_escuro",
+   "celeste"
+  ],
+  "kanaya_shijima": [
+   "azul_escuro",
+   "grafite",
+   "celeste",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_shijima_s": [
+   "verde_escuro",
+   "grafite",
+   "celeste",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_shijima_gt": [
+   "branco_perola",
+   "grafite",
+   "celeste",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_shijima_gt_97": [
+   "branco",
+   "grafite",
+   "celeste",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_shijima_gts": [
+   "azul_escuro",
+   "grafite",
+   "celeste",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_shijima_r": [
+   "vermelho",
+   "grafite",
+   "celeste",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_sekka": [
+   "prata",
+   "branco_perola",
+   "vermelho",
+   "azul_meia_noite",
+   "preto",
+   "turquesa",
+   "azul_perolado"
+  ],
+  "kanaya_ginga": [
+   "celeste",
+   "prata",
+   "roxo",
+   "branco",
+   "verde_escuro"
+  ],
+  "kanaya_ginga_99": [
+   "cinza_claro",
+   "prata",
+   "roxo",
+   "branco",
+   "verde_escuro"
+  ],
+  "kanaya_murasame": [
+   "amarelo",
+   "vermelho",
+   "grafite",
+   "vinho",
+   "prata"
+  ],
+  "kanaya_murasame_s": [
+   "branco",
+   "turquesa",
+   "celeste",
+   "vermelho",
+   "roxo",
+   "prata",
+   "amarelo"
+  ],
+  "kanaya_murasame_gt": [
+   "prata",
+   "turquesa",
+   "celeste",
+   "vermelho",
+   "roxo"
+  ],
+  "hayase_shiden": [
+   "amarelo",
+   "vinho",
+   "grafite",
+   "roxo",
+   "prata",
+   "azul_meia_noite",
+   "azul_perolado"
+  ],
+  "kanaya_murasame_gts": [
+   "verde_escuro",
+   "turquesa",
+   "celeste",
+   "vermelho",
+   "prata"
+  ],
+  "kanaya_botan": [
+   "turquesa",
+   "verde_escuro",
+   "prata",
+   "azul"
+  ],
+  "kanaya_botan_s": [
+   "chumbo",
+   "verde_escuro",
+   "turquesa",
+   "prata"
+  ],
+  "kanaya_hayate_corrida": [
+   "prata",
+   "vermelho",
+   "branco",
+   "amarelo"
+  ],
+  "kanaya_yukihana": [
+   "laranja",
+   "prata",
+   "turquesa",
+   "branco",
+   "celeste"
+  ],
+  "kanaya_gunjo": [
+   "chumbo",
+   "vermelho",
+   "azul",
+   "turquesa",
+   "grafite",
+   "azul_meia_noite",
+   "prata"
+  ],
+  "kanaya_gunjo_96": [
+   "branco",
+   "vermelho",
+   "azul",
+   "turquesa",
+   "grafite"
+  ],
+  "kanaya_yuzuki": [
+   "azul_meia_noite",
+   "branco",
+   "grafite",
+   "amarelo"
+  ],
+  "kanaya_yuzuki_s": [
+   "amarelo",
+   "branco",
+   "grafite",
+   "celeste",
+   "cinza_claro",
+   "prata"
+  ],
+  "kanaya_yuzuki_gt": [
+   "amarelo",
+   "grafite",
+   "branco",
+   "turquesa",
+   "vinho"
+  ],
+  "kanaya_yuzuki_gt_98": [
+   "celeste",
+   "grafite",
+   "branco",
+   "amarelo",
+   "turquesa"
+  ],
+  "kanaya_asakaze": [
+   "azul_meia_noite",
+   "azul",
+   "grafite",
+   "roxo",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_asakaze_97": [
+   "vermelho",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "kanaya_asakaze_ii": [
+   "celeste",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "roxo",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_asakaze_s": [
+   "branco_perola",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "roxo",
+   "preto"
+  ],
+  "kanaya_asakaze_gt": [
+   "vinho",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "kanaya_asakaze_gt_91": [
+   "creme",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "roxo",
+   "preto"
+  ],
+  "kanaya_asakaze_gt_96": [
+   "vinho",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "roxo",
+   "preto"
+  ],
+  "kanaya_asakaze_gt_97": [
+   "laranja",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "kanaya_asakaze_gt_ii": [
+   "branco",
+   "azul",
+   "grafite",
+   "azul_meia_noite",
+   "roxo",
+   "vermelho",
+   "preto"
+  ],
+  "kanaya_hakucho": [
+   "chumbo",
+   "celeste",
+   "verde_escuro",
+   "vermelho",
+   "branco"
+  ],
+  "kanaya_shizuku": [
+   "verde_ingles",
+   "azul_meia_noite",
+   "verde_escuro",
+   "branco",
+   "celeste"
+  ],
+  "kanaya_kagami": [
+   "branco_perola",
+   "celeste",
+   "vermelho",
+   "prata",
+   "azul_meia_noite"
+  ],
+  "kanaya_tomoshibi": [
+   "amarelo",
+   "preto",
+   "azul_perolado",
+   "branco",
+   "azul_meia_noite"
+  ],
+  "hayase_rin": [
+   "branco",
+   "azul",
+   "amarelo",
+   "vinho"
+  ],
+  "kanaya_yozora": [
+   "vermelho",
+   "amarelo",
+   "verde_claro",
+   "prata"
+  ],
+  "kanaya_yozora_s": [
+   "vinho",
+   "azul_meia_noite",
+   "branco_perola",
+   "branco",
+   "vermelho",
+   "turquesa"
+  ],
+  "kanaya_yozora_s_98": [
+   "verde_escuro",
+   "vinho",
+   "azul_meia_noite",
+   "branco_perola",
+   "branco"
+  ],
+  "kanaya_shirasagi": [
+   "prata",
+   "turquesa",
+   "branco_perola",
+   "vinho",
+   "grafite"
+  ],
+  "kanaya_kasumi_corrida": [
+   "amarelo",
+   "azul",
+   "vermelho",
+   "branco"
+  ],
+  "kanaya_kirameki": [
+   "celeste",
+   "azul",
+   "prata",
+   "verde_escuro",
+   "azul_perolado"
+  ],
+  "ashcombe_sorrel": [
+   "turquesa",
+   "amarelo",
+   "branco_perola",
+   "roxo",
+   "prata"
+  ],
+  "ashcombe_saltire": [
+   "verde_ingles",
+   "azul_perolado",
+   "branco",
+   "celeste",
+   "preto"
+  ],
+  "ashcombe_fen": [
+   "laranja",
+   "preto",
+   "verde_ingles",
+   "branco",
+   "verde_escuro"
+  ],
+  "ashcombe_fen_s": [
+   "turquesa",
+   "preto",
+   "verde_ingles",
+   "branco",
+   "verde_escuro"
+  ],
+  "ashcombe_fen_gt": [
+   "vermelho",
+   "preto",
+   "verde_ingles",
+   "branco",
+   "verde_escuro"
+  ],
+  "ashcombe_curlew": [
+   "prata",
+   "vinho",
+   "azul_meia_noite",
+   "branco_perola",
+   "grafite"
+  ],
+  "ashcombe_brute": [
+   "roxo",
+   "azul_meia_noite",
+   "prata",
+   "verde_ingles",
+   "vermelho"
+  ],
+  "ashcombe_plover_corrida": [
+   "vermelho",
+   "azul",
+   "amarelo",
+   "branco"
+  ],
+  "ashcombe_heron": [
+   "prata",
+   "branco",
+   "roxo",
+   "creme",
+   "verde_ingles"
+  ],
+  "ashcombe_heron_s": [
+   "azul_escuro",
+   "roxo",
+   "preto",
+   "verde_escuro",
+   "turquesa"
+  ],
+  "ashcombe_quill": [
+   "verde_escuro",
+   "branco_perola",
+   "amarelo",
+   "azul",
+   "prata"
+  ],
+  "brayford_wold": [
+   "bordo",
+   "verde_claro",
+   "branco_perola",
+   "turquesa",
+   "branco"
+  ],
+  "brayford_swale_corrida": [
+   "branco",
+   "laranja",
+   "vermelho",
+   "azul"
+  ],
+  "brayford_yarrow": [
+   "verde_escuro",
+   "roxo",
+   "prata",
+   "branco",
+   "vermelho"
+  ],
+  "brayford_skerry": [
+   "vermelho",
+   "amarelo",
+   "verde_escuro",
+   "vinho",
+   "preto"
+  ],
+  "brayford_skerry_corrida": [
+   "vermelho",
+   "azul",
+   "verde_escuro",
+   "branco"
+  ],
+  "brayford_rook": [
+   "chumbo",
+   "vinho",
+   "celeste",
+   "vermelho",
+   "prata"
+  ],
+  "kestrin_prairie_hawk": [
+   "laranja",
+   "azul_perolado",
+   "roxo",
+   "branco",
+   "azul_meia_noite"
+  ],
+  "kestrin_prairie_hawk_corrida": [
+   "branco",
+   "azul",
+   "laranja",
+   "vermelho"
+  ],
+  "kestrin_drifter": [
+   "bordo",
+   "roxo",
+   "amarelo",
+   "prata",
+   "verde_escuro"
+  ],
+  "aubrac_grive": [
+   "turquesa",
+   "roxo",
+   "celeste",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "aubrac_grive_s": [
+   "azul_escuro",
+   "roxo",
+   "celeste",
+   "azul_meia_noite",
+   "preto"
+  ],
+  "aubrac_grive_corrida": [
+   "verde_escuro",
+   "vermelho",
+   "azul",
+   "branco"
+  ],
+  "hartwig_pirol": [
+   "grafite",
+   "vermelho",
+   "turquesa",
+   "azul_perolado",
+   "prata"
+  ],
+  "hartwig_lauf": [
+   "azul",
+   "celeste",
+   "amarelo",
+   "vinho",
+   "preto"
+  ],
+  "hartwig_graupel_s": [
+   "verde_escuro",
+   "prata",
+   "turquesa",
+   "azul_meia_noite",
+   "celeste"
+  ],
+  "hartwig_graupel_gt": [
+   "vinho",
+   "prata",
+   "turquesa",
+   "azul_meia_noite",
+   "celeste"
+  ],
+  "hartwig_graupel_gts": [
+   "champanhe",
+   "prata",
+   "turquesa",
+   "azul_meia_noite",
+   "celeste"
+  ],
+  "hartwig_bussard": [
+   "azul_escuro",
+   "branco",
+   "vermelho",
+   "amarelo",
+   "turquesa"
+  ],
+  "hartwig_wiesel": [
+   "chumbo",
+   "azul",
+   "prata",
+   "branco",
+   "vinho"
+  ],
+  "hartwig_wiesel_corrida": [
+   "verde_escuro",
+   "branco",
+   "amarelo",
+   "azul"
+  ]
+ }
+}

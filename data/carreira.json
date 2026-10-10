@@ -1,0 +1,41 @@
+{
+ "piloto_jogador": "jogador",
+ "teto_offline_s": 28800,
+ "niveis_licenca": {
+  "": "CLUB",
+  "CLUB": "CLUB",
+  "SPORT": "SPORT",
+  "NATIONAL": "NATIONAL",
+  "INTERNATIONAL": "INTERNATIONAL",
+  "PRO": "PRO",
+  "ELITE": "ELITE"
+ },
+ "niveis": [
+  "CLUB",
+  "SPORT",
+  "NATIONAL",
+  "INTERNATIONAL",
+  "PRO",
+  "ELITE"
+ ],
+ "segundo_piloto": {
+  "chance": 0.3,
+  "perda_consistencia": 0.2
+ },
+ "licencas": {
+  "fator_treino": 1.0,
+  "fracao_series": 0.5,
+  "campeonato_desde": "NATIONAL"
+ },
+ "equipe_jogador": {
+  "_nota": "Valores por corrida em Cr. null = pendente do playtest (até lá vale 0).",
+  "patrocinio": null,
+  "custo_staff": null,
+  "segundo_piloto": {
+   "id": "jonas_reid",
+   "nome": "Jonas Reid",
+   "retrato": "res://arte/pilotos/jonas_reid.png",
+   "provisorio": true
+  }
+ }
+}

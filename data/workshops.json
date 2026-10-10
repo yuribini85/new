@@ -1,0 +1,79 @@
+[
+ {
+  "id": "relay_room_garage",
+  "nome": "Relay Room Garage",
+  "logo": "relay-room-garage",
+  "fabricantes": [
+   "hayase"
+  ]
+ },
+ {
+  "id": "return_chapter_customs",
+  "nome": "Return Chapter Customs",
+  "logo": "return-chapter-customs",
+  "fabricantes": [
+   "kanaya"
+  ]
+ },
+ {
+  "id": "brace_yard_works",
+  "nome": "Brace Yard Works",
+  "logo": "brace-yard-works",
+  "fabricantes": [
+   "hozuki",
+   "sanga",
+   "kosame"
+  ]
+ },
+ {
+  "id": "spare_penny_repairs",
+  "nome": "Spare Penny Repairs",
+  "logo": "spare-penny-repairs",
+  "fabricantes": [
+   "mizuchi",
+   "hoshino",
+   "tomoe",
+   "tokiwa"
+  ]
+ },
+ {
+  "id": "shared_grid_motors",
+  "nome": "Shared Grid Motors",
+  "logo": "shared-grid-motors",
+  "fabricantes": [
+   "whitlock",
+   "garrison",
+   "cutler",
+   "arvelle",
+   "bancroft",
+   "ashby",
+   "kestrin"
+  ]
+ },
+ {
+  "id": "charge_folio_motors",
+  "nome": "Charge Folio Motors",
+  "logo": "charge-folio-motors",
+  "fabricantes": [
+   "hartwig",
+   "ostwerk",
+   "keldorf",
+   "lindauer",
+   "rauhe",
+   "vorhaus",
+   "varenna",
+   "castellani",
+   "ottavo",
+   "saulieu",
+   "aubrac",
+   "morel",
+   "vallon",
+   "ashcombe",
+   "calderwood",
+   "pemberly",
+   "wexmoor",
+   "dunmere",
+   "thornby"
+  ]
+ }
+]

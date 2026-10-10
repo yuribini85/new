@@ -1,0 +1,10382 @@
+[
+ {
+  "id": "ev_000",
+  "nome": "Troféu Tração Integral — etapa 1",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "tracao": [
+    "4WD"
+   ],
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kagura_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shinonome_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_kagero_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shinonome_gx",
+    "piloto": "ia_100",
+    "potencia_mult": 1.11,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_kogane_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hoshino_senko_s_98"
+ },
+ {
+  "id": "ev_001",
+  "nome": "Troféu Tração Integral — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "tracao": [
+    "4WD"
+   ],
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_tsukishiro_gts_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vorhaus_taucher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_usagi_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_usagi_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_usagi_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hayase_nadeshiko_s_ii"
+ },
+ {
+  "id": "ev_002",
+  "nome": "Troféu Tração Integral — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 700,
+   "tracao": [
+    "4WD"
+   ],
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_usagi_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.66,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.75,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_tsukikage_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.78,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hayase_yaiba"
+ },
+ {
+  "id": "ev_003",
+  "nome": "Copa Wexmoor Rowan",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "wexmoor_rowan"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100",
+    "potencia_mult": 1.15,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_004",
+  "nome": "Copa Wexmoor Rowan Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "wexmoor_rowan"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100",
+    "potencia_mult": 1.15,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "vorhaus_specht",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_005",
+  "nome": "Encontro Retrô — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34
+   },
+   {
+    "carro": "kanaya_fuyu_85",
+    "piloto": "ia_100",
+    "potencia_mult": 1.16
+   },
+   {
+    "carro": "kanaya_yozora",
+    "piloto": "ia_100",
+    "potencia_mult": 1.16
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07
+   },
+   {
+    "carro": "mizuchi_chidori",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hozuki_hiiragi"
+ },
+ {
+  "id": "ev_006",
+  "nome": "Encontro Retrô — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yuzuki_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_fuyu_85",
+    "piloto": "ia_100",
+    "potencia_mult": 1.94,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yozora",
+    "piloto": "ia_100",
+    "potencia_mult": 1.94,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hozuki_tsumuji_s"
+ },
+ {
+  "id": "ev_007",
+  "nome": "Encontro Retrô — etapa 3",
+  "pista": "pista_de_testes",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yuzuki_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_fuyu_85",
+    "piloto": "ia_100",
+    "potencia_mult": 1.94,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yozora",
+    "piloto": "ia_100",
+    "potencia_mult": 1.94,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   342,
+   256,
+   107,
+   64,
+   34,
+   21
+  ],
+  "carro_premio": "hozuki_samidare_gt_98"
+ },
+ {
+  "id": "ev_008",
+  "nome": "Encontro Retrô — etapa 4",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.68,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_fuyu_85",
+    "piloto": "ia_100",
+    "potencia_mult": 2.33,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yozora",
+    "piloto": "ia_100",
+    "potencia_mult": 2.33,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 2.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori",
+    "piloto": "ia_100",
+    "potencia_mult": 1.82,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   342,
+   256,
+   107,
+   64,
+   34,
+   21
+  ],
+  "carro_premio": "hozuki_harusame_s_ii"
+ },
+ {
+  "id": "ev_009",
+  "nome": "Encontro Retrô — etapa 5",
+  "pista": "serra_alta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.68,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_fuyu_85",
+    "piloto": "ia_100",
+    "potencia_mult": 2.33,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yozora",
+    "piloto": "ia_100",
+    "potencia_mult": 2.33,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 2.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori",
+    "piloto": "ia_100",
+    "potencia_mult": 1.82,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_tokage_corrida"
+ },
+ {
+  "id": "ev_010",
+  "nome": "Copa Mizuchi Wadachi",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "mizuchi_wadachi_ii"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_wadachi_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hoshino_kogane_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_011",
+  "nome": "Copa Mizuchi e Hayase",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "mizuchi_chidori",
+    "hayase_raikou",
+    "kanaya_kazane",
+    "mizuchi_chidori_sr",
+    "mizuchi_chidori_sr_98",
+    "mizuchi_chidori_sr_99"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "kanaya_kazane",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28
+   },
+   {
+    "carro": "mizuchi_chidori_sr",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "mizuchi_chidori_sr",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_012",
+  "nome": "Copa Mizuchi Hanabi",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "mizuchi_hanabi_s_99",
+    "mizuchi_hanabi",
+    "mizuchi_hanabi_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "mizuchi_hanabi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2
+   },
+   {
+    "carro": "mizuchi_hanabi_s",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_013",
+  "nome": "Copa Mizuchi Hanabi Corrida",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "mizuchi_hanabi_s_99",
+    "mizuchi_hanabi",
+    "mizuchi_hanabi_s"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.81,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_014",
+  "nome": "Copa Hayase e Mizuchi",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_rin",
+    "hayase_sazanami",
+    "mizuchi_chidori",
+    "hayase_homura"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_015",
+  "nome": "Copa Hayase Rin e Sazanami Corrida",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_rin",
+    "hayase_sazanami"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_016",
+  "nome": "Copa Kanaya Murasame",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_murasame"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_017",
+  "nome": "Copa Kanaya Murasame Corrida",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_murasame"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "dunmere_merlin_s",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_018",
+  "nome": "Copa Dunmere Merlin e Ashcombe Wren",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "dunmere_merlin_s",
+    "ashcombe_wren"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "dunmere_merlin_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_019",
+  "nome": "Copa Dunmere e Ashcombe Corrida",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "dunmere_merlin_s",
+    "ashcombe_wren",
+    "dunmere_wherry_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashcombe_quill",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_020",
+  "nome": "Copa Lindauer Sperber",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "lindauer_sperber"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_sperber",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_021",
+  "nome": "Copa Lindauer Sperber Corrida",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "lindauer_sperber",
+    "lindauer_sperber_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_ryusei_ii",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_022",
+  "nome": "Copa dos Associados — etapa 1",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "ottavo_nebbia",
+    "piloto": "ia_100",
+    "potencia_mult": 2.73
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_023",
+  "nome": "Copa dos Associados — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "kanaya_murasame_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24
+   },
+   {
+    "carro": "calderwood_fletcher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04
+   },
+   {
+    "carro": "aubrac_grive",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "varenna_falco_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.33
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_024",
+  "nome": "Copa dos Associados — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.37
+   },
+   {
+    "carro": "vorhaus_taucher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13
+   },
+   {
+    "carro": "ostwerk_elster",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06
+   },
+   {
+    "carro": "calderwood_quarry",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "mizuchi_chidori_sr_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_025",
+  "nome": "Copa Bancroft Sidewinder",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "bancroft_sidewinder_gt",
+    "bancroft_sidewinder_gts_69",
+    "bancroft_sidewinder",
+    "bancroft_sidewinder_s_96"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "bancroft_sidewinder_gts_69",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "bancroft_sidewinder",
+    "piloto": "ia_100",
+    "potencia_mult": 1.55
+   },
+   {
+    "carro": "bancroft_sidewinder_gt",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "bancroft_sidewinder_s_96",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04
+   },
+   {
+    "carro": "bancroft_sidewinder_s_96",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_026",
+  "nome": "Copa Bancroft Sidewinder Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "bancroft_sidewinder_gt",
+    "bancroft_sidewinder_gts_69",
+    "bancroft_sidewinder",
+    "bancroft_sidewinder_s_96"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "bancroft_sidewinder_gts_69",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder",
+    "piloto": "ia_100",
+    "potencia_mult": 1.99,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.09,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_s_96",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_s_96",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_027",
+  "nome": "Copa Garrison Pecos",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "garrison_pecos_ii"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_pecos_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "garrison_pecos_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_028",
+  "nome": "Copa Garrison Pecos Corrida",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "garrison_pecos_ii"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_pecos_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_056",
+  "nome": "Copa Garrison Arroyo",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "garrison_arroyo"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_057",
+  "nome": "Copa Garrison Arroyo e Bison Corrida",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "garrison_arroyo",
+    "garrison_arroyo_corrida",
+    "garrison_arroyo_corrida_ii",
+    "garrison_bison_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_gt",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_058",
+  "nome": "Copa Whitlock Sagebrush",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "whitlock_sagebrush_s",
+    "whitlock_sagebrush"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_sagebrush",
+    "piloto": "ia_100",
+    "potencia_mult": 1.15
+   },
+   {
+    "carro": "castellani_torrente",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_059",
+  "nome": "Copa Whitlock Saddle",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "whitlock_saddle"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_saddle",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_060",
+  "nome": "Copa Whitlock Saddle Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "whitlock_saddle"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_sagebrush_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_061",
+  "nome": "Resistência do Lago",
+  "pista": "anel_do_vale",
+  "voltas": 150,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 700,
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "aubrac_grive_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "ashcombe_saltire",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "pemberly_teal_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "cutler_kingfisher_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   21350,
+   6405,
+   4270,
+   2135,
+   1281,
+   427
+  ],
+  "carro_premio": "hayase_kiri_corrida"
+ },
+ {
+  "id": "ev_062",
+  "nome": "Resistência do Vinhedo",
+  "pista": "circuito_misto",
+  "voltas": 225,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_benibana_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_kurenai_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_kurogane_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   14945,
+   8540,
+   6405,
+   4270,
+   2135,
+   427
+  ],
+  "carro_premio": "sanga_tsukikage_corrida_99"
+ },
+ {
+  "id": "ev_063",
+  "nome": "Copa Continental — etapa 1",
+  "pista": "serra_curta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_teal_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "rauhe_fink_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "keldorf_wachtel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "calderwood_gale",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "kanaya_yamabiko_corrida_99"
+ },
+ {
+  "id": "ev_064",
+  "nome": "Copa Continental — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_teal_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "rauhe_fink_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "keldorf_wachtel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "calderwood_gale",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_tsubaki_corrida"
+ },
+ {
+  "id": "ev_065",
+  "nome": "Copa Continental — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_teal_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "rauhe_fink_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "keldorf_wachtel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "calderwood_gale",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_suisei_corrida"
+ },
+ {
+  "id": "ev_066",
+  "nome": "Resistência da Capela",
+  "pista": "serra_curta",
+  "voltas": 125,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_usagi_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   21350,
+   6405,
+   4270,
+   2135,
+   1281,
+   427
+  ],
+  "carro_premio": "garrison_arroyo_corrida"
+ },
+ {
+  "id": "ev_067",
+  "nome": "Resistência do Cais",
+  "pista": "parque_das_docas",
+  "voltas": 248,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.09,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   12810,
+   8540,
+   6405,
+   4270,
+   2135,
+   427
+  ],
+  "carro_premio": "kanaya_yamakaze_corrida"
+ },
+ {
+  "id": "ev_068",
+  "nome": "Resistência Expressa",
+  "pista": "anel_do_vale",
+  "voltas": 125,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   14945,
+   6405,
+   4270,
+   2135,
+   1281,
+   427
+  ],
+  "carro_premio": "ashcombe_plover_corrida"
+ },
+ {
+  "id": "ev_069",
+  "nome": "Resistência do Anel",
+  "pista": "anel_do_vale",
+  "voltas": 100,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_ecume_corrida_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "garrison_boxcar",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_dustbowl",
+    "piloto": "ia_100",
+    "potencia_mult": 1.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_switchback_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.46,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_ironwood_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.45,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   6405,
+   4270,
+   2135,
+   1281,
+   854,
+   427
+  ],
+  "carro_premio": "whitlock_palomino"
+ },
+ {
+  "id": "ev_070",
+  "nome": "Resistência das Araucárias",
+  "pista": "serra_alta",
+  "voltas": 75,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "ELITE"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_badlands",
+    "piloto": "ia_100",
+    "potencia_mult": 1.57
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.37
+   },
+   {
+    "carro": "vallon_faucon",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36
+   },
+   {
+    "carro": "varenna_falco",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31
+   }
+  ],
+  "premios": [
+   6405,
+   4270,
+   2135,
+   1281,
+   854,
+   427
+  ],
+  "carro_premio": "kanaya_kawasemi_corrida"
+ },
+ {
+  "id": "ev_071",
+  "nome": "Copa Morel Caillou",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "morel_caillou"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "morel_caillou",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_072",
+  "nome": "Copa Morel Caillou Corrida",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "morel_caillou"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "ottavo_nebbia",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_073",
+  "nome": "Troféu Tração Dianteira — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "tracao": [
+    "FF"
+   ],
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13
+   },
+   {
+    "carro": "hozuki_rindo_s_95",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "saulieu_vague",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hozuki_isaribi_gts_98"
+ },
+ {
+  "id": "ev_074",
+  "nome": "Troféu Tração Dianteira — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "tracao": [
+    "FF"
+   ],
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kagura",
+    "piloto": "ia_100",
+    "potencia_mult": 1.33
+   },
+   {
+    "carro": "hozuki_harusame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28
+   },
+   {
+    "carro": "mizuchi_suzaku",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31
+   },
+   {
+    "carro": "mizuchi_suzaku_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.35
+   },
+   {
+    "carro": "lindauer_rauhreif",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "kanaya_shizuku"
+ },
+ {
+  "id": "ev_075",
+  "nome": "Troféu Tração Dianteira — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "tracao": [
+    "FF"
+   ],
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_kamui_gt_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.51
+   },
+   {
+    "carro": "hozuki_byakko_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38
+   },
+   {
+    "carro": "sanga_kamome",
+    "piloto": "ia_100",
+    "potencia_mult": 1.33
+   },
+   {
+    "carro": "kanaya_shinonome_r_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.59
+   },
+   {
+    "carro": "whitlock_granite_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.8
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hozuki_byakko_gt_98"
+ },
+ {
+  "id": "ev_076",
+  "nome": "Copa Saulieu Loriot e Ecume",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "saulieu_loriot_gt",
+    "saulieu_ecume"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_loriot_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.39,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_ecume",
+    "piloto": "ia_100",
+    "potencia_mult": 1.39,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_077",
+  "nome": "Copa Saulieu Loriot",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "saulieu_loriot",
+    "saulieu_loriot_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_loriot_s",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "saulieu_loriot",
+    "piloto": "ia_100",
+    "potencia_mult": 1.54,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_078",
+  "nome": "Copa Saulieu Loriot Corrida",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "saulieu_loriot",
+    "saulieu_loriot_s"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_loriot_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_loriot_gt",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_079",
+  "nome": "Copa Saulieu Loriot e Ecume Corrida",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "saulieu_loriot_gt",
+    "saulieu_ecume",
+    "saulieu_ecume_corrida_ii"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_rafale_d_est_s",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "saulieu_ecume_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_080",
+  "nome": "Troféu Tração Traseira — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "tracao": [
+    "FR"
+   ],
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.52,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yozora",
+    "piloto": "ia_100",
+    "potencia_mult": 1.55,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_hibari_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_enju_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hayase_homura"
+ },
+ {
+  "id": "ev_081",
+  "nome": "Troféu Tração Traseira — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 450,
+   "tracao": [
+    "FR"
+   ],
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_hagane",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_yukimi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.39,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_hibari_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hayase_nadeshiko"
+ },
+ {
+  "id": "ev_082",
+  "nome": "Troféu Tração Traseira — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "tracao": [
+    "FR"
+   ],
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_switchback_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_switchback_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_s_96",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashcombe_sorrel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_asakaze_gt_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "mizuchi_chidori_sr_99"
+ },
+ {
+  "id": "ev_091",
+  "nome": "Copa Vallon Rafale",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "vallon_rafale_d_est_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_rafale_d_est_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_092",
+  "nome": "Copa Vallon Rafale Corrida",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "vallon_rafale_d_est_s"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_rafale_d_est_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_095",
+  "nome": "Copa Vorhaus Specht",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "vorhaus_specht"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "vorhaus_specht",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_096",
+  "nome": "Copa Vorhaus Specht Corrida",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "vorhaus_specht",
+    "vorhaus_specht_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "ostwerk_habicht",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_097",
+  "nome": "Liga Regional III — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_kauz",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_sperber",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashcombe_wren",
+    "piloto": "ia_100",
+    "potencia_mult": 2.18,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_098",
+  "nome": "Liga Regional III — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_rauhreif",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.32,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashcombe_quill",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_099",
+  "nome": "Liga Regional III — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_teal_iii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "wexmoor_heath",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "calderwood_quarry",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashcombe_sorrel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vallon_faucon",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_100",
+  "nome": "Copa Ostwerk e Hartwig",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "ostwerk_habicht",
+    "ostwerk_luchs",
+    "ostwerk_falke",
+    "hartwig_strecke",
+    "ostwerk_reiher"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "ostwerk_luchs",
+    "piloto": "ia_100",
+    "potencia_mult": 1.09
+   },
+   {
+    "carro": "ostwerk_falke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ostwerk_reiher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08
+   },
+   {
+    "carro": "garrison_pecos_ii",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_101",
+  "nome": "Liga Regional VII — etapa 1",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.9,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_madoka",
+    "piloto": "ia_100",
+    "potencia_mult": 1.65,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vallon_rafale_d_est",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_loriot",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   64,
+   43,
+   30,
+   17,
+   9
+  ],
+  "carro_premio": "kanaya_shirasagi"
+ },
+ {
+  "id": "ev_102",
+  "nome": "Liga Regional VII — etapa 2",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.9,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_madoka",
+    "piloto": "ia_100",
+    "potencia_mult": 1.65,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vallon_rafale_d_est",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_loriot",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   64,
+   43,
+   30,
+   17,
+   9
+  ],
+  "carro_premio": "vallon_rafale_d_est"
+ },
+ {
+  "id": "ev_103",
+  "nome": "Liga Regional VII — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100",
+    "potencia_mult": 2.53,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_madoka",
+    "piloto": "ia_100",
+    "potencia_mult": 2.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_hanabi_s_99",
+    "piloto": "ia_100",
+    "potencia_mult": 2.0,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vallon_rafale_d_est",
+    "piloto": "ia_100",
+    "potencia_mult": 1.82,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_loriot",
+    "piloto": "ia_100",
+    "potencia_mult": 1.92,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   64,
+   43,
+   30,
+   17,
+   9
+  ],
+  "carro_premio": "hartwig_bussard"
+ },
+ {
+  "id": "ev_104",
+  "nome": "Liga Regional IV — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_loriot_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_ecume",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "morel_caillou",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_loriot_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "morel_bruyere",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_105",
+  "nome": "Liga Regional IV — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "aubrac_grive",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "morel_givre",
+    "piloto": "ia_100",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_hirondelle_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vallon_galet",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "saulieu_vague",
+    "piloto": "ia_100",
+    "potencia_mult": 1.47,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_106",
+  "nome": "Liga Regional V — etapa 1",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 220,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ostwerk_kranich",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_gleiter",
+    "piloto": "ia_100",
+    "potencia_mult": 1.1,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_wiesel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_107",
+  "nome": "Liga Regional V — etapa 2",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "vorhaus_dachs",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_gekko",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_rauhreif",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_strecke",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.68,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_108",
+  "nome": "Liga Regional V — etapa 3",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 450,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "keldorf_wachtel_s",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ostwerk_elster",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vorhaus_taucher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.32,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vorhaus_specht",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "varenna_falco",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_109",
+  "nome": "Liga Regional VI — etapa 1",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "varenna_ghiaia",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "varenna_fiume",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_badlands",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ottavo_airone",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "castellani_tufo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.45,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_110",
+  "nome": "Liga Regional VI — etapa 2",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.1,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ottavo_faro",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "varenna_falco_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.22,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "varenna_ghiaia_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "castellani_torrente",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_111",
+  "nome": "Liga Regional I — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 200,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.8,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shirasagi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.63,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_madoka",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_wadachi_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.8,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.83,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_112",
+  "nome": "Liga Regional I — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_tsukikage_99",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yamakaze",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_raikou",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_113",
+  "nome": "Liga Regional I — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_usagi_gt_99",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_98",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_99",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_115",
+  "nome": "Copa Hayase Gekko",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_gekko"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_gekko",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_116",
+  "nome": "Copa Hayase Gekko Corrida",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_gekko"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_sperber",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_117",
+  "nome": "Copa Lindauer Sperber II",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "lindauer_sperber"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_sperber",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_118",
+  "nome": "Copa Lindauer Sperber Corrida II",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "lindauer_sperber",
+    "lindauer_sperber_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_loriot",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_119",
+  "nome": "Categoria Prata — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hiten_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "kanaya_nagare_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.67,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_raijin_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   342,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_raijin_corrida",
+  "bonus_campeonato": 4270
+ },
+ {
+  "id": "ev_120",
+  "nome": "Categoria Prata — etapa 2",
+  "pista": "circuito_misto",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hiten_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "kanaya_nagare_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.67,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_raijin_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   342,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_121",
+  "nome": "Categoria Prata — etapa 3",
+  "pista": "pista_de_testes",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hiten_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "kanaya_nagare_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.67,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_raijin_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   342,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_122",
+  "nome": "Categoria Prata — etapa 4",
+  "pista": "serra_alta",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hiten_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "kanaya_nagare_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.67,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_raijin_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   342,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_123",
+  "nome": "Categoria Prata — etapa 5",
+  "pista": "serra_curta",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_hiten_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "kanaya_nagare_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.67,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_raijin_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   342,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_124",
+  "nome": "Categoria Ouro — etapa 1",
+  "pista": "circuito_misto",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hozuki_uguisu_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_suisei_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   640,
+   214,
+   171,
+   128,
+   64
+  ],
+  "carro_premio": "hayase_kurenai_corrida",
+  "bonus_campeonato": 8540
+ },
+ {
+  "id": "ev_125",
+  "nome": "Categoria Ouro — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hozuki_uguisu_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_suisei_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   171,
+   85,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_126",
+  "nome": "Categoria Ouro — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hozuki_uguisu_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_suisei_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   171,
+   85,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_127",
+  "nome": "Categoria Ouro — etapa 4",
+  "pista": "serra_alta",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hozuki_uguisu_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_suisei_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   171,
+   85,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_128",
+  "nome": "Categoria Ouro — etapa 5",
+  "pista": "serra_curta",
+  "voltas": 13,
+  "largada_kmh": 80,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kawasemi_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_nishiki_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hozuki_uguisu_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_suisei_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   171,
+   85,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_129",
+  "nome": "Torneio dos Campeões — etapa 1",
+  "pista": "anel_do_vale",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "pemberly_fieldfare_r",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   1281,
+   854,
+   427,
+   214,
+   43
+  ],
+  "carro_premio": "sanga_kikyo"
+ },
+ {
+  "id": "ev_130",
+  "nome": "Torneio dos Campeões — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "pemberly_fieldfare_r",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   1281,
+   854,
+   427,
+   214,
+   43
+  ],
+  "carro_premio": "hayase_yaiba"
+ },
+ {
+  "id": "ev_131",
+  "nome": "Torneio dos Campeões — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "pemberly_fieldfare_r",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   1281,
+   854,
+   427,
+   214,
+   43
+  ],
+  "carro_premio": "ashcombe_heron_s"
+ },
+ {
+  "id": "ev_132",
+  "nome": "Torneio dos Campeões — etapa 4",
+  "pista": "parque_das_docas",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "pemberly_fieldfare_r",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   1281,
+   854,
+   427,
+   214,
+   43
+  ],
+  "carro_premio": "tokiwa_kazaguruma"
+ },
+ {
+  "id": "ev_133",
+  "nome": "Torneio dos Campeões — etapa 5",
+  "pista": "circuito_misto",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "pemberly_fieldfare_r",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   1281,
+   854,
+   427,
+   214,
+   43
+  ],
+  "carro_premio": "hayase_kiri"
+ },
+ {
+  "id": "ev_134",
+  "nome": "Categoria Bronze — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.16,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "sanga_tsukikage_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_longhorn_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.1,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_oborozuki_corrida"
+ },
+ {
+  "id": "ev_135",
+  "nome": "Categoria Bronze — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.61,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "sanga_tsukikage_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.6,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_longhorn_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   854,
+   512,
+   342,
+   214,
+   128,
+   34
+  ],
+  "carro_premio": "hozuki_fubuki_corrida_99"
+ },
+ {
+  "id": "ev_136",
+  "nome": "Categoria Bronze — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.66,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.75,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "sanga_tsukikage_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.78,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "bancroft_longhorn_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.57,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   1281,
+   854,
+   427,
+   299,
+   214,
+   43
+  ],
+  "carro_premio": "hayase_minamo_corrida"
+ },
+ {
+  "id": "ev_137",
+  "nome": "Circuito Mundial — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "potencia_mult": 2.16
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   1068,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": "kanaya_ruri_corrida_ii",
+  "bonus_campeonato": 6405
+ },
+ {
+  "id": "ev_138",
+  "nome": "Circuito Mundial — etapa 2",
+  "pista": "circuito_misto",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "potencia_mult": 2.16
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   1068,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_139",
+  "nome": "Circuito Mundial — etapa 3",
+  "pista": "serra_curta",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "potencia_mult": 2.16
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   1068,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_140",
+  "nome": "Circuito Mundial — etapa 4",
+  "pista": "parque_das_docas",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "potencia_mult": 2.16
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   1068,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_141",
+  "nome": "Circuito Mundial — etapa 5",
+  "pista": "serra_alta",
+  "voltas": 13,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "calderwood_tarn_corrida",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire_corrida",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "lindauer_nebel",
+    "piloto": "ia_100",
+    "potencia_mult": 2.16
+   },
+   {
+    "carro": "calderwood_dunlin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_5"
+    ]
+   }
+  ],
+  "premios": [
+   1068,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_142",
+  "nome": "Liga Regional II — etapa 1",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_highline",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_sagebrush_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_badlands",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_sagebrush",
+    "piloto": "ia_100",
+    "potencia_mult": 1.33,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_saddle",
+    "piloto": "ia_100",
+    "potencia_mult": 2.42,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   171,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_143",
+  "nome": "Liga Regional II — etapa 2",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_thunderhead",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_switchback_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_hakucho",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "garrison_gulch",
+    "piloto": "ia_100",
+    "potencia_mult": 2.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_granite_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_144",
+  "nome": "Liga Regional II — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_switchback_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_rattler",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "bancroft_longhorn_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_ironwood_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.06,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "garrison_boxcar",
+    "piloto": "ia_100",
+    "potencia_mult": 1.12,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_145",
+  "nome": "Copa Hartwig Wiesel",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hartwig_wiesel"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_wiesel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_146",
+  "nome": "Copa Hartwig Lauf e Graupel",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hartwig_lauf",
+    "hartwig_graupel_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hartwig_lauf",
+    "piloto": "ia_100",
+    "potencia_mult": 1.48,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_147",
+  "nome": "Copa Hartwig Lauf e Graupel Corrida",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hartwig_lauf",
+    "hartwig_graupel_s"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_lauf",
+    "piloto": "ia_100",
+    "potencia_mult": 1.48,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_lauf",
+    "piloto": "ia_100",
+    "potencia_mult": 1.48,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.22,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.22,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hartwig_graupel_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.22,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_148",
+  "nome": "Copa Hartwig Wiesel Corrida",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hartwig_wiesel",
+    "hartwig_wiesel_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hoshino_ibuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_149",
+  "nome": "Copa Hayase Enju e Cutler Rattler",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_enju_sr_99",
+    "cutler_rattler"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_150",
+  "nome": "Copa Hayase Enju e Mizuchi Chidori Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_enju_sr_99",
+    "mizuchi_chidori_corrida_iii"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_151",
+  "nome": "Copa Mizuchi Wadachi II",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "mizuchi_wadachi_ii"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_wadachi_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "mizuchi_wadachi_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_152",
+  "nome": "Copa Hayase e Hozuki",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_pika",
+    "hozuki_samidare_s_95",
+    "hozuki_samidare_s_ii",
+    "hozuki_samidare_gt_98",
+    "hozuki_hiiragi",
+    "hozuki_samidare_gts"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hozuki_samidare_s_95",
+    "piloto": "ia_100",
+    "potencia_mult": 1.1
+   },
+   {
+    "carro": "hozuki_samidare_s_95",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "hozuki_samidare_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hozuki_samidare_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_153",
+  "nome": "Copa Hayase Pika e Hozuki Samidare Corrida",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_pika",
+    "hozuki_samidare_s_95",
+    "hozuki_samidare_s_ii",
+    "hozuki_samidare_gt_98"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hozuki_samidare_s_95",
+    "piloto": "ia_100",
+    "potencia_mult": 1.32,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_s_95",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.15,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_154",
+  "nome": "Copa Arvelle Outlaw",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "arvelle_outlaw_s",
+    "arvelle_outlaw_s_97",
+    "arvelle_outlaw_gt",
+    "arvelle_outlaw_s_ii"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   },
+   {
+    "carro": "arvelle_outlaw_gt",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "arvelle_outlaw_s_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_pika",
+    "piloto": "ia_100",
+    "potencia_mult": 1.1
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_155",
+  "nome": "Copa Arvelle e Hozuki",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "arvelle_outlaw_s_97",
+    "arvelle_hatchet_s_98",
+    "hozuki_samidare_gt_98",
+    "hozuki_harusame_s_ii",
+    "hozuki_isaribi_gts_98",
+    "hozuki_harusame_gt",
+    "hozuki_samidare_gts",
+    "arvelle_outlaw_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "arvelle_hatchet_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.37
+   },
+   {
+    "carro": "hozuki_harusame_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.37
+   },
+   {
+    "carro": "hozuki_isaribi_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_156",
+  "nome": "Troféu 250 — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hoshino_ibuki",
+    "piloto": "ia_100",
+    "potencia_mult": 3.95
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "kanaya_ryusei_ii",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hozuki_tsumuji_s"
+ },
+ {
+  "id": "ev_157",
+  "nome": "Troféu 250 — etapa 2",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 300,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56
+   },
+   {
+    "carro": "kanaya_ryusei_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27
+   },
+   {
+    "carro": "hayase_sazanami",
+    "piloto": "ia_100",
+    "potencia_mult": 1.32
+   },
+   {
+    "carro": "kanaya_ryusei_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 2.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "pemberly_sedge"
+ },
+ {
+  "id": "ev_158",
+  "nome": "Troféu 250 — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_sazanami",
+    "piloto": "ia_100",
+    "potencia_mult": 2.32,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_ruri_corrida_ii",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_5"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi",
+    "piloto": "ia_100",
+    "potencia_mult": 2.16,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "castellani_zefiro",
+    "piloto": "ia_100",
+    "potencia_mult": 1.8,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_wildfire",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   342,
+   256,
+   107,
+   64,
+   34,
+   21
+  ],
+  "carro_premio": "kanaya_kirameki"
+ },
+ {
+  "id": "ev_159",
+  "nome": "Copa Varenna Falco e Lucciola",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "varenna_falco",
+    "varenna_falco_s",
+    "varenna_lucciola"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "varenna_falco_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   },
+   {
+    "carro": "varenna_lucciola",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24
+   },
+   {
+    "carro": "varenna_falco",
+    "piloto": "ia_100",
+    "potencia_mult": 1.47,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_160",
+  "nome": "Copa Varenna Falco e Lucciola Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "varenna_falco",
+    "varenna_falco_s",
+    "varenna_lucciola",
+    "varenna_lucciola_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "varenna_falco_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "varenna_lucciola",
+    "piloto": "ia_100",
+    "potencia_mult": 1.47,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_161",
+  "nome": "Copa Ottavo Nebbia e Rondine",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "ottavo_nebbia",
+    "ottavo_rondine"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "ottavo_rondine",
+    "piloto": "ia_100",
+    "potencia_mult": 2.39
+   },
+   {
+    "carro": "ottavo_nebbia",
+    "piloto": "ia_100",
+    "potencia_mult": 1.55,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_162",
+  "nome": "Copa Ottavo Nebbia e Rondine Corrida",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "ottavo_nebbia",
+    "ottavo_rondine"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "ottavo_rondine",
+    "piloto": "ia_100",
+    "potencia_mult": 3.7,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_saddle",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_163",
+  "nome": "Copa Castellani Torrente",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "castellani_torrente",
+    "castellani_torrente_gt"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "castellani_torrente_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_164",
+  "nome": "Copa Castellani Torrente Corrida",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "castellani_torrente_gt",
+    "castellani_torrente_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.1
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_165",
+  "nome": "Copa Kanaya e Pemberly",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yuzuki",
+    "pemberly_sedge",
+    "ottavo_airone"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ottavo_airone",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.46,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_166",
+  "nome": "Copa Pemberly e Tokiwa",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "pemberly_sedge",
+    "tokiwa_urara",
+    "tokiwa_unabara",
+    "pemberly_fieldfare_r"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.47,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_167",
+  "nome": "Copa Pemberly e Tokiwa Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "pemberly_sedge",
+    "tokiwa_urara",
+    "pemberly_fieldfare_r"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.67,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_168",
+  "nome": "Copa Kanaya Yuzuki e Pemberly Sedge Corrida",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yuzuki",
+    "pemberly_sedge"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_gekko",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_169",
+  "nome": "Copa Tokiwa Unabara",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "tokiwa_unabara"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_170",
+  "nome": "Copa Tokiwa Unabara Corrida",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "tokiwa_unabara"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "varenna_falco",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_177",
+  "nome": "Copa Hayase Tenrai e Sanga Usagi",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_tenrai",
+    "sanga_usagi_gt_98",
+    "sanga_usagi_gt_iii",
+    "sanga_usagi_gt_99"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04
+   },
+   {
+    "carro": "sanga_usagi_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   },
+   {
+    "carro": "sanga_usagi_gt_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "sanga_usagi_gt_iii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "sanga_usagi_gt_99",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_178",
+  "nome": "Copa Sanga Inazuma",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "sanga_inazuma_98"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_179",
+  "nome": "Copa Sanga Inazuma Corrida",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "sanga_inazuma_98"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_inazuma_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_tenrai",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_180",
+  "nome": "Troféu Motor Central — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "tracao": [
+    "MR"
+   ],
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_zefiro",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame_gt",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "kanaya_kagami"
+ },
+ {
+  "id": "ev_181",
+  "nome": "Troféu Motor Central — etapa 2",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "tracao": [
+    "MR"
+   ],
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_rafale_d_est_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.84,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.61,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "kanaya_hakucho"
+ },
+ {
+  "id": "ev_182",
+  "nome": "Troféu Motor Central — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "tracao": [
+    "MR"
+   ],
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 2.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "pemberly_teal_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kestrin_prairie_hawk",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "aubrac_grive_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kestrin_drifter",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "whitlock_wildfire_corrida"
+ },
+ {
+  "id": "ev_183",
+  "nome": "Copa Livre — etapa 1",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "ashby_stockade",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_gt",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "bancroft_longhorn_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.32,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_dustbowl",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_ironwood_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "kanaya_hakucho"
+ },
+ {
+  "id": "ev_184",
+  "nome": "Copa Livre — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "ashby_dustbowl",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_ironwood_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_redrock",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_stockade",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "bancroft_sidewinder_gt",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   342,
+   256,
+   107,
+   64,
+   34,
+   21
+  ],
+  "carro_premio": "ashcombe_saltire"
+ },
+ {
+  "id": "ev_185",
+  "nome": "Copa Livre — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "ashby_dustbowl",
+    "piloto": "ia_100",
+    "potencia_mult": 1.36,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "cutler_ironwood_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "garrison_driftwood",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_tailwind",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ashby_redrock",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "garrison_canyon"
+ },
+ {
+  "id": "ev_186",
+  "nome": "Copa Hayase",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_enju_s",
+    "hayase_enju_gts",
+    "hayase_soryu",
+    "hayase_hibari_s_97",
+    "hayase_hibari_gts_98",
+    "hayase_enju_sr_99",
+    "hayase_enju_gt_99",
+    "hayase_hibari"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_enju_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34
+   },
+   {
+    "carro": "hayase_enju_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.68
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14
+   },
+   {
+    "carro": "hayase_hibari_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44
+   },
+   {
+    "carro": "hayase_hibari_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_187",
+  "nome": "Copa Hayase Corrida",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_enju_s",
+    "hayase_enju_gts",
+    "hayase_soryu",
+    "hayase_hibari_s_97",
+    "hayase_hibari_gts_98",
+    "hayase_enju_sr_99",
+    "hayase_enju_gt_99",
+    "hayase_hibari",
+    "hayase_raijin_corrida",
+    "hayase_oborozuki_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_enju_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.54,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_enju_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.93,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_hibari_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.66,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_hibari_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.24,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_188",
+  "nome": "Copa Hayase e Tokiwa",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_ryujin",
+    "hayase_komorebi_s_91",
+    "hayase_komorebi_s_v",
+    "hayase_komorebi",
+    "hayase_hisui",
+    "hayase_komorebi_s",
+    "hayase_yaiba",
+    "hayase_nadeshiko_s_ii",
+    "tokiwa_mizuho_s",
+    "tokiwa_mizuho"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_91",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_189",
+  "nome": "Copa Hayase Corrida II",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_ryujin",
+    "hayase_komorebi_s_91",
+    "hayase_komorebi_s_v",
+    "hayase_komorebi",
+    "hayase_hisui",
+    "hayase_nadeshiko_s_ii",
+    "hayase_nishiki_corrida",
+    "hayase_kurenai_corrida",
+    "hayase_kurogane_corrida",
+    "hayase_minamo_corrida",
+    "hayase_tsubaki_corrida",
+    "hayase_suisei_corrida",
+    "hayase_yaiba_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_91",
+    "piloto": "ia_100",
+    "potencia_mult": 1.11,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.11,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.11,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.11,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_190",
+  "nome": "Copa Hayase Jinrai e Kobo",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_jinrai_s",
+    "hayase_kobo"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.46
+   },
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_191",
+  "nome": "Copa Hayase Jinrai e Kobo Corrida",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_jinrai_s",
+    "hayase_kobo"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.9,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_ryujin",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_192",
+  "nome": "Copa Hayase Kagura",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_kagura_s",
+    "hayase_kagura",
+    "hayase_kagura_gt"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_kagura",
+    "piloto": "ia_100",
+    "potencia_mult": 1.16
+   },
+   {
+    "carro": "hayase_hokuto",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_193",
+  "nome": "Copa Hayase Hokuto e Komorebi",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hayase_hokuto",
+    "hayase_komorebi_s_v"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_komorebi_s_v",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_jinrai_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_194",
+  "nome": "Série 550 — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 550,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hayase_tenku_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_4"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_mikazuki_corrida"
+ },
+ {
+  "id": "ev_195",
+  "nome": "Série 550 — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 550,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hayase_tenku_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_4"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "mizuchi_chidori_corrida_iii"
+ },
+ {
+  "id": "ev_196",
+  "nome": "Série 550 — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 550,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hayase_tenku_s_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "garrison_arroyo",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_4"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hayase_tsubasa_corrida"
+ },
+ {
+  "id": "ev_197",
+  "nome": "Série 400 — etapa 1",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_tobi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.88,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "castellani_zefiro",
+    "piloto": "ia_100",
+    "potencia_mult": 1.55,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.54,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "kanaya_tobi"
+ },
+ {
+  "id": "ev_198",
+  "nome": "Série 400 — etapa 2",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 450,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_tobi",
+    "piloto": "ia_100",
+    "potencia_mult": 2.19,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "castellani_zefiro",
+    "piloto": "ia_100",
+    "potencia_mult": 1.8,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.84,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   342,
+   256,
+   107,
+   64,
+   34,
+   21
+  ],
+  "carro_premio": "tokiwa_urara"
+ },
+ {
+  "id": "ev_199",
+  "nome": "Série 400 — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100",
+    "potencia_mult": 2.45,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 2.02,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "ashcombe_sorrel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.41,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "ashcombe_quill"
+ },
+ {
+  "id": "ev_200",
+  "nome": "Copa Hoshino Ibuki",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hoshino_ibuki"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_sperber",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_201",
+  "nome": "Copa Tomoe Niji",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "tomoe_niji_s",
+    "tomoe_niji_s_98"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02
+   },
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02
+   },
+   {
+    "carro": "tomoe_niji_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.54,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_202",
+  "nome": "Copa Tomoe Niji Corrida",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "tomoe_niji_s",
+    "tomoe_niji_s_98"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.59,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.59,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tomoe_hatsukaze_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_203",
+  "nome": "Copa Tomoe Hatsukaze",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "tomoe_hatsukaze_ii",
+    "tomoe_hatsukaze",
+    "tomoe_hatsukaze_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "tomoe_hatsukaze",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64
+   },
+   {
+    "carro": "tomoe_hatsukaze_s",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "tomoe_hatsukaze_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 2.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_204",
+  "nome": "Copa Tomoe Hatsukaze Corrida",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "tomoe_hatsukaze_ii",
+    "tomoe_hatsukaze",
+    "tomoe_hatsukaze_s",
+    "tomoe_hatsukaze_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "tomoe_hatsukaze",
+    "piloto": "ia_100",
+    "potencia_mult": 2.21,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tomoe_hatsukaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "tokiwa_unabara",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_205",
+  "nome": "Copa Hoshino Kogane",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hoshino_kogane_ii"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hoshino_kogane_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.01
+   },
+   {
+    "carro": "hoshino_kogane_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_206",
+  "nome": "Copa Hoshino Kogane Corrida",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hoshino_kogane_ii"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hoshino_kogane_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_tenma_gt_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.02
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_207",
+  "nome": "Copa Hoshino e Hayase",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "hoshino_tenma",
+    "hoshino_tenma_gt_ii",
+    "hayase_kumo",
+    "hoshino_tenma_gt_99",
+    "hoshino_sekirei_99"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "hoshino_tenma_gt_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_kumo",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_208",
+  "nome": "Copa 400 — etapa 1",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "garrison_thunderhead",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_bluff",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "calderwood_fletcher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vorhaus_taucher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.13,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_zakuro_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hozuki_isaribi_gts_98"
+ },
+ {
+  "id": "ev_209",
+  "nome": "Copa 400 — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_bluff",
+    "piloto": "ia_100",
+    "potencia_mult": 1.68,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "calderwood_fletcher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.65,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vorhaus_taucher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.51,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_zakuro_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ostwerk_gischt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "kanaya_kazane_s"
+ },
+ {
+  "id": "ev_210",
+  "nome": "Copa 400 — etapa 3",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_bluff",
+    "piloto": "ia_100",
+    "potencia_mult": 2.1,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "calderwood_fletcher",
+    "piloto": "ia_100",
+    "potencia_mult": 2.06,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "vorhaus_taucher",
+    "piloto": "ia_100",
+    "potencia_mult": 1.89,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_zakuro_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "ostwerk_gischt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.77,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   427,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hayase_komorebi_s"
+ },
+ {
+  "id": "ev_211",
+  "nome": "Copa Primeira Marcha — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "kosame_mikage_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.54
+   },
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.59
+   },
+   {
+    "carro": "kanaya_shirasagi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43
+   },
+   {
+    "carro": "hayase_kobo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27
+   },
+   {
+    "carro": "hartwig_bussard",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_212",
+  "nome": "Copa Primeira Marcha — etapa 2",
+  "pista": "pista_de_testes",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "hozuki_harusame_s_ii",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_hibari_gts_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "ottavo_faro",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "hayase_enju_gt_99",
+    "piloto": "ia_100",
+    "potencia_mult": 1.21
+   },
+   {
+    "carro": "hayase_soryu",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   171,
+   64,
+   43,
+   30,
+   17,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_213",
+  "nome": "Copa Primeira Marcha — etapa 3",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {},
+  "adversarios": [
+   {
+    "carro": "hayase_enju_sr_99",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "vorhaus_specht",
+    "piloto": "ia_100",
+    "potencia_mult": 1.11
+   },
+   {
+    "carro": "vorhaus_dachs",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "whitlock_switchback_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18
+   },
+   {
+    "carro": "varenna_fiume_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_214",
+  "nome": "Série 500 — etapa 1",
+  "pista": "serra_curta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_galet",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "saulieu_hirondelle_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 2.59,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "saulieu_hirondelle_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 2.59,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "lindauer_rauhreif",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "kanaya_tomoshibi"
+ },
+ {
+  "id": "ev_215",
+  "nome": "Série 500 — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kazane",
+    "piloto": "ia_100",
+    "potencia_mult": 1.75,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_murakumo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.9,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_yukikaze_96",
+    "piloto": "ia_100",
+    "potencia_mult": 2.3,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.85,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_yukikaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.84,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "kanaya_tomoshibi"
+ },
+ {
+  "id": "ev_216",
+  "nome": "Série 500 — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_kazane",
+    "piloto": "ia_100",
+    "potencia_mult": 1.75,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "kanaya_murakumo",
+    "piloto": "ia_100",
+    "potencia_mult": 1.9,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_yukikaze_96",
+    "piloto": "ia_100",
+    "potencia_mult": 2.3,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.85,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hayase_yukikaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.84,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "kanaya_tomoshibi"
+ },
+ {
+  "id": "ev_217",
+  "nome": "Série 500 — etapa 4",
+  "pista": "pista_de_testes",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_galet",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "saulieu_hirondelle_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 2.59,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_rauhreif",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "kanaya_tomoshibi"
+ },
+ {
+  "id": "ev_218",
+  "nome": "Série 500 — etapa 5",
+  "pista": "parque_das_docas",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 500,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_galet",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "saulieu_hirondelle_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 2.59,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   },
+   {
+    "carro": "arvelle_outlaw_s_97",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "lindauer_rauhreif",
+    "piloto": "ia_100",
+    "potencia_mult": 1.79,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "kanaya_tomoshibi"
+ },
+ {
+  "id": "ev_219",
+  "nome": "Copa Kanaya Yamakaze e Shijima",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yamakaze",
+    "kanaya_shijima_s",
+    "kanaya_yamakaze_s"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_shijima_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34
+   },
+   {
+    "carro": "kanaya_shijima_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.38
+   },
+   {
+    "carro": "kanaya_yamakaze",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_220",
+  "nome": "Copa Kanaya Yamakaze e Shijima Corrida",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yamakaze",
+    "kanaya_shijima_s",
+    "kanaya_yamakaze_s",
+    "kanaya_yamakaze_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_shijima_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shijima_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.6,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shirasagi",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_221",
+  "nome": "Copa Turismo — etapa 1",
+  "pista": "circuito_misto",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_homura",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_harusame_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "kanaya_hakucho",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hozuki_samidare_gts"
+ },
+ {
+  "id": "ev_222",
+  "nome": "Copa Turismo — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_homura",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_harusame_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "kanaya_hakucho",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hozuki_samidare_gts"
+ },
+ {
+  "id": "ev_223",
+  "nome": "Copa Turismo — etapa 3",
+  "pista": "circuito_misto",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_homura",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_harusame_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "kanaya_hakucho",
+    "piloto": "ia_100",
+    "potencia_mult": 1.28,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "hozuki_samidare_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.64,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   299,
+   214,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "hozuki_samidare_gts"
+ },
+ {
+  "id": "ev_224",
+  "nome": "Copa Preparados — etapa 1",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_nadeshiko_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.5,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "kanaya_tomoshibi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.98,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 2.14,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hayase_yaiba",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hayase_yaiba",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_4"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": "hayase_yaiba_corrida"
+ },
+ {
+  "id": "ev_225",
+  "nome": "Copa Preparados — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.11,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "kanaya_kagami",
+    "piloto": "ia_100",
+    "potencia_mult": 2.36,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr",
+    "piloto": "ia_100",
+    "potencia_mult": 2.26,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "kanaya_asakaze_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.98,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "hayase_yaiba",
+    "piloto": "ia_100",
+    "pneus": [
+     "pneu_4"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": "hayase_yaiba_corrida"
+ },
+ {
+  "id": "ev_226",
+  "nome": "Copa Preparados — etapa 3",
+  "pista": "pista_de_testes",
+  "voltas": 8,
+  "condicao": "seco",
+  "restricoes": {
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_asakaze_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.98,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "tokiwa_seiryu",
+    "piloto": "ia_100",
+    "potencia_mult": 2.36,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "tokiwa_mizuho",
+    "piloto": "ia_100",
+    "potencia_mult": 1.61,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "kanaya_yamakaze_s",
+    "piloto": "ia_100",
+    "potencia_mult": 2.11,
+    "pneus": [
+     "pneu_4"
+    ]
+   },
+   {
+    "carro": "mizuchi_chidori_sr_99",
+    "piloto": "ia_100",
+    "potencia_mult": 2.14,
+    "pneus": [
+     "pneu_4"
+    ]
+   }
+  ],
+  "premios": [
+   2135,
+   427,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": "hayase_yaiba_corrida"
+ },
+ {
+  "id": "ev_227",
+  "nome": "Copa Kanaya Shinonome e Kirameki",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_shinonome_gt_97",
+    "kanaya_shinonome_sx",
+    "kanaya_shinonome_s",
+    "kanaya_shinonome_gts",
+    "kanaya_shinonome_gx",
+    "kanaya_shinonome_r_ii",
+    "kanaya_kirameki"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_shinonome_sx",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "kanaya_shinonome_gt_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "kanaya_shinonome_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.26
+   },
+   {
+    "carro": "kanaya_shinonome_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.17
+   },
+   {
+    "carro": "kanaya_shinonome_gt_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_228",
+  "nome": "Copa Kanaya Shinonome Corrida",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_shinonome_gt_97",
+    "kanaya_shinonome_sx",
+    "kanaya_shinonome_s",
+    "kanaya_shinonome_gts",
+    "kanaya_shinonome_gx",
+    "kanaya_shinonome_r_ii",
+    "kanaya_shinonome_corrida"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_shinonome_sx",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shinonome_gt_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shinonome_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shinonome_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.44,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_shinonome_gt_97",
+    "piloto": "ia_100",
+    "potencia_mult": 1.57,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_229",
+  "nome": "Copa Kanaya Murasame II",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_murasame"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yamakaze",
+    "piloto": "ia_100",
+    "potencia_mult": 1.03
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_230",
+  "nome": "Copa Kanaya Yuzuki",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yuzuki_gt_98",
+    "kanaya_yuzuki_s",
+    "kanaya_yuzuki"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yuzuki_gt_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07
+   },
+   {
+    "carro": "kanaya_yuzuki_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.41
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 2.01
+   },
+   {
+    "carro": "kanaya_murasame",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_231",
+  "nome": "Copa Kanaya Shirasagi",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_shirasagi"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_shirasagi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_232",
+  "nome": "Copa Kanaya Shirasagi Corrida",
+  "pista": "circuito_misto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_shirasagi"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_enju_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.74
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_233",
+  "nome": "Copa Ashcombe Quill",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "ashcombe_quill"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_quill",
+    "piloto": "ia_100",
+    "potencia_mult": 1.15,
+    "pneus": [
+     "pneu_3"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_234",
+  "nome": "Copa Ashcombe Quill Corrida",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "ashcombe_quill"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "hartwig_lauf",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2
+   }
+  ],
+  "premios": [
+   427,
+   299,
+   214,
+   128,
+   85,
+   43
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_235",
+  "nome": "Copa das Peruas — etapa 1",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_sawarabi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_senko_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.12,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_wakaba",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_kairo_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hoshino_tenma_gt_99"
+ },
+ {
+  "id": "ev_236",
+  "nome": "Copa das Peruas — etapa 2",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_sawarabi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_wakaba",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_akane_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_kairo_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.05,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "hozuki_isaribi_gts_iii"
+ },
+ {
+  "id": "ev_237",
+  "nome": "Copa das Peruas — etapa 3",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 400,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_sawarabi",
+    "piloto": "ia_100",
+    "potencia_mult": 1.58,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hozuki_isaribi_gts_iii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.49,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hoshino_senko_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.12,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "sanga_kairo_gts",
+    "piloto": "ia_100",
+    "potencia_mult": 1.14,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_akane_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hayase_akane_gt"
+ },
+ {
+  "id": "ev_238",
+  "nome": "Copa Pena — etapa 1",
+  "pista": "docas_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 150
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_wadachi_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "hoshino_seiran_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23
+   },
+   {
+    "carro": "sanga_yanagi_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19
+   },
+   {
+    "carro": "tomoe_niji_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23
+   },
+   {
+    "carro": "tomoe_kogetsu_s_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27
+   }
+  ],
+  "premios": [
+   214,
+   85,
+   64,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "mizuchi_wadachi_ii"
+ },
+ {
+  "id": "ev_239",
+  "nome": "Copa Pena — etapa 2",
+  "pista": "anel_curto",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 100,
+   "licenca": "CLUB"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "kosame_mikage_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.31
+   },
+   {
+    "carro": "sanga_yanagi_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19
+   },
+   {
+    "carro": "hozuki_oboro_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.6
+   },
+   {
+    "carro": "hoshino_seiran_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23
+   }
+  ],
+  "premios": [
+   256,
+   128,
+   85,
+   43,
+   21,
+   13
+  ],
+  "carro_premio": "mizuchi_hanabi_s"
+ },
+ {
+  "id": "ev_240",
+  "nome": "Copa Pena — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 100,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_yanagi_s",
+    "piloto": "ia_100",
+    "potencia_mult": 1.19
+   },
+   {
+    "carro": "mizuchi_wadachi_ii",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25
+   },
+   {
+    "carro": "kosame_matsuri",
+    "piloto": "ia_100",
+    "potencia_mult": 1.23
+   },
+   {
+    "carro": "tomoe_niji_s_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.27
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hozuki_tsumuji"
+ },
+ {
+  "id": "ev_241",
+  "nome": "Copa Aberta 250 — etapa 1",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 250,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 2.34,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "pemberly_sedge",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_rin",
+    "piloto": "ia_100",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "whitlock_badlands",
+    "piloto": "ia_100",
+    "potencia_mult": 1.18,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   299,
+   214,
+   85,
+   43,
+   30,
+   21
+  ],
+  "carro_premio": "hayase_sazanami"
+ },
+ {
+  "id": "ev_242",
+  "nome": "Copa Aberta 250 — etapa 2",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 350,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "tokiwa_urara",
+    "piloto": "ia_100",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "hayase_gekko",
+    "piloto": "ia_100",
+    "potencia_mult": 1.41,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_murasame_gt",
+    "piloto": "ia_100",
+    "potencia_mult": 1.34,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_kazane",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "garrison_tumbleweed",
+    "piloto": "ia_100",
+    "potencia_mult": 1.22,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   342,
+   256,
+   107,
+   64,
+   34,
+   21
+  ],
+  "carro_premio": "kanaya_murasame"
+ },
+ {
+  "id": "ev_243",
+  "nome": "Copa Aberta 250 — etapa 3",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "potencia_max": 600,
+   "licenca": "PRO"
+  },
+  "adversarios": [
+   {
+    "carro": "ashcombe_sorrel",
+    "piloto": "ia_100",
+    "potencia_mult": 1.39,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "wexmoor_rowan",
+    "piloto": "ia_100",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "ashcombe_quill",
+    "piloto": "ia_100",
+    "potencia_mult": 1.3,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "ashcombe_quill",
+    "piloto": "ia_100",
+    "potencia_mult": 1.22,
+    "pneus": [
+     "pneu_2"
+    ]
+   },
+   {
+    "carro": "ashcombe_saltire",
+    "piloto": "ia_100",
+    "potencia_mult": 1.04,
+    "pneus": [
+     "pneu_2"
+    ]
+   }
+  ],
+  "premios": [
+   640,
+   299,
+   128,
+   85,
+   43,
+   21
+  ],
+  "carro_premio": "garrison_tumbleweed_corrida"
+ },
+ {
+  "id": "ev_244",
+  "nome": "Copa Kosame Hiryu",
+  "pista": "serra_curta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kosame_hiryu_98"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100"
+   },
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_245",
+  "nome": "Copa Kosame Hiryu Corrida",
+  "pista": "anel_do_vale",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kosame_hiryu_98"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kosame_hiryu_98",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   },
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_246",
+  "nome": "Copa Kanaya Yuzuki II",
+  "pista": "parque_das_docas",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yuzuki"
+   ],
+   "corrida": false
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_yuzuki",
+    "piloto": "ia_100",
+    "potencia_mult": 1.56,
+    "pneus": [
+     "pneu_1"
+    ]
+   }
+  ],
+  "premios": [
+   128,
+   43,
+   21,
+   17,
+   13,
+   9
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_247",
+  "nome": "Copa Kanaya Yuzuki Corrida",
+  "pista": "serra_alta",
+  "voltas": 5,
+  "condicao": "seco",
+  "restricoes": {
+   "carros": [
+    "kanaya_yuzuki"
+   ],
+   "corrida": true
+  },
+  "adversarios": [
+   {
+    "carro": "tomoe_niji_s",
+    "piloto": "ia_100"
+   }
+  ],
+  "premios": [
+   214,
+   128,
+   85,
+   64,
+   43,
+   21
+  ],
+  "carro_premio": null
+ }
+]

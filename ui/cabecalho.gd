@@ -1,0 +1,526 @@
+class_name Cabecalho
+extends Control
+## Cabeçalho das telas, como no exemplo do pack "Cabeçalho" (arte/ui/cabecalho/):
+## uma faixa escura de borda a borda com voltar, divisória, título da tela, a
+## diagonal ocre de altura inteira e o painel de giros (moeda, valor em Racing
+## Sans One, "GIROS"). O banner de cada tela vem colado logo abaixo da faixa
+## (Aba.cenario_topo). A faixa começa no topo absoluto; os elementos ficam
+## abaixo da área segura do aparelho (`definir_area_segura`).
+## À direita, a engrenagem das configurações. Pendurado sob o painel, o marcador
+## das corridas aceleradas (decisão 39): "ACELERAR" quando parado; aceso, com o
+## fator e o tempo que falta, quando ativo. Tocar abre a tela da aceleração.
+## À direita dele, a bandeira (voltar à corrida em andamento); à esquerda, na Oficina, GARAGEM
+## (os carros, as vagas e a venda).
+
+signal voltar
+signal configuracoes
+signal acelerar
+signal garagem
+signal corrida
+signal nomes
+signal mapa
+
+const PASTA := "res://arte/ui/cabecalho/"
+const ALTURA := 84  # faixa dos elementos (px da tela de 720)
+const COR_FAIXA := Color("16191c")
+const COR_TITULO := Color("e6ddcd")
+const COR_NUMERO := Color("c89b57")  # ocre dessaturado do pack
+const COR_ROTULO := Color("b9bbbe")
+const TAMANHO_NUMERO := 40
+const TAMANHO_TITULO := 54
+const TAMANHO_TITULO_MIN := 34
+## Marcador da aceleração (aba pendurada sob a faixa).
+const ALTURA_MARCADOR := 54
+const COR_APAGADO := Color("8d9094")
+const OPACIDADE_SEM_VOLTA := 0.8  # 20% de transparência, sem toque
+## Quanto cada texto sobe (px) para o centro das letras cair no centro da faixa,
+## junto com o voltar, a moeda e o painel. Medido na tela renderizada (a caixa
+## de cada fonte não tem as letras no meio: Barlow e Racing Sans One diferem).
+const DESVIO_TITULO := 1.7
+const DESVIO_NUMERO := 0.0
+const DESVIO_GIROS := -1.0
+
+var titulo: Label
+var numero: Label
+var painel: Control
+var botao_voltar: TextureButton
+var _fundo: ColorRect
+var _faixa: HBoxContainer
+var _area_segura := 0.0
+var marcador: Button
+var aba_garagem: Button
+var _dentro_painel: HBoxContainer
+var _caixa_numero: Control
+var aba_corrida: Button
+var aba_nomes: Button
+var aba_mapa: Button
+var _icone_nomes: IconeVetor
+var _icone_corrida: IconeVetor
+var engrenagem: Button
+var _icone_marcador: IconeVetor
+var _caixa_marcador: HBoxContainer
+var _texto_marcador: Label
+var _tempo_marcador: Label
+var _ativo := false
+var _pulso := 0.0
+
+
+func _init() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fundo = ColorRect.new()
+	_fundo.color = COR_FAIXA
+	_fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_fundo.mouse_filter = Control.MOUSE_FILTER_STOP  # a faixa não deixa o toque passar
+	add_child(_fundo)
+	_faixa = HBoxContainer.new()
+	_faixa.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	_faixa.add_theme_constant_override("separation", 0)
+	_faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_faixa)
+	# Voltar: o quadrado escuro do pack, na mesma cor da faixa.
+	botao_voltar = TextureButton.new()
+	botao_voltar.texture_normal = load(PASTA + "voltar.png")
+	botao_voltar.ignore_texture_size = true
+	botao_voltar.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	botao_voltar.custom_minimum_size = Vector2(ALTURA * 0.95, ALTURA)
+	botao_voltar.pressed.connect(func(): voltar.emit())
+	_faixa.add_child(botao_voltar)
+	_imagem("divisoria.png", Vector2(ALTURA * 12.0 / 125.0, ALTURA))
+	_espaco(26)
+	titulo = Label.new()
+	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	titulo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	titulo.clip_text = true
+	titulo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(titulo, "semibold", TAMANHO_TITULO)
+	titulo.add_theme_color_override("font_color", COR_TITULO)
+	titulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_faixa.add_child(_centrado(titulo, DESVIO_TITULO))
+	# Espaço da diagonal, que é desenhada junto do painel (abaixo).
+	_espaco(ALTURA * 0.42)
+	# Painel de giros: moldura do pack com moeda, número e "GIROS" por cima.
+	var h_painel := ALTURA * 0.66
+	var caixa := CenterContainer.new()
+	caixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_faixa.add_child(caixa)
+	painel = TextureRect.new()
+	(painel as TextureRect).texture = load(PASTA + "painel_giros.png")
+	(painel as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	(painel as TextureRect).stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	# Proporção original: a borda inclinada fica no mesmo ângulo da diagonal.
+	painel.custom_minimum_size = Vector2(h_painel * 611.0 / 109.0, h_painel)
+	painel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	caixa.add_child(painel)
+	# Diagonal ocre da altura inteira da faixa, paralela à borda inclinada do
+	# painel e bem perto dela (como no exemplo). Só escala, sem esticar.
+	var diag := TextureRect.new()
+	diag.texture = load(PASTA + "diagonal.png")
+	diag.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	diag.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	diag.size = Vector2(ALTURA * 88.0 / 119.0, ALTURA)
+	diag.position = Vector2(-ALTURA * 0.36, (h_painel - ALTURA) / 2.0)
+	diag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	painel.add_child(diag)
+	var dentro := HBoxContainer.new()
+	dentro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dentro.offset_left = h_painel * 0.75  # depois da borda inclinada
+	dentro.offset_right = -h_painel * 0.22
+	dentro.add_theme_constant_override("separation", 8)
+	dentro.alignment = BoxContainer.ALIGNMENT_CENTER  # moeda, número e GIROS juntos
+	dentro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	painel.add_child(dentro)
+	var moeda := TextureRect.new()
+	moeda.texture = load(PASTA + "icone_giros.png")
+	moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	moeda.custom_minimum_size = Vector2(h_painel * 0.55, h_painel * 0.66)
+	moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	moeda.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dentro.add_child(moeda)
+	numero = Label.new()
+	numero.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	Tipografia.numero(numero, TAMANHO_NUMERO)
+	numero.add_theme_color_override("font_color", COR_NUMERO)
+	numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_caixa_numero = _centrado(numero, DESVIO_NUMERO)
+	dentro.add_child(_caixa_numero)
+	_dentro_painel = dentro
+	var giros := Label.new()
+	giros.text = "GIROS"
+	giros.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	Tipografia.rotulo(giros, "semibold", 20)
+	giros.add_theme_color_override("font_color", COR_ROTULO)
+	giros.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var caixa_giros := _centrado(giros, DESVIO_GIROS)
+	caixa_giros.custom_minimum_size.x = Tipografia.fonte("semibold").get_string_size("GIROS",
+			HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x + 2.0
+	dentro.add_child(caixa_giros)
+	_espaco(4)
+	# Configurações: engrenagem na própria faixa, depois do painel.
+	engrenagem = Button.new()
+	engrenagem.flat = true
+	engrenagem.focus_mode = Control.FOCUS_NONE
+	engrenagem.custom_minimum_size = Vector2(ALTURA * 0.82, ALTURA)
+	engrenagem.tooltip_text = "Configurações"
+	engrenagem.pressed.connect(func(): configuracoes.emit())
+	var eng := IconeVetor.new("engrenagem", COR_ROTULO)
+	eng.cor_fundo = COR_FAIXA
+	eng.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	eng.offset_left = ALTURA * 0.14
+	eng.offset_right = -ALTURA * 0.14
+	eng.offset_top = ALTURA * 0.22
+	eng.offset_bottom = -ALTURA * 0.22
+	engrenagem.add_child(eng)
+	_faixa.add_child(engrenagem)
+	_espaco(6)
+	_criar_marcador()
+	_criar_aba_corrida()
+	_criar_aba_garagem()
+	_criar_aba_nomes()
+	_criar_aba_mapa()
+	titulo.resized.connect(_ajustar_titulo)
+	resized.connect(_posicionar)
+	_posicionar()
+
+
+## Distância do topo até a área segura (recorte da câmera, barra do sistema):
+## a faixa cobre esse trecho; os elementos ficam abaixo dele.
+func definir_area_segura(cima: float) -> void:
+	_area_segura = cima
+	_posicionar()
+
+
+## Altura total da faixa (área segura + elementos): onde o conteúdo começa.
+func altura_total() -> float:
+	return _area_segura + ALTURA
+
+
+func _posicionar() -> void:
+	_faixa.offset_top = _area_segura
+	_faixa.offset_bottom = _area_segura + ALTURA
+	offset_bottom = altura_total()
+	if marcador != null:
+		# Da direita para a esquerda: a bandeira (voltar à corrida), ACELERAR e,
+		# na Oficina, GARAGEM; no mapa das Lojas, NOMES. Dentro de uma loja, a
+		# volta ao mapa fica sozinha no canto esquerdo.
+		var direita := size.x - 14.0
+		if aba_mapa != null and aba_mapa.visible:
+			var wm: float = (aba_mapa.get_child(0) as Control).get_combined_minimum_size().x + 34.0
+			aba_mapa.size = Vector2(wm, ALTURA_MARCADOR)
+			aba_mapa.position = Vector2(14.0, altura_total())
+		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes]:
+			if aba == null or not aba.visible:
+				continue
+			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
+			if aba == marcador:
+				wa = maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
+			aba.size = Vector2(wa, ALTURA_MARCADOR)
+			aba.position = Vector2(direita - wa, altura_total())
+			direita -= wa + 10.0
+
+
+## Título da tela, em fonte menor se não couber (a engrenagem tira espaço).
+func definir_titulo(texto: String) -> void:
+	titulo.text = texto
+	_ajustar_titulo()
+
+
+func _ajustar_titulo() -> void:
+	var livre := titulo.size.x
+	if livre <= 0.0:
+		return
+	var f := Tipografia.fonte("semibold")
+	var tam := TAMANHO_TITULO
+	while tam > TAMANHO_TITULO_MIN and f.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	titulo.add_theme_font_size_override("font_size", tam)
+
+
+## Aba pendurada sob a faixa: a mesma cor, cantos de baixo arredondados.
+func _criar_marcador() -> void:
+	marcador = Button.new()
+	marcador.focus_mode = Control.FOCUS_NONE
+	marcador.tooltip_text = "Corridas aceleradas"
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_FAIXA
+	sb.corner_radius_bottom_left = 12
+	sb.corner_radius_bottom_right = 12
+	sb.content_margin_left = 16
+	sb.content_margin_right = 18
+	sb.shadow_color = Color(0, 0, 0, 0.35)
+	sb.shadow_size = 6
+	sb.shadow_offset = Vector2(0, 3)
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		marcador.add_theme_stylebox_override(estado, sb)
+	marcador.pressed.connect(func(): acelerar.emit())
+	var h := HBoxContainer.new()
+	_caixa_marcador = h
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marcador.add_child(h)
+	_icone_marcador = IconeVetor.new("acelerar", COR_APAGADO)
+	_icone_marcador.custom_minimum_size = Vector2(32, 26)
+	_icone_marcador.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_icone_marcador)
+	_texto_marcador = Label.new()
+	_texto_marcador.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_texto_marcador.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(_texto_marcador)
+	_tempo_marcador = Label.new()
+	_tempo_marcador.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_tempo_marcador.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.numero(_tempo_marcador, 28)
+	_tempo_marcador.add_theme_color_override("font_color", COR_TITULO)
+	h.add_child(_tempo_marcador)
+	definir_aceleracao(0.0, 1.0)
+	add_child(marcador)
+
+
+## Aba GARAGEM, pendurada à esquerda do marcador (só na Oficina).
+func _criar_aba_garagem() -> void:
+	aba_garagem = Button.new()
+	aba_garagem.focus_mode = Control.FOCUS_NONE
+	aba_garagem.tooltip_text = "Seus carros"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_garagem.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_garagem.pressed.connect(func(): garagem.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_garagem.add_child(h)
+	var ic := IconeVetor.new("grade", COR_APAGADO)
+	ic.custom_minimum_size = Vector2(26, 26)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(ic)
+	var t := Label.new()
+	t.text = "GARAGEM"
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	aba_garagem.visible = false
+	add_child(aba_garagem)
+
+
+## Aba da bandeira: volta para a corrida em andamento (acesa quando há uma).
+func _criar_aba_corrida() -> void:
+	aba_corrida = Button.new()
+	aba_corrida.focus_mode = Control.FOCUS_NONE
+	aba_corrida.tooltip_text = "Voltar à corrida"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_corrida.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_corrida.pressed.connect(func(): corrida.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_corrida.add_child(h)
+	_icone_corrida = IconeVetor.new("bandeira", COR_APAGADO)
+	_icone_corrida.custom_minimum_size = Vector2(34, 30)
+	_icone_corrida.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_icone_corrida)
+	add_child(aba_corrida)
+
+
+## Bandeira acesa (ocre) com corrida em andamento; apagada sem.
+func definir_corrida(ativa: bool) -> void:
+	_icone_corrida.cor = COR_NUMERO if ativa else COR_APAGADO
+
+
+func mostrar_corrida(sim: bool) -> void:
+	aba_corrida.visible = sim
+	_posicionar()
+
+
+## Aba NOMES (mapa das Lojas): mostra ou esconde os nomes das lojas sobre
+## elas; ✓ com os nomes à vista, ✗ sem (começa assim).
+func _criar_aba_nomes() -> void:
+	aba_nomes = Button.new()
+	aba_nomes.focus_mode = Control.FOCUS_NONE
+	aba_nomes.tooltip_text = "Nomes das lojas"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_nomes.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_nomes.pressed.connect(func(): nomes.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_nomes.add_child(h)
+	_icone_nomes = IconeVetor.new("x", COR_APAGADO)
+	_icone_nomes.custom_minimum_size = Vector2(24, 24)
+	_icone_nomes.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_icone_nomes)
+	var t := Label.new()
+	t.text = "NOMES"
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	aba_nomes.visible = false
+	add_child(aba_nomes)
+
+
+## Aba ‹ MAPA DAS LOJAS: dentro de uma loja, volta ao mapa.
+func _criar_aba_mapa() -> void:
+	aba_mapa = Button.new()
+	aba_mapa.focus_mode = Control.FOCUS_NONE
+	aba_mapa.tooltip_text = "Voltar ao mapa das lojas"
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		aba_mapa.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	aba_mapa.pressed.connect(func(): mapa.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 8)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	aba_mapa.add_child(h)
+	# A seta do voltar do cabeçalho, recortada da caixa, em escala uniforme.
+	var recorte := AtlasTexture.new()
+	recorte.atlas = load(PASTA + "voltar.png")
+	recorte.region = Rect2(38, 34, 46, 54)
+	var seta := TextureRect.new()
+	seta.texture = recorte
+	seta.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	seta.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	seta.custom_minimum_size = Vector2(22, 26)
+	seta.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(seta)
+	var t := Label.new()
+	t.text = "MAPA DAS LOJAS"
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	aba_mapa.visible = false
+	add_child(aba_mapa)
+
+
+func mostrar_mapa(sim: bool) -> void:
+	if aba_mapa.visible != sim:
+		aba_mapa.visible = sim
+		_posicionar()
+
+
+func definir_nomes(ligado: bool) -> void:
+	_icone_nomes.tipo = "check" if ligado else "x"
+	_icone_nomes.cor = COR_NUMERO if ligado else COR_APAGADO
+
+
+func mostrar_nomes(sim: bool) -> void:
+	if aba_nomes.visible != sim:
+		aba_nomes.visible = sim
+		_posicionar()
+
+
+func mostrar_garagem(sim: bool) -> void:
+	aba_garagem.visible = sim
+	_posicionar()
+
+
+## Estado do marcador: `restante_s` (tempo real que falta; 0 = parado) e o fator.
+func definir_aceleracao(restante_s: float, fator: float) -> void:
+	_ativo = restante_s > 0.0
+	if _ativo:
+		_texto_marcador.text = "%d×" % roundi(fator)
+		Tipografia.numero(_texto_marcador, 34)
+		_texto_marcador.add_theme_color_override("font_color", COR_NUMERO)
+		_tempo_marcador.text = Aceleracao.texto_tempo(restante_s)
+		_tempo_marcador.visible = true
+		_icone_marcador.cor = COR_NUMERO
+	else:
+		_texto_marcador.text = "ACELERAR"
+		Tipografia.rotulo(_texto_marcador, "semibold", 25)
+		_texto_marcador.add_theme_color_override("font_color", COR_ROTULO)
+		_tempo_marcador.visible = false
+		_icone_marcador.cor = COR_APAGADO
+		_icone_marcador.modulate.a = 1.0
+	set_process(_ativo)
+	_posicionar.call_deferred()
+
+
+## Ativo: o ícone respira devagar (parado com movimento reduzido).
+func _process(delta: float) -> void:
+	if Preferencias.reduzir_animacoes:
+		_icone_marcador.modulate.a = 1.0
+		return
+	_pulso = fmod(_pulso + delta, 2.4)
+	_icone_marcador.modulate.a = 0.7 + 0.3 * cos(TAU * _pulso / 2.4)
+
+
+## Valor dos giros, encolhendo a fonte se não couber na moldura.
+func definir_giros(texto: String) -> void:
+	numero.text = texto
+	var f := Tipografia.fonte_numero()
+	# Espaço do número: o painel menos a moeda, GIROS e os vãos (o trio fica
+	# junto, no centro do painel).
+	var livre := 150.0
+	if _dentro_painel != null and _dentro_painel.size.x > 0.0:
+		livre = _dentro_painel.size.x - 16.0
+		for k in _dentro_painel.get_children():
+			if k != _caixa_numero:
+				livre -= (k as Control).get_combined_minimum_size().x
+	var tam := TAMANHO_NUMERO
+	while tam > 20 and f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	numero.add_theme_font_size_override("font_size", tam)
+	_caixa_numero.custom_minimum_size.x = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + 4.0
+
+
+## Voltar habilitado só quando há tela anterior; sem ela, 80% de opacidade.
+func definir_volta(possivel: bool) -> void:
+	botao_voltar.disabled = not possivel
+	botao_voltar.mouse_filter = Control.MOUSE_FILTER_STOP if possivel else Control.MOUSE_FILTER_IGNORE
+	create_tween().tween_property(botao_voltar, "modulate:a", 1.0 if possivel else OPACIDADE_SEM_VOLTA, 0.2)
+
+
+func _imagem(arquivo: String, tam: Vector2) -> TextureRect:
+	var t := TextureRect.new()
+	t.texture = load(PASTA + arquivo)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # só escala, nunca estica
+	t.custom_minimum_size = tam
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_faixa.add_child(t)
+	return t
+
+
+## Rótulo dentro de uma caixa da altura da faixa, subido `desvio` px: o centro
+## das letras cai exatamente no centro da faixa, junto com as imagens.
+func _centrado(l: Label, desvio: float) -> Control:
+	var caixa := Control.new()
+	caixa.size_flags_horizontal = l.size_flags_horizontal
+	caixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.size_flags_horizontal = Control.SIZE_FILL
+	caixa.add_child(l)
+	l.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	l.offset_top = -desvio
+	l.offset_bottom = -desvio
+	return caixa
+
+
+func _espaco(largura: float) -> void:
+	var e := Control.new()
+	e.custom_minimum_size = Vector2(largura, 0)
+	e.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_faixa.add_child(e)

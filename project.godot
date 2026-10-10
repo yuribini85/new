@@ -1,43 +1,38 @@
 ; Engine configuration file.
 ; It's best edited using the editor UI and not directly,
 ; since the parameters that go here are not all obvious.
-;
-; Format:
-;   [section] ; section goes to the same key/value pair as if
-;              no section was defined.
-;
-; Individual values are stored as key/value pairs.
 
 config_version=5
 
 [application]
 
-config/name="The Way Back"
-run/main_scene="res://scenes/mapa.tscn"
+config/name="Chrome & Wreckage"
+config/version="0.1.0-alpha.1"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Apex Garage"
+run/main_scene="res://scenes/inicio.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/bg_color=Color(0.078, 0.09, 0.11, 1)
+boot_splash/show_image=false
 
 [autoload]
 
 Dados="*res://autoload/dados.gd"
+Jogador="*res://autoload/jogador.gd"
 SaveManager="*res://autoload/save_manager.gd"
-Vila="*res://autoload/vila.gd"
-Populacao="*res://autoload/populacao.gd"
-Economia="*res://autoload/economia.gd"
-Floresta="*res://autoload/floresta.gd"
-Expedicoes="*res://autoload/expedicoes.gd"
-Sim="*res://autoload/sim.gd"
-
-[display]
-
-window/size/viewport_width=1920
-window/size/viewport_height=1080
-window/size/window_width_override=960
-window/size/window_height_override=540
-window/handheld/orientation="landscape"
-window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.05, 0.055, 0.07, 1)
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=405
+window/size/window_height_override=720
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_width"

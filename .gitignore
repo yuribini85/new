@@ -2,12 +2,20 @@
 .godot/
 .import/
 export.cfg
-export_presets.cfg
 *.translation
 
 # Capturas locais de QA (não fazem parte do jogo)
 /captures/
+/build/
 
 # OS
 Thumbs.db
 .DS_Store
+
+# Tabelas de referência do GT2 (uso interno, nunca versionar)
+/referencia/
+/referencia*.csv
+
+# Python
+__pycache__/
+/versao.txt
