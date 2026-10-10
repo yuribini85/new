@@ -73,6 +73,18 @@ var _foco_auto := "jogador"
 var segurar_largada := false
 
 
+## Velocidade máxima do carro inscrito (km/h): o HUD doura o número perto dela.
+var _kmh_max := 0.0
+## Largada: 3-2-1 com o grid parado (s que faltam; < 0 = sem contagem).
+const CONTAGEM_S := 3.0
+var _contagem := -1.0
+## Chegada: a imagem para PAUSA_CHEGADA_S quando você cruza e depois alcança
+## o relógio de novo (_atraso volta a zero). Só apresentação.
+const PAUSA_CHEGADA_S := 0.3
+const ALCANCE := 0.25  # s de atraso recuperados por segundo
+var _atraso := 0.0
+var _pausa := 0.0
+
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Corrida")
 	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER  # a corrida cabe na tela: sem rolagem
@@ -286,6 +298,7 @@ func _process(delta: float) -> void:
 	if not is_visible_in_tree() or jogador.fila_ctrl == null:
 		if _sons != null:
 			_sons.motor(false)
+			_sons.torcida(0.0)
 		return
 	_atualizar_seletor(delta)
 	var f: Dictionary = jogador.fila
@@ -314,18 +327,26 @@ func _process(delta: float) -> void:
 		_semente_mostrada = 0
 		_segurar = 0.0
 		_sons.motor(false)
+		_sons.torcida(0.0)
 		_info.text = "Nenhuma corrida em andamento."
 		_relogio.text = ""
 		return
 	var agora := Aceleracao.agora(jogador)
-	if segurar_largada:
+	if _contagem >= 0.0:
+		_contar(delta)
+	if segurar_largada or _contagem > 0.0:
 		f["inicio"] = agora  # parada no grid: o relógio da corrida não anda
 	if f["semente"] != _semente_mostrada:
 		var c: Dictionary = jogador.fila_ctrl.corrida_atual(agora)
 		if c.is_empty():
 			return
 		_mostrar_corrida(f, c, agora)
-	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
+	if _pausa > 0.0:
+		_pausa -= delta
+		_atraso += delta
+	else:
+		_atraso = move_toward(_atraso, 0.0, delta * ALCANCE)
+	_visual.tempo = clampf(agora - float(f["inicio"]) - _atraso, 0.0, _visual.duracao())
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
@@ -335,6 +356,9 @@ func _process(delta: float) -> void:
 	if s_agora >= meta and not _chegou:
 		_chegou = true
 		_sons.chegada()
+		if not Preferencias.reduzir_animacoes:
+			_pausa = PAUSA_CHEGADA_S
+		_painel_hud.bandeirada()
 		var pos := ordem.find("jogador") + 1
 		_painel_hud.evento("CHEGADA", "%dº" % pos, COR_DESTAQUE if pos <= 3 else Color.WHITE, 10, -1.0, true)
 	if _chegou:
@@ -387,6 +411,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	var inscrito: Carro = meu.com_configuracao(f["config"], dados.peca, dados.pneu) if f.get("config") is Dictionary else meu
 	_atributos_hud = inscrito.atributos_efetivos(ev.get("condicao", "seco"))
 	_tatica = Tatica.curvas(_pista, _atributos_hud, dados.simulacao(), dados.curvas(_pista.id))
+	_kmh_max = Simulacao.velocidade_maxima_kmh(_atributos_hud, dados.simulacao())
 	for i in ev["adversarios"].size():
 		var adv: Dictionary = ev["adversarios"][i]
 		var pid := "adv%d_%s" % [i, adv["carro"]]
@@ -413,7 +438,15 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_chegou = false
 	_t_chegada = 0.0
 	_s_jogador = _visual.distancia("jogador")
-	if _visual.tempo < 2.0:
+	_atraso = 0.0
+	_pausa = 0.0
+	_marcha_antes = 0
+	if _visual.tempo < 0.5 and not segurar_largada:
+		# Corrida começando agora com a tela aberta: 3-2-1 no grid.
+		_contagem = CONTAGEM_S
+		_painel_hud.contagem = _contagem
+		_sons.largada(false)
+	elif _visual.tempo < 2.0:
 		_sons.largada(true)
 		_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
 	else:
@@ -451,6 +484,25 @@ func _ajustar_area() -> void:
 		var livre := size.y - _cameras.get_combined_minimum_size().y - _nome_prova.get_combined_minimum_size().y \
 				- 2.0 * 14.0 - 10.0
 		_area.custom_minimum_size.y = maxf(ALTURA_MIN_AREA, livre)
+
+
+## Contagem da largada: um bipe por número; no zero, a largada (se nenhuma
+## cena estiver segurando o grid).
+func _contar(delta: float) -> void:
+	var antes := ceili(_contagem)
+	_contagem = maxf(_contagem - delta, 0.0)
+	_painel_hud.contagem = _contagem
+	if ceili(_contagem) < antes and _contagem > 0.0:
+		_sons.largada(false)
+	if _contagem <= 0.0:
+		_contagem = -1.0
+		_painel_hud.contagem = -1.0
+		if not segurar_largada:
+			if not jogador.fila.is_empty():
+				jogador.fila["inicio"] = Aceleracao.agora(jogador)
+			_diretor.reiniciar()
+			_sons.largada(true)
+			_painel_hud.evento("LARGADA", "", COR_DESTAQUE, 3)
 
 
 ## Fim da cena da largada: a corrida começa agora.
@@ -532,6 +584,7 @@ func _atualizar_hud(ordem: Array) -> void:
 	var v := maxf(_visual.distancia_em("jogador", _visual.tempo) - _visual.distancia_em("jogador", maxf(_visual.tempo - 0.5, 0.0)), 0.0) \
 			/ minf(0.5, maxf(_visual.tempo, 0.05))
 	var mg := Simulacao.marcha_e_giro(_atributos_hud, v) if not _atributos_hud.is_empty() else [0, 0.0]
+	_som_da_corrida(mg, i, ordem, s, volta)
 	# Quem está atacando você: o carro logo atrás, a menos de APROXIMA_S.
 	var atacante := ""
 	if i + 1 < ordem.size() and not _chegou:
@@ -547,9 +600,9 @@ func _atualizar_hud(ordem: Array) -> void:
 	_painel_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": _voltas,
 		"tempo_volta": _visual.tempo - maxf(inicio_volta, 0.0), "melhor": melhor, "kmh": v * 3.6,
 		"delta": delta if tem_delta and not _chegou else INF,
-		"marcha": mg[0], "giro": mg[1], "corte": float(_atributos_hud.get("corte", 0.0)),
+		"marcha": mg[0], "giro": mg[1], "corte": float(_atributos_hud.get("corte", 0.0)), "kmh_max": _kmh_max,
 		"giro_max": ceilf((float(_atributos_hud.get("corte", 0.0)) + 600.0) / 1000.0) * 1000.0 if _atributos_hud.has("corte") else 0.0,
-		"lista": lista})
+		"lista": lista, "ultima": volta == _voltas and not _chegou})
 	if _vista.visible:
 		_atualizar_vista(ordem, i, s, volta, melhor, delta if tem_delta and not _chegou else INF, v, mg)
 	# A tela respira: disputa de perto (à frente ou atrás) ou chegada apagam o
@@ -561,6 +614,38 @@ func _atualizar_hud(ordem: Array) -> void:
 	_painel_hud.secundario = 0.0 if _chegou else (0.35 if perto else 1.0)
 	_minimapa.modulate.a = move_toward(_minimapa.modulate.a, 0.0 if _chegou else (0.55 if perto else 1.0),
 			get_process_delta_time() / 0.6)
+
+
+## Som que acompanha o seu carro: motor pelo giro, estalo na redução, pneu e
+## zebra pelo 3D, torcida na reta final da última volta com disputa de perto
+## (e na chegada).
+var _marcha_antes := 0
+
+
+func _som_da_corrida(mg: Array, i: int, ordem: Array, s: float, volta: int) -> void:
+	if _chegou:
+		_sons.torcida(1.0 - smoothstep(1.5, 4.0, _t_chegada))
+		return
+	var corte := float(_atributos_hud.get("corte", 0.0))
+	if corte > 0.0:
+		var escala := ceilf((corte + 600.0) / 1000.0) * 1000.0
+		_sons.motor_giro(float(mg[1]) / escala)
+	if int(mg[0]) < _marcha_antes and int(mg[0]) > 0:
+		_sons.reducao()
+	_marcha_antes = int(mg[0])
+	_sons.pneu(_visual3d.cantando("jogador"), _visual3d.na_zebra("jogador"))
+	var torcida := 0.0
+	if volta == _voltas:
+		var resto := 1.0 - fposmod(s, _pista.comprimento) / _pista.comprimento
+		var perto := false
+		if i > 0:
+			var g := _gap(ordem[i - 1], "jogador")
+			perto = g >= 0.0 and g < RESPIRA_S
+		if i + 1 < ordem.size():
+			var g := _gap("jogador", ordem[i + 1])
+			perto = perto or (g >= 0.0 and g < RESPIRA_S)
+		torcida = (1.0 - smoothstep(0.1, 0.3, resto)) * (1.0 if perto else 0.45)
+	_sons.torcida(torcida)
 
 
 ## Vista DADOS: os mesmos números do HUD, mais a próxima curva (Tatica), quem
@@ -632,7 +717,9 @@ func _eventos(ordem: Array) -> void:
 			_melhor_volta = tv if _melhor_volta < 0.0 else minf(_melhor_volta, tv)
 		var dif := _texto_dif(ordem, pos)
 		if volta == _voltas:
-			_painel_hud.evento("ÚLTIMA VOLTA", "%dº%s" % [pos, " · " + dif if dif != "" else ""], COR_DESTAQUE, 4)
+			_painel_hud.evento("ÚLTIMA VOLTA", "%dº%s" % [pos, " · " + dif if dif != "" else ""], COR_DESTAQUE, 4,
+					HudCorrida.EVENTO_FICA_S + 0.8, false, true)
+			_sons.ultima_volta()
 		elif melhorou:
 			_painel_hud.evento("MELHOR VOLTA", HudCorrida._tempo(tv), Color.WHITE, 3)
 		elif pos == 1 and dif != "":

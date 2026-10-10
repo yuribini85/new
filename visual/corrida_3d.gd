@@ -231,6 +231,7 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 		r.outline_modulate = Color(0, 0, 0, 0.75)
 		_cena.add_child(r)
 		_rotulos[id] = r
+		_criar_efeitos(id, c)
 		_lateral[id] = _tracado.lateral(fonte.distancia(id))
 		_off[id] = 0.0
 		_tracao[id] = String(base.get("tracao", "FF"))
@@ -250,6 +251,16 @@ func limpar() -> void:
 	_em_contato = {}
 	_s_anterior = {}
 	_tranco = {}
+	_freio = {}
+	_fumaca = {}
+	_luzes = {}
+	_v_max = {}
+	_rastros = {}
+	_marcas = null
+	_marca_i = 0
+	_marca_dist = {}
+	_marca_ponto = {}
+	_marcando = {}
 	_pista = null
 
 
@@ -319,12 +330,17 @@ func atualizar(delta: float) -> void:
 			esterco += gb
 			_giro_batida[id] = gb * exp(-delta * 4.0) if absf(gb) > 0.005 else 0.0
 		# Na zebra (rodas de dentro sobre ela, na curva): trepida um pouco.
-		if absf(float(_lateral[id])) > Tracado.ABERTO_M + 0.2 and absf(_tracado.curvatura(dist)) > 0.002:
+		_na_zebra[id] = absf(float(_lateral[id])) > Tracado.ABERTO_M + 0.2 and absf(_tracado.curvatura(dist)) > 0.002
+		if _na_zebra[id]:
 			esterco += sin(Time.get_ticks_msec() * 0.09 + i) * 0.015
 		c.rotation.y = rumo + esterco
 		c.girar_rodas(maxf(ds, 0.0))
 		if delta > 0.0:
-			_v[id] = lerpf(float(_v.get(id, 0.0)), maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
+			var v_antes := float(_v.get(id, 0.0))
+			_v[id] = lerpf(v_antes, maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
+			_efeitos_pista(id, (float(_v[id]) - v_antes) / delta, float(_v[id]), delta)
+			if _fonte.tempo > 4.0:
+				_v_max[id] = maxf(float(_v_max.get(id, 0.0)), float(_v[id]))
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
 		# Sem nome, número nem seta sobre os carros: a classificação do HUD e os
@@ -332,6 +348,8 @@ func atualizar(delta: float) -> void:
 		r.text = ""
 		r.visible = false
 		r.position = c.position + Vector3(0, ALTURA_MARCADOR, 0)
+	_apagar_marcas()
+	_vacuo(s)
 	# Na visão geral, carros e números maiores para continuarem visíveis.
 	var escala := maxf(1.0, _tamanho_geral / TAMANHO_CAMERA * 0.35) if visao_geral else 1.0
 	for id in _carros:
@@ -446,6 +464,11 @@ func atualizar(delta: float) -> void:
 	_alvo_camera = novo if delta <= 0.0 or Preferencias.reduzir_animacoes or _b > 0.0 \
 			or _alvo_camera.distance_to(novo) > 40.0 else _alvo_camera.lerp(novo, clampf(delta * 5.0, 0.0, 1.0))
 	efeito_velocidade = _b * clampf((float(_v.get(seguido, 0.0)) - V_MIN) / (V_FORTE - V_MIN), 0.3, 1.0)
+	# Retas: perto da velocidade máxima que o carro já mostrou, um pouco do
+	# efeito também de cima (linhas e borrão leves).
+	var frac := v_seg / maxf(float(_v_max.get(seguido, 0.0)), RETA_V_MIN)
+	var reta := 1.0 - smoothstep(0.0012, 0.0035, absf(_tracado.curvatura(float(s[seguido]))))
+	efeito_velocidade = maxf(efeito_velocidade, RETA_EFEITO * smoothstep(0.84, 0.97, frac) * reta)
 	(material as ShaderMaterial).set_shader_parameter("intensidade",
 			0.0 if Preferencias.reduzir_animacoes else efeito_velocidade)
 	_camera_imediata()
@@ -518,6 +541,10 @@ func _decidir_modo(id: String, _s: float, disputa: bool) -> String:
 	var calmo := "foco" if disputa else "normal"
 	if Preferencias.reduzir_animacoes or _fonte == null:
 		return calmo
+	# Chegada: a câmera inclinada atrás do carro, mais perto, até o fim.
+	if chegada > 0.0:
+		_ultrapassado = ""
+		return "velocidade"
 	var agora := _fonte.tempo
 	if modo == "velocidade":
 		# Fica até o carro seguido estar bem à frente do ultrapassado; sai antes
@@ -605,6 +632,286 @@ func _bater(a: String, b: String, dl: float) -> void:
 	if a == seguido or b == seguido:
 		_tremor = 0.4
 	_faiscas((_carros[a].position + _carros[b].position) * 0.5 + Vector3(0, 0.4, 0))
+
+
+# --- Efeitos de pista: luz de freio e fumaça dos pneus ---------------------
+# Só leitura do movimento que a simulação já decidiu (a desaceleração da
+# distância andada); nada aqui muda o resultado.
+
+## Freada (m/s²): acende acima de FREIO_ON, apaga abaixo de FREIO_OFF.
+const FREIO_ON := 3.5
+const FREIO_OFF := 1.5
+## Fumaça: freada forte, ou arrancada forte em baixa velocidade.
+const FUMACA_FREADA := 9.0
+const FUMACA_ARRANCADA := 4.5
+const FUMACA_V_MAX := 11.0  # m/s: acima disso a arrancada não solta fumaça
+var _freio := {}  # id -> intensidade da luz (0..1), suavizada
+var _luzes := {}  # id -> StandardMaterial3D das lanternas
+var _fumaca := {}  # id -> CPUParticles3D
+
+
+func _criar_efeitos(id: String, c: Node3D) -> void:
+	var dim: Vector2 = c.dimensoes() if c.has_method("dimensoes") else Vector2(4.4, 1.75)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.no_depth_test = true
+	mat.render_priority = 3
+	mat.albedo_texture = _brilho()
+	mat.albedo_color = Color(1.0, 0.12, 0.08, 0.0)
+	for lado in [-1.0, 1.0]:
+		var q := MeshInstance3D.new()
+		var m := QuadMesh.new()
+		m.size = Vector2(0.95, 0.95)
+		q.mesh = m
+		q.material_override = mat
+		q.position = Vector3(-dim.x * 0.5 + 0.1, 0.55, lado * dim.y * 0.33)
+		c.add_child(q)
+	_luzes[id] = mat
+	_freio[id] = 0.0
+	if Preferencias.efeitos_leves:
+		return
+	var f := CPUParticles3D.new()
+	f.emitting = false
+	f.amount = 24
+	f.lifetime = 0.9
+	f.local_coords = false
+	f.direction = Vector3.UP
+	f.spread = 35.0
+	f.initial_velocity_min = 0.6
+	f.initial_velocity_max = 1.6
+	f.gravity = Vector3(0, 0.6, 0)
+	f.damping_min = 1.0
+	f.damping_max = 2.0
+	f.scale_amount_min = 1.0
+	f.scale_amount_max = 2.2
+	var curva := Curve.new()
+	curva.add_point(Vector2(0.0, 0.4))
+	curva.add_point(Vector2(1.0, 1.6))
+	f.scale_amount_curve = curva
+	f.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	f.emission_box_extents = Vector3(0.15, 0.05, dim.y * 0.42)
+	var q := QuadMesh.new()
+	q.size = Vector2(0.7, 0.7)
+	var mf := StandardMaterial3D.new()
+	mf.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mf.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mf.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	mf.vertex_color_use_as_albedo = true
+	mf.albedo_texture = _brilho(true)
+	q.material = mf
+	f.mesh = q
+	var cores := Gradient.new()
+	cores.set_color(0, Color(0.92, 0.92, 0.94, 0.55))
+	cores.set_color(1, Color(0.85, 0.86, 0.9, 0.0))
+	f.color_ramp = cores
+	f.position = Vector3(-dim.x * 0.42, 0.15, 0.0)
+	c.add_child(f)
+	_fumaca[id] = f
+
+
+## Mancha redonda suave (lanternas e fumaça), feita uma vez.
+static var _textura_brilho: Texture2D
+static var _textura_nuvem: Texture2D
+## so_alfa: branca, só o alfa cai (fumaça); senão escurece junto (lanternas).
+static func _brilho(so_alfa := false) -> Texture2D:
+	if so_alfa and _textura_nuvem == null:
+		var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+		for y in 64:
+			for x in 64:
+				var d := Vector2(x - 31.5, y - 31.5).length() / 32.0
+				img.set_pixel(x, y, Color(1, 1, 1, pow(clampf(1.0 - d, 0.0, 1.0), 1.4)))
+		_textura_nuvem = ImageTexture.create_from_image(img)
+	if so_alfa:
+		return _textura_nuvem
+	if _textura_brilho == null:
+		# Escurece junto com o alfa: serve tanto somando (lanternas) quanto por
+		# transparência (fumaça).
+		var lado := 64
+		var img := Image.create(lado, lado, false, Image.FORMAT_RGBA8)
+		for y in lado:
+			for x in lado:
+				var d := Vector2(x + 0.5 - lado * 0.5, y + 0.5 - lado * 0.5).length() / (lado * 0.5)
+				var k := pow(clampf(1.0 - d, 0.0, 1.0), 1.6)
+				img.set_pixel(x, y, Color(k, k, k, k))
+		_textura_brilho = ImageTexture.create_from_image(img)
+	return _textura_brilho
+
+
+## Linhas de velocidade nas retas: intensidade máxima e velocidade mínima
+## de referência (m/s) antes de o carro mostrar a dele.
+const RETA_EFEITO := 0.32
+const RETA_V_MIN := 25.0
+var _v_max := {}  # id -> maior velocidade vista (m/s)
+
+## Marcas de pneu: na freada forte, traços escuros no chão que somem devagar.
+const MARCA_FREADA := 6.5  # m/s²
+const MARCA_PASSO_M := 0.7
+const MARCAS_MAX := 240
+const MARCA_DURA_S := 7.0
+var _marcas: MultiMeshInstance3D
+var _marca_i := 0
+var _marca_t := PackedFloat32Array()
+var _marca_dist := {}  # id -> distância andada desde a última marca
+var _marca_ponto := {}  # id -> [esquerda, direita] da última marca (Vector3)
+var _marcando := {}  # id -> está deixando marca (histerese)
+const MARCA_SOLTA := 4.0  # m/s²: abaixo disso a marca termina
+
+## Vácuo: o seu carro logo atrás de outro numa reta deixa ver o ar que ele
+## empurra (rastros finos saindo da traseira do da frente).
+const VACUO_MIN_M := 3.0
+const VACUO_MAX_M := 14.0
+const VACUO_LADO_M := 1.4
+var _rastros := {}  # id -> CPUParticles3D
+var _na_zebra := {}  # id -> rodas sobre a zebra (para o som)
+
+
+## Para o som: o carro está cantando pneu (fumaça ou marca) / na zebra.
+func cantando(id: String) -> bool:
+	return bool(_marcando.get(id, false)) or (_fumaca.has(id) and (_fumaca[id] as CPUParticles3D).emitting)
+
+
+func na_zebra(id: String) -> bool:
+	return bool(_na_zebra.get(id, false))
+
+
+func _criar_marcas() -> void:
+	_marcas = MultiMeshInstance3D.new()
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = true
+	var q := QuadMesh.new()
+	q.size = Vector2(MARCA_PASSO_M, 0.24)
+	q.orientation = PlaneMesh.FACE_Y
+	mm.mesh = q
+	mm.instance_count = MARCAS_MAX
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.vertex_color_use_as_albedo = true
+	_marcas.material_override = mat
+	for k in MARCAS_MAX:
+		mm.set_instance_transform(k, Transform3D(Basis.IDENTITY, Vector3(0, -10, 0)))
+		mm.set_instance_color(k, Color(0, 0, 0, 0))
+	_marcas.multimesh = mm
+	_marca_t.resize(MARCAS_MAX)
+	_marca_t.fill(-INF)
+	_cena.add_child(_marcas)
+
+
+## Traços das rodas de trás: um segmento do ponto da marca anterior até o
+## atual, para a freada deixar um risco contínuo.
+func _marcar(id: String, c: Node3D) -> void:
+	if _marcas == null:
+		_criar_marcas()
+	var dim: Vector2 = c.dimensoes() if c.has_method("dimensoes") else Vector2(4.4, 1.75)
+	var giro := Basis(Vector3.UP, c.rotation.y)
+	var antes: Array = _marca_ponto.get(id, [])
+	var agora := []
+	for k in 2:
+		var lado := -1.0 if k == 0 else 1.0
+		var p := c.position + giro * (Vector3(-dim.x * 0.32, 0.0, lado * dim.y * 0.36) * c.scale.x) + Vector3(0, 0.03, 0)
+		agora.append(p)
+		if antes.size() == 2:
+			var a: Vector3 = antes[k]
+			var d := p - a
+			var comp := d.length()
+			if comp > 0.05 and comp < 4.0:
+				var b := Basis(Vector3.UP, atan2(-d.z, d.x)) * Basis.from_scale(Vector3(comp / MARCA_PASSO_M, 1.0, 1.0))
+				_marcas.multimesh.set_instance_transform(_marca_i, Transform3D(b, (a + p) * 0.5))
+				_marca_t[_marca_i] = _tempo
+				_marca_i = (_marca_i + 1) % MARCAS_MAX
+	_marca_ponto[id] = agora
+
+
+## Marcas somem com o tempo (só as que ainda aparecem são tocadas).
+func _apagar_marcas() -> void:
+	if _marcas == null:
+		return
+	for k in MARCAS_MAX:
+		var idade := _tempo - _marca_t[k]
+		if idade < 0.0 or idade > MARCA_DURA_S + 1.0:
+			continue
+		var a := 0.42 * (1.0 - smoothstep(MARCA_DURA_S * 0.4, MARCA_DURA_S, idade))
+		_marcas.multimesh.set_instance_color(k, Color(0.03, 0.03, 0.035, a))
+
+
+func _criar_rastro(id: String, c: Node3D) -> void:
+	var dim: Vector2 = c.dimensoes() if c.has_method("dimensoes") else Vector2(4.4, 1.75)
+	var f := CPUParticles3D.new()
+	f.emitting = false
+	f.amount = 18
+	f.lifetime = 0.55
+	f.local_coords = false
+	f.direction = Vector3(-1, 0, 0)
+	f.spread = 4.0
+	f.initial_velocity_min = 2.0
+	f.initial_velocity_max = 4.0
+	f.gravity = Vector3.ZERO
+	f.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	f.emission_box_extents = Vector3(0.1, 0.25, dim.y * 0.45)
+	var q := QuadMesh.new()
+	q.size = Vector2(2.6, 0.06)
+	q.orientation = PlaneMesh.FACE_Y
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.vertex_color_use_as_albedo = true
+	m.render_priority = 2
+	q.material = m
+	f.mesh = q
+	var cores := Gradient.new()
+	cores.set_color(0, Color(1, 1, 1, 0.0))
+	cores.add_point(0.25, Color(1, 1, 1, 0.32))
+	cores.set_color(cores.get_point_count() - 1, Color(1, 1, 1, 0.0))
+	f.color_ramp = cores
+	f.position = Vector3(-dim.x * 0.5, 0.4, 0.0)
+	c.add_child(f)
+	_rastros[id] = f
+
+
+## Liga o rastro do carro logo à frente do jogador quando ele está no vácuo
+## (perto, quase na mesma linha, numa reta). Só visual.
+func _vacuo(s: Dictionary) -> void:
+	var frente := ""
+	if not (Preferencias.efeitos_leves or Preferencias.reduzir_animacoes) and _carros.has("jogador") and chegada <= 0.0:
+		var meu := float(s["jogador"])
+		if absf(_tracado.curvatura(meu)) < 0.0015 and absf(_tracado.curvatura(meu + 30.0)) < 0.0015:
+			for id in _carros:
+				var gap := float(s[id]) - meu
+				if id != "jogador" and gap > VACUO_MIN_M and gap < VACUO_MAX_M \
+						and absf(float(_lateral[id]) - float(_lateral["jogador"])) < VACUO_LADO_M:
+					frente = id
+	if frente != "" and not _rastros.has(frente):
+		_criar_rastro(frente, _carros[frente])
+	for id in _rastros:
+		_rastros[id].emitting = id == frente
+
+
+## a: aceleração (m/s², negativa freando); v: velocidade (m/s).
+func _efeitos_pista(id: String, a: float, v: float, delta: float) -> void:
+	if not _luzes.has(id):
+		return
+	var marcando: bool = _marcando.get(id, false)
+	marcando = -a > (MARCA_SOLTA if marcando else MARCA_FREADA) and v > 6.0 and not Preferencias.efeitos_leves \
+			and chegada < 1.0 and _fonte.tempo > 3.0
+	_marcando[id] = marcando
+	if marcando:
+		_marca_dist[id] = float(_marca_dist.get(id, 0.0)) + v * delta
+		if float(_marca_dist[id]) >= MARCA_PASSO_M or not _marca_ponto.has(id):
+			_marca_dist[id] = 0.0
+			_marcar(id, _carros[id])
+	else:
+		_marca_ponto.erase(id)
+	var aceso := float(_freio[id]) > 0.5
+	var freando := -a > (FREIO_OFF if aceso else FREIO_ON) and v > 3.0 and chegada < 1.0
+	_freio[id] = move_toward(float(_freio[id]), 1.0 if freando else 0.0, delta / (0.06 if freando else 0.25))
+	(_luzes[id] as StandardMaterial3D).albedo_color.a = float(_freio[id]) * 0.95
+	if _fumaca.has(id):
+		var fumaca := (-a > FUMACA_FREADA and v > 8.0) or (a > FUMACA_ARRANCADA and v < FUMACA_V_MAX and v > 0.5)
+		(_fumaca[id] as CPUParticles3D).emitting = fumaca and not Preferencias.reduzir_animacoes
 
 
 func _faiscas(onde: Vector3) -> void:

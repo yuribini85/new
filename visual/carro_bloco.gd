@@ -220,6 +220,11 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 
 
 ## Gira as rodas pela distância andada (m).
+## Comprimento e largura (m).
+func dimensoes() -> Vector2:
+	return Vector2(comprimento, largura)
+
+
 func girar_rodas(distancia: float) -> void:
 	for roda in _rodas:
 		roda.rotation.z -= distancia / RAIO_RODA

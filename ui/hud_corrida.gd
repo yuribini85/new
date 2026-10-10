@@ -38,6 +38,7 @@ const TEMPOS_LARGURA := 214.0
 const TEMPOS_LINHA := 28.0
 ## Evento: entra subindo um pouco, fica e sai devagar.
 const EVENTO_ENTRA_S := 0.4
+const EVENTO_POP_S := 0.32
 const EVENTO_SAI_S := 0.7
 const EVENTO_FICA_S := 2.2
 const EVENTO_PENDENTE_MAX_S := 3.0
@@ -68,9 +69,30 @@ func _init() -> void:
 ## giro, corte, giro_max; lista: [{id, nome, cor, voce, camera, gap, ataque}] em
 ## ordem (gap: s atrás do líder; ataque: está atacando o jogador).
 func definir(d: Dictionary) -> void:
+	var pos := int(d.get("posicao", 0))
+	if _pos_antes > 0 and pos > 0 and pos != _pos_antes:
+		_t_pos = Time.get_ticks_msec() / 1000.0
+		_pos_ganhou = pos < _pos_antes
+	_pos_antes = pos
 	_d = d
 	_mover_agulha()
 	queue_redraw()
+
+
+## Placa de posição: ao ganhar, cresce e brilha em ocre; ao perder, treme em
+## vermelho. Dura POS_PULSO_S.
+const POS_PULSO_S := 0.9
+var _pos_antes := 0
+var _t_pos := -INF
+var _pos_ganhou := true
+
+
+## 0..1 do pulso da posição (1 = acabou de mudar).
+func _pulso_pos() -> float:
+	if Preferencias.reduzir_animacoes:
+		return 0.0
+	var t := Time.get_ticks_msec() / 1000.0 - _t_pos
+	return 0.0 if t < 0.0 or t > POS_PULSO_S else 1.0 - t / POS_PULSO_S
 
 
 ## Agulha viva: segue o giro por uma mola pouco amortecida (passa um pouco do
@@ -82,15 +104,21 @@ const AGULHA_TREMOR := 0.018  # fração da escala, no giro máximo
 var _agulha := 0.0
 var _agulha_v := 0.0
 var _agulha_t := -1.0
+var _kmh_vis := 0.0
+## Fração da velocidade máxima a partir da qual o km/h fica dourado.
+const KMH_DOURADO := 0.93
 
 
 func _mover_agulha() -> void:
-	var giro_max := float(_d.get("giro_max", 0.0))
-	if giro_max <= 0.0:
-		return
 	var agora := Time.get_ticks_msec() / 1000.0
 	var dt := clampf(agora - _agulha_t, 0.0, 0.05) if _agulha_t >= 0.0 else 0.0
 	_agulha_t = agora
+	# km/h contando até o valor, sem saltar.
+	var kmh := float(_d.get("kmh", 0.0))
+	_kmh_vis = kmh if dt <= 0.0 or Preferencias.reduzir_animacoes else lerpf(_kmh_vis, kmh, clampf(dt * 9.0, 0.0, 1.0))
+	var giro_max := float(_d.get("giro_max", 0.0))
+	if giro_max <= 0.0:
+		return
 	var giro := float(_d.get("giro", 0.0))
 	var u := clampf(giro / giro_max, 0.0, 1.0)
 	var tremor := (sin(agora * 31.0) + 0.6 * sin(agora * 53.7 + 1.3) + 0.35 * sin(agora * 89.1)) / 1.95
@@ -110,10 +138,11 @@ func _mover_agulha() -> void:
 ## Acontecimento da corrida: título e linha de baixo, no centro. Um por vez:
 ## prioridade maior substitui; menor espera a vez (e expira se demorar).
 ## `fica_s` < 0: até limpar_evento() (a chegada).
-func evento(titulo: String, sub := "", cor := COR, prio := 1, fica_s := EVENTO_FICA_S, grande := false) -> void:
+func evento(titulo: String, sub := "", cor := COR, prio := 1, fica_s := EVENTO_FICA_S, grande := false,
+		ouro := false) -> void:
 	var agora := Time.get_ticks_msec() / 1000.0
 	var e := {"titulo": titulo, "sub": sub, "cor": cor, "prio": prio, "t": 0.0, "fica": fica_s, "grande": grande,
-			"pedido": agora}
+			"pedido": agora, "ouro": ouro}
 	# O mesmo acontecimento de novo (três ultrapassagens seguidas): atualiza a
 	# linha de baixo e prolonga, sem piscar.
 	if not _evento.is_empty() and _evento["titulo"] == titulo:
@@ -129,6 +158,23 @@ func evento(titulo: String, sub := "", cor := COR, prio := 1, fica_s := EVENTO_F
 	elif _pendente.is_empty() or prio >= int(_pendente["prio"]):
 		_pendente = e
 	set_process(true)
+
+
+## Largada: s que faltam na contagem (< 0 = sem contagem). Três luzes
+## vermelhas acendem uma a uma; somem no zero.
+var contagem := -1.0:
+	set(v):
+		contagem = v
+		queue_redraw()
+## Chegada: a bandeira quadriculada cruza a tela uma vez.
+const BANDEIRA_S := 1.1
+var _t_bandeira := -INF
+
+
+func bandeirada() -> void:
+	if not Preferencias.reduzir_animacoes:
+		_t_bandeira = Time.get_ticks_msec() / 1000.0
+		set_process(true)
 
 
 func limpar_evento() -> void:
@@ -154,7 +200,8 @@ func _process(delta: float) -> void:
 			_evento = _pendente
 			_ultimo = Time.get_ticks_msec() / 1000.0
 		_pendente = {}
-	if _evento.is_empty() and is_equal_approx(antes, _sec) and _sec == secundario:
+	var bandeira := Time.get_ticks_msec() / 1000.0 - _t_bandeira < BANDEIRA_S
+	if _evento.is_empty() and is_equal_approx(antes, _sec) and _sec == secundario and not bandeira:
 		set_process(false)
 	queue_redraw()
 
@@ -172,6 +219,8 @@ static func _a(c: Color, a: float) -> Color:
 
 
 func _draw() -> void:
+	_desenhar_contagem()
+	_desenhar_bandeira()
 	if so_eventos:
 		_desenhar_evento()
 		return
@@ -181,8 +230,21 @@ func _draw() -> void:
 	var x := 18.0
 	# Posição: o número grande em âmbar (é o seu); o rótulo e o total pequenos.
 	var pos := str(_d["posicao"])
-	_texto(pos, Vector2(x, 84 + Y0), 80, AMBAR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	var w := f.get_string_size(pos, HORIZONTAL_ALIGNMENT_LEFT, -1, 80).x
+	var p := _pulso_pos()
+	if p > 0.0:
+		# Ganhou: cresce com um passo além e um halo ocre. Perdeu: treme em vermelho.
+		var centro := Vector2(x + w * 0.5, 84 + Y0 - 30.0)
+		var esc := 1.0 + (0.38 * sin(p * PI) if _pos_ganhou else 0.0)
+		var lado := sin((1.0 - p) * 46.0) * 7.0 * p if not _pos_ganhou else 0.0
+		if _pos_ganhou:
+			draw_circle(centro, 46.0 + 30.0 * (1.0 - p), Color(AMBAR, 0.28 * p))
+		draw_set_transform(centro + Vector2(lado, 0), 0.0, Vector2(esc, esc))
+		var cor_p := AMBAR.lerp(Color(1, 0.95, 0.75), p * 0.6) if _pos_ganhou else AMBAR.lerp(CORTE, p)
+		_texto(pos, Vector2(x, 84 + Y0) - centro, 80, cor_p, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
+		draw_set_transform(Vector2.ZERO)
+	else:
+		_texto(pos, Vector2(x, 84 + Y0), 80, AMBAR, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	_texto("POS", Vector2(x + w + 8, 50 + Y0), 16, APAGADO, HORIZONTAL_ALIGNMENT_LEFT, -1.0, Tipografia.fonte("semibold"))
 	_texto("/%d" % _d["total"], Vector2(x + w + 6, 84 + Y0), 28, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	_tempos()
@@ -296,8 +358,52 @@ func _conta_giros() -> void:
 		_ponteiro(c, GIRO_RAIO, lerpf(de, ate, _agulha), cor, a)
 	var marcha := int(_d.get("marcha", 0))
 	_txt_inst(str(marcha) if marcha > 0 else "N", c + Vector2(GIRO_RAIO * 0.42, -GIRO_RAIO * 0.12), 40, _a(COR, a), "numero")
-	_txt_inst("%d km/h" % roundi(float(_d["kmh"])), c + Vector2(GIRO_RAIO * 0.42 + 30.0, -GIRO_RAIO * 0.12), 22,
-			_a(SUAVE, a), "medium")
+	var kmh_max := float(_d.get("kmh_max", 0.0))
+	var no_limite := kmh_max > 0.0 and _kmh_vis >= kmh_max * KMH_DOURADO
+	_txt_inst("%d km/h" % roundi(_kmh_vis), c + Vector2(GIRO_RAIO * 0.42 + 30.0, -GIRO_RAIO * 0.12), 24 if no_limite else 22,
+			_a(AMBAR if no_limite else SUAVE, a), "semibold" if no_limite else "medium")
+
+
+func _desenhar_contagem() -> void:
+	if contagem < 0.0:
+		return
+	var acesas := clampi(4 - ceili(contagem), 1, 3)
+	var c := Vector2(size.x * 0.5, size.y * 0.36)
+	var r := 30.0
+	var passo := 84.0
+	var caixa := Rect2(c.x - passo * 1.5 - 8.0, c.y - r - 18.0, passo * 3.0 + 16.0, r * 2.0 + 36.0)
+	draw_rect(caixa, Color(0.05, 0.05, 0.06, 0.82))
+	for k in 3:
+		var p := c + Vector2((k - 1) * passo, 0.0)
+		var acesa := k < acesas
+		if acesa:
+			draw_circle(p, r * 1.35, Color(CORTE, 0.25))
+		draw_circle(p, r, Color(0.95, 0.18, 0.12) if acesa else Color(0.22, 0.08, 0.08))
+		draw_circle(p + Vector2(-r * 0.3, -r * 0.3), r * 0.28, Color(1, 1, 1, 0.35 if acesa else 0.06))
+	var n := str(ceili(contagem))
+	_texto(n, Vector2(0, caixa.end.y + 64.0), 64, COR, HORIZONTAL_ALIGNMENT_CENTER, size.x, Tipografia.fonte_numero())
+
+
+## Bandeira quadriculada que atravessa a tela inclinada, da esquerda para a
+## direita, na chegada.
+func _desenhar_bandeira() -> void:
+	var t := Time.get_ticks_msec() / 1000.0 - _t_bandeira
+	if t < 0.0 or t > BANDEIRA_S:
+		return
+	var u := smoothstep(0.0, 1.0, t / BANDEIRA_S)
+	var lado := 26.0
+	var faixa := 7
+	var largura := faixa * lado
+	var x0 := lerpf(-largura - 120.0, size.x + 120.0, u)
+	var a := 1.0 - smoothstep(0.75, 1.0, t / BANDEIRA_S)
+	draw_set_transform(Vector2(x0, size.y * 0.5), deg_to_rad(-12.0), Vector2.ONE)
+	var linhas := int(size.y / lado) + 12
+	for j in linhas:
+		for i in faixa:
+			var claro := (i + j) % 2 == 0
+			draw_rect(Rect2(i * lado, (j - linhas * 0.5) * lado, lado, lado),
+					Color(0.95, 0.95, 0.93, 0.85 * a) if claro else Color(0.05, 0.05, 0.06, 0.85 * a))
+	draw_set_transform(Vector2.ZERO)
 
 
 ## Evento no centro: texto direto sobre a cena, com uma faixa escura muito leve
@@ -319,9 +425,11 @@ func _desenhar_evento() -> void:
 		# (VistaDados, de 312 a 422), com fundo opaco, sem cobrir os números.
 		draw_rect(Rect2(0, 314, size.x, 106), Color(VistaDados.FUNDO, a))
 		cy = 368.0 + (1.0 - smoothstep(0.0, EVENTO_ENTRA_S, t)) * 10.0
-		_texto(String(_evento["titulo"]), Vector2(0, cy), 36, Color(_evento["cor"], a), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		_texto(String(_evento["titulo"]), Vector2(0, cy), 38, Color(_evento["cor"], a), HORIZONTAL_ALIGNMENT_CENTER, size.x,
+				Tipografia.fonte("semibold"))
 		if String(_evento["sub"]) != "":
-			_texto(String(_evento["sub"]), Vector2(0, cy + 34), 26, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+			_texto(String(_evento["sub"]), Vector2(0, cy + 34), 26, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x,
+					Tipografia.fonte("medium"))
 		return
 	var tam_t := 30 if grande else 36
 	var tam_s := 110 if grande else 26
@@ -337,14 +445,33 @@ func _desenhar_evento() -> void:
 		draw_polygon(PackedVector2Array([Vector2(xs[i], y0), Vector2(xs[i + 1], y0), Vector2(xs[i + 1], y0 + alt),
 				Vector2(xs[i], y0 + alt)]), PackedColorArray([c0, c1, c1, c0]))
 	var cor: Color = _evento["cor"]
+	if _evento.get("ouro", false):
+		# Destaque (última volta): filetes ocre em cima e embaixo da faixa.
+		var w := size.x * 0.5 * smoothstep(0.0, EVENTO_ENTRA_S, t)
+		draw_line(Vector2(size.x * 0.5 - w, y0), Vector2(size.x * 0.5 + w, y0), Color(AMBAR, a), 3.0)
+		draw_line(Vector2(size.x * 0.5 - w, y0 + alt), Vector2(size.x * 0.5 + w, y0 + alt), Color(AMBAR, a), 3.0)
+	var ft := Tipografia.fonte("semibold")
+	var fs := Tipografia.fonte("medium")
+	# Entrada com um passo além: o título chega grande e assenta (escala 1,3 →
+	# 0,96 → 1). Fica centrado no próprio texto.
+	var esc := 1.0
+	if not Preferencias.reduzir_animacoes:
+		var u := clampf(t / EVENTO_POP_S, 0.0, 1.0)
+		esc = lerpf(1.3, 0.96, smoothstep(0.0, 1.0, u / 0.65)) if u < 0.65 \
+				else lerpf(0.96, 1.0, smoothstep(0.0, 1.0, (u - 0.65) / 0.35))
+	draw_set_transform(Vector2(size.x * 0.5, cy), 0.0, Vector2(esc, esc))
+	var o := Vector2(-size.x * 0.5, -cy)
 	if grande:
 		# Chegada: a linha pequena em cima, a posição enorme embaixo.
-		_texto(String(_evento["titulo"]), Vector2(0, cy - 44), tam_t, Color(COR, a), HORIZONTAL_ALIGNMENT_CENTER, size.x)
-		_texto(String(_evento["sub"]), Vector2(0, cy + 52), tam_s, Color(cor, a), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		_texto(String(_evento["titulo"]), o + Vector2(0, cy - 44), tam_t, Color(COR, a), HORIZONTAL_ALIGNMENT_CENTER, size.x, ft)
+		_texto(String(_evento["sub"]), o + Vector2(0, cy + 52), tam_s, Color(cor, a), HORIZONTAL_ALIGNMENT_CENTER, size.x,
+				Tipografia.fonte_numero())
+		draw_set_transform(Vector2.ZERO)
 		return
-	_texto(String(_evento["titulo"]), Vector2(0, cy), tam_t, Color(cor, a), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+	_texto(String(_evento["titulo"]), o + Vector2(0, cy), tam_t + 6, Color(cor, a), HORIZONTAL_ALIGNMENT_CENTER, size.x, ft)
+	draw_set_transform(Vector2.ZERO)
 	if String(_evento["sub"]) != "":
-		_texto(String(_evento["sub"]), Vector2(0, cy + 34), tam_s, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+		_texto(String(_evento["sub"]), Vector2(0, cy + 36), tam_s, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x, fs)
 
 
 func _has_point(p: Vector2) -> bool:
@@ -439,6 +566,13 @@ func _lista() -> void:
 			draw_string(fr, Vector2(x0, base), gap_txt, HORIZONTAL_ALIGNMENT_RIGHT, LISTA_LARGURA - 10.0, 17,
 					Color(CORTE, 0.95) if ataque else Color(COR, forca * 0.75))
 		y += LISTA_LINHA + LISTA_ESPACO
+	if _d.get("ultima", false) and not _linhas.is_empty():
+		# Última volta: contorno ocre na classificação, pulsando devagar.
+		var pulso := 0.55 + 0.45 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.4)
+		var topo: Rect2 = _linhas[0][0]
+		var fim: Rect2 = _linhas[-1][0]
+		draw_rect(Rect2(topo.position - Vector2(4, 4), Vector2(LISTA_LARGURA + 8.0, fim.end.y - topo.position.y + 8.0)),
+				Color(AMBAR, pulso), false, 2.0)
 
 
 static func _tempo(t: float) -> String:

@@ -3,47 +3,116 @@ extends Node
 ## Sons provisórios gerados em código (sem arquivo de áudio): motor do carro
 ## do jogador, bipes da largada, chegada e ultrapassagem. Em AudioStreamWAV
 ## porque a exportação web sem threads não toca AudioStreamGenerator.
+##
+## Motor em duas camadas que seguem o giro (o tom cai na troca de marcha): o
+## grave sempre, o agudo subindo com o giro. Por cima, laços de ruído que só
+## aparecem quando pedidos: pneu cantando, zebra e a torcida.
 
 const TAXA := 22050
 
 var _motor: AudioStreamPlayer
+var _motor_alto: AudioStreamPlayer
+var _pneu: AudioStreamPlayer
+var _zebra: AudioStreamPlayer
+var _torcida: AudioStreamPlayer
 var _efeito: AudioStreamPlayer
 var _bipe_curto: AudioStreamWAV
 var _bipe_longo: AudioStreamWAV
 var _subida: AudioStreamWAV
 var _descida: AudioStreamWAV
 var _chegada: AudioStreamWAV
+var _estalo: AudioStreamWAV
+var _aviso: AudioStreamWAV
+var _volume := 1.0  # volume_motor (abertura)
+var _giro := -1.0  # fração do giro (0..1); < 0: o tom segue a velocidade
+## Volume alvo de cada laço (dB) e o atual, que segue devagar.
+var _alvos := {}
+const MUDO_DB := -60.0
 
 
 func _init() -> void:
-	_motor = AudioStreamPlayer.new()
-	_motor.stream = _onda(90.0, 1.0, 0.18, true, true)  # 1 s: o laço fecha sem estalo
-	_motor.volume_db = -14.0
-	add_child(_motor)
+	_motor = _laco(_onda(90.0, 1.0, 0.18, true, true), -14.0)  # 1 s: o laço fecha sem estalo
+	_motor_alto = _laco(_onda(180.0, 1.0, 0.12, true, true), MUDO_DB)
+	_pneu = _laco(_ruido(1.0, 0.22, 0.55), MUDO_DB)
+	_zebra = _laco(_ruido(1.0, 0.3, 0.15, 28.0), MUDO_DB)
+	_torcida = _laco(_ruido(2.0, 0.2, 0.9, 0.0, true), MUDO_DB)
 	_efeito = AudioStreamPlayer.new()
-	_efeito.max_polyphony = 3
+	_efeito.max_polyphony = 4
 	add_child(_efeito)
 	_bipe_curto = _onda(660.0, 0.12, 0.35)
 	_bipe_longo = _onda(990.0, 0.4, 0.35)
 	_subida = _varredura(520.0, 880.0, 0.18)
 	_descida = _varredura(520.0, 300.0, 0.2)
 	_chegada = _varredura(660.0, 1320.0, 0.5)
+	_estalo = _estalos()
+	_aviso = _dois_bipes()
 
 
-## Motor: liga/desliga e acompanha a velocidade (m/s) do carro do jogador.
+func _laco(s: AudioStream, db: float) -> AudioStreamPlayer:
+	var p := AudioStreamPlayer.new()
+	p.stream = s
+	p.volume_db = db
+	add_child(p)
+	_alvos[p] = db
+	return p
+
+
+## Motor: liga/desliga. Sem giro informado, o tom acompanha a velocidade (m/s).
 func motor(ligado: bool, velocidade := 0.0) -> void:
 	if not ligado:
-		if _motor.playing:
-			_motor.stop()
+		for p in [_motor, _motor_alto, _pneu, _zebra]:
+			if p.playing:
+				p.stop()
+		_alvos[_pneu] = MUDO_DB
+		_alvos[_zebra] = MUDO_DB
+		_giro = -1.0
 		return
-	if not _motor.playing:
-		_motor.play()
-	_motor.pitch_scale = clampf(0.6 + velocidade / 40.0, 0.5, 3.0)
+	for p in [_motor, _motor_alto]:
+		if not p.playing:
+			p.play()
+	if _giro < 0.0:
+		_motor.pitch_scale = clampf(0.6 + velocidade / 40.0, 0.5, 3.0)
+
+
+## Giro do motor (0..1 da escala): o tom das duas camadas e o volume do agudo.
+func motor_giro(fracao: float) -> void:
+	_giro = clampf(fracao, 0.0, 1.0)
+	_motor.pitch_scale = lerpf(0.55, 1.75, _giro)
+	_motor_alto.pitch_scale = lerpf(0.6, 1.9, _giro)
+	_alvos[_motor_alto] = lerpf(-34.0, -15.0, _giro * _giro)
+
+
+## Pneu cantando (freada forte ou arrancada) e rodas na zebra.
+func pneu(cantando: bool, zebra: bool) -> void:
+	_ligar(_pneu, -17.0 if cantando else MUDO_DB)
+	_ligar(_zebra, -20.0 if zebra else MUDO_DB)
+
+
+## Torcida: 0..1 (sobe na reta final com disputa).
+func torcida(f: float) -> void:
+	_ligar(_torcida, lerpf(MUDO_DB, -16.0, clampf(f, 0.0, 1.0)) if f > 0.01 else MUDO_DB)
+
+
+func _ligar(p: AudioStreamPlayer, db: float) -> void:
+	_alvos[p] = db
+	if db > MUDO_DB and not p.playing:
+		p.volume_db = MUDO_DB
+		p.play()
+
+
+## Volumes seguem os alvos (sem cortes secos); laço mudo para de tocar.
+func _process(delta: float) -> void:
+	for p in _alvos:
+		var alvo: float = _alvos[p] + (linear_to_db(maxf(_volume, 0.001)) if p == _motor or p == _motor_alto else 0.0)
+		p.volume_db = move_toward(p.volume_db, alvo, delta * 90.0)
+		if p.playing and p != _motor and p != _motor_alto and p.volume_db <= MUDO_DB + 0.5 and _alvos[p] <= MUDO_DB:
+			p.stop()
 
 
 ## Volume do motor, 0..1 (entrada e saída suaves da abertura).
 func volume_motor(f: float) -> void:
-	_motor.volume_db = -14.0 + linear_to_db(maxf(f, 0.001))
+	_volume = f
+	_motor.volume_db = float(_alvos[_motor]) + linear_to_db(maxf(f, 0.001))
 
 
 func largada(final := false) -> void:
@@ -56,6 +125,15 @@ func ultrapassagem(ganhou: bool) -> void:
 
 func chegada() -> void:
 	_tocar(_chegada)
+
+
+## Redução de marcha: estalos do escapamento.
+func reducao() -> void:
+	_tocar(_estalo)
+
+
+func ultima_volta() -> void:
+	_tocar(_aviso)
 
 
 func _tocar(s: AudioStream) -> void:
@@ -75,6 +153,60 @@ static func _onda(freq: float, dur: float, amp: float, serra := false, laco := f
 		var env := 1.0 if laco else minf(1.0, minf(t / 0.01, (dur - t) / 0.05))
 		dados.encode_s16(i * 2, int(clampf(x * amp * env, -1.0, 1.0) * 32767.0))
 	return _wav(dados, laco, n)
+
+
+## Laço de ruído (`dur` s, amplitude `amp`). `brilho` 0..1: 0 abafado, 1
+## chiado. `trem` > 0: pulsa nessa frequência (Hz, a zebra). `ondas`: o volume
+## sobe e desce devagar (a torcida). O fim emenda no começo (sem estalo).
+static func _ruido(dur: float, amp: float, brilho: float, trem := 0.0, ondas := false) -> AudioStreamWAV:
+	var n := int(TAXA * dur)
+	var dados := PackedByteArray()
+	dados.resize(n * 2)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	var y := 0.0
+	var k := lerpf(0.04, 0.9, brilho)
+	for i in n:
+		var t := float(i) / TAXA
+		y = lerpf(y, rng.randf_range(-1.0, 1.0), k)
+		var x := y
+		if trem > 0.0:
+			x *= 0.55 + 0.45 * signf(sin(TAU * t * trem))
+		if ondas:
+			x *= 0.7 + 0.3 * sin(TAU * t / dur) * sin(TAU * t * 3.0 / dur)
+		var borda := minf(1.0, minf(t / 0.02, (dur - t) / 0.02))
+		dados.encode_s16(i * 2, int(clampf(x * amp * lerpf(0.6, 1.0, borda), -1.0, 1.0) * 32767.0))
+	return _wav(dados, true, n)
+
+
+## Três estalos curtos de escapamento (ruído com queda rápida).
+static func _estalos() -> AudioStreamWAV:
+	var dur := 0.32
+	var n := int(TAXA * dur)
+	var dados := PackedByteArray()
+	dados.resize(n * 2)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var inicios := [0.0, 0.09, 0.2]
+	for i in n:
+		var t := float(i) / TAXA
+		var x := 0.0
+		for t0 in inicios:
+			var u: float = t - t0
+			if u >= 0.0:
+				x += rng.randf_range(-1.0, 1.0) * exp(-u * 70.0) * (0.9 if t0 == 0.0 else 0.6)
+		dados.encode_s16(i * 2, int(clampf(x * 0.5, -1.0, 1.0) * 32767.0))
+	return _wav(dados, false, n)
+
+
+## Aviso da última volta: dois bipes subindo.
+static func _dois_bipes() -> AudioStreamWAV:
+	var a := _onda(880.0, 0.14, 0.32)
+	var b := _onda(1175.0, 0.22, 0.32)
+	var vao := PackedByteArray()
+	vao.resize(int(TAXA * 0.06) * 2)
+	var dados := a.data + vao + b.data
+	return _wav(dados, false, dados.size() / 2)
 
 
 static func _varredura(f0: float, f1: float, dur: float) -> AudioStreamWAV:

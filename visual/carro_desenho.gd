@@ -73,6 +73,13 @@ func configurar(id: String, cor := Color(0, 0, 0, 0)) -> bool:
 	return true
 
 
+## Comprimento e largura (m), pelo sprite de cima (o alto da imagem é a frente).
+func dimensoes() -> Vector2:
+	if _topo == null:
+		return Vector2(4.4, 1.75)
+	return Vector2(_topo.texture.get_height(), _topo.texture.get_width()) * _topo.pixel_size
+
+
 ## 0 = só o de cima; 1 = só o isométrico; no meio, alfa cruzado.
 func mistura(b: float) -> void:
 	if _topo == null:
