@@ -313,10 +313,12 @@ func _palco(c: Carro, lista: Array) -> Control:
 ## Evolução: cada categoria de peça que existe para o carro, com quanto já foi
 ## comprado (barra dentada e a conta).
 func _evolucao(c: Carro) -> void:
-	var v := cartao()
-	# Cartão translúcido: o cenário passa por trás.
-	(v.get_parent().get_theme_stylebox("panel") as StyleBoxFlat).bg_color = Color(COR_CARTAO, 0.72)
-	Tipografia.rotulo(rotulo("EVOLUÇÃO", 0, COR_SECUNDARIA, v), "medium", 20)
+	# Sem título nem caixa: as categorias direto sobre o cenário.
+	var v := MarginContainer.new()
+	v.add_theme_constant_override("margin_left", 16)
+	v.add_theme_constant_override("margin_right", 16)
+	v.add_theme_constant_override("margin_top", 8)
+	conteudo.add_child(v)
 	var g := GridContainer.new()
 	g.columns = 2
 	g.add_theme_constant_override("h_separation", 24)
