@@ -269,7 +269,7 @@ func cabecalho(t: String, subtitulo := "", fundo := "") -> void:
 
 
 ## Altura da linha de workshop (Lojas e Coleção).
-const ALTURA_LINHA_WORKSHOP := 112.0
+const ALTURA_LINHA_WORKSHOP := 224.0
 ## Véu sobre a imagem do cartão com fundo: à esquerda, no meio e à direita (opacidade).
 const VEU_CARTAO := [0.15, 0.7, 0.85]
 
@@ -347,7 +347,7 @@ func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso :=
 	img.texture = arte("workshops/%s_loja" % String(w.get("logo", "")))
 	img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	img.custom_minimum_size = Vector2(ALTURA_LINHA_WORKSHOP * 1.45, 0)
+	img.custom_minimum_size = Vector2(ALTURA_LINHA_WORKSHOP * 1.25, 0)
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(img)
 	var nomes := VBoxContainer.new()
@@ -357,28 +357,36 @@ func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso :=
 	nomes.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(nomes)
 	var partes := String(w.get("nome", "")).rsplit(" ", true, 1)
+	# Nome grande (quebra em linhas), a segunda parte espaçada e, embaixo, o
+	# número (carros à venda ou x/y da coleção); a seta fica na direita.
 	var n1 := Label.new()
 	n1.text = partes[0] if partes.size() > 1 else String(w.get("nome", ""))
-	Tipografia.rotulo(n1, "semibold", 34)
+	Tipografia.rotulo(n1, "semibold", 60)
+	n1.add_theme_constant_override("line_spacing", -14)
 	n1.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
-	n1.clip_text = true
-	n1.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	n1.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	n1.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	nomes.add_child(n1)
 	if partes.size() > 1:
 		var n2 := Label.new()
 		n2.text = " ".join(Array(partes[1].to_upper().split("")))  # espaçado, como na marca
-		Tipografia.rotulo(n2, "medium", 16)
+		Tipografia.rotulo(n2, "medium", 26)
 		n2.add_theme_color_override("font_color", COR_SECUNDARIA)
 		n2.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		nomes.add_child(n2)
 	var d := Label.new()
-	d.text = direita + "   ›"
-	Tipografia.rotulo(d, "medium", 22)
-	d.add_theme_color_override("font_color", COR_SECUNDARIA)
-	d.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	d.text = direita
+	Tipografia.rotulo(d, "medium", 24)
+	d.add_theme_color_override("font_color", BarraDentes.ACESO)
 	d.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(d)
+	nomes.add_child(d)
+	var seta := Label.new()
+	seta.text = "›"
+	Tipografia.rotulo(seta, "medium", 44)
+	seta.add_theme_color_override("font_color", COR_SECUNDARIA)
+	seta.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(seta)
 	if progresso >= 0.0:
 		var barra := Control.new()
 		barra.custom_minimum_size = Vector2(0, 6)
