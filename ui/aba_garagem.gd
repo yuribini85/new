@@ -20,7 +20,7 @@ func _init(d: Node, j: Node) -> void:
 	super(d, j, "Oficina")
 	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER  # tudo cabe: sem rolagem
 	_vitrine = VitrineCarro.new(ALTURA_PALCO)
-	_fundo = Aba.arte("fundo_garagem")
+	_fundo = Aba.arte("fundo_oficina")
 	if _fundo != null:
 		_vitrine.fundo_transparente()
 	else:
@@ -28,18 +28,15 @@ func _init(d: Node, j: Node) -> void:
 	resized.connect(queue_redraw)
 
 
-## O cenário cobre a tela com escala uniforme (recorta, nunca estica), com o
-## centro da imagem no centro do palco, onde o carro fica no chão.
+## O cenário (retrato) cobre a tela com escala uniforme (recorta, nunca
+## estica), colado no topo: o chão iluminado fica atrás do carro.
 func _draw() -> void:
 	if _fundo == null:
 		return
 	var tam := _fundo.get_size()
-	var cy := _vitrine.get_global_rect().get_center().y - get_global_rect().position.y \
-			if _vitrine.is_inside_tree() else size.y * 0.3
-	var escala := maxf(size.x / tam.x, maxf(2.0 * cy, 2.0 * (size.y - cy)) / tam.y)
-	var r := Rect2(Vector2(size.x * 0.5, cy) - tam * escala * 0.5, tam * escala)
-	draw_texture_rect(_fundo, r, false)
-	# Véu: a Evolução e a missão leem por cima do cenário.
+	var escala := maxf(size.x / tam.x, size.y / tam.y)
+	draw_texture_rect(_fundo, Rect2(Vector2((size.x - tam.x * escala) * 0.5, 0.0), tam * escala), false)
+	# Véu: a Evolução lê por cima do cenário.
 	var veu_y := _vitrine.get_global_rect().end.y - get_global_rect().position.y if _vitrine.is_inside_tree() else 0.0
 	draw_rect(Rect2(0, veu_y, size.x, size.y - veu_y), Color(COR_FUNDO, VEU_FUNDO))
 
