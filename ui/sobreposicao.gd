@@ -16,6 +16,8 @@ var _titulo_cor := Color.WHITE
 var _estilo := {}
 var _fechar_x: Button
 var _vao_x: Control
+## Controles extras no cabeçalho, entre o título e o × (estilo "titulo_extra").
+var _extra_titulo: HBoxContainer
 ## Largura útil do título no cartão (px de uma tela de 720).
 const LARGURA_TITULO := 720.0 - 2.0 * 24.0 - 2.0 * 22.0 - 60.0
 ## Cortina preta do fim da corrida: escurece a tela antes do resultado e sai
@@ -77,16 +79,21 @@ func _init() -> void:
 	linha_titulo.add_theme_constant_override("separation", 0)
 	v.add_child(linha_titulo)
 	_vao_x = Control.new()
-	_vao_x.custom_minimum_size = Vector2(56, 0)
+	_vao_x.custom_minimum_size = Vector2(60, 0)
 	linha_titulo.add_child(_vao_x)
 	linha_titulo.add_child(_painel_titulo)
+	_extra_titulo = HBoxContainer.new()
+	_extra_titulo.add_theme_constant_override("separation", 8)
+	_extra_titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_extra_titulo.visible = false
+	linha_titulo.add_child(_extra_titulo)
 	_fechar_x = Button.new()
 	_fechar_x.text = "×"
 	_fechar_x.flat = true
 	_fechar_x.focus_mode = Control.FOCUS_NONE
-	_fechar_x.add_theme_font_size_override("font_size", 48)
+	_fechar_x.add_theme_font_size_override("font_size", 64)
 	_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
-	_fechar_x.custom_minimum_size = Vector2(56, 56)
+	_fechar_x.custom_minimum_size = Vector2(60, 60)
 	_fechar_x.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_fechar_x.visible = false
 	_fechar_x.pressed.connect(fechar)
@@ -143,11 +150,15 @@ func avisar(texto: String, ok := true) -> void:
 ## [[texto, Callable]] (vazio: só "OK"). Qualquer botão fecha o painel.
 ## estilo (opcional): {"titulo_centro": bool, "titulo_max": px (o título
 ## diminui até caber), "principal": a ação única em destaque, "fora_fecha":
-## tocar fora do cartão ou no × fecha, "habilitado": false apaga a ação}.
+## tocar fora do cartão ou no × fecha (sem botões: a janela fica sem ação),
+## "habilitado": false apaga a ação, "titulo_extra": Callable(hbox) que põe
+## controles entre o título e o ×}.
 func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Dictionary = {}) -> void:
 	for c in _painel_conteudo.get_children():
 		c.queue_free()
 	for c in _painel_botoes.get_children():
+		c.queue_free()
+	for c in _extra_titulo.get_children():
 		c.queue_free()
 	_estilo = estilo
 	_painel_titulo.text = titulo
@@ -160,8 +171,15 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 	_painel_titulo.add_theme_font_size_override("font_size", tam)
 	_fechar_x.visible = estilo.get("fora_fecha", false)
 	_vao_x.visible = _fechar_x.visible and estilo.get("titulo_centro", false)
+	var extra: Callable = estilo.get("titulo_extra", Callable())
+	_extra_titulo.visible = extra.is_valid()
+	_painel_titulo.size_flags_horizontal = Control.SIZE_FILL if extra.is_valid() else Control.SIZE_EXPAND_FILL
+	_painel_titulo.autowrap_mode = TextServer.AUTOWRAP_OFF if extra.is_valid() else TextServer.AUTOWRAP_WORD_SMART
+	if extra.is_valid():
+		extra.call(_extra_titulo)
 	montar.call(_painel_conteudo)
-	if botoes.is_empty():
+	_painel_botoes.visible = not (botoes.is_empty() and _fechar_x.visible)
+	if botoes.is_empty() and not _fechar_x.visible:
 		botoes = [["OK", func(): pass]]
 	for i in botoes.size():
 		var b: Array = botoes[i]
@@ -206,7 +224,8 @@ func _ajustar() -> void:
 	await get_tree().process_frame
 	var altura_tela := size.y if size.y > 0.0 else 1280.0
 	var conteudo := _painel_conteudo.get_combined_minimum_size().y
-	var total := conteudo + _painel_titulo.get_combined_minimum_size().y + _painel_botoes.get_combined_minimum_size().y \
+	var total := conteudo + (_painel_titulo.get_parent() as Control).get_combined_minimum_size().y \
+			+ (_painel_botoes.get_combined_minimum_size().y if _painel_botoes.visible else 0.0) \
 			+ 44.0 + 28.0 + 6.0
 	var margem := maxf(60.0, (altura_tela - total) * 0.5)
 	_margem.add_theme_constant_override("margin_top", int(margem))

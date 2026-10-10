@@ -407,7 +407,7 @@ func test_janela_garagem_escolhe_e_vende() -> void:
 	j.carro_ativo = a
 	g.atualizar()
 	var aberto := []
-	g.painel.connect(func(_t, montar, _b): aberto.append(montar))
+	g.painel_estilo.connect(func(_t, montar, _b, _e): aberto.append(montar))
 	g.abrir_garagem()
 	var v := VBoxContainer.new()
 	_raiz().add_child(v)
