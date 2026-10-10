@@ -80,7 +80,11 @@ func test_encostado_nao_cobra_de_novo() -> void:
 	var p := _params()
 	var r := _lateral(40.0, p)
 	var impactos: Array = r["eventos"].filter(func(e): return e["tipo"] == "impacto" and e["carro"] == "alvo")
-	igual(impactos.size(), 1, "um contato, um dano")
+	verificar(not impactos.is_empty(), "houve o golpe")
+	# Enquanto encostados depois do golpe, nada é cobrado de novo (um toque
+	# posterior, depois de se separarem, é outro contato).
+	var t0: float = impactos[0]["t"]
+	igual(impactos.filter(func(e): return e["t"] > t0 and e["t"] < t0 + 0.3).size(), 0, "um contato, um dano")
 
 
 func test_frente_destruida_elimina_e_fica_como_obstaculo() -> void:
