@@ -23,9 +23,6 @@ var _ordem := "preco"  # "preco" ou "potencia"
 ## Cartões por vez (centenas de carros: a lista cresce sob pedido).
 const POR_PAGINA := 20
 var _limite := POR_PAGINA
-const COR_PLACA := Color("e6ddcd")  # placa clara onde as logos (tinta escura) leem bem
-const COR_PLACA_TEXTO := Color("2a2d31")
-const PASTA_LOGOS := "res://arte/ui/workshops/"
 
 
 func construir() -> void:
@@ -37,7 +34,6 @@ func construir() -> void:
 		_second_chance_vista = true
 		_loja = "second_chance"
 	if _loja == "second_chance" and second_chance:
-		cabecalho("Lojas", "Workshops", "fundo_mercado")
 		_topo_workshop({})
 		_second_chance(Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos))
 		return
@@ -54,7 +50,6 @@ func construir() -> void:
 			cabecalho("Lojas", "Workshops", "fundo_mercado")
 			_vitrine(ws, second_chance)
 	else:
-		cabecalho("Lojas", "Workshops", "fundo_mercado")
 		_workshop(aberta)
 
 
@@ -191,32 +186,6 @@ func _vitrine(ws: Array, second_chance: bool) -> void:
 			mudou.emit())
 
 
-## A logo da workshop (só escala, sem esticar); sem arte, o nome em letras.
-func _logo(logo: String, nome: String, altura: float) -> Control:
-	var tex: Texture2D = load(PASTA_LOGOS + logo + "_logo.png") if logo != "" \
-			and ResourceLoader.exists(PASTA_LOGOS + logo + "_logo.png") else null
-	if tex != null:
-		var t := TextureRect.new()
-		t.texture = tex
-		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		t.custom_minimum_size = Vector2(0, altura)
-		t.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		return t
-	var l := Label.new()
-	l.text = nome
-	l.custom_minimum_size = Vector2(0, altura)
-	l.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	Tipografia.rotulo(l, "semibold", 34)
-	l.add_theme_color_override("font_color", COR_PLACA_TEXTO)
-	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return l
-
-
 ## Dentro da workshop: a logo grande numa placa e, embaixo, os carros.
 func _topo_workshop(w: Dictionary) -> void:
 	var voltar := botao_texto("‹ Mapa das lojas", func():
@@ -224,14 +193,10 @@ func _topo_workshop(w: Dictionary) -> void:
 		_limite = POR_PAGINA
 		mudou.emit())
 	voltar.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	var p := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = COR_PLACA
-	sb.set_corner_radius_all(10)
-	sb.set_content_margin_all(10)
-	p.add_theme_stylebox_override("panel", sb)
-	conteudo.add_child(p)
-	p.add_child(_logo(String(w.get("logo", "")), String(w.get("nome", "Second Chance Motors")), 300.0))
+	# A concessionária grande com o nome ao lado (a mesma linha do mapa/coleção).
+	var n := _carros_da(w).size() if w.has("fabricantes") else 0
+	linha_workshop(w if not w.is_empty() else {"nome": "Second Chance Motors", "logo": ""},
+			("%d CARRO%s À VENDA" % [n, "" if n == 1 else "S"]) if n > 0 else "USADOS", Callable(), -1.0, null, false)
 
 
 func _workshop(w: Dictionary) -> void:

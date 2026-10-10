@@ -320,9 +320,11 @@ func cartao_com_fundo(tex: Texture2D, aceso := true, pai: Control = null) -> VBo
 
 ## Linha de uma workshop (Lojas e Coleção): a ilustração da concessionária à
 ## esquerda, o nome em duas partes ("Relay Room" grande, "GARAGE" espaçado),
-## o texto da direita com a seta e, com `progresso` >= 0, a barra fina na
-## largura toda embaixo. Toque: `acao`.
-func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso := -1.0, pai: Control = null) -> Button:
+## o número embaixo do nome, a seta e, com `progresso` >= 0, a barra fina na
+## largura toda embaixo. Toque: `acao` (inválida: só exibe, sem seta se
+## `com_seta` for false — o topo da loja aberta).
+func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso := -1.0, pai: Control = null,
+		com_seta := true) -> Button:
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, ALTURA_LINHA_WORKSHOP + (10.0 if progresso >= 0.0 else 0.0))
 	b.focus_mode = Control.FOCUS_NONE
@@ -386,7 +388,10 @@ func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso :=
 	seta.add_theme_color_override("font_color", COR_SECUNDARIA)
 	seta.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(seta)
+	if com_seta:
+		h.add_child(seta)
+	else:
+		seta.free()
 	if progresso >= 0.0:
 		var barra := Control.new()
 		barra.custom_minimum_size = Vector2(0, 6)
@@ -402,7 +407,10 @@ func linha_workshop(w: Dictionary, direita: String, acao: Callable, progresso :=
 		filete.custom_minimum_size = Vector2(0, 1)
 		filete.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		v.add_child(filete)
-	b.pressed.connect(acao)
+	if acao.is_valid():
+		b.pressed.connect(acao)
+	else:
+		b.mouse_filter = Control.MOUSE_FILTER_IGNORE  # só o topo (a loja aberta)
 	_pai(pai).add_child(b)
 	return b
 
