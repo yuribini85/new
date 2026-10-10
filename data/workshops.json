@@ -21,6 +21,7 @@
   "logo": "brace-yard-works",
   "fabricantes": [
    "hozuki",
+   "sanga",
    "kosame"
   ]
  },
@@ -29,17 +30,9 @@
   "nome": "Spare Penny Repairs",
   "logo": "spare-penny-repairs",
   "fabricantes": [
-   "sanga",
-   "tomoe"
-  ]
- },
- {
-  "id": "intake_borough_turbo",
-  "nome": "Intake Borough Turbo",
-  "logo": "intake-borough-turbo",
-  "fabricantes": [
    "mizuchi",
    "hoshino",
+   "tomoe",
    "tokiwa"
   ]
  },
@@ -67,35 +60,14 @@
    "keldorf",
    "lindauer",
    "rauhe",
-   "vorhaus"
-  ]
- },
- {
-  "id": "blind_terminal_systems",
-  "nome": "Blind Terminal Systems",
-  "logo": "blind-terminal-systems",
-  "fabricantes": [
+   "vorhaus",
    "varenna",
    "castellani",
-   "ottavo"
-  ]
- },
- {
-  "id": "third_notch_transmissions",
-  "nome": "Third Notch Transmissions",
-  "logo": "third-notch-transmissions",
-  "fabricantes": [
+   "ottavo",
    "saulieu",
    "aubrac",
    "morel",
-   "vallon"
-  ]
- },
- {
-  "id": "odd_bolt_customs",
-  "nome": "Odd Bolt Customs",
-  "logo": "odd-bolt-customs",
-  "fabricantes": [
+   "vallon",
    "ashcombe",
    "calderwood",
    "pemberly",

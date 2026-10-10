@@ -290,11 +290,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     demais na mesma proporção, resistência inclusive) e os preços de compra (carros,
     peças, pneus) dobram em relação aos prêmios. No importador (`FATOR_VOLTAS`,
     `FATOR_PRECO`); prêmios, bônus e saldo inicial não mudam.
-42. **Lojas = workshops, sem usados.** As 10 workshops (`data/workshops.json`, logos em
-    `arte/ui/workshops/`) revendem os carros das marcas de um mesmo país: 5 do Japão
-    (as duas maiores marcas sozinhas, as outras agrupadas), 1 dos EUA, 1 da Alemanha,
-    1 da Itália, 1 da França e 1 do Reino Unido (de 20 a 62 carros): a estrutura do
-    GT2 (uma loja por marca, por região) agrupada. Toda a frota é vendida pelo preço de tabela, inclusive os modelos
+42. **Lojas = workshops, sem usados.** As 6 workshops (`data/workshops.json`, logos em
+    `arte/ui/workshops/`) seguem as regiões do GT2: 4 do Japão (Hayase e Kanaya
+    sozinhas, as outras marcas japonesas em dois grupos), 1 dos EUA e 1 da Europa
+    (de 53 a 101 carros): a estrutura do GT2 (uma loja por marca, por região)
+    agrupada. Toda a frota é vendida pelo preço de tabela, inclusive os modelos
     que no GT2 só existiam usados. Sem usados nem agenda; a Second Chance Motors fica
     só na história (garagem vazia da Elena).
 43. **Garagem com vagas:** começa com 4; cada ampliação dobra as vagas. A 1ª custa a
