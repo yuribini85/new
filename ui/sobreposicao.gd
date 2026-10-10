@@ -13,6 +13,11 @@ var _painel_titulo: Label
 var _painel_botoes: HFlowContainer
 var _margem: MarginContainer
 var _titulo_cor := Color.WHITE
+var _estilo := {}
+var _fechar_x: Button
+var _vao_x: Control
+## Largura útil do título no cartão (px de uma tela de 720).
+const LARGURA_TITULO := 720.0 - 2.0 * 24.0 - 2.0 * 22.0 - 60.0
 ## Cortina preta do fim da corrida: escurece a tela antes do resultado e sai
 ## quando o painel fecha.
 var _cortina: ColorRect
@@ -38,6 +43,9 @@ func _init() -> void:
 	escuro.color = Color(0, 0, 0, 0.7)
 	escuro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_painel_raiz.add_child(escuro)
+	escuro.gui_input.connect(func(ev):
+		if _estilo.get("fora_fecha", false) and ev is InputEventMouseButton and ev.pressed:
+			fechar())
 	var margem := MarginContainer.new()
 	_margem = margem
 	margem.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -62,7 +70,27 @@ func _init() -> void:
 	Tipografia.rotulo(_painel_titulo, "semibold", 40)
 	_painel_titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
 	_painel_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	v.add_child(_painel_titulo)
+	_painel_titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Linha do título: o × à direita (só com fora_fecha) e um vão do mesmo
+	# tamanho à esquerda, para o título centrado ficar no meio do cartão.
+	var linha_titulo := HBoxContainer.new()
+	linha_titulo.add_theme_constant_override("separation", 0)
+	v.add_child(linha_titulo)
+	_vao_x = Control.new()
+	_vao_x.custom_minimum_size = Vector2(56, 0)
+	linha_titulo.add_child(_vao_x)
+	linha_titulo.add_child(_painel_titulo)
+	_fechar_x = Button.new()
+	_fechar_x.text = "×"
+	_fechar_x.flat = true
+	_fechar_x.focus_mode = Control.FOCUS_NONE
+	_fechar_x.add_theme_font_size_override("font_size", 48)
+	_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
+	_fechar_x.custom_minimum_size = Vector2(56, 56)
+	_fechar_x.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_fechar_x.visible = false
+	_fechar_x.pressed.connect(fechar)
+	linha_titulo.add_child(_fechar_x)
 	var rolagem := ScrollContainer.new()
 	rolagem.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	rolagem.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -113,12 +141,25 @@ func avisar(texto: String, ok := true) -> void:
 
 ## Painel modal com rolagem. montar(vbox) preenche o conteúdo; botoes =
 ## [[texto, Callable]] (vazio: só "OK"). Qualquer botão fecha o painel.
-func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
+## estilo (opcional): {"titulo_centro": bool, "titulo_max": px (o título
+## diminui até caber), "principal": a ação única em destaque, "fora_fecha":
+## tocar fora do cartão ou no × fecha, "habilitado": false apaga a ação}.
+func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Dictionary = {}) -> void:
 	for c in _painel_conteudo.get_children():
 		c.queue_free()
 	for c in _painel_botoes.get_children():
 		c.queue_free()
+	_estilo = estilo
 	_painel_titulo.text = titulo
+	_painel_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if estilo.get("titulo_centro", false) \
+			else HORIZONTAL_ALIGNMENT_LEFT
+	var tam: int = int(estilo.get("titulo_max", 40))
+	var f := _painel_titulo.get_theme_font("font")
+	while tam > 40 and f.get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > LARGURA_TITULO:
+		tam -= 4
+	_painel_titulo.add_theme_font_size_override("font_size", tam)
+	_fechar_x.visible = estilo.get("fora_fecha", false)
+	_vao_x.visible = _fechar_x.visible and estilo.get("titulo_centro", false)
 	montar.call(_painel_conteudo)
 	if botoes.is_empty():
 		botoes = [["OK", func(): pass]]
@@ -128,7 +169,8 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 		bt.text = b[0]
 		bt.custom_minimum_size = Vector2(150, 76)
 		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		if i == 0 and botoes.size() > 1:
+		bt.disabled = not estilo.get("habilitado", true)
+		if i == 0 and (botoes.size() > 1 or estilo.get("principal", false)):
 			# A ação principal em destaque.
 			var sb := StyleBoxFlat.new()
 			sb.bg_color = Aba.COR_DESTAQUE
@@ -136,8 +178,14 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 			sb.set_content_margin_all(12)
 			for estado in ["normal", "hover", "pressed", "focus"]:
 				bt.add_theme_stylebox_override(estado, sb)
+			var apagado := sb.duplicate()
+			apagado.bg_color = Aba.COR_DESTAQUE.darkened(0.55)
+			bt.add_theme_stylebox_override("disabled", apagado)
 			for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 				bt.add_theme_color_override(c, Color(0.1, 0.1, 0.1))
+			if estilo.get("principal", false):
+				Tipografia.rotulo(bt, "semibold", 36)
+				bt.custom_minimum_size.y = 92
 		# Terceiro item opcional: ícone da arte da interface.
 		if b.size() > 2 and b[2] == "giros":
 			Aba.moeda(bt)  # preço: a moeda antes do valor

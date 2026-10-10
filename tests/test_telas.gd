@@ -377,22 +377,18 @@ func test_evolucao_da_garagem_abre_a_compra_da_categoria() -> void:
 	var c: Carro = j.garagem.carro(uid)
 	var p: Dictionary = d.lista("pecas").filter(func(x): return c.motivo_recusa(x).is_empty())[0]
 	var aberto := []
-	g.painel.connect(func(titulo, montar, _botoes): aberto.append([titulo, montar]))
+	g.painel_estilo.connect(func(titulo, montar, _botoes, _estilo): aberto.append([titulo, montar]))
 	g._abrir_categoria = String(p["categoria"])
 	g.atualizar()
 	igual(aberto.size(), 1, "a categoria abre a janela de compra")
 	var v := VBoxContainer.new()
 	_raiz().add_child(v)
 	aberto[0][1].call(v)
-	var comprar: Button = null
-	for b in v.find_children("*", "Button", true, false):
-		if b.icon != null and b.text.replace(".", "").is_valid_int() and not b.disabled:  # preço: moeda + número
-			comprar = b
-			break
-	verificar(comprar != null, "estágio à venda com preço")
-	if comprar != null:
-		comprar.pressed.emit()
-		verificar(c.pecas.has(p["categoria"]), "comprar pela janela instala a peça")
+	# A ação da janela (INSTALAR · preço) é o botão do painel: dispara a compra.
+	var acao: Array = g._acao_evolucao(c, String(p["categoria"]))
+	verificar(String(acao[0]).begins_with("INSTALAR") and acao[3], "instalar com o preço, habilitado")
+	acao[1].call()
+	verificar(c.pecas.has(p["categoria"]), "comprar pela janela instala a peça")
 	v.free()
 	g.free()
 	j.free()

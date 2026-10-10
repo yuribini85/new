@@ -156,6 +156,7 @@ func _ready() -> void:
 	for a in _todas:
 		a.aviso.connect(_avisar)
 		a.painel.connect(_sobre.abrir)
+		a.painel_estilo.connect(_sobre.abrir)
 		a.fechar_painel.connect(_sobre.fechar)
 	if jogador.historia != null:
 		# O destaque fica abaixo do diálogo: o resto da tela escurece, a caixa não.

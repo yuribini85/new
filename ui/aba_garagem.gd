@@ -302,9 +302,9 @@ func _palco(c: Carro, lista: Array) -> Control:
 		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		linha.add_child(num)
 		var valor := _hud_rotulo(it[2], 0, Color.WHITE, num)
-		Tipografia.numero(valor, 32)
+		Tipografia.numero(valor, 44)
 		var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, num)
-		Tipografia.rotulo(u, "regular", 20)
+		Tipografia.rotulo(u, "regular", 40)
 		var dentes := DENTES_FICHA
 		v.add_child(BarraDentes.new(roundi(it[4] * dentes), dentes, 7.0))
 	return palco
@@ -362,11 +362,11 @@ func _evolucao(c: Carro) -> void:
 		nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		nome.clip_text = true
 		nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		Tipografia.rotulo(nome, "medium", 22)
+		Tipografia.rotulo(nome, "medium", 29)
 		linha.add_child(nome)
 		var conta := Label.new()
 		conta.text = "%d/%d" % it[2]
-		Tipografia.numero(conta, 20)
+		Tipografia.numero(conta, 26)
 		conta.add_theme_color_override("font_color", BarraDentes.ACESO if it[2][0] > 0 else COR_SECUNDARIA)
 		linha.add_child(conta)
 		cel.add_child(BarraDentes.new(it[2][0], it[2][1]))
@@ -397,11 +397,14 @@ func preparar_destaque(nome: String) -> void:
 ## Janela de compra de uma categoria da Evolução: cada estágio com o ganho
 ## sobre a montagem atual e a ação (comprar, usar, remover). Substitui a Oficina.
 func _abrir_evolucao(c: Carro, cat: String) -> void:
-	painel.emit("Pneus" if cat == "pneus" else NOMES_CATEGORIA.get(cat, cat), func(v):
+	var titulo := ("Pneus" if cat == "pneus" else String(NOMES_CATEGORIA.get(cat, cat))).to_upper()
+	var acao := _acao_evolucao(c, cat)
+	painel_estilo.emit(titulo, func(v):
 		if cat == "pneus":
 			_janela_pneus(c, v)
 		else:
-			_janela_pecas(c, cat, v), [["Fechar", func(): pass]])
+			_janela_pecas(c, cat, v), [[acao[0], acao[1], "giros" if acao[2] else ""]],
+			{"titulo_centro": true, "titulo_max": 80, "principal": true, "fora_fecha": true, "habilitado": acao[3]})
 	historia("EVOLUCAO")
 
 
@@ -412,65 +415,134 @@ func _reabrir(c: Carro, cat: String) -> void:
 		(func(): _abrir_evolucao(atual, cat)).call_deferred()
 
 
-func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
-	var attr: String = PecasTexto.AFETA_CATEGORIA.get(cat, "potencia")
-	rotulo(PecasTexto.EXPLICA_CATEGORIA.get(cat, ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = \
-			TextServer.AUTOWRAP_WORD_SMART
-	rotulo("Na pista: " + PecasTexto.FUNCAO[attr] + ".", FONTE_PEQUENA + 2, Color.WHITE, v).autowrap_mode = \
-			TextServer.AUTOWRAP_WORD_SMART
+## Item escolhido na janela de cada categoria ("" = o padrão: o próximo
+## estágio depois do instalado, ou o instalado se for o último).
+var _escolha := {}
+
+
+func _itens(c: Carro, cat: String) -> Array:
+	if cat == "pneus":
+		return dados.lista("pneus")
 	var pecas: Array = dados.lista("pecas").filter(func(p): return p["categoria"] == cat and c.motivo_recusa(p).is_empty())
 	pecas.sort_custom(func(a, b): return a["preco"] < b["preco"])
+	return pecas
+
+
+func _escolhido(c: Carro, cat: String) -> Dictionary:
+	var itens := _itens(c, cat)
+	if itens.is_empty():
+		return {}
+	for it in itens:
+		if it["id"] == _escolha.get(cat, ""):
+			return it
+	if cat == "pneus":
+		for pn in itens:
+			if not c.pneus.any(func(x): return x["id"] == pn["id"]):
+				return pn
+		return itens[-1]
+	var em_uso := String(c.pecas.get(cat, {}).get("id", ""))
+	var i := itens.map(func(p): return p["id"]).find(em_uso)
+	return itens[mini(i + 1, itens.size() - 1)]
+
+
+## A ação da janela para o item escolhido: [texto, Callable, com moeda, habilitada].
+func _acao_evolucao(c: Carro, cat: String) -> Array:
+	var it := _escolhido(c, cat)
+	if it.is_empty():
+		return ["FECHAR", func(): pass, false, true]
+	var preco := int(it["preco"])
+	if cat == "pneus":
+		var tem: bool = c.pneus.any(func(x): return x["id"] == it["id"])
+		if tem:
+			return ["JÁ É SEU", func(): pass, false, false]
+		return ["INSTALAR · %s" % dinheiro(preco), func():
+			_comprar_pneu(c, it)
+			_reabrir(c, cat), true, jogador.economia.pode_pagar(preco)]
+	var instalada: bool = c.pecas.get(cat, {}).get("id") == it["id"]
 	var antes := c.atributos_efetivos("seco")
+	if instalada:
+		return ["REMOVER", func():
+			_remover(c, it)
+			_reabrir(c, cat), false, true]
+	if it["id"] in c.pecas_possuidas:
+		return ["INSTALAR", func():
+			_comprar_peca(c, it, antes)
+			_reabrir(c, cat), false, true]
+	return ["INSTALAR · %s" % dinheiro(preco), func():
+		_comprar_peca(c, it, antes)
+		_reabrir(c, cat), true, jogador.economia.pode_pagar(preco)]
+
+
+## Um item da janela: o nome e o ganho em caixa alta, centrados; o escolhido
+## com borda ocre, o instalado em verde. Tocar escolhe (a ação fica embaixo).
+func _item_evolucao(v: VBoxContainer, c: Carro, cat: String, id: String, texto: String, estado: String,
+		escolhido: bool) -> Button:
+	var b := Button.new()
+	b.text = texto.to_upper()
+	b.custom_minimum_size = Vector2(0, 76)
+	b.focus_mode = Control.FOCUS_NONE
+	Tipografia.rotulo(b, "semibold", 28)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_CARTAO.lightened(0.05)
+	sb.set_corner_radius_all(10)
+	sb.set_border_width_all(2)
+	sb.border_color = COR_DESTAQUE if escolhido else (COR_BOM if estado == "uso" else Color(1, 1, 1, 0.08))
+	for e in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(e, sb)
+	var cor := COR_DESTAQUE if escolhido else (COR_BOM if estado == "uso" else Color(0.93, 0.91, 0.87))
+	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(k, cor)
+	b.pressed.connect(func():
+		_escolha[cat] = id
+		_reabrir(c, cat))
+	v.add_child(b)
+	return b
+
+
+## O que a categoria faz na corrida, breve, centrado.
+func _descritivo(v: VBoxContainer, texto: String) -> void:
+	var l := rotulo(texto.left(1).to_upper() + texto.substr(1) + ".", FONTE_PEQUENA + 4, COR_SECUNDARIA, v)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+## PROIBIÇÕES DE USO do item escolhido: as provas em que o carro deixa de
+## poder correr com ele.
+func _proibicoes(v: VBoxContainer, perde: Array) -> void:
+	var q := cartao(COR_RUIM if not perde.is_empty() else Color.TRANSPARENT, v)
+	var t := rotulo("PROIBIÇÕES DE USO", 0, COR_RUIM if not perde.is_empty() else COR_SECUNDARIA, q)
+	Tipografia.rotulo(t, "semibold", 24)
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var l := rotulo("Nenhuma" if perde.is_empty() else "\n".join(perde.map(func(e): return nome_evento(dados.evento(e)))),
+			FONTE_PEQUENA + 2, Color.WHITE if not perde.is_empty() else COR_SECUNDARIA, q)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
+	var attr: String = PecasTexto.AFETA_CATEGORIA.get(cat, "potencia")
+	_descritivo(v, PecasTexto.FUNCAO[attr])
+	var pecas := _itens(c, cat)
 	# O ganho de cada estágio é sobre a categoria vazia (não sobre o estágio em
 	# uso): o 1 sempre mostra o que ele dá, mesmo com o 3 instalado.
 	var sem := c.copiar()
 	sem.remover(cat)
 	var base_cat := sem.atributos_efetivos("seco")
-	var provas_antes := Mecanico.provas_possiveis(dados, c)
-	# Correndo: as corridas já marcadas usam a montagem do início (como na Oficina).
-	var bloqueado := false
+	var escolhido := _escolhido(c, cat)
 	for p in pecas:
 		var instalada: bool = c.pecas.get(cat, {}).get("id") == p["id"]
-		var possuida: bool = p["id"] in c.pecas_possuidas
 		var teste := c.copiar()
 		teste.instalar(p)
-		var depois := teste.atributos_efetivos("seco")
-		var perde := provas_antes.filter(func(e): return not e in Mecanico.provas_possiveis(dados, teste)) \
-				if not instalada else []
-		var cartao_p := cartao(COR_BOM if instalada else Color.TRANSPARENT, v)
+		var ganho := "" if cat == "cambio" else _ganho(base_cat, teste.atributos_efetivos("seco"))
+		var texto := String(p["nome"]) + ("   " + ganho if ganho != "" else "")
+		if instalada:
+			texto += "   · EM USO"
+		elif p["id"] in c.pecas_possuidas:
+			texto += "   ✓"
+		var b := _item_evolucao(v, c, cat, String(p["id"]), texto, "uso" if instalada else "", p["id"] == escolhido.get("id"))
 		if p["id"] == String(dados.historia().get("adrian", {}).get("peca_demanda", "")) or (cat == "brake"
 				and not ancoras.has("BRAKES")):
-			ancora("BRAKES", cartao_p)
-		var h := fileira(cartao_p)
-		var info := VBoxContainer.new()
-		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		info.add_theme_constant_override("separation", -2)
-		h.add_child(info)
-		var nome := rotulo(p["nome"], 0, Color.WHITE, info)
-		nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var ganho := "arrancada · equilibrado · velocidade final" if cat == "cambio" else _ganho(base_cat, depois)
-		if instalada:
-			ganho = "em uso" + ("" if ganho == "" or cat == "cambio" else " · " + ganho)
-		rotulo(ganho, FONTE_PEQUENA, COR_BOM, info)
-		if not perde.is_empty():
-			var aviso_l := rotulo("⚠ Deixa de poder correr: " + ", ".join(perde.map(func(e): return dados.evento(e)["nome"])),
-					FONTE_PEQUENA, COR_RUIM, info)
-			aviso_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var acao: Button
-		if instalada:
-			acao = botao("Remover", func():
-				_remover(c, p)
-				_reabrir(c, cat), not bloqueado, false, h)
-		elif possuida:
-			acao = botao("Usar", func():
-				_comprar_peca(c, p, antes)
-				_reabrir(c, cat), not bloqueado, true, h)
-		else:
-			acao = moeda(botao(dinheiro(int(p["preco"])), func():
-				_comprar_peca(c, p, antes)
-				_reabrir(c, cat), not bloqueado and jogador.economia.pode_pagar(int(p["preco"])), true, h))
-		acao.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		acao.custom_minimum_size = Vector2(170, 72)
+			ancora("BRAKES", b)
 	if cat == "cambio" and c.pecas.has("cambio"):
 		var aj := HBoxContainer.new()
 		aj.add_theme_constant_override("separation", 8)
@@ -478,33 +550,27 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 		for a in PecasTexto.AJUSTES_CAMBIO:
 			var b := botao(a[1], func():
 				c.ajuste_cambio = a[0]
-				_reabrir(c, cat), not bloqueado, c.ajuste_cambio == a[0], aj)
+				_reabrir(c, cat), true, c.ajuste_cambio == a[0], aj)
 			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var perde := []
+	if not escolhido.is_empty() and c.pecas.get(cat, {}).get("id") != escolhido["id"]:
+		var teste := c.copiar()
+		teste.instalar(escolhido)
+		var depois := Mecanico.provas_possiveis(dados, teste)
+		perde = Mecanico.provas_possiveis(dados, c).filter(func(e): return not e in depois)
+	_proibicoes(v, perde)
 	if _correndo(c):
 		rotulo("Correndo: o que mudar aqui vale para as próximas corridas.", FONTE_PEQUENA + 2, COR_INFO, v)
 
 
 func _janela_pneus(c: Carro, v: VBoxContainer) -> void:
-	rotulo("Pneu que segura mais: " + PecasTexto.FUNCAO["pneu"] + ". O piloto usa sozinho o melhor que você tiver.",
-			FONTE_PEQUENA + 2, COR_SECUNDARIA, v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_descritivo(v, PecasTexto.FUNCAO["pneu"])
+	var escolhido := _escolhido(c, "pneus")
 	for pn in dados.lista("pneus"):
 		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
-		var h := fileira(cartao(COR_BOM if tem else Color.TRANSPARENT, v))
-		var info := VBoxContainer.new()
-		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		info.add_theme_constant_override("separation", -2)
-		h.add_child(info)
-		rotulo(pn["nome"], 0, Color.WHITE, info)
-		rotulo("aderência %d (curvas e frenagem)" % roundi(pn["aderencia"]["seco"] * 100.0), FONTE_PEQUENA, COR_SECUNDARIA, info)
-		if tem:
-			var l := rotulo("SEU", FONTE_PEQUENA, COR_BOM, h)
-			l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		else:
-			var b := moeda(botao(dinheiro(int(pn["preco"])), func():
-				_comprar_pneu(c, pn)
-				_reabrir(c, "pneus"), jogador.economia.pode_pagar(int(pn["preco"])), true, h))
-			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			b.custom_minimum_size = Vector2(170, 72)
+		var texto := "%s   ader. %d" % [pn["nome"], roundi(pn["aderencia"]["seco"] * 100.0)] + ("   ✓" if tem else "")
+		_item_evolucao(v, c, "pneus", String(pn["id"]), texto, "uso" if tem else "", pn["id"] == escolhido.get("id"))
+	_proibicoes(v, [])
 
 
 ## Texto do HUD: contorno escuro para ler sobre a ilustração.
