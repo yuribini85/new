@@ -8,7 +8,8 @@ extends RefCounted
 ## Camadas, de baixo para cima: chão (duas texturas em manchas), areia e brita
 ## por fora das curvas, faixa de escape, asfalto, linhas brancas, zebras; pit
 ## lane, boxes, arquibancada, torre e pórtico na reta de largada; paddock no
-## lado de dentro; postes no pátio dos boxes e no paddock; mata em volta, mais densa longe da pista.
+## lado de dentro; postes no pátio dos boxes e no paddock; desgaste do asfalto,
+## muro de pneus e guard-rail (DesgastePista); mata em volta, mais densa longe da pista.
 ## Sombras dos objetos geradas aqui, na direção da luz do tema.
 
 ## A linha de chegada e o pórtico ficam logo à frente da vaga da pole (que a
@@ -102,6 +103,7 @@ func montar(cena: Node3D, pista: Pista, tema: Dictionary, largura: float) -> voi
 		_faixa_volta(minf(a, a + lado * 0.3), maxf(a, a + lado * 0.3), -0.015, branco)
 	_zebras()
 	_reta_de_largada(k)
+	DesgastePista.new().montar(self)
 	_mata(caixa, k)
 
 
