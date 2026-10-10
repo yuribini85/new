@@ -116,20 +116,94 @@ func _brasao() -> void:
 	v.add_child(nome)
 
 
+## Objetivos no padrão das outras telas: título de seção fora do cartão; o
+## próximo passo em destaque (borda ocre, botão principal IR) e, embaixo, a
+## lista com ✓ verde nos feitos e um anel nos que faltam.
 func _objetivos() -> void:
 	var lista := Objetivos.lista(jogador, dados)
 	var atual := Objetivos.atual(lista)
-	var v := cartao()
-	titulo_secao("OBJETIVOS", "", v)
+	titulo_secao("OBJETIVOS")
+	if atual < lista.size():
+		var o: Dictionary = lista[atual]
+		var p := PanelContainer.new()
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = COR_CARTAO
+		sb.set_corner_radius_all(14)
+		sb.set_content_margin_all(18)
+		sb.border_color = COR_DESTAQUE
+		sb.set_border_width_all(2)
+		p.add_theme_stylebox_override("panel", sb)
+		conteudo.add_child(p)
+		var v := VBoxContainer.new()
+		v.add_theme_constant_override("separation", 10)
+		p.add_child(v)
+		var k := Label.new()
+		k.text = "PRÓXIMO PASSO"
+		Tipografia.rotulo(k, "medium", 20)
+		k.add_theme_color_override("font_color", COR_DESTAQUE)
+		v.add_child(k)
+		var t := Label.new()
+		t.text = String(o["texto"])
+		t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		Tipografia.rotulo(t, "semibold", 32)
+		t.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+		v.add_child(t)
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		Tipografia.acao_primaria(b, "Ir   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+		b.pressed.connect(func(): ir_para.emit(o["aba"]))
+		v.add_child(b)
+	if lista.size() <= (1 if atual < lista.size() else 0):
+		return
+	var resto := cartao()
+	resto.add_theme_constant_override("separation", 6)
 	for i in lista.size():
-		var o: Dictionary = lista[i]
-		var h := fileira(v)
-		var l := rotulo(("✓ " if o["feito"] else ("→ " if i == atual else "· ")) + o["texto"], FONTE_PEQUENA + 3,
-				COR_BOM if o["feito"] else (Color.WHITE if i == atual else COR_SECUNDARIA), h)
-		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		if i == atual:
-			var b := botao("Ir", func(): ir_para.emit(o["aba"]), true, true, h)
-			b.custom_minimum_size = Vector2(110, 60)
+		if i != atual:
+			_linha_objetivo(lista[i], resto)
+
+
+func _linha_objetivo(o: Dictionary, pai: Control) -> void:
+	_linha_marcada(String(o["texto"]), "feito" if o["feito"] else "pendente", pai, 27)
+
+
+## Linha com marca vetorial: "feito" (✓ verde), "falta" (✗ vermelho) ou
+## "pendente" (anel). Usada nos objetivos e nos requisitos de licença.
+func _linha_marcada(texto: String, estado: String, pai: Control, tamanho: int) -> void:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 14 if tamanho > 24 else 10)
+	pai.add_child(h)
+	var marca := Control.new()
+	var lado := 30.0 if tamanho > 24 else 24.0
+	marca.custom_minimum_size = Vector2(lado, lado)
+	marca.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	marca.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(marca)
+	if estado != "pendente":
+		var ok := IconeVetor.new("check" if estado == "feito" else "x", COR_BOM if estado == "feito" else COR_RUIM)
+		ok.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		ok.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		marca.add_child(ok)
+	else:
+		var anel := Panel.new()
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0, 0, 0, 0)
+		sb.border_color = COR_SECUNDARIA
+		sb.set_border_width_all(2)
+		sb.set_corner_radius_all(11)
+		anel.add_theme_stylebox_override("panel", sb)
+		anel.position = Vector2(4, 4)
+		anel.size = Vector2(lado - 8.0, lado - 8.0)
+		anel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		marca.add_child(anel)
+	var l := Label.new()
+	l.text = texto
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(l, "regular", tamanho)
+	l.add_theme_color_override("font_color", COR_SECUNDARIA if estado == "feito" else Color(0.86, 0.87, 0.9))
+	h.add_child(l)
 
 
 ## Coleção por workshop, em lista (a mesma linha das Lojas) com a barra de
@@ -139,8 +213,7 @@ func _colecao() -> void:
 	var tenho := {}
 	for c in jogador.garagem.lista():
 		tenho[c.id] = true
-	var titulo := rotulo("COLEÇÃO · %d de %d" % [tenho.size(), dados.lista("carros").size()], 0, COR_SECUNDARIA)
-	Tipografia.rotulo(titulo, "medium", 22)
+	titulo_secao("COLEÇÃO · %d DE %d" % [tenho.size(), dados.lista("carros").size()])
 	for w in dados.workshops():
 		var carros: Array = dados.lista("carros").filter(func(c): return c["fabricante"] in w.get("fabricantes", []))
 		if carros.is_empty():
@@ -393,11 +466,12 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 	col.add_child(titulo)
 	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
 	var dur := l.treino_s(lic["id"])
-	rotulo("Libera %d corrida%s · treino de %s" % [provas, "" if provas == 1 else "s", _duracao(dur)], FONTE_PEQUENA,
-			Color(0.86, 0.87, 0.9), col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var libera := rotulo("Libera %d corrida%s · treino de %s" % [provas, "" if provas == 1 else "s", _duracao(dur)], 0,
+			Color(0.86, 0.87, 0.9), col)
+	libera.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	Tipografia.rotulo(libera, "regular", 27)
 	for r in l.requisitos(lic["id"]):
-		var lr := rotulo("%s %s" % ["✓" if r["ok"] else "✗", r["texto"]], FONTE_PEQUENA - 2, COR_BOM if r["ok"] else COR_RUIM, col)
-		lr.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_linha_marcada(String(r["texto"]), "feito" if r["ok"] else "falta", col, 24)
 	match st:
 		Licencas.AVAILABLE:
 			rotulo("Grátis · continua com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
