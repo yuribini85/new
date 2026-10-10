@@ -930,7 +930,7 @@ func _primeira_vitoria(c: Dictionary) -> void:
 	var g: Aba = _todas[0]
 	_sobre.abrir("Primeira vitória!", func(v):
 		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
-		g.nota("icone_creditos", "Prêmio: +%s" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
+		g.nota("cabecalho/icone_giros", "Prêmio: +%s" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
 		g.nota("icone_dica", "Agora: corrida que paga mais, ou Oficina", "", v))
 
 

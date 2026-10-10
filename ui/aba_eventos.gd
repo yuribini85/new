@@ -2,7 +2,6 @@ extends Aba
 
 signal correr_iniciado
 
-var _repeticoes := 1
 ## Preparação para a inscrição: -1 = a atual do carro; senão índice em
 ## Carro.configuracoes. A fila guarda uma cópia dela.
 var _config := -1
@@ -10,11 +9,13 @@ var _config_uid := -1
 ## Estimativas simuladas sob demanda: chave (prova + carro + peças) -> faixa,
 ## ou "..." enquanto calcula.
 var _estimativas := {}
-## Categoria aberta (mantida ao voltar): "voce", "", "marca" ou o id da licença.
-var _filtro := "voce"
+## Filtro aberto (mantido ao voltar): "nao_vencidas" ou "todas".
+var _filtro := "nao_vencidas"
 ## Cartões mostrados de uma vez (cada um custa ~10 ms para montar; a lista toda
 ## travava a troca de tela). "Mostrar mais" acrescenta outro lote.
 const LOTE := 12
+## Moeda de giros: a mesma do painel do cabeçalho.
+const ICONE_GIROS := "cabecalho/icone_giros"
 ## Cartão horizontal da corrida: imagem da pista à esquerda e o título.
 const LARGURA_IMAGEM_CARTAO := 210.0
 const ALTURA_IMAGEM_CARTAO := 200.0
@@ -24,9 +25,9 @@ const TITULO_CARTAO_MIN := 26
 const VEU_CARTAO := [0.15, 0.7, 0.85]
 var _limite := LOTE
 
-const GRUPOS := [["voce", "Para você"], ["", "Sem licença"], ["marca", "Marcas"], ["CLUB", "Club"], ["SPORT", "Sport"],
-	["NATIONAL", "National"], ["INTERNATIONAL", "International"], ["PRO", "Pro"], ["ELITE", "Elite"]]
-const NIVEIS_LICENCA := ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"]
+const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS CORRIDAS"]]
+## Altura do topo (cenário com o carro atual).
+const ALTURA_TOPO_CARRO := 150.0
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
 const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas": Color(0.22, 0.24, 0.28),
 		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22),
@@ -38,76 +39,68 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	cabecalho("Corridas", "Vença para ganhar giros", "fundo_competicoes")
 	var garagem := carro_ativo()
 	if garagem == null:
+		cabecalho("Corridas", "", "fundo_competicoes")
 		proximo_passo("Você precisa de um carro para correr.", "Ir para as Lojas", LOJA)
 		return
+	_topo_carro(garagem)
 	if _config_uid != garagem.uid or _config >= garagem.configuracoes.size():
 		_config = -1
 		_config_uid = garagem.uid
 	# Daqui em diante, o carro com a preparação escolhida para a inscrição.
 	var c := garagem if _config < 0 else garagem.com_configuracao(garagem.configuracoes[_config], dados.peca)
-	_carro_em_uso(garagem, c)
 	if not jogador.fila.is_empty():
 		_fila()
-	elif not jogador.vitorias.is_empty():
-		_repeticoes_ui()  # só faz sentido depois da primeira vitória
-	# Filtros numa linha só, que rola de lado (em várias linhas ocupavam meia tela).
-	var faixa := ScrollContainer.new()
-	faixa.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	faixa.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
-	faixa.scroll_deadzone = 100000  # o arrasto é o da aba (Aba._input)
-	faixa.custom_minimum_size = Vector2(0, 64)
+	# Dois filtros: as ainda não vencidas (padrão) e todas.
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
-	faixa.add_child(abas)
-	for g in GRUPOS:
-		var travada: bool = g[0] in NIVEIS_LICENCA and not g[0] in jogador.licencas
+	conteudo.add_child(abas)
+	for g in FILTROS:
 		var b := Button.new()
 		b.text = g[1]
 		b.toggle_mode = true
 		b.button_pressed = _filtro == g[0]
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		Tipografia.rotulo(b, "semibold", 24)
 		b.custom_minimum_size = Vector2(0, 60)
-		b.add_theme_font_size_override("font_size", 25)
-		if travada:
-			b.add_theme_color_override("font_color", COR_SECUNDARIA)
 		b.pressed.connect(func():
 			_filtro = g[0]
 			_limite = LOTE
 			mudou.emit())
 		abas.add_child(b)
-		if g[0] in NIVEIS_LICENCA:
-			ancora("LICENCA_" + g[0], b)
-	conteudo.add_child(faixa)
-	var lista := []
+	# Só as corridas com licença liberada (ou sem licença) aparecem.
+	var liberadas := []
 	for ev in dados.lista("eventos"):
-		var motivos := Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas)
-		if _filtro == "voce":
-			if motivos.is_empty() and not ev["premios"].is_empty():
-				lista.append([ev, motivos])
-		elif _grupo_evento(ev) == _filtro:
-			lista.append([ev, motivos])
-	if _filtro == "voce":
-		# Ainda não vencidas primeiro, da de prêmio menor (rivais mais fracos).
-		lista.sort_custom(func(a, b):
-			var va: bool = jogador.vitorias.has(a[0]["id"])
-			var vb: bool = jogador.vitorias.has(b[0]["id"])
-			if va != vb:
-				return not va
-			return a[0]["premios"][0] < b[0]["premios"][0])
-	else:
-		lista.sort_custom(func(a, b):
-			if a[1].is_empty() != b[1].is_empty():
-				return a[1].is_empty()
-			return a[0]["nome"] < b[0]["nome"])
-	if _filtro in NIVEIS_LICENCA and not _filtro in jogador.licencas:
-		var v := cartao(COR_INFO)
-		nota("icone_cadeado", "Precisa da licença %s" % _filtro, "Os testes da licença ficam em Carreira.", v, Color.WHITE)
-		botao("Ver licenças", func(): ir_para.emit(LICENCAS), true, false, v)
+		if ev["premios"].is_empty():
+			continue
+		var lic := String(ev["restricoes"].get("licenca", ""))
+		if lic != "" and not lic in jogador.licencas:
+			continue
+		liberadas.append(ev)
+	var lista := []
+	for ev in liberadas:
+		if _filtro == "nao_vencidas" and jogador.vitorias.has(ev["id"]):
+			continue
+		lista.append([ev, Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas)])
+	# O carro atual pode correr primeiro; depois, da de prêmio menor (rivais
+	# mais fracos); vencidas por último.
+	lista.sort_custom(func(a, b):
+		if a[1].is_empty() != b[1].is_empty():
+			return a[1].is_empty()
+		var va: bool = jogador.vitorias.has(a[0]["id"])
+		var vb: bool = jogador.vitorias.has(b[0]["id"])
+		if va != vb:
+			return not va
+		return a[0]["premios"][0] < b[0]["premios"][0])
 	if lista.is_empty():
-		nota("icone_alerta", "Nenhuma aceita o %s" % nome_curto(c.base["nome"]),
-				"Veja as outras categorias ou troque de carro na Garagem.")
+		var v := cartao(COR_INFO)
+		if _filtro == "nao_vencidas" and not liberadas.is_empty():
+			nota("icone_trofeu_ouro", "Você venceu todas as corridas disponíveis", "", v, Color.WHITE)
+			rotulo("Desbloqueie uma nova licença para novas corridas.", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
+		else:
+			nota("icone_cadeado", "Desbloqueie uma licença para novas corridas", "", v, Color.WHITE)
+		botao("Ver licenças", func(): ir_para.emit(LICENCAS), true, true, v)
 	for l in lista.slice(0, _limite):
 		_cartao_evento(c, l[0], l[1])
 	if lista.size() > _limite:
@@ -121,34 +114,32 @@ func construir() -> void:
 		conteudo.add_child(mais)
 
 
-## Carro em uso numa linha: foto, nome e números; trocar leva à Garagem.
-func _carro_em_uso(garagem: Carro, c: Carro) -> void:
-	var h := fileira()
-	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(garagem))
-	img.custom_minimum_size = Vector2(130, 72)
+## Topo: o cenário das corridas com a miniatura do carro atual e o nome grande.
+func _topo_carro(garagem: Carro) -> void:
+	var faixa := ilustracao("fundo_competicoes", ALTURA_TOPO_CARRO)
+	cenario_topo(faixa)
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	h.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	h.offset_left = 16
+	h.offset_right = -16
+	h.offset_bottom = -8
+	h.add_theme_constant_override("separation", 14)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	faixa.add_child(h)
+	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem))
+	img.custom_minimum_size = Vector2(170, 96)
 	h.add_child(img)
-	var a := c.atributos_efetivos("seco")
-	var l := rotulo("%s\n%d cv · %d kg · %s" % [c.base["nome"], a["potencia"], a["peso"],
-			NOMES_TRACAO_CURTO.get(c.base["tracao"], c.base["tracao"])],
-			FONTE_PEQUENA + 2, Color.WHITE, h)
-	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var b := botao_texto("Trocar de carro", func(): ir_para.emit(GARAGEM), h)
-	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	if garagem.configuracoes.is_empty():
-		return
-	var hp := fileira()
-	rotulo("Montagem", FONTE_PEQUENA + 2, COR_SECUNDARIA, hp).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var o := OptionButton.new()
-	o.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	o.custom_minimum_size = Vector2(0, 60)
-	o.add_item("Como está agora na Oficina")
-	for cfg in garagem.configuracoes:
-		o.add_item(cfg["nome"])
-	o.select(_config + 1)
-	o.item_selected.connect(func(i):
-		_config = i - 1
-		mudou.emit())
-	hp.add_child(o)
+	var nome := Label.new()
+	nome.text = garagem.base["nome"]
+	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	nome.clip_text = true
+	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(nome, "semibold", 38)
+	nome.add_theme_constant_override("outline_size", 6)
+	nome.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+	h.add_child(nome)
 
 
 func _fila() -> void:
@@ -207,22 +198,6 @@ static func _tempo(s: float) -> String:
 	if s >= 60.0:
 		return "%d min %02d s" % [int(s) / 60, int(s) % 60]
 	return "%d s" % int(s)
-
-
-func _repeticoes_ui() -> void:
-	var v := cartao()
-	var t := fileira(v)
-	nota("icone_de_novo", "Vencidas: correr quantas vezes?", "Nas corridas que você já venceu, escolha quantas "
-			+ "vezes seguidas correr. Rende giros, até com o app fechado.", t)
-	var h := fileira(v)
-	botao("−", func(): _repeticoes = maxi(1, _repeticoes - 1), _repeticoes > 1, false, h).custom_minimum_size = Vector2(80, 60)
-	var n := Label.new()
-	n.text = "×%d" % _repeticoes
-	n.add_theme_font_size_override("font_size", 32)
-	n.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	h.add_child(n)
-	botao("+", func(): _repeticoes = mini(999, _repeticoes + 1), true, false, h).custom_minimum_size = Vector2(80, 60)
-	botao("×10", func(): _repeticoes = mini(999, _repeticoes * 10), true, false, h).custom_minimum_size = Vector2(90, 60)
 
 
 ## Cartão da corrida, horizontal (vários por tela): à esquerda a imagem da
@@ -302,9 +277,16 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		tam -= 2
 	titulo.add_theme_font_size_override("font_size", tam)
 	var linha := [nome_pista(ev["pista"]), "%d volta%s" % [ev["voltas"], "" if ev["voltas"] == 1 else "s"]]
-	linha.append_array(_regras(ev["restricoes"]).slice(0, 2))
+	var lic := String(ev["restricoes"].get("licenca", ""))
+	if lic != "":
+		linha.append("licença " + lic.capitalize())
+	var sem_lic: Dictionary = ev["restricoes"].duplicate()
+	sem_lic.erase("licenca")
+	linha.append_array(_regras(sem_lic).slice(0, 2))
 	var lp := rotulo(" · ".join(linha), FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col)
 	lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if lic != "":
+		ancora("LICENCA_" + lic, lp)  # tutorial: "olha a licença exigida"
 	if not etapas.is_empty():
 		var prog := rotulo(_progresso_curto(ev, etapas, k_etapa), FONTE_PEQUENA - 2, COR_DESTAQUE.lightened(0.2), col)
 		prog.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -317,18 +299,21 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	for k in mini(3, ev["premios"].size()):
 		var cel := HBoxContainer.new()
 		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cel.add_theme_constant_override("separation", 4)
+		cel.add_theme_constant_override("separation", 6)
 		premios.add_child(cel)
 		var lp_pos := rotulo("%dº" % (k + 1), 0, COR_SECUNDARIA, cel)
 		Tipografia.rotulo(lp_pos, "medium", 18)
 		lp_pos.autowrap_mode = TextServer.AUTOWRAP_OFF
 		lp_pos.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		var moeda := icone("icone_creditos", 22, cel)
-		moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		lp_pos.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		# Valor logo depois da posição e a moeda de giros do cabeçalho depois dele.
 		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
 		Tipografia.numero(lv, [30, 24, 22][k])
 		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
 		lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var moeda := icone(ICONE_GIROS, 24, cel)
+		moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if pode:
 		var barra := _comparacao_rivais(c, ev, col)
 		if tutorial and barra != null:
@@ -351,7 +336,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	if pode:
 		var rotulo_correr := "Disputar"
 		if vitorias > 0:
-			rotulo_correr = "Disputar de novo" if _repeticoes == 1 else "Disputar de novo ×%d" % _repeticoes
+			rotulo_correr = "Disputar de novo"
 		var livre_fila: bool = jogador.fila.is_empty()
 		var bc := Button.new()
 		bc.disabled = not livre_fila
@@ -483,11 +468,6 @@ func _evento_tutorial() -> String:
 	return String(etapas[0]["id"]) if not etapas.is_empty() else ""
 
 
-## Grupo da lista: copas de marca à parte; o resto pela licença exigida.
-static func _grupo_evento(ev: Dictionary) -> String:
-	return "marca" if ev["restricoes"].has("carros") else ev["restricoes"].get("licenca", "")
-
-
 ## Tipo da série pelo que ela exige: [nome, cor de identidade].
 func _tipo(ev: Dictionary) -> Array:
 	var r: Dictionary = ev["restricoes"]
@@ -581,7 +561,7 @@ func _correr(evento_id: String) -> void:
 	if not etapas.is_empty() and etapas.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"]):
 		historia("CAMPEONATO_SELECIONADO", ctx)
 	var garagem := carro_ativo()
-	var n := _repeticoes if jogador.vitorias.has(evento_id) else 1
+	var n := 1
 	var cfg: Dictionary = {} if _config < 0 or garagem == null else garagem.configuracoes[_config]
 	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, n, Aceleracao.agora(jogador), cfg)
 	if motivo != "":
