@@ -120,7 +120,7 @@ func _objetivos() -> void:
 	var lista := Objetivos.lista(jogador, dados)
 	var atual := Objetivos.atual(lista)
 	var v := cartao()
-	rotulo("OBJETIVOS", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	titulo_secao("OBJETIVOS", "", v)
 	for i in lista.size():
 		var o: Dictionary = lista[i]
 		var h := fileira(v)

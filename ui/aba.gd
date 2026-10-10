@@ -221,6 +221,10 @@ func _espaco_topo() -> void:
 		return
 	var vazio := Control.new()
 	vazio.custom_minimum_size = Vector2(0, topo_livre - 14.0)  # 14: o espaço entre itens
+	# Sem cenário no topo, o conteúdo começa abaixo das abas penduradas do
+	# cabeçalho (ACELERAR, bandeira…), que não podem cobrir texto.
+	if not conteudo.get_child(0).has_meta("cenario_topo"):
+		vazio.custom_minimum_size.y += Cabecalho.ALTURA_MARCADOR + 4.0
 	vazio.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	conteudo.add_child(vazio)
 	conteudo.move_child(vazio, 0)
@@ -631,6 +635,8 @@ func titulo_secao(t: String, detalhe := "", pai: Control = null, cor := COR_SECU
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 8)
 	var l := rotulo(t, FONTE_PEQUENA, cor, h)
+	if t == t.to_upper():
+		Tipografia.rotulo(l, "medium", 22)  # título de seção: a mesma voz dos outros
 	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if detalhe != "":
 		l.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -712,10 +718,10 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		if meu != null and meu.id != base["id"]:
 			var a := meu.atributos_efetivos("seco")
 			comp.append(["vs seu %s: %+d cv, %+d kg" % [meu.base["nome"], int(base["potencia"]) - roundi(a["potencia"]),
-					int(base["peso"]) - roundi(a["peso"])], COR_INFO])
+					int(base["peso"]) - roundi(a["peso"])], COR_NEUTRA.lightened(0.3)])
 			# Potência por peso: mais cv com muito mais peso pode não valer a pena.
 			comp.append(["potência por tonelada: %d cv (o seu: %d)" % [roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
-					roundi(1000.0 * a["potencia"] / a["peso"])], COR_INFO])
+					roundi(1000.0 * a["potencia"] / a["peso"])], COR_NEUTRA.lightened(0.3)])
 		else:
 			comp.append(["potência por tonelada: %d cv" % roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
 					COR_NEUTRA.lightened(0.3)])
@@ -985,8 +991,8 @@ func botao_texto(t: String, acao: Callable, pai: Control = null, habilitado := t
 	b.flat = true
 	b.disabled = not habilitado
 	b.custom_minimum_size = Vector2(0, 56)
-	b.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
-	b.add_theme_color_override("font_color", COR_INFO.lightened(0.2))
+	Tipografia.rotulo(b, "medium", FONTE_PEQUENA + 4)
+	b.add_theme_color_override("font_color", COR_DESTAQUE)
 	b.pressed.connect(func():
 		acao.call()
 		mudou.emit())

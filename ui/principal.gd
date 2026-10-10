@@ -405,6 +405,13 @@ static func _simbolos() -> void:
 func _tema() -> Theme:
 	var t := Theme.new()
 	t.default_font_size = FONTE
+	# Botões são ações: Barlow, como os da Tipografia (o texto corrido segue na
+	# fonte padrão, que lê melhor em parágrafo).
+	t.set_font("font", "Button", Tipografia.fonte("medium"))
+	t.set_font("font", "OptionButton", Tipografia.fonte("medium"))
+	# A Barlow condensada lê menor no mesmo tamanho: um pouco maior nos botões.
+	t.set_font_size("font_size", "Button", FONTE + 4)
+	t.set_font_size("font_size", "OptionButton", FONTE + 4)
 	t.set_constant("separation", "VBoxContainer", 12)
 	t.set_constant("separation", "HBoxContainer", 12)
 	var normal := StyleBoxFlat.new()

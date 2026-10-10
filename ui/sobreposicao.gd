@@ -59,7 +59,8 @@ func _init() -> void:
 	v.add_theme_constant_override("separation", 14)
 	cartao.add_child(v)
 	_painel_titulo = Label.new()
-	_painel_titulo.add_theme_font_size_override("font_size", 38)
+	Tipografia.rotulo(_painel_titulo, "semibold", 40)
+	_painel_titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
 	_painel_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(_painel_titulo)
 	var rolagem := ScrollContainer.new()
