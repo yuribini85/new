@@ -16,6 +16,7 @@ extends RefCounted
 ## da demanda do prólogo comprada), GARAGEM_DOIS_CARROS,
 ## CAMPEONATO_VENCIDO, SEM_DINHEIRO, POTENCIA_ACIMA, LICENCA_EM_TREINO,
 ## COMPRA_CARRO_CARA, CAIXA_BAIXO, COLECAO (contexto quantidade),
+## VITORIA_LICENCA:<id> e VITORIA (quantidade; ver disparar_fim),
 ## GARAGEM_AMPLIADA e os do
 ## prólogo (ULTIMA_CORRIDA_ADRIAN, RADIO_ULTIMA_CORRIDA, ACIDENTE, POS_ACIDENTE).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
@@ -79,6 +80,26 @@ func disparar(trigger: String, ctx: Dictionary = {}) -> bool:
 	com_ctx["_ctx"] = ctx
 	cena.emit(com_ctx)
 	return true
+
+
+## Fim de corrida: a conversa da chegada (CORRIDA_FIM) ou, sem ela, numa
+## vitória inédita, um marco: a primeira vitória numa licença
+## (VITORIA_LICENCA:<id>) ou o total de provas vencidas (VITORIA, contexto
+## quantidade). Uma conversa só. `antes`: as vitórias antes desta corrida.
+func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
+	var ctx := {"posicao": posicao, "evento": evento_id}
+	if disparar("CORRIDA_FIM", ctx):
+		return true
+	if posicao != 1 or antes.has(evento_id) or not dados.existe("eventos", evento_id):
+		return false
+	var lic := String(dados.evento(evento_id)["restricoes"].get("licenca", ""))
+	var mesma := func(e) -> bool:
+		return dados.existe("eventos", e) and String(dados.evento(e)["restricoes"].get("licenca", "")) == lic
+	if lic != "" and not antes.keys().any(mesma):
+		if disparar("VITORIA_LICENCA:" + lic, ctx):
+			return true
+	ctx["quantidade"] = jogador.vitorias.size()
+	return disparar("VITORIA", ctx)
 
 
 ## Variáveis das falas ({saldo}, {carro}, {evento}, {serie}, {pista}, {voltas},

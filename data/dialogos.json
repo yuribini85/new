@@ -3199,6 +3199,107 @@
   "personagem": "dono"
  },
  {
+  "id": "CW_M01",
+  "trigger": "VITORIA_LICENCA:CLUB",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeira vitória com licença. Agora a régua sobe.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "FIRST_CLUB_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M02",
+  "trigger": "VITORIA_LICENCA:SPORT",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Na Sport ninguém deixa espaço de graça. Ele achou um.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "FIRST_SPORT_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M03",
+  "trigger": "VITORIA_LICENCA:NATIONAL",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "National. Tem gente na arquibancada que veio por nossa causa.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "FIRST_NATIONAL_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M04",
+  "trigger": "VITORIA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Dez provas vencidas. A parede de troféus já não está vazia.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "TEN_WINS"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "quantidade_min": 10
+  }
+ },
+ {
+  "id": "CW_M05",
+  "trigger": "VITORIA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Vinte e cinco. Já ligam aqui perguntando quem é o dono.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "TWENTY_FIVE_WINS"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "quantidade_min": 25
+  }
+ },
+ {
   "id": "CW_R01",
   "trigger": "CORRIDA_FIM",
   "falas": [

@@ -35,6 +35,13 @@ const CAIXA_S := 0.22
 const ALTURA_CORPO := 0.86  # fração da altura da tela
 const PAUSA_S := 1.6
 const POSE_S := 0.18  # troca de pose do mesmo personagem
+## Fundo acústico do cenário (historia.json → cenarios.<id>.som): volume e
+## quanto leva para entrar e sair.
+const AMBIENTE_DB := -20.0
+const AMBIENTE_MUDO_DB := -60.0
+const AMBIENTE_S := 0.8
+var _ambiente: AudioStreamPlayer
+var _ambiente_som := ""
 const LETRAS_POR_S := 55.0
 const CENARIO_S := 0.6  # troca de fundo
 const ZOOM_CENARIO := 1.07  # zoom lento do fundo
@@ -87,6 +94,9 @@ func _init(historia_: Historia) -> void:
 	_fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_fundo.gui_input.connect(_toque)
 	add_child(_fundo)
+	_ambiente = AudioStreamPlayer.new()
+	_ambiente.volume_db = AMBIENTE_MUDO_DB
+	add_child(_ambiente)
 	_cenario = TextureRect.new()
 	_cenario.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_cenario.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -435,8 +445,10 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 	_posicionar_caixa(_ilustrando)
 	var tex: Texture2D = null
 	var tom := Color.WHITE
+	var som := ""
 	if id != "":
 		var cat: Dictionary = historia.dados.historia().get("ilustracoes" if ilustracao else "cenarios", {}).get(id, {})
+		som = String(cat.get("som", ""))
 		tex = Assets.get_asset(id, "ilustracao" if ilustracao else "cenario")
 		if tex == null and cat.has("provisorio"):
 			var prov := String(cat["provisorio"])
@@ -444,6 +456,7 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 			tex = Assets.get_asset(prov.trim_prefix("cenario:"), "cenario") if prov.begins_with("cenario:") \
 					else Assets.get_asset(prov, "ui")
 			tom = TOM.get(String(cat.get("tom", "")), Color.WHITE)
+	_som_ambiente(som)
 	if tex == null:
 		if _cenario.visible:
 			var tw := create_tween().set_parallel()
@@ -540,6 +553,26 @@ func _tremer() -> void:
 		var amp := 18.0 * (1.0 - k / 10.0)
 		tw.tween_property(self, "position", Vector2(randf_range(-amp, amp), randf_range(-amp, amp)), 0.04)
 	tw.tween_property(self, "position", Vector2.ZERO, 0.04)
+
+
+## Som de fundo do cenário ("" = silêncio): entra e sai devagar, sem cortes.
+func _som_ambiente(som: String) -> void:
+	if som == _ambiente_som:
+		return
+	_ambiente_som = som
+	var stream: AudioStream = Sons.ambiente(som) if som != "" else null
+	var tw := create_tween()
+	if stream == null:
+		tw.tween_property(_ambiente, "volume_db", AMBIENTE_MUDO_DB, AMBIENTE_S)
+		tw.tween_callback(func():
+			if _ambiente_som == "":
+				_ambiente.stop())
+		return
+	if _ambiente.stream != stream or not _ambiente.playing:
+		_ambiente.stream = stream
+		_ambiente.volume_db = AMBIENTE_MUDO_DB
+		_ambiente.play()
+	tw.tween_property(_ambiente, "volume_db", AMBIENTE_DB, AMBIENTE_S)
 
 
 ## Corpo do personagem na pose da fala (sem a arte da pose, o corpo base).

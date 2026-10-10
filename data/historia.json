@@ -36,7 +36,7 @@
  "second_chance": {
   "carros": 5
  },
- "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py. focos (ilustrações): ponto de cada personagem no quadro (0..1, x e y); a câmera do diálogo puxa de leve para quem fala.",
+ "_nota_cena": "Direção das cenas (apresentação, não balanceamento). capitulos: título do cartão de capítulo. cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py. focos (ilustrações): ponto de cada personagem no quadro (0..1, x e y); a câmera do diálogo puxa de leve para quem fala. som (cenários): fundo acústico em laço durante a cena (Sons.ambiente: \"oficina\").",
  "capitulos": {
   "I": "Fim de temporada",
   "II": "A garagem vazia",
@@ -57,24 +57,29 @@
  "cenarios": {
   "garagem_cross": {
    "nome": "Garagem da família Cross",
-   "provisorio": "fundo_garagem"
+   "provisorio": "fundo_garagem",
+   "som": "oficina"
   },
   "garagem_cross_noite": {
    "nome": "Garagem da família Cross, à noite",
    "provisorio": "fundo_garagem",
-   "tom": "noite"
+   "tom": "noite",
+   "som": "oficina"
   },
   "garagem_vazia": {
    "nome": "A garagem sem o carro",
    "provisorio": "cenario:garagem_cross",
-   "tom": "vazio"
+   "tom": "vazio",
+   "som": "oficina"
   },
   "oficina_cross": {
    "nome": "Bancada da oficina",
-   "provisorio": "cenario:garagem_cross"
+   "provisorio": "cenario:garagem_cross",
+   "som": "oficina"
   },
   "oficina_mara": {
-   "nome": "A oficina da Mara, fim de tarde"
+   "nome": "A oficina da Mara, fim de tarde",
+   "som": "oficina"
   },
   "box_largada": {
    "nome": "Box antes da largada",
@@ -113,7 +118,8 @@
   },
   "garagem_second_driver": {
    "nome": "Garagem da Second Driver",
-   "provisorio": "fundo_garagem"
+   "provisorio": "fundo_garagem",
+   "som": "oficina"
   }
  },
  "ilustracoes": {

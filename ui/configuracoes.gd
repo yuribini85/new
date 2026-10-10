@@ -63,6 +63,11 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 
 	testes.call(v)  # traz o próprio separador e título (Modo de playtest)
 
+	if jogador.historia != null and String(jogador.personagem) != "":
+		_secao(aba, v, "HISTÓRIA")
+		aba.botao_texto("Diário de conversas", func():
+			aba.painel.emit("Diário", func(pv): Diario.montar(aba, pv, jogador), []), v)
+
 	_secao(aba, v, "CARREIRA")
 	# Recomeçar pede confirmação numa janela própria (apaga todo o progresso).
 	aba.botao_texto("Recomeçar carreira", func():

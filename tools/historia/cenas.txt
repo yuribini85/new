@@ -651,6 +651,23 @@ Mara[pensativa]: Eu lembro quando a gente tinha um único carro.
 = CW_R12 | GARAGEM_AMPLIADA | personagem=dono; flags=GARAGE_EXPANDED
 Mara[alerta]: Mais espaço. Não significa que a gente precise preencher tudo hoje.
 
+# Vitórias: a primeira numa licença e o total de provas vencidas (só quando a
+# chegada não teve outra conversa; Historia.disparar_fim).
+= CW_M01 | VITORIA_LICENCA:CLUB | personagem=dono; flags=FIRST_CLUB_WIN
+Mara[firme]: Primeira vitória com licença. Agora a régua sobe.
+
+= CW_M02 | VITORIA_LICENCA:SPORT | personagem=dono; flags=FIRST_SPORT_WIN
+Mara[pensativa]: Na Sport ninguém deixa espaço de graça. Ele achou um.
+
+= CW_M03 | VITORIA_LICENCA:NATIONAL | personagem=dono; flags=FIRST_NATIONAL_WIN
+Mara[cruzados]: National. Tem gente na arquibancada que veio por nossa causa.
+
+= CW_M04 | VITORIA | personagem=dono; condicao=quantidade_min:10; flags=TEN_WINS
+Mara[pensativa]: Dez provas vencidas. A parede de troféus já não está vazia.
+
+= CW_M05 | VITORIA | personagem=dono; condicao=quantidade_min:25; flags=TWENTY_FIVE_WINS
+Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
+
 # ---------------------------------------------------------------- Comentários de contexto
 # reativa=sim: no máximo um a cada historia.json → reativa_intervalo_corridas corridas.
 = CW_R01 | CORRIDA_FIM | personagem=dono; requer=FIRST_WIN; proibe=FIRST_LOSS_TALK; condicao=posicao_min:2; flags=FIRST_LOSS_TALK; reativa=sim

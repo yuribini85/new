@@ -173,6 +173,54 @@ func _tocar(s: AudioStream) -> void:
 	_efeito.play()
 
 
+static var _ambientes := {}  # nome -> AudioStreamWAV
+
+
+## Fundo acústico das cenas (historia.json → cenarios.<id>.som), gerado em
+## laço: "oficina" = ventilação abafada, zumbido elétrico baixo, o tique de um
+## relógio e, de vez em quando, metal ao longe. null se o nome não existe.
+static func ambiente(nome: String) -> AudioStream:
+	if nome != "oficina":
+		return null
+	if not _ambientes.has(nome):
+		_ambientes[nome] = _oficina()
+	return _ambientes[nome]
+
+
+static func _oficina() -> AudioStreamWAV:
+	var dur := 8.0
+	var n := int(TAXA * dur)
+	var dados := PackedByteArray()
+	dados.resize(n * 2)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var vento := 0.0
+	var vento2 := 0.0
+	# Batidas de metal ao longe: [início (s), frequência base (Hz), força].
+	var metais := [[1.7, 1830.0, 0.5], [5.3, 2410.0, 0.35], [6.1, 1290.0, 0.25]]
+	for i in n:
+		var t := float(i) / TAXA
+		# Ventilação: ruído passado duas vezes num filtro baixo, ondulando devagar.
+		vento = lerpf(vento, rng.randf_range(-1.0, 1.0), 0.06)
+		vento2 = lerpf(vento2, vento, 0.08)
+		var x := vento2 * 0.55 * (0.85 + 0.15 * sin(TAU * t / dur))
+		# Zumbido de lâmpada/transformador.
+		x += (sin(TAU * 120.0 * t) * 0.6 + sin(TAU * 240.0 * t) * 0.25) * 0.035
+		# Relógio: um tique curto por segundo, alternando o tom (tic-tac).
+		var dt := fmod(t, 1.0)
+		if dt < 0.012:
+			x += sin(TAU * (3200.0 if int(t) % 2 == 0 else 2700.0) * dt) * 0.12 * (1.0 - dt / 0.012)
+		for m in metais:
+			var tm: float = t - float(m[0])
+			if tm >= 0.0 and tm < 1.2:
+				var f: float = m[1]
+				var env := exp(-tm * 5.0) * float(m[2]) * 0.18
+				x += (sin(TAU * f * tm) + 0.6 * sin(TAU * f * 2.76 * tm) + 0.3 * sin(TAU * f * 5.4 * tm)) * env
+		var borda := minf(1.0, minf(t / 0.05, (dur - t) / 0.05))
+		dados.encode_s16(i * 2, int(clampf(x * lerpf(0.7, 1.0, borda), -1.0, 1.0) * 32767.0))
+	return _wav(dados, true, n)
+
+
 static var _curtos := {}  # nome -> AudioStream (ou null sem o arquivo)
 
 

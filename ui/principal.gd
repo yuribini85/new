@@ -699,8 +699,7 @@ func _processar_fila() -> void:
 		var c: Dictionary = rel["corridas"][0]
 		var primeira: bool = not antes_vitorias.has(c["evento_id"])
 		# A conversa da chegada vem antes do resultado, sobre a tela escura.
-		if jogador.historia != null and jogador.historia.disparar("CORRIDA_FIM",
-				{"posicao": int(c["posicao"]), "evento": c["evento_id"]}):
+		if jogador.historia != null and jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias):
 			_quando_dialogo_acabar(_resultado.bind(c, primeira))
 		else:
 			_resultado(c, primeira)
