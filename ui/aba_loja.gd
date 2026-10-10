@@ -29,7 +29,6 @@ const PASTA_LOGOS := "res://arte/ui/workshops/"
 
 
 func construir() -> void:
-	cabecalho("Lojas", "Workshops", "fundo_mercado")
 	# Prólogo: depois do acidente, Elena começa pela Second Chance Motors.
 	# Só enquanto a garagem está vazia: é a loja da história (o primeiro carro da Elena).
 	var second_chance: bool = jogador.flags.has("SECOND_CHANCE_UNLOCKED") and jogador.garagem.lista().is_empty()
@@ -37,6 +36,7 @@ func construir() -> void:
 		_second_chance_vista = true
 		_loja = "second_chance"
 	if _loja == "second_chance" and second_chance:
+		cabecalho("Lojas", "Workshops", "fundo_mercado")
 		_topo_workshop({})
 		_second_chance(Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos))
 		return
@@ -47,8 +47,13 @@ func construir() -> void:
 			aberta = w
 	if aberta.is_empty():
 		_loja = ""
-		_vitrine(ws, second_chance)
+		if ws.size() == AREAS_MAPA.size() and arte("mapa_lojas") != null:
+			_mapa(ws, second_chance)
+		else:
+			cabecalho("Lojas", "Workshops", "fundo_mercado")
+			_vitrine(ws, second_chance)
 	else:
+		cabecalho("Lojas", "Workshops", "fundo_mercado")
 		_workshop(aberta)
 
 
@@ -67,7 +72,71 @@ func _carros_da(w: Dictionary) -> Array:
 	return dados.lista("carros").filter(func(c): return c["fabricante"] in fabs)
 
 
-## Lista das workshops: a concessionária, o nome e quantos carros vende.
+## Mapa das lojas (arte/ui/mapa_lojas.png): a estrada da costa com as seis
+## concessionárias; cada uma é uma área de toque que abre a loja. Áreas em
+## fração da imagem [x0, y0, x1, y1], na ordem de data/workshops.json.
+const AREAS_MAPA := [
+	[0.085, 0.128, 0.447, 0.258], [0.606, 0.263, 0.925, 0.362], [0.112, 0.326, 0.468, 0.458],
+	[0.606, 0.487, 0.940, 0.616], [0.064, 0.610, 0.542, 0.736], [0.542, 0.807, 0.935, 0.909],
+]
+
+
+func _mapa(ws: Array, second_chance: bool) -> void:
+	var tex := arte("mapa_lojas")
+	var mapa := Control.new()
+	mapa.custom_minimum_size = Vector2(0, (720.0 - 2.0 * MARGEM_LATERAL) * tex.get_height() / tex.get_width())
+	mapa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	conteudo.add_child(mapa)
+	var t := TextureRect.new()
+	t.texture = tex
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mapa.add_child(t)
+	cenario_topo(mapa)  # de borda a borda, colado no cabeçalho
+	# A imagem ocupa a largura toda: a altura acompanha a proporção dela.
+	mapa.custom_minimum_size.y = 720.0 * tex.get_height() / tex.get_width()
+	var sb_toque := StyleBoxFlat.new()
+	sb_toque.bg_color = Color(1, 1, 1, 0.12)
+	sb_toque.set_corner_radius_all(16)
+	for i in ws.size():
+		var w: Dictionary = ws[i]
+		var r: Array = AREAS_MAPA[i]
+		var b := Button.new()
+		b.tooltip_text = String(w["nome"])
+		b.focus_mode = Control.FOCUS_NONE
+		for estado in ["normal", "hover", "focus"]:
+			b.add_theme_stylebox_override(estado, StyleBoxEmpty.new())
+		b.add_theme_stylebox_override("pressed", sb_toque)
+		b.anchor_left = r[0]
+		b.anchor_top = r[1]
+		b.anchor_right = r[2]
+		b.anchor_bottom = r[3]
+		var id := String(w["id"])
+		b.pressed.connect(func():
+			_loja = id
+			_limite = POR_PAGINA
+			set_deferred("scroll_vertical", 0)  # a loja abre do topo, não da altura do mapa
+			mudou.emit())
+		t.add_child(b)
+		ancora("LOJA_" + id, b)
+	if second_chance:
+		var sc := Button.new()
+		Tipografia.acao_primaria(sc, "Second Chance Motors · usados", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 64)
+		sc.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+		sc.offset_left = 24
+		sc.offset_right = -24
+		sc.offset_top = 70
+		sc.offset_bottom = 134
+		sc.pressed.connect(func():
+			_loja = "second_chance"
+			mudou.emit())
+		t.add_child(sc)
+
+
+## Lista das workshops (sem o mapa: dados de teste): a concessionária, o nome
+## e quantos carros vende.
 func _vitrine(ws: Array, second_chance: bool) -> void:
 	if second_chance:
 		linha_workshop({"nome": "Second Chance Motors", "logo": ""}, "USADOS", func():
@@ -112,7 +181,7 @@ func _logo(logo: String, nome: String, altura: float) -> Control:
 
 ## Dentro da workshop: a logo grande numa placa e, embaixo, os carros.
 func _topo_workshop(w: Dictionary) -> void:
-	var voltar := botao_texto("‹ Workshops", func():
+	var voltar := botao_texto("‹ Mapa das lojas", func():
 		_loja = ""
 		_limite = POR_PAGINA
 		mudou.emit())
