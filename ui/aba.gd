@@ -701,7 +701,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 	cor_escolhida = inicial.to_html(false)
 	var botoes := [] if compra.is_empty() or not compra[2] else [[compra[0], func():
 		compra[1].call()
-		mudou.emit()], ["Fechar", func(): pass]]
+		mudou.emit(), "giros"], ["Fechar", func(): pass]]
 	painel.emit(base["nome"], func(v):
 		var vit := VitrineCarro.new(320.0)
 		vit.mostrar_modelo(base, inicial)
@@ -728,7 +728,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		selos(extras + comp, v)
 		if not compra.is_empty() and not compra[2]:
 			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)
-		var como := ["à venda na %s por %s G" % [workshop_de(String(base.get("fabricante", ""))), dinheiro(int(base["preco"]))]]
+		var como := ["à venda na %s por %s giros" % [workshop_de(String(base.get("fabricante", ""))), dinheiro(int(base["preco"]))]]
 		for ev in dados.lista("eventos"):
 			if ev.get("carro_premio") == base["id"]:
 				como.append("prêmio da 1ª vitória em %s" % ev["nome"])
@@ -743,7 +743,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
 		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
-		rotulo("Revenda depois: %s G" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
+		rotulo("Revenda depois: %s giros" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
 		if not fab.is_empty():
 			var vf := cartao(Color.TRANSPARENT, v)
 			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)
@@ -1159,6 +1159,16 @@ func icone_pista(pista_id: String) -> Control:
 
 func carro_ativo() -> Carro:
 	return jogador.garagem.carro(jogador.carro_ativo)
+
+
+## Moeda de giros num botão: o ícone do cabeçalho antes do valor (o texto do
+## botão fica só com o número ou "Ação · número").
+static func moeda(b: Button, tamanho := 30) -> Button:
+	b.icon = arte("cabecalho/icone_giros")
+	b.expand_icon = true
+	b.add_theme_constant_override("icon_max_width", tamanho)
+	b.add_theme_constant_override("h_separation", 8)
+	return b
 
 
 static func dinheiro(valor: int) -> String:

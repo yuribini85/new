@@ -194,8 +194,8 @@ func _ganho_estimado(ev: Dictionary, f: Dictionary) -> String:
 	var melhor: int = p.call(int(pos.min())) * n
 	var pior: int = p.call(int(pos.max())) * n
 	if melhor == pior:
-		return "Ganho previsto até o fim: ≈ %s G" % dinheiro(melhor)
-	return "Ganho previsto até o fim: %s a %s G (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
+		return "Ganho previsto até o fim: ≈ %s giros" % dinheiro(melhor)
+	return "Ganho previsto até o fim: %s a %s giros (pelas posições até agora)" % [dinheiro(pior), dinheiro(melhor)]
 
 
 static func _tempo(s: float) -> String:

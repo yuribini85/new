@@ -207,12 +207,12 @@ func _renda(v: VBoxContainer, sessoes: Array) -> void:
 		var x: Dictionary = r[n]
 		var ganho: int = int(x["premio"]) + int(x["bonus"])
 		var minutos: float = float(x["duracao_s"]) / 60.0
-		rotulo("%s: %d corrida%s · %d%% vitórias · %s G por corrida · %s G por minuto de corrida%s%s" % [
+		rotulo("%s: %d corrida%s · %d%% vitórias · %s giros por corrida · %s giros por minuto de corrida%s%s" % [
 				n, x["corridas"], "" if x["corridas"] == 1 else "s", roundi(100.0 * x["vitorias"] / x["corridas"]),
 				dinheiro(roundi(float(ganho) / x["corridas"])),
 				dinheiro(roundi(ganho / minutos)) if minutos > 0.0 else "—",
 				" · %d com o app fechado" % x["offline"] if int(x["offline"]) > 0 else "",
-				" · folha da equipe %s G" % dinheiro(int(x["folha"])) if int(x["folha"]) != 0 else ""],
+				" · folha da equipe %s giros" % dinheiro(int(x["folha"])) if int(x["folha"]) != 0 else ""],
 				FONTE_PEQUENA, COR_SECUNDARIA, v)
 
 
@@ -285,7 +285,7 @@ func _modo_teste(v: VBoxContainer) -> void:
 		for f in s["filas"]:
 			minutos_fila += float(f["duracao_s"]) * int(f["repeticoes"]) / 60.0
 		var aus: float = float(s["ausencia_antes_s"])
-		rotulo("Sessão %d (%s): %.0f min · assistindo %.0f min · %d fila%s (%.0f min) · %d pulo%s · %s→%s · %s→%s G%s" % [
+		rotulo("Sessão %d (%s): %.0f min · assistindo %.0f min · %d fila%s (%.0f min) · %d pulo%s · %s→%s · %s→%s giros%s" % [
 				i + 1, s["modo"], dur / 60.0, corrida / 60.0, s["filas"].size(), "" if s["filas"].size() == 1 else "s",
 				minutos_fila, s["pulos"], "" if s["pulos"] == 1 else "s", s["fase_inicio"], s["fase_fim"],
 				dinheiro(int(s["saldo_inicio"])), dinheiro(int(s["saldo_fim"])),
@@ -310,7 +310,7 @@ func _recomecar() -> void:
 	jogador.ultima_corrida = {}
 	if not dados.historia().is_empty():
 		Prologo.iniciar(dados, jogador)  # recomeça pelo prólogo (decisão 32)
-	avisar("Carreira recomeçada com %s G." % dinheiro(jogador.economia.saldo))
+	avisar("Carreira recomeçada com %s giros." % dinheiro(jogador.economia.saldo))
 	ir_para.emit(GARAGEM)
 	historia("GAME_START")
 
@@ -600,7 +600,7 @@ func _tela_bancada(ct: Dictionary) -> void:
 	for pid in carro.configuracao()["pecas"]:
 		custo += int(dados.peca(pid)["preco"])
 	nota("icone_montagem", "%d peça%s · a escola paga" % [carro.pecas.size(), "" if carro.pecas.size() == 1 else "s"],
-			"Preço de tabela da montagem: %s G. A escola empresta o carro e as peças." % dinheiro(custo))
+			"Preço de tabela da montagem: %s giros. A escola empresta o carro e as peças." % dinheiro(custo))
 	_pecas_da_escola(ct, carro)
 	botao("Testar montagem", _enviar.bind(ct), true, true)
 	if not _avaliacao.is_empty():
@@ -624,7 +624,7 @@ func _pecas_da_escola(ct: Dictionary, carro: Carro) -> void:
 		var opcoes: Array = [{}] + por_cat[cat]
 		for p in opcoes:
 			var b := Button.new()
-			b.text = "Nenhuma" if p.is_empty() else "%s · %s G" % [p["nome"], dinheiro(int(p["preco"]))]
+			b.text = "Nenhuma" if p.is_empty() else "%s · %s giros" % [p["nome"], dinheiro(int(p["preco"]))]
 			b.toggle_mode = true
 			b.button_pressed = (p.is_empty() and atual == "") or (not p.is_empty() and p["id"] == atual)
 			b.custom_minimum_size = Vector2(0, 58)

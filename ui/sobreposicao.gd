@@ -139,7 +139,9 @@ func abrir(titulo: String, montar: Callable, botoes: Array = []) -> void:
 			for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 				bt.add_theme_color_override(c, Color(0.1, 0.1, 0.1))
 		# Terceiro item opcional: ícone da arte da interface.
-		if b.size() > 2 and b[2] is String:
+		if b.size() > 2 and b[2] == "giros":
+			Aba.moeda(bt)  # preço: a moeda antes do valor
+		elif b.size() > 2 and b[2] is String:
 			Aba.com_icone(bt, b[2])
 		bt.pressed.connect(func():
 			fechar()

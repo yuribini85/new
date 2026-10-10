@@ -386,7 +386,7 @@ func test_evolucao_da_garagem_abre_a_compra_da_categoria() -> void:
 	aberto[0][1].call(v)
 	var comprar: Button = null
 	for b in v.find_children("*", "Button", true, false):
-		if b.text.ends_with(" G") and not b.disabled:
+		if b.icon != null and b.text.replace(".", "").is_valid_int() and not b.disabled:  # preço: moeda + número
 			comprar = b
 			break
 	verificar(comprar != null, "estágio à venda com preço")

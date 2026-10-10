@@ -794,7 +794,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
 		v.add_child(pos)
 		var ganho := Label.new()
-		ganho.text = "+%s G" % Aba.dinheiro(int(c["premio"])) if int(c["premio"]) > 0 else "Sem prêmio"
+		ganho.text = "+%s giros" % Aba.dinheiro(int(c["premio"])) if int(c["premio"]) > 0 else "Sem prêmio"
 		ganho.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		Tipografia.numero(ganho, 34)
 		ganho.add_theme_color_override("font_color", Aba.COR_BOM if int(c["premio"]) > 0 else Aba.COR_SECUNDARIA)
@@ -963,14 +963,14 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 		if i_obj < objetivos.size():
 			g.rotulo("OBJETIVO %d/%d" % [i_obj + 1, objetivos.size()], Aba.FONTE_PEQUENA, Aba.COR_INFO, vp)
 			g.rotulo(objetivos[i_obj]["texto"], 30, Color.WHITE, vp)
-		g.rotulo("Saldo: %s G" % Aba.dinheiro(jogador.economia.saldo), Aba.FONTE_PEQUENA + 3, Aba.COR_DESTAQUE, vp)
+		g.rotulo("Saldo: %s giros" % Aba.dinheiro(jogador.economia.saldo), Aba.FONTE_PEQUENA + 3, Aba.COR_DESTAQUE, vp)
 		var obstaculo := Objetivos.proximo_obstaculo(jogador, dados)
 		if obstaculo != "":
 			g.rotulo(obstaculo, Aba.FONTE_PEQUENA + 2, Color.WHITE, vp)
 		for cid in jogador.desejos:
 			var p := Usados.proxima(dados.carro(cid), jogador.dias, jogador.usados_vendidos)
 			if not p.is_empty() and p["inicio"] <= jogador.dias:
-				g.rotulo("♥ %s à venda nos usados por %s G" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
+				g.rotulo("♥ %s à venda nos usados por %s giros" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
 						Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vp)
 		if not corridas.is_empty():
 			var vitorias := corridas.filter(func(c): return c["posicao"] == 1).size()
@@ -978,7 +978,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			var resumo := g.cartao(Aba.COR_BOM, v)
 			g.rotulo("%d corrida%s · %d vitória%s · melhor %dº" % [corridas.size(), "" if corridas.size() == 1 else "s",
 					vitorias, "" if vitorias == 1 else "s", melhor], 0, Color.WHITE, resumo)
-			g.rotulo("+%s G em prêmios" % Aba.dinheiro(rel["premio_total"]), 34, Aba.COR_DESTAQUE, resumo)
+			g.rotulo("+%s giros em prêmios" % Aba.dinheiro(rel["premio_total"]), 34, Aba.COR_DESTAQUE, resumo)
 		for uid in rel["carros_premio"]:
 			var cp: Carro = jogador.garagem.carro(uid)
 			if cp != null:
@@ -1013,7 +1013,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			v.add_child(b)
 			v.add_child(detalhes)
 			for c in corridas:
-				g.rotulo("%s · %dº · %s G" % [dados.evento(c["evento_id"]).get("nome", ""), c["posicao"],
+				g.rotulo("%s · %dº · %s giros" % [dados.evento(c["evento_id"]).get("nome", ""), c["posicao"],
 						Aba.dinheiro(c["premio"])], Aba.FONTE_PEQUENA + 2, Color.WHITE, detalhes), botoes)
 
 

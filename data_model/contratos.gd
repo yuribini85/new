@@ -143,7 +143,7 @@ static func texto_condicao(chave: String, valor: Variant) -> String:
 		"folga_s":
 			return "%.1f s à frente do rival" % float(valor)
 		"custo_max":
-			return "peças até %s G" % Aba.dinheiro(int(valor))
+			return "peças até %s giros" % Aba.dinheiro(int(valor))
 		"pecas_max":
 			return "até %d peça%s" % [int(valor), "" if int(valor) == 1 else "s"]
 		"sem_categorias":

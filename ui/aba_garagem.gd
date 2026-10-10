@@ -466,9 +466,9 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 				_comprar_peca(c, p, antes)
 				_reabrir(c, cat), not bloqueado, true, h)
 		else:
-			acao = botao("%s G" % dinheiro(int(p["preco"])), func():
+			acao = moeda(botao(dinheiro(int(p["preco"])), func():
 				_comprar_peca(c, p, antes)
-				_reabrir(c, cat), not bloqueado and jogador.economia.pode_pagar(int(p["preco"])), true, h)
+				_reabrir(c, cat), not bloqueado and jogador.economia.pode_pagar(int(p["preco"])), true, h))
 		acao.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		acao.custom_minimum_size = Vector2(170, 72)
 	if cat == "cambio" and c.pecas.has("cambio"):
@@ -500,9 +500,9 @@ func _janela_pneus(c: Carro, v: VBoxContainer) -> void:
 			var l := rotulo("SEU", FONTE_PEQUENA, COR_BOM, h)
 			l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		else:
-			var b := botao("%s G" % dinheiro(int(pn["preco"])), func():
+			var b := moeda(botao(dinheiro(int(pn["preco"])), func():
 				_comprar_pneu(c, pn)
-				_reabrir(c, "pneus"), jogador.economia.pode_pagar(int(pn["preco"])), true, h)
+				_reabrir(c, "pneus"), jogador.economia.pode_pagar(int(pn["preco"])), true, h))
 			b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			b.custom_minimum_size = Vector2(170, 72)
 
@@ -693,7 +693,8 @@ func _botao_vender(pai: Control, c: Carro) -> Button:
 	var b := Button.new()
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
-	Tipografia.acao_neutra(b, "Vender · %s G" % dinheiro(revenda(c.base)), 20, 52)
+	Tipografia.acao_neutra(b, "Vender · %s" % dinheiro(revenda(c.base)), 20, 52)
+	moeda(b, 22)
 	b.pressed.connect(_confirmar_venda.bind(c))
 	pai.add_child(b)
 	return b
@@ -771,20 +772,21 @@ func _ampliacao(pai: Control) -> void:
 			else COR_SECUNDARIA, h)
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	info.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var b := botao("Ampliar para %d · %s G" % [nova, dinheiro(preco)], func():
+	var b := botao("Ampliar para %d · %s" % [nova, dinheiro(preco)], func():
 		var erro := VagasGaragem.ampliar(dados, jogador)
 		if erro != "":
 			avisar("Não deu: %s." % erro, false)
 		else:
 			avisar("Garagem com %d vagas." % jogador.garagem.vagas)
 		_reabrir_garagem(), jogador.economia.pode_pagar(preco), false, h)
+	moeda(b, 26)
 	b.custom_minimum_size = Vector2(0, 60)
 
 
 func _confirmar_venda(c: Carro) -> void:
 	painel.emit("Vender %s?" % c.base["nome"], func(v):
 		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
-		nota("icone_vender", "Você recebe %s G" % dinheiro(revenda(c.base)), "", v, Color.WHITE)
+		nota("icone_vender", "Você recebe %s giros" % dinheiro(revenda(c.base)), "", v, Color.WHITE)
 		rotulo("Peças instaladas não entram no valor.", FONTE_PEQUENA, COR_SECUNDARIA, v),
 		[["Vender", func():
 			_vender(c.uid)
@@ -797,7 +799,7 @@ func _vender(uid: int) -> void:
 		avisar("O único carro da garagem não pode ser vendido.", false)
 		return
 	var nome: String = jogador.garagem.carro(uid).base["nome"]
-	avisar("Vendido: %s por %s G." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])
+	avisar("Vendido: %s por %s giros." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])
 	if jogador.carro_ativo == uid:
 		jogador.carro_ativo = -1
 
@@ -811,4 +813,4 @@ func _recomecar() -> void:
 	jogador.novo_jogo(dados.economia(), dados.pneu)
 	jogador.carro_ativo = -1
 	jogador.ultima_corrida = {}
-	avisar("Carreira recomeçada com %s G." % dinheiro(jogador.economia.saldo))
+	avisar("Carreira recomeçada com %s giros." % dinheiro(jogador.economia.saldo))

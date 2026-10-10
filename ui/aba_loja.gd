@@ -327,7 +327,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	v.add_child(img)
 	for t in [[c["nome"] + ("  " + marca if marca != "" else ""), 27, Color.WHITE],
 			["%d cv · %d kg" % [c["potencia"], c["peso"]], 23, COR_SECUNDARIA],
-			["%s G" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
+			["%s giros" % dinheiro(preco), 32, Color.WHITE if pode else Color(0.72, 0.73, 0.78)]]:
 		var l := Label.new()
 		l.text = t[0]
 		l.add_theme_font_size_override("font_size", t[1])
@@ -341,9 +341,9 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 		selo_c.position = Vector2(10, 8)
 		b.add_child(selo_c)
 		extras = extras + [["já na sua garagem", COR_BOM]]
-	var falta := "" if pode else "Faltam %s G" % dinheiro(preco - jogador.economia.saldo)
-	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s G" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
-			["Comprar · %s G" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor))
+	var falta := "" if pode else "Faltam %s giros" % dinheiro(preco - jogador.economia.saldo)
+	b.pressed.connect(func(): ficha_modelo(c, extras + [["revenda %s giros" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
+			["Comprar · %s" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor))
 	grade.add_child(b)
 
 
