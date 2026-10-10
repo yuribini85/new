@@ -10,6 +10,8 @@ const TAMANHO := Vector2i(360, 200)
 static var _no: Estudio
 ## Fração da tela do sprite isométrico que entra na foto (o maior carro cabe).
 const RECORTE_ISO := Vector2(0.74, 0.66)
+## Campo de visão da foto do carro provisório (3D).
+const FOV_PROVISORIO := 27.0
 var _fotos := {}  # "id|cor" -> ViewportTexture
 
 
@@ -70,7 +72,9 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	mundo.add_child(carro)
 	carro.configurar_modelo(base, cor)
 	var cam := Camera3D.new()
-	cam.fov = 19
+	# Enquadramento mais aberto: o carro provisório ocupa a foto na mesma
+	# proporção do sprite recortado (RECORTE_ISO), lado a lado com os de arte.
+	cam.fov = FOV_PROVISORIO
 	mundo.add_child(cam)
 	cam.look_at_from_position(Vector3(4.3, 1.6, 5.8), Vector3(0, 0.5, 0))
 	add_child(vp)
