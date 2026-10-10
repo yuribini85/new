@@ -18,9 +18,11 @@ extends RefCounted
 ## Limites e estágios vêm do estudo (eliminação a 100%, ré a ~90%, cinco
 ## estágios visuais); velocidades e tempos estão em data/arena.json.
 ##
-## IA (a mesma para todos): mantém um alvo por `alvo_s`, mira onde ele vai
-## estar (antecedência pela própria velocidade), vira aos poucos e alivia o
-## acelerador quanto maior o erro de rumo; com a frente em `limite_re`, ataca
+## IA (a mesma para todos): mantém um alvo por `alvo_s`, mira a quina traseira
+## dele onde ele vai estar (antecedência pela própria velocidade), vira aos
+## poucos e reduz até `v_curva_kmh` quanto maior o erro de rumo (ataca até
+## `v_ataque_kmh` alinhada); com o muro à frente em `olhar_muro_s`, vira para o
+## centro devagar; com a frente em `limite_re`, ataca
 ## de ré para poupar a frente; travado encostado por `travado_s`, recua
 ## `recuperacao_s` no sentido contrário ao ataque.
 
@@ -35,7 +37,8 @@ const LARGURA_M := 1.75
 ## Chaves obrigatórias em data/arena.json.
 const PARAMS := ["raio_m", "dt_s", "amostra_dt_s", "tempo_max_s", "restituicao", "atrito_contato",
 	"v_ref_kmh", "v_min_dano_kmh", "limite_eliminacao", "limite_re", "estagios", "alvo_s",
-	"antecedencia_max_s", "travado_s", "recuperacao_s", "v_travado_kmh"]
+	"antecedencia_max_s", "travado_s", "recuperacao_s", "v_travado_kmh", "v_ataque_kmh", "v_curva_kmh",
+	"olhar_muro_s", "margem_muro_m"]
 
 
 ## participantes: [{id, atributos (Carro.atributos_efetivos), piloto {ritmo,
@@ -62,7 +65,9 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"W": float(a.get("largura", LARGURA_M)),
 			"pot": float(a["potencia"]) * CV_PARA_W, "mu": float(a["aderencia"]),
 			"pos": p.get("pos", Vector2.from_angle(ang) * raio * 0.6),
-			"rumo": float(p.get("rumo", ang + PI)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
+			# Largada em roda, de lado para o centro (todos girando no mesmo sentido):
+			# ninguém começa num frontal.
+			"rumo": float(p.get("rumo", ang + PI / 2.0)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
 			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,
 			"por": "", "ultimo_golpe": "", "giro_acum": 0.0, "giros": 0, "eliminou": 0,
 			"acel_fixo": p.get("acelerador", null), "agress": float(p.get("piloto", {}).get("agressividade", 0.5)),
@@ -131,18 +136,37 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 	var a: Dictionary = carros[c["alvo"]]
 	var dist: float = (a["pos"] - c["pos"]).length()
 	var antecedencia := minf(dist / maxf(c["vel"].length(), 1.0), float(params["antecedencia_max_s"]))
-	var mira: Vector2 = a["pos"] + a["vel"] * antecedencia
+	# Mira a quina traseira do alvo (o que o faz girar e poupa a própria frente
+	# de um frontal), onde ele vai estar.
+	var mira: Vector2 = a["pos"] - Vector2.from_angle(a["rumo"]) * a["L"] * float(params.get("mira_traseira", 0.35)) \
+			+ a["vel"] * antecedencia
 	var rumo_alvo: float = (mira - c["pos"]).angle()
 	if c["re"]:
 		rumo_alvo += PI  # a traseira aponta para o alvo
+	var v_alvo := float(params["v_ataque_kmh"]) * KMH
+	# Muro à frente: a posição prevista sai da arena → vira para o centro e reduz.
+	var raio := float(params["raio_m"])
+	var previsto: Vector2 = c["pos"] + c["vel"] * float(params["olhar_muro_s"])
+	if previsto.length() > raio - float(params["margem_muro_m"]):
+		rumo_alvo = (-c["pos"]).angle() + (PI if c["re"] else 0.0)
+		v_alvo = float(params["v_curva_kmh"]) * KMH
 	# Erro de rumo com um pouco de imprecisão (consistência do piloto).
 	var erro := wrapf(rumo_alvo - float(c["rumo"]), -PI, PI) + rng.randfn(0.0, (1.0 - c["consist"]) * 0.2)
-	c["cmd_giro"] = clampf(erro * 2.0, -1.0, 1.0)
-	var forca := lerpf(0.75, 1.0, c["agress"]) * clampf(1.0 - absf(erro) / PI, 0.25, 1.0)
-	c["cmd_acel"] = -forca if c["re"] else forca
-	# Travado: quase parado e encostado em alguém ou no muro.
-	if c["vel"].length() < float(params["v_travado_kmh"]) * KMH and c.get("encostado", false):
-		c["t_travado"] += dt
+	c["cmd_giro"] = clampf(erro * 3.0, -1.0, 1.0)
+	# Velocidade pela curva (estudo: a propulsão cai com o erro de rumo):
+	# alinhado, ataca; virando muito, devagar para fechar a curva.
+	v_alvo = lerpf(v_alvo, float(params["v_curva_kmh"]) * KMH, clampf(absf(erro) / (PI / 2.0), 0.0, 1.0))
+	var sentido := -1.0 if c["re"] else 1.0
+	var v_agora: float = c["vel"].dot(Vector2.from_angle(c["rumo"])) * sentido
+	if v_agora > v_alvo:
+		c["cmd_acel"] = -sentido * clampf((v_agora - v_alvo) / 3.0, 0.2, 1.0)  # freia
+	else:
+		c["cmd_acel"] = sentido * lerpf(0.75, 1.0, c["agress"])
+	# Travado: quase parado e encostado, ou grudado em alguém (empurrando e
+	# girando junto, sem se separar não há batida nova): recua e volta.
+	if c.get("encostado", false):
+		var devagar: bool = c["vel"].length() < float(params["v_travado_kmh"]) * KMH
+		c["t_travado"] += dt * (1.0 if devagar else 0.5)
 		if c["t_travado"] >= float(params["travado_s"]):
 			c["t_travado"] = 0.0
 			c["t_recua"] = float(params["recuperacao_s"])
