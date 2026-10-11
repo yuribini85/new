@@ -23,11 +23,23 @@ var linhas: Array = []:
 		linhas = v
 		queue_redraw()
 var limite_re := 0.9
+## Recolhida (toque no cabeçalho): só o cabeçalho e a sua linha, para ver a luta.
+var recolhida := false
+const CABECALHO := 34.0
 
 
 func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	set_process(true)
+
+
+func _gui_input(e: InputEvent) -> void:
+	var toque: bool = (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) \
+			or (e is InputEventScreenTouch and e.pressed)
+	if toque and e.position.y <= CABECALHO:
+		recolhida = not recolhida
+		queue_redraw()
+		accept_event()
 
 
 func _process(_d: float) -> void:
@@ -40,8 +52,19 @@ func _draw() -> void:
 	var k := ESCALA_COMPACTA if linhas.size() > MUITOS else 1.0
 	var linha := LINHA * k
 	var carro := CARRO * k
-	var y := 0.0
+	# Cabeçalho: quantos ainda estão de pé e a seta de recolher/abrir.
+	var vivos := linhas.filter(func(l): return not l["eliminado"]).size()
+	draw_rect(Rect2(0, 0, LARGURA, CABECALHO - 4.0), Color(0.05, 0.05, 0.06, 0.82))
+	draw_string(fonte, Vector2(12, CABECALHO * 0.5 + 5.0), "COMPETIDORES · %d DE PÉ" % vivos,
+			HORIZONTAL_ALIGNMENT_LEFT, LARGURA - 50, 17, Color(0.86, 0.87, 0.9))
+	var seta := Vector2(LARGURA - 22, CABECALHO * 0.5 - 2.0)
+	var pts := PackedVector2Array([seta + Vector2(-7, -4), seta + Vector2(7, -4), seta + Vector2(0, 5)]) if not recolhida \
+			else PackedVector2Array([seta + Vector2(-4, -7), seta + Vector2(-4, 7), seta + Vector2(5, 0)])
+	draw_colored_polygon(pts, Aba.COR_DESTAQUE)
+	var y := CABECALHO
 	for l in linhas:
+		if recolhida and not l.get("voce", false):
+			continue
 		var r := Rect2(0, y, LARGURA, linha - 6.0 * k)
 		draw_rect(r, Color(0.05, 0.05, 0.06, 0.72))
 		draw_rect(Rect2(r.position, Vector2(4, r.size.y)), l["cor"])
@@ -56,6 +79,7 @@ func _draw() -> void:
 				HORIZONTAL_ALIGNMENT_RIGHT, 62, roundi(19 * maxf(k, 0.8)), Color(0.75, 0.75, 0.75) if l["eliminado"] else Color.WHITE)
 		y += linha
 	custom_minimum_size = Vector2(LARGURA, y)
+	size = custom_minimum_size  # fora de contêiner: a área do toque acompanha a lista
 
 
 ## Carro de pé em 2 colunas × 3 linhas: [frente_e, frente_d], [lado_e, lado_d], [tras_e, tras_d].

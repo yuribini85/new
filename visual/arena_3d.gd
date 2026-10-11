@@ -354,7 +354,7 @@ func _tingir(n: Node, tom: Color) -> void:
 
 func _criar_fumaca(c: Node3D, preta: bool) -> CPUParticles3D:
 	var f := CPUParticles3D.new()
-	f.amount = 22 if preta else 12
+	f.amount = 16 if preta else 12
 	f.lifetime = 1.6
 	f.local_coords = false
 	f.direction = Vector3.UP
@@ -362,8 +362,8 @@ func _criar_fumaca(c: Node3D, preta: bool) -> CPUParticles3D:
 	f.initial_velocity_min = 1.2
 	f.initial_velocity_max = 2.4
 	f.gravity = Vector3(0.6, 0.4, 0.0)  # deriva com o vento
-	f.scale_amount_min = 1.0
-	f.scale_amount_max = 2.6
+	f.scale_amount_min = 0.6
+	f.scale_amount_max = 1.8
 	var q := QuadMesh.new()
 	q.size = Vector2(1.0, 1.0)
 	var m := StandardMaterial3D.new()
@@ -376,12 +376,14 @@ func _criar_fumaca(c: Node3D, preta: bool) -> CPUParticles3D:
 	q.material = m
 	f.mesh = q
 	var cores := Gradient.new()
-	var base := Color(0.08, 0.08, 0.09) if preta else Color(0.75, 0.74, 0.72)
+	# Eliminado: fumaça cinza-chumbo e rala (preta e densa virava uma bola
+	# escura sobre o capô, vista de cima).
+	var base := Color(0.32, 0.31, 0.3) if preta else Color(0.75, 0.74, 0.72)
 	cores.set_color(0, Color(base, 0.0))
-	cores.add_point(0.15, Color(base, 0.55 if preta else 0.35))
+	cores.add_point(0.25, Color(base, 0.3))
 	cores.set_color(cores.get_point_count() - 1, Color(base, 0.0))
 	f.color_ramp = cores
-	f.position = Vector3(Arena.COMPRIMENTO_M * 0.3, 1.0, 0.0)  # do capô (motor na frente)
+	f.position = Vector3(Arena.COMPRIMENTO_M * 0.3, 1.4, 0.0)  # do capô (motor na frente), já acima dele
 	f.set_meta("preta", preta)
 	c.add_child(f)
 	f.emitting = true
