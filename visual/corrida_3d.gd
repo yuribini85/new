@@ -92,6 +92,8 @@ const ARFAGEM_MAX := 0.05
 var _alvo_camera := Vector3.ZERO
 ## Carro que a câmera segue ("jogador" por padrão). Se não existir, o jogador.
 var foco := "jogador"
+## Faixas da pintura da Oficina por carro (id -> {padrao, faixa, filete}).
+var faixas_pintura := {}
 ## Pista inteira na tela em vez de seguir um carro.
 var visao_geral := false
 ## Estilo de cenário forçado ("chapado"), para comparar sem mudar o tema.
@@ -251,7 +253,7 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 		if CarroBloco.tem_glb(String(base.get("id", ""))) \
 				or not c.configurar(String(base.get("id", "")), pinturas.get(id, Color(0, 0, 0, 0))):
 			c.free()
-			c = CarroBloco.new().configurar_modelo(base, pinturas.get(id, fonte.cor_de(id)))
+			c = CarroBloco.new().configurar_modelo(base, pinturas.get(id, fonte.cor_de(id)), faixas_pintura.get(id, {}))
 		_cena.add_child(c)
 		_carros[id] = c
 		var r := Label3D.new()

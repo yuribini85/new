@@ -30,6 +30,8 @@ var _i := 0
 var _mundo: Node3D
 var _cena: Node3D
 var _camera: Camera3D
+## Faixas da pintura da Oficina por carro (id -> {padrao, faixa, filete}).
+var faixas_pintura := {}
 var _orbita := 0.0  # ângulo da câmera em volta do centro (rad)
 var _carros := {}  # id -> Node3D
 var _malhas := {}  # id -> [{mi, rel, surfs: [{arr, prim, mat}]}]: malhas originais da carroceria
@@ -96,7 +98,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		if CarroBloco.tem_glb(String(base.get("id", ""))) \
 				or not c.configurar(String(base.get("id", "")), pinturas.get(id, Color(0, 0, 0, 0))):
 			c.free()
-			c = CarroBloco.new().configurar_modelo(base, cor)
+			c = CarroBloco.new().configurar_modelo(base, cor, faixas_pintura.get(id, {}))
 		_cena.add_child(c)
 		_carros[id] = c
 		_malhas[id] = _malhas_carroceria(c)

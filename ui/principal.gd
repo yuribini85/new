@@ -84,6 +84,7 @@ func _ready() -> void:
 	_cabecalho.configuracoes.connect(_abrir_configuracoes)
 	_cabecalho.acelerar.connect(_abrir_aceleracao)
 	_cabecalho.garagem.connect(func(): _todas[0].abrir_garagem())
+	_cabecalho.pintura.connect(func(): _todas[0].abrir_pintura())
 	_cabecalho.nomes.connect(func():
 		_todas[1].mostrar_nomes = not _todas[1].mostrar_nomes
 		_cabecalho.definir_nomes(_todas[1].mostrar_nomes)

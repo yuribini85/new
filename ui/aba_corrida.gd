@@ -428,6 +428,9 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	_t_suave = -1.0
 	_visual3d.chegada = 0.0
+	_visual3d.faixas_pintura = {"jogador": meu.faixas}
+	if comp_carro != null:
+		_visual3d.faixas_pintura[EquipeJogador.ID] = comp_carro.faixas
 	_visual3d.mostrar(_pista, _visual, categorias, pinturas)
 	_area.visible = true
 	_ajustar_area()

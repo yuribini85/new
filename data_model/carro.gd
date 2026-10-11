@@ -20,6 +20,8 @@ var pecas: Dictionary = {}
 var pneus: Array = []
 ## Pintura escolhida na garagem ("" = de fábrica). Só visual.
 var cor: String = ""
+## Faixas da pintura personalizada (Oficina → PINTURA): {padrao, faixa, filete}.
+var faixas: Dictionary = {}
 ## Ajuste do câmbio ajustável (peça "cambio"): "", "curto" ou "longo".
 var ajuste_cambio: String = ""
 ## Configurações salvas pelo jogador: [{nome, pecas: [ids], ajuste_cambio}].
@@ -211,6 +213,7 @@ func copiar() -> Carro:
 	c.pecas_possuidas = pecas_possuidas.duplicate()
 	c.pneus = pneus.duplicate()
 	c.cor = cor
+	c.faixas = faixas.duplicate()
 	c.ajuste_cambio = ajuste_cambio
 	c.configuracoes = configuracoes.duplicate(true)
 	return c

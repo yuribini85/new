@@ -142,7 +142,7 @@ func _entrar(uid: int) -> void:
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
-			"pinturas": pintura, "final": final})
+			"pinturas": pintura, "faixas": {"jogador": carro.faixas}, "final": final})
 
 
 func _registro() -> void:

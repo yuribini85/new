@@ -376,3 +376,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     16° e abre para o lado no modo velocidade); "Pista inteira" segue de cima, como o
     minimapa. Arena: inclinada (34°), girando devagar em volta da sua briga (você e o rival
     mais perto); fora da luta, enquadra os vivos.
+58. **Pintura na Oficina** (2026-10-11, pedido do usuário; muda a regra de "sem pintura
+    livre" da decisão 31): aba pendurada PINTURA; o jogador paga para trocar a cor da
+    carroceria (qualquer cor da paleta) e pintar faixas (dupla central, larga central,
+    lateral, dois tons) com cor da faixa e do filete. Fica no carro e aparece na
+    oficina, na corrida e na arena. Preço: fator sobre o prêmio de 1º lugar médio da
+    maior licença (`equipe.json` → `pintura`), a definir pelo usuário. O nome do carro
+    desce para baixo dele, abrindo espaço para as abas.

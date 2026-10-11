@@ -16,6 +16,7 @@ signal voltar
 signal configuracoes
 signal acelerar
 signal garagem
+signal pintura
 signal corrida
 signal nomes
 signal mapa
@@ -49,6 +50,8 @@ var _faixa: HBoxContainer
 var _area_segura := 0.0
 var marcador: Button
 var aba_garagem: Button
+## Aba PINTURA, ao lado da GARAGEM (só na Oficina).
+var aba_pintura: Button
 var _dentro_painel: HBoxContainer
 var _caixa_numero: Control
 var aba_corrida: Button
@@ -178,6 +181,7 @@ func _init() -> void:
 	_criar_marcador()
 	_criar_aba_corrida()
 	_criar_aba_garagem()
+	aba_pintura = _aba_pendurada("PINTURA", "pincel", "Pintar o carro", func(): pintura.emit())
 	_criar_aba_nomes()
 	_criar_aba_mapa()
 	titulo.resized.connect(_ajustar_titulo)
@@ -210,7 +214,7 @@ func _posicionar() -> void:
 			var wm: float = (aba_mapa.get_child(0) as Control).get_combined_minimum_size().x + 34.0
 			aba_mapa.size = Vector2(wm, ALTURA_MARCADOR)
 			aba_mapa.position = Vector2(14.0, altura_total())
-		for aba in [aba_corrida, marcador, aba_garagem, aba_nomes]:
+		for aba in [aba_corrida, marcador, aba_garagem, aba_pintura, aba_nomes]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
@@ -311,6 +315,38 @@ func _criar_aba_garagem() -> void:
 	h.add_child(t)
 	aba_garagem.visible = false
 	add_child(aba_garagem)
+
+
+## Aba pendurada genérica (o mesmo estilo da GARAGEM): ícone e texto.
+func _aba_pendurada(texto: String, icone: String, dica: String, ao_tocar: Callable) -> Button:
+	var b := Button.new()
+	b.focus_mode = Control.FOCUS_NONE
+	b.tooltip_text = dica
+	for estado in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(estado, marcador.get_theme_stylebox("normal"))
+	b.pressed.connect(ao_tocar)
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 16
+	h.offset_right = -18
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(h)
+	var ic := IconeVetor.new(icone, COR_APAGADO)
+	ic.custom_minimum_size = Vector2(26, 26)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(ic)
+	var t := Label.new()
+	t.text = texto
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(t, "semibold", 25)
+	t.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(t)
+	b.visible = false
+	add_child(b)
+	return b
 
 
 ## Aba da bandeira: volta para a corrida em andamento (acesa quando há uma).
@@ -435,6 +471,7 @@ func mostrar_nomes(sim: bool) -> void:
 
 func mostrar_garagem(sim: bool) -> void:
 	aba_garagem.visible = sim
+	aba_pintura.visible = sim
 	_posicionar()
 
 

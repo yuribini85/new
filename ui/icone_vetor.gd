@@ -60,6 +60,14 @@ func _draw() -> void:
 			var w := maxf(r * 0.28, 2.0)
 			draw_line(c + Vector2(-0.6, -0.6) * r, c + Vector2(0.6, 0.6) * r, cor, w, true)
 			draw_line(c + Vector2(0.6, -0.6) * r, c + Vector2(-0.6, 0.6) * r, cor, w, true)
+		"pincel":
+			# Rolo de pintura: o rolo, o braço e o cabo.
+			var r := lado * 0.5
+			var w := maxf(r * 0.16, 2.0)
+			draw_rect(Rect2(c + Vector2(-0.85, -0.85) * r, Vector2(1.4, 0.55) * r), cor)
+			draw_polyline(PackedVector2Array([c + Vector2(0.55, -0.58) * r, c + Vector2(0.85, -0.58) * r,
+					c + Vector2(0.85, -0.05) * r, c + Vector2(0.0, -0.05) * r, c + Vector2(0.0, 0.25) * r]), cor, w, true)
+			draw_rect(Rect2(c + Vector2(-0.14, 0.2) * r, Vector2(0.28, 0.7) * r), cor)
 		"lista":
 			for k in 3:
 				var y := c.y + (-0.7 + k * 0.7) * lado * 0.5

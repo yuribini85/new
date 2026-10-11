@@ -64,14 +64,16 @@ func configurar(categoria: String, cor: Color) -> CarroBloco:
 	return configurar_modelo({"id": categoria, "categoria": categoria}, cor)
 
 
-## Silhueta da categoria com o desenho do modelo (ver forma()).
-func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
+## Silhueta da categoria com o desenho do modelo (ver forma()). `faixas`:
+## pintura personalizada da Oficina ({padrao, faixa, filete}; ver PinturaCarro),
+## só nos modelos 3D.
+func configurar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 	for c in get_children():
 		c.queue_free()
 	_rodas = []
 	_rodas_glb = []
 	if tem_glb(String(base.get("id", ""))):
-		return _glb(String(base["id"]), cor)
+		return _glb(String(base["id"]), cor, faixas)
 	var f := forma(base)
 	comprimento = f["c"]
 	largura = f["l"]
@@ -239,7 +241,7 @@ func _sombra(c: float, l: float, alfa := 0.45) -> void:
 ## Pintura do modelo GLB. Material "Paint" (textura branca): só ele recebe a
 ## cor; os outros ficam como vieram (desenhados dos dois lados, como o atlas).
 ## Sem "Paint": atlas de cores, a lataria clara pintada pelo shader.
-static func _pintar_glb(mi: MeshInstance3D, cor: Color) -> void:
+static func _pintar_glb(mi: MeshInstance3D, cor: Color, faixas: Dictionary = {}) -> void:
 	var tem_paint := false
 	for i in mi.get_surface_override_material_count():
 		var m := mi.get_active_material(i)
@@ -256,6 +258,14 @@ static func _pintar_glb(mi: MeshInstance3D, cor: Color) -> void:
 				nova.albedo_color = cor
 				nova.roughness = 0.55
 				nova.metallic_specular = 0.35
+				var padrao := PinturaCarro.indice_padrao(String(faixas.get("padrao", "")))
+				if padrao > 0:
+					var sm := ShaderMaterial.new()
+					sm.shader = preload("res://visual/shaders/carro_faixas.gdshader")
+					sm.set_shader_parameter("cor_base", cor)
+					_parametros_faixas(sm, mi, faixas)
+					mi.set_surface_override_material(i, sm)
+					continue
 			mi.set_surface_override_material(i, nova)
 		return
 	var atlas: Texture2D = null
@@ -266,11 +276,22 @@ static func _pintar_glb(mi: MeshInstance3D, cor: Color) -> void:
 	mat.shader = preload("res://visual/shaders/carro_glb.gdshader")
 	mat.set_shader_parameter("atlas", atlas)
 	mat.set_shader_parameter("pintura", cor)
+	_parametros_faixas(mat, mi, faixas)
 	mi.material_override = mat
 
 
+## Faixas da Oficina nos uniforms do shader (faixas.gdshaderinc).
+static func _parametros_faixas(sm: ShaderMaterial, mi: MeshInstance3D, faixas: Dictionary) -> void:
+	var caixa := mi.get_aabb()
+	sm.set_shader_parameter("cor_faixa", Color(String(faixas.get("faixa", "#ffffff"))))
+	sm.set_shader_parameter("cor_filete", Color(String(faixas.get("filete", "#1a1a1a"))))
+	sm.set_shader_parameter("padrao", PinturaCarro.indice_padrao(String(faixas.get("padrao", ""))))
+	sm.set_shader_parameter("caixa_min", caixa.position)
+	sm.set_shader_parameter("caixa_tam", caixa.size)
+
+
 ## Modelo GLB: girado para a frente em +X, lataria pintada (_pintar_glb).
-func _glb(id: String, cor: Color) -> CarroBloco:
+func _glb(id: String, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 	var cena: PackedScene = load(PASTA_GLB + id + ".glb")
 	var modelo: Node3D = cena.instantiate()
 	modelo.rotation.y = PI / 2.0  # +Z do arquivo -> +X do jogo
@@ -278,7 +299,7 @@ func _glb(id: String, cor: Color) -> CarroBloco:
 	var caixa := AABB()
 	var primeiro := true
 	for mi: MeshInstance3D in modelo.find_children("*", "MeshInstance3D", true, false):
-		_pintar_glb(mi, cor)
+		_pintar_glb(mi, cor, faixas)
 		var b := mi.get_aabb()
 		caixa = b if primeiro else caixa.merge(b)
 		primeiro = false

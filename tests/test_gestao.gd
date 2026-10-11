@@ -160,3 +160,30 @@ func test_segundo_piloto_troca_entre_candidatos_e_promessa_treina() -> void:
 	verificar(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]) > base, "o treino aparece")
 	j.free()
 	d.free()
+
+
+func test_pintura_muda_cor_e_faixas_e_volta_do_save() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	j.economia.creditar(1000)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	var c: Carro = j.garagem.carro(uid)
+	var fx := {"padrao": "dupla", "faixa": "#ffffff", "filete": "#c8202a"}
+	# Fixture sem preço definido (equipe.json sem "pintura"): vale 0.
+	igual(PinturaCarro.preco(d, j, true, true), 0, "preço a definir vale 0")
+	igual(PinturaCarro.aplicar(d, j, c, c.cor, c.faixas), "nada mudou", "sem mudança não aplica")
+	igual(PinturaCarro.aplicar(d, j, c, "#1f3f8f", fx), "", "pinta")
+	igual(c.cor, "#1f3f8f", "cor nova")
+	igual(c.faixas, fx, "faixas novas")
+	igual(PinturaCarro.aplicar(d, j, c, "#1f3f8f", {"padrao": ""}), "", "tira as faixas")
+	igual(c.faixas, {}, "sem faixas")
+	PinturaCarro.aplicar(d, j, c, "#1f3f8f", fx)
+	var s := Save.serializar(j)
+	var k: Node = JogadorScript.new()
+	k.novo_jogo(d.economia(), d.pneu)
+	igual(Save.desserializar(JSON.parse_string(JSON.stringify(s)), k, d), "", "load")
+	igual(k.garagem.carro(uid).faixas, fx, "faixas voltam do save")
+	igual(PinturaCarro.indice_padrao("lateral"), 3, "índice do padrão é o do shader")
+	j.free()
+	k.free()
+	d.free()

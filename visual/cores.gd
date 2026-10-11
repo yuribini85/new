@@ -2,7 +2,8 @@ class_name Cores
 extends RefCounted
 ## Cores de fábrica de cada modelo (arte/carros/cores.json, tools/gerar_cores.py).
 ## Como no GT2: carro novo, o jogador escolhe na compra; usado vem numa cor do
-## modelo; rivais variam entre as cores do modelo. Sem pintura livre depois.
+## modelo; rivais variam entre as cores do modelo. Depois, a Oficina → PINTURA
+## (PinturaCarro) pinta em qualquer cor da paleta, com faixas, por um preço.
 
 const ARQUIVO := "res://arte/carros/cores.json"
 

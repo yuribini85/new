@@ -85,7 +85,7 @@ func mostrar(categoria: String, cor: Color) -> void:
 	_carro.configurar(categoria, cor)
 
 
-func mostrar_modelo(base: Dictionary, cor: Color) -> void:
+func mostrar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> void:
 	if CarroBloco.tem_glb(String(base.get("id", ""))):
 		# Modelo 3D: na mesma câmera e no mesmo ângulo dos sprites da loja.
 		_sprite_modo(true)
@@ -93,7 +93,7 @@ func mostrar_modelo(base: Dictionary, cor: Color) -> void:
 		_reflexo.visible = false
 		_carro.visible = true
 		_carro.rotation.y = ROTACAO_MODELO
-		_carro.configurar_modelo(base, cor)
+		_carro.configurar_modelo(base, cor, faixas)
 		if _id != String(base.get("id", "")) and not Preferencias.reduzir_animacoes and is_inside_tree():
 			_aproximar = 0.0
 		_id = String(base.get("id", ""))
