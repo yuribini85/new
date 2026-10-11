@@ -12,6 +12,10 @@ static var _no: Estudio
 const RECORTE_ISO := Vector2(0.74, 0.66)
 ## Campo de visão da foto do carro provisório (3D).
 const FOV_PROVISORIO := 27.0
+## Largura vista na foto do modelo 3D (m): a do recorte do sprite (tela de
+## 1120 × 800 px a 160 px/m, RECORTE_ISO), corrigida porque a foto (TAMANHO) é
+## mais larga que o recorte e a lista encaixa as duas pela altura.
+const LARGURA_FOTO_GLB_M := 1120.0 / 160.0 * 0.74 * (360.0 / 200.0) / ((1120.0 * 0.74) / (800.0 * 0.66))
 var _fotos := {}  # "id|cor" -> ViewportTexture
 
 
@@ -25,7 +29,8 @@ static func foto(base: Dictionary, cor: Color) -> Texture2D:
 
 
 func _foto(base: Dictionary, cor: Color) -> Texture2D:
-	var arte := ArteCarro.textura(String(base.get("id", "")), "iso")
+	var glb := CarroBloco.tem_glb(String(base.get("id", "")))
+	var arte: Texture2D = null if glb else ArteCarro.textura(String(base.get("id", "")), "iso")
 	if arte != null:
 		# Decisão 31: a foto é o próprio sprite isométrico, sem a margem vazia da
 		# tela. O recorte é o mesmo para todos: carro pequeno continua menor.
@@ -72,11 +77,21 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	mundo.add_child(carro)
 	carro.configurar_modelo(base, cor)
 	var cam := Camera3D.new()
-	# Enquadramento mais aberto: o carro provisório ocupa a foto na mesma
-	# proporção do sprite recortado (RECORTE_ISO), lado a lado com os de arte.
-	cam.fov = FOV_PROVISORIO
 	mundo.add_child(cam)
-	cam.look_at_from_position(Vector3(4.3, 1.6, 5.8), Vector3(0, 0.5, 0))
+	if glb:
+		# Modelo 3D: o ângulo e a escala dos sprites isométricos (a vitrine
+		# usa os mesmos), para ficar lado a lado com os carros de arte.
+		carro.rotation.y = VitrineCarro.ROTACAO_MODELO
+		cam.projection = Camera3D.PROJECTION_ORTHOGONAL
+		cam.keep_aspect = Camera3D.KEEP_WIDTH
+		cam.size = LARGURA_FOTO_GLB_M
+		cam.far = 200.0
+		cam.look_at_from_position(Vector3(70, 57.15, 70).normalized() * 40.0 + Vector3(0, 0.6, 0), Vector3(0, 0.6, 0))
+	else:
+		# Enquadramento mais aberto: o carro provisório ocupa a foto na mesma
+		# proporção do sprite recortado (RECORTE_ISO), lado a lado com os de arte.
+		cam.fov = FOV_PROVISORIO
+		cam.look_at_from_position(Vector3(4.3, 1.6, 5.8), Vector3(0, 0.5, 0))
 	add_child(vp)
 	# A foto vira uma textura comum e o viewport sai: centenas de carros sem
 	# sprite não podem manter centenas de viewports vivos. Até a cópia, a

@@ -217,7 +217,7 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 	_construir_pista()
 	for id in fonte.ordem():
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
-		# Arte em sprite (decisão 31) quando o modelo tem; senão, o carro em código.
+		# Modelo 3D (decisão 31) quando existe; senão o sprite antigo; senão o carro em código.
 		var c: Node3D = CarroDesenho.new()
 		if CarroBloco.tem_glb(String(base.get("id", ""))) \
 				or not c.configurar(String(base.get("id", "")), pinturas.get(id, Color(0, 0, 0, 0))):

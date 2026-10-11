@@ -1,6 +1,10 @@
-# Arte dos carros: especificação
+# Arte dos carros: especificação (sprites, substituída)
 
-Decisão 31 (`docs/plano_mvp.md`): cada modelo tem **dois sprites**, e nada mais.
+**Substituída pela decisão 31 revista: carros em 3D, ver `docs/carros_3d.md`.** Os
+sprites abaixo continuam valendo para os carros que ainda não têm modelo 3D; não pedir
+sprites novos.
+
+Antes: cada modelo tinha **dois sprites**, e nada mais.
 
 | Arquivo | Vista | Uso |
 |---|---|---|

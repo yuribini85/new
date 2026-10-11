@@ -51,6 +51,8 @@ const PASTA_GLB := "res://arte/carros3d/"
 var comprimento := 4.5
 var largura := 1.8
 var _rodas: Array = []
+## Rodas do modelo GLB (nós roda_*): giram no eixo X do arquivo; [nó, raio].
+var _rodas_glb: Array = []
 
 
 static func tem_glb(id: String) -> bool:
@@ -67,6 +69,7 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 	for c in get_children():
 		c.queue_free()
 	_rodas = []
+	_rodas_glb = []
 	if tem_glb(String(base.get("id", ""))):
 		return _glb(String(base["id"]), cor)
 	var f := forma(base)
@@ -256,6 +259,11 @@ func _glb(id: String, cor: Color) -> CarroBloco:
 		primeiro = false
 	comprimento = caixa.size.z
 	largura = caixa.size.x
+	for no: Node3D in modelo.find_children("roda_*", "Node3D", true, false):
+		var raio := 0.3
+		for mi: MeshInstance3D in ([no] if no is MeshInstance3D else []) + no.find_children("*", "MeshInstance3D", true, false):
+			raio = mi.get_aabb().size.y * 0.5
+		_rodas_glb.append([no, maxf(raio, 0.1)])
 	_sombra(comprimento * 0.92, largura * 0.78, 0.3)
 	return self
 
@@ -269,6 +277,8 @@ func dimensoes() -> Vector2:
 func girar_rodas(distancia: float) -> void:
 	for roda in _rodas:
 		roda.rotation.z -= distancia / RAIO_RODA
+	for r in _rodas_glb:
+		(r[0] as Node3D).rotation.x += distancia / float(r[1])
 
 
 ## Desenho do modelo, tirado dos dados dele (sempre o mesmo para o mesmo

@@ -228,13 +228,15 @@ técnico real do projeto.
 30. **Hipótese de balanceamento, não regra:** uma compra importante custa de uma a duas
     sessões. Antes de ajustar preços: definir a duração da sessão e medir a renda ativa e
     offline.
-31. **Arte final dos carros: dois sprites por modelo** (`docs/arte_carros.md`): um de
-    cima, que o jogo gira na corrida, e um isométrico fixo (garagem, mercado, fichas e o
-    momento de velocidade). Na garagem, no lugar da rotação 3D, efeitos de luz e
-    câmera. Sem pintura livre: cada modelo tem a cor do desenho. A corrida tem três
-    estados de câmera: normal (de cima), foco (disputa, mais perto) e velocidade
-    (inclinada, atrás do carro, com o isométrico e efeitos nas bordas), desligados por
-    "Reduzir animações".
+31. **Arte final dos carros: um modelo 3D por carro** (`docs/carros_3d.md`; decisão do
+    usuário em 2026-10-11, substitui os dois sprites por modelo). GLB low-poly com atlas
+    de cores chapadas e lataria branca (o jogo pinta), usado na corrida, na arena, na
+    oficina e nas fotos da loja; menus, diálogos e retratos continuam 2D. Migração carro
+    a carro: sem modelo, o sprite antigo (`docs/arte_carros.md`); sem sprite, o carro em
+    código. Sem pintura livre: cada modelo tem as cores de fábrica e a escolha é na
+    compra. A corrida mantém os três estados de câmera: normal (de cima), foco (disputa,
+    mais perto) e velocidade (inclinada, atrás do carro, com efeitos nas bordas),
+    desligados por "Reduzir animações".
 
 ### Documento de implementação "Second Driver" (aprovadas em 2026-10-08)
 
