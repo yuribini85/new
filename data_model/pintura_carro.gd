@@ -8,7 +8,11 @@ extends RefCounted
 
 ## [id, nome] dos padrões, na ordem da tela (o índice é o do shader carro_faixas).
 const PADROES := [["", "Sem faixas"], ["dupla", "Dupla central"], ["larga", "Larga central"],
-		["lateral", "Lateral"], ["dois_tons", "Dois tons"]]
+		["lateral", "Lateral"], ["dois_tons", "Dois tons"], ["tripla", "Tripla fina"], ["assimetrica", "Assimétrica"],
+		["capo", "Capô"], ["diagonal", "Diagonal"], ["chevron", "Chevron"], ["xadrez", "Xadrez"],
+		["bolinhas", "Bolinhas"], ["ondas", "Ondas"], ["degrade", "Degradê"], ["transversais", "Transversais"],
+		["ziguezague", "Zigue-zague"], ["serrilha", "Serrilha"], ["circulo", "Círculo de número"],
+		["tres_tons", "Três tons"], ["pontas", "Pontas"], ["tigrado", "Tigrado"]]
 
 
 static func indice_padrao(id: String) -> int:
