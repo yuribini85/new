@@ -393,4 +393,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     inclinam com o chão. Mesma área do círculo de 45 m; a luta sorteia entre as arenas
     abertas pelas licenças (`arena.json` → `arenas`, `sim/arena_forma.gd`). Rampas e
     saltos (carro no ar) ficam para uma segunda etapa.
+60. **Equipes com 4 pilotos e cores próprias** (2026-10-11, pedido do usuário): cada equipe
+    rival tem quatro pilotos, cada um com perfil (agressividade) e frase próprios; o
+    titular corre na maioria das provas e, nas outras, sai um dos outros três. Cada
+    equipe tem cores (carro, faixa, filete) e seus carros correm nelas, com um desenho de
+    faixa sorteado por prova. Os 37 pilotos novos ainda não têm retrato.
 

@@ -415,12 +415,19 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_visual.mostrar(_pista, c["resultado"], {"jogador": CarroBloco.cor_do_carro(meu)})
 	var categorias := {"jogador": meu.base}
 	var pinturas := {"jogador": CarroBloco.cor_do_carro(meu)}
+	var faixas_rivais := {}
 	for i in ev["adversarios"].size():
 		var adv_id: String = ev["adversarios"][i]["carro"]
 		var chave := "adv%d_%s" % [i, adv_id]
 		categorias[chave] = dados.carro(adv_id)
-		# Rival numa das cores do modelo, fixa por prova e posição no grid.
-		pinturas[chave] = Cores.sortear(adv_id, "%s|%d" % [ev["id"], i])
+		# Rival nas cores da equipe dele (decisão 60), com um desenho de faixa
+		# sorteado por prova e vaga; sem equipe, uma das cores do modelo.
+		var eq_r: Dictionary = jogador.carreira.equipe_de(ev["id"], chave, int(f.get("semente", -1)))
+		if eq_r.has("cores"):
+			pinturas[chave] = Color(String(eq_r["cores"]["carro"]))
+			faixas_rivais[chave] = PinturaCarro.da_equipe(eq_r, "%s|%d|%d" % [ev["id"], int(f.get("semente", -1)), i])
+		else:
+			pinturas[chave] = Cores.sortear(adv_id, "%s|%d" % [ev["id"], i])
 	var comp_carro: Carro = jogador.fila_ctrl.companheiro_inscrito(f)
 	if comp_carro != null:
 		categorias[EquipeJogador.ID] = comp_carro.base
@@ -428,7 +435,8 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
 	_t_suave = -1.0
 	_visual3d.chegada = 0.0
-	_visual3d.faixas_pintura = {"jogador": meu.faixas}
+	_visual3d.faixas_pintura = faixas_rivais
+	_visual3d.faixas_pintura["jogador"] = meu.faixas
 	if comp_carro != null:
 		_visual3d.faixas_pintura[EquipeJogador.ID] = comp_carro.faixas
 	_visual3d.mostrar(_pista, _visual, categorias, pinturas)

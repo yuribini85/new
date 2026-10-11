@@ -245,25 +245,25 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | equipe | nível | pilotos |
 |---|---|---|
 | `eq01_second_driver` Second Driver | jogador | `elena_cross`, `adrian_cross` |
-| `eq02_vortex_motorsport` Vortex Motorsport | PRO | `lucien_vale`, `nadia_voss` |
-| `eq03_kaze_dynamics` Kaze Dynamics | INTERNATIONAL | `ren_kaito`, `hana_mori` |
-| `eq04_ironclad_racing` Ironclad Racing | NATIONAL | `bram_holt`, `soren_pike` |
-| `eq05_apex_dominion` Apex Dominion | ELITE | `lucas_ward`, `cassian_roe`, `nyra_sol` |
-| `eq06_redline_union` Redline Union | SPORT | `dario_kest` (provisório), `lena_brook` (provisório) |
-| `eq07_northstar_works` Northstar Works | INTERNATIONAL | `erik_halden`, `liv_arnesen` (provisório) |
-| `eq08_black_circuit` Black Circuit | NATIONAL | `marek_stone` (provisório), `ivy_corran` (provisório) |
-| `eq09_helix_racing` Helix Racing | NATIONAL | `tomas_reyl` (provisório), `sasha_imre` (provisório) |
-| `eq10_ember_works` Ember Works | CLUB | `gus_harrow` (provisório), `pia_lund` (provisório) |
-| `eq11_white_fang_racing` White Fang Racing | INTERNATIONAL | `viktor_ren`, `yuna_kess` |
-| `eq12_brassline_motorsport` Brassline Motorsport | CLUB | `oscar_flint`, `mina_rowe` |
-| `eq13_tempest_garage` Tempest Garage | SPORT | `noel_mercer`, `zara_keene` |
-| `eq14_crown_vector` Crown Vector | PRO | `elias_wren`, `celeste_armand` |
-| `eq15_gravelborn` Gravelborn | CLUB | `rafe_calder`, `nika_stroud` |
-| `eq16_meridian_gp` Meridian GP | ELITE | `theo_maren`, `selene_ashby` |
-| `eq17_obsidian_crest` Obsidian Crest | ELITE | `magnus_rell`, `ines_calloway` |
-| `eq18_copperhead_racing` Copperhead Racing | CLUB | `ash_corwin`, `cleo_vane` |
-| `eq19_cold_harbor` Cold Harbor | SPORT | `finn_sutter`, `kaia_rehn` |
-| `eq20_storm_division` Storm Division | PRO | `rex_arden`, `mira_danvers` |
+| `eq02_vortex_motorsport` Vortex Motorsport | PRO | `lucien_vale`, `nadia_voss`, `akira_delacroix`, `beatriz_oyelaran` |
+| `eq03_kaze_dynamics` Kaze Dynamics | INTERNATIONAL | `ren_kaito`, `hana_mori`, `dmitri_abernathy`, `esme_lindgren` |
+| `eq04_ironclad_racing` Ironclad Racing | NATIONAL | `bram_holt`, `soren_pike`, `felix_hakimi`, `greta_saarinen` |
+| `eq05_apex_dominion` Apex Dominion | ELITE | `lucas_ward`, `cassian_roe`, `nyra_sol`, `hugo_esposito` |
+| `eq06_redline_union` Redline Union | SPORT | `dario_kest` (provisório), `lena_brook` (provisório), `isadora_aldana`, `jasper_laurier` |
+| `eq07_northstar_works` Northstar Works | INTERNATIONAL | `erik_halden`, `liv_arnesen` (provisório), `katya_whitcombe`, `leon_iwata` |
+| `eq08_black_circuit` Black Circuit | NATIONAL | `marek_stone` (provisório), `ivy_corran` (provisório), `marisol_eriksen`, `nils_petrakis` |
+| `eq09_helix_racing` Helix Racing | NATIONAL | `tomas_reyl` (provisório), `sasha_imre` (provisório), `odette_bastos`, `pablo_morrow` |
+| `eq10_ember_works` Ember Works | CLUB | `gus_harrow` (provisório), `pia_lund` (provisório), `quinn_ishida`, `rafaela_takeda` |
+| `eq11_white_fang_racing` White Fang Racing | INTERNATIONAL | `viktor_ren`, `yuna_kess`, `stellan_fairbanks`, `tamsin_bergstrom` |
+| `eq12_brassline_motorsport` Brassline Motorsport | CLUB | `oscar_flint`, `mina_rowe`, `ulrich_marchetti`, `valentina_yamaguchi` |
+| `eq13_tempest_garage` Tempest Garage | SPORT | `noel_mercer`, `zara_keene`, `wes_jaramillo`, `xenia_falcone` |
+| `eq14_crown_vector` Crown Vector | PRO | `elias_wren`, `celeste_armand`, `yusuf_quintero`, `zoe_coutinho` |
+| `eq15_gravelborn` Gravelborn | CLUB | `rafe_calder`, `nika_stroud`, `anders_nyberg`, `bianca_jovanovic` |
+| `eq16_meridian_gp` Meridian GP | ELITE | `theo_maren`, `selene_ashby`, `cyrus_ulloa`, `dalia_grimaldi` |
+| `eq17_obsidian_crest` Obsidian Crest | ELITE | `magnus_rell`, `ines_calloway`, `emil_castellan`, `fiona_nakamura` |
+| `eq18_copperhead_racing` Copperhead Racing | CLUB | `ash_corwin`, `cleo_vane`, `gideon_zelenko`, `helga_kowal` |
+| `eq19_cold_harbor` Cold Harbor | SPORT | `finn_sutter`, `kaia_rehn`, `ivo_galloway`, `juno_rasmussen` |
+| `eq20_storm_division` Storm Division | PRO | `rex_arden`, `mira_danvers`, `kenji_drummond`, `livia_okafor` |
 
 Segundo piloto da equipe do jogador: `jonas_reid` (Jonas Reid).
 

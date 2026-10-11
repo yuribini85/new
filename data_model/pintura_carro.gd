@@ -34,6 +34,17 @@ static func cores() -> Array:
 	return l
 
 
+## Pintura de um carro de equipe rival (decisão 60): um desenho sorteado por
+## `semente` (fixo por prova e vaga), nas cores da equipe (faixa e filete).
+static func da_equipe(equipe: Dictionary, semente: String) -> Dictionary:
+	var cores: Dictionary = equipe.get("cores", {})
+	if cores.is_empty():
+		return {}
+	var k := 1 + posmod(semente.hash(), PADROES.size() - 1)
+	return {"padrao": PADROES[k][0], "faixa": String(cores.get("faixa", "#ffffff")),
+			"filete": String(cores.get("filete", "#1a1a1a"))}
+
+
 static func cfg(dados: Node) -> Dictionary:
 	return dados.equipe().get("pintura", {})
 

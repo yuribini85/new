@@ -77,12 +77,13 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 ## vizinhos; em cada equipe, o segundo piloto corre com a chance de
 ## carreira.json, senão o principal. Fixo pela prova e pela semente.
 ## Lista na ordem dos adversários: {equipe, piloto: {id, nome}, segundo}.
-## Piloto de IA de uma vaga do grid: o perfil da equipe (agressivo,
-## equilibrado, cauteloso) diz quanto ele tenta passar; o segundo piloto da
-## equipe (decisão 36) corre com menos consistência.
+## Piloto de IA de uma vaga do grid: o perfil do piloto (agressivo,
+## equilibrado, cauteloso; sem o dele, o da equipe) diz quanto ele tenta
+## passar; o piloto que não é o titular (decisão 36) corre com menos consistência.
 func piloto_na_vaga(base: Dictionary, vaga: Dictionary) -> Dictionary:
 	var p := base.duplicate()
-	var perfil: Dictionary = dados.carreira().get("perfis_piloto", {}).get(String(vaga["equipe"].get("perfil", "")), {})
+	var id_perfil := String(vaga.get("piloto", {}).get("perfil", vaga["equipe"].get("perfil", "")))
+	var perfil: Dictionary = dados.carreira().get("perfis_piloto", {}).get(id_perfil, {})
 	if perfil.has("agressividade"):
 		p["agressividade"] = float(perfil["agressividade"])
 	if vaga["segundo"]:
@@ -120,8 +121,11 @@ func escalacao(evento_id: String, semente: int) -> Array:
 	var grid := []
 	for i in mini(ev["adversarios"].size(), ordem.size()):
 		var eq: Dictionary = ordem[i]
+		# O titular (o primeiro) corre na maioria; nas outras, um dos outros
+		# pilotos da equipe, sorteado (cada equipe tem quatro, decisão 60).
 		var segundo: bool = eq["pilotos"].size() > 1 and rng.randf() < chance
-		grid.append({"equipe": eq, "piloto": eq["pilotos"][1 if segundo else 0], "segundo": segundo})
+		var k := rng.randi_range(1, eq["pilotos"].size() - 1) if segundo else 0
+		grid.append({"equipe": eq, "piloto": eq["pilotos"][k], "segundo": segundo})
 	return grid
 
 
@@ -141,6 +145,15 @@ func nome_piloto(evento_id: String, id: String, semente: int = -1) -> String:
 	if i < grid.size():
 		return String(grid[i]["piloto"]["nome"])
 	return Carreira.sobrenome_fixo(evento_id, i)
+
+
+## Piloto do rival nesta corrida ({} sem equipes): {id, nome, perfil, personalidade}.
+func piloto_de(evento_id: String, id: String, semente: int) -> Dictionary:
+	if not id.begins_with("adv") or semente < 0:
+		return {}
+	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
+	var grid := escalacao(evento_id, semente)
+	return grid[i]["piloto"] if i < grid.size() else {}
 
 
 ## Equipe do rival nesta corrida ({} sem equipes).

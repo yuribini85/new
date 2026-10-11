@@ -886,11 +886,14 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		if not marcos.is_empty():
 			g.selos(marcos, v)
 		_lista_resultado(v, tabela, c)
-		# Rival venceu: a equipe dele em uma frase (perfil da equipe).
+		# Rival venceu: ele em uma frase (a personalidade do piloto; sem ela, a da equipe).
 		if not tabela.is_empty() and String(tabela[0]["id"]).begins_with("adv"):
 			var eq := _equipe_no_resultado(String(tabela[0]["id"]), c)
-			if String(eq.get("personalidade", "")) != "":
-				var lp := g.rotulo("%s: %s" % [eq["nome"], eq["personalidade"]], Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)
+			var pl: Dictionary = jogador.carreira.piloto_de(c["evento_id"], String(tabela[0]["id"]), int(c.get("semente", -1)))
+			var frase := String(pl.get("personalidade", eq.get("personalidade", "")))
+			if frase != "":
+				var quem := "%s (%s)" % [pl["nome"], eq["nome"]] if not pl.is_empty() else String(eq["nome"])
+				var lp := g.rotulo("%s: %s" % [quem, frase], Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)
 				lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 				lp.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_fechamento_automatico(v, token, _depois_do_resultado.bind(c, func(): pass)), botoes, {"acoes_padrao": true})
