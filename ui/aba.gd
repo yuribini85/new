@@ -22,6 +22,15 @@ signal fechar_painel
 
 enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 
+## Moeda de giros: a mesma do painel do cabeçalho.
+const ICONE_GIROS := "cabecalho/icone_giros"
+## Fundo do botão de corrida bloqueada.
+const COR_BLOQUEIO := Color(0.66, 0.17, 0.15)
+const OPACIDADE_SETAS := 0.5
+## Setas da coleção: o voltar do cabeçalho com metade do tamanho.
+const SETA := Vector2(Cabecalho.ALTURA * 0.95, Cabecalho.ALTURA) * 0.5
+## Altura da faixa do carro no topo (Corridas, Arena).
+const ALTURA_TOPO_CARRO := 342.0
 const FONTE_PEQUENA := 23
 const FONTE_TITULO := 40
 ## Botão com ícone: o ícone é o que o jogador lê primeiro (para onde vai), então
@@ -283,6 +292,75 @@ const VEU_CARTAO := [0.15, 0.7, 0.85]
 ## Cartão com uma imagem atrás dele todo (escala uniforme, recortada):
 ## mais visível à esquerda, coberta por um véu que escurece para a direita,
 ## onde ficam os textos. Retorna a coluna do conteúdo (margem de 16).
+## Topo das telas de um carro (Corridas, Arena): a faixa de cenário com o
+## carro grande e o nome ao lado. Devolve a faixa (para pôr setas por cima).
+func topo_carro(garagem: Carro, fundo := "fundo_competicoes") -> Control:
+	var faixa := ilustracao(fundo, ALTURA_TOPO_CARRO)
+	cenario_topo(faixa)
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	h.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	# A imagem do carro tem margem transparente: o quadro sai pela esquerda e o
+	# nome começa logo depois do desenho, com o resto da largura.
+	h.offset_left = -70
+	h.offset_right = -16
+	h.offset_bottom = -8
+	h.add_theme_constant_override("separation", -50)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	faixa.add_child(h)
+	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem))
+	img.custom_minimum_size = Vector2(510, 288)
+	h.add_child(img)
+	var nome := Label.new()
+	nome.text = garagem.base["nome"]
+	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	nome.clip_text = true
+	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(nome, "semibold", 48)
+	# O nome ocupa o espaço que sobra: a maior fonte (até 48) que cabe nele.
+	# (largura que sobra ao lado do carro, com folga para o contorno das letras)
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 16.0 - (-70.0 + 510.0 - 50.0) - 14.0
+	var tam := 48
+	var f := nome.get_theme_font("font")
+	while tam > 30 and f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	nome.add_theme_font_size_override("font_size", tam)
+	if f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		# Nem na menor fonte cabe numa linha: quebra em duas.
+		nome.clip_text = false
+		nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	nome.add_theme_constant_override("outline_size", 6)
+	nome.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+	h.add_child(nome)
+	return faixa
+
+
+## Setas ‹ › nas laterais de `palco` para trocar entre `n` itens; `ao_trocar`
+## recebe -1 ou +1. Nada com um item só.
+func setas_troca(palco: Control, n: int, ao_trocar: Callable) -> void:
+	if n < 2:
+		return
+	for lado in [-1, 1]:
+		var b := TextureButton.new()
+		b.texture_normal = load(Cabecalho.PASTA + "voltar.png")
+		b.ignore_texture_size = true
+		b.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+		b.flip_h = lado > 0
+		b.modulate.a = OPACIDADE_SETAS
+		b.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT if lado < 0 else Control.PRESET_CENTER_RIGHT)
+		b.offset_top = -SETA.y / 2.0
+		b.offset_bottom = SETA.y / 2.0
+		if lado < 0:
+			b.offset_left = 12
+			b.offset_right = 12 + SETA.x
+		else:
+			b.offset_left = -12 - SETA.x
+			b.offset_right = -12
+		b.pressed.connect(ao_trocar.bind(lado))
+		palco.add_child(b)
+
+
 func cartao_com_fundo(tex: Texture2D, aceso := true, pai: Control = null) -> VBoxContainer:
 	var p := PanelContainer.new()
 	var sb := StyleBoxFlat.new()

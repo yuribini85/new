@@ -82,7 +82,6 @@ const TAMANHO_NOME_MIN := 24
 const ALTURA_NOME := 40
 const TOPO_NOME := 4
 const RESERVA_ABAS := 456
-const OPACIDADE_SETAS := 0.5
 ## Quanto o carro em sprite sobe no palco (px).
 const SUBIR_SPRITE := 60.0
 ## Altura do palco (carro e ficha): ocupa o espaço que sobra até a Evolução.
@@ -93,8 +92,6 @@ const ALTURA_FICHA := 128
 const TAMANHO_ICONE_FICHA := 88
 const DENTES_FICHA := 6
 const COR_ICONE_FICHA := Color("ece6da")
-## Setas da coleção: o voltar do cabeçalho com metade do tamanho.
-const SETA := Vector2(Cabecalho.ALTURA * 0.95, Cabecalho.ALTURA) * 0.5
 
 
 ## [comprados, existentes] das peças dessas categorias para o carro.
@@ -217,29 +214,10 @@ func _palco(c: Carro, lista: Array) -> Control:
 	nome_carro.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if _correndo(c):
 		Tipografia.rotulo(_hud_rotulo("correndo agora", 0, Color(0.86, 0.87, 0.9), tl), "medium", 26)
-	if lista.size() > 1:
-		var i := lista.find(c)
-		for lado in [-1, 1]:
-			var b := TextureButton.new()
-			b.texture_normal = load(Cabecalho.PASTA + "voltar.png")
-			b.ignore_texture_size = true
-			b.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-			b.flip_h = lado > 0
-			b.modulate.a = OPACIDADE_SETAS
-			b.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT if lado < 0 else Control.PRESET_CENTER_RIGHT)
-			b.offset_top = -SETA.y / 2.0
-			b.offset_bottom = SETA.y / 2.0
-			if lado < 0:
-				b.offset_left = 12
-				b.offset_right = 12 + SETA.x
-			else:
-				b.offset_left = -12 - SETA.x
-				b.offset_right = -12
-			var alvo: Carro = lista[posmod(i + lado, lista.size())]
-			b.pressed.connect(func():
-				jogador.carro_ativo = alvo.uid
-				mudou.emit())
-			palco.add_child(b)
+	var i := lista.find(c)
+	setas_troca(palco, lista.size(), func(lado: int):
+		jogador.carro_ativo = lista[posmod(i + lado, lista.size())].uid
+		mudou.emit())
 	# Faixa de baixo: os resultados das peças (a Evolução embaixo mostra as
 	# peças em si). Cada barra: do de fábrica até o teto do modelo.
 	var a := c.atributos_efetivos("seco")

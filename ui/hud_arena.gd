@@ -9,6 +9,9 @@ extends Control
 const LINHA := 46.0
 const LARGURA := 250.0
 const CARRO := Vector2(30.0, 40.0)  # o carro de pé: frente para cima
+## Com muitos carros (lutas de 15), as linhas encolhem para caber na tela.
+const MUITOS := 6
+const ESCALA_COMPACTA := 0.62
 const VERDE := Color(0.3, 0.8, 0.35)
 const AMARELO := Color(0.95, 0.8, 0.2)
 const VERMELHO := Color(0.92, 0.2, 0.15)
@@ -34,27 +37,30 @@ func _process(_d: float) -> void:
 
 func _draw() -> void:
 	var fonte := Tipografia.fonte("semibold")
+	var k := ESCALA_COMPACTA if linhas.size() > MUITOS else 1.0
+	var linha := LINHA * k
+	var carro := CARRO * k
 	var y := 0.0
 	for l in linhas:
-		var r := Rect2(0, y, LARGURA, LINHA - 6.0)
+		var r := Rect2(0, y, LARGURA, linha - 6.0 * k)
 		draw_rect(r, Color(0.05, 0.05, 0.06, 0.72))
 		draw_rect(Rect2(r.position, Vector2(4, r.size.y)), l["cor"])
-		_carro(Vector2(14, y + (r.size.y - CARRO.y) * 0.5), l["dano"], l["eliminado"])
+		_carro(Vector2(12, y + (r.size.y - carro.y) * 0.5), l["dano"], l["eliminado"], carro)
 		var cor_nome := Aba.COR_DESTAQUE if l.get("voce", false) else Color(0.92, 0.92, 0.9)
 		if l["eliminado"]:
 			cor_nome = Color(0.55, 0.55, 0.55)
-		draw_string(fonte, Vector2(54, y + r.size.y * 0.5 + 7), String(l["nome"]), HORIZONTAL_ALIGNMENT_LEFT,
-				LARGURA - 128, 20, cor_nome)
+		draw_string(fonte, Vector2(20 + carro.x + 4, y + r.size.y * 0.5 + 7 * k), String(l["nome"]), HORIZONTAL_ALIGNMENT_LEFT,
+				LARGURA - 128, roundi(20 * maxf(k, 0.8)), cor_nome)
 		var txt := "FORA" if l["eliminado"] else "%d%%" % roundi(_pior(l["dano"]) * 100.0)
-		draw_string(Tipografia.fonte_numero(), Vector2(LARGURA - 72, y + r.size.y * 0.5 + 8), txt,
-				HORIZONTAL_ALIGNMENT_RIGHT, 62, 19, Color(0.75, 0.75, 0.75) if l["eliminado"] else Color.WHITE)
-		y += LINHA
+		draw_string(Tipografia.fonte_numero(), Vector2(LARGURA - 72, y + r.size.y * 0.5 + 8 * k), txt,
+				HORIZONTAL_ALIGNMENT_RIGHT, 62, roundi(19 * maxf(k, 0.8)), Color(0.75, 0.75, 0.75) if l["eliminado"] else Color.WHITE)
+		y += linha
 	custom_minimum_size = Vector2(LARGURA, y)
 
 
 ## Carro de pé em 2 colunas × 3 linhas: [frente_e, frente_d], [lado_e, lado_d], [tras_e, tras_d].
-func _carro(o: Vector2, dano: PackedFloat32Array, eliminado: bool) -> void:
-	var cel := Vector2(CARRO.x / 2.0, CARRO.y / 3.0)
+func _carro(o: Vector2, dano: PackedFloat32Array, eliminado: bool, tam := CARRO) -> void:
+	var cel := Vector2(tam.x / 2.0, tam.y / 3.0)
 	for r in 6:
 		var col := r % 2
 		var lin := r / 2

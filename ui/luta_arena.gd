@@ -81,7 +81,11 @@ func _linhas() -> Array:
 	var amostras: Array = r["amostras"]
 	var a: Dictionary = amostras[mini(_vista._i + 1, amostras.size() - 1)]
 	var l := []
-	for id in r["carros"]:
+	# Você em cima; os outros na ordem da largada.
+	var ids: Array = r["carros"].keys().filter(func(x): return x != "jogador")
+	if r["carros"].has("jogador"):
+		ids.push_front("jogador")
+	for id in ids:
 		l.append({"id": id, "nome": _dados["nomes"].get(id, id), "cor": Aba.COR_DESTAQUE if id == "jogador" else CarroBloco.cor_do_id(id),
 				"dano": a[id]["dano"], "eliminado": a[id]["eliminado"], "voce": id == "jogador"})
 	return l
@@ -107,12 +111,38 @@ func _mostrar_final() -> void:
 	Tipografia.rotulo(t, "semibold", 44)
 	t.add_theme_color_override("font_color", Aba.COR_RUIM if f["perdeu"] else Aba.COR_DESTAQUE)
 	v.add_child(t)
-	var d := Label.new()
-	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	d.text = ("O %s foi eliminado e saiu da garagem. " % f["carro"] if f["perdeu"] else "") \
-			+ "%d pontos · %s giros." % [f["pontos"], Aba.dinheiro(f["premio"])]
-	Tipografia.rotulo(d, "regular", 26)
-	v.add_child(d)
+	if f["perdeu"]:
+		var d := Label.new()
+		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		d.text = "O %s foi eliminado e saiu da garagem." % f["carro"]
+		Tipografia.rotulo(d, "regular", 26)
+		v.add_child(d)
+	# Pontos e prêmio no padrão dos números do jogo (valor grande, moeda).
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	v.add_child(h)
+	for par in [[str(f["pontos"]), "pontos"], [Aba.dinheiro(f["premio"]), ""]]:
+		var n := Label.new()
+		n.text = par[0]
+		Tipografia.numero(n, 40)
+		n.add_theme_color_override("font_color", Aba.COR_DESTAQUE if par[1] == "" else Color.WHITE)
+		n.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(n)
+		if par[1] != "":
+			var u := Label.new()
+			u.text = par[1] + "   ·"
+			Tipografia.rotulo(u, "medium", 24)
+			u.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
+			u.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			h.add_child(u)
+		else:
+			var moeda := TextureRect.new()
+			moeda.texture = Aba.arte(Aba.ICONE_GIROS)
+			moeda.custom_minimum_size = Vector2(32, 32)
+			moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			h.add_child(moeda)
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Voltar à arena", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, 76)
 	b.pressed.connect(func():

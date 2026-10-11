@@ -10,8 +10,6 @@ var _filtro := "nao_vencidas"
 ## Cartões mostrados de uma vez (cada um custa ~10 ms para montar; a lista toda
 ## travava a troca de tela). "Mostrar mais" acrescenta outro lote.
 const LOTE := 12
-## Moeda de giros: a mesma do painel do cabeçalho.
-const ICONE_GIROS := "cabecalho/icone_giros"
 ## Cartão horizontal da corrida: imagem da pista à esquerda e o título.
 const LARGURA_IMAGEM_CARTAO := 210.0
 const ALTURA_IMAGEM_CARTAO := 200.0
@@ -21,11 +19,8 @@ const TITULO_CARTAO_MIN := 26
 const SELO_CARTAO := 84.0
 var _limite := LOTE
 
-## Fundo do botão de corrida bloqueada.
-const COR_BLOQUEIO := Color(0.66, 0.17, 0.15)
 const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS CORRIDAS"]]
 ## Altura do topo (cenário com o carro atual).
-const ALTURA_TOPO_CARRO := 342.0
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
 const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas": Color(0.22, 0.24, 0.28),
 		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22),
@@ -42,7 +37,7 @@ func construir() -> void:
 		cabecalho("Corridas", "", "fundo_competicoes")
 		proximo_passo("Você precisa de um carro para correr.", "Ir para as Lojas", LOJA)
 		return
-	_topo_carro(garagem)
+	topo_carro(garagem)
 	var c := garagem
 	if not jogador.fila.is_empty():
 		_fila()
@@ -109,77 +104,34 @@ func construir() -> void:
 
 
 ## Topo: o cenário das corridas com a miniatura do carro atual e o nome grande.
-func _topo_carro(garagem: Carro) -> void:
-	var faixa := ilustracao("fundo_competicoes", ALTURA_TOPO_CARRO)
-	cenario_topo(faixa)
-	var h := HBoxContainer.new()
-	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	h.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	# A imagem do carro tem margem transparente: o quadro sai pela esquerda e o
-	# nome começa logo depois do desenho, com o resto da largura.
-	h.offset_left = -70
-	h.offset_right = -16
-	h.offset_bottom = -8
-	h.add_theme_constant_override("separation", -50)
-	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	faixa.add_child(h)
-	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem))
-	img.custom_minimum_size = Vector2(510, 288)
-	h.add_child(img)
-	var nome := Label.new()
-	nome.text = garagem.base["nome"]
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	nome.clip_text = true
-	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	Tipografia.rotulo(nome, "semibold", 48)
-	# O nome ocupa o espaço que sobra: a maior fonte (até 48) que cabe nele.
-	# (largura que sobra ao lado do carro, com folga para o contorno das letras)
-	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 16.0 - (-70.0 + 510.0 - 50.0) - 14.0
-	var tam := 48
-	var f := nome.get_theme_font("font")
-	while tam > 30 and f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
-		tam -= 2
-	nome.add_theme_font_size_override("font_size", tam)
-	if f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
-		# Nem na menor fonte cabe numa linha: quebra em duas.
-		nome.clip_text = false
-		nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	nome.add_theme_constant_override("outline_size", 6)
-	nome.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
-	h.add_child(nome)
-
-
 func _fila() -> void:
+	# A prova correndo, no mesmo cartão das provas da lista: banner da pista,
+	# estado, traçado, título; no lugar dos prêmios, o tempo e o ganho, e o
+	# botão para assistir. Sem parar: a prova termina sozinha.
 	var f: Dictionary = jogador.fila
 	var ev: Dictionary = dados.evento(f["evento_id"])
-	var carro: Carro = jogador.garagem.carro(int(f["uid"]))
-	var v := cartao(COR_BOM)
-	rotulo("CORRENDO AGORA", FONTE_PEQUENA, COR_BOM, v)
-	rotulo("%s · faltam %d corrida%s" % [ev["nome"], f["restantes"], "" if f["restantes"] == 1 else "s"], 0, Color.WHITE, v)
+	var tex := arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
+	var v := cartao_com_fundo(tex, true)
+	var cab := _cabeca_cartao(ev, v, "CORRENDO", COR_BOM, true, _selo(ev, v) != null)
+	var col: VBoxContainer = cab["col"]
+	_premios(ev, col, true)
 	var dur: float = jogador.fila_ctrl.duracao_atual()
 	if dur > 0.0:
 		var decorrido := clampf(Aceleracao.agora(jogador) - float(f["inicio"]), 0.0, dur)
 		var falta := dur * int(f["restantes"]) - decorrido
-		nota("icone_cronometro", "%s por corrida · fim em %s" % [_tempo(dur), _tempo(falta)], "", v, Color.WHITE)
+		var tempo := rotulo("Termina em %s" % _tempo(falta), 0, Color.WHITE, col)
+		Tipografia.rotulo(tempo, "semibold", 26)
 	var ganho := _ganho_estimado(ev, f)
 	if ganho != "":
-		rotulo(ganho, FONTE_PEQUENA + 2, COR_BOM, v)
-	if jogador.fila_ctrl.importante(f):
-		nota("icone_alerta", "Só com o app aberto", "Prova inédita, etapa de campeonato ou corrida da história: "
-				+ "se você fechar o app, ela recomeça quando voltar.", v)
-	else:
-		nota("icone_app_fechado", "Segue com o app fechado", "A sequência continua com o app fechado, até %s."
-				% _tempo(float(dados.carreira().get("teto_offline_s", 0.0))), v)
-	var h := acoes(v)
-	botao("Assistir", func(): ir_para.emit(CORRIDA), true, true, h, "icone_ao_vivo")
-	if int(f["restantes"]) > 1:
-		botao("Parar no fim desta", func():
-			jogador.fila_ctrl.parar_apos_atual()
-			avisar("A sequência para quando esta corrida terminar."), true, false, h)
-	botao("Parar agora", func():
-		jogador.fila_ctrl.cancelar()
-		avisar("Sequência cancelada. A corrida em andamento não conta."), true, false, h)
+		rotulo(ganho, FONTE_PEQUENA, COR_BOM, col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var offline := ("Só com o app aberto: fechar recomeça a prova" if jogador.fila_ctrl.importante(f)
+			else "Segue com o app fechado")
+	var lo := rotulo(offline, FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
+	lo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var b := Button.new()
+	Tipografia.acao_primaria(b, "Assistir   →", COR_BOM, Color(0.1, 0.1, 0.1), 34, 72)
+	b.pressed.connect(func(): ir_para.emit(CORRIDA))
+	v.add_child(b)
 
 
 ## Faixa de ganho pelas posições já obtidas nesta fila (ou na última vez nesta
@@ -189,7 +141,7 @@ func _ganho_estimado(ev: Dictionary, f: Dictionary) -> String:
 	if pos.is_empty() and jogador.historico.has(ev["id"]):
 		pos = [jogador.historico[ev["id"]]["ultima_pos"]]
 	if pos.is_empty():
-		return "Ganho previsto: aparece depois da primeira corrida."
+		return ""
 	var premios: Array = ev["premios"]
 	var p := func(posicao: int) -> int: return int(premios[posicao - 1]) if posicao >= 1 and posicao <= premios.size() else 0
 	var n := int(f["restantes"])
@@ -216,102 +168,23 @@ static func _tempo(s: float) -> String:
 func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var pode := motivos.is_empty()
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
-	var tipo := _tipo(ev)
 	var tex := arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
 	var v := cartao_com_fundo(tex, pode)
 	ancora("EVENT_CARD", v)
-	# Selo da licença exigida no canto de cima, à direita, por cima do cartão.
-	var selo := selo_licenca(String(ev["restricoes"].get("licenca", "")))
-	if selo != null:
-		var cima := Control.new()
-		cima.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.get_parent().get_parent().add_child(cima)  # o painel do cartão: ocupa ele todo
-		var t := TextureRect.new()
-		t.texture = selo
-		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		t.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-		t.offset_left = -10 - SELO_CARTAO
-		t.offset_right = -10
-		t.offset_top = 8
-		t.offset_bottom = 8 + SELO_CARTAO
-		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cima.add_child(t)
-		ancora("LICENCA_" + String(ev["restricoes"]["licenca"]), t)  # tutorial: "olha a licença exigida"
+	var selo := _selo(ev, v)
 	# A prova do tutorial (etapa 1 do campeonato do prólogo): cartão, etapas,
 	# competitividade e o botão, cada um com a sua âncora.
 	var tutorial: bool = ev["id"] == _evento_tutorial()
 	if tutorial:
 		ancora("COPA", v)
-	var corpo := HBoxContainer.new()
-	corpo.add_theme_constant_override("separation", 14)
-	v.add_child(corpo)
-	# Faixa da esquerda: a imagem da pista aparece mais forte (o fundo do cartão
-	# é ela inteira); estado no canto de cima e o traçado embaixo dele.
-	var banner := Control.new()
-	banner.custom_minimum_size = Vector2(LARGURA_IMAGEM_CARTAO, ALTURA_IMAGEM_CARTAO)
-	banner.size_flags_vertical = Control.SIZE_FILL
-	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	corpo.add_child(banner)
-	var estado := Label.new()
-	estado.text = ("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA")
-	Tipografia.rotulo(estado, "semibold", 18)
-	estado.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
-	var sb_estado := StyleBoxFlat.new()
-	sb_estado.bg_color = COR_BOM if vitorias > 0 else (COR_DESTAQUE if pode else COR_NEUTRA)
-	sb_estado.content_margin_left = 10
-	sb_estado.content_margin_right = 10
-	sb_estado.content_margin_top = 2
-	sb_estado.content_margin_bottom = 2
-	estado.add_theme_stylebox_override("normal", sb_estado)
-	estado.position = Vector2(0, 0)
-	banner.add_child(estado)
-	var tracado := icone_pista(ev["pista"])
-	# Traçado grande no centro da faixa, abaixo do estado.
-	tracado.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	tracado.offset_left = 6
-	tracado.offset_right = -6
-	tracado.offset_top = 44
-	tracado.offset_bottom = 0
-	tracado.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	banner.add_child(tracado)
-	var col := VBoxContainer.new()
-	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	col.add_theme_constant_override("separation", 4)
-	corpo.add_child(col)
-	# Série (ou tipo) e a etapa: no campeonato, o título é a etapa.
-	var serie := Campeonatos.serie(ev)
-	var etapas := Campeonatos.etapas(dados, serie)
-	var k_etapa := etapas.find(ev)
-	var sobre := rotulo((serie if not etapas.is_empty() else tipo[0]).to_upper(), 0, COR_SECUNDARIA, col)
-	Tipografia.rotulo(sobre, "medium", 18)
-	sobre.autowrap_mode = TextServer.AUTOWRAP_OFF
-	sobre.clip_text = true
-	sobre.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	var titulo := Label.new()
-	titulo.text = ("ETAPA %d/%d" % [k_etapa + 1, etapas.size()]) if not etapas.is_empty() else nome_evento(ev).to_upper()
-	titulo.clip_text = true
-	titulo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	Tipografia.rotulo(titulo, "semibold", TITULO_CARTAO)
-	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if pode else COR_SECUNDARIA)
-	col.add_child(titulo)
-	# O título diminui até caber (nome longo de prova avulsa).
-	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 32.0 - LARGURA_IMAGEM_CARTAO - 14.0 - (SELO_CARTAO if selo != null else 0.0)
-	var tam := TITULO_CARTAO
-	var fonte_titulo := titulo.get_theme_font("font")
-	while tam > TITULO_CARTAO_MIN and fonte_titulo.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
-		tam -= 2
-	titulo.add_theme_font_size_override("font_size", tam)
-	var linha := [nome_pista(ev["pista"]), "%d volta%s" % [ev["voltas"], "" if ev["voltas"] == 1 else "s"]]
-	# A licença exigida é o selo no canto (sem selo, vai escrita na linha).
+	var estado_txt := ("VENCIDA ×%d" % vitorias) if vitorias > 0 else ("ABERTA" if pode else "BLOQUEADA")
+	var estado_cor := COR_BOM if vitorias > 0 else (COR_DESTAQUE if pode else COR_NEUTRA)
+	var cab := _cabeca_cartao(ev, v, estado_txt, estado_cor, pode, selo != null)
+	var col: VBoxContainer = cab["col"]
+	var etapas: Array = cab["etapas"]
+	var k_etapa: int = cab["k_etapa"]
+	var lp: Label = cab["linha"]
 	var lic := String(ev["restricoes"].get("licenca", ""))
-	if lic != "" and selo == null:
-		linha.append("licença " + lic.capitalize())
-	var sem_lic: Dictionary = ev["restricoes"].duplicate()
-	sem_lic.erase("licenca")
-	linha.append_array(_regras(sem_lic).slice(0, 2))
-	var lp := rotulo(" · ".join(linha), FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col)
-	lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if lic != "" and selo == null:
 		ancora("LICENCA_" + lic, lp)
 	if not etapas.is_empty():
@@ -319,28 +192,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		prog.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if tutorial:
 			ancora("ETAPAS", prog)
-	# Prêmios do 1º ao 3º, cada um com a moeda (o ícone já diz giros).
-	var premios := HBoxContainer.new()
-	premios.add_theme_constant_override("separation", 6)
-	col.add_child(premios)
-	for k in mini(3, ev["premios"].size()):
-		var cel := HBoxContainer.new()
-		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cel.add_theme_constant_override("separation", 6)
-		premios.add_child(cel)
-		var lp_pos := rotulo("%dº" % (k + 1), 0, COR_SECUNDARIA, cel)
-		Tipografia.rotulo(lp_pos, "medium", 18)
-		lp_pos.autowrap_mode = TextServer.AUTOWRAP_OFF
-		lp_pos.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		lp_pos.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		# Valor logo depois da posição e a moeda de giros do cabeçalho depois dele.
-		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
-		Tipografia.numero(lv, [30, 24, 22][k])
-		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
-		lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		var moeda := icone(ICONE_GIROS, 24, cel)
-		moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_premios(ev, col, pode)
 	if pode:
 		var barra := _comparacao_rivais(c, ev, col)
 		if tutorial and barra != null:
@@ -389,6 +241,130 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			if not (pede_licenca and historia("LICENCA_EXIGIDA", ctx)):
 				historia("EVENTO_BLOQUEADO", ctx))
 		v.add_child(br)
+
+
+## Prêmios do 1º ao 3º, cada um com a moeda (o ícone já diz giros).
+func _premios(ev: Dictionary, col: VBoxContainer, pode: bool) -> void:
+	var premios := HBoxContainer.new()
+	premios.add_theme_constant_override("separation", 6)
+	col.add_child(premios)
+	for k in mini(3, ev["premios"].size()):
+		var cel := HBoxContainer.new()
+		cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cel.add_theme_constant_override("separation", 6)
+		premios.add_child(cel)
+		var lp_pos := rotulo("%dº" % (k + 1), 0, COR_SECUNDARIA, cel)
+		Tipografia.rotulo(lp_pos, "medium", 18)
+		lp_pos.autowrap_mode = TextServer.AUTOWRAP_OFF
+		lp_pos.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		lp_pos.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		# Valor logo depois da posição e a moeda de giros do cabeçalho depois dele.
+		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
+		Tipografia.numero(lv, [30, 24, 22][k])
+		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
+		lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var moeda := icone(ICONE_GIROS, 24, cel)
+		moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+
+## Selo da licença exigida no canto de cima, à direita, por cima do cartão.
+func _selo(ev: Dictionary, v: VBoxContainer) -> Texture2D:
+	var selo := selo_licenca(String(ev["restricoes"].get("licenca", "")))
+	if selo != null:
+		var cima := Control.new()
+		cima.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.get_parent().get_parent().add_child(cima)  # o painel do cartão: ocupa ele todo
+		var t := TextureRect.new()
+		t.texture = selo
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		t.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+		t.offset_left = -10 - SELO_CARTAO
+		t.offset_right = -10
+		t.offset_top = 8
+		t.offset_bottom = 8 + SELO_CARTAO
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cima.add_child(t)
+		ancora("LICENCA_" + String(ev["restricoes"]["licenca"]), t)  # tutorial: "olha a licença exigida"
+	return selo
+
+
+## Topo comum dos cartões de prova (o da lista e o da prova correndo): faixa
+## da esquerda com o estado e o traçado; à direita, série, título (etapa ou
+## nome), pista e voltas. {col, etapas, k_etapa, linha}.
+func _cabeca_cartao(ev: Dictionary, v: VBoxContainer, estado_txt: String, estado_cor: Color, pode: bool,
+		com_selo: bool) -> Dictionary:
+	var corpo := HBoxContainer.new()
+	corpo.add_theme_constant_override("separation", 14)
+	v.add_child(corpo)
+	# Faixa da esquerda: a imagem da pista aparece mais forte (o fundo do cartão
+	# é ela inteira); estado no canto de cima e o traçado embaixo dele.
+	var banner := Control.new()
+	banner.custom_minimum_size = Vector2(LARGURA_IMAGEM_CARTAO, ALTURA_IMAGEM_CARTAO)
+	banner.size_flags_vertical = Control.SIZE_FILL
+	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	corpo.add_child(banner)
+	var estado := Label.new()
+	estado.text = estado_txt
+	Tipografia.rotulo(estado, "semibold", 18)
+	estado.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
+	var sb_estado := StyleBoxFlat.new()
+	sb_estado.bg_color = estado_cor
+	sb_estado.content_margin_left = 10
+	sb_estado.content_margin_right = 10
+	sb_estado.content_margin_top = 2
+	sb_estado.content_margin_bottom = 2
+	estado.add_theme_stylebox_override("normal", sb_estado)
+	estado.position = Vector2(0, 0)
+	banner.add_child(estado)
+	var tracado := icone_pista(ev["pista"])
+	# Traçado grande no centro da faixa, abaixo do estado.
+	tracado.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tracado.offset_left = 6
+	tracado.offset_right = -6
+	tracado.offset_top = 44
+	tracado.offset_bottom = 0
+	tracado.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	banner.add_child(tracado)
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 4)
+	corpo.add_child(col)
+	# Série (ou tipo) e a etapa: no campeonato, o título é a etapa.
+	var serie := Campeonatos.serie(ev)
+	var etapas := Campeonatos.etapas(dados, serie)
+	var k_etapa := etapas.find(ev)
+	var sobre := rotulo((serie if not etapas.is_empty() else _tipo(ev)[0]).to_upper(), 0, COR_SECUNDARIA, col)
+	Tipografia.rotulo(sobre, "medium", 18)
+	sobre.autowrap_mode = TextServer.AUTOWRAP_OFF
+	sobre.clip_text = true
+	sobre.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	var titulo := Label.new()
+	titulo.text = ("ETAPA %d/%d" % [k_etapa + 1, etapas.size()]) if not etapas.is_empty() else nome_evento(ev).to_upper()
+	titulo.clip_text = true
+	titulo.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(titulo, "semibold", TITULO_CARTAO)
+	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if pode else COR_SECUNDARIA)
+	col.add_child(titulo)
+	# O título diminui até caber (nome longo de prova avulsa).
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 32.0 - LARGURA_IMAGEM_CARTAO - 14.0 - (SELO_CARTAO if com_selo else 0.0)
+	var tam := TITULO_CARTAO
+	var fonte_titulo := titulo.get_theme_font("font")
+	while tam > TITULO_CARTAO_MIN and fonte_titulo.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
+		tam -= 2
+	titulo.add_theme_font_size_override("font_size", tam)
+	var linha := [nome_pista(ev["pista"]), "%d volta%s" % [ev["voltas"], "" if ev["voltas"] == 1 else "s"]]
+	# A licença exigida é o selo no canto (sem selo, vai escrita na linha).
+	var lic := String(ev["restricoes"].get("licenca", ""))
+	if lic != "" and not com_selo:
+		linha.append("licença " + lic.capitalize())
+	var sem_lic: Dictionary = ev["restricoes"].duplicate()
+	sem_lic.erase("licenca")
+	linha.append_array(_regras(sem_lic).slice(0, 2))
+	var lp := rotulo(" · ".join(linha), FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col)
+	lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return {"col": col, "etapas": etapas, "k_etapa": k_etapa, "linha": lp}
 
 
 ## "1º: 10 pts · você: 2º, 18 pts" na etapa que vale; nas outras, qual vale.
