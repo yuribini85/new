@@ -368,5 +368,6 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     tem um perfil (agressivo, equilibrado, cauteloso → `carreira.json` → `perfis_piloto`,
     a chance de tentar a ultrapassagem; valores provisórios até o playtest) e uma frase de
     personalidade, mostrada quando a equipe vence. O ritmo dos rivais não muda. O segundo
-    piloto passa a ser escolhido entre 4 candidatos (`docs/pilotos_candidatos.md`); custo e
-    salário entram com o `custo_staff`.
+    piloto passa a ser escolhido entre 8 candidatos, dois por traço (Constante, Agressivo,
+    Barato, Promessa; `docs/pilotos_candidatos.md`); custo e salário entram com o
+    `custo_staff`.

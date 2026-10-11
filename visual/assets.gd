@@ -46,6 +46,10 @@ static func caminho(id: String, variante: String) -> String:
 				for p in e.get("pilotos", []):
 					if p["id"] == id:
 						return String(p.get("retrato", ""))
+			# Segundo piloto e candidatos (carreira.json → equipe_jogador).
+			var p: Dictionary = EquipeJogador.piloto(dados, id)
+			if not p.is_empty():
+				return String(p.get("retrato", ""))
 		"logo":
 			if dados != null and dados.existe("equipes", id):
 				return String(dados.item("equipes", id).get("logo", ""))

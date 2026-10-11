@@ -134,8 +134,10 @@ relógio (offline também), e a avaliação só depois do treino. Configuração
 Equipe do jogador (decisão 38, `carreira.json` → `equipe_jogador`): caixa único (o
 saldo); a cada corrida entra `patrocinio` e sai `custo_staff`. Valores em G;
 **pendentes do playtest** (`null` = 0 até lá; a aba Equipe mostra "a definir").
-`segundo_piloto`: quem entra na equipe na cena que libera, sem contrato nem salário
-(`provisorio` até o nome do Drive).
+`segundo_piloto`: quem entra na equipe na cena que libera, sem contrato nem salário.
+`candidatos` (`{id, nome, retrato, traco, frase}`) e `tracos` (`{nome, treina}`): os 8
+candidatos a segundo piloto e o traço de cada um (decisão 56, `docs/pilotos_candidatos.md`);
+a arte entra por `tools/preparar_piloto.py`.
 
 Cada teste: `{id, pista, voltas, condicao, restricoes, tempos: {ouro, prata, bronze}}`,
 tempos em segundos. O jogador usa o próprio carro dentro da restrição. Licença concedida

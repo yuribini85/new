@@ -34,9 +34,85 @@
   "segundo_piloto": {
    "id": "jonas_reid",
    "nome": "Jonas Reid",
-   "retrato": "res://arte/pilotos/jonas_reid.png",
-   "provisorio": true
-  }
+   "retrato": "res://arte/pilotos/jonas_reid.png"
+  },
+  "tracos": {
+   "_nota": "Traço de cada candidato a segundo piloto (decisão 56). 'treina': o treino do piloto principal vale para ele. Os outros efeitos (consistência, agressividade, salário) entram com o custo_staff, no playtest.",
+   "constante": {
+    "nome": "Constante",
+    "treina": false
+   },
+   "agressivo": {
+    "nome": "Agressivo",
+    "treina": false
+   },
+   "barato": {
+    "nome": "Barato",
+    "treina": false
+   },
+   "promessa": {
+    "nome": "Promessa",
+    "treina": true
+   }
+  },
+  "candidatos": [
+   {
+    "id": "jonas_reid",
+    "nome": "Jonas Reid",
+    "retrato": "res://arte/pilotos/jonas_reid.png",
+    "traco": "constante",
+    "frase": "Não ganha corrida sozinho, mas não joga ponto fora."
+   },
+   {
+    "id": "amir_castell",
+    "nome": "Amir Castell",
+    "retrato": "res://arte/pilotos/amir_castell.png",
+    "traco": "constante",
+    "frase": "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir."
+   },
+   {
+    "id": "ayla_moreno",
+    "nome": "Ayla Moreno",
+    "retrato": "res://arte/pilotos/ayla_moreno.png",
+    "traco": "agressivo",
+    "frase": "Vê uma brecha onde os outros veem um muro."
+   },
+   {
+    "id": "axel_brennan",
+    "nome": "Axel Brennan",
+    "retrato": "res://arte/pilotos/axel_brennan.png",
+    "traco": "agressivo",
+    "frase": "Larga para ganhar ou para não chegar. Ainda não decidiu qual."
+   },
+   {
+    "id": "bastian_kroll",
+    "nome": "Bastian Kroll",
+    "retrato": "res://arte/pilotos/bastian_kroll.png",
+    "traco": "barato",
+    "frase": "Já foi rápido. Hoje é barato e conhece todo mundo no paddock."
+   },
+   {
+    "id": "caleb_wynn",
+    "nome": "Caleb Wynn",
+    "retrato": "res://arte/pilotos/caleb_wynn.png",
+    "traco": "barato",
+    "frase": "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar."
+   },
+   {
+    "id": "noor_haddad",
+    "nome": "Noor Haddad",
+    "retrato": "res://arte/pilotos/noor_haddad.png",
+    "traco": "promessa",
+    "frase": "Crua, mas aprende rápido. Cada hora de treino aparece no carro."
+   },
+   {
+    "id": "sofia_rinaldi",
+    "nome": "Sofia Rinaldi",
+    "retrato": "res://arte/pilotos/sofia_rinaldi.png",
+    "traco": "promessa",
+    "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra."
+   }
+  ]
  },
  "perfis_piloto": {
   "_nota": "Agressividade dos rivais por perfil da equipe (decisão do usuário, 2026-10-11): chance de tentar a ultrapassagem quando está mais rápido. Valores provisórios até o playtest.",

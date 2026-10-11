@@ -265,7 +265,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `eq19_cold_harbor` Cold Harbor | SPORT | `finn_sutter`, `kaia_rehn` |
 | `eq20_storm_division` Storm Division | PRO | `rex_arden`, `mira_danvers` |
 
-Segundo piloto da equipe do jogador: `jonas_reid` (Jonas Reid, provisório).
+Segundo piloto da equipe do jogador: `jonas_reid` (Jonas Reid).
 
 ## Cenários de teste (`data_model/cenarios.gd`)
 

@@ -67,8 +67,34 @@ static func liberar_segundo(dados: Node, jogador: Node) -> void:
 
 
 static func piloto(dados: Node, piloto_id: String) -> Dictionary:
+	if piloto_id == "":
+		return {}
+	for c in candidatos(dados):
+		if c.get("id") == piloto_id:
+			return c
 	var p: Dictionary = config(dados).get("segundo_piloto", {})
-	return p if piloto_id != "" and p.get("id") == piloto_id else {}
+	return p if p.get("id") == piloto_id else {}
+
+
+## Candidatos a segundo piloto (decisão 56): {id, nome, retrato, traco, frase}.
+static func candidatos(dados: Node) -> Array:
+	return config(dados).get("candidatos", [])
+
+
+## Traço do candidato: {nome, treina}.
+static func traco(dados: Node, piloto_id: String) -> Dictionary:
+	return config(dados).get("tracos", {}).get(String(piloto(dados, piloto_id).get("traco", "")), {})
+
+
+## Troca o segundo piloto por outro candidato (sem custo até o custo_staff).
+## "" ou o motivo.
+static func contratar(dados: Node, jogador: Node, piloto_id: String) -> String:
+	if not criada(jogador) or not jogador.flags.has(FLAG_CONTRATAR):
+		return "a equipe ainda não contrata"
+	if not candidatos(dados).any(func(c): return c.get("id") == piloto_id):
+		return "candidato desconhecido"
+	jogador.segundo_piloto = piloto_id
+	return ""
 
 
 ## Nome do piloto do jogador (o personagem da história, Adrian ou Elena, ou o
@@ -111,10 +137,12 @@ static func piloto_do_jogador(dados: Node, jogador: Node) -> Dictionary:
 	return p
 
 
-## Piloto do companheiro: o do jogador sem o treino (é do piloto principal) e
-## com a perda de consistência do segundo piloto.
-static func piloto_corrida(dados: Node, _jogador: Node = null) -> Dictionary:
-	var p: Dictionary = piloto_do_jogador(dados, null)
+## Piloto do companheiro: o do jogador com a perda de consistência do segundo
+## piloto; o treino é do piloto principal, salvo o traço que treina junto
+## (Promessa).
+static func piloto_corrida(dados: Node, jogador: Node = null) -> Dictionary:
+	var treina: bool = jogador != null and bool(traco(dados, jogador.segundo_piloto).get("treina", false))
+	var p: Dictionary = piloto_do_jogador(dados, jogador if treina else null)
 	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
 	p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
 	return p

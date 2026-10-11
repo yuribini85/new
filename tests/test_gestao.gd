@@ -141,3 +141,22 @@ func test_treino_sobe_ritmo_ate_o_teto() -> void:
 	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), base, 1e-6, "o segundo piloto não herda o treino")
 	j.free()
 	d.free()
+
+
+func test_segundo_piloto_troca_entre_candidatos_e_promessa_treina() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	igual(EquipeJogador.contratar(d, j, "livre_2"), "a equipe ainda não contrata", "sem a cena que libera")
+	EquipeJogador.liberar_segundo(d, j)
+	igual(j.segundo_piloto, "livre_1", "começa com o padrão")
+	igual(EquipeJogador.contratar(d, j, "ninguem"), "candidato desconhecido", "só candidatos")
+	j.equipe["treino"] = {"nivel": 2, "fim": 0.0}
+	var base := float(d.piloto(d.carreira()["piloto_jogador"])["ritmo"])
+	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), base, 1e-6, "Constante: sem o treino")
+	igual(EquipeJogador.contratar(d, j, "livre_2"), "", "troca")
+	igual(EquipeJogador.nome_segundo(d, j), "Livre Dois", "o novo segundo piloto")
+	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), GestaoEquipe.ritmo(d, j, base), 1e-6,
+			"Promessa: treina junto com o piloto principal")
+	verificar(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]) > base, "o treino aparece")
+	j.free()
+	d.free()
