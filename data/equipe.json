@@ -54,9 +54,9 @@
   "tempo_base_h": 1.0,
   "custo_fator": 0.25,
   "teto": {
-   "INTERNATIONAL": 0.7,
-   "PRO": 0.7,
-   "ELITE": 0.7
+   "INTERNATIONAL": 1.0,
+   "PRO": 1.0,
+   "ELITE": 1.0
   },
   "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde)."
  }
