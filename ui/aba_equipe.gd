@@ -280,6 +280,7 @@ func _pilotos(eq: Dictionary) -> void:
 	var c := cartao()
 	if Prologo.piloto(dados, jogador) != "":
 		_linha_piloto(c, EquipeJogador.nome_jogador(dados, jogador), "PILOTO PRINCIPAL")
+	_treino(c)
 	for p in eq.get("pilotos", []):
 		if String(p["id"]).begins_with(String(jogador.personagem) + "_"):
 			_linha_piloto(c, String(p["nome"]), "PILOTO PRINCIPAL")
@@ -290,6 +291,52 @@ func _pilotos(eq: Dictionary) -> void:
 		_carro_companheiro()
 	else:
 		nota("icone_info", "Segundo piloto", "Um segundo piloto chega mais adiante na carreira.", c)
+
+
+## Treino do piloto principal (decisão 54): consistência atual e o teto da
+## licença, o treino em andamento ou o botão do próximo nível.
+func _treino(pai: Control) -> void:
+	if not GestaoEquipe.aberta(dados, jogador) or GestaoEquipe.cfg_treino(dados).is_empty():
+		return
+	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["consistencia"])
+	var atual := GestaoEquipe.consistencia(dados, jogador, base)
+	var teto := maxf(GestaoEquipe.teto(dados, jogador), base)
+	var h := fileira(pai)
+	var l := rotulo("Consistência", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var v := rotulo("%d%% · teto %d%%" % [roundi(atual * 100.0), roundi(teto * 100.0)], FONTE_PEQUENA + 2, Color.WHITE, h)
+	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var barra := ProgressBar.new()
+	barra.show_percentage = false
+	barra.min_value = base
+	barra.max_value = maxf(teto, base + 0.01)
+	barra.value = atual
+	barra.custom_minimum_size = Vector2(0, 10)
+	pai.add_child(barra)
+	var agora := Time.get_unix_time_from_system()
+	if GestaoEquipe.treinando(jogador):
+		var resta := maxf(float(jogador.equipe["treino"]["fim"]) - agora, 0.0)
+		rotulo("Treinando o nível %d: termina em %s (também com o app fechado)." % [
+				GestaoEquipe.nivel_treino(jogador) + 1, _horas(resta)], FONTE_PEQUENA, COR_BOM, pai)
+		return
+	if not GestaoEquipe.pode_treinar(dados, jogador, base):
+		rotulo("No teto desta licença. A próxima licença libera mais.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+		return
+	var preco := GestaoEquipe.preco_treino(dados, jogador)
+	var b := Button.new()
+	Tipografia.acao_primaria(b, "Treinar · %s · %s" % [dinheiro(preco), _horas(GestaoEquipe.duracao_treino(dados, jogador))],
+			COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
+	moeda(b, 24)
+	b.disabled = not jogador.economia.pode_pagar(preco)
+	b.pressed.connect(func():
+		var motivo := GestaoEquipe.treinar(dados, jogador, base, Time.get_unix_time_from_system())
+		if motivo != "":
+			avisar("Não deu: %s." % motivo, false)
+			return
+		Sons.tocar_ui(self, "moeda", -4.0)
+		avisar("Treino começou.")
+		mudou.emit())
+	pai.add_child(b)
 
 
 func _linha_piloto(pai: Control, nome: String, papel: String) -> void:

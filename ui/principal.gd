@@ -1026,6 +1026,12 @@ func _primeira_vitoria(c: Dictionary) -> void:
 ## Patrocínio: a renda por hora entra a cada segundo com o app aberto; um
 ## contrato que acaba avisa.
 func _patrocinio() -> void:
+	if GestaoEquipe.concluir_treino(jogador, Time.get_unix_time_from_system()):
+		_sobre.avisar("%s terminou o treino: nível %d." % [EquipeJogador.nome_jogador(dados, jogador),
+				GestaoEquipe.nivel_treino(jogador)])
+		if jogador.historia != null:
+			jogador.historia.disparar("TREINO_CONCLUIDO")
+		atualizar()
 	var r := GestaoEquipe.acumular(dados, jogador, Time.get_unix_time_from_system())
 	for nome in r["encerrados"]:
 		_sobre.avisar("Contrato de %s encerrado. Há ofertas novas na Equipe." % nome)
@@ -1064,6 +1070,9 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			var vpat := g.cartao(Aba.COR_DESTAQUE, v)
 			g.rotulo("PATROCÍNIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vpat)
 			g.rotulo("+%s giros enquanto você esteve fora" % Aba.dinheiro(patrocinio), 30, Color.WHITE, vpat)
+			if rel.get("treino_concluido", false):
+				g.rotulo("Treino do piloto concluído: nível %d." % GestaoEquipe.nivel_treino(jogador), Aba.FONTE_PEQUENA,
+						Aba.COR_BOM, vpat)
 			for nome in rel.get("patrocinios_encerrados", []):
 				g.rotulo("Contrato de %s encerrado." % nome, Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vpat)
 		if not corridas.is_empty():

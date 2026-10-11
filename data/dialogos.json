@@ -3555,6 +3555,32 @@
   "personagem": "dono"
  },
  {
+  "id": "CW_S05",
+  "trigger": "TREINO_CONCLUIDO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} voltou do treino mais constante. Menos erro em curva, menos peça gasta.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Não faz milagre. Mas ajuda o carro a render o que tem.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TRAINING_LEVEL"
+  ],
+  "flags": [
+   "FIRST_TRAINING_LEVEL"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_S04",
   "trigger": "SEDE_MELHORADA",
   "falas": [

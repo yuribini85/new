@@ -716,6 +716,10 @@ Mara[firme]: Primeiro adesivo novo no carro desde aquela noite.
 = CW_S03 | CARRO_DESMONTADO | personagem=dono; proibe=FIRST_DISMANTLE; flags=FIRST_DISMANTLE
 Mara[pensativa]: Cada peça dele ainda serve em outro. O crédito fica para a próxima compra de peças.
 
+= CW_S05 | TREINO_CONCLUIDO | personagem=dono; proibe=FIRST_TRAINING_LEVEL; flags=FIRST_TRAINING_LEVEL
+Mara[gesto]: {piloto} voltou do treino mais constante. Menos erro em curva, menos peça gasta.
+Mara[pensativa]: Não faz milagre. Mas ajuda o carro a render o que tem.
+
 = CW_S04 | SEDE_MELHORADA | personagem=dono; proibe=FIRST_HQ_UPGRADE; flags=FIRST_HQ_UPGRADE
 Mara[gesto]: A oficina parece outra. Ainda tem goteira, mas parece outra.
 

@@ -115,3 +115,28 @@ func test_estado_da_equipe_volta_do_save() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+func test_treino_sobe_consistencia_ate_o_teto() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	j.economia.creditar(1000)
+	# Fixture: passo 0,05, teto 0,8 na licença "b", base 0,7; nível n leva n h e custa 5 × n.
+	perto(GestaoEquipe.consistencia(d, j, 0.7), 0.7, 1e-6, "sem treino, a base")
+	igual(GestaoEquipe.preco_treino(d, j), 5, "nível 1 custa 5")
+	igual(GestaoEquipe.treinar(d, j, 0.7, 0.0), "", "começa o treino")
+	igual(GestaoEquipe.treinar(d, j, 0.7, 0.0), "já está treinando", "um treino por vez")
+	verificar(not GestaoEquipe.concluir_treino(j, 1800.0), "meia hora: ainda treinando")
+	verificar(GestaoEquipe.concluir_treino(j, 3600.0), "uma hora: concluído")
+	perto(GestaoEquipe.consistencia(d, j, 0.7), 0.75, 1e-6, "nível 1: +0,05")
+	GestaoEquipe.treinar(d, j, 0.7, 3600.0)
+	GestaoEquipe.concluir_treino(j, 3600.0 * 3.0)
+	perto(GestaoEquipe.consistencia(d, j, 0.7), 0.8, 1e-6, "nível 2: no teto")
+	verificar(not GestaoEquipe.pode_treinar(d, j, 0.7), "no teto não treina mais")
+	j.equipe["treino"]["nivel"] = 5
+	perto(GestaoEquipe.consistencia(d, j, 0.7), 0.8, 1e-6, "acima do teto: limitado")
+	var base := float(d.piloto(d.carreira()["piloto_jogador"])["consistencia"])
+	var p := EquipeJogador.piloto_do_jogador(d, j)
+	perto(float(p["consistencia"]), GestaoEquipe.consistencia(d, j, base), 1e-6, "o piloto da corrida usa o treino")
+	j.free()
+	d.free()

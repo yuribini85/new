@@ -52,7 +52,7 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int) -> Dictio
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
 	var carro: Carro = jogador.garagem.carro(uid)
-	var piloto: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"])
+	var piloto: Dictionary = EquipeJogador.piloto_do_jogador(dados, jogador)
 	var attrs := carro.atributos_efetivos("seco")
 	var parts := [{"id": "jogador", "atributos": attrs, "piloto": piloto}]
 	var modelos := {"jogador": carro.base}

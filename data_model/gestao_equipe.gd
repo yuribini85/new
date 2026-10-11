@@ -228,6 +228,85 @@ static func bonus_corrida(dados: Node, jogador: Node, ev: Dictionary, posicao: i
 	return pagos
 
 
+# ------------------------------------------------------------------ Treino
+
+## Treino do piloto do jogador (decisão 54): níveis de consistência, um por
+## vez, no relógio real; teto pela maior licença (data/equipe.json → treino.teto,
+## gerado por tools/calibrar_treino.gd). Estado: jogador.equipe.treino =
+## {nivel, fim (segundos Unix; 0 = parado)}.
+static func cfg_treino(dados: Node) -> Dictionary:
+	return dados.equipe().get("treino", {})
+
+
+static func nivel_treino(jogador: Node) -> int:
+	return int(jogador.equipe.get("treino", {}).get("nivel", 0))
+
+
+## Consistência do piloto do jogador com o treino (a base sem gestão).
+static func consistencia(dados: Node, jogador: Node, base: float) -> float:
+	var t := cfg_treino(dados)
+	if t.is_empty():
+		return base
+	return minf(base + float(t.get("passo", 0.0)) * nivel_treino(jogador), maxf(teto(dados, jogador), base))
+
+
+## Teto da maior licença do jogador (sem teto para ela: sem ganho).
+static func teto(dados: Node, jogador: Node) -> float:
+	var tetos: Dictionary = cfg_treino(dados).get("teto", {})
+	var niveis := ordem(dados)
+	var k := maior_licenca(dados, jogador)
+	while k >= 0:
+		if tetos.has(niveis[k]):
+			return float(tetos[niveis[k]])
+		k -= 1
+	return 0.0
+
+
+## O próximo nível ainda sobe a consistência (abaixo do teto)?
+static func pode_treinar(dados: Node, jogador: Node, base: float) -> bool:
+	return aberta(dados, jogador) and not cfg_treino(dados).is_empty() \
+			and base + float(cfg_treino(dados).get("passo", 0.0)) * nivel_treino(jogador) < teto(dados, jogador) - 1e-6
+
+
+static func treinando(jogador: Node) -> bool:
+	return float(jogador.equipe.get("treino", {}).get("fim", 0.0)) > 0.0
+
+
+static func duracao_treino(dados: Node, jogador: Node) -> float:
+	return float(cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 * (nivel_treino(jogador) + 1)
+
+
+static func preco_treino(dados: Node, jogador: Node) -> int:
+	var niveis := ordem(dados)
+	var k := maior_licenca(dados, jogador)
+	var ref := premio_referencia(dados, niveis[k]) if k >= 0 else 0
+	return roundi(ref * float(cfg_treino(dados).get("custo_fator", 0.0)) * (nivel_treino(jogador) + 1))
+
+
+## Começa o próximo nível (agora: segundos Unix). "" ou o motivo.
+static func treinar(dados: Node, jogador: Node, base: float, agora: float) -> String:
+	if treinando(jogador):
+		return "já está treinando"
+	if not pode_treinar(dados, jogador, base):
+		return "no teto da licença"
+	if not jogador.economia.debitar(preco_treino(dados, jogador)):
+		return "saldo insuficiente"
+	var t: Dictionary = jogador.equipe.get("treino", {})
+	t["nivel"] = nivel_treino(jogador)
+	t["fim"] = agora + duracao_treino(dados, jogador)
+	jogador.equipe["treino"] = t
+	return ""
+
+
+## Conclui o treino que já terminou. true se subiu de nível.
+static func concluir_treino(jogador: Node, agora: float) -> bool:
+	if not treinando(jogador) or agora < float(jogador.equipe["treino"]["fim"]):
+		return false
+	jogador.equipe["treino"]["nivel"] = nivel_treino(jogador) + 1
+	jogador.equipe["treino"]["fim"] = 0.0
+	return true
+
+
 # -------------------------------------------------------------- Desmanche
 
 ## Crédito de peças por desmontar o carro: as peças compradas para ele vezes

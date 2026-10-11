@@ -102,9 +102,18 @@ static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid:
 	return cu
 
 
-## Piloto do companheiro: o do jogador com a perda de consistência do segundo piloto.
-static func piloto_corrida(dados: Node) -> Dictionary:
+## Piloto do jogador nas corridas: o de carreira.json com o treino da equipe
+## (GestaoEquipe: consistência até o teto da licença).
+static func piloto_do_jogador(dados: Node, jogador: Node) -> Dictionary:
 	var p: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()
+	if jogador != null:
+		p["consistencia"] = GestaoEquipe.consistencia(dados, jogador, float(p["consistencia"]))
+	return p
+
+
+## Piloto do companheiro: o do jogador com a perda de consistência do segundo piloto.
+static func piloto_corrida(dados: Node, jogador: Node = null) -> Dictionary:
+	var p: Dictionary = piloto_do_jogador(dados, jogador)
 	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
 	p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
 	return p

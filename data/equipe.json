@@ -1,5 +1,5 @@
 {
- "_nota": "Gestão da equipe do jogador (Chrome & Wreckage; aba Equipe). Abre com a equipe (licença International, flag SECOND_DRIVER_CREATED). PRÊMIO DE REFERÊNCIA: a média do prêmio de 1º lugar das provas de uma licença (Patrocinio.premio_referencia). Todos os fatores abaixo multiplicam esse prêmio e são PROVISÓRIOS até o playtest (critério aprovado; valores a medir). Patrocínio: renda por hora corrida no relógio real, também com o app fechado (até carreira.json → teto_offline_s de ausência, como as corridas), mais um bônus quando a corrida cumpre a condição do patrocinador. Desmanche: desmontar um carro vira crédito para peças. Sede: melhorias compradas com o caixa.",
+ "_nota": "Gestão da equipe do jogador (Chrome & Wreckage; aba Equipe). Abre com a equipe (licença International, flag SECOND_DRIVER_CREATED). PRÊMIO DE REFERÊNCIA: a média do prêmio de 1º lugar das provas de uma licença (Patrocinio.premio_referencia). Todos os fatores abaixo multiplicam esse prêmio e são PROVISÓRIOS até o playtest (critério aprovado; valores a medir). Patrocínio: renda por hora corrida no relógio real, também com o app fechado (até carreira.json → teto_offline_s de ausência, como as corridas), mais um bônus quando a corrida cumpre a condição do patrocinador. Desmanche: desmontar um carro vira crédito para peças. Sede: melhorias compradas com o caixa. Treino do piloto (decisão 54): cada nível soma `passo` de consistência ao piloto do jogador, até o teto da maior licença dele; o nível n leva tempo_base_h × n horas no relógio real (também com o app fechado) e custa custo_fator × n prêmios de referência da maior licença.",
  "patrocinio": {
   "ofertas": 3,
   "duracao_h": 24,
@@ -11,10 +11,53 @@
   "fator_pecas": 0.5
  },
  "sede": [
-  {"id": "escritorio", "nome": "Escritório comercial", "descricao": "Mais um contrato de patrocínio ao mesmo tempo.", "efeito": "contratos", "por_nivel": 1, "niveis": 2, "custo_fator": 4.0},
-  {"id": "marketing", "nome": "Marketing", "descricao": "Patrocinadores pagam mais por hora.", "efeito": "renda", "por_nivel": 0.1, "niveis": 3, "custo_fator": 3.0},
-  {"id": "hospitalidade", "nome": "Hospitalidade", "descricao": "Bônus maior quando a corrida cumpre a condição do patrocinador.", "efeito": "bonus", "por_nivel": 0.2, "niveis": 3, "custo_fator": 2.5},
-  {"id": "patio", "nome": "Pátio de desmanche", "descricao": "Desmontar um carro rende mais crédito de peças.", "efeito": "desmanche", "por_nivel": 0.15, "niveis": 3, "custo_fator": 2.0}
+  {
+   "id": "escritorio",
+   "nome": "Escritório comercial",
+   "descricao": "Mais um contrato de patrocínio ao mesmo tempo.",
+   "efeito": "contratos",
+   "por_nivel": 1,
+   "niveis": 2,
+   "custo_fator": 4.0
+  },
+  {
+   "id": "marketing",
+   "nome": "Marketing",
+   "descricao": "Patrocinadores pagam mais por hora.",
+   "efeito": "renda",
+   "por_nivel": 0.1,
+   "niveis": 3,
+   "custo_fator": 3.0
+  },
+  {
+   "id": "hospitalidade",
+   "nome": "Hospitalidade",
+   "descricao": "Bônus maior quando a corrida cumpre a condição do patrocinador.",
+   "efeito": "bonus",
+   "por_nivel": 0.2,
+   "niveis": 3,
+   "custo_fator": 2.5
+  },
+  {
+   "id": "patio",
+   "nome": "Pátio de desmanche",
+   "descricao": "Desmontar um carro rende mais crédito de peças.",
+   "efeito": "desmanche",
+   "por_nivel": 0.15,
+   "niveis": 3,
+   "custo_fator": 2.0
+  }
  ],
- "sede_licenca_custo": "INTERNATIONAL"
+ "sede_licenca_custo": "INTERNATIONAL",
+ "treino": {
+  "passo": 0.01,
+  "tempo_base_h": 1.0,
+  "custo_fator": 0.25,
+  "teto": {
+   "INTERNATIONAL": 0.7,
+   "PRO": 0.7,
+   "ELITE": 0.7
+  },
+  "_teto": "GERADO por tools/calibrar_treino.gd (não editar à mão): maior consistência, por maior licença do jogador, que encurta em até 10% (meta do usuário) o número esperado de corridas até vencer as provas dessa licença."
+ }
 }

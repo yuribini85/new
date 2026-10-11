@@ -60,12 +60,12 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 		participantes.append({
 			"id": EquipeJogador.ID,
 			"atributos": companheiro.atributos_efetivos(condicao),
-			"piloto": EquipeJogador.piloto_corrida(dados),
+			"piloto": EquipeJogador.piloto_corrida(dados, jogador),
 		})
 	participantes.append({
 		"id": "jogador",
 		"atributos": carro.atributos_efetivos(condicao),
-		"piloto": dados.piloto(dados.carreira()["piloto_jogador"]),
+		"piloto": EquipeJogador.piloto_do_jogador(dados, jogador),
 	})
 
 	simulacoes += 1
