@@ -3,7 +3,7 @@
 paralelo) e grava os tetos em data/equipe.json → treino.teto. O teto nunca
 desce de uma licença para a seguinte.
 
-Uso: python3 tools/calibrar_treino.py CAMINHO_DO_GODOT [--eventos=12 --carros=12 --sementes=4 --meta=0.1 --passo=0.0025 --ate=0.05]
+Uso: python3 tools/calibrar_treino.py CAMINHO_DO_GODOT [--eventos=12 --carros=24 --sementes=1 --meta=0.1 --passo=0.001 --ate=0.05 --delta=0.02]
 """
 from __future__ import annotations
 
