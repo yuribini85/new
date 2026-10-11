@@ -2509,8 +2509,17 @@
    },
    {
     "quem": "mara",
-    "texto": "{piloto}. Corre pelo que a gente montar.",
+    "texto": "{piloto}. Estava no outro carro naquela noite. Ficou quando todo mundo foi embora.",
     "pose": "gesto"
+   },
+   {
+    "quem": "piloto_casa",
+    "texto": "Alguém tinha que ficar."
+   },
+   {
+    "quem": "mara",
+    "texto": "Ele corre pelo que a gente montar.",
+    "pose": "firme"
    },
    {
     "quem": "piloto_casa",
@@ -3012,7 +3021,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Com essa, a oficina pode inscrever uma equipe.",
+    "texto": "Com essa, a Wreckage volta a ser equipe de verdade.",
     "pose": "explica"
    },
    {
@@ -3325,6 +3334,11 @@
    },
    {
     "quem": "mara",
+    "texto": "Não é o tipo de corrida que eu escolheria depois daquela noite. Mas paga as dívidas que ficaram.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
     "texto": "Pagam mais porque alguns carros não voltam.",
     "pose": "alerta"
    },
@@ -3421,7 +3435,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "O carro acabou. Pelo menos o piloto saiu andando.",
+    "texto": "O carro acabou. O piloto saiu andando. É isso que importa.",
     "pose": "decepcao"
    }
   ],

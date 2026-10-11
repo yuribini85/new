@@ -472,9 +472,13 @@ Marcus: Sem desculpa também.
 Marcus: Velocidade ganha volta. Isso aqui ganha quem não quebra.
 
 # ================================================================ CHROME & WRECKAGE
-# Campanha do dono (jogo novo; historia.json → nova_campanha). O jogador é o novo dono
-# de uma oficina; Mara Hayes, mecânica veterana, guia; o piloto da casa dirige. Falas
-# curtas, sem melodrama. Saves com Adrian/Elena seguem as cenas acima.
+# Campanha do dono (jogo novo; historia.json → nova_campanha). Antes de tudo, a abertura
+# (ui/abertura_cinema.gd): a noite de chuva em que a Wreckage perdeu um piloto na pista;
+# o outro carro, o do piloto da casa, cruzou a linha sozinho. O antigo dono foi embora
+# depois disso e deixou a oficina para o jogador. Mara Hayes, mecânica veterana, guia; o
+# piloto da casa dirige. Aquela noite volta em poucas falas (abertura, apresentação do
+# piloto, Arena, Elite); no resto, falas curtas, sem melodrama. Saves com Adrian/Elena
+# seguem as cenas acima.
 
 # ---------------------------------------------------------------- Prólogo
 = CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; proxima=CW_P02; cenario=oficina_mara
@@ -528,7 +532,9 @@ Sistema: Vá para Corridas.
 # Quem dirige: o piloto da casa (fixo; contratação fica para depois).
 = CW_P04 | ABA:EVENTOS | personagem=dono; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,PILOT_MET; lembrete=CW_P04L; cenario=oficina_mara
 Mara[explica]: Você cuida da oficina. Alguém precisa assumir o volante.
-Mara[gesto]: {piloto}. Corre pelo que a gente montar.
+Mara[gesto]: {piloto}. Estava no outro carro naquela noite. Ficou quando todo mundo foi embora.
+Piloto: Alguém tinha que ficar.
+Mara[firme]: Ele corre pelo que a gente montar.
 Piloto: E pelo prêmio.
 Mara[firme]: Pelo prêmio também.
 [HIGHLIGHT_COPA]
@@ -621,7 +627,7 @@ Mara[firme]: Agora a gente aparece na lista dos outros.
 # A equipe da oficina nasce com a International; o segundo piloto chega com a Pro.
 = CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,SECOND_DRIVER_CREATED; cenario=oficina_mara
 Responsável: International aprovada.
-Mara[explica]: Com essa, a oficina pode inscrever uma equipe.
+Mara[explica]: Com essa, a Wreckage volta a ser equipe de verdade.
 Mara: Caixa, folha e patrocínio passam a contar por corrida.
 [UNLOCK_TEAM_TAB]
 Sistema: A aba Equipe está liberada.
@@ -674,6 +680,7 @@ Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
 # ---------------------------------------------------------------- Arena (decisão 49)
 = CW_P07 | ABA:ARENA | personagem=dono; requer=NATIONAL_COMPLETE; proibe=ARENA_INTRO; flags=ARENA_INTRO; cenario=oficina_mara
 Mara[cruzados]: Tem outra maneira de ganhar dinheiro por aqui.
+Mara[pensativa]: Não é o tipo de corrida que eu escolheria depois daquela noite. Mas paga as dívidas que ficaram.
 Mara[alerta]: Pagam mais porque alguns carros não voltam.
 Mara[explica]: Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem.
 Sistema: Arena: o último de pé vence. Carro eliminado sai da garagem para sempre.
@@ -688,7 +695,7 @@ Mara[pensativa]: Voltou inteiro o bastante pra reconhecer. Já é alguma coisa.
 Mara[firme]: Último de pé. Agora tira ele dali antes que alguém tenha ideias.
 
 = CW_R09 | ARENA_PERDA | personagem=dono; proibe=ARENA_FIRST_LOSS; flags=ARENA_FIRST_LOSS
-Mara[decepcao]: O carro acabou. Pelo menos o piloto saiu andando.
+Mara[decepcao]: O carro acabou. O piloto saiu andando. É isso que importa.
 
 = CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim
 Mara[decepcao]: Mais um pro ferro-velho.
