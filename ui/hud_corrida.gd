@@ -22,6 +22,12 @@ const APAGADO := Color(0.93, 0.92, 0.88, 0.42)
 const AMBAR := Aba.COR_DESTAQUE  # ocre, o mesmo do menu
 const CORTE := Color(0.95, 0.36, 0.28)
 const SOMBRA := Color(0, 0, 0, 0.6)
+## Semáforo da largada (arte/ui/semaforo.png): altura na tela e as lentes, em
+## frações da imagem (centro x, centro y de cada uma, raio pela largura).
+const SEMAFORO_ALTURA := 300.0
+const SEMAFORO_X := 0.493
+const SEMAFORO_Y := [0.2144, 0.5323, 0.8406]
+const SEMAFORO_RAIO := 0.2
 ## O HUD começa logo abaixo do cabeçalho; os cantos descem Y0 para a volta
 ## (à direita) não ficar sob o marcador da aceleração pendurado nele.
 const Y0 := 44.0
@@ -374,20 +380,30 @@ static func semaforo(ci: CanvasItem, tam: Vector2, contagem: float, altura := 0.
 	if contagem < 0.0:
 		return
 	var acesas := clampi(4 - ceili(contagem), 1, 3)
-	var c := Vector2(tam.x * 0.5, tam.y * altura)
-	var r := 30.0
-	var passo := 84.0
-	var caixa := Rect2(c.x - passo * 1.5 - 8.0, c.y - r - 18.0, passo * 3.0 + 16.0, r * 2.0 + 36.0)
-	ci.draw_rect(caixa, Color(0.05, 0.05, 0.06, 0.82))
+	var tex := Aba.arte("semaforo")
+	var alto := SEMAFORO_ALTURA
+	var largo := alto * tex.get_width() / tex.get_height()
+	var caixa := Rect2(tam.x * 0.5 - largo * 0.5, tam.y * altura - alto * 0.5, largo, alto)
+	ci.draw_texture_rect(tex, caixa, false)
+	# As lentes acendem de cima para baixo, uma por segundo; a que acabou de
+	# acender sobe em 0,15 s com um clarão que assenta.
+	var r := largo * SEMAFORO_RAIO
+	var desde := float(ceili(contagem)) - contagem  # s desde a última lente acesa
 	for k in 3:
-		var p := c + Vector2((k - 1) * passo, 0.0)
-		var acesa := k < acesas
-		if acesa:
-			ci.draw_circle(p, r * 1.35, Color(CORTE, 0.25))
-		ci.draw_circle(p, r, Color(0.95, 0.18, 0.12) if acesa else Color(0.22, 0.08, 0.08))
-		ci.draw_circle(p + Vector2(-r * 0.3, -r * 0.3), r * 0.28, Color(1, 1, 1, 0.35 if acesa else 0.06))
+		if k >= acesas:
+			continue
+		var p := caixa.position + Vector2(largo * SEMAFORO_X, alto * SEMAFORO_Y[k])
+		var a := 1.0
+		var clarao := 0.0
+		if k == acesas - 1 and not Preferencias.reduzir_animacoes:
+			a = smoothstep(0.0, 0.15, desde)
+			clarao = 1.0 - smoothstep(0.1, 0.5, desde)
+		ci.draw_circle(p, r * (1.55 + 0.5 * clarao), Color(CORTE, (0.22 + 0.25 * clarao) * a))
+		ci.draw_circle(p, r * 1.2, Color(CORTE, 0.3 * a))
+		ci.draw_circle(p, r, Color(Color(0.95, 0.16, 0.1), a))
+		ci.draw_circle(p + Vector2(-r * 0.32, -r * 0.32), r * 0.3, Color(1, 0.85, 0.8, 0.45 * a))
 	var f := Tipografia.fonte_numero()
-	var pos := Vector2(0, caixa.end.y + 64.0)
+	var pos := Vector2(0, caixa.end.y + 70.0)
 	var n := str(ceili(contagem))
 	ci.draw_string_outline(f, pos, n, HORIZONTAL_ALIGNMENT_CENTER, tam.x, 64, 6, SOMBRA)
 	ci.draw_string(f, pos, n, HORIZONTAL_ALIGNMENT_CENTER, tam.x, 64, COR)
