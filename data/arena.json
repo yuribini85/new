@@ -516,5 +516,11 @@
    }
   }
  ],
- "_nota_arenas": "Arenas (decisão 59, aprovadas pelo usuário em 2026-10-11): 4 originais com o que caracteriza as do Destruction Derby 2 sem copiar nenhuma: muro em polígono irregular (m), obstáculos (ilhas: c, r em m), chão irregular (relevo: lombada h>0 ou cratera h<0, gaussiana de raio r) e a borda que sobe junto ao muro (largura, altura em m). Mesma área do círculo de raio_m (45 m). Cada uma abre na sua licença; a luta sorteia entre as abertas. Alturas e formas são desenho, não balanceamento; ajustar no playtest."
+ "_nota_arenas": "Arenas (decisão 59, aprovadas pelo usuário em 2026-10-11): 4 originais com o que caracteriza as do Destruction Derby 2 sem copiar nenhuma: muro em polígono irregular (m), obstáculos (ilhas: c, r em m), chão irregular (relevo: lombada h>0 ou cratera h<0, gaussiana de raio r) e a borda que sobe junto ao muro (largura, altura em m). Mesma área do círculo de raio_m (45 m). Cada uma abre na sua licença; a luta sorteia entre as abertas. Alturas e formas são desenho, não balanceamento; ajustar no playtest.",
+ "campeonato": {
+  "equipes_min": 2,
+  "equipes_max": 10,
+  "parceiro_casa": "Piloto da casa"
+ },
+ "_nota_campeonato": "Arena em duplas (decisão 61, pedido do usuário): cada equipe entra com dois carros e os colegas não se miram; a luta acaba quando sobra uma equipe. Campeonato escalonado: começa em 2×2 (2 equipes, 4 carros) e cada vitória da equipe sobe um nível (2×2×2, …) até equipes_max (10 equipes, 20 carros). A dupla do jogador: o segundo piloto no carro dele (se livre) ou o piloto da casa num carro emprestado, que não se perde."
 }

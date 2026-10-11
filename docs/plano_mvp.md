@@ -399,3 +399,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     equipe tem cores (carro, faixa, filete) e seus carros correm nelas, com um desenho de
     faixa sorteado por prova. Os 37 pilotos novos ainda não têm retrato.
 
+61. **Arena em duplas, campeonato escalonado** (2026-10-11, pedido do usuário): na arena as
+    equipes lutam em duplas e vence a última dupla com carro de pé (a IA não ataca o
+    colega). O campeonato começa em 2×2 e cada vitória da dupla do jogador acrescenta uma
+    equipe (2×2×2, 2×2×2×2…) até 10 equipes, 20 carros (`data/arena.json` →
+    `campeonato`). O parceiro do jogador é o segundo piloto no carro dele (eliminado, sai
+    da garagem) ou, sem segundo carro apto, o "Piloto da casa" num carro emprestado. As
+    rivais entram com dois dos seus quatro pilotos, sorteados, nas cores da equipe.

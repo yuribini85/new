@@ -77,6 +77,8 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,
 			"por": "", "ultimo_golpe": "", "giro_acum": 0.0, "giros": 0, "eliminou": 0,
 			"acel_fixo": p.get("acelerador", null), "agress": float(p.get("piloto", {}).get("agressividade", 0.5)),
+			# Equipe (arena em duplas): colegas não se miram; sem equipe, cada um por si.
+			"equipe": String(p.get("equipe", p["id"])),
 			"consist": float(p.get("piloto", {}).get("consistencia", 0.9)),
 			"alvo": -1, "t_alvo": 0.0, "t_travado": 0.0, "t_recua": 0.0, "re": false,
 		}
@@ -106,8 +108,12 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 		if com_amostras and t >= t_amostra:
 			t_amostra += float(params["amostra_dt_s"])
 			amostras.append(_amostra(carros, t))
-		var vivos := carros.filter(func(c): return not c["eliminado"])
-		if vivos.size() <= 1:
+		# Acaba quando sobra uma equipe de pé (ou ninguém).
+		var equipes_vivas := {}
+		for c in carros:
+			if not c["eliminado"]:
+				equipes_vivas[c["equipe"]] = true
+		if equipes_vivas.size() <= 1:
 			break
 	if not com_amostras or amostras.is_empty() or amostras[-1]["t"] < t:
 		amostras.append(_amostra(carros, t))
@@ -153,7 +159,7 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 	if c["t_alvo"] <= 0.0 or not alvo_ok:
 		var vivos := []
 		for j in carros.size():
-			if j != i and not carros[j]["eliminado"]:
+			if j != i and not carros[j]["eliminado"] and carros[j]["equipe"] != c["equipe"]:
 				vivos.append(j)
 		if vivos.is_empty():
 			return
@@ -462,6 +468,16 @@ static func _resultado(carros: Array, eventos: Array, amostras: Array, t: float)
 				if o["id"] == c["por"]:
 					o["eliminou"] += 1
 	var ordem := carros.duplicate()
+	# Equipe vencedora: a de quem ficou de pé (ou do último a cair).
+	var vencedora := ""
+	var ultimo := -INF
+	for c in carros:
+		if not c["eliminado"]:
+			vencedora = c["equipe"]
+			break
+		if float(c["eliminado_em"]) > ultimo:
+			ultimo = float(c["eliminado_em"])
+			vencedora = c["equipe"]
 	ordem.sort_custom(func(x, y):
 		if x["eliminado"] != y["eliminado"]:
 			return not x["eliminado"]
@@ -474,8 +490,10 @@ static func _resultado(carros: Array, eventos: Array, amostras: Array, t: float)
 				"por": c["por"], "sobreviveu_s": c.get("sobreviveu_s", t), "eliminou": c["eliminou"],
 				"perfil": String(c["perfil"].get("id", "")),
 				"giros": eventos.filter(func(e): return e["tipo"] == "giro" and e["por"] == c["id"]).size()}
+	for c in carros:
+		res[c["id"]]["equipe"] = c["equipe"]
 	return {"classificacao": ordem.map(func(c): return c["id"]), "carros": res, "eventos": eventos,
-			"amostras": amostras, "duracao": t}
+			"amostras": amostras, "duracao": t, "equipe_vencedora": vencedora}
 
 
 static func _total(d: PackedFloat32Array) -> float:

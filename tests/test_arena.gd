@@ -157,8 +157,21 @@ func test_arena_na_carreira() -> void:
 	igual(ArenaCarreira.bloqueio(d, j), "", "com 2 carros e a licença: entra")
 	var uid: int = j.carro_ativo
 	var m := ArenaCarreira.montar(d, j, uid, 7)
-	igual(m["participantes"].size(), 1 + int(d.arena()["rivais"]), "jogador + rivais")
-	verificar(m["nomes"]["r1"] != "", "rival com nome de piloto")
+	igual(m["participantes"].size(), 4, "nível 1: 2×2, quatro carros")
+	var equipes := {}
+	for pt in m["participantes"]:
+		equipes[pt["equipe"]] = int(equipes.get(pt["equipe"], 0)) + 1
+	igual(equipes.size(), 2, "duas equipes")
+	verificar(equipes.values().all(func(n): return n == 2), "duplas")
+	verificar(not m["parceiro"]["real"], "sem segundo piloto: o da casa num carro emprestado")
+	var rival: String = m["participantes"][2]["id"]
+	verificar(String(m["nomes"][rival]) != "", "rival com nome de piloto")
+	verificar(m["faixas"].has(rival), "rival nas cores da equipe")
+	j.arena = {"nivel": 3}
+	igual(ArenaCarreira.montar(d, j, uid, 7)["participantes"].size(), 10, "nível 4: 2×2×2×2×2, dez carros")
+	j.arena = {"nivel": 50}
+	igual(ArenaCarreira.montar(d, j, uid, 7)["participantes"].size(), 20, "no máximo 20 carros")
+	j.arena = {}
 	# Derrota forçada: o carro do jogador eliminado.
 	var res := {"classificacao": ["r1", "jogador"], "eventos": [
 			{"t": 1.0, "tipo": "giro", "carro": "r1", "por": "jogador", "graus": 90},
@@ -173,9 +186,32 @@ func test_arena_na_carreira() -> void:
 	verificar(j.carro_ativo != uid and j.carro_ativo >= 0, "outro carro em uso")
 	igual(j.economia.saldo, saldo + f["premio"], "pontos pagos mesmo perdendo")
 	igual(int(j.arena["lutas"]), 1, "luta registrada")
+	igual(ArenaCarreira.nivel(j), 0, "perdeu: o campeonato não sobe")
+	var vit := {"classificacao": ["jogador", "r1"], "eventos": [], "equipe_vencedora": "jogador",
+		"carros": {"jogador": {"eliminado": false, "eliminou": 1, "equipe": "jogador"}, "r1": {"eliminado": true, "eliminou": 0, "equipe": "x"}}}
+	var f2 := ArenaCarreira.aplicar(d, j, j.carro_ativo, vit)
+	verificar(f2["venceu_equipe"] and f2["subiu_nivel"], "dupla de pé: sobe")
+	igual(ArenaCarreira.nivel(j), 1, "próximo campeonato: 2×2×2")
 	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "sobrou 1 carro: não entra mais")
 	j.free()
 	d.free()
+
+
+func test_colegas_de_dupla_nao_se_miram_e_a_luta_acaba_com_uma_equipe() -> void:
+	var p := _params()
+	var lista := []
+	for k in 4:
+		var c := _carro("c%d" % k, 1200.0, 160.0, Vector2.from_angle(TAU * k / 4.0) * 25.0, TAU * k / 4.0 + PI)
+		c.erase("acelerador")
+		c["equipe"] = "A" if k < 2 else "B"
+		lista.append(c)
+	var r := Arena.correr(lista, p, 3, false)
+	var vivos: Array = r["carros"].keys().filter(func(id): return not r["carros"][id]["eliminado"])
+	var equipes := {}
+	for id in vivos:
+		equipes[r["carros"][id]["equipe"]] = true
+	verificar(equipes.size() <= 1, "acaba com uma equipe de pé")
+	verificar(String(r["equipe_vencedora"]) in ["A", "B"], "equipe vencedora")
 
 
 func test_chao_irregular_puxa_morro_abaixo_e_formas_seguram_os_carros() -> void:

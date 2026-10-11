@@ -113,12 +113,15 @@ func _linhas() -> Array:
 	var amostras: Array = r["amostras"]
 	var a: Dictionary = amostras[mini(_vista._i + 1, amostras.size() - 1)]
 	var l := []
-	# Você em cima; os outros na ordem da largada.
-	var ids: Array = r["carros"].keys().filter(func(x): return x != "jogador")
-	if r["carros"].has("jogador"):
-		ids.push_front("jogador")
+	# Você e a sua dupla em cima; as outras duplas juntas, na ordem da largada.
+	var ids: Array = r["carros"].keys().filter(func(x): return x != "jogador" and x != "parceiro")
+	ids.sort_custom(func(a, b): return String(r["carros"][a].get("equipe", a)) < String(r["carros"][b].get("equipe", b)))
+	for x in ["parceiro", "jogador"]:
+		if r["carros"].has(x):
+			ids.push_front(x)
 	for id in ids:
-		l.append({"id": id, "nome": _dados["nomes"].get(id, id), "cor": Aba.COR_DESTAQUE if id == "jogador" else CarroBloco.cor_do_id(id),
+		var eq: Dictionary = _dados.get("equipes", {}).get(id, {})
+		l.append({"id": id, "nome": _dados["nomes"].get(id, id), "cor": eq.get("cor", Aba.COR_DESTAQUE if id == "jogador" else CarroBloco.cor_do_id(id)),
 				"dano": a[id]["dano"], "eliminado": a[id]["eliminado"], "voce": id == "jogador"})
 	return l
 
@@ -139,14 +142,24 @@ func _mostrar_final() -> void:
 	v.add_theme_constant_override("separation", 10)
 	_faixa.add_child(v)
 	var t := Label.new()
-	t.text = ("CARRO PERDIDO" if f["perdeu"] else ("ÚLTIMO DE PÉ" if f["posicao"] == 1 else "%dº LUGAR" % f["posicao"]))
+	t.text = "CARRO PERDIDO" if f["perdeu"] else ("SUA DUPLA VENCEU" if f.get("venceu_equipe", f["posicao"] == 1) \
+			else "%dº LUGAR" % f["posicao"])
 	Tipografia.rotulo(t, "semibold", 44)
 	t.add_theme_color_override("font_color", Aba.COR_RUIM if f["perdeu"] else Aba.COR_DESTAQUE)
 	v.add_child(t)
+	var notas := []
 	if f["perdeu"]:
+		notas.append("O %s foi eliminado e saiu da garagem." % f["carro"])
+	if f.get("perdeu_parceiro", false):
+		notas.append("O carro da sua dupla foi eliminado e saiu da garagem.")
+	if f.get("venceu_equipe", false) and f["perdeu"]:
+		notas.append("Mesmo assim, a sua dupla ficou de pé.")
+	if f.get("subiu_nivel", false):
+		notas.append("Próximo campeonato: uma equipe a mais.")
+	for txt in notas:
 		var d := Label.new()
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		d.text = "O %s foi eliminado e saiu da garagem." % f["carro"]
+		d.text = txt
 		Tipografia.rotulo(d, "regular", 26)
 		v.add_child(d)
 	# Pontos e prêmio no padrão dos números do jogo (valor grande, moeda).

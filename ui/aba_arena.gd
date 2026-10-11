@@ -83,15 +83,19 @@ func _cartao_luta(esc: Carro, motivo: String) -> void:
 	var sobre := rotulo("ARENA DE DESTRUIÇÃO", 0, COR_SECUNDARIA, col)
 	Tipografia.rotulo(sobre, "medium", 18)
 	var titulo := Label.new()
-	titulo.text = "ÚLTIMO DE PÉ VENCE"
+	titulo.text = "ÚLTIMA DUPLA DE PÉ VENCE"
 	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	Tipografia.rotulo(titulo, "semibold", 36)
 	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if pode else COR_SECUNDARIA)
 	col.add_child(titulo)
-	var p: Dictionary = dados.arena()
-	var linha := "%d rivais" % int(p.get("rivais", 3))
+	# Campeonato em duplas: o nível diz quantas equipes (2×2 … 20 carros).
+	var n_eq := ArenaCarreira.equipes_no_nivel(dados, ArenaCarreira.nivel(jogador))
+	var nv := rotulo("CAMPEONATO %s · %d CARROS" % [ArenaCarreira.nome_nivel(n_eq), n_eq * 2], 0, COR_DESTAQUE if pode else COR_SECUNDARIA, col)
+	Tipografia.rotulo(nv, "semibold", 22)
+	var linha := "Em duplas: %d equipes" % n_eq
 	if esc != null:
-		linha += " de potência parecida (%d cv)" % roundi(esc.atributos_efetivos("seco")["potencia"])
+		linha += ", carros de potência parecida (%d cv). Sua dupla: você e %s." % [
+				roundi(esc.atributos_efetivos("seco")["potencia"]), ArenaCarreira.parceiro(dados, jogador, esc.uid)["nome"]]
 	rotulo(linha, FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# Prêmio: o de referência (vitória com uma eliminação), com a moeda.
 	var lpr := rotulo("Vitória com 1 eliminação", 0, COR_SECUNDARIA, col)
@@ -124,9 +128,16 @@ func _cartao_luta(esc: Carro, motivo: String) -> void:
 
 func _confirmar(car: Carro) -> void:
 	historia("ARENA_INSCRICAO")
+	var par := ArenaCarreira.parceiro(dados, jogador, car.uid)
 	painel.emit("Entrar na arena?", func(pv):
 		rotulo("Vai o %s." % car.base["nome"], FONTE_PEQUENA + 4, Color.WHITE, pv)
-		rotulo("Se ele for eliminado, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
+		if par["real"]:
+			var cp: Carro = jogador.garagem.carro(int(par["uid"]))
+			rotulo("Na dupla, %s no %s." % [par["nome"], cp.base["nome"]], FONTE_PEQUENA + 2, Color.WHITE, pv)
+			rotulo("Carro eliminado, seu ou dele, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv)
+		else:
+			rotulo("Na dupla, %s num carro emprestado." % par["nome"], FONTE_PEQUENA + 2, Color.WHITE, pv)
+			rotulo("Se o seu for eliminado, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
 		[["Entrar", func(): _entrar(car.uid)], ["Cancelar", func(): pass]])
 
 
@@ -136,13 +147,30 @@ func _entrar(uid: int) -> void:
 	var semente := hash("arena:%d" % jogador.contador_sementes)
 	var montada := ArenaCarreira.montar(dados, jogador, uid, semente)
 	var carro: Carro = jogador.garagem.carro(uid)
-	var pintura := {"jogador": Color(carro.cor)} if String(carro.cor) != "" else {}
+	var pintura: Dictionary = montada["cores"].duplicate()
+	pintura["jogador"] = CarroBloco.cor_do_carro(carro)
+	var faixas: Dictionary = montada["faixas"].duplicate()
+	faixas["jogador"] = carro.faixas
+	var par: Dictionary = montada["parceiro"]
 	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
-	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado)
+	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1)
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
-			"pinturas": pintura, "faixas": {"jogador": carro.faixas}, "final": final, "params": montada["params"]})
+			"pinturas": pintura, "faixas": faixas, "final": final, "params": montada["params"],
+			"equipes": _equipe_de_cada(resultado, montada["equipes"])})
+
+
+## id -> {nome da equipe, cor} para a lista da luta.
+func _equipe_de_cada(resultado: Dictionary, equipes: Dictionary) -> Dictionary:
+	var r := {}
+	for id in resultado["carros"]:
+		var eq: Dictionary = equipes.get(String(resultado["carros"][id].get("equipe", "")), {})
+		var cor := Color(String(eq["cores"]["carro"])) if eq.has("cores") else COR_DESTAQUE
+		if String(resultado["carros"][id].get("equipe", "")) == "jogador":
+			cor = COR_DESTAQUE
+		r[id] = {"nome": String(eq.get("nome", "")), "cor": cor}
+	return r
 
 
 func _registro() -> void:
