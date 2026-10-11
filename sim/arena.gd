@@ -69,9 +69,8 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"W": float(a.get("largura", LARGURA_M)),
 			"pot": float(a["potencia"]) * CV_PARA_W, "mu": float(a["aderencia"]),
 			"pos": p.get("pos", Vector2.from_angle(ang) * raio * 0.6),
-			# Largada em roda, de lado para o centro (todos girando no mesmo sentido):
-			# ninguém começa num frontal.
-			"rumo": float(p.get("rumo", ang + PI / 2.0)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
+			# Largada em roda, todos de frente para o centro (decisão do usuário).
+			"rumo": float(p.get("rumo", ang + PI)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
 			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,
 			"por": "", "ultimo_golpe": "", "giro_acum": 0.0, "giros": 0, "eliminou": 0,
 			"acel_fixo": p.get("acelerador", null), "agress": float(p.get("piloto", {}).get("agressividade", 0.5)),

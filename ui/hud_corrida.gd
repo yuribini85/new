@@ -365,23 +365,32 @@ func _conta_giros() -> void:
 
 
 func _desenhar_contagem() -> void:
+	semaforo(self, size, contagem)
+
+
+## As três luzes vermelhas da largada e o número, no alto da área `tam` de
+## `ci` (a corrida e a arena usam o mesmo). contagem < 0 não desenha.
+static func semaforo(ci: CanvasItem, tam: Vector2, contagem: float, altura := 0.36) -> void:
 	if contagem < 0.0:
 		return
 	var acesas := clampi(4 - ceili(contagem), 1, 3)
-	var c := Vector2(size.x * 0.5, size.y * 0.36)
+	var c := Vector2(tam.x * 0.5, tam.y * altura)
 	var r := 30.0
 	var passo := 84.0
 	var caixa := Rect2(c.x - passo * 1.5 - 8.0, c.y - r - 18.0, passo * 3.0 + 16.0, r * 2.0 + 36.0)
-	draw_rect(caixa, Color(0.05, 0.05, 0.06, 0.82))
+	ci.draw_rect(caixa, Color(0.05, 0.05, 0.06, 0.82))
 	for k in 3:
 		var p := c + Vector2((k - 1) * passo, 0.0)
 		var acesa := k < acesas
 		if acesa:
-			draw_circle(p, r * 1.35, Color(CORTE, 0.25))
-		draw_circle(p, r, Color(0.95, 0.18, 0.12) if acesa else Color(0.22, 0.08, 0.08))
-		draw_circle(p + Vector2(-r * 0.3, -r * 0.3), r * 0.28, Color(1, 1, 1, 0.35 if acesa else 0.06))
+			ci.draw_circle(p, r * 1.35, Color(CORTE, 0.25))
+		ci.draw_circle(p, r, Color(0.95, 0.18, 0.12) if acesa else Color(0.22, 0.08, 0.08))
+		ci.draw_circle(p + Vector2(-r * 0.3, -r * 0.3), r * 0.28, Color(1, 1, 1, 0.35 if acesa else 0.06))
+	var f := Tipografia.fonte_numero()
+	var pos := Vector2(0, caixa.end.y + 64.0)
 	var n := str(ceili(contagem))
-	_texto(n, Vector2(0, caixa.end.y + 64.0), 64, COR, HORIZONTAL_ALIGNMENT_CENTER, size.x, Tipografia.fonte_numero())
+	ci.draw_string_outline(f, pos, n, HORIZONTAL_ALIGNMENT_CENTER, tam.x, 64, 6, SOMBRA)
+	ci.draw_string(f, pos, n, HORIZONTAL_ALIGNMENT_CENTER, tam.x, 64, COR)
 
 
 ## Bandeira quadriculada que atravessa a tela inclinada, da esquerda para a

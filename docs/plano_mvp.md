@@ -334,7 +334,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     corridas da mesma licença; sem reparo na primeira versão (quem sobrevive volta
     inteiro); só o carro sofre (nada com o piloto); abre com a licença National;
     qualquer carro da garagem, o peso conta no dano. **15 competidores por luta** (o
-    jogador e 14 rivais; decisão do usuário em 2026-10-11).
+    jogador e 14 rivais; decisão do usuário em 2026-10-11), largando em roda de frente
+    para o centro, com o semáforo 3-2-1 da corrida.
 50. **Simulação da arena** (`sim/arena.gd`, `data/arena.json`): 2D, passo fixo e
     semente; dano em seis regiões pela energia do impacto (½·m_efetiva·v_normal²)
     sobre a resistência ½·m·v_ref²; eliminação com uma região da frente a 100% e ré

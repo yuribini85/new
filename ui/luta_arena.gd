@@ -8,6 +8,7 @@ signal acabou(final: Dictionary)
 
 const VELOCIDADE := 1.0  # tempo da luta por segundo de tela
 const FIM_S := 1.2  # depois do último quadro, antes do resultado
+const CONTAGEM_S := 3.0  # largada 3-2-1, como na corrida
 
 var _dados: Dictionary
 var _vista: Arena3D
@@ -16,6 +17,9 @@ var _relogio: Label
 var _pular: Button
 var _fim := -1.0
 var _faixa: PanelContainer
+var _contagem := CONTAGEM_S
+var _sons: Sons
+var _semaforo: Control
 
 
 func _init(dados_luta: Dictionary, params: Dictionary) -> void:
@@ -54,13 +58,40 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 	_pular.offset_right = -16
 	_pular.offset_top = -84
 	_pular.offset_bottom = -16
-	_pular.pressed.connect(func(): _vista.tempo = _vista.duracao())
+	_pular.pressed.connect(func():
+		_contagem = -1.0
+		_semaforo.queue_redraw()
+		_vista.tempo = _vista.duracao())
 	add_child(_pular)
+	# Semáforo da largada por cima da arena (o mesmo da corrida).
+	_semaforo = Control.new()
+	_semaforo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_semaforo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_semaforo.draw.connect(func(): HudCorrida.semaforo(_semaforo, _semaforo.size, _contagem, 0.48))  # abaixo do painel
+	add_child(_semaforo)
+	_sons = Sons.new()
+	add_child(_sons)
 	_vista.ready.connect(func(): _vista.mostrar(_dados["resultado"], params, _dados["modelos"], _dados["pinturas"]))
 
 
 func _process(delta: float) -> void:
 	if _vista.duracao() <= 0.0:
+		return
+	if _contagem >= 0.0:
+		# Largada: os carros parados no lugar até as luzes apagarem.
+		if _contagem == CONTAGEM_S:
+			_sons.largada(false)  # o "3"
+		var antes := ceili(_contagem)
+		_contagem -= delta
+		if _contagem <= 0.0:
+			_contagem = -1.0
+			_sons.largada(true)
+		elif ceili(_contagem) < antes:
+			_sons.largada(false)
+		_semaforo.queue_redraw()
+		_vista.atualizar(delta)
+		_relogio.text = "0 s"
+		_hud.linhas = _linhas()
 		return
 	if _fim < 0.0:
 		_vista.tempo = minf(_vista.tempo + delta * VELOCIDADE, _vista.duracao())
