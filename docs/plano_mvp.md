@@ -371,3 +371,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     piloto passa a ser escolhido entre 8 candidatos, dois por traço (Constante, Agressivo,
     Barato, Promessa; `docs/pilotos_candidatos.md`); custo e salário entram com o
     `custo_staff`.
+57. **Câmera 3D** (2026-10-11, pedido do usuário): corrida e arena em perspectiva para o
+    jogo se ler como 3D. Corrida: perseguição atrás e acima do carro seguido (32°, desce a
+    16° e abre para o lado no modo velocidade); "Pista inteira" segue de cima, como o
+    minimapa. Arena: inclinada (34°), girando devagar em volta da sua briga (você e o rival
+    mais perto); fora da luta, enquadra os vivos.

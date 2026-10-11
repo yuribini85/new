@@ -27,6 +27,14 @@ const BATIDA_INTERVALO_S := 6.0  # um carro não bate de novo antes disso
 ## Deriva nas curvas: ângulo (rad) por g de aceleração lateral, por tração.
 const DERIVA := {"FR": 0.13, "MR": 0.12, "4WD": 0.08, "FF": 0.05}
 const TAMANHO_CAMERA := 28.0
+## Câmera de perseguição em perspectiva (o jogo se lê como 3D): FOV, altura
+## (graus acima do chão) no normal e no modo velocidade, quanto ela abre para o
+## lado na velocidade e a distância relativa ao quadro.
+const FOV_GRAUS := 50.0
+const ELEVACAO_GRAUS := 32.0
+const ELEVACAO_VELOCIDADE_GRAUS := 16.0
+const LADO_VELOCIDADE := 0.45  # rad
+const DISTANCIA_FATOR := 0.85
 const ALTURA_MARCADOR := 2.6
 
 var _fonte: CorridaVisual
@@ -555,22 +563,30 @@ func destacar_jogador() -> void:
 
 
 func _camera_imediata() -> void:
-	# Normal: de cima, girando com o carro seguido (_guinada_normal); na visão
-	# geral, girada 45° (o alto da tela para (-1, 0, -1)), a mesma projeção do
-	# minimapa. Velocidade: 30° acima do chão, atrás do carro, na
-	# direção em que o sprite isométrico foi desenhado. _b passa de uma à outra.
-	# Câmera ortográfica longe (a escala não muda): nada fica atrás dela.
-	var elevacao := lerpf(PI / 2.0 - 0.0005, deg_to_rad(30.0), _b)
-	var guinada := lerp_angle(-PI / 4.0 if visao_geral else _guinada_normal, _rumo_seguido + PI / 4.0, _b)
-	var h := Vector3(cos(guinada), 0.0, -sin(guinada))
-	var longe := 1400.0 * maxf(1.0, _camera.size / 960.0)
 	var tremor := Vector3.ZERO
 	if efeito_velocidade > 0.85 and not Preferencias.reduzir_animacoes:
 		tremor = Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)) * _camera.size * 0.0015
 	if _tremor > 0.0 and not Preferencias.reduzir_animacoes:
 		tremor += Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)) * 0.45 * minf(_tremor / 0.4, 1.0)
 	var alvo_c := _alvo_camera + tremor
-	_camera.look_at_from_position(alvo_c + (h * cos(elevacao) + Vector3.UP * sin(elevacao)) * longe, alvo_c, -h)
+	if visao_geral:
+		# Pista inteira: de cima, ortográfica, girada 45° (a projeção do minimapa).
+		_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+		var hg := Vector3(cos(-PI / 4.0), 0.0, -sin(-PI / 4.0))
+		var longe := 1400.0 * maxf(1.0, _camera.size / 960.0)
+		_camera.look_at_from_position(alvo_c + (hg * 0.0005 + Vector3.UP) * longe, alvo_c, -hg)
+		return
+	# Seguindo um carro: perspectiva, atrás e acima dele (_guinada_normal gira
+	# com o carro, com atraso nas curvas). No modo velocidade a câmera desce e
+	# abre um pouco para o lado. _camera.size é a altura do quadro no chão: a
+	# distância que mostra isso no FOV.
+	_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+	_camera.fov = FOV_GRAUS
+	var elevacao := deg_to_rad(lerpf(ELEVACAO_GRAUS, ELEVACAO_VELOCIDADE_GRAUS, _b))
+	var guinada := lerp_angle(_guinada_normal, _rumo_seguido + PI + LADO_VELOCIDADE, _b)
+	var h := Vector3(cos(guinada), 0.0, -sin(guinada))
+	var d := _camera.size * 0.5 / tan(deg_to_rad(FOV_GRAUS) * 0.5) * DISTANCIA_FATOR
+	_camera.look_at_from_position(alvo_c + (h * cos(elevacao) + Vector3.UP * sin(elevacao)) * d, alvo_c, Vector3.UP)
 
 
 # --- Modos de câmera (decisão 31) ---------------------------------------------

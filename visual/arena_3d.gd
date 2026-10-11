@@ -8,10 +8,15 @@ extends SubViewportContainer
 ## eliminado escurece e solta fumaça preta. Faíscas e um tranco de câmera nas
 ## batidas. A câmera enquadra os carros ainda vivos.
 
-const ALTURA_CAMERA := 400.0
+## Câmera em perspectiva, inclinada e girando devagar em volta da briga (a
+## arena se lê como 3D: paredes, carros e destroços com volume e paralaxe).
+const FOV_GRAUS := 45.0
+const ELEVACAO_GRAUS := 34.0
+const ORBITA_S := 48.0  # uma volta completa em volta do centro
 const FOLGA_M := 9.0  # margem em volta dos carros no enquadramento
 const DESTROCO_PERTO_M := 26.0  # destroço a essa distância da briga entra no quadro
 const TAMANHO_MIN := 28.0
+const TAMANHO_BRIGA_MAX := 46.0  # seguindo a sua briga, a câmera não abre além disso
 const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
@@ -25,6 +30,7 @@ var _i := 0
 var _mundo: Node3D
 var _cena: Node3D
 var _camera: Camera3D
+var _orbita := 0.0  # ângulo da câmera em volta do centro (rad)
 var _carros := {}  # id -> Node3D
 var _marcas := {}  # id -> [MeshInstance3D x6]
 var _fumaca := {}  # id -> CPUParticles3D
@@ -57,7 +63,8 @@ func _init() -> void:
 	luz.light_color = Color(1.0, 0.86, 0.7)
 	_mundo.add_child(luz)
 	_camera = Camera3D.new()
-	_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+	_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+	_camera.fov = FOV_GRAUS
 	_camera.far = 2000.0
 	_mundo.add_child(_camera)
 	_cena = Node3D.new()
@@ -124,6 +131,8 @@ func atualizar(delta: float) -> void:
 		_tamanho = lerpf(_tamanho, _alvo_tamanho(), 1.0 - exp(-delta * CAMERA_SUAVE))
 		_camera.size = _tamanho
 		_tremor = maxf(_tremor - delta, 0.0)
+		if not Preferencias.reduzir_animacoes:
+			_orbita = fmod(_orbita + delta * TAU / ORBITA_S, TAU)
 	_mirar()
 
 
@@ -136,6 +145,19 @@ func _alvo_tamanho() -> float:
 			pts.append(_carros[id].position)
 	if pts.size() < 2:
 		pts = _carros.values().map(func(c): return c.position)
+	# Seu carro vivo: o quadro é a sua briga (você e o rival mais perto), perto
+	# o bastante para a arena ter volume; fora da luta, volta para todos.
+	if _carros.has("jogador") and not ultima.is_empty() and not ultima["jogador"]["eliminado"] and pts.size() > 2:
+		var eu: Vector3 = _carros["jogador"].position
+		var perto := Vector3.INF
+		for id in _carros:
+			if id != "jogador" and not ultima[id]["eliminado"] \
+					and eu.distance_to(_carros[id].position) < eu.distance_to(perto):
+				perto = _carros[id].position
+		var alvo_eu := eu if perto == Vector3.INF else eu.lerp(perto, 0.35)
+		_centro = _centro.lerp(alvo_eu, 0.15) if _centro != Vector3.ZERO else alvo_eu
+		var dist := 0.0 if perto == Vector3.INF else eu.distance_to(perto)
+		return clampf(dist * 1.3 + FOLGA_M * 2.0, TAMANHO_MIN, TAMANHO_BRIGA_MAX)
 	# Destroços perto da briga também (são obstáculos no caminho).
 	var meio := Vector3.ZERO
 	for p in pts:
@@ -155,7 +177,7 @@ func _alvo_tamanho() -> float:
 	# horizontal (mais estreito no celular) precisa caber pela proporção.
 	var aspecto := float(size.y) / maxf(float(size.x), 1.0) if size.x > 0 else 1.6
 	var alto := maxf(mx.z - mn.z, (mx.x - mn.x) * aspecto) + FOLGA_M * 2.0
-	return clampf(alto, TAMANHO_MIN, _raio * 2.6)
+	return clampf(alto, TAMANHO_MIN, _raio * 1.8)
 
 
 func _mirar() -> void:
@@ -163,7 +185,11 @@ func _mirar() -> void:
 	if _tremor > 0.0 and not Preferencias.reduzir_animacoes:
 		tremor = Vector3(randf_range(-1.0, 1.0), 0.0, randf_range(-1.0, 1.0)) * 0.5 * _tremor
 	var c := _centro + tremor
-	_camera.look_at_from_position(c + Vector3.UP * ALTURA_CAMERA, c, Vector3(0, 0, -1))
+	# _tamanho é a altura do quadro no chão: a distância que mostra isso no FOV.
+	var d := _tamanho * 0.5 / tan(deg_to_rad(FOV_GRAUS) * 0.5)
+	var elev := deg_to_rad(ELEVACAO_GRAUS)
+	var h := Vector3(sin(_orbita), 0.0, cos(_orbita))
+	_camera.look_at_from_position(c + (h * cos(elev) + Vector3.UP * sin(elev)) * d, c, Vector3.UP)
 
 
 # --- Dano -----------------------------------------------------------------------
