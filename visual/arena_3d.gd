@@ -16,7 +16,7 @@ const ORBITA_S := 48.0  # uma volta completa em volta do centro
 const FOLGA_M := 9.0  # margem em volta dos carros no enquadramento
 const DESTROCO_PERTO_M := 26.0  # destroço a essa distância da briga entra no quadro
 const TAMANHO_MIN := 28.0
-const TAMANHO_BRIGA_MAX := 46.0  # seguindo a sua briga, a câmera não abre além disso
+const TAMANHO_BRIGA_MAX := 72.0  # seguindo a sua briga, a câmera não abre além disso
 const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
@@ -32,7 +32,8 @@ var _cena: Node3D
 var _camera: Camera3D
 var _orbita := 0.0  # ângulo da câmera em volta do centro (rad)
 var _carros := {}  # id -> Node3D
-var _marcas := {}  # id -> [MeshInstance3D x6]
+var _malhas := {}  # id -> [{mi, rel, surfs: [{arr, prim, mat}]}]: malhas originais da carroceria
+var _estagio_visto := {}  # id -> estágio de dano por região já aplicado na malha
 var _fumaca := {}  # id -> CPUParticles3D
 var _eventos_vistos := 0
 var _estagios := 5
@@ -77,7 +78,8 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	for c in _cena.get_children():
 		c.queue_free()
 	_carros = {}
-	_marcas = {}
+	_malhas = {}
+	_estagio_visto = {}
 	_fumaca = {}
 	_resultado = resultado
 	_amostras = resultado.get("amostras", [])
@@ -97,7 +99,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 			c = CarroBloco.new().configurar_modelo(base, cor)
 		_cena.add_child(c)
 		_carros[id] = c
-		_marcas[id] = _criar_marcas(c)
+		_malhas[id] = _malhas_carroceria(c)
 	atualizar(0.0)
 	_tamanho = _alvo_tamanho()
 	_camera.size = _tamanho
@@ -154,10 +156,13 @@ func _alvo_tamanho() -> float:
 			if id != "jogador" and not ultima[id]["eliminado"] \
 					and eu.distance_to(_carros[id].position) < eu.distance_to(perto):
 				perto = _carros[id].position
-		var alvo_eu := eu if perto == Vector3.INF else eu.lerp(perto, 0.35)
+		var alvo_eu := eu if perto == Vector3.INF else eu.lerp(perto, 0.4)
 		_centro = _centro.lerp(alvo_eu, 0.15) if _centro != Vector3.ZERO else alvo_eu
 		var dist := 0.0 if perto == Vector3.INF else eu.distance_to(perto)
-		return clampf(dist * 1.3 + FOLGA_M * 2.0, TAMANHO_MIN, TAMANHO_BRIGA_MAX)
+		# A câmera gira: os dois podem ficar na horizontal, a mais estreita no
+		# celular em pé; o quadro cabe pela proporção.
+		var asp := float(size.y) / maxf(float(size.x), 1.0) if size.x > 0 else 1.6
+		return clampf((dist + FOLGA_M * 2.0) * maxf(asp, 1.0), TAMANHO_MIN, TAMANHO_BRIGA_MAX)
 	# Destroços perto da briga também (são obstáculos no caminho).
 	var meio := Vector3.ZERO
 	for p in pts:
@@ -196,40 +201,119 @@ func _mirar() -> void:
 
 ## Uma marca por região (Arena.REGIOES), no ponto do carro: frente/lado/trás e
 ## esquerda/direita. Frente em +X, esquerda em -Z (o +Y do plano da arena).
-func _criar_marcas(c: Node3D) -> Array:
+## Amassado de verdade: a malha da carroceria afunda na região atingida, na
+## proporção do estágio de dano (as seis regiões da simulação), com um enrugado
+## irregular e sombreamento facetado. Rodas ficam de fora.
+## Região: centro no carro (+X frente, -Z esquerda, em frações de comprimento,
+## altura em m e largura), direção do afundamento e raio (fração do comprimento).
+const AMASSADOS := [
+	{"c": Vector3(0.5, 0.6, -0.32), "dir": Vector3(-1.0, -0.3, 0.4), "raio": 0.42, "prof": 0.8},  # frente_e
+	{"c": Vector3(0.5, 0.6, 0.32), "dir": Vector3(-1.0, -0.3, -0.4), "raio": 0.42, "prof": 0.8},  # frente_d
+	{"c": Vector3(0.05, 0.65, -0.5), "dir": Vector3(0.0, -0.2, 1.0), "raio": 0.34, "prof": 0.55},  # lado_e
+	{"c": Vector3(0.05, 0.65, 0.5), "dir": Vector3(0.0, -0.2, -1.0), "raio": 0.34, "prof": 0.55},  # lado_d
+	{"c": Vector3(-0.5, 0.6, -0.32), "dir": Vector3(1.0, -0.3, 0.4), "raio": 0.4, "prof": 0.7},  # tras_e
+	{"c": Vector3(-0.5, 0.6, 0.32), "dir": Vector3(1.0, -0.3, -0.4), "raio": 0.4, "prof": 0.7},  # tras_d
+]
+
+
+func _malhas_carroceria(c: Node3D) -> Array:
+	var partes := []
+	for mi: MeshInstance3D in c.find_children("*", "MeshInstance3D", true, false):
+		if mi.mesh == null or _e_roda(mi, c) or mi.top_level:
+			continue
+		var surfs := []
+		for k in mi.mesh.get_surface_count():
+			var prim: int = mi.mesh.surface_get_primitive_type(k) if mi.mesh is ArrayMesh else Mesh.PRIMITIVE_TRIANGLES
+			if prim != Mesh.PRIMITIVE_TRIANGLES:
+				surfs = []
+				break
+			surfs.append({"arr": mi.mesh.surface_get_arrays(k), "prim": prim, "mat": mi.mesh.surface_get_material(k)})
+		if not surfs.is_empty():
+			partes.append({"mi": mi, "rel": _relativo(c, mi), "surfs": surfs})
+	return partes
+
+
+static func _e_roda(n: Node, raiz: Node) -> bool:
+	while n != null and n != raiz:
+		if String(n.name).begins_with("roda"):
+			return true
+		n = n.get_parent()
+	return false
+
+
+## Transformação de `n` no espaço de `raiz` (sem depender da árvore global).
+static func _relativo(raiz: Node3D, n: Node3D) -> Transform3D:
+	var t := Transform3D.IDENTITY
+	var no: Node = n
+	while no != null and no != raiz:
+		if no is Node3D:
+			t = (no as Node3D).transform * t
+		no = no.get_parent()
+	return t
+
+
+## Refaz a malha da carroceria com o estágio de cada região (só quando muda).
+func _amassar(id: String, estagios: PackedInt32Array, eliminado: bool) -> void:
+	var c: Node3D = _carros[id]
 	var dim: Vector2 = c.dimensoes() if c.has_method("dimensoes") else Vector2(Arena.COMPRIMENTO_M, Arena.LARGURA_M)
-	var lx := dim.x * 0.36
-	var lz := dim.y * 0.32
-	var pontos := [Vector3(lx, 0, -lz), Vector3(lx, 0, lz), Vector3(0, 0, -lz), Vector3(0, 0, lz),
-			Vector3(-lx, 0, -lz), Vector3(-lx, 0, lz)]
-	var l := []
-	for p in pontos:
-		var m := MeshInstance3D.new()
-		var q := QuadMesh.new()
-		q.size = Vector2(dim.x * 0.42, dim.y * 0.62)
-		q.orientation = PlaneMesh.FACE_Y
-		m.mesh = q
-		var mat := StandardMaterial3D.new()
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mat.albedo_texture = _textura_amassado()
-		mat.albedo_color = Color(0.08, 0.07, 0.06, 0.0)
-		mat.render_priority = 30
-		mat.no_depth_test = true
-		m.material_override = mat
-		m.position = p + Vector3(0, 0.9, 0)
-		c.add_child(m)
-		l.append(m)
-	return l
+	var fator := []
+	for r in AMASSADOS.size():
+		fator.append(float(estagios[r]) / maxf(_estagios, 1) * (1.15 if eliminado else 1.0))
+	for parte in _malhas.get(id, []):
+		var rel: Transform3D = parte["rel"]
+		var inv := rel.affine_inverse()
+		var nova := ArrayMesh.new()
+		for sf in parte["surfs"]:
+			var arr: Array = (sf["arr"] as Array).duplicate()
+			var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var out := PackedVector3Array()
+			out.resize(vs.size())
+			for i in vs.size():
+				var p := rel * vs[i]
+				p += _deslocamento(p, fator, dim)
+				out[i] = inv * p
+			arr[Mesh.ARRAY_VERTEX] = out
+			# Facetado: sem índices, normais por face (o estilo low-poly chapado).
+			var st := SurfaceTool.new()
+			st.create_from_arrays(arr, sf["prim"])
+			st.deindex()
+			st.generate_normals()
+			st.commit(nova)
+			if sf["mat"] != null:
+				nova.surface_set_material(nova.get_surface_count() - 1, sf["mat"])
+		(parte["mi"] as MeshInstance3D).mesh = nova
+
+
+static func _deslocamento(p: Vector3, fator: Array, dim: Vector2) -> Vector3:
+	var d := Vector3.ZERO
+	for r in AMASSADOS.size():
+		var f: float = fator[r]
+		if f <= 0.0:
+			continue
+		var a: Dictionary = AMASSADOS[r]
+		var centro := Vector3(a["c"].x * dim.x, a["c"].y, a["c"].z * dim.y)
+		var raio: float = a["raio"] * dim.x
+		var dist := p.distance_to(centro)
+		if dist >= raio:
+			continue
+		var u := 1.0 - dist / raio
+		# Enrugado: cada vértice afunda um pouco diferente (fixo pela posição).
+		var ruga := 0.45 + 0.55 * absf(sin(p.x * 13.1 + p.y * 9.7 + p.z * 7.3) + 0.5 * sin(p.x * 31.0 - p.z * 23.0))
+		d += (a["dir"] as Vector3).normalized() * a["prof"] * f * u * sqrt(u) * ruga
+	return d
 
 
 func _mostrar_dano(id: String, dano: PackedFloat32Array, eliminado: bool) -> void:
 	var pior := 0.0
+	var est := PackedInt32Array()
 	for r in dano.size():
-		var e := Arena.estagio(dano[r], _estagios)
-		var a := 0.0 if dano[r] <= 0.0 else 0.45 + 0.55 * float(e) / maxf(_estagios - 1, 1)
-		(_marcas[id][r].material_override as StandardMaterial3D).albedo_color.a = a
+		est.append(Arena.estagio(dano[r], _estagios) + 1 if dano[r] > 0.0 else 0)
 		pior = maxf(pior, dano[r])
+	if eliminado:
+		est.append(1)
+	if _estagio_visto.get(id, PackedInt32Array()) != est:
+		_estagio_visto[id] = est
+		_amassar(id, est, eliminado)
 	var c: Node3D = _carros[id]
 	var tom := Color(0.32, 0.3, 0.3) if eliminado else Color.WHITE.lerp(Color(0.75, 0.72, 0.7), pior)
 	_tingir(c, tom)

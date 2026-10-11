@@ -68,7 +68,8 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"id": p["id"], "m": m, "L": float(a.get("comprimento", COMPRIMENTO_M)),
 			"W": float(a.get("largura", LARGURA_M)),
 			"pot": float(a["potencia"]) * CV_PARA_W, "mu": float(a["aderencia"]),
-			"pos": p.get("pos", Vector2.from_angle(ang) * raio * 0.6),
+			# Largada nas extremidades, junto ao muro (decisão do usuário).
+			"pos": p.get("pos", Vector2.from_angle(ang) * raio * float(params.get("largada_raio_frac", 0.6))),
 			# Largada em roda, todos de frente para o centro (decisão do usuário).
 			"rumo": float(p.get("rumo", ang + PI)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
 			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,

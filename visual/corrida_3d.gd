@@ -35,6 +35,13 @@ const ELEVACAO_GRAUS := 32.0
 const ELEVACAO_VELOCIDADE_GRAUS := 16.0
 const LADO_VELOCIDADE := 0.45  # rad
 const DISTANCIA_FATOR := 0.85
+const DISTANCIA_VELOCIDADE := 1.7  # multiplica a distância no modo velocidade
+## Pórtico da largada: altura da faixa, distância da linha de visão em que ele
+## atrapalha e a elevação da câmera para passar por cima.
+const PORTICO_ALTURA_M := 7.0
+const PORTICO_FOLGA_M := 9.0
+const PORTICO_ELEVACAO_GRAUS := 62.0
+var _sobe_portico := 0.0
 const ALTURA_MARCADOR := 2.6
 
 var _fonte: CorridaVisual
@@ -68,6 +75,20 @@ var _tempo := 0.0
 var _tremor := 0.0  # segundos de câmera tremendo (batida do carro seguido)
 var _s_anterior := {}
 var _tranco := {}  # id -> segundos restantes de tranco
+## Largada com personalidade (só visual; a distância vem da simulação): cada
+## carro deixa a fila do grid no seu ritmo (pressa), a traseira balança na
+## arrancada conforme tração e potência por peso, e a carroceria arfa com a
+## aceleração e a freada.
+var _pot_peso := {}  # id -> ps/kg
+var _jeito := {}  # id -> {pressa, fase}
+var _saida := {}  # id -> _tempo em que deixou a vaga
+var _arfagem := {}  # id -> inclinação atual (rad, + = frente para cima)
+const SAIDA_GRID_S := 6.0  # depois disso todos convergem no mesmo ritmo
+const BALANCO_S := 2.4
+## Amplitude do balanço da traseira por tração, a 0,15 ps/kg (rad).
+const BALANCO := {"FR": 0.11, "MR": 0.09, "RR": 0.1, "4WD": 0.03, "FF": 0.035}
+const ARFAGEM_POR_MS2 := 0.006  # rad por m/s²
+const ARFAGEM_MAX := 0.05
 var _alvo_camera := Vector3.ZERO
 ## Carro que a câmera segue ("jogador" por padrão). Se não existir, o jogador.
 var foco := "jogador"
@@ -247,6 +268,11 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 		_lateral[id] = _tracado.lateral(fonte.distancia(id))
 		_off[id] = 0.0
 		_tracao[id] = String(base.get("tracao", "FF"))
+		_pot_peso[id] = float(base.get("potencia", 100.0)) / maxf(float(base.get("peso", 1000.0)), 1.0)
+		# Jeito de largar, fixo por carro e prova (só visual): quanto demora a
+		# deixar a fila do grid e a fase do balanço da traseira.
+		var h := absi(hash("%s|%s" % [id, String(base.get("id", ""))]))
+		_jeito[id] = {"pressa": lerpf(0.45, 1.7, float(h % 1000) / 999.0), "fase": float(h % 628) / 100.0}
 	_grid()
 	atualizar(0.0)
 	_camera_imediata()
@@ -263,6 +289,10 @@ func limpar() -> void:
 	_em_contato = {}
 	_s_anterior = {}
 	_tranco = {}
+	_pot_peso = {}
+	_jeito = {}
+	_saida = {}
+	_arfagem = {}
 	_freio = {}
 	_historico = []
 	_copias_bloco = []
@@ -312,9 +342,16 @@ func atualizar(delta: float) -> void:
 			alvo[id] = float(_vagas[id]["lateral"]) - float(base[id])
 			if delta <= 0.0 or float(_off[id]) == 0.0:
 				_off[id] = alvo[id]
-	var k := clampf(delta * VELOCIDADE_LATERAL, 0.0, 1.0) if delta > 0.0 and not Preferencias.reduzir_animacoes else 1.0
+		elif not _saida.has(id) and delta > 0.0:
+			_saida[id] = _tempo
+	var animar := delta > 0.0 and not Preferencias.reduzir_animacoes
 	var antes := _lateral.duplicate()
 	for id in _carros:
+		# Logo depois da largada, cada um troca de faixa no seu ritmo.
+		var pressa := 1.0
+		if _saida.has(id) and _jeito.has(id):
+			pressa = lerpf(float(_jeito[id]["pressa"]), 1.0, smoothstep(0.0, SAIDA_GRID_S, _tempo - float(_saida[id])))
+		var k := clampf(delta * VELOCIDADE_LATERAL * pressa, 0.0, 1.0) if animar else 1.0
 		_off[id] = lerpf(_off[id], alvo[id], k)
 		_lateral[id] = clampf(float(base[id]) + float(_off[id]), -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 	_separar(s, base, delta)
@@ -346,6 +383,13 @@ func atualizar(delta: float) -> void:
 		var v: float = float(_v.get(id, 0.0))
 		var g_lateral := v * v * _tracado.curvatura(dist) / 9.8
 		esterco += clampf(g_lateral * float(DERIVA.get(_tracao.get(id, "FF"), 0.06)), -0.22, 0.22)
+		# Arrancada: a traseira balança (tração traseira e muita potência por peso
+		# mais; tração integral quase nada), amortecendo em BALANCO_S.
+		if _saida.has(id) and not Preferencias.reduzir_animacoes:
+			var ts := _tempo - float(_saida[id])
+			if ts < BALANCO_S:
+				var amp := float(BALANCO.get(_tracao.get(id, "FF"), 0.04)) * clampf(float(_pot_peso.get(id, 0.1)) / 0.15, 0.4, 1.8)
+				esterco += amp * sin(ts * 9.0 + float(_jeito[id]["fase"])) * exp(-ts * 1.6) * smoothstep(0.0, 0.15, ts)
 		var t: float = _tranco.get(id, 0.0)
 		if t > 0.0:
 			esterco += sin(t * 55.0) * 0.07 * (t / BATIDA_S)
@@ -370,7 +414,12 @@ func atualizar(delta: float) -> void:
 		if delta > 0.0:
 			var v_antes := float(_v.get(id, 0.0))
 			_v[id] = lerpf(v_antes, maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
-			_efeitos_pista(id, (float(_v[id]) - v_antes) / delta, float(_v[id]), delta)
+			var acel := (float(_v[id]) - v_antes) / delta
+			_efeitos_pista(id, acel, float(_v[id]), delta)
+			# Arfagem: a frente sobe acelerando e mergulha freando.
+			var arf_alvo := 0.0 if Preferencias.reduzir_animacoes else clampf(acel * ARFAGEM_POR_MS2, -ARFAGEM_MAX, ARFAGEM_MAX)
+			_arfagem[id] = lerpf(float(_arfagem.get(id, 0.0)), arf_alvo, 1.0 - exp(-delta * 6.0))
+			c.rotation.z = float(_arfagem[id])
 			if _fonte.tempo > 4.0:
 				_v_max[id] = maxf(float(_v_max.get(id, 0.0)), float(_v[id]))
 		_s_anterior[id] = dist
@@ -585,7 +634,22 @@ func _camera_imediata() -> void:
 	var elevacao := deg_to_rad(lerpf(ELEVACAO_GRAUS, ELEVACAO_VELOCIDADE_GRAUS, _b))
 	var guinada := lerp_angle(_guinada_normal, _rumo_seguido + PI + LADO_VELOCIDADE, _b)
 	var h := Vector3(cos(guinada), 0.0, -sin(guinada))
-	var d := _camera.size * 0.5 / tan(deg_to_rad(FOV_GRAUS) * 0.5) * DISTANCIA_FATOR
+	# Baixa e de lado (velocidade), a câmera precisa de mais distância para o
+	# carro não encher a tela.
+	var d := _camera.size * 0.5 / tan(deg_to_rad(FOV_GRAUS) * 0.5) * DISTANCIA_FATOR * lerpf(1.0, DISTANCIA_VELOCIDADE, _b)
+	# Pórtico da largada entre a câmera e o carro: ela sobe por cima dele.
+	var cam := alvo_c + (h * cos(elevacao) + Vector3.UP * sin(elevacao)) * d
+	var tapa := 0.0
+	if _pista != null:
+		var p2 := _pista.posicao_em(PORTICO_M)
+		var pp := Vector3(p2.x, PORTICO_ALTURA_M, -p2.y)
+		var seg := alvo_c - cam
+		var u := clampf((pp - cam).dot(seg) / maxf(seg.length_squared(), 1e-6), 0.0, 1.0)
+		tapa = 1.0 - smoothstep(PORTICO_FOLGA_M * 0.5, PORTICO_FOLGA_M, (cam + seg * u).distance_to(pp))
+		if u <= 0.02 or u >= 0.98:
+			tapa = 0.0
+	_sobe_portico = lerpf(_sobe_portico, tapa, 0.12) if not Preferencias.reduzir_animacoes else tapa
+	elevacao = lerpf(elevacao, deg_to_rad(PORTICO_ELEVACAO_GRAUS), _sobe_portico)
 	_camera.look_at_from_position(alvo_c + (h * cos(elevacao) + Vector3.UP * sin(elevacao)) * d, alvo_c, Vector3.UP)
 
 
