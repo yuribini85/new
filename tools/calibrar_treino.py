@@ -9,6 +9,7 @@ Uso: python3 tools/calibrar_treino.py CAMINHO_DO_GODOT [--eventos=12 --carros=24
 from __future__ import annotations
 
 import json
+import math
 import pathlib
 import subprocess
 import sys
@@ -61,7 +62,8 @@ def main(args: list[str]) -> int:
             equipe["treino"]["teto"][lic] = anterior
     # Passo de cada nível: o maior teto dividido em `niveis` (decisão do usuário: 3).
     niveis = int(equipe["treino"].get("niveis", 3))
-    equipe["treino"]["passo"] = round((max(equipe["treino"]["teto"].values()) - base) / niveis, 5)
+    # Arredondado para cima: `niveis` passos alcançam o teto (um a mais não cabe).
+    equipe["treino"]["passo"] = math.ceil((max(equipe["treino"]["teto"].values()) - base) / niveis * 1e5) / 1e5
     EQUIPE.write_text(json.dumps(equipe, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("tetos gravados:", equipe["treino"]["teto"], "passo:", equipe["treino"]["passo"])
     return 0
