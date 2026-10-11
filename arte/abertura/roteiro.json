@@ -1,0 +1,17 @@
+{
+ "_nota": "Abertura do jogo (ui/abertura_cinema.gd) e a música dela (tools/gerar_musica_abertura.py) leem estes tempos (s): cada plano entra em 'ini', fica 'dur' e funde com o próximo em 'fusao'; 'zoom' e 'pan' (fração da tela) são o movimento lento da câmera do começo ao fim do plano; 'corte' entra seco, com clarão e tremor. 'batida' é o instante do acidente; 'logo' quando o logo aparece; 'fim' quando a abertura acaba. Apresentação, não balanceamento.",
+ "planos": [
+  {"img": "01", "ini": 0.0, "dur": 4.6, "zoom": [1.0, 1.14], "pan": [[0.0, 0.0], [0.0, 0.02]]},
+  {"img": "02", "ini": 4.0, "dur": 4.4, "zoom": [1.16, 1.04], "pan": [[0.0, 0.0], [0.0, 0.0]]},
+  {"img": "03", "ini": 7.8, "dur": 3.6, "zoom": [1.04, 1.12], "pan": [[0.0, 0.01], [0.0, -0.01]], "tremor": 0.004},
+  {"img": "04", "ini": 10.8, "dur": 3.6, "zoom": [1.0, 1.1], "pan": [[0.0, 0.03], [0.0, -0.03]]},
+  {"img": "05", "ini": 13.8, "dur": 3.7, "zoom": [1.08, 1.2], "pan": [[0.03, 0.0], [-0.03, 0.0]], "tremor": 0.006},
+  {"img": "06", "ini": 17.5, "dur": 4.4, "zoom": [1.22, 1.06], "pan": [[0.0, 0.0], [0.0, 0.0]], "corte": true},
+  {"img": "07", "ini": 21.3, "dur": 4.4, "zoom": [1.0, 1.1], "pan": [[0.02, 0.0], [-0.01, 0.0]]},
+  {"img": "08", "ini": 25.1, "dur": 4.9, "zoom": [1.0, 1.16], "pan": [[0.0, 0.0], [0.0, 0.02]]}
+ ],
+ "fusao": 0.7,
+ "batida": 17.5,
+ "logo": 31.0,
+ "fim": 38.5
+}

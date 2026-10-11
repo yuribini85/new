@@ -628,10 +628,20 @@ func _quando_dialogo_acabar(depois: Callable) -> void:
 	depois.call()
 
 
-## Jogo novo com a história: a volta do Adrian sozinho na pista e, no fim
-## dela, a primeira cena (GAME_START). Só uma vez (flag VOLTA_ABERTURA).
+## Jogo novo com a história: a abertura (dono: a noite do acidente; Adrian: a
+## volta sozinho na pista) e, no fim dela, a primeira cena (GAME_START).
 func _abertura() -> void:
 	var h: Historia = jogador.historia
+	# Campanha do dono: a noite do acidente (AberturaCinema) e então a Mara na
+	# oficina (GAME_START). Só uma vez (flag ABERTURA_DONO).
+	if jogador.personagem == "dono" and not jogador.flags.has("ABERTURA_DONO") \
+			and not h.cena_para("GAME_START").is_empty():
+		var cinema := AberturaCinema.new()
+		add_child(cinema)
+		cinema.terminou.connect(func():
+			jogador.flags["ABERTURA_DONO"] = true
+			h.disparar("GAME_START"))
+		return
 	if jogador.personagem != "adrian" or jogador.flags.has("VOLTA_ABERTURA") or h.cena_para("GAME_START").is_empty():
 		h.disparar("GAME_START")
 		return

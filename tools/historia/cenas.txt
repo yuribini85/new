@@ -478,9 +478,12 @@ Marcus: Velocidade ganha volta. Isso aqui ganha quem não quebra.
 
 # ---------------------------------------------------------------- Prólogo
 = CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; proxima=CW_P02; cenario=oficina_mara
-Mara[cruzados]: Você é o novo dono.
-Mara[gesto]: O antigo deixou as chaves, as dívidas e esse carro.
-Mara[firme]: As chaves funcionam.
+Mara[pensativa]: Aquela noite ainda passa na minha cabeça. Chuva, pista lisa, a reta inteira.
+Mara[decepcao]: Perder um piloto não é perder alguém da equipe. É perder o motivo de abrir a porta de manhã.
+Mara[pensativa]: Depois daquilo, o antigo dono não aguentou. Deixou as chaves, as dívidas e esse carro.
+Mara[cruzados]: E agora deixou você.
+Mara[gesto]: Bem-vindo à Wreckage. Eu sou a Mara. Tudo aqui dentro que tem parafuso passa pela minha mão.
+Mara[firme]: Vamos ver se esse carro ainda tem corrida nele.
 
 # Ficha do carro: cada atributo em destaque; termina pedindo os freios.
 = CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L

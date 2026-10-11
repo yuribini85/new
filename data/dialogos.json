@@ -2276,17 +2276,32 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você é o novo dono.",
+    "texto": "Aquela noite ainda passa na minha cabeça. Chuva, pista lisa, a reta inteira.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Perder um piloto não é perder alguém da equipe. É perder o motivo de abrir a porta de manhã.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mara",
+    "texto": "Depois daquilo, o antigo dono não aguentou. Deixou as chaves, as dívidas e esse carro.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "E agora deixou você.",
     "pose": "cruzados"
    },
    {
     "quem": "mara",
-    "texto": "O antigo deixou as chaves, as dívidas e esse carro.",
+    "texto": "Bem-vindo à Wreckage. Eu sou a Mara. Tudo aqui dentro que tem parafuso passa pela minha mão.",
     "pose": "gesto"
    },
    {
     "quem": "mara",
-    "texto": "As chaves funcionam.",
+    "texto": "Vamos ver se esse carro ainda tem corrida nele.",
     "pose": "firme"
    }
   ],

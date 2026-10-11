@@ -145,6 +145,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 
 | flag | primeira origem |
 |---|---|
+| `ABERTURA_DONO` | ui/principal.gd |
 | `ADRIAN_CAR_DESTROYED` | cena SCN_A13 |
 | `ADRIAN_DEAD` | cena SCN_A13 |
 | `ADRIAN_LICENSE_CONTEXT` | cena SCN_A09 |

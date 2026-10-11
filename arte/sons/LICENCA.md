@@ -12,5 +12,8 @@ O README de cada kit declara os sons como CC0.
 | moeda.ogg | KenneyNL/Starter-Kit-3D-Platformer — sounds/coin.ogg |
 | toque.ogg | KenneyNL/Starter-Kit-City-Builder — sounds/toggle.ogg |
 
+`abertura.ogg` (música da abertura) é composição própria do jogo, gerada em
+código por `tools/gerar_musica_abertura.py` (sem amostras de fora).
+
 Bipes da largada, ultrapassagem, chegada, zebra e
 torcida continuam gerados em código (`visual/sons.gd`).
