@@ -86,6 +86,19 @@ func mostrar(categoria: String, cor: Color) -> void:
 
 
 func mostrar_modelo(base: Dictionary, cor: Color) -> void:
+	if CarroBloco.tem_glb(String(base.get("id", ""))):
+		# Modelo 3D: na mesma câmera e no mesmo ângulo dos sprites da loja.
+		_sprite_modo(true)
+		_sprite.visible = false
+		_reflexo.visible = false
+		_carro.visible = true
+		_carro.rotation.y = ROTACAO_MODELO
+		_carro.configurar_modelo(base, cor)
+		if _id != String(base.get("id", "")) and not Preferencias.reduzir_animacoes and is_inside_tree():
+			_aproximar = 0.0
+		_id = String(base.get("id", ""))
+		return
+	_carro.rotation.y = -0.5
 	var tex := ArteCarro.textura(String(base.get("id", "")), "iso")
 	if tex != null and Pintura.pintavel(String(base.get("id", ""))):
 		tex = Pintura.textura(String(base.get("id", "")), "iso", cor)
@@ -137,6 +150,8 @@ var _reflexo: MeshInstance3D
 var _id := ""
 ## 0..1 da aproximação de entrada (1 = parada).
 var _aproximar := 1.0
+## Giro do modelo 3D na vitrine: frente para baixo e à esquerda, como nos sprites.
+const ROTACAO_MODELO := -PI / 2.0 - 0.25
 ## Largura vista pela câmera no modo sprite (m): o carro ocupa ~2/3 dela.
 const LARGURA_VISTA_M := 6.6
 

@@ -10,6 +10,8 @@ const LISTA := [
 	{"id": "dono_inicio", "nome": "Oficina: começo", "detalhe": "Jogo novo, campanha do dono com a Mara."},
 	{"id": "dono_arena", "nome": "Oficina: arena aberta",
 		"detalhe": "Licenças até a National e 3 carros na garagem: a Arena já abre."},
+	{"id": "carro_3d", "nome": "Carro 3D: Arvelle Outlaw GT",
+		"detalhe": "Como a arena aberta, com o Arvelle Outlaw GT (modelo 3D) como carro ativo: garagem, corrida e arena."},
 	{"id": "adrian_inicio", "nome": "Adrian: começo", "detalhe": "Jogo novo, prólogo do Adrian."},
 	{"id": "adrian_ultima", "nome": "Adrian: antes da última corrida",
 		"detalhe": "Primeiro campeonato feito: a próxima largada é a última dele."},
@@ -21,6 +23,8 @@ const LISTA := [
 		"detalhe": "Licenças até a PRO, segundo piloto e dois carros."},
 ]
 
+## O primeiro carro com modelo 3D (arte/carros3d/).
+const CARRO_3D := "arvelle_outlaw_gt"
 const ROMANOS := {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
 		"XI": 11, "XII": 12, "XIII": 13, "XIV": 14, "XV": 15, "XVI": 16}
 ## Cenas da última corrida do Adrian: ficam por ver em "adrian_ultima".
@@ -29,13 +33,13 @@ const TRIGGERS_ULTIMA := ["ULTIMA_CORRIDA_ADRIAN", "RADIO_ULTIMA_CORRIDA", "ACID
 
 ## Monta o cenário no jogador. "" ou o motivo de não dar.
 static func montar(dados: Node, jogador: Node, id: String) -> String:
-	var erro := Prologo.iniciar(dados, jogador, "dono" if id.begins_with("dono") else "adrian")
+	var erro := Prologo.iniciar(dados, jogador, "dono" if id.begins_with("dono") or id == "carro_3d" else "adrian")
 	if erro != "":
 		return erro
 	match id:
 		"dono_inicio":
 			pass
-		"dono_arena":
+		"dono_arena", "carro_3d":
 			# O prólogo e as licenças vistos; a Mara apresenta a Arena na 1ª visita.
 			for c in dados.lista("dialogos"):
 				if c.get("personagem") is String and c["personagem"] == "dono" and not String(c["id"]).begins_with("CW_P07") \
@@ -48,6 +52,10 @@ static func montar(dados: Node, jogador: Node, id: String) -> String:
 			jogador.flags["NATIONAL_COMPLETE"] = true
 			_comprar_usado(dados, jogador)
 			_comprar_usado(dados, jogador)
+			if id == "carro_3d" and dados.existe("carros", CARRO_3D):
+				var carro := Carro.new(dados.carro(CARRO_3D))
+				carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
+				jogador.carro_ativo = jogador.garagem.adicionar(carro)
 		"adrian_inicio":
 			pass
 		"adrian_ultima":

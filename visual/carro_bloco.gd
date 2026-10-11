@@ -44,9 +44,17 @@ const PINTURAS := [
 	Color(0.98, 0.78, 0.1), Color(0.2, 0.6, 0.3), Color(0.6, 0.62, 0.66), Color(0.95, 0.45, 0.1),
 ]
 
+## Modelos 3D prontos (GLB, um por carro: <id>.glb): têm prioridade sobre
+## os sprites e o carro em código. Frente em +Z e chão em y = 0 no arquivo.
+const PASTA_GLB := "res://arte/carros3d/"
+
 var comprimento := 4.5
 var largura := 1.8
 var _rodas: Array = []
+
+
+static func tem_glb(id: String) -> bool:
+	return id != "" and ResourceLoader.exists(PASTA_GLB + id + ".glb")
 
 
 ## Silhueta só pela categoria (usado onde não há modelo).
@@ -59,6 +67,8 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 	for c in get_children():
 		c.queue_free()
 	_rodas = []
+	if tem_glb(String(base.get("id", ""))):
+		return _glb(String(base["id"]), cor)
 	var f := forma(base)
 	comprimento = f["c"]
 	largura = f["l"]
@@ -204,18 +214,49 @@ func configurar_modelo(base: Dictionary, cor: Color) -> CarroBloco:
 				raio.rotation.z = PI * k / float(f["raios"])
 				roda.add_child(raio)
 			_rodas.append(roda)
+	_sombra(c, l)
+	return self
+
+
+func _sombra(c: float, l: float, alfa := 0.45) -> void:
 	var sombra := MeshInstance3D.new()
 	sombra.name = "Sombra"
 	var q := PlaneMesh.new()
 	q.size = Vector2(c * 1.05, l * 1.15)
 	sombra.mesh = q
 	var ms := StandardMaterial3D.new()
-	ms.albedo_color = Color(0, 0, 0, 0.45)
+	ms.albedo_color = Color(0, 0, 0, alfa)
 	ms.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	ms.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	sombra.material_override = ms
 	sombra.position.y = 0.02
 	add_child(sombra)
+
+
+## Modelo GLB: girado para a frente em +X, lataria pintada pelo atlas.
+func _glb(id: String, cor: Color) -> CarroBloco:
+	var cena: PackedScene = load(PASTA_GLB + id + ".glb")
+	var modelo: Node3D = cena.instantiate()
+	modelo.rotation.y = PI / 2.0  # +Z do arquivo -> +X do jogo
+	add_child(modelo)
+	var caixa := AABB()
+	var primeiro := true
+	for mi: MeshInstance3D in modelo.find_children("*", "MeshInstance3D", true, false):
+		var atlas: Texture2D = null
+		var original := mi.get_active_material(0)
+		if original is BaseMaterial3D:
+			atlas = (original as BaseMaterial3D).albedo_texture
+		var mat := ShaderMaterial.new()
+		mat.shader = preload("res://visual/shaders/carro_glb.gdshader")
+		mat.set_shader_parameter("atlas", atlas)
+		mat.set_shader_parameter("pintura", cor)
+		mi.material_override = mat
+		var b := mi.get_aabb()
+		caixa = b if primeiro else caixa.merge(b)
+		primeiro = false
+	comprimento = caixa.size.z
+	largura = caixa.size.x
+	_sombra(comprimento * 0.92, largura * 0.78, 0.3)
 	return self
 
 
