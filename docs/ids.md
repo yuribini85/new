@@ -245,7 +245,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | equipe | nível | pilotos |
 |---|---|---|
 | `eq01_second_driver` Second Driver | jogador | `elena_cross`, `adrian_cross` |
-| `eq02_vortex_motorsport` Vortex Motorsport | PRO | `lucien_vale`, `mara_voss` |
+| `eq02_vortex_motorsport` Vortex Motorsport | PRO | `lucien_vale`, `nadia_voss` |
 | `eq03_kaze_dynamics` Kaze Dynamics | INTERNATIONAL | `ren_kaito`, `hana_mori` |
 | `eq04_ironclad_racing` Ironclad Racing | NATIONAL | `bram_holt`, `soren_pike` |
 | `eq05_apex_dominion` Apex Dominion | ELITE | `lucas_ward`, `cassian_roe`, `nyra_sol` |
@@ -259,11 +259,11 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `eq13_tempest_garage` Tempest Garage | SPORT | `noel_mercer`, `zara_keene` |
 | `eq14_crown_vector` Crown Vector | PRO | `elias_wren`, `celeste_armand` |
 | `eq15_gravelborn` Gravelborn | CLUB | `rafe_calder`, `nika_stroud` |
-| `eq16_meridian_gp` Meridian GP | ELITE | `theo_maren`, `selene_ward` |
-| `eq17_obsidian_crest` Obsidian Crest | ELITE | `magnus_rell`, `ines_vale` |
-| `eq18_copperhead_racing` Copperhead Racing | CLUB | `ash_mercer`, `cleo_vane` |
+| `eq16_meridian_gp` Meridian GP | ELITE | `theo_maren`, `selene_ashby` |
+| `eq17_obsidian_crest` Obsidian Crest | ELITE | `magnus_rell`, `ines_calloway` |
+| `eq18_copperhead_racing` Copperhead Racing | CLUB | `ash_corwin`, `cleo_vane` |
 | `eq19_cold_harbor` Cold Harbor | SPORT | `finn_sutter`, `kaia_rehn` |
-| `eq20_storm_division` Storm Division | PRO | `rex_arden`, `mira_holt` |
+| `eq20_storm_division` Storm Division | PRO | `rex_arden`, `mira_danvers` |
 
 Segundo piloto da equipe do jogador: `jonas_reid` (Jonas Reid, provisório).
 

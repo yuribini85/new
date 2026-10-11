@@ -364,3 +364,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 55. Todo sistema novo entra com a fala da Mara e o número visível na tela.
     Valores de 51–53: fatores sobre o prêmio de 1º lugar médio da licença, provisórios
     até o playtest.
+56. **Pilotos** (2026-10-11): 40 rivais (20 equipes × 2), sem nomes repetidos; cada equipe
+    tem um perfil (agressivo, equilibrado, cauteloso → `carreira.json` → `perfis_piloto`,
+    a chance de tentar a ultrapassagem; valores provisórios até o playtest) e uma frase de
+    personalidade, mostrada quando a equipe vence. O ritmo dos rivais não muda. O segundo
+    piloto passa a ser escolhido entre 4 candidatos (`docs/pilotos_candidatos.md`); custo e
+    salário entram com o `custo_staff`.

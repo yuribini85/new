@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://drq4qs88c6v40"
-path="res://.godot/imported/mara_voss.png-d206e8faa0130dd7301090fcce4e2287.ctex"
+uid="uid://br68m6d2kqhhc"
+path="res://.godot/imported/ash_corwin.webp-8194c0001af6381ed4f0501bcc067533.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/mara_voss.png"
-dest_files=["res://.godot/imported/mara_voss.png-d206e8faa0130dd7301090fcce4e2287.ctex"]
+source_file="res://arte/pilotos/corpo/ash_corwin.webp"
+dest_files=["res://.godot/imported/ash_corwin.webp-8194c0001af6381ed4f0501bcc067533.ctex"]
 
 [params]
 

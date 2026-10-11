@@ -113,6 +113,13 @@ func test_escalacao_por_equipes() -> void:
 	while not c.escalacao("aberto", s2)[0]["segundo"]:
 		s2 += 1
 	igual(c.nome_piloto("aberto", "adv0_fraco", s2), "Azul Dois", "nome do segundo piloto")
+	# Perfil da equipe (fixture: Azul cautelosa, 0,25) e perda do segundo piloto.
+	var base := {"ritmo": 1.0, "consistencia": 1.0, "agressividade": 1.0}
+	var vaga: Dictionary = c.escalacao("aberto", s2)[0]
+	var p := c.piloto_na_vaga(base, vaga)
+	perto(float(p["agressividade"]), 0.25, 1e-6, "equipe cautelosa tenta passar menos")
+	verificar(float(p["consistencia"]) < 1.0, "segundo piloto com menos consistência")
+	perto(float(base["agressividade"]), 1.0, 1e-6, "a base não muda")
 	igual(c.nome_piloto("aberto", "adv0_fraco"), Carreira.sobrenome_fixo("aberto", 0), "sem semente: nome fixo")
 	j.free()
 	d.free()

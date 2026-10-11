@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mx7q3offn8kx"
-path="res://.godot/imported/ines_vale.webp-8baa9c9625aaae89f1ac885ea42fb3bb.ctex"
+uid="uid://dl0trai4fol8a"
+path="res://.godot/imported/ines_calloway.png-34447fa7c946e584038c1c64324cb05b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/corpo/ines_vale.webp"
-dest_files=["res://.godot/imported/ines_vale.webp-8baa9c9625aaae89f1ac885ea42fb3bb.ctex"]
+source_file="res://arte/pilotos/ines_calloway.png"
+dest_files=["res://.godot/imported/ines_calloway.png-34447fa7c946e584038c1c64324cb05b.ctex"]
 
 [params]
 

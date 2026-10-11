@@ -37,5 +37,20 @@
    "retrato": "res://arte/pilotos/jonas_reid.png",
    "provisorio": true
   }
+ },
+ "perfis_piloto": {
+  "_nota": "Agressividade dos rivais por perfil da equipe (decisão do usuário, 2026-10-11): chance de tentar a ultrapassagem quando está mais rápido. Valores provisórios até o playtest.",
+  "agressivo": {
+   "nome": "Agressivo",
+   "agressividade": 1.0
+  },
+  "equilibrado": {
+   "nome": "Equilibrado",
+   "agressividade": 0.75
+  },
+  "cauteloso": {
+   "nome": "Cauteloso",
+   "agressividade": 0.5
+  }
  }
 }

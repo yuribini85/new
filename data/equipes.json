@@ -31,11 +31,13 @@
     "retrato": "res://arte/pilotos/lucien_vale.png"
    },
    {
-    "id": "mara_voss",
-    "nome": "Mara Voss",
-    "retrato": "res://arte/pilotos/mara_voss.png"
+    "id": "nadia_voss",
+    "nome": "Nadia Voss",
+    "retrato": "res://arte/pilotos/nadia_voss.png"
    }
-  ]
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Rápidos e calculistas: atacam só quando a conta fecha."
  },
  {
   "id": "eq03_kaze_dynamics",
@@ -54,7 +56,9 @@
     "nome": "Hana Mori",
     "retrato": "res://arte/pilotos/hana_mori.png"
    }
-  ]
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Entram por dentro na curva sem pedir licença."
  },
  {
   "id": "eq04_ironclad_racing",
@@ -73,7 +77,9 @@
     "nome": "Soren Pike",
     "retrato": "res://arte/pilotos/soren_pike.png"
    }
-  ]
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Blindados: defendem a posição e esperam o erro dos outros."
  },
  {
   "id": "eq05_apex_dominion",
@@ -98,7 +104,9 @@
     "retrato": "res://arte/pilotos/nyra_sol.png"
    }
   ],
-  "dirigente": "Victor Hale"
+  "dirigente": "Victor Hale",
+  "perfil": "agressivo",
+  "personalidade": "A equipe do Victor Hale: vencer a qualquer preço."
  },
  {
   "id": "eq06_redline_union",
@@ -119,7 +127,9 @@
     "retrato": "res://arte/pilotos/lena_brook.png",
     "provisorio": true
    }
-  ]
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Giro no limite, freada no limite, paciência nenhuma."
  },
  {
   "id": "eq07_northstar_works",
@@ -139,7 +149,9 @@
     "retrato": "res://arte/pilotos/liv_arnesen.png",
     "provisorio": true
    }
-  ]
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Constância acima de tudo: chegam inteiros e somam pontos."
  },
  {
   "id": "eq08_black_circuit",
@@ -160,7 +172,9 @@
     "retrato": "res://arte/pilotos/ivy_corran.png",
     "provisorio": true
    }
-  ]
+  ],
+  "perfil": "agressivo",
+  "personalidade": "No box deles, corrida suja é corrida ganha."
  },
  {
   "id": "eq09_helix_racing",
@@ -181,7 +195,9 @@
     "retrato": "res://arte/pilotos/sasha_imre.png",
     "provisorio": true
    }
-  ]
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Engenheiros primeiro: ultrapassam onde a telemetria manda."
  },
  {
   "id": "eq10_ember_works",
@@ -202,7 +218,9 @@
     "retrato": "res://arte/pilotos/pia_lund.png",
     "provisorio": true
    }
-  ]
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Oficina pequena, brasa acesa: crescem no fim da prova."
  },
  {
   "id": "eq11_white_fang_racing",
@@ -221,7 +239,9 @@
     "nome": "Yuna Kess",
     "retrato": "res://arte/pilotos/yuna_kess.png"
    }
-  ]
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Caçadores: grudam no vácuo e mordem na primeira chance."
  },
  {
   "id": "eq12_brassline_motorsport",
@@ -240,7 +260,9 @@
     "nome": "Mina Rowe",
     "retrato": "res://arte/pilotos/mina_rowe.png"
    }
-  ]
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Tradição e polimento: não arriscam o carro por uma posição."
  },
  {
   "id": "eq13_tempest_garage",
@@ -259,7 +281,9 @@
     "nome": "Zara Keene",
     "retrato": "res://arte/pilotos/zara_keene.png"
    }
-  ]
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Imprevisíveis: ninguém sabe de onde vem o ataque."
  },
  {
   "id": "eq14_crown_vector",
@@ -278,7 +302,9 @@
     "nome": "Celeste Armand",
     "retrato": "res://arte/pilotos/celeste_armand.png"
    }
-  ]
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Dinheiro antigo, pilotagem limpa."
  },
  {
   "id": "eq15_gravelborn",
@@ -297,7 +323,9 @@
     "nome": "Nika Stroud",
     "retrato": "res://arte/pilotos/nika_stroud.png"
    }
-  ]
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Vieram do rali: roda com roda não assusta ninguém ali."
  },
  {
   "id": "eq16_meridian_gp",
@@ -312,11 +340,13 @@
     "retrato": "res://arte/pilotos/theo_maren.png"
    },
    {
-    "id": "selene_ward",
-    "nome": "Selene Ward",
-    "retrato": "res://arte/pilotos/selene_ward.png"
+    "id": "selene_ashby",
+    "nome": "Selene Ashby",
+    "retrato": "res://arte/pilotos/selene_ashby.png"
    }
-  ]
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Estratégia longa: largam devagar e chegam."
  },
  {
   "id": "eq17_obsidian_crest",
@@ -331,11 +361,13 @@
     "retrato": "res://arte/pilotos/magnus_rell.png"
    },
    {
-    "id": "ines_vale",
-    "nome": "Ines Vale",
-    "retrato": "res://arte/pilotos/ines_vale.png"
+    "id": "ines_calloway",
+    "nome": "Ines Calloway",
+    "retrato": "res://arte/pilotos/ines_calloway.png"
    }
-  ]
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Frios e calados; ninguém sabe o que planejam."
  },
  {
   "id": "eq18_copperhead_racing",
@@ -345,16 +377,18 @@
   "logo": "res://arte/equipes/logo_eq18.png",
   "pilotos": [
    {
-    "id": "ash_mercer",
-    "nome": "Ash Mercer",
-    "retrato": "res://arte/pilotos/ash_mercer.png"
+    "id": "ash_corwin",
+    "nome": "Ash Corwin",
+    "retrato": "res://arte/pilotos/ash_corwin.png"
    },
    {
     "id": "cleo_vane",
     "nome": "Cleo Vane",
     "retrato": "res://arte/pilotos/cleo_vane.png"
    }
-  ]
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Paciência de cobra: esperam o bote certo."
  },
  {
   "id": "eq19_cold_harbor",
@@ -373,7 +407,9 @@
     "nome": "Kaia Rehn",
     "retrato": "res://arte/pilotos/kaia_rehn.png"
    }
-  ]
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Cabeça fria: evitam briga roda a roda."
  },
  {
   "id": "eq20_storm_division",
@@ -388,10 +424,12 @@
     "retrato": "res://arte/pilotos/rex_arden.png"
    },
    {
-    "id": "mira_holt",
-    "nome": "Mira Holt",
-    "retrato": "res://arte/pilotos/mira_holt.png"
+    "id": "mira_danvers",
+    "nome": "Mira Danvers",
+    "retrato": "res://arte/pilotos/mira_danvers.png"
    }
-  ]
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Chegam como temporal no fim da corrida."
  }
 ]

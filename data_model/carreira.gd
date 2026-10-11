@@ -50,11 +50,8 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	var grid := escalacao(evento_id, semente)
 	for i in ev["adversarios"].size():
 		var p := _adversario(ev["adversarios"][i], i, condicao)
-		if i < grid.size() and grid[i]["segundo"]:
-			# Segundo piloto da equipe (decisão 36): mesma IA, menos consistência.
-			var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
-			p["piloto"] = p["piloto"].duplicate()
-			p["piloto"]["consistencia"] = float(p["piloto"]["consistencia"]) * (1.0 - perda)
+		if i < grid.size():
+			p["piloto"] = piloto_na_vaga(p["piloto"], grid[i])
 		participantes.append(p)
 	if companheiro != null:
 		participantes.append({
@@ -80,6 +77,20 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 ## vizinhos; em cada equipe, o segundo piloto corre com a chance de
 ## carreira.json, senão o principal. Fixo pela prova e pela semente.
 ## Lista na ordem dos adversários: {equipe, piloto: {id, nome}, segundo}.
+## Piloto de IA de uma vaga do grid: o perfil da equipe (agressivo,
+## equilibrado, cauteloso) diz quanto ele tenta passar; o segundo piloto da
+## equipe (decisão 36) corre com menos consistência.
+func piloto_na_vaga(base: Dictionary, vaga: Dictionary) -> Dictionary:
+	var p := base.duplicate()
+	var perfil: Dictionary = dados.carreira().get("perfis_piloto", {}).get(String(vaga["equipe"].get("perfil", "")), {})
+	if perfil.has("agressividade"):
+		p["agressividade"] = float(perfil["agressividade"])
+	if vaga["segundo"]:
+		var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
+		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
+	return p
+
+
 func escalacao(evento_id: String, semente: int) -> Array:
 	var ev: Dictionary = dados.evento(evento_id)
 	var cfg: Dictionary = dados.carreira()

@@ -2,6 +2,7 @@
 	"piloto_jogador": "perfeito",
 	"teto_offline_s": 3600,
 	"niveis": ["N1", "N2"],
+	"perfis_piloto": {"cauteloso": {"nome": "Cauteloso", "agressividade": 0.25}},
 	"niveis_licenca": {"": "N1", "b": "N2"},
 	"segundo_piloto": {"chance": 0.3, "perda_consistencia": 0.2},
 	"equipe_jogador": {"patrocinio": 50, "custo_staff": 70,

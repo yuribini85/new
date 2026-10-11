@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btshn7uii8rdp"
-path="res://.godot/imported/selene_ward.webp-79874acf8c76fc22447c08e84448db69.ctex"
+uid="uid://4u2jm4swbiin"
+path="res://.godot/imported/nadia_voss.webp-9fe8489767c750e5d1ffad599b896df2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/pilotos/corpo/selene_ward.webp"
-dest_files=["res://.godot/imported/selene_ward.webp-79874acf8c76fc22447c08e84448db69.ctex"]
+source_file="res://arte/pilotos/corpo/nadia_voss.webp"
+dest_files=["res://.godot/imported/nadia_voss.webp-9fe8489767c750e5d1ffad599b896df2.ctex"]
 
 [params]
 
