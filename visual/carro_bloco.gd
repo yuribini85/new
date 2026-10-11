@@ -236,7 +236,40 @@ func _sombra(c: float, l: float, alfa := 0.45) -> void:
 	add_child(sombra)
 
 
-## Modelo GLB: girado para a frente em +X, lataria pintada pelo atlas.
+## Pintura do modelo GLB. Material "Paint" (textura branca): só ele recebe a
+## cor; os outros ficam como vieram (desenhados dos dois lados, como o atlas).
+## Sem "Paint": atlas de cores, a lataria clara pintada pelo shader.
+static func _pintar_glb(mi: MeshInstance3D, cor: Color) -> void:
+	var tem_paint := false
+	for i in mi.get_surface_override_material_count():
+		var m := mi.get_active_material(i)
+		if m != null and m.resource_name.to_lower() == "paint":
+			tem_paint = true
+	if tem_paint:
+		for i in mi.get_surface_override_material_count():
+			var m := mi.get_active_material(i)
+			if not m is BaseMaterial3D:
+				continue
+			var nova := (m as BaseMaterial3D).duplicate() as BaseMaterial3D
+			nova.cull_mode = BaseMaterial3D.CULL_DISABLED
+			if m.resource_name.to_lower() == "paint":
+				nova.albedo_color = cor
+				nova.roughness = 0.55
+				nova.metallic_specular = 0.35
+			mi.set_surface_override_material(i, nova)
+		return
+	var atlas: Texture2D = null
+	var original := mi.get_active_material(0)
+	if original is BaseMaterial3D:
+		atlas = (original as BaseMaterial3D).albedo_texture
+	var mat := ShaderMaterial.new()
+	mat.shader = preload("res://visual/shaders/carro_glb.gdshader")
+	mat.set_shader_parameter("atlas", atlas)
+	mat.set_shader_parameter("pintura", cor)
+	mi.material_override = mat
+
+
+## Modelo GLB: girado para a frente em +X, lataria pintada (_pintar_glb).
 func _glb(id: String, cor: Color) -> CarroBloco:
 	var cena: PackedScene = load(PASTA_GLB + id + ".glb")
 	var modelo: Node3D = cena.instantiate()
@@ -245,15 +278,7 @@ func _glb(id: String, cor: Color) -> CarroBloco:
 	var caixa := AABB()
 	var primeiro := true
 	for mi: MeshInstance3D in modelo.find_children("*", "MeshInstance3D", true, false):
-		var atlas: Texture2D = null
-		var original := mi.get_active_material(0)
-		if original is BaseMaterial3D:
-			atlas = (original as BaseMaterial3D).albedo_texture
-		var mat := ShaderMaterial.new()
-		mat.shader = preload("res://visual/shaders/carro_glb.gdshader")
-		mat.set_shader_parameter("atlas", atlas)
-		mat.set_shader_parameter("pintura", cor)
-		mi.material_override = mat
+		_pintar_glb(mi, cor)
 		var b := mi.get_aabb()
 		caixa = b if primeiro else caixa.merge(b)
 		primeiro = false

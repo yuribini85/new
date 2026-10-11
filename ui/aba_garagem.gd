@@ -172,7 +172,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 	cenario_topo(palco)
 	# A arte dos carros é desenhada num ângulo mais alto que o carro 3D: o
 	# sprite sobe para assentar no chão iluminado do cenário.
-	var subir := SUBIR_SPRITE if ArteCarro.textura(c.id, "iso") != null else 0.0
+	var subir := SUBIR_SPRITE if not CarroBloco.tem_glb(c.id) and ArteCarro.textura(c.id, "iso") != null else 0.0
 	_vitrine.offset_top = -subir
 	_vitrine.offset_bottom = -subir
 	# Cabeçalho: só o nome (e se está correndo agora).

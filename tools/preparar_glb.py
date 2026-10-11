@@ -11,8 +11,14 @@ Para cada <id>.glb recebido (id de data/carros.json; um sufixo _textured é igno
 O modelo nunca é escalado nem esticado: medida fora da tolerância é erro, para
 corrigir na modelagem.
 
+Dois formatos de pintura: (1) atlas de cores com a lataria branca (a textura
+sai do GLB para <id>_atlas.png); (2) material "Paint" com textura branca mínima
+e as outras partes em materiais de cor (o GLB vai como veio; o jogo pinta só
+esse material).
+
 Uso:
-  python3 tools/preparar_glb.py PASTA_OU_ARQUIVOS...   instala em arte/carros3d/
+  python3 tools/preparar_glb.py PASTA_OU_ARQUIVOS... [--manter=id1,id2]   instala em arte/carros3d/
+                                                       (--manter: não substitui esses)
   python3 tools/preparar_glb.py --checar               confere os já instalados
 """
 from __future__ import annotations
@@ -204,12 +210,29 @@ def conferir(id_: str, js: dict, binario: bytes, ref: dict) -> tuple[list[str], 
     return erros, avisos
 
 
+def pintura_por_material(js: dict) -> bool:
+    """Formato com a lataria num material "Paint" (textura branca mínima) e as
+    outras partes em materiais de cor: o jogo pinta só esse material."""
+    return any(str(m.get("name", "")).lower() == "paint" for m in js.get("materials", []))
+
+
 def instalar(arquivo: pathlib.Path, ref_todas: dict) -> bool:
     from PIL import Image  # só para instalar
 
     id_ = arquivo.stem.removesuffix("_textured")
     js, binario = ler_glb(arquivo.read_bytes())
     erros, avisos = conferir(id_, js, binario, ref_todas.get(id_, {}))
+    if not erros and pintura_por_material(js):
+        # Sem atlas: o GLB vai como veio (a textura branca embutida é mínima).
+        for a in avisos:
+            print(f"  aviso {id_}: {a}")
+        DESTINO.mkdir(parents=True, exist_ok=True)
+        saida = DESTINO / f"{id_}.glb"
+        saida.write_bytes(arquivo.read_bytes())
+        for velho in DESTINO.glob(f"{id_}_*.png*"):
+            velho.unlink()
+        print(f"ok {id_}: {saida.stat().st_size // 1024} KB (pintura pelo material Paint)")
+        return True
     imagens = js.get("images", [])
     atlas = None
     if imagens:
@@ -251,7 +274,7 @@ def checar(ref_todas: dict) -> int:
         js, binario = ler_glb(arq.read_bytes())
         erros, _ = conferir(arq.stem, js, binario, ref_todas.get(arq.stem, {}))
         imgs = js.get("images", [])
-        if any("bufferView" in i for i in imgs):
+        if any("bufferView" in i for i in imgs) and not pintura_por_material(js):
             erros.append("textura embutida: passar pelo tools/preparar_glb.py")
         for i in imgs:
             uri = i.get("uri", "")
@@ -271,9 +294,14 @@ def main(args: list[str]) -> int:
     if not args:
         print(__doc__)
         return 1
+    manter = set()
+    for a in [x for x in args if x.startswith("--manter=")]:
+        manter |= set(a.split("=", 1)[1].split(","))
+    args = [x for x in args if not x.startswith("--")]
     arquivos = []
     for a in map(pathlib.Path, args):
         arquivos += sorted(a.glob("*.glb")) if a.is_dir() else [a]
+    arquivos = [a for a in arquivos if a.stem.removesuffix("_textured") not in manter]
     ok = sum(instalar(a, ref) for a in arquivos)
     print(f"{ok}/{len(arquivos)} instalados")
     return 0 if ok == len(arquivos) else 1

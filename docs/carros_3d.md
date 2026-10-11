@@ -44,6 +44,15 @@ sem sprite, o carro gerado em código; a troca é carro a carro.
   "Recalculate Outside") e sem faces duplicadas.
 - **Sem interior; vidros opacos** em cinza-escuro azulado.
 
+## Pintura: dois formatos aceitos
+
+1. **Material "Paint"** (o do pacote dos 386, 2026-10-11): um material chamado `Paint`
+   com textura branca mínima para a lataria; as outras partes em materiais de cor própria
+   (`Trim`, `Glass`, `Rubber`, `Wheel`, `Lens`, `Amber`, `Red`...). O jogo pinta só o
+   `Paint` e o GLB é instalado como veio.
+2. **Atlas de cores** (abaixo): um material com atlas; a lataria branca no atlas é pintada
+   pelo shader.
+
 ## Textura (atlas de cores)
 
 - Um material, um atlas de **cores chapadas** (sem luz, sombra ou desgaste pintados),
