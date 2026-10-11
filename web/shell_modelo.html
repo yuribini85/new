@@ -6,8 +6,7 @@
 		<title>$GODOT_PROJECT_NAME</title>
 		<style>
 /* Tela de carregamento da versão web: a mesma composição da tela inicial do
-   jogo (ui/inicio.gd: garagem escurecida, logo e barra), para a passagem do
-   navegador para o jogo não ter corte. Gerado por tools/gerar_shell_web.gd a
+   jogo (ui/inicio.gd: logo e barra), sobre fundo preto. Gerado por tools/gerar_shell_web.gd a
    partir de web/shell_modelo.html; não editar web/shell.html à mão. */
 html, body, #canvas {
 	margin: 0;
@@ -22,7 +21,7 @@ html, body {
 
 body {
 	color: #e8e2d4;
-	background-color: #14171c;
+	background-color: #000;
 	overflow: hidden;
 	touch-action: none;
 }
@@ -43,17 +42,9 @@ body {
 	   calculada no script abaixo a partir da área visível. Posições iguais às
 	   da tela inicial do jogo (ui/inicio.gd): a troca não dá salto. */
 	--u: 0.5px;
-	background-color: #1a2d49;
+	background-color: #000;
 	visibility: hidden;
 }
-
-#status-fundo {
-	position: absolute;
-	/* A paisagem fica maior que a tela pela folga do parallax, como no jogo. */
-	inset: -{{SOBRA}}%;
-	background: #1a2d49 url("data:image/jpeg;base64,{{FUNDO}}") center / cover no-repeat;
-}
-
 #status-logo {
 	position: absolute;
 	left: calc(56 * var(--u));
@@ -133,8 +124,7 @@ body {
 		</noscript>
 
 		<div id="status">
-			<div id="status-fundo"></div>
-			<img id="status-logo" src="data:image/png;base64,{{LOGO}}" alt="Second Driver">
+			<img id="status-logo" src="data:image/png;base64,{{LOGO}}" alt="Chrome &amp; Wreckage">
 			<div id="status-barra" class="indeterminada"><div id="status-preenche"></div></div>
 			<div id="status-etapa"></div>
 			<div id="status-aviso"></div>
