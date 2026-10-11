@@ -82,7 +82,7 @@ de fora: a simulação não tem esses termos por carro.
 | `amostra_dt_s` | intervalo das amostras para a visualização | definido (técnico) |
 | `tempo_max_s` | trava de segurança da corrida | definido (técnico) |
 | `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | 6,0 (comprimento de um carro + margem; confirmar em playtest) |
-| `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,0 — **a confirmar** (o GT2 não tem; sem ruído até o playtest) |
+| `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,02 — **a confirmar** (o GT2 não tem) |
 | `cda_m2` | área frontal × coeficiente de arrasto, igual para todos | 0,6 — **a confirmar** (o GT2 não guarda arrasto de carro de rua) |
 | `densidade_ar_kg_m3` | densidade do ar | 1,225 (nível do mar) |
 | `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração, **só para carro sem `peso_dianteiro`** (fixtures) | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 |

@@ -357,7 +357,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 53. **Desmanche**: além de vender, desmontar o carro vira crédito que só paga peças
     (antes do caixa), pela soma das peças compradas para ele.
 54. **Evolução do piloto por treino** aprovada: o treino sobe o **ritmo** do piloto
-    principal (a consistência quase não muda a corrida: `sigma_ruido` é 0). Teto por
+    principal (a consistência quase não muda a corrida: ~0,3% do tempo, ruído de 2% por volta). Teto por
     licença: o maior ritmo que encurta em até 10% o caminho até vencer as provas dela
     (`tools/calibrar_treino.py`, decisão do usuário em 2026-10-11). O segundo piloto não
     herda o treino.
