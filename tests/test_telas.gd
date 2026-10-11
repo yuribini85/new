@@ -465,3 +465,28 @@ func test_atualizar_a_tela_no_grid_nao_recomeca_a_contagem() -> void:
 	a.free()
 	j.free()
 	d.free()
+
+
+func test_tempo_da_corrida_nao_engasga_com_relogio_grosso() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var a: Control = preload("res://ui/aba_corrida.gd").new(d, j)
+	# Relógio do navegador: milissegundos inteiros; quadro de 1/60 s.
+	var dt := 1.0 / 60.0
+	var t_real := 10.0
+	var antes: float = a._tempo_suave(snappedf(t_real, 0.001), dt)
+	var passos := []
+	for k in 600:
+		t_real += dt
+		var agora: float = a._tempo_suave(snappedf(t_real, 0.001), dt)
+		if k > 120:
+			passos.append(agora - antes)
+		antes = agora
+	var mn: float = passos.min()
+	var mx: float = passos.max()
+	verificar(mx / mn < 1.01, "avanço por quadro estável (%.4f a %.4f)" % [mn, mx])
+	perto(antes, t_real, 0.01, "acompanha o relógio")
+	a.free()
+	j.free()
+	d.free()

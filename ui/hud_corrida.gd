@@ -33,6 +33,7 @@ const SEMAFORO_RAIO := 0.2
 const Y0 := 44.0
 ## Classificação relativa: abaixo da posição, faixas finas.
 const LISTA_TOPO := 104.0 + Y0
+const LISTA_BASE := 22.0  # folga entre a classificação e o pé da tela
 const LISTA_LARGURA := 246.0
 const LISTA_LINHA := 34.0
 const LISTA_ESPACO := 4.0
@@ -315,8 +316,10 @@ func _alfa_inst() -> float:
 	return lerpf(INST_MIN, 1.0, _sec)
 
 
+## Conta-giros no alto, abaixo da posição (o arco fica acima do eixo); a
+## classificação desce para o canto de baixo (pedido do usuário).
 func _centro_giro() -> Vector2:
-	return Vector2(22.0 + GIRO_RAIO, size.y - 30.0)
+	return Vector2(22.0 + GIRO_RAIO, LISTA_TOPO + GIRO_RAIO + 6.0)
 
 
 func _txt_inst(t: String, pos: Vector2, tam: int, cor: Color, peso := "semibold", alinhar := HORIZONTAL_ALIGNMENT_LEFT) -> void:
@@ -556,11 +559,12 @@ func _lista() -> void:
 	var fn := Tipografia.fonte_numero()
 	var fr := Tipografia.fonte("semibold")
 	var x0 := 18.0
-	var y := LISTA_TOPO
-	# Todos os competidores, em ordem; com muitos, as linhas encolhem para caber
-	# até a altura do conta-giros.
-	var livre := size.y - LISTA_TOPO - GIRO_RAIO - 90.0
+	# Todos os competidores, em ordem, no canto de baixo; com muitos, as linhas
+	# encolhem para caber entre o conta-giros e o pé da tela.
+	var topo_livre := _centro_giro().y + 40.0
+	var livre := size.y - LISTA_BASE - topo_livre
 	var linha := clampf(livre / maxf(lista.size(), 1.0) - LISTA_ESPACO, 22.0, LISTA_LINHA)
+	var y := maxf(topo_livre, size.y - LISTA_BASE - lista.size() * (linha + LISTA_ESPACO))
 	for i in lista.size():
 		var it: Dictionary = lista[i]
 		var voce: bool = it.get("voce", false)

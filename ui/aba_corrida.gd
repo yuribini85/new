@@ -50,6 +50,12 @@ var _semente_mostrada := 0
 ## Corrida cuja largada (3-2-1 ou espera no grid) já foi tratada: remontar a
 ## vista (atualizar) não recomeça a contagem.
 var _semente_largada := 0
+## Tempo mostrado suavizado (_tempo_suave): valor, alvo do quadro anterior e
+## taxa medida (s de corrida por s de quadro).
+var _t_suave := -1.0
+var _t_alvo_antes := 0.0
+var _taxa_tempo := 1.0
+const SALTO_TEMPO_S := 0.5
 var _nomes := {}  # id do participante -> nome do carro
 var _nomes_curtos := {}  # id -> nome na classificação do HUD
 var _equipes := {}  # id -> nome da equipe (vazio: sem equipe)
@@ -357,7 +363,8 @@ func _process(delta: float) -> void:
 		_atraso += delta
 	else:
 		_atraso = move_toward(_atraso, 0.0, delta * ALCANCE)
-	_visual.tempo = clampf(agora - float(f["inicio"]) - _atraso, 0.0, _visual.duracao())
+	_visual.tempo = clampf(_tempo_suave(clampf(agora - float(f["inicio"]) - _atraso, 0.0, _visual.duracao()), delta),
+			0.0, _visual.duracao())
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
@@ -381,6 +388,24 @@ func _process(delta: float) -> void:
 	_eventos(ordem)
 
 
+## Tempo da corrida mostrada sem engasgo: o relógio do sistema tem resolução
+## grossa (1 ms no navegador) e não anda junto com o quadro, então o tempo lido
+## dele direto oscila alguns % a cada quadro (o carro acelera e reduz na reta).
+## Aqui o tempo avança pelo delta do quadro na taxa medida do relógio
+## (aceleração, atraso) e só corrige a diferença devagar; salto grande
+## (corrida nova, volta do segundo plano) vai direto.
+func _tempo_suave(alvo: float, delta: float) -> float:
+	if _t_suave < 0.0 or delta <= 0.0 or absf(alvo - _t_suave) > SALTO_TEMPO_S:
+		_t_suave = alvo
+		_t_alvo_antes = alvo
+		return alvo
+	_taxa_tempo = lerpf(_taxa_tempo, clampf((alvo - _t_alvo_antes) / delta, 0.0, 20.0), 0.05)
+	_t_alvo_antes = alvo
+	_t_suave += delta * _taxa_tempo
+	_t_suave += (alvo - _t_suave) * (1.0 - exp(-delta * 2.0))
+	return _t_suave
+
+
 ## Nova corrida na tela: minimapa, 3D, nomes, cabeçalho e diretor do zero.
 func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	var ev: Dictionary = dados.evento(f["evento_id"])
@@ -401,6 +426,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		categorias[EquipeJogador.ID] = comp_carro.base
 		pinturas[EquipeJogador.ID] = CarroBloco.cor_do_carro(comp_carro)
 	_visual.tempo = clampf(agora - float(f["inicio"]), 0.0, _visual.duracao())
+	_t_suave = -1.0
 	_visual3d.chegada = 0.0
 	_visual3d.mostrar(_pista, _visual, categorias, pinturas)
 	_area.visible = true
