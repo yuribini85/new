@@ -134,6 +134,11 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 	var impaciente: bool = c["t_sem_golpe"] > paciencia
 	if impaciente:
 		c["re"] = false
+		# Ainda sem acertar: os dois perseguindo um ao outro entram em órbita.
+		# A cada `impaciencia_recua_s`, recua para abrir distância e volta reto.
+		var passo := float(params.get("impaciencia_recua_s", 0.0))
+		if passo > 0.0 and fmod(c["t_sem_golpe"] - paciencia, passo) < dt:
+			c["t_recua"] = float(params["recuperacao_s"]) * 0.6
 	# Recuperação: recua no sentido contrário ao ataque, sem virar.
 	if c["t_recua"] > 0.0:
 		c["t_recua"] -= dt
