@@ -86,8 +86,12 @@ func _rodar() -> void:
 			var r1 := _corrida(dados, jogador, licencas, par[0], par[1], s)
 			var ganho := float(r0["minha"]) - float(r1["minha"])  # volta média mais curta
 			var falta := float(r0["minha"]) - float(r0["rival"])
-			# Perdeu na base: vence só acima dela, mesmo com a volta média já melhor.
-			limiares.append(maxf(base + delta * falta / ganho, base + 1e-6) if ganho > 1e-9 else INF)
+			if falta <= 0.0:
+				# Perdeu com a volta média já melhor (largada, tráfego): o ritmo não
+				# diz quanto falta; conta só se vencer com base + delta.
+				limiares.append(base + delta if r1["venceu"] else INF)
+			else:
+				limiares.append(base + delta * falta / ganho if ganho > 1e-9 else INF)
 	piloto["ritmo"] = base
 	var ordenados := Array(limiares)
 	ordenados.sort()

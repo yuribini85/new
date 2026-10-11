@@ -58,6 +58,6 @@
    "PRO": 0.7,
    "ELITE": 0.7
   },
-  "_teto": "GERADO por tools/calibrar_treino.gd (não editar à mão): maior consistência, por maior licença do jogador, que encurta em até 10% (meta do usuário) o número esperado de corridas até vencer as provas dessa licença."
+  "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde)."
  }
 }

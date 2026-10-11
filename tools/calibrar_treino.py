@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Roda tools/calibrar_treino.gd para cada licença em que o treino existe (em
-paralelo) e grava os tetos em data/equipe.json → treino.teto. O teto nunca
-desce de uma licença para a seguinte.
+paralelo) e grava os tetos em data/equipe.json → treino.teto. O treino não se
+perde ao subir de licença, então o teto de cada licença é o menor entre o dela e
+o das seguintes: a meta vale em todas.
 
 Uso: python3 tools/calibrar_treino.py CAMINHO_DO_GODOT [--eventos=12 --carros=24 --sementes=1 --meta=0.1 --passo=0.001 --ate=0.05 --delta=0.02]
 """
@@ -38,11 +39,11 @@ def main(args: list[str]) -> int:
     if set(tetos) != set(licencas):
         print("faltou medir:", sorted(set(licencas) - set(tetos)), file=sys.stderr)
         return 1
-    anterior = 0.0
-    for lic in licencas:
-        t = max(float(tetos[lic]["teto"]), anterior)
+    seguinte = float("inf")
+    for lic in reversed(licencas):
+        t = min(float(tetos[lic]["teto"]), seguinte)
         equipe["treino"]["teto"][lic] = round(t, 4)
-        anterior = t
+        seguinte = t
     EQUIPE.write_text(json.dumps(equipe, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("tetos gravados:", equipe["treino"]["teto"])
     return 0
