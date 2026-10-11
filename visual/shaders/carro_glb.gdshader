@@ -1,4 +1,5 @@
 shader_type spatial;
+render_mode cull_disabled;
 // Carro em modelo 3D (GLB) com atlas de cores chapadas: a lataria vem quase
 // branca no atlas e recebe a pintura; o resto (pneus, vidros, lanternas,
 // grades) fica como está.
