@@ -47,6 +47,9 @@ var _cameras: Control
 var _cameras_botoes: Array = []
 var _ocioso := 0.0
 var _semente_mostrada := 0
+## Corrida cuja largada (3-2-1 ou espera no grid) já foi tratada: remontar a
+## vista (atualizar) não recomeça a contagem.
+var _semente_largada := 0
 var _nomes := {}  # id do participante -> nome do carro
 var _nomes_curtos := {}  # id -> nome na classificação do HUD
 var _equipes := {}  # id -> nome da equipe (vazio: sem equipe)
@@ -448,6 +451,9 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_s_jogador = _visual.distancia("jogador")
 	_atraso = 0.0
 	_pausa = 0.0
+	if f["semente"] == _semente_largada and _visual.tempo < 0.5:
+		return  # a mesma corrida remontada ainda no grid: a contagem segue
+	_semente_largada = f["semente"]
 	if _visual.tempo < 0.5 and not segurar_largada and dialogo_aberto.call():
 		segurar()  # a corrida nova não larga debaixo de uma conversa
 	if _visual.tempo < 0.5 and not segurar_largada:

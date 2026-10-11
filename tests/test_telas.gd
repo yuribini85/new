@@ -435,3 +435,33 @@ func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
 	var dim := c.dimensoes()
 	verificar(dim.x > 4.0 and dim.x < 5.0 and dim.y < dim.x, "comprimento no eixo do carro (%s)" % dim)
 	c.free()
+
+
+func test_atualizar_a_tela_no_grid_nao_recomeca_a_contagem() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000)
+	j.carreira = Carreira.new(d, j)
+	j.fila_ctrl = Fila.new(j.carreira, j, 3600.0)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.carro_ativo = uid
+	var a: Control = preload("res://ui/aba_corrida.gd").new(d, j)
+	a.size = Vector2(720, 1100)
+	_raiz().add_child(a)
+	j.fila_ctrl.iniciar("aberto", uid, 1, Aceleracao.agora(j))
+	a.atualizar()
+	a._process(0.0)
+	perto(a._contagem, a.CONTAGEM_S, 1e-6, "corrida nova: 3-2-1")
+	# O principal atualiza a tela a cada mudança (timer, cena, destaque): a
+	# contagem segue de onde estava, senão a primeira luz acende para sempre.
+	for k in 5:
+		a._process(0.5)
+		a.atualizar()
+	a._process(0.0)
+	perto(a._contagem, a.CONTAGEM_S - 2.5, 1e-6, "contagem segue depois de atualizar")
+	a._process(0.6)
+	igual(a._contagem, -1.0, "largou")
+	a.free()
+	j.free()
+	d.free()
