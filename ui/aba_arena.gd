@@ -9,6 +9,10 @@ signal luta(dados_luta: Dictionary)
 
 var _uid := -1
 
+## Faixa do emblema no cartão da luta (a mesma do traçado nos cartões de prova).
+const LARGURA_FAIXA := 210.0
+const ALTURA_FAIXA := 200.0
+
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Arena")
@@ -41,6 +45,15 @@ func construir() -> void:
 func _cartao_luta(esc: Carro, motivo: String) -> void:
 	var pode := motivo == ""
 	var v := cartao_com_fundo(arte("banner_arena"), pode)
+	# Como os cartões de prova: faixa da esquerda com o estado e o emblema da
+	# arena (no lugar do traçado); à direita, o título, rivais e prêmio.
+	var corpo := HBoxContainer.new()
+	corpo.add_theme_constant_override("separation", 14)
+	v.add_child(corpo)
+	var faixa := Control.new()
+	faixa.custom_minimum_size = Vector2(LARGURA_FAIXA, ALTURA_FAIXA)
+	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	corpo.add_child(faixa)
 	var estado := Label.new()
 	estado.text = "ABERTA" if pode else "BLOQUEADA"
 	Tipografia.rotulo(estado, "semibold", 18)
@@ -52,30 +65,41 @@ func _cartao_luta(esc: Carro, motivo: String) -> void:
 	sb.content_margin_top = 2
 	sb.content_margin_bottom = 2
 	estado.add_theme_stylebox_override("normal", sb)
-	estado.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	v.add_child(estado)
-	var sobre := rotulo("ARENA DE DESTRUIÇÃO", 0, COR_SECUNDARIA, v)
+	faixa.add_child(estado)
+	var emblema := TextureRect.new()
+	emblema.texture = arte("emblema_arena")
+	emblema.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	emblema.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	emblema.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	emblema.offset_top = 36
+	emblema.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if not pode:
+		emblema.modulate = Color(0.6, 0.6, 0.62)
+	faixa.add_child(emblema)
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 4)
+	corpo.add_child(col)
+	var sobre := rotulo("ARENA DE DESTRUIÇÃO", 0, COR_SECUNDARIA, col)
 	Tipografia.rotulo(sobre, "medium", 18)
 	var titulo := Label.new()
 	titulo.text = "ÚLTIMO DE PÉ VENCE"
-	Tipografia.rotulo(titulo, "semibold", 40)
+	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	Tipografia.rotulo(titulo, "semibold", 36)
 	titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87) if pode else COR_SECUNDARIA)
-	v.add_child(titulo)
+	col.add_child(titulo)
 	var p: Dictionary = dados.arena()
 	var linha := "%d rivais" % int(p.get("rivais", 3))
 	if esc != null:
 		linha += " de potência parecida (%d cv)" % roundi(esc.atributos_efetivos("seco")["potencia"])
-	rotulo(linha, FONTE_PEQUENA, Color(0.86, 0.87, 0.9), v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rotulo(linha, FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# Prêmio: o de referência (vitória com uma eliminação), com a moeda.
+	var lpr := rotulo("Vitória com 1 eliminação", 0, COR_SECUNDARIA, col)
+	Tipografia.rotulo(lpr, "medium", 18)
 	var pr := HBoxContainer.new()
 	pr.add_theme_constant_override("separation", 8)
-	v.add_child(pr)
-	var lpr := rotulo("Vitória com 1 eliminação ≈", 0, COR_SECUNDARIA, pr)
-	Tipografia.rotulo(lpr, "medium", 20)
-	lpr.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	lpr.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	lpr.autowrap_mode = TextServer.AUTOWRAP_OFF
-	var lv := rotulo(dinheiro(ArenaCarreira.premio_base(dados)), 0, COR_DESTAQUE if pode else COR_SECUNDARIA, pr)
+	col.add_child(pr)
+	var lv := rotulo("≈ " + dinheiro(ArenaCarreira.premio_base(dados)), 0, COR_DESTAQUE if pode else COR_SECUNDARIA, pr)
 	Tipografia.numero(lv, 30)
 	lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
