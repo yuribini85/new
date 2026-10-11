@@ -364,7 +364,7 @@ func _comprar_sem_anuncios() -> void:
 ## Luta da arena (já resolvida e aplicada): por cima de tudo; no fim, a
 ## conversa do resultado e a tela atualizada.
 func _abrir_luta(dados_luta: Dictionary) -> void:
-	var luta := LutaArena.new(dados_luta, dados.arena())
+	var luta := LutaArena.new(dados_luta, dados_luta.get("params", dados.arena()))
 	add_child(luta)
 	luta.acabou.connect(func(f: Dictionary):
 		if jogador.historia != null:

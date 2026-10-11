@@ -5,9 +5,10 @@ extends RefCounted
 ## resultado com e sem amostras, como a corrida (Simulacao).
 ##
 ## Carro: cápsula (segmento entre os eixos + raio = meia largura), massa = peso,
-## posição, rumo e velocidade contínuos. Contato carro–carro e carro–muro (o
-## muro é um círculo de raio `raio_m`): impulso na normal com restituição e
-## atrito; o ponto do contato fora do centro gira o carro.
+## posição, rumo e velocidade contínuos. Contato carro–carro, carro–muro e
+## carro–obstáculo (a forma da arena, ArenaForma: muro em polígono, ilhas e o
+## chão irregular, cuja inclinação puxa os carros): impulso na normal com
+## restituição e atrito; o ponto do contato fora do centro gira o carro.
 ##
 ## Dano em seis regiões (FRENTE_E, FRENTE_D, LADO_E, LADO_D, TRAS_E, TRAS_D),
 ## de 0 a 1: a energia do impacto E = ½·m_efetiva·v_normal² (v_normal = velocidade
@@ -55,7 +56,7 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
 	var dt := float(params["dt_s"])
-	var raio := float(params["raio_m"])
+	var forma := ArenaForma.de(params)
 	var v_ref := float(params["v_ref_kmh"]) * KMH
 	var carros := []
 	var n := participantes.size()
@@ -69,9 +70,10 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"W": float(a.get("largura", LARGURA_M)),
 			"pot": float(a["potencia"]) * CV_PARA_W, "mu": float(a["aderencia"]),
 			# Largada nas extremidades, junto ao muro (decisão do usuário).
-			"pos": p.get("pos", Vector2.from_angle(ang) * raio * float(params.get("largada_raio_frac", 0.6))),
+			"pos": p.get("pos", forma.largada(ang, float(params.get("largada_raio_frac", 0.6)))),
 			# Largada em roda, todos de frente para o centro (decisão do usuário).
-			"rumo": float(p.get("rumo", ang + PI)), "vel": p.get("vel", Vector2.ZERO), "w": 0.0,
+			"rumo": float(p.get("rumo", (forma.centro - forma.largada(ang, 0.85)).angle())),
+			"vel": p.get("vel", Vector2.ZERO), "w": 0.0,
 			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,
 			"por": "", "ultimo_golpe": "", "giro_acum": 0.0, "giros": 0, "eliminou": 0,
 			"acel_fixo": p.get("acelerador", null), "agress": float(p.get("piloto", {}).get("agressividade", 0.5)),
@@ -92,10 +94,10 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 	var tempo_max := float(params["tempo_max_s"])
 	while t < tempo_max:
 		for i in n:
-			_dirigir(carros, i, params, rng, dt)
+			_dirigir(carros, i, params, rng, dt, forma)
 		for c in carros:
-			_mover(c, dt)
-		_colisoes(carros, contatos, params, eventos, t)
+			_mover(c, dt, forma)
+		_colisoes(carros, contatos, params, eventos, t, forma)
 		_giros(carros, params, eventos, t)
 		t += dt
 		for c in carros:
@@ -113,7 +115,8 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 
 
 ## IA: alvo, interceptação, ré com a frente quase destruída e recuperação.
-static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumberGenerator, dt: float) -> void:
+static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumberGenerator, dt: float,
+		forma: ArenaForma) -> void:
 	var c: Dictionary = carros[i]
 	c["cmd_acel"] = 0.0
 	c["cmd_giro"] = 0.0
@@ -171,11 +174,20 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 		rumo_alvo += PI  # a traseira aponta para o alvo
 	var v_alvo := float(params["v_ataque_kmh"]) * KMH * float(perfil.get("v_mult", 1.0)) * (1.2 if impaciente else 1.0)
 	# Muro à frente: a posição prevista sai da arena → vira para o centro e reduz.
-	var raio := float(params["raio_m"])
+	var margem := float(params["margem_muro_m"])
 	var previsto: Vector2 = c["pos"] + c["vel"] * float(params["olhar_muro_s"])
-	if previsto.length() > raio - float(params["margem_muro_m"]):
-		rumo_alvo = (-c["pos"]).angle() + (PI if c["re"] else 0.0)
+	if forma.muro_perto(previsto)[0] < margem:
+		rumo_alvo = (forma.centro - c["pos"]).angle() + (PI if c["re"] else 0.0)
 		v_alvo = float(params["v_curva_kmh"]) * KMH
+	else:
+		# Obstáculo à frente: contorna pelo lado para onde já está indo.
+		var ob := forma.obstaculo_perto(previsto)
+		if float(ob[0]) < margem * 0.6:
+			var tangente: Vector2 = (ob[1] as Vector2).orthogonal()
+			if tangente.dot(c["vel"]) < 0.0:
+				tangente = -tangente
+			rumo_alvo = (tangente + ob[1] * 0.6).angle() + (PI if c["re"] else 0.0)
+			v_alvo = float(params["v_curva_kmh"]) * KMH
 	# Erro de rumo com um pouco de imprecisão (consistência do piloto).
 	var erro := wrapf(rumo_alvo - float(c["rumo"]), -PI, PI) + rng.randfn(0.0, (1.0 - c["consist"]) * 0.2)
 	c["cmd_giro"] = clampf(erro * 3.0, -1.0, 1.0)
@@ -229,7 +241,9 @@ static func _escolher_alvo(carros: Array, c: Dictionary, vivos: Array, modo: Str
 
 ## Integra: força motriz (potência limitada pela aderência), giro limitado pela
 ## velocidade e aderência lateral que tira o escorregamento aos poucos.
-static func _mover(c: Dictionary, dt: float) -> void:
+static func _mover(c: Dictionary, dt: float, forma: ArenaForma) -> void:
+	# Chão irregular: a gravidade puxa morro abaixo (destroço também desliza).
+	c["vel"] -= forma.gradiente(c["pos"]) * G * dt
 	var frente := Vector2.from_angle(c["rumo"])
 	var lado := frente.orthogonal()
 	var v_long: float = c["vel"].dot(frente)
@@ -285,25 +299,35 @@ static func _mais_proximos(p1: Vector2, q1: Vector2, p2: Vector2, q2: Vector2) -
 	return [p1 + d1 * s, p2 + d2 * u]
 
 
-static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, eventos: Array, t: float) -> void:
-	var raio := float(params["raio_m"])
+static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, eventos: Array, t: float,
+		forma: ArenaForma) -> void:
 	for c in carros:
 		c["encostado"] = false
 	var tocando := {}
 	for i in carros.size():
 		var a: Dictionary = carros[i]
 		var sa := _segmento(a)
-		# Muro: cada ponta da cápsula contra o círculo.
+		# Muro (o polígono) e obstáculos: cada ponta da cápsula.
 		for ponta in sa:
-			var dist: float = ponta.length() + a["W"] * 0.5
-			if dist > raio:
-				var nrm: Vector2 = -ponta.normalized()  # aponta para dentro
+			var pm := forma.muro_perto(ponta)
+			var pen: float = a["W"] * 0.5 - float(pm[0])
+			if pen > 0.0:
+				var nrm: Vector2 = pm[1]  # aponta para dentro
 				var ponto: Vector2 = ponta - nrm * a["W"] * 0.5
-				a["pos"] += nrm * (dist - raio)
+				a["pos"] += nrm * pen
 				var chave := "%d:muro" % i
 				tocando[chave] = true
 				a["encostado"] = true
 				_impulso(a, {}, ponto, nrm, params, eventos, t, not contatos.has(chave))
+			var ob := forma.obstaculo_perto(ponta)
+			var pen_o: float = a["W"] * 0.5 - float(ob[0])
+			if pen_o > 0.0:
+				var nrm_o: Vector2 = ob[1]
+				a["pos"] += nrm_o * pen_o
+				var chave_o := "%d:obst" % i
+				tocando[chave_o] = true
+				a["encostado"] = true
+				_impulso(a, {}, ponta - nrm_o * a["W"] * 0.5, nrm_o, params, eventos, t, not contatos.has(chave_o))
 		for j in range(i + 1, carros.size()):
 			var b: Dictionary = carros[j]
 			var sb := _segmento(b)

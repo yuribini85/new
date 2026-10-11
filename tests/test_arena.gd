@@ -176,3 +176,47 @@ func test_arena_na_carreira() -> void:
 	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "sobrou 1 carro: não entra mais")
 	j.free()
 	d.free()
+
+
+func test_chao_irregular_puxa_morro_abaixo_e_formas_seguram_os_carros() -> void:
+	var p := _params()
+	var forma := {"id": "teste", "muro": [[40, -40], [40, 40], [-40, 40], [-40, -40]],
+			"obstaculos": [{"c": [0, 20], "r": 4.0}], "relevo": [{"c": [0, 0], "r": 30.0, "h": -4.0}]}
+	p["forma"] = forma
+	p["tempo_max_s"] = 3.0
+	# O mesmo arranque descendo a encosta da cratera anda mais que no plano.
+	var plano := p.duplicate()
+	plano["forma"] = forma.duplicate()
+	plano["forma"]["relevo"] = []
+	var anda := func(params: Dictionary) -> float:
+		var desce := _carro("desce", 1200.0, 120.0, Vector2(22, 0), PI, Vector2.ZERO, 0.5)
+		var longe := _carro("longe", 1200.0, 120.0, Vector2(-30, -30), 0.0, Vector2.ZERO, 0.0)
+		var rr := Arena.correr([desce, longe], params, 1, true)
+		return 22.0 - float(rr["amostras"][-1]["desce"]["pos"].x)
+	var com: float = anda.call(p)
+	var sem: float = anda.call(plano)
+	verificar(com > sem + 0.5, "descendo anda mais (%.1f m contra %.1f m no plano)" % [com, sem])
+	var r: Dictionary
+	# Acelerando contra a ilha e contra o muro: não atravessa nenhum.
+	p["tempo_max_s"] = 6.0
+	var ilha := _carro("ilha", 1200.0, 200.0, Vector2(0, 8), PI / 2.0, Vector2.ZERO, 1.0)
+	var muro := _carro("muro", 1200.0, 200.0, Vector2(20, -20), 0.0, Vector2.ZERO, 1.0)
+	r = Arena.correr([ilha, muro], p, 1, true)
+	var fim: Dictionary = r["amostras"][-1]
+	verificar((fim["ilha"]["pos"] - Vector2(0, 20)).length() >= 4.0, "não entra na ilha")
+	verificar(fim["muro"]["pos"].x <= 40.0, "não passa do muro em polígono")
+	# Largada: dentro do polígono, perto do muro, fora das ilhas.
+	var f := ArenaForma.de(p)
+	for k in 8:
+		var q := f.largada(TAU * k / 8.0, 0.85)
+		verificar(f.dentro(q) and f.obstaculo_perto(q)[0] > 0.0, "largada %d dentro e fora da ilha" % k)
+
+
+func test_arenas_do_jogo_tem_a_area_do_circulo() -> void:
+	var p := _params()
+	var alvo := PI * pow(float(p["raio_m"]), 2.0)
+	igual(p["arenas"].size(), 4, "quatro arenas")
+	for a in p["arenas"]:
+		var q := p.duplicate()
+		q["forma"] = a
+		perto(ArenaForma.de(q).area(), alvo, alvo * 0.01, "%s com a área do círculo" % a["id"])

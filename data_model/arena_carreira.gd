@@ -78,7 +78,20 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int) -> Dictio
 		modelos[id] = m
 		nomes[id] = String(pilotos.pop_at(rng.randi_range(0, pilotos.size() - 1))["nome"]) if not pilotos.is_empty() \
 				else "Rival %d" % (k + 1)
-	return {"participantes": parts, "modelos": modelos, "nomes": nomes}
+	# A arena da luta: sorteada entre as abertas pelas licenças do jogador
+	# (decisão 59); a forma vai nos parâmetros da simulação e da tela.
+	var params := p.duplicate()
+	var abertas := arenas_abertas(dados, jogador)
+	if not abertas.is_empty():
+		params["forma"] = abertas[rng.randi_range(0, abertas.size() - 1)]
+	return {"participantes": parts, "modelos": modelos, "nomes": nomes, "params": params}
+
+
+## Arenas (data/arena.json → arenas) cuja licença o jogador já tem.
+static func arenas_abertas(dados: Node, jogador: Node) -> Array:
+	var ordem := GestaoEquipe.ordem(dados)
+	var maior := GestaoEquipe.maior_licenca(dados, jogador)
+	return dados.arena().get("arenas", []).filter(func(a): return ordem.find(String(a.get("licenca", ""))) <= maior)
 
 
 ## Pontos de um participante: giros provocados (pelo maior limite de cada

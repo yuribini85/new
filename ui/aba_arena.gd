@@ -137,12 +137,12 @@ func _entrar(uid: int) -> void:
 	var montada := ArenaCarreira.montar(dados, jogador, uid, semente)
 	var carro: Carro = jogador.garagem.carro(uid)
 	var pintura := {"jogador": Color(carro.cor)} if String(carro.cor) != "" else {}
-	var resultado := Arena.correr(montada["participantes"], dados.arena(), semente, true)
+	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
 	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado)
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
-			"pinturas": pintura, "faixas": {"jogador": carro.faixas}, "final": final})
+			"pinturas": pintura, "faixas": {"jogador": carro.faixas}, "final": final, "params": montada["params"]})
 
 
 func _registro() -> void:

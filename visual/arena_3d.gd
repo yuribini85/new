@@ -19,6 +19,11 @@ const TAMANHO_MIN := 28.0
 const TAMANHO_BRIGA_MAX := 72.0  # seguindo a sua briga, a câmera não abre além disso
 const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
+## Chão em malha: passo da grade e quanto passa do muro (m).
+const CHAO_PASSO_M := 1.5
+const CHAO_MARGEM_M := 10.0
+## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
+const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
 
 ## Tempo atual da luta (s); quem mostra avança.
@@ -40,6 +45,7 @@ var _fumaca := {}  # id -> CPUParticles3D
 var _eventos_vistos := 0
 var _estagios := 5
 var _raio := 45.0
+var _forma: ArenaForma  # muro, obstáculos e relevo (a mesma forma da simulação)
 var _centro := Vector3.ZERO
 var _tamanho := 60.0
 var _tremor := 0.0
@@ -58,11 +64,13 @@ func _init() -> void:
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color(0.11, 0.1, 0.1)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.62, 0.6, 0.58)
+	env.ambient_light_color = Color(0.5, 0.48, 0.46)
 	amb.environment = env
 	_mundo.add_child(amb)
 	var luz := DirectionalLight3D.new()
-	luz.rotation = Vector3(-1.0, 0.6, 0)
+	# Luz baixa, de lado: as encostas do chão irregular ganham luz e sombra.
+	luz.rotation = Vector3(-0.55, 0.75, 0)
+	luz.shadow_enabled = not Preferencias.efeitos_leves
 	luz.light_color = Color(1.0, 0.86, 0.7)
 	_mundo.add_child(luz)
 	_camera = Camera3D.new()
@@ -87,6 +95,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_amostras = resultado.get("amostras", [])
 	_estagios = int(params.get("estagios", 5))
 	_raio = float(params.get("raio_m", 45.0))
+	_forma = ArenaForma.de(params)
 	_i = 0
 	_eventos_vistos = 0
 	tempo = 0.0
@@ -127,8 +136,15 @@ func atualizar(delta: float) -> void:
 		var sb: Dictionary = b[id]
 		var p: Vector2 = sa["pos"].lerp(sb["pos"], u)
 		var c: Node3D = _carros[id]
-		c.position = Vector3(p.x, 0.0, -p.y)
-		c.rotation.y = lerp_angle(float(sa["rumo"]), float(sb["rumo"]), u)
+		c.position = Vector3(p.x, _forma.altura(p), -p.y)
+		var rumo := lerp_angle(float(sa["rumo"]), float(sb["rumo"]), u)
+		c.rotation.y = rumo
+		# Chão irregular: o carro inclina com ele (frente sobe na subida; o lado
+		# mais alto do terreno levanta o lado do carro).
+		var g := _forma.gradiente(p)
+		var f := Vector2.from_angle(rumo)
+		c.rotation.z = atan(g.dot(f))
+		c.rotation.x = atan(g.dot(Vector2(-f.y, f.x)))
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
 	_eventos(delta)
 	if delta > 0.0:
@@ -444,36 +460,98 @@ static func _textura_amassado() -> Texture2D:
 ## Chão de terra batida (disco), muro de pneus empilhados no raio e um anel de
 ## concreto por fora.
 func _construir_arena() -> void:
+	_chao()
+	_pneus_muro()
+	_ilhas()
+
+
+## Chão em malha com o relevo da arena (lombadas, crateras, a borda que sobe
+## para o muro), na textura de terra; a luz baixa marca as encostas.
+func _chao() -> void:
+	var mn := Vector2(INF, INF)
+	var mx := Vector2(-INF, -INF)
+	for q in _forma.muro:
+		mn = mn.min(q)
+		mx = mx.max(q)
+	mn -= Vector2.ONE * CHAO_MARGEM_M
+	mx += Vector2.ONE * CHAO_MARGEM_M
+	var nx := int(ceil((mx.x - mn.x) / CHAO_PASSO_M))
+	var ny := int(ceil((mx.y - mn.y) / CHAO_PASSO_M))
+	var alturas := PackedFloat32Array()
+	alturas.resize((nx + 1) * (ny + 1))
+	for j in ny + 1:
+		for i in nx + 1:
+			alturas[j * (nx + 1) + i] = _forma.altura(mn + Vector2(i, j) * CHAO_PASSO_M)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for j in ny:
+		for i in nx:
+			var cantos := [[i, j], [i + 1, j], [i, j + 1], [i + 1, j], [i + 1, j + 1], [i, j + 1]]
+			for k in [0, 2, 1, 3, 5, 4]:
+				var ci: int = cantos[k][0]
+				var cj: int = cantos[k][1]
+				var q := mn + Vector2(ci, cj) * CHAO_PASSO_M
+				var h: float = alturas[cj * (nx + 1) + ci]
+				# Luz pré-calculada pela inclinação (a encosta virada para a luz
+				# clareia, a outra escurece) e o fundo um pouco mais escuro.
+				var gx := (alturas[cj * (nx + 1) + mini(ci + 1, nx)] - alturas[cj * (nx + 1) + maxi(ci - 1, 0)]) / (2.0 * CHAO_PASSO_M)
+				var gy := (alturas[mini(cj + 1, ny) * (nx + 1) + ci] - alturas[maxi(cj - 1, 0) * (nx + 1) + ci]) / (2.0 * CHAO_PASSO_M)
+				var nrm := Vector3(-gx, 1.0, gy).normalized()
+				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.035, 0.8, 1.1)
+				st.set_color(Color(luz, luz, luz))
+				st.set_uv(q / 7.0)
+				st.add_vertex(Vector3(q.x, h, -q.y))
+	st.generate_normals()
 	var chao := MeshInstance3D.new()
-	var disco := CylinderMesh.new()
-	disco.top_radius = _raio + 6.0
-	disco.bottom_radius = _raio + 6.0
-	disco.height = 0.1
-	disco.radial_segments = 64
-	chao.mesh = disco
+	chao.mesh = st.commit()
 	var mt := StandardMaterial3D.new()
+	mt.vertex_color_use_as_albedo = true
 	var asfalto := MontadorPista.kit("asfalto_b")
 	if asfalto != null:
 		mt.albedo_texture = asfalto
-		mt.uv1_scale = Vector3(14, 14, 1)
 		mt.albedo_color = Color(0.85, 0.74, 0.6)
 	else:
 		mt.albedo_color = Color(0.36, 0.3, 0.24)
+	mt.roughness = 0.95
 	chao.material_override = mt
-	chao.position.y = -0.06
 	_cena.add_child(chao)
 	var fora := MeshInstance3D.new()
-	var anel := CylinderMesh.new()
-	anel.top_radius = _raio + 60.0
-	anel.bottom_radius = _raio + 60.0
-	anel.height = 0.08
-	fora.mesh = anel
+	var plano := PlaneMesh.new()
+	plano.size = Vector2(1000, 1000)
+	fora.mesh = plano
 	var mf := StandardMaterial3D.new()
 	mf.albedo_color = Color(0.2, 0.19, 0.18)
 	fora.material_override = mf
-	fora.position.y = -0.12
+	var fundo := 0.0
+	for h in alturas:
+		fundo = minf(fundo, h)
+	fora.position.y = fundo - 1.0  # abaixo do fundo das crateras
 	_cena.add_child(fora)
-	# Pneus: cilindros pretos lado a lado, duas camadas, com uma faixa de cor a cada tanto.
+
+
+## Pneus em duas fileiras seguindo o muro (polígono), no chão de cada ponto,
+## com uma faixa de cor a cada tanto.
+func _pneus_muro() -> void:
+	var pontos := []  # [posição 3D, colorido]
+	var n := _forma.muro.size()
+	var k := 0
+	for i in n:
+		var a := _forma.muro[i]
+		var b := _forma.muro[(i + 1) % n]
+		var fora := (b - a).normalized().orthogonal()  # o lado de fora (direita da aresta anti-horária)
+		var passos := maxi(int((b - a).length() * PNEUS_POR_M / 1.2), 1)
+		for camada in 2:
+			for t in passos:
+				var q := a.lerp(b, (float(t) + 0.5 * camada) / passos) + fora * (0.7 + camada * 1.15)
+				pontos.append([Vector3(q.x, _forma.altura(q) + 0.18, -q.y), k % 9 == 0])
+				k += 1
+	for o in _forma.obstaculos:
+		var r: float = o["r"]
+		var voltas := int(TAU * r * PNEUS_POR_M / 1.2)
+		for camada in 2:
+			for t in voltas:
+				var q: Vector2 = o["c"] + Vector2.from_angle(TAU * (t + 0.5 * camada) / voltas) * (r - 0.6)
+				pontos.append([Vector3(q.x, _forma.altura(q) + 0.18 + camada * 0.36, -q.y), t % 7 == 0])
 	var pneu := CylinderMesh.new()
 	pneu.top_radius = 0.6
 	pneu.bottom_radius = 0.6
@@ -483,17 +561,10 @@ func _construir_arena() -> void:
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
 	mm.mesh = pneu
-	var volta := TAU * (_raio + 0.7)
-	var n := int(volta * PNEUS_POR_M / 1.2)
-	mm.instance_count = n * 2
-	for k in n * 2:
-		var camada := k / n
-		var ang := TAU * float(k % n) / n + (0.5 * TAU / n if camada == 1 else 0.0)
-		var fileira := _raio + 0.7 + camada * 1.15  # duas fileiras lado a lado
-		var p := Vector3(cos(ang) * fileira, 0.18, -sin(ang) * fileira)
-		mm.set_instance_transform(k, Transform3D(Basis.IDENTITY, p))
-		var faixa := (k % n) % 9 == 0
-		mm.set_instance_color(k, Color(0.75, 0.2, 0.12) if faixa else Color(0.07, 0.07, 0.08))
+	mm.instance_count = pontos.size()
+	for i in pontos.size():
+		mm.set_instance_transform(i, Transform3D(Basis.IDENTITY, pontos[i][0]))
+		mm.set_instance_color(i, Color(0.75, 0.2, 0.12) if pontos[i][1] else Color(0.07, 0.07, 0.08))
 	var pneus := MultiMeshInstance3D.new()
 	pneus.multimesh = mm
 	var mp := StandardMaterial3D.new()
@@ -501,3 +572,23 @@ func _construir_arena() -> void:
 	mp.roughness = 0.9
 	pneus.material_override = mp
 	_cena.add_child(pneus)
+
+
+## Ilhas: um monte de entulho escuro dentro do anel de pneus de cada obstáculo.
+func _ilhas() -> void:
+	for o in _forma.obstaculos:
+		var r: float = o["r"]
+		var m := MeshInstance3D.new()
+		var cone := CylinderMesh.new()
+		cone.top_radius = r * 0.35
+		cone.bottom_radius = r - 0.9
+		cone.height = 1.6 + r * 0.12
+		cone.radial_segments = 9
+		m.mesh = cone
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.24, 0.21, 0.19)
+		mat.roughness = 1.0
+		m.material_override = mat
+		var c: Vector2 = o["c"]
+		m.position = Vector3(c.x, _forma.altura(c) + cone.height * 0.5, -c.y)
+		_cena.add_child(m)

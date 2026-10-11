@@ -383,3 +383,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     oficina, na corrida e na arena. Preço: fator sobre o prêmio de 1º lugar médio da
     maior licença (`equipe.json` → `pintura`), a definir pelo usuário. O nome do carro
     desce para baixo dele, abrindo espaço para as abas.
+59. **Arenas** (2026-10-11, aprovado pelo usuário): 4 originais (Pátio da Pedreira,
+    National; Fosso das Docas, International; Anel do Ferro-Velho, Pro; Cratera do Vale,
+    Elite), com o que dá emoção nas do Destruction Derby 2 sem copiar nenhuma: muro em
+    polígono irregular (cantos para encurralar), ilhas no meio que separam a briga e o
+    chão que não é plano. O relevo (crateras, lombadas, morro, a borda subindo no muro)
+    entra na física: a gravidade acelera na descida e freia na subida, então a cratera
+    puxa a briga para o fundo e o morro joga quem passa; os carros sobem, descem e
+    inclinam com o chão. Mesma área do círculo de 45 m; a luta sorteia entre as arenas
+    abertas pelas licenças (`arena.json` → `arenas`, `sim/arena_forma.gd`). Rampas e
+    saltos (carro no ar) ficam para uma segunda etapa.
+
