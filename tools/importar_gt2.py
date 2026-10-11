@@ -613,9 +613,10 @@ def preco_loja(cr: float) -> int:
     return moeda(cr) * FATOR_PRECO
 
 
-def voltas_jogo(voltas_gt2: int) -> int:
-    """Voltas da prova: as do GT2 × FATOR_VOLTAS, arredondado (decisão 41)."""
-    return int(voltas_gt2 * FATOR_VOLTAS + 0.5)
+def voltas_jogo(voltas_gt2: int, resistencia: bool = False) -> int:
+    """Voltas da prova: as do GT2 × FATOR_VOLTAS, arredondado (decisão 41). A
+    resistência fica com as do GT2: ×2,5 passava do tempo máximo da simulação."""
+    return voltas_gt2 if resistencia else int(voltas_gt2 * FATOR_VOLTAS + 0.5)
 
 
 def moeda(cr: float) -> int:
@@ -729,7 +730,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         largada = int(n(b.get("RollingStartSpeed")))
         eventos.append({
             "id": f"ev_{k:03d}", "nome": serie if lista_marca or r["evento"][:3] in RESISTENCIA else f"{serie} — etapa {etapas[serie]}", "pista": pista,
-            "voltas": voltas_jogo(int(n(r["voltas"])) or 2), **({"largada_kmh": largada} if largada > 0 else {}),
+            "voltas": voltas_jogo(int(n(r["voltas"])) or 2, r["evento"][:3] in RESISTENCIA), **({"largada_kmh": largada} if largada > 0 else {}),
             "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [moeda(int(v) * 100) for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,

@@ -39,13 +39,31 @@ def main(args: list[str]) -> int:
     if set(tetos) != set(licencas):
         print("faltou medir:", sorted(set(licencas) - set(tetos)), file=sys.stderr)
         return 1
+    # Medida só vale com vitórias suficientes na base para resolver a meta (uma
+    # vitória a mais não pode passar dela): sem isso, a licença herda o teto da
+    # anterior (decisão do usuário: o ELITE, onde carro de fábrica quase não vence).
+    medidas = [lic for lic in licencas
+               if tetos[lic]["vitorias_base"] * tetos[lic]["corridas"] >= 1.0 / tetos[lic]["meta"] - 1e-9]
+    for lic in licencas:
+        if lic not in medidas:
+            v = tetos[lic]["vitorias_base"] * tetos[lic]["corridas"]
+            print(f"{lic}: {v:.0f} vitórias na base, poucas para medir; herda o teto da licença anterior")
     seguinte = float("inf")
-    for lic in reversed(licencas):
-        t = min(float(tetos[lic]["teto"]), seguinte)
-        equipe["treino"]["teto"][lic] = round(t, 4)
-        seguinte = t
+    for lic in reversed(medidas):
+        seguinte = min(float(tetos[lic]["teto"]), seguinte)
+        equipe["treino"]["teto"][lic] = round(seguinte, 4)
+    base = float(tetos[licencas[0]]["base"])
+    anterior = base
+    for lic in licencas:
+        if lic in medidas:
+            anterior = equipe["treino"]["teto"][lic]
+        else:
+            equipe["treino"]["teto"][lic] = anterior
+    # Passo de cada nível: o maior teto dividido em `niveis` (decisão do usuário: 3).
+    niveis = int(equipe["treino"].get("niveis", 3))
+    equipe["treino"]["passo"] = round((max(equipe["treino"]["teto"].values()) - base) / niveis, 5)
     EQUIPE.write_text(json.dumps(equipe, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print("tetos gravados:", equipe["treino"]["teto"])
+    print("tetos gravados:", equipe["treino"]["teto"], "passo:", equipe["treino"]["passo"])
     return 0
 
 

@@ -1566,7 +1566,7 @@
   "id": "ev_061",
   "nome": "Resistência do Lago",
   "pista": "anel_do_vale",
-  "voltas": 150,
+  "voltas": 60,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1629,7 +1629,7 @@
   "id": "ev_062",
   "nome": "Resistência do Vinhedo",
   "pista": "circuito_misto",
-  "voltas": 225,
+  "voltas": 90,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1872,7 +1872,7 @@
   "id": "ev_066",
   "nome": "Resistência da Capela",
   "pista": "serra_curta",
-  "voltas": 125,
+  "voltas": 50,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1935,7 +1935,7 @@
   "id": "ev_067",
   "nome": "Resistência do Cais",
   "pista": "parque_das_docas",
-  "voltas": 248,
+  "voltas": 99,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -1993,7 +1993,7 @@
   "id": "ev_068",
   "nome": "Resistência Expressa",
   "pista": "anel_do_vale",
-  "voltas": 125,
+  "voltas": 50,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -2050,7 +2050,7 @@
   "id": "ev_069",
   "nome": "Resistência do Anel",
   "pista": "anel_do_vale",
-  "voltas": 100,
+  "voltas": 40,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -2109,7 +2109,7 @@
   "id": "ev_070",
   "nome": "Resistência das Araucárias",
   "pista": "serra_alta",
-  "voltas": 75,
+  "voltas": 30,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
