@@ -27,10 +27,10 @@ const EVENTO_RIVAL_S := 20.0
 ## Disputa (s): a tela "respira" (secundários apagam) com alguém a menos disto.
 const RESPIRA_S := 0.45
 
-## Câmeras: nome (só na dica do mouse), modo e ícone. Sem texto no botão: o
-## jogador descobre tocando.
-const CAMERAS := [["Automática", "auto", "camera"], ["Seu carro", "jogador", "seta"], ["Líder", "lider", "coroa"],
-		["À frente", "frente", "frente"], ["Pista inteira", "geral", "pista"], ["Dados", "dados", "dados"]]
+## Câmeras: nome (só na dica do mouse) e modo; o ícone é arte/ui/cameras/<modo>.png
+## (branco, tingido pelo estado). Sem texto no botão: o jogador descobre tocando.
+const CAMERAS := [["Automática", "auto"], ["Seu carro", "jogador"], ["Líder", "lider"],
+		["À frente", "frente"], ["Pista inteira", "geral"], ["Dados", "dados"]]
 
 ## Minimapa (pista inteira) e fonte das posições da vista 3D.
 var _visual: CorridaVisual
@@ -174,12 +174,17 @@ func _seletor_cameras() -> Control:
 		b.focus_mode = Control.FOCUS_NONE
 		b.custom_minimum_size = Vector2(0, 60)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var ic := IconeVetor.new(c[2], COR_SECUNDARIA)
+		var ic := TextureRect.new()
+		ic.texture = arte("cameras/" + String(c[1]))
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ic.modulate = COR_SECUNDARIA
+		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		ic.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-		ic.offset_left = -21
-		ic.offset_right = 21
-		ic.offset_top = -19
-		ic.offset_bottom = 19
+		ic.offset_left = -23
+		ic.offset_right = 23
+		ic.offset_top = -23
+		ic.offset_bottom = 23
 		b.add_child(ic)
 		for estado in ["normal", "hover", "focus", "disabled"]:
 			b.add_theme_stylebox_override(estado, vazio)
@@ -199,7 +204,7 @@ var _camera_modo := "auto":
 		for i in _cameras_botoes.size():
 			var marcado: bool = CAMERAS[i][1] == v
 			_cameras_botoes[i].button_pressed = marcado
-			(_cameras_botoes[i].get_child(0) as IconeVetor).cor = Color(0.1, 0.1, 0.1) if marcado else COR_SECUNDARIA
+			(_cameras_botoes[i].get_child(0) as TextureRect).modulate = Color(0.1, 0.1, 0.1) if marcado else COR_SECUNDARIA
 
 
 ## "auto", "jogador", "lider", "frente", "geral" ou o id de um participante
