@@ -152,7 +152,9 @@ func avisar(texto: String, ok := true) -> void:
 ## diminui até caber), "principal": a ação única em destaque, "fora_fecha":
 ## tocar fora do cartão ou no × fecha (sem botões: a janela fica sem ação),
 ## "habilitado": false apaga a ação, "titulo_extra": Callable(hbox) que põe
-## controles entre o título e o ×}.
+## controles entre o título e o ×, "acoes_padrao": os botões no padrão das
+## telas (o primeiro dourado e largo com a seta; os outros secundários, lado a
+## lado), no fim do conteúdo}.
 func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Dictionary = {}) -> void:
 	for c in _painel_conteudo.get_children():
 		c.queue_free()
@@ -178,6 +180,12 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 	if extra.is_valid():
 		extra.call(_extra_titulo)
 	montar.call(_painel_conteudo)
+	if estilo.get("acoes_padrao", false) and not botoes.is_empty():
+		_acoes_padrao(botoes)
+		_painel_botoes.visible = false
+		_painel_raiz.visible = true
+		_ajustar.call_deferred()
+		return
 	_painel_botoes.visible = not (botoes.is_empty() and _fechar_x.visible)
 	if botoes.is_empty() and not _fechar_x.visible:
 		botoes = [["OK", func(): pass]]
@@ -215,6 +223,35 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 		_painel_botoes.add_child(bt)
 	_painel_raiz.visible = true
 	_ajustar.call_deferred()
+
+
+## Ações no padrão das telas, no fim do conteúdo: a primeira como a ação
+## principal (dourada, com a seta), as outras secundárias lado a lado.
+func _acoes_padrao(botoes: Array) -> void:
+	var principal := Button.new()
+	Tipografia.acao_primaria(principal, String(botoes[0][0]) + "   →", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 32, 76)
+	principal.pressed.connect(func():
+		fechar()
+		botoes[0][1].call())
+	_painel_conteudo.add_child(principal)
+	if botoes.size() < 2:
+		return
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	_painel_conteudo.add_child(h)
+	for b in botoes.slice(1):
+		var bt := Button.new()
+		Tipografia.acao_secundaria(bt, String(b[0]), Color(0.86, 0.87, 0.9), 24, 64)
+		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(1, 1, 1, 0.06)
+		sb.set_corner_radius_all(10)
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			bt.add_theme_stylebox_override(estado, sb)
+		bt.pressed.connect(func():
+			fechar()
+			b[1].call())
+		h.add_child(bt)
 
 
 ## Cartão do tamanho do conteúdo, centrado (sem vazio quando há pouco a mostrar).

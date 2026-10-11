@@ -808,33 +808,58 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	var token := Time.get_ticks_usec()
 	_resultado_aberto = token
 	_sobre.abrir("VITÓRIA!" if venceu else "Resultado", func(v):
-		v.add_theme_constant_override("separation", 8)
-		var nome_ev := g.rotulo(Aba.nome_evento(ev), Aba.FONTE_PEQUENA + 3, Aba.COR_SECUNDARIA, v)
-		nome_ev.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		# Troféu da posição (ouro, prata, bronze); dali para baixo, o pódio apagado.
+		v.add_theme_constant_override("separation", 10)
+		# Cabeçalho da prova como nos cartões das Corridas: o fundo da pista,
+		# a série e a etapa (ou o nome da prova) e a pista.
+		var tex := Aba.arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
+		var cab := g.cartao_com_fundo(tex, true, v)
+		var serie := Campeonatos.serie(ev)
+		var etapas := Campeonatos.etapas(dados, serie)
+		if not etapas.is_empty():
+			Tipografia.rotulo(g.rotulo(serie.to_upper(), 0, Aba.COR_SECUNDARIA, cab), "medium", 18)
+		var t := Label.new()
+		t.text = ("ETAPA %d/%d" % [etapas.find(ev) + 1, etapas.size()]) if not etapas.is_empty() \
+				else Aba.nome_evento(ev).to_upper()
+		t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		Tipografia.rotulo(t, "semibold", 34)
+		cab.add_child(t)
+		g.rotulo(Aba.nome_pista(ev["pista"]), Aba.FONTE_PEQUENA, Color(0.86, 0.87, 0.9), cab)
+		# Troféu, posição e prêmio numa linha (o prêmio com a moeda de giros).
+		var linha := HBoxContainer.new()
+		linha.add_theme_constant_override("separation", 14)
+		linha.alignment = BoxContainer.ALIGNMENT_CENTER
+		v.add_child(linha)
 		var trofeu := TextureRect.new()
 		trofeu.texture = Aba.arte({1: "icone_trofeu_ouro", 2: "icone_trofeu_prata", 3: "icone_trofeu_bronze"}.get(
 				int(c["posicao"]), "icone_podio"))
-		trofeu.custom_minimum_size = Vector2(0, 120)
+		trofeu.custom_minimum_size = Vector2(96, 96)
 		trofeu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		trofeu.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		if int(c["posicao"]) > 3:
 			trofeu.modulate = Color(1, 1, 1, 0.35)
-		v.add_child(trofeu)
+		linha.add_child(trofeu)
+		var col := VBoxContainer.new()
+		col.add_theme_constant_override("separation", 0)
+		col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		linha.add_child(col)
 		var pos := Label.new()
 		pos.text = "%dº de %d" % [c["posicao"], c["total"]]
-		pos.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		Tipografia.numero(pos, 64)
+		Tipografia.numero(pos, 56)
 		pos.add_theme_color_override("font_color", Aba.COR_DESTAQUE if venceu else Color.WHITE)
-		v.add_child(pos)
-		var ganho := Label.new()
-		ganho.text = "+%s giros" % Aba.dinheiro(int(c["premio"])) if int(c["premio"]) > 0 else "Sem prêmio"
-		ganho.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		Tipografia.numero(ganho, 34)
-		ganho.add_theme_color_override("font_color", Aba.COR_BOM if int(c["premio"]) > 0 else Aba.COR_SECUNDARIA)
-		v.add_child(ganho)
+		col.add_child(pos)
+		var pr := HBoxContainer.new()
+		pr.add_theme_constant_override("separation", 8)
+		col.add_child(pr)
 		if int(c["premio"]) > 0:
+			var lv := Label.new()
+			lv.text = "+" + Aba.dinheiro(int(c["premio"]))
+			Tipografia.numero(lv, 32)
+			lv.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+			pr.add_child(lv)
+			g.icone(Aba.ICONE_GIROS, 28, pr).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			Sons.tocar_ui(self, "moeda", -2.0)
+		else:
+			Tipografia.rotulo(g.rotulo("Sem prêmio", 0, Aba.COR_SECUNDARIA, pr), "medium", 24)
 		var marcos := []
 		var camp: Dictionary = c.get("campeonato", {})
 		if camp.get("final", false) and camp.get("campeao", false):
@@ -844,7 +869,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		if not marcos.is_empty():
 			g.selos(marcos, v)
 		_lista_resultado(v, tabela, c)
-		_fechamento_automatico(v, token, _depois_do_resultado.bind(c, func(): pass)), botoes)
+		_fechamento_automatico(v, token, _depois_do_resultado.bind(c, func(): pass)), botoes, {"acoes_padrao": true})
 
 
 ## Competidores na ordem de chegada: posição, emblema da equipe, piloto e tempo
