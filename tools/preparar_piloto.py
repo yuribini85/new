@@ -2,8 +2,8 @@
 """Prepara a arte de um piloto a partir do PNG RGBA de corpo inteiro entregue,
 no padrão dos rivais (arte/pilotos/):
   corpo/<id>.webp   corpo inteiro 600 × 900 (2:3), escala uniforme, fundo transparente
-  <id>.png          retrato 240 × 280: cabeça e ombros recortados do corpo, sobre o
-                    fundo em degradê quente dos outros retratos
+  <id>.png          retrato 240 × 280: cabeça e ombros recortados do corpo, fundo
+                    transparente (a tela põe o piloto sobre o que estiver atrás)
 Escala sempre uniforme: o corpo de outra proporção é escalado pela altura e
 recortado dos lados; o retrato é um recorte do corpo, nunca esticado.
 
@@ -13,7 +13,7 @@ Requer Pillow.
 import pathlib
 import sys
 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "arte/pilotos"
@@ -21,9 +21,6 @@ CORPO = (600, 900)
 RETRATO = (240, 280)
 ALFA_ZERO = 16  # abaixo disso a franja some
 ALFA_CHEIO = 245  # acima disso o pixel é opaco
-# Degradê dos retratos (amostrado dos rivais): luz quente no alto, cantos escuros.
-LUZ = (150, 92, 58)
-SOMBRA = (20, 13, 9)
 
 
 def limpar(im: Image.Image) -> Image.Image:
@@ -50,16 +47,6 @@ def corpo(im: Image.Image) -> Image.Image:
     return quadro
 
 
-def fundo() -> Image.Image:
-    f = Image.new("RGB", RETRATO, SOMBRA)
-    luz = Image.new("L", RETRATO, 0)
-    d = ImageDraw.Draw(luz)
-    w, h = RETRATO
-    d.ellipse((w * 0.05, -h * 0.35, w * 0.95, h * 0.75), fill=255)
-    luz = luz.filter(ImageFilter.GaussianBlur(w * 0.18))
-    return Image.composite(Image.new("RGB", RETRATO, LUZ), f, luz)
-
-
 def retrato(c: Image.Image) -> Image.Image:
     """Cabeça e ombros: do topo da figura, largura de 46% do corpo, 240:280."""
     caixa = c.getchannel("A").getbbox()
@@ -71,10 +58,7 @@ def retrato(c: Image.Image) -> Image.Image:
     xs = [x for x in range(c.width) if linha.getpixel((x, 0)) > 128]
     cx = (min(xs) + max(xs)) // 2 if xs else c.width // 2
     x0 = min(max(cx - largura // 2, 0), c.width - largura)
-    rosto = c.crop((x0, topo, x0 + largura, topo + altura)).resize(RETRATO, Image.LANCZOS)
-    r = fundo().convert("RGBA")
-    r.alpha_composite(rosto)
-    return r.convert("RGB")
+    return c.crop((x0, topo, x0 + largura, topo + altura)).resize(RETRATO, Image.LANCZOS)
 
 
 def main(args: list[str]) -> int:

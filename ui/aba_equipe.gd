@@ -5,6 +5,10 @@ extends Aba
 ## da equipe, GestaoEquipe).
 
 const PARTES := [["equipe", "EQUIPE"], ["sede", "SEDE"]]
+## Segundo piloto: busto na aba (cabeça à cintura do corpo 600 × 900) e o palco
+## da escolha, com o corpo inteiro.
+const BUSTO := Vector2(190, 230)
+const PALCO_ALTURA := 560.0
 
 var _parte := "equipe"
 
@@ -339,73 +343,192 @@ func _treino(pai: Control) -> void:
 	pai.add_child(b)
 
 
-## Segundo piloto (decisão 56): retrato, nome, traço e a troca entre os candidatos.
+## Segundo piloto (decisão 56): o busto (corpo inteiro recortado na cintura),
+## nome, traço e frase; "Trocar piloto" abre os candidatos.
 func _segundo_piloto(pai: Control) -> void:
+	var id: String = jogador.segundo_piloto
 	var h := fileira(pai)
-	h.add_theme_constant_override("separation", 14)
-	h.add_child(_retrato_piloto(jogador.segundo_piloto, 96))
+	h.add_theme_constant_override("separation", 12)
+	var busto := TextureRect.new()
+	busto.texture = _busto(id)
+	busto.custom_minimum_size = BUSTO
+	busto.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	busto.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	h.add_child(busto)
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	v.add_theme_constant_override("separation", 4)
 	h.add_child(v)
 	_linha_piloto(v, EquipeJogador.nome_segundo(dados, jogador), "SEGUNDO PILOTO")
-	var tr := EquipeJogador.traco(dados, jogador.segundo_piloto)
+	var tr := EquipeJogador.traco(dados, id)
 	if not tr.is_empty():
-		rotulo(String(tr["nome"]), FONTE_PEQUENA, COR_DESTAQUE, v)
+		_selo_traco(String(tr["nome"]), v)
+	var frase := String(EquipeJogador.piloto(dados, id).get("frase", ""))
+	if frase != "":
+		rotulo(frase, FONTE_PEQUENA, COR_SECUNDARIA, v)
 	if EquipeJogador.candidatos(dados).size() > 1:
-		botao_texto("Trocar piloto", _escolher_segundo, pai)
+		botao_texto("Trocar piloto  →", _escolher_segundo, v).alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 
-## Os candidatos em grade: retrato, nome, traço e a frase; tocar contrata.
+## Os candidatos um por vez, de corpo inteiro sob um foco de luz, com as setas
+## da garagem para passar; embaixo, nome, traço, frase e Contratar.
 func _escolher_segundo() -> void:
+	var lista := EquipeJogador.candidatos(dados)
+	var ids := lista.map(func(c): return String(c["id"]))
+	var estado := {"i": maxi(ids.find(jogador.segundo_piloto), 0)}
 	painel.emit("Segundo piloto", func(pv):
-		var g := GridContainer.new()
-		g.columns = 2
-		g.add_theme_constant_override("h_separation", 10)
-		g.add_theme_constant_override("v_separation", 10)
-		pv.add_child(g)
-		for c in EquipeJogador.candidatos(dados):
+		var palco := Control.new()
+		palco.custom_minimum_size = Vector2(0, PALCO_ALTURA)
+		palco.clip_contents = true
+		pv.add_child(palco)
+		palco.add_child(_foco())
+		var chao := _sombra_chao()
+		palco.add_child(chao)
+		var corpo := TextureRect.new()
+		corpo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		corpo.offset_bottom = -18
+		corpo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		corpo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		palco.add_child(corpo)
+		var contador := Label.new()
+		contador.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		contador.add_theme_color_override("font_color", COR_SECUNDARIA)
+		palco.add_child(contador)
+		contador.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+		contador.offset_left = -90
+		contador.offset_right = -14
+		contador.offset_top = 10
+		contador.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		var info := VBoxContainer.new()
+		info.add_theme_constant_override("separation", 6)
+		pv.add_child(info)
+		var nome := Label.new()
+		Tipografia.rotulo(nome, "semibold", 40)
+		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		info.add_child(nome)
+		var selo := CenterContainer.new()
+		info.add_child(selo)
+		var frase := rotulo("", FONTE_PEQUENA + 2, COR_SECUNDARIA, info)
+		frase.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		frase.custom_minimum_size = Vector2(0, 64)
+		var b := Button.new()
+		info.add_child(b)
+		var na_equipe := Label.new()
+		na_equipe.text = "NA EQUIPE"
+		Tipografia.rotulo(na_equipe, "semibold", 24)
+		na_equipe.add_theme_color_override("font_color", COR_DESTAQUE)
+		na_equipe.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		na_equipe.custom_minimum_size = Vector2(0, 60)
+		na_equipe.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		info.add_child(na_equipe)
+		var mostrar := func(lado: int):
+			var c: Dictionary = lista[estado["i"]]
 			var atual: bool = c["id"] == jogador.segundo_piloto
-			var b := Button.new()
-			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			b.custom_minimum_size = Vector2(0, 400)
-			b.disabled = atual
-			g.add_child(b)
-			var col := VBoxContainer.new()
-			col.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 8)
-			col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			b.add_child(col)
-			var r := _retrato_piloto(String(c["id"]), 150)
-			r.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-			col.add_child(r)
-			var n := rotulo(String(c["nome"]), FONTE_PEQUENA + 4, Color.WHITE, col)
-			n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			var tr: Dictionary = dados.carreira()["equipe_jogador"].get("tracos", {}).get(String(c["traco"]), {})
-			var t := rotulo("ATUAL" if atual else String(tr.get("nome", "")), FONTE_PEQUENA, COR_DESTAQUE, col)
-			t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			var f := rotulo(String(c.get("frase", "")), FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
-			f.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			for l in [n, t, f]:
-				l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			var id := String(c["id"])
-			b.pressed.connect(func():
-				var motivo := EquipeJogador.contratar(dados, jogador, id)
-				if motivo != "":
-					avisar("Não deu: %s." % motivo, false)
-					return
-				avisar("%s é o seu segundo piloto." % c["nome"])
-				fechar_painel.emit()
-				mudou.emit()), [])
+			corpo.texture = Assets.get_asset(String(c["id"]), "corpo")
+			nome.text = String(c["nome"])
+			for f in selo.get_children():
+				f.queue_free()
+			var tr: Dictionary = EquipeJogador.config(dados).get("tracos", {}).get(String(c["traco"]), {})
+			_selo_traco(String(tr.get("nome", "")), selo)
+			frase.text = String(c.get("frase", ""))
+			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
+			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
+			b.visible = not atual
+			na_equipe.visible = atual
+			if lado != 0 and not Preferencias.reduzir_animacoes:
+				corpo.modulate.a = 0.0
+				corpo.position.x = 40.0 * lado
+				var tw := corpo.create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+				tw.tween_property(corpo, "modulate:a", 1.0, 0.22)
+				tw.tween_property(corpo, "position:x", 0.0, 0.28)
+		setas_troca(palco, lista.size(), func(lado: int):
+			estado["i"] = posmod(estado["i"] + lado, lista.size())
+			mostrar.call(lado))
+		b.pressed.connect(func():
+			var c: Dictionary = lista[estado["i"]]
+			var motivo := EquipeJogador.contratar(dados, jogador, String(c["id"]))
+			if motivo != "":
+				avisar("Não deu: %s." % motivo, false)
+				return
+			Sons.tocar_ui(self, "moeda", -4.0)
+			avisar("%s é o seu segundo piloto." % c["nome"])
+			fechar_painel.emit()
+			mudou.emit())
+		mostrar.call(0), [])
 
 
-func _retrato_piloto(piloto_id: String, lado: int) -> TextureRect:
+## Busto: o corpo inteiro recortado da cabeça à cintura (sem esticar).
+func _busto(piloto_id: String) -> Texture2D:
+	var corpo := Assets.get_asset(piloto_id, "corpo")
+	if corpo == null:
+		return Assets.get_asset(piloto_id, "retrato")
+	# Justo na silhueta: a largura da figura e, dela, a altura na proporção do quadro.
+	var usado := corpo.get_image().get_used_rect()
+	var a := AtlasTexture.new()
+	a.atlas = corpo
+	a.region = Rect2(usado.position.x, usado.position.y, usado.size.x,
+			minf(usado.size.x * BUSTO.y / BUSTO.x, usado.size.y))
+	return a
+
+
+## Foco de luz quente atrás do piloto (o palco não tem fundo próprio).
+func _foco() -> TextureRect:
 	var t := TextureRect.new()
-	t.texture = Assets.get_asset(piloto_id, "retrato")
-	t.custom_minimum_size = Vector2(lado, round(lado * 280.0 / 240.0))
+	var g := GradientTexture2D.new()
+	g.fill = GradientTexture2D.FILL_RADIAL
+	g.fill_from = Vector2(0.5, 0.42)
+	g.fill_to = Vector2(0.5, 1.0)
+	g.gradient = Gradient.new()
+	g.gradient.colors = PackedColorArray([Color(COR_DESTAQUE, 0.22), Color(COR_DESTAQUE, 0.0)])
+	t.texture = g
+	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return t
+
+
+## Sombra no chão, sob os pés.
+func _sombra_chao() -> TextureRect:
+	var t := TextureRect.new()
+	var g := GradientTexture2D.new()
+	g.fill = GradientTexture2D.FILL_RADIAL
+	g.fill_from = Vector2(0.5, 0.5)
+	g.fill_to = Vector2(0.5, 0.0)
+	g.gradient = Gradient.new()
+	g.gradient.colors = PackedColorArray([Color(0, 0, 0, 0.55), Color(0, 0, 0, 0.0)])
+	t.texture = g
+	t.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	t.offset_left = -170
+	t.offset_right = 170
+	t.offset_top = -52
+	t.offset_bottom = -4
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return t
+
+
+## Traço como selo: texto escuro sobre a cor de destaque.
+func _selo_traco(texto: String, pai: Control) -> void:
+	if texto == "":
+		return
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_DESTAQUE
+	sb.set_corner_radius_all(4)
+	sb.content_margin_left = 10
+	sb.content_margin_right = 10
+	sb.content_margin_top = 2
+	sb.content_margin_bottom = 2
+	p.add_theme_stylebox_override("panel", sb)
+	p.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	var l := Label.new()
+	l.text = texto.to_upper()
+	Tipografia.rotulo(l, "semibold", 18)
+	l.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
+	p.add_child(l)
+	pai.add_child(p)
 
 
 func _linha_piloto(pai: Control, nome: String, papel: String) -> void:

@@ -34,4 +34,8 @@ por traço.
 Entregue em 2026-10-11 (8 PNG de corpo inteiro, 1024 × 1536, com o macacão da equipe).
 Instalada com `python3 tools/preparar_piloto.py <png> <id>...`: corpo 600 × 900 em
 `arte/pilotos/corpo/<id>.webp` e retrato 240 × 280 recortado do rosto em
-`arte/pilotos/<id>.png`, escala uniforme, no fundo em degradê dos outros retratos.
+`arte/pilotos/<id>.png`, escala uniforme, sem fundo.
+
+Na tela: a aba Equipe mostra o busto (o corpo recortado justo na silhueta, da cabeça à
+coxa) com nome, traço em selo e a frase; "Trocar piloto" abre um candidato por vez de
+corpo inteiro, sob um foco de luz com sombra no chão, passando com as setas da garagem.
