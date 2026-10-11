@@ -293,18 +293,18 @@ func _pilotos(eq: Dictionary) -> void:
 		nota("icone_info", "Segundo piloto", "Um segundo piloto chega mais adiante na carreira.", c)
 
 
-## Treino do piloto principal (decisão 54): consistência atual e o teto da
+## Treino do piloto principal (decisão 54): ritmo atual e o teto da
 ## licença, o treino em andamento ou o botão do próximo nível.
 func _treino(pai: Control) -> void:
 	if not GestaoEquipe.aberta(dados, jogador) or GestaoEquipe.cfg_treino(dados).is_empty():
 		return
-	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["consistencia"])
-	var atual := GestaoEquipe.consistencia(dados, jogador, base)
+	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["ritmo"])
+	var atual := GestaoEquipe.ritmo(dados, jogador, base)
 	var teto := maxf(GestaoEquipe.teto(dados, jogador), base)
 	var h := fileira(pai)
-	var l := rotulo("Consistência", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
+	var l := rotulo("Ritmo", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var v := rotulo("%d%% · teto %d%%" % [roundi(atual * 100.0), roundi(teto * 100.0)], FONTE_PEQUENA + 2, Color.WHITE, h)
+	var v := rotulo("%.1f%% · teto %.1f%%" % [atual * 100.0, teto * 100.0], FONTE_PEQUENA + 2, Color.WHITE, h)
 	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var barra := ProgressBar.new()
 	barra.show_percentage = false

@@ -3,7 +3,7 @@
 paralelo) e grava os tetos em data/equipe.json → treino.teto. O teto nunca
 desce de uma licença para a seguinte.
 
-Uso: python3 tools/calibrar_treino.py CAMINHO_DO_GODOT [--eventos=12 --carros=12 --sementes=4 --meta=0.1 --passo=0.05]
+Uso: python3 tools/calibrar_treino.py CAMINHO_DO_GODOT [--eventos=12 --carros=12 --sementes=4 --meta=0.1 --passo=0.0025 --ate=0.05]
 """
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def main(args: list[str]) -> int:
         for linha in saida.splitlines():
             if linha.startswith("TETO "):
                 tetos[lic] = json.loads(linha[5:])
-            elif linha.startswith(("licença", "  consistência")):
+            elif linha.startswith(("licença", "  ritmo")):
                 print(linha)
     if set(tetos) != set(licencas):
         print("faltou medir:", sorted(set(licencas) - set(tetos)), file=sys.stderr)
@@ -41,7 +41,7 @@ def main(args: list[str]) -> int:
     anterior = 0.0
     for lic in licencas:
         t = max(float(tetos[lic]["teto"]), anterior)
-        equipe["treino"]["teto"][lic] = round(t, 3)
+        equipe["treino"]["teto"][lic] = round(t, 4)
         anterior = t
     EQUIPE.write_text(json.dumps(equipe, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("tetos gravados:", equipe["treino"]["teto"])

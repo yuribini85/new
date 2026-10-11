@@ -1,16 +1,16 @@
 extends SceneTree
-## Mede o teto do treino do piloto (decisão 54) numa licença: a maior
-## consistência do piloto do jogador que encurta em até `meta` (padrão 10%,
-## decisão do usuário) o caminho até vencer as provas dessa licença. Na
-## simulação cada carro quase sempre vence ou nunca vence uma prova; o treino
-## faz carros mais fracos vencerem. Medida: fração de vitórias dos carros de
+## Mede o teto do treino do piloto (decisão 54) numa licença: o maior ritmo do
+## piloto do jogador que encurta em até `meta` (padrão 10%, decisão do usuário)
+## o caminho até vencer as provas dessa licença. Na simulação cada carro quase
+## sempre vence ou nunca vence uma prova; o treino faz carros mais fracos
+## vencerem. A grade vai da base até base + `ate`, de `passo` em `passo`. Medida: fração de vitórias dos carros de
 ## fábrica elegíveis (`carros` por prova, do mais fraco ao mais forte) em
 ## `sementes` corridas, nas mesmas sementes para toda a grade; o caminho até
 ## vencer encurta na razão base ÷ treino.
 ## Imprime uma linha "TETO {json}". Só lê; quem grava é tools/calibrar_treino.py.
 ##
 ## Uso: godot --headless --path . --script res://tools/calibrar_treino.gd -- --licenca=PRO
-##      [--eventos=12] [--carros=12] [--sementes=4] [--meta=0.1] [--passo=0.05]
+##      [--eventos=12] [--carros=12] [--sementes=4] [--meta=0.1] [--passo=0.0025] [--ate=0.05]
 
 var _feito := false
 
@@ -26,7 +26,7 @@ func _process(_d: float) -> bool:
 func _rodar() -> void:
 	var dados: Node = root.get_node("Dados")
 	var jogador: Node = root.get_node("Jogador")
-	var a := {"licenca": "PRO", "eventos": "12", "carros": "12", "sementes": "4", "meta": "0.1", "passo": "0.05"}
+	var a := {"licenca": "PRO", "eventos": "12", "carros": "12", "sementes": "4", "meta": "0.1", "passo": "0.0025", "ate": "0.05"}
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--") and "=" in arg:
 			var kv := arg.trim_prefix("--").split("=")
@@ -39,11 +39,11 @@ func _rodar() -> void:
 	var ordem := GestaoEquipe.ordem(dados)
 	var licencas: Array = ordem.slice(0, ordem.find(lic) + 1)
 	var piloto: Dictionary = dados.item("pilotos_ia", String(dados.carreira()["piloto_jogador"]))
-	var base := float(piloto["consistencia"])
+	var base := float(piloto["ritmo"])
 	var grade := []
 	var c := base
-	while c <= 1.0001:
-		grade.append(snappedf(c, 0.001))
+	while c <= base + float(a["ate"]) + 1e-6:
+		grade.append(snappedf(c, 0.0001))
 		c += float(a["passo"])
 	var eventos: Array = dados.lista("eventos").filter(func(e):
 		return String(e["restricoes"].get("licenca", "")) == lic and not e["premios"].is_empty())
@@ -74,7 +74,7 @@ func _rodar() -> void:
 	var vitorias := {}
 	var tempos := {}
 	for cc in grade:
-		piloto["consistencia"] = cc
+		piloto["ritmo"] = cc
 		var v := 0.0
 		var t := 0.0
 		for par in pares:
@@ -85,10 +85,10 @@ func _rodar() -> void:
 		tempos[cc] = t
 		# Caminho até vencer, relativo: inverso da fração de vitórias.
 		esperadas[cc] = 1.0 / maxf(vitorias[cc], 0.5 / maxf(pares.size() * sementes, 1))
-		print("  consistência %.3f: %.1f%% de vitórias (caminho %.0f%% da base), tempo de corrida %+.2f%%" % [cc,
+		print("  ritmo %.4f: %.1f%% de vitórias (caminho %.0f%% da base), tempo de corrida %+.2f%%" % [cc,
 				100.0 * vitorias[cc], 100.0 * esperadas[cc] / maxf(esperadas[grade[0]], 1e-6),
 				100.0 * (tempos[cc] / maxf(tempos[grade[0]], 1e-6) - 1.0)])
-	piloto["consistencia"] = base
+	piloto["ritmo"] = base
 	var teto := base
 	for cc in grade:
 		if esperadas[cc] >= (1.0 - meta) * esperadas[grade[0]]:

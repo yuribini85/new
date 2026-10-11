@@ -230,7 +230,7 @@ static func bonus_corrida(dados: Node, jogador: Node, ev: Dictionary, posicao: i
 
 # ------------------------------------------------------------------ Treino
 
-## Treino do piloto do jogador (decisão 54): níveis de consistência, um por
+## Treino do piloto do jogador (decisão 54): níveis de ritmo, um por
 ## vez, no relógio real; teto pela maior licença (data/equipe.json → treino.teto,
 ## gerado por tools/calibrar_treino.gd). Estado: jogador.equipe.treino =
 ## {nivel, fim (segundos Unix; 0 = parado)}.
@@ -242,8 +242,8 @@ static func nivel_treino(jogador: Node) -> int:
 	return int(jogador.equipe.get("treino", {}).get("nivel", 0))
 
 
-## Consistência do piloto do jogador com o treino (a base sem gestão).
-static func consistencia(dados: Node, jogador: Node, base: float) -> float:
+## Ritmo do piloto do jogador com o treino (a base sem gestão).
+static func ritmo(dados: Node, jogador: Node, base: float) -> float:
 	var t := cfg_treino(dados)
 	if t.is_empty():
 		return base
@@ -262,7 +262,7 @@ static func teto(dados: Node, jogador: Node) -> float:
 	return 0.0
 
 
-## O próximo nível ainda sobe a consistência (abaixo do teto)?
+## O próximo nível ainda sobe o ritmo (abaixo do teto)?
 static func pode_treinar(dados: Node, jogador: Node, base: float) -> bool:
 	return aberta(dados, jogador) and not cfg_treino(dados).is_empty() \
 			and base + float(cfg_treino(dados).get("passo", 0.0)) * nivel_treino(jogador) < teto(dados, jogador) - 1e-6

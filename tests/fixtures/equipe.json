@@ -45,7 +45,7 @@
   "tempo_base_h": 1.0,
   "custo_fator": 0.5,
   "teto": {
-   "b": 0.8
+   "b": 1.1
   }
  }
 }

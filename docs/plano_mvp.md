@@ -356,8 +356,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (contratos simultâneos, renda, bônus, desmanche): mais onde gastar.
 53. **Desmanche**: além de vender, desmontar o carro vira crédito que só paga peças
     (antes do caixa), pela soma das peças compradas para ele.
-54. **Evolução do piloto por treino** aprovada; teto pendente (os rivais têm a mesma
-    consistência do jogador, então "o nível dos rivais" não dá margem).
+54. **Evolução do piloto por treino** aprovada: o treino sobe o **ritmo** do piloto
+    principal (a consistência quase não muda a corrida: `sigma_ruido` é 0). Teto por
+    licença: o maior ritmo que encurta em até 10% o caminho até vencer as provas dela
+    (`tools/calibrar_treino.py`, decisão do usuário em 2026-10-11). O segundo piloto não
+    herda o treino.
 55. Todo sistema novo entra com a fala da Mara e o número visível na tela.
     Valores de 51–53: fatores sobre o prêmio de 1º lugar médio da licença, provisórios
     até o playtest.
