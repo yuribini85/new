@@ -10,9 +10,16 @@ extends RefCounted
 const PADROES := [["", "Sem faixas"], ["dupla", "Dupla central"], ["larga", "Larga central"],
 		["lateral", "Lateral"], ["dois_tons", "Dois tons"], ["tripla", "Tripla fina"], ["assimetrica", "Assimétrica"],
 		["capo", "Capô"], ["diagonal", "Diagonal"], ["chevron", "Chevron"], ["xadrez", "Xadrez"],
-		["bolinhas", "Bolinhas"], ["ondas", "Ondas"], ["degrade", "Degradê"], ["transversais", "Transversais"],
-		["ziguezague", "Zigue-zague"], ["serrilha", "Serrilha"], ["circulo", "Círculo de número"],
-		["tres_tons", "Três tons"], ["pontas", "Pontas"], ["tigrado", "Tigrado"]]
+		["degrade", "Degradê"], ["ziguezague", "Zigue-zague"], ["serrilha", "Serrilha"], ["circulo", "Círculo"],
+		["tres_tons", "Três tons"]]
+
+## A paleta da pintura é a de fábrica mais saturada (pedido do usuário): mesmas
+## famílias e o mesmo brilho relativo, tons mais vivos. Cinzas, brancos, preto
+## e creme (pouca saturação) ficam como estão.
+const SATURACAO_MIN := 0.2
+const SATURACAO_GANHO := 0.45  # fração do que falta até 1
+const SATURACAO_TETO := 0.97
+const BRILHO_GANHO := 1.15
 
 
 static func indice_padrao(id: String) -> int:
@@ -26,12 +33,18 @@ static func nome_padrao(id: String) -> String:
 	return String(PADROES[indice_padrao(id)][1])
 
 
-## Cores da paleta: [{chave, nome, cor}].
+## Cores da paleta da pintura: [{chave, nome, cor}].
 static func cores() -> Array:
 	var l := []
 	for k in Cores._ler()["paleta"]:
-		l.append({"chave": k, "nome": Cores.nome(k), "cor": Cores.cor(k)})
+		l.append({"chave": k, "nome": Cores.nome(k), "cor": saturada(Cores.cor(k))})
 	return l
+
+
+static func saturada(c: Color) -> Color:
+	if c.s < SATURACAO_MIN:
+		return c
+	return Color.from_hsv(c.h, minf(SATURACAO_TETO, c.s + (1.0 - c.s) * SATURACAO_GANHO), minf(1.0, c.v * BRILHO_GANHO))
 
 
 ## Pintura de um carro de equipe rival (decisão 60): um desenho sorteado por

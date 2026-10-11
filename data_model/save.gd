@@ -37,6 +37,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"personagem": jogador.personagem,
 		"segundo_piloto": jogador.segundo_piloto,
 		"carro_companheiro": jogador.carro_companheiro,
+		"ultima_loja": jogador.ultima_loja,
 		"flags": jogador.flags,
 		"dialogos_vistos": jogador.dialogos_vistos,
 		"ultima_reativa": jogador.ultima_reativa,
@@ -216,6 +217,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	jogador.personagem = String(s.get("personagem", ""))
 	jogador.segundo_piloto = String(s.get("segundo_piloto", ""))
 	jogador.carro_companheiro = int(s.get("carro_companheiro", -1))
+	jogador.ultima_loja = String(s.get("ultima_loja", ""))
 	jogador.flags = s["flags"].duplicate() if s.get("flags") is Dictionary else {}
 	jogador.dialogos_vistos = s["dialogos_vistos"].duplicate() if s.get("dialogos_vistos") is Dictionary else {}
 	jogador.ultima_reativa = int(s.get("ultima_reativa", -1000))

@@ -42,6 +42,8 @@ var historia: Historia
 ## da garagem que ele usa nas provas (-1 = nenhum).
 var segundo_piloto: String = ""
 var carro_companheiro: int = -1
+## Última loja aberta em Lojas ("" = o mapa): reabre nela, também depois de fechar o jogo.
+var ultima_loja: String = ""
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
@@ -96,6 +98,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	personagem = ""
 	segundo_piloto = ""
 	carro_companheiro = -1
+	ultima_loja = ""
 	flags = {}
 	dialogos_vistos = {}
 	ultima_reativa = -1000

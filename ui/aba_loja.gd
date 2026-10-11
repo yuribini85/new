@@ -14,8 +14,13 @@ func _init(d: Node, j: Node) -> void:
 ## marca, agrupada nas workshops). Todos os carros da frota, novos e antigos,
 ## pelo preço de tabela. Sem usados nem agenda. A Second Chance Motors (prólogo
 ## da Elena) aparece como uma loja a mais enquanto a história pede.
-## Workshop aberta ("" = a grade de workshops; "second_chance").
-var _loja := ""
+## Workshop aberta ("" = a grade de workshops; "second_chance"). Fica no
+## jogador (e no save): Lojas reabre na última loja vista.
+var _loja: String:
+	get:
+		return jogador.ultima_loja
+	set(v):
+		jogador.ultima_loja = v
 var _second_chance_vista := false
 ## Filtros dentro da workshop (mantidos ao voltar).
 var _so_posso := false

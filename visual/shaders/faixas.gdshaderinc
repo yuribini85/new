@@ -63,40 +63,21 @@ vec3 aplicar_faixas(vec3 c, vec3 p) {
 		float cel = mod(floor(p.x * 10.0) + floor(z * 16.0), 2.0);
 		f = cel * (1.0 - smoothstep(0.46, 0.48, u));
 		fil = faixa(u, 0.48, 0.52);
-	} else if (padrao == 11) {  // bolinhas
-		vec2 g = vec2(z * 14.0, v * 7.0 + p.x * 7.0);
-		float d = length(fract(g) - 0.5);
-		f = 1.0 - smoothstep(0.2, 0.24, d);
-		fil = faixa(d, 0.24, 0.29);
-	} else if (padrao == 12) {  // ondas nas laterais
-		float t = v - 0.06 * sin(z * 22.0);
-		f = lado * faixa(t, 0.36, 0.50);
-		fil = lado * (faixa(t, 0.33, 0.36) + faixa(t, 0.50, 0.53));
-	} else if (padrao == 13) {  // degradê da frente para a traseira
+	} else if (padrao == 11) {  // degradê da frente para a traseira
 		f = smoothstep(0.2, 0.85, 1.0 - z);
-	} else if (padrao == 14) {  // transversais (de lado a lado)
-		float t = fract(z * 7.0);
-		f = faixa(t, 0.0, 0.16);
-		fil = faixa(t, 0.16, 0.2);
-	} else if (padrao == 15) {  // zigue-zague nas laterais
+	} else if (padrao == 12) {  // zigue-zague nas laterais
 		float t = v - 0.09 * abs(fract(z * 8.0) * 2.0 - 1.0);
 		f = lado * faixa(t, 0.30, 0.42);
 		fil = lado * (faixa(t, 0.27, 0.30) + faixa(t, 0.42, 0.45));
-	} else if (padrao == 16) {  // serrilha embaixo
+	} else if (padrao == 13) {  // serrilha embaixo
 		f = lado * (1.0 - smoothstep(0.0, 0.01, v - (0.16 + 0.16 * fract(z * 10.0))));
-	} else if (padrao == 17) {  // círculo de número nas portas
+	} else if (padrao == 14) {  // círculo nas portas
 		float d = length(vec2((z - 0.5) * 1.7, v - 0.48));
 		f = lado * (1.0 - smoothstep(0.12, 0.13, d));
 		fil = lado * faixa(d, 0.13, 0.155);
-	} else if (padrao == 18) {  // três tons (embaixo a faixa, no meio o filete)
+	} else if (padrao == 15) {  // três tons (embaixo a faixa, no meio o filete)
 		f = 1.0 - smoothstep(0.27, 0.28, v);
 		fil = faixa(v, 0.28, 0.44);
-	} else if (padrao == 19) {  // pontas (bico e traseira)
-		f = (1.0 - smoothstep(0.1, 0.12, z)) + smoothstep(0.86, 0.88, z);
-		fil = faixa(z, 0.12, 0.15) + faixa(z, 0.83, 0.86);
-	} else if (padrao == 20) {  // tigrado
-		float t = sin(z * 38.0 + sin(v * 11.0 + p.x * 9.0) * 2.2);
-		f = smoothstep(0.55, 0.62, t);
 	}
 	c = mix(c, cor_faixa.rgb, clamp(f, 0.0, 1.0));
 	return mix(c, cor_filete.rgb, clamp(fil, 0.0, 1.0));
