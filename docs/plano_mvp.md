@@ -342,3 +342,22 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     para proteger a frente a 90% (limites do estudo); cinco estágios visuais. Valores
     de velocidade, raio e tempos provisórios até o playtest (com 15 carros, lutas
     de ~50–100 s).
+
+### Gestão da equipe (decisões do usuário, 2026-10-11; estudo Grand Prix Story)
+
+51. **Patrocínio é a renda offline** (`GestaoEquipe`, `data/equipe.json`,
+    `data/patrocinadores.json`). Corridas continuam com o app fechado só depois de
+    começar com o app aberto; o patrocínio rende por hora no relógio real, também
+    fechado (até `teto_offline_s` de ausência). Abre com a equipe (International):
+    ofertas de patrocinadores de licença até a do jogador, contrato por um prazo, renda
+    por hora e bônus quando a corrida cumpre a condição dele. Substitui o patrocínio
+    por corrida (B1 da demanda 03).
+52. **Sede**: uma tela própria na aba Equipe com melhorias pagas com o caixa
+    (contratos simultâneos, renda, bônus, desmanche): mais onde gastar.
+53. **Desmanche**: além de vender, desmontar o carro vira crédito que só paga peças
+    (antes do caixa), pela soma das peças compradas para ele.
+54. **Evolução do piloto por treino** aprovada; teto pendente (os rivais têm a mesma
+    consistência do jogador, então "o nível dos rivais" não dá margem).
+55. Todo sistema novo entra com a fala da Mara e o número visível na tela.
+    Valores de 51–53: fatores sobre o prêmio de 1º lugar médio da licença, provisórios
+    até o playtest.

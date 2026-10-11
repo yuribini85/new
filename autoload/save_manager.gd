@@ -44,6 +44,10 @@ func _ready() -> void:
 		push_warning("SaveManager: " + r["aviso"])
 	if jogador.fila_ctrl != null and r["carregou"]:
 		relatorio_offline = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
+		# Patrocínio rende com o app fechado (até o teto de ausência).
+		var pat := GestaoEquipe.acumular(dados, jogador, Time.get_unix_time_from_system())
+		relatorio_offline["patrocinio"] = pat["ganho"]
+		relatorio_offline["patrocinios_encerrados"] = pat["encerrados"]
 		salvar()
 
 

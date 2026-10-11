@@ -3471,6 +3471,111 @@
   "reativa": true
  },
  {
+  "id": "CW_S01",
+  "trigger": "ABA:EQUIPE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Equipe de verdade atrai patrocinador.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Eles pagam por hora. Inclusive com a oficina fechada e você dormindo."
+   },
+   {
+    "quem": "mara",
+    "texto": "E pagam um extra quando a corrida cumpre o que eles pedem.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Na Sede, ao lado, a gente melhora o que eles pagam.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Assine um contrato em Patrocínio. Ele dura um dia; depois vêm ofertas novas."
+   }
+  ],
+  "requer": [
+   "SECOND_DRIVER_CREATED"
+  ],
+  "proibe": [
+   "PATROCINIO_INTRO"
+  ],
+  "flags": [
+   "PATROCINIO_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_S02",
+  "trigger": "PATROCINIO_ASSINADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeiro adesivo novo no carro desde aquela noite.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_SPONSOR"
+  ],
+  "flags": [
+   "FIRST_SPONSOR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_S03",
+  "trigger": "CARRO_DESMONTADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Cada peça dele ainda serve em outro. O crédito fica para a próxima compra de peças.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_DISMANTLE"
+  ],
+  "flags": [
+   "FIRST_DISMANTLE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_S04",
+  "trigger": "SEDE_MELHORADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "A oficina parece outra. Ainda tem goteira, mas parece outra.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_HQ_UPGRADE"
+  ],
+  "flags": [
+   "FIRST_HQ_UPGRADE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_R01",
   "trigger": "CORRIDA_FIM",
   "falas": [

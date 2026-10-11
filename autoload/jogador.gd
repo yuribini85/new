@@ -32,6 +32,9 @@ var flags: Dictionary = {}
 var dialogos_vistos: Dictionary = {}
 ## Arena (decisão 49): {lutas, vitorias, perdidos: [modelos perdidos]}.
 var arena: Dictionary = {}
+## Gestão da equipe (GestaoEquipe): {patrocinios: [contratos], semente_ofertas,
+## sede: {id: nível}, desmontados}.
+var equipe: Dictionary = {}
 ## Corrida (dias) do último comentário de contexto da história (cenas reativa).
 var ultima_reativa: int = -1000
 var historia: Historia
@@ -97,5 +100,6 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	dialogos_vistos = {}
 	ultima_reativa = -1000
 	arena = {}
+	equipe = {}
 	historico = {}
 	dias = 0

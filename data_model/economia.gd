@@ -5,6 +5,8 @@ extends RefCounted
 signal saldo_mudou(saldo: int)
 
 var saldo: int = 0
+## Crédito de peças (desmanche de carros, GestaoEquipe): só paga peças, antes do saldo.
+var credito_pecas: int = 0
 
 
 func _init(saldo_inicial: int = 0) -> void:
@@ -29,3 +31,18 @@ func creditar(valor: int) -> void:
 		return
 	saldo += valor
 	saldo_mudou.emit(saldo)
+
+
+## Peça: o crédito de peças paga primeiro, o saldo o resto.
+func pode_pagar_peca(valor: int) -> bool:
+	return valor <= saldo + credito_pecas
+
+
+func debitar_peca(valor: int) -> bool:
+	if valor < 0 or not pode_pagar_peca(valor):
+		return false
+	var do_credito := mini(credito_pecas, valor)
+	credito_pecas -= do_credito
+	saldo -= valor - do_credito
+	saldo_mudou.emit(saldo)
+	return true

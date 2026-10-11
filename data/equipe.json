@@ -1,0 +1,20 @@
+{
+ "_nota": "Gestão da equipe do jogador (Chrome & Wreckage; aba Equipe). Abre com a equipe (licença International, flag SECOND_DRIVER_CREATED). PRÊMIO DE REFERÊNCIA: a média do prêmio de 1º lugar das provas de uma licença (Patrocinio.premio_referencia). Todos os fatores abaixo multiplicam esse prêmio e são PROVISÓRIOS até o playtest (critério aprovado; valores a medir). Patrocínio: renda por hora corrida no relógio real, também com o app fechado (até carreira.json → teto_offline_s de ausência, como as corridas), mais um bônus quando a corrida cumpre a condição do patrocinador. Desmanche: desmontar um carro vira crédito para peças. Sede: melhorias compradas com o caixa.",
+ "patrocinio": {
+  "ofertas": 3,
+  "duracao_h": 24,
+  "renda_hora_fator": 0.25,
+  "bonus_fator": 0.5,
+  "contratos_base": 1
+ },
+ "desmanche": {
+  "fator_pecas": 0.5
+ },
+ "sede": [
+  {"id": "escritorio", "nome": "Escritório comercial", "descricao": "Mais um contrato de patrocínio ao mesmo tempo.", "efeito": "contratos", "por_nivel": 1, "niveis": 2, "custo_fator": 4.0},
+  {"id": "marketing", "nome": "Marketing", "descricao": "Patrocinadores pagam mais por hora.", "efeito": "renda", "por_nivel": 0.1, "niveis": 3, "custo_fator": 3.0},
+  {"id": "hospitalidade", "nome": "Hospitalidade", "descricao": "Bônus maior quando a corrida cumpre a condição do patrocinador.", "efeito": "bonus", "por_nivel": 0.2, "niveis": 3, "custo_fator": 2.5},
+  {"id": "patio", "nome": "Pátio de desmanche", "descricao": "Desmontar um carro rende mais crédito de peças.", "efeito": "desmanche", "por_nivel": 0.15, "niveis": 3, "custo_fator": 2.0}
+ ],
+ "sede_licenca_custo": "INTERNATIONAL"
+}

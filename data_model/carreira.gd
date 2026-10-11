@@ -216,6 +216,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
 	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo)
 	var folha := EquipeJogador.cobrar_corrida(dados, jogador)
+	var patrocinio := GestaoEquipe.bonus_corrida(dados, jogador, ev, posicao, not campeonato.is_empty())
 
 	return {
 		"anterior": anterior,
@@ -226,6 +227,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"posicao_propria": posicao_propria,
 		"posicao_companheiro": posicao_companheiro,
 		"folha": folha,
+		"patrocinio": patrocinio,
 		"premio": premio,
 		"carro_premio_uid": carro_premio_uid,
 		"resultado": r,

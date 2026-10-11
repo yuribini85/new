@@ -1378,7 +1378,7 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 	var motivo: String = jogador.concessionaria.comprar_peca(c, p)
 	if motivo != "":
 		avisar("Não deu para usar %s: %s." % [p["nome"], motivo], false)
-		if not jogador.economia.pode_pagar(int(p["preco"])):
+		if not jogador.economia.pode_pagar_peca(int(p["preco"])):
 			historia("SEM_DINHEIRO")
 		return
 	Sons.tocar_ui(self, "moeda", -4.0)

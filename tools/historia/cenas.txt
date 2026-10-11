@@ -700,6 +700,25 @@ Mara[decepcao]: O carro acabou. O piloto saiu andando. É isso que importa.
 = CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim
 Mara[decepcao]: Mais um pro ferro-velho.
 
+# ---------------------------------------------------------------- Gestão da equipe
+# Patrocínio, Sede e desmanche (GestaoEquipe, data/equipe.json): cada um com a fala da
+# Mara que explica o que é e o que rende.
+= CW_S01 | ABA:EQUIPE | personagem=dono; requer=SECOND_DRIVER_CREATED; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
+Mara[explica]: Equipe de verdade atrai patrocinador.
+Mara: Eles pagam por hora. Inclusive com a oficina fechada e você dormindo.
+Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
+Mara[firme]: Na Sede, ao lado, a gente melhora o que eles pagam.
+Sistema: Assine um contrato em Patrocínio. Ele dura um dia; depois vêm ofertas novas.
+
+= CW_S02 | PATROCINIO_ASSINADO | personagem=dono; proibe=FIRST_SPONSOR; flags=FIRST_SPONSOR
+Mara[firme]: Primeiro adesivo novo no carro desde aquela noite.
+
+= CW_S03 | CARRO_DESMONTADO | personagem=dono; proibe=FIRST_DISMANTLE; flags=FIRST_DISMANTLE
+Mara[pensativa]: Cada peça dele ainda serve em outro. O crédito fica para a próxima compra de peças.
+
+= CW_S04 | SEDE_MELHORADA | personagem=dono; proibe=FIRST_HQ_UPGRADE; flags=FIRST_HQ_UPGRADE
+Mara[gesto]: A oficina parece outra. Ainda tem goteira, mas parece outra.
+
 # ---------------------------------------------------------------- Comentários de contexto
 # reativa=sim: no máximo um a cada historia.json → reativa_intervalo_corridas corridas.
 = CW_R01 | CORRIDA_FIM | personagem=dono; requer=FIRST_WIN; proibe=FIRST_LOSS_TALK; condicao=posicao_min:2; flags=FIRST_LOSS_TALK; reativa=sim

@@ -448,7 +448,7 @@ func _acao_evolucao(c: Carro, cat: String) -> Array:
 			_reabrir(c, cat), false, true]
 	return ["INSTALAR · %s" % dinheiro(preco), func():
 		_comprar_peca(c, it, antes)
-		_reabrir(c, cat), true, jogador.economia.pode_pagar(preco)]
+		_reabrir(c, cat), true, jogador.economia.pode_pagar_peca(preco)]
 
 
 ## Um item da janela: o nome e o ganho em caixa alta, centrados; o escolhido
@@ -877,14 +877,35 @@ func _preco_ampliacao() -> int:
 
 
 func _confirmar_venda(c: Carro) -> void:
-	painel.emit("Vender %s?" % c.base["nome"], func(v):
-		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
-		nota("icone_vender", "Você recebe %s giros" % dinheiro(revenda(c.base)), "", v, Color.WHITE)
-		rotulo("Peças instaladas não entram no valor.", FONTE_PEQUENA, COR_SECUNDARIA, v),
-		[["Vender", func():
+	# Com o desmanche (GestaoEquipe), a janela oferece as duas saídas: vender
+	# pelo valor do carro ou desmontar pelo crédito das peças compradas.
+	var desmanche: bool = not dados.equipe().is_empty() and GestaoEquipe.pode_desmontar(jogador, c.uid)
+	var credito := GestaoEquipe.credito_desmanche(dados, jogador, c) if desmanche else 0
+	var botoes := [["Vender", func():
 			_vender(c.uid)
 			mudou.emit()
-			_reabrir_garagem()], ["Cancelar", _reabrir_garagem]])
+			_reabrir_garagem()]]
+	if desmanche:
+		botoes.append(["Desmontar", func():
+			var nome: String = c.base["nome"]
+			var cr := GestaoEquipe.desmontar(dados, jogador, c.uid)
+			if cr < 0:
+				avisar("Este carro não pode ser desmontado agora.", false)
+			else:
+				avisar("%s desmontado: %s giros de crédito em peças." % [nome, dinheiro(cr)])
+				Sons.tocar_ui(self, "batida", -10.0, 1.3)
+				historia("CARRO_DESMONTADO")
+			mudou.emit()
+			_reabrir_garagem()])
+	botoes.append(["Cancelar", _reabrir_garagem])
+	painel.emit(("Vender ou desmontar?" if desmanche else "Vender %s?" % c.base["nome"]), func(v):
+		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
+		nota("icone_vender", "Vender: %s giros" % dinheiro(revenda(c.base)), "Peças instaladas não entram no valor.", v,
+				Color.WHITE)
+		if desmanche:
+			nota("icone_melhorar", "Desmontar: %s giros em peças" % dinheiro(credito),
+					"Crédito pelas peças compradas para ele; paga peças de qualquer carro, antes do caixa.", v, Color.WHITE),
+		botoes)
 
 
 func _vender(uid: int) -> void:

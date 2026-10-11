@@ -194,6 +194,7 @@ func _ready() -> void:
 	timer.timeout.connect(_historia_corrida)
 	timer.timeout.connect(_contar_lembrete)
 	timer.timeout.connect(_atualizar_aceleracao)
+	timer.timeout.connect(_patrocinio)
 	_atualizar_aceleracao()
 	add_child(timer)
 	var save_manager := get_node("/root/SaveManager")
@@ -870,6 +871,11 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			Sons.tocar_ui(self, "moeda", -2.0)
 		else:
 			Tipografia.rotulo(g.rotulo("Sem prêmio", 0, Aba.COR_SECUNDARIA, pr), "medium", 24)
+		# Bônus dos patrocinadores cuja condição a corrida cumpriu.
+		for b in c.get("patrocinio", []):
+			var lb := g.rotulo("+%s giros · %s" % [Aba.dinheiro(int(b["valor"])), b["nome"]], Aba.FONTE_PEQUENA,
+					Aba.COR_DESTAQUE, v)
+			lb.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var marcos := []
 		var camp: Dictionary = c.get("campeonato", {})
 		if camp.get("final", false) and camp.get("campeao", false):
@@ -1017,8 +1023,19 @@ func _primeira_vitoria(c: Dictionary) -> void:
 
 ## Relatório de várias corridas (offline ou segundo plano): resumo e, sob
 ## pedido, a lista de cada corrida.
+## Patrocínio: a renda por hora entra a cada segundo com o app aberto; um
+## contrato que acaba avisa.
+func _patrocinio() -> void:
+	var r := GestaoEquipe.acumular(dados, jogador, Time.get_unix_time_from_system())
+	for nome in r["encerrados"]:
+		_sobre.avisar("Contrato de %s encerrado. Há ofertas novas na Equipe." % nome)
+	if not r["encerrados"].is_empty():
+		atualizar()
+
+
 func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
-	if rel.is_empty() or (rel["corridas"].is_empty() and rel["erro"] == ""):
+	var patrocinio := int(rel.get("patrocinio", 0))
+	if rel.is_empty() or (rel["corridas"].is_empty() and rel["erro"] == "" and patrocinio <= 0):
 		return
 	var g: Aba = _todas[0]
 	var objetivos := Objetivos.lista(jogador, dados)
@@ -1043,6 +1060,12 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			if not p.is_empty() and p["inicio"] <= jogador.dias:
 				g.rotulo("♥ %s à venda nos usados por %s giros" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
 						Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vp)
+		if patrocinio > 0:
+			var vpat := g.cartao(Aba.COR_DESTAQUE, v)
+			g.rotulo("PATROCÍNIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vpat)
+			g.rotulo("+%s giros enquanto você esteve fora" % Aba.dinheiro(patrocinio), 30, Color.WHITE, vpat)
+			for nome in rel.get("patrocinios_encerrados", []):
+				g.rotulo("Contrato de %s encerrado." % nome, Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vpat)
 		if not corridas.is_empty():
 			var vitorias := corridas.filter(func(c): return c["posicao"] == 1).size()
 			var melhor: int = corridas.map(func(c): return c["posicao"]).min()

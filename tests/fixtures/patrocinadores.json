@@ -1,0 +1,5 @@
+[
+ {"id": "p_b1", "nome": "Patrocinador B1", "ramo": "teste", "licenca": "b", "condicao": {"tipo": "podio"}},
+ {"id": "p_b2", "nome": "Patrocinador B2", "ramo": "teste", "licenca": "b", "condicao": {"tipo": "vitoria"}},
+ {"id": "p_a1", "nome": "Patrocinador A1", "ramo": "teste", "licenca": "a", "condicao": {"tipo": "licenca", "valor": "b"}}
+]

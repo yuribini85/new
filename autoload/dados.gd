@@ -74,6 +74,8 @@ func carregar(dir: String) -> void:
 	_objetos.erase("carros_removidos")  # idem (substituto())
 	_objetos.erase("workshops")  # idem (workshops())
 	_objetos.erase("garagem")  # idem (garagem())
+	_objetos.erase("equipe")  # idem (equipe())
+	_objetos.erase("patrocinadores")  # idem (patrocinadores())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -311,6 +313,26 @@ func arena() -> Dictionary:
 		var ok: bool = a is Dictionary and Arena.PARAMS.all(func(k): return a.has(k))
 		_objetos["arena"] = a if ok else {}
 	return _objetos["arena"]
+
+
+## Gestão da equipe do jogador (equipe.json, opcional): patrocínio, desmanche
+## e sede. Sem o arquivo, {} (nada disso aparece).
+func equipe() -> Dictionary:
+	if not _objetos.has("equipe"):
+		var caminho := pasta + "equipe.json"
+		var e = _ler_json(caminho) if FileAccess.file_exists(caminho) else {}
+		_objetos["equipe"] = e if e is Dictionary and e.has("patrocinio") else {}
+	return _objetos["equipe"]
+
+
+## Patrocinadores (patrocinadores.json, opcional): [{id, nome, ramo, licenca,
+## condicao: {tipo, valor?}}]. Sem o arquivo, [].
+func patrocinadores() -> Array:
+	if not _objetos.has("patrocinadores"):
+		var caminho := pasta + "patrocinadores.json"
+		var l = _ler_json(caminho) if FileAccess.file_exists(caminho) else []
+		_objetos["patrocinadores"] = {"lista": l if l is Array else []}
+	return _objetos["patrocinadores"]["lista"]
 
 
 ## Vagas da garagem (decisão 43, garagem.json, opcional). Sem o arquivo, {}

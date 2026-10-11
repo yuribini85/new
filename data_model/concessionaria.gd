@@ -67,7 +67,7 @@ func comprar_peca(carro: Carro, peca: Dictionary) -> String:
 	if motivo != OK:
 		return motivo
 	if not peca["id"] in carro.pecas_possuidas:
-		if not economia.debitar(int(peca["preco"])):
+		if not economia.debitar_peca(int(peca["preco"])):
 			return "saldo insuficiente"
 		carro.pecas_possuidas.append(peca["id"])
 	carro.instalar(peca)
