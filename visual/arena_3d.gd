@@ -5,7 +5,7 @@ extends SubViewportContainer
 ## círculo, muro de pneus, carros com a mesma arte da corrida (sprite ou o
 ## carro em código). Dano por região: marcas escuras no ponto do carro, mais
 ## fortes a cada estágio (Arena.estagio); fumaça a partir do 4º estágio; o
-## eliminado escurece e solta fumaça preta. Faíscas e um tranco de câmera nas
+## eliminado escurece e solta mais fumaça. Faíscas e um tranco de câmera nas
 ## batidas. A câmera enquadra os carros ainda vivos.
 ##
 ## Três modos de câmera (`modo`): "briga" (a sua briga, girando devagar),
@@ -614,11 +614,12 @@ func _criar_fumaca(c: Node3D, preta: bool) -> CPUParticles3D:
 	q.material = m
 	f.mesh = q
 	var cores := Gradient.new()
-	# Eliminado: fumaça cinza-chumbo e rala (preta e densa virava uma bola
-	# escura sobre o capô, vista de cima).
-	var base := Color(0.32, 0.31, 0.3) if preta else Color(0.75, 0.74, 0.72)
+	# Sempre clara: fumaça escura virava um disco preto na tela (tirava a
+	# imersão). O eliminado só solta mais, um pouco mais cinza.
+	m.vertex_color_is_srgb = true
+	var base := Color(0.62, 0.61, 0.6) if preta else Color(0.78, 0.77, 0.75)
 	cores.set_color(0, Color(base, 0.0))
-	cores.add_point(0.25, Color(base, 0.3))
+	cores.add_point(0.25, Color(base, 0.22))
 	cores.set_color(cores.get_point_count() - 1, Color(base, 0.0))
 	f.color_ramp = cores
 	f.position = Vector3(Arena.COMPRIMENTO_M * 0.3, 1.4, 0.0)  # do capô (motor na frente), já acima dele
