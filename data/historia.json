@@ -22,7 +22,7 @@
   "pneu": "pneu_1",
   "licencas": [],
   "peca_demanda": "bancroft_sidewinder_brake_1",
-  "piloto": "piloto_casa",
+  "piloto": "",
   "equipe": {
    "nome": "Wreckage Motorsport",
    "logo": "res://arte/equipes/wreckage_motorsport.png",

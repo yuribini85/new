@@ -2480,11 +2480,7 @@
     "texto": "Agora ele freia. Falta alguém para dirigir."
    },
    {
-    "quem": "sistema",
-    "texto": "Vá para Corridas."
-   },
-   {
-    "acao": "HIGHLIGHT_NAV_EVENTOS"
+    "acao": "UNLOCK_TEAM_TAB"
    }
   ],
   "requer": [],
@@ -2499,36 +2495,98 @@
   "personagem": "dono"
  },
  {
+  "id": "CW_P03C",
+  "trigger": "ABA:EQUIPE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Você cuida da equipe. Quem senta no carro é piloto contratado.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Para as corridas, alguém constante ou uma promessa. É ele que leva o nome da Wreckage para a pista.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Contratar, no piloto de corrida."
+   },
+   {
+    "acao": "HIGHLIGHT_PILOTO_CORRIDA"
+   }
+  ],
+  "requer": [
+   "FIRST_TUNE_DONE"
+  ],
+  "proibe": [
+   "PILOT_HIRED"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "lembrete": "CW_P03CL",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_P03CL",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Sem piloto, o carro não sai. Contrate um para as corridas."
+   },
+   {
+    "acao": "HIGHLIGHT_PILOTO_CORRIDA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "PILOT_HIRED"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P03D",
+  "trigger": "PILOTO_CONTRATADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} no volante. Agora, as corridas.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Vá para Corridas."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "PILOT_HIRED"
+  ],
+  "flags": [
+   "PILOT_HIRED",
+   "PILOT_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_P04",
   "trigger": "ABA:EVENTOS",
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você cuida da oficina. Alguém precisa assumir o volante.",
+    "texto": "Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "{piloto}. Estava no outro carro naquela noite. Ficou quando todo mundo foi embora.",
-    "pose": "gesto"
-   },
-   {
-    "quem": "piloto_casa",
-    "texto": "Alguém tinha que ficar."
-   },
-   {
-    "quem": "mara",
-    "texto": "Ele corre pelo que a gente montar.",
-    "pose": "firme"
-   },
-   {
-    "quem": "piloto_casa",
-    "texto": "E pelo prêmio."
-   },
-   {
-    "quem": "mara",
-    "texto": "Pelo prêmio também.",
-    "pose": "firme"
    },
    {
     "acao": "HIGHLIGHT_COPA"
@@ -2552,13 +2610,14 @@
     "acao": "HIGHLIGHT_DISPUTAR"
    }
   ],
-  "requer": [],
+  "requer": [
+   "PILOT_HIRED"
+  ],
   "proibe": [
    "EVENT_MENU_TUTORIAL_SEEN"
   ],
   "flags": [
-   "EVENT_MENU_TUTORIAL_SEEN",
-   "PILOT_MET"
+   "EVENT_MENU_TUTORIAL_SEEN"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -3066,18 +3125,15 @@
     "texto": "Caixa, folha e patrocínio passam a contar por corrida."
    },
    {
-    "acao": "UNLOCK_TEAM_TAB"
-   },
-   {
     "quem": "sistema",
-    "texto": "A aba Equipe está liberada."
+    "texto": "Caixa e Sede na aba Equipe; Patrocínio na Carreira."
    }
   ],
   "requer": [],
   "proibe": [],
   "flags": [
    "INTERNATIONAL_COMPLETE",
-   "SECOND_DRIVER_CREATED"
+   "GESTAO_LIBERADA"
   ],
   "bloqueia": true,
   "uma_vez": true,
@@ -3094,23 +3150,14 @@
    },
    {
     "quem": "mara",
-    "texto": "Um carro só não segura esse nível.",
+    "texto": "Daqui para frente, cada décimo custa caro.",
     "pose": "cruzados"
-   },
-   {
-    "quem": "mara",
-    "texto": "Achei alguém para o segundo. Escolha o carro dele na Equipe.",
-    "pose": "gesto"
-   },
-   {
-    "acao": "OPEN_DRIVER_HIRE"
    }
   ],
   "requer": [],
   "proibe": [],
   "flags": [
-   "PRO_COMPLETE",
-   "DRIVER_HIRE_UNLOCKED"
+   "PRO_COMPLETE"
   ],
   "bloqueia": true,
   "uma_vez": true,
@@ -3437,11 +3484,11 @@
  },
  {
   "id": "CW_P07",
-  "trigger": "ABA:ARENA",
+  "trigger": "GARAGEM_TRES_CARROS",
   "falas": [
    {
     "quem": "mara",
-    "texto": "Tem outra maneira de ganhar dinheiro por aqui.",
+    "texto": "Três carros. Tem outra maneira de ganhar dinheiro por aqui.",
     "pose": "cruzados"
    },
    {
@@ -3455,7 +3502,7 @@
    },
    {
     "quem": "organizadora",
-    "texto": "Aqui se luta em dupla: o seu carro e o do seu segundo piloto. Sem ele, eu empresto um piloto da casa num carro meu."
+    "texto": "Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui."
    },
    {
     "quem": "organizadora",
@@ -3468,16 +3515,17 @@
    },
    {
     "quem": "organizadora",
-    "texto": "Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem."
+    "texto": "Carro que quebra a frente lá dentro fica lá. Por isso a arena pede três carros: um fica para as corridas."
+   },
+   {
+    "acao": "UNLOCK_ARENA_PILOTS"
    },
    {
     "quem": "sistema",
-    "texto": "Arena em duplas: a última dupla de pé vence. Carro eliminado sai da garagem para sempre."
+    "texto": "Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina."
    }
   ],
-  "requer": [
-   "NATIONAL_COMPLETE"
-  ],
+  "requer": [],
   "proibe": [
    "ARENA_INTRO"
   ],
@@ -3786,7 +3834,7 @@
    }
   ],
   "requer": [
-   "SECOND_DRIVER_CREATED"
+   "GESTAO_LIBERADA"
   ],
   "proibe": [
    "PATROCINIO_INTRO"

@@ -108,6 +108,8 @@ func _partes() -> void:
 
 ## Caixa único (o saldo), as peças e a folha de cada corrida.
 func _caixa() -> void:
+	if not GestaoEquipe.aberta(dados, jogador):
+		return  # decisão 69: a equipe nasce no começo; caixa e folha, com a International
 	titulo_secao("CAIXA", "Prêmios, patrocínio e staff entram e saem do mesmo caixa.")
 	var c := cartao()
 	var h := fileira(c)
@@ -192,22 +194,63 @@ func _linha_folha(pai: Control, texto: String, chave: String, v: int, sinal: Str
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 
+## Decisão 69: você administra; quem pilota é contratado. Três vagas: o piloto
+## de corrida (o primeiro, no tutorial do começo) e os dois de arena (abrem com
+## o tutorial da arena, aos 3 carros).
 func _pilotos(eq: Dictionary) -> void:
-	titulo_secao("PILOTOS")
-	var c := cartao()
-	if Prologo.piloto(dados, jogador) != "":
-		_linha_piloto(c, EquipeJogador.nome_jogador(dados, jogador), "PILOTO PRINCIPAL")
-	_treino(c)
+	titulo_secao("PILOTOS", "Um piloto de corrida e dois de arena. Piloto de corrida não luta na arena.")
+	if not EquipeJogador.exige_piloto(jogador) and Prologo.piloto(dados, jogador) != "":
+		var cp := cartao()
+		_linha_piloto(cp, EquipeJogador.nome_jogador(dados, jogador), "PILOTO PRINCIPAL")
 	for p in eq.get("pilotos", []):
 		if String(p["id"]).begins_with(String(jogador.personagem) + "_"):
-			_linha_piloto(c, String(p["nome"]), "PILOTO PRINCIPAL")
-	if jogador.segundo_piloto != "":
-		_segundo_piloto(c)
-		nota("icone_piloto", "Corre com você", "Na mesma prova, com outro carro da garagem. "
-				+ "Vale para a equipe quem chegar na frente; os dois pontuam no campeonato.", c)
-		_carro_companheiro()
-	else:
-		nota("icone_info", "Segundo piloto", "Um segundo piloto chega mais adiante na carreira.", c)
+			_linha_piloto(cartao(), String(p["nome"]), "PILOTO PRINCIPAL")
+	for vaga in EquipeJogador.VAGAS_PILOTO:
+		var c := cartao()
+		_vaga_piloto(vaga, c)
+		if vaga == "corrida":
+			_treino(c)
+		elif vaga == "arena2" and EquipeJogador.piloto_vaga(jogador, vaga) != "":
+			_carro_companheiro()
+
+
+func _vaga_piloto(vaga: String, pai: Control) -> void:
+	var id := EquipeJogador.piloto_vaga(jogador, vaga)
+	var tipo := "corrida" if vaga == "corrida" else "arena"
+	if not EquipeJogador.vaga_aberta(jogador, vaga):
+		_linha_piloto(pai, "Vaga fechada", EquipeJogador.NOMES_VAGA[vaga])
+		rotulo("Os pilotos de arena chegam com a arena: 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+		return
+	if id == "":
+		_linha_piloto(pai, "Vaga livre", EquipeJogador.NOMES_VAGA[vaga])
+		var b := Button.new()
+		Tipografia.acao_primaria(b, "Contratar piloto de %s   →" % tipo, COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 64)
+		b.pressed.connect(_escolher_segundo.bind(vaga))
+		pai.add_child(b)
+		if vaga == "corrida":
+			ancora("PILOTO_CORRIDA", b)
+		return
+	var h := fileira(pai)
+	h.add_theme_constant_override("separation", 12)
+	var busto := TextureRect.new()
+	busto.texture = _busto(id)
+	busto.custom_minimum_size = BUSTO
+	busto.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	busto.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	h.add_child(busto)
+	var v := VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	v.add_theme_constant_override("separation", 4)
+	h.add_child(v)
+	_linha_piloto(v, String(EquipeJogador.piloto(dados, id).get("nome", id)), EquipeJogador.NOMES_VAGA[vaga])
+	var tr := EquipeJogador.traco(dados, id)
+	if not tr.is_empty():
+		_selo_traco(String(tr["nome"]), v)
+	var frase := String(EquipeJogador.piloto(dados, id).get("frase", ""))
+	if frase != "":
+		rotulo(frase, FONTE_PEQUENA, COR_SECUNDARIA, v)
+	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 
 ## Treino do piloto principal (decisão 54): ritmo atual e o teto da
@@ -256,41 +299,15 @@ func _treino(pai: Control) -> void:
 	pai.add_child(b)
 
 
-## Segundo piloto (decisão 56): o busto (corpo inteiro recortado na cintura),
-## nome, traço e frase; "Trocar piloto" abre os candidatos.
-func _segundo_piloto(pai: Control) -> void:
-	var id: String = jogador.segundo_piloto
-	var h := fileira(pai)
-	h.add_theme_constant_override("separation", 12)
-	var busto := TextureRect.new()
-	busto.texture = _busto(id)
-	busto.custom_minimum_size = BUSTO
-	busto.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	busto.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	h.add_child(busto)
-	var v := VBoxContainer.new()
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	v.add_theme_constant_override("separation", 4)
-	h.add_child(v)
-	_linha_piloto(v, EquipeJogador.nome_segundo(dados, jogador), "SEGUNDO PILOTO")
-	var tr := EquipeJogador.traco(dados, id)
-	if not tr.is_empty():
-		_selo_traco(String(tr["nome"]), v)
-	var frase := String(EquipeJogador.piloto(dados, id).get("frase", ""))
-	if frase != "":
-		rotulo(frase, FONTE_PEQUENA, COR_SECUNDARIA, v)
-	if EquipeJogador.candidatos(dados).size() > 1:
-		botao_texto("Trocar piloto  →", _escolher_segundo, v).alignment = HORIZONTAL_ALIGNMENT_LEFT
-
-
 ## Os candidatos um por vez, de corpo inteiro sob um foco de luz, com as setas
 ## da garagem para passar; embaixo, nome, traço, frase e Contratar.
-func _escolher_segundo() -> void:
-	var lista := EquipeJogador.candidatos(dados)
+func _escolher_segundo(vaga: String = "corrida") -> void:
+	var tipo := "corrida" if vaga == "corrida" else "arena"
+	var lista: Array = EquipeJogador.candidatos(dados).filter(func(c): return String(c.get("tipo", "corrida")) == tipo)
 	var ids := lista.map(func(c): return String(c["id"]))
-	var estado := {"i": maxi(ids.find(jogador.segundo_piloto), 0)}
-	painel.emit("Segundo piloto", func(pv):
+	var atual_id := EquipeJogador.piloto_vaga(jogador, vaga)
+	var estado := {"i": maxi(ids.find(atual_id), 0)}
+	painel.emit("Piloto de " + tipo, func(pv):
 		var palco := Control.new()
 		palco.custom_minimum_size = Vector2(0, PALCO_ALTURA)
 		palco.clip_contents = true
@@ -338,7 +355,8 @@ func _escolher_segundo() -> void:
 		info.add_child(na_equipe)
 		var mostrar := func(lado: int):
 			var c: Dictionary = lista[estado["i"]]
-			var atual: bool = c["id"] == jogador.segundo_piloto
+			var atual: bool = c["id"] == atual_id
+			var outra := EquipeJogador.vaga_do_piloto(jogador, String(c["id"]))
 			corpo.texture = Assets.get_asset(String(c["id"]), "corpo")
 			nome.text = String(c["nome"])
 			for f in selo.get_children():
@@ -348,8 +366,9 @@ func _escolher_segundo() -> void:
 			frase.text = String(c.get("frase", ""))
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
 			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
-			b.visible = not atual
-			na_equipe.visible = atual
+			b.visible = not atual and outra == ""
+			na_equipe.visible = atual or outra != ""
+			na_equipe.text = "NA EQUIPE" if atual else ("NA EQUIPE · " + String(EquipeJogador.NOMES_VAGA.get(outra, "")))
 			if lado != 0 and not Preferencias.reduzir_animacoes:
 				corpo.modulate.a = 0.0
 				corpo.position.x = 40.0 * lado
@@ -361,14 +380,15 @@ func _escolher_segundo() -> void:
 			mostrar.call(lado))
 		b.pressed.connect(func():
 			var c: Dictionary = lista[estado["i"]]
-			var motivo := EquipeJogador.contratar(dados, jogador, String(c["id"]))
+			var motivo := EquipeJogador.contratar(dados, jogador, String(c["id"]), vaga)
 			if motivo != "":
 				avisar("Não deu: %s." % motivo, false)
 				return
 			Sons.tocar_ui(self, "moeda", -4.0)
-			avisar("%s é o seu segundo piloto." % c["nome"])
+			avisar("%s contratado: %s." % [c["nome"], String(EquipeJogador.NOMES_VAGA[vaga]).to_lower()])
 			fechar_painel.emit()
-			mudou.emit())
+			mudou.emit()
+			historia("PILOTO_CONTRATADO", {"vaga": vaga}))
 		mostrar.call(0), [])
 
 

@@ -218,7 +218,11 @@ func test_campanha_do_dono_e_comentarios() -> void:
 	igual(j.garagem.lista().size(), 1, "carro da oficina")
 	igual(j.economia.saldo, 299, "saldo pelo mesmo critério do Adrian")
 	igual(Prologo.demanda(d, j), "turbo", "peça da demanda")
-	igual(EquipeJogador.nome_jogador(d, j), "Beto", "o piloto da campanha corre")
+	# Decisão 69: o dono administra; quem corre é o piloto de corrida contratado.
+	igual(EquipeJogador.nome_jogador(d, j), "Sem piloto", "sem piloto contratado")
+	EquipeJogador.criar(j)
+	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "contrata o piloto de corrida")
+	igual(EquipeJogador.nome_jogador(d, j), "Livre Um", "o contratado corre")
 	verificar(not Prologo.deve_ultima_corrida(d, j), "sem a última corrida do Adrian")
 	var h := Historia.new(d, j)
 	j.historia = h
@@ -294,7 +298,10 @@ func test_equipe_folha_e_companheiro() -> void:
 	var saldo: int = j.economia.saldo
 	EquipeJogador.liberar_segundo(d, j)
 	igual(j.economia.saldo, saldo, "segundo piloto sem contrato")
-	igual(EquipeJogador.nome_segundo(d, j), "Livre Um", "nome do segundo piloto")
+	j.flags[EquipeJogador.FLAG_ARENA] = true
+	igual(EquipeJogador.contratar(d, j, "livre_3", "arena1"), "", "piloto de arena 1")
+	igual(EquipeJogador.contratar(d, j, "livre_4", "arena2"), "", "piloto de arena 2")
+	igual(EquipeJogador.nome_segundo(d, j), "Livre Quatro", "nome do segundo da dupla")
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
 	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), -1, "sem carro escolhido não corre")
 	var uid2: int = j.concessionaria.comprar_carro(d.carro("fraco"))
@@ -315,7 +322,7 @@ func test_equipe_folha_e_companheiro() -> void:
 	var premio: int = r["premio"]
 	igual(r["folha"]["saldo"], 50 - 70, "folha: patrocínio − staff, sem salário")
 	igual(j.economia.saldo, saldo + premio + 50 - 70, "prêmio e folha no caixa único")
-	verificar(c.rotulo_participante("aberto", EquipeJogador.ID, uid).begins_with("Livre Um"), "rótulo do companheiro")
+	verificar(c.rotulo_participante("aberto", EquipeJogador.ID, uid).begins_with("Livre Quatro"), "rótulo do companheiro")
 	# Sem dinheiro para a folha: cobra só o que há, sem saldo negativo.
 	j.economia.saldo = 10
 	var f := EquipeJogador.cobrar_corrida(d, j)

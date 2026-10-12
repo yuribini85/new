@@ -20,7 +20,10 @@ static func ordem(dados: Node) -> Array:
 
 
 static func aberta(dados: Node, jogador: Node) -> bool:
-	return not dados.equipe().is_empty() and EquipeJogador.criada(jogador)
+	# Decisão 69: na campanha do dono a equipe nasce no começo (para contratar o
+	# piloto); caixa, sede e patrocínio abrem com a International.
+	return not dados.equipe().is_empty() and EquipeJogador.criada(jogador) \
+			and (not EquipeJogador.exige_piloto(jogador) or jogador.flags.has("GESTAO_LIBERADA"))
 
 
 ## Média do prêmio de 1º lugar das provas da licença (0 sem provas).

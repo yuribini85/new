@@ -46,6 +46,8 @@ var historia: Historia
 ## da garagem que ele usa nas provas (-1 = nenhum).
 var segundo_piloto: String = ""
 var carro_companheiro: int = -1
+## Pilotos contratados (decisão 69, EquipeJogador): {corrida: id, arena: [id, id]}.
+var pilotos: Dictionary = {}
 ## Escalação (Escalacao): {corrida: uid, arena: [uid, uid]}.
 var escalacao: Dictionary = {}
 ## Última loja aberta em Lojas ("" = o mapa): reabre nela, também depois de fechar o jogo.
@@ -106,6 +108,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	segundo_piloto = ""
 	carro_companheiro = -1
 	escalacao = {}
+	pilotos = {}
 	ultima_loja = ""
 	flags = {}
 	dialogos_vistos = {}

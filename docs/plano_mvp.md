@@ -487,3 +487,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     dupla), três carros diferentes; escalado não se vende nem se desmonta. A arena pede 3
     carros, as duas vagas de arena e o segundo piloto contratado (sem carro emprestado).
     Pendente: pilotos só de corrida e só de arena, resolvido na tela de pilotos.
+69. **O jogador administra; pilotos de corrida e de arena** (2026-10-12, decisão do
+    usuário). O protagonista não pilota: quem corre é contratado na tela de pilotos (aba
+    Equipe). Três vagas (`jogador.pilotos`): 1 piloto de corrida (nas corridas só ele corre)
+    e 2 de arena (a dupla). Cada candidato tem o tipo pelo traço (`carreira.json` →
+    candidatos → `tipo`: Constante e Promessa de corrida; Agressivo e Barato de arena),
+    sem salário novo (a gestão segue a tabela atual). Tutorial: depois dos freios, a Mara
+    abre a Equipe e o primeiro piloto (de corrida) é contratado antes da primeira prova
+    (CW_P03C/D); o piloto da casa saiu. Com 3 carros na garagem vem o tutorial da arena
+    (CW_P07, gatilho GARAGEM_TRES_CARROS), que libera os pilotos de arena e abre a arena
+    (no lugar da licença mínima, que ficou só para o prêmio de referência). Caixa, Sede e
+    patrocínio continuam abrindo com a International (flag GESTAO_LIBERADA).

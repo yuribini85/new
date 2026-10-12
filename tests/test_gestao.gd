@@ -148,22 +148,32 @@ func test_treino_sobe_ritmo_ate_o_teto() -> void:
 	d.free()
 
 
-func test_segundo_piloto_troca_entre_candidatos_e_promessa_treina() -> void:
+## Decisão 69: uma vaga de corrida e duas de arena; cada candidato tem o tipo;
+## as de arena abrem com o tutorial da arena.
+func test_pilotos_de_corrida_e_de_arena() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
-	igual(EquipeJogador.contratar(d, j, "livre_2"), "a equipe ainda não contrata", "sem a cena que libera")
-	EquipeJogador.liberar_segundo(d, j)
-	igual(j.segundo_piloto, "livre_1", "começa com o padrão")
+	j.flags.erase(EquipeJogador.FLAG)
+	igual(EquipeJogador.contratar(d, j, "livre_1"), "a equipe ainda não contrata", "antes da equipe existir")
+	EquipeJogador.criar(j)
 	igual(EquipeJogador.contratar(d, j, "ninguem"), "candidato desconhecido", "só candidatos")
-	j.equipe["treino"] = {"nivel": 2, "fim": 0.0}
-	var base := float(d.piloto(d.carreira()["piloto_jogador"])["ritmo"])
-	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), base, 1e-6, "Constante: sem o treino")
-	igual(EquipeJogador.contratar(d, j, "livre_2"), "", "troca")
-	igual(EquipeJogador.nome_segundo(d, j), "Livre Dois", "o novo segundo piloto")
-	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), GestaoEquipe.ritmo(d, j, base), 1e-6,
-			"Promessa: treina junto com o piloto principal")
-	verificar(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]) > base, "o treino aparece")
+	verificar(EquipeJogador.contratar(d, j, "livre_3", "corrida") != "", "piloto de arena não corre")
+	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "piloto de corrida")
+	igual(EquipeJogador.contratar(d, j, "livre_2", "corrida"), "", "troca o de corrida")
+	igual(EquipeJogador.nome_jogador(d, j), "Livre Dois", "quem corre")
+	verificar(EquipeJogador.contratar(d, j, "livre_3", "arena1") != "", "arena fechada antes do tutorial")
+	j.flags[EquipeJogador.FLAG_ARENA] = true
+	verificar(EquipeJogador.contratar(d, j, "livre_1", "arena1") != "", "piloto de corrida não vai à arena")
+	igual(EquipeJogador.contratar(d, j, "livre_3", "arena1"), "", "arena 1")
+	verificar(EquipeJogador.contratar(d, j, "livre_3", "arena2") != "", "o mesmo piloto em duas vagas, não")
+	igual(EquipeJogador.contratar(d, j, "livre_4", "arena2"), "", "arena 2")
+	igual(EquipeJogador.nome_segundo(d, j), "Livre Quatro", "a dupla")
+	var texto := JSON.stringify(Save.serializar(j))
+	var k := _novo(d)
+	igual(Save.desserializar(JSON.parse_string(texto), k, d), "", "load")
+	igual(k.pilotos, j.pilotos, "pilotos no save")
 	j.free()
+	k.free()
 	d.free()
 
 

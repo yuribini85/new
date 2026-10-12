@@ -184,7 +184,9 @@ func _ready() -> void:
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid
 	Escalacao.migrar(jogador)
+	EquipeJogador.migrar(dados, jogador)
 	atualizar()
+	_checar_arena.call_deferred()
 
 	var timer := Timer.new()
 	timer.wait_time = 1.0
@@ -412,6 +414,17 @@ func _abrir_vinheta(id: String, contexto: String) -> void:
 	v.name = "VinhetaGrid"
 	add_child(v)
 	v.ir.connect(func(aba: int): _ir_para(aba))
+
+
+## Decisão 69: com 3 carros na garagem abre o tutorial da arena (campanha do
+## dono); sem história, a arena abre direto.
+func _checar_arena() -> void:
+	if jogador.flags.has(EquipeJogador.FLAG_ARENA) or jogador.garagem.lista().size() < 3:
+		return
+	if not EquipeJogador.exige_piloto(jogador) or jogador.historia == null:
+		jogador.flags[EquipeJogador.FLAG_ARENA] = true
+		return
+	jogador.historia.disparar("GARAGEM_TRES_CARROS")
 
 
 ## Engrenagem do cabeçalho.
@@ -723,6 +736,10 @@ func _acao_historia(nome: String) -> void:
 		EquipeJogador.liberar_segundo(dados, jogador)
 		atualizar()
 		_ir_para(ABA_EQUIPE)
+	elif nome == "UNLOCK_ARENA_PILOTS":
+		# Decisão 69: o tutorial da arena libera os pilotos de arena.
+		jogador.flags[EquipeJogador.FLAG_ARENA] = true
+		atualizar()
 	elif nome == "UNLOCK_TEAM_TAB":
 		# A Second Driver nasce na cena: nada é resetado, só a aba aparece.
 		EquipeJogador.criar(jogador)

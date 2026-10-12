@@ -530,17 +530,27 @@ Mara: O carro não se monta sozinho. {demanda}.
 [OPEN_GARAGE_TAB]
 Mara: {peca} instalados.
 Mara: Agora ele freia. Falta alguém para dirigir.
+[UNLOCK_TEAM_TAB]
+
+# Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
+# piloto (de corrida) é escolhido na tela de pilotos, antes da primeira prova.
+= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_TUNE_DONE; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
+Mara[explica]: Você cuida da equipe. Quem senta no carro é piloto contratado.
+Mara[gesto]: Para as corridas, alguém constante ou uma promessa. É ele que leva o nome da Wreckage para a pista.
+Sistema: Toque em Contratar, no piloto de corrida.
+[HIGHLIGHT_PILOTO_CORRIDA]
+
+= CW_P03CL | LEMBRETE | personagem=dono; proibe=PILOT_HIRED
+Mara: Sem piloto, o carro não sai. Contrate um para as corridas.
+[HIGHLIGHT_PILOTO_CORRIDA]
+
+= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET
+Mara[firme]: {piloto} no volante. Agora, as corridas.
 Sistema: Vá para Corridas.
 [HIGHLIGHT_NAV_EVENTOS]
 
-# Quem dirige: o piloto da casa (fixo; contratação fica para depois).
-= CW_P04 | ABA:EVENTOS | personagem=dono; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN,PILOT_MET; lembrete=CW_P04L; cenario=oficina_mara
-Mara[explica]: Você cuida da oficina. Alguém precisa assumir o volante.
-Mara[gesto]: {piloto}. Estava no outro carro naquela noite. Ficou quando todo mundo foi embora.
-Piloto: Alguém tinha que ficar.
-Mara[firme]: Ele corre pelo que a gente montar.
-Piloto: E pelo prêmio.
-Mara[firme]: Pelo prêmio também.
+= CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara
+Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.
 [HIGHLIGHT_COPA]
 Mara: Sem licença, só as provas abertas. Esta o carro já pode correr.
 [HIGHLIGHT_COMPETITIVIDADE]
@@ -636,18 +646,15 @@ Harold: National aprovada. Poucos passam daqui sem repetir.
 Mara[firme]: Agora a gente aparece na lista dos outros.
 
 # A equipe da oficina nasce com a International; o segundo piloto chega com a Pro.
-= CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,SECOND_DRIVER_CREATED; cenario=oficina_mara
+= CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,GESTAO_LIBERADA; cenario=oficina_mara
 Harold: International aprovada. Agora ele representa a Academy lá fora também.
 Mara[explica]: Com essa, a Wreckage volta a ser equipe de verdade.
 Mara: Caixa, folha e patrocínio passam a contar por corrida.
-[UNLOCK_TEAM_TAB]
-Sistema: A aba Equipe está liberada.
+Sistema: Caixa e Sede na aba Equipe; Patrocínio na Carreira.
 
-= CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE,DRIVER_HIRE_UNLOCKED; cenario=oficina_mara
+= CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE; cenario=oficina_mara
 Harold: Pro aprovada.
-Mara[cruzados]: Um carro só não segura esse nível.
-Mara[gesto]: Achei alguém para o segundo. Escolha o carro dele na Equipe.
-[OPEN_DRIVER_HIRE]
+Mara[cruzados]: Daqui para frente, cada décimo custa caro.
 
 = CW_T03 | LICENCA_CONCEDIDA:ELITE | personagem=dono; flags=ELITE_COMPLETE; cenario=vector_academy
 Harold: Elite aprovada. Em trinta anos, assinei poucas dessas.
@@ -703,15 +710,17 @@ Mara[pensativa]: Dez provas vencidas. A parede de troféus já não está vazia.
 Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
 
 # ---------------------------------------------------------------- Arena (decisão 49)
-= CW_P07 | ABA:ARENA | personagem=dono; requer=NATIONAL_COMPLETE; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
-Mara[cruzados]: Tem outra maneira de ganhar dinheiro por aqui.
+# Decisão 69: o tutorial da arena chega com o terceiro carro na garagem.
+= CW_P07 | GARAGEM_TRES_CARROS | personagem=dono; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
+Mara[cruzados]: Três carros. Tem outra maneira de ganhar dinheiro por aqui.
 Mara[pensativa]: Não é o tipo de corrida que eu escolheria depois daquela noite. Mas paga as dívidas que ficaram.
 Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.
-Roxy: Aqui se luta em dupla: o seu carro e o do seu segundo piloto. Sem ele, eu empresto um piloto da casa num carro meu.
+Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui.
 Roxy: Vence a última dupla com carro de pé. Venceu, o próximo campeonato tem uma equipe a mais: começa em dois contra dois e vai até vinte carros.
 Mara[alerta]: Pagam mais porque alguns carros não voltam.
-Roxy: Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem.
-Sistema: Arena em duplas: a última dupla de pé vence. Carro eliminado sai da garagem para sempre.
+Roxy: Carro que quebra a frente lá dentro fica lá. Por isso a arena pede três carros: um fica para as corridas.
+[UNLOCK_ARENA_PILOTS]
+Sistema: Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina.
 
 # O mecânico da arena: a blindagem (Oficina, ao lado da velocidade máxima).
 = CW_AR02 | ENCADEADA | personagem=dono; flags=DEX_MET
@@ -765,7 +774,7 @@ Mara[decepcao]: Mais um pro ferro-velho.
 # ---------------------------------------------------------------- Gestão da equipe
 # Patrocínio, Sede e desmanche (GestaoEquipe, data/equipe.json): cada um com a fala da
 # Mara que explica o que é e o que rende.
-= CW_S01 | ABA:LICENCAS | personagem=dono; requer=SECOND_DRIVER_CREATED; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
+= CW_S01 | ABA:LICENCAS | personagem=dono; requer=GESTAO_LIBERADA; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
 Mara[explica]: Equipe de verdade atrai patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.

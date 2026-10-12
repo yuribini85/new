@@ -16,6 +16,12 @@ extends RefCounted
 
 const FLAG := "SECOND_DRIVER_CREATED"
 const FLAG_CONTRATAR := "DRIVER_HIRE_UNLOCKED"
+## Decisão 69: o jogador administra; quem pilota é contratado. Vagas de piloto:
+## uma de corrida e duas de arena (jogador.pilotos). Os de arena abrem com o
+## tutorial da arena (3 carros na garagem).
+const VAGAS_PILOTO := ["corrida", "arena1", "arena2"]
+const NOMES_VAGA := {"corrida": "PILOTO DE CORRIDA", "arena1": "PILOTO DE ARENA 1", "arena2": "PILOTO DE ARENA 2"}
+const FLAG_ARENA := "ARENA_PILOTS_UNLOCKED"
 ## Id do companheiro na corrida (ao lado de "jogador").
 const ID := "companheiro"
 
@@ -90,20 +96,90 @@ static func traco(dados: Node, piloto_id: String) -> Dictionary:
 	return config(dados).get("tracos", {}).get(String(piloto(dados, piloto_id).get("traco", "")), {})
 
 
-## Troca o segundo piloto por outro candidato (sem custo até o custo_staff).
-## "" ou o motivo.
-static func contratar(dados: Node, jogador: Node, piloto_id: String) -> String:
-	if not criada(jogador) or not jogador.flags.has(FLAG_CONTRATAR):
-		return "a equipe ainda não contrata"
-	if not candidatos(dados).any(func(c): return c.get("id") == piloto_id):
-		return "candidato desconhecido"
-	jogador.segundo_piloto = piloto_id
+## Tipo do candidato: "corrida" ou "arena" (carreira.json → candidatos).
+static func tipo(dados: Node, piloto_id: String) -> String:
+	return String(piloto(dados, piloto_id).get("tipo", "corrida"))
+
+
+## Piloto contratado na vaga ("" = vaga vazia).
+static func piloto_vaga(jogador: Node, vaga: String) -> String:
+	var p: Dictionary = jogador.pilotos
+	if vaga == "corrida":
+		return String(p.get("corrida", ""))
+	var a: Array = p.get("arena", ["", ""])
+	return String(a[0 if vaga == "arena1" else 1]) if a.size() == 2 else ""
+
+
+static func vaga_do_piloto(jogador: Node, piloto_id: String) -> String:
+	for v in VAGAS_PILOTO:
+		if piloto_id != "" and piloto_vaga(jogador, v) == piloto_id:
+			return v
 	return ""
 
 
-## Nome do piloto do jogador (o personagem da história, Adrian ou Elena, ou o
-## piloto da campanha do dono); "Você" em jogo sem história.
+## As vagas de arena só abrem com o tutorial da arena (3 carros).
+static func vaga_aberta(jogador: Node, vaga: String) -> bool:
+	return criada(jogador) and (vaga == "corrida" or jogador.flags.has(FLAG_ARENA))
+
+
+## Contrata o candidato para a vaga (o tipo tem de bater). "" ou o motivo.
+static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "corrida") -> String:
+	if not vaga in VAGAS_PILOTO:
+		return "vaga desconhecida"
+	if not vaga_aberta(jogador, vaga):
+		return "a equipe ainda não contrata" if not criada(jogador) else "os pilotos de arena chegam com a arena"
+	if not candidatos(dados).any(func(c): return c.get("id") == piloto_id):
+		return "candidato desconhecido"
+	var quer := "corrida" if vaga == "corrida" else "arena"
+	if tipo(dados, piloto_id) != quer:
+		return "%s é piloto de %s" % [String(piloto(dados, piloto_id).get("nome", piloto_id)), tipo(dados, piloto_id)]
+	var em := vaga_do_piloto(jogador, piloto_id)
+	if em != "" and em != vaga:
+		return "já está na equipe"
+	var p: Dictionary = jogador.pilotos.duplicate(true)
+	if vaga == "corrida":
+		p["corrida"] = piloto_id
+	else:
+		var a: Array = p.get("arena", ["", ""])
+		if a.size() != 2:
+			a = ["", ""]
+		a[0 if vaga == "arena1" else 1] = piloto_id
+		p["arena"] = a
+	jogador.pilotos = p
+	return ""
+
+
+## Save antigo: o segundo piloto vai para a vaga do tipo dele; quem já viu a
+## arena ou passou da International mantém o que tinha.
+static func migrar(dados: Node, jogador: Node) -> void:
+	if jogador.flags.has("ARENA_INTRO"):
+		jogador.flags[FLAG_ARENA] = true
+	if exige_piloto(jogador) and jogador.flags.has("INTERNATIONAL_COMPLETE"):
+		jogador.flags["GESTAO_LIBERADA"] = true
+	if not jogador.pilotos.is_empty():
+		return
+	jogador.pilotos = {"corrida": "", "arena": ["", ""]}
+	var s := String(jogador.segundo_piloto)
+	if s != "" and not piloto(dados, s).is_empty():
+		if tipo(dados, s) == "corrida":
+			jogador.pilotos["corrida"] = s
+		else:
+			jogador.pilotos["arena"] = [s, ""]
+
+
+## Na campanha do dono a equipe precisa do piloto de corrida para correr.
+static func exige_piloto(jogador: Node) -> bool:
+	return String(jogador.personagem) == "dono"
+
+
+## Nome de quem pilota nas corridas: o piloto de corrida contratado; sem ele, o
+## personagem da história (Adrian, Elena) ou "Você" em jogo sem história.
 static func nome_jogador(dados: Node, jogador: Node) -> String:
+	var contratado := piloto_vaga(jogador, "corrida")
+	if contratado != "":
+		return String(piloto(dados, contratado).get("nome", contratado))
+	if exige_piloto(jogador):
+		return "Sem piloto"
 	var id := Prologo.piloto(dados, jogador)
 	if id == "":
 		id = String(jogador.personagem)
@@ -112,9 +188,15 @@ static func nome_jogador(dados: Node, jogador: Node) -> String:
 	return "Você"
 
 
-## Nome do segundo piloto ("" se ainda não há).
+## Nome do piloto de arena da vaga ("" se vazia).
+static func nome_arena(dados: Node, jogador: Node, vaga: String) -> String:
+	var id := piloto_vaga(jogador, vaga)
+	return String(piloto(dados, id).get("nome", id)) if id != "" else ""
+
+
+## Nome do segundo piloto da dupla da arena ("" se ainda não há).
 static func nome_segundo(dados: Node, jogador: Node) -> String:
-	return String(piloto(dados, jogador.segundo_piloto).get("nome", ""))
+	return nome_arena(dados, jogador, "arena2")
 
 
 ## Carro do companheiro para esta prova (-1 se ele não corre): piloto
@@ -145,7 +227,7 @@ static func piloto_do_jogador(dados: Node, jogador: Node) -> Dictionary:
 ## piloto; o treino é do piloto principal, salvo o traço que treina junto
 ## (Promessa).
 static func piloto_corrida(dados: Node, jogador: Node = null) -> Dictionary:
-	var treina: bool = jogador != null and bool(traco(dados, jogador.segundo_piloto).get("treina", false))
+	var treina: bool = jogador != null and bool(traco(dados, piloto_vaga(jogador, "arena2")).get("treina", false))
 	var p: Dictionary = piloto_do_jogador(dados, jogador if treina else null)
 	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
 	p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)

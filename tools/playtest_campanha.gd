@@ -70,6 +70,13 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 			var falou := _disparar("PECA_COMPRADA", {"peca": ctx["peca"]})
 			if ctx["id"] == Prologo.demanda(d, j):
 				falou = _disparar("DEMANDA_CONCLUIDA", {"peca": ctx["peca"]}) or falou
+				# Decisão 69: a cena abre a Equipe e o jogador contrata o piloto de corrida.
+				EquipeJogador.criar(j)
+				_disparar("ABA:EQUIPE")
+				var corrida: Array = EquipeJogador.candidatos(d).filter(func(c): return c.get("tipo") == "corrida")
+				if not corrida.is_empty():
+					EquipeJogador.contratar(d, j, String(corrida[0]["id"]), "corrida")
+					_disparar("PILOTO_CONTRATADO", {"vaga": "corrida"})
 			if not falou and h.caixa_baixo():
 				_disparar("CAIXA_BAIXO")
 		"carro":
@@ -79,6 +86,8 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 				falou = _disparar("COMPRA_CARRO_NOVO") or falou
 			if j.garagem.lista().size() == 2:
 				falou = _disparar("GARAGEM_DOIS_CARROS") or falou
+			if j.garagem.lista().size() >= 3:
+				falou = _disparar("GARAGEM_TRES_CARROS") or falou
 			if not falou:
 				var _f := _disparar("COLECAO", {"quantidade": h.colecao()}) \
 						or (h.carro_caro(int(ctx["preco"])) and _disparar("COMPRA_CARRO_CARA", {"carro": nome})) \

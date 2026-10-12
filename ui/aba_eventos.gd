@@ -32,6 +32,12 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
+	# Decisão 69: quem corre é o piloto de corrida contratado.
+	if EquipeJogador.exige_piloto(jogador) and EquipeJogador.piloto_vaga(jogador, "corrida") == "" \
+			and not jogador.garagem.lista().is_empty():
+		cabecalho("Corridas", "", "fundo_competicoes")
+		proximo_passo("A equipe precisa de um piloto de corrida. Contrate na aba Equipe.", "Ir para a Equipe", EQUIPE)
+		return
 	# O carro da vaga CORRIDA da escalação (decisão 68).
 	var garagem := Escalacao.garantir_corrida(jogador)
 	if garagem == null:

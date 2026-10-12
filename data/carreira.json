@@ -61,58 +61,67 @@
     "nome": "Jonas Reid",
     "retrato": "res://arte/pilotos/jonas_reid.png",
     "traco": "constante",
-    "frase": "Não ganha corrida sozinho, mas não joga ponto fora."
+    "frase": "Não ganha corrida sozinho, mas não joga ponto fora.",
+    "tipo": "corrida"
    },
    {
     "id": "amir_castell",
     "nome": "Amir Castell",
     "retrato": "res://arte/pilotos/amir_castell.png",
     "traco": "constante",
-    "frase": "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir."
+    "frase": "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir.",
+    "tipo": "corrida"
    },
    {
     "id": "ayla_moreno",
     "nome": "Ayla Moreno",
     "retrato": "res://arte/pilotos/ayla_moreno.png",
     "traco": "agressivo",
-    "frase": "Vê uma brecha onde os outros veem um muro."
+    "frase": "Vê uma brecha onde os outros veem um muro.",
+    "tipo": "arena"
    },
    {
     "id": "axel_brennan",
     "nome": "Axel Brennan",
     "retrato": "res://arte/pilotos/axel_brennan.png",
     "traco": "agressivo",
-    "frase": "Larga para ganhar ou para não chegar. Ainda não decidiu qual."
+    "frase": "Larga para ganhar ou para não chegar. Ainda não decidiu qual.",
+    "tipo": "arena"
    },
    {
     "id": "bastian_kroll",
     "nome": "Bastian Kroll",
     "retrato": "res://arte/pilotos/bastian_kroll.png",
     "traco": "barato",
-    "frase": "Já foi rápido. Hoje é barato e conhece todo mundo no paddock."
+    "frase": "Já foi rápido. Hoje é barato e conhece todo mundo no paddock.",
+    "tipo": "arena"
    },
    {
     "id": "caleb_wynn",
     "nome": "Caleb Wynn",
     "retrato": "res://arte/pilotos/caleb_wynn.png",
     "traco": "barato",
-    "frase": "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar."
+    "frase": "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar.",
+    "tipo": "arena"
    },
    {
     "id": "noor_haddad",
     "nome": "Noor Haddad",
     "retrato": "res://arte/pilotos/noor_haddad.png",
     "traco": "promessa",
-    "frase": "Crua, mas aprende rápido. Cada hora de treino aparece no carro."
+    "frase": "Crua, mas aprende rápido. Cada hora de treino aparece no carro.",
+    "tipo": "corrida"
    },
    {
     "id": "sofia_rinaldi",
     "nome": "Sofia Rinaldi",
     "retrato": "res://arte/pilotos/sofia_rinaldi.png",
     "traco": "promessa",
-    "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra."
+    "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra.",
+    "tipo": "corrida"
    }
-  ]
+  ],
+  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida (constante, promessa) ou de arena (agressivo, barato), pelo traço. A equipe tem 1 de corrida e 2 de arena."
  },
  "perfis_piloto": {
   "_nota": "Agressividade dos rivais por perfil da equipe (decisão do usuário, 2026-10-11): chance de tentar a ultrapassagem quando está mais rápido. Valores provisórios até o playtest.",

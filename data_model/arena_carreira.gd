@@ -16,18 +16,18 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 	var p: Dictionary = dados.arena()
 	if p.is_empty():
 		return "A arena ainda não está aberta."
-	var lic := String(p.get("licenca_minima", ""))
-	if lic != "" and not lic in jogador.licencas:
-		var nome := String(dados.item("licencas", lic).get("nome", lic)) if dados.existe("licencas", lic) else lic
-		return "Abre com a %s." % nome
+	# Decisão 69: a arena abre com o tutorial dela, ao chegar a 3 carros
+	# (EquipeJogador.FLAG_ARENA); a licença mínima só dá o prêmio de referência.
+	if not jogador.flags.has(EquipeJogador.FLAG_ARENA):
+		return "Abre quando a garagem tiver 3 carros."
 	# Decisão 68: corrida e arena nunca ao mesmo tempo; a dupla é sua (os dois
 	# carros escalados e o segundo piloto contratado); 3 carros no mínimo.
 	if not jogador.fila.is_empty():
 		return "Há uma corrida em andamento: a arena abre quando ela terminar."
 	if jogador.garagem.lista().size() < 3:
 		return "A arena pede 3 carros: 1 de corrida e 2 de arena (carro eliminado não volta)."
-	if String(jogador.segundo_piloto) == "":
-		return "A dupla da arena precisa do segundo piloto contratado (aba Equipe)."
+	if EquipeJogador.piloto_vaga(jogador, "arena1") == "" or EquipeJogador.piloto_vaga(jogador, "arena2") == "":
+		return "A dupla da arena precisa de dois pilotos de arena contratados (aba Equipe)."
 	if aptos(jogador).size() < 2:
 		return "Escale os 2 carros da arena na Oficina."
 	return ""
@@ -75,7 +75,7 @@ static func nome_nivel(equipes: int) -> String:
 ## sem o piloto (a luta não abre: ver bloqueio).
 static func parceiro(dados: Node, jogador: Node, _uid: int) -> Dictionary:
 	var cu := Escalacao.uid(jogador, "arena2")
-	if jogador.segundo_piloto != "" and cu >= 0:
+	if EquipeJogador.piloto_vaga(jogador, "arena2") != "" and cu >= 0:
 		return {"real": true, "uid": cu, "nome": EquipeJogador.nome_segundo(dados, jogador)}
 	return {"real": false, "uid": -1, "nome": String(dados.arena().get("campeonato", {}).get("parceiro_casa", "Piloto da casa"))}
 
@@ -95,7 +95,8 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var attrs := carro.atributos_efetivos("seco")
 	var parts := [{"id": "jogador", "atributos": attrs, "piloto": base_piloto, "equipe": "jogador"}]
 	var modelos := {"jogador": carro.base}
-	var nomes := {"jogador": EquipeJogador.nome_jogador(dados, jogador)}
+	var arena1 := EquipeJogador.nome_arena(dados, jogador, "arena1")
+	var nomes := {"jogador": arena1 if arena1 != "" else EquipeJogador.nome_jogador(dados, jogador)}
 	var cores := {}
 	var faixas := {}
 	var equipes := {"jogador": EquipeJogador.dados_equipe(dados, jogador)}

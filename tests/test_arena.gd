@@ -148,15 +148,15 @@ func test_arena_na_carreira() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var j := _jogador_real(d, 1)
-	verificar(ArenaCarreira.bloqueio(d, j).begins_with("Abre com"), "sem a licença: fechada")
-	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
+	verificar(ArenaCarreira.bloqueio(d, j).begins_with("Abre quando"), "antes do tutorial da arena: fechada")
+	j.flags[EquipeJogador.FLAG_ARENA] = true
 	verificar("3 carros" in ArenaCarreira.bloqueio(d, j), "com 1 carro: não entra")
 	j.free()
 	# Decisão 68: 3 carros (1 de corrida, 2 de arena), segundo piloto e a escalação.
 	j = _jogador_real(d, 3)
-	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
-	verificar("segundo piloto" in ArenaCarreira.bloqueio(d, j), "sem o segundo piloto: não entra")
-	j.segundo_piloto = "candidato"
+	j.flags[EquipeJogador.FLAG_ARENA] = true
+	verificar("dois pilotos de arena" in ArenaCarreira.bloqueio(d, j), "sem os pilotos de arena: não entra")
+	j.pilotos = {"corrida": "", "arena": ["ayla_moreno", "axel_brennan"]}
 	verificar("Escale" in ArenaCarreira.bloqueio(d, j), "sem a escalação: não entra")
 	var carros: Array = j.garagem.lista()
 	igual(Escalacao.definir(j, "corrida", carros[2].uid), "", "corrida")

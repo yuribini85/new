@@ -21,6 +21,7 @@ signal painel_estilo(titulo: String, montar: Callable, botoes: Array, estilo: Di
 signal fechar_painel
 
 enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
+const EQUIPE := 6  # aba Equipe (principal.gd → ABA_EQUIPE)
 
 ## Moeda de giros: a mesma do painel do cabeçalho.
 const ICONE_GIROS := "cabecalho/icone_giros"
