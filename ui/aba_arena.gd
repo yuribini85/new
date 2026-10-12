@@ -8,6 +8,7 @@ extends Aba
 signal luta(dados_luta: Dictionary)
 
 var _uid := -1
+var _sim_arena := ""  # simulação: "" = sorteio entre as abertas
 var _sim_equipes := 2  # simulação de teste: quantas equipes
 
 ## Faixa do emblema no cartão da luta (a mesma do traçado nos cartões de prova).
@@ -255,9 +256,37 @@ func _simulacao(car: Carro) -> void:
 	menos.pressed.connect(func():
 		_sim_equipes -= 1
 		atualizar())
+	# A arena da simulação: sorteio entre as abertas, ou qualquer uma das dez.
+	var arenas: Array = [""] + dados.arena().get("arenas", []).map(func(a): return String(a["id"]))
+	var i_ar := maxi(arenas.find(_sim_arena), 0)
+	var ha := HBoxContainer.new()
+	ha.add_theme_constant_override("separation", 10)
+	var ant := Button.new()
+	Tipografia.acao_primaria(ant, "‹", COR_CARTAO, Color.WHITE, 34, 68)
+	ant.custom_minimum_size.x = 76
+	ha.add_child(ant)
+	var na := Label.new()
+	na.text = "SORTEIO DAS ABERTAS" if _sim_arena == "" else _nome_arena(_sim_arena).to_upper()
+	Tipografia.rotulo(na, "semibold", 24)
+	na.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	na.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	na.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	na.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ha.add_child(na)
+	var prox := Button.new()
+	Tipografia.acao_primaria(prox, "›", COR_CARTAO, Color.WHITE, 34, 68)
+	prox.custom_minimum_size.x = 76
+	ha.add_child(prox)
+	ant.pressed.connect(func():
+		_sim_arena = arenas[posmod(i_ar - 1, arenas.size())]
+		atualizar())
+	prox.pressed.connect(func():
+		_sim_arena = arenas[posmod(i_ar + 1, arenas.size())]
+		atualizar())
 	mais.pressed.connect(func():
 		_sim_equipes += 1
 		atualizar())
+	conteudo.add_child(ha)
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Simular com o %s" % car.base["nome"], Color(0.2, 0.21, 0.24), Color.WHITE, 26, 68)
 	b.pressed.connect(_simular.bind(car.uid))
@@ -265,11 +294,19 @@ func _simulacao(car: Carro) -> void:
 	nota("", "Nada muda no jogo", "Sem prêmio, sem perda de carro, sem peças e sem contar no campeonato.")
 
 
+## Nome da arena (com a marca das do The Grid).
+func _nome_arena(id: String) -> String:
+	for a in dados.arena().get("arenas", []):
+		if a["id"] == id:
+			return String(a["nome"]) + (" · Grid" if a.get("grid", false) else " · " + String(a.get("licenca", "")).capitalize())
+	return id
+
+
 ## A luta de teste: monta com o número escolhido de equipes, resolve e mostra;
 ## não aplica nada.
 func _simular(uid: int) -> void:
 	var semente := hash("arena_sim:%d:%d" % [Time.get_ticks_usec(), _sim_equipes])
-	var montada := ArenaCarreira.montar(dados, jogador, uid, semente, _sim_equipes)
+	var montada := ArenaCarreira.montar(dados, jogador, uid, semente, _sim_equipes, {}, _sim_arena)
 	var carro: Carro = jogador.garagem.carro(uid)
 	var pintura: Dictionary = montada["cores"].duplicate()
 	pintura["jogador"] = CarroBloco.cor_do_carro(carro)

@@ -88,8 +88,9 @@ static func parceiro(dados: Node, jogador: Node, _uid: int) -> Dictionary:
 ## `n_equipes` > 0 fixa quantas equipes (simulação de teste); senão, o nível.
 ## `desafio` (decisão 74): a equipe do Grid desafiada; a luta é 2x2 contra os
 ## carros especiais dela (GridDesafio.especiais), na arena do desafio.
+## `arena_fixa`: id da arena (simulação de teste: qualquer uma, até as do Grid).
 static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes_fixo: int = -1,
-		desafio: Dictionary = {}) -> Dictionary:
+		desafio: Dictionary = {}, arena_fixa: String = "") -> Dictionary:
 	var p: Dictionary = dados.arena()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
@@ -173,8 +174,8 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	# (decisão 59); a forma vai nos parâmetros da simulação e da tela.
 	var params := p.duplicate()
 	var abertas := arenas_abertas(dados, jogador)
-	if not desafio.is_empty():
-		var alvo := String(GridDesafio.de(dados, desafio).get("arena", ""))
+	var alvo := String(GridDesafio.de(dados, desafio).get("arena", "")) if not desafio.is_empty() else arena_fixa
+	if alvo != "":
 		abertas = p.get("arenas", []).filter(func(a): return a["id"] == alvo)
 	if not abertas.is_empty():
 		params["forma"] = abertas[rng.randi_range(0, abertas.size() - 1)]
