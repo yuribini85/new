@@ -315,3 +315,45 @@ func test_cenas_novas_apontam_para_lojas_e_personagens() -> void:
 			"vendedor_relay_room", "vendedora_brace_yard", "vendedora_return_chapter", "vendedora_shared_grid"]:
 		verificar(Assets.get_asset(p, "retrato") != null and Assets.get_asset(p, "corpo") != null, "arte de " + p)
 	d.free()
+
+
+## Identidades das equipes (pacote do usuário): rival com logo, número da vaga
+## na família da equipe; nome e logo do jogador independentes.
+func test_identidade_das_equipes() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var eq: Dictionary = d.item("equipes", "eq06_redline_union")
+	igual(String(eq["nome"]), "Redline Union", "nome da equipe")
+	verificar(ResourceLoader.exists(String(eq["logo"])), "logo da equipe existe")
+	var f := PinturaCarro.da_equipe(eq, "x", 2)
+	igual(int(f["numero"]), int(eq["numero"]) * 4 - 3 + 2, "número pela vaga do piloto")
+	igual(String(f["fonte_numero"]), String(eq["fonte_numero"]), "família do número da equipe")
+	igual(String(f["logo"]), String(eq["logo"]), "logo da equipe no carro")
+	igual(PinturaCarro.da_equipe(eq, "x").has("numero"), false, "sem vaga, sem número")
+	var emblemas := 0
+	for e in d.lista("equipes"):
+		if String(e.get("logo", "")).contains("/emblemas/"):
+			emblemas += 1
+			verificar(ResourceLoader.exists(String(e["logo"])), "logo de %s" % e["id"])
+	igual(emblemas, 10, "as dez identidades novas")
+	igual(IdentidadeEquipe.opcoes().size(), 10, "dez logos para o jogador")
+	for o in IdentidadeEquipe.opcoes():
+		verificar(ResourceLoader.exists(String(o["arquivo"])), "logo %s" % o["id"])
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.personagem = "dono"
+	igual(IdentidadeEquipe.nome(d, j), "Wreckage Motorsport", "nome padrão")
+	IdentidadeEquipe.definir(j, "  Oficina da Esquina  ", "03_wheel_sprint")
+	igual(IdentidadeEquipe.nome(d, j), "Oficina da Esquina", "nome livre")
+	IdentidadeEquipe.definir(j, "Outro Nome", "03_wheel_sprint")
+	igual(IdentidadeEquipe.logo(j), "03_wheel_sprint", "trocar o nome mantém o logo")
+	IdentidadeEquipe.definir(j, "Outro Nome", "09_forge_bolt")
+	igual(IdentidadeEquipe.nome(d, j), "Outro Nome", "trocar o logo mantém o nome")
+	var s := Save.serializar(j)
+	var k: Node = JogadorScript.new()
+	k.novo_jogo(d.economia(), d.pneu)
+	igual(Save.desserializar(JSON.parse_string(JSON.stringify(s)), k, d), "", "load")
+	igual(k.identidade, j.identidade, "identidade volta do save")
+	j.free()
+	k.free()
+	d.free()

@@ -68,6 +68,19 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([c + Vector2(0.55, -0.58) * r, c + Vector2(0.85, -0.58) * r,
 					c + Vector2(0.85, -0.05) * r, c + Vector2(0.0, -0.05) * r, c + Vector2(0.0, 0.25) * r]), cor, w, true)
 			draw_rect(Rect2(c + Vector2(-0.14, 0.2) * r, Vector2(0.28, 0.7) * r), cor)
+		"desfazer", "refazer":
+			# Seta curva para trás (desfazer) ou para a frente (refazer).
+			var r := lado * 0.5
+			var w := maxf(r * 0.2, 2.0)
+			var e := -1.0 if tipo == "desfazer" else 1.0
+			var arco := PackedVector2Array()
+			for k in 13:
+				var a := lerpf(PI * 0.15, PI * 1.05, k / 12.0)
+				arco.append(c + Vector2(cos(a) * e * -1.0, -sin(a)) * r * 0.62 + Vector2(0, r * 0.2))
+			draw_polyline(arco, cor, w, true)
+			var ponta := arco[arco.size() - 1]
+			draw_colored_polygon(PackedVector2Array([ponta + Vector2(0, -0.32) * r, ponta + Vector2(0, 0.32) * r,
+					ponta + Vector2(e * 0.38, 0.0) * r]), cor)
 		"lista":
 			for k in 3:
 				var y := c.y + (-0.7 + k * 0.7) * lado * 0.5

@@ -428,3 +428,19 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     shader (`CarroBloco.repintar`). Descartados: logos da equipe (o pacote de logos não está
     no projeto), pinturas recentes (sem histórico), desgaste, rodas e vidros. Os desenhos
     removidos antes (bolinhas, ondas, transversais, pontas, tigrado) continuam fora.
+64. **Identidades das equipes** (2026-10-12, pacote do usuário avaliado): 20 emblemas sem
+    texto (`arte/equipes/emblemas`, 512 px webp, catálogo em `data/emblemas.json`). As 10
+    identidades rivais (nome, logo, paleta, família do número) entram em 10 das 19
+    equipes já existentes, as de símbolo ou cor mais próximos, mantendo ids, pilotos e
+    licença: Redline Union, Blackwater Racing, Iron Vultures, Dust County, Velvet Thunder,
+    Copperhead Motors, Hollow Saints, Blue Collar Syndicate, Midnight Relay e Last Exit
+    Club; as outras 9 seguem sem logo até haver arte. Rival na pista: cores da equipe,
+    desenho sorteado (decisão 60), número da vaga do piloto (equipe × 4 − 3 + vaga) nas
+    portas, na família da equipe, e o logo nos paralamas. Equipe do jogador: nome livre
+    (padrão Wreckage Motorsport) e um dos 10 logos, independentes, no save
+    (`Jogador.identidade`). Cabine: abas Pintura (base, secundária, acento, largura,
+    espelho), Grafismos, Identificação (nome e logo da equipe, encaixes do logo — paralamas,
+    lateral traseira, capô, traseira —, número com cinco famílias, tamanho, suporte em
+    círculo) e Acabamento (com poeira e arranhões numa camada à parte); desfazer e refazer
+    passo a passo. Fora: cor por região e rodas/vidros (sem malhas separadas confiáveis),
+    sujeira dinâmica de corrida.

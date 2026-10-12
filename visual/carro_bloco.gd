@@ -13,7 +13,13 @@ extends Node3D
 ## (fração do comprimento, altura, recuo do centro) e se tem teto.
 const SHADER_LATARIA := preload("res://visual/shaders/carro_faixas.gdshader")
 const SHADER_GLB := preload("res://visual/shaders/carro_glb.gdshader")
-const DIGITOS := preload("res://arte/ui/pintura/digitos.png")
+## Algarismos de cada família do número (PinturaCarro.FONTES).
+const DIGITOS := {"condensado": preload("res://arte/ui/pintura/digitos_condensado.png"),
+		"bloco": preload("res://arte/ui/pintura/digitos_bloco.png"),
+		"estencil": preload("res://arte/ui/pintura/digitos_estencil.png"),
+		"pincel": preload("res://arte/ui/pintura/digitos_pincel.png"),
+		"serifa": preload("res://arte/ui/pintura/digitos_serifa.png")}
+static var _logos := {}
 const FORMAS := {
 	"compacto": {"c": 3.75, "l": 1.66, "h": 0.6, "cab": 0.62, "hc": 0.72, "recuo": -0.17, "teto": true},
 	"seda": {"c": 4.6, "l": 1.76, "h": 0.6, "cab": 0.44, "hc": 0.6, "recuo": -0.04, "teto": true},
@@ -288,12 +294,40 @@ static func _parametros_faixas(sm: ShaderMaterial, mi: MeshInstance3D, faixas: D
 	sm.set_shader_parameter("padrao", PinturaCarro.indice_padrao(String(faixas.get("padrao", ""))))
 	sm.set_shader_parameter("caixa_min", caixa.position)
 	sm.set_shader_parameter("caixa_tam", caixa.size)
-	sm.set_shader_parameter("digitos", DIGITOS)
+	sm.set_shader_parameter("digitos", DIGITOS.get(String(faixas.get("fonte_numero", "condensado")), DIGITOS["condensado"]))
+	sm.set_shader_parameter("escala_numero", float(faixas.get("escala_numero", 1.0)))
+	sm.set_shader_parameter("suporte_numero", bool(faixas.get("suporte_numero", false)))
+	var logo := _logo(faixas)
+	sm.set_shader_parameter("logo", logo)
+	sm.set_shader_parameter("locais_logo", int(faixas.get("locais_logo", 0)) if logo != null else 0)
+	sm.set_shader_parameter("escala_logo", float(faixas.get("escala_logo", 1.0)))
+	sm.set_shader_parameter("largura_faixas", float(faixas.get("largura", 1.0)))
+	sm.set_shader_parameter("espelhar", bool(faixas.get("espelhar", false)))
+	sm.set_shader_parameter("poeira", float(faixas.get("poeira", 0.0)))
+	sm.set_shader_parameter("arranhoes", float(faixas.get("arranhoes", 0.0)))
 	sm.set_shader_parameter("numero", int(faixas.get("numero", -1)))
 	sm.set_shader_parameter("locais_numero", int(faixas.get("locais_numero", PinturaCarro.LOCAIS_PADRAO)))
 	sm.set_shader_parameter("cor_numero", Color(String(faixas.get("cor_numero", "#141518"))))
 	sm.set_shader_parameter("cor_contorno", Color(String(faixas.get("cor_contorno", "#f2f2ee"))))
 	sm.set_shader_parameter("acabamento", PinturaCarro.indice_acabamento(String(faixas.get("acabamento", ""))))
+
+
+## Textura do logo da pintura: o da equipe rival (faixas.logo) ou, nos carros
+## do jogador, o emblema da equipe dele (IdentidadeEquipe); null sem logo.
+static func _logo(faixas: Dictionary) -> Texture2D:
+	if int(faixas.get("locais_logo", 0)) == 0:
+		return null
+	var caminho := String(faixas.get("logo", ""))
+	if caminho == "":
+		var j: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null("Jogador") \
+				if Engine.get_main_loop() is SceneTree else null
+		if j != null:
+			caminho = IdentidadeEquipe.arquivo_logo(IdentidadeEquipe.logo(j))
+	if caminho == "" or not ResourceLoader.exists(caminho):
+		return null
+	if not _logos.has(caminho):
+		_logos[caminho] = load(caminho)
+	return _logos[caminho]
 
 
 ## Troca a pintura do modelo já montado (cabine de pintura): só os parâmetros

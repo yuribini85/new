@@ -26,9 +26,9 @@
  {
   "id": "eq02_vortex_motorsport",
   "numero": 2,
-  "nome": "Vortex Motorsport",
+  "nome": "Blackwater Racing",
   "nivel": "PRO",
-  "logo": "res://arte/equipes/logo_eq02.png",
+  "logo": "res://arte/equipes/emblemas/rivais/02_blackwater_racing.webp",
   "pilotos": [
    {
     "id": "lucien_vale",
@@ -62,10 +62,11 @@
   "perfil": "equilibrado",
   "personalidade": "Rápidos e calculistas: atacam só quando a conta fecha.",
   "cores": {
-   "carro": "#5b2a86",
-   "faixa": "#b8bcc2",
-   "filete": "#141518"
-  }
+   "carro": "#1f4e5a",
+   "faixa": "#c8ccd0",
+   "filete": "#8a9096"
+  },
+  "fonte_numero": "condensado"
  },
  {
   "id": "eq03_kaze_dynamics",
@@ -114,9 +115,9 @@
  {
   "id": "eq04_ironclad_racing",
   "numero": 4,
-  "nome": "Ironclad Racing",
+  "nome": "Iron Vultures",
   "nivel": "NATIONAL",
-  "logo": "res://arte/equipes/logo_eq04.png",
+  "logo": "res://arte/equipes/emblemas/rivais/03_iron_vultures.webp",
   "pilotos": [
    {
     "id": "bram_holt",
@@ -150,10 +151,11 @@
   "perfil": "cauteloso",
   "personalidade": "Blindados: defendem a posição e esperam o erro dos outros.",
   "cores": {
-   "carro": "#4a4f57",
-   "faixa": "#e8601c",
-   "filete": "#141518"
-  }
+   "carro": "#5c6064",
+   "faixa": "#9a4f2a",
+   "filete": "#cdb88f"
+  },
+  "fonte_numero": "estencil"
  },
  {
   "id": "eq05_apex_dominion",
@@ -205,7 +207,7 @@
   "numero": 6,
   "nome": "Redline Union",
   "nivel": "SPORT",
-  "logo": "res://arte/equipes/logo_eq06.png",
+  "logo": "res://arte/equipes/emblemas/rivais/01_redline_union.webp",
   "pilotos": [
    {
     "id": "dario_kest",
@@ -241,17 +243,18 @@
   "perfil": "agressivo",
   "personalidade": "Giro no limite, freada no limite, paciência nenhuma.",
   "cores": {
-   "carro": "#c8102e",
-   "faixa": "#f2f2ee",
-   "filete": "#141518"
-  }
+   "carro": "#9c3b2e",
+   "faixa": "#e6dcc4",
+   "filete": "#2b2a2a"
+  },
+  "fonte_numero": "bloco"
  },
  {
   "id": "eq07_northstar_works",
   "numero": 7,
-  "nome": "Northstar Works",
+  "nome": "Midnight Relay",
   "nivel": "INTERNATIONAL",
-  "logo": "res://arte/equipes/logo_eq07.png",
+  "logo": "res://arte/equipes/emblemas/rivais/09_midnight_relay.webp",
   "pilotos": [
    {
     "id": "erik_halden",
@@ -286,17 +289,18 @@
   "perfil": "cauteloso",
   "personalidade": "Constância acima de tudo: chegam inteiros e somam pontos.",
   "cores": {
-   "carro": "#18223f",
-   "faixa": "#f2f2ee",
-   "filete": "#7fb2dd"
-  }
+   "carro": "#1b2440",
+   "faixa": "#2a9d9a",
+   "filete": "#e8c22a"
+  },
+  "fonte_numero": "condensado"
  },
  {
   "id": "eq08_black_circuit",
   "numero": 8,
-  "nome": "Black Circuit",
+  "nome": "Last Exit Club",
   "nivel": "NATIONAL",
-  "logo": "res://arte/equipes/logo_eq08.png",
+  "logo": "res://arte/equipes/emblemas/rivais/10_last_exit_club.webp",
   "pilotos": [
    {
     "id": "marek_stone",
@@ -332,10 +336,11 @@
   "perfil": "agressivo",
   "personalidade": "No box deles, corrida suja é corrida ganha.",
   "cores": {
-   "carro": "#141518",
-   "faixa": "#f2c300",
-   "filete": "#5a5f66"
-  }
+   "carro": "#c8202a",
+   "faixa": "#d6c49a",
+   "filete": "#2b2a2a"
+  },
+  "fonte_numero": "pincel"
  },
  {
   "id": "eq09_helix_racing",
@@ -520,9 +525,9 @@
  {
   "id": "eq13_tempest_garage",
   "numero": 13,
-  "nome": "Tempest Garage",
+  "nome": "Blue Collar Syndicate",
   "nivel": "SPORT",
-  "logo": "res://arte/equipes/logo_eq13.png",
+  "logo": "res://arte/equipes/emblemas/rivais/08_blue_collar_syndicate.webp",
   "pilotos": [
    {
     "id": "noel_mercer",
@@ -556,17 +561,18 @@
   "perfil": "equilibrado",
   "personalidade": "Imprevisíveis: ninguém sabe de onde vem o ataque.",
   "cores": {
-   "carro": "#1d4f9c",
-   "faixa": "#f2c300",
-   "filete": "#f2f2ee"
-  }
+   "carro": "#2c4f7c",
+   "faixa": "#9aa3ab",
+   "filete": "#e6dcc4"
+  },
+  "fonte_numero": "estencil"
  },
  {
   "id": "eq14_crown_vector",
   "numero": 14,
-  "nome": "Crown Vector",
+  "nome": "Hollow Saints",
   "nivel": "PRO",
-  "logo": "res://arte/equipes/logo_eq14.png",
+  "logo": "res://arte/equipes/emblemas/rivais/07_hollow_saints.webp",
   "pilotos": [
    {
     "id": "elias_wren",
@@ -600,17 +606,18 @@
   "perfil": "equilibrado",
   "personalidade": "Dinheiro antigo, pilotagem limpa.",
   "cores": {
-   "carro": "#6e1423",
-   "faixa": "#c9b48a",
-   "filete": "#141518"
-  }
+   "carro": "#ece4cf",
+   "faixa": "#5a1a24",
+   "filete": "#a8873e"
+  },
+  "fonte_numero": "serifa"
  },
  {
   "id": "eq15_gravelborn",
   "numero": 15,
-  "nome": "Gravelborn",
+  "nome": "Dust County",
   "nivel": "CLUB",
-  "logo": "res://arte/equipes/logo_eq15.png",
+  "logo": "res://arte/equipes/emblemas/rivais/04_dust_county.webp",
   "pilotos": [
    {
     "id": "rafe_calder",
@@ -644,10 +651,11 @@
   "perfil": "agressivo",
   "personalidade": "Vieram do rali: roda com roda não assusta ninguém ali.",
   "cores": {
-   "carro": "#5e4030",
-   "faixa": "#e8601c",
+   "carro": "#c9a227",
+   "faixa": "#b5562f",
    "filete": "#e9dfc4"
-  }
+  },
+  "fonte_numero": "pincel"
  },
  {
   "id": "eq16_meridian_gp",
@@ -740,9 +748,9 @@
  {
   "id": "eq18_copperhead_racing",
   "numero": 18,
-  "nome": "Copperhead Racing",
+  "nome": "Copperhead Motors",
   "nivel": "CLUB",
-  "logo": "res://arte/equipes/logo_eq18.png",
+  "logo": "res://arte/equipes/emblemas/rivais/06_copperhead_motors.webp",
   "pilotos": [
    {
     "id": "ash_corwin",
@@ -776,10 +784,11 @@
   "perfil": "cauteloso",
   "personalidade": "Paciência de cobra: esperam o bote certo.",
   "cores": {
-   "carro": "#1f6b3a",
-   "faixa": "#e8601c",
-   "filete": "#141518"
-  }
+   "carro": "#b06a3b",
+   "faixa": "#23432f",
+   "filete": "#ece4cf"
+  },
+  "fonte_numero": "bloco"
  },
  {
   "id": "eq19_cold_harbor",
@@ -828,9 +837,9 @@
  {
   "id": "eq20_storm_division",
   "numero": 20,
-  "nome": "Storm Division",
+  "nome": "Velvet Thunder",
   "nivel": "PRO",
-  "logo": "res://arte/equipes/logo_eq20.png",
+  "logo": "res://arte/equipes/emblemas/rivais/05_velvet_thunder.webp",
   "pilotos": [
    {
     "id": "rex_arden",
@@ -864,9 +873,10 @@
   "perfil": "agressivo",
   "personalidade": "Chegam como temporal no fim da corrida.",
   "cores": {
-   "carro": "#f2c300",
-   "faixa": "#141518",
-   "filete": "#5a5f66"
-  }
+   "carro": "#8e7aa0",
+   "faixa": "#6e1f33",
+   "filete": "#c9a54a"
+  },
+  "fonte_numero": "condensado"
  }
 ]

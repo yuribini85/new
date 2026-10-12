@@ -3816,15 +3816,15 @@
    },
    {
     "quem": "pintor",
-    "texto": "Cores: carroceria, faixa e filete, a linha fina que contorna. Faixas: o desenho, já no seu carro."
+    "texto": "Pintura: base, secundária e acento. Grafismos: o desenho, já no seu carro."
    },
    {
     "quem": "pintor",
-    "texto": "Identidade: o número de corrida e onde ele vai. Acabamento: fosco, acetinado, brilhante ou metálico."
+    "texto": "Identificação: o nome e o logo da equipe e o número de corrida. Acabamento: do fosco ao metálico, e poeira se quiser."
    },
    {
     "quem": "pintor",
-    "texto": "Nada é gravado antes de aplicar. Desfazer volta ao que estava; o preço fica embaixo e só cobra o que mudou."
+    "texto": "Nada é gravado antes de aplicar. Como estava volta ao início; o preço fica embaixo e só cobra o que mudou."
    },
    {
     "quem": "sistema",

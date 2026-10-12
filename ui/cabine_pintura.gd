@@ -1,35 +1,43 @@
 class_name CabinePintura
 extends Control
-## Cabine de pintura (proposta do usuário, Chrome_Wreckage_Sugestao_Cabine_Pintura):
-## tela cheia com o carro real em 3D fixo em cima (gira e sobe com o dedo,
-## pinça aproxima, vistas 3/4, lateral, traseira e topo da mesma câmera), as
-## abas CORES, FAIXAS, IDENTIDADE e ACABAMENTO (só a ativa aparece e só ela
-## rola) e as ações sempre visíveis: DESFAZER (volta ao que estava ao abrir),
-## CANCELAR e APLICAR PINTURA. Nada é gravado antes de Aplicar; o preço é o de
-## PinturaCarro (só o que mudou). A prévia só troca parâmetros do shader
-## (CarroBloco.repintar); as miniaturas das faixas são renders do próprio
-## carro com cada desenho, não figuras.
+## Cabine de pintura (propostas do usuário: Sugestão de Cabine de Pintura e
+## Identidades das Equipes): tela cheia com o carro real em 3D fixo em cima
+## (gira e sobe com o dedo, pinça aproxima, vistas 3/4, lateral, traseira e
+## topo da mesma câmera), quatro abas (só a ativa aparece e só ela rola):
+## PINTURA (cores base, secundária e acento; largura e espelho do desenho),
+## GRAFISMOS (os desenhos, em miniaturas renderizadas no próprio carro),
+## IDENTIFICAÇÃO (nome e logo da equipe, independentes; onde o logo vai; o
+## número de corrida com família, tamanho, suporte, lugares e cores) e
+## ACABAMENTO (fosco a metálico; poeira e arranhões numa camada à parte). Em
+## baixo, sempre: desfazer/refazer passo a passo, COMO ESTAVA (o que havia ao
+## abrir), CANCELAR e APLICAR. Nada é gravado antes de Aplicar; o preço é o de
+## PinturaCarro (só o que mudou no carro; nome e logo da equipe não custam).
 
 signal aplicada
 signal fechada
 signal aviso(texto: String, ok: bool)
 
-const ABAS := [["cores", "Cores"], ["faixas", "Faixas"], ["identidade", "Identidade"], ["acabamento", "Acabamento"]]
-const CANAIS := [["cor", "Carroceria"], ["faixa", "Faixa"], ["filete", "Filete"]]
+const ABAS := [["pintura", "Pintura"], ["grafismos", "Grafismos"], ["identificacao", "Identificação"],
+		["acabamento", "Acabamento"]]
+const CANAIS := [["cor", "Base"], ["faixa", "Secundária"], ["filete", "Acento"]]
 const CANAIS_NUMERO := [["cor_numero", "Número"], ["cor_contorno", "Contorno"]]
-const ALTURA_PREVIA_FRAC := 0.36
-const ALTURA_PREVIA_MIN := 300.0
+const ALTURA_PREVIA_FRAC := 0.34
+const ALTURA_PREVIA_MIN := 280.0
 const MINIATURA := Vector2(200, 130)
 const COLUNAS_FAIXAS := 3
+const COLUNAS_LOGOS := 5
 const AMOSTRA := 58.0
+const HISTORICO_MAX := 40
 
 var _dados: Node
 var _jogador: Node
 var _carro: Carro
-## Estado em edição e o de quando a cabine abriu (DESFAZER volta a ele).
+## Estado em edição e o de quando a cabine abriu (COMO ESTAVA volta a ele).
 var _estado := {}
 var _inicio := {}
-var _aba := "cores"
+var _antes: Array = []  # desfazer
+var _depois: Array = []  # refazer
+var _aba := "pintura"
 var _canal := "cor"
 var _canal_numero := "cor_numero"
 
@@ -39,8 +47,10 @@ var _conteudo: VBoxContainer
 var _botoes_aba := {}
 var _preco: Label
 var _aplicar: Button
-var _desfazer: Button
-## padrão -> ImageTexture; refeitas quando as cores mudam.
+var _como_estava: Button
+var _voltar: Button
+var _avancar: Button
+## desenho -> ImageTexture; refeitas quando as cores mudam.
 var _miniaturas := {}
 var _cores_miniaturas := ""
 var _gerando := false
@@ -54,10 +64,17 @@ func _init(dados: Node, jogador: Node, carro: Carro) -> void:
 	var f := PinturaCarro.normalizar(carro.faixas)
 	_estado = {"cor": "#" + CarroBloco.cor_do_carro(carro).to_html(false),
 			"padrao": String(f.get("padrao", "")), "faixa": String(f.get("faixa", "#f2f2ee")),
-			"filete": String(f.get("filete", "#1c1c1e")), "numero": int(f.get("numero", -1)),
+			"filete": String(f.get("filete", "#1c1c1e")), "largura": float(f.get("largura", 1.0)),
+			"espelhar": bool(f.get("espelhar", false)),
+			"numero": int(f.get("numero", -1)),
 			"locais_numero": int(f.get("locais_numero", PinturaCarro.LOCAIS_PADRAO)),
 			"cor_numero": String(f.get("cor_numero", "#141518")), "cor_contorno": String(f.get("cor_contorno", "#f2f2ee")),
-			"acabamento": String(f.get("acabamento", ""))}
+			"fonte_numero": String(f.get("fonte_numero", "condensado")),
+			"escala_numero": float(f.get("escala_numero", 1.0)), "suporte_numero": bool(f.get("suporte_numero", false)),
+			"locais_logo": int(f.get("locais_logo", 0)), "escala_logo": float(f.get("escala_logo", 1.0)),
+			"acabamento": String(f.get("acabamento", "")),
+			"poeira": float(f.get("poeira", 0.0)), "arranhoes": float(f.get("arranhoes", 0.0)),
+			"equipe_nome": String(jogador.identidade.get("nome", "")), "equipe_logo": IdentidadeEquipe.logo(jogador)}
 	_inicio = _estado.duplicate()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -99,7 +116,7 @@ func _init(dados: Node, jogador: Node, carro: Carro) -> void:
 
 func _ready() -> void:
 	_previa.ambiente_garagem()
-	_previa.mostrar_modelo(_carro.base, Color(_estado["cor"]), _faixas())
+	_previa.mostrar_modelo(_carro.base, Color(_estado["cor"]), _faixas_previa())
 	_previa.vista("3/4")
 	_gerador.ambiente_garagem()
 	_gerador.mostrar_modelo(_carro.base, Color(_estado["cor"]), {})
@@ -115,9 +132,19 @@ func _ajustar_previa() -> void:
 	_previa.custom_minimum_size.y = maxf(size.y * ALTURA_PREVIA_FRAC, ALTURA_PREVIA_MIN)
 
 
-## O que vai para Carro.faixas (sem o que está no padrão de fábrica).
+## O que vai para Carro.faixas (sem o que é de fábrica; o logo do jogador vem
+## da equipe, não fica no carro).
 func _faixas() -> Dictionary:
-	return PinturaCarro.normalizar(_estado)
+	var f := PinturaCarro.normalizar(_estado)
+	f.erase("logo")
+	return f
+
+
+## Para a prévia: com o logo escolhido agora (ainda não gravado na equipe).
+func _faixas_previa() -> Dictionary:
+	var e := _estado.duplicate()
+	e["logo"] = IdentidadeEquipe.arquivo_logo(String(_estado["equipe_logo"]))
+	return PinturaCarro.normalizar(e)
 
 
 func _cabecalho() -> Control:
@@ -196,8 +223,8 @@ func _rodape() -> Control:
 	sb.bg_color = Color(0.05, 0.055, 0.07)
 	sb.border_color = Color(1, 1, 1, 0.08)
 	sb.border_width_top = 1
-	sb.content_margin_left = 14
-	sb.content_margin_right = 14
+	sb.content_margin_left = 12
+	sb.content_margin_right = 12
 	sb.content_margin_top = 10
 	sb.content_margin_bottom = 14
 	p.add_theme_stylebox_override("panel", sb)
@@ -210,27 +237,45 @@ func _rodape() -> Control:
 	_preco.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
 	v.add_child(_preco)
 	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 10)
+	h.add_theme_constant_override("separation", 8)
 	v.add_child(h)
-	_desfazer = Button.new()
-	Tipografia.acao_neutra(_desfazer, "Desfazer", 24, 72)
-	_desfazer.tooltip_text = "Volta à pintura de quando a cabine abriu"
-	_desfazer.custom_minimum_size.x = 150
-	_desfazer.pressed.connect(func():
-		_estado = _inicio.duplicate()
-		_mudou())
-	h.add_child(_desfazer)
-	var cancelar := Button.new()
-	Tipografia.acao_neutra(cancelar, "Cancelar", 24, 72)
-	cancelar.custom_minimum_size.x = 150
+	_voltar = _botao_rodape("", 64, h)
+	_icone(_voltar, "desfazer")
+	_voltar.tooltip_text = "Desfazer o último passo"
+	_voltar.pressed.connect(func(): _passo(_antes, _depois))
+	_avancar = _botao_rodape("", 64, h)
+	_icone(_avancar, "refazer")
+	_avancar.tooltip_text = "Refazer"
+	_avancar.pressed.connect(func(): _passo(_depois, _antes))
+	_como_estava = _botao_rodape("Como estava", 150, h)
+	_como_estava.tooltip_text = "Volta à pintura de quando a cabine abriu"
+	_como_estava.pressed.connect(func(): _mudar(_inicio.duplicate()))
+	var cancelar := _botao_rodape("Cancelar", 124, h)
 	cancelar.pressed.connect(_fechar)
-	h.add_child(cancelar)
 	_aplicar = Button.new()
-	Tipografia.acao_primaria(_aplicar, "Aplicar pintura", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 72)
+	Tipografia.acao_primaria(_aplicar, "Aplicar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 72)
 	_aplicar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_aplicar.pressed.connect(_confirmar)
 	h.add_child(_aplicar)
 	return p
+
+
+func _icone(b: Button, tipo: String) -> void:
+	var ic := IconeVetor.new(tipo, Color(0.86, 0.87, 0.9))
+	ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	ic.offset_left = 14
+	ic.offset_right = -14
+	ic.offset_top = 16
+	ic.offset_bottom = -16
+	b.add_child(ic)
+
+
+func _botao_rodape(texto: String, largura: float, pai: Control) -> Button:
+	var b := Button.new()
+	Tipografia.acao_neutra(b, texto, 24 if texto.length() > 2 else 34, 72)
+	b.custom_minimum_size.x = largura
+	pai.add_child(b)
+	return b
 
 
 # ---------------------------------------------------------------- abas
@@ -239,19 +284,19 @@ func _mostrar_aba() -> void:
 	for id in _botoes_aba:
 		var b: Button = _botoes_aba[id][0]
 		if id == _aba:
-			Tipografia.acao_primaria(b, _botoes_aba[id][1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 21, 58)
+			Tipografia.acao_primaria(b, _botoes_aba[id][1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 20, 58)
 		else:
-			Tipografia.acao_neutra(b, _botoes_aba[id][1], 21, 58)
+			Tipografia.acao_neutra(b, _botoes_aba[id][1], 20, 58)
 	for c in _conteudo.get_children():
 		_conteudo.remove_child(c)
 		c.queue_free()
 	match _aba:
-		"cores":
-			_aba_cores()
-		"faixas":
-			_aba_faixas()
-		"identidade":
-			_aba_identidade()
+		"pintura":
+			_aba_pintura()
+		"grafismos":
+			_aba_grafismos()
+		"identificacao":
+			_aba_identificacao()
 		"acabamento":
 			_aba_acabamento()
 	_atualizar_rodape()
@@ -272,6 +317,48 @@ func _nota(texto: String) -> void:
 	l.add_theme_font_size_override("font_size", Aba.FONTE_PEQUENA)
 	l.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
 	_conteudo.add_child(l)
+
+
+## Fileira de escolhas [[valor, rótulo], ...]: a marcada em ocre.
+func _escolhas(lista: Array, atual: Variant, ao_escolher: Callable, altura := 60, tamanho := 22) -> HBoxContainer:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	_conteudo.add_child(h)
+	for par in lista:
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var marcado: bool = par[0] == atual if not (par[0] is float) else is_equal_approx(float(par[0]), float(atual))
+		if marcado:
+			Tipografia.acao_primaria(b, par[1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), tamanho, altura)
+		else:
+			Tipografia.acao_neutra(b, par[1], tamanho, altura)
+		var valor: Variant = par[0]
+		b.pressed.connect(func(): ao_escolher.call(valor))
+		h.add_child(b)
+	return h
+
+
+## Fileira de interruptores para uma soma de bits [[bit, rótulo], ...].
+func _bits(lista: Array, chave: String, minimo_um: bool) -> void:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	_conteudo.add_child(h)
+	var mascara: int = int(_estado[chave])
+	for par in lista:
+		var bit: int = par[0]
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if mascara & bit:
+			Tipografia.acao_primaria(b, par[1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 20, 60)
+		else:
+			Tipografia.acao_neutra(b, par[1], 20, 60)
+		b.pressed.connect(func():
+			var nova: int = mascara ^ bit
+			if nova != 0 or not minimo_um:
+				_definir(chave, nova))
+		h.add_child(b)
 
 
 ## Seletor de canal: cada um com a amostra da cor atual; o ativo em ocre.
@@ -320,26 +407,63 @@ func _paleta(chave: String) -> void:
 		var cor: Color = it["cor"]
 		Aba._estilo_amostra(a, cor, cor.to_html(false) == Color(_estado[chave]).to_html(false))
 		var hex := "#" + cor.to_html(false)
-		a.pressed.connect(func():
-			_estado[chave] = hex
-			_mudou())
+		a.pressed.connect(func(): _definir(chave, hex))
 		g.add_child(a)
 
 
-func _aba_cores() -> void:
+## Controle deslizante 0..1 (desgaste).
+func _deslizante(rotulo: String, chave: String) -> void:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 12)
+	_conteudo.add_child(h)
+	var l := Label.new()
+	l.text = rotulo.to_upper()
+	l.custom_minimum_size.x = 170
+	Tipografia.rotulo(l, "semibold", 22)
+	h.add_child(l)
+	var s := HSlider.new()
+	s.min_value = 0.0
+	s.max_value = 1.0
+	s.step = 0.05
+	s.value = float(_estado[chave])
+	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	s.custom_minimum_size.y = 48
+	s.focus_mode = Control.FOCUS_NONE
+	# Só ao soltar entra no histórico; arrastando, a prévia acompanha.
+	s.value_changed.connect(func(v: float):
+		var e := _estado.duplicate()
+		e[chave] = v
+		_previa.repintar(Color(e["cor"]), _faixas_de(e)))
+	s.drag_ended.connect(func(_mudou: bool): _definir(chave, s.value))
+	h.add_child(s)
+
+
+func _faixas_de(e: Dictionary) -> Dictionary:
+	var c := e.duplicate()
+	c["logo"] = IdentidadeEquipe.arquivo_logo(String(e["equipe_logo"]))
+	return PinturaCarro.normalizar(c)
+
+
+func _aba_pintura() -> void:
 	var com_faixa: bool = _estado["padrao"] != ""
 	if not com_faixa and _canal != "cor":
 		_canal = "cor"
-	_titulo("Cor de")
+	_titulo("Cores")
 	_canais(CANAIS, _canal, func(id): return id == "cor" or com_faixa, func(id):
 		_canal = id
 		_mostrar_aba())
 	if not com_faixa:
-		_nota("Faixa e filete valem quando há um desenho: escolha um em FAIXAS.")
+		_nota("Secundária e acento pintam o desenho: escolha um em GRAFISMOS.")
 	_paleta(_canal)
+	if com_faixa:
+		_titulo("Largura do desenho")
+		_escolhas(PinturaCarro.LARGURAS, float(_estado["largura"]), func(v): _definir("largura", v))
+		_titulo("Lado")
+		_escolhas([[false, "Normal"], [true, "Espelhado"]], bool(_estado["espelhar"]), func(v): _definir("espelhar", v))
 
 
-func _aba_faixas() -> void:
+func _aba_grafismos() -> void:
 	_titulo("Desenho")
 	var g := GridContainer.new()
 	g.columns = COLUNAS_FAIXAS
@@ -360,9 +484,7 @@ func _aba_faixas() -> void:
 		sb.border_color = Aba.COR_DESTAQUE if marcado else Color(1, 1, 1, 0.1)
 		for e in ["normal", "hover", "pressed", "focus"]:
 			b.add_theme_stylebox_override(e, sb)
-		b.pressed.connect(func():
-			_estado["padrao"] = id
-			_mudou())
+		b.pressed.connect(func(): _definir("padrao", id))
 		g.add_child(b)
 		var v := VBoxContainer.new()
 		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -391,7 +513,57 @@ func _aba_faixas() -> void:
 	_gerar_miniaturas()
 
 
-func _aba_identidade() -> void:
+func _aba_identificacao() -> void:
+	# Equipe: nome e logo valem para todos os carros e não dependem um do outro.
+	_titulo("Equipe")
+	var nome := LineEdit.new()
+	nome.text = String(_estado["equipe_nome"])
+	nome.placeholder_text = IdentidadeEquipe.nome_padrao(_dados, _jogador)
+	nome.max_length = IdentidadeEquipe.NOME_MAX
+	nome.custom_minimum_size.y = 64
+	nome.add_theme_font_size_override("font_size", 26)
+	nome.text_submitted.connect(func(t: String):
+		_definir("equipe_nome", t.strip_edges()))
+	nome.focus_exited.connect(func():
+		if nome.text.strip_edges() != _estado["equipe_nome"]:
+			_definir("equipe_nome", nome.text.strip_edges()))
+	_conteudo.add_child(nome)
+	_nota("O nome e o logo são da equipe: valem para todos os carros. Vazio, fica %s." %
+			IdentidadeEquipe.nome_padrao(_dados, _jogador))
+	var g := GridContainer.new()
+	g.columns = COLUNAS_LOGOS
+	g.add_theme_constant_override("h_separation", 8)
+	g.add_theme_constant_override("v_separation", 8)
+	_conteudo.add_child(g)
+	for o in IdentidadeEquipe.opcoes():
+		var id := String(o["id"])
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.tooltip_text = String(o["nome"])
+		b.custom_minimum_size = Vector2(0, 124)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.icon = load(String(o["arquivo"]))
+		b.expand_icon = true
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Aba.COR_CARTAO
+		sb.set_corner_radius_all(8)
+		sb.set_content_margin_all(8)
+		var marcado: bool = id == _estado["equipe_logo"]
+		sb.set_border_width_all(3 if marcado else 1)
+		sb.border_color = Aba.COR_DESTAQUE if marcado else Color(1, 1, 1, 0.1)
+		for e in ["normal", "hover", "pressed", "focus"]:
+			b.add_theme_stylebox_override(e, sb)
+		b.pressed.connect(func(): _definir("equipe_logo", id))
+		g.add_child(b)
+	if _estado["equipe_logo"] != "":
+		_titulo("Logo no carro")
+		_bits(PinturaCarro.LOCAIS_LOGO, "locais_logo", false)
+		if int(_estado["numero"]) >= 0 and int(_estado["locais_numero"]) & 2 and int(_estado["locais_logo"]) & 4:
+			_nota("O capô já tem o número: lá o logo não vai.")
+		_escolhas(PinturaCarro.ESCALAS, float(_estado["escala_logo"]), func(v): _definir("escala_logo", v))
+	else:
+		_nota("Escolha um logo para pô-lo no carro.")
 	_titulo("Número de corrida")
 	var tem: bool = int(_estado["numero"]) >= 0
 	var h := HBoxContainer.new()
@@ -404,9 +576,7 @@ func _aba_identidade() -> void:
 	else:
 		Tipografia.acao_primaria(sem, "Sem número", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 64)
 	sem.custom_minimum_size.x = 170
-	sem.pressed.connect(func():
-		_estado["numero"] = -1 if tem else 1
-		_mudou())
+	sem.pressed.connect(func(): _definir("numero", -1 if tem else 1))
 	h.add_child(sem)
 	for passo in [-10, -1]:
 		h.add_child(_passo_numero(passo, tem))
@@ -422,26 +592,16 @@ func _aba_identidade() -> void:
 	if not tem:
 		_nota("Toque em Sem número para ligar o número.")
 		return
+	_titulo("Família")
+	var fontes := PinturaCarro.FONTES
+	_escolhas(fontes.slice(0, 3), _estado["fonte_numero"], func(v): _definir("fonte_numero", v), 56, 20)
+	_escolhas(fontes.slice(3), _estado["fonte_numero"], func(v): _definir("fonte_numero", v), 56, 20)
+	_titulo("Tamanho e suporte")
+	_escolhas(PinturaCarro.ESCALAS, float(_estado["escala_numero"]), func(v): _definir("escala_numero", v))
+	_escolhas([[false, "Sem suporte"], [true, "Com círculo"]], bool(_estado["suporte_numero"]),
+			func(v): _definir("suporte_numero", v))
 	_titulo("Onde")
-	var locais := HBoxContainer.new()
-	locais.add_theme_constant_override("separation", 8)
-	_conteudo.add_child(locais)
-	var mascara: int = int(_estado["locais_numero"])
-	for par in PinturaCarro.LOCAIS:
-		var bit: int = par[0]
-		var b := Button.new()
-		b.focus_mode = Control.FOCUS_NONE
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		if mascara & bit:
-			Tipografia.acao_primaria(b, par[1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 60)
-		else:
-			Tipografia.acao_neutra(b, par[1], 22, 60)
-		b.pressed.connect(func():
-			var nova: int = mascara ^ bit
-			if nova != 0:  # ao menos um lugar
-				_estado["locais_numero"] = nova
-				_mudou())
-		locais.add_child(b)
+	_bits(PinturaCarro.LOCAIS, "locais_numero", true)
 	_titulo("Cor de")
 	_canais(CANAIS_NUMERO, _canal_numero, func(_id): return true, func(id):
 		_canal_numero = id
@@ -456,8 +616,7 @@ func _passo_numero(passo: int, tem: bool) -> Button:
 	b.custom_minimum_size.x = 76
 	b.disabled = not tem
 	b.pressed.connect(func():
-		_estado["numero"] = clampi(int(_estado["numero"]) + passo, 0, PinturaCarro.NUMERO_MAX)
-		_mudou())
+		_definir("numero", clampi(int(_estado["numero"]) + passo, 0, PinturaCarro.NUMERO_MAX)))
 	return b
 
 
@@ -470,22 +629,52 @@ func _aba_acabamento() -> void:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		var marcado: bool = id == _estado["acabamento"]
-		if marcado:
-			Tipografia.acao_primaria(b, "%s   ·   %s" % [par[1], TEXTOS[id]], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 70)
+		var texto := "%s   ·   %s" % [par[1], TEXTOS[id]]
+		if id == _estado["acabamento"]:
+			Tipografia.acao_primaria(b, texto, Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 70)
 		else:
-			Tipografia.acao_neutra(b, "%s   ·   %s" % [par[1], TEXTOS[id]], 22, 70)
-		b.pressed.connect(func():
-			_estado["acabamento"] = id
-			_mudou())
+			Tipografia.acao_neutra(b, texto, 22, 70)
+		b.pressed.connect(func(): _definir("acabamento", id))
 		_conteudo.add_child(b)
+	_titulo("Desgaste")
+	_nota("Camada à parte, por cima da pintura: tirar volta à cor limpa.")
+	_deslizante("Poeira", "poeira")
+	_deslizante("Arranhões", "arranhoes")
 
 
 # ---------------------------------------------------------------- estado
 
+func _definir(chave: String, valor: Variant) -> void:
+	if _estado.get(chave) == valor:
+		return
+	var novo := _estado.duplicate()
+	novo[chave] = valor
+	_mudar(novo)
+
+
+## Troca o estado guardando o anterior para desfazer.
+func _mudar(novo: Dictionary) -> void:
+	if novo == _estado:
+		return
+	_antes.append(_estado)
+	if _antes.size() > HISTORICO_MAX:
+		_antes.pop_front()
+	_depois.clear()
+	_estado = novo
+	_mudou()
+
+
+func _passo(de: Array, para: Array) -> void:
+	if de.is_empty():
+		return
+	para.append(_estado)
+	_estado = de.pop_back()
+	_mudou()
+
+
 ## Algo mudou: a prévia troca na hora; a aba e o rodapé são refeitos.
 func _mudou() -> void:
-	_previa.repintar(Color(_estado["cor"]), _faixas())
+	_previa.repintar(Color(_estado["cor"]), _faixas_previa())
 	_mostrar_aba()
 
 
@@ -494,28 +683,42 @@ func _muda_cor() -> bool:
 
 
 func _muda_faixas() -> bool:
-	return _faixas() != PinturaCarro.normalizar(_carro.faixas)
+	var antes := PinturaCarro.normalizar(_carro.faixas)
+	antes.erase("logo")
+	return _faixas() != antes
+
+
+func _muda_equipe() -> bool:
+	return _estado["equipe_nome"] != _inicio["equipe_nome"] or _estado["equipe_logo"] != _inicio["equipe_logo"]
 
 
 func _atualizar_rodape() -> void:
 	var mc := _muda_cor()
 	var mf := _muda_faixas()
+	var me := _muda_equipe()
 	var preco := PinturaCarro.preco(_dados, _jogador, mc, mf)
-	if not mc and not mf:
+	if not mc and not mf and not me:
 		_preco.text = "Nada mudou ainda."
+	elif not mc and not mf:
+		_preco.text = "Nome e logo da equipe não custam."
 	elif not PinturaCarro.preco_definido(_dados):
 		_preco.text = "Preço a definir (grátis por enquanto)."
 	else:
 		_preco.text = "Custa %s giros." % Aba.dinheiro(preco)
-	_aplicar.disabled = (not mc and not mf) or not _jogador.economia.pode_pagar(preco)
-	_desfazer.disabled = _estado == _inicio
+	_aplicar.disabled = (not mc and not mf and not me) or not _jogador.economia.pode_pagar(preco)
+	_como_estava.disabled = _estado == _inicio
+	_voltar.disabled = _antes.is_empty()
+	_avancar.disabled = _depois.is_empty()
 
 
 func _confirmar() -> void:
-	var motivo := PinturaCarro.aplicar(_dados, _jogador, _carro, _estado["cor"], _faixas())
-	if motivo != "":
-		aviso.emit("Não deu: %s." % motivo, false)
-		return
+	if _muda_cor() or _muda_faixas():
+		var motivo := PinturaCarro.aplicar(_dados, _jogador, _carro, _estado["cor"], _faixas())
+		if motivo != "":
+			aviso.emit("Não deu: %s." % motivo, false)
+			return
+	if _muda_equipe():
+		IdentidadeEquipe.definir(_jogador, String(_estado["equipe_nome"]), String(_estado["equipe_logo"]))
 	Sons.tocar_ui(self, "moeda", -4.0)
 	aplicada.emit()
 	_fechar()
@@ -536,7 +739,8 @@ func _fechar() -> void:
 ## Cada desenho renderizado no próprio carro, nas cores escolhidas (um por
 ## quadro, para não travar a tela); refeitas só quando as cores mudam.
 func _gerar_miniaturas() -> void:
-	var chave := "%s|%s|%s" % [_estado["cor"], _estado["faixa"], _estado["filete"]]
+	var chave := "%s|%s|%s|%s|%s" % [_estado["cor"], _estado["faixa"], _estado["filete"], _estado["largura"],
+			_estado["espelhar"]]
 	if chave != _cores_miniaturas:
 		_cores_miniaturas = chave
 		_miniaturas.clear()
@@ -549,7 +753,8 @@ func _gerar_miniaturas() -> void:
 			continue
 		if _fechando or not is_inside_tree():
 			break
-		var f := {} if id == "" else {"padrao": id, "faixa": _estado["faixa"], "filete": _estado["filete"]}
+		var f := {} if id == "" else {"padrao": id, "faixa": _estado["faixa"], "filete": _estado["filete"],
+				"largura": _estado["largura"], "espelhar": _estado["espelhar"]}
 		_gerador.repintar(Color(_estado["cor"]), f)
 		await RenderingServer.frame_post_draw
 		await RenderingServer.frame_post_draw
@@ -563,5 +768,5 @@ func _gerar_miniaturas() -> void:
 	if _fechando:
 		queue_free()
 		return
-	if is_inside_tree() and _aba == "faixas" and _miniaturas.size() < PinturaCarro.PADROES.size():
+	if is_inside_tree() and _aba == "grafismos" and _miniaturas.size() < PinturaCarro.PADROES.size():
 		_gerar_miniaturas()

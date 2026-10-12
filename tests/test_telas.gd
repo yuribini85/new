@@ -505,15 +505,18 @@ func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
 	var cab := CabinePintura.new(d, j, c)
 	_raiz().add_child(cab)
 	verificar(cab._aplicar.disabled, "sem mudança, Aplicar apagado")
-	for aba in ["cores", "identidade", "acabamento"]:
+	for aba in ["pintura", "identificacao", "acabamento"]:
 		cab._aba = aba
 		cab._mostrar_aba()
-	cab._estado["cor"] = "#1251b3"
-	cab._estado["numero"] = 7
-	cab._mudou()
+	cab._definir("cor", "#1251b3")
+	cab._definir("numero", 7)
 	verificar(not cab._aplicar.disabled, "mudou: Aplicar aceso")
-	cab._desfazer.pressed.emit()
-	igual(cab._estado, cab._inicio, "Desfazer volta ao que estava ao abrir")
+	cab._voltar.pressed.emit()
+	igual(int(cab._estado["numero"]), -1, "desfazer volta um passo (o número)")
+	cab._avancar.pressed.emit()
+	igual(int(cab._estado["numero"]), 7, "refazer devolve o passo")
+	cab._como_estava.pressed.emit()
+	igual(cab._estado, cab._inicio, "Como estava volta ao que estava ao abrir")
 	cab._estado["cor"] = "#1251b3"
 	cab._fechar()
 	igual(c.faixas, {}, "Cancelar não muda as faixas")
@@ -539,7 +542,21 @@ func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
 	_raiz().add_child(de_novo)
 	verificar(de_novo._aplicar.disabled, "pintura do save não conta como mudança")
 	de_novo._fechar()
-	igual(PinturaCarro.normalizar({"padrao": "", "faixa": "#ffffff", "numero": -1, "acabamento": ""}), {},
-			"o padrão de fábrica não vai para o save")
+	igual(PinturaCarro.normalizar({"padrao": "", "faixa": "#ffffff", "numero": -1, "acabamento": "", "largura": 1.0,
+			"locais_logo": 0, "poeira": 0.0}), {}, "o padrão de fábrica não vai para o save")
+	# Nome e logo da equipe: independentes, gravados no jogador ao aplicar, sem custo.
+	var cab_eq := CabinePintura.new(d, j, c)
+	_raiz().add_child(cab_eq)
+	cab_eq._definir("equipe_nome", "Oficina do Bairro")
+	cab_eq._definir("equipe_logo", "07_gear_star")
+	cab_eq._definir("locais_logo", 5)
+	verificar(not cab_eq._aplicar.disabled, "só nome e logo: dá para aplicar")
+	cab_eq._confirmar()
+	igual(IdentidadeEquipe.nome(d, j), "Oficina do Bairro", "nome da equipe")
+	igual(IdentidadeEquipe.logo(j), "07_gear_star", "logo da equipe")
+	igual(int(c.faixas["locais_logo"]), 1, "logo e número não dividem o capô (o número está lá)")
+	verificar(not c.faixas.has("logo"), "o logo do jogador vem da equipe, não fica no carro")
+	IdentidadeEquipe.definir(j, "", "07_gear_star")
+	igual(IdentidadeEquipe.logo(j), "07_gear_star", "trocar o nome não troca o logo")
 	j.free()
 	d.free()

@@ -425,7 +425,8 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		var eq_r: Dictionary = jogador.carreira.equipe_de(ev["id"], chave, int(f.get("semente", -1)))
 		if eq_r.has("cores"):
 			pinturas[chave] = Color(String(eq_r["cores"]["carro"]))
-			faixas_rivais[chave] = PinturaCarro.da_equipe(eq_r, "%s|%d|%d" % [ev["id"], int(f.get("semente", -1)), i])
+			faixas_rivais[chave] = PinturaCarro.da_equipe(eq_r, "%s|%d|%d" % [ev["id"], int(f.get("semente", -1)), i],
+					jogador.carreira.vaga_de(ev["id"], chave, int(f.get("semente", -1))))
 		else:
 			pinturas[chave] = Cores.sortear(adv_id, "%s|%d" % [ev["id"], i])
 	var comp_carro: Carro = jogador.fila_ctrl.companheiro_inscrito(f)

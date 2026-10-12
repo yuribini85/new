@@ -139,7 +139,7 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int) -> Dictio
 			nomes[id] = String(pl["nome"])
 			if eq.has("cores"):
 				cores[id] = Color(String(eq["cores"]["carro"]))
-				faixas[id] = PinturaCarro.da_equipe(eq, "%d|%s" % [semente, id])
+				faixas[id] = PinturaCarro.da_equipe(eq, "%d|%s" % [semente, id], Array(eq["pilotos"]).find(pl))
 	# A arena da luta: sorteada entre as abertas pelas licenças do jogador
 	# (decisão 59); a forma vai nos parâmetros da simulação e da tela.
 	var params := p.duplicate()

@@ -19,6 +19,14 @@ const ACABAMENTOS := [["fosco", "Fosco"], ["", "Acetinado"], ["brilhante", "Bril
 const NUMERO_MAX := 99
 const LOCAIS := [[1, "Portas"], [2, "Capô"], [4, "Teto"]]
 const LOCAIS_PADRAO := 1
+## Famílias do número [id, nome] (texturas arte/ui/pintura/digitos_<id>.png).
+const FONTES := [["condensado", "Condensado"], ["bloco", "Bloco"], ["estencil", "Estêncil"],
+		["pincel", "Pintado à mão"], ["serifa", "Serifado"]]
+const ESCALAS := [[0.8, "Pequeno"], [1.0, "Médio"], [1.2, "Grande"]]
+## Logo da equipe: onde vai (soma) e tamanhos.
+const LOCAIS_LOGO := [[1, "Paralamas"], [2, "Lateral traseira"], [4, "Capô"], [8, "Traseira"]]
+## Largura das faixas [fator, nome].
+const LARGURAS := [[0.7, "Estreita"], [1.0, "Média"], [1.35, "Larga"]]
 
 ## A paleta da pintura é a de fábrica mais saturada (pedido do usuário): mesmas
 ## famílias e o mesmo brilho relativo, tons mais vivos. Cinzas, brancos, preto
@@ -59,6 +67,31 @@ static func normalizar(f: Dictionary) -> Dictionary:
 		r["locais_numero"] = int(f.get("locais_numero", LOCAIS_PADRAO))
 	if String(f.get("acabamento", "")) != "":
 		r["acabamento"] = String(f["acabamento"])
+	if r.has("padrao"):
+		if not is_equal_approx(float(f.get("largura", 1.0)), 1.0):
+			r["largura"] = float(f["largura"])
+		if bool(f.get("espelhar", false)):
+			r["espelhar"] = true
+	if r.has("numero"):
+		if String(f.get("fonte_numero", "condensado")) != "condensado":
+			r["fonte_numero"] = String(f["fonte_numero"])
+		if not is_equal_approx(float(f.get("escala_numero", 1.0)), 1.0):
+			r["escala_numero"] = float(f["escala_numero"])
+		if bool(f.get("suporte_numero", false)):
+			r["suporte_numero"] = true
+	var ll := int(f.get("locais_logo", 0))
+	# Logo e número não dividem o capô: o número fica, o logo sai de lá.
+	if r.has("numero") and int(r["locais_numero"]) & 2:
+		ll &= ~4
+	if ll > 0:
+		r["locais_logo"] = ll
+		if not is_equal_approx(float(f.get("escala_logo", 1.0)), 1.0):
+			r["escala_logo"] = float(f["escala_logo"])
+		if String(f.get("logo", "")) != "":
+			r["logo"] = String(f["logo"])
+	for k in ["poeira", "arranhoes"]:
+		if float(f.get(k, 0.0)) > 0.0:
+			r[k] = clampf(float(f[k]), 0.0, 1.0)
 	return r
 
 
@@ -82,13 +115,27 @@ static func saturada(c: Color) -> Color:
 
 ## Pintura de um carro de equipe rival (decisão 60): um desenho sorteado por
 ## `semente` (fixo por prova e vaga), nas cores da equipe (faixa e filete).
-static func da_equipe(equipe: Dictionary, semente: String) -> Dictionary:
+## Com `vaga` (o piloto na equipe, 0..3), o carro leva o número dele
+## (numero da equipe × 4 − 3 + vaga) na família da equipe, nas portas; com
+## logo, o emblema nos paralamas dianteiros.
+static func da_equipe(equipe: Dictionary, semente: String, vaga := -1) -> Dictionary:
 	var cores: Dictionary = equipe.get("cores", {})
 	if cores.is_empty():
 		return {}
 	var k := 1 + posmod(semente.hash(), PADROES.size() - 1)
-	return {"padrao": PADROES[k][0], "faixa": String(cores.get("faixa", "#ffffff")),
+	var r := {"padrao": PADROES[k][0], "faixa": String(cores.get("faixa", "#ffffff")),
 			"filete": String(cores.get("filete", "#1a1a1a"))}
+	if vaga >= 0 and equipe.get("numero") != null:
+		r["numero"] = clampi(int(equipe["numero"]) * 4 - 3 + vaga, 1, NUMERO_MAX)
+		r["locais_numero"] = 1
+		r["cor_numero"] = String(cores.get("filete", "#141518"))
+		r["cor_contorno"] = String(cores.get("faixa", "#f2f2ee"))
+		r["fonte_numero"] = String(equipe.get("fonte_numero", "condensado"))
+	var logo := String(equipe.get("logo", ""))
+	if logo != "" and ResourceLoader.exists(logo):
+		r["logo"] = logo
+		r["locais_logo"] = 1
+	return r
 
 
 static func cfg(dados: Node) -> Dictionary:

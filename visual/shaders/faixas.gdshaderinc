@@ -19,6 +19,19 @@ uniform vec4 cor_numero : source_color = vec4(0.1, 0.1, 0.1, 1.0);
 uniform vec4 cor_contorno : source_color = vec4(1.0);
 // Acabamento (aba ACABAMENTO): 0 fosco, 1 acetinado, 2 brilhante, 3 metálico.
 uniform int acabamento = 1;
+uniform float escala_numero = 1.0;
+uniform bool suporte_numero = false;  // círculo atrás do número (na cor do contorno)
+// Logo da equipe em encaixes fixos (soma): 1 paralamas dianteiros, 2 laterais
+// traseiras, 4 capô (pequeno), 8 traseira. A imagem não tem texto.
+uniform sampler2D logo : source_color, filter_linear_mipmap, repeat_disable, hint_default_transparent;
+uniform int locais_logo = 0;
+uniform float escala_logo = 1.0;
+// Desenho: largura das faixas (multiplica) e espelhado (troca os lados).
+uniform float largura_faixas = 1.0;
+uniform bool espelhar = false;
+// Desgaste em camada separada (0..1): poeira embaixo e arranhões; não muda a cor salva.
+uniform float poeira = 0.0;
+uniform float arranhoes = 0.0;
 
 varying vec3 p_carro;
 
@@ -63,21 +76,94 @@ vec3 aplicar_numero(vec3 c, vec3 p, float lado, float topo) {
 	}
 	vec3 m = tamanho_carro();
 	vec2 r = vec2(0.0);
+	float disco = 0.0;
 	if (locais_numero % 2 == 1) {  // portas: lido de fora dos dois lados
 		float s = p.x > 0.5 ? -1.0 : 1.0;
-		float h = min(m.y * 0.34, 0.5);
-		r = max(r, lado * numero_em((p.z - 0.47) * m.z * s, (p.y - 0.44) * m.y, h));
+		float h = min(m.y * 0.34, 0.5) * escala_numero;
+		vec2 q = vec2((p.z - 0.47) * m.z * s, (p.y - 0.44) * m.y);
+		r = max(r, lado * numero_em(q.x, q.y, h));
+		disco = max(disco, lado * (1.0 - smoothstep(h * 0.7, h * 0.72, length(q))));
 	}
 	if ((locais_numero / 2) % 2 == 1) {  // capô: lido de frente
-		float h = min(m.z * 0.13, 0.5);
-		r = max(r, topo * step(0.62, p.z) * numero_em((p.x - 0.5) * m.x, (0.8 - p.z) * m.z, h));
+		float h = min(m.z * 0.13, 0.5) * escala_numero;
+		vec2 q = vec2((p.x - 0.5) * m.x, (0.8 - p.z) * m.z);
+		r = max(r, topo * step(0.62, p.z) * numero_em(q.x, q.y, h));
+		disco = max(disco, topo * step(0.62, p.z) * (1.0 - smoothstep(h * 0.7, h * 0.72, length(q))));
 	}
 	if ((locais_numero / 4) % 2 == 1) {  // teto: lido de frente
-		float h = min(m.z * 0.12, 0.45);
-		r = max(r, topo * step(0.8, p.y) * numero_em((p.x - 0.5) * m.x, (0.45 - p.z) * m.z, h));
+		float h = min(m.z * 0.12, 0.45) * escala_numero;
+		vec2 q = vec2((p.x - 0.5) * m.x, (0.45 - p.z) * m.z);
+		r = max(r, topo * step(0.8, p.y) * numero_em(q.x, q.y, h));
+		disco = max(disco, topo * step(0.8, p.y) * (1.0 - smoothstep(h * 0.7, h * 0.72, length(q))));
+	}
+	if (suporte_numero) {
+		c = mix(c, cor_contorno.rgb, disco);
 	}
 	c = mix(c, cor_contorno.rgb, clamp(r.y, 0.0, 1.0));
 	return mix(c, cor_numero.rgb, clamp(r.x, 0.0, 1.0));
+}
+
+// O logo num quadro de lado h (m) centrado em (a, b): a cor com alfa.
+vec4 logo_em(float a, float b, float h) {
+	vec2 uv = vec2(a / h + 0.5, 0.5 - b / h);
+	if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+		return vec4(0.0);
+	}
+	return texture(logo, uv);
+}
+
+vec3 aplicar_logo(vec3 c, vec3 p, float lado, float topo) {
+	if (locais_logo == 0) {
+		return c;
+	}
+	vec3 m = tamanho_carro();
+	vec4 l = vec4(0.0);
+	float s = p.x > 0.5 ? -1.0 : 1.0;
+	float hl = min(m.y * 0.36, 0.5) * escala_logo;
+	if (locais_logo % 2 == 1) {  // paralamas dianteiros
+		vec4 k = logo_em((p.z - 0.82) * m.z * s, (p.y - 0.5) * m.y, hl);
+		l = mix(l, k, k.a * lado);
+	}
+	if ((locais_logo / 2) % 2 == 1) {  // laterais traseiras
+		vec4 k = logo_em((p.z - 0.15) * m.z * s, (p.y - 0.52) * m.y, hl);
+		l = mix(l, k, k.a * lado);
+	}
+	if ((locais_logo / 4) % 2 == 1) {  // capô, pequeno, perto do para-brisa
+		vec4 k = logo_em((p.x - 0.5) * m.x, (0.7 - p.z) * m.z, hl * 0.8);
+		l = mix(l, k, k.a * topo * step(0.62, p.z) * step(p.y, 0.8));
+	}
+	if ((locais_logo / 8) % 2 == 1) {  // traseira (o painel de trás)
+		vec4 k = logo_em((0.5 - p.x) * m.x, (p.y - 0.45) * m.y, hl * 0.8);
+		l = mix(l, k, k.a * (1.0 - smoothstep(0.02, 0.05, p.z)));
+	}
+	return mix(c, l.rgb, clamp(l.a, 0.0, 1.0));
+}
+
+float ruido(vec3 x) {
+	vec3 i = floor(x);
+	vec3 f = fract(x);
+	f = f * f * (3.0 - 2.0 * f);
+	float n = dot(i, vec3(1.0, 57.0, 113.0));
+	vec4 h = fract(sin(vec4(n, n + 1.0, n + 57.0, n + 58.0)) * 43758.5453);
+	vec4 h2 = fract(sin(vec4(n + 113.0, n + 114.0, n + 170.0, n + 171.0)) * 43758.5453);
+	return mix(mix(mix(h.x, h.y, f.x), mix(h.z, h.w, f.x), f.y),
+			mix(mix(h2.x, h2.y, f.x), mix(h2.z, h2.w, f.x), f.y), f.z);
+}
+
+// Poeira (mais embaixo) e arranhões (riscos finos que mostram o primer), por cima de tudo.
+vec3 aplicar_desgaste(vec3 c, vec3 p) {
+	if (poeira <= 0.0 && arranhoes <= 0.0) {
+		return c;
+	}
+	vec3 pm = p * tamanho_carro();
+	float n = ruido(pm * 3.0) * 0.6 + ruido(pm * 9.0) * 0.4;
+	float baixo = 1.0 - smoothstep(0.1, 0.85, p.y);
+	float d = poeira * clamp(baixo * 1.4 + n * 0.6 - 0.2, 0.0, 1.0);
+	c = mix(c, vec3(0.47, 0.4, 0.31), d * 0.85);
+	// Riscos: linhas finas e compridas no sentido do carro, em manchas.
+	float faixa_r = abs(fract(pm.y * 9.0 + pm.z * 0.8 + ruido(pm * 1.7) * 2.0) - 0.5);
+	float r = arranhoes * (1.0 - smoothstep(0.02, 0.06, faixa_r)) * smoothstep(0.45, 0.6, ruido(pm * 1.1 + 7.0));
+	return mix(c, vec3(0.7, 0.7, 0.68), clamp(r, 0.0, 1.0) * 0.85);
 }
 
 float rugosidade_pintura() {
@@ -92,11 +178,15 @@ float metalico_pintura() {
 	return acabamento == 3 ? 0.65 : 0.0;
 }
 
-vec3 aplicar_faixas(vec3 c, vec3 p) {
-	float u = abs(p.x - 0.5) * 2.0;  // 0 no meio, 1 na lateral
+vec3 aplicar_faixas(vec3 c, vec3 p_orig) {
+	vec3 p = p_orig;
+	if (espelhar) {
+		p.x = 1.0 - p.x;
+	}
+	float u = abs(p.x - 0.5) * 2.0 / max(largura_faixas, 0.2);  // 0 no meio, 1 na lateral
 	float v = p.y;
 	float z = p.z;
-	float lado = smoothstep(0.66, 0.74, u);  // as laterais
+	float lado = smoothstep(0.66, 0.74, abs(p.x - 0.5) * 2.0);  // as laterais (sem a largura)
 	float topo = 1.0 - lado;  // capô, teto e tampa
 	float f = 0.0;
 	float fil = 0.0;
@@ -150,5 +240,9 @@ vec3 aplicar_faixas(vec3 c, vec3 p) {
 	}
 	c = mix(c, cor_faixa.rgb, clamp(f, 0.0, 1.0));
 	c = mix(c, cor_filete.rgb, clamp(fil, 0.0, 1.0));
-	return aplicar_numero(c, p, lado, topo);
+	// Logo, número e desgaste no carro de verdade (sem o espelho do desenho).
+	float lado_r = smoothstep(0.66, 0.74, abs(p_orig.x - 0.5) * 2.0);
+	c = aplicar_logo(c, p_orig, lado_r, 1.0 - lado_r);
+	c = aplicar_numero(c, p_orig, lado_r, 1.0 - lado_r);
+	return aplicar_desgaste(c, p_orig);
 }

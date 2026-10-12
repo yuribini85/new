@@ -37,10 +37,14 @@ static func dados_equipe(dados: Node, jogador: Node) -> Dictionary:
 	for e in dados.lista("equipes"):
 		if e.get("jogador", false):
 			var troca: Dictionary = dados.historia().get(String(jogador.personagem), {}).get("equipe", {})
-			if troca.is_empty():
-				return e
 			var r: Dictionary = e.duplicate()
 			r.merge(troca, true)
+			# A identidade escolhida pelo jogador (nome e logo, independentes).
+			if String(jogador.identidade.get("nome", "")) != "":
+				r["nome"] = IdentidadeEquipe.nome(dados, jogador)
+			if IdentidadeEquipe.logo(jogador) != "":
+				r["logo"] = IdentidadeEquipe.arquivo_logo(IdentidadeEquipe.logo(jogador))
+				r["subtitulo"] = true  # o emblema não traz o nome
 			return r
 	return {}
 

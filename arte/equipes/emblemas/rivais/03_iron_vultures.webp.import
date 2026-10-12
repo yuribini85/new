@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpisbsv38smqm"
-path="res://.godot/imported/digitos.png-8c8f5e37baed83602b66c047b0e3b303.ctex"
+uid="uid://b0qqyhbkq341u"
+path="res://.godot/imported/03_iron_vultures.webp-f8c81f6b97398d3661dc70c9eb951cff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/ui/pintura/digitos.png"
-dest_files=["res://.godot/imported/digitos.png-8c8f5e37baed83602b66c047b0e3b303.ctex"]
+source_file="res://arte/equipes/emblemas/rivais/03_iron_vultures.webp"
+dest_files=["res://.godot/imported/03_iron_vultures.webp-f8c81f6b97398d3661dc70c9eb951cff.ctex"]
 
 [params]
 

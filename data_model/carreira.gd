@@ -165,6 +165,18 @@ func equipe_de(evento_id: String, id: String, semente: int) -> Dictionary:
 	return grid[i]["equipe"] if i < grid.size() else {}
 
 
+## Vaga do piloto de um rival na equipe dele (0 = o titular; -1 sem equipe):
+## o número do carro sai dela (PinturaCarro.da_equipe).
+func vaga_de(evento_id: String, id: String, semente: int) -> int:
+	if not id.begins_with("adv") or semente < 0:
+		return -1
+	var i := int(id.trim_prefix("adv").split("_", true, 1)[0])
+	var grid := escalacao(evento_id, semente)
+	if i >= grid.size():
+		return -1
+	return Array(grid[i]["equipe"]["pilotos"]).find(grid[i]["piloto"])
+
+
 static func sobrenome_fixo(evento_id: String, i: int) -> String:
 	var base := posmod(hash(evento_id), PILOTOS.size())
 	# Passo primo com a lista: pilotos diferentes no mesmo grid.
