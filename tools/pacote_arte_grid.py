@@ -31,7 +31,8 @@ ESTILO = ("Style: semi-realistic digital painting of an anthropomorphic animal c
           "(not cartoon, not chibi, not cute). ")
 SEM_TEXTO = ("Original design only: no real people, teams, brands, car makers or sponsors. NO text, letters, "
              "numbers or logos anywhere (clothing included); team identity only through the colours and "
-             "simple abstract shapes. ")
+             "simple abstract shapes. The lettering on the reference suits is outdated: copy their style, "
+             "never their words or badges. ")
 FUNDO_PILOTO = ("Background: plain dark warm-brown vignette, lighter behind the head, like the references. ")
 FUNDO_DIRIGENTE = ("Background: fully TRANSPARENT (PNG with alpha). If transparency is impossible, a flat "
                    "pure magenta #FF00FF background, no gradient, no shadow on it. ")
