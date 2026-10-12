@@ -498,3 +498,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (CW_P07, gatilho GARAGEM_TRES_CARROS), que libera os pilotos de arena e abre a arena
     (no lugar da licença mínima, que ficou só para o prêmio de referência). Caixa, Sede e
     patrocínio continuam abrindo com a International (flag GESTAO_LIBERADA).
+70. **Atributos por piloto e treino como energia** (2026-10-12, sugestão aprovada pelo
+    usuário, inspirada no Grand Prix Story). Cada piloto contratado tem os três números que a
+    simulação lê, tirados de números que já existem: agressividade pelo perfil do traço
+    (`perfis_piloto`), consistência do piloto-base, ou com a perda do segundo piloto nos
+    traços mais crus (`tracos` → `perfil`, `menos_consistencia`), e ritmo do piloto-base mais
+    o treino dele. O treino passa a ser por piloto e aparece como energia: começar gasta a
+    energia, ela volta enchendo no tempo do treino de hoje e o nível entra quando enche.
+    Correr cansado custa consistência (`equipe.json` → `treino.cansaco`), pendente do
+    playtest (null = sem efeito; sugestão 0,2). Rivais da arena usam o piloto-base.
+    Próximos (aprovados): mercado de pilotos que muda e pilotos das equipes vencidas do
+    Grid; experiência por corrida/luta; embalo; contrato por temporada.

@@ -60,7 +60,9 @@
    "ELITE": 1.007
   },
   "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde).",
-  "_passo": "GERADO por tools/calibrar_treino.py: o maior teto dividido em `niveis` (3, decisão do usuário)."
+  "_passo": "GERADO por tools/calibrar_treino.py: o maior teto dividido em `niveis` (3, decisão do usuário).",
+  "cansaco": null,
+  "_cansaco": "Decisão 70: quanto da consistência o piloto perde correndo com a energia em zero (proporcional ao que falta). null = sem efeito, pendente do playtest; sugestão: 0,2, a mesma perda do segundo piloto."
  },
  "pintura": {
   "_nota": "Oficina → PINTURA (pedido do usuário, 2026-10-11): trocar a cor da carroceria e pintar faixas custa um fator sobre o prêmio de 1º lugar médio da maior licença do jogador (o mesmo critério da Sede e do treino). null = preço a definir (vale 0 até o usuário decidir).",

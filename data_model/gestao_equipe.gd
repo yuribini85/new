@@ -233,24 +233,31 @@ static func bonus_corrida(dados: Node, jogador: Node, ev: Dictionary, posicao: i
 
 # ------------------------------------------------------------------ Treino
 
-## Treino do piloto do jogador (decisão 54): níveis de ritmo, um por
-## vez, no relógio real; teto pela maior licença (data/equipe.json → treino.teto,
-## gerado por tools/calibrar_treino.gd). Estado: jogador.equipe.treino =
-## {nivel, fim (segundos Unix; 0 = parado)}.
+## Treino do piloto (decisão 54; decisão 70: por piloto, como energia): níveis
+## de ritmo, um por vez, no relógio real; teto pela maior licença
+## (data/equipe.json → treino.teto, gerado por tools/calibrar_treino.gd).
+## Começar o treino gasta a energia do piloto; ela volta enchendo durante o
+## treino e o nível entra quando enche. `piloto_id` "" = o treino da equipe
+## (jogo sem pilotos contratados). Estado: jogador.equipe[chave] = {nivel, fim
+## (segundos Unix; 0 = parado), inicio}.
 static func cfg_treino(dados: Node) -> Dictionary:
 	return dados.equipe().get("treino", {})
 
 
-static func nivel_treino(jogador: Node) -> int:
-	return int(jogador.equipe.get("treino", {}).get("nivel", 0))
+static func _chave(piloto_id: String) -> String:
+	return "treino" if piloto_id == "" else "treino_" + piloto_id
 
 
-## Ritmo do piloto do jogador com o treino (a base sem gestão).
-static func ritmo(dados: Node, jogador: Node, base: float) -> float:
+static func nivel_treino(jogador: Node, piloto_id := "") -> int:
+	return int(jogador.equipe.get(_chave(piloto_id), {}).get("nivel", 0))
+
+
+## Ritmo com o treino (a base sem gestão).
+static func ritmo(dados: Node, jogador: Node, base: float, piloto_id := "") -> float:
 	var t := cfg_treino(dados)
 	if t.is_empty():
 		return base
-	return minf(base + float(t.get("passo", 0.0)) * nivel_treino(jogador), maxf(teto(dados, jogador), base))
+	return minf(base + float(t.get("passo", 0.0)) * nivel_treino(jogador, piloto_id), maxf(teto(dados, jogador), base))
 
 
 ## Teto da maior licença do jogador (sem teto para ela: sem ganho).
@@ -266,48 +273,65 @@ static func teto(dados: Node, jogador: Node) -> float:
 
 
 ## O próximo nível ainda sobe o ritmo (abaixo do teto)?
-static func pode_treinar(dados: Node, jogador: Node, base: float) -> bool:
+static func pode_treinar(dados: Node, jogador: Node, base: float, piloto_id := "") -> bool:
 	return aberta(dados, jogador) and not cfg_treino(dados).is_empty() \
-			and base + float(cfg_treino(dados).get("passo", 0.0)) * nivel_treino(jogador) < teto(dados, jogador) - 1e-6
+			and base + float(cfg_treino(dados).get("passo", 0.0)) * nivel_treino(jogador, piloto_id) < teto(dados, jogador) - 1e-6
 
 
-static func treinando(jogador: Node) -> bool:
-	return float(jogador.equipe.get("treino", {}).get("fim", 0.0)) > 0.0
+static func treinando(jogador: Node, piloto_id := "") -> bool:
+	return float(jogador.equipe.get(_chave(piloto_id), {}).get("fim", 0.0)) > 0.0
 
 
-static func duracao_treino(dados: Node, jogador: Node) -> float:
-	return float(cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 * (nivel_treino(jogador) + 1)
+static func duracao_treino(dados: Node, jogador: Node, piloto_id := "") -> float:
+	return float(cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 * (nivel_treino(jogador, piloto_id) + 1)
 
 
-static func preco_treino(dados: Node, jogador: Node) -> int:
+static func preco_treino(dados: Node, jogador: Node, piloto_id := "") -> int:
 	var niveis := ordem(dados)
 	var k := maior_licenca(dados, jogador)
 	var ref := premio_referencia(dados, niveis[k]) if k >= 0 else 0
-	return roundi(ref * float(cfg_treino(dados).get("custo_fator", 0.0)) * (nivel_treino(jogador) + 1))
+	return roundi(ref * float(cfg_treino(dados).get("custo_fator", 0.0)) * (nivel_treino(jogador, piloto_id) + 1))
 
 
 ## Começa o próximo nível (agora: segundos Unix). "" ou o motivo.
-static func treinar(dados: Node, jogador: Node, base: float, agora: float) -> String:
-	if treinando(jogador):
+static func treinar(dados: Node, jogador: Node, base: float, agora: float, piloto_id := "") -> String:
+	if treinando(jogador, piloto_id):
 		return "já está treinando"
-	if not pode_treinar(dados, jogador, base):
+	if not pode_treinar(dados, jogador, base, piloto_id):
 		return "no teto da licença"
-	if not jogador.economia.debitar(preco_treino(dados, jogador)):
+	if not jogador.economia.debitar(preco_treino(dados, jogador, piloto_id)):
 		return "saldo insuficiente"
-	var t: Dictionary = jogador.equipe.get("treino", {})
-	t["nivel"] = nivel_treino(jogador)
-	t["fim"] = agora + duracao_treino(dados, jogador)
-	jogador.equipe["treino"] = t
+	var t: Dictionary = jogador.equipe.get(_chave(piloto_id), {})
+	t["nivel"] = nivel_treino(jogador, piloto_id)
+	t["inicio"] = agora
+	t["fim"] = agora + duracao_treino(dados, jogador, piloto_id)
+	jogador.equipe[_chave(piloto_id)] = t
 	return ""
 
 
-## Conclui o treino que já terminou. true se subiu de nível.
+## Energia do piloto (0..1): gasta ao começar o treino, volta enchendo até o
+## fim dele. 1 = descansado.
+static func energia(jogador: Node, piloto_id: String, agora: float) -> float:
+	if not treinando(jogador, piloto_id):
+		return 1.0
+	var t: Dictionary = jogador.equipe[_chave(piloto_id)]
+	var dur := maxf(float(t["fim"]) - float(t.get("inicio", t["fim"])), 1.0)
+	return clampf(1.0 - (float(t["fim"]) - agora) / dur, 0.0, 1.0)
+
+
+## Conclui os treinos que já terminaram (equipe e pilotos). true se algum subiu.
 static func concluir_treino(jogador: Node, agora: float) -> bool:
-	if not treinando(jogador) or agora < float(jogador.equipe["treino"]["fim"]):
-		return false
-	jogador.equipe["treino"]["nivel"] = nivel_treino(jogador) + 1
-	jogador.equipe["treino"]["fim"] = 0.0
-	return true
+	var subiu := false
+	for k in jogador.equipe.keys():
+		if not String(k).begins_with("treino"):
+			continue
+		var t = jogador.equipe[k]
+		if not t is Dictionary or float(t.get("fim", 0.0)) <= 0.0 or agora < float(t["fim"]):
+			continue
+		t["nivel"] = int(t.get("nivel", 0)) + 1
+		t["fim"] = 0.0
+		subiu = true
+	return subiu
 
 
 # -------------------------------------------------------------- Desmanche

@@ -139,6 +139,10 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 	var p: Dictionary = jogador.pilotos.duplicate(true)
 	if vaga == "corrida":
 		p["corrida"] = piloto_id
+		# O treino da equipe (antes dos pilotos contratados) fica com o primeiro de corrida.
+		if jogador.equipe.has("treino") and not jogador.equipe.has("treino_" + piloto_id):
+			jogador.equipe["treino_" + piloto_id] = jogador.equipe["treino"]
+			jogador.equipe.erase("treino")
 	else:
 		var a: Array = p.get("arena", ["", ""])
 		if a.size() != 2:
@@ -214,19 +218,50 @@ static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid:
 	return cu
 
 
-## Piloto do jogador nas corridas: o de carreira.json com o treino da equipe
-## (GestaoEquipe: ritmo até o teto da licença).
+## Atributos de um piloto contratado (decisão 70): o piloto-base de
+## carreira.json com o traço (agressividade do perfil; consistência do segundo
+## piloto nos mais crus) e o treino dele; cansado, perde consistência
+## (equipe.json → treino.cansaco; null = sem efeito).
+static func atributos(dados: Node, jogador: Node, piloto_id: String, agora := -1.0) -> Dictionary:
+	var p: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()
+	var tr := traco(dados, piloto_id)
+	var perfis: Dictionary = dados.carreira().get("perfis_piloto", {})
+	if perfis.has(String(tr.get("perfil", ""))):
+		p["agressividade"] = float(perfis[String(tr["perfil"])]["agressividade"])
+	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
+	if bool(tr.get("menos_consistencia", false)):
+		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
+	if jogador != null:
+		p["ritmo"] = GestaoEquipe.ritmo(dados, jogador, float(p["ritmo"]), piloto_id)
+		var cansaco = GestaoEquipe.cfg_treino(dados).get("cansaco")
+		if cansaco != null:
+			var e := GestaoEquipe.energia(jogador, piloto_id, agora if agora >= 0.0 else Time.get_unix_time_from_system())
+			p["consistencia"] = float(p["consistencia"]) * (1.0 - float(cansaco) * (1.0 - e))
+	return p
+
+
+## Piloto da vaga (contratado) ou {} se vazia.
+static func piloto_da_vaga(dados: Node, jogador: Node, vaga: String) -> Dictionary:
+	var id := piloto_vaga(jogador, vaga)
+	return {} if id == "" else atributos(dados, jogador, id)
+
+
+## Piloto nas corridas: o de corrida contratado; sem ele, o de carreira.json
+## com o treino da equipe (GestaoEquipe: ritmo até o teto da licença).
 static func piloto_do_jogador(dados: Node, jogador: Node) -> Dictionary:
+	if jogador != null and piloto_vaga(jogador, "corrida") != "":
+		return piloto_da_vaga(dados, jogador, "corrida")
 	var p: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()
 	if jogador != null:
 		p["ritmo"] = GestaoEquipe.ritmo(dados, jogador, float(p["ritmo"]))
 	return p
 
 
-## Piloto do companheiro: o do jogador com a perda de consistência do segundo
-## piloto; o treino é do piloto principal, salvo o traço que treina junto
-## (Promessa).
+## Segundo da dupla: o piloto de arena 2; sem ele, o do jogador com a perda de
+## consistência do segundo piloto (o treino é do principal, salvo Promessa).
 static func piloto_corrida(dados: Node, jogador: Node = null) -> Dictionary:
+	if jogador != null and piloto_vaga(jogador, "arena2") != "":
+		return piloto_da_vaga(dados, jogador, "arena2")
 	var treina: bool = jogador != null and bool(traco(dados, piloto_vaga(jogador, "arena2")).get("treina", false))
 	var p: Dictionary = piloto_do_jogador(dados, jogador if treina else null)
 	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))

@@ -208,9 +208,9 @@ func _pilotos(eq: Dictionary) -> void:
 	for vaga in EquipeJogador.VAGAS_PILOTO:
 		var c := cartao()
 		_vaga_piloto(vaga, c)
-		if vaga == "corrida":
-			_treino(c)
-		elif vaga == "arena2" and EquipeJogador.piloto_vaga(jogador, vaga) != "":
+		if EquipeJogador.piloto_vaga(jogador, vaga) != "":
+			_treino(c, EquipeJogador.piloto_vaga(jogador, vaga))
+		if vaga == "arena2" and EquipeJogador.piloto_vaga(jogador, vaga) != "":
 			_carro_companheiro()
 
 
@@ -253,50 +253,77 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 
-## Treino do piloto principal (decisão 54): ritmo atual e o teto da
-## licença, o treino em andamento ou o botão do próximo nível.
-func _treino(pai: Control) -> void:
+## Atributos (decisão 70) e treino do piloto: ritmo, consistência e
+## agressividade em barras; a energia (treinar gasta, volta enchendo); o botão
+## do próximo nível. `piloto_id` "" = o treino da equipe (sem contratados).
+func _treino(pai: Control, piloto_id := "") -> void:
+	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["ritmo"])
+	if piloto_id != "":
+		var a := EquipeJogador.atributos(dados, jogador, piloto_id)
+		# Ritmo: do piloto-base até o teto da licença (a faixa que o treino percorre).
+		var teto_r := maxf(GestaoEquipe.teto(dados, jogador), base + 0.0001)
+		for it in [["Ritmo", (float(a["ritmo"]) - base) / (teto_r - base), "%.1f%%" % (float(a["ritmo"]) * 100.0)],
+				["Consistência", float(a["consistencia"]), "%d%%" % roundi(float(a["consistencia"]) * 100.0)],
+				["Agressividade", float(a["agressividade"]), "%d%%" % roundi(float(a["agressividade"]) * 100.0)]]:
+			_barra_atributo(pai, it[0], clampf(float(it[1]), 0.0, 1.0), it[2])
+		var e := GestaoEquipe.energia(jogador, piloto_id, Time.get_unix_time_from_system())
+		_barra_atributo(pai, "Energia", e, "%d%%" % roundi(e * 100.0), COR_BOM if e >= 1.0 else COR_DESTAQUE)
 	if not GestaoEquipe.aberta(dados, jogador) or GestaoEquipe.cfg_treino(dados).is_empty():
 		return
-	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["ritmo"])
-	var atual := GestaoEquipe.ritmo(dados, jogador, base)
+	var atual := GestaoEquipe.ritmo(dados, jogador, base, piloto_id)
 	var teto := maxf(GestaoEquipe.teto(dados, jogador), base)
-	var h := fileira(pai)
-	var l := rotulo("Ritmo", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var v := rotulo("%.1f%% · teto %.1f%%" % [atual * 100.0, teto * 100.0], FONTE_PEQUENA + 2, Color.WHITE, h)
-	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	var barra := ProgressBar.new()
-	barra.show_percentage = false
-	barra.min_value = base
-	barra.max_value = maxf(teto, base + 0.01)
-	barra.value = atual
-	barra.custom_minimum_size = Vector2(0, 10)
-	pai.add_child(barra)
+	if piloto_id == "":
+		var h := fileira(pai)
+		var l := rotulo("Ritmo", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var v := rotulo("%.1f%% · teto %.1f%%" % [atual * 100.0, teto * 100.0], FONTE_PEQUENA + 2, Color.WHITE, h)
+		v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var agora := Time.get_unix_time_from_system()
-	if GestaoEquipe.treinando(jogador):
-		var resta := maxf(float(jogador.equipe["treino"]["fim"]) - agora, 0.0)
-		rotulo("Treinando o nível %d: termina em %s (também com o app fechado)." % [
-				GestaoEquipe.nivel_treino(jogador) + 1, horas_min(resta)], FONTE_PEQUENA, COR_BOM, pai)
+	if GestaoEquipe.treinando(jogador, piloto_id):
+		var resta := maxf(float(jogador.equipe[GestaoEquipe._chave(piloto_id)]["fim"]) - agora, 0.0)
+		rotulo("Treinando o nível %d: a energia enche em %s (também com o app fechado)." % [
+				GestaoEquipe.nivel_treino(jogador, piloto_id) + 1, horas_min(resta)], FONTE_PEQUENA, COR_BOM, pai)
 		return
-	if not GestaoEquipe.pode_treinar(dados, jogador, base):
-		rotulo("No teto desta licença. A próxima licença libera mais.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+	if not GestaoEquipe.pode_treinar(dados, jogador, base, piloto_id):
+		rotulo("Ritmo no teto desta licença (%.1f%%). A próxima licença libera mais." % (teto * 100.0),
+				FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
-	var preco := GestaoEquipe.preco_treino(dados, jogador)
+	var preco := GestaoEquipe.preco_treino(dados, jogador, piloto_id)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Treinar · %s · %s" % [dinheiro(preco), horas_min(GestaoEquipe.duracao_treino(dados, jogador))],
+	Tipografia.acao_primaria(b, "Treinar ritmo · %s · %s" % [dinheiro(preco), horas_min(GestaoEquipe.duracao_treino(dados, jogador, piloto_id))],
 			COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
 	moeda(b, 24)
 	b.disabled = not jogador.economia.pode_pagar(preco)
 	b.pressed.connect(func():
-		var motivo := GestaoEquipe.treinar(dados, jogador, base, Time.get_unix_time_from_system())
+		var motivo := GestaoEquipe.treinar(dados, jogador, base, Time.get_unix_time_from_system(), piloto_id)
 		if motivo != "":
 			avisar("Não deu: %s." % motivo, false)
 			return
 		Sons.tocar_ui(self, "moeda", -4.0)
-		avisar("Treino começou.")
+		avisar("Treino começou: a energia volta enchendo.")
 		mudou.emit())
 	pai.add_child(b)
+
+
+## Uma linha de atributo: nome, barra em dentes e o valor.
+func _barra_atributo(pai: Control, nome: String, fracao: float, texto: String, cor := COR_DESTAQUE) -> void:
+	var h := fileira(pai)
+	var l := rotulo(nome, FONTE_PEQUENA, COR_SECUNDARIA, h)
+	l.custom_minimum_size.x = 170
+	var barra := ProgressBar.new()
+	barra.show_percentage = false
+	barra.max_value = 1.0
+	barra.value = fracao
+	barra.custom_minimum_size = Vector2(0, 12)
+	barra.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	barra.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var cheio := StyleBoxFlat.new()
+	cheio.bg_color = cor
+	barra.add_theme_stylebox_override("fill", cheio)
+	h.add_child(barra)
+	var v := rotulo(texto, FONTE_PEQUENA, Color.WHITE, h)
+	v.custom_minimum_size.x = 90
+	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 
 ## Os candidatos um por vez, de corpo inteiro sob um foco de luz, com as setas

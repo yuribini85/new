@@ -211,3 +211,27 @@ func test_pintura_muda_cor_e_faixas_e_volta_do_save() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+## Decisão 70: cada piloto tem atributos pelo traço e o próprio treino, como
+## energia: gasta ao começar, enche até o fim, e o nível entra quando enche.
+func test_atributos_e_energia_por_piloto() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	j.economia.creditar(1000)
+	var base: Dictionary = d.piloto(d.carreira()["piloto_jogador"])
+	var a1 := EquipeJogador.atributos(d, j, "livre_1")
+	var a2 := EquipeJogador.atributos(d, j, "livre_2")
+	perto(float(a1["consistencia"]), float(base["consistencia"]), 1e-6, "Constante: a consistência do piloto-base")
+	verificar(float(a2["consistencia"]) < float(a1["consistencia"]), "Promessa: mais crua")
+	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "contrata")
+	perto(GestaoEquipe.energia(j, "livre_1", 0.0), 1.0, 1e-6, "descansado")
+	igual(GestaoEquipe.treinar(d, j, float(base["ritmo"]), 0.0, "livre_1"), "", "treina")
+	perto(GestaoEquipe.energia(j, "livre_1", 0.0), 0.0, 1e-6, "treinar gasta a energia")
+	verificar(GestaoEquipe.energia(j, "livre_1", 1800.0) > 0.4, "volta enchendo")
+	perto(GestaoEquipe.nivel_treino(j, "livre_2"), 0, 1e-6, "o treino é de um piloto só")
+	verificar(GestaoEquipe.concluir_treino(j, 3600.0), "enche: o nível entra")
+	perto(GestaoEquipe.energia(j, "livre_1", 3600.0), 1.0, 1e-6, "energia cheia")
+	verificar(float(EquipeJogador.piloto_do_jogador(d, j)["ritmo"]) > float(base["ritmo"]), "quem corre usa o treino dele")
+	j.free()
+	d.free()

@@ -91,7 +91,10 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
 	var carro: Carro = jogador.garagem.carro(uid)
-	var base_piloto: Dictionary = EquipeJogador.piloto_do_jogador(dados, jogador)
+	# Decisão 70: na arena luta o piloto de arena 1 (os atributos dele).
+	var base_piloto: Dictionary = EquipeJogador.piloto_da_vaga(dados, jogador, "arena1")
+	if base_piloto.is_empty():
+		base_piloto = EquipeJogador.piloto_do_jogador(dados, jogador)
 	var attrs := carro.atributos_efetivos("seco")
 	var parts := [{"id": "jogador", "atributos": attrs, "piloto": base_piloto, "equipe": "jogador"}]
 	var modelos := {"jogador": carro.base}
@@ -140,7 +143,7 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 			var mod: Dictionary = sortear_modelo.call()
 			var rival := Carro.new(mod)
 			rival.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
-			var piloto := base_piloto.duplicate()
+			var piloto: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()  # rival: o piloto-base
 			if perfis.has(String(pl.get("perfil", ""))):
 				piloto["agressividade"] = float(perfis[pl["perfil"]]["agressividade"])
 			parts.append({"id": id, "atributos": rival.atributos_efetivos("seco"), "piloto": piloto, "equipe": eq["id"]})

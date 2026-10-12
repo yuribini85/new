@@ -37,22 +37,30 @@
    "retrato": "res://arte/pilotos/jonas_reid.png"
   },
   "tracos": {
-   "_nota": "Traço de cada candidato a segundo piloto (decisão 56). 'treina': o treino do piloto principal vale para ele. Os outros efeitos (consistência, agressividade, salário) entram com o custo_staff, no playtest.",
+   "_nota": "Traço de cada candidato (decisões 56 e 70). 'perfil': a agressividade do piloto, a dos perfis de rival (perfis_piloto). 'menos_consistencia': perde a consistência do segundo piloto (segundo_piloto.perda_consistencia). O ritmo é o do piloto-base mais o treino de cada um. 'treina' não vale mais (cada piloto treina o seu).",
    "constante": {
     "nome": "Constante",
-    "treina": false
+    "treina": false,
+    "perfil": "cauteloso",
+    "menos_consistencia": false
    },
    "agressivo": {
     "nome": "Agressivo",
-    "treina": false
+    "treina": false,
+    "perfil": "agressivo",
+    "menos_consistencia": true
    },
    "barato": {
     "nome": "Barato",
-    "treina": false
+    "treina": false,
+    "perfil": "equilibrado",
+    "menos_consistencia": false
    },
    "promessa": {
     "nome": "Promessa",
-    "treina": true
+    "treina": true,
+    "perfil": "equilibrado",
+    "menos_consistencia": true
    }
   },
   "candidatos": [
