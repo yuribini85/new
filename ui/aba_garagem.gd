@@ -200,9 +200,6 @@ func _escolher_vaga(vaga: String) -> void:
 				mudou.emit()], ["Fechar", func(): pass]])
 
 
-## Todas as categorias compráveis, na ordem da seção Evolução.
-const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
-		"lightweight", "corrida", "brake", "cambio"]
 const NOMES_CATEGORIA := PecasTexto.NOMES_CATEGORIA
 ## Nome do carro no palco (fonte) e altura da diagonal ocre na frente dele;
 ## a linha fica na altura das abas penduradas, à esquerda delas.
@@ -437,78 +434,174 @@ func _palco(c: Carro, lista: Array) -> Control:
 	return palco
 
 
-## Evolução: cada categoria de peça que existe para o carro, com quanto já foi
-## comprado (barra dentada e a conta).
+## Evolução (mockup do usuário): duas abas, Preparação de corrida e de arena;
+## cada categoria num cartão com o ícone da peça, a conta, a barra inclinada e a
+## seta. Corrida em duas colunas: motor à esquerda, chassi e transmissão à
+## direita (só as que existem para o carro). Arena: a blindagem.
+const COLUNA_MOTOR := ["aspiracao", "muffler", "computer", "brake", "enginebalance", "corrida", "displacement"]
+const COLUNA_CHASSI := ["cambio", "pneus", "lightweight", "portpolish", "intercooler"]
+const ICONE_PECA := 72
+var _prep := "corrida"
+
+
 func _evolucao(c: Carro) -> void:
-	# Sem título nem caixa: as categorias direto sobre o cenário.
 	var v := MarginContainer.new()
 	v.add_theme_constant_override("margin_left", 16)
 	v.add_theme_constant_override("margin_right", 16)
 	v.add_theme_constant_override("margin_top", 8)
 	conteudo.add_child(v)
-	var g := GridContainer.new()
-	g.columns = 2
-	g.add_theme_constant_override("h_separation", 24)
-	g.add_theme_constant_override("v_separation", 4)
-	v.add_child(g)
-	var itens := []
-	for cat in EVOLUCAO:
-		var pr := _progresso(c, [cat])
-		if pr[1] > 0:
-			itens.append([cat, NOMES_CATEGORIA.get(cat, cat), pr])
-	itens.append(["pneus", "Pneus", _progresso_pneus(c)])
-	var demanda := Prologo.demanda(dados, jogador)
-	var cat_demanda := String(dados.peca(demanda).get("categoria", "")) if dados.existe("pecas", demanda) else ""
-	for it in itens:
-		var b := Button.new()
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.flat = true
-		b.focus_mode = Control.FOCUS_NONE
-		var sb := StyleBoxEmpty.new()
-		sb.content_margin_top = 6
-		sb.content_margin_bottom = 6
-		for estado in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
-			b.add_theme_stylebox_override(estado, sb)
-		g.add_child(b)
-		# A demanda do Marcus (prólogo) aponta para a categoria da peça pedida.
-		if it[0] == cat_demanda:
-			ancora("DEMANDA", b)
-		if it[0] == "brake":
-			ancora("FREIOS", b)
-		elif it[0] == "pneus":
-			ancora("PNEUS", b)
-		var cel := VBoxContainer.new()
-		cel.add_theme_constant_override("separation", 4)
-		cel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		b.add_child(cel)
-		var linha := HBoxContainer.new()
-		linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cel.add_child(linha)
-		var nome := Label.new()
-		nome.text = it[1]
-		nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		nome.clip_text = true
-		nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		Tipografia.rotulo(nome, "medium", 29)
-		linha.add_child(nome)
-		var conta := Label.new()
-		conta.text = "%d/%d" % it[2]
-		Tipografia.numero(conta, 26)
-		conta.add_theme_color_override("font_color", BarraDentes.ACESO if it[2][0] > 0 else COR_SECUNDARIA)
-		linha.add_child(conta)
-		cel.add_child(BarraDentes.new(it[2][0], it[2][1]))
-		# O botão não mede os filhos: a altura vem do conteúdo.
-		var ajustar := func(): b.custom_minimum_size.y = cel.get_combined_minimum_size().y + 12.0
-		cel.minimum_size_changed.connect(ajustar)
-		ajustar.call()
-		cel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		cel.offset_top = 6
-		cel.offset_bottom = -6
-		b.pressed.connect(_abrir_evolucao.bind(c, it[0]))
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 12)
+	v.add_child(col)
+	col.add_child(_abas_preparacao())
+	if _prep == "arena":
+		_preparacao_arena(c, col)
+	else:
+		_preparacao_corrida(c, col)
 	if _abrir_categoria != "":
 		var cat := _abrir_categoria
 		_abrir_categoria = ""
 		_abrir_evolucao(c, cat)
+
+
+## As duas abas: a escolhida em ocre, a outra apagada.
+func _abas_preparacao() -> Control:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 0)
+	for par in [["corrida", "PREPARAÇÃO DE CORRIDA"], ["arena", "PREPARAÇÃO DE ARENA"]]:
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var ativa: bool = _prep == par[0]
+		Tipografia.acao_primaria(b, par[1], COR_DESTAQUE if ativa else Color(0.12, 0.12, 0.14),
+				Color(0.1, 0.1, 0.1) if ativa else COR_SECUNDARIA, 22, 60)
+		b.pressed.connect(func():
+			if _prep != par[0]:
+				Sons.tocar_ui(self, "toque", -6.0)
+				_prep = par[0]
+				mudou.emit())
+		h.add_child(b)
+		if par[0] == "arena":
+			ancora("PREP_ARENA", b)
+	return h
+
+
+func _preparacao_corrida(c: Carro, pai: Control) -> void:
+	var esquerda := []
+	var direita := []
+	for cat in COLUNA_MOTOR + COLUNA_CHASSI:
+		var pr := _progresso_pneus(c) if cat == "pneus" else _progresso(c, [cat])
+		if pr[1] <= 0:
+			continue
+		var it := [cat, "Pneus" if cat == "pneus" else String(NOMES_CATEGORIA.get(cat, cat)), pr]
+		(esquerda if cat in COLUNA_MOTOR else direita).append(it)
+	var g := GridContainer.new()
+	g.columns = 2
+	g.add_theme_constant_override("h_separation", 12)
+	g.add_theme_constant_override("v_separation", 10)
+	pai.add_child(g)
+	var demanda := Prologo.demanda(dados, jogador)
+	var cat_demanda := String(dados.peca(demanda).get("categoria", "")) if dados.existe("pecas", demanda) else ""
+	for i in maxi(esquerda.size(), direita.size()):
+		for lado in [esquerda, direita]:
+			if i >= lado.size():
+				var vazio := Control.new()
+				vazio.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				g.add_child(vazio)
+				continue
+			var it: Array = lado[i]
+			var b := _cartao_peca(c, it[0], it[1], it[2], g)
+			# A demanda do prólogo aponta para a categoria da peça pedida.
+			if it[0] == cat_demanda:
+				ancora("DEMANDA", b)
+			if it[0] == "brake":
+				ancora("FREIOS", b)
+			elif it[0] == "pneus":
+				ancora("PNEUS", b)
+
+
+## Arena: a blindagem (peças e giros), num cartão largo, e o que ela faz.
+func _preparacao_arena(c: Carro, pai: Control) -> void:
+	var itens := Blindagem.itens(dados, c)
+	if itens.is_empty():
+		rotulo("Este carro não aceita blindagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+		return
+	var b := _cartao_peca(c, Blindagem.CATEGORIA, "Blindagem", [Blindagem.nivel(c), itens.size()], pai)
+	b.pressed.connect(func(): historia("BLINDAGEM"))
+	var nota := rotulo("Na arena, aguenta mais pancada antes de a frente quebrar. Na pista, o peso cobra. "
+			+ "Paga com peças (desmanche e arena); os giros completam.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+## Cartão de uma categoria: ícone, nome, conta, barra inclinada e a seta.
+func _cartao_peca(c: Carro, cat: String, nome_cat: String, pr: Array, pai: Control) -> Button:
+	var b := Button.new()
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.focus_mode = Control.FOCUS_NONE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.085, 0.085, 0.095, 0.94)
+	sb.border_color = Color(1, 1, 1, 0.09)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(8)
+	var sb_toque := sb.duplicate()
+	sb_toque.border_color = COR_DESTAQUE
+	for estado in ["normal", "hover", "focus", "disabled"]:
+		b.add_theme_stylebox_override(estado, sb)
+	for estado in ["pressed", "hover_pressed"]:
+		b.add_theme_stylebox_override(estado, sb_toque)
+	pai.add_child(b)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 6
+	h.offset_right = -8
+	b.add_child(h)
+	var icone := TextureRect.new()
+	var arq := "res://arte/ui/pecas/%s.png" % ("blindagem" if cat == Blindagem.CATEGORIA else cat)
+	icone.texture = load(arq) if ResourceLoader.exists(arq) else null
+	icone.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icone.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icone.custom_minimum_size = Vector2(ICONE_PECA, ICONE_PECA)
+	icone.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(icone)
+	var cel := VBoxContainer.new()
+	cel.add_theme_constant_override("separation", 8)
+	cel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	cel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(cel)
+	# O nome com a largura toda; a conta ao lado da barra.
+	var nome := Label.new()
+	nome.text = nome_cat
+	nome.clip_text = true
+	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	Tipografia.rotulo(nome, "medium", 24 if nome_cat.length() <= 16 else 21)
+	cel.add_child(nome)
+	var linha := HBoxContainer.new()
+	linha.add_theme_constant_override("separation", 8)
+	linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cel.add_child(linha)
+	var barra := BarraDentes.new(pr[0], pr[1])
+	barra.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	barra.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	linha.add_child(barra)
+	var conta := Label.new()
+	conta.text = "%d/%d" % pr
+	Tipografia.numero(conta, 22)
+	conta.add_theme_color_override("font_color", BarraDentes.ACESO if pr[0] > 0 else COR_SECUNDARIA)
+	linha.add_child(conta)
+	var seta := Label.new()
+	seta.text = "›"
+	Tipografia.rotulo(seta, "semibold", 40)
+	seta.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87, 0.85))
+	seta.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(seta)
+	b.custom_minimum_size.y = ICONE_PECA + 14
+	b.pressed.connect(_abrir_evolucao.bind(c, cat))
+	return b
 
 
 ## Categoria a abrir na próxima construção (destaque do tutorial).
@@ -517,6 +610,8 @@ var _abrir_categoria := ""
 
 ## Destaque dos freios (tutorial): a janela de compra dos freios aberta.
 func preparar_destaque(nome: String) -> void:
+	if nome in ["BRAKES", "FREIOS", "PNEUS", "DEMANDA"]:
+		_prep = "corrida"  # as âncoras do tutorial ficam na preparação de corrida
 	if nome == "BRAKES":
 		_abrir_categoria = "brake"
 

@@ -586,3 +586,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     a corrida noturna, a arena destruindo os carros, a Mara vendo o guincho, a Mara com as
     contas, a chegada do jogador), cada uma entrando e saindo pelo preto, e o logo. A cena 5
     é também a ilustração `chegada` do diálogo e a cena 3 a `noite_da_arena` da revelação.
+77. **Oficina no padrão do mockup do usuário** (2026-10-12). A lista de peças vira cartões
+    com o ícone da peça (`arte/ui/pecas/<categoria>.png`, pack do usuário, escala uniforme),
+    o nome, a barra inclinada com a conta e a seta. Duas abas: Preparação de corrida (motor
+    à esquerda: aspiração, escapamento, computador, freios, balanceamento, kit de corrida,
+    cilindrada; chassi à direita: câmbio, pneus, peso, polimento de dutos, resfriamento;
+    só as que existem para o carro) e Preparação de arena (a blindagem). As barras de
+    progresso ficam mais altas e mais inclinadas, em todo o jogo. Do mockup não entram: nitro
+    (não existe no GT2) e "Teste" no lugar de Acelerar; a escalação continua no topo.

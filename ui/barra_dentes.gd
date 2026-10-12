@@ -5,8 +5,8 @@ extends Control
 ## estágios, até MAX_DENTES segmentos, acesos na proporção.
 
 const MAX_DENTES := 10
-const INCLINACAO := 0.55  # deslocamento do topo de cada dente, em fração da altura
-const VAO := 3.0
+const INCLINACAO := 0.9  # deslocamento do topo de cada dente, em fração da altura (mais inclinado, como no mockup do usuário)
+const VAO := 5.0
 const ACESO := Color("c89b57")
 const APAGADO := Color(1, 1, 1, 0.16)
 
@@ -14,7 +14,7 @@ var feitos := 0
 var total := 0
 
 
-func _init(feitos_: int = 0, total_: int = 0, altura := 9.0) -> void:
+func _init(feitos_: int = 0, total_: int = 0, altura := 12.0) -> void:
 	feitos = feitos_
 	total = total_
 	custom_minimum_size = Vector2(0, altura)
