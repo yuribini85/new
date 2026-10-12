@@ -63,6 +63,8 @@ func construir() -> void:
 	var c := garagem
 	if not jogador.fila.is_empty():
 		_fila()
+	# Decisão 74: o desafio da equipe da vez do The Grid, quando é na pista.
+	cartao_desafio_grid("corrida", func(eq: Dictionary): _correr(GridDesafio.PREFIXO + String(eq["id"])))
 	# Dois filtros: as ainda não vencidas (padrão) e todas.
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)

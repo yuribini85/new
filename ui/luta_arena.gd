@@ -266,6 +266,17 @@ func _mostrar_final() -> void:
 		notas.append("Mesmo assim, a sua dupla ficou de pé.")
 	if f.get("subiu_nivel", false):
 		notas.append("Próximo campeonato: uma equipe a mais.")
+	# Desafio do The Grid (decisão 74): o placar da série.
+	var serie: Dictionary = f.get("serie", {})
+	if not serie.is_empty():
+		if int(serie.get("rounds", 1)) > 1:
+			notas.append("Série: %d × %d." % [int(serie["vitorias"]), int(serie["derrotas"])])
+		if serie["venceu"]:
+			notas.append("Desafio vencido: a equipe ficou para trás no Grid.")
+		elif serie["fim"]:
+			notas.append("Desafio perdido. Dá para desafiar de novo.")
+		else:
+			notas.append("Próximo round na Arena: os carros destruídos são trocados.")
 	if int(f.get("pecas_destruidos", 0)) > 0:
 		notas.append("Rivais destruídos pela sua dupla: +%s peças." % Aba.dinheiro(int(f["pecas_destruidos"])))
 	if int(f.get("pecas_perdidos", 0)) > 0:

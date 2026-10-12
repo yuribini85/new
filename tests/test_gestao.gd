@@ -99,7 +99,12 @@ func test_desmanche_vira_pecas_que_pagam_a_blindagem() -> void:
 	verificar(j.economia.debitar_peca(150, true), "blindagem de 150 peças")
 	igual(j.economia.credito_pecas, 175, "a blindagem gasta peças")
 	igual(j.economia.saldo, saldo0 - 150, "e não giros")
-	verificar(not j.economia.debitar_peca(500, true), "sem peças bastantes, não compra")
+	# Decisão 74: faltando peças, os giros completam a blindagem.
+	var saldo1: int = j.economia.saldo
+	verificar(j.economia.debitar_peca(500, true), "175 peças + 325 giros")
+	igual(j.economia.credito_pecas, 0, "as peças primeiro")
+	igual(j.economia.saldo, saldo1 - 325, "os giros completam")
+	verificar(not j.economia.debitar_peca(j.economia.saldo + 1, true), "sem peças nem giros bastantes, não compra")
 	j.free()
 	d.free()
 

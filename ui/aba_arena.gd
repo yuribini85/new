@@ -23,6 +23,7 @@ func construir() -> void:
 	var motivo := ArenaCarreira.bloqueio(dados, jogador)
 	if motivo != "":
 		cabecalho("Arena", "Destruição: o último de pé vence", "fundo_competicoes")
+		cartao_desafio_grid("arena", _confirmar_desafio)
 		_cartao_luta(null, motivo)
 		_simulacao(jogador.garagem.carro(jogador.carro_ativo))
 		_registro()
@@ -42,6 +43,7 @@ func construir() -> void:
 		jogador.carro_ativo = esc.uid
 		ir_para.emit(GARAGEM))
 	faixa.add_child(trocar)
+	cartao_desafio_grid("arena", _confirmar_desafio)
 	_cartao_luta(esc, "")
 	_simulacao(esc)
 	_registro()
@@ -163,6 +165,42 @@ func _entrar(uid: int) -> void:
 	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
 	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1,
 			montada["modelos"])
+	get_node("/root/SaveManager").salvar()
+	mudou.emit()
+	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
+			"pinturas": pintura, "faixas": faixas, "final": final, "params": montada["params"],
+			"equipes": _equipe_de_cada(resultado, montada["equipes"])})
+
+
+## Desafio do The Grid na arena (decisão 74): 2x2 contra os carros especiais
+## da equipe; os dois primeiros carros livres entram (os escalados primeiro).
+func _confirmar_desafio(eq: Dictionary) -> void:
+	var livres := GridDesafio.carros_arena(jogador)
+	var d := GridDesafio.de(dados, eq)
+	painel.emit("Desafiar %s?" % eq["nome"], func(pv):
+		rotulo(GridDesafio.resumo(dados, eq) + ".", FONTE_PEQUENA + 4, Color.WHITE, pv)
+		rotulo("Vão o %s e o %s." % [livres[0].base["nome"], livres[1].base["nome"]], FONTE_PEQUENA + 2, Color.WHITE, pv)
+		if int(d["rounds"]) > 1:
+			rotulo("Melhor de %d: carro destruído é trocado pelo próximo da garagem no round seguinte." % int(d["rounds"]),
+					FONTE_PEQUENA + 2, Color.WHITE, pv)
+		rotulo("Carro destruído sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
+		[["Desafiar", func(): _desafiar(eq)], ["Cancelar", func(): pass]])
+
+
+func _desafiar(eq: Dictionary) -> void:
+	jogador.contador_sementes += 1
+	var semente := hash("grid:%d" % jogador.contador_sementes)
+	var montada := GridDesafio.montar_arena(dados, jogador, eq, semente)
+	var uid := Escalacao.uid(jogador, "arena1")
+	var carro: Carro = jogador.garagem.carro(uid)
+	var pintura: Dictionary = montada["cores"].duplicate()
+	pintura["jogador"] = CarroBloco.cor_do_carro(carro)
+	var faixas: Dictionary = montada["faixas"].duplicate()
+	faixas["jogador"] = carro.faixas
+	var par: Dictionary = montada["parceiro"]
+	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
+	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1,
+			montada["modelos"], eq)
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],

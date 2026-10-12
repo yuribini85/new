@@ -546,3 +546,22 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     pela proposta. A revelação do passado da Mara e o rival da #1 ficam para quando os
     carros especiais do Grid forem definidos. Sem prazos, timers ou falência por tempo; sem
     assistente da Mara.
+74. **Desafios do The Grid, revelação da Mara, pinturas pelo Grid e blindagem** (2026-10-12,
+    definidos pelo usuário). A equipe da vez só fica para trás no desafio dela
+    (`data/grid_desafios.json`, `GridDesafio`); vencer prova comum ou campeonato da arena não
+    conta mais. #10 corrida pista 1, 2 voltas · #9 pista 2, 3 · #8 arena 1 · #7 pista 3, 4 ·
+    #6 pista 4, 5 · #5 arena 2 · #4 pista 5, 6 · #3 arena 3, melhor de 3 · #2 pista 6, 8 ·
+    #1 confronto na arena, melhor de 3. Corrida 1x1 (piloto de corrida contra o da equipe),
+    arena 2x2 (a dupla contra dois pilotos de arena da equipe). Pistas 1-6: Oval do Planalto,
+    Lago Sereno, Cais Velho, Colinas do Vinhedo, Alto da Capela (curto), Alto da Capela;
+    arenas 1-3 e confronto: Pátio da Pedreira, Fosso das Docas, Anel do Ferro-Velho, Cratera
+    do Vale (sugestão, em ordem de dificuldade; troca-se no JSON). Melhor de 3: os carros
+    destruídos são trocados pelos próximos da garagem entre os rounds, por isso pede 6 carros
+    fora o de corrida (a série fica salva entre rounds). Carros especiais: os adversários
+    reais (GT2) da licença da equipe com a maior relação potência/peso, com o ajuste de
+    potência deles; a licença da equipe é exigida. Sem prêmio em giros na corrida do desafio
+    (a recompensa é o Grid e as pinturas); na arena vale o prêmio por pontos. Revelação: ao
+    chegar à #6 (a próxima é arena), a Mara conta que a Wreckage perdeu tudo numa noite de
+    arena (ilustração `noite_da_arena`, a da abertura). Pinturas: 6 desenhos e nenhum logo no
+    começo; cada equipe vencida libera 1 desenho e 1 logo (16 e 10 no topo). Blindagem: peças
+    (desmanche e arena) e os giros completam o que faltar.

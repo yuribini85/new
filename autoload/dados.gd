@@ -76,6 +76,7 @@ func carregar(dir: String) -> void:
 	_objetos.erase("garagem")  # idem (garagem())
 	_objetos.erase("equipe")  # idem (equipe())
 	_objetos.erase("patrocinadores")  # idem (patrocinadores())
+	_objetos.erase("grid_desafios")  # idem (grid_desafios())
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
@@ -389,4 +390,16 @@ func monetizacao() -> Dictionary:
 
 
 func evento(id: String) -> Dictionary:
+	# Desafio do The Grid (decisão 74): prova montada dos dados do Grid.
+	if id.begins_with(GridDesafio.PREFIXO):
+		return GridDesafio.evento(self, id.trim_prefix(GridDesafio.PREFIXO))
 	return item("eventos", id)
+
+
+## Desafios do The Grid (decisão 74, grid_desafios.json, opcional).
+func grid_desafios() -> Dictionary:
+	if not _objetos.has("grid_desafios"):
+		var caminho := pasta + "grid_desafios.json"
+		var g = _ler_json(caminho) if FileAccess.file_exists(caminho) else {}
+		_objetos["grid_desafios"] = g if g is Dictionary else {}
+	return _objetos["grid_desafios"]

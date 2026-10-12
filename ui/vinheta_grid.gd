@@ -282,9 +282,11 @@ func _desafio(v: VBoxContainer, aba_corridas: int, aba_arena: int) -> void:
 	var dl: Dictionary = _dados.item("licencas", lic) if _dados.existe("licencas", lic) else {}
 	var txt := Label.new()
 	txt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var d := GridDesafio.de(_dados, _equipe)
 	txt.text = ("Ficou para trás no Grid." if vencida else
-			"Vença uma prova %s em que ela corra (Corridas), ou o campeonato da arena com ela na luta (Arena)."
-			% String(dl.get("nome", lic)))
+			"%s, contra os carros especiais da equipe. Pede a %s. O desafio fica em %s." % [
+				GridDesafio.resumo(_dados, _equipe), String(dl.get("nome", lic)),
+				"Corridas" if d.get("modo", "") == "corrida" else "Arena"])
 	Tipografia.rotulo(txt, "regular", 24)
 	c.add_child(txt)
 	if vencida:
@@ -292,7 +294,8 @@ func _desafio(v: VBoxContainer, aba_corridas: int, aba_arena: int) -> void:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 12)
 	c.add_child(h)
-	for par in [["Corridas", aba_corridas], ["Arena", aba_arena]]:
+	var modo := String(d.get("modo", ""))
+	for par in ([["Corridas", aba_corridas]] if modo == "corrida" else [["Arena", aba_arena]]):
 		var b := Button.new()
 		Tipografia.acao_primaria(b, "%s   →" % par[0], Color(0.2, 0.21, 0.24), Color.WHITE, 24, 60)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL

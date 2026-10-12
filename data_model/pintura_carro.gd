@@ -173,3 +173,25 @@ static func aplicar(dados: Node, jogador: Node, carro: Carro, cor: String, faixa
 	carro.cor = cor
 	carro.faixas = faixas.duplicate()
 	return ""
+
+
+## Decisão 74: quantos desenhos ("padroes") ou logos ("logos") o jogador já
+## liberou subindo no The Grid (grid_desafios.json → pinturas). Sem a
+## configuração, todos.
+static func liberados(dados: Node, jogador: Node, tipo: String, total: int) -> int:
+	var c: Dictionary = dados.grid_desafios().get("pinturas", {})
+	if not c.has(tipo + "_inicio"):
+		return total
+	var n := int(c[tipo + "_inicio"]) + int(c.get(tipo + "_por_posicao", 0)) * TheGrid.vencidas(jogador).size()
+	return clampi(n, 0, total)
+
+
+## Posição do Grid que libera o item de índice `i` (0 se já vem liberado).
+static func posicao_que_libera(dados: Node, tipo: String, i: int) -> int:
+	var c: Dictionary = dados.grid_desafios().get("pinturas", {})
+	var ini := int(c.get(tipo + "_inicio", 0))
+	var passo := maxi(int(c.get(tipo + "_por_posicao", 1)), 1)
+	if not c.has(tipo + "_inicio") or i < ini:
+		return 0
+	return 10 - (i - ini) / passo  # a 1ª equipe vencida é a #10
+

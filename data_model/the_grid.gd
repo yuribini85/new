@@ -3,9 +3,9 @@ extends RefCounted
 ## The Grid, a lista negra (documento de narrativa e progressão): as dez
 ## equipes rivais no topo do circuito, da #10 à #1 (equipes.json → grid), as
 ## das identidades aprovadas. A equipe do jogador começa fora e sobe uma
-## posição por vez: vence a equipe da vez quando ganha uma prova (corrida, ou
-## o campeonato da arena com a dupla de pé) em que ela estava. Só a da vez
-## conta, em ordem. Ninguém perde posição por derrota.
+## posição por vez: vence a equipe da vez no desafio dela (decisão 74,
+## GridDesafio: corrida 1x1 ou arena 2x2, contra os carros especiais). Só a da
+## vez conta, em ordem. Ninguém perde posição por derrota.
 ## (O CRED do documento ainda não existe: o filtro de hoje é a licença, que
 ## já decide em que provas cada equipe corre.)
 

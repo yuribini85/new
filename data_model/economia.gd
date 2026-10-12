@@ -36,16 +36,24 @@ func creditar(valor: int) -> void:
 	saldo_mudou.emit(saldo)
 
 
-## Peça da Oficina: em giros; `em_pecas` (a blindagem) só com peças.
+## Peça da Oficina: em giros; `em_pecas` (a blindagem, decisão 74): peças e
+## giros, as peças primeiro e os giros completam o que faltar.
 func pode_pagar_peca(valor: int, em_pecas := false) -> bool:
-	return valor <= (credito_pecas if em_pecas else saldo)
+	return valor <= (credito_pecas + saldo if em_pecas else saldo)
+
+
+## Quanto da blindagem sai em peças (o resto, em giros).
+func parte_em_pecas(valor: int) -> int:
+	return clampi(credito_pecas, 0, maxi(valor, 0))
 
 
 func debitar_peca(valor: int, em_pecas := false) -> bool:
 	if valor < 0 or not pode_pagar_peca(valor, em_pecas):
 		return false
 	if em_pecas:
-		credito_pecas -= valor
+		var p := parte_em_pecas(valor)
+		credito_pecas -= p
+		saldo -= valor - p
 	else:
 		saldo -= valor
 	saldo_mudou.emit(saldo)

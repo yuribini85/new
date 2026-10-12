@@ -598,8 +598,11 @@ func _acao_evolucao(c: Carro, cat: String) -> Array:
 			_comprar_peca(c, it, antes)
 			_reabrir(c, cat), false, true]
 	if cat == Blindagem.CATEGORIA:
-		# A blindagem se paga com peças (desmanche e arena), não com giros.
-		return ["INSTALAR · %s PEÇAS" % dinheiro(preco), func():
+		# Decisão 74: a blindagem usa peças (desmanche e arena) e os giros completam.
+		var em_p: int = jogador.economia.parte_em_pecas(preco)
+		var txt: String = ("INSTALAR · %s PEÇAS" % dinheiro(preco)) if em_p >= preco else (
+				"INSTALAR · %s PEÇAS + %s" % [dinheiro(em_p), dinheiro(preco - em_p)] if em_p > 0 else "INSTALAR · %s" % dinheiro(preco))
+		return [txt, func():
 			_comprar_peca(c, it, antes)
 			_reabrir(c, cat), false, jogador.economia.pode_pagar_peca(preco, true)]
 	return ["INSTALAR · %s" % dinheiro(preco), func():

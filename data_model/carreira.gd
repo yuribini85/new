@@ -96,6 +96,8 @@ func piloto_na_vaga(base: Dictionary, vaga: Dictionary) -> Dictionary:
 
 func escalacao(evento_id: String, semente: int) -> Array:
 	var ev: Dictionary = dados.evento(evento_id)
+	if ev.has("grid_equipe"):
+		return GridDesafio.escalacao(dados, jogador, ev)
 	var cfg: Dictionary = dados.carreira()
 	var niveis: Array = cfg.get("niveis", [])
 	var equipes: Array = dados.lista("equipes").filter(func(e): return e.has("nivel"))
@@ -245,10 +247,9 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var carro_premio_uid := -1
 	var grid := {}
 	if posicao == 1:
-		# The Grid: a equipe da vez estava nesta prova?
-		var presentes := escalacao(evento_id, int(corrida.get("semente", -1))).map(func(g): return g["equipe"]["id"]) \
-				if int(corrida.get("semente", -1)) >= 0 else []
-		grid = TheGrid.registrar(dados, jogador, presentes)
+		# The Grid (decisão 74): só o desafio da equipe a deixa para trás.
+		if ev.has("grid_equipe"):
+			grid = TheGrid.registrar(dados, jogador, [String(ev["grid_equipe"])])
 		var primeira: bool = not jogador.vitorias.has(evento_id)
 		jogador.vitorias[evento_id] = jogador.vitorias.get(evento_id, 0) + 1
 		if primeira and ev.get("carro_premio") != null:

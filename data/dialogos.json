@@ -2972,7 +2972,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Ganhe uma prova em que ela esteja correndo, ou a arena com ela lá dentro, e ela fica para trás.",
+    "texto": "Cada uma tem o seu desafio, na pista ou na arena, contra os carros especiais dela. Vença e ela fica para trás.",
     "pose": "firme"
    },
    {
@@ -3257,6 +3257,64 @@
   "uma_vez": true,
   "personagem": "dono",
   "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_GR06",
+  "trigger": "GRID_SUBIU",
+  "falas": [
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "mara",
+    "texto": "{equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.",
+    "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "A próxima é na arena. Tem uma coisa que você precisa saber antes.",
+    "pose": "pensativa"
+   },
+   {
+    "acao": "ILUSTRACAO:noite_da_arena"
+   },
+   {
+    "quem": "mara",
+    "texto": "A Wreckage já foi maior. Dois caminhões, seis carros, gente no box que eu nem sabia o nome.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Numa noite de arena, a gente levou tudo o que tinha. Voltou com o guincho."
+   },
+   {
+    "quem": "mara",
+    "texto": "Os carros, os patrocinadores, a equipe. Eu fiquei com a oficina e as contas.",
+    "pose": "decepcao"
+   },
+   {
+    "acao": "CENARIO:oficina_mara"
+   },
+   {
+    "quem": "mara",
+    "texto": "Desta vez a gente entra sabendo o que custa.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "MARA_PASSADO"
+  ],
+  "flags": [
+   "MARA_PASSADO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 6
+  },
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_GR01",

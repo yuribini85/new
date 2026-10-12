@@ -73,7 +73,7 @@ func comprar_peca(carro: Carro, peca: Dictionary) -> String:
 	if not peca["id"] in carro.pecas_possuidas:
 		var em_pecas: bool = peca["categoria"] == Blindagem.CATEGORIA
 		if not economia.debitar_peca(int(peca["preco"]), em_pecas):
-			return "peças insuficientes" if em_pecas else "saldo insuficiente"
+			return "peças e saldo insuficientes" if em_pecas else "saldo insuficiente"
 		carro.pecas_possuidas.append(peca["id"])
 	carro.instalar(peca)
 	return OK

@@ -86,7 +86,10 @@ static func parceiro(dados: Node, jogador: Node, _uid: int) -> Dictionary:
 ## parecida, nas cores da equipe. {participantes, modelos, nomes, cores,
 ## faixas, params (com a arena sorteada), equipes (id -> equipe), parceiro}.
 ## `n_equipes` > 0 fixa quantas equipes (simulação de teste); senão, o nível.
-static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes_fixo: int = -1) -> Dictionary:
+## `desafio` (decisão 74): a equipe do Grid desafiada; a luta é 2x2 contra os
+## carros especiais dela (GridDesafio.especiais), na arena do desafio.
+static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes_fixo: int = -1,
+		desafio: Dictionary = {}) -> Dictionary:
 	var p: Dictionary = dados.arena()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
@@ -110,6 +113,8 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var c_camp: Dictionary = p.get("campeonato", {})
 	var n_equipes := equipes_no_nivel(dados, nivel(jogador)) if n_equipes_fixo <= 0 \
 			else clampi(n_equipes_fixo, int(c_camp.get("equipes_min", 2)), int(c_camp.get("equipes_max", 10)))
+	if not desafio.is_empty():
+		n_equipes = 2
 	var escolhidos := catalogo.slice(0, n_equipes * 4)
 	var sortear_modelo := func() -> Dictionary:
 		return escolhidos.pop_at(rng.randi_range(0, escolhidos.size() - 1)) if not escolhidos.is_empty() else carro.base
@@ -131,6 +136,9 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 		faixas["parceiro"] = car_par.faixas
 	# Equipes rivais sorteadas, dois pilotos de cada.
 	var rivais: Array = dados.lista("equipes").filter(func(e): return not e.get("jogador", false) and e.get("pilotos", []).size() >= 2)
+	if not desafio.is_empty():
+		rivais = [desafio]
+	var especiais: Array = GridDesafio.especiais(dados, desafio, 2) if not desafio.is_empty() else []
 	rivais.sort_custom(func(a, b): return a["id"] < b["id"])
 	var perfis: Dictionary = dados.carreira().get("perfis_piloto", {})
 	for k in mini(n_equipes - 1, rivais.size()):
@@ -139,16 +147,23 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 		var pilotos: Array = eq["pilotos"].filter(func(pl): return EquipeJogador.vaga_do_piloto(jogador, String(pl["id"])) == "")
 		if pilotos.size() < 2:
 			pilotos = eq["pilotos"].duplicate()
+		if not desafio.is_empty():
+			pilotos = GridDesafio.pilotos(dados, jogador, eq, "arena", 2)
 		for m in 2:
-			var pl: Dictionary = pilotos.pop_at(rng.randi_range(0, pilotos.size() - 1))
+			var pl: Dictionary = pilotos.pop_at(0 if not desafio.is_empty() else rng.randi_range(0, pilotos.size() - 1))
 			var id := "%s:%d" % [eq["id"], m + 1]
-			var mod: Dictionary = sortear_modelo.call()
+			# Desafio: os carros especiais da equipe, com o ajuste de potência deles.
+			var adv: Dictionary = especiais[m] if m < especiais.size() else {}
+			var mod: Dictionary = dados.carro(adv["carro"]) if not adv.is_empty() else sortear_modelo.call()
 			var rival := Carro.new(mod)
 			rival.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 			var piloto: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()  # rival: o piloto-base
 			if perfis.has(String(pl.get("perfil", ""))):
 				piloto["agressividade"] = float(perfis[pl["perfil"]]["agressividade"])
-			parts.append({"id": id, "atributos": rival.atributos_efetivos("seco"), "piloto": piloto, "equipe": eq["id"]})
+			var at_rival := rival.atributos_efetivos("seco")
+			if not adv.is_empty():
+				at_rival["potencia"] = float(at_rival["potencia"]) * float(adv.get("potencia_mult", 1.0))
+			parts.append({"id": id, "atributos": at_rival, "piloto": piloto, "equipe": eq["id"]})
 			modelos[id] = mod
 			nomes[id] = String(pl["nome"])
 			if eq.has("cores"):
@@ -158,6 +173,9 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	# (decisão 59); a forma vai nos parâmetros da simulação e da tela.
 	var params := p.duplicate()
 	var abertas := arenas_abertas(dados, jogador)
+	if not desafio.is_empty():
+		var alvo := String(GridDesafio.de(dados, desafio).get("arena", ""))
+		abertas = p.get("arenas", []).filter(func(a): return a["id"] == alvo)
 	if not abertas.is_empty():
 		params["forma"] = abertas[rng.randi_range(0, abertas.size() - 1)]
 	return {"participantes": parts, "modelos": modelos, "nomes": nomes, "cores": cores, "faixas": faixas,
@@ -205,7 +223,7 @@ static func premio(dados: Node, pts: int) -> int:
 ## rival que a dupla do jogador elimina também (GestaoEquipe.pecas_do_carro;
 ## `modelos` = id -> dados do carro de cada participante).
 static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary, parceiro_uid: int = -1,
-		modelos: Dictionary = {}) -> Dictionary:
+		modelos: Dictionary = {}, desafio: Dictionary = {}) -> Dictionary:
 	var p: Dictionary = dados.arena()
 	var pts := pontos(resultado, "jogador", p)
 	var valor := premio(dados, pts)
@@ -255,15 +273,18 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	var subiram := EquipeJogador.apos_prova(dados, jogador, ["arena1", "arena2"], venceu_equipe)
 	var nivel_antes := nivel(jogador)
 	var grid := {}
-	if venceu_equipe:
-		var presentes: Array = []
-		for id in resultado["carros"]:
-			presentes.append(String(resultado["carros"][id].get("equipe", "")))
-		grid = TheGrid.registrar(dados, jogador, presentes)
+	var serie := {}
+	if not desafio.is_empty():
+		# Decisão 74: o Grid só anda no desafio (melhor de N rounds).
+		serie = GridDesafio.registrar_round(dados, jogador, desafio, venceu_equipe)
+		if serie["venceu"]:
+			grid = TheGrid.registrar(dados, jogador, [String(desafio["id"])])
+	elif venceu_equipe:
 		var maximo := int(p.get("campeonato", {}).get("equipes_max", 10)) - int(p.get("campeonato", {}).get("equipes_min", 2))
 		reg["nivel"] = mini(nivel_antes + 1, maximo)
 	jogador.arena = reg
 	return {"posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
 			"perdeu_parceiro": perdeu_parceiro, "venceu_equipe": venceu_equipe,
 			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes,
-			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid, "pilotos_subiram": subiram}
+			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid, "pilotos_subiram": subiram,
+			"serie": serie}

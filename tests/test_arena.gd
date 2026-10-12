@@ -464,3 +464,70 @@ func test_the_grid_risca_e_apresenta_uma_vez() -> void:
 	igual(TheGrid.ficha_pendente(d, j), "", "o fim também só uma vez")
 	j.free()
 	d.free()
+
+
+## Decisão 74: cada posição do Grid tem o seu desafio (grid_desafios.json).
+func test_desafios_do_grid() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var lista := TheGrid.equipes(d)
+	var dez: Dictionary = lista[0]
+	var tres: Dictionary = lista[7]
+	var d10 := GridDesafio.de(d, dez)
+	igual([d10["modo"], d10["pista"], int(d10["voltas"])], ["corrida", "pista_de_testes", 2], "#10: pista 1, 2 voltas")
+	var d3 := GridDesafio.de(d, tres)
+	igual([d3["modo"], d3["arena"], d3["rounds"], d3["carros_min"]], ["arena", "anel_ferro_velho", 3, 6], "#3: arena 3, MD3, 6 carros")
+	igual(GridDesafio.de(d, lista[9])["arena"], "cratera_vale", "#1: o confronto")
+	# A prova do desafio: 1x1 contra o carro especial, com a licença da equipe.
+	var ev: Dictionary = d.evento(GridDesafio.PREFIXO + String(dez["id"]))
+	igual(ev["adversarios"].size(), 1, "1x1")
+	igual(ev["restricoes"]["licenca"], dez["nivel"], "pede a licença da equipe")
+	igual(ev["adversarios"][0]["carro"], GridDesafio.especiais(d, dez, 1)[0]["carro"], "o carro especial")
+	var esp := GridDesafio.especiais(d, tres, 2)
+	verificar(esp.size() == 2 and esp[0]["carro"] != esp[1]["carro"], "arena: dois especiais diferentes")
+	# Bloqueios: só a da vez, com a licença.
+	var j := _jogador_real(d, 1)
+	verificar("da vez" in GridDesafio.bloqueio(d, j, lista[1]), "só a da vez")
+	verificar("Licença" in GridDesafio.bloqueio(d, j, dez), "sem a licença")
+	j.licencas.append(String(dez["nivel"]))
+	Escalacao.migrar(j)
+	igual(GridDesafio.bloqueio(d, j, dez), "", "com licença, piloto-base e carro: pode")
+	# A escalação do desafio: a equipe com o piloto de corrida dela.
+	var esc := GridDesafio.escalacao(d, j, ev)
+	igual(esc[0]["equipe"]["id"], dez["id"], "a equipe desafiada no grid")
+	# A corrida do desafio roda e, vencida, deixa a equipe para trás.
+	var car := Carreira.new(d, j)
+	var c: Dictionary = car.preparar(ev["id"], Escalacao.uid(j, "corrida"), 3, false)
+	verificar(not c.has("erro"), "o desafio corre: %s" % c.get("erro", ""))
+	igual(c["resultado"]["classificacao"].size(), 2, "só os dois carros")
+	c["resultado"]["classificacao"] = ["jogador"] + c["resultado"]["classificacao"].filter(func(x): return x != "jogador")
+	igual(car.aplicar(c)["grid"].get("id"), dez["id"], "vencido o desafio, a #10 fica para trás")
+	igual(TheGrid.posicao(d, j), 10, "agora a #10")
+	j.free()
+	# Arena MD3: pede 6 carros fora o de corrida; a série acaba em 2 vitórias.
+	j = _jogador_real(d, 7)
+	for e in lista.slice(0, 7):
+		TheGrid.registrar(d, j, [e["id"]])
+	igual(TheGrid.da_vez(d, j)["id"], tres["id"], "a #3 é a da vez")
+	j.licencas.append(String(tres["nivel"]))
+	j.flags[EquipeJogador.FLAG_ARENA] = true
+	j.pilotos = {"corrida": "", "arena": ["ayla_moreno", "axel_brennan"]}
+	Escalacao.migrar(j)
+	igual(GridDesafio.bloqueio(d, j, tres), "", "7 carros: 1 de corrida e 6 para a arena")
+	var m := GridDesafio.montar_arena(d, j, tres, 7)
+	igual(m["participantes"].size(), 4, "2x2")
+	igual(m["params"]["forma"]["id"], "anel_ferro_velho", "na arena do desafio")
+	igual(m["modelos"]["%s:1" % tres["id"]]["id"], esp[0]["carro"], "os carros especiais")
+	var r1 := GridDesafio.registrar_round(d, j, tres, true)
+	verificar(not r1["fim"], "1 × 0: segue")
+	var r2 := GridDesafio.registrar_round(d, j, tres, false)
+	verificar(not r2["fim"] and GridDesafio.serie(j)["derrotas"] == 1, "1 × 1: segue")
+	var r3 := GridDesafio.registrar_round(d, j, tres, true)
+	verificar(r3["fim"] and r3["venceu"], "2 × 1: venceu")
+	igual(GridDesafio.serie(j), {}, "série fechada")
+	# Pinturas: 6 desenhos e nenhum logo no começo; um de cada por equipe vencida.
+	igual(PinturaCarro.liberados(d, j, "padroes", PinturaCarro.PADROES.size()), 13, "7 vencidas: 13 desenhos")
+	igual(PinturaCarro.liberados(d, j, "logos", 10), 7, "7 logos")
+	igual(PinturaCarro.posicao_que_libera(d, "padroes", 6), 10, "o 7º desenho na #10")
+	j.free()
+	d.free()

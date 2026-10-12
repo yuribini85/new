@@ -219,6 +219,10 @@
      0.52
     ]
    }
+  },
+  "noite_da_arena": {
+   "nome": "A noite em que a Wreckage perdeu os carros na arena (a mesma da abertura)",
+   "tom": "noite"
   }
  }
 }

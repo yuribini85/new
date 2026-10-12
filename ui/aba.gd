@@ -1414,3 +1414,48 @@ func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
 		avisar("Pneu comprado: %s" % pn["nome"])
 		Sons.tocar_ui(self, "moeda", -4.0)
 		historia("PECA_COMPRADA", {"peca": String(pn["nome"])})
+
+
+## Desafio do The Grid (decisão 74): o cartão da equipe da vez, quando o
+## desafio dela é deste modo ("corrida" ou "arena"). `desafiar` recebe a
+## equipe. Nada aparece sem Grid, com o Grid vencido ou em outro modo.
+func cartao_desafio_grid(modo: String, desafiar: Callable) -> void:
+	var eq := TheGrid.da_vez(dados, jogador)
+	var d := GridDesafio.de(dados, eq)
+	if eq.is_empty() or d.is_empty() or d["modo"] != modo:
+		return
+	var cor := Color(String(eq["cores"]["carro"])) if eq.has("cores") else COR_DESTAQUE
+	var v := cartao(cor.lightened(0.2))
+	var sobre := rotulo("THE GRID · DESAFIO DA #%d" % int(eq["grid"]), 0, COR_DESTAQUE, v)
+	Tipografia.rotulo(sobre, "semibold", 20)
+	var nome := rotulo(String(eq["nome"]).to_upper(), 0, Color(0.93, 0.91, 0.87), v)
+	Tipografia.rotulo(nome, "semibold", 34)
+	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rotulo(GridDesafio.resumo(dados, eq), FONTE_PEQUENA + 4, Color.WHITE, v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var n := 1 if modo == "corrida" else 2
+	var carros := GridDesafio.especiais(dados, eq, n).map(func(a): return String(dados.carro(a["carro"])["nome"]))
+	var pils := GridDesafio.pilotos(dados, jogador, eq, modo, n).map(func(p): return String(p["nome"]))
+	var linha := "Contra %s no %s." % [" e ".join(pils), " e no ".join(carros)] if n == 1 \
+			else "Contra %s, nos carros especiais %s." % [" e ".join(pils), " e ".join(carros)]
+	rotulo(linha, FONTE_PEQUENA, COR_SECUNDARIA, v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var s := GridDesafio.serie(jogador)
+	if s.get("equipe") == eq["id"]:
+		var st := rotulo("Série em andamento: %d × %d. Os carros destruídos são trocados no próximo round." % [
+				int(s["vitorias"]), int(s["derrotas"])], FONTE_PEQUENA, COR_DESTAQUE, v)
+		st.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if modo == "arena":
+		var regra := rotulo("Carro destruído sai da garagem para sempre.", FONTE_PEQUENA, COR_RUIM.lightened(0.25), v)
+		regra.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var motivo := GridDesafio.bloqueio(dados, jogador, eq)
+	var b := Button.new()
+	if motivo == "":
+		var txt := "Próximo round   →" if s.get("equipe") == eq["id"] else "Desafiar   →"
+		Tipografia.acao_primaria(b, txt, COR_DESTAQUE, Color(0.1, 0.1, 0.1), 32, 72)
+		b.pressed.connect(func(): desafiar.call(eq))
+		ancora("GRID_DESAFIAR", b)
+	else:
+		Tipografia.acao_primaria(b, motivo, COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 22, 72)
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.icon = icone_reduzido("icone_cadeado", 30)
+		b.pressed.connect(func(): avisar(motivo, false))
+	v.add_child(b)

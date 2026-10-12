@@ -629,7 +629,7 @@ Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 Mara[explica]: Agora podemos pensar além da próxima conta. Conhece o The Grid?
 Mara: Dez equipes no topo do circuito. A gente está fora dela.
 Mara: Uma de cada vez, da décima até a primeira. A da vez fica em destaque.
-Mara[firme]: Ganhe uma prova em que ela esteja correndo, ou a arena com ela lá dentro, e ela fica para trás.
+Mara[firme]: Cada uma tem o seu desafio, na pista ou na arena, contra os carros especiais dela. Vença e ela fica para trás.
 Sistema: The Grid fica em Carreira, embaixo dos objetivos.
 
 = CW_L03 | LICENCA_TREINO_INICIO | personagem=dono; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED
@@ -679,6 +679,19 @@ Mara[cruzados]: Daqui para frente, cada décimo custa caro.
 Harold: Elite aprovada. Em trinta anos, assinei poucas dessas.
 Mara[pensativa]: Lembra do carro nos cavaletes, no dia em que você chegou?
 Mara: Eu lembro.
+
+# A revelação (decisão 74, pedido do usuário): antes da #5, um desafio de arena, a Mara
+# conta que já teve uma equipe maior e a perdeu na arena, a noite da abertura.
+= CW_GR06 | GRID_SUBIU | personagem=dono; condicao=posicao:6; proibe=MARA_PASSADO; flags=MARA_PASSADO; cenario=oficina_mara
+[IMPACTO]
+Mara[firme]: {equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.
+Mara[pensativa]: A próxima é na arena. Tem uma coisa que você precisa saber antes.
+[ILUSTRACAO:noite_da_arena]
+Mara[pensativa]: A Wreckage já foi maior. Dois caminhões, seis carros, gente no box que eu nem sabia o nome.
+Mara: Numa noite de arena, a gente levou tudo o que tinha. Voltou com o guincho.
+Mara[decepcao]: Os carros, os patrocinadores, a equipe. Eu fiquei com a oficina e as contas.
+[CENARIO:oficina_mara]
+Mara[firme]: Desta vez a gente entra sabendo o que custa.
 
 = CW_GR01 | GRID_SUBIU | personagem=dono; repetivel=sim
 [IMPACTO]

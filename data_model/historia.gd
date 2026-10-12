@@ -92,9 +92,10 @@ func disparar_grid(e: Dictionary, dados_: Node) -> bool:
 	if e.is_empty():
 		return false
 	var pos: int = TheGrid.posicao(dados_, jogador)
-	if pos == 1 and disparar("GRID_TOPO", {"equipe": String(e["nome"]), "posicao_grid": pos}):
+	var ctx := {"equipe": String(e["nome"]), "posicao_grid": pos, "posicao": pos}
+	if pos == 1 and disparar("GRID_TOPO", ctx):
 		return true
-	return disparar("GRID_SUBIU", {"equipe": String(e["nome"]), "posicao_grid": pos})
+	return disparar("GRID_SUBIU", ctx)
 
 
 ## Fim de corrida: a conversa da chegada (CORRIDA_FIM) ou, sem ela, numa

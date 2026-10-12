@@ -470,8 +470,12 @@ func _aba_grafismos() -> void:
 	g.add_theme_constant_override("h_separation", 10)
 	g.add_theme_constant_override("v_separation", 10)
 	_conteudo.add_child(g)
-	for pd in PinturaCarro.PADROES:
+	var n_lib := PinturaCarro.liberados(_dados, _jogador, "padroes", PinturaCarro.PADROES.size())
+	for k in PinturaCarro.PADROES.size():
+		var pd: Array = PinturaCarro.PADROES[k]
 		var id := String(pd[0])
+		# Decisão 74: o desenho trancado mostra a posição do Grid que o libera.
+		var trancado: bool = k >= n_lib and id != _estado["padrao"]
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -484,7 +488,12 @@ func _aba_grafismos() -> void:
 		sb.border_color = Aba.COR_DESTAQUE if marcado else Color(1, 1, 1, 0.1)
 		for e in ["normal", "hover", "pressed", "focus"]:
 			b.add_theme_stylebox_override(e, sb)
-		b.pressed.connect(func(): _definir("padrao", id))
+		if trancado:
+			b.disabled = true
+			b.modulate = Color(1, 1, 1, 0.45)
+			b.tooltip_text = "Libera na #%d do The Grid" % PinturaCarro.posicao_que_libera(_dados, "padroes", k)
+		else:
+			b.pressed.connect(func(): _definir("padrao", id))
 		g.add_child(b)
 		var v := VBoxContainer.new()
 		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -503,7 +512,7 @@ func _aba_grafismos() -> void:
 		img.set_meta("padrao", id)
 		v.add_child(img)
 		var l := Label.new()
-		l.text = String(pd[1]).to_upper()
+		l.text = ("#%d DO GRID" % PinturaCarro.posicao_que_libera(_dados, "padroes", k)) if trancado else String(pd[1]).to_upper()
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		l.clip_text = true
 		Tipografia.rotulo(l, "semibold", 20)
@@ -530,13 +539,19 @@ func _aba_identificacao() -> void:
 	_conteudo.add_child(nome)
 	_nota("O nome e o logo são da equipe: valem para todos os carros. Vazio, fica %s." %
 			IdentidadeEquipe.nome_padrao(_dados, _jogador))
+	if PinturaCarro.liberados(_dados, _jogador, "logos", IdentidadeEquipe.opcoes().size()) < IdentidadeEquipe.opcoes().size():
+		_nota("Cada equipe vencida no The Grid libera um logo novo e um desenho novo.")
 	var g := GridContainer.new()
 	g.columns = COLUNAS_LOGOS
 	g.add_theme_constant_override("h_separation", 8)
 	g.add_theme_constant_override("v_separation", 8)
 	_conteudo.add_child(g)
-	for o in IdentidadeEquipe.opcoes():
+	var logos: Array = IdentidadeEquipe.opcoes()
+	var n_logos := PinturaCarro.liberados(_dados, _jogador, "logos", logos.size())
+	for k in logos.size():
+		var o: Dictionary = logos[k]
 		var id := String(o["id"])
+		var logo_trancado: bool = k >= n_logos and id != _estado["equipe_logo"]
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.tooltip_text = String(o["nome"])
@@ -554,7 +569,12 @@ func _aba_identificacao() -> void:
 		sb.border_color = Aba.COR_DESTAQUE if marcado else Color(1, 1, 1, 0.1)
 		for e in ["normal", "hover", "pressed", "focus"]:
 			b.add_theme_stylebox_override(e, sb)
-		b.pressed.connect(func(): _definir("equipe_logo", id))
+		if logo_trancado:
+			b.disabled = true
+			b.modulate = Color(0.35, 0.35, 0.38, 0.6)
+			b.tooltip_text = "Libera na #%d do The Grid" % PinturaCarro.posicao_que_libera(_dados, "logos", k)
+		else:
+			b.pressed.connect(func(): _definir("equipe_logo", id))
 		g.add_child(b)
 	if _estado["equipe_logo"] != "":
 		_titulo("Logo no carro")
