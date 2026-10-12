@@ -386,7 +386,7 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 	var luta := LutaArena.new(dados_luta, dados_luta.get("params", dados.arena()))
 	add_child(luta)
 	luta.acabou.connect(func(f: Dictionary):
-		if jogador.historia != null:
+		if jogador.historia != null and not f.get("simulacao", false):
 			var t := "ARENA_PERDA" if f["perdeu"] else ("ARENA_VITORIA" if f.get("venceu_equipe", f["posicao"] == 1) else "ARENA_FIM")
 			jogador.historia.disparar(t)
 			jogador.historia.disparar_grid(f.get("grid", {}), dados)

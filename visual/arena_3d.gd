@@ -46,6 +46,20 @@ const CAMERA_DINAMICA_SUAVE := 3.5  # 1/s
 const ANEL_PERIODO_S := 6.0
 const ANEL_S := 1.6
 const SEUS := ["jogador", "parceiro"]
+## Tombo (só visual): batida forte de lado levanta o carro sobre duas rodas e
+## ele cai de volta; de frente ou de trás, o nariz ou a traseira saltam. A
+## gravidade traz de volta e o chão quica pouco. Velocidade angular = dano ×
+## ganho, com teto (o carro nunca vira de vez).
+const TOMBO_DANO := 0.08  # dano mínimo da batida de lado que levanta o carro
+const TOMBO_DANO_PONTA := 0.15  # de frente/trás (são muitas: só as fortes)
+const TOMBO_GANHO_LADO := 12.0
+const TOMBO_GANHO_PONTA := 6.0
+const TOMBO_MAX_LADO := 4.0  # rad/s: ~50° no pico
+const TOMBO_MAX_PONTA := 2.0  # ~13°
+const TOMBO_GRAVIDADE := 9.0  # rad/s²
+const TOMBO_QUIQUE := 0.25
+const MEIA_LARGURA_M := 0.85
+const MEIO_COMPRIMENTO_M := 2.1
 
 ## "briga", "geral" ou "dinamica".
 var modo := "briga":
@@ -77,6 +91,7 @@ var _centro := Vector3.ZERO
 var _tamanho := 60.0
 var _tremor := 0.0
 var _aneis := {}  # id -> MeshInstance3D (só os seus carros)
+var _tombo := {}  # id -> {rolagem, v_rolagem, arfagem, v_arfagem} (rad, rad/s)
 var _foco := "jogador"  # carro da câmera dinâmica
 var _plano := 0  # 0 perseguição, 1 lateral, 2 frente baixa
 var _plano_desde := 0.0
@@ -123,6 +138,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		c.queue_free()
 	_carros = {}
 	_aneis = {}
+	_tombo = {}
 	_malhas = {}
 	_estagio_visto = {}
 	_fumaca = {}
@@ -186,9 +202,16 @@ func atualizar(delta: float) -> void:
 		var f := Vector2.from_angle(rumo)
 		c.rotation.z = atan(g.dot(f))
 		c.rotation.x = atan(g.dot(Vector2(-f.y, f.x)))
+		if _tombo.has(id):
+			var tb: Dictionary = _tombo[id]
+			c.rotation.x += tb["rolagem"]
+			c.rotation.z += tb["arfagem"]
+			# Gira sobre as rodas de um lado (ou um eixo): o centro sobe.
+			c.position.y += absf(sin(tb["rolagem"])) * MEIA_LARGURA_M + absf(sin(tb["arfagem"])) * MEIO_COMPRIMENTO_M
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
 	_mostrar_aneis(b)
 	_eventos(delta)
+	_assentar(delta)
 	if delta > 0.0:
 		_tamanho = lerpf(_tamanho, _alvo_tamanho(), 1.0 - exp(-delta * CAMERA_SUAVE))
 		_camera.size = _tamanho
@@ -343,6 +366,52 @@ func _chamar_batida(e: Dictionary) -> void:
 	_plano = 1 if _plano != 1 else 2  # a batida pede um ângulo de lado ou de frente
 	_plano_desde = tempo
 	_corte = true
+
+
+# --- Tombo -----------------------------------------------------------------------
+
+## Batida forte: impulso de rolagem (de lado; o lado atingido sobe) ou de
+## arfagem (frente/trás; a ponta atingida sobe).
+func _tombar(e: Dictionary) -> void:
+	var dano := float(e["dano"])
+	if dano < TOMBO_DANO or Preferencias.reduzir_animacoes:
+		return
+	var id := String(e["carro"])
+	var tb: Dictionary = _tombo.get(id, {"rolagem": 0.0, "v_rolagem": 0.0, "arfagem": 0.0, "v_arfagem": 0.0})
+	var regiao := String(e.get("regiao", ""))
+	if regiao.begins_with("lado"):
+		var sinal := 1.0 if regiao.ends_with("_e") else -1.0
+		tb["v_rolagem"] = float(tb["v_rolagem"]) + sinal * minf(dano * TOMBO_GANHO_LADO, TOMBO_MAX_LADO)
+	elif dano >= TOMBO_DANO_PONTA:
+		var sinal_p := 1.0 if regiao.begins_with("frente") else -1.0
+		tb["v_arfagem"] = float(tb["v_arfagem"]) + sinal_p * minf(dano * TOMBO_GANHO_PONTA, TOMBO_MAX_PONTA)
+	_tombo[id] = tb
+
+
+## A gravidade traz o carro de volta às quatro rodas, com um quique curto.
+func _assentar(delta: float) -> void:
+	if delta <= 0.0:
+		return
+	for id in _tombo.keys():
+		var tb: Dictionary = _tombo[id]
+		for eixo in [["rolagem", "v_rolagem"], ["arfagem", "v_arfagem"]]:
+			var a := float(tb[eixo[0]])
+			var v := float(tb[eixo[1]])
+			if a == 0.0 and v == 0.0:
+				continue
+			var lado := signf(a) if a != 0.0 else signf(v)
+			v -= lado * TOMBO_GRAVIDADE * delta
+			var novo := a + v * delta
+			if signf(novo) != lado:  # tocou o chão
+				novo = 0.0
+				v = -v * TOMBO_QUIQUE
+				if absf(v) < 0.4:
+					v = 0.0
+			tb[eixo[0]] = novo
+			tb[eixo[1]] = v
+		if float(tb["rolagem"]) == 0.0 and float(tb["v_rolagem"]) == 0.0 \
+				and float(tb["arfagem"]) == 0.0 and float(tb["v_arfagem"]) == 0.0:
+			_tombo.erase(id)
 
 
 # --- Anéis dos seus carros ---------------------------------------------------------
@@ -568,6 +637,7 @@ func _eventos(_delta: float) -> void:
 		if e["tipo"] != "impacto" or not _carros.has(e["carro"]):
 			continue
 		_chamar_batida(e)
+		_tombar(e)
 		var forte := float(e["dano"]) > 0.08
 		if forte:
 			_tremor = minf(_tremor + float(e["dano"]) * 2.0, 0.6)

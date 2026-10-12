@@ -80,7 +80,8 @@ static func parceiro(dados: Node, jogador: Node, uid: int) -> Dictionary:
 ## dois dos seus pilotos ("<equipe>:1", "<equipe>:2") em carros de potência
 ## parecida, nas cores da equipe. {participantes, modelos, nomes, cores,
 ## faixas, params (com a arena sorteada), equipes (id -> equipe), parceiro}.
-static func montar(dados: Node, jogador: Node, uid: int, semente: int) -> Dictionary:
+## `n_equipes` > 0 fixa quantas equipes (simulação de teste); senão, o nível.
+static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes_fixo: int = -1) -> Dictionary:
 	var p: Dictionary = dados.arena()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
@@ -97,7 +98,9 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int) -> Dictio
 	var cv := float(attrs["potencia"])
 	var catalogo: Array = dados.lista("carros").filter(func(c): return c["id"] != carro.id)
 	catalogo.sort_custom(func(a, b): return absf(float(a["potencia"]) - cv) < absf(float(b["potencia"]) - cv))
-	var n_equipes := equipes_no_nivel(dados, nivel(jogador))
+	var c_camp: Dictionary = p.get("campeonato", {})
+	var n_equipes := equipes_no_nivel(dados, nivel(jogador)) if n_equipes_fixo <= 0 \
+			else clampi(n_equipes_fixo, int(c_camp.get("equipes_min", 2)), int(c_camp.get("equipes_max", 10)))
 	var escolhidos := catalogo.slice(0, n_equipes * 4)
 	var sortear_modelo := func() -> Dictionary:
 		return escolhidos.pop_at(rng.randi_range(0, escolhidos.size() - 1)) if not escolhidos.is_empty() else carro.base

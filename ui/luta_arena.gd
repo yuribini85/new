@@ -253,6 +253,11 @@ func _mostrar_final() -> void:
 	t.add_theme_color_override("font_color", Aba.COR_RUIM if f["perdeu"] else Aba.COR_DESTAQUE)
 	v.add_child(t)
 	var notas := []
+	if f.get("simulacao", false):
+		var posicao_eq := _linhas().filter(func(l): return l.get("tipo", "") == "equipe" and l["voce"])
+		if not posicao_eq.is_empty() and int(posicao_eq[0]["posicao"]) > 0 and not f["venceu_equipe"]:
+			t.text = "SUA DUPLA: %dº" % int(posicao_eq[0]["posicao"])
+		notas.append("Simulação: nada mudou na garagem nem no campeonato.")
 	if f["perdeu"]:
 		notas.append("O %s foi eliminado e saiu da garagem." % f["carro"])
 	if f.get("perdeu_parceiro", false):
@@ -275,7 +280,7 @@ func _mostrar_final() -> void:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 10)
 	v.add_child(h)
-	for par in [[str(f["pontos"]), "pontos"], [Aba.dinheiro(f["premio"]), ""]]:
+	for par in ([[str(f["pontos"]), "pontos"]] if f.get("simulacao", false) else [[str(f["pontos"]), "pontos"], [Aba.dinheiro(f["premio"]), ""]]):
 		var n := Label.new()
 		n.text = par[0]
 		Tipografia.numero(n, 40)

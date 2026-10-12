@@ -408,3 +408,19 @@ func test_arena_rende_pecas() -> void:
 	igual(j.economia.credito_pecas, antes + esperado_perdido + esperado_rival, "as peças entram no estoque")
 	j.free()
 	d.free()
+
+
+func test_simulacao_fixa_o_numero_de_equipes() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000000)
+	var uid: int = j.concessionaria.comprar_carro(d.lista("carros")[0])
+	var c: Dictionary = d.arena()["campeonato"]
+	for n in [int(c["equipes_min"]), 7, int(c["equipes_max"])]:
+		var m := ArenaCarreira.montar(d, j, uid, 99, n)
+		igual(m["participantes"].size(), n * 2, "%d equipes = %d carros" % [n, n * 2])
+	igual(ArenaCarreira.montar(d, j, uid, 99, 50)["participantes"].size(), int(c["equipes_max"]) * 2, "acima do máximo, o máximo")
+	j.free()
+	d.free()

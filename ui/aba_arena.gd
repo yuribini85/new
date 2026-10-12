@@ -8,6 +8,7 @@ extends Aba
 signal luta(dados_luta: Dictionary)
 
 var _uid := -1
+var _sim_equipes := 2  # simulação de teste: quantas equipes
 
 ## Faixa do emblema no cartão da luta (a mesma do traçado nos cartões de prova).
 const LARGURA_FAIXA := 210.0
@@ -23,6 +24,7 @@ func construir() -> void:
 	if motivo != "":
 		cabecalho("Arena", "Destruição: o último de pé vence", "fundo_competicoes")
 		_cartao_luta(null, motivo)
+		_simulacao(jogador.garagem.carro(jogador.carro_ativo))
 		_registro()
 		return
 	var aptos := ArenaCarreira.aptos(jogador)
@@ -36,6 +38,7 @@ func construir() -> void:
 		_uid = aptos[posmod(i + lado, aptos.size())].uid
 		atualizar())
 	_cartao_luta(esc, "")
+	_simulacao(esc)
 	_registro()
 
 
@@ -174,6 +177,69 @@ func _equipe_de_cada(resultado: Dictionary, equipes: Dictionary) -> Dictionary:
 			nome = String(EquipeJogador.dados_equipe(dados, jogador).get("nome", "SUA EQUIPE"))
 		r[id] = {"nome": nome, "cor": cor}
 	return r
+
+
+## Só no modo de playtest: uma luta de 2 a 10 equipes com o carro escolhido,
+## sem prêmio, sem perda de carro, sem peças e sem contar no campeonato.
+func _simulacao(car: Carro) -> void:
+	if Preferencias.modo_teste == "" or car == null:
+		return
+	var c: Dictionary = dados.arena().get("campeonato", {})
+	var mn := int(c.get("equipes_min", 2))
+	var mx := int(c.get("equipes_max", 10))
+	_sim_equipes = clampi(_sim_equipes, mn, mx)
+	titulo_secao("SIMULAR LUTA", "teste")
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	conteudo.add_child(h)
+	var menos := Button.new()
+	Tipografia.acao_primaria(menos, "−", COR_CARTAO, Color.WHITE, 34, 68)
+	menos.custom_minimum_size.x = 76
+	menos.disabled = _sim_equipes <= mn
+	h.add_child(menos)
+	var n := Label.new()
+	n.text = "%d EQUIPES · %d CARROS" % [_sim_equipes, _sim_equipes * 2]
+	Tipografia.rotulo(n, "semibold", 26)
+	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	n.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(n)
+	var mais := Button.new()
+	Tipografia.acao_primaria(mais, "+", COR_CARTAO, Color.WHITE, 34, 68)
+	mais.custom_minimum_size.x = 76
+	mais.disabled = _sim_equipes >= mx
+	h.add_child(mais)
+	menos.pressed.connect(func():
+		_sim_equipes -= 1
+		atualizar())
+	mais.pressed.connect(func():
+		_sim_equipes += 1
+		atualizar())
+	var b := Button.new()
+	Tipografia.acao_primaria(b, "Simular com o %s" % car.base["nome"], Color(0.2, 0.21, 0.24), Color.WHITE, 26, 68)
+	b.pressed.connect(_simular.bind(car.uid))
+	conteudo.add_child(b)
+	nota("", "Nada muda no jogo", "Sem prêmio, sem perda de carro, sem peças e sem contar no campeonato.")
+
+
+## A luta de teste: monta com o número escolhido de equipes, resolve e mostra;
+## não aplica nada.
+func _simular(uid: int) -> void:
+	var semente := hash("arena_sim:%d:%d" % [Time.get_ticks_usec(), _sim_equipes])
+	var montada := ArenaCarreira.montar(dados, jogador, uid, semente, _sim_equipes)
+	var carro: Carro = jogador.garagem.carro(uid)
+	var pintura: Dictionary = montada["cores"].duplicate()
+	pintura["jogador"] = CarroBloco.cor_do_carro(carro)
+	var faixas: Dictionary = montada["faixas"].duplicate()
+	faixas["jogador"] = carro.faixas
+	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
+	var final := {"simulacao": true, "perdeu": false, "carro": String(carro.base["nome"]),
+			"posicao": resultado["classificacao"].find("jogador") + 1,
+			"venceu_equipe": resultado.get("equipe_vencedora", "") == "jogador",
+			"pontos": ArenaCarreira.pontos(resultado, "jogador", montada["params"]), "premio": 0}
+	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
+			"pinturas": pintura, "faixas": faixas, "final": final, "params": montada["params"],
+			"equipes": _equipe_de_cada(resultado, montada["equipes"])})
 
 
 func _registro() -> void:
