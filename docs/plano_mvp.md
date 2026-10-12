@@ -417,3 +417,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Edgar Halloway (Charge Folio), Sal Moretti (Relay Room), Bianca Sterling (Brace Yard),
     Nora Lindqvist (Return Chapter) e Jade Ryker (Shared Grid). Spare Penny fica sem
     vendedor até haver arte.
+63. **Cabine de pintura** (2026-10-12, proposta do usuário avaliada): a PINTURA vira tela
+    cheia (`ui/cabine_pintura.gd`) com o carro real em 3D fixo em cima (arrasto gira e sobe
+    a câmera, pinça aproxima, vistas 3/4, lateral, traseira e topo da mesma câmera), abas
+    CORES (um seletor de canal: carroceria, faixa, filete, com uma paleta só), FAIXAS
+    (miniaturas renderizadas no próprio carro com cada desenho), IDENTIDADE (número de
+    corrida 0–99 nas portas, capô e/ou teto, com cor e contorno; medido em metros, sem
+    esticar) e ACABAMENTO (fosco, acetinado, brilhante, metálico), e ações fixas: DESFAZER
+    (volta ao que estava ao abrir), CANCELAR e APLICAR. A prévia só troca parâmetros do
+    shader (`CarroBloco.repintar`). Descartados: logos da equipe (o pacote de logos não está
+    no projeto), pinturas recentes (sem histórico), desgaste, rodas e vidros. Os desenhos
+    removidos antes (bolinhas, ondas, transversais, pontas, tigrado) continuam fora.

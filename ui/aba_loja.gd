@@ -198,6 +198,10 @@ func voltar_ao_mapa() -> void:
 	mudou.emit()
 
 
+func _vendedor(loja: String) -> void:
+	historia("LOJA:" + loja)
+
+
 ## Dentro da workshop: a logo grande numa placa e, embaixo, os carros.
 func _topo_workshop(w: Dictionary) -> void:
 	# A concessionária grande com o nome ao lado (a mesma linha do mapa/coleção).
@@ -209,7 +213,7 @@ func _topo_workshop(w: Dictionary) -> void:
 func _workshop(w: Dictionary) -> void:
 	_topo_workshop(w)
 	# O vendedor da loja (cenas LOJA:<id>; cada uma só uma vez).
-	(func(): historia("LOJA:" + String(w["id"]))).call_deferred()
+	_vendedor.call_deferred(String(w["id"]))
 	_filtros()
 	var grade := _grade()
 	var tenho := {}

@@ -9,6 +9,16 @@ uniform vec4 cor_filete : source_color = vec4(0.1, 0.1, 0.1, 1.0);
 uniform int padrao = 0;
 uniform vec3 caixa_min = vec3(-1.0);
 uniform vec3 caixa_tam = vec3(2.0);
+// Número de corrida (aba IDENTIDADE): -1 = sem; locais_numero soma 1 (portas),
+// 2 (capô) e 4 (teto). Os algarismos vêm de digitos (R = algarismo, G =
+// contorno; tools/gerar_digitos.py), medidos em metros para não esticar.
+uniform sampler2D digitos : filter_linear, repeat_disable, hint_default_black;
+uniform int numero = -1;
+uniform int locais_numero = 1;
+uniform vec4 cor_numero : source_color = vec4(0.1, 0.1, 0.1, 1.0);
+uniform vec4 cor_contorno : source_color = vec4(1.0);
+// Acabamento (aba ACABAMENTO): 0 fosco, 1 acetinado, 2 brilhante, 3 metálico.
+uniform int acabamento = 1;
 
 varying vec3 p_carro;
 
@@ -21,6 +31,65 @@ vec3 posicao_no_carro(vec3 vertice) {
 // 1 dentro da faixa [a, b], com borda suave para não serrilhar.
 float faixa(float x, float a, float b) {
 	return smoothstep(a - 0.006, a + 0.006, x) * (1.0 - smoothstep(b - 0.006, b + 0.006, x));
+}
+
+// Tamanho do carro em metros na ordem de p (X lado a lado, Y altura, Z comprimento).
+vec3 tamanho_carro() {
+	return caixa_tam.x > caixa_tam.z ? caixa_tam.zyx : caixa_tam;
+}
+
+// O número num quadro de altura h (m), centrado em (a, b) = (0, 0): x = (algarismo, contorno).
+vec2 numero_em(float a, float b, float h) {
+	if (numero < 0 || abs(b) > h * 0.5) {
+		return vec2(0.0);
+	}
+	int n = numero >= 10 ? 2 : 1;
+	float w = h * 0.62 * float(n);  // os algarismos um pouco mais juntos que a célula
+	float u = a / w + 0.5;
+	if (u < 0.0 || u > 1.0) {
+		return vec2(0.0);
+	}
+	float k = u * float(n);
+	int i = min(int(k), n - 1);
+	int d = n == 2 ? (i == 0 ? numero / 10 : numero % 10) : numero;
+	float fu = (fract(k) - 0.5) * 0.93 + 0.5;  // 0.62 / (2/3)
+	vec2 uv = vec2((float(d) + fu) / 10.0, 0.5 - b / h);
+	return texture(digitos, uv).rg;
+}
+
+vec3 aplicar_numero(vec3 c, vec3 p, float lado, float topo) {
+	if (numero < 0) {
+		return c;
+	}
+	vec3 m = tamanho_carro();
+	vec2 r = vec2(0.0);
+	if (locais_numero % 2 == 1) {  // portas: lido de fora dos dois lados
+		float s = p.x > 0.5 ? -1.0 : 1.0;
+		float h = min(m.y * 0.34, 0.5);
+		r = max(r, lado * numero_em((p.z - 0.47) * m.z * s, (p.y - 0.44) * m.y, h));
+	}
+	if ((locais_numero / 2) % 2 == 1) {  // capô: lido de frente
+		float h = min(m.z * 0.13, 0.5);
+		r = max(r, topo * step(0.62, p.z) * numero_em((p.x - 0.5) * m.x, (0.8 - p.z) * m.z, h));
+	}
+	if ((locais_numero / 4) % 2 == 1) {  // teto: lido de frente
+		float h = min(m.z * 0.12, 0.45);
+		r = max(r, topo * step(0.8, p.y) * numero_em((p.x - 0.5) * m.x, (0.45 - p.z) * m.z, h));
+	}
+	c = mix(c, cor_contorno.rgb, clamp(r.y, 0.0, 1.0));
+	return mix(c, cor_numero.rgb, clamp(r.x, 0.0, 1.0));
+}
+
+float rugosidade_pintura() {
+	return acabamento == 0 ? 0.85 : (acabamento == 2 ? 0.18 : (acabamento == 3 ? 0.3 : 0.55));
+}
+
+float especular_pintura() {
+	return acabamento == 0 ? 0.15 : (acabamento == 2 ? 0.6 : (acabamento == 3 ? 0.5 : 0.35));
+}
+
+float metalico_pintura() {
+	return acabamento == 3 ? 0.65 : 0.0;
 }
 
 vec3 aplicar_faixas(vec3 c, vec3 p) {
@@ -80,5 +149,6 @@ vec3 aplicar_faixas(vec3 c, vec3 p) {
 		fil = faixa(v, 0.28, 0.44);
 	}
 	c = mix(c, cor_faixa.rgb, clamp(f, 0.0, 1.0));
-	return mix(c, cor_filete.rgb, clamp(fil, 0.0, 1.0));
+	c = mix(c, cor_filete.rgb, clamp(fil, 0.0, 1.0));
+	return aplicar_numero(c, p, lado, topo);
 }

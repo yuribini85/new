@@ -490,3 +490,56 @@ func test_tempo_da_corrida_nao_engasga_com_relogio_grosso() -> void:
 	a.free()
 	j.free()
 	d.free()
+
+
+## Cabine de pintura: nada grava antes de Aplicar; Desfazer volta ao que estava
+## ao abrir; Cancelar não muda o carro; Aplicar grava cor, faixas, número e
+## acabamento (só o que não é de fábrica).
+func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	var c: Carro = j.garagem.carro(uid)
+	var cab := CabinePintura.new(d, j, c)
+	_raiz().add_child(cab)
+	verificar(cab._aplicar.disabled, "sem mudança, Aplicar apagado")
+	for aba in ["cores", "identidade", "acabamento"]:
+		cab._aba = aba
+		cab._mostrar_aba()
+	cab._estado["cor"] = "#1251b3"
+	cab._estado["numero"] = 7
+	cab._mudou()
+	verificar(not cab._aplicar.disabled, "mudou: Aplicar aceso")
+	cab._desfazer.pressed.emit()
+	igual(cab._estado, cab._inicio, "Desfazer volta ao que estava ao abrir")
+	cab._estado["cor"] = "#1251b3"
+	cab._fechar()
+	igual(c.faixas, {}, "Cancelar não muda as faixas")
+	verificar(c.cor != "#1251b3", "nem a cor")
+	cab = CabinePintura.new(d, j, c)
+	_raiz().add_child(cab)
+	cab._estado["cor"] = "#1251b3"
+	cab._estado["padrao"] = "dupla"
+	cab._estado["numero"] = 24
+	cab._estado["locais_numero"] = 3
+	cab._estado["acabamento"] = "metalico"
+	cab._mudou()
+	cab._confirmar()
+	igual(c.cor, "#1251b3", "cor gravada")
+	igual(int(c.faixas["numero"]), 24, "número gravado")
+	igual(int(c.faixas["locais_numero"]), 3, "lugares do número")
+	igual(String(c.faixas["acabamento"]), "metalico", "acabamento gravado")
+	igual(String(c.faixas["padrao"]), "dupla", "desenho gravado")
+	# Volta do save (números viram float): reabrir não acusa mudança.
+	var volta: Dictionary = JSON.parse_string(JSON.stringify(c.faixas))
+	c.faixas = volta
+	var de_novo := CabinePintura.new(d, j, c)
+	_raiz().add_child(de_novo)
+	verificar(de_novo._aplicar.disabled, "pintura do save não conta como mudança")
+	de_novo._fechar()
+	igual(PinturaCarro.normalizar({"padrao": "", "faixa": "#ffffff", "numero": -1, "acabamento": ""}), {},
+			"o padrão de fábrica não vai para o save")
+	j.free()
+	d.free()

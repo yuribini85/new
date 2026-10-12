@@ -84,7 +84,7 @@ func _ready() -> void:
 	_cabecalho.configuracoes.connect(_abrir_configuracoes)
 	_cabecalho.acelerar.connect(_abrir_aceleracao)
 	_cabecalho.garagem.connect(func(): _todas[0].abrir_garagem())
-	_cabecalho.pintura.connect(func(): _todas[0].abrir_pintura())
+	_cabecalho.pintura.connect(_abrir_cabine)
 	_cabecalho.nomes.connect(func():
 		_todas[1].mostrar_nomes = not _todas[1].mostrar_nomes
 		_cabecalho.definir_nomes(_todas[1].mostrar_nomes)
@@ -359,6 +359,25 @@ func _assistir_video() -> void:
 ## aparelho (depois do MVP).
 func _comprar_sem_anuncios() -> void:
 	_sobre.avisar("A compra Sem anúncios chega com a loja do aparelho, na versão final.", false)
+
+
+## Cabine de pintura do carro ativo: por cima das telas e do cabeçalho, abaixo
+## dos avisos e dos diálogos (o tutorial do pintor aparece sobre ela).
+func _abrir_cabine() -> void:
+	var c: Carro = jogador.garagem.carro(jogador.carro_ativo)
+	if c == null:
+		return
+	var cabine := CabinePintura.new(dados, jogador, c)
+	add_child(cabine)
+	move_child(cabine, _sobre.get_index())
+	cabine.aviso.connect(_avisar)
+	cabine.aplicada.connect(func():
+		_avisar("Carro pintado.")
+		if jogador.historia != null:
+			jogador.historia.disparar("PINTURA_APLICADA")
+		atualizar())
+	if jogador.historia != null:
+		jogador.historia.disparar("PINTURA")
 
 
 ## Luta da arena (já resolvida e aplicada): por cima de tudo; no fim, a

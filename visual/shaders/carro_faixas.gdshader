@@ -13,6 +13,7 @@ void vertex() {
 
 void fragment() {
 	ALBEDO = aplicar_faixas(cor_base.rgb, p_carro);
-	ROUGHNESS = 0.55;
-	SPECULAR = 0.35;
+	ROUGHNESS = rugosidade_pintura();
+	SPECULAR = especular_pintura();
+	METALLIC = metalico_pintura();
 }

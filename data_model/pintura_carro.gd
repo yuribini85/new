@@ -13,6 +13,13 @@ const PADROES := [["", "Sem faixas"], ["dupla", "Dupla central"], ["larga", "Lar
 		["degrade", "Degradê"], ["ziguezague", "Zigue-zague"], ["serrilha", "Serrilha"], ["circulo", "Círculo"],
 		["tres_tons", "Três tons"]]
 
+## Acabamentos da lataria [id, nome] (índice = o do shader; "" = acetinado, o de fábrica).
+const ACABAMENTOS := [["fosco", "Fosco"], ["", "Acetinado"], ["brilhante", "Brilhante"], ["metalico", "Metálico"]]
+## Número de corrida: 1 a 99; onde vai (soma): portas 1, capô 2, teto 4.
+const NUMERO_MAX := 99
+const LOCAIS := [[1, "Portas"], [2, "Capô"], [4, "Teto"]]
+const LOCAIS_PADRAO := 1
+
 ## A paleta da pintura é a de fábrica mais saturada (pedido do usuário): mesmas
 ## famílias e o mesmo brilho relativo, tons mais vivos. Cinzas, brancos, preto
 ## e creme (pouca saturação) ficam como estão.
@@ -27,6 +34,32 @@ static func indice_padrao(id: String) -> int:
 		if PADROES[i][0] == id:
 			return i
 	return 0
+
+
+static func indice_acabamento(id: String) -> int:
+	for i in ACABAMENTOS.size():
+		if ACABAMENTOS[i][0] == id:
+			return i
+	return 1
+
+
+## A pintura sem o que está no padrão de fábrica ({} = nada além da cor):
+## faixas só com desenho; número só com valor; acabamento só se não for o acetinado.
+static func normalizar(f: Dictionary) -> Dictionary:
+	var r := {}
+	if String(f.get("padrao", "")) != "":
+		for k in ["padrao", "faixa", "filete"]:
+			if f.has(k):
+				r[k] = f[k]
+	if int(f.get("numero", -1)) >= 0:
+		for k in ["numero", "locais_numero", "cor_numero", "cor_contorno"]:
+			if f.has(k):
+				r[k] = f[k]
+		r["numero"] = clampi(int(f["numero"]), 0, NUMERO_MAX)  # do save vem float
+		r["locais_numero"] = int(f.get("locais_numero", LOCAIS_PADRAO))
+	if String(f.get("acabamento", "")) != "":
+		r["acabamento"] = String(f["acabamento"])
+	return r
 
 
 static func nome_padrao(id: String) -> String:
@@ -84,11 +117,12 @@ static func preco_definido(dados: Node) -> bool:
 ## "" ou o motivo.
 static func aplicar(dados: Node, jogador: Node, carro: Carro, cor: String, faixas: Dictionary) -> String:
 	var muda_cor := cor != carro.cor and not (carro.cor == "" and Color(cor) == Cores.fabrica(carro.id))
-	var muda_faixas := faixas != carro.faixas
+	faixas = normalizar(faixas)
+	var muda_faixas := faixas != normalizar(carro.faixas)
 	if not muda_cor and not muda_faixas:
 		return "nada mudou"
 	if not jogador.economia.debitar(preco(dados, jogador, muda_cor, muda_faixas)):
 		return "saldo insuficiente"
 	carro.cor = cor
-	carro.faixas = {} if String(faixas.get("padrao", "")) == "" else faixas.duplicate()
+	carro.faixas = faixas.duplicate()
 	return ""

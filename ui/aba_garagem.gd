@@ -94,9 +94,6 @@ const NUMERO_FICHA := 36
 const UNIDADE_FICHA := 28
 const DENTES_FICHA := 6
 const COR_ICONE_FICHA := Color("ece6da")
-## Janela PINTURA: altura da vitrine e lado das amostras de cor.
-const PINTURA_VITRINE := 360.0
-const AMOSTRA_LADO := 58
 
 
 ## [comprados, existentes] das peças dessas categorias para o carro.
@@ -410,7 +407,7 @@ func _abrir_evolucao(c: Carro, cat: String) -> void:
 func _reabrir(c: Carro, cat: String) -> void:
 	var atual: Carro = jogador.garagem.carro(c.uid)
 	if atual != null:
-		(func(): _abrir_evolucao(atual, cat)).call_deferred()
+		_abrir_evolucao.call_deferred(atual, cat)
 
 
 ## Item escolhido na janela de cada categoria ("" = o padrão: o próximo
@@ -676,107 +673,6 @@ func abrir_garagem() -> void:
 		{"fora_fecha": true, "titulo_max": 64, "principal": true, "titulo_extra": _cabecalho_garagem,
 		"habilitado": amp.is_empty() or jogador.economia.pode_pagar(_preco_ampliacao())})
 	historia("GARAGEM_ABERTA")
-
-
-## Janela PINTURA (aba pendurada no cabeçalho, pedido do usuário): o carro
-## ativo numa vitrine que mostra a escolha na hora; cor da carroceria (paleta),
-## padrão de faixas e as cores da faixa e do filete; o preço e Aplicar.
-func abrir_pintura() -> void:
-	var c := carro_ativo()
-	if c == null:
-		return
-	var estado := {"cor": "#" + CarroBloco.cor_do_carro(c).to_html(false),
-			"padrao": String(c.faixas.get("padrao", "")),
-			"faixa": String(c.faixas.get("faixa", "#f2f2ee")), "filete": String(c.faixas.get("filete", "#1c1c1e"))}
-	painel_estilo.emit("PINTURA", func(v):
-		var vit := VitrineCarro.new(PINTURA_VITRINE)
-		vit.ambiente_garagem()
-		v.add_child(vit)
-		var preco_l := Label.new()
-		var b := Button.new()
-		var amostras := {"cor": [], "faixa": [], "filete": []}
-		var botoes_padrao := []
-		var faixas_box := VBoxContainer.new()
-		var faixas_de := func() -> Dictionary:
-			return {} if estado["padrao"] == "" else {"padrao": estado["padrao"], "faixa": estado["faixa"], "filete": estado["filete"]}
-		var atualizar := func():
-			vit.mostrar_modelo(c.base, Color(estado["cor"]), faixas_de.call())
-			for qual in amostras:
-				for par in amostras[qual]:
-					_estilo_amostra(par[0], Color(par[1]), Color(par[1]).to_html(false) == Color(estado[qual]).to_html(false))
-			for par in botoes_padrao:
-				if par[1] == estado["padrao"]:
-					Tipografia.acao_primaria(par[0], par[2], COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 56)
-				else:
-					Tipografia.acao_neutra(par[0], par[2], 22, 56)
-			faixas_box.visible = estado["padrao"] != ""
-			var muda_cor := Color(estado["cor"]).to_html(false) != CarroBloco.cor_do_carro(c).to_html(false)
-			var muda_faixas: bool = faixas_de.call() != c.faixas
-			var preco := PinturaCarro.preco(dados, jogador, muda_cor, muda_faixas)
-			if not muda_cor and not muda_faixas:
-				preco_l.text = "Escolha uma cor ou um padrão de faixas."
-			elif not PinturaCarro.preco_definido(dados):
-				preco_l.text = "Preço a definir (grátis por enquanto)."
-			else:
-				preco_l.text = "Custa %s giros." % dinheiro(preco)
-			b.disabled = (not muda_cor and not muda_faixas) or not jogador.economia.pode_pagar(preco)
-		titulo_secao("COR DA CARROCERIA", "", v)
-		v.add_child(_paleta(amostras["cor"], func(cor): estado["cor"] = cor; atualizar.call()))
-		titulo_secao("FAIXAS", "", v)
-		var fl := HFlowContainer.new()
-		fl.add_theme_constant_override("h_separation", 8)
-		fl.add_theme_constant_override("v_separation", 8)
-		v.add_child(fl)
-		for pd in PinturaCarro.PADROES:
-			var bp := Button.new()
-			bp.focus_mode = Control.FOCUS_NONE
-			bp.custom_minimum_size = Vector2(0, 56)
-			Tipografia.acao_neutra(bp, String(pd[1]), 22, 56)
-			var id := String(pd[0])
-			bp.pressed.connect(func(): estado["padrao"] = id; atualizar.call())
-			fl.add_child(bp)
-			botoes_padrao.append([bp, id, String(pd[1])])
-		v.add_child(faixas_box)
-		titulo_secao("COR DA FAIXA", "", faixas_box)
-		faixas_box.add_child(_paleta(amostras["faixa"], func(cor): estado["faixa"] = cor; atualizar.call()))
-		titulo_secao("COR DO FILETE", "", faixas_box)
-		faixas_box.add_child(_paleta(amostras["filete"], func(cor): estado["filete"] = cor; atualizar.call()))
-		preco_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		preco_l.add_theme_font_size_override("font_size", FONTE_PEQUENA + 2)
-		preco_l.add_theme_color_override("font_color", COR_SECUNDARIA)
-		v.add_child(preco_l)
-		Tipografia.acao_primaria(b, "Aplicar pintura", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 64)
-		b.pressed.connect(func():
-			var motivo := PinturaCarro.aplicar(dados, jogador, c, estado["cor"], faixas_de.call())
-			if motivo != "":
-				avisar("Não deu: %s." % motivo, false)
-				return
-			Sons.tocar_ui(self, "moeda", -4.0)
-			avisar("Carro pintado.")
-			historia("PINTURA_APLICADA")
-			fechar_painel.emit()
-			mudou.emit())
-		v.add_child(b)
-		atualizar.call(), [], {"fora_fecha": true, "titulo_max": 64})
-	historia("PINTURA")
-
-
-## Grade de amostras da paleta; `ao_escolher` recebe a cor em "#rrggbb".
-func _paleta(lista: Array, ao_escolher: Callable) -> GridContainer:
-	var g := GridContainer.new()
-	g.columns = 9
-	g.add_theme_constant_override("h_separation", 8)
-	g.add_theme_constant_override("v_separation", 8)
-	for it in PinturaCarro.cores():
-		var a := Button.new()
-		a.focus_mode = Control.FOCUS_NONE
-		a.tooltip_text = String(it["nome"])
-		a.custom_minimum_size = Vector2(AMOSTRA_LADO, AMOSTRA_LADO)
-		var hex := "#" + (it["cor"] as Color).to_html(false)
-		a.pressed.connect(func(): ao_escolher.call(hex))
-		g.add_child(a)
-		lista.append([a, hex])
-	return g
 
 
 func _reabrir_garagem() -> void:

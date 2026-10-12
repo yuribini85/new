@@ -11,6 +11,9 @@ extends Node3D
 
 ## Silhueta por categoria (m): comprimento, largura, altura da cintura, cabine
 ## (fração do comprimento, altura, recuo do centro) e se tem teto.
+const SHADER_LATARIA := preload("res://visual/shaders/carro_faixas.gdshader")
+const SHADER_GLB := preload("res://visual/shaders/carro_glb.gdshader")
+const DIGITOS := preload("res://arte/ui/pintura/digitos.png")
 const FORMAS := {
 	"compacto": {"c": 3.75, "l": 1.66, "h": 0.6, "cab": 0.62, "hc": 0.72, "recuo": -0.17, "teto": true},
 	"seda": {"c": 4.6, "l": 1.76, "h": 0.6, "cab": 0.44, "hc": 0.6, "recuo": -0.04, "teto": true},
@@ -255,17 +258,14 @@ static func _pintar_glb(mi: MeshInstance3D, cor: Color, faixas: Dictionary = {})
 			var nova := (m as BaseMaterial3D).duplicate() as BaseMaterial3D
 			nova.cull_mode = BaseMaterial3D.CULL_DISABLED
 			if m.resource_name.to_lower() == "paint":
-				nova.albedo_color = cor
-				nova.roughness = 0.55
-				nova.metallic_specular = 0.35
-				var padrao := PinturaCarro.indice_padrao(String(faixas.get("padrao", "")))
-				if padrao > 0:
-					var sm := ShaderMaterial.new()
-					sm.shader = preload("res://visual/shaders/carro_faixas.gdshader")
-					sm.set_shader_parameter("cor_base", cor)
-					_parametros_faixas(sm, mi, faixas)
-					mi.set_surface_override_material(i, sm)
-					continue
+				# Sempre o shader da lataria: faixas, número e acabamento mudam
+				# só os parâmetros (repintar), sem recarregar o modelo.
+				var sm := ShaderMaterial.new()
+				sm.shader = SHADER_LATARIA
+				sm.set_shader_parameter("cor_base", cor)
+				_parametros_faixas(sm, mi, faixas)
+				mi.set_surface_override_material(i, sm)
+				continue
 			mi.set_surface_override_material(i, nova)
 		return
 	var atlas: Texture2D = null
@@ -273,7 +273,7 @@ static func _pintar_glb(mi: MeshInstance3D, cor: Color, faixas: Dictionary = {})
 	if original is BaseMaterial3D:
 		atlas = (original as BaseMaterial3D).albedo_texture
 	var mat := ShaderMaterial.new()
-	mat.shader = preload("res://visual/shaders/carro_glb.gdshader")
+	mat.shader = SHADER_GLB
 	mat.set_shader_parameter("atlas", atlas)
 	mat.set_shader_parameter("pintura", cor)
 	_parametros_faixas(mat, mi, faixas)
@@ -288,6 +288,32 @@ static func _parametros_faixas(sm: ShaderMaterial, mi: MeshInstance3D, faixas: D
 	sm.set_shader_parameter("padrao", PinturaCarro.indice_padrao(String(faixas.get("padrao", ""))))
 	sm.set_shader_parameter("caixa_min", caixa.position)
 	sm.set_shader_parameter("caixa_tam", caixa.size)
+	sm.set_shader_parameter("digitos", DIGITOS)
+	sm.set_shader_parameter("numero", int(faixas.get("numero", -1)))
+	sm.set_shader_parameter("locais_numero", int(faixas.get("locais_numero", PinturaCarro.LOCAIS_PADRAO)))
+	sm.set_shader_parameter("cor_numero", Color(String(faixas.get("cor_numero", "#141518"))))
+	sm.set_shader_parameter("cor_contorno", Color(String(faixas.get("cor_contorno", "#f2f2ee"))))
+	sm.set_shader_parameter("acabamento", PinturaCarro.indice_acabamento(String(faixas.get("acabamento", ""))))
+
+
+## Troca a pintura do modelo já montado (cabine de pintura): só os parâmetros
+## dos shaders da lataria, sem recarregar o GLB.
+func repintar(cor: Color, faixas: Dictionary) -> void:
+	for mi: MeshInstance3D in find_children("*", "MeshInstance3D", true, false):
+		var mats: Array = [mi.material_override]
+		for i in mi.get_surface_override_material_count():
+			mats.append(mi.get_surface_override_material(i))
+		for m in mats:
+			if not m is ShaderMaterial:
+				continue
+			var sm := m as ShaderMaterial
+			if sm.shader == SHADER_LATARIA:
+				sm.set_shader_parameter("cor_base", cor)
+			elif sm.shader == SHADER_GLB:
+				sm.set_shader_parameter("pintura", cor)
+			else:
+				continue
+			_parametros_faixas(sm, mi, faixas)
 
 
 ## Modelo GLB: girado para a frente em +X, lataria pintada (_pintar_glb).

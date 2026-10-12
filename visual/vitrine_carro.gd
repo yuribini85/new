@@ -320,7 +320,71 @@ func _gui_input(ev: InputEvent) -> void:
 		_angulo += ev.relative.x * 0.01
 		_carro.rotation.y = _angulo
 		_ultimo_toque = Time.get_ticks_msec() / 1000.0
+		if _livre:
+			# Cabine de pintura: o arrasto vertical sobe e desce a câmera.
+			_elevacao = clampf(_elevacao - ev.relative.y * 0.3, ELEVACAO_MIN, ELEVACAO_MAX)
+			_posicionar_camera()
 		_pedir_quadro()
+	elif _livre and (ev is InputEventMagnifyGesture or (ev is InputEventMouseButton and ev.pressed
+			and ev.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN])):
+		var f: float = ev.factor if ev is InputEventMagnifyGesture else (1.1 if ev.button_index == MOUSE_BUTTON_WHEEL_UP else 0.9)
+		_zoom = clampf(_zoom * f, ZOOM_MIN, ZOOM_MAX)
+		_posicionar_camera()
+		_pedir_quadro()
+
+
+## Cabine de pintura: o carro parado no giro e na altura de câmera pedidos
+## (vistas 3/4, lateral, traseira, topo); o dedo gira, sobe e desce; pinça
+## aproxima. Só para o modelo 3D.
+const ELEVACAO_MIN := 8.0
+const ELEVACAO_MAX := 88.0
+const ZOOM_MIN := 0.75
+const ZOOM_MAX := 1.35
+## Giros do modelo para cada vista (a câmera fica a 45° do lado, como nos sprites).
+const VISTAS := {"3/4": [ROTACAO_MODELO, 30.0], "lateral": [PI / 4.0, 12.0],
+		"traseira": [ROTACAO_MODELO + PI, 26.0], "topo": [ROTACAO_MODELO, 88.0]}
+var _livre := false
+var _elevacao := 30.0
+var _zoom := 1.0
+
+
+func vista(nome: String) -> void:
+	_livre = true
+	var v: Array = VISTAS[nome]
+	_angulo = v[0]
+	_carro.rotation.y = _angulo
+	_elevacao = v[1]
+	_zoom = 1.0
+	_ultimo_toque = INF  # parado: sem balançar nem girar sozinho
+	_posicionar_camera()
+	_pedir_quadro()
+
+
+func _posicionar_camera() -> void:
+	var el := deg_to_rad(_elevacao)
+	var dir := Vector3(cos(el) * 0.7071, sin(el), cos(el) * 0.7071)
+	_camera.size = LARGURA_VISTA_M / _zoom
+	# De cima, a luminária do teto da oficina ficaria entre a câmera e o carro:
+	# o plano de corte começa logo acima do teto do carro.
+	_camera.near = 37.5 if _elevacao > 60.0 else 0.05
+	_camera.look_at_from_position(dir * 40.0 + Vector3(0, 0.6, 0), Vector3(0, 0.6, 0),
+			Vector3.FORWARD if _elevacao > 85.0 else Vector3.UP)
+
+
+## Troca só a pintura do carro mostrado (sem recarregar o modelo).
+func repintar(cor: Color, faixas: Dictionary) -> void:
+	_carro.repintar(cor, faixas)
+	_pedir_quadro()
+
+
+## O quadro atual da vitrine (miniaturas da cabine).
+func imagem() -> Image:
+	var vp: SubViewport = get_child(0)
+	return vp.get_texture().get_image()
+
+
+func pedir_quadro() -> void:
+	_pedir_quadro()
 
 
 ## Desenha o 3D só quando algo se mexe: parado (sprite, animação reduzida),
@@ -354,7 +418,7 @@ func _process(delta: float) -> void:
 		_camera.size = LARGURA_VISTA_M * lerpf(1.06, 1.0, smoothstep(0.0, 1.0, _aproximar))
 		return
 	# Gira sozinho, exceto logo depois de o jogador girar com o dedo.
-	var parado: bool = not is_visible_in_tree() or Preferencias.reduzir_animacoes \
+	var parado: bool = _livre or not is_visible_in_tree() or Preferencias.reduzir_animacoes \
 			or Time.get_ticks_msec() / 1000.0 - _ultimo_toque < 3.0
 	_animando(not parado)
 	if parado:

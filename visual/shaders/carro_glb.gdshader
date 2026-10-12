@@ -19,6 +19,7 @@ void fragment() {
 	float lataria = smoothstep(0.6, 0.8, c.r) * (1.0 - smoothstep(0.05, 0.12, sat));
 	vec3 pintado = aplicar_faixas(pintura.rgb, p_carro);
 	ALBEDO = mix(c, c * pintado * 1.1, lataria);
-	ROUGHNESS = mix(0.9, 0.55, lataria);
-	SPECULAR = mix(0.2, 0.35, lataria);
+	ROUGHNESS = mix(0.9, rugosidade_pintura(), lataria);
+	SPECULAR = mix(0.2, especular_pintura(), lataria);
+	METALLIC = metalico_pintura() * lataria;
 }

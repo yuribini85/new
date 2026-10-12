@@ -773,11 +773,11 @@ Sistema: Toque num carro para levá-lo à Oficina.
 
 = CW_PT01 | PINTURA | personagem=dono; proibe=PAINT_TUTORIAL_SEEN; flags=PAINT_TUTORIAL_SEEN
 Kenji: Kenji Arata. A cabine é minha. Pode entrar, só não encosta no que está molhado.
-Kenji: Em cima, o carro como ele vai sair. O que você escolher aparece nele na hora.
-Kenji: Primeiro a cor da carroceria. Depois o desenho das faixas.
-Kenji: Com faixa escolhida, aparecem a cor dela e a do filete, a linha fina que contorna.
-Kenji: O preço fica embaixo. Só se paga o que mudou.
-Sistema: Escolha as cores e toque em Aplicar pintura.
+Kenji: Em cima, o carro como ele vai sair. Arrasta pra girar; embaixo dele, as vistas.
+Kenji: Cores: carroceria, faixa e filete, a linha fina que contorna. Faixas: o desenho, já no seu carro.
+Kenji: Identidade: o número de corrida e onde ele vai. Acabamento: fosco, acetinado, brilhante ou metálico.
+Kenji: Nada é gravado antes de aplicar. Desfazer volta ao que estava; o preço fica embaixo e só cobra o que mudou.
+Sistema: Escolha a pintura e toque em Aplicar pintura.
 
 = CW_PT02 | PINTURA_APLICADA | personagem=dono; proibe=FIRST_PAINT; flags=FIRST_PAINT
 Kenji: Pronto. Na corrida e na arena, é assim que ele aparece.
