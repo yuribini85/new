@@ -18,7 +18,8 @@ const VERDE := Color(0.3, 0.8, 0.35)
 const AMARELO := Color(0.95, 0.8, 0.2)
 const VERMELHO := Color(0.92, 0.2, 0.15)
 const ALERTA := Color(1.0, 0.95, 0.85)
-const FUNDO_FORA := Color(0.5, 0.07, 0.06, 0.85)
+const FUNDO := Color(0.05, 0.05, 0.06, 0.72)
+const FUNDO_DANO := Color(0.62, 0.08, 0.06, 0.62)
 
 ## [{tipo: "equipe", nome, cor, posicao (0 = de pé), eliminado, voce} ou
 ##  {id, nome, carro, cor, dano: PackedFloat32Array(6), eliminado, voce}]
@@ -76,9 +77,11 @@ func _draw() -> void:
 		var r := Rect2(0, y, LARGURA, linha - 6.0 * k)
 		# O fundo é a barra do dano: enche de vermelho da esquerda para a direita
 		# conforme o pior dano; cheio = eliminado.
-		draw_rect(r, Color(0.05, 0.05, 0.06, 0.72))
+		# Vermelho e preto lado a lado, os dois transparentes (sem empilhar).
 		var cheio := 1.0 if l["eliminado"] else clampf(_pior(l["dano"]), 0.0, 1.0)
-		draw_rect(Rect2(r.position, Vector2(r.size.x * cheio, r.size.y)), FUNDO_FORA)
+		var w := r.size.x * cheio
+		draw_rect(Rect2(r.position, Vector2(w, r.size.y)), FUNDO_DANO)
+		draw_rect(Rect2(r.position + Vector2(w, 0), Vector2(r.size.x - w, r.size.y)), FUNDO)
 		draw_rect(Rect2(r.position, Vector2(4, r.size.y)), l["cor"])
 		_carro(Vector2(12, y + (r.size.y - carro.y) * 0.5), l["dano"], l["eliminado"], carro)
 		var cor_nome := Aba.COR_DESTAQUE if l.get("voce", false) else Color(0.92, 0.92, 0.9)
