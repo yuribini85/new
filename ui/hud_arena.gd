@@ -61,7 +61,7 @@ func _draw() -> void:
 	# Cabeçalho: quantos ainda estão de pé e a seta de recolher/abrir.
 	var vivos := carros.filter(func(l): return not l["eliminado"]).size()
 	draw_rect(Rect2(0, 0, LARGURA, CABECALHO - 4.0), Color(0.05, 0.05, 0.06, 0.82))
-	draw_string(fonte, Vector2(12, CABECALHO * 0.5 + 5.0), "COMPETIDORES · %d DE PÉ" % vivos,
+	draw_string(fonte, Vector2(12, CABECALHO * 0.5 + 5.0), "%d RESTANTES" % vivos,
 			HORIZONTAL_ALIGNMENT_LEFT, LARGURA - 50, 17, Color(0.86, 0.87, 0.9))
 	var seta := Vector2(LARGURA - 22, CABECALHO * 0.5 - 2.0)
 	var pts := PackedVector2Array([seta + Vector2(-7, -4), seta + Vector2(7, -4), seta + Vector2(0, 5)]) if not recolhida \
