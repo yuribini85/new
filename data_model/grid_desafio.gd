@@ -38,10 +38,16 @@ static func de(dados: Node, equipe: Dictionary) -> Dictionary:
 	return d
 
 
-## Carros especiais da equipe: `n` adversários (eventos.json) da licença dela,
-## de modelos diferentes, pela maior relação potência (com o ajuste) / peso.
+## Carros especiais da equipe: adversários reais (eventos.json, do GT2) da
+## licença dela, pela maior relação potência (com o ajuste) / peso, sem
+## repetir no Grid: da #1 para a #10, cada equipe fica com os melhores ainda
+## livres da sua licença (corrida 1, arena 2). `n` limita quantos devolver.
 static func especiais(dados: Node, equipe: Dictionary, n: int) -> Array:
-	var lic := String(equipe.get("nivel", ""))
+	var todos := _distribuir(dados)
+	return Array(todos.get(String(equipe.get("id", "")), [])).slice(0, n)
+
+
+static func _candidatos(dados: Node, lic: String) -> Array:
 	var vistos := {}
 	var lista := []
 	for ev in dados.lista("eventos"):
@@ -55,7 +61,30 @@ static func especiais(dados: Node, equipe: Dictionary, n: int) -> Array:
 			var r := float(c["potencia"]) * float(a.get("potencia_mult", 1.0)) / maxf(float(c["peso"]), 1.0)
 			lista.append({"adv": a, "razao": r})
 	lista.sort_custom(func(x, y): return x["razao"] > y["razao"] or (x["razao"] == y["razao"] and x["adv"]["carro"] < y["adv"]["carro"]))
-	return lista.slice(0, n).map(func(x): return x["adv"])
+	return lista.map(func(x): return x["adv"])
+
+
+## equipe id -> [adversários], da #1 para a #10, sem repetir modelo (se a
+## licença acabar, repete os dela).
+static func _distribuir(dados: Node) -> Dictionary:
+	var r := {}
+	var usados := {}
+	var ordem := TheGrid.equipes(dados)
+	ordem.reverse()
+	for e in ordem:
+		var d := de(dados, e)
+		var quer := 1 if d.get("modo", "corrida") == "corrida" else 2
+		var cand := _candidatos(dados, String(e.get("nivel", "")))
+		var escolha := cand.filter(func(a): return not usados.has(a["carro"])).slice(0, quer)
+		for a in cand:
+			if escolha.size() >= quer:
+				break
+			if not a in escolha:
+				escolha.append(a)
+		for a in escolha:
+			usados[a["carro"]] = true
+		r[String(e["id"])] = escolha
+	return r
 
 
 ## Pilotos da equipe para o desafio: os do tipo (corrida/arena, pelo perfil),

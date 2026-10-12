@@ -558,7 +558,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     do Vale (sugestão, em ordem de dificuldade; troca-se no JSON). Melhor de 3: os carros
     destruídos são trocados pelos próximos da garagem entre os rounds, por isso pede 6 carros
     fora o de corrida (a série fica salva entre rounds). Carros especiais: os adversários
-    reais (GT2) da licença da equipe com a maior relação potência/peso, com o ajuste de
+    reais (GT2) da licença da equipe pela maior relação potência/peso (sem repetir no Grid:
+    da #1 para a #10, cada equipe fica com os melhores ainda livres da sua licença), com o ajuste de
     potência deles; a licença da equipe é exigida. Sem prêmio em giros na corrida do desafio
     (a recompensa é o Grid e as pinturas); na arena vale o prêmio por pontos. Revelação: ao
     chegar à #6 (a próxima é arena), a Mara conta que a Wreckage perdeu tudo numa noite de
