@@ -594,3 +594,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     só as que existem para o carro) e Preparação de arena (a blindagem). As barras de
     progresso ficam mais altas e mais inclinadas, em todo o jogo. Do mockup não entram: nitro
     (não existe no GT2) e "Teste" no lugar de Acelerar; a escalação continua no topo.
+    Depois (pedido do usuário, para desafogar): a Preparação de corrida vira uma roleta, uma
+    categoria por vez num cartão grande (ícone, barra, a próxima peça com o preço e o botão
+    Melhorar; ‹ › ou deslizar), com a faixa de ícones de todas embaixo (a atual destacada,
+    em ocre as que já têm peça; tocar leva a ela). A arena usa o mesmo cartão. A tela não rola.
