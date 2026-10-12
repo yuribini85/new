@@ -5,7 +5,7 @@ extends Control
 ## seis regiões (frente, lados, traseira; esquerda e direita), cada uma na cor
 ## do dano. Cores como o indicador do estudo: verde → amarelo até a metade,
 ## amarelo → vermelho até o limite da ré, piscando daí até quebrar; preto no
-## eliminado. O número é o pior dano em %.
+## eliminado, com o fundo da linha vermelho. O número é o pior dano em %.
 
 const LINHA := 46.0
 const LARGURA := 280.0
@@ -18,6 +18,7 @@ const VERDE := Color(0.3, 0.8, 0.35)
 const AMARELO := Color(0.95, 0.8, 0.2)
 const VERMELHO := Color(0.92, 0.2, 0.15)
 const ALERTA := Color(1.0, 0.95, 0.85)
+const FUNDO_FORA := Color(0.5, 0.07, 0.06, 0.85)
 
 ## [{tipo: "equipe", nome, cor, posicao (0 = de pé), eliminado, voce} ou
 ##  {id, nome, carro, cor, dano: PackedFloat32Array(6), eliminado, voce}]
@@ -73,23 +74,25 @@ func _draw() -> void:
 			y += _equipe(l, y, k)
 			continue
 		var r := Rect2(0, y, LARGURA, linha - 6.0 * k)
-		draw_rect(r, Color(0.05, 0.05, 0.06, 0.72))
+		# Eliminado: o fundo da linha passa de preto a vermelho (sem texto).
+		draw_rect(r, FUNDO_FORA if l["eliminado"] else Color(0.05, 0.05, 0.06, 0.72))
 		draw_rect(Rect2(r.position, Vector2(4, r.size.y)), l["cor"])
 		_carro(Vector2(12, y + (r.size.y - carro.y) * 0.5), l["dano"], l["eliminado"], carro)
 		var cor_nome := Aba.COR_DESTAQUE if l.get("voce", false) else Color(0.92, 0.92, 0.9)
 		if l["eliminado"]:
-			cor_nome = Color(0.55, 0.55, 0.55)
+			cor_nome = Color(0.88, 0.72, 0.7)
 		var modelo := String(l.get("carro", ""))
 		var dois := k == 1.0 and modelo != ""  # sem espaço para o modelo na lista compacta
 		var x_nome := 20 + carro.x + 4
+		var largura_nome := LARGURA - x_nome - 10.0 if l["eliminado"] else LARGURA - 128.0
 		draw_string(fonte, Vector2(x_nome, y + r.size.y * 0.5 + (-2.0 if dois else 7 * k)), String(l["nome"]),
-				HORIZONTAL_ALIGNMENT_LEFT, LARGURA - 128, roundi(20 * maxf(k, 0.8)), cor_nome)
+				HORIZONTAL_ALIGNMENT_LEFT, largura_nome, roundi(20 * maxf(k, 0.8)), cor_nome)
 		if dois:
 			draw_string(fonte, Vector2(x_nome, y + r.size.y * 0.5 + 15.0), modelo, HORIZONTAL_ALIGNMENT_LEFT,
-					LARGURA - 128, 14, Color(0.6, 0.6, 0.62))
-		var txt := "FORA" if l["eliminado"] else "%d%%" % roundi(_pior(l["dano"]) * 100.0)
-		draw_string(Tipografia.fonte_numero(), Vector2(LARGURA - 72, y + r.size.y * 0.5 + 8 * k), txt,
-				HORIZONTAL_ALIGNMENT_RIGHT, 62, roundi(19 * maxf(k, 0.8)), Color(0.75, 0.75, 0.75) if l["eliminado"] else Color.WHITE)
+					largura_nome, 14, Color(0.78, 0.62, 0.6) if l["eliminado"] else Color(0.6, 0.6, 0.62))
+		if not l["eliminado"]:
+			draw_string(Tipografia.fonte_numero(), Vector2(LARGURA - 72, y + r.size.y * 0.5 + 8 * k),
+					"%d%%" % roundi(_pior(l["dano"]) * 100.0), HORIZONTAL_ALIGNMENT_RIGHT, 62, roundi(19 * maxf(k, 0.8)), Color.WHITE)
 		y += linha
 	custom_minimum_size = Vector2(LARGURA, y)
 	size = custom_minimum_size  # fora de contêiner: a área do toque acompanha a lista
