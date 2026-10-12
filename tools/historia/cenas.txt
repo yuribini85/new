@@ -11,7 +11,7 @@
 # posicao_min, quantidade_min), bloqueia, repetivel, reativa, proxima, capitulo, cenario, lembrete
 # Falas aceitam variáveis do jogo: {saldo} {carro} {evento} {serie} {pista} {voltas} {premio}
 # {posicao} {peca} {demanda} {piloto} (Historia.variaveis). Ações do próprio diálogo: [ESCURO] [CLARO] [PAUSA] [TREMOR]
-# [CENARIO:id] [ILUSTRACAO:id]. Opção cenario=id: o fundo da cena (ids em data/historia.json).
+# [CENARIO:id] [ILUSTRACAO:id] [IMPACTO] (salto curto na fala seguinte; usar pouco). Opção cenario=id: o fundo da cena (ids em data/historia.json).
 # Regras do roteiro: cada fala que ensina diz o que o jogador vê na tela; cena de tutorial
 # termina com uma ordem clara do Sistema; nada de mecânica que o jogo não tem.
 
@@ -698,6 +698,7 @@ Sistema: Arena em duplas: a última dupla de pé vence. Carro eliminado sai da g
 # O mecânico da arena: a blindagem (Oficina, ao lado da velocidade máxima).
 = CW_AR02 | ENCADEADA | personagem=dono; flags=DEX_MET
 Dex: Dex Kane. Eu preparo carro pra arena.
+[IMPACTO]
 Dex: Lá dentro cavalo não manda. Manda chapa.
 Dex: A blindagem fica na Oficina, no escudo ao lado da velocidade. Três níveis: quanto mais chapa, mais pancada ele aguenta.
 Dex: Só que pesa. Na corrida ele vai sentir.
@@ -720,6 +721,7 @@ Sistema: Escolha o nível e toque em Instalar.
 Dex: Agora sim. Na pista ele vai sentir o peso. Lá dentro, quem sente são os outros.
 
 = CW_R06 | ARENA_INSCRICAO | personagem=dono; proibe=ARENA_FIRST_ENTRY; flags=ARENA_FIRST_ENTRY
+[IMPACTO]
 Roxy: Último aviso: aqui, segundo lugar pode custar o carro inteiro.
 Mara[alerta]: Ela não está brincando.
 
@@ -736,6 +738,7 @@ Mara[decepcao]: O carro acabou. O piloto saiu andando. É isso que importa.
 Dex: O próximo vai com mais chapa.
 
 = CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim
+[IMPACTO]
 Mara[decepcao]: Mais um pro ferro-velho.
 
 # ---------------------------------------------------------------- Gestão da equipe

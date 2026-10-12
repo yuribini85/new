@@ -3398,6 +3398,9 @@
     "texto": "Dex Kane. Eu preparo carro pra arena."
    },
    {
+    "acao": "IMPACTO"
+   },
+   {
     "quem": "mecanico_arena",
     "texto": "Lá dentro cavalo não manda. Manda chapa."
    },
@@ -3520,6 +3523,9 @@
   "trigger": "ARENA_INSCRICAO",
   "falas": [
    {
+    "acao": "IMPACTO"
+   },
+   {
     "quem": "organizadora",
     "texto": "Último aviso: aqui, segundo lugar pode custar o carro inteiro."
    },
@@ -3619,6 +3625,9 @@
   "id": "CW_R09B",
   "trigger": "ARENA_PERDA",
   "falas": [
+   {
+    "acao": "IMPACTO"
+   },
    {
     "quem": "mara",
     "texto": "Mais um pro ferro-velho.",

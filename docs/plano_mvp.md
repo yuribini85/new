@@ -444,3 +444,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     círculo) e Acabamento (com poeira e arranhões numa camada à parte); desfazer e refazer
     passo a passo. Fora: cor por região e rodas/vidros (sem malhas separadas confiáveis),
     sujeira dinâmica de corrida.
+65. **Animação dos diálogos** (2026-10-12, aprovado pelo usuário): pausas no texto depois da
+    pontuação; respiração do personagem parado; entrada própria de cada um
+    (`personagens.json` → entrada: firme, rápida, pesada, quique, passo, esmaecer,
+    tá-dá, elegante, curta); caixa com a faixa e o nome na cor de quem fala, subindo ao
+    aparecer, e "toque para continuar" pulsando só com o texto pronto; dois em cena (quem
+    escuta recua para o outro lado, menor e mais escuro, e volta à frente quando fala);
+    `[IMPACTO]` no roteiro (salto curto, usar pouco). No tutorial, o busto de quem fala
+    (corpo sem fundo, medidas em `personagens.json` → busto) com a cabeça inteira acima
+    da caixa e o corte rente à borda de baixo. "Pular" sobe quando a caixa desce. Tudo
+    vira corte seco com Reduzir animações.
