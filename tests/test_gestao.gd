@@ -235,3 +235,27 @@ func test_atributos_e_energia_por_piloto() -> void:
 	verificar(float(EquipeJogador.piloto_do_jogador(d, j)["ritmo"]) > float(base["ritmo"]), "quem corre usa o treino dele")
 	j.free()
 	d.free()
+
+
+## Decisão 70: cansado perde consistência; a corrida inscrita guarda o piloto
+## de então (descansar depois não muda a prova programada).
+func test_cansaco_e_piloto_guardado_na_inscricao() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	j.economia.creditar(1000)
+	d.equipe()["treino"]["cansaco"] = 0.2
+	EquipeJogador.contratar(d, j, "livre_1", "corrida")
+	var descansado := float(EquipeJogador.atributos(d, j, "livre_1", 0.0)["consistencia"])
+	GestaoEquipe.treinar(d, j, 1.0, 0.0, "livre_1")
+	var cansado := float(EquipeJogador.atributos(d, j, "livre_1", 0.0)["consistencia"])
+	perto(cansado, descansado * 0.8, 1e-6, "energia zero: −20% de consistência")
+	var c := Carreira.new(d, j)
+	var f := Fila.new(c, j, 3600.0)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "inscrição")
+	var antes: Dictionary = f.corrida_atual(1.0)["resultado"]["carros"]["jogador"]
+	GestaoEquipe.concluir_treino(j, 999999.0)  # descansou
+	var depois: Dictionary = f.corrida_atual(1.0)["resultado"]["carros"]["jogador"]
+	igual(depois["tempo_total"], antes["tempo_total"], "a corrida inscrita não muda")
+	j.free()
+	d.free()

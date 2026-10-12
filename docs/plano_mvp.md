@@ -505,7 +505,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     traços mais crus (`tracos` → `perfil`, `menos_consistencia`), e ritmo do piloto-base mais
     o treino dele. O treino passa a ser por piloto e aparece como energia: começar gasta a
     energia, ela volta enchendo no tempo do treino de hoje e o nível entra quando enche.
-    Correr cansado custa consistência (`equipe.json` → `treino.cansaco`), pendente do
-    playtest (null = sem efeito; sugestão 0,2). Rivais da arena usam o piloto-base.
+    Correr cansado custa consistência (`equipe.json` → `treino.cansaco` = 0,2, aprovado: a
+    perda do segundo piloto, proporcional à energia que falta); a corrida guarda o piloto da
+    inscrição (`fila.piloto`). Rivais da arena usam o piloto-base.
     Próximos (aprovados): mercado de pilotos que muda e pilotos das equipes vencidas do
     Grid; experiência por corrida/luta; embalo; contrato por temporada.

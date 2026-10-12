@@ -44,7 +44,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	cfg["pneus"] = carro.pneus.map(func(p): return p["id"])
 	var semente := _nova_semente()
 	var f := {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente,
-			"config": cfg}
+			"config": cfg, "piloto": EquipeJogador.piloto_do_jogador(carreira.dados, jogador)}
 	# Nas corridas só corre um piloto da equipe (decisão 68).
 	var teste := _preparar(f, false)
 	if teste.has("erro"):
@@ -177,10 +177,12 @@ func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
 	var assinatura := "" if carro == null else str(carro.atributos_efetivos("seco")) + str(carro.atributos_efetivos("chuva"))
 	if comp != null:
 		assinatura += str(comp.atributos_efetivos("seco")) + str(comp.atributos_efetivos("chuva"))
+	var piloto: Dictionary = f.get("piloto", {}) if f.get("piloto") is Dictionary else {}
+	assinatura += str(piloto)
 	var chave := "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura]
 	if chave == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
 		return _cache
-	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras, carro, comp)
+	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras, carro, comp, piloto)
 	if carro == null:
 		c = {"erro": "carro %d não está na garagem" % int(f["uid"])}
 	c["com_amostras"] = com_amostras

@@ -33,8 +33,10 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 ## comprasse esta peça?") sem alterar nada.
 ## `companheiro`: carro do segundo piloto da equipe (fase 9), que larga logo à
 ## frente do jogador; null = só o jogador.
+## `piloto`: o piloto como estava na inscrição (Fila; o treino e o cansaço de
+## depois não mudam a corrida já programada); vazio = o de agora.
 func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true,
-		hipotetico: Carro = null, companheiro: Carro = null) -> Dictionary:
+		hipotetico: Carro = null, companheiro: Carro = null, piloto: Dictionary = {}) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
 	if ev.is_empty():
 		return {"erro": "evento %s não existe" % evento_id}
@@ -62,7 +64,7 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	participantes.append({
 		"id": "jogador",
 		"atributos": carro.atributos_efetivos(condicao),
-		"piloto": EquipeJogador.piloto_do_jogador(dados, jogador),
+		"piloto": piloto if not piloto.is_empty() else EquipeJogador.piloto_do_jogador(dados, jogador),
 	})
 
 	simulacoes += 1
