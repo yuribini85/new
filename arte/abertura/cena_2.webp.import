@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfxwccuct7x2v"
-path="res://.godot/imported/arena.webp-626500fe1cb3317926869f20bc137b73.ctex"
+uid="uid://f0l582jdudvo"
+path="res://.godot/imported/cena_2.webp-ba7ee3fef1fb36e2094f53523bdfc936.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/abertura/arena.webp"
-dest_files=["res://.godot/imported/arena.webp-626500fe1cb3317926869f20bc137b73.ctex"]
+source_file="res://arte/abertura/cena_2.webp"
+dest_files=["res://.godot/imported/cena_2.webp-ba7ee3fef1fb36e2094f53523bdfc936.ctex"]
 
 [params]
 

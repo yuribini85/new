@@ -582,3 +582,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     no [IMPACTO]; o personagem aparece no lugar num esmaecer curto e o ouvinte vai direto
     para o lado dele. Substitui a parte de animação dos personagens da decisão das
     animações do diálogo; o campo `entrada` de personagens.json sai.
+    Abertura final (pedido do usuário): as 5 cenas do usuário (`arte/abertura/cena_1..5`:
+    a corrida noturna, a arena destruindo os carros, a Mara vendo o guincho, a Mara com as
+    contas, a chegada do jogador), cada uma entrando e saindo pelo preto, e o logo. A cena 5
+    é também a ilustração `chegada` do diálogo e a cena 3 a `noite_da_arena` da revelação.

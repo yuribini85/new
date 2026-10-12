@@ -1,18 +1,33 @@
 {
- "_nota": "Abertura do jogo (ui/abertura_cinema.gd), tempos em s: cada plano entra em 'ini', fica 'dur' e funde com o próximo em 'fusao'; imagens paradas, sem música nem zoom (pedido do usuário, 2026-10-12); 'corte' entra seco, com clarão e tremor; 'batida' (opcional) é o instante de um impacto com clarão e estrondo; 'logo' quando o logo aparece; 'fim' quando a abertura acaba. Decisão 73: os carros da Wreckage saindo da arena no guincho e a Mara com as contas; depois, a chegada do jogador (GAME_START, ilustração chegada). Apresentação, não balanceamento.",
+ "_nota": "Abertura do jogo (ui/abertura_cinema.gd), tempos em s (pedido do usuário, 2026-10-12): as 5 cenas, paradas, sem música; cada uma entra do preto em 'fusao', fica e volta ao preto antes da próxima (os planos não se sobrepõem: o intervalo entre eles é a tela preta). 'logo' quando o logo aparece; 'fim' quando a abertura acaba. Cena 1: a corrida noturna; 2: a arena destruindo os carros; 3: a Mara vendo o guincho levar o carro; 4: a Mara com as contas; 5: a chegada do jogador (silhueta). Depois, o diálogo (GAME_START) abre na ilustração chegada (a cena 5).",
  "planos": [
   {
-   "img": "arena",
+   "img": "cena_1",
    "ini": 0.0,
-   "dur": 7.6
+   "dur": 5.0
   },
   {
-   "img": "contas",
-   "ini": 6.9,
-   "dur": 7.4
+   "img": "cena_2",
+   "ini": 5.5,
+   "dur": 5.0
+  },
+  {
+   "img": "cena_3",
+   "ini": 11.0,
+   "dur": 5.0
+  },
+  {
+   "img": "cena_4",
+   "ini": 16.5,
+   "dur": 5.0
+  },
+  {
+   "img": "cena_5",
+   "ini": 22.0,
+   "dur": 5.0
   }
  ],
- "fusao": 0.9,
- "logo": 14.6,
- "fim": 21.0
+ "fusao": 0.8,
+ "logo": 27.5,
+ "fim": 32.5
 }

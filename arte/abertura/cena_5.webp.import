@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://sfjvoyyoqpue"
-path="res://.godot/imported/contas.webp-7adf8083514d9b47ffefea550be1f45d.ctex"
+uid="uid://bcbojpiq8wda6"
+path="res://.godot/imported/cena_5.webp-49658e082a94f54bcb4a2251a2ad0773.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/abertura/contas.webp"
-dest_files=["res://.godot/imported/contas.webp-7adf8083514d9b47ffefea550be1f45d.ctex"]
+source_file="res://arte/abertura/cena_5.webp"
+dest_files=["res://.godot/imported/cena_5.webp-49658e082a94f54bcb4a2251a2ad0773.ctex"]
 
 [params]
 
