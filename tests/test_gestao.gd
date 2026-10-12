@@ -78,7 +78,7 @@ func test_sede_melhora_vagas_e_renda() -> void:
 	d.free()
 
 
-func test_desmanche_vira_credito_que_paga_pecas_primeiro() -> void:
+func test_desmanche_vira_pecas_que_pagam_a_blindagem() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
 	j.economia.creditar(5000)
@@ -86,15 +86,20 @@ func test_desmanche_vira_credito_que_paga_pecas_primeiro() -> void:
 	var b: int = j.concessionaria.comprar_carro(d.carro("forte"))
 	var carro: Carro = j.garagem.carro(b)
 	carro.pecas_possuidas.append("turbo")  # comprada por 200
-	igual(GestaoEquipe.credito_desmanche(d, j, carro), 100, "metade das peças compradas")
-	igual(GestaoEquipe.desmontar(d, j, b), 100, "desmonta")
+	# fator 0,5 × (revenda 900 × 0,5 + peças 200) = 325
+	igual(GestaoEquipe.pecas_do_carro(d, j, carro), 325, "a carcaça e as peças compradas viram peças")
+	igual(GestaoEquipe.desmontar(d, j, b), 325, "desmonta")
 	verificar(j.garagem.carro(b) == null, "o carro sai da garagem")
-	igual(j.economia.credito_pecas, 100, "crédito de peças")
+	igual(j.economia.credito_pecas, 325, "peças no estoque")
 	igual(GestaoEquipe.desmontar(d, j, a), -1, "o único carro não se desmonta")
 	var saldo0: int = j.economia.saldo
-	verificar(j.economia.debitar_peca(150), "peça de 150")
-	igual(j.economia.credito_pecas, 0, "o crédito paga primeiro")
-	igual(j.economia.saldo, saldo0 - 50, "o caixa paga o resto")
+	verificar(j.economia.debitar_peca(150), "peça comum de 150")
+	igual(j.economia.saldo, saldo0 - 150, "peça comum se paga em giros")
+	igual(j.economia.credito_pecas, 325, "e não gasta peças")
+	verificar(j.economia.debitar_peca(150, true), "blindagem de 150 peças")
+	igual(j.economia.credito_pecas, 175, "a blindagem gasta peças")
+	igual(j.economia.saldo, saldo0 - 150, "e não giros")
+	verificar(not j.economia.debitar_peca(500, true), "sem peças bastantes, não compra")
 	j.free()
 	d.free()
 

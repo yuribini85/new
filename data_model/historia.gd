@@ -19,7 +19,8 @@ extends RefCounted
 ## VITORIA_LICENCA:<id> e VITORIA (quantidade; ver disparar_fim),
 ## ARENA_INSCRICAO, ARENA_FIM, ARENA_VITORIA, ARENA_PERDA,
 ## GARAGEM_AMPLIADA, GARAGEM_ABERTA (janela Garagem), PINTURA e PINTURA_APLICADA,
-## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA e os do
+## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA,
+## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, SEM_PECAS e os do
 ## prólogo (ULTIMA_CORRIDA_ADRIAN, RADIO_ULTIMA_CORRIDA, ACIDENTE, POS_ACIDENTE).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
@@ -84,6 +85,17 @@ func disparar(trigger: String, ctx: Dictionary = {}) -> bool:
 	return true
 
 
+## The Grid: uma equipe ficou para trás (`e` = a equipe de equipes.json);
+## no topo, a fala do topo.
+func disparar_grid(e: Dictionary, dados_: Node) -> bool:
+	if e.is_empty():
+		return false
+	var pos: int = TheGrid.posicao(dados_, jogador)
+	if pos == 1 and disparar("GRID_TOPO", {"equipe": String(e["nome"]), "posicao_grid": pos}):
+		return true
+	return disparar("GRID_SUBIU", {"equipe": String(e["nome"]), "posicao_grid": pos})
+
+
 ## Fim de corrida: a conversa da chegada (CORRIDA_FIM) ou, sem ela, numa
 ## vitória inédita, um marco: a primeira vitória numa licença
 ## (VITORIA_LICENCA:<id>) ou o total de provas vencidas (VITORIA, contexto
@@ -131,9 +143,11 @@ func variaveis(ctx: Dictionary = {}) -> Dictionary:
 	if dados.existe("pecas", demanda):
 		v["demanda"] = String(dados.peca(demanda)["nome"])
 	v["piloto"] = EquipeJogador.nome_jogador(dados, jogador)
-	for k in ["peca", "carro"]:
+	for k in ["peca", "carro", "equipe"]:
 		if ctx.has(k):
 			v[k] = String(ctx[k])
+	if ctx.has("posicao_grid"):
+		v["posicao_grid"] = "#%d" % int(ctx["posicao_grid"])
 	return v
 
 

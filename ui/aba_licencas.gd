@@ -39,6 +39,7 @@ func construir() -> void:
 	_brasao()
 	_mostrar_resultado()
 	_objetivos()
+	_the_grid()
 	var c := carro_ativo()
 	var proxima := {}
 	for lic in dados.lista("licencas"):
@@ -160,6 +161,75 @@ func _objetivos() -> void:
 	for i in lista.size():
 		if i != atual:
 			_linha_objetivo(lista[i], resto)
+
+
+## The Grid, a lista negra (TheGrid): as dez equipes do topo, da #1 em cima à
+## #10 embaixo, com o emblema, a licença em que correm e o estado: vencida
+## (verde), a da vez (ocre, com o que fazer) ou à frente (apagada).
+func _the_grid() -> void:
+	var lista: Array = TheGrid.equipes(dados)
+	if lista.is_empty():
+		return
+	var pos: int = TheGrid.posicao(dados, jogador)
+	titulo_secao("THE GRID")
+	var sua := rotulo(("%s: fora do Grid. Dez equipes no topo; uma por vez, da #10 à #1." if pos == 0
+			else "%s: #%d do Grid.") % ([IdentidadeEquipe.nome(dados, jogador)] if pos == 0
+			else [IdentidadeEquipe.nome(dados, jogador), pos]), FONTE_PEQUENA + 2, COR_SECUNDARIA)
+	sua.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var vez: Dictionary = TheGrid.da_vez(dados, jogador)
+	var feitas: Array = TheGrid.vencidas(jogador)
+	var c := cartao()
+	c.add_theme_constant_override("separation", 4)
+	if vez.is_empty():
+		rotulo("O Grid é seu. Ninguém acima.", FONTE_PEQUENA + 2, COR_BOM, c)
+	var invertida := lista.duplicate()
+	invertida.reverse()  # #1 em cima
+	for e in invertida:
+		var venc: bool = e["id"] in feitas
+		var da_vez: bool = not vez.is_empty() and e["id"] == vez["id"]
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 12)
+		h.custom_minimum_size.y = 76 if da_vez else 64
+		h.modulate = Color(1, 1, 1, 1.0 if (venc or da_vez) else 0.55)
+		c.add_child(h)
+		var n := Label.new()
+		n.text = "#%d" % int(e["grid"])
+		n.custom_minimum_size.x = 64
+		n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		Tipografia.numero(n, 30)
+		n.add_theme_color_override("font_color", COR_DESTAQUE if da_vez else (COR_BOM if venc else COR_SECUNDARIA))
+		h.add_child(n)
+		var logo := TextureRect.new()
+		logo.texture = load(String(e["logo"])) if ResourceLoader.exists(String(e.get("logo", ""))) else null
+		logo.custom_minimum_size = Vector2(56, 56)
+		logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		logo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(logo)
+		var v := VBoxContainer.new()
+		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		v.add_theme_constant_override("separation", -2)
+		h.add_child(v)
+		var nome := Label.new()
+		nome.text = String(e["nome"]).to_upper()
+		Tipografia.rotulo(nome, "semibold", 24)
+		nome.add_theme_color_override("font_color", COR_DESTAQUE if da_vez else Color(0.93, 0.91, 0.87))
+		v.add_child(nome)
+		var lic: Dictionary = dados.item("licencas", String(e.get("nivel", ""))) if dados.existe("licencas", String(e.get("nivel", ""))) else {}
+		var nome_lic := String(lic.get("nome", e.get("nivel", "")))
+		var detalhe := "VENCIDA" if venc else (("Vença uma prova %s ou a arena com ela" % nome_lic) if da_vez else nome_lic)
+		var d := Label.new()
+		d.text = detalhe
+		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		d.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		d.add_theme_color_override("font_color", COR_BOM if venc else COR_SECUNDARIA)
+		v.add_child(d)
+		if venc:
+			var ok := IconeVetor.new("check", COR_BOM)
+			ok.custom_minimum_size = Vector2(30, 30)
+			ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			h.add_child(ok)
 
 
 func _linha_objetivo(o: Dictionary, pai: Control) -> void:

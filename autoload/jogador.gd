@@ -37,6 +37,8 @@ var arena: Dictionary = {}
 var equipe: Dictionary = {}
 ## Identidade da equipe do jogador (IdentidadeEquipe): {nome, logo}; vazio = o padrão.
 var identidade: Dictionary = {}
+## The Grid (TheGrid): {vencidas: [ids das equipes vencidas, em ordem]}.
+var grid: Dictionary = {}
 ## Corrida (dias) do último comentário de contexto da história (cenas reativa).
 var ultima_reativa: int = -1000
 var historia: Historia
@@ -107,5 +109,6 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	arena = {}
 	equipe = {}
 	identidade = {}
+	grid = {}
 	historico = {}
 	dias = 0

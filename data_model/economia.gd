@@ -5,7 +5,10 @@ extends RefCounted
 signal saldo_mudou(saldo: int)
 
 var saldo: int = 0
-## Crédito de peças (desmanche de carros, GestaoEquipe): só paga peças, antes do saldo.
+## Peças (o recurso do cabeçalho, ao lado dos giros): vêm de carros desmontados,
+## de carros perdidos na arena e dos rivais que a equipe destrói lá
+## (GestaoEquipe.pecas_do_carro); pagam a blindagem. O nome do campo é o do
+## save antigo (era o crédito do desmanche).
 var credito_pecas: int = 0
 
 
@@ -33,16 +36,23 @@ func creditar(valor: int) -> void:
 	saldo_mudou.emit(saldo)
 
 
-## Peça: o crédito de peças paga primeiro, o saldo o resto.
-func pode_pagar_peca(valor: int) -> bool:
-	return valor <= saldo + credito_pecas
+## Peça da Oficina: em giros; `em_pecas` (a blindagem) só com peças.
+func pode_pagar_peca(valor: int, em_pecas := false) -> bool:
+	return valor <= (credito_pecas if em_pecas else saldo)
 
 
-func debitar_peca(valor: int) -> bool:
-	if valor < 0 or not pode_pagar_peca(valor):
+func debitar_peca(valor: int, em_pecas := false) -> bool:
+	if valor < 0 or not pode_pagar_peca(valor, em_pecas):
 		return false
-	var do_credito := mini(credito_pecas, valor)
-	credito_pecas -= do_credito
-	saldo -= valor - do_credito
+	if em_pecas:
+		credito_pecas -= valor
+	else:
+		saldo -= valor
 	saldo_mudou.emit(saldo)
 	return true
+
+
+func ganhar_pecas(n: int) -> void:
+	if n > 0:
+		credito_pecas += n
+		saldo_mudou.emit(saldo)

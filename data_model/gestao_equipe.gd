@@ -311,13 +311,21 @@ static func concluir_treino(jogador: Node, agora: float) -> bool:
 
 ## Crédito de peças por desmontar o carro: as peças compradas para ele vezes
 ## o fator, com o Pátio de desmanche.
-static func credito_desmanche(dados: Node, jogador: Node, carro: Carro) -> int:
-	var soma := 0
+## Peças que um carro rende (desmontado, perdido ou destruído na arena):
+## fator_pecas × (o que ele vale na revenda + as peças compradas para ele), com
+## o bônus de desmanche da Sede. Sem número novo: o fator do desmanche e a
+## fração de revenda já existem (equipe.json, economia.json).
+static func pecas_do_carro(dados: Node, jogador: Node, carro: Carro) -> int:
+	var soma := float(carro.base.get("preco", 0)) * float(dados.economia().get("fracao_revenda", 0.0))
 	for pid in carro.pecas_possuidas:
 		if dados.existe("pecas", pid):
 			soma += int(dados.item("pecas", pid)["preco"])
 	var f := float(dados.equipe().get("desmanche", {}).get("fator_pecas", 0.0))
 	return roundi(soma * f * (1.0 + efeito(dados, jogador, "desmanche")))
+
+
+static func credito_desmanche(dados: Node, jogador: Node, carro: Carro) -> int:
+	return pecas_do_carro(dados, jogador, carro)
 
 
 static func pode_desmontar(jogador: Node, uid: int) -> bool:
@@ -332,7 +340,7 @@ static func desmontar(dados: Node, jogador: Node, uid: int) -> int:
 	var carro: Carro = jogador.garagem.carro(uid)
 	var credito := credito_desmanche(dados, jogador, carro)
 	jogador.garagem.remover(uid)
-	jogador.economia.credito_pecas += credito
+	jogador.economia.ganhar_pecas(credito)
 	jogador.equipe["desmontados"] = int(jogador.equipe.get("desmontados", 0)) + 1
 	if jogador.carro_ativo == uid:
 		var resto: Array = jogador.garagem.lista()

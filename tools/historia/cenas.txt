@@ -597,6 +597,13 @@ Harold: Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
 Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 
+# The Grid, a lista negra (Carreira): a Mara apresenta na visita seguinte à das licenças.
+= CW_GR00 | ABA:LICENCAS | personagem=dono; requer=FIRST_RACE_DONE,LICENSE_OFFLINE_TUTORIAL_SEEN; proibe=GRID_INTRO; flags=GRID_INTRO; cenario=oficina_mara
+Mara[explica]: Está vendo essa lista? É o The Grid. Dez equipes no topo do circuito. A gente está fora dela.
+Mara: Uma de cada vez, da décima até a primeira. A da vez fica em destaque.
+Mara[firme]: Ganhe uma prova em que ela esteja correndo, ou a arena com ela lá dentro, e ela fica para trás.
+Sistema: The Grid fica em Carreira, embaixo dos objetivos.
+
 = CW_L03 | LICENCA_TREINO_INICIO | personagem=dono; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED
 Mara: Treino rodando. A oficina não para por isso.
 
@@ -646,6 +653,17 @@ Mara[gesto]: Achei alguém para o segundo. Escolha o carro dele na Equipe.
 Harold: Elite aprovada. Em trinta anos, assinei poucas dessas.
 Mara[pensativa]: Lembra do carro que veio com as chaves?
 Mara: Eu lembro.
+
+= CW_GR01 | GRID_SUBIU | personagem=dono; repetivel=sim
+[IMPACTO]
+Mara[firme]: {equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.
+
+= CW_GR02 | GRID_TOPO | personagem=dono; proibe=GRID_TOP; flags=GRID_TOP; cenario=oficina_mara
+Mara[pensativa]: Primeiro lugar do Grid. Quando você entrou por aquela porta, a gente mal pagava as contas.
+Mara[gesto]: Você não ganhou uma corrida. Construiu uma equipe que chegou ao topo.
+
+= CW_SYS11 | SEM_PECAS | personagem=dono; repetivel=sim
+Dex: Faltam peças. Desmonte um carro parado, ou traga sucata da arena.
 
 # ---------------------------------------------------------------- Marcos
 = CW_R02 | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=FIRST_WIN; condicao=posicao:1; flags=FIRST_WIN
@@ -702,11 +720,13 @@ Dex: Dex Kane. Eu preparo carro pra arena.
 Dex: Lá dentro cavalo não manda. Manda chapa.
 Dex: A blindagem fica na Oficina, no escudo ao lado da velocidade. Três níveis: quanto mais chapa, mais pancada ele aguenta.
 Dex: Só que pesa. Na corrida ele vai sentir.
+Dex: E se paga com peças. O que a gente desmonta e o que sobra da arena vira peça.
 Sistema: Blindagem: Oficina, ao lado da velocidade máxima.
 
 = CW_AR03 | BLINDAGEM | personagem=dono; requer=DEX_MET; proibe=ARMOR_TUTORIAL_SEEN; flags=ARMOR_TUTORIAL_SEEN
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
+Dex: Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças.
 Dex: Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida.
 Sistema: Escolha o nível e toque em Instalar.
 
@@ -714,6 +734,7 @@ Sistema: Escolha o nível e toque em Instalar.
 Dex: Dex Kane. Eu preparo carro pra arena, quando ela abrir pra vocês.
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
+Dex: Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças.
 Dex: Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida.
 Sistema: Escolha o nível e toque em Instalar.
 
@@ -755,7 +776,7 @@ Sistema: Assine um contrato em Patrocínio. Ele dura um dia; depois vêm ofertas
 Mara[firme]: Primeiro adesivo novo no carro desde aquela noite.
 
 = CW_S03 | CARRO_DESMONTADO | personagem=dono; proibe=FIRST_DISMANTLE; flags=FIRST_DISMANTLE
-Mara[pensativa]: Cada peça dele ainda serve em outro. O crédito fica para a próxima compra de peças.
+Mara[pensativa]: Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.
 
 = CW_S05 | TREINO_CONCLUIDO | personagem=dono; proibe=FIRST_TRAINING_LEVEL; flags=FIRST_TRAINING_LEVEL
 Mara[gesto]: {piloto} voltou do treino mais constante. Menos erro em curva, menos peça gasta.

@@ -68,6 +68,14 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([c + Vector2(0.55, -0.58) * r, c + Vector2(0.85, -0.58) * r,
 					c + Vector2(0.85, -0.05) * r, c + Vector2(0.0, -0.05) * r, c + Vector2(0.0, 0.25) * r]), cor, w, true)
 			draw_rect(Rect2(c + Vector2(-0.14, 0.2) * r, Vector2(0.28, 0.7) * r), cor)
+		"peca":
+			# Porca sextavada: o recurso Peças.
+			var r := lado * 0.5
+			var hexa := PackedVector2Array()
+			for k in 6:
+				hexa.append(c + Vector2.from_angle(TAU * k / 6.0 + PI / 6.0) * r * 0.92)
+			draw_colored_polygon(hexa, cor)
+			draw_circle(c, r * 0.4, cor_fundo)
 		"desfazer", "refazer":
 			# Seta curva para trás (desfazer) ou para a frente (refazer).
 			var r := lado * 0.5

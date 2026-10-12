@@ -153,7 +153,8 @@ func _entrar(uid: int) -> void:
 	faixas["jogador"] = carro.faixas
 	var par: Dictionary = montada["parceiro"]
 	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
-	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1)
+	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1,
+			montada["modelos"])
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],

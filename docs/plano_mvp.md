@@ -454,3 +454,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (corpo sem fundo, medidas em `personagens.json` → busto) com a cabeça inteira acima
     da caixa e o corte rente à borda de baixo. "Pular" sobe quando a caixa desce. Tudo
     vira corte seco com Reduzir animações.
+66. **Peças e The Grid** (2026-10-12, pedido do usuário): peças são um recurso próprio
+    (`economia.credito_pecas`), mostrado no cabeçalho. Vêm do desmanche, dos carros
+    perdidos na arena (o do jogador e o do parceiro) e dos rivais que a dupla do jogador
+    elimina; pagam só a blindagem. Quantas peças um carro rende
+    (`GestaoEquipe.pecas_do_carro`): `fator_pecas` × (revenda + peças compradas) ×
+    bônus da Sede — critério provisório, a confirmar. A lista negra ("The Grid") fica na
+    tela de Licenças/Carreira: dez equipes (`equipes.json` → `grid`, 10 a 1), vencidas
+    uma por vez ganhando uma prova em que a da vez correu ou a arena com ela presente
+    (`TheGrid`, `jogador.grid`).

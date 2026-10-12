@@ -237,7 +237,12 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	jogador.economia.creditar(premio)
 
 	var carro_premio_uid := -1
+	var grid := {}
 	if posicao == 1:
+		# The Grid: a equipe da vez estava nesta prova?
+		var presentes := escalacao(evento_id, int(corrida.get("semente", -1))).map(func(g): return g["equipe"]["id"]) \
+				if int(corrida.get("semente", -1)) >= 0 else []
+		grid = TheGrid.registrar(dados, jogador, presentes)
 		var primeira: bool = not jogador.vitorias.has(evento_id)
 		jogador.vitorias[evento_id] = jogador.vitorias.get(evento_id, 0) + 1
 		if primeira and ev.get("carro_premio") != null:
@@ -268,6 +273,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"carro_premio_uid": carro_premio_uid,
 		"resultado": r,
 		"campeonato": campeonato,
+		"grid": grid,
 	}
 
 

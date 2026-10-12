@@ -389,6 +389,7 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 		if jogador.historia != null:
 			var t := "ARENA_PERDA" if f["perdeu"] else ("ARENA_VITORIA" if f.get("venceu_equipe", f["posicao"] == 1) else "ARENA_FIM")
 			jogador.historia.disparar(t)
+			jogador.historia.disparar_grid(f.get("grid", {}), dados)
 		_sujar_todas()
 		atualizar())
 
@@ -529,6 +530,7 @@ func _reconstruir(i: int) -> void:
 func _sujar_todas() -> void:
 	for i in _todas.size():
 		_sujas[i] = true
+	_cabecalho.definir_pecas(Aba.dinheiro(jogador.economia.credito_pecas))  # antes: o número dos giros cabe no resto
 	_cabecalho.definir_giros(Aba.dinheiro(jogador.economia.saldo))
 	_atualizar_ao_vivo()
 	_atualizar_nav()
@@ -740,7 +742,9 @@ func _processar_fila() -> void:
 		var c: Dictionary = rel["corridas"][0]
 		var primeira: bool = not antes_vitorias.has(c["evento_id"])
 		# A conversa da chegada vem antes do resultado, sobre a tela escura.
-		if jogador.historia != null and jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias):
+		var falou_grid: bool = jogador.historia != null and jogador.historia.disparar_grid(c.get("grid", {}), dados)
+		if jogador.historia != null and (jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias)
+				or falou_grid):
 			_quando_dialogo_acabar(_resultado.bind(c, primeira))
 		else:
 			_resultado(c, primeira)

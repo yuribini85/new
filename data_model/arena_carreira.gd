@@ -187,7 +187,11 @@ static func premio(dados: Node, pts: int) -> int:
 
 ## Aplica a luta: prêmio no saldo, registro e, se o carro do jogador foi
 ## eliminado, ele sai da garagem. {posicao, pontos, premio, perdeu, carro, uid}.
-static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary, parceiro_uid: int = -1) -> Dictionary:
+## Peças: o carro do jogador (e o do parceiro) perdido vira peças, e cada
+## rival que a dupla do jogador elimina também (GestaoEquipe.pecas_do_carro;
+## `modelos` = id -> dados do carro de cada participante).
+static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary, parceiro_uid: int = -1,
+		modelos: Dictionary = {}) -> Dictionary:
 	var p: Dictionary = dados.arena()
 	var pts := pontos(resultado, "jogador", p)
 	var valor := premio(dados, pts)
@@ -200,7 +204,10 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	var posicao: int = resultado["classificacao"].find("jogador") + 1
 	if posicao == 1:
 		reg["vitorias"] = int(reg.get("vitorias", 0)) + 1
+	var pecas_perdidos := 0
+	var pecas_destruidos := 0
 	if perdeu:
+		pecas_perdidos += GestaoEquipe.pecas_do_carro(dados, jogador, carro)
 		reg["perdidos"] = Array(reg.get("perdidos", [])) + [String(carro.id)]
 		jogador.garagem.remover(uid)
 		if jogador.carro_ativo == uid:
@@ -214,19 +221,34 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		var cp: Carro = jogador.garagem.carro(parceiro_uid)
 		if cp != null:
 			perdeu_parceiro = true
+			pecas_perdidos += GestaoEquipe.pecas_do_carro(dados, jogador, cp)
 			reg["perdidos"] = Array(reg.get("perdidos", [])) + [String(cp.id)]
 			jogador.garagem.remover(parceiro_uid)
 			if jogador.carro_ativo == parceiro_uid:
 				var resto2: Array = jogador.garagem.lista()
 				jogador.carro_ativo = resto2[0].uid if not resto2.is_empty() else -1
 			jogador.carro_companheiro = -1
+	# Rivais que a dupla do jogador tirou da luta viram peças.
+	for id in resultado["carros"]:
+		var r: Dictionary = resultado["carros"][id]
+		if id in ["jogador", "parceiro"] or not r["eliminado"] or not String(r.get("por", "")) in ["jogador", "parceiro"]:
+			continue
+		if modelos.has(id):
+			pecas_destruidos += GestaoEquipe.pecas_do_carro(dados, jogador, Carro.new(modelos[id]))
+	jogador.economia.ganhar_pecas(pecas_perdidos + pecas_destruidos)
 	# Campeonato: a equipe do jogador ficou de pé → sobe de nível (até o último).
 	var venceu_equipe: bool = resultado.get("equipe_vencedora", "") == "jogador"
 	var nivel_antes := nivel(jogador)
+	var grid := {}
 	if venceu_equipe:
+		var presentes: Array = []
+		for id in resultado["carros"]:
+			presentes.append(String(resultado["carros"][id].get("equipe", "")))
+		grid = TheGrid.registrar(dados, jogador, presentes)
 		var maximo := int(p.get("campeonato", {}).get("equipes_max", 10)) - int(p.get("campeonato", {}).get("equipes_min", 2))
 		reg["nivel"] = mini(nivel_antes + 1, maximo)
 	jogador.arena = reg
 	return {"posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
 			"perdeu_parceiro": perdeu_parceiro, "venceu_equipe": venceu_equipe,
-			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes}
+			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes,
+			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid}

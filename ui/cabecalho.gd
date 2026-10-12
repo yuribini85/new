@@ -160,6 +160,24 @@ func _init() -> void:
 	caixa_giros.custom_minimum_size.x = Tipografia.fonte("semibold").get_string_size("GIROS",
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x + 2.0
 	dentro.add_child(caixa_giros)
+	# Peças (desmanche e arena; pagam a blindagem): no mesmo painel, depois dos
+	# giros, com a porca.
+	_pecas = HBoxContainer.new()
+	_pecas.add_theme_constant_override("separation", 4)
+	_pecas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_pecas.tooltip_text = "Peças: vêm do desmanche e da arena; pagam a blindagem"
+	dentro.add_child(_pecas)
+	var porca := IconeVetor.new("peca", COR_ROTULO)
+	porca.cor_fundo = Color(0.09, 0.09, 0.1)
+	porca.custom_minimum_size = Vector2(18, 18)
+	porca.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_pecas.add_child(porca)
+	_pecas_numero = Label.new()
+	Tipografia.numero(_pecas_numero, 22)
+	_pecas_numero.add_theme_color_override("font_color", COR_ROTULO)
+	_pecas_numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_pecas_numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_pecas.add_child(_pecas_numero)
 	_espaco(4)
 	# Configurações: engrenagem na própria faixa, depois do painel.
 	engrenagem = Button.new()
@@ -503,6 +521,15 @@ func _process(delta: float) -> void:
 		return
 	_pulso = fmod(_pulso + delta, 2.4)
 	_icone_marcador.modulate.a = 0.7 + 0.3 * cos(TAU * _pulso / 2.4)
+
+
+var _pecas: HBoxContainer
+var _pecas_numero: Label
+
+
+## Peças do jogador (texto já formatado), sob os giros.
+func definir_pecas(texto: String) -> void:
+	_pecas_numero.text = texto
 
 
 ## Valor dos giros, encolhendo a fonte se não couber na moldura.

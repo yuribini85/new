@@ -357,3 +357,54 @@ func test_identidade_das_equipes() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+
+## The Grid: uma por vez, da #10 à #1; só a da vez conta.
+func test_the_grid_sobe_uma_por_vez() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var lista := TheGrid.equipes(d)
+	igual(lista.size(), 10, "dez equipes no Grid")
+	igual(int(lista[0]["grid"]), 10, "começa na #10")
+	igual(TheGrid.posicao(d, j), 0, "fora do Grid")
+	var dez: Dictionary = lista[0]
+	var nove: Dictionary = lista[1]
+	igual(TheGrid.registrar(d, j, [nove["id"]]), {}, "vencer a #9 antes da #10 não conta")
+	igual(TheGrid.registrar(d, j, [dez["id"], "outra"])["id"], dez["id"], "venceu a da vez")
+	igual(TheGrid.posicao(d, j), 10, "agora é a #10")
+	igual(TheGrid.da_vez(d, j)["id"], nove["id"], "a próxima é a #9")
+	for e in lista.slice(1):
+		TheGrid.registrar(d, j, [e["id"]])
+	igual(TheGrid.posicao(d, j), 1, "topo do Grid")
+	igual(TheGrid.da_vez(d, j), {}, "ninguém acima")
+	j.free()
+	d.free()
+
+
+## Arena: o carro perdido e os rivais que a dupla elimina viram peças.
+func test_arena_rende_pecas() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000000)
+	var base: Dictionary = d.lista("carros")[0]
+	var uid: int = j.concessionaria.comprar_carro(base)
+	j.concessionaria.comprar_carro(base)
+	var rival: Dictionary = d.lista("carros")[1]
+	var resultado := {"classificacao": ["r1", "jogador"], "equipe_vencedora": "x", "eventos": [],
+			"carros": {"jogador": {"eliminado": true, "por": "r1", "equipe": "jogador", "eliminou": 1},
+			"r1": {"eliminado": false, "por": "", "equipe": "x"},
+			"r2": {"eliminado": true, "por": "jogador", "equipe": "x"}}}
+	var antes: int = j.economia.credito_pecas
+	var esperado_perdido := GestaoEquipe.pecas_do_carro(d, j, j.garagem.carro(uid))
+	var esperado_rival := GestaoEquipe.pecas_do_carro(d, j, Carro.new(rival))
+	var f := ArenaCarreira.aplicar(d, j, uid, resultado, -1, {"r1": rival, "r2": rival})
+	igual(int(f["pecas_perdidos"]), esperado_perdido, "o carro perdido vira peças")
+	igual(int(f["pecas_destruidos"]), esperado_rival, "só o rival eliminado pela dupla vira peças")
+	igual(j.economia.credito_pecas, antes + esperado_perdido + esperado_rival, "as peças entram no estoque")
+	j.free()
+	d.free()

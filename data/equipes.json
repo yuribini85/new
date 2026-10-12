@@ -66,7 +66,8 @@
    "faixa": "#c8ccd0",
    "filete": "#8a9096"
   },
-  "fonte_numero": "condensado"
+  "fonte_numero": "condensado",
+  "grid": 3
  },
  {
   "id": "eq03_kaze_dynamics",
@@ -155,7 +156,8 @@
    "faixa": "#9a4f2a",
    "filete": "#cdb88f"
   },
-  "fonte_numero": "estencil"
+  "fonte_numero": "estencil",
+  "grid": 6
  },
  {
   "id": "eq05_apex_dominion",
@@ -247,7 +249,8 @@
    "faixa": "#e6dcc4",
    "filete": "#2b2a2a"
   },
-  "fonte_numero": "bloco"
+  "fonte_numero": "bloco",
+  "grid": 8
  },
  {
   "id": "eq07_northstar_works",
@@ -293,7 +296,8 @@
    "faixa": "#2a9d9a",
    "filete": "#e8c22a"
   },
-  "fonte_numero": "condensado"
+  "fonte_numero": "condensado",
+  "grid": 4
  },
  {
   "id": "eq08_black_circuit",
@@ -340,7 +344,8 @@
    "faixa": "#d6c49a",
    "filete": "#2b2a2a"
   },
-  "fonte_numero": "pincel"
+  "fonte_numero": "pincel",
+  "grid": 5
  },
  {
   "id": "eq09_helix_racing",
@@ -565,7 +570,8 @@
    "faixa": "#9aa3ab",
    "filete": "#e6dcc4"
   },
-  "fonte_numero": "estencil"
+  "fonte_numero": "estencil",
+  "grid": 7
  },
  {
   "id": "eq14_crown_vector",
@@ -610,7 +616,8 @@
    "faixa": "#5a1a24",
    "filete": "#a8873e"
   },
-  "fonte_numero": "serifa"
+  "fonte_numero": "serifa",
+  "grid": 1
  },
  {
   "id": "eq15_gravelborn",
@@ -655,7 +662,8 @@
    "faixa": "#b5562f",
    "filete": "#e9dfc4"
   },
-  "fonte_numero": "pincel"
+  "fonte_numero": "pincel",
+  "grid": 10
  },
  {
   "id": "eq16_meridian_gp",
@@ -788,7 +796,8 @@
    "faixa": "#23432f",
    "filete": "#ece4cf"
   },
-  "fonte_numero": "bloco"
+  "fonte_numero": "bloco",
+  "grid": 9
  },
  {
   "id": "eq19_cold_harbor",
@@ -877,6 +886,7 @@
    "faixa": "#6e1f33",
    "filete": "#c9a54a"
   },
-  "fonte_numero": "condensado"
+  "fonte_numero": "condensado",
+  "grid": 2
  }
 ]

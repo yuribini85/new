@@ -107,7 +107,7 @@ func _partes() -> void:
 		h.add_child(b)
 
 
-## Caixa único (o saldo), o crédito de peças e a folha de cada corrida.
+## Caixa único (o saldo), as peças e a folha de cada corrida.
 func _caixa() -> void:
 	titulo_secao("CAIXA", "Prêmios, patrocínio e staff entram e saem do mesmo caixa.")
 	var c := cartao()
@@ -120,7 +120,7 @@ func _caixa() -> void:
 	n.add_theme_color_override("font_color", COR_DESTAQUE)
 	h.add_child(n)
 	if jogador.economia.credito_pecas > 0:
-		rotulo("+ %s giros de crédito em peças (desmanche)" % dinheiro(jogador.economia.credito_pecas),
+		rotulo("+ %s peças (desmanche e arena; pagam a blindagem)" % dinheiro(jogador.economia.credito_pecas),
 				FONTE_PEQUENA + 2, COR_SECUNDARIA, c)
 	var f := EquipeJogador.folha(dados, jogador)
 	if not GestaoEquipe.aberta(dados, jogador):

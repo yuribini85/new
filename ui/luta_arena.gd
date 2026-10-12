@@ -156,6 +156,10 @@ func _mostrar_final() -> void:
 		notas.append("Mesmo assim, a sua dupla ficou de pé.")
 	if f.get("subiu_nivel", false):
 		notas.append("Próximo campeonato: uma equipe a mais.")
+	if int(f.get("pecas_destruidos", 0)) > 0:
+		notas.append("Rivais destruídos pela sua dupla: +%s peças." % Aba.dinheiro(int(f["pecas_destruidos"])))
+	if int(f.get("pecas_perdidos", 0)) > 0:
+		notas.append("Do que sobrou dos seus: +%s peças." % Aba.dinheiro(int(f["pecas_perdidos"])))
 	for txt in notas:
 		var d := Label.new()
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

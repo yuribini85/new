@@ -2831,6 +2831,44 @@
   "cenario": "vector_academy"
  },
  {
+  "id": "CW_GR00",
+  "trigger": "ABA:LICENCAS",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Está vendo essa lista? É o The Grid. Dez equipes no topo do circuito. A gente está fora dela.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Uma de cada vez, da décima até a primeira. A da vez fica em destaque."
+   },
+   {
+    "quem": "mara",
+    "texto": "Ganhe uma prova em que ela esteja correndo, ou a arena com ela lá dentro, e ela fica para trás.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "The Grid fica em Carreira, embaixo dos objetivos."
+   }
+  ],
+  "requer": [
+   "FIRST_RACE_DONE",
+   "LICENSE_OFFLINE_TUTORIAL_SEEN"
+  ],
+  "proibe": [
+   "GRID_INTRO"
+  ],
+  "flags": [
+   "GRID_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
   "id": "CW_L03",
   "trigger": "LICENCA_TREINO_INICIO",
   "falas": [
@@ -3106,6 +3144,69 @@
   "uma_vez": true,
   "personagem": "dono",
   "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_GR01",
+  "trigger": "GRID_SUBIU",
+  "falas": [
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "mara",
+    "texto": "{equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_GR02",
+  "trigger": "GRID_TOPO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeiro lugar do Grid. Quando você entrou por aquela porta, a gente mal pagava as contas.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Você não ganhou uma corrida. Construiu uma equipe que chegou ao topo.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "GRID_TOP"
+  ],
+  "flags": [
+   "GRID_TOP"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_SYS11",
+  "trigger": "SEM_PECAS",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Faltam peças. Desmonte um carro parado, ou traga sucata da arena."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
  },
  {
   "id": "CW_R02",
@@ -3413,6 +3514,10 @@
     "texto": "Só que pesa. Na corrida ele vai sentir."
    },
    {
+    "quem": "mecanico_arena",
+    "texto": "E se paga com peças. O que a gente desmonta e o que sobra da arena vira peça."
+   },
+   {
     "quem": "sistema",
     "texto": "Blindagem: Oficina, ao lado da velocidade máxima."
    }
@@ -3437,6 +3542,10 @@
    {
     "quem": "mecanico_arena",
     "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças."
    },
    {
     "quem": "mecanico_arena",
@@ -3475,6 +3584,10 @@
    {
     "quem": "mecanico_arena",
     "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças."
    },
    {
     "quem": "mecanico_arena",
@@ -3713,7 +3826,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Cada peça dele ainda serve em outro. O crédito fica para a próxima compra de peças.",
+    "texto": "Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.",
     "pose": "pensativa"
    }
   ],

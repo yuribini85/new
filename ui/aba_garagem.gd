@@ -465,6 +465,11 @@ func _acao_evolucao(c: Carro, cat: String) -> Array:
 		return ["INSTALAR", func():
 			_comprar_peca(c, it, antes)
 			_reabrir(c, cat), false, true]
+	if cat == Blindagem.CATEGORIA:
+		# A blindagem se paga com peças (desmanche e arena), não com giros.
+		return ["INSTALAR · %s PEÇAS" % dinheiro(preco), func():
+			_comprar_peca(c, it, antes)
+			_reabrir(c, cat), false, jogador.economia.pode_pagar_peca(preco, true)]
 	return ["INSTALAR · %s" % dinheiro(preco), func():
 		_comprar_peca(c, it, antes)
 		_reabrir(c, cat), true, jogador.economia.pode_pagar_peca(preco)]
@@ -900,7 +905,7 @@ func _preco_ampliacao() -> int:
 
 func _confirmar_venda(c: Carro) -> void:
 	# Com o desmanche (GestaoEquipe), a janela oferece as duas saídas: vender
-	# pelo valor do carro ou desmontar pelo crédito das peças compradas.
+	# pelo valor do carro (giros) ou desmontar em peças (pagam a blindagem).
 	var desmanche: bool = not dados.equipe().is_empty() and GestaoEquipe.pode_desmontar(jogador, c.uid)
 	var credito := GestaoEquipe.credito_desmanche(dados, jogador, c) if desmanche else 0
 	var botoes := [["Vender", func():
@@ -914,7 +919,7 @@ func _confirmar_venda(c: Carro) -> void:
 			if cr < 0:
 				avisar("Este carro não pode ser desmontado agora.", false)
 			else:
-				avisar("%s desmontado: %s giros de crédito em peças." % [nome, dinheiro(cr)])
+				avisar("%s desmontado: +%s peças." % [nome, dinheiro(cr)])
 				Sons.tocar_ui(self, "batida", -10.0, 1.3)
 				historia("CARRO_DESMONTADO")
 			mudou.emit()
@@ -925,8 +930,8 @@ func _confirmar_venda(c: Carro) -> void:
 		nota("icone_vender", "Vender: %s giros" % dinheiro(revenda(c.base)), "Peças instaladas não entram no valor.", v,
 				Color.WHITE)
 		if desmanche:
-			nota("icone_melhorar", "Desmontar: %s giros em peças" % dinheiro(credito),
-					"Crédito pelas peças compradas para ele; paga peças de qualquer carro, antes do caixa.", v, Color.WHITE),
+			nota("icone_melhorar", "Desmontar: %s peças" % dinheiro(credito),
+					"A carcaça e as peças compradas para ele viram peças, que pagam a blindagem.", v, Color.WHITE),
 		botoes)
 
 
