@@ -658,8 +658,10 @@ func _faiscas(onde: Vector3, forte: bool) -> void:
 	f.initial_velocity_min = 5.0
 	f.initial_velocity_max = 14.0 if forte else 8.0
 	f.gravity = Vector3(0, -22, 0)
+	f.scale_amount_min = 0.5
+	f.scale_amount_max = 1.0
 	var q := QuadMesh.new()
-	q.size = Vector2(0.2, 0.2)
+	q.size = Vector2(0.08, 0.08)  # faísca pequena (perto da câmera, 0,2 m virava quadrado grande)
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
