@@ -400,7 +400,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			var atual: bool = c["id"] == atual_id
 			var outra := EquipeJogador.vaga_do_piloto(jogador, String(c["id"]))
 			corpo.texture = Assets.get_asset(String(c["id"]), "corpo")
-			if corpo.texture == null:  # piloto do Grid: o retrato; sem arte, a silhueta
+			if corpo.texture == null:  # genérico ainda sem corpo: o retrato; sem arte, a silhueta
 				corpo.texture = Assets.get_asset(String(c["id"]), "retrato")
 			if corpo.texture == null:
 				corpo.texture = Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(c["id"]))) % 3))

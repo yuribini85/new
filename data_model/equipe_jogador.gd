@@ -90,7 +90,8 @@ static func piloto(dados: Node, piloto_id: String) -> Dictionary:
 	return p if p.get("id") == piloto_id else {}
 
 
-## Candidatos a segundo piloto (decisão 56): {id, nome, retrato, traco, frase}.
+## Candidatos a segundo piloto (decisão 56): {id, nome, traco, frase}; o retrato
+## é um dos genéricos (Assets.retrato_generico).
 static func candidatos(dados: Node) -> Array:
 	return config(dados).get("candidatos", [])
 
@@ -108,23 +109,24 @@ static func cfg_mercado(dados: Node) -> Dictionary:
 
 ## Piloto de uma equipe do Grid como candidato: o traço pelo perfil da equipe.
 static func _do_grid(dados: Node, e: Dictionary, pe: Dictionary) -> Dictionary:
-	var tr := String(cfg_mercado(dados).get("traco_por_perfil", {}).get(String(e.get("perfil", "")), "constante"))
+	# Decisão 72: o traço pelo perfil do próprio piloto (o da equipe, se faltar).
+	var perfil := String(pe.get("perfil", e.get("perfil", "")))
+	var tr := String(cfg_mercado(dados).get("traco_por_perfil", {}).get(perfil, "constante"))
 	var tipo_tr := "arena" if tr in ["agressivo", "barato"] else "corrida"
-	return {"id": pe["id"], "nome": pe["nome"], "retrato": pe.get("retrato", ""), "traco": tr, "tipo": tipo_tr,
+	return {"id": pe["id"], "nome": pe["nome"], "traco": tr, "tipo": tipo_tr,
 			"frase": String(pe.get("personalidade", "")), "equipe": String(e["nome"])}
 
 
-## Todos os que podem aparecer no mercado: os candidatos e os pilotos (com
-## retrato) das equipes do Grid já vencidas.
+## Todos os que podem aparecer no mercado: os candidatos e os quatro pilotos
+## de cada equipe do Grid já vencida.
 static func pool(dados: Node, jogador: Node, tipo_: String) -> Array:
 	var l: Array = candidatos(dados).filter(func(c): return String(c.get("tipo", "corrida")) == tipo_)
 	for id in TheGrid.vencidas(jogador):
 		var e := TheGrid.equipe(dados, String(id))
 		for pe in e.get("pilotos", []):
-			if String(pe.get("retrato", "")) != "":
-				var c := _do_grid(dados, e, pe)
-				if c["tipo"] == tipo_:
-					l.append(c)
+			var c := _do_grid(dados, e, pe)
+			if c["tipo"] == tipo_:
+				l.append(c)
 	return l
 
 

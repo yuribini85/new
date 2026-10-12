@@ -33,28 +33,24 @@
    {
     "id": "lucien_vale",
     "nome": "Lucien Vale",
-    "retrato": "res://arte/pilotos/lucien_vale.png",
     "perfil": "equilibrado",
     "personalidade": "Erra quando pressionado de perto."
    },
    {
     "id": "nadia_voss",
     "nome": "Nadia Voss",
-    "retrato": "res://arte/pilotos/nadia_voss.png",
     "perfil": "cauteloso",
     "personalidade": "Metódico: cada volta igual à anterior."
    },
    {
     "id": "akira_delacroix",
     "nome": "Akira Delacroix",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Prefere ceder a posição a riscar o carro."
    },
    {
     "id": "beatriz_oyelaran",
     "nome": "Beatriz Oyelaran",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Explosivo na largada, apagado no fim."
    }
@@ -81,28 +77,24 @@
    {
     "id": "ren_kaito",
     "nome": "Ren Kaito",
-    "retrato": "res://arte/pilotos/ren_kaito.png",
     "perfil": "agressivo",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    },
    {
     "id": "hana_mori",
     "nome": "Hana Mori",
-    "retrato": "res://arte/pilotos/hana_mori.png",
     "perfil": "equilibrado",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    },
    {
     "id": "dmitri_abernathy",
     "nome": "Dmitri Abernathy",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Freia mais tarde que todo mundo."
    },
    {
     "id": "esme_lindgren",
     "nome": "Esme Lindgren",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Vive no vácuo, esperando a chance."
    }
@@ -125,28 +117,24 @@
    {
     "id": "bram_holt",
     "nome": "Bram Holt",
-    "retrato": "res://arte/pilotos/bram_holt.png",
     "perfil": "cauteloso",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    },
    {
     "id": "soren_pike",
     "nome": "Soren Pike",
-    "retrato": "res://arte/pilotos/soren_pike.png",
     "perfil": "equilibrado",
     "personalidade": "Paciente: espera o erro dos outros."
    },
    {
     "id": "felix_hakimi",
     "nome": "Felix Hakimi",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Erra quando pressionado de perto."
    },
    {
     "id": "greta_saarinen",
     "nome": "Greta Saarinen",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Metódico: cada volta igual à anterior."
    }
@@ -173,28 +161,24 @@
    {
     "id": "lucas_ward",
     "nome": "Lucas Ward",
-    "retrato": "res://arte/pilotos/lucas_ward.png",
     "perfil": "agressivo",
     "personalidade": "Tem pressa de tudo, menos de frear."
    },
    {
     "id": "cassian_roe",
     "nome": "Cassian Roe",
-    "retrato": "res://arte/pilotos/cassian_roe.png",
     "perfil": "equilibrado",
     "personalidade": "Cresce na segunda metade da prova."
    },
    {
     "id": "nyra_sol",
     "nome": "Nyra Sol",
-    "retrato": "res://arte/pilotos/nyra_sol.png",
     "perfil": "agressivo",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    },
    {
     "id": "hugo_esposito",
     "nome": "Hugo Esposito",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    }
@@ -218,7 +202,6 @@
    {
     "id": "dario_kest",
     "nome": "Dario Kest",
-    "retrato": "res://arte/pilotos/dario_kest.png",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Não perde a calma nem com o pneu no fim."
@@ -226,7 +209,6 @@
    {
     "id": "lena_brook",
     "nome": "Lena Brook",
-    "retrato": "res://arte/pilotos/lena_brook.png",
     "provisorio": true,
     "perfil": "cauteloso",
     "personalidade": "Poupa o carro para a última volta."
@@ -234,14 +216,12 @@
    {
     "id": "isadora_aldana",
     "nome": "Isadora Aldana",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    },
    {
     "id": "jasper_laurier",
     "nome": "Jasper Laurier",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Paciente: espera o erro dos outros."
    }
@@ -268,14 +248,12 @@
    {
     "id": "erik_halden",
     "nome": "Erik Halden",
-    "retrato": "res://arte/pilotos/erik_halden.png",
     "perfil": "cauteloso",
     "personalidade": "Lê a corrida como um tabuleiro."
    },
    {
     "id": "liv_arnesen",
     "nome": "Liv Arnesen",
-    "retrato": "res://arte/pilotos/liv_arnesen.png",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Imprevisível até para a própria equipe."
@@ -283,14 +261,12 @@
    {
     "id": "katya_whitcombe",
     "nome": "Katya Whitcombe",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Tem pressa de tudo, menos de frear."
    },
    {
     "id": "leon_iwata",
     "nome": "Leon Iwata",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Cresce na segunda metade da prova."
    }
@@ -317,7 +293,6 @@
    {
     "id": "marek_stone",
     "nome": "Marek Stone",
-    "retrato": "res://arte/pilotos/marek_stone.png",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Sorri no grid, morde na pista."
@@ -325,7 +300,6 @@
    {
     "id": "ivy_corran",
     "nome": "Ivy Corran",
-    "retrato": "res://arte/pilotos/ivy_corran.png",
     "provisorio": true,
     "perfil": "cauteloso",
     "personalidade": "Briga roda a roda até a última curva."
@@ -333,14 +307,12 @@
    {
     "id": "marisol_eriksen",
     "nome": "Marisol Eriksen",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Não perde a calma nem com o pneu no fim."
    },
    {
     "id": "nils_petrakis",
     "nome": "Nils Petrakis",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Poupa o carro para a última volta."
    }
@@ -367,7 +339,6 @@
    {
     "id": "tomas_reyl",
     "nome": "Tomas Reyl",
-    "retrato": "res://arte/pilotos/tomas_reyl.png",
     "provisorio": true,
     "perfil": "equilibrado",
     "personalidade": "Veterano que conhece todo atalho do paddock."
@@ -375,7 +346,6 @@
    {
     "id": "sasha_imre",
     "nome": "Sasha Imre",
-    "retrato": "res://arte/pilotos/sasha_imre.png",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Ninguém lembra de vê-lo errar."
@@ -383,14 +353,12 @@
    {
     "id": "odette_bastos",
     "nome": "Odette Bastos",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Lê a corrida como um tabuleiro."
    },
    {
     "id": "pablo_morrow",
     "nome": "Pablo Morrow",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Imprevisível até para a própria equipe."
    }
@@ -413,7 +381,6 @@
    {
     "id": "gus_harrow",
     "nome": "Gus Harrow",
-    "retrato": "res://arte/pilotos/gus_harrow.png",
     "provisorio": true,
     "perfil": "equilibrado",
     "personalidade": "Calado no box, barulhento na pista."
@@ -421,7 +388,6 @@
    {
     "id": "pia_lund",
     "nome": "Pia Lund",
-    "retrato": "res://arte/pilotos/pia_lund.png",
     "provisorio": true,
     "perfil": "cauteloso",
     "personalidade": "Fecha a porta sem cerimônia."
@@ -429,14 +395,12 @@
    {
     "id": "quinn_ishida",
     "nome": "Quinn Ishida",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Sorri no grid, morde na pista."
    },
    {
     "id": "rafaela_takeda",
     "nome": "Rafaela Takeda",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Briga roda a roda até a última curva."
    }
@@ -459,28 +423,24 @@
    {
     "id": "viktor_ren",
     "nome": "Viktor Ren",
-    "retrato": "res://arte/pilotos/viktor_ren.png",
     "perfil": "agressivo",
     "personalidade": "Explosivo na largada, apagado no fim."
    },
    {
     "id": "yuna_kess",
     "nome": "Yuna Kess",
-    "retrato": "res://arte/pilotos/yuna_kess.png",
     "perfil": "equilibrado",
     "personalidade": "Ataca por fora quando ninguém espera."
    },
    {
     "id": "stellan_fairbanks",
     "nome": "Stellan Fairbanks",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Veterano que conhece todo atalho do paddock."
    },
    {
     "id": "tamsin_bergstrom",
     "nome": "Tamsin Bergstrom",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Ninguém lembra de vê-lo errar."
    }
@@ -503,28 +463,24 @@
    {
     "id": "oscar_flint",
     "nome": "Oscar Flint",
-    "retrato": "res://arte/pilotos/oscar_flint.png",
     "perfil": "cauteloso",
     "personalidade": "Vive no vácuo, esperando a chance."
    },
    {
     "id": "mina_rowe",
     "nome": "Mina Rowe",
-    "retrato": "res://arte/pilotos/mina_rowe.png",
     "perfil": "equilibrado",
     "personalidade": "Corre com o regulamento decorado."
    },
    {
     "id": "ulrich_marchetti",
     "nome": "Ulrich Marchetti",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Calado no box, barulhento na pista."
    },
    {
     "id": "valentina_yamaguchi",
     "nome": "Valentina Yamaguchi",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Fecha a porta sem cerimônia."
    }
@@ -547,28 +503,24 @@
    {
     "id": "noel_mercer",
     "nome": "Noel Mercer",
-    "retrato": "res://arte/pilotos/noel_mercer.png",
     "perfil": "equilibrado",
     "personalidade": "Metódico: cada volta igual à anterior."
    },
    {
     "id": "zara_keene",
     "nome": "Zara Keene",
-    "retrato": "res://arte/pilotos/zara_keene.png",
     "perfil": "agressivo",
     "personalidade": "Prefere ceder a posição a riscar o carro."
    },
    {
     "id": "wes_jaramillo",
     "nome": "Wes Jaramillo",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Explosivo na largada, apagado no fim."
    },
    {
     "id": "xenia_falcone",
     "nome": "Xenia Falcone",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Ataca por fora quando ninguém espera."
    }
@@ -595,28 +547,24 @@
    {
     "id": "elias_wren",
     "nome": "Elias Wren",
-    "retrato": "res://arte/pilotos/elias_wren.png",
     "perfil": "equilibrado",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    },
    {
     "id": "celeste_armand",
     "nome": "Celeste Armand",
-    "retrato": "res://arte/pilotos/celeste_armand.png",
     "perfil": "cauteloso",
     "personalidade": "Freia mais tarde que todo mundo."
    },
    {
     "id": "yusuf_quintero",
     "nome": "Yusuf Quintero",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Vive no vácuo, esperando a chance."
    },
    {
     "id": "zoe_coutinho",
     "nome": "Zoe Coutinho",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Corre com o regulamento decorado."
    }
@@ -643,28 +591,24 @@
    {
     "id": "rafe_calder",
     "nome": "Rafe Calder",
-    "retrato": "res://arte/pilotos/rafe_calder.png",
     "perfil": "agressivo",
     "personalidade": "Paciente: espera o erro dos outros."
    },
    {
     "id": "nika_stroud",
     "nome": "Nika Stroud",
-    "retrato": "res://arte/pilotos/nika_stroud.png",
     "perfil": "equilibrado",
     "personalidade": "Erra quando pressionado de perto."
    },
    {
     "id": "anders_nyberg",
     "nome": "Anders Nyberg",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Metódico: cada volta igual à anterior."
    },
    {
     "id": "bianca_jovanovic",
     "nome": "Bianca Jovanovic",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Prefere ceder a posição a riscar o carro."
    }
@@ -691,28 +635,24 @@
    {
     "id": "theo_maren",
     "nome": "Tobias Maren",
-    "retrato": "res://arte/pilotos/theo_maren.png",
     "perfil": "cauteloso",
     "personalidade": "Cresce na segunda metade da prova."
    },
    {
     "id": "selene_ashby",
     "nome": "Selene Ashby",
-    "retrato": "res://arte/pilotos/selene_ashby.png",
     "perfil": "equilibrado",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    },
    {
     "id": "cyrus_ulloa",
     "nome": "Cyrus Ulloa",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    },
    {
     "id": "dalia_grimaldi",
     "nome": "Dalia Grimaldi",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Freia mais tarde que todo mundo."
    }
@@ -735,28 +675,24 @@
    {
     "id": "magnus_rell",
     "nome": "Magnus Rell",
-    "retrato": "res://arte/pilotos/magnus_rell.png",
     "perfil": "equilibrado",
     "personalidade": "Poupa o carro para a última volta."
    },
    {
     "id": "ines_calloway",
     "nome": "Ines Calloway",
-    "retrato": "res://arte/pilotos/ines_calloway.png",
     "perfil": "agressivo",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    },
    {
     "id": "emil_castellan",
     "nome": "Emil Castellan",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Paciente: espera o erro dos outros."
    },
    {
     "id": "fiona_nakamura",
     "nome": "Fiona Nakamura",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Erra quando pressionado de perto."
    }
@@ -779,28 +715,24 @@
    {
     "id": "ash_corwin",
     "nome": "Ash Corwin",
-    "retrato": "res://arte/pilotos/ash_corwin.png",
     "perfil": "cauteloso",
     "personalidade": "Imprevisível até para a própria equipe."
    },
    {
     "id": "cleo_vane",
     "nome": "Cleo Vane",
-    "retrato": "res://arte/pilotos/cleo_vane.png",
     "perfil": "equilibrado",
     "personalidade": "Tem pressa de tudo, menos de frear."
    },
    {
     "id": "gideon_zelenko",
     "nome": "Gideon Zelenko",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Cresce na segunda metade da prova."
    },
    {
     "id": "helga_kowal",
     "nome": "Helga Kowal",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    }
@@ -827,28 +759,24 @@
    {
     "id": "finn_sutter",
     "nome": "Finn Sutter",
-    "retrato": "res://arte/pilotos/finn_sutter.png",
     "perfil": "cauteloso",
     "personalidade": "Briga roda a roda até a última curva."
    },
    {
     "id": "kaia_rehn",
     "nome": "Kaia Rehn",
-    "retrato": "res://arte/pilotos/kaia_rehn.png",
     "perfil": "agressivo",
     "personalidade": "Não perde a calma nem com o pneu no fim."
    },
    {
     "id": "ivo_galloway",
     "nome": "Ivo Galloway",
-    "retrato": "",
     "perfil": "cauteloso",
     "personalidade": "Poupa o carro para a última volta."
    },
    {
     "id": "juno_rasmussen",
     "nome": "Juno Rasmussen",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    }
@@ -871,28 +799,24 @@
    {
     "id": "rex_arden",
     "nome": "Rex Arden",
-    "retrato": "res://arte/pilotos/rex_arden.png",
     "perfil": "agressivo",
     "personalidade": "Ninguém lembra de vê-lo errar."
    },
    {
     "id": "mira_danvers",
     "nome": "Mira Danvers",
-    "retrato": "res://arte/pilotos/mira_danvers.png",
     "perfil": "cauteloso",
     "personalidade": "Lê a corrida como um tabuleiro."
    },
    {
     "id": "kenji_drummond",
     "nome": "Kenji Drummond",
-    "retrato": "",
     "perfil": "agressivo",
     "personalidade": "Imprevisível até para a própria equipe."
    },
    {
     "id": "livia_okafor",
     "nome": "Livia Okafor",
-    "retrato": "",
     "perfil": "equilibrado",
     "personalidade": "Tem pressa de tudo, menos de frear."
    }

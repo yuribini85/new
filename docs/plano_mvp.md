@@ -519,3 +519,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     3 corridas (piloto de corrida) ou lutas (pilotos de arena), um nível de treino, até o
     teto da licença. Embalo: 3 vitórias seguidas deixam o próximo treino com metade do
     tempo. Contrato por temporada fica para quando o custo da equipe sair do playtest.
+72. **Pilotos com retrato genérico** (2026-10-12, escolha do usuário: "genérico em tudo").
+    Todo piloto — candidato, mercado, rival — usa um de 12 retratos genéricos
+    (`arte/pilotos/genericos/generico_NN.png`, corpo inteiro em `genericos/corpo/`), sempre o
+    mesmo para o mesmo piloto: a ordem dos dados (candidatos, depois as equipes) dá o número,
+    então os quatro pilotos de uma equipe não repetem rosto. Os 01–08 são os 8 candidatos
+    aprovados; os 09–12 vêm do pedido `tools/pacote_arte_grid.py` (corpo inteiro; o retrato
+    sai recortado do corpo). Os pilotos não têm mais campo `retrato`. Dirigentes e
+    personagens da história seguem com arte própria. Com isso entram no mercado os quatro
+    pilotos de cada equipe do Grid vencida, o traço pelo perfil do próprio piloto (o da
+    equipe, se faltar): 48 pilotos no total, 17 de corrida e 31 de arena.

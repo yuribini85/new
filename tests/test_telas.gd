@@ -564,3 +564,26 @@ func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
 	igual(IdentidadeEquipe.logo(j), "07_gear_star", "trocar o nome não troca o logo")
 	j.free()
 	d.free()
+
+
+## Decisão 72: todo piloto usa um dos 12 retratos genéricos; os candidatos são os
+## 01–08 (arte aprovada) e os quatro pilotos de uma equipe não repetem rosto.
+func test_pilotos_usam_retrato_generico() -> void:
+	Assets.limpar()
+	var d: Node = Assets._dados()
+	var cand: Array = EquipeJogador.candidatos(d)
+	for i in cand.size():
+		igual(Assets.caminho(String(cand[i]["id"]), "retrato"),
+				"res://arte/pilotos/genericos/generico_%02d.png" % (i + 1), "candidato %d" % (i + 1))
+		verificar(Assets.get_asset(String(cand[i]["id"]), "retrato") != null
+				and Assets.get_asset(String(cand[i]["id"]), "corpo") != null, "arte de " + String(cand[i]["id"]))
+	for e in d.lista("equipes"):
+		var vistos := {}
+		for p in e.get("pilotos", []):
+			if d.existe("personagens", String(p["id"])):
+				continue
+			var c := Assets.caminho(String(p["id"]), "retrato")
+			verificar(c.begins_with("res://arte/pilotos/genericos/"), "%s genérico" % p["id"])
+			verificar(not vistos.has(c), "%s: rosto repetido na equipe" % p["id"])
+			vistos[c] = true
+	Assets.limpar()

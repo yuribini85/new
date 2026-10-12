@@ -222,7 +222,7 @@ func _legenda(texto: String, pos: Vector2) -> Label:
 
 
 static func _tem_retrato(p: Dictionary) -> bool:
-	return String(p.get("retrato", "")) != "" and ResourceLoader.exists(String(p["retrato"]))
+	return Assets.get_asset(String(p.get("id", "")), "retrato") != null
 
 
 func _retrato(p: Dictionary, pos: Vector2, tam: Vector2, luz: float) -> Control:
@@ -242,7 +242,8 @@ func _retrato(p: Dictionary, pos: Vector2, tam: Vector2, luz: float) -> Control:
 	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme, recorta
 	r.clip_contents = true
-	r.texture = load(String(p["retrato"])) if _tem_retrato(p) else Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(p.get("id", "")))) % 3))
+	r.texture = Assets.get_asset(String(p.get("id", "")), "retrato") if _tem_retrato(p) \
+			else Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(p.get("id", "")))) % 3))
 	r.size = tam
 	r.modulate = Color(luz, luz, luz)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE

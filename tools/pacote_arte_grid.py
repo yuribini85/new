@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Pacote de pedido de imagens dos rivais para o ChatGPT (decisão 67): os
-dirigentes das dez equipes do The Grid (em primeiro plano na ficha da equipe) e
-os retratos dos pilotos rivais. Pessoas, no estilo de arte aprovado: o dos
-personagens da história (arte/personagens) e dos candidatos a segundo piloto
-(arte/pilotos), que vão como referência. Os retratos de animal antigos foram
-descartados.
+"""Pacote de pedido de imagens para o ChatGPT: os dirigentes das dez equipes do
+The Grid (decisão 67, em primeiro plano na ficha da equipe) e os pilotos
+genéricos que faltam (decisão 72: todo piloto usa um de 12 genéricos; os 01–08
+são os candidatos aprovados). Pessoas, no estilo de arte aprovado: o dos
+personagens da história (arte/personagens) e dos genéricos já feitos, que vão
+como referência.
 
 Escreve build/pedido_arte_grid.zip com:
   LEIA-ME.md        como pedir no ChatGPT (português)
   PROMPTS.md        um pedido por imagem, em inglês, pronto para colar
   pedidos.json      os mesmos pedidos, com nome de arquivo e destino
-  referencias/      estilo (personagens aprovados) e o emblema de cada equipe
-Parte 1: o Grid (dirigentes e pilotos das dez equipes). Parte 2: os pilotos das
-outras equipes. Ao receber, salve cada PNG com o nome pedido numa pasta e rode
-tools/importar_arte_grid.py <pasta>: ele recorta/escala (sem distorcer), tira o
-fundo magenta e põe cada um no caminho que data/equipes.json já usa.
+  referencias/      estilo (retratos e corpos aprovados) e o emblema de cada equipe
+Parte 1: os dirigentes do Grid. Parte 2: os pilotos genéricos. Ao receber, salve
+cada PNG com o nome pedido numa pasta e rode tools/importar_arte_grid.py <pasta>:
+ele recorta/escala (sem distorcer), tira o fundo magenta e põe cada um no lugar
+(do genérico, o corpo e o retrato recortado dele).
 Uso: python3 tools/pacote_arte_grid.py [--saida=caminho.zip]
 """
 import io
@@ -70,51 +70,24 @@ DIRIGENTES = {
                           "pale polished look of old money, unreadable eyes"),
 }
 
-# Pilotos rivais: quem é, em termos visuais (o jeito vem de data/equipes.json).
-PILOTOS = {
-    "lucien_vale": "man, early 30s, sharp cheekbones, swept dark hair, cool half-lidded look",
-    "nadia_voss": "woman, early 30s, platinum hair in a tight braid, composed and exact",
-    "ren_kaito": "man, mid 20s, spiky black hair, grin of a straight-line speed addict",
-    "hana_mori": "woman, early 20s, short black bob, eager determined eyes",
-    "bram_holt": "man, early 40s, big and heavy-set, red beard, ex-karting brawler",
-    "soren_pike": "man, mid 30s, lean, ash-blond, patient pale eyes",
-    "lucas_ward": "man, late 20s, clean-cut, immaculate, quiet confidence of a factory-team lead driver",
-    "cassian_roe": "man, early 30s, curly dark hair, slow calm smile, saves himself for the second half",
-    "nyra_sol": "woman, late 20s, shaved sides with a long top, fierce stare",
-    "dario_kest": "man, mid 30s, square jaw, shaved head, unshakably calm heavy-lidded eyes",
-    "lena_brook": "woman, late 20s, freckles, auburn ponytail, careful and precise",
-    "erik_halden": "man, late 30s, neat beard, thoughtful, reads the race like a chessboard",
-    "liv_arnesen": "woman, mid 20s, white-blonde undercut, restless half-smile",
-    "marek_stone": "man, early 40s, broken nose, toothy smile that looks like a threat",
-    "ivy_corran": "woman, early 30s, dark hair with a red streak, a scar on the chin, wary eyes",
-    "tomas_reyl": "man, early 50s, greying temples, veteran who knows every paddock shortcut",
-    "sasha_imre": "man, late 20s, slick black hair, cold flawless focus",
-    "gus_harrow": "man, mid 30s, stocky, quiet, soot-dark stubble",
-    "pia_lund": "woman, early 30s, short blonde crop, stern no-nonsense look",
-    "viktor_ren": "man, mid 20s, white-dyed hair, explosive grin",
-    "yuna_kess": "woman, mid 20s, long silver-white hair, sly sideways glance",
-    "oscar_flint": "man, early 40s, neat moustache, polished and patient",
-    "mina_rowe": "woman, early 30s, hair in a neat low bun, rule-book precise",
-    "noel_mercer": "man, early 30s, wavy brown hair, methodical, steady eyes",
-    "zara_keene": "woman, late 20s, dark curls tied up, sharp but careful",
-    "elias_wren": "man, early 20s, fair hair, privileged young prodigy eager to prove himself",
-    "celeste_armand": "woman, early 30s, long pale-blonde hair, cool aristocratic poise",
-    "rafe_calder": "man, mid 30s, sun-tanned rally driver, dusty stubble, patient eyes",
-    "nika_stroud": "woman, late 20s, messy short hair, rally grit, nervous energy",
-    "theo_maren": "man, late 20s, tall, calm, slow-burning focus",
-    "selene_ashby": "woman, early 30s, sleek black hair, poised",
-    "magnus_rell": "man, early 40s, big, cold and quiet, close-cropped grey hair",
-    "ines_calloway": "woman, late 20s, short spiky hair, ex-karting scrapper",
-    "ash_corwin": "man, early 30s, auburn hair, unreadable, unpredictable smirk",
-    "cleo_vane": "woman, late 20s, copper-red hair, impatient energy",
-    "finn_sutter": "man, mid 30s, weathered sailor-like face, stubborn",
-    "kaia_rehn": "woman, early 30s, dark braids, ice-calm stare",
-    "rex_arden": "man, early 40s, dark-skinned, imposing, never seems to make a mistake",
-    "mira_danvers": "woman, early 30s, fox-red hair, analytical look",
+# Decisão 72: os pilotos usam 12 retratos genéricos (arte/pilotos/genericos).
+# Os 01–08 são os 8 candidatos aprovados; faltam os 09–12, pedidos de corpo
+# inteiro (o retrato sai recortado do próprio corpo, como nos 01–08). Macacão em
+# cores neutras: o mesmo rosto aparece em equipes diferentes.
+GENERICOS = {
+    9: "woman, early 30s, East Asian, short asymmetric black hair, focused level gaze; charcoal and "
+       "teal racing suit with off-white panels",
+    10: "man, mid 50s, weathered white veteran, close grey beard, deep-set calm eyes; burgundy and "
+        "graphite racing suit with sand-coloured panels",
+    11: "woman, early 40s, Black, dark braids tied back, steady confident half-smile; olive and black "
+        "racing suit with orange accents",
+    12: "man, early 20s, pale with freckles and messy copper-red hair, restless eager grin; light grey and "
+        "royal-blue racing suit with white panels",
 }
 
 TAM_DIRIGENTE = (720, 1080)   # 2:3 (pedido 1024x1536)
-TAM_PILOTO = (240, 280)       # o formato de arte/pilotos (6:7; pedido 1024x1024)
+TAM_PILOTO = (240, 280)       # o retrato dos genéricos (6:7), recortado do corpo
+TAM_CORPO = (600, 900)        # o corpo dos genéricos (2:3; pedido 1024x1536)
 
 
 def ler(nome):
@@ -156,23 +129,23 @@ def pedidos():
                            f"front of two drivers, so a strong readable silhouette. {ESTILO}{TRANSPARENTE}"
                            f"{SEM_TEXTO}Size 1024x1536 (portrait)."),
             })
-        for p in e["pilotos"]:
-            if not p.get("retrato") or caminho(p["retrato"]).exists():
-                continue
-            quem = PILOTOS.get(p["id"], "adult racing driver")
-            itens.append({
-                "parte": parte, "tipo": "piloto", "equipe": e["id"], "nome_equipe": e["nome"], "nome": p["nome"],
-                "arquivo_pedido": f"piloto_{p['id']}.png",
-                "destino": p["retrato"].replace("res://", ""),
-                "largura_px": TAM_PILOTO[0], "altura_px": TAM_PILOTO[1], "referencias": refs,
-                "prompt": (f"Racing driver portrait for the rival team \"{e['nome']}\" ({rotulo}) in a mobile "
-                           f"racing game. {p['nome']}: {quem}. Personality: {p.get('personalidade', '')} "
-                           f"Wearing a racing suit in the team colours ({cores(e)}), collar open, no helmet. "
-                           f"Framing exactly like the driver portraits in the bottom rows of the reference sheet: "
-                           f"chest-up, a light pose (arms crossed, hand on hip or relaxed), head in the top third "
-                           f"with a little margin above, about 8% margin on the left and right (it will be cropped "
-                           f"to 6:7). {ESTILO}{TRANSPARENTE}{SEM_TEXTO}Size 1024x1024."),
-            })
+    for n, quem in GENERICOS.items():
+        if caminho(f"res://arte/pilotos/genericos/generico_{n:02d}.png").exists():
+            continue
+        itens.append({
+            "parte": 2, "tipo": "piloto genérico", "equipe": "", "nome_equipe": "Genéricos", "nome": f"Genérico {n:02d}",
+            "arquivo_pedido": f"generico_{n:02d}.png",
+            "destino": f"arte/pilotos/genericos/corpo/generico_{n:02d}.webp",
+            "destino_retrato": f"arte/pilotos/genericos/generico_{n:02d}.png",
+            "largura_px": TAM_CORPO[0], "altura_px": TAM_CORPO[1],
+            "referencias": ["referencias/estilo_aprovado.png", "referencias/corpo_aprovado.png"],
+            "prompt": (f"Racing driver for a mobile racing game, one of a set of generic drivers shared by many "
+                       f"teams. {quem}. Racing suit with bold angular colour panels, collar closed, no helmet, "
+                       f"no gloves. Framing exactly like the attached full-body reference: whole figure standing, "
+                       f"front three-quarter view, relaxed neutral stance with arms down, head near the top with a "
+                       f"little margin, feet near the bottom, centred with margin on both sides. {ESTILO}"
+                       f"{TRANSPARENTE}{SEM_TEXTO}Size 1024x1536 (portrait)."),
+        })
     return itens
 
 
@@ -182,37 +155,46 @@ def png(img):
     return b.getvalue()
 
 
-def folha_estilo():
-    """Os retratos aprovados (personagens da história e candidatos a segundo
-    piloto), lado a lado sobre fundo escuro: a referência de estilo."""
-    fs = sorted((RAIZ / "arte/personagens").glob("*.png"))
-    cand = [c["retrato"] for c in ler("carreira.json").get("equipe_jogador", {}).get("candidatos", [])]
-    fs += [caminho(c) for c in cand if caminho(c).exists()]
-    lado, col = 256, 6
-    o = Image.new("RGB", (col * lado, ((len(fs) + col - 1) // col) * lado), (24, 24, 26))
+def folha(fs, lado, col, alto=None):
+    alto = alto or lado
+    o = Image.new("RGB", (col * lado, ((len(fs) + col - 1) // col) * alto), (24, 24, 26))
     for i, f in enumerate(fs):
         im = Image.open(f).convert("RGBA")
-        im.thumbnail((lado, lado))
-        x, y = (i % col) * lado + (lado - im.size[0]) // 2, (i // col) * lado + (lado - im.size[1])
+        im.thumbnail((lado, alto))
+        x, y = (i % col) * lado + (lado - im.size[0]) // 2, (i // col) * alto + (alto - im.size[1])
         o.paste(im, (x, y), im)
     return o
 
 
+def folha_estilo():
+    """Os retratos aprovados (personagens da história e genéricos de piloto),
+    lado a lado sobre fundo escuro: a referência de estilo."""
+    fs = sorted((RAIZ / "arte/personagens").glob("*.png")) + sorted((RAIZ / "arte/pilotos/genericos").glob("*.png"))
+    return folha(fs, 256, 6)
+
+
+def folha_corpos():
+    """Os corpos inteiros dos genéricos aprovados: a referência de enquadramento."""
+    return folha(sorted((RAIZ / "arte/pilotos/genericos/corpo").glob("*.webp")), 200, 8, 300)
+
+
 LEIA_ME = """# Rivais: pedido de imagens (ChatGPT)
 
-Estilo aprovado: o dos personagens da história e dos candidatos a segundo piloto (pessoas,
-planos chapados e angulosos). Os retratos de animal antigos foram descartados.
+Estilo aprovado: o dos personagens da história e dos pilotos genéricos (pessoas, planos
+chapados e angulosos). Os retratos de animal antigos foram descartados.
 
 São {n} imagens:
-- **Parte 1 — The Grid** ({n1}): os 10 dirigentes e os pilotos das 10 equipes do Grid.
-- **Parte 2 — outras equipes** ({n2}): os pilotos das demais equipes rivais.
+- **Parte 1 — The Grid** ({n1}): os dirigentes das 10 equipes do Grid.
+- **Parte 2 — pilotos genéricos** ({n2}): corpo inteiro; todos os pilotos do jogo usam um
+  dos 12 genéricos (os 01–08 já existem). O retrato sai recortado do corpo.
 
 ## Como pedir
 1. Conversa nova no ChatGPT (geração de imagem).
-2. Anexe `referencias/estilo_aprovado.png` e o emblema da equipe (`referencias/emblemas/`).
+2. Anexe as referências indicadas no prompt: `referencias/estilo_aprovado.png` e o emblema da
+   equipe (dirigente) ou `referencias/corpo_aprovado.png` (genérico).
 3. Cole o prompt da imagem (PROMPTS.md). Um pedido por imagem; dá para seguir na mesma
    conversa, uma de cada vez, para manter o estilo.
-4. Salve com o **nome indicado** (`dirigente_<equipe>.png` ou `piloto_<id>.png`) numa pasta só.
+4. Salve com o **nome indicado** (`dirigente_<equipe>.png` ou `generico_NN.png`) numa pasta só.
 5. Mande a pasta (ou um zip) de volta: o importador recorta/escala sem distorcer, tira o
    fundo magenta e põe cada arquivo no lugar.
 
@@ -220,9 +202,8 @@ São {n} imagens:
 - Mesmo estilo da folha de referência (pessoas, planos chapados, sem contorno, sem foto-realismo).
 - **Nenhum texto, letra, número ou logo** na roupa ou no fundo (a identidade vem das cores).
 - Fundo **transparente** (ou magenta chapado #FF00FF).
-- Dirigente: da cintura para cima, cabeça inteira com folga. Piloto: do peito para cima,
-  como os pilotos de referência (fileiras de baixo), com folga nas laterais (o jogo recorta
-  para 6:7).
+- Dirigente: da cintura para cima, cabeça inteira com folga. Genérico: corpo inteiro em pé,
+  da cabeça aos pés, como `corpo_aprovado.png`, com folga nas laterais.
 - Errou (texto na roupa, corte na cabeça, estilo diferente)? Peça de novo citando o problema.
 
 ## Lista
@@ -239,14 +220,14 @@ def main():
     saida.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(saida, "w", zipfile.ZIP_DEFLATED) as z:
         lista = []
-        for parte, titulo in [(1, "Parte 1 — The Grid"), (2, "Parte 2 — outras equipes")]:
+        for parte, titulo in [(1, "Parte 1 — The Grid"), (2, "Parte 2 — pilotos genéricos")]:
             lista.append(f"\n### {titulo}")
             lista += [f"- {i['nome_equipe']} · `{i['arquivo_pedido']}` · {i['tipo']} · {i['nome']}"
                       for i in itens if i["parte"] == parte]
         z.writestr("LEIA-ME.md", LEIA_ME.format(n=len(itens), n1=sum(i["parte"] == 1 for i in itens),
                                                 n2=sum(i["parte"] == 2 for i in itens), lista="\n".join(lista)))
         md = ["# Prompts (one image per request)", ""]
-        for parte, titulo in [(1, "Part 1 — The Grid"), (2, "Part 2 — other rival teams")]:
+        for parte, titulo in [(1, "Part 1 — The Grid"), (2, "Part 2 — generic drivers")]:
             md += [f"# {titulo}", ""]
             for i in [i for i in itens if i["parte"] == parte]:
                 md += [f"## {i['arquivo_pedido']} ({i['tipo']}: {i['nome']}, {i['nome_equipe']})", "",
@@ -254,7 +235,8 @@ def main():
         z.writestr("PROMPTS.md", "\n".join(md))
         z.writestr("pedidos.json", json.dumps(itens, ensure_ascii=False, indent=1))
         z.writestr("referencias/estilo_aprovado.png", png(folha_estilo()))
-        for e in rivais():
+        z.writestr("referencias/corpo_aprovado.png", png(folha_corpos()))
+        for e in [e for e in rivais() if e["id"] in DIRIGENTES]:
             logo = caminho(e.get("logo", ""))
             if logo.exists():
                 z.writestr(f"referencias/emblemas/{e['id']}.png", png(Image.open(logo).convert("RGBA")))
