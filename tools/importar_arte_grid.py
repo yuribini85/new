@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Põe no lugar as imagens do pedido do The Grid (tools/pacote_arte_grid.py).
+"""Põe no lugar as imagens do pedido dos rivais (tools/pacote_arte_grid.py).
 Lê a pasta com os PNGs nos nomes pedidos (dirigente_<equipe>.png,
 piloto_<id>.png) e grava cada um no destino que data/equipes.json usa,
 recortado no formato e escalado por inteiro (nunca esticado). Fundo magenta
-chapado (#FF00FF) vira transparente nos dirigentes.
+chapado (#FF00FF) vira transparente.
 Uso: python3 tools/importar_arte_grid.py <pasta>
 """
 import sys
@@ -51,10 +51,7 @@ def main():
             print(f"falta  {p['arquivo_pedido']}")
             continue
         img = Image.open(f)
-        if p["tipo"] == "dirigente":
-            img = recortar(sem_magenta(img), p["largura_px"], p["altura_px"], topo=True)
-        else:
-            img = recortar(img.convert("RGB"), p["largura_px"], p["altura_px"], topo=True)
+        img = recortar(sem_magenta(img), p["largura_px"], p["altura_px"], topo=True)
         destino = RAIZ / p["destino"]
         destino.parent.mkdir(parents=True, exist_ok=True)
         img.save(destino)
