@@ -13,7 +13,7 @@ static func lista(jogador: Node, dados: Node) -> Array:
 	if jogador.personagem == "elena":
 		return _elena(jogador, dados) + _carreira(jogador, dados).slice(4)
 	if jogador.personagem == "dono":
-		return _dono(jogador, dados) + _carreira(jogador, dados).slice(1)
+		return _dono(jogador, dados) + _renomear_licenca(_carreira(jogador, dados).slice(1))
 	return _carreira(jogador, dados)
 
 
@@ -58,6 +58,15 @@ static func _dono(jogador: Node, dados: Node) -> Array:
 		return []
 	return [{"texto": "Comprar %s na Garagem" % dados.peca(peca)["nome"], "feito": jogador.flags.has("FIRST_TUNE_DONE"),
 		"aba": Aba.GARAGEM, "botao": "Ir para a Garagem"}]
+
+
+## De volta às pistas (decisão 73): no dono, a licença Club é a licença que a
+## equipe precisa renovar (sem prazo; a avaliação é grátis, como no GT2).
+static func _renomear_licenca(l: Array) -> Array:
+	for o in l:
+		if o["texto"] == "Conquistar a licença Club":
+			o["texto"] = "De volta às pistas: renovar a licença (Club)"
+	return l
 
 
 static func _carreira(jogador: Node, dados: Node) -> Array:

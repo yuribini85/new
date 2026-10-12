@@ -274,6 +274,19 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	var h := Historia.new(d, j)
 	j.historia = h
 	igual(h.cena_para("GAME_START").get("id"), "CW_P01", "abertura da Mara")
+	# Decisão 73: a chegada termina pedindo o nome; com ele, a Mara segue para o carro.
+	var p01: Dictionary = h.cena_para("GAME_START")
+	igual(String(p01["falas"][-1].get("acao", "")), "PEDIR_NOME", "a chegada pede o nome")
+	igual(h.concluir(p01), {}, "sem nome, a cena não segue sozinha")
+	j.nome_admin = "Ana"
+	var p01b: Dictionary = h.cena_para("NOME_DEFINIDO")
+	igual(p01b.get("id"), "CW_P01B", "o nome dado")
+	igual(h.variaveis().get("admin"), "Ana", "a Mara usa o nome")
+	igual(h.concluir(p01b).get("id"), "CW_P02", "e segue para o carro")
+	# De volta às pistas: a Club é a licença renovada; o Grid vem logo depois.
+	var r10: Dictionary = h.cena_para("LICENCA_CONCEDIDA:CLUB")
+	igual(r10.get("id"), "CW_R10", "licença renovada")
+	igual(h.concluir(r10).get("id"), "CW_GR00", "o Grid em seguida")
 	var sem: Dictionary = h.cena_para("SEM_DINHEIRO")
 	igual(sem["falas"][0]["quem"], "mara", "sem dinheiro: Mara")
 	for c in d.lista("dialogos"):

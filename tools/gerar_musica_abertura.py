@@ -2,10 +2,11 @@
 """Compõe a música da abertura (arte/sons/abertura.ogg) em código, no tempo de
 arte/abertura/roteiro.json: a música é própria do jogo (nenhuma amostra de fora).
 
-Ré menor. Chuva e um zumbido grave na largada; um batimento que acelera e
-cordas que sobem até a batida; no acidente, tudo corta: estrondo grave e um
-zumbido de ouvido; depois, um piano triste sobre a chuva enquanto o outro carro
-cruza a linha; no logo, um golpe grave e um acorde aberto que se apaga.
+Estilo "oficina" (decisão 73, o roteiro atual): Ré menor, contido. Vento baixo
+e um zumbido grave; cordas lentas (Dm, Bb, F, C) sob um piano esparso enquanto
+os carros saem da arena no guincho e a Mara lê as contas; no logo, um golpe
+grave e o acorde aberto que se apaga. Estilo "acidente" (a abertura antiga,
+com "batida"): batimento e cordas até o estrondo, depois piano sobre a chuva.
 
 Uso: python3 tools/gerar_musica_abertura.py   (precisa de numpy e ffmpeg)
 """
@@ -129,7 +130,43 @@ def colar(trilha: np.ndarray, som: np.ndarray, ini: float) -> None:
         trilha[i:fim] += som[:fim - i]
 
 
+def compor_oficina(r: dict) -> np.ndarray:
+    total = float(r["fim"]) + 0.5
+    logo = float(r["logo"])
+    m = np.zeros(int(total * TAXA))
+    # Vento baixo (o ruído da chuva, mais grave e fraco) até o logo.
+    v = passa_baixa(chuva(logo + 1.0, 0.035), 900)
+    v *= envelope(len(v), 2.5, 1.5)
+    colar(m, v, 0.0)
+    # Zumbido grave (Ré) que cresce devagar até o logo.
+    t = tempo(logo)
+    drone = (np.sin(2 * np.pi * nota("D1") * t) + 0.5 * np.sin(2 * np.pi * nota("A1") * t + 0.4)) \
+        * np.linspace(0.05, 0.14, len(t)) * envelope(len(t), 3.0, 0.8)
+    colar(m, drone, 0.0)
+    # Cordas lentas: Dm, Bb, F, C, cada uma com a fusão dos quadros.
+    passo = logo / 4.0
+    for k, ns in enumerate([["D3", "F3", "A3"], ["Bb2", "D3", "F3"], ["F2", "A2", "C3"], ["C3", "E3", "G3"]]):
+        colar(m, cordas(ns, passo + 1.2, 300 + k * 120, 600 + k * 200, 0.08 + k * 0.012), 0.6 + k * passo)
+    # Piano esparso, sem pressa.
+    for n, d in [("A4", 1.6), ("F4", 3.0), ("D4", 4.6), ("E4", 7.4), ("C4", 8.8), ("D4", 10.4), ("F4", 12.0),
+                 ("E4", 13.2)]:
+        if d < logo - 0.6:
+            colar(m, piano(n, 2.8, 0.13), d)
+    # Logo: golpe grave (contido) e o acorde aberto que se apaga até o fim.
+    colar(m, estrondo(4.0, 0.45), logo)
+    dur_logo = total - logo
+    acorde = cordas(["D2", "A2", "D3", "E3", "A3", "D4"], dur_logo, 800, 2200, 0.5)
+    acorde *= envelope(len(acorde), 0.1, dur_logo * 0.75)
+    colar(m, acorde, logo)
+    for n, d in [("D5", 0.0), ("A4", 0.4), ("E5", 0.8)]:
+        colar(m, piano(n, 4.0, 0.1), logo + 0.1 + d)
+    m[-int(0.5 * TAXA):] *= np.linspace(1, 0, int(0.5 * TAXA))
+    return m
+
+
 def compor(r: dict) -> np.ndarray:
+    if r.get("estilo", "acidente") == "oficina":
+        return compor_oficina(r)
     total = float(r["fim"]) + 0.5
     batida = float(r["batida"])
     logo = float(r["logo"])

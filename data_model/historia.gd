@@ -20,7 +20,8 @@ extends RefCounted
 ## ARENA_INSCRICAO, ARENA_FIM, ARENA_VITORIA, ARENA_PERDA,
 ## GARAGEM_AMPLIADA, GARAGEM_ABERTA (janela Garagem), PINTURA e PINTURA_APLICADA,
 ## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA,
-## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, SEM_PECAS e os do
+## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, SEM_PECAS, NOME_DEFINIDO
+## (o nome do administrador dado na abertura) e os do
 ## prólogo (ULTIMA_CORRIDA_ADRIAN, RADIO_ULTIMA_CORRIDA, ACIDENTE, POS_ACIDENTE).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
@@ -117,7 +118,7 @@ func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
 
 
 ## Variáveis das falas ({saldo}, {carro}, {evento}, {serie}, {pista}, {voltas},
-## {premio}, {posicao}, {peca}, {demanda}, {piloto}): o estado do jogo e o contexto do trigger
+## {premio}, {posicao}, {peca}, {demanda}, {piloto}, {admin}): o estado do jogo e o contexto do trigger
 ## (evento = id da prova, posicao, peca, carro). As falas mostram o que o
 ## jogador vê na tela, nunca um número inventado.
 func variaveis(ctx: Dictionary = {}) -> Dictionary:
@@ -143,6 +144,7 @@ func variaveis(ctx: Dictionary = {}) -> Dictionary:
 	if dados.existe("pecas", demanda):
 		v["demanda"] = String(dados.peca(demanda)["nome"])
 	v["piloto"] = EquipeJogador.nome_jogador(dados, jogador)
+	v["admin"] = String(jogador.nome_admin) if String(jogador.nome_admin) != "" else "chefe"
 	for k in ["peca", "carro", "equipe"]:
 		if ctx.has(k):
 			v[k] = String(ctx[k])

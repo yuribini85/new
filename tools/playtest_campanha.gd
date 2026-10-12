@@ -65,6 +65,9 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 	match acao:
 		"inicio":
 			_disparar("GAME_START")
+			# Decisão 73: a cena pede o nome; com ele, a Mara segue para o carro.
+			j.nome_admin = "Playtest"
+			_disparar("NOME_DEFINIDO")
 			_disparar("EVOLUCAO")  # a cena manda tocar em Freios
 		"peca":
 			var falou := _disparar("PECA_COMPRADA", {"peca": ctx["peca"]})

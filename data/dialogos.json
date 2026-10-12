@@ -2275,34 +2275,71 @@
   "trigger": "GAME_START",
   "falas": [
    {
-    "quem": "mara",
-    "texto": "Aquela noite ainda passa na minha cabeça. Chuva, pista lisa, a reta inteira.",
-    "pose": "pensativa"
+    "acao": "ILUSTRACAO:chegada"
    },
    {
     "quem": "mara",
-    "texto": "Perder um piloto não é perder alguém da equipe. É perder o motivo de abrir a porta de manhã.",
-    "pose": "decepcao"
+    "texto": "Se veio buscar o carro, ainda não está pronto."
+   },
+   {
+    "acao": "PAUSA"
    },
    {
     "quem": "mara",
-    "texto": "Depois daquilo, o antigo dono não aguentou. Deixou as chaves, as dívidas e esse carro.",
-    "pose": "pensativa"
+    "texto": "Ah. Você é quem respondeu ao anúncio."
+   },
+   {
+    "acao": "CENARIO:oficina_mara"
    },
    {
     "quem": "mara",
-    "texto": "E agora deixou você.",
+    "texto": "Vou poupar seu tempo. O negócio não vai bem.",
     "pose": "cruzados"
    },
    {
     "quem": "mara",
-    "texto": "Bem-vindo à Wreckage. Eu sou a Mara. Tudo aqui dentro que tem parafuso passa pela minha mão.",
-    "pose": "gesto"
+    "texto": "Já tivemos uma equipe de corrida aqui. Bons pilotos, bons carros... Até alguns troféus.",
+    "pose": "pensativa"
    },
    {
     "quem": "mara",
-    "texto": "Vamos ver se esse carro ainda tem corrida nele.",
+    "texto": "Hoje temos uma oficina, contas para pagar e uma licença de competição que ainda precisamos renovar.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mara",
+    "texto": "Eu sei colocar um carro na pista. O problema sempre foi manter a equipe funcionando fora dela.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Preciso de alguém que cuide das contas, contrate pilotos, negocie com fornecedores e escolha onde investir nossos giros.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Você assume a administração. Eu cuido dos carros.",
+    "pose": "gesto"
+   },
+   {
+    "acao": "PAUSA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Não vou prometer dinheiro fácil. Nem vitórias.",
     "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "Mas, se souber administrar, talvez a gente consiga colocar esta equipe de volta no circuito."
+   },
+   {
+    "quem": "mara",
+    "texto": "Então, temos um acordo? E como devo chamar você?",
+    "pose": "cruzados"
+   },
+   {
+    "acao": "PEDIR_NOME"
    }
   ],
   "requer": [],
@@ -2312,6 +2349,33 @@
    "TUTORIAL_INTRO_SEEN"
   ],
   "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_P01B",
+  "trigger": "NOME_DEFINIDO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Muito bem, {admin}. Eu sou a Mara.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Vamos começar pelo que ainda não precisamos vender.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ADMIN_NAMED"
+  ],
+  "flags": [
+   "ADMIN_NAMED"
+  ],
+  "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
   "proxima": "CW_P02",
@@ -2818,7 +2882,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Licença é do piloto, não da oficina.",
+    "texto": "É a licença que a gente precisa renovar. Quem renova é o piloto, nos testes.",
     "pose": "explica"
    },
    {
@@ -2891,12 +2955,16 @@
  },
  {
   "id": "CW_GR00",
-  "trigger": "ABA:LICENCAS",
+  "trigger": "ENCADEADA",
   "falas": [
    {
     "quem": "mara",
-    "texto": "Está vendo essa lista? É o The Grid. Dez equipes no topo do circuito. A gente está fora dela.",
+    "texto": "Agora podemos pensar além da próxima conta. Conhece o The Grid?",
     "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Dez equipes no topo do circuito. A gente está fora dela."
    },
    {
     "quem": "mara",
@@ -2912,10 +2980,7 @@
     "texto": "The Grid fica em Carreira, embaixo dos objetivos."
    }
   ],
-  "requer": [
-   "FIRST_RACE_DONE",
-   "LICENSE_OFFLINE_TUTORIAL_SEEN"
-  ],
+  "requer": [],
   "proibe": [
    "GRID_INTRO"
   ],
@@ -3041,8 +3106,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Mais provas disponíveis. E mais gente querendo tirar vantagem de nós.",
-    "pose": "alerta"
+    "texto": "Licença renovada. Faz tempo que eu não via esse papel sem uma cobrança junto.",
+    "pose": "pensativa"
    },
    {
     "quem": "sistema",
@@ -3057,6 +3122,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
+  "proxima": "CW_GR00",
   "cenario": "vector_academy"
  },
  {
@@ -3174,7 +3240,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Lembra do carro que veio com as chaves?",
+    "texto": "Lembra do carro nos cavaletes, no dia em que você chegou?",
     "pose": "pensativa"
    },
    {
@@ -3218,13 +3284,27 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Primeiro lugar do Grid. Quando você entrou por aquela porta, a gente mal pagava as contas.",
+    "texto": "Quando você entrou aqui, eu estava tentando descobrir o que ainda dava para salvar.",
     "pose": "pensativa"
    },
    {
     "quem": "mara",
-    "texto": "Você não ganhou uma corrida. Construiu uma equipe que chegou ao topo.",
+    "texto": "Agora temos carros, pilotos, patrocinadores... e o primeiro lugar do Grid."
+   },
+   {
+    "quem": "mara",
+    "texto": "Passei tempo demais achando que essa parte da minha vida tinha acabado.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Você fez a equipe funcionar de novo.",
     "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Só não confunda chegar ao topo com conseguir ficar lá.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -3493,7 +3573,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Não é o tipo de corrida que eu escolheria depois daquela noite. Mas paga as dívidas que ficaram.",
+    "texto": "Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.",
     "pose": "pensativa"
    },
    {
@@ -3853,7 +3933,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Primeiro adesivo novo no carro desde aquela noite.",
+    "texto": "Primeiro adesivo novo no carro desde que a equipe parou.",
     "pose": "firme"
    }
   ],

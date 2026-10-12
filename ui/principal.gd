@@ -736,6 +736,9 @@ func _acao_historia(nome: String) -> void:
 		EquipeJogador.liberar_segundo(dados, jogador)
 		atualizar()
 		_ir_para(ABA_EQUIPE)
+	elif nome == "PEDIR_NOME":
+		# Decisão 73: a Mara pergunta o nome; o painel vem com a cena fechada.
+		_quando_dialogo_acabar(_pedir_nome)
 	elif nome == "UNLOCK_ARENA_PILOTS":
 		# Decisão 69: o tutorial da arena libera os pilotos de arena.
 		jogador.flags[EquipeJogador.FLAG_ARENA] = true
@@ -745,6 +748,20 @@ func _acao_historia(nome: String) -> void:
 		EquipeJogador.criar(jogador)
 		atualizar()
 		_ir_para(ABA_EQUIPE)
+
+
+## Nome do administrador (a cena CW_P01 termina pedindo): sem rosto nem
+## passado, só o nome que a Mara usa. Confirmado, segue a história.
+func _pedir_nome() -> void:
+	if get_node_or_null("NomeAdmin") != null:
+		return
+	var painel := NomeAdmin.new(jogador.nome_admin)
+	painel.name = "NomeAdmin"
+	add_child(painel)
+	painel.confirmado.connect(func(nome: String):
+		jogador.nome_admin = nome
+		get_node("/root/SaveManager").salvar()
+		jogador.historia.disparar("NOME_DEFINIDO"))
 
 
 func _processar_fila() -> void:

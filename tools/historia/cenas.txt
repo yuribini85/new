@@ -477,21 +477,38 @@ Marcus: Velocidade ganha volta. Isso aqui ganha quem não quebra.
 
 # ================================================================ CHROME & WRECKAGE
 # Campanha do dono (jogo novo; historia.json → nova_campanha). Antes de tudo, a abertura
-# (ui/abertura_cinema.gd): a noite de chuva em que a Wreckage perdeu um piloto na pista;
-# o outro carro, o do piloto da casa, cruzou a linha sozinho. O antigo dono foi embora
-# depois disso e deixou a oficina para o jogador. Mara Hayes, mecânica veterana, guia; o
-# piloto da casa dirige. Aquela noite volta em poucas falas (abertura, apresentação do
-# piloto, Arena, Elite); no resto, falas curtas, sem melodrama. Saves com Adrian/Elena
-# seguem as cenas acima.
+# (ui/abertura_cinema.gd, decisão 73): os últimos carros da Wreckage saindo da arena no
+# guincho e a Mara diante das contas. A Wreckage já foi equipe de corrida; hoje é uma
+# oficina com contas e uma licença por renovar. O jogador responde ao anúncio e assume a
+# administração (nunca pilota); Mara Hayes cuida dos carros. Sem prazo: a dificuldade é
+# econômica, nunca o relógio. Sem assistente da Mara. A arena volta em poucas falas (foi lá
+# que a equipe perdeu os carros); no resto, falas curtas, sem melodrama. Saves com
+# Adrian/Elena seguem as cenas acima.
 
 # ---------------------------------------------------------------- Prólogo
-= CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; proxima=CW_P02; cenario=oficina_mara
-Mara[pensativa]: Aquela noite ainda passa na minha cabeça. Chuva, pista lisa, a reta inteira.
-Mara[decepcao]: Perder um piloto não é perder alguém da equipe. É perder o motivo de abrir a porta de manhã.
-Mara[pensativa]: Depois daquilo, o antigo dono não aguentou. Deixou as chaves, as dívidas e esse carro.
-Mara[cruzados]: E agora deixou você.
-Mara[gesto]: Bem-vindo à Wreckage. Eu sou a Mara. Tudo aqui dentro que tem parafuso passa pela minha mão.
-Mara[firme]: Vamos ver se esse carro ainda tem corrida nele.
+# A chegada (proposta de introdução, decisão 73): o jogador responde ao anúncio. A cena
+# acaba pedindo o nome do administrador (PEDIR_NOME); a CW_P01B vem com o nome dado.
+= CW_P01 | GAME_START | personagem=dono; bloqueia=sim; flags=STORY_STARTED,TUTORIAL_INTRO_SEEN; cenario=oficina_mara
+[ILUSTRACAO:chegada]
+Mara: Se veio buscar o carro, ainda não está pronto.
+[PAUSA]
+Mara: Ah. Você é quem respondeu ao anúncio.
+[CENARIO:oficina_mara]
+Mara[cruzados]: Vou poupar seu tempo. O negócio não vai bem.
+Mara[pensativa]: Já tivemos uma equipe de corrida aqui. Bons pilotos, bons carros... Até alguns troféus.
+Mara[decepcao]: Hoje temos uma oficina, contas para pagar e uma licença de competição que ainda precisamos renovar.
+Mara[pensativa]: Eu sei colocar um carro na pista. O problema sempre foi manter a equipe funcionando fora dela.
+Mara[explica]: Preciso de alguém que cuide das contas, contrate pilotos, negocie com fornecedores e escolha onde investir nossos giros.
+Mara[gesto]: Você assume a administração. Eu cuido dos carros.
+[PAUSA]
+Mara[firme]: Não vou prometer dinheiro fácil. Nem vitórias.
+Mara: Mas, se souber administrar, talvez a gente consiga colocar esta equipe de volta no circuito.
+Mara[cruzados]: Então, temos um acordo? E como devo chamar você?
+[PEDIR_NOME]
+
+= CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; proxima=CW_P02; cenario=oficina_mara
+Mara[gesto]: Muito bem, {admin}. Eu sou a Mara.
+Mara[firme]: Vamos começar pelo que ainda não precisamos vender.
 
 # Ficha do carro: cada atributo em destaque; termina pedindo os freios.
 = CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L
@@ -594,7 +611,7 @@ Mara[firme]: Não existe melhor carro. Existe o carro certo para cada prova.
 # ---------------------------------------------------------------- Licenças
 = CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
 Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA
-Mara[explica]: Licença é do piloto, não da oficina.
+Mara[explica]: É a licença que a gente precisa renovar. Quem renova é o piloto, nos testes.
 Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leva café.
 [OPEN_LICENSE_CENTER]
 
@@ -607,9 +624,10 @@ Harold: Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
 Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 
-# The Grid, a lista negra (Carreira): a Mara apresenta na visita seguinte à das licenças.
-= CW_GR00 | ABA:LICENCAS | personagem=dono; requer=FIRST_RACE_DONE,LICENSE_OFFLINE_TUTORIAL_SEEN; proibe=GRID_INTRO; flags=GRID_INTRO; cenario=oficina_mara
-Mara[explica]: Está vendo essa lista? É o The Grid. Dez equipes no topo do circuito. A gente está fora dela.
+# The Grid, a lista negra (Carreira): a Mara apresenta logo depois da licença renovada.
+= CW_GR00 | ENCADEADA | personagem=dono; proibe=GRID_INTRO; flags=GRID_INTRO; cenario=oficina_mara
+Mara[explica]: Agora podemos pensar além da próxima conta. Conhece o The Grid?
+Mara: Dez equipes no topo do circuito. A gente está fora dela.
 Mara: Uma de cada vez, da décima até a primeira. A da vez fica em destaque.
 Mara[firme]: Ganhe uma prova em que ela esteja correndo, ou a arena com ela lá dentro, e ela fica para trás.
 Sistema: The Grid fica em Carreira, embaixo dos objetivos.
@@ -632,9 +650,10 @@ Mara[explica]: National disponível.
 Mara[firme]: Daqui para cima, vitória solta não basta. Pede título.
 [OPEN_LICENSE_CENTER]
 
-= CW_R10 | LICENCA_CONCEDIDA:CLUB | personagem=dono; flags=CLUB_COMPLETE; cenario=vector_academy
+# De volta às pistas (decisão 73): a Club é a licença renovada; depois, o The Grid.
+= CW_R10 | LICENCA_CONCEDIDA:CLUB | personagem=dono; flags=CLUB_COMPLETE; proxima=CW_GR00; cenario=vector_academy
 Harold: Licença Club aprovada. Assinado e carimbado.
-Mara[alerta]: Mais provas disponíveis. E mais gente querendo tirar vantagem de nós.
+Mara[pensativa]: Licença renovada. Faz tempo que eu não via esse papel sem uma cobrança junto.
 Sistema: Novas provas liberadas em Corridas › Club.
 
 = CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
@@ -658,7 +677,7 @@ Mara[cruzados]: Daqui para frente, cada décimo custa caro.
 
 = CW_T03 | LICENCA_CONCEDIDA:ELITE | personagem=dono; flags=ELITE_COMPLETE; cenario=vector_academy
 Harold: Elite aprovada. Em trinta anos, assinei poucas dessas.
-Mara[pensativa]: Lembra do carro que veio com as chaves?
+Mara[pensativa]: Lembra do carro nos cavaletes, no dia em que você chegou?
 Mara: Eu lembro.
 
 = CW_GR01 | GRID_SUBIU | personagem=dono; repetivel=sim
@@ -666,8 +685,11 @@ Mara: Eu lembro.
 Mara[firme]: {equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.
 
 = CW_GR02 | GRID_TOPO | personagem=dono; proibe=GRID_TOP; flags=GRID_TOP; cenario=oficina_mara
-Mara[pensativa]: Primeiro lugar do Grid. Quando você entrou por aquela porta, a gente mal pagava as contas.
-Mara[gesto]: Você não ganhou uma corrida. Construiu uma equipe que chegou ao topo.
+Mara[pensativa]: Quando você entrou aqui, eu estava tentando descobrir o que ainda dava para salvar.
+Mara: Agora temos carros, pilotos, patrocinadores... e o primeiro lugar do Grid.
+Mara[pensativa]: Passei tempo demais achando que essa parte da minha vida tinha acabado.
+Mara[gesto]: Você fez a equipe funcionar de novo.
+Mara[firme]: Só não confunda chegar ao topo com conseguir ficar lá.
 
 = CW_SYS11 | SEM_PECAS | personagem=dono; repetivel=sim
 Dex: Faltam peças. Desmonte um carro parado, ou traga sucata da arena.
@@ -713,7 +735,7 @@ Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
 # Decisão 69: o tutorial da arena chega com o terceiro carro na garagem.
 = CW_P07 | GARAGEM_TRES_CARROS | personagem=dono; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
 Mara[cruzados]: Três carros. Tem outra maneira de ganhar dinheiro por aqui.
-Mara[pensativa]: Não é o tipo de corrida que eu escolheria depois daquela noite. Mas paga as dívidas que ficaram.
+Mara[pensativa]: Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.
 Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.
 Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui.
 Roxy: Vence a última dupla com carro de pé. Venceu, o próximo campeonato tem uma equipe a mais: começa em dois contra dois e vai até vinte carros.
@@ -782,7 +804,7 @@ Mara[firme]: Na Sede, na aba Equipe, a gente melhora o que eles pagam.
 Sistema: Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas.
 
 = CW_S02 | PATROCINIO_ASSINADO | personagem=dono; proibe=FIRST_SPONSOR; flags=FIRST_SPONSOR
-Mara[firme]: Primeiro adesivo novo no carro desde aquela noite.
+Mara[firme]: Primeiro adesivo novo no carro desde que a equipe parou.
 
 = CW_S03 | CARRO_DESMONTADO | personagem=dono; proibe=FIRST_DISMANTLE; flags=FIRST_DISMANTLE
 Mara[pensativa]: Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.

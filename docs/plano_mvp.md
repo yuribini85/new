@@ -529,3 +529,20 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     personagens da história seguem com arte própria. Com isso entram no mercado os quatro
     pilotos de cada equipe do Grid vencida, o traço pelo perfil do próprio piloto (o da
     equipe, se faltar): 48 pilotos no total, 17 de corrida e 31 de arena.
+73. **Introdução e história do dono** (2026-10-12, proposta do usuário avaliada; imagens
+    do usuário). A abertura (`ui/abertura_cinema.gd`, `arte/abertura/roteiro.json`) passa a
+    ser os últimos carros da Wreckage saindo da arena no guincho e a Mara diante das contas,
+    com música contida (`tools/gerar_musica_abertura.py`, estilo `oficina`); a noite do
+    acidente sai. Depois, a chegada (ilustração `chegada`, o jogador em silhueta): o jogador
+    responde ao anúncio e assume a administração; a Mara cuida dos carros. A cena pede o nome
+    do administrador (`jogador.nome_admin`, ação `PEDIR_NOME`, trigger `NOME_DEFINIDO`,
+    variável `{admin}`); a equipe segue Wreckage Motorsport (o nome se troca na cabine de
+    pintura, como antes). O cenário `oficina_mara` é a oficina das imagens (o carro nos
+    cavaletes). Primeiro objetivo, "De volta às pistas": renovar a licença = passar na
+    licença Club, grátis como no GT2 (seção 8), sem prazo, com os giros das provas abertas;
+    aprovada, a Mara apresenta o The Grid. Avaliado e não adotado agora: taxa de 25.000 giros
+    pela licença (número sem fonte; muda a seção 8) e o CRED (sem desbloqueios próprios nem
+    números com fonte; volta junto com os carros especiais do Grid). Fala final do Grid (#1)
+    pela proposta. A revelação do passado da Mara e o rival da #1 ficam para quando os
+    carros especiais do Grid forem definidos. Sem prazos, timers ou falência por tempo; sem
+    assistente da Mara.

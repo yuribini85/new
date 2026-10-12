@@ -79,7 +79,7 @@
    "som": "oficina"
   },
   "oficina_mara": {
-   "nome": "A oficina da Mara, fim de tarde",
+   "nome": "A oficina da Mara, fim de tarde (o carro nos cavaletes)",
    "som": "oficina"
   },
   "box_largada": {
@@ -207,6 +207,15 @@
     ],
     "elena": [
      0.83,
+     0.52
+    ]
+   }
+  },
+  "chegada": {
+   "nome": "A chegada à Wreckage, fim de tarde (o jogador em silhueta)",
+   "focos": {
+    "mara": [
+     0.77,
      0.52
     ]
    }

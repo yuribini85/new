@@ -50,6 +50,8 @@ var carro_companheiro: int = -1
 var pilotos: Dictionary = {}
 ## Escalação (Escalacao): {corrida: uid, arena: [uid, uid]}.
 var escalacao: Dictionary = {}
+## Nome do administrador (decisão 73): o jogador, que a Mara chama pelo nome.
+var nome_admin: String = ""
 ## Última loja aberta em Lojas ("" = o mapa): reabre nela, também depois de fechar o jogo.
 var ultima_loja: String = ""
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
@@ -109,6 +111,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	carro_companheiro = -1
 	escalacao = {}
 	pilotos = {}
+	nome_admin = ""
 	ultima_loja = ""
 	flags = {}
 	dialogos_vistos = {}

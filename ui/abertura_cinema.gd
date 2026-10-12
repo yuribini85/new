@@ -1,10 +1,11 @@
 class_name AberturaCinema
 extends Control
-## Abertura do jogo (campanha do dono): a noite da corrida em que a Wreckage
-## perdeu o piloto, em oito quadros (arte/abertura/NN.webp) com movimento lento
-## de câmera e fusões; no acidente, corte seco com clarão, tremor e o estrondo;
-## depois o outro carro cruza a linha, a tela escurece e o logo entra com o
-## golpe final da música (arte/sons/abertura.ogg, tools/gerar_musica_abertura.py).
+## Abertura do jogo (campanha do dono, decisão 73): os últimos carros da
+## Wreckage saindo da arena no guincho e a Mara diante das contas, em quadros
+## (arte/abertura/<img>.webp) com movimento lento de câmera e fusões; a tela
+## escurece e o logo entra com o golpe final da música (arte/sons/abertura.ogg,
+## tools/gerar_musica_abertura.py). Um impacto (roteiro → batida, opcional) dá
+## corte seco com clarão, tremor e estrondo.
 ## Tempos e movimentos: arte/abertura/roteiro.json (o mesmo da música).
 ## "Pular" encerra; no fim emite `terminou`.
 
@@ -93,7 +94,7 @@ func _process(delta: float) -> void:
 func _quadro(t_: float) -> void:
 	_t = t_
 	var fusao := float(_r["fusao"])
-	var batida := float(_r["batida"])
+	var batida := float(_r["batida"]) if _r.get("batida") != null else INF
 	var tremor := Vector2.ZERO
 	if _t >= batida and _t < batida + TREMOR_S and not Preferencias.reduzir_animacoes:
 		var forca := 1.0 - (_t - batida) / TREMOR_S

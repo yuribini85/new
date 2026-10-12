@@ -722,7 +722,11 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 	if chave == _cenario_id:
 		return
 	_cenario_id = chave if id != "" else ""
+	var saiu_da_ilustracao := _ilustrando and not ilustracao
 	_ilustrando = ilustracao and id != ""
+	if saiu_da_ilustracao:
+		_quem = ""  # quem falava sobre a ilustração entra em cena na próxima fala
+		_pose = ""
 	if _ilustrando:
 		_corpo.visible = false
 		_quem = ""
