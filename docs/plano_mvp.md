@@ -532,8 +532,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 73. **Introdução e história do dono** (2026-10-12, proposta do usuário avaliada; imagens
     do usuário). A abertura (`ui/abertura_cinema.gd`, `arte/abertura/roteiro.json`) passa a
     ser os últimos carros da Wreckage saindo da arena no guincho e a Mara diante das contas,
-    com música contida (`tools/gerar_musica_abertura.py`, estilo `oficina`); a noite do
-    acidente sai. Depois, a chegada (ilustração `chegada`, o jogador em silhueta): o jogador
+    em imagens paradas que entram em fusão, sem música nem zoom (pedido do usuário; o
+    mesmo vale para o fundo e as ilustrações dos diálogos); a noite do acidente sai. Depois, a chegada (ilustração `chegada`, o jogador em silhueta): o jogador
     responde ao anúncio e assume a administração; a Mara cuida dos carros. A cena pede o nome
     do administrador (`jogador.nome_admin`, ação `PEDIR_NOME`, trigger `NOME_DEFINIDO`,
     variável `{admin}`); a equipe segue Wreckage Motorsport (o nome se troca na cabine de
@@ -575,3 +575,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Saída (#5, em L, quatro colunas e rampas), Bacia de Blackwater (#3, reservatório oval de
     fundo fundo e anel de lombadas) e Claustro Vazio (#1, em cruz, o altar no meio, uma
     cratera em cada braço e o muro mais alto). As quatro originais seguem no campeonato.
+76. **Cenas paradas** (2026-10-12, pedido do usuário: "não está bom"). Sem música na
+    abertura (sai `arte/sons/abertura.ogg` e o gerador), sem zoom lento nem câmera
+    seguindo quem fala nas imagens (abertura, cenários e ilustrações dos diálogos) e sem
+    personagens se mexendo: sem respiração, sem entrada deslizando ou quicando, sem salto
+    no [IMPACTO]; o personagem aparece no lugar num esmaecer curto e o ouvinte vai direto
+    para o lado dele. Substitui a parte de animação dos personagens da decisão das
+    animações do diálogo; o campo `entrada` de personagens.json sai.

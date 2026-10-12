@@ -2,10 +2,9 @@ class_name AberturaCinema
 extends Control
 ## Abertura do jogo (campanha do dono, decisão 73): os últimos carros da
 ## Wreckage saindo da arena no guincho e a Mara diante das contas, em quadros
-## (arte/abertura/<img>.webp) com movimento lento de câmera e fusões; a tela
-## escurece e o logo entra com o golpe final da música (arte/sons/abertura.ogg,
-## tools/gerar_musica_abertura.py). Um impacto (roteiro → batida, opcional) dá
-## corte seco com clarão, tremor e estrondo.
+## parados (arte/abertura/<img>.webp) que entram e saem em fusão, sem música
+## nem zoom (pedido do usuário); a tela escurece e o logo entra. Um impacto
+## (roteiro → batida, opcional) dá corte seco com clarão, tremor e estrondo.
 ## Tempos e movimentos: arte/abertura/roteiro.json (o mesmo da música).
 ## "Pular" encerra; no fim emite `terminou`.
 
@@ -23,7 +22,6 @@ var _planos: Array = []  # [{dados, rect}]
 var _t := 0.0
 var _clarao: ColorRect
 var _logo: TextureRect
-var _musica: AudioStreamPlayer
 var _bateu := false
 var _acabou := false
 
@@ -64,9 +62,6 @@ func _init() -> void:
 	_logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_logo.modulate.a = 0.0
 	add_child(_logo)
-	_musica = AudioStreamPlayer.new()
-	_musica.stream = load("res://arte/sons/abertura.ogg")
-	add_child(_musica)
 	var pular := Button.new()
 	Tipografia.acao_secundaria(pular, "Pular ›", Color(0.93, 0.92, 0.88, 0.7), 30, 80)
 	pular.custom_minimum_size.x = 150
@@ -79,15 +74,10 @@ func _init() -> void:
 	add_child(pular)
 
 
-func _ready() -> void:
-	_musica.play()
-
-
 func _process(delta: float) -> void:
 	if _acabou:
 		return
-	# O relógio segue a música (sem descompasso entre som e imagem).
-	_quadro(_musica.get_playback_position() if _musica.playing else _t + delta)
+	_quadro(_t + delta)
 
 
 ## Monta a imagem do instante `t` (s).
@@ -112,15 +102,12 @@ func _quadro(t_: float) -> void:
 		t.visible = t.modulate.a > 0.0
 		if not t.visible:
 			continue
-		# Movimento lento: zoom e deslocamento do começo ao fim do plano.
-		var z := lerpf(float(p["zoom"][0]), float(p["zoom"][1]), u)
-		var pan := Vector2(p["pan"][0][0], p["pan"][0][1]).lerp(Vector2(p["pan"][1][0], p["pan"][1][1]), u)
-		var tam := size * z
+		# Imagem parada, do tamanho da tela (só o tremor do impacto, se houver).
 		var trem := Vector2.ZERO
 		if p.has("tremor") and not Preferencias.reduzir_animacoes:
 			trem = Vector2(randf_range(-1, 1), randf_range(-1, 1)) * size.x * float(p["tremor"])
-		t.size = tam
-		t.position = (size - tam) * 0.5 + pan * size + trem + tremor
+		t.size = size
+		t.position = trem + tremor
 	# O acidente: clarão branco e o estrondo.
 	if _t >= batida and not _bateu:
 		_bateu = true
@@ -143,7 +130,6 @@ func _terminar() -> void:
 	_acabou = true
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 0.0, 0.5)
-	tw.parallel().tween_property(_musica, "volume_db", -40.0, 0.5)
 	tw.tween_callback(func():
 		terminou.emit()
 		queue_free())

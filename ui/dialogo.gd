@@ -44,13 +44,8 @@ var _ambiente: AudioStreamPlayer
 var _ambiente_som := ""
 const LETRAS_POR_S := 55.0
 const CENARIO_S := 0.6  # troca de fundo
-const ZOOM_CENARIO := 1.07  # zoom lento do fundo
-const ZOOM_S := 22.0
 const FAIXA := 0.07  # faixas de cinema, fração da altura
 const CARTAO_S := 2.4  # cartão de capítulo, inteiro
-const ZOOM_FOCO := 1.1  # aproximação sobre ilustração com focos
-const FOCO_PUXA := 0.35  # quanto do caminho até quem fala a câmera anda
-const FOCO_S := 1.1
 const TOM := {"noite": Color(0.42, 0.48, 0.7), "vazio": Color(0.58, 0.58, 0.6), "frio": Color(0.74, 0.8, 0.92)}
 ## Ações que o próprio diálogo executa (não vão para a principal).
 const LOCAIS := ["ESCURO", "CLARO", "PAUSA", "TREMOR", "IMPACTO"]
@@ -59,15 +54,12 @@ const PAUSA_VIRGULA_S := 0.08
 const PAUSA_PONTO_S := 0.2
 ## Respiração do personagem parado: sobe e desce poucos pixels, em ciclos
 ## defasados por personagem.
-const RESPIRA_PX := 2.5
-const RESPIRA_S := 3.6
 ## Dois em cena: quem escuta recua para o outro lado, menor e mais escuro;
 ## quem fala fica à frente, um pouco para o seu lado.
 const OUVINTE_ESCALA := 0.88
 const OUVINTE_LUZ := 0.5
 const OUVINTE_DESLOCA := 0.3  # fração da largura da tela
 const FALANTE_DESLOCA := 0.1
-const TROCA_S := 0.3
 ## Caixa: sobe um pouco ao aparecer; faixa na cor de quem fala.
 const CAIXA_SOBE_PX := 8.0
 ## No tutorial, o busto de quem fala (o corpo recortado na silhueta, sem fundo)
@@ -81,20 +73,6 @@ const BUSTO_ABAIXO := 3.0  # e abaixo (até a cintura; a caixa corta antes)
 const BUSTO_LARGURA_MAX := 300.0  # na tela: o recorte (transparente nas bordas)
 const BUSTO_OCUPA := 0.74  # da largura do recorte, o que empurra o texto
 const BUSTO_BORDA := 2.0  # espessura da moldura (o corte fica rente a ela)
-const IMPACTO_PX := 16.0  # [IMPACTO]: o salto curto da fala forte
-## Entrada de cada personagem (personagens.json → entrada): duração, curva,
-## distância (fração da tela), esmaecer, tranco ao parar, quique e "tá-dá".
-const ENTRADAS := {
-	"firme": {"s": 0.3, "trans": Tween.TRANS_CUBIC, "dist": 1.0},
-	"rapida": {"s": 0.32, "trans": Tween.TRANS_BACK, "dist": 1.0},
-	"pesada": {"s": 0.55, "trans": Tween.TRANS_QUAD, "dist": 0.6, "tranco": true},
-	"quique": {"s": 0.35, "trans": Tween.TRANS_CUBIC, "dist": 1.0, "quique": true},
-	"passo": {"s": 0.6, "trans": Tween.TRANS_SINE, "dist": 0.5},
-	"esmaecer": {"s": 0.35, "trans": Tween.TRANS_SINE, "dist": 0.06, "fade": true},
-	"tada": {"s": 0.32, "trans": Tween.TRANS_CUBIC, "dist": 1.0, "tada": true},
-	"elegante": {"s": 0.5, "trans": Tween.TRANS_SINE, "dist": 0.1, "fade": true},
-	"curta": {"s": 0.25, "trans": Tween.TRANS_CUBIC, "dist": 0.25},
-}
 
 var historia: Historia
 var _fila: Array = []
@@ -118,8 +96,6 @@ var _cartao_titulo: Label
 var _tween: Tween
 var _tw_texto: Tween
 var _tw_cartao: Tween
-var _tw_zoom: Tween
-var _focos := {}  # quem -> Vector2 (0..1) na ilustração atual
 var _animando := false
 var _lado := 1.0  # de que lado o próximo personagem entra (alterna)
 var _translucido := false  # depois de um destaque, até o fim da cena
@@ -127,7 +103,6 @@ var _ouvinte: TextureRect
 var _ouvinte_quem := ""
 var _lados := {}  # quem -> lado na tela (-1, 1) quando há dois em cena
 var _base_y := 0.0
-var _salto := 0.0  # deslocamento vertical do falante (quique, impacto)
 var _impacto := false
 var _barra: ColorRect
 var _retrato: Control  # o espaço do busto dentro da caixa
@@ -497,8 +472,6 @@ func _mostrar() -> void:
 	_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if sistema else HORIZONTAL_ALIGNMENT_LEFT
 	_layout()
 	var atraso := 0.0
-	if _focos.has(quem):
-		_focar(_focos[quem])
 	var pose := String(f.get("pose", ""))
 	if quem != _quem:
 		atraso = _entrar(quem, sistema, pose)
@@ -527,11 +500,9 @@ func _entrar(quem: String, sistema: bool, pose := "") -> float:
 	var anterior := _quem if _corpo.visible and _corpo.texture != null else ""
 	var tex_anterior := _corpo.texture
 	var era_ouvinte: bool = quem == _ouvinte_quem and _ouvinte.visible
-	var pos_ouvinte := _ouvinte.position
 	_lado = -_lado
-	var reduz := Preferencias.reduzir_animacoes
-	var cfg: Dictionary = ENTRADAS.get(String(historia.personagem(quem).get("entrada", "firme")), ENTRADAS["firme"])
-	var dur: float = 0.01 if reduz else float(cfg["s"])
+	# Personagens parados (pedido do usuário): aparecem no lugar, num esmaecer curto.
+	var dur: float = 0.01 if Preferencias.reduzir_animacoes else ENTRADA_S
 	_caixa.modulate.a = 0.0
 	_animando = true
 	_tween = create_tween()
@@ -557,33 +528,10 @@ func _entrar(quem: String, sistema: bool, pose := "") -> float:
 			_ouvinte_quem = ""
 		_corpo.scale = Vector2.ONE
 		_corpo.modulate = Color.WHITE
-		if era_ouvinte:
-			# O ouvinte vem para a frente: cresce, clareia e anda para o seu lugar.
-			_corpo.position.x = pos_ouvinte.x
-			_corpo.scale = Vector2.ONE * OUVINTE_ESCALA
-			_corpo.modulate = Color(OUVINTE_LUZ, OUVINTE_LUZ, OUVINTE_LUZ)
-			_tween.tween_property(_corpo, "position:x", x_final, TROCA_S).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-			_tween.parallel().tween_property(_corpo, "scale", Vector2.ONE, TROCA_S)
-			_tween.parallel().tween_property(_corpo, "modulate", Color.WHITE, TROCA_S)
-			atraso += TROCA_S
-		else:
-			_corpo.position.x = x_final + _lado * tela.x * float(cfg["dist"])
-			if cfg.get("fade", false):
-				_corpo.modulate.a = 0.0
-				_tween.parallel().tween_property(_corpo, "modulate:a", 1.0, dur)
-			if cfg.get("tada", false) and not reduz:
-				_corpo.scale = Vector2.ONE * 0.96
-				_tween.parallel().tween_property(_corpo, "scale", Vector2.ONE, dur * 1.4) \
-						.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-			_tween.parallel().tween_property(_corpo, "position:x", x_final, dur) \
-					.set_trans(cfg["trans"]).set_ease(Tween.EASE_OUT)
-			if cfg.get("quique", false) and not reduz:
-				var q := create_tween()
-				q.tween_interval(dur * 0.6)
-				q.tween_property(self, "_salto", -18.0, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-				q.tween_property(self, "_salto", 0.0, 0.16).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
-			if cfg.get("tranco", false) and not reduz:
-				_tween.tween_callback(func(): _tremer(6.0, 5))
+		_corpo.position.x = x_final
+		if not era_ouvinte:
+			_corpo.modulate.a = 0.0
+			_tween.tween_property(_corpo, "modulate:a", 1.0, dur)
 			atraso += dur
 		_tween.tween_interval(CAIXA_ATRASO_S)
 		atraso += CAIXA_ATRASO_S
@@ -598,14 +546,10 @@ func _recuar(quem: String, tex: Texture2D, x_de: float, x_para: float) -> void:
 	_ouvinte_quem = quem
 	_ouvinte.texture = tex
 	_ouvinte.visible = true
-	_ouvinte.position.x = x_de
-	_ouvinte.scale = Vector2.ONE
-	_ouvinte.modulate = Color.WHITE
-	var dur := 0.01 if Preferencias.reduzir_animacoes else TROCA_S
-	var tw := create_tween().set_parallel()
-	tw.tween_property(_ouvinte, "position:x", x_para, dur).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_ouvinte, "scale", Vector2.ONE * OUVINTE_ESCALA, dur)
-	tw.tween_property(_ouvinte, "modulate", Color(OUVINTE_LUZ, OUVINTE_LUZ, OUVINTE_LUZ), dur)
+	# Vai direto para o lado dele, menor e mais escuro (sem deslizar).
+	_ouvinte.position.x = x_para
+	_ouvinte.scale = Vector2.ONE * OUVINTE_ESCALA
+	_ouvinte.modulate = Color(OUVINTE_LUZ, OUVINTE_LUZ, OUVINTE_LUZ)
 
 
 ## A caixa aparece subindo um pouco.
@@ -619,14 +563,12 @@ func _subir_caixa() -> void:
 	tw.tween_property(_caixa, "offset_bottom", 0.0, dur).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
-## [IMPACTO]: o corpo dá um salto curto e a caixa um tremor leve.
+## [IMPACTO]: a caixa dá um tremor leve (o personagem fica parado).
 func _enfatizar(atraso: float) -> void:
 	if Preferencias.reduzir_animacoes:
 		return
 	var tw := create_tween()
 	tw.tween_interval(atraso)
-	tw.tween_property(self, "_salto", -IMPACTO_PX, 0.08).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(self, "_salto", 0.0, 0.18).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 	for k in 4:
 		tw.tween_property(_caixa, "offset_left", 24.0 + (6.0 if k % 2 == 0 else -6.0) * (1.0 - k / 4.0), 0.04)
 	tw.tween_property(_caixa, "offset_left", 24.0, 0.04)
@@ -759,60 +701,16 @@ func _trocar_cenario(id: String, ilustracao := false) -> void:
 		return
 	_cenario.texture = tex
 	_cenario.self_modulate = tom
-	_focos = {}
-	if ilustracao:
-		var cat_f: Dictionary = historia.dados.historia().get("ilustracoes", {}).get(id, {})
-		for k in cat_f.get("focos", {}):
-			var p: Array = cat_f["focos"][k]
-			_focos[k] = Vector2(float(p[0]), float(p[1]))
 	_cenario.visible = true
 	_vinheta.visible = true
 	_cenario.modulate.a = 0.0
 	var tw := create_tween().set_parallel()
 	tw.tween_property(_cenario, "modulate:a", 1.0, CENARIO_S * (2.0 if ilustracao else 1.0))
 	tw.tween_property(_vinheta, "modulate:a", 1.0, CENARIO_S)
-	# Zoom lento: o quadro respira. Com focos, a câmera fica um pouco mais perto
-	# e segue quem fala (_focar).
-	if _tw_zoom != null:
-		_tw_zoom.kill()
+	# Imagem parada (pedido do usuário): sem zoom lento nem câmera seguindo quem fala.
 	_cenario.position = Vector2.ZERO
-	if _focos.is_empty():
-		_cenario.pivot_offset = get_viewport_rect().size / 2.0
-		_cenario.scale = Vector2.ONE
-		_tw_zoom = create_tween()
-		_tw_zoom.tween_property(_cenario, "scale", Vector2.ONE * ZOOM_CENARIO, ZOOM_S).set_trans(Tween.TRANS_SINE)
-	else:
-		_cenario.pivot_offset = Vector2.ZERO
-		_cenario.scale = Vector2.ONE * ZOOM_FOCO
-		_cenario.position = _posicao_foco(Vector2(0.5, 0.5))
+	_cenario.scale = Vector2.ONE
 	_faixas_cinema(true)
-
-
-## Desloca a câmera de leve para o ponto `foco` (0..1 na ilustração).
-func _focar(foco: Vector2) -> void:
-	if not _cenario.visible or Preferencias.reduzir_animacoes:
-		return
-	if _tw_zoom != null:
-		_tw_zoom.kill()
-	_tw_zoom = create_tween()
-	_tw_zoom.tween_property(_cenario, "position", _posicao_foco(foco), FOCO_S) \
-			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-
-## Posição do quadro (escala ZOOM_FOCO, pivô no canto) que puxa o centro da
-## tela FOCO_PUXA do caminho até `foco`, sem mostrar borda.
-func _posicao_foco(foco: Vector2) -> Vector2:
-	var tela := get_viewport_rect().size
-	var tex := _cenario.texture
-	if tex == null:
-		return Vector2.ZERO
-	# A ilustração cobre a tela (KEEP_ASPECT_COVERED): onde o ponto cai nela.
-	var ts := Vector2(tex.get_size())
-	var k := maxf(tela.x / ts.x, tela.y / ts.y)
-	var ponto := (tela - ts * k) / 2.0 + foco * ts * k
-	var alvo := (tela / 2.0).lerp(ponto, FOCO_PUXA)
-	var pos := tela / 2.0 - alvo * ZOOM_FOCO
-	return Vector2(clampf(pos.x, tela.x - tela.x * ZOOM_FOCO, 0.0), clampf(pos.y, tela.y - tela.y * ZOOM_FOCO, 0.0))
 
 
 func _faixas_cinema(ligar: bool) -> void:
@@ -897,15 +795,14 @@ func _layout() -> void:
 	_base_y = tela.y - h
 
 
-## Respiração (o corpo parado sobe e desce de leve), o salto da ênfase e a
-## dica de continuar, que pulsa só quando o texto acabou.
+## O corpo parado no lugar e a dica de continuar, que pulsa só quando o texto
+## acabou.
 func _process(_delta: float) -> void:
 	if not visible:
 		return
 	var t := Time.get_ticks_msec() / 1000.0
-	var amp := 0.0 if Preferencias.reduzir_animacoes else RESPIRA_PX
-	_corpo.position.y = _base_y + _salto + sin(t * TAU / RESPIRA_S + float(hash(_quem) % 100)) * amp
-	_ouvinte.position.y = _base_y + sin(t * TAU / RESPIRA_S + float(hash(_ouvinte_quem) % 100)) * amp
+	_corpo.position.y = _base_y
+	_ouvinte.position.y = _base_y
 	_encaixar_busto()
 	var pronto := not _digitando() and not _animando
 	_dica.modulate.a = (0.55 + 0.45 * sin(t * 3.0)) if pronto else 0.0

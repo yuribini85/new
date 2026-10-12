@@ -1,9 +1,16 @@
 {
- "_nota": "Abertura do jogo (ui/abertura_cinema.gd) e a música dela (tools/gerar_musica_abertura.py) leem estes tempos (s): cada plano entra em 'ini', fica 'dur' e funde com o próximo em 'fusao'; 'zoom' e 'pan' (fração da tela) são o movimento lento da câmera do começo ao fim do plano; 'corte' entra seco, com clarão e tremor. 'batida' (opcional) é o instante de um impacto com clarão e estrondo; 'logo' quando o logo aparece; 'fim' quando a abertura acaba; 'estilo' escolhe a música. Decisão 73: os carros da Wreckage saindo da arena no guincho e a Mara com as contas; depois, a chegada do jogador (GAME_START, ilustração chegada). Apresentação, não balanceamento.",
- "estilo": "oficina",
+ "_nota": "Abertura do jogo (ui/abertura_cinema.gd), tempos em s: cada plano entra em 'ini', fica 'dur' e funde com o próximo em 'fusao'; imagens paradas, sem música nem zoom (pedido do usuário, 2026-10-12); 'corte' entra seco, com clarão e tremor; 'batida' (opcional) é o instante de um impacto com clarão e estrondo; 'logo' quando o logo aparece; 'fim' quando a abertura acaba. Decisão 73: os carros da Wreckage saindo da arena no guincho e a Mara com as contas; depois, a chegada do jogador (GAME_START, ilustração chegada). Apresentação, não balanceamento.",
  "planos": [
-  {"img": "arena", "ini": 0.0, "dur": 7.6, "zoom": [1.0, 1.12], "pan": [[0.0, 0.03], [0.0, -0.02]]},
-  {"img": "contas", "ini": 6.9, "dur": 7.4, "zoom": [1.14, 1.03], "pan": [[0.0, 0.0], [0.0, 0.01]]}
+  {
+   "img": "arena",
+   "ini": 0.0,
+   "dur": 7.6
+  },
+  {
+   "img": "contas",
+   "ini": 6.9,
+   "dur": 7.4
+  }
  ],
  "fusao": 0.9,
  "logo": 14.6,
