@@ -514,9 +514,610 @@
     "largura": 8.0,
     "altura": 3.2
    }
+  },
+  {
+   "id": "varzea_galpao",
+   "nome": "Várzea do Galpão",
+   "licenca": "CLUB",
+   "borda": {
+    "largura": 4.0,
+    "altura": 1.2
+   },
+   "muro": [
+    [
+     48.86,
+     0.0
+    ],
+    [
+     41.53,
+     26.87
+    ],
+    [
+     19.55,
+     41.53
+    ],
+    [
+     -14.66,
+     43.0
+    ],
+    [
+     -41.53,
+     26.87
+    ],
+    [
+     -48.86,
+     -2.44
+    ],
+    [
+     -39.09,
+     -29.32
+    ],
+    [
+     -9.77,
+     -42.02
+    ],
+    [
+     24.43,
+     -38.11
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "c": [
+      0.0,
+      0.0
+     ],
+     "r": 43.98,
+     "h": -1.6
+    },
+    {
+     "c": [
+      26.87,
+      17.1
+     ],
+     "r": 17.1,
+     "h": 0.9
+    }
+   ]
+  },
+  {
+   "id": "curral_fardos",
+   "nome": "Curral dos Fardos",
+   "licenca": "SPORT",
+   "borda": {
+    "largura": 5.0,
+    "altura": 1.5
+   },
+   "muro": [
+    [
+     49.48,
+     0.0
+    ],
+    [
+     24.74,
+     42.85
+    ],
+    [
+     -24.74,
+     42.85
+    ],
+    [
+     -49.48,
+     0.0
+    ],
+    [
+     -24.74,
+     -42.85
+    ],
+    [
+     24.74,
+     -42.85
+    ]
+   ],
+   "obstaculos": [
+    {
+     "c": [
+      -15.83,
+      5.94
+     ],
+     "r": 3.71
+    },
+    {
+     "c": [
+      15.83,
+      -5.94
+     ],
+     "r": 3.71
+    }
+   ],
+   "relevo": [
+    {
+     "c": [
+      0.0,
+      24.74
+     ],
+     "r": 17.81,
+     "h": 1.4
+    },
+    {
+     "c": [
+      0.0,
+      -24.74
+     ],
+     "r": 17.81,
+     "h": 1.4
+    },
+    {
+     "c": [
+      0.0,
+      0.0
+     ],
+     "r": 22.27,
+     "h": -1.2
+    }
+   ]
+  },
+  {
+   "id": "patio_fundicao",
+   "nome": "Pátio da Fundição",
+   "licenca": "SPORT",
+   "grid": true,
+   "borda": {
+    "largura": 5.0,
+    "altura": 1.8
+   },
+   "muro": [
+    [
+     52.22,
+     -30.46
+    ],
+    [
+     52.22,
+     30.46
+    ],
+    [
+     21.76,
+     30.46
+    ],
+    [
+     21.76,
+     21.76
+    ],
+    [
+     4.35,
+     21.76
+    ],
+    [
+     4.35,
+     30.46
+    ],
+    [
+     -52.22,
+     30.46
+    ],
+    [
+     -52.22,
+     -30.46
+    ],
+    [
+     -4.35,
+     -30.46
+    ],
+    [
+     -4.35,
+     -21.76
+    ],
+    [
+     -21.76,
+     -21.76
+    ],
+    [
+     -21.76,
+     -30.46
+    ]
+   ],
+   "obstaculos": [
+    {
+     "c": [
+      -26.11,
+      0.0
+     ],
+     "r": 3.92
+    },
+    {
+     "c": [
+      0.0,
+      0.0
+     ],
+     "r": 3.92
+    },
+    {
+     "c": [
+      26.11,
+      0.0
+     ],
+     "r": 3.92
+    }
+   ],
+   "relevo": [
+    {
+     "c": [
+      -13.05,
+      13.05
+     ],
+     "r": 13.05,
+     "h": 1.6
+    },
+    {
+     "c": [
+      13.05,
+      -13.05
+     ],
+     "r": 13.05,
+     "h": 1.6
+    },
+    {
+     "c": [
+      39.16,
+      17.41
+     ],
+     "r": 15.23,
+     "h": -1.8
+    },
+    {
+     "c": [
+      -39.16,
+      -17.41
+     ],
+     "r": 15.23,
+     "h": -1.8
+    }
+   ]
+  },
+  {
+   "id": "estacionamento_saida",
+   "nome": "Estacionamento da Última Saída",
+   "licenca": "NATIONAL",
+   "grid": true,
+   "borda": {
+    "largura": 6.0,
+    "altura": 2.2
+   },
+   "muro": [
+    [
+     47.62,
+     -38.96
+    ],
+    [
+     47.62,
+     8.66
+    ],
+    [
+     25.97,
+     8.66
+    ],
+    [
+     12.99,
+     21.64
+    ],
+    [
+     12.99,
+     43.29
+    ],
+    [
+     -43.29,
+     43.29
+    ],
+    [
+     -43.29,
+     -38.96
+    ]
+   ],
+   "obstaculos": [
+    {
+     "c": [
+      -17.32,
+      19.48
+     ],
+     "r": 3.03
+    },
+    {
+     "c": [
+      -17.32,
+      -15.15
+     ],
+     "r": 3.03
+    },
+    {
+     "c": [
+      12.99,
+      -15.15
+     ],
+     "r": 3.03
+    },
+    {
+     "c": [
+      -2.16,
+      2.16
+     ],
+     "r": 3.03
+    }
+   ],
+   "relevo": [
+    {
+     "c": [
+      34.63,
+      -25.97
+     ],
+     "r": 17.32,
+     "h": 2.3
+    },
+    {
+     "c": [
+      -30.3,
+      32.47
+     ],
+     "r": 17.32,
+     "h": 2.3
+    },
+    {
+     "c": [
+      0.0,
+      -28.14
+     ],
+     "r": 15.15,
+     "h": -1.6
+    },
+    {
+     "c": [
+      -30.3,
+      -4.33
+     ],
+     "r": 12.99,
+     "h": 1.2
+    }
+   ]
+  },
+  {
+   "id": "bacia_blackwater",
+   "nome": "Bacia de Blackwater",
+   "licenca": "PRO",
+   "grid": true,
+   "borda": {
+    "largura": 7.0,
+    "altura": 3.0
+   },
+   "muro": [
+    [
+     56.59,
+     0.0
+    ],
+    [
+     50.97,
+     16.06
+    ],
+    [
+     35.3,
+     28.95
+    ],
+    [
+     12.58,
+     36.08
+    ],
+    [
+     -12.58,
+     36.08
+    ],
+    [
+     -35.3,
+     28.95
+    ],
+    [
+     -50.97,
+     16.06
+    ],
+    [
+     -56.59,
+     0.0
+    ],
+    [
+     -50.97,
+     -16.06
+    ],
+    [
+     -35.3,
+     -28.95
+    ],
+    [
+     -12.58,
+     -36.08
+    ],
+    [
+     12.58,
+     -36.08
+    ],
+    [
+     35.3,
+     -28.95
+    ],
+    [
+     50.97,
+     -16.06
+    ]
+   ],
+   "obstaculos": [
+    {
+     "c": [
+      -32.65,
+      0.0
+     ],
+     "r": 3.48
+    },
+    {
+     "c": [
+      32.65,
+      0.0
+     ],
+     "r": 3.48
+    }
+   ],
+   "relevo": [
+    {
+     "c": [
+      0.0,
+      0.0
+     ],
+     "r": 43.53,
+     "h": -6.0
+    },
+    {
+     "c": [
+      26.16,
+      16.93
+     ],
+     "r": 11.32,
+     "h": 1.7
+    },
+    {
+     "c": [
+      -26.16,
+      16.93
+     ],
+     "r": 11.32,
+     "h": 1.7
+    },
+    {
+     "c": [
+      -26.16,
+      -16.93
+     ],
+     "r": 11.32,
+     "h": 1.7
+    },
+    {
+     "c": [
+      26.16,
+      -16.93
+     ],
+     "r": 11.32,
+     "h": 1.7
+    }
+   ]
+  },
+  {
+   "id": "claustro_vazio",
+   "nome": "Claustro Vazio",
+   "licenca": "PRO",
+   "grid": true,
+   "borda": {
+    "largura": 8.0,
+    "altura": 3.4
+   },
+   "muro": [
+    [
+     51.7,
+     -18.8
+    ],
+    [
+     51.7,
+     18.8
+    ],
+    [
+     18.8,
+     18.8
+    ],
+    [
+     18.8,
+     51.7
+    ],
+    [
+     -18.8,
+     51.7
+    ],
+    [
+     -18.8,
+     18.8
+    ],
+    [
+     -51.7,
+     18.8
+    ],
+    [
+     -51.7,
+     -18.8
+    ],
+    [
+     -18.8,
+     -18.8
+    ],
+    [
+     -18.8,
+     -51.7
+    ],
+    [
+     18.8,
+     -51.7
+    ],
+    [
+     18.8,
+     -18.8
+    ]
+   ],
+   "obstaculos": [
+    {
+     "c": [
+      0.0,
+      0.0
+     ],
+     "r": 7.52
+    }
+   ],
+   "relevo": [
+    {
+     "c": [
+      35.25,
+      0.0
+     ],
+     "r": 16.45,
+     "h": -2.6
+    },
+    {
+     "c": [
+      -35.25,
+      0.0
+     ],
+     "r": 16.45,
+     "h": -2.6
+    },
+    {
+     "c": [
+      0.0,
+      35.25
+     ],
+     "r": 16.45,
+     "h": -2.6
+    },
+    {
+     "c": [
+      0.0,
+      -35.25
+     ],
+     "r": 16.45,
+     "h": -2.6
+    },
+    {
+     "c": [
+      0.0,
+      0.0
+     ],
+     "r": 32.9,
+     "h": 2.4
+    }
+   ]
   }
  ],
- "_nota_arenas": "Arenas (decisão 59, aprovadas pelo usuário em 2026-10-11): 4 originais com o que caracteriza as do Destruction Derby 2 sem copiar nenhuma: muro em polígono irregular (m), obstáculos (ilhas: c, r em m), chão irregular (relevo: lombada h>0 ou cratera h<0, gaussiana de raio r) e a borda que sobe junto ao muro (largura, altura em m). Mesma área do círculo de raio_m (45 m). Cada uma abre na sua licença; a luta sorteia entre as abertas. Alturas e formas são desenho, não balanceamento; ajustar no playtest.",
+ "_nota_arenas": "Arenas (decisão 59, aprovadas pelo usuário em 2026-10-11): 4 originais com o que caracteriza as do Destruction Derby 2 sem copiar nenhuma: muro em polígono irregular (m), obstáculos (ilhas: c, r em m), chão irregular (relevo: lombada h>0 ou cratera h<0, gaussiana de raio r) e a borda que sobe junto ao muro (largura, altura em m). Mesma área do círculo de raio_m (45 m). Cada uma abre na sua licença; a luta sorteia entre as abertas. Alturas e formas são desenho, não balanceamento; ajustar no playtest. Decisão 75 (2026-10-12, aprovada pelo usuário): mais seis, geradas por tools/arenas_novas.py: Várzea do Galpão (Club) e Curral dos Fardos (Sport), para quem ainda não tem National; e quatro exclusivas dos desafios do The Grid (grid: true, o campeonato não sorteia): Pátio da Fundição (#8), Estacionamento da Última Saída (#5), Bacia de Blackwater (#3) e Claustro Vazio (#1, o confronto).",
  "campeonato": {
   "equipes_min": 2,
   "equipes_max": 10,
@@ -526,7 +1127,11 @@
  "blindagem": {
   "referencia": "lightweight",
   "niveis": 3,
-  "nomes": ["Blindagem leve", "Blindagem média", "Blindagem pesada"]
+  "nomes": [
+   "Blindagem leve",
+   "Blindagem média",
+   "Blindagem pesada"
+  ]
  },
  "_nota_blindagem": "Blindagem (pedido do usuário; números a confirmar): espelho da redução de peso do GT2 do próprio carro. O nível k pesa o inverso do estágio k da redução (×0,95 vira ×1/0,95) e custa o mesmo. Na arena a resistência é ½·m·v_ref², então cresce na mesma razão do peso; na corrida o peso tira desempenho. Ver data_model/blindagem.gd."
 }

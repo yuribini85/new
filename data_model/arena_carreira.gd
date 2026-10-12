@@ -186,7 +186,9 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 static func arenas_abertas(dados: Node, jogador: Node) -> Array:
 	var ordem := GestaoEquipe.ordem(dados)
 	var maior := GestaoEquipe.maior_licenca(dados, jogador)
-	return dados.arena().get("arenas", []).filter(func(a): return ordem.find(String(a.get("licenca", ""))) <= maior)
+	# Decisão 75: as do The Grid (grid: true) são só dos desafios.
+	var aberta := func(a) -> bool: return not a.get("grid", false) and ordem.find(String(a.get("licenca", ""))) <= maior
+	return dados.arena().get("arenas", []).filter(aberta)
 
 
 ## Pontos de um participante: giros provocados (pelo maior limite de cada

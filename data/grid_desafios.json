@@ -1,5 +1,5 @@
 {
- "_nota": "Desafios do The Grid (decisão 74, definidos pelo usuário em 2026-10-12): cada posição do Grid tem o seu desafio, contra os carros especiais da equipe. Corrida: 1x1 (o piloto de corrida do jogador contra o piloto de corrida da equipe), na pista e nas voltas indicadas. Arena: 2x2 (a dupla de arena contra dois pilotos da equipe), na arena indicada; rounds 3 = melhor de 3, e os carros destruídos são trocados por outros da garagem, por isso carros_min (carros fora da vaga de corrida) = 6. Pistas 1-6 e arenas 1-3 em ordem crescente de dificuldade; o mapeamento de 'pista N' e 'arena N' está em 'pistas' e 'arenas'. Carros especiais: os adversários reais (do GT2, eventos.json) da licença da equipe pela maior relação potência/peso, sem repetir no Grid (da #1 para a #10, cada equipe fica com os melhores ainda livres da sua licença); corrida usa 1, arena 2. A licença da equipe (equipes.json → nivel) é exigida para desafiar. Sem prêmio em giros na corrida (a recompensa é subir no Grid); na arena vale o prêmio por pontos da luta.",
+ "_nota": "Desafios do The Grid (decisão 74, definidos pelo usuário em 2026-10-12): cada posição do Grid tem o seu desafio, contra os carros especiais da equipe. Corrida: 1x1 (o piloto de corrida do jogador contra o piloto de corrida da equipe), na pista e nas voltas indicadas. Arena: 2x2 (a dupla de arena contra dois pilotos da equipe), na arena indicada; rounds 3 = melhor de 3, e os carros destruídos são trocados por outros da garagem, por isso carros_min (carros fora da vaga de corrida) = 6. Pistas 1-6 em ordem crescente de dificuldade; arenas 1-3 e o confronto exclusivas do Grid (decisão 75, arena.json → grid); o mapeamento de 'pista N' e 'arena N' está em 'pistas' e 'arenas'. Carros especiais: os adversários reais (do GT2, eventos.json) da licença da equipe pela maior relação potência/peso, sem repetir no Grid (da #1 para a #10, cada equipe fica com os melhores ainda livres da sua licença); corrida usa 1, arena 2. A licença da equipe (equipes.json → nivel) é exigida para desafiar. Sem prêmio em giros na corrida (a recompensa é subir no Grid); na arena vale o prêmio por pontos da luta.",
  "pistas": {
   "1": "pista_de_testes",
   "2": "anel_do_vale",
@@ -9,10 +9,10 @@
   "6": "serra_alta"
  },
  "arenas": {
-  "1": "patio_pedreira",
-  "2": "fosso_docas",
-  "3": "anel_ferro_velho",
-  "confronto": "cratera_vale"
+  "1": "patio_fundicao",
+  "2": "estacionamento_saida",
+  "3": "bacia_blackwater",
+  "confronto": "claustro_vazio"
  },
  "posicoes": {
   "10": {

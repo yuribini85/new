@@ -265,7 +265,8 @@ func test_chao_irregular_puxa_morro_abaixo_e_formas_seguram_os_carros() -> void:
 func test_arenas_do_jogo_tem_a_area_do_circulo() -> void:
 	var p := _params()
 	var alvo := PI * pow(float(p["raio_m"]), 2.0)
-	igual(p["arenas"].size(), 4, "quatro arenas")
+	igual(p["arenas"].size(), 10, "dez arenas: seis do campeonato e quatro do Grid")
+	igual(p["arenas"].filter(func(a): return a.get("grid", false)).size(), 4, "quatro só do Grid")
 	for a in p["arenas"]:
 		var q := p.duplicate()
 		q["forma"] = a
@@ -476,8 +477,8 @@ func test_desafios_do_grid() -> void:
 	var d10 := GridDesafio.de(d, dez)
 	igual([d10["modo"], d10["pista"], int(d10["voltas"])], ["corrida", "pista_de_testes", 2], "#10: pista 1, 2 voltas")
 	var d3 := GridDesafio.de(d, tres)
-	igual([d3["modo"], d3["arena"], d3["rounds"], d3["carros_min"]], ["arena", "anel_ferro_velho", 3, 6], "#3: arena 3, MD3, 6 carros")
-	igual(GridDesafio.de(d, lista[9])["arena"], "cratera_vale", "#1: o confronto")
+	igual([d3["modo"], d3["arena"], d3["rounds"], d3["carros_min"]], ["arena", "bacia_blackwater", 3, 6], "#3: arena 3, MD3, 6 carros")
+	igual(GridDesafio.de(d, lista[9])["arena"], "claustro_vazio", "#1: o confronto")
 	# A prova do desafio: 1x1 contra o carro especial, com a licença da equipe.
 	var ev: Dictionary = d.evento(GridDesafio.PREFIXO + String(dez["id"]))
 	igual(ev["adversarios"].size(), 1, "1x1")
@@ -516,7 +517,8 @@ func test_desafios_do_grid() -> void:
 	igual(GridDesafio.bloqueio(d, j, tres), "", "7 carros: 1 de corrida e 6 para a arena")
 	var m := GridDesafio.montar_arena(d, j, tres, 7)
 	igual(m["participantes"].size(), 4, "2x2")
-	igual(m["params"]["forma"]["id"], "anel_ferro_velho", "na arena do desafio")
+	igual(m["params"]["forma"]["id"], "bacia_blackwater", "na arena do desafio")
+	verificar(ArenaCarreira.arenas_abertas(d, j).all(func(a): return not a.get("grid", false)), "o campeonato não usa as do Grid")
 	igual(m["modelos"]["%s:1" % tres["id"]]["id"], esp[0]["carro"], "os carros especiais")
 	var r1 := GridDesafio.registrar_round(d, j, tres, true)
 	verificar(not r1["fim"], "1 × 0: segue")

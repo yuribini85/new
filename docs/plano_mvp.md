@@ -554,8 +554,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     #1 confronto na arena, melhor de 3. Corrida 1x1 (piloto de corrida contra o da equipe),
     arena 2x2 (a dupla contra dois pilotos de arena da equipe). Pistas 1-6: Oval do Planalto,
     Lago Sereno, Cais Velho, Colinas do Vinhedo, Alto da Capela (curto), Alto da Capela;
-    arenas 1-3 e confronto: Pátio da Pedreira, Fosso das Docas, Anel do Ferro-Velho, Cratera
-    do Vale (sugestão, em ordem de dificuldade; troca-se no JSON). Melhor de 3: os carros
+    arenas 1-3 e confronto: as da decisão 75 (antes: Pátio da Pedreira, Fosso das Docas, Anel do Ferro-Velho, Cratera
+    do Vale; em ordem de dificuldade, troca-se no JSON). Melhor de 3: os carros
     destruídos são trocados pelos próximos da garagem entre os rounds, por isso pede 6 carros
     fora o de corrida (a série fica salva entre rounds). Carros especiais: os adversários
     reais (GT2) da licença da equipe pela maior relação potência/peso (sem repetir no Grid:
@@ -566,3 +566,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     arena (ilustração `noite_da_arena`, a da abertura). Pinturas: 6 desenhos e nenhum logo no
     começo; cada equipe vencida libera 1 desenho e 1 logo (16 e 10 no topo). Blindagem: peças
     (desmanche e arena) e os giros completam o que faltar.
+75. **Arenas novas** (2026-10-12, aprovada pelo usuário). Seis, no formato da decisão 59
+    (`tools/arenas_novas.py` grava em `arena.json` → `arenas`; mesma área do círculo de 45 m,
+    largada conferida para até 20 carros). Para as licenças sem arena: Várzea do Galpão
+    (Club; pátio quase plano, sem ilhas) e Curral dos Fardos (Sport; hexágono, dois fardos).
+    Exclusivas dos desafios do The Grid (`grid: true`, o campeonato não sorteia): Pátio da
+    Fundição (#8, galpão com docas e três pilhas de lingotes), Estacionamento da Última
+    Saída (#5, em L, quatro colunas e rampas), Bacia de Blackwater (#3, reservatório oval de
+    fundo fundo e anel de lombadas) e Claustro Vazio (#1, em cruz, o altar no meio, uma
+    cratera em cada braço e o muro mais alto). As quatro originais seguem no campeonato.
