@@ -87,6 +87,7 @@ func carregar(dir: String) -> void:
 		for item in lista:
 			_validar_item(arquivo, item)
 			_listas[arquivo][str(item.get("id"))] = item
+	_gerar_blindagem(dir)
 	for arquivo in OBJETOS:
 		_objetos[arquivo] = {}
 		var obj = _ler_json(dir + arquivo + ".json")
@@ -100,6 +101,19 @@ func carregar(dir: String) -> void:
 			elif obj[chave] == null:
 				_pendencias.append("%s.json: %s" % [arquivo, chave])
 	_validar_referencias()
+
+
+## Blindagem (Blindagem): peças derivadas da redução de peso de cada carro,
+## pela regra de data/arena.json → blindagem. Sem a regra, nenhuma.
+func _gerar_blindagem(dir: String) -> void:
+	var caminho := dir + "arena.json"
+	if not FileAccess.file_exists(caminho):
+		return
+	var a = _ler_json(caminho)
+	if not a is Dictionary or not a.get("blindagem") is Dictionary:
+		return
+	for p in Blindagem.gerar(_listas["pecas"].values(), _listas["carros"].values(), a["blindagem"]):
+		_listas["pecas"][p["id"]] = p
 
 
 func _ler_json(caminho: String) -> Variant:

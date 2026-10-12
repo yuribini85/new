@@ -251,6 +251,13 @@ func test_campanha_do_dono_e_comentarios() -> void:
 
 ## Cenas reais: o jogo novo é a campanha do dono; Adrian e Elena seguem com as
 ## cenas deles, e as falas do Marcus de sistema não aparecem para o dono.
+## Quem fala na campanha da Wreckage: a Mara, o piloto, o sistema e o pessoal da
+## oficina, das lojas, da Vector Academy e da arena (pedido do usuário).
+const ELENCO_WRECKAGE := ["mara", "piloto_casa", "sistema", "examinador", "manobrista", "mecanico_arena",
+		"organizadora", "pintor", "vendedor_charge_folio", "vendedor_relay_room", "vendedora_brace_yard",
+		"vendedora_return_chapter", "vendedora_shared_grid"]
+
+
 func test_cenas_reais_da_campanha_do_dono() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar(d.DATA_DIR)
@@ -268,8 +275,7 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	for c in d.lista("dialogos"):
 		if String(c["id"]).begins_with("CW_"):
 			for f in c["falas"]:
-				verificar(f.get("quem", "mara") in ["mara", "piloto_casa", "responsavel", "sistema"],
-						"%s: só Mara, piloto, academia ou sistema" % c["id"])
+				verificar(f.get("quem", "mara") in ELENCO_WRECKAGE, "%s: só o elenco da Wreckage" % c["id"])
 	j.personagem = "elena"
 	verificar(String(h.cena_para("SEM_DINHEIRO").get("id", "")) == "SYS_01", "Elena segue com o Marcus")
 	j.free()

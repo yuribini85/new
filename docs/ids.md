@@ -18,6 +18,16 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `vendedor` | Vendedor · Second Chance Motors |
 | `responsavel` | Vector Academy |
 | `jornalista` | Jornalista |
+| `examinador` | Harold Brandt |
+| `manobrista` | Rico Salas |
+| `mecanico_arena` | Dex Kane |
+| `organizadora` | Roxy Vega |
+| `pintor` | Kenji Arata |
+| `vendedor_charge_folio` | Edgar Halloway |
+| `vendedor_relay_room` | Sal Moretti |
+| `vendedora_brace_yard` | Bianca Sterling |
+| `vendedora_return_chapter` | Nora Lindqvist |
+| `vendedora_shared_grid` | Jade Ryker |
 | `sistema` |  |
 
 ## Cenas (`data/dialogos.json`, de `tools/historia/cenas.txt`)
@@ -118,6 +128,10 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_M04` | `VITORIA` | — | `TEN_WINS` |
 | `CW_M05` | `VITORIA` | — | `TWENTY_FIVE_WINS` |
 | `CW_P07` | `ABA:ARENA` | — | `ARENA_INTRO` |
+| `CW_AR02` | `ENCADEADA` | — | `DEX_MET` |
+| `CW_AR03` | `BLINDAGEM` | — | `ARMOR_TUTORIAL_SEEN` |
+| `CW_AR03B` | `BLINDAGEM` | — | `ARMOR_TUTORIAL_SEEN`, `DEX_MET` |
+| `CW_AR04` | `BLINDAGEM_COMPRADA` | — | `FIRST_ARMOR` |
 | `CW_R06` | `ARENA_INSCRICAO` | — | `ARENA_FIRST_ENTRY` |
 | `CW_R07` | `ARENA_FIM` | — | `ARENA_SURVIVED` |
 | `CW_A01` | `ARENA_VITORIA` | — | `ARENA_FIRST_WIN` |
@@ -128,6 +142,20 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_S03` | `CARRO_DESMONTADO` | — | `FIRST_DISMANTLE` |
 | `CW_S05` | `TREINO_CONCLUIDO` | — | `FIRST_TRAINING_LEVEL` |
 | `CW_S04` | `SEDE_MELHORADA` | — | `FIRST_HQ_UPGRADE` |
+| `CW_GA01` | `GARAGEM_ABERTA` | — | `GARAGE_WINDOW_SEEN` |
+| `CW_PT01` | `PINTURA` | — | `PAINT_TUTORIAL_SEEN` |
+| `CW_PT02` | `PINTURA_APLICADA` | — | `FIRST_PAINT` |
+| `CW_PT03` | `PINTURA_APLICADA` | — | — |
+| `CW_LJ01` | `LOJA:charge_folio_motors` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_CHARGE_FOLIO` |
+| `CW_LJ02` | `LOJA:charge_folio_motors` | — | `SHOP_CHARGE_FOLIO` |
+| `CW_LJ03` | `LOJA:relay_room_garage` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_RELAY_ROOM` |
+| `CW_LJ04` | `LOJA:relay_room_garage` | — | `SHOP_RELAY_ROOM` |
+| `CW_LJ05` | `LOJA:brace_yard_works` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_BRACE_YARD` |
+| `CW_LJ06` | `LOJA:brace_yard_works` | — | `SHOP_BRACE_YARD` |
+| `CW_LJ07` | `LOJA:return_chapter_customs` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_RETURN_CHAPTER` |
+| `CW_LJ08` | `LOJA:return_chapter_customs` | — | `SHOP_RETURN_CHAPTER` |
+| `CW_LJ09` | `LOJA:shared_grid_motors` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_SHARED_GRID` |
+| `CW_LJ10` | `LOJA:shared_grid_motors` | — | `SHOP_SHARED_GRID` |
 | `CW_R01` | `CORRIDA_FIM` | — | `FIRST_LOSS_TALK` |
 | `CW_R03` | `CAIXA_BAIXO` | — | — |
 | `CW_R04` | `COMPRA_CARRO_CARA` | — | — |
@@ -140,7 +168,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 
 ## Triggers usados pelas cenas
 
-`ABA:ARENA`, `ABA:EQUIPE`, `ABA:EVENTOS`, `ABA:LICENCAS`, `ABA:LOJA`, `ACIDENTE`, `ARENA_FIM`, `ARENA_INSCRICAO`, `ARENA_PERDA`, `ARENA_VITORIA`, `CAIXA_BAIXO`, `CAMPEONATO_SELECIONADO`, `CAMPEONATO_VENCIDO`, `CARRO_DESMONTADO`, `COLECAO`, `COMPRA_CARRO`, `COMPRA_CARRO_CARA`, `COMPRA_CARRO_NOVO`, `CORRIDA_CONTRA:lucas_ward`, `CORRIDA_FIM`, `CORRIDA_INICIO`, `CORRIDA_RESISTENCIA`, `DEMANDA_CONCLUIDA`, `ENCADEADA`, `EVENTO_BLOQUEADO`, `EVENTO_SELECIONADO`, `EVOLUCAO`, `GAME_START`, `GARAGEM_AMPLIADA`, `GARAGEM_DOIS_CARROS`, `LEMBRETE`, `LICENCA_CONCEDIDA:CLUB`, `LICENCA_CONCEDIDA:ELITE`, `LICENCA_CONCEDIDA:INTERNATIONAL`, `LICENCA_CONCEDIDA:NATIONAL`, `LICENCA_CONCEDIDA:PRO`, `LICENCA_CONCEDIDA:SPORT`, `LICENCA_DISPONIVEL:ELITE`, `LICENCA_DISPONIVEL:NATIONAL`, `LICENCA_DISPONIVEL:PRO`, `LICENCA_DISPONIVEL:SPORT`, `LICENCA_EM_TREINO`, `LICENCA_EXIGIDA`, `LICENCA_PRONTA`, `LICENCA_TREINO_INICIO`, `PATROCINIO_ASSINADO`, `POTENCIA_ACIMA`, `RADIO_ULTIMA_CORRIDA`, `SEDE_MELHORADA`, `SEM_DINHEIRO`, `TREINO_CONCLUIDO`, `ULTIMA_CORRIDA_ADRIAN`, `VITORIA`, `VITORIA_LICENCA:CLUB`, `VITORIA_LICENCA:NATIONAL`, `VITORIA_LICENCA:SPORT`
+`ABA:ARENA`, `ABA:EQUIPE`, `ABA:EVENTOS`, `ABA:LICENCAS`, `ABA:LOJA`, `ACIDENTE`, `ARENA_FIM`, `ARENA_INSCRICAO`, `ARENA_PERDA`, `ARENA_VITORIA`, `BLINDAGEM`, `BLINDAGEM_COMPRADA`, `CAIXA_BAIXO`, `CAMPEONATO_SELECIONADO`, `CAMPEONATO_VENCIDO`, `CARRO_DESMONTADO`, `COLECAO`, `COMPRA_CARRO`, `COMPRA_CARRO_CARA`, `COMPRA_CARRO_NOVO`, `CORRIDA_CONTRA:lucas_ward`, `CORRIDA_FIM`, `CORRIDA_INICIO`, `CORRIDA_RESISTENCIA`, `DEMANDA_CONCLUIDA`, `ENCADEADA`, `EVENTO_BLOQUEADO`, `EVENTO_SELECIONADO`, `EVOLUCAO`, `GAME_START`, `GARAGEM_ABERTA`, `GARAGEM_AMPLIADA`, `GARAGEM_DOIS_CARROS`, `LEMBRETE`, `LICENCA_CONCEDIDA:CLUB`, `LICENCA_CONCEDIDA:ELITE`, `LICENCA_CONCEDIDA:INTERNATIONAL`, `LICENCA_CONCEDIDA:NATIONAL`, `LICENCA_CONCEDIDA:PRO`, `LICENCA_CONCEDIDA:SPORT`, `LICENCA_DISPONIVEL:ELITE`, `LICENCA_DISPONIVEL:NATIONAL`, `LICENCA_DISPONIVEL:PRO`, `LICENCA_DISPONIVEL:SPORT`, `LICENCA_EM_TREINO`, `LICENCA_EXIGIDA`, `LICENCA_PRONTA`, `LICENCA_TREINO_INICIO`, `LOJA:brace_yard_works`, `LOJA:charge_folio_motors`, `LOJA:relay_room_garage`, `LOJA:return_chapter_customs`, `LOJA:shared_grid_motors`, `PATROCINIO_ASSINADO`, `PINTURA`, `PINTURA_APLICADA`, `POTENCIA_ACIMA`, `RADIO_ULTIMA_CORRIDA`, `SEDE_MELHORADA`, `SEM_DINHEIRO`, `TREINO_CONCLUIDO`, `ULTIMA_CORRIDA_ADRIAN`, `VITORIA`, `VITORIA_LICENCA:CLUB`, `VITORIA_LICENCA:NATIONAL`, `VITORIA_LICENCA:SPORT`
 
 ## Ações de tutorial (TutorialAction)
 
@@ -159,10 +187,12 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `ARENA_FIRST_WIN` | cena CW_A01 |
 | `ARENA_INTRO` | cena CW_P07 |
 | `ARENA_SURVIVED` | cena CW_R07 |
+| `ARMOR_TUTORIAL_SEEN` | cena CW_AR03 |
 | `CHAMPIONSHIP_CLOSED_TALK` | cena SCN_A10 |
 | `CHAMPIONSHIP_TUTORIAL_DONE` | cena SCN_A04 |
 | `CLUB_COMPLETE` | cena CW_R10 |
 | `COLLECTION_FIVE` | cena CW_R11 |
+| `DEX_MET` | cena CW_AR02 |
 | `DRIVER_HIRE_UNLOCKED` | cena SCN_N01 |
 | `ELENA_CLUB_COMPLETE` | cena SCN_D05 |
 | `ELENA_FIRST_CAR_BOUGHT` | cena SCN_C02 |
@@ -177,6 +207,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `EMPTY_GARAGE_SEEN` | cena SCN_B01 |
 | `EVENT_MENU_TUTORIAL_SEEN` | cena SCN_A04 |
 | `EVENT_REQUIREMENTS_TUTORIAL_DONE` | cena SCN_A07 |
+| `FIRST_ARMOR` | cena CW_AR04 |
 | `FIRST_CHAMPIONSHIP_DONE` | condição de SCN_A10 |
 | `FIRST_CLUB_WIN` | cena CW_M01 |
 | `FIRST_DISMANTLE` | cena CW_S03 |
@@ -185,6 +216,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `FIRST_LOSS_TALK` | cena CW_R01 |
 | `FIRST_NATIONAL_WIN` | cena CW_M03 |
 | `FIRST_NEW_CAR` | cena SYS_07 |
+| `FIRST_PAINT` | cena CW_PT02 |
 | `FIRST_RACE_BRIEFED` | condição de SCN_A04L |
 | `FIRST_RACE_DONE` | cena SCN_A06 |
 | `FIRST_SECOND_CAR` | cena SCN_G02 |
@@ -199,6 +231,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `FIRST_WIN_ADRIAN` | cena SCN_A06 |
 | `GARAGE_EXPANDED` | cena CW_R12 |
 | `GARAGE_TUTORIAL_SEEN` | cena SCN_A01 |
+| `GARAGE_WINDOW_SEEN` | cena CW_GA01 |
 | `INTERNATIONAL_COMPLETE` | cena CW_T01 |
 | `LAST_RACE_STARTED` | condição de SCN_A10 |
 | `LICENSE_OFFLINE_TUTORIAL_SEEN` | cena SCN_D02 |
@@ -208,6 +241,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `MEDIA_COMPARISON_STARTED` | cena SCN_G03 |
 | `NATIONAL_AVAILABLE_SEEN` | cena CW_L06 |
 | `NATIONAL_COMPLETE` | cena CW_R10C |
+| `PAINT_TUTORIAL_SEEN` | cena CW_PT01 |
 | `PATROCINIO_INTRO` | cena CW_S01 |
 | `PILOT_MET` | cena CW_P04 |
 | `PRO_AVAILABLE_SEEN` | cena SCN_M01 |
@@ -215,6 +249,12 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `SECOND_CHANCE_UNLOCKED` | cena SCN_B04 |
 | `SECOND_DRIVER_CREATED` | cena SCN_K01 |
 | `SECOND_DRIVER_SECOND_CAR` | cena SCN_N02 |
+| `SHOP_BRACE_YARD` | cena CW_LJ05 |
+| `SHOP_CHARGE_FOLIO` | cena CW_LJ01 |
+| `SHOP_RELAY_ROOM` | cena CW_LJ03 |
+| `SHOP_RETURN_CHAPTER` | cena CW_LJ07 |
+| `SHOP_SHARED_GRID` | cena CW_LJ09 |
+| `SHOP_TUTORIAL_SEEN` | cena CW_LJ01 |
 | `SOPHIE_MET` | cena SCN_L01 |
 | `SPORT_AVAILABLE_SEEN` | cena SCN_F01 |
 | `SPORT_COMPLETE` | cena CW_R10B |

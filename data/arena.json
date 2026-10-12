@@ -522,5 +522,11 @@
   "equipes_max": 10,
   "parceiro_casa": "Piloto da casa"
  },
- "_nota_campeonato": "Arena em duplas (decisão 61, pedido do usuário): cada equipe entra com dois carros e os colegas não se miram; a luta acaba quando sobra uma equipe. Campeonato escalonado: começa em 2×2 (2 equipes, 4 carros) e cada vitória da equipe sobe um nível (2×2×2, …) até equipes_max (10 equipes, 20 carros). A dupla do jogador: o segundo piloto no carro dele (se livre) ou o piloto da casa num carro emprestado, que não se perde."
+ "_nota_campeonato": "Arena em duplas (decisão 61, pedido do usuário): cada equipe entra com dois carros e os colegas não se miram; a luta acaba quando sobra uma equipe. Campeonato escalonado: começa em 2×2 (2 equipes, 4 carros) e cada vitória da equipe sobe um nível (2×2×2, …) até equipes_max (10 equipes, 20 carros). A dupla do jogador: o segundo piloto no carro dele (se livre) ou o piloto da casa num carro emprestado, que não se perde.",
+ "blindagem": {
+  "referencia": "lightweight",
+  "niveis": 3,
+  "nomes": ["Blindagem leve", "Blindagem média", "Blindagem pesada"]
+ },
+ "_nota_blindagem": "Blindagem (pedido do usuário; números a confirmar): espelho da redução de peso do GT2 do próprio carro. O nível k pesa o inverso do estágio k da redução (×0,95 vira ×1/0,95) e custa o mesmo. Na arena a resistência é ½·m·v_ref², então cresce na mesma razão do peso; na corrida o peso tira desempenho. Ver data_model/blindagem.gd."
 }

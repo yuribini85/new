@@ -208,6 +208,8 @@ func _topo_workshop(w: Dictionary) -> void:
 
 func _workshop(w: Dictionary) -> void:
 	_topo_workshop(w)
+	# O vendedor da loja (cenas LOJA:<id>; cada uma só uma vez).
+	(func(): historia("LOJA:" + String(w["id"]))).call_deferred()
 	_filtros()
 	var grade := _grade()
 	var tenho := {}

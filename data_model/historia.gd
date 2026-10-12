@@ -18,7 +18,8 @@ extends RefCounted
 ## COMPRA_CARRO_CARA, CAIXA_BAIXO, COLECAO (contexto quantidade),
 ## VITORIA_LICENCA:<id> e VITORIA (quantidade; ver disparar_fim),
 ## ARENA_INSCRICAO, ARENA_FIM, ARENA_VITORIA, ARENA_PERDA,
-## GARAGEM_AMPLIADA e os do
+## GARAGEM_AMPLIADA, GARAGEM_ABERTA (janela Garagem), PINTURA e PINTURA_APLICADA,
+## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA e os do
 ## prólogo (ULTIMA_CORRIDA_ADRIAN, RADIO_ULTIMA_CORRIDA, ACIDENTE, POS_ACIDENTE).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).

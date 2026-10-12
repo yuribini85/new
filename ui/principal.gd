@@ -368,7 +368,7 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 	add_child(luta)
 	luta.acabou.connect(func(f: Dictionary):
 		if jogador.historia != null:
-			var t := "ARENA_PERDA" if f["perdeu"] else ("ARENA_VITORIA" if f["posicao"] == 1 else "ARENA_FIM")
+			var t := "ARENA_PERDA" if f["perdeu"] else ("ARENA_VITORIA" if f.get("venceu_equipe", f["posicao"] == 1) else "ARENA_FIM")
 			jogador.historia.disparar(t)
 		_sujar_todas()
 		atualizar())

@@ -89,7 +89,9 @@ const ALTURA_PALCO := 560.0
 ## Cartões da ficha (potência, peso, velocidade máxima): altura, ícone, dentes
 ## da barra e a cor do ícone com a barra vazia (cheia: COR_DESTAQUE).
 const ALTURA_FICHA := 128
-const TAMANHO_ICONE_FICHA := 88
+const TAMANHO_ICONE_FICHA := 52
+const NUMERO_FICHA := 36
+const UNIDADE_FICHA := 28
 const DENTES_FICHA := 6
 const COR_ICONE_FICHA := Color("ece6da")
 ## Janela PINTURA: altura da vitrine e lado das amostras de cor.
@@ -238,7 +240,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 	h.offset_right = -12
 	h.offset_top = -12 - ALTURA_FICHA
 	h.offset_bottom = -12
-	h.add_theme_constant_override("separation", 10)
+	h.add_theme_constant_override("separation", 8)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	palco.add_child(h)
 	# Cada atributo num cartão: ícone, valor grande e unidade, e a barra embaixo.
@@ -247,17 +249,30 @@ func _palco(c: Carro, lista: Array) -> Control:
 				_fracao_teto(af["potencia"], a["potencia"], teto["potencia"])],
 			["peso", "PESO", "%d" % a["peso"], "kg", _fracao_teto(af["peso"], a["peso"], teto["peso"])],
 			["velocidade", "VELOCIDADE", "—" if not is_finite(vel) else "%d" % roundi(vel), "km/h",
-				_fracao_teto(Simulacao.velocidade_maxima_kmh(af, dados.simulacao()), vel, teto["vel"])]]:
+				_fracao_teto(Simulacao.velocidade_maxima_kmh(af, dados.simulacao()), vel, teto["vel"])],
+			# Blindagem ao lado da velocidade (pedido do usuário): o nível em
+			# uso, de 0 a 3; tocar abre a compra.
+			["blindagem", "BLINDAGEM", "%d" % Blindagem.nivel(c), "nível",
+				float(Blindagem.nivel(c)) / maxf(Blindagem.itens(dados, c).size(), 1.0)]]:
 		var cartao_ficha := PanelContainer.new()
 		cartao_ficha.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cartao_ficha.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if it[0] == "blindagem":
+			if Blindagem.itens(dados, c).is_empty():
+				continue
+			cartao_ficha.mouse_filter = Control.MOUSE_FILTER_STOP
+			cartao_ficha.gui_input.connect(func(ev: InputEvent):
+				if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+					Sons.tocar_ui(self, "toque", -6.0)
+					_abrir_evolucao(c, Blindagem.CATEGORIA)
+					historia("BLINDAGEM"))
 		var e := StyleBoxFlat.new()
 		e.bg_color = Color(COR_FUNDO, 0.82)
 		e.border_color = Color(1, 1, 1, 0.1)
 		e.set_border_width_all(1)
 		e.set_corner_radius_all(8)
-		e.content_margin_left = 12
-		e.content_margin_right = 12
+		e.content_margin_left = 8
+		e.content_margin_right = 8
 		e.content_margin_top = 10
 		e.content_margin_bottom = 12
 		cartao_ficha.add_theme_stylebox_override("panel", e)
@@ -268,7 +283,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		cartao_ficha.add_child(v)
 		var linha := HBoxContainer.new()
-		linha.add_theme_constant_override("separation", 10)
+		linha.add_theme_constant_override("separation", 6)
 		linha.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		v.add_child(linha)
 		var icone := TextureRect.new()
@@ -285,10 +300,10 @@ func _palco(c: Carro, lista: Array) -> Control:
 		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		linha.add_child(num)
 		var valor := _hud_rotulo(it[2], 0, Color.WHITE, num)
-		Tipografia.numero(valor, 44)
+		Tipografia.numero(valor, NUMERO_FICHA)
 		var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, num)
-		Tipografia.rotulo(u, "regular", 40)
-		var dentes := DENTES_FICHA
+		Tipografia.rotulo(u, "regular", UNIDADE_FICHA)
+		var dentes := DENTES_FICHA if it[0] != "blindagem" else maxi(Blindagem.itens(dados, c).size(), 1)
 		v.add_child(BarraDentes.new(roundi(it[4] * dentes), dentes, 7.0))
 	return palco
 
@@ -406,6 +421,8 @@ var _escolha := {}
 func _itens(c: Carro, cat: String) -> Array:
 	if cat == "pneus":
 		return dados.lista("pneus")
+	if cat == Blindagem.CATEGORIA:
+		return Blindagem.itens(dados, c)
 	var pecas: Array = dados.lista("pecas").filter(func(p): return p["categoria"] == cat and c.motivo_recusa(p).is_empty())
 	pecas.sort_custom(func(a, b): return a["preco"] < b["preco"])
 	return pecas
@@ -517,6 +534,8 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 		var teste := c.copiar()
 		teste.instalar(p)
 		var ganho := "" if cat == "cambio" else _ganho(base_cat, teste.atributos_efetivos("seco"))
+		if cat == Blindagem.CATEGORIA:
+			ganho += "  ·  arena +%d%%" % roundi((Blindagem.ganho_arena(p) - 1.0) * 100.0)
 		var texto := String(p["nome"]) + ("   " + ganho if ganho != "" else "")
 		if instalada:
 			texto += "   · EM USO"
@@ -656,6 +675,7 @@ func abrir_garagem() -> void:
 		_colecao(v, jogador.garagem.lista(), carro_ativo()), botoes,
 		{"fora_fecha": true, "titulo_max": 64, "principal": true, "titulo_extra": _cabecalho_garagem,
 		"habilitado": amp.is_empty() or jogador.economia.pode_pagar(_preco_ampliacao())})
+	historia("GARAGEM_ABERTA")
 
 
 ## Janela PINTURA (aba pendurada no cabeçalho, pedido do usuário): o carro
@@ -733,10 +753,12 @@ func abrir_pintura() -> void:
 				return
 			Sons.tocar_ui(self, "moeda", -4.0)
 			avisar("Carro pintado.")
+			historia("PINTURA_APLICADA")
 			fechar_painel.emit()
 			mudou.emit())
 		v.add_child(b)
 		atualizar.call(), [], {"fora_fecha": true, "titulo_max": 64})
+	historia("PINTURA")
 
 
 ## Grade de amostras da paleta; `ao_escolher` recebe a cor em "#rrggbb".

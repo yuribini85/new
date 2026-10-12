@@ -2764,7 +2764,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Quem treina e avalia é a Vector Academy."
+    "texto": "Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leva café."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -2787,15 +2787,15 @@
   "trigger": "ABA:LICENCAS",
   "falas": [
    {
-    "quem": "responsavel",
-    "texto": "Vector Academy. Licença Club."
+    "quem": "examinador",
+    "texto": "Harold Brandt, examinador da Vector Academy. Licença Club."
    },
    {
-    "quem": "responsavel",
+    "quem": "examinador",
     "texto": "Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado."
    },
    {
-    "quem": "responsavel",
+    "quem": "examinador",
     "texto": "Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é dele."
    },
    {
@@ -2804,8 +2804,8 @@
     "pose": "pensativa"
    },
    {
-    "quem": "responsavel",
-    "texto": "Nada. Aqui se paga com tempo."
+    "quem": "examinador",
+    "texto": "Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta."
    },
    {
     "acao": "HIGHLIGHT_LICENSE_REQUIREMENTS"
@@ -2855,9 +2855,8 @@
   "trigger": "LICENCA_PRONTA",
   "falas": [
    {
-    "quem": "mara",
-    "texto": "O treino acabou. Falta a avaliação.",
-    "pose": "gesto"
+    "quem": "examinador",
+    "texto": "O treino acabou. Agora eu quero ver isso na pista."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -2940,8 +2939,8 @@
   "trigger": "LICENCA_CONCEDIDA:CLUB",
   "falas": [
    {
-    "quem": "responsavel",
-    "texto": "Licença Club aprovada."
+    "quem": "examinador",
+    "texto": "Licença Club aprovada. Assinado e carimbado."
    },
    {
     "quem": "mara",
@@ -2968,8 +2967,8 @@
   "trigger": "LICENCA_CONCEDIDA:SPORT",
   "falas": [
    {
-    "quem": "responsavel",
-    "texto": "Sport aprovada."
+    "quem": "examinador",
+    "texto": "Sport aprovada. Eu esperava mais rápido. Mas aprovada."
    },
    {
     "quem": "mara",
@@ -2992,8 +2991,8 @@
   "trigger": "LICENCA_CONCEDIDA:NATIONAL",
   "falas": [
    {
-    "quem": "responsavel",
-    "texto": "National aprovada."
+    "quem": "examinador",
+    "texto": "National aprovada. Poucos passam daqui sem repetir."
    },
    {
     "quem": "mara",
@@ -3016,8 +3015,8 @@
   "trigger": "LICENCA_CONCEDIDA:INTERNATIONAL",
   "falas": [
    {
-    "quem": "responsavel",
-    "texto": "International aprovada."
+    "quem": "examinador",
+    "texto": "International aprovada. Agora ele representa a Academy lá fora também."
    },
    {
     "quem": "mara",
@@ -3052,7 +3051,7 @@
   "trigger": "LICENCA_CONCEDIDA:PRO",
   "falas": [
    {
-    "quem": "responsavel",
+    "quem": "examinador",
     "texto": "Pro aprovada."
    },
    {
@@ -3085,8 +3084,8 @@
   "trigger": "LICENCA_CONCEDIDA:ELITE",
   "falas": [
    {
-    "quem": "responsavel",
-    "texto": "Elite aprovada."
+    "quem": "examinador",
+    "texto": "Elite aprovada. Em trinta anos, assinei poucas dessas."
    },
    {
     "quem": "mara",
@@ -3143,6 +3142,10 @@
   "trigger": "GARAGEM_DOIS_CARROS",
   "falas": [
    {
+    "quem": "manobrista",
+    "texto": "Dois carros! Agora eu decoro duas chaves."
+   },
+   {
     "quem": "mara",
     "texto": "Dois carros. Duas contas.",
     "pose": "pensativa"
@@ -3186,6 +3189,10 @@
   "trigger": "COLECAO",
   "falas": [
    {
+    "quem": "manobrista",
+    "texto": "Cinco carros, chefe. Já dá pra chamar de frota."
+   },
+   {
     "quem": "mara",
     "texto": "Eu lembro quando a gente tinha um único carro.",
     "pose": "pensativa"
@@ -3207,6 +3214,10 @@
   "id": "CW_R12",
   "trigger": "GARAGEM_AMPLIADA",
   "falas": [
+   {
+    "quem": "manobrista",
+    "texto": "Vaga nova pintada no chão. Cabe mais um, e eu manobro."
+   },
    {
     "quem": "mara",
     "texto": "Mais espaço. Não significa que a gente precise preencher tudo hoje.",
@@ -3338,18 +3349,29 @@
     "pose": "pensativa"
    },
    {
+    "quem": "organizadora",
+    "texto": "E lota a arquibancada! Roxy Vega. A arena é minha."
+   },
+   {
+    "quem": "organizadora",
+    "texto": "Aqui se luta em dupla: o seu carro e o do seu segundo piloto. Sem ele, eu empresto um piloto da casa num carro meu."
+   },
+   {
+    "quem": "organizadora",
+    "texto": "Vence a última dupla com carro de pé. Venceu, o próximo campeonato tem uma equipe a mais: começa em dois contra dois e vai até vinte carros."
+   },
+   {
     "quem": "mara",
     "texto": "Pagam mais porque alguns carros não voltam.",
     "pose": "alerta"
    },
    {
-    "quem": "mara",
-    "texto": "Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem.",
-    "pose": "explica"
+    "quem": "organizadora",
+    "texto": "Carro que quebra a frente lá dentro fica lá. Por isso só entra quem tem outro na garagem."
    },
    {
     "quem": "sistema",
-    "texto": "Arena: o último de pé vence. Carro eliminado sai da garagem para sempre."
+    "texto": "Arena em duplas: a última dupla de pé vence. Carro eliminado sai da garagem para sempre."
    }
   ],
   "requer": [
@@ -3364,15 +3386,146 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
+  "proxima": "CW_AR02",
   "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_AR02",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Dex Kane. Eu preparo carro pra arena."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Lá dentro cavalo não manda. Manda chapa."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "A blindagem fica na Oficina, no escudo ao lado da velocidade. Três níveis: quanto mais chapa, mais pancada ele aguenta."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Só que pesa. Na corrida ele vai sentir."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Blindagem: Oficina, ao lado da velocidade máxima."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "DEX_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_AR03",
+  "trigger": "BLINDAGEM",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha o nível e toque em Instalar."
+   }
+  ],
+  "requer": [
+   "DEX_MET"
+  ],
+  "proibe": [
+   "ARMOR_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "ARMOR_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_AR03B",
+  "trigger": "BLINDAGEM",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Dex Kane. Eu preparo carro pra arena, quando ela abrir pra vocês."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha o nível e toque em Instalar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARMOR_TUTORIAL_SEEN",
+   "DEX_MET"
+  ],
+  "flags": [
+   "ARMOR_TUTORIAL_SEEN",
+   "DEX_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_AR04",
+  "trigger": "BLINDAGEM_COMPRADA",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Agora sim. Na pista ele vai sentir o peso. Lá dentro, quem sente são os outros."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_ARMOR"
+  ],
+  "flags": [
+   "FIRST_ARMOR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
  },
  {
   "id": "CW_R06",
   "trigger": "ARENA_INSCRICAO",
   "falas": [
    {
+    "quem": "organizadora",
+    "texto": "Último aviso: aqui, segundo lugar pode custar o carro inteiro."
+   },
+   {
     "quem": "mara",
-    "texto": "Aqui, segundo lugar pode custar o carro inteiro.",
+    "texto": "Ela não está brincando.",
     "pose": "alerta"
    }
   ],
@@ -3391,6 +3544,10 @@
   "id": "CW_R07",
   "trigger": "ARENA_FIM",
   "falas": [
+   {
+    "quem": "organizadora",
+    "texto": "Saiu inteiro o bastante pra voltar. A plateia gosta de quem volta."
+   },
    {
     "quem": "mara",
     "texto": "Voltou inteiro o bastante pra reconhecer. Já é alguma coisa.",
@@ -3413,8 +3570,12 @@
   "trigger": "ARENA_VITORIA",
   "falas": [
    {
+    "quem": "organizadora",
+    "texto": "Última dupla de pé! O próximo campeonato tem uma equipe a mais."
+   },
+   {
     "quem": "mara",
-    "texto": "Último de pé. Agora tira ele dali antes que alguém tenha ideias.",
+    "texto": "Agora tira ele dali antes que alguém tenha ideias.",
     "pose": "firme"
    }
   ],
@@ -3437,6 +3598,10 @@
     "quem": "mara",
     "texto": "O carro acabou. O piloto saiu andando. É isso que importa.",
     "pose": "decepcao"
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "O próximo vai com mais chapa."
    }
   ],
   "requer": [],
@@ -3560,7 +3725,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{piloto} voltou do treino mais rápido. Freia mais tarde e contorna mais firme.",
+    "texto": "{piloto} voltou do treino mais constante. Menos erro em curva, menos peça gasta.",
     "pose": "gesto"
    },
    {
@@ -3596,6 +3761,410 @@
   ],
   "flags": [
    "FIRST_HQ_UPGRADE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_GA01",
+  "trigger": "GARAGEM_ABERTA",
+  "falas": [
+   {
+    "quem": "manobrista",
+    "texto": "E aí, chefe! Rico Salas, manobrista. Todo carro daqui passa pela minha chave."
+   },
+   {
+    "quem": "manobrista",
+    "texto": "Em cima, as vagas. Garagem cheia não recebe carro novo; dá pra ampliar ali mesmo, por giros."
+   },
+   {
+    "quem": "manobrista",
+    "texto": "Toca num carro e eu levo ele pra Oficina. Ele vira o carro em uso."
+   },
+   {
+    "quem": "manobrista",
+    "texto": "Carro parado só ocupa vaga. Vender também é aqui, no botão de cada um."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para levá-lo à Oficina."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "GARAGE_WINDOW_SEEN"
+  ],
+  "flags": [
+   "GARAGE_WINDOW_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_PT01",
+  "trigger": "PINTURA",
+  "falas": [
+   {
+    "quem": "pintor",
+    "texto": "Kenji Arata. A cabine é minha. Pode entrar, só não encosta no que está molhado."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Em cima, o carro como ele vai sair. O que você escolher aparece nele na hora."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Primeiro a cor da carroceria. Depois o desenho das faixas."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Com faixa escolhida, aparecem a cor dela e a do filete, a linha fina que contorna."
+   },
+   {
+    "quem": "pintor",
+    "texto": "O preço fica embaixo. Só se paga o que mudou."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha as cores e toque em Aplicar pintura."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "PAINT_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "PAINT_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_PT02",
+  "trigger": "PINTURA_APLICADA",
+  "falas": [
+   {
+    "quem": "pintor",
+    "texto": "Pronto. Na corrida e na arena, é assim que ele aparece."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Carro com cara de equipe não anda mais rápido. Mas chega diferente."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_PAINT"
+  ],
+  "flags": [
+   "FIRST_PAINT"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_PT03",
+  "trigger": "PINTURA_APLICADA",
+  "falas": [
+   {
+    "quem": "pintor",
+    "texto": "Deixa secar antes de bater em alguém."
+   }
+  ],
+  "requer": [
+   "FIRST_PAINT"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_LJ01",
+  "trigger": "LOJA:charge_folio_motors",
+  "falas": [
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "Edgar Halloway, Charge Folio. Bem-vindo. Aqui não se vende carro; se confia um."
+   },
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "Alemães, italianos, franceses e ingleses. Cada um com o seu sotaque na estrada."
+   },
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "O cartão de cada carro traz potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_CHARGE_FOLIO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ02",
+  "trigger": "LOJA:charge_folio_motors",
+  "falas": [
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "Edgar Halloway, Charge Folio. Alemães, italianos, franceses e ingleses."
+   },
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "Escolha sem pressa. Pressa é coisa de quem compra mal."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_CHARGE_FOLIO"
+  ],
+  "flags": [
+   "SHOP_CHARGE_FOLIO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ03",
+  "trigger": "LOJA:relay_room_garage",
+  "falas": [
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Sal Moretti! Relay Room, e eu digo com o coração: o melhor balcão da cidade."
+   },
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Aqui é tudo Hayase. Conheço cada parafuso."
+   },
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Olha o cartão: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_RELAY_ROOM"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ04",
+  "trigger": "LOJA:relay_room_garage",
+  "falas": [
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Sal Moretti! Relay Room. Aqui é tudo Hayase, e eu conheço cada parafuso."
+   },
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Gostou de algum? Pra você, preço de tabela. Que é preço de amigo."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_RELAY_ROOM"
+  ],
+  "flags": [
+   "SHOP_RELAY_ROOM"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ05",
+  "trigger": "LOJA:brace_yard_works",
+  "falas": [
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Bianca Sterling, Brace Yard Works. Champanhe? Não? Mais pra mim."
+   },
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Hozuki, Sanga e Kosame. Carro pra quem pretende ser visto."
+   },
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Potência, peso e preço estão no cartão. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_BRACE_YARD"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ06",
+  "trigger": "LOJA:brace_yard_works",
+  "falas": [
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Bianca Sterling, Brace Yard Works. Hozuki, Sanga e Kosame."
+   },
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "O preço está no cartão. Aqui ninguém pergunta duas vezes."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_BRACE_YARD"
+  ],
+  "flags": [
+   "SHOP_BRACE_YARD"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ07",
+  "trigger": "LOJA:return_chapter_customs",
+  "falas": [
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Nora Lindqvist, Return Chapter. Pergunte o que quiser; eu respondo com números."
+   },
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Só Kanaya. Potência, peso e preço estão no cartão de cada carro. Compare antes de se apaixonar."
+   },
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Posso comprar mostra só o que o caixa paga. O outro botão ordena pelos mais baratos ou pelos mais potentes."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_RETURN_CHAPTER"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ08",
+  "trigger": "LOJA:return_chapter_customs",
+  "falas": [
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Nora Lindqvist, Return Chapter. Só Kanaya."
+   },
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Carro certo é o que entra na prova que você quer correr."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_RETURN_CHAPTER"
+  ],
+  "flags": [
+   "SHOP_RETURN_CHAPTER"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ09",
+  "trigger": "LOJA:shared_grid_motors",
+  "falas": [
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Jade Ryker, Shared Grid Motors. Sete marcas americanas, um catálogo, zero tempo a perder."
+   },
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Potência, peso e preço no cartão de cada carro."
+   },
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Liga Posso comprar e põe os mais potentes na frente. Eu faria assim."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_SHARED_GRID"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ10",
+  "trigger": "LOJA:shared_grid_motors",
+  "falas": [
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Jade Ryker, Shared Grid. Sete marcas americanas na mesma grade."
+   },
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Filtra pelo que cabe no caixa. O resto é vitrine."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_SHARED_GRID"
+  ],
+  "flags": [
+   "SHOP_SHARED_GRID"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -3726,7 +4295,7 @@
   "trigger": "LICENCA_EM_TREINO",
   "falas": [
    {
-    "quem": "mara",
+    "quem": "examinador",
     "texto": "O treino ainda está correndo."
    }
   ],

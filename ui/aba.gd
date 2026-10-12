@@ -1382,7 +1382,8 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 			historia("SEM_DINHEIRO")
 		return
 	Sons.tocar_ui(self, "moeda", -4.0)
-	var falou := historia("PECA_COMPRADA", {"peca": String(p["nome"])})
+	var falou: bool = p["categoria"] == Blindagem.CATEGORIA and not possuida and historia("BLINDAGEM_COMPRADA")
+	falou = falou or historia("PECA_COMPRADA", {"peca": String(p["nome"])})
 	if p["id"] == Prologo.demanda(dados, jogador):
 		falou = historia("DEMANDA_CONCLUIDA", {"peca": String(p["nome"])}) or falou
 	if not falou and jogador.historia != null and jogador.historia.caixa_baixo():

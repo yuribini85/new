@@ -72,7 +72,9 @@ static func ordenar(boas: Array, maximo: int) -> Array:
 static func candidatas(dados: Node, jogador: Node, carro: Carro) -> Array:
 	var r := []
 	for p in dados.lista("pecas"):
-		if carro.motivo_recusa(p) != "" or carro.pecas.get(p["categoria"], {}).get("id") == p["id"]:
+		# A blindagem é para a arena: o mecânico da corrida não a sugere.
+		if p["categoria"] == Blindagem.CATEGORIA or carro.motivo_recusa(p) != "" \
+				or carro.pecas.get(p["categoria"], {}).get("id") == p["id"]:
 			continue
 		var preco: int = 0 if p["id"] in carro.pecas_possuidas else int(p["preco"])
 		if not jogador.economia.pode_pagar_peca(preco):

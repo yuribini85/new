@@ -256,3 +256,62 @@ func test_arenas_do_jogo_tem_a_area_do_circulo() -> void:
 		var q := p.duplicate()
 		q["forma"] = a
 		perto(ArenaForma.de(q).area(), alvo, alvo * 0.01, "%s com a área do círculo" % a["id"])
+
+
+## Blindagem (pedido do usuário): espelho da redução de peso do próprio carro;
+## quem não tem redução usa o fator mais comum e a razão mediana de preço.
+func test_blindagem_espelha_a_reducao_de_peso() -> void:
+	var lw := func(carro: String, k: int, f: float, preco: int) -> Dictionary:
+		return {"id": "%s_lightweight_%d" % [carro, k], "nome": "x", "categoria": "lightweight", "preco": preco,
+				"carros_permitidos": [carro], "efeitos": [{"atributo": "peso", "op": "mult", "valor": f}]}
+	var pecas := [lw.call("a", 1, 0.95, 100), lw.call("a", 2, 0.92, 400), lw.call("a", 3, 0.89, 1000)]
+	var carros := [{"id": "a", "preco": 10000}, {"id": "b", "preco": 20000}]
+	var cfg := {"referencia": "lightweight", "niveis": 3, "nomes": ["Leve", "Média", "Pesada"]}
+	var r := Blindagem.gerar(pecas, carros, cfg)
+	igual(r.size(), 6, "três níveis por carro")
+	var a3: Dictionary = r.filter(func(p): return p["id"] == Blindagem.id_peca("a", 3))[0]
+	perto(float(a3["efeitos"][0]["valor"]), 1.0 / 0.89, 1e-9, "pesa o inverso do estágio 3")
+	igual(int(a3["preco"]), 1000, "custa o mesmo que o estágio")
+	igual(String(a3["nome"]), "Pesada", "nome do nível")
+	var b2: Dictionary = r.filter(func(p): return p["id"] == Blindagem.id_peca("b", 2))[0]
+	perto(float(b2["efeitos"][0]["valor"]), 1.0 / 0.92, 1e-9, "sem redução: fator mais comum")
+	igual(int(b2["preco"]), 800, "sem redução: razão de preço (400/10000) sobre o preço do carro")
+	igual(Blindagem.gerar(pecas, carros, {}), [], "sem regra, sem blindagem")
+
+
+func test_blindagem_pesa_no_carro_e_some_do_mecanico() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var base: Dictionary = d.lista("carros")[0]
+	var c := Carro.new(base)
+	c.adicionar_pneu(d.pneu(d.economia()["pneu_de_fabrica"]))
+	var itens := Blindagem.itens(d, c)
+	igual(itens.size(), 3, "três níveis à venda")
+	var antes := float(c.atributos_efetivos("seco")["peso"])
+	verificar(c.instalar(itens[2]), "instala a pesada")
+	igual(Blindagem.nivel(c), 3, "nível em uso")
+	verificar(float(c.atributos_efetivos("seco")["peso"]) > antes, "mais pesado")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000000)
+	var e_blindagem := func(o: Dictionary) -> bool: return o["tipo"] == "peca" and o["item"]["categoria"] == Blindagem.CATEGORIA
+	verificar(not Mecanico.candidatas(d, j, c).any(e_blindagem), "o mecânico da corrida não sugere blindagem")
+	j.free()
+	d.free()
+
+
+## Cada loja citada pelas cenas existe, e cada falante existe em personagens.json.
+func test_cenas_novas_apontam_para_lojas_e_personagens() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var lojas: Array = d.workshops().map(func(w): return w["id"])
+	for c in d.lista("dialogos"):
+		if String(c["trigger"]).begins_with("LOJA:"):
+			verificar(String(c["trigger"]).trim_prefix("LOJA:") in lojas, "loja de %s existe" % c["id"])
+		for f in c["falas"]:
+			if f.has("quem"):
+				verificar(d.existe("personagens", f["quem"]), "%s: %s em personagens.json" % [c["id"], f["quem"]])
+	for p in ["examinador", "manobrista", "mecanico_arena", "organizadora", "pintor", "vendedor_charge_folio",
+			"vendedor_relay_room", "vendedora_brace_yard", "vendedora_return_chapter", "vendedora_shared_grid"]:
+		verificar(Assets.get_asset(p, "retrato") != null and Assets.get_asset(p, "corpo") != null, "arte de " + p)
+	d.free()

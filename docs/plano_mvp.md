@@ -406,3 +406,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     `campeonato`). O parceiro do jogador é o segundo piloto no carro dele (eliminado, sai
     da garagem) ou, sem segundo carro apto, o "Piloto da casa" num carro emprestado. As
     rivais entram com dois dos seus quatro pilotos, sorteados, nas cores da equipe.
+62. **Blindagem e elenco da Wreckage** (2026-10-12, pedido do usuário): a Oficina ganha a
+    blindagem em 3 níveis (cartão de escudo ao lado da velocidade máxima). É peso a mais:
+    na arena a resistência cresce com a massa; na corrida o carro fica mais lento. Números
+    provisórios, a confirmar: espelho da redução de peso do GT2 do próprio carro (nível k
+    pesa o inverso do estágio k e custa o mesmo; `data/arena.json` → `blindagem`). Entram
+    dez personagens com diálogos e tutoriais: Rico Salas (manobrista, janela Garagem),
+    Kenji Arata (pintor, PINTURA), Harold Brandt (examinador da Vector Academy), Roxy Vega
+    (organizadora da arena), Dex Kane (mecânico da arena, blindagem) e os vendedores
+    Edgar Halloway (Charge Folio), Sal Moretti (Relay Room), Bianca Sterling (Brace Yard),
+    Nora Lindqvist (Return Chapter) e Jade Ryker (Shared Grid). Spare Penny fica sem
+    vendedor até haver arte.

@@ -27,6 +27,9 @@ FONTE = RAIZ / "tools/historia/cenas.txt"
 SAIDA = RAIZ / "data/dialogos.json"
 QUEM = {"Mara": "mara", "Piloto": "piloto_casa", "Adrian": "adrian", "Elena": "elena", "Marcus": "marcus", "Victor": "victor", "Lucas": "lucas",
         "Sophie": "sophie", "Vendedor": "vendedor", "Responsável": "responsavel", "Jornalista": "jornalista",
+        "Harold": "examinador", "Rico": "manobrista", "Dex": "mecanico_arena", "Roxy": "organizadora", "Kenji": "pintor",
+        "Edgar": "vendedor_charge_folio", "Sal": "vendedor_relay_room", "Bianca": "vendedora_brace_yard",
+        "Nora": "vendedora_return_chapter", "Jade": "vendedora_shared_grid",
         "Sistema": "sistema"}
 
 

@@ -4,7 +4,8 @@ extends RefCounted
 ## Evolução da Oficina e pelas licenças.
 
 ## Atributo que cada categoria muda (o resto: potência).
-const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio", "cambio": "cambio", "corrida": "peso"}
+const AFETA_CATEGORIA := {"lightweight": "peso", "brake": "freio", "cambio": "cambio", "corrida": "peso",
+		"blindagem": "blindagem"}
 
 ## O que cada grupo de peças faz (detalhe da janela de compra).
 const EXPLICA_CATEGORIA := {
@@ -18,12 +19,14 @@ const EXPLICA_CATEGORIA := {
 	"computer": "Nova central eletrônica: mais potência.",
 	"intercooler": "Resfria o ar do turbo: mais potência.",
 	"cambio": "Permite escolher entre arrancada e velocidade final.",
+	"blindagem": "Chapas de aço na carroceria: aguenta mais pancada na arena, mas pesa na corrida.",
 	"corrida": "Carroceria de corrida: mais leve e aceita nas copas de marca \"Corrida\". O carro deixa de entrar nas copas só de carro de rua.",
 }
 const NOMES_CATEGORIA := {
 	"aspiracao": "Aspiração", "lightweight": "Peso", "brake": "Freios", "muffler": "Escapamento",
 	"portpolish": "Polimento de dutos", "enginebalance": "Balanceamento", "displacement": "Cilindrada",
 	"computer": "Computador", "intercooler": "Intercooler", "cambio": "Câmbio", "corrida": "Kit de corrida",
+	"blindagem": "Blindagem",
 }
 
 ## O que a melhoria faz na pista, dito pela função.
@@ -32,6 +35,7 @@ const FUNCAO := {
 	"peso": "acelera, contorna e freia melhor",
 	"freio": "permite frear mais tarde antes das curvas",
 	"pneu": "contorna mais rápido e freia mais curto",
+	"blindagem": "na arena aguenta mais pancada antes de quebrar; na corrida o peso a mais tira aceleração, freio e curva",
 	"cambio": "Arrancada acelera mais forte; Velocidade final vai mais rápido no fim das retas",
 }
 
