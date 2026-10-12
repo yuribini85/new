@@ -37,7 +37,7 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	abas[3].atualizar()
 	verificar(abas[3].ancoras.has("EVENT_CARD"), "âncora do destaque do evento")
 	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	j.fila_ctrl.iniciar("aberto", uid, 2, Time.get_unix_time_from_system())
+	j.fila_ctrl.iniciar("aberto", uid, 1, Time.get_unix_time_from_system())
 	for a in abas:
 		a.atualizar()
 	abas[3]._correr("aberto")  # recusado: fila ocupada
@@ -57,6 +57,10 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	igual(j.carro_ativo, uid, "único carro não se vende")
 	j.economia.creditar(1000)
 	j.concessionaria.comprar_carro(d.carro("fraco"))
+	abas[0]._vender(uid)
+	igual(j.carro_ativo, uid, "escalado não se vende")
+	j.fila_ctrl.cancelar()
+	Escalacao.definir(j, "corrida", -1)
 	abas[0]._vender(uid)
 	igual(j.carro_ativo, -1, "vender o ativo limpa a seleção")
 	EquipeJogador.criar(j)

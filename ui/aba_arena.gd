@@ -1,6 +1,6 @@
 extends Aba
-## Arena (decisão 49): a inscrição, no padrão das Corridas: o carro escolhido
-## grande no topo (setas trocam) e o cartão da luta com a regra (carro eliminado
+## Arena (decisão 49): a inscrição, no padrão das Corridas: o seu carro da
+## escalação (decisão 68) grande no topo e o cartão da luta com a regra (carro eliminado
 ## não volta; só com 2 carros na garagem; abre com a licença mínima) e o prêmio
 ## de referência. Entrar pede confirmação com o carro exato; a luta é
 ## resolvida e aplicada na hora (ArenaCarreira) e a LutaArena só mostra.
@@ -27,16 +27,21 @@ func construir() -> void:
 		_simulacao(jogador.garagem.carro(jogador.carro_ativo))
 		_registro()
 		return
-	var aptos := ArenaCarreira.aptos(jogador)
-	if not aptos.any(func(x): return x.uid == _uid):
-		_uid = jogador.carro_ativo if aptos.any(func(x): return x.uid == jogador.carro_ativo) else aptos[0].uid
-	var esc: Carro = jogador.garagem.carro(_uid)
-	# O carro inscrito grande no topo, como nas Corridas; setas trocam entre os aptos.
+	# O seu carro (vaga ARENA 1 da escalação) grande no topo; trocar é na Oficina.
+	var esc: Carro = Escalacao.carro(jogador, "arena1")
+	_uid = esc.uid
 	var faixa := topo_carro(esc)
-	var i := aptos.find(esc)
-	setas_troca(faixa, aptos.size(), func(lado: int):
-		_uid = aptos[posmod(i + lado, aptos.size())].uid
-		atualizar())
+	var trocar := Button.new()
+	Tipografia.acao_secundaria(trocar, "Dupla da arena · trocar na Oficina", Color(0.93, 0.91, 0.87), 22, 48)
+	trocar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	trocar.offset_left = -420
+	trocar.offset_right = -16
+	trocar.offset_top = 70
+	trocar.offset_bottom = 118
+	trocar.pressed.connect(func():
+		jogador.carro_ativo = esc.uid
+		ir_para.emit(GARAGEM))
+	faixa.add_child(trocar)
 	_cartao_luta(esc, "")
 	_simulacao(esc)
 	_registro()

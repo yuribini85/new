@@ -454,14 +454,14 @@
    },
    {
     "quem": "adrian",
-    "texto": "As provas novas precisam rodar com o aplicativo aberto."
+    "texto": "Depois que larga, a prova vai até o fim, mesmo com o aplicativo fechado."
    },
    {
     "acao": "HIGHLIGHT_CAMERA_AUTO"
    },
    {
     "quem": "adrian",
-    "texto": "Depois que você vencer uma prova pela primeira vez, pode repetir ela no modo offline."
+    "texto": "Uma de cada vez. Acabou uma, a gente escolhe a próxima."
    },
    {
     "quem": "elena",
@@ -2638,7 +2638,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Prova inédita só corre com o app aberto. Depois de vencida, ela pode se repetir com o app fechado."
+    "texto": "Uma corrida por vez. Depois de largar, ela termina mesmo com o app fechado."
    }
   ],
   "requer": [],
@@ -3219,7 +3219,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Prova vencida pode correr de novo, inclusive com o app fechado."
+    "texto": "Prova vencida pode ser disputada de novo, uma corrida por vez."
    }
   ],
   "requer": [
@@ -3759,7 +3759,7 @@
  },
  {
   "id": "CW_S01",
-  "trigger": "ABA:EQUIPE",
+  "trigger": "ABA:LICENCAS",
   "falas": [
    {
     "quem": "mara",
@@ -3768,7 +3768,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Eles pagam por hora. Inclusive com a oficina fechada e você dormindo."
+    "texto": "Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro."
    },
    {
     "quem": "mara",
@@ -3777,12 +3777,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Na Sede, ao lado, a gente melhora o que eles pagam.",
+    "texto": "Na Sede, na aba Equipe, a gente melhora o que eles pagam.",
     "pose": "firme"
    },
    {
     "quem": "sistema",
-    "texto": "Assine um contrato em Patrocínio. Ele dura um dia; depois vêm ofertas novas."
+    "texto": "Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas."
    }
   ],
   "requer": [

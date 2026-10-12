@@ -11,6 +11,8 @@ var garagem: Garagem
 var regras: Dictionary
 ## Função id -> pneu (Dados.pneu), para o pneu de fábrica.
 var _pneu_por_id: Callable
+## uids que não se vendem (os escalados, Escalacao); vazio = nenhum.
+var protegidos: Callable
 
 
 func _init(economia_: Economia, garagem_: Garagem, regras_: Dictionary, pneu_por_id: Callable) -> void:
@@ -58,6 +60,8 @@ func vender_carro(uid: int) -> int:
 
 
 func pode_vender(uid: int) -> bool:
+	if protegidos.is_valid() and uid in protegidos.call():
+		return false
 	return garagem.carro(uid) != null and garagem.lista().size() > 1
 
 

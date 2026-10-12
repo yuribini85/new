@@ -46,6 +46,7 @@ func construir() -> void:
 	_brasao()
 	_mostrar_resultado()
 	_objetivos()
+	_patrocinio()
 	_the_grid()
 	var c := carro_ativo()
 	var proxima := {}
@@ -331,6 +332,87 @@ func _animar_grid() -> void:
 	t.tween_interval(0.5)
 	if ficha != "":
 		t.tween_callback(func(): vinheta.emit(ficha, contexto))
+
+
+## Patrocínio (decisão 68: administrado na Carreira; é a renda de quando o app
+## está fechado): os contratos (renda por hora e o bônus da condição), as
+## vagas livres e as ofertas.
+func _patrocinio() -> void:
+	if not GestaoEquipe.aberta(dados, jogador):
+		return
+	var vagas := GestaoEquipe.vagas(dados, jogador)
+	var ativos := GestaoEquipe.contratos(jogador)
+	titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o app fechado; a condição de cada um paga bônus por corrida.")
+	var agora := Time.get_unix_time_from_system()
+	for c in ativos:
+		var p := GestaoEquipe.patrocinador(dados, c["id"])
+		var v := _cartao_patrocinador(p, true)
+		var resta := maxf(float(c["fim"]) - agora, 0.0)
+		var dur := maxf(float(c["fim"]) - float(c["inicio"]), 1.0)
+		var barra := ProgressBar.new()
+		barra.show_percentage = false
+		barra.max_value = dur
+		barra.value = resta
+		barra.custom_minimum_size = Vector2(0, 10)
+		v.add_child(barra)
+		rotulo("Contrato termina em %s · já rendeu %s giros" % [horas_min(resta), dinheiro(int(c.get("ganho", 0)))],
+				FONTE_PEQUENA, COR_SECUNDARIA, v)
+	if ativos.size() >= vagas:
+		if GestaoEquipe.melhoria(dados, "escritorio").is_empty() == false \
+				and GestaoEquipe.preco_melhoria(dados, jogador, "escritorio") > 0:
+			nota("icone_info", "Mais contratos", "O Escritório comercial, na Sede, abre vaga para outro patrocinador.")
+		return
+	titulo_secao("OFERTAS", "%d de %d vaga%s de contrato livre%s" % [vagas - ativos.size(), vagas,
+			"" if vagas == 1 else "s", "" if vagas - ativos.size() == 1 else "s"])
+	for p in GestaoEquipe.ofertas(dados, jogador):
+		var v := _cartao_patrocinador(p, false)
+		var b := Button.new()
+		Tipografia.acao_primaria(b, "Assinar contrato   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 28, 64)
+		b.pressed.connect(func():
+			var motivo := GestaoEquipe.assinar(dados, jogador, String(p["id"]), Time.get_unix_time_from_system())
+			if motivo != "":
+				avisar("Não deu: %s." % motivo, false)
+				return
+			Sons.tocar_ui(self, "moeda", -4.0)
+			avisar("Contrato assinado com %s." % p["nome"])
+			historia("PATROCINIO_ASSINADO")
+			mudou.emit())
+		v.add_child(b)
+
+
+## Cartão de um patrocinador: nome, ramo e licença, renda por hora e o bônus.
+func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
+	var v := cartao(COR_BOM if ativo else Color.TRANSPARENT)
+	var cab := fileira(v)
+	var nome := rotulo(String(p.get("nome", "")), 0, Color.WHITE, cab)
+	Tipografia.rotulo(nome, "semibold", 30)
+	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var selo := selo_licenca(String(p.get("licenca", "")))
+	if selo != null:
+		var t := TextureRect.new()
+		t.texture = selo
+		t.custom_minimum_size = Vector2(52, 52)
+		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		cab.add_child(t)
+	Tipografia.rotulo(rotulo(String(p.get("ramo", "")).to_upper(), 0, COR_SECUNDARIA, v), "medium", 18)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	v.add_child(h)
+	var lv := rotulo(dinheiro(GestaoEquipe.renda_hora(dados, jogador, p)), 0, COR_DESTAQUE, h)
+	Tipografia.numero(lv, 34)
+	lv.autowrap_mode = TextServer.AUTOWRAP_OFF
+	lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icone(ICONE_GIROS, 26, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var ph := rotulo("por hora", 0, COR_SECUNDARIA, h)
+	Tipografia.rotulo(ph, "medium", 22)
+	ph.autowrap_mode = TextServer.AUTOWRAP_OFF
+	ph.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	rotulo("Bônus de %s giros ao %s." % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
+			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA, Color(0.86, 0.87, 0.9), v) \
+			.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return v
 
 
 func _linha_objetivo(o: Dictionary, pai: Control) -> void:

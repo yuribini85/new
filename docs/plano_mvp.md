@@ -478,3 +478,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     cores dela (critério: o carro do rival da série no GT2); modo do desafio pelo jeito da
     equipe; desafio dedicado depois disso, com o prêmio da prova existente; decisão 61
     mantida; CRED fora.
+68. **Escalação, uma corrida por vez e patrocínio na Carreira** (2026-10-12, decisão do
+    usuário; substitui a fila de repetições da decisão 3 e a decisão 34). Uma corrida por
+    vez, sem repetições programadas; depois de largar, ela termina mesmo com o app fechado.
+    Fora isso, offline só rende o patrocínio, administrado na tela Carreira. Corrida e arena
+    nunca ao mesmo tempo. Escalação no topo da Oficina (`Escalacao`, `jogador.escalacao`):
+    vaga CORRIDA (nas corridas só corre um piloto da equipe) e vagas ARENA 1 e ARENA 2 (a
+    dupla), três carros diferentes; escalado não se vende nem se desmonta. A arena pede 3
+    carros, as duas vagas de arena e o segundo piloto contratado (sem carro emprestado).
+    Pendente: pilotos só de corrida e só de arena, resolvido na tela de pilotos.

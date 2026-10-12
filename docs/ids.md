@@ -141,7 +141,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_A01` | `ARENA_VITORIA` | — | `ARENA_FIRST_WIN` |
 | `CW_R09` | `ARENA_PERDA` | — | `ARENA_FIRST_LOSS` |
 | `CW_R09B` | `ARENA_PERDA` | — | — |
-| `CW_S01` | `ABA:EQUIPE` | — | `PATROCINIO_INTRO` |
+| `CW_S01` | `ABA:LICENCAS` | — | `PATROCINIO_INTRO` |
 | `CW_S02` | `PATROCINIO_ASSINADO` | — | `FIRST_SPONSOR` |
 | `CW_S03` | `CARRO_DESMONTADO` | — | `FIRST_DISMANTLE` |
 | `CW_S05` | `TREINO_CONCLUIDO` | — | `FIRST_TRAINING_LEVEL` |

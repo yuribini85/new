@@ -14,26 +14,24 @@ func _fila(d: Node, j: Node, teto := 3600.0) -> Fila:
 	return Fila.new(Carreira.new(d, j), j, teto)
 
 
-func test_fila_aplica_so_corridas_concluidas() -> void:
+func test_uma_corrida_por_vez_aplicada_ao_terminar() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	igual(f.iniciar("aberto", uid, 3, 1000.0), "", "iniciar")
+	j.vitorias["aberto"] = 1
+	verificar(f.iniciar("aberto", uid, 3, 1000.0) != "", "sem repetições (decisão 68)")
+	igual(f.iniciar("aberto", uid, 1, 1000.0), "", "iniciar")
 	var dur: float = f.corrida_atual(1000.0)["duracao"]
 	var saldo: int = j.economia.saldo
-	var r := f.processar(1000.0 + dur * 2 + 0.5)
-	igual(r["corridas"].size(), 2, "duas concluídas (duração %.1f s)" % dur)
-	igual(r["premio_total"], 1000, "2 × 500")
+	igual(f.processar(1000.0 + dur * 0.5)["corridas"].size(), 0, "no meio, nada aplicado")
+	var r := f.processar(1000.0 + dur + 0.5)
+	igual(r["corridas"].size(), 1, "aplicada ao terminar (duração %.1f s)" % dur)
+	igual(r["premio_total"], 500, "prêmio")
 	igual(r["carros_premio"].size(), 0, "prova já vencida: carro-prêmio não volta")
-	igual(j.economia.saldo, saldo + 1000, "saldo")
-	igual(j.fila["restantes"], 1, "resta uma")
-	igual(j.dias, 2, "dias")
-	perto(f.corrida_atual(1000.0 + dur * 2 + 0.5)["decorrido"], 0.5, 1e-6, "terceira em andamento")
-	f.processar(1000.0 + dur * 3 + 1.0)
-	verificar(j.fila.is_empty(), "fila terminou")
-	igual(j.dias, 3, "dias")
+	igual(j.economia.saldo, saldo + 500, "saldo")
+	verificar(j.fila.is_empty(), "acabou: nada se repete")
+	igual(j.dias, 1, "dias")
 	j.free()
 	d.free()
 
@@ -41,16 +39,15 @@ func test_fila_aplica_so_corridas_concluidas() -> void:
 func test_teto_offline_limita_e_descarta_o_excesso() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
-	var f := _fila(d, j, 600.0)
+	var f := _fila(d, j, 1.0)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	f.iniciar("aberto", uid, 1000, 0.0)
+	f.iniciar("aberto", uid, 1, 0.0)
 	var dur: float = f.corrida_atual(0.0)["duracao"]
 	var r := f.processar(100000.0)
-	igual(r["corridas"].size(), int(600.0 / dur), "corridas dentro do teto")
-	perto(r["tempo_perdido_s"], 100000.0 - 600.0, 1e-6, "tempo perdido")
-	perto(j.ultimo_processamento, 100000.0, 1e-6, "processado até agora")
-	perto(f.corrida_atual(100000.0)["decorrido"], fmod(600.0, dur), 1e-3, "fila retoma de onde parou")
+	igual(r["corridas"].size(), 0, "ausência acima do teto não corre a prova inteira")
+	perto(r["tempo_perdido_s"], 100000.0 - 1.0, 1e-6, "tempo perdido")
+	perto(f.corrida_atual(100000.0)["decorrido"], 1.0, 1e-3, "retoma de onde parou")
+	verificar(dur > 1.0, "a prova dura mais que o teto do teste")
 	j.free()
 	d.free()
 
@@ -60,8 +57,7 @@ func test_carro_vendido_cancela_a_fila() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	f.iniciar("aberto", uid, 5, 0.0)
+	f.iniciar("aberto", uid, 1, 0.0)
 	j.economia.creditar(1000)
 	j.concessionaria.comprar_carro(d.carro("fraco"))  # o último carro não se vende
 	j.concessionaria.vender_carro(uid)
@@ -86,9 +82,9 @@ func test_save_ida_e_volta() -> void:
 	j.concessionaria.comprar_usado(oferta, d.carro(oferta["carro_id"]), j.usados_vendidos)
 	j.licencas.append("b")
 	j.graus_licenca["b1"] = "prata"
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	f.iniciar("aberto", uid, 4, 0.0)
-	f.processar(f.corrida_atual(0.0)["duracao"] + 1.0)
+	j.vitorias["aberto"] = 1
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "iniciar")
+	f.processar(f.corrida_atual(0.0)["duracao"] * 0.5)  # salva no meio da corrida
 
 	var texto := JSON.stringify(Save.serializar(j))
 	var k := _jogador(d)
@@ -185,8 +181,7 @@ func test_processar_antes_do_fim_nao_simula_de_novo() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	f.iniciar("aberto", uid, 2, 0.0)
+	f.iniciar("aberto", uid, 1, 0.0)
 	var dur: float = f.corrida_atual(0.0)["duracao"]
 	var antes: int = f.carreira.simulacoes
 	for s in range(1, 60):
@@ -202,17 +197,6 @@ func test_processar_antes_do_fim_nao_simula_de_novo() -> void:
 	d.free()
 
 
-func test_repetir_so_prova_vencida() -> void:
-	var d := dados_fixture()
-	var j := _jogador(d)
-	var f := _fila(d, j)
-	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	verificar(f.iniciar("aberto", uid, 3, 0.0) != "", "desafio não repete")
-	igual(f.iniciar("aberto", uid, 1, 0.0), "", "desafio: uma inscrição")
-	j.free()
-	d.free()
-
-
 func test_fila_guarda_copia_da_preparacao() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
@@ -223,7 +207,7 @@ func test_fila_guarda_copia_da_preparacao() -> void:
 	c.configuracoes.append({"nome": "turbo", "pecas": ["turbo"], "ajuste_cambio": ""})
 	c.remover(d.peca("turbo")["categoria"])
 	j.vitorias["aberto"] = 1
-	igual(f.iniciar("aberto", uid, 2, 0.0, c.configuracoes[0]), "", "inscrição com a preparação salva")
+	igual(f.iniciar("aberto", uid, 1, 0.0, c.configuracoes[0]), "", "inscrição com a preparação salva")
 	var antes: Dictionary = f.carro_inscrito(j.fila).atributos_efetivos("seco")
 	verificar(antes["potencia"] > c.atributos_efetivos("seco")["potencia"], "inscrito com turbo, garagem sem")
 	c.configuracoes[0]["pecas"] = []
@@ -241,8 +225,8 @@ func test_fila_guarda_copia_da_preparacao() -> void:
 	d.free()
 
 
-func test_prova_inedita_nao_corre_offline() -> void:
-	# Decisão 34: prova não vencida não termina com o app fechado; recomeça ao vivo.
+func test_corrida_iniciada_termina_offline() -> void:
+	# Decisão 68: a corrida iniciada termina com o app fechado, inédita ou não.
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
@@ -250,18 +234,9 @@ func test_prova_inedita_nao_corre_offline() -> void:
 	igual(fila.iniciar("aberto", uid, 1, 1000.0), "", "inscrição")
 	var dur := fila.duracao_atual()
 	var rel: Dictionary = fila.processar(1000.0 + dur + 600.0)
-	igual(rel["corridas"].size(), 0, "nada aplicado na volta")
-	igual(rel.get("recomecou", ""), "aberto", "corrida recomeça")
-	perto(float(j.fila["inicio"]), 1000.0 + dur + 600.0, 0.01, "recomeça agora")
-	# Com o app aberto (processamento a cada segundo) ela termina.
-	var t := 1000.0 + dur + 600.0
-	while t < 1000.0 + 2.0 * dur + 601.0 and fila.processar(t)["corridas"].is_empty():
-		t += 1.0
-	verificar(j.fila.is_empty(), "termina online")
-	# Repetição de prova vencida corre offline.
-	j.vitorias["aberto"] = 1
-	igual(fila.iniciar("aberto", uid, 2, 5000.0), "", "repetição")
-	igual(fila.processar(5000.0 + 3.0 * dur)["corridas"].size(), 2, "repetições offline")
+	igual(rel["corridas"].size(), 1, "terminou enquanto o app estava fechado")
+	verificar(bool(rel["corridas"][0]["offline"]), "marcada como offline")
+	verificar(j.fila.is_empty(), "nada continua depois")
 	j.free()
 	d.free()
 
@@ -306,7 +281,7 @@ func test_aceleracao_na_fila_e_no_save() -> void:
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
 	j.vitorias["aberto"] = 1
 	Aceleracao.ativar(j, {"fator": 2.0, "duracao_s": 100000.0}, 0.0)
-	igual(f.iniciar("aberto", uid, 2, Aceleracao.agora(j, 0.0)), "", "iniciar")
+	igual(f.iniciar("aberto", uid, 1, Aceleracao.agora(j, 0.0)), "", "iniciar")
 	var dur: float = f.duracao_atual()
 	var saldo: int = j.economia.saldo
 	var r := f.processar(Aceleracao.agora(j, dur * 0.5 + 0.1))

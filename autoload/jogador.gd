@@ -46,6 +46,8 @@ var historia: Historia
 ## da garagem que ele usa nas provas (-1 = nenhum).
 var segundo_piloto: String = ""
 var carro_companheiro: int = -1
+## Escalação (Escalacao): {corrida: uid, arena: [uid, uid]}.
+var escalacao: Dictionary = {}
 ## Última loja aberta em Lojas ("" = o mapa): reabre nela, também depois de fechar o jogo.
 var ultima_loja: String = ""
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
@@ -85,6 +87,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	economia = Economia.new(int(regras["saldo_inicial"]))
 	garagem = Garagem.new()
 	concessionaria = Concessionaria.new(economia, garagem, regras, pneu_por_id)
+	concessionaria.protegidos = func() -> Array: return Escalacao.uids(self)
 	licencas = []
 	graus_licenca = {}
 	montagens = {}
@@ -102,6 +105,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	personagem = ""
 	segundo_piloto = ""
 	carro_companheiro = -1
+	escalacao = {}
 	ultima_loja = ""
 	flags = {}
 	dialogos_vistos = {}

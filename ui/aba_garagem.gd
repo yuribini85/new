@@ -71,6 +71,135 @@ func construir() -> void:
 	queue_redraw.call_deferred()
 
 
+## Escalados (corrida, arena 1, arena 2) primeiro, na ordem das vagas; o resto depois.
+func _ordem_oficina(lista: Array) -> Array:
+	var esc := Escalacao.VAGAS.map(func(v): return Escalacao.carro(jogador, v)).filter(func(x): return x != null)
+	return esc + lista.filter(func(x): return not x in esc)
+
+
+## Escalação (decisão 68) no alto do palco, abaixo das abas penduradas: as
+## três vagas (CORRIDA, ARENA 1, ARENA 2). Tocar numa vaga mostra o carro dela
+## aqui; tocar na do carro mostrado (ou numa vazia) escolhe o carro da vaga.
+const ALTURA_VAGA := 62.0
+
+
+func _faixa_escalacao(atual: Carro) -> Control:
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	h.offset_left = 12
+	h.offset_right = -12
+	h.offset_top = 66
+	h.offset_bottom = 66 + ALTURA_VAGA
+	h.add_theme_constant_override("separation", 8)
+	for vaga in Escalacao.VAGAS:
+		var car := Escalacao.carro(jogador, vaga)
+		var mostrado := car != null and car == atual
+		var b := Button.new()
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.focus_mode = Control.FOCUS_NONE
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0.05, 0.05, 0.06, 0.78)
+		sb.set_corner_radius_all(8)
+		sb.border_color = COR_DESTAQUE if mostrado else (Color(1, 1, 1, 0.12) if car != null else Color(1, 1, 1, 0.25))
+		sb.set_border_width_all(2 if mostrado else 1)
+		for estado in ["normal", "hover", "pressed", "focus"]:
+			b.add_theme_stylebox_override(estado, sb)
+		var v := VBoxContainer.new()
+		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		v.offset_left = 10
+		v.offset_right = -8
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		v.add_theme_constant_override("separation", -2)
+		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(v)
+		var t := Label.new()
+		t.text = Escalacao.NOMES[vaga] + (" · TROCAR" if mostrado else "")
+		Tipografia.rotulo(t, "semibold", 16)
+		t.add_theme_color_override("font_color", COR_DESTAQUE if mostrado else COR_SECUNDARIA)
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.add_child(t)
+		var n := Label.new()
+		n.text = nome_curto(car.base["nome"]) if car != null else "escalar carro"
+		Tipografia.rotulo(n, "medium", 20)
+		n.add_theme_color_override("font_color", Color.WHITE if car != null else Color(0.6, 0.6, 0.62))
+		n.clip_text = true
+		n.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.add_child(n)
+		b.pressed.connect(func():
+			if car != null and not mostrado:
+				jogador.carro_ativo = car.uid
+				mudou.emit()
+			else:
+				_escolher_vaga(vaga))
+		h.add_child(b)
+	return h
+
+
+## Escolher o carro de uma vaga: os carros da garagem (o de outra vaga aparece
+## com ela e não entra). Esvaziar libera o carro para vender.
+func _escolher_vaga(vaga: String) -> void:
+	painel.emit("Escalação · %s" % Escalacao.NOMES[vaga], func(pv):
+		var dica: String = {"corrida": "Nas corridas corre um piloto da equipe, com este carro.",
+				"arena1": "O seu carro na arena. Carro eliminado não volta.",
+				"arena2": "O carro do segundo piloto na arena. Carro eliminado não volta."}[vaga]
+		rotulo(dica + " Escalado não se vende.", FONTE_PEQUENA + 2, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var g := GridContainer.new()
+		g.columns = 3
+		g.add_theme_constant_override("h_separation", 10)
+		g.add_theme_constant_override("v_separation", 10)
+		pv.add_child(g)
+		for car in jogador.garagem.lista():
+			var em := Escalacao.vaga_de(jogador, car.uid)
+			var livre := em == "" or em == vaga
+			var b := Button.new()
+			b.custom_minimum_size = Vector2(0, 160)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.disabled = not livre
+			var sb := StyleBoxFlat.new()
+			sb.bg_color = COR_CARTAO
+			sb.set_corner_radius_all(8)
+			sb.border_color = COR_DESTAQUE if em == vaga else Color(1, 1, 1, 0.08)
+			sb.set_border_width_all(2)
+			for estado in ["normal", "hover", "pressed", "focus", "disabled"]:
+				b.add_theme_stylebox_override(estado, sb)
+			var v := VBoxContainer.new()
+			v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			v.add_theme_constant_override("separation", 0)
+			v.modulate = Color(1, 1, 1, 1.0 if livre else 0.45)
+			b.add_child(v)
+			var img := icone_carro(car.base, false, CarroBloco.cor_do_carro(car))
+			img.custom_minimum_size = Vector2(0, 96)
+			v.add_child(img)
+			var l := Label.new()
+			l.text = nome_curto(car.base["nome"])
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			Tipografia.rotulo(l, "medium", 20)
+			l.clip_text = true
+			l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			v.add_child(l)
+			var tag := Label.new()
+			tag.text = Escalacao.NOMES[em] if em != "" else ""
+			tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			Tipografia.rotulo(tag, "semibold", 16)
+			tag.add_theme_color_override("font_color", COR_DESTAQUE)
+			v.add_child(tag)
+			b.pressed.connect(func():
+				var m := Escalacao.definir(jogador, vaga, car.uid)
+				if m != "":
+					avisar("Não deu: %s." % m, false)
+					return
+				jogador.carro_ativo = car.uid
+				fechar_painel.emit()
+				mudou.emit())
+			g.add_child(b), [["Esvaziar vaga", func():
+				var m := Escalacao.definir(jogador, vaga, -1)
+				if m != "":
+					avisar("Não deu: %s." % m, false)
+				mudou.emit()], ["Fechar", func(): pass]])
+
+
 ## Todas as categorias compráveis, na ordem da seção Evolução.
 const EVOLUCAO := ["aspiracao", "muffler", "computer", "intercooler", "portpolish", "enginebalance", "displacement",
 		"lightweight", "corrida", "brake", "cambio"]
@@ -218,10 +347,13 @@ func _palco(c: Carro, lista: Array) -> Control:
 	nome_carro.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	if _correndo(c):
 		Tipografia.rotulo(_hud_rotulo("correndo agora", 0, Color(0.86, 0.87, 0.9), tl), "medium", 26)
-	var i := lista.find(c)
-	setas_troca(palco, lista.size(), func(lado: int):
-		jogador.carro_ativo = lista[posmod(i + lado, lista.size())].uid
+	# Setas: os escalados primeiro (mexer neles é o mais comum), depois o resto.
+	var ordem := _ordem_oficina(lista)
+	var i := ordem.find(c)
+	setas_troca(palco, ordem.size(), func(lado: int):
+		jogador.carro_ativo = ordem[posmod(i + lado, ordem.size())].uid
 		mudou.emit())
+	palco.add_child(_faixa_escalacao(c))
 	# Faixa de baixo: os resultados das peças (a Evolução embaixo mostra as
 	# peças em si). Cada barra: do de fábrica até o teto do modelo.
 	var a := c.atributos_efetivos("seco")
@@ -818,6 +950,12 @@ func _botao_vender(pai: Control, c: Carro) -> Button:
 	var b := Button.new()
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
+	var vaga := Escalacao.vaga_de(jogador, c.uid)
+	if vaga != "":
+		Tipografia.acao_neutra(b, "ESCALADO · %s" % Escalacao.NOMES[vaga], 24, 52)
+		b.tooltip_text = "Tire da escalação para vender."
+		pai.add_child(b)
+		return b
 	Tipografia.acao_neutra(b, "VENDER · %s" % dinheiro(revenda(c.base)), 24, 52)
 	moeda(b, 24)
 	b.pressed.connect(_confirmar_venda.bind(c))
@@ -937,7 +1075,8 @@ func _confirmar_venda(c: Carro) -> void:
 
 func _vender(uid: int) -> void:
 	if not jogador.concessionaria.pode_vender(uid):
-		avisar("O único carro da garagem não pode ser vendido.", false)
+		avisar("Escalado: tire da escalação para vender." if Escalacao.vaga_de(jogador, uid) != ""
+				else "O único carro da garagem não pode ser vendido.", false)
 		return
 	var nome: String = jogador.garagem.carro(uid).base["nome"]
 	avisar("Vendido: %s por %s giros." % [nome, dinheiro(jogador.concessionaria.vender_carro(uid))])

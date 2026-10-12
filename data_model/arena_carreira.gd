@@ -20,17 +20,22 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 	if lic != "" and not lic in jogador.licencas:
 		var nome := String(dados.item("licencas", lic).get("nome", lic)) if dados.existe("licencas", lic) else lic
 		return "Abre com a %s." % nome
-	if jogador.garagem.lista().size() < 2:
-		return "Só entra quem tem pelo menos 2 carros na garagem: carro eliminado na arena não volta."
-	if aptos(jogador).is_empty():
-		return "Nenhum carro livre: o outro está na fila de corridas."
+	# Decisão 68: corrida e arena nunca ao mesmo tempo; a dupla é sua (os dois
+	# carros escalados e o segundo piloto contratado); 3 carros no mínimo.
+	if not jogador.fila.is_empty():
+		return "Há uma corrida em andamento: a arena abre quando ela terminar."
+	if jogador.garagem.lista().size() < 3:
+		return "A arena pede 3 carros: 1 de corrida e 2 de arena (carro eliminado não volta)."
+	if String(jogador.segundo_piloto) == "":
+		return "A dupla da arena precisa do segundo piloto contratado (aba Equipe)."
+	if aptos(jogador).size() < 2:
+		return "Escale os 2 carros da arena na Oficina."
 	return ""
 
 
-## Carros da garagem que podem entrar (o da fila de corrida não).
+## Os carros escalados para a arena (Escalacao): o seu e o do segundo piloto.
 static func aptos(jogador: Node) -> Array:
-	var na_fila := int(jogador.fila.get("uid", -1)) if not jogador.fila.is_empty() else -1
-	return jogador.garagem.lista().filter(func(c): return c.uid != na_fila)
+	return ["arena1", "arena2"].map(func(v): return Escalacao.carro(jogador, v)).filter(func(c): return c != null)
 
 
 ## Prêmio de referência: média do 1º lugar das corridas da licença mínima.
@@ -65,12 +70,12 @@ static func nome_nivel(equipes: int) -> String:
 	return "×".join(partes)
 
 
-## A dupla do jogador: o segundo piloto no carro dele (se tem um, livre e
-## diferente do inscrito) ou o piloto da casa num carro emprestado (que não se
-## perde). {real (bool), uid, nome}.
-static func parceiro(dados: Node, jogador: Node, uid: int) -> Dictionary:
-	var cu: int = jogador.carro_companheiro
-	if jogador.segundo_piloto != "" and cu != uid and aptos(jogador).any(func(c): return c.uid == cu):
+## A dupla do jogador: o segundo piloto no carro da vaga ARENA 2 (decisão 68;
+## sem carro emprestado). {real (bool), uid, nome}; real = false sem a vaga ou
+## sem o piloto (a luta não abre: ver bloqueio).
+static func parceiro(dados: Node, jogador: Node, _uid: int) -> Dictionary:
+	var cu := Escalacao.uid(jogador, "arena2")
+	if jogador.segundo_piloto != "" and cu >= 0:
 		return {"real": true, "uid": cu, "nome": EquipeJogador.nome_segundo(dados, jogador)}
 	return {"real": false, "uid": -1, "nome": String(dados.arena().get("campeonato", {}).get("parceiro_casa", "Piloto da casa"))}
 

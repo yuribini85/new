@@ -32,12 +32,28 @@ func _init(d: Node, j: Node) -> void:
 
 
 func construir() -> void:
-	var garagem := carro_ativo()
+	# O carro da vaga CORRIDA da escalação (decisão 68).
+	var garagem := Escalacao.garantir_corrida(jogador)
 	if garagem == null:
 		cabecalho("Corridas", "", "fundo_competicoes")
-		proximo_passo("Você precisa de um carro para correr.", "Ir para as Lojas", LOJA)
+		if jogador.garagem.lista().is_empty():
+			proximo_passo("Você precisa de um carro para correr.", "Ir para as Lojas", LOJA)
+		else:
+			proximo_passo("Os seus carros estão na arena. Escale um carro para as corridas na Oficina.",
+					"Ir para a Oficina", GARAGEM)
 		return
-	topo_carro(garagem)
+	var topo := topo_carro(garagem)
+	var trocar := Button.new()
+	Tipografia.acao_secundaria(trocar, "Carro de corrida · trocar na Oficina", Color(0.93, 0.91, 0.87), 22, 48)
+	trocar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	trocar.offset_left = -420
+	trocar.offset_right = -16
+	trocar.offset_top = 70
+	trocar.offset_bottom = 118
+	trocar.pressed.connect(func():
+		jogador.carro_ativo = garagem.uid
+		ir_para.emit(GARAGEM))
+	topo.add_child(trocar)
 	var c := garagem
 	if not jogador.fila.is_empty():
 		_fila()
@@ -124,9 +140,7 @@ func _fila() -> void:
 	var ganho := _ganho_estimado(ev, f)
 	if ganho != "":
 		rotulo(ganho, FONTE_PEQUENA, COR_BOM, col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var offline := ("Só com o app aberto: fechar recomeça a prova" if jogador.fila_ctrl.importante(f)
-			else "Segue com o app fechado")
-	var lo := rotulo(offline, FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
+	var lo := rotulo("Termina mesmo com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
 	lo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Assistir   →", COR_BOM, Color(0.1, 0.1, 0.1), 34, 72)
@@ -428,7 +442,7 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 ## para o dono da oficina, a primeira prova que o carro em uso já pode correr.
 func _evento_tutorial() -> String:
 	if jogador.personagem == "dono" and not jogador.flags.has("FIRST_RACE_DONE"):
-		var c: Carro = jogador.garagem.carro(jogador.carro_ativo)
+		var c: Carro = Escalacao.carro(jogador, "corrida")
 		if c != null:
 			for ev in dados.lista("eventos"):
 				if Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas).is_empty():
@@ -532,10 +546,7 @@ func _correr(evento_id: String) -> void:
 	var etapas := Campeonatos.etapas(dados, Campeonatos.serie(ev))
 	if not etapas.is_empty() and etapas.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"]):
 		historia("CAMPEONATO_SELECIONADO", ctx)
-	var garagem := carro_ativo()
-	var n := 1
-	var cfg: Dictionary = {}
-	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, jogador.carro_ativo, n, Aceleracao.agora(jogador), cfg)
+	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, Escalacao.uid(jogador, "corrida"), 1, Aceleracao.agora(jogador))
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return

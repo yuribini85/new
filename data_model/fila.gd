@@ -1,18 +1,15 @@
 class_name Fila
 extends RefCounted
-## Fila de repetições e progresso offline (docs/plano_mvp.md, decisões 2, 3 e 34).
-## Um carro por vez: o jogador escolhe evento, carro e número de repetições.
-## Cada corrida leva em tempo real o mesmo que leva simulada. Ao processar,
-## todas as corridas que já teriam terminado são aplicadas em lote; o tempo
-## ausente conta até `teto_offline_s` (data/carreira.json).
+## A corrida em andamento (decisão 68: uma por vez, sem fila de repetições).
+## O jogador escolhe evento e carro; a corrida leva em tempo real o mesmo que
+## leva simulada e, depois de iniciada, termina mesmo com o app fechado (o
+## tempo ausente conta até `teto_offline_s`, data/carreira.json). Fora isso,
+## offline só rende o patrocínio.
 ##
 ## Estado em jogador.fila: {} ou {evento_id, uid, restantes, inicio, semente,
 ## config}. `config` é a cópia da preparação na inscrição (Carro.configuracao):
 ## mexer no carro ou numa configuração salva depois não muda corridas já
 ## programadas. Fila sem `config` (save antigo) usa o carro como está.
-##
-## Repetir (renda automática) só em prova já vencida; a primeira vitória é um
-## desafio, com uma inscrição por vez.
 
 ## Intervalo entre processamentos acima do qual houve ausência (app fechado ou
 ## em segundo plano). Com o app aberto a fila processa a cada segundo. Técnico.
@@ -37,10 +34,8 @@ func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
 ## Começa a fila agora. Retorna "" ou o motivo (carro inelegível etc.).
 ## `config` vazio: a preparação atual do carro.
 func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config: Dictionary = {}) -> String:
-	if repeticoes < 1:
-		return "repetições deve ser ao menos 1"
-	if repeticoes > 1 and not jogador.vitorias.has(evento_id):
-		return "correr de novo só depois de vencer a corrida uma vez"
+	if repeticoes != 1:
+		return "uma corrida por vez"
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
 		return "carro %d não está na garagem" % uid
@@ -50,14 +45,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	var semente := _nova_semente()
 	var f := {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente,
 			"config": cfg}
-	# Segundo piloto da equipe (fase 9): inscrito junto, com a preparação de agora.
-	var cu := EquipeJogador.companheiro_para(carreira.dados, jogador, evento_id, uid)
-	if cu >= 0:
-		var cc: Carro = jogador.garagem.carro(cu)
-		var cfg2: Dictionary = cc.configuracao()
-		cfg2.erase("nome")
-		cfg2["pneus"] = cc.pneus.map(func(p): return p["id"])
-		f["companheiro"] = {"uid": cu, "config": cfg2}
+	# Nas corridas só corre um piloto da equipe (decisão 68).
 	var teste := _preparar(f, false)
 	if teste.has("erro"):
 		return teste["erro"]
@@ -79,12 +67,6 @@ func adiantar(agora: float) -> void:
 
 func cancelar() -> void:
 	jogador.fila = {}
-
-
-## A fila acaba quando a corrida em andamento terminar.
-func parar_apos_atual() -> void:
-	if not jogador.fila.is_empty():
-		jogador.fila["restantes"] = 1
 
 
 ## Duração (s) da corrida em andamento, ou 0. Base da estimativa da fila.
@@ -121,7 +103,6 @@ func processar(agora: float) -> Dictionary:
 		limite = agora
 		rel["tempo_perdido_s"] = excesso
 
-	var antes := float(jogador.ultimo_processamento)
 	var offline := ausencia > AUSENCIA_S
 	while not jogador.fila.is_empty():
 		var f: Dictionary = jogador.fila
@@ -131,12 +112,6 @@ func processar(agora: float) -> Dictionary:
 			cancelar()
 			break
 		var fim := float(f["inicio"]) + float(c["duracao"])
-		if offline and fim > antes and importante(f):
-			# Decisão 34: prova inédita ou etapa de campeonato não corre com o app
-			# fechado; na volta, recomeça ao vivo.
-			f["inicio"] = agora
-			rel["recomecou"] = f["evento_id"]
-			break
 		if fim > limite:
 			break
 		var res := carreira.aplicar(c)
@@ -175,20 +150,6 @@ func processar(agora: float) -> Dictionary:
 	# Relógio voltando (ajuste manual, fuso) não pode virar "ausência" depois.
 	jogador.ultimo_processamento = maxf(float(jogador.ultimo_processamento), agora)
 	return rel
-
-
-## Corrida que só acontece com o app aberto (decisão 34): prova ainda não vencida
-## ou etapa que vale pontos na temporada do campeonato. Repetição de prova vencida
-## (renda) roda offline.
-func importante(f: Dictionary) -> bool:
-	var evento_id: String = f["evento_id"]
-	if Prologo.deve_ultima_corrida(carreira.dados, jogador):
-		return true  # corrida da história
-	if not jogador.vitorias.has(evento_id):
-		return true
-	var ev: Dictionary = carreira.dados.evento(evento_id)
-	var lista := Campeonatos.etapas(carreira.dados, Campeonatos.serie(ev))
-	return not lista.is_empty() and lista.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"])
 
 
 ## Carro como foi inscrito: o da garagem com a configuração guardada na fila.

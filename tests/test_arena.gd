@@ -150,12 +150,25 @@ func test_arena_na_carreira() -> void:
 	var j := _jogador_real(d, 1)
 	verificar(ArenaCarreira.bloqueio(d, j).begins_with("Abre com"), "sem a licença: fechada")
 	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
-	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "com 1 carro: não entra")
+	verificar("3 carros" in ArenaCarreira.bloqueio(d, j), "com 1 carro: não entra")
 	j.free()
-	j = _jogador_real(d, 2)
+	# Decisão 68: 3 carros (1 de corrida, 2 de arena), segundo piloto e a escalação.
+	j = _jogador_real(d, 3)
 	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
-	igual(ArenaCarreira.bloqueio(d, j), "", "com 2 carros e a licença: entra")
-	var uid: int = j.carro_ativo
+	verificar("segundo piloto" in ArenaCarreira.bloqueio(d, j), "sem o segundo piloto: não entra")
+	j.segundo_piloto = "candidato"
+	verificar("Escale" in ArenaCarreira.bloqueio(d, j), "sem a escalação: não entra")
+	var carros: Array = j.garagem.lista()
+	igual(Escalacao.definir(j, "corrida", carros[2].uid), "", "corrida")
+	igual(Escalacao.definir(j, "arena1", carros[0].uid), "", "arena 1")
+	verificar(Escalacao.definir(j, "arena2", carros[2].uid) != "", "o carro de corrida não vai para a arena")
+	igual(Escalacao.definir(j, "arena2", carros[1].uid), "", "arena 2")
+	igual(ArenaCarreira.bloqueio(d, j), "", "com tudo: entra")
+	j.fila = {"evento_id": "x", "uid": carros[2].uid}
+	verificar("corrida em andamento" in ArenaCarreira.bloqueio(d, j), "corrida e arena nunca juntas")
+	j.fila = {}
+	verificar(not j.concessionaria.pode_vender(carros[0].uid), "escalado não se vende")
+	var uid: int = carros[0].uid
 	var m := ArenaCarreira.montar(d, j, uid, 7)
 	igual(m["participantes"].size(), 4, "nível 1: 2×2, quatro carros")
 	var equipes := {}
@@ -163,7 +176,7 @@ func test_arena_na_carreira() -> void:
 		equipes[pt["equipe"]] = int(equipes.get(pt["equipe"], 0)) + 1
 	igual(equipes.size(), 2, "duas equipes")
 	verificar(equipes.values().all(func(n): return n == 2), "duplas")
-	verificar(not m["parceiro"]["real"], "sem segundo piloto: o da casa num carro emprestado")
+	verificar(m["parceiro"]["real"] and int(m["parceiro"]["uid"]) == carros[1].uid, "a dupla: o segundo piloto no carro da ARENA 2")
 	var rival: String = m["participantes"][2]["id"]
 	verificar(String(m["nomes"][rival]) != "", "rival com nome de piloto")
 	verificar(m["faixas"].has(rival), "rival nas cores da equipe")
@@ -182,7 +195,8 @@ func test_arena_na_carreira() -> void:
 	var saldo: int = j.economia.saldo
 	var f := ArenaCarreira.aplicar(d, j, uid, res)
 	verificar(f["perdeu"], "eliminado: perdeu")
-	igual(j.garagem.lista().size(), 1, "o carro saiu da garagem")
+	igual(j.garagem.lista().size(), 2, "o carro saiu da garagem")
+	igual(Escalacao.uid(j, "arena1"), -1, "e a vaga ficou vazia")
 	verificar(j.carro_ativo != uid and j.carro_ativo >= 0, "outro carro em uso")
 	igual(j.economia.saldo, saldo + f["premio"], "pontos pagos mesmo perdendo")
 	igual(int(j.arena["lutas"]), 1, "luta registrada")
@@ -192,7 +206,7 @@ func test_arena_na_carreira() -> void:
 	var f2 := ArenaCarreira.aplicar(d, j, j.carro_ativo, vit)
 	verificar(f2["venceu_equipe"] and f2["subiu_nivel"], "dupla de pé: sobe")
 	igual(ArenaCarreira.nivel(j), 1, "próximo campeonato: 2×2×2")
-	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "sobrou 1 carro: não entra mais")
+	verificar("3 carros" in ArenaCarreira.bloqueio(d, j), "sobraram 2 carros: não entra mais")
 	j.free()
 	d.free()
 

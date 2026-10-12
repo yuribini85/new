@@ -120,9 +120,9 @@ Elena: Não.
 Elena: A corrida corre sozinha. O que a gente decide na garagem já está no carro.
 Adrian: Então eu acelero e você anota.
 Elena: Basicamente.
-Adrian: As provas novas precisam rodar com o aplicativo aberto.
+Adrian: Depois que larga, a prova vai até o fim, mesmo com o aplicativo fechado.
 [HIGHLIGHT_CAMERA_AUTO]
-Adrian: Depois que você vencer uma prova pela primeira vez, pode repetir ela no modo offline.
+Adrian: Uma de cada vez. Acabou uma, a gente escolhe a próxima.
 Elena: Primeiro prova que consegue ganhar.
 
 # Cena 4 — resultado: a conversa na chegada, depois o painel do resultado.
@@ -563,7 +563,7 @@ Mara: Campeão é quem soma mais. Constância ganha título.
 Mara: {voltas} voltas em {pista}.
 Mara[firme]: A gente prepara. O piloto corre.
 Mara[pensativa]: Depois, a conta aparece nos resultados.
-Sistema: Prova inédita só corre com o app aberto. Depois de vencida, ela pode se repetir com o app fechado.
+Sistema: Uma corrida por vez. Depois de largar, ela termina mesmo com o app fechado.
 
 # Resultado da primeira prova: uma variante para vitória e outra para o resto.
 = CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN
@@ -668,7 +668,7 @@ Dex: Faltam peças. Desmonte um carro parado, ou traga sucata da arena.
 # ---------------------------------------------------------------- Marcos
 = CW_R02 | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=FIRST_WIN; condicao=posicao:1; flags=FIRST_WIN
 Mara[firme]: Bom resultado. Agora vamos ver se conseguimos repetir.
-Sistema: Prova vencida pode correr de novo, inclusive com o app fechado.
+Sistema: Prova vencida pode ser disputada de novo, uma corrida por vez.
 
 = CW_G01 | GARAGEM_DOIS_CARROS | personagem=dono; proibe=FIRST_SECOND_CAR; flags=FIRST_SECOND_CAR
 Rico: Dois carros! Agora eu decoro duas chaves.
@@ -765,12 +765,12 @@ Mara[decepcao]: Mais um pro ferro-velho.
 # ---------------------------------------------------------------- Gestão da equipe
 # Patrocínio, Sede e desmanche (GestaoEquipe, data/equipe.json): cada um com a fala da
 # Mara que explica o que é e o que rende.
-= CW_S01 | ABA:EQUIPE | personagem=dono; requer=SECOND_DRIVER_CREATED; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
+= CW_S01 | ABA:LICENCAS | personagem=dono; requer=SECOND_DRIVER_CREATED; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
 Mara[explica]: Equipe de verdade atrai patrocinador.
-Mara: Eles pagam por hora. Inclusive com a oficina fechada e você dormindo.
+Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
-Mara[firme]: Na Sede, ao lado, a gente melhora o que eles pagam.
-Sistema: Assine um contrato em Patrocínio. Ele dura um dia; depois vêm ofertas novas.
+Mara[firme]: Na Sede, na aba Equipe, a gente melhora o que eles pagam.
+Sistema: Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas.
 
 = CW_S02 | PATROCINIO_ASSINADO | personagem=dono; proibe=FIRST_SPONSOR; flags=FIRST_SPONSOR
 Mara[firme]: Primeiro adesivo novo no carro desde aquela noite.

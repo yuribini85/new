@@ -1,7 +1,7 @@
 extends Aba
 ## Equipe do jogador (Second Driver Motorsport), visível depois de criada.
 ## Placeholders (documento, seção 4): logo = texto da equipe. Duas partes:
-## EQUIPE (caixa, patrocínio, pilotos e o carro do segundo) e SEDE (melhorias
+## EQUIPE (caixa, pilotos e o carro do segundo; o patrocínio fica na Carreira) e SEDE (melhorias
 ## da equipe, GestaoEquipe).
 
 const PARTES := [["equipe", "EQUIPE"], ["sede", "SEDE"]]
@@ -30,7 +30,6 @@ func construir() -> void:
 			_sede()
 			return
 	_caixa()
-	_patrocinio()
 	_pilotos(eq)
 	titulo_secao("CONQUISTAS")
 	var vit := 0
@@ -126,92 +125,6 @@ func _caixa() -> void:
 	if not GestaoEquipe.aberta(dados, jogador):
 		_linha_folha(c, "Patrocínio por corrida", "patrocinio", int(f["patrocinio"]), "+")
 	_linha_folha(c, "Staff por corrida", "custo_staff", int(f["staff"]), "−")
-
-
-## Patrocínio: os contratos (renda por hora, também com o app fechado, e o
-## bônus da condição), as vagas livres e as ofertas.
-func _patrocinio() -> void:
-	if not GestaoEquipe.aberta(dados, jogador):
-		return
-	var vagas := GestaoEquipe.vagas(dados, jogador)
-	var ativos := GestaoEquipe.contratos(jogador)
-	titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o app fechado; a condição de cada um paga bônus por corrida.")
-	var agora := Time.get_unix_time_from_system()
-	for c in ativos:
-		var p := GestaoEquipe.patrocinador(dados, c["id"])
-		var v := _cartao_patrocinador(p, true)
-		var resta := maxf(float(c["fim"]) - agora, 0.0)
-		var dur := maxf(float(c["fim"]) - float(c["inicio"]), 1.0)
-		var barra := ProgressBar.new()
-		barra.show_percentage = false
-		barra.max_value = dur
-		barra.value = resta
-		barra.custom_minimum_size = Vector2(0, 10)
-		v.add_child(barra)
-		rotulo("Contrato termina em %s · já rendeu %s giros" % [_horas(resta), dinheiro(int(c.get("ganho", 0)))],
-				FONTE_PEQUENA, COR_SECUNDARIA, v)
-	if ativos.size() >= vagas:
-		if GestaoEquipe.melhoria(dados, "escritorio").is_empty() == false \
-				and GestaoEquipe.preco_melhoria(dados, jogador, "escritorio") > 0:
-			nota("icone_info", "Mais contratos", "O Escritório comercial, na Sede, abre vaga para outro patrocinador.")
-		return
-	titulo_secao("OFERTAS", "%d de %d vaga%s de contrato livre%s" % [vagas - ativos.size(), vagas,
-			"" if vagas == 1 else "s", "" if vagas - ativos.size() == 1 else "s"])
-	for p in GestaoEquipe.ofertas(dados, jogador):
-		var v := _cartao_patrocinador(p, false)
-		var b := Button.new()
-		Tipografia.acao_primaria(b, "Assinar contrato   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 28, 64)
-		b.pressed.connect(func():
-			var motivo := GestaoEquipe.assinar(dados, jogador, String(p["id"]), Time.get_unix_time_from_system())
-			if motivo != "":
-				avisar("Não deu: %s." % motivo, false)
-				return
-			Sons.tocar_ui(self, "moeda", -4.0)
-			avisar("Contrato assinado com %s." % p["nome"])
-			historia("PATROCINIO_ASSINADO")
-			mudou.emit())
-		v.add_child(b)
-
-
-## Cartão de um patrocinador: nome, ramo e licença, renda por hora e o bônus.
-func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
-	var v := cartao(COR_BOM if ativo else Color.TRANSPARENT)
-	var cab := fileira(v)
-	var nome := rotulo(String(p.get("nome", "")), 0, Color.WHITE, cab)
-	Tipografia.rotulo(nome, "semibold", 30)
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var selo := selo_licenca(String(p.get("licenca", "")))
-	if selo != null:
-		var t := TextureRect.new()
-		t.texture = selo
-		t.custom_minimum_size = Vector2(52, 52)
-		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		cab.add_child(t)
-	Tipografia.rotulo(rotulo(String(p.get("ramo", "")).to_upper(), 0, COR_SECUNDARIA, v), "medium", 18)
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 8)
-	v.add_child(h)
-	var lv := rotulo(dinheiro(GestaoEquipe.renda_hora(dados, jogador, p)), 0, COR_DESTAQUE, h)
-	Tipografia.numero(lv, 34)
-	lv.autowrap_mode = TextServer.AUTOWRAP_OFF
-	lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	icone(ICONE_GIROS, 26, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var ph := rotulo("por hora", 0, COR_SECUNDARIA, h)
-	Tipografia.rotulo(ph, "medium", 22)
-	ph.autowrap_mode = TextServer.AUTOWRAP_OFF
-	ph.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	rotulo("Bônus de %s giros ao %s." % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
-			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA, Color(0.86, 0.87, 0.9), v) \
-			.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	return v
-
-
-static func _horas(s: float) -> String:
-	var h := int(s / 3600.0)
-	var m := int(fmod(s, 3600.0) / 60.0)
-	return "%d h %02d min" % [h, m] if h > 0 else "%d min" % m
 
 
 ## Sede: as melhorias da equipe, cada uma com os níveis em dentes, o efeito e
@@ -321,14 +234,14 @@ func _treino(pai: Control) -> void:
 	if GestaoEquipe.treinando(jogador):
 		var resta := maxf(float(jogador.equipe["treino"]["fim"]) - agora, 0.0)
 		rotulo("Treinando o nível %d: termina em %s (também com o app fechado)." % [
-				GestaoEquipe.nivel_treino(jogador) + 1, _horas(resta)], FONTE_PEQUENA, COR_BOM, pai)
+				GestaoEquipe.nivel_treino(jogador) + 1, horas_min(resta)], FONTE_PEQUENA, COR_BOM, pai)
 		return
 	if not GestaoEquipe.pode_treinar(dados, jogador, base):
 		rotulo("No teto desta licença. A próxima licença libera mais.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
 	var preco := GestaoEquipe.preco_treino(dados, jogador)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Treinar · %s · %s" % [dinheiro(preco), _horas(GestaoEquipe.duracao_treino(dados, jogador))],
+	Tipografia.acao_primaria(b, "Treinar · %s · %s" % [dinheiro(preco), horas_min(GestaoEquipe.duracao_treino(dados, jogador))],
 			COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
 	moeda(b, 24)
 	b.disabled = not jogador.economia.pode_pagar(preco)
@@ -547,50 +460,16 @@ func _linha_piloto(pai: Control, nome: String, papel: String) -> void:
 	v.add_child(n)
 
 
-## Carro do segundo piloto: qualquer carro da garagem; corre se for elegível
-## e diferente do seu na prova. Miniaturas como na janela da garagem.
+## O carro do segundo piloto é o da vaga ARENA 2 da escalação (decisão 68:
+## nas corridas só corre um piloto; ele vai para a arena). Trocar é na Oficina.
 func _carro_companheiro() -> void:
-	var carros: Array = jogador.garagem.lista()
 	titulo_secao("CARRO DO SEGUNDO PILOTO")
-	if carros.size() < 2:
-		nota("icone_alerta", "Falta um segundo carro", "Compre outro carro para o segundo piloto correr com você.")
+	var car := Escalacao.carro(jogador, "arena2")
+	if car == null:
+		proximo_passo("Ele corre na arena com o carro da vaga ARENA 2. Escale um na Oficina.", "Ir para a Oficina", GARAGEM)
 		return
-	var g := GridContainer.new()
-	g.columns = 3
-	g.add_theme_constant_override("h_separation", 10)
-	g.add_theme_constant_override("v_separation", 10)
-	conteudo.add_child(g)
-	for car in carros:
-		var escolhido: bool = car.uid == jogador.carro_companheiro
-		var b := Button.new()
-		b.custom_minimum_size = Vector2(0, 146)
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = COR_CARTAO
-		sb.set_corner_radius_all(8)
-		sb.border_color = COR_DESTAQUE if escolhido else Color(1, 1, 1, 0.08)
-		sb.set_border_width_all(2)
-		for estado in ["normal", "hover", "pressed", "focus"]:
-			b.add_theme_stylebox_override(estado, sb)
-		var v := VBoxContainer.new()
-		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.add_theme_constant_override("separation", 0)
-		b.add_child(v)
-		var img := icone_carro(car.base, false, CarroBloco.cor_do_carro(car))
-		img.custom_minimum_size = Vector2(0, 100)
-		v.add_child(img)
-		var l := Label.new()
-		l.text = nome_curto(car.base["nome"])
-		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		Tipografia.rotulo(l, "medium", 22)
-		l.add_theme_color_override("font_color", COR_DESTAQUE if escolhido else Color.WHITE)
-		l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		l.clip_text = true
-		v.add_child(l)
-		b.pressed.connect(func():
-			jogador.carro_companheiro = car.uid
-			mudou.emit())
-		g.add_child(b)
-	if jogador.garagem.carro(jogador.carro_companheiro) == null:
-		rotulo("Escolha um carro para ele correr.", FONTE_PEQUENA, COR_RUIM)
+	var v := cartao()
+	var h := fileira(v)
+	h.add_child(icone_carro(car.base, false, CarroBloco.cor_do_carro(car)))
+	rotulo(car.base["nome"], 28, Color.WHITE, h)
+	rotulo("Na arena, ARENA 2 da escalação. Trocar na Oficina.", FONTE_PEQUENA, COR_SECUNDARIA, v)

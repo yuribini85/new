@@ -302,9 +302,10 @@ func test_equipe_folha_e_companheiro() -> void:
 	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), -1, "mesmo carro da Elena não corre")
 	j.carro_companheiro = uid2
 	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), uid2, "companheiro com o outro carro")
-	# Corrida com o companheiro: os dois no grid, vale quem chegar na frente.
-	igual(j.fila_ctrl.iniciar("aberto", uid, 1, 0.0), "", "fila com companheiro")
-	verificar(j.fila.has("companheiro"), "companheiro inscrito na fila")
+	# Decisão 68: nas corridas só corre um piloto da equipe.
+	igual(j.fila_ctrl.iniciar("aberto", uid, 1, 0.0), "", "corrida")
+	verificar(not j.fila.has("companheiro"), "o segundo piloto não corre")
+	j.fila["companheiro"] = {"uid": uid2}  # (a pontuação de equipe ainda aceita dois, como em saves antigos)
 	var corrida: Dictionary = j.fila_ctrl._preparar(j.fila, false)
 	var cl: Array = corrida["resultado"]["classificacao"]
 	verificar(EquipeJogador.ID in cl, "companheiro na classificação")

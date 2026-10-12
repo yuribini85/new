@@ -53,7 +53,7 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 	j.fila_ctrl.processar(10.0)
 	verificar(not j.ultima_corrida.is_empty(), "uma corrida disputada")
 	j.vitorias[j.ultima_corrida["evento_id"]] = 1
-	j.fila_ctrl.iniciar(j.ultima_corrida["evento_id"], uid, 3, Time.get_unix_time_from_system())
+	j.fila_ctrl.iniciar(j.ultima_corrida["evento_id"], uid, 1, Time.get_unix_time_from_system())
 	var abas := []
 	for script in ABAS:
 		var a: Control = script.new(d, j)
@@ -92,12 +92,11 @@ func test_relogio_voltando_nao_aplica_nem_estraga_a_fila() -> void:
 	var j := _jogador(d)
 	j.economia.creditar(10000)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	igual(j.fila_ctrl.iniciar("aberto", uid, 2, 5000.0), "", "iniciar")
+	igual(j.fila_ctrl.iniciar("aberto", uid, 1, 5000.0), "", "iniciar")
 	var r: Dictionary = j.fila_ctrl.processar(1000.0)  # relógio atrasado
 	igual(r["corridas"].size(), 0, "nada aplicado")
 	igual(r["tempo_perdido_s"], 0.0, "nada descontado")
-	igual(j.fila["restantes"], 2, "fila intacta")
+	igual(j.fila["restantes"], 1, "corrida intacta")
 	var dur: float = j.fila_ctrl.duracao_atual()
 	r = j.fila_ctrl.processar(5000.0 + dur + 1.0)
 	igual(r["corridas"].size(), 1, "relógio de volta ao normal: a corrida conta")
@@ -109,29 +108,14 @@ func test_peca_depois_da_inscricao_nao_tira_o_carro_da_prova() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
-	j.vitorias["ff_ate_120"] = 1  # repetir exige a prova já vencida
-	igual(j.fila_ctrl.iniciar("ff_ate_120", uid, 3, 0.0), "", "fraco cabe na Copa FF")
+	igual(j.fila_ctrl.iniciar("ff_ate_120", uid, 1, 0.0), "", "fraco cabe na Copa FF")
 	j.economia.creditar(1000)
 	igual(j.concessionaria.comprar_peca(j.garagem.carro(uid), d.peca("turbo")), "", "turbo")
 	var r: Dictionary = j.fila_ctrl.processar(100000.0)
 	igual(r["erro"], "", "a inscrição guardou a preparação de antes do turbo")
-	igual(r["corridas"].size(), 3, "três corridas")
+	igual(r["corridas"].size(), 1, "a corrida inscrita")
 	# A próxima inscrição usa a preparação nova e é recusada com o motivo.
 	verificar(j.fila_ctrl.iniciar("ff_ate_120", uid, 1, 100000.0).contains("potência"), "nova inscrição recusada")
-	j.free()
-	d.free()
-
-
-func test_parar_apos_a_atual() -> void:
-	var d := dados_fixture()
-	var j := _jogador(d)
-	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	j.fila_ctrl.iniciar("aberto", uid, 5, 0.0)
-	j.fila_ctrl.parar_apos_atual()
-	var r: Dictionary = j.fila_ctrl.processar(100000.0)
-	igual(r["corridas"].size(), 1, "só a corrida em andamento")
-	verificar(j.fila.is_empty(), "fila acabou")
 	j.free()
 	d.free()
 
@@ -140,9 +124,9 @@ func test_historico_registra_evolucao_e_vai_para_o_save() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
-	j.vitorias["aberto"] = 1  # repetir exige a prova já vencida
-	j.fila_ctrl.iniciar("aberto", uid, 2, 0.0)
-	j.fila_ctrl.processar(100000.0)
+	for k in 2:
+		j.fila_ctrl.iniciar("aberto", uid, 1, 0.0)
+		j.fila_ctrl.processar(100000.0)
 	var h: Dictionary = j.historico["aberto"]
 	igual(h["corridas"], 2, "duas corridas")
 	verificar(h["melhor_tempo"] > 0.0 and h["melhor_tempo"] <= h["ultimo_tempo"], "melhor tempo")

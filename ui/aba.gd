@@ -1264,6 +1264,13 @@ func icone_pista(pista_id: String) -> Control:
 	return Icones.pista(_pistas_cache[pista_id])
 
 
+## Duração curta: "2 h 05 min" ou "12 min".
+static func horas_min(s: float) -> String:
+	var h := int(s / 3600.0)
+	var m := int(fmod(s, 3600.0) / 60.0)
+	return "%d h %02d min" % [h, m] if h > 0 else "%d min" % m
+
+
 func carro_ativo() -> Carro:
 	return jogador.garagem.carro(jogador.carro_ativo)
 
