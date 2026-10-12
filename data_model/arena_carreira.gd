@@ -136,7 +136,9 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	for k in mini(n_equipes - 1, rivais.size()):
 		var eq: Dictionary = rivais.pop_at(rng.randi_range(0, rivais.size() - 1))
 		equipes[eq["id"]] = eq
-		var pilotos: Array = eq["pilotos"].duplicate()
+		var pilotos: Array = eq["pilotos"].filter(func(pl): return EquipeJogador.vaga_do_piloto(jogador, String(pl["id"])) == "")
+		if pilotos.size() < 2:
+			pilotos = eq["pilotos"].duplicate()
 		for m in 2:
 			var pl: Dictionary = pilotos.pop_at(rng.randi_range(0, pilotos.size() - 1))
 			var id := "%s:%d" % [eq["id"], m + 1]
@@ -250,6 +252,7 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	jogador.economia.ganhar_pecas(pecas_perdidos + pecas_destruidos)
 	# Campeonato: a equipe do jogador ficou de pé → sobe de nível (até o último).
 	var venceu_equipe: bool = resultado.get("equipe_vencedora", "") == "jogador"
+	var subiram := EquipeJogador.apos_prova(dados, jogador, ["arena1", "arena2"], venceu_equipe)
 	var nivel_antes := nivel(jogador)
 	var grid := {}
 	if venceu_equipe:
@@ -263,4 +266,4 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	return {"posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
 			"perdeu_parceiro": perdeu_parceiro, "venceu_equipe": venceu_equipe,
 			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes,
-			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid}
+			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid, "pilotos_subiram": subiram}

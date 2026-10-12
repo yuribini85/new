@@ -125,9 +125,13 @@ func escalacao(evento_id: String, semente: int) -> Array:
 		var eq: Dictionary = ordem[i]
 		# O titular (o primeiro) corre na maioria; nas outras, um dos outros
 		# pilotos da equipe, sorteado (cada equipe tem quatro, decisão 60).
-		var segundo: bool = eq["pilotos"].size() > 1 and rng.randf() < chance
-		var k := rng.randi_range(1, eq["pilotos"].size() - 1) if segundo else 0
-		grid.append({"equipe": eq, "piloto": eq["pilotos"][k], "segundo": segundo})
+		# Decisão 71: piloto contratado pela sua equipe não corre mais pela dele.
+		var pilotos: Array = eq["pilotos"].filter(func(pl): return EquipeJogador.vaga_do_piloto(jogador, String(pl["id"])) == "")
+		if pilotos.is_empty():
+			pilotos = eq["pilotos"]
+		var segundo: bool = pilotos.size() > 1 and rng.randf() < chance
+		var k := rng.randi_range(1, pilotos.size() - 1) if segundo else 0
+		grid.append({"equipe": eq, "piloto": pilotos[k], "segundo": segundo})
 	return grid
 
 
@@ -260,6 +264,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo)
 	var folha := EquipeJogador.cobrar_corrida(dados, jogador)
 	var patrocinio := GestaoEquipe.bonus_corrida(dados, jogador, ev, posicao, not campeonato.is_empty())
+	var subiram := EquipeJogador.apos_prova(dados, jogador, ["corrida"], posicao == 1)
 
 	return {
 		"anterior": anterior,
@@ -267,6 +272,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"evento_id": evento_id,
 		"classificacao": r["classificacao"],
 		"posicao": posicao,
+		"pilotos_subiram": subiram,
 		"posicao_propria": posicao_propria,
 		"posicao_companheiro": posicao_companheiro,
 		"folha": folha,

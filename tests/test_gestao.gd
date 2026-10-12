@@ -259,3 +259,38 @@ func test_cansaco_e_piloto_guardado_na_inscricao() -> void:
 	igual(depois["tempo_total"], antes["tempo_total"], "a corrida inscrita não muda")
 	j.free()
 	d.free()
+
+
+## Decisão 71: o mercado mostra a oferta do período; vencer uma equipe do Grid
+## põe os pilotos dela no mercado; experiência por prova e embalo.
+func test_mercado_experiencia_e_embalo() -> void:
+	var d: Node = load("res://autoload/dados.gd").new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	EquipeJogador.criar(j)
+	j.flags["GESTAO_LIBERADA"] = true
+	var por_tipo := int(EquipeJogador.cfg_mercado(d)["por_tipo"])
+	igual(EquipeJogador.oferta(d, j, "corrida", 0.0).size(), por_tipo, "a oferta do período")
+	var antes := EquipeJogador.pool(d, j, "arena").size()
+	var primeira: Dictionary = TheGrid.equipes(d)[0]
+	TheGrid.registrar(d, j, [String(primeira["id"])])
+	verificar(EquipeJogador.pool(d, j, "arena").size() + EquipeJogador.pool(d, j, "corrida").size() > antes + por_tipo,
+			"os pilotos da equipe vencida entram no mercado")
+	var do_grid: Dictionary = EquipeJogador.pool(d, j, "corrida").filter(func(c): return c.has("equipe")).front() \
+			if EquipeJogador.pool(d, j, "corrida").any(func(c): return c.has("equipe")) else EquipeJogador.pool(d, j, "arena").filter(func(c): return c.has("equipe")).front()
+	verificar(do_grid.has("equipe"), "piloto do Grid com a equipe de origem")
+	# Experiência: a cada xp_por_nivel provas, um nível (abaixo do teto).
+	j.licencas = ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL"]
+	var c0: String = EquipeJogador.oferta(d, j, "corrida", Time.get_unix_time_from_system())[0]["id"]
+	igual(EquipeJogador.contratar(d, j, c0, "corrida"), "", "contrata do mercado")
+	var n := int(GestaoEquipe.cfg_treino(d)["xp_por_nivel"])
+	for k in n:
+		EquipeJogador.apos_prova(d, j, ["corrida"], true)
+	igual(GestaoEquipe.nivel_treino(j, c0), 1, "subiu um nível com a experiência")
+	verificar(EquipeJogador.em_embalo(j, c0), "vitórias seguidas: embalo")
+	var dur := GestaoEquipe.duracao_treino(d, j, c0)
+	j.equipe.erase("embalo_" + c0)
+	verificar(dur < GestaoEquipe.duracao_treino(d, j, c0), "embalo: treino mais curto")
+	j.free()
+	d.free()

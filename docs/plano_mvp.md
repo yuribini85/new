@@ -510,3 +510,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     inscrição (`fila.piloto`). Rivais da arena usam o piloto-base.
     Próximos (aprovados): mercado de pilotos que muda e pilotos das equipes vencidas do
     Grid; experiência por corrida/luta; embalo; contrato por temporada.
+71. **Mercado de pilotos, experiência e embalo** (2026-10-12, critérios aprovados pelo
+    usuário). Mercado (`carreira.json` → `equipe_jogador.mercado`): mostra 4 de corrida e
+    4 de arena (os que já existiam) e renova a cada 24 h (a duração de um contrato de
+    patrocínio); vencer uma equipe do Grid põe os pilotos com retrato dela no mercado, com o
+    traço pelo perfil da equipe; contratado, ele não corre mais pela equipe de origem.
+    Experiência (`equipe.json` → `treino.xp_por_nivel` = 3, as etapas de uma série): a cada
+    3 corridas (piloto de corrida) ou lutas (pilotos de arena), um nível de treino, até o
+    teto da licença. Embalo: 3 vitórias seguidas deixam o próximo treino com metade do
+    tempo. Contrato por temporada fica para quando o custo da equipe sair do playtest.

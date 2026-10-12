@@ -283,7 +283,10 @@ static func treinando(jogador: Node, piloto_id := "") -> bool:
 
 
 static func duracao_treino(dados: Node, jogador: Node, piloto_id := "") -> float:
-	return float(cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 * (nivel_treino(jogador, piloto_id) + 1)
+	var d := float(cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 * (nivel_treino(jogador, piloto_id) + 1)
+	if piloto_id != "" and EquipeJogador.em_embalo(jogador, piloto_id):
+		d *= float(cfg_treino(dados).get("embalo_fator_tempo", 1.0))  # decisão 71: embalo
+	return d
 
 
 static func preco_treino(dados: Node, jogador: Node, piloto_id := "") -> int:
@@ -306,6 +309,7 @@ static func treinar(dados: Node, jogador: Node, base: float, agora: float, pilot
 	t["inicio"] = agora
 	t["fim"] = agora + duracao_treino(dados, jogador, piloto_id)
 	jogador.equipe[_chave(piloto_id)] = t
+	jogador.equipe.erase("embalo_" + piloto_id)  # o embalo vale um treino
 	return ""
 
 

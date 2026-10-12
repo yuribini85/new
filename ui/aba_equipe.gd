@@ -250,6 +250,14 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var frase := String(EquipeJogador.piloto(dados, id).get("frase", ""))
 	if frase != "":
 		rotulo(frase, FONTE_PEQUENA, COR_SECUNDARIA, v)
+	if EquipeJogador.piloto(dados, id).has("equipe"):
+		rotulo("Ex-%s." % EquipeJogador.piloto(dados, id)["equipe"], FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
+	if por_nivel > 0:
+		rotulo("Experiência: %d/%d %s para o próximo nível" % [EquipeJogador.xp(jogador, id), por_nivel,
+				"corridas" if vaga == "corrida" else "lutas"], FONTE_PEQUENA, COR_SECUNDARIA, v)
+	if EquipeJogador.em_embalo(jogador, id):
+		rotulo("EMBALO: o próximo treino leva metade do tempo.", FONTE_PEQUENA, COR_BOM, v)
 	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 
@@ -330,11 +338,18 @@ func _barra_atributo(pai: Control, nome: String, fracao: float, texto: String, c
 ## da garagem para passar; embaixo, nome, traço, frase e Contratar.
 func _escolher_segundo(vaga: String = "corrida") -> void:
 	var tipo := "corrida" if vaga == "corrida" else "arena"
-	var lista: Array = EquipeJogador.candidatos(dados).filter(func(c): return String(c.get("tipo", "corrida")) == tipo)
-	var ids := lista.map(func(c): return String(c["id"]))
+	# Decisão 71: o mercado do período (renova a cada dia); o atual da vaga junto.
+	var agora_m := Time.get_unix_time_from_system()
+	var lista: Array = EquipeJogador.oferta(dados, jogador, tipo, agora_m)
 	var atual_id := EquipeJogador.piloto_vaga(jogador, vaga)
+	if atual_id != "":
+		lista.push_front(EquipeJogador.piloto(dados, atual_id))
+	if lista.is_empty():
+		avisar("Ninguém no mercado agora. Renova em %s." % horas_min(EquipeJogador.renova_em(dados, agora_m)), false)
+		return
+	var ids := lista.map(func(c): return String(c["id"]))
 	var estado := {"i": maxi(ids.find(atual_id), 0)}
-	painel.emit("Piloto de " + tipo, func(pv):
+	painel.emit("Mercado · piloto de %s · renova em %s" % [tipo, horas_min(EquipeJogador.renova_em(dados, agora_m))], func(pv):
 		var palco := Control.new()
 		palco.custom_minimum_size = Vector2(0, PALCO_ALTURA)
 		palco.clip_contents = true
@@ -385,12 +400,16 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			var atual: bool = c["id"] == atual_id
 			var outra := EquipeJogador.vaga_do_piloto(jogador, String(c["id"]))
 			corpo.texture = Assets.get_asset(String(c["id"]), "corpo")
+			if corpo.texture == null:  # piloto do Grid: o retrato; sem arte, a silhueta
+				corpo.texture = Assets.get_asset(String(c["id"]), "retrato")
+			if corpo.texture == null:
+				corpo.texture = Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(c["id"]))) % 3))
 			nome.text = String(c["nome"])
 			for f in selo.get_children():
 				f.queue_free()
 			var tr: Dictionary = EquipeJogador.config(dados).get("tracos", {}).get(String(c["traco"]), {})
 			_selo_traco(String(tr.get("nome", "")), selo)
-			frase.text = String(c.get("frase", ""))
+			frase.text = String(c.get("frase", "")) + ("\nEx-%s." % c["equipe"] if c.has("equipe") else "")
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
 			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
 			b.visible = not atual and outra == ""

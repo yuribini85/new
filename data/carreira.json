@@ -129,7 +129,17 @@
     "tipo": "corrida"
    }
   ],
-  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida (constante, promessa) ou de arena (agressivo, barato), pelo traço. A equipe tem 1 de corrida e 2 de arena."
+  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida (constante, promessa) ou de arena (agressivo, barato), pelo traço. A equipe tem 1 de corrida e 2 de arena.",
+  "mercado": {
+   "por_tipo": 4,
+   "renova_h": 24,
+   "traco_por_perfil": {
+    "cauteloso": "constante",
+    "equilibrado": "barato",
+    "agressivo": "agressivo"
+   }
+  },
+  "_nota_mercado": "Decisão 71 (aprovado): o mercado mostra 'por_tipo' candidatos de corrida e de arena (os 4 de cada que já existiam) e renova a cada 'renova_h' horas (24: a duração de um contrato de patrocínio, equipe.json → patrocinio.duracao_h). Vencer uma equipe do Grid põe os pilotos com retrato dela no mercado; o traço vem do perfil dela ('traco_por_perfil')."
  },
  "perfis_piloto": {
   "_nota": "Agressividade dos rivais por perfil da equipe (decisão do usuário, 2026-10-11): chance de tentar a ultrapassagem quando está mais rápido. Valores provisórios até o playtest.",

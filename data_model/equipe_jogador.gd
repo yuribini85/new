@@ -82,6 +82,10 @@ static func piloto(dados: Node, piloto_id: String) -> Dictionary:
 	for c in candidatos(dados):
 		if c.get("id") == piloto_id:
 			return c
+	for e in TheGrid.equipes(dados):
+		for pe in e.get("pilotos", []):
+			if pe.get("id") == piloto_id:
+				return _do_grid(dados, e, pe)
 	var p: Dictionary = config(dados).get("segundo_piloto", {})
 	return p if p.get("id") == piloto_id else {}
 
@@ -94,6 +98,62 @@ static func candidatos(dados: Node) -> Array:
 ## Traço do candidato: {nome, treina}.
 static func traco(dados: Node, piloto_id: String) -> Dictionary:
 	return config(dados).get("tracos", {}).get(String(piloto(dados, piloto_id).get("traco", "")), {})
+
+
+# ------------------------------------------------------------ Mercado (decisão 71)
+
+static func cfg_mercado(dados: Node) -> Dictionary:
+	return config(dados).get("mercado", {})
+
+
+## Piloto de uma equipe do Grid como candidato: o traço pelo perfil da equipe.
+static func _do_grid(dados: Node, e: Dictionary, pe: Dictionary) -> Dictionary:
+	var tr := String(cfg_mercado(dados).get("traco_por_perfil", {}).get(String(e.get("perfil", "")), "constante"))
+	var tipo_tr := "arena" if tr in ["agressivo", "barato"] else "corrida"
+	return {"id": pe["id"], "nome": pe["nome"], "retrato": pe.get("retrato", ""), "traco": tr, "tipo": tipo_tr,
+			"frase": String(pe.get("personalidade", "")), "equipe": String(e["nome"])}
+
+
+## Todos os que podem aparecer no mercado: os candidatos e os pilotos (com
+## retrato) das equipes do Grid já vencidas.
+static func pool(dados: Node, jogador: Node, tipo_: String) -> Array:
+	var l: Array = candidatos(dados).filter(func(c): return String(c.get("tipo", "corrida")) == tipo_)
+	for id in TheGrid.vencidas(jogador):
+		var e := TheGrid.equipe(dados, String(id))
+		for pe in e.get("pilotos", []):
+			if String(pe.get("retrato", "")) != "":
+				var c := _do_grid(dados, e, pe)
+				if c["tipo"] == tipo_:
+					l.append(c)
+	return l
+
+
+## Período do mercado (renova a cada `renova_h`).
+static func periodo_mercado(dados: Node, agora: float) -> int:
+	return int(floor(agora / (maxf(float(cfg_mercado(dados).get("renova_h", 24)), 1.0) * 3600.0)))
+
+
+## Segundos até o mercado renovar.
+static func renova_em(dados: Node, agora: float) -> float:
+	var passo := maxf(float(cfg_mercado(dados).get("renova_h", 24)), 1.0) * 3600.0
+	return (periodo_mercado(dados, agora) + 1) * passo - agora
+
+
+## A oferta do período: `por_tipo` do pool, sorteados pelo período (sem
+## `por_tipo` nos dados: o pool inteiro). Os já contratados não ocupam lugar.
+static func oferta(dados: Node, jogador: Node, tipo_: String, agora: float) -> Array:
+	var l := pool(dados, jogador, tipo_).filter(func(c): return vaga_do_piloto(jogador, String(c["id"])) == "")
+	var n := int(cfg_mercado(dados).get("por_tipo", l.size()))
+	if l.size() <= n:
+		return l
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("mercado|%s|%d" % [tipo_, periodo_mercado(dados, agora)])
+	for i in range(l.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var t = l[i]
+		l[i] = l[j]
+		l[j] = t
+	return l.slice(0, n)
 
 
 ## Tipo do candidato: "corrida" ou "arena" (carreira.json → candidatos).
@@ -128,8 +188,12 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 		return "vaga desconhecida"
 	if not vaga_aberta(jogador, vaga):
 		return "a equipe ainda não contrata" if not criada(jogador) else "os pilotos de arena chegam com a arena"
-	if not candidatos(dados).any(func(c): return c.get("id") == piloto_id):
+	if piloto(dados, piloto_id).is_empty():
 		return "candidato desconhecido"
+	var de_tipo := "corrida" if vaga == "corrida" else "arena"
+	if vaga_do_piloto(jogador, piloto_id) == "" and not oferta(dados, jogador, de_tipo, Time.get_unix_time_from_system()) \
+			.any(func(c): return c["id"] == piloto_id) and not pool(dados, jogador, de_tipo).any(func(c): return c["id"] == piloto_id):
+		return "fora do mercado"
 	var quer := "corrida" if vaga == "corrida" else "arena"
 	if tipo(dados, piloto_id) != quer:
 		return "%s é piloto de %s" % [String(piloto(dados, piloto_id).get("nome", piloto_id)), tipo(dados, piloto_id)]
@@ -169,6 +233,50 @@ static func migrar(dados: Node, jogador: Node) -> void:
 			jogador.pilotos["corrida"] = s
 		else:
 			jogador.pilotos["arena"] = [s, ""]
+
+
+# ------------------------------------- Experiência e embalo (decisão 71)
+
+## Depois de uma prova: cada piloto das vagas soma experiência (a cada
+## `xp_por_nivel` provas, um nível de treino, até o teto da licença) e a
+## sequência de vitórias do grupo; `embalo_vitorias` seguidas deixam o próximo
+## treino de cada um mais curto. Devolve os ids que subiram de nível.
+static func apos_prova(dados: Node, jogador: Node, vagas: Array, venceu: bool) -> Array:
+	var cfg := GestaoEquipe.cfg_treino(dados)
+	var por_nivel := int(cfg.get("xp_por_nivel", 0))
+	var subiram := []
+	var ids: Array = vagas.map(func(v): return piloto_vaga(jogador, v)).filter(func(x): return x != "")
+	if ids.is_empty():
+		return subiram
+	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["ritmo"])
+	for id in ids:
+		if por_nivel <= 0:
+			break
+		var xp := int(jogador.equipe.get("xp_" + id, 0)) + 1
+		if xp >= por_nivel and GestaoEquipe.pode_treinar(dados, jogador, base, id):
+			var t: Dictionary = jogador.equipe.get("treino_" + id, {})
+			t["nivel"] = int(t.get("nivel", 0)) + 1
+			jogador.equipe["treino_" + id] = t
+			xp = 0
+			subiram.append(id)
+		jogador.equipe["xp_" + id] = mini(xp, maxi(por_nivel - 1, 0)) if xp >= por_nivel else xp
+	var grupo := "seq_" + String(vagas[0]).left(5)
+	var seq := int(jogador.equipe.get(grupo, 0)) + 1 if venceu else 0
+	var precisa := int(cfg.get("embalo_vitorias", 0))
+	if precisa > 0 and seq >= precisa:
+		for id in ids:
+			jogador.equipe["embalo_" + id] = true
+		seq = 0
+	jogador.equipe[grupo] = seq
+	return subiram
+
+
+static func xp(jogador: Node, piloto_id: String) -> int:
+	return int(jogador.equipe.get("xp_" + piloto_id, 0))
+
+
+static func em_embalo(jogador: Node, piloto_id: String) -> bool:
+	return bool(jogador.equipe.get("embalo_" + piloto_id, false))
 
 
 ## Na campanha do dono a equipe precisa do piloto de corrida para correr.
