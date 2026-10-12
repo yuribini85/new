@@ -5,7 +5,7 @@ extends Control
 ## seis regiões (frente, lados, traseira; esquerda e direita), cada uma na cor
 ## do dano. Cores como o indicador do estudo: verde → amarelo até a metade,
 ## amarelo → vermelho até o limite da ré, piscando daí até quebrar; preto no
-## eliminado, com o fundo da linha vermelho. O número é o pior dano em %.
+## eliminado. O fundo da linha enche de vermelho com o pior dano (cheio = eliminado).
 
 const LINHA := 46.0
 const LARGURA := 280.0
@@ -74,8 +74,11 @@ func _draw() -> void:
 			y += _equipe(l, y, k)
 			continue
 		var r := Rect2(0, y, LARGURA, linha - 6.0 * k)
-		# Eliminado: o fundo da linha passa de preto a vermelho (sem texto).
-		draw_rect(r, FUNDO_FORA if l["eliminado"] else Color(0.05, 0.05, 0.06, 0.72))
+		# O fundo é a barra do dano: enche de vermelho da esquerda para a direita
+		# conforme o pior dano; cheio = eliminado.
+		draw_rect(r, Color(0.05, 0.05, 0.06, 0.72))
+		var cheio := 1.0 if l["eliminado"] else clampf(_pior(l["dano"]), 0.0, 1.0)
+		draw_rect(Rect2(r.position, Vector2(r.size.x * cheio, r.size.y)), FUNDO_FORA)
 		draw_rect(Rect2(r.position, Vector2(4, r.size.y)), l["cor"])
 		_carro(Vector2(12, y + (r.size.y - carro.y) * 0.5), l["dano"], l["eliminado"], carro)
 		var cor_nome := Aba.COR_DESTAQUE if l.get("voce", false) else Color(0.92, 0.92, 0.9)
@@ -84,15 +87,12 @@ func _draw() -> void:
 		var modelo := String(l.get("carro", ""))
 		var dois := k == 1.0 and modelo != ""  # sem espaço para o modelo na lista compacta
 		var x_nome := 20 + carro.x + 4
-		var largura_nome := LARGURA - x_nome - 10.0 if l["eliminado"] else LARGURA - 128.0
+		var largura_nome := LARGURA - x_nome - 10.0
 		draw_string(fonte, Vector2(x_nome, y + r.size.y * 0.5 + (-2.0 if dois else 7 * k)), String(l["nome"]),
 				HORIZONTAL_ALIGNMENT_LEFT, largura_nome, roundi(20 * maxf(k, 0.8)), cor_nome)
 		if dois:
 			draw_string(fonte, Vector2(x_nome, y + r.size.y * 0.5 + 15.0), modelo, HORIZONTAL_ALIGNMENT_LEFT,
 					largura_nome, 14, Color(0.78, 0.62, 0.6) if l["eliminado"] else Color(0.6, 0.6, 0.62))
-		if not l["eliminado"]:
-			draw_string(Tipografia.fonte_numero(), Vector2(LARGURA - 72, y + r.size.y * 0.5 + 8 * k),
-					"%d%%" % roundi(_pior(l["dano"]) * 100.0), HORIZONTAL_ALIGNMENT_RIGHT, 62, roundi(19 * maxf(k, 0.8)), Color.WHITE)
 		y += linha
 	custom_minimum_size = Vector2(LARGURA, y)
 	size = custom_minimum_size  # fora de contêiner: a área do toque acompanha a lista
