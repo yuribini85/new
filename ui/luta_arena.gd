@@ -108,22 +108,57 @@ func _process(delta: float) -> void:
 			_mostrar_final()
 
 
+## O placar por equipe: o nome da equipe e, embaixo, os dois pilotos com o
+## dano do carro. Equipes de pé em cima (a sua primeiro); quando os dois carros
+## de uma equipe caem, ela recebe a posição e desce, de cima para baixo.
 func _linhas() -> Array:
 	var r: Dictionary = _dados["resultado"]
 	var amostras: Array = r["amostras"]
 	var a: Dictionary = amostras[mini(_vista._i + 1, amostras.size() - 1)]
-	var l := []
-	# Você e a sua dupla em cima; as outras duplas juntas, na ordem da largada.
-	var ids: Array = r["carros"].keys().filter(func(x): return x != "jogador" and x != "parceiro")
-	ids.sort_custom(func(a, b): return String(r["carros"][a].get("equipe", a)) < String(r["carros"][b].get("equipe", b)))
-	for x in ["parceiro", "jogador"]:
-		if r["carros"].has(x):
-			ids.push_front(x)
+	var info: Dictionary = _dados.get("equipes", {})
+	var grupos := {}  # equipe -> [ids]
+	var ordem := []
+	var ids: Array = r["carros"].keys()
+	ids.sort_custom(func(x, y): return _ordem_id(x) < _ordem_id(y))
 	for id in ids:
-		var eq: Dictionary = _dados.get("equipes", {}).get(id, {})
-		l.append({"id": id, "nome": _dados["nomes"].get(id, id), "cor": eq.get("cor", Aba.COR_DESTAQUE if id == "jogador" else CarroBloco.cor_do_id(id)),
-				"dano": a[id]["dano"], "eliminado": a[id]["eliminado"], "voce": id == "jogador"})
+		var eq := String(r["carros"][id].get("equipe", id))
+		if not grupos.has(eq):
+			grupos[eq] = []
+			ordem.append(eq)
+		grupos[eq].append(id)
+	var de_pe := []
+	var caidas := []
+	for eq in ordem:
+		if grupos[eq].any(func(id): return not a[id]["eliminado"]):
+			de_pe.append(eq)
+		else:
+			caidas.append(eq)
+	var queda := func(eq): return grupos[eq].reduce(func(m, id): return maxf(m, float(r["carros"][id]["eliminado_em"])), -INF)
+	caidas.sort_custom(func(x, y): return queda.call(x) > queda.call(y))
+	var acabou := _fim >= 0.0
+	if acabou:
+		var venc := String(r.get("equipe_vencedora", ""))
+		de_pe.sort_custom(func(x, y): return x == venc and y != venc)
+	var l := []
+	var n := 0
+	for eq in de_pe + caidas:
+		n += 1
+		var caiu: bool = caidas.has(eq)
+		var primeiro: String = grupos[eq][0]
+		var e: Dictionary = info.get(primeiro, {})
+		var voce: bool = eq == "jogador"
+		var cor: Color = e.get("cor", Aba.COR_DESTAQUE if voce else CarroBloco.cor_do_id(primeiro))
+		var pos := n if caiu or acabou or de_pe.size() == 1 else 0
+		l.append({"tipo": "equipe", "nome": String(e.get("nome", "")) if String(e.get("nome", "")) != "" else eq.to_upper(),
+				"cor": cor, "posicao": pos, "eliminado": caiu, "voce": voce})
+		for id in grupos[eq]:
+			l.append({"id": id, "nome": _dados["nomes"].get(id, id), "carro": String(_dados["modelos"].get(id, {}).get("nome", "")),
+					"cor": cor, "dano": a[id]["dano"], "eliminado": a[id]["eliminado"], "voce": voce})
 	return l
+
+
+static func _ordem_id(id: String) -> String:
+	return {"jogador": "0", "parceiro": "1"}.get(id, "2" + id)
 
 
 func _mostrar_final() -> void:

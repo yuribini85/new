@@ -168,9 +168,11 @@ func _equipe_de_cada(resultado: Dictionary, equipes: Dictionary) -> Dictionary:
 	for id in resultado["carros"]:
 		var eq: Dictionary = equipes.get(String(resultado["carros"][id].get("equipe", "")), {})
 		var cor := Color(String(eq["cores"]["carro"])) if eq.has("cores") else COR_DESTAQUE
+		var nome := String(eq.get("nome", ""))
 		if String(resultado["carros"][id].get("equipe", "")) == "jogador":
 			cor = COR_DESTAQUE
-		r[id] = {"nome": String(eq.get("nome", "")), "cor": cor}
+			nome = String(EquipeJogador.dados_equipe(dados, jogador).get("nome", "SUA EQUIPE"))
+		r[id] = {"nome": nome, "cor": cor}
 	return r
 
 

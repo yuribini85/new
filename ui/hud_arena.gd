@@ -1,13 +1,15 @@
 class_name HudArena
 extends Control
-## Painel da arena: uma linha por carro com o nome e o carro visto de cima em
+## Painel da arena: por equipe, o nome dela (com a posição quando cai) e, embaixo,
+## uma linha por carro com o piloto, o modelo e o carro visto de cima em
 ## seis regiões (frente, lados, traseira; esquerda e direita), cada uma na cor
 ## do dano. Cores como o indicador do estudo: verde → amarelo até a metade,
 ## amarelo → vermelho até o limite da ré, piscando daí até quebrar; preto no
 ## eliminado. O número é o pior dano em %.
 
 const LINHA := 46.0
-const LARGURA := 250.0
+const LARGURA := 280.0
+const EQUIPE := 32.0  # altura da linha do nome da equipe
 const CARRO := Vector2(30.0, 40.0)  # o carro de pé: frente para cima
 ## Com muitos carros (lutas de 15), as linhas encolhem para caber na tela.
 const MUITOS := 6
@@ -17,7 +19,8 @@ const AMARELO := Color(0.95, 0.8, 0.2)
 const VERMELHO := Color(0.92, 0.2, 0.15)
 const ALERTA := Color(1.0, 0.95, 0.85)
 
-## [{id, nome, cor, dano: PackedFloat32Array(6), eliminado, voce}]
+## [{tipo: "equipe", nome, cor, posicao (0 = de pé), eliminado, voce} ou
+##  {id, nome, carro, cor, dano: PackedFloat32Array(6), eliminado, voce}]
 var linhas: Array = []:
 	set(v):
 		linhas = v
@@ -43,17 +46,18 @@ func _gui_input(e: InputEvent) -> void:
 
 
 func _process(_d: float) -> void:
-	if linhas.any(func(l): return not l["eliminado"] and _pior(l["dano"]) >= limite_re):
+	if linhas.any(func(l): return l.has("dano") and not l["eliminado"] and _pior(l["dano"]) >= limite_re):
 		queue_redraw()  # pisca
 
 
 func _draw() -> void:
 	var fonte := Tipografia.fonte("semibold")
-	var k := ESCALA_COMPACTA if linhas.size() > MUITOS else 1.0
+	var carros := linhas.filter(func(l): return l.has("dano"))
+	var k := ESCALA_COMPACTA if carros.size() > MUITOS else 1.0
 	var linha := LINHA * k
 	var carro := CARRO * k
 	# Cabeçalho: quantos ainda estão de pé e a seta de recolher/abrir.
-	var vivos := linhas.filter(func(l): return not l["eliminado"]).size()
+	var vivos := carros.filter(func(l): return not l["eliminado"]).size()
 	draw_rect(Rect2(0, 0, LARGURA, CABECALHO - 4.0), Color(0.05, 0.05, 0.06, 0.82))
 	draw_string(fonte, Vector2(12, CABECALHO * 0.5 + 5.0), "COMPETIDORES · %d DE PÉ" % vivos,
 			HORIZONTAL_ALIGNMENT_LEFT, LARGURA - 50, 17, Color(0.86, 0.87, 0.9))
@@ -65,6 +69,9 @@ func _draw() -> void:
 	for l in linhas:
 		if recolhida and not l.get("voce", false):
 			continue
+		if l.get("tipo", "") == "equipe":
+			y += _equipe(l, y, k)
+			continue
 		var r := Rect2(0, y, LARGURA, linha - 6.0 * k)
 		draw_rect(r, Color(0.05, 0.05, 0.06, 0.72))
 		draw_rect(Rect2(r.position, Vector2(4, r.size.y)), l["cor"])
@@ -72,14 +79,40 @@ func _draw() -> void:
 		var cor_nome := Aba.COR_DESTAQUE if l.get("voce", false) else Color(0.92, 0.92, 0.9)
 		if l["eliminado"]:
 			cor_nome = Color(0.55, 0.55, 0.55)
-		draw_string(fonte, Vector2(20 + carro.x + 4, y + r.size.y * 0.5 + 7 * k), String(l["nome"]), HORIZONTAL_ALIGNMENT_LEFT,
-				LARGURA - 128, roundi(20 * maxf(k, 0.8)), cor_nome)
+		var modelo := String(l.get("carro", ""))
+		var dois := k == 1.0 and modelo != ""  # sem espaço para o modelo na lista compacta
+		var x_nome := 20 + carro.x + 4
+		draw_string(fonte, Vector2(x_nome, y + r.size.y * 0.5 + (-2.0 if dois else 7 * k)), String(l["nome"]),
+				HORIZONTAL_ALIGNMENT_LEFT, LARGURA - 128, roundi(20 * maxf(k, 0.8)), cor_nome)
+		if dois:
+			draw_string(fonte, Vector2(x_nome, y + r.size.y * 0.5 + 15.0), modelo, HORIZONTAL_ALIGNMENT_LEFT,
+					LARGURA - 128, 14, Color(0.6, 0.6, 0.62))
 		var txt := "FORA" if l["eliminado"] else "%d%%" % roundi(_pior(l["dano"]) * 100.0)
 		draw_string(Tipografia.fonte_numero(), Vector2(LARGURA - 72, y + r.size.y * 0.5 + 8 * k), txt,
 				HORIZONTAL_ALIGNMENT_RIGHT, 62, roundi(19 * maxf(k, 0.8)), Color(0.75, 0.75, 0.75) if l["eliminado"] else Color.WHITE)
 		y += linha
 	custom_minimum_size = Vector2(LARGURA, y)
 	size = custom_minimum_size  # fora de contêiner: a área do toque acompanha a lista
+
+
+## Linha da equipe: faixa na cor dela, a posição (quando já tem) e o nome.
+## Devolve a altura usada.
+func _equipe(l: Dictionary, y: float, k: float) -> float:
+	var h := EQUIPE * maxf(k, 0.75)
+	var r := Rect2(0, y, LARGURA, h - 2.0)
+	var cor: Color = l["cor"]
+	draw_rect(r, Color(cor.r, cor.g, cor.b, 0.22 if l["eliminado"] else 0.4).darkened(0.35))
+	draw_rect(Rect2(r.position, Vector2(4, r.size.y)), cor)
+	var x := 12.0
+	var tam := roundi(18 * maxf(k, 0.8))
+	if int(l["posicao"]) > 0:
+		var txt := "#%d" % int(l["posicao"])
+		draw_string(Tipografia.fonte_numero(), Vector2(x, y + h * 0.5 + 6), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, tam + 2,
+				Aba.COR_DESTAQUE if int(l["posicao"]) == 1 else Color.WHITE)
+		x += Tipografia.fonte_numero().get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, tam + 2).x + 10
+	draw_string(Tipografia.fonte("semibold"), Vector2(x, y + h * 0.5 + 6), String(l["nome"]).to_upper(),
+			HORIZONTAL_ALIGNMENT_LEFT, LARGURA - x - 10, tam, Color(0.6, 0.6, 0.6) if l["eliminado"] else Color.WHITE)
+	return h
 
 
 ## Carro de pé em 2 colunas × 3 linhas: [frente_e, frente_d], [lado_e, lado_d], [tras_e, tras_d].
