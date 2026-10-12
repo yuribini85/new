@@ -470,5 +470,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     primeiro na frente; sem retrato, a silhueta do jogo) e como desafiar, com botões para
     Corridas e Arena. A #10 tem ficha de entrada; depois da #1, a ficha do fim. Tocar numa
     linha vencida ou na da vez reabre a ficha. Risco e ficha não se repetem
-    (`jogador.grid` → `riscar`, `vistas`). Pendentes de decisão: chefe da equipe (sem
-    arte), carros especiais, modo do desafio por equipe e desafio dedicado.
+    (`jogador.grid` → `riscar`, `vistas`). Aceitas pelo usuário (2026-10-12): dirigente por equipe (nome em
+    `equipes.json` → `dirigente`, arte em `retrato_dirigente`, pedida pelo pacote
+    `tools/pacote_arte_grid.py` com os 5 retratos de piloto que faltam; entra com
+    `tools/importar_arte_grid.py`); carros especiais do catálogo da licença da equipe, nas
+    cores dela (critério: o carro do rival da série no GT2); modo do desafio pelo jeito da
+    equipe; desafio dedicado depois disso, com o prêmio da prova existente; decisão 61
+    mantida; CRED fora.

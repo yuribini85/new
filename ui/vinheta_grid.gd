@@ -173,7 +173,8 @@ func _topo(fim: bool) -> Control:
 
 
 ## Os pilotos com retrato: o primeiro na frente, o segundo atrás, menor e mais
-## escuro (o lugar do chefe da equipe fica com o primeiro piloto até haver arte).
+## escuro. Com a arte do dirigente (equipes.json → retrato_dirigente), ele vai
+## na frente e os dois pilotos atrás; sem ela, só o nome dele embaixo.
 func _pilotos(v: VBoxContainer) -> void:
 	# Os dois primeiros, os com retrato antes; sem arte, a silhueta do jogo.
 	var pilotos: Array = Array(_equipe.get("pilotos", [])).duplicate()
@@ -182,14 +183,42 @@ func _pilotos(v: VBoxContainer) -> void:
 	if com_retrato.is_empty():
 		return
 	var area := Control.new()
-	area.custom_minimum_size = Vector2(0, 360)
 	area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(area)
 	_fases.append(area)
+	var dirigente := String(_equipe.get("dirigente", ""))
+	var arte_dirigente := String(_equipe.get("retrato_dirigente", ""))
+	if arte_dirigente != "" and ResourceLoader.exists(arte_dirigente):
+		# O dirigente recortado na frente; os dois pilotos atrás, apagados.
+		area.custom_minimum_size = Vector2(0, 420)
+		for i in com_retrato.size():
+			area.add_child(_retrato(com_retrato[i], Vector2(230 + i * 190, 30 + i * 24), Vector2(180, 210), 0.45))
+		var d := TextureRect.new()
+		d.expand_mode = TextureRect.EXPAND_IGNORE_SIZE  # antes do tamanho (senão vale o da textura)
+		d.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		d.texture = load(arte_dirigente)
+		d.position = Vector2(-10, 0)
+		d.size = Vector2(260, 390)
+		d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		area.add_child(d)
+		area.add_child(_legenda("DIRIGENTE · " + dirigente.to_upper(), Vector2(0, 392)))
+		return
+	area.custom_minimum_size = Vector2(0, 360 + (34 if dirigente != "" else 0))
 	# Atrás primeiro (desenha embaixo).
 	if com_retrato.size() > 1:
 		area.add_child(_retrato(com_retrato[1], Vector2(250, 40), Vector2(240, 280), 0.5))
 	area.add_child(_retrato(com_retrato[0], Vector2(0, 0), Vector2(270, 315), 1.0))
+	if dirigente != "":
+		area.add_child(_legenda("DIRIGENTE · " + dirigente.to_upper(), Vector2(0, 364)))
+
+
+func _legenda(texto: String, pos: Vector2) -> Label:
+	var l := Label.new()
+	l.text = texto
+	Tipografia.rotulo(l, "semibold", 22)
+	l.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+	l.position = pos
+	return l
 
 
 static func _tem_retrato(p: Dictionary) -> bool:
@@ -210,10 +239,11 @@ func _retrato(p: Dictionary, pos: Vector2, tam: Vector2, luz: float) -> Control:
 	moldura.size = tam
 	moldura.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var r := TextureRect.new()
-	r.texture = load(String(p["retrato"])) if _tem_retrato(p) else Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(p.get("id", "")))) % 3))
-	r.size = tam
 	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme, recorta
+	r.clip_contents = true
+	r.texture = load(String(p["retrato"])) if _tem_retrato(p) else Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(p.get("id", "")))) % 3))
+	r.size = tam
 	r.modulate = Color(luz, luz, luz)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(r)

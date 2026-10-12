@@ -67,7 +67,9 @@
    "filete": "#8a9096"
   },
   "fonte_numero": "condensado",
-  "grid": 3
+  "grid": 3,
+  "dirigente": "Victor Sloane",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq02_vortex_motorsport.png"
  },
  {
   "id": "eq03_kaze_dynamics",
@@ -157,7 +159,9 @@
    "filete": "#cdb88f"
   },
   "fonte_numero": "estencil",
-  "grid": 6
+  "grid": 6,
+  "dirigente": "Moss Kettering",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq04_ironclad_racing.png"
  },
  {
   "id": "eq05_apex_dominion",
@@ -250,7 +254,9 @@
    "filete": "#2b2a2a"
   },
   "fonte_numero": "bloco",
-  "grid": 8
+  "grid": 8,
+  "dirigente": "Gus Moreau",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq06_redline_union.png"
  },
  {
   "id": "eq07_northstar_works",
@@ -297,7 +303,9 @@
    "filete": "#e8c22a"
   },
   "fonte_numero": "condensado",
-  "grid": 4
+  "grid": 4,
+  "dirigente": "Astrid Halvorsen",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq07_northstar_works.png"
  },
  {
   "id": "eq08_black_circuit",
@@ -345,7 +353,9 @@
    "filete": "#2b2a2a"
   },
   "fonte_numero": "pincel",
-  "grid": 5
+  "grid": 5,
+  "dirigente": "Lou Tasker",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq08_black_circuit.png"
  },
  {
   "id": "eq09_helix_racing",
@@ -571,7 +581,9 @@
    "filete": "#e6dcc4"
   },
   "fonte_numero": "estencil",
-  "grid": 7
+  "grid": 7,
+  "dirigente": "Walt Brennigan",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq13_tempest_garage.png"
  },
  {
   "id": "eq14_crown_vector",
@@ -617,7 +629,9 @@
    "filete": "#a8873e"
   },
   "fonte_numero": "serifa",
-  "grid": 1
+  "grid": 1,
+  "dirigente": "Augustin Pryce",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq14_crown_vector.png"
  },
  {
   "id": "eq15_gravelborn",
@@ -663,7 +677,9 @@
    "filete": "#e9dfc4"
   },
   "fonte_numero": "pincel",
-  "grid": 10
+  "grid": 10,
+  "dirigente": "Hank Ruddle",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq15_gravelborn.png"
  },
  {
   "id": "eq16_meridian_gp",
@@ -797,7 +813,9 @@
    "filete": "#ece4cf"
   },
   "fonte_numero": "bloco",
-  "grid": 9
+  "grid": 9,
+  "dirigente": "Silas Varn",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq18_copperhead_racing.png"
  },
  {
   "id": "eq19_cold_harbor",
@@ -887,6 +905,8 @@
    "filete": "#c9a54a"
   },
   "fonte_numero": "condensado",
-  "grid": 2
+  "grid": 2,
+  "dirigente": "Delphine Arceneaux",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq20_storm_division.png"
  }
 ]
