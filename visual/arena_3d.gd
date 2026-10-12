@@ -50,12 +50,12 @@ const SEUS := ["jogador", "parceiro"]
 ## ele cai de volta; de frente ou de trás, o nariz ou a traseira saltam. A
 ## gravidade traz de volta e o chão quica pouco. Velocidade angular = dano ×
 ## ganho, com teto (o carro nunca vira de vez).
-const TOMBO_DANO := 0.08  # dano mínimo da batida de lado que levanta o carro
-const TOMBO_DANO_PONTA := 0.15  # de frente/trás (são muitas: só as fortes)
-const TOMBO_GANHO_LADO := 12.0
-const TOMBO_GANHO_PONTA := 6.0
-const TOMBO_MAX_LADO := 4.0  # rad/s: ~50° no pico
-const TOMBO_MAX_PONTA := 2.0  # ~13°
+const TOMBO_DANO := 0.06  # dano mínimo da batida de lado que levanta o carro
+const TOMBO_DANO_PONTA := 0.12  # de frente/trás (são muitas: só as fortes)
+const TOMBO_GANHO_LADO := 20.0
+const TOMBO_GANHO_PONTA := 9.0
+const TOMBO_MAX_LADO := 5.0  # rad/s: ~80° no pico (quase de lado, sem virar)
+const TOMBO_MAX_PONTA := 2.6  # ~22°
 const TOMBO_GRAVIDADE := 9.0  # rad/s²
 const TOMBO_QUIQUE := 0.25
 const MEIA_LARGURA_M := 0.85
