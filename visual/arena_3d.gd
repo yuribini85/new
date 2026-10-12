@@ -7,6 +7,12 @@ extends SubViewportContainer
 ## fortes a cada estágio (Arena.estagio); fumaça a partir do 4º estágio; o
 ## eliminado escurece e solta fumaça preta. Faíscas e um tranco de câmera nas
 ## batidas. A câmera enquadra os carros ainda vivos.
+##
+## Três modos de câmera (`modo`): "briga" (a sua briga, girando devagar),
+## "geral" (a arena inteira, mais do alto) e "dinamica" (baixa, perto, com
+## cortes: persegue quem acabou de bater ou o seu carro, alternando ângulos).
+## Os seus carros (jogador e parceiro) ganham um anel no chão de tempos em
+## tempos.
 
 ## Câmera em perspectiva, inclinada e girando devagar em volta da briga (a
 ## arena se lê como 3D: paredes, carros e destroços com volume e paralaxe).
@@ -25,6 +31,27 @@ const CHAO_MARGEM_M := 10.0
 ## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
 const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
+## Vista geral: mais do alto e a arena inteira com folga.
+const ELEVACAO_GERAL_GRAUS := 58.0
+const ORBITA_GERAL_S := 90.0
+## Dinâmica: planos curtos, baixos e perto, com corte seco.
+const PLANO_S := 6.0  # duração de um plano sem batida
+const CORTE_MIN_S := 2.5  # um plano dura pelo menos isso antes de cortar para uma batida
+const DANO_CORTE := 0.06  # batida que chama a câmera
+const ATRAS_M := 15.0
+const ALTURA_M := 5.5
+const LADO_M := 14.0
+const CAMERA_DINAMICA_SUAVE := 3.5  # 1/s
+## Anel nos seus carros: a cada ANEL_PERIODO_S, por ANEL_S.
+const ANEL_PERIODO_S := 6.0
+const ANEL_S := 1.6
+const SEUS := ["jogador", "parceiro"]
+
+## "briga", "geral" ou "dinamica".
+var modo := "briga":
+	set(v):
+		modo = v
+		_corte = true
 
 ## Tempo atual da luta (s); quem mostra avança.
 var tempo := 0.0
@@ -49,6 +76,13 @@ var _forma: ArenaForma  # muro, obstáculos e relevo (a mesma forma da simulaç�
 var _centro := Vector3.ZERO
 var _tamanho := 60.0
 var _tremor := 0.0
+var _aneis := {}  # id -> MeshInstance3D (só os seus carros)
+var _foco := "jogador"  # carro da câmera dinâmica
+var _plano := 0  # 0 perseguição, 1 lateral, 2 frente baixa
+var _plano_desde := 0.0
+var _corte := true  # próximo quadro da câmera dinâmica sem suavizar
+var _pos_cam := Vector3.ZERO
+var _olhar := Vector3.ZERO
 
 
 func _init() -> void:
@@ -88,6 +122,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	for c in _cena.get_children():
 		c.queue_free()
 	_carros = {}
+	_aneis = {}
 	_malhas = {}
 	_estagio_visto = {}
 	_fumaca = {}
@@ -111,6 +146,12 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		_cena.add_child(c)
 		_carros[id] = c
 		_malhas[id] = _malhas_carroceria(c)
+		if id in SEUS:
+			_aneis[id] = _anel()
+	_foco = "jogador" if _carros.has("jogador") else String(_carros.keys()[0])
+	_plano = 0
+	_plano_desde = 0.0
+	_corte = true
 	atualizar(0.0)
 	_tamanho = _alvo_tamanho()
 	_camera.size = _tamanho
@@ -146,18 +187,28 @@ func atualizar(delta: float) -> void:
 		c.rotation.z = atan(g.dot(f))
 		c.rotation.x = atan(g.dot(Vector2(-f.y, f.x)))
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
+	_mostrar_aneis(b)
 	_eventos(delta)
 	if delta > 0.0:
 		_tamanho = lerpf(_tamanho, _alvo_tamanho(), 1.0 - exp(-delta * CAMERA_SUAVE))
 		_camera.size = _tamanho
 		_tremor = maxf(_tremor - delta, 0.0)
 		if not Preferencias.reduzir_animacoes:
-			_orbita = fmod(_orbita + delta * TAU / ORBITA_S, TAU)
+			_orbita = fmod(_orbita + delta * TAU / (ORBITA_GERAL_S if modo == "geral" else ORBITA_S), TAU)
+	if modo == "dinamica":
+		_dirigir(b, delta)
+		return
 	_mirar()
 
 
 ## Enquadramento: os vivos (todos, se já acabou), com folga, dentro da arena.
+## Na vista geral, a arena inteira.
 func _alvo_tamanho() -> float:
+	if modo == "geral":
+		_centro = _centro.lerp(Vector3.ZERO, 0.08)
+		var asp_g := float(size.y) / maxf(float(size.x), 1.0) if size.x > 0 else 1.6
+		# Do alto e inclinada, a largura da tela é que limita o círculo.
+		return (_raio * 2.0 + FOLGA_M) * maxf(asp_g, 1.0) * 1.25
 	var pts := []
 	var ultima: Dictionary = _amostras[_i] if not _amostras.is_empty() else {}
 	for id in _carros:
@@ -210,9 +261,127 @@ func _mirar() -> void:
 	var c := _centro + tremor
 	# _tamanho é a altura do quadro no chão: a distância que mostra isso no FOV.
 	var d := _tamanho * 0.5 / tan(deg_to_rad(FOV_GRAUS) * 0.5)
-	var elev := deg_to_rad(ELEVACAO_GRAUS)
+	var elev := deg_to_rad(ELEVACAO_GERAL_GRAUS if modo == "geral" else ELEVACAO_GRAUS)
 	var h := Vector3(sin(_orbita), 0.0, cos(_orbita))
+	if modo == "geral":
+		c -= h * _raio * 0.22  # mira além do centro: a arena desce e sai de baixo do painel
 	_camera.look_at_from_position(c + (h * cos(elev) + Vector3.UP * sin(elev)) * d, c, Vector3.UP)
+
+
+# --- Câmera dinâmica ------------------------------------------------------------
+
+## Escolhe o carro e o ângulo: corta para quem bateu forte (depois de
+## CORTE_MIN_S no plano), troca de plano a cada PLANO_S e larga quem caiu.
+func _dirigir(amostra: Dictionary, delta: float) -> void:
+	var vivo := func(id): return _carros.has(id) and not bool(amostra[id]["eliminado"])
+	var desde := tempo - _plano_desde
+	if not vivo.call(_foco) and desde > 1.2:
+		_novo_plano(_proximo_foco(amostra))
+	elif desde >= PLANO_S:
+		_novo_plano(_proximo_foco(amostra))
+	var c: Node3D = _carros[_foco]
+	var f := Vector3(cos(c.rotation.y), 0.0, -sin(c.rotation.y))  # a frente (rumo no plano)
+	var lado := Vector3(-f.z, 0.0, f.x)
+	var alvo_pos: Vector3
+	var alvo_olhar: Vector3
+	match _plano:
+		0:  # atrás, olhando para onde vai
+			alvo_pos = c.position - f * ATRAS_M + Vector3.UP * ALTURA_M
+			alvo_olhar = c.position + f * 6.0 + Vector3.UP * 0.8
+		1:  # de lado, baixo
+			alvo_pos = c.position + lado * LADO_M + Vector3.UP * (ALTURA_M * 0.6)
+			alvo_olhar = c.position + Vector3.UP * 0.8
+		_:  # à frente, baixa: o carro vem para a câmera
+			alvo_pos = c.position + f * ATRAS_M * 1.1 + Vector3.UP * (ALTURA_M * 0.45)
+			alvo_olhar = c.position + Vector3.UP * 1.0
+	# Dentro da arena (o muro não fica entre a câmera e o carro).
+	var plano := Vector2(alvo_pos.x, -alvo_pos.z)
+	if plano.length() > _raio - 2.0:
+		plano = plano.normalized() * (_raio - 2.0)
+		alvo_pos = Vector3(plano.x, alvo_pos.y, -plano.y)
+	if _corte or delta <= 0.0:
+		_pos_cam = alvo_pos
+		_olhar = alvo_olhar
+		_corte = false
+	else:
+		var k := 1.0 - exp(-delta * CAMERA_DINAMICA_SUAVE)
+		_pos_cam = _pos_cam.lerp(alvo_pos, k)
+		_olhar = _olhar.lerp(alvo_olhar, minf(k * 1.6, 1.0))
+	var tremor := Vector3.ZERO
+	if _tremor > 0.0 and not Preferencias.reduzir_animacoes:
+		tremor = Vector3(randf_range(-1.0, 1.0), randf_range(-0.5, 0.5), randf_range(-1.0, 1.0)) * 0.35 * _tremor
+	_camera.look_at_from_position(_pos_cam + tremor, _olhar, Vector3.UP)
+
+
+func _novo_plano(id: String) -> void:
+	_foco = id
+	_plano = (_plano + 1) % 3
+	_plano_desde = tempo
+	_corte = true
+
+
+## Roda entre os seus carros vivos e o rival mais perto deles.
+func _proximo_foco(amostra: Dictionary) -> String:
+	var vivos: Array = _carros.keys().filter(func(id): return not bool(amostra[id]["eliminado"]))
+	if vivos.is_empty():
+		return _foco
+	var ordem: Array = vivos.filter(func(id): return id in SEUS)
+	var ref: Vector3 = _carros[ordem[0] if not ordem.is_empty() else _foco].position
+	var rivais: Array = vivos.filter(func(id): return not id in SEUS)
+	if not rivais.is_empty():
+		rivais.sort_custom(func(a, b): return ref.distance_to(_carros[a].position) < ref.distance_to(_carros[b].position))
+		ordem.append(rivais[0])
+	return ordem[(ordem.find(_foco) + 1) % ordem.size()]
+
+
+## Batida forte na dinâmica: corta para o carro atingido (depois de CORTE_MIN_S).
+func _chamar_batida(e: Dictionary) -> void:
+	if modo != "dinamica" or float(e["dano"]) < DANO_CORTE or tempo - _plano_desde < CORTE_MIN_S:
+		return
+	var quem := String(e["por"]) if _carros.has(String(e["por"])) else String(e["carro"])
+	_foco = quem
+	_plano = 1 if _plano != 1 else 2  # a batida pede um ângulo de lado ou de frente
+	_plano_desde = tempo
+	_corte = true
+
+
+# --- Anéis dos seus carros ---------------------------------------------------------
+
+func _anel() -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var tor := TorusMesh.new()
+	tor.inner_radius = 2.7
+	tor.outer_radius = 3.15
+	m.mesh = tor
+	var mat := CarroBloco._material(Aba.COR_DESTAQUE)
+	mat.emission_enabled = true
+	mat.emission = Aba.COR_DESTAQUE * 0.6
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.material_override = mat
+	m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	m.visible = false
+	_cena.add_child(m)
+	return m
+
+
+## A cada ANEL_PERIODO_S o anel aparece por ANEL_S, crescendo e sumindo (com
+## Reduzir animações, parado). Carro eliminado não tem anel.
+func _mostrar_aneis(amostra: Dictionary) -> void:
+	var u := fmod(tempo, ANEL_PERIODO_S) / ANEL_S
+	for id in _aneis:
+		var a: MeshInstance3D = _aneis[id]
+		a.visible = u < 1.0 and not bool(amostra[id]["eliminado"])
+		if not a.visible:
+			continue
+		a.position = _carros[id].position + Vector3(0, 0.12, 0)
+		var mat := a.material_override as StandardMaterial3D
+		if Preferencias.reduzir_animacoes:
+			a.scale = Vector3.ONE
+			mat.albedo_color.a = 0.85
+		else:
+			a.scale = Vector3.ONE * lerpf(0.85, 1.3, smoothstep(0.0, 1.0, u))
+			mat.albedo_color.a = (1.0 - smoothstep(0.4, 1.0, u)) * 0.9
 
 
 # --- Dano -----------------------------------------------------------------------
@@ -398,6 +567,7 @@ func _eventos(_delta: float) -> void:
 		_eventos_vistos += 1
 		if e["tipo"] != "impacto" or not _carros.has(e["carro"]):
 			continue
+		_chamar_batida(e)
 		var forte := float(e["dano"]) > 0.08
 		if forte:
 			_tremor = minf(_tremor + float(e["dano"]) * 2.0, 0.6)

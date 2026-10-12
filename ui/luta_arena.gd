@@ -9,6 +9,9 @@ signal acabou(final: Dictionary)
 const VELOCIDADE := 1.0  # tempo da luta por segundo de tela
 const FIM_S := 1.2  # depois do último quadro, antes do resultado
 const CONTAGEM_S := 3.0  # largada 3-2-1, como na corrida
+## Câmeras: [nome, modo da Arena3D, ícone (arte/ui/cameras)].
+const CAMERAS := [["Sua briga", "briga", "jogador"], ["Arena inteira", "geral", "geral"],
+		["Dinâmica", "dinamica", "auto"]]
 
 var _dados: Dictionary
 var _vista: Arena3D
@@ -20,6 +23,7 @@ var _faixa: PanelContainer
 var _contagem := CONTAGEM_S
 var _sons: Sons
 var _semaforo: Control
+var _cameras_botoes: Array = []
 
 
 func _init(dados_luta: Dictionary, params: Dictionary) -> void:
@@ -32,6 +36,7 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 	add_child(fundo)
 	_vista = Arena3D.new()
 	_vista.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_vista.modo = Preferencias.camera_arena if Preferencias.camera_arena in CAMERAS.map(func(c): return c[1]) else "briga"
 	add_child(_vista)
 	_hud = HudArena.new()
 	_hud.position = Vector2(16, 70)
@@ -63,6 +68,7 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 		_semaforo.queue_redraw()
 		_vista.tempo = _vista.duracao())
 	add_child(_pular)
+	add_child(_seletor_cameras())
 	# Semáforo da largada por cima da arena (o mesmo da corrida).
 	_semaforo = Control.new()
 	_semaforo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -73,6 +79,70 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 	add_child(_sons)
 	_vista.faixas_pintura = _dados.get("faixas", {})
 	_vista.ready.connect(func(): _vista.mostrar(_dados["resultado"], params, _dados["modelos"], _dados["pinturas"]))
+
+
+## Os três modos em ícones, no alto à direita (o escolhido em âmbar), como o
+## seletor da corrida. A escolha fica para as próximas lutas.
+func _seletor_cameras() -> Control:
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(Aba.COR_CARTAO, 0.7)
+	sb.set_corner_radius_all(10)
+	sb.set_content_margin_all(3)
+	p.add_theme_stylebox_override("panel", sb)
+	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	p.offset_left = -16 - 3 * 64 - 10
+	p.offset_right = -16
+	p.offset_top = 70
+	p.offset_bottom = 70 + 58
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 2)
+	p.add_child(h)
+	var vazio := StyleBoxEmpty.new()
+	var marcado := StyleBoxFlat.new()
+	marcado.bg_color = Aba.COR_DESTAQUE
+	marcado.set_corner_radius_all(8)
+	for c in CAMERAS:
+		var b := Button.new()
+		b.tooltip_text = c[0]
+		b.toggle_mode = true
+		b.focus_mode = Control.FOCUS_NONE
+		b.custom_minimum_size = Vector2(64, 52)
+		var ic := TextureRect.new()
+		ic.texture = Aba.arte("cameras/" + String(c[2]))
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ic.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		ic.offset_left = -20
+		ic.offset_right = 20
+		ic.offset_top = -20
+		ic.offset_bottom = 20
+		b.add_child(ic)
+		for estado in ["normal", "hover", "focus", "disabled"]:
+			b.add_theme_stylebox_override(estado, vazio)
+		for estado in ["pressed", "hover_pressed"]:
+			b.add_theme_stylebox_override(estado, marcado)
+		b.pressed.connect(_camera.bind(String(c[1])))
+		h.add_child(b)
+		_cameras_botoes.append(b)
+	_marcar_camera()
+	return p
+
+
+func _camera(modo: String) -> void:
+	_vista.modo = modo
+	_marcar_camera()
+	if Preferencias.camera_arena != modo:
+		Preferencias.camera_arena = modo
+		Preferencias.salvar()
+
+
+func _marcar_camera() -> void:
+	for i in _cameras_botoes.size():
+		var marcado: bool = CAMERAS[i][1] == _vista.modo
+		_cameras_botoes[i].button_pressed = marcado
+		(_cameras_botoes[i].get_child(0) as TextureRect).modulate = Color(0.1, 0.1, 0.1) if marcado else Aba.COR_SECUNDARIA
 
 
 func _process(delta: float) -> void:

@@ -21,6 +21,8 @@ static var garagem_lista := false
 ## Vista da corrida preferida: "" (a câmera 3D, AUTO) ou "dados" (vista tática,
 ## sem 3D). A última escolha vale para as próximas corridas.
 static var vista_corrida := ""
+## Câmera da arena: "briga", "geral" ou "dinamica" (Arena3D.modo).
+static var camera_arena := "briga"
 ## Playtest (docs/playtest_percurso.md): "" desligado, "clareza" (pular corrida
 ## permitido) ou "ritmo" (sem pular). Ligado, grava RegistroSessao.
 static var modo_teste := ""
@@ -40,6 +42,7 @@ static func carregar() -> void:
 		fechar_resultado = bool(cfg.get_value("tela", "fechar_resultado", fechar_resultado))
 		garagem_lista = bool(cfg.get_value("tela", "garagem_lista", garagem_lista))
 		vista_corrida = String(cfg.get_value("tela", "vista_corrida", vista_corrida))
+		camera_arena = String(cfg.get_value("tela", "camera_arena", camera_arena))
 		modo_teste = String(cfg.get_value("teste", "modo", modo_teste))
 		if not modo_teste in ["", "clareza", "ritmo"]:
 			modo_teste = ""
@@ -55,6 +58,7 @@ static func salvar() -> void:
 	cfg.set_value("tela", "fechar_resultado", fechar_resultado)
 	cfg.set_value("tela", "garagem_lista", garagem_lista)
 	cfg.set_value("tela", "vista_corrida", vista_corrida)
+	cfg.set_value("tela", "camera_arena", camera_arena)
 	cfg.set_value("teste", "modo", modo_teste)
 	cfg.save(CAMINHO)
 	aplicar()
