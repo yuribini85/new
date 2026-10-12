@@ -130,6 +130,7 @@ func _ready() -> void:
 			_ir_para(i))
 	_todas[4].dialogo_aberto = func() -> bool: return _dialogo != null and _dialogo.ocupado()
 	_todas[ABA_ARENA].luta.connect(_abrir_luta)
+	_todas[5].vinheta.connect(_abrir_vinheta)
 	eventos.correr_iniciado.connect(func():
 		# Conversa aberta na inscrição (ex.: a do campeonato): o grid espera.
 		if _dialogo != null and _dialogo.ocupado():
@@ -392,6 +393,24 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 			jogador.historia.disparar_grid(f.get("grid", {}), dados)
 		_sujar_todas()
 		atualizar())
+
+
+## Ficha de uma equipe do Grid por cima de tudo, depois de qualquer diálogo
+## em curso. Abrir marca como vista (não reaparece sozinha).
+func _abrir_vinheta(id: String, contexto: String) -> void:
+	while _dialogo != null and _dialogo.ocupado():
+		await _dialogo.terminou
+	var aberta := get_node_or_null("VinhetaGrid")
+	if aberta != null and not aberta.is_queued_for_deletion():
+		return
+	if aberta != null:
+		aberta.name = "VinhetaGrid_saindo"
+	TheGrid.marcar_vista(jogador, id)
+	get_node("/root/SaveManager").salvar()
+	var v := VinhetaGrid.new(dados, jogador, id, contexto, 3, ABA_ARENA)
+	v.name = "VinhetaGrid"
+	add_child(v)
+	v.ir.connect(func(aba: int): _ir_para(aba))
 
 
 ## Engrenagem do cabeçalho.

@@ -17,6 +17,8 @@ static func equipes(dados: Node) -> Array:
 	return l
 
 
+## jogador.grid: {vencidas: [ids, em ordem], riscar: id da última vencida
+## ainda não riscada na tela, vistas: [ids cuja ficha já apareceu; "fim"]}.
 static func vencidas(jogador: Node) -> Array:
 	return Array(jogador.grid.get("vencidas", []))
 
@@ -43,4 +45,37 @@ static func registrar(dados: Node, jogador: Node, presentes: Array) -> Dictionar
 	if e.is_empty() or not e["id"] in presentes:
 		return {}
 	jogador.grid["vencidas"] = vencidas(jogador) + [e["id"]]
+	jogador.grid["riscar"] = String(e["id"])  # a tela Carreira risca e revela a próxima
 	return e
+
+
+## Equipe vencida cujo risco ainda não foi mostrado ("" se nenhuma).
+static func riscar_pendente(jogador: Node) -> String:
+	return String(jogador.grid.get("riscar", ""))
+
+
+static func riscada(jogador: Node) -> void:
+	jogador.grid.erase("riscar")
+
+
+## Ficha (vinheta) ainda não vista: a da vez, ou o fim do Grid ("fim").
+## "" se não há nada a apresentar.
+static func ficha_pendente(dados: Node, jogador: Node) -> String:
+	var vistas: Array = Array(jogador.grid.get("vistas", []))
+	var vez := da_vez(dados, jogador)
+	if vez.is_empty():
+		return "" if equipes(dados).is_empty() or "fim" in vistas else "fim"
+	return "" if vez["id"] in vistas else String(vez["id"])
+
+
+static func marcar_vista(jogador: Node, id: String) -> void:
+	var vistas: Array = Array(jogador.grid.get("vistas", []))
+	if not id in vistas:
+		jogador.grid["vistas"] = vistas + [id]
+
+
+static func equipe(dados: Node, id: String) -> Dictionary:
+	for e in equipes(dados):
+		if e["id"] == id:
+			return e
+	return {}

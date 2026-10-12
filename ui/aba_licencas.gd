@@ -1,5 +1,9 @@
 extends Aba
 
+## Ficha de uma equipe do Grid (VinhetaGrid): id e contexto ("proximo",
+## "primeiro", "rever").
+signal vinheta(id: String, contexto: String)
+
 ## Resultado do último teste: {"teste", "tempo", "grau", "tempos", "concedida", "licenca"} ou erro.
 var _resultado := {}
 
@@ -20,6 +24,9 @@ const NOMES_CATEGORIA := PecasTexto.NOMES_CATEGORIA
 ## Brasão da licença atual no topo (altura, px) e o da próxima no cartão.
 const ALTURA_BRASAO := 230.0
 const BRASAO_CARTAO := 190.0
+## Linhas do Grid na tela: id -> {linha, risco}.
+var _linhas_grid := {}
+var _toque_grid := Vector2.INF
 
 
 func _init(d: Node, j: Node) -> void:
@@ -180,6 +187,7 @@ func _the_grid() -> void:
 	var feitas: Array = TheGrid.vencidas(jogador)
 	var c := cartao()
 	c.add_theme_constant_override("separation", 4)
+	_linhas_grid = {}
 	if vez.is_empty():
 		rotulo("O Grid é seu. Ninguém acima.", FONTE_PEQUENA + 2, COR_BOM, c)
 	var invertida := lista.duplicate()
@@ -189,9 +197,34 @@ func _the_grid() -> void:
 		var da_vez: bool = not vez.is_empty() and e["id"] == vez["id"]
 		var h := HBoxContainer.new()
 		h.add_theme_constant_override("separation", 12)
-		h.custom_minimum_size.y = 76 if da_vez else 64
-		h.modulate = Color(1, 1, 1, 1.0 if (venc or da_vez) else 0.55)
-		c.add_child(h)
+		# A linha: a faixa (HBox) e, por cima, o risco das vencidas (camada, não
+		# mexe no emblema). Vencida fica apagada e riscada; toque abre a ficha.
+		var linha := Control.new()
+		linha.custom_minimum_size.y = 76 if da_vez else 64
+		linha.modulate = Color(0.72, 0.72, 0.72) if venc else Color(1, 1, 1, 1.0 if da_vez else 0.55)
+		linha.mouse_filter = Control.MOUSE_FILTER_PASS
+		c.add_child(linha)
+		h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		linha.add_child(h)
+		# A linha acompanha o texto (a da vez quebra em duas).
+		var base_alto := linha.custom_minimum_size.y
+		h.minimum_size_changed.connect(func(): linha.custom_minimum_size.y = maxf(base_alto, h.get_combined_minimum_size().y))
+		var risco := ColorRect.new()
+		risco.color = COR_RUIM
+		risco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		risco.anchor_top = 0.5
+		risco.anchor_bottom = 0.5
+		risco.anchor_right = 1.0
+		risco.offset_left = 72
+		risco.offset_right = -44
+		risco.offset_top = -2
+		risco.offset_bottom = 3
+		risco.visible = venc
+		linha.add_child(risco)
+		_linhas_grid[e["id"]] = {"linha": linha, "risco": risco}
+		if venc or da_vez:
+			linha.gui_input.connect(_toque_linha_grid.bind(String(e["id"])))
 		var n := Label.new()
 		n.text = "#%d" % int(e["grid"])
 		n.custom_minimum_size.x = 64
@@ -230,6 +263,74 @@ func _the_grid() -> void:
 			ok.custom_minimum_size = Vector2(30, 30)
 			ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			h.add_child(ok)
+	for id in _linhas_grid:
+		var hh: Control = _linhas_grid[id]["linha"].get_child(0)
+		_linhas_grid[id]["linha"].custom_minimum_size.y = maxf(_linhas_grid[id]["linha"].custom_minimum_size.y, hh.get_combined_minimum_size().y)
+	_animar_grid.call_deferred()
+
+
+## Toque (sem arrastar) numa linha vencida ou na da vez: reabre a ficha.
+func _toque_linha_grid(e: InputEvent, id: String) -> void:
+	var botao: bool = e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT
+	if not (botao or e is InputEventScreenTouch):
+		return
+	if e.pressed:
+		_toque_grid = e.position
+	elif _toque_grid != Vector2.INF and e.position.distance_to(_toque_grid) < 14.0:
+		_toque_grid = Vector2.INF
+		vinheta.emit(id, "rever")
+
+
+## Depois de vencer uma equipe: a tela desce até o Grid, o risco atravessa a
+## vencida (que apaga), a próxima acende e a ficha dela abre. Sem nada para
+## riscar, só a ficha que ainda não apareceu (a #10, na entrada no Grid).
+## Nada se repete: o risco e a ficha ficam marcados no save.
+func _animar_grid() -> void:
+	if not is_visible_in_tree():
+		return
+	var riscar := TheGrid.riscar_pendente(jogador)
+	var ficha := TheGrid.ficha_pendente(dados, jogador)
+	var contexto := "primeiro" if TheGrid.vencidas(jogador).is_empty() else "proximo"
+	if riscar == "" or not _linhas_grid.has(riscar):
+		if riscar != "":
+			TheGrid.riscada(jogador)
+		if ficha != "":
+			vinheta.emit(ficha, contexto)
+		return
+	TheGrid.riscada(jogador)
+	get_node("/root/SaveManager").salvar()
+	var linha: Control = _linhas_grid[riscar]["linha"]
+	var risco: ColorRect = _linhas_grid[riscar]["risco"]
+	# A rolagem só conhece a altura da lista depois do layout.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not is_instance_valid(linha):
+		if ficha != "":
+			vinheta.emit(ficha, contexto)
+		return
+	ensure_control_visible(linha)
+	if Preferencias.reduzir_animacoes:
+		if ficha != "":
+			vinheta.emit(ficha, contexto)
+		return
+	var vez: Dictionary = TheGrid.da_vez(dados, jogador)
+	var proxima: Control = _linhas_grid[vez["id"]]["linha"] if not vez.is_empty() and _linhas_grid.has(vez["id"]) else null
+	# Estado de antes: a vencida acesa e sem risco; a próxima apagada.
+	linha.modulate = Color.WHITE
+	risco.pivot_offset = Vector2.ZERO
+	risco.scale.x = 0.0
+	if proxima != null:
+		proxima.modulate = Color(1, 1, 1, 0.55)
+	var t := create_tween()
+	t.tween_interval(0.6)
+	t.tween_property(risco, "scale:x", 1.0, 0.8).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	t.parallel().tween_property(linha, "modulate", Color(0.72, 0.72, 0.72), 0.8)
+	if proxima != null:
+		t.tween_property(proxima, "modulate", Color(1.35, 1.25, 1.0), 0.35)
+		t.tween_property(proxima, "modulate", Color.WHITE, 0.45)
+	t.tween_interval(0.5)
+	if ficha != "":
+		t.tween_callback(func(): vinheta.emit(ficha, contexto))
 
 
 func _linha_objetivo(o: Dictionary, pai: Control) -> void:

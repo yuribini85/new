@@ -463,3 +463,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     tela de Licenças/Carreira: dez equipes (`equipes.json` → `grid`, 10 a 1), vencidas
     uma por vez ganhando uma prova em que a da vez correu ou a arena com ela presente
     (`TheGrid`, `jogador.grid`).
+67. **The Grid: risco, revelação e ficha** (2026-10-12, proposta "The Grid Pack" do
+    usuário, protótipo): ao vencer a equipe da vez, a tela Carreira desce até o Grid, um
+    risco (camada, não mexe no emblema) atravessa a vencida, a próxima acende e abre a
+    ficha dela (VinhetaGrid): posição, emblema, nome, licença e jeito, dois pilotos (o
+    primeiro na frente; sem retrato, a silhueta do jogo) e como desafiar, com botões para
+    Corridas e Arena. A #10 tem ficha de entrada; depois da #1, a ficha do fim. Tocar numa
+    linha vencida ou na da vez reabre a ficha. Risco e ficha não se repetem
+    (`jogador.grid` → `riscar`, `vistas`). Pendentes de decisão: chefe da equipe (sem
+    arte), carros especiais, modo do desafio por equipe e desafio dedicado.

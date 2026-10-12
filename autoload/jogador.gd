@@ -37,7 +37,7 @@ var arena: Dictionary = {}
 var equipe: Dictionary = {}
 ## Identidade da equipe do jogador (IdentidadeEquipe): {nome, logo}; vazio = o padrão.
 var identidade: Dictionary = {}
-## The Grid (TheGrid): {vencidas: [ids das equipes vencidas, em ordem]}.
+## The Grid (TheGrid): {vencidas: [ids, em ordem], riscar, vistas}.
 var grid: Dictionary = {}
 ## Corrida (dias) do último comentário de contexto da história (cenas reativa).
 var ultima_reativa: int = -1000
