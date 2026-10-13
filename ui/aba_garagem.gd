@@ -65,6 +65,10 @@ func construir() -> void:
 	if carro_ativo() == null:
 		jogador.carro_ativo = lista[0].uid
 	var c := carro_ativo()
+	# A categoria da roleta antes do palco (a prévia da ficha depende dela).
+	var cats: Array = _categorias_corrida(c).map(func(x): return x[0])
+	if not _roleta_cat in cats and not cats.is_empty():
+		_roleta_cat = cats[0]
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c), c.faixas)
 	ancora("CAR_STATS", _palco(c, lista))
 	# O palco é o cenário do topo (colado no cabeçalho); sem a faixa da missão,
@@ -365,6 +369,18 @@ func _palco(c: Carro, lista: Array) -> Control:
 	var af := fab.atributos_efetivos("seco")
 	var teto := _tetos_do_modelo(c)
 	var vel := Simulacao.velocidade_maxima_kmh(a, dados.simulacao())
+	# Prévia: os números com a próxima peça da categoria da roleta (ou a
+	# próxima blindagem), para a barra mostrar até onde vai.
+	var pv := _carro_previa(c)
+	var ap := pv.atributos_efetivos("seco") if pv != null else a
+	var velp := Simulacao.velocidade_maxima_kmh(ap, dados.simulacao())
+	var previas := {"potencia": _fracao_teto(af["potencia"], ap["potencia"], teto["potencia"]),
+		"peso": _fracao_teto(af["peso"], ap["peso"], teto["peso"]),
+		"velocidade": _fracao_teto(Simulacao.velocidade_maxima_kmh(af, dados.simulacao()), velp, teto["vel"]),
+		"blindagem": float(Blindagem.nivel(pv if pv != null else c)) / maxf(Blindagem.itens(dados, c).size(), 1.0)}
+	var deltas := {"potencia": roundi(ap["potencia"] - a["potencia"]), "peso": roundi(ap["peso"] - a["peso"]),
+		"velocidade": roundi(velp - vel) if is_finite(vel) and is_finite(velp) else 0,
+		"blindagem": Blindagem.nivel(pv if pv != null else c) - Blindagem.nivel(c)}
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	h.offset_left = 12
@@ -434,8 +450,16 @@ func _palco(c: Carro, lista: Array) -> Control:
 		Tipografia.numero(valor, NUMERO_FICHA)
 		var u := _hud_rotulo(it[3], 0, COR_SECUNDARIA, num)
 		Tipografia.rotulo(u, "regular", UNIDADE_FICHA)
+		# O que a próxima peça muda neste número (em ocre).
+		var dlt := int(deltas.get(it[0], 0))
+		if dlt != 0:
+			u.text = "%s %+d" % [it[3], dlt]
+			var melhora: bool = dlt < 0 if it[0] == "peso" else dlt > 0
+			u.add_theme_color_override("font_color", COR_DESTAQUE if melhora else COR_RUIM.lightened(0.2))
 		var dentes := DENTES_FICHA if it[0] != "blindagem" else maxi(Blindagem.itens(dados, c).size(), 1)
-		v.add_child(BarraDentes.new(roundi(it[4] * dentes), dentes, 7.0))
+		var bd := BarraDentes.new(roundi(it[4] * dentes), dentes, 7.0)
+		bd.previa = roundi(maxf(float(previas.get(it[0], it[4])), it[4]) * dentes)
+		v.add_child(bd)
 	return palco
 
 
@@ -562,6 +586,19 @@ func _preparacao_corrida(c: Carro, pai: Control) -> void:
 		b.modulate = Color.WHITE if itens[k][2][0] > 0 or k == i else Color(1, 1, 1, 0.45)
 		b.pressed.connect(func(): ir.call(k))
 		faixa.add_child(b)
+		# Ponto ocre: a próxima peça desta categoria cabe no saldo.
+		if _da_para_comprar(c, String(itens[k][0])):
+			var ponto := Panel.new()
+			var sp := StyleBoxFlat.new()
+			sp.bg_color = COR_DESTAQUE
+			sp.set_corner_radius_all(7)
+			sp.border_color = Color(0.08, 0.08, 0.09)
+			sp.set_border_width_all(2)
+			ponto.add_theme_stylebox_override("panel", sp)
+			ponto.size = Vector2(14, 14)
+			ponto.position = Vector2(ICONE_FAIXA - 10, 4)
+			ponto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			b.add_child(ponto)
 	# Centraliza a atual depois do layout.
 	(func():
 		await get_tree().process_frame
@@ -630,17 +667,41 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 	conta.add_theme_color_override("font_color", BarraDentes.ACESO if it[2][0] > 0 else COR_SECUNDARIA)
 	linha.add_child(conta)
 	var prox := _escolhido(c, cat)
-	var completo: bool = it[2][0] >= it[2][1]
+	var completo: bool = it[2][0] >= it[2][1] or prox.is_empty()
+	# A próxima peça e o que ela muda (o preço vai no botão).
 	var info := Label.new()
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.text = "Tudo instalado." if completo or prox.is_empty() else \
-			"Próxima: %s · %s %s" % [String(prox.get("nome", "")), dinheiro(int(prox.get("preco", 0))),
-				"peças (os giros completam)" if cat == Blindagem.CATEGORIA else "giros"]
+	info.clip_text = true
+	info.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	if completo:
+		info.text = "Tudo instalado."
+	else:
+		var ganho := ""
+		if cat == "pneus":
+			ganho = "ader. %d" % roundi(float(prox["aderencia"]["seco"]) * 100.0)
+		elif cat != "cambio":
+			var t := c.copiar()
+			t.instalar(prox)
+			ganho = _ganho(c.atributos_efetivos("seco"), t.atributos_efetivos("seco"))
+			if cat == Blindagem.CATEGORIA:
+				ganho += "  ·  arena +%d%%" % roundi((Blindagem.ganho_arena(prox) - 1.0) * 100.0)
+		info.text = String(prox.get("nome", "")) + ("  ·  " + ganho if ganho != "" else "")
 	Tipografia.rotulo(info, "regular", 20)
 	info.add_theme_color_override("font_color", COR_SECUNDARIA)
 	col.add_child(info)
+	var pode := not completo and _da_para_comprar(c, cat)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "VER PEÇAS   ›" if completo else "MELHORAR   ›", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
+	if completo:
+		Tipografia.acao_primaria(b, "VER PEÇAS   ›", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
+	else:
+		var preco := int(prox.get("preco", 0))
+		var txt := "MELHORAR · %s" % dinheiro(preco) + (" PEÇAS" if cat == Blindagem.CATEGORIA else "")
+		# Sem dinheiro: o botão apagado (ainda abre a janela, para ver as peças).
+		Tipografia.acao_primaria(b, txt, COR_DESTAQUE if pode else Color(0.2, 0.2, 0.22),
+				Color(0.1, 0.1, 0.1) if pode else COR_SECUNDARIA, 24, 60)
+		if cat != Blindagem.CATEGORIA:
+			b.icon = icone_reduzido(ICONE_GIROS, 26)
+			b.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			b.add_theme_constant_override("h_separation", 8)
 	b.pressed.connect(_abrir_evolucao.bind(c, cat))
 	if cat == Blindagem.CATEGORIA:
 		b.pressed.connect(func(): historia("BLINDAGEM"))
@@ -654,6 +715,38 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 	elif cat == "pneus":
 		ancora("PNEUS", b)
 	return p
+
+
+## A categoria mostrada no cartão agora (a da roleta ou a blindagem).
+func _cat_cartao() -> String:
+	return Blindagem.CATEGORIA if _prep == "arena" else _roleta_cat
+
+
+## O carro com a próxima peça da categoria do cartão (null sem próxima: tudo
+## comprado, pneus, que não mudam os números da ficha, ou nada escolhido).
+func _carro_previa(c: Carro) -> Carro:
+	var cat := _cat_cartao()
+	if cat == "" or cat == "pneus":
+		return null
+	var prox := _escolhido(c, cat)
+	if prox.is_empty() or c.pecas.get(cat, {}).get("id") == prox["id"]:
+		return null
+	var t := c.copiar()
+	t.instalar(prox)
+	return t
+
+
+## A próxima peça cabe no saldo (peças e giros, na blindagem)?
+func _da_para_comprar(c: Carro, cat: String) -> bool:
+	var prox := _escolhido(c, cat)
+	if prox.is_empty():
+		return false
+	if cat == "pneus":
+		if c.pneus.any(func(x): return x["id"] == prox["id"]):
+			return false
+	elif prox["id"] in c.pecas_possuidas:
+		return false
+	return jogador.economia.pode_pagar_peca(int(prox.get("preco", 0)), cat == Blindagem.CATEGORIA)
 
 
 func _icone_peca(cat: String) -> Texture2D:

@@ -12,6 +12,10 @@ const APAGADO := Color(1, 1, 1, 0.16)
 
 var feitos := 0
 var total := 0
+## Prévia (Oficina): até onde a barra vai com a próxima peça; os dentes entre
+## `feitos` e `previa` aparecem em ocre translúcido.
+var previa := 0
+const PREVIA := Color(0.784, 0.608, 0.341, 0.42)
 
 
 func _init(feitos_: int = 0, total_: int = 0, altura := 12.0) -> void:
@@ -27,10 +31,11 @@ func _draw() -> void:
 		return
 	var n := mini(total, MAX_DENTES)
 	var acesos := feitos if total <= MAX_DENTES else roundi(float(feitos) / total * n)
+	var ate := previa if total <= MAX_DENTES else roundi(float(previa) / total * n)
 	var h := size.y
 	var dx := h * INCLINACAO
 	var w := (size.x - dx - VAO * (n - 1)) / n
 	for i in n:
 		var x := i * (w + VAO)
 		draw_colored_polygon(PackedVector2Array([Vector2(x + dx, 0), Vector2(x + dx + w, 0), Vector2(x + w, h),
-				Vector2(x, h)]), ACESO if i < acesos else APAGADO)
+				Vector2(x, h)]), ACESO if i < acesos else (PREVIA if i < ate else APAGADO))
