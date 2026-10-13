@@ -631,3 +631,25 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     por termo) e subida que pesa: além da gravidade, a força do motor cai com a inclinação
     contra o carro (`subida_perda` 0,5 em `arena.json`, provisório; mais que isso prendia
     carro dentro de vala).
+80. **Frota 360** (2026-10-13, decisões do usuário). A frota do jogo passa a ser a do pacote
+    "Veículos 360" (modelos 3D com rodas separadas e proteções por região), mais os 3
+    modelos aprovados que vieram fora da lista (Nimbo, Bastion, Aster): 363 carros no lugar
+    dos 386. Números: o carro que existe no GT2 (71, casados à mão pela geração) usa o
+    disco; os outros, a ficha real pesquisada (potência, peso, tração, ano) com um doador
+    do GT2 (mesma tração, potência e peso mais perto) para curva de torque, câmbio,
+    aderência, freio, distribuição de peso e peças; preço = preço do doador ×
+    (cv/cv)^1,235 × (kg/kg)^-0,900 (regressão nos carros de rua do GT2). Sem peso na
+    ficha: peso pelo volume do modelo (regressão nas fichas com peso, R² 0,78); sem ficha
+    (3) ou sem referência real (os 3 aprovados): clone do carro antigo de medidas mais
+    parecidas, provisório. Marcas: as reais reusam as fictícias que já existiam (cada marca real
+    → uma fictícia) e as que faltavam ganharam 14 novas (Feldhaus, Corsalto, Taurenza,
+    Tridella, Vantra, Norrvik, Halberton, Ashworth, Ridgeway, Voltane, Ishigumo, Volnar,
+    Iporã, Brakhaus Industrial); categorias novas picape, utilitário e pesado. Os 3
+    caminhões (Brakhaus) são chefes: fora da loja, das provas e dos rivais sorteados.
+    Saves: cada um dos 618 ids antigos vai para o carro novo mais parecido da mesma marca
+    (`carros_removidos.json`). Blindagem visível: o nível de blindagem do carro monta as
+    proteções do modelo (moldura, contraventamento, placa) na Oficina e na arena; na
+    arena a proteção da região atingida se solta e cai. Os modelos ainda estão em revisão
+    artística (o REVIEW.json do pacote; `arte_provisoria` nos dados). Fontes reais (nomes,
+    fichas, casamento) ficam só em `referencia/frota360/`, fora do git e do build;
+    ferramenta `tools/frota360.py` → `tools/importar_gt2.py --frota`.

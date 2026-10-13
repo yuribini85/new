@@ -85,6 +85,15 @@ var _cena: Node3D
 var _camera: Camera3D
 ## Faixas da pintura da Oficina por carro (id -> {padrao, faixa, filete}).
 var faixas_pintura := {}
+## Nível de blindagem à vista por carro (decisão 80): id -> 1..3.
+var blindagens := {}
+## Proteções soltas caindo: [{no, v (m/s), giro (rad/s), chao (m)}].
+var _soltas: Array = []
+## Região da batida -> proteção do modelo (o "left" do pacote fica no -X do
+## arquivo, que é a direita do carro no jogo).
+const PROTECAO_DA_REGIAO := {"frente_e": "front", "frente_d": "front", "tras_e": "rear", "tras_d": "rear",
+		"lado_e": "right", "lado_d": "left"}
+const SOLTA_DANO := 0.05  # batida que arranca a proteção da região
 var _orbita := 0.0  # ângulo da câmera em volta do centro (rad)
 var _carros := {}  # id -> Node3D
 var _malhas := {}  # id -> [{mi, rel, surfs: [{arr, prim, mat}]}]: malhas originais da carroceria
@@ -146,6 +155,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_carros = {}
 	_aneis = {}
 	_tombo = {}
+	_soltas = []
 	_malhas = {}
 	_estagio_visto = {}
 	_fumaca = {}
@@ -169,6 +179,8 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		_cena.add_child(c)
 		_carros[id] = c
 		_malhas[id] = _malhas_carroceria(c)
+		if int(blindagens.get(id, 0)) > 0 and c is CarroBloco:
+			(c as CarroBloco).blindar(String(base.get("id", "")), int(blindagens[id]))
 		if id in SEUS:
 			_aneis[id] = _anel()
 	_foco = "jogador" if _carros.has("jogador") else String(_carros.keys()[0])
@@ -222,6 +234,7 @@ func atualizar(delta: float) -> void:
 	_mostrar_aneis(b)
 	_eventos(delta)
 	_assentar(delta)
+	_cair_soltas(delta)
 	if delta > 0.0:
 		_tamanho = lerpf(_tamanho, _alvo_tamanho(), 1.0 - exp(-delta * CAMERA_SUAVE))
 		_camera.size = _tamanho
@@ -683,10 +696,44 @@ func _eventos(_delta: float) -> void:
 			continue
 		_chamar_batida(e)
 		_tombar(e)
+		_soltar(e)
 		var forte := float(e["dano"]) > 0.08
 		if forte:
 			_tremor = minf(_tremor + float(e["dano"]) * 2.0, 0.6)
 		_faiscas(_carros[e["carro"]].global_position + Vector3(0, 0.8, 0), forte)
+
+
+## A proteção da região atingida sai do carro e cai no chão, rolando.
+func _soltar(e: Dictionary) -> void:
+	var c = _carros.get(e["carro"])
+	if not c is CarroBloco or float(e["dano"]) < SOLTA_DANO:
+		return
+	var regiao := String(PROTECAO_DA_REGIAO.get(String(e.get("regiao", "")), ""))
+	var no: Node3D = (c as CarroBloco).soltar_protecao(regiao, _cena) if regiao != "" else null
+	if no == null:
+		return
+	var fora: Vector3 = no.global_position - (c as Node3D).global_position
+	fora.y = 0.0
+	fora = fora.normalized() if fora.length() > 0.01 else Vector3.RIGHT
+	_soltas.append({"no": no, "v": fora * 4.0 + Vector3.UP * 3.5, "giro": Vector3(randf_range(-6, 6), randf_range(-3, 3),
+			randf_range(-6, 6))})
+
+
+func _cair_soltas(delta: float) -> void:
+	for s in _soltas:
+		var no: Node3D = s["no"]
+		if not is_instance_valid(no) or s.get("parada", false):
+			continue
+		s["v"] = (s["v"] as Vector3) + Vector3.DOWN * 9.8 * delta
+		no.global_position += (s["v"] as Vector3) * delta
+		no.rotation += (s["giro"] as Vector3) * delta
+		var chao := _forma.altura(Vector2(no.global_position.x, -no.global_position.z)) + 0.15
+		if no.global_position.y <= chao:
+			no.global_position.y = chao
+			s["v"] = (s["v"] as Vector3) * Vector3(0.4, -0.25, 0.4)
+			s["giro"] = (s["giro"] as Vector3) * 0.4
+			if (s["v"] as Vector3).length() < 0.6:
+				s["parada"] = true
 
 
 func _faiscas(onde: Vector3, forte: bool) -> void:

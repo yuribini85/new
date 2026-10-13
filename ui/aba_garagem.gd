@@ -71,6 +71,7 @@ func construir() -> void:
 	if not _roleta_cat in cats and not cats.is_empty():
 		_roleta_cat = cats[0]
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c), c.faixas)
+	_vitrine.blindar(c.id, Blindagem.nivel(c))
 	ancora("CAR_STATS", _palco(c, lista))
 	# O palco é o cenário do topo (colado no cabeçalho); sem a faixa da missão,
 	# o palco cresce e o carro respira.

@@ -127,7 +127,7 @@ const JogadorScript := preload("res://autoload/jogador.gd")
 func _jogador_real(d: Node, n_carros: int) -> Node:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
-	var ids := ["bancroft_sidewinder"]
+	var ids := ["bancroft_arraia"]
 	for c in d.lista("carros"):
 		if ids.size() >= n_carros:
 			break

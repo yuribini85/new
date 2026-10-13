@@ -1,6 +1,6 @@
 {
  "adrian": {
-  "carro": "bancroft_sidewinder",
+  "carro": "bancroft_arraia",
   "cor": "creme",
   "pneu": "pneu_1",
   "pista_volta": "serra_curta",
@@ -8,7 +8,7 @@
    "CLUB",
    "SPORT"
   ],
-  "peca_demanda": "bancroft_sidewinder_brake_1",
+  "peca_demanda": "bancroft_arraia_brake_1",
   "campeonato": "Copa Primeira Marcha"
  },
  "elena": {
@@ -17,11 +17,11 @@
  "_nota_campanha": "Chrome & Wreckage: jogo novo começa pela campanha de nova_campanha. dono = o jogador é o novo dono da oficina, Mara Hayes guia e o piloto fixo dirige; mesma montagem inicial do Adrian (carro, pneu, primeira peça e o critério de saldo), sem licenças. Saves com Adrian/Elena seguem a história deles. reativa_intervalo_corridas: no máximo um comentário de contexto a cada N corridas (decisão do usuário: 1 a cada 3). carro_caro_percentil: compra de carro acima desse percentil dos preços do catálogo dispara o comentário (aprovado pelo usuário; ajustável no playtest). dono.equipe: nome e logo da equipe na campanha (logo vazio = nome em texto; subtitulo false = o logo já traz MOTORSPORT).",
  "nova_campanha": "dono",
  "dono": {
-  "carro": "bancroft_sidewinder",
+  "carro": "bancroft_arraia",
   "cor": "creme",
   "pneu": "pneu_1",
   "licencas": [],
-  "peca_demanda": "bancroft_sidewinder_brake_1",
+  "peca_demanda": "bancroft_arraia_brake_1",
   "piloto": "",
   "equipe": {
    "nome": "Wreckage Motorsport",

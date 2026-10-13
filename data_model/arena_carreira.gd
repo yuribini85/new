@@ -109,7 +109,7 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var equipes := {"jogador": EquipeJogador.dados_equipe(dados, jogador)}
 	# Carros de potência parecida (de fábrica), sem repetir modelo.
 	var cv := float(attrs["potencia"])
-	var catalogo: Array = dados.lista("carros").filter(func(c): return c["id"] != carro.id)
+	var catalogo: Array = dados.lista("carros").filter(func(c): return c["id"] != carro.id and not c.get("chefe", false))
 	catalogo.sort_custom(func(a, b): return absf(float(a["potencia"]) - cv) < absf(float(b["potencia"]) - cv))
 	var c_camp: Dictionary = p.get("campeonato", {})
 	var n_equipes := equipes_no_nivel(dados, nivel(jogador)) if n_equipes_fixo <= 0 \
@@ -179,8 +179,12 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 		abertas = p.get("arenas", []).filter(func(a): return a["id"] == alvo)
 	if not abertas.is_empty():
 		params["forma"] = abertas[rng.randi_range(0, abertas.size() - 1)]
+	# Blindagem à vista nos seus carros (decisão 80): solta na batida.
+	var blindagens := {"jogador": Blindagem.nivel(carro)}
+	if par["real"]:
+		blindagens["parceiro"] = Blindagem.nivel(car_par)
 	return {"participantes": parts, "modelos": modelos, "nomes": nomes, "cores": cores, "faixas": faixas,
-			"params": params, "equipes": equipes, "parceiro": par}
+			"params": params, "equipes": equipes, "parceiro": par, "blindagens": blindagens}
 
 
 ## Arenas (data/arena.json → arenas) cuja licença o jogador já tem.

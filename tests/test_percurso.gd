@@ -81,7 +81,12 @@ func test_agente_mede_por_fase_com_os_contratos() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var saldo := int(d.economia()["saldo_inicial"])
-	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)[0]
+	# O usado do dia 0 que cabe no saldo com a melhor relação potência/peso: o
+	# teste mede a contabilidade por fase, não a escolha do carro.
+	var ofertas: Array = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)
+	var razao := func(o): return float(d.carro(o["carro_id"])["potencia"]) / float(d.carro(o["carro_id"])["peso"])
+	ofertas.sort_custom(func(a, b): return razao.call(a) > razao.call(b))
+	var oferta: Dictionary = ofertas[0]
 	var ag = preload("res://tools/agente.gd").new(d, "sugestoes", 1)
 	# Mesmo horizonte do percurso até a B: com as voltas ×2,5 (decisão 41) a
 	# primeira vitória já passa de 12 min, e a avaliação da Club vem depois dela.

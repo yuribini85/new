@@ -10,8 +10,8 @@ const LISTA := [
 	{"id": "dono_inicio", "nome": "Oficina: começo", "detalhe": "Jogo novo, campanha do dono com a Mara."},
 	{"id": "dono_arena", "nome": "Oficina: arena aberta",
 		"detalhe": "Licenças até a National e 3 carros na garagem: a Arena já abre."},
-	{"id": "carro_3d", "nome": "Carro 3D: Arvelle Outlaw GT",
-		"detalhe": "Como a arena aberta, com o Arvelle Outlaw GT (modelo 3D) como carro ativo: garagem, corrida e arena."},
+	{"id": "carro_3d", "nome": "Carro 3D: Hozuki Catana",
+		"detalhe": "Como a arena aberta, com o Hozuki Catana (modelo 3D) como carro ativo: garagem, corrida e arena."},
 	{"id": "adrian_inicio", "nome": "Adrian: começo", "detalhe": "Jogo novo, prólogo do Adrian."},
 	{"id": "adrian_ultima", "nome": "Adrian: antes da última corrida",
 		"detalhe": "Primeiro campeonato feito: a próxima largada é a última dele."},
@@ -24,7 +24,7 @@ const LISTA := [
 ]
 
 ## O primeiro carro com modelo 3D (arte/carros3d/).
-const CARRO_3D := "arvelle_outlaw_gt"
+const CARRO_3D := "hozuki_catana"
 const ROMANOS := {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
 		"XI": 11, "XII": 12, "XIII": 13, "XIV": 14, "XV": 15, "XVI": 16}
 ## Cenas da última corrida do Adrian: ficam por ver em "adrian_ultima".

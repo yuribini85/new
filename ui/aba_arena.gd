@@ -170,6 +170,7 @@ func _entrar(uid: int) -> void:
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
 			"pinturas": pintura, "faixas": faixas, "final": final, "params": montada["params"],
+			"blindagens": montada.get("blindagens", {}),
 			"equipes": _equipe_de_cada(resultado, montada["equipes"])})
 
 
@@ -206,6 +207,7 @@ func _desafiar(eq: Dictionary) -> void:
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
 			"pinturas": pintura, "faixas": faixas, "final": final, "params": montada["params"],
+			"blindagens": montada.get("blindagens", {}),
 			"equipes": _equipe_de_cada(resultado, montada["equipes"])})
 
 
@@ -319,6 +321,7 @@ func _simular(uid: int) -> void:
 			"pontos": ArenaCarreira.pontos(resultado, "jogador", montada["params"]), "premio": 0}
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
 			"pinturas": pintura, "faixas": faixas, "final": final, "params": montada["params"],
+			"blindagens": montada.get("blindagens", {}),
 			"equipes": _equipe_de_cada(resultado, montada["equipes"])})
 
 

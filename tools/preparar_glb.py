@@ -202,6 +202,8 @@ def conferir(id_: str, js: dict, binario: bytes, ref: dict) -> tuple[list[str], 
         avisos.append("o alto do carro está na metade +Z: conferir se a frente aponta para +Z")
     nomes = {str(n.get("name", "")).lower() for n in js.get("nodes", [])}
     faltam = RODAS - nomes
+    if {"mount_frontleft", "mount_frontright", "mount_rearleft", "mount_rearright"} <= nomes:
+        faltam = set()  # rodas da frota 360 (decisão 80)
     if faltam:
         avisos.append(f"rodas separadas faltando ({', '.join(sorted(faltam))}): no jogo elas não giram")
     tri = triangulos(js)
@@ -271,6 +273,8 @@ def instalar(arquivo: pathlib.Path, ref_todas: dict) -> bool:
 def checar(ref_todas: dict) -> int:
     falhas = 0
     for arq in sorted(DESTINO.glob("*.glb")):
+        if arq.stem.endswith("_protecao"):
+            continue  # blindagem da frota 360 (decisão 80): não é carro
         js, binario = ler_glb(arq.read_bytes())
         erros, _ = conferir(arq.stem, js, binario, ref_todas.get(arq.stem, {}))
         imgs = js.get("images", [])
@@ -283,7 +287,8 @@ def checar(ref_todas: dict) -> int:
         for e in erros:
             print(f"ERRO {arq.name}: {e}")
         falhas += bool(erros)
-    print(f"carros 3D: {len(list(DESTINO.glob('*.glb')))} modelos, {falhas} com erro")
+    print(f"carros 3D: {len([a for a in DESTINO.glob('*.glb') if not a.stem.endswith('_protecao')])} modelos, "
+          f"{falhas} com erro")
     return 1 if falhas else 0
 
 

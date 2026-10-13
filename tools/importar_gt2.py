@@ -268,6 +268,8 @@ def main() -> int:
     ap.add_argument("--gt2", help="pasta do despejo (padrão referencia/gt2)")
     ap.add_argument("--ref", help="tabela de referência (padrão referencia/carros.csv)")
     ap.add_argument("--data", help="pasta de saída (padrão data/)")
+    ap.add_argument("--frota", help="frota no lugar da tabela do GT2 (decisão 80: referencia/frota360/frota.json, "
+                    "de tools/frota360.py)")
     args = ap.parse_args()
     global GT2, REF, DATA
     GT2 = pathlib.Path(args.gt2) if args.gt2 else GT2
@@ -297,6 +299,7 @@ def main() -> int:
         c["potencia_real"] = potencia.get(cod, n(c["potencia_ps"]))
     nosso = {l["codigo_gt2"]: l["id"] for l in ref}
     nosso_original = dict(nosso)
+    frota = json.load(open(args.frota, encoding="utf-8")) if args.frota else None
 
     # Normalizações pela mediana dos carros de rua do jogo inteiro.
     grips = [(n(c["aderencia_dianteira"]) + n(c["aderencia_traseira"])) / 2 for c in resumo.values()
@@ -316,7 +319,7 @@ def main() -> int:
             l["categoria"] = "cupe"
     chassis = {r["CarId"]: r for r in ler("Chassis")}
     carros = []
-    for l in ref:
+    for l in ([] if frota is not None else ref):
         c = resumo[l["codigo_gt2"]]
         grip = (n(c["aderencia_dianteira"]) + n(c["aderencia_traseira"])) / 2
         ano = int(n(c["ano"]))
@@ -341,17 +344,20 @@ def main() -> int:
         if janelas:
             carros[-1]["usados"] = janelas
 
-    carros, substituto = reduzir_frota(carros, ref)
-    # Carro que saiu: rivais, prêmios e copas usam o que ficou no lugar dele;
-    # as peças dele saem junto.
-    ficam = {c["id"] for c in carros}
-    nosso = {cod: substituto.get(i, i) for cod, i in nosso.items()}
+    if frota is not None:
+        carros, substituto, nosso, fontes_pecas = montar_frota(frota, ref, resumo, tab_car, partes, grip_mediana,
+                                                               freio_fabrica, freio_mediana, tracoes, chassis)
+    else:
+        carros, substituto = reduzir_frota(carros, ref)
+        # Carro que saiu: rivais, prêmios e copas usam o que ficou no lugar dele;
+        # as peças dele saem junto.
+        ficam = {c["id"] for c in carros}
+        nosso = {cod: substituto.get(i, i) for cod, i in nosso.items()}
+        fontes_pecas = [(cod, i, resumo[cod]["potencia_real"]) for cod, i in nosso.items()
+                        if i in ficam and i == nosso_original[cod]]
 
     pecas = []
-    for codigo, id_nosso in nosso.items():
-        if id_nosso not in ficam or id_nosso != nosso_original[codigo]:
-            continue
-        base_ps = resumo[codigo]["potencia_real"]
+    for codigo, id_nosso, base_ps in fontes_pecas:
         for cat in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake"]:
             for p in partes[cat]:
                 if p["CarId"] != codigo or int(n(p["Stage"])) == 0 or int(n(p.get("Price"))) <= 0:
@@ -434,7 +440,8 @@ def main() -> int:
                       "preco": 0 if est == 0 else preco_loja(statistics.median(pr for _, pr in por_estagio[est])),
                       "aderencia": {"seco": ader, "chuva": ader}})
 
-    eventos, pilotos = importar_eventos(nosso, resumo, carros, {p["id"] for p in pneus})
+    eventos, pilotos = importar_eventos(nosso, resumo, [c for c in carros if not c.get("chefe")],
+                                        {p["id"] for p in pneus}, sem_corrida=frota is not None)
     # Tempos já calibrados (calibrar_licencas.gd) ficam, inclusive dos ids antigos.
     caminho_lic = DATA / "licencas.json"
     tempos_antigos = {}
@@ -505,6 +512,77 @@ def main() -> int:
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
     print("a_confirmar (não vêm do GT2): teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
+
+
+def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict, partes: dict, grip_mediana: float,
+                 freio_fabrica: dict, freio_mediana: float, tracoes: dict, chassis: dict) \
+        -> tuple[list[dict], dict[str, str], dict[str, str], list[tuple[str, str, float]]]:
+    """Frota 360 (decisão 80, tools/frota360.py): cada carro vem do código do GT2
+    dele (casado) ou do doador do GT2, com a ficha real por cima (potência,
+    peso, tração, ano e o preço da regra). A curva de torque do doador escala
+    para a potência da ficha. Doador e clone são vendidos novos; os chefes
+    industriais não são vendidos nem correm provas. Devolve carros, {id antigo:
+    id novo} (saves), {código do GT2: id} (rivais, prêmios, copas) e as fontes
+    das peças [(código, id, potência base)]."""
+    carros = []
+    fontes = []
+    for l in frota:
+        cod = l["codigo_gt2"]
+        c = resumo[cod]
+        sob = l.get("sobrepor", {})
+        grip = (n(c["aderencia_dianteira"]) + n(c["aderencia_traseira"])) / 2
+        ano = int(n(c["ano"]))
+        car = {
+            "id": l["id"], "nome": l["nome"], "fabricante": l["fabricante"], "arquetipo_ref": l["arquetipo"],
+            "categoria": l["categoria"], "tracao": sob.get("tracao", tracoes[c["tracao_tipo"]]),
+            "potencia": int(sob.get("potencia", round(c["potencia_real"]))), "peso": int(sob.get("peso", n(c["peso_kg"]))),
+            "aderencia": round(grip / grip_mediana, 3),
+            "freio": round(min(1.0, freio_fabrica.get(cod, freio_mediana) / freio_mediana), 3),
+            "preco": preco_loja(sob["preco_cr"]) if "preco_cr" in sob else preco_loja(n(c["preco"])),
+            "ano": int(sob["ano"]) if "ano" in sob else ((ano + 1900 if ano < 100 else ano) if ano > 0 else 1990),
+        }
+        ch = chassis.get(cod, {})
+        if n(ch.get("FrontWeightDistribution", 0)) > 0:
+            car["peso_dianteiro"] = round(n(ch["FrontWeightDistribution"]) / 100.0, 3)
+        car.update(motor_cambio_roda(tab_car[cod], partes))
+        if "potencia" in sob and c["potencia_real"] > 0 and "motor" in car:
+            k = sob["potencia"] / c["potencia_real"]
+            car["motor"]["torque_nm"] = [round(t * k, 1) for t in car["motor"]["torque_nm"]]
+        if l.get("chefe"):
+            car["chefe"] = True  # só arena: fora da loja e das provas
+            car["novo"] = False
+        elif l.get("doador"):
+            # Usados como os do doador (mesmos dias), no preço proporcional ao
+            # novo: o começo do jogo depende dos usados baratos, como no GT2.
+            janelas = usados_do_carro(cod)
+            fator = car["preco"] / max(preco_loja(n(c["preco"])), 1)
+            car["novo"] = not janelas
+            if janelas:
+                car["usados"] = [[a, b, max(1, round(p * fator))] for a, b, p in janelas]
+        else:
+            janelas = usados_do_carro(cod)
+            car["novo"] = not janelas
+            if janelas:
+                car["usados"] = janelas
+        if l.get("clone") or not l.get("aprovado", False):
+            car["arte_provisoria"] = True  # modelo do pacote ainda em revisão (REVIEW.json)
+        carros.append(car)
+        if not l.get("chefe"):
+            fontes.append((cod, l["id"], float(car["potencia"])))
+    antigos = json.load(open(RAIZ / "referencia" / "frota360" / "antigos.json", encoding="utf-8"))
+    ids = {c["id"] for c in carros}
+    substituto = {velho: novo for velho, novo in antigos.items() if velho not in ids}
+    # Antigos removidos antes (decisão 40) seguem para o novo do substituto deles.
+    caminho = DATA / "carros_removidos.json"
+    if caminho.exists():
+        for velho, meio in json.load(open(caminho, encoding="utf-8")).items():
+            if velho not in ids and meio in antigos:
+                substituto.setdefault(velho, antigos[meio])
+    nosso = {l["codigo_gt2"]: antigos[l["id"]] for l in ref if l["id"] in antigos}
+    for l in frota:
+        if not l.get("doador") and not l.get("chefe"):
+            nosso[l["codigo_gt2"]] = l["id"]
+    return carros, substituto, nosso, fontes
 
 
 def reduzir_frota(carros: list[dict], ref: list[dict]) -> tuple[list[dict], dict[str, str]]:
@@ -639,8 +717,8 @@ def usados_do_carro(codigo: str) -> list[list[int]]:
     return janelas
 
 
-def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: set[str] = frozenset()) \
-        -> tuple[list[dict], list[dict]]:
+def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: set[str] = frozenset(),
+                     sem_corrida: bool = False) -> tuple[list[dict], list[dict]]:
     brutos = ler("Event")
     pneus_gt2 = ler("TiresFront")
     resumidos = ler("eventos")
@@ -671,7 +749,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         if lista_marca:
             restr["carros"] = lista_marca
             flags = int(n(b.get("CarRestrictionFlags")))
-            if flags & (SO_RUA | SO_CORRIDA):
+            if flags & (SO_RUA | SO_CORRIDA) and not sem_corrida:
                 restr["corrida"] = bool(flags & SO_CORRIDA)
                 if restr["corrida"]:
                     serie += " Corrida"

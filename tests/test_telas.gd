@@ -430,9 +430,9 @@ func test_janela_garagem_escolhe_e_vende() -> void:
 
 
 func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
-	verificar(CarroBloco.tem_glb("arvelle_outlaw_gt"), "o Arvelle Outlaw GT tem modelo 3D")
+	verificar(CarroBloco.tem_glb("hozuki_catana"), "o Hozuki Catana tem modelo 3D")
 	verificar(not CarroBloco.tem_glb("carro_sem_modelo"), "sem arquivo, sem modelo")
-	var c := CarroBloco.new().configurar_modelo({"id": "arvelle_outlaw_gt", "categoria": "cupe"}, Color.RED)
+	var c := CarroBloco.new().configurar_modelo({"id": "hozuki_catana", "categoria": "cupe"}, Color.RED)
 	var malhas := c.find_children("*", "MeshInstance3D", true, false)
 	var pintada := malhas.filter(func(m): return m.material_override is ShaderMaterial)
 	verificar(not pintada.is_empty(), "a lataria do modelo recebe a pintura")

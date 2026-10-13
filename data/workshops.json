@@ -22,7 +22,8 @@
   "fabricantes": [
    "hozuki",
    "sanga",
-   "kosame"
+   "kosame",
+   "ishigumo"
   ]
  },
  {
@@ -32,8 +33,7 @@
   "fabricantes": [
    "mizuchi",
    "hoshino",
-   "tomoe",
-   "tokiwa"
+   "tomoe"
   ]
  },
  {
@@ -44,10 +44,11 @@
    "whitlock",
    "garrison",
    "cutler",
-   "arvelle",
    "bancroft",
    "ashby",
-   "kestrin"
+   "kestrin",
+   "ridgeway",
+   "voltane"
   ]
  },
  {
@@ -55,7 +56,6 @@
   "nome": "Charge Folio Motors",
   "logo": "charge-folio-motors",
   "fabricantes": [
-   "hartwig",
    "ostwerk",
    "keldorf",
    "lindauer",
@@ -65,7 +65,6 @@
    "castellani",
    "ottavo",
    "saulieu",
-   "aubrac",
    "morel",
    "vallon",
    "ashcombe",
@@ -73,7 +72,16 @@
    "pemberly",
    "wexmoor",
    "dunmere",
-   "thornby"
+   "feldhaus",
+   "corsalto",
+   "taurenza",
+   "tridella",
+   "vantra",
+   "norrvik",
+   "halberton",
+   "ashworth",
+   "volnar",
+   "ipora"
   ]
  }
 ]

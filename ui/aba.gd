@@ -1309,7 +1309,8 @@ func ficha(c: Carro, condicao := "seco") -> String:
 	return t
 
 
-const NOMES_CATEGORIA_CARRO := {"compacto": "Compacto", "seda": "Sedã", "cupe": "Cupê", "roadster": "Roadster"}
+const NOMES_CATEGORIA_CARRO := {"compacto": "Compacto", "seda": "Sedã", "cupe": "Cupê", "roadster": "Roadster",
+		"picape": "Picape", "utilitario": "Utilitário", "pesado": "Pesado"}
 ## Ícone e nome curto de cada tração (público geral: sem sigla).
 const ICONE_TRACAO := {"FF": "icone_tracao_dianteira", "FR": "icone_tracao_traseira", "MR": "icone_tracao_central",
 	"RR": "icone_tracao_traseira", "4WD": "icone_tracao_4x4"}

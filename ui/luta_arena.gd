@@ -83,6 +83,7 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 	_sons = Sons.new()
 	add_child(_sons)
 	_vista.faixas_pintura = _dados.get("faixas", {})
+	_vista.blindagens = _dados.get("blindagens", {})
 	_vista.ready.connect(func(): _vista.mostrar(_dados["resultado"], params, _dados["modelos"], _dados["pinturas"]))
 
 

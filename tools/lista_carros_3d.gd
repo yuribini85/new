@@ -144,6 +144,14 @@ func _linha(c: Dictionary, base: Dictionary, fam: String, n: int, aparece: Dicti
 		nomes_cor.append("%s %s" % [p.get("nome", k), p.get("cor", "")])
 	var k := int(aparece.get(c["id"], 99))
 	var feito := CarroBloco.tem_glb(String(c["id"]))
+	if feito:
+		# Frota 360 (decisão 80): as medidas são as do próprio modelo.
+		var cb := CarroBloco.new()
+		cb.configurar_modelo(c, Color.WHITE)
+		var d := cb.dimensoes()
+		f["c"] = d.x
+		f["l"] = d.y
+		cb.free()
 	return {
 		"ordem_familia": n,
 		"familia": fam,

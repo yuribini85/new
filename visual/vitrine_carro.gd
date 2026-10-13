@@ -93,6 +93,13 @@ func mostrar(categoria: String, cor: Color) -> void:
 	_carro.configurar(categoria, cor)
 
 
+## Blindagem montada no modelo mostrado (decisão 80; só modelos com proteção).
+func blindar(id: String, nivel: int) -> void:
+	if _carro is CarroBloco and _carro.visible:
+		(_carro as CarroBloco).blindar(id, nivel)
+		_pedir_quadro()
+
+
 func mostrar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> void:
 	if CarroBloco.tem_glb(String(base.get("id", ""))):
 		# Modelo 3D: na mesma câmera e no mesmo ângulo dos sprites da loja.

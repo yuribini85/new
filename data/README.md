@@ -205,7 +205,24 @@ godot --headless --script res://tools/calibrar_licencas.gd   # tempos das licen�
 ```
 
 `referencia/` nunca vai para o Git. O que entra em `data/` são os números convertidos
-para os carros fictícios. As conversões estão no topo de `tools/importar_gt2.py`.
+para os carros fictícios.
+
+### Frota 360 (decisão 80)
+
+A frota atual vem do pacote "Veículos 360" (modelos 3D) e não mais da tabela
+`referencia/carros.csv`. Fontes em `referencia/frota360/` (fora do Git): `mapa_parte*.json`
+(referência real de cada modelo), `marcas.json` (marca real → fabricante fictício),
+`gt2.json` (carros casados com o GT2, revisados à mão), `fichas.json` (fichas reais
+pesquisadas, com fontes) e `pacote/` (model-info, car.glb e protection.glb de cada modelo).
+
+```
+python3 tools/frota360.py --instalar                      # -> referencia/frota360/frota.json, antigos.json; GLBs
+python3 tools/importar_gt2.py --frota referencia/frota360/frota.json   # -> data/
+godot --headless --path . --script res://tools/calibrar_licencas.gd
+godot --headless --path . --script res://tools/calibrar_contratos.gd
+python3 tools/gerar_cores.py
+godot --headless --path . --script res://tools/lista_carros_3d.gd
+``` As conversões estão no topo de `tools/importar_gt2.py`.
 
 **A confirmar** (não vêm do GT2): `teto_offline_s` (8 h, decisão de design),
 `sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).
