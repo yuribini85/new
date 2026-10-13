@@ -284,6 +284,33 @@ func test_terreno_vala_rampa_plato() -> void:
 	verificar(f.gradiente(Vector2(-25, 0)).x > 0.15, "a rampa inclina o chão")
 
 
+## Pedido do usuário: na subida o carro perde embalo (gravidade e motor
+## rendendo menos), na descida ganha.
+func test_subida_freia_e_descida_embala() -> void:
+	var p := _params()
+	p["tempo_max_s"] = 3.0
+	var rampa := {"id": "r", "muro": [[60, -60], [60, 60], [-60, 60], [-60, -60]], "obstaculos": [],
+			"relevo": [{"tipo": "rampa", "a": [-40, 0], "b": [40, 0], "largura": 30, "h": 16.0, "queda": 3}]}
+	var anda := func(forma: Dictionary, rumo: float, perda: float) -> float:
+		var q := p.duplicate()
+		q["forma"] = forma
+		q["subida_perda"] = perda
+		var x0 := -20.0 if rumo == 0.0 else 20.0
+		var c := _carro("c", 1200.0, 120.0, Vector2(x0, 0), rumo, Vector2.ZERO, 1.0)
+		var longe := _carro("longe", 1200.0, 120.0, Vector2(-50, -50), 0.0, Vector2.ZERO, 0.0)
+		var rr := Arena.correr([c, longe], q, 1, true)
+		return absf(float(rr["amostras"][-1]["c"]["pos"].x) - x0)
+	var plano := rampa.duplicate()
+	plano["relevo"] = []
+	var no_plano: float = anda.call(plano, 0.0, 0.5)
+	var subindo: float = anda.call(rampa, 0.0, 0.5)
+	var subindo_so_gravidade: float = anda.call(rampa, 0.0, 0.0)
+	var descendo: float = anda.call(rampa, PI, 0.5)
+	verificar(subindo < no_plano * 0.85, "subindo anda menos (%.1f m contra %.1f m no plano)" % [subindo, no_plano])
+	verificar(subindo < subindo_so_gravidade, "o motor rende menos na subida (%.1f contra %.1f m)" % [subindo, subindo_so_gravidade])
+	verificar(descendo > no_plano, "descendo anda mais (%.1f m)" % descendo)
+
+
 func test_arenas_do_jogo_tem_a_area_do_circulo() -> void:
 	var p := _params()
 	var alvo := PI * pow(float(p["raio_m"]), 2.0)

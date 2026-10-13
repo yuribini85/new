@@ -618,3 +618,16 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     canal do vertedouro, rampas na bancada) e Claustro (altar alto com rampas leste e
     oeste, fossos nos braços norte e sul, criptas rebaixadas). Alturas e formas são desenho;
     ajustar no playtest.
+79. **Ajustes da luta na arena** (2026-10-13, teste do usuário no celular). Placar começa
+    recolhido (só "N restantes"); um toque abre e ele desce até quase a tela toda (linhas
+    maiores, crescem com poucos carros); o toque do celular e o clique emulado contam uma vez
+    só. A integridade (os seis quadrados) sai do placar, que mostra equipe, piloto, modelo e
+    "FORA"; a dos carros da sua equipe fica grande embaixo (`PainelVidaArena`). A fumaça
+    leva a cor no material (no renderizador de compatibilidade a cor da partícula chegava
+    preta: a "bola preta" no capô). Capotagem (só visual): batida de lado a partir de 0,2
+    de dano (~5 por luta de 10 carros) dá uma volta inteira no ar e cai nas rodas; o
+    eliminado nela fica de teto para baixo. Terreno mais suave (`tools/terreno_arenas.py`:
+    alturas × 0,7, encosta com 2,5 m por m de desnível, rampa até 30%; inclinação até ~0,6
+    por termo) e subida que pesa: além da gravidade, a força do motor cai com a inclinação
+    contra o carro (`subida_perda` 0,5 em `arena.json`, provisório; mais que isso prendia
+    carro dentro de vala).

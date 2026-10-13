@@ -49,7 +49,9 @@ const SEUS := ["jogador", "parceiro"]
 ## Tombo (só visual): batida forte de lado levanta o carro sobre duas rodas e
 ## ele cai de volta; de frente ou de trás, o nariz ou a traseira saltam. A
 ## gravidade traz de volta e o chão quica pouco. Velocidade angular = dano ×
-## ganho, com teto (o carro nunca vira de vez).
+## ganho, com teto. Capotagem (pedido do usuário): a batida muito forte de lado
+## (TOMBO_CAPOTA) passa do ponto de tombar e o carro dá uma volta inteira no ar
+## e cai sobre as rodas; o eliminado nessa batida termina de teto para baixo.
 const TOMBO_DANO := 0.06  # dano mínimo da batida de lado que levanta o carro
 const TOMBO_DANO_PONTA := 0.12  # de frente/trás (são muitas: só as fortes)
 const TOMBO_GANHO_LADO := 20.0
@@ -58,6 +60,11 @@ const TOMBO_MAX_LADO := 5.0  # rad/s: ~80° no pico (quase de lado, sem virar)
 const TOMBO_MAX_PONTA := 2.6  # ~22°
 const TOMBO_GRAVIDADE := 9.0  # rad/s²
 const TOMBO_QUIQUE := 0.25
+const TOMBO_CAPOTA := 0.2  # dano da batida de lado que capota (~5 por luta de 10 carros)
+const TOMBO_VIRA := 1.25  # rad: passou disso, o carro não volta, capota
+const CAPOTA_V := 9.0  # rad/s da volta no ar (~0,7 s)
+const CAPOTA_SALTO_M := 1.1  # altura do arco da volta
+const ALTURA_CARRO_M := 1.35  # de teto para baixo, o carro apoia no teto
 const MEIA_LARGURA_M := 0.85
 const MEIO_COMPRIMENTO_M := 2.1
 
@@ -206,8 +213,11 @@ func atualizar(delta: float) -> void:
 			var tb: Dictionary = _tombo[id]
 			c.rotation.x += tb["rolagem"]
 			c.rotation.z += tb["arfagem"]
-			# Gira sobre as rodas de um lado (ou um eixo): o centro sobe.
-			c.position.y += absf(sin(tb["rolagem"])) * MEIA_LARGURA_M + absf(sin(tb["arfagem"])) * MEIO_COMPRIMENTO_M
+			# Gira sobre as rodas de um lado (ou um eixo): o centro sobe; de
+			# teto para baixo, apoia no teto; capotando, voa num arco.
+			var rl := float(tb["rolagem"])
+			c.position.y += absf(sin(rl)) * MEIA_LARGURA_M + (1.0 - cos(rl)) * 0.5 * ALTURA_CARRO_M \
+					+ absf(sin(tb["arfagem"])) * MEIO_COMPRIMENTO_M + float(tb.get("salto", 0.0))
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
 	_mostrar_aneis(b)
 	_eventos(delta)
@@ -381,7 +391,10 @@ func _tombar(e: Dictionary) -> void:
 	var regiao := String(e.get("regiao", ""))
 	if regiao.begins_with("lado"):
 		var sinal := 1.0 if regiao.ends_with("_e") else -1.0
-		tb["v_rolagem"] = float(tb["v_rolagem"]) + sinal * minf(dano * TOMBO_GANHO_LADO, TOMBO_MAX_LADO)
+		if dano >= TOMBO_CAPOTA and not tb.get("capota", false):
+			tb["v_rolagem"] = sinal * CAPOTA_V
+		else:
+			tb["v_rolagem"] = float(tb["v_rolagem"]) + sinal * minf(dano * TOMBO_GANHO_LADO, TOMBO_MAX_LADO)
 	elif dano >= TOMBO_DANO_PONTA:
 		var sinal_p := 1.0 if regiao.begins_with("frente") else -1.0
 		tb["v_arfagem"] = float(tb["v_arfagem"]) + sinal_p * minf(dano * TOMBO_GANHO_PONTA, TOMBO_MAX_PONTA)
@@ -389,11 +402,34 @@ func _tombar(e: Dictionary) -> void:
 
 
 ## A gravidade traz o carro de volta às quatro rodas, com um quique curto.
+## Passou de TOMBO_VIRA de lado: capota, dá a volta inteira e cai nas rodas
+## (o eliminado para de teto para baixo).
 func _assentar(delta: float) -> void:
 	if delta <= 0.0:
 		return
 	for id in _tombo.keys():
 		var tb: Dictionary = _tombo[id]
+		if tb.get("capota", false):
+			var r := float(tb["rolagem"]) + float(tb["v_rolagem"]) * delta
+			var fim := TAU if not _eliminado(id) else PI
+			if absf(r) >= fim:
+				tb["capota"] = false
+				tb["rolagem"] = 0.0 if fim == TAU else signf(r) * PI
+				tb["v_rolagem"] = 0.0
+				tb["salto"] = 0.0
+				if fim == PI:
+					tb["fixo"] = true  # de teto para baixo até o fim
+			else:
+				tb["rolagem"] = r
+				tb["salto"] = sin(absf(r) / fim * PI) * CAPOTA_SALTO_M
+			continue
+		if tb.get("fixo", false):
+			continue
+		if absf(float(tb["rolagem"])) > TOMBO_VIRA and absf(float(tb["v_rolagem"])) > 0.5 \
+				and signf(float(tb["v_rolagem"])) == signf(float(tb["rolagem"])):
+			tb["capota"] = true
+			tb["v_rolagem"] = signf(float(tb["v_rolagem"])) * CAPOTA_V
+			continue
 		for eixo in [["rolagem", "v_rolagem"], ["arfagem", "v_arfagem"]]:
 			var a := float(tb[eixo[0]])
 			var v := float(tb[eixo[1]])
@@ -412,6 +448,10 @@ func _assentar(delta: float) -> void:
 		if float(tb["rolagem"]) == 0.0 and float(tb["v_rolagem"]) == 0.0 \
 				and float(tb["arfagem"]) == 0.0 and float(tb["v_arfagem"]) == 0.0:
 			_tombo.erase(id)
+
+
+func _eliminado(id: String) -> bool:
+	return _i < _amostras.size() and bool(_amostras[mini(_i + 1, _amostras.size() - 1)].get(id, {}).get("eliminado", false))
 
 
 # --- Anéis dos seus carros ---------------------------------------------------------
@@ -608,25 +648,29 @@ func _criar_fumaca(c: Node3D, preta: bool) -> CPUParticles3D:
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	m.vertex_color_use_as_albedo = true
 	m.albedo_texture = _textura_amassado()
 	m.render_priority = 35
 	q.material = m
 	f.mesh = q
-	var cores := Gradient.new()
-	# Sempre clara: fumaça escura virava um disco preto na tela (tirava a
-	# imersão). O eliminado só solta mais, um pouco mais cinza.
-	m.vertex_color_is_srgb = true
+	# Cor no material, não na partícula: no renderizador de compatibilidade
+	# (web, celular) a cor da partícula (color_ramp) chegava preta e cada
+	# baforada virava uma bola preta no capô. Sempre clara; o eliminado só
+	# solta mais, um pouco mais cinza. A baforada cresce e some no fim.
 	var base := Color(0.62, 0.61, 0.6) if preta else Color(0.78, 0.77, 0.75)
-	cores.set_color(0, Color(base, 0.0))
-	cores.add_point(0.25, Color(base, 0.22))
-	cores.set_color(cores.get_point_count() - 1, Color(base, 0.0))
-	f.color_ramp = cores
+	m.albedo_color = Color(base, 0.22)
+	var curva := Curve.new()
+	curva.add_point(Vector2(0.0, 0.3))
+	curva.add_point(Vector2(0.7, 1.0))
+	curva.add_point(Vector2(1.0, 0.0))
+	f.scale_amount_curve = curva
 	f.position = Vector3(Arena.COMPRIMENTO_M * 0.3, 1.4, 0.0)  # do capô (motor na frente), já acima dele
 	f.set_meta("preta", preta)
 	c.add_child(f)
 	f.emitting = true
 	return f
+
+
+
 
 
 ## Batidas novas até o tempo atual: faíscas no carro atingido e um tranco.

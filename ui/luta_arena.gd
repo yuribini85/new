@@ -16,6 +16,7 @@ const CAMERAS := [["Sua briga", "briga", "jogador"], ["Arena inteira", "geral", 
 var _dados: Dictionary
 var _vista: Arena3D
 var _hud: HudArena
+var _vida: PainelVidaArena
 var _relogio: Label
 var _pular: Button
 var _fim := -1.0
@@ -40,8 +41,12 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 	add_child(_vista)
 	_hud = HudArena.new()
 	_hud.position = Vector2(16, 70)
-	_hud.limite_re = float(params.get("limite_re", 0.9))
 	add_child(_hud)
+	# A integridade dos seus carros, grande, embaixo à esquerda (ao lado de Pular).
+	_vida = PainelVidaArena.new()
+	_vida.limite_re = float(params.get("limite_re", 0.9))
+	_vida.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	add_child(_vida)
 	_relogio = Label.new()
 	Tipografia.rotulo(_relogio, "semibold", 30)
 	_relogio.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
@@ -162,13 +167,13 @@ func _process(delta: float) -> void:
 		_semaforo.queue_redraw()
 		_vista.atualizar(delta)
 		_relogio.text = "0 s"
-		_hud.linhas = _linhas()
+		_placar()
 		return
 	if _fim < 0.0:
 		_vista.tempo = minf(_vista.tempo + delta * VELOCIDADE, _vista.duracao())
 	_vista.atualizar(delta)
 	_relogio.text = "%d s" % int(_vista.tempo)
-	_hud.linhas = _linhas()
+	_placar()
 	if _vista.tempo >= _vista.duracao() and _fim < 0.0:
 		_fim = 0.0
 		_pular.visible = false
@@ -176,6 +181,16 @@ func _process(delta: float) -> void:
 		_fim += delta
 		if _fim >= FIM_S and _faixa == null:
 			_mostrar_final()
+
+
+## Placar em cima e, embaixo, a integridade dos seus carros; o placar aberto
+## desce até logo acima dela.
+func _placar() -> void:
+	var l := _linhas()
+	_hud.linhas = l
+	_vida.carros = l.filter(func(x): return x.has("dano") and x["voce"])
+	_vida.position = Vector2(16, size.y - 16 - _vida.size.y)
+	_hud.altura_max = _vida.position.y - 16 - _hud.position.y
 
 
 ## O placar por equipe: o nome da equipe e, embaixo, os dois pilotos com o

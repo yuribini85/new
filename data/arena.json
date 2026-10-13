@@ -1,5 +1,5 @@
 {
- "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato. IA: ataca até v_ataque_kmh alinhada e reduz até v_curva_kmh quanto maior o erro de rumo; olha olhar_muro_s à frente e vira para o centro com margem_muro_m; mira a quina traseira do alvo (mira_traseira, fração do comprimento); encostado por travado_s recua recuperacao_s. Carreira (ArenaCarreira): abre com licenca_minima; rivais de potência parecida; pontos por giro provocado (pelo maior giro de cada golpe), eliminação e vitória; o prêmio de referência (média do 1º lugar das corridas da licença mínima) paga pontos_referencia pontos. Pontos e pontos_referencia provisórios até o playtest. perfis: jeito de cada piloto, sorteado por luta (alvo: acaso/perto/fraco; mira_traseira; v_mult sobre v_ataque; limite_re próprio; alvo_s_mult; imprecisao_m: erro de mira; impaciencia_s: sem acertar ninguém por esse tempo (metade com 2 vivos), esquece a ré e vai no meio do alvo 20% mais rápido; impaciencia_recua_s: ainda sem acertar, recua a cada tanto para sair da órbita). Valores provisórios. largada_raio_frac: a roda da largada, em fração do raio (0,85: nas extremidades, perto do muro, decisão do usuário).",
+ "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo Destruction Derby: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (DD2: 3684/4096), cinco estágios visuais (DD2: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato. IA: ataca até v_ataque_kmh alinhada e reduz até v_curva_kmh quanto maior o erro de rumo; olha olhar_muro_s à frente e vira para o centro com margem_muro_m; mira a quina traseira do alvo (mira_traseira, fração do comprimento); encostado por travado_s recua recuperacao_s. Carreira (ArenaCarreira): abre com licenca_minima; rivais de potência parecida; pontos por giro provocado (pelo maior giro de cada golpe), eliminação e vitória; o prêmio de referência (média do 1º lugar das corridas da licença mínima) paga pontos_referencia pontos. Pontos e pontos_referencia provisórios até o playtest. perfis: jeito de cada piloto, sorteado por luta (alvo: acaso/perto/fraco; mira_traseira; v_mult sobre v_ataque; limite_re próprio; alvo_s_mult; imprecisao_m: erro de mira; impaciencia_s: sem acertar ninguém por esse tempo (metade com 2 vivos), esquece a ré e vai no meio do alvo 20% mais rápido; impaciencia_recua_s: ainda sem acertar, recua a cada tanto para sair da órbita). Valores provisórios. largada_raio_frac: a roda da largada, em fração do raio (0,85: nas extremidades, perto do muro, decisão do usuário). subida_perda: na rampa, a força do motor é multiplicada por 1 − subida_perda × inclinação contra o carro (mínimo 40%), além da gravidade; com 0,5, a encosta mais íngreme (0,6) ainda se sobe devagar (pedido do usuário: os carros não sentiam a subida). Provisório.",
  "raio_m": 45.0,
  "largada_raio_frac": 0.85,
  "dt_s": 0.0333333,
@@ -7,6 +7,7 @@
  "tempo_max_s": 180.0,
  "restituicao": 0.25,
  "atrito_contato": 0.35,
+ "subida_perda": 0.5,
  "v_ref_kmh": 70.0,
  "v_min_dano_kmh": 6.0,
  "limite_eliminacao": 1.0,
@@ -206,7 +207,7 @@
       ]
      ],
      "encosta": 4,
-     "h": -2.2
+     "h": -1.54
     },
     {
      "tipo": "plato",
@@ -292,8 +293,8 @@
        -18.55
       ]
      ],
-     "encosta": 3.5,
-     "h": -2.2
+     "encosta": 3.85,
+     "h": -1.54
     },
     {
      "tipo": "plato",
@@ -379,8 +380,8 @@
        -15.55
       ]
      ],
-     "encosta": 3,
-     "h": -2.2
+     "encosta": 3.85,
+     "h": -1.54
     },
     {
      "c": [
@@ -388,7 +389,7 @@
       22
      ],
      "r": 12,
-     "h": 2.4
+     "h": 1.68
     },
     {
      "c": [
@@ -396,7 +397,7 @@
       -6
      ],
      "r": 9,
-     "h": 1.8
+     "h": 1.26
     },
     {
      "tipo": "rampa",
@@ -409,8 +410,9 @@
       3
      ],
      "largura": 8,
-     "h": 1.6,
-     "queda": 3
+     "h": 1.12,
+     "queda": 3,
+     "encosta": 2.8
     }
    ],
    "borda": {
@@ -488,9 +490,9 @@
       -16,
       0
      ],
-     "largura": 10,
+     "largura": 13.1,
      "fundo": 4,
-     "h": -2.6
+     "h": -1.82
     },
     {
      "tipo": "vala",
@@ -502,9 +504,9 @@
       5,
       0
      ],
-     "largura": 10,
+     "largura": 13.1,
      "fundo": 4,
-     "h": -2.6
+     "h": -1.82
     },
     {
      "tipo": "vala",
@@ -516,9 +518,9 @@
       38,
       0
      ],
-     "largura": 10,
+     "largura": 13.1,
      "fundo": 4,
-     "h": -2.6
+     "h": -1.82
     },
     {
      "tipo": "plato",
@@ -540,8 +542,8 @@
        24
       ]
      ],
-     "encosta": 3,
-     "h": 2.0,
+     "encosta": 3.5,
+     "h": 1.4,
      "max": true
     },
     {
@@ -555,8 +557,10 @@
       18
      ],
      "largura": 8,
-     "h": 2.0,
-     "max": true
+     "h": 1.4,
+     "max": true,
+     "encosta": 3.5,
+     "queda": 3.5
     },
     {
      "tipo": "rampa",
@@ -569,8 +573,9 @@
       -10
      ],
      "largura": 7,
-     "h": 1.8,
-     "queda": 2.5
+     "h": 1.26,
+     "queda": 3.15,
+     "encosta": 3.15
     }
    ],
    "borda": {
@@ -642,184 +647,187 @@
      ],
      "r": 11,
      "encosta": 5,
-     "h": 1.8
+     "h": 1.26
     },
     {
      "tipo": "vala",
      "a": [
-      19.05,
-      11.0
+      17.75,
+      10.25
      ],
      "b": [
-      11.0,
-      19.05
+      10.25,
+      17.75
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
-      11.0,
-      19.05
+      10.25,
+      17.75
      ],
      "b": [
       0.0,
-      22.0
+      20.5
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
       0.0,
-      22.0
+      20.5
      ],
      "b": [
-      -11.0,
-      19.05
+      -10.25,
+      17.75
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
-      -19.05,
-      11.0
+      -17.75,
+      10.25
      ],
      "b": [
-      -22.0,
+      -20.5,
       0.0
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
-      -22.0,
+      -20.5,
       0.0
      ],
      "b": [
-      -19.05,
-      -11.0
+      -17.75,
+      -10.25
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
-      -19.05,
-      -11.0
+      -17.75,
+      -10.25
      ],
      "b": [
-      -11.0,
-      -19.05
+      -10.25,
+      -17.75
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
       -0.0,
-      -22.0
+      -20.5
      ],
      "b": [
-      11.0,
-      -19.05
+      10.25,
+      -17.75
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
-      11.0,
-      -19.05
+      10.25,
+      -17.75
      ],
      "b": [
-      19.05,
-      -11.0
+      17.75,
+      -10.25
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "vala",
      "a": [
-      19.05,
-      -11.0
+      17.75,
+      -10.25
      ],
      "b": [
-      22.0,
+      20.5,
       -0.0
      ],
-     "largura": 7,
+     "largura": 8.3,
      "fundo": 2,
-     "h": -1.8,
+     "h": -1.26,
      "max": true
     },
     {
      "tipo": "rampa",
      "a": [
-      21.21,
-      21.21
+      21.57,
+      21.57
      ],
      "b": [
-      14.54,
-      26.24
+      14.79,
+      26.68
      ],
-     "largura": 6,
-     "h": 1.7,
-     "queda": 3
+     "largura": 4,
+     "h": 1.19,
+     "queda": 3,
+     "encosta": 2.97
     },
     {
      "tipo": "rampa",
      "a": [
-      -28.98,
-      7.76
+      -29.46,
+      7.89
      ],
      "b": [
-      -30.0,
-      -0.52
+      -30.5,
+      -0.53
      ],
-     "largura": 6,
-     "h": 1.7,
-     "queda": 3
+     "largura": 4,
+     "h": 1.19,
+     "queda": 3,
+     "encosta": 2.97
     },
     {
      "tipo": "rampa",
      "a": [
-      7.76,
-      -28.98
+      7.89,
+      -29.46
      ],
      "b": [
-      15.45,
-      -25.72
+      15.71,
+      -26.14
      ],
-     "largura": 6,
-     "h": 1.7,
-     "queda": 3
+     "largura": 4,
+     "h": 1.19,
+     "queda": 3,
+     "encosta": 2.97
     }
    ],
    "borda": {
@@ -890,8 +898,8 @@
       0
      ],
      "r": 15,
-     "encosta": 6,
-     "h": 4.0
+     "encosta": 7.0,
+     "h": 2.8
     },
     {
      "tipo": "plato",
@@ -900,8 +908,8 @@
       0
      ],
      "r": 6,
-     "encosta": 3.5,
-     "h": -3.4
+     "encosta": 5.95,
+     "h": -2.38
     },
     {
      "tipo": "rampa",
@@ -914,8 +922,10 @@
       0.0
      ],
      "largura": 9,
-     "h": 4.0,
-     "max": true
+     "h": 2.8,
+     "max": true,
+     "encosta": 7.0,
+     "queda": 7.0
     },
     {
      "tipo": "rampa",
@@ -928,8 +938,10 @@
       8.5
      ],
      "largura": 9,
-     "h": 4.0,
-     "max": true
+     "h": 2.8,
+     "max": true,
+     "encosta": 7.0,
+     "queda": 7.0
     },
     {
      "tipo": "rampa",
@@ -942,50 +954,52 @@
       -14.72
      ],
      "largura": 9,
-     "h": 4.0,
-     "max": true
+     "h": 2.8,
+     "max": true,
+     "encosta": 7.0,
+     "queda": 7.0
     },
     {
      "tipo": "vala",
      "a": [
-      9.5,
-      19.92
+      11.0,
+      22.52
      ],
      "b": [
       13.0,
       25.98
      ],
-     "largura": 8,
+     "largura": 10.4,
      "fundo": 2,
-     "h": -2.4
+     "h": -1.68
     },
     {
      "tipo": "vala",
      "a": [
-      -25.0,
+      -28.0,
       0.0
      ],
      "b": [
       -32.0,
       0.0
      ],
-     "largura": 8,
+     "largura": 10.4,
      "fundo": 2,
-     "h": -2.4
+     "h": -1.68
     },
     {
      "tipo": "vala",
      "a": [
-      9.5,
-      -19.92
+      11.0,
+      -22.52
      ],
      "b": [
       13.0,
       -25.98
      ],
-     "largura": 8,
+     "largura": 10.4,
      "fundo": 2,
-     "h": -2.4
+     "h": -1.68
     }
    ],
    "borda": {
@@ -1053,7 +1067,7 @@
      ],
      "largura": 7,
      "fundo": 2,
-     "h": -1.3
+     "h": -0.91
     },
     {
      "tipo": "vala",
@@ -1067,7 +1081,7 @@
      ],
      "largura": 7,
      "fundo": 2,
-     "h": -1.3
+     "h": -0.91
     },
     {
      "tipo": "rampa",
@@ -1080,8 +1094,9 @@
       11
      ],
      "largura": 7,
-     "h": 1.4,
-     "queda": 3
+     "h": 0.98,
+     "queda": 3,
+     "encosta": 2.45
     },
     {
      "tipo": "rampa",
@@ -1094,8 +1109,9 @@
       -11
      ],
      "largura": 7,
-     "h": 1.4,
-     "queda": 3
+     "h": 0.98,
+     "queda": 3,
+     "encosta": 2.45
     }
    ]
   },
@@ -1145,9 +1161,10 @@
       26,
       15
      ],
-     "largura": 8,
+     "largura": 8.25,
      "fundo": 3,
-     "h": -1.5
+     "h": -1.05,
+     "max": true
     },
     {
      "tipo": "vala",
@@ -1159,9 +1176,10 @@
       26,
       -15
      ],
-     "largura": 8,
+     "largura": 8.25,
      "fundo": 3,
-     "h": -1.5
+     "h": -1.05,
+     "max": true
     },
     {
      "tipo": "rampa",
@@ -1174,8 +1192,9 @@
       19
      ],
      "largura": 8,
-     "h": 1.8,
-     "queda": 3
+     "h": 1.26,
+     "queda": 3.15,
+     "encosta": 3.15
     },
     {
      "tipo": "rampa",
@@ -1188,8 +1207,9 @@
       -19
      ],
      "largura": 8,
-     "h": 1.8,
-     "queda": 3
+     "h": 1.26,
+     "queda": 3.15,
+     "encosta": 3.15
     }
    ]
   },
@@ -1274,8 +1294,8 @@
        11
       ]
      ],
-     "encosta": 3,
-     "h": 2.2,
+     "encosta": 3.85,
+     "h": 1.54,
      "max": true
     },
     {
@@ -1289,8 +1309,10 @@
       0
      ],
      "largura": 8,
-     "h": 2.2,
-     "max": true
+     "h": 1.54,
+     "max": true,
+     "encosta": 3.85,
+     "queda": 3.85
     },
     {
      "tipo": "plato",
@@ -1312,8 +1334,8 @@
        1
       ]
      ],
-     "encosta": 2.5,
-     "h": -2.0
+     "encosta": 3.5,
+     "h": -1.4
     },
     {
      "tipo": "plato",
@@ -1335,8 +1357,8 @@
        13
       ]
      ],
-     "encosta": 2.5,
-     "h": -2.0
+     "encosta": 3.5,
+     "h": -1.4
     },
     {
      "tipo": "vala",
@@ -1348,9 +1370,9 @@
       22,
       12
      ],
-     "largura": 4,
+     "largura": 4.5,
      "fundo": 1,
-     "h": 1.0
+     "h": 0.7
     }
    ]
   },
@@ -1399,7 +1421,7 @@
      "tipo": "plato",
      "pontos": [
       [
-       -29,
+       -26,
        6
       ],
       [
@@ -1408,68 +1430,72 @@
       ],
       [
        -4,
-       31
+       29
       ],
       [
-       -29,
-       31
+       -26,
+       29
       ]
      ],
-     "encosta": 3,
-     "h": 2.4,
+     "encosta": 4.2,
+     "h": 1.68,
      "max": true
     },
     {
      "tipo": "plato",
      "pontos": [
       [
-       -29,
-       20
+       -24,
+       19
       ],
       [
-       -17,
-       20
+       -15,
+       19
       ],
       [
-       -17,
-       31
+       -15,
+       27
       ],
       [
-       -29,
-       31
+       -24,
+       27
       ]
      ],
-     "encosta": 6,
-     "h": 4.6,
+     "encosta": 8.05,
+     "h": 3.22,
      "max": true
     },
     {
      "tipo": "rampa",
      "a": [
-      -20,
+      -17,
       -10
      ],
      "b": [
-      -20,
+      -17,
       6
      ],
      "largura": 8,
-     "h": 2.4,
-     "max": true
+     "h": 1.68,
+     "max": true,
+     "encosta": 4.2,
+     "queda": 4.2
     },
     {
      "tipo": "rampa",
      "a": [
-      -5,
-      25
+      -2,
+      23
      ],
      "b": [
-      -17,
-      25
+      -15,
+      23
      ],
-     "largura": 7,
-     "h": 4.6,
-     "max": true
+     "largura": 6,
+     "h": 3.22,
+     "max": true,
+     "encosta": 8.05,
+     "queda": 8.05
     },
     {
      "tipo": "rampa",
@@ -1482,8 +1508,9 @@
       -2
      ],
      "largura": 8,
-     "h": 2.0,
-     "queda": 3.5
+     "h": 1.4,
+     "queda": 3.5,
+     "encosta": 3.5
     },
     {
      "tipo": "plato",
@@ -1505,8 +1532,8 @@
        -14
       ]
      ],
-     "encosta": 2.5,
-     "h": -1.8
+     "encosta": 3.15,
+     "h": -1.26
     }
    ]
   },
@@ -1664,7 +1691,7 @@
       ]
      ],
      "encosta": 4,
-     "h": -2.0
+     "h": -1.4
     },
     {
      "tipo": "plato",
@@ -1751,7 +1778,7 @@
       ]
      ],
      "encosta": 3.5,
-     "h": -2.0
+     "h": -1.4
     },
     {
      "tipo": "plato",
@@ -1837,8 +1864,8 @@
        -2.01
       ]
      ],
-     "encosta": 3,
-     "h": -2.0
+     "encosta": 3.5,
+     "h": -1.4
     },
     {
      "tipo": "vala",
@@ -1850,37 +1877,40 @@
       29,
       19
      ],
-     "largura": 9,
+     "largura": 10.2,
      "fundo": 2.5,
-     "h": -2.2
+     "h": -1.54,
+     "max": true
     },
     {
      "tipo": "rampa",
      "a": [
-      -36,
+      -35,
       0
      ],
      "b": [
-      -29,
+      -31.5,
       0
      ],
      "largura": 7,
-     "h": 1.3,
-     "queda": 3
+     "h": 0.91,
+     "queda": 3,
+     "encosta": 2.27
     },
     {
      "tipo": "rampa",
      "a": [
-      36,
+      35,
       -6
      ],
      "b": [
-      29,
-      -5
+      31.5,
+      -5.5
      ],
      "largura": 7,
-     "h": 1.3,
-     "queda": 3
+     "h": 0.91,
+     "queda": 3,
+     "encosta": 2.27
     }
    ]
   },
@@ -1952,8 +1982,8 @@
       0
      ],
      "r": 7,
-     "encosta": 4,
-     "h": 2.8,
+     "encosta": 4.9,
+     "h": 1.96,
      "max": true
     },
     {
@@ -1967,8 +1997,10 @@
       0
      ],
      "largura": 8,
-     "h": 2.8,
-     "max": true
+     "h": 1.96,
+     "max": true,
+     "encosta": 4.9,
+     "queda": 4.9
     },
     {
      "tipo": "rampa",
@@ -1981,8 +2013,10 @@
       0
      ],
      "largura": 8,
-     "h": 2.8,
-     "max": true
+     "h": 1.96,
+     "max": true,
+     "encosta": 4.9,
+     "queda": 4.9
     },
     {
      "tipo": "vala",
@@ -1994,9 +2028,9 @@
       22,
       29
      ],
-     "largura": 8,
+     "largura": 11.4,
      "fundo": 3,
-     "h": -2.4
+     "h": -1.68
     },
     {
      "tipo": "vala",
@@ -2008,9 +2042,9 @@
       22,
       -29
      ],
-     "largura": 8,
+     "largura": 11.4,
      "fundo": 3,
-     "h": -2.4
+     "h": -1.68
     },
     {
      "tipo": "plato",
@@ -2033,7 +2067,7 @@
       ]
      ],
      "encosta": 2.5,
-     "h": -1.4
+     "h": -0.98
     },
     {
      "tipo": "plato",
@@ -2056,7 +2090,7 @@
       ]
      ],
      "encosta": 2.5,
-     "h": -1.4
+     "h": -0.98
     }
    ]
   }

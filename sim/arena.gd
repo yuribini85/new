@@ -249,7 +249,8 @@ static func _escolher_alvo(carros: Array, c: Dictionary, vivos: Array, modo: Str
 ## velocidade e aderência lateral que tira o escorregamento aos poucos.
 static func _mover(c: Dictionary, dt: float, forma: ArenaForma) -> void:
 	# Chão irregular: a gravidade puxa morro abaixo (destroço também desliza).
-	c["vel"] -= forma.gradiente(c["pos"]) * G * dt
+	var grad := forma.gradiente(c["pos"])
+	c["vel"] -= grad * G * dt
 	var frente := Vector2.from_angle(c["rumo"])
 	var lado := frente.orthogonal()
 	var v_long: float = c["vel"].dot(frente)
@@ -257,6 +258,9 @@ static func _mover(c: Dictionary, dt: float, forma: ArenaForma) -> void:
 	var aderencia: float = c["mu"] * G
 	if not c["eliminado"]:
 		var f := absf(c["cmd_acel"]) * minf(c["pot"] / maxf(absf(v_long), 3.0), c["mu"] * c["m"] * G)
+		# Subindo (de frente ou de ré): o motor rende menos na rampa.
+		var contra := grad.dot(frente) * signf(c["cmd_acel"])
+		f *= clampf(1.0 - forma.subida_perda * maxf(contra, 0.0), 0.4, 1.0)
 		v_long += signf(c["cmd_acel"]) * f / c["m"] * dt
 		# Giro: taxa máxima pela velocidade (raio mínimo ~ entre-eixos) e pela aderência.
 		var taxa_max := minf(absf(v_long) / (c["L"] * 0.6), aderencia / maxf(absf(v_long), 1.0))

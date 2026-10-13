@@ -27,7 +27,14 @@ RAIZ = Path(__file__).resolve().parent.parent
 ARQ = RAIZ / "data" / "arena.json"
 
 INCLINACAO_LARGADA = 0.2  # tg do ângulo do chão onde um carro larga
-INCLINACAO_MAX = 1.6  # tg (≈58°): a queda de uma rampa, o pé de um degrau
+INCLINACAO_MAX = 0.85  # tg (≈40°), onde dois termos se encostam; cada um sozinho fica em 0,6
+# Suavização (pedido do usuário: "desníveis muito íngremes"): alturas × ESCALA_H
+# e cada encosta com pelo menos ENCOSTA_POR_M m de largura por m de desnível
+# (a encosta em smoothstep inclina no máximo 1,5/2,5 = 0,6 ≈ 31°); rampa no
+# máximo RAMPA_MAX de subida.
+ESCALA_H = 0.7
+ENCOSTA_POR_M = 2.5
+RAMPA_MAX = 0.3
 
 
 def elipse(cx, cy, rx, ry, n=20, giro=0.0):
@@ -62,13 +69,12 @@ TERRENO = {
             {"tipo": "rampa", "a": [26, -18], "b": [17, -11], "largura": 7, "h": 1.4, "queda": 3},
         ],
     },
-    # Sport: o curral cortado em X por duas valas que se cruzam num poço no
-    # meio; rampas nos dois quadrantes de cima e de baixo saltam para ele.
+    # Sport: o curral cortado em X por duas valas que se cruzam no meio; rampas nos dois quadrantes de cima e de baixo saltam para ele.
     "curral_fardos": {
         "obstaculos": [],
         "relevo": [
-            {"tipo": "vala", "a": [-26, -15], "b": [26, 15], "largura": 8, "fundo": 3, "h": -1.5},
-            {"tipo": "vala", "a": [-26, 15], "b": [26, -15], "largura": 8, "fundo": 3, "h": -1.5},
+            {"tipo": "vala", "a": [-26, -15], "b": [26, 15], "largura": 8, "fundo": 3, "h": -1.5, "max": True},
+            {"tipo": "vala", "a": [-26, 15], "b": [26, -15], "largura": 8, "fundo": 3, "h": -1.5, "max": True},
             {"tipo": "rampa", "a": [0, 30], "b": [0, 19], "largura": 8, "h": 1.8, "queda": 3},
             {"tipo": "rampa", "a": [0, -30], "b": [0, -19], "largura": 8, "h": 1.8, "queda": 3},
         ],
@@ -105,8 +111,8 @@ TERRENO = {
         "obstaculos": [{"c": [0, 0], "r": 8}],
         "relevo": [
             {"tipo": "plato", "c": [0, 0], "r": 11, "encosta": 5, "h": 1.8},
-            *anel_de_valas(22, 12, {0, 4, 8}, 7, 2, -1.8),
-            *[{"tipo": "rampa", "a": polar(30, g - 15), "b": polar(30, g + 1), "largura": 6, "h": 1.7, "queda": 3}
+            *anel_de_valas(20.5, 12, {0, 4, 8}, 7, 2, -1.8),
+            *[{"tipo": "rampa", "a": polar(30.5, g - 15), "b": polar(30.5, g + 1), "largura": 4, "h": 1.7, "queda": 3}
               for g in (60, 180, 300)],
         ],
     },
@@ -120,7 +126,7 @@ TERRENO = {
             *[{"tipo": "rampa", "a": [round(-2 + 29 * math.cos(math.radians(g)), 2), round(29 * math.sin(math.radians(g)), 2)],
                "b": [round(-2 + 17 * math.cos(math.radians(g)), 2), round(17 * math.sin(math.radians(g)), 2)],
                "largura": 9, "h": 4.0, "max": True} for g in (0, 150, 240)],
-            *[{"tipo": "vala", "a": [round(-2 + 23 * math.cos(math.radians(g)), 2), round(23 * math.sin(math.radians(g)), 2)],
+            *[{"tipo": "vala", "a": [round(-2 + 26 * math.cos(math.radians(g)), 2), round(26 * math.sin(math.radians(g)), 2)],
                "b": [round(-2 + 30 * math.cos(math.radians(g)), 2), round(30 * math.sin(math.radians(g)), 2)],
                "largura": 8, "fundo": 2, "h": -2.4} for g in (60, 180, 300)],
         ],
@@ -143,10 +149,10 @@ TERRENO = {
     "estacionamento_saida": {
         "obstaculos": [],
         "relevo": [
-            {"tipo": "plato", "pontos": ret(-29, -4, 6, 31), "encosta": 3, "h": 2.4, "max": True},
-            {"tipo": "plato", "pontos": ret(-29, -17, 20, 31), "encosta": 6, "h": 4.6, "max": True},
-            {"tipo": "rampa", "a": [-20, -10], "b": [-20, 6], "largura": 8, "h": 2.4, "max": True},
-            {"tipo": "rampa", "a": [-5, 25], "b": [-17, 25], "largura": 7, "h": 4.6, "max": True},
+            {"tipo": "plato", "pontos": ret(-26, -4, 6, 29), "encosta": 3, "h": 2.4, "max": True},
+            {"tipo": "plato", "pontos": ret(-24, -15, 19, 27), "encosta": 6, "h": 4.6, "max": True},
+            {"tipo": "rampa", "a": [-17, -10], "b": [-17, 6], "largura": 8, "h": 2.4, "max": True},
+            {"tipo": "rampa", "a": [-2, 23], "b": [-15, 23], "largura": 6, "h": 4.6, "max": True},
             {"tipo": "rampa", "a": [40, -2], "b": [28, -2], "largura": 8, "h": 2.0, "queda": 3.5},
             {"tipo": "plato", "pontos": ret(16, 30, -24, -14), "encosta": 2.5, "h": -1.8},
         ],
@@ -160,9 +166,9 @@ TERRENO = {
             {"tipo": "plato", "pontos": elipse(0, 0, 38, 22), "encosta": 4, "h": -2.0},
             {"tipo": "plato", "pontos": elipse(0, 0, 25, 14), "encosta": 3.5, "h": -2.0},
             {"tipo": "plato", "pontos": elipse(0, 0, 12, 6.5), "encosta": 3, "h": -2.0},
-            {"tipo": "vala", "a": [12, 7], "b": [29, 19], "largura": 9, "fundo": 2.5, "h": -2.2},
-            {"tipo": "rampa", "a": [-36, 0], "b": [-29, 0], "largura": 7, "h": 1.3, "queda": 3},
-            {"tipo": "rampa", "a": [36, -6], "b": [29, -5], "largura": 7, "h": 1.3, "queda": 3},
+            {"tipo": "vala", "a": [12, 7], "b": [29, 19], "largura": 9, "fundo": 2.5, "h": -2.2, "max": True},
+            {"tipo": "rampa", "a": [-35, 0], "b": [-31.5, 0], "largura": 7, "h": 1.3, "queda": 3},
+            {"tipo": "rampa", "a": [35, -6], "b": [31.5, -5.5], "largura": 7, "h": 1.3, "queda": 3},
         ],
     },
     # Grid #1 (Hollow Saints, o confronto): o altar é um platô alto no meio do
@@ -367,6 +373,30 @@ def previa(a, frac, caminho, px_m=4):
     img.save(caminho)
 
 
+def suavizar(t):
+    t = dict(t)
+    t["h"] = round(t["h"] * ESCALA_H, 2)
+    h = abs(t["h"])
+    tipo = t.get("tipo", "monte")
+    if tipo == "plato":
+        t["encosta"] = round(max(t.get("encosta", 3.0), ENCOSTA_POR_M * h), 2)
+    elif tipo == "vala":
+        if (t["largura"] - t.get("fundo", 0)) / 2 < ENCOSTA_POR_M * h:
+            t["largura"] = round(t.get("fundo", 0) + 2 * ENCOSTA_POR_M * h, 2)
+    elif tipo == "rampa":
+        t["encosta"] = round(max(t.get("encosta", 1.5), ENCOSTA_POR_M * h), 2)
+        t["queda"] = round(max(t.get("queda", 3.0), ENCOSTA_POR_M * h), 2)
+        ax, ay = t["a"]
+        bx, by = t["b"]
+        comp = math.hypot(bx - ax, by - ay)
+        if h / comp > RAMPA_MAX:
+            k = h / RAMPA_MAX / comp
+            t["a"] = [round(bx - (bx - ax) * k, 2), round(by - (by - ay) * k, 2)]
+    else:
+        t["r"] = round(max(t["r"], 2 * h), 2)
+    return t
+
+
 def main():
     dados = json.loads(ARQ.read_text(encoding="utf-8"))
     frac = float(dados["largada_raio_frac"])
@@ -380,7 +410,7 @@ def main():
     for id_, t in TERRENO.items():
         a = dict(por_id[id_])
         a["obstaculos"] = t["obstaculos"]
-        a["relevo"] = t["relevo"]
+        a["relevo"] = [suavizar(x) for x in t["relevo"]]
         novas[id_] = a
         e, pior = checar(a, frac)
         erros += e

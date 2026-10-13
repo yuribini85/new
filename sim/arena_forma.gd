@@ -22,12 +22,16 @@ var relevo: Array = []  # [{tipo, h, ...}] (ver _termo)
 var borda_largura := 0.0
 var borda_altura := 0.0
 var centro := Vector2.ZERO
+## Subida (pedido do usuário): a força do motor cai com a inclinação contra o
+## carro, além da gravidade (patina e perde embalo na rampa). Provisório.
+var subida_perda := 0.0
 var id := ""
 var nome := ""
 
 
 static func de(params: Dictionary) -> ArenaForma:
 	var f := ArenaForma.new()
+	f.subida_perda = float(params.get("subida_perda", 0.0))
 	var d: Dictionary = params.get("forma", {})
 	if d.is_empty():
 		var raio := float(params["raio_m"])
