@@ -29,7 +29,8 @@ var linhas: Array = []:
 		queue_redraw()
 var limite_re := 0.9
 ## Recolhida (toque no cabeçalho): só o cabeçalho e a sua linha, para ver a luta.
-var recolhida := false
+## A luta começa recolhida (pedido do usuário); um toque abre o placar.
+var recolhida := true
 const CABECALHO := 34.0
 
 
