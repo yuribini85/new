@@ -26,7 +26,7 @@ const TAMANHO_BRIGA_MAX := 72.0  # seguindo a sua briga, a câmera não abre al�
 const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 ## Chão em malha: passo da grade e quanto passa do muro (m).
-const CHAO_PASSO_M := 1.5
+const CHAO_PASSO_M := 1.0  # fino o bastante para a quina das rampas e dos degraus
 const CHAO_MARGEM_M := 10.0
 ## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
 const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
@@ -742,7 +742,10 @@ func _chao() -> void:
 				var gx := (alturas[cj * (nx + 1) + mini(ci + 1, nx)] - alturas[cj * (nx + 1) + maxi(ci - 1, 0)]) / (2.0 * CHAO_PASSO_M)
 				var gy := (alturas[mini(cj + 1, ny) * (nx + 1) + ci] - alturas[maxi(cj - 1, 0) * (nx + 1) + ci]) / (2.0 * CHAO_PASSO_M)
 				var nrm := Vector3(-gx, 1.0, gy).normalized()
-				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.035, 0.8, 1.1)
+				# Encosta íngreme (parede de vala, queda de rampa, pé de degrau) mais
+				# escura e o fundo mais escuro que o alto: lê as curvas de nível.
+				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.06, 0.7, 1.15) \
+						* lerpf(0.55, 1.0, pow(nrm.y, 6.0))
 				st.set_color(Color(luz, luz, luz))
 				st.set_uv(q / 7.0)
 				st.add_vertex(Vector3(q.x, h, -q.y))

@@ -262,6 +262,28 @@ func test_chao_irregular_puxa_morro_abaixo_e_formas_seguram_os_carros() -> void:
 		verificar(f.dentro(q) and f.obstaculo_perto(q)[0] > 0.0, "largada %d dentro e fora da ilha" % k)
 
 
+## Decisão 78: o chão em curvas de nível (vala, rampa, platô) e o modo que
+## assenta por cima sem apagar o resto.
+func test_terreno_vala_rampa_plato() -> void:
+	var p := _params()
+	p["forma"] = {"id": "t", "muro": [[60, -60], [60, 60], [-60, 60], [-60, -60]], "obstaculos": [], "relevo": [
+			{"tipo": "vala", "a": [-20, -30], "b": [20, -30], "largura": 8, "fundo": 4, "h": -2.0},
+			{"tipo": "rampa", "a": [-30, 0], "b": [-20, 0], "largura": 6, "h": 2.0, "queda": 3},
+			{"tipo": "plato", "pontos": [[10, 10], [30, 10], [30, 30], [10, 30]], "encosta": 3, "h": 3.0, "max": true},
+			{"tipo": "rampa", "a": [20, -5], "b": [20, 10], "largura": 6, "h": 3.0, "max": true}]}
+	var f := ArenaForma.de(p)
+	perto(f.altura(Vector2(0, -30)), -2.0, 1e-6, "fundo da vala")
+	perto(f.altura(Vector2(0, -31.9)), -2.0, 1e-6, "fundo plano da vala")
+	perto(f.altura(Vector2(0, -40)), 0.0, 1e-6, "fora da vala")
+	perto(f.altura(Vector2(-25, 0)), 1.0, 1e-6, "meio da rampa")
+	perto(f.altura(Vector2(-20, 0)), 2.0, 1e-6, "crista da rampa")
+	perto(f.altura(Vector2(-16, 0)), 0.0, 1e-6, "depois da queda")
+	perto(f.altura(Vector2(20, 20)), 3.0, 1e-6, "topo plano do platô")
+	perto(f.altura(Vector2(20, 2.5)), 1.5, 1e-6, "rampa até o platô sem somar")
+	perto(f.altura(Vector2(0, -30)), -2.0, 1e-6, "o platô por cima não apaga a vala")
+	verificar(f.gradiente(Vector2(-25, 0)).x > 0.15, "a rampa inclina o chão")
+
+
 func test_arenas_do_jogo_tem_a_area_do_circulo() -> void:
 	var p := _params()
 	var alvo := PI * pow(float(p["raio_m"]), 2.0)

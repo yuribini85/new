@@ -600,3 +600,21 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     em ocre as que já têm peça; tocar leva a ela). A arena usa o mesmo cartão. A tela não rola.
     O carro da Oficina fica parado em três quartos (não gira); ao trocar de carro, o novo
     entra de lado numa derrapada (~1,1 s, deslizando de lado) e assenta. Com "reduzir animações", só troca.
+78. **Arenas pelo terreno** (2026-10-13, pedido do usuário: "mudar só o contorno e colocar
+    ilhas de pneus não tem graça; o legal é trabalhar o terreno como curvas de nível").
+    O relevo ganha termos novos além de montes e crateras: valas e diques (com fundo plano),
+    rampas (sobem e caem numa queda curta) e platôs ou poços de topo plano, em círculo ou
+    polígono, que empilham em degraus (`sim/arena_forma.gd`; a física e o desenho do chão
+    usam a mesma conta). As ilhas de pneus saem; fica só o monte de sucata do Anel do
+    Ferro-Velho. As dez arenas são redesenhadas pelo chão (`tools/terreno_arenas.py`, que
+    confere as largadas em chão plano e a inclinação máxima e gera a prévia de cima):
+    Várzea (vala rasa com passagem, duas rampinhas), Curral (valas em X com poço no
+    cruzamento, rampas para ele), Pedreira (bancadas em três degraus, entulho, rampa na
+    beira), Docas (fosso de leste a oeste com duas passagens, cais alto com rampa, rampa de
+    salto), Ferro-Velho (o monte num morro, anel de vala com três passagens, rampas
+    tangentes), Cratera (mesa com caldeira, três rampas de subida, três ravinas), Fundição
+    (plataforma de carga com rampa, dois poços, dique baixo), Estacionamento (dois andares
+    com rampas, rampa de saída, doca rebaixada), Blackwater (reservatório em três degraus,
+    canal do vertedouro, rampas na bancada) e Claustro (altar alto com rampas leste e
+    oeste, fossos nos braços norte e sul, criptas rebaixadas). Alturas e formas são desenho;
+    ajustar no playtest.

@@ -2,8 +2,13 @@ class_name ArenaForma
 extends RefCounted
 ## Forma de uma arena (decisão 59): o muro em polígono (cantos e reentrâncias,
 ## não um círculo), obstáculos no meio (ilhas de pneus, pilhas de carcaças:
-## círculos) e o relevo do chão, que não é plano: lombadas e crateras
-## (gaussianas de altura `h` e raio `r`) e a borda que sobe junto ao muro.
+## círculos) e o relevo do chão, que não é plano, desenhado como curvas de
+## nível (decisão 78): montes e crateras (gaussianas de altura `h` e raio `r`),
+## valas e diques ("vala": ao longo de a→b, `largura`, `fundo` plano), rampas
+## ("rampa": sobe de a até `h` em b e cai em `queda` m) e platôs ou poços de
+## topo plano ("plato": círculo c/r ou polígono `pontos`, com `encosta`); a
+## borda sobe junto ao muro. Os termos se somam; os de `max: true` assentam por
+## cima (a rampa que leva ao platô não o dobra).
 ## O relevo entra na física: a gravidade puxa o carro morro abaixo (a cratera
 ## arrasta a briga para o fundo; a lombada desvia quem passa). A mesma forma
 ## desenha o chão e põe os carros na altura certa (Arena3D).
@@ -13,7 +18,7 @@ const LADOS_CIRCULO := 64
 
 var muro := PackedVector2Array()  # anti-horário, em m
 var obstaculos: Array = []  # [{c: Vector2, r: float}]
-var relevo: Array = []  # [{c: Vector2, r: float, h: float}]
+var relevo: Array = []  # [{tipo, h, ...}] (ver _termo)
 var borda_largura := 0.0
 var borda_altura := 0.0
 var centro := Vector2.ZERO
@@ -38,7 +43,7 @@ static func de(params: Dictionary) -> ArenaForma:
 	for o in d.get("obstaculos", []):
 		f.obstaculos.append({"c": Vector2(float(o["c"][0]), float(o["c"][1])), "r": float(o["r"])})
 	for r in d.get("relevo", []):
-		f.relevo.append({"c": Vector2(float(r["c"][0]), float(r["c"][1])), "r": float(r["r"]), "h": float(r["h"])})
+		f.relevo.append(_ler_termo(r))
 	var borda: Dictionary = d.get("borda", {})
 	f.borda_largura = float(borda.get("largura", 0.0))
 	f.borda_altura = float(borda.get("altura", 0.0))
@@ -81,13 +86,92 @@ func obstaculo_perto(p: Vector2) -> Array:
 	return [melhor, nrm]
 
 
-## Altura do chão em `p` (m): lombadas (+) e crateras (−), e a borda subindo
-## para o muro.
+static func _v(q: Array) -> Vector2:
+	return Vector2(float(q[0]), float(q[1]))
+
+
+static func _ler_termo(r: Dictionary) -> Dictionary:
+	var t := {"tipo": String(r.get("tipo", "monte")), "h": float(r["h"]), "max": bool(r.get("max", false))}
+	match t["tipo"]:
+		"vala":
+			t["a"] = _v(r["a"])
+			t["b"] = _v(r["b"])
+			t["meia"] = float(r["largura"]) * 0.5
+			t["meio_fundo"] = float(r.get("fundo", 0.0)) * 0.5
+		"rampa":
+			t["a"] = _v(r["a"])
+			t["b"] = _v(r["b"])
+			t["meia"] = float(r["largura"]) * 0.5
+			t["queda"] = float(r.get("queda", 3.0))
+			t["encosta"] = float(r.get("encosta", maxf(1.5, absf(float(r["h"])) * 1.2)))  # o lado da rampa
+		"plato":
+			t["encosta"] = float(r.get("encosta", 3.0))
+			if r.has("pontos"):
+				var pts := PackedVector2Array()
+				for q in r["pontos"]:
+					pts.append(_v(q))
+				t["pontos"] = pts
+			else:
+				t["c"] = _v(r["c"])
+				t["r"] = float(r["r"])
+		_:
+			t["c"] = _v(r["c"])
+			t["r"] = float(r["r"])
+	return t
+
+
+## Um termo do relevo em `p` (m).
+static func _termo(t: Dictionary, p: Vector2) -> float:
+	var h: float = t["h"]
+	match t["tipo"]:
+		"vala":
+			var d: float = p.distance_to(Geometry2D.get_closest_point_to_segment(p, t["a"], t["b"]))
+			var meia: float = t["meia"]
+			var mf: float = t["meio_fundo"]
+			return h * (1.0 - smoothstep(0.0, 1.0, clampf((d - mf) / maxf(meia - mf, 0.01), 0.0, 1.0)))
+		"rampa":
+			var a: Vector2 = t["a"]
+			var eixo: Vector2 = t["b"] - a
+			var comp := eixo.length()
+			var dir := eixo / comp
+			var u := (p - a).dot(dir)
+			var v := absf((p - a).dot(dir.orthogonal()))
+			var ao_longo := 0.0
+			if u >= 0.0 and u <= comp:
+				ao_longo = u / comp
+			elif u > comp and u < comp + float(t["queda"]):
+				ao_longo = 1.0 - smoothstep(0.0, float(t["queda"]), u - comp)
+			var meia: float = t["meia"]
+			return h * ao_longo * (1.0 - smoothstep(meia, meia + float(t["encosta"]), v))
+		"plato":
+			var d := 0.0
+			if t.has("pontos"):
+				var pts: PackedVector2Array = t["pontos"]
+				if not Geometry2D.is_point_in_polygon(p, pts):
+					d = INF
+					for i in pts.size():
+						d = minf(d, p.distance_to(Geometry2D.get_closest_point_to_segment(p, pts[i], pts[(i + 1) % pts.size()])))
+			else:
+				var c: Vector2 = t["c"]
+				d = maxf(p.distance_to(c) - float(t["r"]), 0.0)
+			return h * (1.0 - smoothstep(0.0, float(t["encosta"]), d))
+	var s: float = float(t["r"]) * 0.5
+	var cm: Vector2 = t["c"]
+	return h * exp(-p.distance_squared_to(cm) / (2.0 * s * s))
+
+
+## Altura do chão em `p` (m): os termos do relevo e a borda subindo para o muro.
 func altura(p: Vector2) -> float:
 	var h := 0.0
-	for r in relevo:
-		var s: float = float(r["r"]) * 0.5
-		h += float(r["h"]) * exp(-p.distance_squared_to(r["c"]) / (2.0 * s * s))
+	for t in relevo:
+		if not t["max"]:
+			h += _termo(t, p)
+	for t in relevo:
+		if t["max"]:
+			# Só onde o termo existe: fora dele (v≈0) não apaga uma vala nem um poço.
+			var v := _termo(t, p)
+			var peso := minf(absf(v) / (0.3 * absf(float(t["h"]))), 1.0)
+			h = lerpf(h, maxf(h, v) if float(t["h"]) > 0.0 else minf(h, v), peso)
 	if borda_largura > 0.0:
 		var dm: float = muro_perto(p)[0]
 		h += borda_altura * (1.0 - smoothstep(0.0, borda_largura, maxf(dm, 0.0)))
