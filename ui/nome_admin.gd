@@ -37,7 +37,7 @@ func _init(atual := "") -> void:
 	v.add_theme_constant_override("separation", 18)
 	cartao.add_child(v)
 	var titulo := Label.new()
-	titulo.text = "COMO A MARA DEVE CHAMAR VOCÊ?"
+	titulo.text = "COMO VOCÊ SE CHAMA?"
 	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	Tipografia.rotulo(titulo, "semibold", 24)
 	titulo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
@@ -51,12 +51,6 @@ func _init(atual := "") -> void:
 	_campo.text_changed.connect(func(_t): _atualizar())
 	_campo.text_submitted.connect(func(_t): _confirmar())
 	v.add_child(_campo)
-	var nota := Label.new()
-	nota.text = "Você administra a equipe: compras, pilotos, patrocínio e provas. Quem dirige são os pilotos."
-	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	nota.add_theme_font_size_override("font_size", Aba.FONTE_PEQUENA)
-	nota.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
-	v.add_child(nota)
 	_ok = Button.new()
 	Tipografia.acao_primaria(_ok, "Confirmar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 72)
 	_ok.pressed.connect(_confirmar)
