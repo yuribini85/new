@@ -256,6 +256,10 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	if por_nivel > 0:
 		rotulo("Experiência: %d/%d %s para o próximo nível" % [EquipeJogador.xp(jogador, id), por_nivel,
 				"corridas" if vaga == "corrida" else "lutas"], FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var falta := ArenaCarreira.recuperacao_s(jogador, id)
+	if falta > 0.0:
+		rotulo("EM RECUPERAÇÃO (atropelado na arena): volta em %s." % ArenaCarreira.texto_tempo(falta),
+				FONTE_PEQUENA, COR_RUIM, v)
 	if EquipeJogador.em_embalo(jogador, id):
 		rotulo("EMBALO: o próximo treino leva metade do tempo.", FONTE_PEQUENA, COR_BOM, v)
 	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT

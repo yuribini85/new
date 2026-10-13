@@ -38,6 +38,8 @@ const REGIOES := ["frente_e", "frente_d", "lado_e", "lado_d", "tras_e", "tras_d"
 const FRENTE := [0, 1]
 ## Medidas do carro quando os dados não têm (m).
 const COMPRIMENTO_M := 4.4
+## Teto do epílogo (s): a tela não espera mais que isso pelo fogo e pelo piloto.
+const EPILOGO_MAX_S := 30.0
 const LARGURA_M := 1.75
 ## Chaves obrigatórias em data/arena.json.
 const PARAMS := ["raio_m", "dt_s", "amostra_dt_s", "tempo_max_s", "restituicao", "atrito_contato",
@@ -48,7 +50,7 @@ const PARAMS := ["raio_m", "dt_s", "amostra_dt_s", "tempo_max_s", "restituicao",
 
 ## participantes: [{id, atributos (Carro.atributos_efetivos), piloto {ritmo,
 ## consistencia, agressividade}}], opcionais para testes: pos (Vector2), rumo,
-## vel (Vector2), acelerador (fixo; sem IA).
+## vel (Vector2), acelerador (fixo; sem IA), dano (as seis regiões de partida).
 ## Retorna {classificacao, carros{id: {dano[6], eliminado, eliminado_em, por,
 ## sobreviveu_s, giros (provocados), eliminou}}, eventos (impacto, giro,
 ## eliminado), amostras, duracao}.
@@ -74,7 +76,7 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			# Largada em roda, todos de frente para o centro (decisão do usuário).
 			"rumo": float(p.get("rumo", (forma.centro - forma.largada(ang, 0.85)).angle())),
 			"vel": p.get("vel", Vector2.ZERO), "w": 0.0,
-			"dano": PackedFloat32Array([0, 0, 0, 0, 0, 0]), "eliminado": false, "eliminado_em": -1.0,
+			"dano": PackedFloat32Array(p.get("dano", [0, 0, 0, 0, 0, 0])), "eliminado": false, "eliminado_em": -1.0,
 			"por": "", "ultimo_golpe": "", "giro_acum": 0.0, "giros": 0, "eliminou": 0,
 			"acel_fixo": p.get("acelerador", null), "agress": float(p.get("piloto", {}).get("agressividade", 0.5)),
 			# Equipe (arena em duplas): colegas não se miram; sem equipe, cada um por si.
@@ -101,6 +103,7 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			_mover(c, dt, forma)
 		_colisoes(carros, contatos, params, eventos, t, forma)
 		_giros(carros, params, eventos, t)
+		_incendios(carros, params, eventos, t, dt, forma, true)
 		t += dt
 		for c in carros:
 			if not c["eliminado"]:
@@ -117,7 +120,26 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			break
 	if not com_amostras or amostras.is_empty() or amostras[-1]["t"] < t:
 		amostras.append(_amostra(carros, t))
-	return _resultado(carros, eventos, amostras, t)
+	var res := _resultado(carros, eventos, amostras, t)
+	# Epílogo (só para a tela): o resultado já está fechado. Os carros param, o
+	# fogo segue, o piloto termina de sair e a explosão acontece sem dano
+	# (decisão do usuário: depois do fim, só visual).
+	var t_fim := t
+	while _incendio_pendente(carros) and t < t_fim + EPILOGO_MAX_S:
+		for c in carros:
+			c["cmd_acel"] = 0.0
+			c["cmd_giro"] = 0.0
+			_mover(c, dt, forma)
+		_colisoes(carros, contatos, params, eventos, t, forma, false)
+		_incendios(carros, params, eventos, t, dt, forma, false)
+		t += dt
+		if com_amostras and t >= t_amostra:
+			t_amostra += float(params["amostra_dt_s"])
+			amostras.append(_amostra(carros, t))
+	if com_amostras and t > t_fim and amostras[-1]["t"] < t:
+		amostras.append(_amostra(carros, t))
+	res["duracao_cena"] = t
+	return res
 
 
 ## IA: alvo, interceptação, ré com a frente quase destruída e recuperação.
@@ -310,7 +332,7 @@ static func _mais_proximos(p1: Vector2, q1: Vector2, p2: Vector2, q2: Vector2) -
 
 
 static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, eventos: Array, t: float,
-		forma: ArenaForma) -> void:
+		forma: ArenaForma, com_dano := true) -> void:
 	for c in carros:
 		c["encostado"] = false
 	var tocando := {}
@@ -328,7 +350,7 @@ static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, e
 				var chave := "%d:muro" % i
 				tocando[chave] = true
 				a["encostado"] = true
-				_impulso(a, {}, ponto, nrm, params, eventos, t, not contatos.has(chave))
+				_impulso(a, {}, ponto, nrm, params, eventos, t, com_dano and not contatos.has(chave))
 			var ob := forma.obstaculo_perto(ponta)
 			var pen_o: float = a["W"] * 0.5 - float(ob[0])
 			if pen_o > 0.0:
@@ -337,7 +359,7 @@ static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, e
 				var chave_o := "%d:obst" % i
 				tocando[chave_o] = true
 				a["encostado"] = true
-				_impulso(a, {}, ponta - nrm_o * a["W"] * 0.5, nrm_o, params, eventos, t, not contatos.has(chave_o))
+				_impulso(a, {}, ponta - nrm_o * a["W"] * 0.5, nrm_o, params, eventos, t, com_dano and not contatos.has(chave_o))
 		for j in range(i + 1, carros.size()):
 			var b: Dictionary = carros[j]
 			var sb := _segmento(b)
@@ -358,7 +380,7 @@ static func _colisoes(carros: Array, contatos: Dictionary, params: Dictionary, e
 			tocando[chave] = true
 			a["encostado"] = true
 			b["encostado"] = true
-			_impulso(a, b, ponto, nrm, params, eventos, t, not contatos.has(chave))
+			_impulso(a, b, ponto, nrm, params, eventos, t, com_dano and not contatos.has(chave))
 	contatos.clear()
 	contatos.merge(tocando)
 
@@ -434,6 +456,12 @@ static func _danificar(c: Dictionary, ponto: Vector2, energia: float, quem: Stri
 		c["eliminado_em"] = t
 		c["por"] = quem if quem != "" else String(c["ultimo_golpe"])
 		eventos.append({"t": t, "tipo": "eliminado", "carro": c["id"], "por": c["por"]})
+		# Motor destruído (decisão do usuário): a outra metade da frente também no
+		# fim (no limite da ré) → pega fogo; senão o carro só para e fumega.
+		var outra: int = FRENTE[1] if r == FRENTE[0] else FRENTE[0]
+		var inc: Dictionary = params.get("incendio", {})
+		if not inc.is_empty() and c["dano"][outra] >= float(params["limite_re"]):
+			c["fogo_em"] = t + float(inc["fogo_s"])
 
 
 ## Giro provocado: depois de um golpe de outro carro, cada limite de
@@ -456,10 +484,144 @@ static func estagio(dano: float, estagios: int) -> int:
 
 static func _amostra(carros: Array, t: float) -> Dictionary:
 	var a := {"t": t}
+	var pilotos := {}
 	for c in carros:
 		a[c["id"]] = {"pos": c["pos"], "rumo": c["rumo"], "dano": c["dano"].duplicate(), "eliminado": c["eliminado"],
 				"re": c.get("re", false)}
+		if c.has("piloto"):
+			var p: Dictionary = c["piloto"]
+			pilotos[c["id"]] = {"pos": p["pos"], "rumo": p["rumo"], "estado": p["estado"]}
+	if not pilotos.is_empty():
+		a["pilotos"] = pilotos
 	return a
+
+
+## Fogo, fuga do piloto e explosão (pacote de dano aprovado pelo usuário;
+## tempos em data/arena.json → incendio). Do motor parado (a eliminação) ao
+## fogo `fogo_s`; do fogo à saída do piloto `fuga_s`; a explosão vem
+## `explosao_s` depois da saída, com o piloto a `piloto_longe_m` do carro (ou
+## já fora). A explosão dá dano a quem está a menos de `raio_m`: força
+## (1 − d/raio)^queda de uma batida a v_ref contra o carro que explodiu, na
+## região virada para ela (pode eliminar). O piloto corre para o muro mais
+## perto; um carro andando que o pega o lança (`voo_*`), ele fica caído
+## `caido_s`, levanta em `levantar_s` e continua até sair. `valendo` falso
+## (epílogo): sem atropelamento e sem dano.
+static func _incendios(carros: Array, params: Dictionary, eventos: Array, t: float, dt: float, forma: ArenaForma,
+		valendo: bool) -> void:
+	var inc: Dictionary = params.get("incendio", {})
+	if inc.is_empty():
+		return
+	var pf: Dictionary = params["piloto_fuga"]
+	for c in carros:
+		if not c.has("fogo_em"):
+			continue
+		if not c.get("fogo", false) and t >= float(c["fogo_em"]):
+			c["fogo"] = true
+			eventos.append({"t": t, "tipo": "fogo", "carro": c["id"]})
+		if c.get("fogo", false) and not c.has("piloto") and t >= float(c["fogo_em"]) + float(inc["fuga_s"]):
+			# Sai pela porta do lado mais perto do muro.
+			var lado := Vector2.from_angle(c["rumo"]).orthogonal()
+			var pm := forma.muro_perto(c["pos"])
+			if lado.dot(-(pm[1] as Vector2)) < 0.0:
+				lado = -lado
+			var pos: Vector2 = c["pos"] + lado * (c["W"] * 0.5 + float(pf["raio_m"]) * 2.0)
+			c["piloto"] = {"pos": pos, "rumo": lado.angle(), "estado": "correndo", "t_estado": t, "t_fuga": t,
+					"de": pos, "para": pos, "voo_s": 0.0}
+			eventos.append({"t": t, "tipo": "fuga", "carro": c["id"], "lado": signf(lado.dot(Vector2.from_angle(c["rumo"]).orthogonal()))})
+		if c.has("piloto"):
+			_piloto(c, carros, pf, eventos, t, dt, forma, valendo)
+			var p: Dictionary = c["piloto"]
+			if not c.get("explodiu", false) and t >= float(p["t_fuga"]) + float(inc["explosao_s"]) \
+					and (p["estado"] == "fora" or (p["pos"] - c["pos"]).length() >= float(inc["piloto_longe_m"])):
+				c["explodiu"] = true
+				eventos.append({"t": t, "tipo": "explosao", "carro": c["id"], "valendo": valendo})
+				if valendo:
+					_explosao(c, carros, params, eventos, t)
+
+
+static func _explosao(c: Dictionary, carros: Array, params: Dictionary, eventos: Array, t: float) -> void:
+	var inc: Dictionary = params["incendio"]
+	var raio := float(inc["raio_m"])
+	var v_ref := float(params["v_ref_kmh"]) * KMH
+	for o in carros:
+		if o == c or o["eliminado"]:
+			continue
+		var d: float = (o["pos"] - c["pos"]).length()
+		if d >= raio:
+			continue
+		var forca := pow(1.0 - d / raio, float(inc["queda"]))
+		var m_ef: float = o["m"] * c["m"] / (o["m"] + c["m"])
+		var antes := eventos.size()
+		_danificar(o, c["pos"], forca * 0.5 * m_ef * v_ref * v_ref, String(c["id"]), params, eventos, t)
+		for k in range(antes, eventos.size()):
+			eventos[k]["explosao"] = true
+
+
+static func _piloto(c: Dictionary, carros: Array, pf: Dictionary, eventos: Array, t: float, dt: float,
+		forma: ArenaForma, valendo: bool) -> void:
+	var p: Dictionary = c["piloto"]
+	var desde: float = t - float(p["t_estado"])
+	match String(p["estado"]):
+		"voando":
+			p["pos"] = (p["de"] as Vector2).lerp(p["para"], clampf(desde / maxf(float(p["voo_s"]), 0.01), 0.0, 1.0))
+			if desde >= float(p["voo_s"]):
+				p["estado"] = "caido"
+				p["t_estado"] = t
+		"caido":
+			if desde >= float(pf["caido_s"]):
+				p["estado"] = "levantando"
+				p["t_estado"] = t
+		"levantando":
+			if desde >= float(pf["levantar_s"]):
+				p["estado"] = "correndo"
+				p["t_estado"] = t
+		"correndo":
+			var pm := forma.muro_perto(p["pos"])
+			if float(pm[0]) <= float(pf["saida_m"]):
+				p["estado"] = "fora"
+				p["t_estado"] = t
+				eventos.append({"t": t, "tipo": "piloto_fora", "carro": c["id"]})
+				return
+			var dir: Vector2 = -(pm[1] as Vector2)
+			p["rumo"] = dir.angle()
+			p["pos"] += dir * float(pf["v_ms"]) * dt
+			var raio := float(pf["raio_m"])
+			for o in carros:
+				var seg := _segmento(o)
+				var q: Vector2 = Geometry2D.get_closest_point_to_segment(p["pos"], seg[0], seg[1])
+				var delta: Vector2 = p["pos"] - q
+				var soma: float = o["W"] * 0.5 + raio
+				if delta.length() >= soma:
+					continue
+				var v: float = o["vel"].length()
+				if valendo and not o["eliminado"] and v > float(pf["v_atropelo_ms"]):
+					# Atropelado: lançado na direção do carro (como o pacote:
+					# horizontal × voo_k, subida × voo_vy, voo balístico).
+					var vy := clampf(v * float(pf["voo_vy"]), 1.0, 7.5)
+					var voo := 2.0 * vy / G
+					var para: Vector2 = p["pos"] + o["vel"] * float(pf["voo_k"]) * voo
+					var mp := forma.muro_perto(para)
+					if float(mp[0]) < raio:
+						para += (mp[1] as Vector2) * (raio - float(mp[0]))
+					p["de"] = p["pos"]
+					p["para"] = para
+					p["voo_s"] = voo
+					p["estado"] = "voando"
+					p["t_estado"] = t
+					c["atropelado"] = true
+					eventos.append({"t": t, "tipo": "atropelo", "carro": c["id"], "por": o["id"], "v": v})
+					return
+				# Parado (ou no epílogo): contorna.
+				p["pos"] = q + (delta.normalized() if delta.length() > 1e-6 else Vector2.from_angle(o["rumo"]).orthogonal()) * soma
+
+
+## O epílogo espera a explosão que falta (não o piloto chegar ao muro: a
+## tela não fica parada esperando ele correr).
+static func _incendio_pendente(carros: Array) -> bool:
+	for c in carros:
+		if c.has("fogo_em") and not c.get("explodiu", false):
+			return true
+	return false
 
 
 ## Classificação: quem sobrou primeiro; depois os eliminados do último para o
@@ -496,6 +658,7 @@ static func _resultado(carros: Array, eventos: Array, amostras: Array, t: float)
 				"giros": eventos.filter(func(e): return e["tipo"] == "giro" and e["por"] == c["id"]).size()}
 	for c in carros:
 		res[c["id"]]["equipe"] = c["equipe"]
+		res[c["id"]]["atropelado"] = c.get("atropelado", false)
 	return {"classificacao": ordem.map(func(c): return c["id"]), "carros": res, "eventos": eventos,
 			"amostras": amostras, "duracao": t, "equipe_vencedora": vencedora}
 

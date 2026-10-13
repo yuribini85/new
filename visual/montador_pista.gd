@@ -22,6 +22,7 @@ const PASTA := "res://arte/pistas/kit/"
 const PX_M := 32.0
 
 ## Regras de composição (apresentação, não balanceamento).
+const OBJETOS_CURVAS_MAX := 6  # curvas lentas com cones e barreira do pacote
 const ESCAPE_M := 3.0          # faixa de escape pintada dos dois lados
 const ZEBRA_M := 1.2           # largura da zebra, por fora do asfalto
 const RAIO_AREIA_M := 90.0     # curva até este raio ganha caixa de areia por fora
@@ -104,6 +105,7 @@ func montar(cena: Node3D, pista: Pista, tema: Dictionary, largura: float) -> voi
 	_zebras()
 	_reta_de_largada(k)
 	DesgastePista.new().montar(self)
+	_objetos_pacote()
 	_mata(caixa, k)
 
 
@@ -437,6 +439,43 @@ func _zebras() -> void:
 			var a: float = lado * _largura * 0.5
 			var b: float = lado * (_largura * 0.5 + ZEBRA_M)
 			_faixa(minf(a, b), maxf(a, b), s0, s1, -0.01, mat)
+
+
+## Objetos do pacote de dano (aprovado pelo usuário), só decoração, sem
+## colisão: nas curvas lentas, uma fila de cones na zona de frenagem, na borda
+## de dentro da faixa de escape, e a barreira de seis pneus por fora, na saída.
+func _objetos_pacote() -> void:
+	var cone: PackedScene = load("res://arte/dano/cone/model.glb")
+	var pneu: PackedScene = load("res://arte/dano/pneu_individual/model.glb")
+	var postos := 0
+	for i in _pista.trechos.size():
+		var t: Dictionary = _pista.trechos[i]
+		var raio := float(t.get("raio_m", 0.0))
+		if raio <= 0.0 or raio > RAIO_AREIA_M or postos >= OBJETOS_CURVAS_MAX:
+			continue
+		postos += 1
+		var fora := -1.0 if t.get("sentido", "esquerda") == "esquerda" else 1.0
+		var s0: float = _pista.inicios[i]
+		for k in 5:
+			var p := _ponto(s0 - 45.0 + k * 6.0, fora * (_largura * 0.5 + 1.3))
+			if not _reservado(p):
+				_decoracao(cone, p, _pista.rumo_em(s0) + _rng.randf() * TAU)
+		var s1: float = s0 + float(t["comprimento_m"]) + 6.0
+		var base := _ponto(s1, fora * (_largura * 0.5 + ESCAPE_M - 0.6))
+		if _reservado(base):
+			continue
+		var rumo := _pista.rumo_em(s1)
+		var dir := Vector2.from_angle(rumo)
+		for x in [-.73, 0.0, .73]:
+			for y in [0.0, .31]:
+				_decoracao(pneu, base + dir * x, rumo, y)
+
+
+func _decoracao(cena: PackedScene, p: Vector2, rumo: float, y := 0.0) -> void:
+	var n: Node3D = cena.instantiate()
+	n.position = _v3(p, y)
+	n.rotation.y = rumo
+	_cena.add_child(n)
 
 
 ## Boxes, arquibancada, torre e pórtico na reta da largada (por fora); paddock

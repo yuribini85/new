@@ -2111,5 +2111,25 @@
    "Blindagem pesada"
   ]
  },
- "_nota_blindagem": "Blindagem (pedido do usuário; números a confirmar): espelho da redução de peso do GT2 do próprio carro. O nível k pesa o inverso do estágio k da redução (×0,95 vira ×1/0,95) e custa o mesmo. Na arena a resistência é ½·m·v_ref², então cresce na mesma razão do peso; na corrida o peso tira desempenho. Ver data_model/blindagem.gd."
+ "_nota_blindagem": "Blindagem (pedido do usuário; números a confirmar): espelho da redução de peso do GT2 do próprio carro. O nível k pesa o inverso do estágio k da redução (×0,95 vira ×1/0,95) e custa o mesmo. Na arena a resistência é ½·m·v_ref², então cresce na mesma razão do peso; na corrida o peso tira desempenho. Ver data_model/blindagem.gd.",
+ "incendio": {
+  "fogo_s": 2.0,
+  "fuga_s": 1.5,
+  "explosao_s": 3.5,
+  "piloto_longe_m": 7.0,
+  "raio_m": 12.0,
+  "queda": 2.0
+ },
+ "piloto_fuga": {
+  "v_ms": 2.8,
+  "raio_m": 0.18,
+  "saida_m": 0.5,
+  "v_atropelo_ms": 1.0,
+  "voo_k": 0.42,
+  "voo_vy": 0.58,
+  "caido_s": 3.0,
+  "levantar_s": 1.68
+ },
+ "recuperacao_atropelo_h": null,
+ "_nota_incendio": "Fogo, fuga e explosão (pacote de dano aprovado pelo usuário, 2026-10-13; sim/arena.gd → _incendios). Pega fogo o carro eliminado com o motor destruído: a outra metade da frente também no limite da ré (decisão do usuário: nem todo carro pega fogo). Tempos e distâncias são os da bancada do pacote (vehicle_damage.gd: motor para → fogo em 2 s → piloto sai 1,5 s depois → explode 3,5 s depois da saída com o piloto a 7 m; raio 12 m, força (1 − d/12)²). Dano da explosão (decisão do usuário): a força × a energia de uma batida a v_ref contra o carro que explodiu, na região virada para ela; pode eliminar. Depois do fim da luta, a explosão é só visual. piloto_fuga: corre a 2,8 m/s até o muro mais perto (pedestrian.gd, modo fuga); carro andando acima de 1 m/s o atropela e o lança (horizontal × 0,42, subida × 0,58 da velocidade); caído 3 s, levanta em 1,68 s (LayToIdle) e continua. recuperacao_atropelo_h: horas reais em que o piloto atropelado do jogador fica fora (decisão do usuário: recuperação pesada, por tempo real); null = a definir, vale 0 até o usuário decidir."
 }

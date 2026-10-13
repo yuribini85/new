@@ -653,3 +653,18 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     artística (o REVIEW.json do pacote; `arte_provisoria` nos dados). Fontes reais (nomes,
     fichas, casamento) ficam só em `referencia/frota360/`, fora do git e do build;
     ferramenta `tools/frota360.py` → `tools/importar_gt2.py --frota`.
+81. **Pacote de pista, piloto e dano** (2026-10-13, decisões do usuário). A simulação da arena
+    ganha fogo, fuga e explosão: o carro eliminado com o motor destruído (a outra metade da
+    frente também no limite da ré) pega fogo; os outros só param e fumegam. Tempos e raio
+    da bancada do pacote (fogo 2 s depois do motor parar, piloto sai 1,5 s depois, explosão
+    3,5 s depois da saída com o piloto a 7 m; raio 12 m, força (1 − d/12)²). A explosão dá
+    dano a quem está perto (a força × uma batida a v_ref contra o carro que explodiu, na
+    região virada para ela; pode eliminar); depois do fim da luta, só visual. O piloto corre
+    para o muro mais perto; carro andando o atropela: ele é lançado, fica caído, levanta e
+    continua até sair. Atropelado da sua dupla fica fora por `recuperacao_atropelo_h` horas
+    reais (a definir; até lá, não fica fora) e a arena espera. O amassado continua. Na tela
+    (física só de tela, sem mudar o resultado): fumaça clara que escurece, fogo, porta, piloto
+    com ragdoll, explosão com rodas e chapas soltas e carcaça queimada; na arena, barreiras de
+    concreto que racham e quebram no muro, barreira de pneus que desmonta, cones, barris e
+    árvores fora do muro, empurrados pelos carros (corpo cinemático); nas pistas de corrida,
+    cones e pneus só de decoração. Arte e animações do pacote em `arte/dano/` (animações CC0).

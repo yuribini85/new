@@ -98,7 +98,21 @@ var _orbita := 0.0  # ângulo da câmera em volta do centro (rad)
 var _carros := {}  # id -> Node3D
 var _malhas := {}  # id -> [{mi, rel, surfs: [{arr, prim, mat}]}]: malhas originais da carroceria
 var _estagio_visto := {}  # id -> estágio de dano por região já aplicado na malha
-var _fumaca := {}  # id -> CPUParticles3D
+var _objetos: ObjetosArena
+var _corpos := {}  # id -> AnimatableBody3D (física de tela)
+var _incendio := {}  # id -> Incendio3D (fumaça, fogo e explosão do pacote de dano)
+var _pilotos := {}  # id do carro -> Piloto3D (fugindo do carro em chamas)
+var _piloto_fora := {}  # id -> s ainda correndo para fora do muro antes de sumir
+var _piloto_fuga := {}  # data/arena.json → piloto_fuga
+## Destroços soltos ficam no chão; acima disso, os mais antigos somem (celular).
+const SOLTAS_MAX := 80
+## Camadas de colisão da física de tela (pacote de dano, adaptadas): 1 chão,
+## 2 objetos e piloto, 4 carros, 8 destroços.
+const CAMADA_CHAO := 1
+const CAMADA_OBJETO := 2
+const CAMADA_CARRO := 4
+## Depois de chegar ao muro, o piloto corre mais isso e some (s).
+const PILOTO_SAI_S := 1.5
 var _eventos_vistos := 0
 var _estagios := 5
 var _raio := 45.0
@@ -158,7 +172,11 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_soltas = []
 	_malhas = {}
 	_estagio_visto = {}
-	_fumaca = {}
+	_incendio = {}
+	_corpos = {}
+	_pilotos = {}
+	_piloto_fora = {}
+	_piloto_fuga = params.get("piloto_fuga", {})
 	_resultado = resultado
 	_amostras = resultado.get("amostras", [])
 	_estagios = int(params.get("estagios", 5))
@@ -178,6 +196,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 			c = CarroBloco.new().configurar_modelo(base, cor, faixas_pintura.get(id, {}))
 		_cena.add_child(c)
 		_carros[id] = c
+		_corpos[id] = _corpo_fisico(c)
 		_malhas[id] = _malhas_carroceria(c)
 		if int(blindagens.get(id, 0)) > 0 and c is CarroBloco:
 			(c as CarroBloco).blindar(String(base.get("id", "")), int(blindagens[id]))
@@ -193,8 +212,10 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_mirar()
 
 
+## Até o fim da cena: depois do resultado, o fogo, a fuga e a explosão que
+## faltavam (só tela).
 func duracao() -> float:
-	return float(_resultado.get("duracao", 0.0))
+	return float(_resultado.get("duracao_cena", _resultado.get("duracao", 0.0)))
 
 
 ## Posições, dano e efeitos no `tempo` atual (interpolando entre amostras).
@@ -212,7 +233,10 @@ func atualizar(delta: float) -> void:
 		var sb: Dictionary = b[id]
 		var p: Vector2 = sa["pos"].lerp(sb["pos"], u)
 		var c: Node3D = _carros[id]
+		var antes := c.position
 		c.position = Vector3(p.x, _forma.altura(p), -p.y)
+		if delta > 0.0:
+			_corpos[id].set_meta("vel", (c.position - antes) / delta)
 		var rumo := lerp_angle(float(sa["rumo"]), float(sb["rumo"]), u)
 		c.rotation.y = rumo
 		# Chão irregular: o carro inclina com ele (frente sobe na subida; o lado
@@ -233,6 +257,7 @@ func atualizar(delta: float) -> void:
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
 	_mostrar_aneis(b)
 	_eventos(delta)
+	_mover_pilotos(a, b, u, delta)
 	_assentar(delta)
 	_cair_soltas(delta)
 	if delta > 0.0:
@@ -627,11 +652,8 @@ func _mostrar_dano(id: String, dano: PackedFloat32Array, eliminado: bool) -> voi
 	var tom := Color(0.32, 0.3, 0.3) if eliminado else Color.WHITE.lerp(Color(0.75, 0.72, 0.7), pior)
 	_tingir(c, tom)
 	var fumando := eliminado or Arena.estagio(pior, _estagios) >= FUMACA_ESTAGIO
-	if fumando and not _fumaca.has(id) and not Preferencias.efeitos_leves:
-		_fumaca[id] = _criar_fumaca(c, eliminado)
-	if _fumaca.has(id) and eliminado and not _fumaca[id].get_meta("preta", false):
-		_fumaca[id].queue_free()
-		_fumaca[id] = _criar_fumaca(c, true)
+	if fumando and not Preferencias.efeitos_leves:
+		_fogo_de(id).fumacar(eliminado)
 
 
 func _tingir(n: Node, tom: Color) -> void:
@@ -643,56 +665,24 @@ func _tingir(n: Node, tom: Color) -> void:
 		_tingir(f, tom)
 
 
-func _criar_fumaca(c: Node3D, preta: bool) -> CPUParticles3D:
-	var f := CPUParticles3D.new()
-	f.amount = 16 if preta else 12
-	f.lifetime = 1.6
-	f.local_coords = false
-	f.direction = Vector3.UP
-	f.spread = 18.0
-	f.initial_velocity_min = 1.2
-	f.initial_velocity_max = 2.4
-	f.gravity = Vector3(0.6, 0.4, 0.0)  # deriva com o vento
-	f.scale_amount_min = 0.6
-	f.scale_amount_max = 1.8
-	var q := QuadMesh.new()
-	q.size = Vector2(1.0, 1.0)
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	m.albedo_texture = _textura_amassado()
-	m.render_priority = 35
-	q.material = m
-	f.mesh = q
-	# Cor no material, não na partícula: no renderizador de compatibilidade
-	# (web, celular) a cor da partícula (color_ramp) chegava preta e cada
-	# baforada virava uma bola preta no capô. Sempre clara; o eliminado só
-	# solta mais, um pouco mais cinza. A baforada cresce e some no fim.
-	var base := Color(0.62, 0.61, 0.6) if preta else Color(0.78, 0.77, 0.75)
-	m.albedo_color = Color(base, 0.22)
-	var curva := Curve.new()
-	curva.add_point(Vector2(0.0, 0.3))
-	curva.add_point(Vector2(0.7, 1.0))
-	curva.add_point(Vector2(1.0, 0.0))
-	f.scale_amount_curve = curva
-	f.position = Vector3(Arena.COMPRIMENTO_M * 0.3, 1.4, 0.0)  # do capô (motor na frente), já acima dele
-	f.set_meta("preta", preta)
-	c.add_child(f)
-	f.emitting = true
-	return f
-
-
-
-
-
 ## Batidas novas até o tempo atual: faíscas no carro atingido e um tranco.
 func _eventos(_delta: float) -> void:
 	var evs: Array = _resultado.get("eventos", [])
 	while _eventos_vistos < evs.size() and float(evs[_eventos_vistos]["t"]) <= tempo:
 		var e: Dictionary = evs[_eventos_vistos]
 		_eventos_vistos += 1
-		if e["tipo"] != "impacto" or not _carros.has(e["carro"]):
+		if not _carros.has(e["carro"]):
+			continue
+		match String(e["tipo"]):
+			"fogo":
+				_fogo_de(e["carro"]).fogo()
+			"fuga":
+				_fuga(e)
+			"explosao":
+				_explodir(e)
+			"atropelo":
+				_atropelar(e)
+		if e["tipo"] != "impacto":
 			continue
 		_chamar_batida(e)
 		_tombar(e)
@@ -700,7 +690,132 @@ func _eventos(_delta: float) -> void:
 		var forte := float(e["dano"]) > 0.08
 		if forte:
 			_tremor = minf(_tremor + float(e["dano"]) * 2.0, 0.6)
-		_faiscas(_carros[e["carro"]].global_position + Vector3(0, 0.8, 0), forte)
+		if not e.get("explosao", false):
+			_faiscas(_carros[e["carro"]].global_position + Vector3(0, 0.8, 0), forte)
+
+
+# --- Fogo, fuga e explosão (pacote de dano) ----------------------------------------
+
+func _fogo_de(id: String) -> Incendio3D:
+	if not _incendio.has(id):
+		var f := Incendio3D.new()
+		var c: Node3D = _carros[id]
+		var comp: float = (c as CarroBloco).dimensoes().x if c is CarroBloco else Arena.COMPRIMENTO_M
+		f.motor = Vector3(comp * 0.3, 0.9, 0.0)  # frente em +X
+		c.add_child(f)
+		_incendio[id] = f
+	return _incendio[id]
+
+
+## A porta do lado do muro abre e o piloto sai correndo.
+func _fuga(e: Dictionary) -> void:
+	var c: Node3D = _carros[e["carro"]]
+	var dim: Vector2 = (c as CarroBloco).dimensoes() if c is CarroBloco else Vector2(Arena.COMPRIMENTO_M, Arena.LARGURA_M)
+	var lado := float(e.get("lado", 1.0))  # +1 esquerda (+Y da simulação = −Z do mundo)
+	var porta := Node3D.new()
+	c.add_child(porta)
+	porta.position = Vector3(dim.x * 0.12, 0.98, -lado * dim.y * 0.5)
+	var chapa := MeshInstance3D.new()
+	var caixa := BoxMesh.new()
+	caixa.size = Vector3(.68, .55, .045)
+	chapa.mesh = caixa
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(.74, .73, .66)
+	chapa.material_override = m
+	porta.add_child(chapa)
+	chapa.position.x = -.34
+	create_tween().tween_property(porta, "rotation:y", lado * .95, .35)
+	var p := Piloto3D.new()
+	_cena.add_child(p)
+	_pilotos[e["carro"]] = p
+	p.global_position = c.global_position + Vector3(0, 0, -lado * (dim.y * 0.5 + 0.3))
+
+
+func _explodir(e: Dictionary) -> void:
+	var id := String(e["carro"])
+	_fogo_de(id).explodir()
+	_tremor = minf(_tremor + 0.5, 0.8)
+	Sons.estrondo(self)
+	var c = _carros[id]
+	if c is CarroBloco:
+		(c as CarroBloco).carbonizar()
+		for r: Node3D in (c as CarroBloco).soltar_rodas(_cena):
+			_lancar(r, Vector3(randf_range(-4, 4), randf_range(2, 4), randf_range(-3, 3)), Vector3(4, 2, 1))
+	# Quatro chapas da carroceria.
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(.18, .17, .14)
+	for k in 4:
+		var chapa := MeshInstance3D.new()
+		var caixa := BoxMesh.new()
+		caixa.size = Vector3(.55, .05, .35)
+		chapa.mesh = caixa
+		chapa.material_override = m
+		_cena.add_child(chapa)
+		chapa.global_position = (c as Node3D).global_position + Vector3(randf_range(-.5, 1.0), 1.0, randf_range(-.4, .4))
+		_lancar(chapa, Vector3(randf_range(-3, 3), randf_range(3, 6), randf_range(-3, 3)), Vector3(3, 2, -2))
+
+
+## Destroço solto: cai, quica e para no chão (mesmo caminho das proteções).
+func _lancar(no: Node3D, v: Vector3, giro: Vector3) -> void:
+	_soltas.append({"no": no, "v": v, "giro": giro})
+	while _soltas.size() > SOLTAS_MAX:
+		var velho: Dictionary = _soltas.pop_front()
+		if is_instance_valid(velho["no"]):
+			(velho["no"] as Node3D).queue_free()
+
+
+## O carro que atropelou: velocidade dele nas amostras em volta do tempo.
+func _atropelar(e: Dictionary) -> void:
+	var p: Piloto3D = _pilotos.get(e["carro"])
+	if p == null:
+		return
+	var por := String(e["por"])
+	var a: Dictionary = _amostras[maxi(_i - 1, 0)]
+	var b: Dictionary = _amostras[mini(_i + 1, _amostras.size() - 1)]
+	var v2 := Vector2.ZERO
+	if a.has(por) and b.has(por) and float(b["t"]) > float(a["t"]):
+		v2 = ((b[por]["pos"] as Vector2) - (a[por]["pos"] as Vector2)) / (float(b["t"]) - float(a["t"]))
+	if v2.length() < 0.5:
+		v2 = Vector2.from_angle(float(b[por]["rumo"])) * float(e.get("v", 5.0))
+	p.atropelar(Vector3(v2.x, 0, -v2.y))
+
+
+## Os pilotos seguem a simulação: correndo, no ponto dela; caído, o ragdoll;
+## levantando, voltam ao ponto dela; fora, correm mais um pouco e somem.
+func _mover_pilotos(a: Dictionary, b: Dictionary, u: float, delta: float) -> void:
+	for id in _pilotos.keys():
+		var p: Piloto3D = _pilotos[id]
+		if not is_instance_valid(p):
+			_pilotos.erase(id)
+			continue
+		if _piloto_fora.has(id):
+			_piloto_fora[id] = float(_piloto_fora[id]) - delta
+			p.avancar(float(_piloto_fuga.get("v_ms", 2.8)) * delta)
+			if float(_piloto_fora[id]) <= 0.0:
+				p.queue_free()
+				_pilotos.erase(id)
+				_piloto_fora.erase(id)
+			continue
+		var pa: Dictionary = a.get("pilotos", {}).get(id, {})
+		var pb: Dictionary = b.get("pilotos", {}).get(id, pa)
+		if pb.is_empty():
+			continue
+		if pa.is_empty():
+			pa = pb
+		var pos: Vector2 = (pa["pos"] as Vector2).lerp(pb["pos"], u)
+		var onde := Vector3(pos.x, _forma.altura(pos), -pos.y)
+		var est := String(pb["estado"])
+		if est in ["correndo", "fora"] and p.estado == "caido":
+			p.levantar(onde, 0.5)  # pulou o tempo: levanta já
+		match est:
+			"correndo":
+				p.correr(onde, lerp_angle(float(pa["rumo"]), float(pb["rumo"]), u), float(_piloto_fuga.get("v_ms", 2.8)))
+			"levantando":
+				p.levantar(onde, float(_piloto_fuga.get("levantar_s", 1.68)))
+				p.correr(onde, float(pb["rumo"]), 0.0)
+			"fora":
+				p.correr(onde, float(pb["rumo"]), float(_piloto_fuga.get("v_ms", 2.8)))
+				_piloto_fora[id] = PILOTO_SAI_S
 
 
 ## A proteção da região atingida sai do carro e cai no chão, rolando.
@@ -797,6 +912,9 @@ static func _textura_amassado() -> Texture2D:
 ## concreto por fora.
 func _construir_arena() -> void:
 	_chao()
+	_objetos = ObjetosArena.new()
+	_cena.add_child(_objetos)
+	_objetos.montar(_forma, hash(_forma.muro))
 	_pneus_muro()
 	_ilhas()
 
@@ -866,6 +984,48 @@ func _chao() -> void:
 		fundo = minf(fundo, h)
 	fora.position.y = fundo - 1.0  # abaixo do fundo das crateras
 	_cena.add_child(fora)
+	_chao_fisico(mn, nx, ny, alturas)
+
+
+## Corpo cinemático do carro na física de tela: segue a simulação e empurra o
+## piloto caído e os objetos da arena (que não mudam o resultado).
+func _corpo_fisico(c: Node3D) -> AnimatableBody3D:
+	var dim: Vector2 = (c as CarroBloco).dimensoes() if c is CarroBloco else Vector2(Arena.COMPRIMENTO_M, Arena.LARGURA_M)
+	var corpo := AnimatableBody3D.new()
+	corpo.collision_layer = CAMADA_CARRO
+	corpo.collision_mask = 0
+	var cs := CollisionShape3D.new()
+	var caixa := BoxShape3D.new()
+	caixa.size = Vector3(dim.x, 1.2, dim.y)
+	cs.shape = caixa
+	cs.position.y = 0.7
+	corpo.add_child(cs)
+	c.add_child(corpo)
+	return corpo
+
+
+## O mesmo chão para a física de tela (ragdoll do piloto, destroços e objetos
+## da arena): camada 1, como no pacote de dano. A simulação não usa.
+func _chao_fisico(mn: Vector2, nx: int, ny: int, alturas: PackedFloat32Array) -> void:
+	var forma := HeightMapShape3D.new()
+	forma.map_width = nx + 1
+	forma.map_depth = ny + 1
+	var dados := PackedFloat32Array()
+	dados.resize((nx + 1) * (ny + 1))
+	# Linhas do mapa crescem em +Z do mundo, que é −Y da simulação.
+	for jz in ny + 1:
+		for i in nx + 1:
+			dados[jz * (nx + 1) + i] = alturas[(ny - jz) * (nx + 1) + i]
+	forma.map_data = dados
+	var corpo := StaticBody3D.new()
+	corpo.collision_layer = CAMADA_CHAO
+	corpo.collision_mask = 0
+	var cs := CollisionShape3D.new()
+	cs.shape = forma
+	cs.scale = Vector3.ONE * CHAO_PASSO_M
+	corpo.add_child(cs)
+	corpo.position = Vector3(mn.x + nx * CHAO_PASSO_M * 0.5, 0.0, -(mn.y + ny * CHAO_PASSO_M * 0.5))
+	_cena.add_child(corpo)
 
 
 ## Pneus em duas fileiras seguindo o muro (polígono), no chão de cada ponto,
@@ -882,6 +1042,8 @@ func _pneus_muro() -> void:
 		for camada in 2:
 			for t in passos:
 				var q := a.lerp(b, (float(t) + 0.5 * camada) / passos) + fora * (0.7 + camada * 1.15)
+				if _atras_do_concreto(q):
+					continue
 				pontos.append([Vector3(q.x, _forma.altura(q) + 0.18, -q.y), k % 9 == 0])
 				k += 1
 	for o in _forma.obstaculos:
@@ -911,6 +1073,14 @@ func _pneus_muro() -> void:
 	mp.roughness = 0.9
 	pneus.material_override = mp
 	_cena.add_child(pneus)
+
+
+## Trecho do muro com barreira de concreto (ObjetosArena): sem pneus atrás.
+func _atras_do_concreto(q: Vector2) -> bool:
+	for tr in _objetos.trechos_concreto:
+		if q.distance_to(Geometry2D.get_closest_point_to_segment(q, tr[0], tr[1])) < 2.0:
+			return true
+	return false
 
 
 ## Ilhas: um monte de entulho escuro dentro do anel de pneus de cada obstáculo.

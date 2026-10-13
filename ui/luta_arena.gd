@@ -280,6 +280,10 @@ func _mostrar_final() -> void:
 		notas.append("O carro da sua dupla foi eliminado e saiu da garagem.")
 	if f.get("venceu_equipe", false) and f["perdeu"]:
 		notas.append("Mesmo assim, a sua dupla ficou de pé.")
+	for at in f.get("atropelados", []):
+		var falta := float(at.get("fora_s", 0.0))
+		notas.append("Atropelamento na fuga do fogo: %s%s." % [at["nome"],
+				" fica fora por %s" % ArenaCarreira.texto_tempo(falta) if falta > 0.0 else " se levantou"])
 	if f.get("subiu_nivel", false):
 		notas.append("Próximo campeonato: uma equipe a mais.")
 	# Desafio do The Grid (decisão 74): o placar da série.

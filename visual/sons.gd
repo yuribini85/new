@@ -243,6 +243,35 @@ static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0) -> void:
 	p.play()
 
 
+static var _estrondo: AudioStreamWAV
+
+
+## Estrondo da explosão (pacote de dano): ruído filtrado com uma varredura
+## grave, caindo em 1 s. Toca num tocador próprio, como tocar_ui.
+static func estrondo(no: Node, db := -6.0) -> void:
+	if no == null or not no.is_inside_tree():
+		return
+	if _estrondo == null:
+		var n := TAXA
+		var dados := PackedByteArray()
+		dados.resize(n * 2)
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 71023
+		var filtrado := 0.0
+		for i in n:
+			var t := float(i) / TAXA
+			filtrado = lerpf(filtrado, rng.randf_range(-1, 1), .10)
+			var x := (filtrado * .8 + sin(TAU * (62 * t - 12 * t * t)) * .4) * exp(-5 * t) * minf(1, t * 500)
+			dados.encode_s16(i * 2, int(clampf(x, -1, 1) * 28000))
+		_estrondo = _wav(dados, false, n)
+	var p := AudioStreamPlayer.new()
+	p.stream = _estrondo
+	p.volume_db = db
+	p.finished.connect(p.queue_free)
+	no.get_tree().root.add_child(p)
+	p.play()
+
+
 ## Tom de `freq` Hz por `dur` s; dente de serra suave (motor) ou seno.
 static func _onda(freq: float, dur: float, amp: float, serra := false, laco := false) -> AudioStreamWAV:
 	var n := int(TAXA * dur)

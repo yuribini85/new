@@ -582,3 +582,117 @@ func test_desafios_do_grid() -> void:
 	igual(PinturaCarro.posicao_que_libera(d, "padroes", 6), 10, "o 7º desenho na #10")
 	j.free()
 	d.free()
+
+
+## Pacote de dano: motor destruído pega fogo, o piloto sai e o carro explode,
+## com dano em quem está perto e nada em quem está longe.
+func test_motor_destruido_pega_fogo_piloto_sai_e_explode() -> void:
+	var p := _params()
+	p["tempo_max_s"] = 25.0
+	var alvo := _carro("alvo", 1200.0, 200.0, Vector2(0, 0), 0.0, Vector2.ZERO, 0.0)
+	alvo["dano"] = [0.95, 0.95, 0, 0, 0, 0]
+	# Vem de frente na frente do alvo e para perto.
+	var bate := _carro("bate", 1200.0, 200.0, Vector2(9, 0), PI, Vector2(-9, 0), 0.0)
+	var longe := _carro("longe", 1200.0, 200.0, Vector2(-30, 0), 0.0, Vector2.ZERO, 0.0)
+	var r := Arena.correr([alvo, bate, longe], p, 1, true)
+	var tipos: Array = r["eventos"].filter(func(e): return e["carro"] == "alvo").map(func(e): return e["tipo"])
+	verificar("eliminado" in tipos and "fogo" in tipos and "fuga" in tipos and "explosao" in tipos,
+			"eliminado → fogo → fuga → explosão (%s)" % [tipos])
+	var t := {}
+	for e in r["eventos"]:
+		if e["carro"] == "alvo" and not t.has(e["tipo"]):
+			t[e["tipo"]] = float(e["t"])
+	var inc: Dictionary = p["incendio"]
+	verificar(absf(t["fogo"] - t["eliminado"] - float(inc["fogo_s"])) < 0.05, "fogo depois do motor parar")
+	verificar(absf(t["fuga"] - t["fogo"] - float(inc["fuga_s"])) < 0.05, "piloto sai depois do fogo")
+	verificar(t["explosao"] - t["fuga"] >= float(inc["explosao_s"]) - 0.05, "explode depois da saída")
+	var expl: Array = r["eventos"].filter(func(e): return e.get("explosao", false) and e["tipo"] == "impacto")
+	verificar(expl.any(func(e): return e["carro"] == "bate"), "quem está perto toma dano da explosão")
+	verificar(not expl.any(func(e): return e["carro"] == "longe"), "quem está longe não toma")
+	var com_piloto: Array = r["amostras"].filter(func(a): return a.has("pilotos"))
+	verificar(not com_piloto.is_empty(), "o piloto aparece nas amostras")
+
+
+func test_frente_so_de_um_lado_nao_pega_fogo() -> void:
+	var p := _params()
+	p["tempo_max_s"] = 15.0
+	var alvo := _carro("alvo", 1200.0, 200.0, Vector2(0, 0), 0.0, Vector2.ZERO, 0.0)
+	alvo["dano"] = [0.95, 0.2, 0, 0, 0, 0]
+	var bate := _carro("bate", 1200.0, 200.0, Vector2(9, 0.6), PI, Vector2(-9, 0), 0.0)
+	var longe := _carro("longe", 1200.0, 200.0, Vector2(-30, 0), 0.0, Vector2.ZERO, 0.0)
+	var r := Arena.correr([alvo, bate, longe], p, 1, false)
+	verificar(r["carros"]["alvo"]["eliminado"], "eliminado")
+	verificar(not r["eventos"].any(func(e): return e["tipo"] == "fogo"), "só fumaça, sem fogo")
+
+
+func test_explosao_depois_do_fim_e_so_visual() -> void:
+	var p := _params()
+	p["tempo_max_s"] = 25.0
+	var alvo := _carro("alvo", 1200.0, 200.0, Vector2(0, 0), 0.0, Vector2.ZERO, 0.0)
+	alvo["dano"] = [0.95, 0.95, 0, 0, 0, 0]
+	var bate := _carro("bate", 1200.0, 200.0, Vector2(9, 0), PI, Vector2(-9, 0), 0.0)
+	var r := Arena.correr([alvo, bate], p, 1, true)
+	var dano_fim: PackedFloat32Array = r["carros"]["bate"]["dano"].duplicate()
+	verificar(float(r["duracao_cena"]) > float(r["duracao"]), "a cena segue depois do fim")
+	var ex: Array = r["eventos"].filter(func(e): return e["tipo"] == "explosao")
+	verificar(ex.size() == 1 and not ex[0]["valendo"], "explode depois do fim, sem valer")
+	igual(r["carros"]["bate"]["dano"], dano_fim, "sem dano depois do fim")
+	verificar(r["amostras"][-1]["t"] >= float(r["duracao_cena"]) - 0.01, "amostras até o fim da cena")
+
+
+func test_piloto_atropelado_cai_levanta_e_sai() -> void:
+	var p := _params()
+	var forma := ArenaForma.de(p)
+	var pf: Dictionary = p["piloto_fuga"]
+	var dono := {"id": "dono", "pos": Vector2(-20, 0), "rumo": 0.0, "L": 4.4, "W": 1.75, "vel": Vector2.ZERO,
+			"eliminado": true, "piloto": {"pos": Vector2(0, 0), "rumo": 0.0, "estado": "correndo", "t_estado": 0.0,
+			"t_fuga": 0.0, "de": Vector2.ZERO, "para": Vector2.ZERO, "voo_s": 0.0}}
+	var carro := {"id": "carro", "pos": Vector2(-1.8, 0), "rumo": 0.0, "L": 4.4, "W": 1.75, "vel": Vector2(10, 0),
+			"eliminado": false}
+	var eventos := []
+	var dt := float(p["dt_s"])
+	var t := 0.0
+	Arena._piloto(dono, [dono, carro], pf, eventos, t, dt, forma, true)
+	verificar(dono.get("atropelado", false), "carro andando atropela")
+	igual(dono["piloto"]["estado"], "voando", "lançado")
+	verificar((dono["piloto"]["para"] as Vector2).x > 0.5, "lançado na direção do carro")
+	carro["pos"] = Vector2(30, 30)
+	carro["vel"] = Vector2.ZERO
+	var estados := []
+	while t < 120.0 and dono["piloto"]["estado"] != "fora":
+		t += dt
+		Arena._piloto(dono, [dono, carro], pf, eventos, t, dt, forma, true)
+		if estados.is_empty() or estados[-1] != dono["piloto"]["estado"]:
+			estados.append(dono["piloto"]["estado"])
+	igual(estados, ["voando", "caido", "levantando", "correndo", "fora"], "voa, cai, levanta, corre e sai")
+
+
+## Atropelado na fuga: fora por recuperacao_atropelo_h horas reais (sem o
+## número, não fica fora); a arena não abre enquanto ele se recupera.
+func test_piloto_atropelado_fica_em_recuperacao() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j := _jogador_real(d, 3)
+	j.flags[EquipeJogador.FLAG_ARENA] = true
+	j.pilotos = {"corrida": "", "arena": ["ayla_moreno", "axel_brennan"]}
+	var carros: Array = j.garagem.lista()
+	Escalacao.definir(j, "corrida", carros[2].uid)
+	Escalacao.definir(j, "arena1", carros[0].uid)
+	Escalacao.definir(j, "arena2", carros[1].uid)
+	var res := {"classificacao": ["jogador", "r1"], "eventos": [], "equipe_vencedora": "jogador",
+		"carros": {"jogador": {"eliminado": false, "eliminou": 0, "equipe": "jogador", "atropelado": true},
+			"r1": {"eliminado": true, "eliminou": 0, "equipe": "x"}}}
+	var antes = d.arena().get("recuperacao_atropelo_h")
+	d.arena()["recuperacao_atropelo_h"] = null
+	var f := ArenaCarreira.aplicar(d, j, carros[0].uid, res)
+	igual(f["atropelados"].size(), 1, "o atropelado aparece no resultado")
+	igual(ArenaCarreira.recuperacao_s(j, "ayla_moreno"), 0.0, "sem horas definidas: não fica fora")
+	d.arena()["recuperacao_atropelo_h"] = 2.0
+	ArenaCarreira.aplicar(d, j, carros[0].uid, res)
+	var falta := ArenaCarreira.recuperacao_s(j, "ayla_moreno")
+	verificar(falta > 7100.0 and falta <= 7200.0, "fora por 2 h (%.0f s)" % falta)
+	verificar("recupera" in ArenaCarreira.bloqueio(d, j), "a arena espera a recuperação")
+	verificar(ArenaCarreira.recuperacao_s(j, "ayla_moreno", Aceleracao.agora(j) + 7201.0) == 0.0, "depois volta")
+	d.arena()["recuperacao_atropelo_h"] = antes
+	j.free()
+	d.free()

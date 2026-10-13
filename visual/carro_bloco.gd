@@ -437,6 +437,44 @@ func soltar_protecao(regiao: String, mundo: Node3D) -> Node3D:
 	return no
 
 
+## Explosão (pacote de dano): as rodas saem do carro para o `mundo` (com a
+## malha delas, filha ou irmã) e são devolvidas para cair.
+func soltar_rodas(mundo: Node3D) -> Array:
+	var soltas := []
+	for r in _rodas_glb:
+		var no: Node3D = r[0]
+		var grupo: Array = [no]
+		if no.get_parent() != null:
+			for irmao in no.get_parent().get_children():
+				if irmao != no and irmao is Node3D and String(irmao.name).begins_with(String(no.name) + "_Wheel"):
+					grupo.append(irmao)
+		for n: Node3D in grupo:
+			var t := n.global_transform
+			n.get_parent().remove_child(n)
+			mundo.add_child(n)
+			n.global_transform = t
+			soltas.append(n)
+	_rodas_glb.clear()
+	for roda in _rodas:
+		var t: Transform3D = roda.global_transform
+		roda.get_parent().remove_child(roda)
+		mundo.add_child(roda)
+		roda.global_transform = t
+		soltas.append(roda)
+	_rodas.clear()
+	return soltas
+
+
+## Carcaça chamuscada depois da explosão.
+func carbonizar() -> void:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(.16, .15, .13)
+	m.roughness = 1
+	for mi: MeshInstance3D in find_children("*", "MeshInstance3D", true, false):
+		if mi.name != "Sombra":
+			mi.material_override = m
+
+
 ## Gira as rodas pela distância andada (m).
 ## Comprimento e largura (m).
 func dimensoes() -> Vector2:

@@ -37,7 +37,11 @@ func _process(_delta: float) -> bool:
 func _rodar() -> void:
 	var falhas := 0
 	var total := 0
+	# TESTES=arena roda só as suítes cujo arquivo contém o texto (rodada rápida).
+	var filtro := OS.get_environment("TESTES")
 	for suite_script in SUITES:
+		if filtro != "" and not filtro in suite_script.resource_path.get_file():
+			continue
 		var suite = suite_script.new()
 		for m in suite.get_method_list():
 			if not m["name"].begins_with("test_"):
