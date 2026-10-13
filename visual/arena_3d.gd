@@ -50,7 +50,7 @@ const SEUS := ["jogador", "parceiro"]
 ## ele cai de volta; de frente ou de trás, o nariz ou a traseira saltam. A
 ## gravidade traz de volta e o chão quica pouco. Velocidade angular = dano ×
 ## ganho, com teto. Capotagem (pedido do usuário): a batida muito forte de lado
-## (TOMBO_CAPOTA) passa do ponto de tombar, o carro gira no ar e cai de teto
+## (arena.json → capota_dano, a mesma regra da simulação) passa do ponto de tombar, o carro gira no ar e cai de teto
 ## para baixo, e fica assim (como no Destruction Derby; decisão do usuário).
 const TOMBO_DANO := 0.06  # dano mínimo da batida de lado que levanta o carro
 const TOMBO_DANO_PONTA := 0.12  # de frente/trás (são muitas: só as fortes)
@@ -60,8 +60,7 @@ const TOMBO_MAX_LADO := 4.0  # rad/s: ~50° no pico (só a batida de capotar vir
 const TOMBO_MAX_PONTA := 1.6  # ~8°: o nariz não sobe por cima do outro carro
 const TOMBO_GRAVIDADE := 9.0  # rad/s²
 const TOMBO_QUIQUE := 0.25
-const TOMBO_CAPOTA := 0.2  # dano da batida de lado que capota (~5 por luta de 10 carros)
-const TOMBO_VIRA := 1.25  # rad: passou disso, o carro não volta, capota
+const TOMBO_VIRA := 1.25  # rad: o máximo que tomba de lado sem capotar (aí volta)
 const CAPOTA_V := 9.0  # rad/s da volta no ar (~0,7 s)
 const CAPOTA_SALTO_M := 1.1  # altura do arco da volta
 const ALTURA_CARRO_M := 1.35  # de teto para baixo, o carro apoia no teto
@@ -104,6 +103,7 @@ var _incendio := {}  # id -> Incendio3D (fumaça, fogo e explosão do pacote de 
 var _pilotos := {}  # id do carro -> Piloto3D (fugindo do carro em chamas)
 var _piloto_fora := {}  # id -> s ainda correndo para fora do muro antes de sumir
 var _piloto_fuga := {}  # data/arena.json → piloto_fuga
+var _capota_dano := 0.2  # data/arena.json → capota_dano
 ## Destroços soltos ficam no chão; acima disso, os mais antigos somem (celular).
 const SOLTAS_MAX := 80
 ## Camadas de colisão da física de tela (pacote de dano, adaptadas): 1 chão,
@@ -177,6 +177,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_pilotos = {}
 	_piloto_fora = {}
 	_piloto_fuga = params.get("piloto_fuga", {})
+	_capota_dano = float(params.get("capota_dano", 0.2))
 	_resultado = resultado
 	_amostras = resultado.get("amostras", [])
 	_estagios = int(params.get("estagios", 5))
@@ -429,7 +430,7 @@ func _tombar(e: Dictionary) -> void:
 	var regiao := String(e.get("regiao", ""))
 	if regiao.begins_with("lado"):
 		var sinal := 1.0 if regiao.ends_with("_e") else -1.0
-		if dano >= TOMBO_CAPOTA and not tb.get("capota", false):
+		if dano >= _capota_dano and not tb.get("capota", false):
 			tb["v_rolagem"] = sinal * CAPOTA_V
 		else:
 			tb["v_rolagem"] = float(tb["v_rolagem"]) + sinal * minf(dano * TOMBO_GANHO_LADO, TOMBO_MAX_LADO)
@@ -440,8 +441,7 @@ func _tombar(e: Dictionary) -> void:
 
 
 ## A gravidade traz o carro de volta às quatro rodas, com um quique curto.
-## Passou de TOMBO_VIRA de lado: capota, dá a volta inteira e cai nas rodas
-## (o eliminado para de teto para baixo).
+## A batida que capota (capota_dano) gira o carro no ar até o teto, e ele fica assim.
 func _assentar(delta: float) -> void:
 	if delta <= 0.0:
 		return
@@ -464,11 +464,11 @@ func _assentar(delta: float) -> void:
 			continue
 		if tb.get("fixo", false):
 			continue
-		if absf(float(tb["rolagem"])) > TOMBO_VIRA and absf(float(tb["v_rolagem"])) > 0.5 \
-				and signf(float(tb["v_rolagem"])) == signf(float(tb["rolagem"])):
-			tb["capota"] = true
-			tb["v_rolagem"] = signf(float(tb["v_rolagem"])) * CAPOTA_V
-			continue
+		# Só capota a batida que capota na simulação (capota_dano); o resto
+		# para no limite de tombar e volta.
+		if absf(float(tb["rolagem"])) > TOMBO_VIRA:
+			tb["rolagem"] = signf(float(tb["rolagem"])) * TOMBO_VIRA
+			tb["v_rolagem"] = minf(float(tb["v_rolagem"]) * signf(float(tb["rolagem"])), 0.0) * signf(float(tb["rolagem"]))
 		for eixo in [["rolagem", "v_rolagem"], ["arfagem", "v_arfagem"]]:
 			var a := float(tb[eixo[0]])
 			var v := float(tb[eixo[1]])

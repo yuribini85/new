@@ -77,8 +77,8 @@ static func nome_nivel(equipes: int) -> String:
 
 
 ## Piloto atropelado na arena (pacote de dano, decisão do usuário): fica fora
-## por arena.json → recuperacao_atropelo_h horas reais (também com o app
-## fechado). Segundos que faltam; 0 = pode lutar.
+## pelo tempo de tempo_recuperacao (relógio real, também com o app fechado).
+## Segundos que faltam; 0 = pode lutar.
 static func recuperacao_s(jogador: Node, piloto_id: String, agora: float = -1.0) -> float:
 	var r: Dictionary = jogador.arena.get("recuperacao", {})
 	if piloto_id == "" or not r.has(piloto_id):
@@ -93,12 +93,20 @@ static func texto_tempo(s: float) -> String:
 	return "%d h %02d min" % [m / 60, m % 60] if m >= 60 else "%d min" % m
 
 
+## Tempo fora do piloto atropelado (s): arena.json → recuperacao_atropelo
+## "treino" = o do próximo nível de treino dele, sem o desconto do embalo
+## (decisão do usuário); sem o critério, não fica fora.
+static func tempo_recuperacao(dados: Node, jogador: Node, piloto_id: String) -> float:
+	if String(dados.arena().get("recuperacao_atropelo", "")) != "treino":
+		return 0.0
+	return float(GestaoEquipe.cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 \
+			* (GestaoEquipe.nivel_treino(jogador, piloto_id) + 1)
+
+
 ## Registra os atropelados da sua dupla (o piloto de ARENA 1 no "jogador", o
-## de ARENA 2 no "parceiro"). Devolve os nomes. Sem horas definidas (null),
-## não fica fora (vale 0 até o usuário decidir). [{id, nome, fora_s}].
+## de ARENA 2 no "parceiro"). [{id, nome, fora_s}].
 static func _atropelados(dados: Node, jogador: Node, resultado: Dictionary, reg: Dictionary) -> Array:
 	var nomes := []
-	var h = dados.arena().get("recuperacao_atropelo_h")
 	var rec: Dictionary = reg.get("recuperacao", {})
 	for par in [["jogador", "arena1"], ["parceiro", "arena2"]]:
 		if not resultado["carros"].has(par[0]) or not resultado["carros"][par[0]].get("atropelado", false):
@@ -106,7 +114,7 @@ static func _atropelados(dados: Node, jogador: Node, resultado: Dictionary, reg:
 		var pid := EquipeJogador.piloto_vaga(jogador, par[1])
 		if pid == "":
 			continue
-		var fora := float(h) * 3600.0 if h != null and float(h) > 0.0 else 0.0
+		var fora := tempo_recuperacao(dados, jogador, pid)
 		nomes.append({"id": pid, "nome": String(EquipeJogador.piloto(dados, pid).get("nome", pid)), "fora_s": fora})
 		if fora > 0.0:
 			rec[pid] = Aceleracao.agora(jogador) + fora

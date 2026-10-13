@@ -667,8 +667,8 @@ func test_piloto_atropelado_cai_levanta_e_sai() -> void:
 	igual(estados, ["voando", "caido", "levantando", "correndo", "fora"], "voa, cai, levanta, corre e sai")
 
 
-## Atropelado na fuga: fora por recuperacao_atropelo_h horas reais (sem o
-## número, não fica fora); a arena não abre enquanto ele se recupera.
+## Atropelado na fuga: fora pelo tempo do próximo treino do piloto (sem o
+## critério, não fica fora); a arena não abre enquanto ele se recupera.
 func test_piloto_atropelado_fica_em_recuperacao() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
@@ -682,17 +682,29 @@ func test_piloto_atropelado_fica_em_recuperacao() -> void:
 	var res := {"classificacao": ["jogador", "r1"], "eventos": [], "equipe_vencedora": "jogador",
 		"carros": {"jogador": {"eliminado": false, "eliminou": 0, "equipe": "jogador", "atropelado": true},
 			"r1": {"eliminado": true, "eliminou": 0, "equipe": "x"}}}
-	var antes = d.arena().get("recuperacao_atropelo_h")
-	d.arena()["recuperacao_atropelo_h"] = null
+	var antes = d.arena().get("recuperacao_atropelo")
+	d.arena()["recuperacao_atropelo"] = ""
 	var f := ArenaCarreira.aplicar(d, j, carros[0].uid, res)
 	igual(f["atropelados"].size(), 1, "o atropelado aparece no resultado")
-	igual(ArenaCarreira.recuperacao_s(j, "ayla_moreno"), 0.0, "sem horas definidas: não fica fora")
-	d.arena()["recuperacao_atropelo_h"] = 2.0
+	igual(ArenaCarreira.recuperacao_s(j, "ayla_moreno"), 0.0, "sem o critério: não fica fora")
+	d.arena()["recuperacao_atropelo"] = "treino"
+	var esperado := float(GestaoEquipe.cfg_treino(d)["tempo_base_h"]) * 3600.0 * (GestaoEquipe.nivel_treino(j, "ayla_moreno") + 1)
 	ArenaCarreira.aplicar(d, j, carros[0].uid, res)
 	var falta := ArenaCarreira.recuperacao_s(j, "ayla_moreno")
-	verificar(falta > 7100.0 and falta <= 7200.0, "fora por 2 h (%.0f s)" % falta)
+	verificar(falta > esperado - 100.0 and falta <= esperado, "fora pelo tempo do próximo treino (%.0f de %.0f s)" % [falta, esperado])
 	verificar("recupera" in ArenaCarreira.bloqueio(d, j), "a arena espera a recuperação")
-	verificar(ArenaCarreira.recuperacao_s(j, "ayla_moreno", Aceleracao.agora(j) + 7201.0) == 0.0, "depois volta")
-	d.arena()["recuperacao_atropelo_h"] = antes
+	verificar(ArenaCarreira.recuperacao_s(j, "ayla_moreno", Aceleracao.agora(j) + esperado + 1.0) == 0.0, "depois volta")
+	d.arena()["recuperacao_atropelo"] = antes
 	j.free()
 	d.free()
+
+
+## Capotou (batida de lado forte): fica fora da luta, como no Destruction Derby.
+func test_batida_de_lado_forte_capota_e_elimina() -> void:
+	var p := _params()
+	var r := _lateral(70.0, p)
+	var capotou: Array = r["eventos"].filter(func(e): return e["tipo"] == "eliminado" and e.get("capotou", false))
+	verificar(not capotou.is_empty() and capotou[0]["carro"] == "alvo" and capotou[0]["por"] == "bate",
+			"batida de lado forte capota o atingido e conta para quem bateu")
+	var leve := _lateral(15.0, p)
+	verificar(not leve["carros"]["alvo"]["eliminado"], "batida leve não capota")

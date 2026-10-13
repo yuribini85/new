@@ -661,8 +661,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     dano a quem está perto (a força × uma batida a v_ref contra o carro que explodiu, na
     região virada para ela; pode eliminar); depois do fim da luta, só visual. O piloto corre
     para o muro mais perto; carro andando o atropela: ele é lançado, fica caído, levanta e
-    continua até sair. Atropelado da sua dupla fica fora por `recuperacao_atropelo_h` horas
-    reais (a definir; até lá, não fica fora) e a arena espera. O amassado continua. Na tela
+    continua até sair. Atropelado da sua dupla fica fora (tempo real) o mesmo tempo do
+    próximo nível de treino dele (decisão 83) e a arena espera. O amassado continua. Na tela
     (física só de tela, sem mudar o resultado): fumaça clara que escurece, fogo, porta, piloto
     com ragdoll, explosão com rodas e chapas soltas e carcaça queimada; na arena, barreiras de
     concreto que racham e quebram no muro, barreira de pneus que desmonta, cones, barris e
@@ -674,3 +674,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     profundidade. A arena usa as medidas do modelo 3D de cada carro (`comprimento`, `largura`
     em carros.json, do model-info do pacote pelo importador): antes todos tinham 4,4 × 1,75 m
     e os maiores se sobrepunham na tela.
+83. **Capotado fora da luta; recuperação do atropelado** (2026-10-13, decisões do usuário). A
+    batida de lado com dano ≥ `capota_dano` (0,2, o limite que a tela já usava) capota o carro:
+    ele cai de teto para baixo e sai da luta, como no Destruction Derby (~20% dos carros por
+    luta); a eliminação conta para quem bateu. O piloto atropelado fica fora pelo tempo do
+    próximo nível de treino dele (`recuperacao_atropelo: "treino"`), sem o desconto do embalo.

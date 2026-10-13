@@ -451,11 +451,16 @@ static func _danificar(c: Dictionary, ponto: Vector2, energia: float, quem: Stri
 		c["giros_feitos"] = []
 	eventos.append({"t": t, "tipo": "impacto", "carro": c["id"], "por": quem, "regiao": REGIOES[r],
 			"dano": c["dano"][r] - antes})
-	if r in FRENTE and c["dano"][r] >= float(params["limite_eliminacao"]):
+	# Capotou (decisão do usuário, como no Destruction Derby): a batida de lado
+	# forte o bastante para virar o carro o deixa de teto para baixo, fora da luta.
+	var capotou: bool = r in [2, 3] and c["dano"][r] - antes >= float(params.get("capota_dano", INF))
+	if capotou or (r in FRENTE and c["dano"][r] >= float(params["limite_eliminacao"])):
 		c["eliminado"] = true
 		c["eliminado_em"] = t
 		c["por"] = quem if quem != "" else String(c["ultimo_golpe"])
-		eventos.append({"t": t, "tipo": "eliminado", "carro": c["id"], "por": c["por"]})
+		eventos.append({"t": t, "tipo": "eliminado", "carro": c["id"], "por": c["por"], "capotou": capotou})
+		if capotou:
+			return
 		# Motor destruído (decisão do usuário): a outra metade da frente também no
 		# fim (no limite da ré) → pega fogo; senão o carro só para e fumega.
 		var outra: int = FRENTE[1] if r == FRENTE[0] else FRENTE[0]
