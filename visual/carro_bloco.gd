@@ -60,8 +60,14 @@ const PASTA_GLB := "res://arte/carros3d/"
 var comprimento := 4.5
 var largura := 1.8
 var _rodas: Array = []
-## Rodas do modelo GLB (nós roda_*): giram no eixo X do arquivo; [nó, raio].
+## Rodas do modelo GLB (nós roda_* ou Mount_* da frota 360): giram no eixo X
+## do arquivo; [nó, raio].
 var _rodas_glb: Array = []
+## Blindagem montada (<id>_protecao.glb, decisão 80): região (front, rear,
+## left, right) -> nó Protection_<região>; as camadas Level1..3 são cumulativas.
+var _protecao := {}
+var _protecao_raiz: Node3D
+var _modelo: Node3D
 
 
 static func tem_glb(id: String) -> bool:
@@ -365,13 +371,70 @@ func _glb(id: String, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 		primeiro = false
 	comprimento = caixa.size.z
 	largura = caixa.size.x
-	for no: Node3D in modelo.find_children("roda_*", "Node3D", true, false):
+	_modelo = modelo
+	var rodas: Array = modelo.find_children("roda_*", "Node3D", true, false)
+	# Frota 360: Mount_<posição> é a roda, com o centro no eixo; os nós
+	# Mount_*_Wheel_Details são a malha dela (filhos ou irmãos).
+	for no: Node3D in modelo.find_children("Mount_*", "Node3D", true, false):
+		if not String(no.name).contains("_Wheel"):
+			rodas.append(no)
+	for no: Node3D in rodas:
 		var raio := 0.3
 		for mi: MeshInstance3D in ([no] if no is MeshInstance3D else []) + no.find_children("*", "MeshInstance3D", true, false):
 			raio = mi.get_aabb().size.y * 0.5
 		_rodas_glb.append([no, maxf(raio, 0.1)])
 	_sombra(comprimento * 0.92, largura * 0.78, 0.3)
 	return self
+
+
+## Blindagem visual (decisão 80): monta as proteções do modelo até o nível
+## (0 tira). Só nos modelos que trazem <id>_protecao.glb.
+func blindar(id: String, nivel: int) -> void:
+	if is_instance_valid(_protecao_raiz):
+		_protecao_raiz.queue_free()
+	_protecao = {}
+	var caminho := PASTA_GLB + id + "_protecao.glb"
+	if nivel <= 0 or _modelo == null or not ResourceLoader.exists(caminho):
+		return
+	var p: Node3D = (load(caminho) as PackedScene).instantiate()
+	_modelo.add_child(p)
+	_protecao_raiz = p
+	for regiao in ["front", "rear", "left", "right"]:
+		var no := p.find_child("Protection_" + regiao, true, false) as Node3D
+		if no == null:
+			continue
+		_protecao[regiao] = no
+		for camada in no.get_children():
+			var k := String(camada.name).find("Level")
+			if k >= 0:
+				(camada as Node3D).visible = int(String(camada.name)[k + 5]) <= nivel
+	for mi: MeshInstance3D in p.find_children("*", "MeshInstance3D", true, false):
+		for i in mi.get_surface_override_material_count():
+			var m := mi.get_active_material(i)
+			if m is BaseMaterial3D:
+				var nova := (m as BaseMaterial3D).duplicate() as BaseMaterial3D
+				nova.cull_mode = BaseMaterial3D.CULL_DISABLED
+				mi.set_surface_override_material(i, nova)
+
+
+## Proteção montada numa região (front, rear, left, right), ou null.
+func protecao(regiao: String) -> Node3D:
+	var no: Node3D = _protecao.get(regiao)
+	return no if no != null and is_instance_valid(no) and no.is_inside_tree() else null
+
+
+## Solta a proteção da região: sai do carro e fica no mundo onde estava
+## (quem mostra anima a queda). Devolve o nó solto ou null.
+func soltar_protecao(regiao: String, mundo: Node3D) -> Node3D:
+	var no := protecao(regiao)
+	if no == null:
+		return null
+	_protecao.erase(regiao)
+	var t := no.global_transform
+	no.get_parent().remove_child(no)
+	mundo.add_child(no)
+	no.global_transform = t
+	return no
 
 
 ## Gira as rodas pela distância andada (m).
