@@ -72,6 +72,11 @@ func correr(onde: Vector3, rumo: float, v: float) -> void:
 	animacao.speed_scale = v / V_CICLO
 
 
+## Onde o corpo está (caído, é o do ragdoll).
+func posicao_corpo() -> Vector3:
+	return _corpo.global_position if estado == "caido" else global_position
+
+
 ## Segue em frente (depois do muro, saindo da arena).
 func avancar(d: float) -> void:
 	var r := _visual.rotation.y
@@ -263,7 +268,8 @@ func _capacete() -> void:
 func _malha() -> void:
 	_superficie = SurfaceTool.new()
 	_superficie.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var macacao := Color("a34f37")
+	# Macacão branco (pedido do usuário): se destaca no chão de terra.
+	var macacao := Color("ecebe6")
 	var escuro := Color("393e3e")
 	var creme := Color("d4c9ad")
 	_volume("pelvis", .87, 1.04, .28, .30, .19, .20, macacao)

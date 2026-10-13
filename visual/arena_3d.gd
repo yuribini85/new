@@ -777,6 +777,7 @@ func _atropelar(e: Dictionary) -> void:
 		v2 = ((b[por]["pos"] as Vector2) - (a[por]["pos"] as Vector2)) / (float(b["t"]) - float(a["t"]))
 	if v2.length() < 0.5:
 		v2 = Vector2.from_angle(float(b[por]["rumo"])) * float(e.get("v", 5.0))
+	p.set_meta("caido_s", 0.0)
 	p.atropelar(Vector3(v2.x, 0, -v2.y))
 
 
@@ -796,6 +797,9 @@ func _mover_pilotos(a: Dictionary, b: Dictionary, u: float, delta: float) -> voi
 				_pilotos.erase(id)
 				_piloto_fora.erase(id)
 			continue
+		if tempo >= float(_amostras[-1]["t"]):
+			_piloto_sozinho(id, p, delta)
+			continue
 		var pa: Dictionary = a.get("pilotos", {}).get(id, {})
 		var pb: Dictionary = b.get("pilotos", {}).get(id, pa)
 		if pb.is_empty():
@@ -804,6 +808,8 @@ func _mover_pilotos(a: Dictionary, b: Dictionary, u: float, delta: float) -> voi
 			pa = pb
 		var pos: Vector2 = (pa["pos"] as Vector2).lerp(pb["pos"], u)
 		var onde := Vector3(pos.x, _forma.altura(pos), -pos.y)
+		if p.estado == "caido":
+			p.set_meta("caido_s", float(p.get_meta("caido_s", 0.0)) + delta)
 		var est := String(pb["estado"])
 		if est in ["correndo", "fora"] and p.estado == "caido":
 			p.levantar(onde, 0.5)  # pulou o tempo: levanta já
@@ -816,6 +822,30 @@ func _mover_pilotos(a: Dictionary, b: Dictionary, u: float, delta: float) -> voi
 			"fora":
 				p.correr(onde, float(pb["rumo"]), float(_piloto_fuga.get("v_ms", 2.8)))
 				_piloto_fora[id] = PILOTO_SAI_S
+
+
+## Depois da última amostra (a luta acabou e a cena segue atrás do
+## resultado): o piloto continua sozinho, com as regras da simulação, até sair
+## da arena; caído, levanta no tempo dela. Só tela.
+func _piloto_sozinho(id: String, p: Piloto3D, delta: float) -> void:
+	var v := float(_piloto_fuga.get("v_ms", 2.8))
+	match p.estado:
+		"caido":
+			var caido := float(p.get_meta("caido_s", 0.0)) + delta
+			p.set_meta("caido_s", caido)
+			if caido >= float(_piloto_fuga.get("caido_s", 3.0)):
+				var q := p.posicao_corpo()
+				p.levantar(Vector3(q.x, _forma.altura(Vector2(q.x, -q.z)), q.z),
+						float(_piloto_fuga.get("levantar_s", 1.68)))
+		"correndo":
+			var pos := Vector2(p.global_position.x, -p.global_position.z)
+			var pm := _forma.muro_perto(pos)
+			if float(pm[0]) <= float(_piloto_fuga.get("saida_m", 0.5)):
+				_piloto_fora[id] = PILOTO_SAI_S
+				return
+			var dir: Vector2 = -(pm[1] as Vector2)
+			pos += dir * v * delta
+			p.correr(Vector3(pos.x, _forma.altura(pos), -pos.y), dir.angle(), v)
 
 
 ## A proteção da região atingida sai do carro e cai no chão, rolando.

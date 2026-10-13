@@ -408,13 +408,58 @@ func blindar(id: String, nivel: int) -> void:
 			var k := String(camada.name).find("Level")
 			if k >= 0:
 				(camada as Node3D).visible = int(String(camada.name)[k + 5]) <= nivel
+	# Placas em metal claro e gasto, com rebites (pedido do usuário: o
+	# material do modelo, escuro, sumia na carroceria e no chão).
 	for mi: MeshInstance3D in p.find_children("*", "MeshInstance3D", true, false):
-		for i in mi.get_surface_override_material_count():
-			var m := mi.get_active_material(i)
-			if m is BaseMaterial3D:
-				var nova := (m as BaseMaterial3D).duplicate() as BaseMaterial3D
-				nova.cull_mode = BaseMaterial3D.CULL_DISABLED
-				mi.set_surface_override_material(i, nova)
+		mi.material_override = _metal_placa()
+
+
+static var _placa: StandardMaterial3D
+
+
+## Chapa de aço clara: manchas e riscos de uso e uma fileira de rebites a
+## cada 0,25 m, projetada no espaço do objeto (os UVs do modelo não importam).
+static func _metal_placa() -> StandardMaterial3D:
+	if _placa != null:
+		return _placa
+	var n := 128
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	var ruido := FastNoiseLite.new()
+	ruido.seed = 41
+	ruido.frequency = 0.06
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 41
+	for y in n:
+		for x in n:
+			var v := 0.78 + 0.12 * ruido.get_noise_2d(x, y)
+			img.set_pixel(x, y, Color(v, v * 0.99, v * 0.95))
+	# Riscos finos (arrastos de batida).
+	for k in 26:
+		var a := Vector2(rng.randf() * n, rng.randf() * n)
+		var d := Vector2.from_angle(rng.randf_range(-0.4, 0.4)) * rng.randf_range(10, 40)
+		for t in 40:
+			var q := (a + d * t / 40.0).posmod(n)
+			var c := img.get_pixelv(Vector2i(q))
+			img.set_pixelv(Vector2i(q), c.lightened(0.18) if k % 2 == 0 else c.darkened(0.25))
+	# Rebites nos cantos de cada quadro.
+	for cy in [8, 72]:
+		for cx in [8, 72]:
+			for yy in range(-3, 4):
+				for xx in range(-3, 4):
+					var r := Vector2(xx, yy).length()
+					if r <= 3.0:
+						var q := Vector2i((cx + xx) % n, (cy + yy) % n)
+						img.set_pixelv(q, Color(0.45, 0.44, 0.42) if r > 2.0 else Color(0.95, 0.94, 0.9))
+	img.generate_mipmaps()
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = ImageTexture.create_from_image(img)
+	m.uv1_triplanar = true
+	m.uv1_scale = Vector3.ONE * 2.0  # um quadro de 0,5 m (rebites a cada 0,25 m)
+	m.metallic = 0.55
+	m.roughness = 0.45
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_placa = m
+	return m
 
 
 ## Proteção montada numa região (front, rear, left, right), ou null.
