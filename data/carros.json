@@ -217,7 +217,9 @@
     634
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.76
  },
  {
   "id": "kanaya_pingo",
@@ -490,7 +492,9 @@
     778
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.62,
+  "largura": 1.66
  },
  {
   "id": "kanaya_lume",
@@ -551,7 +555,9 @@
   },
   "raio_roda": 0.277,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.04,
+  "largura": 1.81
  },
  {
   "id": "kanaya_cunha",
@@ -610,7 +616,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.18,
+  "largura": 1.9
  },
  {
   "id": "kanaya_rasante",
@@ -928,7 +936,9 @@
     1288
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.39,
+  "largura": 1.91
  },
  {
   "id": "kanaya_aureo",
@@ -990,7 +1000,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.48,
+  "largura": 1.98
  },
  {
   "id": "kanaya_flecha",
@@ -1120,7 +1132,9 @@
     9382
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.33,
+  "largura": 1.78
  },
  {
   "id": "kanaya_solano",
@@ -1181,7 +1195,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 1.95
  },
  {
   "id": "kanaya_vertice",
@@ -1242,7 +1258,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.54,
+  "largura": 1.86
  },
  {
   "id": "kanaya_fortim",
@@ -1301,7 +1319,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.8,
+  "largura": 1.96
  },
  {
   "id": "kanaya_monolito",
@@ -1358,7 +1378,9 @@
   },
   "raio_roda": 0.341,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.18,
+  "largura": 2.04
  },
  {
   "id": "kanaya_prisma",
@@ -1425,7 +1447,9 @@
   },
   "raio_roda": 0.28,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.96,
+  "largura": 1.84
  },
  {
   "id": "kanaya_bago",
@@ -1492,7 +1516,9 @@
   },
   "raio_roda": 0.285,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.71,
+  "largura": 1.72
  },
  {
   "id": "calderwood_nectar",
@@ -1551,7 +1577,9 @@
   },
   "raio_roda": 0.329,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.55,
+  "largura": 2.0
  },
  {
   "id": "hayase_gota",
@@ -1618,7 +1646,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.68,
+  "largura": 1.69
  },
  {
   "id": "hayase_vareta",
@@ -1841,7 +1871,9 @@
     740
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.91,
+  "largura": 1.8
  },
  {
   "id": "hayase_mimo",
@@ -2040,7 +2072,9 @@
     456
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.94,
+  "largura": 1.72
  },
  {
   "id": "hayase_casulo",
@@ -2332,7 +2366,9 @@
     458
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.81
  },
  {
   "id": "hayase_cenario",
@@ -2395,7 +2431,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.49,
+  "largura": 1.88
  },
  {
   "id": "vantra_incisivo",
@@ -2452,7 +2490,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.6,
+  "largura": 2.08
  },
  {
   "id": "hayase_calima",
@@ -2520,7 +2560,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.37,
+  "largura": 1.91
  },
  {
   "id": "hayase_deriva",
@@ -2842,7 +2884,9 @@
     628
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.31,
+  "largura": 1.86
  },
  {
   "id": "hayase_arpao",
@@ -2909,7 +2953,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.29,
+  "largura": 1.98
  },
  {
   "id": "hayase_cetro",
@@ -3040,7 +3086,9 @@
     2040
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.3,
+  "largura": 1.79
  },
  {
   "id": "hayase_silex",
@@ -3320,7 +3368,9 @@
     1524
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.24,
+  "largura": 1.93
  },
  {
   "id": "hayase_granito",
@@ -3384,7 +3434,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.63,
+  "largura": 2.01
  },
  {
   "id": "hayase_cicatriz",
@@ -3716,7 +3768,9 @@
     1730
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.49,
+  "largura": 1.9
  },
  {
   "id": "hayase_cedro",
@@ -3991,7 +4045,9 @@
     865
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.54,
+  "largura": 1.94
  },
  {
   "id": "hayase_retorno",
@@ -4291,7 +4347,9 @@
     367
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.57,
+  "largura": 1.91
  },
  {
   "id": "hayase_portico",
@@ -4351,7 +4409,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.73,
+  "largura": 1.98
  },
  {
   "id": "hayase_obelisco",
@@ -4410,7 +4470,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.9,
+  "largura": 2.02
  },
  {
   "id": "hayase_timo",
@@ -4471,7 +4533,9 @@
   },
   "raio_roda": 0.253,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.56,
+  "largura": 1.65
  },
  {
   "id": "hayase_ninho",
@@ -4803,7 +4867,9 @@
     537
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.7,
+  "largura": 1.72
  },
  {
   "id": "hayase_trilha",
@@ -4865,7 +4931,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.76,
+  "largura": 1.95
  },
  {
   "id": "hayase_muralha",
@@ -5077,7 +5145,9 @@
     562
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.15,
+  "largura": 2.08
  },
  {
   "id": "hozuki_lince",
@@ -5366,7 +5436,9 @@
     792
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.91,
+  "largura": 1.77
  },
  {
   "id": "hozuki_rastro",
@@ -5640,7 +5712,9 @@
     440
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.89,
+  "largura": 1.78
  },
  {
   "id": "hozuki_atrito",
@@ -5924,7 +5998,9 @@
     1262
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.29,
+  "largura": 1.87
  },
  {
   "id": "hozuki_moncao",
@@ -5985,7 +6061,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.39,
+  "largura": 1.85
  },
  {
   "id": "hozuki_vigilia",
@@ -6327,7 +6405,9 @@
     1212
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.54,
+  "largura": 1.93
  },
  {
   "id": "hozuki_ancoragem",
@@ -6387,7 +6467,9 @@
   },
   "raio_roda": 0.335,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.88,
+  "largura": 2.02
  },
  {
   "id": "hozuki_catana",
@@ -6736,7 +6818,9 @@
     2964
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.49,
+  "largura": 2.01
  },
  {
   "id": "hozuki_bico",
@@ -7054,7 +7138,9 @@
     298
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.28,
+  "largura": 1.61
  },
  {
   "id": "hozuki_seixo",
@@ -7306,7 +7392,9 @@
     513
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.23,
+  "largura": 1.57
  },
  {
   "id": "kestrin_fragmento",
@@ -7367,7 +7455,9 @@
   },
   "raio_roda": 0.316,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.52,
+  "largura": 2.09
  },
  {
   "id": "hozuki_gaivota",
@@ -7434,7 +7524,9 @@
   },
   "raio_roda": 0.285,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.0,
+  "largura": 1.81
  },
  {
   "id": "hozuki_escama",
@@ -7495,7 +7587,9 @@
   },
   "raio_roda": 0.314,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.02,
+  "largura": 1.85
  },
  {
   "id": "hozuki_semente",
@@ -7838,7 +7932,9 @@
     238
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.77,
+  "largura": 1.76
  },
  {
   "id": "mizuchi_alvorada",
@@ -7903,7 +7999,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.28,
+  "largura": 1.97
  },
  {
   "id": "mizuchi_dobra",
@@ -8188,7 +8286,9 @@
     1406
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.42,
+  "largura": 1.97
  },
  {
   "id": "mizuchi_pavio",
@@ -8249,7 +8349,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.98,
+  "largura": 1.8
  },
  {
   "id": "mizuchi_brasa",
@@ -8314,7 +8416,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.44,
+  "largura": 1.92
  },
  {
   "id": "mizuchi_arco",
@@ -8629,7 +8733,9 @@
     644
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.87,
+  "largura": 1.75
  },
  {
   "id": "mizuchi_norte",
@@ -8682,7 +8788,9 @@
   },
   "raio_roda": 0.315,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.49,
+  "largura": 1.89
  },
  {
   "id": "rauhe_roca",
@@ -8745,7 +8853,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.32,
+  "largura": 1.94
  },
  {
   "id": "mizuchi_canoa",
@@ -9021,7 +9131,9 @@
     696
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.83,
+  "largura": 1.78
  },
  {
   "id": "mizuchi_fagulha",
@@ -9146,7 +9258,9 @@
     860
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.36,
+  "largura": 1.63
  },
  {
   "id": "mizuchi_lampejo",
@@ -9416,7 +9530,9 @@
     446
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.26,
+  "largura": 1.87
  },
  {
   "id": "mizuchi_visconde",
@@ -9478,7 +9594,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.75,
+  "largura": 1.96
  },
  {
   "id": "mizuchi_teca",
@@ -9536,7 +9654,9 @@
   },
   "raio_roda": 0.23,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.09,
+  "largura": 1.54
  },
  {
   "id": "mizuchi_avela",
@@ -9597,7 +9717,9 @@
   },
   "raio_roda": 0.314,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.38,
+  "largura": 1.89
  },
  {
   "id": "hoshino_pipa",
@@ -9733,7 +9855,9 @@
     610
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.15,
+  "largura": 1.57
  },
  {
   "id": "hoshino_penca",
@@ -9794,7 +9918,9 @@
   },
   "raio_roda": 0.269,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.35,
+  "largura": 1.61
  },
  {
   "id": "hoshino_gomo",
@@ -10081,7 +10207,9 @@
     748
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.37,
+  "largura": 1.64
  },
  {
   "id": "hoshino_alca",
@@ -10368,7 +10496,9 @@
     806
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.58,
+  "largura": 1.69
  },
  {
   "id": "hoshino_vento",
@@ -10600,7 +10730,9 @@
     2088
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.39,
+  "largura": 1.91
  },
  {
   "id": "hoshino_horizonte",
@@ -10893,7 +11025,9 @@
     1022
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 1.95
  },
  {
   "id": "hoshino_prumo",
@@ -11198,7 +11332,9 @@
     311
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.27,
+  "largura": 1.86
  },
  {
   "id": "hoshino_cobalto",
@@ -11420,7 +11556,9 @@
     1842
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.68,
+  "largura": 2.01
  },
  {
   "id": "hoshino_senda",
@@ -11486,7 +11624,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.59,
+  "largura": 1.91
  },
  {
   "id": "sanga_chispa",
@@ -11553,7 +11693,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.78,
+  "largura": 1.74
  },
  {
   "id": "sanga_tecido",
@@ -11853,7 +11995,9 @@
     628
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.49,
+  "largura": 1.88
  },
  {
   "id": "sanga_estopim",
@@ -11914,7 +12058,9 @@
   },
   "raio_roda": 0.315,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.93
  },
  {
   "id": "sanga_fulcro",
@@ -11974,7 +12120,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.31,
+  "largura": 1.92
  },
  {
   "id": "sanga_pulsar",
@@ -12039,7 +12187,9 @@
   },
   "raio_roda": 0.304,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.15,
+  "largura": 1.85
  },
  {
   "id": "sanga_lava",
@@ -12101,7 +12251,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.61,
+  "largura": 2.02
  },
  {
   "id": "sanga_rapina",
@@ -12162,7 +12314,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.37,
+  "largura": 1.93
  },
  {
   "id": "cutler_cintila",
@@ -12215,7 +12369,9 @@
   },
   "raio_roda": 0.328,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.82,
+  "largura": 2.11
  },
  {
   "id": "sanga_garra",
@@ -12504,7 +12660,9 @@
     792
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.65,
+  "largura": 1.7
  },
  {
   "id": "kosame_torvelinho",
@@ -12565,7 +12723,9 @@
   },
   "raio_roda": 0.285,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.88,
+  "largura": 1.82
  },
  {
   "id": "kosame_muda",
@@ -12856,7 +13016,9 @@
     620
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.28,
+  "largura": 1.62
  },
  {
   "id": "kosame_fio",
@@ -13174,7 +13336,9 @@
     288
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.72,
+  "largura": 1.75
  },
  {
   "id": "kosame_alpendre",
@@ -13530,7 +13694,9 @@
     862
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.44,
+  "largura": 1.69
  },
  {
   "id": "kosame_ervilha",
@@ -13588,7 +13754,9 @@
   },
   "raio_roda": 0.26,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 2.83,
+  "largura": 1.54
  },
  {
   "id": "kosame_musgo",
@@ -13649,7 +13817,9 @@
   },
   "raio_roda": 0.29,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.48,
+  "largura": 1.69
  },
  {
   "id": "kosame_xisto",
@@ -13712,7 +13882,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.52,
+  "largura": 1.76
  },
  {
   "id": "kosame_giz",
@@ -13770,7 +13942,9 @@
   },
   "raio_roda": 0.23,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.29,
+  "largura": 1.6
  },
  {
   "id": "vantra_silencio",
@@ -13825,7 +13999,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.98
  },
  {
   "id": "tomoe_avenca",
@@ -14109,7 +14285,9 @@
     260
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.65,
+  "largura": 1.72
  },
  {
   "id": "tomoe_mirtilo",
@@ -14172,7 +14350,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.74,
+  "largura": 1.75
  },
  {
   "id": "tomoe_faia",
@@ -14459,7 +14639,9 @@
     246
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.35,
+  "largura": 1.61
  },
  {
   "id": "tomoe_varanda",
@@ -14772,7 +14954,9 @@
     630
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.5,
+  "largura": 1.72
  },
  {
   "id": "tomoe_eco",
@@ -14839,7 +15023,9 @@
   },
   "raio_roda": 0.28,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.19,
+  "largura": 1.85
  },
  {
   "id": "tomoe_grilo",
@@ -14899,7 +15085,9 @@
   },
   "raio_roda": 0.25,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.37,
+  "largura": 1.66
  },
  {
   "id": "vantra_tempora",
@@ -14960,7 +15148,9 @@
   },
   "raio_roda": 0.316,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.54,
+  "largura": 2.03
  },
  {
   "id": "ishigumo_dique",
@@ -15193,7 +15383,9 @@
     555
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.27,
+  "largura": 1.86
  },
  {
   "id": "ishigumo_fronteira",
@@ -15258,7 +15450,9 @@
   },
   "raio_roda": 0.304,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.02,
+  "largura": 1.78
  },
  {
   "id": "ishigumo_louva",
@@ -15430,7 +15624,9 @@
     493
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.07,
+  "largura": 1.78
  },
  {
   "id": "ishigumo_ambar",
@@ -15795,7 +15991,9 @@
     260
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.4,
+  "largura": 1.89
  },
  {
   "id": "vantra_onix",
@@ -15861,7 +16059,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.5,
+  "largura": 2.06
  },
  {
   "id": "feldhaus_rebento",
@@ -15997,7 +16197,9 @@
     406
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.87,
+  "largura": 1.79
  },
  {
   "id": "feldhaus_palheta",
@@ -16058,7 +16260,9 @@
   },
   "raio_roda": 0.277,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.93,
+  "largura": 1.79
  },
  {
   "id": "feldhaus_pevidem",
@@ -16376,7 +16580,9 @@
     302
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.7,
+  "largura": 1.72
  },
  {
   "id": "feldhaus_cantiga",
@@ -16694,7 +16900,9 @@
     276
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.01,
+  "largura": 1.82
  },
  {
   "id": "feldhaus_corisco",
@@ -16759,7 +16967,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.1,
+  "largura": 1.87
  },
  {
   "id": "feldhaus_estrado",
@@ -16816,7 +17026,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.38,
+  "largura": 1.87
  },
  {
   "id": "feldhaus_andor",
@@ -16952,7 +17164,9 @@
     453
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.17,
+  "largura": 1.81
  },
  {
   "id": "feldhaus_chale",
@@ -17088,7 +17302,9 @@
     367
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.85
  },
  {
   "id": "feldhaus_cais",
@@ -17149,7 +17365,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.4,
+  "largura": 1.88
  },
  {
   "id": "feldhaus_fruta",
@@ -17212,7 +17430,9 @@
   },
   "raio_roda": 0.277,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.4,
+  "largura": 1.69
  },
  {
   "id": "vorhaus_corda",
@@ -17273,7 +17493,9 @@
   },
   "raio_roda": 0.29,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.36,
+  "largura": 1.91
  },
  {
   "id": "vorhaus_nascente",
@@ -17332,7 +17554,9 @@
   },
   "raio_roda": 0.289,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.42,
+  "largura": 1.88
  },
  {
   "id": "vorhaus_marulho",
@@ -17393,7 +17617,9 @@
   },
   "raio_roda": 0.304,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.86,
+  "largura": 1.99
  },
  {
   "id": "vorhaus_bolota",
@@ -17736,7 +17962,9 @@
     242
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.89,
+  "largura": 1.81
  },
  {
   "id": "vorhaus_lapa",
@@ -17797,7 +18025,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.99,
+  "largura": 1.85
  },
  {
   "id": "vorhaus_sopro",
@@ -17864,7 +18094,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 1.99
  },
  {
   "id": "vorhaus_ameixa",
@@ -17924,7 +18156,9 @@
   },
   "raio_roda": 0.315,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.06,
+  "largura": 1.88
  },
  {
   "id": "vorhaus_ferro",
@@ -17991,7 +18225,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.46,
+  "largura": 2.03
  },
  {
   "id": "ostwerk_barrao",
@@ -18331,7 +18567,9 @@
     728
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.82
  },
  {
   "id": "ostwerk_cimbra",
@@ -18564,7 +18802,9 @@
     634
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.29,
+  "largura": 1.87
  },
  {
   "id": "ostwerk_lastro",
@@ -18625,7 +18865,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 1.97
  },
  {
   "id": "ostwerk_aresta",
@@ -18685,7 +18927,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.71,
+  "largura": 1.95
  },
  {
   "id": "ostwerk_pedestal",
@@ -18744,7 +18988,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.97,
+  "largura": 2.04
  },
  {
   "id": "ostwerk_travessa",
@@ -18803,7 +19049,9 @@
   },
   "raio_roda": 0.329,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.73,
+  "largura": 2.01
  },
  {
   "id": "ostwerk_estaca",
@@ -18869,7 +19117,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.38,
+  "largura": 2.0
  },
  {
   "id": "ostwerk_abrigo",
@@ -18929,7 +19179,9 @@
   },
   "raio_roda": 0.311,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.89
  },
  {
   "id": "keldorf_coluna",
@@ -18988,7 +19240,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.63,
+  "largura": 1.95
  },
  {
   "id": "keldorf_borda",
@@ -19045,7 +19299,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.69,
+  "largura": 1.97
  },
  {
   "id": "keldorf_azimute",
@@ -19278,7 +19534,9 @@
     580
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.89
  },
  {
   "id": "keldorf_torre",
@@ -19336,7 +19594,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.09,
+  "largura": 2.07
  },
  {
   "id": "keldorf_coral",
@@ -19636,7 +19896,9 @@
     352
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 1.97
  },
  {
   "id": "keldorf_dardo",
@@ -19698,7 +19960,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.51,
+  "largura": 1.99
  },
  {
   "id": "keldorf_rubi",
@@ -19754,7 +20018,9 @@
   },
   "raio_roda": 0.411,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.41,
+  "largura": 2.03
  },
  {
   "id": "keldorf_gongora",
@@ -20099,7 +20365,9 @@
     633
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.28,
+  "largura": 1.91
  },
  {
   "id": "keldorf_porta",
@@ -20159,7 +20427,9 @@
   },
   "raio_roda": 0.344,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.77,
+  "largura": 1.97
  },
  {
   "id": "keldorf_calha",
@@ -20219,7 +20489,9 @@
   },
   "raio_roda": 0.355,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.81,
+  "largura": 2.02
  },
  {
   "id": "rauhe_boleia",
@@ -20282,7 +20554,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.96,
+  "largura": 1.84
  },
  {
   "id": "rauhe_rutilo",
@@ -20343,7 +20617,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.33,
+  "largura": 1.97
  },
  {
   "id": "rauhe_cursor",
@@ -20646,7 +20922,9 @@
     1292
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.25,
+  "largura": 1.89
  },
  {
   "id": "rauhe_asfalto",
@@ -20710,7 +20988,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.86,
+  "largura": 2.04
  },
  {
   "id": "rauhe_argila",
@@ -20767,7 +21047,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.39,
+  "largura": 1.99
  },
  {
   "id": "rauhe_quartzo",
@@ -20825,7 +21107,9 @@
   },
   "raio_roda": 0.351,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.37,
+  "largura": 1.98
  },
  {
   "id": "rauhe_cachoeira",
@@ -20893,7 +21177,9 @@
   },
   "raio_roda": 0.317,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.24,
+  "largura": 1.91
  },
  {
   "id": "lindauer_naco",
@@ -21185,7 +21471,9 @@
     509
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.07,
+  "largura": 1.79
  },
  {
   "id": "lindauer_acorde",
@@ -21357,7 +21645,9 @@
     618
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.87
  },
  {
   "id": "lindauer_esteio",
@@ -21700,7 +21990,9 @@
     252
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.29,
+  "largura": 1.82
  },
  {
   "id": "lindauer_laminar",
@@ -21761,7 +22053,9 @@
   },
   "raio_roda": 0.29,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.4,
+  "largura": 1.91
  },
  {
   "id": "lindauer_friso",
@@ -21822,7 +22116,9 @@
   },
   "raio_roda": 0.289,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.93,
+  "largura": 1.78
  },
  {
   "id": "lindauer_aro",
@@ -21883,7 +22179,9 @@
   },
   "raio_roda": 0.286,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.72,
+  "largura": 1.73
  },
  {
   "id": "lindauer_margem",
@@ -21943,7 +22241,9 @@
   },
   "raio_roda": 0.329,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.71,
+  "largura": 1.97
  },
  {
   "id": "ottavo_broto",
@@ -22001,7 +22301,9 @@
   },
   "raio_roda": 0.23,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.13,
+  "largura": 1.59
  },
  {
   "id": "ottavo_tocoalto",
@@ -22322,7 +22624,9 @@
     847
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.54,
+  "largura": 1.72
  },
  {
   "id": "ottavo_unoa",
@@ -22606,7 +22910,9 @@
     242
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.68,
+  "largura": 1.75
  },
  {
   "id": "ottavo_areia",
@@ -22667,7 +22973,9 @@
   },
   "raio_roda": 0.277,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.82,
+  "largura": 1.79
  },
  {
   "id": "ottavo_terra",
@@ -22992,7 +23300,9 @@
     624
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.98,
+  "largura": 1.82
  },
  {
   "id": "ottavo_corte",
@@ -23051,7 +23361,9 @@
   },
   "raio_roda": 0.303,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.13,
+  "largura": 1.88
  },
  {
   "id": "ottavo_cobre",
@@ -23223,7 +23535,9 @@
     651
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.2,
+  "largura": 1.84
  },
  {
   "id": "ottavo_bruma",
@@ -23284,7 +23598,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.1,
+  "largura": 1.84
  },
  {
   "id": "varenna_verso",
@@ -23576,7 +23892,9 @@
     485
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.11,
+  "largura": 1.82
  },
  {
   "id": "varenna_vinco",
@@ -23936,7 +24254,9 @@
     196
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.88
  },
  {
   "id": "varenna_galho",
@@ -23997,7 +24317,9 @@
   },
   "raio_roda": 0.286,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.28,
+  "largura": 1.87
  },
  {
   "id": "varenna_pasta",
@@ -24058,7 +24380,9 @@
   },
   "raio_roda": 0.303,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.14,
+  "largura": 1.92
  },
  {
   "id": "varenna_paladio",
@@ -24121,7 +24445,9 @@
   },
   "raio_roda": 0.293,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.47,
+  "largura": 1.92
  },
  {
   "id": "varenna_turbina",
@@ -24185,7 +24511,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.52,
+  "largura": 1.94
  },
  {
   "id": "varenna_sorva",
@@ -24250,7 +24578,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.96,
+  "largura": 1.81
  },
  {
   "id": "castellani_cascalho",
@@ -24311,7 +24641,9 @@
   },
   "raio_roda": 0.29,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.95,
+  "largura": 1.87
  },
  {
   "id": "castellani_espinho",
@@ -24376,7 +24708,9 @@
   },
   "raio_roda": 0.318,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.96,
+  "largura": 1.94
  },
  {
   "id": "castellani_savia",
@@ -24434,7 +24768,9 @@
   },
   "raio_roda": 0.288,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.08,
+  "largura": 1.8
  },
  {
   "id": "castellani_ecoa",
@@ -24497,7 +24833,9 @@
   },
   "raio_roda": 0.289,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.01,
+  "largura": 1.86
  },
  {
   "id": "castellani_nimboalto",
@@ -24558,7 +24896,9 @@
   },
   "raio_roda": 0.303,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.57,
+  "largura": 1.94
  },
  {
   "id": "castellani_caju",
@@ -24730,7 +25070,9 @@
     647
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.23,
+  "largura": 1.88
  },
  {
   "id": "corsalto_pimenta",
@@ -24795,7 +25137,9 @@
   },
   "raio_roda": 0.318,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.14,
+  "largura": 1.9
  },
  {
   "id": "corsalto_poeira",
@@ -24860,7 +25204,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.23,
+  "largura": 1.94
  },
  {
   "id": "corsalto_ocre",
@@ -24923,7 +25269,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.77,
+  "largura": 2.17
  },
  {
   "id": "corsalto_forja",
@@ -24984,7 +25332,9 @@
   },
   "raio_roda": 0.316,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.4,
+  "largura": 2.06
  },
  {
   "id": "corsalto_diadema",
@@ -25042,7 +25392,9 @@
   },
   "raio_roda": 0.321,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.58,
+  "largura": 1.99
  },
  {
   "id": "corsalto_cobalita",
@@ -25103,7 +25455,9 @@
   },
   "raio_roda": 0.316,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.63,
+  "largura": 2.1
  },
  {
   "id": "corsalto_malva",
@@ -25156,7 +25510,9 @@
   },
   "raio_roda": 0.328,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.38,
+  "largura": 2.02
  },
  {
   "id": "corsalto_aurora",
@@ -25218,7 +25574,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 2.03
  },
  {
   "id": "taurenza_lacraia",
@@ -25281,7 +25639,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.31,
+  "largura": 1.98
  },
  {
   "id": "taurenza_lasca",
@@ -25344,7 +25704,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.3,
+  "largura": 2.03
  },
  {
   "id": "taurenza_furia",
@@ -25407,7 +25769,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.55,
+  "largura": 2.11
  },
  {
   "id": "taurenza_basalto",
@@ -25474,7 +25838,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.6,
+  "largura": 2.09
  },
  {
   "id": "taurenza_pinaculo",
@@ -25538,7 +25904,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.97
  },
  {
   "id": "taurenza_alabastro",
@@ -25605,7 +25973,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.47,
+  "largura": 2.02
  },
  {
   "id": "taurenza_galeria",
@@ -25663,7 +26033,9 @@
   },
   "raio_roda": 0.321,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.74,
+  "largura": 2.01
  },
  {
   "id": "tridella_isobara",
@@ -25729,7 +26101,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.3,
+  "largura": 1.98
  },
  {
   "id": "tridella_rosaferro",
@@ -25962,7 +26336,9 @@
     575
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.19,
+  "largura": 1.87
  },
  {
   "id": "tridella_tavola",
@@ -26021,7 +26397,9 @@
   },
   "raio_roda": 0.337,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.43,
+  "largura": 1.94
  },
  {
   "id": "tridella_duna",
@@ -26083,7 +26461,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 1.97
  },
  {
   "id": "tridella_cutelo",
@@ -26146,7 +26526,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.32,
+  "largura": 1.98
  },
  {
   "id": "tridella_martelo",
@@ -26212,7 +26594,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.36,
+  "largura": 1.99
  },
  {
   "id": "vallon_ramo",
@@ -26464,7 +26848,9 @@
     304
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.9,
+  "largura": 1.79
  },
  {
   "id": "vallon_gema",
@@ -26531,7 +26917,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.69,
+  "largura": 1.72
  },
  {
   "id": "vallon_cajuina",
@@ -26592,7 +26980,9 @@
   },
   "raio_roda": 0.286,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.85,
+  "largura": 1.8
  },
  {
   "id": "vallon_nimbo",
@@ -26653,7 +27043,9 @@
   },
   "raio_roda": 0.269,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.64,
+  "largura": 1.59
  },
  {
   "id": "vallon_meandro",
@@ -26714,7 +27106,9 @@
   },
   "raio_roda": 0.277,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.31,
+  "largura": 1.85
  },
  {
   "id": "vallon_avenida",
@@ -26773,7 +27167,9 @@
   },
   "raio_roda": 0.289,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.19,
+  "largura": 1.85
  },
  {
   "id": "vallon_sarga",
@@ -26834,7 +27230,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.07,
+  "largura": 1.87
  },
  {
   "id": "vallon_braseiro",
@@ -27194,7 +27592,9 @@
     210
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.35,
+  "largura": 1.89
  },
  {
   "id": "vallon_atico",
@@ -27254,7 +27654,9 @@
   },
   "raio_roda": 0.344,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.48,
+  "largura": 1.97
  },
  {
   "id": "vallon_serrilha",
@@ -27316,7 +27718,9 @@
   },
   "raio_roda": 0.255,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.92,
+  "largura": 1.83
  },
  {
   "id": "vallon_ceramica",
@@ -27447,7 +27851,9 @@
     2096
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.18,
+  "largura": 1.91
  },
  {
   "id": "vallon_vazante",
@@ -27508,7 +27914,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.32,
+  "largura": 1.96
  },
  {
   "id": "saulieu_arbusto",
@@ -27575,7 +27983,9 @@
   },
   "raio_roda": 0.285,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.43,
+  "largura": 1.66
  },
  {
   "id": "saulieu_cogumelo",
@@ -27845,7 +28255,9 @@
     482
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.82,
+  "largura": 1.78
  },
  {
   "id": "saulieu_pereira",
@@ -27907,7 +28319,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.99,
+  "largura": 1.83
  },
  {
   "id": "saulieu_alto",
@@ -28027,7 +28441,9 @@
     2825
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.46,
+  "largura": 1.91
  },
  {
   "id": "saulieu_ribeira",
@@ -28086,7 +28502,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.49,
+  "largura": 1.92
  },
  {
   "id": "saulieu_nacara",
@@ -28145,7 +28563,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 1.96
  },
  {
   "id": "morel_jangada",
@@ -28397,7 +28817,9 @@
     323
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.91,
+  "largura": 1.8
  },
  {
   "id": "morel_afluente",
@@ -28454,7 +28876,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.87,
+  "largura": 2.03
  },
  {
   "id": "morel_nave",
@@ -28511,7 +28935,9 @@
   },
   "raio_roda": 0.314,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.79,
+  "largura": 1.99
  },
  {
   "id": "morel_colmeia",
@@ -28577,7 +29003,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.14,
+  "largura": 1.84
  },
  {
   "id": "morel_feno",
@@ -28644,7 +29072,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.61,
+  "largura": 1.7
  },
  {
   "id": "morel_jade",
@@ -28705,7 +29135,9 @@
   },
   "raio_roda": 0.277,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.84,
+  "largura": 1.78
  },
  {
   "id": "morel_odorico",
@@ -29047,7 +29479,9 @@
     1196
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.68,
+  "largura": 2.0
  },
  {
   "id": "morel_talisca",
@@ -29299,7 +29733,9 @@
     207
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.9,
+  "largura": 1.8
  },
  {
   "id": "dunmere_menta",
@@ -29366,7 +29802,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.31,
+  "largura": 1.65
  },
  {
   "id": "dunmere_lentilha",
@@ -29433,7 +29871,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.63,
+  "largura": 1.72
  },
  {
   "id": "dunmere_carvalho",
@@ -29491,7 +29931,9 @@
   },
   "raio_roda": 0.26,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.78,
+  "largura": 1.76
  },
  {
   "id": "dunmere_balsa",
@@ -29558,7 +30000,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.01,
+  "largura": 1.83
  },
  {
   "id": "halberton_tambor",
@@ -29619,7 +30063,9 @@
   },
   "raio_roda": 0.286,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.24,
+  "largura": 1.86
  },
  {
   "id": "halberton_violino",
@@ -29911,7 +30357,9 @@
     524
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.11,
+  "largura": 1.85
  },
  {
   "id": "halberton_casarao",
@@ -29973,7 +30421,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 1.96
  },
  {
   "id": "halberton_bravio",
@@ -30032,7 +30482,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.67,
+  "largura": 1.98
  },
  {
   "id": "halberton_campina",
@@ -30374,7 +30826,9 @@
     1156
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.68,
+  "largura": 1.97
  },
  {
   "id": "calderwood_sabre",
@@ -30437,7 +30891,9 @@
   },
   "raio_roda": 0.308,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.45,
+  "largura": 1.91
  },
  {
   "id": "calderwood_arvoredo",
@@ -30498,7 +30954,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.93,
+  "largura": 2.02
  },
  {
   "id": "calderwood_cometa",
@@ -30551,7 +31009,9 @@
   },
   "raio_roda": 0.328,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.96,
+  "largura": 2.16
  },
  {
   "id": "calderwood_satinado",
@@ -30612,7 +31072,9 @@
   },
   "raio_roda": 0.336,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.61,
+  "largura": 1.99
  },
  {
   "id": "pemberly_crisol",
@@ -30675,7 +31137,9 @@
   },
   "raio_roda": 0.289,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.26,
+  "largura": 1.96
  },
  {
   "id": "pemberly_claustro",
@@ -30795,7 +31259,9 @@
     2901
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.41,
+  "largura": 1.91
  },
  {
   "id": "pemberly_flautista",
@@ -31065,7 +31531,9 @@
     480
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.02,
+  "largura": 1.83
  },
  {
   "id": "wexmoor_moenda",
@@ -31125,7 +31593,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.55,
+  "largura": 1.95
  },
  {
   "id": "wexmoor_escarpa",
@@ -31183,7 +31653,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.55,
+  "largura": 2.02
  },
  {
   "id": "wexmoor_carmim",
@@ -31242,7 +31714,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.51,
+  "largura": 1.98
  },
  {
   "id": "ashcombe_arisco",
@@ -31305,7 +31779,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.19,
+  "largura": 1.94
  },
  {
   "id": "ashcombe_assobio",
@@ -31366,7 +31842,9 @@
   },
   "raio_roda": 0.302,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.37,
+  "largura": 1.94
  },
  {
   "id": "dunmere_fornada",
@@ -31538,7 +32016,9 @@
     520
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.19,
+  "largura": 1.85
  },
  {
   "id": "ashworth_soberano",
@@ -31595,7 +32075,9 @@
   },
   "raio_roda": 0.341,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.05,
+  "largura": 1.99
  },
  {
   "id": "ashworth_cerimonial",
@@ -31654,7 +32136,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.3,
+  "largura": 2.04
  },
  {
   "id": "norrvik_gota",
@@ -31975,7 +32459,9 @@
     361
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.68,
+  "largura": 1.63
  },
  {
   "id": "norrvik_favo",
@@ -32040,7 +32526,9 @@
   },
   "raio_roda": 0.26,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.92,
+  "largura": 1.69
  },
  {
   "id": "norrvik_vigia",
@@ -32105,7 +32593,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.37,
+  "largura": 1.79
  },
  {
   "id": "norrvik_bastion",
@@ -32164,7 +32654,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.58,
+  "largura": 1.85
  },
  {
   "id": "norrvik_corisco",
@@ -32225,7 +32717,9 @@
   },
   "raio_roda": 0.285,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.08,
+  "largura": 1.78
  },
  {
   "id": "norrvik_anfora",
@@ -32397,7 +32891,9 @@
     527
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.26,
+  "largura": 1.81
  },
  {
   "id": "volnar_nimbus",
@@ -32459,7 +32955,9 @@
   },
   "raio_roda": 0.321,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.76,
+  "largura": 1.92
  },
  {
   "id": "volnar_decano",
@@ -32521,7 +33019,9 @@
   },
   "raio_roda": 0.321,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.89,
+  "largura": 1.95
  },
  {
   "id": "volnar_dobra",
@@ -32657,7 +33157,9 @@
     620
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.01,
+  "largura": 1.74
  },
  {
   "id": "feldhaus_zenite",
@@ -32714,7 +33216,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.6,
+  "largura": 1.88
  },
  {
   "id": "volnar_broto",
@@ -32777,7 +33281,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.8,
+  "largura": 1.66
  },
  {
   "id": "volnar_tijolo",
@@ -33028,7 +33534,9 @@
     788
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.09,
+  "largura": 1.72
  },
  {
   "id": "volnar_brisa",
@@ -33093,7 +33601,9 @@
   },
   "raio_roda": 0.26,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.77
  },
  {
   "id": "volnar_bolota",
@@ -33345,7 +33855,9 @@
     260
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.42,
+  "largura": 1.55
  },
  {
   "id": "volnar_pomar",
@@ -33408,7 +33920,9 @@
   },
   "raio_roda": 0.263,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.18,
+  "largura": 1.73
  },
  {
   "id": "volnar_caju",
@@ -33471,7 +33985,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.55,
+  "largura": 1.61
  },
  {
   "id": "whitlock_cavalo",
@@ -33531,7 +34047,9 @@
   },
   "raio_roda": 0.328,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.56,
+  "largura": 1.9
  },
  {
   "id": "whitlock_cometa",
@@ -33588,7 +34106,9 @@
   },
   "raio_roda": 0.341,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.87,
+  "largura": 1.98
  },
  {
   "id": "whitlock_lamina",
@@ -33641,7 +34161,9 @@
   },
   "raio_roda": 0.328,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.48,
+  "largura": 2.05
  },
  {
   "id": "whitlock_lavoura",
@@ -33761,7 +34283,9 @@
     3015
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.37,
+  "largura": 1.83
  },
  {
   "id": "whitlock_horizonte",
@@ -33819,7 +34343,9 @@
   },
   "raio_roda": 0.304,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.2,
+  "largura": 2.04
  },
  {
   "id": "whitlock_torvelinho",
@@ -33880,7 +34406,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.85,
+  "largura": 1.98
  },
  {
   "id": "whitlock_seta",
@@ -33939,7 +34467,9 @@
   },
   "raio_roda": 0.304,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.03,
+  "largura": 1.8
  },
  {
   "id": "whitlock_amora",
@@ -34006,7 +34536,9 @@
   },
   "raio_roda": 0.267,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.49,
+  "largura": 1.6
  },
  {
   "id": "bancroft_arraia",
@@ -34066,7 +34598,9 @@
   },
   "raio_roda": 0.344,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.57,
+  "largura": 1.94
  },
  {
   "id": "bancroft_rugido",
@@ -34124,7 +34658,9 @@
   },
   "raio_roda": 0.304,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.6,
+  "largura": 1.92
  },
  {
   "id": "bancroft_marreta",
@@ -34182,7 +34718,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.74,
+  "largura": 1.97
  },
  {
   "id": "bancroft_oficina",
@@ -34474,7 +35012,9 @@
     1056
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.39,
+  "largura": 1.85
  },
  {
   "id": "bancroft_caravela",
@@ -34532,7 +35072,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.24,
+  "largura": 2.03
  },
  {
   "id": "bancroft_patamar",
@@ -34591,7 +35133,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.08,
+  "largura": 2.0
  },
  {
   "id": "bancroft_miragem",
@@ -34650,7 +35194,9 @@
   },
   "raio_roda": 0.329,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.79,
+  "largura": 1.94
  },
  {
   "id": "bancroft_vela",
@@ -34711,7 +35257,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.39,
+  "largura": 1.87
  },
  {
   "id": "bancroft_cintila",
@@ -34883,7 +35431,9 @@
     670
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.15,
+  "largura": 1.78
  },
  {
   "id": "bancroft_festa",
@@ -35150,7 +35700,9 @@
     2184
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.95,
+  "largura": 1.97
  },
  {
   "id": "bancroft_grao",
@@ -35401,7 +35953,9 @@
     699
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.74,
+  "largura": 1.64
  },
  {
   "id": "garrison_aster",
@@ -35457,7 +36011,9 @@
   },
   "raio_roda": 0.324,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.3,
+  "largura": 1.96
  },
  {
   "id": "garrison_trovao",
@@ -35516,7 +36072,9 @@
   },
   "raio_roda": 0.329,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.84,
+  "largura": 1.99
  },
  {
   "id": "garrison_vendaval",
@@ -35573,7 +36131,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 1.96
  },
  {
   "id": "garrison_facao",
@@ -35634,7 +36194,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.34,
+  "largura": 1.83
  },
  {
   "id": "garrison_ladeira",
@@ -35695,7 +36257,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.3,
+  "largura": 1.86
  },
  {
   "id": "garrison_ciranda",
@@ -35756,7 +36320,9 @@
   },
   "raio_roda": 0.297,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.02,
+  "largura": 1.78
  },
  {
   "id": "bancroft_relicario",
@@ -35816,7 +36382,9 @@
   },
   "raio_roda": 0.335,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.25,
+  "largura": 2.07
  },
  {
   "id": "ashby_fagulha",
@@ -35874,7 +36442,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.52,
+  "largura": 1.91
  },
  {
   "id": "ashby_estrondo",
@@ -35935,7 +36505,9 @@
   },
   "raio_roda": 0.302,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.72,
+  "largura": 1.95
  },
  {
   "id": "ashby_condor",
@@ -35993,7 +36565,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.98,
+  "largura": 2.0
  },
  {
   "id": "bancroft_centelha",
@@ -36285,7 +36859,9 @@
     1076
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.68,
+  "largura": 1.96
  },
  {
   "id": "bancroft_bigorna",
@@ -36343,7 +36919,9 @@
   },
   "raio_roda": 0.321,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.76,
+  "largura": 1.97
  },
  {
   "id": "bancroft_seixo",
@@ -36406,7 +36984,9 @@
   },
   "raio_roda": 0.289,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.05,
+  "largura": 1.86
  },
  {
   "id": "ridgeway_corrente",
@@ -36466,7 +37046,9 @@
   },
   "raio_roda": 0.328,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.53,
+  "largura": 1.92
  },
  {
   "id": "ridgeway_pitanga",
@@ -36528,7 +37110,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.78,
+  "largura": 1.73
  },
  {
   "id": "ridgeway_casulo",
@@ -36587,7 +37171,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.02,
+  "largura": 1.84
  },
  {
   "id": "bancroft_astrolabio",
@@ -36646,7 +37232,9 @@
   },
   "raio_roda": 0.329,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.91,
+  "largura": 2.0
  },
  {
   "id": "feldhaus_riacho",
@@ -36705,7 +37293,9 @@
   },
   "raio_roda": 0.28,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.79,
+  "largura": 1.68
  },
  {
   "id": "feldhaus_campina",
@@ -36841,7 +37431,9 @@
     565
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.97,
+  "largura": 1.72
  },
  {
   "id": "bancroft_seresta",
@@ -37020,7 +37612,9 @@
     473
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.6,
+  "largura": 1.9
  },
  {
   "id": "ottavo_miudo",
@@ -37352,7 +37946,9 @@
     551
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.45,
+  "largura": 1.59
  },
  {
   "id": "ipora_farol",
@@ -37488,7 +38084,9 @@
     588
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.12,
+  "largura": 1.81
  },
  {
   "id": "ipora_semente",
@@ -37546,7 +38144,9 @@
   },
   "raio_roda": 0.26,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.1,
+  "largura": 1.52
  },
  {
   "id": "ridgeway_atlas",
@@ -37834,7 +38434,9 @@
     489
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.84,
+  "largura": 2.34
  },
  {
   "id": "ridgeway_rochedo",
@@ -37901,7 +38503,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.77,
+  "largura": 2.15
  },
  {
   "id": "ridgeway_penhasco",
@@ -38189,7 +38793,9 @@
     804
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.55,
+  "largura": 2.1
  },
  {
   "id": "bancroft_pedreira",
@@ -38255,7 +38861,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.32,
+  "largura": 2.29
  },
  {
   "id": "ridgeway_toco",
@@ -38322,7 +38930,9 @@
   },
   "raio_roda": 0.28,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.59,
+  "largura": 1.87
  },
  {
   "id": "ridgeway_escarpa",
@@ -38578,7 +39188,9 @@
     532
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.96,
+  "largura": 1.94
  },
  {
   "id": "ridgeway_mirante",
@@ -38639,7 +39251,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.38,
+  "largura": 1.98
  },
  {
   "id": "ridgeway_sertao",
@@ -38927,7 +39541,9 @@
     873
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 2.05
  },
  {
   "id": "ridgeway_cordilheira",
@@ -39258,7 +39874,9 @@
     1185
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.01,
+  "largura": 2.16
  },
  {
   "id": "ridgeway_estiva",
@@ -39325,7 +39943,9 @@
   },
   "raio_roda": 0.326,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.11,
+  "largura": 2.1
  },
  {
   "id": "ridgeway_arado",
@@ -39656,7 +40276,9 @@
     2026
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.8,
+  "largura": 1.96
  },
  {
   "id": "kanaya_trilha",
@@ -39987,7 +40609,9 @@
     1465
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.9,
+  "largura": 1.93
  },
  {
   "id": "kanaya_chapada",
@@ -40275,7 +40899,9 @@
     738
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.93,
+  "largura": 2.13
  },
  {
   "id": "kanaya_vereda",
@@ -40606,7 +41232,9 @@
     1373
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.55,
+  "largura": 1.98
  },
  {
   "id": "halberton_torrao",
@@ -40937,7 +41565,9 @@
     1091
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.94,
+  "largura": 2.0
  },
  {
   "id": "halberton_serrote",
@@ -41225,7 +41855,9 @@
     657
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.69,
+  "largura": 2.04
  },
  {
   "id": "halberton_planalto",
@@ -41513,7 +42145,9 @@
     694
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.81,
+  "largura": 2.09
  },
  {
   "id": "keldorf_baluar",
@@ -41844,7 +42478,9 @@
     1281
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.33,
+  "largura": 2.02
  },
  {
   "id": "kosame_seiva",
@@ -41907,7 +42543,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.47,
+  "largura": 1.79
  },
  {
   "id": "kosame_moita",
@@ -41972,7 +42610,9 @@
   },
   "raio_roda": 0.282,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.76,
+  "largura": 1.86
  },
  {
   "id": "sanga_ravina",
@@ -42260,7 +42900,9 @@
     752
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.54,
+  "largura": 2.04
  },
  {
   "id": "hayase_desfiladeiro",
@@ -42591,7 +43233,9 @@
     1371
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.86,
+  "largura": 2.16
  },
  {
   "id": "ishigumo_matagal",
@@ -42922,7 +43566,9 @@
     1093
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.45,
+  "largura": 1.97
  },
  {
   "id": "tomoe_cipo",
@@ -42985,7 +43631,9 @@
   },
   "raio_roda": 0.298,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.7,
+  "largura": 1.83
  },
  {
   "id": "volnar_taiga",
@@ -43046,7 +43694,9 @@
   },
   "raio_roda": 0.327,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.88,
+  "largura": 1.86
  },
  {
   "id": "whitlock_campestre",
@@ -43107,7 +43757,9 @@
   },
   "raio_roda": 0.31,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.06,
+  "largura": 2.0
  },
  {
   "id": "bancroft_granito",
@@ -43438,7 +44090,9 @@
     1293
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 2.16
  },
  {
   "id": "ridgeway_ermo",
@@ -43769,7 +44423,9 @@
     1745
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.18,
+  "largura": 2.01
  },
  {
   "id": "whitlock_ferreiro",
@@ -43828,7 +44484,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 2.04
  },
  {
   "id": "whitlock_lavrador",
@@ -43887,7 +44545,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.07,
+  "largura": 2.17
  },
  {
   "id": "whitlock_carreiro",
@@ -43946,7 +44606,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.7,
+  "largura": 1.95
  },
  {
   "id": "bancroft_terral",
@@ -44003,7 +44665,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.88,
+  "largura": 2.12
  },
  {
   "id": "bancroft_oleiro",
@@ -44062,7 +44726,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.78,
+  "largura": 1.99
  },
  {
   "id": "bancroft_forjador",
@@ -44119,7 +44785,9 @@
   },
   "raio_roda": 0.341,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.36,
+  "largura": 2.21
  },
  {
   "id": "garrison_ferrugem",
@@ -44174,7 +44842,9 @@
   },
   "raio_roda": 0.334,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.08,
+  "largura": 2.15
  },
  {
   "id": "garrison_martelo",
@@ -44231,7 +44901,9 @@
   },
   "raio_roda": 0.341,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.45,
+  "largura": 2.24
  },
  {
   "id": "kanaya_sulco",
@@ -44562,7 +45234,9 @@
     1140
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.67,
+  "largura": 1.91
  },
  {
   "id": "kanaya_areia",
@@ -44621,7 +45295,9 @@
   },
   "raio_roda": 0.313,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.88,
+  "largura": 2.02
  },
  {
   "id": "kanaya_cascalho",
@@ -44888,7 +45564,9 @@
     1192
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.27,
+  "largura": 2.19
  },
  {
   "id": "hayase_barranco",
@@ -45219,7 +45897,9 @@
     1582
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.62,
+  "largura": 1.94
  },
  {
   "id": "hayase_canyon",
@@ -45286,7 +45966,9 @@
   },
   "raio_roda": 0.326,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.2,
+  "largura": 2.11
  },
  {
   "id": "hayase_muralha_2",
@@ -45343,7 +46025,9 @@
   },
   "raio_roda": 0.341,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.52,
+  "largura": 2.27
  },
  {
   "id": "sanga_garimpo",
@@ -45674,7 +46358,9 @@
     882
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.9,
+  "largura": 2.0
  },
  {
   "id": "ishigumo_capataz",
@@ -45949,7 +46635,9 @@
     830
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.72,
+  "largura": 1.94
  },
  {
   "id": "feldhaus_vertente",
@@ -46237,7 +46925,9 @@
     682
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.31,
+  "largura": 2.13
  },
  {
   "id": "ottavo_batel",
@@ -46296,7 +46986,9 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.2,
+  "largura": 1.82
  },
  {
   "id": "ottavo_espora",
@@ -46627,7 +47319,9 @@
     1547
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.86,
+  "largura": 2.04
  },
  {
   "id": "hoshino_capim",
@@ -46915,7 +47609,9 @@
     962
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 1.92
  },
  {
   "id": "voltane_aurora",
@@ -46981,7 +47677,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.38,
+  "largura": 2.2
  },
  {
   "id": "voltane_crista",
@@ -47047,7 +47745,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 5.03,
+  "largura": 2.19
  },
  {
   "id": "brakhaus_coletor",
@@ -47105,7 +47805,9 @@
   "raio_roda": 0.341,
   "chefe": true,
   "novo": false,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 8.1,
+  "largura": 2.64
  },
  {
   "id": "brakhaus_sentinela",
@@ -47172,7 +47874,9 @@
   "raio_roda": 0.325,
   "chefe": true,
   "novo": false,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 9.15,
+  "largura": 2.95
  },
  {
   "id": "brakhaus_colosso",
@@ -47233,7 +47937,9 @@
   "raio_roda": 0.355,
   "chefe": true,
   "novo": false,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 9.6,
+  "largura": 5.4
  },
  {
   "id": "vantra_obsidiana",
@@ -47299,7 +48005,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.64,
+  "largura": 2.12
  },
  {
   "id": "vantra_estilete",
@@ -47356,7 +48064,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.66,
+  "largura": 2.03
  },
  {
   "id": "vantra_quimera",
@@ -47413,7 +48123,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.69,
+  "largura": 2.08
  },
  {
   "id": "vantra_orbita",
@@ -47464,7 +48176,9 @@
   },
   "raio_roda": 0.323,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.36,
+  "largura": 1.99
  },
  {
   "id": "corsalto_helios",
@@ -47521,7 +48235,9 @@
   },
   "raio_roda": 0.319,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.65,
+  "largura": 2.07
  },
  {
   "id": "taurenza_meteorito",
@@ -47587,7 +48303,9 @@
   },
   "raio_roda": 0.325,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.84,
+  "largura": 2.13
  },
  {
   "id": "keldorf_baluarte",
@@ -47648,7 +48366,9 @@
   },
   "raio_roda": 0.316,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.98,
+  "largura": 2.09
  },
  {
   "id": "feldhaus_nimbo",
@@ -47937,7 +48657,9 @@
     792
    ]
   ],
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 3.64,
+  "largura": 1.59
  },
  {
   "id": "norrvik_bastion_2",
@@ -48000,7 +48722,9 @@
   },
   "raio_roda": 0.315,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.58,
+  "largura": 1.85
  },
  {
   "id": "vantra_aster",
@@ -48066,6 +48790,8 @@
   },
   "raio_roda": 0.295,
   "novo": true,
-  "arte_provisoria": true
+  "arte_provisoria": true,
+  "comprimento": 4.3,
+  "largura": 1.96
  }
 ]

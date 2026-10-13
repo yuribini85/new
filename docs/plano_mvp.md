@@ -668,3 +668,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     concreto que racham e quebram no muro, barreira de pneus que desmonta, cones, barris e
     árvores fora do muro, empurrados pelos carros (corpo cinemático); nas pistas de corrida,
     cones e pneus só de decoração. Arte e animações do pacote em `arte/dano/` (animações CC0).
+82. **Capotagem, amassado e medidas** (2026-10-13, teste do usuário). O carro que capota fica de
+    teto para baixo (sem a volta inteira de volta às rodas, que parecia artificial; como no
+    Destruction Derby); o nariz sobe menos nas batidas de frente/trás. Amassado com metade da
+    profundidade. A arena usa as medidas do modelo 3D de cada carro (`comprimento`, `largura`
+    em carros.json, do model-info do pacote pelo importador): antes todos tinham 4,4 × 1,75 m
+    e os maiores se sobrepunham na tela.

@@ -50,14 +50,14 @@ const SEUS := ["jogador", "parceiro"]
 ## ele cai de volta; de frente ou de trás, o nariz ou a traseira saltam. A
 ## gravidade traz de volta e o chão quica pouco. Velocidade angular = dano ×
 ## ganho, com teto. Capotagem (pedido do usuário): a batida muito forte de lado
-## (TOMBO_CAPOTA) passa do ponto de tombar e o carro dá uma volta inteira no ar
-## e cai sobre as rodas; o eliminado nessa batida termina de teto para baixo.
+## (TOMBO_CAPOTA) passa do ponto de tombar, o carro gira no ar e cai de teto
+## para baixo, e fica assim (como no Destruction Derby; decisão do usuário).
 const TOMBO_DANO := 0.06  # dano mínimo da batida de lado que levanta o carro
 const TOMBO_DANO_PONTA := 0.12  # de frente/trás (são muitas: só as fortes)
 const TOMBO_GANHO_LADO := 20.0
 const TOMBO_GANHO_PONTA := 9.0
-const TOMBO_MAX_LADO := 5.0  # rad/s: ~80° no pico (quase de lado, sem virar)
-const TOMBO_MAX_PONTA := 2.6  # ~22°
+const TOMBO_MAX_LADO := 4.0  # rad/s: ~50° no pico (só a batida de capotar vira o carro)
+const TOMBO_MAX_PONTA := 1.6  # ~8°: o nariz não sobe por cima do outro carro
 const TOMBO_GRAVIDADE := 9.0  # rad/s²
 const TOMBO_QUIQUE := 0.25
 const TOMBO_CAPOTA := 0.2  # dano da batida de lado que capota (~5 por luta de 10 carros)
@@ -449,14 +449,15 @@ func _assentar(delta: float) -> void:
 		var tb: Dictionary = _tombo[id]
 		if tb.get("capota", false):
 			var r := float(tb["rolagem"]) + float(tb["v_rolagem"]) * delta
-			var fim := TAU if not _eliminado(id) else PI
+			# Capotou, fica de teto para baixo (pedido do usuário, como no
+			# Destruction Derby: a volta inteira de volta às rodas era artificial).
+			var fim := PI
 			if absf(r) >= fim:
 				tb["capota"] = false
-				tb["rolagem"] = 0.0 if fim == TAU else signf(r) * PI
+				tb["rolagem"] = signf(r) * PI
 				tb["v_rolagem"] = 0.0
 				tb["salto"] = 0.0
-				if fim == PI:
-					tb["fixo"] = true  # de teto para baixo até o fim
+				tb["fixo"] = true  # de teto para baixo até o fim
 			else:
 				tb["rolagem"] = r
 				tb["salto"] = sin(absf(r) / fim * PI) * CAPOTA_SALTO_M
@@ -541,12 +542,12 @@ func _mostrar_aneis(amostra: Dictionary) -> void:
 ## Região: centro no carro (+X frente, -Z esquerda, em frações de comprimento,
 ## altura em m e largura), direção do afundamento e raio (fração do comprimento).
 const AMASSADOS := [
-	{"c": Vector3(0.5, 0.6, -0.32), "dir": Vector3(-1.0, -0.3, 0.4), "raio": 0.42, "prof": 0.8},  # frente_e
-	{"c": Vector3(0.5, 0.6, 0.32), "dir": Vector3(-1.0, -0.3, -0.4), "raio": 0.42, "prof": 0.8},  # frente_d
-	{"c": Vector3(0.05, 0.65, -0.5), "dir": Vector3(0.0, -0.2, 1.0), "raio": 0.34, "prof": 0.55},  # lado_e
-	{"c": Vector3(0.05, 0.65, 0.5), "dir": Vector3(0.0, -0.2, -1.0), "raio": 0.34, "prof": 0.55},  # lado_d
-	{"c": Vector3(-0.5, 0.6, -0.32), "dir": Vector3(1.0, -0.3, 0.4), "raio": 0.4, "prof": 0.7},  # tras_e
-	{"c": Vector3(-0.5, 0.6, 0.32), "dir": Vector3(1.0, -0.3, -0.4), "raio": 0.4, "prof": 0.7},  # tras_d
+	{"c": Vector3(0.5, 0.6, -0.32), "dir": Vector3(-1.0, -0.3, 0.4), "raio": 0.42, "prof": 0.4},  # frente_e
+	{"c": Vector3(0.5, 0.6, 0.32), "dir": Vector3(-1.0, -0.3, -0.4), "raio": 0.42, "prof": 0.4},  # frente_d
+	{"c": Vector3(0.05, 0.65, -0.5), "dir": Vector3(0.0, -0.2, 1.0), "raio": 0.34, "prof": 0.28},  # lado_e
+	{"c": Vector3(0.05, 0.65, 0.5), "dir": Vector3(0.0, -0.2, -1.0), "raio": 0.34, "prof": 0.28},  # lado_d
+	{"c": Vector3(-0.5, 0.6, -0.32), "dir": Vector3(1.0, -0.3, 0.4), "raio": 0.4, "prof": 0.35},  # tras_e
+	{"c": Vector3(-0.5, 0.6, 0.32), "dir": Vector3(1.0, -0.3, -0.4), "raio": 0.4, "prof": 0.35},  # tras_d
 ]
 
 
@@ -592,7 +593,7 @@ func _amassar(id: String, estagios: PackedInt32Array, eliminado: bool) -> void:
 	var dim: Vector2 = c.dimensoes() if c.has_method("dimensoes") else Vector2(Arena.COMPRIMENTO_M, Arena.LARGURA_M)
 	var fator := []
 	for r in AMASSADOS.size():
-		fator.append(float(estagios[r]) / maxf(_estagios, 1) * (1.15 if eliminado else 1.0))
+		fator.append(float(estagios[r]) / maxf(_estagios, 1) * (1.05 if eliminado else 1.0))
 	for parte in _malhas.get(id, []):
 		var rel: Transform3D = parte["rel"]
 		var inv := rel.affine_inverse()

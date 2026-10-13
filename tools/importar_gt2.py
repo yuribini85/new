@@ -566,6 +566,14 @@ def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict
                 car["usados"] = janelas
         if l.get("clone") or not l.get("aprovado", False):
             car["arte_provisoria"] = True  # modelo do pacote ainda em revisão (REVIEW.json)
+        # Medidas do modelo 3D (model-info do pacote): a arena usa a forma do
+        # carro que aparece na tela (sem isso, todos 4,4 × 1,75 m e os maiores
+        # se sobrepunham).
+        info = RAIZ / "referencia" / "frota360" / "pacote" / l["asset"] / "model-info.json"
+        if info.exists():
+            mi = json.load(open(info, encoding="utf-8"))
+            car["comprimento"] = round(float(mi["L"]), 2)
+            car["largura"] = round(float(mi["W"]), 2)
         carros.append(car)
         if not l.get("chefe"):
             fontes.append((cod, l["id"], float(car["potencia"])))
