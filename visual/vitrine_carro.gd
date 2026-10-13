@@ -23,9 +23,9 @@ var _anel: MeshInstance3D
 var _estatico := false
 var _deriva := 1.0  # 0 → 1 durante a derrapada
 var _pos_base := Vector3.ZERO
-const DERIVA_S := 0.7
-const DERIVA_GIRO := 0.85  # rad a mais de traseira no começo
-const DERIVA_DIST := 2.6  # m de lado no começo
+const DERIVA_S := 1.1
+const DERIVA_GIRO := 1.15  # rad a mais de traseira no começo
+const DERIVA_DIST := 4.2  # m de lado no começo
 
 
 func _init(altura := 300.0) -> void:
@@ -464,8 +464,8 @@ func _trocou(id: String) -> void:
 ## Pose do carro 3D no ponto atual da derrapada: a traseira vem aberta e fecha
 ## com um pequeno passe do ponto, a carroceria inclina e assenta.
 func _pose_deriva() -> void:
-	var e := 1.0 - pow(1.0 - _deriva, 3.0)  # sai rápido e freia
-	var volta := sin(_deriva * PI) * 0.12 * (1.0 - _deriva)
+	var e := 1.0 - pow(1.0 - _deriva, 2.0)  # freia devagar: desliza até assentar
+	var volta := sin(_deriva * PI) * 0.18 * (1.0 - _deriva)
 	_carro.rotation.y = _angulo + DERIVA_GIRO * (1.0 - e) - volta
 	_carro.rotation.z = sin(_deriva * PI) * 0.05
 	_carro.position = _pos_base + Vector3(-DERIVA_DIST * (1.0 - e), 0, 0)
@@ -490,7 +490,7 @@ func _process(delta: float) -> void:
 			_animando(_deriva < 1.0)
 			if _deriva < 1.0:
 				_deriva = minf(_deriva + minf(delta, 1.0 / 30.0) / DERIVA_S, 1.0)
-			var ef := 1.0 - pow(1.0 - _deriva, 3.0)
+			var ef := 1.0 - pow(1.0 - _deriva, 2.0)
 			_camera.h_offset = DERIVA_DIST * 1.6 * (1.0 - ef) - sin(_deriva * PI) * 0.15 * (1.0 - _deriva)
 			return
 		# Aproximação curta ao trocar de carro (1,06 → 1,00).

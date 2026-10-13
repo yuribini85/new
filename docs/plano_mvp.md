@@ -599,4 +599,4 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Melhorar; ‹ › ou deslizar), com a faixa de ícones de todas embaixo (a atual destacada,
     em ocre as que já têm peça; tocar leva a ela). A arena usa o mesmo cartão. A tela não rola.
     O carro da Oficina fica parado em três quartos (não gira); ao trocar de carro, o novo
-    entra de lado numa derrapada curta (~0,7 s) e assenta. Com "reduzir animações", só troca.
+    entra de lado numa derrapada (~1,1 s, deslizando de lado) e assenta. Com "reduzir animações", só troca.
