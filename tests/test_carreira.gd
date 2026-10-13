@@ -274,8 +274,9 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	var h := Historia.new(d, j)
 	j.historia = h
 	igual(h.cena_para("GAME_START").get("id"), "CW_P01", "abertura da Mara")
-	# Decisão 73: a chegada termina pedindo o nome. Decisão 84: com ele, a equipe
-	# nasce e a Mara pede o piloto; contratado, segue para o carro.
+	# Decisão 73: a chegada termina pedindo o nome. Decisão 85 (ordem do usuário):
+	# Grid → carro → piloto → corrida → peça → corrida → licença → corrida →
+	# patrocínio → arena.
 	var p01: Dictionary = h.cena_para("GAME_START")
 	igual(String(p01["falas"][-1].get("acao", "")), "PEDIR_NOME", "a chegada pede o nome")
 	igual(h.concluir(p01), {}, "sem nome, a cena não segue sozinha")
@@ -283,16 +284,28 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	var p01b: Dictionary = h.cena_para("NOME_DEFINIDO")
 	igual(p01b.get("id"), "CW_P01B", "o nome dado")
 	igual(h.variaveis().get("admin"), "Ana", "a Mara usa o nome")
-	igual(String(p01b["falas"][-1].get("acao", "")), "UNLOCK_TEAM_TAB", "o nome abre a equipe")
-	h.concluir(p01b)
+	var grid: Dictionary = h.concluir(p01b)
+	igual(grid.get("id"), "CW_GR00", "primeiro tutorial: o The Grid")
+	igual(h.concluir(grid).get("id"), "CW_C00", "depois, comprar o carro")
+	igual(j.garagem.lista().size(), 0, "a garagem começa vazia")
+	igual(h.cena_para("COMPRA_CARRO").get("id"), "CW_C01B", "comprado o carro")
+	j.flags["FIRST_CAR"] = true
 	igual(h.cena_para("ABA:EQUIPE").get("id"), "CW_P03C", "na Equipe, a Mara pede o piloto")
-	var p03d: Dictionary = h.cena_para("PILOTO_CONTRATADO")
-	igual(p03d.get("id"), "CW_P03D", "piloto contratado")
-	igual(h.concluir(p03d).get("id"), "CW_P02", "e segue para o carro")
-	# De volta às pistas: a Club é a licença renovada; o Grid vem logo depois.
+	verificar(String(h.cena_para("PILOTO_CONTRATADO")["falas"][-1].get("acao", "")) == "HIGHLIGHT_NAV_EVENTOS",
+			"contratado, vai para a primeira prova")
+	j.flags["PILOT_HIRED"] = true
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 1}).get("id"), "CW_P06", "fim da primeira prova")
+	igual(h.concluir(h.cena_para("CORRIDA_FIM", {"posicao": 1})).get("id"), "CW_P02", "e segue para aprimorar o carro")
+	j.flags["FIRST_TUNE_DONE"] = true
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 3}).get("id"), "CW_P06C", "segunda prova: a licença")
+	j.flags["SECOND_RACE_DONE"] = true
 	var r10: Dictionary = h.cena_para("LICENCA_CONCEDIDA:CLUB")
 	igual(r10.get("id"), "CW_R10", "licença renovada")
-	igual(h.concluir(r10).get("id"), "CW_GR00", "o Grid em seguida")
+	h.concluir(r10)
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 2}).get("id"), "CW_S00", "corrida com a Club: o patrocínio")
+	verificar(h.cena_para("GARAGEM_TRES_CARROS").is_empty(), "a arena espera o patrocínio")
+	j.flags["PATROCINIO_INTRO"] = true
+	igual(h.cena_para("GARAGEM_TRES_CARROS").get("id"), "CW_P07", "depois, a arena")
 	var sem: Dictionary = h.cena_para("SEM_DINHEIRO")
 	igual(sem["falas"][0]["quem"], "mara", "sem dinheiro: Mara")
 	for c in d.lista("dialogos"):

@@ -14,19 +14,22 @@
  "elena": {
   "saldo": "saldo_inicial"
  },
- "_nota_campanha": "Chrome & Wreckage: jogo novo começa pela campanha de nova_campanha. dono = o jogador é o novo dono da oficina, Mara Hayes guia e o piloto fixo dirige; mesma montagem inicial do Adrian (carro, pneu, primeira peça e o critério de saldo), sem licenças. Saves com Adrian/Elena seguem a história deles. reativa_intervalo_corridas: no máximo um comentário de contexto a cada N corridas (decisão do usuário: 1 a cada 3). carro_caro_percentil: compra de carro acima desse percentil dos preços do catálogo dispara o comentário (aprovado pelo usuário; ajustável no playtest). dono.equipe: nome e logo da equipe na campanha (logo vazio = nome em texto; subtitulo false = o logo já traz MOTORSPORT).",
+ "_nota_campanha": "Chrome & Wreckage: jogo novo começa pela campanha de nova_campanha. dono = o jogador é o novo dono da oficina, Mara Hayes guia e o piloto fixo dirige; decisão 85: começa sem carro, com economia.saldo_inicial (o carro novo mais barato que iguala a prova aberta mais fácil); a primeira peça pedida é a mais barata do carro comprado (peca_demanda \"mais_barata\"); carro_mara: o carro dos cavaletes chega preparado (a peça mais forte de cada categoria) na licença indicada (National, decisão do usuário). Saves com Adrian/Elena seguem a história deles. reativa_intervalo_corridas: no máximo um comentário de contexto a cada N corridas (decisão do usuário: 1 a cada 3). carro_caro_percentil: compra de carro acima desse percentil dos preços do catálogo dispara o comentário (aprovado pelo usuário; ajustável no playtest). dono.equipe: nome e logo da equipe na campanha (logo vazio = nome em texto; subtitulo false = o logo já traz MOTORSPORT).",
  "nova_campanha": "dono",
  "dono": {
-  "carro": "bancroft_arraia",
-  "cor": "creme",
-  "pneu": "pneu_1",
   "licencas": [],
-  "peca_demanda": "bancroft_arraia_brake_1",
+  "peca_demanda": "mais_barata",
   "piloto": "",
   "equipe": {
    "nome": "Wreckage Motorsport",
    "logo": "res://arte/equipes/wreckage_motorsport.png",
    "subtitulo": false
+  },
+  "carro_mara": {
+   "carro": "bancroft_arraia",
+   "cor": "creme",
+   "pneu": "pneu_1",
+   "licenca": "NATIONAL"
   }
  },
  "reativa_intervalo_corridas": 3,

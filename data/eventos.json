@@ -198,7 +198,7 @@
   "id": "ev_003",
   "nome": "Copa Wexmoor Carmim",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -233,7 +233,7 @@
   "id": "ev_004",
   "nome": "Copa Wexmoor Carmim II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -562,7 +562,7 @@
   "id": "ev_010",
   "nome": "Copa Mizuchi Fagulha",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -594,7 +594,7 @@
   "id": "ev_011",
   "nome": "Copa Mizuchi e Hayase",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -644,7 +644,7 @@
   "id": "ev_012",
   "nome": "Copa Mizuchi Canoa",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -688,7 +688,7 @@
   "id": "ev_013",
   "nome": "Copa Mizuchi Canoa II",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -751,7 +751,7 @@
   "id": "ev_014",
   "nome": "Copa Hayase e Mizuchi",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -800,7 +800,7 @@
   "id": "ev_015",
   "nome": "Copa Hayase e Mizuchi II",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -865,7 +865,7 @@
   "id": "ev_016",
   "nome": "Copa Dunmere Fornada",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -896,7 +896,7 @@
   "id": "ev_017",
   "nome": "Copa Dunmere Fornada II",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -923,7 +923,7 @@
   "id": "ev_018",
   "nome": "Copa Dunmere Menta e Ashcombe Assobio",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -959,7 +959,7 @@
   "id": "ev_019",
   "nome": "Copa Dunmere Menta e Ashcombe Assobio II",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -995,7 +995,7 @@
   "id": "ev_020",
   "nome": "Copa Lindauer Friso",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1026,7 +1026,7 @@
   "id": "ev_021",
   "nome": "Copa Lindauer Friso e Laminar",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1054,7 +1054,7 @@
   "id": "ev_022",
   "nome": "Copa dos Associados — etapa 1",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -1098,7 +1098,7 @@
   "id": "ev_023",
   "nome": "Copa dos Associados — etapa 2",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -1188,7 +1188,7 @@
   "id": "ev_025",
   "nome": "Copa Bancroft",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1236,7 +1236,7 @@
   "id": "ev_026",
   "nome": "Copa Bancroft II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1301,7 +1301,7 @@
   "id": "ev_027",
   "nome": "Copa Garrison Ciranda",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1336,7 +1336,7 @@
   "id": "ev_028",
   "nome": "Copa Garrison Ciranda II",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1371,7 +1371,7 @@
   "id": "ev_056",
   "nome": "Copa Garrison Aster",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1406,7 +1406,7 @@
   "id": "ev_057",
   "nome": "Copa Garrison Aster II",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1441,7 +1441,7 @@
   "id": "ev_058",
   "nome": "Copa Whitlock Seta",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1474,7 +1474,7 @@
   "id": "ev_059",
   "nome": "Copa Whitlock Amora",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -1505,7 +1505,7 @@
   "id": "ev_060",
   "nome": "Copa Whitlock Amora II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2124,7 +2124,7 @@
   "id": "ev_071",
   "nome": "Copa Morel Jade",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2155,7 +2155,7 @@
   "id": "ev_072",
   "nome": "Copa Morel Jade II",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2332,7 +2332,7 @@
   "id": "ev_076",
   "nome": "Copa Saulieu Alto",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2371,7 +2371,7 @@
   "id": "ev_077",
   "nome": "Copa Saulieu Cogumelo",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2406,7 +2406,7 @@
   "id": "ev_078",
   "nome": "Copa Saulieu Cogumelo II",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2441,7 +2441,7 @@
   "id": "ev_079",
   "nome": "Copa Saulieu Alto e Nacara",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2670,7 +2670,7 @@
   "id": "ev_091",
   "nome": "Copa Vallon Vazante",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2701,7 +2701,7 @@
   "id": "ev_092",
   "nome": "Copa Vallon Vazante II",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2736,7 +2736,7 @@
   "id": "ev_095",
   "nome": "Copa Vorhaus Ameixa",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2767,7 +2767,7 @@
   "id": "ev_096",
   "nome": "Copa Vorhaus Ameixa e Ferro",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -2980,7 +2980,7 @@
   "id": "ev_100",
   "nome": "Copa Ostwerk Cimbra e Saulieu Nacara",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3816,7 +3816,7 @@
   "id": "ev_115",
   "nome": "Copa Keldorf Gongora",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3847,7 +3847,7 @@
   "id": "ev_116",
   "nome": "Copa Keldorf Gongora II",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3874,7 +3874,7 @@
   "id": "ev_117",
   "nome": "Copa Lindauer Friso II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -3905,7 +3905,7 @@
   "id": "ev_118",
   "nome": "Copa Lindauer Friso e Laminar II",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5479,7 +5479,7 @@
   "id": "ev_145",
   "nome": "Copa Feldhaus Zenite",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5510,7 +5510,7 @@
   "id": "ev_146",
   "nome": "Copa Mizuchi e Halberton",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5557,7 +5557,7 @@
   "id": "ev_147",
   "nome": "Copa Mizuchi e Halberton II",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5623,7 +5623,7 @@
   "id": "ev_148",
   "nome": "Copa Feldhaus Zenite e Norrvik Bastion",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5652,7 +5652,7 @@
   "id": "ev_149",
   "nome": "Copa Hozuki Catana",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5683,7 +5683,7 @@
   "id": "ev_150",
   "nome": "Copa Hozuki Catana II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5718,7 +5718,7 @@
   "id": "ev_151",
   "nome": "Copa Hozuki Gaivota",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5754,7 +5754,7 @@
   "id": "ev_152",
   "nome": "Copa Hozuki",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5803,7 +5803,7 @@
   "id": "ev_153",
   "nome": "Copa Hozuki Lince e Moncao",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5867,7 +5867,7 @@
   "id": "ev_154",
   "nome": "Copa Hozuki Catana III",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -5912,7 +5912,7 @@
   "id": "ev_155",
   "nome": "Copa Hozuki II",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6120,7 +6120,7 @@
   "id": "ev_159",
   "nome": "Copa Varenna Paladio e Turbina",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6162,7 +6162,7 @@
   "id": "ev_160",
   "nome": "Copa Varenna",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6207,7 +6207,7 @@
   "id": "ev_161",
   "nome": "Copa Ottavo Miudo e Broto",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6244,7 +6244,7 @@
   "id": "ev_162",
   "nome": "Copa Ottavo Miudo e Broto II",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6280,7 +6280,7 @@
   "id": "ev_163",
   "nome": "Copa Castellani Cascalho e Nimboalto",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6320,7 +6320,7 @@
   "id": "ev_164",
   "nome": "Copa Castellani Cascalho",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6348,7 +6348,7 @@
   "id": "ev_165",
   "nome": "Copa Pemberly Flautista",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6387,7 +6387,7 @@
   "id": "ev_166",
   "nome": "Copa Pemberly e Ashcombe",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6438,7 +6438,7 @@
   "id": "ev_167",
   "nome": "Copa Pemberly e Ashcombe II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6492,7 +6492,7 @@
   "id": "ev_168",
   "nome": "Copa Pemberly Flautista II",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6527,7 +6527,7 @@
   "id": "ev_169",
   "nome": "Copa Hayase Deriva",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6558,7 +6558,7 @@
   "id": "ev_170",
   "nome": "Copa Hayase Deriva II",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6586,7 +6586,7 @@
   "id": "ev_177",
   "nome": "Copa Sanga Estopim e Hayase Calima",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6632,7 +6632,7 @@
   "id": "ev_178",
   "nome": "Copa Sanga Chispa",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -6680,7 +6680,7 @@
   "id": "ev_179",
   "nome": "Copa Sanga Chispa II",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7108,7 +7108,7 @@
   "id": "ev_186",
   "nome": "Copa Hayase",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7161,7 +7161,7 @@
   "id": "ev_187",
   "nome": "Copa Hayase II",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7229,7 +7229,7 @@
   "id": "ev_188",
   "nome": "Copa Hayase III",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7276,7 +7276,7 @@
   "id": "ev_189",
   "nome": "Copa Hayase III II",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7343,7 +7343,7 @@
   "id": "ev_190",
   "nome": "Copa Hayase Casulo e Gota",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7380,7 +7380,7 @@
   "id": "ev_191",
   "nome": "Copa Hayase Casulo e Gota II",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7416,7 +7416,7 @@
   "id": "ev_192",
   "nome": "Copa Hayase III III",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7450,7 +7450,7 @@
   "id": "ev_193",
   "nome": "Copa Hayase Cicatriz e Silex",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7856,7 +7856,7 @@
   "id": "ev_200",
   "nome": "Copa Tomoe Grilo",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7883,7 +7883,7 @@
   "id": "ev_201",
   "nome": "Copa Tomoe Faia e Mirtilo",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7925,7 +7925,7 @@
   "id": "ev_202",
   "nome": "Copa Tomoe Faia e Mirtilo II",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -7970,7 +7970,7 @@
   "id": "ev_203",
   "nome": "Copa Tomoe Mirtilo e Eco",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8011,7 +8011,7 @@
   "id": "ev_204",
   "nome": "Copa Tomoe",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8056,7 +8056,7 @@
   "id": "ev_205",
   "nome": "Copa Hoshino Cobalto",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8092,7 +8092,7 @@
   "id": "ev_206",
   "nome": "Copa Hoshino Cobalto II",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8128,7 +8128,7 @@
   "id": "ev_207",
   "nome": "Copa Hoshino Horizonte e Vento",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8359,7 +8359,7 @@
   "id": "ev_211",
   "nome": "Copa Primeira Marcha — etapa 1",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -8403,7 +8403,7 @@
   "id": "ev_212",
   "nome": "Copa Primeira Marcha — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -8443,7 +8443,7 @@
   "id": "ev_213",
   "nome": "Copa Primeira Marcha — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {},
   "adversarios": [
@@ -8794,7 +8794,7 @@
   "id": "ev_219",
   "nome": "Copa Kanaya",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -8837,7 +8837,7 @@
   "id": "ev_220",
   "nome": "Copa Kanaya II",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9253,7 +9253,7 @@
   "id": "ev_227",
   "nome": "Copa Kanaya III",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9302,7 +9302,7 @@
   "id": "ev_228",
   "nome": "Copa Kanaya III II",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9368,7 +9368,7 @@
   "id": "ev_229",
   "nome": "Copa Kanaya Pingo",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9396,7 +9396,7 @@
   "id": "ev_230",
   "nome": "Copa Kanaya III III",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9440,7 +9440,7 @@
   "id": "ev_231",
   "nome": "Copa Kanaya Bago",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9471,7 +9471,7 @@
   "id": "ev_232",
   "nome": "Copa Kanaya Bago II",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9499,7 +9499,7 @@
   "id": "ev_233",
   "nome": "Copa Ashcombe Assobio",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9530,7 +9530,7 @@
   "id": "ev_234",
   "nome": "Copa Ashcombe Assobio II",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -9744,7 +9744,7 @@
   "id": "ev_238",
   "nome": "Copa Pena — etapa 1",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 150
@@ -10070,7 +10070,7 @@
   "id": "ev_244",
   "nome": "Copa Kosame Muda",
   "pista": "serra_curta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -10113,7 +10113,7 @@
   "id": "ev_245",
   "nome": "Copa Kosame Muda II",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -10164,7 +10164,7 @@
   "id": "ev_246",
   "nome": "Copa Kosame Muda III",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [
@@ -10195,7 +10195,7 @@
   "id": "ev_247",
   "nome": "Copa Kosame Muda III II",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 2,
   "condicao": "seco",
   "restricoes": {
    "carros": [

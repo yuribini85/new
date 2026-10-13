@@ -179,7 +179,7 @@ func _the_grid() -> void:
 	if lista.is_empty():
 		return
 	var pos: int = TheGrid.posicao(dados, jogador)
-	titulo_secao("THE GRID")
+	ancora("GRID", titulo_secao("THE GRID"))
 	var sua := rotulo(("%s: fora do Grid. Dez equipes no topo; uma por vez, da #10 à #1." if pos == 0
 			else "%s: #%d do Grid.") % ([IdentidadeEquipe.nome(dados, jogador)] if pos == 0
 			else [IdentidadeEquipe.nome(dados, jogador), pos]), FONTE_PEQUENA + 2, COR_SECUNDARIA)
@@ -338,11 +338,13 @@ func _animar_grid() -> void:
 ## está fechado): os contratos (renda por hora e o bônus da condição), as
 ## vagas livres e as ofertas.
 func _patrocinio() -> void:
-	if not GestaoEquipe.aberta(dados, jogador):
+	if not GestaoEquipe.patrocinio_aberto(dados, jogador):
 		return
 	var vagas := GestaoEquipe.vagas(dados, jogador)
 	var ativos := GestaoEquipe.contratos(jogador)
-	titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o app fechado; a condição de cada um paga bônus por corrida.")
+	var tit := titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o app fechado (até %d h fora); a condição de cada um paga bônus por corrida."
+			% roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0))
+	ancora("PATROCINIO", tit)
 	var agora := Time.get_unix_time_from_system()
 	for c in ativos:
 		var p := GestaoEquipe.patrocinador(dados, c["id"])

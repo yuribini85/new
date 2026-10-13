@@ -165,6 +165,7 @@ func fazer_teste(licenca_id: String, teste_id: String, uid: int, semente: int,
 	if not licenca_id in jogador.licencas and Contratos.da_licenca(dados, licenca_id).is_empty() and _completa(lic):
 		jogador.licencas.append(licenca_id)
 		concedida = true
+		Prologo.ao_conceder(dados, jogador, licenca_id)
 	return {"tempo": tempo, "grau": grau, "licenca_concedida": concedida}
 
 

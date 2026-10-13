@@ -686,3 +686,18 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (licença Club: treino e avaliação) → o resto como antes (lojas na primeira visita, arena
     aos 3 carros, gestão na International, The Grid). Antes, o carro vinha antes do piloto e
     Corridas, antes dos freios, mandava contratar numa aba que ainda não existia.
+85. **Começo da campanha do dono** (2026-10-13, decisões do usuário; substitui a ordem da 84).
+    História: a oficina da Mara está hipotecada; ela é ruim de negócio, mas domina oficina e
+    preparação de pilotos; o jogador assume as contas e a dívida em troca de sociedade na
+    oficina e na Wreckage. A dívida é só história: vencer o The Grid é o que salva a oficina.
+    Ordem do tutorial: abertura e nome ("COMO VOCÊ SE CHAMA?") → The Grid (Carreira) →
+    comprar o primeiro carro (a garagem começa vazia) → contratar o piloto de corrida →
+    primeira prova → aprimorar o carro (a peça mais barata do carro em uso, que o prêmio da
+    primeira prova paga) → segunda prova → licença Club → prova com a Club → patrocínio →
+    arena (3 carros, depois do patrocínio). Números: saldo inicial = preço do carro novo mais
+    barato com a potência do rival mais forte da prova aberta mais fácil (importador; hoje 658,
+    o Vallon Vazante); provas abertas (sem licença) com 2 voltas; o patrocínio abre na
+    primeira corrida com a Club e rende com o app fechado até 2 h na primeira licença, +1 h
+    por licença conquistada (equipe.json); caixa e sede seguem na International. O carro dos
+    cavaletes (Bancroft Arraia) chega na licença National com a peça mais forte de cada
+    categoria (historia.json → dono.carro_mara).

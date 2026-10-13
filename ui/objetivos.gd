@@ -50,14 +50,22 @@ static func _elena(jogador: Node, _dados: Node) -> Array:
 	]
 
 
-## Dono da oficina (Chrome & Wreckage): o carro já está na garagem; o primeiro
-## pedido da Mara é a peça da demanda (historia.json → dono.peca_demanda).
+## Dono da oficina (Chrome & Wreckage, decisão 85): o primeiro carro, o
+## piloto, a primeira prova e a peça que a Mara pede depois dela.
 static func _dono(jogador: Node, dados: Node) -> Array:
+	var l := [
+		{"texto": "Comprar o primeiro carro", "feito": not jogador.garagem.lista().is_empty(), "aba": Aba.LOJA,
+			"botao": "Ir para as Lojas"},
+		{"texto": "Contratar o piloto de corrida", "feito": jogador.flags.has("PILOT_HIRED"), "aba": Aba.EQUIPE,
+			"botao": "Ir para a Equipe"},
+		{"texto": "Disputar a primeira prova", "feito": jogador.flags.has("FIRST_RACE_DONE"), "aba": Aba.EVENTOS,
+			"botao": "Ver corridas"},
+	]
 	var peca := Prologo.demanda(dados, jogador)
-	if not dados.existe("pecas", peca):
-		return []
-	return [{"texto": "Comprar %s na Garagem" % dados.peca(peca)["nome"], "feito": jogador.flags.has("FIRST_TUNE_DONE"),
-		"aba": Aba.GARAGEM, "botao": "Ir para a Garagem"}]
+	if dados.existe("pecas", peca):
+		l.append({"texto": "Comprar %s na Oficina" % dados.peca(peca)["nome"], "feito": jogador.flags.has("FIRST_TUNE_DONE"),
+			"aba": Aba.GARAGEM, "botao": "Ir para a Oficina"})
+	return l
 
 
 ## De volta às pistas (decisão 73): no dono, a licença Club é a licença que a

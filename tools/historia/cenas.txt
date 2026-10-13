@@ -494,24 +494,21 @@ Mara: Se veio buscar o carro, ainda não está pronto.
 [PAUSA]
 Mara: Ah. Você é quem respondeu ao anúncio.
 [CENARIO:oficina_mara]
-Mara[cruzados]: Vou poupar seu tempo. O negócio não vai bem.
-Mara[pensativa]: Já tivemos uma equipe de corrida aqui. Bons pilotos, bons carros... Até alguns troféus.
-Mara[decepcao]: Hoje temos uma oficina, contas para pagar e uma licença de competição que ainda precisamos renovar.
-Mara[pensativa]: Eu sei colocar um carro na pista. O problema sempre foi manter a equipe funcionando fora dela.
-Mara[explica]: Preciso de alguém que cuide das contas, contrate pilotos, negocie com fornecedores e escolha onde investir nossos giros.
-Mara[gesto]: Você assume a administração. Eu cuido dos carros.
+Mara[cruzados]: Vou poupar seu tempo. A oficina está hipotecada.
+Mara[pensativa]: Já tivemos uma equipe de corrida aqui, a Wreckage. Bons pilotos, bons carros... Até alguns troféus.
+Mara[decepcao]: Eu sou ruim de negócio. As contas mostram isso melhor que eu.
+Mara[explica]: Mas oficina eu domino. Carro e piloto, ninguém aqui prepara melhor.
+Mara[gesto]: A proposta: você assume as contas e a dívida. Em troca, vira sócio da oficina e da Wreckage.
 [PAUSA]
 Mara[firme]: Não vou prometer dinheiro fácil. Nem vitórias.
-Mara: Mas, se souber administrar, talvez a gente consiga colocar esta equipe de volta no circuito.
 Mara[cruzados]: Então, temos um acordo? E como devo chamar você?
 [PEDIR_NOME]
 
 # Decisão 84 (pedido do usuário): o piloto vem primeiro. O jogador administra;
 # a equipe nasce aqui e o primeiro passo é escolher quem vai dirigir.
-= CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; cenario=oficina_mara
-Mara[gesto]: Muito bem, {admin}. Eu sou a Mara.
-Mara[firme]: Antes do carro, a gente precisa de alguém para dirigir.
-[UNLOCK_TEAM_TAB]
+= CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; proxima=CW_GR00; cenario=oficina_mara
+Mara[gesto]: Muito bem, sócio. {admin}. Eu sou a Mara.
+Mara[firme]: Antes de gastar um giro, veja aonde a gente precisa chegar.
 
 # Ficha do carro: cada atributo em destaque; termina pedindo os freios.
 = CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L
@@ -523,21 +520,21 @@ Mara: Peso. O que ele tem de carregar. Mais leve acelera, freia e vira melhor.
 [HIGHLIGHT_PNEUS]
 Mara: Pneus. Quanto disso chega ao chão.
 [HIGHLIGHT_FREIOS]
-Mara: O motor pega. Os freios ainda precisam convencer.
+Mara: Freios. Quanto mais tarde ele freia, mais velocidade leva até a curva.
 [HIGHLIGHT_DEMANDA]
-Mara: Deixei anotado o que ele pede primeiro.
+Mara: Deixei anotado o que ele pede primeiro: {demanda}.
 [HIGHLIGHT_SALDO]
 Mara: Veja o caixa antes de gastar o que não temos.
-Sistema: Toque em Freios.
-[HIGHLIGHT_FREIOS]
+Sistema: Toque na peça destacada.
+[HIGHLIGHT_DEMANDA]
 
 = CW_P02L | LEMBRETE | personagem=dono; proibe=TUNE_TUTORIAL_SEEN,FIRST_TUNE_DONE
-Mara: Freios. Toque ali.
-[HIGHLIGHT_FREIOS]
+Mara: {demanda}. Toque ali.
+[HIGHLIGHT_DEMANDA]
 
 = CW_P03 | EVOLUCAO | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; lembrete=CW_P03L
 [HIGHLIGHT_BRAKES]
-Mara: Peça nova não faz milagre. Mas freio ruim faz estrago.
+Mara: Peça nova não faz milagre. Mas cada uma soma na pista.
 Mara: {demanda}. Cabe no caixa.
 Sistema: Compre os {demanda}.
 [HIGHLIGHT_BRAKES]
@@ -547,14 +544,22 @@ Mara: O carro não se monta sozinho. {demanda}.
 [HIGHLIGHT_BRAKES]
 
 = CW_P03B | DEMANDA_CONCLUIDA | personagem=dono; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE
-Mara: {peca} instalados.
-Mara: Agora ele freia. {piloto} pode correr.
+Mara: Pronto: {peca}.
+Mara[firme]: Mais uma prova. Quero ver a diferença na pista.
 Sistema: Vá para Corridas.
 [HIGHLIGHT_NAV_EVENTOS]
 
+# 6. Depois da segunda corrida (já com a peça): a licença.
+= CW_P06C | CORRIDA_FIM | personagem=dono; requer=FIRST_TUNE_DONE; proibe=SECOND_RACE_DONE; flags=SECOND_RACE_DONE
+Mara[pensativa]: É assim que se sobe: corrida, prêmio, peça, corrida.
+Mara[explica]: Mas sem licença, só as provas abertas. A nossa precisa ser renovada.
+Mara: As licenças abrem as portas certas. Os troféus mantêm elas abertas.
+Sistema: Licenças ficam em Carreira.
+[HIGHLIGHT_NAV_LICENCAS]
+
 # Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
 # piloto (de corrida) é escolhido na tela de pilotos, logo depois do nome.
-= CW_P03C | ABA:EQUIPE | personagem=dono; requer=ADMIN_NAMED; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
+= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
 Mara[explica]: Você cuida da equipe. Quem senta no carro é piloto contratado.
 Mara[gesto]: Para as corridas, alguém constante ou uma promessa. É ele que leva o nome da Wreckage para a pista.
 Sistema: Toque em Contratar, no piloto de corrida.
@@ -564,9 +569,11 @@ Sistema: Toque em Contratar, no piloto de corrida.
 Mara: Sem piloto, o carro não sai. Contrate um para as corridas.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
-= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET; proxima=CW_P02
+= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET
 Mara[firme]: {piloto} no volante. O treino fica aqui na Equipe, no relógio, mesmo com o app fechado.
-Mara: Agora o carro.
+Mara: Agora, a primeira prova.
+Sistema: Vá para Corridas.
+[HIGHLIGHT_NAV_EVENTOS]
 
 = CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara
 Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.
@@ -595,16 +602,14 @@ Mara[pensativa]: Depois, a conta aparece nos resultados.
 Sistema: Uma corrida por vez. Depois de largar, ela termina mesmo com o app fechado.
 
 # Resultado da primeira prova: uma variante para vitória e outra para o resto.
-= CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN
+= CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN; proxima=CW_P02
 Mara[pensativa]: Ganhar é bom. Saber quanto custou é melhor.
-Mara: As licenças abrem as portas certas. Os troféus mantêm elas abertas.
-Sistema: Licenças ficam em Carreira.
+Mara[firme]: Agora o prêmio volta para o carro.
 
-= CW_P06B | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE
+= CW_P06B | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; proxima=CW_P02
 Mara[decepcao]: {posicao}. Corrida perdida também paga.
 Mara[explica]: A tela da corrida mostra onde ele perdeu tempo. Olhe antes de culpar o carro.
-Mara: As licenças abrem as portas certas. Os troféus mantêm elas abertas.
-Sistema: Licenças ficam em Carreira.
+Mara[firme]: Agora o prêmio volta para o carro.
 
 = CW_E01 | EVENTO_BLOQUEADO | personagem=dono; proibe=EVENT_REQUIREMENTS_TUTORIAL_DONE; flags=EVENT_REQUIREMENTS_TUTORIAL_DONE
 Mara[explica]: Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença.
@@ -617,7 +622,7 @@ Mara[explica]: É a licença que a gente precisa renovar. Quem renova é o pilot
 Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leva café.
 [OPEN_LICENSE_CENTER]
 
-= CW_L02 | ABA:LICENCAS | personagem=dono; requer=FIRST_RACE_DONE; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; cenario=vector_academy
+= CW_L02 | ABA:LICENCAS | personagem=dono; requer=SECOND_RACE_DONE; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; cenario=vector_academy
 Harold: Harold Brandt, examinador da Vector Academy. Licença Club.
 Harold: Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado.
 Harold: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é dele.
@@ -626,13 +631,33 @@ Harold: Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
 Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 
-# The Grid, a lista negra (Carreira): a Mara apresenta logo depois da licença renovada.
-= CW_GR00 | ENCADEADA | personagem=dono; proibe=GRID_INTRO; flags=GRID_INTRO; cenario=oficina_mara
-Mara[explica]: Agora podemos pensar além da próxima conta. Conhece o The Grid?
-Mara: Dez equipes no topo do circuito. A gente está fora dela.
+# Decisão 85 (usuário): o primeiro tutorial é o The Grid, a meta que paga a
+# hipoteca (a dívida é só história: vencer o Grid salva a oficina).
+= CW_GR00 | ENCADEADA | personagem=dono; proibe=GRID_INTRO; flags=GRID_INTRO; cenario=oficina_mara; proxima=CW_C00
+[OPEN_LICENSE_CENTER]
+[HIGHLIGHT_GRID]
+Mara[explica]: O The Grid. Dez equipes no topo do circuito. A gente está fora dele.
 Mara: Uma de cada vez, da décima até a primeira. A da vez fica em destaque.
 Mara[firme]: Cada uma tem o seu desafio, na pista ou na arena, contra os carros especiais dela. Vença e ela fica para trás.
+Mara[pensativa]: Quem chega ao topo tem patrocinador batendo na porta. É assim que a hipoteca sai daqui.
 Sistema: The Grid fica em Carreira, embaixo dos objetivos.
+
+# 1. O primeiro carro: a garagem começa vazia.
+= CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara; lembrete=CW_C00L
+Mara[cruzados]: Para correr, um carro. A garagem está vazia; o último foi junto com as dívidas.
+Mara[explica]: O caixa dá para um carro novo, e só. Para as primeiras provas, procure perto de cem cavalos.
+Sistema: Vá para as Lojas e compre o primeiro carro.
+[HIGHLIGHT_NAV_LOJA]
+
+= CW_C00L | LEMBRETE | personagem=dono; proibe=FIRST_CAR
+Mara: Sem carro, não tem corrida. As Lojas estão ali.
+[HIGHLIGHT_NAV_LOJA]
+
+# 2. Comprado o carro, o piloto: a equipe nasce aqui.
+= CW_C01B | COMPRA_CARRO | personagem=dono; proibe=FIRST_CAR; flags=FIRST_CAR; cenario=oficina_mara
+Mara[gesto]: {carro}. Dá para trabalhar.
+Mara[firme]: Agora alguém para dirigir.
+[UNLOCK_TEAM_TAB]
 
 = CW_L03 | LICENCA_TREINO_INICIO | personagem=dono; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED
 Mara: Treino rodando. A oficina não para por isso.
@@ -652,11 +677,24 @@ Mara[explica]: National disponível.
 Mara[firme]: Daqui para cima, vitória solta não basta. Pede título.
 [OPEN_LICENSE_CENTER]
 
-# De volta às pistas (decisão 73): a Club é a licença renovada; depois, o The Grid.
-= CW_R10 | LICENCA_CONCEDIDA:CLUB | personagem=dono; flags=CLUB_COMPLETE; proxima=CW_GR00; cenario=vector_academy
+# De volta às pistas (decisão 73): a Club é a licença renovada; 7. uma prova com ela.
+= CW_R10 | LICENCA_CONCEDIDA:CLUB | personagem=dono; flags=CLUB_COMPLETE; cenario=vector_academy
 Harold: Licença Club aprovada. Assinado e carimbado.
 Mara[pensativa]: Licença renovada. Faz tempo que eu não via esse papel sem uma cobrança junto.
+Mara[firme]: Agora uma prova de licença. Lá o prêmio é outro.
 Sistema: Novas provas liberadas em Corridas › Club.
+[HIGHLIGHT_NAV_EVENTOS]
+
+# 8. A primeira corrida com a Club: o patrocínio (decisão 85: abre aqui; caixa e
+# sede seguem na International).
+= CW_S00 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO,PATROCINIO_LIBERADO; cenario=oficina_mara
+Mara[explica]: Licença na mão e resultado na pista: agora aparece patrocinador.
+Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
+Mara[pensativa]: Fechado, rende algumas horas; cada licença nova aguenta uma hora a mais.
+Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
+[OPEN_LICENSE_CENTER]
+[HIGHLIGHT_PATROCINIO]
+Sistema: Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas.
 
 = CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
 Harold: Sport aprovada. Eu esperava mais rápido. Mas aprovada.
@@ -665,13 +703,17 @@ Mara[pensativa]: Provas maiores. Contas maiores também.
 = CW_R10C | LICENCA_CONCEDIDA:NATIONAL | personagem=dono; flags=NATIONAL_COMPLETE; cenario=vector_academy
 Harold: National aprovada. Poucos passam daqui sem repetir.
 Mara[firme]: Agora a gente aparece na lista dos outros.
+[CENARIO:oficina_mara]
+Mara[pensativa]: Lembra do carro nos cavaletes? Eu não parei de mexer nele.
+Mara[gesto]: Cada peça que ele aceita. Está na garagem. É da equipe.
+Sistema: O carro da Mara entrou na garagem, preparado.
 
 # A equipe da oficina nasce com a International; o segundo piloto chega com a Pro.
 = CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,GESTAO_LIBERADA; cenario=oficina_mara
 Harold: International aprovada. Agora ele representa a Academy lá fora também.
 Mara[explica]: Com essa, a Wreckage volta a ser equipe de verdade.
-Mara: Caixa, folha e patrocínio passam a contar por corrida.
-Sistema: Caixa e Sede na aba Equipe; Patrocínio na Carreira.
+Mara: Caixa e folha passam a contar por corrida, e a Sede melhora o que os patrocinadores pagam.
+Sistema: Caixa e Sede na aba Equipe.
 
 = CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE; cenario=oficina_mara
 Harold: Pro aprovada.
@@ -748,7 +790,7 @@ Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
 
 # ---------------------------------------------------------------- Arena (decisão 49)
 # Decisão 69: o tutorial da arena chega com o terceiro carro na garagem.
-= CW_P07 | GARAGEM_TRES_CARROS | personagem=dono; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
+= CW_P07 | GARAGEM_TRES_CARROS | personagem=dono; requer=PATROCINIO_INTRO; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
 Mara[cruzados]: Três carros. Tem outra maneira de ganhar dinheiro por aqui.
 Mara[pensativa]: Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.
 Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.

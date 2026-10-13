@@ -5,7 +5,9 @@
   "duracao_h": 24,
   "renda_hora_fator": 0.25,
   "bonus_fator": 0.5,
-  "contratos_base": 1
+  "contratos_base": 1,
+  "teto_offline_h_base": 2,
+  "teto_offline_h_por_licenca": 1
  },
  "desmanche": {
   "fator_pecas": 0.5
@@ -72,5 +74,6 @@
   "_nota": "Oficina → PINTURA (pedido do usuário, 2026-10-11): trocar a cor da carroceria e pintar faixas custa um fator sobre o prêmio de 1º lugar médio da maior licença do jogador (o mesmo critério da Sede e do treino). null = preço a definir (vale 0 até o usuário decidir).",
   "fator_cor": null,
   "fator_faixas": null
- }
+ },
+ "_nota_patrocinio_teto": "Decisão 85 (usuário): com o app fechado o patrocínio rende até teto_offline_h_base horas na primeira licença e mais teto_offline_h_por_licenca hora a cada licença conquistada depois (o teto das corridas, carreira.teto_offline_s, não vale para ele). Na campanha do dono o patrocínio abre depois da primeira corrida com a licença Club (flag PATROCINIO_LIBERADO); caixa e sede seguem na International."
 }

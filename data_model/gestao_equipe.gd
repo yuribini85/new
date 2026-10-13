@@ -26,6 +26,27 @@ static func aberta(dados: Node, jogador: Node) -> bool:
 			and (not EquipeJogador.exige_piloto(jogador) or jogador.flags.has("GESTAO_LIBERADA"))
 
 
+## Patrocínio (decisão 85): no dono abre antes do resto da gestão, depois da
+## primeira corrida com a licença Club (flag PATROCINIO_LIBERADO).
+static func patrocinio_aberto(dados: Node, jogador: Node) -> bool:
+	return aberta(dados, jogador) or (not dados.equipe().is_empty() and EquipeJogador.criada(jogador)
+			and jogador.flags.has(FLAG_PATROCINIO))
+
+
+const FLAG_PATROCINIO := "PATROCINIO_LIBERADO"
+
+
+## Teto da renda com o app fechado (s): equipe.json → patrocinio.teto_offline_h_base
+## na primeira licença e + teto_offline_h_por_licenca por licença a mais
+## (decisão 85); sem eles, o teto das corridas.
+static func teto_offline(dados: Node, jogador: Node) -> float:
+	var cfg := config(dados)
+	if cfg.get("teto_offline_h_base") == null:
+		return float(dados.carreira().get("teto_offline_s", 28800))
+	var extra := maxi(jogador.licencas.size() - 1, 0)
+	return (float(cfg["teto_offline_h_base"]) + float(cfg.get("teto_offline_h_por_licenca", 0)) * extra) * 3600.0
+
+
 ## Média do prêmio de 1º lugar das provas da licença (0 sem provas).
 static func premio_referencia(dados: Node, licenca: String) -> int:
 	var soma := 0
@@ -190,9 +211,9 @@ static func assinar(dados: Node, jogador: Node, id: String, agora: float) -> Str
 ## {ganho, encerrados: [nomes]}.
 static func acumular(dados: Node, jogador: Node, agora: float) -> Dictionary:
 	var r := {"ganho": 0, "encerrados": []}
-	if not aberta(dados, jogador):
+	if not patrocinio_aberto(dados, jogador):
 		return r
-	var teto := float(dados.carreira().get("teto_offline_s", 28800))
+	var teto := teto_offline(dados, jogador)
 	var ficam := []
 	for c in contratos(jogador):
 		var p := patrocinador(dados, c["id"])
@@ -219,7 +240,7 @@ static func acumular(dados: Node, jogador: Node, agora: float) -> Dictionary:
 ## retorna [{nome, valor}].
 static func bonus_corrida(dados: Node, jogador: Node, ev: Dictionary, posicao: int, campeonato: bool) -> Array:
 	var pagos := []
-	if not aberta(dados, jogador):
+	if not patrocinio_aberto(dados, jogador):
 		return pagos
 	for c in contratos(jogador):
 		var p := patrocinador(dados, c["id"])

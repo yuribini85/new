@@ -50,8 +50,12 @@ static func montar(dados: Node, jogador: Node, id: String) -> String:
 						jogador.flags[f] = true
 			_licencas_ate(dados, jogador, "NATIONAL")
 			jogador.flags["NATIONAL_COMPLETE"] = true
+			# Decisão 85: a garagem do dono começa vazia; o carro da Mara chega na National.
+			Prologo.ao_conceder(dados, jogador, "NATIONAL")
 			_comprar_usado(dados, jogador)
 			_comprar_usado(dados, jogador)
+			if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
+				jogador.carro_ativo = jogador.garagem.lista()[0].uid
 			if id == "carro_3d" and dados.existe("carros", CARRO_3D):
 				var carro := Carro.new(dados.carro(CARRO_3D))
 				carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))

@@ -126,6 +126,7 @@ func enviar(contrato_id: String, montagem: Dictionary, agora: float = Time.get_u
 	if not lic["id"] in jogador.licencas and completa(dados, jogador, lic["id"]):
 		jogador.licencas.append(lic["id"])
 		r["licenca_concedida"] = true
+		Prologo.ao_conceder(dados, jogador, lic["id"])
 	return r
 
 

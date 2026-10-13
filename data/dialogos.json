@@ -2293,32 +2293,27 @@
    },
    {
     "quem": "mara",
-    "texto": "Vou poupar seu tempo. O negócio não vai bem.",
+    "texto": "Vou poupar seu tempo. A oficina está hipotecada.",
     "pose": "cruzados"
    },
    {
     "quem": "mara",
-    "texto": "Já tivemos uma equipe de corrida aqui. Bons pilotos, bons carros... Até alguns troféus.",
+    "texto": "Já tivemos uma equipe de corrida aqui, a Wreckage. Bons pilotos, bons carros... Até alguns troféus.",
     "pose": "pensativa"
    },
    {
     "quem": "mara",
-    "texto": "Hoje temos uma oficina, contas para pagar e uma licença de competição que ainda precisamos renovar.",
+    "texto": "Eu sou ruim de negócio. As contas mostram isso melhor que eu.",
     "pose": "decepcao"
    },
    {
     "quem": "mara",
-    "texto": "Eu sei colocar um carro na pista. O problema sempre foi manter a equipe funcionando fora dela.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Preciso de alguém que cuide das contas, contrate pilotos, negocie com fornecedores e escolha onde investir nossos giros.",
+    "texto": "Mas oficina eu domino. Carro e piloto, ninguém aqui prepara melhor.",
     "pose": "explica"
    },
    {
     "quem": "mara",
-    "texto": "Você assume a administração. Eu cuido dos carros.",
+    "texto": "A proposta: você assume as contas e a dívida. Em troca, vira sócio da oficina e da Wreckage.",
     "pose": "gesto"
    },
    {
@@ -2328,10 +2323,6 @@
     "quem": "mara",
     "texto": "Não vou prometer dinheiro fácil. Nem vitórias.",
     "pose": "firme"
-   },
-   {
-    "quem": "mara",
-    "texto": "Mas, se souber administrar, talvez a gente consiga colocar esta equipe de volta no circuito."
    },
    {
     "quem": "mara",
@@ -2359,16 +2350,13 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Muito bem, {admin}. Eu sou a Mara.",
+    "texto": "Muito bem, sócio. {admin}. Eu sou a Mara.",
     "pose": "gesto"
    },
    {
     "quem": "mara",
-    "texto": "Antes do carro, a gente precisa de alguém para dirigir.",
+    "texto": "Antes de gastar um giro, veja aonde a gente precisa chegar.",
     "pose": "firme"
-   },
-   {
-    "acao": "UNLOCK_TEAM_TAB"
    }
   ],
   "requer": [],
@@ -2381,6 +2369,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
+  "proxima": "CW_GR00",
   "cenario": "oficina_mara"
  },
  {
@@ -2416,14 +2405,14 @@
    },
    {
     "quem": "mara",
-    "texto": "O motor pega. Os freios ainda precisam convencer."
+    "texto": "Freios. Quanto mais tarde ele freia, mais velocidade leva até a curva."
    },
    {
     "acao": "HIGHLIGHT_DEMANDA"
    },
    {
     "quem": "mara",
-    "texto": "Deixei anotado o que ele pede primeiro."
+    "texto": "Deixei anotado o que ele pede primeiro: {demanda}."
    },
    {
     "acao": "HIGHLIGHT_SALDO"
@@ -2434,10 +2423,10 @@
    },
    {
     "quem": "sistema",
-    "texto": "Toque em Freios."
+    "texto": "Toque na peça destacada."
    },
    {
-    "acao": "HIGHLIGHT_FREIOS"
+    "acao": "HIGHLIGHT_DEMANDA"
    }
   ],
   "requer": [],
@@ -2456,10 +2445,10 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Freios. Toque ali."
+    "texto": "{demanda}. Toque ali."
    },
    {
-    "acao": "HIGHLIGHT_FREIOS"
+    "acao": "HIGHLIGHT_DEMANDA"
    }
   ],
   "requer": [],
@@ -2481,7 +2470,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Peça nova não faz milagre. Mas freio ruim faz estrago."
+    "texto": "Peça nova não faz milagre. Mas cada uma soma na pista."
    },
    {
     "quem": "mara",
@@ -2536,11 +2525,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{peca} instalados."
+    "texto": "Pronto: {peca}."
    },
    {
     "quem": "mara",
-    "texto": "Agora ele freia. {piloto} pode correr."
+    "texto": "Mais uma prova. Quero ver a diferença na pista.",
+    "pose": "firme"
    },
    {
     "quem": "sistema",
@@ -2556,6 +2546,45 @@
   ],
   "flags": [
    "FIRST_TUNE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P06C",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "É assim que se sobe: corrida, prêmio, peça, corrida.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Mas sem licença, só as provas abertas. A nossa precisa ser renovada.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "As licenças abrem as portas certas. Os troféus mantêm elas abertas."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Licenças ficam em Carreira."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_LICENCAS"
+   }
+  ],
+  "requer": [
+   "FIRST_TUNE_DONE"
+  ],
+  "proibe": [
+   "SECOND_RACE_DONE"
+  ],
+  "flags": [
+   "SECOND_RACE_DONE"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -2584,7 +2613,7 @@
    }
   ],
   "requer": [
-   "ADMIN_NAMED"
+   "FIRST_CAR"
   ],
   "proibe": [
    "PILOT_HIRED"
@@ -2628,7 +2657,14 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora o carro."
+    "texto": "Agora, a primeira prova."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Vá para Corridas."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
    }
   ],
   "requer": [],
@@ -2641,8 +2677,7 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono",
-  "proxima": "CW_P02"
+  "personagem": "dono"
  },
  {
   "id": "CW_P04",
@@ -2788,11 +2823,8 @@
    },
    {
     "quem": "mara",
-    "texto": "As licenças abrem as portas certas. Os troféus mantêm elas abertas."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Licenças ficam em Carreira."
+    "texto": "Agora o prêmio volta para o carro.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -2808,7 +2840,8 @@
   "personagem": "dono",
   "condicao": {
    "posicao": 1
-  }
+  },
+  "proxima": "CW_P02"
  },
  {
   "id": "CW_P06B",
@@ -2826,11 +2859,8 @@
    },
    {
     "quem": "mara",
-    "texto": "As licenças abrem as portas certas. Os troféus mantêm elas abertas."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Licenças ficam em Carreira."
+    "texto": "Agora o prêmio volta para o carro.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -2845,7 +2875,8 @@
   "personagem": "dono",
   "condicao": {
    "posicao_min": 2
-  }
+  },
+  "proxima": "CW_P02"
  },
  {
   "id": "CW_E01",
@@ -2940,7 +2971,7 @@
    }
   ],
   "requer": [
-   "FIRST_RACE_DONE"
+   "SECOND_RACE_DONE"
   ],
   "proibe": [
    "LICENSE_OFFLINE_TUTORIAL_SEEN"
@@ -2959,13 +2990,15 @@
   "trigger": "ENCADEADA",
   "falas": [
    {
-    "quem": "mara",
-    "texto": "Agora podemos pensar além da próxima conta. Conhece o The Grid?",
-    "pose": "explica"
+    "acao": "OPEN_LICENSE_CENTER"
+   },
+   {
+    "acao": "HIGHLIGHT_GRID"
    },
    {
     "quem": "mara",
-    "texto": "Dez equipes no topo do circuito. A gente está fora dela."
+    "texto": "O The Grid. Dez equipes no topo do circuito. A gente está fora dele.",
+    "pose": "explica"
    },
    {
     "quem": "mara",
@@ -2975,6 +3008,11 @@
     "quem": "mara",
     "texto": "Cada uma tem o seu desafio, na pista ou na arena, contra os carros especiais dela. Vença e ela fica para trás.",
     "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "Quem chega ao topo tem patrocinador batendo na porta. É assim que a hipoteca sai daqui.",
+    "pose": "pensativa"
    },
    {
     "quem": "sistema",
@@ -2987,6 +3025,91 @@
   ],
   "flags": [
    "GRID_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara",
+  "proxima": "CW_C00"
+ },
+ {
+  "id": "CW_C00",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Para correr, um carro. A garagem está vazia; o último foi junto com as dívidas.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "O caixa dá para um carro novo, e só. Para as primeiras provas, procure perto de cem cavalos.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Vá para as Lojas e compre o primeiro carro."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_LOJA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_CAR"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara",
+  "lembrete": "CW_C00L"
+ },
+ {
+  "id": "CW_C00L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Sem carro, não tem corrida. As Lojas estão ali."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_LOJA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_CAR"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_C01B",
+  "trigger": "COMPRA_CARRO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{carro}. Dá para trabalhar.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora alguém para dirigir.",
+    "pose": "firme"
+   },
+   {
+    "acao": "UNLOCK_TEAM_TAB"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_CAR"
+  ],
+  "flags": [
+   "FIRST_CAR"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -3111,8 +3234,16 @@
     "pose": "pensativa"
    },
    {
+    "quem": "mara",
+    "texto": "Agora uma prova de licença. Lá o prêmio é outro.",
+    "pose": "firme"
+   },
+   {
     "quem": "sistema",
     "texto": "Novas provas liberadas em Corridas › Club."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
    }
   ],
   "requer": [],
@@ -3123,8 +3254,56 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "proxima": "CW_GR00",
   "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_S00",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Licença na mão e resultado na pista: agora aparece patrocinador.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro."
+   },
+   {
+    "quem": "mara",
+    "texto": "Fechado, rende algumas horas; cada licença nova aguenta uma hora a mais.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "E pagam um extra quando a corrida cumpre o que eles pedem.",
+    "pose": "gesto"
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   },
+   {
+    "acao": "HIGHLIGHT_PATROCINIO"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas."
+   }
+  ],
+  "requer": [
+   "CLUB_COMPLETE"
+  ],
+  "proibe": [
+   "PATROCINIO_INTRO"
+  ],
+  "flags": [
+   "PATROCINIO_INTRO",
+   "PATROCINIO_LIBERADO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_R10B",
@@ -3162,6 +3341,23 @@
     "quem": "mara",
     "texto": "Agora a gente aparece na lista dos outros.",
     "pose": "firme"
+   },
+   {
+    "acao": "CENARIO:oficina_mara"
+   },
+   {
+    "quem": "mara",
+    "texto": "Lembra do carro nos cavaletes? Eu não parei de mexer nele.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Cada peça que ele aceita. Está na garagem. É da equipe.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "sistema",
+    "texto": "O carro da Mara entrou na garagem, preparado."
    }
   ],
   "requer": [],
@@ -3189,11 +3385,11 @@
    },
    {
     "quem": "mara",
-    "texto": "Caixa, folha e patrocínio passam a contar por corrida."
+    "texto": "Caixa e folha passam a contar por corrida, e a Sede melhora o que os patrocinadores pagam."
    },
    {
     "quem": "sistema",
-    "texto": "Caixa e Sede na aba Equipe; Patrocínio na Carreira."
+    "texto": "Caixa e Sede na aba Equipe."
    }
   ],
   "requer": [],
@@ -3664,7 +3860,9 @@
     "texto": "Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina."
    }
   ],
-  "requer": [],
+  "requer": [
+   "PATROCINIO_INTRO"
+  ],
   "proibe": [
    "ARENA_INTRO"
   ],

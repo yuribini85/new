@@ -163,6 +163,9 @@ FATOR_MOEDA = 0.0427  # Cr do GT2 → Giros (decisão do usuário: valores bem m
 # Decisão 41 (idle mais longo): voltas das provas ×2,5 (as de 2 viram 5) e preços
 # de compra ×2 em relação aos prêmios.
 FATOR_VOLTAS = 2.5
+# Decisão 85 (usuário): as provas abertas (sem licença) têm 2 voltas, para o
+# começo não ficar maçante; as de licença seguem com FATOR_VOLTAS.
+VOLTAS_ABERTAS = 2
 FATOR_PRECO = 2
 # Copas de marca: CarRestrictionFlags do GT2.
 SO_RUA, SO_CORRIDA = 256, 512
@@ -489,7 +492,8 @@ def main() -> int:
     economia = json.load(open(DATA / "economia.json", encoding="utf-8"))
     # Revenda medida no GT2 (DuckStation): venda = 25% do Car.Price, seja qual for o
     # preço pago no usado; peças não entram (3 carros: 8000→2000, 6400→1600, 2800→700).
-    economia.update({"saldo_inicial": moeda(10000), "pneu_de_fabrica": "pneu_0", "fracao_revenda": FRACAO_REVENDA})
+    economia.update({"saldo_inicial": saldo_inicial(carros, eventos), "pneu_de_fabrica": "pneu_0",
+                     "fracao_revenda": FRACAO_REVENDA})
     gravar("economia", economia)
     carreira = json.load(open(DATA / "carreira.json", encoding="utf-8"))
     carreira["piloto_jogador"] = "jogador"
@@ -699,6 +703,21 @@ def preco_loja(cr: float) -> int:
     return moeda(cr) * FATOR_PRECO
 
 
+def saldo_inicial(carros: list[dict], eventos: list[dict]) -> int:
+    """Decisão 85 (usuário: o jogador compra o primeiro carro): o preço do carro
+    novo mais barato com a potência do rival mais forte da prova aberta mais
+    fácil (sem restrição de carro, potência ou tração). As lojas só vendem
+    novos (decisão 28), e com menos que isso só sobram carros de ~35 cv."""
+    potencia = {c["id"]: float(c["potencia"]) for c in carros}
+    livres = [e for e in eventos if not e["restricoes"] and e["adversarios"]]
+    if not livres:
+        return moeda(10000)  # sem prova aberta livre (fixtures): o saldo inicial do GT2
+    alvo = min(max(potencia.get(a["carro"], 0.0) * float(a.get("potencia_mult", 1.0)) for a in e["adversarios"])
+               for e in livres)
+    precos = [c["preco"] for c in carros if c.get("novo") and not c.get("chefe") and c["potencia"] >= alvo]
+    return min(precos) if precos else moeda(10000)
+
+
 def voltas_jogo(voltas_gt2: int, resistencia: bool = False) -> int:
     """Voltas da prova: as do GT2 × FATOR_VOLTAS, arredondado (decisão 41). A
     resistência fica com as do GT2: ×2,5 passava do tempo máximo da simulação."""
@@ -816,7 +835,8 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         largada = int(n(b.get("RollingStartSpeed")))
         eventos.append({
             "id": f"ev_{k:03d}", "nome": serie if lista_marca or r["evento"][:3] in RESISTENCIA else f"{serie} — etapa {etapas[serie]}", "pista": pista,
-            "voltas": voltas_jogo(int(n(r["voltas"])) or 2, r["evento"][:3] in RESISTENCIA), **({"largada_kmh": largada} if largada > 0 else {}),
+            "voltas": VOLTAS_ABERTAS if not restr.get("licenca") and r["evento"][:3] not in RESISTENCIA
+            else voltas_jogo(int(n(r["voltas"])) or 2, r["evento"][:3] in RESISTENCIA), **({"largada_kmh": largada} if largada > 0 else {}),
             "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [moeda(int(v) * 100) for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,

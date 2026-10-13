@@ -299,3 +299,43 @@ func test_mercado_experiencia_e_embalo() -> void:
 	verificar(dur < GestaoEquipe.duracao_treino(d, j, c0), "embalo: treino mais curto")
 	j.free()
 	d.free()
+
+
+## Decisão 85: o patrocínio rende com o app fechado até 2 h na primeira
+## licença e +1 h por licença a mais (dados reais, equipe.json).
+func test_teto_offline_do_patrocinio_cresce_com_as_licencas() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.licencas = ["CLUB"]
+	igual(GestaoEquipe.teto_offline(d, j), 2.0 * 3600.0, "Club: 2 h")
+	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
+	igual(GestaoEquipe.teto_offline(d, j), 4.0 * 3600.0, "três licenças: 4 h")
+	verificar(not GestaoEquipe.patrocinio_aberto(d, j), "sem equipe, sem patrocínio")
+	j.personagem = "dono"
+	EquipeJogador.criar(j)
+	verificar(not GestaoEquipe.patrocinio_aberto(d, j), "dono: espera a cena do patrocínio")
+	j.flags[GestaoEquipe.FLAG_PATROCINIO] = true
+	verificar(GestaoEquipe.patrocinio_aberto(d, j), "liberado depois da corrida com a Club")
+	verificar(not GestaoEquipe.aberta(d, j), "caixa e sede seguem fechados até a International")
+	j.free()
+	d.free()
+
+
+## Decisão 85: a garagem do dono começa vazia; o carro da Mara chega na
+## National com a peça mais forte de cada categoria.
+func test_dono_comeca_sem_carro_e_ganha_o_da_mara_na_national() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	igual(Prologo.iniciar(d, j, "dono"), "", "começa")
+	igual(j.garagem.lista().size(), 0, "garagem vazia")
+	igual(j.economia.saldo, int(d.economia()["saldo_inicial"]), "saldo inicial da economia")
+	igual(Prologo.ao_conceder(d, j, "CLUB"), "", "a Club não traz o carro")
+	var nome := Prologo.ao_conceder(d, j, "NATIONAL")
+	verificar(nome != "", "a National traz o carro da Mara (%s)" % nome)
+	var c: Carro = j.garagem.lista()[0]
+	verificar(c.pecas.size() >= 5, "preparado: %d categorias com peça" % c.pecas.size())
+	j.free()
+	d.free()
