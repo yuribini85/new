@@ -490,7 +490,7 @@ func _abas_preparacao() -> Control:
 ## (a atual destacada; em ocre as que já têm peça), que leva direto a uma.
 var _roleta_cat := ""
 const ICONE_ROLETA := 120
-const ICONE_FAIXA := 46
+const ICONE_FAIXA := 80
 const DESLIZE_PX := 60.0
 
 
@@ -529,11 +529,16 @@ func _preparacao_corrida(c: Carro, pai: Control) -> void:
 		else:
 			h.add_child(_cartao_roleta(c, it, ir, i))
 			h.add_child(seta)
-	# A faixa: todas as categorias, pequenas.
+	# A faixa: todas as categorias, rolando de lado (ícones grandes, a atual
+	# centralizada); arrastar a faixa não troca a categoria, tocar troca.
+	var rolo := ScrollContainer.new()
+	rolo.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	rolo.custom_minimum_size.y = ICONE_FAIXA + 12
+	pai.add_child(rolo)
 	var faixa := HBoxContainer.new()
-	faixa.add_theme_constant_override("separation", 4)
-	faixa.alignment = BoxContainer.ALIGNMENT_CENTER
-	pai.add_child(faixa)
+	faixa.add_theme_constant_override("separation", 6)
+	rolo.add_child(faixa)
 	for k in itens.size():
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
@@ -553,6 +558,12 @@ func _preparacao_corrida(c: Carro, pai: Control) -> void:
 		b.modulate = Color.WHITE if itens[k][2][0] > 0 or k == i else Color(1, 1, 1, 0.45)
 		b.pressed.connect(func(): ir.call(k))
 		faixa.add_child(b)
+	# Centraliza a atual depois do layout.
+	(func():
+		await get_tree().process_frame
+		if is_instance_valid(rolo):
+			var alvo := float(i) * (ICONE_FAIXA + 12.0) + (ICONE_FAIXA + 6.0) / 2.0 - rolo.size.x / 2.0
+			rolo.scroll_horizontal = maxi(int(alvo), 0)).call()
 
 
 ## O cartão grande da categoria atual: ícone, nome, barra com a conta, a
