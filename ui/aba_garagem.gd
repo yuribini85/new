@@ -23,6 +23,7 @@ func _init(d: Node, j: Node) -> void:
 	_fundo = Aba.arte("fundo_oficina")
 	if _fundo != null:
 		_vitrine.fundo_transparente()
+		_vitrine.luz_fim_de_tarde()
 	else:
 		_vitrine.ambiente_garagem()
 	resized.connect(queue_redraw)

@@ -227,6 +227,30 @@ func fundo_transparente() -> void:
 	_pedir_quadro()
 
 
+## Luz de fim de tarde (pedido do usuário; o clima das cenas e do fundo da
+## Oficina): o sol quente entrando pela porta, de lado e de trás, com sombra; o
+## ambiente baixo e morno; um preenchimento frio fraco do outro lado, para o
+## carro não chapar; e um recorte âmbar contornando o teto.
+func luz_fim_de_tarde() -> void:
+	var ambiente: Environment = (_mundo.get_child(0) as WorldEnvironment).environment
+	ambiente.ambient_light_color = Color(0.4, 0.38, 0.37)
+	ambiente.ambient_light_energy = 1.0
+	_luz.rotation = Vector3(-0.5, -0.9, 0)  # da porta (à esquerda, atrás)
+	_luz.light_color = Color(1.0, 0.86, 0.7)
+	_luz.light_energy = 1.05
+	_luz.shadow_enabled = not Preferencias.efeitos_leves
+	for n in _mundo.get_children():
+		if n is DirectionalLight3D and n != _luz:
+			var d := n as DirectionalLight3D
+			if d.light_color.b > d.light_color.r:  # o recorte frio vira âmbar, por trás
+				d.light_color = Color(1.0, 0.72, 0.45)
+				d.light_energy = 0.45
+			else:  # a frente vira o preenchimento frio e fraco
+				d.light_color = Color(0.62, 0.68, 0.82)
+				d.light_energy = 0.3
+	_pedir_quadro()
+
+
 ## Troca o estúdio por uma oficina: piso de ladrilhos, paredes, armário,
 ## pneus empilhados, bancada, luminária e sombra de verdade.
 func ambiente_garagem() -> void:
