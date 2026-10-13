@@ -2364,8 +2364,11 @@
    },
    {
     "quem": "mara",
-    "texto": "Vamos começar pelo que ainda não precisamos vender.",
+    "texto": "Antes do carro, a gente precisa de alguém para dirigir.",
     "pose": "firme"
+   },
+   {
+    "acao": "UNLOCK_TEAM_TAB"
    }
   ],
   "requer": [],
@@ -2378,7 +2381,6 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "proxima": "CW_P02",
   "cenario": "oficina_mara"
  },
  {
@@ -2533,18 +2535,19 @@
   "trigger": "DEMANDA_CONCLUIDA",
   "falas": [
    {
-    "acao": "OPEN_GARAGE_TAB"
-   },
-   {
     "quem": "mara",
     "texto": "{peca} instalados."
    },
    {
     "quem": "mara",
-    "texto": "Agora ele freia. Falta alguém para dirigir."
+    "texto": "Agora ele freia. {piloto} pode correr."
    },
    {
-    "acao": "UNLOCK_TEAM_TAB"
+    "quem": "sistema",
+    "texto": "Vá para Corridas."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
    }
   ],
   "requer": [],
@@ -2581,7 +2584,7 @@
    }
   ],
   "requer": [
-   "FIRST_TUNE_DONE"
+   "ADMIN_NAMED"
   ],
   "proibe": [
    "PILOT_HIRED"
@@ -2620,15 +2623,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{piloto} no volante. Agora, as corridas.",
+    "texto": "{piloto} no volante. O treino fica aqui na Equipe, no relógio, mesmo com o app fechado.",
     "pose": "firme"
    },
    {
-    "quem": "sistema",
-    "texto": "Vá para Corridas."
-   },
-   {
-    "acao": "HIGHLIGHT_NAV_EVENTOS"
+    "quem": "mara",
+    "texto": "Agora o carro."
    }
   ],
   "requer": [],
@@ -2641,7 +2641,8 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "proxima": "CW_P02"
  },
  {
   "id": "CW_P04",

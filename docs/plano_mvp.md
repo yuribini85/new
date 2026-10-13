@@ -679,3 +679,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     ele cai de teto para baixo e sai da luta, como no Destruction Derby (~20% dos carros por
     luta); a eliminação conta para quem bateu. O piloto atropelado fica fora pelo tempo do
     próximo nível de treino dele (`recuperacao_atropelo: "treino"`), sem o desconto do embalo.
+84. **Ordem do tutorial do dono** (2026-10-13, pedido do usuário). O piloto vem primeiro:
+    abertura → nome do administrador → a equipe nasce e a Mara pede quem vai dirigir (aba
+    Equipe, contratar o piloto de corrida; o treino no relógio é citado) → ficha do carro e a
+    peça que ela pede (freios) → Corridas, primeira prova aberta → resultado → Carreira
+    (licença Club: treino e avaliação) → o resto como antes (lojas na primeira visita, arena
+    aos 3 carros, gestão na International, The Grid). Antes, o carro vinha antes do piloto e
+    Corridas, antes dos freios, mandava contratar numa aba que ainda não existia.

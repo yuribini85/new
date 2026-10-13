@@ -506,9 +506,12 @@ Mara: Mas, se souber administrar, talvez a gente consiga colocar esta equipe de 
 Mara[cruzados]: Então, temos um acordo? E como devo chamar você?
 [PEDIR_NOME]
 
-= CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; proxima=CW_P02; cenario=oficina_mara
+# Decisão 84 (pedido do usuário): o piloto vem primeiro. O jogador administra;
+# a equipe nasce aqui e o primeiro passo é escolher quem vai dirigir.
+= CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; cenario=oficina_mara
 Mara[gesto]: Muito bem, {admin}. Eu sou a Mara.
-Mara[firme]: Vamos começar pelo que ainda não precisamos vender.
+Mara[firme]: Antes do carro, a gente precisa de alguém para dirigir.
+[UNLOCK_TEAM_TAB]
 
 # Ficha do carro: cada atributo em destaque; termina pedindo os freios.
 = CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L
@@ -544,14 +547,14 @@ Mara: O carro não se monta sozinho. {demanda}.
 [HIGHLIGHT_BRAKES]
 
 = CW_P03B | DEMANDA_CONCLUIDA | personagem=dono; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE
-[OPEN_GARAGE_TAB]
 Mara: {peca} instalados.
-Mara: Agora ele freia. Falta alguém para dirigir.
-[UNLOCK_TEAM_TAB]
+Mara: Agora ele freia. {piloto} pode correr.
+Sistema: Vá para Corridas.
+[HIGHLIGHT_NAV_EVENTOS]
 
 # Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
-# piloto (de corrida) é escolhido na tela de pilotos, antes da primeira prova.
-= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_TUNE_DONE; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
+# piloto (de corrida) é escolhido na tela de pilotos, logo depois do nome.
+= CW_P03C | ABA:EQUIPE | personagem=dono; requer=ADMIN_NAMED; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
 Mara[explica]: Você cuida da equipe. Quem senta no carro é piloto contratado.
 Mara[gesto]: Para as corridas, alguém constante ou uma promessa. É ele que leva o nome da Wreckage para a pista.
 Sistema: Toque em Contratar, no piloto de corrida.
@@ -561,10 +564,9 @@ Sistema: Toque em Contratar, no piloto de corrida.
 Mara: Sem piloto, o carro não sai. Contrate um para as corridas.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
-= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET
-Mara[firme]: {piloto} no volante. Agora, as corridas.
-Sistema: Vá para Corridas.
-[HIGHLIGHT_NAV_EVENTOS]
+= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET; proxima=CW_P02
+Mara[firme]: {piloto} no volante. O treino fica aqui na Equipe, no relógio, mesmo com o app fechado.
+Mara: Agora o carro.
 
 = CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara
 Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.
