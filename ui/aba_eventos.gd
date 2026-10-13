@@ -36,6 +36,12 @@ func construir() -> void:
 	if EquipeJogador.exige_piloto(jogador) and EquipeJogador.piloto_vaga(jogador, "corrida") == "" \
 			and not jogador.garagem.lista().is_empty():
 		cabecalho("Corridas", "", "fundo_competicoes")
+		if not EquipeJogador.criada(jogador):
+			# A aba Equipe abre com o tutorial, depois da primeira peça que a Mara
+			# pede: antes disso, mandar para a Equipe era um beco sem saída.
+			proximo_passo("Antes do piloto, a Mara quer o carro pronto: instale a peça que ela pediu na Oficina. "
+					+ "Depois a equipe abre e você contrata o piloto de corrida.", "Ir para a Oficina", GARAGEM)
+			return
 		proximo_passo("A equipe precisa de um piloto de corrida. Contrate na aba Equipe.", "Ir para a Equipe", EQUIPE)
 		return
 	# O carro da vaga CORRIDA da escalação (decisão 68).
