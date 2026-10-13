@@ -71,7 +71,16 @@ func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
 		return false
 	if cond.has("posicao_min") and int(ctx.get("posicao", -1)) < int(cond["posicao_min"]):
 		return false
+	# demanda_paga:1 — o caixa já paga a peça que a Mara pede (o tutorial da
+	# Oficina não manda comprar o que não dá).
+	if cond.has("demanda_paga") and not demanda_paga():
+		return false
 	return true
+
+
+func demanda_paga() -> bool:
+	var d := Prologo.demanda(dados, jogador)
+	return dados.existe("pecas", d) and jogador.economia.pode_pagar_peca(int(dados.peca(d)["preco"]), false)
 
 
 ## Pede a cena do trigger. true se uma cena foi pedida (quem chamou pode

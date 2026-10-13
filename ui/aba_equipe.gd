@@ -338,8 +338,8 @@ func _barra_atributo(pai: Control, nome: String, fracao: float, texto: String, c
 	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 
-## Os candidatos um por vez, de corpo inteiro sob um foco de luz, com as setas
-## da garagem para passar; embaixo, nome, traço, frase e Contratar.
+## Os candidatos um por vez, de corpo inteiro, com as setas
+## da garagem para passar; embaixo, nome, estilo e Contratar.
 func _escolher_segundo(vaga: String = "corrida") -> void:
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	# Decisão 71: o mercado do período (renova a cada dia); o atual da vaga junto.
@@ -353,12 +353,14 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		return
 	var ids := lista.map(func(c): return String(c["id"]))
 	var estado := {"i": maxi(ids.find(atual_id), 0)}
-	painel.emit("Mercado · piloto de %s · renova em %s" % [tipo, horas_min(EquipeJogador.renova_em(dados, agora_m))], func(pv):
+	# Pedido do usuário: "SELEÇÃO DE PILOTOS", e embaixo quando a oferta
+	# renova, com o relógio em destaque (motivo para voltar).
+	painel.emit("SELEÇÃO DE PILOTOS", func(pv):
+		_renova_em(pv)
 		var palco := Control.new()
 		palco.custom_minimum_size = Vector2(0, PALCO_ALTURA)
 		palco.clip_contents = true
 		pv.add_child(palco)
-		palco.add_child(_foco())
 		var chao := _sombra_chao()
 		palco.add_child(chao)
 		var corpo := TextureRect.new()
@@ -384,11 +386,17 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		Tipografia.rotulo(nome, "semibold", 40)
 		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		info.add_child(nome)
+		var linha_estilo := HBoxContainer.new()
+		linha_estilo.alignment = BoxContainer.ALIGNMENT_CENTER
+		linha_estilo.add_theme_constant_override("separation", 10)
+		info.add_child(linha_estilo)
+		var estilo := Label.new()
+		estilo.text = "ESTILO:"
+		Tipografia.rotulo(estilo, "semibold", 20)
+		estilo.add_theme_color_override("font_color", COR_SECUNDARIA)
+		linha_estilo.add_child(estilo)
 		var selo := CenterContainer.new()
-		info.add_child(selo)
-		var frase := rotulo("", FONTE_PEQUENA + 2, COR_SECUNDARIA, info)
-		frase.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		frase.custom_minimum_size = Vector2(0, 64)
+		linha_estilo.add_child(selo)
 		var b := Button.new()
 		info.add_child(b)
 		var na_equipe := Label.new()
@@ -413,7 +421,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 				f.queue_free()
 			var tr: Dictionary = EquipeJogador.config(dados).get("tracos", {}).get(String(c["traco"]), {})
 			_selo_traco(String(tr.get("nome", "")), selo)
-			frase.text = String(c.get("frase", "")) + ("\nEx-%s." % c["equipe"] if c.has("equipe") else "")
+			estilo.visible = String(tr.get("nome", "")) != ""
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
 			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
 			b.visible = not atual and outra == ""
@@ -439,7 +447,46 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			fechar_painel.emit()
 			mudou.emit()
 			historia("PILOTO_CONTRATADO", {"vaga": vaga}))
-		mostrar.call(0), [])
+		mostrar.call(0), [["FECHAR", func(): pass]])
+
+
+## "Renova em" com o relógio em destaque, contando a cada segundo.
+func _renova_em(pai: Control) -> void:
+	var h := HBoxContainer.new()
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 12)
+	pai.add_child(h)
+	var r := Label.new()
+	r.text = "RENOVA EM"
+	Tipografia.rotulo(r, "medium", 22)
+	r.add_theme_color_override("font_color", COR_SECUNDARIA)
+	r.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(r)
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(COR_DESTAQUE, 0.16)
+	sb.border_color = COR_DESTAQUE
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(10)
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.content_margin_top = 2
+	sb.content_margin_bottom = 2
+	p.add_theme_stylebox_override("panel", sb)
+	h.add_child(p)
+	var t := Label.new()
+	Tipografia.numero(t, 34)
+	t.add_theme_color_override("font_color", COR_DESTAQUE)
+	p.add_child(t)
+	var tique := func():
+		var falta := int(EquipeJogador.renova_em(dados, Time.get_unix_time_from_system()))
+		t.text = "%02d:%02d:%02d" % [falta / 3600, falta / 60 % 60, falta % 60]
+	tique.call()
+	var timer := Timer.new()
+	timer.wait_time = 1.0
+	timer.autostart = true
+	timer.timeout.connect(tique)
+	h.add_child(timer)
 
 
 ## Busto: o corpo inteiro recortado da cabeça à cintura (sem esticar).
@@ -454,22 +501,6 @@ func _busto(piloto_id: String) -> Texture2D:
 	a.region = Rect2(usado.position.x, usado.position.y, usado.size.x,
 			minf(usado.size.x * BUSTO.y / BUSTO.x, usado.size.y))
 	return a
-
-
-## Foco de luz quente atrás do piloto (o palco não tem fundo próprio).
-func _foco() -> TextureRect:
-	var t := TextureRect.new()
-	var g := GradientTexture2D.new()
-	g.fill = GradientTexture2D.FILL_RADIAL
-	g.fill_from = Vector2(0.5, 0.42)
-	g.fill_to = Vector2(0.5, 1.0)
-	g.gradient = Gradient.new()
-	g.gradient.colors = PackedColorArray([Color(COR_DESTAQUE, 0.22), Color(COR_DESTAQUE, 0.0)])
-	t.texture = g
-	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return t
 
 
 ## Sombra no chão, sob os pés.

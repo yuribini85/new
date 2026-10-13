@@ -86,7 +86,9 @@ var _arfagem := {}  # id -> inclinação atual (rad, + = frente para cima)
 const SAIDA_GRID_S := 6.0  # depois disso todos convergem no mesmo ritmo
 const BALANCO_S := 2.4
 ## Amplitude do balanço da traseira por tração, a 0,15 ps/kg (rad).
-const BALANCO := {"FR": 0.11, "MR": 0.09, "RR": 0.1, "4WD": 0.03, "FF": 0.035}
+const BALANCO := {"FR": 0.05, "MR": 0.045, "RR": 0.05, "4WD": 0.015, "FF": 0.018}
+## Saindo do grid: no máximo isto de lado por metro andado (≈ 6°).
+const LARGADA_DESVIO := 0.1
 const ARFAGEM_POR_MS2 := 0.006  # rad por m/s²
 const ARFAGEM_MAX := 0.05
 var _alvo_camera := Vector3.ZERO
@@ -354,7 +356,14 @@ func atualizar(delta: float) -> void:
 		if _saida.has(id) and _jeito.has(id):
 			pressa = lerpf(float(_jeito[id]["pressa"]), 1.0, smoothstep(0.0, SAIDA_GRID_S, _tempo - float(_saida[id])))
 		var k := clampf(delta * VELOCIDADE_LATERAL * pressa, 0.0, 1.0) if animar else 1.0
-		_off[id] = lerpf(_off[id], alvo[id], k)
+		var novo := lerpf(_off[id], alvo[id], k)
+		# Saindo do grid, devagar ainda: o carro só vai de lado na proporção do
+		# que anda para a frente (não desliza de lado como um caranguejo).
+		if animar and _saida.has(id) and _tempo - float(_saida[id]) < SAIDA_GRID_S:
+			var ds := maxf(float(s[id]) - float(_s_anterior.get(id, s[id])), 0.0)
+			var passo := ds * LARGADA_DESVIO
+			novo = clampf(novo, float(_off[id]) - passo, float(_off[id]) + passo)
+		_off[id] = novo
 		_lateral[id] = clampf(float(base[id]) + float(_off[id]), -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 	_separar(s, base, delta)
 	var tocando := {}

@@ -275,7 +275,7 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	j.historia = h
 	igual(h.cena_para("GAME_START").get("id"), "CW_P01", "abertura da Mara")
 	# Decisão 73: a chegada termina pedindo o nome. Decisão 85 (ordem do usuário):
-	# Grid → carro → piloto → corrida → peça → corrida → licença → corrida →
+	# Grid → carro → piloto → corrida → corrida → peça → corrida → licença → corrida →
 	# patrocínio → arena.
 	var p01: Dictionary = h.cena_para("GAME_START")
 	igual(String(p01["falas"][-1].get("acao", "")), "PEDIR_NOME", "a chegada pede o nome")
@@ -295,7 +295,16 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 			"contratado, vai para a primeira prova")
 	j.flags["PILOT_HIRED"] = true
 	igual(h.cena_para("CORRIDA_FIM", {"posicao": 1}).get("id"), "CW_P06", "fim da primeira prova")
-	igual(h.concluir(h.cena_para("CORRIDA_FIM", {"posicao": 1})).get("id"), "CW_P02", "e segue para aprimorar o carro")
+	igual(h.concluir(h.cena_para("CORRIDA_FIM", {"posicao": 1})), {}, "a primeira prova não abre a Oficina")
+	# Da segunda prova em diante, só com o caixa pagando a peça (pedido do usuário).
+	var carro := Carro.new(d.lista("carros")[0])
+	j.carro_ativo = j.garagem.adicionar(carro)
+	j.economia.saldo = 0
+	verificar(String(h.cena_para("CORRIDA_FIM", {"posicao": 3}).get("id", "")) != "CW_P06D", "sem caixa, a peça espera")
+	j.economia.saldo = 1000000
+	var p06d: Dictionary = h.cena_para("CORRIDA_FIM", {"posicao": 3})
+	igual(p06d.get("id"), "CW_P06D", "segunda prova com caixa")
+	igual(h.concluir(p06d).get("id"), "CW_P02", "e segue para aprimorar o carro")
 	j.flags["FIRST_TUNE_DONE"] = true
 	igual(h.cena_para("CORRIDA_FIM", {"posicao": 3}).get("id"), "CW_P06C", "segunda prova: a licença")
 	j.flags["SECOND_RACE_DONE"] = true

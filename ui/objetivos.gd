@@ -51,7 +51,7 @@ static func _elena(jogador: Node, _dados: Node) -> Array:
 
 
 ## Dono da oficina (Chrome & Wreckage, decisão 85): o primeiro carro, o
-## piloto, a primeira prova e a peça que a Mara pede depois dela.
+## piloto, a primeira prova, mais provas e a peça que a Mara pede depois.
 static func _dono(jogador: Node, dados: Node) -> Array:
 	var l := [
 		{"texto": "Comprar o primeiro carro", "feito": not jogador.garagem.lista().is_empty(), "aba": Aba.LOJA,
@@ -61,8 +61,12 @@ static func _dono(jogador: Node, dados: Node) -> Array:
 		{"texto": "Disputar a primeira prova", "feito": jogador.flags.has("FIRST_RACE_DONE"), "aba": Aba.EVENTOS,
 			"botao": "Ver corridas"},
 	]
+	# A Oficina só entra depois de apresentada (CW_P06D: da segunda prova em
+	# diante, com o caixa pagando a peça).
+	l.append({"texto": "Correr de novo e juntar giros", "feito": jogador.flags.has("GARAGE_TUTORIAL_SEEN"),
+		"aba": Aba.EVENTOS, "botao": "Ver corridas"})
 	var peca := Prologo.demanda(dados, jogador)
-	if dados.existe("pecas", peca):
+	if dados.existe("pecas", peca) and jogador.flags.has("GARAGE_TUTORIAL_SEEN"):
 		l.append({"texto": "Comprar %s na Oficina" % dados.peca(peca)["nome"], "feito": jogador.flags.has("FIRST_TUNE_DONE"),
 			"aba": Aba.GARAGEM, "botao": "Ir para a Oficina"})
 	return l

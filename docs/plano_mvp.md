@@ -701,3 +701,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     por licença conquistada (equipe.json); caixa e sede seguem na International. O carro dos
     cavaletes (Bancroft Arraia) chega na licença National com a peça mais forte de cada
     categoria (historia.json → dono.carro_mara).
+86. **Tutorial em sequência, sem disputar a tela** (2026-10-13, pedido do usuário; ajusta a
+    ordem da 85). Uma conversa nunca abre por cima de uma janela do jogo: espera o painel
+    (resultado, carro novo) fechar; no fim da corrida, primeiro o resultado, depois a Mara.
+    As exceções são as cenas que mostram algo dentro do próprio painel (peças, blindagem,
+    garagem) e a da largada. O botão Pular fica sempre no mesmo lugar (alto, à direita). Depois
+    da primeira prova não entra nada novo: o tutorial da Oficina começa da segunda prova em
+    diante e só quando o caixa paga a peça pedida (condição demanda_paga). No dono, o que a
+    Mara ainda não apresentou fica oculto: Lojas e Carreira depois do The Grid, Corridas
+    depois do piloto, Oficina depois do tutorial dela, Arena depois do dela; na Carreira, a
+    licença e a coleção só depois da conversa da licença. Ordem: … primeira prova → segunda
+    prova → aprimorar o carro → prova → licença Club → …

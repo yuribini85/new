@@ -62,6 +62,8 @@ const OUVINTE_DESLOCA := 0.3  # fração da largura da tela
 const FALANTE_DESLOCA := 0.1
 ## Caixa: sobe um pouco ao aparecer; faixa na cor de quem fala.
 const CAIXA_SOBE_PX := 8.0
+const PULAR_Y := 168.0  # o Pular, fixo: abaixo do cabeçalho e das abas penduradas
+const PULAR_VAO := 96.0  # do alto do Pular ao alto da caixa, quando ela sobe
 ## No tutorial, o busto de quem fala (o corpo recortado na silhueta, sem fundo)
 ## no canto da caixa: o pé dentro da moldura, a cabeça saindo por cima.
 ## Medidas da arte em personagens.json → busto: [centro do rosto, queixo,
@@ -114,6 +116,9 @@ var _dica: Label
 var _tempos := PackedFloat32Array()
 var _pular: Button
 var _escuro := false  # [ESCURO] vale até [CLARO] ou o fim da sequência de cenas
+## Recebe a próxima cena e diz se ela tem de esperar (uma janela do jogo está
+## aberta: resultado, carro novo...). A cena começa quando a janela fecha.
+var espera := Callable()
 
 
 func _init(historia_: Historia) -> void:
@@ -247,22 +252,19 @@ func _montar_pular() -> void:
 	_pular.custom_minimum_size.x = 150
 	_pular.pressed.connect(pular_cena)
 	add_child(_pular)
-	_lugar_pular(false)
+	_lugar_pular()
 
 
-## "Pular" embaixo, acima da navegação; com a caixa no pé da tela, no alto (sem
-## cobrir o texto).
-func _lugar_pular(no_alto: bool) -> void:
+## "Pular" sempre no mesmo lugar (pedido do usuário): no alto à direita,
+## abaixo do cabeçalho; a caixa nunca sobe até ele (_posicionar_caixa).
+func _lugar_pular() -> void:
 	if _pular == null:
 		return
-	_pular.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT if no_alto else Control.PRESET_BOTTOM_RIGHT)
+	_pular.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	_pular.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	_pular.grow_vertical = Control.GROW_DIRECTION_END if no_alto else Control.GROW_DIRECTION_BEGIN
+	_pular.grow_vertical = Control.GROW_DIRECTION_END
 	_pular.offset_right = -16
-	if no_alto:
-		_pular.offset_top = 168  # abaixo do cabeçalho e das abas penduradas
-	else:
-		_pular.offset_bottom = -156  # acima da barra de navegação
+	_pular.offset_top = PULAR_Y
 
 
 ## Cartão de capítulo: tela preta, "Capítulo N" pequeno e o título grande.
@@ -298,7 +300,11 @@ func _montar_cartao() -> void:
 
 
 func ocupado() -> bool:
-	return not _cena.is_empty()
+	return not _cena.is_empty() or not _fila.is_empty()
+
+
+func _deve_esperar() -> bool:
+	return not _fila.is_empty() and espera.is_valid() and espera.call(_fila[0])
 
 
 func enfileirar(c: Dictionary) -> void:
@@ -310,7 +316,7 @@ func enfileirar(c: Dictionary) -> void:
 
 
 func _proxima() -> void:
-	if _fila.is_empty():
+	if _fila.is_empty() or _deve_esperar():
 		_cena = {}
 		_quem = ""
 		_pose = ""
@@ -724,16 +730,31 @@ func _faixas_cinema(ligar: bool) -> void:
 func _posicionar_caixa(embaixo: bool) -> void:
 	_caixa.anchor_top = 0.8 if embaixo else 0.58
 	_caixa.anchor_bottom = _caixa.anchor_top
-	_lugar_pular(embaixo)
+	_caixa.grow_vertical = Control.GROW_DIRECTION_BOTH
 
 
-## Destaque em `r` (coordenadas da tela): a caixa vai para a metade oposta.
+## Destaque em `r` (coordenadas da tela): a caixa vai para onde cobre menos
+## dele (embaixo, ou no alto logo abaixo do Pular, crescendo para baixo).
 func evitar(r: Rect2) -> void:
 	if _cena.is_empty():
 		return
-	_caixa.anchor_top = 0.2 if r.get_center().y > get_viewport_rect().size.y * 0.5 else 0.8
+	var alt := get_viewport_rect().size.y
+	var h := maxf(_caixa.size.y, 200.0)
+	var embaixo := Rect2(0, alt * 0.8 - h * 0.5, 1, h)
+	var no_alto := Rect2(0, PULAR_Y + PULAR_VAO, 1, h)
+	var cobre_baixo := maxf(0.0, minf(r.end.y, embaixo.end.y) - maxf(r.position.y, embaixo.position.y))
+	var cobre_alto := maxf(0.0, minf(r.end.y, no_alto.end.y) - maxf(r.position.y, no_alto.position.y))
+	if cobre_baixo <= cobre_alto:
+		_posicionar_caixa(true)
+		return
+	_caixa.anchor_top = no_alto.position.y / alt
 	_caixa.anchor_bottom = _caixa.anchor_top
-	_lugar_pular(_caixa.anchor_top > 0.5)
+	_caixa.grow_vertical = Control.GROW_DIRECTION_END
+
+
+## Onde a caixa do destaque começa embaixo (para quem rola a tela antes).
+func topo_da_caixa() -> float:
+	return get_viewport_rect().size.y * 0.8 - maxf(_caixa.size.y, 200.0) * 0.5
 
 
 func _tremer(forca := 18.0, vezes := 10) -> void:
@@ -798,6 +819,8 @@ func _layout() -> void:
 ## O corpo parado no lugar e a dica de continuar, que pulsa só quando o texto
 ## acabou.
 func _process(_delta: float) -> void:
+	if _cena.is_empty() and not _fila.is_empty() and not _deve_esperar():
+		_proxima()  # a janela que segurava a cena fechou
 	if not visible:
 		return
 	var t := Time.get_ticks_msec() / 1000.0

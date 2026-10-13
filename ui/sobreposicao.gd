@@ -147,7 +147,7 @@ func avisar(texto: String, ok := true) -> void:
 
 
 ## Painel modal com rolagem. montar(vbox) preenche o conteúdo; botoes =
-## [[texto, Callable]] (vazio: só "OK"). Qualquer botão fecha o painel.
+## [[texto, Callable]] (vazio: só "FECHAR"). Qualquer botão fecha o painel.
 ## estilo (opcional): {"titulo_centro": bool, "titulo_max": px (o título
 ## diminui até caber), "principal": a ação única em destaque, "fora_fecha":
 ## tocar fora do cartão ou no × fecha (sem botões: a janela fica sem ação),
@@ -188,7 +188,7 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 		return
 	_painel_botoes.visible = not (botoes.is_empty() and _fechar_x.visible)
 	if botoes.is_empty() and not _fechar_x.visible:
-		botoes = [["OK", func(): pass]]
+		botoes = [["FECHAR", func(): pass]]
 	for i in botoes.size():
 		var b: Array = botoes[i]
 		var bt := Button.new()
@@ -288,3 +288,9 @@ func escurecer(sim: bool, duracao: float) -> void:
 
 func aberto() -> bool:
 	return _painel_raiz.visible
+
+
+## Painel aberto ou tela escurecendo/clareando (o fim da corrida): o que se
+## abrir agora fica escondido ou disputa a tela.
+func ocupando() -> bool:
+	return _painel_raiz.visible or _cortina.visible

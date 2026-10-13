@@ -109,6 +109,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_P05` | `CORRIDA_INICIO` | — | `FIRST_RACE_BRIEFED` |
 | `CW_P06` | `CORRIDA_FIM` | — | `FIRST_RACE_DONE`, `FIRST_WIN` |
 | `CW_P06B` | `CORRIDA_FIM` | — | `FIRST_RACE_DONE` |
+| `CW_P06D` | `CORRIDA_FIM` | — | — |
 | `CW_E01` | `EVENTO_BLOQUEADO` | — | `EVENT_REQUIREMENTS_TUTORIAL_DONE` |
 | `CW_L01` | `LICENCA_EXIGIDA` | — | `LICENSE_SYSTEM_UNLOCKED` |
 | `CW_L02` | `ABA:LICENCAS` | — | `LICENSE_OFFLINE_TUTORIAL_SEEN`, `LICENSE_SYSTEM_UNLOCKED` |

@@ -176,6 +176,7 @@ func _ready() -> void:
 		_destaque = Destaque.new()
 		add_child(_destaque)
 		_dialogo = Dialogo.new(jogador.historia)
+		_dialogo.espera = _cena_espera
 		add_child(_dialogo)
 		jogador.historia.cena.connect(_dialogo.enfileirar)
 		jogador.historia.cena.connect(_cena_pedida)
@@ -266,8 +267,33 @@ func _atualizar_nav() -> void:
 	for k in _botoes.size():
 		if DESTINOS[k][1] == ABA_EQUIPE:
 			_botoes[k].visible = cinco
+		else:
+			_botoes[k].visible = apresentada(DESTINOS[k][1])
 		# Seis destinos (com a Equipe): texto menor para caberem.
 		_botoes[k].add_theme_font_size_override("font_size", 17 if cinco else 20)
+
+
+## Tutorial do dono (pedido do usuário): o que a Mara ainda não apresentou
+## fica oculto. Uma tela aparece quando o tutorial a destaca ou abre
+## (APRESENTADA_<ABA>) ou, em saves antigos, pelo passo que já passou.
+const APRESENTADA_POR := {0: "GARAGE_TUTORIAL_SEEN", 1: "GRID_INTRO", 3: "PILOT_HIRED", 5: "GRID_INTRO",
+		ABA_ARENA: "ARENA_INTRO"}
+
+
+func apresentada(aba: int) -> bool:
+	if jogador.historia == null or jogador.personagem != "dono":
+		return true
+	aba = PAI.get(aba, aba)
+	return not APRESENTADA_POR.has(aba) or jogador.flags.has(APRESENTADA_POR[aba]) \
+			or jogador.flags.has("APRESENTADA_" + NOMES_ABA[aba]) \
+			or (aba == ABA_ARENA and jogador.flags.has(EquipeJogador.FLAG_ARENA))
+
+
+func _apresentar(aba: int) -> void:
+	aba = PAI.get(aba, aba)
+	if not apresentada(aba):
+		jogador.flags["APRESENTADA_" + NOMES_ABA[aba]] = true
+		_atualizar_nav()
 
 
 func _ir_para(i: int, voltando := false) -> void:
@@ -588,9 +614,13 @@ func _acao_tutorial(nome: String) -> void:
 	var abas := {"OPEN_GARAGE_TAB": 0, "RETURN_TO_GARAGE": 0, "OPEN_DEALERSHIP": 1, "OPEN_TUNE_SERVICE": 0,
 			"OPEN_EVENTS": 3, "OPEN_LICENSE_CENTER": 5, "OPEN_TEAM_FINANCE": ABA_EQUIPE}
 	if abas.has(nome):
+		_apresentar(abas[nome])
 		_ir_para(abas[nome])
 		atualizar()
 	elif nome.begins_with("HIGHLIGHT_"):
+		var nav := NOMES_ABA.find(nome.trim_prefix("HIGHLIGHT_NAV_"))
+		if nome.begins_with("HIGHLIGHT_NAV_") and nav >= 0:
+			_apresentar(nav)
 		_destacar(nome.trim_prefix("HIGHLIGHT_"))
 	else:
 		historia_acao.emit(nome)
@@ -625,8 +655,10 @@ func _destacar(nome: String) -> void:
 	var alvo: Control = aba.ancoras.get(nome)
 	if not is_instance_valid(alvo):
 		return
-	# Rola só se o elemento não está inteiro na tela (a corrida não sai do lugar).
-	if not aba.get_global_rect().encloses(alvo.get_global_rect()):
+	# Rola se o elemento não está inteiro na tela ou cai onde a caixa do
+	# diálogo fica (a corrida não sai do lugar).
+	var r := alvo.get_global_rect()
+	if not aba.get_global_rect().encloses(r) or (r.end.y > _dialogo.topo_da_caixa() - 16.0 and _abas.current_tab != 4):
 		aba.scroll_vertical = maxi(int(alvo.global_position.y - aba.conteudo.global_position.y) - 24, 0)
 		await get_tree().process_frame
 		if not is_instance_valid(alvo):
@@ -635,6 +667,17 @@ func _destacar(nome: String) -> void:
 	_destaque.mostrar(alvo, func(): return aba.ancoras.get(nome) if aba.is_visible_in_tree() else null)
 	if _dialogo._cena.get("id") == cena_id:
 		_dialogo.evitar(alvo.get_global_rect())
+
+
+## Cenas que mostram algo dentro do painel que as abriu (a janela de peças, a
+## garagem) e a da largada; as outras esperam a janela aberta fechar (o
+## resultado da corrida, o carro novo) para não disputar a tela.
+const CENAS_NO_PAINEL := ["EVOLUCAO", "BLINDAGEM", "GARAGEM_ABERTA", "CORRIDA_INICIO"]
+
+
+func _cena_espera(c: Dictionary) -> bool:
+	return _sobre.ocupando() and not String(c.get("trigger", "")) in CENAS_NO_PAINEL \
+			and not c.get("segura_largada", false)
 
 
 ## Uma cena começa: a da largada, ou qualquer uma pedida antes de a corrida
@@ -787,13 +830,12 @@ func _processar_fila() -> void:
 			await get_tree().create_timer(corrida.SILENCIO_S - corrida.ESCURECER_EM_S).timeout
 		var c: Dictionary = rel["corridas"][0]
 		var primeira: bool = not antes_vitorias.has(c["evento_id"])
-		# A conversa da chegada vem antes do resultado, sobre a tela escura.
-		var falou_grid: bool = jogador.historia != null and jogador.historia.disparar_grid(c.get("grid", {}), dados)
-		if jogador.historia != null and (jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias)
-				or falou_grid):
-			_quando_dialogo_acabar(_resultado.bind(c, primeira))
-		else:
-			_resultado(c, primeira)
+		# Primeiro o resultado (a vitória); a conversa da chegada espera o
+		# painel fechar (Dialogo.espera), sem disputar a tela com ele.
+		_resultado(c, primeira)
+		if jogador.historia != null:
+			jogador.historia.disparar_grid(c.get("grid", {}), dados)
+			jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias)
 		return
 	_mostrar_relatorio(rel, "Resultado das corridas")
 
@@ -867,6 +909,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				_ir_para(0)
 				atualizar(), "icone_melhorar"],
 			["Escolher outra corrida", func(): _ir_para(3), "aba_competicoes"]]
+		var oficina := apresentada(0)
 		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
 		var alvo_obj: Array = Objetivos.lista(jogador, dados)
 		var i_obj := Objetivos.atual(alvo_obj)
@@ -880,8 +923,10 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var b = botoes[primeiro]
 			botoes.remove_at(primeiro)
 			botoes.push_front(b)
-	# A conversa da chegada já veio antes do painel; a do título de campeão vem
-	# depois que o jogador lê o resultado (qualquer botão do painel).
+		if not oficina:  # a Oficina ainda não foi apresentada
+			botoes = botoes.filter(func(b): return b[0] != "Melhorar o carro")
+	# As conversas da chegada e a do título de campeão vêm depois que o jogador
+	# lê o resultado (qualquer botão do painel).
 	for b in botoes:
 		b[1] = _depois_do_resultado.bind(c, b[1])
 	var meu: Carro = jogador.garagem.carro(c["uid"])

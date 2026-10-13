@@ -2693,7 +2693,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Sem licença, só as provas abertas. Esta o carro já pode correr."
+    "texto": "Como estamos sem licenças só podemos correr estes circuitos."
    },
    {
     "acao": "HIGHLIGHT_COMPETITIVIDADE"
@@ -2787,7 +2787,7 @@
    },
    {
     "quem": "mara",
-    "texto": "A gente prepara. O piloto corre.",
+    "texto": "Nós preparamos e o piloto contratado corre.",
     "pose": "firme"
    },
    {
@@ -2823,7 +2823,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora o prêmio volta para o carro.",
+    "texto": "Corre mais uma. Quero ver se ele repete.",
     "pose": "firme"
    }
   ],
@@ -2840,8 +2840,7 @@
   "personagem": "dono",
   "condicao": {
    "posicao": 1
-  },
-  "proxima": "CW_P02"
+  }
  },
  {
   "id": "CW_P06B",
@@ -2859,7 +2858,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora o prêmio volta para o carro.",
+    "texto": "Corre de novo. Uma prova não diz tudo.",
     "pose": "firme"
    }
   ],
@@ -2875,6 +2874,30 @@
   "personagem": "dono",
   "condicao": {
    "posicao_min": 2
+  }
+ },
+ {
+  "id": "CW_P06D",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Agora o prêmio volta para o carro.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [
+   "FIRST_RACE_DONE"
+  ],
+  "proibe": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "demanda_paga": 1
   },
   "proxima": "CW_P02"
  },
@@ -4464,10 +4487,6 @@
    {
     "quem": "vendedor_relay_room",
     "texto": "Olha o cartão: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Toque num carro para ver a ficha e comprar."
    }
   ],
   "requer": [],

@@ -817,8 +817,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		if escolher_cor:
 			_amostras_cor(base, vit, v)
 		var fab: Dictionary = dados.item("fabricantes", base["fabricante"])
-		rotulo("%s%s · %s" % [fab.get("nome", ""), " · %d" % base["ano"] if int(base["ano"]) > 0 else "",
-				NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "")],
+		rotulo("%s · %s" % [fab.get("nome", ""), NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "")],
 				FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		numeros([["%d" % base["potencia"], "cv"], ["%d" % base["peso"], "kg"], [base["tracao"], "tração"]], v)
 		var meu := carro_ativo()
@@ -851,11 +850,7 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
 		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
-		rotulo("Revenda depois: %s giros" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc)
-		if not fab.is_empty():
-			var vf := cartao(Color.TRANSPARENT, v)
-			rotulo("%s · %s" % [fab.get("nome", ""), fab.get("pais", "")], 0, Color.WHITE, vf)
-			rotulo(fab.get("historia", ""), FONTE_PEQUENA + 2, COR_SECUNDARIA, vf), botoes)
+		rotulo("Revenda depois: %s giros" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc), botoes)
 
 
 ## Entrega de um carro novo: o carro girando e o próximo passo.

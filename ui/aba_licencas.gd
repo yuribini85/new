@@ -48,6 +48,8 @@ func construir() -> void:
 	_objetivos()
 	_patrocinio()
 	_the_grid()
+	if not _licencas_apresentadas():
+		return  # tutorial do dono: licença e coleção só depois de a Mara apresentar
 	var c := carro_ativo()
 	var proxima := {}
 	for lic in dados.lista("licencas"):
@@ -76,6 +78,13 @@ func construir() -> void:
 			t.timeout.connect(func(): mudou.emit())
 			conteudo.add_child(t)
 	_colecao()
+
+
+## No tutorial do dono, a licença entra depois da prova com a primeira peça
+## (CW_P06C, SECOND_RACE_DONE); antes disso, a Carreira mostra só o Grid.
+func _licencas_apresentadas() -> bool:
+	return jogador.historia == null or jogador.personagem != "dono" or not jogador.licencas.is_empty() \
+			or jogador.flags.has("SECOND_RACE_DONE") or jogador.flags.has("LICENSE_SYSTEM_UNLOCKED")
 
 
 ## Licença mais alta conquistada (vazio sem nenhuma).
