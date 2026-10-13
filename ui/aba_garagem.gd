@@ -23,6 +23,7 @@ func _init(d: Node, j: Node) -> void:
 	get_child(0).size_flags_vertical = Control.SIZE_EXPAND_FILL
 	conteudo.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_vitrine = VitrineCarro.new(ALTURA_PALCO)
+	_vitrine.modo_estatico()  # parado; derrapa curto ao trocar de carro
 	_fundo = Aba.arte("fundo_oficina")
 	if _fundo != null:
 		_vitrine.fundo_transparente()

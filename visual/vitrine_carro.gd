@@ -18,6 +18,14 @@ var _angulo := -0.5
 var _luz: DirectionalLight3D
 var _piso: MeshInstance3D
 var _anel: MeshInstance3D
+## Oficina (pedido do usuário): o carro parado em três quartos, sem girar; ao
+## trocar de carro, ele entra de lado numa derrapada curta e assenta.
+var _estatico := false
+var _deriva := 1.0  # 0 → 1 durante a derrapada
+var _pos_base := Vector3.ZERO
+const DERIVA_S := 0.7
+const DERIVA_GIRO := 0.85  # rad a mais de traseira no começo
+const DERIVA_DIST := 2.6  # m de lado no começo
 
 
 func _init(altura := 300.0) -> void:
@@ -94,11 +102,17 @@ func mostrar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> vo
 		_carro.visible = true
 		_carro.rotation.y = ROTACAO_MODELO
 		_carro.configurar_modelo(base, cor, faixas)
-		if _id != String(base.get("id", "")) and not Preferencias.reduzir_animacoes and is_inside_tree():
+		if _estatico:
+			_angulo = ROTACAO_MODELO
+			_trocou(String(base.get("id", "")))
+		elif _id != String(base.get("id", "")) and not Preferencias.reduzir_animacoes and is_inside_tree():
 			_aproximar = 0.0
 		_id = String(base.get("id", ""))
 		return
 	_carro.rotation.y = -0.5
+	if _estatico:
+		_angulo = -0.5
+		_trocou(String(base.get("id", "")))
 	var tex := ArteCarro.textura(String(base.get("id", "")), "iso")
 	if tex != null and Pintura.pintavel(String(base.get("id", ""))):
 		tex = Pintura.textura(String(base.get("id", "")), "iso", cor)
@@ -433,8 +447,52 @@ func _notification(what: int) -> void:
 		_pedir_quadro()
 
 
+## Liga o modo parado (Oficina).
+func modo_estatico() -> void:
+	_estatico = true
+	_pos_base = _carro.position
+
+
+## Carro novo no modo parado: a derrapada (o primeiro carro só aparece).
+func _trocou(id: String) -> void:
+	if _id_estatico != "" and _id_estatico != id and not Preferencias.reduzir_animacoes:
+		_deriva = 0.0
+	_id_estatico = id
+	_pose_deriva()
+
+
+## Pose do carro 3D no ponto atual da derrapada: a traseira vem aberta e fecha
+## com um pequeno passe do ponto, a carroceria inclina e assenta.
+func _pose_deriva() -> void:
+	var e := 1.0 - pow(1.0 - _deriva, 3.0)  # sai rápido e freia
+	var volta := sin(_deriva * PI) * 0.12 * (1.0 - _deriva)
+	_carro.rotation.y = _angulo + DERIVA_GIRO * (1.0 - e) - volta
+	_carro.rotation.z = sin(_deriva * PI) * 0.05
+	_carro.position = _pos_base + Vector3(-DERIVA_DIST * (1.0 - e), 0, 0)
+
+
+var _id_estatico := ""
+
+
 func _process(delta: float) -> void:
+	if _estatico and (_sprite == null or not _sprite.visible):
+		# Parado em três quartos; na troca, entra de lado derrapando.
+		_animando(_deriva < 1.0)
+		if _deriva < 1.0:
+			# Passo limitado: o quadro lento de carregar o modelo não come o começo.
+			_deriva = minf(_deriva + minf(delta, 1.0 / 30.0) / DERIVA_S, 1.0)
+			_pose_deriva()
+		return
 	if _sprite != null and _sprite.visible:
+		if _estatico:
+			# Sprite (o desenho isométrico): a derrapada é o carro entrando de lado
+			# e freando; a câmera desliza o quadro.
+			_animando(_deriva < 1.0)
+			if _deriva < 1.0:
+				_deriva = minf(_deriva + minf(delta, 1.0 / 30.0) / DERIVA_S, 1.0)
+			var ef := 1.0 - pow(1.0 - _deriva, 3.0)
+			_camera.h_offset = DERIVA_DIST * 1.6 * (1.0 - ef) - sin(_deriva * PI) * 0.15 * (1.0 - _deriva)
+			return
 		# Aproximação curta ao trocar de carro (1,06 → 1,00).
 		_animando(_aproximar < 1.0)
 		if _aproximar < 1.0:
