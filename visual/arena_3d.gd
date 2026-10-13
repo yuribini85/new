@@ -640,8 +640,13 @@ static func _deslocamento(p: Vector3, fator: Array, dim: Vector2) -> Vector3:
 func _mostrar_dano(id: String, dano: PackedFloat32Array, eliminado: bool) -> void:
 	var pior := 0.0
 	var est := PackedInt32Array()
+	var c0 = _carros[id]
 	for r in dano.size():
-		est.append(Arena.estagio(dano[r], _estagios) + 1 if dano[r] > 0.0 else 0)
+		# Com a placa da região ainda no lugar, a lataria não amassa (pedido do
+		# usuário): o amassado aparece quando ela cai.
+		var coberta: bool = c0 is CarroBloco and (c0 as CarroBloco).protecao(
+				String(PROTECAO_DA_REGIAO.get(Arena.REGIOES[r], ""))) != null
+		est.append(Arena.estagio(dano[r], _estagios) + 1 if dano[r] > 0.0 and not coberta else 0)
 		pior = maxf(pior, dano[r])
 	if eliminado:
 		est.append(1)
