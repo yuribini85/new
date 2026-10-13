@@ -19,6 +19,9 @@ var _fundo: Texture2D
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Oficina")
 	vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER  # tudo cabe: sem rolagem
+	# O palco (carro) cresce e a preparação encosta embaixo (pedido do usuário).
+	get_child(0).size_flags_vertical = Control.SIZE_EXPAND_FILL
+	conteudo.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_vitrine = VitrineCarro.new(ALTURA_PALCO)
 	_fundo = Aba.arte("fundo_oficina")
 	if _fundo != null:
@@ -295,6 +298,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 	var palco := Control.new()
 	palco.custom_minimum_size = _vitrine.custom_minimum_size
 	palco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	palco.size_flags_vertical = Control.SIZE_EXPAND_FILL  # fica com o espaço que sobra
 	conteudo.add_child(palco)
 	_vitrine.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	palco.add_child(_vitrine)
@@ -489,7 +493,7 @@ func _abas_preparacao() -> Control:
 ## num cartão grande (‹ › ou deslizar), e embaixo a faixa com os ícones de todas
 ## (a atual destacada; em ocre as que já têm peça), que leva direto a uma.
 var _roleta_cat := ""
-const ICONE_ROLETA := 120
+const ICONE_ROLETA := 176
 const ICONE_FAIXA := 80
 const DESLIZE_PX := 60.0
 
@@ -587,26 +591,25 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 				inicio[0] = ev.position.x
 			elif absf(ev.position.x - inicio[0]) > DESLIZE_PX:
 				ir.call(i + (1 if ev.position.x < inicio[0] else -1)))
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 8)
-	v.mouse_filter = Control.MOUSE_FILTER_PASS
-	p.add_child(v)
+	# O ícone grande ocupa a altura toda; à direita, nome, barra, a próxima
+	# peça e o botão.
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 12)
 	h.mouse_filter = Control.MOUSE_FILTER_PASS
-	v.add_child(h)
+	p.add_child(h)
 	var icone := TextureRect.new()
 	icone.texture = _icone_peca(cat)
 	icone.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icone.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icone.custom_minimum_size = Vector2(ICONE_ROLETA, ICONE_ROLETA)
+	icone.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(icone)
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 8)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.mouse_filter = Control.MOUSE_FILTER_PASS
 	h.add_child(col)
 	var nome := Label.new()
 	nome.text = String(it[1])
@@ -641,7 +644,7 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 	b.pressed.connect(_abrir_evolucao.bind(c, cat))
 	if cat == Blindagem.CATEGORIA:
 		b.pressed.connect(func(): historia("BLINDAGEM"))
-	v.add_child(b)
+	col.add_child(b)
 	# Âncoras do tutorial: o botão da categoria pedida.
 	var demanda := Prologo.demanda(dados, jogador)
 	if dados.existe("pecas", demanda) and String(dados.peca(demanda).get("categoria", "")) == cat:
