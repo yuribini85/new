@@ -743,7 +743,11 @@ func _abertura() -> void:
 		add_child(cinema)
 		cinema.terminou.connect(func():
 			jogador.flags["ABERTURA_DONO"] = true
-			h.disparar("GAME_START"))
+			# O preto da abertura fica logo abaixo do diálogo até a ilustração
+			# da chegada entrar: a garagem não aparece entre os dois.
+			move_child(cinema, _dialogo.get_index() if _dialogo != null else get_child_count() - 1)
+			h.disparar("GAME_START")
+			cinema.sair(Dialogo.CENARIO_S * 2.0 + Dialogo.ENTRADA_S))
 		return
 	h.disparar("GAME_START")
 

@@ -6,7 +6,7 @@ extends Control
 ## nem zoom (pedido do usuário); a tela escurece e o logo entra. Um impacto
 ## (roteiro → batida, opcional) dá corte seco com clarão, tremor e estrondo.
 ## Tempos e movimentos: arte/abertura/roteiro.json (o mesmo da música).
-## "Pular" encerra; no fim emite `terminou`.
+## "Pular" encerra; no fim emite `terminou` com a tela preta (ver sair()).
 
 signal terminou
 
@@ -124,12 +124,23 @@ func _quadro(t_: float) -> void:
 		_terminar()
 
 
+## Escurece as imagens e o logo (o fundo preto fica) e avisa: quem abriu põe
+## o diálogo por cima e chama sair() quando a primeira imagem dele já cobre a
+## tela, sem a garagem aparecer no meio.
 func _terminar() -> void:
 	if _acabou:
 		return
 	_acabou = true
+	var tw := create_tween().set_parallel(true)
+	for c in get_children():
+		if c is TextureRect or c is Button or c == _clarao:
+			tw.tween_property(c, "modulate:a", 0.0, 0.5)
+	tw.chain().tween_callback(func(): terminou.emit())
+
+
+## Some (o preto) depois de `atraso` s e sai da árvore.
+func sair(atraso: float) -> void:
 	var tw := create_tween()
-	tw.tween_property(self, "modulate:a", 0.0, 0.5)
-	tw.tween_callback(func():
-		terminou.emit()
-		queue_free())
+	tw.tween_interval(atraso)
+	tw.tween_property(self, "modulate:a", 0.0, 0.4)
+	tw.tween_callback(queue_free)
