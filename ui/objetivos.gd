@@ -5,49 +5,12 @@ extends RefCounted
 
 
 ## [{texto, feito, aba, botao}] na ordem em que devem ser cumpridos. Com a
-## história (decisão 32), os objetivos seguem o que os personagens pedem: o
+## história, os objetivos seguem o que a Mara pede: o
 ## jogador novo nunca recebe duas ordens diferentes.
 static func lista(jogador: Node, dados: Node) -> Array:
-	if jogador.personagem == "adrian":
-		return _prologo(jogador, dados)
-	if jogador.personagem == "elena":
-		return _elena(jogador, dados) + _carreira(jogador, dados).slice(4)
 	if jogador.personagem == "dono":
 		return _dono(jogador, dados) + _renomear_licenca(_carreira(jogador, dados).slice(1))
 	return _carreira(jogador, dados)
-
-
-## Prólogo: os freios, a primeira etapa e o campeonato inteiro
-## (historia.json → adrian.campeonato).
-static func _prologo(jogador: Node, dados: Node) -> Array:
-	var serie := String(dados.historia().get("adrian", {}).get("campeonato", ""))
-	var etapas := Campeonatos.etapas(dados, serie)
-	var primeira := Aba.nome_evento(etapas[0]) if not etapas.is_empty() else serie
-	var correu: bool = not etapas.is_empty() and jogador.historico.has(etapas[0]["id"])
-	var peca := String(dados.historia().get("adrian", {}).get("peca_demanda", ""))
-	var nome_peca := String(dados.peca(peca)["nome"]) if dados.existe("pecas", peca) else "a peça"
-	return [
-		{"texto": "Comprar %s na Garagem" % nome_peca, "feito": jogador.flags.has("FIRST_TUNE_DONE"), "aba": Aba.GARAGEM,
-			"botao": "Ir para a Garagem"},
-		{"texto": "Correr a %s" % primeira, "feito": correu, "aba": Aba.EVENTOS, "botao": "Ver corridas"},
-		{"texto": "Fechar a %s (%d etapas)" % [serie, etapas.size()], "feito": jogador.flags.has("FIRST_CHAMPIONSHIP_DONE"),
-			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
-		{"texto": "Correr a próxima prova", "feito": jogador.flags.has("LAST_RACE_STARTED"), "aba": Aba.EVENTOS,
-			"botao": "Ver corridas"},
-	]
-
-
-## Elena: o primeiro carro na Second Chance, a primeira corrida sem licença e
-## o treino da licença Club; depois, a carreira.
-static func _elena(jogador: Node, _dados: Node) -> Array:
-	return [
-		{"texto": "Comprar um carro na Second Chance", "feito": not jogador.garagem.lista().is_empty(),
-			"aba": Aba.LOJA, "botao": "Ir para as Lojas"},
-		{"texto": "Disputar uma corrida sem licença", "feito": not jogador.historico.is_empty(), "aba": Aba.EVENTOS,
-			"botao": "Ver corridas"},
-		{"texto": "Começar o treino da licença Club", "feito": jogador.treinos.has("CLUB") or "CLUB" in jogador.licencas,
-			"aba": Aba.LICENCAS, "botao": "Ver licenças"},
-	]
 
 
 ## Dono da oficina (Chrome & Wreckage, decisão 85): o primeiro carro, o

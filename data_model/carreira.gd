@@ -235,7 +235,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var evento_id: String = corrida["evento_id"]
 	var ev: Dictionary = dados.evento(evento_id)
 	var r: Dictionary = corrida["resultado"]
-	# Equipe (fase 9): vale quem chegar na frente, a Elena ou o companheiro.
+	# Equipe (fase 9): vale quem chegar na frente, o piloto ou o companheiro.
 	var posicao_propria: int = r["classificacao"].find("jogador") + 1
 	var posicao_companheiro: int = r["classificacao"].find(EquipeJogador.ID) + 1
 	var posicao := posicao_propria if posicao_companheiro == 0 else mini(posicao_propria, posicao_companheiro)
@@ -258,8 +258,6 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 			carro_premio_uid = jogador.garagem.adicionar(premiado)
 	jogador.dias += 1
 	var campeonato: Dictionary = Campeonatos.registrar(self, evento_id, r["classificacao"], int(corrida.get("semente", -1)))
-	if campeonato.get("final", false) and jogador.personagem == "adrian":
-		jogador.flags["FIRST_CHAMPIONSHIP_DONE"] = true  # prólogo: a próxima é a última corrida
 	var tempo: float = r["carros"]["jogador"]["tempo_total"] if r["carros"]["jogador"]["terminou"] else 0.0
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
 	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo)

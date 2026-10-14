@@ -65,7 +65,6 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	igual(j.carro_ativo, -1, "vender o ativo limpa a seleção")
 	EquipeJogador.criar(j)
 	igual(EquipeJogador.dados_equipe(d, j).get("id"), "eq_jogador", "equipe do jogador criada")
-	j.flags["SECOND_CHANCE_UNLOCKED"] = true  # seção Second Chance no mercado
 	EquipeJogador.liberar_segundo(d, j)
 	igual(j.segundo_piloto, "livre_1", "segundo piloto na equipe")
 	for a in abas:

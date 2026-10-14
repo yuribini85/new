@@ -287,7 +287,7 @@ static func exige_piloto(jogador: Node) -> bool:
 
 
 ## Nome de quem pilota nas corridas: o piloto de corrida contratado; sem ele, o
-## personagem da história (Adrian, Elena) ou "Você" em jogo sem história.
+## personagem da história ou "Você" em jogo sem história.
 static func nome_jogador(dados: Node, jogador: Node) -> String:
 	var contratado := piloto_vaga(jogador, "corrida")
 	if contratado != "":
@@ -314,7 +314,7 @@ static func nome_segundo(dados: Node, jogador: Node) -> String:
 
 
 ## Carro do companheiro para esta prova (-1 se ele não corre): piloto
-## na equipe, carro escolhido na garagem, diferente do da Elena e elegível.
+## na equipe, carro escolhido na garagem, diferente do do piloto principal e elegível.
 static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid: int) -> int:
 	if not criada(jogador) or jogador.segundo_piloto == "":
 		return -1

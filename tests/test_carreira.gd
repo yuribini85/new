@@ -174,61 +174,30 @@ func test_historia_escolhe_cena_por_trigger_flags_e_condicao() -> void:
 	d.free()
 
 
-func test_prologo_adrian_acidente_e_elena() -> void:
-	var d := dados_fixture()
-	var j: Node = JogadorScript.new()
-	igual(Prologo.iniciar(d, j), "", "começa como Adrian")
-	igual(j.personagem, "adrian", "personagem")
-	igual(j.licencas, ["b"], "licenças do Adrian")
-	igual(j.garagem.lista().size(), 1, "carro do Adrian")
-	igual(j.economia.saldo, 299, "saldo = peça da demanda + a mais barata - 1")
-	verificar(not Prologo.deve_ultima_corrida(d, j), "antes do primeiro campeonato")
-	j.flags["FIRST_CHAMPIONSHIP_DONE"] = true
-	verificar(Prologo.deve_ultima_corrida(d, j), "depois do primeiro campeonato")
-	j.vitorias["x"] = 1
-	j.fila = {"evento_id": "x"}
-	Prologo.acidente(j)
-	igual(j.garagem.lista().size(), 0, "carro destruído")
-	igual(j.fila, {}, "corrida interrompida")
-	verificar(j.flags.has("ADRIAN_CAR_DESTROYED"), "flag do acidente")
-	Prologo.salto_temporal(d, j)
-	igual(j.personagem, "elena", "Elena")
-	igual(j.licencas, [], "sem licença")
-	igual(j.vitorias, {}, "carreira do zero")
-	igual(j.economia.saldo, 1000, "poupança = saldo inicial")
-	verificar(j.flags.has("FIRST_CHAMPIONSHIP_DONE"), "flags continuam")
-	var ofertas := Usados.estoque(d.lista("carros"), 0, {})
-	var sc := Prologo.second_chance(d, j, ofertas)
-	verificar(sc.size() <= 3, "limite de carros da config")
-	verificar(sc.all(func(o): return int(o["preco"]) <= 1000), "só o que o saldo paga")
-	j.free()
-	d.free()
-
-
-## Chrome & Wreckage: o dono da oficina começa com o carro e a peça da
-## demanda, sem licença; quem corre é o piloto da campanha. Cenas valem para
+## Chrome & Wreckage: o dono da oficina começa sem carro e sem licença, com o
+## saldo inicial; quem corre é o piloto contratado. Cenas valem para
 ## listas de personagens, comentários de contexto respeitam o intervalo em
 ## corridas e a condição de quantidade.
 func test_campanha_do_dono_e_comentarios() -> void:
 	var d := dados_fixture()
 	var j: Node = JogadorScript.new()
-	igual(Prologo.iniciar(d, j, "dono"), "", "começa como dono")
+	igual(Prologo.iniciar(d, j), "", "começa como dono")
 	igual(j.personagem, "dono", "personagem")
 	igual(j.licencas, [], "sem licença")
-	igual(j.garagem.lista().size(), 1, "carro da oficina")
-	igual(j.economia.saldo, 299, "saldo pelo mesmo critério do Adrian")
+	igual(j.garagem.lista().size(), 0, "garagem vazia")
+	igual(j.economia.saldo, int(d.economia()["saldo_inicial"]), "saldo inicial da economia")
 	igual(Prologo.demanda(d, j), "turbo", "peça da demanda")
+	j.carro_ativo = j.concessionaria.comprar_carro(d.carro("fraco"))
 	# Decisão 69: o dono administra; quem corre é o piloto de corrida contratado.
 	igual(EquipeJogador.nome_jogador(d, j), "Sem piloto", "sem piloto contratado")
 	EquipeJogador.criar(j)
 	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "contrata o piloto de corrida")
 	igual(EquipeJogador.nome_jogador(d, j), "Livre Um", "o contratado corre")
-	verificar(not Prologo.deve_ultima_corrida(d, j), "sem a última corrida do Adrian")
 	var h := Historia.new(d, j)
 	j.historia = h
 	j.flags["DUPLA"] = true
 	igual(h.cena_para("SEM_DINHEIRO").get("id"), "dupla", "cena com lista de personagens")
-	j.personagem = "elena"
+	j.personagem = "outro"
 	igual(h.cena_para("SEM_DINHEIRO").get("id"), "sempre", "fora da lista, a próxima")
 	j.personagem = "dono"
 	j.dias = 10
@@ -253,8 +222,7 @@ func test_campanha_do_dono_e_comentarios() -> void:
 	d.free()
 
 
-## Cenas reais: o jogo novo é a campanha do dono; Adrian e Elena seguem com as
-## cenas deles, e as falas do Marcus de sistema não aparecem para o dono.
+## Cenas reais: o jogo novo é a campanha do dono (a única).
 ## Quem fala na campanha da Wreckage: a Mara, o piloto, o sistema e o pessoal da
 ## oficina, das lojas, da Vector Academy e da arena (pedido do usuário).
 const ELENCO_WRECKAGE := ["mara", "piloto_casa", "sistema", "examinador", "manobrista", "mecanico_arena",
@@ -321,8 +289,6 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 		if String(c["id"]).begins_with("CW_"):
 			for f in c["falas"]:
 				verificar(f.get("quem", "mara") in ELENCO_WRECKAGE, "%s: só o elenco da Wreckage" % c["id"])
-	j.personagem = "elena"
-	verificar(String(h.cena_para("SEM_DINHEIRO").get("id", "")) == "SYS_01", "Elena segue com o Marcus")
 	j.free()
 	d.free()
 
@@ -347,7 +313,7 @@ func test_equipe_folha_e_companheiro() -> void:
 	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), -1, "sem carro escolhido não corre")
 	var uid2: int = j.concessionaria.comprar_carro(d.carro("fraco"))
 	j.carro_companheiro = uid
-	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), -1, "mesmo carro da Elena não corre")
+	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), -1, "mesmo carro do piloto não corre")
 	j.carro_companheiro = uid2
 	igual(EquipeJogador.companheiro_para(d, j, "aberto", uid), uid2, "companheiro com o outro carro")
 	# Decisão 68: nas corridas só corre um piloto da equipe.
@@ -383,20 +349,6 @@ func test_cenarios_de_teste_montam() -> void:
 				igual(j.personagem, "dono", "dono_inicio: dono")
 			"dono_arena":
 				verificar(j.garagem.lista().size() >= 2, "arena: 2+ carros")
-			"adrian_inicio", "adrian_ultima":
-				igual(j.personagem, "adrian", "%s: Adrian" % c["id"])
-			"elena_inicio":
-				igual(j.personagem, "elena", "Elena")
-				igual(j.garagem.lista().size(), 0, "garagem vazia depois do acidente")
-			"elena_primeira_compra":
-				igual(j.garagem.lista().size(), 1, "primeiro carro da Elena")
-			"second_driver":
-				verificar(not j.licencas.is_empty(), "licenças do cenário")
-			"segundo_piloto":
-				igual(j.garagem.lista().size(), 2, "dois carros")
-				verificar(j.carro_companheiro >= 0 and j.carro_companheiro != j.carro_ativo, "carro do companheiro")
-		if c["id"] == "adrian_ultima":
-			verificar(Prologo.deve_ultima_corrida(d, j), "próxima largada é a última do Adrian")
 		j.free()
 	var j2: Node = JogadorScript.new()
 	igual(Cenarios.montar(d, j2, "nenhum"), "cenário nenhum não existe", "cenário inválido")

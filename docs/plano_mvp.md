@@ -712,3 +712,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     depois do piloto, Oficina depois do tutorial dela, Arena depois do dela; na Carreira, a
     licença e a coleção só depois da conversa da licença. Ordem: … primeira prova → segunda
     prova → aprimorar o carro → prova → licença Club → …
+87. **Uma campanha só** (2026-10-14, pedido do usuário). A campanha antiga (Adrian, o acidente,
+    Elena e a Second Chance Motors) saiu do jogo: cenas, personagens, cenários, a volta de
+    abertura e os cenários de teste dela. O jogo novo é sempre a campanha da oficina
+    (Chrome & Wreckage). Saves antigos com Adrian ou Elena abrem, mas sem as cenas deles.

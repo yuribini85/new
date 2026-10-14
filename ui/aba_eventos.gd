@@ -452,8 +452,8 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 	return v
 
 
-## Prova do tutorial de eventos: a etapa 1 do campeonato do prólogo (Adrian);
-## para o dono da oficina, a primeira prova que o carro em uso já pode correr.
+## Prova do tutorial de eventos: a primeira prova que o carro em uso já pode
+## correr (só antes da primeira corrida).
 func _evento_tutorial() -> String:
 	if jogador.personagem == "dono" and not jogador.flags.has("FIRST_RACE_DONE"):
 		var c: Carro = Escalacao.carro(jogador, "corrida")
@@ -461,11 +461,7 @@ func _evento_tutorial() -> String:
 			for ev in dados.lista("eventos"):
 				if Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas).is_empty():
 					return String(ev["id"])
-		return ""
-	if jogador.personagem != "adrian":
-		return ""
-	var etapas := Campeonatos.etapas(dados, String(dados.historia().get("adrian", {}).get("campeonato", "")))
-	return String(etapas[0]["id"]) if not etapas.is_empty() else ""
+	return ""
 
 
 ## Tipo da série pelo que ela exige: [nome, cor de identidade].
@@ -565,8 +561,6 @@ func _correr(evento_id: String) -> void:
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
 	correr_iniciado.emit()
-	if Prologo.deve_ultima_corrida(dados, jogador):
-		historia("ULTIMA_CORRIDA_ADRIAN", ctx)
 	historia("CORRIDA_INICIO", ctx)
 	if dados.evento(evento_id)["restricoes"].get("licenca", "") == "ELITE":
 		historia("CORRIDA_RESISTENCIA")

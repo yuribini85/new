@@ -12,16 +12,14 @@ func _init(d: Node, j: Node) -> void:
 ## Lojas: as workshops (data/workshops.json), cada uma revende os carros de
 ## algumas marcas da mesma origem (decisão 42: a estrutura do GT2, uma loja por
 ## marca, agrupada nas workshops). Todos os carros da frota, novos e antigos,
-## pelo preço de tabela. Sem usados nem agenda. A Second Chance Motors (prólogo
-## da Elena) aparece como uma loja a mais enquanto a história pede.
-## Workshop aberta ("" = a grade de workshops; "second_chance"). Fica no
+## pelo preço de tabela. Sem usados nem agenda.
+## Workshop aberta ("" = a grade de workshops). Fica no
 ## jogador (e no save): Lojas reabre na última loja vista.
 var _loja: String:
 	get:
 		return jogador.ultima_loja
 	set(v):
 		jogador.ultima_loja = v
-var _second_chance_vista := false
 ## Filtros dentro da workshop (mantidos ao voltar).
 var _so_posso := false
 var _ordem := "preco"  # "preco" ou "potencia"
@@ -32,16 +30,6 @@ var _limite := POR_PAGINA
 
 func construir() -> void:
 	_no_mapa = false
-	# Prólogo: depois do acidente, Elena começa pela Second Chance Motors.
-	# Só enquanto a garagem está vazia: é a loja da história (o primeiro carro da Elena).
-	var second_chance: bool = jogador.flags.has("SECOND_CHANCE_UNLOCKED") and jogador.garagem.lista().is_empty()
-	if second_chance and not _second_chance_vista and jogador.garagem.lista().is_empty():
-		_second_chance_vista = true
-		_loja = "second_chance"
-	if _loja == "second_chance" and second_chance:
-		_topo_workshop({})
-		_second_chance(Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos))
-		return
 	var ws := workshops()
 	var aberta: Dictionary = {}
 	for w in ws:
@@ -50,10 +38,10 @@ func construir() -> void:
 	if aberta.is_empty():
 		_loja = ""
 		if ws.size() == AREAS_MAPA.size() and arte("mapa_lojas") != null:
-			_mapa(ws, second_chance)
+			_mapa(ws)
 		else:
 			cabecalho("Lojas", "Workshops", "fundo_mercado")
-			_vitrine(ws, second_chance)
+			_vitrine(ws)
 	else:
 		_workshop(aberta)
 
@@ -93,7 +81,7 @@ func no_mapa() -> bool:
 	return _no_mapa
 
 
-func _mapa(ws: Array, second_chance: bool) -> void:
+func _mapa(ws: Array) -> void:
 	_no_mapa = true
 	var tex := arte("mapa_lojas")
 	var mapa := Control.new()
@@ -159,27 +147,11 @@ func _mapa(ws: Array, second_chance: bool) -> void:
 			placa.offset_top += AJUSTE_NOME_MAPA[i]
 			placa.offset_bottom += AJUSTE_NOME_MAPA[i]
 			b.add_child(placa)
-	if second_chance:
-		var sc := Button.new()
-		Tipografia.acao_primaria(sc, "Second Chance Motors · usados", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 64)
-		sc.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-		sc.offset_left = 24
-		sc.offset_right = -24
-		sc.offset_top = 70
-		sc.offset_bottom = 134
-		sc.pressed.connect(func():
-			_loja = "second_chance"
-			mudou.emit())
-		t.add_child(sc)
 
 
 ## Lista das workshops (sem o mapa: dados de teste): a concessionária, o nome
 ## e quantos carros vende.
-func _vitrine(ws: Array, second_chance: bool) -> void:
-	if second_chance:
-		linha_workshop({"nome": "Second Chance Motors", "logo": ""}, "USADOS", func():
-			_loja = "second_chance"
-			mudou.emit())
+func _vitrine(ws: Array) -> void:
 	for w in ws:
 		var n := _carros_da(w).size()
 		if n == 0:
@@ -205,9 +177,8 @@ func _vendedor(loja: String) -> void:
 ## Dentro da workshop: a logo grande numa placa e, embaixo, os carros.
 func _topo_workshop(w: Dictionary) -> void:
 	# A concessionária grande com o nome ao lado (a mesma linha do mapa/coleção).
-	var n := _carros_da(w).size() if w.has("fabricantes") else 0
-	linha_workshop(w if not w.is_empty() else {"nome": "Second Chance Motors", "logo": ""},
-			("%d CARRO%s À VENDA" % [n, "" if n == 1 else "S"]) if n > 0 else "USADOS", Callable(), -1.0, null, false)
+	var n := _carros_da(w).size()
+	linha_workshop(w, "%d CARRO%s À VENDA" % [n, "" if n == 1 else "S"], Callable(), -1.0, null, false)
 
 
 func _workshop(w: Dictionary) -> void:
@@ -225,34 +196,6 @@ func _workshop(w: Dictionary) -> void:
 		_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c, cor_escolhida), c,
 				int(c["preco"])), Color(0, 0, 0, 0), true, tenho.has(c["id"]))
 	_mais(lista.size())
-
-
-## Second Chance Motors (prólogo): poucos usados que a poupança da Elena paga,
-## de perfis diferentes (Prologo.second_chance).
-func _second_chance(ofertas: Array) -> void:
-	nota("icone_ofertas", "Second Chance Motors", "Carros usados que cabem no seu saldo. Mudam a cada corrida.")
-	var lista := Prologo.second_chance(dados, jogador, ofertas)
-	if lista.is_empty():
-		rotulo("Nenhum carro hoje que o saldo pague.", 0, COR_SECUNDARIA)
-		return
-	var grade := _grade()
-	for o in lista:
-		_cartao_usado(grade, o)
-
-
-func _cartao_usado(grade: GridContainer, o: Dictionary) -> void:
-	var c: Dictionary = dados.carro(o["carro_id"])
-	var restam: int = int(o.get("fim", jogador.dias)) - jogador.dias + 1
-	var extras := [["sai em %d corrida%s" % [restam, "" if restam == 1 else "s"], COR_NEUTRA.lightened(0.3)]]
-	if o["carro_id"] in jogador.desejos:
-		extras.push_front(["♥ avisando", COR_DESTAQUE])
-	# Usado: vem numa das cores do modelo, fixa pela oferta.
-	var cor_usado := Cores.sortear(String(c["id"]), String(o["chave"]))
-	_bloco(grade, c, int(o["preco"]), "", extras,
-			func(): _escolher(jogador.concessionaria.comprar_usado(o, c, jogador.usados_vendidos, cor_usado.to_html(false)), c,
-					int(o["preco"])), cor_usado)
-	if grade.get_child_count() == 1:
-		ancora("USED_CAR_STATS", grade.get_child(0))
 
 
 ## MOSTRAR TODOS: a lista começa com POR_PAGINA carros; o botão abre o resto.

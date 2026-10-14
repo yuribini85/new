@@ -36,7 +36,7 @@ func _ready() -> void:
 	tinha_save = r["carregou"]
 	aviso = r["aviso"]
 	if not r["carregou"] and not dados.historia().is_empty():
-		# Jogo novo: começa pelo prólogo do Adrian (decisão 32).
+		# Jogo novo: começa pela campanha da oficina (decisão 85).
 		var erro := Prologo.iniciar(dados, jogador)
 		if erro != "":
 			push_warning("SaveManager: " + erro)

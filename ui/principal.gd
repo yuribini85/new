@@ -197,7 +197,6 @@ func _ready() -> void:
 	timer.timeout.connect(_foco_corrida)
 	timer.timeout.connect(_registrar_fila)
 	timer.timeout.connect(_atualizar_fps)
-	timer.timeout.connect(_historia_corrida)
 	timer.timeout.connect(_contar_lembrete)
 	timer.timeout.connect(_atualizar_aceleracao)
 	timer.timeout.connect(_patrocinio)
@@ -727,8 +726,8 @@ func _quando_dialogo_acabar(depois: Callable) -> void:
 	depois.call()
 
 
-## Jogo novo com a história: a abertura (dono: a noite do acidente; Adrian: a
-## volta sozinho na pista) e, no fim dela, a primeira cena (GAME_START).
+## Jogo novo com a história: a abertura (a noite em que a Wreckage perdeu os
+## carros) e, no fim dela, a primeira cena (GAME_START).
 func _abertura() -> void:
 	var h: Historia = jogador.historia
 	# Campanha do dono: a noite do acidente (AberturaCinema) e então a Mara na
@@ -741,40 +740,11 @@ func _abertura() -> void:
 			jogador.flags["ABERTURA_DONO"] = true
 			h.disparar("GAME_START"))
 		return
-	if jogador.personagem != "adrian" or jogador.flags.has("VOLTA_ABERTURA") or h.cena_para("GAME_START").is_empty():
-		h.disparar("GAME_START")
-		return
-	var volta := VoltaAbertura.new(dados, jogador)
-	add_child(volta)
-	volta.terminou.connect(func():
-		jogador.flags["VOLTA_ABERTURA"] = true
-		h.disparar("GAME_START"))
-
-
-## Prólogo: durante a última corrida do Adrian, o rádio e depois o acidente.
-func _historia_corrida() -> void:
-	if jogador.historia == null or not Prologo.ultima_corrida_ativa(jogador):
-		return
-	var dur: float = jogador.fila_ctrl.duracao_atual()
-	if dur <= 0.0:
-		return
-	var feito: float = (Aceleracao.agora(jogador) - float(jogador.fila["inicio"])) / dur
-	var cfg: Dictionary = dados.historia()
-	if feito >= float(cfg.get("radio_fracao", 0.4)):
-		jogador.historia.disparar("RADIO_ULTIMA_CORRIDA")
-	if feito >= float(cfg.get("acidente_fracao", 0.6)):
-		Prologo.acidente(jogador)
-		jogador.historia.disparar("ACIDENTE")
-		atualizar()
-		get_node("/root/SaveManager").salvar()
+	h.disparar("GAME_START")
 
 
 func _acao_historia(nome: String) -> void:
-	if nome == "SALTO_TEMPORAL":
-		Prologo.salto_temporal(dados, jogador)
-		atualizar()
-		get_node("/root/SaveManager").salvar()
-	elif nome == "OPEN_DRIVER_HIRE":
+	if nome == "OPEN_DRIVER_HIRE":
 		# Segundo piloto entra na equipe, sem contrato (decisão 38).
 		EquipeJogador.liberar_segundo(dados, jogador)
 		atualizar()

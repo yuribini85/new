@@ -1220,7 +1220,7 @@ func _escolher(c: Carro) -> void:
 func _botao_vender(pai: Control, c: Carro) -> Button:
 	var b := Button.new()
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid) or Prologo.carro_travado(dados, jogador, c)
+	b.disabled = _correndo(c) or not jogador.concessionaria.pode_vender(c.uid)
 	var vaga := Escalacao.vaga_de(jogador, c.uid)
 	if vaga != "":
 		Tipografia.acao_neutra(b, "ESCALADO · %s" % Escalacao.NOMES[vaga], 24, 52)
