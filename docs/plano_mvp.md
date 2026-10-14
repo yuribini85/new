@@ -730,3 +730,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     para o próximo piloto; Pular vai ao confronto; Reduzir animações tira terminal, efeitos e
     digitação. Aberta da lista, segue a ficha (VinhetaGrid). Fontes: Big Shoulders e IBM
     Plex Mono (OFL).
+89. **Abertura mais curta e nome no celular** (2026-10-14, pedido do usuário; ajusta a
+    abertura final). A chegada não passa mais antes do logo: ela já é o fundo do diálogo
+    (ilustração `chegada`), então a abertura fica com as cenas 1–4 e o logo, em ~19 s (antes
+    32,5 s; `arte/abertura/roteiro.json`). No pedido do nome, o teclado do celular abre ao
+    tocar no campo: a exportação Web liga o teclado virtual e, em tela de toque, o campo não
+    pega o foco sozinho (o navegador só abre o teclado com o toque).

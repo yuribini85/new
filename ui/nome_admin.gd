@@ -44,7 +44,9 @@ func _init(atual := "") -> void:
 	v.add_child(titulo)
 	_campo = LineEdit.new()
 	_campo.text = atual
-	_campo.placeholder_text = "Seu nome"
+	_campo.placeholder_text = "Toque para digitar"
+	_campo.virtual_keyboard_enabled = true
+	_campo.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_DEFAULT
 	_campo.max_length = NOME_MAX
 	_campo.custom_minimum_size.y = 72
 	_campo.add_theme_font_size_override("font_size", 30)
@@ -61,7 +63,11 @@ func _init(atual := "") -> void:
 func _ready() -> void:
 	modulate.a = 0.0
 	create_tween().tween_property(self, "modulate:a", 1.0, 0.25)
-	_campo.grab_focus()
+	# No celular o teclado só abre com o toque no campo (o navegador exige o
+	# gesto): o foco automático deixaria o campo "já focado" e o toque não
+	# abriria nada. Com teclado físico, já entra digitando.
+	if not DisplayServer.is_touchscreen_available():
+		_campo.grab_focus()
 
 
 func nome() -> String:
