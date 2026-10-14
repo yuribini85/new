@@ -1,8 +1,12 @@
 class_name Configuracoes
 extends RefCounted
 ## Tela de Configurações (engrenagem do cabeçalho): som, gráficos, corridas
-## aceleradas e a compra Sem anúncios (decisão 39), testes e versão. Monta o
-## conteúdo do painel modal com os componentes de uma aba (`aba`).
+## aceleradas e a compra Sem anúncios (decisão 39), história, carreira e
+## versão. As ferramentas de teste ficam escondidas: aparecem tocando
+## TOQUES_TESTE vezes na versão (ou já abertas com o modo de playtest ligado).
+## Monta o conteúdo do painel modal com os componentes de uma aba (`aba`).
+const TOQUES_TESTE := 5
+static var _testes_abertos := false
 
 
 ## `acelerar`: abre a tela da aceleração. `comprar`: compra Sem anúncios.
@@ -29,12 +33,9 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 	h.add_child(vol)
 
 	_secao(aba, v, "GRÁFICOS")
-	_chave(aba, v, "Efeitos leves", "Sem sombras, neblina e faíscas no 3D. Para aparelhos mais fracos; vale a partir da próxima corrida.",
-			Preferencias.efeitos_leves, func(x): Preferencias.efeitos_leves = x)
-	_chave(aba, v, "Limitar a 30 quadros por segundo", "Economiza bateria; o movimento fica menos suave.",
-			Preferencias.limitar_fps, func(x): Preferencias.limitar_fps = x)
-	_chave(aba, v, "Reduzir animações", "Fundo da tela inicial parado e menos movimento na interface.",
-			Preferencias.reduzir_animacoes, func(x): Preferencias.reduzir_animacoes = x)
+	_chave(v, "Efeitos leves", Preferencias.efeitos_leves, func(x): Preferencias.efeitos_leves = x)
+	_chave(v, "Limitar a 30 quadros por segundo", Preferencias.limitar_fps, func(x): Preferencias.limitar_fps = x)
+	_chave(v, "Reduzir animações", Preferencias.reduzir_animacoes, func(x): Preferencias.reduzir_animacoes = x)
 	aba.rotulo("Vista da corrida", Aba.FONTE_PEQUENA + 2, Color.WHITE, v)
 	var vistas := HBoxContainer.new()
 	vistas.add_theme_constant_override("separation", 8)
@@ -61,8 +62,6 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 	_botao(v, "Acelerar corridas", acelerar)
 	cartao_sem_anuncios(aba, v, comprar)
 
-	testes.call(v)  # traz o próprio separador e título (Modo de playtest)
-
 	if jogador.historia != null and String(jogador.personagem) != "":
 		_secao(aba, v, "HISTÓRIA")
 		aba.botao_texto("Diário de conversas", func():
@@ -76,8 +75,24 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 			[["Sim, recomeçar", aba._recomecar], ["Cancelar", func(): pass]]), v)
 
 	_secao(aba, v, "SOBRE")
-	aba.rotulo("Chrome & Wreckage v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
+	var versao := aba.rotulo("Chrome & Wreckage v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
 			Aba.versao()], Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)
+	var testes_v := VBoxContainer.new()
+	v.add_child(testes_v)
+	if _testes_abertos or Preferencias.modo_teste != "":
+		testes.call(testes_v)  # traz o próprio separador e título (Modo de playtest)
+		return
+	var toques := {"n": 0}
+	versao.mouse_filter = Control.MOUSE_FILTER_STOP
+	versao.gui_input.connect(func(ev: InputEvent):
+		var toque: bool = (ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT) \
+				or (ev is InputEventScreenTouch and ev.pressed)
+		if not toque or _testes_abertos:
+			return
+		toques["n"] += 1
+		if toques["n"] >= TOQUES_TESTE:
+			_testes_abertos = true
+			testes.call(testes_v))
 
 
 ## Compra única Sem anúncios: a aceleração sem assistir ao vídeo. A compra real
@@ -102,7 +117,7 @@ static func _secao(aba: Aba, v: VBoxContainer, t: String) -> void:
 	aba.rotulo(t, Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)
 
 
-static func _chave(aba: Aba, v: VBoxContainer, t: String, detalhe: String, ligado: bool, gravar: Callable) -> void:
+static func _chave(v: VBoxContainer, t: String, ligado: bool, gravar: Callable) -> void:
 	var c := CheckButton.new()
 	c.text = t
 	c.button_pressed = ligado
@@ -111,7 +126,6 @@ static func _chave(aba: Aba, v: VBoxContainer, t: String, detalhe: String, ligad
 		gravar.call(x)
 		Preferencias.salvar())
 	v.add_child(c)
-	aba.rotulo(detalhe, Aba.FONTE_PEQUENA - 2, Aba.COR_SECUNDARIA, v)
 
 
 static func _botao(pai: Control, t: String, acao: Callable) -> Button:
