@@ -101,6 +101,12 @@ static func traco(dados: Node, piloto_id: String) -> Dictionary:
 	return config(dados).get("tracos", {}).get(String(piloto(dados, piloto_id).get("traco", "")), {})
 
 
+## Traço de um piloto de equipe ({nome, perfil, menos_consistencia, ...}):
+## o do perfil dele (mercado.traco_por_perfil), como no mercado (decisão 88).
+static func traco_rival(dados: Node, e: Dictionary, pe: Dictionary) -> Dictionary:
+	return config(dados).get("tracos", {}).get(String(_do_grid(dados, e, pe)["traco"]), {})
+
+
 # ------------------------------------------------------------ Mercado (decisão 71)
 
 static func cfg_mercado(dados: Node) -> Dictionary:

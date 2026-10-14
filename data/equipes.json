@@ -33,24 +33,32 @@
    {
     "id": "lucien_vale",
     "nome": "Lucien Vale",
+    "numero": 1,
+    "apelido": "Contador",
     "perfil": "equilibrado",
     "personalidade": "Erra quando pressionado de perto."
    },
    {
     "id": "nadia_voss",
     "nome": "Nadia Voss",
+    "numero": 6,
+    "apelido": "Relógio",
     "perfil": "cauteloso",
     "personalidade": "Metódico: cada volta igual à anterior."
    },
    {
     "id": "akira_delacroix",
     "nome": "Akira Delacroix",
+    "numero": 18,
+    "apelido": "Seda",
     "perfil": "equilibrado",
     "personalidade": "Prefere ceder a posição a riscar o carro."
    },
    {
     "id": "beatriz_oyelaran",
     "nome": "Beatriz Oyelaran",
+    "numero": 52,
+    "apelido": "Largada",
     "perfil": "agressivo",
     "personalidade": "Explosivo na largada, apagado no fim."
    }
@@ -77,24 +85,32 @@
    {
     "id": "ren_kaito",
     "nome": "Ren Kaito",
+    "numero": 1,
+    "apelido": "Reta Longa",
     "perfil": "agressivo",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    },
    {
     "id": "hana_mori",
-    "nome": "Hana Mori",
+    "nome": "Haru Mori",
+    "numero": 17,
+    "apelido": "Aprendiz",
     "perfil": "equilibrado",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    },
    {
     "id": "dmitri_abernathy",
     "nome": "Dmitri Abernathy",
+    "numero": 23,
+    "apelido": "Freio Tarde",
     "perfil": "agressivo",
     "personalidade": "Freia mais tarde que todo mundo."
    },
    {
     "id": "esme_lindgren",
-    "nome": "Esme Lindgren",
+    "nome": "Espen Lindgren",
+    "numero": 48,
+    "apelido": "Vácuo",
     "perfil": "cauteloso",
     "personalidade": "Vive no vácuo, esperando a chance."
    }
@@ -117,24 +133,32 @@
    {
     "id": "bram_holt",
     "nome": "Bram Holt",
+    "numero": 1,
+    "apelido": "Kart",
     "perfil": "cauteloso",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    },
    {
     "id": "soren_pike",
     "nome": "Soren Pike",
+    "numero": 5,
+    "apelido": "Muro",
     "perfil": "equilibrado",
     "personalidade": "Paciente: espera o erro dos outros."
    },
    {
     "id": "felix_hakimi",
     "nome": "Felix Hakimi",
+    "numero": 21,
+    "apelido": "Topete",
     "perfil": "cauteloso",
     "personalidade": "Erra quando pressionado de perto."
    },
    {
     "id": "greta_saarinen",
     "nome": "Greta Saarinen",
+    "numero": 47,
+    "apelido": "Metrônomo",
     "perfil": "agressivo",
     "personalidade": "Metódico: cada volta igual à anterior."
    }
@@ -161,31 +185,38 @@
    {
     "id": "lucas_ward",
     "nome": "Lucas Ward",
+    "numero": 1,
+    "apelido": "Pressa",
     "perfil": "agressivo",
     "personalidade": "Tem pressa de tudo, menos de frear."
    },
    {
     "id": "cassian_roe",
     "nome": "Cassian Roe",
+    "numero": 3,
+    "apelido": "Segundo Tempo",
     "perfil": "equilibrado",
     "personalidade": "Cresce na segunda metade da prova."
    },
    {
     "id": "nyra_sol",
-    "nome": "Nyra Sol",
+    "nome": "Nero Sol",
+    "numero": 31,
+    "apelido": "Peito de Aço",
     "perfil": "agressivo",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    },
    {
     "id": "hugo_esposito",
     "nome": "Hugo Esposito",
+    "numero": 58,
+    "apelido": "Promessa",
     "perfil": "cauteloso",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    }
   ],
-  "dirigente": "Victor Hale",
   "perfil": "agressivo",
-  "personalidade": "A equipe do Victor Hale: vencer a qualquer preço.",
+  "personalidade": "Vencer a qualquer preço.",
   "cores": {
    "carro": "#141518",
    "faixa": "#c8102e",
@@ -202,6 +233,8 @@
    {
     "id": "dario_kest",
     "nome": "Dario Kest",
+    "numero": 1,
+    "apelido": "Limite",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Não perde a calma nem com o pneu no fim."
@@ -209,6 +242,8 @@
    {
     "id": "lena_brook",
     "nome": "Lena Brook",
+    "numero": 12,
+    "apelido": "Poupança",
     "provisorio": true,
     "perfil": "cauteloso",
     "personalidade": "Poupa o carro para a última volta."
@@ -216,12 +251,16 @@
    {
     "id": "isadora_aldana",
     "nome": "Isadora Aldana",
+    "numero": 26,
+    "apelido": "Kartódromo",
     "perfil": "agressivo",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    },
    {
     "id": "jasper_laurier",
     "nome": "Jasper Laurier",
+    "numero": 55,
+    "apelido": "Espera",
     "perfil": "equilibrado",
     "personalidade": "Paciente: espera o erro dos outros."
    }
@@ -248,12 +287,16 @@
    {
     "id": "erik_halden",
     "nome": "Erik Halden",
+    "numero": 1,
+    "apelido": "Xadrez",
     "perfil": "cauteloso",
     "personalidade": "Lê a corrida como um tabuleiro."
    },
    {
     "id": "liv_arnesen",
     "nome": "Liv Arnesen",
+    "numero": 11,
+    "apelido": "Faísca",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Imprevisível até para a própria equipe."
@@ -261,12 +304,16 @@
    {
     "id": "katya_whitcombe",
     "nome": "Katya Whitcombe",
+    "numero": 24,
+    "apelido": "Pressa",
     "perfil": "cauteloso",
     "personalidade": "Tem pressa de tudo, menos de frear."
    },
    {
     "id": "leon_iwata",
     "nome": "Leon Iwata",
+    "numero": 39,
+    "apelido": "Maré",
     "perfil": "equilibrado",
     "personalidade": "Cresce na segunda metade da prova."
    }
@@ -293,6 +340,8 @@
    {
     "id": "marek_stone",
     "nome": "Marek Stone",
+    "numero": 1,
+    "apelido": "Sorriso",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Sorri no grid, morde na pista."
@@ -300,6 +349,8 @@
    {
     "id": "ivy_corran",
     "nome": "Ivy Corran",
+    "numero": 13,
+    "apelido": "Navalha",
     "provisorio": true,
     "perfil": "cauteloso",
     "personalidade": "Briga roda a roda até a última curva."
@@ -307,12 +358,16 @@
    {
     "id": "marisol_eriksen",
     "nome": "Marisol Eriksen",
+    "numero": 28,
+    "apelido": "Gelo",
     "perfil": "agressivo",
     "personalidade": "Não perde a calma nem com o pneu no fim."
    },
    {
     "id": "nils_petrakis",
     "nome": "Nils Petrakis",
+    "numero": 61,
+    "apelido": "Gorjeta",
     "perfil": "equilibrado",
     "personalidade": "Poupa o carro para a última volta."
    }
@@ -339,6 +394,8 @@
    {
     "id": "tomas_reyl",
     "nome": "Tomas Reyl",
+    "numero": 1,
+    "apelido": "Atalho",
     "provisorio": true,
     "perfil": "equilibrado",
     "personalidade": "Veterano que conhece todo atalho do paddock."
@@ -346,6 +403,8 @@
    {
     "id": "sasha_imre",
     "nome": "Sasha Imre",
+    "numero": 16,
+    "apelido": "Telemetria",
     "provisorio": true,
     "perfil": "agressivo",
     "personalidade": "Ninguém lembra de vê-lo errar."
@@ -353,12 +412,16 @@
    {
     "id": "odette_bastos",
     "nome": "Odette Bastos",
+    "numero": 22,
+    "apelido": "Professora",
     "perfil": "equilibrado",
     "personalidade": "Lê a corrida como um tabuleiro."
    },
    {
     "id": "pablo_morrow",
     "nome": "Pablo Morrow",
+    "numero": 49,
+    "apelido": "Dado",
     "perfil": "cauteloso",
     "personalidade": "Imprevisível até para a própria equipe."
    }
@@ -381,26 +444,34 @@
    {
     "id": "gus_harrow",
     "nome": "Gus Harrow",
+    "numero": 1,
+    "apelido": "Brasa",
     "provisorio": true,
     "perfil": "equilibrado",
     "personalidade": "Calado no box, barulhento na pista."
    },
    {
     "id": "pia_lund",
-    "nome": "Pia Lund",
+    "nome": "Per Lund",
+    "numero": 15,
+    "apelido": "Porta",
     "provisorio": true,
     "perfil": "cauteloso",
     "personalidade": "Fecha a porta sem cerimônia."
    },
    {
     "id": "quinn_ishida",
-    "nome": "Quinn Ishida",
+    "nome": "Quinn Hartley",
+    "numero": 32,
+    "apelido": "Aceno",
     "perfil": "equilibrado",
     "personalidade": "Sorri no grid, morde na pista."
    },
    {
     "id": "rafaela_takeda",
-    "nome": "Rafaela Takeda",
+    "nome": "Rafaela Duarte",
+    "numero": 68,
+    "apelido": "Roda a Roda",
     "perfil": "agressivo",
     "personalidade": "Briga roda a roda até a última curva."
    }
@@ -423,24 +494,32 @@
    {
     "id": "viktor_ren",
     "nome": "Viktor Ren",
+    "numero": 1,
+    "apelido": "Caçador",
     "perfil": "agressivo",
     "personalidade": "Explosivo na largada, apagado no fim."
    },
    {
     "id": "yuna_kess",
-    "nome": "Yuna Kess",
+    "nome": "Yuri Kess",
+    "numero": 20,
+    "apelido": "Por Fora",
     "perfil": "equilibrado",
     "personalidade": "Ataca por fora quando ninguém espera."
    },
    {
     "id": "stellan_fairbanks",
     "nome": "Stellan Fairbanks",
+    "numero": 36,
+    "apelido": "Lobo Velho",
     "perfil": "agressivo",
     "personalidade": "Veterano que conhece todo atalho do paddock."
    },
    {
     "id": "tamsin_bergstrom",
-    "nome": "Tamsin Bergstrom",
+    "nome": "Torsten Bergstrom",
+    "numero": 59,
+    "apelido": "Sombra",
     "perfil": "cauteloso",
     "personalidade": "Ninguém lembra de vê-lo errar."
    }
@@ -463,24 +542,32 @@
    {
     "id": "oscar_flint",
     "nome": "Oscar Flint",
+    "numero": 1,
+    "apelido": "Tradição",
     "perfil": "cauteloso",
     "personalidade": "Vive no vácuo, esperando a chance."
    },
    {
     "id": "mina_rowe",
     "nome": "Mina Rowe",
+    "numero": 4,
+    "apelido": "Regulamento",
     "perfil": "equilibrado",
     "personalidade": "Corre com o regulamento decorado."
    },
    {
     "id": "ulrich_marchetti",
     "nome": "Ulrich Marchetti",
+    "numero": 25,
+    "apelido": "Calado",
     "perfil": "cauteloso",
     "personalidade": "Calado no box, barulhento na pista."
    },
    {
     "id": "valentina_yamaguchi",
-    "nome": "Valentina Yamaguchi",
+    "nome": "Vasco Rojas",
+    "numero": 71,
+    "apelido": "Ferrolho",
     "perfil": "agressivo",
     "personalidade": "Fecha a porta sem cerimônia."
    }
@@ -503,24 +590,32 @@
    {
     "id": "noel_mercer",
     "nome": "Noel Mercer",
+    "numero": 1,
+    "apelido": "Turno",
     "perfil": "equilibrado",
     "personalidade": "Metódico: cada volta igual à anterior."
    },
    {
     "id": "zara_keene",
     "nome": "Zara Keene",
+    "numero": 8,
+    "apelido": "Manga",
     "perfil": "agressivo",
     "personalidade": "Prefere ceder a posição a riscar o carro."
    },
    {
     "id": "wes_jaramillo",
     "nome": "Wes Jaramillo",
+    "numero": 30,
+    "apelido": "Fagulha",
     "perfil": "equilibrado",
     "personalidade": "Explosivo na largada, apagado no fim."
    },
    {
     "id": "xenia_falcone",
     "nome": "Xenia Falcone",
+    "numero": 73,
+    "apelido": "Atalho",
     "perfil": "cauteloso",
     "personalidade": "Ataca por fora quando ninguém espera."
    }
@@ -547,24 +642,32 @@
    {
     "id": "elias_wren",
     "nome": "Elias Wren",
+    "numero": 1,
+    "apelido": "Herdeiro",
     "perfil": "equilibrado",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    },
    {
     "id": "celeste_armand",
     "nome": "Celeste Armand",
+    "numero": 7,
+    "apelido": "Porcelana",
     "perfil": "cauteloso",
     "personalidade": "Freia mais tarde que todo mundo."
    },
    {
     "id": "yusuf_quintero",
     "nome": "Yusuf Quintero",
+    "numero": 19,
+    "apelido": "Cofre",
     "perfil": "equilibrado",
     "personalidade": "Vive no vácuo, esperando a chance."
    },
    {
     "id": "zoe_coutinho",
     "nome": "Zoe Coutinho",
+    "numero": 33,
+    "apelido": "Regra",
     "perfil": "agressivo",
     "personalidade": "Corre com o regulamento decorado."
    }
@@ -591,24 +694,32 @@
    {
     "id": "rafe_calder",
     "nome": "Rafe Calder",
+    "numero": 1,
+    "apelido": "Poeira",
     "perfil": "agressivo",
     "personalidade": "Paciente: espera o erro dos outros."
    },
    {
     "id": "nika_stroud",
-    "nome": "Nika Stroud",
+    "nome": "Nico Stroud",
+    "numero": 10,
+    "apelido": "Rede",
     "perfil": "equilibrado",
     "personalidade": "Erra quando pressionado de perto."
    },
    {
     "id": "anders_nyberg",
     "nome": "Anders Nyberg",
+    "numero": 29,
+    "apelido": "Cascalho",
     "perfil": "agressivo",
     "personalidade": "Metódico: cada volta igual à anterior."
    },
    {
     "id": "bianca_jovanovic",
-    "nome": "Bianca Jovanovic",
+    "nome": "Bojan Jovanovic",
+    "numero": 77,
+    "apelido": "Estrada",
     "perfil": "cauteloso",
     "personalidade": "Prefere ceder a posição a riscar o carro."
    }
@@ -635,24 +746,32 @@
    {
     "id": "theo_maren",
     "nome": "Tobias Maren",
+    "numero": 1,
+    "apelido": "Maratona",
     "perfil": "cauteloso",
     "personalidade": "Cresce na segunda metade da prova."
    },
    {
     "id": "selene_ashby",
     "nome": "Selene Ashby",
+    "numero": 2,
+    "apelido": "Veterana",
     "perfil": "equilibrado",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    },
    {
     "id": "cyrus_ulloa",
     "nome": "Cyrus Ulloa",
+    "numero": 34,
+    "apelido": "Calmaria",
     "perfil": "cauteloso",
     "personalidade": "A promessa da equipe: quer provar algo a cada volta."
    },
    {
     "id": "dalia_grimaldi",
-    "nome": "Dalia Grimaldi",
+    "nome": "Davide Grimaldi",
+    "numero": 88,
+    "apelido": "Freio Tarde",
     "perfil": "agressivo",
     "personalidade": "Freia mais tarde que todo mundo."
    }
@@ -675,24 +794,32 @@
    {
     "id": "magnus_rell",
     "nome": "Magnus Rell",
+    "numero": 1,
+    "apelido": "Prata",
     "perfil": "equilibrado",
     "personalidade": "Poupa o carro para a última volta."
    },
    {
     "id": "ines_calloway",
-    "nome": "Ines Calloway",
+    "nome": "Ian Calloway",
+    "numero": 17,
+    "apelido": "Kart",
     "perfil": "agressivo",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    },
    {
     "id": "emil_castellan",
     "nome": "Emil Castellan",
+    "numero": 40,
+    "apelido": "O Velho",
     "perfil": "equilibrado",
     "personalidade": "Paciente: espera o erro dos outros."
    },
    {
     "id": "fiona_nakamura",
-    "nome": "Fiona Nakamura",
+    "nome": "Fabian Okoro",
+    "numero": 63,
+    "apelido": "Três",
     "perfil": "cauteloso",
     "personalidade": "Erra quando pressionado de perto."
    }
@@ -715,24 +842,32 @@
    {
     "id": "ash_corwin",
     "nome": "Ash Corwin",
+    "numero": 1,
+    "apelido": "Bote",
     "perfil": "cauteloso",
     "personalidade": "Imprevisível até para a própria equipe."
    },
    {
     "id": "cleo_vane",
-    "nome": "Cleo Vane",
+    "nome": "Cole Vane",
+    "numero": 14,
+    "apelido": "Ponteiro",
     "perfil": "equilibrado",
     "personalidade": "Tem pressa de tudo, menos de frear."
    },
    {
     "id": "gideon_zelenko",
     "nome": "Gideon Zelenko",
+    "numero": 37,
+    "apelido": "Veneno",
     "perfil": "cauteloso",
     "personalidade": "Cresce na segunda metade da prova."
    },
    {
     "id": "helga_kowal",
     "nome": "Helga Kowal",
+    "numero": 66,
+    "apelido": "Reta",
     "perfil": "agressivo",
     "personalidade": "Adora reta longa, sofre na curva lenta."
    }
@@ -759,24 +894,32 @@
    {
     "id": "finn_sutter",
     "nome": "Finn Sutter",
+    "numero": 1,
+    "apelido": "Abraço",
     "perfil": "cauteloso",
     "personalidade": "Briga roda a roda até a última curva."
    },
    {
     "id": "kaia_rehn",
-    "nome": "Kaia Rehn",
+    "nome": "Kofi Rehn",
+    "numero": 19,
+    "apelido": "Sangue Frio",
     "perfil": "agressivo",
     "personalidade": "Não perde a calma nem com o pneu no fim."
    },
    {
     "id": "ivo_galloway",
     "nome": "Ivo Galloway",
+    "numero": 35,
+    "apelido": "Teimoso",
     "perfil": "cauteloso",
     "personalidade": "Poupa o carro para a última volta."
    },
    {
     "id": "juno_rasmussen",
     "nome": "Juno Rasmussen",
+    "numero": 50,
+    "apelido": "Paz",
     "perfil": "equilibrado",
     "personalidade": "Veio do kart e ainda pilota como no kart."
    }
@@ -799,24 +942,32 @@
    {
     "id": "rex_arden",
     "nome": "Rex Arden",
+    "numero": 1,
+    "apelido": "Número Um",
     "perfil": "agressivo",
     "personalidade": "Ninguém lembra de vê-lo errar."
    },
    {
     "id": "mira_danvers",
     "nome": "Mira Danvers",
+    "numero": 9,
+    "apelido": "Vitrine",
     "perfil": "cauteloso",
     "personalidade": "Lê a corrida como um tabuleiro."
    },
    {
     "id": "kenji_drummond",
-    "nome": "Kenji Drummond",
+    "nome": "Dante Drummond",
+    "numero": 27,
+    "apelido": "Coringa",
     "perfil": "agressivo",
     "personalidade": "Imprevisível até para a própria equipe."
    },
    {
     "id": "livia_okafor",
     "nome": "Livia Okafor",
+    "numero": 44,
+    "apelido": "Tempestade",
     "perfil": "equilibrado",
     "personalidade": "Tem pressa de tudo, menos de frear."
    }

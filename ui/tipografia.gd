@@ -5,16 +5,24 @@ extends RefCounted
 ## em parágrafo. Começa na tela inicial; as outras telas adotam pelos mesmos
 ## tokens (acao_primaria, acao_secundaria).
 ## Números (giros, prêmios, atributos, posição, velocidade): Racing Sans One.
-## Licenças das fontes: ui/fontes/LICENCA-Barlow.txt e LICENCA-RacingSansOne.txt (OFL).
+## Intro do Grid: Big Shoulders (Display e Stencil) e IBM Plex Mono.
+## Licenças das fontes (OFL): ui/fontes/LICENCA-*.txt.
 
 const ARQUIVOS := {
 	"semibold": "res://ui/fontes/BarlowCondensed-SemiBold.ttf",
 	"medium": "res://ui/fontes/BarlowCondensed-Medium.ttf",
 	"regular": "res://ui/fontes/BarlowCondensed-Regular.ttf",
 	"numero": "res://ui/fontes/RacingSansOne-Regular.ttf",
+	# Intro das equipes do Grid (GridRivalIntro): títulos, carimbo e terminal.
+	"display": "res://ui/fontes/BigShouldersDisplay-Black.woff2",
+	"display_eb": "res://ui/fontes/BigShouldersDisplay-ExtraBold.woff2",
+	"carimbo": "res://ui/fontes/BigShouldersStencil-Black.woff2",
+	"mono": "res://ui/fontes/IBMPlexMono-Regular.woff2",
+	"mono_sb": "res://ui/fontes/IBMPlexMono-SemiBold.woff2",
 }
 ## Espaço extra entre letras (px), proporcional à caixa alta condensada.
-const ESPACO_LETRAS := {"semibold": 2, "medium": 2, "regular": 1, "numero": 1}
+const ESPACO_LETRAS := {"semibold": 2, "medium": 2, "regular": 1, "numero": 1, "display": 0, "display_eb": 2,
+		"carimbo": 2, "mono": 1, "mono_sb": 1}
 const TAMANHO_PRIMARIA := 50
 const TAMANHO_SECUNDARIA := 30
 const ALTURA_PRIMARIA := 108  # área de toque confortável (>= 88)

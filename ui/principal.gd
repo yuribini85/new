@@ -435,7 +435,12 @@ func _abrir_vinheta(id: String, contexto: String) -> void:
 		aberta.name = "VinhetaGrid_saindo"
 	TheGrid.marcar_vista(jogador, id)
 	get_node("/root/SaveManager").salvar()
-	var v := VinhetaGrid.new(dados, jogador, id, contexto, 3, ABA_ARENA)
+	# Decisão 88: na revelação, a intro da equipe; aberta da lista, a ficha.
+	var v: Control
+	if contexto in ["proximo", "primeiro"] and id != "fim":
+		v = GridRivalIntro.new(dados, jogador, id, contexto, 3, ABA_ARENA)
+	else:
+		v = VinhetaGrid.new(dados, jogador, id, contexto, 3, ABA_ARENA)
 	v.name = "VinhetaGrid"
 	add_child(v)
 	v.ir.connect(func(aba: int): _ir_para(aba))

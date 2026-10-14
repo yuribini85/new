@@ -81,15 +81,20 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 ## Lista na ordem dos adversários: {equipe, piloto: {id, nome}, segundo}.
 ## Piloto de IA de uma vaga do grid: o perfil do piloto (agressivo,
 ## equilibrado, cauteloso; sem o dele, o da equipe) diz quanto ele tenta
-## passar; o piloto que não é o titular (decisão 36) corre com menos consistência.
+## passar; o piloto que não é o titular (decisão 36) corre com menos consistência,
+## e também o de traço com menos consistência (o traço vem do perfil, como no
+## mercado: equipe_jogador.mercado.traco_por_perfil; decisão 88).
 func piloto_na_vaga(base: Dictionary, vaga: Dictionary) -> Dictionary:
 	var p := base.duplicate()
-	var id_perfil := String(vaga.get("piloto", {}).get("perfil", vaga["equipe"].get("perfil", "")))
+	var pv: Dictionary = vaga.get("piloto", {})
+	var id_perfil := String(pv.get("perfil", vaga["equipe"].get("perfil", "")))
 	var perfil: Dictionary = dados.carreira().get("perfis_piloto", {}).get(id_perfil, {})
 	if perfil.has("agressividade"):
 		p["agressividade"] = float(perfil["agressividade"])
+	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
 	if vaga["segundo"]:
-		var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
+		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
+	if pv.has("id") and bool(EquipeJogador.traco_rival(dados, vaga["equipe"], pv).get("menos_consistencia", false)):
 		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
 	return p
 

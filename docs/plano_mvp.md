@@ -716,3 +716,17 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Elena e a Second Chance Motors) saiu do jogo: cenas, personagens, cenários, a volta de
     abertura e os cenários de teste dela. O jogo novo é sempre a campanha da oficina
     (Chrome & Wreckage). Saves antigos com Adrian ou Elena abrem, mas sem as cenas deles.
+88. **Pilotos com rosto e intro das equipes do Grid** (2026-10-14, protótipo GridRivalIntro do
+    usuário, sugestões aceitas). Os 84 pilotos (8 candidatos e 76 das equipes) têm retrato e
+    corpo próprios (arte/pilotos/<id>.webp e corpo/); o genérico da decisão 72 fica só para
+    quem não tiver arte. 17 pilotos trocaram de nome para casar com a arte; cada piloto de
+    equipe ganhou número (o capitão, primeiro da lista, é o 1) e apelido em equipes.json. O
+    rival corre com o traço do perfil, como no mercado (traco_por_perfil): o agressivo perde a
+    consistência do segundo piloto. Na revelação (próxima equipe e entrada no Grid) abre a
+    intro: terminal, emblema, os quatro pilotos (número, retrato que ganha cor, nome, apelido,
+    estilo, carro especial do desafio, currículo, ritmo = teto de treino da licença,
+    consistência e agressividade pelas regras, carimbo CAPITÃO/CORRIDA/ARENA) e o confronto
+    com a sua equipe, o prêmio médio de vitória da licença em giros e o desafio. Toque passa
+    para o próximo piloto; Pular vai ao confronto; Reduzir animações tira terminal, efeitos e
+    digitação. Aberta da lista, segue a ficha (VinhetaGrid). Fontes: Big Shoulders e IBM
+    Plex Mono (OFL).

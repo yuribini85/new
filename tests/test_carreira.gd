@@ -125,6 +125,24 @@ func test_escalacao_por_equipes() -> void:
 	d.free()
 
 
+## Decisão 88: o rival de traço agressivo (pelo perfil, como no mercado) corre
+## com menos consistência; o cauteloso não. Dados reais.
+func test_traco_do_rival_pelo_perfil() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	var c := Carreira.new(d, j)
+	var base := {"ritmo": 1.0, "consistencia": 1.0, "agressividade": 1.0}
+	var eq := {"id": "x", "nome": "X", "perfil": "equilibrado"}
+	var agr := c.piloto_na_vaga(base, {"equipe": eq, "piloto": {"id": "a", "nome": "A", "perfil": "agressivo"}, "segundo": false})
+	var cau := c.piloto_na_vaga(base, {"equipe": eq, "piloto": {"id": "b", "nome": "B", "perfil": "cauteloso"}, "segundo": false})
+	var perda := float(d.carreira()["segundo_piloto"]["perda_consistencia"])
+	perto(float(agr["consistencia"]), 1.0 - perda, 1e-6, "agressivo: menos consistência")
+	perto(float(cau["consistencia"]), 1.0, 1e-6, "cauteloso: consistência inteira")
+	j.free()
+	d.free()
+
+
 func test_campeonato_por_pontos() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)

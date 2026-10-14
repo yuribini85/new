@@ -6,8 +6,8 @@ extends RefCounted
 ## personagem, nome da equipe em texto). A arte nova entra só pondo o arquivo no
 ## caminho que os dados já indicam, sem mexer nas telas.
 ##
-## Variantes: "retrato" (personagens.json, campo `retrato`; piloto: um retrato
-## genérico), "corpo" (corpo inteiro do diálogo: <pasta do retrato>/corpo/
+## Variantes: "retrato" (personagens.json, campo `retrato`; piloto: o dele em
+## arte/pilotos/<id>.webp, senão um genérico), "corpo" (corpo inteiro do diálogo: <pasta do retrato>/corpo/
 ## <nome>.webp; com id "<personagem>@<pose>", <nome>_<pose>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png), "cenario"
 ## (fundo das cenas: arte/cenarios/<id>.webp) e "ilustracao" (quadro de um momento
 ## da história: arte/cenas/<id>.webp); os ids estão em data/historia.json.
@@ -43,6 +43,15 @@ static func retrato_generico(id: String) -> String:
 	return "res://arte/pilotos/genericos/generico_%02d.png" % (1 + i % GENERICOS)
 
 
+## Decisão 88: o piloto com arte própria (arte/pilotos/<id>.webp, corpo em
+## arte/pilotos/corpo/) usa a dele; sem ela, um dos genéricos.
+static func retrato_piloto(id: String) -> String:
+	var proprio := "res://arte/pilotos/%s.webp" % id
+	if ResourceLoader.exists(proprio) or FileAccess.file_exists(proprio):
+		return proprio
+	return retrato_generico(id)
+
+
 ## Caminho que os dados indicam ("" se a entidade não tem um).
 static func caminho(id: String, variante: String) -> String:
 	var dados: Node = _dados()
@@ -66,10 +75,10 @@ static func caminho(id: String, variante: String) -> String:
 			for e in dados.lista("equipes"):
 				for p in e.get("pilotos", []):
 					if p["id"] == id:
-						return retrato_generico(id)
+						return retrato_piloto(id)
 			# Segundo piloto e candidatos (carreira.json → equipe_jogador).
 			if not EquipeJogador.piloto(dados, id).is_empty():
-				return retrato_generico(id)
+				return retrato_piloto(id)
 		"logo":
 			if dados != null and dados.existe("equipes", id):
 				return String(dados.item("equipes", id).get("logo", ""))

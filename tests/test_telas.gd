@@ -565,24 +565,56 @@ func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
 	d.free()
 
 
-## Decisão 72: todo piloto usa um dos 12 retratos genéricos; os candidatos são os
-## 01–08 (arte aprovada) e os quatro pilotos de uma equipe não repetem rosto.
-func test_pilotos_usam_retrato_generico() -> void:
+## Decisão 88: a intro de cada equipe do Grid sai dos dados (número, apelido,
+## estilo pelo perfil, carros especiais do desafio, carimbo) e o Pular monta o
+## confronto com os botões.
+func test_intro_das_equipes_do_grid() -> void:
+	var d: Node = Assets._dados()
+	for peso in ["display", "display_eb", "carimbo", "mono", "mono_sb"]:
+		verificar(Tipografia.fonte(peso).base_font != null, "fonte " + peso)
+	for e in TheGrid.equipes(d):
+		var info := GridRivalIntro.montar(d, null, e)
+		var ps: Array = info["pilotos"]
+		igual(ps.size(), 4, "%s: 4 pilotos" % e["id"])
+		igual(ps[0]["carimbo"], "CAPITÃO", "%s: o primeiro é o capitão" % e["id"])
+		var com_carro := ps.filter(func(p): return String(p["carro"]) != "").size()
+		igual(com_carro, 1 if info["modo"] == "corrida" else 2, "%s: carros do desafio" % e["id"])
+		var numeros := {}
+		for p in ps:
+			verificar(String(p["apelido"]) != "" and int(p["numero"]) > 0, "%s: número e apelido" % p["id"])
+			numeros[int(p["numero"])] = true
+			verificar(Array(p["cv"]).size() > 0 and Array(p["cv"]).size() <= 3, "%s: currículo" % p["id"])
+			verificar(float(p["consistencia"]) > 0.0, "%s: consistência" % p["id"])
+		igual(numeros.size(), 4, "%s: números diferentes" % e["id"])
+		verificar(int(info["premio"]) > 0, "%s: prêmio da licença em giros" % e["id"])
+	var vez: Dictionary = TheGrid.equipes(d)[0]
+	var intro := GridRivalIntro.new(d, null, String(vez["id"]), "primeiro", 3, 4)
+	var sinal := []
+	intro.ir.connect(func(a): sinal.append(a))
+	intro.pular()
+	var botoes := intro.find_children("*", "Button", true, false)
+	verificar(botoes.size() >= 3, "confronto com Pular, ir e Continuar")
+	var ir_b: Array = botoes.filter(func(b): return "→" in b.text)
+	igual(ir_b.size(), 1, "um botão para a aba do desafio")
+	ir_b[0].pressed.emit()
+	igual(sinal, [3 if GridDesafio.de(d, vez)["modo"] == "corrida" else 4], "o botão leva à aba do desafio")
+	intro.free()
+
+
+## Decisão 88: cada piloto (candidatos e os das equipes) tem o retrato e o
+## corpo próprios; o genérico (decisão 72) só falta de arte.
+func test_pilotos_usam_retrato_proprio() -> void:
 	Assets.limpar()
 	var d: Node = Assets._dados()
-	var cand: Array = EquipeJogador.candidatos(d)
-	for i in cand.size():
-		igual(Assets.caminho(String(cand[i]["id"]), "retrato"),
-				"res://arte/pilotos/genericos/generico_%02d.png" % (i + 1), "candidato %d" % (i + 1))
-		verificar(Assets.get_asset(String(cand[i]["id"]), "retrato") != null
-				and Assets.get_asset(String(cand[i]["id"]), "corpo") != null, "arte de " + String(cand[i]["id"]))
+	var ids: Array = EquipeJogador.candidatos(d).map(func(c): return String(c["id"]))
 	for e in d.lista("equipes"):
-		var vistos := {}
+		if e.get("jogador", false):
+			continue
 		for p in e.get("pilotos", []):
-			if d.existe("personagens", String(p["id"])):
-				continue
-			var c := Assets.caminho(String(p["id"]), "retrato")
-			verificar(c.begins_with("res://arte/pilotos/genericos/"), "%s genérico" % p["id"])
-			verificar(not vistos.has(c), "%s: rosto repetido na equipe" % p["id"])
-			vistos[c] = true
+			ids.append(String(p["id"]))
+	igual(ids.size(), 84, "8 candidatos e 76 pilotos de equipe")
+	for id in ids:
+		igual(Assets.caminho(id, "retrato"), "res://arte/pilotos/%s.webp" % id, "retrato de " + id)
+		verificar(Assets.get_asset(id, "retrato") != null and Assets.get_asset(id, "corpo") != null, "arte de " + id)
+	verificar(Assets.caminho("sem_arte_x", "retrato") == "", "id desconhecido sem caminho")
 	Assets.limpar()
