@@ -61,6 +61,7 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	env.background_mode = Environment.BG_CLEAR_COLOR
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.72, 0.74, 0.8)
+	CarroBloco.reflexo(env)  # o reflexo do verniz na pintura
 	amb.environment = env
 	mundo.add_child(amb)
 	var luz := DirectionalLight3D.new()

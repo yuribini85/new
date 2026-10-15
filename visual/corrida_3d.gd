@@ -223,6 +223,7 @@ func _init() -> void:
 	_ambiente = env
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.6, 0.62, 0.66)
+	CarroBloco.reflexo(env)  # o reflexo do verniz na pintura
 	amb.environment = env
 	_mundo.add_child(amb)
 	_luz = DirectionalLight3D.new()

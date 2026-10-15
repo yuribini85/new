@@ -166,12 +166,24 @@ vec3 aplicar_desgaste(vec3 c, vec3 p) {
 	return mix(c, vec3(0.7, 0.7, 0.68), clamp(r, 0.0, 1.0) * 0.85);
 }
 
+// Acabamento: 0 fosco, 1 padrão (verniz), 2 brilho, 3 metálico. O padrão
+// tem verniz: brilho firme e o reflexo do céu (CarroBloco.reflexo).
 float rugosidade_pintura() {
-	return acabamento == 0 ? 0.85 : (acabamento == 2 ? 0.18 : (acabamento == 3 ? 0.3 : 0.55));
+	return acabamento == 0 ? 0.85 : (acabamento == 2 ? 0.16 : (acabamento == 3 ? 0.28 : 0.32));
 }
 
 float especular_pintura() {
-	return acabamento == 0 ? 0.15 : (acabamento == 2 ? 0.6 : (acabamento == 3 ? 0.5 : 0.35));
+	return acabamento == 0 ? 0.15 : (acabamento == 2 ? 0.75 : (acabamento == 3 ? 0.6 : 0.6));
+}
+
+// Sombra de contato falsa: a parte de baixo da lataria escurece (Y 0..1 do carro).
+float oclusao_pintura(float y) {
+	return mix(0.55, 1.0, smoothstep(0.05, 0.45, y));
+}
+
+// Luz de borda do verniz (nada no fosco).
+float borda_pintura() {
+	return acabamento == 0 ? 0.0 : 0.35;
 }
 
 float metalico_pintura() {

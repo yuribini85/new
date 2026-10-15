@@ -12,8 +12,10 @@ void vertex() {
 }
 
 void fragment() {
-	ALBEDO = aplicar_faixas(cor_base.rgb, p_carro);
+	ALBEDO = aplicar_faixas(cor_base.rgb, p_carro) * oclusao_pintura(p_carro.y);
 	ROUGHNESS = rugosidade_pintura();
 	SPECULAR = especular_pintura();
 	METALLIC = metalico_pintura();
+	RIM = borda_pintura();
+	RIM_TINT = 0.5;
 }

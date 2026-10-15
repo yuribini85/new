@@ -18,8 +18,10 @@ void fragment() {
 	float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));
 	float lataria = smoothstep(0.6, 0.8, c.r) * (1.0 - smoothstep(0.05, 0.12, sat));
 	vec3 pintado = aplicar_faixas(pintura.rgb, p_carro);
-	ALBEDO = mix(c, c * pintado * 1.1, lataria);
+	ALBEDO = mix(c, c * pintado * 1.1, lataria) * oclusao_pintura(p_carro.y);
 	ROUGHNESS = mix(0.9, rugosidade_pintura(), lataria);
 	SPECULAR = mix(0.2, especular_pintura(), lataria);
 	METALLIC = metalico_pintura() * lataria;
+	RIM = borda_pintura() * lataria;
+	RIM_TINT = 0.5;
 }

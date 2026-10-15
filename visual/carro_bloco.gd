@@ -70,6 +70,23 @@ var _protecao_raiz: Node3D
 var _modelo: Node3D
 
 
+## Reflexo da pintura (decisão 91): um céu de estúdio só para o reflexo (o fundo
+## e a luz ambiente da cena ficam como estão). Com efeitos leves, nada muda.
+static func reflexo(env: Environment, topo := Color(0.35, 0.42, 0.55), horizonte := Color(0.85, 0.82, 0.78)) -> void:
+	if Preferencias.efeitos_leves:
+		return
+	var ceu := ProceduralSkyMaterial.new()
+	ceu.sky_top_color = topo
+	ceu.sky_horizon_color = horizonte
+	ceu.ground_horizon_color = Color(0.4, 0.38, 0.36)
+	ceu.ground_bottom_color = Color(0.08, 0.08, 0.09)
+	var sky := Sky.new()
+	sky.sky_material = ceu
+	sky.process_mode = Sky.PROCESS_MODE_QUALITY  # calculado uma vez (o céu não muda)
+	env.sky = sky
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+
+
 static func tem_glb(id: String) -> bool:
 	return id != "" and ResourceLoader.exists(PASTA_GLB + id + ".glb")
 
