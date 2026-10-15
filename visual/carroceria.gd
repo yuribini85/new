@@ -42,6 +42,7 @@ static func formas() -> Dictionary:
 ## tempo de execução.
 const ATIVOS: Array[String] = ["kanaya_kestrel"]
 const LIBERADOS := {
+	"classico": ["cupe", "compacto", "seda"],
 	"oitenta": ["cupe", "compacto", "seda"],
 	"noventa": ["cupe", "compacto", "seda"],
 }

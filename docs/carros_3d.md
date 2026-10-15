@@ -99,8 +99,8 @@ e na escala dos antigos sprites isométricos.
 Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 `visual/carroceria.gd`. **Por enquanto só vale para os ids de `Carroceria.ATIVOS`**
 e das épocas/categorias de `Carroceria.LIBERADOS` (hoje: o Kanaya Kestrel, aprovado
-como piloto, e cupê, compacto e sedã dos anos 80 e 90, liberados pela folha da frota; o
-resto usa os GLB). O usuário aprova um carro por vez; ao aprovar, o
+como piloto, e cupê, compacto e sedã dos clássicos (até 1971, piloto Calderwood Sabre)
+e dos anos 80 e 90; o resto usa os GLB). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
@@ -128,6 +128,11 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   lanterna, pisca e ré, aba traseira no lugar do aerofólio, friso de borracha na porta.
   A partir dos 80, molduras e colunas da estufa pretas. Todos: forro escuro dentro da
   estufa, retrovisor preso na porta.
+- **Linguagem dos clássicos (até 1971, aprovada no Calderwood Sabre):** capô mais longo
+  (32% do entre-eixos no cupê, 18% no sedã), estufa até 0,40 m com teto curto, cintura
+  reta, capô arredondado mais baixo que os para-lamas, cauda que desce, seção redonda,
+  faróis redondos grandes, grade oval cromada, para-choque cromado fino com garras,
+  molduras das janelas cromadas e retrovisor redondo no para-lama.
 - **Mesmo eixo dos GLB:** frente em +Z, chão em y = 0, rodas `Mount_*` com o centro no
   eixo e giro em X. Blindagem (`<id>_protecao.glb`), giro, sombra, dano e fogo da arena
   funcionam igual.

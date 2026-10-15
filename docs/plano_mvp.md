@@ -774,8 +774,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       (`docs/carros_3d.md`). O gerado só substitui o GLB dos ids em `Carroceria.ATIVOS`
       e das épocas/categorias em `Carroceria.LIBERADOS`.
     - Folha da frota (recomendação aceita): liberados cupê, compacto e sedã dos anos 80 e
-      90. Próximos pilotos: um cupê clássico dos anos 60 (linguagem própria da época) e
-      uma picape; os pesados ficam no GLB até terem o seu.
+      90. Clássicos (até 1971): piloto Calderwood Sabre aprovado, cupê, compacto e sedã
+      liberados. Próximo piloto: uma picape; os pesados ficam no GLB até terem o seu.
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").
