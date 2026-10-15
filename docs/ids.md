@@ -125,21 +125,21 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 
 | flag | primeira origem |
 |---|---|
-| `ABERTURA_DONO` | .claude/worktrees/agent-a4157b873a9f76d85/ui/principal.gd |
+| `ABERTURA_DONO` | ui/principal.gd |
 | `ADMIN_NAMED` | cena CW_P01B |
 | `ARENA_FIRST_ENTRY` | cena CW_R06 |
 | `ARENA_FIRST_LOSS` | cena CW_R09 |
 | `ARENA_FIRST_WIN` | cena CW_A01 |
 | `ARENA_INTRO` | cena CW_P07 |
-| `ARENA_PILOTS_UNLOCKED` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/equipe_jogador.gd |
+| `ARENA_PILOTS_UNLOCKED` | data_model/equipe_jogador.gd |
 | `ARENA_SURVIVED` | cena CW_R07 |
 | `ARMOR_TUTORIAL_SEEN` | cena CW_AR03 |
-| `CARRO_MARA` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/prologo.gd |
+| `CARRO_MARA` | data_model/prologo.gd |
 | `CHAMPIONSHIP_TUTORIAL_DONE` | cena CW_C01 |
 | `CLUB_COMPLETE` | cena CW_R10 |
 | `COLLECTION_FIVE` | cena CW_R11 |
 | `DEX_MET` | cena CW_AR02 |
-| `DRIVER_HIRE_UNLOCKED` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/equipe_jogador.gd |
+| `DRIVER_HIRE_UNLOCKED` | data_model/equipe_jogador.gd |
 | `ELITE_COMPLETE` | cena CW_T03 |
 | `EVENT_MENU_TUTORIAL_SEEN` | cena CW_P04 |
 | `EVENT_REQUIREMENTS_TUTORIAL_DONE` | cena CW_E01 |
@@ -181,7 +181,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `PILOT_HIRED` | condição de CW_P03C |
 | `PILOT_MET` | cena CW_P03D |
 | `PRO_COMPLETE` | cena CW_T02 |
-| `SECOND_DRIVER_CREATED` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/equipe_jogador.gd |
+| `SECOND_DRIVER_CREATED` | data_model/equipe_jogador.gd |
 | `SECOND_RACE_DONE` | cena CW_P06C |
 | `SHOP_BRACE_YARD` | cena CW_LJ05 |
 | `SHOP_CHARGE_FOLIO` | cena CW_LJ01 |

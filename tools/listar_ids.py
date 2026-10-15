@@ -22,7 +22,8 @@ def flags_do_codigo():
     achadas = {}
     padroes = [re.compile(r'flags\["([A-Z0-9_]+)"\]'), re.compile(r'const FLAG[A-Z_]* := "([A-Z0-9_]+)"')]
     for arq in sorted(RAIZ.glob("**/*.gd")):
-        if any(p in arq.parts for p in (".godot", "referencia", "tests")):
+        # Pastas ocultas (.godot, .claude com cópias de trabalho) e as fora do jogo.
+        if any(p.startswith(".") or p in ("referencia", "tests") for p in arq.relative_to(RAIZ).parts):
             continue
         texto = arq.read_text(encoding="utf-8")
         for p in padroes:
