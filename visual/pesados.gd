@@ -210,13 +210,16 @@ static func _resgate(m: MontagemMalha, f: Dictionary) -> void:
 	# canhão d'água e escada no teto
 	# canhão d'água: torre, lança longa apontada para a frente e bocal
 	var base := Vector3(0, 3.3, 0.3)
-	var incl := 0.32  # elevação da lança
-	var comp := 2.6
+	var incl := 0.26  # elevação da lança
+	var comp := 2.6  # primeiro tubo; o segundo (telescópico) sai dele
+	var comp2 := 2.4
 	var dir := Vector3(0, sin(incl), cos(incl))
 	_cil(m, "aro", 0.24, 0.22, Vector3(0, 3.2, 0.3), Vector3.ZERO, 10)
 	_caixa(m, "aro", Vector3(0.3, 0.3, 0.3), base)
-	_cil(m, "cromo", 0.075, comp, base + dir * comp * 0.5, Vector3(PI / 2 - incl, 0, 0), 8)
-	_cil(m, "cromo", 0.11, 0.28, base + dir * (comp + 0.1), Vector3(PI / 2 - incl, 0, 0), 8)
+	_cil(m, "cromo", 0.09, comp, base + dir * comp * 0.5, Vector3(PI / 2 - incl, 0, 0), 8)
+	_cil(m, "cromo", 0.065, comp2, base + dir * (comp + comp2 * 0.5 - 0.1), Vector3(PI / 2 - incl, 0, 0), 8)
+	_cil(m, "aro", 0.1, 0.12, base + dir * (comp - 0.05), Vector3(PI / 2 - incl, 0, 0), 8)  # luva
+	_cil(m, "cromo", 0.11, 0.3, base + dir * (comp + comp2 - 0.05), Vector3(PI / 2 - incl, 0, 0), 8)  # bocal
 	_caixa(m, "aro", Vector3(0.05, 0.3, 0.05), base + dir * comp * 0.55 + Vector3(0, -0.15, 0))  # apoio
 	for lado in [1.0, -1.0]:
 		_caixa(m, "aro", Vector3(0.05, 0.05, 4.4), Vector3(lado * 0.9, 3.22, -2.2))

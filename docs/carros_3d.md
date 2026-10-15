@@ -152,7 +152,7 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
 - **Pesados (`visual/pesados.gd`, `Pesados`):** os 3 caminhões são desenhados um a um,
   fora das regras do gerador (pedido do usuário): coletor (cabine avançada, compactador
   com nervuras, boca de carga), resgate (cabine dupla, baú com portas de enrolar, canhão
-  d'água de lança longa, barra de luzes) e mineração (deque com cabine e escada, caçamba aberta com
+  d'água de lança telescópica longa, barra de luzes) e mineração (deque com cabine e escada, caçamba aberta com
   cobertura, rodado duplo). Aro de aço por padrão.
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
