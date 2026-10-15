@@ -192,7 +192,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
 		var cor: Color = pinturas.get(id, CarroBloco.cor_do_id(id))
 		var c: Node3D = CarroDesenho.new()
-		if CarroBloco.tem_glb(String(base.get("id", ""))) \
+		if CarroBloco.tem_modelo(String(base.get("id", ""))) \
 				or not c.configurar(String(base.get("id", "")), pinturas.get(id, Color(0, 0, 0, 0))):
 			c.free()
 			c = CarroBloco.new().configurar_modelo(base, cor, faixas_pintura.get(id, {}))

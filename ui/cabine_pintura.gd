@@ -8,7 +8,9 @@ extends Control
 ## GRAFISMOS (os desenhos, em miniaturas renderizadas no próprio carro),
 ## IDENTIFICAÇÃO (nome e logo da equipe, independentes; onde o logo vai; o
 ## número de corrida com família, tamanho, suporte, lugares e cores) e
-## ACABAMENTO (fosco a metálico; poeira e arranhões numa camada à parte). Em
+## ACABAMENTO (fosco a metálico; poeira e arranhões numa camada à parte) e
+## RODAS (o aro do carro, do catálogo Rodas; não custa; só nos carros do
+## gerado, Carroceria.ativos). Em
 ## baixo, sempre: desfazer/refazer passo a passo, COMO ESTAVA (o que havia ao
 ## abrir), CANCELAR e APLICAR. Nada é gravado antes de Aplicar; o preço é o de
 ## PinturaCarro (só o que mudou no carro; nome e logo da equipe não custam).
@@ -18,7 +20,9 @@ signal fechada
 signal aviso(texto: String, ok: bool)
 
 const ABAS := [["pintura", "Pintura"], ["grafismos", "Grafismos"], ["identificacao", "Identificação"],
-		["acabamento", "Acabamento"]]
+		["acabamento", "Acabamento"], ["rodas", "Rodas"]]
+const COLUNAS_RODAS := 2
+const ALTURA_RODA := 88.0  # área de toque de cada aro
 const CANAIS := [["cor", "Base"], ["faixa", "Secundária"], ["filete", "Acento"]]
 const CANAIS_NUMERO := [["cor_numero", "Número"], ["cor_contorno", "Contorno"]]
 const ALTURA_PREVIA_FRAC := 0.34
@@ -74,6 +78,7 @@ func _init(dados: Node, jogador: Node, carro: Carro) -> void:
 			"locais_logo": int(f.get("locais_logo", 0)), "escala_logo": float(f.get("escala_logo", 1.0)),
 			"acabamento": String(f.get("acabamento", "")),
 			"poeira": float(f.get("poeira", 0.0)), "arranhoes": float(f.get("arranhoes", 0.0)),
+			"roda": Rodas.desenho_de(f),
 			"equipe_nome": String(jogador.identidade.get("nome", "")), "equipe_logo": IdentidadeEquipe.logo(jogador)}
 	_inicio = _estado.duplicate()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -206,6 +211,9 @@ func _abas() -> Control:
 	m.add_theme_constant_override("margin_top", 10)
 	m.add_child(h)
 	for par in ABAS:
+		# RODAS só nos carros gerados (Carroceria): no GLB o aro não troca.
+		if par[0] == "rodas" and not Carroceria.tem(_carro.id):
+			continue
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -301,6 +309,8 @@ func _mostrar_aba() -> void:
 			_aba_identificacao()
 		"acabamento":
 			_aba_acabamento()
+		"rodas":
+			_aba_rodas()
 	_atualizar_rodape()
 
 
@@ -669,6 +679,29 @@ func _aba_acabamento() -> void:
 	_deslizante("Arranhões", "arranhoes")
 
 
+## O aro das rodas: o mesmo pneu para todos, o desenho do aro à escolha.
+func _aba_rodas() -> void:
+	_titulo("Aro das rodas")
+	_nota("Troca só o aro; o pneu é o mesmo. Não custa.")
+	var g := GridContainer.new()
+	g.columns = COLUNAS_RODAS
+	g.add_theme_constant_override("h_separation", 8)
+	g.add_theme_constant_override("v_separation", 8)
+	_conteudo.add_child(g)
+	for id in Rodas.DESENHOS:
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if id == _estado["roda"]:
+			Tipografia.acao_primaria(b, Rodas.nome(id), Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, ALTURA_RODA)
+		else:
+			Tipografia.acao_neutra(b, Rodas.nome(id), 22, ALTURA_RODA)
+		Tipografia.area_toque(b, ALTURA_RODA)
+		var d: String = id
+		b.pressed.connect(func(): _definir("roda", d))
+		g.add_child(b)
+
+
 # ---------------------------------------------------------------- estado
 
 func _definir(chave: String, valor: Variant) -> void:
@@ -710,9 +743,15 @@ func _muda_cor() -> bool:
 
 
 func _muda_faixas() -> bool:
-	var antes := PinturaCarro.normalizar(_carro.faixas)
+	var antes := PinturaCarro.sem_roda(_carro.faixas)
 	antes.erase("logo")
-	return _faixas() != antes
+	var agora := _faixas()
+	agora.erase("roda")
+	return agora != antes
+
+
+func _muda_roda() -> bool:
+	return String(_estado["roda"]) != Rodas.desenho_de(_carro.faixas)
 
 
 func _muda_equipe() -> bool:
@@ -723,23 +762,24 @@ func _atualizar_rodape() -> void:
 	var mc := _muda_cor()
 	var mf := _muda_faixas()
 	var me := _muda_equipe()
+	var mr := _muda_roda()
 	var preco := PinturaCarro.preco(_dados, _jogador, mc, mf)
-	if not mc and not mf and not me:
+	if not mc and not mf and not me and not mr:
 		_preco.text = "Nada mudou ainda."
 	elif not mc and not mf:
-		_preco.text = "Nome e logo da equipe não custam."
+		_preco.text = "Rodas, nome e logo da equipe não custam."
 	elif not PinturaCarro.preco_definido(_dados):
 		_preco.text = "Preço a definir (grátis por enquanto)."
 	else:
 		_preco.text = "Custa %s giros." % Aba.dinheiro(preco)
-	_aplicar.disabled = (not mc and not mf and not me) or not _jogador.economia.pode_pagar(preco)
+	_aplicar.disabled = (not mc and not mf and not me and not mr) or not _jogador.economia.pode_pagar(preco)
 	_como_estava.disabled = _estado == _inicio
 	_voltar.disabled = _antes.is_empty()
 	_avancar.disabled = _depois.is_empty()
 
 
 func _confirmar() -> void:
-	if _muda_cor() or _muda_faixas():
+	if _muda_cor() or _muda_faixas() or _muda_roda():
 		var motivo := PinturaCarro.aplicar(_dados, _jogador, _carro, _estado["cor"], _faixas())
 		if motivo != "":
 			aviso.emit("Não deu: %s." % motivo, false)

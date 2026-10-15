@@ -92,6 +92,16 @@ static func normalizar(f: Dictionary) -> Dictionary:
 	for k in ["poeira", "arranhoes"]:
 		if float(f.get(k, 0.0)) > 0.0:
 			r[k] = clampf(float(f[k]), 0.0, 1.0)
+	# Aro das rodas (Rodas; pedido do usuário): só fica se não for o padrão.
+	if Rodas.desenho_de(f) != Rodas.PADRAO:
+		r["roda"] = Rodas.desenho_de(f)
+	return r
+
+
+## A pintura sem o aro das rodas (o aro não entra no preço da pintura).
+static func sem_roda(f: Dictionary) -> Dictionary:
+	var r := normalizar(f)
+	r.erase("roda")
 	return r
 
 
@@ -161,12 +171,14 @@ static func preco_definido(dados: Node) -> bool:
 
 
 ## Aplica a pintura no carro (cor "#rrggbb", faixas {padrao, faixa, filete}).
-## "" ou o motivo.
+## "" ou o motivo. O aro das rodas ("roda") vai junto e não custa: o preço é
+## só o da cor e das faixas (não há preço de rodas definido).
 static func aplicar(dados: Node, jogador: Node, carro: Carro, cor: String, faixas: Dictionary) -> String:
 	var muda_cor := cor != carro.cor and not (carro.cor == "" and Color(cor) == Cores.fabrica(carro.id))
 	faixas = normalizar(faixas)
-	var muda_faixas := faixas != normalizar(carro.faixas)
-	if not muda_cor and not muda_faixas:
+	var muda_faixas := sem_roda(faixas) != sem_roda(carro.faixas)
+	var muda_roda := Rodas.desenho_de(faixas) != Rodas.desenho_de(carro.faixas)
+	if not muda_cor and not muda_faixas and not muda_roda:
 		return "nada mudou"
 	if not jogador.economia.debitar(preco(dados, jogador, muda_cor, muda_faixas)):
 		return "saldo insuficiente"

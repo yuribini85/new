@@ -29,7 +29,7 @@ static func foto(base: Dictionary, cor: Color) -> Texture2D:
 
 
 func _foto(base: Dictionary, cor: Color) -> Texture2D:
-	var glb := CarroBloco.tem_glb(String(base.get("id", "")))
+	var glb := CarroBloco.tem_modelo(String(base.get("id", "")))
 	var arte: Texture2D = null if glb else ArteCarro.textura(String(base.get("id", "")), "iso")
 	if arte != null:
 		# Decisão 31: a foto é o próprio sprite isométrico, sem a margem vazia da

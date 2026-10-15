@@ -196,6 +196,9 @@ static func _tempo(s: float) -> String:
 ## melhor; embaixo, Disputar na largura toda.
 func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 	var pode := motivos.is_empty()
+	if pode:
+		# Os carros do grid saem prontos daqui (um por quadro) e a largada não trava.
+		Carroceria.preparar([c.id] + ev["adversarios"].map(func(a): return String(a["carro"])))
 	var vitorias: int = jogador.vitorias.get(ev["id"], 0)
 	var tex := arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
 	var v := cartao_com_fundo(tex, pode)

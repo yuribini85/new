@@ -429,15 +429,86 @@ func test_janela_garagem_escolhe_e_vende() -> void:
 
 
 func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
-	verificar(CarroBloco.tem_glb("hozuki_catana"), "o Hozuki Catana tem modelo 3D")
-	verificar(not CarroBloco.tem_glb("carro_sem_modelo"), "sem arquivo, sem modelo")
+	verificar(CarroBloco.tem_glb("hozuki_catana"), "o Hozuki Catana tem GLB")
+	verificar(CarroBloco.tem_modelo("hozuki_catana"), "e modelo 3D")
+	verificar(not CarroBloco.tem_modelo("carro_sem_modelo"), "sem forma nem arquivo, sem modelo")
+	igual(Carroceria.ATIVOS, [], "por padrão nenhum carro usa o gerado (um por vez, com aprovação)")
+	# Fora dos ativos, o GLB de sempre.
+	var g := CarroBloco.new().configurar_modelo({"id": "hozuki_catana", "categoria": "cupe"}, Color.RED)
+	verificar(g._modelo != null and not g._modelo.has_node("Carroceria"), "fora dos ativos, o GLB")
+	var dim_glb := g.dimensoes()
+	verificar(dim_glb.x > 4.0 and dim_glb.x < 5.0 and dim_glb.y < dim_glb.x, "GLB: comprimento no eixo do carro (%s)" % dim_glb)
+	g.free()
+	var antes := Carroceria.ativos
+	Carroceria.ativos = ["hozuki_catana"]
 	var c := CarroBloco.new().configurar_modelo({"id": "hozuki_catana", "categoria": "cupe"}, Color.RED)
-	var malhas := c.find_children("*", "MeshInstance3D", true, false)
-	var pintada := malhas.filter(func(m): return m.material_override is ShaderMaterial)
-	verificar(not pintada.is_empty(), "a lataria do modelo recebe a pintura")
+	verificar(c._modelo != null and c._modelo.has_node("Carroceria"), "com forma, o carro é o gerado")
+	var corpo: MeshInstance3D = c._modelo.get_node("Carroceria")
+	var k := int(corpo.mesh.get_meta("pintura"))
+	var sm := corpo.get_surface_override_material(k) as ShaderMaterial
+	verificar(sm != null and sm.shader == CarroBloco.SHADER_LATARIA, "a lataria gerada usa o shader da pintura da Oficina")
 	var dim := c.dimensoes()
 	verificar(dim.x > 4.0 and dim.x < 5.0 and dim.y < dim.x, "comprimento no eixo do carro (%s)" % dim)
+	igual(c._rodas_glb.size(), 4, "quatro rodas que giram")
+	var roda: Node3D = c._rodas_glb[0][0]
+	verificar(String(roda.name).begins_with("Mount_"), "rodas com o nome dos nós do GLB (%s)" % roda.name)
+	var x0 := roda.rotation.x
+	c.girar_rodas(1.0)
+	verificar(absf(roda.rotation.x - x0 - 1.0 / float(c._rodas_glb[0][1])) < 1e-4, "a roda gira no eixo X pela distância")
+	c.blindar("hozuki_catana", 3)
+	verificar(c.protecao("front") != null or c.protecao("rear") != null or not ResourceLoader.exists(
+			CarroBloco.PASTA_GLB + "hozuki_catana_protecao.glb") or not c.is_inside_tree(), "blindagem monta no gerado")
+	verificar(c._protecao_raiz != null and c._protecao_raiz.get_parent() == c._modelo, "a blindagem vai no mesmo eixo do modelo")
 	c.free()
+	Carroceria.ativos = antes
+
+
+## Gerador (Carroceria): formas.json cobre todos os carros do jogo, cada um
+## monta sem erro, dentro do orçamento, e a malha fica guardada por carro.
+func test_gerador_cobre_todos_os_carros_dentro_do_orcamento() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var faltam := []
+	var fora := []
+	for c in d.lista("carros"):
+		var id := String(c["id"])
+		if not Carroceria.tem_forma(id):
+			faltam.append(id)
+			continue
+		var m := Carroceria.corpo(id, c)
+		var tri := 0
+		for s in m.get_surface_count():
+			tri += m.surface_get_array_len(s) / 3
+		if m == null or m.get_surface_count() > 2 or tri > 3200 or tri < 500 or int(m.get_meta("pintura", -1)) != 0:
+			fora.append("%s (%d superfícies, %d triângulos)" % [id, m.get_surface_count(), tri])
+	igual(faltam, [], "todo carro de data/carros.json tem forma")
+	igual(fora, [], "carroceria em até 2 superfícies e 3.200 triângulos")
+	verificar(Carroceria.em_cache("hozuki_catana"), "malha guardada na sessão")
+	var a := Carroceria.corpo("hozuki_catana")
+	verificar(a == Carroceria.corpo("hozuki_catana"), "a mesma malha para o mesmo carro")
+	for desenho in Rodas.DESENHOS:
+		var r := Rodas.malha(desenho, 0.31, -1.0)
+		igual(r.get_surface_count(), 1, "roda %s numa superfície" % desenho)
+		verificar(r.surface_get_array_len(0) / 3 <= 800, "roda %s até 800 triângulos" % desenho)
+		verificar(r == Rodas.malha(desenho, 0.312, -1.0), "roda guardada por desenho e raio em cm")
+		verificar(Rodas.nome(desenho) != "", "nome em português")
+	# Duas instâncias: a malha é a mesma, a pintura é de cada uma.
+	var antes := Carroceria.ativos
+	Carroceria.ativos = ["hozuki_catana"]
+	var c1 := CarroBloco.new().configurar_modelo(d.carro("hozuki_catana"), Color.RED)
+	var c2 := CarroBloco.new().configurar_modelo(d.carro("hozuki_catana"), Color.BLUE, {"roda": "malha"})
+	var m1: MeshInstance3D = c1._modelo.get_node("Carroceria")
+	var m2: MeshInstance3D = c2._modelo.get_node("Carroceria")
+	verificar(m1.mesh == m2.mesh, "carroceria compartilhada")
+	verificar(m1.get_surface_override_material(0) != m2.get_surface_override_material(0), "pintura por instância")
+	verificar((c1._rodas_glb[0][0] as MeshInstance3D).mesh != (c2._rodas_glb[0][0] as MeshInstance3D).mesh, "aro escolhido")
+	c1.repintar(Color.GREEN, {"roda": "malha"})
+	verificar((c1._rodas_glb[0][0] as MeshInstance3D).mesh == (c2._rodas_glb[0][0] as MeshInstance3D).mesh,
+			"repintar troca o aro na hora (prévia da cabine)")
+	c1.free()
+	c2.free()
+	Carroceria.ativos = antes
+	d.free()
 
 
 func test_atualizar_a_tela_no_grid_nao_recomeca_a_contagem() -> void:
@@ -508,7 +579,7 @@ func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
 	var cab := CabinePintura.new(d, j, c)
 	_raiz().add_child(cab)
 	verificar(cab._aplicar.disabled, "sem mudança, Aplicar apagado")
-	for aba in ["pintura", "identificacao", "acabamento"]:
+	for aba in ["pintura", "identificacao", "acabamento", "rodas"]:
 		cab._aba = aba
 		cab._mostrar_aba()
 	cab._definir("cor", "#1251b3")
@@ -545,6 +616,26 @@ func test_cabine_de_pintura_desfaz_cancela_e_aplica() -> void:
 	_raiz().add_child(de_novo)
 	verificar(de_novo._aplicar.disabled, "pintura do save não conta como mudança")
 	de_novo._fechar()
+	verificar(not cab._botoes_aba.has("rodas"), "carro sem gerado: sem a aba RODAS")
+	# Aba RODAS (só no carro gerado; a fixture ganha a forma de um carro real):
+	# o aro troca na prévia, não custa e grava com Aplicar.
+	var ativos_antes := Carroceria.ativos
+	Carroceria.formas()[c.id] = Carroceria.forma("hozuki_catana")
+	Carroceria.ativos = [c.id]
+	var cab_r := CabinePintura.new(d, j, c)
+	_raiz().add_child(cab_r)
+	cab_r._aba = "rodas"
+	cab_r._mostrar_aba()
+	var botoes := cab_r._conteudo.find_children("*", "Button", true, false)
+	igual(botoes.size(), Rodas.DESENHOS.size(), "um botão por aro")
+	verificar(botoes.all(func(b): return b.get_combined_minimum_size().y >= 88.0), "toque de pelo menos 88 px")
+	cab_r._definir("roda", "dez")
+	verificar(not cab_r._aplicar.disabled, "só o aro: dá para aplicar")
+	verificar(not cab_r._muda_faixas() and not cab_r._muda_cor(), "o aro não entra no preço da pintura")
+	cab_r._confirmar()
+	igual(String(c.faixas.get("roda", "")), "dez", "aro gravado no carro")
+	Carroceria.ativos = ativos_antes
+	Carroceria.formas().erase(c.id)
 	igual(PinturaCarro.normalizar({"padrao": "", "faixa": "#ffffff", "numero": -1, "acabamento": "", "largura": 1.0,
 			"locais_logo": 0, "poeira": 0.0}), {}, "o padrão de fábrica não vai para o save")
 	# Nome e logo da equipe: independentes, gravados no jogador ao aplicar, sem custo.

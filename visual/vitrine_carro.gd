@@ -102,7 +102,7 @@ func blindar(id: String, nivel: int) -> void:
 
 
 func mostrar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> void:
-	if CarroBloco.tem_glb(String(base.get("id", ""))):
+	if CarroBloco.tem_modelo(String(base.get("id", ""))):
 		# Modelo 3D: na mesma câmera e no mesmo ângulo dos sprites da loja.
 		_sprite_modo(true)
 		_sprite.visible = false

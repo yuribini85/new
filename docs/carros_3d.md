@@ -93,3 +93,41 @@ prioridade sobre o sprite e o carro em código, gira o modelo para a frente em +
 e pinta a lataria pelo shader `visual/shaders/carro_glb.gdshader`. As fotos da loja e da
 garagem (`Estudio`) e a vitrine da oficina (`VitrineCarro`) usam o mesmo modelo, no ângulo
 e na escala dos antigos sprites isométricos.
+
+## Carro gerado (Carroceria) e rodas
+
+Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
+`visual/carroceria.gd`. **Por enquanto só vale para os ids de `Carroceria.ATIVOS`**
+(vazia: o jogo usa os GLB como sempre). O usuário aprova um carro por vez; ao aprovar, o
+id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
+
+- **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
+  `python3 tools/exportar_formas.py` a partir de `referencia/frota360/` (que nunca vai).
+  Só as medidas que o gerador usa: `W, r, low, lo, hi, sx, za, zb, wind, back, axles,
+  rows [z, meia largura, topo], roof [z, meia largura, altura]` e `rodas [nome, x, y, z]`;
+  nada de nome, intenção ou referência. `--checar` (no `tests/rodar.sh`) confere que todo
+  carro de `data/carros.json` tem forma e que o preset web inclui o arquivo. Não editar à
+  mão.
+- **Desenho:** contexto por época (ano), categoria, esportividade (potência/peso) e escola
+  do fabricante (`data/fabricantes.json`). Uma função por parte, para iterar um carro:
+  `_secoes`/`_loft` (lataria), `_caixas_de_roda`, `_cabine`, `_frente`, `_traseira`,
+  `_lateral`, `_cacamba`, `_aerofolio`, `_pincas`; as rodas são de `Rodas`.
+- **Mesmo eixo dos GLB:** frente em +Z, chão em y = 0, rodas `Mount_*` com o centro no
+  eixo e giro em X. Blindagem (`<id>_protecao.glb`), giro, sombra, dano e fogo da arena
+  funcionam igual.
+- **Desenho (draw calls):** a carroceria é uma malha de 2 superfícies (`MontagemMalha`):
+  a pintura (shader da lataria por instância: cor, faixas, número, logo, acabamento,
+  desgaste) e todo o resto numa só (`shaders/carro_detalhe.gdshader`: cor, metálico,
+  rugosidade, emissão e especular por vértice; `brilho_luzes` regula faróis e lanternas).
+  Cada roda é um nó com uma malha de 1 superfície. Carro inteiro: 7 superfícies com a
+  sombra. Orçamento: carroceria até 3.200 triângulos (média ~2.400), roda até 800.
+- **Cache:** carroceria por id e roda por (desenho, raio em cm, lado), na sessão.
+  A lista de provas pede os carros do grid de antemão (`Carroceria.preparar`, um por
+  quadro). Medido no desktop: ~6 ms por carroceria nova (mediana), <1 ms em cache.
+
+### Rodas (`visual/rodas.gd`)
+
+Um pneu para todos e 8 aros: `cinco` (Cinco raios, padrão), `aco` (Aço com calota),
+`seis`, `malha`, `turbina`, `disco` (Disco aero), `estrela` (Três raios), `dez` (Dez raios
+finos). O jogador escolhe na cabine de pintura, aba RODAS (só nos carros gerados). Fica em
+`Carro.faixas["roda"]` (o padrão não é gravado; save antigo = padrão) e não custa.

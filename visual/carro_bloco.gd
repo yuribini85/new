@@ -68,6 +68,8 @@ var _rodas_glb: Array = []
 var _protecao := {}
 var _protecao_raiz: Node3D
 var _modelo: Node3D
+## Aro das rodas do carro gerado (Rodas; "" no GLB e no carro em código).
+var _roda := ""
 
 
 ## Reflexo da pintura (decisão 91): um céu de estúdio só para o reflexo (o fundo
@@ -91,6 +93,12 @@ static func tem_glb(id: String) -> bool:
 	return id != "" and ResourceLoader.exists(PASTA_GLB + id + ".glb")
 
 
+## O carro tem modelo 3D: o gerado (Carroceria, arte/carros3d/formas.json) ou,
+## sem forma, o GLB. Quem pergunta isto trata os dois do mesmo jeito.
+static func tem_modelo(id: String) -> bool:
+	return Carroceria.tem(id) or tem_glb(id)
+
+
 ## Silhueta só pela categoria (usado onde não há modelo).
 func configurar(categoria: String, cor: Color) -> CarroBloco:
 	return configurar_modelo({"id": categoria, "categoria": categoria}, cor)
@@ -104,6 +112,10 @@ func configurar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) ->
 		c.queue_free()
 	_rodas = []
 	_rodas_glb = []
+	_modelo = null
+	_roda = ""
+	if Carroceria.tem(String(base.get("id", ""))):
+		return _gerado(String(base["id"]), base, cor, faixas)
 	if tem_glb(String(base.get("id", ""))):
 		return _glb(String(base["id"]), cor, faixas)
 	var f := forma(base)
@@ -371,6 +383,33 @@ func repintar(cor: Color, faixas: Dictionary) -> void:
 			else:
 				continue
 			_parametros_faixas(sm, mi, faixas)
+	# Carro gerado: o aro escolhido na cabine troca na hora (só a malha da roda).
+	if _roda != "" and Rodas.desenho_de(faixas) != _roda:
+		_roda = Rodas.desenho_de(faixas)
+		for r in _rodas_glb:
+			var no := r[0] as MeshInstance3D
+			if no != null and is_instance_valid(no) and no.has_meta("lado"):
+				no.mesh = Rodas.malha(_roda, float(no.get_meta("raio")), float(no.get_meta("lado")))
+
+
+## Carro gerado (Carroceria): mesmo eixo e mesmos nós de roda do GLB da frota
+## (Mount_*), então blindagem, giro, sombra e arena funcionam igual.
+func _gerado(id: String, base: Dictionary, cor: Color, faixas: Dictionary) -> CarroBloco:
+	var modelo := Carroceria.construir(id, base, cor, faixas)
+	modelo.rotation.y = PI / 2.0  # +Z do arquivo -> +X do jogo
+	add_child(modelo)
+	_modelo = modelo
+	_roda = Rodas.desenho_de(faixas)
+	var caixa := (modelo.get_node("Carroceria") as MeshInstance3D).get_aabb()
+	for no in modelo.get_children():
+		if no.has_meta("lado"):
+			var r := float(no.get_meta("raio"))
+			caixa = caixa.merge(AABB(no.position - Vector3(r * Rodas.LARGURA * 0.5, r, r), Vector3(r * Rodas.LARGURA, r * 2.0, r * 2.0)))
+			_rodas_glb.append([no, r])
+	comprimento = caixa.size.z
+	largura = caixa.size.x
+	_sombra(comprimento * 0.92, largura * 0.78, 0.3)
+	return self
 
 
 ## Modelo GLB: girado para a frente em +X, lataria pintada (_pintar_glb).
