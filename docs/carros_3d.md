@@ -101,8 +101,8 @@ Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 e das épocas/categorias de `Carroceria.LIBERADOS` (hoje: o Kanaya Kestrel, aprovado
 como piloto, e cupê, compacto e sedã dos clássicos (até 1971, piloto Calderwood Sabre)
 dos anos 70 (piloto Hayase Cedro), dos anos 80 e 90 e dos modernos (piloto Hayase
-Granito), e as picapes (piloto Kanaya Sulco) e os utilitários (piloto Kanaya Chapada)
-de todas as épocas; só os pesados usam os GLB). O usuário aprova um carro por vez; ao aprovar, o
+Granito), as picapes (piloto Kanaya Sulco) e os utilitários (piloto Kanaya Chapada) de
+todas as épocas e os 3 pesados (desenho próprio): a frota inteira). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
@@ -152,7 +152,7 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
 - **Pesados (`visual/pesados.gd`, `Pesados`):** os 3 caminhões são desenhados um a um,
   fora das regras do gerador (pedido do usuário): coletor (cabine avançada, compactador
   com nervuras, boca de carga), resgate (cabine dupla, baú com portas de enrolar, canhão
-  d'água, barra de luzes) e mineração (deque com cabine e escada, caçamba aberta com
+  d'água de lança longa, barra de luzes) e mineração (deque com cabine e escada, caçamba aberta com
   cobertura, rodado duplo). Aro de aço por padrão.
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo

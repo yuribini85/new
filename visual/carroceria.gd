@@ -46,7 +46,7 @@ const LIBERADOS := {
 	"setenta": ["cupe", "compacto", "seda", "picape", "utilitario"],
 	"oitenta": ["cupe", "compacto", "seda", "picape", "utilitario"],
 	"noventa": ["cupe", "compacto", "seda", "picape", "utilitario"],
-	"moderno": ["cupe", "compacto", "seda", "picape", "utilitario"],
+	"moderno": ["cupe", "compacto", "seda", "picape", "utilitario", "pesado"],
 }
 static var ativos: Array = ATIVOS.duplicate()
 static var regras: Dictionary = LIBERADOS.duplicate(true)

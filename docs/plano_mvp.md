@@ -779,7 +779,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       Anos 70: piloto Hayase Cedro aprovado, cupê, compacto e sedã liberados.
       Modernos: piloto Hayase Granito aprovado, cupê, compacto e sedã liberados.
       Utilitários: piloto Kanaya Chapada aprovado, todas as épocas liberadas.
-      Último piloto: os pesados.
+      Pesados: desenhados um a um fora do gerador (`visual/pesados.gd`), aprovados com a
+      lança d'água do resgate mais comprida. A frota inteira usa os modelos novos; os
+      GLB das carrocerias seguem no pacote até decisão sobre removê-los (~13 MB no Web).
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").
