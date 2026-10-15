@@ -127,19 +127,31 @@ func escalacao(evento_id: String, semente: int) -> Array:
 				grupo[j] = t
 			ordem.append_array(grupo)
 	var chance := float(cfg.get("segundo_piloto", {}).get("chance", 0.0))
+	var contratados := _contratados(evento_id, semente)
 	var grid := []
 	for i in mini(ev["adversarios"].size(), ordem.size()):
 		var eq: Dictionary = ordem[i]
 		# O titular (o primeiro) corre na maioria; nas outras, um dos outros
 		# pilotos da equipe, sorteado (cada equipe tem quatro, decisão 60).
 		# Decisão 71: piloto contratado pela sua equipe não corre mais pela dele.
-		var pilotos: Array = eq["pilotos"].filter(func(pl): return EquipeJogador.vaga_do_piloto(jogador, String(pl["id"])) == "")
+		var pilotos: Array = eq["pilotos"].filter(func(pl): return not String(pl["id"]) in contratados)
 		if pilotos.is_empty():
 			pilotos = eq["pilotos"]
 		var segundo: bool = pilotos.size() > 1 and rng.randf() < chance
 		var k := rng.randi_range(1, pilotos.size() - 1) if segundo else 0
 		grid.append({"equipe": eq, "piloto": pilotos[k], "segundo": segundo})
 	return grid
+
+
+## Pilotos que a equipe do jogador contratou (não correm pelas equipes deles).
+## Para a corrida na fila, os da inscrição (Fila.iniciar guarda): contratar
+## alguém no meio dela não troca o rival da corrida já programada.
+func _contratados(evento_id: String, semente: int) -> Array:
+	var f: Dictionary = jogador.fila
+	if not f.is_empty() and f.get("evento_id") == evento_id and int(f.get("semente", -1)) == semente \
+			and f.get("contratados") is Array:
+		return f["contratados"]
+	return EquipeJogador.contratados(jogador)
 
 
 ## Sobrenomes fictícios dos pilotos rivais quando não há equipes (só

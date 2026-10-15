@@ -443,7 +443,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 				avisar("Não deu: %s." % motivo, false)
 				return
 			Sons.tocar_ui(self, "moeda", -4.0)
-			avisar("%s contratado: %s." % [c["nome"], String(EquipeJogador.NOMES_VAGA[vaga]).to_lower()])
+			avisar("%s entra na equipe: %s." % [c["nome"], String(EquipeJogador.NOMES_VAGA[vaga]).to_lower()])
 			fechar_painel.emit()
 			mudou.emit()
 			historia("PILOTO_CONTRATADO", {"vaga": vaga}))

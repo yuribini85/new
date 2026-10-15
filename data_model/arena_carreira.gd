@@ -289,7 +289,7 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	var carro: Carro = jogador.garagem.carro(uid)
 	var nome := String(carro.base["nome"]) if carro != null else ""
 	var perdeu: bool = resultado["carros"]["jogador"]["eliminado"]
-	jogador.economia.saldo += valor
+	jogador.economia.creditar(valor)
 	var reg: Dictionary = jogador.arena
 	reg["lutas"] = int(reg.get("lutas", 0)) + 1
 	var posicao: int = resultado["classificacao"].find("jogador") + 1

@@ -1,7 +1,8 @@
 class_name EquipeJogador
 extends RefCounted
-## Second Driver Motorsport (fases 8 e 9 do documento de implementação): a
-## equipe do jogador nasce na cena SCN_K01 (flag SECOND_DRIVER_CREATED). Criar
+## A equipe do jogador (a Wreckage, na campanha do dono): nasce na cena do
+## primeiro carro (CW_C01B, ação UNLOCK_TEAM_TAB; a flag guarda o nome antigo,
+## SECOND_DRIVER_CREATED, por causa dos saves). Criar
 ## não reseta dinheiro, carros nem licenças; só muda o contexto (aba Equipe).
 ## A equipe é a de equipes.json com "jogador": true; nome e pilotos vêm de lá.
 ##
@@ -183,6 +184,11 @@ static func vaga_do_piloto(jogador: Node, piloto_id: String) -> String:
 		if piloto_id != "" and piloto_vaga(jogador, v) == piloto_id:
 			return v
 	return ""
+
+
+## Ids dos pilotos nas vagas da equipe (os vazios fora).
+static func contratados(jogador: Node) -> Array:
+	return VAGAS_PILOTO.map(func(v): return piloto_vaga(jogador, v)).filter(func(id): return id != "")
 
 
 ## As vagas de arena só abrem com o tutorial da arena (3 carros).

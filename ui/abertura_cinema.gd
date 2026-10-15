@@ -37,7 +37,9 @@ func _init() -> void:
 	_r = JSON.parse_string(FileAccess.get_file_as_string(PASTA + "roteiro.json"))
 	for p in _r["planos"]:
 		var t := TextureRect.new()
-		t.texture = load(PASTA + String(p["img"]) + ".webp")
+		# "img" com pasta (ex.: "cenas/noite_da_arena") vem de arte/; sem, de arte/abertura/.
+		var img := String(p["img"])
+		t.texture = load(("res://arte/" if "/" in img else PASTA) + img + ".webp")
 		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		t.mouse_filter = Control.MOUSE_FILTER_IGNORE

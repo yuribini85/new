@@ -41,6 +41,11 @@ static func montar(dados: Node, jogador: Node, id: String) -> String:
 			Prologo.ao_conceder(dados, jogador, "NATIONAL")
 			_comprar_usado(dados, jogador)
 			_comprar_usado(dados, jogador)
+			# A equipe e o piloto de corrida (no jogo vêm com o primeiro carro).
+			EquipeJogador.criar(jogador)
+			var oferta := EquipeJogador.oferta(dados, jogador, "corrida", Time.get_unix_time_from_system())
+			if not oferta.is_empty():
+				EquipeJogador.contratar(dados, jogador, String(oferta[0]["id"]))
 			if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 				jogador.carro_ativo = jogador.garagem.lista()[0].uid
 			if id == "carro_3d" and dados.existe("carros", CARRO_3D):

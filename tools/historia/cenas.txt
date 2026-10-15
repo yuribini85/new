@@ -37,19 +37,19 @@ Mara[cruzados]: Vou poupar seu tempo. A oficina está hipotecada.
 Mara[pensativa]: Já tivemos uma equipe de corrida aqui, a Wreckage. Bons pilotos, bons carros... Até alguns troféus.
 Mara[decepcao]: Eu sou ruim de negócio. As contas mostram isso melhor que eu.
 Mara[explica]: Mas oficina eu domino. Carro e piloto, ninguém aqui prepara melhor.
-Mara[gesto]: A proposta: você assume as contas e a dívida. Em troca, vira sócio da oficina e da Wreckage.
+Mara[gesto]: A proposta: você assume as contas e a dívida. Em troca, metade da oficina e da Wreckage é sua.
 [PAUSA]
 Mara[firme]: Não vou prometer dinheiro fácil. Nem vitórias.
 Mara[cruzados]: Então, temos um acordo? E como devo chamar você?
 [PEDIR_NOME]
 
-# Decisão 84 (pedido do usuário): o piloto vem primeiro. O jogador administra;
-# a equipe nasce aqui e o primeiro passo é escolher quem vai dirigir.
+# O nome dado: a Mara mostra o The Grid e manda às Lojas (decisão 85: Grid →
+# carro → piloto → corrida).
 = CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; proxima=CW_GR00; cenario=oficina_mara
-Mara[gesto]: Muito bem, sócio. {admin}. Eu sou a Mara.
+Mara[gesto]: Muito bem, {admin}. Sociedade fechada. Eu sou a Mara.
 Mara[firme]: Antes de gastar um giro, veja aonde a gente precisa chegar.
 
-# Ficha do carro: cada atributo em destaque; termina pedindo os freios.
+# Ficha do carro: cada atributo em destaque; termina pedindo a peça (a demanda).
 = CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L
 [OPEN_GARAGE_TAB]
 [HIGHLIGHT_POTENCIA]
@@ -97,10 +97,10 @@ Sistema: Licenças ficam em Carreira.
 [HIGHLIGHT_NAV_LICENCAS]
 
 # Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
-# piloto (de corrida) é escolhido na tela de pilotos, logo depois do nome.
+# piloto (de corrida) é escolhido na tela de pilotos, logo depois do primeiro carro.
 = CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
 Mara[explica]: Você cuida da equipe. Quem senta no carro é piloto contratado.
-Mara[gesto]: Para as corridas, alguém constante ou uma promessa. É ele que leva o nome da Wreckage para a pista.
+Mara[gesto]: Para as corridas, alguém constante ou uma promessa. É quem leva o nome da Wreckage para a pista.
 Sistema: Toque em Contratar, no piloto de corrida.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
@@ -117,7 +117,7 @@ Sistema: Vá para Corridas.
 = CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara
 Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.
 [HIGHLIGHT_COPA]
-Mara: Como estamos sem licenças só podemos correr estes circuitos.
+Mara: Como estamos sem licenças, só podemos correr estes circuitos.
 [HIGHLIGHT_COMPETITIVIDADE]
 Mara: Essa barra compara o carro com o grid. Não garante nada. Evita entrar no escuro.
 Sistema: Toque em Disputar.
@@ -145,11 +145,11 @@ Sistema: Uma corrida por vez. Depois de largar, ela termina mesmo com o app fech
 # novo e a Oficina só aparece quando o caixa paga a peça (CW_P06D).
 = CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN
 Mara[pensativa]: Ganhar é bom. Saber quanto custou é melhor.
-Mara[firme]: Corre mais uma. Quero ver se ele repete.
+Mara[firme]: Corre mais uma. Quero ver se {piloto} repete.
 
 = CW_P06B | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE
 Mara[decepcao]: {posicao}. Corrida perdida também paga.
-Mara[explica]: A tela da corrida mostra onde ele perdeu tempo. Olhe antes de culpar o carro.
+Mara[explica]: A tela da corrida mostra onde se perdeu tempo. Olhe antes de culpar o carro.
 Mara[firme]: Corre de novo. Uma prova não diz tudo.
 
 # Da segunda prova em diante, com o caixa pagando a peça: a Oficina.
@@ -170,7 +170,7 @@ Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leva c
 = CW_L02 | ABA:LICENCAS | personagem=dono; requer=SECOND_RACE_DONE; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; cenario=vector_academy
 Harold: Harold Brandt, examinador da Vector Academy. Licença Club.
 Harold: Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado.
-Harold: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é dele.
+Harold: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é nossa.
 Mara[pensativa]: Quanto custa?
 Harold: Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
@@ -190,7 +190,7 @@ Sistema: The Grid fica em Carreira, embaixo dos objetivos.
 # 1. O primeiro carro: a garagem começa vazia.
 = CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara; lembrete=CW_C00L
 Mara[cruzados]: Para correr, um carro. A garagem está vazia; o último foi junto com as dívidas.
-Mara[explica]: O caixa dá para um carro novo, e só. Para as primeiras provas, procure perto de cem cavalos.
+Mara[explica]: O caixa dá para um carro, e só. Para as primeiras provas, compare potência e peso antes do preço.
 Sistema: Vá para as Lojas e compre o primeiro carro.
 [HIGHLIGHT_NAV_LOJA]
 
@@ -253,9 +253,9 @@ Mara[pensativa]: Lembra do carro nos cavaletes? Eu não parei de mexer nele.
 Mara[gesto]: Cada peça que ele aceita. Está na garagem. É da equipe.
 Sistema: O carro da Mara entrou na garagem, preparado.
 
-# A equipe da oficina nasce com a International; o segundo piloto chega com a Pro.
+# Com a International, a gestão: Caixa e Sede na aba Equipe.
 = CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,GESTAO_LIBERADA; cenario=oficina_mara
-Harold: International aprovada. Agora ele representa a Academy lá fora também.
+Harold: International aprovada. Agora {piloto} representa a Academy lá fora também.
 Mara[explica]: Com essa, a Wreckage volta a ser equipe de verdade.
 Mara: Caixa e folha passam a contar por corrida, e a Sede melhora o que os patrocinadores pagam.
 Sistema: Caixa e Sede na aba Equipe.
@@ -322,7 +322,7 @@ Mara[alerta]: Mais espaço. Não significa que a gente precise preencher tudo ho
 Mara[firme]: Primeira vitória com licença. Agora a régua sobe.
 
 = CW_M02 | VITORIA_LICENCA:SPORT | personagem=dono; flags=FIRST_SPORT_WIN
-Mara[pensativa]: Na Sport ninguém deixa espaço de graça. Ele achou um.
+Mara[pensativa]: Na Sport ninguém deixa espaço de graça. {piloto} achou um.
 
 = CW_M03 | VITORIA_LICENCA:NATIONAL | personagem=dono; flags=FIRST_NATIONAL_WIN
 Mara[cruzados]: National. Tem gente na arquibancada que veio por nossa causa.
@@ -359,7 +359,7 @@ Sistema: Blindagem: Oficina, ao lado da velocidade máxima.
 = CW_AR03 | BLINDAGEM | personagem=dono; requer=DEX_MET; proibe=ARMOR_TUTORIAL_SEEN; flags=ARMOR_TUTORIAL_SEEN
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
-Dex: Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças.
+Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.
 Dex: Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida.
 Sistema: Escolha o nível e toque em Instalar.
 
@@ -367,7 +367,7 @@ Sistema: Escolha o nível e toque em Instalar.
 Dex: Dex Kane. Eu preparo carro pra arena, quando ela abrir pra vocês.
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
-Dex: Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças.
+Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.
 Dex: Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida.
 Sistema: Escolha o nível e toque em Instalar.
 
@@ -446,12 +446,12 @@ Kenji: Deixa secar antes de bater em alguém.
 # Lojas: na primeira, o vendedor ensina os filtros; depois, só o cumprimento.
 = CW_LJ01 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_CHARGE_FOLIO
 Edgar: Edgar Halloway, Charge Folio. Bem-vindo. Aqui não se vende carro; se confia um.
-Edgar: Alemães, italianos, franceses e ingleses. Cada um com o seu sotaque na estrada.
+Edgar: Alemães, italianos, franceses, ingleses, suecos, do Leste e até brasileiros. Cada um com o seu sotaque na estrada.
 Edgar: O cartão de cada carro traz potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ02 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_CHARGE_FOLIO; flags=SHOP_CHARGE_FOLIO
-Edgar: Edgar Halloway, Charge Folio. Alemães, italianos, franceses e ingleses.
+Edgar: Edgar Halloway, Charge Folio. Europeus de todo canto, e até brasileiros.
 Edgar: Escolha sem pressa. Pressa é coisa de quem compra mal.
 
 = CW_LJ03 | LOJA:relay_room_garage | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_RELAY_ROOM
@@ -465,12 +465,12 @@ Sal: Gostou de algum? Pra você, preço de tabela. Que é preço de amigo.
 
 = CW_LJ05 | LOJA:brace_yard_works | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_BRACE_YARD
 Bianca: Bianca Sterling, Brace Yard Works. Champanhe? Não? Mais pra mim.
-Bianca: Hozuki, Sanga e Kosame. Carro pra quem pretende ser visto.
+Bianca: Hozuki, Sanga, Kosame e Ishigumo. Carro pra quem pretende ser visto.
 Bianca: Potência, peso e preço estão no cartão. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ06 | LOJA:brace_yard_works | personagem=dono; proibe=SHOP_BRACE_YARD; flags=SHOP_BRACE_YARD
-Bianca: Bianca Sterling, Brace Yard Works. Hozuki, Sanga e Kosame.
+Bianca: Bianca Sterling, Brace Yard Works. Hozuki, Sanga, Kosame e Ishigumo.
 Bianca: O preço está no cartão. Aqui ninguém pergunta duas vezes.
 
 = CW_LJ07 | LOJA:return_chapter_customs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_RETURN_CHAPTER
@@ -484,14 +484,19 @@ Nora: Nora Lindqvist, Return Chapter. Só Kanaya.
 Nora: Carro certo é o que entra na prova que você quer correr.
 
 = CW_LJ09 | LOJA:shared_grid_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SHARED_GRID
-Jade: Jade Ryker, Shared Grid Motors. Sete marcas americanas, um catálogo, zero tempo a perder.
+Jade: Jade Ryker, Shared Grid Motors. Oito marcas americanas, um catálogo, zero tempo a perder.
 Jade: Potência, peso e preço no cartão de cada carro.
 Jade: Liga Posso comprar e põe os mais potentes na frente. Eu faria assim.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ10 | LOJA:shared_grid_motors | personagem=dono; proibe=SHOP_SHARED_GRID; flags=SHOP_SHARED_GRID
-Jade: Jade Ryker, Shared Grid. Sete marcas americanas na mesma grade.
+Jade: Jade Ryker, Shared Grid. Oito marcas americanas na mesma grade.
 Jade: Filtra pelo que cabe no caixa. O resto é vitrine.
+
+= CW_LJ11 | LOJA:spare_penny_repairs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SPARE_PENNY
+Mara: Spare Penny. Mizuchi, Hoshino e Tomoe; ninguém aqui vende pose.
+Mara[explica]: Potência, peso e preço estão no cartão. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.
+Sistema: Toque num carro para ver a ficha e comprar.
 
 # ---------------------------------------------------------------- Comentários de contexto
 # reativa=sim: no máximo um a cada historia.json → reativa_intervalo_corridas corridas.
@@ -511,12 +516,6 @@ Mara[decepcao]: Não temos isso.
 
 = CW_SYS02 | EVENTO_BLOQUEADO | personagem=dono; requer=EVENT_REQUIREMENTS_TUTORIAL_DONE; repetivel=sim
 Mara[cruzados]: Bom carro. Corrida errada.
-
-= CW_SYS04 | POTENCIA_ACIMA | personagem=dono; repetivel=sim
-Mara[alerta]: Essa potência o regulamento não aceita.
-
-= CW_SYS09 | LICENCA_EM_TREINO | personagem=dono; repetivel=sim
-Harold: O treino ainda está correndo.
 
 = CW_SYS10 | LICENCA_PRONTA | personagem=dono; requer=FIRST_TRAINING_READY; repetivel=sim
 Mara[gesto]: Papel pronto. Agora falta dirigir.

@@ -134,12 +134,16 @@ static func vagas(dados: Node, jogador: Node) -> int:
 
 ## Renda por hora de um patrocinador, com o Marketing.
 static func renda_hora(dados: Node, jogador: Node, p: Dictionary) -> int:
+	if p.is_empty():  # patrocinador que saiu de patrocinadores.json
+		return 0
 	var ref := premio_referencia(dados, String(p["licenca"]))
 	return roundi(ref * float(config(dados).get("renda_hora_fator", 0.0)) * (1.0 + efeito(dados, jogador, "renda")))
 
 
 ## Bônus por corrida que cumpre a condição, com a Hospitalidade.
 static func bonus(dados: Node, jogador: Node, p: Dictionary) -> int:
+	if p.is_empty():
+		return 0
 	var ref := premio_referencia(dados, String(p["licenca"]))
 	return roundi(ref * float(config(dados).get("bonus_fator", 0.0)) * (1.0 + efeito(dados, jogador, "bonus")))
 

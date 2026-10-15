@@ -44,9 +44,11 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	cfg["pneus"] = carro.pneus.map(func(p): return p["id"])
 	var semente := _nova_semente()
 	var f := {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente,
-			"config": cfg, "piloto": EquipeJogador.piloto_do_jogador(carreira.dados, jogador)}
-	# Nas corridas só corre um piloto da equipe (decisão 68).
-	var teste := _preparar(f, false)
+			"config": cfg, "piloto": EquipeJogador.piloto_do_jogador(carreira.dados, jogador),
+			"contratados": EquipeJogador.contratados(jogador)}
+	# Nas corridas só corre um piloto da equipe (decisão 68). Já com as amostras
+	# da tela: quem assiste reaproveita (as de resistência levam segundos).
+	var teste := _preparar(f, true)
 	if teste.has("erro"):
 		return teste["erro"]
 	jogador.fila = f

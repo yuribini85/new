@@ -104,43 +104,42 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_LJ08` | `LOJA:return_chapter_customs` | — | `SHOP_RETURN_CHAPTER` |
 | `CW_LJ09` | `LOJA:shared_grid_motors` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_SHARED_GRID` |
 | `CW_LJ10` | `LOJA:shared_grid_motors` | — | `SHOP_SHARED_GRID` |
+| `CW_LJ11` | `LOJA:spare_penny_repairs` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_SPARE_PENNY` |
 | `CW_R01` | `CORRIDA_FIM` | — | `FIRST_LOSS_TALK` |
 | `CW_R03` | `CAIXA_BAIXO` | — | — |
 | `CW_R04` | `COMPRA_CARRO_CARA` | — | — |
 | `CW_SYS01` | `SEM_DINHEIRO` | — | — |
 | `CW_SYS02` | `EVENTO_BLOQUEADO` | — | — |
-| `CW_SYS04` | `POTENCIA_ACIMA` | — | — |
-| `CW_SYS09` | `LICENCA_EM_TREINO` | — | — |
 | `CW_SYS10` | `LICENCA_PRONTA` | — | — |
 | `CW_SYS_ENDURANCE` | `CORRIDA_RESISTENCIA` | — | `FIRST_ENDURANCE` |
 
 ## Triggers usados pelas cenas
 
-`ABA:EQUIPE`, `ABA:EVENTOS`, `ABA:LICENCAS`, `ARENA_FIM`, `ARENA_INSCRICAO`, `ARENA_PERDA`, `ARENA_VITORIA`, `BLINDAGEM`, `BLINDAGEM_COMPRADA`, `CAIXA_BAIXO`, `CAMPEONATO_SELECIONADO`, `CAMPEONATO_VENCIDO`, `CARRO_DESMONTADO`, `COLECAO`, `COMPRA_CARRO`, `COMPRA_CARRO_CARA`, `CORRIDA_FIM`, `CORRIDA_INICIO`, `CORRIDA_RESISTENCIA`, `DEMANDA_CONCLUIDA`, `ENCADEADA`, `EVENTO_BLOQUEADO`, `EVOLUCAO`, `GAME_START`, `GARAGEM_ABERTA`, `GARAGEM_AMPLIADA`, `GARAGEM_DOIS_CARROS`, `GARAGEM_TRES_CARROS`, `GRID_SUBIU`, `GRID_TOPO`, `LEMBRETE`, `LICENCA_CONCEDIDA:CLUB`, `LICENCA_CONCEDIDA:ELITE`, `LICENCA_CONCEDIDA:INTERNATIONAL`, `LICENCA_CONCEDIDA:NATIONAL`, `LICENCA_CONCEDIDA:PRO`, `LICENCA_CONCEDIDA:SPORT`, `LICENCA_DISPONIVEL:NATIONAL`, `LICENCA_DISPONIVEL:SPORT`, `LICENCA_EM_TREINO`, `LICENCA_EXIGIDA`, `LICENCA_PRONTA`, `LICENCA_TREINO_INICIO`, `LOJA:brace_yard_works`, `LOJA:charge_folio_motors`, `LOJA:relay_room_garage`, `LOJA:return_chapter_customs`, `LOJA:shared_grid_motors`, `NOME_DEFINIDO`, `PATROCINIO_ASSINADO`, `PILOTO_CONTRATADO`, `PINTURA`, `PINTURA_APLICADA`, `POTENCIA_ACIMA`, `SEDE_MELHORADA`, `SEM_DINHEIRO`, `SEM_PECAS`, `TREINO_CONCLUIDO`, `VITORIA`, `VITORIA_LICENCA:CLUB`, `VITORIA_LICENCA:NATIONAL`, `VITORIA_LICENCA:SPORT`
+`ABA:EQUIPE`, `ABA:EVENTOS`, `ABA:LICENCAS`, `ARENA_FIM`, `ARENA_INSCRICAO`, `ARENA_PERDA`, `ARENA_VITORIA`, `BLINDAGEM`, `BLINDAGEM_COMPRADA`, `CAIXA_BAIXO`, `CAMPEONATO_SELECIONADO`, `CAMPEONATO_VENCIDO`, `CARRO_DESMONTADO`, `COLECAO`, `COMPRA_CARRO`, `COMPRA_CARRO_CARA`, `CORRIDA_FIM`, `CORRIDA_INICIO`, `CORRIDA_RESISTENCIA`, `DEMANDA_CONCLUIDA`, `ENCADEADA`, `EVENTO_BLOQUEADO`, `EVOLUCAO`, `GAME_START`, `GARAGEM_ABERTA`, `GARAGEM_AMPLIADA`, `GARAGEM_DOIS_CARROS`, `GARAGEM_TRES_CARROS`, `GRID_SUBIU`, `GRID_TOPO`, `LEMBRETE`, `LICENCA_CONCEDIDA:CLUB`, `LICENCA_CONCEDIDA:ELITE`, `LICENCA_CONCEDIDA:INTERNATIONAL`, `LICENCA_CONCEDIDA:NATIONAL`, `LICENCA_CONCEDIDA:PRO`, `LICENCA_CONCEDIDA:SPORT`, `LICENCA_DISPONIVEL:NATIONAL`, `LICENCA_DISPONIVEL:SPORT`, `LICENCA_EXIGIDA`, `LICENCA_PRONTA`, `LICENCA_TREINO_INICIO`, `LOJA:brace_yard_works`, `LOJA:charge_folio_motors`, `LOJA:relay_room_garage`, `LOJA:return_chapter_customs`, `LOJA:shared_grid_motors`, `LOJA:spare_penny_repairs`, `NOME_DEFINIDO`, `PATROCINIO_ASSINADO`, `PILOTO_CONTRATADO`, `PINTURA`, `PINTURA_APLICADA`, `SEDE_MELHORADA`, `SEM_DINHEIRO`, `SEM_PECAS`, `TREINO_CONCLUIDO`, `VITORIA`, `VITORIA_LICENCA:CLUB`, `VITORIA_LICENCA:NATIONAL`, `VITORIA_LICENCA:SPORT`
 
 ## Ações de tutorial (TutorialAction)
 
-`CENARIO:oficina_mara`, `HIGHLIGHT_BRAKES`, `HIGHLIGHT_COMPETITIVIDADE`, `HIGHLIGHT_COPA`, `HIGHLIGHT_DEMANDA`, `HIGHLIGHT_DISPUTAR`, `HIGHLIGHT_FREIOS`, `HIGHLIGHT_GRID`, `HIGHLIGHT_LICENSE_REQUIREMENTS`, `HIGHLIGHT_NAV_EVENTOS`, `HIGHLIGHT_NAV_LICENCAS`, `HIGHLIGHT_NAV_LOJA`, `HIGHLIGHT_PATROCINIO`, `HIGHLIGHT_PESO`, `HIGHLIGHT_PILOTO_CORRIDA`, `HIGHLIGHT_PNEUS`, `HIGHLIGHT_POTENCIA`, `HIGHLIGHT_SALDO`, `ILUSTRACAO:chegada`, `ILUSTRACAO:noite_da_arena`, `IMPACTO`, `OPEN_GARAGE_TAB`, `OPEN_LICENSE_CENTER`, `PAUSA`, `PEDIR_NOME`, `UNLOCK_ARENA_PILOTS`, `UNLOCK_TEAM_TAB`
+`CENARIO:oficina_mara`, `HIGHLIGHT_COMPETITIVIDADE`, `HIGHLIGHT_COPA`, `HIGHLIGHT_DEMANDA`, `HIGHLIGHT_DISPUTAR`, `HIGHLIGHT_FREIOS`, `HIGHLIGHT_GRID`, `HIGHLIGHT_LICENSE_REQUIREMENTS`, `HIGHLIGHT_NAV_EVENTOS`, `HIGHLIGHT_NAV_LICENCAS`, `HIGHLIGHT_NAV_LOJA`, `HIGHLIGHT_PATROCINIO`, `HIGHLIGHT_PECA_PEDIDA`, `HIGHLIGHT_PESO`, `HIGHLIGHT_PILOTO_CORRIDA`, `HIGHLIGHT_PNEUS`, `HIGHLIGHT_POTENCIA`, `HIGHLIGHT_SALDO`, `ILUSTRACAO:chegada`, `ILUSTRACAO:noite_da_arena`, `IMPACTO`, `OPEN_GARAGE_TAB`, `OPEN_LICENSE_CENTER`, `PAUSA`, `PEDIR_NOME`, `UNLOCK_ARENA_PILOTS`, `UNLOCK_TEAM_TAB`
 
 ## Flags de história
 
 | flag | primeira origem |
 |---|---|
-| `ABERTURA_DONO` | ui/principal.gd |
+| `ABERTURA_DONO` | .claude/worktrees/agent-a4157b873a9f76d85/ui/principal.gd |
 | `ADMIN_NAMED` | cena CW_P01B |
 | `ARENA_FIRST_ENTRY` | cena CW_R06 |
 | `ARENA_FIRST_LOSS` | cena CW_R09 |
 | `ARENA_FIRST_WIN` | cena CW_A01 |
 | `ARENA_INTRO` | cena CW_P07 |
-| `ARENA_PILOTS_UNLOCKED` | data_model/equipe_jogador.gd |
+| `ARENA_PILOTS_UNLOCKED` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/equipe_jogador.gd |
 | `ARENA_SURVIVED` | cena CW_R07 |
 | `ARMOR_TUTORIAL_SEEN` | cena CW_AR03 |
-| `CARRO_MARA` | data_model/prologo.gd |
+| `CARRO_MARA` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/prologo.gd |
 | `CHAMPIONSHIP_TUTORIAL_DONE` | cena CW_C01 |
 | `CLUB_COMPLETE` | cena CW_R10 |
 | `COLLECTION_FIVE` | cena CW_R11 |
 | `DEX_MET` | cena CW_AR02 |
-| `DRIVER_HIRE_UNLOCKED` | data_model/equipe_jogador.gd |
+| `DRIVER_HIRE_UNLOCKED` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/equipe_jogador.gd |
 | `ELITE_COMPLETE` | cena CW_T03 |
 | `EVENT_MENU_TUTORIAL_SEEN` | cena CW_P04 |
 | `EVENT_REQUIREMENTS_TUTORIAL_DONE` | cena CW_E01 |
@@ -182,13 +181,14 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `PILOT_HIRED` | condição de CW_P03C |
 | `PILOT_MET` | cena CW_P03D |
 | `PRO_COMPLETE` | cena CW_T02 |
-| `SECOND_DRIVER_CREATED` | data_model/equipe_jogador.gd |
+| `SECOND_DRIVER_CREATED` | .claude/worktrees/agent-a4157b873a9f76d85/data_model/equipe_jogador.gd |
 | `SECOND_RACE_DONE` | cena CW_P06C |
 | `SHOP_BRACE_YARD` | cena CW_LJ05 |
 | `SHOP_CHARGE_FOLIO` | cena CW_LJ01 |
 | `SHOP_RELAY_ROOM` | cena CW_LJ03 |
 | `SHOP_RETURN_CHAPTER` | cena CW_LJ07 |
 | `SHOP_SHARED_GRID` | cena CW_LJ09 |
+| `SHOP_SPARE_PENNY` | cena CW_LJ11 |
 | `SHOP_TUTORIAL_SEEN` | cena CW_LJ01 |
 | `SPORT_AVAILABLE_SEEN` | cena CW_L05 |
 | `SPORT_COMPLETE` | cena CW_R10B |
@@ -202,18 +202,18 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 
 | id | nome | GT2 |
 |---|---|---|
-| `CLUB` | Licença Club | B |
-| `SPORT` | Licença Sport | A |
-| `NATIONAL` | Licença National | IC |
-| `INTERNATIONAL` | Licença International | IB |
-| `PRO` | Licença Pro | IA |
-| `ELITE` | Licença Elite | S |
+| `CLUB` | Licença Club | — |
+| `SPORT` | Licença Sport | — |
+| `NATIONAL` | Licença National | — |
+| `INTERNATIONAL` | Licença International | — |
+| `PRO` | Licença Pro | — |
+| `ELITE` | Licença Elite | — |
 
 ## Equipes e pilotos (`data/equipes.json`)
 
 | equipe | nível | pilotos |
 |---|---|---|
-| `eq01_second_driver` Second Driver | jogador | `elena_cross`, `adrian_cross` |
+| `eq01_second_driver` Wreckage Motorsport | jogador |  |
 | `eq02_vortex_motorsport` Blackwater Racing | PRO | `lucien_vale`, `nadia_voss`, `akira_delacroix`, `beatriz_oyelaran` |
 | `eq03_kaze_dynamics` Kaze Dynamics | INTERNATIONAL | `ren_kaito`, `hana_mori`, `dmitri_abernathy`, `esme_lindgren` |
 | `eq04_ironclad_racing` Iron Vultures | NATIONAL | `bram_holt`, `soren_pike`, `felix_hakimi`, `greta_saarinen` |

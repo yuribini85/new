@@ -767,7 +767,7 @@ func botao_info(titulo_painel: String, detalhe: String, pai: Control = null) -> 
 		b.icon = tex
 		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	else:
-		b.text = "ⓘ"
+		b.text = "i"
 		b.add_theme_color_override("font_color", COR_INFO)
 	b.pressed.connect(func():
 		painel.emit(titulo_painel, func(v):
@@ -1379,6 +1379,7 @@ static func _diferencas(antes: Dictionary, depois: Dictionary) -> Array:
 
 func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 	var possuida: bool = p["id"] in c.pecas_possuidas
+	var era_demanda: bool = p["id"] == Prologo.demanda(dados, jogador)  # antes: comprada, a demanda muda
 	var motivo: String = jogador.concessionaria.comprar_peca(c, p)
 	if motivo != "":
 		avisar("Não deu para usar %s: %s." % [p["nome"], motivo], false)
@@ -1388,7 +1389,7 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 	Sons.tocar_ui(self, "moeda", -4.0)
 	var falou: bool = p["categoria"] == Blindagem.CATEGORIA and not possuida and historia("BLINDAGEM_COMPRADA")
 	falou = falou or historia("PECA_COMPRADA", {"peca": String(p["nome"])})
-	if p["id"] == Prologo.demanda(dados, jogador):
+	if era_demanda:
 		falou = historia("DEMANDA_CONCLUIDA", {"peca": String(p["nome"])}) or falou
 	if not falou and jogador.historia != null and jogador.historia.caixa_baixo():
 		historia("CAIXA_BAIXO")

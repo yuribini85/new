@@ -21,8 +21,7 @@ extends RefCounted
 ## GARAGEM_AMPLIADA, GARAGEM_ABERTA (janela Garagem), PINTURA e PINTURA_APLICADA,
 ## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA,
 ## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, SEM_PECAS, NOME_DEFINIDO
-## (o nome do administrador dado na abertura) e os do
-## prólogo (ULTIMA_CORRIDA_ADRIAN, RADIO_ULTIMA_CORRIDA, ACIDENTE, POS_ACIDENTE).
+## (o nome do administrador dado na abertura).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
 
@@ -79,7 +78,7 @@ func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
 
 
 func demanda_paga() -> bool:
-	var d := Prologo.demanda(dados, jogador)
+	var d := Prologo.demanda(dados, jogador)  # já sem as peças que o carro tem
 	return dados.existe("pecas", d) and jogador.economia.pode_pagar_peca(int(dados.peca(d)["preco"]), false)
 
 

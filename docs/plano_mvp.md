@@ -736,3 +736,29 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     32,5 s; `arte/abertura/roteiro.json`). No pedido do nome, o teclado do celular abre ao
     tocar no campo: a exportação Web liga o teclado virtual e, em tela de toque, o campo não
     pega o foco sozinho (o navegador só abre o teclado com o toque).
+90. **Correções da auditoria** (2026-10-15, recomendações aceitas pelo usuário).
+    - Save: a fila num desafio do Grid é válida (antes o save era recusado e o jogo
+      recomeçava). Ao voltar de um cenário de teste, o jogo do jogador recarrega do zero.
+    - Retomada do tutorial (`Historia.recuperar`, ao abrir): as flags que destravam telas
+      saem do estado real (carro → equipe criada; piloto de corrida; Club; International →
+      Caixa e Sede); o passo da chegada interrompido volta (pedir o nome, a conversa
+      seguinte ou a apresentação do Grid). As Lojas aparecem com carro na garagem.
+    - Arena do Grid: um carro sempre fica de fora (o da vaga de corrida ou, vazia, o de
+      menor uid): a série nunca zera a garagem.
+    - Corridas que terminam com o app fechado ou várias de uma vez disparam as conversas
+      delas (Grid de cada uma, a chegada da última) depois do relatório.
+    - Tutorial da peça: destaca a peça pedida (antes, os freios); a peça já comprada não é
+      pedida. "Papel pronto" uma vez por licença. Licença concedida: primeiro o painel,
+      depois a conversa. A contratação abre depois de a cena do carro fechar. O jogo abre
+      na primeira tela já apresentada. A arena é conferida depois de cada conversa.
+    - O resultado da corrida espera painel aberto, intro do Grid, luta e o pedido do nome.
+    - Textos: piloto sem gênero fixo ({piloto}), jogador sem "sócio", blindagem paga com
+      peças e o que faltar em giros, marcas dos vendedores conferidas com workshops.json,
+      loja Spare Penny com a fala da Mara. Saem as cenas sem gatilho (CW_SYS04, CW_SYS09).
+    - A escalação dos rivais é a da inscrição (os contratados ficam na fila).
+    - Dados: a equipe do jogador em equipes.json é a Wreckage, sem pilotos fixos; a chave
+      `gt2` sai das licenças; a abertura usa a ilustração `noite_da_arena` (cópia removida).
+    - Web: texturas grandes com perda (pacote de 112 para 45 MB), malhas 3D sem LODs,
+      sombras e tangentes, `docs/` fora do build, uma meta viewport (área segura do iPhone),
+      aviso para girar o aparelho, save ao perder o foco, efeitos leves por padrão no Web,
+      inclinação lida a 20 Hz, ícone de 512 px, deploy depois dos testes e só da main.

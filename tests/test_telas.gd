@@ -629,11 +629,14 @@ func test_glifos_das_telas_existem() -> void:
 	var fontes: Array = [f]
 	for peso in Tipografia.ARQUIVOS:
 		fontes.append(Tipografia.fonte(peso))
+	# Só o que vira texto na tela: as strings do código (não os comentários) e as falas.
 	var textos := ""
+	var aspas := RegEx.create_from_string("\"(?:[^\"\\\\]|\\\\.)*\"")
 	for pasta in ["res://ui/", "res://visual/"]:
 		for arq in DirAccess.get_files_at(pasta):
 			if arq.ends_with(".gd"):
-				textos += FileAccess.get_file_as_string(pasta + arq)
+				for m in aspas.search_all(FileAccess.get_file_as_string(pasta + arq)):
+					textos += m.get_string()
 	textos += FileAccess.get_file_as_string("res://data/dialogos.json")
 	var faltam := {}
 	for i in textos.length():

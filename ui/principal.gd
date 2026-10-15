@@ -257,11 +257,17 @@ func _navegacao() -> HBoxContainer:
 		_botoes.append(b)
 		b.pressed.connect(_ir_para.bind(d[1]))
 		_ancoras["NAV_" + NOMES_ABA[d[1]]] = b
-	_ir_para.call_deferred(0)
+	# Começa na primeira tela que o tutorial já apresentou (a Oficina só depois dele).
+	var inicio := 0
+	for d in DESTINOS:
+		if apresentada(int(d[1])):
+			inicio = int(d[1])
+			break
+	_ir_para.call_deferred(inicio)
 	return barra
 
 
-## A aba Equipe fica oculta até a Second Driver existir (documento, seção 29).
+## A aba Equipe fica oculta até a equipe do jogador existir (documento, seção 29).
 func _atualizar_nav() -> void:
 	var cinco := EquipeJogador.criada(jogador)
 	for k in _botoes.size():
@@ -711,6 +717,8 @@ func _cena_terminou(c: Dictionary) -> void:
 		# conta como aberta): libera só quando não houver mais nenhuma.
 		(func(): _quando_dialogo_acabar(_todas[4].liberar_largada)).call_deferred()
 	atualizar()
+	# A arena pode ter ficado esperando outra conversa (3 carros antes do patrocínio).
+	_checar_arena()
 	get_node("/root/SaveManager").salvar()
 
 
@@ -781,10 +789,12 @@ func _acao_historia(nome: String) -> void:
 		jogador.flags[EquipeJogador.FLAG_ARENA] = true
 		atualizar()
 	elif nome == "UNLOCK_TEAM_TAB":
-		# A Second Driver nasce na cena: nada é resetado, só a aba aparece.
+		# A equipe nasce na cena: nada é resetado, só a aba aparece.
 		EquipeJogador.criar(jogador)
 		atualizar()
-		_ir_para(ABA_EQUIPE)
+		# Depois de a cena fechar: a de contratar (ABA:EQUIPE) pede FIRST_CAR, que
+		# esta cena grava no fim.
+		_quando_dialogo_acabar(func(): _ir_para(ABA_EQUIPE))
 
 
 ## Nome do administrador (a cena CW_P01 termina pedindo): sem rosto nem

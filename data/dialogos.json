@@ -42,7 +42,7 @@
    },
    {
     "quem": "mara",
-    "texto": "A proposta: você assume as contas e a dívida. Em troca, vira sócio da oficina e da Wreckage.",
+    "texto": "A proposta: você assume as contas e a dívida. Em troca, metade da oficina e da Wreckage é sua.",
     "pose": "gesto"
    },
    {
@@ -79,7 +79,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Muito bem, sócio. {admin}. Eu sou a Mara.",
+    "texto": "Muito bem, {admin}. Sociedade fechada. Eu sou a Mara.",
     "pose": "gesto"
    },
    {
@@ -330,7 +330,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Para as corridas, alguém constante ou uma promessa. É ele que leva o nome da Wreckage para a pista.",
+    "texto": "Para as corridas, alguém constante ou uma promessa. É quem leva o nome da Wreckage para a pista.",
     "pose": "gesto"
    },
    {
@@ -422,7 +422,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Como estamos sem licenças só podemos correr estes circuitos."
+    "texto": "Como estamos sem licenças, só podemos correr estes circuitos."
    },
    {
     "acao": "HIGHLIGHT_COMPETITIVIDADE"
@@ -552,7 +552,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Corre mais uma. Quero ver se ele repete.",
+    "texto": "Corre mais uma. Quero ver se {piloto} repete.",
     "pose": "firme"
    }
   ],
@@ -582,7 +582,7 @@
    },
    {
     "quem": "mara",
-    "texto": "A tela da corrida mostra onde ele perdeu tempo. Olhe antes de culpar o carro.",
+    "texto": "A tela da corrida mostra onde se perdeu tempo. Olhe antes de culpar o carro.",
     "pose": "explica"
    },
    {
@@ -703,7 +703,7 @@
    },
    {
     "quem": "examinador",
-    "texto": "Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é dele."
+    "texto": "Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é nossa."
    },
    {
     "quem": "mara",
@@ -795,7 +795,7 @@
    },
    {
     "quem": "mara",
-    "texto": "O caixa dá para um carro novo, e só. Para as primeiras provas, procure perto de cem cavalos.",
+    "texto": "O caixa dá para um carro, e só. Para as primeiras provas, compare potência e peso antes do preço.",
     "pose": "explica"
    },
    {
@@ -1128,7 +1128,7 @@
   "falas": [
    {
     "quem": "examinador",
-    "texto": "International aprovada. Agora ele representa a Academy lá fora também."
+    "texto": "International aprovada. Agora {piloto} representa a Academy lá fora também."
    },
    {
     "quem": "mara",
@@ -1493,7 +1493,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Na Sport ninguém deixa espaço de graça. Ele achou um.",
+    "texto": "Na Sport ninguém deixa espaço de graça. {piloto} achou um.",
     "pose": "pensativa"
    }
   ],
@@ -1682,7 +1682,7 @@
    },
    {
     "quem": "mecanico_arena",
-    "texto": "Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças."
+    "texto": "Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças."
    },
    {
     "quem": "mecanico_arena",
@@ -1724,7 +1724,7 @@
    },
    {
     "quem": "mecanico_arena",
-    "texto": "Chapa não se paga com giros: se paga com peças. Carro desmontado e sucata da arena viram peças."
+    "texto": "Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças."
    },
    {
     "quem": "mecanico_arena",
@@ -2154,7 +2154,7 @@
    },
    {
     "quem": "vendedor_charge_folio",
-    "texto": "Alemães, italianos, franceses e ingleses. Cada um com o seu sotaque na estrada."
+    "texto": "Alemães, italianos, franceses, ingleses, suecos, do Leste e até brasileiros. Cada um com o seu sotaque na estrada."
    },
    {
     "quem": "vendedor_charge_folio",
@@ -2183,7 +2183,7 @@
   "falas": [
    {
     "quem": "vendedor_charge_folio",
-    "texto": "Edgar Halloway, Charge Folio. Alemães, italianos, franceses e ingleses."
+    "texto": "Edgar Halloway, Charge Folio. Europeus de todo canto, e até brasileiros."
    },
    {
     "quem": "vendedor_charge_folio",
@@ -2264,7 +2264,7 @@
    },
    {
     "quem": "vendedora_brace_yard",
-    "texto": "Hozuki, Sanga e Kosame. Carro pra quem pretende ser visto."
+    "texto": "Hozuki, Sanga, Kosame e Ishigumo. Carro pra quem pretende ser visto."
    },
    {
     "quem": "vendedora_brace_yard",
@@ -2293,7 +2293,7 @@
   "falas": [
    {
     "quem": "vendedora_brace_yard",
-    "texto": "Bianca Sterling, Brace Yard Works. Hozuki, Sanga e Kosame."
+    "texto": "Bianca Sterling, Brace Yard Works. Hozuki, Sanga, Kosame e Ishigumo."
    },
    {
     "quem": "vendedora_brace_yard",
@@ -2374,7 +2374,7 @@
   "falas": [
    {
     "quem": "vendedora_shared_grid",
-    "texto": "Jade Ryker, Shared Grid Motors. Sete marcas americanas, um catálogo, zero tempo a perder."
+    "texto": "Jade Ryker, Shared Grid Motors. Oito marcas americanas, um catálogo, zero tempo a perder."
    },
    {
     "quem": "vendedora_shared_grid",
@@ -2407,7 +2407,7 @@
   "falas": [
    {
     "quem": "vendedora_shared_grid",
-    "texto": "Jade Ryker, Shared Grid. Sete marcas americanas na mesma grade."
+    "texto": "Jade Ryker, Shared Grid. Oito marcas americanas na mesma grade."
    },
    {
     "quem": "vendedora_shared_grid",
@@ -2420,6 +2420,36 @@
   ],
   "flags": [
    "SHOP_SHARED_GRID"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ11",
+  "trigger": "LOJA:spare_penny_repairs",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Spare Penny. Mizuchi, Hoshino e Tomoe; ninguém aqui vende pose."
+   },
+   {
+    "quem": "mara",
+    "texto": "Potência, peso e preço estão no cartão. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_SPARE_PENNY"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -2522,39 +2552,6 @@
   "requer": [
    "EVENT_REQUIREMENTS_TUTORIAL_DONE"
   ],
-  "proibe": [],
-  "flags": [],
-  "bloqueia": false,
-  "uma_vez": false,
-  "personagem": "dono"
- },
- {
-  "id": "CW_SYS04",
-  "trigger": "POTENCIA_ACIMA",
-  "falas": [
-   {
-    "quem": "mara",
-    "texto": "Essa potência o regulamento não aceita.",
-    "pose": "alerta"
-   }
-  ],
-  "requer": [],
-  "proibe": [],
-  "flags": [],
-  "bloqueia": false,
-  "uma_vez": false,
-  "personagem": "dono"
- },
- {
-  "id": "CW_SYS09",
-  "trigger": "LICENCA_EM_TREINO",
-  "falas": [
-   {
-    "quem": "examinador",
-    "texto": "O treino ainda está correndo."
-   }
-  ],
-  "requer": [],
   "proibe": [],
   "flags": [],
   "bloqueia": false,

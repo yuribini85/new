@@ -18,7 +18,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
 | `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
 | `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcionais `carro_premio`, `largada_kmh` |
-| `licencas.json` | lista de `{id, nome, testes}`, opcionais `requisito` (id de outra licença), `gt2`, `preco` |
+| `licencas.json` | lista de `{id, nome, testes}`, opcionais `requisito` (id de outra licença), `preco` |
 | `equipes.json` | lista de `{id, nome, pilotos: [{id, nome}]}` (retrato do piloto: genérico, decisão 72), opcionais `nivel` (CLUB…ELITE), `numero`, `logo`, `jogador`, `dirigente` (nome), `retrato_dirigente` (arte do dirigente, fundo transparente; ficha do The Grid), `perfil` (chave de `carreira.json` → `perfis_piloto`: a agressividade dos pilotos da equipe) e `personalidade` (uma frase, mostrada quando a equipe vence) |
 | `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |

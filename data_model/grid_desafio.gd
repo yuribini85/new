@@ -169,7 +169,8 @@ static func bloqueio(dados: Node, jogador: Node, equipe: Dictionary) -> String:
 			return "Escale o carro de corrida na Oficina."
 		return ""
 	if not jogador.flags.has(EquipeJogador.FLAG_ARENA):
-		return "A arena abre quando a garagem tiver 3 carros."
+		return ("A arena abre quando a garagem tiver 3 carros." if jogador.garagem.lista().size() < 3
+				else "A arena abre depois do primeiro patrocínio (licença Club e uma corrida).")
 	if EquipeJogador.piloto_vaga(jogador, "arena1") == "" or EquipeJogador.piloto_vaga(jogador, "arena2") == "":
 		return "A dupla precisa de dois pilotos de arena contratados (aba Equipe)."
 	var precisa := 2 if serie(jogador).get("equipe") == equipe["id"] else int(d["carros_min"])

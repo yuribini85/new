@@ -477,8 +477,8 @@ def main() -> int:
                   for k, pista in enumerate(["anel_do_vale", "parque_das_docas", "serra_alta"])]
         if lic == "ELITE":
             testes = []  # a S do GT2 não tem testes no disco: a avaliação são os contratos
-        licencas.append({"id": lic, "nome": f"Licença {NOMES_LICENCA[lic]}", "requisito": anterior,
-                         "gt2": next((k for k, v in LICENCA_DO_GT2.items() if v == lic), "S"), "preco": 0,
+        # Sem o código da licença do GT2 nos dados (nada do GT2 vai no build).
+        licencas.append({"id": lic, "nome": f"Licença {NOMES_LICENCA[lic]}", "requisito": anterior, "preco": 0,
                          "testes": testes})
 
     gravar("carros", carros)

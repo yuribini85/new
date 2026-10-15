@@ -1,6 +1,5 @@
 [
 	{
-		"gt2": "B",
 		"id": "CLUB",
 		"nome": "Licença Club",
 		"preco": 0.0,
@@ -51,7 +50,6 @@
 		]
 	},
 	{
-		"gt2": "A",
 		"id": "SPORT",
 		"nome": "Licença Sport",
 		"preco": 0.0,
@@ -102,7 +100,6 @@
 		]
 	},
 	{
-		"gt2": "IC",
 		"id": "NATIONAL",
 		"nome": "Licença National",
 		"preco": 0.0,
@@ -153,7 +150,6 @@
 		]
 	},
 	{
-		"gt2": "IB",
 		"id": "INTERNATIONAL",
 		"nome": "Licença International",
 		"preco": 0.0,
@@ -204,7 +200,6 @@
 		]
 	},
 	{
-		"gt2": "IA",
 		"id": "PRO",
 		"nome": "Licença Pro",
 		"preco": 0.0,
@@ -255,7 +250,6 @@
 		]
 	},
 	{
-		"gt2": "S",
 		"id": "ELITE",
 		"nome": "Licença Elite",
 		"preco": 0.0,

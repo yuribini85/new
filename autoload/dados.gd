@@ -233,7 +233,9 @@ func _validar_equipes() -> void:
 		var onde := "equipes.json: '%s'" % eq["id"]
 		if eq.has("nivel") and not eq["nivel"] in niveis:
 			_erros.append("%s nível desconhecido %s" % [onde, eq["nivel"]])
-		if eq["pilotos"].is_empty() or not eq["pilotos"].all(func(p): return p.has("id") and p.has("nome")):
+		# A equipe do jogador não tem pilotos fixos (são os contratados).
+		if (eq["pilotos"].is_empty() and not eq.get("jogador", false)) \
+				or not eq["pilotos"].all(func(p): return p.has("id") and p.has("nome")):
 			_erros.append(onde + " precisa de pilotos com id e nome")
 
 

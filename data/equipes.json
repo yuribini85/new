@@ -2,20 +2,9 @@
  {
   "id": "eq01_second_driver",
   "numero": 1,
-  "nome": "Second Driver",
+  "nome": "Wreckage Motorsport",
   "logo": "res://arte/equipes/logo_eq01.png",
-  "pilotos": [
-   {
-    "id": "elena_cross",
-    "nome": "Elena Cross",
-    "retrato": ""
-   },
-   {
-    "id": "adrian_cross",
-    "nome": "Adrian Cross",
-    "retrato": ""
-   }
-  ],
+  "pilotos": [],
   "jogador": true,
   "cores": {
    "carro": "#1d2f5c",

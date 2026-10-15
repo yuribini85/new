@@ -39,7 +39,9 @@ static func demanda(dados: Node, jogador: Node) -> String:
 		return ""
 	var melhor := {}
 	for p in dados.lista("pecas"):
+		# A peça que o carro já tem não é pedida (comprada antes da hora).
 		if c.motivo_recusa(p) == "" and Array(p.get("carros_permitidos", [])).has(c.id) \
+				and not p["id"] in c.pecas_possuidas \
 				and (melhor.is_empty() or int(p["preco"]) < int(melhor["preco"])):
 			melhor = p
 	return String(melhor.get("id", ""))

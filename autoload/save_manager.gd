@@ -105,6 +105,8 @@ func voltar_ao_jogo() -> void:
 	cenario = ""
 	var dados := get_node("/root/Dados")
 	var jogador := get_node("/root/Jogador")
+	# Do zero antes de carregar: nada do cenário (carros, flags) passa para o save.
+	jogador.novo_jogo(dados.economia(), dados.pneu)
 	var r := carregar_protegido(caminho, jogador, dados)
 	if not r["carregou"]:
 		Prologo.iniciar(dados, jogador)

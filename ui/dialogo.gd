@@ -115,6 +115,9 @@ static var _bustos := {}
 var _dica: Label
 var _tempos := PackedFloat32Array()
 var _pular: Button
+## _i aponta para um item ainda não feito (pausa ou cartão no meio): o Pular
+## começa dele, sem engolir uma ação.
+var _i_pendente := false
 var _escuro := false  # [ESCURO] vale até [CLARO] ou o fim da sequência de cenas
 ## Recebe a próxima cena e diz se ela tem de esperar (uma janela do jogo está
 ## aberta: resultado, carro novo...). A cena começa quando a janela fecha.
@@ -364,6 +367,7 @@ func _capitulo_novo() -> bool:
 	if _tw_cartao != null:
 		_tw_cartao.kill()
 	_tw_cartao = create_tween()
+	_i_pendente = true  # a primeira fala ainda não saiu
 	_tw_cartao.tween_property(_cartao, "modulate:a", 1.0, CARTAO_S * 0.2)
 	_tw_cartao.tween_interval(CARTAO_S * 0.6)
 	_tw_cartao.tween_property(_cartao, "modulate:a", 0.0, CARTAO_S * 0.2)
@@ -393,6 +397,7 @@ func _toque_cartao(ev: InputEvent) -> void:
 func _mostrar() -> void:
 	if _cena.is_empty():  # animação pendente de uma cena já pulada
 		return
+	_i_pendente = false
 	var falas: Array = _cena["falas"]
 	while _i < falas.size() and falas[_i].has("acao"):
 		var nome_acao := String(falas[_i]["acao"])
@@ -431,6 +436,7 @@ func _mostrar() -> void:
 					_tween.kill()
 				_tween = create_tween()
 				_tween.tween_interval(PAUSA_S)
+				_i_pendente = true  # _i já aponta para o que vem depois da pausa
 				_tween.tween_callback(func():
 					_caixa.visible = true
 					_animando = false
@@ -858,7 +864,10 @@ func pular_cena() -> void:
 	_caixa.visible = true
 	_animando = false
 	var falas: Array = _cena["falas"]
-	_i += 1
+	# Na pausa ou no cartão, _i já é o próximo item (ainda não feito): não pula.
+	if not _i_pendente:
+		_i += 1
+	_i_pendente = false
 	while _i < falas.size():
 		if falas[_i].has("acao"):
 			var nome := String(falas[_i]["acao"])
