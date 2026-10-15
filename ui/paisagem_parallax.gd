@@ -32,6 +32,11 @@ var _neutro := Vector3.ZERO
 var _inclinacao := Vector2.ZERO
 var _folga := 0.0
 var _neutro_web := Vector2.INF
+## Leitura da inclinação no navegador: no máximo 20 por segundo (cada leitura
+## é uma chamada ao JavaScript); entre leituras vale o último alvo.
+const INTERVALO_WEB_S := 0.05
+var _alvo_web := Vector2.ZERO
+var _web_t := INTERVALO_WEB_S
 ## Diagnóstico (web, endereço com ?diag=1): camadas, deslocamentos e sensor na tela.
 var _diag: Label
 var _diag_t := 0.0
@@ -130,18 +135,22 @@ func _ler_inclinacao(delta: float) -> void:
 
 
 func _ler_inclinacao_web(delta: float) -> void:
-	var alvo := Vector2.ZERO
-	var g = JavaScriptBridge.eval("window.__sdOri?window.__sdOri.g:null", true)
-	var b = JavaScriptBridge.eval("window.__sdOri?window.__sdOri.b:null", true)
-	if g != null and b != null:
-		var v := Vector2(float(g), float(b))
-		if _neutro_web == Vector2.INF:
-			_neutro_web = v
-		alvo = (v - _neutro_web) / GRAUS_MAX
-		if alvo.length() < ZONA_MORTA:
-			alvo = Vector2.ZERO
-		alvo = alvo.limit_length(1.0)
-	_inclinacao = _inclinacao.lerp(alvo, 1.0 - exp(-SUAVIZAR * delta))
+	_web_t += delta
+	if _web_t >= INTERVALO_WEB_S:
+		_web_t = 0.0
+		var alvo := Vector2.ZERO
+		var g = JavaScriptBridge.eval("window.__sdOri?window.__sdOri.g:null", true)
+		var b = JavaScriptBridge.eval("window.__sdOri?window.__sdOri.b:null", true)
+		if g != null and b != null:
+			var v := Vector2(float(g), float(b))
+			if _neutro_web == Vector2.INF:
+				_neutro_web = v
+			alvo = (v - _neutro_web) / GRAUS_MAX
+			if alvo.length() < ZONA_MORTA:
+				alvo = Vector2.ZERO
+			alvo = alvo.limit_length(1.0)
+		_alvo_web = alvo
+	_inclinacao = _inclinacao.lerp(_alvo_web, 1.0 - exp(-SUAVIZAR * delta))
 
 
 func _diagnostico() -> void:

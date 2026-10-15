@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/oscar_flint.webp-7a1a8562be05a0777d2ce8e1aa37
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.8
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

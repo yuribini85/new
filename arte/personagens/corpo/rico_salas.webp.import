@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/rico_salas.webp-125f5f3c4132303937c4a5f11d5ae
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.8
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

@@ -3,12 +3,12 @@ name: Demo web
 # Exporta o jogo para web e publica no GitHub Pages, para testar no navegador
 # do celular. Precisa de Settings → Pages → Source: GitHub Actions.
 # Por padrão o GitHub só publica a partir da main (regra do ambiente
-# github-pages); para publicar de outra branch, libere-a em
+# github-pages); para publicar de outra branch, inclua-a abaixo e libere-a em
 # Settings → Environments → github-pages.
 
 on:
   push:
-    branches: [main, claude/eloquent-clarke-v7l68k]
+    branches: [main]
   workflow_dispatch: {}
 
 permissions:
@@ -33,8 +33,13 @@ jobs:
           use-dotnet: false
           include-templates: true
 
+      # Os erros "texture_2d_get" da importação sem tela são inofensivos; o
+      # código de saída continua 0.
       - name: Importar projeto
-        run: godot --headless --import || true
+        run: godot --headless --import
+
+      - name: Testes
+        run: tests/rodar.sh godot
 
       - name: Exportar para web
         run: |

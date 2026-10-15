@@ -111,6 +111,52 @@ body {
 	line-height: 1.3;
 	text-align: center;
 }
+/* Celular deitado: o jogo é em pé (720 de largura). Pede para girar. A
+   proporção mínima evita cobrir a tela quando o teclado virtual encolhe a
+   área visível do celular em pé. */
+#gire {
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+	background-color: #000;
+	color: #e8e2d4;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	text-align: center;
+}
+
+#gire-aparelho {
+	width: 2.6rem;
+	height: 4.4rem;
+	border: 3px solid #c9a054;
+	border-radius: 0.5rem;
+	animation: gira 2s ease-in-out infinite;
+}
+
+#gire-texto {
+	font-size: 1.2rem;
+}
+
+#gire-nota {
+	color: rgba(232, 226, 212, 0.7);
+	font-size: 0.9rem;
+}
+
+@keyframes gira {
+	0%, 20% { transform: rotate(-90deg); }
+	60%, 100% { transform: rotate(0deg); }
+}
+
+@media (orientation: landscape) and (max-height: 600px) and (min-aspect-ratio: 4/3) {
+	#gire {
+		display: flex;
+	}
+}
 		</style>
 		$GODOT_HEAD_INCLUDE
 	</head>
@@ -128,6 +174,12 @@ body {
 			<div id="status-barra" class="indeterminada"><div id="status-preenche"></div></div>
 			<div id="status-etapa"></div>
 			<div id="status-aviso"></div>
+		</div>
+
+		<div id="gire" aria-live="polite">
+			<div id="gire-aparelho"></div>
+			<div id="gire-texto">Gire o aparelho</div>
+			<div id="gire-nota">O jogo é jogado com o celular em pé.</div>
 		</div>
 
 		<script>

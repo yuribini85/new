@@ -11,7 +11,8 @@ static var volume := 0.7
 static var reduzir_animacoes := false
 ## Efeitos leves: 3D sem suavização de bordas, sombras, neblina e faíscas
 ## (aparelhos mais fracos). Vale para as cenas 3D criadas depois da troca.
-static var efeitos_leves := false
+## Na web começa ligado (celulares fracos) até o jogador escolher.
+static var efeitos_leves := OS.has_feature("web")
 ## Limita a 30 quadros por segundo (economiza bateria).
 static var limitar_fps := false
 ## Janela do resultado fecha sozinha (30 s); a caixa na própria janela muda.

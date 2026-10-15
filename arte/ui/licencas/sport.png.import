@@ -15,9 +15,9 @@ dest_files=["res://.godot/imported/sport.png-d604fbac3b9af8fffb1e256c1dcb97eb.ct
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.8
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
