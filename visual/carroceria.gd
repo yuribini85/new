@@ -43,7 +43,7 @@ static func formas() -> Dictionary:
 const ATIVOS: Array[String] = ["kanaya_kestrel"]
 const LIBERADOS := {
 	"classico": ["cupe", "compacto", "seda", "picape"],
-	"setenta": ["picape"],
+	"setenta": ["cupe", "compacto", "seda", "picape"],
 	"oitenta": ["cupe", "compacto", "seda", "picape"],
 	"noventa": ["cupe", "compacto", "seda", "picape"],
 	"moderno": ["picape"],
