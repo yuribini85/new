@@ -98,7 +98,9 @@ e na escala dos antigos sprites isométricos.
 
 Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 `visual/carroceria.gd`. **Por enquanto só vale para os ids de `Carroceria.ATIVOS`**
-(hoje só o Kanaya Kestrel, aprovado; os outros usam os GLB). O usuário aprova um carro por vez; ao aprovar, o
+e das épocas/categorias de `Carroceria.LIBERADOS` (hoje: o Kanaya Kestrel, aprovado
+como piloto, e cupê, compacto e sedã dos anos 80 e 90, liberados pela folha da frota; o
+resto usa os GLB). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por

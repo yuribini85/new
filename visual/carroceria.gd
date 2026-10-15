@@ -36,15 +36,30 @@ static func formas() -> Dictionary:
 
 
 ## Carros em que o gerado substitui o GLB (pedido do usuário: melhorar um
-## carro até ele aprovar, só depois aplicar em todos). Vazia: o jogo usa os
-## GLB como antes. Testes e ferramentas trocam `ativos` em tempo de execução.
+## carro até ele aprovar, só depois aplicar em todos; decisão 91): os ids
+## aprovados um a um e as épocas/categorias liberadas depois da folha da frota.
+## O resto usa os GLB. Testes e ferramentas trocam `ativos` e `regras` em
+## tempo de execução.
 const ATIVOS: Array[String] = ["kanaya_kestrel"]
+const LIBERADOS := {
+	"oitenta": ["cupe", "compacto", "seda"],
+	"noventa": ["cupe", "compacto", "seda"],
+}
 static var ativos: Array = ATIVOS.duplicate()
+static var regras: Dictionary = LIBERADOS.duplicate(true)
 
 
-## O carro usa o gerado no jogo (tem forma e está nos ativos).
+## O carro usa o gerado no jogo (tem forma e está nos ativos ou na época e
+## categoria liberadas).
 static func tem(id: String) -> bool:
-	return id in ativos and tem_forma(id)
+	if not tem_forma(id):
+		return false
+	if id in ativos:
+		return true
+	if regras.is_empty():
+		return false
+	var ctx := contexto(_dados_do_carro(id, {}), "")
+	return ctx["cat"] in regras.get(ctx["era"], [])
 
 
 ## Há forma exportada para o carro (formas.json), ativo ou não.

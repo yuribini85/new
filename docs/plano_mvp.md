@@ -771,7 +771,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     - Processo pedido pelo usuário: melhorar um carro feio até aprovar e só depois todos.
       Carro piloto: Kanaya Kestrel, aprovado na versão com proporções da época (capô
       longo, estufa baixa, cunha), detalhes dos anos 80 e rodas rentes
-      (`docs/carros_3d.md`). O gerado só substitui o GLB dos ids em `Carroceria.ATIVOS`.
+      (`docs/carros_3d.md`). O gerado só substitui o GLB dos ids em `Carroceria.ATIVOS`
+      e das épocas/categorias em `Carroceria.LIBERADOS`.
+    - Folha da frota (recomendação aceita): liberados cupê, compacto e sedã dos anos 80 e
+      90. Próximos pilotos: um cupê clássico dos anos 60 (linguagem própria da época) e
+      uma picape; os pesados ficam no GLB até terem o seu.
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").

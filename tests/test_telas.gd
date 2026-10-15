@@ -432,9 +432,14 @@ func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
 	verificar(CarroBloco.tem_glb("hozuki_catana"), "o Hozuki Catana tem GLB")
 	verificar(CarroBloco.tem_modelo("hozuki_catana"), "e modelo 3D")
 	verificar(not CarroBloco.tem_modelo("carro_sem_modelo"), "sem forma nem arquivo, sem modelo")
-	# Só os aprovados pelo usuário usam o gerado (um por vez; decisão 91).
+	# Só os aprovados pelo usuário usam o gerado (decisão 91): ids um a um e
+	# épocas/categorias liberadas.
 	igual(Carroceria.ATIVOS, ["kanaya_kestrel"], "ativos: os carros aprovados")
-	verificar(not Carroceria.tem("hozuki_catana"), "carro não aprovado fica no GLB")
+	verificar(Carroceria.tem("hozuki_catana"), "cupê de 1990: época liberada, gerado")
+	verificar(Carroceria.tem("kanaya_kestrel"), "Kestrel aprovado: gerado")
+	var regras_antes := Carroceria.regras
+	Carroceria.regras = {}
+	verificar(not Carroceria.tem("hozuki_catana"), "sem a regra, fica no GLB")
 	# Fora dos ativos, o GLB de sempre.
 	var g := CarroBloco.new().configurar_modelo({"id": "hozuki_catana", "categoria": "cupe"}, Color.RED)
 	verificar(g._modelo != null and not g._modelo.has_node("Carroceria"), "fora dos ativos, o GLB")
@@ -463,6 +468,7 @@ func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
 	verificar(c._protecao_raiz != null and c._protecao_raiz.get_parent() == c._modelo, "a blindagem vai no mesmo eixo do modelo")
 	c.free()
 	Carroceria.ativos = antes
+	Carroceria.regras = regras_antes
 
 
 ## Gerador (Carroceria): formas.json cobre todos os carros do jogo, cada um
