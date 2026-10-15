@@ -432,7 +432,9 @@ func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
 	verificar(CarroBloco.tem_glb("hozuki_catana"), "o Hozuki Catana tem GLB")
 	verificar(CarroBloco.tem_modelo("hozuki_catana"), "e modelo 3D")
 	verificar(not CarroBloco.tem_modelo("carro_sem_modelo"), "sem forma nem arquivo, sem modelo")
-	igual(Carroceria.ATIVOS, [], "por padrão nenhum carro usa o gerado (um por vez, com aprovação)")
+	# Só os aprovados pelo usuário usam o gerado (um por vez; decisão 91).
+	igual(Carroceria.ATIVOS, ["kanaya_kestrel"], "ativos: os carros aprovados")
+	verificar(not Carroceria.tem("hozuki_catana"), "carro não aprovado fica no GLB")
 	# Fora dos ativos, o GLB de sempre.
 	var g := CarroBloco.new().configurar_modelo({"id": "hozuki_catana", "categoria": "cupe"}, Color.RED)
 	verificar(g._modelo != null and not g._modelo.has_node("Carroceria"), "fora dos ativos, o GLB")

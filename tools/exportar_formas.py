@@ -44,6 +44,8 @@ def forma(info: dict) -> dict:
     for k in LISTAS:
         f[k] = arred(info[k])
     f["rodas"] = [[w["name"]] + arred(w["position"]) for w in info["wheel_mounts"]]
+    if info.get("doors") in (2, 4):
+        f["doors"] = int(info["doors"])  # 2 portas: coluna B no fim da porta
     return f
 
 
@@ -102,7 +104,7 @@ def checar() -> int:
             erros.append(f"{id_}: rodas devem incluir {sorted(RODAS)} (nomes Mount_*)")
         if len(f.get("rows", [])) < 3:
             erros.append(f"{id_}: poucas seções")
-        extras = set(f) - set(ESCALARES + LISTAS + ["rodas"])
+        extras = set(f) - set(ESCALARES + LISTAS + ["rodas", "doors"])
         if extras:
             erros.append(f"{id_}: campos fora do gerador {sorted(extras)}")
     for id_ in set(carros) - set(ids):

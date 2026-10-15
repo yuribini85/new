@@ -98,7 +98,7 @@ e na escala dos antigos sprites isométricos.
 
 Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 `visual/carroceria.gd`. **Por enquanto só vale para os ids de `Carroceria.ATIVOS`**
-(vazia: o jogo usa os GLB como sempre). O usuário aprova um carro por vez; ao aprovar, o
+(hoje só o Kanaya Kestrel, aprovado; os outros usam os GLB). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
@@ -112,6 +112,20 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   do fabricante (`data/fabricantes.json`). Uma função por parte, para iterar um carro:
   `_secoes`/`_loft` (lataria), `_caixas_de_roda`, `_cabine`, `_frente`, `_traseira`,
   `_lateral`, `_cacamba`, `_aerofolio`, `_pincas`; as rodas são de `Rodas`.
+- **Proporções (`proporcoes`, aprovadas no Kanaya Kestrel):** a forma exportada é
+  corrigida pela época antes do desenho (`forma_final`, guardada por id). Para-brisa
+  atrás do eixo dianteiro (20% do entre-eixos no cupê, 10% no sedã; o compacto mantém o
+  da forma); estufa baixa de teto reto (até 0,42 m no esportivo, 0,47 no normal, 0,5 no
+  compacto); teto curto no cupê, longo no sedã e até perto da traseira no compacto; anos
+  70/80 com laterais chapadas, cintura reta e capô em cunha (que não desce abaixo do
+  pneu); coluna B no fim da porta nos de 2 portas (`doors` em formas.json); rodas até
+  4 cm mais para fora, rentes ao para-lama; o para-lama sobe o necessário para cobrir o
+  pneu. Picapes, utilitários e pesados mantêm a estufa da forma.
+- **Linguagem dos anos 80 (esportivo):** faróis escamoteáveis no capô, grade fina,
+  para-choque alto com piscas e tomada de ar, painel traseiro preto de ponta a ponta com
+  lanterna, pisca e ré, aba traseira no lugar do aerofólio, friso de borracha na porta.
+  A partir dos 80, molduras e colunas da estufa pretas. Todos: forro escuro dentro da
+  estufa, retrovisor preso na porta.
 - **Mesmo eixo dos GLB:** frente em +Z, chão em y = 0, rodas `Mount_*` com o centro no
   eixo e giro em X. Blindagem (`<id>_protecao.glb`), giro, sombra, dano e fogo da arena
   funcionam igual.

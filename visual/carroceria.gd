@@ -19,6 +19,8 @@ static var _formas := {}
 static var _lidas := false
 ## id -> ArrayMesh da carroceria (sem rodas).
 static var _corpos := {}
+## id -> forma com as proporções da época aplicadas (proporcoes()).
+static var _finais := {}
 ## Escola (jp, de, us...) por fabricante, de data/fabricantes.json.
 static var _escolas := {}
 
@@ -36,7 +38,7 @@ static func formas() -> Dictionary:
 ## Carros em que o gerado substitui o GLB (pedido do usuário: melhorar um
 ## carro até ele aprovar, só depois aplicar em todos). Vazia: o jogo usa os
 ## GLB como antes. Testes e ferramentas trocam `ativos` em tempo de execução.
-const ATIVOS: Array[String] = []
+const ATIVOS: Array[String] = ["kanaya_kestrel"]
 static var ativos: Array = ATIVOS.duplicate()
 
 
@@ -82,6 +84,7 @@ static func _passo() -> void:
 ## Esquece as malhas guardadas (testes de tempo).
 static func limpar_cache() -> void:
 	_corpos.clear()
+	_finais.clear()
 
 
 static func em_cache(id: String) -> bool:
@@ -121,11 +124,10 @@ static func escola(fabricante: String) -> String:
 static func corpo(id: String, base: Dictionary = {}) -> ArrayMesh:
 	if _corpos.has(id):
 		return _corpos[id]
-	var f := forma(id)
+	var f := forma_final(id, base)
 	if f.is_empty():
 		return null
-	var carro := _dados_do_carro(id, base)
-	var ctx := contexto(carro, escola(String(carro.get("fabricante", ""))))
+	var ctx: Dictionary = f["ctx"]
 	var m := MontagemMalha.new()
 	_montar(m, f, ctx)
 	var malha := m.malha()
@@ -139,7 +141,7 @@ static func construir(id: String, base: Dictionary, cor: Color, faixas: Dictiona
 	var malha := corpo(id, base)
 	if malha == null:
 		return null
-	var f := forma(id)
+	var f := forma_final(id, base)
 	var raiz := Node3D.new()
 	raiz.name = "Gerado"
 	var mi := MeshInstance3D.new()
@@ -164,6 +166,95 @@ static func construir(id: String, base: Dictionary, cor: Color, faixas: Dictiona
 		roda.set_meta("raio", r)
 		raiz.add_child(roda)
 	return raiz
+
+
+## A forma do carro com as proporções da época (guardada por id).
+static func forma_final(id: String, base: Dictionary = {}) -> Dictionary:
+	if _finais.has(id):
+		return _finais[id]
+	var f0 := forma(id)
+	if f0.is_empty():
+		return {}
+	var carro := _dados_do_carro(id, base)
+	var ctx := contexto(carro, escola(String(carro.get("fabricante", ""))))
+	var f := proporcoes(f0, ctx)
+	f["ctx"] = ctx
+	_finais[id] = f
+	return f
+
+
+## Proporções pela linguagem da época (aprovadas no Kestrel): para-brisa atrás
+## do eixo dianteiro (capô longo), estufa baixa de teto reto, laterais chapadas
+## e cintura reta nos anos 70/80, rodas rentes ao para-lama e, nos de 2
+## portas, a coluna B no fim da porta. Picapes, utilitários e pesados ficam
+## como a forma exportada (só as rodas rentes).
+static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
+	var f := f0.duplicate(true)
+	var rows: Array = f["rows"]
+	if not ctx["cat"] in ["picape", "utilitario", "pesado"]:
+		var axf: float = f["axles"][0]
+		var axr: float = f["axles"][1]
+		var eixos: float = axf - axr
+		var reto: bool = ctx["era"] in ["setenta", "oitenta"]
+		if reto:
+			for i in rows.size():
+				var ponta := 0.45 if (i == 0 or i == rows.size() - 1) else 0.75
+				rows[i][1] = lerpf(float(rows[i][1]), float(f["W"]) * 0.5 * 0.97, ponta)
+		# capô: longo no cupê, médio no sedã; o compacto fica com o da forma
+		var recuo: float = {"cupe": 0.2, "seda": 0.1}.get(ctx["cat"], -1.0)
+		var zf: float = minf(float(f["wind"]), axf - eixos * recuo) if recuo >= 0.0 else float(f["wind"])
+		if reto:
+			# cintura reta da traseira ao pé do para-brisa; capô em cunha contínua
+			var zt0: float = float(f["back"])
+			var cowl := 0.0
+			for r in rows:
+				if float(r[0]) >= zt0 and float(r[0]) <= float(f["wind"]) + 0.25:
+					cowl = maxf(cowl, float(r[2]))
+			var nariz: float = rows[-1][2]
+			var pneu: float = float(f["r"]) * 2.0 + 0.13  # o capô não desce abaixo do pneu
+			for r in rows:
+				var z: float = r[0]
+				if z >= zf:
+					var cunha: float = lerpf(cowl, nariz, (z - zf) / maxf(float(rows[-1][0]) - zf, 0.01))
+					if absf(z - axf) < float(f["r"]) * 1.6:
+						cunha = maxf(cunha, minf(float(r[2]), pneu))
+					r[2] = cunha
+				elif z >= zt0:
+					r[2] = cowl
+		f["wind"] = zf
+		var cintura: float = _curva(rows, zf).y
+		var altura := 0.0
+		var larg := 0.0
+		for r in f["roof"]:
+			altura = maxf(altura, float(r[2]))
+			larg = maxf(larg, float(r[1]))
+		var compacto: bool = ctx["cat"] == "compacto"
+		var h: float = minf(altura - cintura, 0.42 if ctx["esportivo"] else (0.5 if compacto else 0.47))
+		var yt: float = cintura + h
+		var zr0: float = zf - h * (1.5 if ctx["esportivo"] else (1.0 if compacto else 1.15))
+		var zt: float = float(f["back"])
+		# teto: curto no cupê, longo no sedã; no compacto vai até perto da traseira
+		var zr1: float = zr0 - (0.95 if ctx["cat"] == "cupe" else 1.25)
+		if compacto:
+			zr1 = minf(zr0 - 0.6, zt + 0.3)
+		var yb: float = _curva(rows, zt).y
+		f["roof"] = [
+			[lerpf(zt, zr1, 0.5), larg * 0.9, lerpf(yb, yt, 0.55)],
+			[zr1, larg * 0.95, yt - 0.01],
+			[lerpf(zr1, zr0, 0.5), larg, yt + 0.008],
+			[zr0, larg * 0.97, yt - 0.005],
+			[lerpf(zr0, zf, 0.5), larg * 0.88, lerpf(yt, cintura, 0.5)],
+		]
+		f["vidro_frente"] = zr0 + 0.04
+		f["vidro_tras"] = zr1 - 0.04
+		if int(f.get("doors", 4)) == 2:
+			f["coluna_b"] = float(f.get("zb", 0.0)) + 0.05
+	# rodas rentes ao para-lama (a face do pneu quase no alinhamento da lataria)
+	for w in f["rodas"]:
+		var borda: float = _curva(rows, float(w[3])).x + _alarga(f, float(w[3])) - 0.03 - float(f["r"]) * 0.31
+		# no máximo 4 cm para fora: nos de bico baixo o pneu furava o para-lama
+		w[1] = signf(float(w[1])) * clampf(borda, absf(float(w[1])), absf(float(w[1])) + 0.04)
+	return f
 
 
 # ------------------------------------------------------------------ forma
@@ -203,7 +294,14 @@ static func _alarga(f: Dictionary, z: float) -> float:
 static func _perfil(w: float, topo: float, f: Dictionary, z: float, ctx: Dictionary) -> PackedVector2Array:
 	var low: float = f["low"]
 	var lo: float = f["lo"]
-	var hi: float = minf(f["hi"], topo - 0.05)
+	# o para-lama cobre o pneu: perto dos eixos a lataria sobe até passar da roda
+	var r: float = f["r"]
+	var perto := 0.0
+	for ax in f["axles"]:
+		var d: float = (z - float(ax)) / (r * 1.5)
+		perto = maxf(perto, exp(-d * d * 2.0))
+	topo = maxf(topo, lerpf(topo, r * 2.0 + 0.11, perto))
+	var hi: float = maxf(minf(f["hi"], topo - 0.05), lerpf(0.0, r * 2.0 + 0.03, perto))
 	var wf := w + _alarga(f, z)
 	var reto: bool = ctx["era"] in ["setenta", "oitenta"] or ctx["cat"] in ["utilitario", "picape", "pesado"]
 	var p := PackedVector2Array()
@@ -245,7 +343,9 @@ static func _montar(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	_lateral(m, f, ctx)
 	if ctx["cat"] == "picape":
 		_cacamba(m, f)
-	if ctx["esportivo"] and ctx["era"] in ["setenta", "oitenta", "noventa"]:
+	if ctx["esportivo"] and ctx["era"] == "oitenta":
+		_aba_traseira(m, f)
+	elif ctx["esportivo"] and ctx["era"] in ["setenta", "noventa"]:
 		_aerofolio(m, f)
 	_pincas(m, f)
 
@@ -328,7 +428,7 @@ static func _caixas_de_roda(m: MontagemMalha, f: Dictionary) -> void:
 		var arco: float = minf(float(f["hi"]), topo - 0.05) - 0.03
 		var raio := clampf(arco - (float(w[2]) + 0.02) - 0.015, r * 1.02, r * 1.16)
 		m.cilindro("interno", raio, 0.34, 12,
-				MontagemMalha.xf(Vector3(x - signf(x) * 0.12, float(w[2]) + 0.02, float(w[3])), Vector3(0, 0, PI / 2)))
+				MontagemMalha.xf(Vector3(x - signf(x) * 0.19, float(w[2]) + 0.02, float(w[3])), Vector3(0, 0, PI / 2)))
 
 
 static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
@@ -343,6 +443,10 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	var cima := [[zt, bt.x * 0.84, bt.y]] + roof + [[zf, bf.x * 0.84, bf.y]]
 	cima.sort_custom(func(a, b): return a[0] < b[0])
 	var friso := "cromo" if ctx["era"] in ["classico", "setenta"] else "preto"
+	# molduras e colunas pretas a partir dos anos 80
+	var moldura: String = "preto" if ctx["era"] in ["oitenta", "noventa", "moderno"] else MontagemMalha.PINTURA
+	var vf: float = float(f.get("vidro_frente", 99.0))
+	var vt: float = float(f.get("vidro_tras", -99.0))
 	var n := 16
 	var secs := []
 	for i in n:
@@ -351,29 +455,35 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 		var base := _curva(rows, z)
 		var top := _curva(cima, z)
 		var yb: float = base.y + 0.004
-		var wb: float = base.x * 0.84
+		var wb: float = base.x * 0.8
 		var yt: float = maxf(top.y, yb + 0.01)
-		var wt: float = minf(top.x, wb)
+		var wt: float = minf(top.x * 0.9, wb * 0.86)  # vidro inclinado para dentro
 		var meio := 0.62
 		secs.append([Vector3(wb, yb, z), Vector3(lerpf(wb, wt, 0.08), lerpf(yb, yt, 0.08), z),
 				Vector3(lerpf(wb, wt, meio + 0.3), lerpf(yb, yt, meio + 0.3), z), Vector3(wt, yt, z),
 				Vector3(wt * 0.5, yt + 0.022, z), Vector3(0, yt + 0.028, z)])
-	var zb_col: float = (float(f.get("za", 0.0)) + float(f.get("zb", 0.0))) * 0.5
+	var zb_col: float = float(f.get("coluna_b", (float(f.get("za", 0.0)) + float(f.get("zb", 0.0))) * 0.5))
 	for lado in [1.0, -1.0]:
 		for i in n - 1:
 			var a: Array = secs[i]
 			var b: Array = secs[i + 1]
 			var zm: float = (a[0].z + b[0].z) * 0.5
 			var u: float = (zm - zt) / maxf(zf - zt, 0.01)
-			var coluna: bool = u < 0.07 or u > 0.93 or (ctx["cat"] != "picape" and absf(zm - zb_col) < 0.045 and u > 0.25 and u < 0.8)
+			var col_c: bool = u < 0.07
+			var col_a: bool = u > 0.94
+			var col_b: bool = ctx["cat"] != "picape" and absf(zm - zb_col) < 0.05 and u > 0.12 and u < 0.8
 			for k in 5:
 				var estilo: String
 				if k == 0:
 					estilo = friso  # moldura de baixo da janela
 				elif k == 1:
-					estilo = MontagemMalha.PINTURA if coluna else "vidro"
+					estilo = moldura if (col_a or col_b or col_c) else "vidro"
+				elif k == 2:
+					estilo = moldura  # moldura de cima da janela
 				else:
 					estilo = MontagemMalha.PINTURA
+				if k >= 3 and (zm > vf or zm < vt):
+					estilo = "vidro"  # para-brisa e vigia inclinados
 				_quad(m, estilo, [_espelho(a[k], lado), _espelho(a[k + 1], lado), _espelho(b[k], lado),
 						_espelho(b[k + 1], lado)], lado)
 		# para-brisa e vigia: vidro emoldurado
@@ -385,11 +495,19 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 				var p1 := _espelho(a[k + 1], lado)
 				var p0i := p0.lerp(c, 0.12)
 				var p1i := p1.lerp(c, 0.12)
-				for par in [[c, p0i, p1i, "vidro"], [p0i, p0, p1, MontagemMalha.PINTURA], [p0i, p1, p1i, MontagemMalha.PINTURA]]:
+				for par in [[c, p0i, p1i, "vidro"], [p0i, p0, p1, moldura], [p0i, p1, p1i, moldura]]:
 					if (s == 0) == (lado > 0):
 						m.tri(par[3], par[0], par[1], par[2])
 					else:
 						m.tri(par[3], par[0], par[2], par[1])
+		# forro escuro por dentro da estufa: as frestas mostram o interior, não o fundo
+		for i in n - 1:
+			for k in 5:
+				var q := []
+				for p in [secs[i][k], secs[i][k + 1], secs[i + 1][k], secs[i + 1][k + 1]]:
+					q.append(Vector3(p.x * 0.93 * lado, p.y - 0.012, p.z))
+				m.tri("interno", q[0], q[2], q[3])
+				m.tri("interno", q[0], q[3], q[1])
 
 
 static func _caixa(m: MontagemMalha, estilo: String, tam: Vector3, pos: Vector3, rot := Vector3.ZERO) -> void:
@@ -441,8 +559,12 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 					_redondo(m, raio, Vector3(lado * w * 0.62, yl, z), "cromo", "farol")
 			"oitenta":
 				if ctx["esportivo"]:
-					# farol escamoteável fechado: só a fresta
-					_caixa(m, "preto", Vector3(w * 0.36, 0.012, 0.02), Vector3(lado * w * 0.58, topo - 0.02, z - 0.06))
+					# farol escamoteável fechado: a tampa no capô, com a fresta em volta
+					var zc: float = z - 0.17
+					var yc: float = _curva(f["rows"], zc).y
+					var incl: float = atan2(yc - _curva(f["rows"], zc + 0.1).y, 0.1)
+					_caixa(m, "preto", Vector3(w * 0.4, 0.012, 0.25), Vector3(lado * w * 0.56, yc + 0.006, zc), Vector3(incl, 0, 0))
+					_caixa(m, MontagemMalha.PINTURA, Vector3(w * 0.37, 0.02, 0.225), Vector3(lado * w * 0.56, yc + 0.012, zc), Vector3(incl, 0, 0))
 				else:
 					_caixa(m, "farol", Vector3(w * 0.42, 0.1, 0.03), Vector3(lado * w * 0.56, yl, z))
 					_caixa(m, "preto", Vector3(w * 0.4, 0.105, 0.025), Vector3(lado * w * 0.56, yl, z - 0.01))
@@ -451,8 +573,9 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 			"moderno":
 				_caixa(m, "farol", Vector3(w * 0.42, 0.035, 0.03), Vector3(lado * w * 0.6, yl + 0.03, z))
 				_caixa(m, "preto", Vector3(w * 0.42, 0.06, 0.025), Vector3(lado * w * 0.6, yl + 0.01, z - 0.01))
-		# seta
-		_caixa(m, "seta", Vector3(0.06, 0.03, 0.02), Vector3(lado * w * 0.86, lerpf(lo, yl, 0.4), z - 0.01))
+		# seta (nos anos 80 fica no para-choque)
+		if era != "oitenta":
+			_caixa(m, "seta", Vector3(0.06, 0.03, 0.02), Vector3(lado * w * 0.86, lerpf(lo, yl, 0.4), z - 0.01))
 	# grade
 	var gw: float = w * (0.9 if esc == "us" else (0.55 if esc in ["de", "uk"] else 0.75))
 	var gh: float = clampf((yl - lo) * 0.9, 0.05, 0.14)
@@ -460,6 +583,10 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 		_caixa(m, "cromo", Vector3(gw * 2.0, gh, 0.03), Vector3(0, lerpf(lo, yl, 0.5), z))
 		for k in 7:
 			_caixa(m, "preto", Vector3(gw * 2.0 - 0.04, 0.008, 0.035), Vector3(0, lerpf(lo, yl, 0.5) - gh * 0.4 + gh * 0.8 * k / 6.0, z + 0.002))
+	elif era == "oitenta" and ctx["esportivo"]:
+		# grade fina entre os faróis escamoteáveis
+		_caixa(m, "preto", Vector3(w * 1.3, 0.025, 0.03), Vector3(0, yl, z))
+		_caixa(m, "preto", Vector3(w * 1.3, 0.025, 0.03), Vector3(0, yl - 0.045, z))
 	elif era != "moderno" or not ctx["esportivo"]:
 		_caixa(m, "preto", Vector3(gw * (0.9 if era in ["oitenta", "noventa"] else 1.0), gh * 0.7, 0.03), Vector3(0, lerpf(lo, yl, 0.5), z))
 		if era in ["classico", "setenta"]:
@@ -475,8 +602,15 @@ static func _parachoque(m: MontagemMalha, f: Dictionary, w: float, z: float, fre
 	match String(ctx["era"]):
 		"classico":
 			_caixa(m, "cromo", Vector3(w * 2.05, 0.07, 0.07), Vector3(0, y, z + frente * 0.02))
-		"setenta", "oitenta":
+		"setenta":
 			_caixa(m, "borracha", Vector3(w * 2.04, 0.09, 0.09), Vector3(0, y, z + frente * 0.02))
+		"oitenta":
+			_caixa(m, "borracha", Vector3(w * 2.02, 0.1, 0.11), Vector3(0, y + 0.02, z + frente * 0.015))
+			_caixa(m, "preto", Vector3(w * 1.7, 0.045, 0.06), Vector3(0, low + 0.025, z - frente * 0.02))
+			if frente > 0:
+				_caixa(m, "interno", Vector3(w * 1.1, 0.03, 0.02), Vector3(0, y + 0.01, z + 0.07))  # tomada de ar
+				for lado in [1.0, -1.0]:
+					_caixa(m, "seta", Vector3(w * 0.22, 0.035, 0.02), Vector3(lado * w * 0.78, y + 0.03, z + 0.07))
 		_:
 			_caixa(m, "preto", Vector3(w * 1.7, 0.05, 0.05), Vector3(0, low + 0.03, z - frente * 0.02))
 
@@ -496,14 +630,15 @@ static func _traseira(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictiona
 			"setenta":
 				_caixa(m, "lanterna", Vector3(w * 0.34, 0.1, 0.03), Vector3(lado * w * 0.6, yl, z))
 			"oitenta":
-				_caixa(m, "lanterna", Vector3(w * 0.62, 0.085, 0.03), Vector3(lado * w * 0.5, yl, z))
-				_caixa(m, "preto", Vector3(w * 0.64, 0.1, 0.02), Vector3(lado * w * 0.5, yl, z + 0.008))
+				_caixa(m, "lanterna", Vector3(w * 0.5, 0.075, 0.03), Vector3(lado * w * 0.62, yl, z - 0.006))
+				_caixa(m, "seta", Vector3(w * 0.12, 0.075, 0.03), Vector3(lado * w * 0.3, yl, z - 0.006))
+				_caixa(m, "re", Vector3(w * 0.1, 0.075, 0.03), Vector3(lado * w * 0.17, yl, z - 0.006))
 			"noventa":
 				_lente(m, "lanterna", Vector3(w * 0.36, 0.08, 0.05), Vector3(lado * w * 0.62, yl, z + 0.01))
 			"moderno":
 				_caixa(m, "lanterna", Vector3(w * 0.46, 0.03, 0.03), Vector3(lado * w * 0.58, yl + 0.02, z))
 	if era == "oitenta":
-		_caixa(m, "preto", Vector3(w * 0.4, 0.06, 0.03), Vector3(0, yl, z))
+		_caixa(m, "preto", Vector3(w * 1.92, 0.11, 0.025), Vector3(0, yl, z))  # painel de ponta a ponta
 	_caixa(m, "placa", Vector3(0.32, 0.1, 0.012), Vector3(0, lerpf(lo, yl, 0.35), z - 0.008))
 	if ctx["esportivo"]:
 		for lado in [1.0, -1.0]:
@@ -517,9 +652,24 @@ static func _lateral(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	var b := _curva(rows, zw - 0.14)
 	var classico: bool = ctx["era"] in ["classico", "setenta"]
 	for lado in [1.0, -1.0]:
-		# retrovisor e haste
-		_lente(m, "preto", Vector3(0.05, 0.07, 0.12), Vector3(lado * (b.x * 0.86 + 0.07), b.y + 0.07, zw - 0.16))
-		_caixa(m, "preto", Vector3(0.06, 0.02, 0.03), Vector3(lado * (b.x * 0.86 + 0.03), b.y + 0.05, zw - 0.16))
+		# retrovisor preso na porta: base, haste e espelho
+		var xb: float = b.x * 0.9
+		_caixa(m, "preto", Vector3(0.03, 0.05, 0.12), Vector3(lado * (xb + 0.01), b.y + 0.025, zw - 0.12))
+		_caixa(m, "preto", Vector3(0.07, 0.018, 0.035), Vector3(lado * (xb + 0.05), b.y + 0.05, zw - 0.13))
+		_caixa(m, "preto", Vector3(0.045, 0.065, 0.11), Vector3(lado * (xb + 0.095), b.y + 0.065, zw - 0.13), Vector3(0, lado * 0.2, 0))
+	# saia preta entre as rodas (80/90) e friso de borracha na porta (80)
+	if ctx["era"] in ["oitenta", "noventa"]:
+		var axs: Array = f["axles"].duplicate()
+		axs.sort()
+		var zs0: float = float(axs[0]) + float(f["r"]) * 1.25
+		var zs1: float = float(axs[1]) - float(f["r"]) * 1.25
+		var zm: float = (zs0 + zs1) * 0.5
+		var cs := _curva(rows, zm)
+		for lado in [1.0, -1.0]:
+			_caixa(m, "preto", Vector3(0.04, 0.07, zs1 - zs0), Vector3(lado * cs.x * 0.95, float(f["low"]) + 0.06, zm))
+			if ctx["era"] == "oitenta":
+				_caixa(m, "borracha", Vector3(0.016, 0.035, zs1 - zs0 - 0.06),
+						Vector3(lado * (cs.x + _alarga(f, zm) + 0.006), lerpf(float(f["lo"]), float(f["hi"]), 0.5), zm))
 	# Trechos da lateral fora das caixas de roda (frisos cromados dos antigos).
 	if classico:
 		var cortes := [float(rows[0][0]) + 0.22]
@@ -564,3 +714,11 @@ static func _aerofolio(m: MontagemMalha, f: Dictionary) -> void:
 	_caixa(m, MontagemMalha.PINTURA, Vector3(c.x * 1.75, 0.025, 0.24), Vector3(0, c.y + 0.13, z), Vector3(-0.08, 0, 0))
 	for lado in [1.0, -1.0]:
 		_caixa(m, "preto", Vector3(0.03, 0.13, 0.08), Vector3(lado * c.x * 0.6, c.y + 0.06, z))
+
+
+## Aba traseira (anos 80): uma lâmina pintada na beira da tampa, levemente erguida.
+static func _aba_traseira(m: MontagemMalha, f: Dictionary) -> void:
+	var rows: Array = f["rows"]
+	var z: float = float(rows[0][0]) + 0.07
+	var c := _curva(rows, z)
+	_caixa(m, MontagemMalha.PINTURA, Vector3(c.x * 1.7, 0.022, 0.16), Vector3(0, c.y + 0.035, z + 0.02), Vector3(0.28, 0, 0))

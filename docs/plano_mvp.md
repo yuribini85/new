@@ -762,3 +762,16 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       sombras e tangentes, `docs/` fora do build, uma meta viewport (área segura do iPhone),
       aviso para girar o aparelho, save ao perder o foco, efeitos leves por padrão no Web,
       inclinação lida a 20 Hz, ícone de 512 px, deploy depois dos testes e só da main.
+91. **Visual dos carros: gerador facetado e rodas trocáveis** (2026-10-15, pedido do
+    usuário: "o maior problema do jogo é a qualidade visual dos carros").
+    - Verniz e reflexo do céu na lataria (`CarroBloco.reflexo`), sombra embaixo.
+    - O gerador de imagens foi descartado. Os carros passam a ser gerados em código no
+      estilo facetado dos pilotos (`visual/carroceria.gd`), com a forma de cada carro
+      (`arte/carros3d/formas.json`) e uma linguagem por época, categoria e escola.
+    - Processo pedido pelo usuário: melhorar um carro feio até aprovar e só depois todos.
+      Carro piloto: Kanaya Kestrel, aprovado na versão com proporções da época (capô
+      longo, estufa baixa, cunha), detalhes dos anos 80 e rodas rentes
+      (`docs/carros_3d.md`). O gerado só substitui o GLB dos ids em `Carroceria.ATIVOS`.
+    - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
+      trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
+      (preço da pintura ainda "a definir").
