@@ -215,8 +215,10 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 			for i in rows.size():
 				var ponta := 0.45 if (i == 0 or i == rows.size() - 1) else 0.75
 				rows[i][1] = lerpf(float(rows[i][1]), float(f["W"]) * 0.5 * 0.97, ponta)
-		# capô: longo no cupê, médio no sedã; o compacto fica com o da forma
-		var recuo: float = {"cupe": 0.2, "seda": 0.1}.get(ctx["cat"], -1.0)
+		var classico: bool = ctx["era"] == "classico"
+		# capô: longo no cupê, médio no sedã (mais longos nos clássicos); o
+		# compacto fica com o da forma
+		var recuo: float = ({"cupe": 0.32, "seda": 0.18} if classico else {"cupe": 0.2, "seda": 0.1}).get(ctx["cat"], -1.0)
 		var zf: float = minf(float(f["wind"]), axf - eixos * recuo) if recuo >= 0.0 else float(f["wind"])
 		if reto:
 			# cintura reta da traseira ao pé do para-brisa; capô em cunha contínua
@@ -236,6 +238,29 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 					r[2] = cunha
 				elif z >= zt0:
 					r[2] = cowl
+		elif classico:
+			# anos 60: cintura reta, capô que só cai perto do bico (arredondado) e
+			# cauda que desce depois do vidro traseiro
+			var zt0: float = float(f["back"])
+			var cowl := 0.0
+			for r in rows:
+				if float(r[0]) >= zt0 and float(r[0]) <= float(f["wind"]) + 0.25:
+					cowl = maxf(cowl, float(r[2]))
+			var nariz: float = rows[-1][2]
+			var cauda: float = rows[0][0]
+			var pneu: float = float(f["r"]) * 2.0 + 0.13
+			for r in rows:
+				var z: float = r[0]
+				if z >= zf:
+					var t: float = (z - zf) / maxf(float(rows[-1][0]) - zf, 0.01)
+					var capo: float = lerpf(cowl, nariz, t * t)
+					if absf(z - axf) < float(f["r"]) * 1.6:
+						capo = maxf(capo, minf(float(r[2]), pneu))
+					r[2] = capo
+				elif z >= zt0:
+					r[2] = cowl
+				else:
+					r[2] = lerpf(cowl, cowl - 0.07, (zt0 - z) / maxf(zt0 - cauda, 0.01))
 		f["wind"] = zf
 		var cintura: float = _curva(rows, zf).y
 		var altura := 0.0
@@ -245,11 +270,13 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 			larg = maxf(larg, float(r[1]))
 		var compacto: bool = ctx["cat"] == "compacto"
 		var h: float = minf(altura - cintura, 0.42 if ctx["esportivo"] else (0.5 if compacto else 0.47))
+		if classico:
+			h = minf(h, 0.4 if ctx["esportivo"] else 0.45)
 		var yt: float = cintura + h
-		var zr0: float = zf - h * (1.5 if ctx["esportivo"] else (1.0 if compacto else 1.15))
+		var zr0: float = zf - h * (1.5 if ctx["esportivo"] and not classico else (1.0 if compacto else (1.3 if classico else 1.15)))
 		var zt: float = float(f["back"])
 		# teto: curto no cupê, longo no sedã; no compacto vai até perto da traseira
-		var zr1: float = zr0 - (0.95 if ctx["cat"] == "cupe" else 1.25)
+		var zr1: float = zr0 - (0.8 if classico and ctx["cat"] == "cupe" else (0.95 if ctx["cat"] == "cupe" else 1.25))
 		if compacto:
 			zr1 = minf(zr0 - 0.6, zt + 0.3)
 		var yb: float = _curva(rows, zt).y
@@ -326,12 +353,15 @@ static func _perfil(w: float, topo: float, f: Dictionary, z: float, ctx: Diction
 	p.append(Vector2(w * 0.96, lerpf(low, lo, 0.55)))  # soleira recuada
 	p.append(Vector2(wf, lo))  # vinco de baixo
 	p.append(Vector2(wf * 1.0, lerpf(lo, hi, 0.5)))
-	p.append(Vector2(wf * (0.995 if reto else 0.985), hi))  # ombro
-	p.append(Vector2(w * (0.975 if reto else 0.95), lerpf(hi, topo, 0.6)))
-	p.append(Vector2(w * (0.94 if reto else 0.86), topo - 0.01))
-	p.append(Vector2(w * 0.66, topo + 0.006))
-	p.append(Vector2(w * 0.33, topo + 0.014))
-	p.append(Vector2(0.0, topo + 0.018))
+	var redondo: bool = ctx["era"] == "classico" and not reto
+	# capô mais baixo que os para-lamas (clássicos), só na frente do para-brisa
+	var vale: float = 0.04 * clampf((z - float(f["wind"]) - 0.05) / 0.3, 0.0, 1.0) if redondo else 0.0
+	p.append(Vector2(wf * (0.995 if reto else (0.97 if redondo else 0.985)), hi))  # ombro
+	p.append(Vector2(w * (0.975 if reto else (0.9 if redondo else 0.95)), lerpf(hi, topo, 0.65 if redondo else 0.6)))
+	p.append(Vector2(w * (0.94 if reto else (0.74 if redondo else 0.86)), topo - 0.01))
+	p.append(Vector2(w * (0.52 if redondo else 0.66), topo + 0.006 - vale * 0.6))
+	p.append(Vector2(w * 0.33, topo + 0.014 - vale))
+	p.append(Vector2(0.0, topo + 0.018 - vale))
 	for ax in f["axles"]:
 		var dz: float = absf(z - float(ax))
 		var R: float = float(f["r"]) * 1.2
@@ -379,7 +409,7 @@ static func _secoes(f: Dictionary, ctx: Dictionary) -> Array:
 		var perf := _perfil(c.x, c.y, f, z, ctx)
 		# pontas: a frente e a traseira se arredondam (mais nos modernos)
 		var ponta := pow(absf(u * 2.0 - 1.0), 10.0)
-		var e := 1.0 - ponta * (0.16 if ctx["era"] in ["setenta", "oitenta", "classico"] else 0.24)
+		var e := 1.0 - ponta * (0.16 if ctx["era"] in ["setenta", "oitenta"] else 0.24)
 		var pts := []
 		for q in perf:
 			var y := q.y
@@ -494,7 +524,7 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 				elif k == 1:
 					estilo = moldura if (col_a or col_b or col_c) else "vidro"
 				elif k == 2:
-					estilo = moldura  # moldura de cima da janela
+					estilo = "cromo" if ctx["era"] == "classico" else moldura  # moldura de cima da janela
 				else:
 					estilo = MontagemMalha.PINTURA
 				if k >= 3 and (zm > vf or zm < vt):
@@ -517,7 +547,7 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 						m.tri(par[3], par[0], par[2], par[1])
 		# forro escuro por dentro da estufa: as frestas mostram o interior, não o fundo
 		for i in n - 1:
-			for k in 5:
+			for k in 3:
 				var q := []
 				for p in [secs[i][k], secs[i][k + 1], secs[i + 1][k], secs[i + 1][k + 1]]:
 					q.append(Vector3(p.x * 0.93 * lado, p.y - 0.012, p.z))
@@ -565,7 +595,12 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 	var esc: String = ctx["escola"]
 	for lado in [1.0, -1.0]:
 		match era:
-			"classico", "setenta":
+			"classico":
+				# faróis redondos grandes nas pontas dos para-lamas
+				var raio: float = clampf(w * 0.2, 0.08, 0.125)
+				var yf: float = clampf(lerpf(lo, topo, 0.72), lo + 0.08, topo - raio * 0.6)
+				_redondo(m, raio, Vector3(lado * w * 0.64, yf, z - 0.01), "cromo", "farol")
+			"setenta":
 				var raio: float = clampf(w * 0.16, 0.07, 0.11)
 				if ctx["cat"] == "seda" and esc in ["de", "uk", "us"] and era == "setenta":
 					for k in 2:
@@ -598,6 +633,13 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 		_caixa(m, "cromo", Vector3(gw * 2.0, gh, 0.03), Vector3(0, lerpf(lo, yl, 0.5), z))
 		for k in 7:
 			_caixa(m, "preto", Vector3(gw * 2.0 - 0.04, 0.008, 0.035), Vector3(0, lerpf(lo, yl, 0.5) - gh * 0.4 + gh * 0.8 * k / 6.0, z + 0.002))
+	elif era == "classico":
+		# grade oval com moldura cromada
+		var yg: float = lerpf(lo, yl, 0.5)
+		_lente(m, "cromo", Vector3(gw * 1.5 + 0.05, gh + 0.04, 0.07), Vector3(0, yg, z - 0.01))
+		_caixa(m, "preto", Vector3(gw * 1.3, gh * 0.8, 0.04), Vector3(0, yg, z + 0.005))
+		for k in 3:
+			_caixa(m, "cromo", Vector3(gw * 1.3, 0.008, 0.02), Vector3(0, yg - gh * 0.25 + gh * 0.25 * k, z + 0.035))
 	elif era == "oitenta" and ctx["esportivo"]:
 		# grade fina entre os faróis escamoteáveis
 		_caixa(m, "preto", Vector3(w * 1.3, 0.025, 0.03), Vector3(0, yl, z))
@@ -616,7 +658,10 @@ static func _parachoque(m: MontagemMalha, f: Dictionary, w: float, z: float, fre
 	var y := low + 0.09
 	match String(ctx["era"]):
 		"classico":
-			_caixa(m, "cromo", Vector3(w * 2.05, 0.07, 0.07), Vector3(0, y, z + frente * 0.02))
+			# lâmina cromada fina com garras
+			_caixa(m, "cromo", Vector3(w * 1.95, 0.05, 0.06), Vector3(0, y, z + frente * 0.025))
+			for lado in [1.0, -1.0]:
+				_caixa(m, "cromo", Vector3(0.035, 0.13, 0.08), Vector3(lado * w * 0.36, y + 0.02, z + frente * 0.035))
 		"setenta":
 			_caixa(m, "borracha", Vector3(w * 2.04, 0.09, 0.09), Vector3(0, y, z + frente * 0.02))
 		"oitenta":
@@ -641,7 +686,8 @@ static func _traseira(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictiona
 	for lado in [1.0, -1.0]:
 		match era:
 			"classico":
-				_redondo(m, 0.05, Vector3(lado * w * 0.66, yl, z), "cromo", "lanterna", -0.012)
+				_redondo(m, 0.06, Vector3(lado * w * 0.66, yl, z), "cromo", "lanterna", -0.012)
+				_caixa(m, "seta", Vector3(0.05, 0.035, 0.02), Vector3(lado * w * 0.42, yl, z - 0.008))
 			"setenta":
 				_caixa(m, "lanterna", Vector3(w * 0.34, 0.1, 0.03), Vector3(lado * w * 0.6, yl, z))
 			"oitenta":
@@ -667,6 +713,13 @@ static func _lateral(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	var b := _curva(rows, zw - 0.14)
 	var classico: bool = ctx["era"] in ["classico", "setenta"]
 	for lado in [1.0, -1.0]:
+		if ctx["era"] == "classico":
+			# retrovisor redondo cromado no para-lama
+			var zm: float = zw + 0.45
+			var bm := _curva(rows, zm)
+			_cilindro(m, "cromo", 0.014, 0.05, Vector3(lado * bm.x * 0.8, bm.y + 0.025, zm), Vector3.ZERO, 6)
+			_cilindro(m, "cromo", 0.045, 0.03, Vector3(lado * bm.x * 0.8, bm.y + 0.075, zm), Vector3(PI / 2, lado * 0.3, 0), 8)
+			continue
 		# retrovisor preso na porta: base, haste e espelho
 		var xb: float = b.x * 0.9
 		_caixa(m, "preto", Vector3(0.03, 0.05, 0.12), Vector3(lado * (xb + 0.01), b.y + 0.025, zw - 0.12))
