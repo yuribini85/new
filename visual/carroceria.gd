@@ -213,7 +213,10 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 	if ctx["cat"] == "picape":
 		_proporcoes_picape(f)
 		rows = f["rows"]
-	elif not ctx["cat"] in ["utilitario", "pesado"]:
+	elif ctx["cat"] == "utilitario":
+		_proporcoes_utilitario(f)
+		rows = f["rows"]
+	elif ctx["cat"] != "pesado":
 		var axf: float = f["axles"][0]
 		var axr: float = f["axles"][1]
 		var eixos: float = axf - axr
@@ -401,6 +404,58 @@ static func _proporcoes_picape(f: Dictionary) -> void:
 	f["zb"] = zt + 0.1
 	f["coluna_b"] = 99.0  # cabine simples: sem coluna no meio
 	f["cacamba"] = [cauda + 0.02, zt - 0.02, cintura]
+	f["lanterna_vertical"] = cintura
+	f["parede_tras"] = true
+
+
+## Utilitário (jipe/SUV, aprovado no Kanaya Chapada): caixote de dois volumes,
+## capô médio e reto, para-brisa quase em pé, teto reto até a traseira, parede
+## de trás reta com vidro, estepe na tampa e rack no teto.
+static func _proporcoes_utilitario(f: Dictionary) -> void:
+	var rows: Array = f["rows"]
+	var axf: float = f["axles"][0]
+	var axr: float = f["axles"][1]
+	var eixos: float = axf - axr
+	var r: float = f["r"]
+	var cintura: float = maxf(_curva(rows, (axf + axr) * 0.5).y, r * 2.0 + 0.3)
+	var zf: float = axf - eixos * 0.15
+	var altura := 0.0
+	var larg := 0.0
+	for p in f["roof"]:
+		altura = maxf(altura, float(p[2]))
+		larg = maxf(larg, float(p[1]))
+	var h: float = clampf(altura - cintura, 0.5, 0.62)
+	var yt: float = cintura + h
+	var zr0: float = zf - h * 0.5
+	var cauda: float = rows[0][0]
+	var bico: float = rows[-1][0]
+	var nariz: float = maxf(float(rows[-1][2]), cintura - 0.1)
+	for i in rows.size():
+		var p: Array = rows[i]
+		var z: float = p[0]
+		var ponta := 0.5 if (i == 0 or i == rows.size() - 1) else 0.8
+		p[1] = lerpf(float(p[1]), float(f["W"]) * 0.5 * 0.97, ponta)  # laterais chapadas
+		if z > zf:
+			var t: float = clampf((z - zf) / maxf(bico - zf, 0.01), 0.0, 1.0)
+			p[2] = lerpf(cintura, nariz, t * t)
+		else:
+			p[2] = cintura
+	f["hi"] = minf(float(f["hi"]), cintura - 0.08)
+	var zt: float = cauda + 0.03
+	f["wind"] = zf
+	f["back"] = zt
+	f["roof"] = [
+		[zt + 0.04, larg * 0.96, yt - 0.01],
+		[lerpf(zt, zr0, 0.3), larg, yt],
+		[lerpf(zt, zr0, 0.7), larg, yt],
+		[zr0, larg * 0.97, yt - 0.01],
+		[lerpf(zr0, zf, 0.5), larg * 0.92, lerpf(yt, cintura, 0.5)],
+	]
+	f["vidro_frente"] = zr0 + 0.04
+	f["lanterna_vertical"] = cintura + 0.12
+	f["parede_tras"] = true
+	f["estepe"] = true
+	f["rack"] = [zr0 - 0.1, zt + 0.15, yt, larg]
 
 
 # ------------------------------------------------------------------ forma
@@ -494,6 +549,8 @@ static func _montar(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 		_cacamba(m, f)
 	if f.has("venezianas"):
 		_venezianas(m, f)
+	if ctx["cat"] == "utilitario":
+		_fora_de_estrada(m, f, secoes)
 	if ctx["esportivo"] and ctx["era"] in ["setenta", "oitenta"]:
 		_aba_traseira(m, f)
 	elif ctx["esportivo"] and ctx["era"] == "noventa":
@@ -601,12 +658,12 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	var roof: Array = f["roof"]
 	var zf: float = f["wind"]
 	var zt: float = f["back"]
-	if ctx["cat"] == "picape":
+	if f.get("parede_tras", false):
 		zt = maxf(zt, float(roof[0][0]) - 0.15)
 	var bf := _curva(rows, zf)
 	var bt := _curva(rows, zt)
 	# picape: a parede de trás da cabine sobe reta até o teto
-	var tras: Array = [zt, roof[0][1], roof[0][2]] if ctx["cat"] == "picape" else [zt, bt.x * 0.84, bt.y]
+	var tras: Array = [zt, roof[0][1], roof[0][2]] if f.get("parede_tras", false) else [zt, bt.x * 0.84, bt.y]
 	var cima := [tras] + roof + [[zf, bf.x * 0.84, bf.y]]
 	cima.sort_custom(func(a, b): return a[0] < b[0])
 	var friso := "cromo" if ctx["era"] in ["classico", "setenta"] else "preto"
@@ -658,7 +715,7 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 			var a: Array = secs[s]
 			var c := Vector3(0, (a[0].y + a[5].y) * 0.5, a[0].z)
 			# picape: a parede de trás da cabine é pintada, com um vidro menor
-			var parede: bool = s == 0 and ctx["cat"] == "picape"
+			var parede: bool = s == 0 and f.get("parede_tras", false)
 			var aperto := 0.35 if parede else 0.12
 			var aro: String = MontagemMalha.PINTURA if parede else moldura
 			if parede and lado > 0:
@@ -731,6 +788,12 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 	var era: String = ctx["era"]
 	var esc: String = ctx["escola"]
 	for lado in [1.0, -1.0]:
+		if ctx["cat"] == "utilitario":
+			# faróis quadrados nas pontas da grade
+			_caixa(m, "preto", Vector3(w * 0.3, 0.15, 0.025), Vector3(lado * w * 0.73, yl, z - 0.002))
+			_caixa(m, "farol", Vector3(w * 0.26, 0.12, 0.03), Vector3(lado * w * 0.73, yl, z + 0.002))
+			_caixa(m, "seta", Vector3(w * 0.12, 0.05, 0.03), Vector3(lado * w * 0.73, yl - 0.11, z + 0.002))
+			continue
 		match era:
 			"classico":
 				# faróis redondos grandes nas pontas dos para-lamas
@@ -767,8 +830,8 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 	# grade
 	var gw: float = w * (0.9 if esc == "us" else (0.55 if esc in ["de", "uk"] else 0.75))
 	var gh: float = clampf((yl - lo) * 0.9, 0.05, 0.14)
-	if ctx["cat"] == "picape":
-		# picape: grade larga entre os faróis, com moldura
+	if ctx["cat"] in ["picape", "utilitario"]:
+		# picape e utilitário: grade larga entre os faróis, com moldura
 		var moldura_g: String = "cromo" if era in ["classico", "setenta", "oitenta"] else "preto"
 		_caixa(m, moldura_g, Vector3(w * 0.74, 0.15, 0.025), Vector3(0, yl, z - 0.002))
 		_caixa(m, "preto", Vector3(w * 0.68, 0.11, 0.03), Vector3(0, yl, z))
@@ -845,8 +908,8 @@ static func _traseira(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictiona
 	var topo: float = fc["topo"]
 	var yl: float = clampf(lerpf(lo, topo, 0.6), lo + 0.05, topo - 0.04)
 	var era: String = ctx["era"]
-	if ctx["cat"] == "picape" and f.has("cacamba"):
-		var topo_c: float = f["cacamba"][2]
+	if f.has("lanterna_vertical"):
+		var topo_c: float = f["lanterna_vertical"]
 		for lado in [1.0, -1.0]:
 			_caixa(m, "lanterna", Vector3(0.07, 0.2, 0.03), Vector3(lado * (w - 0.06), topo_c - 0.16, z - 0.006))
 			_caixa(m, "preto", Vector3(0.08, 0.21, 0.02), Vector3(lado * (w - 0.06), topo_c - 0.16, z + 0.004))
@@ -1011,3 +1074,41 @@ static func _venezianas(m: MontagemMalha, f: Dictionary) -> void:
 	for lado in [1.0, -1.0]:
 		var zc: float = (za + zb) * 0.5
 		_caixa(m, "preto", Vector3(0.025, 0.02, Vector2(za - zb, ya - yb).length()), Vector3(lado * larg * 0.88, (ya + yb) * 0.5 + 0.02, zc), Vector3(-incl, 0, 0))
+
+
+## Utilitário: estepe na tampa, rack no teto, para-choques robustos e
+## molduras pretas nos para-lamas.
+static func _fora_de_estrada(m: MontagemMalha, f: Dictionary, secoes: Array) -> void:
+	var r: float = f["r"]
+	var tras: Dictionary = _face(secoes[0])
+	var frente: Dictionary = _face(secoes[-1])
+	if f.get("estepe", false):
+		var ye: float = float(f.get("lanterna_vertical", 1.0)) + 0.05
+		var ze: float = float(tras["z"]) - r * 0.32
+		_cilindro(m, "pneu", r * 0.95, r * 0.55, Vector3(0, ye, ze), Vector3(PI / 2, 0, 0), 14)
+		_cilindro(m, "aro", r * 0.55, r * 0.58, Vector3(0, ye, ze), Vector3(PI / 2, 0, 0), 10)
+	if f.has("rack"):
+		var rk: Array = f["rack"]
+		var z0: float = rk[0]
+		var z1: float = rk[1]
+		var y: float = float(rk[2]) + 0.06
+		var lg: float = rk[3]
+		for lado in [1.0, -1.0]:
+			_caixa(m, "preto", Vector3(0.035, 0.03, z0 - z1), Vector3(lado * lg * 0.8, y, (z0 + z1) * 0.5))
+			for k in 3:
+				_caixa(m, "preto", Vector3(0.03, 0.06, 0.03), Vector3(lado * lg * 0.8, y - 0.03, lerpf(z1, z0, k / 2.0)))
+		for k in 2:
+			_caixa(m, "preto", Vector3(lg * 1.6, 0.025, 0.035), Vector3(0, y + 0.01, lerpf(z1, z0, 0.3 + 0.4 * k)))
+	# para-choques robustos
+	var low: float = f["low"]
+	for par in [[frente, 1.0], [tras, -1.0]]:
+		var fc: Dictionary = par[0]
+		_caixa(m, "preto", Vector3(float(fc["w"]) * 2.06, 0.15, 0.14), Vector3(0, low + 0.1, float(fc["z"]) + float(par[1]) * 0.04))
+	# molduras dos para-lamas
+	for w in f["rodas"]:
+		var x: float = w[1]
+		var zc: float = w[3]
+		var xb: float = _curva(f["rows"], zc).x + _alarga(f, zc) + 0.012
+		for k in 7:
+			var a: float = PI * (0.12 + 0.76 * k / 6.0)
+			_caixa(m, "preto", Vector3(0.05, 0.07, r * 0.5), Vector3(signf(x) * xb, float(w[2]) + cos(a - PI / 2) * r * 1.22, zc - sin(a - PI / 2) * r * 1.22 * -1.0), Vector3(a - PI / 2, 0, 0))
