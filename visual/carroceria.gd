@@ -148,7 +148,10 @@ static func corpo(id: String, base: Dictionary = {}) -> ArrayMesh:
 		return null
 	var ctx: Dictionary = f["ctx"]
 	var m := MontagemMalha.new()
-	_montar(m, f, ctx)
+	if Pesados.tem(id):
+		Pesados.montar(m, id, f)  # desenhados um a um, fora das regras
+	else:
+		_montar(m, f, ctx)
 	var malha := m.malha()
 	_corpos[id] = malha
 	return malha
@@ -174,7 +177,8 @@ static func construir(id: String, base: Dictionary, cor: Color, faixas: Dictiona
 		sm.set_shader_parameter("cor_base", cor)
 		mi.set_surface_override_material(k, sm)
 		CarroBloco._parametros_faixas(sm, mi, faixas)
-	var desenho := Rodas.desenho_de(faixas)
+	# pesados: aro de aço por padrão (o jogador ainda troca na cabine)
+	var desenho := Rodas.desenho_de(faixas) if faixas.has("roda") or not Pesados.tem(id) else "aco"
 	var r := float(f["r"])
 	for w in f["rodas"]:
 		var lado := signf(float(w[1]))
@@ -339,6 +343,8 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 			f["venezianas"] = [zr1 - 0.06, yt - 0.02, zt + 0.06, lerpf(yb, yt, 0.15), larg]
 		if int(f.get("doors", 4)) == 2:
 			f["coluna_b"] = float(f.get("zb", 0.0)) + 0.05
+	if ctx["cat"] == "pesado":
+		return f
 	# rodas rentes ao para-lama (a face do pneu quase no alinhamento da lataria)
 	for w in f["rodas"]:
 		var borda: float = _curva(rows, float(w[3])).x + _alarga(f, float(w[3])) - 0.03 - float(f["r"]) * 0.31

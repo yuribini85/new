@@ -149,6 +149,11 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   chapadas, capô médio e reto, para-brisa quase em pé, teto reto até a traseira, parede
   de trás reta com vidro, estepe na tampa, rack no teto, faróis quadrados com grade
   larga, para-choques robustos, lanternas verticais e molduras pretas nos para-lamas.
+- **Pesados (`visual/pesados.gd`, `Pesados`):** os 3 caminhões são desenhados um a um,
+  fora das regras do gerador (pedido do usuário): coletor (cabine avançada, compactador
+  com nervuras, boca de carga), resgate (cabine dupla, baú com portas de enrolar, canhão
+  d'água, barra de luzes) e mineração (deque com cabine e escada, caçamba aberta com
+  cobertura, rodado duplo). Aro de aço por padrão.
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
   da cintura: assoalho emborrachado, laterais, parede e tampa pintadas, beira preta),
