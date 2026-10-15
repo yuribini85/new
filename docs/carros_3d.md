@@ -100,8 +100,9 @@ Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 `visual/carroceria.gd`. **Por enquanto só vale para os ids de `Carroceria.ATIVOS`**
 e das épocas/categorias de `Carroceria.LIBERADOS` (hoje: o Kanaya Kestrel, aprovado
 como piloto, e cupê, compacto e sedã dos clássicos (até 1971, piloto Calderwood Sabre)
-dos anos 70 (piloto Hayase Cedro) e dos anos 80 e 90, e as picapes de todas as épocas,
-piloto Kanaya Sulco; o resto usa os GLB). O usuário aprova um carro por vez; ao aprovar, o
+dos anos 70 (piloto Hayase Cedro), dos anos 80 e 90 e dos modernos (piloto Hayase
+Granito), e as picapes de todas as épocas, piloto Kanaya Sulco; utilitários e pesados
+usam os GLB). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
@@ -139,6 +140,11 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   e quatro faróis redondos, para-choque cromado com faixa de borracha e garras, lanternas
   largas com moldura cromada, retrovisor cromado, traseira reta nos comuns; esportivos com
   venezianas no vidro traseiro e aba traseira.
+- **Linguagem moderna (2004+, aprovada no Hayase Granito):** cabine mais à frente (14% do
+  entre-eixos no cupê, 8% no sedã), para-brisa bem deitado, teto curto em rampa, vidros
+  estreitos, cintura que sobe para trás, capô curvo; faróis finos puxados para trás com
+  luz diurna, tomadas de ar central e laterais, lanterna fina com filete de luz, difusor
+  com aletas e quatro saídas nos esportivos; aerofólio só acima de 0,4 cv/kg (senão aba).
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
   da cintura: assoalho emborrachado, laterais, parede e tampa pintadas, beira preta),

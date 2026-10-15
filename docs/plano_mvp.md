@@ -777,7 +777,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       90. Clássicos (até 1971): piloto Calderwood Sabre aprovado, cupê, compacto e sedã
       liberados. Picapes: piloto Kanaya Sulco aprovado, todas as épocas liberadas.
       Anos 70: piloto Hayase Cedro aprovado, cupê, compacto e sedã liberados.
-      Próximos pilotos: modernos, utilitários; os pesados por último.
+      Modernos: piloto Hayase Granito aprovado, cupê, compacto e sedã liberados.
+      Próximo piloto: utilitários; os pesados por último.
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").
