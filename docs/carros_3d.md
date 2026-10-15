@@ -100,7 +100,8 @@ Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 `visual/carroceria.gd`. **Por enquanto só vale para os ids de `Carroceria.ATIVOS`**
 e das épocas/categorias de `Carroceria.LIBERADOS` (hoje: o Kanaya Kestrel, aprovado
 como piloto, e cupê, compacto e sedã dos clássicos (até 1971, piloto Calderwood Sabre)
-e dos anos 80 e 90; o resto usa os GLB). O usuário aprova um carro por vez; ao aprovar, o
+e dos anos 80 e 90, e as picapes de todas as épocas, piloto Kanaya Sulco; o resto usa
+os GLB). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
@@ -133,6 +134,11 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   reta, capô arredondado mais baixo que os para-lamas, cauda que desce, seção redonda,
   faróis redondos grandes, grade oval cromada, para-choque cromado fino com garras,
   molduras das janelas cromadas e retrovisor redondo no para-lama.
+- **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
+  simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
+  da cintura: assoalho emborrachado, laterais, parede e tampa pintadas, beira preta),
+  lanternas verticais nos cantos, grade larga entre os faróis. A forma pede seções
+  extras no degrau da caçamba (`cortes`).
 - **Mesmo eixo dos GLB:** frente em +Z, chão em y = 0, rodas `Mount_*` com o centro no
   eixo e giro em X. Blindagem (`<id>_protecao.glb`), giro, sombra, dano e fogo da arena
   funcionam igual.

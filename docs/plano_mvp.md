@@ -775,7 +775,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       e das épocas/categorias em `Carroceria.LIBERADOS`.
     - Folha da frota (recomendação aceita): liberados cupê, compacto e sedã dos anos 80 e
       90. Clássicos (até 1971): piloto Calderwood Sabre aprovado, cupê, compacto e sedã
-      liberados. Próximo piloto: uma picape; os pesados ficam no GLB até terem o seu.
+      liberados. Picapes: piloto Kanaya Sulco aprovado, todas as épocas liberadas.
+      Próximos pilotos: anos 70, modernos, utilitários; os pesados por último.
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").
