@@ -224,7 +224,8 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 		var classico: bool = ctx["era"] == "classico"
 		# capô: longo no cupê, médio no sedã (mais longos nos clássicos); o
 		# compacto fica com o da forma
-		var recuo: float = ({"cupe": 0.32, "seda": 0.18} if classico else {"cupe": 0.2, "seda": 0.1}).get(ctx["cat"], -1.0)
+		var setenta: bool = ctx["era"] == "setenta"
+		var recuo: float = ({"cupe": 0.32, "seda": 0.18} if classico else ({"cupe": 0.26, "seda": 0.14} if setenta else {"cupe": 0.2, "seda": 0.1})).get(ctx["cat"], -1.0)
 		var zf: float = minf(float(f["wind"]), axf - eixos * recuo) if recuo >= 0.0 else float(f["wind"])
 		if reto:
 			# cintura reta da traseira ao pé do para-brisa; capô em cunha contínua
@@ -238,12 +239,16 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 			for r in rows:
 				var z: float = r[0]
 				if z >= zf:
-					var cunha: float = lerpf(cowl, nariz, (z - zf) / maxf(float(rows[-1][0]) - zf, 0.01))
+					# anos 70: o capô cai devagar e só se inclina perto do bico
+					var tc: float = (z - zf) / maxf(float(rows[-1][0]) - zf, 0.01)
+					var cunha: float = lerpf(cowl, nariz, pow(tc, 1.5) if setenta else tc)
 					if absf(z - axf) < float(f["r"]) * 1.6:
 						cunha = maxf(cunha, minf(float(r[2]), pneu))
 					r[2] = cunha
 				elif z >= zt0:
 					r[2] = cowl
+				elif setenta and not ctx["esportivo"]:
+					r[2] = minf(float(r[2]), cowl + 0.02)  # sem aba: traseira reta
 		elif classico:
 			# anos 60: cintura reta, capô que só cai perto do bico (arredondado) e
 			# cauda que desce depois do vidro traseiro
@@ -279,7 +284,7 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 		if classico:
 			h = minf(h, 0.4 if ctx["esportivo"] else 0.45)
 		var yt: float = cintura + h
-		var zr0: float = zf - h * (1.5 if ctx["esportivo"] and not classico else (1.0 if compacto else (1.3 if classico else 1.15)))
+		var zr0: float = zf - h * (1.4 if ctx["esportivo"] and setenta else (1.5 if ctx["esportivo"] and not classico else (1.0 if compacto else (1.3 if classico else 1.15))))
 		var zt: float = float(f["back"])
 		# teto: curto no cupê, longo no sedã; no compacto vai até perto da traseira
 		var zr1: float = zr0 - (0.8 if classico and ctx["cat"] == "cupe" else (0.95 if ctx["cat"] == "cupe" else 1.25))
@@ -295,6 +300,9 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 		]
 		f["vidro_frente"] = zr0 + 0.04
 		f["vidro_tras"] = zr1 - 0.04
+		if setenta and ctx["esportivo"] and ctx["cat"] == "cupe":
+			# venezianas no vidro traseiro: [z do teto, y do teto, z da base, y da base]
+			f["venezianas"] = [zr1 - 0.06, yt - 0.02, zt + 0.06, lerpf(yb, yt, 0.15), larg]
 		if int(f.get("doors", 4)) == 2:
 			f["coluna_b"] = float(f.get("zb", 0.0)) + 0.05
 	# rodas rentes ao para-lama (a face do pneu quase no alinhamento da lataria)
@@ -453,9 +461,11 @@ static func _montar(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	_lateral(m, f, ctx)
 	if ctx["cat"] == "picape":
 		_cacamba(m, f)
-	if ctx["esportivo"] and ctx["era"] == "oitenta":
+	if f.has("venezianas"):
+		_venezianas(m, f)
+	if ctx["esportivo"] and ctx["era"] in ["setenta", "oitenta"]:
 		_aba_traseira(m, f)
-	elif ctx["esportivo"] and ctx["era"] in ["setenta", "noventa"]:
+	elif ctx["esportivo"] and ctx["era"] == "noventa":
 		_aerofolio(m, f)
 	_pincas(m, f)
 
@@ -691,12 +701,10 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 				var yf: float = clampf(lerpf(lo, topo, 0.72), lo + 0.08, topo - raio * 0.6)
 				_redondo(m, raio, Vector3(lado * w * 0.64, yf, z - 0.01), "cromo", "farol")
 			"setenta":
-				var raio: float = clampf(w * 0.16, 0.07, 0.11)
-				if ctx["cat"] == "seda" and esc in ["de", "uk", "us"] and era == "setenta":
-					for k in 2:
-						_redondo(m, raio * 0.8, Vector3(lado * w * (0.42 + 0.2 * k), yl, z), "cromo", "farol")
-				else:
-					_redondo(m, raio, Vector3(lado * w * 0.62, yl, z), "cromo", "farol")
+				# quatro faróis redondos dentro da grade preta larga
+				var raio: float = clampf(w * 0.11, 0.05, 0.075)
+				for k in 2:
+					_redondo(m, raio, Vector3(lado * w * (0.8 - 0.24 * k), yl, z + 0.01), "cromo", "farol")
 			"oitenta":
 				if ctx["esportivo"]:
 					# farol escamoteável fechado: a tampa no capô, com a fresta em volta
@@ -730,6 +738,12 @@ static func _frente(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictionary
 		_caixa(m, "cromo", Vector3(gw * 2.0, gh, 0.03), Vector3(0, lerpf(lo, yl, 0.5), z))
 		for k in 7:
 			_caixa(m, "preto", Vector3(gw * 2.0 - 0.04, 0.008, 0.035), Vector3(0, lerpf(lo, yl, 0.5) - gh * 0.4 + gh * 0.8 * k / 6.0, z + 0.002))
+	elif era == "setenta" and ctx["cat"] != "picape":
+		# grade preta de ponta a ponta, com moldura cromada
+		_caixa(m, "cromo", Vector3(w * 1.86, 0.17, 0.02), Vector3(0, yl, z - 0.004))
+		_caixa(m, "preto", Vector3(w * 1.8, 0.14, 0.025), Vector3(0, yl, z))
+		for k in 4:
+			_caixa(m, "cromo", Vector3(w * 0.6, 0.006, 0.03), Vector3(0, yl - 0.045 + 0.03 * k, z + 0.002))
 	elif era == "classico":
 		# grade oval com moldura cromada
 		var yg: float = lerpf(lo, yl, 0.5)
@@ -760,7 +774,11 @@ static func _parachoque(m: MontagemMalha, f: Dictionary, w: float, z: float, fre
 			for lado in [1.0, -1.0]:
 				_caixa(m, "cromo", Vector3(0.035, 0.13, 0.08), Vector3(lado * w * 0.36, y + 0.02, z + frente * 0.035))
 		"setenta":
-			_caixa(m, "borracha", Vector3(w * 2.04, 0.09, 0.09), Vector3(0, y, z + frente * 0.02))
+			# lâmina cromada com faixa de borracha e garras
+			_caixa(m, "cromo", Vector3(w * 2.02, 0.08, 0.08), Vector3(0, y, z + frente * 0.025))
+			_caixa(m, "borracha", Vector3(w * 2.03, 0.025, 0.085), Vector3(0, y, z + frente * 0.027))
+			for lado in [1.0, -1.0]:
+				_caixa(m, "borracha", Vector3(0.05, 0.12, 0.09), Vector3(lado * w * 0.42, y + 0.01, z + frente * 0.045))
 		"oitenta":
 			_caixa(m, "borracha", Vector3(w * 2.02, 0.1, 0.11), Vector3(0, y + 0.02, z + frente * 0.015))
 			_caixa(m, "preto", Vector3(w * 1.7, 0.045, 0.06), Vector3(0, low + 0.025, z - frente * 0.02))
@@ -793,7 +811,10 @@ static func _traseira(m: MontagemMalha, f: Dictionary, sec: Array, ctx: Dictiona
 				_redondo(m, 0.06, Vector3(lado * w * 0.66, yl, z), "cromo", "lanterna", -0.012)
 				_caixa(m, "seta", Vector3(0.05, 0.035, 0.02), Vector3(lado * w * 0.42, yl, z - 0.008))
 			"setenta":
-				_caixa(m, "lanterna", Vector3(w * 0.34, 0.1, 0.03), Vector3(lado * w * 0.6, yl, z))
+				# lanternas largas com moldura cromada
+				_caixa(m, "cromo", Vector3(w * 0.6, 0.11, 0.02), Vector3(lado * w * 0.6, yl, z + 0.004))
+				_caixa(m, "lanterna", Vector3(w * 0.56, 0.085, 0.03), Vector3(lado * w * 0.6, yl, z - 0.004))
+				_caixa(m, "re", Vector3(w * 0.1, 0.085, 0.032), Vector3(lado * w * 0.38, yl, z - 0.005))
 			"oitenta":
 				_caixa(m, "lanterna", Vector3(w * 0.5, 0.075, 0.03), Vector3(lado * w * 0.62, yl, z - 0.006))
 				_caixa(m, "seta", Vector3(w * 0.12, 0.075, 0.03), Vector3(lado * w * 0.3, yl, z - 0.006))
@@ -828,7 +849,8 @@ static func _lateral(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 		var xb: float = b.x * 0.9
 		_caixa(m, "preto", Vector3(0.03, 0.05, 0.12), Vector3(lado * (xb + 0.01), b.y + 0.025, zw - 0.12))
 		_caixa(m, "preto", Vector3(0.07, 0.018, 0.035), Vector3(lado * (xb + 0.05), b.y + 0.05, zw - 0.13))
-		_caixa(m, "preto", Vector3(0.045, 0.065, 0.11), Vector3(lado * (xb + 0.095), b.y + 0.065, zw - 0.13), Vector3(0, lado * 0.2, 0))
+		var cor_esp: String = "cromo" if ctx["era"] == "setenta" else "preto"
+		_caixa(m, cor_esp, Vector3(0.045, 0.065, 0.11), Vector3(lado * (xb + 0.095), b.y + 0.065, zw - 0.13), Vector3(0, lado * 0.2, 0))
 	# saia preta entre as rodas (80/90) e friso de borracha na porta (80)
 	if ctx["era"] in ["oitenta", "noventa"]:
 		var axs: Array = f["axles"].duplicate()
@@ -910,3 +932,23 @@ static func _aba_traseira(m: MontagemMalha, f: Dictionary) -> void:
 	var z: float = float(rows[0][0]) + 0.07
 	var c := _curva(rows, z)
 	_caixa(m, MontagemMalha.PINTURA, Vector3(c.x * 1.7, 0.022, 0.16), Vector3(0, c.y + 0.035, z + 0.02), Vector3(0.28, 0, 0))
+
+
+## Venezianas pretas sobre o vidro traseiro (esportivos dos anos 70).
+static func _venezianas(m: MontagemMalha, f: Dictionary) -> void:
+	var v: Array = f["venezianas"]
+	var za: float = v[0]
+	var ya: float = v[1]
+	var zb: float = v[2]
+	var yb: float = v[3]
+	var larg: float = v[4]
+	var incl: float = atan2(ya - yb, za - zb)
+	var n := 6
+	for k in n:
+		var t: float = (float(k) + 0.5) / n
+		var z: float = lerpf(za, zb, t)
+		var y: float = lerpf(ya, yb, t) + 0.02
+		_caixa(m, "preto", Vector3(larg * 1.7 * lerpf(1.0, 1.15, t), 0.012, 0.05), Vector3(0, y, z), Vector3(-incl, 0, 0))
+	for lado in [1.0, -1.0]:
+		var zc: float = (za + zb) * 0.5
+		_caixa(m, "preto", Vector3(0.025, 0.02, Vector2(za - zb, ya - yb).length()), Vector3(lado * larg * 0.88, (ya + yb) * 0.5 + 0.02, zc), Vector3(-incl, 0, 0))
