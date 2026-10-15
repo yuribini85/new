@@ -778,7 +778,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       liberados. Picapes: piloto Kanaya Sulco aprovado, todas as épocas liberadas.
       Anos 70: piloto Hayase Cedro aprovado, cupê, compacto e sedã liberados.
       Modernos: piloto Hayase Granito aprovado, cupê, compacto e sedã liberados.
-      Próximo piloto: utilitários; os pesados por último.
+      Utilitários: piloto Kanaya Chapada aprovado, todas as épocas liberadas.
+      Último piloto: os pesados.
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").

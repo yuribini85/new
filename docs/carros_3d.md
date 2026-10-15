@@ -101,8 +101,8 @@ Gerador em código no estilo facetado dos pilotos (aprovado pelo usuário), em
 e das épocas/categorias de `Carroceria.LIBERADOS` (hoje: o Kanaya Kestrel, aprovado
 como piloto, e cupê, compacto e sedã dos clássicos (até 1971, piloto Calderwood Sabre)
 dos anos 70 (piloto Hayase Cedro), dos anos 80 e 90 e dos modernos (piloto Hayase
-Granito), e as picapes de todas as épocas, piloto Kanaya Sulco; utilitários e pesados
-usam os GLB). O usuário aprova um carro por vez; ao aprovar, o
+Granito), e as picapes (piloto Kanaya Sulco) e os utilitários (piloto Kanaya Chapada)
+de todas as épocas; só os pesados usam os GLB). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
@@ -145,6 +145,10 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   estreitos, cintura que sobe para trás, capô curvo; faróis finos puxados para trás com
   luz diurna, tomadas de ar central e laterais, lanterna fina com filete de luz, difusor
   com aletas e quatro saídas nos esportivos; aerofólio só acima de 0,4 cv/kg (senão aba).
+- **Utilitário (aprovado no Kanaya Chapada):** caixote de dois volumes com laterais
+  chapadas, capô médio e reto, para-brisa quase em pé, teto reto até a traseira, parede
+  de trás reta com vidro, estepe na tampa, rack no teto, faróis quadrados com grade
+  larga, para-choques robustos, lanternas verticais e molduras pretas nos para-lamas.
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
   da cintura: assoalho emborrachado, laterais, parede e tampa pintadas, beira preta),

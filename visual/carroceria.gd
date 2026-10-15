@@ -42,11 +42,11 @@ static func formas() -> Dictionary:
 ## tempo de execução.
 const ATIVOS: Array[String] = ["kanaya_kestrel"]
 const LIBERADOS := {
-	"classico": ["cupe", "compacto", "seda", "picape"],
-	"setenta": ["cupe", "compacto", "seda", "picape"],
-	"oitenta": ["cupe", "compacto", "seda", "picape"],
-	"noventa": ["cupe", "compacto", "seda", "picape"],
-	"moderno": ["cupe", "compacto", "seda", "picape"],
+	"classico": ["cupe", "compacto", "seda", "picape", "utilitario"],
+	"setenta": ["cupe", "compacto", "seda", "picape", "utilitario"],
+	"oitenta": ["cupe", "compacto", "seda", "picape", "utilitario"],
+	"noventa": ["cupe", "compacto", "seda", "picape", "utilitario"],
+	"moderno": ["cupe", "compacto", "seda", "picape", "utilitario"],
 }
 static var ativos: Array = ATIVOS.duplicate()
 static var regras: Dictionary = LIBERADOS.duplicate(true)
