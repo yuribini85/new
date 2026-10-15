@@ -318,7 +318,7 @@ func _animar_grid() -> void:
 		if ficha != "":
 			vinheta.emit(ficha, contexto)
 		return
-	ensure_control_visible(linha)
+	mostrar_controle(linha)
 	if Preferencias.reduzir_animacoes:
 		if ficha != "":
 			vinheta.emit(ficha, contexto)
@@ -424,6 +424,14 @@ func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA, Color(0.86, 0.87, 0.9), v) \
 			.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return v
+
+
+## Requisito de licença como linha da tela: com maiúscula e a contagem "(n)"
+## presa à palavra de antes (espaço sem quebra), para não descer sozinha.
+static func _texto_requisito(t: String) -> String:
+	if t == "":
+		return t
+	return (t.left(1).to_upper() + t.substr(1)).replace(" (", "\u00a0(")
 
 
 func _linha_objetivo(o: Dictionary, pai: Control) -> void:
@@ -737,7 +745,7 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 	libera.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	Tipografia.rotulo(libera, "regular", 27)
 	for r in l.requisitos(lic["id"]):
-		_linha_marcada(String(r["texto"]), "feito" if r["ok"] else "falta", col, 24)
+		_linha_marcada(_texto_requisito(String(r["texto"])), "feito" if r["ok"] else "falta", col, 24)
 	match st:
 		Licencas.AVAILABLE:
 			rotulo("Grátis · continua com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)

@@ -90,7 +90,7 @@ func _ordem_oficina(lista: Array) -> Array:
 ## Escalação (decisão 68) no alto do palco, abaixo das abas penduradas: as
 ## três vagas (CORRIDA, ARENA 1, ARENA 2). Tocar numa vaga mostra o carro dela
 ## aqui; tocar na do carro mostrado (ou numa vazia) escolhe o carro da vaga.
-const ALTURA_VAGA := 62.0
+const ALTURA_VAGA := 62.0  # o desenho; o toque é Tipografia.ALTURA_SECUNDARIA
 
 
 func _faixa_escalacao(atual: Carro) -> Control:
@@ -98,8 +98,10 @@ func _faixa_escalacao(atual: Carro) -> Control:
 	h.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	h.offset_left = 12
 	h.offset_right = -12
-	h.offset_top = 66
-	h.offset_bottom = 66 + ALTURA_VAGA
+	# A área de toque passa da vaga desenhada, metade em cima e metade embaixo.
+	var sobra := (Tipografia.ALTURA_SECUNDARIA - ALTURA_VAGA) / 2.0
+	h.offset_top = 66 - sobra
+	h.offset_bottom = 66 + ALTURA_VAGA + sobra
 	h.add_theme_constant_override("separation", 8)
 	for vaga in Escalacao.VAGAS:
 		var car := Escalacao.carro(jogador, vaga)
@@ -114,6 +116,7 @@ func _faixa_escalacao(atual: Carro) -> Control:
 		sb.set_border_width_all(2 if mostrado else 1)
 		for estado in ["normal", "hover", "pressed", "focus"]:
 			b.add_theme_stylebox_override(estado, sb)
+		Tipografia.area_toque(b, ALTURA_VAGA)
 		var v := VBoxContainer.new()
 		v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		v.offset_left = 10
@@ -504,6 +507,7 @@ func _abas_preparacao() -> Control:
 		var ativa: bool = _prep == par[0]
 		Tipografia.acao_primaria(b, par[1], COR_DESTAQUE if ativa else Color(0.12, 0.12, 0.14),
 				Color(0.1, 0.1, 0.1) if ativa else COR_SECUNDARIA, 22, 60)
+		Tipografia.area_toque(b, 60)  # as abas desenhadas como antes; o toque maior
 		b.pressed.connect(func():
 			if _prep != par[0]:
 				Sons.tocar_ui(self, "toque", -6.0)
@@ -564,7 +568,7 @@ func _preparacao_corrida(c: Carro, pai: Control) -> void:
 	var rolo := ScrollContainer.new()
 	rolo.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	rolo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
-	rolo.custom_minimum_size.y = ICONE_FAIXA + 12
+	rolo.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA + 6
 	pai.add_child(rolo)
 	var faixa := HBoxContainer.new()
 	faixa.add_theme_constant_override("separation", 6)
@@ -573,7 +577,8 @@ func _preparacao_corrida(c: Carro, pai: Control) -> void:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.tooltip_text = String(itens[k][1])
-		b.custom_minimum_size = Vector2(ICONE_FAIXA + 6, ICONE_FAIXA + 6)
+		# O ícone no tamanho de sempre; o botão com a área de toque inteira.
+		b.custom_minimum_size = Vector2(Tipografia.ALTURA_SECUNDARIA, Tipografia.ALTURA_SECUNDARIA)
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = Color(0.085, 0.085, 0.095, 0.94)
 		sb.set_corner_radius_all(6)
@@ -605,7 +610,8 @@ func _preparacao_corrida(c: Carro, pai: Control) -> void:
 	(func():
 		await get_tree().process_frame
 		if is_instance_valid(rolo):
-			var alvo := float(i) * (ICONE_FAIXA + 12.0) + (ICONE_FAIXA + 6.0) / 2.0 - rolo.size.x / 2.0
+			var lado := float(Tipografia.ALTURA_SECUNDARIA)
+			var alvo := float(i) * (lado + 6.0) + lado / 2.0 - rolo.size.x / 2.0
 			rolo.scroll_horizontal = maxi(int(alvo), 0)).call()
 
 
@@ -704,6 +710,7 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 			b.icon = icone_reduzido(ICONE_GIROS, 26)
 			b.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 			b.add_theme_constant_override("h_separation", 8)
+	Tipografia.area_toque(b, 60)  # desenhado como antes, com o toque maior
 	b.pressed.connect(_abrir_evolucao.bind(c, cat))
 	if cat == Blindagem.CATEGORIA:
 		b.pressed.connect(func(): historia("BLINDAGEM"))
@@ -1006,7 +1013,7 @@ func _correndo(c: Carro) -> bool:
 func _vazia() -> void:
 	if _sem_saida():
 		var v := cartao(COR_RUIM)
-		rotulo("Sem carro e sem dinheiro para comprar um.", 0, COR_RUIM, v)
+		rotulo("Sem carro e sem giros para comprar um.", 0, COR_RUIM, v)
 		botao("Recomeçar carreira", _recomecar, true, true, v)
 		return
 	var v := cartao()

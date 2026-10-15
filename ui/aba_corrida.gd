@@ -29,8 +29,8 @@ const RESPIRA_S := 0.45
 
 ## Câmeras: nome (só na dica do mouse) e modo; o ícone é arte/ui/cameras/<modo>.png
 ## (branco, tingido pelo estado). Sem texto no botão: o jogador descobre tocando.
-const CAMERAS := [["Automática", "auto"], ["Seu carro", "jogador"], ["Líder", "lider"],
-		["À frente", "frente"], ["Pista inteira", "geral"], ["Dados", "dados"]]
+const CAMERAS := [["Automática", "auto", "AUTO"], ["Seu carro", "jogador", "SEU CARRO"], ["Líder", "lider", "LÍDER"],
+		["À frente", "frente", "À FRENTE"], ["Pista inteira", "geral", "PISTA"], ["Dados", "dados", "DADOS"]]
 
 ## Minimapa (pista inteira) e fonte das posições da vista 3D.
 var _visual: CorridaVisual
@@ -159,8 +159,8 @@ func _init(d: Node, j: Node) -> void:
 	resized.connect(_ajustar_area)
 
 
-## Seletor único e compacto, só ícones: automática, seu carro, líder, à
-## frente, pista inteira e dados. São filtros de acompanhamento, não ações:
+## Seletor único e compacto, ícones com o nome curto embaixo: automática, seu
+## carro, líder, à frente, pista inteira e dados. São filtros de acompanhamento, não ações:
 ## baixos, num fundo só, o escolhido em âmbar (ícone escuro).
 func _seletor_cameras() -> Control:
 	var p := PanelContainer.new()
@@ -181,7 +181,7 @@ func _seletor_cameras() -> Control:
 		b.tooltip_text = c[0]
 		b.toggle_mode = true
 		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(0, 60)
+		b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var ic := TextureRect.new()
 		ic.texture = arte("cameras/" + String(c[1]))
@@ -192,9 +192,21 @@ func _seletor_cameras() -> Control:
 		ic.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 		ic.offset_left = -23
 		ic.offset_right = 23
-		ic.offset_top = -23
-		ic.offset_bottom = 23
+		ic.offset_top = -33
+		ic.offset_bottom = 13
 		b.add_child(ic)
+		# O nome curto: o ícone sozinho não dizia o que cada câmera mostra.
+		var nome := Label.new()
+		nome.text = String(c[2])
+		nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		nome.clip_text = true
+		Tipografia.rotulo(nome, "semibold", 15)
+		nome.add_theme_color_override("font_color", COR_SECUNDARIA)
+		nome.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		nome.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+		nome.offset_top = -26
+		nome.offset_bottom = -6
+		b.add_child(nome)
 		for estado in ["normal", "hover", "focus", "disabled"]:
 			b.add_theme_stylebox_override(estado, vazio)
 		for estado in ["pressed", "hover_pressed"]:
@@ -214,6 +226,8 @@ var _camera_modo := "auto":
 			var marcado: bool = CAMERAS[i][1] == v
 			_cameras_botoes[i].button_pressed = marcado
 			(_cameras_botoes[i].get_child(0) as TextureRect).modulate = Color(0.1, 0.1, 0.1) if marcado else COR_SECUNDARIA
+			(_cameras_botoes[i].get_child(1) as Label).add_theme_color_override("font_color",
+					Color(0.1, 0.1, 0.1) if marcado else COR_SECUNDARIA)
 
 
 ## "auto", "jogador", "lider", "frente", "geral" ou o id de um participante
@@ -510,7 +524,9 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 func reservar_topo(altura: float) -> void:
 	super(altura)
 	var vazio := Control.new()
-	vazio.custom_minimum_size = Vector2(0, altura - 14.0)
+	# Também abaixo das abas penduradas do cabeçalho (ACELERAR), como em
+	# Aba._espaco_topo: o "Nenhuma corrida em andamento." não fica colado nelas.
+	vazio.custom_minimum_size = Vector2(0, altura - 14.0 + Cabecalho.ALTURA_MARCADOR + 4.0)
 	vazio.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	conteudo.add_child(vazio)
 	conteudo.move_child(vazio, 0)

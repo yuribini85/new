@@ -44,22 +44,33 @@ func _rodar() -> void:
 			if uid > 0:
 				break
 	jogador.carro_ativo = uid
-	for ev in dados.lista("eventos"):
-		# Corrida iniciada há 25 s para a captura mostrar carros em movimento.
-		jogador.vitorias[ev["id"]] = 1  # repetir exige a prova já vencida
-		if jogador.fila_ctrl.iniciar(ev["id"], uid, 3, Time.get_unix_time_from_system() - 25.0) == "":
-			break
-	# Termina a primeira corrida para o painel "Última corrida" aparecer; a
-	# segunda fica em andamento, iniciada há 25 s.
+	# Fichas do Grid já vistas: a intro da equipe da vez não cobre as capturas
+	# (ela tem captura própria no fim).
+	for e in TheGrid.equipes(dados):
+		TheGrid.marcar_vista(jogador, String(e["id"]))
+	TheGrid.marcar_vista(jogador, "fim")
+	# Uma corrida terminada (para o resultado e o painel "Última corrida") e
+	# outra em andamento, iniciada há 25 s (carros em movimento).
 	var agora := Time.get_unix_time_from_system()
-	jogador.fila_ctrl.adiantar(agora - 25.0)
-	var rel: Dictionary = jogador.fila_ctrl.processar(agora - 25.0)
+	var rel := {}
+	var evento := ""
+	for ev in dados.lista("eventos"):
+		if jogador.fila_ctrl.iniciar(ev["id"], uid, 1, agora - 25.0) == "":
+			evento = ev["id"]
+			break
+	if evento != "":
+		jogador.fila_ctrl.adiantar(agora)
+		rel = jogador.fila_ctrl.processar(agora)
+		jogador.vitorias[evento] = maxi(int(jogador.vitorias.get(evento, 0)), 1)  # repetir exige a prova já vencida
+		jogador.fila_ctrl.iniciar(evento, uid, 1, agora - 25.0)
 
 	var tela: Control = load("res://scenes/principal.tscn").instantiate()
 	root.add_child(tela)
 	var abas: TabContainer = tela._abas
 	var total := abas.get_tab_count()
 	for i in total:
+		if abas.get_tab_title(i) == "Oficina antiga":
+			continue  # índice reservado (a Oficina antiga saiu)
 		tela._ir_para(i)
 		for k in 6:
 			await process_frame
@@ -95,6 +106,25 @@ func _rodar() -> void:
 		for k in 6:
 			await process_frame
 		root.get_texture().get_image().save_png(_saida.path_join("%d_bancada_relatorio.png" % (total + 1)))
+	# Intro da equipe da vez no Grid (pulada até o confronto) e a ficha dela.
+	var vez := TheGrid.da_vez(dados, jogador)
+	if not vez.is_empty():
+		var intro := GridRivalIntro.new(dados, jogador, String(vez["id"]), "primeiro", 3, 7)
+		tela.add_child(intro)
+		for k in 30:
+			await process_frame
+		root.get_texture().get_image().save_png(_saida.path_join("%d_grid_intro.png" % (total + 1)))
+		intro.pular()
+		for k in 90:
+			await process_frame
+		root.get_texture().get_image().save_png(_saida.path_join("%d_grid_confronto.png" % (total + 1)))
+		intro.queue_free()
+		var ficha := VinhetaGrid.new(dados, jogador, String(vez["id"]), "rever", 3, 7)
+		tela.add_child(ficha)
+		for k in 60:
+			await process_frame
+		root.get_texture().get_image().save_png(_saida.path_join("%d_grid_ficha.png" % (total + 1)))
+		ficha.queue_free()
 	tela.queue_free()
 	await _capturar_pistas(dados, total + 1)
 	quit()

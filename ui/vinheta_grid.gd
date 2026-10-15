@@ -76,7 +76,7 @@ func _init(dados: Node, jogador: Node, id: String, contexto: String, aba_corrida
 	espaco.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(espaco)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Continuar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, 76)
+	Tipografia.acao_primaria(b, "Continuar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, Tipografia.ALTURA_SECUNDARIA)
 	b.pressed.connect(_fechar)
 	v.add_child(b)
 	_fases.append(b)
@@ -166,6 +166,9 @@ func _topo(fim: bool) -> Control:
 		sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		Tipografia.rotulo(sub, "regular", 24)
 		sub.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
+		# Contorno escuro: a linha passa por cima da faixa ocre do fundo.
+		sub.add_theme_color_override("font_outline_color", Color(0.04, 0.04, 0.05, 0.9))
+		sub.add_theme_constant_override("outline_size", 6)
 		t.add_child(sub)
 		_fases.append(sub)
 	_fases.append(nome)
@@ -297,7 +300,7 @@ func _desafio(v: VBoxContainer, aba_corridas: int, aba_arena: int) -> void:
 	var modo := String(d.get("modo", ""))
 	for par in ([["Corridas", aba_corridas]] if modo == "corrida" else [["Arena", aba_arena]]):
 		var b := Button.new()
-		Tipografia.acao_primaria(b, "%s   →" % par[0], Color(0.2, 0.21, 0.24), Color.WHITE, 24, 60)
+		Tipografia.acao_primaria(b, "%s   →" % par[0], Color(0.2, 0.21, 0.24), Color.WHITE, 24, Tipografia.ALTURA_SECUNDARIA)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.pressed.connect(func():
 			ir.emit(int(par[1]))

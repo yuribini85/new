@@ -22,6 +22,9 @@ func construir() -> void:
 	if eq.is_empty():
 		cabecalho("Equipe")
 		rotulo("A equipe ainda não existe.", 0, COR_SECUNDARIA)
+		# Como ela abre: a história a cria depois do primeiro carro.
+		rotulo("Ela abre com o primeiro carro: compre um nas Lojas." if jogador.garagem.lista().is_empty()
+				else "Ela abre na história: siga o próximo passo da Carreira.", FONTE_PEQUENA, COR_SECUNDARIA)
 		return
 	_topo(eq)
 	if GestaoEquipe.aberta(dados, jogador):
@@ -99,7 +102,7 @@ func _partes() -> void:
 		b.button_pressed = _parte == parte[0]
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		Tipografia.rotulo(b, "semibold", 24)
-		b.custom_minimum_size = Vector2(0, 60)
+		b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 		b.pressed.connect(func():
 			_parte = parte[0]
 			mudou.emit())
@@ -151,10 +154,11 @@ func _sede() -> void:
 		var preco := GestaoEquipe.preco_melhoria(dados, jogador, m["id"])
 		var b := Button.new()
 		if preco <= 0:
-			Tipografia.acao_primaria(b, "Nível máximo", COR_NEUTRA, Color(0.9, 0.9, 0.9), 26, 60)
+			Tipografia.acao_primaria(b, "Nível máximo", COR_NEUTRA, Color(0.9, 0.9, 0.9), 26, Tipografia.ALTURA_SECUNDARIA)
 			b.disabled = true
 		else:
-			Tipografia.acao_primaria(b, "Melhorar · %s" % dinheiro(preco), COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 60)
+			Tipografia.acao_primaria(b, "Melhorar · %s" % dinheiro(preco), COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26,
+					Tipografia.ALTURA_SECUNDARIA)
 			moeda(b, 26)
 			b.disabled = not jogador.economia.pode_pagar(preco)
 			b.pressed.connect(func():
@@ -272,9 +276,11 @@ func _treino(pai: Control, piloto_id := "") -> void:
 	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["ritmo"])
 	if piloto_id != "":
 		var a := EquipeJogador.atributos(dados, jogador, piloto_id)
-		# Ritmo: do piloto-base até o teto da licença (a faixa que o treino percorre).
+		# Ritmo: o ganho do treino sobre o piloto-base, e a barra na mesma
+		# escala (cheia no teto da licença): o número e a barra dizem o mesmo.
 		var teto_r := maxf(GestaoEquipe.teto(dados, jogador), base + 0.0001)
-		for it in [["Ritmo", (float(a["ritmo"]) - base) / (teto_r - base), "%.1f%%" % (float(a["ritmo"]) * 100.0)],
+		var ganho := float(a["ritmo"]) - base
+		for it in [["Ritmo", ganho / (teto_r - base), "+%s%%" % Aba.decimal(ganho * 100.0, 1)],
 				["Consistência", float(a["consistencia"]), "%d%%" % roundi(float(a["consistencia"]) * 100.0)],
 				["Agressividade", float(a["agressividade"]), "%d%%" % roundi(float(a["agressividade"]) * 100.0)]]:
 			_barra_atributo(pai, it[0], clampf(float(it[1]), 0.0, 1.0), it[2])
@@ -288,7 +294,8 @@ func _treino(pai: Control, piloto_id := "") -> void:
 		var h := fileira(pai)
 		var l := rotulo("Ritmo", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var v := rotulo("%.1f%% · teto %.1f%%" % [atual * 100.0, teto * 100.0], FONTE_PEQUENA + 2, Color.WHITE, h)
+		var v := rotulo("%s%% · teto %s%%" % [Aba.decimal(atual * 100.0, 1), Aba.decimal(teto * 100.0, 1)],
+				FONTE_PEQUENA + 2, Color.WHITE, h)
 		v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var agora := Time.get_unix_time_from_system()
 	if GestaoEquipe.treinando(jogador, piloto_id):
@@ -297,13 +304,13 @@ func _treino(pai: Control, piloto_id := "") -> void:
 				GestaoEquipe.nivel_treino(jogador, piloto_id) + 1, horas_min(resta)], FONTE_PEQUENA, COR_BOM, pai)
 		return
 	if not GestaoEquipe.pode_treinar(dados, jogador, base, piloto_id):
-		rotulo("Ritmo no teto desta licença (%.1f%%). A próxima licença libera mais." % (teto * 100.0),
+		rotulo("Ritmo no teto desta licença (%s%%). A próxima licença libera mais." % Aba.decimal(teto * 100.0, 1),
 				FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
 	var preco := GestaoEquipe.preco_treino(dados, jogador, piloto_id)
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Treinar ritmo · %s · %s" % [dinheiro(preco), horas_min(GestaoEquipe.duracao_treino(dados, jogador, piloto_id))],
-			COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
+			COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, Tipografia.ALTURA_SECUNDARIA)
 	moeda(b, 24)
 	b.disabled = not jogador.economia.pode_pagar(preco)
 	b.pressed.connect(func():
@@ -404,7 +411,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		Tipografia.rotulo(na_equipe, "semibold", 24)
 		na_equipe.add_theme_color_override("font_color", COR_DESTAQUE)
 		na_equipe.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		na_equipe.custom_minimum_size = Vector2(0, 60)
+		na_equipe.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)  # no lugar do Contratar
 		na_equipe.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		info.add_child(na_equipe)
 		var mostrar := func(lado: int):
@@ -423,7 +430,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			_selo_traco(String(tr.get("nome", "")), selo)
 			estilo.visible = String(tr.get("nome", "")) != ""
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
-			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
+			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, Tipografia.ALTURA_SECUNDARIA)
 			b.visible = not atual and outra == ""
 			na_equipe.visible = atual or outra != ""
 			na_equipe.text = "NA EQUIPE" if atual else ("NA EQUIPE · " + String(EquipeJogador.NOMES_VAGA.get(outra, "")))

@@ -98,7 +98,8 @@ func _init() -> void:
 	_fechar_x.visible = false
 	_fechar_x.pressed.connect(fechar)
 	linha_titulo.add_child(_fechar_x)
-	var rolagem := ScrollContainer.new()
+	# A rolagem pelo dedo das abas: o arrasto rola mesmo começando num botão.
+	var rolagem := RolagemToque.new()
 	rolagem.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	rolagem.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(rolagem)
@@ -193,7 +194,7 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 		var b: Array = botoes[i]
 		var bt := Button.new()
 		bt.text = b[0]
-		bt.custom_minimum_size = Vector2(150, 76)
+		bt.custom_minimum_size = Vector2(150, Tipografia.ALTURA_SECUNDARIA)
 		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		bt.disabled = not estilo.get("habilitado", true)
 		if i == 0 and (botoes.size() > 1 or estilo.get("principal", false)):
@@ -229,7 +230,8 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 ## principal (dourada, com a seta), as outras secundárias lado a lado.
 func _acoes_padrao(botoes: Array) -> void:
 	var principal := Button.new()
-	Tipografia.acao_primaria(principal, String(botoes[0][0]) + "   →", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 32, 76)
+	Tipografia.acao_primaria(principal, String(botoes[0][0]) + "   →", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 32,
+			Tipografia.ALTURA_SECUNDARIA)
 	principal.pressed.connect(func():
 		fechar()
 		botoes[0][1].call())
@@ -241,7 +243,7 @@ func _acoes_padrao(botoes: Array) -> void:
 	_painel_conteudo.add_child(h)
 	for b in botoes.slice(1):
 		var bt := Button.new()
-		Tipografia.acao_secundaria(bt, String(b[0]), Color(0.86, 0.87, 0.9), 24, 64)
+		Tipografia.acao_secundaria(bt, String(b[0]), Color(0.86, 0.87, 0.9), 24, Tipografia.ALTURA_SECUNDARIA)
 		bt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = Color(1, 1, 1, 0.06)

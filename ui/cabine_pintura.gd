@@ -180,8 +180,8 @@ func _montar_previa() -> Control:
 	vistas.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	vistas.offset_left = 12
 	vistas.offset_right = -12
-	vistas.offset_top = -64
-	vistas.offset_bottom = -10
+	vistas.offset_top = -64 - 17
+	vistas.offset_bottom = -10 + 17
 	vistas.add_theme_constant_override("separation", 8)
 	vistas.alignment = BoxContainer.ALIGNMENT_CENTER
 	_previa.add_child(vistas)
@@ -189,6 +189,7 @@ func _montar_previa() -> Control:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		Tipografia.acao_neutra(b, par[1], 20, 50)
+		Tipografia.area_toque(b, 50)  # sobre a prévia: o desenho de sempre, o toque maior
 		b.custom_minimum_size.x = 120
 		var nome: String = par[0]
 		b.pressed.connect(func(): _previa.vista(nome))
@@ -287,6 +288,7 @@ func _mostrar_aba() -> void:
 			Tipografia.acao_primaria(b, _botoes_aba[id][1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 20, 58)
 		else:
 			Tipografia.acao_neutra(b, _botoes_aba[id][1], 20, 58)
+		Tipografia.area_toque(b, 58)
 	for c in _conteudo.get_children():
 		_conteudo.remove_child(c)
 		c.queue_free()
@@ -375,6 +377,7 @@ func _canais(lista: Array, ativo: String, habilitado: Callable, ao_escolher: Cal
 			Tipografia.acao_primaria(b, par[1], Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 64)
 		else:
 			Tipografia.acao_neutra(b, par[1], 22, 64)
+		Tipografia.area_toque(b, 64)
 		b.disabled = not habilitado.call(id)
 		b.icon = _amostra_icone(Color(_estado[id]))
 		b.pressed.connect(func(): ao_escolher.call(id))
@@ -394,10 +397,13 @@ static func _amostra_icone(cor: Color) -> Texture2D:
 
 ## A paleta da pintura para o canal `chave`.
 func _paleta(chave: String) -> void:
+	# Cada cor desenhada com AMOSTRA, numa área de toque de ALTURA_SECUNDARIA
+	# (as áreas se encostam; o vão entre as cores é a sobra delas).
 	var g := GridContainer.new()
-	g.columns = 9
-	g.add_theme_constant_override("h_separation", 8)
-	g.add_theme_constant_override("v_separation", 8)
+	g.columns = 7
+	g.add_theme_constant_override("h_separation", 0)
+	g.add_theme_constant_override("v_separation", 0)
+	g.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_conteudo.add_child(g)
 	for it in PinturaCarro.cores():
 		var a := Button.new()
@@ -406,6 +412,7 @@ func _paleta(chave: String) -> void:
 		a.custom_minimum_size = Vector2(AMOSTRA, AMOSTRA)
 		var cor: Color = it["cor"]
 		Aba._estilo_amostra(a, cor, cor.to_html(false) == Color(_estado[chave]).to_html(false))
+		Tipografia.area_toque(a, AMOSTRA, AMOSTRA)
 		var hex := "#" + cor.to_html(false)
 		a.pressed.connect(func(): _definir(chave, hex))
 		g.add_child(a)

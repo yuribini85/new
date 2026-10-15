@@ -66,8 +66,9 @@ func _carros_da(w: Dictionary) -> Array:
 ## fração da imagem [x0, y0, x1, y1], na ordem de data/workshops.json.
 ## Ajuste vertical da placa do nome de cada loja (px; + desce), na ordem das áreas.
 const AJUSTE_NOME_MAPA := [40.0, 0.0, 0.0, -30.0, 0.0, 0.0]
-## Nomes das lojas escritos sobre elas no mapa (aba NOMES do cabeçalho).
-var mostrar_nomes := false
+## Nomes das lojas escritos sobre elas no mapa (aba NOMES do cabeçalho). Começa
+## com eles: sem os nomes, o mapa não dizia o que cada prédio vende.
+var mostrar_nomes := true
 var _no_mapa := false
 
 const AREAS_MAPA := [
@@ -222,7 +223,7 @@ func _filtros() -> void:
 		b.text = texto
 		b.toggle_mode = true
 		b.button_pressed = ligado
-		b.custom_minimum_size = Vector2(0, 54)
+		b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 		b.add_theme_font_size_override("font_size", 23)
 		b.pressed.connect(func():
 			acao.call()

@@ -9,8 +9,12 @@ extends Control
 ## À direita, a engrenagem das configurações. Pendurado sob o painel, o marcador
 ## das corridas aceleradas (decisão 39): "ACELERAR" quando parado; aceso, com o
 ## fator e o tempo que falta, quando ativo. Tocar abre a tela da aceleração.
-## À direita dele, a bandeira (voltar à corrida em andamento); à esquerda, na Oficina, GARAGEM
-## (os carros, as vagas e a venda).
+## À direita dele, CORRIDA com a bandeira (voltar à corrida em andamento); à esquerda, na
+## Oficina, GARAGEM (os carros, as vagas e a venda).
+## Toque: voltar, engrenagem e abas penduradas têm pelo menos 88 px
+## (Tipografia.ALTURA_SECUNDARIA). A aba desenha só ALTURA_MARCADOR; o resto do
+## toque sobe por dentro da faixa (atrás do voltar e da engrenagem), sem cobrir
+## o conteúdo da tela.
 
 signal voltar
 signal configuracoes
@@ -22,7 +26,9 @@ signal nomes
 signal mapa
 
 const PASTA := "res://arte/ui/cabecalho/"
-const ALTURA := 84  # faixa dos elementos (px da tela de 720)
+const ALTURA := 88  # faixa dos elementos (px da tela de 720): a área de toque do voltar e da engrenagem
+## Altura da moldura dos giros (a arte do pack, de quando a faixa tinha 84).
+const ALTURA_PAINEL := 84.0 * 0.66
 const COR_FAIXA := Color("16191c")
 const COR_TITULO := Color("e6ddcd")
 const COR_NUMERO := Color("c89b57")  # ocre dessaturado do pack
@@ -30,8 +36,12 @@ const COR_ROTULO := Color("b9bbbe")
 const TAMANHO_NUMERO := 40
 const TAMANHO_TITULO := 54
 const TAMANHO_TITULO_MIN := 34
-## Marcador da aceleração (aba pendurada sob a faixa).
+## Marcador da aceleração (aba pendurada sob a faixa): a parte desenhada.
 const ALTURA_MARCADOR := 54
+## Área de toque das abas penduradas: a parte desenhada mais o que sobe por
+## dentro da faixa.
+const TOQUE_ABA := float(Tipografia.ALTURA_SECUNDARIA)
+const SOBE_TOQUE := TOQUE_ABA - ALTURA_MARCADOR
 const COR_APAGADO := Color("8d9094")
 const OPACIDADE_SEM_VOLTA := 0.8  # 20% de transparência, sem toque
 ## Quanto cada texto sobe (px) para o centro das letras cair no centro da faixa,
@@ -59,6 +69,7 @@ var aba_nomes: Button
 var aba_mapa: Button
 var _icone_nomes: IconeVetor
 var _icone_corrida: IconeVetor
+var _texto_corrida: Label
 var engrenagem: Button
 var _icone_marcador: IconeVetor
 var _caixa_marcador: HBoxContainer
@@ -86,7 +97,7 @@ func _init() -> void:
 	botao_voltar.texture_normal = load(PASTA + "voltar.png")
 	botao_voltar.ignore_texture_size = true
 	botao_voltar.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	botao_voltar.custom_minimum_size = Vector2(ALTURA * 0.95, ALTURA)
+	botao_voltar.custom_minimum_size = Vector2(ALTURA, ALTURA)
 	botao_voltar.pressed.connect(func(): voltar.emit())
 	_faixa.add_child(botao_voltar)
 	_imagem("divisoria.png", Vector2(ALTURA * 12.0 / 125.0, ALTURA))
@@ -103,7 +114,7 @@ func _init() -> void:
 	# Espaço da diagonal, que é desenhada junto do painel (abaixo).
 	_espaco(ALTURA * 0.42)
 	# Painel de giros: moldura do pack com moeda, número e "GIROS" por cima.
-	var h_painel := ALTURA * 0.66
+	var h_painel := ALTURA_PAINEL
 	var caixa := CenterContainer.new()
 	caixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_faixa.add_child(caixa)
@@ -134,6 +145,7 @@ func _init() -> void:
 	dentro.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	painel.add_child(dentro)
 	var moeda := TextureRect.new()
+	_moeda = moeda
 	moeda.texture = load(PASTA + "icone_giros.png")
 	moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -160,6 +172,7 @@ func _init() -> void:
 	caixa_giros.custom_minimum_size.x = Tipografia.fonte("semibold").get_string_size("GIROS",
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x + 2.0
 	dentro.add_child(caixa_giros)
+	_caixa_giros = caixa_giros
 	# Peças (desmanche e arena; pagam a blindagem): no mesmo painel, depois dos
 	# giros, com a porca.
 	_pecas = HBoxContainer.new()
@@ -173,7 +186,7 @@ func _init() -> void:
 	porca.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_pecas.add_child(porca)
 	_pecas_numero = Label.new()
-	Tipografia.numero(_pecas_numero, 22)
+	Tipografia.numero(_pecas_numero, TAMANHO_PECAS)
 	_pecas_numero.add_theme_color_override("font_color", COR_ROTULO)
 	_pecas_numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_pecas_numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -183,25 +196,28 @@ func _init() -> void:
 	engrenagem = Button.new()
 	engrenagem.flat = true
 	engrenagem.focus_mode = Control.FOCUS_NONE
-	engrenagem.custom_minimum_size = Vector2(ALTURA * 0.82, ALTURA)
+	engrenagem.custom_minimum_size = Vector2(ALTURA, ALTURA)
 	engrenagem.tooltip_text = "Configurações"
 	engrenagem.pressed.connect(func(): configuracoes.emit())
 	var eng := IconeVetor.new("engrenagem", COR_ROTULO)
 	eng.cor_fundo = COR_FAIXA
 	eng.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	eng.offset_left = ALTURA * 0.14
-	eng.offset_right = -ALTURA * 0.14
+	# O ícone no mesmo tamanho de antes, no meio da área de toque.
+	eng.offset_left = ALTURA * 0.23
+	eng.offset_right = -ALTURA * 0.23
 	eng.offset_top = ALTURA * 0.22
 	eng.offset_bottom = -ALTURA * 0.22
 	engrenagem.add_child(eng)
 	_faixa.add_child(engrenagem)
-	_espaco(6)
 	_criar_marcador()
 	_criar_aba_corrida()
 	_criar_aba_garagem()
 	aba_pintura = _aba_pendurada("PINTURA", "pincel", "Pintar o carro", func(): pintura.emit())
 	_criar_aba_nomes()
 	_criar_aba_mapa()
+	# A faixa por cima das abas: o voltar e a engrenagem ficam com o toque onde
+	# a área das abas sobe por dentro dela.
+	move_child(_faixa, get_child_count() - 1)
 	titulo.resized.connect(_ajustar_titulo)
 	resized.connect(_posicionar)
 	_posicionar()
@@ -230,16 +246,16 @@ func _posicionar() -> void:
 		var direita := size.x - 14.0
 		if aba_mapa != null and aba_mapa.visible:
 			var wm: float = (aba_mapa.get_child(0) as Control).get_combined_minimum_size().x + 34.0
-			aba_mapa.size = Vector2(wm, ALTURA_MARCADOR)
-			aba_mapa.position = Vector2(14.0, altura_total())
+			aba_mapa.size = Vector2(wm, TOQUE_ABA)
+			aba_mapa.position = Vector2(14.0, altura_total() - SOBE_TOQUE)
 		for aba in [aba_corrida, marcador, aba_garagem, aba_pintura, aba_nomes]:
 			if aba == null or not aba.visible:
 				continue
 			var wa: float = (aba.get_child(0) as Control).get_combined_minimum_size().x + 34.0
 			if aba == marcador:
 				wa = maxf(_caixa_marcador.get_combined_minimum_size().x + 34.0, 176.0)
-			aba.size = Vector2(wa, ALTURA_MARCADOR)
-			aba.position = Vector2(direita - wa, altura_total())
+			aba.size = Vector2(wa, TOQUE_ABA)
+			aba.position = Vector2(direita - wa, altura_total() - SOBE_TOQUE)
 			direita -= wa + 10.0
 
 
@@ -274,12 +290,14 @@ func _criar_marcador() -> void:
 	sb.shadow_color = Color(0, 0, 0, 0.35)
 	sb.shadow_size = 6
 	sb.shadow_offset = Vector2(0, 3)
+	sb.expand_margin_top = -SOBE_TOQUE  # desenha só a aba; o toque sobe pela faixa
 	for estado in ["normal", "hover", "pressed", "focus"]:
 		marcador.add_theme_stylebox_override(estado, sb)
 	marcador.pressed.connect(func(): acelerar.emit())
 	var h := HBoxContainer.new()
 	_caixa_marcador = h
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_top = SOBE_TOQUE  # o conteúdo na parte desenhada
 	h.offset_left = 16
 	h.offset_right = -18
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -314,6 +332,7 @@ func _criar_aba_garagem() -> void:
 	aba_garagem.pressed.connect(func(): garagem.emit())
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_top = SOBE_TOQUE  # o conteúdo na parte desenhada
 	h.offset_left = 16
 	h.offset_right = -18
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -345,6 +364,7 @@ func _aba_pendurada(texto: String, icone: String, dica: String, ao_tocar: Callab
 	b.pressed.connect(ao_tocar)
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_top = SOBE_TOQUE  # o conteúdo na parte desenhada
 	h.offset_left = 16
 	h.offset_right = -18
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -367,7 +387,8 @@ func _aba_pendurada(texto: String, icone: String, dica: String, ao_tocar: Callab
 	return b
 
 
-## Aba da bandeira: volta para a corrida em andamento (acesa quando há uma).
+## Aba CORRIDA, com a bandeira: volta para a corrida em andamento (acesa
+## quando há uma).
 func _criar_aba_corrida() -> void:
 	aba_corrida = Button.new()
 	aba_corrida.focus_mode = Control.FOCUS_NONE
@@ -377,21 +398,32 @@ func _criar_aba_corrida() -> void:
 	aba_corrida.pressed.connect(func(): corrida.emit())
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_top = SOBE_TOQUE  # o conteúdo na parte desenhada
 	h.offset_left = 16
 	h.offset_right = -18
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	aba_corrida.add_child(h)
+	h.add_theme_constant_override("separation", 10)
 	_icone_corrida = IconeVetor.new("bandeira", COR_APAGADO)
 	_icone_corrida.custom_minimum_size = Vector2(34, 30)
 	_icone_corrida.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(_icone_corrida)
+	# Com o nome: a bandeira sozinha não dizia o que a aba faz.
+	_texto_corrida = Label.new()
+	_texto_corrida.text = "CORRIDA"
+	_texto_corrida.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_texto_corrida.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	Tipografia.rotulo(_texto_corrida, "semibold", 25)
+	_texto_corrida.add_theme_color_override("font_color", COR_ROTULO)
+	h.add_child(_texto_corrida)
 	add_child(aba_corrida)
 
 
 ## Bandeira acesa (ocre) com corrida em andamento; apagada sem.
 func definir_corrida(ativa: bool) -> void:
 	_icone_corrida.cor = COR_NUMERO if ativa else COR_APAGADO
+	_texto_corrida.add_theme_color_override("font_color", COR_NUMERO if ativa else COR_ROTULO)
 
 
 func mostrar_corrida(sim: bool) -> void:
@@ -400,7 +432,7 @@ func mostrar_corrida(sim: bool) -> void:
 
 
 ## Aba NOMES (mapa das Lojas): mostra ou esconde os nomes das lojas sobre
-## elas; ✓ com os nomes à vista, ✗ sem (começa assim).
+## elas; ✓ com os nomes à vista (começa assim), ✗ sem.
 func _criar_aba_nomes() -> void:
 	aba_nomes = Button.new()
 	aba_nomes.focus_mode = Control.FOCUS_NONE
@@ -410,13 +442,14 @@ func _criar_aba_nomes() -> void:
 	aba_nomes.pressed.connect(func(): nomes.emit())
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_top = SOBE_TOQUE  # o conteúdo na parte desenhada
 	h.offset_left = 16
 	h.offset_right = -18
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
 	h.add_theme_constant_override("separation", 10)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	aba_nomes.add_child(h)
-	_icone_nomes = IconeVetor.new("x", COR_APAGADO)
+	_icone_nomes = IconeVetor.new("check", COR_NUMERO)
 	_icone_nomes.custom_minimum_size = Vector2(24, 24)
 	_icone_nomes.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(_icone_nomes)
@@ -441,6 +474,7 @@ func _criar_aba_mapa() -> void:
 	aba_mapa.pressed.connect(func(): mapa.emit())
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_top = SOBE_TOQUE  # o conteúdo na parte desenhada
 	h.offset_left = 16
 	h.offset_right = -18
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -525,30 +559,65 @@ func _process(delta: float) -> void:
 
 var _pecas: HBoxContainer
 var _pecas_numero: Label
+var _moeda: Control
+var _caixa_giros: Control
+const TAMANHO_PECAS := 22
+const TAMANHO_PECAS_MIN := 16
 
 
 ## Peças do jogador (texto já formatado), sob os giros.
 func definir_pecas(texto: String) -> void:
 	_pecas_numero.text = texto
+	_ajustar_giros()
 
 
 ## Valor dos giros, encolhendo a fonte se não couber na moldura.
 func definir_giros(texto: String) -> void:
 	numero.text = texto
+	_ajustar_giros()
+
+
+## Moeda, número, GIROS e as peças dividem a moldura: o número encolhe até
+## caber com tudo; se nem no menor tamanho couber, GIROS sai (a moeda já diz
+## o que é) e depois as peças encolhem também.
+func _ajustar_giros() -> void:
 	var f := Tipografia.fonte_numero()
-	# Espaço do número: o painel menos a moeda, GIROS e os vãos (o trio fica
-	# junto, no centro do painel).
-	var livre := 150.0
-	if _dentro_painel != null and _dentro_painel.size.x > 0.0:
-		livre = _dentro_painel.size.x - 16.0
-		for k in _dentro_painel.get_children():
-			if k != _caixa_numero:
-				livre -= (k as Control).get_combined_minimum_size().x
+	var texto := numero.text
+	var com_giros := true
+	var tam_p := TAMANHO_PECAS
+	var tam := _tamanho_numero(f, texto, com_giros, tam_p)
+	if f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > _livre_numero(com_giros, tam_p):
+		com_giros = false
+		tam = _tamanho_numero(f, texto, com_giros, tam_p)
+		while tam_p > TAMANHO_PECAS_MIN \
+				and f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > _livre_numero(com_giros, tam_p):
+			tam_p -= 2
+			tam = _tamanho_numero(f, texto, com_giros, tam_p)
+	_caixa_giros.visible = com_giros
+	_pecas_numero.add_theme_font_size_override("font_size", tam_p)
+	numero.add_theme_font_size_override("font_size", tam)
+	_caixa_numero.custom_minimum_size.x = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + 4.0
+
+
+func _tamanho_numero(f: Font, texto: String, com_giros: bool, tam_p: int) -> int:
+	var livre := _livre_numero(com_giros, tam_p)
 	var tam := TAMANHO_NUMERO
 	while tam > 20 and f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
 		tam -= 2
-	numero.add_theme_font_size_override("font_size", tam)
-	_caixa_numero.custom_minimum_size.x = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + 4.0
+	return tam
+
+
+## Espaço do número: a moldura menos a moeda, GIROS (se fica), as peças (no
+## tamanho `tam_p`) e os vãos entre eles.
+func _livre_numero(com_giros: bool, tam_p: int) -> float:
+	var livre := painel.custom_minimum_size.x + _dentro_painel.offset_right - _dentro_painel.offset_left
+	var vao := float(_dentro_painel.get_theme_constant("separation"))
+	livre -= _moeda.custom_minimum_size.x + vao
+	if com_giros:
+		livre -= _caixa_giros.custom_minimum_size.x + vao
+	livre -= 18.0 + 4.0 + Tipografia.fonte_numero().get_string_size(_pecas_numero.text,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, tam_p).x + vao  # porca, vão e o número das peças
+	return livre - 8.0  # folga das bordas das letras
 
 
 ## Voltar habilitado só quando há tela anterior; sem ela, 80% de opacidade.

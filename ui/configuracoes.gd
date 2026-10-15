@@ -10,9 +10,13 @@ static var _testes_abertos := false
 
 
 ## `acelerar`: abre a tela da aceleração. `comprar`: compra Sem anúncios.
-## `testes(v)`: modo de playtest e cenários (aba Carreira).
+## `testes(v)`: modo de playtest e cenários (aba Carreira). `reabrir`: abre as
+## Configurações de novo (a volta do Diário e do Recomeçar, que ocupam o painel).
 static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable, comprar: Callable,
-		testes: Callable) -> void:
+		testes: Callable, reabrir := Callable()) -> void:
+	var voltar := func():
+		if reabrir.is_valid():
+			reabrir.call()
 	_secao(aba, v, "SOM")
 	var h := aba.fileira(v)
 	var lv := aba.rotulo("Volume", Aba.FONTE_PEQUENA + 2, Color.WHITE, h)
@@ -23,7 +27,7 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 	vol.max_value = 1.0
 	vol.step = 0.05
 	vol.value = Preferencias.volume
-	vol.custom_minimum_size = Vector2(0, 48)
+	vol.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)  # a área de toque; o trilho não muda
 	vol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vol.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	vol.value_changed.connect(func(x):
@@ -47,7 +51,7 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 		b.button_group = grupo
 		b.button_pressed = Preferencias.vista_corrida == m[0]
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.custom_minimum_size = Vector2(0, 58)
+		b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 		b.pressed.connect(func():
 			Preferencias.vista_corrida = m[0]
 			Preferencias.salvar())
@@ -64,15 +68,18 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 
 	if jogador.historia != null and String(jogador.personagem) != "":
 		_secao(aba, v, "HISTÓRIA")
-		aba.botao_texto("Diário de conversas", func():
-			aba.painel.emit("Diário", func(pv): Diario.montar(aba, pv, jogador), []), v)
+		var diario := aba.botao_texto("Diário de conversas", func():
+			aba.painel.emit("Diário", func(pv): Diario.montar(aba, pv, jogador),
+					[["Voltar", voltar]] if reabrir.is_valid() else []), v)
+		diario.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA
 
 	_secao(aba, v, "CARREIRA")
 	# Recomeçar pede confirmação numa janela própria (apaga todo o progresso).
-	aba.botao_texto("Recomeçar carreira", func():
+	var recomecar := aba.botao_texto("Recomeçar carreira", func():
 		aba.painel.emit("Recomeçar carreira?", func(pv):
 			aba.rotulo("Apagar todo o progresso e voltar ao saldo inicial?", Aba.FONTE_PEQUENA + 2, Color.WHITE, pv),
-			[["Sim, recomeçar", aba._recomecar], ["Cancelar", func(): pass]]), v)
+			[["Sim, recomeçar", aba._recomecar], ["Cancelar", voltar]]), v)
+	recomecar.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA
 
 	_secao(aba, v, "SOBRE")
 	var versao := aba.rotulo("Chrome & Wreckage v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
@@ -96,8 +103,11 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 
 
 ## Compra única Sem anúncios: a aceleração sem assistir ao vídeo. A compra real
-## (loja do aparelho) entra com o plugin, depois do MVP.
+## (loja do aparelho) entra com o plugin, depois do MVP. Sem loja do aparelho
+## (a versão Web), o cartão não aparece: os botões só davam erro.
 static func cartao_sem_anuncios(aba: Aba, v: VBoxContainer, comprar: Callable) -> void:
+	if not tem_loja():
+		return
 	var c := aba.cartao(Cabecalho.COR_NUMERO, v)
 	aba.rotulo("SEM ANÚNCIOS", Aba.FONTE_PEQUENA + 2, Cabecalho.COR_NUMERO, c)
 	aba.rotulo("Compra única. Acelera as corridas sem precisar assistir aos vídeos.", Aba.FONTE_PEQUENA,
@@ -111,6 +121,11 @@ static func cartao_sem_anuncios(aba: Aba, v: VBoxContainer, comprar: Callable) -
 	r.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 
+## A plataforma tem loja do aparelho para a compra Sem anúncios (não na Web).
+static func tem_loja() -> bool:
+	return not OS.has_feature("web")
+
+
 static func _secao(aba: Aba, v: VBoxContainer, t: String) -> void:
 	if v.get_child_count() > 0:
 		aba.separador(v)
@@ -122,6 +137,7 @@ static func _chave(v: VBoxContainer, t: String, ligado: bool, gravar: Callable) 
 	c.text = t
 	c.button_pressed = ligado
 	c.add_theme_font_size_override("font_size", Aba.FONTE_PEQUENA + 2)
+	c.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA
 	c.toggled.connect(func(x):
 		gravar.call(x)
 		Preferencias.salvar())
@@ -131,7 +147,7 @@ static func _chave(v: VBoxContainer, t: String, ligado: bool, gravar: Callable) 
 static func _botao(pai: Control, t: String, acao: Callable) -> Button:
 	var b := Button.new()
 	b.text = t
-	b.custom_minimum_size = Vector2(150, 64)
+	b.custom_minimum_size = Vector2(150, Tipografia.ALTURA_SECUNDARIA)
 	b.pressed.connect(func(): acao.call())
 	pai.add_child(b)
 	return b

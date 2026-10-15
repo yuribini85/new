@@ -105,6 +105,30 @@ static func acao_secundaria(b: Button, texto: String, cor := Color(0.86, 0.87, 0
 	b.add_theme_stylebox_override("focus", foco)
 
 
+## Área de toque de ALTURA_SECUNDARIA num botão que continua desenhado com
+## `altura_desenho` (e `largura_desenho`, se > 0): as caixas encolhem por
+## dentro, centradas, e o resto do botão é toque transparente. Para quando o
+## tamanho visível importa (sobre a prévia, no cenário, numa grade de cores).
+static func area_toque(b: Button, altura_desenho: float, largura_desenho := 0.0) -> void:
+	var sobra_y := maxf(ALTURA_SECUNDARIA - altura_desenho, 0.0) / 2.0
+	var sobra_x := maxf(ALTURA_SECUNDARIA - largura_desenho, 0.0) / 2.0 if largura_desenho > 0.0 else 0.0
+	b.custom_minimum_size.y = maxf(b.custom_minimum_size.y, ALTURA_SECUNDARIA)
+	if largura_desenho > 0.0:
+		b.custom_minimum_size.x = maxf(b.custom_minimum_size.x, ALTURA_SECUNDARIA)
+	for estado in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
+		if not b.has_theme_stylebox_override(estado):
+			continue
+		var sb := b.get_theme_stylebox(estado)
+		if not (sb is StyleBoxFlat or sb is StyleBoxTexture):
+			continue
+		sb = sb.duplicate()
+		sb.expand_margin_top -= sobra_y
+		sb.expand_margin_bottom -= sobra_y
+		sb.expand_margin_left -= sobra_x
+		sb.expand_margin_right -= sobra_x
+		b.add_theme_stylebox_override(estado, sb)
+
+
 ## Fonte dos números (Racing Sans One, desenho original, sem efeitos).
 static func fonte_numero() -> Font:
 	return fonte("numero")

@@ -20,8 +20,8 @@ const OURO := Color("d8a73c")
 const OSSO := Color("efe6d3")
 const ACO := Color("8d8680")
 const LINHA := Color(0.94, 0.9, 0.83, 0.14)
-const RITMO_MAX := 2.0  # escala da barra de ritmo (só exibição, como no protótipo)
 const PILOTO_S := 6.0  # cada piloto na versão completa
+const RETRATO_Y := 200.0  # alto do retrato de corpo (o rosto abaixo do Pular)
 const PILOTO_CURTO_S := 3.5  # com Reduzir animações
 const ROTACAO_CARTOES := [-4.0, 3.0, -3.0, 4.0]
 
@@ -286,7 +286,9 @@ func _fase_piloto(i: int) -> void:
 	ret.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	ret.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
 	ret.size = Vector2(512, 768)
-	ret.position = Vector2(size.x - 512 + 24, 56)
+	# Abaixo do Pular (fixo em Dialogo.PULAR_Y, como no diálogo): o botão não
+	# cobre o rosto.
+	ret.position = Vector2(size.x - 512 + 24, RETRATO_Y)
 	ret.pivot_offset = Vector2(256, 230)
 	ret.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mat := ShaderMaterial.new()
@@ -344,8 +346,10 @@ func _fase_piloto(i: int) -> void:
 	barras.add_theme_constant_override("separation", 8)
 	v.add_child(barras)
 	var preenchimentos: Array = []
-	for b in [["RITMO", float(p["ritmo"]), RITMO_MAX], ["CONSISTÊNCIA", float(p["consistencia"]), 1.0],
-			["AGRESSIVIDADE", float(p["agressividade"]), 1.0]]:
+	# As três na mesma escala: em %, barra cheia em 100% (o ritmo, perto de
+	# 100%, com uma casa para as diferenças entre licenças aparecerem).
+	for b in [["RITMO", float(p["ritmo"]), 1], ["CONSISTÊNCIA", float(p["consistencia"]), 0],
+			["AGRESSIVIDADE", float(p["agressividade"]), 0]]:
 		var linha := _barra(b[0], b[1], b[2])
 		barras.add_child(linha[0])
 		preenchimentos.append(linha[1])
@@ -427,7 +431,8 @@ func _confronto() -> void:
 	for lado in ["left", "right"]:
 		m.add_theme_constant_override("margin_" + lado, 28)
 	m.add_theme_constant_override("margin_top", 48)
-	m.add_theme_constant_override("margin_bottom", 32)
+	# Os botões acima dos rótulos do pé (PRÓXIMA DISPUTA, RIVAL #N).
+	m.add_theme_constant_override("margin_bottom", 56)
 	_cena.add_child(m)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
@@ -503,14 +508,15 @@ func _confronto() -> void:
 	v.add_child(botoes)
 	var ir_b := Button.new()
 	var arena := String(_info.get("modo", "")) != "corrida"
-	Tipografia.acao_primaria(ir_b, "%s   →" % ("Arena" if arena else "Corridas"), Color(0.2, 0.21, 0.24), Color.WHITE, 26, 76)
+	Tipografia.acao_primaria(ir_b, "%s   →" % ("Arena" if arena else "Corridas"), Color(0.2, 0.21, 0.24), Color.WHITE, 26,
+			Tipografia.ALTURA_SECUNDARIA)
 	ir_b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ir_b.pressed.connect(func():
 		ir.emit(int(_abas[1 if arena else 0]))
 		_fechar())
 	botoes.add_child(ir_b)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Continuar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 76)
+	Tipografia.acao_primaria(b, "Continuar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.pressed.connect(_fechar)
 	botoes.add_child(b)
@@ -632,7 +638,8 @@ func _campo(titulo: String, valor: String, nota: String) -> VBoxContainer:
 
 
 ## [linha, preenchimento]: rótulo, trilho com o preenchimento e o valor.
-func _barra(titulo: String, valor: float, maximo: float) -> Array:
+## Barra de um atributo (1 = 100% = cheia) com o valor em % (vírgula, pt-BR).
+func _barra(titulo: String, valor: float, casas: int) -> Array:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 12)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -657,11 +664,11 @@ func _barra(titulo: String, valor: float, maximo: float) -> Array:
 	f.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	f.stretch_mode = TextureRect.STRETCH_SCALE
 	f.anchor_bottom = 1.0
-	f.anchor_right = clampf(valor / maxf(maximo, 0.001), 0.0, 1.0)
+	f.anchor_right = clampf(valor, 0.0, 1.0)
 	f.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	trilho.add_child(f)
-	var n := _rotulo("%.2f" % valor, "mono_sb", 16, OSSO, HORIZONTAL_ALIGNMENT_RIGHT)
-	n.custom_minimum_size.x = 56
+	var n := _rotulo("%s%%" % Aba.decimal(valor * 100.0, casas), "mono_sb", 16, OSSO, HORIZONTAL_ALIGNMENT_RIGHT)
+	n.custom_minimum_size.x = 76
 	h.add_child(n)
 	return [h, f]
 

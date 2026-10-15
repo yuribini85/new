@@ -193,7 +193,7 @@ func _confirmar_novo() -> void:
 	t.add_theme_font_size_override("font_size", 40)
 	v.add_child(t)
 	var d := Label.new()
-	d.text = "Isso apaga o progresso salvo neste aparelho: carros, dinheiro, licenças, vitórias e a história. Não dá para desfazer."
+	d.text = "Isso apaga o progresso salvo neste aparelho: carros, giros, licenças, vitórias e a história. Não dá para desfazer."
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	d.add_theme_font_size_override("font_size", 26)
 	d.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)

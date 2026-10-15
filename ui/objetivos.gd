@@ -58,7 +58,7 @@ static func _carreira(jogador: Node, dados: Node) -> Array:
 			"aba": Aba.LOJA, "botao": "Ir para as Lojas"},
 		{"texto": "Disputar uma corrida", "feito": not jogador.historico.is_empty() or not jogador.vitorias.is_empty(),
 			"aba": Aba.EVENTOS, "botao": "Ver corridas"},
-		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.GARAGEM, "botao": "Ir para a Garagem"},
+		{"texto": "Melhorar o carro (peça ou pneu)", "feito": tem_peca, "aba": Aba.GARAGEM, "botao": "Ir para a Oficina"},
 		{"texto": "Vencer uma corrida", "feito": not jogador.vitorias.is_empty(), "aba": Aba.EVENTOS, "botao": "Ver corridas"},
 		{"texto": "Conquistar a licença Club", "feito": "CLUB" in jogador.licencas, "aba": Aba.LICENCAS, "botao": "Ver licenças"},
 		{"texto": "Vencer uma corrida da licença Club", "feito": vitorias_b, "aba": Aba.EVENTOS, "botao": "Ver corridas"},

@@ -56,12 +56,13 @@ func construir() -> void:
 		return
 	var topo := topo_carro(garagem)
 	var trocar := Button.new()
-	Tipografia.acao_secundaria(trocar, "Carro de corrida · trocar na Oficina", Color(0.93, 0.91, 0.87), 22, 48)
+	Tipografia.acao_secundaria(trocar, "Carro de corrida · trocar na Oficina", Color(0.93, 0.91, 0.87), 22)
 	trocar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	trocar.offset_left = -420
 	trocar.offset_right = -16
-	trocar.offset_top = 70
-	trocar.offset_bottom = 118
+	# Área de toque inteira (ALTURA_SECUNDARIA) logo abaixo das abas penduradas.
+	trocar.offset_top = Cabecalho.ALTURA_MARCADOR
+	trocar.offset_bottom = Cabecalho.ALTURA_MARCADOR + Tipografia.ALTURA_SECUNDARIA
 	trocar.pressed.connect(func():
 		jogador.carro_ativo = garagem.uid
 		ir_para.emit(GARAGEM))

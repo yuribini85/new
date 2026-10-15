@@ -128,6 +128,7 @@ func _ready() -> void:
 			_sobre.fechar()  # ex.: cenário aberto nas Configurações
 			_sujar_todas()
 			_ir_para(i))
+	_cabecalho.definir_nomes(_todas[1].mostrar_nomes)
 	_todas[4].dialogo_aberto = func() -> bool: return _dialogo != null and _dialogo.ocupado()
 	_todas[ABA_ARENA].luta.connect(_abrir_luta)
 	_todas[5].vinheta.connect(_abrir_vinheta)
@@ -472,7 +473,7 @@ func _checar_arena() -> void:
 func _abrir_configuracoes() -> void:
 	_sobre.abrir("Configurações", func(v):
 		Configuracoes.montar(_todas[5], v, jogador, _abrir_aceleracao, _comprar_sem_anuncios,
-				func(vv): _todas[5]._modo_teste(vv)))
+				func(vv): _todas[5]._modo_teste(vv), _abrir_configuracoes))
 
 
 ## Voltar do cabeçalho: a última tela visitada (o estado dela fica como estava).
@@ -672,9 +673,11 @@ func _destacar(nome: String) -> void:
 		return
 	# Rola se o elemento não está inteiro na tela ou cai onde a caixa do
 	# diálogo fica (a corrida não sai do lugar).
+	# A área livre: abaixo do cabeçalho e das abas penduradas, que cobririam o topo.
 	var r := alvo.get_global_rect()
-	if not aba.get_global_rect().encloses(r) or (r.end.y > _dialogo.topo_da_caixa() - 16.0 and _abas.current_tab != 4):
-		aba.scroll_vertical = maxi(int(alvo.global_position.y - aba.conteudo.global_position.y) - 24, 0)
+	if not aba.area_livre().encloses(r) or (r.end.y > _dialogo.topo_da_caixa() - 16.0 and _abas.current_tab != 4):
+		aba.scroll_vertical = maxi(int(alvo.global_position.y - aba.conteudo.global_position.y
+				- (aba.area_livre().position.y - aba.get_global_rect().position.y)) - 24, 0)
 		await get_tree().process_frame
 		if not is_instance_valid(alvo):
 			return
@@ -1139,6 +1142,7 @@ func _fechamento_automatico(v: VBoxContainer, token: int, ao_fechar: Callable) -
 	caixa.text = "Fechar sozinha em %d s" % int(FECHAR_RESULTADO_S)
 	caixa.button_pressed = Preferencias.fechar_resultado
 	caixa.add_theme_font_size_override("font_size", Aba.FONTE_PEQUENA)
+	caixa.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA  # área de toque, não o desenho
 	for estado in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
 		caixa.add_theme_stylebox_override(estado, StyleBoxEmpty.new())
 	for cor in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
