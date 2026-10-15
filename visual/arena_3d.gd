@@ -258,6 +258,7 @@ func atualizar(delta: float) -> void:
 					+ absf(sin(tb["arfagem"])) * MEIO_COMPRIMENTO_M + float(tb.get("salto", 0.0))
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
 	_mostrar_aneis(b)
+	_canhoes(b, delta)
 	_eventos(delta)
 	_mover_pilotos(a, b, u, delta)
 	_assentar(delta)
@@ -1138,3 +1139,37 @@ func _ilhas() -> void:
 		var c: Vector2 = o["c"]
 		m.position = Vector3(c.x, _forma.altura(c) + cone.height * 0.5, -c.y)
 		_cena.add_child(m)
+
+
+## Canhão d'água dos pesados que têm um (Pesados.extras): gira para o rival
+## vivo mais perto e solta o jato quando ele está ao alcance. Só visual: a
+## luta é a da simulação.
+const CANHAO_ALCANCE_M := 20.0
+const CANHAO_GIRO := 2.5  # rad/s
+
+
+func _canhoes(amostra: Dictionary, delta: float) -> void:
+	for id in _carros:
+		var c: Node3D = _carros[id]
+		var canhao := c.find_child("Canhao", true, false) as Node3D
+		if canhao == null:
+			continue
+		var jato := canhao.get_node_or_null("Jato") as CPUParticles3D
+		var alvo: Variant = null
+		if not bool(amostra[id]["eliminado"]):
+			var melhor := CANHAO_ALCANCE_M
+			for outro in _carros:
+				if outro == id or bool(amostra[outro]["eliminado"]):
+					continue
+				var d: float = c.global_position.distance_to(_carros[outro].global_position)
+				if d < melhor:
+					melhor = d
+					alvo = _carros[outro]
+		var mirando := false
+		if alvo != null:
+			var local: Vector3 = canhao.get_parent().to_local((alvo as Node3D).global_position) - canhao.position
+			var quer := atan2(local.x, local.z)
+			canhao.rotation.y = rotate_toward(canhao.rotation.y, quer, CANHAO_GIRO * delta) if delta > 0.0 else quer
+			mirando = absf(angle_difference(canhao.rotation.y, quer)) < 0.25
+		if jato != null:
+			jato.emitting = mirando

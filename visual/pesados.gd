@@ -19,6 +19,73 @@ static func tem(id: String) -> bool:
 	return DESENHOS.has(id)
 
 
+## Peças móveis do pesado (nó a acrescentar ao modelo), ou null. O resgate tem
+## o canhão d'água: "Canhao" gira em Y (a arena mira os carros) e o jato
+## ("Jato", partículas) liga quando há alvo.
+const CANHAO_BASE := Vector3(0, 3.3, 0.3)
+const CANHAO_INCL := 0.26  # elevação da lança
+const CANHAO_TUBOS := [2.6, 2.4]  # primeiro tubo e o telescópico
+
+
+static func extras(id: String) -> Node3D:
+	if id != "brakhaus_sentinela":
+		return null
+	var no := Node3D.new()
+	no.name = "Canhao"
+	no.position = CANHAO_BASE
+	var m := MontagemMalha.new()
+	var dir := Vector3(0, sin(CANHAO_INCL), cos(CANHAO_INCL))
+	var rot := Vector3(PI / 2 - CANHAO_INCL, 0, 0)
+	var c1: float = CANHAO_TUBOS[0]
+	var c2: float = CANHAO_TUBOS[1]
+	_caixa(m, "aro", Vector3(0.3, 0.3, 0.3), Vector3.ZERO)
+	_cil(m, "cromo", 0.09, c1, dir * c1 * 0.5, rot, 8)
+	_cil(m, "cromo", 0.065, c2, dir * (c1 + c2 * 0.5 - 0.1), rot, 8)
+	_cil(m, "aro", 0.1, 0.12, dir * (c1 - 0.05), rot, 8)  # luva
+	_cil(m, "cromo", 0.11, 0.3, dir * (c1 + c2 - 0.05), rot, 8)  # bocal
+	_caixa(m, "aro", Vector3(0.05, 0.3, 0.05), dir * c1 * 0.55 + Vector3(0, -0.15, 0))  # apoio
+	var mi := MeshInstance3D.new()
+	mi.name = "Lanca"
+	mi.mesh = m.malha()
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	no.add_child(mi)
+	no.add_child(_jato(dir * (c1 + c2 + 0.1), dir))
+	return no
+
+
+## Jato d'água: partículas no mundo (caem com a gravidade e ficam para trás
+## quando o caminhão anda), desligado até haver alvo.
+static func _jato(pos: Vector3, dir: Vector3) -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.name = "Jato"
+	p.position = pos
+	p.emitting = false
+	p.amount = 160
+	p.lifetime = 1.1
+	p.local_coords = false
+	p.direction = dir
+	p.spread = 4.0
+	p.initial_velocity_min = 18.0
+	p.initial_velocity_max = 21.0
+	p.gravity = Vector3(0, -9.8, 0)
+	p.scale_amount_min = 0.6
+	p.scale_amount_max = 2.0
+	var q := QuadMesh.new()
+	q.size = Vector2(0.42, 0.42)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	mat.vertex_color_use_as_albedo = true
+	q.material = mat
+	p.mesh = q
+	var g := Gradient.new()
+	g.set_color(0, Color(0.85, 0.94, 1.0, 0.9))
+	g.set_color(1, Color(0.6, 0.8, 1.0, 0.0))
+	p.color_ramp = g
+	return p
+
+
 static func montar(m: MontagemMalha, id: String, f: Dictionary) -> void:
 	var funcao: String = DESENHOS[id]
 	Callable(Pesados, funcao).call(m, f)
@@ -208,19 +275,8 @@ static func _resgate(m: MontagemMalha, f: Dictionary) -> void:
 		_caixa(m, "placa", Vector3(0.02, 0.1, 5.6), Vector3(lado * 1.44, 1.3, -1.7))
 		_caixa(m, "lanterna", Vector3(0.03, 0.08, 5.6), Vector3(lado * 1.44, 1.2, -1.7))
 	# canhão d'água e escada no teto
-	# canhão d'água: torre, lança longa apontada para a frente e bocal
-	var base := Vector3(0, 3.3, 0.3)
-	var incl := 0.26  # elevação da lança
-	var comp := 2.6  # primeiro tubo; o segundo (telescópico) sai dele
-	var comp2 := 2.4
-	var dir := Vector3(0, sin(incl), cos(incl))
-	_cil(m, "aro", 0.24, 0.22, Vector3(0, 3.2, 0.3), Vector3.ZERO, 10)
-	_caixa(m, "aro", Vector3(0.3, 0.3, 0.3), base)
-	_cil(m, "cromo", 0.09, comp, base + dir * comp * 0.5, Vector3(PI / 2 - incl, 0, 0), 8)
-	_cil(m, "cromo", 0.065, comp2, base + dir * (comp + comp2 * 0.5 - 0.1), Vector3(PI / 2 - incl, 0, 0), 8)
-	_cil(m, "aro", 0.1, 0.12, base + dir * (comp - 0.05), Vector3(PI / 2 - incl, 0, 0), 8)  # luva
-	_cil(m, "cromo", 0.11, 0.3, base + dir * (comp + comp2 - 0.05), Vector3(PI / 2 - incl, 0, 0), 8)  # bocal
-	_caixa(m, "aro", Vector3(0.05, 0.3, 0.05), base + dir * comp * 0.55 + Vector3(0, -0.15, 0))  # apoio
+	# torre do canhão d'água (a lança gira: é a peça `canhao`, fora da malha)
+	_cil(m, "aro", 0.24, 0.22, Vector3(0, 3.2, CANHAO_BASE.z), Vector3.ZERO, 10)
 	for lado in [1.0, -1.0]:
 		_caixa(m, "aro", Vector3(0.05, 0.05, 4.4), Vector3(lado * 0.9, 3.22, -2.2))
 	for k in 9:

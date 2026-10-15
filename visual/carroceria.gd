@@ -179,6 +179,9 @@ static func construir(id: String, base: Dictionary, cor: Color, faixas: Dictiona
 		CarroBloco._parametros_faixas(sm, mi, faixas)
 	# pesados: aro de aço por padrão (o jogador ainda troca na cabine)
 	var desenho := Rodas.desenho_de(faixas) if faixas.has("roda") or not Pesados.tem(id) else "aco"
+	var movel := Pesados.extras(id)
+	if movel != null:
+		raiz.add_child(movel)
 	var r := float(f["r"])
 	for w in f["rodas"]:
 		var lado := signf(float(w[1]))

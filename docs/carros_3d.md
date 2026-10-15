@@ -153,7 +153,10 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   fora das regras do gerador (pedido do usuário): coletor (cabine avançada, compactador
   com nervuras, boca de carga), resgate (cabine dupla, baú com portas de enrolar, canhão
   d'água de lança telescópica longa, barra de luzes) e mineração (deque com cabine e escada, caçamba aberta com
-  cobertura, rodado duplo). Aro de aço por padrão.
+  cobertura, rodado duplo). Aro de aço por padrão. O canhão do resgate é peça separada
+  (`Pesados.extras`, nó "Canhao" com o jato "Jato"): na arena gira para o rival vivo mais
+  perto (até 20 m) e solta o jato quando alinhado (`Arena3D._canhoes`). Só visual: a
+  simulação não muda.
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
   da cintura: assoalho emborrachado, laterais, parede e tampa pintadas, beira preta),
