@@ -195,7 +195,7 @@
   "trigger": "EVOLUCAO",
   "falas": [
    {
-    "acao": "HIGHLIGHT_BRAKES"
+    "acao": "HIGHLIGHT_PECA_PEDIDA"
    },
    {
     "quem": "mara",
@@ -207,10 +207,10 @@
    },
    {
     "quem": "sistema",
-    "texto": "Compre os {demanda}."
+    "texto": "Compre {demanda}."
    },
    {
-    "acao": "HIGHLIGHT_BRAKES"
+    "acao": "HIGHLIGHT_PECA_PEDIDA"
    }
   ],
   "requer": [
@@ -236,7 +236,7 @@
     "texto": "O carro não se monta sozinho. {demanda}."
    },
    {
-    "acao": "HIGHLIGHT_BRAKES"
+    "acao": "HIGHLIGHT_PECA_PEDIDA"
    }
   ],
   "requer": [],

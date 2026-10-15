@@ -72,15 +72,15 @@ Mara: {demanda}. Toque ali.
 [HIGHLIGHT_DEMANDA]
 
 = CW_P03 | EVOLUCAO | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; lembrete=CW_P03L
-[HIGHLIGHT_BRAKES]
+[HIGHLIGHT_PECA_PEDIDA]
 Mara: Peça nova não faz milagre. Mas cada uma soma na pista.
 Mara: {demanda}. Cabe no caixa.
-Sistema: Compre os {demanda}.
-[HIGHLIGHT_BRAKES]
+Sistema: Compre {demanda}.
+[HIGHLIGHT_PECA_PEDIDA]
 
 = CW_P03L | LEMBRETE | personagem=dono; proibe=FIRST_TUNE_DONE
 Mara: O carro não se monta sozinho. {demanda}.
-[HIGHLIGHT_BRAKES]
+[HIGHLIGHT_PECA_PEDIDA]
 
 = CW_P03B | DEMANDA_CONCLUIDA | personagem=dono; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE
 Mara: Pronto: {peca}.

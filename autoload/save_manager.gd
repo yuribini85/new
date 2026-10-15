@@ -21,6 +21,9 @@ var _caminho_jogo := ""
 var tinha_save := false
 
 var relatorio_offline: Dictionary = {}
+## Vitórias de antes das corridas que terminaram com o app fechado (as
+## conversas delas, na principal).
+var vitorias_antes := {}
 ## Mensagem para o jogador quando o save não pôde ser usado ("" se tudo bem).
 var aviso := ""
 
@@ -43,6 +46,7 @@ func _ready() -> void:
 	if r["aviso"] != "":
 		push_warning("SaveManager: " + r["aviso"])
 	if jogador.fila_ctrl != null and r["carregou"]:
+		vitorias_antes = jogador.vitorias.duplicate()
 		relatorio_offline = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
 		# Patrocínio rende com o app fechado (até o teto de ausência).
 		var agora := Time.get_unix_time_from_system()

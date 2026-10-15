@@ -696,7 +696,9 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 	ancora("LIC_" + String(lic["id"]), v)
 	if st == Licencas.AVAILABLE:
 		historia("LICENCA_DISPONIVEL:" + String(lic["id"]))
-	elif st == Licencas.READY:
+	elif st == Licencas.READY and not jogador.flags.has("PRONTA_" + String(lic["id"])):
+		# Uma vez por licença (a tela reconstrói a cada visita).
+		jogador.flags["PRONTA_" + String(lic["id"])] = true
 		historia("LICENCA_PRONTA")
 	var corpo := HBoxContainer.new()
 	corpo.add_theme_constant_override("separation", 14)

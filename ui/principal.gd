@@ -212,6 +212,7 @@ func _ready() -> void:
 	if jogador.historia != null:
 		historia_acao.connect(_acao_historia)
 		_abertura()
+		_conversas_das_corridas(save_manager.relatorio_offline.get("corridas", []), save_manager.vitorias_antes)
 
 
 func _navegacao() -> HBoxContainer:
@@ -283,6 +284,9 @@ func apresentada(aba: int) -> bool:
 	if jogador.historia == null or jogador.personagem != "dono":
 		return true
 	aba = PAI.get(aba, aba)
+	# As Lojas também com carro na garagem (o jogador já esteve nelas).
+	if aba == 1 and jogador.garagem != null and not jogador.garagem.lista().is_empty():
+		return true
 	return not APRESENTADA_POR.has(aba) or jogador.flags.has(APRESENTADA_POR[aba]) \
 			or jogador.flags.has("APRESENTADA_" + NOMES_ABA[aba]) \
 			or (aba == ABA_ARENA and jogador.flags.has(EquipeJogador.FLAG_ARENA))
@@ -413,6 +417,7 @@ func _abrir_cabine() -> void:
 ## conversa do resultado e a tela atualizada.
 func _abrir_luta(dados_luta: Dictionary) -> void:
 	var luta := LutaArena.new(dados_luta, dados_luta.get("params", dados.arena()))
+	luta.name = "LutaArena"
 	add_child(luta)
 	luta.acabou.connect(func(f: Dictionary):
 		if jogador.historia != null and not f.get("simulacao", false):
@@ -495,7 +500,7 @@ func _atualizar_ao_vivo() -> void:
 	var falta := maxf(dur - (Aceleracao.agora(jogador) - float(f["inicio"])), 0.0)
 	if Aceleracao.ativa(jogador):  # tempo real que falta (o relógio da corrida anda mais rápido)
 		falta /= float(jogador.aceleracao["fator"])
-	_ao_vivo.text = "●  AO VIVO%s · %s · %d:%02d   Assistir ›" % [" %d×" % int(jogador.aceleracao["fator"]) if Aceleracao.ativa(jogador) else "",
+	_ao_vivo.text = "•  AO VIVO%s · %s · %d:%02d   Assistir ›" % [" %d×" % int(jogador.aceleracao["fator"]) if Aceleracao.ativa(jogador) else "",
 			dados.evento(f["evento_id"]).get("nome", ""), int(falta) / 60, int(falta) % 60]
 
 
@@ -735,6 +740,7 @@ func _quando_dialogo_acabar(depois: Callable) -> void:
 ## carros) e, no fim dela, a primeira cena (GAME_START).
 func _abertura() -> void:
 	var h: Historia = jogador.historia
+	var falta := h.recuperar()
 	# Campanha do dono: a noite do acidente (AberturaCinema) e então a Mara na
 	# oficina (GAME_START). Só uma vez (flag ABERTURA_DONO).
 	if jogador.personagem == "dono" and not jogador.flags.has("ABERTURA_DONO") \
@@ -749,7 +755,16 @@ func _abertura() -> void:
 			h.disparar("GAME_START")
 			cinema.sair(Dialogo.CENARIO_S * 2.0 + Dialogo.ENTRADA_S))
 		return
-	h.disparar("GAME_START")
+	if h.disparar("GAME_START"):
+		return
+	# Save fechado no meio da chegada (decisão 90): retoma o passo que faltou.
+	match falta:
+		"nome":
+			_quando_dialogo_acabar(_pedir_nome)
+		"nome_definido":
+			h.disparar("NOME_DEFINIDO")
+		"grid":
+			h.abrir("CW_GR00")
 
 
 func _acao_historia(nome: String) -> void:
@@ -800,6 +815,7 @@ func _processar_fila() -> void:
 	# mostra o resultado. Várias (voltou do segundo plano), erro ou carro-prêmio:
 	# relatório.
 	if rel["corridas"].size() == 1 and rel["erro"] == "":
+		await _esperar_tela_livre()
 		# Assistindo: um silêncio depois da chegada antes do resultado (a tela da
 		# corrida fica parada na última imagem o mesmo tempo).
 		if _abas.current_tab == 4:
@@ -816,7 +832,37 @@ func _processar_fila() -> void:
 			jogador.historia.disparar_grid(c.get("grid", {}), dados)
 			jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias)
 		return
+	await _esperar_tela_livre()
 	_mostrar_relatorio(rel, "Resultado das corridas")
+	_conversas_das_corridas(rel["corridas"], antes_vitorias)
+
+
+## O resultado nunca substitui um painel aberto (ficha, Garagem,
+## Configurações) nem fica escondido atrás da intro do Grid, da luta ou do
+## pedido do nome: espera a tela ficar livre.
+func _esperar_tela_livre() -> void:
+	while is_inside_tree() and (_sobre.aberto() or _cobrindo()):
+		await get_tree().create_timer(0.25).timeout
+
+
+func _cobrindo() -> bool:
+	for n in ["VinhetaGrid", "LutaArena", "NomeAdmin"]:
+		var x := get_node_or_null(n)
+		if x != null and not x.is_queued_for_deletion():
+			return true
+	return false
+
+
+## Corridas que terminaram fora da tela (app fechado ou várias de uma vez):
+## as conversas que elas pedem, como se tivessem terminado com o app aberto
+## (o Grid de cada uma, a chegada da última). Elas esperam o relatório fechar.
+func _conversas_das_corridas(corridas: Array, antes: Dictionary) -> void:
+	if jogador.historia == null or corridas.is_empty():
+		return
+	for c in corridas:
+		jogador.historia.disparar_grid(c.get("grid", {}), dados)
+	var u: Dictionary = corridas[-1]
+	jogador.historia.disparar_fim(int(u["posicao"]), String(u["evento_id"]), antes)
 
 
 func _notification(what: int) -> void:
@@ -1167,7 +1213,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 		for cid in jogador.desejos:
 			var p := Usados.proxima(dados.carro(cid), jogador.dias, jogador.usados_vendidos)
 			if not p.is_empty() and p["inicio"] <= jogador.dias:
-				g.rotulo("♥ %s à venda nos usados por %s giros" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
+				g.rotulo("★ %s à venda nos usados por %s giros" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
 						Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vp)
 		if patrocinio > 0:
 			var vpat := g.cartao(Aba.COR_DESTAQUE, v)

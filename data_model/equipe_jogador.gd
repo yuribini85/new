@@ -230,7 +230,7 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 static func migrar(dados: Node, jogador: Node) -> void:
 	if jogador.flags.has("ARENA_INTRO"):
 		jogador.flags[FLAG_ARENA] = true
-	if exige_piloto(jogador) and jogador.flags.has("INTERNATIONAL_COMPLETE"):
+	if exige_piloto(jogador) and (jogador.flags.has("INTERNATIONAL_COMPLETE") or "INTERNATIONAL" in jogador.licencas):
 		jogador.flags["GESTAO_LIBERADA"] = true
 	if not jogador.pilotos.is_empty():
 		return

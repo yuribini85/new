@@ -163,6 +163,45 @@ func variaveis(ctx: Dictionary = {}) -> Dictionary:
 	return v
 
 
+## Save fechado no meio de uma cena (decisão 90): as flags só são gravadas no
+## fim da cena, e as que destravam telas viriam de gatilhos que não se repetem.
+## Aqui elas saem do estado real (carro, piloto, licenças). Devolve o passo da
+## chegada que ficou para trás: "nome" (pedir o nome), "nome_definido" (o nome
+## foi dado, falta a conversa seguinte), "grid" (a apresentação do Grid) ou "".
+func recuperar() -> String:
+	if String(jogador.personagem) != "dono":
+		return ""
+	var f: Dictionary = jogador.flags
+	if jogador.garagem != null and not jogador.garagem.lista().is_empty() and not f.has("FIRST_CAR"):
+		f["FIRST_CAR"] = true
+		EquipeJogador.criar(jogador)
+	if EquipeJogador.piloto_vaga(jogador, "corrida") != "":
+		f["PILOT_HIRED"] = true
+	if "CLUB" in jogador.licencas:
+		f["CLUB_COMPLETE"] = true
+	if "INTERNATIONAL" in jogador.licencas:
+		f["INTERNATIONAL_COMPLETE"] = true
+		f["GESTAO_LIBERADA"] = true
+	if f.has("FIRST_TUNE_DONE"):
+		f["GARAGE_TUTORIAL_SEEN"] = true
+	if jogador.dialogos_vistos.has("CW_P01") and not f.has("ADMIN_NAMED"):
+		return "nome" if String(jogador.nome_admin) == "" else "nome_definido"
+	if f.has("ADMIN_NAMED") and not f.has("GRID_INTRO"):
+		return "grid"
+	return ""
+
+
+## Abre uma cena pelo id (a que ficou para trás em recuperar); false se ela não vale.
+func abrir(id: String) -> bool:
+	if not dados.existe("dialogos", id):
+		return false
+	var c: Dictionary = dados.item("dialogos", id)
+	if jogador.dialogos_vistos.has(id) and not c.get("repetivel", false):
+		return false
+	cena.emit(c)
+	return true
+
+
 ## Cena terminada: marca como vista e grava as flags. Retorna a próxima ({} se não há).
 func concluir(c: Dictionary) -> Dictionary:
 	jogador.dialogos_vistos[c["id"]] = true

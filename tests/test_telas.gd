@@ -618,3 +618,33 @@ func test_pilotos_usam_retrato_proprio() -> void:
 		verificar(Assets.get_asset(id, "retrato") != null and Assets.get_asset(id, "corpo") != null, "arte de " + id)
 	verificar(Assets.caminho("sem_arte_x", "retrato") == "", "id desconhecido sem caminho")
 	Assets.limpar()
+
+
+## Todo símbolo fora do ASCII usado nas telas e nas falas existe na fonte
+## padrão ou na reserva de símbolos (senão aparece uma caixa com o código).
+func test_glifos_das_telas_existem() -> void:
+	load("res://ui/principal.gd")._simbolos()
+	var f := ThemeDB.fallback_font
+	var ts := TextServerManager.get_primary_interface()
+	var fontes: Array = [f]
+	for peso in Tipografia.ARQUIVOS:
+		fontes.append(Tipografia.fonte(peso))
+	var textos := ""
+	for pasta in ["res://ui/", "res://visual/"]:
+		for arq in DirAccess.get_files_at(pasta):
+			if arq.ends_with(".gd"):
+				textos += FileAccess.get_file_as_string(pasta + arq)
+	textos += FileAccess.get_file_as_string("res://data/dialogos.json")
+	var faltam := {}
+	for i in textos.length():
+		var c := textos.unicode_at(i)
+		if c < 0x2000 or faltam.has(c):  # latim e acentos: a fonte padrão cobre
+			continue
+		var tem := false
+		for fonte in fontes:
+			for r in fonte.get_rids():
+				if ts.font_has_char(r, c):
+					tem = true
+		if not tem:
+			faltam[c] = String.chr(c)
+	igual(faltam.values(), [], "glifos sem fonte")

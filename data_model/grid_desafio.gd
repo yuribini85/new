@@ -123,10 +123,17 @@ static func escalacao(dados: Node, jogador: Node, ev: Dictionary) -> Array:
 
 
 ## Carros que podem ir para a arena no desafio: todos fora da vaga de corrida,
-## os escalados na arena primeiro.
+## os escalados na arena primeiro. Um carro sempre fica (nunca se perde o
+## único): o da vaga de corrida ou, com ela vazia, o de menor uid.
 static func carros_arena(jogador: Node) -> Array:
 	var corrida := Escalacao.uid(jogador, "corrida")
-	var l: Array = jogador.garagem.lista().filter(func(c): return c.uid != corrida)
+	var todos: Array = jogador.garagem.lista()
+	if corrida < 0 or not todos.any(func(c): return c.uid == corrida):
+		corrida = -1
+		for c in todos:
+			if corrida < 0 or c.uid < corrida:
+				corrida = c.uid
+	var l: Array = todos.filter(func(c): return c.uid != corrida)
 	var esc := [Escalacao.uid(jogador, "arena1"), Escalacao.uid(jogador, "arena2")]
 	l.sort_custom(func(a, b):
 		var ia := esc.find(a.uid)

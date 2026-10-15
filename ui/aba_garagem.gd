@@ -773,18 +773,21 @@ func _preparacao_arena(c: Carro, pai: Control) -> void:
 var _abrir_categoria := ""
 
 
-## Destaque dos freios (tutorial): a janela de compra dos freios aberta.
+## Destaques do tutorial: a categoria pedida na roleta; PECA_PEDIDA abre a
+## janela da categoria da peça pedida (a demanda), com ela destacada.
 func preparar_destaque(nome: String) -> void:
-	if nome in ["BRAKES", "FREIOS", "PNEUS", "DEMANDA"]:
+	if nome in ["BRAKES", "FREIOS", "PNEUS", "DEMANDA", "PECA_PEDIDA"]:
 		_prep = "corrida"  # as âncoras do tutorial ficam na preparação de corrida
 	if nome in ["BRAKES", "FREIOS"]:
 		_roleta_cat = "brake"
 	elif nome == "PNEUS":
 		_roleta_cat = "pneus"
-	elif nome == "DEMANDA":
+	elif nome in ["DEMANDA", "PECA_PEDIDA"]:
 		var demanda := Prologo.demanda(dados, jogador)
 		if dados.existe("pecas", demanda):
 			_roleta_cat = String(dados.peca(demanda).get("categoria", ""))
+			if nome == "PECA_PEDIDA":
+				_abrir_categoria = _roleta_cat
 	if nome == "BRAKES":
 		_abrir_categoria = "brake"
 
@@ -947,8 +950,9 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 		elif p["id"] in c.pecas_possuidas:
 			texto += "   ✓"
 		var b := _item_evolucao(v, c, cat, String(p["id"]), texto, "uso" if instalada else "", p["id"] == escolhido.get("id"))
-		if p["id"] == Prologo.demanda(dados, jogador) or (cat == "brake"
-				and not ancoras.has("BRAKES")):
+		if p["id"] == Prologo.demanda(dados, jogador):
+			ancora("PECA_PEDIDA", b)
+		if cat == "brake" and not ancoras.has("BRAKES"):
 			ancora("BRAKES", b)
 	if cat == "cambio" and c.pecas.has("cambio"):
 		var aj := HBoxContainer.new()

@@ -372,3 +372,50 @@ func test_cenarios_de_teste_montam() -> void:
 	igual(Cenarios.montar(d, j2, "nenhum"), "cenário nenhum não existe", "cenário inválido")
 	j2.free()
 	d.free()
+
+
+## Decisão 90: save fechado no meio de uma cena; as flags que destravam telas
+## voltam do estado real e o passo da chegada que faltou é retomado.
+func test_historia_recupera_cena_interrompida() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	if d.historia().is_empty():
+		d.free()
+		return
+	var j: Node = JogadorScript.new()
+	Prologo.iniciar(d, j)
+	var h := Historia.new(d, j)
+	j.historia = h
+	igual(h.recuperar(), "", "jogo novo: nada a recuperar")
+	j.dialogos_vistos["CW_P01"] = true  # fechou no pedido do nome
+	igual(h.recuperar(), "nome", "pede o nome de novo")
+	j.nome_admin = "Ana"
+	igual(h.recuperar(), "nome_definido", "nome dado, falta a conversa")
+	j.flags["ADMIN_NAMED"] = true
+	igual(h.recuperar(), "grid", "falta a apresentação do Grid")
+	j.flags["GRID_INTRO"] = true
+	j.economia.creditar(100000)
+	j.concessionaria.comprar_carro(d.lista("carros")[0])  # fechou na cena do carro
+	j.licencas.append("CLUB")
+	j.licencas.append("INTERNATIONAL")
+	igual(h.recuperar(), "", "nada da chegada")
+	verificar(j.flags.has("FIRST_CAR") and EquipeJogador.criada(j), "a equipe nasce com o carro")
+	verificar(j.flags.has("CLUB_COMPLETE"), "Club pela licença")
+	verificar(j.flags.has("GESTAO_LIBERADA"), "Caixa e Sede pela International")
+	j.free()
+	d.free()
+
+
+## O desafio de arena do Grid nunca leva o último carro: com a vaga de corrida
+## vazia, um carro fica de fora assim mesmo.
+func test_arena_do_grid_nao_zera_a_garagem() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(100000)
+	for i in 2:
+		j.concessionaria.comprar_carro(d.lista("carros")[i])
+	igual(GridDesafio.carros_arena(j).size(), 1, "dois carros, sem escalação: só um vai à arena")
+	j.free()
+	d.free()

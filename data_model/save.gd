@@ -132,7 +132,8 @@ static func validar(s: Variant, dados: Node) -> String:
 	if not f.is_empty():
 		if not f.has_all(["evento_id", "uid", "restantes", "inicio", "semente"]):
 			return "fila do save com estrutura inválida"
-		if not dados.existe("eventos", f["evento_id"]) or not int(f["uid"]) in uids:
+		# dados.evento: também as provas montadas (desafio do Grid, "grid_<equipe>").
+		if dados.evento(String(f["evento_id"])).is_empty() or not int(f["uid"]) in uids:
 			return "fila do save aponta para evento ou carro inexistente"
 		if f.get("config") is Dictionary:
 			for peca_id in f["config"].get("pecas", []):

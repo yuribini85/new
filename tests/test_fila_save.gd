@@ -320,3 +320,20 @@ func test_save_com_carro_removido_migra_para_o_substituto() -> void:
 	j.free()
 	k.free()
 	d.free()
+
+
+## O save com a fila num desafio do Grid ("grid_<equipe>", prova montada) é
+## válido: antes ele era recusado e o jogo recomeçava do zero.
+func test_save_com_desafio_do_grid_na_fila() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j := _jogador(d)
+	var uid: int = j.concessionaria.comprar_carro(d.lista("carros")[0])
+	var eq: Dictionary = TheGrid.equipes(d).filter(func(e): return GridDesafio.de(d, e).get("modo") == "corrida")[0]
+	var s: Dictionary = JSON.parse_string(JSON.stringify(Save.serializar(j)))  # como no disco
+	s["fila"] = {"evento_id": GridDesafio.PREFIXO + String(eq["id"]), "uid": uid, "restantes": 1, "inicio": 0.0, "semente": 1}
+	igual(Save.validar(s, d), "", "desafio do Grid na fila")
+	s["fila"]["evento_id"] = GridDesafio.PREFIXO + "nao_existe"
+	verificar(Save.validar(s, d) != "", "equipe que não existe é recusada")
+	j.free()
+	d.free()

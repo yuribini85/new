@@ -75,7 +75,7 @@ func _draw() -> void:
 	# Próxima curva.
 	var p: Dictionary = _d.get("proxima", {})
 	if not p.is_empty():
-		var seta := "↰" if p.get("sentido", "esquerda") == "esquerda" else "↱"
+		var seta := "‹" if p.get("sentido", "esquerda") == "esquerda" else "›"
 		_t(seta, Vector2(M, 384), 40, SUAVE, "regular")
 		var x := M + 54.0
 		match String(p["estado"]):
