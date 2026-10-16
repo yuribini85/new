@@ -260,9 +260,9 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	var h := Historia.new(d, j)
 	j.historia = h
 	igual(h.cena_para("GAME_START").get("id"), "CW_P01", "abertura da Mara")
-	# Decisão 73: a chegada termina pedindo o nome. Decisão 85 (ordem do usuário):
-	# Grid → carro → piloto → corrida → corrida → peça → corrida → licença → corrida →
-	# patrocínio → arena.
+	# Decisão 73: a chegada termina pedindo o nome. Decisão 96 (a 85 com o Grid
+	# depois da primeira corrida): carro → piloto → corrida → Grid → corrida → peça →
+	# corrida → licença → corrida → patrocínio → arena.
 	var p01: Dictionary = h.cena_para("GAME_START")
 	igual(String(p01["falas"][-1].get("acao", "")), "PEDIR_NOME", "a chegada pede o nome")
 	igual(h.concluir(p01), {}, "sem nome, a cena não segue sozinha")
@@ -270,9 +270,7 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	var p01b: Dictionary = h.cena_para("NOME_DEFINIDO")
 	igual(p01b.get("id"), "CW_P01B", "o nome dado")
 	igual(h.variaveis().get("admin"), "Ana", "a Mara usa o nome")
-	var grid: Dictionary = h.concluir(p01b)
-	igual(grid.get("id"), "CW_GR00", "primeiro tutorial: o The Grid")
-	igual(h.concluir(grid).get("id"), "CW_C00", "depois, comprar o carro")
+	igual(h.concluir(p01b).get("id"), "CW_C00", "primeiro, comprar o carro")
 	igual(j.garagem.lista().size(), 0, "a garagem começa vazia")
 	igual(h.cena_para("COMPRA_CARRO").get("id"), "CW_C01B", "comprado o carro")
 	j.flags["FIRST_CAR"] = true
@@ -281,7 +279,9 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 			"contratado, vai para a primeira prova")
 	j.flags["PILOT_HIRED"] = true
 	igual(h.cena_para("CORRIDA_FIM", {"posicao": 1}).get("id"), "CW_P06", "fim da primeira prova")
-	igual(h.concluir(h.cena_para("CORRIDA_FIM", {"posicao": 1})), {}, "a primeira prova não abre a Oficina")
+	var grid: Dictionary = h.concluir(h.cena_para("CORRIDA_FIM", {"posicao": 1}))
+	igual(grid.get("id"), "CW_GR00", "depois da primeira prova, o The Grid")
+	igual(h.concluir(grid), {}, "e não abre a Oficina")
 	# Da segunda prova em diante, só com o caixa pagando a peça (pedido do usuário).
 	var carro := Carro.new(d.lista("carros")[0])
 	j.carro_ativo = j.garagem.adicionar(carro)
@@ -392,6 +392,8 @@ func test_historia_recupera_cena_interrompida() -> void:
 	j.nome_admin = "Ana"
 	igual(h.recuperar(), "nome_definido", "nome dado, falta a conversa")
 	j.flags["ADMIN_NAMED"] = true
+	igual(h.recuperar(), "", "antes da primeira corrida, o Grid ainda não")
+	j.flags["FIRST_RACE_DONE"] = true
 	igual(h.recuperar(), "grid", "falta a apresentação do Grid")
 	j.flags["GRID_INTRO"] = true
 	j.economia.creditar(100000)

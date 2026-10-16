@@ -84,7 +84,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Antes de gastar um giro, veja aonde a gente precisa chegar.",
+    "texto": "Primeiro, o que falta numa equipe de corrida: um carro.",
     "pose": "firme"
    }
   ],
@@ -98,7 +98,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "proxima": "CW_GR00",
+  "proxima": "CW_C00",
   "cenario": "oficina_mara"
  },
  {
@@ -569,7 +569,8 @@
   "personagem": "dono",
   "condicao": {
    "posicao": 1
-  }
+  },
+  "proxima": "CW_GR00"
  },
  {
   "id": "CW_P06B",
@@ -603,7 +604,8 @@
   "personagem": "dono",
   "condicao": {
    "posicao_min": 2
-  }
+  },
+  "proxima": "CW_GR00"
  },
  {
   "id": "CW_P06D",
@@ -749,7 +751,7 @@
    },
    {
     "quem": "mara",
-    "texto": "O The Grid. Dez equipes no topo do circuito. A gente está fora dele.",
+    "texto": "Agora, aonde a gente precisa chegar. O The Grid: dez equipes no topo do circuito. A gente está fora dele.",
     "pose": "explica"
    },
    {
@@ -768,7 +770,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "The Grid fica em Carreira, embaixo dos objetivos."
+    "texto": "The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sai em Corridas."
    }
   ],
   "requer": [],
@@ -781,8 +783,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "cenario": "oficina_mara",
-  "proxima": "CW_C00"
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_C00",

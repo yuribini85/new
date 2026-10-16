@@ -185,7 +185,8 @@ func recuperar() -> String:
 		f["GARAGE_TUTORIAL_SEEN"] = true
 	if jogador.dialogos_vistos.has("CW_P01") and not f.has("ADMIN_NAMED"):
 		return "nome" if String(jogador.nome_admin) == "" else "nome_definido"
-	if f.has("ADMIN_NAMED") and not f.has("GRID_INTRO"):
+	# Decisão 96: o Grid vem depois da primeira corrida.
+	if f.has("ADMIN_NAMED") and f.has("FIRST_RACE_DONE") and not f.has("GRID_INTRO"):
 		return "grid"
 	return ""
 
