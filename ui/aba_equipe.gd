@@ -188,13 +188,15 @@ static func _texto_efeito(m: Dictionary, n: int) -> String:
 	return t
 
 
+## Valor ainda sem número (pendente de playtest) não aparece para o jogador.
 func _linha_folha(pai: Control, texto: String, chave: String, v: int, sinal: String) -> void:
 	var definido := EquipeJogador.definido(dados, chave)
+	if not definido:
+		return
 	var h := fileira(pai)
 	var l := rotulo(texto, FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var t := rotulo("%s %s giros" % [sinal, dinheiro(v)] if definido else "a definir no playtest", FONTE_PEQUENA + 2,
-			Color.WHITE if definido else COR_NEUTRA.lightened(0.3), h)
+	var t := rotulo("%s %s giros" % [sinal, dinheiro(v)], FONTE_PEQUENA + 2, Color.WHITE, h)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 

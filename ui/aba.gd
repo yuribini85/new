@@ -212,6 +212,13 @@ const VEU_CARTAO := [0.15, 0.7, 0.85]
 ## onde ficam os textos. Retorna a coluna do conteúdo (margem de 16).
 ## Topo das telas de um carro (Corridas, Arena): a faixa de cenário com o
 ## carro grande e o nome ao lado. Devolve a faixa (para pôr setas por cima).
+## Texto sobre a foto do carro: contorno escuro, como o nome dele (sobre um
+## carro branco o texto claro sumia).
+static func sobre_imagem(c: Control) -> void:
+	c.add_theme_constant_override("outline_size", 6)
+	c.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+
+
 func topo_carro(garagem: Carro, fundo := "fundo_competicoes") -> Control:
 	var faixa := ilustracao(fundo, ALTURA_TOPO_CARRO)
 	cenario_topo(faixa)

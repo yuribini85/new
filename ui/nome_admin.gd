@@ -12,9 +12,19 @@ var _campo: LineEdit
 var _ok: Button
 
 
-func _init(atual := "") -> void:
+## `cenario`: o fundo da cena que pergunta (a oficina da Mara), para o painel
+## não aparecer sobre uma aba vazia.
+func _init(atual := "", cenario: Texture2D = null) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	if cenario != null:
+		var img := TextureRect.new()
+		img.texture = cenario
+		img.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme
+		img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(img)
 	var fundo := ColorRect.new()
 	fundo.color = Color(0, 0, 0, 0.72)
 	fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

@@ -813,12 +813,16 @@ func _acao_historia(nome: String) -> void:
 		_quando_dialogo_acabar(func(): _ir_para(ABA_EQUIPE))
 
 
+## Fundo do painel do nome: o cenário da cena que pergunta (CW_P01).
+const CENARIO_NOME := "oficina_mara"
+
+
 ## Nome do administrador (a cena CW_P01 termina pedindo): sem rosto nem
 ## passado, só o nome que a Mara usa. Confirmado, segue a história.
 func _pedir_nome() -> void:
 	if get_node_or_null("NomeAdmin") != null:
 		return
-	var painel := NomeAdmin.new(jogador.nome_admin)
+	var painel := NomeAdmin.new(jogador.nome_admin, Assets.get_asset(CENARIO_NOME, "cenario"))
 	painel.name = "NomeAdmin"
 	add_child(painel)
 	painel.confirmado.connect(func(nome: String):

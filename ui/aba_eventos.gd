@@ -57,6 +57,7 @@ func construir() -> void:
 	var topo := topo_carro(garagem)
 	var trocar := Button.new()
 	Tipografia.acao_secundaria(trocar, "Carro de corrida · trocar na Oficina", Color(0.93, 0.91, 0.87), 22)
+	sobre_imagem(trocar)
 	trocar.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	trocar.offset_left = -420
 	trocar.offset_right = -16

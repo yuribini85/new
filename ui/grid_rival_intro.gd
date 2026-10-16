@@ -1,15 +1,14 @@
 class_name GridRivalIntro
 extends Control
-## Intro de uma equipe do The Grid na revelação (decisão 88, protótipo do
-## usuário "GridRivalIntro"): terminal, emblema, os quatro pilotos (número,
-## retrato que ganha cor, nome, apelido, estilo, carro, currículo, barras e
-## carimbo) e o confronto com a sua equipe. Tudo sai dos dados (montar): o
-## número e o apelido de equipes.json, o estilo pelo traço do perfil (mercado),
-## os carros especiais do desafio (GridDesafio), o teto de treino da licença
-## (ritmo), a consistência e a agressividade pelas regras da corrida
-## (Carreira.piloto_na_vaga) e o prêmio médio de vitória da licença, em giros.
-## Um toque passa para o próximo piloto; "Pular" vai direto ao confronto; com
-## Reduzir animações, sem terminal, efeitos nem digitação. Fica até "Continuar".
+## Intro de uma equipe do The Grid na revelação (decisão 88, encurtada na 96):
+## o choque (o emblema da rival cai de cima, o da sua equipe sobe de baixo, o
+## corte e o VS batem no meio) e o confronto (os quatro pilotos da rival em
+## cartões, a sua equipe, o que está em jogo e o desafio), em poucos segundos,
+## como cabe num idle. Tudo sai dos dados (montar): o número e o apelido de
+## equipes.json, os carros especiais do desafio (GridDesafio) e o prêmio médio
+## de vitória da licença, em giros. Um toque completa a animação; "Pular" vai
+## direto ao confronto; com Reduzir animações, o confronto já pronto. Fica até
+## "Continuar".
 
 signal fechou
 signal ir(aba: int)
@@ -20,24 +19,11 @@ const OURO := Color("d8a73c")
 const OSSO := Color("efe6d3")
 const ACO := Color("8d8680")
 const LINHA := Color(0.94, 0.9, 0.83, 0.14)
-const PILOTO_S := 6.0  # cada piloto na versão completa
-const RETRATO_Y := 200.0  # alto do retrato de corpo (o rosto abaixo do Pular)
-const PILOTO_CURTO_S := 3.5  # com Reduzir animações
 const ROTACAO_CARTOES := [-4.0, 3.0, -3.0, 4.0]
-
-const SHADER_RETRATO := """
-shader_type canvas_item;
-uniform float cor : hint_range(0.0, 1.0) = 1.0;
-uniform float fundo_corte = 0.62;
-void fragment() {
-	vec4 c = texture(TEXTURE, UV);
-	float g = dot(c.rgb, vec3(0.299, 0.587, 0.114));
-	vec3 pb = clamp((vec3(g) * 1.5 - 0.5) * 1.3 + 0.5, 0.0, 1.0);
-	c.rgb = mix(pb, c.rgb, cor);
-	c.a *= 1.0 - smoothstep(fundo_corte, fundo_corte + 0.3, UV.y);
-	COLOR = c;
-}
-"""
+## Choque: tempo do emblema da rival e o da sua equipe chegarem e o VS bater (s).
+const CHOQUE_S := 2.1
+## Largura do emblema da sua equipe (o da Wreckage é um letreiro largo).
+const MARCA_LARGURA := 460.0
 
 var _dados: Node
 var _info: Dictionary
@@ -54,7 +40,6 @@ var _hud: Array = []
 var _avancar := false
 var _pulou := false
 var _no_confronto := false
-var _shader: Shader
 var _tw_confronto: Tween
 
 
@@ -65,12 +50,13 @@ func _init(dados: Node, jogador: Node, id: String, contexto: String, aba_corrida
 	_abas = [aba_corridas, aba_arena]
 	_info = montar(dados, jogador, TheGrid.equipe(dados, id))
 	_info["jogador_nome"] = IdentidadeEquipe.nome(dados, jogador) if jogador != null else ""
+	var nossa: Dictionary = EquipeJogador.identidade(dados, jogador) if jogador != null else {}
+	_info["jogador_logo"] = String(nossa.get("logo", ""))
+	_info["jogador_subtitulo"] = bool(nossa.get("subtitulo", true))
 	_curto = Preferencias.reduzir_animacoes
 	name = "GridRivalIntro"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	_shader = Shader.new()
-	_shader.code = SHADER_RETRATO
 	var fundo := ColorRect.new()
 	fundo.color = TINTA
 	fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -169,23 +155,15 @@ func _ready() -> void:
 
 func _rodar() -> void:
 	await get_tree().process_frame  # o tamanho da tela
-	var fases: Array = []
-	if not _curto:
-		fases.append(_fase_terminal)
-	fases.append(_fase_emblema)
-	for i in Array(_info.get("pilotos", [])).size():
-		fases.append(_fase_piloto.bind(i))
-	for f in fases:
-		if _pulou or not is_inside_tree():
-			break
+	if not _curto and not _pulou:
 		_trocar_cena()
 		_avancar = false
-		await f.call()
+		await _choque()
 	if is_inside_tree() and not _no_confronto:
 		_confronto()
 
 
-## Um toque: durante os pilotos, o próximo; no confronto, completa a entrada.
+## Um toque: no choque, pula para o confronto; nele, completa a entrada.
 func _gui_input(e: InputEvent) -> void:
 	var toque: bool = (e is InputEventMouseButton and e.pressed) or (e is InputEventScreenTouch and e.pressed)
 	if not toque:
@@ -193,7 +171,7 @@ func _gui_input(e: InputEvent) -> void:
 	if _no_confronto:
 		_completar()
 	else:
-		_avancar = true
+		_avancar = true  # o choque termina na hora
 	accept_event()
 
 
@@ -213,210 +191,90 @@ func _fechar() -> void:
 
 # ------------------------------------------------------------------ fases
 
-## "> THE GRID · RANKING ATUALIZADO" e a próxima rival, digitado.
-func _fase_terminal() -> void:
-	var nome_j := String(_info.get("jogador_nome", "")).to_upper()
-	var linhas := ["> THE GRID · RANKING ATUALIZADO",
-			("> %s ENTRA NO GRID" % nome_j) if _contexto == "primeiro" else ("> %s SOBE PARA #%d" % [nome_j, int(_info["grid"]) + 1]),
-			"> PRÓXIMO ADVERSÁRIO:", "> #%d %s" % [int(_info["grid"]), String(_info["nome"]).to_upper()]]
-	var v := VBoxContainer.new()
-	v.position = Vector2(48, size.y * 0.4)
-	v.size = Vector2(size.x - 96, 0)
-	v.add_theme_constant_override("separation", 18)
-	_cena.add_child(v)
-	var tw := _cena.create_tween()
-	for i in linhas.size():
-		var l := _rotulo(linhas[i], "mono_sb" if i in [1, 3] else "mono", 26,
-				[OSSO, OURO, OSSO, SANGUE][i])
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		l.visible_ratio = 0.0
-		v.add_child(l)
-		tw.tween_property(l, "visible_ratio", 1.0, 0.45).set_delay(0.25)
-	await _esperar(3.6)
-
-
-## Emblema que cai com impacto, "#N DO GRID", o nome e a licença.
-func _fase_emblema() -> void:
-	var v := _coluna(size.y * 0.16)
-	var logo := _textura(_info.get("logo", ""), Vector2(380, 380))
-	v.add_child(logo)
-	var eq := _rotulo("#%d DO GRID" % int(_info["grid"]), "display_eb", 40, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
-	v.add_child(eq)
-	var nome := _rotulo(String(_info["nome"]).to_upper(), "display", 96, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
-	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	v.add_child(nome)
-	var sub := _rotulo("%s · %d PILOTOS" % [String(_info["licenca"]).to_upper(),
-			Array(_info["pilotos"]).size()], "mono", 22, ACO, HORIZONTAL_ALIGNMENT_CENTER)
-	v.add_child(sub)
-	if _curto:
-		await _esperar(2.0)
-		return
-	for c in [eq, nome, sub]:
-		c.modulate.a = 0.0
-	logo.pivot_offset = logo.custom_minimum_size / 2.0
-	logo.scale = Vector2.ONE * 3.2
-	logo.modulate.a = 0.0
+## O emblema da rival cai de cima, o da sua equipe sobe de baixo; o corte
+## vermelho atravessa e o VS bate no meio, com clarão e tremor.
+func _choque() -> void:
+	var meio := size.y * 0.5
+	var rival := _textura(_info.get("logo", ""), Vector2(340, 340))
+	rival.position = Vector2((size.x - 340.0) / 2.0, meio - 470.0)
+	_cena.add_child(rival)
+	var rk := _rotulo("#%d DO GRID · %s" % [int(_info["grid"]), String(_info["nome"]).to_upper()],
+			"display_eb", 40, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
+	rk.position = Vector2(20, meio - 120.0)
+	rk.size = Vector2(size.x - 40, 50)
+	_cena.add_child(rk)
+	var nossa := _marca()
+	nossa.position = Vector2((size.x - nossa.size.x) / 2.0, meio + 150.0)
+	_cena.add_child(nossa)
+	var corte := ColorRect.new()
+	corte.color = SANGUE
+	corte.size = Vector2(size.x + 300, 14)
+	corte.position = Vector2(-150, meio - 7.0)
+	corte.pivot_offset = corte.size / 2.0
+	corte.rotation_degrees = -7.0
+	corte.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cena.add_child(corte)
+	var vs := _rotulo("VS", "display", 200, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
+	vs.add_theme_constant_override("outline_size", 12)
+	vs.add_theme_color_override("font_outline_color", TINTA)
+	vs.size = Vector2(size.x, 200)
+	vs.position = Vector2(0, meio - 110.0)
+	vs.pivot_offset = vs.size / 2.0
+	_cena.add_child(vs)
+	rival.pivot_offset = rival.custom_minimum_size / 2.0
+	# O estado de partida já no primeiro quadro (o from() de um passo com atraso
+	# só vale quando ele começa).
+	var alvo_rival := rival.position.y
+	var alvo_nossa := nossa.position.y
+	rival.position.y = -400.0
+	nossa.position.y = size.y + 100.0
+	rk.modulate.a = 0.0
+	corte.scale.x = 0.0
+	vs.modulate.a = 0.0
 	var tw := _cena.create_tween().set_parallel(true)
-	tw.tween_property(logo, "scale", Vector2.ONE, 0.32).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
-	tw.tween_property(logo, "modulate:a", 1.0, 0.32)
-	tw.tween_callback(func(): _impacto(_flash_v, 0.8, 1.3)).set_delay(0.3)
-	tw.tween_property(logo, "scale", Vector2.ONE * 1.05, 3.2).set_delay(0.32)
-	tw.tween_property(eq, "modulate:a", 1.0, 0.5).set_delay(0.7)
-	tw.tween_property(nome, "modulate:a", 1.0, 0.22).set_delay(0.95)
-	tw.tween_callback(func(): _tremer(0.7)).set_delay(1.17)
-	tw.tween_property(sub, "modulate:a", 1.0, 0.4).set_delay(1.6)
-	await _esperar(3.6)
-	_glitch()
-
-
-## Um piloto: número gigante vazado, retrato (preto e branco → cor), ficha e carimbo.
-func _fase_piloto(i: int) -> void:
-	var p: Dictionary = _info["pilotos"][i]
-	var total := Array(_info["pilotos"]).size()
-	var num := _rotulo(str(int(p["numero"])), "display", 600, Color(SANGUE, 0.07))
-	num.add_theme_constant_override("outline_size", 5)
-	num.add_theme_color_override("font_outline_color", SANGUE)
-	num.position = Vector2(-8, -40)
-	_cena.add_child(num)
-	var arte: Texture2D = Assets.get_asset(String(p["id"]), "corpo")
-	if arte == null:
-		arte = Assets.get_asset(String(p["id"]), "retrato")
-	var ret := TextureRect.new()
-	ret.texture = arte
-	ret.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	ret.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
-	ret.size = Vector2(512, 768)
-	# Abaixo do Pular (fixo em Dialogo.PULAR_Y, como no diálogo): o botão não
-	# cobre o rosto.
-	ret.position = Vector2(size.x - 512 + 24, RETRATO_Y)
-	ret.pivot_offset = Vector2(256, 230)
-	ret.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var mat := ShaderMaterial.new()
-	mat.shader = _shader
-	ret.material = mat
-	_cena.add_child(ret)
-	# Sombra que apaga o pé do retrato atrás da ficha.
-	var sombra := TextureRect.new()
-	var gt := GradientTexture2D.new()
-	gt.fill_from = Vector2(0, 0)
-	gt.fill_to = Vector2(0, 1)
-	var gr := Gradient.new()
-	gr.colors = PackedColorArray([Color(TINTA, 0), Color(TINTA, 1)])
-	gr.offsets = PackedFloat32Array([0.0, 0.35])
-	gt.gradient = gr
-	sombra.texture = gt
-	sombra.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sombra.position = Vector2(0, 600)
-	sombra.size = Vector2(size.x, size.y - 600)
-	sombra.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cena.add_child(sombra)
-	var v := VBoxContainer.new()
-	v.position = Vector2(40, 650)
-	v.size = Vector2(size.x - 80, 0)
-	v.add_theme_constant_override("separation", 10)
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cena.add_child(v)
-	var tag := _rotulo("PILOTO %d / %d · %s" % [i + 1, total, String(_info["nome"]).to_upper()], "mono", 17, ACO)
-	v.add_child(tag)
-	var nome := _rotulo(String(p["nome"]).to_upper(), "display", 84, OSSO)
-	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	nome.add_theme_constant_override("line_spacing", -18)
-	v.add_child(nome)
-	var apelido := _rotulo("“%s”" % String(p["apelido"]).to_upper() if String(p["apelido"]) != "" else "", "display_eb", 46, SANGUE)
-	v.add_child(apelido)
-	var campos := HBoxContainer.new()
-	campos.add_theme_constant_override("separation", 24)
-	v.add_child(_divisoria())
-	v.add_child(campos)
-	campos.add_child(_campo("ESTILO", String(p["estilo"]), "vaga de %s · %s" % [p["vaga"], String(p["perfil"]).to_lower()]))
-	var car := String(p["carro"])
-	campos.add_child(_campo("CARRO", car.get_slice(" · ", 0) if car != "" else "RESERVA",
-			("%s · nº %d" % [car.get_slice(" · ", 1), int(p["numero"])]) if car != "" else "nº %d" % int(p["numero"])))
-	var cv := VBoxContainer.new()
-	cv.add_theme_constant_override("separation", 4)
-	v.add_child(cv)
-	cv.add_child(_rotulo("CURRÍCULO", "mono", 14, ACO))
-	var itens: Array = []
-	for t in p["cv"]:
-		var li := _rotulo("—  " + String(t), "mono", 18, OSSO)
-		li.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		cv.add_child(li)
-		itens.append(li)
-	var barras := VBoxContainer.new()
-	barras.add_theme_constant_override("separation", 8)
-	v.add_child(barras)
-	var preenchimentos: Array = []
-	# As três na mesma escala: em %, barra cheia em 100% (o ritmo, perto de
-	# 100%, com uma casa para as diferenças entre licenças aparecerem).
-	for b in [["RITMO", float(p["ritmo"]), 1], ["CONSISTÊNCIA", float(p["consistencia"]), 0],
-			["AGRESSIVIDADE", float(p["agressividade"]), 0]]:
-		var linha := _barra(b[0], b[1], b[2])
-		barras.add_child(linha[0])
-		preenchimentos.append(linha[1])
-	# Carimbo.
-	var carimbo := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0, 0, 0, 0)
-	sb.border_color = SANGUE
-	sb.set_border_width_all(7)
-	sb.content_margin_left = 20
-	sb.content_margin_right = 20
-	sb.content_margin_top = 4
-	sb.content_margin_bottom = 0
-	carimbo.add_theme_stylebox_override("panel", sb)
-	carimbo.add_child(_rotulo(String(p["carimbo"]), "carimbo", 84, SANGUE))
-	carimbo.position = Vector2(36, 470)
-	carimbo.rotation_degrees = -8.0
-	carimbo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cena.add_child(carimbo)
-	carimbo.modulate.a = 0.95
-	if _curto:
-		mat.set_shader_parameter("cor", 1.0)
-		await _esperar(PILOTO_CURTO_S)
-		return
-	# Entrada (os tempos do protótipo).
-	mat.set_shader_parameter("cor", 0.0)
-	for c in [tag, apelido, campos, cv, barras, carimbo]:
-		c.modulate.a = 0.0
-	for li in itens:
-		li.modulate.a = 0.0
-	for f in preenchimentos:
-		f.scale.x = 0.0
-	nome.visible_ratio = 0.0
-	num.modulate.a = 0.0
-	ret.modulate.a = 0.0
-	await get_tree().process_frame  # o tamanho do carimbo para o pivô
-	if not is_instance_valid(carimbo) or carimbo.is_queued_for_deletion() or _avancar:
-		return
-	carimbo.pivot_offset = carimbo.size / 2.0
-	var tw := _cena.create_tween().set_parallel(true)
-	tw.tween_property(num, "position:x", -8.0, 0.5).from(-300.0).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw.tween_property(num, "modulate:a", 1.0, 0.5)
-	tw.tween_property(num, "position:x", 40.0, 6.0).set_delay(0.5)
-	tw.tween_property(ret, "position:x", ret.position.x, 0.5).from(ret.position.x + 190.0).set_delay(0.2) \
-			.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw.tween_property(ret, "modulate:a", 1.0, 0.5).set_delay(0.2)
-	tw.tween_callback(func(): _impacto(_flash, 0.85, 0.0)).set_delay(0.42)
-	tw.tween_property(mat, "shader_parameter/cor", 1.0, 0.7).set_delay(0.95)
-	tw.tween_property(ret, "scale", Vector2.ONE * 1.05, 6.0).set_delay(0.5)
-	tw.tween_property(tag, "modulate:a", 1.0, 0.3).set_delay(0.45)
-	tw.tween_property(nome, "visible_ratio", 1.0, 0.55).set_delay(0.7)
-	tw.tween_property(apelido, "modulate:a", 1.0, 0.4).set_delay(1.35)
-	tw.tween_property(campos, "modulate:a", 1.0, 0.35).set_delay(1.65)
-	tw.tween_property(cv, "modulate:a", 1.0, 0.3).set_delay(1.9)
-	for k in itens.size():
-		tw.tween_property(itens[k], "modulate:a", 1.0, 0.3).set_delay(2.0 + k * 0.16)
-	tw.tween_property(barras, "modulate:a", 1.0, 0.2).set_delay(2.4)
-	for k in preenchimentos.size():
-		tw.tween_property(preenchimentos[k], "scale:x", 1.0, 0.7).from(0.0).set_delay(2.5 + k * 0.12) \
-				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tw.tween_property(carimbo, "scale", Vector2.ONE, 0.22).from(Vector2.ONE * 2.8).set_delay(4.3) \
+	tw.tween_property(rival, "position:y", alvo_rival, 0.28) \
 			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
-	tw.tween_property(carimbo, "rotation_degrees", -8.0, 0.22).from(-22.0).set_delay(4.3)
-	tw.tween_property(carimbo, "modulate:a", 0.95, 0.22).set_delay(4.3)
-	tw.tween_callback(func(): _impacto(_flash_v, 0.55, 1.3 if i == total - 1 else 1.0)).set_delay(4.5)
-	await _esperar(PILOTO_S + (0.4 if i == total - 1 else 0.0))
+	tw.tween_callback(func(): _impacto(_flash_v, 0.5, 0.8)).set_delay(0.28)
+	tw.tween_property(rk, "modulate:a", 1.0, 0.2).set_delay(0.35)
+	tw.tween_property(nossa, "position:y", alvo_nossa, 0.28).set_delay(0.55) \
+			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func(): _impacto(_flash, 0.4, 0.8)).set_delay(0.83)
+	tw.tween_property(corte, "scale:x", 1.0, 0.18).set_delay(1.0) \
+			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tw.tween_property(vs, "scale", Vector2.ONE, 0.2).from(Vector2.ONE * 3.0).set_delay(1.1) \
+			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	tw.tween_property(vs, "modulate:a", 1.0, 0.2).set_delay(1.1)
+	tw.tween_callback(func(): _impacto(_flash_v, 0.7, 1.6)).set_delay(1.3)
+	tw.tween_property(rival, "scale", Vector2.ONE * 1.06, 0.8).set_delay(1.3)
+	await _esperar(CHOQUE_S)
 	_glitch()
+
+
+## O emblema da sua equipe (o letreiro da Wreckage, ou o escolhido na
+## identidade, com o nome embaixo) ou, sem arte, o nome em texto.
+func _marca() -> Control:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 4)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var logo := String(_info.get("jogador_logo", ""))
+	var nome := String(_info.get("jogador_nome", "")).to_upper()
+	var tex: Texture2D = load(logo) if logo != "" and ResourceLoader.exists(logo) else null
+	if tex != null:
+		var r := TextureRect.new()
+		r.texture = tex
+		r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+		var alto := minf(MARCA_LARGURA * tex.get_height() / tex.get_width(), 220.0)
+		r.custom_minimum_size = Vector2(MARCA_LARGURA, alto)
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		v.add_child(r)
+	if tex == null or bool(_info.get("jogador_subtitulo", true)):
+		var l := _rotulo(nome, "display", 56 if tex == null else 34, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size.x = MARCA_LARGURA
+		v.add_child(l)
+	v.size = v.get_combined_minimum_size()
+	return v
 
 
 ## Confronto: a equipe e os quatro cartões, VS, a sua equipe, o que está em
@@ -476,8 +334,9 @@ func _confronto() -> void:
 	vs_l.position = Vector2(0, -16)
 	vs_l.pivot_offset = vs_l.size / 2.0
 	vs.add_child(vs_l)
-	var nos := _rotulo(String(_info.get("jogador_nome", "")).to_upper(), "display", 60, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
-	nos.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var nos := CenterContainer.new()
+	nos.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	nos.add_child(_marca())
 	v.add_child(nos)
 	var nos_sub := _rotulo("FORA DO GRID · DESAFIANTE" if _contexto == "primeiro"
 			else "#%d DO GRID · DESAFIANTE" % (int(_info["grid"]) + 1), "mono", 18, ACO, HORIZONTAL_ALIGNMENT_CENTER)
@@ -531,25 +390,26 @@ func _confronto() -> void:
 		c.modulate.a = 0.0
 	var tw := _cena.create_tween().set_parallel(true)
 	_tw_confronto = tw
-	tw.tween_property(logo, "modulate:a", 1.0, 0.5)
-	tw.tween_property(nome, "modulate:a", 1.0, 0.3).set_delay(0.25)
-	tw.tween_property(rk, "modulate:a", 1.0, 0.3).set_delay(0.45)
+	# Depois do choque, o VS já bateu: aqui tudo entra junto, em ~1,3 s.
+	tw.tween_property(logo, "modulate:a", 1.0, 0.25)
+	tw.tween_property(nome, "modulate:a", 1.0, 0.2).set_delay(0.1)
+	tw.tween_property(rk, "modulate:a", 1.0, 0.2).set_delay(0.15)
 	for k in internos.size():
 		var c: Control = internos[k]
-		tw.tween_property(c, "position:y", 0.0, 0.4).from(-300.0).set_delay(0.5 + k * 0.15) \
+		tw.tween_property(c, "position:y", 0.0, 0.25).from(-300.0).set_delay(0.15 + k * 0.07) \
 				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		tw.tween_property(c, "modulate:a", 1.0, 0.3).set_delay(0.5 + k * 0.15)
-	tw.tween_property(corte, "scale:x", 1.0, 0.25).set_delay(1.6).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-	tw.tween_property(vs_l, "scale", Vector2.ONE, 0.22).from(Vector2.ONE * 2.6).set_delay(1.7) \
+		tw.tween_property(c, "modulate:a", 1.0, 0.2).set_delay(0.15 + k * 0.07)
+	tw.tween_property(corte, "scale:x", 1.0, 0.15).set_delay(0.45).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tw.tween_property(vs_l, "scale", Vector2.ONE, 0.15).from(Vector2.ONE * 2.2).set_delay(0.5) \
 			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
-	tw.tween_property(vs_l, "modulate:a", 1.0, 0.22).set_delay(1.7)
-	tw.tween_callback(func(): _impacto(_flash_v, 0.6, 1.4)).set_delay(1.92)
-	tw.tween_property(nos, "modulate:a", 1.0, 0.35).set_delay(2.4)
-	tw.tween_property(nos_sub, "modulate:a", 1.0, 0.4).set_delay(2.8)
-	tw.tween_property(jogo, "modulate:a", 1.0, 0.3).set_delay(3.1)
-	tw.tween_method(func(x: float): valor.text = Aba.dinheiro(int(x)), 0.0, float(_info["premio"]), 1.2) \
-			.set_delay(3.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(botoes, "modulate:a", 1.0, 0.3).set_delay(3.6)
+	tw.tween_property(vs_l, "modulate:a", 1.0, 0.15).set_delay(0.5)
+	tw.tween_callback(func(): _impacto(_flash_v, 0.45, 0.9)).set_delay(0.65)
+	tw.tween_property(nos, "modulate:a", 1.0, 0.25).set_delay(0.6)
+	tw.tween_property(nos_sub, "modulate:a", 1.0, 0.25).set_delay(0.7)
+	tw.tween_property(jogo, "modulate:a", 1.0, 0.25).set_delay(0.8)
+	tw.tween_method(func(x: float): valor.text = Aba.dinheiro(int(x)), 0.0, float(_info["premio"]), 0.6) \
+			.set_delay(0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(botoes, "modulate:a", 1.0, 0.25).set_delay(1.05)
 
 
 ## Completa a entrada do confronto (toque).
@@ -594,16 +454,6 @@ func _rotulo(texto: String, peso: String, tamanho: int, cor: Color,
 	return l
 
 
-func _coluna(topo: float) -> VBoxContainer:
-	var v := VBoxContainer.new()
-	v.position = Vector2(40, topo)
-	v.size = Vector2(size.x - 80, 0)
-	v.add_theme_constant_override("separation", 16)
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cena.add_child(v)
-	return v
-
-
 func _textura(arq, tam: Vector2) -> TextureRect:
 	var t := TextureRect.new()
 	var a := String(arq)
@@ -621,56 +471,6 @@ func _divisoria() -> ColorRect:
 	d.custom_minimum_size = Vector2(0, 1)
 	d.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return d
-
-
-## Campo da ficha: rótulo pequeno, valor grande e uma nota.
-func _campo(titulo: String, valor: String, nota: String) -> VBoxContainer:
-	var c := VBoxContainer.new()
-	c.add_theme_constant_override("separation", 2)
-	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	c.add_child(_rotulo(titulo, "mono", 14, ACO))
-	var v := _rotulo(valor.to_upper(), "display_eb", 28, OSSO)
-	v.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	c.add_child(v)
-	c.add_child(_rotulo(nota, "mono", 15, ACO))
-	return c
-
-
-## [linha, preenchimento]: rótulo, trilho com o preenchimento e o valor.
-## Barra de um atributo (1 = 100% = cheia) com o valor em % (vírgula, pt-BR).
-func _barra(titulo: String, valor: float, casas: int) -> Array:
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 12)
-	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var t := _rotulo(titulo, "mono", 15, ACO)
-	t.custom_minimum_size.x = 170
-	h.add_child(t)
-	var trilho := ColorRect.new()
-	trilho.color = Color(OSSO, 0.08)
-	trilho.custom_minimum_size = Vector2(0, 10)
-	trilho.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	trilho.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	trilho.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(trilho)
-	var f := TextureRect.new()
-	var gt := GradientTexture2D.new()
-	var gr := Gradient.new()
-	gr.colors = PackedColorArray([SANGUE, OURO])
-	gt.gradient = gr
-	gt.width = 64
-	gt.height = 4
-	f.texture = gt
-	f.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	f.stretch_mode = TextureRect.STRETCH_SCALE
-	f.anchor_bottom = 1.0
-	f.anchor_right = clampf(valor, 0.0, 1.0)
-	f.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	trilho.add_child(f)
-	var n := _rotulo("%s%%" % Aba.decimal(valor * 100.0, casas), "mono_sb", 16, OSSO, HORIZONTAL_ALIGNMENT_RIGHT)
-	n.custom_minimum_size.x = 76
-	h.add_child(n)
-	return [h, f]
 
 
 ## Cartão "polaroide" do confronto: [vaga no contêiner, cartão que cai].

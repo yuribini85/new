@@ -41,6 +41,12 @@ static func criar(jogador: Node) -> void:
 static func dados_equipe(dados: Node, jogador: Node) -> Dictionary:
 	if not criada(jogador):
 		return {}
+	return identidade(dados, jogador)
+
+
+## Nome, logo e cores da equipe do jogador mesmo antes de ela ser criada (a
+## apresentação do Grid mostra a Wreckage desde o começo).
+static func identidade(dados: Node, jogador: Node) -> Dictionary:
 	for e in dados.lista("equipes"):
 		if e.get("jogador", false):
 			var troca: Dictionary = dados.historia().get(String(jogador.personagem), {}).get("equipe", {})
