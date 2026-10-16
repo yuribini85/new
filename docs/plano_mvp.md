@@ -197,9 +197,10 @@ técnico real do projeto.
     fase e por perfil de jogador (`tools/agente.gd`), créditos por minuto de corrida e de
     renda, gastos e a tabela de compras; sessões e retornos usam os valores do playtest
     de ritmo. Ajuste, se houver, entra no importador.
-22. **Licença A calibrada pelo percurso.** Limites dos testes pela mediana e quartis dos
-    limites das provas A; tempos com o carro e o saldo do jogador ao tirar a B (bronze
-    tolerante, prata com o carro do percurso, ouro com uma melhoria).
+22. **Tempos de licença por regra simples.** Só a licença sem contratos (SPORT) usa os
+    testes. Limites pela mediana e quartis das provas que ela abre; tempos com o carro de
+    fábrica: bronze = pior carro elegível, prata = percentil 75 do melhor carro inicial,
+    ouro = percentil 25 do mesmo carro. Sem percurso nem melhorias.
 23. **Carro original em código** (substitui os blocos da 17): carroceria contínua por
     seções, com proporção por categoria, para validar o estilo antes da arte final.
     Agora é o gerador dos sprites provisórios (decisão 31).

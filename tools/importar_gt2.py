@@ -581,6 +581,16 @@ def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict
         carros.append(car)
         if not l.get("chefe"):
             fontes.append((cod, l["id"], float(car["potencia"])))
+    # Sem câmbio no disco (o carro do GT2 de base não tem marchas): o câmbio do
+    # carro mais parecido em tração e potência, como a regra do GT2 para os
+    # demais (decisão 69; aceito pelo usuário na auditoria, decisão 90).
+    com_cambio = [c for c in carros if "cambio" in c]
+    for car in carros:
+        if "cambio" not in car and com_cambio:
+            mesma = [c for c in com_cambio if c["tracao"] == car["tracao"]] or com_cambio
+            doador = min(mesma, key=lambda c: (abs(c["potencia"] - car["potencia"]), c["id"]))
+            car["cambio"] = json.loads(json.dumps(doador["cambio"]))
+            print(f"  câmbio de {doador['id']} em {car['id']} ({car['tracao']}, {car['potencia']} cv)")
     antigos = json.load(open(RAIZ / "referencia" / "frota360" / "antigos.json", encoding="utf-8"))
     ids = {c["id"] for c in carros}
     substituto = {velho: novo for velho, novo in antigos.items() if velho not in ids}

@@ -2492,7 +2492,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.6,
-  "largura": 2.08
+  "largura": 2.08,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "hayase_calima",
@@ -8790,7 +8798,18 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.49,
-  "largura": 1.89
+  "largura": 1.89,
+  "cambio": {
+   "relacoes": [
+    3.154,
+    1.79,
+    1.269,
+    0.967,
+    0.756,
+    0.6
+   ],
+   "final": 3.444
+  }
  },
  {
   "id": "rauhe_roca",
@@ -12371,7 +12390,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.82,
-  "largura": 2.11
+  "largura": 2.11,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "sanga_garra",
@@ -14001,7 +14028,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.34,
-  "largura": 1.98
+  "largura": 1.98,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "tomoe_avenca",
@@ -25512,7 +25547,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.38,
-  "largura": 2.02
+  "largura": 2.02,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "corsalto_aurora",
@@ -31011,7 +31054,17 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.96,
-  "largura": 2.16
+  "largura": 2.16,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.47,
+    1.04,
+    0.846,
+    0.655
+   ],
+   "final": 3.1
+  }
  },
  {
   "id": "calderwood_satinado",
@@ -34163,7 +34216,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.48,
-  "largura": 2.05
+  "largura": 2.05,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "whitlock_lavoura",
@@ -48066,7 +48127,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.66,
-  "largura": 2.03
+  "largura": 2.03,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "vantra_quimera",
@@ -48125,7 +48194,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.69,
-  "largura": 2.08
+  "largura": 2.08,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "vantra_orbita",
@@ -48178,7 +48255,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.36,
-  "largura": 1.99
+  "largura": 1.99,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "corsalto_helios",
@@ -48237,7 +48322,15 @@
   "novo": true,
   "arte_provisoria": true,
   "comprimento": 4.65,
-  "largura": 2.07
+  "largura": 2.07,
+  "cambio": {
+   "relacoes": [
+    2.23,
+    1.25,
+    0.846
+   ],
+   "final": 2.43
+  }
  },
  {
   "id": "taurenza_meteorito",

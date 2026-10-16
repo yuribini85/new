@@ -91,9 +91,9 @@ de fora: a simulação não tem esses termos por carro.
 
 | Chave | O que é | Estado |
 |---|---|---|
-| `saldo_inicial` | dinheiro no começo do jogo | **pendente** |
+| `saldo_inicial` | dinheiro no começo do jogo | 658 |
 | `fracao_revenda` | venda = preço de tabela (novo) × fração, seja qual for o preço pago; peças não entram no valor | 0,25 — medido no GT2 (3 carros: 8.000→2.000, 6.400→1.600, 2.800→700) |
-| `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | **pendente** |
+| `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | `pneu_0` |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
 reinstalá-la é grátis; um pneu de cada composto por carro; nada é cobrado se a compra é
@@ -252,10 +252,10 @@ godot --headless --path . --script res://tools/lista_carros_3d.gd
   Fora: rali e terra e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
 - Licenças CLUB a PRO (B, A, IC, IB, IA do GT2): restrição = mediana (B) ou mediana e quartis (as outras) dos
-  limites dos eventos que abrem; tempos calibrados pela simulação
-  (`tools/calibrar_licencas.gd`). **Pendente:** o critério da ferramenta parte dos carros
-  iniciais (B) ou do jogador ao tirar a B (A); IC, IB e IA saíram com os tempos da B. Falta
-  decidir o ponto de partida de cada licença alta.
+  limites dos eventos que abrem. CLUB a PRO são concedidas por contratos e ignoram os
+  testes; só a SPORT usa tempos, calibrados pela simulação (`tools/calibrar_licencas.gd`,
+  20 sementes, carro de fábrica): bronze = pior tempo de qualquer carro elegível,
+  prata = percentil 75 do melhor carro inicial, ouro = percentil 25 do mesmo carro.
 - Lojas (como no GT2): uma concessionária de novos por fabricante, agrupadas por região
   (Japão, Estados Unidos, Europa, pela escola do fabricante); usados em lotes por
   fabricante (no GT2 só as marcas japonesas têm lote). As versões de corrida ficam na
