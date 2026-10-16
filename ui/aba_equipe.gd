@@ -225,7 +225,7 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	if not EquipeJogador.vaga_aberta(jogador, vaga):
 		_linha_piloto(pai, "Sem carro disponível", EquipeJogador.NOMES_VAGA[vaga])
-		rotulo("Os pilotos de arena chegam com a arena: 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+		rotulo("Para disputar arena o mínimo são 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
 	if id == "":
 		_linha_piloto(pai, "Vaga livre", EquipeJogador.NOMES_VAGA[vaga])
@@ -257,8 +257,7 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 		rotulo("Ex-%s." % EquipeJogador.piloto(dados, id)["equipe"], FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
 	if por_nivel > 0:
-		rotulo("Experiência: %d/%d %s para o próximo nível" % [EquipeJogador.xp(jogador, id), por_nivel,
-				"corridas" if vaga == "corrida" else "lutas"], FONTE_PEQUENA, COR_SECUNDARIA, v)
+		_proximo_nivel(v, EquipeJogador.xp(jogador, id), por_nivel)
 	var falta := ArenaCarreira.recuperacao_s(jogador, id)
 	if falta > 0.0:
 		rotulo("EM RECUPERAÇÃO (%s na arena): volta em %s." % [EquipeJogador.flexao(
@@ -499,8 +498,18 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		fechar.flat = false  # acao_secundaria deixa chato (sem caixa)
 		fechar.pressed.connect(func(): fechar_painel.emit())
 		info.add_child(fechar)
-		fechar.item_rect_changed.connect(func():
-			corpo.offset_bottom = fechar.global_position.y - 12.0 - (palco.global_position.y + palco.size.y))
+		# O piloto desce até trás do Contratar: a soma das alturas entre o palco e o
+		# botão (placa, estilo, atributos) mais 3/4 do botão. Pelas alturas mínimas,
+		# não pela posição na tela, para não depender da ordem do layout.
+		var ajustar_corpo := func():
+			var sep := float(pv.get_theme_constant("separation"))
+			var sep_i := float(info.get_theme_constant("separation"))
+			var botao: Control = b if b.visible else na_equipe
+			corpo.offset_bottom = sep + nome.get_parent().get_combined_minimum_size().y + sep \
+					+ linha_estilo.get_combined_minimum_size().y + sep_i + quadro.get_combined_minimum_size().y \
+					+ sep_i + botao.get_combined_minimum_size().y * 0.75
+		ajustar_corpo.call_deferred()
+		palco.resized.connect(ajustar_corpo)
 		var mostrar := func(lado: int):
 			var c: Dictionary = lista[estado["i"]]
 			var atual: bool = c["id"] == atual_id
@@ -549,6 +558,30 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			mudou.emit()
 			historia("PILOTO_CONTRATADO", {"vaga": vaga}))
 		mostrar.call(0), [], estilo_painel)
+
+
+## "Próximo nível:" e uma barra em estágios (um por corrida ou luta que falta).
+func _proximo_nivel(pai: Control, feitos: int, total: int) -> void:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 12)
+	pai.add_child(h)
+	var l := rotulo("Próximo nível:", FONTE_PEQUENA, COR_SECUNDARIA, h)
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var estagios := HBoxContainer.new()
+	estagios.add_theme_constant_override("separation", 6)
+	estagios.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(estagios)
+	for k in total:
+		var e := Panel.new()
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = COR_DESTAQUE if k < feitos else Color(1, 1, 1, 0.1)
+		sb.set_corner_radius_all(3)
+		e.add_theme_stylebox_override("panel", sb)
+		e.custom_minimum_size = Vector2(0, 14)
+		e.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		e.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		estagios.add_child(e)
 
 
 ## Placa do nome logo abaixo do piloto: faixa escura inclinada com o risco

@@ -495,7 +495,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Uma corrida por vez. Depois de largar, ela termina mesmo com o app fechado."
+    "texto": "Toda corrida iniciada termina mesmo com o jogo fechado."
    }
   ],
   "requer": [],
@@ -516,8 +516,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Ganhar é bom. Saber quanto custou é melhor.",
-    "pose": "pensativa"
+    "texto": "Primeira vitória. A oficina respira um pouco.",
+    "pose": "firme"
    }
   ],
   "requer": [],
@@ -2417,10 +2417,6 @@
   "id": "CW_LJ11",
   "trigger": "LOJA:spare_penny_repairs",
   "falas": [
-   {
-    "quem": "mara",
-    "texto": "Spare Penny. Ninguém aqui vende pose."
-   },
    {
     "quem": "sistema",
     "texto": "Toque num carro para ver a ficha e comprar."

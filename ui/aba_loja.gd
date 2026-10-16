@@ -68,7 +68,15 @@ func _carros_da(w: Dictionary) -> Array:
 const AJUSTE_NOME_MAPA := [40.0, 0.0, 0.0, -30.0, 0.0, 0.0]
 ## Nomes das lojas escritos sobre elas no mapa (aba NOMES do cabeçalho). Começa
 ## com eles: sem os nomes, o mapa não dizia o que cada prédio vende.
-var mostrar_nomes := true
+var mostrar_nomes := true:
+	set(v):
+		mostrar_nomes = v
+		# Liga e desliga as placas no lugar, sem remontar o mapa (as nuvens e as
+		# gaivotas seguem onde estão).
+		for p in _placas:
+			if is_instance_valid(p):
+				p.visible = v
+var _placas: Array = []
 var _no_mapa := false
 
 const AREAS_MAPA := [
@@ -92,6 +100,7 @@ const MAPA_LOJAS_Y := [0.10, 0.93]
 ## por igual (centrado). Nunca estica.
 func _mapa(ws: Array) -> void:
 	_no_mapa = true
+	_placas.clear()
 	var tex := arte("mapa_lojas")
 	var tw := float(tex.get_width())
 	var th := float(tex.get_height())
@@ -160,31 +169,32 @@ func _mapa(ws: Array) -> void:
 			mudou.emit())
 		t.add_child(b)
 		ancora("LOJA_" + id, b)
-		if mostrar_nomes:
-			# Placa com o nome sobre a loja, no alto da área dela.
-			var placa := PanelContainer.new()
-			var sb := StyleBoxFlat.new()
-			sb.bg_color = Color(COR_FUNDO, 0.82)
-			sb.border_color = COR_DESTAQUE
-			sb.set_border_width_all(2)
-			sb.set_corner_radius_all(8)
-			sb.content_margin_left = 12
-			sb.content_margin_right = 12
-			sb.content_margin_top = 2
-			sb.content_margin_bottom = 4
-			placa.add_theme_stylebox_override("panel", sb)
-			placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			var l := Label.new()
-			l.text = String(w["nome"]).to_upper()
-			Tipografia.rotulo(l, "semibold", 24)
-			l.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
-			l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			placa.add_child(l)
-			placa.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-			placa.grow_horizontal = Control.GROW_DIRECTION_BOTH
-			placa.offset_top += AJUSTE_NOME_MAPA[i]
-			placa.offset_bottom += AJUSTE_NOME_MAPA[i]
-			b.add_child(placa)
+		# Placa com o nome sobre a loja, no alto da área dela (NOMES liga e desliga).
+		var placa := PanelContainer.new()
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(COR_FUNDO, 0.82)
+		sb.border_color = COR_DESTAQUE
+		sb.set_border_width_all(2)
+		sb.set_corner_radius_all(8)
+		sb.content_margin_left = 12
+		sb.content_margin_right = 12
+		sb.content_margin_top = 2
+		sb.content_margin_bottom = 4
+		placa.add_theme_stylebox_override("panel", sb)
+		placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var l := Label.new()
+		l.text = String(w["nome"]).to_upper()
+		Tipografia.rotulo(l, "semibold", 24)
+		l.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+		l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		placa.add_child(l)
+		placa.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+		placa.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		placa.offset_top += AJUSTE_NOME_MAPA[i]
+		placa.offset_bottom += AJUSTE_NOME_MAPA[i]
+		placa.visible = mostrar_nomes
+		_placas.append(placa)
+		b.add_child(placa)
 
 
 ## Lista das workshops (sem o mapa: dados de teste): a concessionária, o nome

@@ -7,9 +7,9 @@ extends Control
 
 const QUADROS := 12
 const CICLO := 12
-const FPS := 14.0
-const ESPERA_S := Vector2(5.0, 14.0)  # intervalo entre uma gaivota e a próxima
-const TRAVESSIA_S := Vector2(7.0, 11.0)  # tempo para cruzar a tela
+const FPS := 10.0
+const ESPERA_S := Vector2(30.0, 75.0)  # intervalo entre uma gaivota e a próxima
+const TRAVESSIA_S := Vector2(16.0, 24.0)  # tempo para cruzar a tela
 const ALTURA_PX := Vector2(44.0, 66.0)  # altura na tela (escala uniforme)
 const FAIXA_Y := Vector2(0.04, 0.55)  # onde ela pode passar (fração da altura)
 const PLANA := 5  # quadro de asa aberta, para planar
@@ -35,7 +35,7 @@ func _ready() -> void:
 		q.region = Rect2(i * lw, 0, lw, _tira.get_height())
 		_quadros.append(q)
 	_rng.randomize()
-	_espera = _rng.randf_range(1.0, 4.0)  # a primeira vem logo
+	_espera = _rng.randf_range(6.0, 20.0)
 
 
 func _process(delta: float) -> void:

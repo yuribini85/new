@@ -229,7 +229,7 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 	if not vaga in VAGAS_PILOTO:
 		return "vaga desconhecida"
 	if not vaga_aberta(jogador, vaga):
-		return "a equipe ainda não contrata" if not criada(jogador) else "os pilotos de arena chegam com a arena"
+		return "a equipe ainda não contrata" if not criada(jogador) else "para disputar arena o mínimo são 3 carros na garagem"
 	if piloto(dados, piloto_id).is_empty():
 		return "candidato desconhecido"
 	var de_tipo := "corrida" if vaga == "corrida" else "arena"

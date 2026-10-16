@@ -133,14 +133,14 @@ Mara: Campeão é quem soma mais. Constância ganha título.
 Mara: {voltas} voltas em {pista}.
 Mara[firme]: Nós preparamos e {piloto} corre.
 Mara[pensativa]: Depois, a conta aparece nos resultados.
-Sistema: Uma corrida por vez. Depois de largar, ela termina mesmo com o app fechado.
+Sistema: Toda corrida iniciada termina mesmo com o jogo fechado.
 
 # Resultado da primeira prova: uma variante para vitória e outra para o resto.
 # Pedido do usuário: depois da primeira prova, nada novo; o jogador corre de
 # novo e a Oficina só aparece quando o caixa paga a peça (CW_P06D).
 # Decisão 96: as duas encadeiam o The Grid (a meta, depois da primeira corrida).
 = CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN; proxima=CW_GR00
-Mara[pensativa]: Ganhar é bom. Saber quanto custou é melhor.
+Mara[firme]: Primeira vitória. A oficina respira um pouco.
 
 = CW_P06B | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; proxima=CW_GR00
 Mara[decepcao]: {posicao}. Corrida perdida também paga.
@@ -496,7 +496,6 @@ Sistema: Toque num carro para ver a ficha e comprar.
 Jade: De volta? Escolhe e leva. O resto é vitrine.
 
 = CW_LJ11 | LOJA:spare_penny_repairs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SPARE_PENNY
-Mara: Spare Penny. Ninguém aqui vende pose.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 # ---------------------------------------------------------------- Comentários de contexto

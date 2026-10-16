@@ -88,8 +88,7 @@ func _ready() -> void:
 	_cabecalho.pintura.connect(_abrir_cabine)
 	_cabecalho.nomes.connect(func():
 		_todas[1].mostrar_nomes = not _todas[1].mostrar_nomes
-		_cabecalho.definir_nomes(_todas[1].mostrar_nomes)
-		_todas[1].atualizar())
+		_cabecalho.definir_nomes(_todas[1].mostrar_nomes))
 	_cabecalho.mapa.connect(func(): _todas[1].voltar_ao_mapa())
 	_cabecalho.corrida.connect(func():
 		if jogador.fila.is_empty():
@@ -1116,6 +1115,9 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			botoes.push_front(b)
 		if not oficina:  # a Oficina ainda não foi apresentada
 			botoes = botoes.filter(func(b): return b[0] != "Melhorar o carro")
+		if not acelerar_liberado():
+			# No tutorial a história leva adiante (o Grid, a Oficina): sem "de novo".
+			botoes = botoes.filter(func(b): return b[0] != "Disputar de novo")
 	# As conversas da chegada e a do título de campeão vêm depois que o jogador
 	# lê o resultado (qualquer botão do painel).
 	for b in botoes:
