@@ -735,6 +735,7 @@ func _fuga(e: Dictionary) -> void:
 	chapa.position.x = -.34
 	create_tween().tween_property(porta, "rotation:y", lado * .95, .35)
 	Sons.tocar_ui(self, "porta_abre", -4.0)
+	Sons.tocar_ui(self, "ofegante", -8.0)
 	var p := Piloto3D.new()
 	_cena.add_child(p)
 	_pilotos[e["carro"]] = p

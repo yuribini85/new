@@ -4,9 +4,10 @@ extends Node
 ## do jogador, bipes da largada, chegada e ultrapassagem. Em AudioStreamWAV
 ## porque a exportação web sem threads não toca AudioStreamGenerator.
 ##
-## Motor e pneu gravados (arte/sons, CC0 da Kenney); o tom do motor segue o
-## giro (cai na troca de marcha). Sem os arquivos, voltam os gerados: motor
-## em duas camadas e chiado. Público, oficina, impacto e raspagem da arena e
+## Motor em duas camadas gravadas: o grave é um V8 em marcha lenta
+## (motor_grave), o agudo é o da Kenney (motor, CC0); o tom das duas segue o
+## giro (cai na troca de marcha) e o agudo cresce com ele. Pneu da Kenney.
+## Sem os arquivos, voltam os gerados: motor em duas camadas e chiado. Público, oficina, impacto e raspagem da arena e
 ## porta vêm do GDC Game Audio Bundle (tools/preparar_sons.py); sem eles,
 ## voltam os gerados (público, oficina) ou não toca nada. Zebra e bipes são
 ## sempre gerados.
@@ -16,6 +17,7 @@ const TAXA := 22050
 
 var _motor: AudioStreamPlayer
 var _motor_alto: AudioStreamPlayer
+var _motor_grave: AudioStreamPlayer
 var _pneu: AudioStreamPlayer
 var _zebra: AudioStreamPlayer
 var _torcida: AudioStreamPlayer
@@ -42,6 +44,13 @@ const MOTOR_TOM_MAX := 2.6
 ## Quanto o tom anda por segundo atrás do alvo (desce rápido na troca, sobe
 ## acompanhando o giro).
 const MOTOR_TOM_RAPIDEZ := 9.0
+## Tom do grave (V8 em marcha lenta, ~800 rpm na gravação) em relação ao do
+## agudo: no giro mínimo da escala ele fica perto do original.
+const GRAVE_RAZAO := 0.9
+## Volume do grave no giro mínimo e no máximo (o agudo faz o contrário).
+const GRAVE_DB_MIN_GIRO := -6.0
+const GRAVE_DB_MAX_GIRO := -12.0
+const AGUDO_DB_MIN_GIRO := -16.0
 var _tom_alvo := -1.0
 const PNEU_DB := -8.0
 ## Volume do público gravado no auge da torcida.
@@ -66,6 +75,8 @@ func _init() -> void:
 	_gravado = motor != null
 	_motor = _laco(motor if _gravado else _onda(90.0, 1.0, 0.18, true, true), MOTOR_DB if _gravado else -14.0)
 	_motor_alto = _laco(_onda(180.0, 1.0, 0.12, true, true), MUDO_DB)
+	var grave := _arquivo("motor_grave", true)
+	_motor_grave = _laco(grave, MOTOR_DB + GRAVE_DB_MIN_GIRO if grave != null else MUDO_DB)
 	var pneu := _arquivo("pneu", true)
 	_pneu = _laco(pneu if pneu != null else _ruido(1.0, 0.22, 0.55), MUDO_DB)
 	_zebra = _laco(_ruido(1.0, 0.3, 0.15, 28.0), MUDO_DB)
@@ -95,7 +106,7 @@ func _laco(s: AudioStream, db: float) -> AudioStreamPlayer:
 ## Motor: liga/desliga. Sem giro informado, o tom acompanha a velocidade (m/s).
 func motor(ligado: bool, velocidade := 0.0) -> void:
 	if not ligado:
-		for p in [_motor, _motor_alto, _pneu, _zebra]:
+		for p in [_motor, _motor_alto, _motor_grave, _pneu, _zebra]:
 			if p.playing:
 				p.stop()
 		_alvos[_pneu] = MUDO_DB
@@ -103,11 +114,12 @@ func motor(ligado: bool, velocidade := 0.0) -> void:
 		_giro = -1.0
 		_tom_alvo = -1.0
 		return
-	for p in ([_motor] if _gravado else [_motor, _motor_alto]):
+	for p in ([_motor] if _gravado else [_motor, _motor_alto]) + ([_motor_grave] if _motor_grave.stream else []):
 		if not p.playing:
 			p.play()
 	if _giro < 0.0:
 		_motor.pitch_scale = clampf(0.6 + velocidade / 40.0, 0.5, 3.0)
+		_motor_grave.pitch_scale = _motor.pitch_scale * GRAVE_RAZAO
 
 
 ## Giro do motor (0..1 da escala): o tom das duas camadas e o volume do agudo.
@@ -118,7 +130,11 @@ func motor_giro(fracao: float) -> void:
 		# alto (abaixo de ~1 a gravação soa como trator); a troca de marcha
 		# desliza o tom em vez de saltar (_process).
 		_tom_alvo = lerpf(MOTOR_TOM_MIN, MOTOR_TOM_MAX, _giro)
-		_alvos[_motor] = MOTOR_DB + lerpf(-3.0, 0.0, _giro)
+		if _motor_grave.stream:
+			_alvos[_motor] = MOTOR_DB + lerpf(AGUDO_DB_MIN_GIRO, 0.0, _giro)
+			_alvos[_motor_grave] = MOTOR_DB + lerpf(GRAVE_DB_MIN_GIRO, GRAVE_DB_MAX_GIRO, _giro)
+		else:
+			_alvos[_motor] = MOTOR_DB + lerpf(-3.0, 0.0, _giro)
 		return
 	_motor.pitch_scale = lerpf(0.55, 1.75, _giro)
 	_motor_alto.pitch_scale = lerpf(0.6, 1.9, _giro)
@@ -148,10 +164,12 @@ func _ligar(p: AudioStreamPlayer, db: float) -> void:
 func _process(delta: float) -> void:
 	if _gravado and _tom_alvo > 0.0:
 		_motor.pitch_scale = lerpf(_motor.pitch_scale, _tom_alvo, 1.0 - exp(-delta * MOTOR_TOM_RAPIDEZ))
+		_motor_grave.pitch_scale = _motor.pitch_scale * GRAVE_RAZAO
 	for p in _alvos:
-		var alvo: float = _alvos[p] + (linear_to_db(maxf(_volume, 0.001)) if p == _motor or p == _motor_alto else 0.0)
+		var do_motor: bool = p == _motor or p == _motor_alto or p == _motor_grave
+		var alvo: float = _alvos[p] + (linear_to_db(maxf(_volume, 0.001)) if do_motor else 0.0)
 		p.volume_db = move_toward(p.volume_db, alvo, delta * 90.0)
-		if p.playing and p != _motor and p != _motor_alto and p.volume_db <= MUDO_DB + 0.5 and _alvos[p] <= MUDO_DB:
+		if p.playing and not do_motor and p.volume_db <= MUDO_DB + 0.5 and _alvos[p] <= MUDO_DB:
 			p.stop()
 
 
@@ -159,14 +177,24 @@ func _process(delta: float) -> void:
 func volume_motor(f: float) -> void:
 	_volume = f
 	_motor.volume_db = float(_alvos[_motor]) + linear_to_db(maxf(f, 0.001))
+	_motor_grave.volume_db = float(_alvos[_motor_grave]) + linear_to_db(maxf(f, 0.001))
 
 
 func largada(final := false) -> void:
 	_tocar(_bipe_longo if final else _bipe_curto)
 
 
+const PASSAGEM_INTERVALO_MS := 2500
+var _passagem_ms := -100000
+
+
+## Ultrapassagem: o bipe (sobe se ganhou, desce se perdeu) e o carro passando.
 func ultrapassagem(ganhou: bool) -> void:
 	_tocar(_subida if ganhou else _descida)
+	var agora := Time.get_ticks_msec()
+	if agora - _passagem_ms >= PASSAGEM_INTERVALO_MS:  # pelotão trocando de posição: um só
+		_passagem_ms = agora
+		tocar_ui(self, "passagem", -12.0, randf_range(0.95, 1.1))
 
 
 func chegada() -> void:

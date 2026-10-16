@@ -7,9 +7,10 @@ estão, com os nomes curtos abaixo:
 
     python3 tools/preparar_sons.py <pasta com impacto.wav, raspagem.wav, ...>
 
-Laços (oficina, publico) fecham com uma emenda cruzada: o fim do trecho é
-misturado ao começo, para repetir sem estalo. Mono, 44,1 kHz (tocam em
-celular; o estéreo dobraria o tamanho sem diferença no alto-falante).
+Laços (oficina, publico, motor_grave) fecham com uma emenda cruzada: o fim do
+trecho é misturado ao começo, para repetir sem estalo (emenda de até 1,5 s,
+15% do trecho). Mono, 44,1 kHz (tocam em celular; o estéreo dobraria o
+tamanho sem diferença no alto-falante).
 """
 import subprocess
 import sys
@@ -28,6 +29,12 @@ CORTES = {
     "porta": ("porta.wav", 1.75, 2.55, False, 0.0),
     "oficina": ("oficina.wav", 2.0, 26.0, True, 6.0),
     "publico": ("publico.wav", 18.0, 48.0, True, 4.0),
+    # SoundBits, Mad Mustang Mercury: V8 em marcha lenta, estável até 2,5 s.
+    "motor_grave": ("mustang.wav", 0.0, 2.2, True, 8.0),
+    # SoundBits, Kawasaki: passagem rápida (ultrapassagem).
+    "passagem": ("moto_passa.wav", 3.0, 8.5, False, 0.0),
+    # SoundBits, Vox Hominis: piloto correndo depois de sair do carro.
+    "ofegante": ("ofegante.wav", 0.0, 4.5, False, 0.0),
 }
 EMENDA_S = 1.5
 BORDA_S = 0.01
@@ -42,7 +49,7 @@ def ler(caminho: Path) -> np.ndarray:
 def cortar(x: np.ndarray, ini: float, fim: float, laco: bool) -> np.ndarray:
     a, b = int(ini * TAXA), int(fim * TAXA)
     if laco:
-        e = int(EMENDA_S * TAXA)
+        e = int(min(EMENDA_S, (fim - ini) * 0.15) * TAXA)
         trecho = x[a:b + e].copy()
         rampa = np.linspace(0.0, 1.0, e)
         # O começo recebe o que vem depois do fim, entrando enquanto ele sai.
