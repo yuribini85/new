@@ -121,12 +121,13 @@ static func cfg_mercado(dados: Node) -> Dictionary:
 
 
 ## Piloto de uma equipe do Grid como candidato: o traço pelo perfil da equipe.
+## Serve às duas vagas (tipo "", decisão do usuário de 2026-10-16: o traço não
+## decide a vaga, como nos candidatos).
 static func _do_grid(dados: Node, e: Dictionary, pe: Dictionary) -> Dictionary:
 	# Decisão 72: o traço pelo perfil do próprio piloto (o da equipe, se faltar).
 	var perfil := String(pe.get("perfil", e.get("perfil", "")))
 	var tr := String(cfg_mercado(dados).get("traco_por_perfil", {}).get(perfil, "constante"))
-	var tipo_tr := "arena" if tr in ["agressivo", "barato"] else "corrida"
-	return {"id": pe["id"], "nome": pe["nome"], "traco": tr, "tipo": tipo_tr,
+	return {"id": pe["id"], "nome": pe["nome"], "traco": tr, "tipo": "",
 			"frase": String(pe.get("personalidade", "")), "equipe": String(e["nome"])}
 
 
@@ -138,7 +139,7 @@ static func pool(dados: Node, jogador: Node, tipo_: String) -> Array:
 		var e := TheGrid.equipe(dados, String(id))
 		for pe in e.get("pilotos", []):
 			var c := _do_grid(dados, e, pe)
-			if c["tipo"] == tipo_:
+			if c["tipo"] in ["", tipo_]:
 				l.append(c)
 	return l
 
@@ -171,7 +172,8 @@ static func oferta(dados: Node, jogador: Node, tipo_: String, agora: float) -> A
 	return l.slice(0, n)
 
 
-## Tipo do candidato: "corrida" ou "arena" (carreira.json → candidatos).
+## Tipo do candidato: "corrida" ou "arena" (carreira.json → candidatos); ""
+## para os do Grid, que servem às duas vagas.
 static func tipo(dados: Node, piloto_id: String) -> String:
 	return String(piloto(dados, piloto_id).get("tipo", "corrida"))
 
@@ -215,7 +217,7 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 			.any(func(c): return c["id"] == piloto_id) and not pool(dados, jogador, de_tipo).any(func(c): return c["id"] == piloto_id):
 		return "fora do mercado"
 	var quer := "corrida" if vaga == "corrida" else "arena"
-	if tipo(dados, piloto_id) != quer:
+	if tipo(dados, piloto_id) not in ["", quer]:
 		return "%s é piloto de %s" % [String(piloto(dados, piloto_id).get("nome", piloto_id)), tipo(dados, piloto_id)]
 	var em := vaga_do_piloto(jogador, piloto_id)
 	if em != "" and em != vaga:

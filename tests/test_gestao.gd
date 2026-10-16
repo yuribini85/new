@@ -298,6 +298,10 @@ func test_mercado_experiencia_e_embalo() -> void:
 	var do_grid: Dictionary = EquipeJogador.pool(d, j, "corrida").filter(func(c): return c.has("equipe")).front() \
 			if EquipeJogador.pool(d, j, "corrida").any(func(c): return c.has("equipe")) else EquipeJogador.pool(d, j, "arena").filter(func(c): return c.has("equipe")).front()
 	verificar(do_grid.has("equipe"), "piloto do Grid com a equipe de origem")
+	# Os do Grid servem às duas vagas, qualquer que seja o traço.
+	for pe in primeira.get("pilotos", []):
+		for t in ["corrida", "arena"]:
+			verificar(EquipeJogador.pool(d, j, t).any(func(c): return c["id"] == pe["id"]), "%s no mercado de %s" % [pe["id"], t])
 	# Experiência: a cada xp_por_nivel provas, um nível (abaixo do teto).
 	j.licencas = ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL"]
 	var c0: String = EquipeJogador.oferta(d, j, "corrida", Time.get_unix_time_from_system())[0]["id"]
