@@ -443,6 +443,10 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		setas_troca(palco, lista.size(), func(lado: int):
 			estado["i"] = posmod(estado["i"] + lado, lista.size())
 			mostrar.call(lado))
+		if vaga == "corrida":
+			# Tutorial: com a janela aberta, o destaque vai para o Contratar
+			# dela (o botão da aba fica atrás); fechada, volta para o da aba.
+			ancoras["PILOTO_CORRIDA" + Aba.NA_JANELA] = b
 		b.pressed.connect(func():
 			var c: Dictionary = lista[estado["i"]]
 			var motivo := EquipeJogador.contratar(dados, jogador, String(c["id"]), vaga)

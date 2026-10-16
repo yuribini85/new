@@ -16,6 +16,8 @@ const FOV_PROVISORIO := 27.0
 ## 1120 × 800 px a 160 px/m, RECORTE_ISO), corrigida porque a foto (TAMANHO) é
 ## mais larga que o recorte e a lista encaixa as duas pela altura.
 const LARGURA_FOTO_GLB_M := 1120.0 / 160.0 * 0.74 * (360.0 / 200.0) / ((1120.0 * 0.74) / (800.0 * 0.66))
+## Folga em volta do carro que precisou de enquadramento próprio (fração do quadro).
+const MARGEM_FOTO := 0.06
 var _fotos := {}  # "id|cor" -> ViewportTexture
 
 
@@ -87,7 +89,9 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 		cam.keep_aspect = Camera3D.KEEP_WIDTH
 		cam.size = LARGURA_FOTO_GLB_M
 		cam.far = 200.0
-		cam.look_at_from_position(Vector3(70, 57.15, 70).normalized() * 40.0 + Vector3(0, 0.6, 0), Vector3(0, 0.6, 0))
+		var alvo := Vector3(0, 0.6, 0)
+		cam.transform = Transform3D(Basis.looking_at(-Vector3(70, 57.15, 70)), Vector3(70, 57.15, 70).normalized() * 40.0 + alvo)
+		_enquadrar(cam, carro)
 	else:
 		# Enquadramento mais aberto: o carro provisório ocupa a foto na mesma
 		# proporção do sprite recortado (RECORTE_ISO), lado a lado com os de arte.
@@ -101,6 +105,38 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	_fotos[chave] = tex
 	_copiar(vp, tex)
 	return tex
+
+
+## Carro alto (utilitário, caminhão) passaria do quadro com a mira e a escala
+## de todos: só então a câmera centra nele e, se ainda não couber, se afasta
+## (esse carro sai menor; os outros ficam na escala comum, lado a lado).
+func _enquadrar(cam: Camera3D, carro: Node3D) -> void:
+	var olho_inv := cam.transform.affine_inverse()
+	var mn := Vector2(INF, INF)
+	var mx := -mn
+	for mi: MeshInstance3D in carro.find_children("*", "MeshInstance3D", true, false):
+		if mi.mesh == null or not mi.visible:
+			continue
+		var x := mi.transform
+		var n := mi.get_parent()
+		while n != null and n != carro.get_parent():
+			if n is Node3D:
+				x = (n as Node3D).transform * x
+			n = n.get_parent()
+		var b := mi.get_aabb()
+		for k in 8:
+			var q := olho_inv * (x * b.get_endpoint(k))
+			mn = mn.min(Vector2(q.x, q.y))
+			mx = mx.max(Vector2(q.x, q.y))
+	if mn.x == INF:
+		return
+	var meio := Vector2(cam.size, cam.size * TAMANHO.y / TAMANHO.x) * 0.5 * (1.0 - MARGEM_FOTO)
+	if mn.x >= -meio.x and mn.y >= -meio.y and mx.x <= meio.x and mx.y <= meio.y:
+		return
+	var escala := maxf(1.0, maxf((mx.x - mn.x) / (2.0 * meio.x), (mx.y - mn.y) / (2.0 * meio.y)))
+	cam.size *= escala
+	var centro := (mn + mx) * 0.5
+	cam.transform.origin += cam.transform.basis.x * centro.x + cam.transform.basis.y * centro.y
 
 
 func _copiar(vp: SubViewport, tex: ImageTexture) -> void:

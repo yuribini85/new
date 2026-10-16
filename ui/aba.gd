@@ -154,6 +154,11 @@ func _espaco_topo() -> void:
 	conteudo.move_child(vazio, 0)
 
 
+## Sufixo da âncora de um controle dentro da janela aberta por cima da aba:
+## enquanto ela aparece, o destaque vai para ele em vez do da aba.
+const NA_JANELA := "@janela"
+
+
 ## Marca um controle como alvo do destaque `nome` (o primeiro registrado vale).
 ## Um cartão marca o painel inteiro.
 func ancora(nome: String, c: Control) -> void:

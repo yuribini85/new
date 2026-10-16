@@ -177,6 +177,7 @@ func _ready() -> void:
 		# O destaque fica abaixo do diálogo: o resto da tela escurece, a caixa não.
 		_destaque = Destaque.new()
 		add_child(_destaque)
+		_destaque.alvo_mudou.connect(func(r: Rect2): _dialogo.evitar(r))
 		_dialogo = Dialogo.new(jogador.historia)
 		_dialogo.espera = _cena_espera
 		add_child(_dialogo)
@@ -688,7 +689,13 @@ func _destacar(nome: String) -> void:
 		if not is_instance_valid(alvo):
 			return
 	# Reconstruída a aba, o destaque acha o controle novo pela mesma âncora.
-	_destaque.mostrar(alvo, func(): return aba.ancoras.get(nome) if aba.is_visible_in_tree() else null)
+	_destaque.mostrar(alvo, func():
+		if not aba.is_visible_in_tree():
+			return null
+		var na_janela = aba.ancoras.get(nome + Aba.NA_JANELA)
+		if _sobre.aberto() and is_instance_valid(na_janela) and na_janela.is_inside_tree():
+			return na_janela
+		return aba.ancoras.get(nome))
 	if _dialogo._cena.get("id") == cena_id:
 		_dialogo.evitar(alvo.get_global_rect())
 

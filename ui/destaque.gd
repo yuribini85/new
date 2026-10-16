@@ -4,7 +4,11 @@ extends Control
 ## destaque (escurece) e um contorno pulsante envolve o controle, sem pegar
 ## toque. Fica até outro destaque, a troca de tela ou limpar(); se a tela for
 ## reconstruída, procura o controle de novo pela âncora (`buscar`). Fica abaixo
-## da caixa de diálogo, que continua legível.
+## da caixa de diálogo, que continua legível. Se a âncora passa a outro
+## controle (a janela aberta por cima traz o botão a tocar), o destaque vai
+## junto e avisa (`alvo_mudou`), para a caixa do diálogo sair da frente.
+
+signal alvo_mudou(r: Rect2)
 
 ## Apresentação, não balanceamento.
 const MARGEM := 8.0
@@ -14,6 +18,7 @@ const ENTRADA_S := 0.3
 
 var _alvo: Control
 var _buscar: Callable
+var _aparecia := true
 var _t := 0.0
 
 
@@ -29,6 +34,7 @@ func mostrar(alvo: Control, buscar := Callable()) -> void:
 	_alvo = alvo
 	_buscar = buscar
 	_t = 0.0
+	_aparecia = true
 	visible = true
 	queue_redraw()
 
@@ -47,10 +53,19 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	_t += delta
-	if not _valido(_alvo) and _buscar.is_valid():
+	if _buscar.is_valid():
+		# A âncora manda: outro controle, o destaque vai junto; escondido (ex.:
+		# o botão da janela sumiu para este candidato), não desenha; nenhum, sai.
 		var novo = _buscar.call()
-		_alvo = novo if novo is Control else null
-	if not _valido(_alvo):
+		if not is_instance_valid(novo):
+			limpar()
+			return
+		var aparece := _valido(novo)
+		if aparece and (novo != _alvo or not _aparecia):
+			alvo_mudou.emit((novo as Control).get_global_rect())
+		_alvo = novo
+		_aparecia = aparece
+	elif not _valido(_alvo):
 		limpar()
 		return
 	queue_redraw()
@@ -61,7 +76,7 @@ func _valido(c: Variant) -> bool:
 
 
 func _draw() -> void:
-	if not visible or not is_instance_valid(_alvo):
+	if not visible or not _valido(_alvo):
 		return
 	var r := _alvo.get_global_rect().grow(MARGEM)
 	r.position -= get_global_rect().position
