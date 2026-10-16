@@ -855,3 +855,16 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     na aterrissagem pesada; na simulação, a IA deixa embalar na descida
     (`descida_sobra` 3,0) e a subida tira mais força do motor (`subida_perda` 0,5 →
     2,0). Provisórios até o playtest.
+95. **Jogo mais leve** (2026-10-16, itens 1 a 8 aprovados pelo usuário; o 9 ficou
+    pendente). Arena: amassado com a malha pré-calculada (só soma o deslocamento e
+    refaz as normais dos triângulos atingidos: 11 → 3 ms por quadro), público a 20 Hz
+    quando reage e 5 Hz parado, peças fixas fundidas em poucas malhas por material
+    (`FundirMalhas`: ~1.300 → ~260 chamadas de desenho), chão com a altura exata só
+    perto do muro e malha indexada (montagem 1,7 → 1,1 s). Pacote: kit das pistas em
+    WebP com perda 0,8 (7,5 → 1,4 MB), corpos dos pilotos em 512×768 (a maior exibição;
+    6,8 → 5,0 MB), `pecas.json` agrupado por carro (1,44 → 0,56 MB; o `Dados` expande).
+    **Pendente (item 9):** modelo de exportação Web do Godot compilado sem os módulos
+    que o jogo não usa (`index.wasm` de 43,7 MB, 30,9 MB comprimido, é a maior parte do
+    download). Exige compilar o motor (scons com `profile` de módulos desligados) e
+    apontar `custom_template` no preset Web; fazer quando o build Web for para
+    lojas/divulgação.
