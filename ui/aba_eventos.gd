@@ -595,6 +595,10 @@ func _correr(evento_id: String) -> void:
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
 	correr_iniciado.emit()
+	# Da segunda corrida em diante (o navegador só pergunta depois de um toque):
+	# a permissão do aviso de fim de corrida.
+	if jogador.dias >= 1:
+		AvisoFim.pedir_permissao()
 	historia("CORRIDA_INICIO", ctx)
 	if dados.evento(evento_id)["restricoes"].get("licenca", "") == "ELITE":
 		historia("CORRIDA_RESISTENCIA")

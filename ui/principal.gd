@@ -867,6 +867,26 @@ func _pedir_nome() -> void:
 		jogador.historia.disparar("NOME_DEFINIDO"))
 
 
+## Aviso de fim de corrida no navegador (AvisoFim): agendado para o fim da
+## corrida em andamento, com a posição; sem corrida, cancelado.
+func _agendar_aviso() -> void:
+	if not AvisoFim.disponivel():
+		return
+	if jogador.fila.is_empty() or not jogador.fila_ctrl.pronta(false):
+		AvisoFim.cancelar()
+		return
+	var agora := Aceleracao.agora(jogador)
+	var c: Dictionary = jogador.fila_ctrl.corrida_atual(agora)
+	if c.is_empty():
+		return
+	var falta := float(c["duracao"]) - float(c["decorrido"])
+	var ev_id := String(jogador.fila.get("evento_id", ""))
+	var nome := String(dados.evento(ev_id).get("nome", "Corrida")) if dados.existe("eventos", ev_id) else "Corrida"
+	var pos: int = Array(c["resultado"]["classificacao"]).find("jogador") + 1
+	AvisoFim.agendar(Aceleracao.real_ate(jogador, falta), "Chrome & Wreckage",
+			"%s terminou: %s em %dº." % [nome, EquipeJogador.nome_jogador(dados, jogador), pos])
+
+
 ## A corrida recém-inscrita é resolvida aos poucos, Fila.FATIA_MS por quadro
 ## (decisão 90): uma resistência leva segundos de uma vez e travava a tela.
 var _resolvendo := false
@@ -886,6 +906,7 @@ func _process(_delta: float) -> void:
 
 
 func _processar_fila() -> void:
+	_agendar_aviso()
 	# Corrida ainda sendo resolvida aos poucos (_process): acabou de começar, o
 	# próximo segundo confere.
 	if jogador.fila.is_empty() or not jogador.fila_ctrl.pronta(false):

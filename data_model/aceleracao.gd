@@ -18,6 +18,18 @@ static func agora(jogador: Node, real: float = Time.get_unix_time_from_system())
 	return real + float(a["ganho"]) + (float(a["fator"]) - 1.0) * dentro
 
 
+## Segundos reais até o relógio das corridas andar `jogo_s` (a aceleração
+## ativa encurta a parte que cai dentro da janela dela).
+static func real_ate(jogador: Node, jogo_s: float, real: float = Time.get_unix_time_from_system()) -> float:
+	if jogo_s <= 0.0:
+		return 0.0
+	var janela := restante_s(jogador, real)
+	var f := float(jogador.aceleracao.get("fator", 1.0)) if janela > 0.0 else 1.0
+	if jogo_s <= janela * f:
+		return jogo_s / f
+	return janela + (jogo_s - janela * f)
+
+
 static func ativa(jogador: Node, real: float = Time.get_unix_time_from_system()) -> bool:
 	return restante_s(jogador, real) > 0.0
 

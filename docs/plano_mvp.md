@@ -868,3 +868,24 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     download). Exige compilar o motor (scons com `profile` de módulos desligados) e
     apontar `custom_template` no preset Web; fazer quando o build Web for para
     lojas/divulgação.
+96. **Experiência do jogador** (2026-10-16, análise com o playtest da campanha;
+    recomendações aceitas pelo usuário). Mede-se com `tools/playtest_campanha.gd`
+    (o agente segue o que a tela sugere).
+    - **The Grid depois da primeira corrida** (substitui a ordem da decisão 85): nome →
+      carro → piloto → corrida → Grid. A apresentação das equipes ficou curta (~3 s até o
+      Continuar, era ~35 s): o emblema da rival cai, o da Wreckage sobe, o corte e o VS
+      batem; o confronto mostra a Wreckage no nosso lado.
+    - **Primeira vitória cedo** (critério da Sunday Cup do GT2: a primeira prova sugerida
+      vencível com o carro que o saldo inicial compra): na primeira compra, cada carro
+      mostra a força na estreia ("ESTREIA: MAIS FORTE/PARELHO/MAIS FRACO", frente ao
+      rival mais forte da prova mais favorável); Corridas abre com a **Próxima prova** (a
+      mais favorável ao carro) e o tutorial aponta para ela. 1ª vitória: 22 → 3 min.
+    - **Comentários do dia a dia** (vitória, pódio, derrota, peça comprada): repetíveis e
+      reativos, em rodízio; o fim de corrida dá a vez aos marcos antes deles. Maior vazio
+      sem fala: 46 → 21 min.
+    - **Arena na primeira sessão**: luta de demonstração com o carro da Mara (~7 min de
+      jogo, simulada, sem prêmio nem perda); a arena de verdade segue abrindo com 3 carros.
+    - **Aviso de fim de corrida** na versão web (Notification API, só com a aba em segundo
+      plano; permissão pedida a partir da segunda corrida). **Pendente:** no celular, o
+      Godot 4.4 não tem notificação local sem plugin (Android: plugin de notificação local
+      com `AlarmManager`; iOS: `UNUserNotificationCenter`); fazer junto do build de loja.
