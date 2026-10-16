@@ -124,6 +124,8 @@ var _tamanho := 60.0
 var _tremor := 0.0
 var _aneis := {}  # id -> MeshInstance3D (só os seus carros)
 var _marcadores := {}  # id -> MeshInstance3D (visão geral: o carro de longe)
+var _poeira := {}  # id -> CPUParticles3D (terra levantando atrás do carro rápido)
+const POEIRA_V_MS := 7.0  # acima disso o carro levanta poeira
 var _tombo := {}  # id -> {rolagem, v_rolagem, arfagem, v_arfagem} (rad, rad/s)
 var _foco := "jogador"  # carro da câmera dinâmica
 var _plano := 0  # 0 perseguição, 1 lateral, 2 frente baixa
@@ -174,6 +176,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_carros = {}
 	_aneis = {}
 	_marcadores = {}
+	_poeira = {}
 	_tombo = {}
 	_soltas = []
 	_malhas = {}
@@ -193,6 +196,11 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_i = 0
 	_eventos_vistos = 0
 	tempo = 0.0
+	_cores_luta = []
+	for id in resultado["carros"]:
+		var cl: Color = pinturas.get(id, CarroBloco.cor_do_id(id))
+		if cl.a > 0.0 and not cl in _cores_luta:
+			_cores_luta.append(cl)
 	_construir_arena()
 	for id in resultado["carros"]:
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
@@ -211,6 +219,8 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		if id in SEUS:
 			_aneis[id] = _anel()
 		_marcadores[id] = _marcador(Aba.COR_DESTAQUE if id in SEUS else cor)
+		if not Preferencias.efeitos_leves:
+			_poeira[id] = _nuvem_de_poeira(c)
 	_foco = "jogador" if _carros.has("jogador") else String(_carros.keys()[0])
 	_plano = 0
 	_plano_desde = 0.0
@@ -246,6 +256,9 @@ func atualizar(delta: float) -> void:
 		c.position = Vector3(p.x, _forma.altura(p), -p.y)
 		if delta > 0.0:
 			_corpos[id].set_meta("vel", (c.position - antes) / delta)
+			if _poeira.has(id):
+				(_poeira[id] as CPUParticles3D).emitting = not bool(sb["eliminado"]) \
+						and (c.position - antes).length() / delta > POEIRA_V_MS
 		var rumo := lerp_angle(float(sa["rumo"]), float(sb["rumo"]), u)
 		c.rotation.y = rumo
 		# Chão irregular: o carro inclina com ele (frente sobe na subida; o lado
@@ -941,6 +954,52 @@ func _cair_soltas(delta: float) -> void:
 				s["parada"] = true
 
 
+## Poeira atrás do carro (terra da arena): bolotas macias que sobem, crescem e
+## somem; ficam no mundo (o carro segue e deixa o rastro).
+func _nuvem_de_poeira(c: Node3D) -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.amount = 16
+	p.lifetime = 1.4
+	p.local_coords = false
+	p.emitting = false
+	p.direction = Vector3.UP
+	p.spread = 50.0
+	p.initial_velocity_min = 0.4
+	p.initial_velocity_max = 1.4
+	p.gravity = Vector3(0, 0.3, 0)
+	p.scale_amount_min = 0.8
+	p.scale_amount_max = 1.6
+	var cresce := Curve.new()
+	cresce.add_point(Vector2(0, 0.4))
+	cresce.add_point(Vector2(1, 1.6))
+	p.scale_amount_curve = cresce
+	var some := Gradient.new()
+	some.set_color(0, Color(0.62, 0.48, 0.34, 0.45))
+	some.set_color(1, Color(0.62, 0.48, 0.34, 0.0))
+	p.color_ramp = some
+	var mancha := GradientTexture2D.new()
+	var g := Gradient.new()
+	g.set_color(0, Color(1, 1, 1, 1))
+	g.set_color(1, Color(1, 1, 1, 0))
+	mancha.gradient = g
+	mancha.fill = GradientTexture2D.FILL_RADIAL
+	mancha.fill_from = Vector2(0.5, 0.5)
+	mancha.fill_to = Vector2(1.0, 0.5)
+	var q := QuadMesh.new()
+	q.size = Vector2(1.2, 1.2)
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = mancha
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	m.vertex_color_use_as_albedo = true
+	q.material = m
+	p.mesh = q
+	p.position = Vector3(-MEIO_COMPRIMENTO_M, 0.3, 0)  # traseira (frente em +X)
+	c.add_child(p)
+	return p
+
+
 func _faiscas(onde: Vector3, forte: bool) -> void:
 	if Preferencias.efeitos_leves:
 		return
@@ -1010,7 +1069,7 @@ func _construir_arena() -> void:
 	_montar_arquibancadas(lados)
 	var cenario := CenarioArena.new()
 	_cena.add_child(cenario)
-	cenario.montar(_forma, _bloco_mn, _bloco_lado, lados, _objetos.trechos_concreto, hash(_forma.muro) + 1)
+	cenario.montar(_forma, _bloco_mn, _bloco_lado, lados, _objetos.trechos_concreto, hash(_forma.muro) + 1, _cores_luta)
 	_pneus_muro()
 	_ilhas()
 
@@ -1217,6 +1276,8 @@ const ARQUIBANCADA_MODULOS_MAX := 4
 ## Da linha do muro até a origem do bloco: os pneus (até ~2,5 m) e o muro
 ## frontal do pacote (face a 1 m da origem).
 const ARQUIBANCADA_RECUO_M := 4.2
+const COBERTURA_FOLGA_M := 2.2  # do encosto até o telhado
+const COBERTURA_FUNDO_M := 3.0  # da parede de trás para a frente
 const OLA_ATRASO_S := 1.76  # entre blocos vizinhos (pacote)
 const OLA_INICIO_S := 2.0
 const TORCIDA_DANO := 0.12  # batida entre carros que levanta a arquibancada mais perto
@@ -1225,6 +1286,7 @@ const FUGA_PERTO_M := 9.0
 ## Ocupação do pacote (0 meio vazio, 1 semi cheio, 2 cheio) pela licença da arena.
 const LOTACAO := {"CLUB": 0, "SPORT": 1, "NATIONAL": 1, "INTERNATIONAL": 2, "PRO": 2, "ELITE": 2}
 var _lotacao := 1
+var _cores_luta: Array = []  # cores dos carros da luta (paddock, placas, faixas das arquibancadas)
 ## Grama fora do muro (a faixa antes dela é a terra da barreira e do alambrado).
 const GRAMA_DEPOIS_DO_MURO_M := 2.4
 const GRAMA_FAIXA_M := 0.9  # meia largura da mistura terra/grama
@@ -1278,10 +1340,50 @@ func _montar_arquibancadas(lados: Array) -> void:
 			bloco.crowd_seed = hash([i, k])
 			bloco.transform = Transform3D(base, Vector3(meio.x, chao, -meio.y) + base.x * (k - (mods - 1) * 0.5) * MODULO_M)
 			_cena.add_child(bloco)
+			_cobertura(bloco, ordem)
 			bloco.start_wave(OLA_INICIO_S + ordem * OLA_ATRASO_S)
 			ordem += 1
 			blocos.append(bloco)
 		_arquibancadas.append({"blocos": blocos, "a": a, "b": b, "fora": fora})
+
+
+## Cobertura do bloco: dois pilares atrás, o telhado inclinado para trás e a
+## faixa da frente na cor de uma equipe da luta (coordenadas do bloco do pacote:
+## público olhando para −Z, encosto a ~4,4 m de altura).
+func _cobertura(bloco: Node3D, ordem: int) -> void:
+	var topo: float = bloco.elevation + 3.3 + COBERTURA_FOLGA_M
+	var aco := StandardMaterial3D.new()
+	aco.albedo_color = Color(0.25, 0.27, 0.27)
+	var telha := StandardMaterial3D.new()
+	telha.albedo_color = Color(0.55, 0.58, 0.58)
+	var faixa := StandardMaterial3D.new()
+	faixa.albedo_color = _cores_luta[ordem % _cores_luta.size()] if not _cores_luta.is_empty() else Aba.COR_DESTAQUE
+	for x in [-2.85, 2.85]:
+		var pilar := MeshInstance3D.new()
+		var cx := BoxMesh.new()
+		cx.size = Vector3(0.18, topo + 0.6, 0.18)
+		pilar.mesh = cx
+		pilar.material_override = aco
+		pilar.position = Vector3(x, (topo + 0.6) * 0.5, 4.5)
+		bloco.add_child(pilar)
+	var teto := MeshInstance3D.new()
+	var ct := BoxMesh.new()
+	ct.size = Vector3(6.05, 0.12, COBERTURA_FUNDO_M)
+	teto.mesh = ct
+	teto.material_override = telha
+	# Só as fileiras de trás: de cima, o público da frente continua à vista; sem
+	# sombra (o telhado inteiro escurecia um pedaço grande da arena).
+	teto.transform = Transform3D(Basis(Vector3.RIGHT, -0.1), Vector3(0, topo + 0.3, 4.6 - COBERTURA_FUNDO_M * 0.5))
+	teto.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	bloco.add_child(teto)
+	var frente := MeshInstance3D.new()
+	var cf := BoxMesh.new()
+	cf.size = Vector3(6.05, 0.55, 0.08)
+	frente.mesh = cf
+	frente.material_override = faixa
+	frente.position = Vector3(0, topo + 0.3 + 0.1 * COBERTURA_FUNDO_M * 0.5 - 0.3, 4.6 - COBERTURA_FUNDO_M)
+	frente.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	bloco.add_child(frente)
 
 
 func _comemorar_todas() -> void:

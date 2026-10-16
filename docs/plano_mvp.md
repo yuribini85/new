@@ -826,5 +826,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     manchas e rastros de pneu em arco numa textura gerada), relevo mais legível (topo
     dos platôs claro, fundo das valas escuro), divisa terra/grama em faixa contínua (sem
     degraus), losango na cor do carro sobre cada um na visão geral (os seus em âmbar),
-    pedras no corte do bloco e sombra embaixo dele. Próximo passo combinado: tema por
-    arena (campo visual em `data/arena.json`), um piloto por vez.
+    pedras no corte do bloco e sombra embaixo dele. Terceiro lote (aceito): paddock ao
+    longo da estrada (tendas nas cores das equipes da luta, caminhão com carreta, guincho,
+    barraca de comida), placas de patrocínio no alambrado com as marcas fictícias dos
+    fabricantes do jogo, cobertura nas fileiras de trás das arquibancadas com faixa na
+    cor de uma equipe, copas e bandeirinhas balançando com o vento (parado com Reduzir
+    animações) e poeira atrás do carro acima de 7 m/s (sem ela em Efeitos leves).
+    Próximo passo combinado: tema por arena (campo visual em `data/arena.json`), um
+    piloto por vez.

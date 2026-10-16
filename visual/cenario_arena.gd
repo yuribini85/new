@@ -2,8 +2,10 @@ class_name CenarioArena
 extends Node3D
 ## Acabamento da arena vista de longe (pedido do usuário, referência de maquete):
 ## laterais do bloco de terreno em camadas de terra, barreira de concreto
-## contínua no muro, alambrado, torres de luz com bandeirinhas, estrada de terra
-## com portão e cercas, pinheiros e pedras na grama. Só tela: a simulação não vê
+## contínua no muro, alambrado com placas de patrocínio, torres de luz com
+## bandeirinhas, estrada de terra com portão, cercas e o paddock (tendas das
+## equipes, caminhões, guincho e barraca de comida), pinheiros e pedras na grama;
+## copas e bandeirinhas balançam com o vento. Só tela: a simulação não vê
 ## nada disto (o muro dela continua na mesma linha). Malhas simples, sem textura;
 ## o que se repete vai em MultiMesh (celular).
 
@@ -43,24 +45,39 @@ var lado_estrada := -1
 var _estrada: Array = []  # [início no muro, fim na borda do bloco]
 var _ocupados: Array = []
 var _concreto: Array = []
+var _cores: Array = []  # das equipes da luta (tendas, caminhões, placas)
+var _reservas: Array = []  # [centro (2D), raio]: o paddock; árvores e pedras desviam
+## Vento: copas e bandeirinhas (desligado com Reduzir animações).
+const VENTO_COPA := 1.0
+const VENTO_BANDEIRA := 1.0
+const PLACAS_MAX := 16
+const PLACA_LARGURA_M := 3.6
+const PLACA_ALTURA_M := 0.9
+const MARCAS_RESERVA := ["Hayase", "Bancroft", "Kanaya", "Feldhaus", "Ridgeway", "Hozuki", "Mizuchi", "Keldorf"]
+const COR_LONA := Color(0.92, 0.9, 0.85)
 
 
 ## forma: a da simulação; mn e lado: o quadrado do bloco (2D); ocupados: lados
 ## do muro com arquibancada; concreto: trechos com a barreira quebrável do
 ## pacote de dano (a contínua pula); semente: o mesmo cenário para a mesma arena.
-func montar(forma: ArenaForma, mn: Vector2, lado: float, ocupados: Array, concreto: Array, semente: int) -> void:
+## cores: das equipes da luta (o paddock e as placas usam).
+func montar(forma: ArenaForma, mn: Vector2, lado: float, ocupados: Array, concreto: Array, semente: int,
+		cores: Array = []) -> void:
 	_forma = forma
 	_mn = mn
 	_lado = lado
 	_ocupados = ocupados
 	_concreto = concreto
+	_cores = cores if not cores.is_empty() else [Color(0.8, 0.2, 0.15), Color(0.15, 0.4, 0.75), Color(0.95, 0.7, 0.1)]
 	_rng.seed = semente
 	_escolher_estrada()
 	_laterais()
 	_barreira()
 	_alambrado()
+	_placas()
 	_torres()
 	_estrada_e_portao()
+	_paddock()
 	_pinheiros()
 	_pedras()
 
@@ -74,6 +91,32 @@ func _material(cor := Color.WHITE, cores_vertice := false) -> StandardMaterial3D
 	m.albedo_color = cor
 	m.vertex_color_use_as_albedo = cores_vertice
 	m.roughness = 0.95
+	return m
+
+
+## Material que balança com o vento: o deslocamento cresce com a altura do
+## vértice (copa) ou com a distância do cordão (bandeirinha, que tremula).
+func _material_vento(bandeira: bool) -> Material:
+	var forca := 0.0 if Preferencias.reduzir_animacoes else (VENTO_BANDEIRA if bandeira else VENTO_COPA)
+	var sh := Shader.new()
+	sh.code = """
+shader_type spatial;
+render_mode %s;
+uniform float forca = 1.0;
+void vertex() {
+	vec3 w = (MODEL_MATRIX * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+	%s
+}
+void fragment() {
+	ALBEDO = COLOR.rgb;
+	ROUGHNESS = 0.95;
+}
+""" % ["cull_disabled" if bandeira else "cull_back",
+			"VERTEX.z += sin(TIME * 7.0 + w.x * 0.9 + w.z * 0.7) * 0.18 * forca * -VERTEX.y;" if bandeira
+			else "float f = sin(TIME * 1.6 + w.x * 0.21 + w.z * 0.17) + 0.4 * sin(TIME * 3.1 + w.z * 0.5); VERTEX.x += f * forca * 0.035 * max(VERTEX.y - 1.0, 0.0);"]
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	m.set_shader_parameter("forca", forca)
 	return m
 
 
@@ -382,9 +425,7 @@ func _bandeirinhas() -> void:
 				c += 1
 			anterior = p
 	_lote(_caixa(Vector3.ONE), cordas, [], _material(Color(0.15, 0.15, 0.15)))
-	var mb := _material(Color.WHITE, true)
-	mb.cull_mode = BaseMaterial3D.CULL_DISABLED
-	_lote(tri, bandeiras, cores, mb)
+	_lote(tri, bandeiras, cores, _material_vento(true))
 
 
 # --- Estrada, portão e cercas -----------------------------------------------------
@@ -475,6 +516,9 @@ func _livre(q: Vector2, raio: float) -> bool:
 		return false
 	if _perto_da_estrada(q, 1.5 + raio):
 		return false
+	for r in _reservas:
+		if q.distance_to(r[0]) < float(r[1]) + raio:
+			return false
 	var n := _forma.muro.size()
 	for i in _ocupados:
 		var a := _forma.muro[i]
@@ -509,7 +553,7 @@ func _pinheiros() -> void:
 			cores.append(Color(0.2, 0.36, 0.22).lerp(Color(0.3, 0.45, 0.25), _rng.randf()))
 			if copas.size() >= total:
 				break
-	_lote(_copa(), copas, cores)
+	_lote(_copa(), copas, cores, _material_vento(false))
 	var tronco := CylinderMesh.new()
 	tronco.top_radius = 0.16
 	tronco.bottom_radius = 0.2
@@ -565,3 +609,173 @@ func _pedras() -> void:
 	esfera.radial_segments = 6
 	esfera.rings = 3
 	_lote(esfera, xs, cores)
+
+
+# --- Placas de patrocínio --------------------------------------------------------
+
+## Placas na face de dentro do alambrado, em lados alternados do muro, com as
+## marcas (fictícias) dos fabricantes do jogo; cores das equipes da luta.
+func _placas() -> void:
+	var marcas := _marcas()
+	var n := _forma.muro.size()
+	var feitas := 0
+	for i in n:
+		if feitas >= PLACAS_MAX:
+			break
+		var a := _forma.muro[i]
+		var b := _forma.muro[(i + 1) % n]
+		var comp := (b - a).length()
+		if comp < PLACA_LARGURA_M * 2.0:
+			continue
+		var dir := (b - a) / comp
+		var fora := dir.orthogonal()
+		var quantas := mini(int(comp / (PLACA_LARGURA_M * 2.5)), 3)
+		for k in quantas:
+			var t := (float(k) + 0.5) / quantas
+			var q := a.lerp(b, t) + fora * (ALAMBRADO_RECUO_M - 0.06)
+			if i == lado_estrada and absf(t - 0.5) * comp < ESTRADA_LARGURA_M:
+				continue
+			var cor: Color = _cores[(i + k) % _cores.size()]
+			var base := _em(q, 0.25 + PLACA_ALTURA_M * 0.5)
+			var para := Vector3(-fora.x, 0.0, fora.y)
+			var giro := Basis.looking_at(-para, Vector3.UP)  # a frente (+Z) para a arena
+			var placa := MeshInstance3D.new()
+			placa.mesh = _caixa(Vector3(PLACA_LARGURA_M, PLACA_ALTURA_M, 0.05))
+			placa.material_override = _material(cor)
+			placa.transform = Transform3D(giro, base)
+			add_child(placa)
+			var texto := Label3D.new()
+			texto.text = String(marcas[(i * 3 + k) % marcas.size()]).to_upper()
+			texto.font_size = 64
+			texto.outline_size = 0
+			texto.pixel_size = 0.0075
+			texto.modulate = Color.WHITE if cor.get_luminance() < 0.6 else Color(0.1, 0.1, 0.1)
+			texto.position = Vector3(0, 0, 0.03)
+			texto.shaded = true
+			texto.double_sided = false
+			placa.add_child(texto)
+			feitas += 1
+
+
+func _marcas() -> Array:
+	var d := get_node_or_null("/root/Dados")
+	if d == null:
+		return MARCAS_RESERVA
+	var vistas := {}
+	for c in d.lista("carros"):
+		var f := String(c.get("fabricante", ""))
+		if f != "":
+			vistas[f.capitalize()] = true
+	var r := vistas.keys()
+	r.sort()
+	return r if not r.is_empty() else MARCAS_RESERVA
+
+
+# --- Paddock ----------------------------------------------------------------------
+
+## Ao longo da estrada, dos dois lados (depois das cercas): tendas nas cores das
+## equipes, caminhão com carreta, guincho e barraca de comida, virados para ela.
+func _paddock() -> void:
+	if _estrada.is_empty():
+		return
+	var a: Vector2 = _estrada[0]
+	var b: Vector2 = _estrada[1]
+	var dir := (b - a).normalized()
+	var lado := dir.orthogonal()
+	var tipos := ["tenda", "caminhao", "tenda", "comida", "tenda", "guincho"]
+	var k := 0
+	var dist := 12.0
+	while dist < a.distance_to(b) - 7.0 and k < 10:
+		for sinal in [-1.0, 1.0]:
+			var tipo: String = tipos[k % tipos.size()]
+			var afasta := ESTRADA_LARGURA_M * 0.5 + 1.2 + (4.0 if tipo == "caminhao" else 3.0)
+			var q: Vector2 = a + dir * dist + lado * float(sinal) * afasta
+			var cor: Color = _cores[k % _cores.size()]
+			# Virado para a estrada: a frente local (−Z) aponta para ela.
+			var para := Vector3(-lado.x * float(sinal), 0.0, lado.y * float(sinal))
+			var x := Transform3D(Basis.looking_at(para, Vector3.UP), _em(q))
+			var no := Node3D.new()
+			no.transform = x
+			add_child(no)
+			match tipo:
+				"tenda":
+					_tenda(no, cor)
+				"caminhao":
+					_caminhao(no, cor, false)
+				"guincho":
+					_caminhao(no, Color(0.95, 0.75, 0.1), true)
+				"comida":
+					_barraca(no)
+			_reservas.append([q, 6.0 if tipo == "caminhao" else 4.0])
+			k += 1
+		dist += 10.0
+
+
+func _peca(pai: Node3D, tam: Vector3, pos: Vector3, cor: Color, giro := Basis.IDENTITY) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	m.mesh = _caixa(tam)
+	m.material_override = _material(cor)
+	m.transform = Transform3D(giro, pos)
+	pai.add_child(m)
+	return m
+
+
+## Tenda 4 x 4 m: quatro pés, teto em pirâmide na cor da equipe e uma mesa.
+func _tenda(no: Node3D, cor: Color) -> void:
+	for px in [-1.9, 1.9]:
+		for pz in [-1.9, 1.9]:
+			_peca(no, Vector3(0.08, 2.3, 0.08), Vector3(px, 1.15, pz), COR_ACO)
+	var teto := MeshInstance3D.new()
+	var piramide := CylinderMesh.new()
+	piramide.top_radius = 0.0
+	piramide.bottom_radius = 2.85
+	piramide.height = 1.0
+	piramide.radial_segments = 4
+	piramide.rings = 1
+	teto.mesh = piramide
+	teto.material_override = _material(cor)
+	teto.position = Vector3(0, 2.8, 0)
+	teto.rotation.y = PI * 0.25
+	no.add_child(teto)
+	# Saia da tenda (faixa branca) e a mesa com um pneu em cima.
+	_peca(no, Vector3(4.0, 0.3, 0.04), Vector3(0, 2.15, -2.0), COR_LONA)
+	_peca(no, Vector3(1.8, 0.08, 0.8), Vector3(0, 0.85, 0.6), Color(0.85, 0.85, 0.82))
+	_peca(no, Vector3(0.6, 0.6, 0.25), Vector3(-0.4, 1.2, 0.6), Color(0.08, 0.08, 0.09))
+
+
+## Caminhão com carreta (ou guincho: cabine e plataforma com o braço), cabine
+## virada para a frente da estrada; faixa na cor da equipe.
+func _caminhao(no: Node3D, cor: Color, guincho: bool) -> void:
+	var lado := Basis(Vector3.UP, PI * 0.5)  # comprido ao longo da estrada
+	var corpo := Node3D.new()
+	corpo.transform = Transform3D(lado, Vector3.ZERO)
+	no.add_child(corpo)
+	_peca(corpo, Vector3(2.4, 2.4, 2.2), Vector3(0, 1.6, -4.2), cor)
+	_peca(corpo, Vector3(2.3, 0.7, 0.05), Vector3(0, 2.1, -5.32), Color(0.25, 0.35, 0.42))  # para-brisa
+	if guincho:
+		_peca(corpo, Vector3(2.4, 0.3, 5.0), Vector3(0, 1.0, -0.6), Color(0.3, 0.3, 0.3))
+		_peca(corpo, Vector3(0.3, 0.3, 3.0), Vector3(0, 2.2, 1.0), COR_ACO, Basis(Vector3.RIGHT, -0.5))
+	else:
+		_peca(corpo, Vector3(2.5, 3.0, 8.5), Vector3(0, 2.2, 1.6), Color(0.88, 0.88, 0.86))
+		_peca(corpo, Vector3(2.52, 0.5, 8.0), Vector3(0, 2.4, 1.6), cor)  # faixa da equipe
+	for z in ([-4.2, -0.8, 0.8] if guincho else [-4.2, 3.4, 4.8]):
+		for x in [-1.15, 1.15]:
+			var roda := MeshInstance3D.new()
+			var cil := CylinderMesh.new()
+			cil.top_radius = 0.5
+			cil.bottom_radius = 0.5
+			cil.height = 0.35
+			cil.radial_segments = 8
+			roda.mesh = cil
+			roda.material_override = _material(Color(0.08, 0.08, 0.09))
+			roda.transform = Transform3D(Basis(Vector3.FORWARD, PI * 0.5), Vector3(x, 0.5, z))
+			corpo.add_child(roda)
+
+
+## Barraca de comida: balcão, toldo listrado inclinado e a placa.
+func _barraca(no: Node3D) -> void:
+	_peca(no, Vector3(3.0, 1.1, 1.4), Vector3(0, 0.55, 0), Color(0.75, 0.62, 0.45))
+	_peca(no, Vector3(3.0, 1.4, 0.1), Vector3(0, 1.8, 0.65), Color(0.75, 0.62, 0.45))
+	for k in 6:
+		_peca(no, Vector3(0.5, 0.06, 1.8), Vector3(-1.25 + k * 0.5, 2.55, -0.25),
+				Color(0.85, 0.15, 0.12) if k % 2 == 0 else COR_LONA, Basis(Vector3.RIGHT, 0.25))
