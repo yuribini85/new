@@ -18,7 +18,7 @@
 # ================================================================ CHROME & WRECKAGE
 # Campanha do dono (a única; a do Adrian/Elena saiu, decisão 87). Antes de tudo, a abertura
 # (ui/abertura_cinema.gd, decisão 73): os últimos carros da Wreckage saindo da arena no
-# guincho e a Mara diante das contas. A Wreckage já foi equipe de corrida; hoje é uma
+# guincho e a Mara diante das contas. A Wreckage (a oficina e a equipe são uma coisa só) já foi equipe de corrida; hoje é uma
 # oficina com contas e uma licença por renovar. O jogador responde ao anúncio e assume a
 # administração (nunca pilota); Mara Hayes cuida dos carros. Sem prazo: a dificuldade é
 # econômica, nunca o relógio. Sem assistente da Mara. A arena volta em poucas falas (foi lá
@@ -34,10 +34,10 @@ Mara: Se veio buscar o carro, ainda não está pronto.
 Mara: Ah. Você é quem respondeu ao anúncio.
 [CENARIO:oficina_mara]
 Mara[cruzados]: Vou poupar seu tempo. A oficina está hipotecada.
-Mara[pensativa]: Já tivemos uma equipe de corrida aqui, a Wreckage. Bons pilotos, bons carros... Até alguns troféus.
+Mara[pensativa]: A Wreckage já foi mais que oficina: foi equipe de corrida. Bons pilotos, bons carros... Até alguns troféus.
 Mara[decepcao]: Eu sou ruim de negócio. As contas mostram isso melhor que eu.
 Mara[explica]: Mas oficina eu domino. Carro e piloto, ninguém aqui prepara melhor.
-Mara[gesto]: A proposta: você assume as contas e a dívida. Em troca, metade da oficina e da Wreckage é sua.
+Mara[gesto]: A proposta: você assume as contas e a dívida. Em troca, metade da Wreckage é sua.
 [PAUSA]
 Mara[firme]: Não vou prometer dinheiro fácil. Nem vitórias.
 Mara[cruzados]: Então, temos um acordo? E como devo chamar você?
