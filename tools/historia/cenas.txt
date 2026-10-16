@@ -140,12 +140,10 @@ Sistema: Uma corrida por vez. Depois de largar, ela termina mesmo com o app fech
 # Decisão 96: as duas encadeiam o The Grid (a meta, depois da primeira corrida).
 = CW_P06 | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao:1; flags=FIRST_RACE_DONE,FIRST_WIN; proxima=CW_GR00
 Mara[pensativa]: Ganhar é bom. Saber quanto custou é melhor.
-Mara[firme]: Corre mais uma. Quero ver se {piloto} repete.
 
 = CW_P06B | CORRIDA_FIM | personagem=dono; proibe=FIRST_RACE_DONE; condicao=posicao_min:2; flags=FIRST_RACE_DONE; proxima=CW_GR00
 Mara[decepcao]: {posicao}. Corrida perdida também paga.
 Mara[explica]: A tela da corrida mostra onde se perdeu tempo. Olhe antes de culpar o carro.
-Mara[firme]: Corre de novo. Uma prova não diz tudo.
 
 # Da segunda prova em diante, com o caixa pagando a peça: a Oficina.
 = CW_P06D | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=GARAGE_TUTORIAL_SEEN; condicao=demanda_paga:1; proxima=CW_P02
@@ -193,8 +191,8 @@ Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 [HIGHLIGHT_GRID]
 Mara[explica]: Agora, aonde a gente precisa chegar. O The Grid: dez equipes no topo do circuito. A gente está fora dele.
 Mara: Uma de cada vez, da décima até a primeira. A da vez fica em destaque.
-Mara[firme]: Cada uma tem o seu desafio, na pista ou na arena, contra os carros especiais dela. Vença e ela fica para trás.
-Mara[pensativa]: Quem chega ao topo tem patrocinador batendo na porta. É assim que a hipoteca sai daqui.
+Mara[firme]: Cada equipe possui um desafio diferente. Vença e ela fica para trás.
+Mara[pensativa]: Quem chega ao topo tem patrocinador batendo na porta.
 Sistema: The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sai em Corridas.
 
 # 1. O primeiro carro: a garagem começa vazia.

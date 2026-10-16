@@ -228,34 +228,29 @@ static func _tem_retrato(p: Dictionary) -> bool:
 	return Assets.get_asset(String(p.get("id", "")), "retrato") != null
 
 
+## O piloto de corpo inteiro, recortado sobre o fundo (sem moldura).
 func _retrato(p: Dictionary, pos: Vector2, tam: Vector2, luz: float) -> Control:
 	var c := Control.new()
 	c.position = pos
 	c.size = tam + Vector2(0, 44)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var moldura := Panel.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0, 0, 0, 0)
-	sb.border_color = Color(_cor.lightened(0.2), 0.9 * luz)
-	sb.set_border_width_all(3)
-	moldura.add_theme_stylebox_override("panel", sb)
-	moldura.size = tam
-	moldura.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var id := String(p.get("id", ""))
+	var corpo: Texture2D = Assets.get_asset(id, "corpo")
 	var r := TextureRect.new()
-	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme, recorta
-	r.clip_contents = true
-	r.texture = Assets.get_asset(String(p.get("id", "")), "retrato") if _tem_retrato(p) \
-			else Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(String(p.get("id", "")))) % 3))
+	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE  # antes do tamanho (senão vale o da textura)
+	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme, inteira
+	r.texture = corpo if corpo != null \
+			else Aba.arte("piloto_silhueta_%d" % (1 + absi(hash(id)) % 3))
 	r.size = tam
 	r.modulate = Color(luz, luz, luz)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(r)
-	c.add_child(moldura)
 	var nome := Label.new()
 	nome.text = String(p["nome"]).to_upper()
 	Tipografia.rotulo(nome, "semibold", 22)
 	nome.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87, lerpf(0.6, 1.0, luz)))
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nome.size = Vector2(tam.x, 0)
 	nome.position = Vector2(0, tam.y + 6)
 	c.add_child(nome)
 	return c

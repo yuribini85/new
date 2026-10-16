@@ -518,11 +518,6 @@
     "quem": "mara",
     "texto": "Ganhar é bom. Saber quanto custou é melhor.",
     "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Corre mais uma. Quero ver se {piloto} repete.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -554,11 +549,6 @@
     "quem": "mara",
     "texto": "A tela da corrida mostra onde se perdeu tempo. Olhe antes de culpar o carro.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Corre de novo. Uma prova não diz tudo.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -797,12 +787,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Cada uma tem o seu desafio, na pista ou na arena, contra os carros especiais dela. Vença e ela fica para trás.",
+    "texto": "Cada equipe possui um desafio diferente. Vença e ela fica para trás.",
     "pose": "firme"
    },
    {
     "quem": "mara",
-    "texto": "Quem chega ao topo tem patrocinador batendo na porta. É assim que a hipoteca sai daqui.",
+    "texto": "Quem chega ao topo tem patrocinador batendo na porta.",
     "pose": "pensativa"
    },
    {

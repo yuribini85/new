@@ -19,7 +19,6 @@ const OURO := Color("d8a73c")
 const OSSO := Color("efe6d3")
 const ACO := Color("8d8680")
 const LINHA := Color(0.94, 0.9, 0.83, 0.14)
-const ROTACAO_CARTOES := [-4.0, 3.0, -3.0, 4.0]
 ## Choque: tempo do emblema da rival e o da sua equipe chegarem e o VS bater (s).
 const CHOQUE_S := 2.1
 ## Largura do emblema da sua equipe (o da Wreckage é um letreiro largo).
@@ -306,13 +305,13 @@ func _confronto() -> void:
 	v.add_child(rk)
 	var cartoes := HBoxContainer.new()
 	cartoes.alignment = BoxContainer.ALIGNMENT_CENTER
-	cartoes.add_theme_constant_override("separation", 6)
+	cartoes.add_theme_constant_override("separation", 0)
 	cartoes.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(cartoes)
 	var internos: Array = []
 	var pilotos: Array = _info["pilotos"]
 	for k in pilotos.size():
-		var c := _cartao(pilotos[k], ROTACAO_CARTOES[k % ROTACAO_CARTOES.size()])
+		var c := _cartao(pilotos[k])
 		cartoes.add_child(c[0])
 		internos.append(c[1])
 	var vs := Control.new()
@@ -473,42 +472,31 @@ func _divisoria() -> ColorRect:
 	return d
 
 
-## Cartão "polaroide" do confronto: [vaga no contêiner, cartão que cai].
-func _cartao(p: Dictionary, rot: float) -> Array:
+## Piloto do confronto, corpo inteiro: [vaga no contêiner, figura que cai].
+func _cartao(p: Dictionary) -> Array:
 	var vaga := Control.new()
-	vaga.custom_minimum_size = Vector2(158, 200)
+	vaga.custom_minimum_size = Vector2(160, 284)
 	vaga.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var c := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = OSSO
-	sb.set_content_margin_all(7)
-	sb.content_margin_bottom = 4
-	c.add_theme_stylebox_override("panel", sb)
-	c.size = Vector2(150, 196)
-	c.position = Vector2(4, 0)
-	c.pivot_offset = c.size / 2.0
-	c.rotation_degrees = rot
+	var c := Control.new()
+	c.size = Vector2(160, 284)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vaga.add_child(c)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 2)
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	c.add_child(v)
 	var r := TextureRect.new()
-	r.texture = Assets.get_asset(String(p["id"]), "retrato")
-	r.custom_minimum_size = Vector2(136, 136)
-	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE  # antes do tamanho (senão vale o da textura)
+	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	var corpo: Texture2D = Assets.get_asset(String(p["id"]), "corpo")
+	r.texture = corpo if corpo != null else Assets.get_asset(String(p["id"]), "retrato")
+	r.size = Vector2(160, 236)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(r)
-	var h := HBoxContainer.new()
-	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(h)
-	var ap := _rotulo(String(p["apelido"]).to_upper(), "display_eb", 18, TINTA)
-	ap.clip_text = true
-	ap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	h.add_child(ap)
-	h.add_child(_rotulo(str(int(p["numero"])), "display", 22, SANGUE))
+	c.add_child(r)
+	var num := _rotulo(str(int(p["numero"])), "display", 22, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
+	num.position = Vector2(0, 232)
+	num.size = Vector2(160, 0)
+	c.add_child(num)
+	var ap := _rotulo(String(p["apelido"]).to_upper(), "display_eb", 17, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
+	ap.position = Vector2(0, 258)
+	ap.size = Vector2(160, 0)
+	c.add_child(ap)
 	return [vaga, c]
 
 

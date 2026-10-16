@@ -1065,7 +1065,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				jogador.carro_ativo = c["uid"]
 				_ir_para(0)
 				atualizar(), "icone_melhorar"],
-			["Escolher outra corrida", func(): _ir_para(3), "aba_competicoes"]]
+			["Fechar", func(): pass]]
 		var oficina := apresentada(0)
 		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
 		var alvo_obj: Array = Objetivos.lista(jogador, dados)
