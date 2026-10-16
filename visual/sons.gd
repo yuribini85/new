@@ -18,6 +18,8 @@ const TAXA := 22050
 var _motor: AudioStreamPlayer
 var _motor_alto: AudioStreamPlayer
 var _motor_grave: AudioStreamPlayer
+var _pelotao: AudioStreamPlayer  # rivais perto: o mesmo V8 em outro tom
+var _pelotao_t := 0.0
 var _pneu: AudioStreamPlayer
 var _zebra: AudioStreamPlayer
 var _torcida: AudioStreamPlayer
@@ -77,6 +79,7 @@ func _init() -> void:
 	_motor_alto = _laco(_onda(180.0, 1.0, 0.12, true, true), MUDO_DB)
 	var grave := _arquivo("motor_grave", true)
 	_motor_grave = _laco(grave, MOTOR_DB + GRAVE_DB_MIN_GIRO if grave != null else MUDO_DB)
+	_pelotao = _laco(_arquivo("motor_grave", true), MUDO_DB)
 	var pneu := _arquivo("pneu", true)
 	_pneu = _laco(pneu if pneu != null else _ruido(1.0, 0.22, 0.55), MUDO_DB)
 	_zebra = _laco(_ruido(1.0, 0.3, 0.15, 28.0), MUDO_DB)
@@ -106,11 +109,12 @@ func _laco(s: AudioStream, db: float) -> AudioStreamPlayer:
 ## Motor: liga/desliga. Sem giro informado, o tom acompanha a velocidade (m/s).
 func motor(ligado: bool, velocidade := 0.0) -> void:
 	if not ligado:
-		for p in [_motor, _motor_alto, _motor_grave, _pneu, _zebra]:
+		for p in [_motor, _motor_alto, _motor_grave, _pelotao, _pneu, _zebra]:
 			if p.playing:
 				p.stop()
 		_alvos[_pneu] = MUDO_DB
 		_alvos[_zebra] = MUDO_DB
+		_alvos[_pelotao] = MUDO_DB
 		_giro = -1.0
 		_tom_alvo = -1.0
 		return
@@ -141,6 +145,16 @@ func motor_giro(fracao: float) -> void:
 	_alvos[_motor_alto] = lerpf(-34.0, -15.0, _giro * _giro)
 
 
+## Rivais perto (0..1, pela menor diferença para o da frente ou o de trás): o
+## mesmo motor gravado num tom um pouco diferente, que oscila (outros carros,
+## outros giros). Sem o arquivo, nada.
+const PELOTAO_DB := -9.0
+func pelotao(f: float) -> void:
+	if _pelotao.stream == null:
+		return
+	_ligar(_pelotao, lerpf(MUDO_DB, PELOTAO_DB, clampf(f, 0.0, 1.0)) if f > 0.02 else MUDO_DB)
+
+
 ## Pneu cantando (freada forte ou arrancada) e rodas na zebra.
 func pneu(cantando: bool, zebra: bool) -> void:
 	_ligar(_pneu, (PNEU_DB if _gravado else -17.0) if cantando else MUDO_DB)
@@ -165,8 +179,11 @@ func _process(delta: float) -> void:
 	if _gravado and _tom_alvo > 0.0:
 		_motor.pitch_scale = lerpf(_motor.pitch_scale, _tom_alvo, 1.0 - exp(-delta * MOTOR_TOM_RAPIDEZ))
 		_motor_grave.pitch_scale = _motor.pitch_scale * GRAVE_RAZAO
+	_pelotao_t += delta
+	if _pelotao.playing:
+		_pelotao.pitch_scale = maxf(_motor.pitch_scale * GRAVE_RAZAO * (1.07 + 0.06 * sin(_pelotao_t * 0.9)), 0.5)
 	for p in _alvos:
-		var do_motor: bool = p == _motor or p == _motor_alto or p == _motor_grave
+		var do_motor: bool = p == _motor or p == _motor_alto or p == _motor_grave or p == _pelotao
 		var alvo: float = _alvos[p] + (linear_to_db(maxf(_volume, 0.001)) if do_motor else 0.0)
 		p.volume_db = move_toward(p.volume_db, alvo, delta * 90.0)
 		if p.playing and not do_motor and p.volume_db <= MUDO_DB + 0.5 and _alvos[p] <= MUDO_DB:

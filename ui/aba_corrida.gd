@@ -716,8 +716,9 @@ func _atualizar_hud(ordem: Array) -> void:
 
 
 ## Som que acompanha o seu carro: motor pelo giro, pneu e
-## zebra pelo 3D, torcida na reta final da última volta com disputa de perto
-## (e na chegada).
+## zebra pelo 3D, o pelotão quando há rival colado, torcida na reta final da
+## última volta com disputa de perto (e na chegada).
+const PELOTAO_GAP_S := 2.0  # acima dessa diferença o rival não se ouve
 
 func _som_da_corrida(mg: Array, i: int, ordem: Array, s: float, volta: int) -> void:
 	if _chegou:
@@ -728,6 +729,17 @@ func _som_da_corrida(mg: Array, i: int, ordem: Array, s: float, volta: int) -> v
 		var escala := ceilf((corte + 600.0) / 1000.0) * 1000.0
 		_sons.motor_giro(float(mg[1]) / escala)
 	_sons.pneu(_visual3d.cantando("jogador"), _visual3d.na_zebra("jogador"))
+	# Pelotão: os rivais colados (à frente ou atrás) se ouvem.
+	var gap_min := INF
+	if i > 0:
+		var ga := _gap(ordem[i - 1], "jogador")
+		if ga >= 0.0:
+			gap_min = ga
+	if i + 1 < ordem.size():
+		var gb := _gap("jogador", ordem[i + 1])
+		if gb >= 0.0:
+			gap_min = minf(gap_min, gb)
+	_sons.pelotao(1.0 - smoothstep(0.3, PELOTAO_GAP_S, gap_min) if gap_min < INF else 0.0)
 	var torcida := 0.0
 	if volta == _voltas:
 		var resto := 1.0 - fposmod(s, _pista.comprimento) / _pista.comprimento
