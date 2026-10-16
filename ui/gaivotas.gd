@@ -2,18 +2,17 @@ class_name Gaivotas
 extends Control
 ## Ambientação do mapa das lojas: de vez em quando uma gaivota cruza a tela,
 ## batendo asa e às vezes planando. Só visual (não recebe toque). A tira
-## arte/ui/gaivota.png tem 6 quadros lado a lado (bico à direita); o último
-## repete o primeiro, então o ciclo usa os 5 primeiros. Com "Reduzir
-## animações", não aparece.
+## arte/ui/gaivota.png tem 12 quadros lado a lado (bico à direita, alinhados
+## pelo bico): uma batida de asa inteira. Com "Reduzir animações", não aparece.
 
-const QUADROS := 6
-const CICLO := 5
-const FPS := 10.0
+const QUADROS := 12
+const CICLO := 12
+const FPS := 14.0
 const ESPERA_S := Vector2(5.0, 14.0)  # intervalo entre uma gaivota e a próxima
 const TRAVESSIA_S := Vector2(7.0, 11.0)  # tempo para cruzar a tela
-const ALTURA_PX := Vector2(34.0, 52.0)  # altura na tela (escala uniforme)
+const ALTURA_PX := Vector2(44.0, 66.0)  # altura na tela (escala uniforme)
 const FAIXA_Y := Vector2(0.04, 0.55)  # onde ela pode passar (fração da altura)
-const PLANA := 3  # quadro de asa aberta, para planar
+const PLANA := 5  # quadro de asa aberta, para planar
 
 var _tira: Texture2D
 var _quadros: Array[AtlasTexture] = []
