@@ -27,6 +27,10 @@ const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 ## Chão em malha: passo da grade e quanto passa do muro (m).
 const CHAO_PASSO_M := 1.0  # fino o bastante para a quina das rampas e dos degraus
+## Faixa em volta da caixa do muro com a altura de cada ponto (m); fora dela,
+## a altura é calculada a cada CHAO_GROSSO pontos e interpolada (só grama).
+const CHAO_FINO_M := 8.0
+const CHAO_GROSSO := 4
 const CHAO_MARGEM_M := 30.0  # da maior largura do muro à borda do bloco (arquibancada, tema, árvores)
 ## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
 const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
@@ -1233,49 +1237,103 @@ func _chao() -> void:
 	_bloco_lado = lado
 	var nx := int(ceil((mx.x - mn.x) / CHAO_PASSO_M))
 	var ny := int(ceil((mx.y - mn.y) / CHAO_PASSO_M))
+	var largura := nx + 1
+	var total := largura * (ny + 1)
+	# Perto do muro (a caixa dele mais CHAO_FINO_M), a altura de cada ponto e a
+	# distância ao muro, que decide a terra e a grama; fora dela é só grama e a
+	# altura varia pouco: calculada a cada CHAO_GROSSO pontos e interpolada.
+	var dmn := Vector2(INF, INF)
+	var dmx := Vector2(-INF, -INF)
+	for q in _forma.muro:
+		dmn = dmn.min(q)
+		dmx = dmx.max(q)
+	dmn -= Vector2.ONE * CHAO_FINO_M
+	dmx += Vector2.ONE * CHAO_FINO_M
 	var alturas := PackedFloat32Array()
-	alturas.resize((nx + 1) * (ny + 1))
-	for j in ny + 1:
-		for i in nx + 1:
-			alturas[j * (nx + 1) + i] = _forma.altura(mn + Vector2(i, j) * CHAO_PASSO_M)
-	# Terra da arena até um pouco além do muro (barreira e alambrado); dali
-	# para fora, grama. A troca é por vértice, misturando as cores numa faixa
-	# (por quadrado da grade, a divisa saía em degraus).
+	alturas.resize(total)
 	var grama := PackedFloat32Array()
-	grama.resize((nx + 1) * (ny + 1))
+	grama.resize(total)
+	grama.fill(1.0)
+	var exato := PackedByteArray()
+	exato.resize(total)
 	for j in ny + 1:
 		for i in nx + 1:
-			var d := -float(_forma.muro_perto(mn + Vector2(i, j) * CHAO_PASSO_M)[0])  # > 0 fora
-			grama[j * (nx + 1) + i] = smoothstep(GRAMA_DEPOIS_DO_MURO_M - GRAMA_FAIXA_M, GRAMA_DEPOIS_DO_MURO_M + GRAMA_FAIXA_M, d)
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+			var q := mn + Vector2(i, j) * CHAO_PASSO_M
+			var k := j * largura + i
+			if q.x >= dmn.x and q.x <= dmx.x and q.y >= dmn.y and q.y <= dmx.y:
+				var dm: float = _forma.muro_perto(q)[0]  # > 0 dentro
+				alturas[k] = _forma.altura_com_muro(q, dm)
+				# Terra até um pouco além do muro (barreira e alambrado); dali para
+				# fora, grama, misturada numa faixa por vértice (por quadrado da
+				# grade, a divisa saía em degraus).
+				grama[k] = smoothstep(GRAMA_DEPOIS_DO_MURO_M - GRAMA_FAIXA_M, GRAMA_DEPOIS_DO_MURO_M + GRAMA_FAIXA_M, -dm)
+				exato[k] = 1
+			elif (i % CHAO_GROSSO == 0 or i == nx) and (j % CHAO_GROSSO == 0 or j == ny):
+				alturas[k] = _forma.altura_com_muro(q, -1.0)  # fora do muro
+				exato[k] = 1
+	for j in ny + 1:
+		var j0 := mini(j / CHAO_GROSSO * CHAO_GROSSO, ny)
+		var j1 := mini(j0 + CHAO_GROSSO, ny)
+		var fj := 0.0 if j1 == j0 else float(j - j0) / (j1 - j0)
+		for i in nx + 1:
+			var k := j * largura + i
+			if exato[k] == 1:
+				continue
+			var i0 := mini(i / CHAO_GROSSO * CHAO_GROSSO, nx)
+			var i1 := mini(i0 + CHAO_GROSSO, nx)
+			var fi := 0.0 if i1 == i0 else float(i - i0) / (i1 - i0)
+			alturas[k] = lerpf(lerpf(alturas[j0 * largura + i0], alturas[j0 * largura + i1], fi),
+					lerpf(alturas[j1 * largura + i0], alturas[j1 * largura + i1], fi), fj)
+	# Um vértice por ponto da grade (malha indexada), com a normal da inclinação.
+	var vs := PackedVector3Array()
+	vs.resize(total)
+	var ns := PackedVector3Array()
+	ns.resize(total)
+	var cores := PackedColorArray()
+	cores.resize(total)
+	var uvs := PackedVector2Array()
+	uvs.resize(total)
 	var ruido := FastNoiseLite.new()
 	ruido.frequency = 0.025
+	for j in ny + 1:
+		for i in nx + 1:
+			var k := j * largura + i
+			var q := mn + Vector2(i, j) * CHAO_PASSO_M
+			var h: float = alturas[k]
+			var gx := (alturas[j * largura + mini(i + 1, nx)] - alturas[j * largura + maxi(i - 1, 0)]) / (2.0 * CHAO_PASSO_M)
+			var gy := (alturas[mini(j + 1, ny) * largura + i] - alturas[maxi(j - 1, 0) * largura + i]) / (2.0 * CHAO_PASSO_M)
+			var nrm := Vector3(-gx, 1.0, gy).normalized()
+			# Luz pré-calculada pela inclinação (a encosta virada para a luz
+			# clareia, a outra escurece). Encosta íngreme (parede de vala, queda
+			# de rampa, pé de degrau) mais escura; topo dos platôs mais claro e
+			# fundo das valas mais escuro: o relevo se lê de longe.
+			var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.11, 0.62, 1.22) \
+					* lerpf(0.55, 1.0, pow(nrm.y, 6.0))
+			var tom := COR_GRAMA.lerp(COR_GRAMA_CLARA, clampf(ruido.get_noise_2dv(q) * 0.9 + 0.5, 0.0, 1.0))
+			vs[k] = Vector3(q.x, h, -q.y)
+			ns[k] = nrm
+			cores[k] = COR_TERRA.lerp(tom, grama[k]) * luz
+			uvs[k] = (q - mn) / lado
+	var idx := PackedInt32Array()
+	idx.resize(nx * ny * 6)
+	var n := 0
 	for j in ny:
 		for i in nx:
-			var cantos := [[i, j], [i + 1, j], [i, j + 1], [i + 1, j], [i + 1, j + 1], [i, j + 1]]
-			for k in [0, 2, 1, 3, 5, 4]:
-				var ci: int = cantos[k][0]
-				var cj: int = cantos[k][1]
-				var q := mn + Vector2(ci, cj) * CHAO_PASSO_M
-				var h: float = alturas[cj * (nx + 1) + ci]
-				# Luz pré-calculada pela inclinação (a encosta virada para a luz
-				# clareia, a outra escurece) e o fundo um pouco mais escuro.
-				var gx := (alturas[cj * (nx + 1) + mini(ci + 1, nx)] - alturas[cj * (nx + 1) + maxi(ci - 1, 0)]) / (2.0 * CHAO_PASSO_M)
-				var gy := (alturas[mini(cj + 1, ny) * (nx + 1) + ci] - alturas[maxi(cj - 1, 0) * (nx + 1) + ci]) / (2.0 * CHAO_PASSO_M)
-				var nrm := Vector3(-gx, 1.0, gy).normalized()
-				# Encosta íngreme (parede de vala, queda de rampa, pé de degrau) mais
-				# escura; topo dos platôs mais claro e fundo das valas mais escuro:
-				# o relevo se lê de longe.
-				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.11, 0.62, 1.22) \
-						* lerpf(0.55, 1.0, pow(nrm.y, 6.0))
-				var tom := COR_GRAMA.lerp(COR_GRAMA_CLARA, clampf(ruido.get_noise_2dv(q) * 0.9 + 0.5, 0.0, 1.0))
-				st.set_color(COR_TERRA.lerp(tom, grama[cj * (nx + 1) + ci]) * luz)
-				st.set_uv((q - mn) / lado)
-				st.add_vertex(Vector3(q.x, h, -q.y))
-	st.generate_normals()
+			var a := j * largura + i
+			for k in [a, a + largura, a + 1, a + 1, a + largura, a + largura + 1]:
+				idx[n] = k
+				n += 1
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = vs
+	arr[Mesh.ARRAY_NORMAL] = ns
+	arr[Mesh.ARRAY_COLOR] = cores
+	arr[Mesh.ARRAY_TEX_UV] = uvs
+	arr[Mesh.ARRAY_INDEX] = idx
+	var malha := ArrayMesh.new()
+	malha.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 	var chao := MeshInstance3D.new()
-	chao.mesh = st.commit()
+	chao.mesh = malha
 	# A textura (manchas e rastros) clareia e escurece a terra e a grama.
 	var mt := StandardMaterial3D.new()
 	mt.vertex_color_use_as_albedo = true

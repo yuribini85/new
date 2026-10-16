@@ -166,6 +166,12 @@ static func _termo(t: Dictionary, p: Vector2) -> float:
 
 ## Altura do chão em `p` (m): os termos do relevo e a borda subindo para o muro.
 func altura(p: Vector2) -> float:
+	return altura_com_muro(p, muro_perto(p)[0] if borda_largura > 0.0 else 0.0)
+
+
+## A mesma altura, com a distância ao muro (muro_perto) já calculada: o chão da
+## tela a usa também para a grama, sem medir duas vezes.
+func altura_com_muro(p: Vector2, dm: float) -> float:
 	var h := 0.0
 	for t in relevo:
 		if not t["max"]:
@@ -177,7 +183,6 @@ func altura(p: Vector2) -> float:
 			var peso := minf(absf(v) / (0.3 * absf(float(t["h"]))), 1.0)
 			h = lerpf(h, maxf(h, v) if float(t["h"]) > 0.0 else minf(h, v), peso)
 	if borda_largura > 0.0:
-		var dm: float = muro_perto(p)[0]
 		h += borda_altura * (1.0 - smoothstep(0.0, borda_largura, maxf(dm, 0.0)))
 	return h
 
