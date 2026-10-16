@@ -126,6 +126,11 @@ var _tremor := 0.0
 var _aneis := {}  # id -> MeshInstance3D (só os seus carros)
 var _marcadores := {}  # id -> MeshInstance3D (visão geral: o carro de longe)
 var _poeira := {}  # id -> CPUParticles3D (terra levantando atrás do carro rápido)
+var _voo := {}  # id -> {y, vy, ar}: altura do carro na tela (sai do chão na crista da rampa)
+## Gravidade da tela para o salto (um pouco mais forte que a real: o pulo é curto
+## e legível de longe) e o passo máximo que ainda é animação contínua.
+const SALTO_G := 13.0
+const SALTO_DT_MAX := 0.1
 const POEIRA_V_MS := 7.0  # acima disso o carro levanta poeira
 var _tombo := {}  # id -> {rolagem, v_rolagem, arfagem, v_arfagem} (rad, rad/s)
 var _foco := "jogador"  # carro da câmera dinâmica
@@ -178,6 +183,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_aneis = {}
 	_marcadores = {}
 	_poeira = {}
+	_voo = {}
 	_tombo = {}
 	_soltas = []
 	_malhas = {}
@@ -255,7 +261,7 @@ func atualizar(delta: float) -> void:
 		var p: Vector2 = sa["pos"].lerp(sb["pos"], u)
 		var c: Node3D = _carros[id]
 		var antes := c.position
-		c.position = Vector3(p.x, _forma.altura(p), -p.y)
+		c.position = Vector3(p.x, _no_ar(id, _forma.altura(p), delta, bool(sb["eliminado"])), -p.y)
 		if delta > 0.0:
 			_corpos[id].set_meta("vel", (c.position - antes) / delta)
 			if _poeira.has(id):
@@ -269,6 +275,11 @@ func atualizar(delta: float) -> void:
 		var f := Vector2.from_angle(rumo)
 		c.rotation.z = atan(g.dot(f))
 		c.rotation.x = atan(g.dot(Vector2(-f.y, f.x)))
+		var voo: Dictionary = _voo.get(id, {})
+		if voo.get("ar", false):
+			# No ar: o nariz segue a trajetória (sobe saindo da rampa, desce caindo).
+			var vh := Vector2(float(_corpos[id].get_meta("vel", Vector3.ZERO).x), float(_corpos[id].get_meta("vel", Vector3.ZERO).z)).length()
+			c.rotation.z = clampf(atan2(float(voo["vy"]), maxf(vh, 2.0)), -0.6, 0.6)
 		if _tombo.has(id):
 			var tb: Dictionary = _tombo[id]
 			c.rotation.x += tb["rolagem"]
@@ -279,6 +290,9 @@ func atualizar(delta: float) -> void:
 			c.position.y += absf(sin(rl)) * MEIA_LARGURA_M + (1.0 - cos(rl)) * 0.5 * ALTURA_CARRO_M \
 					+ absf(sin(tb["arfagem"])) * MEIO_COMPRIMENTO_M + float(tb.get("salto", 0.0))
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
+		# O corpo da física de tela segue o carro por ele mesmo (é top_level):
+		# assim empurra cones, barris e pneus em vez de atravessar.
+		_corpos[id].global_transform = c.global_transform
 	_mostrar_aneis(b)
 	_mostrar_marcadores(b)
 	_canhoes(b, delta)
@@ -455,20 +469,40 @@ func _chamar_batida(e: Dictionary) -> void:
 ## arfagem (frente/trás; a ponta atingida sobe).
 func _tombar(e: Dictionary) -> void:
 	var dano := float(e["dano"])
-	if dano < TOMBO_DANO or Preferencias.reduzir_animacoes:
+	if dano < TOMBO_DANO:
 		return
 	var id := String(e["carro"])
 	var tb: Dictionary = _tombo.get(id, {"rolagem": 0.0, "v_rolagem": 0.0, "arfagem": 0.0, "v_arfagem": 0.0})
 	var regiao := String(e.get("regiao", ""))
+	if regiao.begins_with("lado") and dano >= _capota_dano:
+		_capotar(id, 1.0 if regiao.ends_with("_e") else -1.0)
+		return
+	if Preferencias.reduzir_animacoes:
+		return
 	if regiao.begins_with("lado"):
 		var sinal := 1.0 if regiao.ends_with("_e") else -1.0
-		if dano >= _capota_dano and not tb.get("capota", false):
-			tb["v_rolagem"] = sinal * CAPOTA_V
-		else:
-			tb["v_rolagem"] = float(tb["v_rolagem"]) + sinal * minf(dano * TOMBO_GANHO_LADO, TOMBO_MAX_LADO)
+		tb["v_rolagem"] = float(tb["v_rolagem"]) + sinal * minf(dano * TOMBO_GANHO_LADO, TOMBO_MAX_LADO)
 	elif dano >= TOMBO_DANO_PONTA:
 		var sinal_p := 1.0 if regiao.begins_with("frente") else -1.0
 		tb["v_arfagem"] = float(tb["v_arfagem"]) + sinal_p * minf(dano * TOMBO_GANHO_PONTA, TOMBO_MAX_PONTA)
+	_tombo[id] = tb
+
+
+## A batida que capota na simulação (capota_dano, de lado): o carro gira no ar
+## até o teto e fica assim (com Reduzir animações, já de teto para baixo).
+func _capotar(id: String, sinal: float) -> void:
+	var tb: Dictionary = _tombo.get(id, {"rolagem": 0.0, "v_rolagem": 0.0, "arfagem": 0.0, "v_arfagem": 0.0})
+	if tb.get("capota", false) or tb.get("fixo", false):
+		return
+	if Preferencias.reduzir_animacoes:
+		tb["rolagem"] = sinal * PI
+		tb["v_rolagem"] = 0.0
+		tb["arfagem"] = 0.0
+		tb["v_arfagem"] = 0.0
+		tb["fixo"] = true
+	else:
+		tb["capota"] = true
+		tb["v_rolagem"] = sinal * CAPOTA_V
 	_tombo[id] = tb
 
 
@@ -562,6 +596,33 @@ func _mostrar_aneis(amostra: Dictionary) -> void:
 		else:
 			a.scale = Vector3.ONE * lerpf(0.85, 1.3, smoothstep(0.0, 1.0, u))
 			mat.albedo_color.a = (1.0 - smoothstep(0.4, 1.0, u)) * 0.9
+
+
+# --- Salto -------------------------------------------------------------------------
+
+## Altura do carro na tela: segue o chão, mas quem passa rápido pela crista de
+## uma rampa ou lombada sai do chão (a subida deu velocidade para cima que o chão
+## não acompanha) e cai pela gravidade. Só tela: a simulação é plana. Salto de
+## tempo (Pular) ou destroço: no chão.
+func _no_ar(id: String, chao: float, delta: float, eliminado: bool) -> float:
+	var s: Dictionary = _voo.get(id, {})
+	if s.is_empty() or delta <= 0.0 or delta > SALTO_DT_MAX or eliminado:
+		_voo[id] = {"y": chao, "vy": 0.0, "ar": false}
+		return chao
+	var vy := float(s["vy"]) - SALTO_G * delta
+	var y := float(s["y"]) + vy * delta
+	if y > chao + 0.03:
+		s["y"] = y
+		s["vy"] = vy
+		s["ar"] = true
+	else:
+		if s["ar"] and vy < -4.0:
+			_tremor = minf(_tremor + minf(-vy * 0.02, 0.15), 0.6)  # aterrissagem pesada
+		s["vy"] = clampf((chao - float(s["y"])) / delta, -20.0, 20.0)  # acompanha o chão
+		s["y"] = chao
+		s["ar"] = false
+	_voo[id] = s
+	return float(s["y"])
 
 
 # --- Marcadores da visão geral ------------------------------------------------------
@@ -1194,10 +1255,14 @@ func _textura_terra(mn: Vector2, lado: float) -> ImageTexture:
 
 
 ## Corpo cinemático do carro na física de tela: segue a simulação e empurra o
-## piloto caído e os objetos da arena (que não mudam o resultado).
+## piloto caído e os objetos da arena (que não mudam o resultado). top_level e
+## movido por ele mesmo (atualizar): com sync_to_physics, o AnimatableBody3D só
+## empurra quando a própria transformação muda; filho do carro, ele era
+## teletransportado e passava através dos objetos.
 func _corpo_fisico(c: Node3D) -> AnimatableBody3D:
 	var dim: Vector2 = (c as CarroBloco).dimensoes() if c is CarroBloco else Vector2(Arena.COMPRIMENTO_M, Arena.LARGURA_M)
 	var corpo := AnimatableBody3D.new()
+	corpo.top_level = true
 	corpo.collision_layer = CAMADA_CARRO
 	corpo.collision_mask = 0
 	var cs := CollisionShape3D.new()

@@ -263,8 +263,14 @@ static func _dirigir(carros: Array, i: int, params: Dictionary, rng: RandomNumbe
 	v_alvo = lerpf(v_alvo, float(params["v_curva_kmh"]) * KMH, clampf(absf(erro) / (PI / 2.0), 0.0, 1.0))
 	var sentido := -1.0 if c["re"] else 1.0
 	var v_agora: float = c["vel"].dot(Vector2.from_angle(c["rumo"])) * sentido
-	if v_agora > v_alvo:
-		c["cmd_acel"] = -sentido * clampf((v_agora - v_alvo) / 3.0, 0.2, 1.0)  # freia
+	# Descendo, deixa embalar (sem frear) até descida_sobra × declive acima do
+	# alvo: a gravidade aparece na velocidade.
+	var declive := -forma.gradiente(c["pos"]).dot(Vector2.from_angle(c["rumo"]) * sentido)
+	var sobra := 1.0 + float(params.get("descida_sobra", 0.0)) * maxf(declive, 0.0)
+	if v_agora > v_alvo * sobra:
+		c["cmd_acel"] = -sentido * clampf((v_agora - v_alvo * sobra) / 3.0, 0.2, 1.0)  # freia
+	elif v_agora > v_alvo:
+		c["cmd_acel"] = 0.0  # embalado na descida: só a gravidade
 	else:
 		c["cmd_acel"] = sentido * lerpf(0.75, 1.0, c["agress"])
 	# Travado: quase parado e encostado, ou grudado em alguém (empurrando e

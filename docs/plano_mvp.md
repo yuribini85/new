@@ -844,3 +844,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     juncos, píer com barco, árvores secas) e claustro (colunas e arcos em ruína, torre,
     ciprestes). A visão geral enquadra o bloco inteiro (margem de 30 m em volta do
     muro) e, com tema alto, fica do lado oposto a ele, indo e voltando.
+94. **Física da arena: capotagem, relevo e objetos** (2026-10-16, três problemas
+    apontados pelo usuário). Capotagem: a tela não marcava o carro como capotando desde
+    a troca para capota_dano (36f7c8c) e o segurava no limite de tombar; agora a batida
+    que capota na simulação gira o carro até o teto e ele fica assim (com Reduzir
+    animações, já de teto). Objetos: o corpo cinemático do carro na física de tela era
+    filho do carro e era teletransportado, sem empurrar; agora é top_level e movido por
+    ele mesmo, e cones, barris e barreiras são empurrados. Relevo: na tela, o carro sai
+    do chão na crista de rampas e lombadas e cai pela gravidade (até ~2 m), com tremor
+    na aterrissagem pesada; na simulação, a IA deixa embalar na descida
+    (`descida_sobra` 3,0) e a subida tira mais força do motor (`subida_perda` 0,5 →
+    2,0). Provisórios até o playtest.
