@@ -8,7 +8,7 @@ const PARTES := [["equipe", "EQUIPE"], ["sede", "SEDE"]]
 ## Segundo piloto: busto na aba (cabeça à cintura do corpo 600 × 900) e o palco
 ## da escolha, com o corpo inteiro.
 const BUSTO := Vector2(190, 230)
-const PALCO_ALTURA := 470.0
+const PALCO_ALTURA := 445.0
 
 var _parte := "equipe"
 
@@ -464,7 +464,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		linhas.add_theme_constant_override("separation", 0)
 		quadro.add_child(linhas)
 		var barras := []
-		var itens := [["velocimetro", "Ritmo"], ["mira", "Consistência"], ["punho", "Agressividade"]]
+		var itens := [["icone_ritmo", "Ritmo"], ["icone_consistencia", "Consistência"], ["icone_agressividade", "Agressividade"]]
 		for k in itens.size():
 			if k > 0:
 				var sep := ColorRect.new()
@@ -631,8 +631,11 @@ func _linha_atributo(pai: Control, icone_: String, nome: String) -> Dictionary:
 	h.add_theme_constant_override("separation", 16)
 	h.custom_minimum_size = Vector2(0, 42)
 	pai.add_child(h)
-	var ic := IconeVetor.new(icone_, Color(0.85, 0.85, 0.87))
-	ic.cor_fundo = Color(0.05, 0.05, 0.06)  # furos do desenho na cor do quadro
+	var ic := TextureRect.new()  # arte do usuário (arte/ui/icone_<atributo>.png)
+	ic.texture = arte(icone_)
+	ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ic.custom_minimum_size = Vector2(40, 40)
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(ic)

@@ -55,67 +55,6 @@ func _draw() -> void:
 			var r := lado * 0.5
 			draw_polyline(PackedVector2Array([c + Vector2(-0.7, 0.0) * r, c + Vector2(-0.2, 0.5) * r,
 					c + Vector2(0.75, -0.55) * r]), cor, maxf(r * 0.28, 2.0), true)
-		"velocimetro":
-			# Mostrador em 6 segmentos (de 200° a 340°, com folgas) e o ponteiro
-			# saindo do cubo vazado, para a direita e para cima.
-			var r := lado * 0.5
-			var centro := c + Vector2(0, 0.22) * r
-			var segs := 6
-			var ini := deg_to_rad(160.0)
-			var fim := deg_to_rad(380.0)
-			var folga := deg_to_rad(5.0)
-			for k in segs:
-				var a0 := lerpf(ini, fim, float(k) / segs) + folga * 0.5
-				var a1 := lerpf(ini, fim, float(k + 1) / segs) - folga * 0.5
-				var pts := PackedVector2Array()
-				for i in 7:
-					pts.append(centro + Vector2.from_angle(lerpf(a0, a1, i / 6.0)) * r * 0.95)
-				for i in 7:
-					pts.append(centro + Vector2.from_angle(lerpf(a1, a0, i / 6.0)) * r * 0.68)
-				draw_colored_polygon(pts, cor)
-			var ponta := centro + Vector2.from_angle(deg_to_rad(-32.0)) * r * 0.72
-			var lado_p := Vector2.from_angle(deg_to_rad(-32.0)).orthogonal() * r * 0.12
-			draw_colored_polygon(PackedVector2Array([centro + lado_p, ponta, centro - lado_p]), cor)
-			draw_circle(centro, r * 0.24, cor)
-			draw_circle(centro, r * 0.08, cor_fundo)
-		"mira":
-			# Anel em quatro arcos, as quatro barras arredondadas nas folgas e o ponto.
-			var r := lado * 0.5
-			var folga := deg_to_rad(16.0)
-			for q in 4:
-				var a0 := q * PI / 2.0 + folga
-				var a1 := (q + 1) * PI / 2.0 - folga
-				draw_arc(c, r * 0.6, a0, a1, 16, cor, r * 0.14, true)
-			var esp := r * 0.16
-			for d in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
-				var p0: Vector2 = c + d * r * 0.42
-				var p1: Vector2 = c + d * r * 0.96
-				draw_line(p0, p1, cor, esp, true)
-				draw_circle(p0, esp * 0.5, cor)
-				draw_circle(p1, esp * 0.5, cor)
-			draw_circle(c, r * 0.17, cor)
-		"punho":
-			# Punho erguido, inclinado: quatro dedos dobrados, o polegar por cima,
-			# o dorso e o pulso (silhueta, sem contorno).
-			var r := lado * 0.5
-			var p := func(x: float, y: float) -> Vector2: return c + Vector2(x, y) * r
-			var dedos := [
-				[p.call(-0.3, -0.86), p.call(-0.08, -0.9), p.call(0.08, -0.82), p.call(-0.16, -0.45), p.call(-0.4, -0.55)],
-				[p.call(0.12, -0.7), p.call(0.3, -0.66), p.call(0.38, -0.56), p.call(0.08, -0.17), p.call(-0.1, -0.3)],
-				[p.call(0.4, -0.5), p.call(0.55, -0.42), p.call(0.6, -0.32), p.call(0.28, 0.05), p.call(0.14, -0.04)],
-				[p.call(0.62, -0.26), p.call(0.74, -0.18), p.call(0.76, -0.08), p.call(0.47, 0.22), p.call(0.36, 0.13)],
-			]
-			for dd in dedos:
-				draw_colored_polygon(PackedVector2Array(dd), cor)
-			# Dorso e pulso.
-			draw_colored_polygon(PackedVector2Array([p.call(-0.48, -0.58), p.call(-0.12, -0.42), p.call(0.1, -0.05),
-					p.call(0.32, 0.12), p.call(0.48, 0.3), p.call(0.66, 0.06), p.call(0.62, 0.38), p.call(0.3, 0.75),
-					p.call(0.36, 1.0), p.call(-0.28, 1.0), p.call(-0.16, 0.7), p.call(-0.78, -0.12)]), cor)
-			# Polegar dobrado por cima dos dedos (a folga do fundo o separa).
-			draw_polyline(PackedVector2Array([p.call(-0.42, -0.22), p.call(-0.12, -0.05), p.call(0.12, -0.08)]),
-					cor_fundo, maxf(r * 0.06, 1.5), true)
-			draw_polyline(PackedVector2Array([p.call(-0.12, -0.05), p.call(0.2, 0.42)]), cor_fundo,
-					maxf(r * 0.05, 1.5), true)
 		"cronometro":
 			var r := lado * 0.5
 			var w := maxf(r * 0.14, 2.0)

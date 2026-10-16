@@ -302,24 +302,21 @@ func _aplicar_visual(estilo: Dictionary, titulo: String) -> void:
 		_fechar_x.add_theme_font_size_override("font_size", 64)
 		_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
 		return
-	# A faixa na largura do cartão; o título no vão entre as linhas, no maior
-	# tamanho que couber ali.
+	# O título no vão entre as linhas da faixa (a faixa cresce com ele, na
+	# proporção da arte).
 	var fonte := Tipografia.fonte("display")
-	var largura_faixa := 720.0 - 2.0 * 24.0 - 60.0
-	var cabe := largura_faixa * (0.74 - FaixaTitulo.TEXTO_X) - 10.0
-	var tam := 56
-	while tam > 36 and fonte.get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > cabe:
-		tam -= 2
+	var tam := 50
 	_painel_titulo.add_theme_font_override("font", fonte)
 	_painel_titulo.add_theme_font_size_override("font_size", tam)
 	_painel_titulo.add_theme_color_override("font_color", Color(0.96, 0.94, 0.9))
 	_painel_titulo.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
 	_painel_titulo.add_theme_constant_override("shadow_offset_y", 3)
 	var alto_linha := float(tam) * 1.25
-	var faixa := Vector2(largura_faixa, alto_linha / (FaixaTitulo.MEIO_Y.y - FaixaTitulo.MEIO_Y.x))
+	var alto_faixa := alto_linha / (FaixaTitulo.MEIO_Y.y - FaixaTitulo.MEIO_Y.x)
+	var faixa := Vector2(alto_faixa * _pincel.proporcao(), alto_faixa)
 	var vao := StyleBoxEmpty.new()
 	vao.content_margin_left = FaixaTitulo.TEXTO_X * faixa.x - 22.0
-	var desce := faixa.y * FaixaTitulo.MEIO_Y.x - 8.0  # a faixa inteira dentro do cartão
+	var desce := faixa.y * FaixaTitulo.MEIO_Y.x - 26.0  # quase toda a faixa dentro do cartão
 	vao.content_margin_top = desce
 	_painel_titulo.add_theme_stylebox_override("normal", vao)
 	_pincel.size = faixa
