@@ -125,10 +125,17 @@ func _mapa(ws: Array) -> void:
 		# Encolhido por igual: centrado, com o fundo nas laterais.
 		t.offset_left = -MARGEM_LATERAL + (720.0 - largura) / 2.0
 		t.offset_right = MARGEM_LATERAL - (720.0 - largura) / 2.0
-	# Gaivotas cruzando de vez em quando (ambientação), abaixo das lojas e placas.
+	# Ambientação, abaixo das lojas e placas: sombras das nuvens no chão, as
+	# gaivotas cruzando de vez em quando e, por cima delas, as nuvens.
+	var sombras := Control.new()
+	sombras.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	t.add_child(sombras)
 	var gaivotas := Gaivotas.new()
 	gaivotas.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	t.add_child(gaivotas)
+	var nuvens := Nuvens.new(sombras)
+	nuvens.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	t.add_child(nuvens)
 	var sb_toque := StyleBoxFlat.new()
 	sb_toque.bg_color = Color(1, 1, 1, 0.12)
 	sb_toque.set_corner_radius_all(16)
