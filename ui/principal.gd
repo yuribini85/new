@@ -96,8 +96,8 @@ func _ready() -> void:
 			_sobre.avisar("Nenhuma corrida em andamento.", false)
 		else:
 			_ir_para(4))
-	_cabecalho.marcador.visible = not _regras_aceleracao().is_empty()
 	_ancoras["SALDO"] = _cabecalho.painel
+	_ancoras["ACELERAR"] = _cabecalho.marcador
 	_meta = [_cabecalho.painel]
 	_abas = TabContainer.new()
 	_abas.tabs_visible = false  # navegação pelos botões grandes embaixo
@@ -362,8 +362,26 @@ func _regras_aceleracao() -> Dictionary:
 	return dados.monetizacao().get("aceleracao", {})
 
 
+## O marcador ACELERAR entra depois do tutorial: a Mara o apresenta no
+## primeiro treino de licença (CW_L03, ação UNLOCK_ACELERAR). Sem história, já
+## vem liberado.
+const FLAG_ACELERAR := "ACELERAR_LIBERADO"
+
+
+func acelerar_liberado() -> bool:
+	if jogador.historia == null or jogador.personagem != "dono":
+		return true
+	return jogador.flags.has(FLAG_ACELERAR) or jogador.flags.has("FIRST_TRAINING_STARTED")
+
+
+## A primeira ativação é por conta da casa; as seguintes, com o vídeo.
+func _acelerar_gratis() -> bool:
+	return jogador.aceleracao.is_empty()
+
+
 func _atualizar_aceleracao() -> void:
 	if _cabecalho != null:
+		_cabecalho.marcador.visible = not _regras_aceleracao().is_empty() and acelerar_liberado()
 		_cabecalho.definir_aceleracao(Aceleracao.restante_s(jogador),
 				float(jogador.aceleracao.get("fator", _regras_aceleracao().get("fator", 2.0))))
 
@@ -397,9 +415,11 @@ func _abrir_aceleracao() -> void:
 		st.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		aba.rotulo("Cada vídeo deixa as corridas %d vezes mais rápidas por %d minutos. Os prêmios são os mesmos: "
 				% [fator, minutos] + "só o tempo de corrida passa mais depressa. Vale também com o app fechado, "
-				+ "e um vídeo novo soma tempo.", Aba.FONTE_PEQUENA, Color.WHITE, c)
+				+ "e um vídeo novo soma tempo." + (" A primeira é grátis." if _acelerar_gratis() else ""),
+				Aba.FONTE_PEQUENA, Color.WHITE, c)
 		Configuracoes.cartao_sem_anuncios(aba, v, _comprar_sem_anuncios),
-		[["Assistir vídeo · +%d min" % minutos, _assistir_video], ["Fechar", func(): pass]])
+		[["Ativar grátis · +%d min" % minutos, _ativar_aceleracao] if _acelerar_gratis()
+				else ["Assistir vídeo · +%d min" % minutos, _assistir_video], ["Fechar", func(): pass]])
 
 
 ## Vídeo com recompensa (por enquanto, o de teste): no fim, soma a aceleração.
@@ -407,17 +427,20 @@ func _assistir_video() -> void:
 	var video := VideoRecompensa.new()
 	add_child(video)
 	video.terminou.connect(func(assistiu):
-		if not assistiu:
-			return
-		var erro := Aceleracao.ativar(jogador, _regras_aceleracao())
-		if erro != "":
-			_sobre.avisar("Não deu: %s." % erro, false)
-			return
-		get_node("/root/SaveManager").salvar()
-		_atualizar_aceleracao()
-		_sobre.avisar("Corridas %d× por mais %d min (faltam %s)." % [roundi(float(jogador.aceleracao["fator"])),
-				roundi(float(_regras_aceleracao()["duracao_s"]) / 60.0),
-				Aceleracao.texto_tempo(Aceleracao.restante_s(jogador))]))
+		if assistiu:
+			_ativar_aceleracao())
+
+
+func _ativar_aceleracao() -> void:
+	var erro := Aceleracao.ativar(jogador, _regras_aceleracao())
+	if erro != "":
+		_sobre.avisar("Não deu: %s." % erro, false)
+		return
+	get_node("/root/SaveManager").salvar()
+	_atualizar_aceleracao()
+	_sobre.avisar("Corridas %d× por mais %d min (faltam %s)." % [roundi(float(jogador.aceleracao["fator"])),
+			roundi(float(_regras_aceleracao()["duracao_s"]) / 60.0),
+			Aceleracao.texto_tempo(Aceleracao.restante_s(jogador))])
 
 
 ## Compra Sem anúncios: o lugar já existe; a compra real entra com a loja do
@@ -531,7 +554,7 @@ func _checar_arena() -> void:
 ## Engrenagem do cabeçalho.
 func _abrir_configuracoes() -> void:
 	_sobre.abrir("Configurações", func(v):
-		Configuracoes.montar(_todas[5], v, jogador, _abrir_aceleracao, _comprar_sem_anuncios,
+		Configuracoes.montar(_todas[5], v, jogador, _abrir_aceleracao if acelerar_liberado() else Callable(), _comprar_sem_anuncios,
 				func(vv): _todas[5]._modo_teste(vv), _abrir_configuracoes))
 
 
@@ -656,6 +679,7 @@ func atualizar() -> void:
 	_sujar_todas()
 	_reconstruir(_abas.current_tab)
 	_atualizar_capa()
+	_atualizar_aceleracao()
 
 
 func _reconstruir(i: int) -> void:
@@ -866,6 +890,9 @@ func _acao_historia(nome: String) -> void:
 		# Decisão 69: o tutorial da arena libera os pilotos de arena.
 		jogador.flags[EquipeJogador.FLAG_ARENA] = true
 		atualizar()
+	elif nome == "UNLOCK_ACELERAR":
+		jogador.flags[FLAG_ACELERAR] = true
+		_atualizar_aceleracao()
 	elif nome == "UNLOCK_TEAM_TAB":
 		# A equipe nasce na cena: nada é resetado, só a aba aparece.
 		EquipeJogador.criar(jogador)

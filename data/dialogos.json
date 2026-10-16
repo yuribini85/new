@@ -910,6 +910,21 @@
    {
     "quem": "mara",
     "texto": "Treino rodando. A oficina não para por isso."
+   },
+   {
+    "acao": "UNLOCK_ACELERAR"
+   },
+   {
+    "quem": "mara",
+    "texto": "Lá em cima, ACELERAR deixa as corridas mais rápidas por um tempo. A primeira é por minha conta.",
+    "pose": "explica"
+   },
+   {
+    "acao": "HIGHLIGHT_ACELERAR"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em ACELERAR, no alto da tela."
    }
   ],
   "requer": [],

@@ -311,6 +311,11 @@ func test_configuracoes_e_video_montam() -> void:
 	var abriu := [false]
 	Configuracoes.montar(aba, v, j, func(): abriu[0] = true, func(): pass, func(vv): aba._modo_teste(vv))
 	verificar(v.get_child_count() > 10, "seções montadas")
+	# Antes do fim do tutorial (sem `acelerar`), a seção da aceleração some.
+	var v2 := VBoxContainer.new()
+	aba.add_child(v2)
+	Configuracoes.montar(aba, v2, j, Callable(), func(): pass, func(vv): aba._modo_teste(vv))
+	verificar(v2.get_child_count() < v.get_child_count(), "sem a seção da aceleração")
 	var video := VideoRecompensa.new()
 	_raiz().add_child(video)
 	var r := []

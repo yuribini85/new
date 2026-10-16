@@ -58,13 +58,15 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 		vistas.add_child(b)
 	v.add_child(vistas)
 
-	_secao(aba, v, "CORRIDAS ACELERADAS")
-	var ativa := Aceleracao.ativa(jogador)
-	aba.rotulo("Ativa: %s" % Aceleracao.texto_tempo(Aceleracao.restante_s(jogador)) if ativa
-			else "Desligada. Um vídeo deixa as corridas mais rápidas por um tempo.",
-			Aba.FONTE_PEQUENA, Cabecalho.COR_NUMERO if ativa else Aba.COR_SECUNDARIA, v)
-	_botao(v, "Acelerar corridas", acelerar)
-	cartao_sem_anuncios(aba, v, comprar)
+	# Sem `acelerar` (antes do fim do tutorial), a seção não aparece.
+	if acelerar.is_valid():
+		_secao(aba, v, "CORRIDAS ACELERADAS")
+		var ativa := Aceleracao.ativa(jogador)
+		aba.rotulo("Ativa: %s" % Aceleracao.texto_tempo(Aceleracao.restante_s(jogador)) if ativa
+				else "Desligada. Um vídeo deixa as corridas mais rápidas por um tempo.",
+				Aba.FONTE_PEQUENA, Cabecalho.COR_NUMERO if ativa else Aba.COR_SECUNDARIA, v)
+		_botao(v, "Acelerar corridas", acelerar)
+		cartao_sem_anuncios(aba, v, comprar)
 
 	if jogador.historia != null and String(jogador.personagem) != "":
 		_secao(aba, v, "SEU NOME")

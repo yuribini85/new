@@ -216,6 +216,10 @@ Sistema: Toque em Equipe, na barra de baixo.
 
 = CW_L03 | LICENCA_TREINO_INICIO | personagem=dono; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED
 Mara: Treino rodando. A oficina não para por isso.
+[UNLOCK_ACELERAR]
+Mara[explica]: Lá em cima, ACELERAR deixa as corridas mais rápidas por um tempo. A primeira é por minha conta.
+[HIGHLIGHT_ACELERAR]
+Sistema: Toque em ACELERAR, no alto da tela.
 
 = CW_L04 | LICENCA_PRONTA | personagem=dono; proibe=FIRST_TRAINING_READY; flags=FIRST_TRAINING_READY
 Harold: O treino acabou. Agora eu quero ver isso na pista.
