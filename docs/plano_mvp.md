@@ -783,9 +783,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       lança d'água do resgate mais comprida. A frota inteira usa os modelos novos; os
       GLB das carrocerias seguem no pacote até decisão sobre removê-los (~13 MB no Web).
     - Canhão d'água do resgate (pedido do usuário): gira para o rival e o jato empurra na
-      simulação com a força de um canhão real (F = vazão × velocidade: 50 kg/s × 20 m/s
-      ≈ 1.000 N, `data/arena.json` → `canhao`). Com esse valor o jato freia quem vem e
-      empurra devagar; não arrasta um carro parado (o arrasto do sim é 0,15 g).
+      simulação com 10.000 N (decisão do usuário; ~10x um canhão real de ~1.000 N),
+      `data/arena.json` → `canhao.forca_n`: arrasta um carro parado de frente ou de trás
+      e, de lado, quase vence a aderência.
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").

@@ -148,13 +148,13 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 
 ## Canhão d'água (data/arena.json → canhao; pedido do usuário): a torre gira
 ## para o rival vivo mais perto de outra equipe dentro do alcance e, alinhada,
-## empurra-o com a força do jato F = vazão × velocidade, na direção do canhão
-## para o alvo. `jato` guarda quem está levando água (a tela desenha).
+## empurra-o com a força do jato (forca_n, decisão do usuário), na direção do
+## canhão para o alvo. `jato` guarda quem está levando água (a tela desenha).
 static func _canhoes(carros: Array, params: Dictionary, dt: float) -> void:
 	var pc: Dictionary = params.get("canhao", {})
 	if pc.is_empty():
 		return
-	var forca := float(pc["vazao_kg_s"]) * float(pc["v_ms"])
+	var forca := float(pc["forca_n"])
 	for c in carros:
 		if not c.has("canhao"):
 			continue

@@ -714,19 +714,19 @@ func test_canhao_dagua_empurra_o_rival_de_outra_equipe() -> void:
 	var p := _params()
 	p["tempo_max_s"] = 6.0
 	var pc: Dictionary = p["canhao"]
-	perto(float(pc["vazao_kg_s"]) * float(pc["v_ms"]), 1000.0, 1.0, "jato de canhão real: ~1.000 N")
+	perto(float(pc["forca_n"]), 10000.0, 1.0, "jato de 10.000 N (decisão do usuário)")
 	var parado := func(com: bool) -> Dictionary:
 		var cam := _carro("caminhao", 39000.0, 600.0, Vector2(0, 0), 0.0, Vector2.ZERO, 0.0)
 		if com:
 			cam["canhao"] = true
-		# vem rolando na direção do caminhão, sem acelerar: o jato freia
-		var alvo := _carro("alvo", 1250.0, 150.0, Vector2(18, 0), PI, Vector2(-5, 0), 0.0)
+		# parado de frente para o caminhão, sem acelerar: o jato o arrasta para trás
+		var alvo := _carro("alvo", 1250.0, 150.0, Vector2(12, 0), PI, Vector2.ZERO, 0.0)
 		return Arena.correr([cam, alvo], p, 1, true)
 	var sem: Dictionary = parado.call(false)
 	var com: Dictionary = parado.call(true)
 	var x_sem: float = sem["amostras"][-1]["alvo"]["pos"].x
 	var x_com: float = com["amostras"][-1]["alvo"]["pos"].x
-	verificar(x_com > x_sem + 1.0, "o jato empurra contra quem vem (%.2f > %.2f)" % [x_com, x_sem])
+	verificar(x_com > x_sem + 3.0, "o jato arrasta o carro parado (%.2f > %.2f)" % [x_com, x_sem])
 	var levou := false
 	for a in com["amostras"]:
 		levou = levou or String(a["caminhao"].get("jato", "")) == "alvo"
