@@ -286,7 +286,7 @@ func _atualizar_nav() -> void:
 ## fica oculto. Uma tela aparece quando o tutorial a destaca ou abre
 ## (APRESENTADA_<ABA>) ou, em saves antigos, pelo passo que já passou.
 const APRESENTADA_POR := {0: "GARAGE_TUTORIAL_SEEN", 1: "GRID_INTRO", 3: "PILOT_HIRED", 5: "GRID_INTRO",
-		ABA_ARENA: "ARENA_INTRO"}
+		ABA_EQUIPE: "FIRST_CAR", ABA_ARENA: "ARENA_INTRO"}
 
 
 func apresentada(aba: int) -> bool:
@@ -678,6 +678,11 @@ func _acao_tutorial(nome: String) -> void:
 		var nav := NOMES_ABA.find(nome.trim_prefix("HIGHLIGHT_NAV_"))
 		if nome.begins_with("HIGHLIGHT_NAV_") and nav >= 0:
 			_apresentar(nav)
+			# A tela de fundo ainda não foi apresentada (o começo do jogo mostrava a
+			# Equipe vazia, fora da barra): vai para a destacada; o destaque segue
+			# no botão da barra.
+			if not apresentada(_abas.current_tab):
+				_ir_para(nav)
 		_destacar(nome.trim_prefix("HIGHLIGHT_"))
 	else:
 		historia_acao.emit(nome)
