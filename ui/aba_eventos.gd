@@ -73,6 +73,16 @@ func construir() -> void:
 		_fila()
 	# Decisão 74: o desafio da equipe da vez do The Grid, quando é na pista.
 	cartao_desafio_grid("corrida", func(eq: Dictionary): _correr(GridDesafio.PREFIXO + String(eq["id"])))
+	# Próxima prova: a mais favorável ao carro entre as não vencidas, em
+	# destaque (o jogador não precisa comparar 200 cartões).
+	var proxima := ""
+	var fav := _favoraveis(c)
+	if not fav.is_empty() and jogador.fila.is_empty():
+		proxima = String(fav[0]["ev"]["id"])
+		titulo_secao("PRÓXIMA PROVA", "A mais favorável ao seu carro entre as que você ainda não venceu."
+				if Carreira.nivel_forca(float(fav[0]["melhor"])) > 0
+				else "Seu carro está mais fraco que os rivais em todas as provas abertas: melhore-o na Oficina ou troque de carro nas Lojas.")
+		_cartao_evento(c, fav[0]["ev"], [])
 	# Dois filtros: as ainda não vencidas (padrão) e todas.
 	var abas := HBoxContainer.new()
 	abas.add_theme_constant_override("separation", 8)
@@ -101,7 +111,7 @@ func construir() -> void:
 		liberadas.append(ev)
 	var lista := []
 	for ev in liberadas:
-		if _filtro == "nao_vencidas" and jogador.vitorias.has(ev["id"]):
+		if (_filtro == "nao_vencidas" and jogador.vitorias.has(ev["id"])) or ev["id"] == proxima:
 			continue
 		lista.append([ev, Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas)])
 	# O carro atual pode correr primeiro; depois, da de prêmio menor (rivais
@@ -428,9 +438,9 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 	var r := _razao_rivais(c, ev)
 	if r < 0.0:
 		return null
-	var nivel := 0 if r < 0.95 else (1 if r < 1.08 else 2)
+	var nivel := Carreira.nivel_forca(r)
 	# Tons sóbrios (a faixa do nível fica mais viva; as outras, apagadas).
-	var tons := [Color(0.42, 0.33, 0.31), Color(0.66, 0.62, 0.5), Color(0.33, 0.47, 0.4)]
+	var tons := TONS_FORCA
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	pai.add_child(v)
@@ -439,7 +449,7 @@ func _comparacao_rivais(c: Carro, ev: Dictionary, pai: Control) -> Control:
 	var t := rotulo("SEU CARRO", 0, COR_SECUNDARIA, topo)
 	Tipografia.rotulo(t, "medium", 18)
 	t.autowrap_mode = TextServer.AUTOWRAP_OFF
-	var n := rotulo(["MAIS FRACO", "PARELHO", "MAIS FORTE"][nivel], 0, tons[nivel].lightened(0.35), topo)
+	var n := rotulo(Carreira.NOMES_FORCA[nivel], 0, tons[nivel].lightened(0.35), topo)
 	Tipografia.rotulo(n, "semibold", 20)
 	n.autowrap_mode = TextServer.AUTOWRAP_OFF
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -464,10 +474,22 @@ func _evento_tutorial() -> String:
 	if jogador.personagem == "dono" and not jogador.flags.has("FIRST_RACE_DONE"):
 		var c: Carro = Escalacao.carro(jogador, "corrida")
 		if c != null:
-			for ev in dados.lista("eventos"):
-				if Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas).is_empty():
-					return String(ev["id"])
+			# A mais favorável ao carro (era a primeira do arquivo, e o jogador
+			# perdia as primeiras provas com um carro que vencia outra).
+			var fav := _favoraveis(c)
+			if not fav.is_empty():
+				return String(fav[0]["ev"]["id"])
 	return ""
+
+
+## Provas favoráveis ao carro (Carreira.provas_favoraveis), uma vez por
+## construção da tela.
+var _fav_cache := {}
+func _favoraveis(c: Carro) -> Array:
+	var chave := _chave({"id": "fav"}, c) + "|" + str(jogador.licencas) + "|" + str(jogador.vitorias.size())
+	if not _fav_cache.has(chave):
+		_fav_cache = {chave: jogador.carreira.provas_favoraveis(c)}
+	return _fav_cache[chave]
 
 
 ## Tipo da série pelo que ela exige: [nome, cor de identidade].
@@ -493,16 +515,7 @@ func _tipo(ev: Dictionary) -> Array:
 ## dificuldade: pneus, curvas e frenagem também contam, e para isso há "Prever
 ## minha posição". Limites (+8% / −5%) provisórios.
 func _razao_rivais(c: Carro, ev: Dictionary) -> float:
-	var meu := c.atributos_efetivos(ev["condicao"])
-	var rivais := []
-	for i in ev["adversarios"].size():
-		var a: Dictionary = jogador.carreira.atributos_participante(ev["id"], "adv%d_%s" % [i, ev["adversarios"][i]["carro"]], c.uid)
-		if not a.is_empty():
-			rivais.append(a["potencia"] / maxf(a["peso"], 1.0))
-	if rivais.is_empty():
-		return -1.0
-	rivais.sort()
-	return (meu["potencia"] / maxf(meu["peso"], 1.0)) / maxf(rivais[rivais.size() / 2], 1e-6)
+	return jogador.carreira.forca_relativa(ev, c)
 
 
 ## Chave da estimativa: muda se o carro, as peças ou os pneus mudarem.

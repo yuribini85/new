@@ -192,7 +192,7 @@ Sistema: The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sa
 # 1. O primeiro carro: a garagem começa vazia.
 = CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara; lembrete=CW_C00L
 Mara[cruzados]: Para correr, um carro. A garagem está vazia; o último foi junto com as dívidas.
-Mara[explica]: O caixa dá para um carro, e só. Para as primeiras provas, compare potência e peso antes do preço.
+Mara[explica]: O caixa dá para um carro, e só. Cada um mostra como chega na estreia: procure o MAIS FORTE, não o mais barato.
 Sistema: Vá para as Lojas e compre o primeiro carro.
 [HIGHLIGHT_NAV_LOJA]
 

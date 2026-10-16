@@ -212,6 +212,11 @@ const VEU_CARTAO := [0.15, 0.7, 0.85]
 ## onde ficam os textos. Retorna a coluna do conteúdo (margem de 16).
 ## Topo das telas de um carro (Corridas, Arena): a faixa de cenário com o
 ## carro grande e o nome ao lado. Devolve a faixa (para pôr setas por cima).
+## Cores das faixas de força (Carreira.nivel_forca): mais fraco, parelho, mais
+## forte, em tons sóbrios.
+const TONS_FORCA := [Color(0.42, 0.33, 0.31), Color(0.66, 0.62, 0.5), Color(0.33, 0.47, 0.4)]
+
+
 ## Texto sobre a foto do carro: contorno escuro, como o nome dele (sobre um
 ## carro branco o texto claro sumia).
 static func sobre_imagem(c: Control) -> void:

@@ -262,6 +262,57 @@ func atributos_participante(evento_id: String, id: String, uid: int) -> Dictiona
 	return _adversario(ev["adversarios"][i], i, ev["condicao"])["atributos"]
 
 
+## Força do carro frente aos rivais da prova: potência por peso dele sobre a
+## mediana dos rivais (1 = parelho); -1 sem rivais. A mesma conta do "SEU CARRO"
+## dos cartões, da "Próxima prova" e da escolha do primeiro carro.
+## `contra_o_melhor`: frente ao rival mais forte (quem precisa ser batido para
+## vencer), em vez da mediana; ordena a "Próxima prova".
+func forca_relativa(ev: Dictionary, c: Carro, contra_o_melhor := false) -> float:
+	var meu := c.atributos_efetivos(ev["condicao"])
+	var rivais := []
+	for i in ev["adversarios"].size():
+		var a := atributos_participante(ev["id"], "adv%d_%s" % [i, ev["adversarios"][i]["carro"]], c.uid)
+		if not a.is_empty():
+			rivais.append(a["potencia"] / maxf(a["peso"], 1.0))
+	if rivais.is_empty():
+		return -1.0
+	rivais.sort()
+	var ref: float = rivais[-1] if contra_o_melhor else rivais[rivais.size() / 2]
+	return (meu["potencia"] / maxf(meu["peso"], 1.0)) / maxf(ref, 1e-6)
+
+
+## Faixas da força relativa (as do "SEU CARRO" dos cartões): abaixo de
+## PARELHO, mais fraco; de FORTE para cima, mais forte.
+const FORCA_PARELHO := 0.95
+const FORCA_FORTE := 1.08
+const NOMES_FORCA := ["MAIS FRACO", "PARELHO", "MAIS FORTE"]
+
+
+## 0 mais fraco, 1 parelho, 2 mais forte (-1 sem rivais).
+static func nivel_forca(r: float) -> int:
+	if r < 0.0:
+		return -1
+	return 0 if r < FORCA_PARELHO else (1 if r < FORCA_FORTE else 2)
+
+
+## Provas que o carro já pode correr (licença, restrições, prêmio) e ainda não
+## venceu, da mais favorável para a menos (frente ao rival mais forte: é quem
+## decide a vitória): [{ev, forca}], forca frente à mediana, como nos cartões.
+## Base da "Próxima prova" e do selo de estreia na loja.
+func provas_favoraveis(c: Carro) -> Array:
+	var r := []
+	for ev in dados.lista("eventos"):
+		if jogador.vitorias.has(ev["id"]) or ev["premios"].is_empty():
+			continue
+		if not Elegibilidade.motivos(c, ev["restricoes"], jogador.licencas).is_empty():
+			continue
+		var f := forca_relativa(ev, c)
+		if f >= 0.0:
+			r.append({"ev": ev, "forca": f, "melhor": forca_relativa(ev, c, true)})
+	r.sort_custom(func(a, b): return a["melhor"] > b["melhor"])
+	return r
+
+
 ## Atributos de fábrica do carro de um adversário ("adv<i>_<carro>").
 func carro_participante(id: String) -> Dictionary:
 	return dados.carro(id.split("_", true, 1)[1]) if id.begins_with("adv") else {}

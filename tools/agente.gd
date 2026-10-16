@@ -99,8 +99,9 @@ func jogar_campanha(id: String, limite_s: float) -> Dictionary:
 
 
 ## Decisão 85: a campanha do dono começa com a garagem vazia; como a cena
-## CW_C00 pede, o primeiro carro sai da loja: o mais barato que o saldo paga
-## (explora: um dos três mais baratos).
+## CW_C00 pede, o primeiro carro sai da loja pelo selo de estreia (decisão 96):
+## o mais barato que chega MAIS FORTE na prova mais favorável (sem nenhum, o de
+## maior força); explora: um dos três mais baratos, sem olhar o selo.
 func _primeiro_carro() -> void:
 	var opcoes := []
 	for c in d.lista("carros"):
@@ -114,6 +115,19 @@ func _primeiro_carro() -> void:
 		return
 	opcoes.sort_custom(func(x, y): return x["preco"] < y["preco"])
 	var o: Dictionary = opcoes[rng.randi_range(0, mini(2, opcoes.size() - 1))] if perfil == "explora" else opcoes[0]
+	if perfil != "explora":
+		var melhor := -1.0
+		for x in opcoes:
+			var c := Carro.new(d.carro(x["carro_id"]))
+			c.adicionar_pneu(d.pneu(d.economia()["pneu_de_fabrica"]))
+			var fav: Array = j.carreira.provas_favoraveis(c)
+			var f: float = float(fav[0]["melhor"]) if not fav.is_empty() else -1.0
+			if Carreira.nivel_forca(f) == 2:
+				o = x  # o mais barato MAIS FORTE (a lista está por preço)
+				break
+			if f > melhor:
+				melhor = f
+				o = x
 	_comprar_carro(o, "primeiro carro")
 
 
@@ -216,6 +230,11 @@ func _escolher_desafio() -> Dictionary:
 		return {}
 	if perfil == "explora":
 		return lista[rng.randi_range(0, lista.size() - 1)]
+	# A "Próxima prova" da tela (Carreira.provas_favoraveis): a mais favorável
+	# ao carro, frente ao rival mais forte.
+	for f in j.carreira.provas_favoraveis(carro):
+		if f["ev"] in lista:
+			return f["ev"]
 	lista.sort_custom(func(a, b): return a["premios"][0] < b["premios"][0] if a["premios"][0] != b["premios"][0] else a["nome"] < b["nome"])
 	return lista[0]
 
