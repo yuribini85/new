@@ -112,8 +112,10 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 			_disparar("LICENCA_PRONTA")
 		"corrida":
 			var ev_ctx := {"evento": ctx["evento"]}
-			if not _disparar("CORRIDA_FIM", {"posicao": ctx["posicao"], "evento": ctx["evento"]}):
-				_marco_vitoria(ctx)
+			# A ordem de Historia.disparar_fim: cena da chegada, marco, comentário.
+			var fim := {"posicao": ctx["posicao"], "evento": ctx["evento"]}
+			if not _disparar("CORRIDA_FIM", fim, false) and not _marco_vitoria(ctx):
+				_disparar("CORRIDA_FIM", fim)
 			if ctx["campeao"]:
 				_disparar("CAMPEONATO_VENCIDO", ev_ctx)
 			if _primeira_prova:
@@ -128,22 +130,22 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 
 
 ## Os marcos de vitória de Historia.disparar_fim (sem a CORRIDA_FIM, já tentada).
-func _marco_vitoria(ctx: Dictionary) -> void:
+func _marco_vitoria(ctx: Dictionary) -> bool:
 	var j: Node = ag.j
 	var ev := String(ctx["evento"])
 	if int(ctx["posicao"]) != 1 or int(j.vitorias.get(ev, 0)) != 1:
-		return  # não é vitória inédita
+		return false  # não é vitória inédita
 	var lic := String(d.evento(ev)["restricoes"].get("licenca", ""))
 	var mesma := func(e) -> bool: return e != ev and String(d.evento(e)["restricoes"].get("licenca", "")) == lic
 	var outras: Array = j.vitorias.keys().filter(mesma)
 	if lic != "" and outras.is_empty() and _disparar("VITORIA_LICENCA:" + lic, ctx):
-		return
-	_disparar("VITORIA", {"quantidade": j.vitorias.size()})
+		return true
+	return _disparar("VITORIA", {"quantidade": j.vitorias.size()})
 
 
 ## Mostra a cena do trigger (e as encadeadas) como se o jogador lesse tudo.
-func _disparar(trigger: String, ctx: Dictionary = {}) -> bool:
-	var c := h.cena_para(trigger, ctx)
+func _disparar(trigger: String, ctx: Dictionary = {}, reativas := true) -> bool:
+	var c := h.cena_para(trigger, ctx, reativas)
 	if c.is_empty():
 		return false
 	while not c.is_empty():
@@ -155,7 +157,10 @@ func _disparar(trigger: String, ctx: Dictionary = {}) -> bool:
 				EquipeJogador.criar(ag.j)
 			elif a == "OPEN_DRIVER_HIRE":
 				EquipeJogador.liberar_segundo(d, ag.j)
+		var demo: bool = c.get("falas", []).any(func(f): return String(f.get("acao", "")) == "ARENA_DEMO")
 		c = h.concluir(c)
+		if demo and c.is_empty():
+			c = h.cena_para("ARENA_DEMO_FIM")  # a luta de demonstração terminou
 	return true
 
 

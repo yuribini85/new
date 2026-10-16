@@ -161,6 +161,20 @@ Mara[firme]: Agora o prêmio volta para o carro.
 Mara[explica]: Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença.
 Mara[firme]: Não existe melhor carro. Existe o carro certo para cada prova.
 
+# Decisão 96: a arena na primeira sessão. A Mara mostra de onde vem o nome
+# Wreckage numa luta de demonstração com o carro dela (simulada: sem prêmio,
+# sem perda de carro); a arena de verdade abre com 3 carros (decisão 69).
+= CW_AD01 | CORRIDA_FIM | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=ARENA_DEMO_SEEN; flags=ARENA_DEMO_SEEN; cenario=oficina_mara
+Mara[pensativa]: Você nunca perguntou por que Wreckage.
+Mara[cruzados]: Corrida paga as contas. A arena é de onde o nome vem.
+Mara[firme]: Vem ver. Meu carro, nosso piloto, ninguém aposta nada.
+[ARENA_DEMO]
+
+= CW_AD02 | ARENA_DEMO_FIM | personagem=dono; proibe=ARENA_DEMO_TALK; flags=ARENA_DEMO_TALK; cenario=oficina_mara
+Mara[gesto]: Isso é a Wreckage. Lá o carro que quebra não volta.
+Mara[explica]: Por isso a arena abre só com três carros na garagem: um para correr e dois para arriscar.
+Sistema: Com o terceiro carro, a Arena aparece na barra de baixo.
+
 # ---------------------------------------------------------------- Licenças
 = CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
 Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA

@@ -429,12 +429,46 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 	luta.name = "LutaArena"
 	add_child(luta)
 	luta.acabou.connect(func(f: Dictionary):
-		if jogador.historia != null and not f.get("simulacao", false):
+		if jogador.historia != null and f.get("demo", false):
+			jogador.historia.disparar("ARENA_DEMO_FIM")
+		elif jogador.historia != null and not f.get("simulacao", false):
 			var t := "ARENA_PERDA" if f["perdeu"] else ("ARENA_VITORIA" if f.get("venceu_equipe", f["posicao"] == 1) else "ARENA_FIM")
 			jogador.historia.disparar(t)
 			jogador.historia.disparar_grid(f.get("grid", {}), dados)
 		_sujar_todas()
 		atualizar())
+
+
+## Decisão 96: a luta de demonstração da primeira sessão (cena CW_AD01). O
+## carro da Mara (historia.json → carro_mara) entra na garagem só para montar a
+## luta e sai em seguida; a luta é simulada (nada muda no jogo) e, no fim, a
+## Mara explica quando a arena abre (ARENA_DEMO_FIM).
+const DEMO_EQUIPES := 2
+
+
+func _luta_demo() -> void:
+	var cm: Dictionary = dados.historia().get(String(jogador.personagem), {}).get("carro_mara", {})
+	var id := String(cm.get("carro", ""))
+	if not dados.existe("carros", id):
+		jogador.historia.disparar("ARENA_DEMO_FIM")
+		return
+	var carro := Carro.new(dados.carro(id))
+	carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
+	var uid: int = jogador.garagem.adicionar(carro)
+	var semente := hash("arena_demo:%s" % jogador.nome_admin)
+	var montada := ArenaCarreira.montar(dados, jogador, uid, semente, DEMO_EQUIPES)
+	jogador.garagem.remover(uid)
+	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
+	var final := {"simulacao": true, "demo": true, "perdeu": false, "carro": String(carro.base["nome"]),
+			"posicao": resultado["classificacao"].find("jogador") + 1,
+			"venceu_equipe": resultado.get("equipe_vencedora", "") == "jogador",
+			"pontos": ArenaCarreira.pontos(resultado, "jogador", montada["params"]), "premio": 0}
+	var pintura: Dictionary = montada["cores"].duplicate()
+	pintura["jogador"] = CarroBloco.cor_do_carro(carro)
+	_abrir_luta({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
+			"pinturas": pintura, "faixas": montada["faixas"], "final": final, "params": montada["params"],
+			"blindagens": montada.get("blindagens", {}),
+			"equipes": _todas[ABA_ARENA]._equipe_de_cada(resultado, montada["equipes"])})
 
 
 ## Ficha de uma equipe do Grid por cima de tudo, depois de qualquer diálogo
@@ -800,6 +834,8 @@ func _acao_historia(nome: String) -> void:
 	elif nome == "PEDIR_NOME":
 		# Decisão 73: a Mara pergunta o nome; o painel vem com a cena fechada.
 		_quando_dialogo_acabar(_pedir_nome)
+	elif nome == "ARENA_DEMO":
+		_quando_dialogo_acabar(_luta_demo)
 	elif nome == "UNLOCK_ARENA_PILOTS":
 		# Decisão 69: o tutorial da arena libera os pilotos de arena.
 		jogador.flags[EquipeJogador.FLAG_ARENA] = true

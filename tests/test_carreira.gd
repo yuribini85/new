@@ -432,7 +432,7 @@ func test_comentarios_se_revezam_e_marcos_vem_antes() -> void:
 	Prologo.iniciar(d, j)
 	var h := Historia.new(d, j)
 	j.historia = h
-	for f in ["GRID_INTRO", "FIRST_RACE_DONE", "FIRST_WIN", "FIRST_LOSS_TALK", "GARAGE_TUTORIAL_SEEN"]:
+	for f in ["GRID_INTRO", "FIRST_RACE_DONE", "FIRST_WIN", "FIRST_LOSS_TALK", "GARAGE_TUTORIAL_SEEN", "ARENA_DEMO_SEEN"]:
 		j.flags[f] = true
 	var vistos := {}
 	for k in 4:

@@ -659,6 +659,74 @@
   "personagem": "dono"
  },
  {
+  "id": "CW_AD01",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Você nunca perguntou por que Wreckage.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Corrida paga as contas. A arena é de onde o nome vem.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "Vem ver. Meu carro, nosso piloto, ninguém aposta nada.",
+    "pose": "firme"
+   },
+   {
+    "acao": "ARENA_DEMO"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [
+   "ARENA_DEMO_SEEN"
+  ],
+  "flags": [
+   "ARENA_DEMO_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_AD02",
+  "trigger": "ARENA_DEMO_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Isso é a Wreckage. Lá o carro que quebra não volta.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Por isso a arena abre só com três carros na garagem: um para correr e dois para arriscar.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Com o terceiro carro, a Arena aparece na barra de baixo."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_DEMO_TALK"
+  ],
+  "flags": [
+   "ARENA_DEMO_TALK"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
   "id": "CW_L01",
   "trigger": "LICENCA_EXIGIDA",
   "falas": [
