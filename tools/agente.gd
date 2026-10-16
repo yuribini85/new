@@ -89,11 +89,32 @@ func jogar_campanha(id: String, limite_s: float) -> Dictionary:
 	j.carreira = Carreira.new(d, j)
 	uid = j.carro_ativo
 	_avisar("inicio", {})
+	if uid < 0:
+		_primeiro_carro()
 	var demanda := Prologo.demanda(d, j)
 	if d.existe("pecas", demanda):
 		var p: Dictionary = d.peca(demanda)
 		_comprar_item({"tipo": "peca", "item": p, "nome": String(p["nome"]), "preco": int(p["preco"])})
 	return _laco(limite_s)
+
+
+## Decisão 85: a campanha do dono começa com a garagem vazia; como a cena
+## CW_C00 pede, o primeiro carro sai da loja: o mais barato que o saldo paga
+## (explora: um dos três mais baratos).
+func _primeiro_carro() -> void:
+	var opcoes := []
+	for c in d.lista("carros"):
+		if c.get("novo", true) and int(c["preco"]) <= j.economia.saldo:
+			opcoes.append({"carro_id": c["id"], "preco": int(c["preco"])})
+	for o in Usados.estoque(d.lista("carros"), j.dias, j.usados_vendidos):
+		if int(o["preco"]) <= j.economia.saldo:
+			opcoes.append(o)
+	if opcoes.is_empty():
+		log.append("campanha: o saldo inicial não paga nenhum carro")
+		return
+	opcoes.sort_custom(func(x, y): return x["preco"] < y["preco"])
+	var o: Dictionary = opcoes[rng.randi_range(0, mini(2, opcoes.size() - 1))] if perfil == "explora" else opcoes[0]
+	_comprar_carro(o, "primeiro carro")
 
 
 func _laco(limite_s: float) -> Dictionary:
