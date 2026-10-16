@@ -8,7 +8,7 @@ const PARTES := [["equipe", "EQUIPE"], ["sede", "SEDE"]]
 ## Segundo piloto: busto na aba (cabeça à cintura do corpo 600 × 900) e o palco
 ## da escolha, com o corpo inteiro.
 const BUSTO := Vector2(190, 230)
-const PALCO_ALTURA := 405.0
+const PALCO_ALTURA := 400.0
 
 var _parte := "equipe"
 
@@ -407,7 +407,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 	var estilo_painel := {"fora_fecha": true, "titulo_pincel": true,
 			"fundo": Assets.get_asset("garagem_pilotos", "cenario")}
 	painel_estilo.emit("SELEÇÃO DE PILOTOS", func(pv):
-		pv.add_theme_constant_override("separation", 10)
+		pv.add_theme_constant_override("separation", 8)
 		_renova_em(pv)
 		var palco := Control.new()
 		palco.custom_minimum_size = Vector2(0, PALCO_ALTURA)
@@ -415,14 +415,14 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		pv.add_child(palco)
 		var corpo := TextureRect.new()
 		corpo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		corpo.offset_top = 6
-		corpo.offset_bottom = 190  # passa da borda: a placa cobre as pernas
+		corpo.offset_top = 4
+		corpo.offset_bottom = -4  # o corpo inteiro, sem cortar
 		corpo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		corpo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		palco.add_child(corpo)
 		var contador := Label.new()
-		contador.add_theme_font_override("font", Tipografia.italica("display"))
+		contador.add_theme_font_override("font", Tipografia.fonte("display"))
 		contador.add_theme_font_size_override("font_size", 40)
 		contador.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
 		palco.add_child(contador)
@@ -431,7 +431,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		contador.offset_right = -10
 		contador.offset_top = 14
 		contador.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		var nome := _placa_nome(palco)
+		var nome := _placa_nome(pv)
 		var info := VBoxContainer.new()
 		info.add_theme_constant_override("separation", 8)
 		pv.add_child(info)
@@ -450,11 +450,11 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		linha_estilo.add_child(selo)
 		linha_estilo.add_child(_riscos())
 		var frase := Label.new()
-		frase.add_theme_font_override("font", Tipografia.italica("regular"))
-		frase.add_theme_font_size_override("font_size", 24)
+		frase.add_theme_font_override("font", Tipografia.fonte("regular"))
+		frase.add_theme_font_size_override("font_size", 22)
 		frase.add_theme_color_override("font_color", Color(0.78, 0.78, 0.8))
 		frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		frase.custom_minimum_size.y = 64  # duas linhas: a tela não pula ao trocar de piloto
+		frase.custom_minimum_size.y = 58  # duas linhas: a tela não pula ao trocar de piloto
 		frase.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		var margem_frase := MarginContainer.new()
 		margem_frase.add_theme_constant_override("margin_left", 90)
@@ -556,14 +556,13 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		mostrar.call(0), [], estilo_painel)
 
 
-## Placa do nome na base do palco, sobre as pernas: faixa escura inclinada com
-## o risco dourado à esquerda. Devolve o Label do nome.
-func _placa_nome(palco: Control) -> Label:
+## Placa do nome logo abaixo do piloto: faixa escura inclinada com o risco
+## dourado à esquerda. Devolve o Label do nome.
+func _placa_nome(pai: Control) -> Label:
 	var placa := Control.new()
 	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	placa.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	placa.offset_top = -104
-	palco.add_child(placa)
+	placa.custom_minimum_size = Vector2(0, 78)
+	pai.add_child(placa)
 	placa.draw.connect(func():
 		var w := placa.size.x
 		var h := placa.size.y
@@ -575,8 +574,8 @@ func _placa_nome(palco: Control) -> Label:
 		placa.draw_colored_polygon(PackedVector2Array([Vector2(84, 8), Vector2(90, 8), Vector2(68, h - 8),
 				Vector2(62, h - 8)]), Color(COR_DESTAQUE, 0.6)))
 	var nome := Label.new()
-	nome.add_theme_font_override("font", Tipografia.italica("display"))
-	nome.add_theme_font_size_override("font_size", 64)
+	nome.add_theme_font_override("font", Tipografia.fonte("display"))
+	nome.add_theme_font_size_override("font_size", 58)
 	nome.add_theme_color_override("font_color", Color(0.96, 0.94, 0.9))
 	nome.clip_text = true
 	nome.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -637,7 +636,7 @@ func _seta_caixa(palco: Control, lado: int, ao_tocar: Callable) -> void:
 func _linha_atributo(pai: Control, icone_: String, nome: String) -> Dictionary:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 16)
-	h.custom_minimum_size = Vector2(0, 50)
+	h.custom_minimum_size = Vector2(0, 42)
 	pai.add_child(h)
 	var ic := IconeVetor.new(icone_, Color(0.85, 0.85, 0.87))
 	ic.custom_minimum_size = Vector2(40, 40)
@@ -679,7 +678,7 @@ func _linha_atributo(pai: Control, icone_: String, nome: String) -> Dictionary:
 func _botao_contratar(pai: Control) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	b.custom_minimum_size = Vector2(0, 88)
+	b.custom_minimum_size = Vector2(0, 84)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = COR_DESTAQUE
 	sb.border_color = COR_DESTAQUE.lightened(0.3)
@@ -758,7 +757,7 @@ func _renova_em(pai: Control) -> void:
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	dentro.add_child(ic)
 	var t := Label.new()
-	t.add_theme_font_override("font", Tipografia.italica("display"))
+	t.add_theme_font_override("font", Tipografia.fonte("display"))
 	t.add_theme_font_size_override("font_size", 42)
 	t.add_theme_color_override("font_color", COR_DESTAQUE)
 	dentro.add_child(t)

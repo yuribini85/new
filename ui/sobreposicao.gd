@@ -302,12 +302,12 @@ func _aplicar_visual(estilo: Dictionary, titulo: String) -> void:
 		_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
 		return
 	var tam := 60
-	_painel_titulo.add_theme_font_override("font", Tipografia.italica("display"))
+	_painel_titulo.add_theme_font_override("font", Tipografia.fonte("display"))
 	_painel_titulo.add_theme_font_size_override("font_size", tam)
 	_painel_titulo.add_theme_color_override("font_color", Color(0.96, 0.94, 0.9))
 	_painel_titulo.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
 	_painel_titulo.add_theme_constant_override("shadow_offset_y", 3)
-	var largura := Tipografia.italica("display").get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+	var largura := Tipografia.fonte("display").get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
 	_pincel.position = Vector2(-34.0, tam * 0.5)
 	_pincel.size = Vector2(largura + 70.0, tam * 0.62)
 	var caixa := StyleBoxFlat.new()
