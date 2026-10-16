@@ -814,3 +814,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     cheia). O público faz a ola na largada, comemora as explosões (todas as
     arquibancadas) e as batidas fortes entre carros (a mais perto) e foge pela escada
     quando um carro bate forte no muro bem na frente dele (não volta até a próxima luta).
+93. **Acabamento das arenas para a vista de longe** (2026-10-16, pedido do usuário com
+    referência de maquete; recomendação aceita). `visual/cenario_arena.gd`, só tela:
+    o terreno vira um bloco quadrado com as laterais em camadas de terra, sobre fundo
+    claro; terra só dentro do muro e na faixa da barreira, grama fora; barreira de
+    concreto contínua na linha do muro (pula a quebrável do pacote de dano) com pilhas
+    de pneus nos cantos; alambrado; seis torres de luz; bandeirinhas por cima do
+    alambrado; estrada de terra com portão e cercas no lado mais comprido sem
+    arquibancada; pinheiros em grupos e pedras na grama (MultiMesh). Luz mais clara e
+    câmera geral a 40° (era 58°). Próximo passo combinado: tema por arena (campo
+    visual em `data/arena.json`), um piloto por vez.

@@ -27,12 +27,12 @@ const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 ## Chão em malha: passo da grade e quanto passa do muro (m).
 const CHAO_PASSO_M := 1.0  # fino o bastante para a quina das rampas e dos degraus
-const CHAO_MARGEM_M := 15.0  # cabe a arquibancada (recuo 4,2 m + 4,4 m de fundo)
+const CHAO_MARGEM_M := 22.0  # da maior largura do muro à borda do bloco (arquibancada, árvores)
 ## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
 const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
 ## Vista geral: mais do alto e a arena inteira com folga.
-const ELEVACAO_GERAL_GRAUS := 58.0
+const ELEVACAO_GERAL_GRAUS := 40.0  # ângulo de maquete: mostra as laterais e o que é alto
 const ORBITA_GERAL_S := 90.0
 ## Dinâmica: planos curtos, baixos e perto, com corte seco.
 const PLANO_S := 6.0  # duração de um plano sem batida
@@ -143,9 +143,9 @@ func _init() -> void:
 	var amb := WorldEnvironment.new()
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.11, 0.1, 0.1)
+	env.background_color = Color(0.8, 0.77, 0.74)  # fundo claro de estúdio: a arena é uma maquete
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.5, 0.48, 0.46)
+	env.ambient_light_color = Color(0.62, 0.6, 0.58)
 	CarroBloco.reflexo(env)  # o reflexo do verniz na pintura
 	amb.environment = env
 	_mundo.add_child(amb)
@@ -153,7 +153,8 @@ func _init() -> void:
 	# Luz baixa, de lado: as encostas do chão irregular ganham luz e sombra.
 	luz.rotation = Vector3(-0.55, 0.75, 0)
 	luz.shadow_enabled = not Preferencias.efeitos_leves
-	luz.light_color = Color(1.0, 0.86, 0.7)
+	luz.light_color = Color(1.0, 0.9, 0.78)
+	luz.light_energy = 1.15
 	_mundo.add_child(luz)
 	_camera = Camera3D.new()
 	_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
@@ -341,7 +342,7 @@ func _mirar() -> void:
 	var elev := deg_to_rad(ELEVACAO_GERAL_GRAUS if modo == "geral" else ELEVACAO_GRAUS)
 	var h := Vector3(sin(_orbita), 0.0, cos(_orbita))
 	if modo == "geral":
-		c -= h * _raio * 0.22  # mira além do centro: a arena desce e sai de baixo do painel
+		c -= h * _raio * 0.1  # mira além do centro: a arena desce e sai de baixo do painel
 	_camera.look_at_from_position(c + (h * cos(elev) + Vector3.UP * sin(elev)) * d, c, Vector3.UP)
 
 
@@ -966,6 +967,9 @@ func _construir_arena() -> void:
 	_objetos.lados_ocupados = lados
 	_objetos.montar(_forma, hash(_forma.muro))
 	_montar_arquibancadas(lados)
+	var cenario := CenarioArena.new()
+	_cena.add_child(cenario)
+	cenario.montar(_forma, _bloco_mn, _bloco_lado, lados, _objetos.trechos_concreto, hash(_forma.muro) + 1)
 	_pneus_muro()
 	_ilhas()
 
@@ -978,8 +982,12 @@ func _chao() -> void:
 	for q in _forma.muro:
 		mn = mn.min(q)
 		mx = mx.max(q)
-	mn -= Vector2.ONE * CHAO_MARGEM_M
-	mx += Vector2.ONE * CHAO_MARGEM_M
+	# Bloco quadrado (maquete): o lado é a maior largura do muro mais a margem.
+	var lado := ceilf(maxf(mx.x - mn.x, mx.y - mn.y) + CHAO_MARGEM_M * 2.0)
+	mn = (mn + mx) * 0.5 - Vector2.ONE * lado * 0.5
+	mx = mn + Vector2.ONE * lado
+	_bloco_mn = mn
+	_bloco_lado = lado
 	var nx := int(ceil((mx.x - mn.x) / CHAO_PASSO_M))
 	var ny := int(ceil((mx.y - mn.y) / CHAO_PASSO_M))
 	var alturas := PackedFloat32Array()
@@ -987,10 +995,20 @@ func _chao() -> void:
 	for j in ny + 1:
 		for i in nx + 1:
 			alturas[j * (nx + 1) + i] = _forma.altura(mn + Vector2(i, j) * CHAO_PASSO_M)
+	# Terra da arena até um pouco além do muro (barreira e alambrado); dali
+	# para fora, grama (cor própria, sem a textura de terra).
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var sg := SurfaceTool.new()
+	sg.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var ruido := FastNoiseLite.new()
+	ruido.frequency = 0.025
 	for j in ny:
 		for i in nx:
+			var centro := mn + Vector2(i + 0.5, j + 0.5) * CHAO_PASSO_M
+			var grama := float(_forma.muro_perto(centro)[0]) < -GRAMA_DEPOIS_DO_MURO_M
+			var tom := COR_GRAMA.lerp(COR_GRAMA_CLARA, clampf(ruido.get_noise_2dv(centro) * 0.9 + 0.5, 0.0, 1.0))
+			var alvo := sg if grama else st
 			var cantos := [[i, j], [i + 1, j], [i, j + 1], [i + 1, j], [i + 1, j + 1], [i, j + 1]]
 			for k in [0, 2, 1, 3, 5, 4]:
 				var ci: int = cantos[k][0]
@@ -1006,9 +1024,9 @@ func _chao() -> void:
 				# escura e o fundo mais escuro que o alto: lê as curvas de nível.
 				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.06, 0.7, 1.15) \
 						* lerpf(0.55, 1.0, pow(nrm.y, 6.0))
-				st.set_color(Color(luz, luz, luz))
-				st.set_uv(q / 7.0)
-				st.add_vertex(Vector3(q.x, h, -q.y))
+				alvo.set_color(tom * luz if grama else Color(luz, luz, luz))
+				alvo.set_uv(q / 7.0)
+				alvo.add_vertex(Vector3(q.x, h, -q.y))
 	st.generate_normals()
 	var chao := MeshInstance3D.new()
 	chao.mesh = st.commit()
@@ -1017,24 +1035,20 @@ func _chao() -> void:
 	var asfalto := MontadorPista.kit("asfalto_b")
 	if asfalto != null:
 		mt.albedo_texture = asfalto
-		mt.albedo_color = Color(0.85, 0.74, 0.6)
+		mt.albedo_color = Color(1.1, 0.88, 0.66)  # terra batida clara, como na maquete
 	else:
-		mt.albedo_color = Color(0.36, 0.3, 0.24)
+		mt.albedo_color = Color(0.46, 0.37, 0.28)
 	mt.roughness = 0.95
 	chao.material_override = mt
 	_cena.add_child(chao)
-	var fora := MeshInstance3D.new()
-	var plano := PlaneMesh.new()
-	plano.size = Vector2(1000, 1000)
-	fora.mesh = plano
-	var mf := StandardMaterial3D.new()
-	mf.albedo_color = Color(0.2, 0.19, 0.18)
-	fora.material_override = mf
-	var fundo := 0.0
-	for h in alturas:
-		fundo = minf(fundo, h)
-	fora.position.y = fundo - 1.0  # abaixo do fundo das crateras
-	_cena.add_child(fora)
+	sg.generate_normals()
+	var gramado := MeshInstance3D.new()
+	gramado.mesh = sg.commit()
+	var mg := StandardMaterial3D.new()
+	mg.vertex_color_use_as_albedo = true
+	mg.roughness = 1.0
+	gramado.material_override = mg
+	_cena.add_child(gramado)
 	_chao_fisico(mn, nx, ny, alturas)
 
 
@@ -1079,24 +1093,22 @@ func _chao_fisico(mn: Vector2, nx: int, ny: int, alturas: PackedFloat32Array) ->
 	_cena.add_child(corpo)
 
 
-## Pneus em duas fileiras seguindo o muro (polígono), no chão de cada ponto,
-## com uma faixa de cor a cada tanto.
+## Pilhas de pneus nos cantos do muro, entre a barreira e o alambrado (a
+## barreira contínua é do CenarioArena), e os anéis de pneus das ilhas.
 func _pneus_muro() -> void:
 	var pontos := []  # [posição 3D, colorido]
 	var n := _forma.muro.size()
-	var k := 0
 	for i in n:
-		var a := _forma.muro[i]
-		var b := _forma.muro[(i + 1) % n]
-		var fora := (b - a).normalized().orthogonal()  # o lado de fora (direita da aresta anti-horária)
-		var passos := maxi(int((b - a).length() * PNEUS_POR_M / 1.2), 1)
-		for camada in 2:
-			for t in passos:
-				var q := a.lerp(b, (float(t) + 0.5 * camada) / passos) + fora * (0.7 + camada * 1.15)
-				if _atras_do_concreto(q):
-					continue
-				pontos.append([Vector3(q.x, _forma.altura(q) + 0.18, -q.y), k % 9 == 0])
-				k += 1
+		var q := _forma.muro[i]
+		var fora := ((q - _forma.muro[(i - 1 + n) % n]).normalized().orthogonal()
+				+ (_forma.muro[(i + 1) % n] - q).normalized().orthogonal()).normalized()
+		var lado := fora.orthogonal()
+		for coluna in [[-0.65, 3], [0.65, 2]]:
+			var p: Vector2 = q + fora * 1.1 + lado * float(coluna[0])
+			if _atras_do_concreto(p):
+				continue
+			for andar in int(coluna[1]):
+				pontos.append([Vector3(p.x, _forma.altura(p) + 0.18 + andar * 0.36, -p.y), andar == 1 and i % 2 == 0])
 	for o in _forma.obstaculos:
 		var r: float = o["r"]
 		var voltas := int(TAU * r * PNEUS_POR_M / 1.2)
@@ -1143,6 +1155,13 @@ const FUGA_PERTO_M := 9.0
 ## Ocupação do pacote (0 meio vazio, 1 semi cheio, 2 cheio) pela licença da arena.
 const LOTACAO := {"CLUB": 0, "SPORT": 1, "NATIONAL": 1, "INTERNATIONAL": 2, "PRO": 2, "ELITE": 2}
 var _lotacao := 1
+## Grama fora do muro (a faixa antes dela é a terra da barreira e do alambrado).
+const GRAMA_DEPOIS_DO_MURO_M := 2.4
+const COR_GRAMA := Color(0.36, 0.47, 0.27)
+const COR_GRAMA_CLARA := Color(0.45, 0.55, 0.31)
+## Quadrado do bloco de terreno (2D): canto mínimo e lado.
+var _bloco_mn := Vector2.ZERO
+var _bloco_lado := 0.0
 
 
 ## Índices dos lados do muro que recebem arquibancada: os mais compridos que

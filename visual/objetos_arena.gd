@@ -20,7 +20,7 @@ const PNEUS_MAX := 5
 const CONES_FILAS := 3
 const CONES_POR_FILA := 5
 const BARRIS := 6
-const ARVORES := 10
+const ARVORES := 0  # os pinheiros agora são do CenarioArena
 
 var _forma: ArenaForma
 var _rng := RandomNumberGenerator.new()
