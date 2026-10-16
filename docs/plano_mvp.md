@@ -822,5 +822,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     de pneus nos cantos; alambrado; seis torres de luz; bandeirinhas por cima do
     alambrado; estrada de terra com portão e cercas no lado mais comprido sem
     arquibancada; pinheiros em grupos e pedras na grama (MultiMesh). Luz mais clara e
-    câmera geral a 40° (era 58°). Próximo passo combinado: tema por arena (campo
-    visual em `data/arena.json`), um piloto por vez.
+    câmera geral a 40° (era 58°). Segundo lote (aceito): terra própria (cor quente com
+    manchas e rastros de pneu em arco numa textura gerada), relevo mais legível (topo
+    dos platôs claro, fundo das valas escuro), divisa terra/grama em faixa contínua (sem
+    degraus), losango na cor do carro sobre cada um na visão geral (os seus em âmbar),
+    pedras no corte do bloco e sombra embaixo dele. Próximo passo combinado: tema por
+    arena (campo visual em `data/arena.json`), um piloto por vez.

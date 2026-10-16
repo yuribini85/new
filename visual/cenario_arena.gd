@@ -28,6 +28,7 @@ const CORES_BANDEIRA := [Color(0.85, 0.2, 0.15), Color(0.95, 0.75, 0.15), Color(
 const ESTRADA_LARGURA_M := 6.0
 const PINHEIRO_POR_M2 := 1.0 / 90.0  # densidade média na grama do bloco
 const PEDRAS := 45
+const PEDRAS_CORTE_POR_LADO := 7
 const LIVRE_DO_MURO_M := 4.0  # árvore e pedra começam depois do alambrado
 const LIVRE_DA_ARQUIBANCADA_M := 11.0
 const COR_MADEIRA := Color(0.42, 0.29, 0.19)
@@ -157,6 +158,55 @@ func _laterais() -> void:
 	st.generate_normals()
 	var mi := _malha(st.commit(), _material(Color.WHITE, true))
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_pedras_no_corte(cantos, fundo)
+	_sombra_do_bloco(fundo)
+
+
+## Pedras saindo das camadas de terra, meio enterradas na lateral.
+func _pedras_no_corte(cantos: Array, fundo: float) -> void:
+	var xs := []
+	var cores := []
+	for k in 4:
+		var a: Vector2 = cantos[k]
+		var b: Vector2 = cantos[(k + 1) % 4]
+		# O quadrado é anti-horário no plano 2D: para fora é a direita da aresta.
+		var fora := (b - a).normalized().orthogonal()
+		for j in PEDRAS_CORTE_POR_LADO:
+			var q := a.lerp(b, _rng.randf_range(0.05, 0.95))
+			var y := lerpf(_forma.altura(q) - 1.0, fundo + 1.0, _rng.randf_range(0.15, 0.9))
+			var esc := Vector3(_rng.randf_range(0.8, 1.8), _rng.randf_range(0.5, 1.1), _rng.randf_range(0.8, 1.8))
+			var giro := Basis(Vector3.UP, _rng.randf() * TAU)
+			xs.append(Transform3D(giro.scaled(esc), Vector3(q.x + fora.x * 0.2, y, -(q.y + fora.y * 0.2))))
+			var g := _rng.randf_range(0.48, 0.6)
+			cores.append(Color(g, g * 0.96, g * 0.92))
+	var esfera := SphereMesh.new()
+	esfera.radius = 0.9
+	esfera.height = 1.8
+	esfera.radial_segments = 6
+	esfera.rings = 3
+	_lote(esfera, xs, cores)
+
+
+## Sombra suave embaixo do bloco, no fundo claro: ele assenta em vez de flutuar.
+func _sombra_do_bloco(fundo: float) -> void:
+	var grad := Gradient.new()
+	grad.set_color(0, Color(0, 0, 0, 0.45))
+	grad.set_color(1, Color(0, 0, 0, 0))
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	var plano := PlaneMesh.new()
+	plano.size = Vector2.ONE * _lado * 1.5
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = tex
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var mi := _malha(plano, m)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var centro := _mn + Vector2.ONE * _lado * 0.5
+	mi.position = Vector3(centro.x, fundo - 2.0, -centro.y)
 
 
 # --- Muro ---------------------------------------------------------------------------

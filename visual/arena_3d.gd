@@ -123,6 +123,7 @@ var _centro := Vector3.ZERO
 var _tamanho := 60.0
 var _tremor := 0.0
 var _aneis := {}  # id -> MeshInstance3D (só os seus carros)
+var _marcadores := {}  # id -> MeshInstance3D (visão geral: o carro de longe)
 var _tombo := {}  # id -> {rolagem, v_rolagem, arfagem, v_arfagem} (rad, rad/s)
 var _foco := "jogador"  # carro da câmera dinâmica
 var _plano := 0  # 0 perseguição, 1 lateral, 2 frente baixa
@@ -172,6 +173,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 		c.queue_free()
 	_carros = {}
 	_aneis = {}
+	_marcadores = {}
 	_tombo = {}
 	_soltas = []
 	_malhas = {}
@@ -208,6 +210,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 			(c as CarroBloco).blindar(String(base.get("id", "")), int(blindagens[id]))
 		if id in SEUS:
 			_aneis[id] = _anel()
+		_marcadores[id] = _marcador(Aba.COR_DESTAQUE if id in SEUS else cor)
 	_foco = "jogador" if _carros.has("jogador") else String(_carros.keys()[0])
 	_plano = 0
 	_plano_desde = 0.0
@@ -262,6 +265,7 @@ func atualizar(delta: float) -> void:
 					+ absf(sin(tb["arfagem"])) * MEIO_COMPRIMENTO_M + float(tb.get("salto", 0.0))
 		_mostrar_dano(id, sb["dano"], bool(sb["eliminado"]))
 	_mostrar_aneis(b)
+	_mostrar_marcadores(b)
 	_canhoes(b, delta)
 	_eventos(delta)
 	_mover_pilotos(a, b, u, delta)
@@ -342,7 +346,7 @@ func _mirar() -> void:
 	var elev := deg_to_rad(ELEVACAO_GERAL_GRAUS if modo == "geral" else ELEVACAO_GRAUS)
 	var h := Vector3(sin(_orbita), 0.0, cos(_orbita))
 	if modo == "geral":
-		c -= h * _raio * 0.1  # mira além do centro: a arena desce e sai de baixo do painel
+		c += h * _raio * 0.12  # mira aquém do centro: o bloco sobe e ocupa a tela (o painel é estreito)
 	_camera.look_at_from_position(c + (h * cos(elev) + Vector3.UP * sin(elev)) * d, c, Vector3.UP)
 
 
@@ -536,6 +540,43 @@ func _mostrar_aneis(amostra: Dictionary) -> void:
 		else:
 			a.scale = Vector3.ONE * lerpf(0.85, 1.3, smoothstep(0.0, 1.0, u))
 			mat.albedo_color.a = (1.0 - smoothstep(0.4, 1.0, u)) * 0.9
+
+
+# --- Marcadores da visão geral ------------------------------------------------------
+
+const MARCADOR_ALTURA_M := 4.0  # acima do carro, na escala 1
+const MARCADOR_TAMANHO_REF := 75.0  # quadro (m) em que o marcador tem a escala 1
+
+
+## Losango na cor do carro (os seus em âmbar) acima dele: de longe, o carro
+## (4,5 m numa arena de 100 m) some; o marcador mostra onde está a briga.
+func _marcador(cor: Color) -> MeshInstance3D:
+	var m := MeshInstance3D.new()
+	var losango := PrismMesh.new()
+	losango.size = Vector3(1.6, 2.2, 1.6)
+	m.mesh = losango
+	m.rotation.z = PI  # ponta para baixo
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = cor
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.material_override = mat
+	m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	m.visible = false
+	_cena.add_child(m)
+	return m
+
+
+## Só na visão geral; cresce com o quadro (fica do mesmo tamanho na tela) e
+## some com o carro eliminado.
+func _mostrar_marcadores(amostra: Dictionary) -> void:
+	var esc := clampf(_tamanho / MARCADOR_TAMANHO_REF, 0.6, 4.0)
+	var sobe := 0.0 if Preferencias.reduzir_animacoes else sin(tempo * 3.0) * 0.3
+	for id in _marcadores:
+		var m: MeshInstance3D = _marcadores[id]
+		m.visible = modo == "geral" and not bool(amostra[id]["eliminado"])
+		if m.visible:
+			m.scale = Vector3.ONE * esc
+			m.position = _carros[id].position + Vector3.UP * (MARCADOR_ALTURA_M + sobe) * esc
 
 
 # --- Dano -----------------------------------------------------------------------
@@ -996,19 +1037,20 @@ func _chao() -> void:
 		for i in nx + 1:
 			alturas[j * (nx + 1) + i] = _forma.altura(mn + Vector2(i, j) * CHAO_PASSO_M)
 	# Terra da arena até um pouco além do muro (barreira e alambrado); dali
-	# para fora, grama (cor própria, sem a textura de terra).
+	# para fora, grama. A troca é por vértice, misturando as cores numa faixa
+	# (por quadrado da grade, a divisa saía em degraus).
+	var grama := PackedFloat32Array()
+	grama.resize((nx + 1) * (ny + 1))
+	for j in ny + 1:
+		for i in nx + 1:
+			var d := -float(_forma.muro_perto(mn + Vector2(i, j) * CHAO_PASSO_M)[0])  # > 0 fora
+			grama[j * (nx + 1) + i] = smoothstep(GRAMA_DEPOIS_DO_MURO_M - GRAMA_FAIXA_M, GRAMA_DEPOIS_DO_MURO_M + GRAMA_FAIXA_M, d)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var sg := SurfaceTool.new()
-	sg.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var ruido := FastNoiseLite.new()
 	ruido.frequency = 0.025
 	for j in ny:
 		for i in nx:
-			var centro := mn + Vector2(i + 0.5, j + 0.5) * CHAO_PASSO_M
-			var grama := float(_forma.muro_perto(centro)[0]) < -GRAMA_DEPOIS_DO_MURO_M
-			var tom := COR_GRAMA.lerp(COR_GRAMA_CLARA, clampf(ruido.get_noise_2dv(centro) * 0.9 + 0.5, 0.0, 1.0))
-			var alvo := sg if grama else st
 			var cantos := [[i, j], [i + 1, j], [i, j + 1], [i + 1, j], [i + 1, j + 1], [i, j + 1]]
 			for k in [0, 2, 1, 3, 5, 4]:
 				var ci: int = cantos[k][0]
@@ -1021,35 +1063,63 @@ func _chao() -> void:
 				var gy := (alturas[mini(cj + 1, ny) * (nx + 1) + ci] - alturas[maxi(cj - 1, 0) * (nx + 1) + ci]) / (2.0 * CHAO_PASSO_M)
 				var nrm := Vector3(-gx, 1.0, gy).normalized()
 				# Encosta íngreme (parede de vala, queda de rampa, pé de degrau) mais
-				# escura e o fundo mais escuro que o alto: lê as curvas de nível.
-				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.06, 0.7, 1.15) \
+				# escura; topo dos platôs mais claro e fundo das valas mais escuro:
+				# o relevo se lê de longe.
+				var luz := clampf(0.62 + 0.55 * nrm.dot(LUZ_CHAO), 0.45, 1.25) * clampf(1.0 + h * 0.11, 0.62, 1.22) \
 						* lerpf(0.55, 1.0, pow(nrm.y, 6.0))
-				alvo.set_color(tom * luz if grama else Color(luz, luz, luz))
-				alvo.set_uv(q / 7.0)
-				alvo.add_vertex(Vector3(q.x, h, -q.y))
+				var tom := COR_GRAMA.lerp(COR_GRAMA_CLARA, clampf(ruido.get_noise_2dv(q) * 0.9 + 0.5, 0.0, 1.0))
+				st.set_color(COR_TERRA.lerp(tom, grama[cj * (nx + 1) + ci]) * luz)
+				st.set_uv((q - mn) / lado)
+				st.add_vertex(Vector3(q.x, h, -q.y))
 	st.generate_normals()
 	var chao := MeshInstance3D.new()
 	chao.mesh = st.commit()
+	# A textura (manchas e rastros) clareia e escurece a terra e a grama.
 	var mt := StandardMaterial3D.new()
 	mt.vertex_color_use_as_albedo = true
-	var asfalto := MontadorPista.kit("asfalto_b")
-	if asfalto != null:
-		mt.albedo_texture = asfalto
-		mt.albedo_color = Color(1.1, 0.88, 0.66)  # terra batida clara, como na maquete
-	else:
-		mt.albedo_color = Color(0.46, 0.37, 0.28)
+	mt.albedo_texture = _textura_terra(mn, lado)
 	mt.roughness = 0.95
 	chao.material_override = mt
 	_cena.add_child(chao)
-	sg.generate_normals()
-	var gramado := MeshInstance3D.new()
-	gramado.mesh = sg.commit()
-	var mg := StandardMaterial3D.new()
-	mg.vertex_color_use_as_albedo = true
-	mg.roughness = 1.0
-	gramado.material_override = mg
-	_cena.add_child(gramado)
 	_chao_fisico(mn, nx, ny, alturas)
+
+
+## Manchas de terra úmida e seca (ruído em camadas, nativo e rápido) e rastros
+## de pneu em arco, como de carros rodando: pares de linhas mais escuras.
+func _textura_terra(mn: Vector2, lado: float) -> ImageTexture:
+	var ruido := FastNoiseLite.new()
+	ruido.seed = hash(_forma.muro)
+	ruido.frequency = 0.004
+	ruido.fractal_octaves = 5
+	ruido.fractal_gain = 0.55
+	var img := ruido.get_image(TERRA_PX, TERRA_PX)
+	img.convert(Image.FORMAT_RGB8)
+	img.adjust_bcs(1.5, 0.42, 1.0)  # claro e pouco contraste: manchas, não buracos
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(_forma.muro) + 7
+	var px := TERRA_PX / lado
+	for k in MARCAS:
+		var centro := _forma.largada(rng.randf() * TAU, rng.randf_range(0.0, 0.7))
+		var raio := rng.randf_range(5.0, 18.0)
+		var a0 := rng.randf() * TAU
+		var arco := rng.randf_range(1.5, 4.5)
+		var passos := int(raio * arco / 0.2)
+		for t in passos:
+			var ang := a0 + arco * float(t) / passos
+			var dir := Vector2.from_angle(ang)
+			for lado_pneu in [-0.8, 0.8]:
+				var q: Vector2 = centro + dir * (raio + float(lado_pneu))
+				if not _forma.dentro(q):
+					continue
+				var x := int((q.x - mn.x) * px)
+				var y := int((q.y - mn.y) * px)
+				for dx in 2:
+					for dy in 2:
+						var xx := clampi(x + dx, 0, TERRA_PX - 1)
+						var yy := clampi(y + dy, 0, TERRA_PX - 1)
+						img.set_pixel(xx, yy, img.get_pixel(xx, yy) * 0.95)
+	img.generate_mipmaps()
+	return ImageTexture.create_from_image(img)
 
 
 ## Corpo cinemático do carro na física de tela: segue a simulação e empurra o
@@ -1157,8 +1227,14 @@ const LOTACAO := {"CLUB": 0, "SPORT": 1, "NATIONAL": 1, "INTERNATIONAL": 2, "PRO
 var _lotacao := 1
 ## Grama fora do muro (a faixa antes dela é a terra da barreira e do alambrado).
 const GRAMA_DEPOIS_DO_MURO_M := 2.4
-const COR_GRAMA := Color(0.36, 0.47, 0.27)
-const COR_GRAMA_CLARA := Color(0.45, 0.55, 0.31)
+const GRAMA_FAIXA_M := 0.9  # meia largura da mistura terra/grama
+const COR_GRAMA := Color(0.38, 0.52, 0.29)
+const COR_GRAMA_CLARA := Color(0.47, 0.6, 0.32)
+## Terra da arena: cor base (a textura gerada só clareia e escurece) e a
+## textura, um pixel a cada lado/TERRA_PX m, com as marcas de pneu.
+const COR_TERRA := Color(0.66, 0.5, 0.36)
+const TERRA_PX := 512
+const MARCAS := 10  # rastros em arco (pares de pneus) pintados no chão
 ## Quadrado do bloco de terreno (2D): canto mínimo e lado.
 var _bloco_mn := Vector2.ZERO
 var _bloco_lado := 0.0
