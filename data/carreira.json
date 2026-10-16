@@ -51,13 +51,13 @@
     "menos_consistencia": true
    },
    "barato": {
-    "nome": "Operário",
+    "nome": "Versátil",
     "treina": false,
     "perfil": "equilibrado",
     "menos_consistencia": false
    },
    "promessa": {
-    "nome": "Revelação",
+    "nome": "Instintivo",
     "treina": true,
     "perfil": "equilibrado",
     "menos_consistencia": true

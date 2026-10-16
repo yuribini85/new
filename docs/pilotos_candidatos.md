@@ -12,19 +12,19 @@ Jonas Reid é o padrão, o que entra na cena que libera o segundo piloto. Cada c
 | `amir_castell` | Amir Castell | Calculista | arena | 4 | "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir." |
 | `ayla_moreno` | Ayla Moreno | Destemido | arena | 3 | "Vê uma brecha onde os outros veem um muro." |
 | `axel_brennan` | Axel Brennan | Destemido | corrida | 1 | "Larga para ganhar ou para não chegar. Ainda não decidiu qual." |
-| `bastian_kroll` | Bastian Kroll | Operário | arena | 8 | "Já foi rápido. Hoje é barato e conhece todo mundo no paddock." |
-| `caleb_wynn` | Caleb Wynn | Operário | corrida | 6 | "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar." |
-| `noor_haddad` | Noor Haddad | Revelação | corrida | 7 | "Crua, mas aprende rápido. Cada hora de treino aparece no carro." |
-| `sofia_rinaldi` | Sofia Rinaldi | Revelação | arena | 5 | "Veio do kart com fome. Treina como se a vaga fosse de outra." |
+| `bastian_kroll` | Bastian Kroll | Versátil | arena | 8 | "Já foi rápido. Hoje é barato e conhece todo mundo no paddock." |
+| `caleb_wynn` | Caleb Wynn | Versátil | corrida | 6 | "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar." |
+| `noor_haddad` | Noor Haddad | Instintivo | corrida | 7 | "Crua, mas aprende rápido. Cada hora de treino aparece no carro." |
+| `sofia_rinaldi` | Sofia Rinaldi | Instintivo | arena | 5 | "Veio do kart com fome. Treina como se a vaga fosse de outra." |
 
 ## Efeito de cada traço
 
 | traço | efeito | estado |
 |---|---|---|
-| Revelação | o treino do piloto principal vale para ele (`treina: true`) | ativo |
+| Instintivo | o treino do piloto principal vale para ele (`treina: true`) | ativo |
 | Calculista | perde menos consistência que o segundo piloto padrão | número com o `custo_staff`, no playtest |
 | Destemido | tenta mais ultrapassagens | idem (o piloto do jogador já tem agressividade 1,0: o efeito é dos outros traços terem menos) |
-| Operário | salário menor | idem |
+| Versátil | salário menor | idem |
 
 Trocar não custa nada até o `custo_staff` existir; aí entram preço de contratação e salário
 por traço.

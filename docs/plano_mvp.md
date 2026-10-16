@@ -370,7 +370,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     a chance de tentar a ultrapassagem; valores provisórios até o playtest) e uma frase de
     personalidade, mostrada quando a equipe vence. O ritmo dos rivais não muda. O segundo
     piloto passa a ser escolhido entre 8 candidatos, dois por traço (Calculista, Destemido,
-    Operário, Revelação; eram Constante, Agressivo, Barato e Promessa, renomeados pelo
+    Versátil, Instintivo; eram Constante, Agressivo, Barato e Promessa, renomeados pelo
     usuário em 2026-10-16; `docs/pilotos_candidatos.md`); custo e salário entram com o
     `custo_staff`.
 57. **Câmera 3D** (2026-10-11, pedido do usuário): corrida e arena em perspectiva para o
