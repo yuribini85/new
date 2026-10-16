@@ -8,7 +8,8 @@ name: Demo web
 
 on:
   push:
-    branches: [main]
+    # A branch de trabalho publica a demo a cada push (o usuário testa por ela).
+    branches: [main, claude/eloquent-clarke-v7l68k]
   workflow_dispatch: {}
 
 permissions:
