@@ -8,7 +8,7 @@ const PARTES := [["equipe", "EQUIPE"], ["sede", "SEDE"]]
 ## Segundo piloto: busto na aba (cabeça à cintura do corpo 600 × 900) e o palco
 ## da escolha, com o corpo inteiro.
 const BUSTO := Vector2(190, 230)
-const PALCO_ALTURA := 400.0
+const PALCO_ALTURA := 470.0
 
 var _parte := "equipe"
 
@@ -253,9 +253,6 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var tr := EquipeJogador.traco(dados, id)
 	if not tr.is_empty():
 		_selo_traco(String(tr["nome"]), v)
-	var frase := String(EquipeJogador.piloto(dados, id).get("frase", ""))
-	if frase != "":
-		rotulo(frase, FONTE_PEQUENA, COR_SECUNDARIA, v)
 	if EquipeJogador.piloto(dados, id).has("equipe"):
 		rotulo("Ex-%s." % EquipeJogador.piloto(dados, id)["equipe"], FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
@@ -390,7 +387,7 @@ func _animar_barra(b: Dictionary, valor: float, dur: float) -> void:
 
 ## Os candidatos um por vez, de corpo inteiro na garagem (referência do
 ## usuário): setas em caixa para passar; a placa com o nome sobre as pernas;
-## estilo, frase, os atributos com ícones e Contratar.
+## estilo, os atributos com ícones e Contratar.
 func _escolher_segundo(vaga: String = "corrida") -> void:
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	# Decisão 71: o mercado do período (renova a cada dia); o atual da vaga junto.
@@ -415,8 +412,8 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		pv.add_child(palco)
 		var corpo := TextureRect.new()
 		corpo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		corpo.offset_top = 4
-		corpo.offset_bottom = -4  # o corpo inteiro, sem cortar
+		corpo.offset_top = 24  # mais baixo, encostado na placa
+		corpo.offset_bottom = 0  # o corpo inteiro (a arte termina na coxa), sem cortar
 		corpo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		corpo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -439,27 +436,16 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		linha_estilo.add_theme_constant_override("separation", 12)
 		info.add_child(linha_estilo)
 		var vao := Control.new()
-		vao.custom_minimum_size = Vector2(90, 0)
+		vao.custom_minimum_size = Vector2(104, 0)
 		linha_estilo.add_child(vao)
 		var estilo := Label.new()
 		estilo.text = "ESTILO:"
-		Tipografia.rotulo(estilo, "semibold", 22)
+		Tipografia.rotulo(estilo, "semibold", 32)
 		estilo.add_theme_color_override("font_color", Color(0.86, 0.86, 0.86))
 		linha_estilo.add_child(estilo)
 		var selo := CenterContainer.new()
 		linha_estilo.add_child(selo)
 		linha_estilo.add_child(_riscos())
-		var frase := Label.new()
-		frase.add_theme_font_override("font", Tipografia.fonte("regular"))
-		frase.add_theme_font_size_override("font_size", 22)
-		frase.add_theme_color_override("font_color", Color(0.78, 0.78, 0.8))
-		frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		frase.custom_minimum_size.y = 58  # duas linhas: a tela não pula ao trocar de piloto
-		frase.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-		var margem_frase := MarginContainer.new()
-		margem_frase.add_theme_constant_override("margin_left", 90)
-		margem_frase.add_child(frase)
-		info.add_child(margem_frase)
 		# Os atributos em barras que andam na troca: o estilo muda a
 		# consistência e a agressividade (o ritmo cresce depois, no treino).
 		var quadro := PanelContainer.new()
@@ -520,9 +506,8 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			for f in selo.get_children():
 				f.queue_free()
 			var tr: Dictionary = EquipeJogador.config(dados).get("tracos", {}).get(String(c["traco"]), {})
-			_selo_traco(String(tr.get("nome", "")), selo)
+			_selo_traco(String(tr.get("nome", "")), selo, 28)
 			linha_estilo.visible = String(tr.get("nome", "")) != ""
-			frase.text = String(c.get("frase", ""))
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
 			var at := EquipeJogador.atributos(dados, jogador if atual else null, String(c["id"]))
 			var valores := [float(at.get("ritmo", 1.0)), float(at.get("consistencia", 0.0)), float(at.get("agressividade", 0.0))]
@@ -590,14 +575,14 @@ func _placa_nome(pai: Control) -> Label:
 ## Três riscos dourados inclinados (enfeite ao lado do estilo).
 func _riscos() -> Control:
 	var r := Control.new()
-	r.custom_minimum_size = Vector2(70, 26)
+	r.custom_minimum_size = Vector2(96, 36)
 	r.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	r.draw.connect(func():
 		for k in 3:
-			var x := 6.0 + k * 20.0
-			r.draw_colored_polygon(PackedVector2Array([Vector2(x + 8, 0), Vector2(x + 18, 0),
-					Vector2(x + 10, 26), Vector2(x, 26)]), COR_DESTAQUE))
+			var x := 6.0 + k * 28.0
+			r.draw_colored_polygon(PackedVector2Array([Vector2(x + 12, 0), Vector2(x + 25, 0),
+					Vector2(x + 13, 36), Vector2(x, 36)]), COR_DESTAQUE))
 	return r
 
 
@@ -639,6 +624,7 @@ func _linha_atributo(pai: Control, icone_: String, nome: String) -> Dictionary:
 	h.custom_minimum_size = Vector2(0, 42)
 	pai.add_child(h)
 	var ic := IconeVetor.new(icone_, Color(0.85, 0.85, 0.87))
+	ic.cor_fundo = Color(0.05, 0.05, 0.06)  # furos do desenho na cor do quadro
 	ic.custom_minimum_size = Vector2(40, 40)
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(ic)
@@ -807,7 +793,7 @@ func _sombra_chao() -> TextureRect:
 
 
 ## Traço como selo: texto escuro sobre a cor de destaque.
-func _selo_traco(texto: String, pai: Control) -> void:
+func _selo_traco(texto: String, pai: Control, tamanho := 18) -> void:
 	if texto == "":
 		return
 	var p := PanelContainer.new()
@@ -822,7 +808,7 @@ func _selo_traco(texto: String, pai: Control) -> void:
 	p.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var l := Label.new()
 	l.text = texto.to_upper()
-	Tipografia.rotulo(l, "semibold", 18)
+	Tipografia.rotulo(l, "semibold", tamanho)
 	l.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
 	p.add_child(l)
 	pai.add_child(p)
