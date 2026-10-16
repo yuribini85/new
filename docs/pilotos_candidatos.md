@@ -44,9 +44,9 @@ corpo inteiro, sob um foco de luz com sombra no chão, passando com as setas da 
 ## Pack premium (decisão do usuário, 2026-10-16)
 
 Três pilotos de elite, vendidos juntos num pack (compra única, permanente). 100% em
-tudo (ritmo no teto do treino, consistência e agressividade 1), sem cansaço. Antes da
-compra aparecem como vitrine na seleção (botão PACK PREMIUM no lugar de Contratar);
-depois ficam sempre no mercado. Até a loja do aparelho, a compra é de teste.
+tudo (ritmo no teto do treino, consistência e agressividade 1), sem cansaço. Vendido
+com dinheiro real numa tela de loja própria (a criar); na seleção aparecem só depois de
+comprados (flag PACK_PREMIUM) e ficam sempre no mercado.
 
 | id | nome | vaga | estilo |
 |---|---|---|---|

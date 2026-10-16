@@ -396,9 +396,6 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 	var atual_id := EquipeJogador.piloto_vaga(jogador, vaga)
 	if atual_id != "":
 		lista.push_front(EquipeJogador.piloto(dados, atual_id))
-	# Vitrine do pack premium: os premium do tipo, antes da compra, no fim.
-	if not EquipeJogador.tem_pack_premium(jogador):
-		lista.append_array(EquipeJogador.premium_do_tipo(dados, tipo))
 	if lista.is_empty():
 		avisar("Ninguém no mercado agora. Renova em %s." % horas_min(EquipeJogador.renova_em(dados, agora_m)), false)
 		return
@@ -476,8 +473,6 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 				linhas.add_child(sep)
 			barras.append(_linha_atributo(linhas, itens[k][0], itens[k][1]))
 		var b := _botao_contratar(info)
-		var pack := _botao_contratar(info, "PACK PREMIUM")
-		pack.pressed.connect(func(): _comprar_pack(vaga))
 		var na_equipe := Label.new()
 		na_equipe.text = "NA EQUIPE"
 		Tipografia.rotulo(na_equipe, "semibold", 28)
@@ -528,9 +523,7 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 					float(at.get("consistencia", 0.0)), float(at.get("agressividade", 0.0))]
 			for k in barras.size():
 				_animar_barra(barras[k], valores[k], 0.0 if lado == 0 and Preferencias.reduzir_animacoes else 0.35)
-			var vitrine := bool(c.get("premium", false)) and not EquipeJogador.tem_pack_premium(jogador)
-			b.visible = not atual and outra == "" and not vitrine
-			pack.visible = vitrine
+			b.visible = not atual and outra == ""
 			na_equipe.visible = atual or outra != ""
 			na_equipe.text = "NA EQUIPE" if atual else ("NA EQUIPE · " + String(EquipeJogador.NOMES_VAGA.get(outra, "")))
 			if lado != 0 and not Preferencias.reduzir_animacoes:
@@ -556,19 +549,6 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			mudou.emit()
 			historia("PILOTO_CONTRATADO", {"vaga": vaga}))
 		mostrar.call(0), [], estilo_painel)
-
-
-## Pack premium (os 3 pilotos de elite, compra única e permanente). Até a loja
-## do aparelho entrar (depois do MVP, como o Sem anúncios), é uma compra de
-## teste: libera na hora, para ver e jogar com eles.
-func _comprar_pack(vaga: String) -> void:
-	jogador.flags[EquipeJogador.FLAG_PACK_PREMIUM] = true
-	get_node("/root/SaveManager").salvar()
-	Sons.tocar_ui(self, "moeda", -4.0)
-	avisar("Pack premium liberado (compra de teste): 3 pilotos de elite na equipe.")
-	fechar_painel.emit()
-	mudou.emit()
-	_escolher_segundo.call_deferred(vaga)
 
 
 ## Placa do nome logo abaixo do piloto: faixa escura inclinada com o risco
@@ -694,7 +674,7 @@ func _linha_atributo(pai: Control, icone_: String, nome: String) -> Dictionary:
 
 
 ## Contratar: grande e dourado, com a bandeira, riscos à esquerda e a seta.
-func _botao_contratar(pai: Control, texto := "CONTRATAR") -> Button:
+func _botao_contratar(pai: Control) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	b.custom_minimum_size = Vector2(0, 84)
@@ -732,7 +712,7 @@ func _botao_contratar(pai: Control, texto := "CONTRATAR") -> Button:
 	bandeira.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(bandeira)
 	var t := Label.new()
-	t.text = texto
+	t.text = "CONTRATAR"
 	Tipografia.rotulo(t, "display_eb", 50)
 	t.add_theme_color_override("font_color", escuro)
 	h.add_child(t)

@@ -900,6 +900,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     `carreira.json` → `variacao_piloto.fator` escala no playtest. O ritmo segue o GT2 e a
     barra mostra o ritmo sobre o teto do treino (só o premium chega a 100%). Pack premium:
     3 pilotos de elite (1 de corrida, 2 de arena; nomes inventados), compra única e
-    permanente, 100% em tudo, sem cansaço; antes da compra aparecem como vitrine na
-    seleção, depois ficam sempre no mercado. A compra real entra com a loja do aparelho
-    (como o Sem anúncios); até lá é uma compra de teste.
+    permanente, 100% em tudo, sem cansaço. Vendido com dinheiro real numa tela de loja
+    própria, separada (pendente: criar essa loja, com a loja do aparelho, como o Sem
+    anúncios); na seleção os premium aparecem só depois de comprados e ficam sempre no
+    mercado (flag PACK_PREMIUM).
