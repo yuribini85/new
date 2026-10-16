@@ -47,6 +47,20 @@ static func fonte(peso: String) -> Font:
 	return _cache[peso]
 
 
+## A família inclinada (itálico desenhado: a mesma fonte com o topo para a
+## direita), para títulos de impacto.
+static func italica(peso: String) -> Font:
+	var chave := peso + "@italica"
+	if not _cache.has(chave):
+		var v := FontVariation.new()
+		v.base_font = load(ARQUIVOS[peso])  # direto na fonte: a variação sobre variação perde a inclinação
+		v.spacing_glyph = ESPACO_LETRAS[peso]
+		v.fallbacks = [ThemeDB.fallback_font]
+		v.variation_transform = Transform2D(Vector2(1.0, 0.0), Vector2(-0.3, 1.0), Vector2.ZERO)
+		_cache[chave] = v
+	return _cache[chave]
+
+
 ## Ação principal: preenchida no ocre, texto escuro, caixa alta.
 static func acao_primaria(b: Button, texto: String, fundo := Aba.COR_DESTAQUE, cor := Color(0.1, 0.1, 0.1),
 		tamanho := TAMANHO_PRIMARIA, altura := ALTURA_PRIMARIA) -> void:

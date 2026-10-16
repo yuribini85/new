@@ -55,6 +55,40 @@ func _draw() -> void:
 			var r := lado * 0.5
 			draw_polyline(PackedVector2Array([c + Vector2(-0.7, 0.0) * r, c + Vector2(-0.2, 0.5) * r,
 					c + Vector2(0.75, -0.55) * r]), cor, maxf(r * 0.28, 2.0), true)
+		"velocimetro":
+			# Mostrador: arco de 3/4 e o ponteiro.
+			var r := lado * 0.5
+			var w := maxf(r * 0.16, 2.0)
+			draw_arc(c + Vector2(0, 0.12) * r, r * 0.8, PI * 0.8, PI * 2.2, 24, cor, w, true)
+			draw_line(c + Vector2(0, 0.12) * r, c + Vector2(0.45, -0.35) * r, cor, w, true)
+			draw_circle(c + Vector2(0, 0.12) * r, r * 0.14, cor)
+		"mira":
+			# Alvo: círculo, ponto e as quatro marcas.
+			var r := lado * 0.5
+			var w := maxf(r * 0.13, 2.0)
+			draw_arc(c, r * 0.62, 0.0, TAU, 32, cor, w, true)
+			draw_circle(c, r * 0.14, cor)
+			for d in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
+				draw_line(c + d * r * 0.4, c + d * r * 0.98, cor, w, true)
+		"punho":
+			# Punho fechado: os quatro dedos, o polegar e o pulso.
+			var r := lado * 0.5
+			for k in 4:
+				draw_rect(Rect2(c + Vector2(-0.62 + k * 0.32, -0.72) * r, Vector2(0.28, 0.5) * r), cor)
+			draw_rect(Rect2(c + Vector2(-0.62, -0.28) * r, Vector2(1.24, 0.62) * r), cor)
+			draw_rect(Rect2(c + Vector2(-0.86, -0.32) * r, Vector2(0.3, 0.42) * r), cor)
+			draw_rect(Rect2(c + Vector2(-0.42, 0.34) * r, Vector2(0.84, 0.5) * r), cor)
+		"cronometro":
+			var r := lado * 0.5
+			var w := maxf(r * 0.14, 2.0)
+			draw_arc(c + Vector2(0, 0.12) * r, r * 0.72, 0.0, TAU, 32, cor, w, true)
+			draw_rect(Rect2(c + Vector2(-0.18, -0.92) * r, Vector2(0.36, 0.2) * r), cor)
+			draw_line(c + Vector2(0, 0.12) * r, c + Vector2(0, -0.32) * r, cor, w, true)
+			draw_line(c + Vector2(0, 0.12) * r, c + Vector2(0.3, 0.3) * r, cor, w, true)
+		"chevron":
+			var r := lado * 0.5
+			draw_polyline(PackedVector2Array([c + Vector2(-0.3, -0.62) * r, c + Vector2(0.32, 0.0) * r,
+					c + Vector2(-0.3, 0.62) * r]), cor, maxf(r * 0.2, 2.0), true)
 		"x":
 			var r := lado * 0.5
 			var w := maxf(r * 0.28, 2.0)

@@ -16,6 +16,13 @@ var _titulo_cor := Color.WHITE
 var _estilo := {}
 var _fechar_x: Button
 var _vao_x: Control
+var _cartao: PanelContainer
+## Estilo "fundo": a imagem atrás do conteúdo, recortada (sem esticar) e
+## escurecida embaixo para o texto ler.
+var _fundo: Control
+var _fundo_img: TextureRect
+## Estilo "titulo_pincel": título inclinado com a pincelada atrás.
+var _pincel: Pincel
 ## Controles extras no cabeçalho, entre o título e o × (estilo "titulo_extra").
 var _extra_titulo: HBoxContainer
 ## Largura útil do título no cartão (px de uma tela de 720).
@@ -65,6 +72,39 @@ func _init() -> void:
 	sb.set_border_width_all(2)
 	cartao.add_theme_stylebox_override("panel", sb)
 	margem.add_child(cartao)
+	_cartao = cartao
+	_fundo = Control.new()
+	_fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fundo.visible = false
+	cartao.add_child(_fundo)
+	_fundo_img = TextureRect.new()
+	_fundo_img.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for lado in ["offset_left", "offset_top"]:
+		_fundo_img.set(lado, -20.0)  # dentro da borda dourada
+	for lado in ["offset_right", "offset_bottom"]:
+		_fundo_img.set(lado, 20.0)
+	_fundo_img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_fundo_img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme, recorta
+	_fundo_img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fundo.add_child(_fundo_img)
+	var veu := TextureRect.new()
+	var grad := Gradient.new()
+	grad.offsets = PackedFloat32Array([0.0, 0.45, 1.0])
+	grad.colors = PackedColorArray([Color(0, 0, 0, 0.35), Color(0, 0, 0, 0.2), Color(0.02, 0.02, 0.03, 0.92)])
+	var gt := GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill_from = Vector2(0, 0)
+	gt.fill_to = Vector2(0, 1)
+	veu.texture = gt
+	veu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	veu.stretch_mode = TextureRect.STRETCH_SCALE  # degradê: sem proporção
+	veu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	veu.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for lado in ["offset_left", "offset_top"]:
+		veu.set(lado, -20.0)
+	for lado in ["offset_right", "offset_bottom"]:
+		veu.set(lado, 20.0)
+	_fundo.add_child(veu)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 14)
 	cartao.add_child(v)
@@ -73,6 +113,10 @@ func _init() -> void:
 	_painel_titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
 	_painel_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_painel_titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_pincel = Pincel.new()
+	_pincel.show_behind_parent = true
+	_pincel.visible = false
+	_painel_titulo.add_child(_pincel)
 	# Linha do título: o × à direita (só com fora_fecha) e um vão do mesmo
 	# tamanho à esquerda, para o título centrado ficar no meio do cartão.
 	var linha_titulo := HBoxContainer.new()
@@ -172,6 +216,7 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 	while tam > 40 and f.get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > LARGURA_TITULO:
 		tam -= 4
 	_painel_titulo.add_theme_font_size_override("font_size", tam)
+	_aplicar_visual(estilo, titulo)
 	_fechar_x.visible = estilo.get("fora_fecha", false)
 	_vao_x.visible = _fechar_x.visible and estilo.get("titulo_centro", false)
 	var extra: Callable = estilo.get("titulo_extra", Callable())
@@ -234,6 +279,48 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 		_painel_botoes.add_child(bt)
 	_painel_raiz.visible = true
 	_ajustar.call_deferred()
+
+
+## Fundo com imagem ("fundo": Texture2D) e título de impacto ("titulo_pincel"):
+## o título inclinado com a pincelada e o × numa caixa dourada.
+func _aplicar_visual(estilo: Dictionary, titulo: String) -> void:
+	var tex: Texture2D = estilo.get("fundo", null)
+	_fundo.visible = tex != null
+	_fundo_img.texture = tex
+	_cartao.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW if tex != null else CanvasItem.CLIP_CHILDREN_DISABLED
+	var pincel: bool = estilo.get("titulo_pincel", false)
+	_pincel.visible = pincel
+	if not pincel:
+		_painel_titulo.add_theme_font_override("font", Tipografia.fonte("semibold"))
+		_painel_titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+		_painel_titulo.remove_theme_color_override("font_shadow_color")
+		_fechar_x.flat = true
+		_fechar_x.custom_minimum_size = Vector2(Tipografia.ALTURA_SECUNDARIA, Tipografia.ALTURA_SECUNDARIA)
+		for e in ["normal", "hover", "pressed", "focus"]:
+			_fechar_x.remove_theme_stylebox_override(e)
+		_fechar_x.add_theme_font_size_override("font_size", 64)
+		_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
+		return
+	var tam := 60
+	_painel_titulo.add_theme_font_override("font", Tipografia.italica("display"))
+	_painel_titulo.add_theme_font_size_override("font_size", tam)
+	_painel_titulo.add_theme_color_override("font_color", Color(0.96, 0.94, 0.9))
+	_painel_titulo.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
+	_painel_titulo.add_theme_constant_override("shadow_offset_y", 3)
+	var largura := Tipografia.italica("display").get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+	_pincel.position = Vector2(-34.0, tam * 0.5)
+	_pincel.size = Vector2(largura + 70.0, tam * 0.62)
+	var caixa := StyleBoxFlat.new()
+	caixa.bg_color = Color(0.05, 0.05, 0.06, 0.75)
+	caixa.border_color = Aba.COR_DESTAQUE
+	caixa.set_border_width_all(2)
+	caixa.set_corner_radius_all(4)
+	_fechar_x.flat = false  # botão chato não desenha a caixa
+	_fechar_x.custom_minimum_size = Vector2(66, 66)
+	for e in ["normal", "hover", "pressed", "focus"]:
+		_fechar_x.add_theme_stylebox_override(e, caixa)
+	_fechar_x.add_theme_font_size_override("font_size", 48)
+	_fechar_x.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
 
 
 ## Ações no padrão das telas, no fim do conteúdo: a primeira como a ação
