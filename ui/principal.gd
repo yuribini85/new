@@ -271,7 +271,14 @@ func _navegacao() -> HBoxContainer:
 		b.pressed.connect(func(): Sons.tocar_ui(self, "toque", -6.0))
 		barra.add_child(b)
 		_botoes.append(b)
-		b.pressed.connect(_ir_para.bind(d[1]))
+		if d[1] == 1:
+			# LOJAS na barra abre sempre o mapa, não a última loja visitada.
+			b.pressed.connect(func():
+				if not _todas[1].no_mapa():
+					_todas[1].voltar_ao_mapa()
+				_ir_para(1))
+		else:
+			b.pressed.connect(_ir_para.bind(d[1]))
 		_ancoras["NAV_" + NOMES_ABA[d[1]]] = b
 	# Começa na primeira tela que o tutorial já apresentou (a Oficina só depois dele).
 	var inicio := 0

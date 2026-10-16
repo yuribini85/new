@@ -197,14 +197,10 @@ Mara[pensativa]: Quem chega ao topo tem patrocinador batendo na porta.
 Sistema: The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sai em Corridas.
 
 # 1. O primeiro carro: a garagem começa vazia.
-= CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara; lembrete=CW_C00L
+= CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara
 Mara[cruzados]: A garagem está vazia; o último carro foi junto com as dívidas.
 Mara[explica]: O caixa dá para um carro, e só. Cada um mostra como chega na estreia: procure o MAIS FORTE, não o mais barato.
 Sistema: Vá para as Lojas e compre o primeiro carro.
-[HIGHLIGHT_NAV_LOJA]
-
-= CW_C00L | LEMBRETE | personagem=dono; proibe=FIRST_CAR
-Mara: Sem carro, não tem corrida. As Lojas estão ali.
 [HIGHLIGHT_NAV_LOJA]
 
 # 2. Comprado o carro, o piloto: a equipe nasce aqui.
@@ -458,59 +454,49 @@ Kenji: Carro com cara de equipe não anda mais rápido. Mas chega diferente.
 = CW_PT03 | PINTURA_APLICADA | personagem=dono; requer=FIRST_PAINT; repetivel=sim; reativa=sim
 Kenji: Deixa secar antes de bater em alguém.
 
-# Lojas: na primeira, o vendedor ensina os filtros; depois, só o cumprimento.
+# Lojas: o vendedor cumprimenta sem dizer o nome (a caixa já mostra) e sem falar de país
+# (as marcas são fictícias); na primeira loja, o Sistema ensina a abrir a ficha.
 = CW_LJ01 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_CHARGE_FOLIO
-Edgar: Edgar Halloway, Charge Folio. Bem-vindo. Aqui não se vende carro; se confia um.
-Edgar: Alemães, italianos, franceses, ingleses, suecos, do Leste e até brasileiros. Cada um com o seu sotaque na estrada.
-Edgar: Cada carro mostra potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes.
+Edgar: Boas-vindas à minha loja. Aqui não se vende carro; se confia um.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ02 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_CHARGE_FOLIO; flags=SHOP_CHARGE_FOLIO
-Edgar: Edgar Halloway, Charge Folio. Europeus de todo canto, e até brasileiros.
-Edgar: Escolha sem pressa. Pressa é coisa de quem compra mal.
+Edgar: Boas-vindas. Escolha sem pressa; pressa é coisa de quem compra mal.
 
 = CW_LJ03 | LOJA:relay_room_garage | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_RELAY_ROOM
-Sal: Sal Moretti, da Relay Room! Carro bom e preço justo, palavra de vendedor.
+Sal: Entra, entra! Carro bom e preço justo, palavra de vendedor.
 Sal: Aqui é tudo Hayase. Conheço cada parafuso.
-Sal: Embaixo de cada carro: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente.
+Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ04 | LOJA:relay_room_garage | personagem=dono; proibe=SHOP_RELAY_ROOM; flags=SHOP_RELAY_ROOM
-Sal: Sal Moretti! Relay Room. Aqui é tudo Hayase, e eu conheço cada parafuso.
+Sal: Entra, entra! Aqui é tudo Hayase, e eu conheço cada parafuso.
 Sal: Gostou de algum? Pra você, preço de tabela. Que é preço de amigo.
 
 = CW_LJ05 | LOJA:brace_yard_works | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_BRACE_YARD
-Bianca: Bianca Sterling, Brace Yard Works. Champanhe? Não? Mais pra mim.
-Bianca: Hozuki, Sanga, Kosame e Ishigumo. Carro pra quem pretende ser visto.
-Bianca: Potência, peso e preço estão embaixo de cada carro. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência.
+Bianca: Boas-vindas. Champanhe? Não? Mais pra mim.
+Bianca: Carro pra quem pretende ser visto.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ06 | LOJA:brace_yard_works | personagem=dono; proibe=SHOP_BRACE_YARD; flags=SHOP_BRACE_YARD
-Bianca: Bianca Sterling, Brace Yard Works. Hozuki, Sanga, Kosame e Ishigumo.
-Bianca: O preço está embaixo do carro. Aqui ninguém pergunta duas vezes.
+Bianca: Fique à vontade. O preço está embaixo do carro; aqui ninguém pergunta duas vezes.
 
 = CW_LJ07 | LOJA:return_chapter_customs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_RETURN_CHAPTER
-Nora: Nora Lindqvist, Return Chapter. Pergunte o que quiser; eu respondo com números.
-Nora: Só Kanaya. Potência, peso e preço estão embaixo de cada carro. Compare antes de se apaixonar.
-Nora: Posso comprar mostra só o que o caixa paga. O outro botão ordena pelos mais baratos ou pelos mais potentes.
+Nora: Boas-vindas. Pergunte o que quiser; eu respondo com números.
+Nora: Compare antes de se apaixonar.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ08 | LOJA:return_chapter_customs | personagem=dono; proibe=SHOP_RETURN_CHAPTER; flags=SHOP_RETURN_CHAPTER
-Nora: Nora Lindqvist, Return Chapter. Só Kanaya.
 Nora: Carro certo é o que entra na prova que você quer correr.
 
 = CW_LJ09 | LOJA:shared_grid_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SHARED_GRID
-Jade: Jade Ryker, Shared Grid Motors. Oito marcas americanas, um catálogo, zero tempo a perder.
-Jade: Potência, peso e preço embaixo de cada carro.
-Jade: Liga Posso comprar e põe os mais potentes na frente. Eu faria assim.
+Jade: Boas-vindas. Um catálogo, zero tempo a perder.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ10 | LOJA:shared_grid_motors | personagem=dono; proibe=SHOP_SHARED_GRID; flags=SHOP_SHARED_GRID
-Jade: Jade Ryker, Shared Grid. Oito marcas americanas na mesma grade.
-Jade: Filtra pelo que cabe no caixa. O resto é vitrine.
+Jade: De volta? Escolhe e leva. O resto é vitrine.
 
 = CW_LJ11 | LOJA:spare_penny_repairs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SPARE_PENNY
-Mara: Spare Penny. Mizuchi, Hoshino e Tomoe; ninguém aqui vende pose.
-Mara[explica]: Potência, peso e preço estão embaixo de cada carro. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.
+Mara: Spare Penny. Ninguém aqui vende pose.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 # ---------------------------------------------------------------- Comentários de contexto

@@ -49,7 +49,6 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_L02` | `ABA:LICENCAS` | — | `LICENSE_OFFLINE_TUTORIAL_SEEN`, `LICENSE_SYSTEM_UNLOCKED` |
 | `CW_GR00` | `ENCADEADA` | — | `GRID_INTRO` |
 | `CW_C00` | `ENCADEADA` | — | — |
-| `CW_C00L` | `LEMBRETE` | — | — |
 | `CW_C01B` | `COMPRA_CARRO` | — | `FIRST_CAR` |
 | `CW_L03` | `LICENCA_TREINO_INICIO` | — | `FIRST_TRAINING_STARTED` |
 | `CW_L04` | `LICENCA_PRONTA` | — | `FIRST_TRAINING_READY` |

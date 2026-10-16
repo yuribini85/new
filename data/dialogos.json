@@ -842,29 +842,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "cenario": "oficina_mara",
-  "lembrete": "CW_C00L"
- },
- {
-  "id": "CW_C00L",
-  "trigger": "LEMBRETE",
-  "falas": [
-   {
-    "quem": "mara",
-    "texto": "Sem carro, não tem corrida. As Lojas estão ali."
-   },
-   {
-    "acao": "HIGHLIGHT_NAV_LOJA"
-   }
-  ],
-  "requer": [],
-  "proibe": [
-   "FIRST_CAR"
-  ],
-  "flags": [],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "dono"
+  "cenario": "oficina_mara"
  },
  {
   "id": "CW_C01B",
@@ -2200,15 +2178,7 @@
   "falas": [
    {
     "quem": "vendedor_charge_folio",
-    "texto": "Edgar Halloway, Charge Folio. Bem-vindo. Aqui não se vende carro; se confia um."
-   },
-   {
-    "quem": "vendedor_charge_folio",
-    "texto": "Alemães, italianos, franceses, ingleses, suecos, do Leste e até brasileiros. Cada um com o seu sotaque na estrada."
-   },
-   {
-    "quem": "vendedor_charge_folio",
-    "texto": "Cada carro mostra potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes."
+    "texto": "Boas-vindas à minha loja. Aqui não se vende carro; se confia um."
    },
    {
     "quem": "sistema",
@@ -2233,11 +2203,7 @@
   "falas": [
    {
     "quem": "vendedor_charge_folio",
-    "texto": "Edgar Halloway, Charge Folio. Europeus de todo canto, e até brasileiros."
-   },
-   {
-    "quem": "vendedor_charge_folio",
-    "texto": "Escolha sem pressa. Pressa é coisa de quem compra mal."
+    "texto": "Boas-vindas. Escolha sem pressa; pressa é coisa de quem compra mal."
    }
   ],
   "requer": [],
@@ -2257,15 +2223,15 @@
   "falas": [
    {
     "quem": "vendedor_relay_room",
-    "texto": "Sal Moretti, da Relay Room! Carro bom e preço justo, palavra de vendedor."
+    "texto": "Entra, entra! Carro bom e preço justo, palavra de vendedor."
    },
    {
     "quem": "vendedor_relay_room",
     "texto": "Aqui é tudo Hayase. Conheço cada parafuso."
    },
    {
-    "quem": "vendedor_relay_room",
-    "texto": "Embaixo de cada carro: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente."
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
    }
   ],
   "requer": [],
@@ -2286,7 +2252,7 @@
   "falas": [
    {
     "quem": "vendedor_relay_room",
-    "texto": "Sal Moretti! Relay Room. Aqui é tudo Hayase, e eu conheço cada parafuso."
+    "texto": "Entra, entra! Aqui é tudo Hayase, e eu conheço cada parafuso."
    },
    {
     "quem": "vendedor_relay_room",
@@ -2310,15 +2276,11 @@
   "falas": [
    {
     "quem": "vendedora_brace_yard",
-    "texto": "Bianca Sterling, Brace Yard Works. Champanhe? Não? Mais pra mim."
+    "texto": "Boas-vindas. Champanhe? Não? Mais pra mim."
    },
    {
     "quem": "vendedora_brace_yard",
-    "texto": "Hozuki, Sanga, Kosame e Ishigumo. Carro pra quem pretende ser visto."
-   },
-   {
-    "quem": "vendedora_brace_yard",
-    "texto": "Potência, peso e preço estão embaixo de cada carro. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência."
+    "texto": "Carro pra quem pretende ser visto."
    },
    {
     "quem": "sistema",
@@ -2343,11 +2305,7 @@
   "falas": [
    {
     "quem": "vendedora_brace_yard",
-    "texto": "Bianca Sterling, Brace Yard Works. Hozuki, Sanga, Kosame e Ishigumo."
-   },
-   {
-    "quem": "vendedora_brace_yard",
-    "texto": "O preço está embaixo do carro. Aqui ninguém pergunta duas vezes."
+    "texto": "Fique à vontade. O preço está embaixo do carro; aqui ninguém pergunta duas vezes."
    }
   ],
   "requer": [],
@@ -2367,15 +2325,11 @@
   "falas": [
    {
     "quem": "vendedora_return_chapter",
-    "texto": "Nora Lindqvist, Return Chapter. Pergunte o que quiser; eu respondo com números."
+    "texto": "Boas-vindas. Pergunte o que quiser; eu respondo com números."
    },
    {
     "quem": "vendedora_return_chapter",
-    "texto": "Só Kanaya. Potência, peso e preço estão embaixo de cada carro. Compare antes de se apaixonar."
-   },
-   {
-    "quem": "vendedora_return_chapter",
-    "texto": "Posso comprar mostra só o que o caixa paga. O outro botão ordena pelos mais baratos ou pelos mais potentes."
+    "texto": "Compare antes de se apaixonar."
    },
    {
     "quem": "sistema",
@@ -2400,10 +2354,6 @@
   "falas": [
    {
     "quem": "vendedora_return_chapter",
-    "texto": "Nora Lindqvist, Return Chapter. Só Kanaya."
-   },
-   {
-    "quem": "vendedora_return_chapter",
     "texto": "Carro certo é o que entra na prova que você quer correr."
    }
   ],
@@ -2424,15 +2374,7 @@
   "falas": [
    {
     "quem": "vendedora_shared_grid",
-    "texto": "Jade Ryker, Shared Grid Motors. Oito marcas americanas, um catálogo, zero tempo a perder."
-   },
-   {
-    "quem": "vendedora_shared_grid",
-    "texto": "Potência, peso e preço embaixo de cada carro."
-   },
-   {
-    "quem": "vendedora_shared_grid",
-    "texto": "Liga Posso comprar e põe os mais potentes na frente. Eu faria assim."
+    "texto": "Boas-vindas. Um catálogo, zero tempo a perder."
    },
    {
     "quem": "sistema",
@@ -2457,11 +2399,7 @@
   "falas": [
    {
     "quem": "vendedora_shared_grid",
-    "texto": "Jade Ryker, Shared Grid. Oito marcas americanas na mesma grade."
-   },
-   {
-    "quem": "vendedora_shared_grid",
-    "texto": "Filtra pelo que cabe no caixa. O resto é vitrine."
+    "texto": "De volta? Escolhe e leva. O resto é vitrine."
    }
   ],
   "requer": [],
@@ -2481,12 +2419,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Spare Penny. Mizuchi, Hoshino e Tomoe; ninguém aqui vende pose."
-   },
-   {
-    "quem": "mara",
-    "texto": "Potência, peso e preço estão embaixo de cada carro. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.",
-    "pose": "explica"
+    "texto": "Spare Penny. Ninguém aqui vende pose."
    },
    {
     "quem": "sistema",
