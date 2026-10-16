@@ -12,6 +12,8 @@ extends SceneTree
 ## jogador tem ao tirar a B (tools/percurso.gd, um percurso por carro inicial)
 ## no lugar dos carros iniciais de fábrica e do saldo inicial.
 ## Imprime também com que frequência o melhor carro de fábrica alcança o ouro.
+## Licenças concedidas por contratos (data/contratos.json) ficam de fora: o
+## jogo ignora os testes delas.
 ## Uso: godot --headless --script res://tools/calibrar_licencas.gd
 
 const CAMINHO := "res://data/licencas.json"
@@ -60,6 +62,11 @@ func _calibrar() -> void:
 						print("percurso com %s: pronto para a B com %d cv e %d Cr" % [o["carro_id"],
 								r["carro"].atributos_efetivos("seco")["potencia"], r["saldo"]])
 		var possui := [lic["id"], lic.get("requisito")]
+		# Licença com contratos é concedida por eles e ignora os testes
+		# (Licencas, decisão 4): não há o que calibrar (os tempos ficam).
+		if not Contratos.da_licenca(_dados, String(lic["id"])).is_empty():
+			print("%s: concedida por contratos, testes não calibrados" % lic["id"])
+			continue
 		for t in lic["testes"]:
 			# Bronze: todos os carros elegíveis de fábrica.
 			var pior := 0.0
