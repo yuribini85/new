@@ -199,3 +199,41 @@ func test_tatica_curvas_frenagem_e_proxima() -> void:
 	igual(Tatica.proxima(lista, 600.0, pista.comprimento)["estado"], "na_curva", "dentro da curva")
 	igual(Tatica.proxima(lista, lista[0]["frenagem"] + 1.0, pista.comprimento)["estado"], "freando", "entre frenagem e curva")
 	d.free()
+
+
+## Decisão 90: a resistência resolvida aos poucos (entre quadros) dá o mesmo
+## resultado, bit a bit, que de uma vez.
+func test_aos_poucos_igual_a_de_uma_vez() -> void:
+	var d := dados_fixture()
+	var ps := [_participante(d, "a", "forte", "erratico"), _participante(d, "b", "fraco", "timido"),
+			_participante(d, "c", "forte", "perfeito")]
+	for com_amostras in [true, false]:
+		var inteira := Simulacao.correr(d.pista("oval"), ps, 30, d.simulacao(), 99, com_amostras)
+		var a := Simulacao.iniciar(d.pista("oval"), ps, 30, d.simulacao(), 99, com_amostras)
+		var fatias := 0
+		while not a.avancar(0.0):  # a menor fatia possível
+			fatias += 1
+			verificar(a.resultado().is_empty(), "sem resultado antes do fim")
+		verificar(fatias > 10, "orçamento zero devolve antes do fim (%d fatias)" % fatias)
+		verificar(a.pronto() and a.avancar(0.0), "terminada continua terminada")
+		igual(a.resultado(), inteira, "mesmo resultado (amostras: %s)" % com_amostras)
+	d.free()
+
+
+func test_fatia_respeita_o_orcamento() -> void:
+	var d := dados_fixture()
+	var ps := [_participante(d, "a", "forte", "erratico"), _participante(d, "b", "fraco", "erratico")]
+	var a := Simulacao.iniciar(d.pista("oval"), ps, 60, d.simulacao(), 5)
+	var pior := 0
+	var fatias := 0
+	while true:
+		var t0 := Time.get_ticks_usec()
+		var pronto := a.avancar(2.0)
+		pior = maxi(pior, Time.get_ticks_usec() - t0)
+		fatias += 1
+		if pronto:
+			break
+	verificar(fatias > 1, "corrida longa em mais de uma fatia")
+	# Folga para um envelope ou alguns passos além do prazo (e máquina lenta).
+	verificar(pior < 2000 + 15000, "fatia de 2 ms passou de 17 ms (%d us)" % pior)
+	d.free()

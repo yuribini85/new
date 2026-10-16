@@ -368,6 +368,14 @@ func _process(delta: float) -> void:
 	if segurar_largada or _contagem > 0.0:
 		f["inicio"] = agora  # parada no grid: o relógio da corrida não anda
 	if f["semente"] != _semente_mostrada:
+		if not jogador.fila_ctrl.pronta():
+			# Sendo resolvida aos poucos (decisão 90; a principal avança a cada
+			# quadro). Recém-inscrita, espera no grid: o relógio não anda e a
+			# largada (3-2-1) fica para quando a corrida aparecer.
+			if agora - float(f["inicio"]) < 0.5:
+				f["inicio"] = agora
+			_info.text = "Preparando a corrida..."
+			return
 		var c: Dictionary = jogador.fila_ctrl.corrida_atual(agora)
 		if c.is_empty():
 			return

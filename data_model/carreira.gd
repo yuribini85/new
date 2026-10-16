@@ -37,6 +37,18 @@ func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
 ## depois não mudam a corrida já programada); vazio = o de agora.
 func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true,
 		hipotetico: Carro = null, companheiro: Carro = null, piloto: Dictionary = {}) -> Dictionary:
+	var p := iniciar_preparo(evento_id, uid, semente, com_amostras, hipotetico, companheiro, piloto)
+	if p.has("erro"):
+		return p
+	return concluir_preparo(p)
+
+
+## A preparação em partes, para resolver a corrida aos poucos sem travar a tela
+## (decisão 90): monta o grid e devolve {"erro"} ou {"andamento":
+## Simulacao.Andamento, ...}. Quem chama avança `p["andamento"].avancar(ms)`
+## por quadro e, terminado, `concluir_preparo(p)` dá o mesmo que preparar().
+func iniciar_preparo(evento_id: String, uid: int, semente: int, com_amostras: bool = true,
+		hipotetico: Carro = null, companheiro: Carro = null, piloto: Dictionary = {}) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
 	if ev.is_empty():
 		return {"erro": "evento %s não existe" % evento_id}
@@ -68,10 +80,19 @@ func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = tr
 	})
 
 	simulacoes += 1
-	var r := Simulacao.correr(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
+	var a := Simulacao.iniciar(dados.pista(ev["pista"]), participantes, int(ev["voltas"]),
 			dados.simulacao(), semente, com_amostras, float(ev.get("largada_kmh", 0.0)) / 3.6)
-	return {"evento_id": evento_id, "uid": uid, "resultado": r, "duracao": r["duracao"], "semente": semente,
+	return {"evento_id": evento_id, "uid": uid, "andamento": a, "semente": semente,
 			"companheiro": companheiro != null}
+
+
+## Termina (de uma vez, se ainda falta) a preparação de iniciar_preparo().
+func concluir_preparo(p: Dictionary) -> Dictionary:
+	var a: Simulacao.Andamento = p["andamento"]
+	a.avancar(INF)
+	var r := a.resultado()
+	return {"evento_id": p["evento_id"], "uid": p["uid"], "resultado": r, "duracao": r["duracao"],
+			"semente": p["semente"], "companheiro": p["companheiro"]}
 
 
 ## Grid de equipes da corrida (decisão 36): uma vaga por equipe, primeiro as do

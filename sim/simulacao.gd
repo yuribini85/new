@@ -26,158 +26,275 @@ const PARAMS := [
 ## Retorna {"classificacao", "carros", "amostras", "comprimento", "duracao"}.
 ## com_amostras = false (offline) guarda só a amostra final; o resultado é o mesmo.
 ## v_inicial_ms > 0: largada lançada (o grid já parte nessa velocidade).
+## Tudo de uma vez: testes, ferramentas e o offline. Na tela, `iniciar`.
 static func correr(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int,
 		com_amostras: bool = true, v_inicial_ms: float = 0.0) -> Dictionary:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = semente
+	var a := iniciar(pista, participantes, voltas, params, semente, com_amostras, v_inicial_ms)
+	a.avancar(INF)
+	return a.resultado()
 
-	var comprimento := pista.comprimento
-	var n := maxi(int(ceil(comprimento / float(params["passo_m"]))), 1)
-	var passo := comprimento / n
-	var dt := float(params["dt_s"])
-	var k_arrasto := 0.5 * float(params.get("densidade_ar_kg_m3", 0.0)) * float(params.get("cda_m2", 0.0))
-	var dmin := float(params["distancia_minima_m"])
 
-	# Geometria discretizada: raio (0 = sem limite de curva) e zona de ultrapassagem.
-	var raios := PackedFloat64Array()
-	var zonas := PackedInt32Array()
-	raios.resize(n)
-	zonas.resize(n)
-	for i in n:
-		var idx := pista.indice_em((i + 0.5) * passo)
-		var t: Dictionary = pista.trechos[idx]
-		raios[i] = float(t.get("raio_m", 0.0))
-		zonas[i] = idx if t.get("ultrapassagem", false) else -1
+## A mesma corrida resolvida aos poucos (decisão 90: uma prova de resistência
+## leva segundos e travava a tela). `avancar(orcamento_ms)` roda até gastar o
+## orçamento e diz se terminou; `resultado()` é igual, bit a bit, ao de
+## `correr` com os mesmos argumentos (o fatiamento não muda a conta).
+static func iniciar(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int,
+		com_amostras: bool = true, v_inicial_ms: float = 0.0) -> Andamento:
+	return Andamento.new(pista, participantes, voltas, params, semente, com_amostras, v_inicial_ms)
 
-	var carros := []
-	for g in participantes.size():
-		var p: Dictionary = participantes[g]
-		var a: Dictionary = p["atributos"]
-		var piloto: Dictionary = p["piloto"]
-		var mu := float(a["aderencia"])
-		var c := {
-			"id": p["id"],
-			"agressividade": float(piloto["agressividade"]),
-			"potencia_w": float(a["potencia"]) * CV_PARA_W,
-			"forca": forca_por_velocidade(a),
-			"massa": float(a["peso"]),
-			"acel_tracao": mu * G * fator_tracao(a, params),
-			"s": -g * dmin,
-			"v": v_inicial_ms,
-			"envelopes": [],
-			"voltas": [],
-			"ultima_passagem": 0.0,
-			"terminou": false,
-			"tempo_total": 0.0,
-			"rolagens": {},
+
+## Estado de uma corrida em resolução. Primeiro os envelopes (um por carro e
+## volta), depois os passos de tempo; o orçamento é conferido entre eles.
+class Andamento:
+	extends RefCounted
+
+	## Passos de tempo entre leituras do relógio (ler a cada passo custa).
+	const PASSOS_POR_CONFERENCIA := 16
+
+	var _rng := RandomNumberGenerator.new()
+	var _comprimento: float
+	var _n: int
+	var _passo: float
+	var _dt: float
+	var _k_arrasto: float
+	var _dmin: float
+	var _voltas: int
+	var _com_amostras: bool
+	var _raios := PackedFloat64Array()
+	var _zonas := PackedInt32Array()
+	var _carros := []
+	## Envelopes ainda por calcular, um por carro e volta, na ordem dos carros:
+	## [carro, aderência, freio, teto, fator].
+	var _por_calcular := []
+	var _calculados := 0
+	var _s_arr := PackedFloat64Array()
+	var _v_arr := PackedFloat64Array()
+	var _acel_arr := PackedFloat64Array()
+	var _pot_arr := PackedFloat64Array()
+	var _massa_arr := PackedFloat64Array()
+	var _forcas := []  # força motriz por faixa de velocidade (vazio: potência/v)
+	var _lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
+	var _envs := []
+	var _ativos: Array[int] = []
+	var _amostras := []
+	var _proxima_amostra := 0.0
+	var _t := 0.0
+	var _tempo_max: float
+	var _amostra_dt: float
+	var _pronto := false
+	var _resultado: Dictionary = {}
+
+	func _init(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int,
+			com_amostras: bool, v_inicial_ms: float) -> void:
+		_rng.seed = semente
+		_voltas = voltas
+		_com_amostras = com_amostras
+		_comprimento = pista.comprimento
+		_n = maxi(int(ceil(_comprimento / float(params["passo_m"]))), 1)
+		_passo = _comprimento / _n
+		_dt = float(params["dt_s"])
+		_k_arrasto = 0.5 * float(params.get("densidade_ar_kg_m3", 0.0)) * float(params.get("cda_m2", 0.0))
+		_dmin = float(params["distancia_minima_m"])
+		_tempo_max = float(params["tempo_max_s"])
+		_amostra_dt = float(params["amostra_dt_s"])
+
+		# Geometria discretizada: raio (0 = sem limite de curva) e zona de ultrapassagem.
+		_raios.resize(_n)
+		_zonas.resize(_n)
+		for i in _n:
+			var idx := pista.indice_em((i + 0.5) * _passo)
+			var t: Dictionary = pista.trechos[idx]
+			_raios[i] = float(t.get("raio_m", 0.0))
+			_zonas[i] = idx if t.get("ultrapassagem", false) else -1
+
+		for g in participantes.size():
+			var p: Dictionary = participantes[g]
+			var a: Dictionary = p["atributos"]
+			var piloto: Dictionary = p["piloto"]
+			var mu := float(a["aderencia"])
+			var c := {
+				"id": p["id"],
+				"agressividade": float(piloto["agressividade"]),
+				"potencia_w": float(a["potencia"]) * Simulacao.CV_PARA_W,
+				"forca": Simulacao.forca_por_velocidade(a),
+				"massa": float(a["peso"]),
+				"acel_tracao": mu * Simulacao.G * Simulacao.fator_tracao(a, params),
+				"s": -g * _dmin,
+				"v": v_inicial_ms,
+				"envelopes": [],
+				"voltas": [],
+				"ultima_passagem": 0.0,
+				"terminou": false,
+				"tempo_total": 0.0,
+				"rolagens": {},
+			}
+			# O ruído de cada volta sai do gerador agora, na ordem de sempre; o
+			# envelope (sem sorteio) fica para avancar(), que pode ser fatiado.
+			var teto := INF if a.get("velocidade_max") == null else float(a["velocidade_max"]) * Simulacao.KMH_PARA_MS
+			for volta in voltas:
+				var ruido := absf(_rng.randfn(0.0, float(params["sigma_ruido"])))
+				var fator := maxf(float(piloto["ritmo"]) * (1.0 - ruido * (1.0 - float(piloto["consistencia"]))), 0.01)
+				_por_calcular.append([c, mu, float(a["freio"]), teto, fator])
+			_carros.append(c)
+
+		# Estado quente em arrays: o laço roda dezenas de milhares de vezes por
+		# corrida e o offline resolve muitas corridas de uma vez.
+		for c in _carros:
+			_s_arr.append(c["s"])
+			_v_arr.append(float(c["v"]))
+			_acel_arr.append(c["acel_tracao"])
+			_pot_arr.append(c["potencia_w"])
+			_massa_arr.append(c["massa"])
+			_forcas.append(c["forca"])
+			_lim_arr.append(0.0)
+			_envs.append(c["envelopes"])
+		# Índices dos carros ainda correndo, mantidos em ordem de corrida.
+		for k in _carros.size():
+			_ativos.append(k)
+
+	## Avança até gastar `orcamento_ms` (INF: até o fim). true = terminou.
+	## Um envelope ou PASSOS_POR_CONFERENCIA passos podem passar um pouco do
+	## orçamento; 0 dá a menor fatia possível.
+	func avancar(orcamento_ms: float) -> bool:
+		if _pronto:
+			return true
+		var sem_limite := is_inf(orcamento_ms)
+		var prazo := 0 if sem_limite else Time.get_ticks_usec() + int(orcamento_ms * 1000.0)
+
+		while _calculados < _por_calcular.size():
+			var e: Array = _por_calcular[_calculados]
+			e[0]["envelopes"].append(Simulacao._envelope(_raios, _passo, e[1], e[2], e[3], e[4]))
+			_por_calcular[_calculados] = null
+			_calculados += 1
+			if not sem_limite and Time.get_ticks_usec() >= prazo:
+				return false
+		_por_calcular = []
+
+		# Locais no laço quente (mais rápidos que membros). Os Packed* são
+		# copiados na escrita: voltam para os membros ao sair.
+		var comprimento := _comprimento
+		var n := _n
+		var passo := _passo
+		var dt := _dt
+		var k_arrasto := _k_arrasto
+		var dmin := _dmin
+		var voltas := _voltas
+		var tempo_max := _tempo_max
+		var carros := _carros
+		var zonas := _zonas
+		var s_arr := _s_arr
+		var v_arr := _v_arr
+		var acel_arr := _acel_arr
+		var pot_arr := _pot_arr
+		var massa_arr := _massa_arr
+		var forcas := _forcas
+		var lim_arr := _lim_arr
+		var envs := _envs
+		var ativos := _ativos
+		var rng := _rng
+		var t := _t
+		var contagem := 0
+		var esgotou := false
+
+		while t < tempo_max and not ativos.is_empty():
+			if not sem_limite:
+				contagem += 1
+				if contagem > PASSOS_POR_CONFERENCIA:
+					contagem = 0
+					if Time.get_ticks_usec() >= prazo:
+						esgotou = true
+						break
+			if t >= _proxima_amostra:
+				if _com_amostras:
+					_amostras.append(Simulacao._amostra(t, carros, s_arr))
+				_proxima_amostra += _amostra_dt
+
+			# Ordem de corrida antes do passo: o da frente resolve primeiro. A
+			# ordem muda pouco entre passos, então inserção é quase linear.
+			for k in range(1, ativos.size()):
+				var j := k
+				while j > 0 and s_arr[ativos[j - 1]] < s_arr[ativos[j]]:
+					var tmp := ativos[j - 1]
+					ativos[j - 1] = ativos[j]
+					ativos[j] = tmp
+					j -= 1
+
+			var frente := -1
+			var terminaram := false
+			for idx in ativos:
+				var s_antes := s_arr[idx]
+				var volta_atual := floori(s_antes / comprimento)
+				var volta := clampi(volta_atual, 0, voltas - 1)
+				var i := int(fposmod(s_antes, comprimento) / passo) % n
+				var env: PackedFloat64Array = envs[idx][volta]
+				var limite := minf(env[i], env[(i + 1) % n])
+				var v := v_arr[idx]
+				var acel := acel_arr[idx]
+				if v > 0.0:
+					acel = Simulacao._acel_livre(acel, pot_arr[idx], massa_arr[idx], v, k_arrasto, forcas[idx])
+				var v_novo := clampf(v + acel * dt, 0.0, limite)
+				var s_novo := s_antes + (v + v_novo) * 0.5 * dt
+				lim_arr[idx] = limite
+
+				if frente >= 0 and s_novo > s_arr[frente] - dmin:
+					# Preso atrás, o carro anda na velocidade do da frente; "mais
+					# rápido" é ter mais potencial ali: limite maior (curva) ou mais
+					# aceleração na mesma velocidade (reta). Melhorar o carro nunca
+					# tira a chance de passar.
+					var vf := v_arr[frente]
+					var mais_rapido := limite > lim_arr[frente] + 0.05 \
+							or Simulacao._acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto, forcas[idx]) \
+							> Simulacao._acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto,
+									forcas[frente]) + 0.01
+					if not Simulacao._pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng):
+						s_novo = maxf(s_antes, s_arr[frente] - dmin)
+						v_novo = minf(v_novo, v_arr[frente])
+
+				s_arr[idx] = s_novo
+				v_arr[idx] = v_novo
+				if floori(s_novo / comprimento) > volta_atual:
+					Simulacao._registrar_passagem(carros[idx], s_antes, s_novo, t, dt, comprimento, voltas)
+					terminaram = terminaram or carros[idx]["terminou"]
+				frente = idx
+			if terminaram:
+				ativos = ativos.filter(func(k): return not carros[k]["terminou"])
+			t += dt
+
+		_s_arr = s_arr
+		_v_arr = v_arr
+		_lim_arr = lim_arr
+		_ativos = ativos
+		_t = t
+		if esgotou:
+			return false
+		_concluir()
+		return true
+
+	func _concluir() -> void:
+		for k in _carros.size():
+			_carros[k]["s"] = _s_arr[k]
+			_carros[k]["v"] = _v_arr[k]
+		_amostras.append(Simulacao._amostra(_t, _carros, _s_arr))
+		_resultado = {
+			"classificacao": Simulacao._classificar(_carros),
+			"carros": Simulacao._resumo(_carros),
+			"amostras": _amostras,
+			"comprimento": _comprimento,
+			"voltas": _voltas,
+			"duracao": _t,
 		}
-		for volta in voltas:
-			var ruido := absf(rng.randfn(0.0, float(params["sigma_ruido"])))
-			var fator := maxf(float(piloto["ritmo"]) * (1.0 - ruido * (1.0 - float(piloto["consistencia"]))), 0.01)
-			var teto := INF if a.get("velocidade_max") == null else float(a["velocidade_max"]) * KMH_PARA_MS
-			c["envelopes"].append(_envelope(raios, passo, mu, float(a["freio"]), teto, fator))
-		carros.append(c)
+		_pronto = true
+		# Os envelopes são o maior pedaço de memória; o resultado não usa.
+		_envs = []
+		for c in _carros:
+			c.erase("envelopes")
 
-	# Estado quente em arrays: o laço roda dezenas de milhares de vezes por
-	# corrida e o offline resolve muitas corridas de uma vez.
-	var total := carros.size()
-	var s_arr := PackedFloat64Array()
-	var v_arr := PackedFloat64Array()
-	var acel_arr := PackedFloat64Array()
-	var pot_arr := PackedFloat64Array()
-	var massa_arr := PackedFloat64Array()
-	var forcas := []  # força motriz por faixa de velocidade (vazio: potência/v)
-	var lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
-	for c in carros:
-		s_arr.append(c["s"])
-		v_arr.append(float(c["v"]))
-		acel_arr.append(c["acel_tracao"])
-		pot_arr.append(c["potencia_w"])
-		massa_arr.append(c["massa"])
-		forcas.append(c["forca"])
-		lim_arr.append(0.0)
-	var envs := []
-	for c in carros:
-		envs.append(c["envelopes"])
-	# Índices dos carros ainda correndo, mantidos em ordem de corrida.
-	var ativos: Array[int] = []
-	for k in total:
-		ativos.append(k)
+	func pronto() -> bool:
+		return _pronto
 
-	var amostras := []
-	var proxima_amostra := 0.0
-	var t := 0.0
-	var tempo_max := float(params["tempo_max_s"])
-	var amostra_dt := float(params["amostra_dt_s"])
-
-	while t < tempo_max and not ativos.is_empty():
-		if t >= proxima_amostra:
-			if com_amostras:
-				amostras.append(_amostra(t, carros, s_arr))
-			proxima_amostra += amostra_dt
-
-		# Ordem de corrida antes do passo: o da frente resolve primeiro. A
-		# ordem muda pouco entre passos, então inserção é quase linear.
-		for k in range(1, ativos.size()):
-			var j := k
-			while j > 0 and s_arr[ativos[j - 1]] < s_arr[ativos[j]]:
-				var tmp := ativos[j - 1]
-				ativos[j - 1] = ativos[j]
-				ativos[j] = tmp
-				j -= 1
-
-		var frente := -1
-		var terminaram := false
-		for idx in ativos:
-			var s_antes := s_arr[idx]
-			var volta_atual := floori(s_antes / comprimento)
-			var volta := clampi(volta_atual, 0, voltas - 1)
-			var i := int(fposmod(s_antes, comprimento) / passo) % n
-			var env: PackedFloat64Array = envs[idx][volta]
-			var limite := minf(env[i], env[(i + 1) % n])
-			var v := v_arr[idx]
-			var acel := acel_arr[idx]
-			if v > 0.0:
-				acel = _acel_livre(acel, pot_arr[idx], massa_arr[idx], v, k_arrasto, forcas[idx])
-			var v_novo := clampf(v + acel * dt, 0.0, limite)
-			var s_novo := s_antes + (v + v_novo) * 0.5 * dt
-			lim_arr[idx] = limite
-
-			if frente >= 0 and s_novo > s_arr[frente] - dmin:
-				# Preso atrás, o carro anda na velocidade do da frente; "mais
-				# rápido" é ter mais potencial ali: limite maior (curva) ou mais
-				# aceleração na mesma velocidade (reta). Melhorar o carro nunca
-				# tira a chance de passar.
-				var vf := v_arr[frente]
-				var mais_rapido := limite > lim_arr[frente] + 0.05 \
-						or _acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto, forcas[idx]) \
-						> _acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto, forcas[frente]) + 0.01
-				if not _pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng):
-					s_novo = maxf(s_antes, s_arr[frente] - dmin)
-					v_novo = minf(v_novo, v_arr[frente])
-
-			s_arr[idx] = s_novo
-			v_arr[idx] = v_novo
-			if floori(s_novo / comprimento) > volta_atual:
-				_registrar_passagem(carros[idx], s_antes, s_novo, t, dt, comprimento, voltas)
-				terminaram = terminaram or carros[idx]["terminou"]
-			frente = idx
-		if terminaram:
-			ativos = ativos.filter(func(k): return not carros[k]["terminou"])
-		t += dt
-
-	for k in total:
-		carros[k]["s"] = s_arr[k]
-		carros[k]["v"] = v_arr[k]
-	amostras.append(_amostra(t, carros, s_arr))
-	return {
-		"classificacao": _classificar(carros),
-		"carros": _resumo(carros),
-		"amostras": amostras,
-		"comprimento": comprimento,
-		"voltas": voltas,
-		"duracao": t,
-	}
+	## O resultado de `correr`; {} enquanto não terminou.
+	func resultado() -> Dictionary:
+		return _resultado
 
 
 ## Velocidade máxima em cada ponto considerando a frenagem para os pontos à

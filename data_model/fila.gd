@@ -14,6 +14,10 @@ extends RefCounted
 ## Intervalo entre processamentos acima do qual houve ausência (app fechado ou
 ## em segundo plano). Com o app aberto a fila processa a cada segundo. Técnico.
 const AUSENCIA_S := 5.0
+## Quanto de cada quadro a simulação de uma corrida pode usar na tela, quando
+## resolvida aos poucos (decisão 90). Técnico: ~4 ms deixa folga num quadro de
+## 16 ms em aparelho fraco.
+const FATIA_MS := 4.0
 
 var carreira: Carreira
 var jogador: Node
@@ -23,6 +27,9 @@ var teto_offline_s: float
 ## carro, então uma peça instalada no meio invalida o cache.
 var _cache_chave := ""
 var _cache: Dictionary = {}
+## Corrida em andamento sendo resolvida aos poucos, entre quadros (decisão 90):
+## {chave, preparo: Carreira.iniciar_preparo()} ou {}. Pronta, vai para o cache.
+var _pendente: Dictionary = {}
 
 
 func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
@@ -46,14 +53,64 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	var f := {"evento_id": evento_id, "uid": uid, "restantes": repeticoes, "inicio": agora, "semente": semente,
 			"config": cfg, "piloto": EquipeJogador.piloto_do_jogador(carreira.dados, jogador),
 			"contratados": EquipeJogador.contratados(jogador)}
-	# Nas corridas só corre um piloto da equipe (decisão 68). Já com as amostras
-	# da tela: quem assiste reaproveita (as de resistência levam segundos).
-	var teste := _preparar(f, true)
-	if teste.has("erro"):
-		return teste["erro"]
+	# Nas corridas só corre um piloto da equipe (decisão 68). A inscrição só
+	# confere e monta o grid; a corrida (com as amostras da tela) é resolvida aos
+	# poucos por avancar_preparo(), ou de uma vez por quem pedir o resultado antes.
+	var k := _chave(f)
+	if k.is_empty():
+		return "carro %d não está na garagem" % uid
+	var p := carreira.iniciar_preparo(f["evento_id"], uid, semente, true, k["carro"], k["comp"], k["piloto"])
+	if p.has("erro"):
+		return p["erro"]
+	_pendente = {"chave": k["chave"], "preparo": p}
 	jogador.fila = f
 	jogador.ultimo_processamento = agora
 	return ""
+
+
+## A corrida em andamento já está resolvida (com as amostras da tela, se
+## `com_amostras`), e as funções que a leem respondem sem simular. Se não, a
+## resolução aos poucos começa (ou segue) e a resposta é false: a tela espera
+## e chama de novo. Fila vazia ou inválida (o erro sai de processar): true.
+func pronta(com_amostras: bool = true) -> bool:
+	var f: Dictionary = jogador.fila
+	if f.is_empty():
+		return true
+	var k := _chave(f)
+	if k.is_empty():
+		return true
+	if k["chave"] == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
+		return true
+	if not _pendente.is_empty() and _pendente["chave"] == k["chave"]:
+		return false
+	var p := carreira.iniciar_preparo(f["evento_id"], int(f["uid"]), int(f["semente"]), true,
+			k["carro"], k["comp"], k["piloto"])
+	if p.has("erro"):
+		_pendente = {}
+		return true
+	_pendente = {"chave": k["chave"], "preparo": p}
+	return false
+
+
+## Avança a resolução aos poucos da corrida em andamento por até `orcamento_ms`
+## (a principal chama a cada quadro). true = nada pendente.
+func avancar_preparo(orcamento_ms: float) -> bool:
+	if _pendente.is_empty():
+		return true
+	var p: Dictionary = _pendente["preparo"]
+	if not p["andamento"].avancar(orcamento_ms):
+		return false
+	_concluir_pendente()
+	return true
+
+
+func _concluir_pendente() -> Dictionary:
+	var c := carreira.concluir_preparo(_pendente["preparo"])
+	c["com_amostras"] = true
+	_cache_chave = _pendente["chave"]
+	_cache = c
+	_pendente = {}
+	return c
 
 
 ## Faz a corrida em andamento terminar agora (botão de teste da demo).
@@ -173,20 +230,34 @@ func companheiro_inscrito(f: Dictionary) -> Carro:
 	return carro
 
 
-func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
+## Chave do cache e o que a corrida precisa: {chave, carro, comp, piloto}; {}
+## se o carro inscrito saiu da garagem.
+func _chave(f: Dictionary) -> Dictionary:
 	var carro := carro_inscrito(f)
+	if carro == null:
+		return {}
 	var comp := companheiro_inscrito(f)
-	var assinatura := "" if carro == null else str(carro.atributos_efetivos("seco")) + str(carro.atributos_efetivos("chuva"))
+	var assinatura := str(carro.atributos_efetivos("seco")) + str(carro.atributos_efetivos("chuva"))
 	if comp != null:
 		assinatura += str(comp.atributos_efetivos("seco")) + str(comp.atributos_efetivos("chuva"))
 	var piloto: Dictionary = f.get("piloto", {}) if f.get("piloto") is Dictionary else {}
 	assinatura += str(piloto)
-	var chave := "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura]
+	return {"chave": "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura],
+			"carro": carro, "comp": comp, "piloto": piloto}
+
+
+func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
+	var k := _chave(f)
+	if k.is_empty():
+		return {"erro": "carro %d não está na garagem" % int(f["uid"])}
+	var chave: String = k["chave"]
 	if chave == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
 		return _cache
-	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras, carro, comp, piloto)
-	if carro == null:
-		c = {"erro": "carro %d não está na garagem" % int(f["uid"])}
+	# Já sendo resolvida aos poucos: termina agora, sem recomeçar do zero.
+	if not _pendente.is_empty() and _pendente["chave"] == chave:
+		return _concluir_pendente()
+	var c := carreira.preparar(f["evento_id"], int(f["uid"]), int(f["semente"]), com_amostras,
+			k["carro"], k["comp"], k["piloto"])
 	c["com_amostras"] = com_amostras
 	if not c.has("erro"):
 		_cache_chave = chave

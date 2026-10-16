@@ -197,6 +197,41 @@ func test_processar_antes_do_fim_nao_simula_de_novo() -> void:
 	d.free()
 
 
+## Decisão 90: a inscrição não resolve a corrida no mesmo quadro; ela anda aos
+## poucos (avancar_preparo, a cada quadro da principal) e uma só vez.
+func test_inscricao_resolve_a_corrida_aos_poucos() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "iniciar")
+	verificar(not f.pronta(), "recém-inscrita: ainda não resolvida")
+	verificar(not f.pronta(false), "nem sem as amostras")
+	var fatias := 0
+	while not f.avancar_preparo(0.0):
+		fatias += 1
+	verificar(fatias > 0, "orçamento zero não resolve tudo num quadro")
+	verificar(f.pronta() and f.pronta(false), "resolvida")
+	var antes: int = f.carreira.simulacoes
+	var c := f.corrida_atual(0.0)
+	igual(f.carreira.simulacoes, antes, "a tela reusa a corrida resolvida aos poucos")
+	# A mesma corrida de uma vez, noutra fila com o mesmo estado: igual.
+	var outra := _fila(d, j)
+	igual(outra.corrida_atual(0.0)["resultado"], c["resultado"], "aos poucos = de uma vez")
+	# Pedida antes de terminar (processar, adiantar): termina a que está em
+	# andamento, sem simular de novo do zero.
+	f.cancelar()
+	j.vitorias["aberto"] = 1
+	f.iniciar("aberto", uid, 1, 0.0)
+	f.avancar_preparo(0.0)
+	antes = f.carreira.simulacoes
+	verificar(f.duracao_atual() > 0.0, "duração pedida no meio")
+	igual(f.carreira.simulacoes, antes, "terminou a pendente em vez de simular outra")
+	verificar(f.avancar_preparo(0.0), "nada mais pendente")
+	j.free()
+	d.free()
+
+
 func test_fila_guarda_copia_da_preparacao() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)

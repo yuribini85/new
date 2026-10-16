@@ -104,6 +104,26 @@ static func avaliar(carreira: Carreira, evento_id: String, uid: int, carro: Carr
 		if r.has("erro"):
 			return {}
 		posicoes.append(r["resultado"]["classificacao"].find("jogador") + 1)
+	return _resumir(posicoes)
+
+
+## avaliar() sem travar a tela (decisão 90: a de uma resistência leva
+## segundos): cada corrida é resolvida aos poucos, até `orcamento_ms` por quadro
+## de `arvore`. Mesmo resultado; chamar com await.
+static func avaliar_aos_poucos(carreira: Carreira, evento_id: String, uid: int, carro: Carro, arvore: SceneTree,
+		orcamento_ms: float) -> Dictionary:
+	var posicoes := []
+	for k in amostras_para(carreira.dados.evento(evento_id)):
+		var p := carreira.iniciar_preparo(evento_id, uid, SEMENTE_BASE + k, false, carro)
+		if p.has("erro"):
+			return {}
+		while not p["andamento"].avancar(orcamento_ms):
+			await arvore.process_frame
+		posicoes.append(carreira.concluir_preparo(p)["resultado"]["classificacao"].find("jogador") + 1)
+	return _resumir(posicoes)
+
+
+static func _resumir(posicoes: Array) -> Dictionary:
 	posicoes.sort()
 	var corte := 1 if posicoes.size() >= 5 else 0
 	return {

@@ -504,6 +504,9 @@ func _atualizar_ao_vivo() -> void:
 	_ao_vivo.visible = not f.is_empty() and not _abas.current_tab in [3, 4]
 	if not _ao_vivo.visible:
 		return
+	if not jogador.fila_ctrl.pronta(false):  # sendo resolvida aos poucos: sem o tempo ainda
+		_ao_vivo.text = "•  AO VIVO · %s   Assistir ›" % dados.evento(f["evento_id"]).get("nome", "")
+		return
 	var dur: float = jogador.fila_ctrl.duracao_atual()
 	var falta := maxf(dur - (Aceleracao.agora(jogador) - float(f["inicio"])), 0.0)
 	if Aceleracao.ativa(jogador):  # tempo real que falta (o relógio da corrida anda mais rápido)
@@ -815,8 +818,28 @@ func _pedir_nome() -> void:
 		jogador.historia.disparar("NOME_DEFINIDO"))
 
 
+## A corrida recém-inscrita é resolvida aos poucos, Fila.FATIA_MS por quadro
+## (decisão 90): uma resistência leva segundos de uma vez e travava a tela.
+var _resolvendo := false
+
+
+func _process(_delta: float) -> void:
+	if jogador.fila_ctrl == null:
+		return
+	var pronta: bool = jogador.fila_ctrl.avancar_preparo(Fila.FATIA_MS)
+	if pronta and _resolvendo:
+		# Resolvida: o cartão da prova e a faixa ao vivo ganham o tempo que falta.
+		_sujas[Aba.EVENTOS] = true
+		if _abas.current_tab == Aba.EVENTOS:
+			_reconstruir(Aba.EVENTOS)
+		_atualizar_ao_vivo()
+	_resolvendo = not pronta
+
+
 func _processar_fila() -> void:
-	if jogador.fila.is_empty():
+	# Corrida ainda sendo resolvida aos poucos (_process): acabou de começar, o
+	# próximo segundo confere.
+	if jogador.fila.is_empty() or not jogador.fila_ctrl.pronta(false):
 		return
 	var antes_vitorias: Dictionary = jogador.vitorias.duplicate()
 	var rel: Dictionary = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
@@ -919,7 +942,7 @@ var _fila_vista: Dictionary = {}
 
 
 func _registrar_fila() -> void:
-	if jogador.fila.is_empty() or is_same(jogador.fila, _fila_vista):
+	if jogador.fila.is_empty() or is_same(jogador.fila, _fila_vista) or not jogador.fila_ctrl.pronta(false):
 		return
 	_fila_vista = jogador.fila
 	RegistroSessao.fila(jogador.fila, jogador.fila_ctrl.duracao_atual(), not jogador.vitorias.has(jogador.fila["evento_id"]))

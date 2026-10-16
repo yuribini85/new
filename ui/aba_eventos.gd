@@ -146,7 +146,8 @@ func _fila() -> void:
 	var cab := _cabeca_cartao(ev, v, "CORRENDO", COR_BOM, true, _selo(ev, v) != null)
 	var col: VBoxContainer = cab["col"]
 	_premios(ev, col, true)
-	var dur: float = jogador.fila_ctrl.duracao_atual()
+	# Recém-inscrita, ainda sendo resolvida aos poucos: o tempo aparece quando ficar pronta.
+	var dur: float = jogador.fila_ctrl.duracao_atual() if jogador.fila_ctrl.pronta(false) else 0.0
 	if dur > 0.0:
 		var decorrido := clampf(Aceleracao.agora(jogador) - float(f["inicio"]), 0.0, dur)
 		var falta := dur * int(f["restantes"]) - decorrido
@@ -516,7 +517,7 @@ func _estimar(ev: Dictionary, c: Carro) -> void:
 	_estimativas[chave] = "..."
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var a := Mecanico.avaliar(jogador.carreira, ev["id"], c.uid, c)
+	var a: Dictionary = await Mecanico.avaliar_aos_poucos(jogador.carreira, ev["id"], c.uid, c, get_tree(), Fila.FATIA_MS)
 	if a.is_empty():
 		_estimativas.erase(chave)
 	else:

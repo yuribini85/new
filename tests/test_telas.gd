@@ -52,6 +52,9 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	igual(j.graus_licenca.get("c_teste", ""), "ouro", "contrato pela tela")
 	abas[5]._bancada = ""
 	abas[4]._process(0.0)
+	verificar(abas[4]._visual.duracao() == 0.0, "corrida ainda sendo resolvida: a tela espera")
+	j.fila_ctrl.avancar_preparo(INF)  # a principal resolve aos poucos, a cada quadro
+	abas[4]._process(0.0)
 	verificar(abas[4]._visual.duracao() > 0.0, "corrida ao vivo carregada")
 	abas[0]._vender(uid)
 	igual(j.carro_ativo, uid, "único carro não se vende")
@@ -531,8 +534,12 @@ func test_atualizar_a_tela_no_grid_nao_recomeca_a_contagem() -> void:
 	var a: Control = preload("res://ui/aba_corrida.gd").new(d, j)
 	a.size = Vector2(720, 1100)
 	_raiz().add_child(a)
-	j.fila_ctrl.iniciar("aberto", uid, 1, Aceleracao.agora(j))
+	j.fila_ctrl.iniciar("aberto", uid, 1, Aceleracao.agora(j) - 0.2)
 	a.atualizar()
+	a._process(0.0)
+	# Sendo resolvida aos poucos: a corrida espera no grid (o relógio não anda).
+	perto(float(j.fila["inicio"]), Aceleracao.agora(j), 0.05, "relógio parado enquanto resolve")
+	j.fila_ctrl.avancar_preparo(INF)  # a principal resolve aos poucos, a cada quadro
 	a._process(0.0)
 	perto(a._contagem, a.CONTAGEM_S, 1e-6, "corrida nova: 3-2-1")
 	# O principal atualiza a tela a cada mudança (timer, cena, destaque): a

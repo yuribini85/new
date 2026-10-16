@@ -769,6 +769,15 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       os botões de ação com 88 px de toque (DISPUTAR, filtros de Corridas, Aplicar,
       Confirmar, Voltar à arena, fechar, amostras de cor); o pacote Web deixa de levar os
       GLB de carroceria (a frota inteira é gerada; ficam as blindagens).
+    - Corrida resolvida aos poucos (engasgo das resistências): `Simulacao.iniciar` devolve
+      um `Andamento` que avança por orçamento de tempo (`avancar(ms)`) e dá o mesmo
+      resultado, bit a bit, de `Simulacao.correr` (que agora é o mesmo laço de uma vez,
+      para testes, ferramentas e o offline). A inscrição só monta o grid; a principal
+      resolve a corrida ~4 ms por quadro (`Fila.FATIA_MS`), a tela da corrida espera no
+      grid com "Preparando a corrida..." e o 3-2-1 vem depois. Quem pede o resultado antes
+      termina a mesma resolução, sem recomeçar. A estimativa de posição da prova
+      (`Mecanico.avaliar_aos_poucos`) também é fatiada. O processamento ao abrir o app
+      (antes do primeiro quadro) segue de uma vez.
 91. **Visual dos carros: gerador facetado e rodas trocáveis** (2026-10-15, pedido do
     usuário: "o maior problema do jogo é a qualidade visual dos carros").
     - Verniz e reflexo do céu na lataria (`CarroBloco.reflexo`), sombra embaixo.
