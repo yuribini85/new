@@ -53,8 +53,6 @@ var _semente_largada := 0
 ## Tempo mostrado suavizado (_tempo_suave): valor, alvo do quadro anterior e
 ## taxa medida (s de corrida por s de quadro).
 var _t_suave := -1.0
-var _t_alvo_antes := 0.0
-var _taxa_tempo := 1.0
 const SALTO_TEMPO_S := 0.5
 var _nomes := {}  # id do participante -> nome do carro
 var _nomes_curtos := {}  # id -> nome na classificação do HUD
@@ -419,7 +417,11 @@ func _process(delta: float) -> void:
 		_atraso += delta
 	else:
 		_atraso = move_toward(_atraso, 0.0, delta * ALCANCE)
-	_visual.tempo = clampf(_tempo_suave(clampf(agora - float(f["inicio"]) - _atraso, 0.0, _visual.duracao()), delta),
+	# Velocidade do relógio da corrida, conhecida (não medida): parada na
+	# contagem e na pausa da chegada; 1× ou o fator da aceleração.
+	var taxa := 0.0 if (_pausa > 0.0 or _contagem > 0.0 or segurar_largada) \
+			else (float(jogador.aceleracao.get("fator", 1.0)) if Aceleracao.ativa(jogador) else 1.0)
+	_visual.tempo = clampf(_tempo_suave(clampf(agora - float(f["inicio"]) - _atraso, 0.0, _visual.duracao()), delta, taxa),
 			0.0, _visual.duracao())
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
@@ -447,18 +449,17 @@ func _process(delta: float) -> void:
 ## Tempo da corrida mostrada sem engasgo: o relógio do sistema tem resolução
 ## grossa (1 ms no navegador) e não anda junto com o quadro, então o tempo lido
 ## dele direto oscila alguns % a cada quadro (o carro acelera e reduz na reta).
-## Aqui o tempo avança pelo delta do quadro na taxa medida do relógio
-## (aceleração, atraso) e só corrige a diferença devagar; salto grande
-## (corrida nova, volta do segundo plano) vai direto.
-func _tempo_suave(alvo: float, delta: float) -> float:
+## Aqui o tempo avança pelo delta do quadro na velocidade conhecida do relógio
+## (`taxa`: 0 parado, 1×, ou o fator da aceleração) e só corrige a diferença
+## devagar; salto grande (corrida nova, volta do segundo plano) vai direto.
+## Antes a velocidade era medida e "aprendia" zero na contagem 3-2-1: a largada
+## saía em câmera lenta, o atraso crescia e o tempo pulava (a travada).
+func _tempo_suave(alvo: float, delta: float, taxa := 1.0) -> float:
 	if _t_suave < 0.0 or delta <= 0.0 or absf(alvo - _t_suave) > SALTO_TEMPO_S:
 		_t_suave = alvo
-		_t_alvo_antes = alvo
 		return alvo
-	_taxa_tempo = lerpf(_taxa_tempo, clampf((alvo - _t_alvo_antes) / delta, 0.0, 20.0), 0.05)
-	_t_alvo_antes = alvo
-	_t_suave += delta * _taxa_tempo
-	_t_suave += (alvo - _t_suave) * (1.0 - exp(-delta * 2.0))
+	_t_suave += delta * taxa
+	_t_suave += (alvo - _t_suave) * (1.0 - exp(-delta * 4.0))
 	return _t_suave
 
 
