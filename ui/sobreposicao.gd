@@ -93,7 +93,7 @@ func _init() -> void:
 	_fechar_x.focus_mode = Control.FOCUS_NONE
 	_fechar_x.add_theme_font_size_override("font_size", 64)
 	_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
-	_fechar_x.custom_minimum_size = Vector2(60, 60)
+	_fechar_x.custom_minimum_size = Vector2(Tipografia.ALTURA_SECUNDARIA, Tipografia.ALTURA_SECUNDARIA)
 	_fechar_x.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_fechar_x.visible = false
 	_fechar_x.pressed.connect(fechar)

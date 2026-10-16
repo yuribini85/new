@@ -75,12 +75,33 @@ def ler_preset() -> tuple[str, str]:
     return texto, m.group(1)
 
 
-def checar_preset() -> list[str]:
-    texto, _ = ler_preset()
+## A frota inteira usa o carro gerado (Carroceria/Pesados, decisão 91): o GLB
+## da carroceria e a textura dele saem do pacote. A blindagem (*_protecao*)
+## continua. Os curingas do Godot não separam os dois, então a lista é por id.
+def exclusoes_glb(ids: list[str]) -> list[str]:
+    r = []
+    for id_ in sorted(ids):
+        r += [f"arte/carros3d/{id_}.glb", f"arte/carros3d/{id_}_0.png"]
+    return r
+
+
+def com_exclusoes(exc: str, ids: list[str]) -> str:
+    itens = [p.strip() for p in exc.split(",") if p.strip()]
+    itens = [p for p in itens if not (p.startswith("arte/carros3d/") and "_protecao" not in p
+                                      and (p.endswith(".glb") or p.endswith("_0.png")))]
+    return ", ".join(itens + exclusoes_glb(ids))
+
+
+def checar_preset(ids: list[str]) -> list[str]:
+    texto, exc = ler_preset()
+    erros = []
     inc = re.search(r'^include_filter="([^"]*)"', texto, re.M).group(1)
     if "arte/carros3d/formas.json" not in [p.strip() for p in inc.split(",")]:
-        return ["export_presets.cfg: include_filter sem arte/carros3d/formas.json"]
-    return []
+        erros.append("export_presets.cfg: include_filter sem arte/carros3d/formas.json")
+    if com_exclusoes(exc, ids) != exc:
+        erros.append("export_presets.cfg: exclude_filter sem os GLB de carroceria de todos os carros "
+                     "(rodar tools/exportar_formas.py)")
+    return erros
 
 
 def checar() -> int:
@@ -111,7 +132,7 @@ def checar() -> int:
         erros.append(f"{id_}: forma de carro que não está em data/carros.json")
     if FROTA.exists() and gerar() != dados:
         erros.append("formas.json desatualizado em relação à referência (rodar tools/exportar_formas.py)")
-    erros += checar_preset()
+    erros += checar_preset(sorted(carros))
     for e in erros:
         print("ERRO", e)
     print(f"formas dos carros: {len(carros)} de {len(ids)}, {len(erros)} erro(s)")
@@ -133,6 +154,8 @@ def main(args: list[str]) -> int:
     inc = re.search(r'^include_filter="([^"]*)"', texto, re.M).group(1)
     if "arte/carros3d/formas.json" not in inc:
         texto = texto.replace(f'include_filter="{inc}"', f'include_filter="{inc}, arte/carros3d/formas.json"', 1)
+    _, exc = ler_preset()
+    texto = texto.replace(f'exclude_filter="{exc}"', f'exclude_filter="{com_exclusoes(exc, sorted(dados["carros"]))}"', 1)
     PRESET.write_text(texto, encoding="utf-8")
     print(f"{len(dados['carros'])} formas em {SAIDA.relative_to(RAIZ)} ({SAIDA.stat().st_size // 1024} KB)")
     return 0

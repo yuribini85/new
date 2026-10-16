@@ -54,7 +54,7 @@ func _init(atual := "") -> void:
 	_campo.text_submitted.connect(func(_t): _confirmar())
 	v.add_child(_campo)
 	_ok = Button.new()
-	Tipografia.acao_primaria(_ok, "Confirmar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 72)
+	Tipografia.acao_primaria(_ok, "Confirmar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
 	_ok.pressed.connect(_confirmar)
 	v.add_child(_ok)
 	_atualizar()

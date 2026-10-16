@@ -153,6 +153,7 @@ func _ready() -> void:
 	sb_vivo.set_content_margin_all(10)
 	for estado in ["normal", "hover", "pressed", "focus"]:
 		_ao_vivo.add_theme_stylebox_override(estado, sb_vivo)
+	Tipografia.area_toque(_ao_vivo, 64)  # faixa de 64 px, toque de 88
 	_ao_vivo.pressed.connect(func(): _ir_para(4))
 	# Faixa ao vivo e navegação com a margem lateral (as telas vão até a beira).
 	var pe := MarginContainer.new()
@@ -1268,7 +1269,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			detalhes.visible = false
 			var b := Button.new()
 			b.text = "Ver cada corrida"
-			b.custom_minimum_size = Vector2(0, 68)
+			b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 			b.pressed.connect(func():
 				detalhes.visible = not detalhes.visible
 				b.text = "Esconder" if detalhes.visible else "Ver cada corrida")

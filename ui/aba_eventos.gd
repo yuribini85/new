@@ -83,7 +83,7 @@ func construir() -> void:
 		b.button_pressed = _filtro == g[0]
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		Tipografia.rotulo(b, "semibold", 24)
-		b.custom_minimum_size = Vector2(0, 60)
+		b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)  # área de toque de 88 px
 		b.pressed.connect(func():
 			_filtro = g[0]
 			_limite = LOTE
@@ -158,7 +158,7 @@ func _fila() -> void:
 	var lo := rotulo("Termina mesmo com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
 	lo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Assistir   →", COR_BOM, Color(0.1, 0.1, 0.1), 34, 72)
+	Tipografia.acao_primaria(b, "Assistir   →", COR_BOM, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 	b.pressed.connect(func(): ir_para.emit(CORRIDA))
 	v.add_child(b)
 
@@ -251,7 +251,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		var livre_fila: bool = jogador.fila.is_empty()
 		var bc := Button.new()
 		bc.disabled = not livre_fila
-		Tipografia.acao_primaria(bc, rotulo_correr + "   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+		Tipografia.acao_primaria(bc, rotulo_correr + "   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 		bc.pressed.connect(func():
 			_correr(ev["id"])
 			mudou.emit())
@@ -263,7 +263,7 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		# explica a recusa (e a história pode comentar).
 		var pede_licenca: bool = motivos.any(func(m): return String(m).begins_with("licença"))
 		var br := Button.new()
-		Tipografia.acao_primaria(br, " · ".join(motivos), COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 28, 72)
+		Tipografia.acao_primaria(br, " · ".join(motivos), COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 28, Tipografia.ALTURA_SECUNDARIA)
 		br.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		br.icon = icone_reduzido("icone_cadeado", 34)
 		br.add_theme_constant_override("h_separation", 12)

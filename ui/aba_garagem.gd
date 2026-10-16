@@ -894,7 +894,7 @@ func _item_evolucao(v: VBoxContainer, c: Carro, cat: String, id: String, texto: 
 		escolhido: bool) -> Button:
 	var b := Button.new()
 	b.text = texto.to_upper()
-	b.custom_minimum_size = Vector2(0, 76)
+	b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 	b.focus_mode = Control.FOCUS_NONE
 	Tipografia.rotulo(b, "semibold", 28)
 	var sb := StyleBoxFlat.new()
@@ -1218,7 +1218,7 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(nome)
 	var vender := _botao_vender(v, c)
-	vender.custom_minimum_size = Vector2(0, 64)
+	vender.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
 
 
 ## Escolher um carro na janela: ele vai para a Oficina e a janela fecha.

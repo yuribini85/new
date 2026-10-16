@@ -262,7 +262,7 @@ func _rodape() -> Control:
 	var cancelar := _botao_rodape("Cancelar", 124, h)
 	cancelar.pressed.connect(_fechar)
 	_aplicar = Button.new()
-	Tipografia.acao_primaria(_aplicar, "Aplicar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, 72)
+	Tipografia.acao_primaria(_aplicar, "Aplicar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
 	_aplicar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_aplicar.pressed.connect(_confirmar)
 	h.add_child(_aplicar)
@@ -668,7 +668,7 @@ func _aba_acabamento() -> void:
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var texto := "%s   ·   %s" % [par[1], TEXTOS[id]]
 		if id == _estado["acabamento"]:
-			Tipografia.acao_primaria(b, texto, Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 70)
+			Tipografia.acao_primaria(b, texto, Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, Tipografia.ALTURA_SECUNDARIA)
 		else:
 			Tipografia.acao_neutra(b, texto, 22, 70)
 		b.pressed.connect(func(): _definir("acabamento", id))

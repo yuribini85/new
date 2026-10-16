@@ -105,6 +105,9 @@ Granito), as picapes (piloto Kanaya Sulco) e os utilitários (piloto Kanaya Chap
 todas as épocas e os 3 pesados (desenho próprio): a frota inteira). O usuário aprova um carro por vez; ao aprovar, o
 id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GLB).
 
+- **Pacote Web:** os GLB de carroceria (`<id>.glb`, `<id>_0.png`) ficam fora do export
+  (`exclude_filter`, mantido por `tools/exportar_formas.py`, conferido no `--checar`); as
+  blindagens (`*_protecao*`) continuam. No editor e nos testes os GLB seguem disponíveis.
 - **Forma:** `arte/carros3d/formas.json` (vai no jogo), gerado por
   `python3 tools/exportar_formas.py` a partir de `referencia/frota360/` (que nunca vai).
   Só as medidas que o gerador usa: `W, r, low, lo, hi, sx, za, zb, wind, back, axles,

@@ -168,7 +168,7 @@ func _objetivos() -> void:
 		v.add_child(t)
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
-		Tipografia.acao_primaria(b, "Ir   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+		Tipografia.acao_primaria(b, "Ir   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 		b.pressed.connect(func(): ir_para.emit(o["aba"]))
 		v.add_child(b)
 	if lista.size() <= (1 if atual < lista.size() else 0):
@@ -750,7 +750,7 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 		Licencas.AVAILABLE:
 			rotulo("Grátis · continua com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
 			var b := Button.new()
-			Tipografia.acao_primaria(b, "Iniciar treino   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+			Tipografia.acao_primaria(b, "Iniciar treino   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 			b.pressed.connect(func():
 				var erro := l.iniciar_treino(lic["id"], Time.get_unix_time_from_system())
 				if erro != "":

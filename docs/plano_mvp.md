@@ -762,6 +762,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       sombras e tangentes, `docs/` fora do build, uma meta viewport (área segura do iPhone),
       aviso para girar o aparelho, save ao perder o foco, efeitos leves por padrão no Web,
       inclinação lida a 20 Hz, ícone de 512 px, deploy depois dos testes e só da main.
+    - Pendências resolvidas depois (recomendações aceitas pelo usuário, 2026-10-16): saldo
+      inicial mantido em 658 giros (o critério do carro mais barato vale sobre os carros
+      novos; com 226 só um carro cabia); os 11 carros sem marchas no disco recebem o câmbio
+      do carro mais parecido em tração e potência (importador, regra da decisão 69); todos
+      os botões de ação com 88 px de toque (DISPUTAR, filtros de Corridas, Aplicar,
+      Confirmar, Voltar à arena, fechar, amostras de cor); o pacote Web deixa de levar os
+      GLB de carroceria (a frota inteira é gerada; ficam as blindagens).
 91. **Visual dos carros: gerador facetado e rodas trocáveis** (2026-10-15, pedido do
     usuário: "o maior problema do jogo é a qualidade visual dos carros").
     - Verniz e reflexo do céu na lataria (`CarroBloco.reflexo`), sombra embaixo.

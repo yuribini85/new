@@ -953,7 +953,7 @@ func botao(t: String, acao: Callable, habilitado := true, primario := false, pai
 		nome_icone := "") -> Button:
 	var b := Button.new()
 	b.text = t
-	b.custom_minimum_size = Vector2(150, 72)
+	b.custom_minimum_size = Vector2(150, Tipografia.ALTURA_SECUNDARIA)
 	b.disabled = not habilitado
 	if primario and habilitado:
 		var sb := StyleBoxFlat.new()
@@ -1150,7 +1150,7 @@ func _amostras_cor(base: Dictionary, vit: VitrineCarro, pai: Control) -> void:
 	for k in chaves.size():
 		var cor := Cores.cor(chaves[k])
 		var b := Button.new()
-		b.custom_minimum_size = Vector2(68, 68)
+		b.custom_minimum_size = Vector2(Tipografia.ALTURA_SECUNDARIA, Tipografia.ALTURA_SECUNDARIA)
 		b.tooltip_text = Cores.nome(chaves[k])
 		botoes.append(b)
 		fila.add_child(b)
@@ -1166,7 +1166,7 @@ func _amostras_cor(base: Dictionary, vit: VitrineCarro, pai: Control) -> void:
 static func _estilo_amostra(b: Button, cor: Color, marcada: bool) -> void:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = cor
-	sb.set_corner_radius_all(34)
+	sb.set_corner_radius_all(44)
 	sb.set_border_width_all(5 if marcada else 2)
 	sb.border_color = COR_DESTAQUE if marcada else Color(1, 1, 1, 0.35)
 	for estado in ["normal", "hover", "pressed", "focus"]:
@@ -1375,11 +1375,11 @@ func cartao_desafio_grid(modo: String, desafiar: Callable) -> void:
 	var b := Button.new()
 	if motivo == "":
 		var txt := "Próximo round   →" if s.get("equipe") == eq["id"] else "Desafiar   →"
-		Tipografia.acao_primaria(b, txt, COR_DESTAQUE, Color(0.1, 0.1, 0.1), 32, 72)
+		Tipografia.acao_primaria(b, txt, COR_DESTAQUE, Color(0.1, 0.1, 0.1), 32, Tipografia.ALTURA_SECUNDARIA)
 		b.pressed.connect(func(): desafiar.call(eq))
 		ancora("GRID_DESAFIAR", b)
 	else:
-		Tipografia.acao_primaria(b, motivo, COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 22, 72)
+		Tipografia.acao_primaria(b, motivo, COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 22, Tipografia.ALTURA_SECUNDARIA)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.icon = icone_reduzido("icone_cadeado", 30)
 		b.pressed.connect(func(): avisar(motivo, false))

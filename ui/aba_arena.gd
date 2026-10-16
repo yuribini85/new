@@ -125,11 +125,11 @@ func _cartao_luta(esc: Carro, motivo: String) -> void:
 	regra.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var b := Button.new()
 	if pode:
-		Tipografia.acao_primaria(b, "Entrar na arena   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, 72)
+		Tipografia.acao_primaria(b, "Entrar na arena   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 		b.pressed.connect(_confirmar.bind(esc))
 		ancora("ARENA_ENTRAR", b)
 	else:
-		Tipografia.acao_primaria(b, motivo, COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 24, 72)
+		Tipografia.acao_primaria(b, motivo, COR_BLOQUEIO, Color(0.98, 0.95, 0.93), 24, Tipografia.ALTURA_SECUNDARIA)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.icon = icone_reduzido("icone_cadeado", 34)
 		b.add_theme_constant_override("h_separation", 12)

@@ -334,7 +334,7 @@ func _mostrar_final() -> void:
 			moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			h.add_child(moeda)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Voltar à arena", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, 76)
+	Tipografia.acao_primaria(b, "Voltar à arena", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, Tipografia.ALTURA_SECUNDARIA)
 	b.pressed.connect(func():
 		acabou.emit(f)
 		queue_free())
