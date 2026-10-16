@@ -20,6 +20,7 @@ func flee_from(at: Vector3,exit_at: Vector3) -> void:
 		queue_slot += 1
 		var start: Vector3 = p.origin
 		var exit_local := to_local(exit_at)
+		_fugindo = true
 		p.escape_path = [start,Vector3(start.x,start.y,start.z+.23),Vector3(2.5,start.y,start.z+.23),Vector3(2.5,.30,.12),Vector3(exit_local.x-.9,.30,.12),Vector3(exit_local.x,.30,.45),Vector3(exit_local.x,-global_position.y+.06,2.70),Vector3(exit_local.x+1,-global_position.y+.06,7.0)]
 func fleeing_count() -> int:
 	var n := 0
@@ -99,8 +100,20 @@ func cheering_count() -> int:
 		var t: float = clock-cheer_start-p.delay
 		if t > .25 and t < 7.8: n += 1
 	return n
+## Atualizar todos os espectadores a cada quadro custava ~1 ms por bloco
+## (12 blocos: ~10 ms). Comemorando, na ola ou fugindo: 20 vezes por segundo;
+## sentados (só o balanço do tronco): 5.
+const ATIVO_HZ := 20.0
+const PARADO_HZ := 5.0
+var _desde := 0.0
+var _fugindo := false
 func _process(dt: float) -> void:
 	clock += dt
+	_desde += dt
+	var ativo := _fugindo or clock - cheer_start < 9.0 or clock - wave_start < 6.0
+	if _desde < 1.0 / (ATIVO_HZ if ativo else PARADO_HZ):
+		return
+	_desde = 0.0
 	update_people()
 func put(kind: String,index: int,position_local: Vector3,scale_local: Vector3,tint: Color) -> void:
 	var mm: MultiMesh = batches[kind].multimesh

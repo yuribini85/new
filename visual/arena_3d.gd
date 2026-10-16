@@ -97,6 +97,7 @@ const SOLTA_DANO := 0.05  # batida que arranca a proteção da região
 var _orbita := 0.0  # ângulo da câmera em volta do centro (rad)
 var _carros := {}  # id -> Node3D
 var _malhas := {}  # id -> [{mi, rel, surfs: [{arr, prim, mat}]}]: malhas originais da carroceria
+var _tom_visto := {}  # id -> último tom aplicado (_tingir só quando muda)
 var _estagio_visto := {}  # id -> estágio de dano por região já aplicado na malha
 var _objetos: ObjetosArena
 ## Arquibancadas (pacote do usuário, visual/arquibancada): [{no, centro (2D), modulos}].
@@ -188,6 +189,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_soltas = []
 	_malhas = {}
 	_estagio_visto = {}
+	_tom_visto = {}
 	_incendio = {}
 	_corpos = {}
 	_pilotos = {}
@@ -725,28 +727,86 @@ func _amassar(id: String, estagios: PackedInt32Array, eliminado: bool) -> void:
 	for r in AMASSADOS.size():
 		fator.append(float(estagios[r]) / maxf(_estagios, 1) * (1.05 if eliminado else 1.0))
 	for parte in _malhas.get(id, []):
-		var rel: Transform3D = parte["rel"]
-		var inv := rel.affine_inverse()
 		var nova := ArrayMesh.new()
 		for sf in parte["surfs"]:
-			var arr: Array = (sf["arr"] as Array).duplicate()
-			var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
-			var out := PackedVector3Array()
-			out.resize(vs.size())
-			for i in vs.size():
-				var p := rel * vs[i]
-				p += _deslocamento(p, fator, dim)
-				out[i] = inv * p
+			if not sf.has("base"):
+				_preparar_amassado(sf, parte["rel"], dim)
+			var base: Array = sf["base"]
+			var out: PackedVector3Array = (base[Mesh.ARRAY_VERTEX] as PackedVector3Array).duplicate()
+			var nrm: PackedVector3Array = (base[Mesh.ARRAY_NORMAL] as PackedVector3Array).duplicate()
+			var tris := {}
+			for r in AMASSADOS.size():
+				var f: float = fator[r]
+				if f <= 0.0:
+					continue
+				var idx: PackedInt32Array = sf["idx"][r]
+				var pesos: PackedFloat32Array = sf["peso"][r]
+				var dl: Vector3 = sf["dir"][r]
+				for k in idx.size():
+					out[idx[k]] += dl * (f * pesos[k])
+				for t in (sf["tris"][r] as PackedInt32Array):
+					tris[t] = true
+			# Facetado: a normal de cada face mexida (as outras não mudam).
+			for t in tris:
+				var i: int = t * 3
+				var n := (out[i + 1] - out[i]).cross(out[i + 2] - out[i]).normalized()
+				if n.dot(nrm[i]) < 0.0:
+					n = -n
+				nrm[i] = n
+				nrm[i + 1] = n
+				nrm[i + 2] = n
+			var arr := base.duplicate()
 			arr[Mesh.ARRAY_VERTEX] = out
-			# Facetado: sem índices, normais por face (o estilo low-poly chapado).
-			var st := SurfaceTool.new()
-			st.create_from_arrays(arr, sf["prim"])
-			st.deindex()
-			st.generate_normals()
-			st.commit(nova)
+			arr[Mesh.ARRAY_NORMAL] = nrm
+			nova.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 			if sf["mat"] != null:
 				nova.surface_set_material(nova.get_surface_count() - 1, sf["mat"])
 		(parte["mi"] as MeshInstance3D).mesh = nova
+
+
+## Uma vez por superfície (na primeira batida do carro): a malha sem índices, com
+## normal por face, e, por região de AMASSADOS, os vértices que ela afunda, o
+## peso de cada um (_deslocamento sem o fator) e a direção no espaço da malha.
+## Cada batida depois só soma; antes, cada estágio novo refazia a malha inteira
+## (~48 ms por batida).
+func _preparar_amassado(sf: Dictionary, rel: Transform3D, dim: Vector2) -> void:
+	var st := SurfaceTool.new()
+	st.create_from_arrays(sf["arr"], sf["prim"])
+	st.deindex()
+	st.generate_normals()
+	var base := st.commit_to_arrays()
+	var vs: PackedVector3Array = base[Mesh.ARRAY_VERTEX]
+	var inv := rel.affine_inverse()
+	var idxs := []
+	var pesos := []
+	var dirs := []
+	var tris := []
+	for r in AMASSADOS.size():
+		var a: Dictionary = AMASSADOS[r]
+		var centro := Vector3(a["c"].x * dim.x, a["c"].y, a["c"].z * dim.y)
+		var raio: float = a["raio"] * dim.x
+		var idx := PackedInt32Array()
+		var peso := PackedFloat32Array()
+		var vistos := {}
+		for i in vs.size():
+			var p := rel * vs[i]
+			var dist := p.distance_to(centro)
+			if dist >= raio:
+				continue
+			var u := 1.0 - dist / raio
+			var ruga := 0.45 + 0.55 * absf(sin(p.x * 13.1 + p.y * 9.7 + p.z * 7.3) + 0.5 * sin(p.x * 31.0 - p.z * 23.0))
+			idx.append(i)
+			peso.append(float(a["prof"]) * u * sqrt(u) * ruga)
+			vistos[i / 3] = true
+		idxs.append(idx)
+		pesos.append(peso)
+		dirs.append(inv.basis * (a["dir"] as Vector3).normalized())
+		tris.append(PackedInt32Array(vistos.keys()))
+	sf["base"] = base
+	sf["idx"] = idxs
+	sf["peso"] = pesos
+	sf["dir"] = dirs
+	sf["tris"] = tris
 
 
 static func _deslocamento(p: Vector3, fator: Array, dim: Vector2) -> Vector3:
@@ -786,7 +846,11 @@ func _mostrar_dano(id: String, dano: PackedFloat32Array, eliminado: bool) -> voi
 		_amassar(id, est, eliminado)
 	var c: Node3D = _carros[id]
 	var tom := Color(0.32, 0.3, 0.3) if eliminado else Color.WHITE.lerp(Color(0.75, 0.72, 0.7), pior)
-	_tingir(c, tom)
+	# Só quando o tom muda: percorrer o modelo inteiro a cada quadro custava
+	# ~1 ms por carro.
+	if _tom_visto.get(id, Color(0, 0, 0, 0)) != tom:
+		_tom_visto[id] = tom
+		_tingir(c, tom)
 	var fumando := eliminado or Arena.estagio(pior, _estagios) >= FUMACA_ESTAGIO
 	if fumando and not Preferencias.efeitos_leves:
 		_fogo_de(id).fumacar(eliminado)
@@ -1140,6 +1204,12 @@ func _construir_arena() -> void:
 	var cenario := CenarioArena.new()
 	_cena.add_child(cenario)
 	cenario.montar(_forma, _bloco_mn, _bloco_lado, lados, _objetos.trechos_concreto, hash(_forma.muro) + 1, _cores_luta, _tema)
+	# Peças fixas (arquibancadas, paddock, tema) em poucas malhas: eram ~1.300
+	# chamadas de desenho, uma por degrau, banco, poste ou tenda.
+	var blocos := []
+	for arq in _arquibancadas:
+		blocos.append_array(arq["blocos"])
+	FundirMalhas.fundir(blocos + [cenario], _cena)
 	_fundo = cenario.direcao_fundo
 	if _fundo != Vector2.ZERO:
 		_orbita = atan2(-_fundo.x, _fundo.y)  # já começa do lado oposto ao tema alto

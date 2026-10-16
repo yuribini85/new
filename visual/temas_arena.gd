@@ -641,6 +641,7 @@ static func _fardos(c: CenarioArena) -> void:
 				c._peca(no, Vector3(0.15, 11.0, 0.15), Vector3(x * 0.6, 5.5, zz * 0.6), aco,
 						Basis(Vector3.FORWARD, -x * 0.05).rotated(Vector3.RIGHT, zz * 0.05))
 		var helice := Node3D.new()
+		helice.set_meta("animado", true)  # gira: fica fora da malha fundida
 		helice.position = Vector3(0, 11.2, -0.8)
 		no.add_child(helice)
 		for k in 12:
