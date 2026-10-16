@@ -132,8 +132,23 @@ func construir() -> void:
 		else:
 			nota("icone_cadeado", "Desbloqueie uma licença para novas corridas", "", v, Color.WHITE)
 		botao("Ver licenças", func(): ir_para.emit(LICENCAS), true, true, v)
-	for l in lista.slice(0, _limite):
-		_cartao_evento(c, l[0], l[1])
+	_geracao += 1
+	_cartoes_aos_poucos(c, lista, _geracao)
+
+
+## Os cartões da lista: os primeiros (os que cabem na tela) na hora, o resto um
+## por quadro (cada um custa ~5 ms; a lista inteira travava a abertura da aba).
+## Uma nova construção da tela interrompe a anterior.
+const CARTOES_NA_HORA := 3
+var _geracao := 0
+func _cartoes_aos_poucos(c: Carro, lista: Array, geracao: int) -> void:
+	var itens := lista.slice(0, _limite)
+	for k in itens.size():
+		if k >= CARTOES_NA_HORA and is_inside_tree():  # fora da árvore (testes), tudo na hora
+			await get_tree().process_frame
+			if geracao != _geracao or not is_inside_tree():
+				return
+		_cartao_evento(c, itens[k][0], itens[k][1])
 	if lista.size() > _limite:
 		var resto := lista.size() - _limite
 		var mais := Button.new()
