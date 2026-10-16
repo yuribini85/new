@@ -25,6 +25,7 @@ static func tem(id: String) -> bool:
 const CANHAO_BASE := Vector3(0, 3.3, 0.3)
 const CANHAO_INCL := 0.26  # elevação da lança
 const CANHAO_TUBOS := [2.6, 2.4]  # primeiro tubo e o telescópico
+const JATO_V := 20.0  # velocidade de saída da água (m/s)
 
 
 static func extras(id: String) -> Node3D:
@@ -53,37 +54,104 @@ static func extras(id: String) -> Node3D:
 	return no
 
 
-## Jato d'água: partículas no mundo (caem com a gravidade e ficam para trás
-## quando o caminhão anda), desligado até haver alvo.
+## Jato d'água: núcleo de filetes alinhados à velocidade (o arco do jato) e
+## névoa de gotas que abre e some no fim. Partículas no mundo: caem com a
+## gravidade e ficam para trás quando o caminhão anda. Desligado até haver alvo.
 static func _jato(pos: Vector3, dir: Vector3) -> CPUParticles3D:
-	var p := CPUParticles3D.new()
-	p.name = "Jato"
+	# gotas que se soltam do jato (o jato contínuo é a faixa que a arena desenha
+	# no arco, Arena3D._canhoes, com a mesma velocidade de saída)
+	var p := _particulas("Jato", 120, 1.0, dir, 2.5, JATO_V - 1.5, JATO_V + 0.5)
 	p.position = pos
+	p.mesh = _quadro(Vector2(0.18, 0.18), Color(0.92, 0.97, 1.0, 0.8))
+	var abre := Curve.new()
+	abre.add_point(Vector2(0, 0.6))
+	abre.add_point(Vector2(1, 1.6))
+	p.scale_amount_curve = abre
+	p.color_ramp = _rampa(Color(0.95, 0.98, 1.0, 0.9), Color(0.75, 0.88, 1.0, 0.0))
+	var nevoa := _particulas("Nevoa", 70, 1.2, dir, 6.0, JATO_V - 6.0, JATO_V - 1.0)
+	nevoa.mesh = _quadro(Vector2(0.55, 0.55), Color(0.88, 0.94, 1.0, 0.4))
+	nevoa.damping_min = 2.0
+	nevoa.damping_max = 4.0
+	var cresce := Curve.new()
+	cresce.add_point(Vector2(0, 0.4))
+	cresce.add_point(Vector2(1, 2.4))
+	nevoa.scale_amount_curve = cresce
+	nevoa.color_ramp = _rampa(Color(0.9, 0.95, 1.0, 0.45), Color(0.8, 0.9, 1.0, 0.0))
+	p.add_child(nevoa)
+	return p
+
+
+static func _particulas(nome: String, n: int, vida: float, dir: Vector3, abertura: float, v0: float, v1: float) -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.name = nome
 	p.emitting = false
-	p.amount = 160
-	p.lifetime = 1.1
+	p.amount = n
+	p.lifetime = vida
 	p.local_coords = false
 	p.direction = dir
-	p.spread = 4.0
-	p.initial_velocity_min = 18.0
-	p.initial_velocity_max = 21.0
+	p.spread = abertura
+	p.initial_velocity_min = v0
+	p.initial_velocity_max = v1
 	p.gravity = Vector3(0, -9.8, 0)
-	p.scale_amount_min = 0.6
-	p.scale_amount_max = 2.0
+	p.randomness = 0.3
+	return p
+
+
+## Quadro virado para a câmera com uma gota redonda e macia (sem textura em
+## arquivo: um degradê radial).
+static var _gota: Texture2D
+
+
+static func gota() -> Texture2D:
+	_quadro(Vector2.ONE, Color.WHITE)
+	return _gota
+
+
+## Respingo onde o jato bate: gotas que sobem e caem, e névoa.
+static func respingo() -> CPUParticles3D:
+	var p := _particulas("Respingo", 50, 0.7, Vector3.UP, 55.0, 2.0, 5.0)
+	p.top_level = true
+	p.mesh = _quadro(Vector2(0.22, 0.22), Color(0.92, 0.97, 1.0, 0.85))
+	p.color_ramp = _rampa(Color(0.95, 0.98, 1.0, 0.9), Color(0.8, 0.9, 1.0, 0.0))
+	var bruma := _particulas("Bruma", 16, 1.0, Vector3.UP, 80.0, 0.5, 1.5)
+	bruma.mesh = _quadro(Vector2(0.9, 0.9), Color(0.9, 0.95, 1.0, 0.35))
+	bruma.gravity = Vector3(0, -1.0, 0)
+	bruma.color_ramp = _rampa(Color(0.9, 0.95, 1.0, 0.4), Color(0.9, 0.95, 1.0, 0.0))
+	p.add_child(bruma)
+	return p
+
+
+static func _quadro(tam: Vector2, cor: Color) -> QuadMesh:
+	if _gota == null:
+		var g := Gradient.new()
+		g.set_color(0, Color(1, 1, 1, 1))
+		g.set_color(1, Color(1, 1, 1, 0))
+		var t := GradientTexture2D.new()
+		t.gradient = g
+		t.fill = GradientTexture2D.FILL_RADIAL
+		t.fill_from = Vector2(0.5, 0.5)
+		t.fill_to = Vector2(1.0, 0.5)
+		t.width = 32
+		t.height = 32
+		_gota = t
 	var q := QuadMesh.new()
-	q.size = Vector2(0.42, 0.42)
+	q.size = tam
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	mat.vertex_color_use_as_albedo = true
+	mat.albedo_color = cor
+	mat.albedo_texture = _gota
 	q.material = mat
-	p.mesh = q
+	return q
+
+
+static func _rampa(a: Color, b: Color) -> Gradient:
 	var g := Gradient.new()
-	g.set_color(0, Color(0.85, 0.94, 1.0, 0.9))
-	g.set_color(1, Color(0.6, 0.8, 1.0, 0.0))
-	p.color_ramp = g
-	return p
+	g.set_color(0, a)
+	g.set_color(1, b)
+	return g
 
 
 static func montar(m: MontagemMalha, id: String, f: Dictionary) -> void:

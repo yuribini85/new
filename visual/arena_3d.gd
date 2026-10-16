@@ -1171,5 +1171,101 @@ func _canhoes(amostra: Dictionary, delta: float) -> void:
 			var quer := atan2(local.x, local.z)
 			canhao.rotation.y = rotate_toward(canhao.rotation.y, quer, CANHAO_GIRO * delta) if delta > 0.0 else quer
 			mirando = absf(angle_difference(canhao.rotation.y, quer)) < 0.25
-		if jato != null:
+		if jato != null and jato.emitting != mirando:
 			jato.emitting = mirando
+			for nevoa in jato.get_children():
+				(nevoa as CPUParticles3D).emitting = mirando
+		_arco_do_jato(canhao, jato, alvo as Node3D if mirando else null)
+
+
+## O jato contínuo: uma faixa macia (borda transparente) no arco da água, do
+## bocal até a altura do alvo, com a velocidade de saída e a gravidade, mais o
+## respingo onde ela bate. Refeita a cada quadro, virada para a câmera.
+func _arco_do_jato(canhao: Node3D, jato: Node3D, alvo: Node3D) -> void:
+	var arco := canhao.get_node_or_null("ArcoJato") as MeshInstance3D
+	var resp := canhao.get_node_or_null("Respingo") as CPUParticles3D
+	if arco == null:
+		arco = MeshInstance3D.new()
+		arco.name = "ArcoJato"
+		arco.top_level = true
+		arco.mesh = ImmediateMesh.new()
+		arco.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.vertex_color_use_as_albedo = true
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		arco.material_override = mat
+		canhao.add_child(arco)
+		resp = Pesados.respingo()
+		canhao.add_child(resp)
+	if alvo == null or jato == null or _camera == null:
+		arco.visible = false
+		if resp.emitting:
+			resp.emitting = false
+			for b in resp.get_children():
+				(b as CPUParticles3D).emitting = false
+		return
+	arco.visible = true
+	var p0: Vector3 = jato.global_position
+	var dir: Vector3 = (canhao.global_transform.basis * Vector3(0, sin(Pesados.CANHAO_INCL), cos(Pesados.CANHAO_INCL))).normalized()
+	var g := Vector3(0, -9.8, 0)
+	var chao: float = alvo.global_position.y + 0.7
+	# força do jato para cair no alvo (ângulo da lança fixo):
+	# v² = g·d² / (2·cos²θ·(d·tanθ + h)), h = altura do bocal sobre o alvo
+	var plano := Vector2(alvo.global_position.x - p0.x, alvo.global_position.z - p0.z)
+	var d := plano.length()
+	var th: float = Pesados.CANHAO_INCL
+	var h := p0.y - chao
+	var vel := Pesados.JATO_V
+	var den := 2.0 * cos(th) * cos(th) * (d * tan(th) + h)
+	if den > 0.01:
+		vel = clampf(sqrt(9.8 * d * d / den), 4.0, Pesados.JATO_V + 4.0)
+	var v := dir * vel
+	if jato is CPUParticles3D:
+		var cp := jato as CPUParticles3D
+		cp.initial_velocity_min = vel - 1.0
+		cp.initial_velocity_max = vel + 0.5
+		for nv in cp.get_children():
+			(nv as CPUParticles3D).initial_velocity_min = vel * 0.7
+			(nv as CPUParticles3D).initial_velocity_max = vel * 0.95
+	var pts := []
+	var t := 0.0
+	while t < 1.8:
+		var p := p0 + v * t + g * (0.5 * t * t)
+		pts.append(p)
+		if p.y < chao and t > 0.1:
+			break
+		t += 0.04
+	var im := arco.mesh as ImmediateMesh
+	im.clear_surfaces()
+	if pts.size() < 2:
+		return
+	var agora := Time.get_ticks_msec() / 1000.0
+	var olho: Vector3 = _camera.global_position
+	im.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+	var antes := []
+	for i in pts.size():
+		var p: Vector3 = pts[i]
+		var tan: Vector3 = (pts[mini(i + 1, pts.size() - 1)] - pts[maxi(i - 1, 0)]).normalized()
+		var lado := tan.cross(olho - p).normalized()
+		var u := float(i) / (pts.size() - 1)
+		var w := lerpf(0.1, 0.65, u) * (1.0 + 0.18 * sin(agora * 31.0 + i * 1.7))
+		var a := lerpf(0.85, 0.35, u)
+		var faixa := [[p - lado * w, 0.0], [p, a], [p + lado * w, 0.0]]
+		if not antes.is_empty():
+			for k in 2:
+				var q0: Array = antes[k]
+				var q1: Array = antes[k + 1]
+				var r0: Array = faixa[k]
+				var r1: Array = faixa[k + 1]
+				for vtx in [q0, r0, r1, q0, r1, q1]:
+					im.surface_set_color(Color(0.9, 0.96, 1.0, vtx[1]))
+					im.surface_add_vertex(vtx[0])
+		antes = faixa
+	im.surface_end()
+	resp.global_position = pts[-1]
+	if not resp.emitting:
+		resp.emitting = true
+		for b in resp.get_children():
+			(b as CPUParticles3D).emitting = true
