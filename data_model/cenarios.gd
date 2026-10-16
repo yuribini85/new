@@ -12,7 +12,20 @@ const LISTA := [
 		"detalhe": "Licenças até a National e 3 carros na garagem: a Arena já abre."},
 	{"id": "carro_3d", "nome": "Carro 3D: Hozuki Catana",
 		"detalhe": "Como a arena aberta, com o Hozuki Catana (modelo 3D) como carro ativo: garagem, corrida e arena."},
+	{"id": "completo", "nome": "Teste completo",
+		"detalhe": "Tudo liberado: todas as licenças, história e tutoriais vistos, saldo e peças de sobra, "
+			+ "garagem ampliada com vários carros (o resgate com canhão incluso), pilotos de corrida e de arena "
+			+ "contratados e escalados. Para testar a arena e o resto sem jogar o começo."},
 ]
+
+## Teste completo: dinheiro e peças de sobra (cenário de teste, não economia),
+## ampliações da garagem e os carros além dos dois usados.
+const COMPLETO_SALDO := 50_000_000
+const COMPLETO_PECAS := 100_000
+const COMPLETO_AMPLIACOES := 4
+const COMPLETO_CARROS := ["hozuki_catana", "brakhaus_sentinela", "brakhaus_colosso", "kanaya_kestrel"]
+## Flags de história que o teste não liga: o topo do Grid encerraria os desafios.
+const COMPLETO_SEM_FLAGS := ["GRID_TOP"]
 
 ## O primeiro carro com modelo 3D (arte/carros3d/).
 const CARRO_3D := "hozuki_catana"
@@ -52,9 +65,54 @@ static func montar(dados: Node, jogador: Node, id: String) -> String:
 				var carro := Carro.new(dados.carro(CARRO_3D))
 				carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 				jogador.carro_ativo = jogador.garagem.adicionar(carro)
+		"completo":
+			_completo(dados, jogador)
 		_:
 			return "cenário %s não existe" % id
 	return ""
+
+
+## Teste completo: tudo visto e liberado, a equipe montada e escalada.
+static func _completo(dados: Node, jogador: Node) -> void:
+	for c in dados.lista("dialogos"):
+		jogador.dialogos_vistos[c["id"]] = true
+		for f in c.get("flags", []):
+			if not f in COMPLETO_SEM_FLAGS:
+				jogador.flags[f] = true
+	jogador.flags["ABERTURA_DONO"] = true
+	jogador.nome_admin = "Teste"
+	var todas: Array = dados.lista("licencas")
+	_licencas_ate(dados, jogador, String(todas.back()["id"]))
+	Prologo.ao_conceder(dados, jogador, "NATIONAL")
+	jogador.economia.creditar(COMPLETO_SALDO)
+	jogador.economia.ganhar_pecas(COMPLETO_PECAS)
+	jogador.ampliacoes_garagem = COMPLETO_AMPLIACOES
+	jogador.garagem.vagas = VagasGaragem.capacidade(dados, COMPLETO_AMPLIACOES)
+	_comprar_usado(dados, jogador)
+	_comprar_usado(dados, jogador)
+	var uids := {}
+	for mid in COMPLETO_CARROS:
+		if dados.existe("carros", mid) and not jogador.garagem.cheia():
+			var carro := Carro.new(dados.carro(mid))
+			carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
+			uids[mid] = jogador.garagem.adicionar(carro)
+	# Equipe: um piloto de corrida e a dupla da arena, do mercado de agora.
+	EquipeJogador.criar(jogador)
+	jogador.flags[EquipeJogador.FLAG_ARENA] = true
+	var agora := Time.get_unix_time_from_system()
+	for v in [["corrida", "corrida"], ["arena1", "arena"], ["arena2", "arena"]]:
+		for o in EquipeJogador.oferta(dados, jogador, v[1], agora) + EquipeJogador.pool(dados, jogador, v[1]):
+			if EquipeJogador.contratar(dados, jogador, String(o["id"]), v[0]) == "":
+				break
+	var carros: Array = jogador.garagem.lista()
+	var corrida: int = uids.get(CARRO_3D, carros[0].uid)
+	jogador.carro_ativo = corrida
+	Escalacao.definir(jogador, "corrida", corrida)
+	var arena := carros.filter(func(c): return c.uid != corrida)
+	if uids.has("brakhaus_sentinela"):  # o resgate com o canhão vai para a arena
+		arena.sort_custom(func(a, b): return a.uid == uids["brakhaus_sentinela"] and b.uid != uids["brakhaus_sentinela"])
+	for k in mini(2, arena.size()):
+		Escalacao.definir(jogador, "arena%d" % (k + 1), arena[k].uid)
 
 
 static func _licencas_ate(dados: Node, jogador: Node, ultima: String) -> void:

@@ -2,7 +2,9 @@ extends Control
 ## Tela inicial: o logo com o carregamento de verdade (a cena principal, com as
 ## telas e a corrida 3D, carregada em segundo plano) e depois as opções:
 ## "Continuar" grande e "Novo jogo" pequeno embaixo, que pede confirmação
-## porque apaga o progresso. Sem save, a opção grande é "Começar".
+## porque apaga o progresso. Sem save, a opção grande é "Começar". Abaixo, o
+## "Teste completo" (Cenarios: tudo liberado, num save próprio; o seu jogo não
+## muda e volta pelas Configurações).
 
 const PRINCIPAL := "res://scenes/principal.tscn"
 ## Composição (apresentação, não balanceamento): tempo mínimo do logo (s),
@@ -13,6 +15,9 @@ const ALTURA_LOGO := 198.0
 const TOPO_ACOES := 0.44
 const LARGURA_BOTAO := 460.0
 const ALTURA_BOTAO := 96.0
+## Botão do teste completo na tela inicial (pedido do usuário para testar rápido);
+## desligar antes do lançamento.
+const MOSTRAR_TESTE := true
 ## Ocre do botão principal um pouco menos saturado que o da interface.
 static var OCRE := Color.from_hsv(Aba.COR_DESTAQUE.h, Aba.COR_DESTAQUE.s * 0.82, Aba.COR_DESTAQUE.v * 0.96)
 
@@ -158,6 +163,15 @@ func _mostrar_opcoes() -> void:
 		novo.add_theme_constant_override("shadow_offset_y", 2)
 		novo.pressed.connect(_confirmar_novo)
 		_opcoes.add_child(novo)
+	if MOSTRAR_TESTE:
+		var teste := Button.new()
+		Tipografia.acao_secundaria(teste, "Teste completo", Color(0.75, 0.85, 0.95), 26, 88)
+		teste.custom_minimum_size.x = LARGURA_BOTAO
+		teste.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		teste.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
+		teste.add_theme_constant_override("shadow_offset_y", 2)
+		teste.pressed.connect(_entrar_teste)
+		_opcoes.add_child(teste)
 	_opcoes.visible = true
 	create_tween().tween_property(_opcoes, "modulate:a", 1.0, 0.4)
 
@@ -212,6 +226,15 @@ func _confirmar_novo() -> void:
 		centro.queue_free()
 		_confirmacao = null)
 	v.add_child(cancelar)
+
+
+## Tudo liberado (Cenarios "completo"), num save próprio, e entra no jogo.
+func _entrar_teste() -> void:
+	var erro: String = get_node("/root/SaveManager").usar_cenario("completo")
+	if erro != "":
+		push_error("teste completo: " + erro)
+		return
+	_entrar()
 
 
 func _entrar() -> void:

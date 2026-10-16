@@ -125,7 +125,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 
 | flag | primeira origem |
 |---|---|
-| `ABERTURA_DONO` | ui/principal.gd |
+| `ABERTURA_DONO` | data_model/cenarios.gd |
 | `ADMIN_NAMED` | cena CW_P01B |
 | `ARENA_FIRST_ENTRY` | cena CW_R06 |
 | `ARENA_FIRST_LOSS` | cena CW_R09 |
@@ -242,3 +242,4 @@ Segundo piloto da equipe do jogador: `jonas_reid` (Jonas Reid).
 |---|---|
 | `dono_inicio` | Oficina: começo |
 | `dono_arena` | Oficina: arena aberta |
+| `completo` | Teste completo |
