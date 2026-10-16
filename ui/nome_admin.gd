@@ -84,12 +84,25 @@ func nome() -> String:
 	return _campo.text.strip_edges()
 
 
+## O botão nunca fica desabilitado: no navegador do celular, o teclado virtual
+## preenche o campo sem o sinal text_changed, e o Confirmar ficava travado
+## mesmo com o nome escrito. Vazio, ele só fica apagado; o texto é conferido
+## a cada quadro e no toque.
 func _atualizar() -> void:
-	_ok.disabled = nome() == ""
+	_ok.modulate.a = 0.55 if nome() == "" else 1.0
+
+
+func _process(_delta: float) -> void:
+	_atualizar()
 
 
 func _confirmar() -> void:
 	if nome() == "":
+		# Sem nome: o campo pisca e volta a pedir o texto.
+		var tw := create_tween()
+		tw.tween_property(_campo, "modulate", Color(1.6, 1.3, 0.6), 0.12)
+		tw.tween_property(_campo, "modulate", Color.WHITE, 0.25)
+		_campo.grab_focus()
 		return
 	confirmado.emit(nome())
 	queue_free()
