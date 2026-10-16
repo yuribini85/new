@@ -1315,6 +1315,7 @@ func _comprar_peca(c: Carro, p: Dictionary, antes: Dictionary) -> void:
 			historia("SEM_PECAS" if p["categoria"] == Blindagem.CATEGORIA else "SEM_DINHEIRO")
 		return
 	Sons.tocar_ui(self, "moeda", -4.0)
+	Sons.tocar_ui(self, "parafusadeira", -8.0)
 	var falou: bool = p["categoria"] == Blindagem.CATEGORIA and not possuida and historia("BLINDAGEM_COMPRADA")
 	falou = falou or historia("PECA_COMPRADA", {"peca": String(p["nome"])})
 	if era_demanda:
@@ -1338,6 +1339,7 @@ func _comprar_pneu(c: Carro, pn: Dictionary) -> void:
 	else:
 		avisar("Pneu comprado: %s" % pn["nome"])
 		Sons.tocar_ui(self, "moeda", -4.0)
+		Sons.tocar_ui(self, "parafusadeira", -8.0)
 		historia("PECA_COMPRADA", {"peca": String(pn["nome"])})
 
 

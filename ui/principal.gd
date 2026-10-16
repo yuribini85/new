@@ -584,6 +584,8 @@ func _tema() -> Theme:
 ## Avisos das telas. Assistindo a corrida, só os de erro: os outros cobririam o
 ## cabeçalho sem dar tempo de ler (a própria corrida já mostra a largada).
 func _avisar(texto: String, ok := true) -> void:
+	if not ok:
+		Sons.tocar_ui(self, "erro", -8.0)
 	if ok and _abas.current_tab == 4 and (not jogador.fila.is_empty() or _todas[4].em_silencio()):
 		return
 	_sobre.avisar(texto, ok)

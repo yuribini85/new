@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Corta os sons do GDC Game Audio Bundle 2026 (parte 9, Sonniss; royalty-free,
-uso comercial sem atribuição) e grava os .ogg do jogo em arte/sons/.
+"""Corta os sons gravados e grava os .ogg do jogo em arte/sons/. Fontes (todas
+de uso comercial sem atribuição; detalhes em arte/sons/LICENCA.md):
+  GDC Game Audio Bundle 2026, parte 9 (Sonniss, royalty-free);
+  Mixkit (Mixkit Sound Effects Free License), arquivos mixkit_<id>.mp3;
+  Kenney (CC0), arquivos kenney_<nome>.ogg.
 
-Os WAV originais ficam fora do repositório (7 GB no pacote); passe a pasta onde
-estão, com os nomes curtos abaixo:
+Os originais ficam fora do repositório; passe a pasta onde estão, com os nomes
+curtos abaixo:
 
-    python3 tools/preparar_sons.py <pasta com impacto.wav, raspagem.wav, ...>
+    python3 tools/preparar_sons.py <pasta com impacto.wav, mixkit_462.mp3, ...>
 
-Laços (oficina, publico, motor_grave) fecham com uma emenda cruzada: o fim do
+Laços (oficina, torcida, motor_grave) fecham com uma emenda cruzada: o fim do
 trecho é misturado ao começo, para repetir sem estalo (emenda de até 1,5 s,
 15% do trecho). Mono, 44,1 kHz (tocam em celular; o estéreo dobraria o
 tamanho sem diferença no alto-falante).
@@ -28,11 +31,20 @@ CORTES = {
     "porta_abre": ("porta.wav", 0.05, 0.9, False, 4.0),
     "porta": ("porta.wav", 1.75, 2.55, False, 0.0),
     "oficina": ("oficina.wav", 2.0, 26.0, True, 6.0),
-    "publico": ("publico.wav", 18.0, 48.0, True, 4.0),
     # SoundBits, Mad Mustang Mercury: V8 em marcha lenta, estável até 2,5 s.
     "motor_grave": ("mustang.wav", 0.0, 2.2, True, 8.0),
-    # SoundBits, Kawasaki: passagem rápida (ultrapassagem).
-    "passagem": ("moto_passa.wav", 3.0, 8.5, False, 0.0),
+    # Mixkit: "Fast car drive by" (ultrapassagem).
+    "passagem": ("mixkit_1538.mp3", 0.3, 2.6, False, 0.0),
+    # Mixkit: "Huge crowd cheering victory" (torcida da reta final).
+    "torcida": ("mixkit_462.mp3", 1.0, 7.5, True, 0.0),
+    # Mixkit: "Stadium joy shouting crowd" (chegada).
+    "comemoracao": ("mixkit_3022.mp3", 0.0, 14.0, False, 0.0),
+    # Mixkit: "Car explosion debris" (explosão na arena).
+    "explosao": ("mixkit_1562.mp3", 0.0, 7.5, False, 0.0),
+    # Mixkit: "Garage pneumatic screwer" (peça instalada).
+    "parafusadeira": ("mixkit_817.mp3", 0.0, 0.9, False, 0.0),
+    # Kenney Interface Sounds: error_003 (aviso de falha).
+    "erro": ("kenney_error_003.ogg", 0.0, 0.53, False, 0.0),
     # SoundBits, Vox Hominis: piloto correndo depois de sair do carro.
     "ofegante": ("ofegante.wav", 0.0, 4.5, False, 0.0),
 }

@@ -53,10 +53,10 @@ const GRAVE_DB_MAX_GIRO := -12.0
 const AGUDO_DB_MIN_GIRO := -16.0
 var _tom_alvo := -1.0
 const PNEU_DB := -8.0
-## Volume do público gravado no auge da torcida.
-const PUBLICO_DB := -2.0
+## Volume da torcida gravada no auge.
+const TORCIDA_DB := -10.0
 var _gravado := false
-var _publico_gravado := false
+var _torcida_gravada := false
 
 
 ## Laço gravado (ou null sem o arquivo).
@@ -80,9 +80,9 @@ func _init() -> void:
 	var pneu := _arquivo("pneu", true)
 	_pneu = _laco(pneu if pneu != null else _ruido(1.0, 0.22, 0.55), MUDO_DB)
 	_zebra = _laco(_ruido(1.0, 0.3, 0.15, 28.0), MUDO_DB)
-	var publico := _arquivo("publico", true)
-	_publico_gravado = publico != null
-	_torcida = _laco(publico if _publico_gravado else _ruido(2.0, 0.2, 0.9, 0.0, true), MUDO_DB)
+	var torcida_gravada := _arquivo("torcida", true)
+	_torcida_gravada = torcida_gravada != null
+	_torcida = _laco(torcida_gravada if _torcida_gravada else _ruido(2.0, 0.2, 0.9, 0.0, true), MUDO_DB)
 	_efeito = AudioStreamPlayer.new()
 	_efeito.max_polyphony = 4
 	add_child(_efeito)
@@ -149,7 +149,7 @@ func pneu(cantando: bool, zebra: bool) -> void:
 
 ## Torcida: 0..1 (sobe na reta final com disputa).
 func torcida(f: float) -> void:
-	var alto := PUBLICO_DB if _publico_gravado else -16.0
+	var alto := TORCIDA_DB if _torcida_gravada else -16.0
 	_ligar(_torcida, lerpf(MUDO_DB, alto, clampf(f, 0.0, 1.0)) if f > 0.01 else MUDO_DB)
 
 
@@ -194,11 +194,13 @@ func ultrapassagem(ganhou: bool) -> void:
 	var agora := Time.get_ticks_msec()
 	if agora - _passagem_ms >= PASSAGEM_INTERVALO_MS:  # pelotão trocando de posição: um só
 		_passagem_ms = agora
-		tocar_ui(self, "passagem", -12.0, randf_range(0.95, 1.1))
+		tocar_ui(self, "passagem", -6.0, randf_range(0.95, 1.1))
 
 
+## Chegada: o sinal e o público comemorando.
 func chegada() -> void:
 	_tocar(_chegada)
+	tocar_ui(self, "comemoracao", -10.0)
 
 
 func ultima_volta() -> void:
@@ -302,10 +304,14 @@ static func impacto(no: Node, dano: float) -> void:
 static var _estrondo: AudioStreamWAV
 
 
-## Estrondo da explosão (pacote de dano): ruído filtrado com uma varredura
-## grave, caindo em 1 s. Toca num tocador próprio, como tocar_ui.
+## Estrondo da explosão (pacote de dano): a gravação (explosao.ogg) ou, sem
+## ela, ruído filtrado com uma varredura grave, caindo em 1 s. Toca num
+## tocador próprio, como tocar_ui.
 static func estrondo(no: Node, db := -6.0) -> void:
 	if no == null or not no.is_inside_tree():
+		return
+	if ResourceLoader.exists(PASTA + "explosao.ogg"):
+		tocar_ui(no, "explosao", db)
 		return
 	if _estrondo == null:
 		var n := TAXA
