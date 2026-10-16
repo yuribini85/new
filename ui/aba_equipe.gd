@@ -264,7 +264,8 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 				"corridas" if vaga == "corrida" else "lutas"], FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var falta := ArenaCarreira.recuperacao_s(jogador, id)
 	if falta > 0.0:
-		rotulo("EM RECUPERAÇÃO (atropelado na arena): volta em %s." % ArenaCarreira.texto_tempo(falta),
+		rotulo("EM RECUPERAÇÃO (%s na arena): volta em %s." % [EquipeJogador.flexao(
+				EquipeJogador.genero(dados, id), "atropelado", "atropelada"), ArenaCarreira.texto_tempo(falta)],
 				FONTE_PEQUENA, COR_RUIM, v)
 	if EquipeJogador.em_embalo(jogador, id):
 		rotulo("EMBALO: o próximo treino leva metade do tempo.", FONTE_PEQUENA, COR_BOM, v)

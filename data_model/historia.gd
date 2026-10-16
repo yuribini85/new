@@ -167,6 +167,21 @@ func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
 ## {premio}, {posicao}, {peca}, {demanda}, {piloto}, {admin}): o estado do jogo e o contexto do trigger
 ## (evento = id da prova, posicao, peca, carro). As falas mostram o que o
 ## jogador vê na tela, nunca um número inventado.
+## Flexão de gênero nas falas: "{g:contratado|contratada}" vira a forma do
+## gênero do piloto de corrida contratado ({piloto}); sem ele, a masculina.
+## Fica antes de `format` (as chaves com ":" não são variáveis).
+func flexionar(texto: String) -> String:
+	if not "{g:" in texto:
+		return texto
+	var id := EquipeJogador.piloto_vaga(jogador, "corrida")
+	var g := EquipeJogador.genero(dados, id) if id != "" else "m"
+	var re := RegEx.create_from_string("\\{g:([^|}]*)\\|([^}]*)\\}")
+	var saida := texto
+	for m in re.search_all(texto):
+		saida = saida.replace(m.get_string(0), m.get_string(2) if g == "f" else m.get_string(1))
+	return saida
+
+
 func variaveis(ctx: Dictionary = {}) -> Dictionary:
 	var v := {"saldo": Aba.dinheiro(jogador.economia.saldo) + " giros"}
 	var c: Carro = jogador.garagem.carro(jogador.carro_ativo) if jogador.garagem != null else null

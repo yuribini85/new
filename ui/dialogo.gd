@@ -480,7 +480,7 @@ func _mostrar() -> void:
 		_busto.texture = _busto_info["tex"]
 		_busto.size = _busto_info["tela"]
 		_retrato.custom_minimum_size.x = _busto_info["tela"].x * BUSTO_OCUPA
-	_texto.text = String(f["texto"]).format(historia.variaveis(_cena.get("_ctx", {})))
+	_texto.text = historia.flexionar(String(f["texto"])).format(historia.variaveis(_cena.get("_ctx", {})))
 	_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER if sistema else HORIZONTAL_ALIGNMENT_LEFT
 	_layout()
 	var atraso := 0.0

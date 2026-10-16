@@ -354,7 +354,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{piloto} está contratado. Agora, a primeira prova.",
+    "texto": "{piloto} está {g:contratado|contratada}. Agora, a primeira prova.",
     "pose": "firme"
    },
    {
@@ -485,7 +485,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Nós preparamos e o piloto contratado corre.",
+    "texto": "Nós preparamos e {piloto} corre.",
     "pose": "firme"
    },
    {
@@ -633,7 +633,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Vem ver. Meu carro, nosso piloto, ninguém aposta nada.",
+    "texto": "Vem ver. Meu carro, nossa equipe, ninguém aposta nada.",
     "pose": "firme"
    },
    {
@@ -695,7 +695,7 @@
    },
    {
     "quem": "mara",
-    "texto": "É a licença que a gente precisa renovar. Quem renova é o piloto, nos testes.",
+    "texto": "É a licença que a gente precisa renovar. Quem renova é {piloto}, nos testes.",
     "pose": "explica"
    },
    {
@@ -1902,7 +1902,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "O carro acabou. O piloto saiu andando. É isso que importa.",
+    "texto": "O carro acabou. Quem pilotava saiu andando. É isso que importa.",
     "pose": "decepcao"
    },
    {

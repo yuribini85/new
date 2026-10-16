@@ -26,7 +26,7 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node) -> void:
 		for f in c.get("falas", []):
 			if not f.has("quem"):
 				continue
-			linhas.append([String(f["quem"]), _texto(String(f["texto"]), vars)])
+			linhas.append([String(f["quem"]), _texto(h.flexionar(String(f["texto"])), vars)])
 		if linhas.is_empty():
 			continue
 		var cart := aba.cartao(Color.TRANSPARENT, v)

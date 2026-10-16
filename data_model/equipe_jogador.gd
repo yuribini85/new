@@ -127,7 +127,7 @@ static func _do_grid(dados: Node, e: Dictionary, pe: Dictionary) -> Dictionary:
 	# Decisão 72: o traço pelo perfil do próprio piloto (o da equipe, se faltar).
 	var perfil := String(pe.get("perfil", e.get("perfil", "")))
 	var tr := String(cfg_mercado(dados).get("traco_por_perfil", {}).get(perfil, "constante"))
-	return {"id": pe["id"], "nome": pe["nome"], "traco": tr, "tipo": "",
+	return {"id": pe["id"], "nome": pe["nome"], "genero": String(pe.get("genero", "m")), "traco": tr, "tipo": "",
 			"frase": String(pe.get("personalidade", "")), "equipe": String(e["nome"])}
 
 
@@ -170,6 +170,22 @@ static func oferta(dados: Node, jogador: Node, tipo_: String, agora: float) -> A
 		l[i] = l[j]
 		l[j] = t
 	return l.slice(0, n)
+
+
+## Gênero do piloto ("m" ou "f", dado em equipes.json e carreira.json pela
+## arte dele). Sem o dado, "m".
+static func genero(dados: Node, piloto_id: String) -> String:
+	return "f" if String(piloto(dados, piloto_id).get("genero", "m")) == "f" else "m"
+
+
+## A forma da palavra para o gênero: flexao("f", "contratado", "contratada").
+static func flexao(genero_: String, masculino: String, feminino: String) -> String:
+	return feminino if genero_ == "f" else masculino
+
+
+## "piloto" ou "pilota", para quem é uma pessoa (o cargo segue "piloto").
+static func palavra_piloto(dados: Node, piloto_id: String) -> String:
+	return flexao(genero(dados, piloto_id), "piloto", "pilota")
 
 
 ## Tipo do candidato: "corrida" ou "arena" (carreira.json → candidatos); ""
@@ -218,7 +234,8 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 		return "fora do mercado"
 	var quer := "corrida" if vaga == "corrida" else "arena"
 	if tipo(dados, piloto_id) not in ["", quer]:
-		return "%s é piloto de %s" % [String(piloto(dados, piloto_id).get("nome", piloto_id)), tipo(dados, piloto_id)]
+		return "%s é %s de %s" % [String(piloto(dados, piloto_id).get("nome", piloto_id)),
+				palavra_piloto(dados, piloto_id), tipo(dados, piloto_id)]
 	var em := vaga_do_piloto(jogador, piloto_id)
 	if em != "" and em != vaga:
 		return "já está na equipe"

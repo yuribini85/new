@@ -10,7 +10,8 @@
 # Opções: requer, proibe, flags, personagem (dono), condicao (posicao,
 # posicao_min, quantidade_min, demanda_paga), bloqueia, repetivel, reativa, proxima, capitulo, cenario, lembrete
 # Falas aceitam variáveis do jogo: {saldo} {carro} {evento} {serie} {pista} {voltas} {premio}
-# {posicao} {peca} {demanda} {piloto} (Historia.variaveis). Ações do próprio diálogo: [ESCURO] [CLARO] [PAUSA] [TREMOR]
+# {posicao} {peca} {demanda} {piloto} (Historia.variaveis). Gênero do piloto de corrida: {g:contratado|contratada}
+# (Historia.flexionar; masculina sem piloto). Sem gênero conhecido, frase neutra ("Quem pilotava"). Ações do próprio diálogo: [ESCURO] [CLARO] [PAUSA] [TREMOR]
 # [CENARIO:id] [ILUSTRACAO:id] [IMPACTO] (salto curto na fala seguinte; usar pouco). Opção cenario=id: o fundo da cena (ids em data/historia.json).
 # Regras do roteiro: cada fala que ensina diz o que o jogador vê na tela; cena de tutorial
 # termina com uma ordem clara do Sistema; nada de mecânica que o jogo não tem.
@@ -104,7 +105,7 @@ Sistema: Toque em Contratar, no piloto de corrida.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
 = CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET
-Mara[firme]: {piloto} está contratado. Agora, a primeira prova.
+Mara[firme]: {piloto} está {g:contratado|contratada}. Agora, a primeira prova.
 Sistema: Vá para Corridas.
 [HIGHLIGHT_NAV_EVENTOS]
 
@@ -130,7 +131,7 @@ Mara: Campeão é quem soma mais. Constância ganha título.
 # Na pista: o grid espera a conversa acabar.
 = CW_P05 | CORRIDA_INICIO | personagem=dono; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; segura_largada=sim
 Mara: {voltas} voltas em {pista}.
-Mara[firme]: Nós preparamos e o piloto contratado corre.
+Mara[firme]: Nós preparamos e {piloto} corre.
 Mara[pensativa]: Depois, a conta aparece nos resultados.
 Sistema: Uma corrida por vez. Depois de largar, ela termina mesmo com o app fechado.
 
@@ -159,7 +160,7 @@ Mara[firme]: Não existe melhor carro. Existe o carro certo para cada prova.
 = CW_AD01 | CORRIDA_FIM | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=ARENA_DEMO_SEEN; flags=ARENA_DEMO_SEEN; cenario=oficina_mara
 Mara[pensativa]: Você nunca perguntou por que Wreckage.
 Mara[cruzados]: Corrida paga as contas. A arena é de onde o nome vem.
-Mara[firme]: Vem ver. Meu carro, nosso piloto, ninguém aposta nada.
+Mara[firme]: Vem ver. Meu carro, nossa equipe, ninguém aposta nada.
 [ARENA_DEMO]
 
 = CW_AD02 | ARENA_DEMO_FIM | personagem=dono; proibe=ARENA_DEMO_TALK; flags=ARENA_DEMO_TALK; cenario=oficina_mara
@@ -170,7 +171,7 @@ Sistema: Com o terceiro carro, a Arena aparece na barra de baixo.
 # ---------------------------------------------------------------- Licenças
 = CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
 Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA
-Mara[explica]: É a licença que a gente precisa renovar. Quem renova é o piloto, nos testes.
+Mara[explica]: É a licença que a gente precisa renovar. Quem renova é {piloto}, nos testes.
 Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leva café.
 [OPEN_LICENSE_CENTER]
 
@@ -402,7 +403,7 @@ Roxy: Última dupla de pé! O próximo campeonato tem uma equipe a mais.
 Mara[firme]: Agora tira ele dali antes que alguém tenha ideias.
 
 = CW_R09 | ARENA_PERDA | personagem=dono; proibe=ARENA_FIRST_LOSS; flags=ARENA_FIRST_LOSS
-Mara[decepcao]: O carro acabou. O piloto saiu andando. É isso que importa.
+Mara[decepcao]: O carro acabou. Quem pilotava saiu andando. É isso que importa.
 Dex: O próximo vai com mais chapa.
 
 = CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim

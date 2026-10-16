@@ -270,6 +270,14 @@ func test_cenas_reais_da_campanha_do_dono() -> void:
 	var p01b: Dictionary = h.cena_para("NOME_DEFINIDO")
 	igual(p01b.get("id"), "CW_P01B", "o nome dado")
 	igual(h.variaveis().get("admin"), "Ana", "a Mara usa o nome")
+	# Gênero do piloto de corrida nas falas: masculina sem piloto.
+	igual(h.flexionar("{g:contratado|contratada}."), "contratado.", "sem piloto: masculina")
+	var antes = j.pilotos
+	j.pilotos = {"corrida": "noor_haddad", "arena": ["", ""]}
+	igual(EquipeJogador.genero(d, "noor_haddad"), "f", "Noor é pilota")
+	igual(h.flexionar("{piloto} está {g:contratado|contratada}."), "{piloto} está contratada.", "pilota: feminina")
+	igual(EquipeJogador.palavra_piloto(d, "noor_haddad"), "pilota", "pilota")
+	j.pilotos = antes
 	igual(h.concluir(p01b).get("id"), "CW_C00", "primeiro, comprar o carro")
 	igual(j.garagem.lista().size(), 0, "a garagem começa vazia")
 	igual(h.cena_para("COMPRA_CARRO").get("id"), "CW_C01B", "comprado o carro")

@@ -4,7 +4,8 @@ Decisão 56 (`docs/plano_mvp.md`): o segundo piloto da equipe deixa de ser fixo 
 escolhido entre 8 candidatos (aba Equipe → "Trocar piloto"), como no Grand Prix Story.
 Jonas Reid é o padrão, o que entra na cena que libera o segundo piloto. Cada candidato tem
 **um traço**, dois candidatos por traço: um de corrida e um de arena (decisão do usuário, 2026-10-16), para a tela de cada vaga mostrar os quatro traços. Dados em `data/carreira.json` → `equipe_jogador`
-(`candidatos`, `tracos`).
+(`candidatos`, `tracos`). Cada candidato tem `genero` ("m"/"f", pela arte); os textos flexionam por ele
+(`EquipeJogador.flexao`, e nas falas `{g:masculino|feminino}`).
 
 | id | nome | traço | vaga | arte | em uma frase |
 |---|---|---|---|---|---|

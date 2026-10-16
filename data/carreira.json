@@ -34,6 +34,7 @@
   "segundo_piloto": {
    "id": "jonas_reid",
    "nome": "Jonas Reid",
+   "genero": "m",
    "retrato": "res://arte/pilotos/jonas_reid.png"
   },
   "tracos": {
@@ -67,6 +68,7 @@
    {
     "id": "jonas_reid",
     "nome": "Jonas Reid",
+    "genero": "m",
     "traco": "constante",
     "frase": "Não ganha corrida sozinho, mas não joga ponto fora.",
     "tipo": "corrida"
@@ -74,6 +76,7 @@
    {
     "id": "amir_castell",
     "nome": "Amir Castell",
+    "genero": "m",
     "traco": "constante",
     "frase": "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir.",
     "tipo": "arena"
@@ -81,6 +84,7 @@
    {
     "id": "ayla_moreno",
     "nome": "Ayla Moreno",
+    "genero": "f",
     "traco": "agressivo",
     "frase": "Vê uma brecha onde os outros veem um muro.",
     "tipo": "arena"
@@ -88,6 +92,7 @@
    {
     "id": "axel_brennan",
     "nome": "Axel Brennan",
+    "genero": "m",
     "traco": "agressivo",
     "frase": "Larga para ganhar ou para não chegar. Ainda não decidiu qual.",
     "tipo": "corrida"
@@ -95,6 +100,7 @@
    {
     "id": "bastian_kroll",
     "nome": "Bastian Kroll",
+    "genero": "m",
     "traco": "barato",
     "frase": "Já foi rápido. Hoje é barato e conhece todo mundo no paddock.",
     "tipo": "arena"
@@ -102,6 +108,7 @@
    {
     "id": "caleb_wynn",
     "nome": "Caleb Wynn",
+    "genero": "m",
     "traco": "barato",
     "frase": "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar.",
     "tipo": "corrida"
@@ -109,6 +116,7 @@
    {
     "id": "noor_haddad",
     "nome": "Noor Haddad",
+    "genero": "f",
     "traco": "promessa",
     "frase": "Crua, mas aprende rápido. Cada hora de treino aparece no carro.",
     "tipo": "corrida"
@@ -116,6 +124,7 @@
    {
     "id": "sofia_rinaldi",
     "nome": "Sofia Rinaldi",
+    "genero": "f",
     "traco": "promessa",
     "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra.",
     "tipo": "arena"
