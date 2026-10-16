@@ -21,8 +21,8 @@ var _cartao: PanelContainer
 ## escurecida embaixo para o texto ler.
 var _fundo: Control
 var _fundo_img: TextureRect
-## Estilo "titulo_pincel": título inclinado com a pincelada atrás.
-var _pincel: Pincel
+## Estilo "titulo_pincel": o título dentro da faixa dourada.
+var _pincel: FaixaTitulo
 ## Controles extras no cabeçalho, entre o título e o × (estilo "titulo_extra").
 var _extra_titulo: HBoxContainer
 ## Largura útil do título no cartão (px de uma tela de 720).
@@ -113,7 +113,7 @@ func _init() -> void:
 	_painel_titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
 	_painel_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_painel_titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_pincel = Pincel.new()
+	_pincel = FaixaTitulo.new()
 	_pincel.show_behind_parent = true
 	_pincel.visible = false
 	_painel_titulo.add_child(_pincel)
@@ -294,6 +294,7 @@ func _aplicar_visual(estilo: Dictionary, titulo: String) -> void:
 		_painel_titulo.add_theme_font_override("font", Tipografia.fonte("semibold"))
 		_painel_titulo.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
 		_painel_titulo.remove_theme_color_override("font_shadow_color")
+		_painel_titulo.remove_theme_stylebox_override("normal")
 		_fechar_x.flat = true
 		_fechar_x.custom_minimum_size = Vector2(Tipografia.ALTURA_SECUNDARIA, Tipografia.ALTURA_SECUNDARIA)
 		for e in ["normal", "hover", "pressed", "focus"]:
@@ -301,15 +302,29 @@ func _aplicar_visual(estilo: Dictionary, titulo: String) -> void:
 		_fechar_x.add_theme_font_size_override("font_size", 64)
 		_fechar_x.add_theme_color_override("font_color", Aba.COR_SECUNDARIA)
 		return
-	var tam := 60
-	_painel_titulo.add_theme_font_override("font", Tipografia.fonte("display"))
+	# A faixa na largura do cartão; o título no vão entre as linhas, no maior
+	# tamanho que couber ali.
+	var fonte := Tipografia.fonte("display")
+	var largura_faixa := 720.0 - 2.0 * 24.0 - 60.0
+	var cabe := largura_faixa * (0.74 - FaixaTitulo.TEXTO_X) - 10.0
+	var tam := 56
+	while tam > 36 and fonte.get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > cabe:
+		tam -= 2
+	_painel_titulo.add_theme_font_override("font", fonte)
 	_painel_titulo.add_theme_font_size_override("font_size", tam)
 	_painel_titulo.add_theme_color_override("font_color", Color(0.96, 0.94, 0.9))
 	_painel_titulo.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
 	_painel_titulo.add_theme_constant_override("shadow_offset_y", 3)
-	var largura := Tipografia.fonte("display").get_string_size(titulo, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
-	_pincel.position = Vector2(-34.0, tam * 0.5)
-	_pincel.size = Vector2(largura + 70.0, tam * 0.62)
+	var alto_linha := float(tam) * 1.25
+	var faixa := Vector2(largura_faixa, alto_linha / (FaixaTitulo.MEIO_Y.y - FaixaTitulo.MEIO_Y.x))
+	var vao := StyleBoxEmpty.new()
+	vao.content_margin_left = FaixaTitulo.TEXTO_X * faixa.x - 22.0
+	var desce := faixa.y * FaixaTitulo.MEIO_Y.x - 8.0  # a faixa inteira dentro do cartão
+	vao.content_margin_top = desce
+	_painel_titulo.add_theme_stylebox_override("normal", vao)
+	_pincel.size = faixa
+	_pincel.position = Vector2(-22.0, desce + alto_linha * 0.5
+			- faixa.y * (FaixaTitulo.MEIO_Y.x + FaixaTitulo.MEIO_Y.y) * 0.5)
 	var caixa := StyleBoxFlat.new()
 	caixa.bg_color = Color(0.05, 0.05, 0.06, 0.75)
 	caixa.border_color = Aba.COR_DESTAQUE

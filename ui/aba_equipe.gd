@@ -408,12 +408,12 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		_renova_em(pv)
 		var palco := Control.new()
 		palco.custom_minimum_size = Vector2(0, PALCO_ALTURA)
-		palco.clip_contents = true
 		pv.add_child(palco)
 		var corpo := TextureRect.new()
 		corpo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		corpo.offset_top = 24  # mais baixo, encostado na placa
-		corpo.offset_bottom = 0  # o corpo inteiro (a arte termina na coxa), sem cortar
+		# O piloto vai do palco até trás do Contratar: placa, estilo e atributos
+		# ficam por cima dele (a borda de baixo da arte some atrás do botão).
+		corpo.offset_top = 10
 		corpo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		corpo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -480,6 +480,12 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		na_equipe.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		na_equipe.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)  # no lugar do Contratar
 		na_equipe.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		var sbn := StyleBoxFlat.new()  # cobre a base do piloto, como o Contratar
+		sbn.bg_color = Color(0.05, 0.05, 0.06, 0.95)
+		sbn.border_color = Color(COR_DESTAQUE, 0.6)
+		sbn.set_border_width_all(2)
+		sbn.set_corner_radius_all(6)
+		na_equipe.add_theme_stylebox_override("normal", sbn)
 		info.add_child(na_equipe)
 		var fechar := Button.new()
 		Tipografia.acao_secundaria(fechar, "FECHAR", Color(0.9, 0.9, 0.92), 32, Tipografia.ALTURA_SECUNDARIA)
@@ -493,6 +499,8 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		fechar.flat = false  # acao_secundaria deixa chato (sem caixa)
 		fechar.pressed.connect(func(): fechar_painel.emit())
 		info.add_child(fechar)
+		fechar.item_rect_changed.connect(func():
+			corpo.offset_bottom = fechar.global_position.y - 12.0 - (palco.global_position.y + palco.size.y))
 		var mostrar := func(lado: int):
 			var c: Dictionary = lista[estado["i"]]
 			var atual: bool = c["id"] == atual_id
