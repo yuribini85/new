@@ -235,6 +235,11 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var blindagens := {"jogador": Blindagem.nivel(carro)}
 	if par["real"]:
 		blindagens["parceiro"] = Blindagem.nivel(car_par)
+	# Canhão d'água (arena.json → canhao): os carros da lista empurram com o jato.
+	var com_canhao: Array = p.get("canhao", {}).get("carros", [])
+	for part in parts:
+		if String(modelos[part["id"]].get("id", "")) in com_canhao:
+			part["canhao"] = true
 	return {"participantes": parts, "modelos": modelos, "nomes": nomes, "cores": cores, "faixas": faixas,
 			"params": params, "equipes": equipes, "parceiro": par, "blindagens": blindagens}
 

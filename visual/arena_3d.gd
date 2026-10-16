@@ -1141,9 +1141,9 @@ func _ilhas() -> void:
 		_cena.add_child(m)
 
 
-## Canhão d'água dos pesados que têm um (Pesados.extras): gira para o rival
-## vivo mais perto e solta o jato quando ele está ao alcance. Só visual: a
-## luta é a da simulação.
+## Canhão d'água dos pesados que têm um (Pesados.extras): mostra o jato no
+## carro que a simulação diz que leva água (Arena._canhoes, que empurra); sem
+## esse dado (luta antiga), mira o rival vivo mais perto.
 const CANHAO_ALCANCE_M := 20.0
 const CANHAO_GIRO := 2.5  # rad/s
 
@@ -1156,7 +1156,10 @@ func _canhoes(amostra: Dictionary, delta: float) -> void:
 			continue
 		var jato := canhao.get_node_or_null("Jato") as CPUParticles3D
 		var alvo: Variant = null
-		if not bool(amostra[id]["eliminado"]):
+		var da_sim: bool = amostra[id].has("jato")  # a simulação diz quem leva água
+		if da_sim:
+			alvo = _carros.get(String(amostra[id]["jato"]))
+		elif not bool(amostra[id]["eliminado"]):
 			var melhor := CANHAO_ALCANCE_M
 			for outro in _carros:
 				if outro == id or bool(amostra[outro]["eliminado"]):
@@ -1170,7 +1173,7 @@ func _canhoes(amostra: Dictionary, delta: float) -> void:
 			var local: Vector3 = canhao.get_parent().to_local((alvo as Node3D).global_position) - canhao.position
 			var quer := atan2(local.x, local.z)
 			canhao.rotation.y = rotate_toward(canhao.rotation.y, quer, CANHAO_GIRO * delta) if delta > 0.0 else quer
-			mirando = absf(angle_difference(canhao.rotation.y, quer)) < 0.25
+			mirando = da_sim or absf(angle_difference(canhao.rotation.y, quer)) < 0.25
 		if jato != null and jato.emitting != mirando:
 			jato.emitting = mirando
 			for nevoa in jato.get_children():

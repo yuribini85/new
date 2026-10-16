@@ -157,7 +157,9 @@ id entra na lista. `CarroBloco.tem_modelo(id)` responde pelos dois (gerado ou GL
   (`Pesados.extras`, nó "Canhao" com o jato "Jato"): na arena gira para o rival vivo mais
   perto (até 20 m) e solta o jato quando alinhado (`Arena3D._canhoes`): faixa contínua
   no arco da água (velocidade de saída calculada para cair no alvo com a lança no ângulo
-  fixo), gotas, névoa e respingo no impacto. Só visual: a simulação não muda.
+  fixo), gotas, névoa e respingo no impacto. O alvo e o empurrão vêm da simulação
+  (`Arena._canhoes`, `data/arena.json` → `canhao`): força de canhão real, F = vazão ×
+  velocidade ≈ 1.000 N, no rival vivo mais perto de outra equipe.
 - **Picape (aprovada na Kanaya Sulco):** para-brisa logo atrás da roda dianteira, cabine
   simples de parede traseira reta com vidro retangular, caçamba aberta (`FUNDO` abaixo
   da cintura: assoalho emborrachado, laterais, parede e tampa pintadas, beira preta),

@@ -708,3 +708,27 @@ func test_batida_de_lado_forte_capota_e_elimina() -> void:
 			"batida de lado forte capota o atingido e conta para quem bateu")
 	var leve := _lateral(15.0, p)
 	verificar(not leve["carros"]["alvo"]["eliminado"], "batida leve não capota")
+
+
+func test_canhao_dagua_empurra_o_rival_de_outra_equipe() -> void:
+	var p := _params()
+	p["tempo_max_s"] = 6.0
+	var pc: Dictionary = p["canhao"]
+	perto(float(pc["vazao_kg_s"]) * float(pc["v_ms"]), 1000.0, 1.0, "jato de canhão real: ~1.000 N")
+	var parado := func(com: bool) -> Dictionary:
+		var cam := _carro("caminhao", 39000.0, 600.0, Vector2(0, 0), 0.0, Vector2.ZERO, 0.0)
+		if com:
+			cam["canhao"] = true
+		# vem rolando na direção do caminhão, sem acelerar: o jato freia
+		var alvo := _carro("alvo", 1250.0, 150.0, Vector2(18, 0), PI, Vector2(-5, 0), 0.0)
+		return Arena.correr([cam, alvo], p, 1, true)
+	var sem: Dictionary = parado.call(false)
+	var com: Dictionary = parado.call(true)
+	var x_sem: float = sem["amostras"][-1]["alvo"]["pos"].x
+	var x_com: float = com["amostras"][-1]["alvo"]["pos"].x
+	verificar(x_com > x_sem + 1.0, "o jato empurra contra quem vem (%.2f > %.2f)" % [x_com, x_sem])
+	var levou := false
+	for a in com["amostras"]:
+		levou = levou or String(a["caminhao"].get("jato", "")) == "alvo"
+	verificar(levou, "a amostra diz quem leva água (a tela desenha)")
+	verificar(not sem["amostras"][-1]["caminhao"].has("jato"), "sem canhão, sem jato")

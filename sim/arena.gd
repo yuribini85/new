@@ -84,6 +84,9 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 			"consist": float(p.get("piloto", {}).get("consistencia", 0.9)),
 			"alvo": -1, "t_alvo": 0.0, "t_travado": 0.0, "t_recua": 0.0, "re": false,
 		}
+		if p.get("canhao", false):
+			c["canhao"] = c["rumo"]  # rumo da torre (no plano)
+			c["jato"] = ""
 		c["perfil"] = _perfil(p, params, rng)
 		c["t_sem_golpe"] = 0.0
 		c["desvio"] = Vector2.ZERO
@@ -99,6 +102,7 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 	while t < tempo_max:
 		for i in n:
 			_dirigir(carros, i, params, rng, dt, forma)
+		_canhoes(carros, params, dt)
 		for c in carros:
 			_mover(c, dt, forma)
 		_colisoes(carros, contatos, params, eventos, t, forma)
@@ -140,6 +144,41 @@ static func correr(participantes: Array, params: Dictionary, semente: int, com_a
 		amostras.append(_amostra(carros, t))
 	res["duracao_cena"] = t
 	return res
+
+
+## Canhão d'água (data/arena.json → canhao; pedido do usuário): a torre gira
+## para o rival vivo mais perto de outra equipe dentro do alcance e, alinhada,
+## empurra-o com a força do jato F = vazão × velocidade, na direção do canhão
+## para o alvo. `jato` guarda quem está levando água (a tela desenha).
+static func _canhoes(carros: Array, params: Dictionary, dt: float) -> void:
+	var pc: Dictionary = params.get("canhao", {})
+	if pc.is_empty():
+		return
+	var forca := float(pc["vazao_kg_s"]) * float(pc["v_ms"])
+	for c in carros:
+		if not c.has("canhao"):
+			continue
+		c["jato"] = ""
+		if c["eliminado"]:
+			continue
+		var alvo: Dictionary = {}
+		var melhor := float(pc["alcance_m"])
+		for o in carros:
+			if o["id"] == c["id"] or o["eliminado"] or o["equipe"] == c["equipe"]:
+				continue
+			var d: float = c["pos"].distance_to(o["pos"])
+			if d < melhor:
+				melhor = d
+				alvo = o
+		if alvo.is_empty():
+			continue
+		var quer: float = (alvo["pos"] - c["pos"]).angle()
+		var passo := deg_to_rad(float(pc["giro_graus_s"])) * dt
+		c["canhao"] = rotate_toward(float(c["canhao"]), quer, passo)
+		if absf(angle_difference(float(c["canhao"]), quer)) > deg_to_rad(float(pc["alinhamento_graus"])):
+			continue
+		c["jato"] = alvo["id"]
+		alvo["vel"] += Vector2.from_angle(quer) * (forca / float(alvo["m"])) * dt
 
 
 ## IA: alvo, interceptação, ré com a frente quase destruída e recuperação.
@@ -493,6 +532,8 @@ static func _amostra(carros: Array, t: float) -> Dictionary:
 	for c in carros:
 		a[c["id"]] = {"pos": c["pos"], "rumo": c["rumo"], "dano": c["dano"].duplicate(), "eliminado": c["eliminado"],
 				"re": c.get("re", false)}
+		if c.has("canhao"):
+			a[c["id"]]["jato"] = c["jato"]
 		if c.has("piloto"):
 			var p: Dictionary = c["piloto"]
 			pilotos[c["id"]] = {"pos": p["pos"], "rumo": p["rumo"], "estado": p["estado"]}
