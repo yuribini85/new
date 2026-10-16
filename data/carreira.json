@@ -39,25 +39,25 @@
   "tracos": {
    "_nota": "Traço de cada candidato (decisões 56 e 70). 'perfil': a agressividade do piloto, a dos perfis de rival (perfis_piloto). 'menos_consistencia': perde a consistência do segundo piloto (segundo_piloto.perda_consistencia). O ritmo é o do piloto-base mais o treino de cada um. 'treina' não vale mais (cada piloto treina o seu).",
    "constante": {
-    "nome": "Constante",
+    "nome": "Calculista",
     "treina": false,
     "perfil": "cauteloso",
     "menos_consistencia": false
    },
    "agressivo": {
-    "nome": "Agressivo",
+    "nome": "Destemido",
     "treina": false,
     "perfil": "agressivo",
     "menos_consistencia": true
    },
    "barato": {
-    "nome": "Barato",
+    "nome": "Operário",
     "treina": false,
     "perfil": "equilibrado",
     "menos_consistencia": false
    },
    "promessa": {
-    "nome": "Promessa",
+    "nome": "Revelação",
     "treina": true,
     "perfil": "equilibrado",
     "menos_consistencia": true
@@ -76,7 +76,7 @@
     "nome": "Amir Castell",
     "traco": "constante",
     "frase": "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir.",
-    "tipo": "corrida"
+    "tipo": "arena"
    },
    {
     "id": "ayla_moreno",
@@ -90,7 +90,7 @@
     "nome": "Axel Brennan",
     "traco": "agressivo",
     "frase": "Larga para ganhar ou para não chegar. Ainda não decidiu qual.",
-    "tipo": "arena"
+    "tipo": "corrida"
    },
    {
     "id": "bastian_kroll",
@@ -104,7 +104,7 @@
     "nome": "Caleb Wynn",
     "traco": "barato",
     "frase": "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar.",
-    "tipo": "arena"
+    "tipo": "corrida"
    },
    {
     "id": "noor_haddad",
@@ -118,10 +118,10 @@
     "nome": "Sofia Rinaldi",
     "traco": "promessa",
     "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra.",
-    "tipo": "corrida"
+    "tipo": "arena"
    }
   ],
-  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida (constante, promessa) ou de arena (agressivo, barato), pelo traço. A equipe tem 1 de corrida e 2 de arena.",
+  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida ou de arena. A equipe tem 1 de corrida e 2 de arena. Decisão do usuário (2026-10-16): em cada vaga, um candidato de cada traço, para os da tela serem diferentes (no GT2 os pilotos de uma classe valem o mesmo; a diferença vem do traço).",
   "mercado": {
    "por_tipo": 4,
    "renova_h": 24,

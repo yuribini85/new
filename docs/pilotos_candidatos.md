@@ -3,28 +3,28 @@
 Decisão 56 (`docs/plano_mvp.md`): o segundo piloto da equipe deixa de ser fixo e é
 escolhido entre 8 candidatos (aba Equipe → "Trocar piloto"), como no Grand Prix Story.
 Jonas Reid é o padrão, o que entra na cena que libera o segundo piloto. Cada candidato tem
-**um traço**, dois candidatos por traço. Dados em `data/carreira.json` → `equipe_jogador`
+**um traço**, dois candidatos por traço: um de corrida e um de arena (decisão do usuário, 2026-10-16), para a tela de cada vaga mostrar os quatro traços. Dados em `data/carreira.json` → `equipe_jogador`
 (`candidatos`, `tracos`).
 
-| id | nome | traço | arte | em uma frase |
-|---|---|---|---|---|
-| `jonas_reid` | Jonas Reid | Constante | 2 | "Não ganha corrida sozinho, mas não joga ponto fora." |
-| `amir_castell` | Amir Castell | Constante | 4 | "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir." |
-| `ayla_moreno` | Ayla Moreno | Agressivo | 3 | "Vê uma brecha onde os outros veem um muro." |
-| `axel_brennan` | Axel Brennan | Agressivo | 1 | "Larga para ganhar ou para não chegar. Ainda não decidiu qual." |
-| `bastian_kroll` | Bastian Kroll | Barato | 8 | "Já foi rápido. Hoje é barato e conhece todo mundo no paddock." |
-| `caleb_wynn` | Caleb Wynn | Barato | 6 | "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar." |
-| `noor_haddad` | Noor Haddad | Promessa | 7 | "Crua, mas aprende rápido. Cada hora de treino aparece no carro." |
-| `sofia_rinaldi` | Sofia Rinaldi | Promessa | 5 | "Veio do kart com fome. Treina como se a vaga fosse de outra." |
+| id | nome | traço | vaga | arte | em uma frase |
+|---|---|---|---|---|---|
+| `jonas_reid` | Jonas Reid | Calculista | corrida | 2 | "Não ganha corrida sozinho, mas não joga ponto fora." |
+| `amir_castell` | Amir Castell | Calculista | arena | 4 | "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir." |
+| `ayla_moreno` | Ayla Moreno | Destemido | arena | 3 | "Vê uma brecha onde os outros veem um muro." |
+| `axel_brennan` | Axel Brennan | Destemido | corrida | 1 | "Larga para ganhar ou para não chegar. Ainda não decidiu qual." |
+| `bastian_kroll` | Bastian Kroll | Operário | arena | 8 | "Já foi rápido. Hoje é barato e conhece todo mundo no paddock." |
+| `caleb_wynn` | Caleb Wynn | Operário | corrida | 6 | "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar." |
+| `noor_haddad` | Noor Haddad | Revelação | corrida | 7 | "Crua, mas aprende rápido. Cada hora de treino aparece no carro." |
+| `sofia_rinaldi` | Sofia Rinaldi | Revelação | arena | 5 | "Veio do kart com fome. Treina como se a vaga fosse de outra." |
 
 ## Efeito de cada traço
 
 | traço | efeito | estado |
 |---|---|---|
-| Promessa | o treino do piloto principal vale para ele (`treina: true`) | ativo |
-| Constante | perde menos consistência que o segundo piloto padrão | número com o `custo_staff`, no playtest |
-| Agressivo | tenta mais ultrapassagens | idem (o piloto do jogador já tem agressividade 1,0: o efeito é dos outros traços terem menos) |
-| Barato | salário menor | idem |
+| Revelação | o treino do piloto principal vale para ele (`treina: true`) | ativo |
+| Calculista | perde menos consistência que o segundo piloto padrão | número com o `custo_staff`, no playtest |
+| Destemido | tenta mais ultrapassagens | idem (o piloto do jogador já tem agressividade 1,0: o efeito é dos outros traços terem menos) |
+| Operário | salário menor | idem |
 
 Trocar não custa nada até o `custo_staff` existir; aí entram preço de contratação e salário
 por traço.

@@ -369,8 +369,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     tem um perfil (agressivo, equilibrado, cauteloso → `carreira.json` → `perfis_piloto`,
     a chance de tentar a ultrapassagem; valores provisórios até o playtest) e uma frase de
     personalidade, mostrada quando a equipe vence. O ritmo dos rivais não muda. O segundo
-    piloto passa a ser escolhido entre 8 candidatos, dois por traço (Constante, Agressivo,
-    Barato, Promessa; `docs/pilotos_candidatos.md`); custo e salário entram com o
+    piloto passa a ser escolhido entre 8 candidatos, dois por traço (Calculista, Destemido,
+    Operário, Revelação; eram Constante, Agressivo, Barato e Promessa, renomeados pelo
+    usuário em 2026-10-16; `docs/pilotos_candidatos.md`); custo e salário entram com o
     `custo_staff`.
 57. **Câmera 3D** (2026-10-11, pedido do usuário): corrida e arena em perspectiva para o
     jogo se ler como 3D. Corrida: perseguição atrás e acima do carro seguido (32°, desce a
@@ -491,8 +492,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 69. **O jogador administra; pilotos de corrida e de arena** (2026-10-12, decisão do
     usuário). O protagonista não pilota: quem corre é contratado na tela de pilotos (aba
     Equipe). Três vagas (`jogador.pilotos`): 1 piloto de corrida (nas corridas só ele corre)
-    e 2 de arena (a dupla). Cada candidato tem o tipo pelo traço (`carreira.json` →
-    candidatos → `tipo`: Constante e Promessa de corrida; Agressivo e Barato de arena),
+    e 2 de arena (a dupla). Cada candidato tem o seu tipo (`carreira.json` →
+    candidatos → `tipo`; desde 2026-10-16, por decisão do usuário, um candidato de cada
+    traço em cada vaga, para os pilotos da tela serem diferentes: no GT2 a habilidade da IA
+    é uma só por prova, então não há dispersão de piloto para importar),
     sem salário novo (a gestão segue a tabela atual). Tutorial: depois dos freios, a Mara
     abre a Equipe e o primeiro piloto (de corrida) é contratado antes da primeira prova
     (CW_P03C/D); o piloto da casa saiu. Com 3 carros na garagem vem o tutorial da arena
