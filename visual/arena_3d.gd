@@ -27,7 +27,7 @@ const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 ## Chão em malha: passo da grade e quanto passa do muro (m).
 const CHAO_PASSO_M := 1.0  # fino o bastante para a quina das rampas e dos degraus
-const CHAO_MARGEM_M := 10.0
+const CHAO_MARGEM_M := 15.0  # cabe a arquibancada (recuo 4,2 m + 4,4 m de fundo)
 ## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
 const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
@@ -98,6 +98,8 @@ var _carros := {}  # id -> Node3D
 var _malhas := {}  # id -> [{mi, rel, surfs: [{arr, prim, mat}]}]: malhas originais da carroceria
 var _estagio_visto := {}  # id -> estágio de dano por região já aplicado na malha
 var _objetos: ObjetosArena
+## Arquibancadas (pacote do usuário, visual/arquibancada): [{no, centro (2D), modulos}].
+var _arquibancadas: Array = []
 var _corpos := {}  # id -> AnimatableBody3D (física de tela)
 var _incendio := {}  # id -> Incendio3D (fumaça, fogo e explosão do pacote de dano)
 var _pilotos := {}  # id do carro -> Piloto3D (fugindo do carro em chamas)
@@ -182,6 +184,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_resultado = resultado
 	_amostras = resultado.get("amostras", [])
 	_estagios = int(params.get("estagios", 5))
+	_lotacao = LOTACAO.get(String(params.get("forma", {}).get("licenca", "")), 1)
 	_raio = float(params.get("raio_m", 45.0))
 	_forma = ArenaForma.de(params)
 	_i = 0
@@ -694,6 +697,8 @@ func _eventos(_delta: float) -> void:
 			continue
 		_chamar_batida(e)
 		Sons.impacto(self, float(e["dano"]))
+		var pc: Vector3 = _carros[e["carro"]].position
+		_reagir_publico(e, Vector2(pc.x, -pc.z))
 		_tombar(e)
 		_soltar(e)
 		var forte := float(e["dano"]) > 0.08
@@ -748,6 +753,7 @@ func _explodir(e: Dictionary) -> void:
 	_tremor = minf(_tremor + 0.5, 0.8)
 	Sons.estrondo(self)
 	Sons.tocar_ui(self, "impacto", 0.0, 0.8)
+	_comemorar_todas()
 	var c = _carros[id]
 	if c is CarroBloco:
 		(c as CarroBloco).carbonizar()
@@ -956,7 +962,10 @@ func _construir_arena() -> void:
 	_chao()
 	_objetos = ObjetosArena.new()
 	_cena.add_child(_objetos)
+	var lados := _lados_arquibancada()
+	_objetos.lados_ocupados = lados
 	_objetos.montar(_forma, hash(_forma.muro))
+	_montar_arquibancadas(lados)
 	_pneus_muro()
 	_ilhas()
 
@@ -1115,6 +1124,111 @@ func _pneus_muro() -> void:
 	mp.roughness = 0.9
 	pneus.material_override = mp
 	_cena.add_child(pneus)
+
+
+# --- Arquibancadas -----------------------------------------------------------------
+
+const ARQUIBANCADA := preload("res://visual/arquibancada/arquibancada.tscn")
+const MODULO_M := 6.0  # largura de um bloco do pacote
+const ARQUIBANCADA_LADOS := 3  # os lados mais compridos do muro
+const ARQUIBANCADA_MODULOS_MAX := 4
+## Da linha do muro até a origem do bloco: os pneus (até ~2,5 m) e o muro
+## frontal do pacote (face a 1 m da origem).
+const ARQUIBANCADA_RECUO_M := 4.2
+const OLA_ATRASO_S := 1.76  # entre blocos vizinhos (pacote)
+const OLA_INICIO_S := 2.0
+const TORCIDA_DANO := 0.12  # batida entre carros que levanta a arquibancada mais perto
+const FUGA_DANO := 0.1  # batida no muro que espanta quem está atrás
+const FUGA_PERTO_M := 9.0
+## Ocupação do pacote (0 meio vazio, 1 semi cheio, 2 cheio) pela licença da arena.
+const LOTACAO := {"CLUB": 0, "SPORT": 1, "NATIONAL": 1, "INTERNATIONAL": 2, "PRO": 2, "ELITE": 2}
+var _lotacao := 1
+
+
+## Índices dos lados do muro que recebem arquibancada: os mais compridos que
+## cabem pelo menos um bloco.
+func _lados_arquibancada() -> Array:
+	var n := _forma.muro.size()
+	var lados := []
+	for i in n:
+		var comp := (_forma.muro[(i + 1) % n] - _forma.muro[i]).length()
+		if comp >= MODULO_M + 2.0:
+			lados.append([comp, i])
+	lados.sort_custom(func(x, y): return x[0] > y[0])
+	return lados.slice(0, ARQUIBANCADA_LADOS).map(func(x): return x[1])
+
+
+## Blocos encostados, centrados no lado, de frente para o centro da arena; o
+## primeiro e o último fecham as pontas (left_end/right_end do pacote). A ola
+## corre por todos, um bloco depois do outro.
+func _montar_arquibancadas(lados: Array) -> void:
+	_arquibancadas = []
+	var n := _forma.muro.size()
+	var ordem := 0
+	for i in lados:
+		var a := _forma.muro[i]
+		var b := _forma.muro[(i + 1) % n]
+		var fora := (b - a).normalized().orthogonal()
+		var mods := mini(int(((b - a).length() - 2.0) / MODULO_M), ARQUIBANCADA_MODULOS_MAX)
+		var meio := a.lerp(b, 0.5) + fora * ARQUIBANCADA_RECUO_M
+		var dentro := Vector3(-fora.x, 0.0, fora.y)  # para o centro, no mundo (y 2D = −z)
+		var base := Basis.looking_at(dentro, Vector3.UP)  # o público olha para −Z
+		var chao := _forma.altura(meio)
+		var blocos := []
+		for k in mods:
+			var bloco: Node3D = ARQUIBANCADA.instantiate()
+			bloco.left_end = k == 0
+			bloco.right_end = k == mods - 1
+			bloco.occupancy = _lotacao
+			bloco.crowd_seed = hash([i, k])
+			bloco.transform = Transform3D(base, Vector3(meio.x, chao, -meio.y) + base.x * (k - (mods - 1) * 0.5) * MODULO_M)
+			_cena.add_child(bloco)
+			bloco.start_wave(OLA_INICIO_S + ordem * OLA_ATRASO_S)
+			ordem += 1
+			blocos.append(bloco)
+		_arquibancadas.append({"blocos": blocos, "a": a, "b": b, "fora": fora})
+
+
+func _comemorar_todas() -> void:
+	for arq in _arquibancadas:
+		for bloco in arq["blocos"]:
+			bloco.celebrate()
+
+
+## A arquibancada do lado mais perto de `q` (2D) e a distância até o lado.
+func _arquibancada_perto(q: Vector2) -> Array:
+	var melhor: Dictionary = {}
+	var dist := INF
+	for arq in _arquibancadas:
+		var d := q.distance_to(Geometry2D.get_closest_point_to_segment(q, arq["a"], arq["b"]))
+		if d < dist:
+			dist = d
+			melhor = arq
+	return [melhor, dist]
+
+
+## Batida forte entre carros: a arquibancada mais perto comemora. Batida forte
+## no muro (sem outro carro) bem na frente dela: quem está atrás foge pela
+## escada da ponta (fuga do pacote; não voltam até a próxima luta).
+func _reagir_publico(e: Dictionary, q: Vector2) -> void:
+	if _arquibancadas.is_empty():
+		return
+	var perto := _arquibancada_perto(q)
+	var dano := float(e["dano"])
+	if String(e.get("por", "")) != "":
+		if dano >= TORCIDA_DANO:
+			for bloco in perto[0]["blocos"]:
+				bloco.celebrate()
+		return
+	if dano < FUGA_DANO or float(perto[1]) > FUGA_PERTO_M:
+		return
+	var blocos: Array = perto[0]["blocos"]
+	var saida: Vector3 = blocos.back().global_transform * Vector3(3.43, 0.0, 2.7)
+	for bloco in blocos:
+		var frente: Vector3 = bloco.global_transform * Vector3(0.0, bloco.elevation, 0.4)
+		var alvo := Vector3(q.x, frente.y, -q.y)
+		if frente.distance_to(alvo) < MODULO_M + ARQUIBANCADA_RECUO_M:
+			bloco.crowd.flee_from(bloco.global_transform * Vector3(clampf(bloco.to_local(alvo).x, -2.5, 2.5), bloco.elevation, 0.5), saida)
 
 
 ## Trecho do muro com barreira de concreto (ObjetosArena): sem pneus atrás.

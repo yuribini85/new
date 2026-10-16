@@ -27,6 +27,8 @@ var _rng := RandomNumberGenerator.new()
 ## Trechos do muro com barreira: [a, b] (2D, simulação), para o muro de pneus pular.
 var trechos_concreto: Array = []
 var _quebraveis: Array = []  # [{tipo, no, area, solido, pecas, rachou, quebrou}]
+## Lados do muro com arquibancada (Arena3D): sem árvores atrás.
+var lados_ocupados: Array = []
 
 
 func montar(forma: ArenaForma, semente: int) -> void:
@@ -66,6 +68,8 @@ func montar(forma: ArenaForma, semente: int) -> void:
 		_barril(q + (forma.centro - q).normalized() * (1.5 + _rng.randf() * 2.0))
 	for k in ARVORES:
 		var i := _rng.randi_range(0, n - 1)
+		if i in lados_ocupados:
+			continue
 		var a := forma.muro[i]
 		var b := forma.muro[(i + 1) % n]
 		var fora := (b - a).normalized().orthogonal()

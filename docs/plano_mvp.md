@@ -806,3 +806,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     - Rodas: o mesmo conjunto para todos os carros, 8 desenhos (`visual/rodas.gd`),
       trocados na cabine de pintura (aba RODAS), gravados no carro; a troca não custa
       (preço da pintura ainda "a definir").
+92. **Arquibancadas com público na arena** (2026-10-16, pacote enviado pelo usuário).
+    Blocos de 6 m do pacote (`visual/arquibancada/`, malhas de caixa, público em
+    MultiMesh) nos três lados mais compridos do muro, até 4 blocos por lado, de frente
+    para a luta, atrás do muro de pneus. Só tela: a simulação não vê a arquibancada.
+    Lotação pela licença da arena (CLUB meio vazia; SPORT e NATIONAL semi cheia; acima,
+    cheia). O público faz a ola na largada, comemora as explosões (todas as
+    arquibancadas) e as batidas fortes entre carros (a mais perto) e foge pela escada
+    quando um carro bate forte no muro bem na frente dele (não volta até a próxima luta).
