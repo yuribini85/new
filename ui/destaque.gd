@@ -6,7 +6,9 @@ extends Control
 ## reconstruída, procura o controle de novo pela âncora (`buscar`). Fica abaixo
 ## da caixa de diálogo, que continua legível. Se a âncora passa a outro
 ## controle (a janela aberta por cima traz o botão a tocar), o destaque vai
-## junto e avisa (`alvo_mudou`), para a caixa do diálogo sair da frente.
+## junto e avisa (`alvo_mudou`), para a caixa do diálogo sair da frente. Se
+## `buscar` devolve true, o destaque fica em pausa (sem desenhar), como com uma
+## janela aberta por cima.
 
 signal alvo_mudou(r: Rect2)
 
@@ -19,6 +21,7 @@ const ENTRADA_S := 0.3
 var _alvo: Control
 var _buscar: Callable
 var _aparecia := true
+var _pausado := false
 var _t := 0.0
 
 
@@ -35,6 +38,7 @@ func mostrar(alvo: Control, buscar := Callable()) -> void:
 	_buscar = buscar
 	_t = 0.0
 	_aparecia = true
+	_pausado = false
 	visible = true
 	queue_redraw()
 
@@ -57,6 +61,13 @@ func _process(delta: float) -> void:
 		# A âncora manda: outro controle, o destaque vai junto; escondido (ex.:
 		# o botão da janela sumiu para este candidato), não desenha; nenhum, sai.
 		var novo = _buscar.call()
+		if novo is bool and novo:
+			# Em pausa: fica, sem desenhar, até a âncora voltar.
+			_aparecia = false
+			_pausado = true
+			queue_redraw()
+			return
+		_pausado = false
 		if not is_instance_valid(novo):
 			limpar()
 			return
@@ -76,7 +87,7 @@ func _valido(c: Variant) -> bool:
 
 
 func _draw() -> void:
-	if not visible or not _valido(_alvo):
+	if not visible or _pausado or not _valido(_alvo):
 		return
 	var r := _alvo.get_global_rect().grow(MARGEM)
 	r.position -= get_global_rect().position

@@ -82,23 +82,49 @@ func no_mapa() -> bool:
 	return _no_mapa
 
 
+## Faixa vertical do mapa com as lojas e os nomes delas (fração da altura da
+## arte): o resto (céu e mar) pode ser recortado para o mapa caber na tela.
+const MAPA_LOJAS_Y := [0.10, 0.93]
+
+
+## O mapa inteiro na tela, sem rolar (pedido do usuário): na largura da tela,
+## recorta céu e mar acima e abaixo das lojas; se nem assim couber, encolhe
+## por igual (centrado). Nunca estica.
 func _mapa(ws: Array) -> void:
 	_no_mapa = true
 	var tex := arte("mapa_lojas")
+	var tw := float(tex.get_width())
+	var th := float(tex.get_height())
+	var alto_cheio := 720.0 * th / tw
+	var livre := size.y - topo_livre if size.y > 0.0 else get_viewport_rect().size.y - topo_livre - 180.0
+	var alto := minf(alto_cheio, maxf(livre, 400.0))
+	var faixa: float = MAPA_LOJAS_Y[1] - MAPA_LOJAS_Y[0]
+	var fy := clampf(alto / alto_cheio, faixa, 1.0)  # fração da altura da arte que aparece
+	var centro: float = (MAPA_LOJAS_Y[0] + MAPA_LOJAS_Y[1]) / 2.0
+	var y0 := clampf(centro - fy / 2.0, 0.0, 1.0 - fy)
+	var largura := minf(720.0, alto / (fy * th) * tw)
 	var mapa := Control.new()
-	mapa.custom_minimum_size = Vector2(0, (720.0 - 2.0 * MARGEM_LATERAL) * tex.get_height() / tex.get_width())
+	mapa.custom_minimum_size = Vector2(0, alto)
 	mapa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	conteudo.add_child(mapa)
 	var t := TextureRect.new()
-	t.texture = tex
+	if fy < 1.0:
+		var recorte := AtlasTexture.new()
+		recorte.atlas = tex
+		recorte.region = Rect2(0, y0 * th, tw, fy * th)
+		t.texture = recorte
+	else:
+		t.texture = tex
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	t.stretch_mode = TextureRect.STRETCH_SCALE  # o retângulo já tem a proporção do recorte
 	t.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	mapa.add_child(t)
 	cenario_topo(mapa)  # de borda a borda, colado no cabeçalho
-	# A imagem ocupa a largura toda: a altura acompanha a proporção dela.
-	mapa.custom_minimum_size.y = 720.0 * tex.get_height() / tex.get_width()
+	if largura < 720.0:
+		# Encolhido por igual: centrado, com o fundo nas laterais.
+		t.offset_left = -MARGEM_LATERAL + (720.0 - largura) / 2.0
+		t.offset_right = MARGEM_LATERAL - (720.0 - largura) / 2.0
 	var sb_toque := StyleBoxFlat.new()
 	sb_toque.bg_color = Color(1, 1, 1, 0.12)
 	sb_toque.set_corner_radius_all(16)
@@ -112,9 +138,9 @@ func _mapa(ws: Array) -> void:
 			b.add_theme_stylebox_override(estado, StyleBoxEmpty.new())
 		b.add_theme_stylebox_override("pressed", sb_toque)
 		b.anchor_left = r[0]
-		b.anchor_top = r[1]
+		b.anchor_top = (float(r[1]) - y0) / fy
 		b.anchor_right = r[2]
-		b.anchor_bottom = r[3]
+		b.anchor_bottom = (float(r[3]) - y0) / fy
 		var id := String(w["id"])
 		b.pressed.connect(func():
 			_loja = id
@@ -272,9 +298,7 @@ const LARGURA_NOME_BLOCO := 290.0
 func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extras: Array, comprar: Callable,
 		cor := Color(0, 0, 0, 0), escolher_cor := false, comprado := false) -> void:
 	var pode: bool = jogador.economia.pode_pagar(preco)
-	var falta := "" if pode else "Faltam %s giros" % dinheiro(preco - jogador.economia.saldo)
-	var abrir := func(): ficha_modelo(c, extras + [["revenda %s giros" % dinheiro(revenda(c)), COR_NEUTRA.lightened(0.3)]],
-			["Comprar · %s" % dinheiro(preco), comprar, true] if pode else [falta, comprar, false], cor, escolher_cor)
+	var abrir := func(): ficha_modelo(c, extras, ["Comprar por %s giros" % dinheiro(preco), comprar, pode], cor, escolher_cor)
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, ALTURA_BLOCO)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL

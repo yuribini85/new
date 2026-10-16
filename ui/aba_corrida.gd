@@ -71,6 +71,14 @@ var _em_andamento := false
 var _vazio_topo: Control
 var _nome_prova: Label
 const ALTURA_MIN_AREA := 720.0
+## Quadros com a capa depois de montar a pista (o primeiro desenho e o
+## aquecimento dos efeitos acontecem por trás dela).
+const CARGA_QUADROS := 4
+var _carga: Control
+var _carga_texto: Label
+var _carga_espera := 0
+var _carga_semente := 0  # a corrida para a qual a capa já apareceu
+var _carga_sair := -1
 var _sons: Sons
 var _s_jogador := 0.0
 var _chegou := false
@@ -125,6 +133,22 @@ func _init(d: Node, j: Node) -> void:
 	_minimapa.offset_bottom = -16
 	_minimapa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	area.add_child(_minimapa)
+	_carga = ColorRect.new()
+	(_carga as ColorRect).color = COR_FUNDO
+	_carga.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_carga.offset_left = -MARGEM_LATERAL
+	_carga.offset_right = MARGEM_LATERAL
+	_carga.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_carga.visible = true  # começa coberta: a área só aparece com a pista pronta
+	area.add_child(_carga)
+	_carga_texto = Label.new()
+	_carga_texto.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_carga_texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_carga_texto.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_carga_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	Tipografia.rotulo(_carga_texto, "semibold", 34)
+	_carga_texto.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+	_carga.add_child(_carga_texto)
 	_visual = CorridaVisual.new()
 	_visual.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -332,6 +356,7 @@ func _process(delta: float) -> void:
 			_sons.torcida(0.0)
 		return
 	_atualizar_seletor(delta)
+	_tirar_carga()
 	var f: Dictionary = jogador.fila
 	# Fim da corrida mostrada (fila vazia ou a próxima já começou): fica parado
 	# na última imagem por SILENCIO_S antes de seguir.
@@ -368,6 +393,13 @@ func _process(delta: float) -> void:
 	if segurar_largada or _contagem > 0.0:
 		f["inicio"] = agora  # parada no grid: o relógio da corrida não anda
 	if f["semente"] != _semente_mostrada:
+		# Capa de carregamento antes de montar a pista (a montagem e o primeiro
+		# desenho levam alguns segundos e a tela ficava verde, parada): aparece
+		# um quadro antes, cobre a montagem e sai depois do aquecimento.
+		if _carga_semente != int(f["semente"]) or _carga_espera > 0:
+			_mostrar_carga(f)
+			f["inicio"] = agora  # o relógio da corrida espera a pista
+			return
 		if not jogador.fila_ctrl.pronta():
 			# Sendo resolvida aos poucos (decisão 90; a principal avança a cada
 			# quadro). Recém-inscrita, espera no grid: o relógio não anda e a
@@ -380,6 +412,8 @@ func _process(delta: float) -> void:
 		if c.is_empty():
 			return
 		_mostrar_corrida(f, c, agora)
+		_visual3d.aquecer()
+		_carga_sair = CARGA_QUADROS
 	if _pausa > 0.0:
 		_pausa -= delta
 		_atraso += delta
@@ -426,6 +460,35 @@ func _tempo_suave(alvo: float, delta: float) -> float:
 	_t_suave += delta * _taxa_tempo
 	_t_suave += (alvo - _t_suave) * (1.0 - exp(-delta * 2.0))
 	return _t_suave
+
+
+## Capa sobre a área da corrida enquanto a pista é montada: o nome da prova e
+## da pista. Fica um quadro na tela antes da montagem (que trava a tela).
+func _mostrar_carga(f: Dictionary) -> void:
+	if _carga_semente != int(f["semente"]):
+		_carga_semente = int(f["semente"])
+		_area.move_child(_carga, _area.get_child_count() - 1)  # por cima da pista e do HUD
+		var ev: Dictionary = dados.evento(f["evento_id"])
+		_carga_texto.text = "PREPARANDO A PISTA\n\n%s\n%s" % [String(ev["nome"]), Aba.nome_pista(String(ev["pista"]))]
+		_carga.modulate.a = 1.0
+		_carga.visible = true
+		_area.visible = true
+		_carga_espera = 2
+		_carga_sair = -1
+	else:
+		_carga_espera -= 1
+
+
+func _tirar_carga() -> void:
+	if _carga_sair < 0:
+		return
+	_carga_sair -= 1
+	if _carga_sair > 0:
+		return
+	_carga_sair = -1
+	var tw := _carga.create_tween()
+	tw.tween_property(_carga, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(func(): _carga.visible = false)
 
 
 ## Nova corrida na tela: minimapa, 3D, nomes, cabeçalho e diretor do zero.

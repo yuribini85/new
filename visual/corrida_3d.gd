@@ -283,6 +283,40 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 	_camera_imediata()
 
 
+## Desenha uma vez, sob a capa de carregamento da tela, o que só apareceria
+## no meio da corrida (pontos da câmera de cima, marcas de pneu, rastro do
+## vácuo, faíscas): o primeiro desenho de cada material compila o shader, e
+## isso travava a corrida nos primeiros segundos. Volta tudo ao normal em
+## dois quadros.
+func aquecer() -> void:
+	if _carros.is_empty() or not is_inside_tree():
+		return
+	var id: String = _carros.keys()[0]
+	var c: Node3D = _carros[id]
+	if _marcas == null:
+		_criar_marcas()
+	_marcas.multimesh.set_instance_transform(0, Transform3D(Basis.IDENTITY, c.position + Vector3(0, 0.05, 0)))
+	_marcas.multimesh.set_instance_color(0, Color(0, 0, 0, 0.01))
+	if not _rastros.has(id):
+		_criar_rastro(id, c)
+	_rastros[id].emitting = true
+	var antes := _cena.get_child_count()
+	_faiscas(c.position + Vector3(0, 0.6, 0))
+	var faisca: Node = _cena.get_child(_cena.get_child_count() - 1) if _cena.get_child_count() > antes else null
+	_mostrar_pontos(true)
+	for k in 2:
+		await get_tree().process_frame
+	if not is_instance_valid(c):
+		return
+	_mostrar_pontos(false)
+	if _rastros.has(id) and is_instance_valid(_rastros[id]):
+		_rastros[id].emitting = false
+	if _marcas != null:
+		_marcas.multimesh.set_instance_color(0, Color(0, 0, 0, 0))
+	if is_instance_valid(faisca):
+		faisca.queue_free()
+
+
 func limpar() -> void:
 	for c in _cena.get_children():
 		c.queue_free()

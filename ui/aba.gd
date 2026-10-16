@@ -154,11 +154,6 @@ func _espaco_topo() -> void:
 	conteudo.move_child(vazio, 0)
 
 
-## Sufixo da âncora de um controle dentro da janela aberta por cima da aba:
-## enquanto ela aparece, o destaque vai para ele em vez do da aba.
-const NA_JANELA := "@janela"
-
-
 ## Marca um controle como alvo do destaque `nome` (o primeiro registrado vale).
 ## Um cartão marca o painel inteiro.
 func ancora(nome: String, c: Control) -> void:
@@ -747,10 +742,12 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		escolher_cor := false) -> void:
 	var inicial: Color = cor if cor.a > 0.0 else Cores.fabrica(String(base["id"]))
 	cor_escolhida = inicial.to_html(false)
-	var botoes := [] if compra.is_empty() or not compra[2] else [[compra[0], func():
+	# Com compra: um botão só, "Comprar por X giros" (vermelho e inativo se o
+	# caixa não paga); fecha pelo ×.
+	var botoes := [] if compra.is_empty() else [[compra[0], func():
 		compra[1].call()
-		mudou.emit(), "giros"], ["Fechar", func(): pass]]
-	painel.emit(base["nome"], func(v):
+		mudou.emit(), "giros", compra[2]]]
+	painel_estilo.emit(base["nome"], func(v):
 		var vit := VitrineCarro.new(320.0)
 		vit.mostrar_modelo(base, inicial)
 		v.add_child(vit)
@@ -766,15 +763,8 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 			var a := meu.atributos_efetivos("seco")
 			comp.append(["vs seu %s: %+d cv, %+d kg" % [meu.base["nome"], int(base["potencia"]) - roundi(a["potencia"]),
 					int(base["peso"]) - roundi(a["peso"])], COR_NEUTRA.lightened(0.3)])
-			# Potência por peso: mais cv com muito mais peso pode não valer a pena.
-			comp.append(["potência por tonelada: %d cv (o seu: %d)" % [roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
-					roundi(1000.0 * a["potencia"] / a["peso"])], COR_NEUTRA.lightened(0.3)])
-		else:
-			comp.append(["potência por tonelada: %d cv" % roundi(1000.0 * float(base["potencia"]) / float(base["peso"])),
-					COR_NEUTRA.lightened(0.3)])
-		selos(extras + comp, v)
-		if not compra.is_empty() and not compra[2]:
-			rotulo(compra[0], FONTE_PEQUENA + 2, COR_RUIM, v)
+		if not (extras + comp).is_empty():
+			selos(extras + comp, v)
 		var como := ["à venda na %s por %s giros" % [workshop_de(String(base.get("fabricante", ""))), dinheiro(int(base["preco"]))]]
 		for ev in dados.lista("eventos"):
 			if ev.get("carro_premio") == base["id"]:
@@ -789,13 +779,13 @@ func ficha_modelo(base: Dictionary, extras: Array = [], compra: Array = [], cor 
 		var raro := false
 		var vc := cartao(COR_DESTAQUE if raro else Color.TRANSPARENT, v)
 		rotulo("COMO CONSEGUIR" + (" · RARO" if raro else ""), FONTE_PEQUENA, COR_DESTAQUE if raro else COR_SECUNDARIA, vc)
-		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc)
-		rotulo("Revenda depois: %s giros" % dinheiro(revenda(base)), FONTE_PEQUENA, COR_SECUNDARIA, vc), botoes)
+		rotulo("; ".join(como).capitalize().left(1) + "; ".join(como).substr(1) + ".", FONTE_PEQUENA + 2, Color.WHITE, vc),
+		botoes, {"fora_fecha": true, "principal": not botoes.is_empty()})
 
 
 ## Entrega de um carro novo: o carro girando e o próximo passo.
 func entrega(carro: Carro) -> void:
-	painel.emit("Seu novo carro", func(v):
+	painel.emit("COMPRADO!", func(v):
 		var vit := VitrineCarro.new(380.0)
 		vit.mostrar_modelo(carro.base, CarroBloco.cor_do_carro(carro))
 		v.add_child(vit)

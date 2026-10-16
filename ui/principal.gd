@@ -17,6 +17,7 @@ var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
 var _sobre: Sobreposicao
+var _capa: TextureRect
 var _dialogo: Dialogo
 var _destaque: Destaque
 ## Âncoras fora das abas (topo e navegação) para os destaques do tutorial.
@@ -109,6 +110,18 @@ func _ready() -> void:
 	raiz.add_child(moldura)
 	_abas.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	moldura.add_child(_abas)
+	# Tutorial do dono: enquanto a tela atual não foi apresentada (o começo do
+	# jogo, antes do primeiro toque na barra), a oficina no lugar dela; a tela
+	# só abre com o toque no botão que o tutorial destaca.
+	_capa = TextureRect.new()
+	_capa.texture = Assets.get_asset(CENARIO_NOME, "cenario")
+	_capa.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_capa.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_capa.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme
+	_capa.modulate = Color(0.55, 0.55, 0.55)
+	_capa.mouse_filter = Control.MOUSE_FILTER_STOP
+	_capa.visible = false
+	moldura.add_child(_capa)
 	var eventos := preload("res://ui/aba_eventos.gd").new(dados, jogador)
 	_todas = [
 		preload("res://ui/aba_garagem.gd").new(dados, jogador),
@@ -332,6 +345,16 @@ func _ir_para(i: int, voltando := false) -> void:
 	_cabecalho.mostrar_corrida(i != 4)
 	_atualizar_ao_vivo()
 	_foco_corrida()
+	_atualizar_capa()
+
+
+## A capa (a oficina) fica sobre a tela atual enquanto ela não foi apresentada.
+func _atualizar_capa() -> void:
+	if _capa == null:
+		return
+	_capa.visible = not apresentada(_abas.current_tab)
+	if _capa.visible:
+		_cabecalho.definir_titulo("WRECKAGE")
 
 
 ## Corridas aceleradas (decisão 39): regras de data/monetizacao.json.
@@ -632,6 +655,7 @@ func atualizar() -> void:
 	jogador.garagem.vagas = VagasGaragem.capacidade(dados, jogador.ampliacoes_garagem)
 	_sujar_todas()
 	_reconstruir(_abas.current_tab)
+	_atualizar_capa()
 
 
 func _reconstruir(i: int) -> void:
@@ -678,11 +702,6 @@ func _acao_tutorial(nome: String) -> void:
 		var nav := NOMES_ABA.find(nome.trim_prefix("HIGHLIGHT_NAV_"))
 		if nome.begins_with("HIGHLIGHT_NAV_") and nav >= 0:
 			_apresentar(nav)
-			# A tela de fundo ainda não foi apresentada (o começo do jogo mostrava a
-			# Equipe vazia, fora da barra): vai para a destacada; o destaque segue
-			# no botão da barra.
-			if not apresentada(_abas.current_tab):
-				_ir_para(nav)
 		_destacar(nome.trim_prefix("HIGHLIGHT_"))
 	else:
 		historia_acao.emit(nome)
@@ -731,9 +750,10 @@ func _destacar(nome: String) -> void:
 	_destaque.mostrar(alvo, func():
 		if not aba.is_visible_in_tree():
 			return null
-		var na_janela = aba.ancoras.get(nome + Aba.NA_JANELA)
-		if _sobre.aberto() and is_instance_valid(na_janela) and na_janela.is_inside_tree():
-			return na_janela
+		# Janela aberta por cima (ex.: a seleção de pilotos): o destaque espera
+		# sem desenhar; a escolha dentro dela é do jogador.
+		if _sobre.aberto():
+			return true
 		return aba.ancoras.get(nome))
 	if _dialogo._cena.get("id") == cena_id:
 		_dialogo.evitar(alvo.get_global_rect())
@@ -802,6 +822,7 @@ func _quando_dialogo_acabar(depois: Callable) -> void:
 ## Jogo novo com a história: a abertura (a noite em que a Wreckage perdeu os
 ## carros) e, no fim dela, a primeira cena (GAME_START).
 func _abertura() -> void:
+	_atualizar_capa()
 	var h: Historia = jogador.historia
 	var falta := h.recuperar()
 	# Campanha do dono: a noite do acidente (AberturaCinema) e então a Mara na
@@ -849,9 +870,8 @@ func _acao_historia(nome: String) -> void:
 		# A equipe nasce na cena: nada é resetado, só a aba aparece.
 		EquipeJogador.criar(jogador)
 		atualizar()
-		# Depois de a cena fechar: a de contratar (ABA:EQUIPE) pede FIRST_CAR, que
-		# esta cena grava no fim.
-		_quando_dialogo_acabar(func(): _ir_para(ABA_EQUIPE))
+		# A Equipe abre com o toque do jogador na barra (a cena destaca o botão);
+		# a de contratar (ABA:EQUIPE) pede FIRST_CAR, que esta cena grava no fim.
 
 
 ## Fundo do painel do nome: o cenário da cena que pergunta (CW_P01).

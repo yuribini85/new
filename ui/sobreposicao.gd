@@ -214,6 +214,16 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 				Tipografia.rotulo(bt, "semibold", 36)
 				bt.custom_minimum_size.y = 92
 		# Terceiro item opcional: ícone da arte da interface.
+		# Quarto item opcional: false = ação indisponível (vermelha e inativa,
+		# ex.: comprar sem caixa).
+		if b.size() > 3 and not b[3]:
+			bt.disabled = true
+			var vermelho := StyleBoxFlat.new()
+			vermelho.bg_color = Aba.COR_RUIM.darkened(0.25)
+			vermelho.set_corner_radius_all(10)
+			vermelho.set_content_margin_all(12)
+			bt.add_theme_stylebox_override("disabled", vermelho)
+			bt.add_theme_color_override("font_disabled_color", Color(1, 1, 1, 0.85))
 		if b.size() > 2 and b[2] == "giros":
 			Aba.moeda(bt)  # preço: a moeda antes do valor
 		elif b.size() > 2 and b[2] is String:

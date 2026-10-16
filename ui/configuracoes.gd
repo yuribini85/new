@@ -67,6 +67,31 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, acelerar: Callable
 	cartao_sem_anuncios(aba, v, comprar)
 
 	if jogador.historia != null and String(jogador.personagem) != "":
+		_secao(aba, v, "SEU NOME")
+		# O nome que a Mara usa (o do começo do jogo), trocado aqui. O texto é
+		# lido no toque (o teclado do navegador não avisa a cada letra).
+		var linha_nome := HBoxContainer.new()
+		linha_nome.add_theme_constant_override("separation", 10)
+		v.add_child(linha_nome)
+		var campo := LineEdit.new()
+		campo.text = String(jogador.nome_admin)
+		campo.max_length = NomeAdmin.NOME_MAX
+		campo.virtual_keyboard_enabled = true
+		campo.custom_minimum_size.y = 64
+		campo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		campo.add_theme_font_size_override("font_size", 26)
+		linha_nome.add_child(campo)
+		var salvar := func():
+			var novo := campo.text.strip_edges()
+			if novo == "" or novo == String(jogador.nome_admin):
+				campo.text = String(jogador.nome_admin)
+				return
+			jogador.nome_admin = novo
+			aba.get_node("/root/SaveManager").salvar()
+			aba.avisar("Nome trocado: %s." % novo)
+		campo.text_submitted.connect(func(_t): salvar.call())
+		var b_salvar := _botao(linha_nome, "Salvar", salvar)
+		b_salvar.custom_minimum_size.x = 150
 		_secao(aba, v, "HISTÓRIA")
 		var diario := aba.botao_texto("Diário de conversas", func():
 			aba.painel.emit("Diário", func(pv): Diario.montar(aba, pv, jogador),

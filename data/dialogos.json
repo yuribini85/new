@@ -325,13 +325,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você cuida da equipe. Quem senta no carro é piloto contratado.",
+    "texto": "Você gerencia as contratações. Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Para as corridas, alguém constante ou uma promessa. É quem leva o nome da Wreckage para a pista.",
-    "pose": "gesto"
    },
    {
     "quem": "sistema",
@@ -351,29 +346,7 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "lembrete": "CW_P03CL",
   "cenario": "oficina_mara"
- },
- {
-  "id": "CW_P03CL",
-  "trigger": "LEMBRETE",
-  "falas": [
-   {
-    "quem": "mara",
-    "texto": "Sem piloto, o carro não sai. Contrate um para as corridas."
-   },
-   {
-    "acao": "HIGHLIGHT_PILOTO_CORRIDA"
-   }
-  ],
-  "requer": [],
-  "proibe": [
-   "PILOT_HIRED"
-  ],
-  "flags": [],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "dono"
  },
  {
   "id": "CW_P03D",
@@ -381,12 +354,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{piloto} no volante. O treino fica aqui na Equipe, no relógio, mesmo com o app fechado.",
+    "texto": "{piloto} está contratado. Agora, a primeira prova.",
     "pose": "firme"
-   },
-   {
-    "quem": "mara",
-    "texto": "Agora, a primeira prova."
    },
    {
     "quem": "sistema",
@@ -859,7 +828,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Para correr, um carro. A garagem está vazia; o último foi junto com as dívidas.",
+    "texto": "A garagem está vazia; o último carro foi junto com as dívidas.",
     "pose": "cruzados"
    },
    {
@@ -918,11 +887,18 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora alguém para dirigir.",
+    "texto": "Agora precisamos de um piloto. O último foi embora, e ainda preciso pagar.",
     "pose": "firme"
    },
    {
     "acao": "UNLOCK_TEAM_TAB"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Equipe, na barra de baixo."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EQUIPE"
    }
   ],
   "requer": [],
@@ -2227,7 +2203,7 @@
    },
    {
     "quem": "vendedor_charge_folio",
-    "texto": "O cartão de cada carro traz potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes."
+    "texto": "Cada carro mostra potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes."
    },
    {
     "quem": "sistema",
@@ -2276,7 +2252,7 @@
   "falas": [
    {
     "quem": "vendedor_relay_room",
-    "texto": "Sal Moretti! Relay Room, e eu digo com o coração: o melhor balcão da cidade."
+    "texto": "Sal Moretti, da Relay Room! Carro bom e preço justo, palavra de vendedor."
    },
    {
     "quem": "vendedor_relay_room",
@@ -2284,7 +2260,7 @@
    },
    {
     "quem": "vendedor_relay_room",
-    "texto": "Olha o cartão: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente."
+    "texto": "Embaixo de cada carro: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente."
    }
   ],
   "requer": [],
@@ -2337,7 +2313,7 @@
    },
    {
     "quem": "vendedora_brace_yard",
-    "texto": "Potência, peso e preço estão no cartão. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência."
+    "texto": "Potência, peso e preço estão embaixo de cada carro. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência."
    },
    {
     "quem": "sistema",
@@ -2366,7 +2342,7 @@
    },
    {
     "quem": "vendedora_brace_yard",
-    "texto": "O preço está no cartão. Aqui ninguém pergunta duas vezes."
+    "texto": "O preço está embaixo do carro. Aqui ninguém pergunta duas vezes."
    }
   ],
   "requer": [],
@@ -2390,7 +2366,7 @@
    },
    {
     "quem": "vendedora_return_chapter",
-    "texto": "Só Kanaya. Potência, peso e preço estão no cartão de cada carro. Compare antes de se apaixonar."
+    "texto": "Só Kanaya. Potência, peso e preço estão embaixo de cada carro. Compare antes de se apaixonar."
    },
    {
     "quem": "vendedora_return_chapter",
@@ -2447,7 +2423,7 @@
    },
    {
     "quem": "vendedora_shared_grid",
-    "texto": "Potência, peso e preço no cartão de cada carro."
+    "texto": "Potência, peso e preço embaixo de cada carro."
    },
    {
     "quem": "vendedora_shared_grid",
@@ -2504,7 +2480,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Potência, peso e preço estão no cartão. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.",
+    "texto": "Potência, peso e preço estão embaixo de cada carro. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.",
     "pose": "explica"
    },
    {
@@ -2771,7 +2747,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Carro certo, prova errada. O cartão de cada prova mostra se o seu carro é mais forte ou mais fraco.",
+    "texto": "Carro certo, prova errada. Cada prova, em Corridas, mostra se o seu carro é mais forte ou mais fraco.",
     "pose": "cruzados"
    }
   ],

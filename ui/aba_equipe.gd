@@ -224,7 +224,7 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var id := EquipeJogador.piloto_vaga(jogador, vaga)
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	if not EquipeJogador.vaga_aberta(jogador, vaga):
-		_linha_piloto(pai, "Vaga fechada", EquipeJogador.NOMES_VAGA[vaga])
+		_linha_piloto(pai, "Sem carro disponível", EquipeJogador.NOMES_VAGA[vaga])
 		rotulo("Os pilotos de arena chegam com a arena: 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
 	if id == "":
@@ -347,6 +347,46 @@ func _barra_atributo(pai: Control, nome: String, fracao: float, texto: String, c
 	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 
+## Barra de atributo que anima até o valor ({barra, texto}); _animar_barra.
+func _barra_animada(pai: Control, nome: String) -> Dictionary:
+	var h := fileira(pai)
+	var l := rotulo(nome.to_upper(), FONTE_PEQUENA, COR_SECUNDARIA, h)
+	l.custom_minimum_size.x = 210
+	var barra := ProgressBar.new()
+	barra.show_percentage = false
+	barra.max_value = 1.0
+	barra.custom_minimum_size = Vector2(0, 14)
+	barra.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	barra.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var cheio := StyleBoxFlat.new()
+	cheio.bg_color = COR_DESTAQUE
+	cheio.set_corner_radius_all(3)
+	barra.add_theme_stylebox_override("fill", cheio)
+	h.add_child(barra)
+	var v := rotulo("", FONTE_PEQUENA, Color.WHITE, h)
+	v.custom_minimum_size.x = 80
+	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	return {"barra": barra, "texto": v}
+
+
+func _animar_barra(b: Dictionary, valor: float, dur: float) -> void:
+	var barra: ProgressBar = b["barra"]
+	var texto: Label = b["texto"]
+	var de := barra.value
+	var alvo := clampf(valor, 0.0, 1.0)
+	if dur <= 0.0 or Preferencias.reduzir_animacoes:
+		barra.set_meta("valor", valor)
+		barra.value = alvo
+		texto.text = "%d%%" % roundi(valor * 100.0)
+		return
+	var de_txt := float(barra.get_meta("valor", 0.0))
+	barra.set_meta("valor", valor)
+	var tw := barra.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_method(func(t: float):
+		barra.value = lerpf(de, alvo, t)
+		texto.text = "%d%%" % roundi(lerpf(de_txt, valor, t) * 100.0), 0.0, 1.0, dur)
+
+
 ## Os candidatos um por vez, de corpo inteiro, com as setas
 ## da garagem para passar; embaixo, nome, estilo e Contratar.
 func _escolher_segundo(vaga: String = "corrida") -> void:
@@ -406,6 +446,14 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		linha_estilo.add_child(estilo)
 		var selo := CenterContainer.new()
 		linha_estilo.add_child(selo)
+		# Os atributos do candidato em barras que andam na troca: o estilo muda
+		# a consistência e a agressividade (o ritmo cresce depois, no treino).
+		var grafico := VBoxContainer.new()
+		grafico.add_theme_constant_override("separation", 6)
+		info.add_child(grafico)
+		var barras := []
+		for nome_b in ["Ritmo", "Consistência", "Agressividade"]:
+			barras.append(_barra_animada(grafico, nome_b))
 		var b := Button.new()
 		info.add_child(b)
 		var na_equipe := Label.new()
@@ -432,6 +480,10 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			_selo_traco(String(tr.get("nome", "")), selo)
 			estilo.visible = String(tr.get("nome", "")) != ""
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
+			var at := EquipeJogador.atributos(dados, jogador if atual else null, String(c["id"]))
+			var valores := [float(at.get("ritmo", 1.0)), float(at.get("consistencia", 0.0)), float(at.get("agressividade", 0.0))]
+			for k in barras.size():
+				_animar_barra(barras[k], valores[k], 0.0 if lado == 0 and Preferencias.reduzir_animacoes else 0.35)
 			Tipografia.acao_primaria(b, "Contratar", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, Tipografia.ALTURA_SECUNDARIA)
 			b.visible = not atual and outra == ""
 			na_equipe.visible = atual or outra != ""
@@ -445,10 +497,6 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 		setas_troca(palco, lista.size(), func(lado: int):
 			estado["i"] = posmod(estado["i"] + lado, lista.size())
 			mostrar.call(lado))
-		if vaga == "corrida":
-			# Tutorial: com a janela aberta, o destaque vai para o Contratar
-			# dela (o botão da aba fica atrás); fechada, volta para o da aba.
-			ancoras["PILOTO_CORRIDA" + Aba.NA_JANELA] = b
 		b.pressed.connect(func():
 			var c: Dictionary = lista[estado["i"]]
 			var motivo := EquipeJogador.contratar(dados, jogador, String(c["id"]), vaga)

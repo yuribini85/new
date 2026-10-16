@@ -98,19 +98,13 @@ Sistema: Licenças ficam em Carreira.
 
 # Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
 # piloto (de corrida) é escolhido na tela de pilotos, logo depois do primeiro carro.
-= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; lembrete=CW_P03CL; cenario=oficina_mara
-Mara[explica]: Você cuida da equipe. Quem senta no carro é piloto contratado.
-Mara[gesto]: Para as corridas, alguém constante ou uma promessa. É quem leva o nome da Wreckage para a pista.
+= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; cenario=oficina_mara
+Mara[explica]: Você gerencia as contratações. Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.
 Sistema: Toque em Contratar, no piloto de corrida.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
-= CW_P03CL | LEMBRETE | personagem=dono; proibe=PILOT_HIRED
-Mara: Sem piloto, o carro não sai. Contrate um para as corridas.
-[HIGHLIGHT_PILOTO_CORRIDA]
-
 = CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET
-Mara[firme]: {piloto} no volante. O treino fica aqui na Equipe, no relógio, mesmo com o app fechado.
-Mara: Agora, a primeira prova.
+Mara[firme]: {piloto} está contratado. Agora, a primeira prova.
 Sistema: Vá para Corridas.
 [HIGHLIGHT_NAV_EVENTOS]
 
@@ -205,7 +199,7 @@ Sistema: The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sa
 
 # 1. O primeiro carro: a garagem começa vazia.
 = CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara; lembrete=CW_C00L
-Mara[cruzados]: Para correr, um carro. A garagem está vazia; o último foi junto com as dívidas.
+Mara[cruzados]: A garagem está vazia; o último carro foi junto com as dívidas.
 Mara[explica]: O caixa dá para um carro, e só. Cada um mostra como chega na estreia: procure o MAIS FORTE, não o mais barato.
 Sistema: Vá para as Lojas e compre o primeiro carro.
 [HIGHLIGHT_NAV_LOJA]
@@ -217,8 +211,10 @@ Mara: Sem carro, não tem corrida. As Lojas estão ali.
 # 2. Comprado o carro, o piloto: a equipe nasce aqui.
 = CW_C01B | COMPRA_CARRO | personagem=dono; proibe=FIRST_CAR; flags=FIRST_CAR; cenario=oficina_mara
 Mara[gesto]: {carro}. Dá para trabalhar.
-Mara[firme]: Agora alguém para dirigir.
+Mara[firme]: Agora precisamos de um piloto. O último foi embora, e ainda preciso pagar.
 [UNLOCK_TEAM_TAB]
+Sistema: Toque em Equipe, na barra de baixo.
+[HIGHLIGHT_NAV_EQUIPE]
 
 = CW_L03 | LICENCA_TREINO_INICIO | personagem=dono; proibe=FIRST_TRAINING_STARTED; flags=FIRST_TRAINING_STARTED
 Mara: Treino rodando. A oficina não para por isso.
@@ -463,7 +459,7 @@ Kenji: Deixa secar antes de bater em alguém.
 = CW_LJ01 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_CHARGE_FOLIO
 Edgar: Edgar Halloway, Charge Folio. Bem-vindo. Aqui não se vende carro; se confia um.
 Edgar: Alemães, italianos, franceses, ingleses, suecos, do Leste e até brasileiros. Cada um com o seu sotaque na estrada.
-Edgar: O cartão de cada carro traz potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes.
+Edgar: Cada carro mostra potência, peso e preço. Posso comprar mostra só o que o caixa paga; o outro botão troca a ordem entre os mais baratos e os mais potentes.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ02 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_CHARGE_FOLIO; flags=SHOP_CHARGE_FOLIO
@@ -471,9 +467,9 @@ Edgar: Edgar Halloway, Charge Folio. Europeus de todo canto, e até brasileiros.
 Edgar: Escolha sem pressa. Pressa é coisa de quem compra mal.
 
 = CW_LJ03 | LOJA:relay_room_garage | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_RELAY_ROOM
-Sal: Sal Moretti! Relay Room, e eu digo com o coração: o melhor balcão da cidade.
+Sal: Sal Moretti, da Relay Room! Carro bom e preço justo, palavra de vendedor.
 Sal: Aqui é tudo Hayase. Conheço cada parafuso.
-Sal: Olha o cartão: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente.
+Sal: Embaixo de cada carro: potência, peso, preço. Posso comprar mostra o que cabe no bolso; o outro botão põe os mais baratos ou os mais potentes na frente.
 
 = CW_LJ04 | LOJA:relay_room_garage | personagem=dono; proibe=SHOP_RELAY_ROOM; flags=SHOP_RELAY_ROOM
 Sal: Sal Moretti! Relay Room. Aqui é tudo Hayase, e eu conheço cada parafuso.
@@ -482,16 +478,16 @@ Sal: Gostou de algum? Pra você, preço de tabela. Que é preço de amigo.
 = CW_LJ05 | LOJA:brace_yard_works | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_BRACE_YARD
 Bianca: Bianca Sterling, Brace Yard Works. Champanhe? Não? Mais pra mim.
 Bianca: Hozuki, Sanga, Kosame e Ishigumo. Carro pra quem pretende ser visto.
-Bianca: Potência, peso e preço estão no cartão. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência.
+Bianca: Potência, peso e preço estão embaixo de cada carro. Posso comprar esconde o que o caixa não paga; o outro botão ordena por preço ou por potência.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ06 | LOJA:brace_yard_works | personagem=dono; proibe=SHOP_BRACE_YARD; flags=SHOP_BRACE_YARD
 Bianca: Bianca Sterling, Brace Yard Works. Hozuki, Sanga, Kosame e Ishigumo.
-Bianca: O preço está no cartão. Aqui ninguém pergunta duas vezes.
+Bianca: O preço está embaixo do carro. Aqui ninguém pergunta duas vezes.
 
 = CW_LJ07 | LOJA:return_chapter_customs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_RETURN_CHAPTER
 Nora: Nora Lindqvist, Return Chapter. Pergunte o que quiser; eu respondo com números.
-Nora: Só Kanaya. Potência, peso e preço estão no cartão de cada carro. Compare antes de se apaixonar.
+Nora: Só Kanaya. Potência, peso e preço estão embaixo de cada carro. Compare antes de se apaixonar.
 Nora: Posso comprar mostra só o que o caixa paga. O outro botão ordena pelos mais baratos ou pelos mais potentes.
 Sistema: Toque num carro para ver a ficha e comprar.
 
@@ -501,7 +497,7 @@ Nora: Carro certo é o que entra na prova que você quer correr.
 
 = CW_LJ09 | LOJA:shared_grid_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SHARED_GRID
 Jade: Jade Ryker, Shared Grid Motors. Oito marcas americanas, um catálogo, zero tempo a perder.
-Jade: Potência, peso e preço no cartão de cada carro.
+Jade: Potência, peso e preço embaixo de cada carro.
 Jade: Liga Posso comprar e põe os mais potentes na frente. Eu faria assim.
 Sistema: Toque num carro para ver a ficha e comprar.
 
@@ -511,7 +507,7 @@ Jade: Filtra pelo que cabe no caixa. O resto é vitrine.
 
 = CW_LJ11 | LOJA:spare_penny_repairs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SPARE_PENNY
 Mara: Spare Penny. Mizuchi, Hoshino e Tomoe; ninguém aqui vende pose.
-Mara[explica]: Potência, peso e preço estão no cartão. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.
+Mara[explica]: Potência, peso e preço estão embaixo de cada carro. Posso comprar mostra o que o caixa paga; o outro botão ordena por preço ou por potência.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 # ---------------------------------------------------------------- Comentários de contexto
@@ -552,7 +548,7 @@ Mara[explica]: Os rivais estavam mais fortes. Escolha outra prova ou melhore o c
 Mara[pensativa]: {piloto} fez o que deu. O resto é com a gente.
 
 = CW_D10 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:4; repetivel=sim; reativa=sim
-Mara[cruzados]: Carro certo, prova errada. O cartão de cada prova mostra se o seu carro é mais forte ou mais fraco.
+Mara[cruzados]: Carro certo, prova errada. Cada prova, em Corridas, mostra se o seu carro é mais forte ou mais fraco.
 
 = CW_D11 | PECA_COMPRADA | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; repetivel=sim; reativa=sim
 Mara[gesto]: {peca} no lugar. Quero ver isso na pista.
