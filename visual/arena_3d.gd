@@ -27,11 +27,12 @@ const CAMERA_SUAVE := 2.5  # 1/s
 const PNEUS_POR_M := 0.95
 ## Chão em malha: passo da grade e quanto passa do muro (m).
 const CHAO_PASSO_M := 1.0  # fino o bastante para a quina das rampas e dos degraus
-const CHAO_MARGEM_M := 22.0  # da maior largura do muro à borda do bloco (arquibancada, árvores)
+const CHAO_MARGEM_M := 30.0  # da maior largura do muro à borda do bloco (arquibancada, tema, árvores)
 ## Direção da luz pré-calculada no chão (de onde vem a luz, normalizada).
 const LUZ_CHAO := Vector3(0.55, 0.62, 0.56)
 const FUMACA_ESTAGIO := 3  # estágio (0..4) a partir do qual sai fumaça
 ## Vista geral: mais do alto e a arena inteira com folga.
+const BLOCO_NA_TELA := 1.25  # largura do quadro geral em lados do bloco (girado, a diagonal é maior)
 const ELEVACAO_GERAL_GRAUS := 40.0  # ângulo de maquete: mostra as laterais e o que é alto
 const ORBITA_GERAL_S := 90.0
 ## Dinâmica: planos curtos, baixos e perto, com corte seco.
@@ -191,6 +192,7 @@ func mostrar(resultado: Dictionary, params: Dictionary, modelos: Dictionary, pin
 	_amostras = resultado.get("amostras", [])
 	_estagios = int(params.get("estagios", 5))
 	_lotacao = LOTACAO.get(String(params.get("forma", {}).get("licenca", "")), 1)
+	_tema = String(params.get("forma", {}).get("tema", ""))
 	_raio = float(params.get("raio_m", 45.0))
 	_forma = ArenaForma.de(params)
 	_i = 0
@@ -290,6 +292,11 @@ func atualizar(delta: float) -> void:
 		_tremor = maxf(_tremor - delta, 0.0)
 		if not Preferencias.reduzir_animacoes:
 			_orbita = fmod(_orbita + delta * TAU / (ORBITA_GERAL_S if modo == "geral" else ORBITA_S), TAU)
+			_passeio += delta * TAU / ORBITA_GERAL_S
+		# Com o tema alto (montanhas, chaminés), a visão geral fica do lado
+		# oposto a ele, indo e voltando (parada com Reduzir animações).
+		if modo == "geral" and _fundo != Vector2.ZERO:
+			_orbita = atan2(-_fundo.x, _fundo.y) + sin(_passeio) * PASSEIO_ARCO
 	if modo == "dinamica":
 		_dirigir(b, delta)
 		return
@@ -300,10 +307,12 @@ func atualizar(delta: float) -> void:
 ## Na vista geral, a arena inteira.
 func _alvo_tamanho() -> float:
 	if modo == "geral":
-		_centro = _centro.lerp(Vector3.ZERO, 0.08)
+		var cb := _bloco_mn + Vector2.ONE * _bloco_lado * 0.5
+		_centro = _centro.lerp(Vector3(cb.x, 0.0, -cb.y), 0.08)
 		var asp_g := float(size.y) / maxf(float(size.x), 1.0) if size.x > 0 else 1.6
-		# Do alto e inclinada, a largura da tela é que limita o círculo.
-		return (_raio * 2.0 + FOLGA_M) * maxf(asp_g, 1.0) * 1.25
+		# Do alto e inclinada, a largura da tela é que limita: a maquete inteira
+		# (o bloco com o tema em volta) cabe nela.
+		return maxf((_raio * 2.0 + FOLGA_M) * 1.25, _bloco_lado * BLOCO_NA_TELA) * maxf(asp_g, 1.0)
 	var pts := []
 	var ultima: Dictionary = _amostras[_i] if not _amostras.is_empty() else {}
 	for id in _carros:
@@ -1069,7 +1078,10 @@ func _construir_arena() -> void:
 	_montar_arquibancadas(lados)
 	var cenario := CenarioArena.new()
 	_cena.add_child(cenario)
-	cenario.montar(_forma, _bloco_mn, _bloco_lado, lados, _objetos.trechos_concreto, hash(_forma.muro) + 1, _cores_luta)
+	cenario.montar(_forma, _bloco_mn, _bloco_lado, lados, _objetos.trechos_concreto, hash(_forma.muro) + 1, _cores_luta, _tema)
+	_fundo = cenario.direcao_fundo
+	if _fundo != Vector2.ZERO:
+		_orbita = atan2(-_fundo.x, _fundo.y)  # já começa do lado oposto ao tema alto
 	_pneus_muro()
 	_ilhas()
 
@@ -1286,6 +1298,10 @@ const FUGA_PERTO_M := 9.0
 ## Ocupação do pacote (0 meio vazio, 1 semi cheio, 2 cheio) pela licença da arena.
 const LOTACAO := {"CLUB": 0, "SPORT": 1, "NATIONAL": 1, "INTERNATIONAL": 2, "PRO": 2, "ELITE": 2}
 var _lotacao := 1
+var _tema := ""  # data/arena.json → arenas[].tema
+var _fundo := Vector2.ZERO  # do tema: a câmera geral não passa por trás disso
+var _passeio := 0.0  # fase do vaivém da câmera geral com tema
+const PASSEIO_ARCO := 0.75  # rad para cada lado
 var _cores_luta: Array = []  # cores dos carros da luta (paddock, placas, faixas das arquibancadas)
 ## Grama fora do muro (a faixa antes dela é a terra da barreira e do alambrado).
 const GRAMA_DEPOIS_DO_MURO_M := 2.4

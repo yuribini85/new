@@ -47,6 +47,11 @@ var _ocupados: Array = []
 var _concreto: Array = []
 var _cores: Array = []  # das equipes da luta (tendas, caminhões, placas)
 var _reservas: Array = []  # [centro (2D), raio]: o paddock; árvores e pedras desviam
+## Direção (2D, do centro do bloco) do que é alto no tema (montanhas): a câmera
+## geral fica do outro lado. ZERO sem tema.
+var direcao_fundo := Vector2.ZERO
+## Quanto do pinheiral o tema mantém (porto, fábrica e estacionamento têm menos).
+var pinheiro_fator := 1.0
 ## Vento: copas e bandeirinhas (desligado com Reduzir animações).
 const VENTO_COPA := 1.0
 const VENTO_BANDEIRA := 1.0
@@ -60,9 +65,10 @@ const COR_LONA := Color(0.92, 0.9, 0.85)
 ## forma: a da simulação; mn e lado: o quadrado do bloco (2D); ocupados: lados
 ## do muro com arquibancada; concreto: trechos com a barreira quebrável do
 ## pacote de dano (a contínua pula); semente: o mesmo cenário para a mesma arena.
-## cores: das equipes da luta (o paddock e as placas usam).
+## cores: das equipes da luta (o paddock e as placas usam). tema: o cenário da
+## arena (data/arena.json → arenas[].tema; "" sem tema).
 func montar(forma: ArenaForma, mn: Vector2, lado: float, ocupados: Array, concreto: Array, semente: int,
-		cores: Array = []) -> void:
+		cores: Array = [], tema := "") -> void:
 	_forma = forma
 	_mn = mn
 	_lado = lado
@@ -78,6 +84,7 @@ func montar(forma: ArenaForma, mn: Vector2, lado: float, ocupados: Array, concre
 	_torres()
 	_estrada_e_portao()
 	_paddock()
+	TemasArena.montar(self, tema)
 	_pinheiros()
 	_pedras()
 
@@ -534,7 +541,7 @@ func _pinheiros() -> void:
 	var copas := []
 	var cores := []
 	var troncos := []
-	var total := int(_lado * _lado * PINHEIRO_POR_M2)
+	var total := int(_lado * _lado * PINHEIRO_POR_M2 * pinheiro_fator)
 	var tentativas := 0
 	while copas.size() < total and tentativas < total * 30:
 		tentativas += 1
@@ -779,3 +786,4 @@ func _barraca(no: Node3D) -> void:
 	for k in 6:
 		_peca(no, Vector3(0.5, 0.06, 1.8), Vector3(-1.25 + k * 0.5, 2.55, -0.25),
 				Color(0.85, 0.15, 0.12) if k % 2 == 0 else COR_LONA, Basis(Vector3.RIGHT, 0.25))
+

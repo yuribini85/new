@@ -832,5 +832,15 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     fabricantes do jogo, cobertura nas fileiras de trás das arquibancadas com faixa na
     cor de uma equipe, copas e bandeirinhas balançando com o vento (parado com Reduzir
     animações) e poeira atrás do carro acima de 7 m/s (sem ela em Efeitos leves).
-    Próximo passo combinado: tema por arena (campo visual em `data/arena.json`), um
-    piloto por vez.
+    Temas (pedido do usuário: todas as arenas de uma vez), `data/arena.json` →
+    `arenas[].tema` (nas de `tools/arenas_novas.py`, lá) e `visual/temas_arena.gd`, no
+    canto do bloco mais longe da estrada: montanha (Cratera do Vale: picos com neve e
+    riacho que cai pela lateral num poço à vista), pedreira (bancadas em degraus, brita,
+    basculante), docas (mar ao longo de um lado, cais, navio, pórtico e contêineres),
+    ferro-velho (pilhas de carcaças, pneus, guindaste com eletroímã), galpão (galpão
+    vermelho, silo, plantação), fardos (fardos de feno, cata-vento que gira, caixa
+    d'água), fundição (galpão em dentes de serra, chaminés com fumaça, tanques),
+    estacionamento (vagas pintadas, carros, postes, placa da saída), lago (lago escuro,
+    juncos, píer com barco, árvores secas) e claustro (colunas e arcos em ruína, torre,
+    ciprestes). A visão geral enquadra o bloco inteiro (margem de 30 m em volta do
+    muro) e, com tema alto, fica do lado oposto a ele, indo e voltando.

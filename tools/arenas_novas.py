@@ -19,42 +19,43 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 ARQ = RAIZ / "data" / "arena.json"
 
-# grid: só nos desafios do The Grid (o campeonato não sorteia).
+# grid: só nos desafios do The Grid (o campeonato não sorteia). tema: o cenário
+# em volta (visual/temas_arena.gd; só tela).
 ARENAS = [
     {   # Club: um pátio de terra cercado (para aprender).
-        "id": "varzea_galpao", "nome": "Várzea do Galpão", "licenca": "CLUB",
+        "id": "varzea_galpao", "nome": "Várzea do Galpão", "licenca": "CLUB", "tema": "galpao",
         "muro": [[10, 0], [8.5, 5.5], [4, 8.5], [-3, 8.8], [-8.5, 5.5], [-10, -0.5], [-8, -6], [-2, -8.6],
                  [5, -7.8]],
         "borda": {"largura": 4.0, "altura": 1.2},
     },
     {   # Sport: curral hexagonal.
-        "id": "curral_fardos", "nome": "Curral dos Fardos", "licenca": "SPORT",
+        "id": "curral_fardos", "nome": "Curral dos Fardos", "licenca": "SPORT", "tema": "fardos",
         "muro": [[10, 0], [5, 8.66], [-5, 8.66], [-10, 0], [-5, -8.66], [5, -8.66]],
         "borda": {"largura": 5.0, "altura": 1.5},
     },
     {   # Grid arena 1 (#8, Redline Union, sindicato de chão de fábrica): galpão
         # retangular com as docas recortadas.
-        "id": "patio_fundicao", "nome": "Pátio da Fundição", "licenca": "SPORT", "grid": True,
+        "id": "patio_fundicao", "nome": "Pátio da Fundição", "licenca": "SPORT", "grid": True, "tema": "fundicao",
         "muro": [[12, -7], [12, 7], [5, 7], [5, 5], [1, 5], [1, 7], [-12, 7], [-12, -7], [-1, -7], [-1, -5],
                  [-5, -5], [-5, -7]],
         "borda": {"largura": 5.0, "altura": 1.8},
     },
     {   # Grid arena 2 (#5, Last Exit Club): estacionamento de beira de estrada em
         # L.
-        "id": "estacionamento_saida", "nome": "Estacionamento da Última Saída", "licenca": "NATIONAL", "grid": True,
+        "id": "estacionamento_saida", "nome": "Estacionamento da Última Saída", "licenca": "NATIONAL", "grid": True, "tema": "estacionamento",
         "muro": [[11, -9], [11, 2], [6, 2], [3, 5], [3, 10], [-10, 10], [-10, -9]],
         "borda": {"largura": 6.0, "altura": 2.2},
     },
     {   # Grid arena 3 (#3, Blackwater Racing): bacia oval de um reservatório
         # seco.
-        "id": "bacia_blackwater", "nome": "Bacia de Blackwater", "licenca": "PRO", "grid": True,
+        "id": "bacia_blackwater", "nome": "Bacia de Blackwater", "licenca": "PRO", "grid": True, "tema": "lago",
         "muro": [[round(13 * math.cos(t), 2), round(8.5 * math.sin(t), 2)]
                  for t in [2 * math.pi * k / 14 for k in range(14)]],
         "borda": {"largura": 7.0, "altura": 3.0},
     },
     {   # Confronto (#1, Hollow Saints): claustro em cruz; o muro mais alto
         # de todas.
-        "id": "claustro_vazio", "nome": "Claustro Vazio", "licenca": "PRO", "grid": True,
+        "id": "claustro_vazio", "nome": "Claustro Vazio", "licenca": "PRO", "grid": True, "tema": "claustro",
         "muro": [[11, -4], [11, 4], [4, 4], [4, 11], [-4, 11], [-4, 4], [-11, 4], [-11, -4], [-4, -4],
                  [-4, -11], [4, -11], [4, -4]],
         "borda": {"largura": 8.0, "altura": 3.4},

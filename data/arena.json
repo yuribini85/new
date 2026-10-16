@@ -418,7 +418,8 @@
    "borda": {
     "largura": 7.0,
     "altura": 2.56
-   }
+   },
+   "tema": "pedreira"
   },
   {
    "id": "fosso_docas",
@@ -581,7 +582,8 @@
    "borda": {
     "largura": 5.0,
     "altura": 1.6
-   }
+   },
+   "tema": "docas"
   },
   {
    "id": "anel_ferro_velho",
@@ -833,7 +835,8 @@
    "borda": {
     "largura": 6.0,
     "altura": 2.24
-   }
+   },
+   "tema": "ferro_velho"
   },
   {
    "id": "cratera_vale",
@@ -1005,12 +1008,14 @@
    "borda": {
     "largura": 8.0,
     "altura": 3.2
-   }
+   },
+   "tema": "montanha"
   },
   {
    "id": "varzea_galpao",
    "nome": "Várzea do Galpão",
    "licenca": "CLUB",
+   "tema": "galpao",
    "borda": {
     "largura": 4.0,
     "altura": 1.2
@@ -1119,6 +1124,7 @@
    "id": "curral_fardos",
    "nome": "Curral dos Fardos",
    "licenca": "SPORT",
+   "tema": "fardos",
    "borda": {
     "largura": 5.0,
     "altura": 1.5
@@ -1218,6 +1224,7 @@
    "nome": "Pátio da Fundição",
    "licenca": "SPORT",
    "grid": true,
+   "tema": "fundicao",
    "borda": {
     "largura": 5.0,
     "altura": 1.8
@@ -1381,6 +1388,7 @@
    "nome": "Estacionamento da Última Saída",
    "licenca": "NATIONAL",
    "grid": true,
+   "tema": "estacionamento",
    "borda": {
     "largura": 6.0,
     "altura": 2.2
@@ -1542,6 +1550,7 @@
    "nome": "Bacia de Blackwater",
    "licenca": "PRO",
    "grid": true,
+   "tema": "lago",
    "borda": {
     "largura": 7.0,
     "altura": 3.0
@@ -1919,6 +1928,7 @@
    "nome": "Claustro Vazio",
    "licenca": "PRO",
    "grid": true,
+   "tema": "claustro",
    "borda": {
     "largura": 8.0,
     "altura": 3.4
@@ -2134,7 +2144,15 @@
  "capota_dano": 0.2,
  "recuperacao_atropelo": "treino",
  "_nota_capota": "Capotagem (decisão do usuário, 2026-10-13, como no Destruction Derby): batida de lado com dano ≥ capota_dano numa região do lado vira o carro, que cai de teto para baixo e sai da luta (eliminado; o golpe conta para quem bateu). 0,2 é o limite que a tela já usava para capotar (~20% dos carros por luta). Provisório até o playtest.",
-  "canhao": {"carros": ["brakhaus_sentinela"], "forca_n": 10000.0, "alcance_m": 20.0,
-    "giro_graus_s": 143.0, "alinhamento_graus": 15.0},
-  "_nota_canhao": "Canhão d'água dos pesados que têm um (pedido do usuário: o jato empurra os carros). Mira o rival vivo mais perto de outra equipe a até alcance_m, gira a torre a giro_graus_s e, alinhado (alinhamento_graus), empurra o alvo com forca_n na direção do jato. forca_n = 10.000 N, decisão do usuário (2026-10-16): ~10x um canhão de bombeiro real (~1.000 N = 50 kg/s a 20 m/s); arrasta de frente/trás um carro parado (vence o arrasto de 0,15 g) e, de lado, quase vence a aderência (~12.000 N num carro de 1,3 t). O alcance e o giro são os do visual."
+ "canhao": {
+  "carros": [
+   "brakhaus_sentinela"
+  ],
+  "forca_n": 10000.0,
+  "alcance_m": 20.0,
+  "giro_graus_s": 143.0,
+  "alinhamento_graus": 15.0
+ },
+ "_nota_canhao": "Canhão d'água dos pesados que têm um (pedido do usuário: o jato empurra os carros). Mira o rival vivo mais perto de outra equipe a até alcance_m, gira a torre a giro_graus_s e, alinhado (alinhamento_graus), empurra o alvo com forca_n na direção do jato. forca_n = 10.000 N, decisão do usuário (2026-10-16): ~10x um canhão de bombeiro real (~1.000 N = 50 kg/s a 20 m/s); arrasta de frente/trás um carro parado (vence o arrasto de 0,15 g) e, de lado, quase vence a aderência (~12.000 N num carro de 1,3 t). O alcance e o giro são os do visual.",
+ "_nota_tema": "arenas[].tema: cenário em volta da arena (visual/temas_arena.gd; só tela, a simulação não usa). Nas arenas de tools/arenas_novas.py o tema vem de lá."
 }
