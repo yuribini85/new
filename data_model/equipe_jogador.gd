@@ -134,7 +134,8 @@ static func _do_grid(dados: Node, e: Dictionary, pe: Dictionary) -> Dictionary:
 ## Todos os que podem aparecer no mercado: os candidatos e os quatro pilotos
 ## de cada equipe do Grid já vencida.
 static func pool(dados: Node, jogador: Node, tipo_: String) -> Array:
-	var l: Array = candidatos(dados).filter(func(c): return String(c.get("tipo", "corrida")) == tipo_)
+	var l: Array = candidatos(dados).filter(func(c): return (String(c.get("tipo", "corrida")) == tipo_
+			and (not bool(c.get("premium", false)) or tem_pack_premium(jogador))))
 	for id in TheGrid.vencidas(jogador):
 		var e := TheGrid.equipe(dados, String(id))
 		for pe in e.get("pilotos", []):
@@ -158,10 +159,13 @@ static func renova_em(dados: Node, agora: float) -> float:
 ## A oferta do período: `por_tipo` do pool, sorteados pelo período (sem
 ## `por_tipo` nos dados: o pool inteiro). Os já contratados não ocupam lugar.
 static func oferta(dados: Node, jogador: Node, tipo_: String, agora: float) -> Array:
-	var l := pool(dados, jogador, tipo_).filter(func(c): return vaga_do_piloto(jogador, String(c["id"])) == "")
+	var livres := pool(dados, jogador, tipo_).filter(func(c): return vaga_do_piloto(jogador, String(c["id"])) == "")
+	# Os premium do pack ficam sempre (fora do sorteio do período).
+	var fixos := livres.filter(func(c): return bool(c.get("premium", false)))
+	var l := livres.filter(func(c): return not bool(c.get("premium", false)))
 	var n := int(cfg_mercado(dados).get("por_tipo", l.size()))
 	if l.size() <= n:
-		return l
+		return fixos + l
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash("mercado|%s|%d" % [tipo_, periodo_mercado(dados, agora)])
 	for i in range(l.size() - 1, 0, -1):
@@ -169,7 +173,7 @@ static func oferta(dados: Node, jogador: Node, tipo_: String, agora: float) -> A
 		var t = l[i]
 		l[i] = l[j]
 		l[j] = t
-	return l.slice(0, n)
+	return fixos + l.slice(0, n)
 
 
 ## Gênero do piloto ("m" ou "f", dado em equipes.json e carreira.json pela
@@ -369,15 +373,92 @@ static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid:
 ## carreira.json com o traço (agressividade do perfil; consistência do segundo
 ## piloto nos mais crus) e o treino dele; cansado, perde consistência
 ## (equipe.json → treino.cansaco; null = sem efeito).
+## Calculadora da variação por piloto (pedido do usuário, 2026-10-16): cada
+## piloto tem um ajuste próprio e fixo (sorteado pelo id) em consistência e
+## agressividade, que não vêm do GT2. As faixas saem dos dados que já existem,
+## sem número novo: agressividade, metade do menor intervalo entre os perfis de
+## rival (perfis_piloto); consistência, metade da perda do segundo piloto
+## (segundo_piloto.perda_consistencia). `variacao_piloto.fator` (carreira.json)
+## escala as duas faixas no playtest (0 desliga). O ritmo segue a regra do GT2.
+static func faixas_variacao(dados: Node, consistencia_base: float) -> Dictionary:
+	var cfg: Dictionary = dados.carreira().get("variacao_piloto", {})
+	var fator := float(cfg.get("fator", 0.0))
+	if fator <= 0.0:
+		return {"agressividade": 0.0, "consistencia": 0.0}
+	var valores := []
+	for k in dados.carreira().get("perfis_piloto", {}):
+		var pf = dados.carreira()["perfis_piloto"][k]
+		if pf is Dictionary and pf.has("agressividade") and not float(pf["agressividade"]) in valores:
+			valores.append(float(pf["agressividade"]))
+	valores.sort()
+	var menor := 0.0
+	for i in range(1, valores.size()):
+		var gap: float = valores[i] - valores[i - 1]
+		menor = gap if menor == 0.0 else minf(menor, gap)
+	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
+	return {"agressividade": menor * 0.5 * fator, "consistencia": consistencia_base * perda * 0.5 * fator}
+
+
+## Aplica a variação do piloto `piloto_id` aos atributos `p` (no lugar).
+static func variar(dados: Node, piloto_id: String, p: Dictionary, consistencia_base: float) -> void:
+	if piloto_id == "":
+		return
+	var faixas := faixas_variacao(dados, consistencia_base)
+	for attr in ["consistencia", "agressividade"]:
+		var d: float = faixas[attr]
+		if d <= 0.0 or not p.has(attr):
+			continue
+		var u := float(absi(hash(piloto_id + "|" + attr)) % 10001) / 10000.0  # 0..1, fixo por piloto
+		p[attr] = clampf(float(p[attr]) + d * (2.0 * u - 1.0), 0.0, 1.0)
+
+
+# ------------------------------------------- Pack premium (decisão do usuário, 2026-10-16)
+
+## Flag do pack premium (os 3 pilotos de elite, compra única e permanente).
+const FLAG_PACK_PREMIUM := "PACK_PREMIUM"
+
+
+static func tem_pack_premium(jogador: Node) -> bool:
+	return jogador != null and jogador.flags.has(FLAG_PACK_PREMIUM)
+
+
+static func premium(dados: Node, piloto_id: String) -> bool:
+	return bool(piloto(dados, piloto_id).get("premium", false))
+
+
+## Os premium de um tipo (corrida/arena), comprados ou não (para a vitrine).
+static func premium_do_tipo(dados: Node, tipo_: String) -> Array:
+	return candidatos(dados).filter(func(c): return (bool(c.get("premium", false))
+			and String(c.get("tipo", "corrida")) == tipo_))
+
+
+## O maior ritmo que o treino alcança (o teto mais alto das licenças): o dos
+## premium e a escala da barra de ritmo na tela.
+static func ritmo_maximo(dados: Node) -> float:
+	var base := float(dados.piloto(dados.carreira()["piloto_jogador"]).get("ritmo", 1.0))
+	var maior := base
+	for v in GestaoEquipe.cfg_treino(dados).get("teto", {}).values():
+		maior = maxf(maior, float(v))
+	return maior
+
+
 static func atributos(dados: Node, jogador: Node, piloto_id: String, agora := -1.0) -> Dictionary:
 	var p: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()
+	if premium(dados, piloto_id):
+		# Premium: tudo no máximo, sempre (sem variação, treino ou cansaço).
+		p["ritmo"] = ritmo_maximo(dados)
+		p["consistencia"] = 1.0
+		p["agressividade"] = 1.0
+		return p
 	var tr := traco(dados, piloto_id)
 	var perfis: Dictionary = dados.carreira().get("perfis_piloto", {})
 	if perfis.has(String(tr.get("perfil", ""))):
 		p["agressividade"] = float(perfis[String(tr["perfil"])]["agressividade"])
 	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
+	var consistencia_base := float(p["consistencia"])
 	if bool(tr.get("menos_consistencia", false)):
 		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
+	variar(dados, piloto_id, p, consistencia_base)
 	if jogador != null:
 		p["ritmo"] = GestaoEquipe.ritmo(dados, jogador, float(p["ritmo"]), piloto_id)
 		var cansaco = GestaoEquipe.cfg_treino(dados).get("cansaco")

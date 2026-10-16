@@ -40,3 +40,21 @@ Instalada com `python3 tools/preparar_piloto.py <png> <id>...`: corpo 600 × 900
 Na tela: a aba Equipe mostra o busto (o corpo recortado justo na silhueta, da cabeça à
 coxa) com nome, traço em selo e a frase; "Trocar piloto" abre um candidato por vez de
 corpo inteiro, sob um foco de luz com sombra no chão, passando com as setas da garagem.
+
+## Pack premium (decisão do usuário, 2026-10-16)
+
+Três pilotos de elite, vendidos juntos num pack (compra única, permanente). 100% em
+tudo (ritmo no teto do treino, consistência e agressividade 1), sem cansaço. Antes da
+compra aparecem como vitrine na seleção (botão PACK PREMIUM no lugar de Contratar);
+depois ficam sempre no mercado. Até a loja do aparelho, a compra é de teste.
+
+| id | nome | vaga | estilo |
+|---|---|---|---|
+| `enzo_varga` | Enzo Varga | corrida | Elite |
+| `gunnar_vale` | Gunnar Vale | arena | Elite |
+| `scarlet_reyes` | Scarlet Reyes | arena | Elite |
+
+## Variação por piloto
+
+Consistência e agressividade variam por piloto, fixas (calculadora em
+`EquipeJogador.variar`; faixas tiradas dos dados, `variacao_piloto.fator` no playtest).

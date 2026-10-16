@@ -137,8 +137,13 @@ func test_traco_do_rival_pelo_perfil() -> void:
 	var agr := c.piloto_na_vaga(base, {"equipe": eq, "piloto": {"id": "a", "nome": "A", "perfil": "agressivo"}, "segundo": false})
 	var cau := c.piloto_na_vaga(base, {"equipe": eq, "piloto": {"id": "b", "nome": "B", "perfil": "cauteloso"}, "segundo": false})
 	var perda := float(d.carreira()["segundo_piloto"]["perda_consistencia"])
-	perto(float(agr["consistencia"]), 1.0 - perda, 1e-6, "agressivo: menos consistência")
-	perto(float(cau["consistencia"]), 1.0, 1e-6, "cauteloso: consistência inteira")
+	# Cada piloto tem a sua variação (EquipeJogador.variar): dentro da faixa.
+	var faixa: float = EquipeJogador.faixas_variacao(d, 1.0)["consistencia"]
+	perto(float(agr["consistencia"]), 1.0 - perda, faixa + 1e-6, "agressivo: menos consistência")
+	perto(float(cau["consistencia"]), 1.0, faixa + 1e-6, "cauteloso: consistência inteira")
+	verificar(float(agr["consistencia"]) < float(cau["consistencia"]), "o agressivo segue menos consistente")
+	var de_novo := c.piloto_na_vaga(base, {"equipe": eq, "piloto": {"id": "a", "nome": "A", "perfil": "agressivo"}, "segundo": false})
+	igual(de_novo, agr, "a variação é fixa por piloto")
 	j.free()
 	d.free()
 

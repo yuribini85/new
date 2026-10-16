@@ -117,6 +117,8 @@ func piloto_na_vaga(base: Dictionary, vaga: Dictionary) -> Dictionary:
 		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
 	if pv.has("id") and bool(EquipeJogador.traco_rival(dados, vaga["equipe"], pv).get("menos_consistencia", false)):
 		p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
+	# A mesma variação por piloto da equipe do jogador (EquipeJogador.variar).
+	EquipeJogador.variar(dados, String(pv.get("id", "")), p, float(base.get("consistencia", 0.0)))
 	return p
 
 

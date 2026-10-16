@@ -892,3 +892,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       plano; permissão pedida a partir da segunda corrida). **Pendente:** no celular, o
       Godot 4.4 não tem notificação local sem plugin (Android: plugin de notificação local
       com `AlarmManager`; iOS: `UNUserNotificationCenter`); fazer junto do build de loja.
+
+97. **Pilotos: variação e pack premium** (2026-10-16, decisões do usuário). Cada piloto tem
+    consistência e agressividade próprias, fixas, de uma calculadora
+    (`EquipeJogador.variar`): as faixas saem dos dados (agressividade ± metade do menor
+    intervalo entre os perfis; consistência ± metade da perda do segundo piloto) e
+    `carreira.json` → `variacao_piloto.fator` escala no playtest. O ritmo segue o GT2 e a
+    barra mostra o ritmo sobre o teto do treino (só o premium chega a 100%). Pack premium:
+    3 pilotos de elite (1 de corrida, 2 de arena; nomes inventados), compra única e
+    permanente, 100% em tudo, sem cansaço; antes da compra aparecem como vitrine na
+    seleção, depois ficam sempre no mercado. A compra real entra com a loja do aparelho
+    (como o Sem anúncios); até lá é uma compra de teste.

@@ -57,6 +57,12 @@
     "perfil": "equilibrado",
     "menos_consistencia": false
    },
+   "elite": {
+    "nome": "Elite",
+    "treina": false,
+    "perfil": "agressivo",
+    "menos_consistencia": false
+   },
    "promessa": {
     "nome": "Instintivo",
     "treina": true,
@@ -128,8 +134,36 @@
     "traco": "promessa",
     "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra.",
     "tipo": "arena"
+   },
+   {
+    "id": "enzo_varga",
+    "nome": "Enzo Varga",
+    "genero": "m",
+    "traco": "elite",
+    "frase": "",
+    "tipo": "corrida",
+    "premium": true
+   },
+   {
+    "id": "gunnar_vale",
+    "nome": "Gunnar Vale",
+    "genero": "m",
+    "traco": "elite",
+    "frase": "",
+    "tipo": "arena",
+    "premium": true
+   },
+   {
+    "id": "scarlet_reyes",
+    "nome": "Scarlet Reyes",
+    "genero": "f",
+    "traco": "elite",
+    "frase": "",
+    "tipo": "arena",
+    "premium": true
    }
   ],
+  "_nota_premium": "Decisão do usuário (2026-10-16): pack premium com 3 pilotos de elite (1 de corrida, 2 de arena), compra única e permanente; 100% em todos os atributos (ritmo no teto do treino, consistência e agressividade 1), sem cansaço. Antes da compra aparecem na seleção como vitrine; depois ficam sempre no mercado (fora do sorteio). Nomes inventados pelo Claude (pedido do usuário).",
   "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida ou de arena. A equipe tem 1 de corrida e 2 de arena. Decisão do usuário (2026-10-16): em cada vaga, um candidato de cada traço, para os da tela serem diferentes (no GT2 os pilotos de uma classe valem o mesmo; a diferença vem do traço).",
   "mercado": {
    "por_tipo": 4,
@@ -141,6 +175,10 @@
    }
   },
   "_nota_mercado": "Decisão 71 (aprovado): o mercado mostra 'por_tipo' candidatos de corrida e de arena (os 4 de cada que já existiam) e renova a cada 'renova_h' horas (24: a duração de um contrato de patrocínio, equipe.json → patrocinio.duracao_h). Vencer uma equipe do Grid põe os pilotos com retrato dela no mercado; o traço vem do perfil dela ('traco_por_perfil')."
+ },
+ "variacao_piloto": {
+  "_nota": "Calculadora da variação por piloto (pedido do usuário, 2026-10-16; EquipeJogador.variar): consistência e agressividade de cada piloto ganham um ajuste fixo, sorteado pelo id. As faixas vêm dos dados: agressividade ± metade do menor intervalo entre os perfis_piloto; consistência ± metade da perda do segundo piloto. 'fator' escala as duas faixas (1 = como derivado; 0 desliga); ajustar no playtest.",
+  "fator": 1.0
  },
  "perfis_piloto": {
   "_nota": "Agressividade dos rivais por perfil da equipe (decisão do usuário, 2026-10-11): chance de tentar a ultrapassagem quando está mais rápido. Valores provisórios até o playtest.",

@@ -725,7 +725,7 @@ func test_pilotos_usam_retrato_proprio() -> void:
 			continue
 		for p in e.get("pilotos", []):
 			ids.append(String(p["id"]))
-	igual(ids.size(), 84, "8 candidatos e 76 pilotos de equipe")
+	igual(ids.size(), 87, "8 candidatos, 3 premium e 76 pilotos de equipe")
 	for id in ids:
 		igual(Assets.caminho(id, "retrato"), "res://arte/pilotos/%s.webp" % id, "retrato de " + id)
 		verificar(Assets.get_asset(id, "retrato") != null and Assets.get_asset(id, "corpo") != null, "arte de " + id)

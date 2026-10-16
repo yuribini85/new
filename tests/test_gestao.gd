@@ -281,6 +281,39 @@ func test_cansaco_e_piloto_guardado_na_inscricao() -> void:
 
 ## Decisão 71: o mercado mostra a oferta do período; vencer uma equipe do Grid
 ## põe os pilotos dela no mercado; experiência por prova e embalo.
+## Pack premium e variação por piloto (pedido do usuário, 2026-10-16). Dados reais.
+func test_pack_premium_e_variacao_por_piloto() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	EquipeJogador.criar(j)
+	var agora := Time.get_unix_time_from_system()
+	verificar(not EquipeJogador.oferta(d, j, "corrida", agora).any(func(c): return bool(c.get("premium", false))),
+			"sem o pack, nenhum premium no mercado")
+	igual(EquipeJogador.premium_do_tipo(d, "corrida").size(), 1, "1 premium de corrida")
+	igual(EquipeJogador.premium_do_tipo(d, "arena").size(), 2, "2 premium de arena")
+	var pr: Dictionary = EquipeJogador.premium_do_tipo(d, "corrida")[0]
+	var at := EquipeJogador.atributos(d, j, String(pr["id"]))
+	perto(float(at["ritmo"]), EquipeJogador.ritmo_maximo(d), 1e-6, "premium: ritmo no teto")
+	perto(float(at["consistencia"]), 1.0, 1e-6, "premium: consistência 100%")
+	perto(float(at["agressividade"]), 1.0, 1e-6, "premium: agressividade 100%")
+	j.flags[EquipeJogador.FLAG_PACK_PREMIUM] = true
+	for t in ["corrida", "arena"]:
+		var of := EquipeJogador.oferta(d, j, t, agora)
+		for c in EquipeJogador.premium_do_tipo(d, t):
+			verificar(of.any(func(x): return x["id"] == c["id"]), "%s sempre no mercado com o pack" % c["id"])
+	igual(EquipeJogador.contratar(d, j, String(pr["id"]), "corrida"), "", "contrata o premium")
+	# Variação: dois candidatos do mesmo traço com atributos diferentes, fixos.
+	var mesmos: Array = EquipeJogador.candidatos(d).filter(func(c): return c.get("traco") == "constante")
+	var a1 := EquipeJogador.atributos(d, null, String(mesmos[0]["id"]))
+	var a2 := EquipeJogador.atributos(d, null, String(mesmos[1]["id"]))
+	verificar(a1 != a2, "mesmo traço, atributos diferentes")
+	igual(EquipeJogador.atributos(d, null, String(mesmos[0]["id"])), a1, "a variação é fixa")
+	j.free()
+	d.free()
+
+
 func test_mercado_experiencia_e_embalo() -> void:
 	var d: Node = load("res://autoload/dados.gd").new()
 	d.carregar("res://data/")
