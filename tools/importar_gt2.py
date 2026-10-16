@@ -484,7 +484,7 @@ def main() -> int:
     gravar("carros", carros)
     # Saves com carros que saíram passam para o substituto (Save).
     gravar("carros_removidos", dict(sorted(substituto.items())))
-    gravar("pecas", pecas)
+    gravar_pecas(pecas)
     gravar("pneus", pneus)
     gravar("pilotos_ia", pilotos)
     gravar("eventos", eventos)
@@ -878,6 +878,56 @@ def _nome_copa(nomes: list[str]) -> str:
 
 def gravar(nome: str, obj) -> None:
     (DATA / f"{nome}.json").write_text(json.dumps(obj, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+
+FORMATO_PECAS = ("Peças agrupadas por carro (uma linha cada). Em cada peça, s é o id sem o carro "
+                 "(id = <carro>_<s>), os carros permitidos são só esse carro, o nome vem de 'nomes' pelo s "
+                 "(salvo 'nome' na peça) e a categoria, quando omitida, é o s sem o último _trecho. "
+                 "O jogo expande no carregamento (autoload/dados.gd); ler com ler_pecas().")
+
+
+def pecas_compactas(pecas: list) -> dict:
+    """O formato de data/pecas.json: um terço do tamanho da lista com tudo repetido."""
+    nomes, carros = {}, {}
+    for p in pecas:
+        carro = p["carros_permitidos"][0]
+        assert p["carros_permitidos"] == [carro] and p["id"].startswith(carro + "_"), p["id"]
+        s = p["id"][len(carro) + 1:]
+        q = {"s": s}
+        nomes.setdefault(s, p["nome"])
+        if p["nome"] != nomes[s]:
+            q["nome"] = p["nome"]
+        if p["categoria"] != s.rsplit("_", 1)[0]:
+            q["categoria"] = p["categoria"]
+        q.update({k: v for k, v in p.items() if k not in ("id", "nome", "categoria", "carros_permitidos")})
+        carros.setdefault(carro, []).append(q)
+    return {"_formato": FORMATO_PECAS, "nomes": nomes, "carros": carros}
+
+
+def pecas_expandidas(obj: dict) -> list:
+    """A lista de peças completa (como o jogo a vê) a partir de pecas_compactas()."""
+    pecas = []
+    for carro, lista in obj["carros"].items():
+        for q in lista:
+            s = q["s"]
+            p = {"id": f"{carro}_{s}", "nome": q.get("nome", obj["nomes"][s]),
+                 "categoria": q.get("categoria", s.rsplit("_", 1)[0]), "carros_permitidos": [carro]}
+            p.update({k: v for k, v in q.items() if k not in ("s", "nome", "categoria")})
+            pecas.append(p)
+    return pecas
+
+
+def ler_pecas(caminho: Path) -> list:
+    return pecas_expandidas(json.loads(caminho.read_text(encoding="utf-8")))
+
+
+def gravar_pecas(pecas: list) -> None:
+    obj = pecas_compactas(pecas)
+    compacto = lambda x: json.dumps(x, ensure_ascii=False, separators=(",", ":"))
+    linhas = ",\n".join(f" {compacto(c)}:{compacto(l)}" for c, l in obj["carros"].items())
+    (DATA / "pecas.json").write_text(
+        f'{{"_formato":{compacto(obj["_formato"])},\n"nomes":{compacto(obj["nomes"])},\n"carros":{{\n{linhas}\n}}}}\n',
+        encoding="utf-8")
 
 
 if __name__ == "__main__":

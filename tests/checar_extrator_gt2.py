@@ -256,7 +256,7 @@ def main():
             # aderência: médias 89 e 97, mediana 93; freio: 40 e 60, mediana 50
             if (x["aderencia"], y["aderencia"], x["freio"], y["freio"]) != (round(89 / 93, 3), round(97 / 93, 3), 0.8, 1.0):
                 falhas.append(f"importador normalização: {x} {y}")
-            pecas = {p["id"]: p for p in carregar("pecas")}
+            pecas = {p["id"]: p for p in imp.ler_pecas(dados / "pecas.json")}
             esperado = {"hayase_x_natune_1": ("aspiracao", "potencia", 16.0, g(4000)),
                         "hartwig_y_turbinekit_2": ("aspiracao", "potencia", 112.0, g(20000)),
                         "hayase_x_lightweight_1": ("lightweight", "peso", 0.9, g(2500)),

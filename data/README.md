@@ -11,7 +11,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 |---|---|
 | `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
 | `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` |
-| `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos` |
+| `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos`. O importador grava agrupado por carro (`{nomes, carros: {carro: [{s, preco, efeitos, ...}]}}`, um terço do tamanho; regra no campo `_formato`) e o `Dados` expande para a lista; em Python, `ler_pecas()` de `tools/importar_gt2.py` |
 | `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |

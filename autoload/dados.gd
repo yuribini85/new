@@ -80,6 +80,8 @@ func carregar(dir: String) -> void:
 	for arquivo in ESQUEMAS:
 		_listas[arquivo] = {}
 		var lista = _ler_json(dir + arquivo + ".json")
+		if arquivo == "pecas" and lista is Dictionary:
+			lista = _expandir_pecas(lista)
 		if not lista is Array:
 			_erros.append("%s.json deve ser uma lista" % arquivo)
 			continue
@@ -102,6 +104,26 @@ func carregar(dir: String) -> void:
 			elif obj[chave] == null:
 				_pendencias.append("%s.json: %s" % [arquivo, chave])
 	_validar_referencias()
+
+
+## data/pecas.json vem agrupado por carro (tools/importar_gt2.py →
+## pecas_compactas: um terço do tamanho); aqui volta à lista de sempre: id =
+## <carro>_<s>, nome pela tabela `nomes`, categoria omitida = o s sem o último
+## _trecho, carros permitidos = só o carro.
+static func _expandir_pecas(obj: Dictionary) -> Array:
+	var nomes: Dictionary = obj.get("nomes", {})
+	var lista := []
+	var carros: Dictionary = obj.get("carros", {})
+	for carro in carros:
+		for q: Dictionary in carros[carro]:
+			var sufixo := String(q["s"])
+			var p := {"id": "%s_%s" % [carro, sufixo], "nome": q.get("nome", nomes.get(sufixo, sufixo)),
+					"categoria": q.get("categoria", sufixo.rsplit("_", true, 1)[0]), "carros_permitidos": [carro]}
+			for k in q:
+				if k != "s" and k != "nome" and k != "categoria":
+					p[k] = q[k]
+			lista.append(p)
+	return lista
 
 
 ## Blindagem (Blindagem): peças derivadas da redução de peso de cada carro,
