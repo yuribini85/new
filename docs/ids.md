@@ -191,6 +191,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `MARA_PASSADO` | cena CW_GR06 |
 | `NATIONAL_AVAILABLE_SEEN` | cena CW_L06 |
 | `NATIONAL_COMPLETE` | cena CW_R10C |
+| `PACK_PREMIUM` | data_model/equipe_jogador.gd |
 | `PAINT_TUTORIAL_SEEN` | cena CW_PT01 |
 | `PATROCINIO_INTRO` | cena CW_S00 |
 | `PATROCINIO_LIBERADO` | cena CW_S00 |
