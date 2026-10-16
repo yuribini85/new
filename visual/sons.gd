@@ -6,8 +6,11 @@ extends Node
 ##
 ## Motor e pneu gravados (arte/sons, CC0 da Kenney); o tom do motor segue o
 ## giro (cai na troca de marcha). Sem os arquivos, voltam os gerados: motor
-## em duas camadas e chiado. Zebra, torcida e bipes são sempre gerados.
-## Sons de interface curtos (moeda, toque, batida): Sons.tocar_ui().
+## em duas camadas e chiado. Público, oficina, impacto e raspagem da arena e
+## porta vêm do GDC Game Audio Bundle (tools/preparar_sons.py); sem eles,
+## voltam os gerados (público, oficina) ou não toca nada. Zebra e bipes são
+## sempre gerados.
+## Sons de interface curtos (moeda, toque, batida, porta): Sons.tocar_ui().
 
 const TAXA := 22050
 
@@ -41,7 +44,10 @@ const MOTOR_TOM_MAX := 2.6
 const MOTOR_TOM_RAPIDEZ := 9.0
 var _tom_alvo := -1.0
 const PNEU_DB := -8.0
+## Volume do público gravado no auge da torcida.
+const PUBLICO_DB := -2.0
 var _gravado := false
+var _publico_gravado := false
 
 
 ## Laço gravado (ou null sem o arquivo).
@@ -63,7 +69,9 @@ func _init() -> void:
 	var pneu := _arquivo("pneu", true)
 	_pneu = _laco(pneu if pneu != null else _ruido(1.0, 0.22, 0.55), MUDO_DB)
 	_zebra = _laco(_ruido(1.0, 0.3, 0.15, 28.0), MUDO_DB)
-	_torcida = _laco(_ruido(2.0, 0.2, 0.9, 0.0, true), MUDO_DB)
+	var publico := _arquivo("publico", true)
+	_publico_gravado = publico != null
+	_torcida = _laco(publico if _publico_gravado else _ruido(2.0, 0.2, 0.9, 0.0, true), MUDO_DB)
 	_efeito = AudioStreamPlayer.new()
 	_efeito.max_polyphony = 4
 	add_child(_efeito)
@@ -125,7 +133,8 @@ func pneu(cantando: bool, zebra: bool) -> void:
 
 ## Torcida: 0..1 (sobe na reta final com disputa).
 func torcida(f: float) -> void:
-	_ligar(_torcida, lerpf(MUDO_DB, -16.0, clampf(f, 0.0, 1.0)) if f > 0.01 else MUDO_DB)
+	var alto := PUBLICO_DB if _publico_gravado else -16.0
+	_ligar(_torcida, lerpf(MUDO_DB, alto, clampf(f, 0.0, 1.0)) if f > 0.01 else MUDO_DB)
 
 
 func _ligar(p: AudioStreamPlayer, db: float) -> void:
@@ -176,14 +185,16 @@ func _tocar(s: AudioStream) -> void:
 static var _ambientes := {}  # nome -> AudioStreamWAV
 
 
-## Fundo acústico das cenas (historia.json → cenarios.<id>.som), gerado em
-## laço: "oficina" = ventilação abafada, zumbido elétrico baixo, o tique de um
-## relógio e, de vez em quando, metal ao longe. null se o nome não existe.
+## Fundo acústico das cenas (historia.json → cenarios.<id>.som), em laço:
+## "oficina" = galpão com máquinas e vozes (arte/sons/oficina.ogg); sem o
+## arquivo, o gerado (ventilação, zumbido, relógio e metal ao longe). null se
+## o nome não existe.
 static func ambiente(nome: String) -> AudioStream:
 	if nome != "oficina":
 		return null
 	if not _ambientes.has(nome):
-		_ambientes[nome] = _oficina()
+		var gravado := _arquivo(nome, true)
+		_ambientes[nome] = gravado if gravado != null else _oficina()
 	return _ambientes[nome]
 
 
@@ -224,7 +235,7 @@ static func _oficina() -> AudioStreamWAV:
 static var _curtos := {}  # nome -> AudioStream (ou null sem o arquivo)
 
 
-## Som curto de arte/sons (moeda, toque, batida) num tocador próprio que some
+## Som curto de arte/sons (moeda, toque, batida, porta) num tocador próprio que some
 ## ao acabar. Sem o arquivo, não toca nada.
 static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0) -> void:
 	if no == null or not no.is_inside_tree():
@@ -241,6 +252,23 @@ static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0) -> void:
 	p.finished.connect(p.queue_free)
 	no.get_tree().root.add_child(p)
 	p.play()
+
+
+static var _impacto_ms := -1000
+
+
+## Batida na arena: impacto metálico grave nas fortes, raspagem de lataria nas
+## leves; volume pelo dano. No máximo uma a cada IMPACTO_INTERVALO_MS (vários
+## carros batendo no mesmo quadro viram um som só).
+const IMPACTO_INTERVALO_MS := 120
+static func impacto(no: Node, dano: float) -> void:
+	var agora := Time.get_ticks_msec()
+	if agora - _impacto_ms < IMPACTO_INTERVALO_MS:
+		return
+	_impacto_ms = agora
+	var forte := dano > 0.08
+	tocar_ui(no, "impacto" if forte else "raspagem",
+			lerpf(-12.0, 0.0, clampf(dano / 0.3, 0.0, 1.0)) if forte else -16.0, randf_range(0.9, 1.1))
 
 
 static var _estrondo: AudioStreamWAV

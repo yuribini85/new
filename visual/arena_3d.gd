@@ -693,6 +693,7 @@ func _eventos(_delta: float) -> void:
 		if e["tipo"] != "impacto":
 			continue
 		_chamar_batida(e)
+		Sons.impacto(self, float(e["dano"]))
 		_tombar(e)
 		_soltar(e)
 		var forte := float(e["dano"]) > 0.08
@@ -733,6 +734,7 @@ func _fuga(e: Dictionary) -> void:
 	porta.add_child(chapa)
 	chapa.position.x = -.34
 	create_tween().tween_property(porta, "rotation:y", lado * .95, .35)
+	Sons.tocar_ui(self, "porta_abre", -4.0)
 	var p := Piloto3D.new()
 	_cena.add_child(p)
 	_pilotos[e["carro"]] = p
@@ -744,6 +746,7 @@ func _explodir(e: Dictionary) -> void:
 	_fogo_de(id).explodir()
 	_tremor = minf(_tremor + 0.5, 0.8)
 	Sons.estrondo(self)
+	Sons.tocar_ui(self, "impacto", 0.0, 0.8)
 	var c = _carros[id]
 	if c is CarroBloco:
 		(c as CarroBloco).carbonizar()

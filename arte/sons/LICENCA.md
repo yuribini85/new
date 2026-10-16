@@ -12,5 +12,18 @@ O README de cada kit declara os sons como CC0.
 | moeda.ogg | KenneyNL/Starter-Kit-3D-Platformer — sounds/coin.ogg |
 | toque.ogg | KenneyNL/Starter-Kit-City-Builder — sounds/toggle.ogg |
 
-Bipes da largada, ultrapassagem, chegada, zebra e
-torcida continuam gerados em código (`visual/sons.gd`).
+Do **GDC Game Audio Bundle 2026, parte 9** (Sonniss, sonniss.com): royalty-free,
+uso pessoal ou comercial sem atribuição (Readme e "License - GDC Game Audio.pdf" do
+pacote). Cortados por `tools/preparar_sons.py` (os WAV originais ficam fora do
+repositório):
+
+| Arquivo | Origem |
+|---|---|
+| impacto.ogg | The Noisery, Moaning Metal — DSGNImpt_Metal Hit Thud Thump Low Ring Geofon 1 |
+| raspagem.ogg | The Noisery, Moaning Metal — DSGNTonl_Metal Scrape Low Tonal LFE 4 |
+| porta_abre.ogg, porta.ogg | SoundBits, Mad Mustang Mercury — VEHDoor_Car Foley Car Door Open and Close Exterior 04 Perspective A |
+| oficina.ogg | Victor Ermakov, Ship Repair Factory — AMBInd_Factory Hall Busy Alarm Machines Voices |
+| publico.ogg | TheWorkRoom, South African Walla — SAW002 |
+
+Bipes da largada, ultrapassagem, chegada e zebra continuam gerados em código
+(`visual/sons.gd`).
