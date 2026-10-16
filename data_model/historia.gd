@@ -41,14 +41,42 @@ func ativa() -> bool:
 	return String(jogador.personagem) != ""
 
 
-## Primeira cena que vale para o trigger ({} se nenhuma).
-func cena_para(trigger: String, ctx: Dictionary = {}) -> Dictionary:
+## Primeira cena que vale para o trigger ({} se nenhuma). Comentários de
+## contexto (repetíveis e reativos) do mesmo trigger se revezam: vale o da vez
+## entre os que valem agora, para a mesma fala não voltar sempre.
+## `reativas`: false deixa de fora os comentários (o fim de corrida dá a vez
+## aos marcos antes deles).
+func cena_para(trigger: String, ctx: Dictionary = {}, reativas := true) -> Dictionary:
 	if not ativa() or trigger in ["ENCADEADA", "LEMBRETE"]:
 		return {}
+	var rodizio := []
 	for c in dados.lista("dialogos"):
-		if c["trigger"] == trigger and vale(c, ctx):
-			return c
-	return {}
+		if c["trigger"] != trigger or not vale(c, ctx):
+			continue
+		if not _comentario(c):
+			if rodizio.is_empty():
+				return c
+			continue
+		if reativas:
+			rodizio.append(c)
+	if rodizio.is_empty():
+		return {}
+	# O visto há mais tempo (nunca visto primeiro; empate: a ordem do arquivo).
+	var melhor: Dictionary = rodizio[0]
+	for c in rodizio:
+		if _visto_em(c) < _visto_em(melhor):
+			melhor = c
+	return melhor
+
+
+## Corrida (jogador.dias) em que o comentário foi visto pela última vez; -1 nunca.
+func _visto_em(c: Dictionary) -> int:
+	var v = jogador.dialogos_vistos.get(c["id"], -1)
+	return int(v) if v is int or v is float else -1
+
+
+static func _comentario(c: Dictionary) -> bool:
+	return c.get("reativa", false) and not c.get("uma_vez", true)
 
 
 func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
@@ -70,6 +98,8 @@ func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
 		return false
 	if cond.has("posicao_min") and int(ctx.get("posicao", -1)) < int(cond["posicao_min"]):
 		return false
+	if cond.has("posicao_max") and (not ctx.has("posicao") or int(ctx["posicao"]) > int(cond["posicao_max"])):
+		return false
 	# demanda_paga:1 — o caixa já paga a peça que a Mara pede (o tutorial da
 	# Oficina não manda comprar o que não dá).
 	if cond.has("demanda_paga") and not demanda_paga():
@@ -85,7 +115,10 @@ func demanda_paga() -> bool:
 ## Pede a cena do trigger. true se uma cena foi pedida (quem chamou pode
 ## esperar por ela, como a inscrição que vira tutorial).
 func disparar(trigger: String, ctx: Dictionary = {}) -> bool:
-	var c := cena_para(trigger, ctx)
+	return _pedir(cena_para(trigger, ctx), ctx)
+
+
+func _pedir(c: Dictionary, ctx: Dictionary) -> bool:
 	if c.is_empty():
 		return false
 	var com_ctx := c.duplicate()
@@ -112,18 +145,22 @@ func disparar_grid(e: Dictionary, dados_: Node) -> bool:
 ## quantidade). Uma conversa só. `antes`: as vitórias antes desta corrida.
 func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
 	var ctx := {"posicao": posicao, "evento": evento_id}
-	if disparar("CORRIDA_FIM", ctx):
+	if _pedir(cena_para("CORRIDA_FIM", ctx, false), ctx):
 		return true
-	if posicao != 1 or antes.has(evento_id) or not dados.existe("eventos", evento_id):
-		return false
-	var lic := String(dados.evento(evento_id)["restricoes"].get("licenca", ""))
-	var mesma := func(e) -> bool:
-		return dados.existe("eventos", e) and String(dados.evento(e)["restricoes"].get("licenca", "")) == lic
-	if lic != "" and not antes.keys().any(mesma):
-		if disparar("VITORIA_LICENCA:" + lic, ctx):
+	if posicao == 1 and not antes.has(evento_id) and dados.existe("eventos", evento_id):
+		var lic := String(dados.evento(evento_id)["restricoes"].get("licenca", ""))
+		var mesma := func(e) -> bool:
+			return dados.existe("eventos", e) and String(dados.evento(e)["restricoes"].get("licenca", "")) == lic
+		if lic != "" and not antes.keys().any(mesma):
+			if disparar("VITORIA_LICENCA:" + lic, ctx):
+				return true
+		var q := ctx.duplicate()
+		q["quantidade"] = jogador.vitorias.size()
+		if disparar("VITORIA", q):
 			return true
-	ctx["quantidade"] = jogador.vitorias.size()
-	return disparar("VITORIA", ctx)
+	# Sem cena nem marco: um comentário de contexto (no máximo um a cada
+	# reativa_intervalo_corridas corridas), para a Mara não sumir entre os marcos.
+	return disparar("CORRIDA_FIM", ctx)
 
 
 ## Variáveis das falas ({saldo}, {carro}, {evento}, {serie}, {pista}, {voltas},
@@ -204,7 +241,8 @@ func abrir(id: String) -> bool:
 
 ## Cena terminada: marca como vista e grava as flags. Retorna a próxima ({} se não há).
 func concluir(c: Dictionary) -> Dictionary:
-	jogador.dialogos_vistos[c["id"]] = true
+	# Comentário de contexto: guarda a corrida em que foi visto (o rodízio).
+	jogador.dialogos_vistos[c["id"]] = jogador.dias if _comentario(c) else true
 	if c.get("reativa", false):
 		jogador.ultima_reativa = jogador.dias
 	for f in c.get("flags", []):

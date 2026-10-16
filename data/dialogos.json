@@ -2484,6 +2484,302 @@
   "reativa": true
  },
  {
+  "id": "CW_D01",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} levou essa. O {carro} merece um banho e mais nada.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D02",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Vitória em {pista}. Anota o que funcionou antes de mexer em alguma coisa.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D03",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeiro lugar. Não comemora muito: a próxima prova não sabe disso.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D04",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Ganhou sem precisar de sorte. Gosto assim.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D05",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}. Pódio paga a conta; a vitória paga o resto.",
+    "pose": "explica"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2,
+   "posicao_max": 3
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D06",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Perto. A Próxima prova, em Corridas, mostra onde o {carro} tem mais chance.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2,
+   "posicao_max": 3
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D07",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao} em {pista}. Mais um ajuste e a gente sobe um degrau."
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2,
+   "posicao_max": 3
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D08",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}. O {carro} chegou até onde dava.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mara",
+    "texto": "Os rivais estavam mais fortes. Escolha outra prova ou melhore o carro na Oficina.",
+    "pose": "explica"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 4
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D09",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} fez o que deu. O resto é com a gente.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 4
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D10",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Carro certo, prova errada. O cartão de cada prova mostra se o seu carro é mais forte ou mais fraco.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 4
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D11",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{peca} no lugar. Quero ver isso na pista.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_D12",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Dinheiro bem gasto, se o cronômetro concordar."
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_D13",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{peca} instalado. Agora é correr.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
   "id": "CW_R03",
   "trigger": "CAIXA_BAIXO",
   "falas": [

@@ -505,6 +505,50 @@ Sistema: Toque num carro para ver a ficha e comprar.
 = CW_R01 | CORRIDA_FIM | personagem=dono; requer=FIRST_WIN; proibe=FIRST_LOSS_TALK; condicao=posicao_min:2; flags=FIRST_LOSS_TALK; reativa=sim
 Mara[decepcao]: Não deu. Olhe os números antes de trocar metade do carro.
 
+# Decisão 96: comentários do dia a dia, para a Mara não sumir entre os marcos
+# (o playtest mostrou 46 min sem fala). Repetíveis e reativos: se revezam
+# (Historia.cena_para) e esperam reativa_intervalo_corridas corridas; o fim de
+# corrida dá a vez aos marcos (VITORIA, VITORIA_LICENCA) antes deles.
+= CW_D01 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[gesto]: {piloto} levou essa. O {carro} merece um banho e mais nada.
+
+= CW_D02 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[pensativa]: Vitória em {pista}. Anota o que funcionou antes de mexer em alguma coisa.
+
+= CW_D03 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[firme]: Primeiro lugar. Não comemora muito: a próxima prova não sabe disso.
+
+= CW_D04 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[cruzados]: Ganhou sem precisar de sorte. Gosto assim.
+
+= CW_D05 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:2,posicao_max:3; repetivel=sim; reativa=sim
+Mara[explica]: {posicao}. Pódio paga a conta; a vitória paga o resto.
+
+= CW_D06 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:2,posicao_max:3; repetivel=sim; reativa=sim
+Mara[pensativa]: Perto. A Próxima prova, em Corridas, mostra onde o {carro} tem mais chance.
+
+= CW_D07 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:2,posicao_max:3; repetivel=sim; reativa=sim
+Mara: {posicao} em {pista}. Mais um ajuste e a gente sobe um degrau.
+
+= CW_D08 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:4; repetivel=sim; reativa=sim
+Mara[decepcao]: {posicao}. O {carro} chegou até onde dava.
+Mara[explica]: Os rivais estavam mais fortes. Escolha outra prova ou melhore o carro na Oficina.
+
+= CW_D09 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:4; repetivel=sim; reativa=sim
+Mara[pensativa]: {piloto} fez o que deu. O resto é com a gente.
+
+= CW_D10 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:4; repetivel=sim; reativa=sim
+Mara[cruzados]: Carro certo, prova errada. O cartão de cada prova mostra se o seu carro é mais forte ou mais fraco.
+
+= CW_D11 | PECA_COMPRADA | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; repetivel=sim; reativa=sim
+Mara[gesto]: {peca} no lugar. Quero ver isso na pista.
+
+= CW_D12 | PECA_COMPRADA | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; repetivel=sim; reativa=sim
+Mara: Dinheiro bem gasto, se o cronômetro concordar.
+
+= CW_D13 | PECA_COMPRADA | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; repetivel=sim; reativa=sim
+Mara[firme]: {peca} instalado. Agora é correr.
+
 = CW_R03 | CAIXA_BAIXO | personagem=dono; repetivel=sim; reativa=sim
 Mara[alerta]: A garagem ainda funciona. O caixa, nem tanto.
 Sistema: Prova já vencida rende giros de novo, inclusive com o app fechado.

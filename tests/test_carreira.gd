@@ -421,3 +421,30 @@ func test_arena_do_grid_nao_zera_a_garagem() -> void:
 	igual(GridDesafio.carros_arena(j).size(), 1, "dois carros, sem escalação: só um vai à arena")
 	j.free()
 	d.free()
+
+
+## Decisão 96: os comentários do dia a dia se revezam (o visto há mais tempo
+## primeiro) e o fim de corrida dá a vez ao marco antes deles.
+func test_comentarios_se_revezam_e_marcos_vem_antes() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	Prologo.iniciar(d, j)
+	var h := Historia.new(d, j)
+	j.historia = h
+	for f in ["GRID_INTRO", "FIRST_RACE_DONE", "FIRST_WIN", "FIRST_LOSS_TALK", "GARAGE_TUTORIAL_SEEN"]:
+		j.flags[f] = true
+	var vistos := {}
+	for k in 4:
+		j.dias = 10 + k * 5  # fora do intervalo entre comentários
+		var c := h.cena_para("CORRIDA_FIM", {"posicao": 1})
+		verificar(not c.is_empty() and String(c["id"]).begins_with("CW_D"), "um comentário de vitória")
+		vistos[c["id"]] = true
+		h.concluir(c)
+	igual(vistos.size(), 4, "quatro vitórias, quatro falas diferentes")
+	j.dias = 100
+	var podio := h.cena_para("CORRIDA_FIM", {"posicao": 2})
+	verificar(String(podio.get("id", "")) in ["CW_D05", "CW_D06", "CW_D07"], "pódio tem fala própria")
+	igual(h.cena_para("CORRIDA_FIM", {"posicao": 2}, false), {}, "sem os comentários, nada no fim comum")
+	j.free()
+	d.free()

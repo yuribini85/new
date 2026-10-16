@@ -57,8 +57,8 @@ def main() -> int:
                 elif k == "repetivel":
                     c["uma_vez"] = v != "sim"
                 elif k == "condicao":
-                    ck, cv = v.split(":")
-                    c["condicao"] = {ck: int(cv)}
+                    # Uma ou mais, separadas por vírgula (posicao_min:2,posicao_max:3).
+                    c["condicao"] = {ck.strip(): int(cv) for ck, cv in (x.split(":") for x in v.split(","))}
                 elif k == "personagem":
                     ps = [x.strip() for x in v.split(",") if x.strip()]
                     c[k] = ps[0] if len(ps) == 1 else ps
