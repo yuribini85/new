@@ -210,5 +210,18 @@
   "periodo_h": 24,
   "_nota": "Decisão do usuário (2026-10-17): repetir prova já vencida paga 50%, depois 25%, depois 10% (piso); volta a 100% a cada 24 h (mesmo período do mercado de pilotos). Medido (playtest da campanha): no caminho normal as repetições são até 25% das corridas por meia hora; a queda pesa só no farm. Não vem do GT2 (lá o prêmio se repete inteiro). so_com_licenca (decisão do usuário, 2026-10-17): provas sem licença ficam fora da queda; com ela, 3 dos 11 carros iniciais deixavam de tirar a Club (antes 12-18 min); sem elas na regra, todos tiram em 6-18 min (tests/test_percurso.gd).",
   "so_com_licenca": true
+ },
+ "meta_dia": {
+  "_nota": "Decisão 109 (sugestão aceita pelo usuário, 2026-10-17): 3 tarefas por dia, sorteadas pela data entre as possíveis. Recompensa: recompensa_premios × o prêmio de referência da maior licença (a média do 1º lugar das provas dela) por tarefa. Critério: 1 = uma vitória a mais por tarefa; perto de 8 vitórias por hora de jogo ativo (playtest da campanha), as 3 somam menos de meia hora de corrida. Ajustar no playtest.",
+  "por_dia": 3,
+  "recompensa_premios": 1,
+  "tarefas": [
+   {"id": "corridas3", "tipo": "corridas", "quantidade": 3, "texto": "Dispute 3 corridas"},
+   {"id": "vitorias2", "tipo": "vitorias", "quantidade": 2, "texto": "Vença 2 provas"},
+   {"id": "podios3", "tipo": "podios", "quantidade": 3, "texto": "Suba ao pódio 3 vezes"},
+   {"id": "arena1", "tipo": "arena", "quantidade": 1, "texto": "Lute 1 vez na arena"},
+   {"id": "peca1", "tipo": "pecas", "quantidade": 1, "texto": "Compre uma peça para um carro"},
+   {"id": "patrocinio1", "tipo": "patrocinio", "quantidade": 1, "texto": "Assine um contrato de patrocínio"}
+  ]
  }
 }

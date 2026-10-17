@@ -982,3 +982,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     giros do patrocínio contando, as corridas, o treino e os contratos encerrados; COLETAR
     fecha e DOBRAR COM VÍDEO paga a renda offline do patrocínio mais uma vez (uma vez por
     volta). Sem renda do patrocínio, o relatório das corridas de antes.
+109. **Meta do dia** (2026-10-17, sugestão aceita pelo usuário). Na Carreira, depois dos
+    objetivos: 3 tarefas por dia (meia-noite do aparelho), sorteadas pela data entre as que
+    o jogador pode fazer (`carreira.json → meta_dia.tarefas`: corridas, vitórias, pódios,
+    luta da arena, peça, contrato de patrocínio). Cumprida, COLETAR paga
+    `recompensa_premios` (1) × o prêmio de referência da maior licença; critério: uma
+    vitória a mais por tarefa, menos de meia hora de corrida no total. Ajustar no playtest.

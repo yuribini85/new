@@ -46,6 +46,7 @@ func construir() -> void:
 	_brasao()
 	_mostrar_resultado()
 	_objetivos()
+	_meta_dia()
 	_the_grid()
 	if not _licencas_apresentadas():
 		return  # tutorial do dono: licença e coleção só depois de a Mara apresentar
@@ -172,6 +173,51 @@ func _objetivos() -> void:
 	resto.add_theme_constant_override("separation", 6)
 	for o in faltam:
 		_linha_objetivo(o, resto)
+
+
+## Meta do dia (decisão 109): as tarefas de hoje com o progresso e, cumprida,
+## COLETAR com a recompensa. Some antes das licenças serem apresentadas.
+func _meta_dia() -> void:
+	if MetaDia.config(dados).is_empty() or not _licencas_apresentadas():
+		return
+	var est := MetaDia.estado(dados, jogador)
+	if est["tarefas"].is_empty():
+		return
+	titulo_secao("META DO DIA")
+	var c := cartao()
+	c.add_theme_constant_override("separation", 10)
+	var valor := MetaDia.recompensa(dados, jogador)
+	for id in est["tarefas"]:
+		var t := MetaDia.tarefa(dados, String(id))
+		var p := MetaDia.progresso(dados, jogador, String(id))
+		var feita: bool = p[0] >= p[1]
+		var coletada: bool = id in est["coletadas"]
+		var h := fileira(c)
+		var tx := rotulo(String(t.get("texto", "")), FONTE_PEQUENA + 2, COR_SECUNDARIA if coletada else Color.WHITE, h)
+		tx.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tx.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		tx.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if coletada:
+			var ok := IconeVetor.new("check", COR_BOM)
+			ok.custom_minimum_size = Vector2(34, 34)
+			ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			h.add_child(ok)
+		elif feita:
+			var b := Button.new()
+			Tipografia.acao_primaria(b, "COLETAR %s" % dinheiro(valor), COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, 56)
+			b.custom_minimum_size = Vector2(200, 56)
+			b.pressed.connect(func():
+				var v := MetaDia.coletar(dados, jogador, String(id))
+				if v > 0:
+					Sons.tocar_ui(self, "moeda", -4.0)
+					avisar("Meta do dia: +%s giros." % dinheiro(v))
+				mudou.emit())
+			h.add_child(b)
+		else:
+			var n := rotulo("%d/%d" % [p[0], p[1]], 0, COR_DESTAQUE, h)
+			Tipografia.numero(n, 26)
+			n.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	rotulo("Cada tarefa paga %s giros. Novas amanhã." % dinheiro(valor), FONTE_PEQUENA - 2, COR_SECUNDARIA, c)
 
 
 ## The Grid, a lista negra (TheGrid): as dez equipes do topo, da #1 em cima à

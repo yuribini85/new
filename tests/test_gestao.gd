@@ -532,3 +532,32 @@ func test_notificacoes_planejadas() -> void:
 			"menos de um minuto: sem aviso")
 	j.free()
 	d.free()
+
+
+## Decisão 109: meta do dia sorteada pela data entre as tarefas possíveis;
+## cumprida, coleta uma vez; no dia seguinte, tudo de novo (dados reais).
+func test_meta_do_dia() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.licencas = ["CLUB"]
+	var agora := 1_800_000_000.0
+	var est := MetaDia.estado(d, j, agora)
+	igual(est["tarefas"].size(), 3, "três tarefas")
+	for id in est["tarefas"]:
+		verificar(not String(MetaDia.tarefa(d, id)["tipo"]) in ["arena", "patrocinio"], "só o que dá para fazer")
+	var id: String = est["tarefas"][0]
+	var t := MetaDia.tarefa(d, id)
+	igual(MetaDia.coletar(d, j, id, agora), 0, "sem cumprir não paga")
+	MetaDia.registrar(j, String(t["tipo"]), int(t["quantidade"]), agora)
+	var saldo0: int = j.economia.saldo
+	var v := MetaDia.coletar(d, j, id, agora)
+	verificar(v > 0, "cumprida paga")
+	igual(j.economia.saldo, saldo0 + v, "no caixa")
+	igual(MetaDia.coletar(d, j, id, agora), 0, "uma vez só")
+	var amanha := MetaDia.estado(d, j, agora + 86400.0)
+	igual(amanha["coletadas"].size(), 0, "dia novo: nada coletado")
+	igual(MetaDia.progresso(d, j, String(amanha["tarefas"][0]), agora + 86400.0)[0], 0, "dia novo: contagem zerada")
+	j.free()
+	d.free()

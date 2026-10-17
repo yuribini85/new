@@ -216,6 +216,7 @@ static func assinar(dados: Node, jogador: Node, id: String, agora: float) -> Str
 	lista.append({"id": id, "inicio": agora, "fim": agora + dur, "ultimo": agora, "resto": 0.0, "ganho": 0})
 	jogador.equipe["patrocinios"] = lista
 	jogador.equipe["semente_ofertas"] = int(jogador.equipe.get("semente_ofertas", 0)) + 1
+	MetaDia.registrar(jogador, "patrocinio")
 	return ""
 
 

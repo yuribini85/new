@@ -67,6 +67,8 @@ var ultimo_processamento: float = 0.0
 var aceleracao: Dictionary = {}
 ## Combustível (Combustivel): {} = tanque cheio; {qtd, desde}.
 var combustivel: Dictionary = {}
+## Meta do dia (MetaDia): {dia, tarefas, contagem, coletadas}.
+var meta_dia: Dictionary = {}
 ## Repetições de prova já vencida no período (Carreira.fator_repeticao):
 ## {periodo, provas: {evento_id: n}}.
 var repeticoes: Dictionary = {}
@@ -106,6 +108,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	ultimo_processamento = 0.0
 	aceleracao = {}
 	combustivel = {}
+	meta_dia = {}
 	repeticoes = {}
 	ampliacoes_garagem = 0
 	contador_sementes = 0

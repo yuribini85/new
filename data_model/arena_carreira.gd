@@ -299,6 +299,7 @@ static func premio(dados: Node, pts: int) -> int:
 static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary, parceiro_uid: int = -1,
 		modelos: Dictionary = {}, desafio: Dictionary = {}) -> Dictionary:
 	var p: Dictionary = dados.arena()
+	MetaDia.registrar(jogador, "arena")  # meta do dia (decisão 109)
 	var pts := pontos(resultado, "jogador", p)
 	var valor := premio(dados, pts)
 	var carro: Carro = jogador.garagem.carro(uid)

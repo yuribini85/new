@@ -55,6 +55,7 @@ static func serializar(jogador: Node) -> Dictionary:
 		"ultimo_processamento": jogador.ultimo_processamento,
 		"aceleracao": jogador.aceleracao,
 		"combustivel": jogador.combustivel,
+		"meta_dia": jogador.meta_dia,
 		"repeticoes": jogador.repeticoes,
 		"ampliacoes_garagem": jogador.ampliacoes_garagem,
 		"contador_sementes": jogador.contador_sementes,
@@ -268,6 +269,8 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	var cb = s.get("combustivel")
 	if cb is Dictionary and cb.has_all(["qtd", "desde"]):
 		jogador.combustivel = {"qtd": int(cb["qtd"]), "desde": float(cb["desde"])}
+	# Opcional: saves anteriores à meta do dia começam o dia do zero.
+	jogador.meta_dia = s.get("meta_dia", {}) if s.get("meta_dia") is Dictionary else {}
 	jogador.repeticoes = {}
 	var rp = s.get("repeticoes")
 	if rp is Dictionary and rp.get("provas") is Dictionary:

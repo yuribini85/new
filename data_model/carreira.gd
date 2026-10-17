@@ -378,6 +378,12 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var posicao_propria: int = r["classificacao"].find("jogador") + 1
 	var posicao_companheiro: int = r["classificacao"].find(EquipeJogador.ID) + 1
 	var posicao := posicao_propria if posicao_companheiro == 0 else mini(posicao_propria, posicao_companheiro)
+	# Meta do dia (decisão 109): corrida, vitória e pódio contam.
+	MetaDia.registrar(jogador, "corridas")
+	if posicao == 1:
+		MetaDia.registrar(jogador, "vitorias")
+	if posicao >= 1 and posicao <= 3:
+		MetaDia.registrar(jogador, "podios")
 	var premio := 0
 	if posicao <= ev["premios"].size():
 		premio = int(ev["premios"][posicao - 1])
