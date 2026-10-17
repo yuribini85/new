@@ -282,7 +282,7 @@ func _desafio(v: VBoxContainer, aba_corridas: int, aba_arena: int) -> void:
 	txt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var d := GridDesafio.de(_dados, _equipe)
 	txt.text = ("Ficou para trás no Grid." if vencida else
-			"%s, contra os carros especiais da equipe. Pede a %s. O desafio fica em %s." % [
+			"%s, contra os carros especiais da equipe. Precisa da %s. O desafio fica em %s." % [
 				GridDesafio.resumo(_dados, _equipe), String(dl.get("nome", lic)),
 				"Corridas" if d.get("modo", "") == "corrida" else "Arena"])
 	Tipografia.rotulo(txt, "regular", 24)

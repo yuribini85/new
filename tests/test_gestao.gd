@@ -440,3 +440,22 @@ func test_combustivel_e_repeticao() -> void:
 	perto(c.fator_repeticao(ev, t0 + c.repeticao_volta_em(t0) + 1.0), float(fatores[0]), 1e-9, "período novo recomeça")
 	j.free()
 	d.free()
+
+
+## Pedido do usuário: com a corrida em andamento, o piloto de corrida não muda.
+func test_nao_troca_piloto_durante_a_corrida() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	EquipeJogador.criar(j)
+	var ofertas: Array = EquipeJogador.oferta(d, j, "corrida", Time.get_unix_time_from_system())
+	verificar(ofertas.size() >= 2, "há candidatos de corrida")
+	igual(EquipeJogador.contratar(d, j, String(ofertas[0]["id"]), "corrida"), "", "contrata sem corrida")
+	j.fila = {"evento_id": "x", "uid": 1, "restantes": 1, "inicio": 0.0, "semente": 1}
+	verificar(EquipeJogador.contratar(d, j, String(ofertas[1]["id"]), "corrida") != "", "com corrida em andamento, não troca")
+	igual(EquipeJogador.piloto_vaga(j, "corrida"), String(ofertas[0]["id"]), "o piloto continua o mesmo")
+	j.fila = {}
+	igual(EquipeJogador.contratar(d, j, String(ofertas[1]["id"]), "corrida"), "", "depois da corrida, troca")
+	j.free()
+	d.free()

@@ -394,6 +394,9 @@ func _animar_barra(b: Dictionary, valor: float, dur: float) -> void:
 ## usuário): setas em caixa para passar; a placa com o nome sobre as pernas;
 ## estilo, os atributos com ícones e Contratar.
 func _escolher_segundo(vaga: String = "corrida") -> void:
+	if vaga == "corrida" and not jogador.fila.is_empty():
+		avisar("Não dá para trocar o piloto com uma corrida em andamento.", false)
+		return
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	# Decisão 71: o mercado do período (renova a cada dia); o atual da vaga junto.
 	var agora_m := Time.get_unix_time_from_system()

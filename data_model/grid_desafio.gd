@@ -159,7 +159,7 @@ static func bloqueio(dados: Node, jogador: Node, equipe: Dictionary) -> String:
 	var lic := String(equipe.get("nivel", ""))
 	if lic != "" and not lic in jogador.licencas:
 		var nome := String(dados.item("licencas", lic).get("nome", lic)) if dados.existe("licencas", lic) else lic
-		return "Pede a %s." % nome
+		return "Precisa da %s." % nome
 	if not jogador.fila.is_empty():
 		return "Há uma corrida em andamento: o desafio abre quando ela terminar."
 	if d["modo"] == "corrida":

@@ -33,7 +33,7 @@ static func motivos(carro: Carro, restricoes: Dictionary, licencas: Array) -> Ar
 	if restricoes.has("ano_max") and int(base["ano"]) > int(restricoes["ano_max"]):
 		m.append("a prova pede carro até %d" % restricoes["ano_max"])
 	if restricoes.has("licenca") and not restricoes["licenca"] in licencas:
-		m.append("pede a Licença %s" % String(restricoes["licenca"]).capitalize())
+		m.append("precisa da Licença %s" % String(restricoes["licenca"]).capitalize())
 	if restricoes.has("carros") and not base["id"] in restricoes["carros"]:
 		m.append("só os modelos da copa")
 	if restricoes.has("corrida") and versao_corrida(carro) != bool(restricoes["corrida"]):

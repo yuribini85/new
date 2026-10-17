@@ -232,6 +232,9 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 		return "a equipe ainda não contrata" if not criada(jogador) else "para disputar a arena, são precisos pelo menos 3 carros na garagem"
 	if piloto(dados, piloto_id).is_empty():
 		return "candidato desconhecido"
+	# Com a corrida em andamento, o piloto de corrida não muda (pedido do usuário).
+	if vaga == "corrida" and not jogador.fila.is_empty() and piloto_vaga(jogador, "corrida") != piloto_id:
+		return "não dá para trocar o piloto com uma corrida em andamento"
 	var de_tipo := "corrida" if vaga == "corrida" else "arena"
 	if vaga_do_piloto(jogador, piloto_id) == "" and not oferta(dados, jogador, de_tipo, Time.get_unix_time_from_system()) \
 			.any(func(c): return c["id"] == piloto_id) and not pool(dados, jogador, de_tipo).any(func(c): return c["id"] == piloto_id):

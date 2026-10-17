@@ -266,7 +266,7 @@ func _the_grid() -> void:
 		v.add_child(nome)
 		var lic: Dictionary = dados.item("licencas", String(e.get("nivel", ""))) if dados.existe("licencas", String(e.get("nivel", ""))) else {}
 		var nome_lic := String(lic.get("nome", e.get("nivel", "")))
-		var detalhe := "VENCIDA" if venc else (("Vença o desafio da equipe (pede a %s)" % nome_lic) if da_vez else nome_lic)
+		var detalhe := "VENCIDA" if venc else (("Vença o desafio da equipe (precisa da %s)" % nome_lic) if da_vez else nome_lic)
 		var d := Label.new()
 		d.text = detalhe
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
