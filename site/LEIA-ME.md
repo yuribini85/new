@@ -66,6 +66,21 @@ Contagem de visitas (para saber a taxa de inscrição por origem): crie uma cont
 goatcounter.com e ponha o código na constante `GOATCOUNTER` do `index.html`. Não usa
 cookies, então não precisa de aviso de cookies.
 
+## Questionário do fim do teste
+
+A página promete "três perguntas no fim e o nome que você quer nos créditos". Formulário
+do Google separado, mandado no 14º dia para a lista de testadores:
+
+1. **E-mail da conta Google** (resposta curta) — para cruzar com a inscrição e liberar a
+   pintura Fundador.
+2. **O que te fez parar de jogar, ou quase parar?** (parágrafo)
+3. **O que foi mais confuso ou chato?** (parágrafo)
+4. **O que você mais quer que tenha no jogo?** (parágrafo)
+5. **Como você quer aparecer nos créditos?** (resposta curta; nome ou apelido. Deixar
+   claro que fica público dentro do jogo e que em branco = não aparece.)
+
+Só entra nos créditos quem responder este questionário.
+
 ## Promessas da página que dependem do jogo
 
 A página promete a quem completar o teste: **pintura Fundador exclusiva** e **nome nos
