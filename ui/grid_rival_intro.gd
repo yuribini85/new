@@ -293,9 +293,9 @@ func _confronto() -> void:
 	v.add_theme_constant_override("separation", 10)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	m.add_child(v)
-	var logo := _textura(_info.get("logo", ""), Vector2(150, 150))
+	var logo := _textura(_info.get("logo", ""), Vector2(120, 120))
 	v.add_child(logo)
-	var nome := _rotulo(String(_info["nome"]).to_upper(), "display", 64, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
+	var nome := _rotulo(String(_info["nome"]).to_upper(), "display", 58, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
 	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(nome)
 	# A posição no Grid em destaque (pedido do usuário); sem as linhas miúdas.
@@ -313,21 +313,21 @@ func _confronto() -> void:
 		cartoes.add_child(c[0])
 		internos.append(c[1])
 	var vs := Control.new()
-	vs.custom_minimum_size = Vector2(0, 150)
+	vs.custom_minimum_size = Vector2(0, 124)
 	vs.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(vs)
 	var corte := ColorRect.new()
 	corte.color = SANGUE
 	corte.size = Vector2(size.x + 200, 12)
-	corte.position = Vector2(-128, 70)
+	corte.position = Vector2(-128, 58)
 	corte.pivot_offset = corte.size / 2.0
 	corte.rotation_degrees = -6.0
 	corte.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vs.add_child(corte)
-	var vs_l := _rotulo("VS", "display", 150, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
+	var vs_l := _rotulo("VS", "display", 130, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
 	vs_l.add_theme_constant_override("outline_size", 10)
 	vs_l.add_theme_color_override("font_outline_color", TINTA)
-	vs_l.size = Vector2(size.x - 56, 150)
+	vs_l.size = Vector2(size.x - 56, 130)
 	vs_l.position = Vector2(0, -16)
 	vs_l.pivot_offset = vs_l.size / 2.0
 	vs.add_child(vs_l)
@@ -358,17 +358,8 @@ func _confronto() -> void:
 	var botoes := HBoxContainer.new()
 	botoes.add_theme_constant_override("separation", 12)
 	v.add_child(botoes)
-	var ir_b := Button.new()
-	var arena := String(_info.get("modo", "")) != "corrida"
-	Tipografia.acao_primaria(ir_b, "%s   →" % ("Arena" if arena else "Corridas"), Color(0.2, 0.21, 0.24), Color.WHITE, 26,
-			Tipografia.ALTURA_SECUNDARIA)
-	ir_b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ir_b.pressed.connect(func():
-		ir.emit(int(_abas[1 if arena else 0]))
-		_fechar())
-	botoes.add_child(ir_b)
 	var b := Button.new()
-	Tipografia.acao_primaria(b, "Continuar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
+	Tipografia.acao_primaria(b, "Continuar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, Tipografia.ALTURA_SECUNDARIA)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.pressed.connect(_fechar)
 	botoes.add_child(b)
@@ -468,10 +459,10 @@ func _divisoria() -> ColorRect:
 ## Piloto do confronto, corpo inteiro: [vaga no contêiner, figura que cai].
 func _cartao(p: Dictionary) -> Array:
 	var vaga := Control.new()
-	vaga.custom_minimum_size = Vector2(160, 284)
+	vaga.custom_minimum_size = Vector2(160, 306)
 	vaga.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var c := Control.new()
-	c.size = Vector2(160, 284)
+	c.size = Vector2(160, 306)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vaga.add_child(c)
 	var r := TextureRect.new()
@@ -497,13 +488,13 @@ func _cartao(p: Dictionary) -> Array:
 	faixa.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	faixa.stretch_mode = TextureRect.STRETCH_SCALE  # degradê: sem proporção
 	faixa.position = Vector2(0, 186)
-	faixa.size = Vector2(160, 102)
+	faixa.size = Vector2(160, 120)
 	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(faixa)
 	var placa := ColorRect.new()
 	placa.color = Color("1d1a19")
 	placa.position = Vector2(0, 229)
-	placa.size = Vector2(160, 58)
+	placa.size = Vector2(160, 78)
 	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(placa)
 	var filete := ColorRect.new()
@@ -512,12 +503,12 @@ func _cartao(p: Dictionary) -> Array:
 	filete.size = Vector2(160, 3)
 	filete.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(filete)
-	var num := _rotulo(str(int(p["numero"])), "display", 22, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
-	num.position = Vector2(0, 232)
+	var num := _rotulo(str(int(p["numero"])), "display", 32, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
+	num.position = Vector2(0, 230)
 	num.size = Vector2(160, 0)
 	c.add_child(num)
-	var ap := _rotulo(String(p["apelido"]).to_upper(), "display_eb", 17, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
-	ap.position = Vector2(0, 258)
+	var ap := _rotulo(String(p["apelido"]).to_upper(), "display_eb", 25, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
+	ap.position = Vector2(0, 268)
 	ap.size = Vector2(160, 0)
 	c.add_child(ap)
 	return [vaga, c]
