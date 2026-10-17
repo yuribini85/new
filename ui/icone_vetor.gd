@@ -87,6 +87,49 @@ func _draw() -> void:
 				hexa.append(c + Vector2.from_angle(TAU * k / 6.0 + PI / 6.0) * r * 0.92)
 			draw_colored_polygon(hexa, cor)
 			draw_circle(c, r * 0.4, cor_fundo)
+		"som":
+			# Alto-falante com duas ondas.
+			var r := lado * 0.5
+			draw_colored_polygon(PackedVector2Array([c + Vector2(-0.8, -0.28) * r, c + Vector2(-0.45, -0.28) * r,
+					c + Vector2(-0.05, -0.65) * r, c + Vector2(-0.05, 0.65) * r, c + Vector2(-0.45, 0.28) * r,
+					c + Vector2(-0.8, 0.28) * r]), cor)
+			for k in 2:
+				draw_arc(c + Vector2(0.0, 0.0) * r, r * (0.35 + 0.3 * k), -0.8, 0.8, 10, cor, maxf(r * 0.1, 1.5), true)
+		"tela", "quadros":
+			# Monitor com pé; "quadros" leva um segundo monitor atrás.
+			var r := lado * 0.5
+			var w := maxf(r * 0.1, 1.5)
+			if tipo == "quadros":
+				draw_rect(Rect2(c + Vector2(-0.62, -0.78) * r, Vector2(1.5, 0.95) * r), cor, false, w)
+			draw_rect(Rect2(c + Vector2(-0.88, -0.6) * r, Vector2(1.5, 0.95) * r), cor, false, w)
+			draw_line(c + Vector2(-0.13, 0.35) * r, c + Vector2(-0.13, 0.62) * r, cor, w)
+			draw_line(c + Vector2(-0.48, 0.65) * r, c + Vector2(0.22, 0.65) * r, cor, w)
+		"movimento":
+			# Círculo com rastros de velocidade.
+			var r := lado * 0.5
+			draw_circle(c + Vector2(0.35, 0.0) * r, r * 0.42, cor)
+			for k in 3:
+				var y := (-0.35 + k * 0.35) * r
+				draw_line(c + Vector2(-0.9, y / r) * r, c + Vector2(-0.2, y / r) * r, cor, maxf(r * 0.1, 1.5))
+		"conversa":
+			# Balão de fala com três pontos.
+			var r := lado * 0.5
+			var balao := Rect2(c + Vector2(-0.85, -0.6) * r, Vector2(1.7, 1.05) * r)
+			draw_rect(balao, cor)
+			draw_colored_polygon(PackedVector2Array([c + Vector2(-0.5, 0.44) * r, c + Vector2(-0.1, 0.44) * r,
+					c + Vector2(-0.55, 0.85) * r]), cor)
+			for k in 3:
+				draw_circle(c + Vector2(-0.45 + k * 0.45, -0.08) * r, r * 0.11, cor_fundo)
+		"lapis":
+			var r := lado * 0.5
+			var w := maxf(r * 0.22, 2.0)
+			draw_line(c + Vector2(-0.6, 0.6) * r, c + Vector2(0.55, -0.55) * r, cor, w)
+			draw_colored_polygon(PackedVector2Array([c + Vector2(-0.6, 0.6) * r, c + Vector2(-0.78, 0.78) * r,
+					c + Vector2(-0.5, 0.42) * r]), cor)
+		"chevron_dir":
+			var r := lado * 0.5
+			draw_polyline(PackedVector2Array([c + Vector2(-0.25, -0.55) * r, c + Vector2(0.3, 0.0) * r,
+					c + Vector2(-0.25, 0.55) * r]), cor, maxf(r * 0.16, 2.0), true)
 		"combustivel":
 			# Galão: corpo com o canto de cima cortado, alça vazada e bico.
 			var r := lado * 0.5

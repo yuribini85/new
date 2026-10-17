@@ -607,9 +607,9 @@ func _checar_arena() -> void:
 
 ## Engrenagem do cabeçalho.
 func _abrir_configuracoes() -> void:
-	_sobre.abrir("Configurações", func(v):
-		Configuracoes.montar(_todas[5], v, jogador, _abrir_aceleracao if acelerar_liberado() else Callable(), _comprar_sem_anuncios,
-				func(vv): _todas[5]._modo_teste(vv), _abrir_configuracoes))
+	_sobre.abrir("CONFIGURAÇÕES", func(v):
+		Configuracoes.montar(_todas[5], v, jogador, func(vv): _todas[5]._modo_teste(vv), _abrir_configuracoes),
+		[["Fechar", func(): pass]], {"fora_fecha": true})
 
 
 ## Voltar do cabeçalho: a última tela visitada (o estado dela fica como estava).
