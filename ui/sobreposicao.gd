@@ -404,8 +404,17 @@ func _ajustar() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	if _estilo.has("tela_cheia"):
-		_margem.add_theme_constant_override("margin_top", int(_estilo["tela_cheia"]))
-		_margem.add_theme_constant_override("margin_bottom", 12 if _estilo.has("caixa") else 0)
+		var topo := float(_estilo["tela_cheia"])
+		if not _estilo.has("caixa"):
+			_margem.add_theme_constant_override("margin_top", int(topo))
+			_margem.add_theme_constant_override("margin_bottom", 0)
+			return
+		# Com a caixa: do tamanho do conteúdo, centrada abaixo do cabeçalho.
+		var alto := size.y if size.y > 0.0 else 1280.0
+		var caixa_y := _painel_conteudo.get_combined_minimum_size().y + 60.0 + 8.0
+		var sobra := maxf(alto - topo - 12.0 - caixa_y, 0.0)
+		_margem.add_theme_constant_override("margin_top", int(topo + sobra * 0.5))
+		_margem.add_theme_constant_override("margin_bottom", int(12.0 + sobra * 0.5))
 		return
 	var altura_tela := size.y if size.y > 0.0 else 1280.0
 	var conteudo := _painel_conteudo.get_combined_minimum_size().y

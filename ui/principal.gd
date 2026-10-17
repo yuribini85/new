@@ -1130,61 +1130,18 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	var g: Aba = _todas[0]
 	var venceu: bool = c["posicao"] == 1
 	var ev: Dictionary = dados.evento(c["evento_id"])
-	var continua: bool = not jogador.fila.is_empty()
-	var botoes := []
-	if continua:
-		botoes = [["Assistir a próxima", func(): _ir_para(4), "icone_ao_vivo"], ["Fechar", func(): pass]]
-	else:
-		var de_novo := func():
-			var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Aceleracao.agora(jogador))
-			if m != "":
-				_sobre.avisar("Não deu para correr: %s." % m, false)
-			else:
-				Combustivel.gastar(dados, jogador)
-				get_node("/root/SaveManager").salvar()
-				_ir_para(4)
-			atualizar()
-		botoes = [["Disputar de novo", func():
-				if Combustivel.pode(dados, jogador):
-					de_novo.call()
-				else:
-					_abrir_combustivel(de_novo), "icone_de_novo"],
-			["Melhorar o carro", func():
-				jogador.carro_ativo = c["uid"]
-				_ir_para(0)
-				atualizar(), "icone_melhorar"],
-			["Fechar", func(): pass]]
-		var oficina := apresentada(0)
-		# A ação em destaque (primeira) é a que leva ao próximo objetivo.
-		var alvo_obj: Array = Objetivos.lista(jogador, dados)
-		var i_obj := Objetivos.atual(alvo_obj)
-		var aba_obj: int = alvo_obj[i_obj]["aba"] if i_obj < alvo_obj.size() else -1
-		var primeiro := 0
-		if aba_obj == Aba.GARAGEM or (not venceu and aba_obj != Aba.EVENTOS):
-			primeiro = 1
-		elif aba_obj == Aba.EVENTOS and venceu:
-			primeiro = 2
-		if primeiro > 0:
-			var b = botoes[primeiro]
-			botoes.remove_at(primeiro)
-			botoes.push_front(b)
-		if not oficina:  # a Oficina ainda não foi apresentada
-			botoes = botoes.filter(func(b): return b[0] != "Melhorar o carro")
-		if not acelerar_liberado():
-			# No tutorial a história leva adiante (o Grid, a Oficina): sem "de novo".
-			botoes = botoes.filter(func(b): return b[0] != "Disputar de novo")
-	# As conversas da chegada e a do título de campeão vêm depois que o jogador
-	# lê o resultado (qualquer botão do painel).
-	for b in botoes:
-		b[1] = _depois_do_resultado.bind(c, b[1])
+	# Só FECHAR (pedido do usuário): as conversas da chegada e a do título de
+	# campeão vêm depois que o jogador lê o resultado.
+	var fechar := _depois_do_resultado.bind(c, func(): pass)
 	var meu: Carro = jogador.garagem.carro(c["uid"])
 	var tabela: Array = c.get("tabela", [])
 	var token := Time.get_ticks_usec()
 	_resultado_aberto = token
-	# Caixa de moldura dourada (arte do usuário) com o título, a etapa num cartão, troféu e posição, a classificação em
-	# faixas inclinadas e, embaixo, a ação principal no botão dourado.
+	# Caixa de moldura dourada (arte do usuário), sem rolagem: título, etapa,
+	# troféu e posição, a classificação em faixas inclinadas e o FECHAR
+	# (dourado na vitória, cinza nas outras posições).
 	_sobre.abrir("", func(v):
-		v.add_theme_constant_override("separation", 8)
+		v.add_theme_constant_override("separation", 6)
 		_titulo_resultado(v, "VITÓRIA!" if venceu else ("%dº LUGAR" % int(c["posicao"]) if int(c["posicao"]) <= 3
 				else "RESULTADO"), venceu)
 		_cartao_etapa(v, ev)
@@ -1204,81 +1161,50 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		var premiado: Carro = jogador.garagem.carro(c["carro_premio_uid"]) if c.get("carro_premio_uid", -1) > 0 else null
 		if premiado != null:
 			var lc := g.rotulo("CARRO DE PRÊMIO: %s" % String(premiado.base["nome"]).to_upper(), 0, Color("ffd34d"), v)
-			Tipografia.rotulo(lc, "semibold", 30)
+			Tipografia.rotulo(lc, "semibold", 26)
 			lc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			var vit := VitrineCarro.new(240.0)
+			var vit := VitrineCarro.new(170.0)
 			vit.fundo_transparente()
 			vit.mostrar_modelo(premiado.base, CarroBloco.cor_do_carro(premiado), premiado.faixas)
 			v.add_child(vit)
 		_lista_resultado(v, tabela, c)
-		# Rival venceu: ele em uma frase (a personalidade do piloto; sem ela, a da equipe).
-		if not tabela.is_empty() and String(tabela[0]["id"]).begins_with("adv"):
-			var eq := _equipe_no_resultado(String(tabela[0]["id"]), c)
-			var pl: Dictionary = jogador.carreira.piloto_de(c["evento_id"], String(tabela[0]["id"]), int(c.get("semente", -1)))
-			var frase := String(pl.get("personalidade", eq.get("personalidade", "")))
-			if frase != "":
-				var quem := "%s (%s)" % [pl["nome"], eq["nome"]] if not pl.is_empty() else String(eq["nome"])
-				var lp := g.rotulo("%s: %s" % [quem, frase], Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, v)
-				lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-				lp.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_fechamento_automatico(v, token, _depois_do_resultado.bind(c, func(): pass))
-		_acoes_resultado(v, botoes), [], {"caixa": Aba.arte("caixa_resultado"), "tela_cheia": _cabecalho.altura_total() + 8.0})
+		_fechamento_automatico(v, token, fechar)
+		_botao_fechar(v, fechar, venceu), [], {"caixa": Aba.arte("caixa_resultado"), "tela_cheia": _cabecalho.altura_total() + 8.0})
 
 
-## "VITÓRIA!" (ou a posição) no alto à esquerda.
+## "VITÓRIA!" (ou a posição) no alto, centrado.
 func _titulo_resultado(v: VBoxContainer, texto: String, venceu: bool) -> void:
 	var caixa := Control.new()
-	caixa.custom_minimum_size = Vector2(0, 124)
+	caixa.custom_minimum_size = Vector2(0, 100)
 	v.add_child(caixa)
 	var l := Label.new()
 	l.text = texto
 	l.add_theme_font_override("font", Tipografia.fonte("display"))
-	l.add_theme_font_size_override("font_size", 96 if texto.length() <= 8 else 80)
+	l.add_theme_font_size_override("font_size", 88 if texto.length() <= 8 else 74)
 	l.add_theme_color_override("font_color", Color("ffd34d") if venceu else Color(0.95, 0.94, 0.9))
 	l.add_theme_color_override("font_outline_color", Color(0.08, 0.06, 0.03))
 	l.add_theme_constant_override("outline_size", 10)
 	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
 	l.add_theme_constant_override("shadow_offset_y", 5)
 	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	l.offset_left = 20
 	caixa.add_child(l)
 
 
-## A série, a etapa (ou o nome da prova) e a pista num cartão escuro translúcido.
+## A série e a etapa (ou o nome da prova) numa linha e a pista embaixo,
+## centradas sob o título (sem caixa).
 func _cartao_etapa(v: VBoxContainer, ev: Dictionary) -> void:
 	var g: Aba = _todas[0]
-	var p := PanelContainer.new()
-	p.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.05, 0.06, 0.08, 0.72)
-	sb.border_color = Color(1, 1, 1, 0.22)
-	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(12)
-	sb.corner_detail = 1
-	sb.content_margin_left = 26
-	sb.content_margin_right = 40
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
-	p.add_theme_stylebox_override("panel", sb)
-	v.add_child(p)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 2)
-	p.add_child(col)
 	var serie := Campeonatos.serie(ev)
 	var etapas := Campeonatos.etapas(dados, serie)
-	if not etapas.is_empty():
-		Tipografia.rotulo(g.rotulo(serie.to_upper(), 0, Color(0.86, 0.87, 0.9), col), "medium", 20)
-	var t := Label.new()
-	t.text = ("ETAPA %d/%d" % [etapas.find(ev) + 1, etapas.size()]) if not etapas.is_empty() \
-			else Aba.nome_evento(ev).to_upper()
-	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	Tipografia.rotulo(t, "semibold", 42)
-	col.add_child(t)
-	g.rotulo(Aba.nome_pista(ev["pista"]), Aba.FONTE_PEQUENA + 5, Color(0.93, 0.92, 0.9), col)
-	# O cartão tem a largura do texto: sem quebra de linha.
-	for l in col.get_children():
-		(l as Label).autowrap_mode = TextServer.AUTOWRAP_OFF
+	var l1 := g.rotulo(("%s · ETAPA %d/%d" % [serie.to_upper(), etapas.find(ev) + 1, etapas.size()])
+			if not etapas.is_empty() else Aba.nome_evento(ev).to_upper(), 0, Color(0.95, 0.94, 0.9), v)
+	Tipografia.rotulo(l1, "semibold", 32)
+	var l2 := g.rotulo(Aba.nome_pista(ev["pista"]), Aba.FONTE_PEQUENA + 2, Color(0.8, 0.82, 0.86), v)
+	for l in [l1, l2]:
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.autowrap_mode = TextServer.AUTOWRAP_OFF
 
 
 ## Troféu (com os louros na vitória), a posição grande e o prêmio com a moeda.
@@ -1291,7 +1217,7 @@ func _trofeu_resultado(v: VBoxContainer, c: Dictionary, venceu: bool) -> void:
 	var trofeu := TextureRect.new()
 	trofeu.texture = Aba.arte("resultado_trofeu") if venceu else Aba.arte(
 			{2: "icone_trofeu_prata", 3: "icone_trofeu_bronze"}.get(int(c["posicao"]), "icone_podio"))
-	trofeu.custom_minimum_size = Vector2(160, 130) if venceu else Vector2(110, 110)
+	trofeu.custom_minimum_size = Vector2(140, 112) if venceu else Vector2(96, 96)
 	trofeu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	trofeu.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	if int(c["posicao"]) > 3:
@@ -1303,7 +1229,7 @@ func _trofeu_resultado(v: VBoxContainer, c: Dictionary, venceu: bool) -> void:
 	linha.add_child(col)
 	var pos := Label.new()
 	pos.text = "%dº de %d" % [c["posicao"], c["total"]]
-	Tipografia.numero(pos, 64)
+	Tipografia.numero(pos, 58)
 	pos.add_theme_color_override("font_color", Color("ffd34d") if venceu else Color.WHITE)
 	pos.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
 	pos.add_theme_constant_override("shadow_offset_y", 3)
@@ -1319,7 +1245,7 @@ func _trofeu_resultado(v: VBoxContainer, c: Dictionary, venceu: bool) -> void:
 	if int(c["premio"]) > 0:
 		var lv := Label.new()
 		lv.text = "+" + Aba.dinheiro(int(c["premio"]))
-		Tipografia.numero(lv, 40)
+		Tipografia.numero(lv, 36)
 		lv.add_theme_color_override("font_color", Color("ffd34d"))
 		pr.add_child(lv)
 		g.icone(Aba.ICONE_GIROS, 34, pr).size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -1328,50 +1254,34 @@ func _trofeu_resultado(v: VBoxContainer, c: Dictionary, venceu: bool) -> void:
 		Tipografia.rotulo(g.rotulo("Sem prêmio", 0, Aba.COR_SECUNDARIA, pr), "medium", 26)
 
 
-## A primeira ação no botão dourado (com a seta); as outras como texto, embaixo.
-func _acoes_resultado(v: VBoxContainer, botoes: Array) -> void:
-	if botoes.is_empty():
-		return
-	var principal := Button.new()
-	principal.text = String(botoes[0][0]).to_upper() + "  →"
-	principal.focus_mode = Control.FOCUS_NONE
-	principal.add_theme_font_override("font", Tipografia.fonte("display"))
-	principal.add_theme_font_size_override("font_size", 48 if String(botoes[0][0]).length() <= 10 else 38)
+## FECHAR na arte do botão: dourado na vitória, cinza nas outras posições.
+func _botao_fechar(v: VBoxContainer, ao_fechar: Callable, venceu: bool) -> void:
+	var b := Button.new()
+	b.text = "FECHAR  →"
+	b.focus_mode = Control.FOCUS_NONE
+	b.add_theme_font_override("font", Tipografia.fonte("display"))
+	b.add_theme_font_size_override("font_size", 46)
+	var cor_texto := Color(0.1, 0.08, 0.04) if venceu else Color(0.95, 0.95, 0.95)
 	for cor in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		principal.add_theme_color_override(cor, Color(0.1, 0.08, 0.04))
+		b.add_theme_color_override(cor, cor_texto)
 	var arte := StyleBoxTexture.new()
-	arte.texture = Aba.arte("botao_dourado")
+	arte.texture = Aba.arte("botao_dourado" if venceu else "botao_cinza")
 	# As bordas da arte (o contorno e o canto inclinado) não esticam.
 	arte.texture_margin_left = 40
 	arte.texture_margin_right = 40
 	arte.texture_margin_top = 20
 	arte.texture_margin_bottom = 20
-	arte.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 	var apertado := arte.duplicate()
 	apertado.modulate_color = Color(0.85, 0.85, 0.85)
 	for estado in ["normal", "hover", "focus", "disabled"]:
-		principal.add_theme_stylebox_override(estado, arte)
-	principal.add_theme_stylebox_override("pressed", apertado)
-	principal.custom_minimum_size = Vector2(600, 600.0 * 138.0 / 900.0)
-	principal.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	principal.pressed.connect(func():
+		b.add_theme_stylebox_override(estado, arte)
+	b.add_theme_stylebox_override("pressed", apertado)
+	b.custom_minimum_size = Vector2(560, 560.0 * 138.0 / 900.0)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	b.pressed.connect(func():
 		_sobre.fechar()
-		botoes[0][1].call())
-	v.add_child(principal)
-	if botoes.size() == 1:
-		return
-	var outras := HFlowContainer.new()
-	outras.alignment = FlowContainer.ALIGNMENT_CENTER
-	outras.add_theme_constant_override("h_separation", 24)
-	v.add_child(outras)
-	for i in range(1, botoes.size()):
-		var b: Array = botoes[i]
-		var bt := Button.new()
-		Tipografia.acao_secundaria(bt, String(b[0]), Color(0.78, 0.8, 0.84), 26)
-		bt.pressed.connect(func():
-			_sobre.fechar()
-			b[1].call())
-		outras.add_child(bt)
+		ao_fechar.call())
+	v.add_child(b)
 
 
 ## Competidores na ordem de chegada: posição, emblema da equipe, piloto e tempo
@@ -1403,17 +1313,17 @@ func _lista_resultado(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		var n := Label.new()
 		n.text = str(i + 1)
 		n.custom_minimum_size = Vector2(34, 0)
-		Tipografia.numero(n, 28)
+		Tipografia.numero(n, 26)
 		n.add_theme_color_override("font_color", cor)
 		h.add_child(n)
-		h.add_child(_emblema_equipe(_equipe_no_resultado(id, c), 40))
+		h.add_child(_emblema_equipe(_equipe_no_resultado(id, c), 34))
 		var nome := Label.new()
 		nome.text = EquipeJogador.nome_jogador(dados, jogador) if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador)
 				if id == EquipeJogador.ID else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1))))
 		nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		nome.clip_text = true
 		nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		nome.add_theme_font_size_override("font_size", 27)
+		nome.add_theme_font_size_override("font_size", 25)
 		nome.add_theme_color_override("font_color", cor)
 		h.add_child(nome)
 		var tempo := Label.new()
