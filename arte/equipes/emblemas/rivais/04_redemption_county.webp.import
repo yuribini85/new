@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://pw4ccmqthxff"
-path="res://.godot/imported/04_dust_county.webp-cb034f8a80a1218f79dad2d76fe976f5.ctex"
+uid="uid://c4nmgp6jkiabb"
+path="res://.godot/imported/04_redemption_county.webp-7a10d923a2480f77e1eba3b09215c640.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/equipes/emblemas/rivais/04_dust_county.webp"
-dest_files=["res://.godot/imported/04_dust_county.webp-cb034f8a80a1218f79dad2d76fe976f5.ctex"]
+source_file="res://arte/equipes/emblemas/rivais/04_redemption_county.webp"
+dest_files=["res://.godot/imported/04_redemption_county.webp-7a10d923a2480f77e1eba3b09215c640.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.8
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
