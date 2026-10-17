@@ -14,7 +14,7 @@ var uid: int = -1
 var base: Dictionary
 ## Peças compradas para este carro (ids). Reinstalar uma peça possuída é grátis.
 var pecas_possuidas: Array = []
-## categoria -> peça instalada. Uma peça por categoria, como no GT2.
+## categoria -> peça instalada. Uma peça por categoria.
 var pecas: Dictionary = {}
 ## Compostos possuídos. O piloto de IA escolhe sozinho conforme a condição.
 var pneus: Array = []
@@ -28,8 +28,8 @@ var ajuste_cambio: String = ""
 ## Só guardam escolhas entre peças já compradas; equipar é grátis.
 var configuracoes: Array = []
 
-## Fração do caminho do diferencial de fábrica até o limite do GT2 nos
-## ajustes curto/longo. Provisório (decisão de interface, não do GT2).
+## Fração do caminho do diferencial de fábrica até o limite dos dados nos
+## ajustes curto/longo. Provisório (decisão de interface, não do estudo).
 const PASSO_CAMBIO := 0.5
 
 
@@ -140,7 +140,7 @@ func atributos_efetivos(condicao: String) -> Dictionary:
 	else:
 		attrs["aderencia"] *= float(pneu["aderencia"][condicao])
 	attrs["tracao"] = base["tracao"]
-	# Fração do peso no eixo dianteiro (GT2, Chassis); a simulação usa o peso
+	# Fração do peso no eixo dianteiro (dados do carro); a simulação usa o peso
 	# sobre o eixo motriz para a tração. Opcional: sem ela, fator por tração.
 	if base.get("peso_dianteiro") != null:
 		attrs["peso_dianteiro"] = float(base["peso_dianteiro"])

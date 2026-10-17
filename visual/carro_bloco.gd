@@ -812,7 +812,7 @@ static func cor_do_id(id: String) -> Color:
 
 
 ## Pintura do carro da garagem: a escolhida na compra (Carro.cor) ou a de
-## fábrica do modelo (Cores). Sem pintura livre depois, como no GT2.
+## fábrica do modelo (Cores). Sem pintura livre depois.
 static func cor_do_carro(carro: Carro) -> Color:
 	return Cores.do_carro(carro)
 

@@ -1,14 +1,14 @@
 class_name Elegibilidade
 extends RefCounted
-## Restrições de entrada dos eventos, no estilo do GT2. Todas opcionais; um
+## Restrições de entrada dos eventos. Todas opcionais; um
 ## evento sem restrições aceita qualquer carro.
-##   potencia_max  cv efetivos, já com peças (como o GT2 mede)
+##   potencia_max  cv efetivos, já com peças (como a referência mede)
 ##   tracao        lista de trações aceitas
 ##   categoria     lista de categorias aceitas
 ##   fabricante    lista de fabricantes aceitas
 ##   ano_min / ano_max
 ##   licenca       id da licença exigida do jogador
-##   carros        lista de ids de carro aceitos (copas de marca do GT2)
+##   carros        lista de ids de carro aceitos (copas de marca)
 ##   corrida       true: só versão de corrida (kit "corrida" ou carro de corrida
 ##                 de fábrica); false: só carro de rua, sem o kit
 
@@ -46,7 +46,7 @@ static func versao_corrida(carro: Carro) -> bool:
 	return bool(carro.base.get("corrida", false)) or carro.pecas.has("corrida")
 
 
-## Prova aberta de entrada (como a prova de estreia do GT2): sem licença, sem
+## Prova aberta de entrada (a prova de estreia): sem licença, sem
 ## lista de modelos e com prêmio. Referência para o "mais fácil" do Mercado.
 static func aberta_sem_licenca(ev: Dictionary) -> bool:
 	return not ev["restricoes"].has("licenca") and not ev["restricoes"].has("carros") and not ev["premios"].is_empty()

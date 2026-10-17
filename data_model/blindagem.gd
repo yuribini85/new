@@ -5,7 +5,7 @@ extends RefCounted
 ## resistência de cada região é ½·m·v_ref² (Arena), então o carro mais pesado
 ## aguenta mais pancada; na corrida, o mesmo peso tira aceleração, freio e curva.
 ##
-## Números (CLAUDE.md: nada inventado): espelho da redução de peso do GT2 do
+## Números (CLAUDE.md: nada inventado): espelho da redução de peso do
 ## próprio carro (data/pecas.json, categoria em data/arena.json → blindagem
 ## → referencia). O nível k pesa o inverso do que o estágio k da redução tira
 ## (×0,95 vira ×1/0,95) e custa o mesmo que ele. Carro sem redução de peso no

@@ -378,7 +378,7 @@ static func velocidade_maxima_kmh(a: Dictionary, params: Dictionary) -> float:
 	return minf(V_MAX_FORCA / KMH_PARA_MS, teto)
 
 
-## Fração do peso sobre o eixo motriz: com "peso_dianteiro" do carro (GT2),
+## Fração do peso sobre o eixo motriz: com "peso_dianteiro" do carro,
 ## dianteira para FF, traseira para FR/MR/RR e tudo no 4WD; sem ele, o fator
 ## fixo por tração de data/simulacao.json.
 static func fator_tracao(a: Dictionary, params: Dictionary) -> float:

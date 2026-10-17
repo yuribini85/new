@@ -15,7 +15,7 @@ const TRAINING := "TRAINING"
 const READY := "READY_FOR_EVALUATION"
 const COMPLETE := "COMPLETE"
 
-## Ids do GT2 nos saves antigos -> ids do jogo (decisão 33).
+## Ids antigos nos saves -> ids do jogo (decisão 33).
 const ID_ANTIGO := {"B": "CLUB", "A": "SPORT", "IC": "NATIONAL", "IB": "INTERNATIONAL", "IA": "PRO"}
 
 
@@ -67,7 +67,7 @@ func restante(licenca_id: String, agora: float) -> float:
 
 
 ## Duração do treino: soma dos tempos de bronze dos testes × fator_treino
-## (a confirmar no playtest). Sem testes (ELITE: a S do GT2 não tem), a da anterior.
+## (a confirmar no playtest). Sem testes (ELITE não tem), a da anterior.
 func treino_s(licenca_id: String) -> float:
 	var lic: Dictionary = dados.item("licencas", licenca_id)
 	var soma := 0.0
@@ -127,7 +127,7 @@ func atualizar(agora: float) -> Array:
 	return novas
 
 
-## Começa o treino (preço do GT2: grátis). "" ou o motivo de não poder.
+## Começa o treino (grátis). "" ou o motivo de não poder.
 func iniciar_treino(licenca_id: String, agora: float) -> String:
 	var st := estado(licenca_id, agora)
 	if st != AVAILABLE:

@@ -410,11 +410,11 @@ static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid:
 ## (equipe.json → treino.cansaco; null = sem efeito).
 ## Calculadora da variação por piloto (pedido do usuário, 2026-10-16): cada
 ## piloto tem um ajuste próprio e fixo (sorteado pelo id) em consistência e
-## agressividade, que não vêm do GT2. As faixas saem dos dados que já existem,
+## agressividade, que não vêm do estudo. As faixas saem dos dados que já existem,
 ## sem número novo: agressividade, metade do menor intervalo entre os perfis de
 ## rival (perfis_piloto); consistência, metade da perda do segundo piloto
 ## (segundo_piloto.perda_consistencia). `variacao_piloto.fator` (carreira.json)
-## escala as duas faixas no playtest (0 desliga). O ritmo segue a regra do GT2.
+## escala as duas faixas no playtest (0 desliga). O ritmo segue a regra de sempre.
 static func faixas_variacao(dados: Node, consistencia_base: float) -> Dictionary:
 	var cfg: Dictionary = dados.carreira().get("variacao_piloto", {})
 	var fator := float(cfg.get("fator", 0.0))

@@ -105,7 +105,7 @@ func carregar(dir: String) -> void:
 	_validar_referencias()
 
 
-## data/pecas.json vem agrupado por carro (tools/importar_gt2.py →
+## data/pecas.json vem agrupado por carro (importador em tools/ →
 ## pecas_compactas: um terço do tamanho); aqui volta à lista de sempre: id =
 ## <carro>_<s>, nome pela tabela `nomes`, categoria omitida = o s sem o último
 ## _trecho, carros permitidos = só o carro.
@@ -254,7 +254,7 @@ func _exigir(onde: String, arquivo: String, id: Variant) -> void:
 		_erros.append("%s cita %s inexistente em %s.json" % [onde, id, arquivo])
 
 
-## Valores que ainda precisam vir do estudo do GT2 ou de playtest.
+## Valores que ainda precisam vir do estudo de referência ou de playtest.
 func pendencias() -> Array:
 	return _pendencias
 

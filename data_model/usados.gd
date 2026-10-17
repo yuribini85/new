@@ -1,8 +1,8 @@
 class_name Usados
 extends RefCounted
-## Estoque de usados como no GT2: cada carro de data/carros.json pode ter
+## Estoque de usados: cada carro de data/carros.json pode ter
 ## `usados: [[dia_inicio, dia_fim, preco], ...]`, as janelas em que aparece na
-## concessionária de usados e o preço de cada uma (no GT2, períodos de 10 dias).
+## concessionária de usados e o preço de cada uma (períodos de 10 dias).
 ## O dia é o número de corridas disputadas (docs/plano_mvp.md, decisão 5).
 
 

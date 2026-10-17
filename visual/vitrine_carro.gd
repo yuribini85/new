@@ -1,7 +1,7 @@
 class_name VitrineCarro
 extends SubViewportContainer
-## Carro num estúdio (piso, luz de recorte, fundo escuro), como a vitrine da
-## garagem do GT2. Com a arte em sprite (decisão 31), o carro é o isométrico
+## Carro num estúdio (piso, luz de recorte, fundo escuro), como uma vitrine
+## de garagem. Com a arte em sprite (decisão 31), o carro é o isométrico
 ## parado, a câmera fica no mesmo ângulo do desenho e os efeitos são de luz:
 ## feixe passando pela carroceria, reflexo no piso, sombra de contato e uma aproximação
 ## curta ao trocar de carro. Sem sprite, o carro em código gira como antes.

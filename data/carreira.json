@@ -166,7 +166,7 @@
   "ritmo_premium": 1.023,
   "_ritmo_premium": "Medido com tools/calibrar_treino.gd --licenca=INTERNATIONAL --meta=0.2 (2026-10-17): o ritmo que encurta em 20% o caminho até vencer as provas, o dobro da meta do treino (10%, decisão do usuário). Na PRO a medida é fraca (carro de fábrica quase não vence); vale a da INTERNATIONAL.",
   "_nota_premium": "Decisão do usuário (2026-10-16): pack premium com 3 pilotos de elite (1 de corrida, 2 de arena), compra única e permanente; 100% em todos os atributos (ritmo no teto do treino, consistência e agressividade 1), sem cansaço. Vendido só na loja de dinheiro real, uma tela própria (a criar); na seleção aparecem só depois de comprados e ficam sempre no mercado (fora do sorteio). Nomes inventados pelo Claude (pedido do usuário).",
-  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida ou de arena. A equipe tem 1 de corrida e 2 de arena. Decisão do usuário (2026-10-16): em cada vaga, um candidato de cada traço, para os da tela serem diferentes (no GT2 os pilotos de uma classe valem o mesmo; a diferença vem do traço).",
+  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida ou de arena. A equipe tem 1 de corrida e 2 de arena. Decisão do usuário (2026-10-16): em cada vaga, um candidato de cada traço, para os da tela serem diferentes (os pilotos de uma classe valem o mesmo; a diferença vem do traço).",
   "mercado": {
    "por_tipo": 4,
    "renova_h": 24,
@@ -208,7 +208,7 @@
    0.1
   ],
   "periodo_h": 24,
-  "_nota": "Decisão do usuário (2026-10-17): repetir prova já vencida paga 50%, depois 25%, depois 10% (piso); volta a 100% a cada 24 h (mesmo período do mercado de pilotos). Medido (playtest da campanha): no caminho normal as repetições são até 25% das corridas por meia hora; a queda pesa só no farm. Não vem do GT2 (lá o prêmio se repete inteiro). so_com_licenca (decisão do usuário, 2026-10-17): provas sem licença ficam fora da queda; com ela, 3 dos 11 carros iniciais deixavam de tirar a Club (antes 12-18 min); sem elas na regra, todos tiram em 6-18 min (tests/test_percurso.gd).",
+  "_nota": "Decisão do usuário (2026-10-17): repetir prova já vencida paga 50%, depois 25%, depois 10% (piso); volta a 100% a cada 24 h (mesmo período do mercado de pilotos). Medido (playtest da campanha): no caminho normal as repetições são até 25% das corridas por meia hora; a queda pesa só no farm. Não vem do estudo de referência (lá o prêmio se repete inteiro). so_com_licenca (decisão do usuário, 2026-10-17): provas sem licença ficam fora da queda; com ela, 3 dos 11 carros iniciais deixavam de tirar a Club (antes 12-18 min); sem elas na regra, todos tiram em 6-18 min (tests/test_percurso.gd).",
   "so_com_licenca": true
  },
  "meta_dia": {

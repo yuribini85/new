@@ -743,7 +743,7 @@ func proximo_passo(t: String, botao_texto: String, indice: int, pai: Control = n
 ## como conseguir e fabricante. `extras`: selos a mais ([[texto, cor]]);
 ## `compra`: [texto, Callable, habilitado] vira o botão principal do painel.
 ## `cor`: pintura mostrada (usado: a cor dele); sem ela, a de fábrica.
-## `escolher_cor`: carro novo, como no GT2: as cores do modelo para escolher;
+## `escolher_cor`: carro novo: as cores do modelo para escolher;
 ## a escolhida fica em `cor_escolhida` (hex) para o Callable da compra.
 var cor_escolhida := ""
 

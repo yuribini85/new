@@ -176,7 +176,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		c.uid = int(cs["uid"])
 		jogador.garagem.carros[c.uid] = c
 	jogador.garagem.proximo_uid = int(s["proximo_uid"])
-	# Saves anteriores à decisão 33 têm os ids do GT2 (B, A, IC...): migram.
+	# Saves anteriores à decisão 33 têm os ids antigos (B, A, IC...): migram.
 	jogador.licencas = []
 	for x in s["licencas"]:
 		jogador.licencas.append(String(x) if dados.existe("licencas", x) else Licencas.id_novo(String(x)))

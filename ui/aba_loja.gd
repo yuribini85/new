@@ -10,7 +10,7 @@ func _init(d: Node, j: Node) -> void:
 
 
 ## Lojas: as workshops (data/workshops.json), cada uma revende os carros de
-## algumas marcas da mesma origem (decisão 42: a estrutura do GT2, uma loja por
+## algumas marcas da mesma origem (decisão 42: uma loja por
 ## marca, agrupada nas workshops). Todos os carros da frota, novos e antigos,
 ## pelo preço de tabela. Sem usados nem agenda.
 ## Workshop aberta ("" = a grade de workshops). Fica no
@@ -240,7 +240,7 @@ func _workshop(w: Dictionary) -> void:
 		tenho[c.id] = true
 	var lista := _filtrar(_carros_da(w).map(func(c): return [c, int(c["preco"]), c])).map(func(x): return x[2])
 	for c in lista.slice(0, _limite):
-		# A cor do carro novo é escolhida na ficha (cor_escolhida), como no GT2.
+		# A cor do carro novo é escolhida na ficha (cor_escolhida).
 		_bloco(grade, c, int(c["preco"]), "", [], func(): _escolher(jogador.concessionaria.comprar_carro(c, cor_escolhida), c,
 				int(c["preco"])), Color(0, 0, 0, 0), true, tenho.has(c["id"]))
 	_mais(lista.size())

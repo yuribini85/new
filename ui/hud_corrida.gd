@@ -1,6 +1,6 @@
 class_name HudCorrida
 extends Control
-## Painel da corrida sobre a pista, com os dados do HUD do GT2 num desenho
+## Painel da corrida sobre a pista, com os dados de corrida num desenho
 ## calmo: tipografia limpa, linhas finas, sem caixas.
 ##
 ## Quatro cantos, o centro livre para a corrida (como os jogos de corrida

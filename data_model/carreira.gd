@@ -1,7 +1,7 @@
 class_name Carreira
 extends RefCounted
 ## Disputa de eventos: monta o grid, roda a Simulacao e paga o resultado.
-##   - O jogador larga em último, atrás dos adversários na ordem do evento (GT2).
+##   - O jogador larga em último, atrás dos adversários na ordem do evento.
 ##   - Prêmio em dinheiro por posição a cada disputa; carro-prêmio só na
 ##     primeira vitória do evento.
 ##   - Cada corrida disputada conta um dia (rotação de usados, docs/plano_mvp.md).
@@ -459,7 +459,7 @@ func _adversario(adv: Dictionary, indice: int, condicao: String) -> Dictionary:
 	for pneu_id in pneus:
 		c.adicionar_pneu(dados.pneu(pneu_id))
 	var a := c.atributos_efetivos(condicao)
-	# Preparação do rival no GT2 (EnemyCars.PowerMultiplier): potência × fator.
+	# Preparação do rival (potencia_mult do evento): potência × fator.
 	a["potencia"] = float(a["potencia"]) * float(adv.get("potencia_mult", 1.0))
 	return {
 		"id": "adv%d_%s" % [indice, adv["carro"]],

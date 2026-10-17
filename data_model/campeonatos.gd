@@ -4,9 +4,9 @@ extends RefCounted
 ## ("<série> — etapa N" em eventos.json) é um campeonato. A temporada pontua
 ## quando o jogador corre as etapas em ordem; correr outra etapa fora da vez é
 ## uma corrida comum. Pontos por posição: prêmio da posição ÷ prêmio do 1º × 10,
-## arredondado (escala de prêmios da própria série do GT2). Rivais pontuam por
+## arredondado (escala de prêmios da própria série). Rivais pontuam por
 ## equipe (escalação da corrida). No fim da última etapa sai a classificação;
-## o campeão recebe o bônus da série quando o GT2 tem (bonus_campeonato).
+## o campeão recebe o bônus da série quando ela tem (bonus_campeonato).
 ## Estado em jogador.campeonatos: {série: {"etapa": próxima (0..), "pontos": {quem: pts}}};
 ## títulos em jogador.titulos: {série: quantidade}.
 

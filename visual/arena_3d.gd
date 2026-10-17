@@ -56,7 +56,7 @@ const SEUS := ["jogador", "parceiro"]
 ## gravidade traz de volta e o chão quica pouco. Velocidade angular = dano ×
 ## ganho, com teto. Capotagem (pedido do usuário): a batida muito forte de lado
 ## (arena.json → capota_dano, a mesma regra da simulação) passa do ponto de tombar, o carro gira no ar e cai de teto
-## para baixo, e fica assim (como no Destruction Derby; decisão do usuário).
+## para baixo, e fica assim (decisão do usuário).
 const TOMBO_DANO := 0.06  # dano mínimo da batida de lado que levanta o carro
 const TOMBO_DANO_PONTA := 0.12  # de frente/trás (são muitas: só as fortes)
 const TOMBO_GANHO_LADO := 20.0
@@ -521,8 +521,8 @@ func _assentar(delta: float) -> void:
 		var tb: Dictionary = _tombo[id]
 		if tb.get("capota", false):
 			var r := float(tb["rolagem"]) + float(tb["v_rolagem"]) * delta
-			# Capotou, fica de teto para baixo (pedido do usuário, como no
-			# Destruction Derby: a volta inteira de volta às rodas era artificial).
+			# Capotou, fica de teto para baixo (pedido do usuário:
+			# a volta inteira de volta às rodas era artificial).
 			var fim := PI
 			if absf(r) >= fim:
 				tb["capota"] = false

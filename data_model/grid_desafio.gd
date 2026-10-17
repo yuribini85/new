@@ -6,8 +6,7 @@ extends RefCounted
 ## montada aqui (id "grid_<equipe>", lida por Dados.evento). Arena: 2x2, a
 ## dupla de arena contra dois pilotos da equipe; com rounds 3, melhor de 3, e
 ## os carros destruídos são trocados por outros da garagem entre os rounds.
-## Carros especiais: os adversários reais da licença da equipe (eventos.json,
-## do GT2) com a maior relação potência/peso, com o ajuste de potência deles.
+## Carros especiais: os adversários reais da licença da equipe (eventos.json) com a maior relação potência/peso, com o ajuste de potência deles.
 ## A licença da equipe é exigida. Nada é inventado aqui: os números vêm dos
 ## dados.
 
@@ -38,7 +37,7 @@ static func de(dados: Node, equipe: Dictionary) -> Dictionary:
 	return d
 
 
-## Carros especiais da equipe: adversários reais (eventos.json, do GT2) da
+## Carros especiais da equipe: adversários reais (eventos.json) da
 ## licença dela, pela maior relação potência (com o ajuste) / peso, sem
 ## repetir no Grid: da #1 para a #10, cada equipe fica com os melhores ainda
 ## livres da sua licença (corrida 1, arena 2). `n` limita quantos devolver.
