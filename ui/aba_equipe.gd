@@ -918,6 +918,6 @@ func _carro_companheiro() -> void:
 		return
 	var v := cartao()
 	var h := fileira(v)
-	h.add_child(icone_carro(car.base, false, CarroBloco.cor_do_carro(car)))
+	h.add_child(icone_carro(car.base, false, CarroBloco.cor_do_carro(car), car.faixas))
 	rotulo(car.base["nome"], 28, Color.WHITE, h)
 	rotulo("Na arena, ARENA 2 da escalação. Trocar na Oficina.", FONTE_PEQUENA, COR_SECUNDARIA, v)

@@ -236,7 +236,7 @@ func topo_carro(garagem: Carro, fundo := "fundo_competicoes") -> Control:
 	h.add_theme_constant_override("separation", -50)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faixa.add_child(h)
-	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem))
+	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem), garagem.faixas)
 	img.custom_minimum_size = Vector2(510, 288)
 	h.add_child(img)
 	var nome := Label.new()
@@ -1198,9 +1198,9 @@ func linha(descricao: String, botoes: Array = [], icone: Control = null, pai: Co
 # --- Placeholders e formatação ---------------------------------------------
 
 ## Foto do modelo: o sprite isométrico antigo ou, com modelo 3D ou sem sprite, o Estudio.
-func icone_carro(base: Dictionary, grande := false, cor := Color(0, 0, 0, 0)) -> Control:
+func icone_carro(base: Dictionary, grande := false, cor := Color(0, 0, 0, 0), faixas: Dictionary = {}) -> Control:
 	return Estudio.imagem(base, cor if cor.a > 0.0 else Cores.fabrica(String(base.get("id", ""))),
-			Vector2(200, 110) if grande else Vector2(140, 78))
+			Vector2(200, 110) if grande else Vector2(140, 78), faixas)
 
 
 ## Amostras das cores do modelo; tocar troca a vitrine e a cor da compra.

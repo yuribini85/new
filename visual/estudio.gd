@@ -21,16 +21,17 @@ const MARGEM_FOTO := 0.06
 var _fotos := {}  # "id|cor" -> ViewportTexture
 
 
-## Textura da foto do modelo na pintura dada.
-static func foto(base: Dictionary, cor: Color) -> Texture2D:
+## Textura da foto do modelo na pintura dada. `faixas`: as da cabine de pintura
+## (faixas e número do carro do jogador); só no modelo 3D, como na vitrine.
+static func foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	if _no == null or not is_instance_valid(_no):
 		_no = Estudio.new()
 		_no.name = "Estudio"
 		(Engine.get_main_loop() as SceneTree).root.add_child.call_deferred(_no)
-	return _no._foto(base, cor)
+	return _no._foto(base, cor, faixas)
 
 
-func _foto(base: Dictionary, cor: Color) -> Texture2D:
+func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	var glb := CarroBloco.tem_modelo(String(base.get("id", "")))
 	var arte: Texture2D = null if glb else ArteCarro.textura(String(base.get("id", "")), "iso")
 	if arte != null:
@@ -48,6 +49,8 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 			_fotos[chave_arte] = a
 		return _fotos[chave_arte]
 	var chave := "%s|%s" % [base.get("id", ""), cor.to_html(false)]
+	if not faixas.is_empty():
+		chave += "|%d" % JSON.stringify(faixas, "", true).hash()
 	if _fotos.has(chave):
 		return _fotos[chave]
 	var vp := SubViewport.new()
@@ -78,7 +81,7 @@ func _foto(base: Dictionary, cor: Color) -> Texture2D:
 	mundo.add_child(recorte)
 	var carro := CarroBloco.new()
 	mundo.add_child(carro)
-	carro.configurar_modelo(base, cor)
+	carro.configurar_modelo(base, cor, faixas)
 	var cam := Camera3D.new()
 	mundo.add_child(cam)
 	if glb:
@@ -158,9 +161,9 @@ func _copiar(vp: SubViewport, tex: ImageTexture) -> void:
 
 
 ## Retângulo com a foto, pronto para pôr numa lista.
-static func imagem(base: Dictionary, cor: Color, tamanho := Vector2(180, 100)) -> TextureRect:
+static func imagem(base: Dictionary, cor: Color, tamanho := Vector2(180, 100), faixas: Dictionary = {}) -> TextureRect:
 	var t := TextureRect.new()
-	t.texture = foto(base, cor)
+	t.texture = foto(base, cor, faixas)
 	t.custom_minimum_size = tamanho
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

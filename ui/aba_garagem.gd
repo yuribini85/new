@@ -182,7 +182,7 @@ func _escolher_vaga(vaga: String) -> void:
 			v.add_theme_constant_override("separation", 0)
 			v.modulate = Color(1, 1, 1, 1.0 if livre else 0.45)
 			b.add_child(v)
-			var img := icone_carro(car.base, false, CarroBloco.cor_do_carro(car))
+			var img := icone_carro(car.base, false, CarroBloco.cor_do_carro(car), car.faixas)
 			img.custom_minimum_size = Vector2(0, 96)
 			v.add_child(img)
 			var l := Label.new()
@@ -1223,7 +1223,7 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 		Tipografia.rotulo(l, "semibold", 24)
 		l.add_theme_color_override("font_color", COR_DESTAQUE)
 		selo.add_child(l)
-	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c))
+	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c), c.faixas)
 	img.custom_minimum_size = Vector2(0, 200)
 	img.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -1298,7 +1298,7 @@ func _linha_carro(pai: Control, c: Carro, ativo: bool) -> void:
 	h.add_theme_constant_override("separation", 12)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(h)
-	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c))
+	var img := icone_carro(c.base, false, CarroBloco.cor_do_carro(c), c.faixas)
 	img.custom_minimum_size = Vector2(110, 76)
 	h.add_child(img)
 	var info := VBoxContainer.new()
@@ -1371,7 +1371,7 @@ func _confirmar_venda(c: Carro) -> void:
 			_reabrir_garagem()])
 	botoes.append(["Cancelar", _reabrir_garagem])
 	painel.emit(("Vender ou desmontar?" if desmanche else "Vender %s?" % c.base["nome"]), func(v):
-		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180)))
+		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180), c.faixas))
 		nota("icone_vender", "Vender: %s giros" % dinheiro(revenda(c.base)), "Peças instaladas não entram no valor.", v,
 				Color.WHITE)
 		if desmanche:
