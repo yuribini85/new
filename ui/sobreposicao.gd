@@ -17,6 +17,9 @@ var _estilo := {}
 var _fechar_x: Button
 var _vao_x: Control
 var _cartao: PanelContainer
+var _caixa_cartao: StyleBoxFlat
+var _escuro: ColorRect
+var _linha_titulo: HBoxContainer
 ## Estilo "fundo": a imagem atrás do conteúdo, recortada (sem esticar) e
 ## escurecida embaixo para o texto ler.
 var _fundo: Control
@@ -49,6 +52,7 @@ func _init() -> void:
 	_painel_raiz.visible = false
 	add_child(_painel_raiz)
 	var escuro := ColorRect.new()
+	_escuro = escuro
 	escuro.color = Color(0, 0, 0, 0.7)
 	escuro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_painel_raiz.add_child(escuro)
@@ -71,6 +75,7 @@ func _init() -> void:
 	sb.border_color = Aba.COR_DESTAQUE
 	sb.set_border_width_all(2)
 	cartao.add_theme_stylebox_override("panel", sb)
+	_caixa_cartao = sb
 	margem.add_child(cartao)
 	_cartao = cartao
 	_fundo = Control.new()
@@ -120,6 +125,7 @@ func _init() -> void:
 	# Linha do título: o × à direita (só com fora_fecha) e um vão do mesmo
 	# tamanho à esquerda, para o título centrado ficar no meio do cartão.
 	var linha_titulo := HBoxContainer.new()
+	_linha_titulo = linha_titulo
 	linha_titulo.add_theme_constant_override("separation", 0)
 	v.add_child(linha_titulo)
 	_vao_x = Control.new()
@@ -199,7 +205,9 @@ func avisar(texto: String, ok := true) -> void:
 ## "habilitado": false apaga a ação, "titulo_extra": Callable(hbox) que põe
 ## controles entre o título e o ×, "acoes_padrao": os botões no padrão das
 ## telas (o primeiro dourado e largo com a seta; os outros secundários, lado a
-## lado), no fim do conteúdo}.
+## lado), no fim do conteúdo, "tela_cheia": sem moldura nem véu, do topo
+## (px, abaixo do cabeçalho) até o pé da tela, sem a linha do título e sem a
+## fileira de botões (o conteúdo traz as próprias ações; use `fechar()`)}.
 func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Dictionary = {}) -> void:
 	for c in _painel_conteudo.get_children():
 		c.queue_free()
@@ -217,6 +225,17 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 		tam -= 4
 	_painel_titulo.add_theme_font_size_override("font_size", tam)
 	_aplicar_visual(estilo, titulo)
+	var cheia: bool = estilo.has("tela_cheia")
+	_linha_titulo.visible = not cheia
+	_escuro.color = Color(0, 0, 0, 0.0 if cheia else 0.7)
+	if cheia:
+		var vazio := StyleBoxEmpty.new()
+		vazio.set_content_margin_all(22)
+		_cartao.add_theme_stylebox_override("panel", vazio)
+	else:
+		_cartao.add_theme_stylebox_override("panel", _caixa_cartao)
+	for lado in ["left", "right"]:
+		_margem.add_theme_constant_override("margin_" + lado, 0 if cheia else 24)
 	_fechar_x.visible = estilo.get("fora_fecha", false)
 	_vao_x.visible = _fechar_x.visible and estilo.get("titulo_centro", false)
 	var extra: Callable = estilo.get("titulo_extra", Callable())
@@ -226,6 +245,11 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 	if extra.is_valid():
 		extra.call(_extra_titulo)
 	montar.call(_painel_conteudo)
+	if cheia:
+		_painel_botoes.visible = false
+		_painel_raiz.visible = true
+		_ajustar.call_deferred()
+		return
 	if estilo.get("acoes_padrao", false) and not botoes.is_empty():
 		_acoes_padrao(botoes)
 		_painel_botoes.visible = false
@@ -370,6 +394,10 @@ func _ajustar() -> void:
 	# Espera o texto quebrar linha e as imagens assentarem antes de medir.
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if _estilo.has("tela_cheia"):
+		_margem.add_theme_constant_override("margin_top", int(_estilo["tela_cheia"]))
+		_margem.add_theme_constant_override("margin_bottom", 0)
+		return
 	var altura_tela := size.y if size.y > 0.0 else 1280.0
 	var conteudo := _painel_conteudo.get_combined_minimum_size().y
 	var total := conteudo + (_painel_titulo.get_parent() as Control).get_combined_minimum_size().y \
