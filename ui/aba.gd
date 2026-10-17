@@ -451,11 +451,16 @@ const PASTA_ARTE := "res://arte/ui/"
 static var _arte := {}
 
 
-## Textura da arte da interface (arte/ui/<nome>.png); null se não existe.
+## Textura da arte da interface (arte/ui/<nome>.png, ou .webp para as
+## ilustrações dos cartões); null se não existe.
 static func arte(nome: String) -> Texture2D:
 	if not _arte.has(nome):
-		var caminho := PASTA_ARTE + nome + ".png"
-		_arte[nome] = load(caminho) if ResourceLoader.exists(caminho) else null
+		_arte[nome] = null
+		for ext: String in [".png", ".webp"]:
+			var caminho := PASTA_ARTE + nome + ext
+			if ResourceLoader.exists(caminho):
+				_arte[nome] = load(caminho)
+				break
 	return _arte[nome]
 
 
@@ -1422,8 +1427,10 @@ func cartao_desafio_grid(modo: String, desafiar: Callable) -> void:
 	var d := GridDesafio.de(dados, eq)
 	if eq.is_empty() or d.is_empty() or d["modo"] != modo:
 		return
+	# O cenário da equipe (arte/ui/banner_grid_<nome>); sem ele, o cartão com a cor dela.
+	var fundo := arte("banner_grid_" + String(eq["nome"]).to_lower().replace(" ", "_"))
 	var cor := Color(String(eq["cores"]["carro"])) if eq.has("cores") else COR_DESTAQUE
-	var v := cartao(cor.lightened(0.2))
+	var v := cartao_com_fundo(fundo) if fundo != null else cartao(cor.lightened(0.2))
 	var sobre := rotulo("THE GRID · DESAFIO DA #%d" % int(eq["grid"]), 0, COR_DESTAQUE, v)
 	Tipografia.rotulo(sobre, "semibold", 20)
 	var nome := rotulo(String(eq["nome"]).to_upper(), 0, Color(0.93, 0.91, 0.87), v)

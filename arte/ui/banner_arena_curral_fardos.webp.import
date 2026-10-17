@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://blkonpnf7d13l"
-path="res://.godot/imported/banner_parque_das_docas.png-da5f99f93ee5151670f2ebdaebd8e801.ctex"
+uid="uid://dogt32i2bk4wh"
+path="res://.godot/imported/banner_arena_curral_fardos.webp-ba8c9c35f57a6679f743878e39efad67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/ui/banner_parque_das_docas.png"
-dest_files=["res://.godot/imported/banner_parque_das_docas.png-da5f99f93ee5151670f2ebdaebd8e801.ctex"]
+source_file="res://arte/ui/banner_arena_curral_fardos.webp"
+dest_files=["res://.godot/imported/banner_arena_curral_fardos.webp-ba8c9c35f57a6679f743878e39efad67.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.85
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

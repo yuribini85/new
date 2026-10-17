@@ -43,6 +43,10 @@ const AMBIENTE_S := 0.8
 var _ambiente: AudioStreamPlayer
 var _ambiente_som := ""
 const LETRAS_POR_S := 55.0
+## Toques mais próximos que isso são o mesmo toque (eco do clique simulado).
+const TOQUE_ECO_MS := 150
+var _ultimo_toque := -TOQUE_ECO_MS
+var _quadro_toque := -10
 const CENARIO_S := 0.6  # troca de fundo
 const FAIXA := 0.07  # faixas de cinema, fração da altura
 const CARTAO_S := 2.4  # cartão de capítulo, inteiro
@@ -391,6 +395,9 @@ func _toque_cartao(ev: InputEvent) -> void:
 		if _tw_cartao != null:
 			_tw_cartao.kill()
 		_fim_cartao()
+		# O eco deste toque não pode completar a fala que abre agora.
+		_ultimo_toque = Time.get_ticks_msec()
+		_quadro_toque = Engine.get_process_frames()
 
 
 ## Mostra a fala atual; ações seguidas executam antes de parar na próxima fala.
@@ -842,15 +849,28 @@ func _toque(ev: InputEvent) -> void:
 			or (ev is InputEventScreenTouch and ev.pressed)
 	if toque and not _cena.is_empty():
 		accept_event()
-		if _animando and _tween != null:
-			_tween.custom_step(10.0)  # completa a entrada
-			if _digitando():
-				_tw_texto.custom_step(1000.0)
+		# No celular um toque chega duas vezes (o da tela e o clique que o Godot
+		# simula dele): o segundo completava a digitação da fala que acabou de
+		# abrir, e só a primeira fala aparecia letra a letra.
+		# Conta do fim do toque anterior (abrir a fala seguinte pode levar um
+		# tempo) e pelo quadro, que no aparelho é o mesmo ou o seguinte.
+		if Time.get_ticks_msec() - _ultimo_toque < TOQUE_ECO_MS or Engine.get_process_frames() - _quadro_toque <= 1:
 			return
+		_tratar_toque()
+		_ultimo_toque = Time.get_ticks_msec()
+		_quadro_toque = Engine.get_process_frames()
+
+
+func _tratar_toque() -> void:
+	if _animando and _tween != null:
+		_tween.custom_step(10.0)  # completa a entrada
 		if _digitando():
-			_tw_texto.custom_step(1000.0)  # completa o texto
-			return
-		avancar()
+			_tw_texto.custom_step(1000.0)
+		return
+	if _digitando():
+		_tw_texto.custom_step(1000.0)  # completa o texto
+		return
+	avancar()
 
 
 ## Pula as falas da cena; ações e flags dela acontecem do mesmo jeito.

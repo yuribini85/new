@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hk62l5vqt6xn"
-path="res://.godot/imported/banner_anel_do_vale.png-3e6015e6ce3ef2d147d41af47aef592b.ctex"
+uid="uid://dst8tdqe14l7r"
+path="res://.godot/imported/banner_grid_copperhead_motors.webp-cf227ef343b3b8f36543bdfe7ccac4fc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/ui/banner_anel_do_vale.png"
-dest_files=["res://.godot/imported/banner_anel_do_vale.png-3e6015e6ce3ef2d147d41af47aef592b.ctex"]
+source_file="res://arte/ui/banner_grid_copperhead_motors.webp"
+dest_files=["res://.godot/imported/banner_grid_copperhead_motors.webp-cf227ef343b3b8f36543bdfe7ccac4fc.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.85
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

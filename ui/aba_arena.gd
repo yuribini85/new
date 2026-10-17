@@ -57,7 +57,13 @@ func construir() -> void:
 ## o motivo no lugar do botão.
 func _cartao_luta(esc: Carro, motivo: String) -> void:
 	var pode := motivo == ""
-	var v := cartao_com_fundo(arte("banner_arena"), pode)
+	# O cenário da arena aberta de licença mais alta (a luta sorteia entre as
+	# abertas); sem arte própria, o da arena genérica.
+	var ordem := GestaoEquipe.ordem(dados)
+	var abertas := ArenaCarreira.arenas_abertas(dados, jogador)
+	abertas.sort_custom(func(x, y): return ordem.find(String(x.get("licenca", ""))) < ordem.find(String(y.get("licenca", ""))))
+	var fundo: Texture2D = arte("banner_arena_" + String(abertas.back()["id"])) if not abertas.is_empty() else null
+	var v := cartao_com_fundo(fundo if fundo != null else arte("banner_arena"), pode)
 	# Como os cartões de prova: faixa da esquerda com o estado e o emblema da
 	# arena (no lugar do traçado); à direita, o título, rivais e prêmio.
 	var corpo := HBoxContainer.new()

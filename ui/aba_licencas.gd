@@ -393,7 +393,8 @@ func _patrocinio() -> void:
 ## e "rende com o jogo fechado" na segunda; renda e bônus à esquerda e, na
 ## oferta, o botão à direita (meta "acao": a fileira onde ele entra).
 func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
-	var v := cartao(COR_BOM if ativo else Color.TRANSPARENT)
+	var fundo := arte("banner_patrocinio_" + String(p.get("id", "")))
+	var v := cartao_com_fundo(fundo) if fundo != null else cartao(COR_BOM if ativo else Color.TRANSPARENT)
 	v.add_theme_constant_override("separation", 4)
 	var cab := fileira(v)
 	var nome := rotulo(String(p.get("nome", "")), 0, Color.WHITE, cab)
