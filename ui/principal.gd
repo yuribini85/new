@@ -352,6 +352,7 @@ func _ir_para(i: int, voltando := false) -> void:
 			_historico.pop_front()
 	_abas.current_tab = i
 	_reconstruir(i)
+	_liberar_escondidas()
 	if jogador.historia != null:
 		jogador.historia.disparar("ABA:" + NOMES_ABA[i])
 	RegistroSessao.tela(i)
@@ -814,6 +815,19 @@ func _reconstruir(i: int) -> void:
 	# NOMES só no mapa das Lojas; dentro de uma loja, a volta ao mapa.
 	_cabecalho.mostrar_nomes(i == 1 and _todas[1].no_mapa())
 	_cabecalho.mostrar_mapa(i == 1 and not _todas[1].no_mapa())
+
+
+## Telas que ficam montadas fora de vista: a da corrida (a corrida ao vivo) e
+## a anterior (o Voltar do cabeçalho a mostra como estava). As outras soltam o
+## conteúdo e se refazem ao abrir (memória de vídeo no celular).
+func _liberar_escondidas() -> void:
+	var manter := [_abas.current_tab, 4]
+	if not _historico.is_empty():
+		manter.append(_historico.back())
+	for k in _todas.size():
+		if not k in manter and not _sujas.has(k) and _todas[k] is Aba:
+			_todas[k].liberar()
+			_sujas[k] = true
 
 
 func _sujar_todas() -> void:

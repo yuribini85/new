@@ -113,6 +113,7 @@ func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> voi
 
 func limpar() -> void:
 	_pista = null
+	_contorno = PackedVector2Array()
 	for c in _carros.get_children():
 		c.queue_free()
 	_sprites = {}
@@ -219,7 +220,7 @@ func _posicionar() -> void:
 
 
 func _draw() -> void:
-	if _contorno.size() < 2:
+	if _pista == null or _contorno.size() < 2:
 		return
 	var largura := maxf(LARGURA_PISTA_M * _escala * 0.75, largura_min_px)
 	if sombra:

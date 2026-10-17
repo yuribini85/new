@@ -12,14 +12,20 @@ extends RefCounted
 ## (fundo das cenas: arte/cenarios/<id>.webp) e "ilustracao" (quadro de um momento
 ## da história: arte/cenas/<id>.webp); os ids estão em data/historia.json.
 
+## Caminho de cada entidade ("" sem arquivo). Só o caminho: a textura fica na
+## memória enquanto alguma tela a usa (o ResourceLoader reaproveita a mesma).
+## Guardar as texturas acumulava retratos e corpos já vistos na memória de
+## vídeo até o navegador do celular fechar o jogo.
 static var _cache := {}
+## Arte ainda não importada (lida direto do arquivo): essa fica guardada.
+static var _soltas := {}
 
 
 static func get_asset(id: String, variante: String) -> Texture2D:
 	var chave := variante + ":" + id
 	if not _cache.has(chave):
-		_cache[chave] = _carregar(caminho(id, variante))
-	return _cache[chave]
+		_cache[chave] = caminho(id, variante)
+	return _carregar(String(_cache[chave]))
 
 
 ## Decisão 72: todo piloto (rival, candidato, mercado) usa um dos retratos
@@ -88,6 +94,7 @@ static func caminho(id: String, variante: String) -> String:
 ## Limpa o cache (arte trocada com o jogo aberto, testes).
 static func limpar() -> void:
 	_cache = {}
+	_soltas = {}
 	_ordem_pilotos = {}
 
 
@@ -97,11 +104,14 @@ static func _carregar(arquivo: String) -> Texture2D:
 	if ResourceLoader.exists(arquivo):
 		return load(arquivo) as Texture2D
 	# Arquivo novo ainda não importado pelo editor: lê a imagem direto.
+	if _soltas.has(arquivo):
+		return _soltas[arquivo]
+	_soltas[arquivo] = null
 	if FileAccess.file_exists(arquivo):
 		var img := Image.load_from_file(arquivo)
 		if img != null and not img.is_empty():
-			return ImageTexture.create_from_image(img)
-	return null
+			_soltas[arquivo] = ImageTexture.create_from_image(img)
+	return _soltas[arquivo]
 
 
 static func _dados() -> Node:

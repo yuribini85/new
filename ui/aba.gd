@@ -88,7 +88,8 @@ func _init(dados_: Node, jogador_: Node, titulo_aba: String) -> void:
 
 ## Reconstrói a tela mantendo a posição da lista (voltar não perde o lugar).
 func atualizar() -> void:
-	var posicao := scroll_vertical
+	var posicao := scroll_vertical if _rolagem_guardada < 0 else _rolagem_guardada
+	_rolagem_guardada = -1
 	for c in conteudo.get_children():
 		conteudo.remove_child(c)
 		c.queue_free()
@@ -97,6 +98,24 @@ func atualizar() -> void:
 	_espaco_topo()
 	if posicao > 0:
 		set_deferred("scroll_vertical", posicao)
+
+
+## Rolagem de quando a tela foi solta (liberar), para voltar no mesmo ponto.
+var _rolagem_guardada := -1
+
+
+## Tela fora de vista: solta o conteúdo (as texturas dos cartões, fotos e
+## retratos saem da memória de vídeo) e guarda a rolagem; o Principal a marca
+## para refazer quando for aberta de novo. No celular, as telas escondidas
+## guardando tudo somavam centenas de MB e o navegador fechava o jogo.
+func liberar() -> void:
+	if conteudo.get_child_count() == 0:
+		return
+	_rolagem_guardada = scroll_vertical
+	for c in conteudo.get_children():
+		conteudo.remove_child(c)
+		c.queue_free()
+	ancoras = {}
 
 
 ## Implementado por cada aba.
@@ -452,16 +471,20 @@ static var _arte := {}
 
 
 ## Textura da arte da interface (arte/ui/<nome>.png, ou .webp para as
-## ilustrações dos cartões); null se não existe.
+## ilustrações dos cartões); null se não existe. Guarda só o caminho: a
+## textura fica na memória enquanto alguma tela a usa (o ResourceLoader
+## reaproveita a mesma), e sai junto com a tela. Guardar as texturas
+## acumulava todos os fundos de cartão já vistos na memória de vídeo, e o
+## navegador do celular fechava o jogo ao montar a corrida seguinte.
 static func arte(nome: String) -> Texture2D:
 	if not _arte.has(nome):
-		_arte[nome] = null
+		_arte[nome] = ""
 		for ext: String in [".png", ".webp"]:
 			var caminho := PASTA_ARTE + nome + ext
 			if ResourceLoader.exists(caminho):
-				_arte[nome] = load(caminho)
+				_arte[nome] = caminho
 				break
-	return _arte[nome]
+	return load(_arte[nome]) if _arte[nome] != "" else null
 
 
 ## Ícone da interface num quadrado de `tamanho` px.

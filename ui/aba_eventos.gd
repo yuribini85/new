@@ -141,6 +141,13 @@ func construir() -> void:
 ## Uma nova construção da tela interrompe a anterior.
 const CARTOES_NA_HORA := 3
 var _geracao := 0
+
+
+## Solta a tela no meio da montagem aos poucos: a montagem em curso para.
+func liberar() -> void:
+	_geracao += 1
+	super()
+
 func _cartoes_aos_poucos(c: Carro, lista: Array, geracao: int) -> void:
 	var itens := lista.slice(0, _limite)
 	for k in itens.size():

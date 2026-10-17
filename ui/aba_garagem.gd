@@ -52,6 +52,13 @@ func atualizar() -> void:
 	super()
 
 
+## A vitrine é reaproveitada entre montagens: sai antes de o conteúdo ser solto.
+func liberar() -> void:
+	if _vitrine.get_parent() != null:
+		_vitrine.get_parent().remove_child(_vitrine)
+	super()
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE and is_instance_valid(_vitrine) and _vitrine.get_parent() == null:
 		_vitrine.free()

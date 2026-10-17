@@ -19,6 +19,11 @@ const LARGURA_FOTO_GLB_M := 1120.0 / 160.0 * 0.74 * (360.0 / 200.0) / ((1120.0 *
 ## Folga em volta do carro que precisou de enquadramento próprio (fração do quadro).
 const MARGEM_FOTO := 0.06
 var _fotos := {}  # "id|cor" -> ViewportTexture
+## Fotos guardadas no máximo (as mais recentes): cada uma tem 0,3 MB na memória
+## de vídeo e passear pelas lojas juntava centenas. A que sai do cache continua
+## viva enquanto alguma tela a mostra; pedida de novo, é refeita.
+const FOTOS_MAX := 48
+var _ordem: Array = []
 
 
 ## Textura da foto do modelo na pintura dada. `faixas`: as da cabine de pintura
@@ -52,6 +57,7 @@ func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	if not faixas.is_empty():
 		chave += "|%d" % JSON.stringify(faixas, "", true).hash()
 	if _fotos.has(chave):
+		_usar(chave)
 		return _fotos[chave]
 	var vp := SubViewport.new()
 	vp.size = TAMANHO
@@ -106,8 +112,17 @@ func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	# textura fica transparente (quem já a usa recebe a imagem depois).
 	var tex := ImageTexture.create_from_image(Image.create(TAMANHO.x, TAMANHO.y, false, Image.FORMAT_RGBA8))
 	_fotos[chave] = tex
+	_usar(chave)
 	_copiar(vp, tex)
 	return tex
+
+
+## Marca a foto como recente e tira do cache as mais antigas além de FOTOS_MAX.
+func _usar(chave: String) -> void:
+	_ordem.erase(chave)
+	_ordem.append(chave)
+	while _ordem.size() > FOTOS_MAX:
+		_fotos.erase(_ordem.pop_front())
 
 
 ## Carro alto (utilitário, caminhão) passaria do quadro com a mira e a escala
