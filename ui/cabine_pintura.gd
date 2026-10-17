@@ -554,8 +554,6 @@ func _aba_identificacao() -> void:
 		if nome.text.strip_edges() != _estado["equipe_nome"]:
 			_definir("equipe_nome", nome.text.strip_edges()))
 	_conteudo.add_child(nome)
-	_nota("O nome e o logo são da equipe: valem para todos os carros. Vazio, fica %s." %
-			IdentidadeEquipe.nome_padrao(_dados, _jogador))
 	if PinturaCarro.liberados(_dados, _jogador, "logos", IdentidadeEquipe.opcoes().size()) < IdentidadeEquipe.opcoes().size():
 		_nota("Cada equipe vencida no Grid libera um logo novo e um desenho novo.")
 	var g := GridContainer.new()

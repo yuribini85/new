@@ -435,7 +435,7 @@ Kenji: Kenji Arata. A cabine é minha. Pode entrar, só não encosta no que est�
 Kenji: Em cima, o carro como ele vai sair. Arrasta pra girar; embaixo dele, as vistas.
 Kenji: Pintura: base, secundária e acento. Grafismos: faixas e desenhos, já aplicados no seu carro.
 Kenji: Identificação: o nome e o logo da equipe e o número de corrida. Acabamento: do fosco ao metálico, e poeira se quiser.
-Kenji: Nada fica gravado antes de aplicar. O botão Como estava desfaz tudo. O preço aparece embaixo, e você só paga o que mudou.
+Kenji: Só fica pronto quando você toca em Aplicar pintura. O preço aparece embaixo e cobre só o que você mudou. Mudou de ideia? Como estava desfaz tudo.
 Sistema: Escolha a pintura e toque em Aplicar pintura.
 
 = CW_PT02 | PINTURA_APLICADA | personagem=dono; proibe=FIRST_PAINT; flags=FIRST_PAINT
