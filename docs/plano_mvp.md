@@ -953,3 +953,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     caixa; a cena do patrocínio abre a Equipe. O combustível sai do topo de Corridas e Arena
     e fica na faixa do cabeçalho, entre o título e os giros, em todas as telas (bomba e
     "5/8"; vazio em vermelho); tocar abre a janela do combustível.
+104. **Capacidade de renda offline por títulos** (2026-10-17, decisão do usuário: "o jogador
+    gosta de evoluir a capacidade de retorno"; substitui o teto da decisão 85). Começa em
+    2 h (`equipe.json → patrocinio.teto_offline_h_base`) e cada série com título soma 1 h
+    (`teto_offline_h_por_titulo`); o cartão da série ainda sem título mostra "+1 H OFFLINE"
+    e o resultado do título, "+1 H DE RENDA OFFLINE". O contrato de patrocínio dura essa
+    capacidade (fixada ao assinar) e paga todas as horas dela, com o jogo aberto ou fechado:
+    sem teto escondido. Licença nova não soma mais hora.

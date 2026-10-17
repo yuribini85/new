@@ -402,11 +402,20 @@ func _cabeca_cartao(ev: Dictionary, v: VBoxContainer, estado_txt: String, estado
 	var serie := Campeonatos.serie(ev)
 	var etapas := Campeonatos.etapas(dados, serie)
 	var k_etapa := etapas.find(ev)
-	var sobre := rotulo((serie if not etapas.is_empty() else _tipo(ev)[0]).to_upper(), 0, COR_SECUNDARIA, col)
+	var linha_sobre := HBoxContainer.new()
+	linha_sobre.add_theme_constant_override("separation", 8)
+	col.add_child(linha_sobre)
+	var sobre := rotulo((serie if not etapas.is_empty() else _tipo(ev)[0]).to_upper(), 0, COR_SECUNDARIA, linha_sobre)
 	Tipografia.rotulo(sobre, "medium", 18)
 	sobre.autowrap_mode = TextServer.AUTOWRAP_OFF
 	sobre.clip_text = true
 	sobre.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	sobre.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Decisão 104: o primeiro título da série soma +1 h de renda offline.
+	if not etapas.is_empty() and not jogador.titulos.has(serie):
+		var extra := rotulo("+1 H OFFLINE", 0, COR_BOM, linha_sobre)
+		Tipografia.rotulo(extra, "semibold", 18)
+		extra.autowrap_mode = TextServer.AUTOWRAP_OFF
 	var titulo := Label.new()
 	titulo.text = ("ETAPA %d/%d" % [k_etapa + 1, etapas.size()]) if not etapas.is_empty() else nome_evento(ev).to_upper()
 	titulo.clip_text = true

@@ -997,7 +997,7 @@ func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var info := [String(p.get("ramo", "")).to_upper()]
 	if not ativo:
-		info.append("DURAÇÃO %d H" % int(GestaoEquipe.config(dados).get("duracao_h", 24)))
+		info.append("DURAÇÃO %d H" % roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0))
 	Tipografia.rotulo(rotulo(" · ".join(info.filter(func(x): return x != "")), 0, COR_SECUNDARIA, v), "medium", 18)
 	var linha := fileira(v)
 	v.set_meta("acao", linha)

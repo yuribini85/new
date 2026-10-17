@@ -2,13 +2,13 @@
  "_nota": "Gestão da equipe do jogador (Chrome & Wreckage; aba Equipe). Abre com a equipe (licença International, flag SECOND_DRIVER_CREATED). PRÊMIO DE REFERÊNCIA: a média do prêmio de 1º lugar das provas de uma licença (Patrocinio.premio_referencia). Todos os fatores abaixo multiplicam esse prêmio e são PROVISÓRIOS até o playtest (critério aprovado; valores a medir). Patrocínio: renda por hora corrida no relógio real, também com o app fechado (até carreira.json → teto_offline_s de ausência, como as corridas), mais um bônus quando a corrida cumpre a condição do patrocinador. Desmanche: desmontar um carro vira crédito para peças. Sede: melhorias compradas com o caixa. Treino do piloto (decisão 54): cada nível soma `passo` de consistência ao piloto do jogador, até o teto da maior licença dele; o nível n leva tempo_base_h × n horas no relógio real (também com o app fechado) e custa custo_fator × n prêmios de referência da maior licença.",
  "patrocinio": {
   "ofertas": 3,
-  "duracao_h": 24,
   "renda_hora_fator": 1.66,
   "_renda_hora_fator": "Decisão do usuário (2026-10-17): cada contrato paga por hora 20% do que o jogador ganha correndo. Medido (playtest da campanha, 3 perfis, 10 h): correndo rende ~8,3 prêmios de 1º lugar da licença por hora (Club ~1.600 giros/h sobre prêmio médio 194; Sport ~2.200 sobre 258). 0,2 × 8,3 = 1,66 × o prêmio de referência.",
   "bonus_fator": 0.5,
   "contratos_base": 1,
   "teto_offline_h_base": 2,
-  "teto_offline_h_por_licenca": 1,
+  "teto_offline_h_por_titulo": 1,
+  "_teto_offline": "Decisão 104 (usuário, 2026-10-17): a capacidade de renda offline começa em teto_offline_h_base e cada título de série soma teto_offline_h_por_titulo; o contrato de patrocínio dura essa capacidade e paga todas as horas dela, com o jogo aberto ou fechado.",
   "bonus_condicao": {
    "podio": 1.0,
    "vitoria": 1.21,

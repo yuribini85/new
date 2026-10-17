@@ -241,7 +241,7 @@ Sistema: Novas provas liberadas em Corridas › Club.
 = CW_S00 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO,PATROCINIO_LIBERADO; cenario=oficina_mara
 Mara[explica]: Licença na mão e resultado na pista: agora aparece patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
-Mara[pensativa]: Com o jogo fechado, o contrato rende por algumas horas; cada licença nova soma mais uma.
+Mara[pensativa]: O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título de série dá uma hora a mais.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
 [OPEN_TEAM_FINANCE]
 [HIGHLIGHT_PATROCINIO]

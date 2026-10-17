@@ -26,7 +26,7 @@ func test_ofertas_vem_da_licenca_do_jogador() -> void:
 	d.free()
 
 
-func test_patrocinio_rende_por_hora_com_teto_e_acaba() -> void:
+func test_patrocinio_rende_todas_as_horas_e_acaba() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
 	var saldo0: int = j.economia.saldo
@@ -38,11 +38,13 @@ func test_patrocinio_rende_por_hora_com_teto_e_acaba() -> void:
 		r = GestaoEquipe.acumular(d, j, h * 3600.0)
 	igual(int(r["ganho"]), 1, "uma hora por vez")
 	igual(j.economia.saldo, saldo0 + 3, "renda no caixa")
-	# Ausência de 5 h com teto de 1 h (fixture: teto_offline_s 3600): só 1 h conta.
+	# Decisão 104: a ausência conta inteira dentro do contrato (5 h fora: 5 giros).
 	r = GestaoEquipe.acumular(d, j, 8.0 * 3600.0)
-	igual(int(r["ganho"]), 1, "ausência limitada ao teto")
-	# O contrato dura 10 h: acaba e sai da lista.
-	r = GestaoEquipe.acumular(d, j, 10.0 * 3600.0)
+	igual(int(r["ganho"]), 5, "ausência paga inteira")
+	# O contrato dura 10 h (fixture, sem a base: duracao_h): acaba e sai da
+	# lista; o que passa do fim não paga.
+	r = GestaoEquipe.acumular(d, j, 14.0 * 3600.0)
+	igual(int(r["ganho"]), 2, "só até o fim do contrato")
 	igual(r["encerrados"], ["Patrocinador B1"], "contrato encerrado")
 	igual(GestaoEquipe.contratos(j).size(), 0, "sem contratos depois do fim")
 	j.free()
@@ -363,17 +365,17 @@ func test_mercado_experiencia_e_embalo() -> void:
 	d.free()
 
 
-## Decisão 85: o patrocínio rende com o app fechado até 2 h na primeira
-## licença e +1 h por licença a mais (dados reais, equipe.json).
-func test_teto_offline_do_patrocinio_cresce_com_as_licencas() -> void:
+## Decisão 104: a capacidade de renda offline (a duração do contrato) começa
+## em 2 h e cada título de série soma 1 h (dados reais, equipe.json).
+func test_capacidade_offline_cresce_com_os_titulos() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
-	j.licencas = ["CLUB"]
-	igual(GestaoEquipe.teto_offline(d, j), 2.0 * 3600.0, "Club: 2 h")
 	j.licencas = ["CLUB", "SPORT", "NATIONAL"]
-	igual(GestaoEquipe.teto_offline(d, j), 4.0 * 3600.0, "três licenças: 4 h")
+	igual(GestaoEquipe.teto_offline(d, j), 2.0 * 3600.0, "sem título: 2 h (licença não soma)")
+	j.titulos = {"Copa A": 1, "Copa B": 3}
+	igual(GestaoEquipe.teto_offline(d, j), 4.0 * 3600.0, "dois títulos de série: 4 h")
 	verificar(not GestaoEquipe.patrocinio_aberto(d, j), "sem equipe, sem patrocínio")
 	j.personagem = "dono"
 	EquipeJogador.criar(j)

@@ -1242,6 +1242,8 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		var camp: Dictionary = c.get("campeonato", {})
 		if camp.get("final", false) and camp.get("campeao", false):
 			marcos.append(["CAMPEÃO: %s" % camp["serie"], Aba.COR_DESTAQUE])
+			if int(jogador.titulos.get(String(camp["serie"]), 0)) == 1:  # primeiro título da série
+				marcos.append(["+1 H DE RENDA OFFLINE", Aba.COR_BOM])
 		if not marcos.is_empty():
 			g.selos(marcos, v)
 		# Carro de prêmio: ele girando na vitrine, com o nome.

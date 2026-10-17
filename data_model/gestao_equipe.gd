@@ -5,9 +5,9 @@ extends RefCounted
 ## jogador.equipe; o crédito de peças fica na Economia.
 ##
 ## Patrocínio: ofertas dos patrocinadores (data/patrocinadores.json) de licença
-## até a maior do jogador; um contrato rende por hora no relógio real, também
-## com o app fechado (até teto_offline_s de ausência, como as corridas), por
-## `duracao_h`, e paga um bônus a cada corrida que cumpre a condição dele.
+## até a maior do jogador; um contrato dura a capacidade de renda offline do
+## jogador (decisão 104) e paga cada hora dela no relógio real, com o app aberto
+## ou fechado; mais um bônus a cada corrida que cumpre a condição dele.
 ## Valores: fatores sobre o prêmio de referência (média do 1º lugar das provas
 ## da licença do patrocinador); provisórios até o playtest.
 ## Desmanche: desmontar um carro (como vender: não o único, nem o da fila) vira
@@ -36,15 +36,15 @@ static func patrocinio_aberto(dados: Node, jogador: Node) -> bool:
 const FLAG_PATROCINIO := "PATROCINIO_LIBERADO"
 
 
-## Teto da renda com o app fechado (s): equipe.json → patrocinio.teto_offline_h_base
-## na primeira licença e + teto_offline_h_por_licenca por licença a mais
-## (decisão 85); sem eles, o teto das corridas.
+## Capacidade de renda offline (s), decisão 104: equipe.json →
+## patrocinio.teto_offline_h_base e + teto_offline_h_por_titulo por série com
+## título (jogador.titulos); é a duração de cada contrato. Sem a base nos
+## dados, `duracao_h`.
 static func teto_offline(dados: Node, jogador: Node) -> float:
 	var cfg := config(dados)
 	if cfg.get("teto_offline_h_base") == null:
-		return float(dados.carreira().get("teto_offline_s", 28800))
-	var extra := maxi(jogador.licencas.size() - 1, 0)
-	return (float(cfg["teto_offline_h_base"]) + float(cfg.get("teto_offline_h_por_licenca", 0)) * extra) * 3600.0
+		return float(cfg.get("duracao_h", 24)) * 3600.0
+	return (float(cfg["teto_offline_h_base"]) + float(cfg.get("teto_offline_h_por_titulo", 0)) * jogador.titulos.size()) * 3600.0
 
 
 ## Média do prêmio de 1º lugar das provas da licença (0 sem provas).
@@ -210,7 +210,7 @@ static func assinar(dados: Node, jogador: Node, id: String, agora: float) -> Str
 		return "sem vaga para outro contrato"
 	if patrocinador(dados, id).is_empty():
 		return "patrocinador desconhecido"
-	var dur := float(config(dados).get("duracao_h", 24)) * 3600.0
+	var dur := teto_offline(dados, jogador)
 	var lista: Array = contratos(jogador)
 	lista.append({"id": id, "inicio": agora, "fim": agora + dur, "ultimo": agora, "resto": 0.0, "ganho": 0})
 	jogador.equipe["patrocinios"] = lista
@@ -218,19 +218,18 @@ static func assinar(dados: Node, jogador: Node, id: String, agora: float) -> Str
 	return ""
 
 
-## Credita a renda por hora desde a última vez (até `agora`, segundos Unix),
-## com o teto de ausência das corridas, e encerra os contratos vencidos.
+## Credita a renda por hora desde a última vez (até `agora`, segundos Unix,
+## no máximo até o fim do contrato) e encerra os contratos vencidos.
 ## {ganho, encerrados: [nomes]}.
 static func acumular(dados: Node, jogador: Node, agora: float) -> Dictionary:
 	var r := {"ganho": 0, "encerrados": []}
 	if not patrocinio_aberto(dados, jogador):
 		return r
-	var teto := teto_offline(dados, jogador)
 	var ficam := []
 	for c in contratos(jogador):
 		var p := patrocinador(dados, c["id"])
 		var ate := minf(agora, float(c["fim"]))
-		var dt := clampf(ate - float(c["ultimo"]), 0.0, teto)
+		var dt := maxf(ate - float(c["ultimo"]), 0.0)
 		var valor := float(c.get("resto", 0.0)) + dt / 3600.0 * renda_hora(dados, jogador, p)
 		var inteiro := int(floor(valor))
 		c["resto"] = valor - inteiro
