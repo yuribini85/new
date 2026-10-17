@@ -20,6 +20,7 @@ var _cartao: PanelContainer
 var _caixa_cartao: StyleBoxFlat
 var _escuro: ColorRect
 var _linha_titulo: HBoxContainer
+var _rolagem: ScrollContainer
 ## Estilo "fundo": a imagem atrás do conteúdo, recortada (sem esticar) e
 ## escurecida embaixo para o texto ler.
 var _fundo: Control
@@ -150,6 +151,7 @@ func _init() -> void:
 	linha_titulo.add_child(_fechar_x)
 	# A rolagem pelo dedo das abas: o arrasto rola mesmo começando num botão.
 	var rolagem := RolagemToque.new()
+	_rolagem = rolagem
 	rolagem.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	rolagem.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(rolagem)
@@ -228,6 +230,8 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 	_aplicar_visual(estilo, titulo)
 	var cheia: bool = estilo.has("tela_cheia")
 	_linha_titulo.visible = not cheia
+	# Tela cheia: sem barra de rolagem à vista (o arrasto ainda rola, se faltar espaço).
+	_rolagem.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER if cheia else ScrollContainer.SCROLL_MODE_AUTO
 	var caixa: Texture2D = estilo.get("caixa", null)
 	_escuro.color = Color(0, 0, 0, 0.0 if cheia and caixa == null else 0.7)
 	if cheia and caixa != null:

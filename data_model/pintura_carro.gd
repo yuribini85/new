@@ -123,6 +123,15 @@ static func saturada(c: Color) -> Color:
 	return Color.from_hsv(c.h, minf(SATURACAO_TETO, c.s + (1.0 - c.s) * SATURACAO_GANHO), minf(1.0, c.v * BRILHO_GANHO))
 
 
+## Pintura exclusiva dos carros de prêmio (pedido do usuário): faixa dupla
+## central dourada, de capô a traseira, com filete escuro e lataria brilhante.
+const COR_PREMIO := "#d9a62e"
+
+
+static func de_premio() -> Dictionary:
+	return {"padrao": "dupla", "faixa": COR_PREMIO, "filete": "#1a1a1a", "acabamento": "brilhante"}
+
+
 ## Pintura de um carro de equipe rival (decisão 60): um desenho sorteado por
 ## `semente` (fixo por prova e vaga), nas cores da equipe (faixa e filete).
 ## Com `vaga` (o piloto na equipe, 0..3), o carro leva o número dele

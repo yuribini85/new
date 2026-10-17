@@ -1163,13 +1163,13 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			var lc := g.rotulo("CARRO DE PRÊMIO: %s" % String(premiado.base["nome"]).to_upper(), 0, Color("ffd34d"), v)
 			Tipografia.rotulo(lc, "semibold", 26)
 			lc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			var vit := VitrineCarro.new(170.0)
+			var vit := VitrineCarro.new(230.0)
 			vit.fundo_transparente()
 			vit.mostrar_modelo(premiado.base, CarroBloco.cor_do_carro(premiado), premiado.faixas)
 			v.add_child(vit)
 		_lista_resultado(v, tabela, c)
 		_fechamento_automatico(v, token, fechar)
-		_botao_fechar(v, fechar, venceu), [], {"caixa": Aba.arte("caixa_resultado"), "tela_cheia": _cabecalho.altura_total() + 8.0})
+		_botao_fechar(v, fechar, venceu), [], {"caixa": Aba.arte("caixa_resultado" if venceu else "caixa_resultado_cinza"), "tela_cheia": _cabecalho.altura_total() + 8.0})
 
 
 ## "VITÓRIA!" (ou a posição) no alto, centrado.
@@ -1368,45 +1368,43 @@ func _emblema_equipe(eq: Dictionary, tamanho: int) -> Control:
 	return p
 
 
-## Barra que esvazia em FECHAR_RESULTADO_S e fecha a janela; a caixa liga e
-## desliga o fechamento automático (fica nas preferências).
+## Contagem no texto da caixa ("Fechar sozinha em 12 s"): no zero, fecha a
+## janela; a caixa liga e desliga o fechamento automático (fica nas preferências).
 func _fechamento_automatico(v: VBoxContainer, token: int, ao_fechar: Callable) -> void:
-	var barra := ProgressBar.new()
-	barra.show_percentage = false
-	barra.max_value = FECHAR_RESULTADO_S
-	barra.value = FECHAR_RESULTADO_S
-	barra.custom_minimum_size = Vector2(0, 10)
-	v.add_child(barra)
 	var caixa := CheckBox.new()
-	caixa.text = "Fechar sozinha em %d s" % int(FECHAR_RESULTADO_S)
 	caixa.button_pressed = Preferencias.fechar_resultado
 	caixa.add_theme_font_size_override("font_size", Aba.FONTE_PEQUENA)
-	caixa.custom_minimum_size.y = Tipografia.ALTURA_SECUNDARIA  # área de toque, não o desenho
+	caixa.custom_minimum_size.y = 56
+	caixa.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	for estado in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
 		caixa.add_theme_stylebox_override(estado, StyleBoxEmpty.new())
 	for cor in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		caixa.add_theme_color_override(cor, Aba.COR_SECUNDARIA)
 	v.add_child(caixa)
-	var contar := func():
-		var tw := barra.create_tween()
-		barra.value = FECHAR_RESULTADO_S
-		tw.tween_property(barra, "value", 0.0, FECHAR_RESULTADO_S)
-		tw.finished.connect(func():
-			if _resultado_aberto == token and _sobre.aberto() and Preferencias.fechar_resultado:
+	var resta := [int(FECHAR_RESULTADO_S)]
+	var mostrar := func():
+		caixa.text = "Fechar sozinha em %d s" % resta[0] if Preferencias.fechar_resultado \
+				else "Fechar sozinha em %d s" % int(FECHAR_RESULTADO_S)
+	mostrar.call()
+	var relogio := Timer.new()
+	relogio.wait_time = 1.0
+	relogio.autostart = true
+	caixa.add_child(relogio)
+	relogio.timeout.connect(func():
+		if not Preferencias.fechar_resultado:
+			return
+		resta[0] -= 1
+		mostrar.call()
+		if resta[0] <= 0:
+			relogio.stop()
+			if _resultado_aberto == token and _sobre.aberto():
 				_sobre.fechar()
 				ao_fechar.call())
-		barra.set_meta("tween", tw)
 	caixa.toggled.connect(func(ligado):
 		Preferencias.fechar_resultado = ligado
 		Preferencias.salvar()
-		if barra.has_meta("tween"):
-			(barra.get_meta("tween") as Tween).kill()
-		barra.modulate.a = 1.0 if ligado else 0.35
-		if ligado:
-			contar.call())
-	barra.modulate.a = 1.0 if Preferencias.fechar_resultado else 0.35
-	if Preferencias.fechar_resultado:
-		contar.call()
+		resta[0] = int(FECHAR_RESULTADO_S)
+		mostrar.call())
 
 
 func _depois_do_resultado(c: Dictionary, acao: Callable) -> void:

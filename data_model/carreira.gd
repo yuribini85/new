@@ -400,6 +400,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		if primeira and ev.get("carro_premio") != null:
 			var premiado := Carro.new(dados.carro(ev["carro_premio"]))
 			premiado.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
+			premiado.faixas = PinturaCarro.de_premio()
 			carro_premio_uid = jogador.garagem.adicionar(premiado)
 	jogador.dias += 1
 	var campeonato: Dictionary = Campeonatos.registrar(self, evento_id, r["classificacao"], int(corrida.get("semente", -1)))
