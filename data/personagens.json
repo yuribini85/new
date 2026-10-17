@@ -12,5 +12,6 @@
  {"id": "vendedora_brace_yard", "nome": "Bianca Sterling", "retrato": "res://arte/personagens/bianca_sterling.png", "cor": "#2a3a6a", "papel": "vendedora · Brace Yard Works", "busto": [0.49, 0.123, 0.112]},
  {"id": "vendedora_return_chapter", "nome": "Nora Lindqvist", "retrato": "res://arte/personagens/nora_lindqvist.png", "cor": "#2a4a8a", "papel": "vendedora · Return Chapter Customs", "busto": [0.49, 0.128, 0.108]},
  {"id": "vendedora_shared_grid", "nome": "Jade Ryker", "retrato": "res://arte/personagens/jade_ryker.png", "cor": "#b0202a", "papel": "vendedora · Shared Grid Motors", "busto": [0.53, 0.114, 0.106]},
+ {"id": "vendedor_spare_penny", "nome": "Walt Pruitt", "retrato": "", "cor": "#6a7a5a", "papel": "vendedor · Spare Penny Repairs"},
  {"id": "sistema", "nome": "", "retrato": "", "cor": "#000000"}
 ]

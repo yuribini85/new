@@ -47,7 +47,7 @@ Mara[cruzados]: Então, temos um acordo? E como devo chamar você?
 # O nome dado: a Mara manda às Lojas (decisão 96: carro → piloto → corrida →
 # The Grid; a meta aparece depois da primeira corrida, não antes de agir).
 = CW_P01B | NOME_DEFINIDO | personagem=dono; proibe=ADMIN_NAMED; flags=ADMIN_NAMED; proxima=CW_C00; cenario=oficina_mara
-Mara[gesto]: Muito bem, {admin}. Sociedade fechada. Eu sou a Mara.
+Mara[gesto]: Muito bem, {admin}. Sociedade fechada.
 Mara[firme]: Primeiro, o que falta numa equipe de corrida: um carro.
 
 # Ficha do carro: cada atributo em destaque; termina pedindo a peça (a demanda).
@@ -492,10 +492,14 @@ Jade: Boas-vindas. Um catálogo, zero tempo a perder.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ10 | LOJA:shared_grid_motors | personagem=dono; proibe=SHOP_SHARED_GRID; flags=SHOP_SHARED_GRID
-Jade: De volta? Escolhe e leva. O resto é vitrine.
+Jade: Boas-vindas. Escolhe e leva; o resto é vitrine.
 
 = CW_LJ11 | LOJA:spare_penny_repairs | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_SPARE_PENNY
+Walt: Boas-vindas. Carro usado, preço honesto: aqui nada sai sem revisão.
 Sistema: Toque num carro para ver a ficha e comprar.
+
+= CW_LJ12 | LOJA:spare_penny_repairs | personagem=dono; proibe=SHOP_SPARE_PENNY; flags=SHOP_SPARE_PENNY
+Walt: Boas-vindas. Não é bonito, mas anda; e anda bem.
 
 # ---------------------------------------------------------------- Comentários de contexto
 # reativa=sim: no máximo um a cada historia.json → reativa_intervalo_corridas corridas.

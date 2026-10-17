@@ -29,6 +29,7 @@ QUEM = {"Mara": "mara", "Piloto": "piloto_casa",
         "Harold": "examinador", "Rico": "manobrista", "Dex": "mecanico_arena", "Roxy": "organizadora", "Kenji": "pintor",
         "Edgar": "vendedor_charge_folio", "Sal": "vendedor_relay_room", "Bianca": "vendedora_brace_yard",
         "Nora": "vendedora_return_chapter", "Jade": "vendedora_shared_grid",
+        "Walt": "vendedor_spare_penny",
         "Sistema": "sistema"}
 
 

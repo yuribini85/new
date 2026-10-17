@@ -19,6 +19,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `vendedora_brace_yard` | Bianca Sterling |
 | `vendedora_return_chapter` | Nora Lindqvist |
 | `vendedora_shared_grid` | Jade Ryker |
+| `vendedor_spare_penny` | Walt Pruitt |
 | `sistema` |  |
 
 ## Cenas (`data/dialogos.json`, de `tools/historia/cenas.txt`)
@@ -105,6 +106,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_LJ09` | `LOJA:shared_grid_motors` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_SHARED_GRID` |
 | `CW_LJ10` | `LOJA:shared_grid_motors` | — | `SHOP_SHARED_GRID` |
 | `CW_LJ11` | `LOJA:spare_penny_repairs` | — | `SHOP_TUTORIAL_SEEN`, `SHOP_SPARE_PENNY` |
+| `CW_LJ12` | `LOJA:spare_penny_repairs` | — | `SHOP_SPARE_PENNY` |
 | `CW_R01` | `CORRIDA_FIM` | — | `FIRST_LOSS_TALK` |
 | `CW_D01` | `CORRIDA_FIM` | — | — |
 | `CW_D02` | `CORRIDA_FIM` | — | — |

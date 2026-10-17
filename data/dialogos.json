@@ -79,7 +79,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Muito bem, {admin}. Sociedade fechada. Eu sou a Mara.",
+    "texto": "Muito bem, {admin}. Sociedade fechada.",
     "pose": "gesto"
    },
    {
@@ -2395,7 +2395,7 @@
   "falas": [
    {
     "quem": "vendedora_shared_grid",
-    "texto": "De volta? Escolhe e leva. O resto é vitrine."
+    "texto": "Boas-vindas. Escolhe e leva; o resto é vitrine."
    }
   ],
   "requer": [],
@@ -2414,6 +2414,10 @@
   "trigger": "LOJA:spare_penny_repairs",
   "falas": [
    {
+    "quem": "vendedor_spare_penny",
+    "texto": "Boas-vindas. Carro usado, preço honesto: aqui nada sai sem revisão."
+   },
+   {
     "quem": "sistema",
     "texto": "Toque num carro para ver a ficha e comprar."
    }
@@ -2424,6 +2428,26 @@
   ],
   "flags": [
    "SHOP_TUTORIAL_SEEN",
+   "SHOP_SPARE_PENNY"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ12",
+  "trigger": "LOJA:spare_penny_repairs",
+  "falas": [
+   {
+    "quem": "vendedor_spare_penny",
+    "texto": "Boas-vindas. Não é bonito, mas anda; e anda bem."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_SPARE_PENNY"
+  ],
+  "flags": [
    "SHOP_SPARE_PENNY"
   ],
   "bloqueia": false,

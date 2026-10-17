@@ -250,7 +250,7 @@ func test_campanha_do_dono_e_comentarios() -> void:
 ## oficina, das lojas, da Vector Academy e da arena (pedido do usuário).
 const ELENCO_WRECKAGE := ["mara", "piloto_casa", "sistema", "examinador", "manobrista", "mecanico_arena",
 		"organizadora", "pintor", "vendedor_charge_folio", "vendedor_relay_room", "vendedora_brace_yard",
-		"vendedora_return_chapter", "vendedora_shared_grid"]
+		"vendedora_return_chapter", "vendedora_shared_grid", "vendedor_spare_penny"]
 
 
 func test_cenas_reais_da_campanha_do_dono() -> void:
