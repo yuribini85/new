@@ -421,6 +421,8 @@ func _glb(id: String, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 	var caixa := AABB()
 	var primeiro := true
 	for mi: MeshInstance3D in modelo.find_children("*", "MeshInstance3D", true, false):
+		if mi.mesh != null and not _em_roda(mi, modelo):
+			mi.mesh = suavizar_por_angulo(mi.mesh)
 		_pintar_glb(mi, cor, faixas)
 		var b := mi.get_aabb()
 		caixa = b if primeiro else caixa.merge(b)
@@ -441,6 +443,86 @@ func _glb(id: String, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 		_rodas_glb.append([no, maxf(raio, 0.1)])
 	_sombra(comprimento * 0.92, largura * 0.78, 0.3)
 	return self
+
+
+## Normais por ângulo (pedido do usuário, 2026-10-17: capô, teto e laterais
+## pareciam amassados). Os modelos vêm facetados (uma normal por triângulo) e
+## simplificados para ~1 mil triângulos: superfícies que deveriam ser planas ou
+## levemente curvas têm pequenas diferenças de inclinação, e o facetado mostra
+## cada uma. Aqui cada vértice usa a média das faces vizinhas que fazem menos de
+## SUAVE_GRAUS com a dele: o painel fica liso e as quinas de verdade (para-choque,
+## coluna, caixa de roda) continuam vivas. Feito uma vez por malha (fica no
+## próprio recurso do modelo, que sai da memória com ele).
+const SUAVE_GRAUS := 40.0
+
+
+static func suavizar_por_angulo(m: Mesh) -> Mesh:
+	if not m is ArrayMesh:
+		return m
+	if m.has_meta("suave"):
+		return m.get_meta("suave")
+	var nova := ArrayMesh.new()
+	var cos_lim := cos(deg_to_rad(SUAVE_GRAUS))
+	for s in m.get_surface_count():
+		var arr := m.surface_get_arrays(s)
+		if m.surface_get_primitive_type(s) != Mesh.PRIMITIVE_TRIANGLES:
+			nova.add_surface_from_arrays(m.surface_get_primitive_type(s), arr)
+			nova.surface_set_material(s, m.surface_get_material(s))
+			continue
+		var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+		var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array(range(vs.size()))
+		var nt := idx.size() / 3
+		var fn := PackedVector3Array()
+		fn.resize(nt)
+		var fa := PackedFloat32Array()
+		fa.resize(nt)
+		var vizinhas := {}  # posição -> faces que a usam
+		for t in nt:
+			var a := vs[idx[t * 3]]
+			var cr := (vs[idx[t * 3 + 1]] - a).cross(vs[idx[t * 3 + 2]] - a)
+			fa[t] = cr.length()
+			fn[t] = cr / fa[t] if fa[t] > 1e-12 else Vector3.UP
+			for k in 3:
+				var chave := vs[idx[t * 3 + k]].snapped(Vector3.ONE * 1e-4)
+				if not vizinhas.has(chave):
+					vizinhas[chave] = PackedInt32Array()
+				vizinhas[chave].append(t)
+		# Sem índices: cada canto do triângulo com a normal dele (as outras
+		# colunas copiadas do vértice de origem).
+		var saida := []
+		saida.resize(Mesh.ARRAY_MAX)
+		for col in [Mesh.ARRAY_VERTEX, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_TEX_UV2, Mesh.ARRAY_COLOR]:
+			if arr[col] != null:
+				var origem = arr[col]
+				var dest = origem.duplicate()
+				dest.resize(idx.size())
+				for i in idx.size():
+					dest[i] = origem[idx[i]]
+				saida[col] = dest
+		var normais := PackedVector3Array()
+		normais.resize(idx.size())
+		for t in nt:
+			for k in 3:
+				var soma := Vector3.ZERO
+				for u in vizinhas[vs[idx[t * 3 + k]].snapped(Vector3.ONE * 1e-4)]:
+					if fn[u].dot(fn[t]) >= cos_lim:
+						soma += fn[u] * fa[u]
+				normais[t * 3 + k] = soma.normalized() if soma.length() > 1e-12 else fn[t]
+		saida[Mesh.ARRAY_NORMAL] = normais
+		nova.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, saida)
+		nova.surface_set_material(nova.get_surface_count() - 1, m.surface_get_material(s))
+	m.set_meta("suave", nova)
+	return nova
+
+
+## Malha de roda (Mount_*, roda_*): fica como veio (aro e pneu facetados).
+static func _em_roda(no: Node, raiz: Node) -> bool:
+	while no != null and no != raiz:
+		var n := String(no.name)
+		if n.begins_with("Mount_") or n.begins_with("roda_"):
+			return true
+		no = no.get_parent()
+	return false
 
 
 ## Blindagem visual (decisão 80): monta as proteções do modelo até o nível
