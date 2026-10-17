@@ -1181,9 +1181,8 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	var tabela: Array = c.get("tabela", [])
 	var token := Time.get_ticks_usec()
 	_resultado_aberto = token
-	# Tela cheia (referência do usuário): a pista de fundo, o título, a etapa num cartão, troféu e posição, a classificação em
+	# Caixa de moldura dourada (arte do usuário) com o título, a etapa num cartão, troféu e posição, a classificação em
 	# faixas inclinadas e, embaixo, a ação principal no botão dourado.
-	var tex := Aba.arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
 	_sobre.abrir("", func(v):
 		v.add_theme_constant_override("separation", 8)
 		_titulo_resultado(v, "VITÓRIA!" if venceu else ("%dº LUGAR" % int(c["posicao"]) if int(c["posicao"]) <= 3
@@ -1223,7 +1222,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				lp.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 				lp.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_fechamento_automatico(v, token, _depois_do_resultado.bind(c, func(): pass))
-		_acoes_resultado(v, botoes), [], {"fundo": tex, "tela_cheia": _cabecalho.altura_total()})
+		_acoes_resultado(v, botoes), [], {"caixa": Aba.arte("caixa_resultado"), "tela_cheia": _cabecalho.altura_total() + 8.0})
 
 
 ## "VITÓRIA!" (ou a posição) no alto à esquerda.

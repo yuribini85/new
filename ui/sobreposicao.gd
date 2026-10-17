@@ -207,7 +207,8 @@ func avisar(texto: String, ok := true) -> void:
 ## telas (o primeiro dourado e largo com a seta; os outros secundários, lado a
 ## lado), no fim do conteúdo, "tela_cheia": sem moldura nem véu, do topo
 ## (px, abaixo do cabeçalho) até o pé da tela, sem a linha do título e sem a
-## fileira de botões (o conteúdo traz as próprias ações; use `fechar()`)}.
+## fileira de botões (o conteúdo traz as próprias ações; use `fechar()`),
+## "caixa": com tela_cheia, a arte (Texture2D) que vira o fundo do cartão}.
 func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Dictionary = {}) -> void:
 	for c in _painel_conteudo.get_children():
 		c.queue_free()
@@ -227,15 +228,23 @@ func abrir(titulo: String, montar: Callable, botoes: Array = [], estilo: Diction
 	_aplicar_visual(estilo, titulo)
 	var cheia: bool = estilo.has("tela_cheia")
 	_linha_titulo.visible = not cheia
-	_escuro.color = Color(0, 0, 0, 0.0 if cheia else 0.7)
-	if cheia:
+	var caixa: Texture2D = estilo.get("caixa", null)
+	_escuro.color = Color(0, 0, 0, 0.0 if cheia and caixa == null else 0.7)
+	if cheia and caixa != null:
+		# A arte da caixa (moldura dourada) com cantos e borda sem esticar.
+		var arte := StyleBoxTexture.new()
+		arte.texture = caixa
+		arte.set_texture_margin_all(48)
+		arte.set_content_margin_all(30)
+		_cartao.add_theme_stylebox_override("panel", arte)
+	elif cheia:
 		var vazio := StyleBoxEmpty.new()
 		vazio.set_content_margin_all(22)
 		_cartao.add_theme_stylebox_override("panel", vazio)
 	else:
 		_cartao.add_theme_stylebox_override("panel", _caixa_cartao)
 	for lado in ["left", "right"]:
-		_margem.add_theme_constant_override("margin_" + lado, 0 if cheia else 24)
+		_margem.add_theme_constant_override("margin_" + lado, (12 if caixa != null else 0) if cheia else 24)
 	_fechar_x.visible = estilo.get("fora_fecha", false)
 	_vao_x.visible = _fechar_x.visible and estilo.get("titulo_centro", false)
 	var extra: Callable = estilo.get("titulo_extra", Callable())
@@ -396,7 +405,7 @@ func _ajustar() -> void:
 	await get_tree().process_frame
 	if _estilo.has("tela_cheia"):
 		_margem.add_theme_constant_override("margin_top", int(_estilo["tela_cheia"]))
-		_margem.add_theme_constant_override("margin_bottom", 0)
+		_margem.add_theme_constant_override("margin_bottom", 12 if _estilo.has("caixa") else 0)
 		return
 	var altura_tela := size.y if size.y > 0.0 else 1280.0
 	var conteudo := _painel_conteudo.get_combined_minimum_size().y
