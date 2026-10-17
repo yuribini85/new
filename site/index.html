@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chrome &amp; Wreckage</title>
-<meta name="description" content="Jogo idle de automobilismo para Android: monte a equipe, corra, sobreviva à arena. Inscreva-se no teste fechado.">
+<title>Chrome &amp; Wreckage — jogue antes</title>
+<meta name="description" content="Compre usado, troque peça, tire licença e sobreviva à arena de demolição. Jogo de gestão de equipe para Android. Inscreva-se para jogar antes, de graça.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Chrome & Wreckage — teste fechado">
-<meta property="og:description" content="Monte a equipe, corra e sobreviva à arena. Procuramos testadores Android.">
+<meta property="og:title" content="Chrome & Wreckage — jogue antes do lançamento">
+<meta property="og:description" content="Gestão de equipe de corrida com arena de demolição. Android, grátis. 100 vagas no teste fechado.">
 <meta property="og:image" content="img/compartilhar.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14110f">
 <link rel="icon" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/icone180.png">
+<link rel="preload" href="fontes/BigShouldersDisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: "Big Shoulders"; src: url("fontes/BigShouldersDisplay-Black.woff2") format("woff2"); font-weight: 900; font-display: swap; }
 @font-face { font-family: "Barlow C"; src: url("fontes/BarlowCondensed-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
@@ -31,6 +32,7 @@
   --azul: #1f6f86;
   --erro: #ff7a59;
   --ok: #7fd18b;
+  --zap: #25d366;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -39,120 +41,151 @@ body {
   font: 500 19px/1.45 "Barlow C", "Arial Narrow", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-img { display: block; max-width: 100%; }
+img, video { display: block; max-width: 100%; }
 a { color: var(--ouro); }
 .largura { width: min(1120px, 100% - 32px); margin-inline: auto; }
 h1, h2, h3 { font-family: "Big Shoulders", Impact, sans-serif; font-weight: 900; text-transform: uppercase; line-height: 0.95; letter-spacing: 0.01em; margin: 0; }
-h2 { font-size: clamp(38px, 6vw, 64px); }
+h2 { font-size: clamp(38px, 6vw, 62px); }
 h3 { font-size: 30px; }
 .rotulo { font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; font-size: 15px; color: var(--ouro); }
 
 /* topo */
 .topo { position: absolute; inset: 0 0 auto 0; z-index: 3; }
-.topo .largura { display: flex; justify-content: flex-end; padding-top: 16px; }
+.topo .largura { display: flex; justify-content: flex-end; padding-top: 14px; }
 .idiomas { display: flex; border: 1px solid #ffffff40; border-radius: 6px; overflow: hidden; background: #0008; }
 .idiomas button { all: unset; cursor: pointer; padding: 6px 12px; font-weight: 600; letter-spacing: 0.08em; color: var(--texto-2); }
 .idiomas button[aria-pressed="true"] { background: var(--ouro); color: #1a1205; }
 
-/* abertura */
-.abertura { position: relative; min-height: 100svh; display: grid; place-items: end center; overflow: hidden; isolation: isolate; }
-.abertura .fundo { position: absolute; inset: 0; z-index: -2; display: grid; grid-template-columns: repeat(3, 1fr); }
-.abertura .fundo img { width: 100%; height: 100%; object-fit: cover; }
-.abertura::after { content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(180deg, #14110f55 0%, #14110f30 35%, #14110fcc 70%, var(--fundo) 100%); }
-.abertura .conteudo { text-align: center; padding: 120px 0 64px; }
-.abertura .logo { width: min(760px, 100%); margin: 0 auto 20px; filter: drop-shadow(0 8px 24px #000a); }
-.abertura p.chamada { font-size: clamp(22px, 3vw, 28px); max-width: 640px; margin: 0 auto 28px; text-shadow: 0 2px 10px #000; }
-.botao { display: inline-block; cursor: pointer; border: 0; text-decoration: none;
-  background: var(--ouro); color: #1a1205; font: 900 24px/1 "Big Shoulders", Impact, sans-serif; text-transform: uppercase; letter-spacing: 0.04em;
-  padding: 18px 34px; border-radius: 6px; box-shadow: 0 4px 0 var(--ouro-escuro), 0 10px 30px #f0b42933; transition: transform .12s, box-shadow .12s; }
+/* abertura: promessa + e-mail + gameplay, tudo na primeira tela */
+.abertura { position: relative; overflow: hidden; isolation: isolate; padding: 64px 0 56px; }
+.abertura::before { content: ""; position: absolute; inset: 0; z-index: -2; background: url("img/corrida.webp") center 30% / cover; opacity: .35; }
+.abertura::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #14110f66, var(--fundo) 92%); }
+.abertura .grade { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+.abertura .logo { width: min(560px, 100%); margin: 0 0 22px -6px; filter: drop-shadow(0 8px 24px #000a); }
+.abertura h1 { font-size: clamp(34px, 4.6vw, 54px); }
+.abertura h1 em { font-style: normal; color: var(--ouro); }
+.abertura p.sub { font-size: clamp(20px, 2.2vw, 23px); color: var(--texto); margin: 16px 0 24px; max-width: 560px; }
+.selos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; color: var(--texto-2); font-size: 16px; }
+.selos span { border: 1px solid var(--linha); background: #0007; padding: 3px 10px; border-radius: 99px; }
+.selos .vagas { border-color: var(--ouro); color: var(--ouro); }
+
+/* inscrição: um campo só */
+.inscrever { display: flex; gap: 10px; max-width: 560px; }
+.inscrever input { flex: 1; min-width: 0; }
+.letra-miuda { font-size: 15px; color: var(--texto-2); margin: 10px 0 0; max-width: 560px; }
+.aviso { margin: 10px 0 0; min-height: 1.3em; font-weight: 600; }
+.aviso.erro { color: var(--erro); }
+.oculto { position: absolute; left: -9999px; }
+
+input { font: 500 19px "Barlow C", system-ui, sans-serif; color: var(--texto); background: #0e0c0b; border: 1px solid var(--linha); border-radius: 6px; padding: 14px 16px; }
+input:focus { outline: 2px solid var(--ouro); outline-offset: 1px; border-color: transparent; }
+
+.botao { display: inline-block; cursor: pointer; border: 0; text-decoration: none; white-space: nowrap;
+  background: var(--ouro); color: #1a1205; font: 900 22px/1 "Big Shoulders", Impact, sans-serif; text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 16px 26px; border-radius: 6px; box-shadow: 0 4px 0 var(--ouro-escuro), 0 10px 30px #f0b42933; transition: transform .12s, box-shadow .12s; }
 .botao:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ouro-escuro), 0 14px 34px #f0b42944; }
 .botao:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ouro-escuro); }
 .botao[disabled] { opacity: .6; cursor: progress; }
-.selos { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; color: var(--texto-2); font-size: 16px; }
-.selos span { border: 1px solid var(--linha); background: #0007; padding: 4px 10px; border-radius: 99px; }
+.botao.zap { background: var(--zap); color: #062b14; box-shadow: 0 4px 0 #189c4b; }
+.botao.claro { background: var(--texto); box-shadow: 0 4px 0 #a99f92; }
 
-/* faixa listrada (como a do logo) */
+.celular { border: 8px solid #0b0a09; border-radius: 30px; overflow: hidden; background: #000; box-shadow: 0 24px 60px #000c, 0 0 0 1px #ffffff14; }
+.celular img, .celular video { aspect-ratio: 9 / 16; object-fit: cover; width: 100%; }
+.abertura .celular { max-width: 330px; margin-inline: auto; transform: rotate(2deg); }
+
+/* confirmação */
+.pronto { max-width: 560px; background: #1d1916f2; border: 1px solid var(--ouro); border-radius: 10px; padding: 22px; }
+.pronto h3 { color: var(--ouro); font-size: 34px; }
+.pronto p { color: var(--texto-2); margin: 8px 0 0; }
+.link-pessoal { display: flex; gap: 8px; margin-top: 14px; }
+.link-pessoal input { flex: 1; min-width: 0; font-size: 16px; padding: 10px 12px; }
+.compartilhar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.compartilhar .botao { font-size: 19px; padding: 13px 18px; }
+
 .listras { height: 10px; background: linear-gradient(180deg, var(--azul) 0 33%, var(--texto) 33% 66%, var(--laranja) 66%); }
 
-section { padding: 88px 0; }
-.intro { max-width: 720px; margin: 14px 0 44px; color: var(--texto-2); font-size: 21px; }
+section { padding: 84px 0; }
+.intro { max-width: 720px; margin: 14px 0 40px; color: var(--texto-2); font-size: 21px; }
 
-/* pilares */
-.pilares { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.pilar { background: var(--cartao); border: 1px solid var(--linha); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
-.pilar img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
-.pilar div { padding: 20px 22px 24px; }
-.pilar p { margin: 10px 0 0; color: var(--texto-2); }
+/* motivos */
+.motivos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.motivo { background: var(--cartao); border: 1px solid var(--linha); border-radius: 10px; overflow: hidden; }
+.motivo img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
+.motivo div { padding: 20px 22px 24px; }
+.motivo p { margin: 10px 0 0; color: var(--texto-2); }
+
+/* recompensa de quem testa */
+.fundador { background: var(--fundo-2); }
+.fundador .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.fundador ul { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 14px; }
+.fundador li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
+.fundador li b { display: block; color: var(--texto); }
+.fundador li span { color: var(--texto-2); }
+.fundador .icone { width: 40px; height: 40px; border-radius: 8px; background: var(--ouro); color: #1a1205; display: grid; place-items: center; font: 900 22px "Big Shoulders", Impact, sans-serif; }
+.fundador figure { margin: 0; }
 
 /* telas */
-.telas { background: var(--fundo-2); }
-.fila-telas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
-.celular { border: 8px solid #0b0a09; border-radius: 28px; overflow: hidden; background: #000; box-shadow: 0 20px 50px #0009; }
-.celular img { aspect-ratio: 9 / 16; object-fit: cover; width: 100%; }
+.fila-telas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 36px; }
 .legenda { text-align: center; margin-top: 12px; color: var(--texto-2); }
 
-/* como funciona */
-.passos { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: passo; }
-.passos li { counter-increment: passo; background: var(--cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 22px; }
-.passos li::before { content: counter(passo); display: block; font: 900 46px/1 "Big Shoulders", Impact, sans-serif; color: var(--ouro); margin-bottom: 8px; }
+/* passos */
+.passos { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; counter-reset: passo; }
+.passos li { counter-increment: passo; background: var(--cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 20px; }
+.passos li::before { content: counter(passo); display: block; font: 900 42px/1 "Big Shoulders", Impact, sans-serif; color: var(--ouro); margin-bottom: 8px; }
+.passos h3 { font-size: 26px; }
 .passos p { margin: 8px 0 0; color: var(--texto-2); }
-.requisitos { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px 28px; color: var(--texto-2); }
-.requisitos b { color: var(--texto); }
-
-/* formulário */
-.inscricao { position: relative; isolation: isolate; overflow: hidden; }
-.inscricao::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("img/ferro_velho.webp") center / cover; opacity: .22; }
-.caixa { max-width: 640px; margin: 0 auto; background: #1d1916f2; border: 1px solid var(--linha); border-radius: 12px; padding: 34px; box-shadow: 0 30px 80px #000a; }
-.caixa h2 { text-align: center; }
-.caixa .intro { text-align: center; margin: 12px auto 26px; font-size: 19px; }
-label { display: block; font-weight: 600; margin: 16px 0 6px; }
-label small { font-weight: 500; color: var(--texto-2); }
-input, select { width: 100%; font: 500 19px "Barlow C", system-ui, sans-serif; color: var(--texto); background: var(--fundo); border: 1px solid var(--linha); border-radius: 6px; padding: 12px 14px; }
-input:focus, select:focus { outline: 2px solid var(--ouro); outline-offset: 1px; border-color: transparent; }
-.aceite { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-weight: 500; color: var(--texto-2); }
-.aceite input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: var(--ouro); }
-.caixa .botao { width: 100%; margin-top: 26px; }
-.aviso { margin: 16px 0 0; min-height: 1.4em; text-align: center; font-weight: 600; }
-.aviso.erro { color: var(--erro); }
-.aviso.ok { color: var(--ok); }
-.oculto { position: absolute; left: -9999px; }
-.pronto { text-align: center; padding: 20px 0 6px; }
-.pronto h3 { font-size: 40px; color: var(--ouro); }
-.pronto p { color: var(--texto-2); }
 
 /* quem faz */
-.autor { display: grid; grid-template-columns: 200px 1fr; gap: 36px; align-items: center; max-width: 900px; }
-.autor img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid var(--ouro); }
+.autor { display: grid; grid-template-columns: 180px 1fr; gap: 34px; align-items: center; max-width: 900px; }
+.autor img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 3px solid var(--ouro); }
 .autor p { color: var(--texto-2); margin: 12px 0 0; }
-.autor .nome { color: var(--texto); font-weight: 600; font-size: 22px; margin-top: 16px; }
-@media (max-width: 640px) { .autor { grid-template-columns: 1fr; gap: 20px; } .autor img { width: 140px; height: 140px; } }
+.autor .nome { color: var(--texto); font-weight: 600; }
 
 /* perguntas */
 details { border-bottom: 1px solid var(--linha); padding: 16px 0; }
 summary { cursor: pointer; font-weight: 600; font-size: 21px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
-summary::after { content: "+"; color: var(--ouro); font-weight: 600; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--ouro); }
 details[open] summary::after { content: "–"; }
 details p { color: var(--texto-2); margin: 10px 0 0; max-width: 760px; }
 
-footer { padding: 40px 0 56px; color: var(--texto-2); font-size: 16px; border-top: 1px solid var(--linha); }
+/* chamada final */
+.final { text-align: center; position: relative; isolation: isolate; overflow: hidden; }
+.final::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("img/ferro_velho.webp") center / cover; opacity: .25; }
+.final h2 { margin-bottom: 22px; }
+.final .inscrever, .final .letra-miuda, .final .aviso { margin-inline: auto; }
+
+footer { padding: 36px 0 96px; color: var(--texto-2); font-size: 16px; border-top: 1px solid var(--linha); }
 footer .largura { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
+/* barra fixa no celular, depois da primeira tela */
+.barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: #14110ff2; border-top: 1px solid var(--linha); display: none; transform: translateY(110%); transition: transform .25s; }
+.barra.visivel { transform: none; }
+.barra .botao { width: 100%; text-align: center; }
+
 @media (max-width: 860px) {
-  .pilares, .fila-telas { grid-template-columns: 1fr; }
-  .fila-telas { max-width: 340px; margin-inline: auto; }
+  .abertura { padding-top: 56px; }
+  .abertura .grade, .fundador .grade { grid-template-columns: 1fr; gap: 32px; }
+  .abertura .logo { margin-inline: auto; width: min(300px, 80%); margin-bottom: 14px; }
+  .abertura .texto { text-align: center; }
+  .abertura p.sub, .inscrever, .letra-miuda, .aviso, .pronto { margin-inline: auto; }
+  .selos { justify-content: center; }
+  .abertura .celular { max-width: 260px; transform: none; }
+  .motivos, .fila-telas { grid-template-columns: 1fr; }
+  .fila-telas { max-width: 320px; margin-inline: auto; }
   .passos { grid-template-columns: 1fr 1fr; }
-  .abertura .fundo { grid-template-columns: 1fr; }
-  .abertura .fundo img:not(:first-child) { display: none; }
-  section { padding: 64px 0; }
+  .barra { display: block; }
+  section { padding: 60px 0; }
 }
 @media (max-width: 520px) {
   body { font-size: 18px; }
+  .inscrever { flex-direction: column; }
   .passos { grid-template-columns: 1fr; }
-  .caixa { padding: 24px 18px; }
-  .botao { font-size: 21px; padding: 16px 22px; }
+  .autor { grid-template-columns: 1fr; gap: 18px; }
+  .autor img { width: 130px; height: 130px; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .botao { transition: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .botao, .barra { transition: none; } .abertura .celular { transform: none; } }
 </style>
 </head>
 <body>
@@ -167,20 +200,24 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
 </header>
 
 <main>
-  <section class="abertura">
-    <div class="fundo" aria-hidden="true">
-      <img src="img/corrida.webp" alt="">
-      <img src="img/arena_noite.webp" alt="">
-      <img src="img/mara.webp" alt="">
-    </div>
-    <div class="conteudo largura">
-      <h1><img class="logo" src="img/logo.webp" width="900" height="235" alt="Chrome & Wreckage — Idle Motorsport Manager"></h1>
-      <p class="chamada" data-t="chamada">Você monta a equipe. Os pilotos correm. Na arena, só um carro sai inteiro.</p>
-      <a class="botao" href="#inscricao" data-t="cta">Quero testar</a>
-      <div class="selos">
-        <span data-t="selo1">Android</span>
-        <span data-t="selo2">Grátis</span>
-        <span data-t="selo3">Teste fechado · 100 vagas</span>
+  <section class="abertura" id="topo">
+    <div class="largura grade">
+      <div class="texto">
+        <img class="logo" src="img/logo.webp" width="900" height="235" alt="Chrome & Wreckage — Idle Motorsport Manager">
+        <h1 data-t="h1">Compre usado. Troque peça. Tire licença. <em>Sobreviva à arena.</em></h1>
+        <p class="sub" data-t="sub">Os jogos de corrida dos anos 90 viraram gestão de equipe no celular. Você monta a garagem; seus pilotos correm até com o jogo fechado.</p>
+        <div data-inscricao></div>
+        <div class="selos">
+          <span data-t="selo1">Android</span>
+          <span data-t="selo2">Grátis</span>
+          <span class="vagas" data-t="selo3">100 vagas no teste fechado</span>
+        </div>
+      </div>
+      <div class="celular">
+        <video autoplay muted loop playsinline preload="metadata" poster="img/arena_capa.webp" aria-label="Luta na arena de demolição" data-alt-aria="video_alt">
+          <source src="img/arena.mp4" type="video/mp4">
+          <source src="img/arena.webm" type="video/webm">
+        </video>
       </div>
     </div>
   </section>
@@ -188,39 +225,56 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
 
   <section id="jogo">
     <div class="largura">
-      <span class="rotulo" data-t="jogo_rotulo">O jogo</span>
-      <h2 data-t="jogo_titulo">Gestão de garagem com graxa e metal retorcido</h2>
-      <p class="intro" data-t="jogo_intro">Um jogo idle de automobilismo: você decide, a equipe executa. Compre carros, prepare cada peça, contrate pilotos e mande o time para as provas. As corridas continuam mesmo com o jogo fechado.</p>
-      <div class="pilares">
-        <article class="pilar">
-          <img src="img/corrida.webp" alt="" loading="lazy">
-          <div>
-            <h3 data-t="p1_t">Corridas</h3>
-            <p data-t="p1_d">Seus pilotos disputam campeonatos e licenças, da categoria de clube até a elite. Você escolhe o carro, as peças e a prova; eles cuidam do volante.</p>
-          </div>
-        </article>
-        <article class="pilar">
-          <img src="img/arena_noite.webp" alt="" loading="lazy">
-          <div>
-            <h3 data-t="p2_t">Arena</h3>
-            <p data-t="p2_d">Demolição em duplas. Blinde o carro e escolha bem quem vai: na arena o carro pode ser destruído e sair da sua garagem para sempre.</p>
-          </div>
-        </article>
-        <article class="pilar">
+      <span class="rotulo" data-t="jogo_rotulo">Por que jogar</span>
+      <h2 data-t="jogo_titulo">Três jeitos de ganhar. Um jeito de perder tudo.</h2>
+      <div class="motivos" style="margin-top:36px">
+        <article class="motivo">
           <img src="img/oficina.webp" alt="" loading="lazy">
           <div>
-            <h3 data-t="p3_t">Garagem</h3>
-            <p data-t="p3_d">Mais de 360 carros de fabricantes fictícias, de compactos dos anos 60 a esportivos modernos. Peças, pneus, blindagem e pintura com o seu número.</p>
+            <h3 data-t="m1_t">Garagem de colecionador</h3>
+            <p data-t="m1_d">Mais de 360 carros de fabricantes fictícias, do compacto dos anos 60 ao esportivo moderno. Peças, pneus, blindagem e pintura com o seu número.</p>
+          </div>
+        </article>
+        <article class="motivo">
+          <img src="img/corrida.webp" alt="" loading="lazy">
+          <div>
+            <h3 data-t="m2_t">Corrida sem você ao volante</h3>
+            <p data-t="m2_d">Contrate pilotos, escolha a prova e acompanhe. Licenças do clube até a elite, campeonatos com pontos e renda enquanto você está fora.</p>
+          </div>
+        </article>
+        <article class="motivo">
+          <img src="img/arena_noite.webp" alt="" loading="lazy">
+          <div>
+            <h3 data-t="m3_t">Arena de demolição</h3>
+            <p data-t="m3_d">Lutas em duplas contra equipes rivais. Ganhe peças e dinheiro, ou veja seu carro sair da garagem para sempre.</p>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <section class="telas">
+  <section class="fundador" id="fundador">
+    <div class="largura grade">
+      <div>
+        <span class="rotulo" data-t="f_rotulo">Só para quem testa</span>
+        <h2 data-t="f_titulo">Entre agora, leve isto para sempre</h2>
+        <ul>
+          <li><span class="icone">1</span><div><b data-t="f1_t">Jogue antes de todo mundo</b><span data-t="f1_d">Acesso pela Google Play semanas antes do lançamento.</span></div></li>
+          <li><span class="icone">2</span><div><b data-t="f2_t">Pintura Fundador exclusiva</b><span data-t="f2_d">Uma pintura que nunca vai estar à venda, liberada na sua conta no lançamento.</span></div></li>
+          <li><span class="icone">3</span><div><b data-t="f3_t">Seu nome nos créditos</b><span data-t="f3_d">Quem completar o teste entra na lista de pilotos de teste do jogo.</span></div></li>
+          <li><span class="icone">4</span><div><b data-t="f4_t">Você muda o jogo</b><span data-t="f4_d">Cada resposta é lida por quem decide o que entra na versão final.</span></div></li>
+        </ul>
+      </div>
+      <figure>
+        <img src="img/mara.webp" alt="" loading="lazy" style="border-radius:10px;aspect-ratio:4/5;object-fit:cover;width:100%">
+      </figure>
+    </div>
+  </section>
+
+  <section>
     <div class="largura">
       <span class="rotulo" data-t="telas_rotulo">Do celular</span>
-      <h2 data-t="telas_titulo">Telas do jogo em desenvolvimento</h2>
+      <h2 data-t="telas_titulo">Como o jogo está hoje</h2>
       <div class="fila-telas">
         <figure style="margin:0">
           <div class="celular"><img src="img/tela_corrida.webp" alt="" loading="lazy" data-alt="tela1"></div>
@@ -228,7 +282,7 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
         </figure>
         <figure style="margin:0">
           <div class="celular"><img src="img/tela_arena.webp" alt="" loading="lazy" data-alt="tela2"></div>
-          <figcaption class="legenda" data-t="tela2">Arena de demolição</figcaption>
+          <figcaption class="legenda" data-t="tela2">Resultado da arena</figcaption>
         </figure>
         <figure style="margin:0">
           <div class="celular"><img src="img/tela_oficina.webp" alt="" loading="lazy" data-alt="tela3"></div>
@@ -238,76 +292,21 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
     </div>
   </section>
 
-  <section id="como">
+  <section class="fundador">
     <div class="largura">
       <span class="rotulo" data-t="como_rotulo">Teste fechado</span>
       <h2 data-t="como_titulo">Como funciona</h2>
-      <p class="intro" data-t="como_intro">O jogo vai para a Google Play primeiro para um grupo fechado. Quem entra agora joga antes de todo mundo e ajuda a decidir o que muda.</p>
+      <p class="intro" data-t="como_intro">Precisa de um celular Android e da mesma conta Google que você usa na Play Store.</p>
       <ol class="passos">
-        <li><h3 data-t="s1_t">Inscreva-se</h3><p data-t="s1_d">Preencha o formulário abaixo com o e-mail da sua conta Google.</p></li>
-        <li><h3 data-t="s2_t">Receba o convite</h3><p data-t="s2_d">Quando o teste abrir, mandamos um link da Google Play para esse e-mail.</p></li>
-        <li><h3 data-t="s3_t">Jogue 14 dias</h3><p data-t="s3_d">Instale pela Play Store e jogue alguns minutos por dia, no seu ritmo.</p></li>
-        <li><h3 data-t="s4_t">Conte o que achou</h3><p data-t="s4_d">No fim, um questionário curto: o que travou, o que cansou, o que você quer mais.</p></li>
+        <li><h3 data-t="s1_t">Deixe o e-mail</h3><p data-t="s1_d">O da sua conta Google. Leva 10 segundos.</p></li>
+        <li><h3 data-t="s2_t">Receba o convite</h3><p data-t="s2_d">Quando o teste abrir, chega um link da Google Play.</p></li>
+        <li><h3 data-t="s3_t">Jogue 14 dias</h3><p data-t="s3_d">Alguns minutos por dia. O jogo corre sozinho com o celular no bolso.</p></li>
+        <li><h3 data-t="s4_t">Conte o que achou</h3><p data-t="s4_d">Três perguntas no fim. Pronto: a pintura Fundador é sua.</p></li>
       </ol>
-      <div class="requisitos">
-        <span data-t="r1"><b>Celular Android</b> (iPhone ainda não)</span>
-        <span data-t="r2"><b>Conta Google</b>, a mesma da Play Store</span>
-        <span data-t="r3"><b>Grátis</b>, sem compras obrigatórias</span>
-      </div>
     </div>
   </section>
 
-  <section id="inscricao" class="inscricao">
-    <div class="largura">
-      <div class="caixa">
-        <form id="form" novalidate>
-          <h2 data-t="f_titulo">Quero testar</h2>
-          <p class="intro" data-t="f_intro">Leva menos de um minuto.</p>
-
-          <label for="nome" data-t="f_nome">Nome ou apelido</label>
-          <input id="nome" name="nome" autocomplete="nickname" required maxlength="60">
-
-          <label for="email"><span data-t="f_email">E-mail da conta Google</span> <small data-t="f_email_dica">(o mesmo da Play Store)</small></label>
-          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120">
-
-          <label for="celular"><span data-t="f_celular">Modelo do celular</span> <small data-t="f_opcional">(opcional)</small></label>
-          <input id="celular" name="celular" maxlength="60" data-ph="f_celular_ph" placeholder="Ex.: Galaxy A15, Moto G54">
-
-          <label for="origem" data-t="f_origem">Como conheceu o jogo?</label>
-          <select id="origem" name="origem" required>
-            <option value="" data-t="o0">Escolha</option>
-            <option value="Instagram">Instagram</option>
-            <option value="Forum" data-t="o2">Fórum ou Reddit</option>
-            <option value="Discord">Discord</option>
-            <option value="Amigo" data-t="o4">Indicação de amigo</option>
-            <option value="Outro" data-t="o5">Outro</option>
-          </select>
-
-          <div class="oculto" aria-hidden="true">
-            <label for="site">Site</label><input id="site" name="site" tabindex="-1" autocomplete="off">
-          </div>
-
-          <label class="aceite">
-            <input id="aceite" type="checkbox" required>
-            <span data-t="f_aceite">Concordo em receber o convite do teste por e-mail. Meus dados servem só para o teste e posso pedir a remoção quando quiser.</span>
-          </label>
-
-          <button class="botao" type="submit" data-t="f_enviar">Enviar inscrição</button>
-          <p class="aviso" id="aviso" role="status" aria-live="polite"></p>
-        </form>
-
-        <div class="pronto" id="pronto" hidden>
-          <h3 data-t="ok_t">Inscrição feita</h3>
-          <p data-t="ok_d">Quando o teste abrir, o convite chega no seu e-mail. Fique de olho também na caixa de spam.</p>
-          <p data-t="ok_compartilhe">Conhece alguém com Android que curte carro? Mande este site.</p>
-          <button class="botao" type="button" id="compartilhar" data-t="ok_botao">Compartilhar</button>
-          <p class="aviso ok" id="copiado" role="status" aria-live="polite"></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="autor" class="telas">
+  <section id="autor">
     <div class="largura autor">
       <img src="img/yuri.webp" width="360" height="360" alt="Yuri Bini">
       <div>
@@ -320,18 +319,25 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
     </div>
   </section>
 
-  <section id="perguntas">
+  <section id="perguntas" class="fundador">
     <div class="largura">
       <span class="rotulo" data-t="faq_rotulo">Dúvidas</span>
       <h2 data-t="faq_titulo">Perguntas</h2>
-      <div style="margin-top:28px">
+      <div style="margin-top:24px">
         <details><summary data-t="q1">Paga alguma coisa?</summary><p data-t="a1">Não. O teste é gratuito e nada no jogo é obrigatório para avançar.</p></details>
-        <details><summary data-t="q2">Por que precisa do e-mail da conta Google?</summary><p data-t="a2">A Google Play só libera um teste fechado para as contas convidadas. Se você usar outro e-mail, a Play Store não vai mostrar o jogo para você.</p></details>
+        <details><summary data-t="q2">Por que o e-mail da conta Google?</summary><p data-t="a2">A Google Play só mostra um teste fechado para as contas convidadas. Com outro e-mail, a Play Store não vai mostrar o jogo para você.</p></details>
         <details><summary data-t="q3">Tem para iPhone?</summary><p data-t="a3">Ainda não. O primeiro lançamento é só para Android.</p></details>
-        <details><summary data-t="q4">Quanto tempo tenho que jogar?</summary><p data-t="a4">O teste dura 14 dias. Alguns minutos por dia já ajudam; o jogo continua correndo com ele fechado. Pedimos só que você não desinstale antes do fim.</p></details>
-        <details><summary data-t="q5">Meu progresso continua depois do teste?</summary><p data-t="a5">Ainda pode haver ajustes de equilíbrio durante o teste. Se for preciso zerar o progresso no lançamento, avisamos antes.</p></details>
-        <details><summary data-t="q6">O que vocês fazem com os meus dados?</summary><p data-t="a6">Usamos o nome e o e-mail só para convidar você e falar sobre o teste. Não vendemos nem repassamos. Para sair da lista, responda qualquer e-mail nosso pedindo a remoção.</p></details>
+        <details><summary data-t="q4">Quanto tempo tenho que jogar?</summary><p data-t="a4">O teste dura 14 dias. Alguns minutos por dia bastam; o jogo continua correndo fechado. Só pedimos que você não desinstale antes do fim.</p></details>
+        <details><summary data-t="q5">O progresso continua no lançamento?</summary><p data-t="a5">O equilíbrio ainda pode mudar durante o teste. Se for preciso zerar o progresso, avisamos antes. A pintura Fundador fica de qualquer jeito.</p></details>
+        <details><summary data-t="q6">O que vocês fazem com o meu e-mail?</summary><p data-t="a6">Usamos só para o convite e para falar do teste. Não vendemos nem repassamos. Para sair da lista, responda qualquer e-mail nosso pedindo a remoção.</p></details>
       </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="largura">
+      <h2 data-t="final_titulo">A garagem abre para 100 pilotos</h2>
+      <div data-inscricao></div>
     </div>
   </section>
 </main>
@@ -343,144 +349,229 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
   </div>
 </footer>
 
+<div class="barra" id="barra"><a class="botao" href="#topo" data-t="barra">Quero jogar antes</a></div>
+
+<template id="modelo-inscricao">
+  <form class="form-inscricao" novalidate>
+    <div class="inscrever">
+      <input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="120" data-ph="ph_email" placeholder="Seu e-mail do Google" aria-label="E-mail">
+      <button class="botao" type="submit" data-t="cta">Quero jogar antes</button>
+    </div>
+    <div class="oculto" aria-hidden="true"><input name="site" tabindex="-1" autocomplete="off"></div>
+    <p class="letra-miuda" data-t="miuda">Use o e-mail da Play Store. Ao enviar, você aceita receber o convite do teste; seu e-mail não é repassado.</p>
+    <p class="aviso" role="status" aria-live="polite"></p>
+  </form>
+</template>
+
+<template id="modelo-pronto">
+  <div class="pronto">
+    <h3 data-t="ok_t">Vaga garantida</h3>
+    <p data-t="ok_d">Quando o teste abrir, o convite chega no seu e-mail (confira o spam também).</p>
+    <p data-t="ok_convite"><b>Chame um amigo para a sua equipe.</b> Quem entra pelo seu link fica registrado como indicação sua.</p>
+    <div class="link-pessoal"><input readonly aria-label="Link"><button class="botao claro" type="button" data-copiar data-t="copiar">Copiar</button></div>
+    <div class="compartilhar">
+      <a class="botao zap" target="_blank" rel="noopener" data-zap>WhatsApp</a>
+      <button class="botao" type="button" data-partilhar data-t="ok_botao">Compartilhar</button>
+    </div>
+  </div>
+</template>
+
 <script>
 // Formulário do Google ligado ao site (ver LEIA-ME.md): o id do formulário
 // publicado e o número "entry." de cada pergunta.
 const FORMULARIO = {
-  id: "",           // ex.: "1FAIpQLSc..."
-  nome: "",         // ex.: "entry.123456789"
-  email: "",
-  celular: "",
-  origem: "",
+  id: "",          // ex.: "1FAIpQLSc..."
+  email: "",       // ex.: "entry.123456789"
+  origem: "",      // de onde veio (?ref= ou ?utm_source=, ou o site anterior)
+  indicado_por: "",// código de quem indicou (?i=)
+  codigo: "",      // código próprio deste inscrito (para as indicações dele)
   idioma: "",
 };
+// Contagem de visitas (opcional, sem cookies): o código do GoatCounter, ex.: "chromewreckage".
+const GOATCOUNTER = "";
 
 const TEXTOS = {
   en: {
-    chamada: "You build the team. Your drivers race. In the arena, only one car leaves in one piece.",
-    cta: "I want to test",
-    selo1: "Android", selo2: "Free", selo3: "Closed test · 100 spots",
-    jogo_rotulo: "The game",
-    jogo_titulo: "Garage management with grease and twisted metal",
-    jogo_intro: "An idle motorsport game: you make the calls, the team does the work. Buy cars, tune every part, hire drivers and send them to race. Races keep running even with the game closed.",
-    p1_t: "Racing", p1_d: "Your drivers chase championships and licenses, from club level to the elite. You pick the car, the parts and the event; they handle the wheel.",
-    p2_t: "Arena", p2_d: "Team demolition derby. Armor up and choose wisely: in the arena a car can be wrecked and leave your garage for good.",
-    p3_t: "Garage", p3_d: "Over 360 cars from fictional makers, from 60s compacts to modern sports cars. Parts, tires, armor and a paint job with your number.",
-    telas_rotulo: "On your phone", telas_titulo: "Work-in-progress screens",
-    tela1: "Live race", tela2: "Demolition arena", tela3: "Workshop and parts",
+    h1: "Buy used. Swap parts. Earn licenses. <em>Survive the arena.</em>",
+    sub: "The 90s racing games, reborn as a team manager on your phone. You build the garage; your drivers race even with the game closed.",
+    selo1: "Android", selo2: "Free", selo3: "100 spots in the closed test",
+    video_alt: "Demolition arena fight",
+    cta: "Play it first", barra: "Play it first", ph_email: "Your Google email",
+    miuda: "Use your Play Store email. By signing up you agree to receive the test invite; your email is never shared.",
+    jogo_rotulo: "Why play", jogo_titulo: "Three ways to win. One way to lose it all.",
+    m1_t: "A collector's garage", m1_d: "Over 360 cars from fictional makers, from 60s compacts to modern sports cars. Parts, tires, armor and a paint job with your number.",
+    m2_t: "Racing without the wheel", m2_d: "Hire drivers, pick the event and watch. Licenses from club to elite, point championships and income while you're away.",
+    m3_t: "Demolition arena", m3_d: "Tag-team fights against rival crews. Win parts and cash, or watch your car leave the garage for good.",
+    f_rotulo: "Testers only", f_titulo: "Join now, keep this forever",
+    f1_t: "Play before everyone", f1_d: "Google Play access weeks before launch.",
+    f2_t: "Exclusive Founder livery", f2_d: "A paint job that will never be sold, unlocked on your account at launch.",
+    f3_t: "Your name in the credits", f3_d: "Everyone who finishes the test joins the game's test driver list.",
+    f4_t: "You shape the game", f4_d: "Every answer is read by the person who decides what makes the final cut.",
+    telas_rotulo: "On your phone", telas_titulo: "The game today",
+    tela1: "Live race", tela2: "Arena result", tela3: "Workshop and parts",
     como_rotulo: "Closed test", como_titulo: "How it works",
-    como_intro: "The game launches on Google Play to a closed group first. Join now to play before everyone else and help decide what changes.",
-    s1_t: "Sign up", s1_d: "Fill in the form below with your Google account email.",
-    s2_t: "Get the invite", s2_d: "When the test opens, we send a Google Play link to that email.",
-    s3_t: "Play 14 days", s3_d: "Install from the Play Store and play a few minutes a day, at your own pace.",
-    s4_t: "Tell us", s4_d: "At the end, a short survey: what got in your way, what got boring, what you want more of.",
-    r1: "<b>Android phone</b> (no iPhone yet)", r2: "<b>Google account</b>, the one on your Play Store", r3: "<b>Free</b>, no required purchases",
-    f_titulo: "I want to test", f_intro: "Takes less than a minute.",
-    f_nome: "Name or nickname", f_email: "Google account email", f_email_dica: "(same as the Play Store)",
-    f_celular: "Phone model", f_opcional: "(optional)", f_celular_ph: "e.g. Galaxy A15, Pixel 7a",
-    f_origem: "How did you hear about the game?", o0: "Choose", o2: "Forum or Reddit", o4: "A friend", o5: "Other",
-    f_aceite: "I agree to receive the test invite by email. My data is used only for the test and I can ask for removal at any time.",
-    f_enviar: "Sign me up",
-    e_nome: "Tell us your name or nickname.", e_email: "Check the email: it must be your Google account.", e_origem: "Choose how you heard about the game.",
-    e_aceite: "Tick the box to agree to the invite email.", e_envio: "Could not send. Check your connection and try again.",
-    e_desligado: "Sign-ups are not open yet. Come back soon.", enviando: "Sending…",
-    ok_t: "You're in", ok_d: "When the test opens, the invite goes to your email. Check the spam folder too.",
-    ok_compartilhe: "Know someone with Android who loves cars? Send them this site.", ok_botao: "Share", copiado: "Link copied.",
-    faq_rotulo: "Questions", faq_titulo: "FAQ",
-    q1: "Does it cost anything?", a1: "No. The test is free and nothing in the game is required to progress.",
-    q2: "Why do you need my Google account email?", a2: "Google Play only opens a closed test to invited accounts. If you use a different email, the Play Store won't show you the game.",
-    q3: "Is there an iPhone version?", a3: "Not yet. The first release is Android only.",
-    q4: "How long do I have to play?", a4: "The test lasts 14 days. A few minutes a day helps; the game keeps racing while closed. We only ask that you don't uninstall before the end.",
-    q5: "Will my progress carry over?", a5: "Balance may still change during the test. If progress has to be reset at launch, we'll let you know first.",
-    q6: "What do you do with my data?", a6: "We use your name and email only to invite you and talk about the test. We don't sell or share it. To leave the list, reply to any of our emails asking for removal.",
-    rodape: "Cars, makers, tracks and characters are fictional.",
+    como_intro: "You need an Android phone and the same Google account you use on the Play Store.",
+    s1_t: "Drop your email", s1_d: "Your Google account one. Takes 10 seconds.",
+    s2_t: "Get the invite", s2_d: "When the test opens, a Google Play link arrives.",
+    s3_t: "Play 14 days", s3_d: "A few minutes a day. The game races on its own in your pocket.",
+    s4_t: "Tell us", s4_d: "Three questions at the end. Done: the Founder livery is yours.",
     autor_rotulo: "Who makes it", autor_titulo: "An independent project",
     autor_d1: "Chrome &amp; Wreckage is made by Yuri Bini, an architect and urban planner from Itapema, Brazil. The same design method applied to buildings goes into the game's garages, tracks and arenas.",
     autor_d2: "There's no big studio behind it: every test answer is read by the person who decides what changes in the game.",
     autor_link: "architecture work",
-    titulo_pagina: "Chrome & Wreckage — closed test",
+    faq_rotulo: "Questions", faq_titulo: "FAQ",
+    q1: "Does it cost anything?", a1: "No. The test is free and nothing in the game is required to progress.",
+    q2: "Why my Google account email?", a2: "Google Play only shows a closed test to invited accounts. With a different email, the Play Store won't show you the game.",
+    q3: "Is there an iPhone version?", a3: "Not yet. The first release is Android only.",
+    q4: "How long do I have to play?", a4: "The test lasts 14 days. A few minutes a day is enough; the game keeps racing while closed. We only ask that you don't uninstall before the end.",
+    q5: "Will my progress carry over?", a5: "Balance may still change during the test. If progress has to be reset, we'll tell you first. The Founder livery stays either way.",
+    q6: "What do you do with my email?", a6: "We use it only for the invite and to talk about the test. We don't sell or share it. To leave the list, reply to any of our emails asking for removal.",
+    final_titulo: "The garage opens to 100 drivers",
+    rodape: "Cars, makers, tracks and characters are fictional.",
+    ok_t: "Spot secured", ok_d: "When the test opens, the invite goes to your email (check spam too).",
+    ok_convite: "<b>Bring a friend onto your team.</b> Anyone who signs up through your link counts as your referral.",
+    copiar: "Copy", copiado: "Copied", ok_botao: "Share",
+    zap_texto: "I signed up to play Chrome & Wreckage before launch (racing team manager + demolition arena, Android, free). Grab a spot:",
+    e_email: "Check the email: it must be your Google account.", e_envio: "Could not send. Check your connection and try again.",
+    e_desligado: "Sign-ups open soon. Come back in a few days.", enviando: "Sending…",
+    titulo_pagina: "Chrome & Wreckage — play it first",
   },
 };
 
 const pt = {};
 document.querySelectorAll("[data-t]").forEach(el => pt[el.dataset.t] = el.innerHTML);
-document.querySelectorAll("[data-ph]").forEach(el => pt[el.dataset.ph] = el.placeholder);
+for (const m of ["modelo-inscricao", "modelo-pronto"]) {
+  document.getElementById(m).content.querySelectorAll("[data-t]").forEach(el => pt[el.dataset.t] = el.innerHTML);
+}
 Object.assign(pt, {
-  e_nome: "Diga seu nome ou apelido.", e_email: "Confira o e-mail: precisa ser o da sua conta Google.", e_origem: "Escolha como conheceu o jogo.",
-  e_aceite: "Marque a caixa para concordar com o e-mail do convite.", e_envio: "Não foi possível enviar. Confira a conexão e tente de novo.",
-  e_desligado: "As inscrições ainda não abriram. Volte em breve.", enviando: "Enviando…", copiado: "Link copiado.",
-  titulo_pagina: "Chrome & Wreckage — teste fechado",
+  ph_email: "Seu e-mail do Google", video_alt: "Luta na arena de demolição", copiado: "Copiado",
+  zap_texto: "Me inscrevi para jogar Chrome & Wreckage antes do lançamento (gestão de equipe de corrida + arena de demolição, Android, grátis). Garanta sua vaga:",
+  e_email: "Confira o e-mail: precisa ser o da sua conta Google.", e_envio: "Não foi possível enviar. Confira a conexão e tente de novo.",
+  e_desligado: "As inscrições abrem em breve. Volte em alguns dias.", enviando: "Enviando…",
+  titulo_pagina: "Chrome & Wreckage — jogue antes",
 });
 TEXTOS.pt = pt;
 
 let idioma = "pt";
-function t(chave) { return TEXTOS[idioma][chave] ?? TEXTOS.pt[chave] ?? chave; }
+const t = chave => TEXTOS[idioma][chave] ?? TEXTOS.pt[chave] ?? chave;
+
+function traduzir(raiz) {
+  raiz.querySelectorAll("[data-t]").forEach(el => el.innerHTML = t(el.dataset.t));
+  raiz.querySelectorAll("[data-ph]").forEach(el => el.placeholder = t(el.dataset.ph));
+  raiz.querySelectorAll("[data-alt]").forEach(el => el.alt = t(el.dataset.alt));
+  raiz.querySelectorAll("[data-alt-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.altAria)));
+}
 
 function aplicarIdioma(novo) {
   idioma = TEXTOS[novo] ? novo : "pt";
   document.documentElement.lang = idioma === "pt" ? "pt-BR" : "en";
-  document.querySelectorAll("[data-t]").forEach(el => el.innerHTML = t(el.dataset.t));
-  document.querySelectorAll("[data-ph]").forEach(el => el.placeholder = t(el.dataset.ph));
-  document.querySelectorAll("[data-alt]").forEach(el => el.alt = t(el.dataset.alt));
+  traduzir(document);
   document.querySelectorAll("[data-idioma]").forEach(b => b.setAttribute("aria-pressed", b.dataset.idioma === idioma));
   document.title = t("titulo_pagina");
+  atualizarZap();
   try { localStorage.setItem("idioma", idioma); } catch (e) {}
 }
 
-document.querySelectorAll("[data-idioma]").forEach(b => b.addEventListener("click", () => aplicarIdioma(b.dataset.idioma)));
+// ---- origem e indicação: ?ref=reddit / ?utm_source=instagram / ?i=CODIGO
+const parametros = new URLSearchParams(location.search);
+function lerGuardado(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
+function guardar(chave, valor) { try { localStorage.setItem(chave, valor); } catch (e) {} }
+const origem = parametros.get("ref") || parametros.get("utm_source") || lerGuardado("origem")
+  || (document.referrer ? new URL(document.referrer).hostname : "direto");
+guardar("origem", origem);
+const indicadoPor = parametros.get("i") || lerGuardado("indicado_por") || "";
+if (indicadoPor) guardar("indicado_por", indicadoPor);
 
-// ?lang=en no link (para divulgar em fóruns de fora), depois a escolha guardada, depois o navegador.
-(function () {
-  const daUrl = new URLSearchParams(location.search).get("lang");
-  let guardado = null;
-  try { guardado = localStorage.getItem("idioma"); } catch (e) {}
-  const doNavegador = (navigator.language || "pt").toLowerCase().startsWith("pt") ? "pt" : "en";
-  aplicarIdioma(daUrl || guardado || doNavegador);
-})();
+async function codigoDe(email) {
+  const dados = new TextEncoder().encode(email.toLowerCase());
+  const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", dados));
+  return Array.from(hash.slice(0, 4), b => b.toString(36).padStart(2, "0")).join("").slice(0, 7).toUpperCase();
+}
 
-const form = document.getElementById("form");
-const aviso = document.getElementById("aviso");
+function linkPessoal(codigo) { return location.origin + location.pathname + "?i=" + codigo; }
 
-function avisar(texto, tipo) { aviso.textContent = texto; aviso.className = "aviso " + (tipo || ""); }
+let meuCodigo = lerGuardado("codigo") || "";
 
-form.addEventListener("submit", async ev => {
+function atualizarZap() {
+  document.querySelectorAll("[data-zap]").forEach(a => {
+    a.href = "https://wa.me/?text=" + encodeURIComponent(t("zap_texto") + " " + linkPessoal(meuCodigo));
+  });
+}
+
+function mostrarPronto() {
+  document.querySelectorAll("[data-inscricao]").forEach(lugar => {
+    const pronto = document.getElementById("modelo-pronto").content.cloneNode(true);
+    traduzir(pronto);
+    pronto.querySelector(".link-pessoal input").value = linkPessoal(meuCodigo);
+    lugar.replaceChildren(pronto);
+  });
+  atualizarZap();
+  document.querySelectorAll("[data-copiar]").forEach(b => b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(linkPessoal(meuCodigo)); b.textContent = t("copiado"); } catch (e) {}
+  }));
+  document.querySelectorAll("[data-partilhar]").forEach(b => b.addEventListener("click", async () => {
+    try { if (navigator.share) await navigator.share({ title: "Chrome & Wreckage", text: t("zap_texto"), url: linkPessoal(meuCodigo) }); } catch (e) {}
+  }));
+  document.getElementById("barra").remove();
+}
+
+async function enviar(ev) {
   ev.preventDefault();
-  const v = id => document.getElementById(id).value.trim();
-  if (v("site")) return;  // robô preencheu o campo escondido
-  if (!v("nome")) return avisar(t("e_nome"), "erro");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v("email"))) return avisar(t("e_email"), "erro");
-  if (!v("origem")) return avisar(t("e_origem"), "erro");
-  if (!document.getElementById("aceite").checked) return avisar(t("e_aceite"), "erro");
+  const form = ev.target;
+  const aviso = form.querySelector(".aviso");
+  const avisar = (texto, tipo) => { aviso.textContent = texto; aviso.className = "aviso " + (tipo || ""); };
+  const email = form.email.value.trim();
+  if (form.site.value) return;  // robô preencheu o campo escondido
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return avisar(t("e_email"), "erro");
   if (!FORMULARIO.id) return avisar(t("e_desligado"), "erro");
 
+  meuCodigo = await codigoDe(email);
   const dados = new URLSearchParams();
-  for (const campo of ["nome", "email", "celular", "origem"]) {
-    if (FORMULARIO[campo]) dados.append(FORMULARIO[campo], v(campo));
+  const campos = { email, origem, indicado_por: indicadoPor, codigo: meuCodigo, idioma };
+  for (const [campo, valor] of Object.entries(campos)) {
+    if (FORMULARIO[campo]) dados.append(FORMULARIO[campo], valor);
   }
-  if (FORMULARIO.idioma) dados.append(FORMULARIO.idioma, idioma);
-
-  const botao = form.querySelector("button[type=submit]");
+  const botao = form.querySelector("button");
   botao.disabled = true;
   avisar(t("enviando"));
   try {
     // O Google Forms não responde a outros sites (no-cors): sem erro de rede, a resposta foi gravada.
     await fetch(`https://docs.google.com/forms/d/e/${FORMULARIO.id}/formResponse`, { method: "POST", mode: "no-cors", body: dados });
-    form.hidden = true;
-    document.getElementById("pronto").hidden = false;
+    guardar("codigo", meuCodigo);
+    mostrarPronto();
+    if (window.goatcounter?.count) window.goatcounter.count({ path: "inscricao", title: "Inscrição", event: true });
   } catch (e) {
     avisar(t("e_envio"), "erro");
     botao.disabled = false;
   }
+}
+
+document.querySelectorAll("[data-inscricao]").forEach(lugar => {
+  lugar.append(document.getElementById("modelo-inscricao").content.cloneNode(true));
+  lugar.querySelector("form").addEventListener("submit", enviar);
 });
 
-document.getElementById("compartilhar").addEventListener("click", async () => {
-  const url = location.origin + location.pathname;
-  try {
-    if (navigator.share) return await navigator.share({ title: "Chrome & Wreckage", url });
-    await navigator.clipboard.writeText(url);
-    document.getElementById("copiado").textContent = t("copiado");
-  } catch (e) {}
-});
+document.querySelectorAll("[data-idioma]").forEach(b => b.addEventListener("click", () => aplicarIdioma(b.dataset.idioma)));
+{
+  const doNavegador = (navigator.language || "pt").toLowerCase().startsWith("pt") ? "pt" : "en";
+  aplicarIdioma(parametros.get("lang") || lerGuardado("idioma") || doNavegador);
+}
+if (meuCodigo) mostrarPronto();
+
+// barra fixa aparece quando a primeira tela sai de vista
+const barra = document.getElementById("barra");
+if (barra && "IntersectionObserver" in window) {
+  new IntersectionObserver(([e]) => barra?.classList.toggle("visivel", !e.isIntersecting))
+    .observe(document.querySelector(".abertura"));
+}
+
+if (GOATCOUNTER) {
+  const s = document.createElement("script");
+  s.async = true;
+  s.dataset.goatcounter = `https://${GOATCOUNTER}.goatcounter.com/count`;
+  s.src = "https://gc.zgo.at/count.js";
+  document.head.append(s);
+}
 </script>
 </body>
 </html>

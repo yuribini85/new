@@ -9,7 +9,12 @@ Este diretório tem `.gdignore` para o Godot não importar as imagens no projeto
 ## 1. Formulário do Google (onde caem as inscrições)
 
 1. Em forms.google.com, crie um formulário em branco com 5 perguntas, **todas do tipo
-   "Resposta curta"**, nesta ordem: `Nome`, `E-mail`, `Celular`, `Origem`, `Idioma`.
+   "Resposta curta"**, nesta ordem: `E-mail`, `Origem`, `Indicado por`, `Código`, `Idioma`.
+   O visitante só digita o e-mail; o resto o site preenche sozinho:
+   - `Origem`: de onde veio (`?ref=reddit`, `?utm_source=instagram`, ou o site anterior).
+   - `Código`: o código pessoal do inscrito; o link dele para indicar é `?i=CÓDIGO`.
+   - `Indicado por`: o código de quem indicou. Contar quantas vezes cada código aparece
+     nessa coluna dá o ranking de indicações.
    - Não ligue "Coletar endereços de e-mail" nem "Restringir a usuários": isso obriga
      login e o envio pelo site falha.
    - Não marque nenhuma como obrigatória (o site já confere).
@@ -46,5 +51,21 @@ inscrição do teste e mandar por e-mail para a lista.
 
 ## Divulgação
 
-- Link em inglês para fóruns de fora: `https://seudominio.com/?lang=en`
-- Imagem de prévia para redes: `img/compartilhar.jpg` (1200×630)
+Use um `ref` diferente em cada lugar onde postar, para saber o que trouxe gente:
+
+- Instagram (bio): `https://seudominio.com/?ref=instagram`
+- Reddit: `https://seudominio.com/?ref=reddit&lang=en`
+- Grupos de WhatsApp: `https://seudominio.com/?ref=whatsapp`
+- Fórum X: `https://seudominio.com/?ref=forum-x`
+
+Imagem de prévia para redes: `img/compartilhar.jpg` (1200×630). Vídeo da arena para
+stories e posts: `img/arena.mp4` (14 s, vertical, sem som).
+
+Contagem de visitas (para saber a taxa de inscrição por origem): crie uma conta grátis em
+goatcounter.com e ponha o código na constante `GOATCOUNTER` do `index.html`. Não usa
+cookies, então não precisa de aviso de cookies.
+
+## Promessas da página que dependem do jogo
+
+A página promete a quem completar o teste: **pintura Fundador exclusiva** e **nome nos
+créditos**. As duas precisam existir no jogo até o lançamento.
