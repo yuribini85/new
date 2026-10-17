@@ -2,12 +2,22 @@
 .godot/
 .import/
 export.cfg
-export_presets.cfg
 *.translation
 
 # Capturas locais de QA (não fazem parte do jogo)
 /captures/
+/build/
 
 # OS
 Thumbs.db
 .DS_Store
+
+# Tabelas extraídas do jogo de referência (uso interno, nunca versionar)
+/referencia/
+/referencia*.csv
+
+# Python
+__pycache__/
+/versao.txt
+# Chave do selo do save (Selo): gravada pelo CI a partir do segredo SELO_CHAVE
+/chave_selo.txt

@@ -1,0 +1,108 @@
+class_name NomeAdmin
+extends Control
+## Nome do administrador (decisão 73): o painel que vem depois de a Mara
+## perguntar "como devo chamar você?". Só o nome (sem rosto nem passado); não
+## fecha sem um nome. Fica no alto da tela, longe do teclado do celular.
+
+signal confirmado(nome: String)
+
+const NOME_MAX := 20
+
+var _campo: LineEdit
+var _ok: Button
+
+
+## `cenario`: o fundo da cena que pergunta (a oficina da Mara), para o painel
+## não aparecer sobre uma aba vazia.
+func _init(atual := "", cenario: Texture2D = null) -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	if cenario != null:
+		var img := TextureRect.new()
+		img.texture = cenario
+		img.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme
+		img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(img)
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.72)
+	fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(fundo)
+	var cartao := PanelContainer.new()
+	var estilo := StyleBoxFlat.new()
+	estilo.bg_color = Color(0.09, 0.09, 0.1, 0.96)
+	estilo.border_color = Aba.COR_DESTAQUE
+	estilo.border_width_left = 4
+	estilo.set_corner_radius_all(6)
+	estilo.set_content_margin_all(28)
+	cartao.add_theme_stylebox_override("panel", estilo)
+	cartao.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	cartao.offset_left = -310
+	cartao.offset_right = 310
+	cartao.offset_top = 220
+	cartao.grow_vertical = Control.GROW_DIRECTION_END
+	add_child(cartao)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 18)
+	cartao.add_child(v)
+	var titulo := Label.new()
+	titulo.text = "COMO VOCÊ SE CHAMA?"
+	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	Tipografia.rotulo(titulo, "semibold", 24)
+	titulo.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+	v.add_child(titulo)
+	_campo = LineEdit.new()
+	_campo.text = atual
+	_campo.placeholder_text = "Toque para digitar"
+	_campo.virtual_keyboard_enabled = true
+	_campo.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_DEFAULT
+	_campo.max_length = NOME_MAX
+	_campo.custom_minimum_size.y = 72
+	_campo.add_theme_font_size_override("font_size", 30)
+	_campo.text_changed.connect(func(_t): _atualizar())
+	_campo.text_submitted.connect(func(_t): _confirmar())
+	v.add_child(_campo)
+	_ok = Button.new()
+	Tipografia.acao_primaria(_ok, "Confirmar", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
+	_ok.pressed.connect(_confirmar)
+	v.add_child(_ok)
+	_atualizar()
+
+
+func _ready() -> void:
+	modulate.a = 0.0
+	create_tween().tween_property(self, "modulate:a", 1.0, 0.25)
+	# No celular o teclado só abre com o toque no campo (o navegador exige o
+	# gesto): o foco automático deixaria o campo "já focado" e o toque não
+	# abriria nada. Com teclado físico, já entra digitando.
+	if not DisplayServer.is_touchscreen_available():
+		_campo.grab_focus()
+
+
+func nome() -> String:
+	return _campo.text.strip_edges()
+
+
+## O botão nunca fica desabilitado: no navegador do celular, o teclado virtual
+## preenche o campo sem o sinal text_changed, e o Confirmar ficava travado
+## mesmo com o nome escrito. Vazio, ele só fica apagado; o texto é conferido
+## a cada quadro e no toque.
+func _atualizar() -> void:
+	_ok.modulate.a = 0.55 if nome() == "" else 1.0
+
+
+func _process(_delta: float) -> void:
+	_atualizar()
+
+
+func _confirmar() -> void:
+	if nome() == "":
+		# Sem nome: o campo pisca e volta a pedir o texto.
+		var tw := create_tween()
+		tw.tween_property(_campo, "modulate", Color(1.6, 1.3, 0.6), 0.12)
+		tw.tween_property(_campo, "modulate", Color.WHITE, 0.25)
+		_campo.grab_focus()
+		return
+	confirmado.emit(nome())
+	queue_free()

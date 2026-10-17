@@ -1,0 +1,87 @@
+{
+ "_nota": "Gestão da equipe do jogador (Chrome & Wreckage; aba Equipe). Abre com a equipe (licença International, flag SECOND_DRIVER_CREATED). PRÊMIO DE REFERÊNCIA: a média do prêmio de 1º lugar das provas de uma licença (Patrocinio.premio_referencia). Todos os fatores abaixo multiplicam esse prêmio e são PROVISÓRIOS até o playtest (critério aprovado; valores a medir). Patrocínio: renda por hora corrida no relógio real, também com o app fechado (até carreira.json → teto_offline_s de ausência, como as corridas), mais um bônus quando a corrida cumpre a condição do patrocinador. Desmanche: desmontar um carro vira crédito para peças. Sede: melhorias compradas com o caixa. Treino do piloto (decisão 54): cada nível soma `passo` de consistência ao piloto do jogador, até o teto da maior licença dele; o nível n leva tempo_base_h × n horas no relógio real (também com o app fechado) e custa custo_fator × n prêmios de referência da maior licença.",
+ "patrocinio": {
+  "ofertas": 3,
+  "renda_hora_fator": 1.66,
+  "_renda_hora_fator": "Decisão do usuário (2026-10-17): cada contrato paga por hora 20% do que o jogador ganha correndo. Medido (playtest da campanha, 3 perfis, 10 h): correndo rende ~8,3 prêmios de 1º lugar da licença por hora (Club ~1.600 giros/h sobre prêmio médio 194; Sport ~2.200 sobre 258). 0,2 × 8,3 = 1,66 × o prêmio de referência.",
+  "bonus_fator": 0.5,
+  "contratos_base": 1,
+  "teto_offline_h_base": 2,
+  "teto_offline_h_por_titulo": 1,
+  "_teto_offline": "Decisão 104 (usuário, 2026-10-17): a capacidade de renda offline começa em teto_offline_h_base e cada título de série soma teto_offline_h_por_titulo; o contrato de patrocínio dura essa capacidade e paga todas as horas dela, com o jogo aberto ou fechado.",
+  "bonus_condicao": {
+   "podio": 1.0,
+   "vitoria": 1.21,
+   "etapa": 1.53,
+   "licenca:INTERNATIONAL": 1.46
+  },
+  "_bonus_condicao": "Gerado por tools/calibrar_bonus.gd (600 min por perfil): frequência do pódio ÷ frequência da condição, medida no playtest automático. Condição ausente vale 1."
+ },
+ "desmanche": {
+  "fator_pecas": 0.5
+ },
+ "sede": [
+  {
+   "id": "escritorio",
+   "nome": "Escritório comercial",
+   "descricao": "Mais um contrato de patrocínio ao mesmo tempo.",
+   "efeito": "contratos",
+   "por_nivel": 1,
+   "niveis": 2,
+   "custo_fator": 4.0
+  },
+  {
+   "id": "marketing",
+   "nome": "Marketing",
+   "descricao": "Patrocinadores pagam mais por hora.",
+   "efeito": "renda",
+   "por_nivel": 0.1,
+   "niveis": 3,
+   "custo_fator": 3.0
+  },
+  {
+   "id": "hospitalidade",
+   "nome": "Hospitalidade",
+   "descricao": "Bônus maior quando a corrida cumpre a condição do patrocinador.",
+   "efeito": "bonus",
+   "por_nivel": 0.2,
+   "niveis": 3,
+   "custo_fator": 2.5
+  },
+  {
+   "id": "patio",
+   "nome": "Pátio de desmanche",
+   "descricao": "Desmontar um carro rende mais crédito de peças.",
+   "efeito": "desmanche",
+   "por_nivel": 0.15,
+   "niveis": 3,
+   "custo_fator": 2.0
+  }
+ ],
+ "sede_licenca_custo": "INTERNATIONAL",
+ "treino": {
+  "passo": 0.00234,
+  "niveis": 3,
+  "tempo_base_h": 1.0,
+  "custo_fator": 0.25,
+  "teto": {
+   "INTERNATIONAL": 1.007,
+   "PRO": 1.007,
+   "ELITE": 1.007
+  },
+  "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde).",
+  "_passo": "GERADO por tools/calibrar_treino.py: o maior teto dividido em `niveis` (3, decisão do usuário).",
+  "cansaco": 0.2,
+  "_cansaco": "Decisão 70 (aprovado pelo usuário): quanto da consistência o piloto perde correndo com a energia em zero (proporcional ao que falta): 0,2, a mesma perda do segundo piloto. A corrida guarda o piloto da inscrição.",
+  "xp_por_nivel": 3,
+  "embalo_vitorias": 3,
+  "embalo_fator_tempo": 0.5,
+  "_xp": "Decisão 71 (aprovado): a cada 'xp_por_nivel' provas (corridas do piloto de corrida, lutas dos de arena) o piloto ganha um nível de treino, até o teto da licença; 3 = as etapas de uma série de campeonato. 'embalo_vitorias' vitórias seguidas deixam o próximo treino com 'embalo_fator_tempo' do tempo."
+ },
+ "pintura": {
+  "_nota": "Oficina → PINTURA (pedido do usuário, 2026-10-11): trocar a cor da carroceria e pintar faixas custa um fator sobre o prêmio de 1º lugar médio da maior licença do jogador (o mesmo critério da Sede e do treino). null = preço a definir (vale 0 até o usuário decidir).",
+  "fator_cor": null,
+  "fator_faixas": null
+ },
+ "_nota_patrocinio_teto": "Decisão 85 (usuário): com o app fechado o patrocínio rende até teto_offline_h_base horas na primeira licença e mais teto_offline_h_por_licenca hora a cada licença conquistada depois (o teto das corridas, carreira.teto_offline_s, não vale para ele). Na campanha do dono o patrocínio abre depois da primeira corrida com a licença Club (flag PATROCINIO_LIBERADO); caixa e sede seguem na International."
+}

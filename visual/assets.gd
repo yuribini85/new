@@ -1,0 +1,119 @@
+class_name Assets
+extends RefCounted
+## Carregador central de arte (documento de implementação, seção 30):
+## get_asset(id, variante) devolve a textura da entidade, ou null quando o
+## arquivo ainda não existe; quem chama mostra o placeholder (iniciais na cor do
+## personagem, nome da equipe em texto). A arte nova entra só pondo o arquivo no
+## caminho que os dados já indicam, sem mexer nas telas.
+##
+## Variantes: "retrato" (personagens.json, campo `retrato`; piloto: o dele em
+## arte/pilotos/<id>.webp, senão um genérico), "corpo" (corpo inteiro do diálogo: <pasta do retrato>/corpo/
+## <nome>.webp; com id "<personagem>@<pose>", <nome>_<pose>.webp), "logo" (equipe, campo `logo`), "ui" (arte/ui/<id>.png), "cenario"
+## (fundo das cenas: arte/cenarios/<id>.webp) e "ilustracao" (quadro de um momento
+## da história: arte/cenas/<id>.webp); os ids estão em data/historia.json.
+
+## Caminho de cada entidade ("" sem arquivo). Só o caminho: a textura fica na
+## memória enquanto alguma tela a usa (o ResourceLoader reaproveita a mesma).
+## Guardar as texturas acumulava retratos e corpos já vistos na memória de
+## vídeo até o navegador do celular fechar o jogo.
+static var _cache := {}
+## Arte ainda não importada (lida direto do arquivo): essa fica guardada.
+static var _soltas := {}
+
+
+static func get_asset(id: String, variante: String) -> Texture2D:
+	var chave := variante + ":" + id
+	if not _cache.has(chave):
+		_cache[chave] = caminho(id, variante)
+	return _carregar(String(_cache[chave]))
+
+
+## Decisão 72: todo piloto (rival, candidato, mercado) usa um dos retratos
+## genéricos (arte/pilotos/genericos/generico_NN.png, corpo em genericos/corpo/),
+## sempre o mesmo para o mesmo piloto. A ordem é a dos dados (candidatos, depois
+## as equipes), então os quatro pilotos de uma equipe nunca repetem rosto.
+const GENERICOS := 12
+static var _ordem_pilotos := {}
+
+
+static func retrato_generico(id: String) -> String:
+	var dados: Node = _dados()
+	if _ordem_pilotos.is_empty() and dados != null:
+		for c in EquipeJogador.candidatos(dados):
+			_ordem_pilotos[String(c["id"])] = _ordem_pilotos.size()
+		for e in dados.lista("equipes"):
+			for p in e.get("pilotos", []):
+				if not _ordem_pilotos.has(String(p["id"])):
+					_ordem_pilotos[String(p["id"])] = _ordem_pilotos.size()
+	var i := int(_ordem_pilotos.get(id, absi(hash(id))))
+	return "res://arte/pilotos/genericos/generico_%02d.png" % (1 + i % GENERICOS)
+
+
+## Decisão 88: o piloto com arte própria (arte/pilotos/<id>.webp, corpo em
+## arte/pilotos/corpo/) usa a dele; sem ela, um dos genéricos.
+static func retrato_piloto(id: String) -> String:
+	var proprio := "res://arte/pilotos/%s.webp" % id
+	if ResourceLoader.exists(proprio) or FileAccess.file_exists(proprio):
+		return proprio
+	return retrato_generico(id)
+
+
+## Caminho que os dados indicam ("" se a entidade não tem um).
+static func caminho(id: String, variante: String) -> String:
+	var dados: Node = _dados()
+	match variante:
+		"corpo":
+			var pose := id.get_slice("@", 1) if "@" in id else ""
+			var r := caminho(id.get_slice("@", 0), "retrato")
+			return "" if r == "" else r.get_base_dir().path_join("corpo").path_join(
+					r.get_file().get_basename() + ("_" + pose if pose != "" else "") + ".webp")
+		"ui":
+			return "res://arte/ui/%s.png" % id
+		"cenario":
+			return "res://arte/cenarios/%s.webp" % id
+		"ilustracao":
+			return "res://arte/cenas/%s.webp" % id
+		"retrato":
+			if dados == null:
+				return ""
+			if dados.existe("personagens", id):
+				return String(dados.item("personagens", id).get("retrato", ""))
+			for e in dados.lista("equipes"):
+				for p in e.get("pilotos", []):
+					if p["id"] == id:
+						return retrato_piloto(id)
+			# Segundo piloto e candidatos (carreira.json → equipe_jogador).
+			if not EquipeJogador.piloto(dados, id).is_empty():
+				return retrato_piloto(id)
+		"logo":
+			if dados != null and dados.existe("equipes", id):
+				return String(dados.item("equipes", id).get("logo", ""))
+	return ""
+
+
+## Limpa o cache (arte trocada com o jogo aberto, testes).
+static func limpar() -> void:
+	_cache = {}
+	_soltas = {}
+	_ordem_pilotos = {}
+
+
+static func _carregar(arquivo: String) -> Texture2D:
+	if arquivo == "":
+		return null
+	if ResourceLoader.exists(arquivo):
+		return load(arquivo) as Texture2D
+	# Arquivo novo ainda não importado pelo editor: lê a imagem direto.
+	if _soltas.has(arquivo):
+		return _soltas[arquivo]
+	_soltas[arquivo] = null
+	if FileAccess.file_exists(arquivo):
+		var img := Image.load_from_file(arquivo)
+		if img != null and not img.is_empty():
+			_soltas[arquivo] = ImageTexture.create_from_image(img)
+	return _soltas[arquivo]
+
+
+static func _dados() -> Node:
+	var arvore := Engine.get_main_loop() as SceneTree
+	return arvore.root.get_node_or_null("Dados") if arvore != null else null

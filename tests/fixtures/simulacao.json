@@ -1,0 +1,9 @@
+{
+	"passo_m": 1.0,
+	"dt_s": 0.02,
+	"amostra_dt_s": 0.5,
+	"tempo_max_s": 3600,
+	"distancia_minima_m": 8.0,
+	"sigma_ruido": 0.05,
+	"fator_tracao": {"FF": 0.6, "FR": 0.5, "MR": 0.55, "RR": 0.6, "4WD": 1.0}
+}

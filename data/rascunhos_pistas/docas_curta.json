@@ -1,0 +1,49 @@
+{
+ "id": "docas_curta",
+ "funcao": "tecnico",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 420,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 32,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 220,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 26,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 58,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  }
+ ]
+}

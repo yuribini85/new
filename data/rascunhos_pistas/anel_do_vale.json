@@ -1,0 +1,52 @@
+{
+ "id": "anel_do_vale",
+ "funcao": "alta_velocidade",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 900,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_rapida",
+   "raio_m": 200,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 150,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 80,
+   "angulo_graus": 60
+  },
+  {
+   "tipo": "curva_rapida",
+   "raio_m": 250,
+   "angulo_graus": 30,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 60,
+   "angulo_graus": 150
+  }
+ ]
+}

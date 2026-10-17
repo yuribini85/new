@@ -1,0 +1,2808 @@
+[
+ {
+  "id": "CW_P01",
+  "trigger": "GAME_START",
+  "falas": [
+   {
+    "acao": "ILUSTRACAO:chegada"
+   },
+   {
+    "quem": "mara",
+    "texto": "Se veio buscar o carro, ainda não está pronto."
+   },
+   {
+    "acao": "PAUSA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Ah. Você é quem respondeu ao anúncio."
+   },
+   {
+    "acao": "CENARIO:oficina_mara"
+   },
+   {
+    "quem": "mara",
+    "texto": "Vou poupar seu tempo. A oficina está hipotecada.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "A Wreckage já foi mais que oficina: foi equipe de corrida. Bons pilotos, bons carros... Até alguns troféus.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Eu sou ruim de negócio. As contas mostram isso melhor que eu.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mara",
+    "texto": "Mas oficina eu domino. Carro e piloto, ninguém aqui prepara melhor.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "A proposta: você assume as contas e a dívida. Em troca, metade da Wreckage é sua.",
+    "pose": "gesto"
+   },
+   {
+    "acao": "PAUSA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Não vou prometer dinheiro fácil. Nem vitórias.",
+    "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "Então, temos um acordo? E como devo chamar você?",
+    "pose": "cruzados"
+   },
+   {
+    "acao": "PEDIR_NOME"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "STORY_STARTED",
+   "TUTORIAL_INTRO_SEEN"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_P01B",
+  "trigger": "NOME_DEFINIDO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Muito bem, {admin}. Sociedade fechada.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Primeiro, o que falta numa equipe de corrida: um carro.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ADMIN_NAMED"
+  ],
+  "flags": [
+   "ADMIN_NAMED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "proxima": "CW_C00",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_P02",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "acao": "OPEN_GARAGE_TAB"
+   },
+   {
+    "acao": "HIGHLIGHT_POTENCIA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Potência. O que o motor entrega."
+   },
+   {
+    "acao": "HIGHLIGHT_PESO"
+   },
+   {
+    "quem": "mara",
+    "texto": "Peso. O que ele tem de carregar. Mais leve acelera, freia e vira melhor."
+   },
+   {
+    "acao": "HIGHLIGHT_PNEUS"
+   },
+   {
+    "quem": "mara",
+    "texto": "Pneus. São eles que seguram o carro: curva mais rápida e freada mais curta."
+   },
+   {
+    "acao": "HIGHLIGHT_FREIOS"
+   },
+   {
+    "quem": "mara",
+    "texto": "Freios. Quanto mais tarde ele freia, mais velocidade leva até a curva."
+   },
+   {
+    "acao": "HIGHLIGHT_DEMANDA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Deixei anotado o que ele pede primeiro: {demanda}."
+   },
+   {
+    "acao": "HIGHLIGHT_SALDO"
+   },
+   {
+    "quem": "mara",
+    "texto": "Veja o caixa antes de gastar o que não temos."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque na peça destacada."
+   },
+   {
+    "acao": "HIGHLIGHT_DEMANDA"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "dono",
+  "lembrete": "CW_P02L"
+ },
+ {
+  "id": "CW_P02L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{demanda}. Toque ali."
+   },
+   {
+    "acao": "HIGHLIGHT_DEMANDA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "TUNE_TUTORIAL_SEEN",
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P03",
+  "trigger": "EVOLUCAO",
+  "falas": [
+   {
+    "acao": "HIGHLIGHT_PECA_PEDIDA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Peça nova não faz milagre. Mas cada uma soma na pista."
+   },
+   {
+    "quem": "mara",
+    "texto": "{demanda}. Cabe no caixa."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Compre {demanda}."
+   },
+   {
+    "acao": "HIGHLIGHT_PECA_PEDIDA"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [
+   "TUNE_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "lembrete": "CW_P03L"
+ },
+ {
+  "id": "CW_P03L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "O carro não se monta sozinho. {demanda}."
+   },
+   {
+    "acao": "HIGHLIGHT_PECA_PEDIDA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P03B",
+  "trigger": "DEMANDA_CONCLUIDA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Pronto: {peca}."
+   },
+   {
+    "quem": "mara",
+    "texto": "Mais uma prova. Quero ver a diferença na pista.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Vá para Corridas."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TUNE_DONE"
+  ],
+  "flags": [
+   "FIRST_TUNE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P06C",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "É assim que se sobe: corrida, prêmio, peça, corrida.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Mas sem licença, só as provas abertas. A nossa precisa ser renovada.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Cada licença nova abre provas maiores, com prêmio maior."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Licenças ficam em Carreira."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_LICENCAS"
+   }
+  ],
+  "requer": [
+   "FIRST_TUNE_DONE"
+  ],
+  "proibe": [
+   "SECOND_RACE_DONE"
+  ],
+  "flags": [
+   "SECOND_RACE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P03C",
+  "trigger": "ABA:EQUIPE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Você gerencia as contratações. Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Contratar, no piloto de corrida."
+   },
+   {
+    "acao": "HIGHLIGHT_PILOTO_CORRIDA"
+   }
+  ],
+  "requer": [
+   "FIRST_CAR"
+  ],
+  "proibe": [
+   "PILOT_HIRED"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_P03D",
+  "trigger": "PILOTO_CONTRATADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} está {g:contratado|contratada}. Agora, a primeira prova.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Vá para Corridas."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "PILOT_HIRED"
+  ],
+  "flags": [
+   "PILOT_HIRED",
+   "PILOT_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P04",
+  "trigger": "ABA:EVENTOS",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.",
+    "pose": "explica"
+   },
+   {
+    "acao": "HIGHLIGHT_COPA"
+   },
+   {
+    "quem": "mara",
+    "texto": "Como estamos sem licenças, só podemos correr estas provas."
+   },
+   {
+    "acao": "HIGHLIGHT_COMPETITIVIDADE"
+   },
+   {
+    "quem": "mara",
+    "texto": "Essa barra compara o carro com o grid. Não garante nada. Evita entrar no escuro."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Disputar."
+   },
+   {
+    "acao": "HIGHLIGHT_DISPUTAR"
+   }
+  ],
+  "requer": [
+   "PILOT_HIRED"
+  ],
+  "proibe": [
+   "EVENT_MENU_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "EVENT_MENU_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "lembrete": "CW_P04L",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_P04L",
+  "trigger": "LEMBRETE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "A prova está ali. Toque em Disputar."
+   },
+   {
+    "acao": "HIGHLIGHT_DISPUTAR"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_BRIEFED"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_C01",
+  "trigger": "CAMPEONATO_SELECIONADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{serie} é campeonato: cada etapa dá pontos.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Corra as etapas na ordem. Fora da ordem, a prova não soma pontos."
+   },
+   {
+    "quem": "mara",
+    "texto": "Leva o título quem somar mais no fim."
+   }
+  ],
+  "requer": [
+   "FIRST_RACE_DONE"
+  ],
+  "proibe": [
+   "CHAMPIONSHIP_TUTORIAL_DONE"
+  ],
+  "flags": [
+   "CHAMPIONSHIP_TUTORIAL_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_P05",
+  "trigger": "CORRIDA_INICIO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{pista}: {voltas} voltas."
+   },
+   {
+    "quem": "mara",
+    "texto": "Nós preparamos e {piloto} corre.",
+    "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "Quando acabar, o resultado e o prêmio aparecem na tela.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toda corrida iniciada termina mesmo com o jogo fechado."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_BRIEFED"
+  ],
+  "flags": [
+   "FIRST_RACE_BRIEFED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "segura_largada": true
+ },
+ {
+  "id": "CW_P06",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeira vitória. A oficina respira um pouco.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_DONE"
+  ],
+  "flags": [
+   "FIRST_RACE_DONE",
+   "FIRST_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "proxima": "CW_GR00"
+ },
+ {
+  "id": "CW_P06B",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}. Corrida perdida também paga.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mara",
+    "texto": "A tela da corrida mostra onde se perdeu tempo. Olhe antes de culpar o carro.",
+    "pose": "explica"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_RACE_DONE"
+  ],
+  "flags": [
+   "FIRST_RACE_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2
+  },
+  "proxima": "CW_GR00"
+ },
+ {
+  "id": "CW_P06D",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Agora o prêmio volta para o carro.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [
+   "FIRST_RACE_DONE"
+  ],
+  "proibe": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "demanda_paga": 1
+  },
+  "proxima": "CW_P02"
+ },
+ {
+  "id": "CW_E01",
+  "trigger": "EVENTO_BLOQUEADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Não existe melhor carro. Existe o carro certo para cada prova.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "EVENT_REQUIREMENTS_TUTORIAL_DONE"
+  ],
+  "flags": [
+   "EVENT_REQUIREMENTS_TUTORIAL_DONE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_AD01",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Você nunca perguntou por que Wreckage.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Corrida paga as contas. A arena é de onde o nome vem.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "Vem ver uma luta. Seis duplas na arena; hoje você só assiste.",
+    "pose": "firme"
+   },
+   {
+    "acao": "ARENA_DEMO"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [
+   "ARENA_DEMO_SEEN"
+  ],
+  "flags": [
+   "ARENA_DEMO_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_AD02",
+  "trigger": "ARENA_DEMO_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Isso é a Wreckage. Lá o carro que quebra não volta.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Por isso a arena abre só com três carros na garagem: um para correr e dois para arriscar.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Com o terceiro carro, a Arena aparece na barra de baixo."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_DEMO_TALK"
+  ],
+  "flags": [
+   "ARENA_DEMO_TALK"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_L01",
+  "trigger": "LICENCA_EXIGIDA",
+  "falas": [
+   {
+    "quem": "sistema",
+    "texto": "INSCRIÇÃO RECUSADA: PEDE LICENÇA"
+   },
+   {
+    "quem": "mara",
+    "texto": "É a licença que a gente precisa renovar. Quem renova é {piloto}, no treino da escola.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Quem treina é a Vector Academy. O instrutor é o Brandt. Leve café pra ele."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "LICENSE_SYSTEM_UNLOCKED"
+  ],
+  "flags": [
+   "LICENSE_SYSTEM_UNLOCKED"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_L02",
+  "trigger": "ABA:LICENCAS",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "Harold Brandt, instrutor da Vector Academy. Licença Club."
+   },
+   {
+    "quem": "examinador",
+    "texto": "Primeiro, o treino. Ele corre no relógio, mesmo com o jogo fechado."
+   },
+   {
+    "quem": "examinador",
+    "texto": "Terminou o treino, a licença sai. Sem prova, sem papelada."
+   },
+   {
+    "quem": "mara",
+    "texto": "Quanto custa?",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "examinador",
+    "texto": "Nada. Aqui se paga com tempo."
+   },
+   {
+    "acao": "HIGHLIGHT_LICENSE_REQUIREMENTS"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas."
+   }
+  ],
+  "requer": [
+   "SECOND_RACE_DONE"
+  ],
+  "proibe": [
+   "LICENSE_OFFLINE_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "LICENSE_OFFLINE_TUTORIAL_SEEN",
+   "LICENSE_SYSTEM_UNLOCKED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_GR00",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   },
+   {
+    "acao": "HIGHLIGHT_GRID"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora, aonde a gente precisa chegar. O Grid: dez equipes no topo do circuito. A gente está fora dele.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Uma de cada vez, da décima até a primeira. A da vez fica em destaque."
+   },
+   {
+    "quem": "mara",
+    "texto": "Cada equipe possui um desafio diferente. Vença e ela fica para trás.",
+    "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "Quem chega ao topo tem patrocinador batendo na porta.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "sistema",
+    "texto": "The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sai em Corridas."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "GRID_INTRO"
+  ],
+  "flags": [
+   "GRID_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_C00",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "A garagem está vazia; o último carro foi vendido pra pagar dívida.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "O caixa dá para um carro, e só. Cada carro mostra, no selo ESTREIA, como se sai na primeira prova. Procure o MAIS FORTE, não o mais barato.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Vá para as Lojas e compre o primeiro carro."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_LOJA"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_CAR"
+  ],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_C01B",
+  "trigger": "COMPRA_CARRO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{carro}. Dá para trabalhar.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.",
+    "pose": "firme"
+   },
+   {
+    "acao": "UNLOCK_TEAM_TAB"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em Equipe, na barra de baixo."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EQUIPE"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_CAR"
+  ],
+  "flags": [
+   "FIRST_CAR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_L03",
+  "trigger": "LICENCA_TREINO_INICIO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Treino rodando. A oficina não para por isso."
+   },
+   {
+    "acao": "UNLOCK_ACELERAR"
+   },
+   {
+    "quem": "mara",
+    "texto": "Lá em cima, ACELERAR deixa as corridas mais rápidas por um tempo. A primeira é por minha conta.",
+    "pose": "explica"
+   },
+   {
+    "acao": "HIGHLIGHT_ACELERAR"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque em ACELERAR, no alto da tela."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TRAINING_STARTED"
+  ],
+  "flags": [
+   "FIRST_TRAINING_STARTED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_L05",
+  "trigger": "LICENCA_DISPONIVEL:SPORT",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Os requisitos da Sport estão cumpridos.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora falta o treino na Academy. Esse não sai na pista."
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SPORT_AVAILABLE_SEEN"
+  ],
+  "flags": [
+   "SPORT_AVAILABLE_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_L06",
+  "trigger": "LICENCA_DISPONIVEL:NATIONAL",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "National disponível.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Daqui para cima, vitória solta não basta. Pede título.",
+    "pose": "firme"
+   },
+   {
+    "acao": "OPEN_LICENSE_CENTER"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "NATIONAL_AVAILABLE_SEEN"
+  ],
+  "flags": [
+   "NATIONAL_AVAILABLE_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R10",
+  "trigger": "LICENCA_CONCEDIDA:CLUB",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "Licença Club aprovada. Assinado e carimbado."
+   },
+   {
+    "quem": "mara",
+    "texto": "Licença renovada. Faz tempo que eu não via esse papel sem uma cobrança junto.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora uma prova de licença. Lá o prêmio é outro.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Novas provas liberadas em Corridas › Club."
+   },
+   {
+    "acao": "HIGHLIGHT_NAV_EVENTOS"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "CLUB_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_S00",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Licença na mão e resultado na pista: agora aparece patrocinador.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro."
+   },
+   {
+    "quem": "mara",
+    "texto": "O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título de série dá uma hora a mais.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "E pagam um extra quando a corrida cumpre o que eles pedem.",
+    "pose": "gesto"
+   },
+   {
+    "acao": "OPEN_TEAM_FINANCE"
+   },
+   {
+    "acao": "HIGHLIGHT_PATROCINIO"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas."
+   }
+  ],
+  "requer": [
+   "CLUB_COMPLETE"
+  ],
+  "proibe": [
+   "PATROCINIO_INTRO"
+  ],
+  "flags": [
+   "PATROCINIO_INTRO",
+   "PATROCINIO_LIBERADO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_R10B",
+  "trigger": "LICENCA_CONCEDIDA:SPORT",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "Sport aprovada. Eu esperava mais rápido. Mas aprovada."
+   },
+   {
+    "quem": "mara",
+    "texto": "Provas maiores. Contas maiores também.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "SPORT_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_R10C",
+  "trigger": "LICENCA_CONCEDIDA:NATIONAL",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "National aprovada. Poucos passam daqui sem repetir."
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora a gente aparece na lista dos outros.",
+    "pose": "firme"
+   },
+   {
+    "acao": "CENARIO:oficina_mara"
+   },
+   {
+    "quem": "mara",
+    "texto": "Lembra do carro nos cavaletes? Eu não parei de mexer nele.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Pus nele todas as peças que ele aceita. Agora está na garagem: é da equipe.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "sistema",
+    "texto": "O carro da Mara entrou na garagem, preparado."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "NATIONAL_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_T01",
+  "trigger": "LICENCA_CONCEDIDA:INTERNATIONAL",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "International aprovada. Agora {piloto} pode correr lá fora."
+   },
+   {
+    "quem": "mara",
+    "texto": "Com essa, a Wreckage volta a ser equipe de verdade.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora o Caixa mostra o que entra e sai em cada corrida. E a Sede faz os patrocinadores pagarem mais."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Caixa e Sede na aba Equipe."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "INTERNATIONAL_COMPLETE",
+   "GESTAO_LIBERADA"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_T02",
+  "trigger": "LICENCA_CONCEDIDA:PRO",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "Pro aprovada."
+   },
+   {
+    "quem": "mara",
+    "texto": "Daqui para frente, cada décimo custa caro.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "PRO_COMPLETE"
+  ],
+  "bloqueia": true,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_T03",
+  "trigger": "LICENCA_CONCEDIDA:ELITE",
+  "falas": [
+   {
+    "quem": "examinador",
+    "texto": "Elite aprovada. Em trinta anos, assinei poucas dessas."
+   },
+   {
+    "quem": "mara",
+    "texto": "Elite. No dia em que você chegou, eu não tinha nem como renovar a Club.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "ELITE_COMPLETE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "vector_academy"
+ },
+ {
+  "id": "CW_GR06",
+  "trigger": "GRID_SUBIU",
+  "falas": [
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "mara",
+    "texto": "{equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.",
+    "pose": "firme"
+   },
+   {
+    "quem": "mara",
+    "texto": "A próxima é na arena. Tem uma coisa que você precisa saber antes.",
+    "pose": "pensativa"
+   },
+   {
+    "acao": "ILUSTRACAO:noite_da_arena"
+   },
+   {
+    "quem": "mara",
+    "texto": "A Wreckage já foi maior. Dois caminhões, seis carros, gente no box de quem eu nem sabia o nome.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Numa noite de arena, a gente levou tudo o que tinha. Voltou com o guincho."
+   },
+   {
+    "quem": "mara",
+    "texto": "Os carros, os patrocinadores, a equipe. Eu fiquei com a oficina e as contas.",
+    "pose": "decepcao"
+   },
+   {
+    "acao": "CENARIO:oficina_mara"
+   },
+   {
+    "quem": "mara",
+    "texto": "Desta vez a gente entra sabendo o que custa.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "MARA_PASSADO"
+  ],
+  "flags": [
+   "MARA_PASSADO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 6
+  },
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_GR01",
+  "trigger": "GRID_SUBIU",
+  "falas": [
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "mara",
+    "texto": "{equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_GR02",
+  "trigger": "GRID_TOPO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Quando você entrou aqui, eu estava tentando descobrir o que ainda dava para salvar.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora temos carros, pilotos, patrocinadores... e o primeiro lugar do Grid."
+   },
+   {
+    "quem": "mara",
+    "texto": "Passei tempo demais achando que essa parte da minha vida tinha acabado.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "Você fez a equipe funcionar de novo.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Só não confunda chegar ao topo com conseguir ficar lá.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "GRID_TOP"
+  ],
+  "flags": [
+   "GRID_TOP"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_SYS11",
+  "trigger": "SEM_PECAS",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Faltam peças. Desmonte um carro parado, ou traga sucata da arena."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R02",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Bom resultado. Agora vamos ver se conseguimos repetir.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Prova vencida pode ser disputada de novo, uma corrida por vez."
+   }
+  ],
+  "requer": [
+   "FIRST_RACE_DONE"
+  ],
+  "proibe": [
+   "FIRST_WIN"
+  ],
+  "flags": [
+   "FIRST_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  }
+ },
+ {
+  "id": "CW_G01",
+  "trigger": "GARAGEM_DOIS_CARROS",
+  "falas": [
+   {
+    "quem": "manobrista",
+    "texto": "Dois carros! Agora eu decoro duas chaves."
+   },
+   {
+    "quem": "mara",
+    "texto": "Dois carros. Duas contas.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_SECOND_CAR"
+  ],
+  "flags": [
+   "FIRST_SECOND_CAR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_G02",
+  "trigger": "CAMPEONATO_VENCIDO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Título. Guarde o troféu longe da graxa.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TITLE_TALK"
+  ],
+  "flags": [
+   "FIRST_TITLE_TALK"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_R11",
+  "trigger": "COLECAO",
+  "falas": [
+   {
+    "quem": "manobrista",
+    "texto": "Cinco carros, chefe. Já dá pra chamar de frota."
+   },
+   {
+    "quem": "mara",
+    "texto": "Eu lembro quando a gente tinha um único carro.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "COLLECTION_FIVE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "quantidade_min": 5
+  }
+ },
+ {
+  "id": "CW_R12",
+  "trigger": "GARAGEM_AMPLIADA",
+  "falas": [
+   {
+    "quem": "manobrista",
+    "texto": "Vaga nova pintada no chão. Cabe mais um, e eu manobro."
+   },
+   {
+    "quem": "mara",
+    "texto": "Mais espaço. Não significa que a gente precise preencher tudo hoje.",
+    "pose": "alerta"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "GARAGE_EXPANDED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M01",
+  "trigger": "VITORIA_LICENCA:CLUB",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeira vitória com licença. Agora a régua sobe.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "FIRST_CLUB_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M02",
+  "trigger": "VITORIA_LICENCA:SPORT",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Na Sport ninguém deixa espaço de graça. {piloto} achou um.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "FIRST_SPORT_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M03",
+  "trigger": "VITORIA_LICENCA:NATIONAL",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "National. Tem gente na arquibancada que veio por nossa causa.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "FIRST_NATIONAL_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_M04",
+  "trigger": "VITORIA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Dez provas vencidas. A parede de troféus já não está vazia.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "TEN_WINS"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "quantidade_min": 10
+  }
+ },
+ {
+  "id": "CW_M05",
+  "trigger": "VITORIA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Vinte e cinco. Já ligam aqui perguntando quem é o dono.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "TWENTY_FIVE_WINS"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "quantidade_min": 25
+  }
+ },
+ {
+  "id": "CW_P07",
+  "trigger": "GARAGEM_TRES_CARROS",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Três carros. Tem outra maneira de ganhar dinheiro por aqui.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "organizadora",
+    "texto": "E lota a arquibancada! Roxy Vega. A arena é minha."
+   },
+   {
+    "quem": "organizadora",
+    "texto": "Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui."
+   },
+   {
+    "quem": "organizadora",
+    "texto": "Ganha a dupla que tiver o último carro andando. A cada vitória, o campeonato seguinte ganha mais uma dupla: começa com duas e vai até vinte carros."
+   },
+   {
+    "quem": "mara",
+    "texto": "Pagam mais porque alguns carros não voltam.",
+    "pose": "alerta"
+   },
+   {
+    "quem": "organizadora",
+    "texto": "Carro com a frente destruída não sai daqui. Por isso a arena pede três carros: um fica para as corridas."
+   },
+   {
+    "acao": "UNLOCK_ARENA_PILOTS"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina."
+   }
+  ],
+  "requer": [
+   "PATROCINIO_INTRO"
+  ],
+  "proibe": [
+   "ARENA_INTRO"
+  ],
+  "flags": [
+   "ARENA_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "proxima": "CW_AR02",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_AR02",
+  "trigger": "ENCADEADA",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Dex Kane. Eu preparo carro pra arena."
+   },
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Lá dentro cavalo não manda. Manda chapa."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "A blindagem fica na Oficina, no escudo ao lado da velocidade. Três níveis: quanto mais chapa, mais pancada ele aguenta."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Só que pesa. Na corrida ele vai sentir."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "E se paga com peças. O que a gente desmonta e o que sobra da arena vira peça."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Blindagem: Oficina, ao lado da velocidade máxima."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [
+   "DEX_MET"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_AR03",
+  "trigger": "BLINDAGEM",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças."
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "Comprou, é sua. Tirar a chapa custa metade do que ela custou; pôr de volta é de graça."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha o nível e toque em Instalar."
+   }
+  ],
+  "requer": [
+   "DEX_MET"
+  ],
+  "proibe": [
+   "ARMOR_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "ARMOR_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_AR04",
+  "trigger": "BLINDAGEM_COMPRADA",
+  "falas": [
+   {
+    "quem": "mecanico_arena",
+    "texto": "Agora sim. Na pista ele vai sentir o peso. Lá dentro, quem sente são os outros."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_ARMOR"
+  ],
+  "flags": [
+   "FIRST_ARMOR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R06",
+  "trigger": "ARENA_INSCRICAO",
+  "falas": [
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "organizadora",
+    "texto": "Último aviso: aqui, segundo lugar pode custar o carro inteiro."
+   },
+   {
+    "quem": "mara",
+    "texto": "Ela não está brincando.",
+    "pose": "alerta"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_FIRST_ENTRY"
+  ],
+  "flags": [
+   "ARENA_FIRST_ENTRY"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R07",
+  "trigger": "ARENA_FIM",
+  "falas": [
+   {
+    "quem": "organizadora",
+    "texto": "Saiu inteiro o bastante pra voltar. A plateia gosta de quem volta."
+   },
+   {
+    "quem": "mara",
+    "texto": "Voltou amassado, mas voltou. Pra primeira vez, está ótimo.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_SURVIVED"
+  ],
+  "flags": [
+   "ARENA_SURVIVED"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_A01",
+  "trigger": "ARENA_VITORIA",
+  "falas": [
+   {
+    "quem": "organizadora",
+    "texto": "Última dupla de pé! O próximo campeonato tem uma equipe a mais."
+   },
+   {
+    "quem": "mara",
+    "texto": "Agora tira ele dali antes que alguém tenha ideias.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_FIRST_WIN"
+  ],
+  "flags": [
+   "ARENA_FIRST_WIN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R09",
+  "trigger": "ARENA_PERDA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "O carro acabou. O piloto, pelo menos, está inteiro.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mecanico_arena",
+    "texto": "O próximo vai com mais chapa."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "ARENA_FIRST_LOSS"
+  ],
+  "flags": [
+   "ARENA_FIRST_LOSS"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R09B",
+  "trigger": "ARENA_PERDA",
+  "falas": [
+   {
+    "acao": "IMPACTO"
+   },
+   {
+    "quem": "mara",
+    "texto": "Mais um pro ferro-velho.",
+    "pose": "decepcao"
+   }
+  ],
+  "requer": [
+   "ARENA_FIRST_LOSS"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_S01",
+  "trigger": "ABA:EQUIPE",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Equipe de verdade atrai patrocinador.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro."
+   },
+   {
+    "quem": "mara",
+    "texto": "E pagam um extra quando a corrida cumpre o que eles pedem.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Na Sede, aqui mesmo, a gente melhora o que eles pagam.",
+    "pose": "firme"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas."
+   }
+  ],
+  "requer": [
+   "GESTAO_LIBERADA"
+  ],
+  "proibe": [
+   "PATROCINIO_INTRO"
+  ],
+  "flags": [
+   "PATROCINIO_INTRO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "cenario": "oficina_mara"
+ },
+ {
+  "id": "CW_S02",
+  "trigger": "PATROCINIO_ASSINADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeiro adesivo novo no carro desde que a equipe parou.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_SPONSOR"
+  ],
+  "flags": [
+   "FIRST_SPONSOR"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_S03",
+  "trigger": "CARRO_DESMONTADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_DISMANTLE"
+  ],
+  "flags": [
+   "FIRST_DISMANTLE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_S05",
+  "trigger": "TREINO_CONCLUIDO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} voltou do treino mais rápido. Não faz milagre, mas ajuda o carro a render o que tem.",
+    "pose": "gesto"
+   },
+   {
+    "quem": "mara",
+    "texto": "Não faz milagre. Mas ajuda o carro a render o que tem.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_TRAINING_LEVEL"
+  ],
+  "flags": [
+   "FIRST_TRAINING_LEVEL"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_S04",
+  "trigger": "SEDE_MELHORADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "A oficina parece outra. Ainda tem goteira, mas parece outra.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_HQ_UPGRADE"
+  ],
+  "flags": [
+   "FIRST_HQ_UPGRADE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_GA01",
+  "trigger": "GARAGEM_ABERTA",
+  "falas": [
+   {
+    "quem": "manobrista",
+    "texto": "E aí, chefe! Rico Salas, manobrista. Todo carro daqui passa pela minha chave."
+   },
+   {
+    "quem": "manobrista",
+    "texto": "Em cima, as vagas. Garagem cheia não recebe carro novo; dá pra ampliar ali mesmo, por giros."
+   },
+   {
+    "quem": "manobrista",
+    "texto": "Toca num carro e eu levo ele pra Oficina. Ele vira o carro em uso."
+   },
+   {
+    "quem": "manobrista",
+    "texto": "Carro parado só ocupa vaga. Vender também é aqui, no botão de cada um."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para levá-lo à Oficina."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "GARAGE_WINDOW_SEEN"
+  ],
+  "flags": [
+   "GARAGE_WINDOW_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_PT01",
+  "trigger": "PINTURA",
+  "falas": [
+   {
+    "quem": "pintor",
+    "texto": "Kenji Arata. A cabine é minha. Pode entrar, só não encosta no que está molhado."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Em cima, o carro como ele vai sair. Arrasta pra girar; embaixo dele, as vistas."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Pintura: base, secundária e acento. Grafismos: faixas e desenhos, já aplicados no seu carro."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Identificação: o nome e o logo da equipe e o número de corrida. Acabamento: do fosco ao metálico, e poeira se quiser."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Só fica pronto quando você toca em Aplicar pintura. O preço aparece embaixo e cobre só o que você mudou. Mudou de ideia? Como estava desfaz tudo."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Escolha a pintura e toque em Aplicar pintura."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "PAINT_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "PAINT_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_PT02",
+  "trigger": "PINTURA_APLICADA",
+  "falas": [
+   {
+    "quem": "pintor",
+    "texto": "Pronto. Na corrida e na arena, é assim que ele aparece."
+   },
+   {
+    "quem": "pintor",
+    "texto": "Não anda mais rápido. Mas todo mundo sabe de quem é."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_PAINT"
+  ],
+  "flags": [
+   "FIRST_PAINT"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_PT03",
+  "trigger": "PINTURA_APLICADA",
+  "falas": [
+   {
+    "quem": "pintor",
+    "texto": "Deixa secar antes de bater em alguém."
+   }
+  ],
+  "requer": [
+   "FIRST_PAINT"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_LJ01",
+  "trigger": "LOJA:charge_folio_motors",
+  "falas": [
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "Boas-vindas à minha loja. Aqui ninguém empurra carro. Escolha com calma."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_CHARGE_FOLIO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ02",
+  "trigger": "LOJA:charge_folio_motors",
+  "falas": [
+   {
+    "quem": "vendedor_charge_folio",
+    "texto": "Boas-vindas. Escolha sem pressa; pressa é coisa de quem compra mal."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_CHARGE_FOLIO"
+  ],
+  "flags": [
+   "SHOP_CHARGE_FOLIO"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ03",
+  "trigger": "LOJA:relay_room_garage",
+  "falas": [
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Entra, entra! Carro bom e preço justo, palavra de vendedor."
+   },
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Aqui é tudo Hayase. Conheço cada parafuso."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_RELAY_ROOM"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ04",
+  "trigger": "LOJA:relay_room_garage",
+  "falas": [
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Entra, entra! Aqui é tudo Hayase, e eu conheço cada parafuso."
+   },
+   {
+    "quem": "vendedor_relay_room",
+    "texto": "Gostou de algum? Pra você, preço de tabela. Que é preço de amigo."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_RELAY_ROOM"
+  ],
+  "flags": [
+   "SHOP_RELAY_ROOM"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ05",
+  "trigger": "LOJA:brace_yard_works",
+  "falas": [
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Boas-vindas. Champanhe? Não? Mais pra mim."
+   },
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Carro pra quem pretende ser visto."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_BRACE_YARD"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ06",
+  "trigger": "LOJA:brace_yard_works",
+  "falas": [
+   {
+    "quem": "vendedora_brace_yard",
+    "texto": "Fique à vontade. O preço está embaixo do carro; aqui ninguém pergunta duas vezes."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_BRACE_YARD"
+  ],
+  "flags": [
+   "SHOP_BRACE_YARD"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ07",
+  "trigger": "LOJA:return_chapter_customs",
+  "falas": [
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Boas-vindas. Pergunte o que quiser; eu respondo com números."
+   },
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Compare antes de se apaixonar."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_RETURN_CHAPTER"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ08",
+  "trigger": "LOJA:return_chapter_customs",
+  "falas": [
+   {
+    "quem": "vendedora_return_chapter",
+    "texto": "Carro certo é o que entra na prova que você quer correr."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_RETURN_CHAPTER"
+  ],
+  "flags": [
+   "SHOP_RETURN_CHAPTER"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ09",
+  "trigger": "LOJA:shared_grid_motors",
+  "falas": [
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Boas-vindas. Um catálogo, zero tempo a perder."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_SHARED_GRID"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ10",
+  "trigger": "LOJA:shared_grid_motors",
+  "falas": [
+   {
+    "quem": "vendedora_shared_grid",
+    "texto": "Boas-vindas. Escolhe e leva; o resto é vitrine."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_SHARED_GRID"
+  ],
+  "flags": [
+   "SHOP_SHARED_GRID"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ11",
+  "trigger": "LOJA:spare_penny_repairs",
+  "falas": [
+   {
+    "quem": "vendedor_spare_penny",
+    "texto": "Boas-vindas. Carro usado, preço honesto: aqui nada sai sem revisão."
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque num carro para ver a ficha e comprar."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "SHOP_TUTORIAL_SEEN",
+   "SHOP_SPARE_PENNY"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_LJ12",
+  "trigger": "LOJA:spare_penny_repairs",
+  "falas": [
+   {
+    "quem": "vendedor_spare_penny",
+    "texto": "Boas-vindas. Não é bonito, mas anda; e anda bem."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "SHOP_SPARE_PENNY"
+  ],
+  "flags": [
+   "SHOP_SPARE_PENNY"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_R01",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Não deu. Olhe os números antes de trocar metade do carro.",
+    "pose": "decepcao"
+   }
+  ],
+  "requer": [
+   "FIRST_WIN"
+  ],
+  "proibe": [
+   "FIRST_LOSS_TALK"
+  ],
+  "flags": [
+   "FIRST_LOSS_TALK"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D01",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} levou essa. O {carro} merece um banho e mais nada.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D02",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Vitória: {pista}. Anota o que funcionou antes de mexer em alguma coisa.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D03",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Primeiro lugar. Não comemora muito: a próxima prova não sabe disso.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D04",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Ganhou sem precisar de sorte. Gosto assim.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao": 1
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D05",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}. Pódio paga a conta; a vitória paga o resto.",
+    "pose": "explica"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2,
+   "posicao_max": 3
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D06",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Perto. Em Corridas, a seção PRÓXIMA PROVA mostra onde o {carro} tem mais chance.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2,
+   "posicao_max": 3
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D07",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}: {pista}. Mais um ajuste e a gente sobe um degrau."
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 2,
+   "posicao_max": 3
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D08",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}. O {carro} chegou até onde dava.",
+    "pose": "decepcao"
+   },
+   {
+    "quem": "mara",
+    "texto": "Os rivais estavam mais fortes. Escolha outra prova ou melhore o carro na Oficina.",
+    "pose": "explica"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 4
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D09",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{piloto} fez o que deu. O resto é com a gente.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 4
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D10",
+  "trigger": "CORRIDA_FIM",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Carro certo, prova errada. Cada prova, em Corridas, mostra se o seu carro é mais forte ou mais fraco.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [
+   "GRID_INTRO"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "condicao": {
+   "posicao_min": 4
+  },
+  "reativa": true
+ },
+ {
+  "id": "CW_D11",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{peca} no lugar. Quero ver isso na pista.",
+    "pose": "gesto"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_D12",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Dinheiro bem gasto, se o cronômetro concordar."
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_D13",
+  "trigger": "PECA_COMPRADA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Peça instalada: {peca}. Agora é correr.",
+    "pose": "firme"
+   }
+  ],
+  "requer": [
+   "GARAGE_TUTORIAL_SEEN"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_R03",
+  "trigger": "CAIXA_BAIXO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "A garagem ainda funciona. O caixa, nem tanto.",
+    "pose": "alerta"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Prova já vencida paga de novo, mas o prêmio cai a cada repetição."
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_R04",
+  "trigger": "COMPRA_CARRO_CARA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Bonito carro. Espero que você tenha deixado dinheiro pro resto.",
+    "pose": "alerta"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono",
+  "reativa": true
+ },
+ {
+  "id": "CW_SYS01",
+  "trigger": "SEM_DINHEIRO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Não temos isso.",
+    "pose": "decepcao"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_SYS02",
+  "trigger": "EVENTO_BLOQUEADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Bom carro. Corrida errada.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [
+   "EVENT_REQUIREMENTS_TUTORIAL_DONE"
+  ],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
+  "id": "CW_SYS_ENDURANCE",
+  "trigger": "CORRIDA_RESISTENCIA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Prova longa. Aqui ganha quem segura o ritmo até o fim.",
+    "pose": "alerta"
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "FIRST_ENDURANCE"
+  ],
+  "flags": [
+   "FIRST_ENDURANCE"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ }
+]

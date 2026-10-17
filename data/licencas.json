@@ -1,0 +1,259 @@
+[
+	{
+		"id": "CLUB",
+		"nome": "Licença Club",
+		"preco": 0.0,
+		"requisito": null,
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "club1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 250.0
+				},
+				"tempos": {
+					"bronze": 114.61,
+					"ouro": 76.26,
+					"prata": 77.62
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "club2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 250.0
+				},
+				"tempos": {
+					"bronze": 97.33,
+					"ouro": 72.51,
+					"prata": 73.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "club3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 250.0
+				},
+				"tempos": {
+					"bronze": 103.46,
+					"ouro": 83.43,
+					"prata": 84.96
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "SPORT",
+		"nome": "Licença Sport",
+		"preco": 0.0,
+		"requisito": "CLUB",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "sport1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 300.0
+				},
+				"tempos": {
+					"bronze": 126.99,
+					"ouro": 77.48,
+					"prata": 77.62
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "sport2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 300.0
+				},
+				"tempos": {
+					"bronze": 110.48,
+					"ouro": 73.77,
+					"prata": 73.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "sport3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 400.0
+				},
+				"tempos": {
+					"bronze": 113.84,
+					"ouro": 84.75,
+					"prata": 84.96
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "NATIONAL",
+		"nome": "Licença National",
+		"preco": 0.0,
+		"requisito": "SPORT",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "national1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 400.0
+				},
+				"tempos": {
+					"bronze": 126.99,
+					"ouro": 76.26,
+					"prata": 77.62
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "national2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 400.0
+				},
+				"tempos": {
+					"bronze": 110.48,
+					"ouro": 72.51,
+					"prata": 73.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "national3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 450.0
+				},
+				"tempos": {
+					"bronze": 113.84,
+					"ouro": 83.43,
+					"prata": 84.96
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "INTERNATIONAL",
+		"nome": "Licença International",
+		"preco": 0.0,
+		"requisito": "NATIONAL",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "international1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 550.0
+				},
+				"tempos": {
+					"bronze": 126.99,
+					"ouro": 76.26,
+					"prata": 77.62
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "international2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 500.0
+				},
+				"tempos": {
+					"bronze": 110.48,
+					"ouro": 72.51,
+					"prata": 73.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "international3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 113.84,
+					"ouro": 83.43,
+					"prata": 84.96
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "PRO",
+		"nome": "Licença Pro",
+		"preco": 0.0,
+		"requisito": "INTERNATIONAL",
+		"testes": [
+			{
+				"condicao": "seco",
+				"id": "pro1",
+				"pista": "anel_do_vale",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 126.99,
+					"ouro": 76.26,
+					"prata": 77.62
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "pro2",
+				"pista": "parque_das_docas",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 110.48,
+					"ouro": 72.51,
+					"prata": 73.9
+				},
+				"voltas": 1.0
+			},
+			{
+				"condicao": "seco",
+				"id": "pro3",
+				"pista": "serra_alta",
+				"restricoes": {
+					"potencia_max": 600.0
+				},
+				"tempos": {
+					"bronze": 113.84,
+					"ouro": 83.43,
+					"prata": 84.96
+				},
+				"voltas": 1.0
+			}
+		]
+	},
+	{
+		"id": "ELITE",
+		"nome": "Licença Elite",
+		"preco": 0.0,
+		"requisito": "PRO",
+		"testes": []
+	}
+]

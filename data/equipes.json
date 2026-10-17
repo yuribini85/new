@@ -1,0 +1,976 @@
+[
+ {
+  "id": "eq01_second_driver",
+  "numero": 1,
+  "nome": "Wreckage Motorsport",
+  "logo": "res://arte/equipes/logo_eq01.png",
+  "pilotos": [],
+  "jogador": true,
+  "cores": {
+   "carro": "#1d2f5c",
+   "faixa": "#f2c300",
+   "filete": "#c8102e"
+  }
+ },
+ {
+  "id": "eq02_vortex_motorsport",
+  "numero": 2,
+  "nome": "Blackwater Racing",
+  "nivel": "PRO",
+  "logo": "res://arte/equipes/emblemas/rivais/02_blackwater_racing.webp",
+  "pilotos": [
+   {
+    "id": "lucien_vale",
+    "nome": "Lucien Vale", "genero": "m",
+    "numero": 1,
+    "apelido": "Contador",
+    "perfil": "equilibrado",
+    "personalidade": "Calcula cada ultrapassagem antes de tentar."
+   },
+   {
+    "id": "nadia_voss",
+    "nome": "Nadia Voss", "genero": "f",
+    "numero": 6,
+    "apelido": "Relógio",
+    "perfil": "cauteloso",
+    "personalidade": "Metódica: cada volta igual à anterior."
+   },
+   {
+    "id": "akira_delacroix",
+    "nome": "Akira Delacroix", "genero": "m",
+    "numero": 18,
+    "apelido": "Seda",
+    "perfil": "equilibrado",
+    "personalidade": "Pilotagem limpa: passa sem encostar em ninguém."
+   },
+   {
+    "id": "beatriz_oyelaran",
+    "nome": "Beatriz Oyelaran", "genero": "f",
+    "numero": 52,
+    "apelido": "Largada",
+    "perfil": "agressivo",
+    "personalidade": "Explosiva na largada: ganha posições antes da primeira curva."
+   }
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Rápidos e calculistas: atacam só quando a conta fecha.",
+  "cores": {
+   "carro": "#1f4e5a",
+   "faixa": "#c8ccd0",
+   "filete": "#8a9096"
+  },
+  "fonte_numero": "condensado",
+  "grid": 3,
+  "dirigente": "Victor Sloane",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq02_vortex_motorsport.png"
+ },
+ {
+  "id": "eq03_kaze_dynamics",
+  "numero": 3,
+  "nome": "Kaze Dynamics",
+  "nivel": "INTERNATIONAL",
+  "logo": "res://arte/equipes/logo_eq03.png",
+  "pilotos": [
+   {
+    "id": "ren_kaito",
+    "nome": "Ren Kaito", "genero": "m",
+    "numero": 1,
+    "apelido": "Reta Longa",
+    "perfil": "agressivo",
+    "personalidade": "Adora reta longa, sofre na curva lenta."
+   },
+   {
+    "id": "hana_mori",
+    "nome": "Haru Mori", "genero": "m",
+    "numero": 17,
+    "apelido": "Aprendiz",
+    "perfil": "equilibrado",
+    "personalidade": "O mais novo da equipe: aprende com cada volta."
+   },
+   {
+    "id": "dmitri_abernathy",
+    "nome": "Dmitri Abernathy", "genero": "m",
+    "numero": 23,
+    "apelido": "Freio Tarde",
+    "perfil": "agressivo",
+    "personalidade": "Freia mais tarde que todo mundo."
+   },
+   {
+    "id": "esme_lindgren",
+    "nome": "Espen Lindgren", "genero": "m",
+    "numero": 48,
+    "apelido": "Vácuo",
+    "perfil": "cauteloso",
+    "personalidade": "Vive no vácuo, esperando a chance."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Entram por dentro na curva sem pedir licença.",
+  "cores": {
+   "carro": "#f2f2ee",
+   "faixa": "#c8102e",
+   "filete": "#141518"
+  }
+ },
+ {
+  "id": "eq04_ironclad_racing",
+  "numero": 4,
+  "nome": "Iron Vultures",
+  "nivel": "NATIONAL",
+  "logo": "res://arte/equipes/emblemas/rivais/03_iron_vultures.webp",
+  "pilotos": [
+   {
+    "id": "bram_holt",
+    "nome": "Bram Holt", "genero": "m",
+    "numero": 1,
+    "apelido": "Kart",
+    "perfil": "cauteloso",
+    "personalidade": "Veio do kart: traçado perfeito e nada de risco."
+   },
+   {
+    "id": "soren_pike",
+    "nome": "Soren Pike", "genero": "m",
+    "numero": 5,
+    "apelido": "Muro",
+    "perfil": "equilibrado",
+    "personalidade": "Difícil de passar: fecha o traçado na hora certa."
+   },
+   {
+    "id": "felix_hakimi",
+    "nome": "Felix Hakimi", "genero": "m",
+    "numero": 21,
+    "apelido": "Topete",
+    "perfil": "cauteloso",
+    "personalidade": "Vaidoso no box, cuidadoso na pista."
+   },
+   {
+    "id": "greta_saarinen",
+    "nome": "Greta Saarinen", "genero": "f",
+    "numero": 47,
+    "apelido": "Metrônomo",
+    "perfil": "agressivo",
+    "personalidade": "Ritmo de metrônomo, e não tira o pé quando encosta."
+   }
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Blindados: defendem a posição e esperam o erro dos outros.",
+  "cores": {
+   "carro": "#5c6064",
+   "faixa": "#9a4f2a",
+   "filete": "#cdb88f"
+  },
+  "fonte_numero": "estencil",
+  "grid": 6,
+  "dirigente": "Moss Kettering",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq04_ironclad_racing.png"
+ },
+ {
+  "id": "eq05_apex_dominion",
+  "numero": 5,
+  "nome": "Apex Dominion",
+  "nivel": "ELITE",
+  "logo": "res://arte/equipes/logo_eq05.png",
+  "pilotos": [
+   {
+    "id": "lucas_ward",
+    "nome": "Lucas Ward", "genero": "m",
+    "numero": 1,
+    "apelido": "Pressa",
+    "perfil": "agressivo",
+    "personalidade": "Tem pressa de tudo, menos de frear."
+   },
+   {
+    "id": "cassian_roe",
+    "nome": "Cassian Roe", "genero": "m",
+    "numero": 3,
+    "apelido": "Segundo Tempo",
+    "perfil": "equilibrado",
+    "personalidade": "Cresce na segunda metade da prova."
+   },
+   {
+    "id": "nyra_sol",
+    "nome": "Nero Sol", "genero": "m",
+    "numero": 31,
+    "apelido": "Peito de Aço",
+    "perfil": "agressivo",
+    "personalidade": "Não recua em disputa nenhuma."
+   },
+   {
+    "id": "hugo_esposito",
+    "nome": "Hugo Esposito", "genero": "m",
+    "numero": 58,
+    "apelido": "Promessa",
+    "perfil": "cauteloso",
+    "personalidade": "A promessa da equipe: rápido, mas ainda evita o contato."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Vencer a qualquer preço.",
+  "cores": {
+   "carro": "#141518",
+   "faixa": "#c8102e",
+   "filete": "#b8bcc2"
+  }
+ },
+ {
+  "id": "eq06_redline_union",
+  "numero": 6,
+  "nome": "Redline Union",
+  "nivel": "SPORT",
+  "logo": "res://arte/equipes/emblemas/rivais/01_redline_union.webp",
+  "pilotos": [
+   {
+    "id": "dario_kest",
+    "nome": "Dario Kest", "genero": "m",
+    "numero": 1,
+    "apelido": "Limite",
+    "provisorio": true,
+    "perfil": "agressivo",
+    "personalidade": "Vive no limite: giro alto e freada no último metro."
+   },
+   {
+    "id": "lena_brook",
+    "nome": "Lena Brook", "genero": "f",
+    "numero": 12,
+    "apelido": "Poupança",
+    "provisorio": true,
+    "perfil": "cauteloso",
+    "personalidade": "Poupa o carro para a última volta."
+   },
+   {
+    "id": "isadora_aldana",
+    "nome": "Isadora Aldana", "genero": "f",
+    "numero": 26,
+    "apelido": "Kartódromo",
+    "perfil": "agressivo",
+    "personalidade": "Cria de kartódromo: mergulha por dentro em qualquer brecha."
+   },
+   {
+    "id": "jasper_laurier",
+    "nome": "Jasper Laurier", "genero": "m",
+    "numero": 55,
+    "apelido": "Espera",
+    "perfil": "equilibrado",
+    "personalidade": "Paciente: espera o erro dos outros."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Giro no limite, freada no limite, paciência nenhuma.",
+  "cores": {
+   "carro": "#9c3b2e",
+   "faixa": "#e6dcc4",
+   "filete": "#2b2a2a"
+  },
+  "fonte_numero": "bloco",
+  "grid": 8,
+  "dirigente": "Gus Moreau",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq06_redline_union.png"
+ },
+ {
+  "id": "eq07_northstar_works",
+  "numero": 7,
+  "nome": "Midnight Relay",
+  "nivel": "INTERNATIONAL",
+  "logo": "res://arte/equipes/emblemas/rivais/09_midnight_relay.webp",
+  "pilotos": [
+   {
+    "id": "erik_halden",
+    "nome": "Erik Halden", "genero": "m",
+    "numero": 1,
+    "apelido": "Xadrez",
+    "perfil": "cauteloso",
+    "personalidade": "Lê a corrida como um tabuleiro."
+   },
+   {
+    "id": "liv_arnesen",
+    "nome": "Liv Arnesen", "genero": "f",
+    "numero": 11,
+    "apelido": "Faísca",
+    "provisorio": true,
+    "perfil": "agressivo",
+    "personalidade": "Imprevisível até para a própria equipe."
+   },
+   {
+    "id": "katya_whitcombe",
+    "nome": "Katya Whitcombe", "genero": "f",
+    "numero": 24,
+    "apelido": "Pressa",
+    "perfil": "cauteloso",
+    "personalidade": "Sai rápida do box e administra a corrida com calma."
+   },
+   {
+    "id": "leon_iwata",
+    "nome": "Leon Iwata", "genero": "m",
+    "numero": 39,
+    "apelido": "Maré",
+    "perfil": "equilibrado",
+    "personalidade": "Vai e volta como a maré: perde posição e recupera no fim."
+   }
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Constância acima de tudo: chegam inteiros e somam pontos.",
+  "cores": {
+   "carro": "#1b2440",
+   "faixa": "#2a9d9a",
+   "filete": "#e8c22a"
+  },
+  "fonte_numero": "condensado",
+  "grid": 4,
+  "dirigente": "Astrid Halvorsen",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq07_northstar_works.png"
+ },
+ {
+  "id": "eq08_black_circuit",
+  "numero": 8,
+  "nome": "Last Exit Club",
+  "nivel": "NATIONAL",
+  "logo": "res://arte/equipes/emblemas/rivais/10_last_exit_club.webp",
+  "pilotos": [
+   {
+    "id": "marek_stone",
+    "nome": "Marek Stone", "genero": "m",
+    "numero": 1,
+    "apelido": "Sorriso",
+    "provisorio": true,
+    "perfil": "agressivo",
+    "personalidade": "Sorri no grid, morde na pista."
+   },
+   {
+    "id": "ivy_corran",
+    "nome": "Ivy Corran", "genero": "f",
+    "numero": 13,
+    "apelido": "Navalha",
+    "provisorio": true,
+    "perfil": "cauteloso",
+    "personalidade": "Precisa como navalha: só ataca quando é certo."
+   },
+   {
+    "id": "marisol_eriksen",
+    "nome": "Marisol Eriksen", "genero": "f",
+    "numero": 28,
+    "apelido": "Gelo",
+    "perfil": "agressivo",
+    "personalidade": "Fria no ataque: passa sem mudar a expressão."
+   },
+   {
+    "id": "nils_petrakis",
+    "nome": "Nils Petrakis", "genero": "m",
+    "numero": 61,
+    "apelido": "Gorjeta",
+    "perfil": "equilibrado",
+    "personalidade": "Faz o serviço e não pede nada a mais."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "No box deles, corrida suja é corrida ganha.",
+  "cores": {
+   "carro": "#c8202a",
+   "faixa": "#d6c49a",
+   "filete": "#2b2a2a"
+  },
+  "fonte_numero": "pincel",
+  "grid": 5,
+  "dirigente": "Lou Tasker",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq08_black_circuit.png"
+ },
+ {
+  "id": "eq09_helix_racing",
+  "numero": 9,
+  "nome": "Helix Racing",
+  "nivel": "NATIONAL",
+  "logo": "res://arte/equipes/logo_eq09.png",
+  "pilotos": [
+   {
+    "id": "tomas_reyl",
+    "nome": "Tomas Reyl", "genero": "m",
+    "numero": 1,
+    "apelido": "Atalho",
+    "provisorio": true,
+    "perfil": "equilibrado",
+    "personalidade": "Veterano que conhece todos os truques do paddock."
+   },
+   {
+    "id": "sasha_imre",
+    "nome": "Sasha Imre", "genero": "m",
+    "numero": 16,
+    "apelido": "Telemetria",
+    "provisorio": true,
+    "perfil": "agressivo",
+    "personalidade": "Ataca onde a telemetria mostra o ponto fraco do rival."
+   },
+   {
+    "id": "odette_bastos",
+    "nome": "Odette Bastos", "genero": "f",
+    "numero": 22,
+    "apelido": "Professora",
+    "perfil": "equilibrado",
+    "personalidade": "Ensina o traçado aos novatos e cobra deles na pista."
+   },
+   {
+    "id": "pablo_morrow",
+    "nome": "Pablo Morrow", "genero": "m",
+    "numero": 49,
+    "apelido": "Dado",
+    "perfil": "cauteloso",
+    "personalidade": "Joga seguro: nunca aposta tudo numa curva."
+   }
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Engenheiros primeiro: ultrapassam onde a telemetria manda.",
+  "cores": {
+   "carro": "#1f7a7a",
+   "faixa": "#f2f2ee",
+   "filete": "#141518"
+  }
+ },
+ {
+  "id": "eq10_ember_works",
+  "numero": 10,
+  "nome": "Ember Works",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/logo_eq10.png",
+  "pilotos": [
+   {
+    "id": "gus_harrow",
+    "nome": "Gus Harrow", "genero": "m",
+    "numero": 1,
+    "apelido": "Brasa",
+    "provisorio": true,
+    "perfil": "equilibrado",
+    "personalidade": "Calado no box, barulhento na pista."
+   },
+   {
+    "id": "pia_lund",
+    "nome": "Per Lund", "genero": "m",
+    "numero": 15,
+    "apelido": "Porta",
+    "provisorio": true,
+    "perfil": "cauteloso",
+    "personalidade": "Fecha a porta sem cerimônia."
+   },
+   {
+    "id": "quinn_ishida",
+    "nome": "Quinn Hartley", "genero": "m",
+    "numero": 32,
+    "apelido": "Aceno",
+    "perfil": "equilibrado",
+    "personalidade": "Cumprimenta todo mundo e não cede um centímetro."
+   },
+   {
+    "id": "rafaela_takeda",
+    "nome": "Rafaela Duarte", "genero": "f",
+    "numero": 68,
+    "apelido": "Roda a Roda",
+    "perfil": "agressivo",
+    "personalidade": "Briga roda a roda até a última curva."
+   }
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Oficina pequena, brasa acesa: crescem no fim da prova.",
+  "cores": {
+   "carro": "#e8601c",
+   "faixa": "#141518",
+   "filete": "#f2c300"
+  }
+ },
+ {
+  "id": "eq11_white_fang_racing",
+  "numero": 11,
+  "nome": "White Fang Racing",
+  "nivel": "INTERNATIONAL",
+  "logo": "res://arte/equipes/logo_eq11.png",
+  "pilotos": [
+   {
+    "id": "viktor_ren",
+    "nome": "Viktor Ren", "genero": "m",
+    "numero": 1,
+    "apelido": "Caçador",
+    "perfil": "agressivo",
+    "personalidade": "Persegue o carro da frente até achar a brecha."
+   },
+   {
+    "id": "yuna_kess",
+    "nome": "Yuri Kess", "genero": "m",
+    "numero": 20,
+    "apelido": "Por Fora",
+    "perfil": "equilibrado",
+    "personalidade": "Ataca por fora quando ninguém espera."
+   },
+   {
+    "id": "stellan_fairbanks",
+    "nome": "Stellan Fairbanks", "genero": "m",
+    "numero": 36,
+    "apelido": "Lobo Velho",
+    "perfil": "agressivo",
+    "personalidade": "Velho de guerra: ainda morde no fim da prova."
+   },
+   {
+    "id": "tamsin_bergstrom",
+    "nome": "Torsten Bergstrom", "genero": "m",
+    "numero": 59,
+    "apelido": "Sombra",
+    "perfil": "cauteloso",
+    "personalidade": "Ninguém lembra de vê-lo errar."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Caçadores: grudam no vácuo e mordem na primeira chance.",
+  "cores": {
+   "carro": "#f2f2ee",
+   "faixa": "#1d4f9c",
+   "filete": "#141518"
+  }
+ },
+ {
+  "id": "eq12_brassline_motorsport",
+  "numero": 12,
+  "nome": "Brassline Motorsport",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/logo_eq12.png",
+  "pilotos": [
+   {
+    "id": "oscar_flint",
+    "nome": "Oscar Flint", "genero": "m",
+    "numero": 1,
+    "apelido": "Tradição",
+    "perfil": "cauteloso",
+    "personalidade": "Pilota como se ensinava antigamente: limpo e sem pressa."
+   },
+   {
+    "id": "mina_rowe",
+    "nome": "Mina Rowe", "genero": "f",
+    "numero": 4,
+    "apelido": "Regulamento",
+    "perfil": "equilibrado",
+    "personalidade": "Corre com o regulamento decorado."
+   },
+   {
+    "id": "ulrich_marchetti",
+    "nome": "Ulrich Marchetti", "genero": "m",
+    "numero": 25,
+    "apelido": "Calado",
+    "perfil": "cauteloso",
+    "personalidade": "Não fala, não arrisca, não erra."
+   },
+   {
+    "id": "valentina_yamaguchi",
+    "nome": "Vasco Rojas", "genero": "m",
+    "numero": 71,
+    "apelido": "Ferrolho",
+    "perfil": "agressivo",
+    "personalidade": "Fecha a porta e não abre por nada."
+   }
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Tradição e polimento: não arriscam o carro por uma posição.",
+  "cores": {
+   "carro": "#1f4d34",
+   "faixa": "#c9a227",
+   "filete": "#e9dfc4"
+  }
+ },
+ {
+  "id": "eq13_tempest_garage",
+  "numero": 13,
+  "nome": "Blue Collar Syndicate",
+  "nivel": "SPORT",
+  "logo": "res://arte/equipes/emblemas/rivais/08_blue_collar_syndicate.webp",
+  "pilotos": [
+   {
+    "id": "noel_mercer",
+    "nome": "Noel Mercer", "genero": "m",
+    "numero": 1,
+    "apelido": "Turno",
+    "perfil": "equilibrado",
+    "personalidade": "Aguenta turnos longos sem perder o ritmo."
+   },
+   {
+    "id": "zara_keene",
+    "nome": "Zara Keene", "genero": "f",
+    "numero": 8,
+    "apelido": "Manga",
+    "perfil": "agressivo",
+    "personalidade": "Arregaça as mangas e parte pra cima."
+   },
+   {
+    "id": "wes_jaramillo",
+    "nome": "Wes Jaramillo", "genero": "m",
+    "numero": 30,
+    "apelido": "Fagulha",
+    "perfil": "equilibrado",
+    "personalidade": "Acende na largada e se acalma depois."
+   },
+   {
+    "id": "xenia_falcone",
+    "nome": "Xenia Falcone", "genero": "f",
+    "numero": 73,
+    "apelido": "Atalho",
+    "perfil": "cauteloso",
+    "personalidade": "Acha o traçado mais curto sem tocar em ninguém."
+   }
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Imprevisíveis: ninguém sabe de onde vem o ataque.",
+  "cores": {
+   "carro": "#2c4f7c",
+   "faixa": "#9aa3ab",
+   "filete": "#e6dcc4"
+  },
+  "fonte_numero": "estencil",
+  "grid": 7,
+  "dirigente": "Walt Brennigan",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq13_tempest_garage.png"
+ },
+ {
+  "id": "eq14_crown_vector",
+  "numero": 14,
+  "nome": "Hollow Saints",
+  "nivel": "PRO",
+  "logo": "res://arte/equipes/emblemas/rivais/07_hollow_saints.webp",
+  "pilotos": [
+   {
+    "id": "elias_wren",
+    "nome": "Elias Wren", "genero": "m",
+    "numero": 1,
+    "apelido": "Herdeiro",
+    "perfil": "equilibrado",
+    "personalidade": "Herdeiro da equipe: quer provar que merece a vaga."
+   },
+   {
+    "id": "celeste_armand",
+    "nome": "Celeste Armand", "genero": "f",
+    "numero": 7,
+    "apelido": "Porcelana",
+    "perfil": "cauteloso",
+    "personalidade": "Delicada com o carro: nunca volta com um arranhão."
+   },
+   {
+    "id": "yusuf_quintero",
+    "nome": "Yusuf Quintero", "genero": "m",
+    "numero": 19,
+    "apelido": "Cofre",
+    "perfil": "equilibrado",
+    "personalidade": "Guarda o carro e o ataque para a hora certa."
+   },
+   {
+    "id": "zoe_coutinho",
+    "nome": "Zoe Coutinho", "genero": "f",
+    "numero": 33,
+    "apelido": "Regra",
+    "perfil": "agressivo",
+    "personalidade": "Conhece a regra e vai até o último centímetro dela."
+   }
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Dinheiro de família, pilotagem limpa.",
+  "cores": {
+   "carro": "#ece4cf",
+   "faixa": "#5a1a24",
+   "filete": "#a8873e"
+  },
+  "fonte_numero": "serifa",
+  "grid": 1,
+  "dirigente": "Augustin Pryce",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq14_crown_vector.png"
+ },
+ {
+  "id": "eq15_gravelborn",
+  "numero": 15,
+  "nome": "Redemption County",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/emblemas/rivais/04_redemption_county.webp",
+  "pilotos": [
+   {
+    "id": "rafe_calder",
+    "nome": "Rafe Calder", "genero": "m",
+    "numero": 1,
+    "apelido": "Poeira",
+    "perfil": "agressivo",
+    "personalidade": "Deixa os rivais na poeira e não olha para trás."
+   },
+   {
+    "id": "nika_stroud",
+    "nome": "Nico Stroud", "genero": "m",
+    "numero": 10,
+    "apelido": "Rede",
+    "perfil": "equilibrado",
+    "personalidade": "Erra quando pressionado de perto."
+   },
+   {
+    "id": "anders_nyberg",
+    "nome": "Anders Nyberg", "genero": "m",
+    "numero": 29,
+    "apelido": "Cascalho",
+    "perfil": "agressivo",
+    "personalidade": "Veio do rali: não tem medo de sair do traçado."
+   },
+   {
+    "id": "bianca_jovanovic",
+    "nome": "Bojan Jovanovic", "genero": "m",
+    "numero": 77,
+    "apelido": "Estrada",
+    "perfil": "cauteloso",
+    "personalidade": "Rodou muita estrada: sabe chegar ao fim."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Vieram do rali: encostar roda não assusta ninguém lá.",
+  "cores": {
+   "carro": "#c9a227",
+   "faixa": "#b5562f",
+   "filete": "#e9dfc4"
+  },
+  "fonte_numero": "pincel",
+  "grid": 10,
+  "dirigente": "Hank Ruddle",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq15_gravelborn.png"
+ },
+ {
+  "id": "eq16_meridian_gp",
+  "numero": 16,
+  "nome": "Meridian GP",
+  "nivel": "ELITE",
+  "logo": "res://arte/equipes/logo_eq16.png",
+  "pilotos": [
+   {
+    "id": "theo_maren",
+    "nome": "Tobias Maren", "genero": "m",
+    "numero": 1,
+    "apelido": "Maratona",
+    "perfil": "cauteloso",
+    "personalidade": "Feito para prova longa: cresce na segunda metade."
+   },
+   {
+    "id": "selene_ashby",
+    "nome": "Selene Ashby", "genero": "f",
+    "numero": 2,
+    "apelido": "Veterana",
+    "perfil": "equilibrado",
+    "personalidade": "Veterana: já viu de tudo e não se assusta."
+   },
+   {
+    "id": "cyrus_ulloa",
+    "nome": "Cyrus Ulloa", "genero": "m",
+    "numero": 34,
+    "apelido": "Calmaria",
+    "perfil": "cauteloso",
+    "personalidade": "Calmo até demais: às vezes deixa a chance passar."
+   },
+   {
+    "id": "dalia_grimaldi",
+    "nome": "Davide Grimaldi", "genero": "m",
+    "numero": 88,
+    "apelido": "Freio Tarde",
+    "perfil": "agressivo",
+    "personalidade": "Mergulha na freada e confia no carro."
+   }
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Estratégia longa: largam devagar e chegam na frente.",
+  "cores": {
+   "carro": "#7fb2dd",
+   "faixa": "#f2f2ee",
+   "filete": "#1d2f5c"
+  }
+ },
+ {
+  "id": "eq17_obsidian_crest",
+  "numero": 17,
+  "nome": "Obsidian Crest",
+  "nivel": "ELITE",
+  "logo": "res://arte/equipes/logo_eq17.png",
+  "pilotos": [
+   {
+    "id": "magnus_rell",
+    "nome": "Magnus Rell", "genero": "m",
+    "numero": 1,
+    "apelido": "Prata",
+    "perfil": "equilibrado",
+    "personalidade": "Vive em segundo e não se incomoda."
+   },
+   {
+    "id": "ines_calloway",
+    "nome": "Ian Calloway", "genero": "m",
+    "numero": 17,
+    "apelido": "Kart",
+    "perfil": "agressivo",
+    "personalidade": "Veio do kart e ainda pilota como no kart."
+   },
+   {
+    "id": "emil_castellan",
+    "nome": "Emil Castellan", "genero": "m",
+    "numero": 40,
+    "apelido": "O Velho",
+    "perfil": "equilibrado",
+    "personalidade": "O mais experiente do grid: espera o erro dos outros."
+   },
+   {
+    "id": "fiona_nakamura",
+    "nome": "Fabian Okoro", "genero": "m",
+    "numero": 63,
+    "apelido": "Três",
+    "perfil": "cauteloso",
+    "personalidade": "Contenta-se com o pódio e quase sempre chega nele."
+   }
+  ],
+  "perfil": "equilibrado",
+  "personalidade": "Frios e calados; ninguém sabe o que planejam.",
+  "cores": {
+   "carro": "#5a5f66",
+   "faixa": "#5b2a86",
+   "filete": "#141518"
+  }
+ },
+ {
+  "id": "eq18_copperhead_racing",
+  "numero": 18,
+  "nome": "Copperhead Motors",
+  "nivel": "CLUB",
+  "logo": "res://arte/equipes/emblemas/rivais/06_copperhead_motors.webp",
+  "pilotos": [
+   {
+    "id": "ash_corwin",
+    "nome": "Ash Corwin", "genero": "m",
+    "numero": 1,
+    "apelido": "Bote",
+    "perfil": "cauteloso",
+    "personalidade": "Espera a curva inteira para dar o bote."
+   },
+   {
+    "id": "cleo_vane",
+    "nome": "Cole Vane", "genero": "m",
+    "numero": 14,
+    "apelido": "Ponteiro",
+    "perfil": "equilibrado",
+    "personalidade": "Olho no ponteiro: sempre no giro certo."
+   },
+   {
+    "id": "gideon_zelenko",
+    "nome": "Gideon Zelenko", "genero": "m",
+    "numero": 37,
+    "apelido": "Veneno",
+    "perfil": "cauteloso",
+    "personalidade": "Paciente na ida, venenoso no fim."
+   },
+   {
+    "id": "helga_kowal",
+    "nome": "Helga Kowal", "genero": "f",
+    "numero": 66,
+    "apelido": "Reta",
+    "perfil": "agressivo",
+    "personalidade": "Adora reta longa e não tira o pé na entrada da curva."
+   }
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Paciência de cobra: esperam o bote certo.",
+  "cores": {
+   "carro": "#b06a3b",
+   "faixa": "#23432f",
+   "filete": "#ece4cf"
+  },
+  "fonte_numero": "bloco",
+  "grid": 9,
+  "dirigente": "Silas Varn",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq18_copperhead_racing.png"
+ },
+ {
+  "id": "eq19_cold_harbor",
+  "numero": 19,
+  "nome": "Cold Harbor",
+  "nivel": "SPORT",
+  "logo": "res://arte/equipes/logo_eq19.png",
+  "pilotos": [
+   {
+    "id": "finn_sutter",
+    "nome": "Finn Sutter", "genero": "m",
+    "numero": 1,
+    "apelido": "Abraço",
+    "perfil": "cauteloso",
+    "personalidade": "Deixa espaço para o rival: ninguém sai batido de perto dele."
+   },
+   {
+    "id": "kaia_rehn",
+    "nome": "Kofi Rehn", "genero": "m",
+    "numero": 19,
+    "apelido": "Sangue Frio",
+    "perfil": "agressivo",
+    "personalidade": "Não perde a calma nem com o rival colado."
+   },
+   {
+    "id": "ivo_galloway",
+    "nome": "Ivo Galloway", "genero": "m",
+    "numero": 35,
+    "apelido": "Teimoso",
+    "perfil": "cauteloso",
+    "personalidade": "Teimoso no traçado: não muda nem sob pressão."
+   },
+   {
+    "id": "juno_rasmussen",
+    "nome": "Juno Rasmussen", "genero": "m",
+    "numero": 50,
+    "apelido": "Paz",
+    "perfil": "equilibrado",
+    "personalidade": "Nunca briga, nem no box nem na pista."
+   }
+  ],
+  "perfil": "cauteloso",
+  "personalidade": "Cabeça fria: evitam briga roda a roda.",
+  "cores": {
+   "carro": "#b8bcc2",
+   "faixa": "#1d2f5c",
+   "filete": "#f2f2ee"
+  }
+ },
+ {
+  "id": "eq20_storm_division",
+  "numero": 20,
+  "nome": "Velvet Thunder",
+  "nivel": "PRO",
+  "logo": "res://arte/equipes/emblemas/rivais/05_velvet_thunder.webp",
+  "pilotos": [
+   {
+    "id": "rex_arden",
+    "nome": "Rex Arden", "genero": "m",
+    "numero": 1,
+    "apelido": "Número Um",
+    "perfil": "agressivo",
+    "personalidade": "Quer o número um e não aceita menos."
+   },
+   {
+    "id": "mira_danvers",
+    "nome": "Aline Roberta", "genero": "f",
+    "numero": 9,
+    "apelido": "Vitrine",
+    "perfil": "cauteloso",
+    "personalidade": "Sempre bem na foto: chega sem um arranhão."
+   },
+   {
+    "id": "kenji_drummond",
+    "nome": "Dante Drummond", "genero": "m",
+    "numero": 27,
+    "apelido": "Coringa",
+    "perfil": "agressivo",
+    "personalidade": "Coringa: ataca de qualquer lado."
+   },
+   {
+    "id": "livia_okafor",
+    "nome": "Livia Okafor", "genero": "f",
+    "numero": 44,
+    "apelido": "Tempestade",
+    "perfil": "equilibrado",
+    "personalidade": "Calma no começo, tempestade no fim."
+   }
+  ],
+  "perfil": "agressivo",
+  "personalidade": "Chegam como temporal no fim da corrida.",
+  "cores": {
+   "carro": "#8e7aa0",
+   "faixa": "#6e1f33",
+   "filete": "#c9a54a"
+  },
+  "fonte_numero": "condensado",
+  "grid": 2,
+  "dirigente": "Delphine Arceneaux",
+  "retrato_dirigente": "res://arte/equipes/dirigentes/eq20_storm_division.png"
+ }
+]

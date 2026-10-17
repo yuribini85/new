@@ -1,0 +1,17 @@
+{
+	"passo_m": 1.0,
+	"dt_s": 0.05,
+	"amostra_dt_s": 0.1,
+	"tempo_max_s": 7200,
+	"distancia_minima_m": 6.0,
+	"sigma_ruido": 0.02,
+	"fator_tracao": {
+		"FF": 0.6,
+		"FR": 0.5,
+		"MR": 0.55,
+		"RR": 0.6,
+		"4WD": 1.0
+	},
+	"cda_m2": 0.6,
+	"densidade_ar_kg_m3": 1.225
+}

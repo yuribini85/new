@@ -1,0 +1,17 @@
+[
+ {"id": "mara", "nome": "Mara Hayes", "retrato": "res://arte/personagens/mara_hayes.png", "cor": "#b0703a", "papel": "mecânica veterana da oficina", "busto": [0.43, 0.225, 0.192]},
+ {"id": "piloto_casa", "nome": "Theo Lane", "retrato": "res://arte/personagens/theo_lane.png", "cor": "#4a7a9a", "papel": "piloto da oficina", "busto": [0.47, 0.206, 0.188]},
+ {"id": "dono", "nome": "", "retrato": "", "cor": "#000000", "papel": "o jogador, novo dono da oficina"},
+ {"id": "examinador", "nome": "Harold Brandt", "retrato": "res://arte/personagens/harold_brandt.png", "cor": "#8a2a2a", "papel": "examinador da Vector Academy", "busto": [0.42, 0.158, 0.144]},
+ {"id": "manobrista", "nome": "Rico Salas", "retrato": "res://arte/personagens/rico_salas.png", "cor": "#c8372d", "papel": "manobrista da garagem", "busto": [0.48, 0.132, 0.123]},
+ {"id": "mecanico_arena", "nome": "Dex Kane", "retrato": "res://arte/personagens/dex_kane.png", "cor": "#7a3a2a", "papel": "mecânico da arena", "busto": [0.5, 0.132, 0.119]},
+ {"id": "organizadora", "nome": "Roxy Vega", "retrato": "res://arte/personagens/roxy_vega.png", "cor": "#d2402a", "papel": "organizadora da arena", "busto": [0.47, 0.126, 0.121]},
+ {"id": "pintor", "nome": "Kenji Arata", "retrato": "res://arte/personagens/kenji_arata.png", "cor": "#d9a521", "papel": "pintor da oficina", "busto": [0.47, 0.141, 0.119]},
+ {"id": "vendedor_charge_folio", "nome": "Edgar Halloway", "retrato": "res://arte/personagens/edgar_halloway.png", "cor": "#9a7a4a", "papel": "vendedor · Charge Folio Motors", "busto": [0.47, 0.085, 0.072]},
+ {"id": "vendedor_relay_room", "nome": "Sal Moretti", "retrato": "res://arte/personagens/sal_moretti.png", "cor": "#c9862a", "papel": "vendedor · Relay Room Garage", "busto": [0.52, 0.127, 0.119]},
+ {"id": "vendedora_brace_yard", "nome": "Bianca Sterling", "retrato": "res://arte/personagens/bianca_sterling.png", "cor": "#2a3a6a", "papel": "vendedora · Brace Yard Works", "busto": [0.49, 0.123, 0.112]},
+ {"id": "vendedora_return_chapter", "nome": "Nora Lindqvist", "retrato": "res://arte/personagens/nora_lindqvist.png", "cor": "#2a4a8a", "papel": "vendedora · Return Chapter Customs", "busto": [0.49, 0.128, 0.108]},
+ {"id": "vendedora_shared_grid", "nome": "Jade Ryker", "retrato": "res://arte/personagens/jade_ryker.png", "cor": "#b0202a", "papel": "vendedora · Shared Grid Motors", "busto": [0.53, 0.114, 0.106]},
+ {"id": "vendedor_spare_penny", "nome": "Walt Pruitt", "retrato": "res://arte/personagens/walt_pruitt.png", "cor": "#6a7a5a", "papel": "vendedor · Spare Penny Repairs", "busto": [0.525, 0.133, 0.126]},
+ {"id": "sistema", "nome": "", "retrato": "", "cor": "#000000"}
+]
