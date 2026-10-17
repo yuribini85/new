@@ -1168,6 +1168,7 @@ func _conversas_das_corridas(corridas: Array, antes: Dictionary) -> void:
 func _notification(what: int) -> void:
 	# Volta do segundo plano: aplica o que correu enquanto isso, na hora.
 	if what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN] and _sobre != null:
+		Notificacoes.cancelar()  # de volta: os avisos agendados saem
 		RegistroSessao.inicio(jogador)  # antes da fila: as corridas de fora entram na sessão
 		RegistroSessao.tela(_abas.current_tab)
 		_processar_fila()
@@ -1175,6 +1176,7 @@ func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT, NOTIFICATION_WM_CLOSE_REQUEST] \
 			and _sobre != null:
 		RegistroSessao.fim(jogador)
+		Notificacoes.agendar(dados, jogador)
 
 
 ## Quadros por segundo no canto, só com o modo de playtest ligado: medir o

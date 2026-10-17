@@ -57,6 +57,13 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, 
 	_chave(v, "animacoes", "Reduzir animações", "Desativa animações secundárias.", Preferencias.reduzir_animacoes,
 			func(x): Preferencias.reduzir_animacoes = x)
 
+	_secao(v, "AVISOS")
+	_chave(v, "cronometro", "Avisos do aparelho", "Contrato encerrado, tanque cheio, licença pronta.",
+			Preferencias.notificacoes, func(x):
+				Preferencias.notificacoes = x
+				if not x:
+					Notificacoes.cancelar())
+
 	_secao(v, "VISTA DA CORRIDA")
 	var vistas := HBoxContainer.new()
 	vistas.add_theme_constant_override("separation", 10)
@@ -218,6 +225,16 @@ static func _icone(nome: String, tam := 46.0) -> TextureRect:
 	return t
 
 
+## A arte cfg_<nome>; sem ela, o ícone vetorial do mesmo nome.
+static func _icone_ou_vetor(nome: String) -> Control:
+	if Aba.arte("cfg_" + nome) != null:
+		return _icone(nome)
+	var iv := IconeVetor.new(nome, Aba.COR_DESTAQUE)
+	iv.custom_minimum_size = Vector2(46, 46)
+	iv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	return iv
+
+
 static func _titulo(t: String) -> Label:
 	var l := Label.new()
 	l.text = t.to_upper()
@@ -247,7 +264,7 @@ static func _chave(v: VBoxContainer, icone: String, t: String, descricao: String
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 16)
 	c.add_child(h)
-	h.add_child(_icone(icone))
+	h.add_child(_icone_ou_vetor(icone))
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 0)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -340,13 +357,7 @@ static func _linha_botao(v: VBoxContainer, icone: String, t: String, acao: Calla
 	h.add_theme_constant_override("separation", 16)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(h)
-	if Aba.arte("cfg_" + icone) != null:
-		h.add_child(_icone(icone))
-	else:  # sem arte cfg_: o ícone vetorial do mesmo nome
-		var iv := IconeVetor.new(icone, Aba.COR_DESTAQUE)
-		iv.custom_minimum_size = Vector2(46, 46)
-		iv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		h.add_child(iv)
+	h.add_child(_icone_ou_vetor(icone))
 	var l := _titulo(t)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(l)

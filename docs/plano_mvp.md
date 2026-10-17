@@ -970,3 +970,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     preco_usd`: Pack Elite US$ 9,99; Turno da Noite US$ 4,99; Sem anúncios US$ 3,99. A tela
     mostra o preço da loja do aparelho e, sem ela, esse preço-base. Na comparação da loja só
     entram os atributos em que a Elite supera o melhor do mercado por 10 pontos ou mais.
+107. **Avisos do aparelho** (2026-10-17, decisão do usuário: liga por padrão, desliga nas
+    Configurações → AVISOS). Ao sair de foco, o jogo agenda avisos do que acontece longe
+    dele (contrato de patrocínio que acaba, tanque cheio, treino de licença pronto, piloto
+    recuperado); ao voltar, cancela todos (`Notificacoes`). O envio usa o plugin de avisos
+    locais do aparelho (singleton `LocalNotification`, a instalar no export Android/iOS);
+    sem ele (editor, Web), nada acontece.

@@ -27,6 +27,8 @@ static var camera_arena := "briga"
 ## Playtest (docs/playtest_percurso.md): "" desligado, "clareza" (pular corrida
 ## permitido) ou "ritmo" (sem pular). Ligado, grava RegistroSessao.
 static var modo_teste := ""
+## Avisos do aparelho com o jogo fechado (Notificacoes, decisão 107).
+static var notificacoes := true
 static var _carregado := false
 
 
@@ -45,6 +47,7 @@ static func carregar() -> void:
 		vista_corrida = String(cfg.get_value("tela", "vista_corrida", vista_corrida))
 		camera_arena = String(cfg.get_value("tela", "camera_arena", camera_arena))
 		modo_teste = String(cfg.get_value("teste", "modo", modo_teste))
+		notificacoes = bool(cfg.get_value("avisos", "notificacoes", notificacoes))
 		if not modo_teste in ["", "clareza", "ritmo"]:
 			modo_teste = ""
 	aplicar()
@@ -61,6 +64,7 @@ static func salvar() -> void:
 	cfg.set_value("tela", "vista_corrida", vista_corrida)
 	cfg.set_value("tela", "camera_arena", camera_arena)
 	cfg.set_value("teste", "modo", modo_teste)
+	cfg.set_value("avisos", "notificacoes", notificacoes)
 	cfg.save(CAMINHO)
 	aplicar()
 

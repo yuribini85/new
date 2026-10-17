@@ -515,3 +515,20 @@ func test_loja_real_compra_liga_a_flag() -> void:
 	igual(LojaReal.conceder(d, j, "nada"), "produto desconhecido", "produto que não existe")
 	j.free()
 	d.free()
+
+
+## Decisão 107: os avisos do aparelho saem do estado (contrato que acaba,
+## treino de licença); o que falta menos de um minuto não vira aviso.
+func test_notificacoes_planejadas() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	GestaoEquipe.assinar(d, j, "p_b1", 0.0)
+	var n := Notificacoes.planejar(d, j, 3600.0)
+	var ids: Array = n.map(func(x): return x["id"])
+	verificar("contrato_p_b1" in ids, "contrato vira aviso")
+	var c: Dictionary = n[ids.find("contrato_p_b1")]
+	perto(float(c["em_s"]), 9.0 * 3600.0, 1.0, "no fim do contrato (10 h, assinado em 0)")
+	igual(Notificacoes.planejar(d, j, 10.0 * 3600.0 - 30.0).filter(func(x): return x["id"] == "contrato_p_b1").size(), 0,
+			"menos de um minuto: sem aviso")
+	j.free()
+	d.free()
