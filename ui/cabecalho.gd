@@ -24,6 +24,8 @@ signal pintura
 signal corrida
 signal nomes
 signal mapa
+## Toque no combustível da faixa.
+signal combustivel
 
 const PASTA := "res://arte/ui/cabecalho/"
 const ALTURA := 88  # faixa dos elementos (px da tela de 720): a área de toque do voltar e da engrenagem
@@ -191,6 +193,7 @@ func _init() -> void:
 	_pecas_numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_pecas_numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_pecas.add_child(_pecas_numero)
+	_criar_combustivel()
 	_espaco(4)
 	# Configurações: engrenagem na própria faixa, depois do painel.
 	engrenagem = Button.new()
@@ -274,6 +277,51 @@ func _ajustar_titulo() -> void:
 	while tam > TAMANHO_TITULO_MIN and f.get_string_size(titulo.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
 		tam -= 2
 	titulo.add_theme_font_size_override("font_size", tam)
+
+
+## Combustível no painel dos giros, depois das peças (pedido do usuário: no
+## cabeçalho do jogo, em toda tela): a bomba e "5/8"; vazio, em vermelho.
+## Tocar abre a janela do combustível. Some enquanto o combustível não vale.
+var _combustivel: Button
+var _combustivel_numero: Label
+
+
+func _criar_combustivel() -> void:
+	_combustivel = Button.new()
+	_combustivel.flat = true
+	_combustivel.focus_mode = Control.FOCUS_NONE
+	_combustivel.tooltip_text = "Combustível"
+	_combustivel.custom_minimum_size = Vector2(0, ALTURA_PAINEL)
+	_combustivel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_combustivel.visible = false
+	_combustivel.pressed.connect(func(): combustivel.emit())
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.add_theme_constant_override("separation", 4)
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_combustivel.add_child(h)
+	var ic := IconeVetor.new("combustivel", COR_ROTULO)
+	ic.cor_fundo = Color(0.09, 0.09, 0.1)
+	ic.custom_minimum_size = Vector2(18, 18)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(ic)
+	_combustivel_numero = Label.new()
+	Tipografia.numero(_combustivel_numero, TAMANHO_PECAS)
+	_combustivel_numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_combustivel_numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(_combustivel_numero)
+	_dentro_painel.add_child(_combustivel)
+
+
+## qtd < 0: esconde (combustível desligado ou ainda no tutorial).
+func definir_combustivel(qtd: int, tanque: int) -> void:
+	_combustivel.visible = qtd >= 0
+	if qtd < 0:
+		return
+	_combustivel_numero.text = "%d/%d" % [qtd, tanque]
+	_combustivel_numero.add_theme_color_override("font_color", COR_ROTULO if qtd > 0 else Aba.COR_RUIM)
+	_ajustar_giros()
 
 
 ## Aba pendurada sob a faixa: a mesma cor, cantos de baixo arredondados.
@@ -595,6 +643,10 @@ func _ajustar_giros() -> void:
 			tam = _tamanho_numero(f, texto, com_giros, tam_p)
 	_caixa_giros.visible = com_giros
 	_pecas_numero.add_theme_font_size_override("font_size", tam_p)
+	if _combustivel != null:
+		_combustivel_numero.add_theme_font_size_override("font_size", tam_p)
+		_combustivel.custom_minimum_size.x = 18.0 + 4.0 + f.get_string_size(_combustivel_numero.text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, tam_p).x
 	numero.add_theme_font_size_override("font_size", tam)
 	_caixa_numero.custom_minimum_size.x = f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x + 4.0
 
@@ -617,6 +669,9 @@ func _livre_numero(com_giros: bool, tam_p: int) -> float:
 		livre -= _caixa_giros.custom_minimum_size.x + vao
 	livre -= 18.0 + 4.0 + Tipografia.fonte_numero().get_string_size(_pecas_numero.text,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, tam_p).x + vao  # porca, vão e o número das peças
+	if _combustivel != null and _combustivel.visible:
+		livre -= 18.0 + 4.0 + Tipografia.fonte_numero().get_string_size(_combustivel_numero.text,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, tam_p).x + vao  # bomba, vão e o combustível
 	return livre - 8.0  # folga das bordas das letras
 
 

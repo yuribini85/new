@@ -243,9 +243,9 @@ Mara[explica]: Licença na mão e resultado na pista: agora aparece patrocinador
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
 Mara[pensativa]: Com o jogo fechado, o contrato rende por algumas horas; cada licença nova soma mais uma.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
-[OPEN_LICENSE_CENTER]
+[OPEN_TEAM_FINANCE]
 [HIGHLIGHT_PATROCINIO]
-Sistema: Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas.
+Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas.
 
 = CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
 Harold: Sport aprovada. Eu esperava mais rápido. Mas aprovada.
@@ -395,12 +395,12 @@ Mara[decepcao]: Mais um pro ferro-velho.
 # ---------------------------------------------------------------- Gestão da equipe
 # Patrocínio, Sede e desmanche (GestaoEquipe, data/equipe.json): cada um com a fala da
 # Mara que explica o que é e o que rende.
-= CW_S01 | ABA:LICENCAS | personagem=dono; requer=GESTAO_LIBERADA; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
+= CW_S01 | ABA:EQUIPE | personagem=dono; requer=GESTAO_LIBERADA; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO; cenario=oficina_mara
 Mara[explica]: Equipe de verdade atrai patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
-Mara[firme]: Na Sede, na aba Equipe, a gente melhora o que eles pagam.
-Sistema: Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas.
+Mara[firme]: Na Sede, aqui mesmo, a gente melhora o que eles pagam.
+Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas.
 
 = CW_S02 | PATROCINIO_ASSINADO | personagem=dono; proibe=FIRST_SPONSOR; flags=FIRST_SPONSOR
 Mara[firme]: Primeiro adesivo novo no carro desde que a equipe parou.

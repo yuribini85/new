@@ -1033,14 +1033,14 @@
     "pose": "gesto"
    },
    {
-    "acao": "OPEN_LICENSE_CENTER"
+    "acao": "OPEN_TEAM_FINANCE"
    },
    {
     "acao": "HIGHLIGHT_PATROCINIO"
    },
    {
     "quem": "sistema",
-    "texto": "Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas."
+    "texto": "Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas."
    }
   ],
   "requer": [
@@ -1851,7 +1851,7 @@
  },
  {
   "id": "CW_S01",
-  "trigger": "ABA:LICENCAS",
+  "trigger": "ABA:EQUIPE",
   "falas": [
    {
     "quem": "mara",
@@ -1869,12 +1869,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Na Sede, na aba Equipe, a gente melhora o que eles pagam.",
+    "texto": "Na Sede, aqui mesmo, a gente melhora o que eles pagam.",
     "pose": "firme"
    },
    {
     "quem": "sistema",
-    "texto": "Assine um contrato em Patrocínio, aqui na Carreira. Ele dura um dia; depois vêm ofertas novas."
+    "texto": "Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas."
    }
   ],
   "requer": [

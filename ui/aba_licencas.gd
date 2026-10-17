@@ -46,7 +46,6 @@ func construir() -> void:
 	_brasao()
 	_mostrar_resultado()
 	_objetivos()
-	_patrocinio()
 	_the_grid()
 	if not _licencas_apresentadas():
 		return  # tutorial do dono: licença e coleção só depois de a Mara apresentar
@@ -337,102 +336,6 @@ func _animar_grid() -> void:
 	t.tween_interval(0.5)
 	if ficha != "":
 		t.tween_callback(func(): vinheta.emit(ficha, contexto))
-
-
-## Patrocínio (decisão 68: administrado na Carreira; é a renda de quando o app
-## está fechado): os contratos (renda por hora e o bônus da condição), as
-## vagas livres e as ofertas.
-func _patrocinio() -> void:
-	if not GestaoEquipe.patrocinio_aberto(dados, jogador):
-		return
-	var vagas := GestaoEquipe.vagas(dados, jogador)
-	var ativos := GestaoEquipe.contratos(jogador)
-	var tit := titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o jogo fechado (até %d h fora); a condição de cada um paga bônus por corrida."
-			% roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0))
-	ancora("PATROCINIO", tit)
-	var agora := Time.get_unix_time_from_system()
-	for c in ativos:
-		var p := GestaoEquipe.patrocinador(dados, c["id"])
-		var v := _cartao_patrocinador(p, true)
-		var resta := maxf(float(c["fim"]) - agora, 0.0)
-		var dur := maxf(float(c["fim"]) - float(c["inicio"]), 1.0)
-		var barra := ProgressBar.new()
-		barra.show_percentage = false
-		barra.max_value = dur
-		barra.value = resta
-		barra.custom_minimum_size = Vector2(0, 10)
-		v.add_child(barra)
-		rotulo("Contrato termina em %s · já rendeu %s giros" % [horas_min(resta), dinheiro(int(c.get("ganho", 0)))],
-				FONTE_PEQUENA, COR_SECUNDARIA, v)
-	if ativos.size() >= vagas:
-		if GestaoEquipe.melhoria(dados, "escritorio").is_empty() == false \
-				and GestaoEquipe.preco_melhoria(dados, jogador, "escritorio") > 0:
-			nota("icone_info", "Mais contratos", "O Escritório comercial, na Sede, abre vaga para outro patrocinador.")
-		return
-	titulo_secao("OFERTAS", "%d de %d vaga%s de contrato livre%s" % [vagas - ativos.size(), vagas,
-			"" if vagas == 1 else "s", "" if vagas - ativos.size() == 1 else "s"])
-	for p in GestaoEquipe.ofertas(dados, jogador):
-		var v := _cartao_patrocinador(p, false)
-		var b := Button.new()
-		Tipografia.acao_primaria(b, "ASSINAR", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 56)
-		b.custom_minimum_size = Vector2(170, 56)
-		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		b.pressed.connect(func():
-			var motivo := GestaoEquipe.assinar(dados, jogador, String(p["id"]), Time.get_unix_time_from_system())
-			if motivo != "":
-				avisar("Não deu: %s." % motivo, false)
-				return
-			Sons.tocar_ui(self, "moeda", -4.0)
-			avisar("Contrato assinado com %s." % p["nome"])
-			historia("PATROCINIO_ASSINADO")
-			mudou.emit())
-		v.get_meta("acao").add_child(b)
-
-
-## Cartão compacto de um patrocinador: nome e licença numa linha; ramo, duração
-## e "rende com o jogo fechado" na segunda; renda e bônus à esquerda e, na
-## oferta, o botão à direita (meta "acao": a fileira onde ele entra).
-func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
-	var fundo := arte("banner_patrocinio_" + String(p.get("id", "")))
-	var v := cartao_com_fundo(fundo) if fundo != null else cartao(COR_BOM if ativo else Color.TRANSPARENT)
-	v.add_theme_constant_override("separation", 4)
-	var cab := fileira(v)
-	var nome := rotulo(String(p.get("nome", "")), 0, Color.WHITE, cab)
-	Tipografia.rotulo(nome, "semibold", 28)
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var lic := String(p.get("licenca", ""))
-	if lic != "":
-		var chip := selo(lic, COR_DESTAQUE, cab)
-		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var info := [String(p.get("ramo", "")).to_upper()]
-	if not ativo:
-		info.append("%d H" % int(GestaoEquipe.config(dados).get("duracao_h", 24)))
-		info.append("RENDE COM O JOGO FECHADO")
-	Tipografia.rotulo(rotulo(" · ".join(info.filter(func(x): return x != "")), 0, COR_SECUNDARIA, v), "medium", 18)
-	var linha := fileira(v)
-	v.set_meta("acao", linha)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 0)
-	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	linha.add_child(col)
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 8)
-	col.add_child(h)
-	var lv := rotulo(dinheiro(GestaoEquipe.renda_hora(dados, jogador, p)), 0, COR_DESTAQUE, h)
-	Tipografia.numero(lv, 32)
-	lv.autowrap_mode = TextServer.AUTOWRAP_OFF
-	lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	icone(ICONE_GIROS, 24, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var ph := rotulo("por hora", 0, COR_SECUNDARIA, h)
-	Tipografia.rotulo(ph, "medium", 20)
-	ph.autowrap_mode = TextServer.AUTOWRAP_OFF
-	ph.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	rotulo("+%s giros por %s" % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
-			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA - 2, Color(0.86, 0.87, 0.9), col) \
-			.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	return v
 
 
 ## Requisito de licença como linha da tela: com maiúscula e a contagem "(n)"

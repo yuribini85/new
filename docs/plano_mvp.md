@@ -481,7 +481,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 68. **Escalação, uma corrida por vez e patrocínio na Carreira** (2026-10-12, decisão do
     usuário; substitui a fila de repetições da decisão 3 e a decisão 34). Uma corrida por
     vez, sem repetições programadas; depois de largar, ela termina mesmo com o app fechado.
-    Fora isso, offline só rende o patrocínio, administrado na tela Carreira. Corrida e arena
+    Fora isso, offline só rende o patrocínio, administrado na tela Carreira (na Equipe desde a
+    decisão 103). Corrida e arena
     nunca ao mesmo tempo. Escalação no topo da Oficina (`Escalacao`, `jogador.escalacao`):
     vaga CORRIDA (nas corridas só corre um piloto da equipe) e vagas ARENA 1 e ARENA 2 (a
     dupla), três carros diferentes; escalado não se vende nem se desmonta. A arena pede 3
@@ -947,3 +948,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     para sempre"; Sem anúncios em faixa menor; aviso da loja do aparelho e "Restaurar
     compras" no pé. Comprado o pack: cerimônia (os três entram, carimbo ELITE, "Bem-vindos
     à equipe", "Ver pilotos" leva à Equipe). Frases dos premium em `carreira.json`.
+103. **Patrocínio na Equipe e combustível no cabeçalho** (2026-10-17, pedido do usuário). A
+    seção de patrocínio (contratos e ofertas) sai da Carreira e fica na aba Equipe, depois do
+    caixa; a cena do patrocínio abre a Equipe. O combustível sai do topo de Corridas e Arena
+    e fica na faixa do cabeçalho, entre o título e os giros, em todas as telas (bomba e
+    "5/8"; vazio em vermelho); tocar abre a janela do combustível.

@@ -83,6 +83,7 @@ func _ready() -> void:
 	_cabecalho.definir_area_segura(AreaSegura.topo(get_viewport_rect().size.x))
 	_cabecalho.voltar.connect(_voltar_tela)
 	_cabecalho.configuracoes.connect(_abrir_configuracoes)
+	_cabecalho.combustivel.connect(func(): _abrir_combustivel())
 	_cabecalho.acelerar.connect(_abrir_aceleracao)
 	_cabecalho.garagem.connect(func(): _todas[0].abrir_garagem())
 	_cabecalho.pintura.connect(_abrir_cabine)
@@ -211,6 +212,7 @@ func _ready() -> void:
 	timer.autostart = true
 	timer.timeout.connect(_processar_fila)
 	timer.timeout.connect(_checar_licencas)
+	timer.timeout.connect(_atualizar_combustivel)
 	timer.timeout.connect(_atualizar_ao_vivo)
 	timer.timeout.connect(_foco_corrida)
 	timer.timeout.connect(_registrar_fila)
@@ -451,6 +453,16 @@ func _ativar_aceleracao() -> void:
 	_sobre.avisar("Corridas %d× por mais %d min (faltam %s)." % [roundi(float(jogador.aceleracao["fator"])),
 			roundi(float(_regras_aceleracao()["duracao_s"]) / 60.0),
 			Aceleracao.texto_tempo(Aceleracao.restante_s(jogador))])
+
+
+## O combustível do cabeçalho (renova sozinho: o relógio de 1 s atualiza).
+func _atualizar_combustivel() -> void:
+	if _cabecalho == null:
+		return
+	if not Combustivel.vale(dados, jogador):
+		_cabecalho.definir_combustivel(-1, 0)
+		return
+	_cabecalho.definir_combustivel(Combustivel.quantidade(dados, jogador), Combustivel.tanque(dados))
 
 
 ## Combustível (Combustivel): quanto tem, quando renova e o vídeo que enche o
@@ -799,6 +811,7 @@ func _sujar_todas() -> void:
 		_sujas[i] = true
 	_cabecalho.definir_pecas(Aba.dinheiro(jogador.economia.credito_pecas))  # antes: o número dos giros cabe no resto
 	_cabecalho.definir_giros(Aba.dinheiro(jogador.economia.saldo))
+	_atualizar_combustivel()
 	_atualizar_ao_vivo()
 	_atualizar_nav()
 	var objetivos := Objetivos.lista(jogador, dados)

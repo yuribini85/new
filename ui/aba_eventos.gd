@@ -68,7 +68,6 @@ func construir() -> void:
 		jogador.carro_ativo = garagem.uid
 		ir_para.emit(GARAGEM))
 	topo.add_child(trocar)
-	medidor_combustivel(topo)
 	var c := garagem
 	if not jogador.fila.is_empty():
 		_fila()

@@ -45,7 +45,6 @@ func construir() -> void:
 		jogador.carro_ativo = esc.uid
 		ir_para.emit(GARAGEM))
 	faixa.add_child(trocar)
-	medidor_combustivel(faixa)
 	cartao_desafio_grid("arena", _confirmar_desafio)
 	_cartao_luta(esc, "")
 	_simulacao(esc)
