@@ -139,12 +139,10 @@ técnico real do projeto.
 3. **Um carro por vez, com fila de repetições.** O jogador escolhe evento, carro e número
    de repetições; offline, a fila é consumida. Corridas simultâneas com vários carros
    ficam fora do primeiro build.
-4. **Licença é uma série de contratos de certificação do piloto automático**
-   (substitui o teste de tempo com o carro do jogador). A escola empresta carro e peças,
-   sem custo; o jogador monta a solução, envia para avaliação (execução automática, mesma
-   simulação das corridas) e recebe um diagnóstico ao concluir. Bronze cumpre o contrato e
-   libera a licença; prata e ouro acrescentam condições explícitas. Primeiros contratos:
-   "O pequeno contra o gigante", "O último crédito", "Dois circuitos, um carro".
+4. **Licença é requisito + treino no relógio** (decisão 99; substitui os contratos de
+   certificação e os testes de tempo). Cumpridos os requisitos, o jogador inicia o treino;
+   ele corre em tempo real, com o app aberto ou fechado, e ao terminar a licença é
+   concedida sozinha. Não há avaliação, montagem nem medalha.
 5. **Usados giram por número de corridas**, não por tempo real. Cada corrida conta como
    um dia, como no GT2. Imune a manipulação do relógio; a fila offline avança o estoque.
 6. **Fabricantes: 3 no primeiro build, 8 a 10 no lançamento.** Primeiro build: uma
@@ -916,3 +914,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     10% do prêmio, voltando a 100% a cada 24 h (`carreira.json` → `repeticao`); provas sem
     licença ficam fora, para não travar o começo (a renda inicial é repetir a primeira
     prova vencida). Não vem do GT2.
+99. **Licença sem avaliação** (2026-10-17, decisão do usuário: "as licenças são adquiridas
+    com tempo correndo online e offline apenas"). Saem os contratos da Club (montagem com
+    peças da escola, "O pequeno contra o gigante" etc.) e os testes de tempo da Sport em
+    diante. Fica: requisitos (`licencas.json`) → iniciar o treino → esperar a duração
+    (`treino_s`) em tempo real → licença concedida automaticamente
+    (`Licencas.atualizar`, checado a cada segundo e na volta do app). O modelo de contratos
+    e testes continua no código, sem uso na tela, até a próxima limpeza.

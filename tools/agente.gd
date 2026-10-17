@@ -133,8 +133,7 @@ func _primeiro_carro() -> void:
 
 func _laco(limite_s: float) -> Dictionary:
 	while tempo < limite_s:
-		_talvez_contratos()
-		_talvez_licenca_a()
+		_talvez_licencas()
 		var ev := _escolher_desafio()
 		if ev.is_empty():
 			if not _trocar_carro():
@@ -414,109 +413,21 @@ func _comprar_carro(o: Dictionary, motivo: String) -> void:
 	_avisar("carro", {"carro_id": String(o["carro_id"]), "preco": int(o["preco"]), "novo": not o.has("chave")})
 
 
-## Contratos da Club (a B do GT2): o treino começa logo (decisão 33; o relógio
-## é o tempo de corrida do agente); sugestoes e renda enviam depois da primeira
-## vitória, explora logo.
-func _talvez_contratos() -> void:
-	if "CLUB" in j.licencas or marcos.has("contratos_b_falhou"):
-		return
+## Licenças por treino no relógio (decisão do usuário, 2026-10-17): treino
+## assim que os requisitos permitem; terminado, a licença sai sozinha. O relógio
+## é o tempo de corrida do agente.
+func _talvez_licencas() -> void:
 	var lic := Licencas.new(d, j)
-	if lic.estado("CLUB", tempo) == Licencas.AVAILABLE:
-		lic.iniciar_treino("CLUB", tempo)
-		_avisar("treino", {"licenca": "CLUB"})
-	if perfil != "explora" and not marcos.has("primeira_vitoria"):
-		return
-	if not lic.pode_avaliar("CLUB", tempo):
-		return
-	_avisar("pronta", {"licenca": "CLUB"})
-	var ct := Contratos.new(d, j)
-	var envios := 0
-	for c in Contratos.da_licenca(d, "CLUB"):
-		var m := _resolver_contrato(c)
-		envios += int(m["envios"])
-		ct.enviar(c["id"], m["montagem"], tempo)
-	marcos["envios_contratos_b"] = envios
-	if "CLUB" in j.licencas:
-		_avisar("licenca", {"licenca": "CLUB"})
-		marcos["licenca_b"] = tempo
-		log.append("%.0f min: licença Club pelos contratos (%d envios)" % [tempo / 60.0, envios])
-	else:
-		marcos["contratos_b_falhou"] = tempo
-		log.append("contratos da Club não resolvidos")
-
-
-## Montagem que cumpre o bronze: a cada envio, a opção que mais reduz o pior
-## déficit, respeitando o teto de custo. "envios" conta os passos (cada passo
-## é uma avaliação que o jogador mandaria).
-func _resolver_contrato(c: Dictionary) -> Dictionary:
-	var teto := int(c["condicoes"]["bronze"].get("custo_max", 1 << 30))
-	var pecas: Array = Contratos.pecas_escola(d, c)
-	var m := {"pecas": [], "ajuste_cambio": ""}
-	var r := Contratos.avaliar(d, c, m, false)
-	var envios := 1
-	while r["grau"] == "" and envios < 30:
-		var melhor := {}
-		var melhor_def := _deficit(r)
-		for p in pecas:
-			if p["id"] in m["pecas"]:
-				continue
-			var ids: Array = m["pecas"].filter(func(x): return d.peca(x)["categoria"] != p["categoria"]) + [p["id"]]
-			var custo := 0
-			for x in ids:
-				custo += int(d.peca(x)["preco"])
-			if custo > teto:
-				continue
-			var mm := {"pecas": ids, "ajuste_cambio": m["ajuste_cambio"] if ids.any(func(x): return d.peca(x)["categoria"] == "cambio") else ""}
-			var rr := Contratos.avaliar(d, c, mm, false)
-			if _deficit(rr) < melhor_def - 0.005:
-				melhor_def = _deficit(rr)
-				melhor = mm
-		if melhor.is_empty():
-			break
-		m = melhor
-		r = Contratos.avaliar(d, c, m, false)
-		envios += 1
-	return {"montagem": m, "envios": envios}
-
-
-static func _deficit(r: Dictionary) -> float:
-	var pior := -INF
-	for p in r["provas"]:
-		pior = maxf(pior, -float(p["folga"]))
-	return pior
-
-
-## Testes de tempo da Sport (a A do GT2) com o próprio carro: treino assim que os
-## requisitos permitem; testes depois de vencer uma prova Club (explora: a cada
-## tentativa). Conta o tempo dos testes.
-func _talvez_licenca_a() -> void:
-	if "SPORT" in j.licencas or not "CLUB" in j.licencas:
-		return
-	var lic := Licencas.new(d, j)
-	if lic.estado("SPORT", tempo) == Licencas.AVAILABLE:
-		lic.iniciar_treino("SPORT", tempo)
-		_avisar("treino", {"licenca": "SPORT"})
-	if not lic.pode_avaliar("SPORT", tempo):
-		return
-	if not marcos.has("pronta_a"):
-		marcos["pronta_a"] = tempo
-		_avisar("pronta", {"licenca": "SPORT"})
-	if perfil != "explora" and not marcos.has("vitoria_b"):
-		return
-	var tentou := int(marcos.get("tentativas_a", 0))
-	if tentou >= j.vitorias.size():
-		return  # uma tentativa por vitória nova
-	marcos["tentativas_a"] = j.vitorias.size()
-	for t in d.item("licencas", "SPORT")["testes"]:
-		if j.graus_licenca.has(t["id"]):
-			continue
-		semente += 1
-		var r := lic.fazer_teste("SPORT", t["id"], uid, hash("agente-a:%d" % semente), tempo)
-		if r.has("erro"):
-			return
-		tempo += float(r["tempo"])
-		_fase_stats()["tempo_s"] += float(r["tempo"])
-	if "SPORT" in j.licencas:
-		_avisar("licenca", {"licenca": "SPORT"})
-		marcos["licenca_a"] = tempo
-		log.append("%.0f min: licença Sport" % (tempo / 60.0))
+	for l in d.lista("licencas"):
+		var id := String(l["id"])
+		if lic.estado(id, tempo) == Licencas.AVAILABLE:
+			_avisar("disponivel", {"licenca": id})
+			lic.iniciar_treino(id, tempo)
+			_avisar("treino", {"licenca": id})
+	for id in lic.atualizar(tempo):
+		_avisar("licenca", {"licenca": id})
+		if id == "CLUB":
+			marcos["licenca_b"] = tempo
+		elif id == "SPORT":
+			marcos["licenca_a"] = tempo
+		log.append("%.0f min: licença %s" % [tempo / 60.0, id])

@@ -2,7 +2,7 @@
 # = ID | trigger | opções (chave=valor; listas separadas por vírgula)
 # Nome: fala           [ACAO]           (Sistema: texto de sistema)
 # Personagens da Wreckage e das lojas: Rico (manobrista, janela Garagem), Kenji (pintor, PINTURA),
-# Harold (examinador da Vector Academy), Roxy (organizadora da arena), Dex (mecânico da arena,
+# Harold (instrutor da Vector Academy), Roxy (organizadora da arena), Dex (mecânico da arena,
 # blindagem), vendedores: Edgar (Charge Folio), Sal (Relay Room), Bianca (Brace Yard),
 # Nora (Return Chapter), Jade (Shared Grid).
 # Nome[pose]: fala — pose do corpo (Mara: cruzados, gesto, pensativa, explica, firme, decepcao, alerta;
@@ -171,16 +171,16 @@ Sistema: Com o terceiro carro, a Arena aparece na barra de baixo.
 # ---------------------------------------------------------------- Licenças
 = CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
 Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA
-Mara[explica]: É a licença que a gente precisa renovar. Quem renova é {piloto}, nos testes.
-Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leve café pra ele.
+Mara[explica]: É a licença que a gente precisa renovar. Quem renova é {piloto}, no treino da escola.
+Mara: Quem treina é a Vector Academy. O instrutor é o Brandt. Leve café pra ele.
 [OPEN_LICENSE_CENTER]
 
 = CW_L02 | ABA:LICENCAS | personagem=dono; requer=SECOND_RACE_DONE; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; cenario=vector_academy
-Harold: Harold Brandt, examinador da Vector Academy. Licença Club.
+Harold: Harold Brandt, instrutor da Vector Academy. Licença Club.
 Harold: Primeiro, o treino. Ele corre no relógio, mesmo com o jogo fechado.
-Harold: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é sua.
+Harold: Terminou o treino, a licença sai. Sem prova, sem papelada.
 Mara[pensativa]: Quanto custa?
-Harold: Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta.
+Harold: Nada. Aqui se paga com tempo.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
 Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 
@@ -217,11 +217,6 @@ Mara: Treino rodando. A oficina não para por isso.
 Mara[explica]: Lá em cima, ACELERAR deixa as corridas mais rápidas por um tempo. A primeira é por minha conta.
 [HIGHLIGHT_ACELERAR]
 Sistema: Toque em ACELERAR, no alto da tela.
-
-= CW_L04 | LICENCA_PRONTA | personagem=dono; proibe=FIRST_TRAINING_READY; flags=FIRST_TRAINING_READY
-Harold: O treino acabou. Agora eu quero ver isso na pista.
-[OPEN_LICENSE_CENTER]
-Sistema: Faça as missões da avaliação.
 
 = CW_L05 | LICENCA_DISPONIVEL:SPORT | personagem=dono; proibe=SPORT_AVAILABLE_SEEN; flags=SPORT_AVAILABLE_SEEN
 Mara[gesto]: Os requisitos da Sport estão cumpridos.
@@ -555,9 +550,6 @@ Mara[decepcao]: Não temos isso.
 
 = CW_SYS02 | EVENTO_BLOQUEADO | personagem=dono; requer=EVENT_REQUIREMENTS_TUTORIAL_DONE; repetivel=sim
 Mara[cruzados]: Bom carro. Corrida errada.
-
-= CW_SYS10 | LICENCA_PRONTA | personagem=dono; requer=FIRST_TRAINING_READY; repetivel=sim
-Mara[gesto]: Treino feito. Agora falta a avaliação.
 
 = CW_SYS_ENDURANCE | CORRIDA_RESISTENCIA | personagem=dono; proibe=FIRST_ENDURANCE; flags=FIRST_ENDURANCE
 Mara[alerta]: Prova longa. Aqui ganha quem segura o ritmo até o fim.

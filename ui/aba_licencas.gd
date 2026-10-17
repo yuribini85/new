@@ -59,17 +59,8 @@ func construir() -> void:
 	if not proxima.is_empty():
 		var st := l.estado(proxima["id"], agora)
 		var v := _cartao_proxima(l, proxima, st, agora)
-		if st in [Licencas.READY]:
-			# A avaliação entra no mesmo cartão (sem repetir o cabeçalho).
-			if not Contratos.da_licenca(dados, proxima["id"]).is_empty():
-				_cartao_contratos(proxima, v)
-			elif proxima["testes"].is_empty():
-				nota("icone_alerta", "Avaliação da %s em preparação" % proxima["nome"], "", v, COR_INFO)
-			elif c == null:
-				nota("icone_cadeado", "%s: compre um carro primeiro" % proxima["nome"],
-						"Os testes da %s são feitos com o carro em uso." % proxima["nome"], v)
-			else:
-				_cartao_licenca(c, proxima, v)
+		# Sem avaliação (decisão do usuário, 2026-10-17): o treino terminado
+		# concede a licença sozinho (Principal._checar_licencas).
 		if st == Licencas.TRAINING:
 			# Relógio do treino na tela: reconstrói a cada segundo enquanto treina.
 			var t := Timer.new()
@@ -695,24 +686,20 @@ func _mostrar_resultado() -> void:
 
 const TEXTO_ESTADO := {
 	Licencas.LOCKED: "BLOQUEADA", Licencas.AVAILABLE: "PRONTA PARA TREINAR", Licencas.TRAINING: "EM TREINO",
-	Licencas.READY: "AVALIAÇÃO ABERTA", Licencas.COMPLETE: "CONQUISTADA",
+	Licencas.READY: "TREINO CONCLUÍDO", Licencas.COMPLETE: "CONQUISTADA",
 }
 
 
 ## Cartão da próxima licença (decisão 33), no formato do cartão de corrida:
 ## o brasão à esquerda; à direita o nome, o que libera, os requisitos e o
-## treino; embaixo, a ação (iniciar o treino) ou o andamento. A avaliação
-## entra em seguida, no mesmo cartão. Retorna a coluna do cartão.
+## treino; embaixo, a ação (iniciar o treino) ou o andamento. Retorna a coluna
+## do cartão.
 func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> VBoxContainer:
 	var v := cartao_com_fundo(arte("fundo_carreira"), st != Licencas.LOCKED)
 	ancora("LICENSE_REQUIREMENTS", v)
 	ancora("LIC_" + String(lic["id"]), v)
 	if st == Licencas.AVAILABLE:
 		historia("LICENCA_DISPONIVEL:" + String(lic["id"]))
-	elif st == Licencas.READY and not jogador.flags.has("PRONTA_" + String(lic["id"])):
-		# Uma vez por licença (a tela reconstrói a cada visita).
-		jogador.flags["PRONTA_" + String(lic["id"])] = true
-		historia("LICENCA_PRONTA")
 	var corpo := HBoxContainer.new()
 	corpo.add_theme_constant_override("separation", 14)
 	v.add_child(corpo)
@@ -770,7 +757,7 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 			col.add_child(barra)
 			rotulo("Treino: faltam %s" % _duracao(falta), FONTE_PEQUENA, COR_INFO, col)
 		Licencas.READY:
-			rotulo("Treino concluído: faça a avaliação abaixo.", FONTE_PEQUENA, COR_BOM, col)
+			rotulo("Treino concluído: a licença sai em instantes.", FONTE_PEQUENA, COR_BOM, col)
 	return v
 
 

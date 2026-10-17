@@ -36,7 +36,7 @@ static func _dono(jogador: Node, dados: Node) -> Array:
 
 
 ## De volta às pistas (decisão 73): no dono, a licença Club é a licença que a
-## equipe precisa renovar (sem prazo; a avaliação é grátis, como no GT2).
+## equipe precisa renovar (sem prazo; sai com o treino, decisão 99).
 static func _renomear_licenca(l: Array) -> Array:
 	for o in l:
 		if o["texto"] == "Conquistar a licença Club":
@@ -75,12 +75,15 @@ static func proximo_obstaculo(jogador: Node, dados: Node) -> String:
 		return ""
 	var texto: String = l[i]["texto"]
 	if texto.begins_with("Conquistar a licença"):
-		var lic_id := texto.right(1)
-		var contratos := Contratos.da_licenca(dados, lic_id)
-		var faltam := contratos.filter(func(c): return not jogador.graus_licenca.has(c["id"]))
-		if not faltam.is_empty():
-			return "Missão a cumprir: %s (%d de %d na licença %s)." % [faltam[0]["nome"],
-					contratos.size() - faltam.size(), contratos.size(), lic_id]
+		# Licença por treino no relógio (decisão 99): diz onde está o treino.
+		var lic_id := texto.get_slice(" ", texto.get_slice_count(" ") - 1).to_upper()
+		var lic := Licencas.new(dados, jogador)
+		var agora := Time.get_unix_time_from_system()
+		match lic.estado(lic_id, agora):
+			Licencas.AVAILABLE:
+				return "Licença %s: requisitos cumpridos, falta iniciar o treino." % lic_id.capitalize()
+			Licencas.TRAINING:
+				return "Licença %s em treino: faltam %d min." % [lic_id.capitalize(), ceili(lic.restante(lic_id, agora) / 60.0)]
 	var carro: Carro = jogador.garagem.carro(jogador.carro_ativo)
 	if carro == null and not jogador.garagem.lista().is_empty():
 		carro = jogador.garagem.lista()[0]
@@ -130,6 +133,6 @@ static func glossario(dados: Node) -> Array:
 		["Disputar de novo e giros", "Uma corrida por vez; depois de largar, ela termina mesmo com o jogo fechado. Prova já vencida (com licença) paga menos a cada repetição: 50%, 25% e depois 10%, voltando a 100% em 24 h."],
 		["Combustível", "Cada corrida ou luta da arena gasta 1. O tanque renova sozinho com o tempo, também com o jogo fechado, e um vídeo o enche de uma vez."],
 		["Peças", "Peças compradas ficam com o carro. Dá para tirar e pôr de volta de graça na Oficina."],
-		["Missões da licença", "A escola empresta o carro e as peças. Você monta, testa e lê o resultado: onde perdeu tempo e o que falta para cada medalha."],
+		["Treino da licença", "Cumpridos os requisitos, comece o treino. Ele corre no relógio, com o jogo aberto ou fechado; quando termina, a licença sai sozinha."],
 		["Previsão", "MAIS FRACO, PARELHO e MAIS FORTE vêm de corridas simuladas contra os rivais. É previsão: a corrida de verdade varia."],
 	]

@@ -112,6 +112,21 @@ func requisitos(licenca_id: String) -> Array:
 	return r
 
 
+## Licença por tempo (decisão do usuário, 2026-10-17): cumpridos os
+## requisitos e terminado o treino no relógio (corre com o jogo fechado), a
+## licença sai sozinha, sem avaliação. Concede todas as que estiverem prontas
+## em `agora` e retorna os ids, na ordem.
+func atualizar(agora: float) -> Array:
+	var novas := []
+	for lic in dados.lista("licencas"):
+		var id := String(lic["id"])
+		if estado(id, agora) == READY:
+			jogador.licencas.append(id)
+			Prologo.ao_conceder(dados, jogador, id)
+			novas.append(id)
+	return novas
+
+
 ## Começa o treino (preço do GT2: grátis). "" ou o motivo de não poder.
 func iniciar_treino(licenca_id: String, agora: float) -> String:
 	var st := estado(licenca_id, agora)

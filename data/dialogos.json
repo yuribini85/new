@@ -695,12 +695,12 @@
    },
    {
     "quem": "mara",
-    "texto": "É a licença que a gente precisa renovar. Quem renova é {piloto}, nos testes.",
+    "texto": "É a licença que a gente precisa renovar. Quem renova é {piloto}, no treino da escola.",
     "pose": "explica"
    },
    {
     "quem": "mara",
-    "texto": "Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leve café pra ele."
+    "texto": "Quem treina é a Vector Academy. O instrutor é o Brandt. Leve café pra ele."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -724,7 +724,7 @@
   "falas": [
    {
     "quem": "examinador",
-    "texto": "Harold Brandt, examinador da Vector Academy. Licença Club."
+    "texto": "Harold Brandt, instrutor da Vector Academy. Licença Club."
    },
    {
     "quem": "examinador",
@@ -732,7 +732,7 @@
    },
    {
     "quem": "examinador",
-    "texto": "Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é sua."
+    "texto": "Terminou o treino, a licença sai. Sem prova, sem papelada."
    },
    {
     "quem": "mara",
@@ -741,7 +741,7 @@
    },
    {
     "quem": "examinador",
-    "texto": "Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta."
+    "texto": "Nada. Aqui se paga com tempo."
    },
    {
     "acao": "HIGHLIGHT_LICENSE_REQUIREMENTS"
@@ -911,33 +911,6 @@
   ],
   "flags": [
    "FIRST_TRAINING_STARTED"
-  ],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "dono"
- },
- {
-  "id": "CW_L04",
-  "trigger": "LICENCA_PRONTA",
-  "falas": [
-   {
-    "quem": "examinador",
-    "texto": "O treino acabou. Agora eu quero ver isso na pista."
-   },
-   {
-    "acao": "OPEN_LICENSE_CENTER"
-   },
-   {
-    "quem": "sistema",
-    "texto": "Faça as missões da avaliação."
-   }
-  ],
-  "requer": [],
-  "proibe": [
-   "FIRST_TRAINING_READY"
-  ],
-  "flags": [
-   "FIRST_TRAINING_READY"
   ],
   "bloqueia": false,
   "uma_vez": true,
@@ -2804,25 +2777,6 @@
   ],
   "requer": [
    "EVENT_REQUIREMENTS_TUTORIAL_DONE"
-  ],
-  "proibe": [],
-  "flags": [],
-  "bloqueia": false,
-  "uma_vez": false,
-  "personagem": "dono"
- },
- {
-  "id": "CW_SYS10",
-  "trigger": "LICENCA_PRONTA",
-  "falas": [
-   {
-    "quem": "mara",
-    "texto": "Treino feito. Agora falta a avaliação.",
-    "pose": "gesto"
-   }
-  ],
-  "requer": [
-   "FIRST_TRAINING_READY"
   ],
   "proibe": [],
   "flags": [],

@@ -76,8 +76,8 @@ func _imprimir(r: Dictionary, o: Dictionary, ausencias: Array, sessoes: Array, t
 			r["tempo"] / 60.0, ",".join(r["licencas"]) if not r["licencas"].is_empty() else "-", r["saldo"]])
 	print("    %d de %d provas vencidas · %d carros na garagem · fim: %s" % [r["vencidas"], r["provas"], r["carros"],
 			r["log"].back() if not r["log"].is_empty() else "-"])
-	print("    marcos (min de corrida): 1ª vitória %s · B %s (%s envios) · 1ª vitória B %s · A %s" % [_min(m, "primeira_vitoria"),
-			_min(m, "licenca_b"), m.get("envios_contratos_b", "-"), _min(m, "vitoria_b"), _min(m, "licenca_a")])
+	print("    marcos (min de corrida): 1ª vitória %s · B %s · 1ª vitória B %s · A %s" % [_min(m, "primeira_vitoria"),
+			_min(m, "licenca_b"), _min(m, "vitoria_b"), _min(m, "licenca_a")])
 	for f in r["fases"]:
 		var st: Dictionary = r["fases"][f]
 		print("    %-12s %5.1f min · bruto %7d · gastos %7d · %5.0f Cr/min · renda %d corridas, %5.0f Cr/min · %d desafios" % [

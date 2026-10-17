@@ -209,6 +209,7 @@ func _ready() -> void:
 	timer.wait_time = 1.0
 	timer.autostart = true
 	timer.timeout.connect(_processar_fila)
+	timer.timeout.connect(_checar_licencas)
 	timer.timeout.connect(_atualizar_ao_vivo)
 	timer.timeout.connect(_foco_corrida)
 	timer.timeout.connect(_registrar_fila)
@@ -1009,6 +1010,31 @@ func _process(_delta: float) -> void:
 			_reconstruir(Aba.EVENTOS)
 		_atualizar_ao_vivo()
 	_resolvendo = not pronta
+
+
+## Treino terminado (também com o jogo fechado): a licença sai sozinha; o
+## painel da conquista e, depois, a conversa da licença.
+func _checar_licencas() -> void:
+	if jogador.historia != null and _dialogo != null and _dialogo.ocupado():
+		return
+	var novas: Array = Licencas.new(dados, jogador).atualizar(Time.get_unix_time_from_system())
+	if novas.is_empty():
+		return
+	get_node("/root/SaveManager").salvar()
+	atualizar()
+	for id in novas:
+		var lic: Dictionary = dados.item("licencas", id)
+		var liberadas: Array = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == id)
+		(func(): _todas[0].historia("LICENCA_CONCEDIDA:" + String(id))).call_deferred()
+		_sobre.abrir("%s conquistada!" % lic["nome"], func(v):
+			var g: Aba = _todas[0]
+			g.rotulo("Treino concluído. Agora você pode correr %d corridas novas:" % liberadas.size(), 0, Color.WHITE, v)
+			var series := {}
+			for e in liberadas:
+				series[String(e["nome"]).split(" — ")[0]] = true
+			for nome in series:
+				g.rotulo("• " + nome, Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, v),
+			[["Ver corridas", func(): _ir_para(Aba.EVENTOS)], ["Fechar", func(): pass]])
 
 
 func _processar_fila() -> void:

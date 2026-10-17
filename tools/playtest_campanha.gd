@@ -107,9 +107,8 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 			if not etapas.is_empty() and etapas.find(ev) == int(Campeonatos.estado(j, Campeonatos.serie(ev))["etapa"]):
 				_disparar("CAMPEONATO_SELECIONADO", ev_ctx)
 			_disparar("CORRIDA_INICIO", ev_ctx)
-		"pronta":
+		"disponivel":
 			_disparar("LICENCA_DISPONIVEL:" + String(ctx["licenca"]))
-			_disparar("LICENCA_PRONTA")
 		"corrida":
 			var ev_ctx := {"evento": ctx["evento"]}
 			# A ordem de Historia.disparar_fim: cena da chegada, marco, comentário.
