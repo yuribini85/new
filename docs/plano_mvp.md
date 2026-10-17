@@ -1020,3 +1020,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     alterado não carrega; save alterado carrega sem as compras pagas. No Android, a consulta
     de compras da Google Play tira do jogo o que a conta não possui. Scripts exportados como
     bytecode comprimido (já era). Criptografia do pacote e validação em servidor: a decidir.
+116. **Corrida e arena ao mesmo tempo** (2026-10-17, pedido do usuário; substitui a regra da
+    decisão 61). A arena (e o desafio do Grid na arena) abre com uma corrida em andamento: a luta
+    é resolvida na hora. Enquanto a tela da luta está aberta, a pista 3D da corrida sai da memória
+    (`AbaCorrida.pausada`) e é remontada ao fechar, com a capa "Preparando a pista". O desafio
+    do Grid em corrida continua esperando a corrida em andamento (uma corrida por vez).

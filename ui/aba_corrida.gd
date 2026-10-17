@@ -347,8 +347,21 @@ func _construir_painel() -> void:
 		proximo_passo("Nenhuma corrida agora.", "Escolher corrida", EVENTOS, _painel)
 
 
+## Luta da arena por cima (decisão 116): a pista 3D sai da memória enquanto ela
+## passa (duas cenas 3D juntas fechavam o navegador do celular) e é remontada
+## ao voltar, com a capa "Preparando a pista".
+var pausada := false:
+	set(v):
+		pausada = v
+		if v:
+			_visual.limpar()
+			_visual3d.limpar()
+			_semente_mostrada = 0
+			_carga_semente = 0
+
+
 func _process(delta: float) -> void:
-	if not is_visible_in_tree() or jogador.fila_ctrl == null:
+	if pausada or not is_visible_in_tree() or jogador.fila_ctrl == null:
 		if _sons != null:
 			_sons.motor(false)
 			_sons.torcida(0.0)

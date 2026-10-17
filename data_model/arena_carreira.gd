@@ -20,10 +20,9 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 	# (EquipeJogador.FLAG_ARENA); a licença mínima só dá o prêmio de referência.
 	if not jogador.flags.has(EquipeJogador.FLAG_ARENA):
 		return "Abre quando a garagem tiver 3 carros."
-	# Decisão 68: corrida e arena nunca ao mesmo tempo; a dupla é sua (os dois
+	# Decisão 116 (pedido do usuário, 2026-10-17): a arena abre também com uma
+	# corrida em andamento (a luta é resolvida na hora). A dupla é sua (os dois
 	# carros escalados e o segundo piloto contratado); 3 carros no mínimo.
-	if not jogador.fila.is_empty():
-		return "Há uma corrida em andamento: a arena abre quando ela terminar."
 	if jogador.garagem.lista().size() < 3:
 		return "A arena pede 3 carros: 1 de corrida e 2 de arena (carro eliminado não volta)."
 	if EquipeJogador.piloto_vaga(jogador, "arena1") == "" or EquipeJogador.piloto_vaga(jogador, "arena2") == "":

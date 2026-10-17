@@ -618,6 +618,8 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 	var luta := LutaArena.new(dados_luta, dados_luta.get("params", dados.arena()))
 	luta.name = "LutaArena"
 	luta.gratis_recuperar = LojaReal.comprado(dados, jogador, "sem_anuncios")
+	_todas[4].pausada = true  # a pista 3D da corrida sai enquanto a luta passa
+	luta.tree_exited.connect(func(): _todas[4].pausada = false)
 	add_child(luta)
 	luta.recuperar.connect(func(f: Dictionary):
 		var aplicar := func():

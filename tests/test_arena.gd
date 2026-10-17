@@ -165,7 +165,7 @@ func test_arena_na_carreira() -> void:
 	igual(Escalacao.definir(j, "arena2", carros[1].uid), "", "arena 2")
 	igual(ArenaCarreira.bloqueio(d, j), "", "com tudo: entra")
 	j.fila = {"evento_id": "x", "uid": carros[2].uid}
-	verificar("corrida em andamento" in ArenaCarreira.bloqueio(d, j), "corrida e arena nunca juntas")
+	igual(ArenaCarreira.bloqueio(d, j), "", "com corrida em andamento a arena abre (decisão 116)")
 	j.fila = {}
 	verificar(not j.concessionaria.pode_vender(carros[0].uid), "escalado não se vende")
 	var uid: int = carros[0].uid
