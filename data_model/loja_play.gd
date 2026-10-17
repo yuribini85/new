@@ -10,6 +10,9 @@ extends Node
 ## Principal entrega a LojaReal.conceder; restaurar consulta as compras feitas.
 
 signal concedido(id: String)
+## Consulta das compras da conta concluída: os ids que ela possui. O Principal
+## tira as compras marcadas no jogo que a conta não tem (save copiado ou editado).
+signal possuidos(ids: Array)
 signal erro(texto: String)
 
 const SINGLETON := "GodotGooglePlayBilling"
@@ -61,8 +64,17 @@ func restaurar() -> void:
 
 
 func _consulta(r: Dictionary) -> void:
-	if int(r.get("status", -1)) == OK:
-		_compras(r.get("purchases", []))
+	if int(r.get("status", -1)) != OK:
+		return
+	var compras: Array = r.get("purchases", [])
+	_compras(compras)
+	var ids := []
+	for c in compras:
+		if int(c.get("purchase_state", 0)) == ESTADO_COMPRADO:
+			for s in c.get("skus", [c.get("sku", "")]):
+				if _skus.has(String(s)):
+					ids.append(String(_skus[String(s)]))
+	possuidos.emit(ids)
 
 
 func _compras(compras: Array) -> void:

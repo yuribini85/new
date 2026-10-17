@@ -236,6 +236,10 @@ func _ready() -> void:
 			if not LojaReal.comprado(dados, jogador, id):
 				compra_confirmada(id))
 		ponte.erro.connect(func(t: String): _sobre.avisar("Compra não concluída: %s" % t, false))
+		ponte.possuidos.connect(func(ids: Array):
+			if not LojaReal.conferir(dados, jogador, ids).is_empty():
+				get_node("/root/SaveManager").salvar()
+				atualizar())
 	# Progresso na nuvem do Play Games, quando o plugin está no export.
 	if Engine.has_singleton(NuvemPlay.SINGLETON):
 		var nuvem := NuvemPlay.new()

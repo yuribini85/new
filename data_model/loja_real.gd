@@ -36,6 +36,17 @@ static func conceder(dados: Node, jogador: Node, id: String) -> String:
 	return ""
 
 
+## Tira do jogo as compras que a conta da loja não possui (LojaPlay.possuidos).
+## Devolve os ids retirados.
+static func conferir(dados: Node, jogador: Node, possuidos: Array) -> Array:
+	var tirados := []
+	for p in produtos(dados):
+		if jogador.flags.has(String(p["flag"])) and not String(p["id"]) in possuidos:
+			jogador.flags.erase(String(p["flag"]))
+			tirados.append(String(p["id"]))
+	return tirados
+
+
 ## Horas de renda offline que as compras somam (produto com "horas_offline").
 static func horas_offline(dados: Node, jogador: Node) -> float:
 	var h := 0.0

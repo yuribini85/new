@@ -129,6 +129,8 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, 
 	var versao := aba.rotulo("Chrome & Wreckage v%s · build %s" % [ProjectSettings.get_setting("application/config/version", ""),
 			Aba.versao()], Aba.FONTE_PEQUENA - 4, Color(Aba.COR_SECUNDARIA, 0.7), v)
 	versao.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if not Preferencias.ferramentas_teste():
+		return
 	var testes_v := VBoxContainer.new()
 	v.add_child(testes_v)
 	if _testes_abertos or Preferencias.modo_teste != "":

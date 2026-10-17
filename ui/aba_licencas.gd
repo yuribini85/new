@@ -557,7 +557,7 @@ func _modo_teste(v: VBoxContainer) -> void:
 	v.add_child(h)
 	nota("", "Só para testes", "Clareza: pode pular a corrida. Ritmo: sem pular, para medir sessão e renda. "
 			+ "Ligado, o aparelho registra as sessões (só local).", v)
-	if Preferencias.modo_teste != "":
+	if Preferencias.modo_teste != "" and Preferencias.ferramentas_teste():
 		_cenarios(v)
 		# A loja do aparelho ainda não existe: libera as compras para testar.
 		botao("Liberar as compras da Loja (teste)", func():

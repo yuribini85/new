@@ -131,8 +131,37 @@ func test_codigo_do_progresso() -> void:
 	var raw := Marshalls.base64_to_raw(codigo.substr(SaveManagerScript.PREFIXO_CODIGO.length()))
 	igual(raw.decompress_dynamic(-1, FileAccess.COMPRESSION_GZIP).get_string_from_utf8(), texto, "volta igual")
 	verificar(j.garagem.carro(uid) != null, "carro no jogo")
+	# Selo: o código e o save adulterados são reconhecidos.
+	var comprimido := bruto.compress(FileAccess.COMPRESSION_GZIP)
+	verificar(Selo.confere(comprimido, Selo.de(comprimido)), "selo confere")
+	var mexido := comprimido.duplicate()
+	mexido[mexido.size() / 2] = mexido[mexido.size() / 2] ^ 1
+	verificar(not Selo.confere(mexido, Selo.de(comprimido)), "um byte mudado: o selo não confere")
+	# Compras: com os dados reais (as fixtures não têm loja).
+	var dr: Node = DadosScript.new()
+	dr.carregar("res://data/")
+	var jr := _jogador(dr)
+	jr.flags["PACK_PREMIUM"] = true
+	var arq := "user://teste_selo.json"
+	SaveManagerScript.gravar(arq, Save.serializar(jr))
+	var k := _jogador(dr)
+	igual(SaveManagerScript.carregar_protegido(arq, k, dr)["carregou"], true, "save com selo abre")
+	verificar(k.flags.has("PACK_PREMIUM"), "selo certo: a compra fica")
+	var texto_arq := FileAccess.get_file_as_string(arq).replace("\"saldo\":", "\"saldo\":9")
+	var f := FileAccess.open(arq, FileAccess.WRITE)
+	f.store_string(texto_arq)
+	f.close()
+	var m := _jogador(dr)
+	igual(SaveManagerScript.carregar_protegido(arq, m, dr)["carregou"], true, "save mexido ainda abre")
+	verificar(not m.flags.has("PACK_PREMIUM"), "save mexido: as compras saem")
+	for x in [arq, arq + ".bak"]:
+		DirAccess.remove_absolute(x)
 	j.free()
+	jr.free()
+	k.free()
+	m.free()
 	d.free()
+	dr.free()
 
 
 func test_save_corrompido_usa_bak_e_preserva_o_original() -> void:

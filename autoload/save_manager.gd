@@ -108,7 +108,8 @@ const PREFIXO_CODIGO := "CW1-"
 func codigo() -> String:
 	salvar()
 	var bruto := JSON.stringify(Save.serializar(get_node("/root/Jogador"))).to_utf8_buffer()
-	return PREFIXO_CODIGO + Marshalls.raw_to_base64(bruto.compress(FileAccess.COMPRESSION_GZIP))
+	var comprimido := bruto.compress(FileAccess.COMPRESSION_GZIP)
+	return PREFIXO_CODIGO + Marshalls.raw_to_base64(comprimido) + "." + Selo.de(comprimido)
 
 
 ## Troca o jogo atual pelo do código (o atual fica no .bak). "" ou o motivo.
@@ -119,9 +120,14 @@ func usar_codigo(texto: String) -> String:
 	texto = texto.strip_edges().replace("\n", "").replace(" ", "")
 	if not texto.begins_with(PREFIXO_CODIGO):
 		return "código inválido"
-	var raw := Marshalls.base64_to_raw(texto.substr(PREFIXO_CODIGO.length()))
+	var partes := texto.substr(PREFIXO_CODIGO.length()).split(".")
+	if partes.size() != 2:
+		return "código inválido"
+	var raw := Marshalls.base64_to_raw(partes[0])
 	if raw.is_empty():
 		return "código inválido"
+	if not Selo.confere(raw, partes[1]):
+		return "código alterado ou incompleto"
 	var json := JSON.new()
 	if json.parse(raw.decompress_dynamic(-1, FileAccess.COMPRESSION_GZIP).get_string_from_utf8()) != OK:
 		return "código incompleto (copie de novo, inteiro)"
@@ -169,7 +175,9 @@ static func gravar(arquivo: String, estado: Dictionary) -> bool:
 	if f == null:
 		push_error("SaveManager: não consegui gravar " + arquivo)
 		return false
-	f.store_string(JSON.stringify(estado))
+	# Primeira linha: o selo do resto (Selo); save editado à mão perde as compras.
+	var texto := JSON.stringify(estado)
+	f.store_string(PREFIXO_SELO + Selo.de(texto.to_utf8_buffer()) + "\n" + texto)
 	f.close()
 	if FileAccess.file_exists(arquivo):
 		DirAccess.remove_absolute(arquivo + ".bak")
@@ -185,9 +193,19 @@ static func carregar_protegido(arquivo: String, jogador: Node, dados: Node) -> D
 		var p: String = arquivo if origem == "save" else arquivo + ".bak"
 		if not FileAccess.file_exists(p):
 			continue
+		var texto := FileAccess.get_file_as_string(p)
+		var selado := true
+		if texto.begins_with(PREFIXO_SELO):
+			var fim_linha := texto.find("\n")
+			var selo := texto.substr(PREFIXO_SELO.length(), fim_linha - PREFIXO_SELO.length())
+			texto = texto.substr(fim_linha + 1)
+			selado = Selo.confere(texto.to_utf8_buffer(), selo)
+		# Sem selo: save de antes do selo (vale; ganha selo na próxima gravação).
 		var json := JSON.new()
-		var lido: Variant = json.data if json.parse(FileAccess.get_file_as_string(p)) == OK else null
+		var lido: Variant = json.data if json.parse(texto) == OK else null
 		var erro := Save.desserializar(lido, jogador, dados)
+		if erro == "" and not selado:
+			_tirar_compras(dados, jogador)
 		if erro == "":
 			var aviso := ""
 			if origem == "bak":
@@ -201,6 +219,16 @@ static func carregar_protegido(arquivo: String, jogador: Node, dados: Node) -> D
 	_guardar_com_erro(arquivo + ".bak")
 	return {"carregou": false, "origem": "",
 		"aviso": "Não foi possível abrir o save (%s). Ele foi guardado em %s e um jogo novo começou." % [erros[0], copia]}
+
+
+const PREFIXO_SELO := "SELO:"
+
+
+## Save adulterado: o progresso fica, as compras pagas saem (no Android, a loja
+## do aparelho devolve as legítimas ao conectar).
+static func _tirar_compras(dados: Node, jogador: Node) -> void:
+	for p in LojaReal.produtos(dados):
+		jogador.flags.erase(String(p["flag"]))
 
 
 ## Renomeia o arquivo para <nome>.erro-<hora>, para nunca ser sobrescrito.

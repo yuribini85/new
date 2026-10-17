@@ -17,9 +17,6 @@ const LARGURA_BOTAO := 470.0
 const ALTURA_BOTAO := 104.0
 const LARGURA_SECUNDARIO := 360.0
 const ALTURA_SECUNDARIO := 76.0
-## Botão do teste completo na tela inicial (pedido do usuário para testar rápido);
-## desligar antes do lançamento.
-const MOSTRAR_TESTE := true
 ## Ocre do botão principal um pouco menos saturado que o da interface.
 ## Amarelo-ouro do botão principal (referência da tela inicial).
 const COR_PRINCIPAL := Color("f5b52e")
@@ -149,7 +146,7 @@ func _mostrar_opcoes() -> void:
 			LARGURA_BOTAO)
 	continuar.pressed.connect(_entrar)
 	_opcoes.add_child(continuar)
-	if sm.tinha_save or MOSTRAR_TESTE:
+	if sm.tinha_save or Preferencias.ferramentas_teste():
 		# Linha fina separa a ação principal das outras.
 		var sep := ColorRect.new()
 		sep.color = Color(0.85, 0.88, 0.94, 0.5)
@@ -164,7 +161,7 @@ func _mostrar_opcoes() -> void:
 		var novo := BotaoInicio.new("Novo jogo", false, Color.WHITE, 36, ALTURA_SECUNDARIO, LARGURA_SECUNDARIO)
 		novo.pressed.connect(_confirmar_novo)
 		_opcoes.add_child(novo)
-	if MOSTRAR_TESTE:
+	if Preferencias.ferramentas_teste():
 		var teste := BotaoInicio.new("Teste completo", false, Color.WHITE, 34, ALTURA_SECUNDARIO, LARGURA_SECUNDARIO)
 		teste.add_theme_color_override("font_color", Color(0.75, 0.87, 0.98))
 		teste.pressed.connect(_entrar_teste)

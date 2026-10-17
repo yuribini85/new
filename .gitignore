@@ -19,3 +19,5 @@ Thumbs.db
 # Python
 __pycache__/
 /versao.txt
+# Chave do selo do save (Selo): gravada pelo CI a partir do segredo SELO_CHAVE
+/chave_selo.txt

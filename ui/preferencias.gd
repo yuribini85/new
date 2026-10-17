@@ -48,7 +48,7 @@ static func carregar() -> void:
 		camera_arena = String(cfg.get_value("tela", "camera_arena", camera_arena))
 		modo_teste = String(cfg.get_value("teste", "modo", modo_teste))
 		notificacoes = bool(cfg.get_value("avisos", "notificacoes", notificacoes))
-		if not modo_teste in ["", "clareza", "ritmo"]:
+		if not modo_teste in ["", "clareza", "ritmo"] or not ferramentas_teste():
 			modo_teste = ""
 	aplicar()
 
@@ -79,3 +79,11 @@ static func aplicar() -> void:
 	AudioServer.set_bus_mute(bus, volume <= 0.001)
 	AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(volume, 0.001)))
 	Engine.max_fps = 30 if limitar_fps else 0
+
+
+## Ferramentas de teste (modo de playtest, cenários, liberar as compras, Teste
+## completo): só no editor e nos builds com a feature "playtest" (a demo web do
+## playtest, export_presets.cfg). No build da loja não existem: liberavam as
+## compras pagas para qualquer jogador.
+static func ferramentas_teste() -> bool:
+	return OS.is_debug_build() or OS.has_feature("playtest")

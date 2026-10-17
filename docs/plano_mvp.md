@@ -1013,3 +1013,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     português e, marcados EM BREVE, English, Español, Français, Deutsch e Italiano (alfabeto
     latino, que as fontes cobrem). A tela de volta avisa, numa linha, quando o tempo fora
     passou do teto da renda offline.
+115. **Proteção contra adulteração e cópia** (2026-10-17, pedido do usuário). Ferramentas de
+    teste (modo de playtest, cenários, liberar as compras, Teste completo) só no editor e nos
+    builds com a feature `playtest` (a demo web); o build da loja não as tem. Save e código do
+    progresso levam selo HMAC-SHA256 (`Selo`, chave do segredo `SELO_CHAVE` no CI): código
+    alterado não carrega; save alterado carrega sem as compras pagas. No Android, a consulta
+    de compras da Google Play tira do jogo o que a conta não possui. Scripts exportados como
+    bytecode comprimido (já era). Criptografia do pacote e validação em servidor: a decidir.
