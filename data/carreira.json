@@ -140,7 +140,7 @@
     "nome": "Enzo Varga",
     "genero": "m",
     "traco": "elite",
-    "frase": "",
+    "frase": "Não freio onde os outros freiam. Freio onde a pista deixa.",
     "tipo": "corrida",
     "premium": true
    },
@@ -149,7 +149,7 @@
     "nome": "Gunnar Vale",
     "genero": "m",
     "traco": "elite",
-    "frase": "",
+    "frase": "Chego por último no pátio e saio sozinho.",
     "tipo": "arena",
     "premium": true
    },
@@ -158,7 +158,7 @@
     "nome": "Scarlet Reyes",
     "genero": "f",
     "traco": "elite",
-    "frase": "",
+    "frase": "Eu não bato. Eu escolho onde vai doer.",
     "tipo": "arena",
     "premium": true
    }

@@ -505,12 +505,19 @@ func _comprar_sem_anuncios() -> void:
 	_comprar_real("sem_anuncios")
 
 
-## Loja de dinheiro real (decisão 101): tela própria, aberta das Configurações,
-## da aceleração e da contratação de pilotos.
+## Loja de dinheiro real (decisões 101 e 102): tela cheia por cima de tudo,
+## aberta das Configurações, da aceleração e da contratação de pilotos.
 func _abrir_loja_real() -> void:
-	_sobre.abrir("LOJA", func(v):
-		LojaRealTela.montar(_todas[0], v, dados, jogador, _comprar_real, _restaurar_compras),
-		[["Fechar", func(): pass]], {"fora_fecha": true})
+	_sobre.fechar()
+	var aberta := get_node_or_null("LojaReal")
+	if aberta != null and not aberta.is_queued_for_deletion():
+		return
+	var l := LojaRealTela.new(dados, jogador)
+	l.name = "LojaReal"
+	add_child(l)
+	l.comprar.connect(_comprar_real)
+	l.restaurar.connect(_restaurar_compras)
+	l.ir.connect(func(aba: int): _ir_para(aba))
 
 
 func _comprar_real(id: String) -> void:
@@ -530,8 +537,18 @@ func compra_confirmada(id: String) -> void:
 	if LojaReal.conceder(dados, jogador, id) != "":
 		return
 	get_node("/root/SaveManager").salvar()
-	_avisar("%s: compra concluída." % String(LojaReal.produto(dados, id).get("nome", id)))
+	Sons.tocar_ui(self, "moeda", -4.0)
 	atualizar()
+	var loja := get_node_or_null("LojaReal")
+	if loja != null and not loja.is_queued_for_deletion():
+		# A loja reabre com o estado novo; o pack ganha a cerimônia.
+		loja.name = "LojaReal_saindo"
+		loja.queue_free()
+		_abrir_loja_real()
+		if id == "pack_premium":
+			(get_node("LojaReal") as LojaRealTela).cerimonia()
+			return
+	_avisar("%s: compra concluída." % String(LojaReal.produto(dados, id).get("nome", id)))
 
 
 ## Cabine de pintura do carro ativo: por cima das telas e do cabeçalho, abaixo

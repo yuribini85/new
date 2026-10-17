@@ -938,3 +938,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     aceleração sem vídeo). O preço é o da loja do aparelho (sku), nunca do JSON; até o plugin
     dela entrar (depois do MVP), comprar e restaurar avisam que a loja chega na versão final.
     Na Web a loja não aparece. O modo de playtest tem "Liberar as compras da Loja (teste)".
+102. **Loja em tela cheia** (2026-10-17, sugestões aprovadas pelo usuário). A loja vira
+    tela própria por cima de tudo (`LojaRealTela`): fundo da garagem dos pilotos escurecido
+    com facho dourado; PACK ELITE com brilho que passa; os três premium de corpo inteiro
+    (corrida na frente, arena atrás) com contorno dourado; nomes carimbados com vaga e frase;
+    barras de ritmo, consistência e agressividade da Elite contra o melhor piloto que o
+    mercado oferece no momento (valores do jogo); botão dourado pulsando com "Compra única ·
+    para sempre"; Sem anúncios em faixa menor; aviso da loja do aparelho e "Restaurar
+    compras" no pé. Comprado o pack: cerimônia (os três entram, carimbo ELITE, "Bem-vindos
+    à equipe", "Ver pilotos" leva à Equipe). Frases dos premium em `carreira.json`.
