@@ -7,42 +7,7 @@ func _jogador(d: Node) -> Node:
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
 	j.economia.creditar(10000)
-	# Treinos já feitos (decisão 33): estes testes cobrem a avaliação.
-	j.treinos = {"a": -1.0e12, "b": -1.0e12}
 	return j
-
-
-func test_licenca_concedida_com_todos_os_testes_em_bronze_ou_melhor() -> void:
-	var d := dados_fixture()
-	var j := _jogador(d)
-	var l := Licencas.new(d, j)
-	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
-	var r1 := l.fazer_teste("b", "b1", uid, 1)
-	igual(r1["grau"], "ouro", "b1 (tempo %.2f)" % r1.get("tempo", -1.0))
-	igual(r1["licenca_concedida"], false, "falta b2")
-	var r2 := l.fazer_teste("b", "b2", uid, 1)
-	igual(r2["grau"], "bronze", "b2 (tempo %.2f)" % r2.get("tempo", -1.0))
-	igual(r2["licenca_concedida"], true, "b concedida")
-	igual(j.licencas, ["b"], "licenças")
-	igual(j.dias, 0, "teste não conta dia")
-	j.free()
-	d.free()
-
-
-func test_requisito_restricao_e_reprovacao() -> void:
-	var d := dados_fixture()
-	var j := _jogador(d)
-	var l := Licencas.new(d, j)
-	var forte: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	verificar(l.fazer_teste("a", "a1", forte, 1).has("erro"), "a exige b")
-	verificar(l.fazer_teste("b", "b1", forte, 1).has("erro"), "b1 só FF")
-	j.licencas.append("b")
-	var r := l.fazer_teste("a", "a1", forte, 1)
-	igual(r["grau"], "", "tempo impossível reprova")
-	igual(r["licenca_concedida"], false, "a não concedida")
-	verificar(not j.graus_licenca.has("a1"), "reprovação não registra grau")
-	j.free()
-	d.free()
 
 
 func test_estados_e_treino_da_licenca() -> void:
@@ -53,29 +18,17 @@ func test_estados_e_treino_da_licenca() -> void:
 	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
 	igual(l.estado("a", 0.0), Licencas.LOCKED, "a sem b: bloqueada")
 	igual(l.estado("b", 0.0), Licencas.AVAILABLE, "b disponível")
-	verificar(l.fazer_teste("b", "b1", uid, 1, 0.0).has("erro"), "sem treino não avalia")
 	igual(l.iniciar_treino("b", 100.0), "", "treino começa")
 	var dur := l.treino_s("b")
 	verificar(dur > 0.0, "treino tem duração")
 	igual(l.estado("b", 100.0 + dur * 0.5), Licencas.TRAINING, "no meio do treino")
 	perto(l.restante("b", 100.0 + dur * 0.5), dur * 0.5, 0.01, "tempo restante")
-	igual(l.estado("b", 100.0 + dur + 1.0), Licencas.READY, "treino feito: avaliação")
-	verificar(not l.fazer_teste("b", "b1", uid, 1, 100.0 + dur + 1.0).has("erro"), "avalia depois do treino")
+	igual(l.estado("b", 100.0 + dur + 1.0), Licencas.READY, "treino feito")
+	igual(l.atualizar(100.0 + dur + 1.0), ["b"], "treino feito: licença concedida sozinha")
+	igual(l.estado("b", 100.0 + dur + 2.0), Licencas.COMPLETE, "concedida")
 	igual(Licencas.id_novo("B"), "CLUB", "id antigo migra")
 	igual(Licencas.teste_novo("a2"), "sport2", "teste antigo migra")
 	igual(Licencas.teste_novo("ic_ultimo_credito"), "ic_ultimo_credito", "contrato fica")
-	j.free()
-	d.free()
-
-
-func test_melhor_grau_e_mantido() -> void:
-	var d := dados_fixture()
-	var j := _jogador(d)
-	var l := Licencas.new(d, j)
-	j.graus_licenca["b2"] = "ouro"
-	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
-	l.fazer_teste("b", "b2", uid, 1)
-	igual(j.graus_licenca["b2"], "ouro", "bronze não rebaixa ouro")
 	j.free()
 	d.free()
 

@@ -90,22 +90,6 @@ func _rodar() -> void:
 			await process_frame
 		root.get_texture().get_image().save_png(_saida.path_join("%d_resultado.png" % (total + 1)))
 		tela._sobre.fechar()
-	# Bancada do primeiro contrato, montada e avaliada.
-	var contratos: Array = dados.lista("contratos")
-	if not contratos.is_empty():
-		var carreira = tela._todas[5]
-		tela._ir_para(5)
-		carreira._abrir_bancada(contratos[0])
-		carreira._montagem = jogador.montagens.get(contratos[0]["id"], {"pecas": [], "ajuste_cambio": ""})
-		carreira._enviar(contratos[0])
-		carreira.atualizar()
-		for k in 6:
-			await process_frame
-		root.get_texture().get_image().save_png(_saida.path_join("%d_bancada.png" % (total + 1)))
-		carreira.scroll_vertical = 100000
-		for k in 6:
-			await process_frame
-		root.get_texture().get_image().save_png(_saida.path_join("%d_bancada_relatorio.png" % (total + 1)))
 	# Intro da equipe da vez no Grid (pulada até o confronto) e a ficha dela.
 	var vez := TheGrid.da_vez(dados, jogador)
 	if not vez.is_empty():

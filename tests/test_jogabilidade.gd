@@ -70,17 +70,6 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 	abas[1].atualizar()
 	var la: float = abas[1].conteudo.get_combined_minimum_size().x
 	verificar(la <= LARGURA, "workshop pede %.0f px (máx. %.0f)" % [la, LARGURA])
-	# Bancada de cada contrato, com câmbio montado e relatório.
-	var carreira: Control = abas[5]
-	for ct in d.lista("contratos"):
-		carreira._abrir_bancada(ct)
-		var pecas: Array = Contratos.pecas_escola(d, ct).map(func(p): return p["id"])
-		carreira._montagem = {"pecas": pecas.filter(func(x): return d.peca(x)["categoria"] == "cambio"),
-				"ajuste_cambio": "curto"}
-		carreira._enviar(ct)
-		carreira.atualizar()
-		var lb: float = carreira.conteudo.get_combined_minimum_size().x
-		verificar(lb <= LARGURA, "bancada %s pede %.0f px (máx. %.0f)" % [ct["id"], lb, LARGURA])
 	for a in abas:
 		a.free()
 	j.free()

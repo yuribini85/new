@@ -37,11 +37,6 @@ func _calibrar() -> void:
 			iniciais.append(_dados.carro(o["carro_id"]))
 	var licencas: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
 	for lic in licencas:
-		# Licença com contratos é concedida por eles e ignora os testes
-		# (Licencas, decisão 4): não há o que calibrar (os tempos ficam).
-		if not Contratos.da_licenca(_dados, String(lic["id"])).is_empty():
-			print("%s: concedida por contratos, testes não calibrados" % lic["id"])
-			continue
 		var possui := [lic["id"], lic.get("requisito")]
 		for t in lic["testes"]:
 			var pior := 0.0

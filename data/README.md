@@ -20,7 +20,6 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcionais `carro_premio`, `largada_kmh` |
 | `licencas.json` | lista de `{id, nome, testes}`, opcionais `requisito` (id de outra licença), `preco` |
 | `equipes.json` | lista de `{id, nome, pilotos: [{id, nome, genero}]}` (`genero`: "m" ou "f", pela arte do piloto; flexiona os textos, ex.: piloto/pilota, contratado/contratada) (retrato do piloto: genérico, decisão 72), opcionais `nivel` (CLUB…ELITE), `numero`, `logo`, `jogador`, `dirigente` (nome), `retrato_dirigente` (arte do dirigente, fundo transparente; ficha do The Grid), `perfil` (chave de `carreira.json` → `perfis_piloto`: a agressividade dos pilotos da equipe) e `personalidade` (uma frase, mostrada quando a equipe vence) |
-| `contratos.json` | lista de `{id, licenca, nome, carro, provas, condicoes}`, opcionais `descricao`, `pecas_escola`. **Gerado** por `tools/calibrar_contratos.gd` (não editar à mão) |
 | `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |
 | `carros_removidos.json` | objeto `{id que saiu: id que ficou}` (decisão 40). **Gerado** pelo importador; o save migra carros e peças por ele |
 | `garagem.json` | objeto `{capacidade_inicial, fator_vagas, licenca_do_preco, fator_preco_base, fator_preco}` (decisão 43): vagas da garagem e o preço de cada ampliação (`VagasGaragem`). Opcional (sem ele, sem limite); feito à mão |
@@ -123,7 +122,7 @@ cada corrida disputada conta um dia.
 
 Licenças CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO e ELITE (decisão 33): CLUB=B, SPORT=A,
 NATIONAL=IC, INTERNATIONAL=IB, PRO=IA do GT2 (campo `gt2`); ELITE (a S, sem dados no
-disco) libera as 7 resistências e não tem testes (avaliação por contratos). Estados e
+disco) libera as 7 resistências e não tem testes. Sem avaliação (decisão 99): o treino terminado concede a licença. Estados e
 regras em `data_model/licencas.gd`: requisitos (anterior; vencer em `fracao_series` das
 séries da anterior; a partir de `campeonato_desde`, um título da anterior quando ela tem
 campeonato), treino com duração = soma dos bronzes dos testes × `fator_treino` (**a
@@ -219,7 +218,6 @@ pesquisadas, com fontes) e `pacote/` (model-info, car.glb e protection.glb de ca
 python3 tools/frota360.py --instalar                      # -> referencia/frota360/frota.json, antigos.json; GLBs
 python3 tools/importar_gt2.py --frota referencia/frota360/frota.json   # -> data/
 godot --headless --path . --script res://tools/calibrar_licencas.gd
-godot --headless --path . --script res://tools/calibrar_contratos.gd
 python3 tools/gerar_cores.py
 godot --headless --path . --script res://tools/lista_carros_3d.gd
 ``` As conversões estão no topo de `tools/importar_gt2.py`.
@@ -252,19 +250,14 @@ godot --headless --path . --script res://tools/lista_carros_3d.gd
   Fora: rali e terra e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
 - Licenças CLUB a PRO (B, A, IC, IB, IA do GT2): restrição = mediana (B) ou mediana e quartis (as outras) dos
-  limites dos eventos que abrem. CLUB a PRO são concedidas por contratos e ignoram os
-  testes; só a SPORT usa tempos, calibrados pela simulação (`tools/calibrar_licencas.gd`,
+  limites dos eventos que abrem. Os tempos dos testes só dão a duração do treino
+  (decisão 99), calibrados pela simulação (`tools/calibrar_licencas.gd`,
   20 sementes, carro de fábrica): bronze = pior tempo de qualquer carro elegível,
   prata = percentil 75 do melhor carro inicial, ouro = percentil 25 do mesmo carro.
 - Lojas (como no GT2): uma concessionária de novos por fabricante, agrupadas por região
   (Japão, Estados Unidos, Europa, pela escola do fabricante); usados em lotes por
   fabricante (no GT2 só as marcas japonesas têm lote). As versões de corrida ficam na
   concessionária do fabricante.
-- Contratos (`contratos.json`): recalibrados por `tools/calibrar_contratos.gd`, licença por
-  licença, depois da redução da frota (os de antes usavam carros abertos que saíram) e,
-  em "O último giro", depois dos preços ×2 (`--so-custo`). A Club passou a usar a mesma
-  regra das outras (carros e pistas das provas que ela libera; teto de custo = saldo
-  inicial): a busca entre todos os carros não terminava em três horas.
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
 
 ## Como conferir a fração de revenda no GT2
@@ -277,23 +270,3 @@ No DuckStation, num save de teste (nunca nos saves existentes; copie o memory ca
 4. Fração = valor de venda ÷ preço de tabela. Se for igual em todos, ela vai para
    `tools/importar_gt2.py` (não editar `economia.json` à mão); se variar (por exemplo, com
    a quilometragem), anote os casos e o critério muda.
-
-## contratos.json (licenças por contrato, decisão 4)
-
-`provas`: `[{pista, voltas, condicao, rivais: [{carro, pecas?}]}]`. Avaliação em
-`Contratos.avaliar`: cada carro corre sozinho, com o piloto do jogador e a semente fixa da
-bancada; vencer = tempo menor que o de todos os rivais. `condicoes`: `{bronze, prata,
-ouro}`, cada uma com `vencer`, `folga_s`, `custo_max`, `pecas_max` ou `sem_categorias`
-(prata e ouro somam ao bronze).
-
-Os carros, rivais, pistas e números são escolhidos por `tools/calibrar_contratos.gd` a
-partir dos dados. Voltas e limite de potência do carro da escola vêm dos testes da licença
-B (GT2). Critérios **provisórios** (confirmar em playtest), no topo da ferramenta:
-
-| Constante | Valor | Uso |
-|---|---|---|
-| `RAZAO_GIGANTE` | 1,3 | potência mínima do "gigante" em relação ao carro da escola |
-| `FOLGA_CUSTO_BRONZE` / `_PRATA` | 1,5 / 1,2 | teto de custo do bronze e da prata sobre o menor custo achado |
-| `FOLGA_MINIMA_DUPLA` | 0,2 s | folga mínima da solução de "Dois circuitos" |
-| `FOLGA_PRATA_DUPLA_S` | **pendente** (playtest de clareza) | prata de "Dois circuitos" por folga fixa; enquanto pendente, metade da folga da solução |
-| prata por folga | metade da maior folga achada | "O pequeno contra o gigante" e "Dois circuitos" |

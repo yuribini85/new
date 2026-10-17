@@ -188,14 +188,8 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	for k in s["graus_licenca"]:
 		var novo := Licencas.teste_novo(String(k))
 		jogador.graus_licenca[novo if not testes.has(k) and testes.has(novo) else String(k)] = s["graus_licenca"][k]
-	# Opcional: montagens dos contratos (saves anteriores aos contratos não têm).
+	# Montagens dos contratos de licença (removidos, decisão 99): não carregam mais.
 	jogador.montagens = {}
-	if s.get("montagens") is Dictionary:
-		for k in s["montagens"]:
-			var m = s["montagens"][k]
-			if m is Dictionary and dados.existe("contratos", k):
-				jogador.montagens[k] = {"pecas": Array(m.get("pecas", [])).filter(func(x): return dados.existe("pecas", x)),
-						"ajuste_cambio": String(m.get("ajuste_cambio", ""))}
 	jogador.usados_vendidos = s["usados_vendidos"]
 	# Opcional: lista de desejos (modelos que saíram de data/ somem).
 	jogador.desejos = Array(s.get("desejos", [])).filter(func(x): return dados.existe("carros", x)) \

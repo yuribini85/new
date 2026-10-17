@@ -1,14 +1,14 @@
 class_name Licencas
 extends RefCounted
-## Testes de tempo de licença: tempo-alvo numa pista com o carro do próprio
-## jogador dentro de uma restrição. Licença com contratos (data/contratos.json,
-## decisão 4) é concedida pelos contratos (ver Contratos) e ignora os testes;
-## sem contratos, quando todos os testes têm ao menos bronze. Não contam dia.
+## Licenças (decisão 99): cumpridos os requisitos, o treino corre no relógio
+## real e, terminado, a licença é concedida sozinha (atualizar). Os testes de
+## licenca.json só dão a duração do treino (treino_s); não há avaliação.
 
+## Graus dos tempos dos testes em licencas.json (o de bronze dá a duração do treino).
 const GRAUS := ["ouro", "prata", "bronze"]
 ## Estados (decisão 33). LOCKED: falta a anterior ou um requisito; AVAILABLE:
 ## pode iniciar o treino; TRAINING: treino correndo (conta offline, pelo relógio);
-## READY: avaliação aberta (contratos ou testes); COMPLETE: concedida.
+## READY: treino terminado, a licença sai no próximo atualizar; COMPLETE: concedida.
 const LOCKED := "LOCKED"
 const AVAILABLE := "AVAILABLE"
 const TRAINING := "TRAINING"
@@ -137,70 +137,3 @@ func iniciar_treino(licenca_id: String, agora: float) -> String:
 		return "saldo insuficiente"
 	jogador.treinos[licenca_id] = agora
 	return ""
-
-
-## A avaliação (testes ou contratos) só abre depois do treino; refazer para
-## melhorar o grau continua possível depois de concedida.
-func pode_avaliar(licenca_id: String, agora: float) -> bool:
-	return estado(licenca_id, agora) in [READY, COMPLETE]
-
-
-## Retorna {"erro"} ou {"tempo", "grau" ("" se reprovado), "licenca_concedida"}.
-func fazer_teste(licenca_id: String, teste_id: String, uid: int, semente: int,
-		agora: float = Time.get_unix_time_from_system()) -> Dictionary:
-	var lic: Dictionary = dados.item("licencas", licenca_id)
-	if lic.get("requisito") != null and not lic["requisito"] in jogador.licencas:
-		return {"erro": "exige a licença %s" % lic["requisito"]}
-	if not pode_avaliar(licenca_id, agora):
-		return {"erro": "termine o treino da %s antes da avaliação" % lic.get("nome", licenca_id)}
-	var teste := _teste(lic, teste_id)
-	if teste.is_empty():
-		return {"erro": "teste %s não existe em %s" % [teste_id, licenca_id]}
-	var carro: Carro = jogador.garagem.carro(uid)
-	if carro == null:
-		return {"erro": "carro %d não está na garagem" % uid}
-	var motivos := Elegibilidade.motivos(carro, teste.get("restricoes", {}), jogador.licencas)
-	if not motivos.is_empty():
-		return {"erro": ", ".join(motivos)}
-
-	var r := Simulacao.correr(dados.pista(teste["pista"]), [{
-		"id": "jogador",
-		"atributos": carro.atributos_efetivos(teste["condicao"]),
-		"piloto": dados.piloto(dados.carreira()["piloto_jogador"]),
-	}], int(teste["voltas"]), dados.simulacao(), semente)
-	var tempo: float = r["carros"]["jogador"]["tempo_total"]
-	var grau := ""
-	if r["carros"]["jogador"]["terminou"]:
-		for g in GRAUS:
-			if tempo <= float(teste["tempos"][g]):
-				grau = g
-				break
-	_guardar_melhor(teste_id, grau)
-	var concedida := false
-	if not licenca_id in jogador.licencas and Contratos.da_licenca(dados, licenca_id).is_empty() and _completa(lic):
-		jogador.licencas.append(licenca_id)
-		concedida = true
-		Prologo.ao_conceder(dados, jogador, licenca_id)
-	return {"tempo": tempo, "grau": grau, "licenca_concedida": concedida}
-
-
-func _teste(lic: Dictionary, teste_id: String) -> Dictionary:
-	for t in lic["testes"]:
-		if t["id"] == teste_id:
-			return t
-	return {}
-
-
-func _guardar_melhor(teste_id: String, grau: String) -> void:
-	if grau == "":
-		return
-	var atual: String = jogador.graus_licenca.get(teste_id, "")
-	if atual == "" or GRAUS.find(grau) < GRAUS.find(atual):
-		jogador.graus_licenca[teste_id] = grau
-
-
-func _completa(lic: Dictionary) -> bool:
-	for t in lic["testes"]:
-		if not jogador.graus_licenca.has(t["id"]):
-			return false
-	return true

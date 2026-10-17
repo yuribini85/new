@@ -41,16 +41,6 @@ func test_abas_constroem_com_e_sem_carro() -> void:
 	for a in abas:
 		a.atualizar()
 	abas[3]._correr("aberto")  # recusado: fila ocupada
-	abas[5]._fazer(d.item("licencas", "b"), d.item("licencas", "b")["testes"][1])
-	verificar(j.graus_licenca.has("b2"), "teste de licença pela tela")
-	j.licencas.append("b")
-	abas[5]._abrir_bancada(d.item("contratos", "c_teste"))
-	abas[5].atualizar()
-	abas[5]._montagem = {"pecas": ["alivio"], "ajuste_cambio": ""}
-	abas[5]._enviar(d.item("contratos", "c_teste"))
-	abas[5].atualizar()
-	igual(j.graus_licenca.get("c_teste", ""), "ouro", "contrato pela tela")
-	abas[5]._bancada = ""
 	abas[4]._process(0.0)
 	verificar(abas[4]._visual.duracao() == 0.0, "corrida ainda sendo resolvida: a tela espera")
 	j.fila_ctrl.avancar_preparo(INF)  # a principal resolve aos poucos, a cada quadro
