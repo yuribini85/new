@@ -539,11 +539,13 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 		atualizar())
 
 
-## Decisão 96: a luta de demonstração da primeira sessão (cena CW_AD01). O
-## carro da Mara (historia.json → carro_mara) entra na garagem só para montar a
-## luta e sai em seguida; a luta é simulada (nada muda no jogo) e, no fim, a
-## Mara explica quando a arena abre (ARENA_DEMO_FIM).
-const DEMO_EQUIPES := 2
+## Decisão 96: a luta de demonstração da primeira sessão (cena CW_AD01). Só
+## equipes rivais (pedido do usuário: o jogador é convidado a assistir), seis
+## duplas para mostrar o tamanho da coisa. O carro de historia.json →
+## carro_mara só serve de referência de potência (entra e sai da garagem); a
+## luta é simulada (nada muda no jogo) e, no fim, a Mara explica quando a arena
+## abre (ARENA_DEMO_FIM).
+const DEMO_EQUIPES := 6
 
 
 func _luta_demo() -> void:
@@ -556,15 +558,13 @@ func _luta_demo() -> void:
 	carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 	var uid: int = jogador.garagem.adicionar(carro)
 	var semente := hash("arena_demo:%s" % jogador.nome_admin)
-	var montada := ArenaCarreira.montar(dados, jogador, uid, semente, DEMO_EQUIPES)
+	var montada := ArenaCarreira.montar(dados, jogador, uid, semente, DEMO_EQUIPES, {}, "", true)
 	jogador.garagem.remover(uid)
 	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
-	var final := {"simulacao": true, "demo": true, "perdeu": false, "carro": String(carro.base["nome"]),
-			"posicao": resultado["classificacao"].find("jogador") + 1,
-			"venceu_equipe": resultado.get("equipe_vencedora", "") == "jogador",
-			"pontos": ArenaCarreira.pontos(resultado, "jogador", montada["params"]), "premio": 0}
+	var vencedora: Dictionary = montada["equipes"].get(String(resultado.get("equipe_vencedora", "")), {})
+	var final := {"simulacao": true, "demo": true, "perdeu": false, "carro": "", "posicao": 0,
+			"venceu_equipe": false, "pontos": 0, "premio": 0, "vencedora": String(vencedora.get("nome", ""))}
 	var pintura: Dictionary = montada["cores"].duplicate()
-	pintura["jogador"] = CarroBloco.cor_do_carro(carro)
 	_abrir_luta({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
 			"pinturas": pintura, "faixas": montada["faixas"], "final": final, "params": montada["params"],
 			"blindagens": montada.get("blindagens", {}),

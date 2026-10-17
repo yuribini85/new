@@ -269,7 +269,16 @@ func _mostrar_final() -> void:
 	t.add_theme_color_override("font_color", Aba.COR_RUIM if f["perdeu"] else Aba.COR_DESTAQUE)
 	v.add_child(t)
 	var notas := []
-	if f.get("simulacao", false):
+	if f.get("demo", false):
+		# Demonstração: o jogador só assistiu; vale quem venceu.
+		t.text = "VENCEU: %s" % String(f.get("vencedora", "")).to_upper() if String(f.get("vencedora", "")) != "" \
+				else "FIM DA LUTA"
+		var dd := Label.new()
+		dd.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		dd.text = "Demonstração: seis duplas, a última de pé vence."
+		Tipografia.rotulo(dd, "regular", 26)
+		v.add_child(dd)
+	elif f.get("simulacao", false):
 		var posicao_eq := _linhas().filter(func(l): return l.get("tipo", "") == "equipe" and l["voce"])
 		if not posicao_eq.is_empty() and int(posicao_eq[0]["posicao"]) > 0 and not f["venceu_equipe"]:
 			t.text = "SUA DUPLA: %dº" % int(posicao_eq[0]["posicao"])
@@ -311,6 +320,7 @@ func _mostrar_final() -> void:
 	# Pontos e prêmio no padrão dos números do jogo (valor grande, moeda).
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 10)
+	h.visible = not f.get("demo", false)  # a demonstração não tem pontos da sua dupla
 	v.add_child(h)
 	for par in ([[str(f["pontos"]), "pontos"]] if f.get("simulacao", false) else [[str(f["pontos"]), "pontos"], [Aba.dinheiro(f["premio"]), ""]]):
 		var n := Label.new()

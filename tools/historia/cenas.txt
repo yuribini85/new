@@ -160,7 +160,7 @@ Mara[firme]: Não existe melhor carro. Existe o carro certo para cada prova.
 = CW_AD01 | CORRIDA_FIM | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=ARENA_DEMO_SEEN; flags=ARENA_DEMO_SEEN; cenario=oficina_mara
 Mara[pensativa]: Você nunca perguntou por que Wreckage.
 Mara[cruzados]: Corrida paga as contas. A arena é de onde o nome vem.
-Mara[firme]: Vem ver. É só demonstração: meu carro, nada em jogo.
+Mara[firme]: Vem ver uma luta. Seis duplas na arena; hoje você só assiste.
 [ARENA_DEMO]
 
 = CW_AD02 | ARENA_DEMO_FIM | personagem=dono; proibe=ARENA_DEMO_TALK; flags=ARENA_DEMO_TALK; cenario=oficina_mara
@@ -367,14 +367,6 @@ Dex: E se paga com peças. O que a gente desmonta e o que sobra da arena vira pe
 Sistema: Blindagem: Oficina, ao lado da velocidade máxima.
 
 = CW_AR03 | BLINDAGEM | personagem=dono; requer=DEX_MET; proibe=ARMOR_TUTORIAL_SEEN; flags=ARMOR_TUTORIAL_SEEN
-Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
-Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
-Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.
-Dex: Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida.
-Sistema: Escolha o nível e toque em Instalar.
-
-= CW_AR03B | BLINDAGEM | personagem=dono; proibe=ARMOR_TUTORIAL_SEEN,DEX_MET; flags=ARMOR_TUTORIAL_SEEN,DEX_MET
-Dex: Dex Kane. Eu preparo carro pra arena, quando ela abrir pra vocês.
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
 Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.

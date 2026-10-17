@@ -141,8 +141,10 @@ static func parceiro(dados: Node, jogador: Node, _uid: int) -> Dictionary:
 ## `desafio` (decisão 74): a equipe do Grid desafiada; a luta é 2x2 contra os
 ## carros especiais dela (GridDesafio.especiais), na arena do desafio.
 ## `arena_fixa`: id da arena (simulação de teste: qualquer uma, até as do Grid).
+## `espectador`: só equipes rivais (a demonstração: o jogador assiste); o
+## carro `uid` serve só de referência de potência.
 static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes_fixo: int = -1,
-		desafio: Dictionary = {}, arena_fixa: String = "") -> Dictionary:
+		desafio: Dictionary = {}, arena_fixa: String = "", espectador := false) -> Dictionary:
 	var p: Dictionary = dados.arena()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = semente
@@ -171,19 +173,27 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var escolhidos := catalogo.slice(0, n_equipes * 4)
 	var sortear_modelo := func() -> Dictionary:
 		return escolhidos.pop_at(rng.randi_range(0, escolhidos.size() - 1)) if not escolhidos.is_empty() else carro.base
+	if espectador:
+		parts.clear()
+		modelos.clear()
+		nomes.clear()
+		equipes.clear()
 	# Parceiro: o segundo piloto no carro dele, ou o da casa num emprestado.
-	var par := parceiro(dados, jogador, uid)
+	var par := parceiro(dados, jogador, uid) if not espectador else {"real": false, "nome": ""}
 	var car_par: Carro
-	if par["real"]:
+	if espectador:
+		pass
+	elif par["real"]:
 		car_par = jogador.garagem.carro(int(par["uid"]))
 	else:
 		car_par = Carro.new(sortear_modelo.call())
 		car_par.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 		cores["parceiro"] = CarroBloco.cor_do_carro(carro)
-	parts.append({"id": "parceiro", "atributos": car_par.atributos_efetivos("seco"),
-			"piloto": EquipeJogador.piloto_corrida(dados, jogador), "equipe": "jogador"})
-	modelos["parceiro"] = car_par.base
-	nomes["parceiro"] = String(par["nome"])
+	if not espectador:
+		parts.append({"id": "parceiro", "atributos": car_par.atributos_efetivos("seco"),
+				"piloto": EquipeJogador.piloto_corrida(dados, jogador), "equipe": "jogador"})
+		modelos["parceiro"] = car_par.base
+		nomes["parceiro"] = String(par["nome"])
 	if par["real"]:
 		cores["parceiro"] = CarroBloco.cor_do_carro(car_par)
 		faixas["parceiro"] = car_par.faixas
@@ -194,7 +204,7 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	var especiais: Array = GridDesafio.especiais(dados, desafio, 2) if not desafio.is_empty() else []
 	rivais.sort_custom(func(a, b): return a["id"] < b["id"])
 	var perfis: Dictionary = dados.carreira().get("perfis_piloto", {})
-	for k in mini(n_equipes - 1, rivais.size()):
+	for k in mini(n_equipes - (0 if espectador else 1), rivais.size()):
 		var eq: Dictionary = rivais.pop_at(rng.randi_range(0, rivais.size() - 1))
 		equipes[eq["id"]] = eq
 		var pilotos: Array = eq["pilotos"].filter(func(pl): return EquipeJogador.vaga_do_piloto(jogador, String(pl["id"])) == "")
@@ -232,7 +242,7 @@ static func montar(dados: Node, jogador: Node, uid: int, semente: int, n_equipes
 	if not abertas.is_empty():
 		params["forma"] = abertas[rng.randi_range(0, abertas.size() - 1)]
 	# Blindagem à vista nos seus carros (decisão 80): solta na batida.
-	var blindagens := {"jogador": Blindagem.nivel(carro)}
+	var blindagens := {} if espectador else {"jogador": Blindagem.nivel(carro)}
 	if par["real"]:
 		blindagens["parceiro"] = Blindagem.nivel(car_par)
 	# Canhão d'água (arena.json → canhao): os carros da lista empurram com o jato.

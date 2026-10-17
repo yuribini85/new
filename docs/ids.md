@@ -79,7 +79,6 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_P07` | `GARAGEM_TRES_CARROS` | — | `ARENA_INTRO` |
 | `CW_AR02` | `ENCADEADA` | — | `DEX_MET` |
 | `CW_AR03` | `BLINDAGEM` | — | `ARMOR_TUTORIAL_SEEN` |
-| `CW_AR03B` | `BLINDAGEM` | — | `ARMOR_TUTORIAL_SEEN`, `DEX_MET` |
 | `CW_AR04` | `BLINDAGEM_COMPRADA` | — | `FIRST_ARMOR` |
 | `CW_R06` | `ARENA_INSCRICAO` | — | `ARENA_FIRST_ENTRY` |
 | `CW_R07` | `ARENA_FIM` | — | `ARENA_SURVIVED` |

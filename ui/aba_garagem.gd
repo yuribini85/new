@@ -410,7 +410,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 		cartao_ficha.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cartao_ficha.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		if it[0] == "blindagem":
-			if Blindagem.itens(dados, c).is_empty():
+			if Blindagem.itens(dados, c).is_empty() or not _arena_aberta():
 				continue
 			cartao_ficha.mouse_filter = Control.MOUSE_FILTER_STOP
 			cartao_ficha.gui_input.connect(func(ev: InputEvent):
@@ -485,7 +485,12 @@ func _evolucao(c: Carro) -> void:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 12)
 	v.add_child(col)
-	col.add_child(_abas_preparacao())
+	# A blindagem e a preparação de arena só depois que a arena abre (o
+	# terceiro carro, cena CW_P07): antes, a chapa iria no carro de corrida.
+	if not _arena_aberta():
+		_prep = "corrida"
+	else:
+		col.add_child(_abas_preparacao())
 	if _prep == "arena":
 		_preparacao_arena(c, col)
 	else:
@@ -494,6 +499,11 @@ func _evolucao(c: Carro) -> void:
 		var cat := _abrir_categoria
 		_abrir_categoria = ""
 		_abrir_evolucao(c, cat)
+
+
+func _arena_aberta() -> bool:
+	return jogador.historia == null or String(jogador.personagem) != "dono" \
+			or jogador.flags.has(EquipeJogador.FLAG_ARENA)
 
 
 ## As duas abas: a escolhida em ocre, a outra apagada.

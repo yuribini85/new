@@ -633,7 +633,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Vem ver. É só demonstração: meu carro, nada em jogo.",
+    "texto": "Vem ver uma luta. Seis duplas na arena; hoje você só assiste.",
     "pose": "firme"
    },
    {
@@ -1725,48 +1725,6 @@
   ],
   "flags": [
    "ARMOR_TUTORIAL_SEEN"
-  ],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "dono"
- },
- {
-  "id": "CW_AR03B",
-  "trigger": "BLINDAGEM",
-  "falas": [
-   {
-    "quem": "mecanico_arena",
-    "texto": "Dex Kane. Eu preparo carro pra arena, quando ela abrir pra vocês."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida."
-   },
-   {
-    "quem": "sistema",
-    "texto": "Escolha o nível e toque em Instalar."
-   }
-  ],
-  "requer": [],
-  "proibe": [
-   "ARMOR_TUTORIAL_SEEN",
-   "DEX_MET"
-  ],
-  "flags": [
-   "ARMOR_TUTORIAL_SEEN",
-   "DEX_MET"
   ],
   "bloqueia": false,
   "uma_vez": true,
