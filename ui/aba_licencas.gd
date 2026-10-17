@@ -374,7 +374,9 @@ func _patrocinio() -> void:
 	for p in GestaoEquipe.ofertas(dados, jogador):
 		var v := _cartao_patrocinador(p, false)
 		var b := Button.new()
-		Tipografia.acao_primaria(b, "Assinar contrato   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 28, 64)
+		Tipografia.acao_primaria(b, "ASSINAR", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 56)
+		b.custom_minimum_size = Vector2(170, 56)
+		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		b.pressed.connect(func():
 			var motivo := GestaoEquipe.assinar(dados, jogador, String(p["id"]), Time.get_unix_time_from_system())
 			if motivo != "":
@@ -384,40 +386,50 @@ func _patrocinio() -> void:
 			avisar("Contrato assinado com %s." % p["nome"])
 			historia("PATROCINIO_ASSINADO")
 			mudou.emit())
-		v.add_child(b)
+		v.get_meta("acao").add_child(b)
 
 
-## Cartão de um patrocinador: nome, ramo e licença, renda por hora e o bônus.
+## Cartão compacto de um patrocinador: nome e licença numa linha; ramo, duração
+## e "rende com o jogo fechado" na segunda; renda e bônus à esquerda e, na
+## oferta, o botão à direita (meta "acao": a fileira onde ele entra).
 func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 	var v := cartao(COR_BOM if ativo else Color.TRANSPARENT)
+	v.add_theme_constant_override("separation", 4)
 	var cab := fileira(v)
 	var nome := rotulo(String(p.get("nome", "")), 0, Color.WHITE, cab)
-	Tipografia.rotulo(nome, "semibold", 30)
+	Tipografia.rotulo(nome, "semibold", 28)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var selo := selo_licenca(String(p.get("licenca", "")))
-	if selo != null:
-		var t := TextureRect.new()
-		t.texture = selo
-		t.custom_minimum_size = Vector2(52, 52)
-		t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		cab.add_child(t)
-	Tipografia.rotulo(rotulo(String(p.get("ramo", "")).to_upper(), 0, COR_SECUNDARIA, v), "medium", 18)
+	nome.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var lic := String(p.get("licenca", ""))
+	if lic != "":
+		var chip := selo(lic, COR_DESTAQUE, cab)
+		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var info := [String(p.get("ramo", "")).to_upper()]
+	if not ativo:
+		info.append("%d H" % int(GestaoEquipe.config(dados).get("duracao_h", 24)))
+		info.append("RENDE COM O JOGO FECHADO")
+	Tipografia.rotulo(rotulo(" · ".join(info.filter(func(x): return x != "")), 0, COR_SECUNDARIA, v), "medium", 18)
+	var linha := fileira(v)
+	v.set_meta("acao", linha)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 0)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	linha.add_child(col)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 8)
-	v.add_child(h)
+	col.add_child(h)
 	var lv := rotulo(dinheiro(GestaoEquipe.renda_hora(dados, jogador, p)), 0, COR_DESTAQUE, h)
-	Tipografia.numero(lv, 34)
+	Tipografia.numero(lv, 32)
 	lv.autowrap_mode = TextServer.AUTOWRAP_OFF
 	lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	icone(ICONE_GIROS, 26, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icone(ICONE_GIROS, 24, h).size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var ph := rotulo("por hora", 0, COR_SECUNDARIA, h)
-	Tipografia.rotulo(ph, "medium", 22)
+	Tipografia.rotulo(ph, "medium", 20)
 	ph.autowrap_mode = TextServer.AUTOWRAP_OFF
 	ph.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	rotulo("Bônus de %s giros por %s." % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
-			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA, Color(0.86, 0.87, 0.9), v) \
+	rotulo("+%s giros por %s" % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
+			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA - 2, Color(0.86, 0.87, 0.9), col) \
 			.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return v
 

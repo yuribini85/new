@@ -63,6 +63,18 @@ func test_bonus_so_quando_a_condicao_e_cumprida() -> void:
 	d.free()
 
 
+func test_bonus_pela_dificuldade_da_condicao() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	var p := GestaoEquipe.patrocinador(d, "p_b1")  # pódio, bônus 5
+	igual(GestaoEquipe.bonus(d, j, p), 5, "sem bonus_condicao: multiplicador 1")
+	d.equipe()["patrocinio"]["bonus_condicao"] = {"podio": 2.0}
+	igual(GestaoEquipe.bonus(d, j, p), 10, "pódio × 2")
+	igual(GestaoEquipe.chave_condicao({"tipo": "licenca", "valor": "PRO"}), "licenca:PRO", "chave com a licença")
+	j.free()
+	d.free()
+
+
 func test_sede_melhora_vagas_e_renda() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)

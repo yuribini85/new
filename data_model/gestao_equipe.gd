@@ -145,7 +145,15 @@ static func bonus(dados: Node, jogador: Node, p: Dictionary) -> int:
 	if p.is_empty():
 		return 0
 	var ref := premio_referencia(dados, String(p["licenca"]))
-	return roundi(ref * float(config(dados).get("bonus_fator", 0.0)) * (1.0 + efeito(dados, jogador, "bonus")))
+	# Decisão 100: condição mais difícil paga mais (equipe.json →
+	# bonus_condicao, medido por tools/calibrar_bonus.gd; ausente vale 1).
+	var mult := float(config(dados).get("bonus_condicao", {}).get(chave_condicao(p.get("condicao", {})), 1.0))
+	return roundi(ref * float(config(dados).get("bonus_fator", 0.0)) * mult * (1.0 + efeito(dados, jogador, "bonus")))
+
+
+## Chave da condição em bonus_condicao: "vitoria", "podio", "etapa", "licenca:PRO".
+static func chave_condicao(c: Dictionary) -> String:
+	return String(c.get("tipo", "")) + (":" + String(c["valor"]) if c.has("valor") else "")
 
 
 ## Texto da condição do bônus.

@@ -921,3 +921,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (`treino_s`) em tempo real → licença concedida automaticamente
     (`Licencas.atualizar`, checado a cada segundo e na volta do app). O modelo de contratos
     e testes continua no código, sem uso na tela, até a próxima limpeza.
+100. **Patrocínio: bônus pela dificuldade da condição e cartão compacto** (2026-10-17,
+    recomendação aceita pelo usuário). O bônus de cada patrocinador é
+    `bonus_fator × prêmio de referência × bonus_condicao[condição]`; o multiplicador é a
+    frequência do pódio ÷ a frequência da condição, medidas por corrida no playtest
+    automático (`tools/calibrar_bonus.gd`, grava `equipe.json → patrocinio.bonus_condicao`):
+    o bônus esperado por corrida é igual em todas, e a condição mais difícil paga mais por
+    vez. Condição sem amostra (menos de 30 corridas cumpridas) vale 1 até nova medição.
+    Cartão: nome e licença (texto) numa linha; ramo, "24 h" e "rende com o jogo fechado"
+    na segunda; renda e bônus à esquerda e o botão ASSINAR à direita.
