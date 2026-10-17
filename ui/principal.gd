@@ -226,6 +226,16 @@ func _ready() -> void:
 	if save_manager.aviso != "":
 		_sobre.abrir("Save", func(v): _todas[0].rotulo(save_manager.aviso, 0, Color.WHITE, v))
 	_abrir_volta(save_manager.relatorio_offline)
+	# Decisão 110: a cobrança do Google Play, quando o plugin está no export.
+	if Engine.has_singleton(LojaPlay.SINGLETON):
+		var ponte := LojaPlay.new(dados)
+		ponte.name = "LojaPlay"
+		add_child(ponte)
+		LojaReal.ponte = ponte
+		ponte.concedido.connect(func(id: String):
+			if not LojaReal.comprado(dados, jogador, id):
+				compra_confirmada(id))
+		ponte.erro.connect(func(t: String): _sobre.avisar("Compra não concluída: %s" % t, false))
 	_fila_vista = jogador.fila
 	RegistroSessao.inicio(jogador)
 	RegistroSessao.corridas(save_manager.relatorio_offline, dados)

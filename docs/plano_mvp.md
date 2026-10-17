@@ -988,3 +988,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     luta da arena, peça, contrato de patrocínio). Cumprida, COLETAR paga
     `recompensa_premios` (1) × o prêmio de referência da maior licença; critério: uma
     vitória a mais por tarefa, menos de meia hora de corrida no total. Ajustar no playtest.
+110. **Cobrança do Google Play** (2026-10-17, sugestão aceita pelo usuário). `LojaPlay` liga a
+    loja ao plugin oficial GodotGooglePlayBilling (consulta os preços dos skus, compra,
+    reconhece a compra e restaura as já feitas); o Principal só cria a ponte quando o
+    plugin está no export Android. Para valer: ativar o plugin no export Android, cadastrar
+    no Google Play Console os produtos `pack_premium`, `turno_noite` e `sem_anuncios`
+    (compra única, preços da decisão 106) e testar com uma conta de teste. iOS (App Store)
+    fica para quando houver export iOS.

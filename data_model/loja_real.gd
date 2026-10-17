@@ -2,9 +2,12 @@ class_name LojaReal
 extends RefCounted
 ## Loja de dinheiro real (decisão 101): compras únicas e permanentes
 ## (monetizacao.json → loja.produtos), cada uma liga uma flag no save. O preço
-## e a cobrança são da loja do aparelho (sku); enquanto o plugin dela não entra
-## (depois do MVP), comprar e restaurar respondem que ainda não há loja.
-## `conceder` é o que o plugin chama ao confirmar a compra (e o modo de teste).
+## e a cobrança são da loja do aparelho (sku), pela ponte LojaPlay (decisão
+## 110, Google Play); sem ela, comprar e restaurar respondem que ainda não há
+## loja. `conceder` é o que a ponte chama ao confirmar a compra (e o modo de teste).
+
+## A ponte com a loja do aparelho (o Principal cria quando o plugin existe).
+static var ponte: LojaPlay
 
 const SEM_LOJA := "a loja do aparelho entra na versão final"
 
@@ -42,16 +45,20 @@ static func horas_offline(dados: Node, jogador: Node) -> float:
 	return h
 
 
-## A plataforma tem loja do aparelho (não na Web) e o plugin dela está ativo.
+## A plataforma tem loja do aparelho (não na Web) e a ponte está conectada.
 static func disponivel() -> bool:
-	return not OS.has_feature("web") and _plugin() != null
+	return not OS.has_feature("web") and ponte != null and is_instance_valid(ponte) and ponte.conectado
 
 
 ## Preço como a loja do aparelho mostra; sem ela, o preço-base em dólar
 ## (monetizacao.json → preco_usd, decisão 106); "" sem nenhum dos dois.
 static func preco(dados: Node, id: String) -> String:
 	var p := produto(dados, id)
-	if p.is_empty() or p.get("preco_usd") == null:
+	if p.is_empty():
+		return ""
+	if disponivel() and ponte.precos.has(String(p.get("sku", id))):
+		return String(ponte.precos[String(p.get("sku", id))])
+	if p.get("preco_usd") == null:
 		return ""
 	return ("US$ %.2f" % float(p["preco_usd"])).replace(".", ",")
 
@@ -65,14 +72,12 @@ static func comprar(dados: Node, jogador: Node, id: String) -> String:
 		return "já comprado"
 	if not disponivel():
 		return SEM_LOJA
-	return SEM_LOJA
+	ponte.comprar(String(produto(dados, id).get("sku", id)))
+	return ""
 
 
 static func restaurar(_dados: Node, _jogador: Node) -> String:
 	if not disponivel():
 		return SEM_LOJA
-	return SEM_LOJA
-
-
-static func _plugin() -> Object:
-	return null
+	ponte.restaurar()
+	return ""
