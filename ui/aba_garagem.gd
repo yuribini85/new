@@ -889,6 +889,9 @@ func _acao_evolucao(c: Carro, cat: String) -> Array:
 			_reabrir(c, cat), true, jogador.economia.pode_pagar(preco)]
 	var instalada: bool = c.pecas.get(cat, {}).get("id") == it["id"]
 	var antes := c.atributos_efetivos("seco")
+	if instalada and cat == Blindagem.CATEGORIA:
+		# A blindagem sai só pelo REMOVER BLINDAGEM da preparação de arena (pago).
+		return ["INSTALADA", func(): pass, false, false]
 	if instalada:
 		return ["REMOVER", func():
 			_remover(c, it)
