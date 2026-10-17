@@ -114,7 +114,7 @@ func _partes() -> void:
 func _caixa() -> void:
 	if not GestaoEquipe.aberta(dados, jogador):
 		return  # decisão 69: a equipe nasce no começo; caixa e folha, com a International
-	titulo_secao("CAIXA", "Prêmios e patrocínio entram, salários saem: tudo no mesmo caixa.")
+	titulo_secao("CAIXA")
 	var c := cartao()
 	var h := fileira(c)
 	var moeda_i := icone("cabecalho/icone_giros", 40, h)
@@ -136,7 +136,7 @@ func _caixa() -> void:
 ## Sede: as melhorias da equipe, cada uma com os níveis em dentes, o efeito e
 ## o preço do próximo nível.
 func _sede() -> void:
-	titulo_secao("SEDE", "Melhorias da equipe, pagas com o caixa.")
+	titulo_secao("SEDE")
 	for m in dados.equipe().get("sede", []):
 		var n := GestaoEquipe.nivel(jogador, m["id"])
 		var total := int(m["niveis"])
@@ -205,7 +205,7 @@ func _linha_folha(pai: Control, texto: String, chave: String, v: int, sinal: Str
 ## de corrida (o primeiro, no tutorial do começo) e os dois de arena (abrem com
 ## o tutorial da arena, aos 3 carros).
 func _pilotos(eq: Dictionary) -> void:
-	titulo_secao("PILOTOS", "Um piloto de corrida e dois de arena. Piloto de corrida não luta na arena.")
+	titulo_secao("PILOTOS")
 	if not EquipeJogador.exige_piloto(jogador) and Prologo.piloto(dados, jogador) != "":
 		var cp := cartao()
 		_linha_piloto(cp, EquipeJogador.nome_jogador(dados, jogador), "PILOTO PRINCIPAL")
@@ -939,8 +939,7 @@ func _patrocinio() -> void:
 		return
 	var vagas := GestaoEquipe.vagas(dados, jogador)
 	var ativos := GestaoEquipe.contratos(jogador)
-	var tit := titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o jogo fechado (até %d h fora); a condição de cada um paga bônus por corrida."
-			% roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0))
+	var tit := titulo_secao("PATROCÍNIO")
 	ancora("PATROCINIO", tit)
 	var agora := Time.get_unix_time_from_system()
 	for c in ativos:
@@ -959,10 +958,9 @@ func _patrocinio() -> void:
 	if ativos.size() >= vagas:
 		if GestaoEquipe.melhoria(dados, "escritorio").is_empty() == false \
 				and GestaoEquipe.preco_melhoria(dados, jogador, "escritorio") > 0:
-			nota("icone_info", "Mais contratos", "O Escritório comercial, na Sede, abre vaga para outro patrocinador.")
+			nota("", "Mais contratos: o Escritório comercial, na Sede, abre vaga para outro patrocinador.")
 		return
-	titulo_secao("OFERTAS", "%d de %d vaga%s de contrato livre%s" % [vagas - ativos.size(), vagas,
-			"" if vagas == 1 else "s", "" if vagas - ativos.size() == 1 else "s"])
+	titulo_secao("RECOMPENSA OFFLINE")
 	for p in GestaoEquipe.ofertas(dados, jogador):
 		var v := _cartao_patrocinador(p, false)
 		var b := Button.new()
@@ -981,9 +979,9 @@ func _patrocinio() -> void:
 		v.get_meta("acao").add_child(b)
 
 
-## Cartão compacto de um patrocinador: nome e licença numa linha; ramo, duração
-## e "rende com o jogo fechado" na segunda; renda e bônus à esquerda e, na
-## oferta, o botão à direita (meta "acao": a fileira onde ele entra).
+## Cartão compacto de um patrocinador: nome e licença numa linha; ramo e
+## duração na segunda; renda e bônus à esquerda e, na oferta, o botão à direita
+## (meta "acao": a fileira onde ele entra).
 func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 	var fundo := arte("banner_patrocinio_" + String(p.get("id", "")))
 	var v := cartao_com_fundo(fundo) if fundo != null else cartao(COR_BOM if ativo else Color.TRANSPARENT)
@@ -999,8 +997,7 @@ func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var info := [String(p.get("ramo", "")).to_upper()]
 	if not ativo:
-		info.append("%d H" % int(GestaoEquipe.config(dados).get("duracao_h", 24)))
-		info.append("RENDE COM O JOGO FECHADO")
+		info.append("DURAÇÃO %d H" % int(GestaoEquipe.config(dados).get("duracao_h", 24)))
 	Tipografia.rotulo(rotulo(" · ".join(info.filter(func(x): return x != "")), 0, COR_SECUNDARIA, v), "medium", 18)
 	var linha := fileira(v)
 	v.set_meta("acao", linha)
