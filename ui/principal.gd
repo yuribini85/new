@@ -1316,7 +1316,7 @@ func _lista_resultado(v: VBoxContainer, tabela: Array, c: Dictionary) -> void:
 		Tipografia.numero(n, 26)
 		n.add_theme_color_override("font_color", cor)
 		h.add_child(n)
-		h.add_child(_emblema_equipe(_equipe_no_resultado(id, c), 34))
+		h.add_child(_emblema_equipe(_equipe_no_resultado(id, c), 38, false))
 		var nome := Label.new()
 		nome.text = EquipeJogador.nome_jogador(dados, jogador) if id == "jogador" else (EquipeJogador.nome_segundo(dados, jogador)
 				if id == EquipeJogador.ID else jogador.carreira.nome_piloto(c["evento_id"], id, int(c.get("semente", -1))))
@@ -1340,11 +1340,12 @@ func _equipe_no_resultado(id: String, c: Dictionary) -> Dictionary:
 	return jogador.carreira.equipe_de(c["evento_id"], id, int(c.get("semente", -1)))
 
 
-## Emblema da equipe: a logo, se existir; senão um círculo na cor da equipe com
-## o número dela.
-func _emblema_equipe(eq: Dictionary, tamanho: int) -> Control:
+## Emblema da equipe: a logo, se existir (e `com_logo`); senão um círculo na
+## cor da equipe com o número dela. No resultado, sempre o número (pedido do
+## usuário: a logo pequena fica ilegível).
+func _emblema_equipe(eq: Dictionary, tamanho: int, com_logo := true) -> Control:
 	var caminho := String(eq.get("logo", ""))
-	if caminho != "" and ResourceLoader.exists(caminho):
+	if com_logo and caminho != "" and ResourceLoader.exists(caminho):
 		var t := TextureRect.new()
 		t.texture = load(caminho)
 		t.custom_minimum_size = Vector2(tamanho, tamanho)
@@ -1363,7 +1364,7 @@ func _emblema_equipe(eq: Dictionary, tamanho: int) -> Control:
 	l.text = str(int(eq["numero"])) if eq.has("numero") else String(eq.get("nome", "?")).left(1)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	Tipografia.numero(l, int(tamanho * 0.5))
+	Tipografia.numero(l, int(tamanho * 0.58))
 	p.add_child(l)
 	return p
 
