@@ -35,7 +35,6 @@ var _flash: ColorRect
 var _flash_v: ColorRect
 var _faixas: Array = []  # glitch entre as fases
 var _botao_pular: Button
-var _hud: Array = []
 var _avancar := false
 var _pulou := false
 var _no_confronto := false
@@ -80,7 +79,6 @@ func _init(dados: Node, jogador: Node, id: String, contexto: String, aba_corrida
 	_flash_v = _cheio(ColorRect.new())
 	_flash_v.color = Color(SANGUE, 0)
 	add_child(_flash_v)
-	_montar_hud()
 	_botao_pular = Button.new()
 	Tipografia.acao_secundaria(_botao_pular, "Pular ›", Color(0.93, 0.92, 0.88, 0.85), 30, 80)
 	_botao_pular.custom_minimum_size.x = 150
@@ -300,8 +298,8 @@ func _confronto() -> void:
 	var nome := _rotulo(String(_info["nome"]).to_upper(), "display", 64, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
 	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	v.add_child(nome)
-	var rk := _rotulo("#%d DO GRID · %s" % [int(_info["grid"]), String(_info["licenca"]).to_upper()],
-			"mono", 18, ACO, HORIZONTAL_ALIGNMENT_CENTER)
+	# A posição no Grid em destaque (pedido do usuário); sem as linhas miúdas.
+	var rk := _rotulo("#%d DO GRID" % int(_info["grid"]), "display", 46, OURO, HORIZONTAL_ALIGNMENT_CENTER)
 	v.add_child(rk)
 	var cartoes := HBoxContainer.new()
 	cartoes.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -337,22 +335,18 @@ func _confronto() -> void:
 	nos.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	nos.add_child(_marca())
 	v.add_child(nos)
-	var nos_sub := _rotulo("FORA DO GRID · DESAFIANTE" if _contexto == "primeiro"
-			else "#%d DO GRID · DESAFIANTE" % (int(_info["grid"]) + 1), "mono", 18, ACO, HORIZONTAL_ALIGNMENT_CENTER)
-	v.add_child(nos_sub)
 	var jogo := VBoxContainer.new()
 	jogo.add_theme_constant_override("separation", 2)
 	v.add_child(_divisoria())
 	v.add_child(jogo)
-	jogo.add_child(_rotulo("VITÓRIA NA %s · MÉDIA" % String(_info["licenca"]).to_upper(), "mono", 15, ACO,
-			HORIZONTAL_ALIGNMENT_CENTER))
+	jogo.add_child(_rotulo("RECOMPENSA DA VITÓRIA", "display_eb", 24, OSSO, HORIZONTAL_ALIGNMENT_CENTER))
 	var h := HBoxContainer.new()
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
 	h.add_theme_constant_override("separation", 12)
 	jogo.add_child(h)
 	var moeda := _textura("res://arte/ui/cabecalho/icone_giros.png", Vector2(52, 52))
 	h.add_child(moeda)
-	var valor := _rotulo(Aba.dinheiro(int(_info["premio"])), "display", 72, OURO)
+	var valor := _rotulo("+" + Aba.dinheiro(int(_info["premio"])), "display", 72, OURO)
 	h.add_child(valor)
 	var desafio := _rotulo(String(_info["resumo"]), "mono_sb", 18, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
 	desafio.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -381,7 +375,7 @@ func _confronto() -> void:
 	if pronto:
 		return
 	_impacto(_flash, 0.7, 0.0)
-	for c in [logo, nome, rk, nos, nos_sub, jogo, botoes]:
+	for c in [logo, nome, rk, nos, jogo, botoes]:
 		c.modulate.a = 0.0
 	vs_l.modulate.a = 0.0
 	corte.scale.x = 0.0
@@ -404,9 +398,8 @@ func _confronto() -> void:
 	tw.tween_property(vs_l, "modulate:a", 1.0, 0.15).set_delay(0.5)
 	tw.tween_callback(func(): _impacto(_flash_v, 0.45, 0.9)).set_delay(0.65)
 	tw.tween_property(nos, "modulate:a", 1.0, 0.25).set_delay(0.6)
-	tw.tween_property(nos_sub, "modulate:a", 1.0, 0.25).set_delay(0.7)
 	tw.tween_property(jogo, "modulate:a", 1.0, 0.25).set_delay(0.8)
-	tw.tween_method(func(x: float): valor.text = Aba.dinheiro(int(x)), 0.0, float(_info["premio"]), 0.6) \
+	tw.tween_method(func(x: float): valor.text = "+" + Aba.dinheiro(int(x)), 0.0, float(_info["premio"]), 0.6) \
 			.set_delay(0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(botoes, "modulate:a", 1.0, 0.25).set_delay(1.05)
 
@@ -489,6 +482,36 @@ func _cartao(p: Dictionary) -> Array:
 	r.size = Vector2(160, 236)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(r)
+	# Faixa na frente da base do corpo e atrás do número e do apelido: o corte
+	# do desenho some num degradê e os nomes ficam sobre uma placa (os cartões
+	# lado a lado formam uma faixa só).
+	var grad := Gradient.new()
+	grad.offsets = PackedFloat32Array([0.0, 0.32, 1.0])
+	grad.colors = PackedColorArray([Color(TINTA, 0.0), Color(TINTA, 0.95), Color(TINTA, 1.0)])
+	var gt := GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill_from = Vector2(0, 0)
+	gt.fill_to = Vector2(0, 1)
+	var faixa := TextureRect.new()
+	faixa.texture = gt
+	faixa.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	faixa.stretch_mode = TextureRect.STRETCH_SCALE  # degradê: sem proporção
+	faixa.position = Vector2(0, 186)
+	faixa.size = Vector2(160, 102)
+	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.add_child(faixa)
+	var placa := ColorRect.new()
+	placa.color = Color("1d1a19")
+	placa.position = Vector2(0, 229)
+	placa.size = Vector2(160, 58)
+	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.add_child(placa)
+	var filete := ColorRect.new()
+	filete.color = SANGUE
+	filete.position = Vector2(0, 226)
+	filete.size = Vector2(160, 3)
+	filete.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.add_child(filete)
 	var num := _rotulo(str(int(p["numero"])), "display", 22, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
 	num.position = Vector2(0, 232)
 	num.size = Vector2(160, 0)
@@ -498,25 +521,6 @@ func _cartao(p: Dictionary) -> Array:
 	ap.size = Vector2(160, 0)
 	c.add_child(ap)
 	return [vaga, c]
-
-
-func _montar_hud() -> void:
-	var cantos := [["THE GRID // RANKING", Control.PRESET_TOP_LEFT],
-			["PRÓXIMA DISPUTA", Control.PRESET_BOTTOM_LEFT],
-			["RIVAL #%d" % int(_info.get("grid", 0)), Control.PRESET_BOTTOM_RIGHT]]
-	for c in cantos:
-		var l := _rotulo(c[0], "mono", 15, Color(ACO, 0.8))
-		l.set_anchors_and_offsets_preset(c[1])
-		l.grow_horizontal = Control.GROW_DIRECTION_BEGIN if c[1] == Control.PRESET_BOTTOM_RIGHT else Control.GROW_DIRECTION_END
-		l.grow_vertical = Control.GROW_DIRECTION_BEGIN if c[1] != Control.PRESET_TOP_LEFT else Control.GROW_DIRECTION_END
-		var dx := -20.0 if c[1] == Control.PRESET_BOTTOM_RIGHT else 20.0
-		var dy := 20.0 if c[1] == Control.PRESET_TOP_LEFT else -14.0
-		l.offset_left += dx
-		l.offset_right += dx
-		l.offset_top += dy
-		l.offset_bottom += dy
-		add_child(l)
-		_hud.append(l)
 
 
 ## Linhas de varredura bem leves por cima de tudo.
