@@ -964,5 +964,4 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Compra única de dinheiro real (`monetizacao.json → loja.produtos`, flag OFFLINE_EXTRA,
     `horas_offline` 6): soma 6 h à capacidade de renda offline para sempre, somando com os
     títulos; com ela o início (2 h) cobre uma noite (8 h) e os contratos duram 6 h a mais.
-    Faixa na loja com o antes e depois ("2 h → 8 h") e botão na seção de patrocínio da Equipe
-    enquanto não comprado.
+    Faixa na loja com o antes e depois ("2 h → 8 h"); sem aviso fora da loja (pedido do usuário).
