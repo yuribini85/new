@@ -770,8 +770,8 @@ func _amassar(id: String, estagios: PackedInt32Array, eliminado: bool) -> void:
 		(parte["mi"] as MeshInstance3D).mesh = nova
 
 
-## Uma vez por superfície (na primeira batida do carro): a malha sem índices, com
-## normal por face, e, por região de AMASSADOS, os vértices que ela afunda, o
+## Uma vez por superfície (na primeira batida do carro): a malha sem índices (com
+## as normais do carro), e, por região de AMASSADOS, os vértices que ela afunda, o
 ## peso de cada um (_deslocamento sem o fator) e a direção no espaço da malha.
 ## Cada batida depois só soma; antes, cada estágio novo refazia a malha inteira
 ## (~48 ms por batida).
@@ -779,7 +779,9 @@ func _preparar_amassado(sf: Dictionary, rel: Transform3D, dim: Vector2) -> void:
 	var st := SurfaceTool.new()
 	st.create_from_arrays(sf["arr"], sf["prim"])
 	st.deindex()
-	st.generate_normals()
+	# Mantém as normais lisas do carro; só as faces amassadas ganham normal própria.
+	if sf["arr"][Mesh.ARRAY_NORMAL] == null:
+		st.generate_normals()
 	var base := st.commit_to_arrays()
 	var vs: PackedVector3Array = base[Mesh.ARRAY_VERTEX]
 	var inv := rel.affine_inverse()

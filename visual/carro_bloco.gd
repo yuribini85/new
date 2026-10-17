@@ -456,13 +456,14 @@ func _glb(id: String, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 const SUAVE_GRAUS := 40.0
 
 
-static func suavizar_por_angulo(m: Mesh) -> Mesh:
+static func suavizar_por_angulo(m: Mesh, graus := SUAVE_GRAUS) -> Mesh:
 	if not m is ArrayMesh:
 		return m
-	if m.has_meta("suave"):
-		return m.get_meta("suave")
+	var chave_meta := "suave_%d" % int(graus)
+	if m.has_meta(chave_meta):
+		return m.get_meta(chave_meta)
 	var nova := ArrayMesh.new()
-	var cos_lim := cos(deg_to_rad(SUAVE_GRAUS))
+	var cos_lim := cos(deg_to_rad(graus))
 	for s in m.get_surface_count():
 		var arr := m.surface_get_arrays(s)
 		if m.surface_get_primitive_type(s) != Mesh.PRIMITIVE_TRIANGLES:
@@ -511,7 +512,10 @@ static func suavizar_por_angulo(m: Mesh) -> Mesh:
 		saida[Mesh.ARRAY_NORMAL] = normais
 		nova.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, saida)
 		nova.surface_set_material(nova.get_surface_count() - 1, m.surface_get_material(s))
-	m.set_meta("suave", nova)
+	for k in m.get_meta_list():
+		if not String(k).begins_with("suave"):
+			nova.set_meta(k, m.get_meta(k))
+	m.set_meta(chave_meta, nova)
 	return nova
 
 

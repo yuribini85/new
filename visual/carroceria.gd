@@ -48,6 +48,8 @@ const LIBERADOS := {
 	"noventa": ["cupe", "compacto", "seda", "picape", "utilitario"],
 	"moderno": ["cupe", "compacto", "seda", "picape", "utilitario", "pesado"],
 }
+## Ângulo máximo (graus) entre faces vizinhas que ainda viram superfície lisa.
+const SUAVE_GRAUS := 30.0
 static var ativos: Array = ATIVOS.duplicate()
 static var regras: Dictionary = LIBERADOS.duplicate(true)
 
@@ -152,7 +154,9 @@ static func corpo(id: String, base: Dictionary = {}) -> ArrayMesh:
 		Pesados.montar(m, id, f)  # desenhados um a um, fora das regras
 	else:
 		_montar(m, f, ctx)
-	var malha := m.malha()
+	# Capô, teto e laterais lisos: as facetas da loft (< SUAVE_GRAUS entre si)
+	# ganham normal média; vincos e quinas de verdade continuam vivos.
+	var malha: ArrayMesh = CarroBloco.suavizar_por_angulo(m.malha(), SUAVE_GRAUS)
 	_corpos[id] = malha
 	return malha
 
