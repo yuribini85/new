@@ -285,15 +285,15 @@ func _confronto() -> void:
 	_cheio(m)
 	for lado in ["left", "right"]:
 		m.add_theme_constant_override("margin_" + lado, 28)
-	m.add_theme_constant_override("margin_top", 26)
+	m.add_theme_constant_override("margin_top", 12)
 	# Os botões acima dos rótulos do pé (PRÓXIMA DISPUTA, RIVAL #N).
 	m.add_theme_constant_override("margin_bottom", 56)
 	_cena.add_child(m)
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 10)
+	v.add_theme_constant_override("separation", 2)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	m.add_child(v)
-	var logo := _textura(_info.get("logo", ""), Vector2(180, 180))
+	var logo := _textura(_info.get("logo", ""), Vector2(240, 240))
 	v.add_child(logo)
 	var nome := _rotulo(String(_info["nome"]).to_upper(), "display", 58, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
 	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -315,7 +315,7 @@ func _confronto() -> void:
 		internos.append(c[1])
 		carimbos.append(c[2])
 	var vs := Control.new()
-	vs.custom_minimum_size = Vector2(0, 112)
+	vs.custom_minimum_size = Vector2(0, 128)
 	vs.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(vs)
 	var corte := ColorRect.new()

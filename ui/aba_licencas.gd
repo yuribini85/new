@@ -171,13 +171,17 @@ func _objetivos() -> void:
 		Tipografia.acao_primaria(b, "Ir   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 		b.pressed.connect(func(): ir_para.emit(o["aba"]))
 		v.add_child(b)
-	if lista.size() <= (1 if atual < lista.size() else 0):
+	# Só o que falta (pedido do usuário): os já cumpridos não aparecem.
+	var faltam: Array = []
+	for i in lista.size():
+		if i != atual and not lista[i]["feito"]:
+			faltam.append(lista[i])
+	if faltam.is_empty():
 		return
 	var resto := cartao()
 	resto.add_theme_constant_override("separation", 6)
-	for i in lista.size():
-		if i != atual:
-			_linha_objetivo(lista[i], resto)
+	for o in faltam:
+		_linha_objetivo(o, resto)
 
 
 ## The Grid, a lista negra (TheGrid): as dez equipes do topo, da #1 em cima à
