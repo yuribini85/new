@@ -246,7 +246,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `eq12_brassline_motorsport` Brassline Motorsport | CLUB | `oscar_flint`, `mina_rowe`, `ulrich_marchetti`, `valentina_yamaguchi` |
 | `eq13_tempest_garage` Blue Collar Syndicate | SPORT | `noel_mercer`, `zara_keene`, `wes_jaramillo`, `xenia_falcone` |
 | `eq14_crown_vector` Hollow Saints | PRO | `elias_wren`, `celeste_armand`, `yusuf_quintero`, `zoe_coutinho` |
-| `eq15_gravelborn` Dust County | CLUB | `rafe_calder`, `nika_stroud`, `anders_nyberg`, `bianca_jovanovic` |
+| `eq15_gravelborn` Redemption County | CLUB | `rafe_calder`, `nika_stroud`, `anders_nyberg`, `bianca_jovanovic` |
 | `eq16_meridian_gp` Meridian GP | ELITE | `theo_maren`, `selene_ashby`, `cyrus_ulloa`, `dalia_grimaldi` |
 | `eq17_obsidian_crest` Obsidian Crest | ELITE | `magnus_rell`, `ines_calloway`, `emil_castellan`, `fiona_nakamura` |
 | `eq18_copperhead_racing` Copperhead Motors | CLUB | `ash_corwin`, `cleo_vane`, `gideon_zelenko`, `helga_kowal` |

@@ -434,7 +434,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     texto (`arte/equipes/emblemas`, 512 px webp, catálogo em `data/emblemas.json`). As 10
     identidades rivais (nome, logo, paleta, família do número) entram em 10 das 19
     equipes já existentes, as de símbolo ou cor mais próximos, mantendo ids, pilotos e
-    licença: Redline Union, Blackwater Racing, Iron Vultures, Dust County, Velvet Thunder,
+    licença: Redline Union, Blackwater Racing, Iron Vultures, Redemption County, Velvet Thunder,
     Copperhead Motors, Hollow Saints, Blue Collar Syndicate, Midnight Relay e Last Exit
     Club; as outras 9 seguem sem logo até haver arte. Rival na pista: cores da equipe,
     desenho sorteado (decisão 60), número da vaga do piloto (equipe × 4 − 3 + vaga) nas

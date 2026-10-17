@@ -307,11 +307,13 @@ func _confronto() -> void:
 	cartoes.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(cartoes)
 	var internos: Array = []
+	var carimbos: Array = []
 	var pilotos: Array = _info["pilotos"]
 	for k in pilotos.size():
 		var c := _cartao(pilotos[k])
 		cartoes.add_child(c[0])
 		internos.append(c[1])
+		carimbos.append(c[2])
 	var vs := Control.new()
 	vs.custom_minimum_size = Vector2(0, 124)
 	vs.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -372,6 +374,8 @@ func _confronto() -> void:
 	corte.scale.x = 0.0
 	for c in internos:
 		c.modulate.a = 0.0
+	for c in carimbos:
+		c.modulate.a = 0.0
 	var tw := _cena.create_tween().set_parallel(true)
 	_tw_confronto = tw
 	# Depois do choque, o VS já bateu: aqui tudo entra junto, em ~1,3 s.
@@ -383,6 +387,11 @@ func _confronto() -> void:
 		tw.tween_property(c, "position:y", 0.0, 0.25).from(-300.0).set_delay(0.15 + k * 0.07) \
 				.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		tw.tween_property(c, "modulate:a", 1.0, 0.2).set_delay(0.15 + k * 0.07)
+		# O carimbo bate depois que o piloto chega.
+		var ca: Control = carimbos[k]
+		tw.tween_property(ca, "scale", Vector2.ONE, 0.12).from(Vector2.ONE * 2.4).set_delay(0.5 + k * 0.1) \
+				.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+		tw.tween_property(ca, "modulate:a", 1.0, 0.08).set_delay(0.5 + k * 0.1)
 	tw.tween_property(corte, "scale:x", 1.0, 0.15).set_delay(0.45).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 	tw.tween_property(vs_l, "scale", Vector2.ONE, 0.15).from(Vector2.ONE * 2.2).set_delay(0.5) \
 			.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
@@ -473,9 +482,8 @@ func _cartao(p: Dictionary) -> Array:
 	r.size = Vector2(160, 236)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(r)
-	# Faixa na frente da base do corpo e atrás do número e do apelido: o corte
-	# do desenho some num degradê e os nomes ficam sobre uma placa (os cartões
-	# lado a lado formam uma faixa só).
+	# Degradê na frente da base do corpo (o corte do desenho some) e o filete
+	# vermelho em cima dos números (os cartões lado a lado formam uma linha só).
 	var grad := Gradient.new()
 	grad.offsets = PackedFloat32Array([0.0, 0.32, 1.0])
 	grad.colors = PackedColorArray([Color(TINTA, 0.0), Color(TINTA, 0.95), Color(TINTA, 1.0)])
@@ -491,27 +499,35 @@ func _cartao(p: Dictionary) -> Array:
 	faixa.size = Vector2(160, 120)
 	faixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(faixa)
-	var placa := ColorRect.new()
-	placa.color = Color("1d1a19")
-	placa.position = Vector2(0, 229)
-	placa.size = Vector2(160, 78)
-	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	c.add_child(placa)
 	var filete := ColorRect.new()
 	filete.color = SANGUE
 	filete.position = Vector2(0, 226)
 	filete.size = Vector2(160, 3)
 	filete.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(filete)
-	var num := _rotulo(str(int(p["numero"])), "display", 32, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
-	num.position = Vector2(0, 230)
+	# Número sempre com dois dígitos (01, 07, 77), grande na placa.
+	var num := _rotulo("%02d" % int(p["numero"]), "display", 44, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
+	num.position = Vector2(0, 234)
 	num.size = Vector2(160, 0)
 	c.add_child(num)
-	var ap := _rotulo(String(p["apelido"]).to_upper(), "display_eb", 25, OSSO, HORIZONTAL_ALIGNMENT_CENTER)
-	ap.position = Vector2(0, 268)
-	ap.size = Vector2(160, 0)
+	# Apelido como carimbo sobre o corpo, inclinado (entra batendo no confronto).
+	var ap := _rotulo(String(p["apelido"]).to_upper(), "carimbo", 26, SANGUE, HORIZONTAL_ALIGNMENT_CENTER)
+	var tinta := StyleBoxFlat.new()
+	tinta.bg_color = Color(TINTA, 0.55)
+	tinta.border_color = SANGUE
+	tinta.set_border_width_all(3)
+	tinta.set_corner_radius_all(3)
+	tinta.content_margin_left = 8
+	tinta.content_margin_right = 8
+	tinta.content_margin_top = 0
+	tinta.content_margin_bottom = 0
+	ap.add_theme_stylebox_override("normal", tinta)
+	ap.size = ap.get_combined_minimum_size()
+	ap.position = Vector2((160.0 - ap.size.x) / 2.0, 168)
+	ap.pivot_offset = ap.size / 2.0
+	ap.rotation_degrees = -9.0 if int(p["numero"]) % 2 == 0 else 7.0
 	c.add_child(ap)
-	return [vaga, c]
+	return [vaga, c, ap]
 
 
 ## Linhas de varredura bem leves por cima de tudo.

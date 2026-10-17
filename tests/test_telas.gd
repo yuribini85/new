@@ -702,15 +702,10 @@ func test_intro_das_equipes_do_grid() -> void:
 		verificar(int(info["premio"]) > 0, "%s: prêmio da licença em giros" % e["id"])
 	var vez: Dictionary = TheGrid.equipes(d)[0]
 	var intro := GridRivalIntro.new(d, null, String(vez["id"]), "primeiro", 3, 4)
-	var sinal := []
-	intro.ir.connect(func(a): sinal.append(a))
 	intro.pular()
-	var botoes := intro.find_children("*", "Button", true, false)
-	verificar(botoes.size() >= 3, "confronto com Pular, ir e Continuar")
-	var ir_b: Array = botoes.filter(func(b): return "→" in b.text)
-	igual(ir_b.size(), 1, "um botão para a aba do desafio")
-	ir_b[0].pressed.emit()
-	igual(sinal, [3 if GridDesafio.de(d, vez)["modo"] == "corrida" else 4], "o botão leva à aba do desafio")
+	# Pedido do usuário: no confronto só o CONTINUAR (sem o botão para a aba).
+	var botoes: Array = intro.find_children("*", "Button", true, false).filter(func(b): return b.visible)
+	igual(botoes.map(func(b): return String(b.text).to_upper()), ["CONTINUAR"], "confronto só com Continuar")
 	intro.free()
 
 

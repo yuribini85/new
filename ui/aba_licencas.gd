@@ -189,10 +189,11 @@ func _the_grid() -> void:
 		return
 	var pos: int = TheGrid.posicao(dados, jogador)
 	ancora("GRID", titulo_secao("THE GRID"))
-	var sua := rotulo(("%s: fora do Grid. Dez equipes no topo; uma por vez, da #10 à #1." if pos == 0
-			else "%s: #%d do Grid.") % ([IdentidadeEquipe.nome(dados, jogador)] if pos == 0
-			else [IdentidadeEquipe.nome(dados, jogador), pos]), FONTE_PEQUENA + 2, COR_SECUNDARIA)
-	sua.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Fora do Grid, nada: a lista já mostra a da vez (pedido do usuário).
+	if pos > 0:
+		var sua := rotulo("%s: #%d do Grid." % [IdentidadeEquipe.nome(dados, jogador), pos], FONTE_PEQUENA + 2,
+				COR_SECUNDARIA)
+		sua.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var vez: Dictionary = TheGrid.da_vez(dados, jogador)
 	var feitas: Array = TheGrid.vencidas(jogador)
 	var c := cartao()
