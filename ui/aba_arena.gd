@@ -107,11 +107,11 @@ func _cartao_luta(esc: Carro, motivo: String) -> void:
 	Tipografia.rotulo(nv, "semibold", 22)
 	var linha := "Em duplas: %d equipes" % n_eq
 	if esc != null:
-		linha += ", carros de potência parecida (%d cv). Sua dupla: você e %s." % [
+		linha += ", carros de potência parecida (%d cv). Na dupla, %s no segundo carro." % [
 				roundi(esc.atributos_efetivos("seco")["potencia"]), ArenaCarreira.parceiro(dados, jogador, esc.uid)["nome"]]
 	rotulo(linha, FONTE_PEQUENA, Color(0.86, 0.87, 0.9), col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# Prêmio: o de referência (vitória com uma eliminação), com a moeda.
-	var lpr := rotulo("Vitória com 1 eliminação", 0, COR_SECUNDARIA, col)
+	var lpr := rotulo("Prêmio (vitória com 1 eliminação)", 0, COR_SECUNDARIA, col)
 	Tipografia.rotulo(lpr, "medium", 18)
 	var pr := HBoxContainer.new()
 	pr.add_theme_constant_override("separation", 8)
@@ -147,10 +147,10 @@ func _confirmar(car: Carro) -> void:
 		if par["real"]:
 			var cp: Carro = jogador.garagem.carro(int(par["uid"]))
 			rotulo("Na dupla, %s no %s." % [par["nome"], cp.base["nome"]], FONTE_PEQUENA + 2, Color.WHITE, pv)
-			rotulo("Carro eliminado, seu ou dele, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv)
+			rotulo("Qualquer carro da dupla que for eliminado sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv)
 		else:
 			rotulo("Na dupla, %s num carro emprestado." % par["nome"], FONTE_PEQUENA + 2, Color.WHITE, pv)
-			rotulo("Se o seu for eliminado, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
+			rotulo("Se o carro da equipe for eliminado, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
 		[["Entrar", func(): com_combustivel(_entrar.bind(car.uid))], ["Cancelar", func(): pass]])
 
 

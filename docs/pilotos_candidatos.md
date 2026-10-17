@@ -10,12 +10,12 @@ Jonas Reid é o padrão, o que entra na cena que libera o segundo piloto. Cada c
 | id | nome | traço | vaga | arte | em uma frase |
 |---|---|---|---|---|---|
 | `jonas_reid` | Jonas Reid | Calculista | corrida | 2 | "Não ganha corrida sozinho, mas não joga ponto fora." |
-| `amir_castell` | Amir Castell | Calculista | arena | 4 | "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir." |
+| `amir_castell` | Amir Castell | Calculista | arena | 4 | "Bate sempre no mesmo lugar, do mesmo jeito. Não erra o alvo." |
 | `ayla_moreno` | Ayla Moreno | Destemido | arena | 3 | "Vê uma brecha onde os outros veem um muro." |
 | `axel_brennan` | Axel Brennan | Destemido | corrida | 1 | "Larga para ganhar ou para não chegar. Ainda não decidiu qual." |
-| `bastian_kroll` | Bastian Kroll | Versátil | arena | 8 | "Já foi rápido. Hoje é barato e conhece todo mundo no paddock." |
-| `caleb_wynn` | Caleb Wynn | Versátil | corrida | 6 | "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar." |
-| `noor_haddad` | Noor Haddad | Instintivo | corrida | 7 | "Crua, mas aprende rápido. Cada hora de treino aparece no carro." |
+| `bastian_kroll` | Bastian Kroll | Versátil | arena | 8 | "Já foi rápido. Hoje conhece todo mundo no paddock e se vira em qualquer carro." |
+| `caleb_wynn` | Caleb Wynn | Versátil | corrida | 6 | "Corre em qualquer carro e agradece a vaga." |
+| `noor_haddad` | Noor Haddad | Instintivo | corrida | 7 | "Crua, mas sem medo. Cada hora de treino aparece no carro." |
 | `sofia_rinaldi` | Sofia Rinaldi | Instintivo | arena | 5 | "Veio do kart com fome. Treina como se a vaga fosse de outra." |
 
 ## Efeito de cada traço

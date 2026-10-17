@@ -126,7 +126,7 @@ PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, shortway, short, sprint2
 # do disco. Resistência (RESISTENCIA): prova única, com as voltas do GT2, sem
 # pit stop nem desgaste de pneu (o jogo não tem esses sistemas).
 SERIES = {
-    "SND": "Copa Primeira Marcha", "CBM": "Copa dos Associados", "WLK": "Copa Pena",
+    "SND": "Copa Primeira Marcha", "CBM": "Copa dos Associados", "WLK": "Copa Peso-Pena",
     "GJL": "Liga Regional I", "GUL": "Liga Regional II", "GBL": "Liga Regional III",
     "GFL": "Liga Regional IV", "GGL": "Liga Regional V", "GIL": "Liga Regional VI", "GCC": "Liga Regional VII",
     "FFC": "Troféu Tração Dianteira", "FRC": "Troféu Tração Traseira", "4WD": "Troféu Tração Integral",
@@ -176,14 +176,14 @@ POOL_MARCA = ["anel_do_vale", "parque_das_docas", "serra_alta", "circuito_misto"
 
 MOTOR = ["PortPolish", "EngineBalance", "Displacement", "Computer", "Muffler", "Intercooler"]
 NOMES_CATEGORIA = {
-    "PortPolish": "Polimento de dutos", "EngineBalance": "Balanceamento do motor",
-    "Displacement": "Aumento de cilindrada", "Computer": "Computador de bordo",
+    "PortPolish": "Retrabalho do cabeçote", "EngineBalance": "Balanceamento do motor",
+    "Displacement": "Aumento de cilindrada", "Computer": "Central eletrônica",
     "Muffler": "Escapamento", "Intercooler": "Intercooler", "NATune": "Preparação aspirada",
     "TurbineKit": "Kit turbo", "Lightweight": "Redução de peso", "Brake": "Freios",
     "RacingModify": "Kit de corrida",
 }
 NOMES_PNEU = ["Pneu de fábrica", "Pneu esportivo", "Pneu de corrida duro", "Pneu de corrida médio",
-              "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu de simulação"]
+              "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu econômico"]
 ESTAGIO_TERRA = 7
 CONSISTENCIA = 0.7
 

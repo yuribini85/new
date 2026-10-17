@@ -156,9 +156,9 @@ static func texto_condicao(c: Dictionary) -> String:
 		"podio":
 			return "terminar no pódio"
 		"etapa":
-			return "pódio numa etapa de campeonato"
+			return "subir ao pódio numa etapa de campeonato"
 		"licenca":
-			return "pódio numa prova %s" % String(c.get("valor", "")).capitalize()
+			return "subir ao pódio numa prova %s" % String(c.get("valor", "")).capitalize()
 	return ""
 
 

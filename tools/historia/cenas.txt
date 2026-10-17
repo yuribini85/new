@@ -58,7 +58,7 @@ Mara: Potência. O que o motor entrega.
 [HIGHLIGHT_PESO]
 Mara: Peso. O que ele tem de carregar. Mais leve acelera, freia e vira melhor.
 [HIGHLIGHT_PNEUS]
-Mara: Pneus. Quanto disso chega ao chão.
+Mara: Pneus. São eles que seguram o carro: curva mais rápida e freada mais curta.
 [HIGHLIGHT_FREIOS]
 Mara: Freios. Quanto mais tarde ele freia, mais velocidade leva até a curva.
 [HIGHLIGHT_DEMANDA]
@@ -93,7 +93,7 @@ Sistema: Vá para Corridas.
 = CW_P06C | CORRIDA_FIM | personagem=dono; requer=FIRST_TUNE_DONE; proibe=SECOND_RACE_DONE; flags=SECOND_RACE_DONE
 Mara[pensativa]: É assim que se sobe: corrida, prêmio, peça, corrida.
 Mara[explica]: Mas sem licença, só as provas abertas. A nossa precisa ser renovada.
-Mara: As licenças abrem as portas certas. Os troféus mantêm elas abertas.
+Mara: Cada licença nova abre provas maiores, com prêmio maior.
 Sistema: Licenças ficam em Carreira.
 [HIGHLIGHT_NAV_LICENCAS]
 
@@ -112,7 +112,7 @@ Sistema: Vá para Corridas.
 = CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara
 Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.
 [HIGHLIGHT_COPA]
-Mara: Como estamos sem licenças, só podemos correr estes circuitos.
+Mara: Como estamos sem licenças, só podemos correr estas provas.
 [HIGHLIGHT_COMPETITIVIDADE]
 Mara: Essa barra compara o carro com o grid. Não garante nada. Evita entrar no escuro.
 Sistema: Toque em Disputar.
@@ -124,15 +124,15 @@ Mara: A prova está ali. Toque em Disputar.
 
 # Depois da primeira corrida (antes dela já há a apresentação e a largada).
 = CW_C01 | CAMPEONATO_SELECIONADO | personagem=dono; requer=FIRST_RACE_DONE; proibe=CHAMPIONSHIP_TUTORIAL_DONE; flags=CHAMPIONSHIP_TUTORIAL_DONE
-Mara[explica]: {serie}. Conta pontos.
-Mara: Etapas em ordem. Fora de ordem vira corrida comum.
-Mara: Campeão é quem soma mais. Constância ganha título.
+Mara[explica]: {serie} é campeonato: cada etapa dá pontos.
+Mara: Corra as etapas na ordem. Fora da ordem, a prova não soma pontos.
+Mara: Leva o título quem somar mais no fim.
 
 # Na pista: o grid espera a conversa acabar.
 = CW_P05 | CORRIDA_INICIO | personagem=dono; proibe=FIRST_RACE_BRIEFED; flags=FIRST_RACE_BRIEFED; segura_largada=sim
-Mara: {voltas} voltas em {pista}.
+Mara: {pista}: {voltas} voltas.
 Mara[firme]: Nós preparamos e {piloto} corre.
-Mara[pensativa]: Depois, a conta aparece nos resultados.
+Mara[pensativa]: Quando acabar, o resultado e o prêmio aparecem na tela.
 Sistema: Toda corrida iniciada termina mesmo com o jogo fechado.
 
 # Resultado da primeira prova: uma variante para vitória e outra para o resto.
@@ -160,7 +160,7 @@ Mara[firme]: Não existe melhor carro. Existe o carro certo para cada prova.
 = CW_AD01 | CORRIDA_FIM | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=ARENA_DEMO_SEEN; flags=ARENA_DEMO_SEEN; cenario=oficina_mara
 Mara[pensativa]: Você nunca perguntou por que Wreckage.
 Mara[cruzados]: Corrida paga as contas. A arena é de onde o nome vem.
-Mara[firme]: Vem ver. Meu carro, nossa equipe, ninguém aposta nada.
+Mara[firme]: Vem ver. É só demonstração: meu carro, nada em jogo.
 [ARENA_DEMO]
 
 = CW_AD02 | ARENA_DEMO_FIM | personagem=dono; proibe=ARENA_DEMO_TALK; flags=ARENA_DEMO_TALK; cenario=oficina_mara
@@ -172,13 +172,13 @@ Sistema: Com o terceiro carro, a Arena aparece na barra de baixo.
 = CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
 Sistema: INSCRIÇÃO RECUSADA: PEDE LICENÇA
 Mara[explica]: É a licença que a gente precisa renovar. Quem renova é {piloto}, nos testes.
-Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leva café.
+Mara: Quem treina e avalia é a Vector Academy. O examinador é o Brandt. Leve café pra ele.
 [OPEN_LICENSE_CENTER]
 
 = CW_L02 | ABA:LICENCAS | personagem=dono; requer=SECOND_RACE_DONE; proibe=LICENSE_OFFLINE_TUTORIAL_SEEN; flags=LICENSE_OFFLINE_TUTORIAL_SEEN,LICENSE_SYSTEM_UNLOCKED; cenario=vector_academy
 Harold: Harold Brandt, examinador da Vector Academy. Licença Club.
-Harold: Primeiro, o treino. Ele corre no relógio, mesmo com o app fechado.
-Harold: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é nossa.
+Harold: Primeiro, o treino. Ele corre no relógio, mesmo com o jogo fechado.
+Harold: Depois, a avaliação: missões com o carro e as peças da escola. Bronze em todas e a licença é sua.
 Mara[pensativa]: Quanto custa?
 Harold: Nada. Aqui se paga com tempo. E bronze é o mínimo, não a meta.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
@@ -190,7 +190,7 @@ Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
 = CW_GR00 | ENCADEADA | personagem=dono; proibe=GRID_INTRO; flags=GRID_INTRO; cenario=oficina_mara
 [OPEN_LICENSE_CENTER]
 [HIGHLIGHT_GRID]
-Mara[explica]: Agora, aonde a gente precisa chegar. O The Grid: dez equipes no topo do circuito. A gente está fora dele.
+Mara[explica]: Agora, aonde a gente precisa chegar. O Grid: dez equipes no topo do circuito. A gente está fora dele.
 Mara: Uma de cada vez, da décima até a primeira. A da vez fica em destaque.
 Mara[firme]: Cada equipe possui um desafio diferente. Vença e ela fica para trás.
 Mara[pensativa]: Quem chega ao topo tem patrocinador batendo na porta.
@@ -198,15 +198,15 @@ Sistema: The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sa
 
 # 1. O primeiro carro: a garagem começa vazia.
 = CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara
-Mara[cruzados]: A garagem está vazia; o último carro foi junto com as dívidas.
-Mara[explica]: O caixa dá para um carro, e só. Cada um mostra como chega na estreia: procure o MAIS FORTE, não o mais barato.
+Mara[cruzados]: A garagem está vazia; o último carro foi vendido pra pagar dívida.
+Mara[explica]: O caixa dá para um carro, e só. Cada carro mostra, no selo ESTREIA, como se sai na primeira prova. Procure o MAIS FORTE, não o mais barato.
 Sistema: Vá para as Lojas e compre o primeiro carro.
 [HIGHLIGHT_NAV_LOJA]
 
 # 2. Comprado o carro, o piloto: a equipe nasce aqui.
 = CW_C01B | COMPRA_CARRO | personagem=dono; proibe=FIRST_CAR; flags=FIRST_CAR; cenario=oficina_mara
 Mara[gesto]: {carro}. Dá para trabalhar.
-Mara[firme]: Agora precisamos de um piloto. O último foi embora, e ainda preciso pagar.
+Mara[firme]: Agora precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.
 [UNLOCK_TEAM_TAB]
 Sistema: Toque em Equipe, na barra de baixo.
 [HIGHLIGHT_NAV_EQUIPE]
@@ -225,7 +225,7 @@ Sistema: Faça as missões da avaliação.
 
 = CW_L05 | LICENCA_DISPONIVEL:SPORT | personagem=dono; proibe=SPORT_AVAILABLE_SEEN; flags=SPORT_AVAILABLE_SEEN
 Mara[gesto]: Os requisitos da Sport estão cumpridos.
-Mara: Falta o treino. Esse a corrida não resolve sozinha.
+Mara: Agora falta o treino na Academy. Esse não sai na pista.
 [OPEN_LICENSE_CENTER]
 
 = CW_L06 | LICENCA_DISPONIVEL:NATIONAL | personagem=dono; proibe=NATIONAL_AVAILABLE_SEEN; flags=NATIONAL_AVAILABLE_SEEN
@@ -246,7 +246,7 @@ Sistema: Novas provas liberadas em Corridas › Club.
 = CW_S00 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO,PATROCINIO_LIBERADO; cenario=oficina_mara
 Mara[explica]: Licença na mão e resultado na pista: agora aparece patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
-Mara[pensativa]: Fechado, rende algumas horas; cada licença nova aguenta uma hora a mais.
+Mara[pensativa]: Com o jogo fechado, o contrato rende por algumas horas; cada licença nova soma mais uma.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
 [OPEN_LICENSE_CENTER]
 [HIGHLIGHT_PATROCINIO]
@@ -261,14 +261,14 @@ Harold: National aprovada. Poucos passam daqui sem repetir.
 Mara[firme]: Agora a gente aparece na lista dos outros.
 [CENARIO:oficina_mara]
 Mara[pensativa]: Lembra do carro nos cavaletes? Eu não parei de mexer nele.
-Mara[gesto]: Cada peça que ele aceita. Está na garagem. É da equipe.
+Mara[gesto]: Pus nele todas as peças que ele aceita. Agora está na garagem: é da equipe.
 Sistema: O carro da Mara entrou na garagem, preparado.
 
 # Com a International, a gestão: Caixa e Sede na aba Equipe.
 = CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,GESTAO_LIBERADA; cenario=oficina_mara
-Harold: International aprovada. Agora {piloto} representa a Academy lá fora também.
+Harold: International aprovada. Agora {piloto} pode correr lá fora.
 Mara[explica]: Com essa, a Wreckage volta a ser equipe de verdade.
-Mara: Caixa e folha passam a contar por corrida, e a Sede melhora o que os patrocinadores pagam.
+Mara: Agora o Caixa mostra o que entra e sai em cada corrida. E a Sede faz os patrocinadores pagarem mais.
 Sistema: Caixa e Sede na aba Equipe.
 
 = CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE; cenario=oficina_mara
@@ -277,8 +277,7 @@ Mara[cruzados]: Daqui para frente, cada décimo custa caro.
 
 = CW_T03 | LICENCA_CONCEDIDA:ELITE | personagem=dono; flags=ELITE_COMPLETE; cenario=vector_academy
 Harold: Elite aprovada. Em trinta anos, assinei poucas dessas.
-Mara[pensativa]: Lembra do carro nos cavaletes, no dia em que você chegou?
-Mara: Eu lembro.
+Mara[pensativa]: Elite. No dia em que você chegou, eu não tinha nem como renovar a Club.
 
 # A revelação (decisão 74, pedido do usuário): antes da #5, um desafio de arena, a Mara
 # conta que já teve uma equipe maior e a perdeu na arena, a noite da abertura.
@@ -287,7 +286,7 @@ Mara: Eu lembro.
 Mara[firme]: {equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.
 Mara[pensativa]: A próxima é na arena. Tem uma coisa que você precisa saber antes.
 [ILUSTRACAO:noite_da_arena]
-Mara[pensativa]: A Wreckage já foi maior. Dois caminhões, seis carros, gente no box que eu nem sabia o nome.
+Mara[pensativa]: A Wreckage já foi maior. Dois caminhões, seis carros, gente no box de quem eu nem sabia o nome.
 Mara: Numa noite de arena, a gente levou tudo o que tinha. Voltou com o guincho.
 Mara[decepcao]: Os carros, os patrocinadores, a equipe. Eu fiquei com a oficina e as contas.
 [CENARIO:oficina_mara]
@@ -351,9 +350,9 @@ Mara[cruzados]: Três carros. Tem outra maneira de ganhar dinheiro por aqui.
 Mara[pensativa]: Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.
 Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.
 Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui.
-Roxy: Vence a última dupla com carro de pé. Venceu, o próximo campeonato tem uma equipe a mais: começa em dois contra dois e vai até vinte carros.
+Roxy: Ganha a dupla que tiver o último carro andando. A cada vitória, o campeonato seguinte ganha mais uma dupla: começa com duas e vai até vinte carros.
 Mara[alerta]: Pagam mais porque alguns carros não voltam.
-Roxy: Carro que quebra a frente lá dentro fica lá. Por isso a arena pede três carros: um fica para as corridas.
+Roxy: Carro com a frente destruída não sai daqui. Por isso a arena pede três carros: um fica para as corridas.
 [UNLOCK_ARENA_PILOTS]
 Sistema: Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina.
 
@@ -392,14 +391,14 @@ Mara[alerta]: Ela não está brincando.
 
 = CW_R07 | ARENA_FIM | personagem=dono; proibe=ARENA_SURVIVED; flags=ARENA_SURVIVED
 Roxy: Saiu inteiro o bastante pra voltar. A plateia gosta de quem volta.
-Mara[pensativa]: Voltou inteiro o bastante pra reconhecer. Já é alguma coisa.
+Mara[pensativa]: Voltou amassado, mas voltou. Pra primeira vez, está ótimo.
 
 = CW_A01 | ARENA_VITORIA | personagem=dono; proibe=ARENA_FIRST_WIN; flags=ARENA_FIRST_WIN
 Roxy: Última dupla de pé! O próximo campeonato tem uma equipe a mais.
 Mara[firme]: Agora tira ele dali antes que alguém tenha ideias.
 
 = CW_R09 | ARENA_PERDA | personagem=dono; proibe=ARENA_FIRST_LOSS; flags=ARENA_FIRST_LOSS
-Mara[decepcao]: O carro acabou. Quem pilotava saiu andando. É isso que importa.
+Mara[decepcao]: O carro acabou. O piloto, pelo menos, está inteiro.
 Dex: O próximo vai com mais chapa.
 
 = CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim
@@ -423,7 +422,7 @@ Mara[firme]: Primeiro adesivo novo no carro desde que a equipe parou.
 Mara[pensativa]: Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.
 
 = CW_S05 | TREINO_CONCLUIDO | personagem=dono; proibe=FIRST_TRAINING_LEVEL; flags=FIRST_TRAINING_LEVEL
-Mara[gesto]: {piloto} voltou do treino mais constante. Menos erro em curva, menos peça gasta.
+Mara[gesto]: {piloto} voltou do treino mais rápido. Não faz milagre, mas ajuda o carro a render o que tem.
 Mara[pensativa]: Não faz milagre. Mas ajuda o carro a render o que tem.
 
 = CW_S04 | SEDE_MELHORADA | personagem=dono; proibe=FIRST_HQ_UPGRADE; flags=FIRST_HQ_UPGRADE
@@ -442,14 +441,14 @@ Sistema: Toque num carro para levá-lo à Oficina.
 = CW_PT01 | PINTURA | personagem=dono; proibe=PAINT_TUTORIAL_SEEN; flags=PAINT_TUTORIAL_SEEN
 Kenji: Kenji Arata. A cabine é minha. Pode entrar, só não encosta no que está molhado.
 Kenji: Em cima, o carro como ele vai sair. Arrasta pra girar; embaixo dele, as vistas.
-Kenji: Pintura: base, secundária e acento. Grafismos: o desenho, já no seu carro.
+Kenji: Pintura: base, secundária e acento. Grafismos: faixas e desenhos, já aplicados no seu carro.
 Kenji: Identificação: o nome e o logo da equipe e o número de corrida. Acabamento: do fosco ao metálico, e poeira se quiser.
-Kenji: Nada é gravado antes de aplicar. Como estava volta ao início; o preço fica embaixo e só cobra o que mudou.
+Kenji: Nada fica gravado antes de aplicar. O botão Como estava desfaz tudo. O preço aparece embaixo, e você só paga o que mudou.
 Sistema: Escolha a pintura e toque em Aplicar pintura.
 
 = CW_PT02 | PINTURA_APLICADA | personagem=dono; proibe=FIRST_PAINT; flags=FIRST_PAINT
 Kenji: Pronto. Na corrida e na arena, é assim que ele aparece.
-Kenji: Carro com cara de equipe não anda mais rápido. Mas chega diferente.
+Kenji: Não anda mais rápido. Mas todo mundo sabe de quem é.
 
 = CW_PT03 | PINTURA_APLICADA | personagem=dono; requer=FIRST_PAINT; repetivel=sim; reativa=sim
 Kenji: Deixa secar antes de bater em alguém.
@@ -457,7 +456,7 @@ Kenji: Deixa secar antes de bater em alguém.
 # Lojas: o vendedor cumprimenta sem dizer o nome (a caixa já mostra) e sem falar de país
 # (as marcas são fictícias); na primeira loja, o Sistema ensina a abrir a ficha.
 = CW_LJ01 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_TUTORIAL_SEEN; flags=SHOP_TUTORIAL_SEEN,SHOP_CHARGE_FOLIO
-Edgar: Boas-vindas à minha loja. Aqui não se vende carro; se confia um.
+Edgar: Boas-vindas à minha loja. Aqui ninguém empurra carro. Escolha com calma.
 Sistema: Toque num carro para ver a ficha e comprar.
 
 = CW_LJ02 | LOJA:charge_folio_motors | personagem=dono; proibe=SHOP_CHARGE_FOLIO; flags=SHOP_CHARGE_FOLIO
@@ -511,7 +510,7 @@ Mara[decepcao]: Não deu. Olhe os números antes de trocar metade do carro.
 Mara[gesto]: {piloto} levou essa. O {carro} merece um banho e mais nada.
 
 = CW_D02 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao:1; repetivel=sim; reativa=sim
-Mara[pensativa]: Vitória em {pista}. Anota o que funcionou antes de mexer em alguma coisa.
+Mara[pensativa]: Vitória: {pista}. Anota o que funcionou antes de mexer em alguma coisa.
 
 = CW_D03 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao:1; repetivel=sim; reativa=sim
 Mara[firme]: Primeiro lugar. Não comemora muito: a próxima prova não sabe disso.
@@ -523,10 +522,10 @@ Mara[cruzados]: Ganhou sem precisar de sorte. Gosto assim.
 Mara[explica]: {posicao}. Pódio paga a conta; a vitória paga o resto.
 
 = CW_D06 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:2,posicao_max:3; repetivel=sim; reativa=sim
-Mara[pensativa]: Perto. A Próxima prova, em Corridas, mostra onde o {carro} tem mais chance.
+Mara[pensativa]: Perto. Em Corridas, a seção PRÓXIMA PROVA mostra onde o {carro} tem mais chance.
 
 = CW_D07 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:2,posicao_max:3; repetivel=sim; reativa=sim
-Mara: {posicao} em {pista}. Mais um ajuste e a gente sobe um degrau.
+Mara: {posicao}: {pista}. Mais um ajuste e a gente sobe um degrau.
 
 = CW_D08 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:4; repetivel=sim; reativa=sim
 Mara[decepcao]: {posicao}. O {carro} chegou até onde dava.
@@ -545,11 +544,11 @@ Mara[gesto]: {peca} no lugar. Quero ver isso na pista.
 Mara: Dinheiro bem gasto, se o cronômetro concordar.
 
 = CW_D13 | PECA_COMPRADA | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; repetivel=sim; reativa=sim
-Mara[firme]: {peca} instalado. Agora é correr.
+Mara[firme]: Peça instalada: {peca}. Agora é correr.
 
 = CW_R03 | CAIXA_BAIXO | personagem=dono; repetivel=sim; reativa=sim
 Mara[alerta]: A garagem ainda funciona. O caixa, nem tanto.
-Sistema: Prova já vencida rende giros de novo, inclusive com o app fechado.
+Sistema: Prova já vencida paga de novo, mas o prêmio cai a cada repetição.
 
 = CW_R04 | COMPRA_CARRO_CARA | personagem=dono; repetivel=sim; reativa=sim
 Mara[alerta]: Bonito carro. Espero que você tenha deixado dinheiro pro resto.
@@ -562,7 +561,7 @@ Mara[decepcao]: Não temos isso.
 Mara[cruzados]: Bom carro. Corrida errada.
 
 = CW_SYS10 | LICENCA_PRONTA | personagem=dono; requer=FIRST_TRAINING_READY; repetivel=sim
-Mara[gesto]: Papel pronto. Agora falta dirigir.
+Mara[gesto]: Treino feito. Agora falta a avaliação.
 
 = CW_SYS_ENDURANCE | CORRIDA_RESISTENCIA | personagem=dono; proibe=FIRST_ENDURANCE; flags=FIRST_ENDURANCE
-Mara[alerta]: Velocidade ganha volta. Isso aqui ganha quem não quebra.
+Mara[alerta]: Prova longa. Aqui ganha quem segura o ritmo até o fim.

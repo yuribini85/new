@@ -183,7 +183,7 @@ func _fila() -> void:
 	var ganho := _ganho_estimado(ev, f)
 	if ganho != "":
 		rotulo(ganho, FONTE_PEQUENA, COR_BOM, col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var lo := rotulo("Termina mesmo com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
+	var lo := rotulo("Termina mesmo com o jogo fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
 	lo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Assistir   →", COR_BOM, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)

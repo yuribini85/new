@@ -421,7 +421,7 @@ func _abrir_aceleracao() -> void:
 		st.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		st.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		aba.rotulo("Cada vídeo deixa as corridas %d vezes mais rápidas por %d minutos. Os prêmios são os mesmos: "
-				% [fator, minutos] + "só o tempo de corrida passa mais depressa. Vale também com o app fechado, "
+				% [fator, minutos] + "só o tempo de corrida passa mais depressa. Vale também com o jogo fechado, "
 				+ "e um vídeo novo soma tempo." + (" A primeira é grátis." if _acelerar_gratis() else ""),
 				Aba.FONTE_PEQUENA, Color.WHITE, c)
 		Configuracoes.cartao_sem_anuncios(aba, v, _comprar_sem_anuncios),
@@ -1434,11 +1434,6 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 		var obstaculo := Objetivos.proximo_obstaculo(jogador, dados)
 		if obstaculo != "":
 			g.rotulo(obstaculo, Aba.FONTE_PEQUENA + 2, Color.WHITE, vp)
-		for cid in jogador.desejos:
-			var p := Usados.proxima(dados.carro(cid), jogador.dias, jogador.usados_vendidos)
-			if not p.is_empty() and p["inicio"] <= jogador.dias:
-				g.rotulo("★ %s à venda nos usados por %s giros" % [dados.carro(cid)["nome"], Aba.dinheiro(p["preco"])],
-						Aba.FONTE_PEQUENA + 2, Aba.COR_DESTAQUE, vp)
 		if patrocinio > 0:
 			var vpat := g.cartao(Aba.COR_DESTAQUE, v)
 			g.rotulo("PATROCÍNIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vpat)

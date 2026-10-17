@@ -341,7 +341,7 @@ func _dois_circuitos(escola: Array, todos: Array, pistas: Array) -> Dictionary:
 					var enxuta := _enxugar_duplo(c, alvo, junto)
 					return {
 						"id": "dois_circuitos", "licenca": _licenca, "nome": "Dois circuitos, um carro",
-						"descricao": "Uma preparação só para vencer o %s em %s e o %s em %s." % [
+						"descricao": "Uma preparação só para vencer o %s (pista %s) e o %s (pista %s)." % [
 								r1["nome"], _nome_pista(p1), r2["nome"], _nome_pista(p2)],
 						"carro": c["id"],
 						"provas": [

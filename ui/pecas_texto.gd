@@ -24,8 +24,8 @@ const EXPLICA_CATEGORIA := {
 }
 const NOMES_CATEGORIA := {
 	"aspiracao": "Aspiração", "lightweight": "Peso", "brake": "Freios", "muffler": "Escapamento",
-	"portpolish": "Polimento de dutos", "enginebalance": "Balanceamento", "displacement": "Cilindrada",
-	"computer": "Computador", "intercooler": "Intercooler", "cambio": "Câmbio", "corrida": "Kit de corrida",
+	"portpolish": "Retrabalho do cabeçote", "enginebalance": "Balanceamento", "displacement": "Cilindrada",
+	"computer": "Central eletrônica", "intercooler": "Intercooler", "cambio": "Câmbio", "corrida": "Kit de corrida",
 	"blindagem": "Blindagem",
 }
 

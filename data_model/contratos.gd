@@ -148,7 +148,7 @@ static func texto_condicao(chave: String, valor: Variant) -> String:
 		"pecas_max":
 			return "até %d peça%s" % [int(valor), "" if int(valor) == 1 else "s"]
 		"sem_categorias":
-			return "sem peças de potência" if Array(valor) == CATEGORIAS_POTENCIA else "sem peças de " + ", ".join(valor)
+			return "sem peças de potência" if Array(valor) == CATEGORIAS_POTENCIA else "sem peças de " + ", ".join(Array(valor).map(func(c): return String(PecasTexto.NOMES_CATEGORIA.get(c, c)).to_lower()))
 	return chave
 
 

@@ -113,7 +113,7 @@ func _partes() -> void:
 func _caixa() -> void:
 	if not GestaoEquipe.aberta(dados, jogador):
 		return  # decisão 69: a equipe nasce no começo; caixa e folha, com a International
-	titulo_secao("CAIXA", "Prêmios, patrocínio e staff entram e saem do mesmo caixa.")
+	titulo_secao("CAIXA", "Prêmios e patrocínio entram, salários saem: tudo no mesmo caixa.")
 	var c := cartao()
 	var h := fileira(c)
 	var moeda_i := icone("cabecalho/icone_giros", 40, h)
@@ -129,7 +129,7 @@ func _caixa() -> void:
 	var f := EquipeJogador.folha(dados, jogador)
 	if not GestaoEquipe.aberta(dados, jogador):
 		_linha_folha(c, "Patrocínio por corrida", "patrocinio", int(f["patrocinio"]), "+")
-	_linha_folha(c, "Staff por corrida", "custo_staff", int(f["staff"]), "−")
+	_linha_folha(c, "Salários por corrida", "custo_staff", int(f["staff"]), "−")
 
 
 ## Sede: as melhorias da equipe, cada uma com os níveis em dentes, o efeito e
@@ -225,7 +225,7 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	if not EquipeJogador.vaga_aberta(jogador, vaga):
 		_linha_piloto(pai, "Sem carro disponível", EquipeJogador.NOMES_VAGA[vaga])
-		rotulo("Para disputar arena o mínimo são 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+		rotulo("Para disputar a arena, são precisos pelo menos 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
 	if id == "":
 		_linha_piloto(pai, "Vaga livre", EquipeJogador.NOMES_VAGA[vaga])
@@ -299,7 +299,7 @@ func _treino(pai: Control, piloto_id := "") -> void:
 	var agora := Time.get_unix_time_from_system()
 	if GestaoEquipe.treinando(jogador, piloto_id):
 		var resta := maxf(float(jogador.equipe[GestaoEquipe._chave(piloto_id)]["fim"]) - agora, 0.0)
-		rotulo("Treinando o nível %d: a energia enche em %s (também com o app fechado)." % [
+		rotulo("Treinando para o nível %d: termina em %s, também com o jogo fechado." % [
 				GestaoEquipe.nivel_treino(jogador, piloto_id) + 1, horas_min(resta)], FONTE_PEQUENA, COR_BOM, pai)
 		return
 	if not GestaoEquipe.pode_treinar(dados, jogador, base, piloto_id):
@@ -318,7 +318,7 @@ func _treino(pai: Control, piloto_id := "") -> void:
 			avisar("Não deu: %s." % motivo, false)
 			return
 		Sons.tocar_ui(self, "moeda", -4.0)
-		avisar("Treino começou: a energia volta enchendo.")
+		avisar("Treino começou.")
 		mudou.emit())
 	pai.add_child(b)
 
@@ -889,7 +889,7 @@ func _carro_companheiro() -> void:
 	titulo_secao("CARRO DO SEGUNDO PILOTO")
 	var car := Escalacao.carro(jogador, "arena2")
 	if car == null:
-		proximo_passo("Ele corre na arena com o carro da vaga ARENA 2. Escale um na Oficina.", "Ir para a Oficina", GARAGEM)
+		proximo_passo("O segundo piloto de arena luta com o carro da vaga ARENA 2. Escale um na Oficina.", "Ir para a Oficina", GARAGEM)
 		return
 	var v := cartao()
 	var h := fileira(v)

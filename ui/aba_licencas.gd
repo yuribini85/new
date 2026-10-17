@@ -261,7 +261,7 @@ func _the_grid() -> void:
 		v.add_child(nome)
 		var lic: Dictionary = dados.item("licencas", String(e.get("nivel", ""))) if dados.existe("licencas", String(e.get("nivel", ""))) else {}
 		var nome_lic := String(lic.get("nome", e.get("nivel", "")))
-		var detalhe := "VENCIDA" if venc else (("Vença uma prova %s ou a arena com ela" % nome_lic) if da_vez else nome_lic)
+		var detalhe := "VENCIDA" if venc else (("Vença o desafio da equipe (pede a %s)" % nome_lic) if da_vez else nome_lic)
 		var d := Label.new()
 		d.text = detalhe
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -351,7 +351,7 @@ func _patrocinio() -> void:
 		return
 	var vagas := GestaoEquipe.vagas(dados, jogador)
 	var ativos := GestaoEquipe.contratos(jogador)
-	var tit := titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o app fechado (até %d h fora); a condição de cada um paga bônus por corrida."
+	var tit := titulo_secao("PATROCÍNIO", "Rende por hora, inclusive com o jogo fechado (até %d h fora); a condição de cada um paga bônus por corrida."
 			% roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0))
 	ancora("PATROCINIO", tit)
 	var agora := Time.get_unix_time_from_system()
@@ -420,7 +420,7 @@ func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 	Tipografia.rotulo(ph, "medium", 22)
 	ph.autowrap_mode = TextServer.AUTOWRAP_OFF
 	ph.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	rotulo("Bônus de %s giros ao %s." % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
+	rotulo("Bônus de %s giros por %s." % [dinheiro(GestaoEquipe.bonus(dados, jogador, p)),
 			GestaoEquipe.texto_condicao(p.get("condicao", {}))], FONTE_PEQUENA, Color(0.86, 0.87, 0.9), v) \
 			.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return v
@@ -556,7 +556,7 @@ func _renda(v: VBoxContainer, sessoes: Array) -> void:
 				n, x["corridas"], "" if x["corridas"] == 1 else "s", roundi(100.0 * x["vitorias"] / x["corridas"]),
 				dinheiro(roundi(float(ganho) / x["corridas"])),
 				dinheiro(roundi(ganho / minutos)) if minutos > 0.0 else "—",
-				" · %d com o app fechado" % x["offline"] if int(x["offline"]) > 0 else "",
+				" · %d com o jogo fechado" % x["offline"] if int(x["offline"]) > 0 else "",
 				" · folha da equipe %s giros" % dinheiro(int(x["folha"])) if int(x["folha"]) != 0 else ""],
 				FONTE_PEQUENA, COR_SECUNDARIA, v)
 
@@ -682,7 +682,7 @@ func _mostrar_resultado() -> void:
 		rotulo("Faltaram %.2f s para o %s." % [_resultado["tempo"] - float(tempos[proximo]), proximo],
 				FONTE_PEQUENA + 2, Color.WHITE, v)
 	if _resultado["concedida"]:
-		nota("icone_licenca", "Licença %s conquistada!" % _resultado["licenca"], "Novas corridas liberadas em Correr.",
+		nota("icone_licenca", "Licença %s conquistada!" % _resultado["licenca"], "Novas corridas liberadas em Corridas.",
 				v, COR_BOM)
 		botao("Ver corridas", func(): ir_para.emit(EVENTOS), true, true, v)
 	_resultado = {}
@@ -748,7 +748,7 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 		_linha_marcada(_texto_requisito(String(r["texto"])), "feito" if r["ok"] else "falta", col, 24)
 	match st:
 		Licencas.AVAILABLE:
-			rotulo("Grátis · continua com o app fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
+			rotulo("Grátis · continua com o jogo fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
 			var b := Button.new()
 			Tipografia.acao_primaria(b, "Iniciar treino   →", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 			b.pressed.connect(func():
@@ -857,7 +857,7 @@ func _fazer(lic: Dictionary, t: Dictionary) -> void:
 				series[String(e["nome"]).split(" — ")[0]] = true
 			for nome in series:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
-			nota("icone_pista", "Em Correr › %s" % lic["nome"], "", v),
+			nota("icone_pista", "Em Corridas › %s" % lic["nome"], "", v),
 			[["Ver corridas", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
 
 
@@ -1023,7 +1023,7 @@ func _enviar(ct: Dictionary) -> void:
 				series[String(e["nome"]).split(" — ")[0]] = true
 			for nome in series:
 				rotulo("• " + nome, FONTE_PEQUENA + 2, COR_DESTAQUE, v)
-			rotulo("Elas aparecem em Correr, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
+			rotulo("Elas aparecem em Corridas, no grupo %s." % lic["nome"], FONTE_PEQUENA, COR_SECUNDARIA, v),
 			[["Ver corridas", func(): ir_para.emit(EVENTOS)], ["Fechar", func(): pass]])
 
 

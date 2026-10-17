@@ -25,7 +25,7 @@
     "numero": 1,
     "apelido": "Contador",
     "perfil": "equilibrado",
-    "personalidade": "Erra quando pressionado de perto."
+    "personalidade": "Calcula cada ultrapassagem antes de tentar."
    },
    {
     "id": "nadia_voss",
@@ -33,7 +33,7 @@
     "numero": 6,
     "apelido": "Relógio",
     "perfil": "cauteloso",
-    "personalidade": "Metódico: cada volta igual à anterior."
+    "personalidade": "Metódica: cada volta igual à anterior."
    },
    {
     "id": "akira_delacroix",
@@ -41,7 +41,7 @@
     "numero": 18,
     "apelido": "Seda",
     "perfil": "equilibrado",
-    "personalidade": "Prefere ceder a posição a riscar o carro."
+    "personalidade": "Pilotagem limpa: passa sem encostar em ninguém."
    },
    {
     "id": "beatriz_oyelaran",
@@ -49,7 +49,7 @@
     "numero": 52,
     "apelido": "Largada",
     "perfil": "agressivo",
-    "personalidade": "Explosivo na largada, apagado no fim."
+    "personalidade": "Explosiva na largada: ganha posições antes da primeira curva."
    }
   ],
   "perfil": "equilibrado",
@@ -85,7 +85,7 @@
     "numero": 17,
     "apelido": "Aprendiz",
     "perfil": "equilibrado",
-    "personalidade": "A promessa da equipe: quer provar algo a cada volta."
+    "personalidade": "O mais novo da equipe: aprende com cada volta."
    },
    {
     "id": "dmitri_abernathy",
@@ -125,7 +125,7 @@
     "numero": 1,
     "apelido": "Kart",
     "perfil": "cauteloso",
-    "personalidade": "Veio do kart e ainda pilota como no kart."
+    "personalidade": "Veio do kart: traçado perfeito e nada de risco."
    },
    {
     "id": "soren_pike",
@@ -133,7 +133,7 @@
     "numero": 5,
     "apelido": "Muro",
     "perfil": "equilibrado",
-    "personalidade": "Paciente: espera o erro dos outros."
+    "personalidade": "Difícil de passar: fecha o traçado na hora certa."
    },
    {
     "id": "felix_hakimi",
@@ -141,7 +141,7 @@
     "numero": 21,
     "apelido": "Topete",
     "perfil": "cauteloso",
-    "personalidade": "Erra quando pressionado de perto."
+    "personalidade": "Vaidoso no box, cuidadoso na pista."
    },
    {
     "id": "greta_saarinen",
@@ -149,7 +149,7 @@
     "numero": 47,
     "apelido": "Metrônomo",
     "perfil": "agressivo",
-    "personalidade": "Metódico: cada volta igual à anterior."
+    "personalidade": "Ritmo de metrônomo, e não tira o pé quando encosta."
    }
   ],
   "perfil": "cauteloso",
@@ -193,7 +193,7 @@
     "numero": 31,
     "apelido": "Peito de Aço",
     "perfil": "agressivo",
-    "personalidade": "Adora reta longa, sofre na curva lenta."
+    "personalidade": "Não recua em disputa nenhuma."
    },
    {
     "id": "hugo_esposito",
@@ -201,7 +201,7 @@
     "numero": 58,
     "apelido": "Promessa",
     "perfil": "cauteloso",
-    "personalidade": "A promessa da equipe: quer provar algo a cada volta."
+    "personalidade": "A promessa da equipe: rápido, mas ainda evita o contato."
    }
   ],
   "perfil": "agressivo",
@@ -226,7 +226,7 @@
     "apelido": "Limite",
     "provisorio": true,
     "perfil": "agressivo",
-    "personalidade": "Não perde a calma nem com o pneu no fim."
+    "personalidade": "Vive no limite: giro alto e freada no último metro."
    },
    {
     "id": "lena_brook",
@@ -243,7 +243,7 @@
     "numero": 26,
     "apelido": "Kartódromo",
     "perfil": "agressivo",
-    "personalidade": "Veio do kart e ainda pilota como no kart."
+    "personalidade": "Cria de kartódromo: mergulha por dentro em qualquer brecha."
    },
    {
     "id": "jasper_laurier",
@@ -296,7 +296,7 @@
     "numero": 24,
     "apelido": "Pressa",
     "perfil": "cauteloso",
-    "personalidade": "Tem pressa de tudo, menos de frear."
+    "personalidade": "Sai rápida do box e administra a corrida com calma."
    },
    {
     "id": "leon_iwata",
@@ -304,7 +304,7 @@
     "numero": 39,
     "apelido": "Maré",
     "perfil": "equilibrado",
-    "personalidade": "Cresce na segunda metade da prova."
+    "personalidade": "Vai e volta como a maré: perde posição e recupera no fim."
    }
   ],
   "perfil": "cauteloso",
@@ -342,7 +342,7 @@
     "apelido": "Navalha",
     "provisorio": true,
     "perfil": "cauteloso",
-    "personalidade": "Briga roda a roda até a última curva."
+    "personalidade": "Precisa como navalha: só ataca quando é certo."
    },
    {
     "id": "marisol_eriksen",
@@ -350,7 +350,7 @@
     "numero": 28,
     "apelido": "Gelo",
     "perfil": "agressivo",
-    "personalidade": "Não perde a calma nem com o pneu no fim."
+    "personalidade": "Fria no ataque: passa sem mudar a expressão."
    },
    {
     "id": "nils_petrakis",
@@ -358,7 +358,7 @@
     "numero": 61,
     "apelido": "Gorjeta",
     "perfil": "equilibrado",
-    "personalidade": "Poupa o carro para a última volta."
+    "personalidade": "Faz o serviço e não pede nada a mais."
    }
   ],
   "perfil": "agressivo",
@@ -387,7 +387,7 @@
     "apelido": "Atalho",
     "provisorio": true,
     "perfil": "equilibrado",
-    "personalidade": "Veterano que conhece todo atalho do paddock."
+    "personalidade": "Veterano que conhece todos os truques do paddock."
    },
    {
     "id": "sasha_imre",
@@ -396,7 +396,7 @@
     "apelido": "Telemetria",
     "provisorio": true,
     "perfil": "agressivo",
-    "personalidade": "Ninguém lembra de vê-lo errar."
+    "personalidade": "Ataca onde a telemetria mostra o ponto fraco do rival."
    },
    {
     "id": "odette_bastos",
@@ -404,7 +404,7 @@
     "numero": 22,
     "apelido": "Professora",
     "perfil": "equilibrado",
-    "personalidade": "Lê a corrida como um tabuleiro."
+    "personalidade": "Ensina o traçado aos novatos e cobra deles na pista."
    },
    {
     "id": "pablo_morrow",
@@ -412,7 +412,7 @@
     "numero": 49,
     "apelido": "Dado",
     "perfil": "cauteloso",
-    "personalidade": "Imprevisível até para a própria equipe."
+    "personalidade": "Joga seguro: nunca aposta tudo numa curva."
    }
   ],
   "perfil": "equilibrado",
@@ -454,7 +454,7 @@
     "numero": 32,
     "apelido": "Aceno",
     "perfil": "equilibrado",
-    "personalidade": "Sorri no grid, morde na pista."
+    "personalidade": "Cumprimenta todo mundo e não cede um centímetro."
    },
    {
     "id": "rafaela_takeda",
@@ -486,7 +486,7 @@
     "numero": 1,
     "apelido": "Caçador",
     "perfil": "agressivo",
-    "personalidade": "Explosivo na largada, apagado no fim."
+    "personalidade": "Persegue o carro da frente até achar a brecha."
    },
    {
     "id": "yuna_kess",
@@ -502,7 +502,7 @@
     "numero": 36,
     "apelido": "Lobo Velho",
     "perfil": "agressivo",
-    "personalidade": "Veterano que conhece todo atalho do paddock."
+    "personalidade": "Velho de guerra: ainda morde no fim da prova."
    },
    {
     "id": "tamsin_bergstrom",
@@ -534,7 +534,7 @@
     "numero": 1,
     "apelido": "Tradição",
     "perfil": "cauteloso",
-    "personalidade": "Vive no vácuo, esperando a chance."
+    "personalidade": "Pilota como se ensinava antigamente: limpo e sem pressa."
    },
    {
     "id": "mina_rowe",
@@ -550,7 +550,7 @@
     "numero": 25,
     "apelido": "Calado",
     "perfil": "cauteloso",
-    "personalidade": "Calado no box, barulhento na pista."
+    "personalidade": "Não fala, não arrisca, não erra."
    },
    {
     "id": "valentina_yamaguchi",
@@ -558,7 +558,7 @@
     "numero": 71,
     "apelido": "Ferrolho",
     "perfil": "agressivo",
-    "personalidade": "Fecha a porta sem cerimônia."
+    "personalidade": "Fecha a porta e não abre por nada."
    }
   ],
   "perfil": "cauteloso",
@@ -582,7 +582,7 @@
     "numero": 1,
     "apelido": "Turno",
     "perfil": "equilibrado",
-    "personalidade": "Metódico: cada volta igual à anterior."
+    "personalidade": "Aguenta turnos longos sem perder o ritmo."
    },
    {
     "id": "zara_keene",
@@ -590,7 +590,7 @@
     "numero": 8,
     "apelido": "Manga",
     "perfil": "agressivo",
-    "personalidade": "Prefere ceder a posição a riscar o carro."
+    "personalidade": "Arregaça as mangas e parte pra cima."
    },
    {
     "id": "wes_jaramillo",
@@ -598,7 +598,7 @@
     "numero": 30,
     "apelido": "Fagulha",
     "perfil": "equilibrado",
-    "personalidade": "Explosivo na largada, apagado no fim."
+    "personalidade": "Acende na largada e se acalma depois."
    },
    {
     "id": "xenia_falcone",
@@ -606,7 +606,7 @@
     "numero": 73,
     "apelido": "Atalho",
     "perfil": "cauteloso",
-    "personalidade": "Ataca por fora quando ninguém espera."
+    "personalidade": "Acha o traçado mais curto sem tocar em ninguém."
    }
   ],
   "perfil": "equilibrado",
@@ -634,7 +634,7 @@
     "numero": 1,
     "apelido": "Herdeiro",
     "perfil": "equilibrado",
-    "personalidade": "A promessa da equipe: quer provar algo a cada volta."
+    "personalidade": "Herdeiro da equipe: quer provar que merece a vaga."
    },
    {
     "id": "celeste_armand",
@@ -642,7 +642,7 @@
     "numero": 7,
     "apelido": "Porcelana",
     "perfil": "cauteloso",
-    "personalidade": "Freia mais tarde que todo mundo."
+    "personalidade": "Delicada com o carro: nunca volta com um arranhão."
    },
    {
     "id": "yusuf_quintero",
@@ -650,7 +650,7 @@
     "numero": 19,
     "apelido": "Cofre",
     "perfil": "equilibrado",
-    "personalidade": "Vive no vácuo, esperando a chance."
+    "personalidade": "Guarda o carro e o ataque para a hora certa."
    },
    {
     "id": "zoe_coutinho",
@@ -658,11 +658,11 @@
     "numero": 33,
     "apelido": "Regra",
     "perfil": "agressivo",
-    "personalidade": "Corre com o regulamento decorado."
+    "personalidade": "Conhece a regra e vai até o último centímetro dela."
    }
   ],
   "perfil": "equilibrado",
-  "personalidade": "Dinheiro antigo, pilotagem limpa.",
+  "personalidade": "Dinheiro de família, pilotagem limpa.",
   "cores": {
    "carro": "#ece4cf",
    "faixa": "#5a1a24",
@@ -686,7 +686,7 @@
     "numero": 1,
     "apelido": "Poeira",
     "perfil": "agressivo",
-    "personalidade": "Paciente: espera o erro dos outros."
+    "personalidade": "Deixa os rivais na poeira e não olha para trás."
    },
    {
     "id": "nika_stroud",
@@ -702,7 +702,7 @@
     "numero": 29,
     "apelido": "Cascalho",
     "perfil": "agressivo",
-    "personalidade": "Metódico: cada volta igual à anterior."
+    "personalidade": "Veio do rali: não tem medo de sair do traçado."
    },
    {
     "id": "bianca_jovanovic",
@@ -710,11 +710,11 @@
     "numero": 77,
     "apelido": "Estrada",
     "perfil": "cauteloso",
-    "personalidade": "Prefere ceder a posição a riscar o carro."
+    "personalidade": "Rodou muita estrada: sabe chegar ao fim."
    }
   ],
   "perfil": "agressivo",
-  "personalidade": "Vieram do rali: roda com roda não assusta ninguém ali.",
+  "personalidade": "Vieram do rali: encostar roda não assusta ninguém lá.",
   "cores": {
    "carro": "#c9a227",
    "faixa": "#b5562f",
@@ -738,7 +738,7 @@
     "numero": 1,
     "apelido": "Maratona",
     "perfil": "cauteloso",
-    "personalidade": "Cresce na segunda metade da prova."
+    "personalidade": "Feito para prova longa: cresce na segunda metade."
    },
    {
     "id": "selene_ashby",
@@ -746,7 +746,7 @@
     "numero": 2,
     "apelido": "Veterana",
     "perfil": "equilibrado",
-    "personalidade": "Adora reta longa, sofre na curva lenta."
+    "personalidade": "Veterana: já viu de tudo e não se assusta."
    },
    {
     "id": "cyrus_ulloa",
@@ -754,7 +754,7 @@
     "numero": 34,
     "apelido": "Calmaria",
     "perfil": "cauteloso",
-    "personalidade": "A promessa da equipe: quer provar algo a cada volta."
+    "personalidade": "Calmo até demais: às vezes deixa a chance passar."
    },
    {
     "id": "dalia_grimaldi",
@@ -762,11 +762,11 @@
     "numero": 88,
     "apelido": "Freio Tarde",
     "perfil": "agressivo",
-    "personalidade": "Freia mais tarde que todo mundo."
+    "personalidade": "Mergulha na freada e confia no carro."
    }
   ],
   "perfil": "cauteloso",
-  "personalidade": "Estratégia longa: largam devagar e chegam.",
+  "personalidade": "Estratégia longa: largam devagar e chegam na frente.",
   "cores": {
    "carro": "#7fb2dd",
    "faixa": "#f2f2ee",
@@ -786,7 +786,7 @@
     "numero": 1,
     "apelido": "Prata",
     "perfil": "equilibrado",
-    "personalidade": "Poupa o carro para a última volta."
+    "personalidade": "Vive em segundo e não se incomoda."
    },
    {
     "id": "ines_calloway",
@@ -802,7 +802,7 @@
     "numero": 40,
     "apelido": "O Velho",
     "perfil": "equilibrado",
-    "personalidade": "Paciente: espera o erro dos outros."
+    "personalidade": "O mais experiente do grid: espera o erro dos outros."
    },
    {
     "id": "fiona_nakamura",
@@ -810,7 +810,7 @@
     "numero": 63,
     "apelido": "Três",
     "perfil": "cauteloso",
-    "personalidade": "Erra quando pressionado de perto."
+    "personalidade": "Contenta-se com o pódio e quase sempre chega nele."
    }
   ],
   "perfil": "equilibrado",
@@ -834,7 +834,7 @@
     "numero": 1,
     "apelido": "Bote",
     "perfil": "cauteloso",
-    "personalidade": "Imprevisível até para a própria equipe."
+    "personalidade": "Espera a curva inteira para dar o bote."
    },
    {
     "id": "cleo_vane",
@@ -842,7 +842,7 @@
     "numero": 14,
     "apelido": "Ponteiro",
     "perfil": "equilibrado",
-    "personalidade": "Tem pressa de tudo, menos de frear."
+    "personalidade": "Olho no ponteiro: sempre no giro certo."
    },
    {
     "id": "gideon_zelenko",
@@ -850,7 +850,7 @@
     "numero": 37,
     "apelido": "Veneno",
     "perfil": "cauteloso",
-    "personalidade": "Cresce na segunda metade da prova."
+    "personalidade": "Paciente na ida, venenoso no fim."
    },
    {
     "id": "helga_kowal",
@@ -858,7 +858,7 @@
     "numero": 66,
     "apelido": "Reta",
     "perfil": "agressivo",
-    "personalidade": "Adora reta longa, sofre na curva lenta."
+    "personalidade": "Adora reta longa e não tira o pé na entrada da curva."
    }
   ],
   "perfil": "cauteloso",
@@ -886,7 +886,7 @@
     "numero": 1,
     "apelido": "Abraço",
     "perfil": "cauteloso",
-    "personalidade": "Briga roda a roda até a última curva."
+    "personalidade": "Deixa espaço para o rival: ninguém sai batido de perto dele."
    },
    {
     "id": "kaia_rehn",
@@ -894,7 +894,7 @@
     "numero": 19,
     "apelido": "Sangue Frio",
     "perfil": "agressivo",
-    "personalidade": "Não perde a calma nem com o pneu no fim."
+    "personalidade": "Não perde a calma nem com o rival colado."
    },
    {
     "id": "ivo_galloway",
@@ -902,7 +902,7 @@
     "numero": 35,
     "apelido": "Teimoso",
     "perfil": "cauteloso",
-    "personalidade": "Poupa o carro para a última volta."
+    "personalidade": "Teimoso no traçado: não muda nem sob pressão."
    },
    {
     "id": "juno_rasmussen",
@@ -910,7 +910,7 @@
     "numero": 50,
     "apelido": "Paz",
     "perfil": "equilibrado",
-    "personalidade": "Veio do kart e ainda pilota como no kart."
+    "personalidade": "Nunca briga, nem no box nem na pista."
    }
   ],
   "perfil": "cauteloso",
@@ -934,7 +934,7 @@
     "numero": 1,
     "apelido": "Número Um",
     "perfil": "agressivo",
-    "personalidade": "Ninguém lembra de vê-lo errar."
+    "personalidade": "Quer o número um e não aceita menos."
    },
    {
     "id": "mira_danvers",
@@ -942,7 +942,7 @@
     "numero": 9,
     "apelido": "Vitrine",
     "perfil": "cauteloso",
-    "personalidade": "Lê a corrida como um tabuleiro."
+    "personalidade": "Sempre bem na foto: chega sem um arranhão."
    },
    {
     "id": "kenji_drummond",
@@ -950,7 +950,7 @@
     "numero": 27,
     "apelido": "Coringa",
     "perfil": "agressivo",
-    "personalidade": "Imprevisível até para a própria equipe."
+    "personalidade": "Coringa: ataca de qualquer lado."
    },
    {
     "id": "livia_okafor",
@@ -958,7 +958,7 @@
     "numero": 44,
     "apelido": "Tempestade",
     "perfil": "equilibrado",
-    "personalidade": "Tem pressa de tudo, menos de frear."
+    "personalidade": "Calma no começo, tempestade no fim."
    }
   ],
   "perfil": "agressivo",

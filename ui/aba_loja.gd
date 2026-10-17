@@ -40,7 +40,7 @@ func construir() -> void:
 		if ws.size() == AREAS_MAPA.size() and arte("mapa_lojas") != null:
 			_mapa(ws)
 		else:
-			cabecalho("Lojas", "Workshops", "fundo_mercado")
+			cabecalho("Lojas", "", "fundo_mercado")
 			_vitrine(ws)
 	else:
 		_workshop(aberta)

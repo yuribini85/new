@@ -84,7 +84,7 @@
     "nome": "Amir Castell",
     "genero": "m",
     "traco": "constante",
-    "frase": "Faz a mesma volta cem vezes. É isso que o chefe quer ouvir.",
+    "frase": "Bate sempre no mesmo lugar, do mesmo jeito. Não erra o alvo.",
     "tipo": "arena"
    },
    {
@@ -108,7 +108,7 @@
     "nome": "Bastian Kroll",
     "genero": "m",
     "traco": "barato",
-    "frase": "Já foi rápido. Hoje é barato e conhece todo mundo no paddock.",
+    "frase": "Já foi rápido. Hoje conhece todo mundo no paddock e se vira em qualquer carro.",
     "tipo": "arena"
    },
    {
@@ -116,7 +116,7 @@
     "nome": "Caleb Wynn",
     "genero": "m",
     "traco": "barato",
-    "frase": "Corre por pouco e agradece a vaga. Ainda vai aprender a negociar.",
+    "frase": "Corre em qualquer carro e agradece a vaga.",
     "tipo": "corrida"
    },
    {
@@ -124,7 +124,7 @@
     "nome": "Noor Haddad",
     "genero": "f",
     "traco": "promessa",
-    "frase": "Crua, mas aprende rápido. Cada hora de treino aparece no carro.",
+    "frase": "Crua, mas sem medo. Cada hora de treino aparece no carro.",
     "tipo": "corrida"
    },
    {

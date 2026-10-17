@@ -154,7 +154,7 @@ func _faixa_escalacao(atual: Carro) -> Control:
 func _escolher_vaga(vaga: String) -> void:
 	painel.emit("Escalação · %s" % Escalacao.NOMES[vaga], func(pv):
 		var dica: String = {"corrida": "Nas corridas corre um piloto da equipe, com este carro.",
-				"arena1": "O seu carro na arena. Carro eliminado não volta.",
+				"arena1": "Carro do primeiro piloto de arena. Carro eliminado não volta.",
 				"arena2": "O carro do segundo piloto na arena. Carro eliminado não volta."}[vaga]
 		rotulo(dica + " Escalado não se vende.", FONTE_PEQUENA + 2, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var g := GridContainer.new()

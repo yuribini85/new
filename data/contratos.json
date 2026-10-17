@@ -81,7 +81,7 @@
     "folga_s": 0.1
    }
   },
-  "descricao": "Uma preparação só para vencer o Mizuchi Alvorada em Cais Velho e o Vallon Cajuina em Alto da Capela.",
+  "descricao": "Uma preparação só para vencer o Mizuchi Alvorada (pista Cais Velho) e o Vallon Cajuina (pista Alto da Capela).",
   "id": "dois_circuitos",
   "licenca": "CLUB",
   "nome": "Dois circuitos, um carro",
@@ -190,7 +190,7 @@
     "folga_s": 1.0
    }
   },
-  "descricao": "Uma preparação só para vencer o Vorhaus Ameixa em Lago Sereno e o Kanaya Prisma em Alto da Capela.",
+  "descricao": "Uma preparação só para vencer o Vorhaus Ameixa (pista Lago Sereno) e o Kanaya Prisma (pista Alto da Capela).",
   "id": "national_dois_circuitos",
   "licenca": "NATIONAL",
   "nome": "Dois circuitos, um carro",
@@ -299,7 +299,7 @@
     "folga_s": 0.3
    }
   },
-  "descricao": "Uma preparação só para vencer o Vorhaus Ameixa em Oval do Planalto e o Hozuki Vigilia em Lago Sereno.",
+  "descricao": "Uma preparação só para vencer o Vorhaus Ameixa (pista Oval do Planalto) e o Hozuki Vigilia (pista Lago Sereno).",
   "id": "international_dois_circuitos",
   "licenca": "INTERNATIONAL",
   "nome": "Dois circuitos, um carro",
@@ -408,7 +408,7 @@
     "folga_s": 0.1
    }
   },
-  "descricao": "Uma preparação só para vencer o Kanaya Cunha em Colinas do Vinhedo e o Sanga Estopim em Lago Sereno.",
+  "descricao": "Uma preparação só para vencer o Kanaya Cunha (pista Colinas do Vinhedo) e o Sanga Estopim (pista Lago Sereno).",
   "id": "pro_dois_circuitos",
   "licenca": "PRO",
   "nome": "Dois circuitos, um carro",
@@ -517,7 +517,7 @@
     "folga_s": 0.1
    }
   },
-  "descricao": "Uma preparação só para vencer o Sanga Estopim em Lago Sereno e o Kanaya Cunha em Colinas do Vinhedo.",
+  "descricao": "Uma preparação só para vencer o Sanga Estopim (pista Lago Sereno) e o Kanaya Cunha (pista Colinas do Vinhedo).",
   "id": "elite_dois_circuitos",
   "licenca": "ELITE",
   "nome": "Dois circuitos, um carro",

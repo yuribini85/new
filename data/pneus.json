@@ -55,7 +55,7 @@
  },
  {
   "id": "pneu_6",
-  "nome": "Pneu de simulação",
+  "nome": "Pneu econômico",
   "preco": 170,
   "aderencia": {
    "seco": 0.793,

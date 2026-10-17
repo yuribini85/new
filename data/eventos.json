@@ -9742,7 +9742,7 @@
  },
  {
   "id": "ev_238",
-  "nome": "Copa Pena — etapa 1",
+  "nome": "Copa Peso-Pena — etapa 1",
   "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
@@ -9788,7 +9788,7 @@
  },
  {
   "id": "ev_239",
-  "nome": "Copa Pena — etapa 2",
+  "nome": "Copa Peso-Pena — etapa 2",
   "pista": "anel_curto",
   "voltas": 5,
   "condicao": "seco",
@@ -9835,7 +9835,7 @@
  },
  {
   "id": "ev_240",
-  "nome": "Copa Pena — etapa 3",
+  "nome": "Copa Peso-Pena — etapa 3",
   "pista": "serra_alta",
   "voltas": 5,
   "condicao": "seco",

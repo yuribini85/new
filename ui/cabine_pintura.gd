@@ -508,7 +508,7 @@ func _aba_grafismos() -> void:
 		if trancado:
 			b.disabled = true
 			b.modulate = Color(1, 1, 1, 0.45)
-			b.tooltip_text = "Libera na #%d do The Grid" % PinturaCarro.posicao_que_libera(_dados, "padroes", k)
+			b.tooltip_text = "Libera na #%d do Grid" % PinturaCarro.posicao_que_libera(_dados, "padroes", k)
 		else:
 			b.pressed.connect(func(): _definir("padrao", id))
 		g.add_child(b)
@@ -557,7 +557,7 @@ func _aba_identificacao() -> void:
 	_nota("O nome e o logo são da equipe: valem para todos os carros. Vazio, fica %s." %
 			IdentidadeEquipe.nome_padrao(_dados, _jogador))
 	if PinturaCarro.liberados(_dados, _jogador, "logos", IdentidadeEquipe.opcoes().size()) < IdentidadeEquipe.opcoes().size():
-		_nota("Cada equipe vencida no The Grid libera um logo novo e um desenho novo.")
+		_nota("Cada equipe vencida no Grid libera um logo novo e um desenho novo.")
 	var g := GridContainer.new()
 	g.columns = COLUNAS_LOGOS
 	g.add_theme_constant_override("h_separation", 8)
@@ -589,7 +589,7 @@ func _aba_identificacao() -> void:
 		if logo_trancado:
 			b.disabled = true
 			b.modulate = Color(0.35, 0.35, 0.38, 0.6)
-			b.tooltip_text = "Libera na #%d do The Grid" % PinturaCarro.posicao_que_libera(_dados, "logos", k)
+			b.tooltip_text = "Libera na #%d do Grid" % PinturaCarro.posicao_que_libera(_dados, "logos", k)
 		else:
 			b.pressed.connect(func(): _definir("equipe_logo", id))
 		g.add_child(b)
@@ -600,7 +600,7 @@ func _aba_identificacao() -> void:
 			_nota("O capô já tem o número: lá o logo não vai.")
 		_escolhas(PinturaCarro.ESCALAS, float(_estado["escala_logo"]), func(v): _definir("escala_logo", v))
 	else:
-		_nota("Escolha um logo para pô-lo no carro.")
+		_nota("Escolha um logo para o carro.")
 	_titulo("Número de corrida")
 	var tem: bool = int(_estado["numero"]) >= 0
 	var h := HBoxContainer.new()
@@ -627,7 +627,7 @@ func _aba_identificacao() -> void:
 	for passo in [1, 10]:
 		h.add_child(_passo_numero(passo, tem))
 	if not tem:
-		_nota("Toque em Sem número para ligar o número.")
+		_nota("O carro está sem número. Toque no botão de novo para pôr um.")
 		return
 	_titulo("Família")
 	var fontes := PinturaCarro.FONTES
