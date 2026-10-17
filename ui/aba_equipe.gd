@@ -543,6 +543,11 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			for k in barras.size():
 				_animar_barra(barras[k], valores[k], 0.0 if lado == 0 and Preferencias.reduzir_animacoes else 0.35)
 			b.visible = not atual and outra == ""
+			var luvas := EquipeJogador.luvas(dados, jogador, String(c["id"]))
+			(b.get_meta("preco") as Label).text = Aba.dinheiro(luvas)
+			(b.get_meta("preco") as Label).visible = luvas > 0
+			(b.get_meta("moeda") as Control).visible = luvas > 0
+			(b.get_meta("rotulo") as Label).add_theme_font_size_override("font_size", 50 if luvas <= 0 else 40)
 			na_equipe.visible = atual or outra != ""
 			na_equipe.text = "NA EQUIPE" if atual else ("NA EQUIPE · " + String(EquipeJogador.NOMES_VAGA.get(outra, "")))
 			if lado != 0 and not Preferencias.reduzir_animacoes:
@@ -759,6 +764,23 @@ func _botao_contratar(pai: Control) -> Button:
 	Tipografia.rotulo(t, "display_eb", 50)
 	t.add_theme_color_override("font_color", escuro)
 	h.add_child(t)
+	b.set_meta("rotulo", t)
+	# Luvas: o valor e a moeda (somem quando é de graça).
+	var preco := Label.new()
+	Tipografia.numero(preco, 36)
+	preco.add_theme_color_override("font_color", escuro)
+	preco.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(preco)
+	b.set_meta("preco", preco)
+	var moeda := TextureRect.new()
+	moeda.texture = Aba.arte(ICONE_GIROS)
+	moeda.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	moeda.custom_minimum_size = Vector2(32, 32)
+	moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	moeda.modulate = escuro
+	h.add_child(moeda)
+	b.set_meta("moeda", moeda)
 	var seta := IconeVetor.new("chevron", escuro)
 	seta.set_anchors_and_offsets_preset(Control.PRESET_RIGHT_WIDE)
 	seta.offset_left = -70

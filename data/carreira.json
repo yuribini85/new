@@ -176,7 +176,11 @@
     "agressivo": "agressivo"
    }
   },
-  "_nota_mercado": "Decisão 71 (aprovado): o mercado mostra 'por_tipo' candidatos de corrida e de arena (os 4 de cada que já existiam) e renova a cada 'renova_h' horas (24: a duração de um contrato de patrocínio, equipe.json → patrocinio.duracao_h). Vencer uma equipe do Grid põe os pilotos com retrato dela no mercado; o traço vem do perfil dela ('traco_por_perfil')."
+  "_nota_mercado": "Decisão 71 (aprovado): o mercado mostra 'por_tipo' candidatos de corrida e de arena (os 4 de cada que já existiam) e renova a cada 'renova_h' horas (24: a duração de um contrato de patrocínio, equipe.json → patrocinio.duracao_h). Vencer uma equipe do Grid põe os pilotos com retrato dela no mercado; o traço vem do perfil dela ('traco_por_perfil').",
+  "luvas": {
+   "premios": 5,
+   "_nota": "Decisão do usuário (2026-10-17): luvas pagas uma vez ao contratar, sem salário. Custo = premios × prêmio de 1º lugar médio da maior licença × qualidade do piloto (escala 35–100%). Correndo, o jogador ganha ~8,3 desses prêmios por hora (playtest da campanha): 5 prêmios ≈ 15–35 min de corrida. O primeiro piloto e os premium não pagam."
+  }
  },
  "variacao_piloto": {
   "_nota": "Calculadora da variação por piloto (pedido do usuário, 2026-10-16; EquipeJogador.variar): consistência e agressividade de cada piloto ganham um ajuste fixo, sorteado pelo id. As faixas vêm dos dados: agressividade ± metade do menor intervalo entre os perfis_piloto; consistência ± metade da perda do segundo piloto. 'fator' escala as duas faixas (1 = como derivado; 0 desliga); ajustar no playtest.",

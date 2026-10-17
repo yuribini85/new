@@ -224,6 +224,33 @@ static func vaga_aberta(jogador: Node, vaga: String) -> bool:
 	return criada(jogador) and (vaga == "corrida" or jogador.flags.has(FLAG_ARENA))
 
 
+## Luvas da contratação (decisão do usuário, 2026-10-17): pagas uma vez, ao
+## entrar na equipe; sem salário. carreira.json → equipe_jogador → luvas
+## {premios}: premios × o prêmio de 1º lugar médio da maior licença do jogador
+## (a Club sem licença) × a qualidade do piloto (média das três barras da
+## escala do jogo, 35–100%). O primeiro piloto (o do tutorial) sai de graça;
+## premium, do pack comprado, também.
+const FLAG_PRIMEIRA_CONTRATACAO := "PRIMEIRO_PILOTO_CONTRATADO"
+
+
+static func luvas(dados: Node, jogador: Node, piloto_id: String) -> int:
+	var n := float(config(dados).get("luvas", {}).get("premios", 0.0))
+	if n <= 0.0 or piloto_id == "" or bool(piloto(dados, piloto_id).get("premium", false)):
+		return 0
+	if not jogador.flags.has(FLAG_PRIMEIRA_CONTRATACAO) and VAGAS_PILOTO.all(func(v): return piloto_vaga(jogador, v) == ""):
+		return 0
+	var ordem := GestaoEquipe.ordem(dados)
+	var lic: String = ordem[0] if not ordem.is_empty() else ""
+	for l in ordem:
+		if l in jogador.licencas:
+			lic = l
+	var at := atributos(dados, null, piloto_id)
+	var q := 0.0
+	for k in ["ritmo", "consistencia", "agressividade"]:
+		q += barra_atributo(dados, k, float(at.get(k, 0.0)))
+	return roundi(n * GestaoEquipe.premio_referencia(dados, lic) * q / 3.0)
+
+
 ## Contrata o candidato para a vaga (o tipo tem de bater). "" ou o motivo.
 static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "corrida") -> String:
 	if not vaga in VAGAS_PILOTO:
@@ -246,6 +273,11 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 	var em := vaga_do_piloto(jogador, piloto_id)
 	if em != "" and em != vaga:
 		return "já está na equipe"
+	if em == "":
+		var custo := luvas(dados, jogador, piloto_id)
+		if custo > 0 and not jogador.economia.debitar(custo):
+			return "faltam giros para as luvas (%d)" % custo
+	jogador.flags[FLAG_PRIMEIRA_CONTRATACAO] = true
 	var p: Dictionary = jogador.pilotos.duplicate(true)
 	if vaga == "corrida":
 		p["corrida"] = piloto_id

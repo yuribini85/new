@@ -459,3 +459,27 @@ func test_nao_troca_piloto_durante_a_corrida() -> void:
 	igual(EquipeJogador.contratar(d, j, String(ofertas[1]["id"]), "corrida"), "", "depois da corrida, troca")
 	j.free()
 	d.free()
+
+
+## Luvas (decisão do usuário, 2026-10-17): o primeiro piloto sai de graça; os
+## seguintes pagam uma vez, mais pelo melhor; sem giros, não contrata.
+func test_luvas_da_contratacao() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	EquipeJogador.criar(j)
+	var ofertas: Array = EquipeJogador.oferta(d, j, "corrida", Time.get_unix_time_from_system())
+	igual(EquipeJogador.luvas(d, j, String(ofertas[0]["id"])), 0, "o primeiro sai de graça")
+	var saldo0: int = j.economia.saldo
+	igual(EquipeJogador.contratar(d, j, String(ofertas[0]["id"]), "corrida"), "", "contrata o primeiro")
+	igual(j.economia.saldo, saldo0, "sem débito no primeiro")
+	var custo := EquipeJogador.luvas(d, j, String(ofertas[1]["id"]))
+	verificar(custo > 0, "o segundo paga luvas")
+	j.economia.saldo = custo - 1
+	verificar(EquipeJogador.contratar(d, j, String(ofertas[1]["id"]), "corrida") != "", "sem giros, não contrata")
+	j.economia.saldo = custo
+	igual(EquipeJogador.contratar(d, j, String(ofertas[1]["id"]), "corrida"), "", "com giros, contrata")
+	igual(j.economia.saldo, 0, "pagou as luvas uma vez")
+	j.free()
+	d.free()
