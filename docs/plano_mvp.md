@@ -976,3 +976,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     recuperado); ao voltar, cancela todos (`Notificacoes`). O envio usa o plugin de avisos
     locais do aparelho (singleton `LocalNotification`, a instalar no export Android/iOS);
     sem ele (editor, Web), nada acontece.
+108. **Tela de volta e renda offline em dobro** (2026-10-17, sugestões aceitas pelo usuário;
+    o vídeo só dobra a renda offline). Ao abrir o jogo, ou ao voltar depois de 5 min ou
+    mais fora, com renda do patrocínio, abre "Enquanto você esteve fora" (`TelaVolta`): os
+    giros do patrocínio contando, as corridas, o treino e os contratos encerrados; COLETAR
+    fecha e DOBRAR COM VÍDEO paga a renda offline do patrocínio mais uma vez (uma vez por
+    volta). Sem renda do patrocínio, o relatório das corridas de antes.

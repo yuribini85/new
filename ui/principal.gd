@@ -225,7 +225,7 @@ func _ready() -> void:
 	var save_manager := get_node("/root/SaveManager")
 	if save_manager.aviso != "":
 		_sobre.abrir("Save", func(v): _todas[0].rotulo(save_manager.aviso, 0, Color.WHITE, v))
-	_mostrar_relatorio(save_manager.relatorio_offline, "Enquanto você esteve fora")
+	_abrir_volta(save_manager.relatorio_offline)
 	_fila_vista = jogador.fila
 	RegistroSessao.inicio(jogador)
 	RegistroSessao.corridas(save_manager.relatorio_offline, dados)
@@ -1169,6 +1169,7 @@ func _notification(what: int) -> void:
 	# Volta do segundo plano: aplica o que correu enquanto isso, na hora.
 	if what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN] and _sobre != null:
 		Notificacoes.cancelar()  # de volta: os avisos agendados saem
+		_volta_do_segundo_plano()
 		RegistroSessao.inicio(jogador)  # antes da fila: as corridas de fora entram na sessão
 		RegistroSessao.tela(_abas.current_tab)
 		_processar_fila()
@@ -1177,6 +1178,7 @@ func _notification(what: int) -> void:
 			and _sobre != null:
 		RegistroSessao.fim(jogador)
 		Notificacoes.agendar(dados, jogador)
+		_saiu_em = Time.get_unix_time_from_system()
 
 
 ## Quadros por segundo no canto, só com o modo de playtest ligado: medir o
@@ -1529,6 +1531,54 @@ func _patrocinio() -> void:
 		_sobre.avisar("Contrato de %s encerrado. Há ofertas novas na Equipe." % nome)
 	if not r["encerrados"].is_empty():
 		atualizar()
+
+
+## Volta ao jogo (decisão 108): com renda do patrocínio, a tela própria
+## "Enquanto você esteve fora"; sem ela, o relatório das corridas, como antes.
+func _abrir_volta(rel: Dictionary) -> void:
+	if int(rel.get("patrocinio", 0)) <= 0:
+		_mostrar_relatorio(rel, "Enquanto você esteve fora")
+		return
+	if get_node_or_null("TelaVolta") != null:
+		return
+	var t := TelaVolta.new(rel, dados)
+	t.name = "TelaVolta"
+	add_child(t)
+	t.dobrar.connect(func(valor: int):
+		var video := VideoRecompensa.new("dobrar a renda offline", "coroa")
+		add_child(video)
+		video.terminou.connect(func(assistiu):
+			if not assistiu:
+				t.liberar_dobro()
+				return
+			jogador.economia.creditar(valor)
+			get_node("/root/SaveManager").salvar()
+			atualizar()
+			t.dobrado()))
+
+
+## Quando o jogo saiu de foco (s Unix) e quanto tempo fora abre a tela de volta.
+var _saiu_em := 0.0
+const VOLTA_MIN_S := 300.0
+
+
+## O jogo voltou do segundo plano: a renda do patrocínio do tempo fora entra de
+## uma vez e aparece na tela de volta (o relógio de 1 s pagaria em silêncio).
+func _volta_do_segundo_plano() -> void:
+	var agora := Time.get_unix_time_from_system()
+	var rel := {"corridas": [], "erro": "", "carros_premio": [], "premio_total": 0}
+	rel["treino_concluido"] = GestaoEquipe.concluir_treino(jogador, agora)
+	var pat := GestaoEquipe.acumular(dados, jogador, agora)
+	rel["patrocinio"] = pat["ganho"]
+	rel["patrocinios_encerrados"] = pat["encerrados"]
+	var fora := agora - _saiu_em
+	if int(rel["patrocinio"]) <= 0:
+		return
+	get_node("/root/SaveManager").salvar()
+	atualizar()
+	# Trocar de aba ou de app por instantes (Web dá foco a cada troca) não abre a tela.
+	if _saiu_em > 0.0 and fora >= VOLTA_MIN_S:
+		_abrir_volta(rel)
 
 
 func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
