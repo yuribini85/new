@@ -19,6 +19,9 @@ signal painel(titulo: String, montar: Callable, botoes: Array)
 signal painel_estilo(titulo: String, montar: Callable, botoes: Array, estilo: Dictionary)
 ## Fecha o painel aberto (ex.: escolher um carro na janela da garagem).
 signal fechar_painel
+## Tanque vazio (Combustivel): a tela principal oferece o vídeo que enche o
+## tanque e, cheio, chama `depois`.
+signal sem_combustivel(depois: Callable)
 
 enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 const EQUIPE := 6  # aba Equipe (principal.gd → ABA_EQUIPE)
@@ -884,6 +887,65 @@ func selos(lista: Array, pai: Control = null) -> Control:
 
 ## Avisa a tela principal (aviso no topo).
 ## Dispara um trigger da história (Historia); true se uma cena foi pedida.
+## Medidor do combustível no alto à esquerda da imagem do topo: galão, quanto
+## tem e quando vem o próximo. Tocar abre a tela do combustível (e o vídeo).
+## Some no tutorial e sem regras nos dados.
+func medidor_combustivel(faixa: Control) -> void:
+	if not Combustivel.vale(dados, jogador):
+		return
+	var b := Button.new()
+	Tipografia.acao_secundaria(b, "", Color(0.93, 0.91, 0.87), 22)
+	sobre_imagem(b)
+	b.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	b.offset_left = 16
+	b.offset_right = 16 + 250
+	b.offset_top = Cabecalho.ALTURA_MARCADOR
+	b.offset_bottom = Cabecalho.ALTURA_MARCADOR + Tipografia.ALTURA_SECUNDARIA
+	b.tooltip_text = "Combustível"
+	b.pressed.connect(func(): sem_combustivel.emit(Callable()))
+	faixa.add_child(b)
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 14
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(h)
+	var ic := IconeVetor.new("combustivel", Cabecalho.COR_NUMERO)
+	ic.cor_fundo = Color(0.08, 0.08, 0.09)
+	ic.custom_minimum_size = Vector2(34, 34)
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(ic)
+	var n := Label.new()
+	Tipografia.numero(n, 30)
+	n.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(n)
+	var t := Label.new()
+	Tipografia.rotulo(t, "medium", 20)
+	t.add_theme_color_override("font_color", Color(0.86, 0.87, 0.9))
+	t.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(t)
+	var mostrar := func():
+		var q := Combustivel.quantidade(dados, jogador)
+		n.text = "%d/%d" % [q, Combustivel.tanque(dados)]
+		n.add_theme_color_override("font_color", Cabecalho.COR_NUMERO if q > 0 else COR_RUIM)
+		var falta := Combustivel.proxima_s(dados, jogador)
+		t.text = "+1 em %s" % Aceleracao.texto_tempo(falta) if falta > 0.0 else "cheio"
+	mostrar.call()
+	var relogio := Timer.new()
+	relogio.wait_time = 1.0
+	relogio.autostart = true
+	relogio.timeout.connect(mostrar)
+	b.add_child(relogio)
+
+
+## Roda `acao` se houver combustível; senão, pede o vídeo que enche o tanque.
+func com_combustivel(acao: Callable) -> void:
+	if Combustivel.pode(dados, jogador):
+		acao.call()
+	else:
+		sem_combustivel.emit(acao)
+
+
 func historia(trigger: String, ctx: Dictionary = {}) -> bool:
 	return jogador.historia != null and jogador.historia.disparar(trigger, ctx)
 

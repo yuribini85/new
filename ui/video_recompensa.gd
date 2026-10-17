@@ -14,7 +14,7 @@ var _contagem: Label
 var _fechou := false
 
 
-func _init() -> void:
+func _init(recompensa := "as corridas andarem mais rápido", icone_ := "acelerar") -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	var fundo := ColorRect.new()
@@ -28,7 +28,7 @@ func _init() -> void:
 	v.custom_minimum_size = Vector2(560, 0)
 	v.add_theme_constant_override("separation", 22)
 	centro.add_child(v)
-	var icone := IconeVetor.new("acelerar", Cabecalho.COR_NUMERO)
+	var icone := IconeVetor.new(icone_, Cabecalho.COR_NUMERO)
 	icone.custom_minimum_size = Vector2(0, 120)
 	v.add_child(icone)
 	var t := Label.new()
@@ -37,7 +37,7 @@ func _init() -> void:
 	Tipografia.rotulo(t, "semibold", 40)
 	v.add_child(t)
 	var d := Label.new()
-	d.text = "Aqui entra o anúncio de verdade. Assista até o fim para as corridas andarem mais rápido."
+	d.text = "Aqui entra o anúncio de verdade. Assista até o fim para %s." % recompensa
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	d.add_theme_font_size_override("font_size", 26)

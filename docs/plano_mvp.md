@@ -907,3 +907,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     própria, separada (pendente: criar essa loja, com a loja do aparelho, como o Sem
     anúncios); na seleção os premium aparecem só depois de comprados e ficam sempre no
     mercado (flag PACK_PREMIUM).
+98. **Combustível e repetição** (2026-10-17, decisões do usuário, números pelo ritmo medido
+    no playtest da campanha: corrida mediana 7 min, 6-8 corridas nos primeiros 30 min, ~10/h
+    depois). Tanque de 8 (`monetizacao.json` → `combustivel`), +1 a cada 15 min em tempo
+    real, também com o app fechado; corrida e luta da arena (e desafios do Grid) gastam 1;
+    treino de licença e tutorial (até liberar o ACELERAR) não gastam. Tanque vazio: o vídeo
+    com recompensa enche o tanque inteiro. Repetir prova já vencida paga 50%, 25% e depois
+    10% do prêmio, voltando a 100% a cada 24 h (`carreira.json` → `repeticao`); provas sem
+    licença ficam fora, para não travar o começo (a renda inicial é repetir a primeira
+    prova vencida). Não vem do GT2.

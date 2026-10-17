@@ -87,6 +87,17 @@ func _draw() -> void:
 				hexa.append(c + Vector2.from_angle(TAU * k / 6.0 + PI / 6.0) * r * 0.92)
 			draw_colored_polygon(hexa, cor)
 			draw_circle(c, r * 0.4, cor_fundo)
+		"combustivel":
+			# Galão: corpo com o canto de cima cortado, alça vazada e bico.
+			var r := lado * 0.5
+			var corpo := PackedVector2Array([c + Vector2(-0.62, -0.5) * r, c + Vector2(0.22, -0.5) * r,
+					c + Vector2(0.62, -0.1) * r, c + Vector2(0.62, 0.95) * r, c + Vector2(-0.62, 0.95) * r])
+			draw_colored_polygon(corpo, cor)
+			draw_rect(Rect2(c + Vector2(-0.4, -0.38) * r, Vector2(0.44, 0.16) * r), cor_fundo)
+			draw_line(c + Vector2(-0.32, 0.2) * r, c + Vector2(0.32, 0.72) * r, cor_fundo, maxf(r * 0.12, 1.5))
+			draw_line(c + Vector2(0.32, 0.2) * r, c + Vector2(-0.32, 0.72) * r, cor_fundo, maxf(r * 0.12, 1.5))
+			draw_colored_polygon(PackedVector2Array([c + Vector2(-0.5, -0.5) * r, c + Vector2(-0.3, -0.5) * r,
+					c + Vector2(-0.12, -0.95) * r, c + Vector2(-0.32, -0.95) * r]), cor)
 		"desfazer", "refazer":
 			# Seta curva para trás (desfazer) ou para a frente (refazer).
 			var r := lado * 0.5

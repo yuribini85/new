@@ -3,5 +3,10 @@
   "fator": 2.0,
   "duracao_s": 1800,
   "teto_s": null
+ },
+ "combustivel": {
+  "tanque": 8,
+  "renova_s": 900,
+  "_nota": "Decisão do usuário (2026-10-17), pelo ritmo medido no playtest da campanha (3 perfis, 3 h): tanque 8 = corridas dos primeiros 30 min (6-8), ninguém fica sem no tutorial; +1 a cada 15 min enche em 2 h fora; jogando direto (~10 corridas/h, mediana 7 min) acaba em ~1h20. Corrida e luta da arena gastam 1; o vídeo com recompensa enche o tanque."
  }
 }

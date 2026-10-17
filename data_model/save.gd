@@ -54,6 +54,8 @@ static func serializar(jogador: Node) -> Dictionary:
 		"fila": jogador.fila,
 		"ultimo_processamento": jogador.ultimo_processamento,
 		"aceleracao": jogador.aceleracao,
+		"combustivel": jogador.combustivel,
+		"repeticoes": jogador.repeticoes,
 		"ampliacoes_garagem": jogador.ampliacoes_garagem,
 		"contador_sementes": jogador.contador_sementes,
 	}
@@ -261,5 +263,17 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	if ac is Dictionary and ac.has_all(["ganho", "inicio", "fim", "fator"]):
 		jogador.aceleracao = {"ganho": float(ac["ganho"]), "inicio": float(ac["inicio"]),
 				"fim": float(ac["fim"]), "fator": float(ac["fator"])}
+	# Opcionais: saves anteriores ao combustível carregam com o tanque cheio.
+	jogador.combustivel = {}
+	var cb = s.get("combustivel")
+	if cb is Dictionary and cb.has_all(["qtd", "desde"]):
+		jogador.combustivel = {"qtd": int(cb["qtd"]), "desde": float(cb["desde"])}
+	jogador.repeticoes = {}
+	var rp = s.get("repeticoes")
+	if rp is Dictionary and rp.get("provas") is Dictionary:
+		var provas := {}
+		for k in rp["provas"]:
+			provas[String(k)] = int(rp["provas"][k])
+		jogador.repeticoes = {"periodo": int(rp.get("periodo", 0)), "provas": provas}
 	jogador.contador_sementes = int(s["contador_sementes"])
 	return ""

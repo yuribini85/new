@@ -65,6 +65,11 @@ var fila: Dictionary = {}
 var ultimo_processamento: float = 0.0
 ## Corridas aceleradas (Aceleracao, decisão 39): {ganho, inicio, fim, fator}.
 var aceleracao: Dictionary = {}
+## Combustível (Combustivel): {} = tanque cheio; {qtd, desde}.
+var combustivel: Dictionary = {}
+## Repetições de prova já vencida no período (Carreira.fator_repeticao):
+## {periodo, provas: {evento_id: n}}.
+var repeticoes: Dictionary = {}
 ## Ampliações da garagem compradas (VagasGaragem, decisão 43).
 var ampliacoes_garagem: int = 0
 var contador_sementes: int = 0
@@ -100,6 +105,8 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	fila = {}
 	ultimo_processamento = 0.0
 	aceleracao = {}
+	combustivel = {}
+	repeticoes = {}
 	ampliacoes_garagem = 0
 	contador_sementes = 0
 	vitorias = {}

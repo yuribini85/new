@@ -185,6 +185,7 @@ func _ready() -> void:
 		a.painel.connect(_sobre.abrir)
 		a.painel_estilo.connect(_sobre.abrir)
 		a.fechar_painel.connect(_sobre.fechar)
+		a.sem_combustivel.connect(_abrir_combustivel)
 	if jogador.historia != null:
 		# O destaque fica abaixo do diálogo: o resto da tela escurece, a caixa não.
 		_destaque = Destaque.new()
@@ -447,6 +448,53 @@ func _ativar_aceleracao() -> void:
 	_sobre.avisar("Corridas %d× por mais %d min (faltam %s)." % [roundi(float(jogador.aceleracao["fator"])),
 			roundi(float(_regras_aceleracao()["duracao_s"]) / 60.0),
 			Aceleracao.texto_tempo(Aceleracao.restante_s(jogador))])
+
+
+## Combustível (Combustivel): quanto tem, quando renova e o vídeo que enche o
+## tanque. `depois` (a largada que esperava o combustível) roda com o tanque cheio.
+func _abrir_combustivel(depois: Callable = Callable()) -> void:
+	var cheio := Combustivel.quantidade(dados, jogador) >= Combustivel.tanque(dados)
+	_sobre.abrir("Combustível", func(v):
+		var aba: Aba = _todas[0]
+		var c := aba.cartao(Cabecalho.COR_NUMERO, v)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 14)
+		c.add_child(h)
+		var ic := IconeVetor.new("combustivel", Cabecalho.COR_NUMERO)
+		ic.cor_fundo = Color(0.09, 0.09, 0.1)
+		ic.custom_minimum_size = Vector2(56, 52)
+		h.add_child(ic)
+		var n := Label.new()
+		n.text = "%d/%d" % [Combustivel.quantidade(dados, jogador), Combustivel.tanque(dados)]
+		Tipografia.numero(n, 56)
+		n.add_theme_color_override("font_color", Cabecalho.COR_NUMERO)
+		h.add_child(n)
+		var renova := roundi(float(Combustivel.regras(dados)["renova_s"]) / 60.0)
+		var linha := "Cada corrida ou luta da arena gasta 1. O tanque renova sozinho: +1 a cada %d min, " % renova \
+				+ "mesmo com o jogo fechado."
+		if not cheio:
+			linha += " Próximo em %s; cheio em %s." % [Aceleracao.texto_tempo(Combustivel.proxima_s(dados, jogador)),
+					Aceleracao.texto_tempo(Combustivel.cheio_em_s(dados, jogador))]
+		aba.rotulo(linha, Aba.FONTE_PEQUENA, Color.WHITE, c).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if not depois.is_null():
+			aba.rotulo("Sem combustível para largar. Assista ao vídeo para encher o tanque.", Aba.FONTE_PEQUENA,
+					Aba.COR_RUIM.lightened(0.25), c).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART,
+		[["Tanque cheio", func(): pass, null, false] if cheio
+				else ["Assistir vídeo · tanque cheio", func(): _video_combustivel(depois)], ["Fechar", func(): pass]])
+
+
+func _video_combustivel(depois: Callable) -> void:
+	var video := VideoRecompensa.new("encher o tanque de combustível", "combustivel")
+	add_child(video)
+	video.terminou.connect(func(assistiu):
+		if not assistiu:
+			return
+		Combustivel.encher(jogador)
+		get_node("/root/SaveManager").salvar()
+		_avisar("Tanque cheio.")
+		atualizar()
+		if not depois.is_null():
+			depois.call())
 
 
 ## Compra Sem anúncios: o lugar já existe; a compra real entra com a loja do
@@ -1087,13 +1135,20 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	if continua:
 		botoes = [["Assistir a próxima", func(): _ir_para(4), "icone_ao_vivo"], ["Fechar", func(): pass]]
 	else:
+		var de_novo := func():
+			var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Aceleracao.agora(jogador))
+			if m != "":
+				_sobre.avisar("Não deu para correr: %s." % m, false)
+			else:
+				Combustivel.gastar(dados, jogador)
+				get_node("/root/SaveManager").salvar()
+				_ir_para(4)
+			atualizar()
 		botoes = [["Disputar de novo", func():
-				var m: String = jogador.fila_ctrl.iniciar(c["evento_id"], c["uid"], 1, Aceleracao.agora(jogador))
-				if m != "":
-					_sobre.avisar("Não deu para correr: %s." % m, false)
+				if Combustivel.pode(dados, jogador):
+					de_novo.call()
 				else:
-					_ir_para(4)
-				atualizar(), "icone_de_novo"],
+					_abrir_combustivel(de_novo), "icone_de_novo"],
 			["Melhorar o carro", func():
 				jogador.carro_ativo = c["uid"]
 				_ir_para(0)

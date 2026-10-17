@@ -68,6 +68,7 @@ func construir() -> void:
 		jogador.carro_ativo = garagem.uid
 		ir_para.emit(GARAGEM))
 	topo.add_child(trocar)
+	medidor_combustivel(topo)
 	var c := garagem
 	if not jogador.fila.is_empty():
 		_fila()
@@ -303,7 +304,10 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 
 
 ## Prêmios do 1º ao 3º, cada um com a moeda (o ícone já diz giros).
+## Prova já vencida: o valor que a próxima corrida paga (cai a cada repetição)
+## e uma linha dizendo quanto e quando volta a 100%.
 func _premios(ev: Dictionary, col: VBoxContainer, pode: bool) -> void:
+	var fator: float = jogador.carreira.fator_repeticao(ev["id"]) if jogador.carreira != null else 1.0
 	var premios := HBoxContainer.new()
 	premios.add_theme_constant_override("separation", 6)
 	col.add_child(premios)
@@ -318,13 +322,18 @@ func _premios(ev: Dictionary, col: VBoxContainer, pode: bool) -> void:
 		lp_pos.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		lp_pos.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		# Valor logo depois da posição e a moeda de giros do cabeçalho depois dele.
-		var lv := rotulo(dinheiro(int(ev["premios"][k])), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
+		var lv := rotulo(dinheiro(roundi(int(ev["premios"][k]) * fator)), 0, COR_DESTAQUE if pode and k == 0 else (Color.WHITE if pode else COR_SECUNDARIA), cel)
 		Tipografia.numero(lv, [30, 24, 22][k])
 		lv.autowrap_mode = TextServer.AUTOWRAP_OFF
 		lv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		var moeda := icone(ICONE_GIROS, 24, cel)
 		moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if fator < 1.0:
+		var rep := rotulo("Repetição: prêmio em %d%%. Volta a 100%% em %s." % [roundi(fator * 100.0),
+				_tempo(jogador.carreira.repeticao_volta_em())], FONTE_PEQUENA - 3,
+				COR_RUIM.lightened(0.25), col)
+		rep.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
 ## Selo da licença exigida no canto de cima, à direita, por cima do cartão.
@@ -590,10 +599,16 @@ func _correr(evento_id: String) -> void:
 	var etapas := Campeonatos.etapas(dados, Campeonatos.serie(ev))
 	if not etapas.is_empty() and etapas.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"]):
 		historia("CAMPEONATO_SELECIONADO", ctx)
+	com_combustivel(_largar.bind(evento_id))
+
+
+func _largar(evento_id: String) -> void:
+	var ctx := {"evento": evento_id}
 	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, Escalacao.uid(jogador, "corrida"), 1, Aceleracao.agora(jogador))
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
+	Combustivel.gastar(dados, jogador)
 	correr_iniciado.emit()
 	# Da segunda corrida em diante (o navegador só pergunta depois de um toque):
 	# a permissão do aviso de fim de corrida.

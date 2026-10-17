@@ -389,3 +389,54 @@ func test_dono_comeca_sem_carro_e_ganha_o_da_mara_na_national() -> void:
 	verificar(c.pecas.size() >= 5, "preparado: %d categorias com peça" % c.pecas.size())
 	j.free()
 	d.free()
+
+
+## Combustível e prêmio na repetição (decisões do usuário, 2026-10-17). Dados reais.
+func test_combustivel_e_repeticao() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	var r := Combustivel.regras(d)
+	verificar(not r.is_empty(), "regras do combustível nos dados")
+	var tanque := int(r["tanque"])
+	var passo := float(r["renova_s"])
+	var t0 := 1_000_000.0
+	verificar(Combustivel.vale(d, j), "sem história, o combustível vale")
+	igual(Combustivel.quantidade(d, j, t0), tanque, "começa cheio")
+	for i in tanque:
+		verificar(Combustivel.gastar(d, j, t0), "gasta %d" % (i + 1))
+	igual(Combustivel.quantidade(d, j, t0), 0, "vazio")
+	verificar(not Combustivel.pode(d, j, t0) and not Combustivel.gastar(d, j, t0), "vazio não larga")
+	igual(Combustivel.quantidade(d, j, t0 + passo * 1.5), 1, "renova 1 por período")
+	perto(Combustivel.proxima_s(d, j, t0 + passo * 1.5), passo * 0.5, 1e-6, "próxima no meio do período")
+	verificar(Combustivel.gastar(d, j, t0 + passo * 1.5), "gasta o renovado")
+	igual(Combustivel.quantidade(d, j, t0 + passo * 2.0), 1, "fração do período guardada ao gastar")
+	igual(Combustivel.quantidade(d, j, t0 - 3600.0), 0, "relógio voltando não dá combustível")
+	igual(Combustivel.quantidade(d, j, t0 + passo * 100.0), tanque, "não passa do tanque")
+	Combustivel.encher(j)
+	igual(Combustivel.quantidade(d, j, t0), tanque, "vídeo enche o tanque")
+	# Repetição: só prova vencida com licença; cai e volta no período seguinte.
+	var c := Carreira.new(d, j)
+	j.carreira = c
+	var ev := ""
+	for e in d.lista("eventos"):
+		if String(e["restricoes"].get("licenca", "")) != "" and not e["premios"].is_empty():
+			ev = e["id"]
+			break
+	var livre := ""
+	for e in d.lista("eventos"):
+		if String(e["restricoes"].get("licenca", "")) == "" and not e["premios"].is_empty():
+			livre = e["id"]
+			break
+	perto(c.fator_repeticao(ev, t0), 1.0, 1e-9, "não vencida paga inteiro")
+	j.vitorias[ev] = 1
+	j.vitorias[livre] = 1
+	var fatores: Array = d.carreira()["repeticao"]["fatores"]
+	for k in fatores.size() + 1:
+		perto(c.fator_repeticao(ev, t0), float(fatores[mini(k, fatores.size() - 1)]), 1e-9, "repetição %d" % (k + 1))
+		c._contar_repeticao(ev, t0)
+	perto(c.fator_repeticao(livre, t0), 1.0, 1e-9, "prova sem licença fica fora")
+	perto(c.fator_repeticao(ev, t0 + c.repeticao_volta_em(t0) + 1.0), float(fatores[0]), 1e-9, "período novo recomeça")
+	j.free()
+	d.free()

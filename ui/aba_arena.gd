@@ -45,6 +45,7 @@ func construir() -> void:
 		jogador.carro_ativo = esc.uid
 		ir_para.emit(GARAGEM))
 	faixa.add_child(trocar)
+	medidor_combustivel(faixa)
 	cartao_desafio_grid("arena", _confirmar_desafio)
 	_cartao_luta(esc, "")
 	_simulacao(esc)
@@ -150,11 +151,14 @@ func _confirmar(car: Carro) -> void:
 		else:
 			rotulo("Na dupla, %s num carro emprestado." % par["nome"], FONTE_PEQUENA + 2, Color.WHITE, pv)
 			rotulo("Se o seu for eliminado, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
-		[["Entrar", func(): _entrar(car.uid)], ["Cancelar", func(): pass]])
+		[["Entrar", func(): com_combustivel(_entrar.bind(car.uid))], ["Cancelar", func(): pass]])
 
 
 ## Resolve e aplica a luta agora; a tela da luta só mostra.
 func _entrar(uid: int) -> void:
+	if jogador.garagem.carro(uid) == null:
+		return
+	Combustivel.gastar(dados, jogador)
 	jogador.contador_sementes += 1
 	var semente := hash("arena:%d" % jogador.contador_sementes)
 	var montada := ArenaCarreira.montar(dados, jogador, uid, semente)
@@ -187,10 +191,11 @@ func _confirmar_desafio(eq: Dictionary) -> void:
 			rotulo("Melhor de %d: carro destruído é trocado pelo próximo da garagem no round seguinte." % int(d["rounds"]),
 					FONTE_PEQUENA + 2, Color.WHITE, pv)
 		rotulo("Carro destruído sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
-		[["Desafiar", func(): _desafiar(eq)], ["Cancelar", func(): pass]])
+		[["Desafiar", func(): com_combustivel(_desafiar.bind(eq))], ["Cancelar", func(): pass]])
 
 
 func _desafiar(eq: Dictionary) -> void:
+	Combustivel.gastar(dados, jogador)
 	jogador.contador_sementes += 1
 	var semente := hash("grid:%d" % jogador.contador_sementes)
 	var montada := GridDesafio.montar_arena(dados, jogador, eq, semente)

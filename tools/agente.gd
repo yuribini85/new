@@ -188,7 +188,8 @@ func _chave(evento_id: String) -> String:
 func _correr(evento_id: String, tipo: String) -> Dictionary:
 	_avisar("largada", {"evento": evento_id, "tipo": tipo})
 	semente += 1
-	var r: Dictionary = j.carreira.disputar(evento_id, uid, hash("agente:%s:%d" % [perfil, semente]))
+	# O período das repetições (prêmio menor) corre no tempo de corrida simulado.
+	var r: Dictionary = j.carreira.disputar(evento_id, uid, hash("agente:%s:%d" % [perfil, semente]), tempo)
 	if r.has("erro"):
 		return {}
 	var dur: float = r["resultado"]["duracao"]
@@ -283,6 +284,7 @@ func _juntar(preco: int, nome: String) -> bool:
 	var cr := 0
 	var s := 0.0
 	while not j.economia.pode_pagar(preco):
+		ev = _escolher_renda()  # o prêmio cai a cada repetição: troca quando outra rende mais
 		var r := _correr(ev, "renda")
 		if r.is_empty():
 			return false
@@ -298,8 +300,10 @@ func _juntar(preco: int, nome: String) -> bool:
 	return true
 
 
-## Prova vencida para repetir: a última (sugestoes), ao acaso (explora) ou a de
-## maior Cr/min já visto (renda). "" se nenhuma.
+## Prova vencida para repetir: ao acaso (explora); senão a de maior Cr/min já
+## visto com o prêmio de agora (cai a cada repetição, Carreira.fator_repeticao,
+## e a tela mostra o valor reduzido); no empate, a última vencida (sugestoes).
+## "" se nenhuma.
 func _escolher_renda() -> String:
 	var carro: Carro = j.garagem.carro(uid)
 	var vencidas: Array = j.vitorias.keys().filter(func(e): return Elegibilidade.motivos(carro,
@@ -308,10 +312,15 @@ func _escolher_renda() -> String:
 		return ""
 	if perfil == "explora":
 		return vencidas[rng.randi_range(0, vencidas.size() - 1)]
-	if perfil == "renda":
-		vencidas.sort_custom(func(a, b): return _cr_min(a) > _cr_min(b))
-		return vencidas[0]
-	return _ultima_vencida if _ultima_vencida in vencidas else vencidas[0]
+	var valor := func(e: String) -> float: return _cr_min(e) * j.carreira.fator_repeticao(e, tempo)
+	if perfil == "sugestoes" and _ultima_vencida in vencidas:
+		vencidas.erase(_ultima_vencida)
+		vencidas.push_front(_ultima_vencida)
+	var melhor: String = vencidas[0]
+	for e in vencidas:
+		if valor.call(e) > valor.call(melhor):
+			melhor = e
+	return melhor
 
 
 func _cr_min(evento_id: String) -> float:

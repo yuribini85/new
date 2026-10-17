@@ -18,10 +18,14 @@ func _init(dados_: Node, jogador_: Node) -> void:
 
 
 ## Disputa e aplica o resultado na hora. Retorna {"erro"} ou o mesmo que aplicar().
-func disputar(evento_id: String, uid: int, semente: int) -> Dictionary:
+## `agora_real` (>= 0): relógio do período das repetições (fator_repeticao);
+## o agente de playtest passa o tempo simulado. Padrão: o relógio do sistema.
+func disputar(evento_id: String, uid: int, semente: int, agora_real := -1.0) -> Dictionary:
 	var corrida := preparar(evento_id, uid, semente)
 	if corrida.has("erro"):
 		return corrida
+	if agora_real >= 0.0:
+		corrida["agora_real"] = agora_real
 	return aplicar(corrida)
 
 
@@ -320,6 +324,50 @@ func carro_participante(id: String) -> Dictionary:
 	return dados.carro(id.split("_", true, 1)[1]) if id.begins_with("adv") else {}
 
 
+## Recompensa ao repetir prova já vencida (2026-10-17, decisão do usuário):
+## carreira.json → repeticao {fatores, periodo_h}. A n-ésima repetição no
+## período paga fatores[n-1] do prêmio (o último é o piso); o período vira no
+## mesmo relógio da renovação do mercado de pilotos. Prova não vencida: 1.
+func fator_repeticao(evento_id: String, agora_real: float = Time.get_unix_time_from_system()) -> float:
+	if not jogador.vitorias.has(evento_id):
+		return 1.0
+	var r: Dictionary = dados.carreira().get("repeticao", {})
+	if r.get("so_com_licenca", false) and String(dados.evento(evento_id)["restricoes"].get("licenca", "")) == "":
+		return 1.0
+	var fatores: Array = r.get("fatores", [])
+	if fatores.is_empty():
+		return 1.0
+	var n := repeticoes_no_periodo(evento_id, agora_real)
+	return float(fatores[mini(n, fatores.size() - 1)])
+
+
+## Repetições já feitas da prova no período atual.
+func repeticoes_no_periodo(evento_id: String, agora_real: float = Time.get_unix_time_from_system()) -> int:
+	var rp: Dictionary = jogador.repeticoes
+	if rp.is_empty() or int(rp.get("periodo", -1)) != _periodo_repeticao(agora_real):
+		return 0
+	return int(rp["provas"].get(evento_id, 0))
+
+
+## Segundos até o prêmio das repetições voltar a 100% (o período virar).
+func repeticao_volta_em(agora_real: float = Time.get_unix_time_from_system()) -> float:
+	var h := maxf(float(dados.carreira().get("repeticao", {}).get("periodo_h", 24)), 1.0) * 3600.0
+	return (_periodo_repeticao(agora_real) + 1) * h - agora_real
+
+
+func _periodo_repeticao(agora_real: float) -> int:
+	var h := maxf(float(dados.carreira().get("repeticao", {}).get("periodo_h", 24)), 1.0)
+	return int(floor(agora_real / (h * 3600.0)))
+
+
+func _contar_repeticao(evento_id: String, agora_real: float) -> void:
+	var p := _periodo_repeticao(agora_real)
+	if jogador.repeticoes.is_empty() or int(jogador.repeticoes.get("periodo", -1)) != p:
+		jogador.repeticoes = {"periodo": p, "provas": {}}
+	var provas: Dictionary = jogador.repeticoes["provas"]
+	provas[evento_id] = int(provas.get(evento_id, 0)) + 1
+
+
 ## Paga prêmio, entrega carro-prêmio e conta o dia.
 ## Retorna {"evento_id", "classificacao", "posicao", "premio", "carro_premio_uid", "resultado"}.
 func aplicar(corrida: Dictionary) -> Dictionary:
@@ -333,6 +381,12 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var premio := 0
 	if posicao <= ev["premios"].size():
 		premio = int(ev["premios"][posicao - 1])
+	# Prova já vencida: o prêmio cai a cada repetição no período.
+	var agora_real := float(corrida.get("agora_real", Time.get_unix_time_from_system()))
+	var fator := fator_repeticao(evento_id, agora_real)
+	if jogador.vitorias.has(evento_id):
+		_contar_repeticao(evento_id, agora_real)
+	premio = roundi(premio * fator)
 	jogador.economia.creditar(premio)
 
 	var carro_premio_uid := -1
@@ -368,6 +422,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"folha": folha,
 		"patrocinio": patrocinio,
 		"premio": premio,
+		"fator_repeticao": fator,
 		"carro_premio_uid": carro_premio_uid,
 		"resultado": r,
 		"campeonato": campeonato,
