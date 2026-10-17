@@ -370,7 +370,7 @@ Sistema: Blindagem: Oficina, ao lado da velocidade máxima.
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
 Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.
-Dex: Comprou, é sua. Tira e põe de graça: com chapa na arena, sem chapa na corrida.
+Dex: Comprou, é sua. Tirar a chapa custa metade do que ela custou; pôr de volta é de graça.
 Sistema: Escolha o nível e toque em Instalar.
 
 = CW_AR04 | BLINDAGEM_COMPRADA | personagem=dono; proibe=FIRST_ARMOR; flags=FIRST_ARMOR

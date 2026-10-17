@@ -412,12 +412,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 		if it[0] == "blindagem":
 			if Blindagem.itens(dados, c).is_empty() or not _arena_aberta():
 				continue
-			cartao_ficha.mouse_filter = Control.MOUSE_FILTER_STOP
-			cartao_ficha.gui_input.connect(func(ev: InputEvent):
-				if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
-					Sons.tocar_ui(self, "toque", -6.0)
-					_abrir_evolucao(c, Blindagem.CATEGORIA)
-					historia("BLINDAGEM"))
+			# A compra fica na aba PREPARAÇÃO DE ARENA: o cartão só mostra o nível.
 		var e := StyleBoxFlat.new()
 		e.bg_color = Color(COR_FUNDO, 0.82)
 		e.border_color = Color(1, 1, 1, 0.1)
@@ -444,7 +439,8 @@ func _palco(c: Carro, lista: Array) -> Control:
 		icone.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icone.custom_minimum_size = Vector2(TAMANHO_ICONE_FICHA, TAMANHO_ICONE_FICHA)
 		icone.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		icone.modulate = COR_ICONE_FICHA.lerp(COR_DESTAQUE, it[4])
+		# A blindagem é arte colorida (do usuário): sem tingir.
+		icone.modulate = Color.WHITE if it[0] == "blindagem" else COR_ICONE_FICHA.lerp(COR_DESTAQUE, it[4])
 		icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		linha.add_child(icone)
 		var num := VBoxContainer.new()
@@ -781,9 +777,25 @@ func _preparacao_arena(c: Carro, pai: Control) -> void:
 		return
 	pai.add_child(_cartao_roleta(c, [Blindagem.CATEGORIA, "Blindagem", [Blindagem.nivel(c), itens.size()]],
 			func(_k): pass, 0))
-	var nota := rotulo("Na arena, aguenta mais pancada antes de a frente quebrar. Na pista, o peso cobra. "
-			+ "Paga com peças (desmanche e arena); os giros completam.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
-	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Tirar a chapa custa metade do que ela custou (pedido do usuário); em
+	# peças, os giros completam. Pôr de volta é de graça (a chapa continua sua).
+	var nv := Blindagem.nivel(c)
+	if nv > 0:
+		var custo := roundi(float(itens[nv - 1]["preco"]) / 2.0)
+		var b := Button.new()
+		var pode: bool = jogador.economia.pode_pagar_peca(custo, true)
+		Tipografia.acao_primaria(b, "REMOVER BLINDAGEM · %s PEÇAS" % dinheiro(custo),
+				COR_RUIM.darkened(0.25) if pode else Color(0.2, 0.2, 0.22), Color.WHITE if pode else COR_SECUNDARIA, 24, 60)
+		b.pressed.connect(func():
+			if not jogador.economia.debitar_peca(custo, true):
+				avisar("Faltam peças e giros para tirar a blindagem.", false)
+				return
+			c.remover(Blindagem.CATEGORIA)
+			Sons.tocar_ui(self, "parafusadeira", -8.0)
+			avisar("Blindagem removida. Pôr de volta é de graça.")
+			get_node("/root/SaveManager").salvar()
+			mudou.emit())
+		pai.add_child(b)
 
 
 ## Categoria a abrir na próxima construção (destaque do tutorial).
