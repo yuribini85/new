@@ -16,11 +16,17 @@ static var _testes_abertos := false
 
 ## `testes(v)`: modo de playtest e cenários (aba Carreira). `reabrir`: abre as
 ## Configurações de novo (a volta do Diário e do Recomeçar, que ocupam o painel).
-static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, reabrir := Callable()) -> void:
+## `loja`: abre a loja de dinheiro real (sem ela, a seção não aparece).
+static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, reabrir := Callable(),
+		loja := Callable()) -> void:
 	var voltar := func():
 		if reabrir.is_valid():
 			reabrir.call()
 	v.add_theme_constant_override("separation", 8)
+	if loja.is_valid():
+		# Loja de dinheiro real (decisão 101): Pack Elite e Sem anúncios.
+		_secao(v, "LOJA")
+		_linha_botao(v, "coroa", "PACK ELITE E SEM ANÚNCIOS", loja)
 	_secao(v, "SOM")
 	var c := _cartao(v)
 	var h := HBoxContainer.new()
@@ -334,7 +340,13 @@ static func _linha_botao(v: VBoxContainer, icone: String, t: String, acao: Calla
 	h.add_theme_constant_override("separation", 16)
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_child(h)
-	h.add_child(_icone(icone))
+	if Aba.arte("cfg_" + icone) != null:
+		h.add_child(_icone(icone))
+	else:  # sem arte cfg_: o ícone vetorial do mesmo nome
+		var iv := IconeVetor.new(icone, Aba.COR_DESTAQUE)
+		iv.custom_minimum_size = Vector2(46, 46)
+		iv.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(iv)
 	var l := _titulo(t)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(l)

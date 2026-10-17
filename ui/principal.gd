@@ -186,6 +186,7 @@ func _ready() -> void:
 		a.painel_estilo.connect(_sobre.abrir)
 		a.fechar_painel.connect(_sobre.fechar)
 		a.sem_combustivel.connect(_abrir_combustivel)
+		a.loja_real.connect(_abrir_loja_real)
 	if jogador.historia != null:
 		# O destaque fica abaixo do diálogo: o resto da tela escurece, a caixa não.
 		_destaque = Destaque.new()
@@ -427,7 +428,8 @@ func _abrir_aceleracao() -> void:
 				Aba.FONTE_PEQUENA, Color.WHITE, c)
 		Configuracoes.cartao_sem_anuncios(aba, v, _comprar_sem_anuncios),
 		[["Ativar grátis · +%d min" % minutos, _ativar_aceleracao] if _acelerar_gratis()
-				else ["Assistir vídeo · +%d min" % minutos, _assistir_video], ["Fechar", func(): pass]])
+				else (["Ativar · +%d min" % minutos, _ativar_aceleracao] if LojaReal.comprado(dados, jogador, "sem_anuncios")
+				else ["Assistir vídeo · +%d min" % minutos, _assistir_video]), ["Fechar", func(): pass]])
 
 
 ## Vídeo com recompensa (por enquanto, o de teste): no fim, soma a aceleração.
@@ -498,10 +500,38 @@ func _video_combustivel(depois: Callable) -> void:
 			depois.call())
 
 
-## Compra Sem anúncios: o lugar já existe; a compra real entra com a loja do
-## aparelho (depois do MVP).
+## Compra Sem anúncios (cartão da aceleração): pela loja de dinheiro real.
 func _comprar_sem_anuncios() -> void:
-	_sobre.avisar("A compra Sem anúncios chega com a loja do aparelho, na versão final.", false)
+	_comprar_real("sem_anuncios")
+
+
+## Loja de dinheiro real (decisão 101): tela própria, aberta das Configurações,
+## da aceleração e da contratação de pilotos.
+func _abrir_loja_real() -> void:
+	_sobre.abrir("LOJA", func(v):
+		LojaRealTela.montar(_todas[0], v, dados, jogador, _comprar_real, _restaurar_compras),
+		[["Fechar", func(): pass]], {"fora_fecha": true})
+
+
+func _comprar_real(id: String) -> void:
+	var erro := LojaReal.comprar(dados, jogador, id)
+	if erro != "":
+		_sobre.avisar("Não deu: %s." % erro, false)
+
+
+func _restaurar_compras() -> void:
+	var erro := LojaReal.restaurar(dados, jogador)
+	if erro != "":
+		_sobre.avisar("Não deu: %s." % erro, false)
+
+
+## A loja confirmou a compra (plugin da loja do aparelho; modo de teste).
+func compra_confirmada(id: String) -> void:
+	if LojaReal.conceder(dados, jogador, id) != "":
+		return
+	get_node("/root/SaveManager").salvar()
+	_avisar("%s: compra concluída." % String(LojaReal.produto(dados, id).get("nome", id)))
+	atualizar()
 
 
 ## Cabine de pintura do carro ativo: por cima das telas e do cabeçalho, abaixo
@@ -609,7 +639,8 @@ func _checar_arena() -> void:
 ## Engrenagem do cabeçalho.
 func _abrir_configuracoes() -> void:
 	_sobre.abrir("CONFIGURAÇÕES", func(v):
-		Configuracoes.montar(_todas[5], v, jogador, func(vv): _todas[5]._modo_teste(vv), _abrir_configuracoes),
+		Configuracoes.montar(_todas[5], v, jogador, func(vv): _todas[5]._modo_teste(vv), _abrir_configuracoes,
+				_abrir_loja_real if Configuracoes.tem_loja() else Callable()),
 		[["Fechar", func(): pass]], {"fora_fecha": true})
 
 

@@ -627,6 +627,13 @@ func _modo_teste(v: VBoxContainer) -> void:
 			+ "Ligado, o aparelho registra as sessões (só local).", v)
 	if Preferencias.modo_teste != "":
 		_cenarios(v)
+		# A loja do aparelho ainda não existe: libera as compras para testar.
+		botao("Liberar as compras da Loja (teste)", func():
+			for p in LojaReal.produtos(dados):
+				LojaReal.conceder(dados, jogador, String(p["id"]))
+			get_node("/root/SaveManager").salvar()
+			avisar("Compras liberadas (teste).")
+			mudou.emit(), false, true, v)
 	var sessoes := RegistroSessao.sessoes()
 	if sessoes.is_empty():
 		return

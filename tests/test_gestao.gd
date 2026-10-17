@@ -495,3 +495,19 @@ func test_luvas_da_contratacao() -> void:
 	igual(j.economia.saldo, 0, "pagou as luvas uma vez")
 	j.free()
 	d.free()
+
+
+func test_loja_real_compra_liga_a_flag() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	d.monetizacao()["loja"] = {"produtos": [{"id": "pack_premium", "sku": "pack_premium", "flag": "PACK_PREMIUM",
+			"nome": "Pack Elite", "descricao": ""}]}
+	verificar(not LojaReal.comprado(d, j, "pack_premium"), "começa sem o pack")
+	igual(LojaReal.comprar(d, j, "pack_premium"), LojaReal.SEM_LOJA, "sem a loja do aparelho, não cobra")
+	verificar(not EquipeJogador.tem_pack_premium(j), "pedir não concede")
+	igual(LojaReal.conceder(d, j, "pack_premium"), "", "a loja confirma")
+	verificar(EquipeJogador.tem_pack_premium(j), "a confirmação liga o pack")
+	igual(LojaReal.comprar(d, j, "pack_premium"), "já comprado", "não compra duas vezes")
+	igual(LojaReal.conceder(d, j, "nada"), "produto desconhecido", "produto que não existe")
+	j.free()
+	d.free()

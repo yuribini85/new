@@ -22,6 +22,8 @@ signal fechar_painel
 ## Tanque vazio (Combustivel): a tela principal oferece o vídeo que enche o
 ## tanque e, cheio, chama `depois`.
 signal sem_combustivel(depois: Callable)
+## Abre a loja de dinheiro real (decisão 101).
+signal loja_real
 
 enum { GARAGEM, LOJA, OFICINA, EVENTOS, CORRIDA, LICENCAS }
 const EQUIPE := 6  # aba Equipe (principal.gd → ABA_EQUIPE)

@@ -218,6 +218,13 @@ func _pilotos(eq: Dictionary) -> void:
 			_treino(c, EquipeJogador.piloto_vaga(jogador, vaga))
 		if vaga == "arena2" and EquipeJogador.piloto_vaga(jogador, vaga) != "":
 			_carro_companheiro()
+	# Decisão 101: os premium só entram no mercado depois do Pack Elite.
+	if not EquipeJogador.tem_pack_premium(jogador) and Configuracoes.tem_loja():
+		var b := Button.new()
+		Tipografia.acao_secundaria(b, "Pilotos de elite: Pack Elite na Loja   ›", LojaRealTela.COR_PREMIUM, 22, 64)
+		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		b.pressed.connect(func(): loja_real.emit())
+		conteudo.add_child(b)
 
 
 func _vaga_piloto(vaga: String, pai: Control) -> void:

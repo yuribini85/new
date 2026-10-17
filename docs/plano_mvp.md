@@ -930,3 +930,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     vez. Condição sem amostra (menos de 30 corridas cumpridas) vale 1 até nova medição.
     Cartão: nome e licença (texto) numa linha; ramo, "24 h" e "rende com o jogo fechado"
     na segunda; renda e bônus à esquerda e o botão ASSINAR à direita.
+101. **Loja de dinheiro real** (2026-10-17, pedido do usuário; recomendação aceita). Tela
+    própria (painel LOJA), aberta das Configurações (seção LOJA, primeira), do botão
+    "Pilotos de elite" na aba Equipe (só sem o pack) e da compra Sem anúncios da aceleração.
+    Produtos em `monetizacao.json → loja.produtos` (compra única; cada um liga uma flag):
+    Pack Elite (PACK_PREMIUM, os 3 pilotos premium) e Sem anúncios (SEM_ANUNCIOS: a
+    aceleração sem vídeo). O preço é o da loja do aparelho (sku), nunca do JSON; até o plugin
+    dela entrar (depois do MVP), comprar e restaurar avisam que a loja chega na versão final.
+    Na Web a loja não aparece. O modo de playtest tem "Liberar as compras da Loja (teste)".
