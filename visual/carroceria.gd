@@ -680,13 +680,34 @@ static func _cabine(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 	var moldura: String = "preto" if ctx["era"] in ["oitenta", "noventa", "moderno"] else MontagemMalha.PINTURA
 	var vf: float = float(f.get("vidro_frente", 99.0))
 	var vt: float = float(f.get("vidro_tras", -99.0))
+	# Coluna A reta (como nos carros reais): do pé do para-brisa até a frente do
+	# teto a linha é reta; a curva só arredondaria o para-brisa e a coluna.
+	var zr0: float = vf - 0.04
+	var frente_teto: Array = cima[0]
+	for p in cima:
+		if absf(float(p[0]) - zr0) < absf(float(frente_teto[0]) - zr0):
+			frente_teto = p
+	var pe_vidro: Array = cima[cima.size() - 1]
+	var reta := float(frente_teto[0]) < zf - 0.05 and vf < 90.0
 	var n := 16
+	var zs := []
+	for i in n:
+		zs.append(lerpf(zt, zf, float(i) / (n - 1)))
+	if reta:
+		# a seção mais perto da frente do teto vai para ela: a dobra cai numa aresta
+		var mais_perto := 1
+		for i in range(1, n - 1):
+			if absf(zs[i] - float(frente_teto[0])) < absf(zs[mais_perto] - float(frente_teto[0])):
+				mais_perto = i
+		zs[mais_perto] = float(frente_teto[0])
 	var secs := []
 	for i in n:
-		var u := float(i) / (n - 1)
-		var z := lerpf(zt, zf, u)
+		var z: float = zs[i]
 		var base := _curva(rows, z)
 		var top := _curva(cima, z)
+		if reta and z >= float(frente_teto[0]):
+			var t: float = (z - float(frente_teto[0])) / (zf - float(frente_teto[0]))
+			top = Vector2(lerpf(frente_teto[1], pe_vidro[1], t), lerpf(frente_teto[2], pe_vidro[2], t))
 		var yb: float = base.y + 0.004
 		var wb: float = base.x * 0.8
 		var yt: float = maxf(top.y, yb + 0.01)
