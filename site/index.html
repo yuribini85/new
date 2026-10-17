@@ -121,6 +121,13 @@ input:focus, select:focus { outline: 2px solid var(--ouro); outline-offset: 1px;
 .pronto h3 { font-size: 40px; color: var(--ouro); }
 .pronto p { color: var(--texto-2); }
 
+/* quem faz */
+.autor { display: grid; grid-template-columns: 200px 1fr; gap: 36px; align-items: center; max-width: 900px; }
+.autor img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid var(--ouro); }
+.autor p { color: var(--texto-2); margin: 12px 0 0; }
+.autor .nome { color: var(--texto); font-weight: 600; font-size: 22px; margin-top: 16px; }
+@media (max-width: 640px) { .autor { grid-template-columns: 1fr; gap: 20px; } .autor img { width: 140px; height: 140px; } }
+
 /* perguntas */
 details { border-bottom: 1px solid var(--linha); padding: 16px 0; }
 summary { cursor: pointer; font-weight: 600; font-size: 21px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
@@ -300,6 +307,19 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
     </div>
   </section>
 
+  <section id="autor" class="telas">
+    <div class="largura autor">
+      <img src="img/yuri.webp" width="360" height="360" alt="Yuri Bini">
+      <div>
+        <span class="rotulo" data-t="autor_rotulo">Quem faz</span>
+        <h2 data-t="autor_titulo">Um projeto independente</h2>
+        <p data-t="autor_d1">Chrome &amp; Wreckage é criado por Yuri Bini, arquiteto e urbanista em Itapema, Santa Catarina. O mesmo método de projeto aplicado em edifícios vai para as garagens, as pistas e as arenas do jogo.</p>
+        <p data-t="autor_d2">Não há estúdio grande por trás: cada resposta do teste é lida por quem decide o que muda no jogo.</p>
+        <p class="nome">Yuri Bini · <a href="https://nostos.arq.br/" target="_blank" rel="noopener" data-t="autor_link">trabalho de arquitetura</a></p>
+      </div>
+    </div>
+  </section>
+
   <section id="perguntas">
     <div class="largura">
       <span class="rotulo" data-t="faq_rotulo">Dúvidas</span>
@@ -374,6 +394,10 @@ const TEXTOS = {
     q5: "Will my progress carry over?", a5: "Balance may still change during the test. If progress has to be reset at launch, we'll let you know first.",
     q6: "What do you do with my data?", a6: "We use your name and email only to invite you and talk about the test. We don't sell or share it. To leave the list, reply to any of our emails asking for removal.",
     rodape: "Cars, makers, tracks and characters are fictional.",
+    autor_rotulo: "Who makes it", autor_titulo: "An independent project",
+    autor_d1: "Chrome &amp; Wreckage is made by Yuri Bini, an architect and urban planner from Itapema, Brazil. The same design method applied to buildings goes into the game's garages, tracks and arenas.",
+    autor_d2: "There's no big studio behind it: every test answer is read by the person who decides what changes in the game.",
+    autor_link: "architecture work",
     titulo_pagina: "Chrome & Wreckage — closed test",
   },
 };
