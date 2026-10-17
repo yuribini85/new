@@ -236,6 +236,18 @@ func _ready() -> void:
 			if not LojaReal.comprado(dados, jogador, id):
 				compra_confirmada(id))
 		ponte.erro.connect(func(t: String): _sobre.avisar("Compra não concluída: %s" % t, false))
+	# Progresso na nuvem do Play Games, quando o plugin está no export.
+	if Engine.has_singleton(NuvemPlay.SINGLETON):
+		var nuvem := NuvemPlay.new()
+		nuvem.name = "NuvemPlay"
+		add_child(nuvem)
+		nuvem.erro.connect(func(t: String): _sobre.avisar("Nuvem: %s." % t, false))
+		nuvem.baixado.connect(func(codigo: String):
+			var erro: String = get_node("/root/SaveManager").usar_codigo(codigo)
+			if erro != "":
+				_sobre.avisar("Nuvem: %s." % erro, false)
+				return
+			get_tree().reload_current_scene())
 	_fila_vista = jogador.fila
 	RegistroSessao.inicio(jogador)
 	RegistroSessao.corridas(save_manager.relatorio_offline, dados)
@@ -502,6 +514,9 @@ func _abrir_combustivel(depois: Callable = Callable()) -> void:
 			linha += " Próximo em %s; cheio em %s." % [Aceleracao.texto_tempo(Combustivel.proxima_s(dados, jogador)),
 					Aceleracao.texto_tempo(Combustivel.cheio_em_s(dados, jogador))]
 		aba.rotulo(linha, Aba.FONTE_PEQUENA, Color.WHITE, c).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if Combustivel.quantidade(dados, jogador) <= 0:
+			aba.rotulo("Enquanto isso: Oficina, Lojas e Equipe não gastam combustível.", Aba.FONTE_PEQUENA,
+					Aba.COR_SECUNDARIA, c).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if not depois.is_null():
 			aba.rotulo("Sem combustível para largar. Assista ao vídeo para encher o tanque.", Aba.FONTE_PEQUENA,
 					Aba.COR_RUIM.lightened(0.25), c).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART,
@@ -598,7 +613,27 @@ func _abrir_cabine() -> void:
 func _abrir_luta(dados_luta: Dictionary) -> void:
 	var luta := LutaArena.new(dados_luta, dados_luta.get("params", dados.arena()))
 	luta.name = "LutaArena"
+	luta.gratis_recuperar = LojaReal.comprado(dados, jogador, "sem_anuncios")
 	add_child(luta)
+	luta.recuperar.connect(func(f: Dictionary):
+		var aplicar := func():
+			var ok := ArenaCarreira.resgatar(jogador, f)
+			if ok:
+				f["perdeu"] = false
+				f["perdeu_parceiro"] = false
+				get_node("/root/SaveManager").salvar()
+				_sujar_todas()
+			luta.recuperados(ok)
+		if luta.gratis_recuperar:
+			aplicar.call()
+			return
+		var video := VideoRecompensa.new("recuperar os carros eliminados", "peca")
+		add_child(video)
+		video.terminou.connect(func(assistiu):
+			if assistiu:
+				aplicar.call()
+			else:
+				luta.recuperados(false)))
 	luta.acabou.connect(func(f: Dictionary):
 		if jogador.historia != null and f.get("demo", false):
 			jogador.historia.disparar("ARENA_DEMO_FIM")
@@ -1203,6 +1238,9 @@ func _notification(what: int) -> void:
 		RegistroSessao.fim(jogador)
 		Notificacoes.agendar(dados, jogador)
 		_saiu_em = Time.get_unix_time_from_system()
+		if NuvemPlay.ativa != null and get_node("/root/SaveManager").cenario == "":
+			NuvemPlay.ativa.enviar(get_node("/root/SaveManager").codigo(), "%s · %s giros" % [jogador.nome_admin,
+					Aba.dinheiro(jogador.economia.saldo)], 0)
 
 
 ## Quadros por segundo no canto, só com o modo de playtest ligado: medir o
@@ -1595,6 +1633,8 @@ func _volta_do_segundo_plano() -> void:
 	var pat := GestaoEquipe.acumular(dados, jogador, agora)
 	rel["patrocinio"] = pat["ganho"]
 	rel["patrocinios_encerrados"] = pat["encerrados"]
+	rel["fora_s"] = pat["fora_s"]
+	rel["pago_s"] = pat["pago_s"]
 	var fora := agora - _saiu_em
 	if int(rel["patrocinio"]) <= 0:
 		return

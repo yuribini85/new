@@ -5,6 +5,9 @@ extends Control
 ## se foi o caso, o carro perdido) e o botão de voltar. Por cima de tudo.
 
 signal acabou(final: Dictionary)
+## Recuperar os carros eliminados (vídeo): o Principal mostra o vídeo e, no fim,
+## chama `recuperados()`.
+signal recuperar(final: Dictionary)
 
 const VELOCIDADE := 1.0  # tempo da luta por segundo de tela
 const FIM_S := 1.2  # depois do último quadro, antes do resultado
@@ -247,6 +250,21 @@ static func _ordem_id(id: String) -> String:
 	return {"jogador": "0", "parceiro": "1"}.get(id, "2" + id)
 
 
+## Sem anúncios comprado: recuperar sem o vídeo (como a aceleração).
+var gratis_recuperar := false
+var _botao_recuperar: Button
+
+
+## O vídeo terminou e os carros voltaram (ou não: o botão volta).
+func recuperados(ok: bool) -> void:
+	if _botao_recuperar == null:
+		return
+	if ok:
+		_botao_recuperar.text = "CARROS DE VOLTA NA GARAGEM"
+	else:
+		_botao_recuperar.disabled = false
+
+
 func _mostrar_final() -> void:
 	var f: Dictionary = _dados["final"]
 	_faixa = PanelContainer.new()
@@ -344,6 +362,16 @@ func _mostrar_final() -> void:
 			moeda.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			moeda.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			h.add_child(moeda)
+	var resg: Dictionary = f.get("resgate", {})
+	if not resg.is_empty() and not f.get("demo", false) and not f.get("simulacao", false):
+		var n_carros: int = resg["carros"].size()
+		_botao_recuperar = Button.new()
+		Tipografia.acao_primaria(_botao_recuperar, ("RECUPERAR O CARRO" if n_carros == 1 else "RECUPERAR OS %d CARROS" % n_carros)
+				+ ("" if gratis_recuperar else "  ·  VÍDEO"), Aba.COR_BOM, Color(0.06, 0.08, 0.06), 30, Tipografia.ALTURA_SECUNDARIA)
+		_botao_recuperar.pressed.connect(func():
+			_botao_recuperar.disabled = true
+			recuperar.emit(f))
+		v.add_child(_botao_recuperar)
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Voltar à arena", Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 30, Tipografia.ALTURA_SECUNDARIA)
 	b.pressed.connect(func():

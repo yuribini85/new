@@ -64,6 +64,9 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, 
 				if not x:
 					Notificacoes.cancelar())
 
+	_secao(v, "IDIOMA")
+	_idiomas(v)
+
 	_secao(v, "VISTA DA CORRIDA")
 	var vistas := HBoxContainer.new()
 	vistas.add_theme_constant_override("separation", 10)
@@ -107,6 +110,8 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, 
 		_linha_botao(v, "diario", "DIÁRIO DE CONVERSAS", func():
 			aba.painel.emit("Diário", func(pv): Diario.montar(aba, pv, jogador),
 					[["Voltar", voltar]] if reabrir.is_valid() else []))
+
+	_progresso(aba, v, voltar)
 
 	# Recomeçar, discreto (apaga todo o progresso; pede confirmação).
 	var recomecar := Button.new()
@@ -288,6 +293,53 @@ static func _chave(v: VBoxContainer, icone: String, t: String, descricao: String
 
 
 ## Cartão da vista da corrida: ícone grande e nome; o escolhido em dourado.
+## Idiomas (pedido do usuário, 2026-10-17): o português valendo e os previstos
+## marcados EM BREVE, até as traduções entrarem. Os nomes vão escritos na
+## própria língua; os previstos usam só o alfabeto latino, o que as fontes do
+## jogo cobrem (japonês, russo ou chinês pedem fonte própria).
+const IDIOMAS := [["pt", "Português"], ["en", "English"], ["es", "Español"], ["fr", "Français"],
+		["de", "Deutsch"], ["it", "Italiano"]]
+
+
+static func _idiomas(v: VBoxContainer) -> void:
+	var g := GridContainer.new()
+	g.columns = 2
+	g.add_theme_constant_override("h_separation", 10)
+	g.add_theme_constant_override("v_separation", 10)
+	v.add_child(g)
+	for par in IDIOMAS:
+		var ativo: bool = par[0] == "pt"
+		var c := PanelContainer.new()
+		c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		c.custom_minimum_size = Vector2(0, 76)
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Aba.COR_DESTAQUE if ativo else COR_CARTAO
+		sb.border_color = Aba.COR_DESTAQUE.lightened(0.3) if ativo else COR_BORDA
+		sb.set_border_width_all(2 if ativo else 1)
+		sb.set_corner_radius_all(8)
+		sb.content_margin_left = 18
+		sb.content_margin_right = 14
+		c.add_theme_stylebox_override("panel", sb)
+		g.add_child(c)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 8)
+		c.add_child(h)
+		var l := Label.new()
+		l.text = par[1]
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		Tipografia.rotulo(l, "semibold", 28)
+		l.add_theme_color_override("font_color", Color(0.1, 0.09, 0.07) if ativo else Color(0.93, 0.91, 0.87, 0.55))
+		h.add_child(l)
+		if not ativo:
+			var e := Label.new()
+			e.text = "EM BREVE"
+			e.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			Tipografia.rotulo(e, "medium", 18)
+			e.add_theme_color_override("font_color", Aba.COR_DESTAQUE)
+			h.add_child(e)
+
+
 static func _cartao_vista(id: String, nome: String, icone: String, grupo: ButtonGroup) -> Button:
 	var b := Button.new()
 	b.toggle_mode = true
@@ -337,6 +389,45 @@ static func _cartao_vista(id: String, nome: String, icone: String, grupo: Button
 
 
 ## Linha que abre outra tela: ícone, texto e a seta à direita.
+## Progresso (pedido do usuário, 2026-10-17): onde o jogo fica salvo e o
+## código para levar a outro aparelho (SaveManager.codigo / usar_codigo).
+static func _progresso(aba: Aba, v: VBoxContainer, voltar: Callable) -> void:
+	var sm := aba.get_node("/root/SaveManager")
+	_secao(v, "PROGRESSO")
+	var c := _cartao(v)
+	var nota := Label.new()
+	nota.text = ("Fica salvo só neste navegador: limpar os dados dele apaga o jogo. Guarde o código." if OS.has_feature("web")
+			else "Fica salvo neste aparelho. O código leva o jogo para outro.")
+	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	Tipografia.rotulo(nota, "regular", 24)
+	nota.add_theme_color_override("font_color", Color(0.93, 0.91, 0.87))
+	c.add_child(nota)
+	if NuvemPlay.ativa != null:
+		_linha_botao(v, "seta", "BAIXAR DA NUVEM DO PLAY GAMES", func():
+			aba.painel.emit("Baixar da nuvem?", func(pv):
+				aba.rotulo("O jogo deste aparelho é trocado pelo da nuvem.", Aba.FONTE_PEQUENA + 2, Color.WHITE, pv),
+				[["Baixar", func(): NuvemPlay.ativa.baixar()], ["Cancelar", voltar]]))
+	_linha_botao(v, "lista", "COPIAR CÓDIGO DO PROGRESSO", func():
+		DisplayServer.clipboard_set(sm.codigo())
+		aba.avisar("Código copiado. Guarde num lugar seguro."))
+	_linha_botao(v, "desfazer", "CARREGAR UM CÓDIGO", func():
+		var campo := [null]
+		aba.painel.emit("Carregar progresso", func(pv):
+			aba.rotulo("Cole o código. O jogo atual é trocado por ele.", Aba.FONTE_PEQUENA + 2, Color.WHITE, pv)
+			var te := TextEdit.new()
+			te.custom_minimum_size = Vector2(0, 220)
+			te.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+			te.add_theme_font_size_override("font_size", 20)
+			pv.add_child(te)
+			campo[0] = te,
+			[["Carregar", func():
+				var erro: String = sm.usar_codigo(campo[0].text if campo[0] != null else "")
+				if erro != "":
+					aba.avisar("Não deu: %s." % erro, false)
+					return
+				aba.get_tree().reload_current_scene()], ["Cancelar", voltar]]))
+
+
 static func _linha_botao(v: VBoxContainer, icone: String, t: String, acao: Callable) -> void:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE

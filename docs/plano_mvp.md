@@ -995,3 +995,21 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     no Google Play Console os produtos `pack_premium`, `turno_noite` e `sem_anuncios`
     (compra única, preços da decisão 106) e testar com uma conta de teste. iOS (App Store)
     fica para quando houver export iOS.
+111. **Memória e corrida leve** (2026-10-17, defeito relatado pelo usuário: o jogo fechava na
+    segunda corrida e pesava em 2×). Texturas de arte só ficam na memória enquanto alguma tela
+    as usa; telas fora de vista (menos a corrida e a anterior) soltam o conteúdo; o estúdio de
+    fotos guarda as 48 mais recentes e uma cópia webp das outras. Velocidade dos efeitos medida
+    no relógio da corrida; efeitos leves sem o borrão de velocidade; cenário chapado numa malha.
+112. **Recuperar carros da arena com vídeo** (2026-10-17, pedido do usuário). Na tela do
+    resultado, os carros eliminados voltam como estavam (mesmo uid, escalação) e as peças do
+    desmanche saem; uma vez por luta. Com Sem anúncios, sem o vídeo.
+113. **Progresso fora do aparelho** (2026-10-17, sugestão aceita pelo usuário). Configurações →
+    PROGRESSO: código do progresso (save comprimido, ~2 KB) para copiar e carregar em outro
+    aparelho; no navegador, o aviso de que o jogo fica só nele. Android: `NuvemPlay` envia o
+    código aos jogos salvos do Play Games ao ir para segundo plano e baixa pelas Configurações
+    (plugin GodotPlayGameServices; os nomes da API ficam em constantes, a conferir na integração).
+114. **Avisos desligados por padrão e idiomas previstos** (2026-10-17, pedidos do usuário).
+    Notificações começam desligadas (Configurações → AVISOS liga). Configurações → IDIOMA:
+    português e, marcados EM BREVE, English, Español, Français, Deutsch e Italiano (alfabeto
+    latino, que as fontes cobrem). A tela de volta avisa, numa linha, quando o tempo fora
+    passou do teto da renda offline.

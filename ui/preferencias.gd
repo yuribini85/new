@@ -28,7 +28,7 @@ static var camera_arena := "briga"
 ## permitido) ou "ritmo" (sem pular). Ligado, grava RegistroSessao.
 static var modo_teste := ""
 ## Avisos do aparelho com o jogo fechado (Notificacoes, decisão 107).
-static var notificacoes := true
+static var notificacoes := false
 static var _carregado := false
 
 

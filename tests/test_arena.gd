@@ -201,6 +201,15 @@ func test_arena_na_carreira() -> void:
 	igual(j.economia.saldo, saldo + f["premio"], "pontos pagos mesmo perdendo")
 	igual(int(j.arena["lutas"]), 1, "luta registrada")
 	igual(ArenaCarreira.nivel(j), 0, "perdeu: o campeonato não sobe")
+	# Vídeo depois da luta: o carro volta como estava e as peças do desmanche saem.
+	var pecas: int = j.economia.credito_pecas
+	verificar(ArenaCarreira.resgatar(j, f), "recuperou")
+	verificar(j.garagem.carro(uid) != null, "o carro voltou com o mesmo uid")
+	igual(Escalacao.uid(j, "arena1"), uid, "e a escalação dele voltou")
+	igual(j.economia.credito_pecas, pecas - int(f["pecas_perdidos"]), "as peças do desmanche saíram")
+	verificar(not ArenaCarreira.resgatar(j, f), "uma vez só")
+	j.garagem.remover(uid)
+	j.escalacao["arena"] = [-1, int(j.escalacao.get("arena", [-1, -1])[1])]
 	var vit := {"classificacao": ["jogador", "r1"], "eventos": [], "equipe_vencedora": "jogador",
 		"carros": {"jogador": {"eliminado": false, "eliminou": 1, "equipe": "jogador"}, "r1": {"eliminado": true, "eliminou": 0, "equipe": "x"}}}
 	var f2 := ArenaCarreira.aplicar(d, j, j.carro_ativo, vit)

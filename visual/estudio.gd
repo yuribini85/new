@@ -24,6 +24,11 @@ var _fotos := {}  # "id|cor" -> ViewportTexture
 ## viva enquanto alguma tela a mostra; pedida de novo, é refeita.
 const FOTOS_MAX := 48
 var _ordem: Array = []
+## Cópia comprimida (webp, ~30 KB na memória comum) de cada foto já tirada: a
+## que sai do cache volta na hora, sem montar o carro de novo nem aparecer
+## vazia por um instante ao reabrir uma loja.
+const GUARDADAS_MAX := 600
+var _guardadas := {}
 
 
 ## Textura da foto do modelo na pintura dada. `faixas`: as da cabine de pintura
@@ -59,6 +64,13 @@ func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	if _fotos.has(chave):
 		_usar(chave)
 		return _fotos[chave]
+	if _guardadas.has(chave):
+		var img := Image.new()
+		if img.load_webp_from_buffer(_guardadas[chave]) == OK:
+			var volta := ImageTexture.create_from_image(img)
+			_fotos[chave] = volta
+			_usar(chave)
+			return volta
 	var vp := SubViewport.new()
 	vp.size = TAMANHO
 	vp.own_world_3d = true
@@ -113,7 +125,7 @@ func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	var tex := ImageTexture.create_from_image(Image.create(TAMANHO.x, TAMANHO.y, false, Image.FORMAT_RGBA8))
 	_fotos[chave] = tex
 	_usar(chave)
-	_copiar(vp, tex)
+	_copiar(vp, tex, chave)
 	return tex
 
 
@@ -157,7 +169,7 @@ func _enquadrar(cam: Camera3D, carro: Node3D) -> void:
 	cam.transform.origin += cam.transform.basis.x * centro.x + cam.transform.basis.y * centro.y
 
 
-func _copiar(vp: SubViewport, tex: ImageTexture) -> void:
+func _copiar(vp: SubViewport, tex: ImageTexture, chave := "") -> void:
 	# Foto pedida antes de o estúdio entrar na árvore (ao abrir o jogo, na
 	# Garagem): espera ele entrar e só então desenha uma vez.
 	var arvore := Engine.get_main_loop() as SceneTree
@@ -172,6 +184,8 @@ func _copiar(vp: SubViewport, tex: ImageTexture) -> void:
 		if img != null and not img.is_empty():
 			img.convert(Image.FORMAT_RGBA8)
 			tex.update(img)
+			if chave != "" and _guardadas.size() < GUARDADAS_MAX:
+				_guardadas[chave] = img.save_webp_to_buffer(true, 0.9)
 		vp.queue_free()
 
 

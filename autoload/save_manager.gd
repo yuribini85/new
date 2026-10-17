@@ -54,6 +54,8 @@ func _ready() -> void:
 		var pat := GestaoEquipe.acumular(dados, jogador, agora)
 		relatorio_offline["patrocinio"] = pat["ganho"]
 		relatorio_offline["patrocinios_encerrados"] = pat["encerrados"]
+		relatorio_offline["fora_s"] = pat["fora_s"]
+		relatorio_offline["pago_s"] = pat["pago_s"]
 		salvar()
 
 
@@ -93,6 +95,48 @@ func usar_cenario(id: String) -> String:
 	cenario = id
 	caminho = "user://save_cenario_%s.json" % id
 	salvar()
+	return ""
+
+
+## Código do progresso (pedido do usuário, 2026-10-17): o save comprimido num
+## texto curto (~2 KB) para guardar fora do aparelho ou levar o jogo a outro
+## (do navegador para o celular, por exemplo). Até a nuvem do Play Games entrar,
+## é o jeito de não perder tudo ao limpar o navegador.
+const PREFIXO_CODIGO := "CW1-"
+
+
+func codigo() -> String:
+	salvar()
+	var bruto := JSON.stringify(Save.serializar(get_node("/root/Jogador"))).to_utf8_buffer()
+	return PREFIXO_CODIGO + Marshalls.raw_to_base64(bruto.compress(FileAccess.COMPRESSION_GZIP))
+
+
+## Troca o jogo atual pelo do código (o atual fica no .bak). "" ou o motivo.
+## O estado só muda se o código abrir inteiro.
+func usar_codigo(texto: String) -> String:
+	if cenario != "":
+		return "volte ao seu jogo antes (cenário de teste em uso)"
+	texto = texto.strip_edges().replace("\n", "").replace(" ", "")
+	if not texto.begins_with(PREFIXO_CODIGO):
+		return "código inválido"
+	var raw := Marshalls.base64_to_raw(texto.substr(PREFIXO_CODIGO.length()))
+	if raw.is_empty():
+		return "código inválido"
+	var json := JSON.new()
+	if json.parse(raw.decompress_dynamic(-1, FileAccess.COMPRESSION_GZIP).get_string_from_utf8()) != OK:
+		return "código incompleto (copie de novo, inteiro)"
+	var dados := get_node("/root/Dados")
+	var jogador := get_node("/root/Jogador")
+	var atual := Save.serializar(jogador)
+	jogador.novo_jogo(dados.economia(), dados.pneu)
+	var erro := Save.desserializar(json.data, jogador, dados)
+	if erro != "":
+		jogador.novo_jogo(dados.economia(), dados.pneu)
+		Save.desserializar(atual, jogador, dados)
+		return erro
+	gravar(caminho, atual)  # o jogo de antes vira o .bak na próxima gravação
+	salvar()
+	relatorio_offline = {}
 	return ""
 
 

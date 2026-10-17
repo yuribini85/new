@@ -12,6 +12,8 @@ signal fechou
 
 const COR := Color("e8b04a")
 const CONTA_S := 1.2
+## Diferença mínima entre o tempo fora e o que rendeu para avisar do teto.
+const TETO_AVISO_S := 600.0
 
 var _valor := 0
 var _numero: Label
@@ -82,6 +84,11 @@ func _init(rel: Dictionary, dados: Node) -> void:
 		linhas.append("Treino concluído: energia cheia e o ritmo subiu")
 	for nome in rel.get("patrocinios_encerrados", []):
 		linhas.append("Contrato de %s encerrado: há ofertas novas na Equipe" % nome)
+	# Bateu no teto da renda offline (decisão 104): curto e direto.
+	var fora := float(rel.get("fora_s", 0.0))
+	var pago := float(rel.get("pago_s", 0.0))
+	if pago > 0.0 and fora - pago >= TETO_AVISO_S:
+		linhas.append("Rendeu %s das %s fora. Vença séries: +1 h cada." % [_horas(pago), _horas(fora)])
 	for t in linhas:
 		var l := Label.new()
 		l.text = t
@@ -133,6 +140,10 @@ func dobrado() -> void:
 func liberar_dobro() -> void:
 	if _botao_dobrar != null:
 		_botao_dobrar.disabled = false
+
+
+static func _horas(s: float) -> String:
+	return "%d h" % roundi(s / 3600.0) if s >= 3600.0 else "%d min" % maxi(1, roundi(s / 60.0))
 
 
 func sair() -> void:

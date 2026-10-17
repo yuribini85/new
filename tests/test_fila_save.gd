@@ -118,6 +118,23 @@ func _escrever(caminho: String, texto: String) -> void:
 	f.close()
 
 
+## Código do progresso (SaveManager.codigo / usar_codigo): ida e volta e
+## código estragado não muda nada.
+func test_codigo_do_progresso() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	var texto := JSON.stringify(Save.serializar(j))
+	var bruto := texto.to_utf8_buffer()
+	var codigo := SaveManagerScript.PREFIXO_CODIGO + Marshalls.raw_to_base64(bruto.compress(FileAccess.COMPRESSION_GZIP))
+	verificar(codigo.length() < texto.length(), "o código é menor que o save")
+	var raw := Marshalls.base64_to_raw(codigo.substr(SaveManagerScript.PREFIXO_CODIGO.length()))
+	igual(raw.decompress_dynamic(-1, FileAccess.COMPRESSION_GZIP).get_string_from_utf8(), texto, "volta igual")
+	verificar(j.garagem.carro(uid) != null, "carro no jogo")
+	j.free()
+	d.free()
+
+
 func test_save_corrompido_usa_bak_e_preserva_o_original() -> void:
 	_limpar_pasta()
 	var d := dados_fixture()

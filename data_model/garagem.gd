@@ -24,6 +24,12 @@ func adicionar(carro: Carro) -> int:
 	return carro.uid
 
 
+## Volta um carro removido, com o mesmo uid (a escalação dele continua valendo).
+func devolver(carro: Carro) -> void:
+	carros[carro.uid] = carro
+	mudou.emit()
+
+
 func remover(uid: int) -> Carro:
 	var carro: Carro = carros.get(uid)
 	if carro != null:

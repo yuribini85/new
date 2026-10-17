@@ -224,7 +224,9 @@ static func assinar(dados: Node, jogador: Node, id: String, agora: float) -> Str
 ## no máximo até o fim do contrato) e encerra os contratos vencidos.
 ## {ganho, encerrados: [nomes]}.
 static func acumular(dados: Node, jogador: Node, agora: float) -> Dictionary:
-	var r := {"ganho": 0, "encerrados": []}
+	# fora_s: tempo desde o último pagamento; pago_s: quanto dele rendeu (o
+	# contrato acaba no teto da renda offline). A tela de volta compara os dois.
+	var r := {"ganho": 0, "encerrados": [], "fora_s": 0.0, "pago_s": 0.0}
 	if not patrocinio_aberto(dados, jogador):
 		return r
 	var ficam := []
@@ -232,6 +234,8 @@ static func acumular(dados: Node, jogador: Node, agora: float) -> Dictionary:
 		var p := patrocinador(dados, c["id"])
 		var ate := minf(agora, float(c["fim"]))
 		var dt := maxf(ate - float(c["ultimo"]), 0.0)
+		r["fora_s"] = maxf(float(r["fora_s"]), agora - float(c["ultimo"]))
+		r["pago_s"] = maxf(float(r["pago_s"]), dt)
 		var valor := float(c.get("resto", 0.0)) + dt / 3600.0 * renda_hora(dados, jogador, p)
 		var inteiro := int(floor(valor))
 		c["resto"] = valor - inteiro

@@ -313,7 +313,10 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		reg["vitorias"] = int(reg.get("vitorias", 0)) + 1
 	var pecas_perdidos := 0
 	var pecas_destruidos := 0
+	# Para o vídeo que recupera os carros logo depois da luta (resgatar).
+	var resgate := {"carros": [], "pecas": 0, "ativo": jogador.carro_ativo, "companheiro": jogador.carro_companheiro}
 	if perdeu:
+		resgate["carros"].append(carro)
 		pecas_perdidos += GestaoEquipe.pecas_do_carro(dados, jogador, carro)
 		reg["perdidos"] = Array(reg.get("perdidos", [])) + [String(carro.id)]
 		jogador.garagem.remover(uid)
@@ -328,6 +331,7 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		var cp: Carro = jogador.garagem.carro(parceiro_uid)
 		if cp != null:
 			perdeu_parceiro = true
+			resgate["carros"].append(cp)
 			pecas_perdidos += GestaoEquipe.pecas_do_carro(dados, jogador, cp)
 			reg["perdidos"] = Array(reg.get("perdidos", [])) + [String(cp.id)]
 			jogador.garagem.remover(parceiro_uid)
@@ -343,6 +347,7 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		if modelos.has(id):
 			pecas_destruidos += GestaoEquipe.pecas_do_carro(dados, jogador, Carro.new(modelos[id]))
 	jogador.economia.ganhar_pecas(pecas_perdidos + pecas_destruidos)
+	resgate["pecas"] = pecas_perdidos
 	# Campeonato: a equipe do jogador ficou de pé → sobe de nível (até o último).
 	var venceu_equipe: bool = resultado.get("equipe_vencedora", "") == "jogador"
 	var subiram := EquipeJogador.apos_prova(dados, jogador, ["arena1", "arena2"], venceu_equipe)
@@ -363,4 +368,31 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 			"perdeu_parceiro": perdeu_parceiro, "venceu_equipe": venceu_equipe,
 			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes,
 			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid, "pilotos_subiram": subiram,
-			"serie": serie}
+			"serie": serie, "resgate": resgate if not resgate["carros"].is_empty() else {}}
+
+
+## Vídeo depois da luta (pedido do usuário, 2026-10-17): os carros eliminados
+## voltam para a garagem como estavam (mesmo uid, escalação e peças
+## instaladas) e as peças do desmanche deles saem. Só na tela do resultado; o
+## resto da luta (prêmio, pontos, campeonato, Grid) fica como foi. false se não
+## havia o que recuperar.
+static func resgatar(jogador: Node, final: Dictionary) -> bool:
+	var r: Dictionary = final.get("resgate", {})
+	if r.is_empty() or r.get("feito", false):
+		return false
+	r["feito"] = true
+	var reg: Dictionary = jogador.arena
+	var perdidos: Array = reg.get("perdidos", [])
+	for c: Carro in r["carros"]:
+		jogador.garagem.devolver(c)
+		var i := perdidos.rfind(String(c.id))
+		if i >= 0:
+			perdidos.remove_at(i)
+	reg["perdidos"] = perdidos
+	jogador.economia.credito_pecas = maxi(jogador.economia.credito_pecas - int(r["pecas"]), 0)
+	jogador.economia.saldo_mudou.emit(jogador.economia.saldo)
+	if jogador.garagem.carro(int(r["ativo"])) != null:
+		jogador.carro_ativo = int(r["ativo"])
+	if jogador.garagem.carro(int(r["companheiro"])) != null:
+		jogador.carro_companheiro = int(r["companheiro"])
+	return true
