@@ -22,13 +22,13 @@ logotipos ou carros reconhecíveis.
 
 ## B. Números (balanceamento)
 
-Pela regra do projeto, não estimo valores: vêm do estudo do GT2 ou de playtest seu.
+Pela regra do projeto, não estimo valores: vêm do estudo da referência ou de playtest seu.
 
 | # | Valor | Onde | Hoje | Critério sugerido |
 |---|-------|------|------|-------------------|
 | B1 | ~~Patrocínio por corrida~~ → **renda por hora** (decisão 51) | `data/equipe.json` → `patrocinio` | fatores provisórios (0,25 do prêmio médio por hora; bônus 0,5) | Medir no playtest: quanto o jogador acha justo voltar e encontrar depois de 8 h fora |
 | B2 | **Custo de staff por corrida** | `equipe_jogador.custo_staff` | "a definir no playtest" (vale 0) | Menor que o patrocínio na International, maior na Pro sem vitórias |
-| B3 | **Tempo até a licença Sport** | ritmo da campanha | 142–183 min de corrida no playtest automático | Jogar 20–30 min antes de mexer; se lento, igualar ao tempo até a licença A do GT2 |
+| B3 | **Tempo até a licença Sport** | ritmo da campanha | 142–183 min de corrida no playtest automático | Jogar 20–30 min antes de mexer; se lento, igualar ao tempo até a licença A da referência |
 
 ## C. Regras da Arena (antes de construir o modo)
 

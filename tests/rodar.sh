@@ -22,7 +22,7 @@ if echo "$importacao$saida" | grep -qE 'SCRIPT ERROR|Parse Error|Compile Error';
 fi
 python3 tests/checar_rascunhos.py || exit 1
 python3 tests/checar_conversor.py || exit 1
-python3 tests/checar_extrator_gt2.py || exit 1
+python3 tests/checar_extrator.py || exit 1
 python3 tools/listar_ids.py --checar || exit 1
 python3 tools/preparar_glb.py --checar || exit 1
 python3 tools/exportar_formas.py --checar || exit 1

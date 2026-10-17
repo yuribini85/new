@@ -121,7 +121,7 @@ def main() -> int:
             primeiro.setdefault(familia, c["id"])
             continue
         l = ref.get(c["id"], {})
-        corrida = l.get("codigo_gt2", "").endswith("r")
+        corrida = l.get("codigo_ref", "").endswith("r")
         desc = "%s, %s drive; %s" % (corpo(c["categoria"], l.get("ref_real", ""), c["peso"], c["tracao"]),
                                      {"FF": "front-wheel", "FR": "rear-wheel", "MR": "mid-engine rear-wheel",
                                       "RR": "rear-engine rear-wheel", "4WD": "four-wheel"}[c["tracao"]], era(int(c["ano"])))

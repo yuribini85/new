@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Gera referencia/carros.csv com todos os carros do GT2, cada um com fabricante e
+"""Gera referencia/carros.csv com todos os carros da referência, cada um com fabricante e
 nome fictícios (o nome real fica só em ref_real, fora do Git).
 
-Uso: python3 tools/gerar_referencia_carros.py [--gt2 referencia/gt2] [--ref referencia/carros.csv]
+Uso: python3 tools/gerar_referencia_carros.py [--fonte referencia/extraido] [--ref referencia/carros.csv]
 
-Regras (CLAUDE.md: nada do GT2 entra no build):
-  fabricante  um fictício por fabricante do GT2 (FABRICANTES, pelo número interno);
+Regras (CLAUDE.md: nada da referência entra no build):
+  fabricante  um fictício por fabricante da referência (FABRICANTES, pelo número interno);
               os três do primeiro build ficam com uma marca cada.
-  modelo      um nome por família (o primeiro nome do modelo no GT2, sem a marca),
+  modelo      um nome por família (o primeiro nome do modelo na referência, sem a marca),
               palavra inventada no idioma da escola do fabricante; nunca um nome de
               modelo real (PROIBIDOS) nem repetido.
   versão      dentro da família, por potência: base, S, GT, GTS, R, SR, GX, SX; versões de
@@ -33,7 +33,7 @@ import unicodedata
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 
-# Número interno do fabricante no GT2 -> (id, nome, escola, país). Nomes inventados;
+# Número interno do fabricante na referência -> (id, nome, escola, país). Nomes inventados;
 # busca de marca pendente antes do lançamento (data/README.md).
 FABRICANTES = {
     "0": ("arvelle", "Arvelle", "us", "Estados Unidos"),
@@ -265,30 +265,30 @@ class Nomes:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--gt2", default=str(RAIZ / "referencia" / "gt2"))
+    ap.add_argument("--fonte", default=str(RAIZ / "referencia" / "extraido"))
     ap.add_argument("--ref", default=str(RAIZ / "referencia" / "carros.csv"))
     ap.add_argument("--fabricantes", default=str(RAIZ / "data" / "fabricantes.json"))
     args = ap.parse_args()
-    gt2 = list(csv.DictReader(open(pathlib.Path(args.gt2) / "carros.csv", encoding="utf-8")))
+    fonte = list(csv.DictReader(open(pathlib.Path(args.fonte) / "carros.csv", encoding="utf-8")))
     ref_path = pathlib.Path(args.ref)
     antigos = list(csv.DictReader(open(ref_path, encoding="utf-8"))) if ref_path.exists() else []
     campos = list(antigos[0].keys()) if antigos else ["id", "nome", "fabricante", "arquetipo", "categoria", "tracao",
-                                                      "ano", "ref_real", "codigo_gt2"]
-    for extra in ("ano", "ref_real", "codigo_gt2"):
+                                                      "ano", "ref_real", "codigo_ref"]
+    for extra in ("ano", "ref_real", "codigo_ref"):
         if extra not in campos:
             campos.append(extra)
-    por_codigo = {l["codigo_gt2"]: l for l in antigos if l.get("codigo_gt2")}
-    marcas = marcas_por_fabricante(gt2)
+    por_codigo = {l["codigo_ref"]: l for l in antigos if l.get("codigo_ref")}
+    marcas = marcas_por_fabricante(fonte)
     # Família -> nome do modelo. Os modelos atuais reservam o nome da família deles.
     fam_nome: dict[tuple[str, str], str] = {}
     usados = {l["nome"].split()[-1] for l in antigos}
     for l in antigos:
-        c = next((x for x in gt2 if x["codigo"] == l["codigo_gt2"]), None)
+        c = next((x for x in fonte if x["codigo"] == l["codigo_ref"]), None)
         if c:
             usados.add(l["nome"].split()[-1])
     nomes = Nomes(usados)
     familias = collections.defaultdict(list)
-    for c in gt2:
+    for c in fonte:
         familias[(c["fabricante_id"], familia(c["nome"], marcas.get(c["fabricante_id"], set())))].append(c)
     linhas = []
     ids = {l["id"] for l in antigos}
@@ -332,7 +332,7 @@ def main() -> int:
             linha = {k2: "" for k2 in campos}
             linha.update({"id": cid, "nome": nome, "fabricante": f_id, "arquetipo": arquetipo(c, cat, eh_corrida),
                           "categoria": cat, "tracao": TRACAO.get(c["tracao_tipo"], "FR"), "ano": str(ano or ""),
-                          "ref_real": c["nome"], "codigo_gt2": c["codigo"]})
+                          "ref_real": c["nome"], "codigo_ref": c["codigo"]})
             linhas.append(linha)
     with open(ref_path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=campos)

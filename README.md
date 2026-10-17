@@ -2,14 +2,14 @@
 
 Jogo mobile idle de automobilismo, feito em Godot 4.4.
 
-Preserva a estrutura de carreira de um Gran Turismo clássico — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
+Preserva a estrutura de carreira de um clássico de corrida — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
 colecionar — e substitui a pilotagem por corridas automáticas isométricas.
 
 ## Estado
 
 Demo jogável com a história. As fases 1 a 9 do documento de implementação "Second
 Driver" estão feitas (decisões 32 a 38 em `docs/plano_mvp.md`); `data/` tem o
-balanceamento importado do disco do GT2; a arte final de personagens e equipes ainda vai
+balanceamento importado do disco da referência; a arte final de personagens e equipes ainda vai
 chegar (hoje: placeholders).
 
 O que existe hoje:
@@ -21,7 +21,7 @@ O que existe hoje:
 - concessionária de novos e usados, garagem, oficina com peças e pneus por carro,
   pintura por cores do modelo, venda;
 - licenças CLUB a ELITE (treino por tempo, requisitos, avaliação por testes ou
-  contratos), eventos do GT2 com equipes e pilotos rivais, campeonatos por pontos,
+  contratos), eventos da referência com equipes e pilotos rivais, campeonatos por pontos,
   resistência, copas de marca;
 - arena de destruição (Chrome & Wreckage): abre com a licença National, só com 2 carros na
   garagem; luta resolvida na inscrição, dano em seis regiões, carro eliminado sai da garagem;
@@ -54,8 +54,8 @@ visual/                       corrida 3D e minimapa, carro de blocos, vitrine, �
 ui/                           telas: garagem, loja, oficina, eventos, corrida, carreira, equipe;
                               diálogo e destaques do tutorial
 scenes/principal.tscn         cena principal (retrato 720×1280)
-data/                         balanceamento (gerado do GT2; ver data/README.md)
-tools/                        extração e importação do GT2, calibração, editor de pistas,
+data/                         balanceamento (gerado da referência; ver data/README.md)
+tools/                        extração e importação da referência, calibração, editor de pistas,
                               captura de telas, matriz de progressão
 tests/                        testes Godot e Python, fixtures sintéticas
 ```
@@ -69,10 +69,10 @@ tests/rodar.sh            # ou: tests/rodar.sh /caminho/do/godot
 Roda os testes Godot (fixtures sintéticas) e os das ferramentas Python (disco
 sintético). Também roda no GitHub Actions a cada push e pull request.
 
-## Dados do GT2
+## Dados da referência
 
 `data/` é gerado a partir de uma cópia legítima do disco pelo fluxo
-`tools/extrair_gt2.py` → `tools/importar_gt2.py` → `tools/calibrar_licencas.gd`. Passo a
+`tools/extrair_referencia.py` → `tools/importar_referencia.py` → `tools/calibrar_licencas.gd`. Passo a
 passo, conversões e o que ainda está "a confirmar" em `data/README.md`.
 `tools/simular_progressao.gd` mostra a posição de cada carro de fábrica em cada evento;
 `tools/medir_progressao.gd`, a progressão e a renda por fase e por perfil de jogador.
@@ -109,11 +109,11 @@ Second Driver criada e segundo piloto na equipe. Cada um grava em
 
 1. O jogador decide; a IA executa. Nenhuma decisão durante a corrida.
 2. Não é Motorsport Manager.
-3. Não inventar sistema quando o GT2 já tem uma solução que funciona.
+3. Não inventar sistema quando a referência já tem uma solução que funciona.
 4. O movimento visual é consequência da simulação, nunca o contrário.
 5. A mesma IA controla o jogador e os adversários.
 6. Carros, fabricantes, pistas e arte são originais. Nenhuma marca, nome ou traçado real.
-7. O GT2 é referência de estudo a partir de cópia legítima. Nada dele é redistribuído.
+7. O jogo de referência é estudado a partir de cópia legítima. Nada dele é redistribuído.
 8. A história (Chrome & Wreckage: o jogador é o dono da oficina e Mara Hayes o guia; saves
    antigos seguem Adrian → Elena → Second Driver Motorsport) é uma camada de dados —
    diálogos e flags — sobre os sistemas do jogo; o diálogo também é o tutorial. Aprovado

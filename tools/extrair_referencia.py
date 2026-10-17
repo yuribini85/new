@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Extrai as tabelas do Gran Turismo 2 de uma cópia legítima do disco.
+"""Extrai as tabelas do jogo de referência de uma cópia legítima do disco.
 
 Uso (qualquer uma das entradas):
-  tools/extrair_gt2.py --disco "Gran Turismo 2 (Simulation).bin"
-  tools/extrair_gt2.py --vol GT2.VOL
-  tools/extrair_gt2.py --pasta pasta_com_os_dat/
+  tools/extrair_referencia.py --disco "disco.bin"
+  tools/extrair_referencia.py --vol arquivo.VOL
+  tools/extrair_referencia.py --pasta pasta_com_os_dat/
 
-Saída em referencia/gt2/ (no .gitignore, nunca versionar):
+Saída em referencia/extraido/ (no .gitignore, nunca versionar):
   <Tabela>.csv      uma linha por estrutura, todos os campos
   carros.csv        resumo por carro: código, nome, ano, preço, potência,
                     peso, tração e índices das peças de fábrica
@@ -21,7 +21,7 @@ import csv
 import pathlib
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "gt2"))
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "extracao"))
 import tabelas  # noqa: E402
 import vol as gtvol  # noqa: E402
 
@@ -51,7 +51,7 @@ def carregar_arquivos(args) -> dict[str, bytes]:
             import disco as gtdisco
             d = gtdisco.Disco(pathlib.Path(args.disco))
             try:
-                dados_vol = d.extrair("GT2.VOL")
+                dados_vol = d.extrair(".VOL")
             finally:
                 d.fechar()
         else:
@@ -137,7 +137,7 @@ def main() -> int:
     g.add_argument("--disco")
     g.add_argument("--vol")
     g.add_argument("--pasta")
-    ap.add_argument("--saida", default="referencia/gt2")
+    ap.add_argument("--saida", default="referencia/extraido")
     ap.add_argument("--regiao", default="usa", help="prefixo preferido (usa, eng, jpn...)")
     args = ap.parse_args()
 

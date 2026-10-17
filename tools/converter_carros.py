@@ -2,7 +2,7 @@
 """Converte a tabela de referência (CSV) em data/carros.json.
 
 A tabela é de uso interno e NÃO vai para o repositório: pode ter a coluna
-`ref_real` (nome do carro do GT2 que serviu de referência), que é descartada.
+`ref_real` (nome do carro real que serviu de modelo), que é descartada.
 Só o equivalente fictício e o arquétipo entram no jogo.
 
 Colunas obrigatórias:

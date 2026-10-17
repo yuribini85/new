@@ -1,5 +1,5 @@
 extends "res://tests/base_teste.gd"
-## Arena (sim/arena.gd): critérios de aceite do estudo Destruction Derby —
+## Arena (sim/arena.gd): critérios de aceite do estudo de arena —
 ## batida mais forte, mais dano; batida de lado desloca e gira; região certa;
 ## nenhum dano duplicado no mesmo contato; eliminado vira obstáculo; mesmo
 ## resultado com e sem amostras.
@@ -699,7 +699,7 @@ func test_piloto_atropelado_fica_em_recuperacao() -> void:
 	d.free()
 
 
-## Capotou (batida de lado forte): fica fora da luta, como no Destruction Derby.
+## Capotou (batida de lado forte): fica fora da luta, como na referência de arena.
 func test_batida_de_lado_forte_capota_e_elimina() -> void:
 	var p := _params()
 	var r := _lateral(70.0, p)

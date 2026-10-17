@@ -1,4 +1,4 @@
-"""Leitura do arquivo GT2.VOL (formato GTFS).
+"""Leitura do arquivo .VOL do disco (formato GTFS).
 
 Layout documentado em adeyblue/GTVolTools (MIT,
 https://github.com/adeyblue/GTVolTools): cabeçalho "GTFS\\0\\0\\0\\0", contagem
@@ -21,7 +21,7 @@ def _alinhar(valor: int) -> int:
 def ler_indice(vol: bytes) -> dict[str, tuple[int, int]]:
     """Retorna {caminho: (início, tamanho)} de cada arquivo do VOL."""
     if vol[:8] != b"GTFS\0\0\0\0":
-        raise ValueError("não é um arquivo GTFS (GT2.VOL)")
+        raise ValueError("não é um arquivo GTFS (.VOL)")
     n_arquivos, n_entradas = struct.unpack_from("<HH", vol, 8)
     desloc = list(struct.unpack_from(f"<{n_arquivos}I", vol, 16))
     desloc.append(len(vol))

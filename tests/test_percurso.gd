@@ -1,6 +1,6 @@
 extends "res://tests/base_teste.gd"
 ## Percurso inicial com os dados REAIS de data/ (não fixtures): confere que o
-## balanceamento importado do GT2 sustenta o começo. Jogador automático
+## balanceamento importado da referência sustenta o começo. Jogador automático
 ## (tools/agente.gd, perfil "sugestoes") com cada usado inicial: exige uma
 ## vitória e a licença B (contratos) em até 30 min de corrida, e ao menos um
 ## ciclo derrota → compra → vitória NA MESMA PROVA (a compra resolve o que a
@@ -14,9 +14,9 @@ func test_percurso_inicial_ate_a_licenca_b() -> void:
 	# Agente "sugestoes" (tools/agente.gd) com cada usado inicial que o saldo
 	# paga E que tem boa chance na primeira corrida aberta (posição média de
 	# fábrica até 1,5 na prova aberta sem licença de menor prêmio). O Mercado
-	# não recomenda nada, como no GT2: este filtro é só a conferência de que
-	# existem bons primeiros carros. Com o GT2 inteiro há dezenas de usados
-	# iniciais, e alguns não sustentam o começo, como no GT2.
+	# não recomenda nada, como na referência: este filtro é só a conferência de que
+	# existem bons primeiros carros. Com a referência inteiro há dezenas de usados
+	# iniciais, e alguns não sustentam o começo, como na referência.
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var saldo := int(d.economia()["saldo_inicial"])

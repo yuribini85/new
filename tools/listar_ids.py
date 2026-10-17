@@ -70,9 +70,9 @@ def gerar():
     for f in sorted(flags):
         l.append(f"| `{f}` | {flags[f]} |")
 
-    l += ["", "## Licenças (`data/licencas.json`)", "", "| id | nome | GT2 |", "|---|---|---|"]
+    l += ["", "## Licenças (`data/licencas.json`)", "", "| id | nome |", "|---|---|"]
     for lic in ler("licencas.json"):
-        l.append(f"| `{lic['id']}` | {lic.get('nome', '')} | {lic.get('gt2') or '—'} |")
+        l.append(f"| `{lic['id']}` | {lic.get('nome', '')} |")
 
     l += ["", "## Equipes e pilotos (`data/equipes.json`)", "", "| equipe | nível | pilotos |", "|---|---|---|"]
     for e in ler("equipes.json"):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Testa tools/extrair_gt2.py com um disco sintético no mesmo formato do GT2.
+"""Testa tools/extrair_referencia.py com um disco sintético no mesmo formato da referência.
 
-Não usa dados do jogo: monta ISO 9660 -> GT2.VOL (GTFS) -> gtmode_*.dat
+Não usa dados do jogo: monta ISO 9660 -> DADOS.VOL (GTFS) -> gtmode_*.dat
 (GTDT) com valores inventados e confere que o extrator lê de volta.
 """
 import csv
@@ -21,7 +21,7 @@ for _fluxo in (sys.stdout, sys.stderr):
 
 AMBIENTE = {**os.environ, "PYTHONUTF8": "1"}
 raiz = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(raiz / "tools" / "gt2"))
+sys.path.insert(0, str(raiz / "tools" / "extracao"))
 from layouts import LAYOUTS, ORDEM_GTMODE_DATA, ORDEM_GTMODE_RACE  # noqa: E402
 import tabelas  # noqa: E402
 
@@ -196,9 +196,9 @@ def main():
     for bruto in (False, True):
         with tempfile.TemporaryDirectory() as tmp:
             img = pathlib.Path(tmp) / "disco.bin"
-            img.write_bytes(iso("GT2.VOL", vol, bruto))
+            img.write_bytes(iso("DADOS.VOL", vol, bruto))
             saida = pathlib.Path(tmp) / "saida"
-            r = subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--disco", str(img),
+            r = subprocess.run([sys.executable, str(raiz / "tools/extrair_referencia.py"), "--disco", str(img),
                                 "--saida", str(saida)], capture_output=True, encoding="utf-8", env=AMBIENTE)
             if r.returncode:
                 falhas.append(f"bruto={bruto}: extrator falhou: {r.stderr.strip()[-400:]}")
@@ -224,18 +224,18 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         tmp = pathlib.Path(tmp)
         img = tmp / "disco.iso"
-        img.write_bytes(iso("GT2.VOL", vol, False))
-        subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--disco", str(img), "--saida", str(tmp / "gt2")],
+        img.write_bytes(iso("DADOS.VOL", vol, False))
+        subprocess.run([sys.executable, str(raiz / "tools/extrair_referencia.py"), "--disco", str(img), "--saida", str(tmp / "extraido")],
                        capture_output=True, check=True, env=AMBIENTE)
         (tmp / "ref.csv").write_text(
-            "id,nome,fabricante,arquetipo,categoria,tracao,ref_real,codigo_gt2\n"
+            "id,nome,fabricante,arquetipo,categoria,tracao,ref_real,codigo_ref\n"
             "hayase_x,Hayase X,hayase,hatch,compacto,FF,Hatch Teste,hat93\n"
             "hartwig_y,Hartwig Y,hartwig,cupe,cupe,FR,Cupe Turbo,cup95\n", encoding="utf-8")
         dados = tmp / "data"
         dados.mkdir()
         for arq in ("economia", "carreira"):
             (dados / f"{arq}.json").write_text((raiz / "data" / f"{arq}.json").read_text(encoding="utf-8"))
-        r = subprocess.run([sys.executable, str(raiz / "tools/importar_gt2.py"), "--gt2", str(tmp / "gt2"),
+        r = subprocess.run([sys.executable, str(raiz / "tools/importar_referencia.py"), "--fonte", str(tmp / "extraido"),
                             "--ref", str(tmp / "ref.csv"), "--data", str(dados)], capture_output=True, encoding="utf-8", env=AMBIENTE)
         if r.returncode:
             falhas.append(f"importador falhou: {r.stderr.strip()[-500:]}")
@@ -245,7 +245,7 @@ def main():
             carros = {c["id"]: c for c in carregar("carros")}
             x, y = carros["hayase_x"], carros["hartwig_y"]
             # Dinheiro: os valores do disco sintético em Cr, convertidos para G pelo importador.
-            spec = importlib.util.spec_from_file_location("importar_gt2", raiz / "tools/importar_gt2.py")
+            spec = importlib.util.spec_from_file_location("importar_referencia", raiz / "tools/importar_referencia.py")
             imp = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(imp)
             g = imp.preco_loja  # preços de compra (decisão 41: moeda × FATOR_PRECO)
@@ -288,14 +288,14 @@ def main():
         for nome, (ini, tam) in indice.items():
             (pasta / "carparam" / nome).write_bytes(vol[ini:ini + tam])
         saida = pathlib.Path(tmp) / "saida"
-        r = subprocess.run([sys.executable, str(raiz / "tools/extrair_gt2.py"), "--pasta", str(pasta),
+        r = subprocess.run([sys.executable, str(raiz / "tools/extrair_referencia.py"), "--pasta", str(pasta),
                             "--saida", str(saida)], capture_output=True, encoding="utf-8", env=AMBIENTE)
         if r.returncode or not (saida / "carros.csv").exists():
             falhas.append(f"pasta: {r.stderr.strip()[-400:]}")
     for f in falhas:
-        print("FAIL extrator GT2: " + f)
+        print("FAIL extrator referência: " + f)
     if not falhas:
-        print("ok   extrator GT2 (disco sintético ISO, bruto e pasta)")
+        print("ok   extrator referência (disco sintético ISO, bruto e pasta)")
     return 1 if falhas else 0
 
 

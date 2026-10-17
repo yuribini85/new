@@ -1,6 +1,6 @@
-"""Leitura das tabelas de dados do GT2 (contêiner "GTDT").
+"""Leitura das tabelas de dados da referência (contêiner "GTDT").
 
-Formato (pez2k/gt2tools, DataFile.cs): para o bloco i, o cabeçalho guarda em
+Formato (pez2k, DataFile.cs): para o bloco i, o cabeçalho guarda em
 8*(i+1) o início e o tamanho do bloco; o bloco é um vetor de estruturas de
 tamanho fixo (layouts.py).
 """
@@ -14,7 +14,7 @@ CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
 
 
 def id_para_nome(car_id: int) -> str:
-    """Id numérico de carro do GT2 para o código de 5 letras (ex.: 'cv93s')."""
+    """Id numérico de carro da referência para o código de 5 letras (ex.: 'cv93s')."""
     return "".join(CARACTERES_ID[(car_id >> (i * 6)) & 0x3F] for i in range(4, -1, -1))
 
 
@@ -99,7 +99,7 @@ DIAS_POR_PERIODO = 10
 def ler_usados(dados: bytes) -> list[dict]:
     """Concessionárias de usados (".usedcar_usa", cabeçalho "UCAR").
 
-    Formato (pez2k/gt2tools, GT2UsedCarEditor): 60 períodos de 10 dias; cada
+    Formato (pez2k, editor de usados): 60 períodos de 10 dias; cada
     um com 39 fabricantes (deslocamento u16 relativo ao período, contagem
     u16); cada carro tem 8 bytes: id u32, preço u24, paleta u8.
     """

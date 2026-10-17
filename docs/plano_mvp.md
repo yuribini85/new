@@ -2,14 +2,14 @@
 
 Desdobramento de `docs/conceito.md` em sistemas, dados e ordem de trabalho. Estruturas abaixo
 são formato, não balanceamento: **nenhum número aqui é definitivo**. Os valores virão do
-estudo do GT2 e de playtest, sempre em JSON externo.
+estudo da referência e de playtest, sempre em JSON externo.
 
 ## 1. Escopo do primeiro build
 
 Entra:
 
 - 1 concessionária de novos, 1 de usados
-- ~15 carros de 3 fabricantes fictícias (faixa de entrada do GT2: compactos, esportivos leves, um turbo)
+- ~15 carros de 3 fabricantes fictícias (faixa de entrada da referência: compactos, esportivos leves, um turbo)
 - garagem com coleção
 - 5 categorias de peça + 3 compostos de pneu (incluindo chuva)
 - 2 licenças
@@ -69,8 +69,8 @@ Saída: série temporal de posição ao longo da trajetória por carro. A visual
 interpola sobre ela e escolhe a direção do sprite (16) pelo ângulo da tangente.
 
 ### Calibração
-Tempos de volta e velocidades do GT2 servem de alvo: se o carro-arquétipo X faz Y na pista
-de função Z no GT2, o equivalente fictício deve ficar na mesma ordem relativa. A meta é
+Tempos de volta e velocidades da referência servem de alvo: se o carro-arquétipo X faz Y na pista
+de função Z na referência, o equivalente fictício deve ficar na mesma ordem relativa. A meta é
 preservar **ordem e distância relativa** entre carros, não tempos absolutos.
 
 ## 4. Arquivos de dados
@@ -78,7 +78,7 @@ preservar **ordem e distância relativa** entre carros, não tempos absolutos.
 ```
 data/fabricantes.json   id, nome, escola (jp/de/it/us/uk/fr), descrição
 data/carros.json        id, fabricante, arquétipo_ref, categoria, tração, potência, peso, preço, ano
-(usados ficam em carros.json: janelas de dias com preço, da lista do GT2)
+(usados ficam em carros.json: janelas de dias com preço, da lista da referência)
 data/pecas.json         id, categoria, efeitos por atributo, preço, compatibilidade
 data/pneus.json         compostos, aderência seco/chuva, preço
 data/pistas.json        id, função, trechos
@@ -92,7 +92,7 @@ nome real do carro — esse campo pode ir para o build sem problema.
 
 ## 5. Pipeline de carros (ordem de construção)
 
-1. Planilha de referência a partir do GT2: arquétipo, categoria, potência, peso, preço,
+1. Planilha de referência a partir do jogo de referência: arquétipo, categoria, potência, peso, preço,
    tração, posição na progressão. Uso interno, nunca empacotado.
 2. Agente gera ficha fictícia: fabricante, nome, números ajustados, briefing de design.
 3. Modelo 3D simplificado (low-poly, paleta limitada).
@@ -119,7 +119,7 @@ técnico real do projeto.
 
 ## 7. Riscos
 
-- **Jurídico.** Usar o GT2 só como referência de estudo. Não empacotar código, modelos,
+- **Jurídico.** Usar o jogo de referência só para estudo. Não empacotar código, modelos,
   texturas, músicas, nomes de carros, marcas ou traçados reconhecíveis. Dados numéricos
   devem ser reajustados, não copiados em bloco.
 - **Design parecido demais.** O pipeline precisa de uma etapa explícita de checagem
@@ -144,7 +144,7 @@ técnico real do projeto.
    ele corre em tempo real, com o app aberto ou fechado, e ao terminar a licença é
    concedida sozinha. Não há avaliação, montagem nem medalha.
 5. **Usados giram por número de corridas**, não por tempo real. Cada corrida conta como
-   um dia, como no GT2. Imune a manipulação do relógio; a fila offline avança o estoque.
+   um dia, como na referência. Imune a manipulação do relógio; a fila offline avança o estoque.
 6. **Fabricantes: 3 no primeiro build, 8 a 10 no lançamento.** Primeiro build: uma
    japonesa, uma alemã e uma de outra escola. Lançamento: ~3 japonesas, 2 alemãs, 1
    italiana, 1 americana, 1 britânica, 1 francesa.
@@ -158,11 +158,11 @@ técnico real do projeto.
 8. **Ordem:** etapa 7 (usados, licenças, carros-prêmio) antes da 6 (visualização).
 9. **Licença:** testes com pista, voltas, condição e restrição fixas; tempos de ouro,
    prata e bronze em `licencas.json`; concedida com todos os testes em bronze ou melhor.
-10. **Usados:** como no GT2 — janelas de dias com preço por carro, vindas da lista de
+10. **Usados:** como na referência — janelas de dias com preço por carro, vindas da lista de
     usados do disco (60 períodos de 10 dias). Sem quilometragem. (Substituiu a versão
-    com quilometragem sorteada, que não existe no GT2.)
+    com quilometragem sorteada, que não existe na referência.)
 11. **Piloto do jogador:** perfil fixo (`carreira.json`), sem evolução.
-12. **Eventos:** restrições do GT2 (potência efetiva, tração, categoria, fabricante, ano,
+12. **Eventos:** restrições da referência (potência efetiva, tração, categoria, fabricante, ano,
     licença); jogador larga em último; prêmio por posição a cada disputa; carro-prêmio só
     na primeira vitória.
 13. **Duração na fila:** uma corrida dura em tempo real o mesmo que dura simulada. O tempo
@@ -172,22 +172,22 @@ técnico real do projeto.
 15. **Visualização:** retrato 720×1280; geometria derivada dos trechos (curvas com
     `sentido`); carro provisório desenhado por código em 16 direções, com tamanho fixo
     em pixels; telas com componentes padrão do Godot até a arte existir.
-16. **Dados do GT2:** `data/` vem do disco (SCUS-94488 v1.2) pelo extrator e importador
-    em `tools/`. Carros fictícios ligados a modelos do GT2; séries do GT2 renomeadas;
-    nenhum nome, marca ou traçado do GT2 no build.
+16. **Dados da referência:** `data/` vem do disco (SCUS-94488 v1.2) pelo extrator e importador
+    em `tools/`. Carros fictícios ligados a modelos da referência; séries da referência renomeadas;
+    nenhum nome, marca ou traçado da referência no build.
 17. **Placeholders em blocos 3D** (pedido do usuário, substitui parte da 15): corrida em
     3D com câmera ortográfica isométrica seguindo o jogador e minimapa da pista inteira;
     carros de blocos (chassi, cabine, rodas) com proporção por categoria; oficina começa
-    pela escolha do carro, com vitrine girando como no GT2; ícones de carro e de pista
+    pela escolha do carro, com vitrine girando como na referência; ícones de carro e de pista
     nas listas. A posição lateral é só visual (a simulação é em uma dimensão): carros
     próximos abrem para faixas livres e não se atravessam; toque na troca de faixa
     aparece como tranco, sem efeito no resultado. A arte final continua a da seção 5.
 18. **Colisão só visual.** O toque entre carros aparece na tela e não muda o resultado:
-    no GT2 batida não tem dano, e a simulação já segura quem está atrás fora das zonas de
+    na referência batida não tem dano, e a simulação já segura quem está atrás fora das zonas de
     ultrapassagem.
-19. **Provas abertas como no GT2.** Só licenças travam provas; o começo é guiado por
+19. **Provas abertas como na referência.** Só licenças travam provas; o começo é guiado por
     objetivos e pelas "recomendadas para começar", sem esconder nada.
-20. **Sem campeonato por pontos.** No disco do GT2, o bônus de campeonato
+20. **Sem campeonato por pontos.** No disco da referência, o bônus de campeonato
     (`SeriesChampBonus`) só existe nas séries internacionais (GT3, GT5, GTW, FRE), fora do
     jogo; a tabela de pontos não está nas tabelas. Os eventos mostram o progresso da série
     (etapas vencidas), sem prêmio extra inventado.
@@ -207,7 +207,7 @@ técnico real do projeto.
     limites provisórios +8% / −5%), que não é dificuldade: pneus, curvas e frenagem
     também contam. "Estimar desempenho" simula a prova com o carro em uso e mostra a
     faixa de posições, só quando o jogador pede.
-25. **Torque e câmbio na simulação.** A curva de torque e as marchas vêm do GT2; só a forma
+25. **Torque e câmbio na simulação.** A curva de torque e as marchas vêm da referência; só a forma
     é usada, escalada para a potência efetiva. O câmbio ajustável oferece curto,
     equilibrado e longo (passo provisório). `tools/provas_profundidade.gd` verifica as três
     provas de profundidade: menos potente que vence onde é adequado, ajuste que muda
@@ -247,14 +247,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 33. **Licença híbrida** (muda a 4 e a 9): estados LOCKED → AVAILABLE → TRAINING (treino por
     tempo, timestamp absoluto, conta offline) → READY_FOR_EVALUATION → COMPLETE. A
     avaliação são os contratos de certificação. Requisitos combináveis com status na tela.
-    IDs CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO, ELITE ligados às licenças do GT2.
+    IDs CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO, ELITE ligados às licenças da referência.
 34. **Offline só para repetição** (muda a 2): repetir prova já vencida roda offline; prova
     inédita, campeonato e corrida da história só com o app aberto.
 35. **Campeonatos com pontos** (muda a 20 e a 28).
 36. **Equipes, pilotos e carros nas corridas:** cada rival é um carro de uma equipe; a
     equipe tem piloto principal e segundo piloto; a cada corrida, 70% de chance de correr
     o principal e 30% o segundo, que pode ser até 20% pior.
-37. **Fora:** taxa de inscrição e quilometragem/condição (o GT2 não tem; mantém a 10).
+37. **Fora:** taxa de inscrição e quilometragem/condição (a referência não tem; mantém a 10).
     Equipe do jogador (finanças leves, 2º carro e piloto) só na fase 9 do documento.
 38. **Segundo piloto e gestão leve (fase 9):** o segundo piloto é só visual, com a
     penalidade de segundo piloto (36): corre a mesma prova com outro carro da garagem,
@@ -267,7 +267,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 
 39. **Corridas aceleradas por vídeo com recompensa; sem banner fixo.** O jogador assiste
     a um anúncio por escolha e as corridas da fila andam 2× mais rápido por 30 minutos
-    (prêmios iguais: só o tempo encolhe, a economia do GT2 não muda). Cada vídeo soma
+    (prêmios iguais: só o tempo encolhe, a economia da referência não muda). Cada vídeo soma
     tempo; vale com o app fechado. Uma compra única **Sem anúncios** dá a aceleração sem
     o vídeo. Sem banner permanente, sem anúncio forçado e sem vender carros ou Giros.
     Fator e duração em `data/monetizacao.json`; teto diário de aceleração pendente
@@ -282,7 +282,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     corridas não desenham piloto: todo carro aberto sai. Num jogo idle, carros do mesmo
     modelo com números quase iguais não têm função diferente: de cada grupo (mesmo
     modelo, inclusive vendido por duas marcas; mesma tração; de rua ou de corrida;
-    potência ±10% e peso ±5%) fica um. Dos 618 do GT2 ficam 386. Rivais, prêmios e
+    potência ±10% e peso ±5%) fica um. Dos 618 da referência ficam 386. Rivais, prêmios e
     copas usam o substituto; saves migram para ele. Regra no importador
     (`reduzir_frota`), não à mão.
 
@@ -293,11 +293,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     peças, pneus) dobram em relação aos prêmios. No importador (`FATOR_VOLTAS`,
     `FATOR_PRECO`); prêmios, bônus e saldo inicial não mudam.
 42. **Lojas = workshops, sem usados.** As 6 workshops (`data/workshops.json`, logos em
-    `arte/ui/workshops/`) seguem as regiões do GT2: 4 do Japão (Hayase e Kanaya
+    `arte/ui/workshops/`) seguem as regiões da referência: 4 do Japão (Hayase e Kanaya
     sozinhas, as outras marcas japonesas em dois grupos), 1 dos EUA e 1 da Europa
-    (de 53 a 101 carros): a estrutura do GT2 (uma loja por marca, por região)
+    (de 53 a 101 carros): a estrutura da referência (uma loja por marca, por região)
     agrupada. Toda a frota é vendida pelo preço de tabela, inclusive os modelos
-    que no GT2 só existiam usados. Sem usados nem agenda; a Second Chance Motors fica
+    que na referência só existiam usados. Sem usados nem agenda; a Second Chance Motors fica
     só na história (garagem vazia da Elena).
 43. **Garagem com vagas:** começa com 4; cada ampliação dobra as vagas. A 1ª custa a
     soma dos prêmios de 1º lugar das provas da licença Club × 2; cada uma seguinte
@@ -324,7 +324,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     acima do percentil 90 dos preços do catálogo e o tutorial de corridas na primeira
     prova que o carro em uso já pode correr.
 
-### Arena (decisões do usuário, 2026-10-10; estudo Destruction Derby)
+### Arena (decisões do usuário, 2026-10-10; estudo de arena)
 
 49. **Arena: perda do carro sempre.** Carro eliminado na arena sai da garagem para
     sempre. Só pode se inscrever quem tem **ao menos 2 carros** na garagem (nunca se
@@ -385,7 +385,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     desce para baixo dele, abrindo espaço para as abas.
 59. **Arenas** (2026-10-11, aprovado pelo usuário): 4 originais (Pátio da Pedreira,
     National; Fosso das Docas, International; Anel do Ferro-Velho, Pro; Cratera do Vale,
-    Elite), com o que dá emoção nas do Destruction Derby 2 sem copiar nenhuma: muro em
+    Elite), com o que dá emoção nas da referência de arena sem copiar nenhuma: muro em
     polígono irregular (cantos para encurralar), ilhas no meio que separam a briga e o
     chão que não é plano. O relevo (crateras, lombadas, morro, a borda subindo no muro)
     entra na física: a gravidade acelera na descida e freia na subida, então a cratera
@@ -409,7 +409,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 62. **Blindagem e elenco da Wreckage** (2026-10-12, pedido do usuário): a Oficina ganha a
     blindagem em 3 níveis (cartão de escudo ao lado da velocidade máxima). É peso a mais:
     na arena a resistência cresce com a massa; na corrida o carro fica mais lento. Números
-    provisórios, a confirmar: espelho da redução de peso do GT2 do próprio carro (nível k
+    provisórios, a confirmar: espelho da redução de peso da referência do próprio carro (nível k
     pesa o inverso do estágio k e custa o mesmo; `data/arena.json` → `blindagem`). Entram
     dez personagens com diálogos e tutoriais: Rico Salas (manobrista, janela Garagem),
     Kenji Arata (pintor, PINTURA), Harold Brandt (examinador da Vector Academy), Roxy Vega
@@ -475,7 +475,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     `tools/pacote_arte_grid.py` com os retratos de todos os pilotos rivais, pessoas no estilo
     aprovado dos personagens; os retratos de animal antigos foram descartados; entra com
     `tools/importar_arte_grid.py`); carros especiais do catálogo da licença da equipe, nas
-    cores dela (critério: o carro do rival da série no GT2); modo do desafio pelo jeito da
+    cores dela (critério: o carro do rival da série na referência); modo do desafio pelo jeito da
     equipe; desafio dedicado depois disso, com o prêmio da prova existente; decisão 61
     mantida; CRED fora.
 68. **Escalação, uma corrida por vez e patrocínio na Carreira** (2026-10-12, decisão do
@@ -493,7 +493,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Equipe). Três vagas (`jogador.pilotos`): 1 piloto de corrida (nas corridas só ele corre)
     e 2 de arena (a dupla). Cada candidato tem o seu tipo (`carreira.json` →
     candidatos → `tipo`; desde 2026-10-16, por decisão do usuário, um candidato de cada
-    traço em cada vaga, para os pilotos da tela serem diferentes: no GT2 a habilidade da IA
+    traço em cada vaga, para os pilotos da tela serem diferentes: na referência a habilidade da IA
     é uma só por prova, então não há dispersão de piloto para importar),
     sem salário novo (a gestão segue a tabela atual). Tutorial: depois dos freios, a Mara
     abre a Equipe e o primeiro piloto (de corrida) é contratado antes da primeira prova
@@ -542,7 +542,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     variável `{admin}`); a equipe segue Wreckage Motorsport (o nome se troca na cabine de
     pintura, como antes). O cenário `oficina_mara` é a oficina das imagens (o carro nos
     cavaletes). Primeiro objetivo, "De volta às pistas": renovar a licença = passar na
-    licença Club, grátis como no GT2 (seção 8), sem prazo, com os giros das provas abertas;
+    licença Club, grátis como na referência (seção 8), sem prazo, com os giros das provas abertas;
     aprovada, a Mara apresenta o The Grid. Avaliado e não adotado agora: taxa de 25.000 giros
     pela licença (número sem fonte; muda a seção 8) e o CRED (sem desbloqueios próprios nem
     números com fonte; volta junto com os carros especiais do Grid). Fala final do Grid (#1)
@@ -561,7 +561,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     do Vale; em ordem de dificuldade, troca-se no JSON). Melhor de 3: os carros
     destruídos são trocados pelos próximos da garagem entre os rounds, por isso pede 6 carros
     fora o de corrida (a série fica salva entre rounds). Carros especiais: os adversários
-    reais (GT2) da licença da equipe pela maior relação potência/peso (sem repetir no Grid:
+    reais (referência) da licença da equipe pela maior relação potência/peso (sem repetir no Grid:
     da #1 para a #10, cada equipe fica com os melhores ainda livres da sua licença), com o ajuste de
     potência deles; a licença da equipe é exigida. Sem prêmio em giros na corrida do desafio
     (a recompensa é o Grid e as pinturas); na arena vale o prêmio por pontos. Revelação: ao
@@ -596,7 +596,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     cilindrada; chassi à direita: câmbio, pneus, peso, polimento de dutos, resfriamento;
     só as que existem para o carro) e Preparação de arena (a blindagem). As barras de
     progresso ficam mais altas e mais inclinadas, em todo o jogo. Do mockup não entram: nitro
-    (não existe no GT2) e "Teste" no lugar de Acelerar; a escalação continua no topo.
+    (não existe na referência) e "Teste" no lugar de Acelerar; a escalação continua no topo.
     Depois (pedido do usuário, para desafogar): a Preparação de corrida vira uma roleta, uma
     categoria por vez num cartão grande (ícone, barra, a próxima peça com o preço e o botão
     Melhorar; ‹ › ou deslizar), com a faixa de ícones de todas embaixo (a atual destacada,
@@ -637,11 +637,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 80. **Frota 360** (2026-10-13, decisões do usuário). A frota do jogo passa a ser a do pacote
     "Veículos 360" (modelos 3D com rodas separadas e proteções por região), mais os 3
     modelos aprovados que vieram fora da lista (Nimbo, Bastion, Aster): 363 carros no lugar
-    dos 386. Números: o carro que existe no GT2 (71, casados à mão pela geração) usa o
+    dos 386. Números: o carro que existe na referência (71, casados à mão pela geração) usa o
     disco; os outros, a ficha real pesquisada (potência, peso, tração, ano) com um doador
-    do GT2 (mesma tração, potência e peso mais perto) para curva de torque, câmbio,
+    da referência (mesma tração, potência e peso mais perto) para curva de torque, câmbio,
     aderência, freio, distribuição de peso e peças; preço = preço do doador ×
-    (cv/cv)^1,235 × (kg/kg)^-0,900 (regressão nos carros de rua do GT2). Sem peso na
+    (cv/cv)^1,235 × (kg/kg)^-0,900 (regressão nos carros de rua da referência). Sem peso na
     ficha: peso pelo volume do modelo (regressão nas fichas com peso, R² 0,78); sem ficha
     (3) ou sem referência real (os 3 aprovados): clone do carro antigo de medidas mais
     parecidas, provisório. Marcas: as reais reusam as fictícias que já existiam (cada marca real
@@ -655,7 +655,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     arena a proteção da região atingida se solta e cai. Os modelos ainda estão em revisão
     artística (o REVIEW.json do pacote; `arte_provisoria` nos dados). Fontes reais (nomes,
     fichas, casamento) ficam só em `referencia/frota360/`, fora do git e do build;
-    ferramenta `tools/frota360.py` → `tools/importar_gt2.py --frota`.
+    ferramenta `tools/frota360.py` → `tools/importar_referencia.py --frota`.
 81. **Pacote de pista, piloto e dano** (2026-10-13, decisões do usuário). A simulação da arena
     ganha fogo, fuga e explosão: o carro eliminado com o motor destruído (a outra metade da
     frente também no limite da ré) pega fogo; os outros só param e fumegam. Tempos e raio
@@ -673,13 +673,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     cones e pneus só de decoração. Arte e animações do pacote em `arte/dano/` (animações CC0).
 82. **Capotagem, amassado e medidas** (2026-10-13, teste do usuário). O carro que capota fica de
     teto para baixo (sem a volta inteira de volta às rodas, que parecia artificial; como no
-    Destruction Derby); o nariz sobe menos nas batidas de frente/trás. Amassado com metade da
+    referência de arena); o nariz sobe menos nas batidas de frente/trás. Amassado com metade da
     profundidade. A arena usa as medidas do modelo 3D de cada carro (`comprimento`, `largura`
     em carros.json, do model-info do pacote pelo importador): antes todos tinham 4,4 × 1,75 m
     e os maiores se sobrepunham na tela.
 83. **Capotado fora da luta; recuperação do atropelado** (2026-10-13, decisões do usuário). A
     batida de lado com dano ≥ `capota_dano` (0,2, o limite que a tela já usava) capota o carro:
-    ele cai de teto para baixo e sai da luta, como no Destruction Derby (~20% dos carros por
+    ele cai de teto para baixo e sai da luta, como na referência de arena (~20% dos carros por
     luta); a eliminação conta para quem bateu. O piloto atropelado fica fora pelo tempo do
     próximo nível de treino dele (`recuperacao_atropelo: "treino"`), sem o desconto do embalo.
 84. **Ordem do tutorial do dono** (2026-10-13, pedido do usuário). O piloto vem primeiro:
@@ -760,7 +760,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       loja Spare Penny com a fala da Mara. Saem as cenas sem gatilho (CW_SYS04, CW_SYS09).
     - A escalação dos rivais é a da inscrição (os contratados ficam na fila).
     - Dados: a equipe do jogador em equipes.json é a Wreckage, sem pilotos fixos; a chave
-      `gt2` sai das licenças; a abertura usa a ilustração `noite_da_arena` (cópia removida).
+      do código antigo sai das licenças; a abertura usa a ilustração `noite_da_arena` (cópia removida).
     - Web: texturas grandes com perda (pacote de 112 para 45 MB), malhas 3D sem LODs,
       sombras e tangentes, `docs/` fora do build, uma meta viewport (área segura do iPhone),
       aviso para girar o aparelho, save ao perder o foco, efeitos leves por padrão no Web,
@@ -877,7 +877,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       carro → piloto → corrida → Grid. A apresentação das equipes ficou curta (~3 s até o
       Continuar, era ~35 s): o emblema da rival cai, o da Wreckage sobe, o corte e o VS
       batem; o confronto mostra a Wreckage no nosso lado.
-    - **Primeira vitória cedo** (critério da Sunday Cup do GT2: a primeira prova sugerida
+    - **Primeira vitória cedo** (critério da Sunday Cup da referência: a primeira prova sugerida
       vencível com o carro que o saldo inicial compra): na primeira compra, cada carro
       mostra a força na estreia ("ESTREIA: MAIS FORTE/PARELHO/MAIS FRACO", frente ao
       rival mais forte da prova mais favorável); Corridas abre com a **Próxima prova** (a
@@ -896,7 +896,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     consistência e agressividade próprias, fixas, de uma calculadora
     (`EquipeJogador.variar`): as faixas saem dos dados (agressividade ± metade do menor
     intervalo entre os perfis; consistência ± metade da perda do segundo piloto) e
-    `carreira.json` → `variacao_piloto.fator` escala no playtest. O ritmo segue o GT2 e a
+    `carreira.json` → `variacao_piloto.fator` escala no playtest. O ritmo segue a referência e a
     barra é uma escala própria: do pior piloto do jogo (35%, `PISO_BARRA`) ao premium (100%).
     Vantagem real do premium (2026-10-17): ritmo `carreira.json` → `ritmo_premium` = 1.023,
     medido com `tools/calibrar_treino.gd --licenca=INTERNATIONAL --meta=0.2` (o teto do
@@ -914,7 +914,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     com recompensa enche o tanque inteiro. Repetir prova já vencida paga 50%, 25% e depois
     10% do prêmio, voltando a 100% a cada 24 h (`carreira.json` → `repeticao`); provas sem
     licença ficam fora, para não travar o começo (a renda inicial é repetir a primeira
-    prova vencida). Não vem do GT2.
+    prova vencida). Não vem da referência.
 99. **Licença sem avaliação** (2026-10-17, decisão do usuário: "as licenças são adquiridas
     com tempo correndo online e offline apenas"). Saem os contratos da Club (montagem com
     peças da escola, "O pequeno contra o gigante" etc.) e os testes de tempo da Sport em

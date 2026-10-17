@@ -1,7 +1,7 @@
 # data/
 
 Balanceamento consumido pelo autoload `Dados` (`autoload/dados.gd`). **Nenhum valor aqui é
-inventado:** os números vêm do estudo do GT2 e de playtest. O que ainda falta aparece em
+inventado:** os números vêm do estudo da referência e de playtest. O que ainda falta aparece em
 `Dados.pendencias()` e como aviso ao abrir o projeto.
 
 Os campos obrigatórios de cada arquivo estão em `Dados.ESQUEMAS`. Exemplos completos e
@@ -11,7 +11,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 |---|---|
 | `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
 | `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` |
-| `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos`. O importador grava agrupado por carro (`{nomes, carros: {carro: [{s, preco, efeitos, ...}]}}`, um terço do tamanho; regra no campo `_formato`) e o `Dados` expande para a lista; em Python, `ler_pecas()` de `tools/importar_gt2.py` |
+| `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos`. O importador grava agrupado por carro (`{nomes, carros: {carro: [{s, preco, efeitos, ...}]}}`, um terço do tamanho; regra no campo `_formato`) e o `Dados` expande para a lista; em Python, `ler_pecas()` de `tools/importar_referencia.py` |
 | `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
@@ -23,19 +23,19 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |
 | `carros_removidos.json` | objeto `{id que saiu: id que ficou}` (decisão 40). **Gerado** pelo importador; o save migra carros e peças por ele |
 | `garagem.json` | objeto `{capacidade_inicial, fator_vagas, licenca_do_preco, fator_preco_base, fator_preco}` (decisão 43): vagas da garagem e o preço de cada ampliação (`VagasGaragem`). Opcional (sem ele, sem limite); feito à mão |
-| `workshops.json` | lista de `{id, nome, logo, fabricantes}` (decisão 42): as lojas e as marcas que cada uma vende; `logo` = prefixo dos arquivos em `arte/ui/workshops/`. Feito à mão (não vem do GT2) |
-| `monetizacao.json` | objeto `{aceleracao: {fator, duracao_s, teto_s}, combustivel: {tanque, renova_s}}` (decisão 39): corridas aceleradas pelo vídeo com recompensa; combustível (corrida e luta gastam 1, renova 1 a cada `renova_s` em tempo real, o vídeo enche o tanque; `Combustivel`). `teto_s` `null` = sem teto (pendente de playtest). Opcional; feito à mão (não vem do GT2) |
+| `workshops.json` | lista de `{id, nome, logo, fabricantes}` (decisão 42): as lojas e as marcas que cada uma vende; `logo` = prefixo dos arquivos em `arte/ui/workshops/`. Feito à mão (não vem da referência) |
+| `monetizacao.json` | objeto `{aceleracao: {fator, duracao_s, teto_s}, combustivel: {tanque, renova_s}}` (decisão 39): corridas aceleradas pelo vídeo com recompensa; combustível (corrida e luta gastam 1, renova 1 a cada `renova_s` em tempo real, o vídeo enche o tanque; `Combustivel`). `teto_s` `null` = sem teto (pendente de playtest). Opcional; feito à mão (não vem da referência) |
 | `equipe.json` | objeto `{patrocinio: {ofertas, duracao_h, renda_hora_fator, bonus_fator, contratos_base}, desmanche: {fator_pecas}, sede: [{id, nome, descricao, efeito, por_nivel, niveis, custo_fator}], sede_licenca_custo, treino: {passo, tempo_base_h, custo_fator, teto: {licença: ritmo}}}` (decisões 51–54, `GestaoEquipe`). `treino.teto` é GERADO por `tools/calibrar_treino.py` (maior ritmo do piloto que encurta em até 10% o caminho até vencer as provas da licença); não editar à mão. Fatores sobre o prêmio de 1º lugar médio da licença; provisórios até o playtest. Opcional; feito à mão |
 | `patrocinadores.json` | lista de `{id, nome, ramo, licenca, condicao: {tipo: podio\|vitoria\|etapa\|licenca, valor?}}` (decisão 51): marcas fictícias. Opcional; feito à mão |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}` (e `repeticao {fatores, periodo_h, so_com_licenca}`: prêmio de prova já vencida cai a cada repetição no período, `Carreira.fator_repeticao`): piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
 ## Unidades e semântica
 
-- Dinheiro em **Giros (G)**: todo valor em Cr do GT2 (preços, usados, prêmios, bônus de campeão,
+- Dinheiro em **Giros (G)**: todo valor em Cr da referência (preços, usados, prêmios, bônus de campeão,
   saldo inicial) passa por `moeda()` no importador: × `FATOR_MOEDA` (0,0427), arredondado. As
-  proporções entre valores ficam as do GT2; os números (e o padrão de 00/000) não. Preços de
+  proporções entre valores ficam as da referência; os números (e o padrão de 00/000) não. Preços de
   compra (carros, peças, pneus, usados) ainda × `FATOR_PRECO` (2, decisão 41): `preco_loja()`.
-- Voltas das provas: as do GT2 × `FATOR_VOLTAS` (2,5, decisão 41), arredondado.
+- Voltas das provas: as da referência × `FATOR_VOLTAS` (2,5, decisão 41), arredondado.
 
 - `tracao`: `FF`, `FR`, `MR`, `RR` ou `4WD`.
 - `potencia` em cv; `peso` em kg; `velocidade_max` em km/h.
@@ -51,11 +51,11 @@ sintéticos (só para teste) em `tests/fixtures/`.
 - `peso_dianteiro` do carro (opcional): fração do peso no eixo dianteiro
   (Chassis.FrontWeightDistribution ÷ 100). A tração usa o peso sobre o eixo motriz:
   dianteiro (FF), traseiro (FR, MR, RR) ou todo (4WD). Transferência de carga na
-  aceleração ainda não entra: pede a altura do centro de gravidade, que o GT2 não guarda.
-- `motor` do carro (opcional): `{rpm, torque_nm, corte}`. Curva da tabela Engine do GT2
+  aceleração ainda não entra: pede a altura do centro de gravidade, que a referência não guarda.
+- `motor` do carro (opcional): `{rpm, torque_nm, corte}`. Curva da tabela Engine da referência
   (TorqueCurve × 0,01 kgf·m → N·m; TorqueCurveRPM × 100; RedlineRPM × 100). Na
   simulação, a curva é escalada para que o pico de potência seja igual a `potencia`
-  com as peças. Usamos só a **forma**: não é o modelo físico do GT2.
+  com as peças. Usamos só a **forma**: não é o modelo físico da referência.
 - `cambio` do carro: `{relacoes, final}` (tabela Gear, ÷ 1000). `raio_roda` em m, do
   TireSize dianteiro (diâmetro do aro + 2 × largura × perfil; leitura a confirmar).
   Com os três, a força na roda é torque × relação × diferencial ÷ raio na melhor marcha,
@@ -65,7 +65,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
   `turbo_baixa`/`turbo_alta` (multiplicadores do torque no giro baixo e alto,
   TurbineKit). Peça de categoria `cambio`: `{final_min, final_max}` (estágio 3 do Gear).
 Peça de categoria `corrida` (kit de corrida, `RacingModify` estágio 1): preço e peso do
-GT2; muda a elegibilidade (copas "Corrida"). Pressão aerodinâmica e arrasto do kit ficam
+referência; muda a elegibilidade (copas "Corrida"). Pressão aerodinâmica e arrasto do kit ficam
 de fora: a simulação não tem esses termos por carro.
   Os ajustes curto/longo andam `Carro.PASSO_CAMBIO` (0,5, **provisório**, decisão de
   interface) do diferencial de fábrica até esses limites.
@@ -81,8 +81,8 @@ de fora: a simulação não tem esses termos por carro.
 | `amostra_dt_s` | intervalo das amostras para a visualização | definido (técnico) |
 | `tempo_max_s` | trava de segurança da corrida | definido (técnico) |
 | `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | 6,0 (comprimento de um carro + margem; confirmar em playtest) |
-| `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,02 — **a confirmar** (o GT2 não tem) |
-| `cda_m2` | área frontal × coeficiente de arrasto, igual para todos | 0,6 — **a confirmar** (o GT2 não guarda arrasto de carro de rua) |
+| `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,02 — **a confirmar** (a referência não tem) |
+| `cda_m2` | área frontal × coeficiente de arrasto, igual para todos | 0,6 — **a confirmar** (a referência não guarda arrasto de carro de rua) |
 | `densidade_ar_kg_m3` | densidade do ar | 1,225 (nível do mar) |
 | `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração, **só para carro sem `peso_dianteiro`** (fixtures) | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 |
 
@@ -91,7 +91,7 @@ de fora: a simulação não tem esses termos por carro.
 | Chave | O que é | Estado |
 |---|---|---|
 | `saldo_inicial` | dinheiro no começo do jogo | 658 |
-| `fracao_revenda` | venda = preço de tabela (novo) × fração, seja qual for o preço pago; peças não entram no valor | 0,25 — medido no GT2 (3 carros: 8.000→2.000, 6.400→1.600, 2.800→700) |
+| `fracao_revenda` | venda = preço de tabela (novo) × fração, seja qual for o preço pago; peças não entram no valor | 0,25 — medido na referência (3 carros: 8.000→2.000, 6.400→1.600, 2.800→700) |
 | `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | `pneu_0` |
 
 Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
@@ -103,32 +103,32 @@ recusada.
 - `condicao`: `seco` ou `chuva`, fixa por evento.
 - `restricoes` (todas opcionais, ver `data_model/elegibilidade.gd`): `potencia_max` (cv
   efetivos, já com peças), `tracao`, `categoria`, `fabricante` (listas), `ano_min`,
-  `ano_max`, `licenca`, `carros` (lista de ids: copas de marca do GT2, `Regulations`) e
+  `ano_max`, `licenca`, `carros` (lista de ids: copas de marca da referência, `Regulations`) e
   `corrida` (`true`: só versão de corrida, isto é, carro com a peça `corrida` ou carro
   `corrida` de fábrica; `false`: só carro de rua sem o kit; `CarRestrictionFlags` 512/256).
-- `largada_kmh`: largada lançada (`RollingStartSpeed` do GT2); sem ela, largada parada.
+- `largada_kmh`: largada lançada (`RollingStartSpeed` da referência); sem ela, largada parada.
 - `adversarios`: lista de `{carro, piloto, pecas?, pneus?, potencia_mult?}`; sem `pneus`,
-  usa o de fábrica. `potencia_mult` e `pneus` são a preparação do rival no GT2
+  usa o de fábrica. `potencia_mult` e `pneus` são a preparação do rival na referência
   (`EnemyCars.PowerMultiplier` ÷ 100 e o estágio de `TiresFront`).
-- Copas de marca: prova única por modelo (nome sem "etapa"); o GT2 sorteia a pista, aqui
+- Copas de marca: prova única por modelo (nome sem "etapa"); a referência sorteia a pista, aqui
   ela gira pelas pistas de corrida (`POOL_MARCA` no importador).
 - `premios`: dinheiro por posição (índice 0 = 1º). Posições além da lista não recebem.
 
-Regras fixas no código (`data_model/carreira.gd`), seguindo o GT2: o jogador larga em
+Regras fixas no código (`data_model/carreira.gd`), seguindo a referência: o jogador larga em
 último; o prêmio em dinheiro é pago a cada disputa; o carro-prêmio só na primeira vitória;
 cada corrida disputada conta um dia.
 
 ## licencas.json
 
 Licenças CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO e ELITE (decisão 33): CLUB=B, SPORT=A,
-NATIONAL=IC, INTERNATIONAL=IB, PRO=IA do GT2 (campo `gt2`); ELITE (a S, sem dados no
+NATIONAL=IC, INTERNATIONAL=IB, PRO=IA da referência; ELITE (a S, sem dados no
 disco) libera as 7 resistências e não tem testes. Sem avaliação (decisão 99): o treino terminado concede a licença. Estados e
 regras em `data_model/licencas.gd`: requisitos (anterior; vencer em `fracao_series` das
 séries da anterior; a partir de `campeonato_desde`, um título da anterior quando ela tem
 campeonato), treino com duração = soma dos bronzes dos testes × `fator_treino` (**a
 confirmar** no playtest; sem testes, a da anterior), começado pelo jogador, contado pelo
 relógio (offline também), e a avaliação só depois do treino. Configuração em
-`carreira.json` → `licencas`. Preço 0 (no GT2 a licença é grátis).
+`carreira.json` → `licencas`. Preço 0 (na referência a licença é grátis).
 
 Equipe do jogador (decisão 38, `carreira.json` → `equipe_jogador`): caixa único (o
 saldo); a cada corrida entra `patrocinio` e sai `custo_staff`. Valores em G;
@@ -145,10 +145,10 @@ Testes não contam dia.
 
 ## Usados
 
-Como no GT2: cada carro lista as janelas em que aparece na concessionária de usados e o
-preço de cada uma (`usados`). No GT2 são 60 períodos de 10 dias; o dia é o número de
+Como na referência: cada carro lista as janelas em que aparece na concessionária de usados e o
+preço de cada uma (`usados`). Na referência são 60 períodos de 10 dias; o dia é o número de
 corridas disputadas. Comprado, o carro sai do estoque até a janela seguinte. Não há
-quilometragem (o GT2 não tem).
+quilometragem (a referência não tem).
 
 ## Fila e offline
 
@@ -170,7 +170,7 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 | `anel_curto` | alta velocidade, versão curta | 2.101 m | reta principal e reta oposta |
 | `serra_curta` | montanha, versão curta | 1.356 m | reta de largada e duas retas finais |
 
-As versões curtas recebem os eventos das versões curtas do GT2 e usam o cenário da
+As versões curtas recebem os eventos das versões curtas da referência e usam o cenário da
 pista-mãe (`Corrida3D.TEMA_DE`).
 
 Os rascunhos ficam em `data/rascunhos_pistas/`: curvas descritas por raio e ângulo, com
@@ -183,7 +183,7 @@ duas retas para a volta fechar e imprime a pista pronta para `pistas.json`.
 Reino Unido). Nomes fictícios; **busca de marca pendente** antes do lançamento, como o
 título do jogo.
 
-## Carros a partir da referência do GT2
+## Carros a partir da referência
 
 1. Monte a tabela CSV descrita em `tools/converter_carros.py` (exemplo em
    `tests/referencia/exemplo.csv`). Guarde em `referencia/` ou como
@@ -192,14 +192,14 @@ título do jogo.
 2. `tools/converter_carros.py referencia/carros.csv > data/carros.json`
 3. A coluna `ref_real` é descartada; só nome fictício e arquétipo entram no jogo.
 
-## Dados do GT2 (fonte de todo o balanceamento)
+## Dados da referência (fonte de todo o balanceamento)
 
 Fluxo, a partir de uma cópia legítima do disco (Simulation Disc, SCUS-94488):
 
 ```
-python3 tools/extrair_gt2.py --disco "Gran Turismo 2 (Simulation).bin"   # -> referencia/gt2/
-python3 tools/importar_gt2.py --sugerir      # liga cada carro nosso a um carro do GT2 (revise)
-python3 tools/importar_gt2.py                # -> data/carros, pecas, pneus, pilotos_ia, eventos, licencas...
+python3 tools/extrair_referencia.py --disco "disco.bin"   # -> referencia/extraido/
+python3 tools/importar_referencia.py --sugerir      # liga cada carro nosso a um carro da referência (revise)
+python3 tools/importar_referencia.py                # -> data/carros, pecas, pneus, pilotos_ia, eventos, licencas...
 godot --headless --script res://tools/calibrar_licencas.gd   # tempos das licenças
 ```
 
@@ -211,21 +211,21 @@ para os carros fictícios.
 A frota atual vem do pacote "Veículos 360" (modelos 3D) e não mais da tabela
 `referencia/carros.csv`. Fontes em `referencia/frota360/` (fora do Git): `mapa_parte*.json`
 (referência real de cada modelo), `marcas.json` (marca real → fabricante fictício),
-`gt2.json` (carros casados com o GT2, revisados à mão), `fichas.json` (fichas reais
+`casados.json` (carros casados com a referência, revisados à mão), `fichas.json` (fichas reais
 pesquisadas, com fontes) e `pacote/` (model-info, car.glb e protection.glb de cada modelo).
 
 ```
 python3 tools/frota360.py --instalar                      # -> referencia/frota360/frota.json, antigos.json; GLBs
-python3 tools/importar_gt2.py --frota referencia/frota360/frota.json   # -> data/
+python3 tools/importar_referencia.py --frota referencia/frota360/frota.json   # -> data/
 godot --headless --path . --script res://tools/calibrar_licencas.gd
 python3 tools/gerar_cores.py
 godot --headless --path . --script res://tools/lista_carros_3d.gd
-``` As conversões estão no topo de `tools/importar_gt2.py`.
+``` As conversões estão no topo de `tools/importar_referencia.py`.
 
-**A confirmar** (não vêm do GT2): `teto_offline_s` (8 h, decisão de design),
+**A confirmar** (não vêm da referência): `teto_offline_s` (8 h, decisão de design),
 `sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).
 
-## Estado atual de data/ (importado do GT2 americano, SCUS-94488 v1.2)
+## Estado atual de data/ (importado da referência americano, SCUS-94488 v1.2)
 
 - **386 carros** (319 de rua e 67 versões de corrida), dos 618 do disco menos os
   abertos e os repetidos (decisão 40, `reduzir_frota` no importador): sai todo carro sem
@@ -235,32 +235,32 @@ godot --headless --path . --script res://tools/lista_carros_3d.gd
   copas de marca usam o substituto; `carros_removidos.json` (gerado) leva cada id que saiu
   ao que ficou, e o save migra por ele (`Save.migrar_frota`). Nome e fabricante
   fictícios: `tools/gerar_referencia_carros.py` monta `referencia/carros.csv` (fora do Git)
-  com um fabricante inventado por fabricante do GT2 (36) e um nome por família de modelo,
+  com um fabricante inventado por fabricante da referência (36) e um nome por família de modelo,
   no idioma da escola do fabricante; as versões da família vão por potência (base, S, GT,
   GTS, R, SR, GX, SX; corrida = "Corrida") e levam o ano quando preciso. Os 17 do primeiro
   build mantêm id, nome e fabricante. **Busca de marca pendente** antes do lançamento.
-- 4.701 peças com preço e efeito do GT2 (por carro); 7 compostos de pneu (medianas sobre os
+- 4.701 peças com preço e efeito da referência (por carro); 7 compostos de pneu (medianas sobre os
   618 do disco. como antes da redução).
-- Usados: janelas e preços dos 60 períodos de 10 dias do GT2 (~140 por período). Novos:
+- Usados: janelas e preços dos 60 períodos de 10 dias da referência (~140 por período). Novos:
   os 313 que nunca aparecem no usado.
 - 103 eventos de 31 séries sem licença, B, A, IC, IB e IA (`SERIES` em
-  `tools/importar_gt2.py`), com voltas, limites, prêmios, adversários (o carro do próprio
-  GT2) e carros-prêmio do disco. Resistência: as 7 provas do GT2 (30 a 99 voltas), prova
+  `tools/importar_referencia.py`), com voltas, limites, prêmios, adversários (o carro do próprio
+  referência) e carros-prêmio do disco. Resistência: as 7 provas da referência (30 a 99 voltas), prova
   única, sem pit stop nem desgaste de pneu. Copas de marca: 94 provas (ver `eventos.json`).
-  Fora: rali e terra e a licença S (sem pista no disco). Pista do GT2 vira a nossa pela função
+  Fora: rali e terra e a licença S (sem pista no disco). Pista da referência vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
-- Licenças CLUB a PRO (B, A, IC, IB, IA do GT2): restrição = mediana (B) ou mediana e quartis (as outras) dos
+- Licenças CLUB a PRO (B, A, IC, IB, IA da referência): restrição = mediana (B) ou mediana e quartis (as outras) dos
   limites dos eventos que abrem. Os tempos dos testes só dão a duração do treino
   (decisão 99), calibrados pela simulação (`tools/calibrar_licencas.gd`,
   20 sementes, carro de fábrica): bronze = pior tempo de qualquer carro elegível,
   prata = percentil 75 do melhor carro inicial, ouro = percentil 25 do mesmo carro.
-- Lojas (como no GT2): uma concessionária de novos por fabricante, agrupadas por região
+- Lojas (como na referência): uma concessionária de novos por fabricante, agrupadas por região
   (Japão, Estados Unidos, Europa, pela escola do fabricante); usados em lotes por
-  fabricante (no GT2 só as marcas japonesas têm lote). As versões de corrida ficam na
+  fabricante (na referência só as marcas japonesas têm lote). As versões de corrida ficam na
   concessionária do fabricante.
 - `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
 
-## Como conferir a fração de revenda no GT2
+## Como conferir a fração de revenda na referência
 
 No DuckStation, num save de teste (nunca nos saves existentes; copie o memory card antes):
 
@@ -268,5 +268,5 @@ No DuckStation, num save de teste (nunca nos saves existentes; copie o memory ca
 2. Compre, vá à garagem, escolha vender e anote o valor oferecido, sem peças instaladas.
 3. Repita com um carro com peças, para confirmar que peças não entram no valor.
 4. Fração = valor de venda ÷ preço de tabela. Se for igual em todos, ela vai para
-   `tools/importar_gt2.py` (não editar `economia.json` à mão); se variar (por exemplo, com
+   `tools/importar_referencia.py` (não editar `economia.json` à mão); se variar (por exemplo, com
    a quilometragem), anote os casos e o critério muda.

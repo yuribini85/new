@@ -6,7 +6,7 @@ Preservar a estrutura de carreira, compra, coleção, preparação e progressão
 Turismo clássico; substituir a pilotagem por corridas automáticas isométricas; e criar
 carros, fabricantes, pistas, arte e universo próprios.
 
-Não é recriar Gran Turismo inteiro. Não é Motorsport Manager.
+Não é recriar um jogo de corrida inteiro. Não é Motorsport Manager.
 
 ## Por que este projeto
 
@@ -16,10 +16,10 @@ Não é recriar Gran Turismo inteiro. Não é Motorsport Manager.
   trabalhadores, conflitos e IA sistêmica interligados.
 - Este funciona principalmente com telas de gestão, banco de dados e uma simulação de
   corrida simples.
-- **Regra de desenvolvimento:** não inventar sistema novo quando o GT2 já tem uma solução
+- **Regra de desenvolvimento:** não inventar sistema novo quando a referência já tem uma solução
   que funciona.
 
-## O que se preserva do GT2
+## O que se preserva da referência
 
 Comprar carros novos e usados · concessionárias · garagem · tuning e peças · pneus ·
 campeonatos e eventos · restrições de entrada · licenças · dinheiro e prêmios · carros-prêmio
@@ -50,7 +50,7 @@ A decisão econômica fica; o microgerenciamento durante a corrida sai.
 
 ### IA de referência
 
-O GT2 é estudado, não copiado: tempos de volta, velocidades, diferença entre pilotos,
+O jogo de referência é estudado, não copiado: tempos de volta, velocidades, diferença entre pilotos,
 pontos de frenagem, relação carro × pista, comportamento dos adversários e curva de
 progressão. Depois se reconstrói uma versão muito mais simples.
 
@@ -77,7 +77,7 @@ traçado muda completamente.
 
 ## Pipeline automatizado de carros
 
-Um agente recebe do GT2 referências de modelo, proporções, categoria, potência, peso,
+Um agente recebe do jogo de referência dados de modelo, proporções, categoria, potência, peso,
 preço, tração e posição na progressão, e produz um **equivalente fictício**.
 
 Não é trocar o nome de um Toyota e colocar um aerofólio. Preserva-se o arquétipo e a
@@ -94,7 +94,7 @@ Sem Toyota, Nissan, BMW, Mercedes etc. Fabricantes próprias inspiradas nas esco
 automobilísticas. O fã reconhece o arquétipo (o papel de um Civic antigo, de um Skyline,
 de um RX-7), mas o carro e a marca são deste universo.
 
-## GT2 como matriz de estudo
+## O jogo de referência como matriz de estudo
 
 Escolhido por ter progressão simples, muitos carros, usados, concessionárias, tuning,
 licenças, campeonatos, economia, carros-prêmio e trabalho comunitário de engenharia

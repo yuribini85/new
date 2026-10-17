@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Gera arte/carros/cores.json: as cores de fábrica de cada modelo (como no GT2, a
+"""Gera arte/carros/cores.json: as cores de fábrica de cada modelo (como na referência, a
 escolha é na compra; sem pintura livre depois).
 
-As cores do GT2 ficam nas paletas do modelo 3D de cada carro (não há tabela no
+As cores da referência ficam nas paletas do modelo 3D de cada carro (não há tabela no
 disco que o extrator leia), então a paleta é própria, por época e categoria:
   - a primeira cor de cada modelo é a de fábrica do manifesto (arte/carros/manifesto.json);
   - as outras saem da lista da época (ano do carro; sem ano, anos 90) e da
     categoria, embaralhadas pela família (fabricante + modelo): versões da mesma
     família têm as mesmas opções;
-  - quantidade: a de cores diferentes do modelo nos usados do GT2
-    (referencia/gt2/usados.csv), entre MIN_CORES e MAX_CORES; sem dado, PADRAO_CORES;
+  - quantidade: a de cores diferentes do modelo nos usados da referência
+    (referencia/extraido/usados.csv), entre MIN_CORES e MAX_CORES; sem dado, PADRAO_CORES;
   - versão de corrida: cores fortes de equipe, até MAX_CORRIDA.
 Toda paleta tem ao menos um neutro (branco, prata ou preto).
 
@@ -28,7 +28,7 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 MANIFESTO = RAIZ / "arte/carros/manifesto.json"
 CARROS = RAIZ / "data/carros.json"
 REF = RAIZ / "referencia/carros.csv"
-USADOS = RAIZ / "referencia/gt2/usados.csv"
+USADOS = RAIZ / "referencia/extraido/usados.csv"
 SAIDA = RAIZ / "arte/carros/cores.json"
 
 MIN_CORES, MAX_CORES, PADRAO_CORES, MAX_CORRIDA = 4, 7, 5, 4
@@ -90,11 +90,11 @@ def semente(texto: str) -> int:
 def main() -> int:
     manifesto = {i["id"]: i["cor"] for i in json.loads(MANIFESTO.read_text(encoding="utf-8"))}
     carros = json.loads(CARROS.read_text(encoding="utf-8"))
-    codigo = {l["id"]: l["codigo_gt2"] for l in csv.DictReader(open(REF, encoding="utf-8"))} if REF.exists() else {}
-    paletas_gt2: dict[str, set] = collections.defaultdict(set)
+    codigo = {l["id"]: l["codigo_ref"] for l in csv.DictReader(open(REF, encoding="utf-8"))} if REF.exists() else {}
+    paletas_ref: dict[str, set] = collections.defaultdict(set)
     if USADOS.exists():
         for l in csv.DictReader(open(USADOS, encoding="utf-8")):
-            paletas_gt2[l["codigo"]].add(l["paleta"])
+            paletas_ref[l["codigo"]].add(l["paleta"])
     modelos = {}
     for c in carros:
         corrida = bool(c.get("corrida")) or c["nome"].endswith("Corrida")
@@ -107,7 +107,7 @@ def main() -> int:
             ano = int(c.get("ano") or 0)
             epoca = EPOCA[max(k for k in EPOCA if k <= ano)] if ano >= 1960 else EPOCA[1990]
             candidatos = list(dict.fromkeys(CATEGORIA.get(c["categoria"], []) + epoca))
-            k = len(paletas_gt2.get(codigo.get(c["id"], ""), ()))
+            k = len(paletas_ref.get(codigo.get(c["id"], ""), ()))
             n = min(MAX_CORES, max(MIN_CORES, k)) if k else PADRAO_CORES
         random.Random(semente(familia)).shuffle(candidatos)
         cores = [fabrica] + [x for x in candidatos if x != fabrica]

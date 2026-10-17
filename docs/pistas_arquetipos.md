@@ -1,14 +1,14 @@
-# Pistas: arquétipos do GT2 e proposta de pistas novas
+# Pistas: arquétipos da referência e proposta de pistas novas
 
 Estudo, não build. Os traçados do jogo são originais. Daqui sai só o **comportamento**
 de cada grupo de pistas (proporção de retas, raios, frenagens), nunca o desenho.
 
-## Uso das pistas do GT2 nos eventos
+## Uso das pistas da referência nos eventos
 
-Do disco (`referencia/gt2/eventos.csv`), pelo código interno da pista: total de eventos
+Do disco (`referencia/extraido/eventos.csv`), pelo código interno da pista: total de eventos
 e quantos estão entre os 38 importados.
 
-| Código | Eventos no GT2 | Nos nossos 38 | Hoje vai para |
+| Código | Eventos na referência | Nos nossos 38 | Hoje vai para |
 |---|---|---|---|
 | laguna | 14 | 4 | Docas |
 | mountain | 11 | 4 | Serra |
@@ -35,12 +35,12 @@ Medição com os 17 carros de fábrica (piloto do jogador, sem rivais):
   **20 a 70 km/h abaixo** do corte na última marcha, para todos os carros. Ninguém chega
   ao corte, então alongar a relação só tira força.
 - Em 11 dos 17 carros, o corte na última marcha coincide com a velocidade de equilíbrio
-  com o arrasto (ex.: 237/237 km/h). O câmbio do GT2 é feito para isso. Nos outros 6
+  com o arrasto (ex.: 237/237 km/h). O câmbio da referência é feito para isso. Nos outros 6
   (Kobo, Wren, Kaze, Kestrel, Gleiter, Brute), o arrasto limita antes do corte, e
   "Longo" nunca ajuda. **É coerente, não é defeito.**
 - Para "Longo" valer, a reta precisa ser longa o bastante para o carro chegar perto do
   equilíbrio. Isso só acontece em pistas do tipo "teste de velocidade", com retas muito
-  longas, que o GT2 usa (test_in2, testline, maxspeed) e que nós não temos.
+  longas, que a referência usa (test_in2, testline, maxspeed) e que nós não temos.
 
 ## Grupos de comportamento
 
@@ -98,9 +98,9 @@ Melhor ajuste do câmbio ajustável (2 voltas, média de 3 sementes):
 
 O critério foi atendido: "Longo" vale para alguns carros, nas condições adequadas (motor
 preparado e reta longa), e não para outros. Kumo, Ryujin, Lauf, Strecke e Brute continuam
-no equilibrado mesmo preparados; Tsubame e Kaze, também. De fábrica, o câmbio do GT2 já
+no equilibrado mesmo preparados; Tsubame e Kaze, também. De fábrica, o câmbio da referência já
 acaba no equilíbrio com o arrasto, e por isso "Longo" não ajuda. Preparar o motor e
-alongar o câmbio é a combinação que a pista revela, como no GT2.
+alongar o câmbio é a combinação que a pista revela, como na referência.
 
 **No jogo:** os 3 eventos de test_in2 (Liga Regional V, etapas 1 a 3) e o de testline
 (Copa Primeira Marcha, etapa 2) correm aqui. O tema visual é um planalto seco com mesas ao
@@ -129,11 +129,11 @@ Depois da distribuição de peso (tração pelo peso no eixo motriz) a ordem dos
 passou a variar mais entre as pistas: Brute (FR, 45% do peso atrás) cai na Serra, Kestrel
 (MR, 61% atrás) sobe, os 4WD ganham nas técnicas. O misto continua no meio: 0 de 136.
 
-## Estado (importação completa do GT2)
+## Estado (importação completa da referência)
 
 Feitas as duas propostas: a pista de testes (grupo 1) e o circuito misto, Colinas do Vinhedo
-(`circuito_misto`, grupo 4: laguna e autumn). As versões curtas do GT2 (roma_short, seatt_s,
+(`circuito_misto`, grupo 4: laguna e autumn). As versões curtas da referência (roma_short, seatt_s,
 new_parmaS) ganharam versões curtas das nossas pistas do mesmo grupo (`docas_curta`,
 `anel_curto`, `serra_curta`), com o começo da pista-mãe e um atalho que fecha a volta.
-Todos os traçados são originais; só o comportamento do grupo vem do GT2.
+Todos os traçados são originais; só o comportamento do grupo vem da referência.
 

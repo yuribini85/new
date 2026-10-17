@@ -65,14 +65,15 @@ class Disco:
         return itens
 
     def achar(self, nome: str) -> dict | None:
-        """Busca um arquivo pelo nome (sem diferenciar maiúsculas) em todo o disco."""
+        """Busca um arquivo pelo nome (sem diferenciar maiúsculas) em todo o disco.
+        Nome começando com ponto ("*.vol" não, só ".vol"): o primeiro com essa extensão."""
         pendentes = [self.raiz]
         while pendentes:
             d = pendentes.pop()
             for item in self.listar(d):
                 if item["diretorio"]:
                     pendentes.append(item)
-                elif item["nome"].lower() == nome.lower():
+                elif item["nome"].lower() == nome.lower() or (nome.startswith(".") and item["nome"].lower().endswith(nome.lower())):
                     return item
         return None
 

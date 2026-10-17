@@ -27,7 +27,7 @@ Antes: cada modelo tinha **dois sprites**, e nada mais.
 - **Cor:** carroceria **branca**; o jogo pinta por programação (`visual/shaders/pintura.gdshader`,
   aprovado na Oficina de Pintura com tolerância 70%). Nada branco ou cinza-claro fora da
   carroceria: lente do farol cinza-clara, placa cinza, interior cinza-escuro, frisos e
-  aerofólios de corrida pretos, sem faixas nem duas cores. Como no GT2, cada modelo tem
+  aerofólios de corrida pretos, sem faixas nem duas cores. Como na referência, cada modelo tem
   algumas cores de fábrica e a escolha é na compra (sem pintura livre depois).
 - **Nada reconhecível:** sem marcas, logotipos ou desenho de carro real.
 - **Estilo:** `docs/referencias/carro_estilo.webp` (low-poly facetado, sombreamento chapado,
@@ -59,10 +59,10 @@ Cores escuras: menos grão, mais contraste entre facetas e reflexo levemente fri
 ## Cores de cada modelo
 
 `python3 tools/gerar_cores.py` grava `arte/carros/cores.json`: a paleta (nome e cor) e as
-cores de cada modelo, a de fábrica primeiro. As cores do GT2 ficam nas paletas do modelo 3D
+cores de cada modelo, a de fábrica primeiro. As cores da referência ficam nas paletas do modelo 3D
 de cada carro, fora das tabelas que o extrator lê; por isso a paleta é própria, por época
 (ano do carro) e categoria, embaralhada pela família (versões da mesma família têm as mesmas
-opções). Quantidade: a de cores diferentes do modelo nos usados do GT2, de 4 a 7 (sem dado,
+opções). Quantidade: a de cores diferentes do modelo nos usados da referência, de 4 a 7 (sem dado,
 5); versão de corrida, 4 cores fortes. No jogo (`visual/cores.gd`): carro novo, o jogador
 escolhe na ficha antes de comprar; usado vem numa cor do modelo, fixa pela oferta; rivais
 variam entre as cores do modelo, fixas por prova e posição no grid.
@@ -74,7 +74,7 @@ código, já nesta especificação. A arte final substitui o arquivo de mesmo no
 muda código. Uso: `godot --path . --script res://tools/gerar_sprites.gd` (precisa de
 display; no servidor, `xvfb-run`).
 
-## Carros do GT2 (frota de 386, decisão 40)
+## Carros da referência (frota de 386, decisão 40)
 
 Os carros sem sprite próprio (todos menos os do primeiro build): no jogo aparecem como o carro em código (placeholder),
 que já segue a categoria, o ano e os números de cada um. Os provisórios deles **não** entram

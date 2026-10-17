@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
-"""Converte o despejo do GT2 (referencia/gt2/, saída de extrair_gt2.py) em data/.
+"""Converte o despejo da referência (referencia/extraido/, saída de extrair_referencia.py) em data/.
 
 Passos:
-  1. tools/importar_gt2.py --sugerir
-       Preenche a coluna codigo_gt2 de referencia/carros.csv com o carro do
-       GT2 de nome mais parecido com ref_real e lista as alternativas. Revise.
-  2. tools/importar_gt2.py
+  1. tools/importar_referencia.py --sugerir
+       Preenche a coluna codigo_ref de referencia/carros.csv com o carro do
+       referência de nome mais parecido com ref_real e lista as alternativas. Revise.
+  2. tools/importar_referencia.py
        Gera data/carros.json, pecas.json, pneus.json, pilotos_ia.json,
        eventos.json, licencas.json (tempos vazios), economia.json e
        carreira.json, e imprime um diagnóstico.
   3. godot --headless --script res://tools/calibrar_licencas.gd
        Preenche os tempos das licenças com a própria simulação.
 
-Conversões (todas a partir de valores do GT2; ver data/README.md):
+Conversões (todas a partir de valores da referência; ver data/README.md):
   potência     pico da curva de torque do motor (Engine.TorqueCurve × rpm ×
                PowerMultiplier/100), em ps. Bate com a lista de Connoy (garagem do
-               GT2) em ~1%; DisplayedPower é o número de concessionária, impreciso.
+               referência) em ~1%; DisplayedPower é o número de concessionária, impreciso.
   peso         Chassis.Weight (kg)
-  dinheiro     todo valor em Cr do GT2 (preços de carros, peças, pneus e usados,
+  dinheiro     todo valor em Cr da referência (preços de carros, peças, pneus e usados,
                prêmios, bônus de campeão, saldo inicial) vira Giros (G):
                × FATOR_MOEDA, arredondado (moeda(); mínimo 1 G se não era 0).
-               O fator quebrado tira o padrão de 00/000 dos preços do GT2.
+               O fator quebrado tira o padrão de 00/000 dos preços da referência.
   preço, ano   Car.Price, 1900 + Car.Year; carros de fora do Japão têm ano 0
-               no GT2 e usam a coluna ano de referencia/carros.csv
-  novo         só se o carro nunca aparece nos usados do GT2 (lá os modelos
+               na referência e usam a coluna ano de referencia/carros.csv
+  novo         só se o carro nunca aparece nos usados da referência (lá os modelos
                antigos só se compram usados)
   tração       Drivetrain.DrivetrainType, códigos deduzidos da coluna
                tracao de referencia/carros.csv (falha se não forem coerentes)
@@ -32,24 +32,24 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
   aderência    média de Chassis.FrontGrip/RearGrip ÷ mediana de todos os
                carros de rua (o carro mediano tem 1,0)
   freio        Brake.BrakingPower de fábrica ÷ mediana, no máximo 1,0
-  peças        por carro (carros_permitidos), preço do GT2; efeito:
+  peças        por carro (carros_permitidos), preço da referência; efeito:
                motor: ganho percentual sobre a potência de fábrica, somado
                (op "soma", em ps): PortPolish, EngineBalance, Displacement,
                Computer, Muffler, Intercooler = PowerMultiplier + PowerbandScaling;
                NATune = PowerMultiplier; TurbineKit = HighRPMPowerMultiplier.
                Conferido contra Connoy: turbo máx. ~3%, aspirado máx. ~7% abaixo
-               (o GT2 ainda sobe a rotação, que o nosso modelo não tem);
+               (a referência ainda sobe a rotação, que o nosso modelo não tem);
                peso (Lightweight): Weight é o peso final em ‰ do de fábrica
                (bate exato com Connoy);
                freios (Brake): BrakingPower ÷ o de fábrica.
-               NATune e TurbineKit dividem a categoria "aspiracao" (no GT2
+               NATune e TurbineKit dividem a categoria "aspiracao" (na referência
                são excludentes).
   motor        Engine: curva de torque (TorqueCurve × 0,01 kgf·m × 9,80665 ×
                PowerMultiplier/100, em N·m) nas rotações TorqueCurveRPM × 100;
                corte = RedlineRPM × 100. O pico de torque × rpm dá a potência acima.
   câmbio       Gear de fábrica (índice em Car.Gear): relações e diferencial ÷ 1000.
                O câmbio ajustável (Gear estágio 3) vira peça "cambio" com o preço
-               do GT2 e os limites MinFinalDriveRatio/MaxFinalDriveRatio.
+               da referência e os limites MinFinalDriveRatio/MaxFinalDriveRatio.
   roda         raio do pneu de fábrica (TiresFront → TireSize): aro em polegadas
                ÷ 2 + largura × perfil. Interpretação a confirmar: largura em cm
                (×10 mm) e perfil em passos de 5% (×5), o que dá 150–220 mm e
@@ -64,25 +64,25 @@ Conversões (todas a partir de valores do GT2; ver data/README.md):
   pneus        por estágio de TiresFront: o grip é o 1º byte do composto
                (TireCompound); aderência = grip do estágio ÷ o de fábrica
                (mediana entre os nossos carros); preço = mediana. Sem terra.
-               O GT2 não tem chuva: chuva = seco.
+               A referência não tem chuva: chuva = seco.
   eventos      voltas, licença, limite de ps, tração, prêmios (×100 fora do
                Japão), carro-prêmio quando é um dos nossos carros. A pista do
-               GT2 vira uma das nossas pela função (PISTAS abaixo).
+               referência vira uma das nossas pela função (PISTAS abaixo).
                Adversários: o carro do EnemyCars com a preparação dele
                (PowerMultiplier ÷ 100 multiplica a potência; pneu do estágio de
                TiresFront). Largada lançada: RollingStartSpeed (km/h).
                Pilotos de IA: ritmo = média dos AI*Acceleration do evento/100.
                Copas de marca (EligibleCarsRestriction ≠ 0): a lista de carros
                vem de Regulations (índice base 1; EligibleCarIds são ids de
-               carro, ver gt2/tabelas.id_para_nome). CarRestrictionFlags 256 =
+               carro, ver extracao/tabelas.id_para_nome). CarRestrictionFlags 256 =
                só carro de rua; 512 = versão de corrida (kit ou carro de
-               corrida). A pista é sorteada no GT2 (pool); aqui gira pelas
+               corrida). A pista é sorteada na referência (pool); aqui gira pelas
                nossas pistas de corrida, na ordem dos eventos.
-  kit corrida  RacingModify estágio 1 (a carroceria de corrida do GT2): peça
+  kit corrida  RacingModify estágio 1 (a carroceria de corrida da referência): peça
                "corrida" com o preço e o peso (Weight em % do de fábrica). A
                pressão aerodinâmica (Downforce) e o arrasto (Drag) ficam de
                fora: a simulação não tem esses termos por carro.
-Valores que o GT2 não tem ficam marcados como "a_confirmar" no diagnóstico.
+Valores que a referência não tem ficam marcados como "a_confirmar" no diagnóstico.
 """
 from __future__ import annotations
 
@@ -101,12 +101,12 @@ for _fluxo in (sys.stdout, sys.stderr):
         _fluxo.reconfigure(encoding="utf-8", errors="replace")
 
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
-GT2 = RAIZ / "referencia" / "gt2"
+FONTE = RAIZ / "referencia" / "extraido"
 REF = RAIZ / "referencia" / "carros.csv"
 DATA = RAIZ / "data"
 
-# Pista do GT2 (id interno) -> nossa pista pela função (docs/pistas_arquetipos.md).
-# As versões curtas do GT2 vão para a versão curta da nossa pista do mesmo grupo.
+# Pista da referência (id interno) -> nossa pista pela função (docs/pistas_arquetipos.md).
+# As versões curtas da referência vão para a versão curta da nossa pista do mesmo grupo.
 PISTAS = {
     "highway": "anel_do_vale", "s_speed": "anel_do_vale", "speed": "anel_do_vale", "seattle": "anel_do_vale",
     "circuit": "anel_do_vale", "seatt_s": "anel_curto",
@@ -120,10 +120,10 @@ PISTAS = {
 }
 PISTA_PADRAO = "parque_das_docas"  # técnicas: roma, shortway, short, sprint2
 
-# Séries do GT2 que entram no jogo (prefixo do código do evento -> nosso nome).
+# Séries da referência que entram no jogo (prefixo do código do evento -> nosso nome).
 # Fora: rali, testes de licença e a licença S (os eventos dela não têm pista no
 # disco). As copas de marca entram à parte (Regulations). O resto do evento vem
-# do disco. Resistência (RESISTENCIA): prova única, com as voltas do GT2, sem
+# do disco. Resistência (RESISTENCIA): prova única, com as voltas da referência, sem
 # pit stop nem desgaste de pneu (o jogo não tem esses sistemas).
 SERIES = {
     "SND": "Copa Primeira Marcha", "CBM": "Copa dos Associados", "WLK": "Copa Peso-Pena",
@@ -141,16 +141,16 @@ SERIES = {
     "ETM": "Resistência das Araucárias",
 }
 RESISTENCIA = {"EGV", "ELS", "EPS", "ERM", "ES5", "EST", "ETM"}
-LICENCAS_GT2 = ["B", "A", "IC", "IB", "IA"]
+LICENCAS_REF = ["B", "A", "IC", "IB", "IA"]
 # Licenças do jogo (decisão 33): CLUB=B, SPORT=A, NATIONAL=IC, INTERNATIONAL=IB,
-# PRO=IA; ELITE (a S do GT2, sem dados no disco) libera as resistências.
-LICENCA_DO_GT2 = {"B": "CLUB", "A": "SPORT", "IC": "NATIONAL", "IB": "INTERNATIONAL", "IA": "PRO"}
+# PRO=IA; ELITE (a S da referência, sem dados no disco) libera as resistências.
+LICENCA_DA_REF = {"B": "CLUB", "A": "SPORT", "IC": "NATIONAL", "IB": "INTERNATIONAL", "IA": "PRO"}
 LICENCAS = ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"]
 NOMES_LICENCA = {"CLUB": "Club", "SPORT": "Sport", "NATIONAL": "National", "INTERNATIONAL": "International",
                  "PRO": "Pro", "ELITE": "Elite"}
 # Ids antigos dos testes (b1...) -> novos (club1...): o importador guarda os tempos
 # já calibrados ao trocar os ids.
-TESTE_ANTIGO = {k.lower(): v.lower() for k, v in LICENCA_DO_GT2.items()}
+TESTE_ANTIGO = {k.lower(): v.lower() for k, v in LICENCA_DA_REF.items()}
 # Enquanto uma pista nova não está em data/pistas.json, os eventos dela vão para
 # a pista do mesmo grupo que já existe.
 PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "docas_curta": "parque_das_docas",
@@ -159,7 +159,7 @@ PISTAS_EXISTENTES: set[str] = set()
 # Acima disso são os testes de licença do disco (255 voltas), que não entram.
 MAX_VOLTAS = 99
 FRACAO_REVENDA = 0.25
-FATOR_MOEDA = 0.0427  # Cr do GT2 → Giros (decisão do usuário: valores bem menores, sem rastro)
+FATOR_MOEDA = 0.0427  # Cr da referência → Giros (decisão do usuário: valores bem menores, sem rastro)
 # Decisão 41 (idle mais longo): voltas das provas ×2,5 (as de 2 viram 5) e preços
 # de compra ×2 em relação aos prêmios.
 FATOR_VOLTAS = 2.5
@@ -167,10 +167,10 @@ FATOR_VOLTAS = 2.5
 # começo não ficar maçante; as de licença seguem com FATOR_VOLTAS.
 VOLTAS_ABERTAS = 2
 FATOR_PRECO = 2
-# Copas de marca: CarRestrictionFlags do GT2.
+# Copas de marca: CarRestrictionFlags da referência.
 SO_RUA, SO_CORRIDA = 256, 512
 CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
-# Pistas de corrida para as copas de marca (o GT2 sorteia; a de testes fica de fora).
+# Pistas de corrida para as copas de marca (a referência sorteia; a de testes fica de fora).
 POOL_MARCA = ["anel_do_vale", "parque_das_docas", "serra_alta", "circuito_misto", "anel_curto", "docas_curta",
               "serra_curta"]
 
@@ -215,10 +215,10 @@ AGRESSIVIDADE = 1.0
 
 
 def ler(nome: str, obrigatorio: bool = False) -> list[dict]:
-    caminho = GT2 / f"{nome}.csv"
+    caminho = FONTE / f"{nome}.csv"
     if not caminho.exists():
         if obrigatorio:
-            sys.exit(f"falta {caminho}: rode tools/extrair_gt2.py antes")
+            sys.exit(f"falta {caminho}: rode tools/extrair_referencia.py antes")
         return []  # tabela vazia no disco: o extrator não grava CSV
     return list(csv.DictReader(open(caminho, encoding="utf-8")))
 
@@ -228,12 +228,12 @@ def n(v) -> float:
 
 
 def sugerir() -> int:
-    gt2 = ler("carros", True)
+    fonte = ler("carros", True)
     linhas = list(csv.DictReader(open(REF, encoding="utf-8")))
-    if "codigo_gt2" not in linhas[0]:
+    if "codigo_ref" not in linhas[0]:
         for l in linhas:
-            l["codigo_gt2"] = ""
-    rotulos = {f'{c["nome"]} \'{int(n(c["ano"])) % 100:02d}': c for c in gt2}
+            l["codigo_ref"] = ""
+    rotulos = {f'{c["nome"]} \'{int(n(c["ano"])) % 100:02d}': c for c in fonte}
     for l in linhas:
         alvo = l["ref_real"].split("/")[0].strip()
         opcoes = difflib.get_close_matches(alvo, list(rotulos), n=4, cutoff=0.3)
@@ -241,26 +241,26 @@ def sugerir() -> int:
         for o in opcoes:
             c = rotulos[o]
             print(f'    {c["codigo"]}  {o:40s} {c["potencia_ps"]:>4s} ps {c["peso_kg"]:>5s} kg  {c["preco"]:>7s} Cr')
-        if not l["codigo_gt2"] and opcoes:
-            l["codigo_gt2"] = rotulos[opcoes[0]]["codigo"]
+        if not l["codigo_ref"] and opcoes:
+            l["codigo_ref"] = rotulos[opcoes[0]]["codigo"]
     with open(REF, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(linhas[0].keys()))
         w.writeheader()
         w.writerows(linhas)
-    print(f"\ncodigo_gt2 preenchido em {REF} com a primeira opção de cada um. Revise antes de importar.")
+    print(f"\ncodigo_ref preenchido em {REF} com a primeira opção de cada um. Revise antes de importar.")
     return 0
 
 
 def deduzir_tracoes(ref: list[dict], resumo: dict) -> dict[str, str]:
     votos: dict[str, dict[str, int]] = {}
     for l in ref:
-        c = resumo[l["codigo_gt2"]]
+        c = resumo[l["codigo_ref"]]
         votos.setdefault(c["tracao_tipo"], {}).setdefault(l["tracao"], 0)
         votos[c["tracao_tipo"]][l["tracao"]] += 1
     mapa = {}
     for codigo, v in votos.items():
         if len(v) > 1:
-            sys.exit(f"tração incoerente: código {codigo} do GT2 aparece como {v} em referencia/carros.csv")
+            sys.exit(f"tração incoerente: código {codigo} da referência aparece como {v} em referencia/carros.csv")
         mapa[codigo] = next(iter(v))
     return mapa
 
@@ -268,14 +268,14 @@ def deduzir_tracoes(ref: list[dict], resumo: dict) -> dict[str, str]:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sugerir", action="store_true")
-    ap.add_argument("--gt2", help="pasta do despejo (padrão referencia/gt2)")
+    ap.add_argument("--fonte", help="pasta do despejo (padrão referencia/extraido)")
     ap.add_argument("--ref", help="tabela de referência (padrão referencia/carros.csv)")
     ap.add_argument("--data", help="pasta de saída (padrão data/)")
-    ap.add_argument("--frota", help="frota no lugar da tabela do GT2 (decisão 80: referencia/frota360/frota.json, "
+    ap.add_argument("--frota", help="frota no lugar da tabela da referência (decisão 80: referencia/frota360/frota.json, "
                     "de tools/frota360.py)")
     args = ap.parse_args()
-    global GT2, REF, DATA
-    GT2 = pathlib.Path(args.gt2) if args.gt2 else GT2
+    global FONTE, REF, DATA
+    FONTE = pathlib.Path(args.fonte) if args.fonte else FONTE
     REF = pathlib.Path(args.ref) if args.ref else REF
     DATA = pathlib.Path(args.data) if args.data else DATA
     if args.sugerir:
@@ -286,12 +286,12 @@ def main() -> int:
     PISTAS_EXISTENTES = {p["id"] for p in json.load(open(caminho_pistas, encoding="utf-8"))} if caminho_pistas.exists() \
             else set(PISTAS.values()) | {PISTA_PADRAO}
     ref = list(csv.DictReader(open(REF, encoding="utf-8")))
-    if not ref or not all(l.get("codigo_gt2") for l in ref):
-        sys.exit("preencha codigo_gt2 em referencia/carros.csv (tools/importar_gt2.py --sugerir)")
+    if not ref or not all(l.get("codigo_ref") for l in ref):
+        sys.exit("preencha codigo_ref em referencia/carros.csv (tools/importar_referencia.py --sugerir)")
     resumo = {c["codigo"]: c for c in ler("carros", True)}
-    faltando = [l["codigo_gt2"] for l in ref if l["codigo_gt2"] not in resumo]
+    faltando = [l["codigo_ref"] for l in ref if l["codigo_ref"] not in resumo]
     if faltando:
-        sys.exit(f"códigos inexistentes no GT2: {faltando}")
+        sys.exit(f"códigos inexistentes na referência: {faltando}")
     tab_car = {c["CarId"]: c for c in ler("Car", True)}
     partes = {nome: ler(nome) for nome in MOTOR + ["NATune", "TurbineKit", "Lightweight", "Brake", "TiresFront", "Engine",
                                                      "Gear", "TireSize", "RacingModify"]}
@@ -300,7 +300,7 @@ def main() -> int:
                 if int(n(car["Engine"])) < len(motores)}
     for cod, c in resumo.items():
         c["potencia_real"] = potencia.get(cod, n(c["potencia_ps"]))
-    nosso = {l["codigo_gt2"]: l["id"] for l in ref}
+    nosso = {l["codigo_ref"]: l["id"] for l in ref}
     nosso_original = dict(nosso)
     frota = json.load(open(args.frota, encoding="utf-8")) if args.frota else None
 
@@ -323,7 +323,7 @@ def main() -> int:
     chassis = {r["CarId"]: r for r in ler("Chassis")}
     carros = []
     for l in ([] if frota is not None else ref):
-        c = resumo[l["codigo_gt2"]]
+        c = resumo[l["codigo_ref"]]
         grip = (n(c["aderencia_dianteira"]) + n(c["aderencia_traseira"])) / 2
         ano = int(n(c["ano"]))
         carros.append({
@@ -331,18 +331,18 @@ def main() -> int:
             "categoria": l["categoria"], "tracao": tracoes[c["tracao_tipo"]],
             "potencia": int(round(c["potencia_real"])), "peso": int(n(c["peso_kg"])),
             "aderencia": round(grip / grip_mediana, 3),
-            "freio": round(min(1.0, freio_fabrica.get(l["codigo_gt2"], freio_mediana) / freio_mediana), 3),
+            "freio": round(min(1.0, freio_fabrica.get(l["codigo_ref"], freio_mediana) / freio_mediana), 3),
             "preco": preco_loja(n(c["preco"])),
             "ano": (ano + 1900 if ano < 100 else ano) if ano > 0 else int(n(l.get("ano"))),
         })
-        car = tab_car[l["codigo_gt2"]]
-        ch = chassis.get(l["codigo_gt2"], {})
+        car = tab_car[l["codigo_ref"]]
+        ch = chassis.get(l["codigo_ref"], {})
         if n(ch.get("FrontWeightDistribution", 0)) > 0:
             carros[-1]["peso_dianteiro"] = round(n(ch["FrontWeightDistribution"]) / 100.0, 3)
         carros[-1].update(motor_cambio_roda(car, partes))
-        if l["codigo_gt2"].endswith("r"):
+        if l["codigo_ref"].endswith("r"):
             carros[-1]["corrida"] = True  # carro de corrida de fábrica (vale nas copas "versão de corrida")
-        janelas = usados_do_carro(l["codigo_gt2"])
+        janelas = usados_do_carro(l["codigo_ref"])
         carros[-1]["novo"] = not janelas
         if janelas:
             carros[-1]["usados"] = janelas
@@ -397,7 +397,7 @@ def main() -> int:
                     forma = {"corte": int(n(p["RPMIncrease"])) * 100}
                 pecas.append({
                     "id": f"{id_nosso}_{cat.lower()}_{estagio}",
-                    # Freio: o GT2 tem um só (o de fábrica conta como nível 1).
+                    # Freio: a referência tem um só (o de fábrica conta como nível 1).
                     "nome": "Freios esportivos" if cat == "Brake" else f"{NOMES_CATEGORIA[cat]} {estagio}",
                     "categoria": "aspiracao" if cat in ("NATune", "TurbineKit") else cat.lower(),
                     "preco": preco_loja(n(p["Price"])), "carros_permitidos": [id_nosso], "efeitos": efeitos,
@@ -413,7 +413,7 @@ def main() -> int:
                 "preco": preco_loja(n(kits[0]["Price"])), "carros_permitidos": [id_nosso],
                 "efeitos": [{"atributo": "peso", "op": "mult", "valor": round(n(kits[0]["Weight"]) / 100.0, 4)}],
             })
-        # Câmbio ajustável (Gear estágio 3): limites do diferencial do GT2.
+        # Câmbio ajustável (Gear estágio 3): limites do diferencial da referência.
         for g in partes["Gear"]:
             if g["CarId"] == codigo and int(n(g["Stage"])) == 3 and int(n(g["Price"])) > 0:
                 pecas.append({
@@ -476,8 +476,8 @@ def main() -> int:
                    "tempos": tempos_antigos.get(f"{lic.lower()}{k + 1}", {"ouro": None, "prata": None, "bronze": None})}
                   for k, pista in enumerate(["anel_do_vale", "parque_das_docas", "serra_alta"])]
         if lic == "ELITE":
-            testes = []  # a S do GT2 não tem testes no disco: a avaliação são os contratos
-        # Sem o código da licença do GT2 nos dados (nada do GT2 vai no build).
+            testes = []  # a S da referência não tem testes no disco: a avaliação são os contratos
+        # Sem o código da licença da referência nos dados (nada da referência vai no build).
         licencas.append({"id": lic, "nome": f"Licença {NOMES_LICENCA[lic]}", "requisito": anterior, "preco": 0,
                          "testes": testes})
 
@@ -490,7 +490,7 @@ def main() -> int:
     gravar("eventos", eventos)
     gravar("licencas", licencas)
     economia = json.load(open(DATA / "economia.json", encoding="utf-8"))
-    # Revenda medida no GT2 (DuckStation): venda = 25% do Car.Price, seja qual for o
+    # Revenda medida na referência (DuckStation): venda = 25% do Car.Price, seja qual for o
     # preço pago no usado; peças não entram (3 carros: 8000→2000, 6400→1600, 2800→700).
     economia.update({"saldo_inicial": saldo_inicial(carros, eventos), "pneu_de_fabrica": "pneu_0",
                      "fracao_revenda": FRACAO_REVENDA})
@@ -500,8 +500,8 @@ def main() -> int:
     gravar("carreira", carreira)
 
     print(f"{len(carros)} carros, {len(pecas)} peças, {len(pneus)} pneus, {len(eventos)} eventos, {len(pilotos)} pilotos")
-    print(f"aderência: mediana GT2 {grip_mediana:.1f} = 1,0 · freio: mediana {freio_mediana:.1f} = 1,0")
-    print(f"tração: códigos do GT2 {tracoes}")
+    print(f"aderência: mediana referência {grip_mediana:.1f} = 1,0 · freio: mediana {freio_mediana:.1f} = 1,0")
+    print(f"tração: códigos da referência {tracoes}")
     print("\ncarro               ps   kg   preço  aspirado_max  turbo_max  peso_min")
     for c in carros:
         pc = [p for p in pecas if p["carros_permitidos"] == [c["id"]]]
@@ -514,24 +514,24 @@ def main() -> int:
               f'{(c["potencia"] + motor + tb) if tb else 0:9.0f}  {c["peso"] * lw:8.0f}')
     print("\nCompare aspirado_max/turbo_max/peso_min com a lista de Connoy (NA MaxHP, Turbo MaxHP em hp,")
     print("Tuned Wt. em lb): se estiverem muito fora, a escala de alguma peça está errada.")
-    print("a_confirmar (não vêm do GT2): teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
+    print("a_confirmar (não vêm da referência): teto_offline_s, sigma_ruido, cda_m2, consistência e agressividade dos pilotos.")
     return 0
 
 
 def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict, partes: dict, grip_mediana: float,
                  freio_fabrica: dict, freio_mediana: float, tracoes: dict, chassis: dict) \
         -> tuple[list[dict], dict[str, str], dict[str, str], list[tuple[str, str, float]]]:
-    """Frota 360 (decisão 80, tools/frota360.py): cada carro vem do código do GT2
-    dele (casado) ou do doador do GT2, com a ficha real por cima (potência,
+    """Frota 360 (decisão 80, tools/frota360.py): cada carro vem do código da referência
+    dele (casado) ou do doador da referência, com a ficha real por cima (potência,
     peso, tração, ano e o preço da regra). A curva de torque do doador escala
     para a potência da ficha. Doador e clone são vendidos novos; os chefes
     industriais não são vendidos nem correm provas. Devolve carros, {id antigo:
-    id novo} (saves), {código do GT2: id} (rivais, prêmios, copas) e as fontes
+    id novo} (saves), {código da referência: id} (rivais, prêmios, copas) e as fontes
     das peças [(código, id, potência base)]."""
     carros = []
     fontes = []
     for l in frota:
-        cod = l["codigo_gt2"]
+        cod = l["codigo_ref"]
         c = resumo[cod]
         sob = l.get("sobrepor", {})
         grip = (n(c["aderencia_dianteira"]) + n(c["aderencia_traseira"])) / 2
@@ -557,7 +557,7 @@ def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict
             car["novo"] = False
         elif l.get("doador"):
             # Usados como os do doador (mesmos dias), no preço proporcional ao
-            # novo: o começo do jogo depende dos usados baratos, como no GT2.
+            # novo: o começo do jogo depende dos usados baratos, como na referência.
             janelas = usados_do_carro(cod)
             fator = car["preco"] / max(preco_loja(n(c["preco"])), 1)
             car["novo"] = not janelas
@@ -581,8 +581,8 @@ def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict
         carros.append(car)
         if not l.get("chefe"):
             fontes.append((cod, l["id"], float(car["potencia"])))
-    # Sem câmbio no disco (o carro do GT2 de base não tem marchas): o câmbio do
-    # carro mais parecido em tração e potência, como a regra do GT2 para os
+    # Sem câmbio no disco (o carro da referência de base não tem marchas): o câmbio do
+    # carro mais parecido em tração e potência, como a regra da referência para os
     # demais (decisão 69; aceito pelo usuário na auditoria, decisão 90).
     com_cambio = [c for c in carros if "cambio" in c]
     for car in carros:
@@ -600,10 +600,10 @@ def montar_frota(frota: list[dict], ref: list[dict], resumo: dict, tab_car: dict
         for velho, meio in json.load(open(caminho, encoding="utf-8")).items():
             if velho not in ids and meio in antigos:
                 substituto.setdefault(velho, antigos[meio])
-    nosso = {l["codigo_gt2"]: antigos[l["id"]] for l in ref if l["id"] in antigos}
+    nosso = {l["codigo_ref"]: antigos[l["id"]] for l in ref if l["id"] in antigos}
     for l in frota:
         if not l.get("doador") and not l.get("chefe"):
-            nosso[l["codigo_gt2"]] = l["id"]
+            nosso[l["codigo_ref"]] = l["id"]
     return carros, substituto, nosso, fontes
 
 
@@ -721,26 +721,26 @@ def saldo_inicial(carros: list[dict], eventos: list[dict]) -> int:
     potencia = {c["id"]: float(c["potencia"]) for c in carros}
     livres = [e for e in eventos if not e["restricoes"] and e["adversarios"]]
     if not livres:
-        return moeda(10000)  # sem prova aberta livre (fixtures): o saldo inicial do GT2
+        return moeda(10000)  # sem prova aberta livre (fixtures): o saldo inicial da referência
     alvo = min(max(potencia.get(a["carro"], 0.0) * float(a.get("potencia_mult", 1.0)) for a in e["adversarios"])
                for e in livres)
     precos = [c["preco"] for c in carros if c.get("novo") and not c.get("chefe") and c["potencia"] >= alvo]
     return min(precos) if precos else moeda(10000)
 
 
-def voltas_jogo(voltas_gt2: int, resistencia: bool = False) -> int:
-    """Voltas da prova: as do GT2 × FATOR_VOLTAS, arredondado (decisão 41). A
-    resistência fica com as do GT2: ×2,5 passava do tempo máximo da simulação."""
-    return voltas_gt2 if resistencia else int(voltas_gt2 * FATOR_VOLTAS + 0.5)
+def voltas_jogo(voltas_ref: int, resistencia: bool = False) -> int:
+    """Voltas da prova: as da referência × FATOR_VOLTAS, arredondado (decisão 41). A
+    resistência fica com as da referência: ×2,5 passava do tempo máximo da simulação."""
+    return voltas_ref if resistencia else int(voltas_ref * FATOR_VOLTAS + 0.5)
 
 
 def moeda(cr: float) -> int:
-    """Valor em Cr do GT2 para Giros (FATOR_MOEDA); 0 continua 0."""
+    """Valor em Cr da referência para Giros (FATOR_MOEDA); 0 continua 0."""
     return 0 if cr <= 0 else max(1, round(cr * FATOR_MOEDA))
 
 
 def usados_do_carro(codigo: str) -> list[list[int]]:
-    """Janelas [dia_inicio, dia_fim, preço] em que o carro está no usado do GT2.
+    """Janelas [dia_inicio, dia_fim, preço] em que o carro está no usado da referência.
 
     Períodos seguidos com o mesmo preço viram uma janela só.
     """
@@ -757,11 +757,11 @@ def usados_do_carro(codigo: str) -> list[list[int]]:
 def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: set[str] = frozenset(),
                      sem_corrida: bool = False) -> tuple[list[dict], list[dict]]:
     brutos = ler("Event")
-    pneus_gt2 = ler("TiresFront")
+    pneus_ref = ler("TiresFront")
     resumidos = ler("eventos")
     inimigos = ler("EnemyCars")
     por_id = {c["id"]: c for c in carros}
-    # Consistência e agressividade não existem no GT2; valores aprovados para a
+    # Consistência e agressividade não existem na referência; valores aprovados para a
     # demo, iguais para jogador e IA (regra 5: a mesma IA para todos).
     pilotos = {"jogador": {"id": "jogador", "ritmo": 1.0, "consistencia": CONSISTENCIA, "agressividade": AGRESSIVIDADE}}
     eventos = []
@@ -779,7 +779,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             lista_marca = list(dict.fromkeys(nosso[c] for c in codigos if c in nosso))
             if lista_marca:
                 serie = _nome_copa([nomes[c] for c in lista_marca])
-        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS_GT2 \
+        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS_REF \
                 or int(n(r["voltas"])) > MAX_VOLTAS or (marca > 0 and not lista_marca):
             continue
         restr = {}
@@ -800,7 +800,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         if r["evento"][:3] in RESISTENCIA:
             restr["licenca"] = "ELITE"
         elif r["licenca"]:
-            restr["licenca"] = LICENCA_DO_GT2[r["licenca"]]
+            restr["licenca"] = LICENCA_DA_REF[r["licenca"]]
         elegiveis = [c for c in carros
                      if c["potencia"] <= restr.get("potencia_max", 10 ** 6) and c["tracao"] in restr.get("tracao", [c["tracao"]])
                      and c["id"] in restr.get("carros", [c["id"]])]
@@ -815,7 +815,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             i = int(idx)
             ini = inimigos[i] if i < len(inimigos) else {}
             codigo = ini.get("CarId", "")
-            # O rival é o do próprio GT2 (com a preparação dele abaixo).
+            # O rival é o da própria referência (com a preparação dele abaixo).
             if codigo in nosso:
                 carro = nosso[codigo]
             else:
@@ -827,15 +827,15 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             if mult > 0 and abs(mult - 1.0) > 1e-6:
                 adv["potencia_mult"] = round(mult, 3)
             pt = int(n(ini.get("TiresFront")))
-            if pt < len(pneus_gt2):
-                est = int(n(pneus_gt2[pt]["Stage"]))
+            if pt < len(pneus_ref):
+                est = int(n(pneus_ref[pt]["Stage"]))
                 if 0 < est != ESTAGIO_TERRA and f"pneu_{est}" in ids_pneus:
                     adv["pneus"] = [f"pneu_{est}"]
             adversarios.append(adv)
         premio_carros = [nosso[c] for c in r["carros_premio"].split() if c in nosso]
         pista = PISTAS.get(r["pista"].lower(), PISTA_PADRAO)
         if lista_marca:
-            # O GT2 sorteia a pista das copas de marca; aqui ela gira pelas nossas.
+            # A referência sorteia a pista das copas de marca; aqui ela gira pelas nossas.
             pool = [p for p in POOL_MARCA if p in PISTAS_EXISTENTES] or [PISTA_PADRAO]
             pista = pool[copas % len(pool)]
             copas += 1
@@ -853,13 +853,13 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
         })
         bonus = moeda(int(n(r.get("bonus_campeonato_x100"))) * 100)
         if bonus > 0:
-            # SeriesChampBonus do GT2: pago ao campeão da série (decisão 35).
+            # SeriesChampBonus da referência: pago ao campeão da série (decisão 35).
             eventos[-1]["bonus_campeonato"] = bonus
     return eventos, list(pilotos.values())
 
 
 def _codigo_carro(car_id: int) -> str:
-    """Id numérico de carro do GT2 para o código de 5 letras (ver gt2/tabelas.id_para_nome)."""
+    """Id numérico de carro da referência para o código de 5 letras (ver extracao/tabelas.id_para_nome)."""
     return "".join(CARACTERES_ID[(car_id >> (i * 6)) & 0x3F] for i in range(4, -1, -1)).lstrip("-")
 
 

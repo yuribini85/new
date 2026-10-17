@@ -1,7 +1,7 @@
-"""Layouts das tabelas de gtmode_data.dat e gtmode_race.dat do GT2.
+"""Layouts das tabelas de gtmode_data.dat e gtmode_race.dat da referência.
 
-Gerado a partir das estruturas documentadas por pez2k em gt2tools
-(https://github.com/pez2k/gt2tools, GT2DataSplitter/DataStructures), com
+Gerado a partir das estruturas documentadas por pez2k
+(DataStructures), com
 autorização do dono do projeto Second Drive (antes Apex Garage) para uso como referência.
 Cada campo: (nome, formato struct, quantidade). Tudo little-endian, sem
 preenchimento entre campos (Pack = 1). `None` = estrutura sem campos

@@ -16,7 +16,7 @@ func test_data_real_carrega_sem_erros_nem_pendencias() -> void:
 	d.carregar("res://data/")
 	igual(d.erros(), [], "erros em data/")
 	igual(d.pendencias(), [], "pendências em data/")
-	verificar(d.lista("carros").size() >= 17, "carros importados do GT2")
+	verificar(d.lista("carros").size() >= 17, "carros importados da referência")
 	d.free()
 
 func test_referencias_invalidas_sao_erro() -> void:

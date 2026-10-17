@@ -5,20 +5,20 @@ Bastion, Aster). Gera a tabela de referência que o importador lê no lugar de
 referencia/carros.csv:
 
   referencia/frota360/frota.json   um carro por linha:
-      {id, nome, fabricante, arquetipo, categoria, codigo_gt2, doador, sobrepor,
+      {id, nome, fabricante, arquetipo, categoria, codigo_ref, doador, sobrepor,
        asset, numero, aprovado, chefe}
-  referencia/frota360/antigos.json {id antigo (os 618 do GT2): id novo} (saves,
+  referencia/frota360/antigos.json {id antigo (os 618 da referência): id novo} (saves,
       rivais, prêmios e copas de marca)
 
 Números (CLAUDE.md, escolha do usuário):
-- O carro existe no GT2 (referencia/frota360/gt2.json, casamento revisado à mão,
+- O carro existe na referência (referencia/frota360/casados.json, casamento revisado à mão,
   mesma geração): os números do disco, como antes (doador = false).
 - Não existe: a ficha real (referencia/frota360/fichas.json: potência, peso,
-  tração, ano) e um doador do GT2 (o carro de rua de mesma tração mais perto em
+  tração, ano) e um doador da referência (o carro de rua de mesma tração mais perto em
   potência e peso) que dá o que a ficha não tem: forma da curva de torque,
   câmbio, aderência, freio, distribuição de peso e a estrutura das peças. Preço
   = preço do doador × (potência/potência do doador)^1,235 × (peso/peso do
-  doador)^-0,900 (expoentes da regressão log-log nos carros de rua do GT2).
+  doador)^-0,900 (expoentes da regressão log-log nos carros de rua da referência).
 - Potência com fonte mas sem peso: peso pela regra ajustada nas fichas que têm
   peso (log peso ~ log(volume do modelo C×L×A) + picape/utilitário; R² 0,78,
   erro mediano 13%), marcado como estimado no relatório.
@@ -47,8 +47,8 @@ import unicodedata
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 REF = RAIZ / "referencia"
 F360 = REF / "frota360"
-GT2 = REF / "gt2"
-TRACAO_GT2 = {"0": "FR", "1": "FF", "2": "4WD", "3": "MR", "4": "RR"}
+FONTE = REF / "extraido"
+TRACAO_REF = {"0": "FR", "1": "FF", "2": "4WD", "3": "MR", "4": "RR"}
 EXP_POTENCIA = 1.235
 EXP_PESO = -0.900
 CATEGORIA = {
@@ -102,22 +102,22 @@ def main() -> int:
     for fid, v in m["novas"].items():
         for b in v["marcas"]:
             marcas[b] = fid
-    casados = {int(k): v for k, v in json.load(open(F360 / "gt2.json", encoding="utf-8")).items()}
+    casados = {int(k): v for k, v in json.load(open(F360 / "casados.json", encoding="utf-8")).items()}
     fichas = {x["n"]: x for x in json.load(open(F360 / "fichas.json", encoding="utf-8"))}
     info = {}
     for pasta in args.pacote or [str(F360 / "pacote")]:
         for f in glob.glob(f"{pasta}/*/model-info.json"):
             d = json.load(open(f, encoding="utf-8"))
             info[d["id"]] = d
-    gt2 = {c["codigo"]: c for c in csv.DictReader(open(GT2 / "carros.csv", encoding="utf-8"))}
+    fonte = {c["codigo"]: c for c in csv.DictReader(open(FONTE / "carros.csv", encoding="utf-8"))}
     antigos = list(csv.DictReader(open(REF / "carros.csv", encoding="utf-8")))
     num = lambda v: float(v) if v not in (None, "") else 0.0
-    # Tração de cada código do GT2 (pela tabela antiga, que já foi conferida).
+    # Tração de cada código da referência (pela tabela antiga, que já foi conferida).
     tracao_cod = {}
     for a in antigos:
-        tracao_cod[gt2[a["codigo_gt2"]]["tracao_tipo"]] = a["tracao"]
-    tracao_de = lambda cod: tracao_cod.get(gt2[cod]["tracao_tipo"], TRACAO_GT2.get(gt2[cod]["tracao_tipo"], "FR"))
-    rua = [c for c in gt2.values() if c["codigo"].endswith("n") and num(c["potencia_ps"]) > 0 and num(c["peso_kg"]) > 0
+        tracao_cod[fonte[a["codigo_ref"]]["tracao_tipo"]] = a["tracao"]
+    tracao_de = lambda cod: tracao_cod.get(fonte[cod]["tracao_tipo"], TRACAO_REF.get(fonte[cod]["tracao_tipo"], "FR"))
+    rua = [c for c in fonte.values() if c["codigo"].endswith("n") and num(c["potencia_ps"]) > 0 and num(c["peso_kg"]) > 0
            and num(c["preco"]) > 0]
     # Medidas da frota antiga (docs/carros_3d/lista.csv) para os clones.
     medidas = {}
@@ -167,8 +167,8 @@ def main() -> int:
                  "aprovado": numero is None}
         if numero in casados:
             cod = casados[numero]
-            linha.update({"codigo_gt2": cod, "doador": False, "sobrepor": {}})
-            cv, tracao = num(gt2[cod]["potencia_ps"]), tracao_de(cod)
+            linha.update({"codigo_ref": cod, "doador": False, "sobrepor": {}})
+            cv, tracao = num(fonte[cod]["potencia_ps"]), tracao_de(cod)
         else:
             f = fichas.get(numero, {}) if numero is not None else {}
             if f.get("potencia_cv") and f.get("fontes") and not f.get("peso_kg") and cat != "pesado":
@@ -176,18 +176,18 @@ def main() -> int:
                 estimados.append(asset)
             if f.get("potencia_cv") and f.get("peso_kg") and f.get("fontes"):
                 cv, kg = float(f["potencia_cv"]), float(f["peso_kg"])
-                tracao = f.get("tracao") if f.get("tracao") in TRACAO_GT2.values() else "FR"
+                tracao = f.get("tracao") if f.get("tracao") in TRACAO_REF.values() else "FR"
                 d = doador(tracao, cv, kg)
                 preco = num(d["preco"]) * (cv / num(d["potencia_ps"])) ** EXP_POTENCIA * (kg / num(d["peso_kg"])) ** EXP_PESO
                 sob = {"potencia": round(cv), "peso": round(kg), "tracao": tracao, "preco_cr": round(preco)}
                 if f.get("ano"):
                     sob["ano"] = int(f["ano"])
-                linha.update({"codigo_gt2": d["codigo"], "doador": True, "sobrepor": sob})
+                linha.update({"codigo_ref": d["codigo"], "doador": True, "sobrepor": sob})
             else:
                 # Sem ficha conferida: clone do antigo mais parecido nas medidas.
                 velho = por_id_antigo[clone(cat, mi["L"], mi["W"], mi["H"])]
-                linha.update({"codigo_gt2": velho["codigo_gt2"], "doador": True, "sobrepor": {}, "clone": True})
-                cv, tracao = num(gt2[velho["codigo_gt2"]]["potencia_ps"]), tracao_de(velho["codigo_gt2"])
+                linha.update({"codigo_ref": velho["codigo_ref"], "doador": True, "sobrepor": {}, "clone": True})
+                cv, tracao = num(fonte[velho["codigo_ref"]]["potencia_ps"]), tracao_de(velho["codigo_ref"])
                 pendentes.append(asset)
         cid = slug(f"{fab}_{nome_modelo}")
         k = 2
@@ -204,16 +204,16 @@ def main() -> int:
     # em potência e peso; senão o mais perto da frota (fora os chefes).
     def pot_peso(l):
         s = l["sobrepor"]
-        c = gt2[l["codigo_gt2"]]
+        c = fonte[l["codigo_ref"]]
         return s.get("potencia", num(c["potencia_ps"])), s.get("peso", num(c["peso_kg"]))
     novos = [l for l in linhas if not l["chefe"]]
-    exato = {l["codigo_gt2"]: l["id"] for l in novos if not l["doador"]}
+    exato = {l["codigo_ref"]: l["id"] for l in novos if not l["doador"]}
     mapa_antigo = {}
     for a in antigos:
-        if a["codigo_gt2"] in exato:
-            mapa_antigo[a["id"]] = exato[a["codigo_gt2"]]
+        if a["codigo_ref"] in exato:
+            mapa_antigo[a["id"]] = exato[a["codigo_ref"]]
             continue
-        c = gt2[a["codigo_gt2"]]
+        c = fonte[a["codigo_ref"]]
         cv, kg = max(num(c["potencia_ps"]), 1), max(num(c["peso_kg"]), 1)
         fab = IRMA.get(a["fabricante"], a["fabricante"])
         mesma = [l for l in novos if l["fabricante"] == fab] or novos
@@ -221,7 +221,7 @@ def main() -> int:
         mapa_antigo[a["id"]] = min(mesma, key=dist)["id"]
     json.dump(linhas, open(F360 / "frota.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(mapa_antigo, open(F360 / "antigos.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"{len(linhas)} carros: {sum(1 for l in linhas if not l['doador'])} do GT2, "
+    print(f"{len(linhas)} carros: {sum(1 for l in linhas if not l['doador'])} da referência, "
           f"{sum(1 for l in linhas if l['doador'] and not l.get('clone'))} ficha + doador, "
           f"{len(pendentes)} clones provisórios (sem ficha), {sum(1 for l in linhas if l['chefe'])} chefes")
     if args.instalar:

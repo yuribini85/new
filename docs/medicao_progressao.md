@@ -37,7 +37,7 @@ os prêmios das primeiras vitórias.
    separação desafio × renda existe, mas a economia atual não pede renda.
 3. **O dinheiro sobra.** Fim com 26–132 mil Cr sem destino. O carro mais caro comprado
    custou ~15 mil.
-4. **O conteúdo acaba em ~2h20 de corrida.** São 38 provas (as do disco do GT2
+4. **O conteúdo acaba em ~2h20 de corrida.** São 38 provas (as do disco da referência
    importadas até aqui).
 5. Os perfis quase não diferem, porque o dinheiro não restringe nada. A diferença deve
    aparecer quando houver restrição.
@@ -53,8 +53,8 @@ os prêmios das primeiras vitórias.
 
 ## O que decidir antes de recalibrar (pendente)
 
-- Se a B deve exigir algo além dos contratos. O GT2 libera os testes desde o início; o
+- Se a B deve exigir algo além dos contratos. A referência libera os testes desde o início; o
   que segura o jogador lá é o carro necessário para vencer as provas B.
 - Se os testes de tempo da A devem ser recalibrados agora, pela nova referência, ou só
   quando os contratos da A substituírem os testes.
-- Quantidade de conteúdo: o resto dos eventos do GT2 ainda não foi importado.
+- Quantidade de conteúdo: o resto dos eventos da referência ainda não foi importado.

@@ -216,14 +216,14 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 
 ## Licenças (`data/licencas.json`)
 
-| id | nome | GT2 |
-|---|---|---|
-| `CLUB` | Licença Club | — |
-| `SPORT` | Licença Sport | — |
-| `NATIONAL` | Licença National | — |
-| `INTERNATIONAL` | Licença International | — |
-| `PRO` | Licença Pro | — |
-| `ELITE` | Licença Elite | — |
+| id | nome |
+|---|---|
+| `CLUB` | Licença Club |
+| `SPORT` | Licença Sport |
+| `NATIONAL` | Licença National |
+| `INTERNATIONAL` | Licença International |
+| `PRO` | Licença Pro |
+| `ELITE` | Licença Elite |
 
 ## Equipes e pilotos (`data/equipes.json`)
 
