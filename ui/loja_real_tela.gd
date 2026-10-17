@@ -90,6 +90,7 @@ func _montar() -> void:
 	_nomes(v)
 	_comparacao(v)
 	_compra_pack(v)
+	_turno_noite(v)
 	_sem_anuncios(v)
 	_rodape(v)
 
@@ -160,7 +161,7 @@ func _titulo(v: VBoxContainer) -> void:
 ## Os três de corpo inteiro: arena atrás nas laterais, corrida na frente.
 func _heroi(v: VBoxContainer) -> void:
 	var palco := Control.new()
-	palco.custom_minimum_size = Vector2(0, 420)
+	palco.custom_minimum_size = Vector2(0, 380)
 	palco.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(palco)
 	var arena := EquipeJogador.premium_do_tipo(_dados, "arena")
@@ -401,13 +402,30 @@ func _estilo_botao(b: Button, cor: Color, texto: String, apagado: bool) -> void:
 	b.disabled = apagado
 
 
-## Sem anúncios: a faixa baixa, depois do pack.
+## Faixas baixas, depois do pack: Turno da Noite (horas de renda offline, com
+## o antes e depois do jogador) e Sem anúncios.
+func _turno_noite(v: VBoxContainer) -> void:
+	var p := LojaReal.produto(_dados, "turno_noite")
+	if p.is_empty():
+		return
+	var agora_h := roundi(GestaoEquipe.teto_offline(_dados, _jogador) / 3600.0)
+	var extra := roundi(float(p.get("horas_offline", 0)))
+	var desc := ("Sua renda offline: %d h. Contratos de patrocínio duram %d h a mais." % [agora_h, extra]) \
+			if LojaReal.comprado(_dados, _jogador, "turno_noite") \
+			else "+%d h de renda offline, para sempre: %d h → %d h. Contratos duram mais." % [extra, agora_h, agora_h + extra]
+	_faixa_produto(v, "turno_noite", "cronometro", String(p.get("nome", "")).to_upper(), desc)
+
+
 func _sem_anuncios(v: VBoxContainer) -> void:
+	_faixa_produto(v, "sem_anuncios", "acelerar", "SEM ANÚNCIOS", "Acelera as corridas sem vídeo. Compra única.")
+
+
+func _faixa_produto(v: VBoxContainer, id: String, icone: String, titulo: String, texto: String) -> void:
 	var caixa := _caixa(v)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 14)
 	caixa.add_child(h)
-	var ic := IconeVetor.new("acelerar", Cabecalho.COR_NUMERO)
+	var ic := IconeVetor.new(icone, Cabecalho.COR_NUMERO)
 	ic.custom_minimum_size = Vector2(48, 42)
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(ic)
@@ -416,13 +434,13 @@ func _sem_anuncios(v: VBoxContainer) -> void:
 	t.add_theme_constant_override("separation", 0)
 	h.add_child(t)
 	var nome := Label.new()
-	nome.text = "SEM ANÚNCIOS"
+	nome.text = titulo
 	nome.add_theme_font_override("font", Tipografia.fonte("display_eb"))
 	nome.add_theme_font_size_override("font_size", 30)
 	nome.add_theme_color_override("font_color", Color.WHITE)
 	t.add_child(nome)
 	var d := Label.new()
-	d.text = "Acelera as corridas sem vídeo. Compra única."
+	d.text = texto
 	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	Tipografia.rotulo(d, "regular", 20)
 	d.add_theme_color_override("font_color", Color(0.8, 0.79, 0.76))
@@ -432,12 +450,12 @@ func _sem_anuncios(v: VBoxContainer) -> void:
 	b.custom_minimum_size = Vector2(170, 64)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(b)
-	if LojaReal.comprado(_dados, _jogador, "sem_anuncios"):
+	if LojaReal.comprado(_dados, _jogador, id):
 		_estilo_botao(b, Aba.COR_BOM, "COMPRADO", true)
 	else:
-		var preco := LojaReal.preco(_dados, "sem_anuncios")
+		var preco := LojaReal.preco(_dados, id)
 		_estilo_botao(b, Cabecalho.COR_NUMERO, preco if preco != "" else "COMPRAR", false)
-		b.pressed.connect(func(): comprar.emit("sem_anuncios"))
+		b.pressed.connect(func(): comprar.emit(id))
 	b.add_theme_font_size_override("font_size", 26)
 	_fases.append(caixa.get_parent())
 

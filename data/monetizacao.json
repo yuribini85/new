@@ -20,6 +20,15 @@
     "descricao": "Três pilotos de elite para a equipe: um de corrida e dois de arena. 100% em todos os atributos e sem cansaço. Ficam sempre no mercado de pilotos."
    },
    {
+    "id": "turno_noite",
+    "sku": "turno_noite",
+    "flag": "OFFLINE_EXTRA",
+    "nome": "Turno da Noite",
+    "horas_offline": 6,
+    "_horas_offline": "Decisão 105 (usuário, 2026-10-17): o início (2 h) passa a cobrir uma noite de sono (8 h). Soma com os títulos de série.",
+    "descricao": "+6 h de renda offline, para sempre. Os contratos de patrocínio duram 6 h a mais."
+   },
+   {
     "id": "sem_anuncios",
     "sku": "sem_anuncios",
     "flag": "SEM_ANUNCIOS",

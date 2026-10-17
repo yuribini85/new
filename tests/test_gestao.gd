@@ -376,6 +376,8 @@ func test_capacidade_offline_cresce_com_os_titulos() -> void:
 	igual(GestaoEquipe.teto_offline(d, j), 2.0 * 3600.0, "sem título: 2 h (licença não soma)")
 	j.titulos = {"Copa A": 1, "Copa B": 3}
 	igual(GestaoEquipe.teto_offline(d, j), 4.0 * 3600.0, "dois títulos de série: 4 h")
+	LojaReal.conceder(d, j, "turno_noite")
+	igual(GestaoEquipe.teto_offline(d, j), 10.0 * 3600.0, "Turno da Noite: +6 h, soma com os títulos")
 	verificar(not GestaoEquipe.patrocinio_aberto(d, j), "sem equipe, sem patrocínio")
 	j.personagem = "dono"
 	EquipeJogador.criar(j)

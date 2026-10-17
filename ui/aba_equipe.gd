@@ -941,6 +941,15 @@ func _patrocinio() -> void:
 	var ativos := GestaoEquipe.contratos(jogador)
 	var tit := titulo_secao("PATROCÍNIO")
 	ancora("PATROCINIO", tit)
+	# Decisão 105: mais horas offline na loja (Turno da Noite), enquanto não comprado.
+	if Configuracoes.tem_loja() and not LojaReal.produto(dados, "turno_noite").is_empty() \
+			and not LojaReal.comprado(dados, jogador, "turno_noite"):
+		var b := Button.new()
+		Tipografia.acao_secundaria(b, "Renda offline: %d h · mais horas na Loja   ›" % roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0),
+				LojaRealTela.COR_PREMIUM, 22, 64)
+		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		b.pressed.connect(func(): loja_real.emit())
+		conteudo.add_child(b)
 	var agora := Time.get_unix_time_from_system()
 	for c in ativos:
 		var p := GestaoEquipe.patrocinador(dados, c["id"])

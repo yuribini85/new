@@ -33,6 +33,15 @@ static func conceder(dados: Node, jogador: Node, id: String) -> String:
 	return ""
 
 
+## Horas de renda offline que as compras somam (produto com "horas_offline").
+static func horas_offline(dados: Node, jogador: Node) -> float:
+	var h := 0.0
+	for p in produtos(dados):
+		if p.has("horas_offline") and jogador.flags.has(String(p["flag"])):
+			h += float(p["horas_offline"])
+	return h
+
+
 ## A plataforma tem loja do aparelho (não na Web) e o plugin dela está ativo.
 static func disponivel() -> bool:
 	return not OS.has_feature("web") and _plugin() != null

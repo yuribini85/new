@@ -960,3 +960,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     e o resultado do título, "+1 H DE RENDA OFFLINE". O contrato de patrocínio dura essa
     capacidade (fixada ao assinar) e paga todas as horas dela, com o jogo aberto ou fechado:
     sem teto escondido. Licença nova não soma mais hora.
+105. **Turno da Noite na loja** (2026-10-17, decisão do usuário: horas extras permanentes).
+    Compra única de dinheiro real (`monetizacao.json → loja.produtos`, flag OFFLINE_EXTRA,
+    `horas_offline` 6): soma 6 h à capacidade de renda offline para sempre, somando com os
+    títulos; com ela o início (2 h) cobre uma noite (8 h) e os contratos duram 6 h a mais.
+    Faixa na loja com o antes e depois ("2 h → 8 h") e botão na seção de patrocínio da Equipe
+    enquanto não comprado.

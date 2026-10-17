@@ -38,13 +38,14 @@ const FLAG_PATROCINIO := "PATROCINIO_LIBERADO"
 
 ## Capacidade de renda offline (s), decisão 104: equipe.json →
 ## patrocinio.teto_offline_h_base e + teto_offline_h_por_titulo por série com
-## título (jogador.titulos); é a duração de cada contrato. Sem a base nos
-## dados, `duracao_h`.
+## título (jogador.titulos), mais as horas compradas na loja (Turno da Noite,
+## decisão 105); é a duração de cada contrato. Sem a base nos dados, `duracao_h`.
 static func teto_offline(dados: Node, jogador: Node) -> float:
 	var cfg := config(dados)
 	if cfg.get("teto_offline_h_base") == null:
 		return float(cfg.get("duracao_h", 24)) * 3600.0
-	return (float(cfg["teto_offline_h_base"]) + float(cfg.get("teto_offline_h_por_titulo", 0)) * jogador.titulos.size()) * 3600.0
+	return (float(cfg["teto_offline_h_base"]) + float(cfg.get("teto_offline_h_por_titulo", 0)) * jogador.titulos.size()
+			+ LojaReal.horas_offline(dados, jogador)) * 3600.0
 
 
 ## Média do prêmio de 1º lugar das provas da licença (0 sem provas).
