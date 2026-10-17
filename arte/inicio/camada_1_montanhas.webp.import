@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dffota5042b8y"
-path="res://.godot/imported/camada_1_ceu.webp-669f2b454ffb5db76e0ce214d819f90d.ctex"
+uid="uid://bgl0vxmcsalln"
+path="res://.godot/imported/camada_1_montanhas.webp-ec2eddd278f4f4894369cfb5d0dc2421.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/inicio/camada_1_ceu.webp"
-dest_files=["res://.godot/imported/camada_1_ceu.webp-669f2b454ffb5db76e0ce214d819f90d.ctex"]
+source_file="res://arte/inicio/camada_1_montanhas.webp"
+dest_files=["res://.godot/imported/camada_1_montanhas.webp-ec2eddd278f4f4894369cfb5d0dc2421.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.8
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

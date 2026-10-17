@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8ind7tp8ejkv"
-path="res://.godot/imported/camada_3_pista.webp-d85ff72bb0b2bb01055b21a32b742c37.ctex"
+uid="uid://puka6w82gydc"
+path="res://.godot/imported/camada_0_ceu.webp-ee4912047aaf126588fb96d64255897c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/inicio/camada_3_pista.webp"
-dest_files=["res://.godot/imported/camada_3_pista.webp-d85ff72bb0b2bb01055b21a32b742c37.ctex"]
+source_file="res://arte/inicio/camada_0_ceu.webp"
+dest_files=["res://.godot/imported/camada_0_ceu.webp-ee4912047aaf126588fb96d64255897c.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.8
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

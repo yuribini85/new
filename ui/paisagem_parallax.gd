@@ -1,18 +1,20 @@
 class_name PaisagemParallax
 extends Control
-## Paisagem da tela inicial em quatro camadas (arte/inicio/): céu e montanhas,
-## vales e água, autódromo, vegetação e cerca. Parallax híbrido: um movimento
-## automático lento e contínuo (ciclo de CICLO_S, sem salto no fim) somado à
-## inclinação do aparelho quando há sensor. A camada mais próxima mexe mais.
+## Paisagem da tela inicial em seis camadas (arte/inicio/, arte do usuário):
+## céu, montanhas e floresta, pórtico com as luzes, torre e cercas à esquerda,
+## asfalto e o box à direita. Parallax híbrido: um movimento automático lento e
+## contínuo (ciclo de CICLO_S, sem salto no fim) somado à inclinação do
+## aparelho quando há sensor. A camada mais próxima mexe mais.
 ## Cada camada é escalada por inteiro (sem esticar) com folga suficiente para
 ## nunca mostrar a borda. Movimento reduzido nas preferências: tudo parado.
 ## Apresentação, não balanceamento: amplitudes e tempos são de composição.
 
 const PASTA := "res://arte/inicio/"
-const CAMADAS := ["camada_1_ceu", "camada_2_horizonte", "camada_3_pista", "camada_4_frente"]
+const CAMADAS := ["camada_0_ceu", "camada_1_montanhas", "camada_2_portico", "camada_3_torre", "camada_4_asfalto",
+		"camada_5_box"]
 ## Deslocamento máximo de cada camada (px da tela de 720): automático e inclinação.
-const AMP_AUTO := [4.0, 10.0, 18.0, 32.0]
-const AMP_INCLINACAO := [4.0, 10.0, 18.0, 28.0]
+const AMP_AUTO := [2.0, 4.0, 7.0, 10.0, 13.0, 20.0]
+const AMP_INCLINACAO := [2.0, 4.0, 7.0, 10.0, 13.0, 18.0]
 const VERTICAL := 0.25  # oscilação vertical, fração da horizontal
 const CICLO_S := 36.0
 ## Inclinação: zona morta (tremor da mão), resposta suavizada e limite.

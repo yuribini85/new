@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm58x1elud35k"
-path="res://.godot/imported/camada_2_horizonte.webp-a9dd1f55abff2f9df2a1ebc6a034ad96.ctex"
+uid="uid://1jko4gvf5wiv"
+path="res://.godot/imported/camada_2_portico.webp-3719431698fb58559e48b424eac9b482.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://arte/inicio/camada_2_horizonte.webp"
-dest_files=["res://.godot/imported/camada_2_horizonte.webp-a9dd1f55abff2f9df2a1ebc6a034ad96.ctex"]
+source_file="res://arte/inicio/camada_2_portico.webp"
+dest_files=["res://.godot/imported/camada_2_portico.webp-3719431698fb58559e48b424eac9b482.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.8
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0

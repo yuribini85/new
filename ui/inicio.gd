@@ -1,7 +1,7 @@
 extends Control
 ## Tela inicial: o logo com o carregamento de verdade (a cena principal, com as
 ## telas e a corrida 3D, carregada em segundo plano) e depois as opções:
-## "Continuar" grande e "Novo jogo" pequeno embaixo, que pede confirmação
+## "Continuar" grande e "Novo jogo" pequeno embaixo (BotaoInicio), que pede confirmação
 ## porque apaga o progresso. Sem save, a opção grande é "Começar". Abaixo, o
 ## "Teste completo" (Cenarios: tudo liberado, num save próprio; o seu jogo não
 ## muda e volta pelas Configurações).
@@ -13,12 +13,16 @@ const LOGO_MIN_S := 1.2
 const TOPO_LOGO := 0.17
 const ALTURA_LOGO := 198.0
 const TOPO_ACOES := 0.44
-const LARGURA_BOTAO := 460.0
-const ALTURA_BOTAO := 96.0
+const LARGURA_BOTAO := 470.0
+const ALTURA_BOTAO := 104.0
+const LARGURA_SECUNDARIO := 360.0
+const ALTURA_SECUNDARIO := 76.0
 ## Botão do teste completo na tela inicial (pedido do usuário para testar rápido);
 ## desligar antes do lançamento.
 const MOSTRAR_TESTE := true
 ## Ocre do botão principal um pouco menos saturado que o da interface.
+## Amarelo-ouro do botão principal (referência da tela inicial).
+const COR_PRINCIPAL := Color("f5b52e")
 static var OCRE := Color.from_hsv(Aba.COR_DESTAQUE.h, Aba.COR_DESTAQUE.s * 0.82, Aba.COR_DESTAQUE.v * 0.96)
 
 var _barra: ProgressBar
@@ -141,35 +145,28 @@ func _process(delta: float) -> void:
 func _mostrar_opcoes() -> void:
 	_barra.visible = false
 	var sm := get_node("/root/SaveManager")
-	var continuar := Button.new()
-	Tipografia.acao_primaria(continuar, "Continuar" if sm.tinha_save else "Começar", OCRE, Color(0.1, 0.1, 0.1),
-			46, ALTURA_BOTAO)
-	# Mais sóbrio: largura contida e cantos menos arredondados.
-	continuar.custom_minimum_size.x = LARGURA_BOTAO
-	continuar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	for estado in ["normal", "hover", "pressed", "focus", "disabled"]:
-		var sb: StyleBoxFlat = (continuar.get_theme_stylebox(estado) as StyleBoxFlat).duplicate()
-		sb.set_corner_radius_all(4)
-		continuar.add_theme_stylebox_override(estado, sb)
+	var continuar := BotaoInicio.new("Continuar" if sm.tinha_save else "Começar", true, COR_PRINCIPAL, 56, ALTURA_BOTAO,
+			LARGURA_BOTAO)
 	continuar.pressed.connect(_entrar)
 	_opcoes.add_child(continuar)
+	if sm.tinha_save or MOSTRAR_TESTE:
+		# Linha fina separa a ação principal das outras.
+		var sep := ColorRect.new()
+		sep.color = Color(0.85, 0.88, 0.94, 0.5)
+		sep.custom_minimum_size = Vector2(LARGURA_BOTAO * 1.05, 2)
+		sep.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		var caixa := MarginContainer.new()
+		caixa.add_theme_constant_override("margin_top", 14)
+		caixa.add_theme_constant_override("margin_bottom", 6)
+		caixa.add_child(sep)
+		_opcoes.add_child(caixa)
 	if sm.tinha_save:
-		var novo := Button.new()
-		Tipografia.acao_secundaria(novo, "Novo jogo", Color(0.95, 0.93, 0.89), 30, 88)
-		novo.custom_minimum_size.x = LARGURA_BOTAO
-		novo.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		# Contraste sobre a paisagem sem caixa: uma sombra curta no texto.
-		novo.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
-		novo.add_theme_constant_override("shadow_offset_y", 2)
+		var novo := BotaoInicio.new("Novo jogo", false, Color.WHITE, 36, ALTURA_SECUNDARIO, LARGURA_SECUNDARIO)
 		novo.pressed.connect(_confirmar_novo)
 		_opcoes.add_child(novo)
 	if MOSTRAR_TESTE:
-		var teste := Button.new()
-		Tipografia.acao_secundaria(teste, "Teste completo", Color(0.75, 0.85, 0.95), 26, 88)
-		teste.custom_minimum_size.x = LARGURA_BOTAO
-		teste.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		teste.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
-		teste.add_theme_constant_override("shadow_offset_y", 2)
+		var teste := BotaoInicio.new("Teste completo", false, Color.WHITE, 34, ALTURA_SECUNDARIO, LARGURA_SECUNDARIO)
+		teste.add_theme_color_override("font_color", Color(0.75, 0.87, 0.98))
 		teste.pressed.connect(_entrar_teste)
 		_opcoes.add_child(teste)
 	_opcoes.visible = true
