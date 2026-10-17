@@ -898,7 +898,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (`EquipeJogador.variar`): as faixas saem dos dados (agressividade ± metade do menor
     intervalo entre os perfis; consistência ± metade da perda do segundo piloto) e
     `carreira.json` → `variacao_piloto.fator` escala no playtest. O ritmo segue o GT2 e a
-    barra mostra o ritmo sobre o teto do treino (só o premium chega a 100%). Pack premium:
+    barra é uma escala própria: do pior piloto do jogo (35%, `PISO_BARRA`) ao premium (100%).
+    Vantagem real do premium (2026-10-17): ritmo `carreira.json` → `ritmo_premium` = 1.023,
+    medido com `tools/calibrar_treino.gd --licenca=INTERNATIONAL --meta=0.2` (o teto do
+    treino comum é 1.007, medido no PRO). Pack premium:
     3 pilotos de elite (1 de corrida, 2 de arena; nomes inventados), compra única e
     permanente, 100% em tudo, sem cansaço. Vendido com dinheiro real numa tela de loja
     própria, separada (pendente: criar essa loja, com a loja do aparelho, como o Sem

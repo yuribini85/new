@@ -280,8 +280,8 @@ func _treino(pai: Control, piloto_id := "") -> void:
 		var teto_r := maxf(GestaoEquipe.teto(dados, jogador), base + 0.0001)
 		var ganho := float(a["ritmo"]) - base
 		for it in [["Ritmo", ganho / (teto_r - base), "+%s%%" % Aba.decimal(ganho * 100.0, 1)],
-				["Consistência", float(a["consistencia"]), "%d%%" % roundi(float(a["consistencia"]) * 100.0)],
-				["Agressividade", float(a["agressividade"]), "%d%%" % roundi(float(a["agressividade"]) * 100.0)]]:
+				_na_escala("Consistência", "consistencia", float(a["consistencia"])),
+				_na_escala("Agressividade", "agressividade", float(a["agressividade"]))]:
 			_barra_atributo(pai, it[0], clampf(float(it[1]), 0.0, 1.0), it[2])
 		var e := GestaoEquipe.energia(jogador, piloto_id, Time.get_unix_time_from_system())
 		_barra_atributo(pai, "Energia", e, "%d%%" % roundi(e * 100.0), COR_BOM if e >= 1.0 else COR_DESTAQUE)
@@ -321,6 +321,12 @@ func _treino(pai: Control, piloto_id := "") -> void:
 		avisar("Treino começou: a energia volta enchendo.")
 		mudou.emit())
 	pai.add_child(b)
+
+
+## [nome, fração, texto] do atributo na escala do jogo (a mesma da seleção).
+func _na_escala(nome: String, attr: String, valor: float) -> Array:
+	var f := EquipeJogador.barra_atributo(dados, attr, valor)
+	return [nome, f, "%d%%" % roundi(f * 100.0)]
 
 
 ## Uma linha de atributo: nome, barra em dentes e o valor.
@@ -527,9 +533,10 @@ func _escolher_segundo(vaga: String = "corrida") -> void:
 			linha_estilo.visible = String(tr.get("nome", "")) != ""
 			contador.text = "%d / %d" % [estado["i"] + 1, lista.size()]
 			var at := EquipeJogador.atributos(dados, jogador if atual else null, String(c["id"]))
-			# Ritmo na escala do teto do treino: só o premium chega a 100%.
-			var valores := [float(at.get("ritmo", 1.0)) / EquipeJogador.ritmo_maximo(dados),
-					float(at.get("consistencia", 0.0)), float(at.get("agressividade", 0.0))]
+			# Na escala do jogo: do pior piloto ao premium (só ele chega a 100%).
+			var valores := []
+			for k in ["ritmo", "consistencia", "agressividade"]:
+				valores.append(EquipeJogador.barra_atributo(dados, k, float(at.get(k, 0.0))))
 			for k in barras.size():
 				_animar_barra(barras[k], valores[k], 0.0 if lado == 0 and Preferencias.reduzir_animacoes else 0.35)
 			b.visible = not atual and outra == ""

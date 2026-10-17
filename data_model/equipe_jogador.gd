@@ -442,11 +442,53 @@ static func ritmo_maximo(dados: Node) -> float:
 	return maior
 
 
+## Ritmo do premium: carreira.json → equipe_jogador.ritmo_premium (medido com
+## tools/calibrar_treino.gd, meta 2x a do treino); sem o dado, o teto do treino.
+static func ritmo_premium(dados: Node) -> float:
+	var r = config(dados).get("ritmo_premium")
+	return float(r) if r != null else ritmo_maximo(dados)
+
+
+## Escala das barras de atributo (tela): do pior piloto do jogo (candidatos e
+## equipes do Grid, sem treino) ao premium. PISO_BARRA é só visual: a barra do
+## pior nunca aparece vazia.
+const PISO_BARRA := 0.35
+static var _escala := {}
+
+
+static func escala_atributos(dados: Node) -> Dictionary:
+	if not _escala.is_empty():
+		return _escala
+	var ids := candidatos(dados).filter(func(c): return not bool(c.get("premium", false))).map(func(c): return String(c["id"]))
+	var minimo := {"ritmo": INF, "consistencia": INF, "agressividade": INF}
+	for id in ids:
+		var at := atributos(dados, null, String(id))
+		for k in minimo:
+			minimo[k] = minf(minimo[k], float(at[k]))
+	var c := Carreira.new(dados, null)
+	var base: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"])
+	for e in TheGrid.equipes(dados):
+		for pe in e.get("pilotos", []):
+			var at := c.piloto_na_vaga(base, {"equipe": e, "piloto": pe, "segundo": false})
+			for k in minimo:
+				minimo[k] = minf(minimo[k], float(at[k]))
+	_escala = {"ritmo": [minimo["ritmo"], ritmo_premium(dados)], "consistencia": [minimo["consistencia"], 1.0],
+			"agressividade": [minimo["agressividade"], 1.0]}
+	return _escala
+
+
+## Fração da barra (PISO_BARRA a 1) do atributo na escala do jogo.
+static func barra_atributo(dados: Node, attr: String, valor: float) -> float:
+	var e: Array = escala_atributos(dados)[attr]
+	var t := 1.0 if e[1] <= e[0] else clampf((valor - e[0]) / (e[1] - e[0]), 0.0, 1.0)
+	return PISO_BARRA + (1.0 - PISO_BARRA) * t
+
+
 static func atributos(dados: Node, jogador: Node, piloto_id: String, agora := -1.0) -> Dictionary:
 	var p: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()
 	if premium(dados, piloto_id):
 		# Premium: tudo no máximo, sempre (sem variação, treino ou cansaço).
-		p["ritmo"] = ritmo_maximo(dados)
+		p["ritmo"] = ritmo_premium(dados)
 		p["consistencia"] = 1.0
 		p["agressividade"] = 1.0
 		return p

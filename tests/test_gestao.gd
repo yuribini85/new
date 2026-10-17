@@ -295,7 +295,7 @@ func test_pack_premium_e_variacao_por_piloto() -> void:
 	igual(EquipeJogador.premium_do_tipo(d, "arena").size(), 2, "2 premium de arena")
 	var pr: Dictionary = EquipeJogador.premium_do_tipo(d, "corrida")[0]
 	var at := EquipeJogador.atributos(d, j, String(pr["id"]))
-	perto(float(at["ritmo"]), EquipeJogador.ritmo_maximo(d), 1e-6, "premium: ritmo no teto")
+	perto(float(at["ritmo"]), EquipeJogador.ritmo_premium(d), 1e-6, "premium: ritmo medido")
 	perto(float(at["consistencia"]), 1.0, 1e-6, "premium: consistência 100%")
 	perto(float(at["agressividade"]), 1.0, 1e-6, "premium: agressividade 100%")
 	j.flags[EquipeJogador.FLAG_PACK_PREMIUM] = true
