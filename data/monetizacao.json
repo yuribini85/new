@@ -10,11 +10,12 @@
   "_nota": "Decisão do usuário (2026-10-17), pelo ritmo medido no playtest da campanha (3 perfis, 3 h): tanque 8 = corridas dos primeiros 30 min (6-8), ninguém fica sem no tutorial; +1 a cada 15 min enche em 2 h fora; jogando direto (~10 corridas/h, mediana 7 min) acaba em ~1h20. Corrida e luta da arena gastam 1; o vídeo com recompensa enche o tanque."
  },
  "loja": {
-  "_nota": "Loja de dinheiro real (tela própria, decisão 101). Compras únicas e permanentes; o preço vem da loja do aparelho (sku), nunca daqui. 'flag': o que a compra liga no save.",
+  "_nota": "Loja de dinheiro real (tela própria, decisão 101). Compras únicas e permanentes; o preço cobrado é o da loja do aparelho (sku). preco_usd (decisão 106): o preço-base sugerido em dólar, para cadastrar nas lojas (cada loja converte por país) e para a tela quando a loja do aparelho não responde. 'flag': o que a compra liga no save.",
   "produtos": [
    {
     "id": "pack_premium",
     "sku": "pack_premium",
+    "preco_usd": 9.99,
     "flag": "PACK_PREMIUM",
     "nome": "Pack Elite",
     "descricao": "Três pilotos de elite para a equipe: um de corrida e dois de arena. 100% em todos os atributos e sem cansaço. Ficam sempre no mercado de pilotos."
@@ -22,6 +23,7 @@
    {
     "id": "turno_noite",
     "sku": "turno_noite",
+    "preco_usd": 4.99,
     "flag": "OFFLINE_EXTRA",
     "nome": "Turno da Noite",
     "horas_offline": 6,
@@ -31,6 +33,7 @@
    {
     "id": "sem_anuncios",
     "sku": "sem_anuncios",
+    "preco_usd": 3.99,
     "flag": "SEM_ANUNCIOS",
     "nome": "Sem anúncios",
     "descricao": "Acelera as corridas sem precisar assistir aos vídeos."

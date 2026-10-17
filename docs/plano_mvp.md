@@ -965,3 +965,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     `horas_offline` 6): soma 6 h à capacidade de renda offline para sempre, somando com os
     títulos; com ela o início (2 h) cobre uma noite (8 h) e os contratos duram 6 h a mais.
     Faixa na loja com o antes e depois ("2 h → 8 h"); sem aviso fora da loja (pedido do usuário).
+106. **Preços da loja em dólar** (2026-10-17, sugestão aceita pelo usuário). Preço-base para
+    cadastrar nas lojas do aparelho (cada loja converte por país), em `monetizacao.json →
+    preco_usd`: Pack Elite US$ 9,99; Turno da Noite US$ 4,99; Sem anúncios US$ 3,99. A tela
+    mostra o preço da loja do aparelho e, sem ela, esse preço-base. Na comparação da loja só
+    entram os atributos em que a Elite supera o melhor do mercado por 10 pontos ou mais.

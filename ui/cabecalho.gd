@@ -295,6 +295,20 @@ func _criar_combustivel() -> void:
 	_combustivel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_combustivel.visible = false
 	_combustivel.pressed.connect(func(): combustivel.emit())
+	# Área de toque maior que o desenho (a faixa inteira de altura, com folga dos lados).
+	var toque := Button.new()
+	toque.flat = true
+	toque.focus_mode = Control.FOCUS_NONE
+	toque.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	toque.offset_left = -14
+	toque.offset_right = 14
+	toque.offset_top = -(ALTURA - ALTURA_PAINEL) * 0.5
+	toque.offset_bottom = (ALTURA - ALTURA_PAINEL) * 0.5
+	toque.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	toque.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	toque.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	toque.pressed.connect(func(): combustivel.emit())
+	_combustivel.add_child(toque)
 	var h := HBoxContainer.new()
 	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	h.add_theme_constant_override("separation", 4)

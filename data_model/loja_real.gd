@@ -47,9 +47,13 @@ static func disponivel() -> bool:
 	return not OS.has_feature("web") and _plugin() != null
 
 
-## Preço como a loja do aparelho mostra ("" sem loja: a tela não inventa preço).
-static func preco(_dados: Node, _id: String) -> String:
-	return ""
+## Preço como a loja do aparelho mostra; sem ela, o preço-base em dólar
+## (monetizacao.json → preco_usd, decisão 106); "" sem nenhum dos dois.
+static func preco(dados: Node, id: String) -> String:
+	var p := produto(dados, id)
+	if p.is_empty() or p.get("preco_usd") == null:
+		return ""
+	return ("US$ %.2f" % float(p["preco_usd"])).replace(".", ",")
 
 
 ## Pede a compra; "" quando a loja aceitou o pedido (a confirmação chega por

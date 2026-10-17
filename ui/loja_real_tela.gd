@@ -19,6 +19,7 @@ const COR_PREMIUM := Color("e8b04a")
 const COR_FUNDO := Color(0.035, 0.032, 0.03)
 const ATRIBUTOS := [["ritmo", "RITMO"], ["consistencia", "CONSISTÊNCIA"], ["agressividade", "AGRESSIVIDADE"]]
 const FASE_S := 0.12
+const DIFERENCA_MIN := 0.1
 const ABA_EQUIPE := 6
 
 const SHADER_CONTORNO := """
@@ -271,6 +272,9 @@ func _comparacao(v: VBoxContainer) -> void:
 	_legenda(leg, Color(0.55, 0.56, 0.6), "MELHOR DO MERCADO HOJE")
 	var melhor := _melhor_do_mercado()
 	for a in ATRIBUTOS:
+		# Só o que a Elite muda de verdade: diferença de menos de 10 pontos não entra.
+		if 1.0 - float(melhor.get(a[0], 0.0)) < DIFERENCA_MIN:
+			continue
 		var h := HBoxContainer.new()
 		h.add_theme_constant_override("separation", 12)
 		caixa.add_child(h)
