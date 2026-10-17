@@ -415,8 +415,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Kenji Arata (pintor, PINTURA), Harold Brandt (examinador da Vector Academy), Roxy Vega
     (organizadora da arena), Dex Kane (mecânico da arena, blindagem) e os vendedores
     Edgar Halloway (Charge Folio), Sal Moretti (Relay Room), Bianca Sterling (Brace Yard),
-    Nora Lindqvist (Return Chapter) e Jade Ryker (Shared Grid). Spare Penny fica sem
-    vendedor até haver arte.
+    Nora Lindqvist (Return Chapter) e Jade Ryker (Shared Grid). Spare Penny ganhou o
+    vendedor Walt Pruitt quando chegou a arte (2026-10-17).
 63. **Cabine de pintura** (2026-10-12, proposta do usuário avaliada): a PINTURA vira tela
     cheia (`ui/cabine_pintura.gd`) com o carro real em 3D fixo em cima (arrasto gira e sobe
     a câmera, pinça aproxima, vistas 3/4, lateral, traseira e topo da mesma câmera), abas
@@ -921,7 +921,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     diante. Fica: requisitos (`licencas.json`) → iniciar o treino → esperar a duração
     (`treino_s`) em tempo real → licença concedida automaticamente
     (`Licencas.atualizar`, checado a cada segundo e na volta do app). O modelo de contratos
-    e testes continua no código, sem uso na tela, até a próxima limpeza.
+    e testes saiu do código na limpeza de 2026-10-17.
 100. **Patrocínio: bônus pela dificuldade da condição e cartão compacto** (2026-10-17,
     recomendação aceita pelo usuário). O bônus de cada patrocinador é
     `bonus_fator × prêmio de referência × bonus_condicao[condição]`; o multiplicador é a
