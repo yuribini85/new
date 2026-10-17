@@ -1181,8 +1181,7 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 	var tabela: Array = c.get("tabela", [])
 	var token := Time.get_ticks_usec()
 	_resultado_aberto = token
-	# Tela cheia (referência do usuário): a pista de fundo, o título na
-	# pincelada, a etapa num cartão, troféu e posição, a classificação em
+	# Tela cheia (referência do usuário): a pista de fundo, o título, a etapa num cartão, troféu e posição, a classificação em
 	# faixas inclinadas e, embaixo, a ação principal no botão dourado.
 	var tex := Aba.arte("banner_" + String(Corrida3D.TEMA_DE.get(ev["pista"], ev["pista"])))
 	_sobre.abrir("", func(v):
@@ -1227,20 +1226,11 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 		_acoes_resultado(v, botoes), [], {"fundo": tex, "tela_cheia": _cabecalho.altura_total()})
 
 
-## "VITÓRIA!" (ou a posição) na pincelada dourada, no alto à esquerda.
+## "VITÓRIA!" (ou a posição) no alto à esquerda.
 func _titulo_resultado(v: VBoxContainer, texto: String, venceu: bool) -> void:
 	var caixa := Control.new()
 	caixa.custom_minimum_size = Vector2(0, 124)
 	v.add_child(caixa)
-	var pincel := TextureRect.new()
-	pincel.texture = Aba.arte("resultado_pincelada")
-	pincel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	pincel.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	pincel.size = Vector2(560, 560.0 * 316.0 / 1000.0)
-	pincel.position = Vector2(-30, (124.0 - pincel.size.y) / 2.0)
-	if not venceu:
-		pincel.modulate = Color(0.55, 0.55, 0.58, 0.85)
-	caixa.add_child(pincel)
 	var l := Label.new()
 	l.text = texto
 	l.add_theme_font_override("font", Tipografia.fonte("display"))
