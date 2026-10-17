@@ -192,7 +192,7 @@ func _the_grid() -> void:
 	var vez: Dictionary = TheGrid.da_vez(dados, jogador)
 	var feitas: Array = TheGrid.vencidas(jogador)
 	var c := cartao()
-	c.add_theme_constant_override("separation", 4)
+	c.add_theme_constant_override("separation", 10)
 	_linhas_grid = {}
 	if vez.is_empty():
 		rotulo("O Grid é seu. Ninguém acima.", FONTE_PEQUENA + 2, COR_BOM, c)
@@ -202,11 +202,11 @@ func _the_grid() -> void:
 		var venc: bool = e["id"] in feitas
 		var da_vez: bool = not vez.is_empty() and e["id"] == vez["id"]
 		var h := HBoxContainer.new()
-		h.add_theme_constant_override("separation", 12)
+		h.add_theme_constant_override("separation", 16)
 		# A linha: a faixa (HBox) e, por cima, o risco das vencidas (camada, não
 		# mexe no emblema). Vencida fica apagada e riscada; toque abre a ficha.
 		var linha := Control.new()
-		linha.custom_minimum_size.y = 76 if da_vez else 64
+		linha.custom_minimum_size.y = 148 if da_vez else 128
 		linha.modulate = Color(0.72, 0.72, 0.72) if venc else Color(1, 1, 1, 1.0 if da_vez else 0.55)
 		linha.mouse_filter = Control.MOUSE_FILTER_PASS
 		c.add_child(linha)
@@ -222,7 +222,7 @@ func _the_grid() -> void:
 		risco.anchor_top = 0.5
 		risco.anchor_bottom = 0.5
 		risco.anchor_right = 1.0
-		risco.offset_left = 72
+		risco.offset_left = 92
 		risco.offset_right = -44
 		risco.offset_top = -2
 		risco.offset_bottom = 3
@@ -233,14 +233,14 @@ func _the_grid() -> void:
 			linha.gui_input.connect(_toque_linha_grid.bind(String(e["id"])))
 		var n := Label.new()
 		n.text = "#%d" % int(e["grid"])
-		n.custom_minimum_size.x = 64
+		n.custom_minimum_size.x = 92
 		n.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		Tipografia.numero(n, 30)
+		Tipografia.numero(n, 50 if da_vez else 44)
 		n.add_theme_color_override("font_color", COR_DESTAQUE if da_vez else (COR_BOM if venc else COR_SECUNDARIA))
 		h.add_child(n)
 		var logo := TextureRect.new()
 		logo.texture = load(String(e["logo"])) if ResourceLoader.exists(String(e.get("logo", ""))) else null
-		logo.custom_minimum_size = Vector2(56, 56)
+		logo.custom_minimum_size = Vector2(136, 136) if da_vez else Vector2(120, 120)
 		logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		logo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -252,7 +252,7 @@ func _the_grid() -> void:
 		h.add_child(v)
 		var nome := Label.new()
 		nome.text = String(e["nome"]).to_upper()
-		Tipografia.rotulo(nome, "semibold", 24)
+		Tipografia.rotulo(nome, "semibold", 38 if da_vez else 34)
 		nome.add_theme_color_override("font_color", COR_DESTAQUE if da_vez else Color(0.93, 0.91, 0.87))
 		v.add_child(nome)
 		var lic: Dictionary = dados.item("licencas", String(e.get("nivel", ""))) if dados.existe("licencas", String(e.get("nivel", ""))) else {}
@@ -261,12 +261,12 @@ func _the_grid() -> void:
 		var d := Label.new()
 		d.text = detalhe
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		d.add_theme_font_size_override("font_size", FONTE_PEQUENA)
+		d.add_theme_font_size_override("font_size", FONTE_PEQUENA + 5)
 		d.add_theme_color_override("font_color", COR_BOM if venc else COR_SECUNDARIA)
 		v.add_child(d)
 		if venc:
 			var ok := IconeVetor.new("check", COR_BOM)
-			ok.custom_minimum_size = Vector2(30, 30)
+			ok.custom_minimum_size = Vector2(40, 40)
 			ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 			h.add_child(ok)
 	for id in _linhas_grid:
