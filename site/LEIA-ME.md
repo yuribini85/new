@@ -29,15 +29,16 @@ Enquanto o `id` estiver vazio, o botão de enviar avisa que as inscrições aind
 
 ## 2. Publicar (GitHub Pages) e ligar o domínio
 
-1. Repositório **público** só para o site (ex.: `chrome-wreckage-site`) com estes arquivos na raiz.
-2. Settings → Pages → Source: **Deploy from a branch**, branch `main`, pasta `/ (root)`.
-3. Settings → Pages → Custom domain: digite o domínio (ex.: `www.seudominio.com`) e salve.
+O site sai no mesmo GitHub Pages da demo do jogo: o workflow `.github/workflows/pages.yml`
+publica esta pasta na raiz e a demo em `/demo/`, a cada push (só se os testes passarem).
+
+1. Settings → Pages → Custom domain: digite o domínio (ex.: `www.seudominio.com`) e salve.
    Marque **Enforce HTTPS** quando liberar.
-4. No painel do registrador do domínio:
-   - `www` → registro **CNAME** apontando para `SEU-USUARIO.github.io`
+2. No painel do registrador do domínio:
+   - `www` → registro **CNAME** apontando para `yuribini85.github.io`
    - domínio sem `www` → 4 registros **A**: `185.199.108.153`, `185.199.109.153`,
      `185.199.110.153`, `185.199.111.153`
-5. A propagação leva de minutos a algumas horas.
+3. A propagação leva de minutos a algumas horas.
 
 Depois que o domínio estiver definido, trocar `og:image` no `index.html` pelo endereço
 completo (`https://seudominio.com/img/compartilhar.jpg`): Instagram, WhatsApp e fóruns

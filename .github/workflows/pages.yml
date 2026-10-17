@@ -1,6 +1,7 @@
 name: Demo web
 
-# Exporta o jogo para web e publica no GitHub Pages, para testar no navegador
+# Publica no GitHub Pages o site oficial (pasta site/, na raiz) e a demo web do
+# jogo (em /demo/), para testar no navegador
 # do celular. Precisa de Settings → Pages → Source: GitHub Actions.
 # Por padrão o GitHub só publica a partir da main (regra do ambiente
 # github-pages); para publicar de outra branch, inclua-a abaixo e libere-a em
@@ -63,9 +64,19 @@ jobs:
           sed -i "s/__VERSAO__/$v/" build/web/index.html
           grep -q "var v = '$v'" build/web/index.html
 
+      # O site oficial (site/) fica na raiz do Pages e a demo do jogo em /demo/.
+      - name: Montar site e demo
+        run: |
+          mkdir -p build/pages
+          cp -r site/. build/pages/
+          rm -f build/pages/LEIA-ME.md build/pages/.gdignore
+          cp -r build/web build/pages/demo
+          test -f build/pages/index.html
+          test -f build/pages/demo/index.pck
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: build/web
+          path: build/pages
 
   publicar:
     needs: exportar
