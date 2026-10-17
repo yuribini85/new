@@ -20,10 +20,45 @@ const COR_ARVORE := [Color(0.2, 0.3, 0.17), Color(0.17, 0.26, 0.16), Color(0.23,
 static var _shader_chapado: Shader
 static var _texturas := {}
 
+## Prédios, postes, boxes e caminhões juntos numa malha só (cor por vértice; o
+## shader chapado já multiplica a cor da instância) e as luzes noutra: no
+## celular cada objeto era uma chamada de desenho, e uma pista passava de cem.
+var _lote_volumes: SurfaceTool
+var _lote_luzes: SurfaceTool
+
 
 func montar(cena: Node3D, pista: Pista, tema: Dictionary, largura: float) -> void:
 	_borda_irregular = 0.0
+	_lote_volumes = SurfaceTool.new()
+	_lote_volumes.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_lote_luzes = SurfaceTool.new()
+	_lote_luzes.begin(Mesh.PRIMITIVE_TRIANGLES)
 	super(cena, pista, tema, largura)
+	_fechar_lote(_lote_volumes, _material(Color.WHITE))
+	var luz := _brilhante(Color.WHITE)
+	luz.vertex_color_use_as_albedo = true
+	_fechar_lote(_lote_luzes, luz)
+
+
+func _fechar_lote(st: SurfaceTool, mat: Material) -> void:
+	var malha := st.commit()
+	if malha.get_surface_count() == 0:
+		return
+	var mi := MeshInstance3D.new()
+	mi.mesh = malha
+	mi.material_override = mat
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_cena.add_child(mi)
+
+
+## Põe uma malha primitiva no lote, já na posição final e com a cor nos vértices.
+func _no_lote(st: SurfaceTool, m: PrimitiveMesh, tr: Transform3D, c: Color) -> void:
+	var arr := m.get_mesh_arrays()
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var idx: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
+	for i in idx:
+		st.set_color(c)
+		st.add_vertex(tr * vs[i])
 
 
 ## Superfícies: o mesmo material do kit, com uma textura de cor lisa.
@@ -132,7 +167,7 @@ func _mata_desenho(nome: String, t: Texture2D, lista: Array, cores: Array) -> vo
 		cone.bottom_radius = raio
 		cone.height = raio * 2.2
 		cone.radial_segments = 6
-		cone.rings = 1
+		cone.rings = 0
 		forma = cone
 		altura = raio * 1.1
 		cor_base = _tema.get("cores", {}).get("pinheiro", Color(0.14, 0.24, 0.2))
@@ -178,31 +213,23 @@ func _mata_desenho(nome: String, t: Texture2D, lista: Array, cores: Array) -> vo
 ## Objetos: volumes no lugar dos sprites (mesma planta, altura e cor por tipo).
 func _desenho_objeto(nome: String, t: Texture2D, p: Vector2, rumo: float, y: float) -> void:
 	var planta := Vector2(t.get_width(), t.get_height()) / PX_M
-	var no := Node3D.new()
-	no.position = _v3(p, 0.0)
-	no.rotation.y = rumo
-	_cena.add_child(no)
+	var no := Transform3D(Basis(Vector3.UP, rumo), _v3(p, 0.0))
 	if nome == "poste":
 		_volume(no, Vector3(0.4, 8.0, 0.4), Vector3.ZERO, Color(0.25, 0.25, 0.27))
-		var lampada := MeshInstance3D.new()
+		# Esfera baixa: a padrão do Godot tem ~4 mil triângulos por lâmpada.
 		var b := SphereMesh.new()
 		b.radius = 0.7
 		b.height = 1.4
-		lampada.mesh = b
-		lampada.material_override = _brilhante(Color(1.0, 0.86, 0.6))
-		lampada.position.y = 8.2
-		no.add_child(lampada)
+		b.radial_segments = 8
+		b.rings = 4
+		_no_lote(_lote_luzes, b, no * Transform3D(Basis(), Vector3(0, 8.2, 0)), Color(1.0, 0.86, 0.6))
 		return
 	if nome == "box_modulo":
 		_volume(no, Vector3(planta.x, 5.0, planta.y * 0.9), Vector3(0, 0, -planta.y * 0.05), Color(0.62, 0.62, 0.64))
 		# Porta acesa na frente (borda de baixo do sprite = +z).
-		var porta := MeshInstance3D.new()
 		var bm := BoxMesh.new()
 		bm.size = Vector3(planta.x * 0.82, 0.4, 0.5)
-		porta.mesh = bm
-		porta.material_override = _brilhante(Color(1.0, 0.72, 0.36))
-		porta.position = Vector3(0, 5.05, planta.y * 0.42)
-		no.add_child(porta)
+		_no_lote(_lote_luzes, bm, no * Transform3D(Basis(), Vector3(0, 5.05, planta.y * 0.42)), Color(1.0, 0.72, 0.36))
 		return
 	var cfg: Dictionary = {
 		"arquibancada_modulo": {"h": 6.0, "cor": Color(0.3, 0.32, 0.38)},
@@ -224,11 +251,7 @@ func _desenho_objeto(nome: String, t: Texture2D, p: Vector2, rumo: float, y: flo
 	_volume(no, Vector3(planta.x, cfg["h"], planta.y), Vector3(0, cfg.get("y", 0.0), 0), cfg["cor"])
 
 
-func _volume(pai: Node3D, tam: Vector3, pos: Vector3, c: Color) -> void:
-	var mi := MeshInstance3D.new()
+func _volume(pai: Transform3D, tam: Vector3, pos: Vector3, c: Color) -> void:
 	var b := BoxMesh.new()
 	b.size = tam
-	mi.mesh = b
-	mi.material_override = _material(c)
-	mi.position = pos + Vector3(0, tam.y * 0.5, 0)
-	pai.add_child(mi)
+	_no_lote(_lote_volumes, b, pai * Transform3D(Basis(), pos + Vector3(0, tam.y * 0.5, 0)), c)

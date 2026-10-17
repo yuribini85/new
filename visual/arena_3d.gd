@@ -572,6 +572,8 @@ func _anel() -> MeshInstance3D:
 	var tor := TorusMesh.new()
 	tor.inner_radius = 2.7
 	tor.outer_radius = 3.15
+	tor.rings = 32  # a padrão (64 × 32) tem 4 mil triângulos num anel fino
+	tor.ring_segments = 6
 	m.mesh = tor
 	var mat := CarroBloco._material(Aba.COR_DESTAQUE)
 	mat.emission_enabled = true

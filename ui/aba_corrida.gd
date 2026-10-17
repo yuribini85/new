@@ -426,6 +426,7 @@ func _process(delta: float) -> void:
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
+		_visual3d.taxa = taxa
 		_visual3d.atualizar(delta)
 	var s_agora := _visual.distancia("jogador")
 	var meta := _pista.comprimento * _voltas if _pista != null else INF
@@ -440,7 +441,8 @@ func _process(delta: float) -> void:
 	if _chegou:
 		_t_chegada += delta
 		_visual3d.chegada = minf(_t_chegada / 3.0, 1.0)
-	_sons.motor(not _chegou, (s_agora - _s_jogador) / maxf(delta, 1e-3) if delta > 0.0 else 0.0)
+	# Velocidade no relógio da corrida (em 2× o motor não sobe de giro).
+	_sons.motor(not _chegou, (s_agora - _s_jogador) / maxf(delta * maxf(taxa, 1.0), 1e-3) if delta > 0.0 else 0.0)
 	_s_jogador = s_agora
 	_atualizar_hud(ordem)
 	_eventos(ordem)

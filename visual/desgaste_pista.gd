@@ -242,7 +242,10 @@ func _protecoes() -> void:
 		cil.bottom_radius = PNEU_RAIO_M
 		cil.height = 0.3
 		cil.radial_segments = 10
-		cil.rings = 1
+		# Uma faixa só e sem a tampa de baixo (no chão, nunca aparece): de 60
+		# para 30 triângulos por pneu, e a barreira passa de mil pneus.
+		cil.rings = 0
+		cil.cap_bottom = false
 		_multi(cil, pneus, cores_pneu)
 	# Guard-rail nas retas, dos dois lados, fora da área dos boxes e das caixas.
 	var trilhos := SurfaceTool.new()

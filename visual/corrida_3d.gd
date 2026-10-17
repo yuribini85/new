@@ -459,8 +459,9 @@ func atualizar(delta: float) -> void:
 		c.girar_rodas(maxf(ds, 0.0))
 		if delta > 0.0:
 			var v_antes := float(_v.get(id, 0.0))
-			_v[id] = lerpf(v_antes, maxf(ds, 0.0) / delta, clampf(delta * 4.0, 0.0, 1.0))
-			var acel := (float(_v[id]) - v_antes) / delta
+			var dc := delta * taxa if taxa > 0.0 else delta  # tempo da corrida no quadro
+			_v[id] = lerpf(v_antes, maxf(ds, 0.0) / dc, clampf(delta * 4.0, 0.0, 1.0))
+			var acel := (float(_v[id]) - v_antes) / dc
 			_efeitos_pista(id, acel, float(_v[id]), delta)
 			# Arfagem: a frente sobe acelerando e mergulha freando.
 			var arf_alvo := 0.0 if Preferencias.reduzir_animacoes else clampf(acel * ARFAGEM_POR_MS2, -ARFAGEM_MAX, ARFAGEM_MAX)
@@ -602,8 +603,10 @@ func atualizar(delta: float) -> void:
 	var frac := v_seg / maxf(float(_v_max.get(seguido, 0.0)), RETA_V_MIN)
 	var reta := 1.0 - smoothstep(0.0012, 0.0035, absf(_tracado.curvatura(float(s[seguido]))))
 	efeito_velocidade = maxf(efeito_velocidade, RETA_EFEITO * smoothstep(0.84, 0.97, frac) * reta)
+	# Efeitos leves (o padrão no navegador): sem o borrão, que lê a imagem 7
+	# vezes por pixel da tela inteira; a vinheta continua.
 	(material as ShaderMaterial).set_shader_parameter("intensidade",
-			0.0 if Preferencias.reduzir_animacoes else efeito_velocidade)
+			0.0 if Preferencias.reduzir_animacoes or Preferencias.efeitos_leves else efeito_velocidade)
 	_camera_imediata()
 
 
@@ -706,6 +709,11 @@ func _camera_imediata() -> void:
 var modo := "normal"
 ## Intensidade do efeito de tela (0..1), lida pela tela da corrida.
 var efeito_velocidade := 0.0
+## Velocidade do relógio da corrida neste quadro (1×, o fator da aceleração ou 0
+## parado), dada pela tela da corrida. A velocidade dos carros é medida no
+## relógio da corrida: medida no tempo real, em 2× ela dobrava, e o borrão de
+## tela cheia, a fumaça e os rastros ficavam no máximo (o jogo pesava).
+var taxa := 1.0
 var _b := 0.0  # 0 = de cima; 1 = velocidade
 var _zoom := 1.0
 var _tamanho_base := TAMANHO_CAMERA
@@ -1544,6 +1552,8 @@ func _marcadores() -> void:
 	var tor := TorusMesh.new()
 	tor.inner_radius = 2.6
 	tor.outer_radius = 3.1
+	tor.rings = 32  # a padrão (64 × 32) tem 4 mil triângulos num anel fino
+	tor.ring_segments = 6
 	_anel_alvo.mesh = tor
 	var mat_alvo := CarroBloco._material(Color(1.0, 0.3, 0.25))
 	mat_alvo.emission_enabled = true
@@ -1555,6 +1565,8 @@ func _marcadores() -> void:
 	var tor_j := TorusMesh.new()
 	tor_j.inner_radius = 2.5
 	tor_j.outer_radius = 2.9
+	tor_j.rings = 32
+	tor_j.ring_segments = 6
 	_anel_jogador.mesh = tor_j
 	var mat_j := CarroBloco._material(Aba.COR_DESTAQUE)
 	mat_j.emission_enabled = true
@@ -1697,6 +1709,9 @@ func _bordas() -> void:
 		cil.bottom_radius = 0.45
 		cil.height = 0.9
 		cil.radial_segments = 8
+		# Uma faixa só e sem a tampa de baixo (no chão, nunca aparece).
+		cil.rings = 0
+		cil.cap_bottom = false
 		mm.mesh = cil
 		mm.instance_count = pneus.size()
 		for i in pneus.size():
