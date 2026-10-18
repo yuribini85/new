@@ -194,20 +194,32 @@ func test_arena_na_carreira() -> void:
 	igual(pts, int(d.arena()["pontos"]["giro_180"]), "giro conta pelo maior limite do golpe")
 	var saldo: int = j.economia.saldo
 	var f := ArenaCarreira.aplicar(d, j, uid, res)
-	verificar(f["perdeu"], "eliminado: perdeu")
-	igual(j.garagem.lista().size(), 2, "o carro saiu da garagem")
-	igual(Escalacao.uid(j, "arena1"), -1, "e a vaga ficou vazia")
-	verificar(j.carro_ativo != uid and j.carro_ativo >= 0, "outro carro em uso")
-	igual(j.economia.saldo, saldo + f["premio"], "pontos pagos mesmo perdendo")
+	verificar(f["perdeu"], "eliminado: quebrou")
+	igual(j.garagem.lista().size(), 3, "o carro não sai da garagem (revisão da decisão 49)")
+	igual(Escalacao.uid(j, "arena1"), uid, "e segue escalado")
+	verificar(ArenaCarreira.em_reparo(j, uid), "vai para o reparo")
+	perto(ArenaCarreira.reparo_s(j, uid), ArenaCarreira.tempo_reparo(d), 5.0, "pelo tempo do reparo")
+	verificar(ArenaCarreira.tempo_reparo(d) > 0.0, "critério do tempo nos dados")
+	verificar("reparo" in ArenaCarreira.bloqueio(d, j), "no reparo: não luta")
+	var fila := Fila.new(Carreira.new(d, j), j, 3600.0)
+	verificar("reparo" in fila.iniciar(d.lista("eventos")[0]["id"], uid, 1, 0.0), "no reparo: não corre")
+	igual(j.economia.saldo, saldo + f["premio"], "pontos pagos mesmo quebrando")
 	igual(int(j.arena["lutas"]), 1, "luta registrada")
-	igual(ArenaCarreira.nivel(j), 0, "perdeu: o campeonato não sobe")
-	# Vídeo depois da luta: o carro volta como estava e as peças do desmanche saem.
-	var pecas: int = j.economia.credito_pecas
-	verificar(ArenaCarreira.resgatar(j, f), "recuperou")
-	verificar(j.garagem.carro(uid) != null, "o carro voltou com o mesmo uid")
-	igual(Escalacao.uid(j, "arena1"), uid, "e a escalação dele voltou")
-	igual(j.economia.credito_pecas, pecas - int(f["pecas_perdidos"]), "as peças do desmanche saíram")
-	verificar(not ArenaCarreira.resgatar(j, f), "uma vez só")
+	igual(ArenaCarreira.nivel(j), 0, "quebrou: o campeonato não sobe")
+	# Vídeo depois da luta: conserta na hora, sem pagar.
+	var saldo_v: int = j.economia.saldo
+	verificar(ArenaCarreira.resgatar(d, j, f), "consertou")
+	verificar(not ArenaCarreira.em_reparo(j, uid), "fora do reparo")
+	igual(j.economia.saldo, saldo_v, "o vídeo não cobra")
+	verificar(not ArenaCarreira.resgatar(d, j, f), "uma vez só")
+	# Conserto pago: o valor de revenda.
+	ArenaCarreira.aplicar(d, j, uid, res)
+	var custo := ArenaCarreira.custo_reparo(d, j.garagem.carro(uid))
+	verificar(custo > 0, "conserto custa")
+	var saldo_p: int = j.economia.saldo
+	verificar(ArenaCarreira.consertar(d, j, uid), "pagou e consertou")
+	igual(j.economia.saldo, saldo_p - custo, "cobrou a revenda")
+	verificar(not ArenaCarreira.em_reparo(j, uid), "pronto")
 	j.garagem.remover(uid)
 	j.escalacao["arena"] = [-1, int(j.escalacao.get("arena", [-1, -1])[1])]
 	var vit := {"classificacao": ["jogador", "r1"], "eventos": [], "equipe_vencedora": "jogador",
@@ -473,12 +485,11 @@ func test_arena_rende_pecas() -> void:
 			"r1": {"eliminado": false, "por": "", "equipe": "x"},
 			"r2": {"eliminado": true, "por": "jogador", "equipe": "x"}}}
 	var antes: int = j.economia.credito_pecas
-	var esperado_perdido := GestaoEquipe.pecas_do_carro(d, j, j.garagem.carro(uid))
 	var esperado_rival := GestaoEquipe.pecas_do_carro(d, j, Carro.new(rival))
 	var f := ArenaCarreira.aplicar(d, j, uid, resultado, -1, {"r1": rival, "r2": rival})
-	igual(int(f["pecas_perdidos"]), esperado_perdido, "o carro perdido vira peças")
+	igual(int(f["pecas_perdidos"]), 0, "o seu carro quebrado vai para o reparo, não vira peças")
 	igual(int(f["pecas_destruidos"]), esperado_rival, "só o rival eliminado pela dupla vira peças")
-	igual(j.economia.credito_pecas, antes + esperado_perdido + esperado_rival, "as peças entram no estoque")
+	igual(j.economia.credito_pecas, antes + esperado_rival, "as peças entram no estoque")
 	j.free()
 	d.free()
 

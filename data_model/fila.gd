@@ -57,6 +57,9 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
 		return "carro %d não está na garagem" % uid
+	var reparo := ArenaCarreira.reparo_s(jogador, uid)
+	if reparo > 0.0:
+		return "o carro está no reparo (faltam %s)" % ArenaCarreira.texto_tempo(reparo)
 	var cfg: Dictionary = carro.configuracao() if config.is_empty() else config.duplicate(true)
 	cfg.erase("nome")
 	cfg["pneus"] = carro.pneus.map(func(p): return p["id"])

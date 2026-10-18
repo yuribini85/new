@@ -7,8 +7,9 @@ extends RefCounted
 ## jogador (as mesmas regras para todos). A luta é resolvida e aplicada na
 ## inscrição (fechar o app não salva o carro); a tela só mostra.
 ## Resultado: pontos (giros provocados, eliminações, vencer) viram giros pelo
-## prêmio de 1º lugar médio das corridas da licença mínima; carro eliminado sai
-## da garagem para sempre.
+## prêmio de 1º lugar médio das corridas da licença mínima; carro eliminado vai
+## para o reparo (revisão da decisão 49): fica fora pelo tempo de tempo_reparo,
+## com o app fechado também, ou conserta na hora pagando custo_reparo.
 
 
 ## "" se pode se inscrever; senão, o motivo (texto da tela).
@@ -24,7 +25,7 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 	# corrida em andamento (a luta é resolvida na hora). A dupla é sua (os dois
 	# carros escalados e o segundo piloto contratado); 3 carros no mínimo.
 	if jogador.garagem.lista().size() < 3:
-		return "A arena pede 3 carros: 1 de corrida e 2 de arena (carro eliminado não volta)."
+		return "A arena pede 3 carros: 1 de corrida e 2 de arena."
 	if EquipeJogador.piloto_vaga(jogador, "arena1") == "" or EquipeJogador.piloto_vaga(jogador, "arena2") == "":
 		return "A dupla da arena precisa de dois pilotos de arena contratados (aba Equipe)."
 	for vaga in ["arena1", "arena2"]:
@@ -35,7 +36,70 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 					String(EquipeJogador.piloto(dados, pid).get("nome", pid)), texto_tempo(falta)]
 	if aptos(jogador).size() < 2:
 		return "Escale os 2 carros da arena na Oficina."
+	for c: Carro in aptos(jogador):
+		var falta_r := reparo_s(jogador, c.uid)
+		if falta_r > 0.0:
+			return "%s está no reparo: faltam %s (ou conserte na Oficina)." % [String(c.base["nome"]), texto_tempo(falta_r)]
 	return ""
+
+
+## Reparo (revisão da decisão 49, pedido do usuário em 2026-10-18): o carro
+## eliminado não sai da garagem; fica no reparo pelo relógio real, também com o
+## app fechado. jogador.arena["reparo"]: uid (texto) -> instante em que fica
+## pronto (Aceleracao.agora). Segundos que faltam; 0 = pronto.
+static func reparo_s(jogador: Node, uid: int, agora: float = -1.0) -> float:
+	var r: Dictionary = jogador.arena.get("reparo", {})
+	if not r.has(str(uid)):
+		return 0.0
+	if agora < 0.0:
+		agora = Aceleracao.agora(jogador)
+	return maxf(float(r[str(uid)]) - agora, 0.0)
+
+
+static func em_reparo(jogador: Node, uid: int) -> bool:
+	return reparo_s(jogador, uid) > 0.0
+
+
+## Tempo de reparo (s): arena.json → reparo.tempo "treino" = um nível do
+## treino de piloto (equipe.json treino.tempo_base_h); sem o critério, nenhum.
+static func tempo_reparo(dados: Node) -> float:
+	if String(dados.arena().get("reparo", {}).get("tempo", "")) != "treino":
+		return 0.0
+	return float(GestaoEquipe.cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0
+
+
+## Consertar na hora (giros): arena.json → reparo.custo "revenda" = o que o
+## carro vale na revenda (economia.json fracao_revenda), o que ele custava
+## quando era perdido.
+static func custo_reparo(dados: Node, carro: Carro) -> int:
+	if carro == null or String(dados.arena().get("reparo", {}).get("custo", "")) != "revenda":
+		return 0
+	return int(floor(float(carro.base.get("preco", 0)) * float(dados.economia().get("fracao_revenda", 0.0))))
+
+
+## Tira o carro do reparo; `pagar` cobra custo_reparo (false: o vídeo do
+## resultado). false se não estava no reparo ou se o saldo não paga.
+static func consertar(dados: Node, jogador: Node, uid: int, pagar: bool = true) -> bool:
+	var r: Dictionary = jogador.arena.get("reparo", {})
+	if not r.has(str(uid)):
+		return false
+	if pagar:
+		var custo := custo_reparo(dados, jogador.garagem.carro(uid))
+		if not jogador.economia.pode_pagar(custo):
+			return false
+		jogador.economia.debitar(custo)
+	r.erase(str(uid))
+	jogador.arena["reparo"] = r
+	return true
+
+
+static func _quebrar(dados: Node, jogador: Node, uid: int, reg: Dictionary) -> void:
+	var fora := tempo_reparo(dados)
+	if fora <= 0.0:
+		return
+	var r: Dictionary = reg.get("reparo", {})
+	r[str(uid)] = Aceleracao.agora(jogador) + fora
+	reg["reparo"] = r
 
 
 ## Os carros escalados para a arena (Escalacao): o seu e o do segundo piloto.
@@ -290,10 +354,10 @@ static func premio(dados: Node, pts: int) -> int:
 	return roundi(premio_base(dados) * pts / ref)
 
 
-## Aplica a luta: prêmio no saldo, registro e, se o carro do jogador foi
-## eliminado, ele sai da garagem. {posicao, pontos, premio, perdeu, carro, uid}.
-## Peças: o carro do jogador (e o do parceiro) perdido vira peças, e cada
-## rival que a dupla do jogador elimina também (GestaoEquipe.pecas_do_carro;
+## Aplica a luta: prêmio no saldo, registro e, se o carro do jogador (ou o do
+## parceiro) foi eliminado, ele vai para o reparo (_quebrar). {posicao, pontos,
+## premio, perdeu, carro, uid}; `perdeu` = o carro quebrou. Peças: cada rival
+## que a dupla do jogador elimina vira peças (GestaoEquipe.pecas_do_carro;
 ## `modelos` = id -> dados do carro de cada participante).
 static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary, parceiro_uid: int = -1,
 		modelos: Dictionary = {}, desafio: Dictionary = {}) -> Dictionary:
@@ -312,32 +376,19 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		reg["vitorias"] = int(reg.get("vitorias", 0)) + 1
 	var pecas_perdidos := 0
 	var pecas_destruidos := 0
-	# Para o vídeo que recupera os carros logo depois da luta (resgatar).
-	var resgate := {"carros": [], "pecas": 0, "ativo": jogador.carro_ativo, "companheiro": jogador.carro_companheiro}
-	if perdeu:
-		resgate["carros"].append(carro)
-		pecas_perdidos += GestaoEquipe.pecas_do_carro(dados, jogador, carro)
-		reg["perdidos"] = Array(reg.get("perdidos", [])) + [String(carro.id)]
-		jogador.garagem.remover(uid)
-		if jogador.carro_ativo == uid:
-			var resto: Array = jogador.garagem.lista()
-			jogador.carro_ativo = resto[0].uid if not resto.is_empty() else -1
-		if jogador.carro_companheiro == uid:
-			jogador.carro_companheiro = -1
-	# O carro do segundo piloto (real, da garagem) também se perde se cair.
+	# Para o vídeo que conserta na hora os carros quebrados (resgatar).
+	var resgate := {"uids": []}
+	if perdeu and carro != null:
+		resgate["uids"].append(uid)
+		reg["quebrados"] = int(reg.get("quebrados", 0)) + 1
+		_quebrar(dados, jogador, uid, reg)
 	var perdeu_parceiro := false
-	if parceiro_uid >= 0 and resultado["carros"].has("parceiro") and resultado["carros"]["parceiro"]["eliminado"]:
-		var cp: Carro = jogador.garagem.carro(parceiro_uid)
-		if cp != null:
-			perdeu_parceiro = true
-			resgate["carros"].append(cp)
-			pecas_perdidos += GestaoEquipe.pecas_do_carro(dados, jogador, cp)
-			reg["perdidos"] = Array(reg.get("perdidos", [])) + [String(cp.id)]
-			jogador.garagem.remover(parceiro_uid)
-			if jogador.carro_ativo == parceiro_uid:
-				var resto2: Array = jogador.garagem.lista()
-				jogador.carro_ativo = resto2[0].uid if not resto2.is_empty() else -1
-			jogador.carro_companheiro = -1
+	if parceiro_uid >= 0 and resultado["carros"].has("parceiro") and resultado["carros"]["parceiro"]["eliminado"] \
+			and jogador.garagem.carro(parceiro_uid) != null:
+		perdeu_parceiro = true
+		resgate["uids"].append(parceiro_uid)
+		reg["quebrados"] = int(reg.get("quebrados", 0)) + 1
+		_quebrar(dados, jogador, parceiro_uid, reg)
 	# Rivais que a dupla do jogador tirou da luta viram peças.
 	for id in resultado["carros"]:
 		var r: Dictionary = resultado["carros"][id]
@@ -363,35 +414,22 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		reg["nivel"] = mini(nivel_antes + 1, maximo)
 	var atropelados := _atropelados(dados, jogador, resultado, reg)
 	jogador.arena = reg
-	return {"atropelados": atropelados, "posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
+	return {"atropelados": atropelados, "reparo_s": tempo_reparo(dados), "posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
 			"perdeu_parceiro": perdeu_parceiro, "venceu_equipe": venceu_equipe,
 			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes,
 			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid, "pilotos_subiram": subiram,
-			"serie": serie, "resgate": resgate if not resgate["carros"].is_empty() else {}}
+			"serie": serie, "resgate": resgate if not resgate["uids"].is_empty() else {}}
 
 
-## Vídeo depois da luta (pedido do usuário, 2026-10-17): os carros eliminados
-## voltam para a garagem como estavam (mesmo uid, escalação e peças
-## instaladas) e as peças do desmanche deles saem. Só na tela do resultado; o
-## resto da luta (prêmio, pontos, campeonato, Grid) fica como foi. false se não
-## havia o que recuperar.
-static func resgatar(jogador: Node, final: Dictionary) -> bool:
+## Vídeo depois da luta (pedido do usuário, 2026-10-17): os carros quebrados
+## saem do reparo na hora, sem pagar. Só na tela do resultado; o resto da luta
+## (prêmio, pontos, campeonato, Grid) fica como foi. false se não havia o que
+## consertar.
+static func resgatar(dados: Node, jogador: Node, final: Dictionary) -> bool:
 	var r: Dictionary = final.get("resgate", {})
 	if r.is_empty() or r.get("feito", false):
 		return false
 	r["feito"] = true
-	var reg: Dictionary = jogador.arena
-	var perdidos: Array = reg.get("perdidos", [])
-	for c: Carro in r["carros"]:
-		jogador.garagem.devolver(c)
-		var i := perdidos.rfind(String(c.id))
-		if i >= 0:
-			perdidos.remove_at(i)
-	reg["perdidos"] = perdidos
-	jogador.economia.credito_pecas = maxi(jogador.economia.credito_pecas - int(r["pecas"]), 0)
-	jogador.economia.saldo_mudou.emit(jogador.economia.saldo)
-	if jogador.garagem.carro(int(r["ativo"])) != null:
-		jogador.carro_ativo = int(r["ativo"])
-	if jogador.garagem.carro(int(r["companheiro"])) != null:
-		jogador.carro_companheiro = int(r["companheiro"])
+	for u in r["uids"]:
+		consertar(dados, jogador, int(u), false)
 	return true

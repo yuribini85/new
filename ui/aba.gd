@@ -1420,11 +1420,11 @@ func cartao_desafio_grid(modo: String, desafiar: Callable) -> void:
 	rotulo(linha, FONTE_PEQUENA, COR_SECUNDARIA, v).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var s := GridDesafio.serie(jogador)
 	if s.get("equipe") == eq["id"]:
-		var st := rotulo("Série em andamento: %d × %d. Os carros destruídos são trocados no próximo round." % [
+		var st := rotulo("Série em andamento: %d × %d. Os carros quebrados são trocados no próximo round." % [
 				int(s["vitorias"]), int(s["derrotas"])], FONTE_PEQUENA, COR_DESTAQUE, v)
 		st.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if modo == "arena":
-		var regra := rotulo("Carro destruído sai da garagem para sempre.", FONTE_PEQUENA, COR_RUIM.lightened(0.25), v)
+		var regra := rotulo("Carro eliminado vai para o reparo.", FONTE_PEQUENA, COR_RUIM.lightened(0.25), v)
 		regra.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var motivo := GridDesafio.bloqueio(dados, jogador, eq)
 	var b := Button.new()

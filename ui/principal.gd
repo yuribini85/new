@@ -623,7 +623,7 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 	add_child(luta)
 	luta.recuperar.connect(func(f: Dictionary):
 		var aplicar := func():
-			var ok := ArenaCarreira.resgatar(jogador, f)
+			var ok := ArenaCarreira.resgatar(dados, jogador, f)
 			if ok:
 				f["perdeu"] = false
 				f["perdeu_parceiro"] = false
@@ -633,7 +633,7 @@ func _abrir_luta(dados_luta: Dictionary) -> void:
 		if luta.gratis_recuperar:
 			aplicar.call()
 			return
-		var video := VideoRecompensa.new("recuperar os carros eliminados", "peca")
+		var video := VideoRecompensa.new("consertar na hora os carros quebrados", "peca")
 		add_child(video)
 		video.terminou.connect(func(assistiu):
 			if assistiu:

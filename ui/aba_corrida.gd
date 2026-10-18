@@ -62,10 +62,11 @@ var _varrido := 0.0  # até onde a corrida mostrada já foi procurada (s de corr
 var _em_curso := {}
 ## Técnicos: antecedência (deixa a fila refazer a corrida duas vezes aos poucos
 ## em aparelho fraco), quanto de corrida procurar por quadro e o salto depois
-## de um momento descartado.
+## de um momento descartado (10 s: medido, os mesmos cartões com um terço das
+## corridas refeitas que 3 s).
 const ANTECEDENCIA_S := 10.0
 const VARRE_S := 2.0
-const PASSO_S := 3.0
+const PASSO_S := 10.0
 ## Clarão da tela no toque e na comemoração (só visual).
 var _clarao: ColorRect
 var _t_clarao := 0.0

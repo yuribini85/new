@@ -688,7 +688,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Isso é a Wreckage. Lá o carro que quebra não volta.",
+    "texto": "Isso é a Wreckage. Lá carro nenhum sai inteiro: o que quebra passa um tempo no meu elevador.",
     "pose": "gesto"
    },
    {
@@ -1622,7 +1622,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Pagam mais porque alguns carros não voltam.",
+    "texto": "Pagam mais porque todo carro volta amassado.",
     "pose": "alerta"
    },
    {
@@ -1835,7 +1835,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "O carro acabou. O piloto, pelo menos, está inteiro.",
+    "texto": "O carro voltou em pedaços. Fica no elevador até eu desamassar, ou você paga a pressa.",
     "pose": "decepcao"
    },
    {
@@ -1863,7 +1863,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Mais um pro ferro-velho.",
+    "texto": "Mais um pro meu elevador.",
     "pose": "decepcao"
    }
   ],

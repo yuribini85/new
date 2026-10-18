@@ -1,7 +1,7 @@
 extends Aba
 ## Arena (decisão 49): a inscrição, no padrão das Corridas: o seu carro da
 ## escalação (decisão 68) grande no topo e o cartão da luta com a regra (carro eliminado
-## não volta; só com 2 carros na garagem; abre com a licença mínima) e o prêmio
+## vai para o reparo; 3 carros na garagem; abre com a licença mínima) e o prêmio
 ## de referência. Entrar pede confirmação com o carro exato; a luta é
 ## resolvida e aplicada na hora (ArenaCarreira) e a LutaArena só mostra.
 
@@ -127,7 +127,7 @@ func _cartao_luta(esc: Carro, motivo: String) -> void:
 	lv.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	lv.autowrap_mode = TextServer.AUTOWRAP_OFF
 	icone(ICONE_GIROS, 24, pr).size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var regra := rotulo("Se a frente quebrar, o carro sai da garagem para sempre.", FONTE_PEQUENA,
+	var regra := rotulo("Se a frente quebrar, o carro vai para o reparo (%s, ou conserto pago na hora)." % ArenaCarreira.texto_tempo(ArenaCarreira.tempo_reparo(dados)), FONTE_PEQUENA,
 			COR_RUIM.lightened(0.25), v)
 	regra.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var b := Button.new()
@@ -152,10 +152,10 @@ func _confirmar(car: Carro) -> void:
 		if par["real"]:
 			var cp: Carro = jogador.garagem.carro(int(par["uid"]))
 			rotulo("Na dupla, %s no %s." % [par["nome"], cp.base["nome"]], FONTE_PEQUENA + 2, Color.WHITE, pv)
-			rotulo("Qualquer carro da dupla que for eliminado sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv)
+			rotulo("Carro da dupla eliminado vai para o reparo (%s)." % ArenaCarreira.texto_tempo(ArenaCarreira.tempo_reparo(dados)), FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv)
 		else:
 			rotulo("Na dupla, %s num carro emprestado." % par["nome"], FONTE_PEQUENA + 2, Color.WHITE, pv)
-			rotulo("Se o carro da equipe for eliminado, sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
+			rotulo("Se o carro for eliminado, vai para o reparo (%s)." % ArenaCarreira.texto_tempo(ArenaCarreira.tempo_reparo(dados)), FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
 		[["Entrar", func(): com_combustivel(_entrar.bind(car.uid))], ["Cancelar", func(): pass]])
 
 
@@ -193,9 +193,10 @@ func _confirmar_desafio(eq: Dictionary) -> void:
 		rotulo(GridDesafio.resumo(dados, eq) + ".", FONTE_PEQUENA + 4, Color.WHITE, pv)
 		rotulo("Vão o %s e o %s." % [livres[0].base["nome"], livres[1].base["nome"]], FONTE_PEQUENA + 2, Color.WHITE, pv)
 		if int(d["rounds"]) > 1:
-			rotulo("Melhor de %d: carro destruído é trocado pelo próximo da garagem no round seguinte." % int(d["rounds"]),
+			rotulo("Melhor de %d: carro quebrado é trocado pelo próximo da garagem no round seguinte." % int(d["rounds"]),
 					FONTE_PEQUENA + 2, Color.WHITE, pv)
-		rotulo("Carro destruído sai da garagem para sempre.", FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
+		rotulo("Carro eliminado vai para o reparo (%s)." % ArenaCarreira.texto_tempo(ArenaCarreira.tempo_reparo(dados)),
+				FONTE_PEQUENA + 2, Color(0.95, 0.6, 0.55), pv),
 		[["Desafiar", func(): com_combustivel(_desafiar.bind(eq))], ["Cancelar", func(): pass]])
 
 
@@ -342,4 +343,4 @@ func _registro() -> void:
 		return
 	titulo_secao("HISTÓRICO")
 	numeros([[str(int(r.get("lutas", 0))), "lutas"], [str(int(r.get("vitorias", 0))), "vitórias"],
-			[str(Array(r.get("perdidos", [])).size()), "carros perdidos"]])
+			[str(int(r.get("quebrados", 0)) + Array(r.get("perdidos", [])).size()), "carros quebrados"]])

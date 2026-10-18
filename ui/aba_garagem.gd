@@ -80,6 +80,7 @@ func construir() -> void:
 	_vitrine.mostrar_modelo(c.base, CarroBloco.cor_do_carro(c), c.faixas)
 	_vitrine.blindar(c.id, Blindagem.nivel(c))
 	ancora("CAR_STATS", _palco(c, lista))
+	_faixa_reparo(c)
 	# O palco é o cenário do topo (colado no cabeçalho); sem a faixa da missão,
 	# o palco cresce e o carro respira.
 	# Melhorar é tocar na Evolução (abre a compra da categoria); correr fica na
@@ -161,8 +162,8 @@ func _faixa_escalacao(atual: Carro) -> Control:
 func _escolher_vaga(vaga: String) -> void:
 	painel.emit("Escalação · %s" % Escalacao.NOMES[vaga], func(pv):
 		var dica: String = {"corrida": "Nas corridas corre um piloto da equipe, com este carro.",
-				"arena1": "Carro do primeiro piloto de arena. Carro eliminado não volta.",
-				"arena2": "O carro do segundo piloto na arena. Carro eliminado não volta."}[vaga]
+				"arena1": "Carro do primeiro piloto de arena. Eliminado, vai para o reparo.",
+				"arena2": "O carro do segundo piloto na arena. Eliminado, vai para o reparo."}[vaga]
 		rotulo(dica + " Escalado não se vende.", FONTE_PEQUENA + 2, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var g := GridContainer.new()
 		g.columns = 3
@@ -502,6 +503,35 @@ func _evolucao(c: Carro) -> void:
 		var cat := _abrir_categoria
 		_abrir_categoria = ""
 		_abrir_evolucao(c, cat)
+
+
+## Carro quebrado na arena (ArenaCarreira.reparo_s): quanto falta e o
+## conserto pago na hora.
+func _faixa_reparo(c: Carro) -> void:
+	var falta := ArenaCarreira.reparo_s(jogador, c.uid)
+	if falta <= 0.0:
+		return
+	var m := MarginContainer.new()
+	m.add_theme_constant_override("margin_left", 16)
+	m.add_theme_constant_override("margin_right", 16)
+	m.add_theme_constant_override("margin_top", 8)
+	conteudo.add_child(m)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 12)
+	m.add_child(h)
+	var l := rotulo("NO REPARO · volta em %s" % ArenaCarreira.texto_tempo(falta), FONTE_PEQUENA + 4, COR_RUIM.lightened(0.25), h)
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var custo := ArenaCarreira.custo_reparo(dados, c)
+	var b := Button.new()
+	Tipografia.acao_primaria(b, "CONSERTAR AGORA · %s" % dinheiro(custo), COR_DESTAQUE, Color(0.1, 0.1, 0.1), 26,
+			Tipografia.ALTURA_SECUNDARIA)
+	b.disabled = not jogador.economia.pode_pagar(custo)
+	b.pressed.connect(func():
+		if ArenaCarreira.consertar(dados, jogador, c.uid):
+			avisar("%s consertado." % c.base["nome"])
+			mudou.emit())
+	h.add_child(b)
 
 
 func _arena_aberta() -> bool:
@@ -1215,7 +1245,13 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	selo.add_theme_constant_override("separation", 8)
 	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(selo)
-	if em_uso:
+	if ArenaCarreira.em_reparo(jogador, c.uid):
+		var r := Label.new()
+		r.text = "  NO REPARO"
+		Tipografia.rotulo(r, "semibold", 24)
+		r.add_theme_color_override("font_color", COR_RUIM.lightened(0.25))
+		selo.add_child(r)
+	elif em_uso:
 		var vao := Control.new()
 		vao.custom_minimum_size = Vector2(10, 0)
 		vao.mouse_filter = Control.MOUSE_FILTER_IGNORE

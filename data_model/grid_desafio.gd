@@ -132,7 +132,8 @@ static func carros_arena(jogador: Node) -> Array:
 		for c in todos:
 			if corrida < 0 or c.uid < corrida:
 				corrida = c.uid
-	var l: Array = todos.filter(func(c): return c.uid != corrida)
+	# Fora o de corrida e os que estão no reparo (ArenaCarreira.reparo_s).
+	var l: Array = todos.filter(func(c): return c.uid != corrida and not ArenaCarreira.em_reparo(jogador, c.uid))
 	var esc := [Escalacao.uid(jogador, "arena1"), Escalacao.uid(jogador, "arena2")]
 	l.sort_custom(func(a, b):
 		var ia := esc.find(a.uid)
@@ -167,6 +168,8 @@ static func bloqueio(dados: Node, jogador: Node, equipe: Dictionary) -> String:
 			return "Contrate um piloto de corrida (aba Equipe)."
 		if Escalacao.carro(jogador, "corrida") == null:
 			return "Escale o carro de corrida na Oficina."
+		if ArenaCarreira.em_reparo(jogador, Escalacao.uid(jogador, "corrida")):
+			return "O carro de corrida está no reparo (conserte na Oficina ou escale outro)."
 		return ""
 	if not jogador.flags.has(EquipeJogador.FLAG_ARENA):
 		return ("A arena abre quando a garagem tiver 3 carros." if jogador.garagem.lista().size() < 3
@@ -175,8 +178,8 @@ static func bloqueio(dados: Node, jogador: Node, equipe: Dictionary) -> String:
 		return "A dupla precisa de dois pilotos de arena contratados (aba Equipe)."
 	var precisa := 2 if serie(jogador).get("equipe") == equipe["id"] else int(d["carros_min"])
 	if carros_arena(jogador).size() < precisa:
-		return ("Melhor de 3: pede %d carros fora o de corrida (os destruídos são trocados)." % precisa
-				if int(d["rounds"]) > 1 else "Pede 2 carros fora o de corrida.")
+		return ("Melhor de 3: pede %d carros fora o de corrida e fora do reparo (os quebrados são trocados)." % precisa
+				if int(d["rounds"]) > 1 else "Pede 2 carros fora o de corrida e fora do reparo.")
 	return ""
 
 

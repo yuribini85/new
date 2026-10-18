@@ -260,7 +260,7 @@ func recuperados(ok: bool) -> void:
 	if _botao_recuperar == null:
 		return
 	if ok:
-		_botao_recuperar.text = "CARROS DE VOLTA NA GARAGEM"
+		_botao_recuperar.text = "CONSERTADO: PRONTO PARA CORRER"
 	else:
 		_botao_recuperar.disabled = false
 
@@ -281,7 +281,7 @@ func _mostrar_final() -> void:
 	v.add_theme_constant_override("separation", 10)
 	_faixa.add_child(v)
 	var t := Label.new()
-	t.text = "CARRO PERDIDO" if f["perdeu"] else ("SUA DUPLA VENCEU" if f.get("venceu_equipe", f["posicao"] == 1) \
+	t.text = "CARRO QUEBRADO" if f["perdeu"] else ("SUA DUPLA VENCEU" if f.get("venceu_equipe", f["posicao"] == 1) \
 			else "%dº LUGAR" % f["posicao"])
 	Tipografia.rotulo(t, "semibold", 44)
 	t.add_theme_color_override("font_color", Aba.COR_RUIM if f["perdeu"] else Aba.COR_DESTAQUE)
@@ -301,10 +301,11 @@ func _mostrar_final() -> void:
 		if not posicao_eq.is_empty() and int(posicao_eq[0]["posicao"]) > 0 and not f["venceu_equipe"]:
 			t.text = "SUA DUPLA: %dº" % int(posicao_eq[0]["posicao"])
 		notas.append("Simulação: nada mudou na garagem nem no campeonato.")
+	var reparo := ArenaCarreira.texto_tempo(float(f.get("reparo_s", 0.0)))
 	if f["perdeu"]:
-		notas.append("O %s foi eliminado e saiu da garagem." % f["carro"])
+		notas.append("O %s foi eliminado e foi para o reparo: volta em %s." % [f["carro"], reparo])
 	if f.get("perdeu_parceiro", false):
-		notas.append("O carro da sua dupla foi eliminado e saiu da garagem.")
+		notas.append("O carro da sua dupla foi eliminado e foi para o reparo: volta em %s." % reparo)
 	if f.get("venceu_equipe", false) and f["perdeu"]:
 		notas.append("Mesmo assim, a sua dupla ficou de pé.")
 	for at in f.get("atropelados", []):
@@ -324,11 +325,9 @@ func _mostrar_final() -> void:
 		elif serie["fim"]:
 			notas.append("Desafio perdido. Dá para desafiar de novo.")
 		else:
-			notas.append("Próximo round na Arena: os carros destruídos são trocados.")
+			notas.append("Próximo round na Arena: os carros quebrados são trocados.")
 	if int(f.get("pecas_destruidos", 0)) > 0:
 		notas.append("Rivais destruídos pela sua dupla: +%s peças." % Aba.dinheiro(int(f["pecas_destruidos"])))
-	if int(f.get("pecas_perdidos", 0)) > 0:
-		notas.append("Do que sobrou dos seus: +%s peças." % Aba.dinheiro(int(f["pecas_perdidos"])))
 	for txt in notas:
 		var d := Label.new()
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -364,9 +363,9 @@ func _mostrar_final() -> void:
 			h.add_child(moeda)
 	var resg: Dictionary = f.get("resgate", {})
 	if not resg.is_empty() and not f.get("demo", false) and not f.get("simulacao", false):
-		var n_carros: int = resg["carros"].size()
+		var n_carros: int = resg["uids"].size()
 		_botao_recuperar = Button.new()
-		Tipografia.acao_primaria(_botao_recuperar, ("RECUPERAR O CARRO" if n_carros == 1 else "RECUPERAR OS %d CARROS" % n_carros)
+		Tipografia.acao_primaria(_botao_recuperar, ("CONSERTAR AGORA" if n_carros == 1 else "CONSERTAR OS %d AGORA" % n_carros)
 				+ ("" if gratis_recuperar else "  ·  VÍDEO"), Aba.COR_BOM, Color(0.06, 0.08, 0.06), 30, Tipografia.ALTURA_SECUNDARIA)
 		_botao_recuperar.pressed.connect(func():
 			_botao_recuperar.disabled = true

@@ -326,7 +326,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 
 ### Arena (decisões do usuário, 2026-10-10; estudo de arena)
 
-49. **Arena: perda do carro sempre.** Carro eliminado na arena sai da garagem para
+49. **Arena: perda do carro sempre.** *(Substituída pela 118: o carro eliminado vai para o
+    reparo.)* Carro eliminado na arena sai da garagem para
     sempre. Só pode se inscrever quem tem **ao menos 2 carros** na garagem (nunca se
     perde o único carro). Prêmio por pontos (giros provocados de 90°/180°/360°,
     eliminações e sobrevivência), conversão para giros pelo critério do prêmio das
@@ -1056,3 +1057,15 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     `momentos.dica_acerto` (1.0 por enquanto: o rádio sempre acerta e o jogador decide se ouve;
     valor menor a definir no playtest). Ouviu e deu certo: "OUVIU O RÁDIO"; ignorou: QUASE! com
     "MARA AVISOU: ...".
+118. **Arena sem perda de carro: reparo** (2026-10-18, crítica dos testadores; opção escolhida
+    pelo usuário; substitui a perda da 49). O carro eliminado (o seu e o da dupla) não sai da
+    garagem: vai para o reparo (`ArenaCarreira.reparo_s`, `jogador.arena.reparo`), fica fora
+    pelo relógio real (também com o app fechado) e não corre, não luta e não entra no Grid até
+    ficar pronto. Na Oficina: "NO REPARO · volta em ..." e CONSERTAR AGORA (pago). No resultado
+    da luta, o vídeo (ou o pacote sem anúncios) que antes recuperava o carro agora conserta na
+    hora. O seu carro quebrado não vira mais peças; os rivais que a dupla destrói, sim.
+    Critérios provisórios (`arena.json` → `reparo`, a confirmar no playtest): tempo = um nível
+    do treino de piloto (`treino.tempo_base_h`, hoje 1 h), o mesmo critério do piloto
+    atropelado; conserto na hora = valor de revenda do carro (o que ele custava quando era
+    perdido). Continua pedindo 3 carros (1 de corrida e 2 de arena).
+

@@ -100,7 +100,7 @@ Sistema: Licenças ficam em Carreira.
 # Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
 # piloto (de corrida) é escolhido na tela de pilotos, logo depois do primeiro carro.
 = CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; cenario=oficina_mara
-Mara[explica]: Você gerencia as contratações. Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.
+Mara[explica]: Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.
 Sistema: Toque em Contratar, no piloto de corrida.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
@@ -135,6 +135,12 @@ Mara[firme]: Nós preparamos e {piloto} corre.
 Mara[pensativa]: Quando acabar, o resultado e o prêmio aparecem na tela.
 Sistema: Toda corrida iniciada termina mesmo com o jogo fechado.
 
+# Com a primeira corrida andando: a câmera é do jogador (pedido do usuário).
+= CW_P05C | CORRIDA_EM_CURSO | personagem=dono; proibe=CAMERA_TUTORIAL_SEEN; flags=CAMERA_TUTORIAL_SEEN
+[HIGHLIGHT_CAMERA_AUTO]
+Mara[explica]: A corrida é do {piloto}, mas a vista é sua. Aqui embaixo você troca a câmera: seu carro, o líder, a pista inteira.
+Sistema: Toque numa câmera para trocar. Em Automática, a corrida escolhe o melhor ângulo.
+
 # Resultado da primeira prova: uma variante para vitória e outra para o resto.
 # Pedido do usuário: depois da primeira prova, nada novo; o jogador corre de
 # novo e a Oficina só aparece quando o caixa paga a peça (CW_P06D).
@@ -164,7 +170,7 @@ Mara[firme]: Vem ver uma luta. Seis duplas na arena; hoje você só assiste.
 [ARENA_DEMO]
 
 = CW_AD02 | ARENA_DEMO_FIM | personagem=dono; proibe=ARENA_DEMO_TALK; flags=ARENA_DEMO_TALK; cenario=oficina_mara
-Mara[gesto]: Isso é a Wreckage. Lá o carro que quebra não volta.
+Mara[gesto]: Isso é a Wreckage. Lá carro nenhum sai inteiro: o que quebra passa um tempo no meu elevador.
 Mara[explica]: Por isso a arena abre só com três carros na garagem: um para correr e dois para arriscar.
 Sistema: Com o terceiro carro, a Arena aparece na barra de baixo.
 
@@ -199,14 +205,14 @@ Sistema: The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sa
 # 1. O primeiro carro: a garagem começa vazia.
 = CW_C00 | ENCADEADA | personagem=dono; proibe=FIRST_CAR; cenario=oficina_mara
 Mara[cruzados]: A garagem está vazia; o último carro foi vendido pra pagar dívida.
-Mara[explica]: O caixa dá para um carro, e só. Cada carro mostra, no selo ESTREIA, como se sai na primeira prova. Procure o MAIS FORTE, não o mais barato.
 Sistema: Vá para as Lojas e compre o primeiro carro.
 [HIGHLIGHT_NAV_LOJA]
 
 # 2. Comprado o carro, o piloto: a equipe nasce aqui.
 = CW_C01B | COMPRA_CARRO | personagem=dono; proibe=FIRST_CAR; flags=FIRST_CAR; cenario=oficina_mara
 Mara[gesto]: {carro}. Dá para trabalhar.
-Mara[firme]: Agora precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.
+Mara[explica]: Daqui pra frente, as contratações são com você. Quem entra e quem sai da equipe passa pela sua mesa.
+Mara[firme]: E a primeira é urgente: precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.
 [UNLOCK_TEAM_TAB]
 Sistema: Toque em Equipe, na barra de baixo.
 [HIGHLIGHT_NAV_EQUIPE]
@@ -346,7 +352,7 @@ Mara[pensativa]: Foi lá que a gente perdeu os últimos carros. Mas paga as cont
 Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.
 Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui.
 Roxy: Ganha a dupla que tiver o último carro andando. A cada vitória, o campeonato seguinte ganha mais uma dupla: começa com duas e vai até vinte carros.
-Mara[alerta]: Pagam mais porque alguns carros não voltam.
+Mara[alerta]: Pagam mais porque todo carro volta amassado.
 Roxy: Carro com a frente destruída não sai daqui. Por isso a arena pede três carros: um fica para as corridas.
 [UNLOCK_ARENA_PILOTS]
 Sistema: Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina.
@@ -385,12 +391,12 @@ Roxy: Última dupla de pé! O próximo campeonato tem uma equipe a mais.
 Mara[firme]: Agora tira ele dali antes que alguém tenha ideias.
 
 = CW_R09 | ARENA_PERDA | personagem=dono; proibe=ARENA_FIRST_LOSS; flags=ARENA_FIRST_LOSS
-Mara[decepcao]: O carro acabou. O piloto, pelo menos, está inteiro.
+Mara[decepcao]: O carro voltou em pedaços. Fica no elevador até eu desamassar, ou você paga a pressa.
 Dex: O próximo vai com mais chapa.
 
 = CW_R09B | ARENA_PERDA | personagem=dono; requer=ARENA_FIRST_LOSS; repetivel=sim; reativa=sim
 [IMPACTO]
-Mara[decepcao]: Mais um pro ferro-velho.
+Mara[decepcao]: Mais um pro meu elevador.
 
 # ---------------------------------------------------------------- Gestão da equipe
 # Patrocínio, Sede e desmanche (GestaoEquipe, data/equipe.json): cada um com a fala da
