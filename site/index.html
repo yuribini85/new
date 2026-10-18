@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chrome &amp; Wreckage — jogue antes</title>
-<meta name="description" content="Compre usado, troque peça, tire licença e sobreviva à arena de demolição. Jogo de gestão de equipe para Android. Inscreva-se para jogar antes, de graça.">
+<meta name="description" content="Até 20 carros na mesma arena, corridas que rolam sozinhas e uma garagem que pode virar sucata. Jogo de gestão de equipe para Android. Inscreva-se para jogar antes, de graça.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Chrome & Wreckage — jogue antes do lançamento">
-<meta property="og:description" content="Gestão de equipe de corrida com arena de demolição. Android, grátis. 100 vagas no teste fechado.">
+<meta property="og:description" content="Monte a equipe e solte no caos: até 20 carros na arena, corridas no automático. Android, grátis. 100 vagas no teste fechado.">
 <meta property="og:image" content="img/compartilhar.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14110f">
@@ -57,14 +57,15 @@ h3 { font-size: 30px; }
 .idiomas button[aria-pressed="true"] { background: var(--ouro); color: #1a1205; }
 
 /* abertura: promessa + e-mail + gameplay, tudo na primeira tela */
-.abertura { position: relative; overflow: hidden; isolation: isolate; padding: 64px 0 56px; }
-.abertura::before { content: ""; position: absolute; inset: 0; z-index: -2; background: url("img/corrida.webp") center 30% / cover; opacity: .35; }
-.abertura::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #14110f66, var(--fundo) 92%); }
-.abertura .grade { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
-.abertura .logo { width: min(560px, 100%); margin: 0 0 22px -6px; filter: drop-shadow(0 8px 24px #000a); }
+.abertura { padding: 64px 0 48px; }
+.abertura .grade { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; align-items: center; }
+.abertura .logo { width: min(460px, 100%); margin: 0 0 22px -6px; filter: drop-shadow(0 8px 24px #000c); }
+.caos { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 10; background: #000; box-shadow: 0 24px 60px #000c, 0 0 0 1px #ffffff14; }
+.caos video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.caos .selo-caos { position: absolute; left: 12px; bottom: 12px; background: #000b; color: var(--ouro); font: 900 20px/1 "Big Shoulders", Impact, sans-serif; text-transform: uppercase; letter-spacing: .04em; padding: 8px 12px; border-radius: 6px; }
 .abertura h1 { font-size: clamp(34px, 4.6vw, 54px); }
 .abertura h1 em { font-style: normal; color: var(--ouro); }
-.abertura p.sub { font-size: clamp(20px, 2.2vw, 23px); color: var(--texto); margin: 16px 0 24px; max-width: 560px; }
+.abertura p.sub { font-size: clamp(20px, 2.2vw, 23px); color: var(--texto); margin: 14px 0 22px; max-width: 580px; }
 .selos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; color: var(--texto-2); font-size: 16px; }
 .selos span { border: 1px solid var(--linha); background: #0007; padding: 3px 10px; border-radius: 99px; }
 .selos .vagas { border-color: var(--ouro); color: var(--ouro); }
@@ -91,7 +92,6 @@ input:focus { outline: 2px solid var(--ouro); outline-offset: 1px; border-color:
 
 .celular { border: 8px solid #0b0a09; border-radius: 30px; overflow: hidden; background: #000; box-shadow: 0 24px 60px #000c, 0 0 0 1px #ffffff14; }
 .celular img, .celular video { aspect-ratio: 9 / 16; object-fit: cover; width: 100%; }
-.abertura .celular { max-width: 330px; margin-inline: auto; transform: rotate(2deg); }
 
 /* confirmação */
 .pronto { max-width: 560px; background: #1d1916f2; border: 1px solid var(--ouro); border-radius: 10px; padding: 22px; }
@@ -151,7 +151,7 @@ details p { color: var(--texto-2); margin: 10px 0 0; max-width: 760px; }
 
 /* chamada final */
 .final { text-align: center; position: relative; isolation: isolate; overflow: hidden; }
-.final::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("img/ferro_velho.webp") center / cover; opacity: .25; }
+.final::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("img/caos_pc.webp") center / cover; opacity: .3; }
 .final h2 { margin-bottom: 22px; }
 .final .inscrever, .final .letra-miuda, .final .aviso { margin-inline: auto; }
 
@@ -165,13 +165,15 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
 .barra .botao { width: 100%; text-align: center; }
 
 @media (max-width: 860px) {
-  .abertura { padding-top: 56px; }
-  .abertura .grade, .fundador .grade { grid-template-columns: 1fr; gap: 32px; }
-  .abertura .logo { margin-inline: auto; width: min(300px, 80%); margin-bottom: 14px; }
-  .abertura .texto { text-align: center; }
+  .abertura { padding-top: 0; }
+  .abertura .grade, .fundador .grade { grid-template-columns: 1fr; gap: 26px; }
+  .abertura .grade { width: 100%; }
+  .abertura .texto { text-align: center; width: min(1120px, 100% - 32px); margin-inline: auto; }
+  .caos { order: -1; border-radius: 0; aspect-ratio: 4 / 5; box-shadow: none; }
+  .caos .logo-sobre { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); width: min(300px, 78%); margin: 0; }
+  .abertura .texto .logo { display: none; }
   .abertura p.sub, .inscrever, .letra-miuda, .aviso, .pronto { margin-inline: auto; }
   .selos { justify-content: center; }
-  .abertura .celular { max-width: 260px; transform: none; }
   .motivos, .fila-telas { grid-template-columns: 1fr; }
   .fila-telas { max-width: 320px; margin-inline: auto; }
   .passos { grid-template-columns: 1fr 1fr; }
@@ -185,7 +187,7 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
   .autor { grid-template-columns: 1fr; gap: 18px; }
   .autor img { width: 130px; height: 130px; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .botao, .barra { transition: none; } .abertura .celular { transform: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .botao, .barra { transition: none; } }
 </style>
 </head>
 <body>
@@ -204,8 +206,8 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
     <div class="largura grade">
       <div class="texto">
         <img class="logo" src="img/logo.webp" width="900" height="235" alt="Chrome & Wreckage — Idle Motorsport Manager">
-        <h1 data-t="h1">Compre usado. Troque peça. Tire licença. <em>Sobreviva à arena.</em></h1>
-        <p class="sub" data-t="sub">Os jogos de corrida dos anos 90 viraram gestão de equipe no celular. Você monta a garagem; seus pilotos correm até com o jogo fechado.</p>
+        <h1 data-t="h1">Monte a equipe. <em>Solte no caos.</em></h1>
+        <p class="sub" data-t="sub">Até 20 carros na mesma arena, corridas que rolam sozinhas e uma garagem que pode virar sucata. Você decide quem entra; seus pilotos fazem o resto, até com o celular no bolso.</p>
         <div data-inscricao></div>
         <div class="selos">
           <span data-t="selo1">Android</span>
@@ -213,11 +215,11 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
           <span class="vagas" data-t="selo3">100 vagas no teste fechado</span>
         </div>
       </div>
-      <div class="celular">
-        <video autoplay muted loop playsinline preload="metadata" poster="img/arena_capa.webp" aria-label="Luta na arena de demolição" data-alt-aria="video_alt">
-          <source src="img/arena.mp4" type="video/mp4">
-          <source src="img/arena.webm" type="video/webm">
-        </video>
+      <div class="caos">
+        <video class="fundo-video" autoplay muted loop playsinline preload="auto" aria-hidden="true"
+            poster="img/caos_pc.webp" data-cel="img/caos_cel.mp4" data-pc="img/caos_pc.mp4" data-capa-cel="img/caos_cel.webp"></video>
+        <img class="logo logo-sobre" src="img/logo.webp" width="900" height="235" alt="" aria-hidden="true" style="display:none">
+        <span class="selo-caos" data-t="selo_caos">20 carros · gameplay real</span>
       </div>
     </div>
   </section>
@@ -225,28 +227,28 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
 
   <section id="jogo">
     <div class="largura">
-      <span class="rotulo" data-t="jogo_rotulo">Por que jogar</span>
-      <h2 data-t="jogo_titulo">Três jeitos de ganhar. Um jeito de perder tudo.</h2>
+      <span class="rotulo" data-t="jogo_rotulo">O jogo</span>
+      <h2 data-t="jogo_titulo">Caos que roda sozinho</h2>
       <div class="motivos" style="margin-top:36px">
         <article class="motivo">
-          <img src="img/oficina.webp" alt="" loading="lazy">
+          <img src="img/m_caos.webp" alt="" loading="lazy">
           <div>
-            <h3 data-t="m1_t">Garagem de colecionador</h3>
-            <p data-t="m1_d">Mais de 360 carros de fabricantes fictícias, do compacto dos anos 60 ao esportivo moderno. Peças, pneus, blindagem e pintura com o seu número.</p>
+            <h3 data-t="m1_t">Até 20 carros na arena</h3>
+            <p data-t="m1_d">Batidas, capotadas e pilhas de lata. Ganhe peças e dinheiro, ou veja seu carro sair da garagem para sempre.</p>
           </div>
         </article>
         <article class="motivo">
-          <img src="img/corrida.webp" alt="" loading="lazy">
+          <img src="img/m_corrida.webp" alt="" loading="lazy">
           <div>
-            <h3 data-t="m2_t">Corrida sem você ao volante</h3>
-            <p data-t="m2_d">Contrate pilotos, escolha a prova e acompanhe. Licenças do clube até a elite, campeonatos com pontos e renda enquanto você está fora.</p>
+            <h3 data-t="m2_t">Ninguém precisa pilotar</h3>
+            <p data-t="m2_d">Seus pilotos correm e brigam sozinhos. Você escolhe a prova e o carro; o resto acontece na tela, ou enquanto você está fora.</p>
           </div>
         </article>
         <article class="motivo">
-          <img src="img/arena_noite.webp" alt="" loading="lazy">
+          <img src="img/m_garagem.webp" alt="" loading="lazy">
           <div>
-            <h3 data-t="m3_t">Arena de demolição</h3>
-            <p data-t="m3_d">Lutas em duplas contra equipes rivais. Ganhe peças e dinheiro, ou veja seu carro sair da garagem para sempre.</p>
+            <h3 data-t="m3_t">Uma garagem para perder</h3>
+            <p data-t="m3_d">Mais de 360 carros de fabricantes fictícias, com peças, blindagem e pintura. Quanto melhor o carro, mais dói vê-lo amassado.</p>
           </div>
         </article>
       </div>
@@ -266,7 +268,7 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
         </ul>
       </div>
       <figure>
-        <img src="img/mara.webp" alt="" loading="lazy" style="border-radius:10px;aspect-ratio:4/5;object-fit:cover;width:100%">
+        <img src="img/fundador_caos.webp" alt="" loading="lazy" style="border-radius:10px;aspect-ratio:4/5;object-fit:cover;width:100%">
       </figure>
     </div>
   </section>
@@ -277,16 +279,16 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
       <h2 data-t="telas_titulo">Como o jogo está hoje</h2>
       <div class="fila-telas">
         <figure style="margin:0">
-          <div class="celular"><img src="img/tela_corrida.webp" alt="" loading="lazy" data-alt="tela1"></div>
-          <figcaption class="legenda" data-t="tela1">Corrida ao vivo</figcaption>
+          <div class="celular"><img src="img/tela_caos.webp" alt="" loading="lazy" data-alt="tela1"></div>
+          <figcaption class="legenda" data-t="tela1">20 carros, uma arena</figcaption>
         </figure>
         <figure style="margin:0">
-          <div class="celular"><img src="img/tela_arena.webp" alt="" loading="lazy" data-alt="tela2"></div>
-          <figcaption class="legenda" data-t="tela2">Resultado da arena</figcaption>
+          <div class="celular"><img src="img/tela_corrida.webp" alt="" loading="lazy" data-alt="tela2"></div>
+          <figcaption class="legenda" data-t="tela2">Corrida no automático</figcaption>
         </figure>
         <figure style="margin:0">
-          <div class="celular"><img src="img/tela_oficina.webp" alt="" loading="lazy" data-alt="tela3"></div>
-          <figcaption class="legenda" data-t="tela3">Oficina e peças</figcaption>
+          <div class="celular"><img src="img/tela_arena.webp" alt="" loading="lazy" data-alt="tela3"></div>
+          <figcaption class="legenda" data-t="tela3">Perdeu: o carro sai da garagem</figcaption>
         </figure>
       </div>
     </div>
@@ -336,7 +338,7 @@ footer .largura { display: flex; justify-content: space-between; gap: 16px; flex
 
   <section class="final">
     <div class="largura">
-      <h2 data-t="final_titulo">A garagem abre para 100 pilotos</h2>
+      <h2 data-t="final_titulo">A arena abre para 100 pilotos</h2>
       <div data-inscricao></div>
     </div>
   </section>
@@ -392,23 +394,23 @@ const GOATCOUNTER = "";
 
 const TEXTOS = {
   en: {
-    h1: "Buy used. Swap parts. Earn licenses. <em>Survive the arena.</em>",
-    sub: "The 90s racing games, reborn as a team manager on your phone. You build the garage; your drivers race even with the game closed.",
+    h1: "Build the crew. <em>Unleash the chaos.</em>",
+    selo_caos: "20 cars · real gameplay",
+    sub: "Up to 20 cars in one arena, races that run themselves and a garage that can turn into scrap. You pick who goes in; your drivers do the rest, even with your phone in your pocket.",
     selo1: "Android", selo2: "Free", selo3: "100 spots in the closed test",
-    video_alt: "Demolition arena fight",
     cta: "Play it first", barra: "Play it first", ph_email: "Your Google email",
     miuda: "Use your Play Store email. By signing up you agree to receive the test invite; your email is never shared.",
-    jogo_rotulo: "Why play", jogo_titulo: "Three ways to win. One way to lose it all.",
-    m1_t: "A collector's garage", m1_d: "Over 360 cars from fictional makers, from 60s compacts to modern sports cars. Parts, tires, armor and a paint job with your number.",
-    m2_t: "Racing without the wheel", m2_d: "Hire drivers, pick the event and watch. Licenses from club to elite, point championships and income while you're away.",
-    m3_t: "Demolition arena", m3_d: "Tag-team fights against rival crews. Win parts and cash, or watch your car leave the garage for good.",
+    jogo_rotulo: "The game", jogo_titulo: "Chaos that runs itself",
+    m1_t: "Up to 20 cars in the arena", m1_d: "Crashes, rollovers and piles of scrap metal. Win parts and cash, or watch your car leave the garage for good.",
+    m2_t: "Nobody has to drive", m2_d: "Your drivers race and fight on their own. You pick the event and the car; the rest happens on screen, or while you're away.",
+    m3_t: "A garage worth losing", m3_d: "Over 360 cars from fictional makers, with parts, armor and paint. The better the car, the more it hurts to see it dented.",
     f_rotulo: "Testers only", f_titulo: "Join now, keep this forever",
     f1_t: "Play before everyone", f1_d: "Google Play access weeks before launch.",
     f2_t: "Exclusive Founder livery", f2_d: "A paint job that will never be sold, unlocked on your account at launch.",
     f3_t: "Your name in the credits", f3_d: "Everyone who finishes the test picks the name or nickname shown in the game's credits, on the test driver list.",
     f4_t: "You shape the game", f4_d: "Every answer is read by the person who decides what makes the final cut.",
     telas_rotulo: "On your phone", telas_titulo: "The game today",
-    tela1: "Live race", tela2: "Arena result", tela3: "Workshop and parts",
+    tela1: "20 cars, one arena", tela2: "Racing on autopilot", tela3: "Lost: the car leaves the garage",
     como_rotulo: "Closed test", como_titulo: "How it works",
     como_intro: "You need an Android phone and the same Google account you use on the Play Store.",
     s1_t: "Drop your email", s1_d: "Your Google account one. Takes 10 seconds.",
@@ -426,12 +428,12 @@ const TEXTOS = {
     q4: "How long do I have to play?", a4: "The test lasts 14 days. A few minutes a day is enough; the game keeps racing while closed. We only ask that you don't uninstall before the end.",
     q5: "Will my progress carry over?", a5: "Balance may still change during the test. If progress has to be reset, we'll tell you first. The Founder livery stays either way.",
     q6: "What do you do with my email?", a6: "We use it only for the invite and to talk about the test. We don't sell or share it. To leave the list, reply to any of our emails asking for removal.",
-    final_titulo: "The garage opens to 100 drivers",
+    final_titulo: "The arena opens to 100 drivers",
     rodape: "Cars, makers, tracks and characters are fictional.",
     ok_t: "Spot secured", ok_d: "When the test opens, the invite goes to your email (check spam too).",
     ok_convite: "<b>Bring a friend onto your team.</b> Anyone who signs up through your link counts as your referral.",
     copiar: "Copy", copiado: "Copied", ok_botao: "Share",
-    zap_texto: "I signed up to play Chrome & Wreckage before launch (racing team manager + demolition arena, Android, free). Grab a spot:",
+    zap_texto: "I signed up to play Chrome & Wreckage before launch: up to 20 cars wrecking each other in the arena and races that run themselves (Android, free). Grab a spot:",
     e_email: "Check the email: it must be your Google account.", e_envio: "Could not send. Check your connection and try again.",
     e_desligado: "Sign-ups open soon. Come back in a few days.", enviando: "Sending…",
     titulo_pagina: "Chrome & Wreckage — play it first",
@@ -444,8 +446,8 @@ for (const m of ["modelo-inscricao", "modelo-pronto"]) {
   document.getElementById(m).content.querySelectorAll("[data-t]").forEach(el => pt[el.dataset.t] = el.innerHTML);
 }
 Object.assign(pt, {
-  ph_email: "Seu e-mail do Google", video_alt: "Luta na arena de demolição", copiado: "Copiado",
-  zap_texto: "Me inscrevi para jogar Chrome & Wreckage antes do lançamento (gestão de equipe de corrida + arena de demolição, Android, grátis). Garanta sua vaga:",
+  ph_email: "Seu e-mail do Google", copiado: "Copiado",
+  zap_texto: "Me inscrevi para jogar Chrome & Wreckage antes do lançamento: até 20 carros se destruindo na arena e corridas que rolam sozinhas (Android, grátis). Garanta sua vaga:",
   e_email: "Confira o e-mail: precisa ser o da sua conta Google.", e_envio: "Não foi possível enviar. Confira a conexão e tente de novo.",
   e_desligado: "As inscrições abrem em breve. Volte em alguns dias.", enviando: "Enviando…",
   titulo_pagina: "Chrome & Wreckage — jogue antes",
@@ -557,6 +559,18 @@ document.querySelectorAll("[data-idioma]").forEach(b => b.addEventListener("clic
   aplicarIdioma(parametros.get("lang") || lerGuardado("idioma") || doNavegador);
 }
 if (meuCodigo) mostrarPronto();
+
+// vídeo do topo: vertical no celular, horizontal no computador
+{
+  const v = document.querySelector(".fundo-video");
+  const celular = matchMedia("(max-width: 860px)").matches;
+  if (celular) {
+    v.poster = v.dataset.capaCel;
+    document.querySelector(".logo-sobre").style.display = "";
+  }
+  v.src = celular ? v.dataset.cel : v.dataset.pc;
+  v.play?.().catch(() => {});
+}
 
 // barra fixa aparece quando a primeira tela sai de vista
 const barra = document.getElementById("barra");
