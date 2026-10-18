@@ -243,7 +243,8 @@ static func sobre_imagem(c: Control) -> void:
 	c.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
 
 
-func topo_carro(garagem: Carro, fundo := "fundo_competicoes") -> Control:
+## `escala`: tamanho do carro (Corridas usa 0,8: o carro ali é só referência).
+func topo_carro(garagem: Carro, fundo := "fundo_competicoes", escala := 1.0) -> Control:
 	var faixa := ilustracao(fundo, ALTURA_TOPO_CARRO)
 	cenario_topo(faixa)
 	var h := HBoxContainer.new()
@@ -251,14 +252,14 @@ func topo_carro(garagem: Carro, fundo := "fundo_competicoes") -> Control:
 	h.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	# A imagem do carro tem margem transparente: o quadro sai pela esquerda e o
 	# nome começa logo depois do desenho, com o resto da largura.
-	h.offset_left = -70
+	h.offset_left = -70.0 * escala
 	h.offset_right = -16
 	h.offset_bottom = -8
-	h.add_theme_constant_override("separation", -50)
+	h.add_theme_constant_override("separation", int(-50.0 * escala))
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	faixa.add_child(h)
 	var img := icone_carro(garagem.base, false, CarroBloco.cor_do_carro(garagem), garagem.faixas)
-	img.custom_minimum_size = Vector2(510, 288)
+	img.custom_minimum_size = Vector2(510, 288) * escala
 	h.add_child(img)
 	var nome := Label.new()
 	nome.text = garagem.base["nome"]
@@ -269,7 +270,7 @@ func topo_carro(garagem: Carro, fundo := "fundo_competicoes") -> Control:
 	Tipografia.rotulo(nome, "semibold", 48)
 	# O nome ocupa o espaço que sobra: a maior fonte (até 48) que cabe nele.
 	# (largura que sobra ao lado do carro, com folga para o contorno das letras)
-	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 16.0 - (-70.0 + 510.0 - 50.0) - 14.0
+	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 16.0 - (-70.0 + 510.0 - 50.0) * escala - 14.0
 	var tam := 48
 	var f := nome.get_theme_font("font")
 	while tam > 30 and f.get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:

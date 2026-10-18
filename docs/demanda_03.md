@@ -13,8 +13,8 @@ logotipos ou carros reconhecíveis.
 | # | Peça | Formato | Onde entra | Até lá |
 |---|------|---------|-----------|--------|
 | A1 | **Logo Wreckage Motorsport** (equipe do jogador) | PNG RGBA, ~1200 px de largura, fundo transparente; só a palavra principal + emblema (a tela já escreve "MOTORSPORT" embaixo) | Aba Equipe (faixa do topo) e resultado das corridas | Nome em texto ocre |
-| A2 | **Segundo piloto da oficina** (chega na licença Pro) | Corpo 1024 × 1536 RGBA, macacão diferente do Theo | Diálogo da Mara na Pro e aba Equipe | Usa o Jonas Reid da história antiga, sem retrato |
-| A3 | **Nome do segundo piloto** | Texto | `data/carreira.json` → `segundo_piloto` | "Jonas Reid" |
+| A2 | **Segundo piloto da oficina** (chega na licença Pro) | Corpo 1024 × 1536 RGBA, macacão diferente do Theo | Diálogo da Mara na Pro e aba Equipe | Usa o Hiro Sakuno da história antiga, sem retrato |
+| A3 | **Nome do segundo piloto** | Texto | `data/carreira.json` → `segundo_piloto` | "Hiro Sakuno" |
 | A4 | **Tela inicial** com a identidade Chrome & Wreckage (oficina/pista ao entardecer, espaço livre no terço de cima para o logo) | 4 camadas de parallax como as atuais: céu (sem transparência), fundo, meio e frente (com transparência) — PNG 941 × 1672 cada | Tela de abertura | Paisagem da versão anterior |
 | A5 | **Ícone do app** | PNG 1024 × 1024, sem transparência, legível em 48 px | Android/iOS | Ícone padrão do Godot (o projeto não tem ícone) |
 | A6 | **Mara, pose extra (opcional)**: rindo de canto / satisfeita | Corpo 1024 × 1536 RGBA | Falas de vitória e marcos | Pose "firme" ou "gesto" |

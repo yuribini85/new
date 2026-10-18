@@ -325,7 +325,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você gerencia as contratações. Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.",
+    "texto": "Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.",
     "pose": "explica"
    },
    {
@@ -509,6 +509,34 @@
   "uma_vez": true,
   "personagem": "dono",
   "segura_largada": true
+ },
+ {
+  "id": "CW_P05C",
+  "trigger": "CORRIDA_EM_CURSO",
+  "falas": [
+   {
+    "acao": "HIGHLIGHT_CAMERA_AUTO"
+   },
+   {
+    "quem": "mara",
+    "texto": "A corrida é do {piloto}, mas a vista é sua. Aqui embaixo você troca a câmera: seu carro, o líder, a pista inteira.",
+    "pose": "explica"
+   },
+   {
+    "quem": "sistema",
+    "texto": "Toque numa câmera para trocar. Em Automática, a corrida escolhe o melhor ângulo."
+   }
+  ],
+  "requer": [],
+  "proibe": [
+   "CAMERA_TUTORIAL_SEEN"
+  ],
+  "flags": [
+   "CAMERA_TUTORIAL_SEEN"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
  },
  {
   "id": "CW_P06",
@@ -822,11 +850,6 @@
     "pose": "cruzados"
    },
    {
-    "quem": "mara",
-    "texto": "O caixa dá para um carro, e só. Cada carro mostra, no selo ESTREIA, como se sai na primeira prova. Procure o MAIS FORTE, não o mais barato.",
-    "pose": "explica"
-   },
-   {
     "quem": "sistema",
     "texto": "Vá para as Lojas e compre o primeiro carro."
    },
@@ -855,7 +878,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.",
+    "texto": "Daqui pra frente, as contratações são com você. Quem entra e quem sai da equipe passa pela sua mesa.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "E a primeira é urgente: precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.",
     "pose": "firme"
    },
    {

@@ -2,14 +2,14 @@
 
 Decisão 56 (`docs/plano_mvp.md`): o segundo piloto da equipe deixa de ser fixo e é
 escolhido entre 8 candidatos (aba Equipe → "Trocar piloto"), como no Grand Prix Story.
-Jonas Reid é o padrão, o que entra na cena que libera o segundo piloto. Cada candidato tem
+Hiro Sakuno é o padrão, o que entra na cena que libera o segundo piloto. Cada candidato tem
 **um traço**, dois candidatos por traço: um de corrida e um de arena (decisão do usuário, 2026-10-16), para a tela de cada vaga mostrar os quatro traços. Dados em `data/carreira.json` → `equipe_jogador`
 (`candidatos`, `tracos`). Cada candidato tem `genero` ("m"/"f", pela arte); os textos flexionam por ele
 (`EquipeJogador.flexao`, e nas falas `{g:masculino|feminino}`).
 
 | id | nome | traço | vaga | arte | em uma frase |
 |---|---|---|---|---|---|
-| `jonas_reid` | Jonas Reid | Calculista | corrida | 2 | "Não ganha corrida sozinho, mas não joga ponto fora." |
+| `jonas_reid` | Hiro Sakuno | Calculista | corrida | 2 | "Não ganha corrida sozinho, mas não joga ponto fora." |
 | `amir_castell` | Amir Castell | Calculista | arena | 4 | "Bate sempre no mesmo lugar, do mesmo jeito. Não erra o alvo." |
 | `ayla_moreno` | Ayla Moreno | Destemido | arena | 3 | "Vê uma brecha onde os outros veem um muro." |
 | `axel_brennan` | Axel Brennan | Destemido | corrida | 1 | "Larga para ganhar ou para não chegar. Ainda não decidiu qual." |

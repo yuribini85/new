@@ -54,7 +54,7 @@ func construir() -> void:
 			proximo_passo("Os seus carros estão na arena. Escale um carro para as corridas na Oficina.",
 					"Ir para a Oficina", GARAGEM)
 		return
-	var topo := topo_carro(garagem)
+	var topo := topo_carro(garagem, "fundo_competicoes", 0.8)
 	var trocar := Button.new()
 	Tipografia.acao_secundaria(trocar, "Carro de corrida · trocar na Oficina", Color(0.93, 0.91, 0.87), 22)
 	sobre_imagem(trocar)

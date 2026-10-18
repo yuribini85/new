@@ -362,9 +362,8 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 		Tipografia.rotulo(l, "semibold", 24)
 		l.add_theme_color_override("font_color", COR_BOM)
 		topo.add_child(l)
-	var estreia: bool = jogador.garagem.lista().is_empty()
 	var img := icone_carro(c, false, cor)
-	img.custom_minimum_size = Vector2(0, 170 if estreia else 200)  # o selo de estreia ocupa 30
+	img.custom_minimum_size = Vector2(0, 200)
 	img.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(img)
@@ -404,8 +403,6 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 		u.add_theme_color_override("font_color", COR_SECUNDARIA)
 		u.size_flags_vertical = Control.SIZE_SHRINK_END
 		nums.add_child(u)
-	if estreia:
-		_estreia(c, v)
 	var compra := Button.new()
 	compra.focus_mode = Control.FOCUS_NONE
 	Tipografia.acao_neutra(compra, "COMPRAR · %s" % dinheiro(preco), 24, 64)
@@ -415,24 +412,6 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	moeda(compra, 24)
 	compra.pressed.connect(abrir)
 	v.add_child(compra)
-
-
-## Primeira compra (garagem vazia): como o carro chega na prova mais favorável
-## que já dá para correr, frente ao rival mais forte dela (quem decide a vitória).
-## Sem isso o jogador escolhia pelo preço e perdia as primeiras provas.
-func _estreia(c: Dictionary, pai: Control) -> void:
-	var carro := Carro.new(c)
-	carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
-	var provas: Array = jogador.carreira.provas_favoraveis(carro)
-	var nivel := Carreira.nivel_forca(float(provas[0]["melhor"])) if not provas.is_empty() else -1
-	var l := Label.new()
-	l.text = "ESTREIA: " + (Carreira.NOMES_FORCA[nivel] if nivel >= 0 else "SEM PROVA ABERTA")
-	Tipografia.rotulo(l, "semibold", 20)
-	l.add_theme_color_override("font_color", TONS_FORCA[maxi(nivel, 0)].lightened(0.4))
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.custom_minimum_size = Vector2(0, 30)
-	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pai.add_child(l)
 
 
 ## O primeiro carro já entra em uso, e a tela vai para a Garagem, que mostra o

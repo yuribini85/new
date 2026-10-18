@@ -33,7 +33,7 @@
   "custo_staff": null,
   "segundo_piloto": {
    "id": "jonas_reid",
-   "nome": "Jonas Reid",
+   "nome": "Hiro Sakuno",
    "genero": "m",
    "retrato": "res://arte/pilotos/jonas_reid.png"
   },
@@ -73,7 +73,7 @@
   "candidatos": [
    {
     "id": "jonas_reid",
-    "nome": "Jonas Reid",
+    "nome": "Hiro Sakuno",
     "genero": "m",
     "traco": "constante",
     "frase": "Não ganha corrida sozinho, mas não joga ponto fora.",

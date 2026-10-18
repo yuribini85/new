@@ -880,7 +880,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     - **Primeira vitória cedo** (critério da Sunday Cup da referência: a primeira prova sugerida
       vencível com o carro que o saldo inicial compra): na primeira compra, cada carro
       mostra a força na estreia ("ESTREIA: MAIS FORTE/PARELHO/MAIS FRACO", frente ao
-      rival mais forte da prova mais favorável); Corridas abre com a **Próxima prova** (a
+      rival mais forte da prova mais favorável; selo retirado da loja em 2026-10-18 a
+      pedido do usuário, junto com a fala da Mara que o explicava); Corridas abre com a **Próxima prova** (a
       mais favorável ao carro) e o tutorial aponta para ela. 1ª vitória: 22 → 3 min.
     - **Comentários do dia a dia** (vitória, pódio, derrota, peça comprada): repetíveis e
       reativos, em rodízio; o fim de corrida dá a vez aos marcos antes deles. Maior vazio

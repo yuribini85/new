@@ -99,9 +99,10 @@ func jogar_campanha(id: String, limite_s: float) -> Dictionary:
 
 
 ## Decisão 85: a campanha do dono começa com a garagem vazia; como a cena
-## CW_C00 pede, o primeiro carro sai da loja pelo selo de estreia (decisão 96):
+## CW_C00 pede, o primeiro carro sai da loja pela força na estreia (decisão 96;
+## o selo saiu da loja, o agente segue como um jogador que compara as fichas):
 ## o mais barato que chega MAIS FORTE na prova mais favorável (sem nenhum, o de
-## maior força); explora: um dos três mais baratos, sem olhar o selo.
+## maior força); explora: um dos três mais baratos, sem olhar a força.
 func _primeiro_carro() -> void:
 	var opcoes := []
 	for c in d.lista("carros"):

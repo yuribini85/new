@@ -304,7 +304,7 @@ static func nivel_forca(r: float) -> int:
 ## Provas que o carro já pode correr (licença, restrições, prêmio) e ainda não
 ## venceu, da mais favorável para a menos (frente ao rival mais forte: é quem
 ## decide a vitória): [{ev, forca}], forca frente à mediana, como nos cartões.
-## Base da "Próxima prova" e do selo de estreia na loja.
+## Base da "Próxima prova" em Corridas.
 func provas_favoraveis(c: Carro) -> Array:
 	var r := []
 	for ev in dados.lista("eventos"):

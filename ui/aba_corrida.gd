@@ -46,6 +46,9 @@ var _atributos_hud := {}  # atributos do carro inscrito (marcha e giro no HUD)
 var _cameras: Control
 var _cameras_botoes: Array = []
 var _ocioso := 0.0
+## Segundos de corrida até a dica da câmera.
+const DICA_CAMERA_S := 6.0
+var _dica_camera_pedida := false
 var _semente_mostrada := 0
 ## Corrida cuja largada (3-2-1 ou espera no grid) já foi tratada: remontar a
 ## vista (atualizar) não recomeça a contagem.
@@ -368,6 +371,7 @@ func _process(delta: float) -> void:
 		return
 	_atualizar_seletor(delta)
 	_tirar_carga()
+	_dica_camera()
 	var f: Dictionary = jogador.fila
 	# Fim da corrida mostrada (fila vazia ou a próxima já começou): fica parado
 	# na última imagem por SILENCIO_S antes de seguir.
@@ -931,9 +935,19 @@ func _texto_dif(ordem: Array, pos: int) -> String:
 	return ""
 
 
-## Seletor de câmera: perde contraste sem toque; volta ao tocar.
+## Com a corrida já andando (DICA_CAMERA_S depois da largada), a história conta
+## que a câmera muda (CW_P05C, só na primeira vez).
+func _dica_camera() -> void:
+	if _dica_camera_pedida or jogador.fila.is_empty() or antes_da_largada() or _visual.tempo < DICA_CAMERA_S:
+		return
+	_dica_camera_pedida = true
+	historia("CORRIDA_EM_CURSO")
+
+
+## Seletor de câmera: perde contraste sem toque; volta ao tocar (e fica aceso
+## com uma conversa aberta, que pode estar apontando para ele).
 func _atualizar_seletor(delta: float) -> void:
-	_ocioso += delta
+	_ocioso = 0.0 if dialogo_aberto.call() else _ocioso + delta
 	var alvo := SELETOR_APAGADO if _ocioso > SELETOR_OCIOSO_S and not Preferencias.reduzir_animacoes else 1.0
 	_cameras.modulate.a = move_toward(_cameras.modulate.a, alvo, delta / (0.8 if alvo < 1.0 else 0.25))
 
