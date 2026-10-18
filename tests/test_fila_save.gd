@@ -418,3 +418,26 @@ func test_save_com_desafio_do_grid_na_fila() -> void:
 	verificar(Save.validar(s, d) != "", "equipe que não existe é recusada")
 	j.free()
 	d.free()
+
+
+## Decisão 117: a escolha de um momento entra no piloto da fila, a corrida é
+## refeita com ela e, enquanto isso, a tela segue com o resultado anterior.
+func test_ordem_refaz_a_corrida_e_fica_na_fila() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "iniciar")
+	var antes := f.corrida_atual(0.0)
+	var versao := f.versao
+	f.ordenar({"escolha": "atacar", "de": 5.0, "ate": 40.0, "ritmo": 1.05, "agressividade": 1.0})
+	igual(j.fila["piloto"]["ordens"].size(), 1, "ordem gravada na fila (vale offline)")
+	igual(f.corrida_atual(1.0)["resultado"], antes["resultado"], "enquanto refaz, a tela usa a anterior")
+	while not f.avancar_preparo(0.0):
+		pass
+	verificar(f.versao > versao, "resultado novo no cache")
+	var depois := f.corrida_atual(1.0)
+	verificar(float(depois["resultado"]["carros"]["jogador"]["tempo_total"])
+			< float(antes["resultado"]["carros"]["jogador"]["tempo_total"]), "com a ordem, o jogador anda mais")
+	j.free()
+	d.free()

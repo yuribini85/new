@@ -13,5 +13,20 @@
 		"4WD": 1.0
 	},
 	"cda_m2": 0.6,
-	"densidade_ar_kg_m3": 1.225
+	"densidade_ar_kg_m3": 1.225,
+	"momentos": {
+		"_nota": "Momentos de decisão na corrida (decisão 117, MomentosCorrida). distancia_m: quão colado no rival; inicio_s/fim_s: sem momento logo depois da largada nem perto do fim; intervalo_s e max_por_corrida: espaço entre momentos; janela_s: tempo real para escolher. ritmo das opções: calibrado por tools/calibrar_momentos.gd (corrida toda bem decidida ~ uma peça). Medido em 2026-10-18 (hozuki_catana, 5 provas disputadas, 120 corridas): uma peça +0,11 posição; sempre a escolha imediata +0,14; sempre a de efeito longo +0,17; a melhor de cada momento sabendo o resultado (teto, inalcançável) +0,31.",
+		"distancia_m": 20.0,
+		"inicio_s": 8.0,
+		"fim_s": 6.0,
+		"intervalo_s": 20.0,
+		"max_por_corrida": 4,
+		"janela_s": 4.0,
+		"opcoes": {
+			"atacar": {"tipo": "ataque", "atraso_s": 1.0, "dura_s": 8.0, "ritmo": 1.005, "agressividade": 1.0},
+			"esperar": {"tipo": "ataque", "atraso_s": 9.0, "dura_s": 14.0, "ritmo": 1.002, "agressividade": 1.0},
+			"defender": {"tipo": "defesa", "atraso_s": 1.0, "dura_s": 8.0, "ritmo": 1.005},
+			"poupar": {"tipo": "defesa", "atraso_s": 9.0, "dura_s": 24.0, "ritmo": 1.003}
+		}
+	}
 }

@@ -23,6 +23,10 @@ const PARAMS := [
 
 ## participantes: em ordem de grid, cada um
 ##   {"id": String, "atributos": Carro.atributos_efetivos(), "piloto": {ritmo, consistencia, agressividade}}
+## O piloto pode trazer "ordens" (momentos de decisão, decisão 117): lista de
+## {"de": s, "ate": s, "ritmo": fator, "agressividade": 0..1 ou -1}; dentro da
+## janela o envelope do carro é multiplicado por "ritmo" e, se >= 0, a
+## agressividade vale a da ordem. Antes de "de" a corrida é idêntica à sem ordem.
 ## Retorna {"classificacao", "carros", "amostras", "comprimento", "duracao"}.
 ## com_amostras = false (offline) guarda só a amostra final; o resultado é o mesmo.
 ## v_inicial_ms > 0: largada lançada (o grid já parte nessa velocidade).
@@ -74,6 +78,7 @@ class Andamento:
 	var _massa_arr := PackedFloat64Array()
 	var _forcas := []  # força motriz por faixa de velocidade (vazio: potência/v)
 	var _lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
+	var _ordens := []  # por carro: [[de, ate, ritmo, agressividade], ...] (quase sempre vazio)
 	var _envs := []
 	var _ativos: Array[int] = []
 	var _amostras := []
@@ -128,6 +133,11 @@ class Andamento:
 				"tempo_total": 0.0,
 				"rolagens": {},
 			}
+			var ordens := []
+			for o in piloto.get("ordens", []):
+				ordens.append([float(o["de"]), float(o["ate"]), float(o.get("ritmo", 1.0)),
+						float(o.get("agressividade", -1.0))])
+			c["ordens"] = ordens
 			# O ruído de cada volta sai do gerador agora, na ordem de sempre; o
 			# envelope (sem sorteio) fica para avancar(), que pode ser fatiado.
 			var teto := INF if a.get("velocidade_max") == null else float(a["velocidade_max"]) * Simulacao.KMH_PARA_MS
@@ -148,6 +158,7 @@ class Andamento:
 			_forcas.append(c["forca"])
 			_lim_arr.append(0.0)
 			_envs.append(c["envelopes"])
+			_ordens.append(c["ordens"])
 		# Índices dos carros ainda correndo, mantidos em ordem de corrida.
 		for k in _carros.size():
 			_ativos.append(k)
@@ -190,6 +201,7 @@ class Andamento:
 		var forcas := _forcas
 		var lim_arr := _lim_arr
 		var envs := _envs
+		var ordens := _ordens
 		var ativos := _ativos
 		var rng := _rng
 		var t := _t
@@ -228,6 +240,9 @@ class Andamento:
 				var i := int(fposmod(s_antes, comprimento) / passo) % n
 				var env: PackedFloat64Array = envs[idx][volta]
 				var limite := minf(env[i], env[(i + 1) % n])
+				var ordem: Array = Simulacao._ordem_ativa(ordens[idx], t)
+				if not ordem.is_empty():
+					limite *= ordem[2]
 				var v := v_arr[idx]
 				var acel := acel_arr[idx]
 				if v > 0.0:
@@ -246,7 +261,12 @@ class Andamento:
 							or Simulacao._acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto, forcas[idx]) \
 							> Simulacao._acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto,
 									forcas[frente]) + 0.01
-					if not Simulacao._pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng):
+					var agr := float(carros[idx]["agressividade"])
+					if not ordem.is_empty() and ordem[3] >= 0.0:
+						carros[idx]["agressividade"] = ordem[3]
+					var passa := Simulacao._pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng)
+					carros[idx]["agressividade"] = agr
+					if not passa:
 						s_novo = maxf(s_antes, s_arr[frente] - dmin)
 						v_novo = minf(v_novo, v_arr[frente])
 
@@ -320,6 +340,14 @@ static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio:
 		var i := (inicio + k) % n
 		env[i] = minf(env[i], sqrt(env[(i + 1) % n] ** 2 + 2.0 * desacel * passo))
 	return env
+
+
+## A ordem do carro valendo no instante t ([] sem nenhuma).
+static func _ordem_ativa(ordens: Array, t: float) -> Array:
+	for o in ordens:
+		if t >= o[0] and t < o[1]:
+			return o
+	return []
 
 
 ## Na entrada de cada zona, uma vez por volta, a agressividade decide se o

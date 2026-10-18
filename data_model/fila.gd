@@ -30,6 +30,12 @@ var _cache: Dictionary = {}
 ## Corrida em andamento sendo resolvida aos poucos, entre quadros (decisão 90):
 ## {chave, preparo: Carreira.iniciar_preparo()} ou {}. Pronta, vai para o cache.
 var _pendente: Dictionary = {}
+## Prova, carro e semente do resultado no cache: com uma ordem nova (momento de
+## decisão) a tela segue mostrando o resultado anterior, igual até a ordem
+## valer, enquanto o novo é resolvido aos poucos.
+var _cache_base := ""
+## Sobe a cada resultado novo no cache (a tela recarrega as amostras).
+var versao := 0
 
 
 func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
@@ -107,10 +113,30 @@ func avancar_preparo(orcamento_ms: float) -> bool:
 func _concluir_pendente() -> Dictionary:
 	var c := carreira.concluir_preparo(_pendente["preparo"])
 	c["com_amostras"] = true
-	_cache_chave = _pendente["chave"]
-	_cache = c
+	_guardar(_pendente["chave"], c)
 	_pendente = {}
 	return c
+
+
+func _guardar(chave: String, c: Dictionary) -> void:
+	_cache_chave = chave
+	_cache = c
+	_cache_base = chave.substr(0, chave.find("|", chave.find("|", chave.find("|") + 1) + 1))
+	versao += 1
+
+
+## Momento de decisão (MomentosCorrida): a ordem entra no piloto da corrida em
+## andamento, que é refeita aos poucos com ela; antes da ordem valer, nada muda.
+## Gravada na fila, vale também se a corrida terminar com o app fechado.
+func ordenar(ordem: Dictionary) -> void:
+	var f: Dictionary = jogador.fila
+	if f.is_empty():
+		return
+	var piloto: Dictionary = f["piloto"].duplicate(true) if f.get("piloto") is Dictionary and not f["piloto"].is_empty() \
+			else EquipeJogador.piloto_do_jogador(carreira.dados, jogador)
+	piloto["ordens"] = Array(piloto.get("ordens", [])) + [ordem]
+	f["piloto"] = piloto
+	pronta()
 
 
 ## Faz a corrida em andamento terminar agora (botão de teste da demo).
@@ -142,7 +168,13 @@ func corrida_atual(agora: float) -> Dictionary:
 	var f: Dictionary = jogador.fila
 	if f.is_empty():
 		return {}
-	var c := _preparar(f, true).duplicate()
+	var c: Dictionary
+	var k := _chave(f)
+	if not k.is_empty() and not _pendente.is_empty() and _pendente["chave"] == k["chave"] \
+			and _cache.get("com_amostras", false) and k["chave"].begins_with(_cache_base + "|"):
+		c = _cache.duplicate()  # ordem nova ainda sendo resolvida: o anterior serve
+	else:
+		c = _preparar(f, true).duplicate()
 	if c.has("erro"):
 		return {}
 	c["decorrido"] = agora - float(f["inicio"])
@@ -260,8 +292,7 @@ func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
 			k["carro"], k["comp"], k["piloto"])
 	c["com_amostras"] = com_amostras
 	if not c.has("erro"):
-		_cache_chave = chave
-		_cache = c
+		_guardar(chave, c)
 	return c
 
 

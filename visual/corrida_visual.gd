@@ -61,6 +61,12 @@ func _init() -> void:
 
 
 ## cores: id -> Color. Ids sem cor ganham uma derivada do id.
+## Troca as amostras pelas de outro resultado da mesma corrida (refeita com
+## uma ordem do jogador), mantendo pista e cores.
+func trocar_resultado(resultado: Dictionary) -> void:
+	mostrar(_pista, resultado, _cores)
+
+
 func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> void:
 	_pista = pista
 	_fim = float(resultado.get("comprimento", pista.comprimento)) * int(resultado.get("voltas", 0))

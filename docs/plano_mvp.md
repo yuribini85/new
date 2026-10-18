@@ -1026,3 +1026,15 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     é resolvida na hora. Enquanto a tela da luta está aberta, a pista 3D da corrida sai da memória
     (`AbaCorrida.pausada`) e é remontada ao fechar, com a capa "Preparando a pista". O desafio
     do Grid em corrida continua esperando a corrida em andamento (uma corrida por vez).
+117. **Momentos de decisão na corrida** (2026-10-18, crítica do primeiro testador: "chato
+    assistir sem fazer nada"; o usuário escolheu esta opção e o peso "ajuda, não decide"). Com o
+    carro do jogador colado num rival (data/simulacao.json `momentos.distancia_m`), a tela da
+    corrida abre um cartão por alguns segundos com duas escolhas: no ataque, ATACAR AGORA (ritmo
+    e ultrapassagem por alguns segundos) ou ESPERAR A RETA (o mesmo, mais tarde); na defesa,
+    FECHAR A PORTA (ritmo agora) ou POUPAR PNEUS (ritmo menor por mais tempo). A escolha vira uma
+    ordem no piloto da corrida (Simulacao: janela de tempo, fator de ritmo e agressividade), a
+    fila grava a ordem (vale também se a corrida terminar com o app fechado) e a corrida é refeita
+    aos poucos; antes da ordem valer, nada muda. Sem toque, nada acontece. Até
+    `max_por_corrida` momentos, com `intervalo_s` entre eles. Peso calibrado por
+    tools/calibrar_momentos.gd para uma corrida bem decidida valer mais ou menos uma peça
+    (números medidos na nota de "momentos").

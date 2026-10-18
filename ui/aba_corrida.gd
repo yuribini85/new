@@ -46,6 +46,13 @@ var _atributos_hud := {}  # atributos do carro inscrito (marcha e giro no HUD)
 var _cameras: Control
 var _cameras_botoes: Array = []
 var _ocioso := 0.0
+## Momentos de decisão (decisão 117): o cartão, o resultado mostrado (onde o
+## momento é procurado), quantos já vieram e quando foi o último.
+var _cartao: CartaoMomento
+var _resultado: Dictionary = {}
+var _versao_mostrada := -1
+var _momentos := 0
+var _t_momento := -INF
 ## Segundos de corrida até a dica da câmera.
 const DICA_CAMERA_S := 6.0
 var _dica_camera_pedida := false
@@ -166,6 +173,15 @@ func _init(d: Node, j: Node) -> void:
 	_painel_hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_painel_hud.escolhido.connect(_camera)
 	area.add_child(_painel_hud)
+	_cartao = CartaoMomento.new()
+	_cartao.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_cartao.offset_left = -300
+	_cartao.offset_right = 300
+	_cartao.offset_top = -420
+	_cartao.offset_bottom = -190
+	_cartao.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_cartao.escolhido.connect(_ordenar)
+	area.add_child(_cartao)
 	# Nome da prova e da pista no pé da corrida, logo acima das câmeras.
 	_nome_prova = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
 	_nome_prova.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -440,6 +456,8 @@ func _process(delta: float) -> void:
 			else (float(jogador.aceleracao.get("fator", 1.0)) if Aceleracao.ativa(jogador) else 1.0)
 	_visual.tempo = clampf(_tempo_suave(clampf(agora - float(f["inicio"]) - _atraso, 0.0, _visual.duracao()), delta, taxa),
 			0.0, _visual.duracao())
+	_recarregar_ordem(f, agora)
+	_procurar_momento(taxa)
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
@@ -549,6 +567,11 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_area.visible = true
 	_ajustar_area()
 	_semente_mostrada = f["semente"]
+	_resultado = c["resultado"]
+	_versao_mostrada = jogador.fila_ctrl.versao
+	_momentos = 0
+	_t_momento = -INF
+	_cartao.fechar()
 	_segurar = 0.0
 	_painel_hud.limpar_evento()
 	_painel_hud.secundario = 1.0
@@ -933,6 +956,48 @@ func _texto_dif(ordem: Array, pos: int) -> String:
 		var g := _gap(ordem[pos - 2], "jogador")
 		return "−%.1f s" % g if g >= 0.0 else ""
 	return ""
+
+
+## Uma escolha refez a corrida (Fila.ordenar): as amostras novas entram no
+## lugar das antigas, iguais até a ordem valer, e o tempo segue de onde estava.
+func _recarregar_ordem(f: Dictionary, agora: float) -> void:
+	if jogador.fila_ctrl.versao == _versao_mostrada or f["semente"] != _semente_mostrada:
+		return
+	var c: Dictionary = jogador.fila_ctrl.corrida_atual(agora)
+	if c.is_empty() or c["resultado"] == _resultado:
+		_versao_mostrada = jogador.fila_ctrl.versao
+		return
+	var t := _visual.tempo
+	_visual.trocar_resultado(c["resultado"])
+	_visual.tempo = t
+	_resultado = c["resultado"]
+	_versao_mostrada = jogador.fila_ctrl.versao
+
+
+## Com o jogador colado num rival, abre o cartão do momento (no máximo
+## max_por_corrida, com intervalo_s entre eles; nunca com conversa aberta, na
+## largada, na chegada ou com o relógio parado).
+func _procurar_momento(taxa: float) -> void:
+	if _cartao.aberto() or _chegou or taxa <= 0.0 or dialogo_aberto.call() or _resultado.is_empty():
+		return
+	var p: Dictionary = dados.simulacao().get("momentos", {})
+	if p.is_empty() or _momentos >= int(p["max_por_corrida"]) or _visual.tempo - _t_momento < float(p["intervalo_s"]):
+		return
+	var m := MomentosCorrida.detectar(_resultado, _visual.tempo, p)
+	if m.is_empty():
+		return
+	_momentos += 1
+	_t_momento = _visual.tempo
+	_cartao.abrir(m, MomentosCorrida.escolhas(m["tipo"], p), String(_nomes_curtos.get(m["rival"], "O rival")),
+			float(p["janela_s"]))
+	_sons.largada(false)  # bipe: o cartão pede atenção
+
+
+func _ordenar(id: String) -> void:
+	var p: Dictionary = dados.simulacao()["momentos"]
+	jogador.fila_ctrl.ordenar(MomentosCorrida.ordem(id, _visual.tempo, p))
+	var rot: Array = CartaoMomento.ROTULOS.get(id, [id.to_upper(), ""])
+	_painel_hud.evento(rot[0], "", COR_DESTAQUE, 3)
 
 
 ## Com a corrida já andando (DICA_CAMERA_S depois da largada), a história conta

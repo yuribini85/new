@@ -237,3 +237,28 @@ func test_fatia_respeita_o_orcamento() -> void:
 	# Folga para um envelope ou alguns passos além do prazo (e máquina lenta).
 	verificar(pior < 2000 + 15000, "fatia de 2 ms passou de 17 ms (%d us)" % pior)
 	d.free()
+
+
+## Decisão 117: a ordem de um momento de decisão só mexe na corrida a partir de
+## "de"; antes, as amostras são as mesmas; mais ritmo, menos tempo.
+func test_ordem_so_vale_depois_de_comecar() -> void:
+	var d := dados_fixture()
+	var a := _participante(d, "a", "forte", "erratico")
+	var b := _participante(d, "b", "forte", "erratico")
+	var sem := _correr(d, "oval", [a, b], 4, 11)
+	var b2: Dictionary = b.duplicate(true)
+	b2["piloto"] = b["piloto"].duplicate()
+	b2["piloto"]["ordens"] = [{"de": 20.0, "ate": 60.0, "ritmo": 1.05, "agressividade": 1.0}]
+	var com := _correr(d, "oval", [a, b2], 4, 11)
+	var iguais := true
+	var depois_muda := false
+	for k in mini(sem["amostras"].size(), com["amostras"].size()):
+		var x: Dictionary = sem["amostras"][k]
+		if float(x["t"]) < 20.0:
+			iguais = iguais and x["s"] == com["amostras"][k]["s"]
+		elif x["s"]["b"] != com["amostras"][k]["s"]["b"]:
+			depois_muda = true
+	verificar(iguais, "antes da ordem, a mesma corrida")
+	verificar(depois_muda, "depois dela, o carro anda diferente")
+	verificar(float(com["carros"]["b"]["tempo_total"]) < float(sem["carros"]["b"]["tempo_total"]), "mais ritmo, menos tempo")
+	d.free()
