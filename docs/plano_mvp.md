@@ -1049,3 +1049,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     chão, faíscas douradas e tremor; quando não, QUASE! dizendo qual escolha era a jogada.
     Nenhum número de balanceamento mudou; o ganho total precisa ser medido de novo com a
     ferramenta, porque agora só aparecem momentos que importam.
+    **Revisão 2 (2026-10-18, opção A escolhida pelo usuário).** Medido na revisão anterior: em
+    todo cartão exatamente uma escolha muda o duelo e nada na tela dizia qual (cara ou coroa;
+    55% de QUASE! ao acaso). Agora a Mara fala no rádio dentro do cartão e marca a escolha que
+    indica ("INDICAÇÃO DA MARA"); MomentosCorrida.dica aponta a certa com a chance
+    `momentos.dica_acerto` (1.0 por enquanto: o rádio sempre acerta e o jogador decide se ouve;
+    valor menor a definir no playtest). Ouviu e deu certo: "OUVIU O RÁDIO"; ignorou: QUASE! com
+    "MARA AVISOU: ...".

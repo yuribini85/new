@@ -100,6 +100,24 @@ static func avaliar(base: Dictionary, m: Dictionary, ordens: Dictionary, refeita
 	return r
 
 
+## A escolha que o rádio da Mara aponta (revisão 2 da decisão 117): a que
+## muda o duelo com a chance `dica_acerto`, senão a outra. Sorteio fixo pela
+## semente da corrida e o instante (refazer a tela não muda a dica).
+static func dica(avaliacao: Dictionary, p: Dictionary, semente: int, t: float) -> String:
+	var certa := ""
+	var outra := ""
+	for id in avaliacao:
+		if avaliacao[id]["vence"] and certa == "":
+			certa = id
+		else:
+			outra = id
+	if certa == "":
+		return outra
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash([semente, snappedf(t, 0.5)])
+	return certa if outra == "" or rng.randf() < float(p.get("dica_acerto", 1.0)) else outra
+
+
 ## Alguma das escolhas muda o duelo (só aí o momento aparece).
 static func importa(avaliacao: Dictionary) -> bool:
 	for id in avaliacao:

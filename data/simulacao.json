@@ -22,6 +22,8 @@
 		"intervalo_s": 20.0,
 		"max_por_corrida": 4,
 		"janela_s": 4.0,
+		"_nota_dica": "Rádio da Mara no cartão (decisão 117, revisão 2): chance de ela apontar a escolha que muda o duelo. 1.0 = o rádio sempre acerta (o jogador decide se ouve); valor menor a definir no playtest.",
+		"dica_acerto": 1.0,
 		"opcoes": {
 			"atacar": {"tipo": "ataque", "atraso_s": 1.0, "dura_s": 8.0, "ritmo": 1.005, "agressividade": 1.0},
 			"esperar": {"tipo": "ataque", "atraso_s": 9.0, "dura_s": 14.0, "ritmo": 1.002, "agressividade": 1.0},

@@ -1045,6 +1045,7 @@ func _procurar_momento(taxa: float) -> void:
 			_descartar_proximo()
 			return
 		_proximo["avaliacao"] = av
+		_proximo["dica"] = MomentosCorrida.dica(av, p, int(jogador.fila.get("semente", 0)), float(_proximo["t"]))
 	if _cartao.aberto() or agora < float(_proximo["t"]):
 		return
 	if agora > float(_proximo["t"]) + 1.0 or taxa <= 0.0 or dialogo_aberto.call():
@@ -1054,8 +1055,14 @@ func _procurar_momento(taxa: float) -> void:
 	_t_momento = float(_proximo["t"])
 	var m: Dictionary = _proximo["m"]
 	_cartao.abrir(m, MomentosCorrida.escolhas(m["tipo"], p), String(_nomes_curtos.get(m["rival"], "O rival")),
-			float(p["janela_s"]))
+			float(p["janela_s"]), _proximo["dica"], _nome_radio(), int(float(_proximo["t"]) * 2.0))
 	_sons.largada(false)  # bipe: o cartão pede atenção
+
+
+## Quem fala no rádio dos momentos (data/personagens.json, "mara"): o primeiro nome.
+func _nome_radio() -> String:
+	var pers: Dictionary = dados.item("personagens", "mara") if dados.existe("personagens", "mara") else {}
+	return String(pers.get("nome", "Mara")).get_slice(" ", 0)
 
 
 func _descartar_proximo() -> void:
@@ -1075,7 +1082,8 @@ func _ordenar(id: String) -> void:
 		if o != id and av[o]["vence"]:
 			outra = o
 	_em_curso = {"id": id, "m": _proximo["m"], "ordem": _proximo["ordens"][id], "vence": av[id]["vence"],
-			"t": float(av[id]["t"]), "como": String(av[id]["como"]), "outra": outra, "mostrado": false}
+			"t": float(av[id]["t"]), "como": String(av[id]["como"]), "outra": outra, "mostrado": false,
+			"ouviu": id == String(_proximo.get("dica", ""))}
 	_proximo = {}
 	jogador.fila_ctrl.ordenar(_em_curso["ordem"])
 	var nome := String(_nomes_curtos.get(_em_curso["m"]["rival"], "o rival"))
@@ -1109,10 +1117,11 @@ func _acompanhar_ordem(delta: float) -> void:
 	if _em_curso["vence"] and not _em_curso["mostrado"] and t >= float(_em_curso["t"]):
 		_em_curso["mostrado"] = true
 		_painel_hud.limpar_evento()
+		var quem := "OUVIU O RÁDIO" if _em_curso["ouviu"] else "JOGADA SUA"
 		if _em_curso["como"] == "passou":
-			_painel_hud.evento("JOGADA SUA · PASSOU %s" % nome, "ULTRAPASSOU!", COR_DESTAQUE, 8, 2.6, true, true)
+			_painel_hud.evento("%s · PASSOU %s" % [quem, nome], "ULTRAPASSOU!", COR_DESTAQUE, 8, 2.6, true, true)
 		else:
-			_painel_hud.evento("JOGADA SUA · %s FICOU PARA TRÁS" % nome, "SEGUROU!", COR_DESTAQUE, 8, 2.6, true, true)
+			_painel_hud.evento("%s · %s FICOU PARA TRÁS" % [quem, nome], "SEGUROU!", COR_DESTAQUE, 8, 2.6, true, true)
 		_clarear(Color(1.0, 0.86, 0.45), 0.42)
 		_visual3d.comemorar(Color(1.0, 0.8, 0.3))
 		_sons.ultrapassagem(true)
@@ -1120,7 +1129,11 @@ func _acompanhar_ordem(delta: float) -> void:
 	if t > float(o["ate"]) + MomentosCorrida.CONFERE_S and (not _em_curso["vence"] or _em_curso["mostrado"]):
 		if not _em_curso["vence"]:
 			var outra: String = _em_curso["outra"]
-			var linha := "DESTA VEZ, %s ERA A JOGADA" % CartaoMomento.ROTULOS[outra][0] if outra != "" else "%s RESISTIU" % nome
+			var linha := "%s RESISTIU" % nome
+			if outra != "" and not _em_curso["ouviu"]:
+				linha = "%s AVISOU: %s" % [_nome_radio().to_upper(), CartaoMomento.ROTULOS[outra][0]]
+			elif outra != "":
+				linha = "NEM %s ACERTOU DESTA VEZ" % ("A " + _nome_radio().to_upper())
 			_painel_hud.evento(linha, "QUASE!", Color.WHITE, 6, 2.4, true)
 		_em_curso = {}
 

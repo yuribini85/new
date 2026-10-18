@@ -284,3 +284,13 @@ func test_momento_avaliar_duelo() -> void:
 	verificar(MomentosCorrida.importa(av), "o momento importa")
 	verificar(not MomentosCorrida.importa(MomentosCorrida.avaliar(base, m, ordens, {"atacar": base, "esperar": base})),
 			"sem mudança, o momento não aparece")
+
+
+## Rádio da Mara: com dica_acerto 1 aponta sempre a escolha que vence; com 0,
+## a outra; o sorteio é fixo pela semente e pelo instante.
+func test_momento_dica_do_radio() -> void:
+	var av := {"atacar": {"vence": false}, "esperar": {"vence": true}}
+	igual(MomentosCorrida.dica(av, {"dica_acerto": 1.0}, 7, 30.0), "esperar", "acerta sempre")
+	igual(MomentosCorrida.dica(av, {"dica_acerto": 0.0}, 7, 30.0), "atacar", "erra sempre")
+	var meio := {"dica_acerto": 0.5}
+	igual(MomentosCorrida.dica(av, meio, 7, 30.0), MomentosCorrida.dica(av, meio, 7, 30.0), "mesmo sorteio")
