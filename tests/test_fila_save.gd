@@ -441,3 +441,37 @@ func test_ordem_refaz_a_corrida_e_fica_na_fila() -> void:
 			< float(antes["resultado"]["carros"]["jogador"]["tempo_total"]), "com a ordem, o jogador anda mais")
 	j.free()
 	d.free()
+
+
+## Momento previsto (Fila.prever): a corrida refeita com cada escolha sai aos
+## poucos; escolhida, vale na hora e é a mesma que a fila faria do zero.
+func test_ordem_prevista_vale_na_hora() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "iniciar")
+	var antes := f.corrida_atual(0.0)
+	var ordens := {
+		"atacar": {"escolha": "atacar", "de": 5.0, "ate": 40.0, "ritmo": 1.05, "agressividade": 1.0},
+		"esperar": {"escolha": "esperar", "de": 20.0, "ate": 40.0, "ritmo": 1.02, "agressividade": 1.0},
+	}
+	f.prever(ordens)
+	igual(f.previsao("atacar"), {}, "ainda sendo resolvida")
+	for i in 1000:
+		f.avancar_preparo(1.0)
+		if not f.previsao("atacar").is_empty() and not f.previsao("esperar").is_empty():
+			break
+	verificar(not f.previsao("atacar").is_empty() and not f.previsao("esperar").is_empty(), "as duas previstas")
+	var prevista := f.previsao("atacar")
+	var versao := f.versao
+	f.ordenar(ordens["atacar"])
+	verificar(f.versao > versao, "trocou na hora, sem refazer")
+	verificar(f.pronta(), "nada pendente")
+	igual(f.corrida_atual(1.0)["resultado"], prevista, "a corrida mostrada é a prevista")
+	verificar(f.previsao("esperar").is_empty(), "previsões descartadas")
+	var g := _fila(d, j)  # do zero, com a mesma ordem gravada
+	igual(g.corrida_atual(1.0)["resultado"]["carros"], prevista["carros"], "igual à refeita do zero")
+	verificar(prevista != antes["resultado"], "a ordem mudou a corrida")
+	j.free()
+	d.free()

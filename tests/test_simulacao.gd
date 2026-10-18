@@ -262,3 +262,25 @@ func test_ordem_so_vale_depois_de_comecar() -> void:
 	verificar(depois_muda, "depois dela, o carro anda diferente")
 	verificar(float(com["carros"]["b"]["tempo_total"]) < float(sem["carros"]["b"]["tempo_total"]), "mais ritmo, menos tempo")
 	d.free()
+
+
+## Momentos de decisão: a escolha "vence" quando muda o duelo no fim da ordem,
+## e o instante mostrado é o da ultrapassagem (ataque).
+func test_momento_avaliar_duelo() -> void:
+	var base := {"duracao": 60.0, "amostras": [
+		{"t": 0.0, "s": {"jogador": 0.0, "r": 10.0}},
+		{"t": 60.0, "s": {"jogador": 600.0, "r": 610.0}}]}
+	var passa := {"duracao": 60.0, "amostras": [
+		{"t": 0.0, "s": {"jogador": 0.0, "r": 10.0}},
+		{"t": 10.0, "s": {"jogador": 100.0, "r": 110.0}},
+		{"t": 20.0, "s": {"jogador": 220.0, "r": 210.0}},
+		{"t": 60.0, "s": {"jogador": 620.0, "r": 610.0}}]}
+	var m := {"tipo": MomentosCorrida.ATAQUE, "rival": "r", "distancia": 10.0}
+	var ordens := {"atacar": {"de": 10.0, "ate": 20.0}, "esperar": {"de": 30.0, "ate": 40.0}}
+	var av := MomentosCorrida.avaliar(base, m, ordens, {"atacar": passa, "esperar": base})
+	verificar(av["atacar"]["vence"], "atacar passou")
+	verificar(not av["esperar"]["vence"], "esperar não mudou nada")
+	perto(float(av["atacar"]["t"]), 15.0, 0.1, "o instante da ultrapassagem")
+	verificar(MomentosCorrida.importa(av), "o momento importa")
+	verificar(not MomentosCorrida.importa(MomentosCorrida.avaliar(base, m, ordens, {"atacar": base, "esperar": base})),
+			"sem mudança, o momento não aparece")

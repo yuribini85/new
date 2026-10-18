@@ -53,6 +53,23 @@ var _resultado: Dictionary = {}
 var _versao_mostrada := -1
 var _momentos := 0
 var _t_momento := -INF
+## O próximo momento, achado ANTECEDENCIA_S antes enquanto a fila refaz a
+## corrida com cada escolha (Fila.prever); só aparece se alguma muda o duelo
+## (MomentosCorrida.avaliar). {t, m, ordens, avaliacao?} ou {}.
+var _proximo := {}
+var _varrido := 0.0  # até onde a corrida mostrada já foi procurada (s de corrida)
+## A escolha feita, em curso: {id, m, ordem, vence, t, outra, mostrado} ou {}.
+var _em_curso := {}
+## Técnicos: antecedência (deixa a fila refazer a corrida duas vezes aos poucos
+## em aparelho fraco), quanto de corrida procurar por quadro e o salto depois
+## de um momento descartado.
+const ANTECEDENCIA_S := 10.0
+const VARRE_S := 2.0
+const PASSO_S := 3.0
+## Clarão da tela no toque e na comemoração (só visual).
+var _clarao: ColorRect
+var _t_clarao := 0.0
+const CLARAO_S := 0.45
 ## Segundos de corrida até a dica da câmera.
 const DICA_CAMERA_S := 6.0
 var _dica_camera_pedida := false
@@ -181,6 +198,12 @@ func _init(d: Node, j: Node) -> void:
 	_cartao.offset_bottom = -190
 	_cartao.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	_cartao.escolhido.connect(_ordenar)
+	_cartao.expirou.connect(_descartar_proximo)
+	_clarao = ColorRect.new()
+	_clarao.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_clarao.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_clarao.color = Color(1, 1, 1, 0)
+	area.add_child(_clarao)
 	area.add_child(_cartao)
 	# Nome da prova e da pista no pé da corrida, logo acima das câmeras.
 	_nome_prova = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
@@ -458,6 +481,7 @@ func _process(delta: float) -> void:
 			0.0, _visual.duracao())
 	_recarregar_ordem(f, agora)
 	_procurar_momento(taxa)
+	_acompanhar_ordem(delta)
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
@@ -571,6 +595,9 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_versao_mostrada = jogador.fila_ctrl.versao
 	_momentos = 0
 	_t_momento = -INF
+	_varrido = 0.0
+	_em_curso = {}
+	_descartar_proximo()
 	_cartao.fechar()
 	_segurar = 0.0
 	_painel_hud.limpar_evento()
@@ -974,30 +1001,136 @@ func _recarregar_ordem(f: Dictionary, agora: float) -> void:
 	_versao_mostrada = jogador.fila_ctrl.versao
 
 
-## Com o jogador colado num rival, abre o cartão do momento (no máximo
-## max_por_corrida, com intervalo_s entre eles; nunca com conversa aberta, na
-## largada, na chegada ou com o relógio parado).
+## Momentos de decisão (decisão 117). Procura ANTECEDENCIA_S à frente no
+## resultado mostrado; achado, a fila refaz a corrida com cada escolha e o
+## cartão só abre, no instante do momento, se alguma delas muda o duelo (sem
+## isso o toque não mudava nada na tela). No máximo max_por_corrida, com
+## intervalo_s entre eles; nunca com conversa aberta, na chegada ou parado.
 func _procurar_momento(taxa: float) -> void:
-	if _cartao.aberto() or _chegou or taxa <= 0.0 or dialogo_aberto.call() or _resultado.is_empty():
-		return
 	var p: Dictionary = dados.simulacao().get("momentos", {})
-	if p.is_empty() or _momentos >= int(p["max_por_corrida"]) or _visual.tempo - _t_momento < float(p["intervalo_s"]):
+	if p.is_empty() or _resultado.is_empty() or _chegou:
 		return
-	var m := MomentosCorrida.detectar(_resultado, _visual.tempo, p)
-	if m.is_empty():
+	var agora := _visual.tempo
+	if _proximo.is_empty():
+		if _momentos >= int(p["max_por_corrida"]) or _cartao.aberto() or not _em_curso.is_empty():
+			return
+		var de := maxf(maxf(_varrido, agora + 1.0), _t_momento + float(p["intervalo_s"]))
+		var ate := minf(agora + ANTECEDENCIA_S, float(_resultado["duracao"]))
+		var t := de
+		while t < ate and t < de + VARRE_S:
+			var m := MomentosCorrida.detectar(_resultado, t, p)
+			if not m.is_empty():
+				var ordens := {}
+				for e in MomentosCorrida.escolhas(m["tipo"], p):
+					ordens[e[0]] = MomentosCorrida.ordem(e[0], t, p)
+				jogador.fila_ctrl.prever(ordens)
+				_proximo = {"t": t, "m": m, "ordens": ordens}
+				_varrido = t + PASSO_S
+				return
+			t += 0.5
+		_varrido = maxf(_varrido, t)
+		return
+	if not _proximo.has("avaliacao"):
+		var refeitas := {}
+		for id in _proximo["ordens"]:
+			var r: Dictionary = jogador.fila_ctrl.previsao(id)
+			if not r.is_empty():
+				refeitas[id] = r
+		if refeitas.size() < _proximo["ordens"].size():
+			if agora > float(_proximo["t"]):  # não deu tempo de prever
+				_descartar_proximo()
+			return
+		var av := MomentosCorrida.avaliar(_resultado, _proximo["m"], _proximo["ordens"], refeitas)
+		if not MomentosCorrida.importa(av):
+			_descartar_proximo()
+			return
+		_proximo["avaliacao"] = av
+	if _cartao.aberto() or agora < float(_proximo["t"]):
+		return
+	if agora > float(_proximo["t"]) + 1.0 or taxa <= 0.0 or dialogo_aberto.call():
+		_descartar_proximo()  # passou o instante (pausa, conversa)
 		return
 	_momentos += 1
-	_t_momento = _visual.tempo
+	_t_momento = float(_proximo["t"])
+	var m: Dictionary = _proximo["m"]
 	_cartao.abrir(m, MomentosCorrida.escolhas(m["tipo"], p), String(_nomes_curtos.get(m["rival"], "O rival")),
 			float(p["janela_s"]))
 	_sons.largada(false)  # bipe: o cartão pede atenção
 
 
+func _descartar_proximo() -> void:
+	_proximo = {}
+	jogador.fila_ctrl.cancelar_previsoes()
+
+
+## A escolha vale na hora (a corrida já foi refeita com ela): toque com peso
+## (clarão, câmera no duelo, rastro na cor de destaque) e, quando ela muda o
+## duelo, a comemoração no instante da ultrapassagem.
 func _ordenar(id: String) -> void:
-	var p: Dictionary = dados.simulacao()["momentos"]
-	jogador.fila_ctrl.ordenar(MomentosCorrida.ordem(id, _visual.tempo, p))
-	var rot: Array = CartaoMomento.ROTULOS.get(id, [id.to_upper(), ""])
-	_painel_hud.evento(rot[0], "", COR_DESTAQUE, 3)
+	if _proximo.is_empty() or not _proximo.has("avaliacao") or not _proximo["ordens"].has(id):
+		return
+	var av: Dictionary = _proximo["avaliacao"]
+	var outra := ""
+	for o in av:
+		if o != id and av[o]["vence"]:
+			outra = o
+	_em_curso = {"id": id, "m": _proximo["m"], "ordem": _proximo["ordens"][id], "vence": av[id]["vence"],
+			"t": float(av[id]["t"]), "como": String(av[id]["como"]), "outra": outra, "mostrado": false}
+	_proximo = {}
+	jogador.fila_ctrl.ordenar(_em_curso["ordem"])
+	var nome := String(_nomes_curtos.get(_em_curso["m"]["rival"], "o rival"))
+	var acao: Array = CartaoMomento.ACAO.get(id, [id.to_upper(), ""])
+	_painel_hud.limpar_evento()
+	_painel_hud.evento((acao[1] % nome if "%s" in acao[1] else acao[1]).to_upper(), acao[0], COR_DESTAQUE, 7, 1.6, true)
+	_clarear(COR_DESTAQUE, 0.28)
+	_visual3d.acionar()
+	Sons.tocar_ui(self, "passagem", -4.0, 1.15)
+
+
+## A ordem em curso: rastro e câmera no duelo enquanto ela vale; a comemoração
+## quando o jogador passa (ataque) ou o rival desiste (defesa); no fim, se não
+## deu, a jogada que daria.
+func _acompanhar_ordem(delta: float) -> void:
+	_t_clarao = maxf(_t_clarao - delta, 0.0)
+	_clarao.color.a = float(_clarao.get_meta("forca", 0.0)) * pow(_t_clarao / CLARAO_S, 2.0)
+	if _em_curso.is_empty():
+		_visual3d.impulso = move_toward(_visual3d.impulso, 0.0, delta * 2.0)
+		return
+	var o: Dictionary = _em_curso["ordem"]
+	var t := _visual.tempo
+	# Rastro e lanternas acesos enquanto a ordem vale (esperar a reta: depois da espera).
+	var valendo := t >= float(o["de"]) - 0.5 and t <= float(o["ate"])
+	_visual3d.impulso = move_toward(_visual3d.impulso, 1.0 if valendo else 0.0, delta * 2.0)
+	var rival: String = _em_curso["m"]["rival"]
+	if _camera_modo == "auto" and not _visual3d.visao_geral:
+		_visual3d.foco = "jogador"
+		_visual3d.enquadrar_com = rival
+	var nome := String(_nomes_curtos.get(rival, "o rival")).to_upper()
+	if _em_curso["vence"] and not _em_curso["mostrado"] and t >= float(_em_curso["t"]):
+		_em_curso["mostrado"] = true
+		_painel_hud.limpar_evento()
+		if _em_curso["como"] == "passou":
+			_painel_hud.evento("JOGADA SUA · PASSOU %s" % nome, "ULTRAPASSOU!", COR_DESTAQUE, 8, 2.6, true, true)
+		else:
+			_painel_hud.evento("JOGADA SUA · %s FICOU PARA TRÁS" % nome, "SEGUROU!", COR_DESTAQUE, 8, 2.6, true, true)
+		_clarear(Color(1.0, 0.86, 0.45), 0.42)
+		_visual3d.comemorar(Color(1.0, 0.8, 0.3))
+		_sons.ultrapassagem(true)
+		Sons.tocar_ui(self, "comemoracao", -12.0)
+	if t > float(o["ate"]) + MomentosCorrida.CONFERE_S and (not _em_curso["vence"] or _em_curso["mostrado"]):
+		if not _em_curso["vence"]:
+			var outra: String = _em_curso["outra"]
+			var linha := "DESTA VEZ, %s ERA A JOGADA" % CartaoMomento.ROTULOS[outra][0] if outra != "" else "%s RESISTIU" % nome
+			_painel_hud.evento(linha, "QUASE!", Color.WHITE, 6, 2.4, true)
+		_em_curso = {}
+
+
+func _clarear(cor: Color, forca: float) -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	_clarao.color = Color(cor, 0.0)
+	_clarao.set_meta("forca", forca)
+	_t_clarao = CLARAO_S
 
 
 ## Com a corrida já andando (DICA_CAMERA_S depois da largada), a história conta

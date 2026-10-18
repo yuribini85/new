@@ -36,6 +36,11 @@ var _pendente: Dictionary = {}
 var _cache_base := ""
 ## Sobe a cada resultado novo no cache (a tela recarrega as amostras).
 var versao := 0
+## Momento de decisão à frente (MomentosCorrida): a corrida refeita com cada
+## escolha, resolvida aos poucos depois da principal, para a tela saber antes se
+## a escolha muda o duelo e, escolhida, trocar o resultado na hora.
+## id -> {chave, ordem, preparo} ou {chave, ordem, resultado}.
+var _previsoes := {}
 
 
 func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
@@ -100,14 +105,73 @@ func pronta(com_amostras: bool = true) -> bool:
 
 ## Avança a resolução aos poucos da corrida em andamento por até `orcamento_ms`
 ## (a principal chama a cada quadro). true = nada pendente.
+## As previsões dos momentos (prever) usam o que sobrar do orçamento; o
+## retorno só fala da corrida em andamento.
 func avancar_preparo(orcamento_ms: float) -> bool:
 	if _pendente.is_empty():
+		_avancar_previsoes(orcamento_ms)
 		return true
+	var t0 := Time.get_ticks_usec()
 	var p: Dictionary = _pendente["preparo"]
 	if not p["andamento"].avancar(orcamento_ms):
 		return false
 	_concluir_pendente()
+	_avancar_previsoes(orcamento_ms - (Time.get_ticks_usec() - t0) / 1000.0)
 	return true
+
+
+## Começa a refazer a corrida em andamento com cada ordem (id -> ordem de
+## MomentosCorrida.ordem), no lugar das previsões anteriores.
+func prever(ordens: Dictionary) -> void:
+	_previsoes = {}
+	var f: Dictionary = jogador.fila
+	if f.is_empty():
+		return
+	for id in ordens:
+		var g := f.duplicate()
+		g["piloto"] = _com_ordem(f, ordens[id])
+		var k := _chave(g)
+		if k.is_empty():
+			continue
+		var p := carreira.iniciar_preparo(f["evento_id"], int(f["uid"]), int(f["semente"]), true,
+				k["carro"], k["comp"], k["piloto"])
+		if not p.has("erro"):
+			_previsoes[id] = {"chave": k["chave"], "ordem": ordens[id], "preparo": p}
+
+
+## O resultado da corrida refeita com a escolha `id`, ou {} (ainda sendo
+## resolvida, ou sem previsão).
+func previsao(id: String) -> Dictionary:
+	var pv: Dictionary = _previsoes.get(id, {})
+	return pv.get("resultado", {})
+
+
+func cancelar_previsoes() -> void:
+	_previsoes = {}
+
+
+func _avancar_previsoes(orcamento_ms: float) -> void:
+	for id in _previsoes:
+		if orcamento_ms <= 0.0:
+			return
+		var pv: Dictionary = _previsoes[id]
+		if pv.has("resultado"):
+			continue
+		var t0 := Time.get_ticks_usec()
+		if pv["preparo"]["andamento"].avancar(orcamento_ms):
+			var c := carreira.concluir_preparo(pv["preparo"])
+			c["com_amostras"] = true
+			pv.erase("preparo")
+			pv["resultado"] = c["resultado"]
+			pv["corrida"] = c
+		orcamento_ms -= (Time.get_ticks_usec() - t0) / 1000.0
+
+
+func _com_ordem(f: Dictionary, ordem: Dictionary) -> Dictionary:
+	var piloto: Dictionary = f["piloto"].duplicate(true) if f.get("piloto") is Dictionary and not f["piloto"].is_empty() \
+			else EquipeJogador.piloto_do_jogador(carreira.dados, jogador)
+	piloto["ordens"] = Array(piloto.get("ordens", [])) + [ordem]
+	return piloto
 
 
 func _concluir_pendente() -> Dictionary:
@@ -132,10 +196,16 @@ func ordenar(ordem: Dictionary) -> void:
 	var f: Dictionary = jogador.fila
 	if f.is_empty():
 		return
-	var piloto: Dictionary = f["piloto"].duplicate(true) if f.get("piloto") is Dictionary and not f["piloto"].is_empty() \
-			else EquipeJogador.piloto_do_jogador(carreira.dados, jogador)
-	piloto["ordens"] = Array(piloto.get("ordens", [])) + [ordem]
-	f["piloto"] = piloto
+	f["piloto"] = _com_ordem(f, ordem)
+	# Já prevista (o momento foi resolvido antes de aparecer): vale na hora.
+	var k := _chave(f)
+	for id in _previsoes:
+		var pv: Dictionary = _previsoes[id]
+		if pv.has("corrida") and not k.is_empty() and pv["chave"] == k["chave"]:
+			_pendente = {}
+			_guardar(pv["chave"], pv["corrida"])
+			break
+	_previsoes = {}
 	pronta()
 
 

@@ -202,6 +202,16 @@ var _destaque_jogador := 0.0  # segundos restantes do anel temporário do jogado
 const DESTAQUE_S := 1.6
 var _anel_alvo: MeshInstance3D
 var _anel_jogador: MeshInstance3D
+## Momento de decisão em curso (0..1, dado pela tela): o rastro do seu carro na
+## cor de destaque, as lanternas piscando e o efeito de velocidade.
+var impulso := 0.0
+## Comemoração (comemorar): onda no chão que abre em volta do seu carro.
+var _onda: MeshInstance3D
+var _t_onda := -1.0
+const ONDA_S := 0.9
+## Soco da câmera (acionar, comemorar): fecha um pouco e volta (0..1).
+var _soco := 0.0
+const SOCO_S := 0.5
 ## Traço do seu carro até o alvo, quando ele está perto (disputa).
 var _traco: MeshInstance3D
 const DISPUTA_M := 12.0
@@ -512,6 +522,16 @@ func atualizar(delta: float) -> void:
 			_anel_jogador.position = _carros["jogador"].position + Vector3(0, 0.05, 0)
 			_anel_jogador.scale = Vector3.ONE * lerpf(0.85, 1.25, smoothstep(0.0, 1.0, u))
 			(_anel_jogador.material_override as StandardMaterial3D).albedo_color.a = (1.0 - smoothstep(0.35, 1.0, u)) * 0.9
+		if _t_onda >= 0.0:
+			_t_onda += delta
+			var uo := _t_onda / ONDA_S
+			_onda.visible = uo < 1.0 and _carros.has("jogador") and not visao_geral
+			if _onda.visible:
+				_onda.position = _carros["jogador"].position + Vector3(0, 0.08, 0)
+				_onda.scale = Vector3.ONE * lerpf(0.5, 3.4, 1.0 - pow(1.0 - uo, 3.0))
+				(_onda.material_override as StandardMaterial3D).albedo_color.a = pow(1.0 - uo, 1.5)
+			else:
+				_t_onda = -1.0
 		_traco.visible = disputa
 		if disputa:
 			var a: Vector3 = _carros["jogador"].position
@@ -560,6 +580,9 @@ func atualizar(delta: float) -> void:
 	_camera.size *= 1.0 + 0.22 * clampf(v_seg / V_FORTE, 0.0, 1.0)
 	# Chegada: fecha devagar no carro.
 	_camera.size *= lerpf(1.0, 0.76, smoothstep(0.0, 1.0, chegada))
+	# Soco do toque e da comemoração: fecha e volta.
+	_soco = maxf(_soco - delta / SOCO_S, 0.0)
+	_camera.size *= 1.0 - SOCO_ZOOM * sin(_soco * PI) * _soco
 	var novo: Vector3 = _carros[seguido].position
 	if par != "" and modo != "velocidade":
 		novo = (novo + _carros[par].position) * 0.5
@@ -603,6 +626,7 @@ func atualizar(delta: float) -> void:
 	var frac := v_seg / maxf(float(_v_max.get(seguido, 0.0)), RETA_V_MIN)
 	var reta := 1.0 - smoothstep(0.0012, 0.0035, absf(_tracado.curvatura(float(s[seguido]))))
 	efeito_velocidade = maxf(efeito_velocidade, RETA_EFEITO * smoothstep(0.84, 0.97, frac) * reta)
+	efeito_velocidade = maxf(efeito_velocidade, IMPULSO_EFEITO * impulso) if seguido == "jogador" else efeito_velocidade
 	# Efeitos leves (o padrão no navegador): sem o borrão, que lê a imagem 7
 	# vezes por pixel da tela inteira; a vinheta continua.
 	(material as ShaderMaterial).set_shader_parameter("intensidade",
@@ -658,6 +682,29 @@ func _camera_grid(s: Dictionary, ordem: Array, delta: float) -> void:
 func destacar_jogador() -> void:
 	if not Preferencias.reduzir_animacoes:
 		_destaque_jogador = DESTAQUE_S
+
+
+## Momento de decisão: a escolha foi feita (soco da câmera e o anel no seu carro).
+const IMPULSO_EFEITO := 0.6
+const SOCO_ZOOM := 0.16
+func acionar() -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	_soco = 1.0
+	_destaque_jogador = DESTAQUE_S
+
+
+## A escolha deu certo: onda no chão, chuva de faíscas na cor, câmera treme.
+func comemorar(cor: Color) -> void:
+	if Preferencias.reduzir_animacoes or not _carros.has("jogador"):
+		return
+	_t_onda = 0.0
+	(_onda.material_override as StandardMaterial3D).albedo_color = Color(cor, 1.0)
+	_soco = 1.0
+	_tremor = 0.35
+	var p: Vector3 = _carros["jogador"].position + Vector3(0, 0.6, 0)
+	_faiscas(p, cor, 60, 1.5)
+	_faiscas(p + Vector3(0, 0.6, 0), Color(1, 1, 1), 24, 1.1)
 
 
 func _camera_imediata() -> void:
@@ -966,6 +1013,8 @@ func _atualizar_esteira(id: String) -> void:
 		# Junto ao carro entra suave; some com a idade.
 		var alfa := ESTEIRA_ALFA * forca * smoothstep(0.0, 0.2, idade) * (1.0 - smoothstep(0.25, 1.0, idade))
 		var cor := Color(0.87, 0.86, 0.84, alfa)
+		if id == "jogador" and impulso > 0.0:
+			cor = cor.lerp(Color(Aba.COR_DESTAQUE, minf(alfa * 2.6, 0.75)), impulso)
 		var y := a + Vector3(0, idade * 0.2, 0)
 		im.surface_set_color(cor)
 		im.surface_set_uv(Vector2(0.0, idade))
@@ -1388,30 +1437,35 @@ func _efeitos_pista(id: String, a: float, v: float, delta: float) -> void:
 	var aceso := float(_freio[id]) > 0.5
 	var freando := -a > (FREIO_OFF if aceso else FREIO_ON) and v > 3.0 and chegada < 1.0
 	_freio[id] = move_toward(float(_freio[id]), 1.0 if freando else 0.0, delta / (0.06 if freando else 0.25))
-	(_luzes[id] as StandardMaterial3D).albedo_color.a = float(_freio[id]) * 0.95
+	var luz := float(_freio[id]) * 0.95
+	if id == "jogador" and impulso > 0.0:
+		luz = maxf(luz, impulso * (0.65 + 0.35 * sin(_tempo * 30.0)))
+	(_luzes[id] as StandardMaterial3D).albedo_color.a = luz
 	if _esteira.has(id):
 		var forte := (-a > FUMACA_FREADA and v > 8.0) or (a > FUMACA_ARRANCADA and v < FUMACA_V_MAX and v > 0.5)
 		_fumaca[id] = forte
 		var alvo := 0.0
 		if v > 3.0 and chegada < 1.0 and not Preferencias.reduzir_animacoes:
 			alvo = 1.0 if forte else ESTEIRA_BASE
+			if id == "jogador":
+				alvo = maxf(alvo, impulso)
 		# Sobe e desce devagar: sem degraus de densidade ao longo da fita.
 		_intensidade[id] = move_toward(float(_intensidade.get(id, 0.0)), alvo, delta * (1.8 if alvo > float(_intensidade.get(id, 0.0)) else 0.9))
 		_atualizar_esteira(id)
 
 
-func _faiscas(onde: Vector3) -> void:
+func _faiscas(onde: Vector3, cor := Color(1.0, 0.35, 0.05), quantas := 28, forca := 1.0) -> void:
 	if Preferencias.efeitos_leves:
 		return
 	var f := CPUParticles3D.new()
 	f.one_shot = true
-	f.amount = 28
+	f.amount = quantas
 	f.lifetime = 0.5
 	f.explosiveness = 1.0
 	f.direction = Vector3.UP
 	f.spread = 75.0
-	f.initial_velocity_min = 5.0
-	f.initial_velocity_max = 13.0
+	f.initial_velocity_min = 5.0 * forca
+	f.initial_velocity_max = 13.0 * forca
 	f.gravity = Vector3(0, -22, 0)
 	f.scale_amount_min = 0.6
 	f.scale_amount_max = 1.2
@@ -1426,7 +1480,7 @@ func _faiscas(onde: Vector3) -> void:
 	f.mesh = q
 	var cores := Gradient.new()
 	cores.set_color(0, Color(1.0, 0.95, 0.7))
-	cores.set_color(1, Color(1.0, 0.35, 0.05, 0.0))
+	cores.set_color(1, Color(cor, 0.0))
 	f.color_ramp = cores
 	f.position = onde
 	_cena.add_child(f)
@@ -1575,6 +1629,21 @@ func _marcadores() -> void:
 	_anel_jogador.material_override = mat_j
 	_anel_jogador.visible = false
 	_cena.add_child(_anel_jogador)
+	_onda = MeshInstance3D.new()
+	var tor_o := TorusMesh.new()
+	tor_o.inner_radius = 2.6
+	tor_o.outer_radius = 3.0
+	tor_o.rings = 32
+	tor_o.ring_segments = 6
+	_onda.mesh = tor_o
+	var mat_o := StandardMaterial3D.new()
+	mat_o.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat_o.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_o.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	_onda.material_override = mat_o
+	_onda.visible = false
+	_t_onda = -1.0
+	_cena.add_child(_onda)
 	_traco = MeshInstance3D.new()
 	var bm := BoxMesh.new()
 	bm.size = Vector3(1.0, 0.04, 0.35)

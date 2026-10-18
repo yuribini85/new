@@ -1038,3 +1038,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     `max_por_corrida` momentos, com `intervalo_s` entre eles. Peso calibrado por
     tools/calibrar_momentos.gd para uma corrida bem decidida valer mais ou menos uma peça
     (números medidos na nota de "momentos").
+    **Revisão (2026-10-18, pedido do usuário: "recompensa visual forte quando o jogador
+    interage").** Medido antes: em 93% dos toques a posição final era a mesma de não tocar e em
+    95% nada mudava na tela em 10 s. Agora o momento é achado `ANTECEDENCIA_S` antes, a fila
+    refaz a corrida com cada escolha em segundo plano (Fila.prever) e o cartão só abre se alguma
+    escolha muda o duelo com o rival no fim da ordem (MomentosCorrida.avaliar; cerca de 2 por
+    corrida disputada); escolhida, a corrida prevista vale na hora. No toque: clarão, câmera no
+    duelo com soco de zoom, rastro e lanternas do carro na cor de destaque, e a palavra grande no
+    HUD. Quando a escolha muda o duelo, no instante certo: ULTRAPASSOU! ou SEGUROU! com onda no
+    chão, faíscas douradas e tremor; quando não, QUASE! dizendo qual escolha era a jogada.
+    Nenhum número de balanceamento mudou; o ganho total precisa ser medido de novo com a
+    ferramenta, porque agora só aparecem momentos que importam.

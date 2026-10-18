@@ -490,16 +490,25 @@ func _desenhar_evento() -> void:
 	draw_set_transform(Vector2(size.x * 0.5, cy), 0.0, Vector2(esc, esc))
 	var o := Vector2(-size.x * 0.5, -cy)
 	if grande:
-		# Chegada: a linha pequena em cima, a posição enorme embaixo.
-		_texto(String(_evento["titulo"]), o + Vector2(0, cy - 44), tam_t, Color(COR, a), HORIZONTAL_ALIGNMENT_CENTER, size.x, ft)
-		_texto(String(_evento["sub"]), o + Vector2(0, cy + 52), tam_s, Color(cor, a), HORIZONTAL_ALIGNMENT_CENTER, size.x,
-				Tipografia.fonte_numero())
+		# Chegada: a linha pequena em cima, a posição enorme embaixo (as duas
+		# encolhem para caber na largura).
+		var fn := Tipografia.fonte_numero()
+		_texto(String(_evento["titulo"]), o + Vector2(0, cy - 44), _cabe(String(_evento["titulo"]), ft, tam_t), Color(COR, a),
+				HORIZONTAL_ALIGNMENT_CENTER, size.x, ft)
+		_texto(String(_evento["sub"]), o + Vector2(0, cy + 52), _cabe(String(_evento["sub"]), fn, tam_s), Color(cor, a),
+				HORIZONTAL_ALIGNMENT_CENTER, size.x, fn)
 		draw_set_transform(Vector2.ZERO)
 		return
 	_texto(String(_evento["titulo"]), o + Vector2(0, cy), tam_t + 6, Color(cor, a), HORIZONTAL_ALIGNMENT_CENTER, size.x, ft)
 	draw_set_transform(Vector2.ZERO)
 	if String(_evento["sub"]) != "":
 		_texto(String(_evento["sub"]), Vector2(0, cy + 36), tam_s, Color(COR, a * 0.85), HORIZONTAL_ALIGNMENT_CENTER, size.x, fs)
+
+
+## Tamanho de fonte até `tam` em que o texto cabe em 92% da largura.
+func _cabe(t: String, f: Font, tam: int) -> int:
+	var w := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+	return tam if w <= size.x * 0.92 or w <= 0.0 else maxi(int(tam * size.x * 0.92 / w), 12)
 
 
 func _has_point(p: Vector2) -> bool:
