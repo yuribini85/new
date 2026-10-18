@@ -107,6 +107,11 @@ static func montar(aba: Aba, v: VBoxContainer, jogador: Node, testes: Callable, 
 		campo.focus_exited.connect(salvar)
 
 		_secao(v, "HISTÓRIA")
+		if jogador.personagem == "dono" and not Tutorial.pulado(jogador):
+			# Decisão 119: o tutorial inteiro some com um toque; a história fica.
+			_linha_botao(v, "diario", "PULAR TUTORIAL", func():
+				aba.get_tree().call_group("principal", "pular_tutorial")
+				voltar.call())
 		_linha_botao(v, "diario", "DIÁRIO DE CONVERSAS", func():
 			aba.painel.emit("Diário", func(pv): Diario.montar(aba, pv, jogador),
 					[["Voltar", voltar]] if reabrir.is_valid() else []))

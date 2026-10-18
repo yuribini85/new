@@ -51,7 +51,7 @@ Mara[gesto]: Muito bem, {admin}. Sociedade fechada.
 Mara[firme]: Primeiro, o que falta numa equipe de corrida: um carro.
 
 # Ficha do carro: cada atributo em destaque; termina pedindo a peça (a demanda).
-= CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L
+= CW_P02 | ENCADEADA | personagem=dono; bloqueia=sim; flags=GARAGE_TUTORIAL_SEEN; lembrete=CW_P02L; tutorial=sim
 [OPEN_GARAGE_TAB]
 [HIGHLIGHT_POTENCIA]
 Mara: Potência. O que o motor entrega.
@@ -68,22 +68,22 @@ Mara: Veja o caixa antes de gastar o que não temos.
 Sistema: Toque na peça destacada.
 [HIGHLIGHT_DEMANDA]
 
-= CW_P02L | LEMBRETE | personagem=dono; proibe=TUNE_TUTORIAL_SEEN,FIRST_TUNE_DONE
+= CW_P02L | LEMBRETE | personagem=dono; proibe=TUNE_TUTORIAL_SEEN,FIRST_TUNE_DONE; tutorial=sim
 Mara: {demanda}. Toque ali.
 [HIGHLIGHT_DEMANDA]
 
-= CW_P03 | EVOLUCAO | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; lembrete=CW_P03L
+= CW_P03 | EVOLUCAO | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=FIRST_TUNE_DONE; flags=TUNE_TUTORIAL_SEEN; lembrete=CW_P03L; tutorial=sim
 [HIGHLIGHT_PECA_PEDIDA]
 Mara: Peça nova não faz milagre. Mas cada uma soma na pista.
 Mara: {demanda}. Cabe no caixa.
 Sistema: Compre {demanda}.
 [HIGHLIGHT_PECA_PEDIDA]
 
-= CW_P03L | LEMBRETE | personagem=dono; proibe=FIRST_TUNE_DONE
+= CW_P03L | LEMBRETE | personagem=dono; proibe=FIRST_TUNE_DONE; tutorial=sim
 Mara: O carro não se monta sozinho. {demanda}.
 [HIGHLIGHT_PECA_PEDIDA]
 
-= CW_P03B | DEMANDA_CONCLUIDA | personagem=dono; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE
+= CW_P03B | DEMANDA_CONCLUIDA | personagem=dono; proibe=FIRST_TUNE_DONE; flags=FIRST_TUNE_DONE; tutorial=sim
 Mara: Pronto: {peca}.
 Mara[firme]: Mais uma prova. Quero ver a diferença na pista.
 Sistema: Vá para Corridas.
@@ -99,17 +99,17 @@ Sistema: Licenças ficam em Carreira.
 
 # Decisão 69: o jogador administra; quem pilota é contratado. O primeiro
 # piloto (de corrida) é escolhido na tela de pilotos, logo depois do primeiro carro.
-= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; cenario=oficina_mara
+= CW_P03C | ABA:EQUIPE | personagem=dono; requer=FIRST_CAR; proibe=PILOT_HIRED; cenario=oficina_mara; tutorial=sim
 Mara[explica]: Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.
 Sistema: Toque em Contratar, no piloto de corrida.
 [HIGHLIGHT_PILOTO_CORRIDA]
 
-= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET
+= CW_P03D | PILOTO_CONTRATADO | personagem=dono; proibe=PILOT_HIRED; flags=PILOT_HIRED,PILOT_MET; tutorial=sim
 Mara[firme]: {piloto} está {g:contratado|contratada}. Agora, a primeira prova.
 Sistema: Vá para Corridas.
 [HIGHLIGHT_NAV_EVENTOS]
 
-= CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara
+= CW_P04 | ABA:EVENTOS | personagem=dono; requer=PILOT_HIRED; proibe=EVENT_MENU_TUTORIAL_SEEN; flags=EVENT_MENU_TUTORIAL_SEEN; lembrete=CW_P04L; cenario=oficina_mara; tutorial=sim
 Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.
 [HIGHLIGHT_COPA]
 Mara: Como estamos sem licenças, só podemos correr estas provas.
@@ -118,7 +118,7 @@ Mara: Essa barra compara o carro com o grid. Não garante nada. Evita entrar no 
 Sistema: Toque em Disputar.
 [HIGHLIGHT_DISPUTAR]
 
-= CW_P04L | LEMBRETE | personagem=dono; proibe=FIRST_RACE_BRIEFED
+= CW_P04L | LEMBRETE | personagem=dono; proibe=FIRST_RACE_BRIEFED; tutorial=sim
 Mara: A prova está ali. Toque em Disputar.
 [HIGHLIGHT_DISPUTAR]
 
@@ -136,7 +136,7 @@ Mara[pensativa]: Quando acabar, o resultado e o prêmio aparecem na tela.
 Sistema: Toda corrida iniciada termina mesmo com o jogo fechado.
 
 # Com a primeira corrida andando: a câmera é do jogador (pedido do usuário).
-= CW_P05C | CORRIDA_EM_CURSO | personagem=dono; proibe=CAMERA_TUTORIAL_SEEN; flags=CAMERA_TUTORIAL_SEEN
+= CW_P05C | CORRIDA_EM_CURSO | personagem=dono; proibe=CAMERA_TUTORIAL_SEEN; flags=CAMERA_TUTORIAL_SEEN; tutorial=sim
 [HIGHLIGHT_CAMERA_AUTO]
 Mara[explica]: A corrida é do {piloto}, mas a vista é sua. Aqui embaixo você troca a câmera: seu carro, o líder, a pista inteira.
 Sistema: Toque numa câmera para trocar. Em Automática, a corrida escolhe o melhor ângulo.
@@ -353,7 +353,7 @@ Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.
 Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui.
 Roxy: Ganha a dupla que tiver o último carro andando. A cada vitória, o campeonato seguinte ganha mais uma dupla: começa com duas e vai até vinte carros.
 Mara[alerta]: Pagam mais porque todo carro volta amassado.
-Roxy: Carro com a frente destruída não sai daqui. Por isso a arena pede três carros: um fica para as corridas.
+Roxy: Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede três carros: um fica para as corridas.
 [UNLOCK_ARENA_PILOTS]
 Sistema: Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina.
 
@@ -367,7 +367,7 @@ Dex: Só que pesa. Na corrida ele vai sentir.
 Dex: E se paga com peças. O que a gente desmonta e o que sobra da arena vira peça.
 Sistema: Blindagem: Oficina, ao lado da velocidade máxima.
 
-= CW_AR03 | BLINDAGEM | personagem=dono; requer=DEX_MET; proibe=ARMOR_TUTORIAL_SEEN; flags=ARMOR_TUTORIAL_SEEN
+= CW_AR03 | BLINDAGEM | personagem=dono; requer=DEX_MET; proibe=ARMOR_TUTORIAL_SEEN; flags=ARMOR_TUTORIAL_SEEN; tutorial=sim
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
 Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.

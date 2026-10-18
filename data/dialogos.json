@@ -166,7 +166,8 @@
   "bloqueia": true,
   "uma_vez": true,
   "personagem": "dono",
-  "lembrete": "CW_P02L"
+  "lembrete": "CW_P02L",
+  "tutorial": true
  },
  {
   "id": "CW_P02L",
@@ -188,7 +189,8 @@
   "flags": [],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_P03",
@@ -225,7 +227,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "lembrete": "CW_P03L"
+  "lembrete": "CW_P03L",
+  "tutorial": true
  },
  {
   "id": "CW_P03L",
@@ -246,7 +249,8 @@
   "flags": [],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_P03B",
@@ -278,7 +282,8 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_P06C",
@@ -346,7 +351,8 @@
   "bloqueia": false,
   "uma_vez": true,
   "personagem": "dono",
-  "cenario": "oficina_mara"
+  "cenario": "oficina_mara",
+  "tutorial": true
  },
  {
   "id": "CW_P03D",
@@ -375,7 +381,8 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_P04",
@@ -421,7 +428,8 @@
   "uma_vez": true,
   "personagem": "dono",
   "lembrete": "CW_P04L",
-  "cenario": "oficina_mara"
+  "cenario": "oficina_mara",
+  "tutorial": true
  },
  {
   "id": "CW_P04L",
@@ -442,7 +450,8 @@
   "flags": [],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_C01",
@@ -536,7 +545,8 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_P06",
@@ -1627,7 +1637,7 @@
    },
    {
     "quem": "organizadora",
-    "texto": "Carro com a frente destruída não sai daqui. Por isso a arena pede três carros: um fica para as corridas."
+    "texto": "Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede três carros: um fica para as corridas."
    },
    {
     "acao": "UNLOCK_ARENA_PILOTS"
@@ -1729,7 +1739,8 @@
   ],
   "bloqueia": false,
   "uma_vez": true,
-  "personagem": "dono"
+  "personagem": "dono",
+  "tutorial": true
  },
  {
   "id": "CW_AR04",

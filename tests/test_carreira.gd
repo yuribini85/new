@@ -461,3 +461,33 @@ func test_comentarios_se_revezam_e_marcos_vem_antes() -> void:
 	igual(h.cena_para("CORRIDA_FIM", {"posicao": 2}, false), {}, "sem os comentários, nada no fim comum")
 	j.free()
 	d.free()
+
+
+## Decisão 119: PULAR TUTORIAL tira o ensino (cenas tutorial, falas do sistema,
+## destaques) e mantém a história; as telas ficam liberadas.
+func test_pular_tutorial_tira_o_ensino_e_mantem_a_historia() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	if d.historia().is_empty():
+		d.free()
+		return
+	var j: Node = JogadorScript.new()
+	Prologo.iniciar(d, j)
+	var cenas := {}
+	for c in d.lista("dialogos"):
+		cenas[c["id"]] = c
+	verificar(Tutorial.ensina(cenas["CW_P02"]), "o tour da Oficina ensina")
+	verificar(not Tutorial.tem_fala(Tutorial.sem_ensino(cenas["CW_P02"])), "cena só de tutorial: nada a mostrar")
+	var c01b := Tutorial.sem_ensino(cenas["CW_C01B"])
+	verificar(Tutorial.tem_fala(c01b), "cena de história continua")
+	verificar(c01b["falas"].all(func(f): return String(f.get("quem", "")) != "sistema"), "sem a voz do tutorial")
+	verificar(c01b["falas"].all(func(f): return not Tutorial.acao_de_ensino(String(f.get("acao", "")))), "sem destaques")
+	verificar(c01b["falas"].any(func(f): return f.get("acao", "") == "UNLOCK_TEAM_TAB"), "o desbloqueio fica")
+	verificar(not Tutorial.ensina(cenas["CW_GR06"]), "cena do Grid não é tutorial")
+	verificar(not Tutorial.pulado(j), "começa com tutorial")
+	Tutorial.pular(j)
+	verificar(Tutorial.pulado(j), "pulado")
+	verificar(EquipeJogador.criada(j), "a equipe existe")
+	verificar(j.flags.has("ACELERAR_LIBERADO") and j.flags.has("LICENSE_SYSTEM_UNLOCKED"), "ACELERAR e licenças liberados")
+	j.free()
+	d.free()

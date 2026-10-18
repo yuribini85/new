@@ -1068,4 +1068,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     do treino de piloto (`treino.tempo_base_h`, hoje 1 h), o mesmo critério do piloto
     atropelado; conserto na hora = valor de revenda do carro (o que ele custava quando era
     perdido). Continua pedindo 3 carros (1 de corrida e 2 de arena).
-
+119. **Tutorial à parte da história e PULAR TUTORIAL** (2026-10-18, crítica dos testadores;
+    opção escolhida pelo usuário: "pula o ensino, fica a história"). O ensino é uma camada
+    própria (`Tutorial`): as cenas só de ensino (`tutorial=sim` em cenas.txt: tour da Oficina,
+    peça pedida, contratar, escolher a prova, lembretes, câmera, blindagem), as falas do sistema
+    (na tela com o rótulo TUTORIAL e a caixa em ciano, fora da paleta da história) e as ações que
+    destacam ou abrem telas. Nas cenas que ensinam aparecem, no alto à esquerda, o selo TUTORIAL
+    e o botão PULAR TUTORIAL (também nas Configurações). Um toque tira todo o ensino de uma vez:
+    a cena atual e as da fila perdem as linhas de ensino, as que só ensinam passam caladas
+    (valem as flags), e as telas que o tutorial apresentaria aparecem (Oficina, Lojas,
+    Corridas, Carreira, Equipe; ACELERAR e licenças). A história segue igual (Mara, Grid,
+    licenças, lojas, arena); a Arena continua abrindo com os 3 carros.

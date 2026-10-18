@@ -54,6 +54,7 @@ const ALTURA_BOTAO := 124
 func _ready() -> void:
 	dados = get_node("/root/Dados")
 	jogador = get_node("/root/Jogador")
+	add_to_group("principal")  # Configurações: PULAR TUTORIAL (pular_tutorial)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_simbolos()
 	Preferencias.carregar()
@@ -200,6 +201,7 @@ func _ready() -> void:
 		jogador.historia.cena.connect(_cena_pedida)
 		_dialogo.acao.connect(_acao_tutorial)
 		_dialogo.terminou.connect(_cena_terminou)
+		_dialogo.tutorial_pulado.connect(_tutorial_pulado)
 	if jogador.carro_ativo < 0 and not jogador.garagem.lista().is_empty():
 		jogador.carro_ativo = jogador.garagem.lista()[0].uid
 	Escalacao.migrar(jogador)
@@ -343,6 +345,9 @@ func apresentada(aba: int) -> bool:
 	if jogador.historia == null or jogador.personagem != "dono":
 		return true
 	aba = PAI.get(aba, aba)
+	# Tutorial pulado (Tutorial.pular): tudo à mostra; a Arena segue a regra dos 3 carros.
+	if Tutorial.pulado(jogador) and aba != ABA_ARENA:
+		return true
 	# As Lojas também com carro na garagem (o jogador já esteve nelas).
 	if aba == 1 and jogador.garagem != null and not jogador.garagem.lista().is_empty():
 		return true
@@ -869,6 +874,28 @@ func _liberar_escondidas() -> void:
 		if not k in manter and not _sujas.has(k) and _todas[k] is Aba:
 			_todas[k].liberar()
 			_sujas[k] = true
+
+
+## PULAR TUTORIAL fora de uma conversa (Configurações): o mesmo do botão dela.
+func pular_tutorial() -> void:
+	if _dialogo != null:
+		_dialogo.pular_tutorial()
+	else:
+		Tutorial.pular(jogador)
+		_tutorial_pulado()
+
+
+## PULAR TUTORIAL (Dialogo): sai o destaque, as telas aparecem e o jogo salva.
+func _tutorial_pulado() -> void:
+	if _destaque != null:
+		_destaque.limpar()
+	_atualizar_nav()
+	_atualizar_capa()
+	_atualizar_aceleracao()
+	_sujar_todas()
+	_reconstruir(_abas.current_tab)
+	get_node("/root/SaveManager").salvar()
+	_sobre.avisar("Tutorial pulado: todas as telas liberadas.")
 
 
 func _sujar_todas() -> void:

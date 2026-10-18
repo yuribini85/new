@@ -214,6 +214,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `TEN_WINS` | cena CW_M04 |
 | `TUNE_TUTORIAL_SEEN` | condição de CW_P02L |
 | `TUTORIAL_INTRO_SEEN` | cena CW_P01 |
+| `TUTORIAL_PULADO` | data_model/tutorial.gd |
 | `TWENTY_FIVE_WINS` | cena CW_M05 |
 
 ## Licenças (`data/licencas.json`)

@@ -27,6 +27,8 @@ extends Control
 signal acao(nome: String)
 ## Cena terminada (para a principal encadear a próxima e salvar).
 signal terminou(c: Dictionary)
+## PULAR TUTORIAL tocado (Tutorial.pular já feito): a tela libera o que falta.
+signal tutorial_pulado
 
 ## Apresentação, não balanceamento.
 const ENTRADA_S := 0.35
@@ -119,6 +121,9 @@ static var _bustos := {}
 var _dica: Label
 var _tempos := PackedFloat32Array()
 var _pular: Button
+## Tutorial à parte da história (Tutorial): o rótulo TUTORIAL e o PULAR TUTORIAL,
+## no alto à esquerda, nas cenas que ensinam.
+var _barra_tutorial: HBoxContainer
 ## _i aponta para um item ainda não feito (pausa ou cartão no meio): o Pular
 ## começa dele, sem engolir uma ação.
 var _i_pendente := false
@@ -248,6 +253,7 @@ func _init(historia_: Historia) -> void:
 	v.add_child(_dica)
 	_montar_cartao()
 	_montar_pular()
+	_montar_tutorial()
 	visible = false
 
 
@@ -260,6 +266,52 @@ func _montar_pular() -> void:
 	_pular.pressed.connect(pular_cena)
 	add_child(_pular)
 	_lugar_pular()
+
+
+func _montar_tutorial() -> void:
+	_barra_tutorial = HBoxContainer.new()
+	_barra_tutorial.add_theme_constant_override("separation", 10)
+	_barra_tutorial.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	_barra_tutorial.offset_left = 16
+	_barra_tutorial.offset_top = PULAR_Y
+	_barra_tutorial.visible = false
+	add_child(_barra_tutorial)
+	var chip := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Tutorial.COR
+	sb.set_corner_radius_all(6)
+	sb.content_margin_left = 12
+	sb.content_margin_right = 12
+	chip.add_theme_stylebox_override("panel", sb)
+	chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_barra_tutorial.add_child(chip)
+	var l := Label.new()
+	l.text = "TUTORIAL"
+	Tipografia.rotulo(l, "semibold", 24)
+	l.add_theme_color_override("font_color", Color(0.05, 0.08, 0.1))
+	chip.add_child(l)
+	var b := Button.new()
+	Tipografia.acao_secundaria(b, "PULAR TUTORIAL", Tutorial.COR, 26, 80)
+	b.pressed.connect(pular_tutorial)
+	_barra_tutorial.add_child(b)
+
+
+## Um toque tira todo o ensino: o resto desta cena e o das cenas na fila
+## (Tutorial.sem_ensino); a história continua.
+func pular_tutorial() -> void:
+	Tutorial.pular(historia.jogador)
+	_fila = _fila.map(func(c): return Tutorial.sem_ensino(c))
+	_barra_tutorial.visible = false
+	if not _cena.is_empty():
+		var resto: Dictionary = Tutorial.sem_ensino({"falas": Array(_cena["falas"]).slice(_i + (0 if _i_pendente else 1)),
+				"tutorial": _cena.get("tutorial", false)})
+		var falas: Array = Array(_cena["falas"]).slice(0, _i + (0 if _i_pendente else 1)) + resto["falas"]
+		_cena = _cena.duplicate()
+		_cena["falas"] = falas
+		_cena["tutorial"] = false
+	tutorial_pulado.emit()
+	if not _cena.is_empty():
+		pular_cena()
 
 
 ## "Pular" sempre no mesmo lugar (pedido do usuário): no alto à direita,
@@ -317,6 +369,8 @@ func _deve_esperar() -> bool:
 func enfileirar(c: Dictionary) -> void:
 	if c.is_empty() or (_cena.get("id") == c["id"]) or _fila.any(func(x): return x["id"] == c["id"]):
 		return
+	if Tutorial.pulado(historia.jogador):
+		c = Tutorial.sem_ensino(c)
 	_fila.append(c)
 	if _cena.is_empty():
 		_proxima()
@@ -335,6 +389,11 @@ func _proxima() -> void:
 		return
 	_cena = _fila.pop_front()
 	_i = 0
+	if not Tutorial.tem_fala(_cena):
+		# Sem nada a mostrar (o ensino saiu): só as ações e a conclusão.
+		_concluir_calada()
+		return
+	_barra_tutorial.visible = Tutorial.ensina(_cena) and not Tutorial.pulado(historia.jogador)
 	_lados = {}
 	_ouvinte_quem = ""
 	_ouvinte.visible = false
@@ -474,10 +533,14 @@ func _mostrar() -> void:
 	if not sistema and String(p.get("papel", "")) != "" and not historia.jogador.flags.has(flag):
 		_nome.text += " · " + String(p["papel"])
 		historia.jogador.flags[flag] = true
-	_nome.visible = not sistema and _nome.text != ""
-	# A caixa na cor de quem fala (faixa e nome); o sistema, no ocre.
-	var cor := Aba.COR_DESTAQUE if sistema else _cor_legivel(Color(String(p.get("cor", "#d6a23e"))))
+	if sistema:
+		_nome.text = "TUTORIAL"  # a voz do tutorial, à parte da história
+	_nome.visible = _nome.text != ""
+	# A caixa na cor de quem fala (faixa e nome); o tutorial, na cor dele.
+	var cor := Tutorial.COR if sistema else _cor_legivel(Color(String(p.get("cor", "#d6a23e"))))
 	_barra.color = cor
+	# A moldura também: ciano no tutorial, ocre na história.
+	(_caixa.get_theme_stylebox("panel") as StyleBoxFlat).border_color = Tutorial.COR if sistema else Aba.COR_DESTAQUE
 	_nome.add_theme_color_override("font_color", cor)
 	# No tutorial (o jogo à mostra), o retrato pequeno no canto da caixa.
 	_busto_info = _busto_de(quem) if _translucido and not sistema else {}
@@ -894,6 +957,15 @@ func pular_cena() -> void:
 			if not nome in LOCAIS and not nome.contains(":"):
 				acao.emit(nome)
 		_i += 1
+	_fim()
+
+
+func _concluir_calada() -> void:
+	for f in _cena["falas"]:
+		if f.has("acao"):
+			var nome := String(f["acao"])
+			if not nome in LOCAIS and not nome.contains(":"):
+				acao.emit(nome)
 	_fim()
 
 

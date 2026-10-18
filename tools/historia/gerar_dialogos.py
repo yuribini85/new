@@ -10,7 +10,8 @@ comentário de contexto, no máximo um a cada `reativa_intervalo_corridas`
 corridas (data/historia.json).
 lembrete=ID: se o jogador não fizer o que a cena pede em alguns segundos, a cena
 ID (trigger LEMBRETE) aparece, enquanto ainda valer. segura_largada=sim: a
-corrida fica parada no grid até a cena acabar.
+corrida fica parada no grid até a cena acabar. tutorial=sim: a cena só ensina
+(some inteira quando o jogador pula o tutorial; Tutorial.sem_ensino).
 Fala com pose: "Mara[pensativa]: texto" (arte corpo/<retrato>_<pose>.webp; sem
 o arquivo, o corpo base).
 Ações com argumento: [CENARIO:id] e [ILUSTRACAO:id] (data/historia.json → cenarios,
@@ -55,6 +56,8 @@ def main() -> int:
                     c["reativa"] = v == "sim"
                 elif k == "segura_largada":
                     c["segura_largada"] = v == "sim"
+                elif k == "tutorial":
+                    c["tutorial"] = v == "sim"
                 elif k == "repetivel":
                     c["uma_vez"] = v != "sim"
                 elif k == "condicao":
