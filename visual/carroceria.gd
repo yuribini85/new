@@ -50,6 +50,8 @@ const LIBERADOS := {
 }
 ## Ângulo máximo (graus) entre faces vizinhas que ainda viram superfície lisa.
 const SUAVE_GRAUS := 30.0
+## Ângulo máximo entre faces de vidro de uma mesma placa (para-brisa, janela).
+const VIDRO_GRAUS := 25.0
 static var ativos: Array = ATIVOS.duplicate()
 static var regras: Dictionary = LIBERADOS.duplicate(true)
 
@@ -156,9 +158,72 @@ static func corpo(id: String, base: Dictionary = {}) -> ArrayMesh:
 		_montar(m, f, ctx)
 	# Capô, teto e laterais lisos: as facetas da loft (< SUAVE_GRAUS entre si)
 	# ganham normal média; vincos e quinas de verdade continuam vivos.
-	var malha: ArrayMesh = CarroBloco.suavizar_por_angulo(m.malha(), SUAVE_GRAUS)
+	var malha: ArrayMesh = _vidros_planos(CarroBloco.suavizar_por_angulo(m.malha(), SUAVE_GRAUS, true))
 	_corpos[id] = malha
 	return malha
+
+
+## Cada vidro (para-brisa, janela, vigia) vira uma placa plana: as faces de vidro
+## vizinhas que fazem menos de VIDRO_GRAUS com a primeira do grupo recebem a
+## normal média dele. Lisas mas curvas, as janelas refletiam manchadas.
+static func _vidros_planos(malha: ArrayMesh) -> ArrayMesh:
+	var cor_vidro: Color = MontagemMalha._attr("vidro")[0]
+	var cos_lim := cos(deg_to_rad(VIDRO_GRAUS))
+	var nova := ArrayMesh.new()
+	for s in malha.get_surface_count():
+		var arr := malha.surface_get_arrays(s)
+		var cores = arr[Mesh.ARRAY_COLOR]
+		if cores != null:
+			var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var nrm: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
+			var vidros := []  # triângulos de vidro
+			var por_aresta := {}
+			for t in vs.size() / 3:
+				var c: Color = cores[t * 3]
+				# a cor do vértice volta em 8 bits: compara com folga
+				if absf(c.r - cor_vidro.r) + absf(c.g - cor_vidro.g) + absf(c.b - cor_vidro.b) > 0.01:
+					continue
+				vidros.append(t)
+				for k in 3:
+					var a := vs[t * 3 + k].snapped(Vector3.ONE * 1e-4)
+					var b := vs[t * 3 + (k + 1) % 3].snapped(Vector3.ONE * 1e-4)
+					var chave := [a, b] if [a.x, a.y, a.z] < [b.x, b.y, b.z] else [b, a]
+					if not por_aresta.has(chave):
+						por_aresta[chave] = []
+					por_aresta[chave].append(t)
+			var face := func(t: int) -> Vector3:
+				return (vs[t * 3 + 1] - vs[t * 3]).cross(vs[t * 3 + 2] - vs[t * 3])
+			var visto := {}
+			for t0 in vidros:
+				if visto.has(t0):
+					continue
+				var semente: Vector3 = face.call(t0).normalized()
+				var grupo := [t0]
+				visto[t0] = true
+				var soma := Vector3.ZERO
+				var i := 0
+				while i < grupo.size():
+					var t: int = grupo[i]
+					i += 1
+					soma += face.call(t)
+					for k in 3:
+						var a := vs[t * 3 + k].snapped(Vector3.ONE * 1e-4)
+						var b := vs[t * 3 + (k + 1) % 3].snapped(Vector3.ONE * 1e-4)
+						for u in por_aresta[[a, b] if [a.x, a.y, a.z] < [b.x, b.y, b.z] else [b, a]]:
+							if not visto.has(u) and face.call(u).normalized().dot(semente) >= cos_lim:
+								visto[u] = true
+								grupo.append(u)
+				var n := soma.normalized()
+				for t in grupo:
+					for k in 3:
+						nrm[t * 3 + k] = n
+			arr[Mesh.ARRAY_NORMAL] = nrm
+		nova.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		nova.surface_set_material(s, malha.surface_get_material(s))
+		nova.surface_set_name(s, malha.surface_get_name(s))
+	for k in malha.get_meta_list():
+		nova.set_meta(k, malha.get_meta(k))
+	return nova
 
 
 ## O carro montado: nó com a carroceria ("Carroceria", pintura na superfície
@@ -795,13 +860,13 @@ static func _cilindro(m: MontagemMalha, estilo: String, raio: float, alt: float,
 
 ## Lente: elipsoide achatado na face.
 static func _lente(m: MontagemMalha, estilo: String, tam: Vector3, pos: Vector3, rot := Vector3.ZERO) -> void:
-	m.esfera(estilo, 0.5, 1.0, 8, 4, MontagemMalha.xf(pos, rot, tam))
+	m.esfera(estilo, 0.5, 1.0, 12, 4, MontagemMalha.xf(pos, rot, tam))
 
 
 ## Farol ou lanterna redondos: aro e lente (a lente a `dz` do aro).
 static func _redondo(m: MontagemMalha, raio: float, pos: Vector3, aro: String, lente: String, dz := 0.012) -> void:
-	m.cilindro(aro, raio, 0.04, 10, MontagemMalha.xf(pos, Vector3(PI / 2, 0, 0)))
-	m.esfera(lente, raio * 0.88, raio * 0.7, 10, 3, MontagemMalha.xf(pos + Vector3(0, 0, dz), Vector3(PI / 2, 0, 0)))
+	m.cilindro(aro, raio, 0.04, 12, MontagemMalha.xf(pos, Vector3(PI / 2, 0, 0)))
+	m.esfera(lente, raio * 0.88, raio * 0.7, 12, 2, MontagemMalha.xf(pos + Vector3(0, 0, dz), Vector3(PI / 2, 0, 0)))
 
 
 ## Dados da face (frente ou traseira): meia largura útil e alturas.

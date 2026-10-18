@@ -456,10 +456,12 @@ func _glb(id: String, cor: Color, faixas: Dictionary = {}) -> CarroBloco:
 const SUAVE_GRAUS := 40.0
 
 
-static func suavizar_por_angulo(m: Mesh, graus := SUAVE_GRAUS) -> Mesh:
+## `por_cor`: só junta faces da mesma cor de vértice (o carro gerado guarda o
+## estilo — vidro, moldura, farol — na cor; sem isso a borda entre eles borra).
+static func suavizar_por_angulo(m: Mesh, graus := SUAVE_GRAUS, por_cor := false) -> Mesh:
 	if not m is ArrayMesh:
 		return m
-	var chave_meta := "suave_%d" % int(graus)
+	var chave_meta := "suave_%d_%s" % [int(graus), por_cor]
 	if m.has_meta(chave_meta):
 		return m.get_meta(chave_meta)
 	var nova := ArrayMesh.new()
@@ -477,14 +479,18 @@ static func suavizar_por_angulo(m: Mesh, graus := SUAVE_GRAUS) -> Mesh:
 		fn.resize(nt)
 		var fa := PackedFloat32Array()
 		fa.resize(nt)
-		var vizinhas := {}  # posição -> faces que a usam
+		var cores = arr[Mesh.ARRAY_COLOR] if por_cor else null
+		var chave_de := func(i: int):
+			var p := vs[idx[i]].snapped(Vector3.ONE * 1e-4)
+			return [p, cores[idx[i]]] if cores != null else p
+		var vizinhas := {}  # posição (e cor) -> faces que a usam
 		for t in nt:
 			var a := vs[idx[t * 3]]
 			var cr := (vs[idx[t * 3 + 1]] - a).cross(vs[idx[t * 3 + 2]] - a)
 			fa[t] = cr.length()
 			fn[t] = cr / fa[t] if fa[t] > 1e-12 else Vector3.UP
 			for k in 3:
-				var chave := vs[idx[t * 3 + k]].snapped(Vector3.ONE * 1e-4)
+				var chave = chave_de.call(t * 3 + k)
 				if not vizinhas.has(chave):
 					vizinhas[chave] = PackedInt32Array()
 				vizinhas[chave].append(t)
@@ -505,7 +511,7 @@ static func suavizar_por_angulo(m: Mesh, graus := SUAVE_GRAUS) -> Mesh:
 		for t in nt:
 			for k in 3:
 				var soma := Vector3.ZERO
-				for u in vizinhas[vs[idx[t * 3 + k]].snapped(Vector3.ONE * 1e-4)]:
+				for u in vizinhas[chave_de.call(t * 3 + k)]:
 					if fn[u].dot(fn[t]) >= cos_lim:
 						soma += fn[u] * fa[u]
 				normais[t * 3 + k] = soma.normalized() if soma.length() > 1e-12 else fn[t]
