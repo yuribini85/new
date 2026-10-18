@@ -59,8 +59,8 @@ Use um `ref` diferente em cada lugar onde postar, para saber o que trouxe gente:
 - Grupos de WhatsApp: `https://seudominio.com/?ref=whatsapp`
 - Fórum X: `https://seudominio.com/?ref=forum-x`
 
-Imagem de prévia para redes: `img/compartilhar.jpg` (1200×630). Vídeo da arena para
-stories e posts: `img/arena.mp4` (14 s, vertical, sem som).
+Imagem de prévia para redes: `img/compartilhar.jpg` (1200×630). Vídeos da arena com 20 carros para
+stories e posts: `img/caos_cel.mp4` (vertical) e `img/caos_pc.mp4` (horizontal), 7 s, sem som.
 
 Contagem de visitas (para saber a taxa de inscrição por origem): crie uma conta grátis em
 goatcounter.com e ponha o código na constante `GOATCOUNTER` do `index.html`. Não usa
