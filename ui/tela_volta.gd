@@ -21,7 +21,7 @@ var _botao_dobrar: Button
 
 
 ## rel: o relatório de volta (patrocinio, corridas, premio_total, carros_premio,
-## treino_concluido, patrocinios_encerrados).
+## patrocinios_encerrados, patrocinios_assinados).
 func _init(rel: Dictionary, dados: Node) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -80,10 +80,10 @@ func _init(rel: Dictionary, dados: Node) -> void:
 				"" if corridas.size() == 1 else "s", vit, "" if vit == 1 else "s", Aba.dinheiro(int(rel.get("premio_total", 0)))])
 	if not rel.get("carros_premio", []).is_empty():
 		linhas.append("Carro de prêmio na garagem")
-	if rel.get("treino_concluido", false):
-		linhas.append("Treino concluído: energia cheia e o ritmo subiu")
 	for nome in rel.get("patrocinios_encerrados", []):
-		linhas.append("Contrato de %s encerrado: há ofertas novas na Equipe" % nome)
+		linhas.append("Contrato de %s encerrado" % nome)
+	for nome in rel.get("patrocinios_assinados", []):
+		linhas.append("Novo contrato: %s" % nome)
 	# Bateu no teto da renda offline (decisão 104): curto e direto.
 	var fora := float(rel.get("fora_s", 0.0))
 	var pago := float(rel.get("pago_s", 0.0))

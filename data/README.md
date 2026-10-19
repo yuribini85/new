@@ -10,7 +10,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | Arquivo | Formato |
 |---|---|
 | `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
-| `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` |
+| `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` (janelas da referência; o jogo não vende usados, decisão 124: só as ferramentas de calibração e medição leem) |
 | `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos`. O importador grava agrupado por carro (`{nomes, carros: {carro: [{s, preco, efeitos, ...}]}}`, um terço do tamanho; regra no campo `_formato`) e o `Dados` expande para a lista; em Python, `ler_pecas()` de `tools/importar_referencia.py` |
 | `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
@@ -25,7 +25,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `garagem.json` | objeto `{capacidade_inicial, fator_vagas, licenca_do_preco, fator_preco_base, fator_preco}` (decisão 43): vagas da garagem e o preço de cada ampliação (`VagasGaragem`). Opcional (sem ele, sem limite); feito à mão |
 | `workshops.json` | lista de `{id, nome, logo, fabricantes}` (decisão 42): as lojas e as marcas que cada uma vende; `logo` = prefixo dos arquivos em `arte/ui/workshops/`. Feito à mão (não vem da referência) |
 | `monetizacao.json` | objeto `{aceleracao: {fator, duracao_s, teto_s}, combustivel: {tanque, renova_s}}` (decisão 39): corridas aceleradas pelo vídeo com recompensa; combustível (corrida e luta gastam 1, renova 1 a cada `renova_s` em tempo real, o vídeo enche o tanque; `Combustivel`). `teto_s` `null` = sem teto (pendente de playtest). Opcional; feito à mão (não vem da referência) |
-| `equipe.json` | objeto `{patrocinio: {ofertas, duracao_h, renda_hora_fator, bonus_fator, contratos_base}, desmanche: {fator_pecas}, sede: [{id, nome, descricao, efeito, por_nivel, niveis, custo_fator}], sede_licenca_custo, treino: {passo, tempo_base_h, custo_fator, teto: {licença: ritmo}}}` (decisões 51–54, `GestaoEquipe`). `treino.teto` é GERADO por `tools/calibrar_treino.py` (maior ritmo do piloto que encurta em até 10% o caminho até vencer as provas da licença); não editar à mão. Fatores sobre o prêmio de 1º lugar médio da licença; provisórios até o playtest. Opcional; feito à mão |
+| `equipe.json` | objeto `{patrocinio: {duracao_h, renda_hora_fator, bonus_fator, contratos_base}, sede: [{id, nome, descricao, efeito, por_nivel, niveis, custo_fator}], sede_licenca_custo, treino: {passo, niveis, tempo_base_h, xp_por_nivel, teto: {licença: ritmo}}}` (decisões 51–54 e 124, `GestaoEquipe`; a sede só tem o Escritório, efeito `contratos`; `tempo_base_h` é o critério do reparo da arena). `treino.teto` é GERADO por `tools/calibrar_treino.py` (maior ritmo do piloto que encurta em até 10% o caminho até vencer as provas da licença); não editar à mão. Fatores sobre o prêmio de 1º lugar médio da licença; provisórios até o playtest. Opcional; feito à mão |
 | `patrocinadores.json` | lista de `{id, nome, ramo, licenca, condicao: {tipo: podio\|vitoria\|etapa\|licenca, valor?}}` (decisão 51): marcas fictícias. Opcional; feito à mão |
 | `carreira.json` | objeto `{piloto_jogador, teto_offline_s}` (e `repeticao {fatores, periodo_h, so_com_licenca}`: prêmio de prova já vencida cai a cada repetição no período, `Carreira.fator_repeticao`): piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
@@ -145,10 +145,10 @@ Testes não contam dia.
 
 ## Usados
 
-Como na referência: cada carro lista as janelas em que aparece na concessionária de usados e o
-preço de cada uma (`usados`). Na referência são 60 períodos de 10 dias; o dia é o número de
-corridas disputadas. Comprado, o carro sai do estoque até a janela seguinte. Não há
-quilometragem (a referência não tem).
+Cada carro lista as janelas em que aparecia na concessionária de usados da referência e o
+preço de cada uma (`usados`; 60 períodos de 10 dias). O jogo não vende usados (decisões 42 e
+124); o campo fica porque o importador o gera e a calibração das licenças usa os usados do dia 0
+como "carro inicial" da referência.
 
 ## Fila e offline
 

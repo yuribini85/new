@@ -84,7 +84,12 @@ func _prova_2(pistas: Array) -> bool:
 
 func _prova_3(pistas: Array) -> bool:
 	var casos := []
-	for o in Usados.estoque(_dados.lista("carros"), 0, {}):
+	var dia0 := []  # usados do dia 0 (carros.json → usados), {carro_id, preco}
+	for c in _dados.lista("carros"):
+		for w in c.get("usados", []):
+			if int(w[0]) <= 0 and int(w[1]) >= 0:
+				dia0.append({"carro_id": c["id"], "preco": int(w[2])})
+	for o in dia0:
 		var usado := _fabrica(_dados.carro(o["carro_id"]))
 		for novo in _dados.lista("carros"):
 			if not novo.get("novo", true) or int(novo["preco"]) <= int(o["preco"]):

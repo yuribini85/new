@@ -21,7 +21,7 @@ extends RefCounted
 ## ARENA_INSCRICAO, ARENA_FIM, ARENA_VITORIA, ARENA_PERDA,
 ## GARAGEM_AMPLIADA, GARAGEM_ABERTA (janela Garagem), PINTURA e PINTURA_APLICADA,
 ## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA,
-## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, SEM_PECAS, NOME_DEFINIDO
+## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, NOME_DEFINIDO
 ## (o nome do administrador dado na abertura), FILA_INICIADA (uma fila de corridas
 ## numa prova vencida, decisão 120).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
@@ -111,7 +111,7 @@ func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
 
 func demanda_paga() -> bool:
 	var d := Prologo.demanda(dados, jogador)  # já sem as peças que o carro tem
-	return dados.existe("pecas", d) and jogador.economia.pode_pagar_peca(int(dados.peca(d)["preco"]), false)
+	return dados.existe("pecas", d) and jogador.economia.pode_pagar(int(dados.peca(d)["preco"]))
 
 
 ## Pede a cena do trigger. true se uma cena foi pedida (quem chamou pode

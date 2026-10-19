@@ -257,8 +257,8 @@ func _progresso(c: Carro, categorias: Array) -> Array:
 
 
 ## Teto de cada número da ficha por modelo: {potencia, peso, vel} com a melhor
-## peça de cada categoria (mais potência; no empate, menos peso) e o melhor
-## ajuste do câmbio para a velocidade. Calculado uma vez por modelo.
+## peça de cada categoria (mais potência; no empate, menos peso), com o câmbio
+## no equilibrado. Calculado uma vez por modelo.
 static var _tetos := {}
 
 
@@ -283,10 +283,7 @@ func _tetos_do_modelo(c: Carro) -> Dictionary:
 				melhor = p
 		m.pecas[cat] = melhor
 	var a := m.atributos_efetivos("seco")
-	var vel := 0.0
-	for ajuste in ["", "curto", "longo"]:
-		m.ajuste_cambio = ajuste
-		vel = maxf(vel, Simulacao.velocidade_maxima_kmh(m.atributos_efetivos("seco"), dados.simulacao()))
+	var vel := Simulacao.velocidade_maxima_kmh(a, dados.simulacao())
 	_tetos[c.id] = {"potencia": float(a["potencia"]), "peso": float(a["peso"]), "vel": vel}
 	return _tetos[c.id]
 
@@ -745,14 +742,13 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 		Tipografia.acao_primaria(b, "VER PEÇAS   ›", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 60)
 	else:
 		var preco := int(prox.get("preco", 0))
-		var txt := "MELHORAR · %s" % dinheiro(preco) + (" PEÇAS" if cat == Blindagem.CATEGORIA else "")
+		var txt := "MELHORAR · %s" % dinheiro(preco)
 		# Sem dinheiro: o botão apagado (ainda abre a janela, para ver as peças).
 		Tipografia.acao_primaria(b, txt, COR_DESTAQUE if pode else Color(0.2, 0.2, 0.22),
 				Color(0.1, 0.1, 0.1) if pode else COR_SECUNDARIA, 24, 60)
-		if cat != Blindagem.CATEGORIA:
-			b.icon = icone_reduzido(ICONE_GIROS, 26)
-			b.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-			b.add_theme_constant_override("h_separation", 8)
+		b.icon = icone_reduzido(ICONE_GIROS, 26)
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		b.add_theme_constant_override("h_separation", 8)
 	Tipografia.area_toque(b, 60)  # desenhado como antes, com o toque maior
 	b.pressed.connect(_abrir_evolucao.bind(c, cat))
 	if cat == Blindagem.CATEGORIA:
@@ -788,7 +784,7 @@ func _carro_previa(c: Carro) -> Carro:
 	return t
 
 
-## A próxima peça cabe no saldo (peças e giros, na blindagem)?
+## A próxima peça cabe no saldo?
 func _da_para_comprar(c: Carro, cat: String) -> bool:
 	var prox := _escolhido(c, cat)
 	if prox.is_empty():
@@ -798,7 +794,7 @@ func _da_para_comprar(c: Carro, cat: String) -> bool:
 			return false
 	elif prox["id"] in c.pecas_possuidas:
 		return false
-	return jogador.economia.pode_pagar_peca(int(prox.get("preco", 0)), cat == Blindagem.CATEGORIA)
+	return jogador.economia.pode_pagar(int(prox.get("preco", 0)))
 
 
 func _icone_peca(cat: String) -> Texture2D:
@@ -806,7 +802,7 @@ func _icone_peca(cat: String) -> Texture2D:
 	return load(arq) if ResourceLoader.exists(arq) else null
 
 
-## Arena: a blindagem (peças e giros), num cartão largo, e o que ela faz.
+## Arena: a blindagem (em giros), num cartão largo, e o que ela faz.
 func _preparacao_arena(c: Carro, pai: Control) -> void:
 	var itens := Blindagem.itens(dados, c)
 	if itens.is_empty():
@@ -814,18 +810,18 @@ func _preparacao_arena(c: Carro, pai: Control) -> void:
 		return
 	pai.add_child(_cartao_roleta(c, [Blindagem.CATEGORIA, "Blindagem", [Blindagem.nivel(c), itens.size()]],
 			func(_k): pass, 0))
-	# Tirar a chapa custa metade do que ela custou (pedido do usuário); em
-	# peças, os giros completam. Pôr de volta é de graça (a chapa continua sua).
+	# Tirar a chapa custa metade do que ela custou (pedido do usuário). Pôr de
+	# volta é de graça (a chapa continua sua).
 	var nv := Blindagem.nivel(c)
 	if nv > 0:
 		var custo := roundi(float(itens[nv - 1]["preco"]) / 2.0)
 		var b := Button.new()
-		var pode: bool = jogador.economia.pode_pagar_peca(custo, true)
-		Tipografia.acao_primaria(b, "REMOVER BLINDAGEM · %s PEÇAS" % dinheiro(custo),
+		var pode: bool = jogador.economia.pode_pagar(custo)
+		Tipografia.acao_primaria(b, "REMOVER BLINDAGEM · %s GIROS" % dinheiro(custo),
 				COR_RUIM.darkened(0.25) if pode else Color(0.2, 0.2, 0.22), Color.WHITE if pode else COR_SECUNDARIA, 24, 60)
 		b.pressed.connect(func():
-			if not jogador.economia.debitar_peca(custo, true):
-				avisar("Faltam peças e giros para tirar a blindagem.", false)
+			if not jogador.economia.debitar(custo):
+				avisar("Faltam giros para tirar a blindagem.", false)
 				return
 			c.remover(Blindagem.CATEGORIA)
 			Sons.tocar_ui(self, "parafusadeira", -8.0)
@@ -937,17 +933,9 @@ func _acao_evolucao(c: Carro, cat: String) -> Array:
 		return ["INSTALAR", func():
 			_comprar_peca(c, it, antes)
 			_reabrir(c, cat), false, true]
-	if cat == Blindagem.CATEGORIA:
-		# Decisão 74: a blindagem usa peças (desmanche e arena) e os giros completam.
-		var em_p: int = jogador.economia.parte_em_pecas(preco)
-		var txt: String = ("INSTALAR · %s PEÇAS" % dinheiro(preco)) if em_p >= preco else (
-				"INSTALAR · %s PEÇAS + %s" % [dinheiro(em_p), dinheiro(preco - em_p)] if em_p > 0 else "INSTALAR · %s" % dinheiro(preco))
-		return [txt, func():
-			_comprar_peca(c, it, antes)
-			_reabrir(c, cat), false, jogador.economia.pode_pagar_peca(preco, true)]
 	return ["INSTALAR · %s" % dinheiro(preco), func():
 		_comprar_peca(c, it, antes)
-		_reabrir(c, cat), true, jogador.economia.pode_pagar_peca(preco)]
+		_reabrir(c, cat), true, jogador.economia.pode_pagar(preco)]
 
 
 ## Um item da janela: o nome e o ganho em caixa alta, centrados; o escolhido
@@ -1023,15 +1011,6 @@ func _janela_pecas(c: Carro, cat: String, v: VBoxContainer) -> void:
 			ancora("PECA_PEDIDA", b)
 		if cat == "brake" and not ancoras.has("BRAKES"):
 			ancora("BRAKES", b)
-	if cat == "cambio" and c.pecas.has("cambio"):
-		var aj := HBoxContainer.new()
-		aj.add_theme_constant_override("separation", 8)
-		v.add_child(aj)
-		for a in PecasTexto.AJUSTES_CAMBIO:
-			var b := botao(a[1], func():
-				c.ajuste_cambio = a[0]
-				_reabrir(c, cat), true, c.ajuste_cambio == a[0], aj)
-			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var perde := []
 	if not escolhido.is_empty() and c.pecas.get(cat, {}).get("id") != escolhido["id"]:
 		var teste := c.copiar()
@@ -1392,35 +1371,14 @@ func _preco_ampliacao() -> int:
 
 
 func _confirmar_venda(c: Carro) -> void:
-	# Com o desmanche (GestaoEquipe), a janela oferece as duas saídas: vender
-	# pelo valor do carro (giros) ou desmontar em peças (pagam a blindagem).
-	var desmanche: bool = not dados.equipe().is_empty() and GestaoEquipe.pode_desmontar(jogador, c.uid)
-	var credito := GestaoEquipe.credito_desmanche(dados, jogador, c) if desmanche else 0
-	var botoes := [["Vender", func():
-			_vender(c.uid)
-			mudou.emit()
-			_reabrir_garagem()]]
-	if desmanche:
-		botoes.append(["Desmontar", func():
-			var nome: String = c.base["nome"]
-			var cr := GestaoEquipe.desmontar(dados, jogador, c.uid)
-			if cr < 0:
-				avisar("Este carro não pode ser desmontado agora.", false)
-			else:
-				avisar("%s desmontado: +%s peças." % [nome, dinheiro(cr)])
-				Sons.tocar_ui(self, "batida", -10.0, 1.3)
-				historia("CARRO_DESMONTADO")
-			mudou.emit()
-			_reabrir_garagem()])
-	botoes.append(["Cancelar", _reabrir_garagem])
-	painel.emit(("Vender ou desmontar?" if desmanche else "Vender %s?" % c.base["nome"]), func(v):
+	painel.emit("Vender %s?" % c.base["nome"], func(v):
 		v.add_child(Estudio.imagem(c.base, CarroBloco.cor_do_carro(c), Vector2(0, 180), c.faixas))
 		nota("icone_vender", "Vender: %s giros" % dinheiro(revenda(c.base)), "Peças instaladas não entram no valor.", v,
-				Color.WHITE)
-		if desmanche:
-			nota("icone_melhorar", "Desmontar: %s peças" % dinheiro(credito),
-					"A carcaça e as peças compradas para ele viram peças, que pagam a blindagem.", v, Color.WHITE),
-		botoes)
+				Color.WHITE),
+		[["Vender", func():
+			_vender(c.uid)
+			mudou.emit()
+			_reabrir_garagem()], ["Cancelar", _reabrir_garagem]])
 
 
 func _vender(uid: int) -> void:

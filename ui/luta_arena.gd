@@ -308,11 +308,6 @@ func _mostrar_final() -> void:
 		notas.append("O carro da sua dupla foi eliminado e foi para o reparo: volta em %s." % reparo)
 	if f.get("venceu_equipe", false) and f["perdeu"]:
 		notas.append("Mesmo assim, a sua dupla ficou de pé.")
-	for at in f.get("atropelados", []):
-		var falta := float(at.get("fora_s", 0.0))
-		notas.append(("Fuga do fogo: %s levou um atropelamento e fica fora por %s." % [at["nome"],
-				ArenaCarreira.texto_tempo(falta)]) if falta > 0.0
-				else ("Fuga do fogo: %s levou um atropelamento, mas já se levantou." % at["nome"]))
 	if f.get("subiu_nivel", false):
 		notas.append("Próximo campeonato: uma equipe a mais.")
 	# Desafio do The Grid (decisão 74): o placar da série.
@@ -326,8 +321,6 @@ func _mostrar_final() -> void:
 			notas.append("Desafio perdido. Dá para desafiar de novo.")
 		else:
 			notas.append("Próximo round na Arena: os carros quebrados são trocados.")
-	if int(f.get("pecas_destruidos", 0)) > 0:
-		notas.append("Rivais destruídos pela sua dupla: +%s peças." % Aba.dinheiro(int(f["pecas_destruidos"])))
 	for txt in notas:
 		var d := Label.new()
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

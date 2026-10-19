@@ -175,24 +175,6 @@ func _init() -> void:
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x + 2.0
 	dentro.add_child(caixa_giros)
 	_caixa_giros = caixa_giros
-	# Peças (desmanche e arena; pagam a blindagem): no mesmo painel, depois dos
-	# giros, com a porca.
-	_pecas = HBoxContainer.new()
-	_pecas.add_theme_constant_override("separation", 4)
-	_pecas.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_pecas.tooltip_text = "Peças: vêm do desmanche e da arena; pagam a blindagem"
-	dentro.add_child(_pecas)
-	var porca := IconeVetor.new("peca", COR_ROTULO)
-	porca.cor_fundo = Color(0.09, 0.09, 0.1)
-	porca.custom_minimum_size = Vector2(18, 18)
-	porca.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_pecas.add_child(porca)
-	_pecas_numero = Label.new()
-	Tipografia.numero(_pecas_numero, TAMANHO_PECAS)
-	_pecas_numero.add_theme_color_override("font_color", COR_ROTULO)
-	_pecas_numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_pecas_numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_pecas.add_child(_pecas_numero)
 	_criar_combustivel()
 	_espaco(4)
 	# Configurações: engrenagem na própria faixa, depois do painel.
@@ -279,7 +261,7 @@ func _ajustar_titulo() -> void:
 	titulo.add_theme_font_size_override("font_size", tam)
 
 
-## Combustível no painel dos giros, depois das peças (pedido do usuário: no
+## Combustível no painel dos giros, depois deles (pedido do usuário: no
 ## cabeçalho do jogo, em toda tela): a bomba e "5/8"; vazio, em vermelho.
 ## Tocar abre a janela do combustível. Some enquanto o combustível não vale.
 var _combustivel: Button
@@ -321,7 +303,7 @@ func _criar_combustivel() -> void:
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(ic)
 	_combustivel_numero = Label.new()
-	Tipografia.numero(_combustivel_numero, TAMANHO_PECAS)
+	Tipografia.numero(_combustivel_numero, TAMANHO_COMBUSTIVEL)
 	_combustivel_numero.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_combustivel_numero.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(_combustivel_numero)
@@ -619,18 +601,10 @@ func _process(delta: float) -> void:
 	_icone_marcador.modulate.a = 0.7 + 0.3 * cos(TAU * _pulso / 2.4)
 
 
-var _pecas: HBoxContainer
-var _pecas_numero: Label
 var _moeda: Control
 var _caixa_giros: Control
-const TAMANHO_PECAS := 22
-const TAMANHO_PECAS_MIN := 16
-
-
-## Peças do jogador (texto já formatado), sob os giros.
-func definir_pecas(texto: String) -> void:
-	_pecas_numero.text = texto
-	_ajustar_giros()
+const TAMANHO_COMBUSTIVEL := 22
+const TAMANHO_COMBUSTIVEL_MIN := 16
 
 
 ## Valor dos giros, encolhendo a fonte se não couber na moldura.
@@ -639,24 +613,23 @@ func definir_giros(texto: String) -> void:
 	_ajustar_giros()
 
 
-## Moeda, número, GIROS e as peças dividem a moldura: o número encolhe até
-## caber com tudo; se nem no menor tamanho couber, GIROS sai (a moeda já diz
-## o que é) e depois as peças encolhem também.
+## Moeda, número, GIROS e o combustível dividem a moldura: o número encolhe
+## até caber com tudo; se nem no menor tamanho couber, GIROS sai (a moeda já
+## diz o que é) e depois o combustível encolhe também.
 func _ajustar_giros() -> void:
 	var f := Tipografia.fonte_numero()
 	var texto := numero.text
 	var com_giros := true
-	var tam_p := TAMANHO_PECAS
+	var tam_p := TAMANHO_COMBUSTIVEL
 	var tam := _tamanho_numero(f, texto, com_giros, tam_p)
 	if f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > _livre_numero(com_giros, tam_p):
 		com_giros = false
 		tam = _tamanho_numero(f, texto, com_giros, tam_p)
-		while tam_p > TAMANHO_PECAS_MIN \
+		while tam_p > TAMANHO_COMBUSTIVEL_MIN \
 				and f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > _livre_numero(com_giros, tam_p):
 			tam_p -= 2
 			tam = _tamanho_numero(f, texto, com_giros, tam_p)
 	_caixa_giros.visible = com_giros
-	_pecas_numero.add_theme_font_size_override("font_size", tam_p)
 	if _combustivel != null:
 		_combustivel_numero.add_theme_font_size_override("font_size", tam_p)
 		_combustivel.custom_minimum_size.x = 18.0 + 4.0 + f.get_string_size(_combustivel_numero.text,
@@ -673,16 +646,14 @@ func _tamanho_numero(f: Font, texto: String, com_giros: bool, tam_p: int) -> int
 	return tam
 
 
-## Espaço do número: a moldura menos a moeda, GIROS (se fica), as peças (no
-## tamanho `tam_p`) e os vãos entre eles.
+## Espaço do número: a moldura menos a moeda, GIROS (se fica), o combustível
+## (no tamanho `tam_p`) e os vãos entre eles.
 func _livre_numero(com_giros: bool, tam_p: int) -> float:
 	var livre := painel.custom_minimum_size.x + _dentro_painel.offset_right - _dentro_painel.offset_left
 	var vao := float(_dentro_painel.get_theme_constant("separation"))
 	livre -= _moeda.custom_minimum_size.x + vao
 	if com_giros:
 		livre -= _caixa_giros.custom_minimum_size.x + vao
-	livre -= 18.0 + 4.0 + Tipografia.fonte_numero().get_string_size(_pecas_numero.text,
-			HORIZONTAL_ALIGNMENT_LEFT, -1, tam_p).x + vao  # porca, vão e o número das peças
 	if _combustivel != null and _combustivel.visible:
 		livre -= 18.0 + 4.0 + Tipografia.fonte_numero().get_string_size(_combustivel_numero.text,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, tam_p).x + vao  # bomba, vão e o combustível

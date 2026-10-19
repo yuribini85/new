@@ -251,7 +251,7 @@ Mara[pensativa]: O contrato paga cada hora dele, com o jogo aberto ou fechado. C
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
 [OPEN_TEAM_FINANCE]
 [HIGHLIGHT_PATROCINIO]
-Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas horas, com o jogo aberto ou fechado; depois vêm ofertas novas.
+Sistema: O patrocínio fica na Equipe. O contrato renova sozinho: a equipe assina quem mais paga por hora, com o jogo aberto ou fechado.
 
 = CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
 Harold: Sport aprovada. Eu esperava mais rápido. Mas aprovada.
@@ -270,7 +270,7 @@ Sistema: O carro da Mara entrou na garagem, preparado.
 = CW_T01 | LICENCA_CONCEDIDA:INTERNATIONAL | personagem=dono; bloqueia=sim; flags=INTERNATIONAL_COMPLETE,GESTAO_LIBERADA; cenario=oficina_mara
 Harold: International aprovada. Agora {piloto} pode correr lá fora.
 Mara[explica]: Com essa, a Wreckage volta a ser equipe de verdade.
-Mara: Agora o Caixa mostra o que entra e sai em cada corrida. E a Sede faz os patrocinadores pagarem mais.
+Mara: Agora o Caixa mostra o que a equipe tem. E o Escritório, na Sede, abre vaga para outro patrocinador.
 Sistema: Caixa e Sede na aba Equipe.
 
 = CW_T02 | LICENCA_CONCEDIDA:PRO | personagem=dono; bloqueia=sim; flags=PRO_COMPLETE; cenario=oficina_mara
@@ -304,9 +304,6 @@ Mara: Agora temos carros, pilotos, patrocinadores... e o primeiro lugar do Grid.
 Mara[pensativa]: Passei tempo demais achando que essa parte da minha vida tinha acabado.
 Mara[gesto]: Você fez a equipe funcionar de novo.
 Mara[firme]: Só não confunda chegar ao topo com conseguir ficar lá.
-
-= CW_SYS11 | SEM_PECAS | personagem=dono; repetivel=sim
-Dex: Faltam peças. Desmonte um carro parado, ou traga sucata da arena.
 
 # ---------------------------------------------------------------- Marcos
 = CW_R02 | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=FIRST_WIN; condicao=posicao:1; flags=FIRST_WIN
@@ -380,13 +377,13 @@ Dex: Dex Kane. Eu preparo carro pra arena.
 Dex: Lá dentro cavalo não manda. Manda chapa.
 Dex: A blindagem fica na Oficina, no escudo ao lado da velocidade. Três níveis: quanto mais chapa, mais pancada ele aguenta.
 Dex: Só que pesa. Na corrida ele vai sentir.
-Dex: E se paga com peças. O que a gente desmonta e o que sobra da arena vira peça.
+Dex: E se paga em giros. Chapa boa não é barata.
 Sistema: Blindagem: Oficina, ao lado da velocidade máxima.
 
 = CW_AR03 | BLINDAGEM | personagem=dono; requer=DEX_MET; proibe=ARMOR_TUTORIAL_SEEN; flags=ARMOR_TUTORIAL_SEEN; tutorial=sim
 Dex: Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena.
 Dex: Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior.
-Dex: Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças.
+Dex: Chapa se paga em giros.
 Dex: Comprou, é sua. Tirar a chapa custa metade do que ela custou; pôr de volta é de graça.
 Sistema: Escolha o nível e toque em Instalar.
 
@@ -421,18 +418,11 @@ Mara[decepcao]: Mais um pro meu elevador.
 Mara[explica]: Equipe de verdade atrai patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
-Mara[firme]: Na Sede, aqui mesmo, a gente melhora o que eles pagam.
-Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas horas, com o jogo aberto ou fechado; depois vêm ofertas novas.
+Mara[firme]: Na Sede, o Escritório abre vaga para mais um patrocinador.
+Sistema: O patrocínio fica na Equipe. O contrato renova sozinho: a equipe assina quem mais paga por hora, com o jogo aberto ou fechado.
 
 = CW_S02 | PATROCINIO_ASSINADO | personagem=dono; proibe=FIRST_SPONSOR; flags=FIRST_SPONSOR
 Mara[firme]: Primeiro adesivo novo no carro desde que a equipe parou.
-
-= CW_S03 | CARRO_DESMONTADO | personagem=dono; proibe=FIRST_DISMANTLE; flags=FIRST_DISMANTLE
-Mara[pensativa]: Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.
-
-= CW_S05 | TREINO_CONCLUIDO | personagem=dono; proibe=FIRST_TRAINING_LEVEL; flags=FIRST_TRAINING_LEVEL
-Mara[gesto]: {piloto} voltou do treino mais rápido. Não faz milagre, mas ajuda o carro a render o que tem.
-Mara[pensativa]: Não faz milagre. Mas ajuda o carro a render o que tem.
 
 = CW_S04 | SEDE_MELHORADA | personagem=dono; proibe=FIRST_HQ_UPGRADE; flags=FIRST_HQ_UPGRADE
 Mara[gesto]: A oficina parece outra. Ainda tem goteira, mas parece outra.

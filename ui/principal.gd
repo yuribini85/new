@@ -901,7 +901,6 @@ func _tutorial_pulado() -> void:
 func _sujar_todas() -> void:
 	for i in _todas.size():
 		_sujas[i] = true
-	_cabecalho.definir_pecas(Aba.dinheiro(jogador.economia.credito_pecas))  # antes: o número dos giros cabe no resto
 	_cabecalho.definir_giros(Aba.dinheiro(jogador.economia.saldo))
 	_atualizar_combustivel()
 	_atualizar_ao_vivo()
@@ -1616,15 +1615,17 @@ func _primeira_vitoria(c: Dictionary) -> void:
 ## Patrocínio: a renda por hora entra a cada segundo com o app aberto; um
 ## contrato que acaba avisa.
 func _patrocinio() -> void:
-	if GestaoEquipe.concluir_treino(jogador, Time.get_unix_time_from_system()):
-		_sobre.avisar("Treino concluído: energia cheia e o ritmo subiu.")
-		if jogador.historia != null:
-			jogador.historia.disparar("TREINO_CONCLUIDO")
-		atualizar()
-	var r := GestaoEquipe.acumular(dados, jogador, Time.get_unix_time_from_system())
+	var agora := Time.get_unix_time_from_system()
+	var r := GestaoEquipe.acumular(dados, jogador, agora)
 	for nome in r["encerrados"]:
-		_sobre.avisar("Contrato de %s encerrado. Há ofertas novas na Equipe." % nome)
-	if not r["encerrados"].is_empty():
+		_sobre.avisar("Contrato de %s encerrado." % nome)
+	# Decisão 124: a vaga livre assina sozinha o patrocinador que mais paga.
+	var novos := GestaoEquipe.renovar(dados, jogador, agora)
+	for nome in novos:
+		_sobre.avisar("Novo contrato de patrocínio: %s." % nome)
+	if not novos.is_empty() and jogador.historia != null:
+		jogador.historia.disparar("PATROCINIO_ASSINADO")
+	if not r["encerrados"].is_empty() or not novos.is_empty():
 		atualizar()
 
 
@@ -1662,10 +1663,10 @@ const VOLTA_MIN_S := 300.0
 func _volta_do_segundo_plano() -> void:
 	var agora := Time.get_unix_time_from_system()
 	var rel := {"corridas": [], "erro": "", "carros_premio": [], "premio_total": 0}
-	rel["treino_concluido"] = GestaoEquipe.concluir_treino(jogador, agora)
 	var pat := GestaoEquipe.acumular(dados, jogador, agora)
 	rel["patrocinio"] = pat["ganho"]
 	rel["patrocinios_encerrados"] = pat["encerrados"]
+	rel["patrocinios_assinados"] = GestaoEquipe.renovar(dados, jogador, agora)
 	rel["fora_s"] = pat["fora_s"]
 	rel["pago_s"] = pat["pago_s"]
 	var fora := agora - _saiu_em
@@ -1704,10 +1705,10 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			var vpat := g.cartao(Aba.COR_DESTAQUE, v)
 			g.rotulo("PATROCÍNIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vpat)
 			g.rotulo("+%s giros enquanto você esteve fora" % Aba.dinheiro(patrocinio), 30, Color.WHITE, vpat)
-			if rel.get("treino_concluido", false):
-				g.rotulo("Treino concluído: energia cheia e o ritmo subiu.", Aba.FONTE_PEQUENA, Aba.COR_BOM, vpat)
 			for nome in rel.get("patrocinios_encerrados", []):
 				g.rotulo("Contrato de %s encerrado." % nome, Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vpat)
+			for nome in rel.get("patrocinios_assinados", []):
+				g.rotulo("Novo contrato: %s." % nome, Aba.FONTE_PEQUENA, Aba.COR_BOM, vpat)
 		if not corridas.is_empty():
 			var vitorias := corridas.filter(func(c): return c["posicao"] == 1).size()
 			var melhor: int = corridas.map(func(c): return c["posicao"]).min()

@@ -2,7 +2,7 @@ class_name Notificacoes
 extends RefCounted
 ## Avisos do aparelho com o jogo fechado (decisão 107): quando o jogo sai de
 ## foco, agenda o que vai acontecer longe dele (contrato de patrocínio que
-## acaba, tanque cheio, treino de licença pronto, piloto recuperado); ao voltar,
+## acaba, tanque cheio, treino de licença pronto); ao voltar,
 ## cancela tudo. O jogador desliga nas Configurações (Preferencias.notificacoes).
 ## `planejar` só lê o estado (testável); o envio vai para o plugin de avisos
 ## locais do aparelho (singleton LocalNotification); sem ele (editor, Web),
@@ -18,7 +18,7 @@ static func planejar(dados: Node, jogador: Node, agora: float) -> Array:
 	for c in GestaoEquipe.contratos(jogador):
 		var p := GestaoEquipe.patrocinador(dados, String(c["id"]))
 		_somar(r, "contrato_" + String(c["id"]), float(c["fim"]) - agora, "Patrocínio encerrado",
-				"O contrato com %s terminou. Há ofertas novas na Equipe." % String(p.get("nome", "o patrocinador")))
+				"O contrato com %s terminou. Abra o jogo e a equipe assina o próximo." % String(p.get("nome", "o patrocinador")))
 	if Combustivel.vale(dados, jogador) and Combustivel.quantidade(dados, jogador, agora) < Combustivel.tanque(dados):
 		_somar(r, "combustivel", Combustivel.cheio_em_s(dados, jogador, agora), "Tanque cheio",
 				"O combustível está no máximo. Bora correr.")
@@ -28,9 +28,6 @@ static func planejar(dados: Node, jogador: Node, agora: float) -> Array:
 		if lic.estado(id, agora) == Licencas.TRAINING:
 			_somar(r, "licenca_" + id, lic.restante(id, agora), "Licença %s" % id.capitalize(),
 					"O treino terminou: a licença é sua.")
-	for pid in jogador.arena.get("recuperacao", {}):
-		_somar(r, "recuperacao_" + String(pid), ArenaCarreira.recuperacao_s(jogador, String(pid), agora),
-				"Piloto recuperado", "%s está pronto para voltar à arena." % EquipeJogador.piloto(dados, String(pid)).get("nome", "O piloto"))
 	return r
 
 

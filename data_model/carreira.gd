@@ -4,7 +4,7 @@ extends RefCounted
 ##   - O jogador larga em último, atrás dos adversários na ordem do evento.
 ##   - Prêmio em dinheiro por posição a cada disputa; carro-prêmio só na
 ##     primeira vitória do evento.
-##   - Cada corrida disputada conta um dia (rotação de usados, docs/plano_mvp.md).
+##   - Cada corrida disputada conta um dia (docs/plano_mvp.md).
 
 var dados: Node
 var jogador: Node
@@ -37,8 +37,8 @@ func disputar(evento_id: String, uid: int, semente: int, agora_real := -1.0) -> 
 ## comprasse esta peça?") sem alterar nada.
 ## `companheiro`: carro do segundo piloto da equipe (fase 9), que larga logo à
 ## frente do jogador; null = só o jogador.
-## `piloto`: o piloto como estava na inscrição (Fila; o treino e o cansaço de
-## depois não mudam a corrida já programada); vazio = o de agora.
+## `piloto`: o piloto como estava na inscrição (Fila; o nível que ele sobe
+## depois não muda a corrida já programada); vazio = o de agora.
 func preparar(evento_id: String, uid: int, semente: int, com_amostras: bool = true,
 		hipotetico: Carro = null, companheiro: Carro = null, piloto: Dictionary = {}) -> Dictionary:
 	var p := iniciar_preparo(evento_id, uid, semente, com_amostras, hipotetico, companheiro, piloto)
@@ -417,7 +417,6 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var tempo: float = r["carros"]["jogador"]["tempo_total"] if r["carros"]["jogador"]["terminou"] else 0.0
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
 	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo)
-	var folha := EquipeJogador.cobrar_corrida(dados, jogador)
 	var patrocinio := GestaoEquipe.bonus_corrida(dados, jogador, ev, posicao, not campeonato.is_empty())
 	var subiram := EquipeJogador.apos_prova(dados, jogador, ["corrida"], posicao == 1)
 
@@ -430,7 +429,6 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"pilotos_subiram": subiram,
 		"posicao_propria": posicao_propria,
 		"posicao_companheiro": posicao_companheiro,
-		"folha": folha,
 		"patrocinio": patrocinio,
 		"premio": premio,
 		"fator_repeticao": fator,

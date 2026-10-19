@@ -28,12 +28,6 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 		return "A arena pede %d carros: 1 de corrida e 1 de arena." % carros_minimos(dados)
 	if EquipeJogador.piloto_vaga(jogador, "arena1") == "":
 		return "Contrate um piloto de arena (aba Equipe)."
-	for vaga in ["arena1", "arena2"]:
-		var pid := EquipeJogador.piloto_vaga(jogador, vaga)
-		var falta := recuperacao_s(jogador, pid)
-		if falta > 0.0:
-			return "%s se recupera do atropelamento: faltam %s." % [
-					String(EquipeJogador.piloto(dados, pid).get("nome", pid)), texto_tempo(falta)]
 	if Escalacao.carro(jogador, "arena1") == null:
 		return "Escale o carro da ARENA 1 na Oficina."
 	for c: Carro in aptos(jogador):
@@ -144,50 +138,9 @@ static func nome_nivel(equipes: int) -> String:
 	return "×".join(partes)
 
 
-## Piloto atropelado na arena (pacote de dano, decisão do usuário): fica fora
-## pelo tempo de tempo_recuperacao (relógio real, também com o app fechado).
-## Segundos que faltam; 0 = pode lutar.
-static func recuperacao_s(jogador: Node, piloto_id: String, agora: float = -1.0) -> float:
-	var r: Dictionary = jogador.arena.get("recuperacao", {})
-	if piloto_id == "" or not r.has(piloto_id):
-		return 0.0
-	if agora < 0.0:
-		agora = Aceleracao.agora(jogador)
-	return maxf(float(r[piloto_id]) - agora, 0.0)
-
-
 static func texto_tempo(s: float) -> String:
 	var m := int(ceil(s / 60.0))
 	return "%d h %02d min" % [m / 60, m % 60] if m >= 60 else "%d min" % m
-
-
-## Tempo fora do piloto atropelado (s): arena.json → recuperacao_atropelo
-## "treino" = o do próximo nível de treino dele, sem o desconto do embalo
-## (decisão do usuário); sem o critério, não fica fora.
-static func tempo_recuperacao(dados: Node, jogador: Node, piloto_id: String) -> float:
-	if String(dados.arena().get("recuperacao_atropelo", "")) != "treino":
-		return 0.0
-	return float(GestaoEquipe.cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 \
-			* (GestaoEquipe.nivel_treino(jogador, piloto_id) + 1)
-
-
-## Registra os atropelados da sua dupla (o piloto de ARENA 1 no "jogador", o
-## de ARENA 2 no "parceiro"). [{id, nome, fora_s}].
-static func _atropelados(dados: Node, jogador: Node, resultado: Dictionary, reg: Dictionary) -> Array:
-	var nomes := []
-	var rec: Dictionary = reg.get("recuperacao", {})
-	for par in [["jogador", "arena1"], ["parceiro", "arena2"]]:
-		if not resultado["carros"].has(par[0]) or not resultado["carros"][par[0]].get("atropelado", false):
-			continue
-		var pid := EquipeJogador.piloto_vaga(jogador, par[1])
-		if pid == "":
-			continue
-		var fora := tempo_recuperacao(dados, jogador, pid)
-		nomes.append({"id": pid, "nome": String(EquipeJogador.piloto(dados, pid).get("nome", pid)), "fora_s": fora})
-		if fora > 0.0:
-			rec[pid] = Aceleracao.agora(jogador) + fora
-	reg["recuperacao"] = rec
-	return nomes
 
 
 ## A dupla do jogador: o segundo piloto no carro da vaga ARENA 2 (decisão 68;
@@ -361,11 +314,9 @@ static func premio(dados: Node, pts: int) -> int:
 
 ## Aplica a luta: prêmio no saldo, registro e, se o carro do jogador (ou o do
 ## parceiro) foi eliminado, ele vai para o reparo (_quebrar). {posicao, pontos,
-## premio, perdeu, carro, uid}; `perdeu` = o carro quebrou. Peças: cada rival
-## que a dupla do jogador elimina vira peças (GestaoEquipe.pecas_do_carro;
-## `modelos` = id -> dados do carro de cada participante).
+## premio, perdeu, carro, uid}; `perdeu` = o carro quebrou.
 static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary, parceiro_uid: int = -1,
-		modelos: Dictionary = {}, desafio: Dictionary = {}) -> Dictionary:
+		desafio: Dictionary = {}) -> Dictionary:
 	var p: Dictionary = dados.arena()
 	MetaDia.registrar(jogador, "arena")  # meta do dia (decisão 109)
 	var pts := pontos(resultado, "jogador", p)
@@ -379,8 +330,6 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	var posicao: int = resultado["classificacao"].find("jogador") + 1
 	if posicao == 1:
 		reg["vitorias"] = int(reg.get("vitorias", 0)) + 1
-	var pecas_perdidos := 0
-	var pecas_destruidos := 0
 	# Para o vídeo que conserta na hora os carros quebrados (resgatar).
 	var resgate := {"uids": []}
 	if perdeu and carro != null:
@@ -394,15 +343,6 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 		resgate["uids"].append(parceiro_uid)
 		reg["quebrados"] = int(reg.get("quebrados", 0)) + 1
 		_quebrar(dados, jogador, parceiro_uid, reg)
-	# Rivais que a dupla do jogador tirou da luta viram peças.
-	for id in resultado["carros"]:
-		var r: Dictionary = resultado["carros"][id]
-		if id in ["jogador", "parceiro"] or not r["eliminado"] or not String(r.get("por", "")) in ["jogador", "parceiro"]:
-			continue
-		if modelos.has(id):
-			pecas_destruidos += GestaoEquipe.pecas_do_carro(dados, jogador, Carro.new(modelos[id]))
-	jogador.economia.ganhar_pecas(pecas_perdidos + pecas_destruidos)
-	resgate["pecas"] = pecas_perdidos
 	# Campeonato: a equipe do jogador ficou de pé → sobe de nível (até o último).
 	var venceu_equipe: bool = resultado.get("equipe_vencedora", "") == "jogador"
 	var subiram := EquipeJogador.apos_prova(dados, jogador, ["arena1", "arena2"], venceu_equipe)
@@ -417,12 +357,13 @@ static func aplicar(dados: Node, jogador: Node, uid: int, resultado: Dictionary,
 	elif venceu_equipe:
 		var maximo := int(p.get("campeonato", {}).get("equipes_max", 10)) - int(p.get("campeonato", {}).get("equipes_min", 2))
 		reg["nivel"] = mini(nivel_antes + 1, maximo)
-	var atropelados := _atropelados(dados, jogador, resultado, reg)
+	# O piloto atropelado não fica fora depois da luta: o carro eliminado já
+	# vai para o reparo (decisão 118), e a pausa dobrava a mesma espera.
 	jogador.arena = reg
-	return {"atropelados": atropelados, "reparo_s": tempo_reparo(dados), "posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
+	return {"reparo_s": tempo_reparo(dados), "posicao": posicao, "pontos": pts, "premio": valor, "perdeu": perdeu, "carro": nome, "uid": uid,
 			"perdeu_parceiro": perdeu_parceiro, "venceu_equipe": venceu_equipe,
 			"subiu_nivel": int(reg.get("nivel", 0)) > nivel_antes,
-			"pecas_perdidos": pecas_perdidos, "pecas_destruidos": pecas_destruidos, "grid": grid, "pilotos_subiram": subiram,
+			"grid": grid, "pilotos_subiram": subiram,
 			"serie": serie, "resgate": resgate if not resgate["uids"].is_empty() else {}}
 
 

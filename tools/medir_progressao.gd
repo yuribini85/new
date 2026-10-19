@@ -41,9 +41,9 @@ func _rodar() -> void:
 	var teto_h := float(d.carreira()["teto_offline_s"]) / 3600.0
 	var saldo := int(d.economia()["saldo_inicial"])
 	var ofertas := []
-	for o in Usados.estoque(d.lista("carros"), 0, {}):
-		if int(o["preco"]) <= saldo:
-			ofertas.append(o)
+	for c in d.lista("carros"):
+		if c.get("preco") != null and int(c["preco"]) <= saldo:
+			ofertas.append({"carro_id": c["id"], "preco": int(c["preco"])})
 	print("limite %.0f min de corrida · teto offline %.1f h · %d carros iniciais · perfis %s" % [limite / 60.0, teto_h,
 			ofertas.size(), ", ".join(perfis)])
 	if ausencias.is_empty() and sessoes.is_empty():

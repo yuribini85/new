@@ -3,7 +3,7 @@ extends RefCounted
 ## Escalação (decisão 68): os carros pré-escolhidos para competir. Uma vaga de
 ## CORRIDA (nas corridas só corre um piloto da equipe) e duas de ARENA (a
 ## dupla: você e o segundo piloto). Três carros diferentes: um carro não está
-## na corrida e na arena ao mesmo tempo. Escalado não se vende nem se desmonta.
+## na corrida e na arena ao mesmo tempo. Escalado não se vende.
 ## jogador.escalacao = {corrida: uid, arena: [uid, uid]} (-1 = vaga vazia).
 ## Carro que saiu da garagem deixa a vaga vazia sozinho (as leituras conferem).
 

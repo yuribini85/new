@@ -22,11 +22,11 @@ var pneus: Array = []
 var cor: String = ""
 ## Faixas da pintura personalizada (Oficina → PINTURA): {padrao, faixa, filete}.
 var faixas: Dictionary = {}
-## Ajuste do câmbio ajustável (peça "cambio"): "", "curto" ou "longo".
+## Ajuste do câmbio ajustável (peça "cambio"): "", "curto" ou "longo". O
+## jogador não escolhe mais (fica o equilibrado, ""); a simulação e as
+## ferramentas de medição ainda aceitam os três, e uma inscrição antiga na
+## fila guarda o dela.
 var ajuste_cambio: String = ""
-## Configurações salvas pelo jogador: [{nome, pecas: [ids], ajuste_cambio}].
-## Só guardam escolhas entre peças já compradas; equipar é grátis.
-var configuracoes: Array = []
 
 ## Fração do caminho do diferencial de fábrica até o limite dos dados nos
 ## ajustes curto/longo. Provisório (decisão de interface, não do estudo).
@@ -62,7 +62,7 @@ func remover(categoria: String) -> void:
 
 
 ## Peças instaladas (ids em ordem) e ajuste do câmbio: o que uma inscrição
-## na fila guarda e o que uma configuração salva contém.
+## na fila guarda.
 func configuracao() -> Dictionary:
 	var ids: Array = pecas.values().map(func(p): return p["id"])
 	ids.sort()
@@ -87,19 +87,6 @@ func com_configuracao(cfg: Dictionary, peca_por_id: Callable, pneu_por_id: Calla
 			if not pn.is_empty():
 				c.adicionar_pneu(pn)
 	return c
-
-
-## Equipa uma configuração salva no próprio carro. Só peças já compradas
-## para ele entram; retorna as que ficaram de fora (ids).
-func equipar(cfg: Dictionary, peca_por_id: Callable) -> Array:
-	var fora := []
-	pecas = {}
-	for pid in cfg.get("pecas", []):
-		var p: Dictionary = peca_por_id.call(pid)
-		if p.is_empty() or not pid in pecas_possuidas or not instalar(p):
-			fora.append(pid)
-	ajuste_cambio = String(cfg.get("ajuste_cambio", ""))
-	return fora
 
 
 func adicionar_pneu(pneu: Dictionary) -> void:
@@ -219,5 +206,4 @@ func copiar() -> Carro:
 	c.cor = cor
 	c.faixas = faixas.duplicate()
 	c.ajuste_cambio = ajuste_cambio
-	c.configuracoes = configuracoes.duplicate(true)
 	return c

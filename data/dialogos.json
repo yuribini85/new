@@ -1078,7 +1078,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas horas, com o jogo aberto ou fechado; depois vêm ofertas novas."
+    "texto": "O patrocínio fica na Equipe. O contrato renova sozinho: a equipe assina quem mais paga por hora, com o jogo aberto ou fechado."
    }
   ],
   "requer": [
@@ -1181,7 +1181,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora o Caixa mostra o que entra e sai em cada corrida. E a Sede faz os patrocinadores pagarem mais."
+    "texto": "Agora o Caixa mostra o que a equipe tem. E o Escritório, na Sede, abre vaga para outro patrocinador."
    },
    {
     "quem": "sistema",
@@ -1365,22 +1365,6 @@
   "uma_vez": true,
   "personagem": "dono",
   "cenario": "oficina_mara"
- },
- {
-  "id": "CW_SYS11",
-  "trigger": "SEM_PECAS",
-  "falas": [
-   {
-    "quem": "mecanico_arena",
-    "texto": "Faltam peças. Desmonte um carro parado, ou traga sucata da arena."
-   }
-  ],
-  "requer": [],
-  "proibe": [],
-  "flags": [],
-  "bloqueia": false,
-  "uma_vez": false,
-  "personagem": "dono"
  },
  {
   "id": "CW_R02",
@@ -1789,7 +1773,7 @@
    },
    {
     "quem": "mecanico_arena",
-    "texto": "E se paga com peças. O que a gente desmonta e o que sobra da arena vira peça."
+    "texto": "E se paga em giros. Chapa boa não é barata."
    },
    {
     "quem": "sistema",
@@ -1819,7 +1803,7 @@
    },
    {
     "quem": "mecanico_arena",
-    "texto": "Chapa se paga com peças; o que faltar sai em giros. Carro desmontado e sucata da arena viram peças."
+    "texto": "Chapa se paga em giros."
    },
    {
     "quem": "mecanico_arena",
@@ -2010,12 +1994,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Na Sede, aqui mesmo, a gente melhora o que eles pagam.",
+    "texto": "Na Sede, o Escritório abre vaga para mais um patrocinador.",
     "pose": "firme"
    },
    {
     "quem": "sistema",
-    "texto": "Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas horas, com o jogo aberto ou fechado; depois vêm ofertas novas."
+    "texto": "O patrocínio fica na Equipe. O contrato renova sozinho: a equipe assina quem mais paga por hora, com o jogo aberto ou fechado."
    }
   ],
   "requer": [
@@ -2048,53 +2032,6 @@
   ],
   "flags": [
    "FIRST_SPONSOR"
-  ],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "dono"
- },
- {
-  "id": "CW_S03",
-  "trigger": "CARRO_DESMONTADO",
-  "falas": [
-   {
-    "quem": "mara",
-    "texto": "Desmontado, ele vira peças. Peça paga blindagem; o Dex sabe o que fazer com elas.",
-    "pose": "pensativa"
-   }
-  ],
-  "requer": [],
-  "proibe": [
-   "FIRST_DISMANTLE"
-  ],
-  "flags": [
-   "FIRST_DISMANTLE"
-  ],
-  "bloqueia": false,
-  "uma_vez": true,
-  "personagem": "dono"
- },
- {
-  "id": "CW_S05",
-  "trigger": "TREINO_CONCLUIDO",
-  "falas": [
-   {
-    "quem": "mara",
-    "texto": "{piloto} voltou do treino mais rápido. Não faz milagre, mas ajuda o carro a render o que tem.",
-    "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "Não faz milagre. Mas ajuda o carro a render o que tem.",
-    "pose": "pensativa"
-   }
-  ],
-  "requer": [],
-  "proibe": [
-   "FIRST_TRAINING_LEVEL"
-  ],
-  "flags": [
-   "FIRST_TRAINING_LEVEL"
   ],
   "bloqueia": false,
   "uma_vez": true,

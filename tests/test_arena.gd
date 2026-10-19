@@ -480,31 +480,6 @@ func test_the_grid_sobe_uma_por_vez() -> void:
 	d.free()
 
 
-## Arena: o carro perdido e os rivais que a dupla elimina viram peças.
-func test_arena_rende_pecas() -> void:
-	var d: Node = DadosScript.new()
-	d.carregar("res://data/")
-	var j: Node = JogadorScript.new()
-	j.novo_jogo(d.economia(), d.pneu)
-	j.economia.creditar(10000000)
-	var base: Dictionary = d.lista("carros")[0]
-	var uid: int = j.concessionaria.comprar_carro(base)
-	j.concessionaria.comprar_carro(base)
-	var rival: Dictionary = d.lista("carros")[1]
-	var resultado := {"classificacao": ["r1", "jogador"], "equipe_vencedora": "x", "eventos": [],
-			"carros": {"jogador": {"eliminado": true, "por": "r1", "equipe": "jogador", "eliminou": 1},
-			"r1": {"eliminado": false, "por": "", "equipe": "x"},
-			"r2": {"eliminado": true, "por": "jogador", "equipe": "x"}}}
-	var antes: int = j.economia.credito_pecas
-	var esperado_rival := GestaoEquipe.pecas_do_carro(d, j, Carro.new(rival))
-	var f := ArenaCarreira.aplicar(d, j, uid, resultado, -1, {"r1": rival, "r2": rival})
-	igual(int(f["pecas_perdidos"]), 0, "o seu carro quebrado vai para o reparo, não vira peças")
-	igual(int(f["pecas_destruidos"]), esperado_rival, "só o rival eliminado pela dupla vira peças")
-	igual(j.economia.credito_pecas, antes + esperado_rival, "as peças entram no estoque")
-	j.free()
-	d.free()
-
-
 func test_simulacao_fixa_o_numero_de_equipes() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
@@ -698,9 +673,9 @@ func test_piloto_atropelado_cai_levanta_e_sai() -> void:
 	igual(estados, ["voando", "caido", "levantando", "correndo", "fora"], "voa, cai, levanta, corre e sai")
 
 
-## Atropelado na fuga: fora pelo tempo do próximo treino do piloto (sem o
-## critério, não fica fora); a arena não abre enquanto ele se recupera.
-func test_piloto_atropelado_fica_em_recuperacao() -> void:
+## Atropelado na fuga: o atropelamento é só da luta. O piloto não fica fora
+## depois dela (o carro eliminado já vai para o reparo, decisão 118).
+func test_piloto_atropelado_nao_fica_bloqueado() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var j := _jogador_real(d, 3)
@@ -713,19 +688,10 @@ func test_piloto_atropelado_fica_em_recuperacao() -> void:
 	var res := {"classificacao": ["jogador", "r1"], "eventos": [], "equipe_vencedora": "jogador",
 		"carros": {"jogador": {"eliminado": false, "eliminou": 0, "equipe": "jogador", "atropelado": true},
 			"r1": {"eliminado": true, "eliminou": 0, "equipe": "x"}}}
-	var antes = d.arena().get("recuperacao_atropelo")
-	d.arena()["recuperacao_atropelo"] = ""
-	var f := ArenaCarreira.aplicar(d, j, carros[0].uid, res)
-	igual(f["atropelados"].size(), 1, "o atropelado aparece no resultado")
-	igual(ArenaCarreira.recuperacao_s(j, "ayla_moreno"), 0.0, "sem o critério: não fica fora")
-	d.arena()["recuperacao_atropelo"] = "treino"
-	var esperado := float(GestaoEquipe.cfg_treino(d)["tempo_base_h"]) * 3600.0 * (GestaoEquipe.nivel_treino(j, "ayla_moreno") + 1)
+	igual(ArenaCarreira.bloqueio(d, j), "", "a arena abre antes da luta")
 	ArenaCarreira.aplicar(d, j, carros[0].uid, res)
-	var falta := ArenaCarreira.recuperacao_s(j, "ayla_moreno")
-	verificar(falta > esperado - 100.0 and falta <= esperado, "fora pelo tempo do próximo treino (%.0f de %.0f s)" % [falta, esperado])
-	verificar("recupera" in ArenaCarreira.bloqueio(d, j), "a arena espera a recuperação")
-	verificar(ArenaCarreira.recuperacao_s(j, "ayla_moreno", Aceleracao.agora(j) + esperado + 1.0) == 0.0, "depois volta")
-	d.arena()["recuperacao_atropelo"] = antes
+	igual(ArenaCarreira.bloqueio(d, j), "", "atropelado, o piloto luta de novo na hora")
+	verificar(not j.arena.has("recuperacao"), "nenhuma recuperação registrada")
 	j.free()
 	d.free()
 

@@ -174,8 +174,7 @@ func _entrar(uid: int) -> void:
 	faixas["jogador"] = carro.faixas
 	var par: Dictionary = montada["parceiro"]
 	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
-	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1,
-			montada["modelos"])
+	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1)
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
@@ -213,8 +212,7 @@ func _desafiar(eq: Dictionary) -> void:
 	faixas["jogador"] = carro.faixas
 	var par: Dictionary = montada["parceiro"]
 	var resultado := Arena.correr(montada["participantes"], montada["params"], semente, true)
-	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1,
-			montada["modelos"], eq)
+	var final := ArenaCarreira.aplicar(dados, jogador, uid, resultado, int(par["uid"]) if par["real"] else -1, eq)
 	get_node("/root/SaveManager").salvar()
 	mudou.emit()
 	luta.emit({"resultado": resultado, "modelos": montada["modelos"], "nomes": montada["nomes"],
@@ -238,7 +236,7 @@ func _equipe_de_cada(resultado: Dictionary, equipes: Dictionary) -> Dictionary:
 
 
 ## Só no modo de playtest: uma luta de 2 a 10 equipes com o carro escolhido,
-## sem prêmio, sem perda de carro, sem peças e sem contar no campeonato.
+## sem prêmio, sem perda de carro e sem contar no campeonato.
 func _simulacao(car: Carro) -> void:
 	if Preferencias.modo_teste == "" or car == null:
 		return
@@ -305,7 +303,7 @@ func _simulacao(car: Carro) -> void:
 	Tipografia.acao_primaria(b, "Simular com o %s" % car.base["nome"], Color(0.2, 0.21, 0.24), Color.WHITE, 26, 68)
 	b.pressed.connect(_simular.bind(car.uid))
 	conteudo.add_child(b)
-	nota("", "Nada muda no jogo", "Sem prêmio, sem perda de carro, sem peças e sem contar no campeonato.")
+	nota("", "Nada muda no jogo", "Sem prêmio, sem perda de carro e sem contar no campeonato.")
 
 
 ## Nome da arena (com a marca das do The Grid).

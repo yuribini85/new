@@ -28,9 +28,6 @@
   "campeonato_desde": "NATIONAL"
  },
  "equipe_jogador": {
-  "_nota": "Valores por corrida em Cr. null = pendente do playtest (até lá vale 0).",
-  "patrocinio": null,
-  "custo_staff": null,
   "segundo_piloto": {
    "id": "jonas_reid",
    "nome": "Hiro Sakuno",
@@ -220,8 +217,7 @@
    {"id": "vitorias2", "tipo": "vitorias", "quantidade": 2, "texto": "Vença 2 provas"},
    {"id": "podios3", "tipo": "podios", "quantidade": 3, "texto": "Suba ao pódio 3 vezes"},
    {"id": "arena1", "tipo": "arena", "quantidade": 1, "texto": "Lute 1 vez na arena"},
-   {"id": "peca1", "tipo": "pecas", "quantidade": 1, "texto": "Compre uma peça para um carro"},
-   {"id": "patrocinio1", "tipo": "patrocinio", "quantidade": 1, "texto": "Assine um contrato de patrocínio"}
+   {"id": "peca1", "tipo": "pecas", "quantidade": 1, "texto": "Compre uma peça para um carro"}
   ]
  }
 }

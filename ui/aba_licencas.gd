@@ -492,12 +492,11 @@ func _renda(v: VBoxContainer, sessoes: Array) -> void:
 		var x: Dictionary = r[n]
 		var ganho: int = int(x["premio"]) + int(x["bonus"])
 		var minutos: float = float(x["duracao_s"]) / 60.0
-		rotulo("%s: %d corrida%s · %d%% vitórias · %s giros por corrida · %s giros por minuto de corrida%s%s" % [
+		rotulo("%s: %d corrida%s · %d%% vitórias · %s giros por corrida · %s giros por minuto de corrida%s" % [
 				n, x["corridas"], "" if x["corridas"] == 1 else "s", roundi(100.0 * x["vitorias"] / x["corridas"]),
 				dinheiro(roundi(float(ganho) / x["corridas"])),
 				dinheiro(roundi(ganho / minutos)) if minutos > 0.0 else "—",
-				" · %d com o jogo fechado" % x["offline"] if int(x["offline"]) > 0 else "",
-				" · folha da equipe %s giros" % dinheiro(int(x["folha"])) if int(x["folha"]) != 0 else ""],
+				" · %d com o jogo fechado" % x["offline"] if int(x["offline"]) > 0 else ""],
 				FONTE_PEQUENA, COR_SECUNDARIA, v)
 
 

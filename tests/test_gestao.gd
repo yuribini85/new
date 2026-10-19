@@ -1,8 +1,8 @@
 extends "res://tests/base_teste.gd"
 ## Gestão da equipe (GestaoEquipe): patrocínio com renda por hora (também
-## offline, com o teto de ausência), bônus por condição, desmanche em crédito
-## de peças e as melhorias da sede. Fixtures sintéticas (equipe.json,
-## patrocinadores.json): prêmio de referência da licença "b" = 10.
+## offline, com o teto de ausência) e renovação sozinha, bônus por condição e
+## o Escritório da sede. Fixtures sintéticas (equipe.json, patrocinadores.json):
+## prêmio de referência da licença "b" = 10.
 
 const JogadorScript := preload("res://autoload/jogador.gd")
 
@@ -77,48 +77,53 @@ func test_bonus_pela_dificuldade_da_condicao() -> void:
 	d.free()
 
 
-func test_sede_melhora_vagas_e_renda() -> void:
+## Decisão 124: sem escolha entre ofertas; a vaga livre assina sozinha a
+## primeira (a que mais paga por hora) e renova quando o contrato acaba.
+func test_patrocinio_assina_e_renova_sozinho() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
-	j.economia.creditar(1000)
-	igual(GestaoEquipe.preco_melhoria(d, j, "marketing"), 10, "nível 1: 10 × 1 × 1")
-	igual(GestaoEquipe.comprar_melhoria(d, j, "marketing"), "", "compra marketing 1")
-	igual(GestaoEquipe.preco_melhoria(d, j, "marketing"), 20, "nível 2 custa o dobro")
-	igual(GestaoEquipe.comprar_melhoria(d, j, "escritorio"), "", "compra escritório")
-	igual(GestaoEquipe.comprar_melhoria(d, j, "escritorio"), "nível máximo", "escritório só tem 1 nível")
-	igual(GestaoEquipe.vagas(d, j), 2, "escritório abre a segunda vaga")
-	igual(GestaoEquipe.renda_hora(d, j, GestaoEquipe.patrocinador(d, "p_b1")), 2, "marketing +50%: 1 → 1,5 → 2")
+	var primeira: String = GestaoEquipe.ofertas(d, j)[0]["nome"]
+	igual(GestaoEquipe.renovar(d, j, 0.0), [primeira], "assina a primeira oferta")
+	igual(GestaoEquipe.contratos(j).size(), 1, "um contrato")
+	igual(GestaoEquipe.renovar(d, j, 0.0), [], "sem vaga, não assina outro")
+	GestaoEquipe.acumular(d, j, 20.0 * 3600.0)
+	igual(GestaoEquipe.contratos(j).size(), 0, "o contrato acabou")
+	igual(GestaoEquipe.renovar(d, j, 20.0 * 3600.0).size(), 1, "renova sozinho")
+	perto(float(GestaoEquipe.contratos(j)[0]["inicio"]), 20.0 * 3600.0, 1e-6, "o novo começa agora")
 	j.free()
 	d.free()
 
 
-func test_desmanche_vira_pecas_que_pagam_a_blindagem() -> void:
+func test_sede_so_escritorio_abre_vaga() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	j.economia.creditar(1000)
+	igual(d.equipe()["sede"].size(), 1, "só o Escritório")
+	igual(GestaoEquipe.preco_melhoria(d, j, "escritorio"), 10, "nível 1: 10 × 1 × 1")
+	igual(GestaoEquipe.comprar_melhoria(d, j, "escritorio"), "", "compra escritório")
+	igual(GestaoEquipe.comprar_melhoria(d, j, "escritorio"), "nível máximo", "escritório só tem 1 nível")
+	igual(GestaoEquipe.vagas(d, j), 2, "escritório abre a segunda vaga")
+	igual(GestaoEquipe.renovar(d, j, 0.0).size(), 2, "as duas vagas assinam")
+	igual(GestaoEquipe.renda_hora(d, j, GestaoEquipe.patrocinador(d, "p_b1")), 1, "renda sem multiplicador da sede")
+	j.free()
+	d.free()
+
+
+## Decisão 124: a blindagem se paga em giros, pelo preço dela (antes, peças e
+## giros valiam o mesmo).
+func test_blindagem_em_giros() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
 	j.economia.creditar(5000)
-	var a: int = j.concessionaria.comprar_carro(d.carro("fraco"))
-	var b: int = j.concessionaria.comprar_carro(d.carro("forte"))
-	var carro: Carro = j.garagem.carro(b)
-	carro.pecas_possuidas.append("turbo")  # comprada por 200
-	# fator 0,5 × (revenda 900 × 0,5 + peças 200) = 325
-	igual(GestaoEquipe.pecas_do_carro(d, j, carro), 325, "a carcaça e as peças compradas viram peças")
-	igual(GestaoEquipe.desmontar(d, j, b), 325, "desmonta")
-	verificar(j.garagem.carro(b) == null, "o carro sai da garagem")
-	igual(j.economia.credito_pecas, 325, "peças no estoque")
-	igual(GestaoEquipe.desmontar(d, j, a), -1, "o único carro não se desmonta")
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	var chapa := {"id": "fraco_blindagem_1", "nome": "Chapa", "categoria": Blindagem.CATEGORIA, "nivel": 1, "preco": 150,
+			"efeitos": [{"atributo": "peso", "op": "mult", "valor": 1.05}]}
 	var saldo0: int = j.economia.saldo
-	verificar(j.economia.debitar_peca(150), "peça comum de 150")
-	igual(j.economia.saldo, saldo0 - 150, "peça comum se paga em giros")
-	igual(j.economia.credito_pecas, 325, "e não gasta peças")
-	verificar(j.economia.debitar_peca(150, true), "blindagem de 150 peças")
-	igual(j.economia.credito_pecas, 175, "a blindagem gasta peças")
-	igual(j.economia.saldo, saldo0 - 150, "e não giros")
-	# Decisão 74: faltando peças, os giros completam a blindagem.
-	var saldo1: int = j.economia.saldo
-	verificar(j.economia.debitar_peca(500, true), "175 peças + 325 giros")
-	igual(j.economia.credito_pecas, 0, "as peças primeiro")
-	igual(j.economia.saldo, saldo1 - 325, "os giros completam")
-	verificar(not j.economia.debitar_peca(j.economia.saldo + 1, true), "sem peças nem giros bastantes, não compra")
+	igual(j.concessionaria.comprar_peca(j.garagem.carro(uid), chapa), "", "compra a blindagem")
+	igual(j.economia.saldo, saldo0 - 150, "paga em giros")
+	j.economia.saldo = 0
+	chapa = chapa.merged({"id": "fraco_blindagem_2"}, true)
+	igual(j.concessionaria.comprar_peca(j.garagem.carro(uid), chapa), "saldo insuficiente", "sem giros, não compra")
 	j.free()
 	d.free()
 
@@ -127,42 +132,43 @@ func test_estado_da_equipe_volta_do_save() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
 	GestaoEquipe.assinar(d, j, "p_b1", 100.0)
-	j.economia.credito_pecas = 42
-	j.equipe["sede"] = {"marketing": 1}
+	j.equipe["sede"] = {"escritorio": 1}
+	j.equipe["treino_livre_1"] = {"nivel": 1, "inicio": 0.0, "fim": 3600.0}  # treino pago de save antigo
+	j.equipe["embalo_livre_1"] = true
 	var s := Save.serializar(j)
+	s["credito_pecas"] = 42  # save antigo: as peças saíram, o campo é ignorado
 	var k: Node = JogadorScript.new()
 	k.novo_jogo(d.economia(), d.pneu)
 	igual(Save.desserializar(JSON.parse_string(JSON.stringify(s)), k, d), "", "load")
 	igual(GestaoEquipe.contratos(k).size(), 1, "contrato volta do save")
-	igual(k.economia.credito_pecas, 42, "crédito de peças volta do save")
-	igual(GestaoEquipe.nivel(k, "marketing"), 1, "nível da sede volta do save")
+	igual(GestaoEquipe.nivel(k, "escritorio"), 1, "nível da sede volta do save")
+	EquipeJogador.migrar(d, k)
+	igual(GestaoEquipe.nivel_treino(k, "livre_1"), 2, "o treino pago em andamento entra como nível")
+	verificar(not k.equipe.has("embalo_livre_1"), "o embalo sai")
 	j.free()
 	k.free()
 	d.free()
 
 
-func test_treino_sobe_ritmo_ate_o_teto() -> void:
+## Nível de ritmo: passo por nível até o teto da licença (decisão 124: sobe só
+## com a experiência).
+func test_nivel_sobe_ritmo_ate_o_teto() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
-	j.economia.creditar(1000)
-	# Fixture: passo 0,05, teto 1,1 na licença "b", base 1,0; nível n leva n h e custa 5 × n.
-	perto(GestaoEquipe.ritmo(d, j, 1.0), 1.0, 1e-6, "sem treino, a base")
-	igual(GestaoEquipe.preco_treino(d, j), 5, "nível 1 custa 5")
-	igual(GestaoEquipe.treinar(d, j, 1.0, 0.0), "", "começa o treino")
-	igual(GestaoEquipe.treinar(d, j, 1.0, 0.0), "já está treinando", "um treino por vez")
-	verificar(not GestaoEquipe.concluir_treino(j, 1800.0), "meia hora: ainda treinando")
-	verificar(GestaoEquipe.concluir_treino(j, 3600.0), "uma hora: concluído")
+	# Fixture: passo 0,05, teto 1,1 na licença "b", base 1,0.
+	perto(GestaoEquipe.ritmo(d, j, 1.0), 1.0, 1e-6, "sem nível, a base")
+	verificar(GestaoEquipe.pode_subir(d, j, 1.0), "abaixo do teto sobe")
+	j.equipe["treino"] = {"nivel": 1}
 	perto(GestaoEquipe.ritmo(d, j, 1.0), 1.05, 1e-6, "nível 1: +0,05")
-	GestaoEquipe.treinar(d, j, 1.0, 3600.0)
-	GestaoEquipe.concluir_treino(j, 3600.0 * 3.0)
+	j.equipe["treino"]["nivel"] = 2
 	perto(GestaoEquipe.ritmo(d, j, 1.0), 1.1, 1e-6, "nível 2: no teto")
-	verificar(not GestaoEquipe.pode_treinar(d, j, 1.0), "no teto não treina mais")
+	verificar(not GestaoEquipe.pode_subir(d, j, 1.0), "no teto não sobe mais")
 	j.equipe["treino"]["nivel"] = 5
 	perto(GestaoEquipe.ritmo(d, j, 1.0), 1.1, 1e-6, "acima do teto: limitado")
 	var base := float(d.piloto(d.carreira()["piloto_jogador"])["ritmo"])
 	var p := EquipeJogador.piloto_do_jogador(d, j)
-	perto(float(p["ritmo"]), GestaoEquipe.ritmo(d, j, base), 1e-6, "o piloto da corrida usa o treino")
-	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), base, 1e-6, "o segundo piloto não herda o treino")
+	perto(float(p["ritmo"]), GestaoEquipe.ritmo(d, j, base), 1e-6, "o piloto da corrida usa o nível")
+	perto(float(EquipeJogador.piloto_corrida(d, j)["ritmo"]), base, 1e-6, "o segundo piloto não herda o nível")
 	j.free()
 	d.free()
 
@@ -245,48 +251,42 @@ func test_pintura_muda_cor_e_faixas_e_volta_do_save() -> void:
 	d.free()
 
 
-## Decisão 70: cada piloto tem atributos pelo traço e o próprio treino, como
-## energia: gasta ao começar, enche até o fim, e o nível entra quando enche.
-func test_atributos_e_energia_por_piloto() -> void:
+## Decisão 70: cada piloto tem atributos pelo traço e o próprio nível, que
+## sobe com as provas (experiência, decisão 71).
+func test_atributos_e_experiencia_por_piloto() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
 	j.economia.creditar(1000)
+	d.equipe()["treino"]["xp_por_nivel"] = 2
 	var base: Dictionary = d.piloto(d.carreira()["piloto_jogador"])
 	var a1 := EquipeJogador.atributos(d, j, "livre_1")
 	var a2 := EquipeJogador.atributos(d, j, "livre_2")
 	perto(float(a1["consistencia"]), float(base["consistencia"]), 1e-6, "Constante: a consistência do piloto-base")
 	verificar(float(a2["consistencia"]) < float(a1["consistencia"]), "Promessa: mais crua")
 	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "contrata")
-	perto(GestaoEquipe.energia(j, "livre_1", 0.0), 1.0, 1e-6, "descansado")
-	igual(GestaoEquipe.treinar(d, j, float(base["ritmo"]), 0.0, "livre_1"), "", "treina")
-	perto(GestaoEquipe.energia(j, "livre_1", 0.0), 0.0, 1e-6, "treinar gasta a energia")
-	verificar(GestaoEquipe.energia(j, "livre_1", 1800.0) > 0.4, "volta enchendo")
-	perto(GestaoEquipe.nivel_treino(j, "livre_2"), 0, 1e-6, "o treino é de um piloto só")
-	verificar(GestaoEquipe.concluir_treino(j, 3600.0), "enche: o nível entra")
-	perto(GestaoEquipe.energia(j, "livre_1", 3600.0), 1.0, 1e-6, "energia cheia")
-	verificar(float(EquipeJogador.piloto_do_jogador(d, j)["ritmo"]) > float(base["ritmo"]), "quem corre usa o treino dele")
+	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false), [], "uma prova: ainda não")
+	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false), ["livre_1"], "duas provas: sobe")
+	igual(GestaoEquipe.nivel_treino(j, "livre_1"), 1, "nível 1")
+	igual(GestaoEquipe.nivel_treino(j, "livre_2"), 0, "o nível é de um piloto só")
+	verificar(float(EquipeJogador.piloto_do_jogador(d, j)["ritmo"]) > float(base["ritmo"]), "quem corre usa o nível dele")
+	d.equipe()["treino"].erase("xp_por_nivel")
 	j.free()
 	d.free()
 
 
-## Decisão 70: cansado perde consistência; a corrida inscrita guarda o piloto
-## de então (descansar depois não muda a prova programada).
-func test_cansaco_e_piloto_guardado_na_inscricao() -> void:
+## Decisão 70: a corrida inscrita guarda o piloto de então (subir de nível
+## depois não muda a prova programada).
+func test_piloto_guardado_na_inscricao() -> void:
 	var d := dados_fixture()
 	var j := _novo(d)
 	j.economia.creditar(1000)
-	d.equipe()["treino"]["cansaco"] = 0.2
 	EquipeJogador.contratar(d, j, "livre_1", "corrida")
-	var descansado := float(EquipeJogador.atributos(d, j, "livre_1", 0.0)["consistencia"])
-	GestaoEquipe.treinar(d, j, 1.0, 0.0, "livre_1")
-	var cansado := float(EquipeJogador.atributos(d, j, "livre_1", 0.0)["consistencia"])
-	perto(cansado, descansado * 0.8, 1e-6, "energia zero: −20% de consistência")
 	var c := Carreira.new(d, j)
 	var f := Fila.new(c, j, 3600.0)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
 	igual(f.iniciar("aberto", uid, 1, 0.0), "", "inscrição")
 	var antes: Dictionary = f.corrida_atual(1.0)["resultado"]["carros"]["jogador"]
-	GestaoEquipe.concluir_treino(j, 999999.0)  # descansou
+	j.equipe["treino_livre_1"] = {"nivel": 2}  # subiu depois
 	var depois: Dictionary = f.corrida_atual(1.0)["resultado"]["carros"]["jogador"]
 	igual(depois["tempo_total"], antes["tempo_total"], "a corrida inscrita não muda")
 	j.free()
@@ -294,7 +294,7 @@ func test_cansaco_e_piloto_guardado_na_inscricao() -> void:
 
 
 ## Decisão 71: o mercado mostra a oferta do período; vencer uma equipe do Grid
-## põe os pilotos dela no mercado; experiência por prova e embalo.
+## põe os pilotos dela no mercado; experiência por prova.
 ## Pack premium e variação por piloto (pedido do usuário, 2026-10-16). Dados reais.
 func test_pack_premium_e_variacao_por_piloto() -> void:
 	var d: Node = DadosScript.new()
@@ -328,7 +328,7 @@ func test_pack_premium_e_variacao_por_piloto() -> void:
 	d.free()
 
 
-func test_mercado_experiencia_e_embalo() -> void:
+func test_mercado_e_experiencia() -> void:
 	var d: Node = load("res://autoload/dados.gd").new()
 	d.carregar("res://data/")
 	var j: Node = JogadorScript.new()
@@ -357,10 +357,6 @@ func test_mercado_experiencia_e_embalo() -> void:
 	for k in n:
 		EquipeJogador.apos_prova(d, j, ["corrida"], true)
 	igual(GestaoEquipe.nivel_treino(j, c0), 1, "subiu um nível com a experiência")
-	verificar(EquipeJogador.em_embalo(j, c0), "vitórias seguidas: embalo")
-	var dur := GestaoEquipe.duracao_treino(d, j, c0)
-	j.equipe.erase("embalo_" + c0)
-	verificar(dur < GestaoEquipe.duracao_treino(d, j, c0), "embalo: treino mais curto")
 	j.free()
 	d.free()
 

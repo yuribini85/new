@@ -1,18 +1,17 @@
 class_name GestaoEquipe
 extends RefCounted
 ## Gestão da equipe do jogador (data/equipe.json; abre com a equipe, flag
-## SECOND_DRIVER_CREATED): patrocínio, desmanche e sede. Estado em
-## jogador.equipe; o crédito de peças fica na Economia.
+## SECOND_DRIVER_CREATED): patrocínio, sede e o nível de ritmo dos pilotos.
+## Estado em jogador.equipe.
 ##
-## Patrocínio: ofertas dos patrocinadores (data/patrocinadores.json) de licença
-## até a maior do jogador; um contrato dura a capacidade de renda offline do
-## jogador (decisão 104) e paga cada hora dela no relógio real, com o app aberto
-## ou fechado; mais um bônus a cada corrida que cumpre a condição dele.
+## Patrocínio: os patrocinadores (data/patrocinadores.json) de licença até a
+## maior do jogador; cada vaga livre assina sozinha o que mais paga por hora
+## (renovar). Um contrato dura a capacidade de renda offline do jogador
+## (decisão 104) e paga cada hora dela no relógio real, com o app aberto ou
+## fechado; mais um bônus a cada corrida que cumpre a condição dele.
 ## Valores: fatores sobre o prêmio de referência (média do 1º lugar das provas
 ## da licença do patrocinador); provisórios até o playtest.
-## Desmanche: desmontar um carro (como vender: não o único, nem o da fila) vira
-## crédito de peças pela soma das peças compradas para ele.
-## Sede: melhorias com níveis (contratos, renda, bônus, desmanche).
+## Sede: só o Escritório comercial (mais contratos ao mesmo tempo).
 
 ## Licenças na ordem de licencas.json (CLUB → ELITE).
 static func ordem(dados: Node) -> Array:
@@ -80,7 +79,7 @@ static func melhoria(dados: Node, id: String) -> Dictionary:
 	return {}
 
 
-## Soma do efeito das melhorias compradas ("contratos", "renda", "bonus", "desmanche").
+## Soma do efeito das melhorias compradas (hoje só "contratos").
 static func efeito(dados: Node, jogador: Node, tipo: String) -> float:
 	var t := 0.0
 	for m in dados.equipe().get("sede", []):
@@ -133,23 +132,23 @@ static func vagas(dados: Node, jogador: Node) -> int:
 	return int(config(dados).get("contratos_base", 1)) + int(efeito(dados, jogador, "contratos"))
 
 
-## Renda por hora de um patrocinador, com o Marketing.
-static func renda_hora(dados: Node, jogador: Node, p: Dictionary) -> int:
+## Renda por hora de um patrocinador.
+static func renda_hora(dados: Node, _jogador: Node, p: Dictionary) -> int:
 	if p.is_empty():  # patrocinador que saiu de patrocinadores.json
 		return 0
 	var ref := premio_referencia(dados, String(p["licenca"]))
-	return roundi(ref * float(config(dados).get("renda_hora_fator", 0.0)) * (1.0 + efeito(dados, jogador, "renda")))
+	return roundi(ref * float(config(dados).get("renda_hora_fator", 0.0)))
 
 
-## Bônus por corrida que cumpre a condição, com a Hospitalidade.
-static func bonus(dados: Node, jogador: Node, p: Dictionary) -> int:
+## Bônus por corrida que cumpre a condição.
+static func bonus(dados: Node, _jogador: Node, p: Dictionary) -> int:
 	if p.is_empty():
 		return 0
 	var ref := premio_referencia(dados, String(p["licenca"]))
 	# Decisão 100: condição mais difícil paga mais (equipe.json →
 	# bonus_condicao, medido por tools/calibrar_bonus.gd; ausente vale 1).
 	var mult := float(config(dados).get("bonus_condicao", {}).get(chave_condicao(p.get("condicao", {})), 1.0))
-	return roundi(ref * float(config(dados).get("bonus_fator", 0.0)) * mult * (1.0 + efeito(dados, jogador, "bonus")))
+	return roundi(ref * float(config(dados).get("bonus_fator", 0.0)) * mult)
 
 
 ## Chave da condição em bonus_condicao: "vitoria", "podio", "etapa", "licenca:PRO".
@@ -184,9 +183,10 @@ static func cumpre(c: Dictionary, ev: Dictionary, posicao: int, campeonato: bool
 	return false
 
 
-## Ofertas abertas: patrocinadores de licença até a maior do jogador, sem os
-## já contratados; os de licença mais alta primeiro, sorteados pela semente
-## (troca quando um contrato é assinado ou acaba).
+## Patrocinadores disponíveis (licença até a maior do jogador, sem os já
+## contratados), o que mais paga por hora primeiro; no empate, sorteados pela
+## semente (troca quando um contrato é assinado ou acaba), para variar a marca
+## e a condição do bônus.
 static func ofertas(dados: Node, jogador: Node) -> Array:
 	var niveis := ordem(dados)
 	var maior := maior_licenca(dados, jogador)
@@ -196,13 +196,28 @@ static func ofertas(dados: Node, jogador: Node) -> Array:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(jogador.equipe.get("semente_ofertas", 0)) + 1
 	var sorteio := {}
+	var renda := {}
 	for p in lista:
 		sorteio[p["id"]] = rng.randf()
+		renda[p["id"]] = renda_hora(dados, jogador, p)
 	lista.sort_custom(func(a, b):
-		var ka := niveis.find(String(a["licenca"]))
-		var kb := niveis.find(String(b["licenca"]))
-		return ka > kb if ka != kb else sorteio[a["id"]] < sorteio[b["id"]])
-	return lista.slice(0, int(config(dados).get("ofertas", 3)))
+		return renda[a["id"]] > renda[b["id"]] if renda[a["id"]] != renda[b["id"]] else sorteio[a["id"]] < sorteio[b["id"]])
+	return lista
+
+
+## Sem escolha entre ofertas (decisão 124): cada vaga livre assina a primeira
+## de ofertas(), a que mais paga por hora. Quem chama passa depois de acumular
+## (o contrato vencido sai antes). Retorna os nomes assinados agora.
+static func renovar(dados: Node, jogador: Node, agora: float) -> Array:
+	var nomes := []
+	if not patrocinio_aberto(dados, jogador):
+		return nomes
+	while contratos(jogador).size() < vagas(dados, jogador):
+		var lista := ofertas(dados, jogador)
+		if lista.is_empty() or assinar(dados, jogador, String(lista[0]["id"]), agora) != "":
+			break
+		nomes.append(String(lista[0]["nome"]))
+	return nomes
 
 
 ## Assina o contrato (agora: segundos Unix). "" ou o motivo.
@@ -271,13 +286,12 @@ static func bonus_corrida(dados: Node, jogador: Node, ev: Dictionary, posicao: i
 
 # ------------------------------------------------------------------ Treino
 
-## Treino do piloto (decisão 54; decisão 70: por piloto, como energia): níveis
-## de ritmo, um por vez, no relógio real; teto pela maior licença
-## (data/equipe.json → treino.teto, gerado por tools/calibrar_treino.gd).
-## Começar o treino gasta a energia do piloto; ela volta enchendo durante o
-## treino e o nível entra quando enche. `piloto_id` "" = o treino da equipe
-## (jogo sem pilotos contratados). Estado: jogador.equipe[chave] = {nivel, fim
-## (segundos Unix; 0 = parado), inicio}.
+## Nível de ritmo do piloto (decisão 54; decisão 70: por piloto). Sobe só com
+## a experiência (EquipeJogador.apos_prova: um nível a cada xp_por_nivel
+## provas), sem custo nem espera (decisão 124: o treino pago saiu). Teto pela
+## maior licença (data/equipe.json → treino.teto, gerado por
+## tools/calibrar_treino.py). `piloto_id` "" = o nível da equipe (jogo sem
+## pilotos contratados). Estado: jogador.equipe[chave] = {nivel}.
 static func cfg_treino(dados: Node) -> Dictionary:
 	return dados.equipe().get("treino", {})
 
@@ -290,7 +304,7 @@ static func nivel_treino(jogador: Node, piloto_id := "") -> int:
 	return int(jogador.equipe.get(_chave(piloto_id), {}).get("nivel", 0))
 
 
-## Ritmo com o treino (a base sem gestão).
+## Ritmo com os níveis (a base sem gestão).
 static func ritmo(dados: Node, jogador: Node, base: float, piloto_id := "") -> float:
 	var t := cfg_treino(dados)
 	if t.is_empty():
@@ -311,109 +325,6 @@ static func teto(dados: Node, jogador: Node) -> float:
 
 
 ## O próximo nível ainda sobe o ritmo (abaixo do teto)?
-static func pode_treinar(dados: Node, jogador: Node, base: float, piloto_id := "") -> bool:
+static func pode_subir(dados: Node, jogador: Node, base: float, piloto_id := "") -> bool:
 	return aberta(dados, jogador) and not cfg_treino(dados).is_empty() \
 			and base + float(cfg_treino(dados).get("passo", 0.0)) * nivel_treino(jogador, piloto_id) < teto(dados, jogador) - 1e-6
-
-
-static func treinando(jogador: Node, piloto_id := "") -> bool:
-	return float(jogador.equipe.get(_chave(piloto_id), {}).get("fim", 0.0)) > 0.0
-
-
-static func duracao_treino(dados: Node, jogador: Node, piloto_id := "") -> float:
-	var d := float(cfg_treino(dados).get("tempo_base_h", 1.0)) * 3600.0 * (nivel_treino(jogador, piloto_id) + 1)
-	if piloto_id != "" and EquipeJogador.em_embalo(jogador, piloto_id):
-		d *= float(cfg_treino(dados).get("embalo_fator_tempo", 1.0))  # decisão 71: embalo
-	return d
-
-
-static func preco_treino(dados: Node, jogador: Node, piloto_id := "") -> int:
-	var niveis := ordem(dados)
-	var k := maior_licenca(dados, jogador)
-	var ref := premio_referencia(dados, niveis[k]) if k >= 0 else 0
-	return roundi(ref * float(cfg_treino(dados).get("custo_fator", 0.0)) * (nivel_treino(jogador, piloto_id) + 1))
-
-
-## Começa o próximo nível (agora: segundos Unix). "" ou o motivo.
-static func treinar(dados: Node, jogador: Node, base: float, agora: float, piloto_id := "") -> String:
-	if treinando(jogador, piloto_id):
-		return "já está treinando"
-	if not pode_treinar(dados, jogador, base, piloto_id):
-		return "no teto da licença"
-	if not jogador.economia.debitar(preco_treino(dados, jogador, piloto_id)):
-		return "saldo insuficiente"
-	var t: Dictionary = jogador.equipe.get(_chave(piloto_id), {})
-	t["nivel"] = nivel_treino(jogador, piloto_id)
-	t["inicio"] = agora
-	t["fim"] = agora + duracao_treino(dados, jogador, piloto_id)
-	jogador.equipe[_chave(piloto_id)] = t
-	jogador.equipe.erase("embalo_" + piloto_id)  # o embalo vale um treino
-	return ""
-
-
-## Energia do piloto (0..1): gasta ao começar o treino, volta enchendo até o
-## fim dele. 1 = descansado.
-static func energia(jogador: Node, piloto_id: String, agora: float) -> float:
-	if not treinando(jogador, piloto_id):
-		return 1.0
-	var t: Dictionary = jogador.equipe[_chave(piloto_id)]
-	var dur := maxf(float(t["fim"]) - float(t.get("inicio", t["fim"])), 1.0)
-	return clampf(1.0 - (float(t["fim"]) - agora) / dur, 0.0, 1.0)
-
-
-## Conclui os treinos que já terminaram (equipe e pilotos). true se algum subiu.
-static func concluir_treino(jogador: Node, agora: float) -> bool:
-	var subiu := false
-	for k in jogador.equipe.keys():
-		if not String(k).begins_with("treino"):
-			continue
-		var t = jogador.equipe[k]
-		if not t is Dictionary or float(t.get("fim", 0.0)) <= 0.0 or agora < float(t["fim"]):
-			continue
-		t["nivel"] = int(t.get("nivel", 0)) + 1
-		t["fim"] = 0.0
-		subiu = true
-	return subiu
-
-
-# -------------------------------------------------------------- Desmanche
-
-## Crédito de peças por desmontar o carro: as peças compradas para ele vezes
-## o fator, com o Pátio de desmanche.
-## Peças que um carro rende (desmontado, perdido ou destruído na arena):
-## fator_pecas × (o que ele vale na revenda + as peças compradas para ele), com
-## o bônus de desmanche da Sede. Sem número novo: o fator do desmanche e a
-## fração de revenda já existem (equipe.json, economia.json).
-static func pecas_do_carro(dados: Node, jogador: Node, carro: Carro) -> int:
-	var soma := float(carro.base.get("preco", 0)) * float(dados.economia().get("fracao_revenda", 0.0))
-	for pid in carro.pecas_possuidas:
-		if dados.existe("pecas", pid):
-			soma += int(dados.item("pecas", pid)["preco"])
-	var f := float(dados.equipe().get("desmanche", {}).get("fator_pecas", 0.0))
-	return roundi(soma * f * (1.0 + efeito(dados, jogador, "desmanche")))
-
-
-static func credito_desmanche(dados: Node, jogador: Node, carro: Carro) -> int:
-	return pecas_do_carro(dados, jogador, carro)
-
-
-static func pode_desmontar(jogador: Node, uid: int) -> bool:
-	var na_fila := int(jogador.fila.get("uid", -1)) if not jogador.fila.is_empty() else -1
-	return jogador.concessionaria.pode_vender(uid) and uid != na_fila
-
-
-## Desmonta: o carro sai da garagem e o crédito entra. Retorna o crédito (-1 se não pode).
-static func desmontar(dados: Node, jogador: Node, uid: int) -> int:
-	if not pode_desmontar(jogador, uid):
-		return -1
-	var carro: Carro = jogador.garagem.carro(uid)
-	var credito := credito_desmanche(dados, jogador, carro)
-	jogador.garagem.remover(uid)
-	jogador.economia.ganhar_pecas(credito)
-	jogador.equipe["desmontados"] = int(jogador.equipe.get("desmontados", 0)) + 1
-	if jogador.carro_ativo == uid:
-		var resto: Array = jogador.garagem.lista()
-		jogador.carro_ativo = resto[0].uid if not resto.is_empty() else -1
-	if jogador.carro_companheiro == uid:
-		jogador.carro_companheiro = -1
-	return credito

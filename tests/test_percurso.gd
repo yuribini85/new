@@ -1,27 +1,27 @@
 extends "res://tests/base_teste.gd"
 ## Percurso inicial com os dados REAIS de data/ (não fixtures): confere que o
 ## balanceamento importado da referência sustenta o começo. Jogador automático
-## (tools/agente.gd, perfil "sugestoes") com cada usado inicial: exige uma
+## (tools/agente.gd, perfil "sugestoes") com cada carro inicial: exige uma
 ## vitória e a licença B (contratos) em até 30 min de corrida, e ao menos um
 ## ciclo derrota → compra → vitória NA MESMA PROVA (a compra resolve o que a
 ## motivou). O tempo conta só corrida: leitura e navegação ficam para o playtest.
 
 const JogadorScript := preload("res://autoload/jogador.gd")
 const LIMITE_S := 30.0 * 60.0
+const BONS_TESTADOS := 8
 
 
 func test_percurso_inicial_ate_a_licenca_b() -> void:
-	# Agente "sugestoes" (tools/agente.gd) com cada usado inicial que o saldo
+	# Agente "sugestoes" (tools/agente.gd) com cada carro das Lojas que o saldo
 	# paga E que tem boa chance na primeira corrida aberta (posição média de
 	# fábrica até 1,5 na prova aberta sem licença de menor prêmio). O Mercado
 	# não recomenda nada, como na referência: este filtro é só a conferência de que
-	# existem bons primeiros carros. Com a referência inteiro há dezenas de usados
-	# iniciais, e alguns não sustentam o começo, como na referência.
+	# existem bons primeiros carros; alguns não sustentam o começo.
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var saldo := int(d.economia()["saldo_inicial"])
-	var ofertas: Array = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)
-	verificar(not ofertas.is_empty(), "algum usado inicial cabe no saldo")
+	var ofertas: Array = _novos_no_saldo(d, saldo)
+	verificar(not ofertas.is_empty(), "algum carro cabe no saldo inicial")
 	var j: Node = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
 	var carreira := Carreira.new(d, j)
@@ -34,7 +34,12 @@ func test_percurso_inicial_ate_a_licenca_b() -> void:
 		return not a.is_empty() and float(a["media"]) <= 1.5)
 	j.free()
 	print("\n  bons iniciais: %d" % ofertas.size())
-	verificar(not ofertas.is_empty(), "há usado inicial com boa chance na primeira corrida")
+	verificar(not ofertas.is_empty(), "há carro inicial com boa chance na primeira corrida")
+	# Toda a frota nas Lojas dá dezenas de bons iniciais: o agente joga os
+	# BONS_TESTADOS mais baratos (o começo mais apertado), para a suíte caber
+	# no tempo do tests/rodar.sh.
+	ofertas.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
+	ofertas = ofertas.slice(0, BONS_TESTADOS)
 	var ciclo := false
 	for o in ofertas:
 		var ag = preload("res://tools/agente.gd").new(d, "sugestoes", hash(o["carro_id"]))
@@ -81,9 +86,9 @@ func test_agente_mede_por_fase_com_os_contratos() -> void:
 	var d: Node = DadosScript.new()
 	d.carregar("res://data/")
 	var saldo := int(d.economia()["saldo_inicial"])
-	# O usado do dia 0 que cabe no saldo com a melhor relação potência/peso: o
+	# O carro das Lojas que cabe no saldo com a melhor relação potência/peso: o
 	# teste mede a contabilidade por fase, não a escolha do carro.
-	var ofertas: Array = Usados.estoque(d.lista("carros"), 0, {}).filter(func(o): return int(o["preco"]) <= saldo)
+	var ofertas: Array = _novos_no_saldo(d, saldo)
 	var razao := func(o): return float(d.carro(o["carro_id"])["potencia"]) / float(d.carro(o["carro_id"])["peso"])
 	ofertas.sort_custom(func(a, b): return razao.call(a) > razao.call(b))
 	var oferta: Dictionary = ofertas[0]
@@ -102,3 +107,10 @@ func test_agente_mede_por_fase_com_os_contratos() -> void:
 		gastos += int(r["fases"][f]["gastos"])
 	igual(r["saldo"], saldo + bruto - gastos, "saldo = inicial + renda bruta − gastos")
 	d.free()
+
+
+## Os carros das Lojas que o saldo inicial paga (toda a frota, decisão 42),
+## como ofertas do agente ({carro_id, preco}).
+func _novos_no_saldo(d: Node, saldo: int) -> Array:
+	return d.lista("carros").filter(func(c): return c.get("preco") != null and int(c["preco"]) <= saldo) \
+			.map(func(c): return {"carro_id": c["id"], "preco": int(c["preco"])})

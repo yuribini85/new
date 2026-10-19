@@ -13,15 +13,14 @@ const LISTA := [
 	{"id": "carro_3d", "nome": "Carro 3D: Hozuki Catana",
 		"detalhe": "Como a arena aberta, com o Hozuki Catana (modelo 3D) como carro ativo: garagem, corrida e arena."},
 	{"id": "completo", "nome": "Teste completo",
-		"detalhe": "Tudo liberado: todas as licenças, história e tutoriais vistos, saldo e peças de sobra, "
+		"detalhe": "Tudo liberado: todas as licenças, história e tutoriais vistos, saldo de sobra, "
 			+ "garagem ampliada com vários carros (o resgate com canhão incluso), pilotos de corrida e de arena "
 			+ "contratados e escalados. Para testar a arena e o resto sem jogar o começo."},
 ]
 
-## Teste completo: dinheiro e peças de sobra (cenário de teste, não economia),
-## ampliações da garagem e os carros além dos dois usados.
+## Teste completo: dinheiro de sobra (cenário de teste, não economia),
+## ampliações da garagem e os carros além dos dois mais baratos.
 const COMPLETO_SALDO := 50_000_000
-const COMPLETO_PECAS := 100_000
 const COMPLETO_AMPLIACOES := 4
 const COMPLETO_CARROS := ["hozuki_catana", "brakhaus_sentinela", "brakhaus_colosso", "kanaya_kestrel"]
 ## Flags de história que o teste não liga: o topo do Grid encerraria os desafios.
@@ -52,8 +51,8 @@ static func montar(dados: Node, jogador: Node, id: String) -> String:
 			jogador.flags["NATIONAL_COMPLETE"] = true
 			# Decisão 85: a garagem do dono começa vazia; o carro da Mara chega na National.
 			Prologo.ao_conceder(dados, jogador, "NATIONAL")
-			_comprar_usado(dados, jogador)
-			_comprar_usado(dados, jogador)
+			_comprar_barato(dados, jogador)
+			_comprar_barato(dados, jogador)
 			# A equipe e o piloto de corrida (no jogo vêm com o primeiro carro).
 			EquipeJogador.criar(jogador)
 			var oferta := EquipeJogador.oferta(dados, jogador, "corrida", Time.get_unix_time_from_system())
@@ -85,11 +84,10 @@ static func _completo(dados: Node, jogador: Node) -> void:
 	_licencas_ate(dados, jogador, String(todas.back()["id"]))
 	Prologo.ao_conceder(dados, jogador, "NATIONAL")
 	jogador.economia.creditar(COMPLETO_SALDO)
-	jogador.economia.ganhar_pecas(COMPLETO_PECAS)
 	jogador.ampliacoes_garagem = COMPLETO_AMPLIACOES
 	jogador.garagem.vagas = VagasGaragem.capacidade(dados, COMPLETO_AMPLIACOES)
-	_comprar_usado(dados, jogador)
-	_comprar_usado(dados, jogador)
+	_comprar_barato(dados, jogador)
+	_comprar_barato(dados, jogador)
 	var uids := {}
 	for mid in COMPLETO_CARROS:
 		if dados.existe("carros", mid) and not jogador.garagem.cheia():
@@ -123,24 +121,16 @@ static func _licencas_ate(dados: Node, jogador: Node, ultima: String) -> void:
 			break
 
 
-## O usado mais barato do dia que o saldo paga, de um modelo que
-## ainda não está na garagem; sem nenhum, o modelo mais barato do catálogo, de
-## graça (é cenário de teste, não economia). Retorna o uid.
-static func _comprar_usado(dados: Node, jogador: Node) -> int:
-	var ofertas := Usados.estoque(dados.lista("carros"), jogador.dias, jogador.usados_vendidos)
-	var lista := ofertas.filter(func(o): return jogador.economia.pode_pagar(int(o["preco"])))
-	lista.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
-	lista = lista.filter(func(o): return jogador.garagem.lista().all(func(c): return c.id != o["carro_id"]))
-	var uid := -1
-	if not lista.is_empty():
-		var o: Dictionary = lista[0]
-		uid = jogador.concessionaria.comprar_usado(o, dados.carro(o["carro_id"]), jogador.usados_vendidos)
+## O modelo novo mais barato que ainda não está na garagem: pago se o saldo
+## dá; senão, de graça (é cenário de teste, não economia). Retorna o uid.
+static func _comprar_barato(dados: Node, jogador: Node) -> int:
+	var tem: Array = jogador.garagem.lista().map(func(c): return c.id)
+	var modelos: Array = dados.lista("carros").filter(func(m): return not m["id"] in tem and m.get("preco") != null)
+	modelos.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
+	if modelos.is_empty():
+		return jogador.carro_ativo  # todos os modelos já na garagem (dados de teste)
+	var uid: int = jogador.concessionaria.comprar_carro(modelos[0])
 	if uid < 0:
-		var tem: Array = jogador.garagem.lista().map(func(c): return c.id)
-		var modelos: Array = dados.lista("carros").filter(func(m): return not m["id"] in tem)
-		modelos.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
-		if modelos.is_empty():
-			return jogador.carro_ativo  # todos os modelos já na garagem (dados de teste)
 		var carro := Carro.new(modelos[0])
 		carro.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
 		uid = jogador.garagem.adicionar(carro)

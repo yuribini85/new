@@ -78,8 +78,7 @@ func test_save_ida_e_volta() -> void:
 	j.concessionaria.comprar_peca(c, d.peca("turbo"))
 	j.concessionaria.comprar_peca(c, d.peca("motor_fr"))
 	j.concessionaria.comprar_pneu(c, d.pneu("chuva"))
-	var oferta: Dictionary = Usados.estoque(d.lista("carros"), 0, j.usados_vendidos)[0]
-	j.concessionaria.comprar_usado(oferta, d.carro(oferta["carro_id"]), j.usados_vendidos)
+	j.concessionaria.comprar_carro(d.carro("fraco"))
 	j.licencas.append("b")
 	j.graus_licenca["b1"] = "prata"
 	j.vitorias["aberto"] = 1
@@ -285,20 +284,23 @@ func test_fila_guarda_copia_da_preparacao() -> void:
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
 	var c: Carro = j.garagem.carro(uid)
 	igual(j.concessionaria.comprar_peca(c, d.peca("turbo")), "", "turbo")
-	c.configuracoes.append({"nome": "turbo", "pecas": ["turbo"], "ajuste_cambio": ""})
+	var cfg := c.configuracao()
 	c.remover(d.peca("turbo")["categoria"])
 	j.vitorias["aberto"] = 1
-	igual(f.iniciar("aberto", uid, 1, 0.0, c.configuracoes[0]), "", "inscrição com a preparação salva")
+	igual(f.iniciar("aberto", uid, 1, 0.0, cfg), "", "inscrição com a preparação dada")
 	var antes: Dictionary = f.carro_inscrito(j.fila).atributos_efetivos("seco")
 	verificar(antes["potencia"] > c.atributos_efetivos("seco")["potencia"], "inscrito com turbo, garagem sem")
-	c.configuracoes[0]["pecas"] = []
+	cfg["pecas"] = []
 	c.instalar(d.peca("turbo"))
 	c.remover(d.peca("turbo")["categoria"])
-	igual(f.carro_inscrito(j.fila).atributos_efetivos("seco"), antes, "editar a configuração salva não muda a inscrição")
+	igual(f.carro_inscrito(j.fila).atributos_efetivos("seco"), antes, "mexer na preparação depois não muda a inscrição")
 	var estado: Dictionary = JSON.parse_string(JSON.stringify(Save.serializar(j)))
+	# Save antigo: preparações salvas e ajuste do câmbio saíram (ficam de fora no load).
+	estado["carros"][0]["configuracoes"] = [{"nome": "turbo", "pecas": ["turbo"], "ajuste_cambio": "curto"}]
+	estado["carros"][0]["ajuste_cambio"] = "curto"
 	var k := _jogador(d)
 	igual(Save.desserializar(estado, k, d), "", "load")
-	igual(k.garagem.carro(uid).configuracoes.size(), 1, "configuração salva volta")
+	igual(k.garagem.carro(uid).ajuste_cambio, "", "câmbio no equilibrado")
 	var fk := _fila(d, k)
 	igual(fk.carro_inscrito(k.fila).atributos_efetivos("seco"), antes, "inscrição volta do save")
 	j.free()

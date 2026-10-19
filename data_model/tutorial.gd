@@ -59,7 +59,7 @@ static func tem_fala(c: Dictionary) -> bool:
 
 ## Um toque: daqui em diante sem ensino, com as telas liberadas (a equipe
 ## existe; Lojas, Corridas, Carreira e Oficina à mostra; o ACELERAR e as
-## licenças). A Arena continua abrindo com os 3 carros (regra do jogo).
+## licenças). A Arena continua abrindo pela regra do jogo (carros_minimos).
 static func pular(jogador: Node) -> void:
 	jogador.flags[FLAG_PULADO] = true
 	for f in FLAGS_LIBERADAS:

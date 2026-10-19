@@ -1,8 +1,8 @@
 extends Aba
 ## Equipe do jogador (Second Driver Motorsport), visível depois de criada.
 ## Placeholders (documento, seção 4): logo = texto da equipe. Duas partes:
-## EQUIPE (caixa, patrocínio, pilotos e o carro do segundo) e SEDE (melhorias
-## da equipe, GestaoEquipe).
+## EQUIPE (caixa, patrocínio e pilotos; o carro de cada um é o da escalação,
+## na Oficina) e SEDE (melhorias da equipe, GestaoEquipe).
 
 const PARTES := [["equipe", "EQUIPE"], ["sede", "SEDE"]]
 ## Segundo piloto: busto na aba (cabeça à cintura do corpo 600 × 900) e o palco
@@ -110,10 +110,10 @@ func _partes() -> void:
 		h.add_child(b)
 
 
-## Caixa único (o saldo), as peças e a folha de cada corrida.
+## Caixa único (o saldo).
 func _caixa() -> void:
 	if not GestaoEquipe.aberta(dados, jogador):
-		return  # decisão 69: a equipe nasce no começo; caixa e folha, com a International
+		return  # decisão 69: a equipe nasce no começo; o caixa, com a International
 	titulo_secao("CAIXA")
 	var c := cartao()
 	var h := fileira(c)
@@ -124,13 +124,6 @@ func _caixa() -> void:
 	Tipografia.numero(n, 44)
 	n.add_theme_color_override("font_color", COR_DESTAQUE)
 	h.add_child(n)
-	if jogador.economia.credito_pecas > 0:
-		rotulo("+ %s peças (desmanche e arena; pagam a blindagem)" % dinheiro(jogador.economia.credito_pecas),
-				FONTE_PEQUENA + 2, COR_SECUNDARIA, c)
-	var f := EquipeJogador.folha(dados, jogador)
-	if not GestaoEquipe.aberta(dados, jogador):
-		_linha_folha(c, "Patrocínio por corrida", "patrocinio", int(f["patrocinio"]), "+")
-	_linha_folha(c, "Salários por corrida", "custo_staff", int(f["staff"]), "−")
 
 
 ## Sede: as melhorias da equipe, cada uma com os níveis em dentes, o efeito e
@@ -189,18 +182,6 @@ static func _texto_efeito(m: Dictionary, n: int) -> String:
 	return t
 
 
-## Valor ainda sem número (pendente de playtest) não aparece para o jogador.
-func _linha_folha(pai: Control, texto: String, chave: String, v: int, sinal: String) -> void:
-	var definido := EquipeJogador.definido(dados, chave)
-	if not definido:
-		return
-	var h := fileira(pai)
-	var l := rotulo(texto, FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var t := rotulo("%s %s giros" % [sinal, dinheiro(v)], FONTE_PEQUENA + 2, Color.WHITE, h)
-	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-
-
 ## Decisão 69: você administra; quem pilota é contratado. Três vagas: o piloto
 ## de corrida (o primeiro, no tutorial do começo) e os dois de arena (abrem com
 ## o tutorial da arena, aos 3 carros).
@@ -216,9 +197,7 @@ func _pilotos(eq: Dictionary) -> void:
 		var c := cartao()
 		_vaga_piloto(vaga, c)
 		if EquipeJogador.piloto_vaga(jogador, vaga) != "":
-			_treino(c, EquipeJogador.piloto_vaga(jogador, vaga))
-		if vaga == "arena2" and EquipeJogador.piloto_vaga(jogador, vaga) != "":
-			_carro_companheiro()
+			_atributos(c, EquipeJogador.piloto_vaga(jogador, vaga))
 	# Decisão 101: os premium só entram no mercado depois do Pack Elite.
 	if not EquipeJogador.tem_pack_premium(jogador) and Configuracoes.tem_loja():
 		var b := Button.new()
@@ -266,69 +245,27 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
 	if por_nivel > 0:
 		_proximo_nivel(v, EquipeJogador.xp(jogador, id), por_nivel)
-	var falta := ArenaCarreira.recuperacao_s(jogador, id)
-	if falta > 0.0:
-		rotulo("EM RECUPERAÇÃO (%s na arena): volta em %s." % [EquipeJogador.flexao(
-				EquipeJogador.genero(dados, id), "atropelado", "atropelada"), ArenaCarreira.texto_tempo(falta)],
-				FONTE_PEQUENA, COR_RUIM, v)
-	if EquipeJogador.em_embalo(jogador, id):
-		rotulo("EMBALO: o próximo treino leva metade do tempo.", FONTE_PEQUENA, COR_BOM, v)
 	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 
-## Atributos (decisão 70) e treino do piloto: ritmo, consistência e
-## agressividade em barras; a energia (treinar gasta, volta enchendo); o botão
-## do próximo nível. `piloto_id` "" = o treino da equipe (sem contratados).
-func _treino(pai: Control, piloto_id := "") -> void:
+## Atributos (decisão 70) do piloto: ritmo, consistência e agressividade em
+## barras. O ritmo sobe só com a experiência (decisão 124: sem treino pago).
+func _atributos(pai: Control, piloto_id: String) -> void:
 	var base := float(dados.piloto(dados.carreira()["piloto_jogador"])["ritmo"])
-	if piloto_id != "":
-		var a := EquipeJogador.atributos(dados, jogador, piloto_id)
-		# Ritmo: o ganho do treino sobre o piloto-base, e a barra na mesma
-		# escala (cheia no teto da licença): o número e a barra dizem o mesmo.
-		var teto_r := maxf(GestaoEquipe.teto(dados, jogador), base + 0.0001)
-		var ganho := float(a["ritmo"]) - base
-		for it in [["Ritmo", ganho / (teto_r - base), "+%s%%" % Aba.decimal(ganho * 100.0, 1)],
-				_na_escala("Consistência", "consistencia", float(a["consistencia"])),
-				_na_escala("Agressividade", "agressividade", float(a["agressividade"]))]:
-			_barra_atributo(pai, it[0], clampf(float(it[1]), 0.0, 1.0), it[2])
-		var e := GestaoEquipe.energia(jogador, piloto_id, Time.get_unix_time_from_system())
-		_barra_atributo(pai, "Energia", e, "%d%%" % roundi(e * 100.0), COR_BOM if e >= 1.0 else COR_DESTAQUE)
-	if not GestaoEquipe.aberta(dados, jogador) or GestaoEquipe.cfg_treino(dados).is_empty():
-		return
-	var atual := GestaoEquipe.ritmo(dados, jogador, base, piloto_id)
-	var teto := maxf(GestaoEquipe.teto(dados, jogador), base)
-	if piloto_id == "":
-		var h := fileira(pai)
-		var l := rotulo("Ritmo", FONTE_PEQUENA + 2, COR_SECUNDARIA, h)
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var v := rotulo("%s%% · teto %s%%" % [Aba.decimal(atual * 100.0, 1), Aba.decimal(teto * 100.0, 1)],
-				FONTE_PEQUENA + 2, Color.WHITE, h)
-		v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	var agora := Time.get_unix_time_from_system()
-	if GestaoEquipe.treinando(jogador, piloto_id):
-		var resta := maxf(float(jogador.equipe[GestaoEquipe._chave(piloto_id)]["fim"]) - agora, 0.0)
-		rotulo("Treinando para o nível %d: termina em %s, também com o jogo fechado." % [
-				GestaoEquipe.nivel_treino(jogador, piloto_id) + 1, horas_min(resta)], FONTE_PEQUENA, COR_BOM, pai)
-		return
-	if not GestaoEquipe.pode_treinar(dados, jogador, base, piloto_id):
-		rotulo("Ritmo no teto desta licença (%s%%). A próxima licença libera mais." % Aba.decimal(teto * 100.0, 1),
+	var a := EquipeJogador.atributos(dados, jogador, piloto_id)
+	# Ritmo: o ganho dos níveis sobre o piloto-base, e a barra na mesma escala
+	# (cheia no teto da licença): o número e a barra dizem o mesmo.
+	var teto_r := maxf(GestaoEquipe.teto(dados, jogador), base + 0.0001)
+	var ganho := float(a["ritmo"]) - base
+	for it in [["Ritmo", ganho / (teto_r - base), "+%s%%" % Aba.decimal(ganho * 100.0, 1)],
+			_na_escala("Consistência", "consistencia", float(a["consistencia"])),
+			_na_escala("Agressividade", "agressividade", float(a["agressividade"]))]:
+		_barra_atributo(pai, it[0], clampf(float(it[1]), 0.0, 1.0), it[2])
+	if GestaoEquipe.aberta(dados, jogador) and not GestaoEquipe.cfg_treino(dados).is_empty() \
+			and not GestaoEquipe.pode_subir(dados, jogador, base, piloto_id):
+		rotulo("Ritmo no teto desta licença (%s%%). A próxima licença libera mais." % Aba.decimal(
+				maxf(GestaoEquipe.teto(dados, jogador), base) * 100.0, 1),
 				FONTE_PEQUENA, COR_SECUNDARIA, pai)
-		return
-	var preco := GestaoEquipe.preco_treino(dados, jogador, piloto_id)
-	var b := Button.new()
-	Tipografia.acao_primaria(b, "Treinar ritmo · %s · %s" % [dinheiro(preco), horas_min(GestaoEquipe.duracao_treino(dados, jogador, piloto_id))],
-			COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, Tipografia.ALTURA_SECUNDARIA)
-	moeda(b, 24)
-	b.disabled = not jogador.economia.pode_pagar(preco)
-	b.pressed.connect(func():
-		var motivo := GestaoEquipe.treinar(dados, jogador, base, Time.get_unix_time_from_system(), piloto_id)
-		if motivo != "":
-			avisar("Não deu: %s." % motivo, false)
-			return
-		Sons.tocar_ui(self, "moeda", -4.0)
-		avisar("Treino começou.")
-		mudou.emit())
-	pai.add_child(b)
 
 
 ## [nome, fração, texto] do atributo na escala do jogo (a mesma da seleção).
@@ -916,35 +853,20 @@ func _linha_piloto(pai: Control, nome: String, papel: String) -> void:
 	v.add_child(n)
 
 
-## O carro do segundo piloto é o da vaga ARENA 2 da escalação (decisão 68:
-## nas corridas só corre um piloto; ele vai para a arena). Trocar é na Oficina.
-func _carro_companheiro() -> void:
-	titulo_secao("CARRO DO SEGUNDO PILOTO")
-	var car := Escalacao.carro(jogador, "arena2")
-	if car == null:
-		proximo_passo("O segundo piloto de arena luta com o carro da vaga ARENA 2. Escale um na Oficina.", "Ir para a Oficina", GARAGEM)
-		return
-	var v := cartao()
-	var h := fileira(v)
-	h.add_child(icone_carro(car.base, false, CarroBloco.cor_do_carro(car), car.faixas))
-	rotulo(car.base["nome"], 28, Color.WHITE, h)
-	rotulo("Na arena, ARENA 2 da escalação. Trocar na Oficina.", FONTE_PEQUENA, COR_SECUNDARIA, v)
-
-
 ## Patrocínio (pedido do usuário, 2026-10-17: na Equipe, não mais na
-## Carreira; é a renda de quando o app está fechado): os contratos (renda por
-## hora e o bônus da condição), as vagas livres e as ofertas.
+## Carreira; é a renda de quando o app está fechado): o contrato ativo (renda
+## por hora e o bônus da condição). Decisão 124: sem ofertas para escolher; a
+## vaga livre assina sozinha o que mais paga (GestaoEquipe.renovar).
 func _patrocinio() -> void:
 	if not GestaoEquipe.patrocinio_aberto(dados, jogador):
 		return
-	var vagas := GestaoEquipe.vagas(dados, jogador)
 	var ativos := GestaoEquipe.contratos(jogador)
 	var tit := titulo_secao("PATROCÍNIO")
 	ancora("PATROCINIO", tit)
 	var agora := Time.get_unix_time_from_system()
 	for c in ativos:
 		var p := GestaoEquipe.patrocinador(dados, c["id"])
-		var v := _cartao_patrocinador(p, true)
+		var v := _cartao_patrocinador(p)
 		var resta := maxf(float(c["fim"]) - agora, 0.0)
 		var dur := maxf(float(c["fim"]) - float(c["inicio"]), 1.0)
 		var barra := ProgressBar.new()
@@ -953,38 +875,20 @@ func _patrocinio() -> void:
 		barra.value = resta
 		barra.custom_minimum_size = Vector2(0, 10)
 		v.add_child(barra)
-		rotulo("Contrato termina em %s · já rendeu %s giros" % [horas_min(resta), dinheiro(int(c.get("ganho", 0)))],
+		rotulo("Termina em %s e renova sozinho · já rendeu %s giros" % [horas_min(resta), dinheiro(int(c.get("ganho", 0)))],
 				FONTE_PEQUENA, COR_SECUNDARIA, v)
-	if ativos.size() >= vagas:
-		if GestaoEquipe.melhoria(dados, "escritorio").is_empty() == false \
-				and GestaoEquipe.preco_melhoria(dados, jogador, "escritorio") > 0:
-			nota("", "Mais contratos: o Escritório comercial, na Sede, abre vaga para outro patrocinador.")
-		return
-	titulo_secao("RECOMPENSA OFFLINE")
-	for p in GestaoEquipe.ofertas(dados, jogador):
-		var v := _cartao_patrocinador(p, false)
-		var b := Button.new()
-		Tipografia.acao_primaria(b, "ASSINAR", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 24, 56)
-		b.custom_minimum_size = Vector2(170, 56)
-		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		b.pressed.connect(func():
-			var motivo := GestaoEquipe.assinar(dados, jogador, String(p["id"]), Time.get_unix_time_from_system())
-			if motivo != "":
-				avisar("Não deu: %s." % motivo, false)
-				return
-			Sons.tocar_ui(self, "moeda", -4.0)
-			avisar("Contrato assinado com %s." % p["nome"])
-			historia("PATROCINIO_ASSINADO")
-			mudou.emit())
-		v.get_meta("acao").add_child(b)
+	if ativos.is_empty():
+		nota("", "A equipe assina sozinha o patrocinador que mais paga por hora.")
+	elif not GestaoEquipe.melhoria(dados, "escritorio").is_empty() \
+			and GestaoEquipe.preco_melhoria(dados, jogador, "escritorio") > 0:
+		nota("", "Mais contratos: o Escritório comercial, na Sede, abre vaga para outro patrocinador.")
 
 
-## Cartão compacto de um patrocinador: nome e licença numa linha; ramo e
-## duração na segunda; renda e bônus à esquerda e, na oferta, o botão à direita
-## (meta "acao": a fileira onde ele entra).
-func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
+## Cartão compacto do patrocinador do contrato: nome e licença numa linha; o
+## ramo na segunda; renda e bônus embaixo.
+func _cartao_patrocinador(p: Dictionary) -> VBoxContainer:
 	var fundo := arte("banner_patrocinio_" + String(p.get("id", "")))
-	var v := cartao_com_fundo(fundo) if fundo != null else cartao(COR_BOM if ativo else Color.TRANSPARENT)
+	var v := cartao_com_fundo(fundo) if fundo != null else cartao(COR_BOM)
 	v.add_theme_constant_override("separation", 4)
 	var cab := fileira(v)
 	var nome := rotulo(String(p.get("nome", "")), 0, Color.WHITE, cab)
@@ -995,12 +899,10 @@ func _cartao_patrocinador(p: Dictionary, ativo: bool) -> VBoxContainer:
 	if lic != "":
 		var chip := selo(lic, COR_DESTAQUE, cab)
 		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var info := [String(p.get("ramo", "")).to_upper()]
-	if not ativo:
-		info.append("DURAÇÃO %d H" % roundi(GestaoEquipe.teto_offline(dados, jogador) / 3600.0))
-	Tipografia.rotulo(rotulo(" · ".join(info.filter(func(x): return x != "")), 0, COR_SECUNDARIA, v), "medium", 18)
+	var ramo := String(p.get("ramo", "")).to_upper()
+	if ramo != "":
+		Tipografia.rotulo(rotulo(ramo, 0, COR_SECUNDARIA, v), "medium", 18)
 	var linha := fileira(v)
-	v.set_meta("acao", linha)
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 0)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL

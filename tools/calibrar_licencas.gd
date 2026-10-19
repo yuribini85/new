@@ -32,9 +32,11 @@ func _calibrar() -> void:
 	_piloto = _dados.piloto(_dados.carreira()["piloto_jogador"])
 	var saldo := int(_dados.economia()["saldo_inicial"])
 	var iniciais := []
-	for o in Usados.estoque(_dados.lista("carros"), 0, {}):
-		if o["preco"] <= saldo:
-			iniciais.append(_dados.carro(o["carro_id"]))
+	# Usados do dia 0 (carros.json → usados, do disco da referência): a regra
+	# da calibração continua a mesma depois que os usados saíram do jogo.
+	for c in _dados.lista("carros"):
+		if c.get("usados", []).any(func(w): return int(w[0]) <= 0 and int(w[1]) >= 0 and int(w[2]) <= saldo):
+			iniciais.append(c)
 	var licencas: Array = JSON.parse_string(FileAccess.get_file_as_string(CAMINHO))
 	for lic in licencas:
 		var possui := [lic["id"], lic.get("requisito")]

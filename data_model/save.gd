@@ -17,8 +17,6 @@ static func serializar(jogador: Node) -> Dictionary:
 			"pneus": c.pneus.map(func(p): return p["id"]),
 			"cor": c.cor,
 			"faixas": c.faixas,
-			"ajuste_cambio": c.ajuste_cambio,
-			"configuracoes": c.configuracoes,
 		})
 	return {
 		"versao": VERSAO,
@@ -29,7 +27,6 @@ static func serializar(jogador: Node) -> Dictionary:
 		"graus_licenca": jogador.graus_licenca,
 		"montagens": jogador.montagens,
 		"desejos": jogador.desejos,
-		"usados_vendidos": jogador.usados_vendidos,
 		"vitorias": jogador.vitorias,
 		"campeonatos": jogador.campeonatos,
 		"titulos": jogador.titulos,
@@ -48,7 +45,6 @@ static func serializar(jogador: Node) -> Dictionary:
 		"equipe": jogador.equipe,
 		"identidade": jogador.identidade,
 		"grid": jogador.grid,
-		"credito_pecas": jogador.economia.credito_pecas,
 		"historico": jogador.historico,
 		"dias": jogador.dias,
 		"fila": jogador.fila,
@@ -63,7 +59,7 @@ static func serializar(jogador: Node) -> Dictionary:
 
 
 const CHAVES := [
-	"versao", "saldo", "proximo_uid", "carros", "licencas", "graus_licenca", "usados_vendidos",
+	"versao", "saldo", "proximo_uid", "carros", "licencas", "graus_licenca",
 	"vitorias", "dias", "fila", "ultimo_processamento", "contador_sementes",
 ]
 
@@ -93,8 +89,6 @@ static func migrar_frota(s: Variant, dados: Node) -> void:
 					if dados.existe("pecas", q) and not q in lista:
 						lista.append(q)
 				cs[chave] = lista
-		if cs.get("configuracoes") is Array:
-			cs["configuracoes"] = []
 	if s.get("desejos") is Array:
 		var d := []
 		for x in s["desejos"]:
@@ -161,14 +155,8 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		c.pecas_possuidas = cs["pecas_possuidas"]
 		c.cor = String(cs.get("cor", ""))  # opcional: saves antigos sem pintura
 		c.faixas = cs.get("faixas", {}) if cs.get("faixas") is Dictionary else {}
-		c.ajuste_cambio = String(cs.get("ajuste_cambio", ""))
-		# Opcional: configurações salvas; peça que saiu de data/ some da configuração.
-		if cs.get("configuracoes") is Array:
-			for cfg in cs["configuracoes"]:
-				if cfg is Dictionary:
-					c.configuracoes.append({"nome": String(cfg.get("nome", "")),
-							"pecas": Array(cfg.get("pecas", [])).filter(func(x): return dados.existe("pecas", x)),
-							"ajuste_cambio": String(cfg.get("ajuste_cambio", ""))})
+		# Saves antigos: ajuste_cambio (agora sempre o equilibrado) e as
+		# preparações salvas (configuracoes) ficam de fora.
 		for peca_id in cs["pecas"]:
 			c.instalar(dados.peca(peca_id))
 		for pneu_id in cs["pneus"]:
@@ -190,7 +178,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 		jogador.graus_licenca[novo if not testes.has(k) and testes.has(novo) else String(k)] = s["graus_licenca"][k]
 	# Montagens dos contratos de licença (removidos, decisão 99): não carregam mais.
 	jogador.montagens = {}
-	jogador.usados_vendidos = s["usados_vendidos"]
+	# Usados (removidos, decisão 42): usados_vendidos de saves antigos fica de fora.
 	# Opcional: lista de desejos (modelos que saíram de data/ somem).
 	jogador.desejos = Array(s.get("desejos", [])).filter(func(x): return dados.existe("carros", x)) \
 			if s.get("desejos") is Array else []
@@ -232,7 +220,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 	jogador.equipe = s["equipe"].duplicate(true) if s.get("equipe") is Dictionary else {}
 	jogador.identidade = s["identidade"].duplicate(true) if s.get("identidade") is Dictionary else {}
 	jogador.grid = s["grid"].duplicate(true) if s.get("grid") is Dictionary else {}
-	jogador.economia.credito_pecas = int(s.get("credito_pecas", 0))
+	# Peças (moeda removida): credito_pecas de saves antigos fica de fora, sem conversão.
 	jogador.treinos = {}
 	if s.get("treinos") is Dictionary:
 		for k in s["treinos"]:

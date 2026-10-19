@@ -33,18 +33,6 @@ func comprar_carro(dados_carro: Dictionary, cor := "") -> int:
 	return garagem.adicionar(carro)
 
 
-## Compra uma oferta de Usados.estoque(). `vendidos` recebe a chave da oferta
-## para ela sumir do estoque no resto do período. Retorna o uid ou -1.
-func comprar_usado(oferta: Dictionary, dados_carro: Dictionary, vendidos: Dictionary, cor := "") -> int:
-	if vendidos.has(oferta["chave"]) or garagem.cheia() or not economia.debitar(int(oferta["preco"])):
-		return -1
-	vendidos[oferta["chave"]] = true
-	var carro := Carro.new(dados_carro)
-	carro.cor = cor
-	carro.adicionar_pneu(_pneu_por_id.call(regras["pneu_de_fabrica"]))
-	return garagem.adicionar(carro)
-
-
 ## Vende pelo preço de tabela vezes a fração de revenda. Peças não somam.
 ## O último carro da garagem não pode ser vendido: sem carro e sem saldo para
 ## outro, a carreira trava. Retorna o valor creditado ou 0.
@@ -71,9 +59,8 @@ func comprar_peca(carro: Carro, peca: Dictionary) -> String:
 	if motivo != OK:
 		return motivo
 	if not peca["id"] in carro.pecas_possuidas:
-		var em_pecas: bool = peca["categoria"] == Blindagem.CATEGORIA
-		if not economia.debitar_peca(int(peca["preco"]), em_pecas):
-			return "peças e saldo insuficientes" if em_pecas else "saldo insuficiente"
+		if not economia.debitar(int(peca["preco"])):
+			return "saldo insuficiente"
 		carro.pecas_possuidas.append(peca["id"])
 	carro.instalar(peca)
 	return OK

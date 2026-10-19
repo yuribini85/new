@@ -77,7 +77,7 @@ static func candidatas(dados: Node, jogador: Node, carro: Carro) -> Array:
 				or carro.pecas.get(p["categoria"], {}).get("id") == p["id"]:
 			continue
 		var preco: int = 0 if p["id"] in carro.pecas_possuidas else int(p["preco"])
-		if not jogador.economia.pode_pagar_peca(preco):
+		if not jogador.economia.pode_pagar(preco):
 			continue
 		var c := carro.copiar()
 		c.instalar(p)

@@ -34,10 +34,11 @@ func test_telas_cabem_na_largura_do_celular() -> void:
 	j.economia.creditar(200000)
 	# Estado de meio de carreira: três carros (botão "Usar este" nos outros),
 	# licenças, vitórias, peça instalada e fila correndo.
-	var ofertas := Usados.estoque(d.lista("carros"), 0, j.usados_vendidos)
+	var baratos: Array = d.lista("carros").filter(func(c): return c.get("preco") != null)
+	baratos.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
 	var uid := -1
-	for o in ofertas.slice(0, 3):
-		var u: int = j.concessionaria.comprar_usado(o, d.carro(o["carro_id"]), j.usados_vendidos)
+	for c in baratos.slice(0, 3):
+		var u: int = j.concessionaria.comprar_carro(c)
 		if uid < 0:
 			uid = u
 	j.carro_ativo = uid

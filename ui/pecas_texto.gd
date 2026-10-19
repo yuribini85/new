@@ -36,8 +36,6 @@ const FUNCAO := {
 	"freio": "permite frear mais tarde antes das curvas",
 	"pneu": "contorna mais rápido e freia mais curto",
 	"blindagem": "na arena aguenta mais pancada antes de quebrar; na corrida o peso a mais tira aceleração, freio e curva",
-	"cambio": "Arrancada acelera mais forte; Velocidade final vai mais rápido no fim das retas",
+	"cambio": "muda a relação final do câmbio",
 }
 
-## Ajustes do câmbio ajustável: [valor em Carro.ajuste_cambio, rótulo].
-const AJUSTES_CAMBIO := [["curto", "Arrancada"], ["", "Equilibrado"], ["longo", "Velocidade final"]]

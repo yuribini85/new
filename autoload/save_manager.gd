@@ -50,10 +50,10 @@ func _ready() -> void:
 		relatorio_offline = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
 		# Patrocínio rende com o app fechado (até o teto de ausência).
 		var agora := Time.get_unix_time_from_system()
-		relatorio_offline["treino_concluido"] = GestaoEquipe.concluir_treino(jogador, agora)
 		var pat := GestaoEquipe.acumular(dados, jogador, agora)
 		relatorio_offline["patrocinio"] = pat["ganho"]
 		relatorio_offline["patrocinios_encerrados"] = pat["encerrados"]
+		relatorio_offline["patrocinios_assinados"] = GestaoEquipe.renovar(dados, jogador, agora)
 		relatorio_offline["fora_s"] = pat["fora_s"]
 		relatorio_offline["pago_s"] = pat["pago_s"]
 		salvar()

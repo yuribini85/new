@@ -14,10 +14,8 @@ var licencas: Array = []
 var graus_licenca: Dictionary = {}
 ## contrato_id -> última montagem enviada {pecas: [ids], ajuste_cambio}.
 var montagens: Dictionary = {}
-## Modelos acompanhados no Mercado (ids de carros): avisa quando aparecem nos usados.
+## Modelos acompanhados no Mercado (ids de carros).
 var desejos: Array = []
-## Chaves de ofertas de usados já compradas ("período:carro").
-var usados_vendidos: Dictionary = {}
 ## evento_id -> número de vitórias.
 var vitorias: Dictionary = {}
 ## Temporadas em andamento e títulos (Campeonatos).
@@ -33,7 +31,7 @@ var dialogos_vistos: Dictionary = {}
 ## Arena (decisão 49): {lutas, vitorias, perdidos: [modelos perdidos]}.
 var arena: Dictionary = {}
 ## Gestão da equipe (GestaoEquipe): {patrocinios: [contratos], semente_ofertas,
-## sede: {id: nível}, desmontados}.
+## sede: {id: nível}, treino_<piloto>: {nivel}, xp_<piloto>}.
 var equipe: Dictionary = {}
 ## Identidade da equipe do jogador (IdentidadeEquipe): {nome, logo}; vazio = o padrão.
 var identidade: Dictionary = {}
@@ -57,7 +55,7 @@ var ultima_loja: String = ""
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
-## Corridas disputadas; cada uma conta um dia (rotação de usados).
+## Corridas disputadas; cada uma conta um dia.
 var dias: int = 0
 ## Fila de repetições (ver data_model/fila.gd).
 var fila: Dictionary = {}
@@ -103,7 +101,6 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	graus_licenca = {}
 	montagens = {}
 	desejos = []
-	usados_vendidos = {}
 	fila = {}
 	ultimo_processamento = 0.0
 	aceleracao = {}

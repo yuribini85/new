@@ -91,6 +91,7 @@ func carregar(dir: String) -> void:
 			_listas[arquivo][str(item.get("id"))] = item
 	_gerar_blindagem(dir)
 	_tirar_pneus_dominados()
+	_tirar_cambio_ajustavel()
 	var nomes_lic := {"": "Abertas"}
 	for l in _listas.get("licencas", {}).values():
 		nomes_lic[String(l["id"])] = String(l.get("nome", l["id"]))
@@ -132,6 +133,21 @@ func _tirar_pneus_dominados() -> void:
 		var pior := ["seco", "chuva"].all(func(k): return float(p["aderencia"].get(k, 0.0)) < float(fabrica.get(k, 0.0)))
 		if int(p.get("preco", 0)) > 0 and pior and not usados.has(id):
 			pneus.erase(id)
+
+
+## O câmbio ajustável só mudava o ajuste curto/longo, que saiu do jogo
+## (decisão 124: fica o equilibrado): sem efeito, ele não vai para a loja. Fica
+## só o que algum adversário usa (a preparação dele na referência).
+func _tirar_cambio_ajustavel() -> void:
+	var pecas: Dictionary = _listas.get("pecas", {})
+	var usados := {}
+	for ev in _listas.get("eventos", {}).values():
+		for adv in ev.get("adversarios", []):
+			for pid in adv.get("pecas", []):
+				usados[str(pid)] = true
+	for id in pecas.keys():
+		if String(pecas[id].get("categoria", "")) == "cambio" and not usados.has(id):
+			pecas.erase(id)
 
 
 ## data/pecas.json vem agrupado por carro (importador em tools/ →
@@ -364,8 +380,8 @@ func arena() -> Dictionary:
 	return _objetos["arena"]
 
 
-## Gestão da equipe do jogador (equipe.json, opcional): patrocínio, desmanche
-## e sede. Sem o arquivo, {} (nada disso aparece).
+## Gestão da equipe do jogador (equipe.json, opcional): patrocínio, sede e
+## nível de ritmo. Sem o arquivo, {} (nada disso aparece).
 func equipe() -> Dictionary:
 	if not _objetos.has("equipe"):
 		var caminho := pasta + "equipe.json"

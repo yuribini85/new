@@ -5,7 +5,7 @@
 	"perfis_piloto": {"cauteloso": {"nome": "Cauteloso", "agressividade": 0.25}},
 	"niveis_licenca": {"": "N1", "b": "N2"},
 	"segundo_piloto": {"chance": 0.3, "perda_consistencia": 0.2},
-	"equipe_jogador": {"patrocinio": 50, "custo_staff": 70,
+	"equipe_jogador": {
 		"segundo_piloto": {"id": "livre_1", "nome": "Livre Um"},
 		"tracos": {"constante": {"nome": "Constante", "treina": false}, "promessa": {"nome": "Promessa", "treina": true, "menos_consistencia": true},
 			"agressivo": {"nome": "Agressivo", "treina": false, "menos_consistencia": true}, "barato": {"nome": "Barato", "treina": false}},

@@ -66,16 +66,6 @@ static func config(dados: Node) -> Dictionary:
 	return dados.carreira().get("equipe_jogador", {})
 
 
-## Valor da gestão em G (0 enquanto pendente do playtest).
-static func valor(dados: Node, chave: String) -> int:
-	var v = config(dados).get(chave)
-	return 0 if v == null else int(v)
-
-
-static func definido(dados: Node, chave: String) -> bool:
-	return config(dados).get(chave) != null
-
-
 ## Segundo piloto entra na equipe (ação da cena que libera). Sem custo.
 static func liberar_segundo(dados: Node, jogador: Node) -> void:
 	jogador.flags[FLAG_CONTRATAR] = true
@@ -298,6 +288,16 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 ## Save antigo: o segundo piloto vai para a vaga do tipo dele; quem já viu a
 ## arena ou passou da International mantém o que tinha.
 static func migrar(dados: Node, jogador: Node) -> void:
+	# Decisão 124: o treino pago saiu. O nível que estava treinando (já pago)
+	# entra agora; embalo e sequência de vitórias somem.
+	for k in jogador.equipe.keys():
+		var t = jogador.equipe[k]
+		if String(k).begins_with("treino") and t is Dictionary:
+			if float(t.get("fim", 0.0)) > 0.0:
+				t["nivel"] = int(t.get("nivel", 0)) + 1
+			jogador.equipe[k] = {"nivel": int(t.get("nivel", 0))}
+		elif String(k).begins_with("embalo_") or String(k).begins_with("seq_"):
+			jogador.equipe.erase(k)
 	if jogador.flags.has("ARENA_INTRO"):
 		jogador.flags[FLAG_ARENA] = true
 	if exige_piloto(jogador) and (jogador.flags.has("INTERNATIONAL_COMPLETE") or "INTERNATIONAL" in jogador.licencas):
@@ -313,15 +313,14 @@ static func migrar(dados: Node, jogador: Node) -> void:
 			jogador.pilotos["arena"] = [s, ""]
 
 
-# ------------------------------------- Experiência e embalo (decisão 71)
+# ---------------------------------------------- Experiência (decisão 71)
 
-## Depois de uma prova: cada piloto das vagas soma experiência (a cada
-## `xp_por_nivel` provas, um nível de treino, até o teto da licença) e a
-## sequência de vitórias do grupo; `embalo_vitorias` seguidas deixam o próximo
-## treino de cada um mais curto. Devolve os ids que subiram de nível.
-static func apos_prova(dados: Node, jogador: Node, vagas: Array, venceu: bool) -> Array:
-	var cfg := GestaoEquipe.cfg_treino(dados)
-	var por_nivel := int(cfg.get("xp_por_nivel", 0))
+## Depois de uma prova: cada piloto das vagas soma experiência; a cada
+## `xp_por_nivel` provas, um nível de ritmo, até o teto da licença (decisão
+## 124: é o único jeito de subir; o treino pago, a energia e o embalo saíram).
+## Devolve os ids que subiram de nível.
+static func apos_prova(dados: Node, jogador: Node, vagas: Array, _venceu: bool) -> Array:
+	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
 	var subiram := []
 	var ids: Array = vagas.map(func(v): return piloto_vaga(jogador, v)).filter(func(x): return x != "")
 	if ids.is_empty():
@@ -331,30 +330,18 @@ static func apos_prova(dados: Node, jogador: Node, vagas: Array, venceu: bool) -
 		if por_nivel <= 0:
 			break
 		var xp := int(jogador.equipe.get("xp_" + id, 0)) + 1
-		if xp >= por_nivel and GestaoEquipe.pode_treinar(dados, jogador, base, id):
+		if xp >= por_nivel and GestaoEquipe.pode_subir(dados, jogador, base, id):
 			var t: Dictionary = jogador.equipe.get("treino_" + id, {})
 			t["nivel"] = int(t.get("nivel", 0)) + 1
 			jogador.equipe["treino_" + id] = t
 			xp = 0
 			subiram.append(id)
 		jogador.equipe["xp_" + id] = mini(xp, maxi(por_nivel - 1, 0)) if xp >= por_nivel else xp
-	var grupo := "seq_" + String(vagas[0]).left(5)
-	var seq := int(jogador.equipe.get(grupo, 0)) + 1 if venceu else 0
-	var precisa := int(cfg.get("embalo_vitorias", 0))
-	if precisa > 0 and seq >= precisa:
-		for id in ids:
-			jogador.equipe["embalo_" + id] = true
-		seq = 0
-	jogador.equipe[grupo] = seq
 	return subiram
 
 
 static func xp(jogador: Node, piloto_id: String) -> int:
 	return int(jogador.equipe.get("xp_" + piloto_id, 0))
-
-
-static func em_embalo(jogador: Node, piloto_id: String) -> bool:
-	return bool(jogador.equipe.get("embalo_" + piloto_id, false))
 
 
 ## Na campanha do dono a equipe precisa do piloto de corrida para correr.
@@ -389,25 +376,9 @@ static func nome_segundo(dados: Node, jogador: Node) -> String:
 	return nome_arena(dados, jogador, "arena2")
 
 
-## Carro do companheiro para esta prova (-1 se ele não corre): piloto
-## na equipe, carro escolhido na garagem, diferente do do piloto principal e elegível.
-static func companheiro_para(dados: Node, jogador: Node, evento_id: String, uid: int) -> int:
-	if not criada(jogador) or jogador.segundo_piloto == "":
-		return -1
-	var cu: int = jogador.carro_companheiro
-	var carro: Carro = jogador.garagem.carro(cu)
-	if carro == null or cu == uid:
-		return -1
-	var ev: Dictionary = dados.evento(evento_id)
-	if ev.is_empty() or not Elegibilidade.motivos(carro, ev["restricoes"], jogador.licencas).is_empty():
-		return -1
-	return cu
-
-
 ## Atributos de um piloto contratado (decisão 70): o piloto-base de
 ## carreira.json com o traço (agressividade do perfil; consistência do segundo
-## piloto nos mais crus) e o treino dele; cansado, perde consistência
-## (equipe.json → treino.cansaco; null = sem efeito).
+## piloto nos mais crus) e o nível de ritmo dele (experiência).
 ## Calculadora da variação por piloto (pedido do usuário, 2026-10-16): cada
 ## piloto tem um ajuste próprio e fixo (sorteado pelo id) em consistência e
 ## agressividade, que não vêm do estudo. As faixas saem dos dados que já existem,
@@ -519,10 +490,10 @@ static func barra_atributo(dados: Node, attr: String, valor: float) -> float:
 	return PISO_BARRA + (1.0 - PISO_BARRA) * t
 
 
-static func atributos(dados: Node, jogador: Node, piloto_id: String, agora := -1.0) -> Dictionary:
+static func atributos(dados: Node, jogador: Node, piloto_id: String) -> Dictionary:
 	var p: Dictionary = dados.piloto(dados.carreira()["piloto_jogador"]).duplicate()
 	if premium(dados, piloto_id):
-		# Premium: tudo no máximo, sempre (sem variação, treino ou cansaço).
+		# Premium: tudo no máximo, sempre (sem variação nem nível).
 		p["ritmo"] = ritmo_premium(dados)
 		p["consistencia"] = 1.0
 		p["agressividade"] = 1.0
@@ -538,10 +509,6 @@ static func atributos(dados: Node, jogador: Node, piloto_id: String, agora := -1
 	variar(dados, piloto_id, p, consistencia_base)
 	if jogador != null:
 		p["ritmo"] = GestaoEquipe.ritmo(dados, jogador, float(p["ritmo"]), piloto_id)
-		var cansaco = GestaoEquipe.cfg_treino(dados).get("cansaco")
-		if cansaco != null:
-			var e := GestaoEquipe.energia(jogador, piloto_id, agora if agora >= 0.0 else Time.get_unix_time_from_system())
-			p["consistencia"] = float(p["consistencia"]) * (1.0 - float(cansaco) * (1.0 - e))
 	return p
 
 
@@ -572,28 +539,3 @@ static func piloto_corrida(dados: Node, jogador: Node = null) -> Dictionary:
 	var perda := float(dados.carreira().get("segundo_piloto", {}).get("perda_consistencia", 0.0))
 	p["consistencia"] = float(p["consistencia"]) * (1.0 - perda)
 	return p
-
-
-## Folha de uma corrida: {patrocinio, staff, saldo} (saldo = líquido).
-static func folha(dados: Node, jogador: Node) -> Dictionary:
-	if not criada(jogador):
-		return {}
-	var f := {
-		"patrocinio": valor(dados, "patrocinio"),
-		"staff": valor(dados, "custo_staff"),
-	}
-	f["saldo"] = f["patrocinio"] - f["staff"]
-	return f
-
-
-## Aplica a folha depois de uma corrida. O caixa não fica negativo: o que
-## faltar não é cobrado (gestão leve, sem dívida). Retorna a folha aplicada.
-static func cobrar_corrida(dados: Node, jogador: Node) -> Dictionary:
-	var f := folha(dados, jogador)
-	if f.is_empty():
-		return {}
-	jogador.economia.creditar(int(f["patrocinio"]))
-	var custo: int = mini(int(f["staff"]), jogador.economia.saldo)
-	jogador.economia.debitar(custo)
-	f["cobrado"] = custo
-	return f

@@ -67,13 +67,11 @@ static func corridas(rel: Dictionary, dados: Node) -> void:
 	var lista: Array = _sessoes.back().get_or_add("corridas", [])
 	for c in rel["corridas"]:
 		var ev: Dictionary = dados.evento(c["evento_id"])
-		var folha: Dictionary = c.get("folha", {})
 		lista.append({
 			"t": Time.get_unix_time_from_system(), "evento": c["evento_id"], "nivel": nivel(dados, ev),
 			"posicao": int(c["posicao"]), "total": int(c.get("total", 0)), "premio": int(c["premio"]),
 			"bonus": int(c.get("campeonato", {}).get("bonus", 0)), "duracao_s": float(c.get("duracao", 0.0)),
 			"offline": bool(c.get("offline", false)), "companheiro": int(c.get("posicao_companheiro", 0)) > 0,
-			"folha": int(folha.get("patrocinio", 0)) - int(folha.get("cobrado", 0)),
 		})
 	_salvar()
 
@@ -85,18 +83,17 @@ static func nivel(dados: Node, ev: Dictionary) -> String:
 
 
 ## Renda por nível, somando as sessões: {nivel: {corridas, vitorias, premio,
-## bonus, folha, duracao_s, offline}}, na ordem dos níveis em que aparecem.
+## bonus, duracao_s, offline}}, na ordem dos níveis em que aparecem.
 static func renda_por_nivel(lista_sessoes: Array) -> Dictionary:
 	var r := {}
 	for s in lista_sessoes:
 		for c in s.get("corridas", []):
 			var n: Dictionary = r.get_or_add(String(c["nivel"]),
-					{"corridas": 0, "vitorias": 0, "premio": 0, "bonus": 0, "folha": 0, "duracao_s": 0.0, "offline": 0})
+					{"corridas": 0, "vitorias": 0, "premio": 0, "bonus": 0, "duracao_s": 0.0, "offline": 0})
 			n["corridas"] += 1
 			n["vitorias"] += 1 if int(c["posicao"]) == 1 else 0
 			n["premio"] += int(c["premio"])
 			n["bonus"] += int(c.get("bonus", 0))
-			n["folha"] += int(c.get("folha", 0))
 			n["duracao_s"] += float(c.get("duracao_s", 0.0))
 			n["offline"] += 1 if c.get("offline", false) else 0
 	return r

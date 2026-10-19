@@ -1107,3 +1107,25 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     Resistência", da mais curta para a mais longa (a Elite não tinha título). Títulos e
     temporadas de saves antigos vão para a série da menor licença. Feito no jogo, não no
     importador: os dados da referência seguem iguais.
+124. **Mecânicas removidas** (2026-10-19, auditoria aprovada pelo usuário: o que pouco acrescenta
+    sai). Cada uma em uma linha:
+    - Treino pago do piloto (e energia, cansaço, embalo): rendia +0,7% de ritmo. O ritmo sobe só
+      com a experiência (um nível a cada `xp_por_nivel` provas, até o teto da licença).
+    - Sede: só o Escritório comercial (+1 contrato). O Marketing levava ~18 h para se pagar;
+      Hospitalidade e Pátio de desmanche saem junto.
+    - Moeda de peças e desmanche: as peças só compravam blindagem. A blindagem passa a ser paga em
+      giros, pelo mesmo preço (peças e giros valiam 1 por 1); o crédito de peças de saves antigos
+      é descartado, sem conversão.
+    - Patrocínio sem escolha: as 3 ofertas não davam escolha real (a de licença mais alta paga
+      mais por hora). A vaga livre assina e renova sozinha a que mais paga; a condição do bônus
+      continua à vista no cartão do contrato.
+    - Piloto atropelado na arena não fica mais fora: duplicava o reparo de 1 h do carro eliminado
+      (118). O atropelamento segue na luta, como evento visual.
+    - Ajuste do câmbio (curto/equilibrado/longo) sem escolha manual: o carro usa o equilibrado
+      (não há avaliação do melhor ajuste por pista no jogo). Pendente: o Câmbio ajustável não
+      muda nada no equilibrado.
+    - Seção "Carro do segundo piloto" da Equipe: repetia a vaga ARENA 2 da Escalação na Oficina.
+    - Código morto ou que valia 0: carros usados (a interface já não os mostrava, 42),
+      companheiro na corrida (`companheiro_para`, sem chamada desde a 68), preparações salvas
+      (`Carro.configuracoes`, nenhuma tela lia) e a folha por corrida (patrocínio e salários
+      `null` em carreira.json, pagavam e cobravam 0). Saves antigos carregam ignorando os campos.

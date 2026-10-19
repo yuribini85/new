@@ -73,7 +73,7 @@ func liberar() -> void:
 	j.free()
 
 
-## Joga a partir da oferta inicial (Usados.estoque() ou {carro_id, preco}) até
+## Joga a partir da oferta inicial ({carro_id, preco}) até
 ## `limite_s` de corrida ou até não ter prova a vencer nem carro que ajude.
 func jogar(oferta: Dictionary, limite_s: float) -> Dictionary:
 	_comprar_carro(oferta, "carro inicial")
@@ -106,11 +106,8 @@ func jogar_campanha(id: String, limite_s: float) -> Dictionary:
 func _primeiro_carro() -> void:
 	var opcoes := []
 	for c in d.lista("carros"):
-		if c.get("novo", true) and int(c["preco"]) <= j.economia.saldo:
+		if int(c["preco"]) <= j.economia.saldo:
 			opcoes.append({"carro_id": c["id"], "preco": int(c["preco"])})
-	for o in Usados.estoque(d.lista("carros"), j.dias, j.usados_vendidos):
-		if int(o["preco"]) <= j.economia.saldo:
-			opcoes.append(o)
 	if opcoes.is_empty():
 		log.append("campanha: o saldo inicial não paga nenhum carro")
 		return
@@ -344,7 +341,7 @@ func _comprar_item(o: Dictionary) -> void:
 
 
 ## Sem prova a vencer com este carro: outro carro da garagem que tenha prova a
-## vencer; senão, o mais barato (novo ou usado de hoje) que entra numa prova
+## vencer; senão, o mais barato que entra numa prova
 ## ainda não vencida que o atual não pode correr, ou que o atual já tentou e
 ## deixou de lado (aí, só com mais potência por peso de fábrica).
 func _trocar_carro() -> bool:
@@ -365,9 +362,7 @@ func _trocar_carro() -> bool:
 	var ppa: float = fa["potencia"] / fa["peso"]
 	var opcoes := []
 	for c in d.lista("carros"):
-		if c.get("novo", true):
-			opcoes.append({"carro_id": c["id"], "preco": int(c["preco"])})
-	opcoes.append_array(Usados.estoque(d.lista("carros"), j.dias, j.usados_vendidos))
+		opcoes.append({"carro_id": c["id"], "preco": int(c["preco"])})
 	var possuidos: Array = j.garagem.lista().map(func(c): return c.id)
 	var boas := []
 	for o in opcoes:
@@ -392,19 +387,12 @@ func _trocar_carro() -> bool:
 	var o: Dictionary = boas[rng.randi_range(0, mini(2, boas.size() - 1))] if perfil == "explora" else boas[0]
 	if not _juntar(int(o["preco"]), "carro " + d.carro(o["carro_id"])["nome"]):
 		return false
-	# A oferta de usado pode ter saído enquanto juntava: confere de novo.
-	if o.has("chave") and not Usados.estoque(d.lista("carros"), j.dias, j.usados_vendidos).any(func(x): return x["chave"] == o["chave"]):
-		return true
 	_comprar_carro(o, "troca de carro")
 	return true
 
 
 func _comprar_carro(o: Dictionary, motivo: String) -> void:
-	var novo: int
-	if o.has("chave"):
-		novo = j.concessionaria.comprar_usado(o, d.carro(o["carro_id"]), j.usados_vendidos)
-	else:
-		novo = j.concessionaria.comprar_carro(d.carro(o["carro_id"]))
+	var novo: int = j.concessionaria.comprar_carro(d.carro(o["carro_id"]))
 	if novo < 0:
 		return
 	uid = novo
@@ -412,7 +400,7 @@ func _comprar_carro(o: Dictionary, motivo: String) -> void:
 	log.append("%.0f min: %s, %s (%d)" % [tempo / 60.0, motivo, o["carro_id"], o["preco"]])
 	_tentativas.clear()
 	j.carro_ativo = uid
-	_avisar("carro", {"carro_id": String(o["carro_id"]), "preco": int(o["preco"]), "novo": not o.has("chave")})
+	_avisar("carro", {"carro_id": String(o["carro_id"]), "preco": int(o["preco"]), "novo": true})
 
 
 ## Licenças por treino no relógio (decisão do usuário, 2026-10-17): treino
