@@ -22,7 +22,8 @@ extends RefCounted
 ## GARAGEM_AMPLIADA, GARAGEM_ABERTA (janela Garagem), PINTURA e PINTURA_APLICADA,
 ## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA,
 ## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, SEM_PECAS, NOME_DEFINIDO
-## (o nome do administrador dado na abertura).
+## (o nome do administrador dado na abertura), FILA_INICIADA (uma fila de corridas
+## numa prova vencida, decisão 120).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
 

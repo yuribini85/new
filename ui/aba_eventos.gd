@@ -656,6 +656,8 @@ func _largar(evento_id: String, n := 1) -> void:
 	if jogador.dias >= 1:
 		AvisoFim.pedir_permissao()
 	historia("CORRIDA_INICIO", ctx)
+	if n > 1:
+		historia("FILA_INICIADA", ctx)
 	if dados.evento(evento_id)["restricoes"].get("licenca", "") == "ELITE":
 		historia("CORRIDA_RESISTENCIA")
 	for g in jogador.carreira.escalacao(evento_id, int(jogador.fila.get("semente", -1))):

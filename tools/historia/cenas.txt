@@ -256,6 +256,7 @@ Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas
 = CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
 Harold: Sport aprovada. Eu esperava mais rápido. Mas aprovada.
 Mara[pensativa]: Provas maiores. Contas maiores também.
+Mara[firme]: E daqui pra cima o Grid começa a olhar os resultados. Que olhe.
 
 = CW_R10C | LICENCA_CONCEDIDA:NATIONAL | personagem=dono; flags=NATIONAL_COMPLETE; cenario=vector_academy
 Harold: National aprovada. Poucos passam daqui sem repetir.
@@ -310,7 +311,12 @@ Dex: Faltam peças. Desmonte um carro parado, ou traga sucata da arena.
 # ---------------------------------------------------------------- Marcos
 = CW_R02 | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=FIRST_WIN; condicao=posicao:1; flags=FIRST_WIN
 Mara[firme]: Bom resultado. Agora vamos ver se conseguimos repetir.
-Sistema: Prova vencida pode ser disputada de novo, uma corrida por vez.
+Sistema: Prova vencida pode ser disputada de novo: uma corrida ou uma fila, que segue com o jogo fechado.
+
+# Decisão 120: a primeira fila de corridas.
+= CW_F01 | FILA_INICIADA | personagem=dono; proibe=FIRST_QUEUE; flags=FIRST_QUEUE
+Mara[explica]: Fila montada. A oficina segue a noite toda: cada corrida gasta um tanque, e o tanque enche sozinho.
+Mara[pensativa]: Vai dormir. Amanhã a gente conta o dinheiro.
 
 = CW_G01 | GARAGEM_DOIS_CARROS | personagem=dono; proibe=FIRST_SECOND_CAR; flags=FIRST_SECOND_CAR
 Rico: Dois carros! Agora eu decoro duas chaves.
@@ -318,6 +324,7 @@ Mara[pensativa]: Dois carros. Duas contas.
 
 = CW_G02 | CAMPEONATO_VENCIDO | personagem=dono; proibe=FIRST_TITLE_TALK; flags=FIRST_TITLE_TALK; cenario=oficina_mara
 Mara[gesto]: Título. Guarde o troféu longe da graxa.
+Mara[explica]: E cada título é mais uma hora que o patrocinador paga com a oficina fechada.
 
 = CW_R11 | COLECAO | personagem=dono; condicao=quantidade_min:5; flags=COLLECTION_FIVE
 Rico: Cinco carros, chefe. Já dá pra chamar de frota.
@@ -338,11 +345,20 @@ Mara[pensativa]: Na Sport ninguém deixa espaço de graça. {piloto} achou um.
 = CW_M03 | VITORIA_LICENCA:NATIONAL | personagem=dono; flags=FIRST_NATIONAL_WIN
 Mara[cruzados]: National. Tem gente na arquibancada que veio por nossa causa.
 
+= CW_M00 | VITORIA | personagem=dono; condicao=quantidade_min:5; flags=FIVE_WINS
+Mara[pensativa]: Cinco vitórias. O pessoal da rua já para na porta pra ver o carro sair.
+
 = CW_M04 | VITORIA | personagem=dono; condicao=quantidade_min:10; flags=TEN_WINS
 Mara[pensativa]: Dez provas vencidas. A parede de troféus já não está vazia.
 
 = CW_M05 | VITORIA | personagem=dono; condicao=quantidade_min:25; flags=TWENTY_FIVE_WINS
 Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
+
+= CW_M06 | VITORIA | personagem=dono; condicao=quantidade_min:50; flags=FIFTY_WINS
+Mara[pensativa]: Cinquenta. Paguei a última parcela atrasada da hipoteca. Não conta pra ninguém que eu sorri.
+
+= CW_M07 | VITORIA | personagem=dono; condicao=quantidade_min:100; flags=HUNDRED_WINS
+Mara[firme]: Cem vitórias. A Wreckage voltou a ser equipe. Agora falta o Grid admitir.
 
 # ---------------------------------------------------------------- Arena (decisão 49)
 # Decisões 69 e 121: o tutorial da arena chega com o segundo carro na garagem.
@@ -533,6 +549,26 @@ Mara[pensativa]: {piloto} fez o que deu. O resto é com a gente.
 
 = CW_D10 | CORRIDA_FIM | personagem=dono; requer=GRID_INTRO; condicao=posicao_min:4; repetivel=sim; reativa=sim
 Mara[cruzados]: Carro certo, prova errada. Cada prova, em Corridas, mostra se o seu carro é mais forte ou mais fraco.
+
+# Análise de 2026-10-19: comentários do meio do jogo, depois da Club, com a história da
+# oficina (a dívida, o letreiro, o Grid), para a fala não se repetir tanto.
+= CW_D14 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[pensativa]: A última vez que a Wreckage ganhou assim, o letreiro ainda acendia inteiro.
+
+= CW_D15 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[gesto]: O banco ligou de novo. Pela primeira vez em meses, eu atendi.
+
+= CW_D16 | CORRIDA_FIM | personagem=dono; requer=SPORT_COMPLETE; condicao=posicao:1; repetivel=sim; reativa=sim
+Mara[firme]: {piloto} está guiando como piloto de equipe grande. Não conta isso pra {g:ele|ela}.
+
+= CW_D17 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; condicao=posicao_min:2,posicao_max:3; repetivel=sim; reativa=sim
+Mara[explica]: {posicao}. O {carro} está pedindo mais uma peça. Eu sei ouvir quando ele pede.
+
+= CW_D18 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; condicao=posicao_min:4; repetivel=sim; reativa=sim
+Mara[cruzados]: As equipes do Grid também veem esses resultados. Melhor elas verem a gente subir.
+
+= CW_D19 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; condicao=posicao_min:4; repetivel=sim; reativa=sim
+Mara[pensativa]: Já perdi corrida pior com carro melhor. Amanhã a pista é outra.
 
 = CW_D11 | PECA_COMPRADA | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; repetivel=sim; reativa=sim
 Mara[gesto]: {peca} no lugar. Quero ver isso na pista.
