@@ -1078,7 +1078,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     a cena atual e as da fila perdem as linhas de ensino, as que só ensinam passam caladas
     (valem as flags), e as telas que o tutorial apresentaria aparecem (Oficina, Lojas,
     Corridas, Carreira, Equipe; ACELERAR e licenças). A história segue igual (Mara, Grid,
-    licenças, lojas, arena); a Arena continua abrindo com os 3 carros.
+    licenças, lojas, arena); a Arena continua abrindo pela regra dela (2 carros desde a 121).
 120. **Fila de corridas offline** (2026-10-19, análise do jogo aprovada pelo usuário; substitui
     "uma corrida por vez" das 60/68 para provas já vencidas). Medido no playtest da campanha:
     41–47 corridas em 4 h de corrida = uma volta ao app a cada ~5 min; 8 h fora rendiam 1
@@ -1122,8 +1122,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     - Piloto atropelado na arena não fica mais fora: duplicava o reparo de 1 h do carro eliminado
       (118). O atropelamento segue na luta, como evento visual.
     - Ajuste do câmbio (curto/equilibrado/longo) sem escolha manual: o carro usa o equilibrado
-      (não há avaliação do melhor ajuste por pista no jogo). Pendente: o Câmbio ajustável não
-      muda nada no equilibrado.
+      (não há avaliação do melhor ajuste por pista no jogo). A peça Câmbio ajustável sai da loja
+      (Dados, salvo se um rival a usa): no equilibrado ela não mudava nada.
     - Seção "Carro do segundo piloto" da Equipe: repetia a vaga ARENA 2 da Escalação na Oficina.
     - Código morto ou que valia 0: carros usados (a interface já não os mostrava, 42),
       companheiro na corrida (`companheiro_para`, sem chamada desde a 68), preparações salvas
