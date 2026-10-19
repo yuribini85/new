@@ -90,6 +90,7 @@ func carregar(dir: String) -> void:
 			_validar_item(arquivo, item)
 			_listas[arquivo][str(item.get("id"))] = item
 	_gerar_blindagem(dir)
+	_tirar_pneus_dominados()
 	for arquivo in OBJETOS:
 		_objetos[arquivo] = {}
 		var obj = _ler_json(dir + arquivo + ".json")
@@ -103,6 +104,30 @@ func carregar(dir: String) -> void:
 			elif obj[chave] == null:
 				_pendencias.append("%s.json: %s" % [arquivo, chave])
 	_validar_referencias()
+
+
+## Pneu pago com aderência menor que a do de fábrica (grátis, o de todo carro
+## novo) não entra no jogo: ninguém tem motivo para comprá-lo (análise de
+## 2026-10-19: o "Pneu econômico" da referência, 0,793 contra 1,0). Fica fora
+## só o que nenhum adversário usa.
+func _tirar_pneus_dominados() -> void:
+	var pneus: Dictionary = _listas.get("pneus", {})
+	var fabrica: Dictionary = {}
+	for p in pneus.values():
+		if int(p.get("preco", 0)) == 0:
+			fabrica = p["aderencia"]
+	if fabrica.is_empty():
+		return
+	var usados := {}
+	for ev in _listas.get("eventos", {}).values():
+		for adv in ev.get("adversarios", []):
+			for pid in adv.get("pneus", []):
+				usados[str(pid)] = true
+	for id in pneus.keys():
+		var p: Dictionary = pneus[id]
+		var pior := ["seco", "chuva"].all(func(k): return float(p["aderencia"].get(k, 0.0)) < float(fabrica.get(k, 0.0)))
+		if int(p.get("preco", 0)) > 0 and pior and not usados.has(id):
+			pneus.erase(id)
 
 
 ## data/pecas.json vem agrupado por carro (importador em tools/ →

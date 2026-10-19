@@ -52,8 +52,10 @@ func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
 ## Começa a fila agora. Retorna "" ou o motivo (carro inelegível etc.).
 ## `config` vazio: a preparação atual do carro.
 func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config: Dictionary = {}) -> String:
-	if repeticoes != 1:
-		return "uma corrida por vez"
+	# Fila (decisão 120): várias corridas seguidas só numa prova já vencida;
+	# desafio novo, uma por vez.
+	if repeticoes < 1 or (repeticoes > 1 and not jogador.vitorias.has(evento_id)):
+		return "a fila só repete prova já vencida"
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
 		return "carro %d não está na garagem" % uid
@@ -309,11 +311,57 @@ func processar(agora: float) -> Dictionary:
 		if f["restantes"] <= 0:
 			cancelar()
 		else:
-			f["inicio"] = fim
+			# A próxima da fila larga quando há combustível (Combustivel: 1 por
+			# corrida, renova também com o app fechado). As ordens dos momentos
+			# de decisão eram da corrida que acabou.
+			var largada := _proxima_largada(fim)
+			if largada < 0.0:
+				cancelar()
+				break
+			f["inicio"] = largada
 			f["semente"] = _nova_semente()
+			if f.get("piloto") is Dictionary:
+				f["piloto"].erase("ordens")
 	# Relógio voltando (ajuste manual, fuso) não pode virar "ausência" depois.
 	jogador.ultimo_processamento = maxf(float(jogador.ultimo_processamento), agora)
 	return rel
+
+
+## Instante (relógio da fila) em que a próxima corrida da fila larga a partir
+## de `t`: na hora, se há combustível; senão, quando a próxima unidade chegar.
+## Gasta a unidade. -1 sem regra de renovação (não há como largar).
+func _proxima_largada(t: float) -> float:
+	var dados: Node = carreira.dados
+	if not Combustivel.vale(dados, jogador):
+		return t
+	# A fila conta no relógio do jogo (Aceleracao.agora); o tanque, no relógio
+	# real: a diferença entre os dois agora vale para o instante da largada.
+	var real := t - (Aceleracao.agora(jogador) - Time.get_unix_time_from_system())
+	if Combustivel.quantidade(dados, jogador, real) <= 0:
+		var espera := Combustivel.proxima_s(dados, jogador, real)
+		if espera <= 0.0:
+			return -1.0
+		t += espera
+		real += espera
+	Combustivel.gastar(dados, jogador, real)
+	return t
+
+
+## Quantas corridas desta prova cabem na fila: o que a capacidade offline
+## (teto_offline_s) comporta pela duração de uma. 1 se a prova não foi vencida.
+func cabem(evento_id: String, uid: int) -> int:
+	if not jogador.vitorias.has(evento_id):
+		return 1
+	var c := carreira.preparar(evento_id, uid, 1, false)
+	if c.has("erro"):
+		return 1
+	return maxi(1, int(floor(teto_offline_s / maxf(float(c["duracao"]), 1.0))))
+
+
+## Para a fila depois da corrida que está andando.
+func parar_depois_desta() -> void:
+	if not jogador.fila.is_empty():
+		jogador.fila["restantes"] = 1
 
 
 ## Carro como foi inscrito: o da garagem com a configuração guardada na fila.

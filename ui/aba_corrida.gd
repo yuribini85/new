@@ -443,6 +443,13 @@ func _process(delta: float) -> void:
 		_relogio.text = ""
 		return
 	var agora := Aceleracao.agora(jogador)
+	if float(f["inicio"]) > agora + 0.5:
+		# Fila esperando combustível (decisão 120): a próxima larga sozinha.
+		if _area.visible:
+			_area.visible = false
+			_ajustar_area()
+		_info.text = "Fila: esperando combustível. A próxima corrida larga em %s." % _mmss(float(f["inicio"]) - agora)
+		return
 	if _contagem >= 0.0:
 		_contar(delta)
 	if segurar_largada or _contagem > 0.0:

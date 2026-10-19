@@ -2,7 +2,8 @@
  "aceleracao": {
   "fator": 2.0,
   "duracao_s": 1800,
-  "teto_s": null
+  "teto_s": 1800,
+  "_teto_s": "Análise de 2026-10-19 (aprovada pelo usuário): sem teto, os vídeos acumulavam horas de 2× (e o Sem anúncios, de graça). Teto = a própria duracao_s: o vídeo renova os 30 min, não soma."
  },
  "combustivel": {
   "tanque": 8,

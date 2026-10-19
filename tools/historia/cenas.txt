@@ -251,7 +251,7 @@ Mara[pensativa]: O contrato paga cada hora dele, com o jogo aberto ou fechado. C
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
 [OPEN_TEAM_FINANCE]
 [HIGHLIGHT_PATROCINIO]
-Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas.
+Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas horas, com o jogo aberto ou fechado; depois vêm ofertas novas.
 
 = CW_R10B | LICENCA_CONCEDIDA:SPORT | personagem=dono; flags=SPORT_COMPLETE; cenario=vector_academy
 Harold: Sport aprovada. Eu esperava mais rápido. Mas aprovada.
@@ -406,7 +406,7 @@ Mara[explica]: Equipe de verdade atrai patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
 Mara[firme]: Na Sede, aqui mesmo, a gente melhora o que eles pagam.
-Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele dura um dia; depois vêm ofertas novas.
+Sistema: Assine um contrato em Patrocínio, aqui na Equipe. Ele paga por algumas horas, com o jogo aberto ou fechado; depois vêm ofertas novas.
 
 = CW_S02 | PATROCINIO_ASSINADO | personagem=dono; proibe=FIRST_SPONSOR; flags=FIRST_SPONSOR
 Mara[firme]: Primeiro adesivo novo no carro desde que a equipe parou.

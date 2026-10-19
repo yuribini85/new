@@ -1079,3 +1079,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (valem as flags), e as telas que o tutorial apresentaria aparecem (Oficina, Lojas,
     Corridas, Carreira, Equipe; ACELERAR e licenças). A história segue igual (Mara, Grid,
     licenças, lojas, arena); a Arena continua abrindo com os 3 carros.
+120. **Fila de corridas offline** (2026-10-19, análise do jogo aprovada pelo usuário; substitui
+    "uma corrida por vez" das 60/68 para provas já vencidas). Medido no playtest da campanha:
+    41–47 corridas em 4 h de corrida = uma volta ao app a cada ~5 min; 8 h fora rendiam 1
+    corrida. Agora, numa prova já vencida, Disputar oferece "Só uma" ou "Fila": quantas cabem na
+    capacidade offline (`teto_offline_s`, 8 h) pela duração da prova. A fila segue com o jogo
+    fechado; cada corrida gasta 1 de combustível ao largar e, sem ele, a próxima espera a
+    unidade seguinte (o combustível vira o ritmo do idle). O prêmio cai a cada repetição como
+    antes. "Parar a fila depois desta" no cartão da prova correndo. Desafio novo segue uma
+    corrida por vez. Também: teto da aceleração = a própria duração (o vídeo renova os 30 min,
+    não acumula); pneu pago pior que o de fábrica sai do jogo (Dados); texto do patrocínio sem
+    "um dia".

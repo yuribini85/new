@@ -19,8 +19,8 @@ func test_uma_corrida_por_vez_aplicada_ao_terminar() -> void:
 	var j := _jogador(d)
 	var f := _fila(d, j)
 	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	verificar(f.iniciar("aberto", uid, 3, 1000.0) != "", "prova não vencida: sem fila (decisão 120)")
 	j.vitorias["aberto"] = 1
-	verificar(f.iniciar("aberto", uid, 3, 1000.0) != "", "sem repetições (decisão 68)")
 	igual(f.iniciar("aberto", uid, 1, 1000.0), "", "iniciar")
 	var dur: float = f.corrida_atual(1000.0)["duracao"]
 	var saldo: int = j.economia.saldo
@@ -473,5 +473,29 @@ func test_ordem_prevista_vale_na_hora() -> void:
 	var g := _fila(d, j)  # do zero, com a mesma ordem gravada
 	igual(g.corrida_atual(1.0)["resultado"]["carros"], prevista["carros"], "igual à refeita do zero")
 	verificar(prevista != antes["resultado"], "a ordem mudou a corrida")
+	j.free()
+	d.free()
+
+
+## Decisão 120: a fila repete só prova vencida e roda inteira com o jogo
+## fechado; as ordens dos momentos não passam para a corrida seguinte.
+func test_fila_de_prova_vencida_roda_offline() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j, 100000.0)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	verificar(f.iniciar("aberto", uid, 3, 0.0) != "", "prova não vencida: sem fila")
+	j.vitorias["aberto"] = 1
+	igual(f.iniciar("aberto", uid, 3, 0.0), "", "vencida: fila de 3")
+	f.ordenar({"escolha": "atacar", "de": 5.0, "ate": 40.0, "ritmo": 1.05, "agressividade": 1.0})
+	var dur: float = f.corrida_atual(0.0)["duracao"]
+	var rel := f.processar(dur * 1.5)
+	igual(rel["corridas"].size(), 1, "a primeira terminou")
+	igual(int(j.fila["restantes"]), 2, "faltam duas")
+	verificar(not j.fila["piloto"].has("ordens"), "a ordem era só da primeira")
+	rel = f.processar(dur * 10.0)
+	igual(rel["corridas"].size(), 2, "as outras duas com o jogo fechado")
+	verificar(j.fila.is_empty(), "fila acabou")
+	verificar(f.cabem("aberto", uid) > 1, "cabe mais de uma na capacidade offline")
 	j.free()
 	d.free()

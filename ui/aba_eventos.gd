@@ -191,6 +191,18 @@ func _fila() -> void:
 		rotulo(ganho, FONTE_PEQUENA, COR_BOM, col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var lo := rotulo("Termina mesmo com o jogo fechado", FONTE_PEQUENA - 2, COR_SECUNDARIA, col)
 	lo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if int(f["restantes"]) > 1:
+		# Fila (decisão 120): quantas faltam e o fim dela depois desta.
+		var falta_n := int(f["restantes"])
+		rotulo("Fila: esta e mais %d · cada uma gasta 1 de combustível" % (falta_n - 1), FONTE_PEQUENA, COR_DESTAQUE,
+				col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var parar := Button.new()
+		Tipografia.acao_secundaria(parar, "Parar a fila depois desta", COR_SECUNDARIA, 24, 64)
+		parar.pressed.connect(func():
+			jogador.fila_ctrl.parar_depois_desta()
+			avisar("A fila para quando esta corrida terminar.")
+			mudou.emit())
+		v.add_child(parar)
 	var b := Button.new()
 	Tipografia.acao_primaria(b, "Assistir   →", COR_BOM, Color(0.1, 0.1, 0.1), 34, Tipografia.ALTURA_SECUNDARIA)
 	b.pressed.connect(func(): ir_para.emit(CORRIDA))
@@ -614,12 +626,26 @@ func _correr(evento_id: String) -> void:
 	var etapas := Campeonatos.etapas(dados, Campeonatos.serie(ev))
 	if not etapas.is_empty() and etapas.find(ev) == int(Campeonatos.estado(jogador, Campeonatos.serie(ev))["etapa"]):
 		historia("CAMPEONATO_SELECIONADO", ctx)
-	com_combustivel(_largar.bind(evento_id))
+	# Prova já vencida (decisão 120): uma corrida ou a fila, que segue com o
+	# jogo fechado enquanto houver combustível, até a capacidade offline.
+	var uid := Escalacao.uid(jogador, "corrida")
+	var cabem: int = jogador.fila_ctrl.cabem(evento_id, uid) if jogador.vitorias.has(evento_id) else 1
+	if cabem > 1:
+		painel.emit("Disputar de novo", func(pv):
+			rotulo("Prova já vencida: o prêmio cai a cada repetição e volta a 100% em 24 h.", FONTE_PEQUENA + 2,
+					Color.WHITE, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			rotulo("Na fila, as corridas seguem com o jogo fechado: cada uma gasta 1 de combustível e, sem ele, "
+					+ "a próxima espera o tanque encher.", FONTE_PEQUENA, COR_SECUNDARIA,
+					pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART,
+			[["Fila: até %d corridas" % cabem, func(): com_combustivel(_largar.bind(evento_id, cabem))],
+			["Só uma", func(): com_combustivel(_largar.bind(evento_id, 1))], ["Cancelar", func(): pass]])
+		return
+	com_combustivel(_largar.bind(evento_id, 1))
 
 
-func _largar(evento_id: String) -> void:
+func _largar(evento_id: String, n := 1) -> void:
 	var ctx := {"evento": evento_id}
-	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, Escalacao.uid(jogador, "corrida"), 1, Aceleracao.agora(jogador))
+	var motivo: String = jogador.fila_ctrl.iniciar(evento_id, Escalacao.uid(jogador, "corrida"), n, Aceleracao.agora(jogador))
 	if motivo != "":
 		avisar("Não deu para correr: %s." % motivo, false)
 		return
