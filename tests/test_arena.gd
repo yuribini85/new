@@ -150,12 +150,23 @@ func test_arena_na_carreira() -> void:
 	var j := _jogador_real(d, 1)
 	verificar(ArenaCarreira.bloqueio(d, j).begins_with("Abre quando"), "antes do tutorial da arena: fechada")
 	j.flags[EquipeJogador.FLAG_ARENA] = true
-	verificar("3 carros" in ArenaCarreira.bloqueio(d, j), "com 1 carro: não entra")
+	verificar("2 carros" in ArenaCarreira.bloqueio(d, j), "com 1 carro: não entra")
 	j.free()
-	# Decisão 68: 3 carros (1 de corrida, 2 de arena), segundo piloto e a escalação.
+	# Decisão 121: 2 carros (1 de corrida, 1 de arena) e o piloto da ARENA 1;
+	# sem a ARENA 2, a casa empresta piloto e carro.
+	j = _jogador_real(d, 2)
+	j.flags[EquipeJogador.FLAG_ARENA] = true
+	verificar("piloto de arena" in ArenaCarreira.bloqueio(d, j), "sem piloto de arena: não entra")
+	j.pilotos = {"corrida": "", "arena": ["ayla_moreno", ""]}
+	var dois: Array = j.garagem.lista()
+	igual(Escalacao.definir(j, "corrida", dois[1].uid), "", "corrida")
+	verificar("ARENA 1" in ArenaCarreira.bloqueio(d, j), "sem o carro da ARENA 1: não entra")
+	igual(Escalacao.definir(j, "arena1", dois[0].uid), "", "arena 1")
+	igual(ArenaCarreira.bloqueio(d, j), "", "com 2 carros e um piloto: entra")
+	verificar(not ArenaCarreira.parceiro(d, j, dois[0].uid)["real"], "a dupla com carro emprestado")
+	j.free()
 	j = _jogador_real(d, 3)
 	j.flags[EquipeJogador.FLAG_ARENA] = true
-	verificar("dois pilotos de arena" in ArenaCarreira.bloqueio(d, j), "sem os pilotos de arena: não entra")
 	j.pilotos = {"corrida": "", "arena": ["ayla_moreno", "axel_brennan"]}
 	verificar("Escale" in ArenaCarreira.bloqueio(d, j), "sem a escalação: não entra")
 	var carros: Array = j.garagem.lista()
@@ -227,7 +238,7 @@ func test_arena_na_carreira() -> void:
 	var f2 := ArenaCarreira.aplicar(d, j, j.carro_ativo, vit)
 	verificar(f2["venceu_equipe"] and f2["subiu_nivel"], "dupla de pé: sobe")
 	igual(ArenaCarreira.nivel(j), 1, "próximo campeonato: 2×2×2")
-	verificar("3 carros" in ArenaCarreira.bloqueio(d, j), "sobraram 2 carros: não entra mais")
+	verificar("ARENA 1" in ArenaCarreira.bloqueio(d, j), "a vaga da ARENA 1 ficou vazia: escalar de novo")
 	j.free()
 	d.free()
 

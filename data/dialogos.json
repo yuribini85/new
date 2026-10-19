@@ -703,12 +703,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Por isso a arena abre só com três carros na garagem: um para correr e dois para arriscar.",
+    "texto": "Por isso a arena abre só com dois carros na garagem: um para correr e um para arriscar.",
     "pose": "explica"
    },
    {
     "quem": "sistema",
-    "texto": "Com o terceiro carro, a Arena aparece na barra de baixo."
+    "texto": "Com o segundo carro, a Arena aparece na barra de baixo."
    }
   ],
   "requer": [],
@@ -1610,7 +1610,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Três carros. Tem outra maneira de ganhar dinheiro por aqui.",
+    "texto": "Dois carros. Tem outra maneira de ganhar dinheiro por aqui.",
     "pose": "cruzados"
    },
    {
@@ -1624,7 +1624,7 @@
    },
    {
     "quem": "organizadora",
-    "texto": "Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui."
+    "texto": "Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui. Sem o segundo, a casa empresta piloto e carro."
    },
    {
     "quem": "organizadora",
@@ -1637,14 +1637,14 @@
    },
    {
     "quem": "organizadora",
-    "texto": "Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede três carros: um fica para as corridas."
+    "texto": "Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede dois carros: um fica para as corridas."
    },
    {
     "acao": "UNLOCK_ARENA_PILOTS"
    },
    {
     "quem": "sistema",
-    "texto": "Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina."
+    "texto": "Contrate um piloto de arena na Equipe e escale o carro da ARENA 1 na Oficina. A ARENA 2 é opcional."
    }
   ],
   "requer": [

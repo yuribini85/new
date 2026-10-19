@@ -433,7 +433,7 @@ func _escolher(uid: int, c: Dictionary, preco: int) -> void:
 		falou = historia("COMPRA_CARRO_NOVO") or falou
 	if jogador.garagem.lista().size() == 2:
 		falou = historia("GARAGEM_DOIS_CARROS") or falou
-	if jogador.garagem.lista().size() >= 3 and not jogador.flags.has(EquipeJogador.FLAG_ARENA):
+	if jogador.garagem.lista().size() >= ArenaCarreira.carros_minimos(dados) and not jogador.flags.has(EquipeJogador.FLAG_ARENA):
 		if EquipeJogador.exige_piloto(jogador):
 			falou = historia("GARAGEM_TRES_CARROS") or falou
 		else:

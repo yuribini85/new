@@ -256,7 +256,7 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 	if not vaga in VAGAS_PILOTO:
 		return "vaga desconhecida"
 	if not vaga_aberta(jogador, vaga):
-		return "a equipe ainda não contrata" if not criada(jogador) else "para disputar a arena, são precisos pelo menos 3 carros na garagem"
+		return "a equipe ainda não contrata" if not criada(jogador) else "a arena ainda não abriu"
 	if piloto(dados, piloto_id).is_empty():
 		return "candidato desconhecido"
 	# Com a corrida em andamento, o piloto de corrida não muda (pedido do usuário).

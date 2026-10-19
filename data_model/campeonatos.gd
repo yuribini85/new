@@ -23,7 +23,56 @@ const RENOMEADAS := {
 
 
 static func serie(ev: Dictionary) -> String:
+	if ev.has("serie"):
+		return String(ev["serie"])
 	return String(ev.get("nome", "")).split(" — ")[0]
+
+
+## Decisão 123: séries por licença. Ao carregar os dados (Dados), cada prova
+## de uma série que atravessava licenças ganha a série "<nome> · <licença>"
+## (antes, fechar o título pedia a licença seguinte); as provas de resistência
+## da Elite, que não tinham série, formam a SERIE_ELITE (etapas da mais curta
+## para a mais longa). `nome_licenca`: id -> nome ("" = provas abertas).
+const SERIE_ELITE := "Série Resistência"
+static func anotar(eventos: Array, nome_licenca: Dictionary) -> void:
+	var lics := {}
+	for ev in eventos:
+		if String(ev.get("nome", "")).contains(" — etapa "):
+			var base := String(ev["nome"]).split(" — ")[0]
+			if not lics.has(base):
+				lics[base] = {}
+			lics[base][String(ev["restricoes"].get("licenca", ""))] = true
+	for ev in eventos:
+		var nome := String(ev.get("nome", ""))
+		var lic := String(ev["restricoes"].get("licenca", ""))
+		if nome.contains(" — etapa "):
+			var base := nome.split(" — ")[0]
+			if lics[base].size() > 1:
+				ev["serie"] = "%s · %s" % [base, String(nome_licenca.get(lic, lic))]
+	var elite: Array = eventos.filter(func(e): return String(e["restricoes"].get("licenca", "")) == "ELITE" \
+			and not String(e.get("nome", "")).contains(" — etapa "))
+	elite.sort_custom(func(a, b): return int(a.get("voltas", 0)) < int(b.get("voltas", 0)))
+	if elite.size() >= 2:
+		for i in elite.size():
+			elite[i]["serie"] = SERIE_ELITE
+			elite[i]["etapa"] = i + 1
+
+
+## Título ou temporada salvos com o nome antigo de uma série que agora é uma
+## por licença (decisão 123): vão para a série da menor licença.
+static func migrar_nome(dados: Node, nome: String) -> String:
+	if not etapas(dados, nome).is_empty():
+		return nome
+	var ordem := ["", "CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"]
+	var melhor := ""
+	var melhor_i := 99
+	for ev in dados.lista("eventos"):
+		if String(ev.get("serie", "")).begins_with(nome + " · "):
+			var i := ordem.find(String(ev["restricoes"].get("licenca", "")))
+			if i < melhor_i and not etapas(dados, String(ev["serie"])).is_empty():
+				melhor_i = i
+				melhor = String(ev["serie"])
+	return melhor if melhor != "" else nome
 
 
 ## Etapas da série em ordem; vazio se a série tem uma prova só.
@@ -34,10 +83,12 @@ static func etapas(dados: Node, nome_serie: String) -> Array:
 
 
 static func _da_serie(ev: Dictionary, nome_serie: String) -> bool:
-	return serie(ev) == nome_serie and String(ev["nome"]).contains(" — etapa ")
+	return serie(ev) == nome_serie and (ev.has("etapa") or String(ev["nome"]).contains(" — etapa "))
 
 
 static func _numero(ev: Dictionary) -> int:
+	if ev.has("etapa"):
+		return int(ev["etapa"])
 	return int(String(ev["nome"]).get_slice(" — etapa ", 1))
 
 

@@ -1313,6 +1313,14 @@ const NOMES_PISTA := {"anel_do_vale": "Lago Sereno", "anel_curto": "Lago Sereno 
 ## Nome da prova para a tela: "Copa Primeira Marcha — Etapa 1" (nos dados a
 ## etapa vem em minúscula, que é a chave dos campeonatos).
 static func nome_evento(ev: Dictionary) -> String:
+	# Série por licença ou da Elite (decisão 123): o nome da série e o número da
+	# etapa nela (o número no nome da prova era o da série inteira).
+	if ev.has("serie"):
+		var d: Node = Engine.get_main_loop().root.get_node_or_null("Dados")
+		var etapas: Array = Campeonatos.etapas(d, String(ev["serie"])) if d != null else []
+		if not etapas.is_empty():
+			var titulo := String(ev["nome"]) if ev["serie"] == Campeonatos.SERIE_ELITE else String(ev["serie"])
+			return "%s — Etapa %d" % [titulo, etapas.find(ev) + 1]
 	return String(ev.get("nome", "")).replace(" — etapa ", " — Etapa ")
 
 

@@ -1090,3 +1090,20 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     corrida por vez. Também: teto da aceleração = a própria duração (o vídeo renova os 30 min,
     não acumula); pneu pago pior que o de fábrica sai do jogo (Dados); texto do patrocínio sem
     "um dia".
+121. **Arena com 2 carros** (2026-10-19, análise aprovada pelo usuário; substitui os 3 carros da
+    69/116). Medido: em 4 h de corrida nenhum perfil do playtest chegou ao 3º carro, e o caos da
+    arena (o que mais empolga o jogo) ficava atrás disso. Com o reparo (118) o carro não se perde,
+    então o motivo dos 3 caiu. Agora a arena abre com `arena.json → carros_minimos` (2): o carro e
+    o piloto da ARENA 1; sem os da ARENA 2, a casa empresta piloto e carro (o caminho que já
+    existia). Os desafios de arena do Grid seguem pedindo a dupla completa.
+122. **Provas abertas na queda por repetição depois da primeira licença** (2026-10-19, análise
+    aprovada). Elas rendiam 56 giros/km contra ~20 nas de licença e sem queda; a isenção
+    (`repeticao.so_com_licenca`) passa a valer só até a primeira licença, para o começo seguir
+    tirando a Club como medido em tests/test_percurso.gd.
+123. **Séries por licença e Série Resistência na Elite** (2026-10-19, análise aprovada). 19 das 31
+    séries atravessavam licenças (fechar o título pedia a licença seguinte). Ao carregar os dados
+    (`Campeonatos.anotar`), a prova de uma série mista fica na série "<nome> · <licença>" (as
+    etapas numeradas dentro dela); as 7 provas de resistência da Elite formam a "Série
+    Resistência", da mais curta para a mais longa (a Elite não tinha título). Títulos e
+    temporadas de saves antigos vão para a série da menor licença. Feito no jogo, não no
+    importador: os dados da referência seguem iguais.

@@ -1,8 +1,8 @@
 class_name ArenaCarreira
 extends RefCounted
-## A arena na carreira (decisão 49). Inscrição: licença `licenca_minima` e ao
-## menos 2 carros na garagem (nunca se perde o único carro); o carro na fila de
-## corrida não entra. Rivais: os carros do catálogo de potência mais parecida com
+## A arena na carreira (decisão 49). Inscrição: `carros_minimos` na garagem
+## (decisão 121) e o carro e o piloto da ARENA 1; sem os da ARENA 2, a casa
+## empresta um carro e um piloto. O carro na fila de corrida não entra. Rivais: os carros do catálogo de potência mais parecida com
 ## a do inscrito, com pilotos das equipes rivais e a mesma IA e piloto-base do
 ## jogador (as mesmas regras para todos). A luta é resolvida e aplicada na
 ## inscrição (fechar o app não salva o carro); a tela só mostra.
@@ -17,25 +17,25 @@ static func bloqueio(dados: Node, jogador: Node) -> String:
 	var p: Dictionary = dados.arena()
 	if p.is_empty():
 		return "A arena ainda não está aberta."
-	# Decisão 69: a arena abre com o tutorial dela, ao chegar a 3 carros
+	# Decisão 69: a arena abre com o tutorial dela, ao chegar a carros_minimos
 	# (EquipeJogador.FLAG_ARENA); a licença mínima só dá o prêmio de referência.
 	if not jogador.flags.has(EquipeJogador.FLAG_ARENA):
-		return "Abre quando a garagem tiver 3 carros."
+		return "Abre quando a garagem tiver %d carros." % carros_minimos(dados)
 	# Decisão 116 (pedido do usuário, 2026-10-17): a arena abre também com uma
-	# corrida em andamento (a luta é resolvida na hora). A dupla é sua (os dois
-	# carros escalados e o segundo piloto contratado); 3 carros no mínimo.
-	if jogador.garagem.lista().size() < 3:
-		return "A arena pede 3 carros: 1 de corrida e 2 de arena."
-	if EquipeJogador.piloto_vaga(jogador, "arena1") == "" or EquipeJogador.piloto_vaga(jogador, "arena2") == "":
-		return "A dupla da arena precisa de dois pilotos de arena contratados (aba Equipe)."
+	# corrida em andamento (a luta é resolvida na hora). Decisão 121: basta o
+	# carro e o piloto da ARENA 1; sem os da ARENA 2, a casa empresta os dois.
+	if jogador.garagem.lista().size() < carros_minimos(dados):
+		return "A arena pede %d carros: 1 de corrida e 1 de arena." % carros_minimos(dados)
+	if EquipeJogador.piloto_vaga(jogador, "arena1") == "":
+		return "Contrate um piloto de arena (aba Equipe)."
 	for vaga in ["arena1", "arena2"]:
 		var pid := EquipeJogador.piloto_vaga(jogador, vaga)
 		var falta := recuperacao_s(jogador, pid)
 		if falta > 0.0:
 			return "%s se recupera do atropelamento: faltam %s." % [
 					String(EquipeJogador.piloto(dados, pid).get("nome", pid)), texto_tempo(falta)]
-	if aptos(jogador).size() < 2:
-		return "Escale os 2 carros da arena na Oficina."
+	if Escalacao.carro(jogador, "arena1") == null:
+		return "Escale o carro da ARENA 1 na Oficina."
 	for c: Carro in aptos(jogador):
 		var falta_r := reparo_s(jogador, c.uid)
 		if falta_r > 0.0:
@@ -100,6 +100,11 @@ static func _quebrar(dados: Node, jogador: Node, uid: int, reg: Dictionary) -> v
 	var r: Dictionary = reg.get("reparo", {})
 	r[str(uid)] = Aceleracao.agora(jogador) + fora
 	reg["reparo"] = r
+
+
+## Carros na garagem para a arena abrir (arena.json → carros_minimos).
+static func carros_minimos(dados: Node) -> int:
+	return int(dados.arena().get("carros_minimos", 3))
 
 
 ## Os carros escalados para a arena (Escalacao): o seu e o do segundo piloto.

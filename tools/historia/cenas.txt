@@ -162,7 +162,7 @@ Mara[firme]: Não existe melhor carro. Existe o carro certo para cada prova.
 
 # Decisão 96: a arena na primeira sessão. A Mara mostra de onde vem o nome
 # Wreckage numa luta de demonstração com o carro dela (simulada: sem prêmio,
-# sem perda de carro); a arena de verdade abre com 3 carros (decisão 69).
+# sem perda de carro); a arena de verdade abre com 2 carros (decisão 121).
 = CW_AD01 | CORRIDA_FIM | personagem=dono; requer=GARAGE_TUTORIAL_SEEN; proibe=ARENA_DEMO_SEEN; flags=ARENA_DEMO_SEEN; cenario=oficina_mara
 Mara[pensativa]: Você nunca perguntou por que Wreckage.
 Mara[cruzados]: Corrida paga as contas. A arena é de onde o nome vem.
@@ -171,8 +171,8 @@ Mara[firme]: Vem ver uma luta. Seis duplas na arena; hoje você só assiste.
 
 = CW_AD02 | ARENA_DEMO_FIM | personagem=dono; proibe=ARENA_DEMO_TALK; flags=ARENA_DEMO_TALK; cenario=oficina_mara
 Mara[gesto]: Isso é a Wreckage. Lá carro nenhum sai inteiro: o que quebra passa um tempo no meu elevador.
-Mara[explica]: Por isso a arena abre só com três carros na garagem: um para correr e dois para arriscar.
-Sistema: Com o terceiro carro, a Arena aparece na barra de baixo.
+Mara[explica]: Por isso a arena abre só com dois carros na garagem: um para correr e um para arriscar.
+Sistema: Com o segundo carro, a Arena aparece na barra de baixo.
 
 # ---------------------------------------------------------------- Licenças
 = CW_L01 | LICENCA_EXIGIDA | personagem=dono; proibe=LICENSE_SYSTEM_UNLOCKED; flags=LICENSE_SYSTEM_UNLOCKED; bloqueia=sim; cenario=vector_academy
@@ -345,17 +345,17 @@ Mara[pensativa]: Dez provas vencidas. A parede de troféus já não está vazia.
 Mara[gesto]: Vinte e cinco. Já ligam aqui perguntando quem é o dono.
 
 # ---------------------------------------------------------------- Arena (decisão 49)
-# Decisão 69: o tutorial da arena chega com o terceiro carro na garagem.
+# Decisões 69 e 121: o tutorial da arena chega com o segundo carro na garagem.
 = CW_P07 | GARAGEM_TRES_CARROS | personagem=dono; requer=PATROCINIO_INTRO; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
-Mara[cruzados]: Três carros. Tem outra maneira de ganhar dinheiro por aqui.
+Mara[cruzados]: Dois carros. Tem outra maneira de ganhar dinheiro por aqui.
 Mara[pensativa]: Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.
 Roxy: E lota a arquibancada! Roxy Vega. A arena é minha.
-Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui.
+Roxy: Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui. Sem o segundo, a casa empresta piloto e carro.
 Roxy: Ganha a dupla que tiver o último carro andando. A cada vitória, o campeonato seguinte ganha mais uma dupla: começa com duas e vai até vinte carros.
 Mara[alerta]: Pagam mais porque todo carro volta amassado.
-Roxy: Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede três carros: um fica para as corridas.
+Roxy: Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede dois carros: um fica para as corridas.
 [UNLOCK_ARENA_PILOTS]
-Sistema: Contrate dois pilotos de arena na Equipe e escale os dois carros da arena na Oficina.
+Sistema: Contrate um piloto de arena na Equipe e escale o carro da ARENA 1 na Oficina. A ARENA 2 é opcional.
 
 # O mecânico da arena: a blindagem (Oficina, ao lado da velocidade máxima).
 = CW_AR02 | ENCADEADA | personagem=dono; flags=DEX_MET

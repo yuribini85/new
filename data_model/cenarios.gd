@@ -9,7 +9,7 @@ extends RefCounted
 const LISTA := [
 	{"id": "dono_inicio", "nome": "Oficina: começo", "detalhe": "Jogo novo, campanha do dono com a Mara."},
 	{"id": "dono_arena", "nome": "Oficina: arena aberta",
-		"detalhe": "Licenças até a National e 3 carros na garagem: a Arena já abre."},
+		"detalhe": "Licenças até a National e 3 carros na garagem: a Arena já abre (com a dupla completa)."},
 	{"id": "carro_3d", "nome": "Carro 3D: Hozuki Catana",
 		"detalhe": "Como a arena aberta, com o Hozuki Catana (modelo 3D) como carro ativo: garagem, corrida e arena."},
 	{"id": "completo", "nome": "Teste completo",

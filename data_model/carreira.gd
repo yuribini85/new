@@ -332,7 +332,11 @@ func fator_repeticao(evento_id: String, agora_real: float = Time.get_unix_time_f
 	if not jogador.vitorias.has(evento_id):
 		return 1.0
 	var r: Dictionary = dados.carreira().get("repeticao", {})
-	if r.get("so_com_licenca", false) and String(dados.evento(evento_id)["restricoes"].get("licenca", "")) == "":
+	# Provas abertas ficam fora da queda só até a primeira licença (decisão 122):
+	# o começo precisa delas para tirar a Club; depois, rendiam mais por km que
+	# as provas de licença e sem queda (o lugar óbvio de juntar dinheiro).
+	if r.get("so_com_licenca", false) and String(dados.evento(evento_id)["restricoes"].get("licenca", "")) == "" \
+			and jogador.licencas.is_empty():
 		return 1.0
 	var fatores: Array = r.get("fatores", [])
 	if fatores.is_empty():

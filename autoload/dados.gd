@@ -91,6 +91,10 @@ func carregar(dir: String) -> void:
 			_listas[arquivo][str(item.get("id"))] = item
 	_gerar_blindagem(dir)
 	_tirar_pneus_dominados()
+	var nomes_lic := {"": "Abertas"}
+	for l in _listas.get("licencas", {}).values():
+		nomes_lic[String(l["id"])] = String(l.get("nome", l["id"]))
+	Campeonatos.anotar(_listas.get("eventos", {}).values(), nomes_lic)
 	for arquivo in OBJETOS:
 		_objetos[arquivo] = {}
 		var obj = _ler_json(dir + arquivo + ".json")

@@ -642,7 +642,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 		_equipes[EquipeJogador.ID] = _equipes["jogador"]
 	_visual3d.nomes = _nomes_curtos
 	# Cabeçalho enxuto: campeonato · etapa; embaixo, pista · volta (ao vivo).
-	_info.text = String(ev["nome"]).replace(" — etapa ", " · Etapa ")
+	_info.text = nome_evento(ev).replace(" — Etapa ", " · Etapa ")
 	_nome_prova.text = "%s · %s" % [_info.text, nome_pista(_pista.id)]
 	_diretor.reiniciar()
 	_foco_auto = "jogador"

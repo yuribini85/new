@@ -233,7 +233,7 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	var tipo := "corrida" if vaga == "corrida" else "arena"
 	if not EquipeJogador.vaga_aberta(jogador, vaga):
 		_linha_piloto(pai, "Sem carro disponível", EquipeJogador.NOMES_VAGA[vaga])
-		rotulo("Para disputar a arena, são precisos pelo menos 3 carros na garagem.", FONTE_PEQUENA, COR_SECUNDARIA, pai)
+		rotulo("A arena abre com %d carros na garagem." % ArenaCarreira.carros_minimos(dados), FONTE_PEQUENA, COR_SECUNDARIA, pai)
 		return
 	if id == "":
 		_linha_piloto(pai, "Vaga livre", EquipeJogador.NOMES_VAGA[vaga])

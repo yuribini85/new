@@ -345,7 +345,7 @@ func apresentada(aba: int) -> bool:
 	if jogador.historia == null or jogador.personagem != "dono":
 		return true
 	aba = PAI.get(aba, aba)
-	# Tutorial pulado (Tutorial.pular): tudo à mostra; a Arena segue a regra dos 3 carros.
+	# Tutorial pulado (Tutorial.pular): tudo à mostra; a Arena segue a regra dos carros mínimos.
 	if Tutorial.pulado(jogador) and aba != ABA_ARENA:
 		return true
 	# As Lojas também com carro na garagem (o jogador já esteve nelas).
@@ -714,7 +714,7 @@ func _abrir_vinheta(id: String, contexto: String) -> void:
 ## Decisão 69: com 3 carros na garagem abre o tutorial da arena (campanha do
 ## dono); sem história, a arena abre direto.
 func _checar_arena() -> void:
-	if jogador.flags.has(EquipeJogador.FLAG_ARENA) or jogador.garagem.lista().size() < 3:
+	if jogador.flags.has(EquipeJogador.FLAG_ARENA) or jogador.garagem.lista().size() < ArenaCarreira.carros_minimos(dados):
 		return
 	if not EquipeJogador.exige_piloto(jogador) or jogador.historia == null:
 		jogador.flags[EquipeJogador.FLAG_ARENA] = true
@@ -1024,7 +1024,7 @@ func _cena_terminou(c: Dictionary) -> void:
 		# conta como aberta): libera só quando não houver mais nenhuma.
 		(func(): _quando_dialogo_acabar(_todas[4].liberar_largada)).call_deferred()
 	atualizar()
-	# A arena pode ter ficado esperando outra conversa (3 carros antes do patrocínio).
+	# A arena pode ter ficado esperando outra conversa (os carros antes do patrocínio).
 	_checar_arena()
 	get_node("/root/SaveManager").salvar()
 

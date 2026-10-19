@@ -491,3 +491,22 @@ func test_pular_tutorial_tira_o_ensino_e_mantem_a_historia() -> void:
 	verificar(j.flags.has("ACELERAR_LIBERADO") and j.flags.has("LICENSE_SYSTEM_UNLOCKED"), "ACELERAR e licenças liberados")
 	j.free()
 	d.free()
+
+
+## Decisão 123: série que atravessava licenças vira uma por licença; a Elite
+## ganha a Série Resistência, da prova mais curta para a mais longa.
+func test_series_por_licenca_e_elite() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	for ev in d.lista("eventos"):
+		var etapas := Campeonatos.etapas(d, Campeonatos.serie(ev))
+		if etapas.is_empty():
+			continue
+		var lic := String(ev["restricoes"].get("licenca", ""))
+		verificar(etapas.all(func(e): return String(e["restricoes"].get("licenca", "")) == lic),
+				"%s: todas as etapas na mesma licença" % Campeonatos.serie(ev))
+	var elite := Campeonatos.etapas(d, Campeonatos.SERIE_ELITE)
+	igual(elite.size(), d.lista("eventos").filter(func(e): return e["restricoes"].get("licenca", "") == "ELITE").size(),
+			"todas as provas da Elite na série")
+	verificar(int(elite[0]["voltas"]) <= int(elite[-1]["voltas"]), "da mais curta para a mais longa")
+	d.free()
