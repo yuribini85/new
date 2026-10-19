@@ -130,9 +130,9 @@ static func glossario(dados: Node) -> Array:
 		["Aderência e pneus", "Quanto o pneu segura: curvas mais rápidas e frenagem mais curta. O piloto usa o melhor pneu que você tiver."],
 		["Freio", "Freios melhores deixam frear mais tarde antes das curvas."],
 		["Câmbio", "O motor tem uma faixa de giro: cada marcha leva o carro até o limite dela antes da próxima."],
-		["Disputar de novo e giros", "Uma corrida por vez; depois de largar, ela termina mesmo com o jogo fechado. Prova já vencida (com licença) paga menos a cada repetição: 50%, 25% e depois 10%, voltando a 100% em 24 h."],
+		["Disputar de novo e giros", "Depois de largar, a corrida termina mesmo com o jogo fechado. Numa prova já vencida dá para montar uma sequência de corridas. Prova já vencida paga menos a cada repetição: 50%, 25% e depois 10%, voltando a 100% em 24 h."],
 		["Combustível", "Cada corrida ou luta da arena gasta 1. O tanque renova sozinho com o tempo, também com o jogo fechado, e um vídeo o enche de uma vez."],
 		["Peças", "Peças compradas ficam com o carro. Dá para tirar e pôr de volta de graça na Oficina."],
 		["Treino da licença", "Cumpridos os requisitos, comece o treino. Ele corre no relógio, com o jogo aberto ou fechado; quando termina, a licença sai sozinha."],
-		["Previsão", "MAIS FRACO, PARELHO e MAIS FORTE vêm de corridas simuladas contra os rivais. É previsão: a corrida de verdade varia."],
+		["Previsão", "MAIS FRACO, PARELHO e MAIS FORTE são uma previsão contra os rivais da prova: a corrida de verdade varia."],
 	]

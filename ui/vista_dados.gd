@@ -50,7 +50,7 @@ func _draw() -> void:
 	var destaque := Aba.COR_DESTAQUE
 	# Pista e rótulo da vista.
 	_t(String(_d.get("pista_nome", "")).to_upper(), Vector2(M, 44), 20, SUAVE, "medium")
-	_t("DADOS SIMULADOS", Vector2(direita, 44), 20, APAGADO, "medium", HORIZONTAL_ALIGNMENT_RIGHT)
+	_t("TELEMETRIA", Vector2(direita, 44), 20, APAGADO, "medium", HORIZONTAL_ALIGNMENT_RIGHT)
 	# Velocidade grande; marcha à direita.
 	_t("%d" % roundi(float(_d.get("kmh", 0.0))), Vector2(M - 6, 200), 160, COR, "numero")
 	_t("KM/H", Vector2(M, 236), 20, SUAVE, "medium")

@@ -92,7 +92,7 @@ Sistema: Vá para Corridas.
 # 6. Depois da segunda corrida (já com a peça): a licença.
 = CW_P06C | CORRIDA_FIM | personagem=dono; requer=FIRST_TUNE_DONE; proibe=SECOND_RACE_DONE; flags=SECOND_RACE_DONE
 Mara[pensativa]: É assim que se sobe: corrida, prêmio, peça, corrida.
-Mara[explica]: Mas sem licença, só as provas abertas. A nossa precisa ser renovada.
+Mara[explica]: Sem licença, a gente só corre as provas que não pedem uma. A nossa precisa ser renovada.
 Mara: Cada licença nova abre provas maiores, com prêmio maior.
 Sistema: Licenças ficam em Carreira.
 [HIGHLIGHT_NAV_LICENCAS]
@@ -114,7 +114,7 @@ Mara[explica]: Aqui você escolhe a prova. {piloto} corre com o carro que a gent
 [HIGHLIGHT_COPA]
 Mara: Como estamos sem licenças, só podemos correr estas provas.
 [HIGHLIGHT_COMPETITIVIDADE]
-Mara: Essa barra compara o carro com o grid. Não garante nada. Evita entrar no escuro.
+Mara: Essa barra compara o carro com os rivais. Não garante nada. Evita entrar no escuro.
 Sistema: Toque em Disputar.
 [HIGHLIGHT_DISPUTAR]
 
@@ -188,7 +188,7 @@ Harold: Terminou o treino, a licença sai. Sem prova, sem papelada.
 Mara[pensativa]: Quanto custa?
 Harold: Nada. Aqui se paga com tempo.
 [HIGHLIGHT_LICENSE_REQUIREMENTS]
-Sistema: Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas.
+Sistema: Toque em Iniciar treino. Enquanto ele treina, siga nas provas que não pedem licença.
 
 # O The Grid, a meta que paga a hipoteca (a dívida é só história: vencer o
 # Grid salva a oficina). Decisão 96: vem depois da primeira corrida (era a
@@ -247,7 +247,7 @@ Sistema: Novas provas liberadas em Corridas › Club.
 = CW_S00 | CORRIDA_FIM | personagem=dono; requer=CLUB_COMPLETE; proibe=PATROCINIO_INTRO; flags=PATROCINIO_INTRO,PATROCINIO_LIBERADO; cenario=oficina_mara
 Mara[explica]: Licença na mão e resultado na pista: agora aparece patrocinador.
 Mara: Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro.
-Mara[pensativa]: O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título de série dá uma hora a mais.
+Mara[pensativa]: O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título dá uma hora a mais de renda offline.
 Mara[gesto]: E pagam um extra quando a corrida cumpre o que eles pedem.
 [OPEN_TEAM_FINANCE]
 [HIGHLIGHT_PATROCINIO]
@@ -308,11 +308,11 @@ Mara[firme]: Só não confunda chegar ao topo com conseguir ficar lá.
 # ---------------------------------------------------------------- Marcos
 = CW_R02 | CORRIDA_FIM | personagem=dono; requer=FIRST_RACE_DONE; proibe=FIRST_WIN; condicao=posicao:1; flags=FIRST_WIN
 Mara[firme]: Bom resultado. Agora vamos ver se conseguimos repetir.
-Sistema: Prova vencida pode ser disputada de novo: uma corrida ou uma fila, que segue com o jogo fechado.
+Sistema: Prova vencida pode ser disputada de novo: uma corrida só ou uma sequência, que continua com o jogo fechado.
 
 # Decisão 120: a primeira fila de corridas.
 = CW_F01 | FILA_INICIADA | personagem=dono; proibe=FIRST_QUEUE; flags=FIRST_QUEUE
-Mara[explica]: Fila montada. A oficina segue a noite toda: cada corrida gasta um tanque, e o tanque enche sozinho.
+Mara[explica]: Sequência montada. A oficina segue a noite toda, enquanto tiver combustível. E o tanque enche sozinho.
 Mara[pensativa]: Vai dormir. Amanhã a gente conta o dinheiro.
 
 = CW_G01 | GARAGEM_DOIS_CARROS | personagem=dono; proibe=FIRST_SECOND_CAR; flags=FIRST_SECOND_CAR
@@ -585,8 +585,8 @@ Mara[alerta]: Bonito carro. Espero que você tenha deixado dinheiro pro resto.
 
 # Análise de 2026-10-19: derrotas seguidas em provas não vencidas (carreira.json → travado).
 = CW_TR01 | TRAVADO | personagem=dono; repetivel=sim
-Mara[cruzados]: {posicao}º de novo. Insistir com o mesmo carro não muda a conta.
-Mara[explica]: No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro quanto cada giro rende.
+Mara[cruzados]: {posicao} de novo. Insistir com o mesmo carro não muda a conta.
+Mara[explica]: No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro o que mais melhora pelo preço.
 Mara[pensativa]: Se nenhuma peça resolver, eu digo qual carro abre caminho.
 
 # ---------------------------------------------------------------- Respostas do sistema (Mara)

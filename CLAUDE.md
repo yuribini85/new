@@ -30,6 +30,10 @@ vêm do disco da referência pelo fluxo `tools/extrair_referencia.py` → `tools
 `tools/calibrar_licencas.gd` (ver `data/README.md`). Não edite à mão os arquivos que o
 importador gera; ajuste a conversão no importador.
 
+**Fala e texto de tela só na língua do jogador** (`docs/vocabulario.md`): um nome por coisa, o
+texto exato do botão, nada de termo interno (fila, simulação, flag, decisão, ids). Antes de escrever,
+pergunte se quem só jogou entende. `tests/checar_vocabulario.py` barra a lista de termos internos.
+
 **Assets só com escala uniforme.** Nunca esticar nem estreitar uma imagem (mudar a
 proporção); para caber, escalar inteira ou recortar.
 

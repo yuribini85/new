@@ -55,7 +55,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	# Fila (decisão 120): várias corridas seguidas só numa prova já vencida;
 	# desafio novo, uma por vez.
 	if repeticoes < 1 or (repeticoes > 1 and not jogador.vitorias.has(evento_id)):
-		return "a fila só repete prova já vencida"
+		return "a sequência só repete prova já vencida"
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
 		return "carro %d não está na garagem" % uid

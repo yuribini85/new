@@ -32,43 +32,11 @@ Levantamento: 659 textos de interface (`ui/`, `data_model/diagnostico.gd`,
    - Os cartões de competição repetem a mesma explicação em texto.
    - A Carreira mistura licenças, objetivos, coleção e preferências.
 
-## Glossário proposto
+## Glossário
 
-Regra: o verbo diz o que acontece; o termo técnico vem depois, menor, para quem quiser.
-
-| Hoje | Proposta | Por quê |
-| --- | --- | --- |
-| Prova / evento / corrida (uma largada) | **Corrida** | palavra de todo mundo |
-| Série, copa, etapas | **Campeonato** (nome próprio: "Copa Primeira Marcha"), **etapa 2 de 3** | agrupa as corridas |
-| Desafiar | **Correr** | o jogador entende na hora |
-| Correr ×N (vencidas) / "Renda: repetir vencidas" | **Disputar de novo ×N** + linha "Rende créditos, até com o app fechado" | diz o ganho |
-| Repetir (resultado) | **Disputar de novo** | idem |
-| Preparar (botão) | **Oficina** | diz o objetivo |
-| Oficina (tela) | **Oficina** (mantém) | todo mundo sabe o que é |
-| Preparação / preparação salva | **Montagem** / **Montagens salvas** | "preparação" soa técnico |
-| Testar preparação | **Comparar montagens** | é o que faz |
-| Estimar desempenho | **Prever minha posição** | é o que mostra |
-| "1º–3º nos testes" | **"Previsão: 1º a 3º"** | sem termo interno |
-| Equipar / instalar / reinstalar | **Usar** (peça já comprada) e **Comprar e usar** | um verbo por ação |
-| Fila / faltam N corridas | **Sequência de corridas** / "faltam N" | "fila" é interno |
-| Parar após esta / Parar já | **Parar no fim desta** / **Parar agora** | |
-| Outra prova | **Escolher outra corrida** | |
-| Potência/peso frente aos rivais: Abaixo/Próxima/Acima | **Seu carro x rivais: mais fraco / parelho / mais forte** | sem fração |
-| Aderência | **Pneus (curvas)**; o número vira barra de 0 a 100 | diz onde ajuda |
-| Freio 1.00 | **Freios (frenagem)**, barra | idem |
-| Potência (cv) | **Potência (retas)**, com cv ao lado | idem |
-| Peso (kg) | **Peso (quanto menor, melhor)** | |
-| FF / FR / MR / 4WD | **Tração dianteira / traseira / motor central / 4x4**, com ícone; sigla só na ficha | |
-| Câmbio curto / equilibrado / longo | **Arrancada / Equilibrado / Velocidade final** | diz o efeito |
-| Corte, giro alto/baixo, rpm | só no gráfico do motor, em "Detalhes" | público técnico |
-| Diagnosticar / DIAGNÓSTICO | **Por que perdi?** (já usado no título) | |
-| Analisar / O QUE AJUDA? | **O que melhora meu resultado?** | |
-| Contratos da licença / Enviar para avaliação | **Missões da licença** / **Testar montagem** | |
-| Acompanhar nos usados | **Avisar quando aparecer usado** | diz o efeito |
-| Agenda (mercado) | **Próximas ofertas** | |
-| Créditos (Cr) | **G** (Giros) com ícone de moeda | curto e sem rastro da referência |
-| Eventos (resto antigo) | **Competições** | um nome por aba |
-| Modo de playtest | some do jogo final (só em versão de teste) | é ferramenta |
+O glossário vigente (termos do jogador e termos internos) está em **`docs/vocabulario.md`**, que
+substitui a tabela proposta que ficava aqui (créditos, montagens, usados e agenda já saíram do jogo).
+`tests/checar_vocabulario.py` confere as falas e os textos de tela.
 
 ## Mudanças de estrutura (comunicação, não balanceamento)
 

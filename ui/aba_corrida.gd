@@ -448,7 +448,7 @@ func _process(delta: float) -> void:
 		if _area.visible:
 			_area.visible = false
 			_ajustar_area()
-		_info.text = "Fila: esperando combustível. A próxima corrida larga em %s." % _mmss(float(f["inicio"]) - agora)
+		_info.text = "Sequência: esperando combustível. A próxima corrida larga em %s." % _mmss(float(f["inicio"]) - agora)
 		return
 	if _contagem >= 0.0:
 		_contar(delta)

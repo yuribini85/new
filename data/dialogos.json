@@ -296,7 +296,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Mas sem licença, só as provas abertas. A nossa precisa ser renovada.",
+    "texto": "Sem licença, a gente só corre as provas que não pedem uma. A nossa precisa ser renovada.",
     "pose": "explica"
    },
    {
@@ -405,7 +405,7 @@
    },
    {
     "quem": "mara",
-    "texto": "Essa barra compara o carro com o grid. Não garante nada. Evita entrar no escuro."
+    "texto": "Essa barra compara o carro com os rivais. Não garante nada. Evita entrar no escuro."
    },
    {
     "quem": "sistema",
@@ -786,7 +786,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Toque em Iniciar treino. Enquanto ele corre, siga nas provas abertas."
+    "texto": "Toque em Iniciar treino. Enquanto ele treina, siga nas provas que não pedem licença."
    }
   ],
   "requer": [
@@ -1062,7 +1062,7 @@
    },
    {
     "quem": "mara",
-    "texto": "O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título de série dá uma hora a mais.",
+    "texto": "O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título dá uma hora a mais de renda offline.",
     "pose": "pensativa"
    },
    {
@@ -1377,7 +1377,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Prova vencida pode ser disputada de novo: uma corrida ou uma fila, que segue com o jogo fechado."
+    "texto": "Prova vencida pode ser disputada de novo: uma corrida só ou uma sequência, que continua com o jogo fechado."
    }
   ],
   "requer": [
@@ -1402,7 +1402,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Fila montada. A oficina segue a noite toda: cada corrida gasta um tanque, e o tanque enche sozinho.",
+    "texto": "Sequência montada. A oficina segue a noite toda, enquanto tiver combustível. E o tanque enche sozinho.",
     "pose": "explica"
    },
    {
@@ -3004,12 +3004,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{posicao}º de novo. Insistir com o mesmo carro não muda a conta.",
+    "texto": "{posicao} de novo. Insistir com o mesmo carro não muda a conta.",
     "pose": "cruzados"
    },
    {
     "quem": "mara",
-    "texto": "No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro quanto cada giro rende.",
+    "texto": "No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro o que mais melhora pelo preço.",
     "pose": "explica"
    },
    {

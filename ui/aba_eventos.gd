@@ -78,7 +78,7 @@ func construir() -> void:
 		proxima = String(fav[0]["ev"]["id"])
 		titulo_secao("PRÓXIMA PROVA", "A mais favorável ao seu carro entre as que você ainda não venceu."
 				if Carreira.nivel_forca(float(fav[0]["melhor"])) > 0
-				else "Seu carro está mais fraco que os rivais em todas as provas abertas: melhore-o na Oficina ou troque de carro nas Lojas.")
+				else "Seu carro está mais fraco que os rivais em todas as provas que ele pode correr: melhore-o na Oficina ou troque de carro nas Lojas.")
 		_cartao_evento(c, fav[0]["ev"], [])
 	# Dois filtros: as ainda não vencidas (padrão) e todas.
 	var abas := HBoxContainer.new()
@@ -191,13 +191,13 @@ func _fila() -> void:
 	if int(f["restantes"]) > 1:
 		# Fila (decisão 120): quantas faltam e o fim dela depois desta.
 		var falta_n := int(f["restantes"])
-		rotulo("Fila: esta e mais %d · cada uma gasta 1 de combustível" % (falta_n - 1), FONTE_PEQUENA, COR_DESTAQUE,
+		rotulo("Sequência: esta e mais %d · cada uma gasta 1 de combustível" % (falta_n - 1), FONTE_PEQUENA, COR_DESTAQUE,
 				col).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var parar := Button.new()
-		Tipografia.acao_secundaria(parar, "Parar a fila depois desta", COR_SECUNDARIA, 24, 64)
+		Tipografia.acao_secundaria(parar, "Parar a sequência depois desta", COR_SECUNDARIA, 24, 64)
 		parar.pressed.connect(func():
 			jogador.fila_ctrl.parar_depois_desta()
-			avisar("A fila para quando esta corrida terminar.")
+			avisar("A sequência para quando esta corrida terminar.")
 			mudou.emit())
 		v.add_child(parar)
 	var b := Button.new()
@@ -632,9 +632,8 @@ func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
 
 func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, pv: Control) -> void:
 	var hoje := Mecanico.texto_faixa(base["faixa"])
-	rotulo("Sem mudar nada, nos testes: %s." % hoje, 0, Color.WHITE, pv)
-	rotulo("%d corridas simuladas por opção, as mesmas para todas: é previsão, não promessa." \
-			% Mecanico.amostras_para(ev), FONTE_PEQUENA - 2, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	rotulo("Sem mudar nada, previsão: %s." % hoje, 0, Color.WHITE, pv)
+	rotulo("É previsão, não promessa: a corrida de verdade varia.", FONTE_PEQUENA - 2, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if opcoes.is_empty():
 		separador(pv)
 		rotulo("Nada que o saldo paga melhora essa prova.", 0, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -647,7 +646,7 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 		h.add_child(img)
 		var t := rotulo("%s\n%s · %s giros\n%s" % ["CARRO QUE ABRE CAMINHO" if carro_s["abre"] else "CARRO MAIS FORTE AQUI",
 				carro_s["carro"]["nome"], dinheiro(int(carro_s["carro"]["preco"])),
-				("Abre: " + carro_s["prova"]) if carro_s["abre"] else "Nos testes, de fábrica: " + carro_s["faixa"]],
+				("Abre: " + carro_s["prova"]) if carro_s["abre"] else "Previsão, sem peças: " + carro_s["faixa"]],
 				FONTE_PEQUENA, COR_INFO.lightened(0.3), h)
 		t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -655,7 +654,7 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 			fechar_painel.emit()
 			ir_para.emit(LOJA), true, true, pv)
 		return
-	rotulo("Da que mais rende por giro para a que menos.", FONTE_PEQUENA - 2, COR_SECUNDARIA, pv)
+	rotulo("Da que mais melhora pelo preço para a que menos.", FONTE_PEQUENA - 2, COR_SECUNDARIA, pv)
 	for o in opcoes:
 		separador(pv)
 		var h := fileira(pv)
@@ -663,7 +662,7 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(info)
 		rotulo(o["nome"], 0, Color.WHITE, info)
-		var etiquetas := [["nos testes: %s → %s" % [hoje, Mecanico.texto_faixa(o["faixa"])],
+		var etiquetas := [["previsão: %s → %s" % [hoje, Mecanico.texto_faixa(o["faixa"])],
 				COR_BOM if o["faixa"][0] == 1 else COR_INFO],
 				["melhora %.1f posição" % o["ganho"], COR_NEUTRA.lightened(0.3)]]
 		if not o["perde"].is_empty():
@@ -756,11 +755,11 @@ func _correr(evento_id: String) -> void:
 		painel.emit("Disputar de novo", func(pv):
 			rotulo("Prova já vencida: o prêmio cai a cada repetição e volta a 100% em 24 h.", FONTE_PEQUENA + 2,
 					Color.WHITE, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			rotulo("Na fila, as corridas seguem com o jogo fechado: cada uma gasta 1 de combustível e, sem ele, "
-					+ "a próxima espera o tanque encher. A cada corrida, a fila escolhe entre as provas que você "
+			rotulo("Na sequência, as corridas continuam com o jogo fechado: cada uma gasta 1 de combustível e, "
+					+ "sem ele, a próxima espera o tanque encher. A cada corrida, a sequência escolhe entre as provas que você "
 					+ "já venceu a que paga mais naquela hora.", FONTE_PEQUENA, COR_SECUNDARIA,
 					pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART,
-			[["Fila: até %d corridas" % cabem, func(): com_combustivel(_largar.bind(evento_id, cabem))],
+			[["Sequência: até %d corridas" % cabem, func(): com_combustivel(_largar.bind(evento_id, cabem))],
 			["Só uma", func(): com_combustivel(_largar.bind(evento_id, 1))], ["Cancelar", func(): pass]])
 		return
 	com_combustivel(_largar.bind(evento_id, 1))

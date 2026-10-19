@@ -263,7 +263,7 @@ func _atributos(pai: Control, piloto_id: String) -> void:
 		_barra_atributo(pai, it[0], clampf(float(it[1]), 0.0, 1.0), it[2])
 	if GestaoEquipe.aberta(dados, jogador) and not GestaoEquipe.cfg_treino(dados).is_empty() \
 			and not GestaoEquipe.pode_subir(dados, jogador, base, piloto_id):
-		rotulo("Ritmo no teto desta licença (%s%%). A próxima licença libera mais." % Aba.decimal(
+		rotulo("Ritmo no máximo desta licença (%s%%). A próxima licença libera mais." % Aba.decimal(
 				maxf(GestaoEquipe.teto(dados, jogador), base) * 100.0, 1),
 				FONTE_PEQUENA, COR_SECUNDARIA, pai)
 
