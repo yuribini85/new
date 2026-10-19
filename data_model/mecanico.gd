@@ -27,6 +27,11 @@ static func amostras_para(ev: Dictionary) -> int:
 	return clampi(ceili(float(AMOSTRAS * VOLTAS_REFERENCIA) / voltas), AMOSTRAS_MIN, AMOSTRAS)
 ## Diferença mínima de posição média para contar como melhora.
 const GANHO_MINIMO := 0.25
+## Triagem: cada opção corre primeiro TRIAGEM corridas (as primeiras sementes);
+## só a que melhora nelas ganha a avaliação completa. As sementes são as mesmas
+## para todas, então a diferença vem do carro; corta a análise pela metade (19
+## opções numa prova da Club: 6 a 17 s sem triagem num desktop).
+const TRIAGEM := 2
 
 
 ## Retorna {"base": avaliação atual, "opcoes": [...]}. Cada avaliação tem
@@ -42,12 +47,21 @@ static func analisar(carreira: Carreira, evento_id: String, uid: int, maximo: in
 	if carro == null:
 		return {"base": {}, "opcoes": []}
 	var base := avaliar(carreira, evento_id, uid, carro, amostras)
+	var base_t := avaliar(carreira, evento_id, uid, carro, mini(TRIAGEM, amostras))
 	var pode_antes := provas_possiveis(dados, carro)
 	var boas := []
 	for o in candidatas(dados, jogador, carro):
+		if not passa_triagem(avaliar(carreira, evento_id, uid, o["carro"], mini(TRIAGEM, amostras)), base_t):
+			continue
 		if considerar(o, avaliar(carreira, evento_id, uid, o["carro"], amostras), base, pode_antes, dados):
 			boas.append(o)
 	return {"base": base, "opcoes": ordenar(boas, base, maximo)}
+
+
+## A opção melhora nas corridas da triagem (qualquer melhora: a avaliação
+## completa decide se passa de GANHO_MINIMO).
+static func passa_triagem(a: Dictionary, base_t: Dictionary) -> bool:
+	return not a.is_empty() and a["media"] < base_t["media"]
 
 
 ## Completa a opção com a avaliação e as provas que ela tira; true se ela
@@ -126,9 +140,11 @@ static func avaliar(carreira: Carreira, evento_id: String, uid: int, carro: Carr
 ## segundos): cada corrida é resolvida aos poucos, até `orcamento_ms` por quadro
 ## de `arvore`. Mesmo resultado; chamar com await.
 static func avaliar_aos_poucos(carreira: Carreira, evento_id: String, uid: int, carro: Carro, arvore: SceneTree,
-		orcamento_ms: float) -> Dictionary:
+		orcamento_ms: float, amostras: int = -1) -> Dictionary:
+	if amostras < 0:
+		amostras = amostras_para(carreira.dados.evento(evento_id))
 	var posicoes := []
-	for k in amostras_para(carreira.dados.evento(evento_id)):
+	for k in amostras:
 		var p := carreira.iniciar_preparo(evento_id, uid, SEMENTE_BASE + k, false, carro)
 		if p.has("erro"):
 			return {}
@@ -170,9 +186,17 @@ static func texto_faixa(faixa: Array) -> String:
 ## atual não pode correr, ou que corre uma das `travadas` (provas em que o
 ## atual não sai do lugar) com mais potência por peso de fábrica (+5%, o mesmo
 ## critério do agente de playtest). Não precisa caber no saldo: é a meta para
-## juntar. {"carro": dados do carro, "prova": nome da prova que ele abre}; {}
-## se nenhum serve.
+## juntar. {"carro": dados do carro, "prova": nome da prova, "abre": true se o
+## atual não pode correr nela}; {} se nenhum serve.
 static func carro_sugerido(dados: Node, jogador: Node, carro: Carro, travadas: Array = []) -> Dictionary:
+	var l := carros_candidatos(dados, jogador, carro, travadas, 1)
+	return {} if l.is_empty() else l[0]
+
+
+## Os carros de carro_sugerido, do mais barato ao mais caro, até `maximo`. Os
+## que só servem numa travada ("abre" false) passam pela simulação na tela
+## antes de aparecer: a potência por peso de fábrica não conta as peças do atual.
+static func carros_candidatos(dados: Node, jogador: Node, carro: Carro, travadas: Array, maximo: int) -> Array:
 	var pneu: Dictionary = dados.pneu(dados.economia()["pneu_de_fabrica"])
 	var fab := Carro.new(carro.base)
 	fab.adicionar_pneu(pneu)
@@ -181,10 +205,10 @@ static func carro_sugerido(dados: Node, jogador: Node, carro: Carro, travadas: A
 	var possuidos: Array = jogador.garagem.lista().map(func(c): return c.id)
 	var abertas: Array = dados.lista("eventos").filter(func(ev):
 		return not jogador.vitorias.has(ev["id"]) and not ev["premios"].is_empty())
-	var melhor := {}
-	for base in dados.lista("carros"):
-		if base["id"] in possuidos or (not melhor.is_empty() and int(base["preco"]) >= int(melhor["carro"]["preco"])):
-			continue
+	var bases: Array = dados.lista("carros").filter(func(b): return not b["id"] in possuidos)
+	bases.sort_custom(func(x, y): return int(x["preco"]) < int(y["preco"]))
+	var r := []
+	for base in bases:
 		var teste := Carro.new(base)
 		teste.adicionar_pneu(pneu)
 		var mais_forte: bool = float(base["potencia"]) / float(base["peso"]) > ppa * 1.05
@@ -193,6 +217,8 @@ static func carro_sugerido(dados: Node, jogador: Node, carro: Carro, travadas: A
 				continue
 			var atual_entra := Elegibilidade.motivos(carro, ev["restricoes"], jogador.licencas).is_empty()
 			if not atual_entra or (ev["id"] in travadas and mais_forte):
-				melhor = {"carro": base, "prova": String(ev["nome"])}
+				r.append({"carro": base, "prova": String(ev["nome"]), "abre": not atual_entra, "evento": ev["id"]})
 				break
-	return melhor
+		if r.size() >= maximo:
+			break
+	return r

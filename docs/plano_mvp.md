@@ -1129,3 +1129,25 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       companheiro na corrida (`companheiro_para`, sem chamada desde a 68), preparações salvas
       (`Carro.configuracoes`, nenhuma tela lia) e a folha por corrida (patrocínio e salários
       `null` em carreira.json, pagavam e cobravam 0). Saves antigos carregam ignorando os campos.
+125. **Ajuda para o jogador travado, carro-prêmio, fila que alterna** (2026-10-19, análise do
+    jogo aprovada pelo usuário). Medido no playtest da campanha (4 h de corrida, 3 perfis): o
+    perfil que escolhe ao acaso venceu 1 prova em 87 corridas (4,6 giros/min, contra 23 de quem
+    segue as sugestões); quem comprava pela maior melhora gastava mais do que ganhava (saldo 64
+    em 4 h); o segundo carro vinha sempre de prêmio, e a conversa dele só existia na compra.
+    - "O que ajuda?" no cartão da prova ainda não vencida que o carro já perdeu (Corridas): a
+      análise do Mecanico (as mesmas sementes para todas as opções), sem travar a tela, com até
+      3 peças ou pneus que o saldo paga, da que mais melhora por giro gasto (`Mecanico.ordenar`);
+      sem opção, o carro da loja que abre uma prova nova ou, de fábrica, vence o atual nesta prova
+      na simulação (`Mecanico.carros_candidatos`). Triagem: cada opção corre 2 vezes antes da
+      avaliação completa (mesmas opções, ~40% menos tempo: 4 s numa prova de 2 voltas, 10 s numa
+      de 5, num desktop). O painel da tela da corrida segue fora (25).
+    - Travado: na N-ésima derrota seguida em provas não vencidas, a Mara aponta o "O que
+      ajuda?" (cena TRAVADO). N em `carreira.json → travado` (4, provisório: as tentativas com
+      que o agente de playtest deixa uma prova de lado).
+    - Carro-prêmio: a conversa do segundo carro e a abertura da arena valem também para ele; no
+      resultado, aviso quando a garagem passa do limite (o prêmio entra mesmo cheia, 43).
+    - Fila (120): a cada corrida, entre as provas já vencidas que o carro corre, a que paga mais
+      por km naquele instante (prêmio do 1º × fator da repetição ÷ distância). A regra da queda
+      (decisão do usuário) não muda.
+    - Playtest da campanha mede o caminho até o segundo carro, a arena e cada desafio de corrida
+      do Grid, com o tempo real mínimo pelo combustível.

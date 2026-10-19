@@ -174,16 +174,15 @@ func _tentar_grid() -> void:
 	var lic := String(eq.get("nivel", ""))
 	if lic != "" and not lic in j.licencas:
 		return
-	var pos := TheGrid.posicao(d, j)
 	var des := GridDesafio.de(d, eq)
-	_marco("grid_%d_liberado (%s)" % [pos - 1, des.get("modo", "?")])
+	_marco("grid_%s_liberado (%s)" % [eq["id"], des.get("modo", "?")])
 	if des.get("modo") != "corrida":
 		return
 	_grid_t = ag.tempo
 	var r: Dictionary = ag._correr(GridDesafio.PREFIXO + String(eq["id"]), "grid")
 	if r.is_empty() or int(r["posicao"]) != 1:
 		return
-	_marco("grid_%d_vencido" % (pos - 1))
+	_marco("grid_%s_vencido" % eq["id"])
 	var depois := TheGrid.posicao(d, j)
 	var ctx := {"equipe": String(eq["nome"]), "posicao_grid": depois, "posicao": depois}
 	if not (depois == 1 and _disparar("GRID_TOPO", ctx)):

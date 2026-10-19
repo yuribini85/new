@@ -595,6 +595,8 @@ func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
 	pv.add_child(barra)
 	var carreira: Carreira = jogador.carreira
 	var base: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, c, get_tree(), Fila.FATIA_MS)
+	var base_t: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, c, get_tree(), Fila.FATIA_MS,
+			Mecanico.TRIAGEM)
 	if base.is_empty() or not is_instance_valid(progresso) or not progresso.is_visible_in_tree():
 		return
 	var pode_antes := Mecanico.provas_possiveis(dados, c)
@@ -606,6 +608,10 @@ func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
 		var o: Dictionary = cands[i]
 		progresso.text = "Testando %d de %d: %s" % [i + 1, cands.size(), o["nome"]]
 		barra.value = 100.0 * (i + 1) / cands.size()
+		var t: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, o["carro"], get_tree(),
+				Fila.FATIA_MS, Mecanico.TRIAGEM)
+		if not Mecanico.passa_triagem(t, base_t):
+			continue
 		var a: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, o["carro"], get_tree(), Fila.FATIA_MS)
 		if Mecanico.considerar(o, a, base, pode_antes, dados):
 			boas.append(o)
@@ -613,7 +619,15 @@ func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
 		return
 	progresso.queue_free()
 	barra.queue_free()
-	_mostrar_ajuda(ev, c, base, Mecanico.ordenar(boas, base, 3), pv)
+	await _mostrar_ajuda(ev, c, base, Mecanico.ordenar(boas, base, 3), pv)
+	if not is_instance_valid(pv):
+		return
+	# O painel abriu com o progresso: volta a ter o tamanho do resultado.
+	var s: Node = pv.get_parent()
+	while s != null and not s.has_method("reajustar"):
+		s = s.get_parent()
+	if s != null:
+		s.reajustar()
 
 
 func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, pv: Control) -> void:
@@ -624,15 +638,17 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 	if opcoes.is_empty():
 		separador(pv)
 		rotulo("Nada que o saldo paga melhora essa prova.", 0, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var s := Mecanico.carro_sugerido(dados, jogador, c, [ev["id"]])
-		if s.is_empty():
+		var carro_s: Dictionary = await _carro_que_ajuda(ev, c, base, pv)
+		if carro_s.is_empty() or not is_instance_valid(pv):
 			return
 		var h := fileira(pv)
-		var img := icone_carro(s["carro"])
+		var img := icone_carro(carro_s["carro"])
 		img.custom_minimum_size = Vector2(120, 68)
 		h.add_child(img)
-		var t := rotulo("CARRO QUE ABRE CAMINHO\n%s · %s giros\nAbre: %s" % [s["carro"]["nome"],
-				dinheiro(int(s["carro"]["preco"])), s["prova"]], FONTE_PEQUENA, COR_INFO.lightened(0.3), h)
+		var t := rotulo("%s\n%s · %s giros\n%s" % ["CARRO QUE ABRE CAMINHO" if carro_s["abre"] else "CARRO MAIS FORTE AQUI",
+				carro_s["carro"]["nome"], dinheiro(int(carro_s["carro"]["preco"])),
+				("Abre: " + carro_s["prova"]) if carro_s["abre"] else "Nos testes, de fábrica: " + carro_s["faixa"]],
+				FONTE_PEQUENA, COR_INFO.lightened(0.3), h)
 		t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		botao("Ir para as Lojas", func():
@@ -656,6 +672,32 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 		var b := botao("Usar" if o["preco"] == 0 else "%s giros" % dinheiro(o["preco"]),
 				_comprar_ajuda.bind(o, c), true, false, h)
 		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+
+## O carro da loja que ajuda (Mecanico.carros_candidatos): o que abre prova
+## nova serve direto; o que só serve nesta prova precisa vencer o atual (com as
+## peças dele) na simulação, de fábrica. {} se nenhum dos primeiros serve.
+func _carro_que_ajuda(ev: Dictionary, c: Carro, base: Dictionary, pv: Control) -> Dictionary:
+	var pneu: Dictionary = dados.pneu(dados.economia()["pneu_de_fabrica"])
+	var aviso := rotulo("Testando carros da loja…", FONTE_PEQUENA, COR_INFO, pv)
+	var achou := {}
+	for s in Mecanico.carros_candidatos(dados, jogador, c, [ev["id"]], 4):
+		if s["abre"]:
+			achou = s
+			break
+		if not is_instance_valid(aviso) or not aviso.is_visible_in_tree():
+			return {}
+		aviso.text = "Testando %s…" % s["carro"]["nome"]
+		var novo := Carro.new(s["carro"])
+		novo.adicionar_pneu(pneu)
+		var a: Dictionary = await Mecanico.avaliar_aos_poucos(jogador.carreira, ev["id"], c.uid, novo, get_tree(), Fila.FATIA_MS)
+		if not a.is_empty() and a["media"] < base["media"] - Mecanico.GANHO_MINIMO:
+			s["faixa"] = Mecanico.texto_faixa(a["faixa"])
+			achou = s
+			break
+	if is_instance_valid(aviso):
+		aviso.queue_free()
+	return achou
 
 
 func _comprar_ajuda(o: Dictionary, c: Carro) -> void:

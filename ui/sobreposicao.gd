@@ -402,6 +402,12 @@ func _acoes_padrao(botoes: Array) -> void:
 		h.add_child(bt)
 
 
+## O conteúdo do painel mudou depois de aberto (ex.: análise que termina aos
+## poucos): o cartão volta a ter o tamanho dele.
+func reajustar() -> void:
+	_ajustar()
+
+
 ## Cartão do tamanho do conteúdo, centrado (sem vazio quando há pouco a mostrar).
 func _ajustar() -> void:
 	# Espera o texto quebrar linha e as imagens assentarem antes de medir.
