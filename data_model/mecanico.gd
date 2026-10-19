@@ -32,8 +32,8 @@ const GANHO_MINIMO := 0.25
 ## Retorna {"base": avaliação atual, "opcoes": [...]}. Cada avaliação tem
 ## {media, faixa: [melhor_tipica, pior_tipica]}; cada opção também {tipo,
 ## item, nome, preco, perde: [nomes de provas que o carro deixa de poder correr]}.
-## Até `maximo` opções que melhoram, da maior melhora para a menor (empate: a
-## mais barata). Peça já possuída custa 0 (só reinstalar).
+## Até `maximo` opções que melhoram, na ordem de `ordenar` (melhora por giro).
+## Peça já possuída custa 0 (só reinstalar).
 static func analisar(carreira: Carreira, evento_id: String, uid: int, maximo: int = 3,
 		amostras: int = AMOSTRAS) -> Dictionary:
 	var jogador: Node = carreira.jogador
@@ -47,7 +47,7 @@ static func analisar(carreira: Carreira, evento_id: String, uid: int, maximo: in
 	for o in candidatas(dados, jogador, carro):
 		if considerar(o, avaliar(carreira, evento_id, uid, o["carro"], amostras), base, pode_antes, dados):
 			boas.append(o)
-	return {"base": base, "opcoes": ordenar(boas, maximo)}
+	return {"base": base, "opcoes": ordenar(boas, base, maximo)}
 
 
 ## Completa a opção com a avaliação e as provas que ela tira; true se ela
@@ -62,9 +62,24 @@ static func considerar(o: Dictionary, a: Dictionary, base: Dictionary, pode_ante
 	return true
 
 
-## Da maior melhora para a menor (empate: a mais barata), até `maximo`.
-static func ordenar(boas: Array, maximo: int) -> Array:
-	boas.sort_custom(func(x, y): return x["media"] < y["media"] if absf(x["media"] - y["media"]) > 0.01 else x["preco"] < y["preco"])
+## Da que mais melhora por giro gasto para a que menos, até `maximo` (análise
+## do jogo, 2026-10-19: ordenar só pela melhora punha na frente pneus que
+## custavam mais que o carro e deixava o jogador sem caixa; quem escolhia pela
+## melhora por giro terminava as 4 h do playtest com caixa). Peça já possuída
+## (custa 0) vem antes; empate: a que mais melhora. Cada opção ganha
+## "ganho_por_mil": posições médias ganhas a cada 1000 giros (0 = já é sua).
+static func ordenar(boas: Array, base: Dictionary, maximo: int) -> Array:
+	for o in boas:
+		o["ganho"] = float(base.get("media", 0.0)) - float(o["media"])
+		o["ganho_por_mil"] = o["ganho"] * 1000.0 / float(o["preco"]) if int(o["preco"]) > 0 else 0.0
+	boas.sort_custom(func(x, y):
+		if (int(x["preco"]) == 0) != (int(y["preco"]) == 0):
+			return int(x["preco"]) == 0
+		var gx: float = x["ganho"] / maxf(float(x["preco"]), 1.0)
+		var gy: float = y["ganho"] / maxf(float(y["preco"]), 1.0)
+		if absf(gx - gy) > 1e-9:
+			return gx > gy
+		return x["ganho"] > y["ganho"])
 	return boas.slice(0, maximo)
 
 
@@ -148,3 +163,36 @@ static func provas_possiveis(dados: Node, carro: Carro) -> Array:
 ## Texto curto da faixa: "1º" ou "1º–3º".
 static func texto_faixa(faixa: Array) -> String:
 	return "%dº" % faixa[0] if faixa[0] == faixa[1] else "%dº–%dº" % [faixa[0], faixa[1]]
+
+
+## Quando nenhuma peça ou pneu resolve: o carro mais barato da loja que abre
+## uma prova ainda não vencida (com as licenças que o jogador tem) que o carro
+## atual não pode correr, ou que corre uma das `travadas` (provas em que o
+## atual não sai do lugar) com mais potência por peso de fábrica (+5%, o mesmo
+## critério do agente de playtest). Não precisa caber no saldo: é a meta para
+## juntar. {"carro": dados do carro, "prova": nome da prova que ele abre}; {}
+## se nenhum serve.
+static func carro_sugerido(dados: Node, jogador: Node, carro: Carro, travadas: Array = []) -> Dictionary:
+	var pneu: Dictionary = dados.pneu(dados.economia()["pneu_de_fabrica"])
+	var fab := Carro.new(carro.base)
+	fab.adicionar_pneu(pneu)
+	var fa := fab.atributos_efetivos("seco")
+	var ppa: float = fa["potencia"] / fa["peso"]
+	var possuidos: Array = jogador.garagem.lista().map(func(c): return c.id)
+	var abertas: Array = dados.lista("eventos").filter(func(ev):
+		return not jogador.vitorias.has(ev["id"]) and not ev["premios"].is_empty())
+	var melhor := {}
+	for base in dados.lista("carros"):
+		if base["id"] in possuidos or (not melhor.is_empty() and int(base["preco"]) >= int(melhor["carro"]["preco"])):
+			continue
+		var teste := Carro.new(base)
+		teste.adicionar_pneu(pneu)
+		var mais_forte: bool = float(base["potencia"]) / float(base["peso"]) > ppa * 1.05
+		for ev in abertas:
+			if not Elegibilidade.motivos(teste, ev["restricoes"], jogador.licencas).is_empty():
+				continue
+			var atual_entra := Elegibilidade.motivos(carro, ev["restricoes"], jogador.licencas).is_empty()
+			if not atual_entra or (ev["id"] in travadas and mais_forte):
+				melhor = {"carro": base, "prova": String(ev["nome"])}
+				break
+	return melhor

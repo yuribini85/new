@@ -2,9 +2,6 @@ extends Aba
 
 signal correr_iniciado
 
-## Estimativas simuladas sob demanda: chave (prova + carro + peças) -> faixa,
-## ou "..." enquanto calcula.
-var _estimativas := {}
 ## Filtro aberto (mantido ao voltar): "nao_vencidas" ou "todas".
 var _filtro := "nao_vencidas"
 ## Cartões mostrados de uma vez (cada um custa ~10 ms para montar; a lista toda
@@ -304,6 +301,12 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		v.add_child(bc)
 		if tutorial:
 			ancora("DISPUTAR", bc)
+		# Já perdeu aqui: o que no saldo melhora a posição (análise de 2026-10-19).
+		if vitorias == 0 and livre_fila and int(hist.get("melhor_pos", 1)) > 1:
+			var ba := Button.new()
+			Tipografia.acao_secundaria(ba, "O que ajuda?", COR_INFO)
+			ba.pressed.connect(_o_que_ajuda.bind(ev, c))
+			v.add_child(ba)
 	else:
 		# Bloqueada: o motivo no lugar do DISPUTAR, num botão vermelho. Tocar
 		# explica a recusa (e a história pode comentar).
@@ -574,20 +577,97 @@ static func _chave(ev: Dictionary, c: Carro) -> String:
 	return "%s|%d|%s|%s" % [ev["id"], c.uid, str(c.configuracao()), str(c.pneus.map(func(p): return p["id"]))]
 
 
-## Simula a prova com o carro em uso (Mecanico.avaliar, mesmas sementes do
-## "O que ajuda?") e mostra a faixa típica de posições. Sob demanda: a lista
-## abre rápido e só calcula o que o jogador pedir.
-func _estimar(ev: Dictionary, c: Carro) -> void:
-	var chave := _chave(ev, c)
-	_estimativas[chave] = "..."
-	await get_tree().process_frame
-	await get_tree().process_frame
-	var a: Dictionary = await Mecanico.avaliar_aos_poucos(jogador.carreira, ev["id"], c.uid, c, get_tree(), Fila.FATIA_MS)
-	if a.is_empty():
-		_estimativas.erase(chave)
-	else:
-		_estimativas[chave] = a["faixa"]
-	mudou.emit()
+## "O que ajuda?" (análise do jogo, 2026-10-19): numa prova ainda não vencida
+## que o carro já perdeu, simula a prova com cada peça e pneu que o saldo paga
+## (Mecanico, as mesmas sementes para todas) e mostra até 3, da que mais melhora
+## por giro gasto. Se nenhuma resolve, o carro da loja que abre caminho.
+func _o_que_ajuda(ev: Dictionary, c: Carro) -> void:
+	painel.emit("O que ajuda?", func(pv: Control): _analisar(ev, c, pv), [["Fechar", func(): pass]])
+
+
+## A análise opção a opção, sem travar a tela (Mecanico.avaliar_aos_poucos), com
+## o progresso à vista. Para se o painel fechar.
+func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
+	var progresso := rotulo("Testando o carro como está…", FONTE_PEQUENA, COR_INFO, pv)
+	var barra := ProgressBar.new()
+	barra.custom_minimum_size = Vector2(0, 20)
+	barra.show_percentage = false
+	pv.add_child(barra)
+	var carreira: Carreira = jogador.carreira
+	var base: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, c, get_tree(), Fila.FATIA_MS)
+	if base.is_empty() or not is_instance_valid(progresso) or not progresso.is_visible_in_tree():
+		return
+	var pode_antes := Mecanico.provas_possiveis(dados, c)
+	var cands := Mecanico.candidatas(dados, jogador, c)
+	var boas := []
+	for i in cands.size():
+		if not is_instance_valid(progresso) or not progresso.is_visible_in_tree():
+			return
+		var o: Dictionary = cands[i]
+		progresso.text = "Testando %d de %d: %s" % [i + 1, cands.size(), o["nome"]]
+		barra.value = 100.0 * (i + 1) / cands.size()
+		var a: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, o["carro"], get_tree(), Fila.FATIA_MS)
+		if Mecanico.considerar(o, a, base, pode_antes, dados):
+			boas.append(o)
+	if not is_instance_valid(progresso):
+		return
+	progresso.queue_free()
+	barra.queue_free()
+	_mostrar_ajuda(ev, c, base, Mecanico.ordenar(boas, base, 3), pv)
+
+
+func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, pv: Control) -> void:
+	var hoje := Mecanico.texto_faixa(base["faixa"])
+	rotulo("Sem mudar nada, nos testes: %s." % hoje, 0, Color.WHITE, pv)
+	rotulo("%d corridas simuladas por opção, as mesmas para todas: é previsão, não promessa." \
+			% Mecanico.amostras_para(ev), FONTE_PEQUENA - 2, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if opcoes.is_empty():
+		separador(pv)
+		rotulo("Nada que o saldo paga melhora essa prova.", 0, COR_SECUNDARIA, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var s := Mecanico.carro_sugerido(dados, jogador, c, [ev["id"]])
+		if s.is_empty():
+			return
+		var h := fileira(pv)
+		var img := icone_carro(s["carro"])
+		img.custom_minimum_size = Vector2(120, 68)
+		h.add_child(img)
+		var t := rotulo("CARRO QUE ABRE CAMINHO\n%s · %s giros\nAbre: %s" % [s["carro"]["nome"],
+				dinheiro(int(s["carro"]["preco"])), s["prova"]], FONTE_PEQUENA, COR_INFO.lightened(0.3), h)
+		t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		botao("Ir para as Lojas", func():
+			fechar_painel.emit()
+			ir_para.emit(LOJA), true, true, pv)
+		return
+	rotulo("Da que mais rende por giro para a que menos.", FONTE_PEQUENA - 2, COR_SECUNDARIA, pv)
+	for o in opcoes:
+		separador(pv)
+		var h := fileira(pv)
+		var info := VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(info)
+		rotulo(o["nome"], 0, Color.WHITE, info)
+		var etiquetas := [["nos testes: %s → %s" % [hoje, Mecanico.texto_faixa(o["faixa"])],
+				COR_BOM if o["faixa"][0] == 1 else COR_INFO],
+				["melhora %.1f posição" % o["ganho"], COR_NEUTRA.lightened(0.3)]]
+		if not o["perde"].is_empty():
+			etiquetas.append(["deixa de poder correr: %s" % ", ".join(o["perde"]), COR_RUIM])
+		selos(etiquetas, info)
+		var b := botao("Usar" if o["preco"] == 0 else "%s giros" % dinheiro(o["preco"]),
+				_comprar_ajuda.bind(o, c), true, false, h)
+		b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+
+func _comprar_ajuda(o: Dictionary, c: Carro) -> void:
+	var motivo: String = jogador.concessionaria.comprar_peca(c, o["item"]) if o["tipo"] == "peca" \
+			else jogador.concessionaria.comprar_pneu(c, o["item"])
+	if motivo != "":
+		avisar("Não deu: %s." % motivo, false)
+		return
+	fechar_painel.emit()
+	avisar("%s em %s. Corra de novo para conferir." % [o["nome"], c.base["nome"]])
+	if o["tipo"] == "peca":
+		historia("PECA_COMPRADA", {"peca": String(o["nome"])})
 
 
 ## Regras da prova em texto curto ("até 150 cv", "tração FF").
@@ -635,7 +715,8 @@ func _correr(evento_id: String) -> void:
 			rotulo("Prova já vencida: o prêmio cai a cada repetição e volta a 100% em 24 h.", FONTE_PEQUENA + 2,
 					Color.WHITE, pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			rotulo("Na fila, as corridas seguem com o jogo fechado: cada uma gasta 1 de combustível e, sem ele, "
-					+ "a próxima espera o tanque encher.", FONTE_PEQUENA, COR_SECUNDARIA,
+					+ "a próxima espera o tanque encher. A cada corrida, a fila escolhe entre as provas que você "
+					+ "já venceu a que paga mais naquela hora.", FONTE_PEQUENA, COR_SECUNDARIA,
 					pv).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART,
 			[["Fila: até %d corridas" % cabem, func(): com_combustivel(_largar.bind(evento_id, cabem))],
 			["Só uma", func(): com_combustivel(_largar.bind(evento_id, 1))], ["Cancelar", func(): pass]])

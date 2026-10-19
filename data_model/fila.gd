@@ -320,6 +320,7 @@ func processar(agora: float) -> Dictionary:
 				break
 			f["inicio"] = largada
 			f["semente"] = _nova_semente()
+			f["evento_id"] = melhor_renda(f, largada - (Aceleracao.agora(jogador) - Time.get_unix_time_from_system()))
 			if f.get("piloto") is Dictionary:
 				f["piloto"].erase("ordens")
 	# Relógio voltando (ajuste manual, fuso) não pode virar "ausência" depois.
@@ -345,6 +346,41 @@ func _proxima_largada(t: float) -> float:
 		real += espera
 	Combustivel.gastar(dados, jogador, real)
 	return t
+
+
+## Prova da próxima corrida da fila (análise de 2026-10-19): a queda por
+## repetição tirava quase todo o prêmio de uma fila de 8 h na mesma prova. Entre
+## as provas já vencidas em que o carro inscrito pode correr, a que paga mais por
+## km naquele instante (prêmio do 1º × fator da repetição ÷ voltas × extensão
+## da pista); empate: a prova atual. `agora_real`: o relógio real da largada.
+func melhor_renda(f: Dictionary, agora_real: float) -> String:
+	var dados: Node = carreira.dados
+	var atual := String(f["evento_id"])
+	var carro := carro_inscrito(f)
+	if carro == null:
+		return atual
+	var melhor := atual
+	var valor := _renda_km(atual, agora_real)
+	for id in jogador.vitorias:
+		if id == atual or not dados.existe("eventos", id):
+			continue
+		var ev: Dictionary = dados.evento(id)
+		if ev.get("grid_equipe") != null or not Elegibilidade.motivos(carro, ev["restricoes"], jogador.licencas).is_empty():
+			continue
+		var v := _renda_km(id, agora_real)
+		if v > valor + 1e-9:
+			melhor = id
+			valor = v
+	return melhor
+
+
+func _renda_km(evento_id: String, agora_real: float) -> float:
+	var dados: Node = carreira.dados
+	var ev: Dictionary = dados.evento(evento_id)
+	if ev["premios"].is_empty():
+		return 0.0
+	var km := maxf(float(ev.get("voltas", 1)) * dados.pista(ev["pista"]).comprimento, 1.0)
+	return float(ev["premios"][0]) * carreira.fator_repeticao(evento_id, agora_real) / km
 
 
 ## Quantas corridas desta prova cabem na fila: o que a capacidade offline

@@ -208,6 +208,10 @@
   "_nota": "Decisão do usuário (2026-10-17): repetir prova já vencida paga 50%, depois 25%, depois 10% (piso); volta a 100% a cada 24 h (mesmo período do mercado de pilotos). Medido (playtest da campanha): no caminho normal as repetições são até 25% das corridas por meia hora; a queda pesa só no farm. Não vem do estudo de referência (lá o prêmio se repete inteiro). so_com_licenca (decisão do usuário, 2026-10-17): provas sem licença ficam fora da queda; com ela, 3 dos 11 carros iniciais deixavam de tirar a Club (antes 12-18 min); sem elas na regra, todos tiram em 6-18 min (tests/test_percurso.gd). Decisão 122 (2026-10-19, análise aprovada pelo usuário): a isenção das provas abertas vale só até a primeira licença; depois elas entram na queda como as outras (rendiam 56 giros/km, contra ~20 nas de licença, sem queda).",
   "so_com_licenca": true
  },
+ "travado": {
+  "derrotas": 4,
+  "_nota": "Análise do jogo (2026-10-19, aprovada pelo usuário): na N-ésima derrota seguida em provas ainda não vencidas, a Mara aponta o \"O que ajuda?\" do cartão da prova (cena TRAVADO, uma vez por série de derrotas). Critério provisório: o mesmo número de tentativas com que o agente de playtest deixa uma prova de lado (tools/agente.gd MAX_TENTATIVAS); confirmar no playtest com pessoas. 0 desliga."
+ },
  "meta_dia": {
   "_nota": "Decisão 109 (sugestão aceita pelo usuário, 2026-10-17): 3 tarefas por dia, sorteadas pela data entre as possíveis. Recompensa: recompensa_premios × o prêmio de referência da maior licença (a média do 1º lugar das provas dela) por tarefa. Critério: 1 = uma vitória a mais por tarefa; perto de 8 vitórias por hora de jogo ativo (playtest da campanha), as 3 somam menos de meia hora de corrida. Ajustar no playtest.",
   "por_dia": 3,

@@ -1196,6 +1196,7 @@ func _processar_fila() -> void:
 	if jogador.fila.is_empty() or not jogador.fila_ctrl.pronta(false):
 		return
 	var antes_vitorias: Dictionary = jogador.vitorias.duplicate()
+	var antes_carros: int = jogador.garagem.lista().size()
 	var rel: Dictionary = jogador.fila_ctrl.processar(Aceleracao.agora(jogador))
 	RegistroSessao.corridas(rel, dados)
 	if rel["corridas"].is_empty() and rel["erro"] == "":
@@ -1222,10 +1223,23 @@ func _processar_fila() -> void:
 		if jogador.historia != null:
 			jogador.historia.disparar_grid(c.get("grid", {}), dados)
 			jogador.historia.disparar_fim(int(c["posicao"]), c["evento_id"], antes_vitorias)
+		_carros_de_premio(antes_carros)
 		return
 	await _esperar_tela_livre()
 	_mostrar_relatorio(rel, "Resultado das corridas")
 	_conversas_das_corridas(rel["corridas"], antes_vitorias)
+	_carros_de_premio(antes_carros)
+
+
+## Carro-prêmio (análise de 2026-10-19: em 4 h de playtest o segundo carro vinha
+## de prêmio, nunca da loja): a conversa do segundo carro e a arena, como na compra.
+func _carros_de_premio(antes: int) -> void:
+	var n: int = jogador.garagem.lista().size()
+	if n <= antes:
+		return
+	if jogador.historia != null and antes < 2 and n >= 2:
+		jogador.historia.disparar("GARAGEM_DOIS_CARROS")
+	_checar_arena()
 
 
 ## O resultado nunca substitui um painel aberto (ficha, Garagem,
@@ -1354,9 +1368,19 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			vit.fundo_transparente()
 			vit.mostrar_modelo(premiado.base, CarroBloco.cor_do_carro(premiado), premiado.faixas)
 			v.add_child(vit)
+			_aviso_vagas(g, v)
 		_lista_resultado(v, tabela, c)
 		_fechamento_automatico(v, token, fechar)
 		_botao_fechar(v, fechar, venceu), [], {"caixa": Aba.arte("caixa_resultado" if venceu else "caixa_resultado_cinza"), "tela_cheia": _cabecalho.altura_total() + 8.0})
+
+
+## Garagem acima do limite depois de um carro-prêmio (VagasGaragem.aviso_excesso).
+func _aviso_vagas(g: Aba, v: Control) -> void:
+	var t := VagasGaragem.aviso_excesso(jogador)
+	if t != "":
+		var l := g.rotulo(t, Aba.FONTE_PEQUENA, Aba.COR_RUIM.lightened(0.2), v)
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
 ## "VITÓRIA!" (ou a posição) no alto, centrado.
@@ -1637,6 +1661,7 @@ func _abrir_volta(rel: Dictionary) -> void:
 		return
 	if get_node_or_null("TelaVolta") != null:
 		return
+	rel["aviso_vagas"] = VagasGaragem.aviso_excesso(jogador)
 	var t := TelaVolta.new(rel, dados)
 	t.name = "TelaVolta"
 	add_child(t)
@@ -1725,6 +1750,8 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 				h.add_child(g.icone_carro(cp.base))
 				g.rotulo(cp.base["nome"], 30, Color.WHITE, h)
 				g.rotulo("Já está na sua garagem.", Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vc)
+		if not rel["carros_premio"].is_empty():
+			_aviso_vagas(g, v)
 		if rel["erro"] != "":
 			var ve := g.cartao(Aba.COR_RUIM, v)
 			g.rotulo("A corrida parou: " + rel["erro"], 0, Aba.COR_RUIM, ve)

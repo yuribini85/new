@@ -39,6 +39,9 @@ var identidade: Dictionary = {}
 var grid: Dictionary = {}
 ## Corrida (dias) do último comentário de contexto da história (cenas reativa).
 var ultima_reativa: int = -1000
+## Derrotas seguidas em provas ainda não vencidas (a vitória zera; a repetição
+## de prova vencida não conta): a Mara aponta o "O que ajuda?" (TRAVADO).
+var derrotas_seguidas: int = 0
 var historia: Historia
 ## Equipe do jogador (fase 9): segundo piloto contratado ("" = nenhum) e o carro
 ## da garagem que ele usa nas provas (-1 = nenhum).
@@ -123,6 +126,7 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	flags = {}
 	dialogos_vistos = {}
 	ultima_reativa = -1000
+	derrotas_seguidas = 0
 	arena = {}
 	equipe = {}
 	identidade = {}

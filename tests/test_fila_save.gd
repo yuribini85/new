@@ -501,3 +501,34 @@ func test_fila_de_prova_vencida_roda_offline() -> void:
 	verificar(f.cabem("aberto", uid) > 1, "cabe mais de uma na capacidade offline")
 	j.free()
 	d.free()
+
+
+func test_fila_troca_para_a_vencida_que_paga_mais_por_km() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j, 100000.0)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.vitorias["serie_1"] = 1  # 100 por 1 volta
+	igual(f.iniciar("serie_1", uid, 3, 0.0), "", "fila na série")
+	igual(f.melhor_renda(j.fila, 0.0), "serie_1", "só ela vencida: fica nela")
+	j.vitorias["aberto"] = 1  # 500 por 3 voltas na mesma pista
+	j.vitorias["licenciado"] = 1  # pede licença que o jogador não tem
+	igual(f.melhor_renda(j.fila, 0.0), "aberto", "o Aberto paga mais por km")
+	var dur: float = f.corrida_atual(0.0)["duracao"]
+	var rel := f.processar(dur * 1.5)
+	igual(String(rel["corridas"][0]["evento_id"]), "serie_1", "a primeira é a escolhida")
+	igual(String(j.fila["evento_id"]), "aberto", "a próxima vai para a que paga mais")
+	j.free()
+	d.free()
+
+
+func test_aviso_de_garagem_acima_do_limite() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	j.garagem.vagas = 1
+	j.concessionaria.comprar_carro(d.carro("fraco"))
+	igual(VagasGaragem.aviso_excesso(j), "", "dentro do limite")
+	j.garagem.adicionar(Carro.new(d.carro("forte")))  # carro-prêmio entra mesmo cheia
+	verificar("2 carros em 1 vagas" in VagasGaragem.aviso_excesso(j), "acima do limite: o aviso")
+	j.free()
+	d.free()

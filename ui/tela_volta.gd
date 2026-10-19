@@ -21,7 +21,7 @@ var _botao_dobrar: Button
 
 
 ## rel: o relatório de volta (patrocinio, corridas, premio_total, carros_premio,
-## patrocinios_encerrados, patrocinios_assinados).
+## patrocinios_encerrados, patrocinios_assinados, aviso_vagas).
 func _init(rel: Dictionary, dados: Node) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -80,6 +80,8 @@ func _init(rel: Dictionary, dados: Node) -> void:
 				"" if corridas.size() == 1 else "s", vit, "" if vit == 1 else "s", Aba.dinheiro(int(rel.get("premio_total", 0)))])
 	if not rel.get("carros_premio", []).is_empty():
 		linhas.append("Carro de prêmio na garagem")
+		if String(rel.get("aviso_vagas", "")) != "":
+			linhas.append(String(rel["aviso_vagas"]))
 	for nome in rel.get("patrocinios_encerrados", []):
 		linhas.append("Contrato de %s encerrado" % nome)
 	for nome in rel.get("patrocinios_assinados", []):

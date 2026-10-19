@@ -576,6 +576,12 @@ Sistema: Prova já vencida paga de novo, mas o prêmio cai a cada repetição.
 = CW_R04 | COMPRA_CARRO_CARA | personagem=dono; repetivel=sim; reativa=sim
 Mara[alerta]: Bonito carro. Espero que você tenha deixado dinheiro pro resto.
 
+# Análise de 2026-10-19: derrotas seguidas em provas não vencidas (carreira.json → travado).
+= CW_TR01 | TRAVADO | personagem=dono; repetivel=sim
+Mara[cruzados]: {posicao}º de novo. Insistir com o mesmo carro não muda a conta.
+Mara[explica]: No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro quanto cada giro rende.
+Mara[pensativa]: Se nenhuma peça resolver, eu digo qual carro abre caminho.
+
 # ---------------------------------------------------------------- Respostas do sistema (Mara)
 = CW_SYS01 | SEM_DINHEIRO | personagem=dono; repetivel=sim
 Mara[decepcao]: Não temos isso.

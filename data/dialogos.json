@@ -2966,6 +2966,33 @@
   "reativa": true
  },
  {
+  "id": "CW_TR01",
+  "trigger": "TRAVADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "{posicao}º de novo. Insistir com o mesmo carro não muda a conta.",
+    "pose": "cruzados"
+   },
+   {
+    "quem": "mara",
+    "texto": "No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro quanto cada giro rende.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Se nenhuma peça resolver, eu digo qual carro abre caminho.",
+    "pose": "pensativa"
+   }
+  ],
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_SYS01",
   "trigger": "SEM_DINHEIRO",
   "falas": [

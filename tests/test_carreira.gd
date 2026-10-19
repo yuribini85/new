@@ -499,3 +499,23 @@ func test_series_por_licenca_e_elite() -> void:
 			"todas as provas da Elite na série")
 	verificar(int(elite[0]["voltas"]) <= int(elite[-1]["voltas"]), "da mais curta para a mais longa")
 	d.free()
+
+
+## Análise de 2026-10-19: derrotas seguidas em provas não vencidas fazem a
+## Mara apontar o "O que ajuda?" (TRAVADO), na N-ésima derrota da série.
+func test_travado_aponta_o_que_ajuda() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	if d.historia().is_empty():
+		d.free()
+		return
+	var j: Node = JogadorScript.new()
+	Prologo.iniciar(d, j)
+	var h := Historia.new(d, j)
+	verificar(h.travado_derrotas() > 0, "carreira.json define o número")
+	var c := h.cena_para("TRAVADO", {"posicao": 4})
+	igual(c.get("id"), "CW_TR01", "a cena da Mara")
+	h.concluir(c)
+	igual(h.cena_para("TRAVADO", {"posicao": 4}).get("id"), "CW_TR01", "repetível (uma por série de derrotas)")
+	j.free()
+	d.free()

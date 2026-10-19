@@ -23,7 +23,8 @@ extends RefCounted
 ## LOJA:<workshop>, BLINDAGEM (janela da blindagem) e BLINDAGEM_COMPRADA,
 ## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, NOME_DEFINIDO
 ## (o nome do administrador dado na abertura), FILA_INICIADA (uma fila de corridas
-## numa prova vencida, decisão 120).
+## numa prova vencida, decisão 120), TRAVADO (derrotas seguidas em provas não
+## vencidas; ver disparar_fim).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
 
@@ -109,6 +110,11 @@ func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
 	return true
 
 
+## Derrotas seguidas que contam como travado (carreira.json → travado.derrotas).
+func travado_derrotas() -> int:
+	return int(dados.carreira().get("travado", {}).get("derrotas", 0))
+
+
 func demanda_paga() -> bool:
 	var d := Prologo.demanda(dados, jogador)  # já sem as peças que o carro tem
 	return dados.existe("pecas", d) and jogador.economia.pode_pagar(int(dados.peca(d)["preco"]))
@@ -160,6 +166,10 @@ func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
 		q["quantidade"] = jogador.vitorias.size()
 		if disparar("VITORIA", q):
 			return true
+	# Travado (análise de 2026-10-19): na N-ésima derrota seguida em provas não
+	# vencidas, a Mara aponta o "O que ajuda?" do cartão da prova (uma vez por série).
+	if posicao != 1 and jogador.derrotas_seguidas == travado_derrotas() and disparar("TRAVADO", ctx):
+		return true
 	# Sem cena nem marco: um comentário de contexto (no máximo um a cada
 	# reativa_intervalo_corridas corridas), para a Mara não sumir entre os marcos.
 	return disparar("CORRIDA_FIM", ctx)

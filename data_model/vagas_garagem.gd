@@ -37,3 +37,13 @@ static func ampliar(dados: Node, jogador: Node) -> String:
 	jogador.ampliacoes_garagem += 1
 	jogador.garagem.vagas = capacidade(dados, jogador.ampliacoes_garagem)
 	return ""
+
+
+## Carro-prêmio entra mesmo com a garagem cheia (prêmio não se recusa) e ela
+## passa do limite: o aviso para a tela do resultado. "" dentro do limite.
+static func aviso_excesso(jogador: Node) -> String:
+	var n: int = jogador.garagem.lista().size()
+	var vagas: int = jogador.garagem.vagas
+	if vagas <= 0 or n <= vagas:
+		return ""
+	return "Garagem com %d carros em %d vagas: o prêmio entrou, mas para comprar outro carro venda um ou amplie a garagem." % [n, vagas]

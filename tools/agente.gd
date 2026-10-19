@@ -341,9 +341,7 @@ func _comprar_item(o: Dictionary) -> void:
 
 
 ## Sem prova a vencer com este carro: outro carro da garagem que tenha prova a
-## vencer; senão, o mais barato que entra numa prova
-## ainda não vencida que o atual não pode correr, ou que o atual já tentou e
-## deixou de lado (aí, só com mais potência por peso de fábrica).
+## vencer; senão, o carro que o jogo sugere (Mecanico.carro_sugerido).
 func _trocar_carro() -> bool:
 	var atual_uid := uid
 	for c in j.garagem.lista():
@@ -355,37 +353,16 @@ func _trocar_carro() -> bool:
 			_tentativas.clear()
 			return true
 	uid = atual_uid
-	var atual: Carro = j.garagem.carro(uid)
-	var fab := Carro.new(atual.base)
-	fab.adicionar_pneu(d.pneu(d.economia()["pneu_de_fabrica"]))
-	var fa := fab.atributos_efetivos("seco")
-	var ppa: float = fa["potencia"] / fa["peso"]
-	var opcoes := []
-	for c in d.lista("carros"):
-		opcoes.append({"carro_id": c["id"], "preco": int(c["preco"])})
-	var possuidos: Array = j.garagem.lista().map(func(c): return c.id)
-	var boas := []
-	for o in opcoes:
-		if o["carro_id"] in possuidos:
-			continue
-		var base: Dictionary = d.carro(o["carro_id"])
-		var teste := Carro.new(base)
-		teste.adicionar_pneu(d.pneu(d.economia()["pneu_de_fabrica"]))
-		var mais_forte: bool = float(base["potencia"]) / float(base["peso"]) > ppa * 1.05
-		var abre: bool = d.lista("eventos").any(func(ev):
-			if j.vitorias.has(ev["id"]) or ev["premios"].is_empty():
-				return false
-			if not Elegibilidade.motivos(teste, ev["restricoes"], j.licencas).is_empty():
-				return false
-			var atual_entra := Elegibilidade.motivos(atual, ev["restricoes"], j.licencas).is_empty()
-			return not atual_entra or (_bloqueadas.has(_chave(ev["id"])) and mais_forte))
-		if abre:
-			boas.append(o)
-	if boas.is_empty():
+	# O carro que o jogo sugere quando nada no saldo resolve (Mecanico.carro_sugerido).
+	var travadas := []
+	for k in _bloqueadas:
+		if String(k).begins_with("%d:" % uid):
+			travadas.append(String(k).get_slice(":", 1))
+	var s := Mecanico.carro_sugerido(d, j, j.garagem.carro(uid), travadas)
+	if s.is_empty():
 		return false
-	boas.sort_custom(func(x, y): return x["preco"] < y["preco"])
-	var o: Dictionary = boas[rng.randi_range(0, mini(2, boas.size() - 1))] if perfil == "explora" else boas[0]
-	if not _juntar(int(o["preco"]), "carro " + d.carro(o["carro_id"])["nome"]):
+	var o := {"carro_id": s["carro"]["id"], "preco": int(s["carro"]["preco"])}
+	if not _juntar(int(o["preco"]), "carro " + String(s["carro"]["nome"])):
 		return false
 	_comprar_carro(o, "troca de carro")
 	return true

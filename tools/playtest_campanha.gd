@@ -6,6 +6,12 @@ extends SceneTree
 ## são "vistas" na hora (flags gravadas, encadeadas seguidas). Mede: tempo de
 ## corrida até cada marco, cenas por hora, intervalo entre comentários de
 ## contexto, cenas repetidas, travas (o agente parou) e o que nunca apareceu.
+## Também o caminho até a arena e o The Grid (análise de 2026-10-19): o segundo
+## carro (comprado ou de prêmio), a arena aberta e cada desafio de corrida do
+## Grid que a licença libera (o agente tenta no máximo um a cada GRID_INTERVALO_S
+## de corrida; os de arena só contam como liberados). Ao lado de cada marco, o
+## tempo real mínimo jogando sem parar: o combustível (tanque e renovação de
+## monetizacao.json) limita as corridas depois do tanque.
 ## Só lê o jogo; não muda dados.
 ##
 ## Uso: godot --headless --path . --script tools/playtest_campanha.gd -- [minutos] [campanha]
@@ -19,6 +25,12 @@ var h: Historia
 var vistas := []  # [{t, id, trigger, reativa}]
 var _primeira_prova := true
 var _licencas_vistas := false
+## Carros na garagem na última conferência (o prêmio entra sem ação de compra).
+var _carros := 0
+## Corrida (jogador.dias) de cada marco do caminho até a arena e o Grid.
+var _dias := {}
+var _grid_t := -1.0e9
+const GRID_INTERVALO_S := 600.0
 
 
 func _initialize() -> void:
@@ -38,6 +50,9 @@ func _initialize() -> void:
 		vistas = []
 		_primeira_prova = true
 		_licencas_vistas = false
+		_carros = 0
+		_dias = {}
+		_grid_t = -1.0e9
 		ag = preload("res://tools/agente.gd").new(d, perfil, 7)
 		h = Historia.new(d, ag.j)
 		ag.j.historia = h
@@ -89,8 +104,11 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 				falou = _disparar("COMPRA_CARRO_NOVO") or falou
 			if j.garagem.lista().size() == 2:
 				falou = _disparar("GARAGEM_DOIS_CARROS") or falou
-			if j.garagem.lista().size() >= 3:
+			if j.garagem.lista().size() >= ArenaCarreira.carros_minimos(d):
 				falou = _disparar("GARAGEM_TRES_CARROS") or falou
+			_carros = j.garagem.lista().size()
+			if _carros >= 2:
+				_marco("segundo_carro")
 			if not falou:
 				var _f := _disparar("COLECAO", {"quantidade": h.colecao()}) \
 						or (h.carro_caro(int(ctx["preco"])) and _disparar("COMPRA_CARRO_CARA", {"carro": nome})) \
@@ -122,10 +140,60 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 			if not _licencas_vistas and j.flags.has("FIRST_RACE_DONE"):
 				_licencas_vistas = true
 				_disparar("ABA:LICENCAS")  # a cena do resultado manda ir para Carreira
+			_depois_da_corrida()
 		"treino":
 			_disparar("LICENCA_TREINO_INICIO")
 		"licenca":
 			_disparar("LICENCA_CONCEDIDA:" + String(ctx["licenca"]))
+
+
+## Como principal.gd depois de uma corrida: o carro-prêmio (a conversa do
+## segundo carro e a arena, _carros_de_premio e _checar_arena) e o Grid.
+func _depois_da_corrida() -> void:
+	var j: Node = ag.j
+	var n: int = j.garagem.lista().size()
+	if n > _carros:
+		if _carros < 2 and n >= 2:
+			_disparar("GARAGEM_DOIS_CARROS")
+			_marco("segundo_carro")
+		_carros = n
+	if n >= ArenaCarreira.carros_minimos(d) and not j.flags.has(EquipeJogador.FLAG_ARENA):
+		_disparar("GARAGEM_TRES_CARROS")
+	if j.flags.has("ARENA_INTRO"):
+		_marco("arena")
+	_tentar_grid()
+
+
+## O desafio da equipe da vez, se a licença dela já é do jogador: o de corrida
+## é disputado com o carro do agente; o de arena só fica registrado como liberado.
+func _tentar_grid() -> void:
+	var j: Node = ag.j
+	var eq := TheGrid.da_vez(d, j)
+	if eq.is_empty() or ag.tempo - _grid_t < GRID_INTERVALO_S:
+		return
+	var lic := String(eq.get("nivel", ""))
+	if lic != "" and not lic in j.licencas:
+		return
+	var pos := TheGrid.posicao(d, j)
+	var des := GridDesafio.de(d, eq)
+	_marco("grid_%d_liberado (%s)" % [pos - 1, des.get("modo", "?")])
+	if des.get("modo") != "corrida":
+		return
+	_grid_t = ag.tempo
+	var r: Dictionary = ag._correr(GridDesafio.PREFIXO + String(eq["id"]), "grid")
+	if r.is_empty() or int(r["posicao"]) != 1:
+		return
+	_marco("grid_%d_vencido" % (pos - 1))
+	var depois := TheGrid.posicao(d, j)
+	var ctx := {"equipe": String(eq["nome"]), "posicao_grid": depois, "posicao": depois}
+	if not (depois == 1 and _disparar("GRID_TOPO", ctx)):
+		_disparar("GRID_SUBIU", ctx)
+
+
+func _marco(k: String) -> void:
+	if not ag.marcos.has(k):
+		ag.marcos[k] = ag.tempo
+		_dias[k] = ag.j.dias
 
 
 ## Os marcos de vitória de Historia.disparar_fim (sem a CORRIDA_FIM, já tentada).
@@ -169,6 +237,15 @@ func _relatorio(perfil: String, r: Dictionary) -> void:
 	var m: Dictionary = r["marcos"]
 	for k in ["primeira_vitoria", "licenca_b", "vitoria_b", "licenca_a"]:
 		print("  %-17s %s" % [k, "%.0f min" % (m[k] / 60.0) if m.has(k) else "—"])
+	var tanque := Combustivel.tanque(d)
+	var renova := float(Combustivel.regras(d).get("renova_s", 0.0))
+	for k in ["segundo_carro", "arena"] + _dias.keys().filter(func(x): return String(x).begins_with("grid_")):
+		if not m.has(k):
+			print("  %-26s —" % k)
+			continue
+		var real := maxf(float(m[k]), (int(_dias[k]) - tanque) * renova)
+		print("  %-26s %.0f min de corrida · corrida %d · real jogando sem parar ≥ %.1f h"
+				% [k, m[k] / 60.0, int(_dias[k]), real / 3600.0])
 	for linha in r["log"]:
 		if "parou" in linha or "não resolvidos" in linha:
 			print("  TRAVA: " + linha)

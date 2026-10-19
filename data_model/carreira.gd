@@ -402,6 +402,10 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var carro_premio_uid := -1
 	var grid := {}
 	if posicao == 1:
+		jogador.derrotas_seguidas = 0
+	elif not jogador.vitorias.has(evento_id):
+		jogador.derrotas_seguidas += 1
+	if posicao == 1:
 		# The Grid (decisão 74): só o desafio da equipe a deixa para trás.
 		if ev.has("grid_equipe"):
 			grid = TheGrid.registrar(dados, jogador, [String(ev["grid_equipe"])])
