@@ -131,7 +131,7 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 			var ev_ctx := {"evento": ctx["evento"]}
 			# A ordem de Historia.disparar_fim: cena da chegada, marco, comentário.
 			var fim := {"posicao": ctx["posicao"], "evento": ctx["evento"]}
-			if not _disparar("CORRIDA_FIM", fim, false) and not _marco_vitoria(ctx):
+			if not _disparar("CORRIDA_FIM", fim, false) and not _marco_vitoria(ctx) and not _arena_sugerida():
 				_disparar("CORRIDA_FIM", fim)
 			if ctx["campeao"]:
 				_disparar("CAMPEONATO_VENCIDO", ev_ctx)
@@ -145,6 +145,20 @@ func _acao(acao: String, ctx: Dictionary) -> void:
 			_disparar("LICENCA_TREINO_INICIO")
 		"licenca":
 			_disparar("LICENCA_CONCEDIDA:" + String(ctx["licenca"]))
+
+
+## Decisão 126 (Historia.disparar_fim): a Mara sugere o carro barato que abre a
+## arena; o jogador do playtest compra (sem trocar o carro de corrida).
+func _arena_sugerida() -> bool:
+	var sug := h.arena_sugerida()
+	if sug.is_empty() or not _disparar("ARENA_SUGERIDA", sug):
+		return false
+	var uid: int = ag.j.concessionaria.comprar_carro(d.carro(sug["carro_id"]))
+	if uid >= 0:
+		ag.reservados.append(uid)  # vai para a arena, não para as corridas
+		ag._fase_stats()["gastos"] += int(sug["preco"])
+		ag.log.append("%.0f min: carro para a arena, %s (%d)" % [ag.tempo / 60.0, sug["carro_id"], sug["preco"]])
+	return true
 
 
 ## Como principal.gd depois de uma corrida: o carro-prêmio (a conversa do

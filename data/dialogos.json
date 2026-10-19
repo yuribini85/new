@@ -1691,6 +1691,39 @@
   }
  },
  {
+  "id": "CW_AR00",
+  "trigger": "ARENA_SUGERIDA",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Licença no bolso e caixa sobrando. Tem uma conta que a pista não paga.",
+    "pose": "pensativa"
+   },
+   {
+    "quem": "mara",
+    "texto": "A arena da Roxy abre com dois carros na garagem. O {carro} cabe no caixa e serve pra isso: lá o carro só precisa aguentar pancada.",
+    "pose": "explica"
+   },
+   {
+    "quem": "mara",
+    "texto": "Está nas Lojas. Carro quebrado volta pro meu elevador, não pro ferro-velho.",
+    "pose": "cruzados"
+   }
+  ],
+  "requer": [
+   "PATROCINIO_INTRO"
+  ],
+  "proibe": [
+   "ARENA_INTRO"
+  ],
+  "flags": [
+   "ARENA_SUGERIDA_VISTA"
+  ],
+  "bloqueia": false,
+  "uma_vez": true,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_P07",
   "trigger": "GARAGEM_TRES_CARROS",
   "falas": [

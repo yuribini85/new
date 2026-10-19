@@ -1151,3 +1151,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
       (decisão do usuário) não muda.
     - Playtest da campanha mede o caminho até o segundo carro, a arena e cada desafio de corrida
       do Grid, com o tempo real mínimo pelo combustível.
+126. **Arena mais cedo pela sugestão da Mara** (2026-10-19, recomendação aprovada pelo usuário).
+    Medido no playtest da campanha: o segundo carro chegava só como prêmio, aos 113–126 min de
+    corrida (5 a 6 h de jogo com o combustível), e a arena esperava por ele, embora o carro mais
+    barato custe menos que uma peça. Agora, no fim de uma corrida, com a primeira licença, a
+    garagem abaixo de `arena.json → carros_minimos` e caixa para o carro mais barato que o
+    jogador não tem, a Mara sugere comprá-lo para a arena (cena ARENA_SUGERIDA, uma vez, depois
+    da conversa do patrocínio; `Historia.arena_sugerida`). O playtest compra o carro sugerido e
+    o reserva para a arena: a arena abre aos 16–21 min de corrida (antes 113–126), sem atrasar
+    a Club; a Sport variou de 143–158 para 120–180 min entre os perfis.

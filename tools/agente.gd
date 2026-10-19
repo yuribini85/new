@@ -26,6 +26,10 @@ const JogadorScript := preload("res://autoload/jogador.gd")
 const PERFIS := ["sugestoes", "explora", "renda"]
 ## Corridas simuladas por opção ao decidir (menos que o Mecanico do jogo, para
 ## o agente caber no tempo; a decisão é a mesma ordem de grandeza).
+## Tempo de corrida da medição: juntar dinheiro para uma compra também para nele.
+var _limite_s := INF
+## Carros da garagem que não correm (os da arena, comprados pelo playtest).
+var reservados: Array = []
 const AMOSTRAS := 4
 ## Derrotas seguidas numa prova antes de deixá-la de lado com este carro.
 const MAX_TENTATIVAS := 4
@@ -130,6 +134,7 @@ func _primeiro_carro() -> void:
 
 
 func _laco(limite_s: float) -> Dictionary:
+	_limite_s = limite_s
 	while tempo < limite_s:
 		_talvez_licencas()
 		var ev := _escolher_desafio()
@@ -289,7 +294,7 @@ func _juntar(preco: int, nome: String) -> bool:
 		linha["corridas"] += 1
 		cr += int(r["premio"])
 		s += float(r["resultado"]["duracao"])
-		if linha["corridas"] > 500:
+		if linha["corridas"] > 500 or tempo >= _limite_s:
 			return false
 	linha["duracao_s"] = s / linha["corridas"]
 	linha["ganho_corrida"] = float(cr) / linha["corridas"]
@@ -345,7 +350,7 @@ func _comprar_item(o: Dictionary) -> void:
 func _trocar_carro() -> bool:
 	var atual_uid := uid
 	for c in j.garagem.lista():
-		if c.uid == atual_uid:
+		if c.uid == atual_uid or c.uid in reservados:
 			continue
 		uid = c.uid
 		if not _escolher_desafio().is_empty():

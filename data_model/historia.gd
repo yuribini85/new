@@ -24,7 +24,8 @@ extends RefCounted
 ## GRID_SUBIU (contexto equipe, posicao_grid), GRID_TOPO, NOME_DEFINIDO
 ## (o nome do administrador dado na abertura), FILA_INICIADA (uma fila de corridas
 ## numa prova vencida, decisão 120), TRAVADO (derrotas seguidas em provas não
-## vencidas; ver disparar_fim).
+## vencidas; ver disparar_fim), ARENA_SUGERIDA (contexto carro; ver
+## arena_sugerida).
 ## ENCADEADA: só vem pela "proxima" de outra cena; LEMBRETE: só pelo "lembrete"
 ## de outra (a interface mostra se o jogador demorar e a cena ainda valer).
 
@@ -110,6 +111,24 @@ func vale(c: Dictionary, ctx: Dictionary = {}) -> bool:
 	return true
 
 
+## Decisão 126: a arena chegava só com o carro-prêmio (playtest: 5 a 6 h de jogo),
+## mas o carro mais barato custa menos que uma peça. Com a primeira licença, a
+## garagem abaixo do mínimo da arena e caixa para o carro mais barato que o
+## jogador não tem: {carro (nome), carro_id, preco}; senão {}.
+func arena_sugerida() -> Dictionary:
+	if jogador.licencas.is_empty() or jogador.flags.has("ARENA_INTRO") \
+			or jogador.garagem.lista().size() >= ArenaCarreira.carros_minimos(dados):
+		return {}
+	var possuidos: Array = jogador.garagem.lista().map(func(c): return c.id)
+	var melhor := {}
+	for c in dados.lista("carros"):
+		if not c["id"] in possuidos and (melhor.is_empty() or int(c["preco"]) < int(melhor["preco"])):
+			melhor = c
+	if melhor.is_empty() or not jogador.economia.pode_pagar(int(melhor["preco"])):
+		return {}
+	return {"carro": String(melhor["nome"]), "carro_id": String(melhor["id"]), "preco": int(melhor["preco"])}
+
+
 ## Derrotas seguidas que contam como travado (carreira.json → travado.derrotas).
 func travado_derrotas() -> int:
 	return int(dados.carreira().get("travado", {}).get("derrotas", 0))
@@ -166,6 +185,11 @@ func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
 		q["quantidade"] = jogador.vitorias.size()
 		if disparar("VITORIA", q):
 			return true
+	# Arena mais cedo (decisão 126): com a primeira licença e caixa para um
+	# carro barato, a Mara sugere o segundo carro que abre a arena.
+	var sug := arena_sugerida()
+	if not sug.is_empty() and disparar("ARENA_SUGERIDA", sug):
+		return true
 	# Travado (análise de 2026-10-19): na N-ésima derrota seguida em provas não
 	# vencidas, a Mara aponta o "O que ajuda?" do cartão da prova (uma vez por série).
 	if posicao != 1 and jogador.derrotas_seguidas == travado_derrotas() and disparar("TRAVADO", ctx):

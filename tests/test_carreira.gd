@@ -519,3 +519,30 @@ func test_travado_aponta_o_que_ajuda() -> void:
 	igual(h.cena_para("TRAVADO", {"posicao": 4}).get("id"), "CW_TR01", "repetível (uma por série de derrotas)")
 	j.free()
 	d.free()
+
+
+## Decisão 126: com a primeira licença e caixa para o carro mais barato, a Mara
+## sugere o segundo carro que abre a arena.
+func test_arena_sugerida_com_licenca_e_caixa() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	if d.historia().is_empty():
+		d.free()
+		return
+	var j: Node = JogadorScript.new()
+	Prologo.iniciar(d, j)
+	var h := Historia.new(d, j)
+	j.economia.creditar(100000)
+	igual(h.arena_sugerida(), {}, "sem licença, nada")
+	j.licencas = ["CLUB"]
+	var sug := h.arena_sugerida()
+	verificar(sug.has("carro_id"), "com licença e caixa: o carro mais barato")
+	var mais_barato: int = d.lista("carros").map(func(c): return int(c["preco"])).min()
+	igual(int(sug.get("preco", -1)), mais_barato, "é o mais barato da loja")
+	j.flags["PATROCINIO_INTRO"] = true
+	igual(h.cena_para("ARENA_SUGERIDA", sug).get("id"), "CW_AR00", "a cena da Mara")
+	j.concessionaria.comprar_carro(d.carro(sug["carro_id"]))
+	j.concessionaria.comprar_carro(d.carro(h.arena_sugerida().get("carro_id", sug["carro_id"])))
+	igual(h.arena_sugerida(), {}, "garagem com os carros da arena: nada")
+	j.free()
+	d.free()

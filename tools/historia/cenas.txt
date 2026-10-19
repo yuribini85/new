@@ -358,6 +358,13 @@ Mara[pensativa]: Cinquenta. Paguei a última parcela atrasada da hipoteca. Não 
 Mara[firme]: Cem vitórias. A Wreckage voltou a ser equipe. Agora falta o Grid admitir.
 
 # ---------------------------------------------------------------- Arena (decisão 49)
+# Decisão 126: com a primeira licença e caixa para o carro mais barato, a Mara
+# sugere o segundo carro que abre a arena (Historia.arena_sugerida).
+= CW_AR00 | ARENA_SUGERIDA | personagem=dono; requer=PATROCINIO_INTRO; proibe=ARENA_INTRO; flags=ARENA_SUGERIDA_VISTA
+Mara[pensativa]: Licença no bolso e caixa sobrando. Tem uma conta que a pista não paga.
+Mara[explica]: A arena da Roxy abre com dois carros na garagem. O {carro} cabe no caixa e serve pra isso: lá o carro só precisa aguentar pancada.
+Mara[cruzados]: Está nas Lojas. Carro quebrado volta pro meu elevador, não pro ferro-velho.
+
 # Decisões 69 e 121: o tutorial da arena chega com o segundo carro na garagem.
 = CW_P07 | GARAGEM_TRES_CARROS | personagem=dono; requer=PATROCINIO_INTRO; proibe=ARENA_INTRO; flags=ARENA_INTRO; proxima=CW_AR02; cenario=oficina_mara
 Mara[cruzados]: Dois carros. Tem outra maneira de ganhar dinheiro por aqui.
