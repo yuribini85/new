@@ -26,7 +26,7 @@ static func _dono(jogador: Node, dados: Node) -> Array:
 	]
 	# A Oficina só entra depois de apresentada (CW_P06D: da segunda prova em
 	# diante, com o caixa pagando a peça).
-	l.append({"texto": "Correr de novo e juntar giros", "feito": jogador.flags.has("GARAGE_TUTORIAL_SEEN"),
+	l.append({"texto": "Disputar de novo e juntar giros", "feito": jogador.flags.has("GARAGE_TUTORIAL_SEEN"),
 		"aba": Aba.EVENTOS, "botao": "Ver corridas"})
 	var peca := Prologo.demanda(dados, jogador)
 	if dados.existe("pecas", peca) and jogador.flags.has("GARAGE_TUTORIAL_SEEN"):
@@ -101,7 +101,7 @@ static func proximo_obstaculo(jogador: Node, dados: Node) -> String:
 	if alvo.is_empty():
 		return ""
 	var h: Dictionary = jogador.historico.get(alvo["id"], {})
-	return "Próxima corrida a vencer com o %s: %s%s." % [carro.base["nome"], alvo["nome"],
+	return "Próxima prova a vencer com o %s: %s%s." % [carro.base["nome"], alvo["nome"],
 			" (seu melhor: %dº)" % h["melhor_pos"] if not h.is_empty() else ""]
 
 
@@ -113,23 +113,22 @@ static func atual(lista_: Array) -> int:
 	return lista_.size()
 
 
-## [[termo, explicação]] para o painel "Entenda os números". A tração usa os
-## fatores de data/simulacao.json, para o texto nunca contradizer a corrida.
+## [[termo, explicação]] para o painel "Entenda os números". A ordem das trações
+## sai dos fatores de data/simulacao.json, para o texto nunca contradizer a corrida.
 static func glossario(dados: Node) -> Array:
 	var f: Dictionary = dados.simulacao().get("fator_tracao", {})
-	var nomes := {"4WD": "integral (4WD)", "FF": "dianteira (FF)", "FR": "traseira (FR)", "MR": "motor central (MR)", "RR": "motor traseiro (RR)"}
-	var partes := []
-	for t in ["4WD", "FF", "RR", "MR", "FR"]:
-		if f.has(t):
-			partes.append("%s %d%%" % [nomes[t], roundi(float(f[t]) * 100.0)])
+	var nomes := {"4WD": "4x4", "FF": "dianteira", "FR": "traseira", "MR": "motor central", "RR": "motor traseiro"}
+	var ordem: Array = f.keys().filter(func(t): return nomes.has(t))
+	ordem.sort_custom(func(x, y): return float(f[x]) > float(f[y]))
+	var partes: Array = ordem.map(func(t): return nomes[t])
 	return [
 		["Potência (cv)", "Força do motor. Mais potência: acelera mais e chega a mais velocidade nas retas. Algumas corridas têm limite de cv, contado já com as peças."],
 		["Peso (kg)", "Carro mais leve acelera, freia e contorna melhor com a mesma potência. O que conta é a potência por kg."],
-		["Tração", "Quanto da aderência vira aceleração na largada e na saída das curvas: " + ", ".join(partes)
-				+ ". Nas retas rápidas pesa mais a potência."],
+		["Tração", "Quanto da aderência vira aceleração na largada e na saída das curvas, da que mais aproveita para a "
+				+ "que menos: " + ", ".join(partes) + ". Nas retas rápidas pesa mais a potência."],
 		["Aderência e pneus", "Quanto o pneu segura: curvas mais rápidas e frenagem mais curta. O piloto usa o melhor pneu que você tiver."],
 		["Freio", "Freios melhores deixam frear mais tarde antes das curvas."],
-		["Câmbio", "O motor tem uma faixa de giro: cada marcha leva o carro até o limite dela antes da próxima."],
+		["Câmbio", "O motor tem uma faixa de rotação: cada marcha leva o carro até o limite dela antes da próxima."],
 		["Disputar de novo e giros", "Depois de largar, a corrida termina mesmo com o jogo fechado. Numa prova já vencida dá para montar uma sequência de corridas. Prova já vencida paga menos a cada repetição: 50%, 25% e depois 10%, voltando a 100% em 24 h."],
 		["Combustível", "Cada corrida ou luta da arena gasta 1. O tanque renova sozinho com o tempo, também com o jogo fechado, e um vídeo o enche de uma vez."],
 		["Peças", "Peças compradas ficam com o carro. Dá para tirar e pôr de volta de graça na Oficina."],

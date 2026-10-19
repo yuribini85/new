@@ -199,7 +199,7 @@ func _meta_dia() -> void:
 			var n := rotulo("%d/%d" % [p[0], p[1]], 0, COR_DESTAQUE, h)
 			Tipografia.numero(n, 26)
 			n.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	rotulo("Cada tarefa paga %s giros. Novas amanhã." % dinheiro(valor), FONTE_PEQUENA - 2, COR_SECUNDARIA, c)
+	rotulo("Cada objetivo paga %s giros. Novos amanhã." % dinheiro(valor), FONTE_PEQUENA - 2, COR_SECUNDARIA, c)
 
 
 ## The Grid, a lista negra (TheGrid): as dez equipes do topo, da #1 em cima à
@@ -654,7 +654,7 @@ func _cartao_proxima(l: Licencas, lic: Dictionary, st: String, agora: float) -> 
 	col.add_child(titulo)
 	var provas: int = dados.lista("eventos").filter(func(e): return e["restricoes"].get("licenca") == lic["id"]).size()
 	var dur := l.treino_s(lic["id"])
-	var libera := rotulo("Libera %d corrida%s · treino de %s" % [provas, "" if provas == 1 else "s", _duracao(dur)], 0,
+	var libera := rotulo("Libera %d prova%s · treino de %s" % [provas, "" if provas == 1 else "s", _duracao(dur)], 0,
 			Color(0.86, 0.87, 0.9), col)
 	libera.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	Tipografia.rotulo(libera, "regular", 27)

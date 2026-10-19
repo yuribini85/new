@@ -387,7 +387,7 @@ func _construir_painel() -> void:
 	# O resultado de cada corrida aparece na janela do resultado (principal);
 	# aqui, sem corrida, só o próximo passo.
 	if not _em_andamento and not _area.visible:
-		proximo_passo("Nenhuma corrida agora.", "Escolher corrida", EVENTOS, _painel)
+		proximo_passo("Nenhuma corrida agora.", "Escolher prova", EVENTOS, _painel)
 
 
 ## Luta da arena por cima (decisão 116): a pista 3D sai da memória enquanto ela

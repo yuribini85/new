@@ -266,7 +266,7 @@ static func contratar(dados: Node, jogador: Node, piloto_id: String, vaga := "co
 	if em == "":
 		var custo := luvas(dados, jogador, piloto_id)
 		if custo > 0 and not jogador.economia.debitar(custo):
-			return "faltam giros para as luvas (%d)" % custo
+			return "faltam giros para contratar (%d)" % custo
 	jogador.flags[FLAG_PRIMEIRA_CONTRATACAO] = true
 	var p: Dictionary = jogador.pilotos.duplicate(true)
 	if vaga == "corrida":

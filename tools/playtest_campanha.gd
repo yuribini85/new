@@ -9,7 +9,10 @@ extends SceneTree
 ## Também o caminho até a arena e o The Grid (análise de 2026-10-19): o segundo
 ## carro (comprado ou de prêmio), a arena aberta e cada desafio de corrida do
 ## Grid que a licença libera (o agente tenta no máximo um a cada GRID_INTERVALO_S
-## de corrida; os de arena só contam como liberados). Ao lado de cada marco, o
+## de corrida). Nos de arena, o agente contrata os dois pilotos de arena mais
+## baratos e compra os carros mais baratos que faltam (fora o de corrida), quando
+## o caixa paga, e luta a série; carro quebrado volta do reparo antes da próxima
+## tentativa (o tempo de reparo não entra na conta: só as lutas, no combustível). Ao lado de cada marco, o
 ## tempo real mínimo jogando sem parar: o combustível (tanque e renovação de
 ## monetizacao.json) limita as corridas depois do tanque.
 ## Só lê o jogo; não muda dados.
@@ -31,6 +34,9 @@ var _carros := 0
 var _dias := {}
 var _grid_t := -1.0e9
 const GRID_INTERVALO_S := 600.0
+## Lutas de arena (gastam combustível como as corridas) e carros que foram ao reparo.
+var _lutas := 0
+var _reparos := 0
 
 
 func _initialize() -> void:
@@ -53,6 +59,8 @@ func _initialize() -> void:
 		_carros = 0
 		_dias = {}
 		_grid_t = -1.0e9
+		_lutas = 0
+		_reparos = 0
 		ag = preload("res://tools/agente.gd").new(d, perfil, 7)
 		h = Historia.new(d, ag.j)
 		ag.j.historia = h
@@ -190,6 +198,9 @@ func _tentar_grid() -> void:
 		return
 	var des := GridDesafio.de(d, eq)
 	_marco("grid_%s_liberado (%s)" % [eq["id"], des.get("modo", "?")])
+	if des.get("modo") == "arena":
+		_tentar_grid_arena(eq, des)
+		return
 	if des.get("modo") != "corrida":
 		return
 	_grid_t = ag.tempo
@@ -203,10 +214,69 @@ func _tentar_grid() -> void:
 		_disparar("GRID_SUBIU", ctx)
 
 
+## Desafio de arena do Grid: prepara a dupla (pilotos e carros que faltam, se o
+## caixa paga) e luta a série como aba_arena._desafiar, round a round.
+func _tentar_grid_arena(eq: Dictionary, des: Dictionary) -> void:
+	var j: Node = ag.j
+	if not j.flags.has(EquipeJogador.FLAG_ARENA):
+		return
+	for vaga in ["arena1", "arena2"]:
+		if EquipeJogador.piloto_vaga(j, vaga) != "":
+			continue
+		var ofertas: Array = EquipeJogador.oferta(d, j, "arena", Time.get_unix_time_from_system())
+		ofertas.sort_custom(func(a, b): return EquipeJogador.luvas(d, j, a["id"]) < EquipeJogador.luvas(d, j, b["id"]))
+		for c in ofertas:
+			if EquipeJogador.contratar(d, j, String(c["id"]), vaga) == "":
+				_marco("piloto_" + vaga)
+				break
+	var precisa := maxi(2, int(des.get("carros_min", 2)))
+	while GridDesafio.carros_arena(j).size() < precisa:
+		var possuidos: Array = j.garagem.lista().map(func(c): return c.id)
+		var bases: Array = d.lista("carros").filter(func(b): return not b["id"] in possuidos)
+		bases.sort_custom(func(a, b): return int(a["preco"]) < int(b["preco"]))
+		if bases.is_empty() or j.garagem.cheia() or not j.economia.pode_pagar(int(bases[0]["preco"])):
+			break
+		var uid: int = j.concessionaria.comprar_carro(bases[0])
+		if uid < 0:
+			break
+		ag.reservados.append(uid)
+		ag._fase_stats()["gastos"] += int(bases[0]["preco"])
+		ag.log.append("%.0f min: carro para o Grid de arena, %s (%d)" % [ag.tempo / 60.0, bases[0]["id"], bases[0]["preco"]])
+		_carros = j.garagem.lista().size()
+	if GridDesafio.bloqueio(d, j, eq) != "":
+		return
+	_grid_t = ag.tempo
+	_marco("grid_%s_tentado" % eq["id"])
+	var final := {}
+	while true:
+		j.contador_sementes += 1
+		var semente := hash("grid:%d" % j.contador_sementes)
+		var montada := GridDesafio.montar_arena(d, j, eq, semente)
+		var uid := Escalacao.uid(j, "arena1")
+		var par: Dictionary = montada["parceiro"]
+		var res := Arena.correr(montada["participantes"], montada["params"], semente, false)
+		final = ArenaCarreira.aplicar(d, j, uid, res, int(par["uid"]) if par["real"] else -1, eq)
+		_lutas += 1
+		ag.tempo += float(res.get("duracao", 0.0))
+		_reparos += final["resgate"].get("uids", []).size()
+		if final["serie"].get("fim", true):
+			break
+	# O jogador espera o reparo antes de lutar de novo.
+	for c in j.garagem.lista():
+		if ArenaCarreira.em_reparo(j, c.uid):
+			ArenaCarreira.consertar(d, j, c.uid, false)
+	if not final["grid"].is_empty():
+		_marco("grid_%s_vencido" % eq["id"])
+		var depois := TheGrid.posicao(d, j)
+		var ctx := {"equipe": String(eq["nome"]), "posicao_grid": depois, "posicao": depois}
+		if not (depois == 1 and _disparar("GRID_TOPO", ctx)):
+			_disparar("GRID_SUBIU", ctx)
+
+
 func _marco(k: String) -> void:
 	if not ag.marcos.has(k):
 		ag.marcos[k] = ag.tempo
-		_dias[k] = ag.j.dias
+		_dias[k] = ag.j.dias + _lutas
 
 
 ## Os marcos de vitória de Historia.disparar_fim (sem a CORRIDA_FIM, já tentada).
@@ -237,6 +307,8 @@ func _disparar(trigger: String, ctx: Dictionary = {}, reativas := true) -> bool:
 				EquipeJogador.criar(ag.j)
 			elif a == "OPEN_DRIVER_HIRE":
 				EquipeJogador.liberar_segundo(d, ag.j)
+			elif a == "UNLOCK_ARENA_PILOTS":
+				ag.j.flags[EquipeJogador.FLAG_ARENA] = true
 		var demo: bool = c.get("falas", []).any(func(f): return String(f.get("acao", "")) == "ARENA_DEMO")
 		c = h.concluir(c)
 		if demo and c.is_empty():
@@ -257,11 +329,12 @@ func _relatorio(perfil: String, r: Dictionary) -> void:
 			print("  %-26s —" % k)
 			continue
 		var real := maxf(float(m[k]), (int(_dias[k]) - tanque) * renova)
-		print("  %-26s %.0f min de corrida · corrida %d · real jogando sem parar ≥ %.1f h"
+		print("  %-26s %.0f min de corrida · corrida/luta %d · real jogando sem parar ≥ %.1f h"
 				% [k, m[k] / 60.0, int(_dias[k]), real / 3600.0])
 	for linha in r["log"]:
 		if "parou" in linha or "não resolvidos" in linha:
 			print("  TRAVA: " + linha)
+	print("  arena do Grid: %d lutas, %d carros ao reparo" % [_lutas, _reparos])
 	print("  cenas: %d (%.1f por hora de corrida)" % [vistas.size(), vistas.size() / maxf(r["tempo"] / 3600.0, 0.01)])
 	var vez := {}
 	var ultima_reativa := -1000

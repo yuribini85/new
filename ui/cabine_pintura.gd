@@ -767,7 +767,7 @@ func _atualizar_rodape() -> void:
 	elif not mc and not mf:
 		_preco.text = "Rodas, nome e logo da equipe não custam."
 	elif not PinturaCarro.preco_definido(_dados):
-		_preco.text = "Preço a definir (grátis por enquanto)."
+		_preco.text = "Grátis."
 	else:
 		_preco.text = "Custa %s giros." % Aba.dinheiro(preco)
 	_aplicar.disabled = (not mc and not mf and not me and not mr) or not _jogador.economia.pode_pagar(preco)

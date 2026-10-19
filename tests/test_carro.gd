@@ -50,4 +50,4 @@ func test_forma_do_ganho_na_curva() -> void:
 	verificar(GraficoMotor.forma_do_ganho(antes, igual_).contains("por igual"), "10% em todo o giro: por igual")
 	var alto := {"curva_rpm": antes["curva_rpm"], "curva_nm": PackedFloat64Array([100, 130, 140]), "corte": 7500.0}
 	var f := GraficoMotor.forma_do_ganho(antes, alto)
-	verificar(f.contains("giro alto") and f.contains("corte sobe 500"), "turbo: giro alto e corte (%s)" % f)
+	verificar(f.contains("rotação alta") and f.contains("rotação máxima sobe 500"), "turbo: giro alto e corte (%s)" % f)

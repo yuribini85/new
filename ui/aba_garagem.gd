@@ -473,7 +473,7 @@ func _palco(c: Carro, lista: Array) -> Control:
 ## Corrida: a roleta (uma categoria por vez, na ordem motor e depois chassi e
 ## transmissão; só as que existem para o carro). Arena: a blindagem.
 const COLUNA_MOTOR := ["aspiracao", "muffler", "computer", "brake", "enginebalance", "corrida", "displacement"]
-const COLUNA_CHASSI := ["cambio", "pneus", "lightweight", "portpolish", "intercooler"]
+const COLUNA_CHASSI := ["pneus", "lightweight", "portpolish", "intercooler"]
 var _prep := "corrida"
 
 
@@ -540,7 +540,7 @@ func _arena_aberta() -> bool:
 func _abas_preparacao() -> Control:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 0)
-	for par in [["corrida", "PREPARAÇÃO DE CORRIDA"], ["arena", "PREPARAÇÃO DE ARENA"]]:
+	for par in [["corrida", "PARA CORRIDA"], ["arena", "PARA ARENA"]]:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -975,7 +975,7 @@ func _descritivo(v: VBoxContainer, texto: String) -> void:
 ## poder correr com ele.
 func _proibicoes(v: VBoxContainer, perde: Array) -> void:
 	var q := cartao(COR_RUIM if not perde.is_empty() else Color.TRANSPARENT, v)
-	var t := rotulo("PROIBIÇÕES DE USO", 0, COR_RUIM if not perde.is_empty() else COR_SECUNDARIA, q)
+	var t := rotulo("PROVAS QUE O CARRO PERDE", 0, COR_RUIM if not perde.is_empty() else COR_SECUNDARIA, q)
 	Tipografia.rotulo(t, "semibold", 24)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var l := rotulo("Nenhuma" if perde.is_empty() else "\n".join(perde.map(func(e): return nome_evento(dados.evento(e)))),

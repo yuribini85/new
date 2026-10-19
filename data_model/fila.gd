@@ -58,7 +58,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 		return "a sequência só repete prova já vencida"
 	var carro: Carro = jogador.garagem.carro(uid)
 	if carro == null:
-		return "carro %d não está na garagem" % uid
+		return "o carro não está mais na garagem"
 	var reparo := ArenaCarreira.reparo_s(jogador, uid)
 	if reparo > 0.0:
 		return "o carro está no reparo (faltam %s)" % ArenaCarreira.texto_tempo(reparo)
@@ -74,7 +74,7 @@ func iniciar(evento_id: String, uid: int, repeticoes: int, agora: float, config:
 	# poucos por avancar_preparo(), ou de uma vez por quem pedir o resultado antes.
 	var k := _chave(f)
 	if k.is_empty():
-		return "carro %d não está na garagem" % uid
+		return "o carro não está mais na garagem"
 	var p := carreira.iniciar_preparo(f["evento_id"], uid, semente, true, k["carro"], k["comp"], k["piloto"])
 	if p.has("erro"):
 		return p["erro"]
@@ -438,7 +438,7 @@ func _chave(f: Dictionary) -> Dictionary:
 func _preparar(f: Dictionary, com_amostras: bool) -> Dictionary:
 	var k := _chave(f)
 	if k.is_empty():
-		return {"erro": "carro %d não está na garagem" % int(f["uid"])}
+		return {"erro": "o carro não está mais na garagem"}
 	var chave: String = k["chave"]
 	if chave == _cache_chave and (not com_amostras or _cache.get("com_amostras", false)):
 		return _cache

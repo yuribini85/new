@@ -414,9 +414,9 @@ func _turno_noite(v: VBoxContainer) -> void:
 		return
 	var agora_h := roundi(GestaoEquipe.teto_offline(_dados, _jogador) / 3600.0)
 	var extra := roundi(float(p.get("horas_offline", 0)))
-	var desc := ("Sua renda offline: %d h. Contratos de patrocínio duram %d h a mais." % [agora_h, extra]) \
+	var desc := ("Limite da renda offline: %d h. Contratos de patrocínio duram %d h a mais." % [agora_h, extra]) \
 			if LojaReal.comprado(_dados, _jogador, "turno_noite") \
-			else "+%d h de renda offline, para sempre: %d h → %d h. Contratos duram mais." % [extra, agora_h, agora_h + extra]
+			else "+%d h no limite da renda offline, para sempre: %d h → %d h. Contratos duram mais." % [extra, agora_h, agora_h + extra]
 	_faixa_produto(v, "turno_noite", "cronometro", String(p.get("nome", "")).to_upper(), desc)
 
 
@@ -470,7 +470,7 @@ func _rodape(v: VBoxContainer) -> void:
 	v.add_child(col)
 	if not LojaReal.disponivel():
 		var n := Label.new()
-		n.text = "As compras chegam com a loja do aparelho, na versão final."
+		n.text = "Compras indisponíveis por enquanto."
 		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		n.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		n.add_theme_font_override("font", Tipografia.fonte("mono"))

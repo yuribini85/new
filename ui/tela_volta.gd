@@ -90,7 +90,7 @@ func _init(rel: Dictionary, dados: Node) -> void:
 	var fora := float(rel.get("fora_s", 0.0))
 	var pago := float(rel.get("pago_s", 0.0))
 	if pago > 0.0 and fora - pago >= TETO_AVISO_S:
-		linhas.append("Rendeu %s das %s fora. Vença séries: +1 h cada." % [_horas(pago), _horas(fora)])
+		linhas.append("Limite da renda offline: %s de %s. Cada título novo: +1 h." % [_horas(pago), _horas(fora)])
 	for t in linhas:
 		var l := Label.new()
 		l.text = t

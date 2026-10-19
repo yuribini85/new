@@ -1180,7 +1180,7 @@ func _checar_licencas() -> void:
 		(func(): _todas[0].historia("LICENCA_CONCEDIDA:" + String(id))).call_deferred()
 		_sobre.abrir("%s conquistada!" % lic["nome"], func(v):
 			var g: Aba = _todas[0]
-			g.rotulo("Treino concluído. Agora você pode correr %d corridas novas:" % liberadas.size(), 0, Color.WHITE, v)
+			g.rotulo("Treino concluído. Agora você pode correr %d provas novas:" % liberadas.size(), 0, Color.WHITE, v)
 			var series := {}
 			for e in liberadas:
 				series[String(e["nome"]).split(" — ")[0]] = true
@@ -1631,7 +1631,7 @@ func _primeira_vitoria(c: Dictionary) -> void:
 	_sobre.abrir("Primeira vitória!", func(v):
 		g.rotulo(dados.evento(c["evento_id"]).get("nome", ""), 30, Aba.COR_DESTAQUE, v)
 		g.nota("cabecalho/icone_giros", "Prêmio: +%s" % Aba.dinheiro(c["premio"]), "", v, Color.WHITE)
-		g.nota("icone_dica", "Agora: corrida que paga mais, ou Oficina", "", v))
+		g.nota("icone_dica", "Agora: prova que paga mais, ou Oficina", "", v))
 
 
 ## Relatório de várias corridas (offline ou segundo plano): resumo e, sob
@@ -1759,7 +1759,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 			var teto: float = float(dados.carreira().get("teto_offline_s", 0.0))
 			var vt := g.cartao(Aba.COR_INFO, v)
 			# Dentro de um painel: sem ⓘ (abriria outro painel por cima).
-			g.nota("icone_cronometro", "Limite fora do app: %s" % _duracao(teto), "", vt, Color.WHITE)
+			g.nota("icone_cronometro", "Limite da renda offline: %s" % _duracao(teto), "", vt, Color.WHITE)
 			g.rotulo("%s além dele não contaram." % _duracao(rel["tempo_perdido_s"]), Aba.FONTE_PEQUENA + 1,
 					Aba.COR_SECUNDARIA, vt)
 		if corridas.size() > 1:

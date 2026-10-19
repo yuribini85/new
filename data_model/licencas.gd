@@ -100,7 +100,7 @@ func requisitos(licenca_id: String) -> Array:
 		var pede := ceili(series.size() * float(_cfg().get("fracao_series", 0.0)))
 		var tem := series.values().filter(func(x): return x).size()
 		if pede > 0:
-			r.append({"texto": "vencer em %d de %d séries da %s (%d)" % [pede, series.size(), nome_ant, tem],
+			r.append({"texto": "vencer uma prova em %d de %d campeonatos da %s (%d)" % [pede, series.size(), nome_ant, tem],
 					"ok": tem >= pede})
 	var ordem: Array = dados.lista("licencas").map(func(l): return l["id"])
 	var desde := ordem.find(String(_cfg().get("campeonato_desde", "")))
@@ -131,7 +131,7 @@ func atualizar(agora: float) -> Array:
 func iniciar_treino(licenca_id: String, agora: float) -> String:
 	var st := estado(licenca_id, agora)
 	if st != AVAILABLE:
-		return "treino indisponível (%s)" % st
+		return "treino indisponível agora"
 	var preco := int(dados.item("licencas", licenca_id).get("preco", 0))
 	if preco > 0 and not jogador.economia.debitar(preco):
 		return "saldo insuficiente"

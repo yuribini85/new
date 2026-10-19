@@ -13,6 +13,13 @@ extends RefCounted
 ##                 de fábrica); false: só carro de rua, sem o kit
 
 const NOMES := {"tracao": "tração", "categoria": "categoria", "fabricante": "fabricante"}
+## Valores como o jogador os lê (docs/vocabulario.md: sem sigla de tração).
+const LEGIVEL := {
+	"tracao": {"FF": "tração dianteira", "FR": "tração traseira", "MR": "motor central", "RR": "motor traseiro",
+		"4WD": "tração 4x4"},
+	"categoria": {"compacto": "compacto", "seda": "sedã", "cupe": "cupê", "roadster": "roadster", "picape": "picape",
+		"utilitario": "utilitário", "pesado": "pesado"},
+}
 const RESTRICOES := ["potencia_max", "tracao", "categoria", "fabricante", "ano_min", "ano_max", "licenca", "carros",
 	"corrida"]
 
@@ -27,7 +34,10 @@ static func motivos(carro: Carro, restricoes: Dictionary, licencas: Array) -> Ar
 			m.append("potência máx. %d cv (seu: %d)" % [restricoes["potencia_max"], potencia])
 	for chave in NOMES:
 		if restricoes.has(chave) and not base[chave] in restricoes[chave]:
-			m.append("a prova não aceita %s %s" % [NOMES[chave], base[chave]])
+			if chave == "fabricante":
+				m.append("só as marcas da prova")
+			else:
+				m.append("só " + " ou ".join(Array(restricoes[chave]).map(func(x): return String(LEGIVEL[chave].get(x, x)))))
 	if restricoes.has("ano_min") and int(base["ano"]) < int(restricoes["ano_min"]):
 		m.append("a prova pede carro de %d em diante" % restricoes["ano_min"])
 	if restricoes.has("ano_max") and int(base["ano"]) > int(restricoes["ano_max"]):

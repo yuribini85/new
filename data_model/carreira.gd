@@ -55,7 +55,7 @@ func iniciar_preparo(evento_id: String, uid: int, semente: int, com_amostras: bo
 		hipotetico: Carro = null, companheiro: Carro = null, piloto: Dictionary = {}) -> Dictionary:
 	var ev: Dictionary = dados.evento(evento_id)
 	if ev.is_empty():
-		return {"erro": "evento %s não existe" % evento_id}
+		return {"erro": "prova indisponível"}
 	var carro: Carro = hipotetico if hipotetico != null else jogador.garagem.carro(uid)
 	if carro == null:
 		return {"erro": "carro %d não está na garagem" % uid}

@@ -31,7 +31,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 ### Corridas
 | Termo | O que é para o jogador |
 | --- | --- |
-| **prova** | uma corrida da lista, com rivais, regras e prêmio |
+| **prova** | uma corrida da lista, com rivais, regras e prêmio. A lista, os filtros e as licenças falam em provas |
 | **corrida** | uma largada de uma prova |
 | **campeonato** / **série** | provas em etapas que somam pontos; o nome próprio vem do jogo ("Copa Primeira Marcha") |
 | **etapa** | uma prova dentro do campeonato ("Etapa 2/3") |
@@ -46,7 +46,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **MAIS FRACO / PARELHO / MAIS FORTE** | como o carro se compara aos rivais da prova |
 | **previsão** | a posição provável antes de correr; nunca é garantia |
 | **O QUE AJUDA?** | o que, no seu saldo, melhora a posição numa prova perdida |
-| **jogada** | a escolha rápida durante a corrida: ATAQUE, PACIÊNCIA, PORTA FECHADA, POUPANDO PNEUS |
+| **jogada** | a escolha rápida durante a corrida. Botões (o que mandar): ATACAR AGORA, ESPERAR A RETA, FECHAR A PORTA, POUPAR PNEUS; na pista, o que está acontecendo: ATAQUE!, PACIÊNCIA..., PORTA FECHADA!, POUPANDO PNEUS |
 | **INDICAÇÃO DA MARA** | a jogada que a Mara sugere pelo rádio |
 
 ### Dinheiro e tempo
@@ -55,6 +55,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **giros** | o dinheiro do jogo (ícone da moeda) |
 | **combustível** | cada corrida ou luta gasta 1; a contagem fica no alto da tela |
 | **tanque** | o combustível cheio; enche sozinho com o tempo, ou com um vídeo |
+| **limite da renda offline** | quantas horas fora a renda offline cobre; cada título novo soma 1 h |
 | **renda offline** | o que a equipe ganha com o jogo fechado (sequência de corridas e patrocínio), até um limite de horas |
 | **patrocínio** / **patrocinador** / **contrato** | renda por hora com bônus quando a corrida cumpre a condição |
 | **Caixa** | o resumo do dinheiro da equipe |
@@ -65,6 +66,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | Termo | O que é para o jogador |
 | --- | --- |
 | **piloto de corrida** / **piloto de arena** | quem corre / quem luta; o jogador administra, não dirige |
+| **mercado de pilotos** | os pilotos disponíveis para contratar; renova de tempos em tempos |
 | **escalação** | qual carro vai para CORRIDA, ARENA 1 e ARENA 2 (Oficina) |
 | **licença** (Club, Sport, National, International, Pro, Elite) | libera provas maiores |
 | **treino da licença** | o tempo que o piloto treina para tirar a licença |
@@ -99,6 +101,12 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | decisão N, plano, playtest, agente, perfil, cenário | nunca |
 | arquétipo, referência, dados importados | nunca (nada da referência entra no jogo) |
 | XP | **nível do piloto** |
+| luvas (custo de contratar) | "custa X giros para contratar" |
+| giro (rotação do motor) | **rotação** (rpm): "giros" no jogo é só o dinheiro |
+| corte (limitador) | **rotação máxima** |
+| `fator_tracao` e outras porcentagens da simulação | a ordem ("da que mais aproveita para a que menos"), nunca o número |
+| siglas de tração (FF, FR, MR, RR, 4WD) e ids de categoria | tração dianteira/traseira, motor central/traseiro, 4x4; compacto, sedã... |
+| "versão final", "a definir" (estado do desenvolvimento) | nunca: o texto diz o que vale hoje |
 | Second Driver, Wreckage (nomes de equipe) | só como nomes da história, nunca como sistema |
 
 ## 3. Regras de escrita das falas
@@ -121,7 +129,7 @@ aspas no código da interface):
 
 `fila` · `simulad` · `nos testes` · `semente` · `triagem` · `amostra` · `flag` · `trigger` ·
 `gatilho` · `playtest` · `decisão <número>` · `provas abertas` · `grid` em minúsculas (a largada) ·
-`fator` · `teto` · `uid` · `XP`
+`fator` · `teto` · `uid` · `XP` · `luvas` · `versão final` · `a definir`
 
 Exceções ficam na lista `PERMITIDO` do próprio script, com o motivo (ex.: o modo de teste, que não
 existe na versão de loja).

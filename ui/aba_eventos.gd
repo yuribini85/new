@@ -16,7 +16,7 @@ const TITULO_CARTAO_MIN := 26
 const SELO_CARTAO := 84.0
 var _limite := LOTE
 
-const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS CORRIDAS"]]
+const FILTROS := [["nao_vencidas", "NÃO VENCIDAS"], ["todas", "TODAS AS PROVAS"]]
 ## Altura do topo (cenário com o carro atual).
 ## Cor de fundo da imagem da pista (o tema dela na corrida).
 const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas": Color(0.22, 0.24, 0.28),
@@ -124,8 +124,8 @@ func construir() -> void:
 	if lista.is_empty():
 		var v := cartao(COR_INFO)
 		if _filtro == "nao_vencidas" and not liberadas.is_empty():
-			nota("icone_trofeu_ouro", "Você venceu todas as corridas disponíveis", "", v, Color.WHITE)
-			rotulo("Desbloqueie uma nova licença para novas corridas.", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
+			nota("icone_trofeu_ouro", "Você venceu todas as provas disponíveis", "", v, Color.WHITE)
+			rotulo("Desbloqueie uma nova licença para novas provas.", FONTE_PEQUENA + 2, COR_SECUNDARIA, v)
 		else:
 			nota("icone_cadeado", "Desbloqueie uma licença para novas corridas", "", v, Color.WHITE)
 		botao("Ver licenças", func(): ir_para.emit(LICENCAS), true, true, v)
@@ -156,7 +156,7 @@ func _cartoes_aos_poucos(c: Carro, lista: Array, geracao: int) -> void:
 	if lista.size() > _limite:
 		var resto := lista.size() - _limite
 		var mais := Button.new()
-		Tipografia.acao_secundaria(mais, "Mostrar mais %d corrida%s" % [mini(resto, LOTE), "" if resto == 1 else "s"],
+		Tipografia.acao_secundaria(mais, "Mostrar mais %d prova%s" % [mini(resto, LOTE), "" if resto == 1 else "s"],
 				COR_INFO.lightened(0.2), 28, 88)
 		mais.pressed.connect(func():
 			_limite += LOTE
@@ -435,7 +435,7 @@ func _cabeca_cartao(ev: Dictionary, v: VBoxContainer, estado_txt: String, estado
 	sobre.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	# Decisão 104: o primeiro título da série soma +1 h de renda offline.
 	if not etapas.is_empty() and not jogador.titulos.has(serie):
-		var extra := rotulo("+1 H OFFLINE", 0, COR_BOM, linha_sobre)
+		var extra := rotulo("+1 H DE RENDA OFFLINE", 0, COR_BOM, linha_sobre)
 		Tipografia.rotulo(extra, "semibold", 18)
 		extra.autowrap_mode = TextServer.AUTOWRAP_OFF
 	var titulo := Label.new()
@@ -588,7 +588,7 @@ func _o_que_ajuda(ev: Dictionary, c: Carro) -> void:
 ## A análise opção a opção, sem travar a tela (Mecanico.avaliar_aos_poucos), com
 ## o progresso à vista. Para se o painel fechar.
 func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
-	var progresso := rotulo("Testando o carro como está…", FONTE_PEQUENA, COR_INFO, pv)
+	var progresso := rotulo("Calculando a previsão…", FONTE_PEQUENA, COR_INFO, pv)
 	var barra := ProgressBar.new()
 	barra.custom_minimum_size = Vector2(0, 20)
 	barra.show_percentage = false
@@ -606,7 +606,7 @@ func _analisar(ev: Dictionary, c: Carro, pv: Control) -> void:
 		if not is_instance_valid(progresso) or not progresso.is_visible_in_tree():
 			return
 		var o: Dictionary = cands[i]
-		progresso.text = "Testando %d de %d: %s" % [i + 1, cands.size(), o["nome"]]
+		progresso.text = "Prevendo %d de %d: %s" % [i + 1, cands.size(), o["nome"]]
 		barra.value = 100.0 * (i + 1) / cands.size()
 		var t: Dictionary = await Mecanico.avaliar_aos_poucos(carreira, ev["id"], c.uid, o["carro"], get_tree(),
 				Fila.FATIA_MS, Mecanico.TRIAGEM)
@@ -664,7 +664,7 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 		rotulo(o["nome"], 0, Color.WHITE, info)
 		var etiquetas := [["previsão: %s → %s" % [hoje, Mecanico.texto_faixa(o["faixa"])],
 				COR_BOM if o["faixa"][0] == 1 else COR_INFO],
-				["melhora %.1f posição" % o["ganho"], COR_NEUTRA.lightened(0.3)]]
+				["sobe ~%d posição%s na previsão" % [maxi(1, roundi(o["ganho"])), "" if maxi(1, roundi(o["ganho"])) == 1 else "ões"], COR_NEUTRA.lightened(0.3)]]
 		if not o["perde"].is_empty():
 			etiquetas.append(["deixa de poder correr: %s" % ", ".join(o["perde"]), COR_RUIM])
 		selos(etiquetas, info)
@@ -678,7 +678,7 @@ func _mostrar_ajuda(ev: Dictionary, c: Carro, base: Dictionary, opcoes: Array, p
 ## peças dele) na simulação, de fábrica. {} se nenhum dos primeiros serve.
 func _carro_que_ajuda(ev: Dictionary, c: Carro, base: Dictionary, pv: Control) -> Dictionary:
 	var pneu: Dictionary = dados.pneu(dados.economia()["pneu_de_fabrica"])
-	var aviso := rotulo("Testando carros da loja…", FONTE_PEQUENA, COR_INFO, pv)
+	var aviso := rotulo("Prevendo com carros da loja…", FONTE_PEQUENA, COR_INFO, pv)
 	var achou := {}
 	for s in Mecanico.carros_candidatos(dados, jogador, c, [ev["id"]], 4):
 		if s["abre"]:
@@ -686,7 +686,7 @@ func _carro_que_ajuda(ev: Dictionary, c: Carro, base: Dictionary, pv: Control) -
 			break
 		if not is_instance_valid(aviso) or not aviso.is_visible_in_tree():
 			return {}
-		aviso.text = "Testando %s…" % s["carro"]["nome"]
+		aviso.text = "Prevendo com o %s…" % s["carro"]["nome"]
 		var novo := Carro.new(s["carro"])
 		novo.adicionar_pneu(pneu)
 		var a: Dictionary = await Mecanico.avaliar_aos_poucos(jogador.carreira, ev["id"], c.uid, novo, get_tree(), Fila.FATIA_MS)
@@ -706,7 +706,7 @@ func _comprar_ajuda(o: Dictionary, c: Carro) -> void:
 		avisar("Não deu: %s." % motivo, false)
 		return
 	fechar_painel.emit()
-	avisar("%s em %s. Corra de novo para conferir." % [o["nome"], c.base["nome"]])
+	avisar("%s no %s. Dispute de novo para conferir." % [o["nome"], c.base["nome"]])
 	if o["tipo"] == "peca":
 		historia("PECA_COMPRADA", {"peca": String(o["nome"])})
 

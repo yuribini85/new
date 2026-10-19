@@ -9,7 +9,7 @@ extends RefCounted
 ## A ponte com a loja do aparelho (o Principal cria quando o plugin existe).
 static var ponte: LojaPlay
 
-const SEM_LOJA := "a loja do aparelho entra na versão final"
+const SEM_LOJA := "compras indisponíveis por enquanto"
 
 
 static func produtos(dados: Node) -> Array:

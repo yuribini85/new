@@ -14,7 +14,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 # Sem distinção de maiúsculas.
 TERMOS = [r"\bfila\b", r"simulad", r"nos testes", r"\bsemente", r"triagem", r"\bamostra", r"\bflags?\b",
           r"\btriggers?\b", r"gatilho", r"playtest", r"decisão \d", r"provas abertas", r"\bfator\b",
-          r"\bteto\b", r"\buid\b"]
+          r"\bteto\b", r"\buid\b", r"\bluvas\b", r"versão final", r"a definir"]
 # Com distinção: "grid" minúsculo é a largada (o jogo só usa "Grid" para o The Grid); XP é sigla interna.
 TERMOS_CASO = [r"\bgrid\b", r"\bXP\b"]
 

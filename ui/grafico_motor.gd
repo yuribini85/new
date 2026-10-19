@@ -50,14 +50,14 @@ static func forma_do_ganho(antes: Dictionary, depois: Dictionary) -> String:
 	if absf(alto) < 0.005 and absf(baixo) < 0.005:
 		pass
 	elif absf(alto - baixo) < 0.02:
-		partes.append("ganho por igual em todo o giro")
+		partes.append("ganho por igual em toda a rotação")
 	elif alto > baixo:
-		partes.append("ganho concentrado no giro alto")
+		partes.append("ganho concentrado na rotação alta")
 	else:
-		partes.append("ganho concentrado no giro baixo")
+		partes.append("ganho concentrado na rotação baixa")
 	var dc := float(depois["corte"]) - float(antes["corte"])
 	if dc >= 50.0:
-		partes.append("corte sobe %d rpm (até %d)" % [roundi(dc), roundi(float(depois["corte"]))])
+		partes.append("rotação máxima sobe %d rpm (até %d)" % [roundi(dc), roundi(float(depois["corte"]))])
 	if partes.is_empty():
 		return ""
 	var texto := "; ".join(partes)

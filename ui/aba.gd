@@ -1290,7 +1290,7 @@ const NOMES_TRACAO_CURTO := {"FF": "Tração dianteira", "FR": "Tração traseir
 	"RR": "Motor traseiro", "4WD": "Tração 4x4"}
 const NOMES_TRACAO := {
 	"FF": "Dianteira (FF)", "FR": "Traseira (FR)", "MR": "Motor central (MR)",
-	"RR": "Motor traseiro (RR)", "4WD": "Integral (4WD)",
+	"RR": "Motor traseiro (RR)", "4WD": "4x4 (4WD)",
 }
 
 

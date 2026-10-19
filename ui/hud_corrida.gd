@@ -592,7 +592,7 @@ func _lista() -> void:
 		var gap_txt := ""
 		if gap >= 0.0 and not voce:
 			var rel := gap - gap_eu  # negativo: à sua frente
-			gap_txt = "%+.1f" % rel if absf(rel) < 60.0 else ("+1 v" if rel > 0.0 else "-1 v")
+			gap_txt = "%+.1f" % rel if absf(rel) < 60.0 else ("+1 volta" if rel > 0.0 else "-1 volta")
 		var wg := fr.get_string_size(gap_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 17).x if gap_txt != "" else 0.0
 		var nome: String = it["nome"]
 		var max_l := LISTA_LARGURA - 46.0 - wg - 14.0
