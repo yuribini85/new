@@ -58,3 +58,26 @@ os prêmios das primeiras vitórias.
 - Se os testes de tempo da A devem ser recalibrados agora, pela nova referência, ou só
   quando os contratos da A substituírem os testes.
 - Quantidade de conteúdo: o resto dos eventos da referência ainda não foi importado.
+
+## Campanha com arena e Grid, 5 sementes (2026-10-19)
+
+`tools/playtest_campanha.gd -- 480 "" <semente>`, sementes 1 a 5, 8 h de corrida por perfil. Faixa dos
+perfis `sugestoes` e `renda` (10 rodadas). Tempo real = mínimo jogando sem parar, limitado pelo
+combustível.
+
+| Marco | Corrida | Real mínimo |
+| --- | --- | --- |
+| Licença Club | 7 min | — |
+| Arena aberta (carro sugerido pela Mara) | 16 min | 0,3 h |
+| Grid #10 (corrida) | 16 min | 0,3 h |
+| Grid #9 (corrida) | 27–81 min | 0,4–3,2 h |
+| Licença Sport | 114–189 min | — |
+| Grid #8 (arena, pede Sport) | 131–202 min | 5–11,5 h |
+| Grid #7 (corrida) | 149–221 min | 6–12 h |
+| Grid #6 (corrida, pede National) | 241–479 min | 9–20,5 h |
+| Grid #5 (arena) | 276–347 min (8 de 10) | 11–17 h |
+| Grid #4 | não chegou em 8 h | — |
+
+O maior trecho sem avanço no Grid é entre o #9 e o #8, que espera a licença Sport. As lutas de arena do
+Grid não seguram: 1 a 4 lutas por desafio. O perfil `explora` (escolhas ao acaso, sem seguir a ajuda
+do jogo) fica na Club em 4 de 5 sementes, com 4 a 12 vitórias.
