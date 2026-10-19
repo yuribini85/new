@@ -28,6 +28,8 @@ const PERFIS := ["sugestoes", "explora", "renda"]
 ## o agente caber no tempo; a decisão é a mesma ordem de grandeza).
 ## Tempo de corrida da medição: juntar dinheiro para uma compra também para nele.
 var _limite_s := INF
+## Sufixo das sementes das corridas ("" na semente padrão).
+var _sorte := ""
 ## Carros da garagem que não correm (os da arena, comprados pelo playtest).
 var reservados: Array = []
 const AMOSTRAS := 4
@@ -68,6 +70,9 @@ func _init(dados: Node, perfil_: String, semente_rng: int) -> void:
 	d = dados
 	perfil = perfil_
 	rng.seed = semente_rng
+	# A semente também muda a sorte das corridas (playtest com várias sementes);
+	# a padrão (7) mantém as sementes de sempre, para comparar com as medições antigas.
+	_sorte = "" if semente_rng == 7 else ":%d" % semente_rng
 	j = JogadorScript.new()
 	j.novo_jogo(d.economia(), d.pneu)
 	j.carreira = Carreira.new(d, j)
@@ -191,7 +196,7 @@ func _correr(evento_id: String, tipo: String) -> Dictionary:
 	_avisar("largada", {"evento": evento_id, "tipo": tipo})
 	semente += 1
 	# O período das repetições (prêmio menor) corre no tempo de corrida simulado.
-	var r: Dictionary = j.carreira.disputar(evento_id, uid, hash("agente:%s:%d" % [perfil, semente]), tempo)
+	var r: Dictionary = j.carreira.disputar(evento_id, uid, hash("agente:%s:%d%s" % [perfil, semente, _sorte]), tempo)
 	if r.has("erro"):
 		return {}
 	var dur: float = r["resultado"]["duracao"]

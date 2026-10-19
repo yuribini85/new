@@ -17,7 +17,9 @@ extends SceneTree
 ## monetizacao.json) limita as corridas depois do tanque.
 ## Só lê o jogo; não muda dados.
 ##
-## Uso: godot --headless --path . --script tools/playtest_campanha.gd -- [minutos] [campanha]
+## Uso: godot --headless --path . --script tools/playtest_campanha.gd -- [minutos] [campanha] [semente]
+## (semente do agente, padrão 7: rodar várias dá a faixa dos marcos; a sorte das
+## corridas muda o caminho)
 ## (padrão: 90 minutos de corrida, a campanha de historia.json → nova_campanha).
 
 const PERFIS := ["sugestoes", "explora", "renda"]
@@ -44,7 +46,8 @@ func _initialize() -> void:
 	var minutos := float(args[0]) if args.size() > 0 else 90.0
 	d = preload("res://autoload/dados.gd").new()
 	d.carregar("res://data/")
-	var campanha := args[1] if args.size() > 1 else Prologo.campanha(d)
+	var campanha := args[1] if args.size() > 1 and args[1] != "" else Prologo.campanha(d)
+	var semente := int(args[2]) if args.size() > 2 else 7
 	print("PLAYTEST campanha=%s, %.0f min de corrida por perfil" % [campanha, minutos])
 	var cenas_ids := {}
 	for c in d.lista("dialogos"):
@@ -61,7 +64,7 @@ func _initialize() -> void:
 		_grid_t = -1.0e9
 		_lutas = 0
 		_reparos = 0
-		ag = preload("res://tools/agente.gd").new(d, perfil, 7)
+		ag = preload("res://tools/agente.gd").new(d, perfil, semente)
 		h = Historia.new(d, ag.j)
 		ag.j.historia = h
 		ag.ouvinte = _acao
