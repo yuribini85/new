@@ -58,6 +58,8 @@ jobs:
           # do jogo é pedido com a versão no endereço para vir sempre o novo.
           sed -i "s/\"executable\":\"index\",/\"executable\":\"index\",\"mainPack\":\"index.pck?v=$v\",/" build/web/index.html
           grep -q "index.pck?v=$v" build/web/index.html
+          # O tamanho do pacote com o mesmo nome do endereço (a barra mostra a porcentagem).
+          sed -i "s/\"index.pck\":/\"index.pck?v=$v\":/" build/web/index.html
           # A página confere esta versão ao abrir e recarrega se houver outra
           # mais nova (navegador interno de app guarda cache por muito tempo).
           echo "$v" > build/web/versao.txt
