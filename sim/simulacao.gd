@@ -338,6 +338,13 @@ class Andamento:
 	func tempo() -> float:
 		return _t
 
+	## Distância percorrida (m) e velocidade (m/s) de cada carro agora: {id: [s, v]}.
+	func estado() -> Dictionary:
+		var r := {}
+		for k in _carros.size():
+			r[_carros[k]["id"]] = [_s_arr[k], _v_arr[k]]
+		return r
+
 	## O que já foi resolvido, no formato do resultado (a tela mostra a corrida
 	## refeita por um toque enquanto ela termina): amostras até agora, quem já
 	## terminou e "duracao" = até onde chegou.
