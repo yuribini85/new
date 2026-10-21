@@ -8,41 +8,22 @@
    },
    {
     "quem": "mara",
-    "texto": "Se veio buscar o carro, ainda não está pronto."
+    "texto": "Se veio buscar o carro, não está pronto."
    },
    {
     "acao": "PAUSA"
    },
    {
     "quem": "mara",
-    "texto": "Ah. Você é quem respondeu ao anúncio."
+    "texto": "Ah, o anúncio. A oficina está hipotecada.",
+    "pose": "cruzados"
    },
    {
     "acao": "CENARIO:oficina_mara"
    },
    {
     "quem": "mara",
-    "texto": "Vou poupar seu tempo. A oficina está hipotecada.",
-    "pose": "cruzados"
-   },
-   {
-    "quem": "mara",
-    "texto": "A Wreckage já foi mais que oficina: foi equipe de corrida. Bons pilotos, bons carros... Até alguns troféus.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Eu sou ruim de negócio. As contas mostram isso melhor que eu.",
-    "pose": "decepcao"
-   },
-   {
-    "quem": "mara",
-    "texto": "Mas oficina eu domino. Carro e piloto, ninguém aqui prepara melhor.",
-    "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "A proposta: você assume as contas e a dívida. Em troca, metade da Wreckage é sua.",
+    "texto": "A Wreckage já foi equipe de corrida. Você cuida das contas, eu dos carros. Metade é sua.",
     "pose": "gesto"
    },
    {
@@ -50,13 +31,8 @@
    },
    {
     "quem": "mara",
-    "texto": "Não vou prometer dinheiro fácil. Nem vitórias.",
+    "texto": "Fechado? Como chamo você?",
     "pose": "firme"
-   },
-   {
-    "quem": "mara",
-    "texto": "Então, temos um acordo? E como devo chamar você?",
-    "pose": "cruzados"
    },
    {
     "acao": "PEDIR_NOME"
@@ -79,13 +55,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Muito bem, {admin}. Sociedade fechada.",
+    "texto": "Muito bem, {admin}. Primeiro, um carro.",
     "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "Primeiro, o que falta numa equipe de corrida: um carro.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -109,46 +80,18 @@
     "acao": "OPEN_GARAGE_TAB"
    },
    {
-    "acao": "HIGHLIGHT_POTENCIA"
-   },
-   {
-    "quem": "mara",
-    "texto": "Potência. O que o motor entrega."
-   },
-   {
-    "acao": "HIGHLIGHT_PESO"
-   },
-   {
-    "quem": "mara",
-    "texto": "Peso. O que ele tem de carregar. Mais leve acelera, freia e vira melhor."
-   },
-   {
-    "acao": "HIGHLIGHT_PNEUS"
-   },
-   {
-    "quem": "mara",
-    "texto": "Pneus. São eles que seguram o carro: curva mais rápida e freada mais curta."
-   },
-   {
-    "acao": "HIGHLIGHT_FREIOS"
-   },
-   {
-    "quem": "mara",
-    "texto": "Freios. Quanto mais tarde ele freia, mais velocidade leva até a curva."
-   },
-   {
     "acao": "HIGHLIGHT_DEMANDA"
    },
    {
     "quem": "mara",
-    "texto": "Deixei anotado o que ele pede primeiro: {demanda}."
+    "texto": "Ele pede {demanda} primeiro."
    },
    {
     "acao": "HIGHLIGHT_SALDO"
    },
    {
     "quem": "mara",
-    "texto": "Veja o caixa antes de gastar o que não temos."
+    "texto": "Olhe o caixa antes de gastar."
    },
    {
     "quem": "sistema",
@@ -200,16 +143,8 @@
     "acao": "HIGHLIGHT_PECA_PEDIDA"
    },
    {
-    "quem": "mara",
-    "texto": "Peça nova não faz milagre. Mas cada uma soma na pista."
-   },
-   {
-    "quem": "mara",
-    "texto": "{demanda}. Cabe no caixa."
-   },
-   {
     "quem": "sistema",
-    "texto": "Compre {demanda}."
+    "texto": "Toque em {demanda} para comprar."
    },
    {
     "acao": "HIGHLIGHT_PECA_PEDIDA"
@@ -258,16 +193,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Pronto: {peca}."
-   },
-   {
-    "quem": "mara",
-    "texto": "Mais uma prova. Quero ver a diferença na pista.",
+    "texto": "{peca} no lugar. Quero ver na pista.",
     "pose": "firme"
    },
    {
     "quem": "sistema",
-    "texto": "Vá para Corridas."
+    "texto": "Toque em Corridas."
    },
    {
     "acao": "HIGHLIGHT_NAV_EVENTOS"
@@ -291,21 +222,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "É assim que se sobe: corrida, prêmio, peça, corrida.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Sem licença, a gente só corre as provas que não pedem uma. A nossa precisa ser renovada.",
+    "texto": "Sem licença, só corremos provas que não pedem uma. A nossa precisa ser renovada.",
     "pose": "explica"
    },
    {
-    "quem": "mara",
-    "texto": "Cada licença nova abre provas maiores, com prêmio maior."
-   },
-   {
     "quem": "sistema",
-    "texto": "Licenças ficam em Carreira."
+    "texto": "Toque em Carreira."
    },
    {
     "acao": "HIGHLIGHT_NAV_LICENCAS"
@@ -330,12 +252,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Escolha o melhor piloto para aumentar nossas chances de vencer a corrida.",
+    "texto": "Escolha quem vai correr por nós.",
     "pose": "explica"
    },
    {
     "quem": "sistema",
-    "texto": "Toque em Contratar, no piloto de corrida."
+    "texto": "Toque em Contratar."
    },
    {
     "acao": "HIGHLIGHT_PILOTO_CORRIDA"
@@ -365,7 +287,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "Vá para Corridas."
+    "texto": "Toque em Corridas."
    },
    {
     "acao": "HIGHLIGHT_NAV_EVENTOS"
@@ -389,23 +311,19 @@
   "trigger": "ABA:EVENTOS",
   "falas": [
    {
-    "quem": "mara",
-    "texto": "Aqui você escolhe a prova. {piloto} corre com o carro que a gente montar.",
-    "pose": "explica"
-   },
-   {
     "acao": "HIGHLIGHT_COPA"
    },
    {
     "quem": "mara",
-    "texto": "Como estamos sem licenças, só podemos correr estas provas."
+    "texto": "Sem licença, só estas provas.",
+    "pose": "explica"
    },
    {
     "acao": "HIGHLIGHT_COMPETITIVIDADE"
    },
    {
     "quem": "mara",
-    "texto": "Essa barra compara o carro com os rivais. Não garante nada. Evita entrar no escuro."
+    "texto": "A barra compara o carro com os rivais. Não garante nada."
    },
    {
     "quem": "sistema",
@@ -459,16 +377,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{serie} é campeonato: cada etapa dá pontos.",
+    "texto": "{serie} é campeonato: corra as etapas na ordem. Leva o título quem somar mais pontos.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Corra as etapas na ordem. Fora da ordem, a prova não soma pontos."
-   },
-   {
-    "quem": "mara",
-    "texto": "Leva o título quem somar mais no fim."
    }
   ],
   "requer": [
@@ -490,21 +400,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{pista}: {voltas} voltas."
-   },
-   {
-    "quem": "mara",
-    "texto": "Nós preparamos e {piloto} corre.",
+    "texto": "{pista}, {voltas} voltas. Nós preparamos, {piloto} corre.",
     "pose": "firme"
-   },
-   {
-    "quem": "mara",
-    "texto": "Quando acabar, o resultado e o prêmio aparecem na tela.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "sistema",
-    "texto": "Toda corrida iniciada termina mesmo com o jogo fechado."
    }
   ],
   "requer": [],
@@ -527,13 +424,8 @@
     "acao": "HIGHLIGHT_CAMERA_AUTO"
    },
    {
-    "quem": "mara",
-    "texto": "A corrida é do {piloto}, mas a vista é sua. Aqui embaixo você troca a câmera: seu carro, o líder, a pista inteira.",
-    "pose": "explica"
-   },
-   {
     "quem": "sistema",
-    "texto": "Toque numa câmera para trocar. Em Automática, a corrida escolhe o melhor ângulo."
+    "texto": "Toque numa câmera para trocar."
    }
   ],
   "requer": [],
@@ -582,11 +474,6 @@
     "quem": "mara",
     "texto": "{posicao}. Corrida perdida também paga.",
     "pose": "decepcao"
-   },
-   {
-    "quem": "mara",
-    "texto": "A tela da corrida mostra onde se perdeu tempo. Olhe antes de culpar o carro.",
-    "pose": "explica"
    }
   ],
   "requer": [],
@@ -635,13 +522,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Recusaram a inscrição. O motivo está no botão: potência, tração, modelo ou licença.",
+    "texto": "Recusaram a inscrição; o motivo está no botão. Não existe melhor carro, só o carro certo.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Não existe melhor carro. Existe o carro certo para cada prova.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -661,18 +543,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Você nunca perguntou por que Wreckage.",
+    "texto": "Você nunca perguntou por que Wreckage. Vem ver uma luta. Hoje você só assiste.",
     "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Corrida paga as contas. A arena é de onde o nome vem.",
-    "pose": "cruzados"
-   },
-   {
-    "quem": "mara",
-    "texto": "Vem ver uma luta. Seis duplas na arena; hoje você só assiste.",
-    "pose": "firme"
    },
    {
     "acao": "ARENA_DEMO"
@@ -698,17 +570,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Isso é a Wreckage. Lá carro nenhum sai inteiro: o que quebra passa um tempo no meu elevador.",
+    "texto": "Isso é a Wreckage. Lá, carro nenhum sai inteiro.",
     "pose": "gesto"
    },
    {
-    "quem": "mara",
-    "texto": "Por isso a arena abre só com dois carros na garagem: um para correr e um para arriscar.",
-    "pose": "explica"
-   },
-   {
     "quem": "sistema",
-    "texto": "Com o segundo carro, a Arena aparece na barra de baixo."
+    "texto": "Compre o segundo carro em Lojas para abrir a Arena."
    }
   ],
   "requer": [],
@@ -728,17 +595,9 @@
   "trigger": "LICENCA_EXIGIDA",
   "falas": [
    {
-    "quem": "sistema",
-    "texto": "INSCRIÇÃO RECUSADA: PEDE LICENÇA"
-   },
-   {
     "quem": "mara",
-    "texto": "É a licença que a gente precisa renovar. Quem renova é {piloto}, no treino da escola.",
+    "texto": "Essa prova pede licença. Quem renova é {piloto}, no treino da Vector Academy. Leve café pro instrutor.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Quem treina é a Vector Academy. O instrutor é o Brandt. Leve café pra ele."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -762,31 +621,14 @@
   "falas": [
    {
     "quem": "examinador",
-    "texto": "Harold Brandt, instrutor da Vector Academy. Licença Club."
-   },
-   {
-    "quem": "examinador",
-    "texto": "Primeiro, o treino. Ele corre no relógio, mesmo com o jogo fechado."
-   },
-   {
-    "quem": "examinador",
-    "texto": "Terminou o treino, a licença sai. Sem prova, sem papelada."
-   },
-   {
-    "quem": "mara",
-    "texto": "Quanto custa?",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "examinador",
-    "texto": "Nada. Aqui se paga com tempo."
+    "texto": "Harold Brandt. Terminou o treino, sai a licença Club. Aqui se paga com tempo."
    },
    {
     "acao": "HIGHLIGHT_LICENSE_REQUIREMENTS"
    },
    {
     "quem": "sistema",
-    "texto": "Toque em Iniciar treino. Enquanto ele treina, siga nas provas que não pedem licença."
+    "texto": "Toque em Iniciar treino."
    }
   ],
   "requer": [
@@ -816,26 +658,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Agora, aonde a gente precisa chegar. O Grid: dez equipes no topo do circuito. A gente está fora dele.",
+    "texto": "O Grid: as dez equipes do topo. Vença uma por vez e a oficina se paga.",
     "pose": "explica"
    },
    {
-    "quem": "mara",
-    "texto": "Uma de cada vez, da décima até a primeira. A da vez fica em destaque."
-   },
-   {
-    "quem": "mara",
-    "texto": "Cada equipe possui um desafio diferente. Vença e ela fica para trás.",
-    "pose": "firme"
-   },
-   {
-    "quem": "mara",
-    "texto": "Quem chega ao topo tem patrocinador batendo na porta.",
-    "pose": "pensativa"
-   },
-   {
     "quem": "sistema",
-    "texto": "The Grid fica em Carreira, embaixo dos objetivos. A próxima corrida sai em Corridas."
+    "texto": "Toque em Corridas."
    }
   ],
   "requer": [],
@@ -856,12 +684,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "A garagem está vazia; o último carro foi vendido pra pagar dívida.",
+    "texto": "A garagem está vazia. O último carro pagou dívida.",
     "pose": "cruzados"
    },
    {
     "quem": "sistema",
-    "texto": "Vá para as Lojas e compre o primeiro carro."
+    "texto": "Toque em Lojas e compre um carro."
    },
    {
     "acao": "HIGHLIGHT_NAV_LOJA"
@@ -883,25 +711,15 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{carro}. Dá para trabalhar.",
+    "texto": "{carro}. Dá para trabalhar. Agora, um piloto.",
     "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "Daqui pra frente, as contratações são com você. Quem entra e quem sai da equipe passa pela sua mesa.",
-    "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "E a primeira é urgente: precisamos de um piloto. O último foi embora, e eu ainda devo o salário dele.",
-    "pose": "firme"
    },
    {
     "acao": "UNLOCK_TEAM_TAB"
    },
    {
     "quem": "sistema",
-    "texto": "Toque em Equipe, na barra de baixo."
+    "texto": "Toque em Equipe."
    },
    {
     "acao": "HIGHLIGHT_NAV_EQUIPE"
@@ -924,16 +742,11 @@
   "trigger": "LICENCA_TREINO_INICIO",
   "falas": [
    {
-    "quem": "mara",
-    "texto": "Treino rodando. A oficina não para por isso."
-   },
-   {
     "acao": "UNLOCK_ACELERAR"
    },
    {
     "quem": "mara",
-    "texto": "Lá em cima, ACELERAR deixa as corridas mais rápidas por um tempo. A primeira é por minha conta.",
-    "pose": "explica"
+    "texto": "Treino rodando. O primeiro ACELERAR é por minha conta."
    },
    {
     "acao": "HIGHLIGHT_ACELERAR"
@@ -960,12 +773,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Os requisitos da Sport estão cumpridos.",
+    "texto": "Requisitos da Sport cumpridos. Falta o treino na Academy.",
     "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "Agora falta o treino na Academy. Esse não sai na pista."
    },
    {
     "acao": "OPEN_LICENSE_CENTER"
@@ -988,12 +797,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "National disponível.",
-    "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Daqui para cima, vitória solta não basta. Pede título.",
+    "texto": "National disponível. Daqui pra cima, vitória solta não basta: pede título.",
     "pose": "firme"
    },
    {
@@ -1017,21 +821,16 @@
   "falas": [
    {
     "quem": "examinador",
-    "texto": "Licença Club aprovada. Assinado e carimbado."
+    "texto": "Licença Club aprovada."
    },
    {
     "quem": "mara",
-    "texto": "Licença renovada. Faz tempo que eu não via esse papel sem uma cobrança junto.",
+    "texto": "Faz tempo que eu não via esse papel sem uma cobrança junto.",
     "pose": "pensativa"
    },
    {
-    "quem": "mara",
-    "texto": "Agora uma prova de licença. Lá o prêmio é outro.",
-    "pose": "firme"
-   },
-   {
     "quem": "sistema",
-    "texto": "Novas provas liberadas em Corridas › Club."
+    "texto": "Toque em Corridas e escolha uma prova Club."
    },
    {
     "acao": "HIGHLIGHT_NAV_EVENTOS"
@@ -1053,22 +852,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Licença na mão e resultado na pista: agora aparece patrocinador.",
+    "texto": "Licença na mão: apareceu patrocinador. Paga por hora, até com a oficina fechada.",
     "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro."
-   },
-   {
-    "quem": "mara",
-    "texto": "O contrato paga cada hora dele, com o jogo aberto ou fechado. Cada título dá uma hora a mais de renda offline.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "E pagam um extra quando a corrida cumpre o que eles pedem.",
-    "pose": "gesto"
    },
    {
     "acao": "OPEN_TEAM_FINANCE"
@@ -1078,7 +863,7 @@
    },
    {
     "quem": "sistema",
-    "texto": "O patrocínio fica na Equipe. O contrato renova sozinho: a equipe assina quem mais paga por hora, com o jogo aberto ou fechado."
+    "texto": "O patrocínio fica em Equipe."
    }
   ],
   "requer": [
@@ -1103,16 +888,6 @@
    {
     "quem": "examinador",
     "texto": "Sport aprovada. Eu esperava mais rápido. Mas aprovada."
-   },
-   {
-    "quem": "mara",
-    "texto": "Provas maiores. Contas maiores também.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "E daqui pra cima o Grid começa a olhar os resultados. Que olhe.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -1134,26 +909,12 @@
     "texto": "National aprovada. Poucos passam daqui sem repetir."
    },
    {
-    "quem": "mara",
-    "texto": "Agora a gente aparece na lista dos outros.",
-    "pose": "firme"
-   },
-   {
     "acao": "CENARIO:oficina_mara"
    },
    {
     "quem": "mara",
-    "texto": "Lembra do carro nos cavaletes? Eu não parei de mexer nele.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Pus nele todas as peças que ele aceita. Agora está na garagem: é da equipe.",
+    "texto": "Lembra do carro nos cavaletes? Terminei. Está na garagem: é da equipe.",
     "pose": "gesto"
-   },
-   {
-    "quem": "sistema",
-    "texto": "O carro da Mara entrou na garagem, preparado."
    }
   ],
   "requer": [],
@@ -1176,16 +937,12 @@
    },
    {
     "quem": "mara",
-    "texto": "Com essa, a Wreckage volta a ser equipe de verdade.",
+    "texto": "A Wreckage volta a ser equipe de verdade. Abriram o Caixa e a Sede.",
     "pose": "explica"
    },
    {
-    "quem": "mara",
-    "texto": "Agora o Caixa mostra o que a equipe tem. E o Escritório, na Sede, abre vaga para outro patrocinador."
-   },
-   {
     "quem": "sistema",
-    "texto": "Caixa e Sede na aba Equipe."
+    "texto": "Toque em Equipe para ver Caixa e Sede."
    }
   ],
   "requer": [],
@@ -1204,12 +961,8 @@
   "trigger": "LICENCA_CONCEDIDA:PRO",
   "falas": [
    {
-    "quem": "examinador",
-    "texto": "Pro aprovada."
-   },
-   {
     "quem": "mara",
-    "texto": "Daqui para frente, cada décimo custa caro.",
+    "texto": "Pro aprovada. Daqui para frente, cada décimo custa caro.",
     "pose": "cruzados"
    }
   ],
@@ -1229,11 +982,11 @@
   "falas": [
    {
     "quem": "examinador",
-    "texto": "Elite aprovada. Em trinta anos, assinei poucas dessas."
+    "texto": "Elite aprovada. Assinei poucas dessas."
    },
    {
     "quem": "mara",
-    "texto": "Elite. No dia em que você chegou, eu não tinha nem como renovar a Club.",
+    "texto": "No dia em que você chegou, eu não tinha nem como renovar a Club.",
     "pose": "pensativa"
    }
   ],
@@ -1256,38 +1009,19 @@
    },
    {
     "quem": "mara",
-    "texto": "{equipe} ficou para trás. Agora somos a {posicao_grid} do Grid.",
+    "texto": "{equipe} ficou para trás. A próxima é na arena, e você precisa saber uma coisa.",
     "pose": "firme"
-   },
-   {
-    "quem": "mara",
-    "texto": "A próxima é na arena. Tem uma coisa que você precisa saber antes.",
-    "pose": "pensativa"
    },
    {
     "acao": "ILUSTRACAO:noite_da_arena"
    },
    {
     "quem": "mara",
-    "texto": "A Wreckage já foi maior. Dois caminhões, seis carros, gente no box de quem eu nem sabia o nome.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Numa noite de arena, a gente levou tudo o que tinha. Voltou com o guincho."
-   },
-   {
-    "quem": "mara",
-    "texto": "Os carros, os patrocinadores, a equipe. Eu fiquei com a oficina e as contas.",
+    "texto": "Numa noite de arena, a Wreckage perdeu carros, patrocinadores e equipe. Desta vez a gente entra sabendo o que custa.",
     "pose": "decepcao"
    },
    {
     "acao": "CENARIO:oficina_mara"
-   },
-   {
-    "quem": "mara",
-    "texto": "Desta vez a gente entra sabendo o que custa.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -1331,26 +1065,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Quando você entrou aqui, eu estava tentando descobrir o que ainda dava para salvar.",
+    "texto": "Quando você chegou, eu só tentava salvar o que dava. Agora somos o primeiro do Grid.",
     "pose": "pensativa"
    },
    {
     "quem": "mara",
-    "texto": "Agora temos carros, pilotos, patrocinadores... e o primeiro lugar do Grid."
-   },
-   {
-    "quem": "mara",
-    "texto": "Passei tempo demais achando que essa parte da minha vida tinha acabado.",
-    "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "Você fez a equipe funcionar de novo.",
-    "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "Só não confunda chegar ao topo com conseguir ficar lá.",
+    "texto": "Você fez a equipe funcionar de novo. Agora, fique lá.",
     "pose": "firme"
    }
   ],
@@ -1372,12 +1092,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Bom resultado. Agora vamos ver se conseguimos repetir.",
+    "texto": "Bom resultado. Agora vamos ver se repete.",
     "pose": "firme"
    },
    {
     "quem": "sistema",
-    "texto": "Prova vencida pode ser disputada de novo: uma corrida só ou uma sequência, que continua com o jogo fechado."
+    "texto": "Toque em Disputar de novo para correr outra vez."
    }
   ],
   "requer": [
@@ -1402,12 +1122,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Sequência montada. A oficina segue a noite toda, enquanto tiver combustível. E o tanque enche sozinho.",
-    "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Vai dormir. Amanhã a gente conta o dinheiro.",
+    "texto": "Sequência montada. A oficina segue a noite toda. Vai dormir.",
     "pose": "pensativa"
    }
   ],
@@ -1426,10 +1141,6 @@
   "id": "CW_G01",
   "trigger": "GARAGEM_DOIS_CARROS",
   "falas": [
-   {
-    "quem": "manobrista",
-    "texto": "Dois carros! Agora eu decoro duas chaves."
-   },
    {
     "quem": "mara",
     "texto": "Dois carros. Duas contas.",
@@ -1453,13 +1164,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Título. Guarde o troféu longe da graxa.",
+    "texto": "Título. Cada um é mais uma hora que o patrocinador paga com a oficina fechada.",
     "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "E cada título é mais uma hora que o patrocinador paga com a oficina fechada.",
-    "pose": "explica"
    }
   ],
   "requer": [],
@@ -1481,11 +1187,6 @@
    {
     "quem": "manobrista",
     "texto": "Cinco carros, chefe. Já dá pra chamar de frota."
-   },
-   {
-    "quem": "mara",
-    "texto": "Eu lembro quando a gente tinha um único carro.",
-    "pose": "pensativa"
    }
   ],
   "requer": [],
@@ -1507,11 +1208,6 @@
    {
     "quem": "manobrista",
     "texto": "Vaga nova pintada no chão. Cabe mais um, e eu manobro."
-   },
-   {
-    "quem": "mara",
-    "texto": "Mais espaço. Não significa que a gente precise preencher tudo hoje.",
-    "pose": "alerta"
    }
   ],
   "requer": [],
@@ -1586,7 +1282,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Cinco vitórias. O pessoal da rua já para na porta pra ver o carro sair.",
+    "texto": "Cinco vitórias. O pessoal da rua já para pra ver o carro sair.",
     "pose": "pensativa"
    }
   ],
@@ -1608,7 +1304,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Dez provas vencidas. A parede de troféus já não está vazia.",
+    "texto": "Dez vitórias. A parede de troféus já não está vazia.",
     "pose": "pensativa"
    }
   ],
@@ -1652,7 +1348,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Cinquenta. Paguei a última parcela atrasada da hipoteca. Não conta pra ninguém que eu sorri.",
+    "texto": "Cinquenta. Paguei a última parcela atrasada. Não conta que eu sorri.",
     "pose": "pensativa"
    }
   ],
@@ -1696,18 +1392,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Licença no bolso e caixa sobrando. Tem uma conta que a pista não paga.",
+    "texto": "A arena abre com dois carros na garagem. O {carro} cabe no caixa e aguenta pancada: está nas Lojas.",
     "pose": "pensativa"
-   },
-   {
-    "quem": "mara",
-    "texto": "A arena da Roxy abre com dois carros na garagem. O {carro} cabe no caixa e serve pra isso: lá o carro só precisa aguentar pancada.",
-    "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Está nas Lojas. Carro quebrado volta pro meu elevador, não pro ferro-velho.",
-    "pose": "cruzados"
    }
   ],
   "requer": [
@@ -1729,41 +1415,19 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Dois carros. Tem outra maneira de ganhar dinheiro por aqui.",
+    "texto": "Dois carros. Foi na arena que a gente perdeu os últimos, mas ela paga as contas.",
     "pose": "cruzados"
    },
    {
-    "quem": "mara",
-    "texto": "Foi lá que a gente perdeu os últimos carros. Mas paga as contas que ficaram.",
-    "pose": "pensativa"
-   },
-   {
     "quem": "organizadora",
-    "texto": "E lota a arquibancada! Roxy Vega. A arena é minha."
-   },
-   {
-    "quem": "organizadora",
-    "texto": "Aqui se luta em dupla: dois pilotos de arena, cada um no seu carro. Piloto de corrida não entra aqui. Sem o segundo, a casa empresta piloto e carro."
-   },
-   {
-    "quem": "organizadora",
-    "texto": "Ganha a dupla que tiver o último carro andando. A cada vitória, o campeonato seguinte ganha mais uma dupla: começa com duas e vai até vinte carros."
-   },
-   {
-    "quem": "mara",
-    "texto": "Pagam mais porque todo carro volta amassado.",
-    "pose": "alerta"
-   },
-   {
-    "quem": "organizadora",
-    "texto": "Carro com a frente destruída sai daqui direto pro elevador da Mara. Por isso a arena pede dois carros: um fica para as corridas."
+    "texto": "Roxy Vega, a arena é minha! Luta em dupla: vence quem tiver o último carro andando."
    },
    {
     "acao": "UNLOCK_ARENA_PILOTS"
    },
    {
     "quem": "sistema",
-    "texto": "Contrate um piloto de arena na Equipe e escale o carro da ARENA 1 na Oficina. A ARENA 2 é opcional."
+    "texto": "Contrate um piloto de arena em Equipe e escale o carro em ARENA 1, na Oficina."
    }
   ],
   "requer": [
@@ -1786,31 +1450,15 @@
   "trigger": "ENCADEADA",
   "falas": [
    {
-    "quem": "mecanico_arena",
-    "texto": "Dex Kane. Eu preparo carro pra arena."
-   },
-   {
     "acao": "IMPACTO"
    },
    {
     "quem": "mecanico_arena",
-    "texto": "Lá dentro cavalo não manda. Manda chapa."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "A blindagem fica na Oficina, no escudo ao lado da velocidade. Três níveis: quanto mais chapa, mais pancada ele aguenta."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Só que pesa. Na corrida ele vai sentir."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "E se paga em giros. Chapa boa não é barata."
+    "texto": "Dex Kane, preparo carro pra arena. Lá dentro cavalo não manda. Manda chapa."
    },
    {
     "quem": "sistema",
-    "texto": "Blindagem: Oficina, ao lado da velocidade máxima."
+    "texto": "Toque no escudo, na Oficina, para pôr blindagem."
    }
   ],
   "requer": [],
@@ -1828,19 +1476,7 @@
   "falas": [
    {
     "quem": "mecanico_arena",
-    "texto": "Leve, média, pesada. Cada uma mostra o peso que soma e quanto a mais ele aguenta na arena."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Carro mais pesado aguenta mais e empurra mais. E acelera, freia e vira pior."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Chapa se paga em giros."
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "Comprou, é sua. Tirar a chapa custa metade do que ela custou; pôr de volta é de graça."
+    "texto": "Mais chapa aguenta mais pancada e pesa na corrida. Tirar custa metade do preço."
    },
    {
     "quem": "sistema",
@@ -1867,7 +1503,7 @@
   "falas": [
    {
     "quem": "mecanico_arena",
-    "texto": "Agora sim. Na pista ele vai sentir o peso. Lá dentro, quem sente são os outros."
+    "texto": "Agora sim. Na pista ele sente o peso. Lá dentro, sentem os outros."
    }
   ],
   "requer": [],
@@ -1891,11 +1527,6 @@
    {
     "quem": "organizadora",
     "texto": "Último aviso: aqui, segundo lugar pode custar o carro inteiro."
-   },
-   {
-    "quem": "mara",
-    "texto": "Ela não está brincando.",
-    "pose": "alerta"
    }
   ],
   "requer": [],
@@ -1913,10 +1544,6 @@
   "id": "CW_R07",
   "trigger": "ARENA_FIM",
   "falas": [
-   {
-    "quem": "organizadora",
-    "texto": "Saiu inteiro o bastante pra voltar. A plateia gosta de quem volta."
-   },
    {
     "quem": "mara",
     "texto": "Voltou amassado, mas voltou. Pra primeira vez, está ótimo.",
@@ -1941,11 +1568,6 @@
    {
     "quem": "organizadora",
     "texto": "Última dupla de pé! O próximo campeonato tem uma equipe a mais."
-   },
-   {
-    "quem": "mara",
-    "texto": "Agora tira ele dali antes que alguém tenha ideias.",
-    "pose": "firme"
    }
   ],
   "requer": [],
@@ -1965,12 +1587,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "O carro voltou em pedaços. Fica no elevador até eu desamassar, ou você paga a pressa.",
+    "texto": "Voltou em pedaços. Fica no meu elevador, ou você paga a pressa.",
     "pose": "decepcao"
-   },
-   {
-    "quem": "mecanico_arena",
-    "texto": "O próximo vai com mais chapa."
    }
   ],
   "requer": [],
@@ -2013,26 +1631,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Equipe de verdade atrai patrocinador.",
+    "texto": "Equipe de verdade atrai patrocinador. Paga por hora, até com a oficina fechada.",
     "pose": "explica"
    },
    {
-    "quem": "mara",
-    "texto": "Eles pagam por hora. Com a oficina fechada e você dormindo, é deles que vem o dinheiro."
-   },
-   {
-    "quem": "mara",
-    "texto": "E pagam um extra quando a corrida cumpre o que eles pedem.",
-    "pose": "gesto"
-   },
-   {
-    "quem": "mara",
-    "texto": "Na Sede, o Escritório abre vaga para mais um patrocinador.",
-    "pose": "firme"
-   },
-   {
     "quem": "sistema",
-    "texto": "O patrocínio fica na Equipe. O contrato renova sozinho: a equipe assina quem mais paga por hora, com o jogo aberto ou fechado."
+    "texto": "O patrocínio fica em Equipe."
    }
   ],
   "requer": [
@@ -2097,19 +1701,7 @@
   "falas": [
    {
     "quem": "manobrista",
-    "texto": "E aí, chefe! Rico Salas, manobrista. Todo carro daqui passa pela minha chave."
-   },
-   {
-    "quem": "manobrista",
-    "texto": "Em cima, as vagas. Garagem cheia não recebe carro novo; dá pra ampliar ali mesmo, por giros."
-   },
-   {
-    "quem": "manobrista",
-    "texto": "Toca num carro e eu levo ele pra Oficina. Ele vira o carro em uso."
-   },
-   {
-    "quem": "manobrista",
-    "texto": "Carro parado só ocupa vaga. Vender também é aqui, no botão de cada um."
+    "texto": "Rico Salas, manobrista. Todo carro daqui passa pela minha chave."
    },
    {
     "quem": "sistema",
@@ -2133,23 +1725,7 @@
   "falas": [
    {
     "quem": "pintor",
-    "texto": "Kenji Arata. A cabine é minha. Pode entrar, só não encosta no que está molhado."
-   },
-   {
-    "quem": "pintor",
-    "texto": "Em cima, o carro como ele vai sair. Arrasta pra girar; embaixo dele, as vistas."
-   },
-   {
-    "quem": "pintor",
-    "texto": "Pintura: base, secundária e acento. Grafismos: faixas e desenhos, já aplicados no seu carro."
-   },
-   {
-    "quem": "pintor",
-    "texto": "Identificação: o nome e o logo da equipe e o número de corrida. Acabamento: do fosco ao metálico, e poeira se quiser."
-   },
-   {
-    "quem": "pintor",
-    "texto": "Só fica pronto quando você toca em Aplicar pintura. O preço aparece embaixo e cobre só o que você mudou. Mudou de ideia? Como estava desfaz tudo."
+    "texto": "Kenji Arata. A cabine é minha. Não encosta no que está molhado."
    },
    {
     "quem": "sistema",
@@ -2173,11 +1749,7 @@
   "falas": [
    {
     "quem": "pintor",
-    "texto": "Pronto. Na corrida e na arena, é assim que ele aparece."
-   },
-   {
-    "quem": "pintor",
-    "texto": "Não anda mais rápido. Mas todo mundo sabe de quem é."
+    "texto": "Pronto. Não anda mais rápido, mas todo mundo sabe de quem é."
    }
   ],
   "requer": [],
@@ -2261,11 +1833,7 @@
   "falas": [
    {
     "quem": "vendedor_relay_room",
-    "texto": "Entra, entra! Carro bom e preço justo, palavra de vendedor."
-   },
-   {
-    "quem": "vendedor_relay_room",
-    "texto": "Aqui é tudo Hayase. Conheço cada parafuso."
+    "texto": "Entra, entra! Aqui é tudo Hayase, e eu conheço cada parafuso."
    },
    {
     "quem": "sistema",
@@ -2290,10 +1858,6 @@
   "falas": [
    {
     "quem": "vendedor_relay_room",
-    "texto": "Entra, entra! Aqui é tudo Hayase, e eu conheço cada parafuso."
-   },
-   {
-    "quem": "vendedor_relay_room",
     "texto": "Gostou de algum? Pra você, preço de tabela. Que é preço de amigo."
    }
   ],
@@ -2315,10 +1879,6 @@
    {
     "quem": "vendedora_brace_yard",
     "texto": "Boas-vindas. Champanhe? Não? Mais pra mim."
-   },
-   {
-    "quem": "vendedora_brace_yard",
-    "texto": "Carro pra quem pretende ser visto."
    },
    {
     "quem": "sistema",
@@ -2363,11 +1923,7 @@
   "falas": [
    {
     "quem": "vendedora_return_chapter",
-    "texto": "Boas-vindas. Pergunte o que quiser; eu respondo com números."
-   },
-   {
-    "quem": "vendedora_return_chapter",
-    "texto": "Compare antes de se apaixonar."
+    "texto": "Boas-vindas. Compare antes de se apaixonar."
    },
    {
     "quem": "sistema",
@@ -2552,7 +2108,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Vitória: {pista}. Anota o que funcionou antes de mexer em alguma coisa.",
+    "texto": "Vitória. Anota o que funcionou antes de mexer em alguma coisa.",
     "pose": "pensativa"
    }
   ],
@@ -2645,7 +2201,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Perto. Em Corridas, a seção PRÓXIMA PROVA mostra onde o {carro} tem mais chance.",
+    "texto": "Perto. PRÓXIMA PROVA, em Corridas, mostra onde o {carro} tem mais chance.",
     "pose": "pensativa"
    }
   ],
@@ -2669,7 +2225,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{posicao}: {pista}. Mais um ajuste e a gente sobe um degrau."
+    "texto": "{posicao}. Mais um ajuste e a gente sobe um degrau."
    }
   ],
   "requer": [
@@ -2692,13 +2248,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{posicao}. O {carro} chegou até onde dava.",
+    "texto": "{posicao}. Escolha outra prova ou melhore o carro na Oficina.",
     "pose": "decepcao"
-   },
-   {
-    "quem": "mara",
-    "texto": "Os rivais estavam mais fortes. Escolha outra prova ou melhore o carro na Oficina.",
-    "pose": "explica"
    }
   ],
   "requer": [
@@ -2743,7 +2294,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Carro certo, prova errada. Cada prova, em Corridas, mostra se o seu carro é mais forte ou mais fraco.",
+    "texto": "Carro certo, prova errada.",
     "pose": "cruzados"
    }
   ],
@@ -2812,7 +2363,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{piloto} está guiando como piloto de equipe grande. Não conta isso pra {g:ele|ela}.",
+    "texto": "{piloto} está guiando como piloto de equipe grande. Não conta pra {g:ele|ela}.",
     "pose": "firme"
    }
   ],
@@ -2835,7 +2386,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{posicao}. O {carro} está pedindo mais uma peça. Eu sei ouvir quando ele pede.",
+    "texto": "{posicao}. O {carro} está pedindo mais uma peça.",
     "pose": "explica"
    }
   ],
@@ -2859,7 +2410,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "As equipes do Grid também veem esses resultados. Melhor elas verem a gente subir.",
+    "texto": "O Grid também vê esses resultados. Melhor ver a gente subir.",
     "pose": "cruzados"
    }
   ],
@@ -2964,12 +2515,12 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "A garagem ainda funciona. O caixa, nem tanto.",
+    "texto": "A garagem funciona. O caixa, nem tanto.",
     "pose": "alerta"
    },
    {
     "quem": "sistema",
-    "texto": "Prova já vencida paga de novo, mas o prêmio cai a cada repetição."
+    "texto": "Toque em Disputar de novo numa prova vencida."
    }
   ],
   "requer": [],
@@ -2986,7 +2537,7 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "Bonito carro. Espero que você tenha deixado dinheiro pro resto.",
+    "texto": "Bonito carro. Sobrou dinheiro pro resto?",
     "pose": "alerta"
    }
   ],
@@ -3004,18 +2555,8 @@
   "falas": [
    {
     "quem": "mara",
-    "texto": "{posicao} de novo. Insistir com o mesmo carro não muda a conta.",
+    "texto": "{posicao} de novo. No cartão da prova, O QUE AJUDA? mostra o que cabe no caixa.",
     "pose": "cruzados"
-   },
-   {
-    "quem": "mara",
-    "texto": "No cartão da prova, em Corridas, toque em O QUE AJUDA?. Eu testo o que cabe no caixa e mostro o que mais melhora pelo preço.",
-    "pose": "explica"
-   },
-   {
-    "quem": "mara",
-    "texto": "Se nenhuma peça resolver, eu digo qual carro abre caminho.",
-    "pose": "pensativa"
    }
   ],
   "requer": [],
