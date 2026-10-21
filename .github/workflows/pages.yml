@@ -85,7 +85,9 @@ jobs:
             printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' "$sdk" "$jdk" > "$f"
           done
           sed -i "s/^version\/code=1$/version\/code=${{ github.run_number }}/" export_presets.cfg
-          godot --headless --export-release "Android" build/android/chrome-wreckage.apk
+          ls ~/.local/share/godot/export_templates/*/ | grep -i android || echo "sem template Android"
+          ls "$sdk/build-tools" || echo "sem build-tools em $sdk"
+          godot --headless --verbose --export-release "Android" build/android/chrome-wreckage.apk 2>&1 | grep -v "savepack: step" | tail -60
           test -f build/android/chrome-wreckage.apk
           ls -la build/android
 
