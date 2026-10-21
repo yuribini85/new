@@ -130,6 +130,25 @@ const PAUSA_CHEGADA_S := 0.3
 const ALCANCE := 0.25  # s de atraso recuperados por segundo
 var _atraso := 0.0
 var _pausa := 0.0
+## Pilotagem por toques (decisão 127, Pilotagem): a régua (FREIE / SEGURE), o
+## botão de ataque, o dedo na tela e o que já foi feito em cada curva.
+var _pil: Dictionary = {}
+var _pedal: PedalPilotagem
+var _botao_ataque: Button
+var _segurando := false
+var _feitas := {}  # curva (distância de entrada na corrida, m) -> nota
+## A frenagem esperando o toque: {chave, t_frenagem, fim} ou {}.
+var _frenagem := {}
+## A curva em que o carro está (para a saída): {chave, fim, com_frenagem} ou {}.
+var _na_curva := {}
+## A saída em curso: {de, ate, soltou} ou {}.
+var _saida := {}
+var _s_antes_pil := 0.0
+var _ultimo_ataque := -INF
+## A corrida refeita por um toque, emendada na tela enquanto termina (Fila.parcial).
+var _versao_parcial := 0
+var _emenda_desde := -1.0
+var _emenda_i := 0
 
 func _init(d: Node, j: Node) -> void:
 	super(d, j, "Corrida")
@@ -206,6 +225,26 @@ func _init(d: Node, j: Node) -> void:
 	_clarao.color = Color(1, 1, 1, 0)
 	area.add_child(_clarao)
 	area.add_child(_cartao)
+	_pil = Pilotagem.params(dados)
+	_pedal = PedalPilotagem.new()
+	_pedal.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_pedal.offset_left = -230
+	_pedal.offset_right = 230
+	_pedal.offset_top = -270
+	_pedal.offset_bottom = -200
+	_pedal.visible = false
+	area.add_child(_pedal)
+	_botao_ataque = Button.new()
+	_botao_ataque.focus_mode = Control.FOCUS_NONE
+	Tipografia.acao_primaria(_botao_ataque, "ATACAR")
+	_botao_ataque.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	_botao_ataque.offset_left = 16
+	_botao_ataque.offset_right = 236
+	_botao_ataque.offset_top = -190
+	_botao_ataque.offset_bottom = -100
+	_botao_ataque.visible = false
+	_botao_ataque.pressed.connect(_atacar)
+	area.add_child(_botao_ataque)
 	# Nome da prova e da pista no pé da corrida, logo acima das câmeras.
 	_nome_prova = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
 	_nome_prova.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -355,6 +394,34 @@ func _input(e: InputEvent) -> void:
 	if is_visible_in_tree() and ((e is InputEventScreenTouch and e.pressed) or (e is InputEventMouseButton and e.pressed)
 			or e is InputEventScreenDrag):
 		_acordar()
+	_pedal_toque(e)
+
+
+## O dedo na área da corrida é o pedal da pilotagem: apertar na marca é a
+## freada; manter apertado na saída da curva é a aceleração. (O toque também
+## chega como clique do mouse: o segundo aviso de apertar é ignorado.)
+func _pedal_toque(e: InputEvent) -> void:
+	if _pil.is_empty() or not _pil.get("ativa", false):
+		return
+	var apertou: bool
+	var pos: Vector2
+	if e is InputEventScreenTouch and e.index == 0:
+		apertou = e.pressed
+		pos = e.position
+	elif e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
+		apertou = e.pressed
+		pos = e.position
+	else:
+		return
+	if not apertou:
+		_segurando = false
+		return
+	if _segurando or not is_visible_in_tree() or not _area.visible or not _area.get_global_rect().has_point(pos):
+		return
+	if _botao_ataque.visible and _botao_ataque.get_global_rect().has_point(pos):
+		return
+	_segurando = true
+	_frear()
 
 
 func atualizar() -> void:
@@ -490,6 +557,7 @@ func _process(delta: float) -> void:
 	_recarregar_ordem(f, agora)
 	_procurar_momento(taxa)
 	_acompanhar_ordem(delta)
+	_pilotar(taxa)
 	var ordem := _visual.ordem()
 	_dirigir(ordem)
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
@@ -607,6 +675,16 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_em_curso = {}
 	_descartar_proximo()
 	_cartao.fechar()
+	_feitas = {}
+	_frenagem = {}
+	_na_curva = {}
+	_saida = {}
+	_ultimo_ataque = -INF
+	_s_antes_pil = 0.0
+	_versao_parcial = jogador.fila_ctrl.versao_parcial
+	_emenda_desde = -1.0
+	_pedal.esconder()
+	_botao_ataque.visible = false
 	_segurar = 0.0
 	_painel_hud.limpar_evento()
 	_painel_hud.secundario = 1.0
@@ -1016,7 +1094,8 @@ func _recarregar_ordem(f: Dictionary, agora: float) -> void:
 ## intervalo_s entre eles; nunca com conversa aberta, na chegada ou parado.
 func _procurar_momento(taxa: float) -> void:
 	var p: Dictionary = dados.simulacao().get("momentos", {})
-	if p.is_empty() or _resultado.is_empty() or _chegou:
+	# Com a pilotagem, o ATACAR na tela faz o papel dos cartões.
+	if p.is_empty() or _resultado.is_empty() or _chegou or _pil.get("ativa", false):
 		return
 	var agora := _visual.tempo
 	if _proximo.is_empty():
@@ -1144,6 +1223,152 @@ func _acompanhar_ordem(delta: float) -> void:
 				linha = "NEM %s ACERTOU DESTA VEZ" % ("A " + _nome_radio().to_upper())
 			_painel_hud.evento(linha, "QUASE!", Color.WHITE, 6, 2.4, true)
 		_em_curso = {}
+
+
+## Pilotagem por toques, a cada quadro: leva a corrida ao vivo até o instante
+## mostrado, emenda a corrida refeita pelo último toque e acompanha a curva à
+## frente (a régua FREIE), a saída (SEGURE) e o ATACAR.
+func _pilotar(taxa: float) -> void:
+	if not _pil.get("ativa", false) or _pista == null or _resultado.is_empty():
+		return
+	var t := _visual.tempo
+	jogador.fila_ctrl.acompanhar(t)
+	_emendar()
+	if _chegou or taxa <= 0.0 or _contagem > 0.0:
+		_pedal.esconder()
+		_botao_ataque.visible = false
+		return
+	var comp := _pista.comprimento
+	var s := _visual.distancia("jogador")
+	var s_volta := fposmod(s, comp)
+	# Saída da curva: começa ao cruzar o fim dela com o dedo na tela.
+	if not _na_curva.is_empty() and _s_antes_pil < float(_na_curva["fim"]) and s >= float(_na_curva["fim"]):
+		if _segurando and _na_curva["com_frenagem"] and _saida.is_empty():
+			var ate := t + Pilotagem.dura_saida(_pil)
+			if not _dar(Pilotagem.ordem_saida(Pilotagem.LIMPA, t, ate, _pil)).is_empty():
+				_saida = {"de": t, "ate": ate, "soltou": false}
+		_na_curva = {}
+	_s_antes_pil = s
+	var mostrou := false
+	if not _saida.is_empty():
+		if not _segurando and not _saida["soltou"]:
+			_saida["soltou"] = true
+			_dar(Pilotagem.ordem_saida(Pilotagem.SOLTOU, t, float(_saida["ate"]), _pil))
+			_nota(Pilotagem.SOLTOU)
+		var fr := (t - float(_saida["de"])) / maxf(float(_saida["ate"]) - float(_saida["de"]), 0.01)
+		if fr >= 1.0:
+			if not _saida["soltou"]:
+				_nota(Pilotagem.LIMPA)
+			_saida = {}
+		else:
+			_pedal.saida(fr, _segurando)
+			mostrou = true
+	# A curva à frente: a régua da frenagem até o carro entrar nela.
+	_frenagem = {}
+	var prox := Tatica.proxima(_tatica, s_volta, comp)
+	if not prox.is_empty():
+		var c: Dictionary = prox["curva"]
+		var inicio_abs := s + fposmod(float(c["inicio"]) - s_volta, comp)
+		if prox["estado"] == "na_curva":
+			inicio_abs = s - fposmod(s_volta - float(c["inicio"]), comp)
+		var chave := roundi(inicio_abs)
+		var com_frenagem := Pilotagem.tem_frenagem(c, comp, _pil)
+		var fim_abs := inicio_abs + fposmod(float(c["fim"]) - float(c["inicio"]), comp)
+		if prox["estado"] == "na_curva":
+			_feitas[chave] = _feitas.get(chave, "")
+			_na_curva = {"chave": chave, "fim": fim_abs, "com_frenagem": com_frenagem}
+		elif com_frenagem and not _feitas.has(chave):
+			var fren_abs := inicio_abs - fposmod(float(c["inicio"]) - float(c["frenagem"]), comp)
+			var t_fren := _visual.tempo_em("jogador", fren_abs)
+			var f: Dictionary = _pil["frenagem"]
+			if t_fren >= 0.0 and t_fren - t <= float(f["janela_s"]):
+				_frenagem = {"chave": chave, "t_frenagem": t_fren, "fim": fim_abs}
+				if not mostrou:
+					_pedal.frenagem(t_fren - t, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]))
+					mostrou = true
+				_dica_pilotagem()
+	if not mostrou:
+		_pedal.esconder()
+	# ATACAR: colado no carro da frente, com o ataque recarregado.
+	var ordem := _visual.ordem()
+	var i := ordem.find("jogador")
+	var d_frente := INF if i <= 0 else _visual.distancia(ordem[i - 1]) - s
+	_botao_ataque.visible = Pilotagem.pode_atacar(d_frente, t, _ultimo_ataque, _pil)
+
+
+## O toque na régua FREIE: a nota pelo atraso em relação ao ponto de frenagem.
+func _frear() -> void:
+	if _frenagem.is_empty():
+		return
+	var t := _visual.tempo
+	var nota := Pilotagem.nota_frenagem(t - float(_frenagem["t_frenagem"]), _pil)
+	var t_saida := _visual.tempo_em("jogador", float(_frenagem["fim"]))
+	if t_saida < 0.0:
+		t_saida = t + 5.0
+	if _dar(Pilotagem.ordem_frenagem(nota, t, t_saida, _pil)).is_empty():
+		return
+	_feitas[_frenagem["chave"]] = nota
+	_frenagem = {}
+	_pedal.esconder()
+	_nota(nota)
+
+
+func _atacar() -> void:
+	var t := _visual.tempo
+	if _dar(Pilotagem.ordem_ataque(t, _pil)).is_empty():
+		return
+	_ultimo_ataque = t
+	_botao_ataque.visible = false
+	_painel_hud.evento("ATAQUE!", "", COR_DESTAQUE, 7, 1.4, true)
+	_clarear(COR_DESTAQUE, 0.22)
+	_visual3d.acionar()
+	Sons.tocar_ui(self, "passagem", -6.0, 1.2)
+
+
+## A ordem vai para a corrida (Fila.pilotar); {} se a corrida ao vivo ainda não
+## chegou ao instante da tela (o toque não conta).
+func _dar(ordem: Dictionary) -> Dictionary:
+	return jogador.fila_ctrl.pilotar(ordem, _visual.tempo)
+
+
+func _nota(nota: String) -> void:
+	var boa := nota in [Pilotagem.PERFEITA, Pilotagem.LIMPA]
+	var ruim := nota in [Pilotagem.CEDO, Pilotagem.TARDE, Pilotagem.SOLTOU]
+	var cor := COR_DESTAQUE if boa else (Color(1.0, 0.45, 0.4) if ruim else Color.WHITE)
+	_painel_hud.evento(Pilotagem.TEXTOS[nota], "", cor, 6, 1.1, false, boa)
+	if boa:
+		_clarear(COR_DESTAQUE, 0.15)
+
+
+## A corrida refeita pelo último toque entra na tela a partir do toque, à
+## medida que a fila a resolve (igual à anterior até ali).
+func _emendar() -> void:
+	var vp: int = jogador.fila_ctrl.versao_parcial
+	if vp != _versao_parcial:
+		_versao_parcial = vp
+		_emenda_desde = -1.0
+		_emenda_i = 0
+	var r: Dictionary = jogador.fila_ctrl.parcial()
+	if r.is_empty():
+		return
+	if _emenda_desde < 0.0:
+		_emenda_desde = float(r["desde"])
+	var t := _visual.tempo
+	_emenda_i = _visual.emendar(r, _emenda_desde, _emenda_i)
+	_emenda_desde = _visual.duracao() + 1e-6
+	_visual.tempo = t
+
+
+## Nas primeiras corridas, a primeira régua da corrida vem com a explicação.
+func _dica_pilotagem() -> void:
+	var n := int(jogador.flags.get("PILOTAGEM_DICA", 0))
+	if n >= 3 or bool(_frenagem.get("dica", false)) or _feitas.size() > 1:
+		return
+	if jogador.flags.get("PILOTAGEM_DICA_SEMENTE", 0) == _semente_mostrada:
+		return
+	jogador.flags["PILOTAGEM_DICA_SEMENTE"] = _semente_mostrada
+	jogador.flags["PILOTAGEM_DICA"] = n + 1
+	_painel_hud.evento("TOQUE NA TELA NO FREIE", "E SEGURE ATÉ A SAÍDA DA CURVA", Color.WHITE, 9, 3.5, true)
 
 
 func _clarear(cor: Color, forca: float) -> void:

@@ -264,6 +264,53 @@ func test_ordem_so_vale_depois_de_comecar() -> void:
 	d.free()
 
 
+## Pilotagem por toques (decisão 127): a ordem dada no meio da corrida que
+## anda junto com a tela, numa cópia, dá o mesmo resultado que a corrida
+## refeita do zero com a ordem desde o começo.
+func test_ordem_no_meio_igual_a_refazer_do_zero() -> void:
+	var d := dados_fixture()
+	var a := _participante(d, "a", "forte", "erratico")
+	var b := _participante(d, "b", "forte", "erratico")
+	var ordens := [{"de": 20.0, "ate": 30.0, "ritmo": 1.04, "acel": 1.1},
+			{"de": 25.0, "ate": 40.0, "ritmo": 0.97, "agressividade": 1.0}]
+	var b2: Dictionary = b.duplicate(true)
+	b2["piloto"] = b["piloto"].duplicate()
+	b2["piloto"]["ordens"] = ordens
+	var do_zero := _correr(d, "oval", [a, b2], 4, 11)
+	var vivo := Simulacao.iniciar(d.pista("oval"), [a, b], 4, d.simulacao(), 11)
+	verificar(vivo.avancar_ate(20.0) and not vivo.pronto(), "para no instante pedido")
+	var dada: Dictionary = vivo.ordenar("b", ordens[0])
+	perto(float(dada["de"]), 20.0, 0.051, "a ordem vale a partir de agora")
+	var copia := vivo.clonar()
+	copia.avancar_ate(25.0)
+	copia.ordenar("b", ordens[1])
+	copia.avancar(INF)
+	vivo.avancar(INF)
+	var r := copia.resultado()
+	igual(r["classificacao"], do_zero["classificacao"], "mesma classificação")
+	perto(float(r["carros"]["b"]["tempo_total"]), float(do_zero["carros"]["b"]["tempo_total"]), 1e-9, "mesmo tempo")
+	igual(r["amostras"].size(), do_zero["amostras"].size(), "mesmas amostras")
+	igual(r["amostras"].back()["s"], do_zero["amostras"].back()["s"], "mesma chegada")
+	# A original termina sozinha (a cópia não mexe nela).
+	verificar(vivo.pronto(), "a original segue depois da cópia")
+	d.free()
+
+
+## Ordens sobrepostas somam: duas de ritmo 1.03 valem como uma de 1.03².
+func test_ordens_sobrepostas_somam() -> void:
+	var d := dados_fixture()
+	var b := _participante(d, "b", "forte", "perfeito")
+	var duas: Dictionary = b.duplicate(true)
+	duas["piloto"] = b["piloto"].duplicate()
+	duas["piloto"]["ordens"] = [{"de": 5.0, "ate": 50.0, "ritmo": 1.03}, {"de": 5.0, "ate": 50.0, "ritmo": 1.03}]
+	var uma: Dictionary = b.duplicate(true)
+	uma["piloto"] = b["piloto"].duplicate()
+	uma["piloto"]["ordens"] = [{"de": 5.0, "ate": 50.0, "ritmo": 1.03 * 1.03}]
+	perto(float(_correr(d, "oval", [duas], 3, 5)["carros"]["b"]["tempo_total"]),
+			float(_correr(d, "oval", [uma], 3, 5)["carros"]["b"]["tempo_total"]), 1e-6, "efeito somado")
+	d.free()
+
+
 ## Momentos de decisão: a escolha "vence" quando muda o duelo no fim da ordem,
 ## e o instante mostrado é o da ultrapassagem (ataque).
 func test_momento_avaliar_duelo() -> void:

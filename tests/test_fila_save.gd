@@ -445,6 +445,41 @@ func test_ordem_refaz_a_corrida_e_fica_na_fila() -> void:
 	d.free()
 
 
+## Pilotagem por toques (decisão 127): os toques no meio da corrida ao vivo
+## ficam na fila; a tela emenda a corrida refeita enquanto ela termina, e a
+## corrida aplicada (como com o jogo fechado) é a mesma que sairia do zero com
+## as ordens gravadas.
+func test_pilotar_no_meio_vale_como_do_zero() -> void:
+	var d := dados_fixture()
+	var j := _jogador(d)
+	var f := _fila(d, j)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("forte"))
+	igual(f.iniciar("aberto", uid, 1, 0.0), "", "iniciar")
+	f.corrida_atual(0.0)
+	igual(f.pilotar({"de": 5.0, "ate": 9.0, "ritmo": 1.04}, 5.0), {}, "sem a corrida ao vivo no instante, o toque não conta")
+	f.acompanhar(5.0, INF)
+	verificar(f.ao_vivo(5.0), "corrida ao vivo chegou à tela")
+	var a1 := f.pilotar({"de": 5.0, "ate": 9.0, "ritmo": 1.04}, 5.0)
+	verificar(not a1.is_empty(), "toque valeu")
+	var parcial := f.parcial()
+	verificar(not parcial.is_empty() and float(parcial["desde"]) >= 5.0, "a tela recebe a parte já refeita")
+	f.acompanhar(12.0, INF)
+	verificar(not f.pilotar({"de": 12.0, "ate": 14.0, "acel": 1.08}, 12.0).is_empty(), "segundo toque")
+	igual(j.fila["piloto"]["ordens"].size(), 2, "as ordens ficam na fila (valem com o jogo fechado)")
+	while not f.avancar_preparo(1.0):
+		pass
+	var vivo: Dictionary = f.corrida_atual(20.0)["resultado"]
+	# Do zero, com as ordens gravadas: a mesma corrida.
+	var k := f._chave(j.fila)
+	var zero: Dictionary = f.carreira.preparar("aberto", uid, int(j.fila["semente"]), true, k["carro"], k["comp"],
+			k["piloto"])["resultado"]
+	igual(vivo["classificacao"], zero["classificacao"], "mesma classificação")
+	perto(float(vivo["carros"]["jogador"]["tempo_total"]), float(zero["carros"]["jogador"]["tempo_total"]), 1e-9,
+			"mesmo tempo")
+	j.free()
+	d.free()
+
+
 ## Momento previsto (Fila.prever): a corrida refeita com cada escolha sai aos
 ## poucos; escolhida, vale na hora e é a mesma que a fila faria do zero.
 func test_ordem_prevista_vale_na_hora() -> void:

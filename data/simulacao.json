@@ -30,5 +30,13 @@
 			"defender": {"tipo": "defesa", "atraso_s": 1.0, "dura_s": 8.0, "ritmo": 1.005},
 			"poupar": {"tipo": "defesa", "atraso_s": 9.0, "dura_s": 24.0, "ritmo": 1.003}
 		}
+	},
+	"pilotagem": {
+		"_nota": "Pilotagem por toques (decisão 127, Pilotagem). Valores provisórios até a calibração por tools/calibrar_pilotagem.gd com o critério que o usuário decidir. frenagem: tolerâncias do toque em relação ao ponto de frenagem (s), curva com frenagem a partir de minimo_m, janela_s antes do ponto em que o toque vale, ritmo de cada nota do toque até a saída da curva. saida: dura_s de saída de curva, aceleração de cada nota. ataque: como a escolha 'atacar' dos momentos (ritmo, agressividade, dura_s), a distância do rival e a recarga.",
+		"ativa": true,
+		"frenagem": {"janela_s": 1.5, "perfeita_s": 0.15, "boa_s": 0.35, "minimo_m": 15.0,
+			"ritmo": {"perfeita": 1.03, "boa": 1.015, "cedo": 0.985, "tarde": 0.96}},
+		"saida": {"dura_s": 2.0, "acel": {"limpa": 1.08, "soltou": 0.92}},
+		"ataque": {"distancia_m": 20.0, "recarga_s": 12.0, "dura_s": 6.0, "ritmo": 1.005, "agressividade": 1.0}
 	}
 }

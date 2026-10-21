@@ -207,6 +207,8 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `PAINT_TUTORIAL_SEEN` | cena CW_PT01 |
 | `PATROCINIO_INTRO` | cena CW_S00 |
 | `PATROCINIO_LIBERADO` | cena CW_S00 |
+| `PILOTAGEM_DICA` | ui/aba_corrida.gd |
+| `PILOTAGEM_DICA_SEMENTE` | ui/aba_corrida.gd |
 | `PILOT_HIRED` | condição de CW_P03C |
 | `PILOT_MET` | cena CW_P03D |
 | `PRIMEIRO_PILOTO_CONTRATADO` | data_model/equipe_jogador.gd |

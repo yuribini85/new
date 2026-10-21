@@ -23,10 +23,13 @@ const PARAMS := [
 
 ## participantes: em ordem de grid, cada um
 ##   {"id": String, "atributos": Carro.atributos_efetivos(), "piloto": {ritmo, consistencia, agressividade}}
-## O piloto pode trazer "ordens" (momentos de decisão, decisão 117): lista de
-## {"de": s, "ate": s, "ritmo": fator, "agressividade": 0..1 ou -1}; dentro da
-## janela o envelope do carro é multiplicado por "ritmo" e, se >= 0, a
-## agressividade vale a da ordem. Antes de "de" a corrida é idêntica à sem ordem.
+## O piloto pode trazer "ordens" (momentos de decisão, decisão 117, e a
+## pilotagem por toques, decisão 127): lista de {"de": s, "ate": s, "ritmo":
+## fator, "agressividade": 0..1 ou -1, "acel": fator}; dentro da janela o
+## envelope do carro é multiplicado por "ritmo", a aceleração por "acel" e, se
+## >= 0, a agressividade vale a da ordem. Ordens que se sobrepõem somam o efeito
+## (ritmos e acel multiplicam; vale a maior agressividade). Antes de "de" a
+## corrida é idêntica à sem ordem.
 ## Retorna {"classificacao", "carros", "amostras", "comprimento", "duracao"}.
 ## com_amostras = false (offline) guarda só a amostra final; o resultado é o mesmo.
 ## v_inicial_ms > 0: largada lançada (o grid já parte nessa velocidade).
@@ -78,7 +81,9 @@ class Andamento:
 	var _massa_arr := PackedFloat64Array()
 	var _forcas := []  # força motriz por faixa de velocidade (vazio: potência/v)
 	var _lim_arr := PackedFloat64Array()  # limite de velocidade de cada carro neste passo
-	var _ordens := []  # por carro: [[de, ate, ritmo, agressividade], ...] (quase sempre vazio)
+	var _ordens := []  # por carro: [[de, ate, ritmo, agressividade, acel], ...] por "de" (quase sempre vazio)
+	## Por carro, a primeira ordem que ainda pode valer (as de antes já acabaram).
+	var _cursor_ordens := PackedInt32Array()
 	var _envs := []
 	var _ativos: Array[int] = []
 	var _amostras := []
@@ -91,6 +96,8 @@ class Andamento:
 
 	func _init(pista: Pista, participantes: Array, voltas: int, params: Dictionary, semente: int,
 			com_amostras: bool, v_inicial_ms: float) -> void:
+		if pista == null:
+			return  # clonar() preenche
 		_rng.seed = semente
 		_voltas = voltas
 		_com_amostras = com_amostras
@@ -135,8 +142,8 @@ class Andamento:
 			}
 			var ordens := []
 			for o in piloto.get("ordens", []):
-				ordens.append([float(o["de"]), float(o["ate"]), float(o.get("ritmo", 1.0)),
-						float(o.get("agressividade", -1.0))])
+				ordens.append(Simulacao._ordem_interna(o))
+			ordens.sort_custom(func(x, y): return x[0] < y[0])
 			c["ordens"] = ordens
 			# O ruído de cada volta sai do gerador agora, na ordem de sempre; o
 			# envelope (sem sorteio) fica para avancar(), que pode ser fatiado.
@@ -159,6 +166,7 @@ class Andamento:
 			_lim_arr.append(0.0)
 			_envs.append(c["envelopes"])
 			_ordens.append(c["ordens"])
+			_cursor_ordens.append(0)
 		# Índices dos carros ainda correndo, mantidos em ordem de corrida.
 		for k in _carros.size():
 			_ativos.append(k)
@@ -167,6 +175,12 @@ class Andamento:
 	## Um envelope ou PASSOS_POR_CONFERENCIA passos podem passar um pouco do
 	## orçamento; 0 dá a menor fatia possível.
 	func avancar(orcamento_ms: float) -> bool:
+		return avancar_ate(INF, orcamento_ms) and _pronto
+
+	## Avança só até o instante `alvo` (o último passo começa antes dele) ou até
+	## gastar o orçamento. true = chegou ao alvo ou terminou. A corrida que anda
+	## junto com a tela (Fila, pilotagem) para aqui para receber ordens novas.
+	func avancar_ate(alvo: float, orcamento_ms: float = INF) -> bool:
 		if _pronto:
 			return true
 		var sem_limite := is_inf(orcamento_ms)
@@ -202,13 +216,14 @@ class Andamento:
 		var lim_arr := _lim_arr
 		var envs := _envs
 		var ordens := _ordens
+		var cursor_ordens := _cursor_ordens
 		var ativos := _ativos
 		var rng := _rng
 		var t := _t
 		var contagem := 0
 		var esgotou := false
 
-		while t < tempo_max and not ativos.is_empty():
+		while t < tempo_max and not ativos.is_empty() and t < alvo:
 			if not sem_limite:
 				contagem += 1
 				if contagem > PASSOS_POR_CONFERENCIA:
@@ -240,13 +255,17 @@ class Andamento:
 				var i := int(fposmod(s_antes, comprimento) / passo) % n
 				var env: PackedFloat64Array = envs[idx][volta]
 				var limite := minf(env[i], env[(i + 1) % n])
-				var ordem: Array = Simulacao._ordem_ativa(ordens[idx], t)
+				# [ritmo, agressividade, acel] das ordens valendo agora; [] sem nenhuma.
+				var ordem: Array = [] if ordens[idx].is_empty() \
+						else Simulacao._efeito_ordens(ordens[idx], cursor_ordens, idx, t)
 				if not ordem.is_empty():
-					limite *= ordem[2]
+					limite *= ordem[0]
 				var v := v_arr[idx]
 				var acel := acel_arr[idx]
 				if v > 0.0:
 					acel = Simulacao._acel_livre(acel, pot_arr[idx], massa_arr[idx], v, k_arrasto, forcas[idx])
+				if not ordem.is_empty() and acel > 0.0:
+					acel *= ordem[2]
 				var v_novo := clampf(v + acel * dt, 0.0, limite)
 				var s_novo := s_antes + (v + v_novo) * 0.5 * dt
 				lim_arr[idx] = limite
@@ -262,8 +281,8 @@ class Andamento:
 							> Simulacao._acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto,
 									forcas[frente]) + 0.01
 					var agr := float(carros[idx]["agressividade"])
-					if not ordem.is_empty() and ordem[3] >= 0.0:
-						carros[idx]["agressividade"] = ordem[3]
+					if not ordem.is_empty() and ordem[1] >= 0.0:
+						carros[idx]["agressividade"] = ordem[1]
 					var passa := Simulacao._pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng)
 					carros[idx]["agressividade"] = agr
 					if not passa:
@@ -283,10 +302,13 @@ class Andamento:
 		_s_arr = s_arr
 		_v_arr = v_arr
 		_lim_arr = lim_arr
+		_cursor_ordens = cursor_ordens
 		_ativos = ativos
 		_t = t
 		if esgotou:
 			return false
+		if t < tempo_max and not ativos.is_empty():
+			return true  # chegou ao alvo; a corrida segue depois
 		_concluir()
 		return true
 
@@ -311,6 +333,72 @@ class Andamento:
 
 	func pronto() -> bool:
 		return _pronto
+
+	## Instante da corrida até onde já foi resolvida.
+	func tempo() -> float:
+		return _t
+
+	## O que já foi resolvido, no formato do resultado (a tela mostra a corrida
+	## refeita por um toque enquanto ela termina): amostras até agora, quem já
+	## terminou e "duracao" = até onde chegou.
+	func parcial() -> Dictionary:
+		if _pronto:
+			return _resultado
+		return {"amostras": _amostras, "carros": Simulacao._resumo(_carros), "comprimento": _comprimento,
+				"voltas": _voltas, "duracao": _t}
+
+	## Ordem nova para o carro `id` (o formato do piloto). Vale a partir do
+	## instante atual: "de" anterior vira o agora. Dali em diante a corrida é a
+	## mesma que sairia do zero com a ordem (devolvida) desde o começo.
+	func ordenar(id: String, ordem: Dictionary) -> Dictionary:
+		var o := ordem.duplicate()
+		o["de"] = maxf(float(o["de"]), _t)
+		for k in _carros.size():
+			if _carros[k]["id"] == id:
+				var lista: Array = _ordens[k]
+				var nova := Simulacao._ordem_interna(o)
+				var pos := lista.size()
+				while pos > 0 and lista[pos - 1][0] > nova[0]:
+					pos -= 1
+				lista.insert(pos, nova)
+				_cursor_ordens[k] = mini(_cursor_ordens[k], pos)
+		return o
+
+	## Cópia independente no mesmo instante: segue sozinha, com o mesmo sorteio
+	## (a corrida e a cópia, com as mesmas ordens, terminam iguais). Os envelopes
+	## já calculados são só lidos e ficam compartilhados.
+	func clonar() -> Andamento:
+		var a := Andamento.new(null, [], 0, {}, 0, false, 0.0)
+		a._rng.seed = _rng.seed
+		a._rng.state = _rng.state
+		for campo in ["_comprimento", "_n", "_passo", "_dt", "_k_arrasto", "_dmin", "_voltas", "_com_amostras",
+				"_raios", "_zonas", "_calculados", "_forcas", "_proxima_amostra", "_t", "_tempo_max", "_amostra_dt",
+				"_pronto", "_resultado"]:
+			a.set(campo, get(campo))
+		a._s_arr = _s_arr.duplicate()
+		a._v_arr = _v_arr.duplicate()
+		a._acel_arr = _acel_arr.duplicate()
+		a._pot_arr = _pot_arr.duplicate()
+		a._massa_arr = _massa_arr.duplicate()
+		a._lim_arr = _lim_arr.duplicate()
+		a._cursor_ordens = _cursor_ordens.duplicate()
+		a._ativos = _ativos.duplicate()
+		a._amostras = _amostras.duplicate()
+		var mapa := {}
+		for c in _carros:
+			var c2: Dictionary = c.duplicate()
+			c2["voltas"] = c["voltas"].duplicate()
+			c2["rolagens"] = c["rolagens"].duplicate()
+			c2["ordens"] = c["ordens"].map(func(o): return o.duplicate())
+			c2["envelopes"] = c.get("envelopes", []).duplicate()
+			mapa[c] = c2
+			a._carros.append(c2)
+			a._ordens.append(c2["ordens"])
+			a._envs.append(c2["envelopes"])
+		# Envelopes ainda por calcular: a cópia calcula os dela.
+		for e in _por_calcular:
+			a._por_calcular.append(null if e == null else [mapa[e[0]], e[1], e[2], e[3], e[4]])
+		return a
 
 	## O resultado de `correr`; {} enquanto não terminou.
 	func resultado() -> Dictionary:
@@ -342,12 +430,35 @@ static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio:
 	return env
 
 
-## A ordem do carro valendo no instante t ([] sem nenhuma).
-static func _ordem_ativa(ordens: Array, t: float) -> Array:
-	for o in ordens:
-		if t >= o[0] and t < o[1]:
-			return o
-	return []
+## Ordem do piloto (dicionário) no formato do laço: [de, ate, ritmo, agressividade, acel].
+static func _ordem_interna(o: Dictionary) -> Array:
+	return [float(o["de"]), float(o["ate"]), float(o.get("ritmo", 1.0)), float(o.get("agressividade", -1.0)),
+			float(o.get("acel", 1.0))]
+
+
+## Efeito das ordens do carro `idx` valendo no instante t: [ritmo, agressividade,
+## acel] (sobrepostas somam: ritmos e acel multiplicam, vale a maior
+## agressividade), ou [] sem nenhuma. As ordens estão por "de" e o tempo só
+## anda: o cursor pula as que já acabaram.
+static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t: float) -> Array:
+	var k := cursor[idx]
+	while k < ordens.size() and ordens[k][1] <= t:
+		k += 1
+	cursor[idx] = k
+	var ritmo := 1.0
+	var agr := -1.0
+	var acel := 1.0
+	var alguma := false
+	for j in range(k, ordens.size()):
+		var o: Array = ordens[j]
+		if o[0] > t:
+			break
+		if t < o[1]:
+			alguma = true
+			ritmo *= o[2]
+			agr = maxf(agr, o[3])
+			acel *= o[4]
+	return [ritmo, agr, acel] if alguma else []
 
 
 ## Na entrada de cada zona, uma vez por volta, a agressividade decide se o

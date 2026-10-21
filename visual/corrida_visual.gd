@@ -60,16 +60,71 @@ func _init() -> void:
 	resized.connect(_enquadrar)
 
 
-## cores: id -> Color. Ids sem cor ganham uma derivada do id.
 ## Troca as amostras pelas de outro resultado da mesma corrida (refeita com
-## uma ordem do jogador), mantendo pista e cores.
+## uma ordem do jogador), mantendo pista, cores e os carros na tela.
 func trocar_resultado(resultado: Dictionary) -> void:
-	mostrar(_pista, resultado, _cores)
+	if _pista == null or not _mesmos_carros(resultado):
+		mostrar(_pista, resultado, _cores)
+		return
+	_carregar(resultado)
+	_posicionar()
 
 
+## Pilotagem (Fila.parcial): troca as amostras a partir do instante `desde`
+## pelas do resultado (completo ou parcial, ainda sendo resolvido); antes dele
+## fica tudo igual. Chamada a cada quadro enquanto a corrida refeita avança:
+## `inicio` é a amostra do resultado por onde continuar (o retorno da chamada
+## anterior), para não percorrer tudo de novo.
+func emendar(resultado: Dictionary, desde: float, inicio := 0) -> int:
+	var amostras: Array = resultado["amostras"]
+	if _pista == null or _tempos.is_empty():
+		return amostras.size()
+	var i := _tempos.bsearch(desde)
+	_tempos.resize(i)
+	for id in _s:
+		_s[id].resize(i)
+	for k in range(inicio, amostras.size()):
+		var a: Dictionary = amostras[k]
+		if float(a["t"]) < desde:
+			continue
+		_tempos.append(a["t"])
+		for id in _s:
+			_s[id].append(a["s"].get(id, _s[id][-1] if not _s[id].is_empty() else 0.0))
+	_calcular_chegada(resultado)
+	_posicionar()
+	return amostras.size()
+
+
+func _mesmos_carros(resultado: Dictionary) -> bool:
+	var amostras: Array = resultado.get("amostras", [])
+	return not amostras.is_empty() and amostras[0]["s"].size() == _s.size() \
+			and amostras[0]["s"].keys().all(func(id): return _s.has(id))
+
+
+## cores: id -> Color. Ids sem cor ganham uma derivada do id.
 func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> void:
 	_pista = pista
-	_fim = float(resultado.get("comprimento", pista.comprimento)) * int(resultado.get("voltas", 0))
+	_carregar(resultado)
+	for c in _carros.get_children():
+		c.queue_free()
+	_sprites = {}
+	_cores = {}
+	var ids: Array = _s.keys()
+	ids.sort_custom(func(a, b): return a == "jogador" or (b != "jogador" and a < b))
+	for i in ids.size():
+		var id: String = ids[i]
+		var sp := CarroSprite.new()
+		sp.escala = escala_carro
+		sp.cor = cores.get(id, PALETA[i % PALETA.size()])
+		sp.destaque = id == "jogador"
+		_cores[id] = sp.cor
+		_carros.add_child(sp)
+		_sprites[id] = sp
+	_enquadrar()
+
+
+func _carregar(resultado: Dictionary) -> void:
+	_fim = float(resultado.get("comprimento", _pista.comprimento)) * int(resultado.get("voltas", 0))
 	_tempos = PackedFloat64Array()
 	_s = {}
 	for a in resultado["amostras"]:
@@ -78,6 +133,10 @@ func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> voi
 			if not _s.has(id):
 				_s[id] = PackedFloat64Array()
 			_s[id].append(a["s"][id])
+	_calcular_chegada(resultado)
+
+
+func _calcular_chegada(resultado: Dictionary) -> void:
 	_chegada = {}
 	for id in resultado.get("carros", {}):
 		var info: Dictionary = resultado["carros"][id]
@@ -99,22 +158,6 @@ func mostrar(pista: Pista, resultado: Dictionary, cores: Dictionary = {}) -> voi
 			c["a"] = maxf(DESACELERACAO_CHEGADA, v * v / (2.0 * folga))
 			para = c["s"] + v * v / (2.0 * float(c["a"]))
 		limite = para
-	for c in _carros.get_children():
-		c.queue_free()
-	_sprites = {}
-	_cores = {}
-	var ids: Array = _s.keys()
-	ids.sort_custom(func(a, b): return a == "jogador" or (b != "jogador" and a < b))
-	for i in ids.size():
-		var id: String = ids[i]
-		var sp := CarroSprite.new()
-		sp.escala = escala_carro
-		sp.cor = cores.get(id, PALETA[i % PALETA.size()])
-		sp.destaque = id == "jogador"
-		_cores[id] = sp.cor
-		_carros.add_child(sp)
-		_sprites[id] = sp
-	_enquadrar()
 
 
 func limpar() -> void:

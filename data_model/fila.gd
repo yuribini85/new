@@ -41,6 +41,12 @@ var versao := 0
 ## a escolha muda o duelo e, escolhida, trocar o resultado na hora.
 ## id -> {chave, ordem, preparo} ou {chave, ordem, resultado}.
 var _previsoes := {}
+## Pilotagem por toques (decisão 127): a corrida em andamento resolvida junto
+## com a tela, até o instante mostrado, com todas as ordens do jogador. Um toque
+## vira ordem nela e numa cópia, que resolve o resto da corrida aos poucos
+## (_pendente, com "parcial": a tela já mostra o que a cópia resolveu).
+## {base: prova|carro|semente, preparo} ou {}.
+var _vivo := {}
 
 
 func _init(carreira_: Carreira, jogador_: Node, teto_offline_s_: float) -> void:
@@ -201,6 +207,7 @@ func ordenar(ordem: Dictionary) -> void:
 	var f: Dictionary = jogador.fila
 	if f.is_empty():
 		return
+	_vivo = {}  # remontada com a ordem nova
 	f["piloto"] = _com_ordem(f, ordem)
 	# Já prevista (o momento foi resolvido antes de aparecer): vale na hora.
 	var k := _chave(f)
@@ -212,6 +219,78 @@ func ordenar(ordem: Dictionary) -> void:
 			break
 	_previsoes = {}
 	pronta()
+
+
+## Pilotagem: leva a corrida ao vivo até o instante `t` da tela (montando-a
+## na primeira vez ou numa corrida nova). Gasta até `orcamento_ms`.
+func acompanhar(t: float, orcamento_ms: float = FATIA_MS) -> void:
+	var f: Dictionary = jogador.fila
+	if f.is_empty():
+		_vivo = {}
+		return
+	var base := _base(f)
+	if _vivo.get("base", "") != base:
+		var k := _chave(f)
+		if k.is_empty():
+			return
+		var p := carreira.iniciar_preparo(f["evento_id"], int(f["uid"]), int(f["semente"]), true,
+				k["carro"], k["comp"], k["piloto"])
+		if p.has("erro"):
+			return
+		_vivo = {"base": base, "preparo": p}
+	_vivo["preparo"]["andamento"].avancar_ate(t, orcamento_ms)
+
+
+## A corrida ao vivo já chegou (perto) do instante `t`: um toque agora vale.
+func ao_vivo(t: float) -> bool:
+	return not _vivo.is_empty() and _vivo["base"] == _base(jogador.fila) \
+			and _vivo["preparo"]["andamento"].tempo() >= t - 0.5
+
+
+## Pilotagem: a ordem do toque (formato do piloto) entra na corrida ao vivo e
+## na fila (vale também com o jogo fechado); uma cópia resolve o resto da
+## corrida aos poucos e a tela mostra o que ela já resolveu (parcial). Devolve a
+## ordem como valeu ("de" pode andar até o instante da corrida ao vivo) ou {}
+## se a corrida ao vivo ainda não chegou ao instante da tela.
+func pilotar(ordem: Dictionary, t: float) -> Dictionary:
+	var f: Dictionary = jogador.fila
+	if f.is_empty() or not ao_vivo(t):
+		return {}
+	var a: Simulacao.Andamento = _vivo["preparo"]["andamento"]
+	if a.pronto():
+		return {}
+	a.avancar_ate(maxf(t, float(ordem["de"])))
+	var dada: Dictionary = a.ordenar("jogador", ordem)
+	f["piloto"] = _com_ordem(f, dada)
+	var k := _chave(f)
+	var p: Dictionary = _vivo["preparo"].duplicate()
+	p["andamento"] = a.clonar()
+	_pendente = {"chave": k["chave"], "preparo": p, "parcial": true, "desde": float(dada["de"])}
+	_previsoes = {}
+	versao_parcial += 1
+	return dada
+
+
+## Sobe a cada toque (a tela começa a emendar a corrida refeita).
+var versao_parcial := 0
+
+
+## O que a cópia do último toque já resolveu: {amostras, carros, comprimento,
+## voltas, duracao (até onde chegou), desde (a partir de quando mudou)}, ou {}
+## sem cópia em andamento.
+func parcial() -> Dictionary:
+	if _pendente.is_empty() or not _pendente.get("parcial", false):
+		return {}
+	var r: Dictionary = _pendente["preparo"]["andamento"].parcial()
+	r["desde"] = _pendente["desde"]
+	return r
+
+
+## Prova, carro e semente: a mesma corrida, com quaisquer ordens.
+func _base(f: Dictionary) -> String:
+	if f.is_empty():
+		return ""
+	return "%s|%d|%d" % [f["evento_id"], int(f["uid"]), int(f["semente"])]
 
 
 ## Faz a corrida em andamento terminar agora (botão de teste da demo).
@@ -430,7 +509,11 @@ func _chave(f: Dictionary) -> Dictionary:
 	if comp != null:
 		assinatura += str(comp.atributos_efetivos("seco")) + str(comp.atributos_efetivos("chuva"))
 	var piloto: Dictionary = f.get("piloto", {}) if f.get("piloto") is Dictionary else {}
-	assinatura += str(piloto)
+	# As ordens da pilotagem são centenas: entram pelo hash (a chave é montada a
+	# cada quadro).
+	var sem_ordens := piloto.duplicate()
+	sem_ordens.erase("ordens")
+	assinatura += str(sem_ordens) + "|o%d:%d" % [piloto.get("ordens", []).size(), hash(piloto.get("ordens", []))]
 	return {"chave": "%s|%d|%d|%s" % [f["evento_id"], int(f["uid"]), int(f["semente"]), assinatura],
 			"carro": carro, "comp": comp, "piloto": piloto}
 
