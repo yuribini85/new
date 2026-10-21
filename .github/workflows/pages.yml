@@ -66,6 +66,29 @@ jobs:
           sed -i "s/__VERSAO__/$v/" build/web/index.html
           grep -q "var v = '$v'" build/web/index.html
 
+      # APK Android para os testes (decisão 127): o mesmo jogo como app nativo,
+      # bem mais leve que a web em celular de entrada. Assinado com a chave de
+      # teste do repositório (android/LEIA-ME.md), não com a do Google Play.
+      # Se falhar, a demo web segue publicada.
+      - name: Exportar APK Android
+        id: apk
+        continue-on-error: true
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ github.workspace }}/android/teste.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: teste
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: chromewreckage
+        run: |
+          mkdir -p build/android ~/.config/godot
+          sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          jdk="${JAVA_HOME_17_X64:-$JAVA_HOME}"
+          for f in ~/.config/godot/editor_settings-4.4.tres ~/.config/godot/editor_settings-4.tres; do
+            printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' "$sdk" "$jdk" > "$f"
+          done
+          sed -i "s/^version\/code=1$/version\/code=${{ github.run_number }}/" export_presets.cfg
+          godot --headless --export-release "Android" build/android/chrome-wreckage.apk
+          test -f build/android/chrome-wreckage.apk
+          ls -la build/android
+
       # O site oficial (site/) fica na raiz do Pages e a demo do jogo em /demo/.
       - name: Montar site e demo
         run: |
@@ -75,6 +98,8 @@ jobs:
           cp -r build/web build/pages/demo
           test -f build/pages/index.html
           test -f build/pages/demo/index.pck
+          # O APK de teste fica em /demo/chrome-wreckage.apk (quando a exportação deu certo).
+          if [ -f build/android/chrome-wreckage.apk ]; then cp build/android/chrome-wreckage.apk build/pages/demo/; fi
 
       - uses: actions/upload-pages-artifact@v3
         with:
