@@ -127,3 +127,20 @@ jogar de verdade. O jogo tem 249 falas no total.
 - Amostra: incluir testadores adultos do público-alvo no teste do protótipo.
 - Cartões: sem frase de personalidade (mais leitura era uma reclamação); só selos e identidade
   visual.
+
+## Andamento
+
+- **Fase 0, APK:** exportado no CI a cada envio e publicado em `/demo/chrome-wreckage.apk` do
+  site (105 MB, armeabi-v7a e arm64-v8a, chave só de teste em `android/`). O Android exige a
+  compressão de textura ETC2/ASTC, agora ligada no projeto.
+- **Fase 0, medição e qualidade automática** (`ui/desempenho.gd`): nos builds de teste, aparelho,
+  tempo de abertura e quadros por segundo por tela (média e pior segundo) nas Configurações e em
+  `user://desempenho.json`. Em todos os builds, com 3D na tela e média abaixo de 85% da meta (30)
+  por 8 s, os efeitos leves ligam sozinhos uma vez (3D a 75% da resolução) e o jogo avisa.
+  Pendente: pacote menor (artes de tela no tamanho da tela, carregar cenários sob demanda).
+- **Fase 1, diálogos:** primeiros 15 min de 620 para 225 palavras; o jogo de 249 para 148 falas;
+  no máximo 2 falas de personagem por cena (a abertura tem 4); uma frase por fala do tutorial.
+- **Fase 1, cartões:** a cor de fábrica caía no branco em todos os carros (o manifesto de cores
+  era da frota antiga); agora é a primeira cor forte da paleta do modelo. Loja e garagem com fundo
+  e faixa na cor do carro, logo da loja da marca, selo de categoria e losangos de raridade
+  (quartis de preço da frota). Pendente: pintura, número e apelido nos demais cartões.
