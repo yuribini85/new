@@ -1344,9 +1344,10 @@ func raridade(base: Dictionary) -> int:
 	return r
 
 
-## Fileira do topo do cartão: logo da loja da marca à esquerda; à direita o selo
-## de categoria e os losangos de raridade.
-func faixa_marca(base: Dictionary, altura := 36.0) -> HBoxContainer:
+## Fileira do topo do cartão: logo da loja da marca à esquerda (e o número de
+## corrida do carro do jogador, se tiver); à direita o selo de categoria e os
+## losangos de raridade.
+func faixa_marca(base: Dictionary, altura := 36.0, numero := -1) -> HBoxContainer:
 	var h := HBoxContainer.new()
 	h.custom_minimum_size = Vector2(0, altura)
 	h.add_theme_constant_override("separation", 4)
@@ -1360,6 +1361,13 @@ func faixa_marca(base: Dictionary, altura := 36.0) -> HBoxContainer:
 	logo.modulate = Color(1, 1, 1, 0.85)
 	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(logo)
+	if numero >= 0:
+		var num := Label.new()
+		num.text = "#%d" % numero
+		Tipografia.numero(num, 26)
+		num.add_theme_color_override("font_color", Color.WHITE)
+		num.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(num)
 	var vao := Control.new()
 	vao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vao.mouse_filter = Control.MOUSE_FILTER_IGNORE

@@ -140,7 +140,7 @@ func _faixa_escalacao(atual: Carro) -> Control:
 		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		v.add_child(t)
 		var n := Label.new()
-		n.text = nome_curto(car.base["nome"]) if car != null else "escalar carro"
+		n.text = nome_curto(car.nome_mostrado()) if car != null else "escalar carro"
 		Tipografia.rotulo(n, "medium", 20)
 		n.add_theme_color_override("font_color", Color.WHITE if car != null else Color(0.6, 0.6, 0.62))
 		n.clip_text = true
@@ -194,7 +194,7 @@ func _escolher_vaga(vaga: String) -> void:
 			img.custom_minimum_size = Vector2(0, 96)
 			v.add_child(img)
 			var l := Label.new()
-			l.text = nome_curto(car.base["nome"])
+			l.text = nome_curto(car.nome_mostrado())
 			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			Tipografia.rotulo(l, "medium", 20)
 			l.clip_text = true
@@ -346,14 +346,14 @@ func _palco(c: Carro, lista: Array) -> Control:
 	diag.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	diag.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	linha_nome.add_child(diag)
-	var nome_carro := _hud_rotulo(c.base["nome"], 0, Color.WHITE, linha_nome)
+	var nome_carro := _hud_rotulo(c.nome_mostrado(), 0, Color.WHITE, linha_nome)
 	# Nome longo: a fonte diminui até caber ao lado das abas (depois, "…").
 	var livre := 720.0 - 2.0 * MARGEM_LATERAL - 40.0 - ALTURA_NOME * 88.0 / 119.0 - 10.0
 	var tam := TAMANHO_NOME
 	Tipografia.rotulo(nome_carro, "semibold", tam)
 	# Mede com a fonte do próprio rótulo (com o espaçamento entre letras).
 	var fonte_nome := nome_carro.get_theme_font("font")
-	while tam > TAMANHO_NOME_MIN and fonte_nome.get_string_size(c.base["nome"],
+	while tam > TAMANHO_NOME_MIN and fonte_nome.get_string_size(c.nome_mostrado(),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x > livre:
 		tam -= 2
 	nome_carro.add_theme_font_size_override("font_size", tam)
@@ -1226,7 +1226,7 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var reparo := ArenaCarreira.em_reparo(jogador, c.uid)
 	# Sem EM USO nem NO REPARO, o topo mostra a marca e os selos.
-	v.add_child(selo if reparo or em_uso else faixa_marca(c.base))
+	v.add_child(selo if reparo or em_uso else faixa_marca(c.base, 36.0, int(c.faixas.get("numero", -1))))
 	if reparo:
 		var r := Label.new()
 		r.text = "  NO REPARO"
@@ -1254,7 +1254,7 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_child(img)
 	var nome := Label.new()
-	nome.text = c.base["nome"]
+	nome.text = c.nome_mostrado()
 	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	nome.custom_minimum_size = Vector2(0, 56)
 	nome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -1333,7 +1333,7 @@ func _linha_carro(pai: Control, c: Carro, ativo: bool) -> void:
 	info.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	h.add_child(info)
 	var nome := Label.new()
-	nome.text = c.base["nome"]
+	nome.text = c.nome_mostrado()
 	nome.clip_text = true
 	nome.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	Tipografia.rotulo(nome, "semibold", 26)

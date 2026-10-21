@@ -79,7 +79,7 @@ func _init(dados: Node, jogador: Node, carro: Carro) -> void:
 			"acabamento": String(f.get("acabamento", "")),
 			"poeira": float(f.get("poeira", 0.0)), "arranhoes": float(f.get("arranhoes", 0.0)),
 			"roda": Rodas.desenho_de(f),
-			"equipe_nome": String(jogador.identidade.get("nome", "")), "equipe_logo": IdentidadeEquipe.logo(jogador)}
+			"equipe_nome": String(jogador.identidade.get("nome", "")), "equipe_logo": IdentidadeEquipe.logo(jogador), "apelido": carro.apelido}
 	_inicio = _estado.duplicate()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -540,6 +540,19 @@ func _aba_grafismos() -> void:
 
 
 func _aba_identificacao() -> void:
+	# Apelido: só deste carro; aparece nos cartões e na Oficina no lugar do nome.
+	_titulo("Apelido do carro")
+	var ap := LineEdit.new()
+	ap.text = String(_estado["apelido"])
+	ap.placeholder_text = String(_carro.base["nome"])
+	ap.max_length = Carro.APELIDO_MAX
+	ap.custom_minimum_size.y = 64
+	ap.add_theme_font_size_override("font_size", 26)
+	ap.text_submitted.connect(func(t: String): _definir("apelido", t.strip_edges()))
+	ap.focus_exited.connect(func():
+		if ap.text.strip_edges() != _estado["apelido"]:
+			_definir("apelido", ap.text.strip_edges()))
+	_conteudo.add_child(ap)
 	# Equipe: nome e logo valem para todos os carros e não dependem um do outro.
 	_titulo("Equipe")
 	var nome := LineEdit.new()
@@ -753,7 +766,8 @@ func _muda_roda() -> bool:
 
 
 func _muda_equipe() -> bool:
-	return _estado["equipe_nome"] != _inicio["equipe_nome"] or _estado["equipe_logo"] != _inicio["equipe_logo"]
+	return _estado["equipe_nome"] != _inicio["equipe_nome"] or _estado["equipe_logo"] != _inicio["equipe_logo"] \
+			or _estado["apelido"] != _inicio["apelido"]
 
 
 func _atualizar_rodape() -> void:
@@ -765,7 +779,7 @@ func _atualizar_rodape() -> void:
 	if not mc and not mf and not me and not mr:
 		_preco.text = "Nada mudou ainda."
 	elif not mc and not mf:
-		_preco.text = "Rodas, nome e logo da equipe não custam."
+		_preco.text = "Rodas, apelido, nome e logo da equipe não custam."
 	elif not PinturaCarro.preco_definido(_dados):
 		_preco.text = "Grátis."
 	else:
@@ -784,6 +798,7 @@ func _confirmar() -> void:
 			return
 	if _muda_equipe():
 		IdentidadeEquipe.definir(_jogador, String(_estado["equipe_nome"]), String(_estado["equipe_logo"]))
+		_carro.apelido = String(_estado["apelido"]).left(Carro.APELIDO_MAX)
 	Sons.tocar_ui(self, "moeda", -4.0)
 	aplicada.emit()
 	_fechar()

@@ -1756,7 +1756,7 @@ func _mostrar_relatorio(rel: Dictionary, titulo: String) -> void:
 				var vc := g.cartao(Aba.COR_DESTAQUE, v)
 				g.rotulo("CARRO DE PRÊMIO", Aba.FONTE_PEQUENA, Aba.COR_DESTAQUE, vc)
 				var h := g.fileira(vc)
-				h.add_child(g.icone_carro(cp.base))
+				h.add_child(g.icone_carro(cp.base, false, CarroBloco.cor_do_carro(cp), cp.faixas))
 				g.rotulo(cp.base["nome"], 30, Color.WHITE, h)
 				g.rotulo("Já está na sua garagem.", Aba.FONTE_PEQUENA, Aba.COR_SECUNDARIA, vc)
 		if not rel["carros_premio"].is_empty():

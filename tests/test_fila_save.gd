@@ -78,6 +78,7 @@ func test_save_ida_e_volta() -> void:
 	j.concessionaria.comprar_peca(c, d.peca("turbo"))
 	j.concessionaria.comprar_peca(c, d.peca("motor_fr"))
 	j.concessionaria.comprar_pneu(c, d.pneu("chuva"))
+	c.apelido = "Relâmpago"
 	j.concessionaria.comprar_carro(d.carro("fraco"))
 	j.licencas.append("b")
 	j.graus_licenca["b1"] = "prata"
@@ -92,6 +93,7 @@ func test_save_ida_e_volta() -> void:
 	igual(JSON.stringify(Save.serializar(k)), texto, "estado idêntico")
 	var ck: Carro = k.garagem.carro(uid)
 	igual(ck.atributos_efetivos("chuva"), c.atributos_efetivos("chuva"), "atributos do carro")
+	igual([ck.apelido, ck.nome_mostrado()], ["Relâmpago", "Relâmpago"], "apelido do carro no save")
 	var fk := _fila(d, k)
 	igual(fk.corrida_atual(100.0)["resultado"]["carros"], f.corrida_atual(100.0)["resultado"]["carros"], "corrida em andamento idêntica")
 	verificar(k.concessionaria.comprar_carro(d.carro("fraco")) >= j.garagem.proximo_uid, "uid não se repete")

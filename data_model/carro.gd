@@ -22,6 +22,9 @@ var pneus: Array = []
 var cor: String = ""
 ## Faixas da pintura personalizada (Oficina → PINTURA): {padrao, faixa, filete}.
 var faixas: Dictionary = {}
+## Apelido dado pelo jogador (Cabine de pintura, aba da identificação); "" = sem.
+var apelido: String = ""
+const APELIDO_MAX := 16
 ## Ajuste do câmbio ajustável (peça "cambio"): "", "curto" ou "longo". O
 ## jogador não escolhe mais (fica o equilibrado, ""); a simulação e as
 ## ferramentas de medição ainda aceitam os três, e uma inscrição antiga na
@@ -197,6 +200,11 @@ const CV_POR_NM_RPM := TAU / 60.0 / 735.49875
 
 
 ## Cópia independente (mesmas peças instaladas e possuídas, mesmos pneus).
+## O nome na tela: o apelido, se houver; senão o do modelo.
+func nome_mostrado() -> String:
+	return apelido if apelido != "" else String(base["nome"])
+
+
 func copiar() -> Carro:
 	var c := Carro.new(base)
 	c.uid = uid
@@ -205,5 +213,6 @@ func copiar() -> Carro:
 	c.pneus = pneus.duplicate()
 	c.cor = cor
 	c.faixas = faixas.duplicate()
+	c.apelido = apelido
 	c.ajuste_cambio = ajuste_cambio
 	return c

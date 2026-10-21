@@ -696,7 +696,7 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_melhor_volta = -1.0
 	_avisado = {}
 	var eu := EquipeJogador.nome_jogador(dados, jogador)
-	_nomes = {"jogador": "%s · %s" % [eu, meu.base["nome"]]}
+	_nomes = {"jogador": "%s · %s" % [eu, meu.nome_mostrado()]}
 	_nomes_curtos = {"jogador": eu}
 	var minha := EquipeJogador.dados_equipe(dados, jogador)
 	_equipes = {"jogador": String(minha.get("nome", "")) if not minha.is_empty() else ""}
