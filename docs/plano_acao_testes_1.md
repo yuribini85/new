@@ -138,7 +138,7 @@ jogar de verdade. O jogo tem 249 falas no total.
   `user://desempenho.json`. Em todos os builds, com 3D na tela e média abaixo de 85% da meta (30)
   por 8 s, os efeitos leves ligam sozinhos uma vez (3D a 75% da resolução) e o jogo avisa.
   Pendente: pacote menor (artes de tela no tamanho da tela, carregar cenários sob demanda).
-- **Fase 1, diálogos:** primeiros 15 min de 620 para 225 palavras; o jogo de 249 para 148 falas;
+- **Fase 1, diálogos:** primeiros 15 min de 620 para 225 palavras; o jogo de 249 para 149 falas;
   no máximo 2 falas de personagem por cena (a abertura tem 4); uma frase por fala do tutorial.
 - **Fase 1, cartões:** a cor de fábrica caía no branco em todos os carros (o manifesto de cores
   era da frota antiga); agora é a primeira cor forte da paleta do modelo. Loja e garagem com fundo
