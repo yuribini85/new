@@ -227,21 +227,24 @@ func _init(d: Node, j: Node) -> void:
 	area.add_child(_cartao)
 	_pil = Pilotagem.params(dados)
 	_pedal = PedalPilotagem.new()
-	_pedal.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	# No alto, entre a posição e a volta: o carro fica no meio da tela e a
+	# classificação embaixo.
+	_pedal.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	_pedal.offset_left = -230
 	_pedal.offset_right = 230
-	_pedal.offset_top = -270
-	_pedal.offset_bottom = -200
+	_pedal.offset_top = 330
+	_pedal.offset_bottom = 400
 	_pedal.visible = false
 	area.add_child(_pedal)
 	_botao_ataque = Button.new()
 	_botao_ataque.focus_mode = Control.FOCUS_NONE
 	Tipografia.acao_primaria(_botao_ataque, "ATACAR")
-	_botao_ataque.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-	_botao_ataque.offset_left = 16
-	_botao_ataque.offset_right = 236
-	_botao_ataque.offset_top = -190
-	_botao_ataque.offset_bottom = -100
+	# À direita, acima do minimapa (a classificação fica à esquerda).
+	_botao_ataque.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	_botao_ataque.offset_left = -236
+	_botao_ataque.offset_right = -16
+	_botao_ataque.offset_top = -290
+	_botao_ataque.offset_bottom = -196
 	_botao_ataque.visible = false
 	_botao_ataque.pressed.connect(_atacar)
 	area.add_child(_botao_ataque)
