@@ -42,6 +42,11 @@ static func foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Textu
 
 
 func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
+	# Ilustração do cartão (decisão 127, D2: arte/carros/<id>_cartao.png), pintada
+	# na cor pedida quando a carroceria é branca. Sem ela, a foto do modelo 3D.
+	var cartao := ArteCarro.textura(String(base.get("id", "")), "cartao")
+	if cartao != null:
+		return Pintura.textura(String(base.get("id", "")), "cartao", cor) if cor.a > 0.0 else cartao
 	var glb := CarroBloco.tem_modelo(String(base.get("id", "")))
 	var arte: Texture2D = null if glb else ArteCarro.textura(String(base.get("id", "")), "iso")
 	if arte != null:

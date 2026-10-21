@@ -27,10 +27,10 @@ func _process(_d: float) -> bool:
 func _medir() -> void:
 	var saida := {}
 	var dir := DirAccess.open(ArteCarro.PASTA)
-	var arquivos := Array(dir.get_files()).filter(func(f): return f.ends_with("_iso.png") or f.ends_with("_topo.png"))
+	var arquivos := Array(dir.get_files()).filter(func(f): return f.ends_with("_iso.png") or f.ends_with("_topo.png") or f.ends_with("_cartao.png"))
 	arquivos.sort()
 	for f in arquivos:
-		var vista: String = "iso" if f.ends_with("_iso.png") else "topo"
+		var vista: String = "iso" if f.ends_with("_iso.png") else ("topo" if f.ends_with("_topo.png") else "cartao")
 		var id: String = f.trim_suffix("_%s.png" % vista)
 		var img := Image.load_from_file(ArteCarro.PASTA + f)
 		img.convert(Image.FORMAT_RGBA8)
@@ -64,9 +64,13 @@ func _medir() -> void:
 	# Só modelos com as vistas que existem todas brancas (a corrida usa as
 	# duas); sem a vista de cima ainda, vale a isométrica (na corrida entra o
 	# carro em código, já na cor).
+	# A ilustração do cartão (vista "cartao") vale sozinha: só aparece nos cartões.
 	for id in saida.keys():
 		var tem_topo := FileAccess.file_exists(ArteCarro.PASTA + id + "_topo.png")
 		if not saida[id].has("iso") or (tem_topo and not saida[id].has("topo")):
+			saida[id].erase("iso")
+			saida[id].erase("topo")
+		if saida[id].is_empty():
 			saida.erase(id)
 	var arq := FileAccess.open(ArteCarro.PASTA + "pintura.json", FileAccess.WRITE)
 	arq.store_string(JSON.stringify(saida, "\t", true) + "\n")

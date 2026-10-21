@@ -94,3 +94,13 @@ repetidos). A arte de quatro que saíram (três abertos e um repetido) ficou em 
 **Tamanho:** com a arte final nesta especificação (160 px/m), 386 carros somam centenas de MB.
 Antes de importar em massa, decidir compressão (WebP com perdas) ou escala menor no build.
 
+
+## Ilustração do cartão (decisão 127, D2)
+
+Uma ilustração 2D por carro para os cartões (lojas, garagem, coleção, fichas), começando pelos
+carros das licenças Club e Sport. Arquivo `arte/carros/<id>_cartao.png`, carroceria branca (o
+jogo pinta: `tools/medir_pintura.gd` mede a vista `cartao` como as outras). Com o arquivo, a foto
+do cartão (`Estudio`) passa a ser a ilustração; sem ele, a foto do modelo 3D.
+Pedido: `python3 tools/pacote_arte_cartoes.py --amostra` (3 carros para aprovar o estilo) e
+`python3 tools/pacote_arte_cartoes.py` (lotes de 60); as silhuetas de referência saem de
+`tools/fotos_cartao.gd` (precisa de tela: xvfb-run).
