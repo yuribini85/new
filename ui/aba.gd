@@ -1309,6 +1309,23 @@ func estilo_cartao_carro(cor: Color, marca := Color(0, 0, 0, 0)) -> StyleBoxFlat
 	return sb
 
 
+## A foto do carro sobre o fundo de pôster na cor dele (CartazCarro): o
+## conjunto toma o lugar da foto no cartão (mesmo tamanho e expansão).
+func em_cartaz(img: Control, cor: Color) -> Control:
+	var caixa := Control.new()
+	caixa.custom_minimum_size = img.custom_minimum_size
+	caixa.size_flags_horizontal = img.size_flags_horizontal
+	caixa.size_flags_vertical = img.size_flags_vertical
+	caixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var fundo := CartazCarro.new(cor)
+	fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	caixa.add_child(fundo)
+	img.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	img.custom_minimum_size = Vector2.ZERO
+	caixa.add_child(img)
+	return caixa
+
+
 ## Loja (workshop) que vende a marca do carro; vazio se nenhuma vende.
 var _loja_da_marca := {}
 

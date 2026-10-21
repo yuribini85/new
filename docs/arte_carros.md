@@ -95,7 +95,10 @@ repetidos). A arte de quatro que saíram (três abertos e um repetido) ficou em 
 Antes de importar em massa, decidir compressão (WebP com perdas) ou escala menor no build.
 
 
-## Ilustração do cartão (decisão 127, D2)
+## Ilustração do cartão (decisão 127, D2; opcional desde a decisão 129)
+
+Sem ilustração, o cartão mostra a foto do modelo 3D com contorno de desenho e fundo de pôster
+(decisão 129). A ilustração, quando existir, substitui a foto daquele carro.
 
 Uma ilustração 2D por carro para os cartões (lojas, garagem, coleção, fichas), começando pelos
 carros das licenças Club e Sport. Arquivo `arte/carros/<id>_cartao.png`, carroceria branca (o

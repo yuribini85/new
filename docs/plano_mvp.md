@@ -1178,3 +1178,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     balanceamento: a corrida toda pilotada perfeita rende +0,5 posição; pilotada mal perde metade
     disso. Medido por `tools/calibrar_pilotagem.gd` (hozuki_catana, 5 provas disputadas, 60
     corridas): perfeita +0,53, boa +0,30, ruim −0,20, só o ATACAR +0,07; a peça mais barata, +0,12.
+129. **Carros dos cartões ilustrados no próprio jogo, sem artista** (2026-10-21, usuário: "não
+    temos artista pra tudo isso"). No lugar das ~96 ilustrações 2D da decisão 127 (D2), a foto
+    do modelo 3D de cada carro ganha um visual de desenho: contorno escuro em volta da silhueta
+    (shader `visual/shaders/contorno.gdshader`), luz mais marcada e um fundo de pôster na cor do
+    carro (`CartazCarro`: sol em degradê e faixas de velocidade). Vale para os 363 carros. O
+    pedido de ilustrações (`tools/pacote_arte_cartoes.py`) fica como opção: se um dia houver arte,
+    `arte/carros/<id>_cartao.png` substitui a foto daquele carro.

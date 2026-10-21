@@ -1252,7 +1252,7 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	img.custom_minimum_size = Vector2(0, 200)
 	img.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(img)
+	v.add_child(em_cartaz(img, CarroBloco.cor_do_carro(c)))
 	var nome := Label.new()
 	nome.text = c.nome_mostrado()
 	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

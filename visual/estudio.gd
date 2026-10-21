@@ -105,6 +105,11 @@ func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	var carro := CarroBloco.new()
 	mundo.add_child(carro)
 	carro.configurar_modelo(base, cor, faixas)
+	if glb:
+		# Luz de desenho: menos luz ambiente e a principal mais forte, para as
+		# faixas de luz e sombra aparecerem.
+		env.ambient_light_color = Color(0.5, 0.52, 0.58)
+		luz.light_energy = 1.35
 	var cam := Camera3D.new()
 	mundo.add_child(cam)
 	if glb:
@@ -132,6 +137,20 @@ func _foto(base: Dictionary, cor: Color, faixas: Dictionary = {}) -> Texture2D:
 	_usar(chave)
 	_copiar(vp, tex, chave)
 	return tex
+
+
+## Visual "ilustrado" das fotos dos cartões (decisão 127, D2, sem artista: o
+## usuário pediu uma solução sem pedir arte): o mesmo modelo 3D, com a luz mais
+## marcada e um contorno escuro em volta da silhueta (shader contorno, na hora
+## de desenhar: a casca invertida não funciona no renderizador de compatibilidade).
+static var _mat_contorno: ShaderMaterial
+
+
+static func material_contorno() -> ShaderMaterial:
+	if _mat_contorno == null:
+		_mat_contorno = ShaderMaterial.new()
+		_mat_contorno.shader = preload("res://visual/shaders/contorno.gdshader")
+	return _mat_contorno
 
 
 ## Marca a foto como recente e tira do cache as mais antigas além de FOTOS_MAX.
@@ -198,6 +217,8 @@ func _copiar(vp: SubViewport, tex: ImageTexture, chave := "") -> void:
 static func imagem(base: Dictionary, cor: Color, tamanho := Vector2(180, 100), faixas: Dictionary = {}) -> TextureRect:
 	var t := TextureRect.new()
 	t.texture = foto(base, cor, faixas)
+	if CarroBloco.tem_modelo(String(base.get("id", ""))) and ArteCarro.textura(String(base.get("id", "")), "cartao") == null:
+		t.material = material_contorno()
 	t.custom_minimum_size = tamanho
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

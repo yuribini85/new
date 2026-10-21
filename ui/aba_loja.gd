@@ -363,7 +363,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	img.custom_minimum_size = Vector2(0, 200)
 	img.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(img)
+	v.add_child(em_cartaz(img, cor if cor.a > 0.0 else Cores.fabrica(String(c["id"]))))
 	var nome := Label.new()
 	nome.text = c["nome"] + ("  " + marca if marca != "" else "")
 	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
