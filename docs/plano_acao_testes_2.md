@@ -24,6 +24,21 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     4–8° (antes 13–26°).
   - Teste automático: seis carros num bolo de 6 m em duas pistas, nenhum dentro do outro,
     rodas até a zebra, frente na direção do movimento.
+- **Fase B, parte 1 feita** (2026-10-21): largada e vácuo (E2).
+  - Largada: com a pilotagem, as três luzes ficam acesas mais um tempo que varia por corrida
+    (sorteado pela semente) e o aviso TOQUE QUANDO APAGAR aparece. Tocar ao apagarem: LARGADA
+    PERFEITA (até 0,35 s), BOA LARGADA (até 0,6 s), LARGOU ATRASADO (até 1,5 s); com as luzes
+    acesas, QUEIMOU A LARGADA. A corrida ao vivo espera no apagar das luzes até o toque, e a
+    ordem vale desde ali (gravada na fila: termina igual com o jogo fechado). A largada boa ou
+    perfeita pode ganhar posição antes da primeira zona de ultrapassagem (o grid sai em fila).
+  - Vácuo no lugar do botão ATACAR: colado no rival, SEGURE NO VÁCUO; a barra enche em 1,2 s e
+    fica verde (SOLTE!) por 0,8 s; soltar no verde é a ultrapassagem (PASSOU NO VÁCUO), segurar
+    demais é PERDEU O VÁCUO. Depois recarrega, como o ATACAR.
+  - Correção na simulação: preso atrás de outro carro, a aceleração extra das ordens (largada,
+    saída de curva) agora conta para saber quem é mais rápido (antes era ignorada).
+  - Calibrado com a largada (60 corridas): tudo perfeito +0,52 (teto +0,5), bom +0,35, ruim
+    −0,20, só a largada +0,08, só o vácuo +0,07.
+  - Falta da fase B: defesa e poupar/forçar (decisão 130: começar por vácuo e largada).
 
 ## Ordem recomendada
 

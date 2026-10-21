@@ -239,6 +239,21 @@ func test_fatia_respeita_o_orcamento() -> void:
 	d.free()
 
 
+## Decisão 130 (largada): a ordem "livre" deixa passar fora das zonas de
+## ultrapassagem enquanto vale (a largada sai em fila); sem ela, ninguém passa.
+func test_ordem_livre_passa_fora_da_zona() -> void:
+	var d := dados_fixture()
+	var a := _participante(d, "a", "fraco", "perfeito")
+	var b := _participante(d, "b", "fraco", "perfeito")
+	for livre in [false, true]:
+		var b2: Dictionary = b.duplicate(true)
+		b2["piloto"] = b["piloto"].duplicate()
+		b2["piloto"]["ordens"] = [{"de": 0.0, "ate": 5.0, "acel": 1.3, "agressividade": 1.0, "livre": livre}]
+		var r := _correr(d, "sem_ultrapassagem", [a, b2], 2)
+		igual(r["classificacao"], ["b", "a"] if livre else ["a", "b"], "livre=%s" % livre)
+	d.free()
+
+
 ## Decisão 117: a ordem de um momento de decisão só mexe na corrida a partir de
 ## "de"; antes, as amostras são as mesmas; mais ritmo, menos tempo.
 func test_ordem_so_vale_depois_de_comecar() -> void:

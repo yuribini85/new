@@ -4,6 +4,8 @@ extends Control
 ## no pé da pista. Antes de cada curva o cursor corre até a faixa da frenagem
 ## (FREIE): tocar com o cursor na faixa é a freada certa. Na saída da curva a
 ## régua vira a barra da saída (SEGURE), que enche enquanto o dedo segura.
+## Na largada, só o aviso (o semáforo é a marca); colado num rival, a barra do
+## vácuo enche enquanto o dedo segura e fica verde quando é hora de soltar.
 ## Só desenha; quem decide é a tela da corrida (Pilotagem).
 
 const LARGURA := 560.0
@@ -14,7 +16,7 @@ const COR_BOA := Color(0.36, 0.82, 0.47, 0.35)
 const COR_CURSOR := Color(1, 1, 1)
 const COR_SAIDA := Color("d6a23e")
 
-## "" (escondida), "frenagem" ou "saida".
+## "" (escondida), "frenagem", "saida", "largada" ou "vacuo".
 var modo := ""
 ## Frenagem: segundos até o ponto de frenagem (negativo: já passou) e as
 ## tolerâncias, para desenhar a faixa.
@@ -64,12 +66,34 @@ func saida(fracao_: float, segurando_: bool) -> void:
 	queue_redraw()
 
 
+func largada() -> void:
+	modo = "largada"
+	_rotulo.text = "TOQUE QUANDO APAGAR"
+	_rotulo.add_theme_color_override("font_color", Color.WHITE)
+	visible = true
+	queue_redraw()
+
+
+## fracao_: 0..1 enchendo (1 ou mais: cheia, solte); segurando_: o dedo na tela.
+func vacuo(fracao_: float, segurando_: bool) -> void:
+	modo = "vacuo"
+	fracao = clampf(fracao_, 0.0, 1.0)
+	segurando = segurando_
+	var cheia := fracao_ >= 1.0
+	_rotulo.text = "SOLTE!" if cheia else "SEGURE NO VÁCUO"
+	_rotulo.add_theme_color_override("font_color", COR_ALVO if cheia else (COR_SAIDA if segurando else Color.WHITE))
+	visible = true
+	queue_redraw()
+
+
 func esconder() -> void:
 	modo = ""
 	visible = false
 
 
 func _draw() -> void:
+	if modo == "largada":
+		return
 	var r := Rect2(Vector2((size.x - LARGURA) * 0.5, size.y - ALTURA), Vector2(LARGURA, ALTURA))
 	draw_rect(r, COR_FUNDO)
 	if modo == "frenagem":
@@ -82,4 +106,6 @@ func _draw() -> void:
 		draw_rect(Rect2(x - 3.0, r.position.y - 6.0, 6.0, r.size.y + 12.0), COR_CURSOR)
 	elif modo == "saida":
 		draw_rect(Rect2(r.position, Vector2(r.size.x * fracao, r.size.y)), COR_SAIDA if segurando else Color(1, 1, 1, 0.35))
+	elif modo == "vacuo":
+		draw_rect(Rect2(r.position, Vector2(r.size.x * fracao, r.size.y)), COR_ALVO if fracao >= 1.0 else COR_SAIDA)
 	draw_rect(r, Color(1, 1, 1, 0.5), false, 2.0)

@@ -464,6 +464,28 @@ func test_freada_antes_do_ponto_vale_do_ponto() -> void:
 	igual(Pilotagem.ordem_frenagem(Pilotagem.CEDO, 9.4, 15.0, p, 10.0)["de"], 9.4, "cedo: do toque")
 
 
+## Decisão 130: a largada (toque ao apagar das luzes) e o vácuo (segurar e
+## soltar com a barra cheia).
+func test_largada_e_vacuo() -> void:
+	var p := {"largada": {"perfeita_s": 0.35, "boa_s": 0.6, "janela_s": 1.5, "espera_s": [0.3, 1.3], "dura_s": 3.0,
+			"agressividade": 1.0, "acel": {"largada_perfeita": 1.05, "largada_boa": 1.02, "queimou": 0.9, "atrasada": 0.95}},
+			"vacuo": {"carga_s": 1.2, "janela_s": 0.8}}
+	igual(Pilotagem.nota_largada(-1.0, p), Pilotagem.QUEIMOU, "luzes acesas: queimou")
+	igual(Pilotagem.nota_largada(0.2, p), Pilotagem.LARGADA_PERFEITA, "0,2 s: perfeita")
+	igual(Pilotagem.nota_largada(0.5, p), Pilotagem.LARGADA_BOA, "0,5 s: boa")
+	igual(Pilotagem.nota_largada(1.0, p), Pilotagem.ATRASADA, "1 s: atrasada")
+	igual(Pilotagem.nota_largada(2.0, p), "", "depois da janela: não conta")
+	var o := Pilotagem.ordem_largada(Pilotagem.LARGADA_PERFEITA, p)
+	igual([o["de"], o["ate"], o["acel"], o.get("livre", false)], [0.0, 3.0, 1.05, true], "perfeita: do apagar, briga pela posição")
+	verificar(not Pilotagem.ordem_largada(Pilotagem.QUEIMOU, p).has("livre"), "queimou não ganha posição")
+	var e := Pilotagem.espera_largada(42, p)
+	verificar(e >= 0.3 and e <= 1.3, "espera dentro da faixa")
+	igual(Pilotagem.espera_largada(42, p), e, "a mesma corrida apaga no mesmo instante")
+	igual(Pilotagem.nota_vacuo(1.0, p), "", "soltou antes de encher")
+	igual(Pilotagem.nota_vacuo(1.5, p), Pilotagem.VACUO, "cheia: passa")
+	igual(Pilotagem.nota_vacuo(2.1, p), Pilotagem.PERDEU_VACUO, "segurou demais")
+
+
 func test_pilotar_no_meio_vale_como_do_zero() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)

@@ -11,7 +11,12 @@ extends RefCounted
 ##   certa a curva sai mais rápida; cedo perde tempo; tarde escapa da linha.
 ## - Saída: estar segurando quando o carro sai da curva acelera melhor; soltar
 ##   antes do fim da saída perde tração.
-## - Ataque: colado num rival, ATACAR tenta a ultrapassagem; depois recarrega.
+## - Largada: tocar quando as luzes do semáforo apagam (a espera depois da
+##   terceira luz varia por corrida). Na hora, o carro arranca melhor; antes,
+##   queima a largada; tarde, larga atrasado.
+## - Vácuo: colado num rival, segurar enche a barra do vácuo; soltar com ela
+##   cheia é a ultrapassagem (a ordem do ataque); segurar demais perde o vácuo.
+##   Depois recarrega.
 
 const PERFEITA := "perfeita"
 const BOA := "boa"
@@ -19,10 +24,18 @@ const CEDO := "cedo"
 const TARDE := "tarde"
 const LIMPA := "limpa"
 const SOLTOU := "soltou"
+const LARGADA_PERFEITA := "largada_perfeita"
+const LARGADA_BOA := "largada_boa"
+const QUEIMOU := "queimou"
+const ATRASADA := "atrasada"
+const VACUO := "vacuo"
+const PERDEU_VACUO := "perdeu_vacuo"
 
 ## Texto de cada nota na tela (língua do jogador).
 const TEXTOS := {PERFEITA: "FREADA PERFEITA", BOA: "BOA FREADA", CEDO: "FREOU CEDO", TARDE: "FREOU TARDE",
-		LIMPA: "SAÍDA LIMPA", SOLTOU: "PERDEU TRAÇÃO"}
+		LIMPA: "SAÍDA LIMPA", SOLTOU: "PERDEU TRAÇÃO", LARGADA_PERFEITA: "LARGADA PERFEITA",
+		LARGADA_BOA: "BOA LARGADA", QUEIMOU: "QUEIMOU A LARGADA", ATRASADA: "LARGOU ATRASADO",
+		VACUO: "PASSOU NO VÁCUO", PERDEU_VACUO: "PERDEU O VÁCUO"}
 
 
 static func params(dados: Node) -> Dictionary:
@@ -76,8 +89,8 @@ static func ordem_ataque(t: float, p: Dictionary) -> Dictionary:
 			"agressividade": float(a["agressividade"]), "origem": "ataque"}
 
 
-## O botão ATACAR aparece: alguém à frente a até `distancia_m` e o último
-## ataque já recarregou.
+## O vácuo aparece: alguém à frente a até `distancia_m` e o último ataque
+## (passagem no vácuo) já recarregou.
 static func pode_atacar(distancia_frente_m: float, t: float, ultimo_ataque: float, p: Dictionary) -> bool:
 	var a: Dictionary = p["ataque"]
 	return distancia_frente_m <= float(a["distancia_m"]) and t - ultimo_ataque >= float(a["recarga_s"])
@@ -92,3 +105,47 @@ static func recarga(t: float, ultimo_ataque: float, p: Dictionary) -> float:
 ## antes da entrada.
 static func tem_frenagem(curva: Dictionary, comprimento: float, p: Dictionary) -> bool:
 	return fposmod(float(curva["inicio"]) - float(curva["frenagem"]), comprimento) >= float(p["frenagem"]["minimo_m"])
+
+
+## Nota da largada pelo tempo de reação ao apagar das luzes (negativo: tocou
+## com as luzes acesas). "" depois da janela: o toque não conta.
+static func nota_largada(reacao_s: float, p: Dictionary) -> String:
+	var l: Dictionary = p["largada"]
+	if reacao_s < 0.0:
+		return QUEIMOU
+	if reacao_s <= float(l["perfeita_s"]):
+		return LARGADA_PERFEITA
+	if reacao_s <= float(l["boa_s"]):
+		return LARGADA_BOA
+	return ATRASADA if reacao_s <= float(l["janela_s"]) else ""
+
+
+## A ordem da largada: vale do apagar das luzes (t = 0 da corrida; a corrida ao
+## vivo espera o toque, ver Fila.pilotar) por `dura_s`, com a aceleração da
+## nota; na largada boa ou perfeita o piloto também briga pela posição
+## (agressividade) e pode passar antes da primeira zona de ultrapassagem.
+static func ordem_largada(nota: String, p: Dictionary) -> Dictionary:
+	var l: Dictionary = p["largada"]
+	var o := {"de": 0.0, "ate": float(l["dura_s"]), "acel": float(l["acel"][nota]), "origem": "largada"}
+	if nota in [LARGADA_PERFEITA, LARGADA_BOA]:
+		o["agressividade"] = float(l["agressividade"])
+		o["livre"] = true
+	return o
+
+
+## Quanto as três luzes ficam acesas antes de apagar (s), sorteado pela
+## semente da corrida: a mesma corrida apaga sempre no mesmo instante.
+static func espera_largada(semente: int, p: Dictionary) -> float:
+	var e: Array = p["largada"]["espera_s"]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("largada:%d" % semente)
+	return rng.randf_range(float(e[0]), float(e[1]))
+
+
+## Barra do vácuo pelo tempo segurando (s de tela): 0..1 enchendo, 1 cheia
+## (soltar agora passa) até `janela_s` depois; além disso perdeu o vácuo.
+static func nota_vacuo(segurou_s: float, p: Dictionary) -> String:
+	var v: Dictionary = p["vacuo"]
+	if segurou_s < float(v["carga_s"]):
+		return ""
+	return VACUO if segurou_s <= float(v["carga_s"]) + float(v["janela_s"]) else PERDEU_VACUO

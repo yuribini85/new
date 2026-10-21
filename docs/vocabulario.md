@@ -50,7 +50,10 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **INDICAÇÃO DA MARA** | a jogada que a Mara sugere pelo rádio |
 | **FREIE NO VERDE** | a régua antes da curva: tocar na tela quando o cursor chega na faixa verde |
 | **DEDO NA TELA** | a barra da saída da curva: manter o dedo na tela até ela encher |
-| **ATACAR** | o botão que aparece colado no carro da frente; depois de usar, demora para voltar |
+| **SEGURE NO VÁCUO / SOLTE!** | a barra que aparece colado no carro da frente: segurar o dedo enche; soltar com ela cheia (verde) é a ultrapassagem; segurar demais perde o vácuo. Depois de usar, demora para voltar |
+| **TOQUE QUANDO APAGAR** | a largada: tocar quando as três luzes do semáforo apagam |
+| **LARGADA PERFEITA / BOA LARGADA / QUEIMOU A LARGADA / LARGOU ATRASADO** | a nota do toque da largada |
+| **PASSOU NO VÁCUO / PERDEU O VÁCUO** | a nota do vácuo |
 | **FREADA PERFEITA / BOA FREADA / FREOU CEDO / FREOU TARDE** | a nota do toque no FREIE |
 | **SAÍDA LIMPA / PERDEU TRAÇÃO** | segurou a saída inteira / soltou antes |
 
@@ -98,7 +101,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | provas abertas (`licenca == ""`) | **provas sem licença** (ABERTA no cartão é outra coisa: a prova que o carro pode correr) |
 | grid (os carros da largada) | **rivais** / largada. "Grid" no jogo é só **The Grid** |
 | momento de decisão, `MomentosCorrida`, cartão | **jogada** |
-| pilotagem, ordem, `Pilotagem`, toque, nota | **FREIE NO VERDE** / **DEDO NA TELA** / **ATACAR** e o texto da nota |
+| pilotagem, ordem, `Pilotagem`, toque, nota | **FREIE NO VERDE** / **DEDO NA TELA** / **SEGURE NO VÁCUO** / **TOQUE QUANDO APAGAR** e o texto da nota |
 | `dica_acerto`, rádio | **INDICAÇÃO DA MARA** |
 | `derrotas_seguidas`, travado | nada: a Mara só aponta o O QUE AJUDA? |
 | `carros_minimos` | "a arena abre com dois carros na garagem" |

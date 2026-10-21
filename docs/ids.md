@@ -230,6 +230,8 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `TUTORIAL_INTRO_SEEN` | cena CW_P01 |
 | `TUTORIAL_PULADO` | data_model/tutorial.gd |
 | `TWENTY_FIVE_WINS` | cena CW_M05 |
+| `VACUO_DICA` | ui/aba_corrida.gd |
+| `VACUO_DICA_SEMENTE` | ui/aba_corrida.gd |
 
 ## Licenças (`data/licencas.json`)
 

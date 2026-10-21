@@ -1197,3 +1197,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     fixos. E6: treinador contratável e evolução do piloto pelo recorde pessoal de volta, no lugar
     do nível por corridas disputadas. Números novos (custo do treinador, ganho por recorde,
     conteúdo das caixas) saem do critério da referência ou de calibração, não de estimativa.
+    Fase B (usuário: "Ok" à recomendação): a largada perfeita entra no teto com o valor próximo
+    ao da peça mais barata; freada e saída só baixariam se a soma passasse de +0,5 (não passou:
+    os ganhos se sobrepõem). Largada: as três luzes ficam acesas um tempo que varia por corrida;
+    tocar ao apagarem é a largada (perfeita, boa, atrasada; com as luzes acesas, queimou). Vácuo no
+    lugar do botão ATACAR: colado no rival, segurar enche a barra e soltar com ela cheia é a
+    ultrapassagem. Medido: tudo perfeito +0,52, bom +0,35, ruim −0,20, só a largada +0,08, só o
+    vácuo +0,07.

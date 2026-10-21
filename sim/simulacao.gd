@@ -11,6 +11,8 @@ extends RefCounted
 const G := 9.81
 const CV_PARA_W := 735.5
 const KMH_PARA_MS := 1.0 / 3.6
+## Zona de ultrapassagem das ordens "livre" fora das zonas da pista (a largada).
+const ZONA_LIVRE := 1000000
 
 ## Chaves obrigatórias em data/simulacao.json. Opcionais: "cda_m2" e
 ## "densidade_ar_kg_m3" ligam o arrasto aerodinâmico (velocidade máxima passa a
@@ -276,14 +278,21 @@ class Andamento:
 					# aceleração na mesma velocidade (reta). Melhorar o carro nunca
 					# tira a chance de passar.
 					var vf := v_arr[frente]
+					# A aceleração das ordens (largada, saída de curva) conta: é
+					# a que o carro teria se não estivesse preso.
+					var acel_aqui := Simulacao._acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto, forcas[idx])
+					if not ordem.is_empty() and acel_aqui > 0.0:
+						acel_aqui *= ordem[2]
 					var mais_rapido := limite > lim_arr[frente] + 0.05 \
-							or Simulacao._acel_livre(acel_arr[idx], pot_arr[idx], massa_arr[idx], vf, k_arrasto, forcas[idx]) \
-							> Simulacao._acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf, k_arrasto,
-									forcas[frente]) + 0.01
+							or acel_aqui > Simulacao._acel_livre(acel_arr[frente], pot_arr[frente], massa_arr[frente], vf,
+									k_arrasto, forcas[frente]) + 0.01
 					var agr := float(carros[idx]["agressividade"])
 					if not ordem.is_empty() and ordem[1] >= 0.0:
 						carros[idx]["agressividade"] = ordem[1]
-					var passa := Simulacao._pode_passar(carros[idx], zonas[i], volta, mais_rapido, rng)
+					var zona := zonas[i]
+					if zona < 0 and not ordem.is_empty() and ordem[3] > 0.0:
+						zona = ZONA_LIVRE
+					var passa := Simulacao._pode_passar(carros[idx], zona, volta, mais_rapido, rng)
 					carros[idx]["agressividade"] = agr
 					if not passa:
 						s_novo = maxf(s_antes, s_arr[frente] - dmin)
@@ -437,15 +446,17 @@ static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio:
 	return env
 
 
-## Ordem do piloto (dicionário) no formato do laço: [de, ate, ritmo, agressividade, acel].
+## Ordem do piloto (dicionário) no formato do laço: [de, ate, ritmo,
+## agressividade, acel, livre]. livre = 1: enquanto vale, o carro pode passar
+## fora das zonas de ultrapassagem (a largada sai em fila, antes da primeira).
 static func _ordem_interna(o: Dictionary) -> Array:
 	return [float(o["de"]), float(o["ate"]), float(o.get("ritmo", 1.0)), float(o.get("agressividade", -1.0)),
-			float(o.get("acel", 1.0))]
+			float(o.get("acel", 1.0)), 1.0 if o.get("livre", false) else 0.0]
 
 
 ## Efeito das ordens do carro `idx` valendo no instante t: [ritmo, agressividade,
-## acel] (sobrepostas somam: ritmos e acel multiplicam, vale a maior
-## agressividade), ou [] sem nenhuma. As ordens estão por "de" e o tempo só
+## acel, livre] (sobrepostas somam: ritmos e acel multiplicam, vale a maior
+## agressividade; livre se alguma for), ou [] sem nenhuma. As ordens estão por "de" e o tempo só
 ## anda: o cursor pula as que já acabaram.
 static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t: float) -> Array:
 	var k := cursor[idx]
@@ -455,6 +466,7 @@ static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t:
 	var ritmo := 1.0
 	var agr := -1.0
 	var acel := 1.0
+	var livre := 0.0
 	var alguma := false
 	for j in range(k, ordens.size()):
 		var o: Array = ordens[j]
@@ -465,7 +477,8 @@ static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t:
 			ritmo *= o[2]
 			agr = maxf(agr, o[3])
 			acel *= o[4]
-	return [ritmo, agr, acel] if alguma else []
+			livre = maxf(livre, o[5] if o.size() > 5 else 0.0)
+	return [ritmo, agr, acel, livre] if alguma else []
 
 
 ## Na entrada de cada zona, uma vez por volta, a agressividade decide se o

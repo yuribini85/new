@@ -4,13 +4,16 @@ extends SceneTree
 ## a posição média com cada jeito de pilotar (as ordens dadas na hora, como na
 ## tela: a corrida anda junto e cada toque vale a partir do instante dele):
 ##   base      sem toque (o piloto contratado dirige)
-##   perfeita  toda freada perfeita, toda saída limpa e ATACAR sempre que puder
+##   perfeita  largada perfeita, toda freada perfeita, toda saída limpa e a
+##             passagem no vácuo sempre que puder
 ##   beira     como a perfeita, mas tocando no começo da faixa verde (perfeita_s antes)
-##   boa       toda freada boa, toda saída limpa
-##   ruim      toda freada tarde e toda saída solta no meio
-##   ataque    só o ATACAR
+##   boa       largada boa, toda freada boa, toda saída limpa
+##   ruim      largada queimada, toda freada tarde e toda saída solta no meio
+##   largada   só a largada perfeita
+##   ataque    só a passagem no vácuo
 ##   peça      sem toque, com a peça mais barata que o carro aceita
-## Uso: godot --headless --path . -s tools/calibrar_pilotagem.gd [-- sementes=10 cenario=carro_3d provas=5]
+## Uso: godot --headless --path . -s tools/calibrar_pilotagem.gd [-- sementes=10 cenario=carro_3d provas=5
+##        politicas=base,largada]
 
 var d: Node
 var j: Node
@@ -48,7 +51,11 @@ func _rodar() -> void:
 		if media >= 2.0 and media <= total - 1.0:
 			provas.append(ev["id"])
 	print("carro ", carro.id, " · peça de comparação ", com_peca[1], " · provas ", provas)
-	var politicas := ["base", "perfeita", "beira", "boa", "ruim", "ataque", "peca"]
+	var politicas := ["base", "perfeita", "beira", "boa", "ruim", "largada", "ataque", "peca"]
+	if args.has("politicas"):
+		politicas = Array(String(args["politicas"]).split(","))
+		if not "base" in politicas:
+			politicas.push_front("base")  # o ganho é sobre ela
 	var soma := {}
 	var vit := {}
 	var toques := {}
@@ -93,6 +100,12 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var ultimo_ataque := -INF
 	var saida_ate := -1.0
 	var soltar_em := -1.0
+	# Largada: perfeita, boa ou queimada (ruim); vale do apagar das luzes.
+	var largada := {"perfeita": Pilotagem.LARGADA_PERFEITA, "beira": Pilotagem.LARGADA_PERFEITA,
+			"largada": Pilotagem.LARGADA_PERFEITA, "boa": Pilotagem.LARGADA_BOA, "ruim": Pilotagem.QUEIMOU}
+	if largada.has(politica):
+		a.ordenar("jogador", Pilotagem.ordem_largada(largada[politica], p))
+		toques += 1
 	while not a.pronto():
 		t += dt
 		a.avancar_ate(t)
@@ -102,7 +115,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 		var s: float = est["jogador"][0]
 		var v: float = maxf(est["jogador"][1], 1.0)
 		for c in curvas:
-			var frear := politica != "ataque" and Pilotagem.tem_frenagem(c, comp, p)
+			var frear := not politica in ["ataque", "largada"] and Pilotagem.tem_frenagem(c, comp, p)
 			var ponto := float(c["frenagem"])
 			if politica == "beira":
 				ponto = fposmod(ponto - v * float(p["frenagem"]["perfeita_s"]), comp)

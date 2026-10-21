@@ -605,6 +605,56 @@ func test_atualizar_a_tela_no_grid_nao_recomeca_a_contagem() -> void:
 	d.free()
 
 
+## Decisão 130: com a pilotagem, as três luzes ficam acesas a espera da
+## corrida; tocar antes da terceira não conta; tocar quando apagam é a largada
+## perfeita, gravada na fila desde o apagar (vale com o jogo fechado).
+func test_largada_pelo_semaforo() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000)
+	j.carreira = Carreira.new(d, j)
+	j.fila_ctrl = Fila.new(j.carreira, j, 3600.0)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.carro_ativo = uid
+	var a: Control = preload("res://ui/aba_corrida.gd").new(d, j)
+	var pil := {"ativa": true, "frenagem": {"janela_s": 2.5, "perfeita_s": 0.25, "boa_s": 0.5, "minimo_m": 15.0,
+			"ritmo": {"perfeita": 1.0, "boa": 1.0, "cedo": 1.0, "tarde": 1.0}},
+			"saida": {"dura_s": 2.0, "acel": {"limpa": 1.0, "soltou": 1.0}},
+			"ataque": {"distancia_m": 20.0, "recarga_s": 45.0, "dura_s": 3.0, "ritmo": 1.0, "agressividade": 1.0},
+			"largada": {"perfeita_s": 0.35, "boa_s": 0.6, "janela_s": 1.5, "espera_s": [0.5, 0.5], "dura_s": 3.0,
+				"agressividade": 1.0, "acel": {"largada_perfeita": 1.1, "largada_boa": 1.0, "queimou": 0.9, "atrasada": 0.95}},
+			"vacuo": {"carga_s": 1.2, "janela_s": 0.8}}
+	a.size = Vector2(720, 1100)
+	_raiz().add_child(a)
+	a._pil = pil
+	j.fila_ctrl.iniciar("aberto", uid, 1, Aceleracao.agora(j) - 0.2)
+	a.atualizar()
+	a._process(0.0)
+	j.fila_ctrl.avancar_preparo(INF)
+	for k in 4:
+		a._process(0.0)
+	perto(a._contagem, a.CONTAGEM_S + 0.5, 1e-6, "3-2-1 mais a espera com as luzes acesas")
+	perto(a._painel_hud.contagem, a.CONTAGEM_S, 1e-6, "o semáforo não mostra a espera")
+	a._process(1.0)
+	a._largar()
+	igual(a._largada["nota"], "", "antes da terceira luz o toque não conta")
+	a._process(1.0)
+	a._process(1.0)
+	verificar(a._largada_aberta(), "três luzes acesas: esperando o toque")
+	a._process(0.6)
+	igual(a._contagem, -1.0, "apagou")
+	a._process(0.0)
+	a._largar()
+	igual(a._largada["nota"], Pilotagem.LARGADA_PERFEITA, "na hora: largada perfeita")
+	var ordens: Array = j.fila["piloto"].get("ordens", [])
+	igual(ordens.map(func(o): return [o["origem"], o["de"]]), [["largada", 0.0]], "na fila, desde o apagar")
+	verificar(not a._largada_aberta(), "um toque só")
+	a.free()
+	j.free()
+	d.free()
+
+
 func test_tempo_da_corrida_nao_engasga_com_relogio_grosso() -> void:
 	var d := dados_fixture()
 	var j: Node = JogadorScript.new()
