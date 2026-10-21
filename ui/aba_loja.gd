@@ -309,8 +309,8 @@ func _grade() -> GridContainer:
 	return g
 
 
-## Bloco do catálogo, no padrão da Garagem: selo JÁ COMPRADO, o carro
-## grande, nome, potência e peso, e o COMPRAR no rodapé. Tocar no cartão ou
+## Bloco do catálogo, no padrão da Garagem: a marca e os selos (ou JÁ
+## COMPRADO), o fundo na cor do carro, o carro grande, nome, potência e peso, e o COMPRAR no rodapé. Tocar no cartão ou
 ## no rodapé abre a ficha, onde a compra é confirmada.
 const ALTURA_BLOCO := 420
 const LARGURA_NOME_BLOCO := 290.0
@@ -324,11 +324,8 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	b.custom_minimum_size = Vector2(0, ALTURA_BLOCO)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.focus_mode = Control.FOCUS_NONE
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = COR_CARTAO
-	sb.set_corner_radius_all(8)
-	sb.border_color = COR_BOM if comprado else Color(1, 1, 1, 0.08)
-	sb.set_border_width_all(2)
+	var sb := estilo_cartao_carro(cor if cor.a > 0.0 else Cores.fabrica(String(c["id"])),
+			COR_BOM if comprado else Color(0, 0, 0, 0))
 	for estado in ["normal", "hover", "pressed", "focus"]:
 		b.add_theme_stylebox_override(estado, sb)
 	b.pressed.connect(abrir)
@@ -346,7 +343,7 @@ func _bloco(grade: GridContainer, c: Dictionary, preco: int, marca: String, extr
 	topo.custom_minimum_size = Vector2(0, 36)
 	topo.add_theme_constant_override("separation", 8)
 	topo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(topo)
+	v.add_child(topo if comprado else faixa_marca(c))
 	if comprado:
 		var vao := Control.new()
 		vao.custom_minimum_size = Vector2(10, 0)

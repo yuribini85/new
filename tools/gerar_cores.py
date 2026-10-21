@@ -5,6 +5,7 @@ escolha é na compra; sem pintura livre depois).
 As cores da referência ficam nas paletas do modelo 3D de cada carro (não há tabela no
 disco que o extrator leia), então a paleta é própria, por época e categoria:
   - a primeira cor de cada modelo é a de fábrica do manifesto (arte/carros/manifesto.json);
+    sem ela, a primeira cor forte (não neutra) da lista do modelo;
   - as outras saem da lista da época (ano do carro; sem ano, anos 90) e da
     categoria, embaralhadas pela família (fabricante + modelo): versões da mesma
     família têm as mesmas opções;
@@ -53,6 +54,9 @@ NOMES = {
     "creme": "Creme", "champanhe": "Champanhe", "marrom": "Marrom", "roxo": "Roxo",
 }
 NEUTROS = ["branco", "prata", "preto"]
+# Não servem de cor de fábrica quando ela é escolhida aqui: somem no cartão escuro (neutros e tons muito escuros).
+CLAROS_E_NEUTROS = {"branco", "branco_perola", "prata", "cinza_claro", "chumbo", "grafite", "preto", "creme",
+                    "champanhe", "azul_meia_noite", "bordo", "marrom", "verde_ingles"}
 # Cor do manifesto (em inglês, para o agente de imagem) -> cor da paleta.
 DO_MANIFESTO = {
     "dark blue": "azul_escuro", "teal": "turquesa", "silver grey": "prata", "pale sky blue": "celeste",
@@ -99,7 +103,7 @@ def main() -> int:
     for c in carros:
         corrida = bool(c.get("corrida")) or c["nome"].endswith("Corrida")
         familia = " ".join(c["nome"].replace(" Corrida", "").split()[:2]) + (" corrida" if corrida else "")
-        fabrica = DO_MANIFESTO.get(manifesto.get(c["id"], ""), "branco")
+        fabrica = DO_MANIFESTO.get(manifesto.get(c["id"], ""))
         if corrida:
             candidatos = list(CORRIDA)
             n = MAX_CORRIDA
@@ -110,6 +114,10 @@ def main() -> int:
             k = len(paletas_ref.get(codigo.get(c["id"], ""), ()))
             n = min(MAX_CORES, max(MIN_CORES, k)) if k else PADRAO_CORES
         random.Random(semente(familia)).shuffle(candidatos)
+        if fabrica is None:
+            # Sem cor no manifesto (frota nova): a de fábrica é a primeira cor forte da
+            # lista, para o carro não chegar branco às telas (teste com pessoas, 2026-10-21).
+            fabrica = next((x for x in candidatos if x not in CLAROS_E_NEUTROS), candidatos[0])
         cores = [fabrica] + [x for x in candidatos if x != fabrica]
         cores = cores[:n]
         if not any(x in NEUTROS for x in cores):

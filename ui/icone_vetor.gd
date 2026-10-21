@@ -5,7 +5,7 @@ extends Control
 ## (voltar à corrida, quadriculada) e os das
 ## câmeras da corrida: "camera" (AUTO, o diretor), "seta" (o seu carro, a
 ## mesma seta que fica sobre ele), "coroa" (líder), "frente" (o carro à
-## frente), "pista" (visão geral) e "dados" (vista tática). Escala com o
+## frente), "losango" (selo de raridade do carro), "pista" (visão geral) e "dados" (vista tática). Escala com o
 ## tamanho, sem esticar: o desenho usa o menor lado.
 
 var tipo := ""
@@ -39,6 +39,8 @@ func _draw() -> void:
 		"coroa":
 			_poligono(c, lado * 0.5, [[-0.82, 0.55], [-0.82, -0.42], [-0.4, 0.04], [0.0, -0.62], [0.4, 0.04],
 					[0.82, -0.42], [0.82, 0.55]])
+		"losango":
+			_poligono(c, lado * 0.5, [[0.0, -0.9], [0.7, 0.0], [0.0, 0.9], [-0.7, 0.0]])
 		"frente":
 			_frente(c, lado * 0.5)
 		"pista":

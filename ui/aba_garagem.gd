@@ -1199,15 +1199,16 @@ const ALTURA_CARTAO_GARAGEM := 370
 const LARGURA_NOME_GARAGEM := 270.0
 
 
-## Cartão da grade: selo EM USO, o carro grande, o nome e o vender no rodapé.
+## Cartão da grade: selo EM USO (ou a marca), fundo na cor do carro, o carro grande, o nome e o vender no rodapé.
 ## Tocar no cartão leva o carro para a Oficina.
 func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	var b := Button.new()
 	b.custom_minimum_size = Vector2(0, ALTURA_CARTAO_GARAGEM)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.focus_mode = Control.FOCUS_NONE
+	var sb := estilo_cartao_carro(CarroBloco.cor_do_carro(c), COR_DESTAQUE if em_uso else Color(0, 0, 0, 0))
 	for estado in ["normal", "hover", "pressed", "focus"]:
-		b.add_theme_stylebox_override(estado, _estilo_item(em_uso))
+		b.add_theme_stylebox_override(estado, sb)
 	b.pressed.connect(_escolher.bind(c))
 	pai.add_child(b)
 	var v := VBoxContainer.new()
@@ -1223,8 +1224,10 @@ func _cartao_carro(pai: Control, c: Carro, em_uso: bool) -> void:
 	selo.custom_minimum_size = Vector2(0, 36)
 	selo.add_theme_constant_override("separation", 8)
 	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(selo)
-	if ArenaCarreira.em_reparo(jogador, c.uid):
+	var reparo := ArenaCarreira.em_reparo(jogador, c.uid)
+	# Sem EM USO nem NO REPARO, o topo mostra a marca e os selos.
+	v.add_child(selo if reparo or em_uso else faixa_marca(c.base))
+	if reparo:
 		var r := Label.new()
 		r.text = "  NO REPARO"
 		Tipografia.rotulo(r, "semibold", 24)

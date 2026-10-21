@@ -1294,6 +1294,102 @@ const NOMES_TRACAO := {
 }
 
 
+## Identidade do carro nos cartões (teste com pessoas, 2026-10-21: "carrinho
+## branco parecido"): fundo puxado para a cor do carro, a logo da loja da marca
+## e os selos de categoria e de raridade, só ícones (sem frase: mais leitura era
+## outra reclamação).
+func estilo_cartao_carro(cor: Color, marca := Color(0, 0, 0, 0)) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COR_CARTAO.lerp(cor.darkened(0.35), 0.38)
+	sb.set_corner_radius_all(8)
+	# Sem `marca` (em uso, comprado): faixa grossa na cor do carro em cima.
+	sb.border_color = marca if marca.a > 0.0 else cor
+	sb.set_border_width_all(2 if marca.a > 0.0 else 0)
+	sb.border_width_top = 8
+	return sb
+
+
+## Loja (workshop) que vende a marca do carro; vazio se nenhuma vende.
+var _loja_da_marca := {}
+
+
+func loja_da_marca(fabricante: String) -> Dictionary:
+	if _loja_da_marca.is_empty():
+		for w in dados.workshops():
+			for f in w.get("fabricantes", []):
+				_loja_da_marca[String(f)] = w
+	return _loja_da_marca.get(fabricante, {})
+
+
+## Raridade de 1 a 4 pelo preço de tabela, em quartis da frota (cada faixa com
+## um quarto dos carros; sai dos dados, sem número fixo).
+static var _cortes_raridade: Array = []
+const CORES_RARIDADE := [Color(0.62, 0.64, 0.68), Color(0.36, 0.72, 0.95), Color(0.72, 0.45, 0.95),
+		Color("d6a23e")]
+
+
+func raridade(base: Dictionary) -> int:
+	if _cortes_raridade.is_empty():
+		var precos: Array = dados.lista("carros").map(func(x): return int(x.get("preco", 0)))
+		precos.sort()
+		if precos.is_empty():
+			return 1
+		for q in [0.25, 0.5, 0.75]:
+			_cortes_raridade.append(precos[int(precos.size() * q)])
+	var p := int(base.get("preco", 0))
+	var r := 1
+	for corte in _cortes_raridade:
+		if p > corte:
+			r += 1
+	return r
+
+
+## Fileira do topo do cartão: logo da loja da marca à esquerda; à direita o selo
+## de categoria e os losangos de raridade.
+func faixa_marca(base: Dictionary, altura := 36.0) -> HBoxContainer:
+	var h := HBoxContainer.new()
+	h.custom_minimum_size = Vector2(0, altura)
+	h.add_theme_constant_override("separation", 4)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var w := loja_da_marca(String(base.get("fabricante", "")))
+	var logo := TextureRect.new()
+	logo.texture = arte("workshops/%s_logo_branca" % String(w.get("logo", ""))) if not w.is_empty() else null
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	logo.custom_minimum_size = Vector2(altura * 3.2, altura * 1.25)
+	logo.modulate = Color(1, 1, 1, 0.85)
+	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(logo)
+	var vao := Control.new()
+	vao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vao.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(vao)
+	var icone_cat := arte("icones/categoria_%s" % String(base.get("categoria", "")))
+	if icone_cat != null:
+		var ic := TextureRect.new()
+		ic.texture = icone_cat
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ic.custom_minimum_size = Vector2(altura, altura)
+		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(ic)
+	else:
+		var cat := Label.new()
+		cat.text = NOMES_CATEGORIA_CARRO.get(base.get("categoria", ""), "").to_upper()
+		Tipografia.rotulo(cat, "semibold", 20)
+		cat.add_theme_color_override("font_color", COR_SECUNDARIA)
+		cat.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(cat)
+	var r := raridade(base)
+	var cor_r: Color = CORES_RARIDADE[r - 1]
+	for k in r:
+		var l := IconeVetor.new("losango", cor_r)
+		l.custom_minimum_size = Vector2(altura * 0.5, altura * 0.8)
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		h.add_child(l)
+	return h
+
+
 ## Selos de tração e categoria de um carro.
 func selos_carro(base: Dictionary) -> Array:
 	return [

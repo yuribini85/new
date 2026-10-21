@@ -111,2545 +111,2545 @@
  },
  "modelos": {
   "kanaya_kestrel": [
-   "branco",
    "amarelo",
    "vinho",
    "azul_escuro",
-   "champanhe"
+   "champanhe",
+   "preto"
   ],
   "kanaya_pingo": [
-   "branco",
    "turquesa",
    "amarelo",
    "vermelho",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "prata"
   ],
   "kanaya_lume": [
-   "branco",
    "roxo",
    "azul_meia_noite",
    "verde_escuro",
-   "prata"
+   "prata",
+   "vinho"
   ],
   "kanaya_cunha": [
-   "branco",
-   "preto",
    "roxo",
+   "preto",
    "turquesa",
-   "prata"
+   "prata",
+   "vermelho"
   ],
   "kanaya_rasante": [
-   "branco",
    "azul",
    "azul_meia_noite",
    "preto",
-   "verde_escuro"
+   "verde_escuro",
+   "prata"
   ],
   "kanaya_aureo": [
-   "branco",
-   "branco_perola",
    "azul_perolado",
+   "branco_perola",
    "verde_escuro",
-   "azul"
+   "azul",
+   "branco"
   ],
   "kanaya_flecha": [
-   "branco",
-   "marrom",
    "amarelo",
+   "marrom",
    "vermelho_classico",
-   "creme"
+   "creme",
+   "branco"
   ],
   "kanaya_solano": [
-   "branco",
-   "azul_meia_noite",
    "celeste",
+   "azul_meia_noite",
    "amarelo",
-   "branco_perola"
+   "branco_perola",
+   "prata"
   ],
   "kanaya_vertice": [
-   "branco",
    "verde_escuro",
    "prata",
    "celeste",
-   "roxo"
+   "roxo",
+   "azul_meia_noite"
   ],
   "kanaya_fortim": [
-   "branco",
    "azul_escuro",
    "prata",
    "chumbo",
-   "cinza_claro"
+   "cinza_claro",
+   "preto"
   ],
   "kanaya_monolito": [
-   "branco",
    "azul_perolado",
    "roxo",
    "verde_escuro",
-   "celeste"
+   "celeste",
+   "prata"
   ],
   "kanaya_prisma": [
-   "branco",
    "amarelo",
    "vinho",
    "turquesa",
+   "branco",
    "prata"
   ],
   "kanaya_bago": [
-   "branco",
    "verde_claro",
    "roxo",
    "celeste",
-   "vermelho"
+   "vermelho",
+   "preto"
   ],
   "calderwood_nectar": [
-   "branco",
    "celeste",
    "azul_meia_noite",
    "azul",
-   "roxo"
+   "roxo",
+   "preto"
   ],
   "hayase_gota": [
-   "branco",
-   "azul_meia_noite",
    "amarelo",
+   "azul_meia_noite",
    "preto",
-   "vermelho"
+   "vermelho",
+   "grafite"
   ],
   "hayase_vareta": [
-   "branco",
+   "turquesa",
    "prata",
    "grafite",
    "branco_perola",
-   "turquesa"
+   "azul_perolado"
   ],
   "hayase_mimo": [
-   "branco",
    "mostarda",
    "vermelho_classico",
    "azul_meia_noite",
-   "celeste"
+   "celeste",
+   "prata"
   ],
   "hayase_casulo": [
-   "branco",
+   "celeste",
    "creme",
    "marrom",
-   "celeste",
+   "branco",
    "verde_ingles"
   ],
   "hayase_cenario": [
-   "branco",
    "celeste",
    "champanhe",
    "chumbo",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "prata"
   ],
   "vantra_incisivo": [
-   "branco",
    "vinho",
    "grafite",
    "preto",
-   "azul_perolado"
+   "azul_perolado",
+   "celeste"
   ],
   "hayase_calima": [
-   "branco",
    "azul",
    "branco_perola",
    "turquesa",
-   "roxo"
+   "roxo",
+   "preto"
   ],
   "hayase_deriva": [
+   "verde_escuro",
    "branco",
    "branco_perola",
-   "verde_escuro",
    "roxo",
    "amarelo"
   ],
   "hayase_arpao": [
-   "branco",
    "turquesa",
    "preto",
    "vinho",
-   "verde_escuro"
+   "verde_escuro",
+   "celeste"
   ],
   "hayase_cetro": [
-   "branco",
    "mostarda",
    "celeste",
    "marrom",
-   "azul"
+   "azul",
+   "branco"
   ],
   "hayase_silex": [
-   "branco",
-   "grafite",
    "celeste",
+   "grafite",
    "branco_perola",
+   "branco",
    "vinho"
   ],
   "hayase_granito": [
-   "branco",
    "azul_perolado",
    "celeste",
    "turquesa",
-   "branco_perola"
+   "branco_perola",
+   "prata"
   ],
   "hayase_cicatriz": [
-   "branco",
    "verde_escuro",
+   "branco",
    "celeste",
    "amarelo",
    "prata"
   ],
   "hayase_cedro": [
-   "branco",
    "celeste",
    "mostarda",
    "marrom",
+   "branco",
    "preto"
   ],
   "hayase_retorno": [
-   "branco",
-   "grafite",
    "amarelo",
+   "grafite",
+   "branco",
    "vermelho",
    "preto"
   ],
   "hayase_portico": [
-   "branco",
+   "vermelho",
    "grafite",
    "preto",
    "chumbo",
    "prata"
   ],
   "hayase_obelisco": [
-   "branco",
-   "marrom",
    "vinho",
+   "marrom",
+   "branco",
    "preto",
    "celeste"
   ],
   "hayase_timo": [
-   "branco",
    "amarelo",
+   "branco",
    "celeste",
    "azul_escuro",
    "cinza_claro"
   ],
   "hayase_ninho": [
-   "branco",
-   "cinza_claro",
    "celeste",
+   "cinza_claro",
    "amarelo",
-   "champanhe"
+   "champanhe",
+   "branco"
   ],
   "hayase_trilha": [
-   "branco",
-   "preto",
    "turquesa",
+   "preto",
    "amarelo",
-   "vermelho"
+   "vermelho",
+   "celeste"
   ],
   "hayase_muralha": [
-   "branco",
-   "prata",
    "vinho",
+   "prata",
    "turquesa",
-   "chumbo"
+   "chumbo",
+   "roxo"
   ],
   "hozuki_lince": [
-   "branco",
    "roxo",
    "prata",
+   "branco",
    "branco_perola",
    "verde_claro"
   ],
   "hozuki_rastro": [
-   "branco",
    "celeste",
+   "branco",
    "vermelho",
    "verde_escuro",
    "roxo"
   ],
   "hozuki_atrito": [
-   "branco",
    "verde_escuro",
    "turquesa",
    "celeste",
-   "preto"
+   "preto",
+   "amarelo"
   ],
   "hozuki_moncao": [
-   "branco",
    "amarelo",
    "azul_escuro",
    "preto",
-   "vinho"
+   "vinho",
+   "prata"
   ],
   "hozuki_vigilia": [
-   "branco",
-   "azul_meia_noite",
    "turquesa",
+   "azul_meia_noite",
    "verde_escuro",
-   "branco_perola"
+   "branco_perola",
+   "preto"
   ],
   "hozuki_ancoragem": [
-   "branco",
-   "champanhe",
    "amarelo",
+   "champanhe",
    "vinho",
-   "chumbo"
+   "chumbo",
+   "preto"
   ],
   "hozuki_catana": [
-   "branco",
    "verde_escuro",
    "vermelho",
    "prata",
-   "grafite"
+   "grafite",
+   "azul_meia_noite"
   ],
   "hozuki_bico": [
-   "branco",
+   "vermelho",
    "cinza_claro",
    "prata",
    "grafite",
    "preto"
   ],
   "hozuki_seixo": [
-   "branco",
    "verde_claro",
    "vinho",
    "prata",
+   "branco",
    "turquesa"
   ],
   "kestrin_fragmento": [
-   "branco",
-   "branco_perola",
    "amarelo",
+   "branco_perola",
    "celeste",
+   "branco",
    "verde_escuro"
   ],
   "hozuki_gaivota": [
-   "branco",
    "vermelho",
    "grafite",
    "azul",
-   "azul_perolado"
+   "azul_perolado",
+   "branco"
   ],
   "hozuki_escama": [
-   "branco",
    "vermelho",
    "azul_meia_noite",
    "branco_perola",
-   "vinho"
+   "vinho",
+   "preto"
   ],
   "hozuki_semente": [
-   "branco",
    "vermelho",
    "preto",
+   "branco",
    "roxo",
    "amarelo"
   ],
   "mizuchi_alvorada": [
-   "branco",
-   "preto",
    "celeste",
+   "preto",
    "vermelho",
-   "azul_perolado"
+   "azul_perolado",
+   "vinho"
   ],
   "mizuchi_dobra": [
-   "branco",
-   "azul_meia_noite",
    "azul",
+   "azul_meia_noite",
    "vinho",
+   "branco",
    "amarelo"
   ],
   "mizuchi_pavio": [
-   "branco",
+   "vinho",
    "prata",
    "preto",
-   "vinho",
-   "branco_perola"
+   "branco_perola",
+   "azul_perolado"
   ],
   "mizuchi_brasa": [
-   "branco",
-   "grafite",
    "vermelho",
+   "grafite",
+   "branco",
    "azul_meia_noite",
    "roxo"
   ],
   "mizuchi_arco": [
-   "branco",
    "roxo",
    "branco_perola",
    "verde_escuro",
-   "azul_perolado"
+   "azul_perolado",
+   "preto"
   ],
   "mizuchi_norte": [
-   "branco",
-   "branco_perola",
    "vermelho",
+   "branco_perola",
    "azul_perolado",
-   "celeste"
+   "celeste",
+   "branco"
   ],
   "rauhe_roca": [
-   "branco",
    "celeste",
    "branco_perola",
    "turquesa",
-   "azul"
+   "azul",
+   "prata"
   ],
   "mizuchi_canoa": [
-   "branco",
-   "branco_perola",
    "vinho",
+   "branco_perola",
    "roxo",
-   "verde_escuro"
+   "verde_escuro",
+   "preto"
   ],
   "mizuchi_fagulha": [
-   "branco",
    "turquesa",
    "grafite",
    "azul_meia_noite",
-   "roxo"
+   "roxo",
+   "preto"
   ],
   "mizuchi_lampejo": [
-   "branco",
    "amarelo",
    "vermelho",
    "preto",
-   "mostarda"
+   "mostarda",
+   "vermelho_classico"
   ],
   "mizuchi_visconde": [
-   "branco",
    "roxo",
    "prata",
    "chumbo",
-   "amarelo"
+   "amarelo",
+   "verde_escuro"
   ],
   "mizuchi_teca": [
-   "branco",
+   "celeste",
    "prata",
    "preto",
-   "celeste",
-   "vermelho"
+   "vermelho",
+   "vermelho_classico"
   ],
   "mizuchi_avela": [
-   "branco",
-   "creme",
    "azul",
+   "creme",
    "vermelho_classico",
-   "vermelho"
+   "vermelho",
+   "preto"
   ],
   "hoshino_pipa": [
-   "branco",
    "verde_claro",
    "verde_ingles",
    "vermelho",
-   "prata"
+   "prata",
+   "preto"
   ],
   "hoshino_penca": [
-   "branco",
    "vinho",
+   "branco",
    "celeste",
    "azul_escuro",
    "verde_claro"
   ],
   "hoshino_gomo": [
-   "branco",
    "azul_perolado",
    "vermelho",
    "verde_claro",
+   "branco",
    "vinho"
   ],
   "hoshino_alca": [
-   "branco",
    "celeste",
+   "branco",
    "vermelho",
    "amarelo",
    "verde_claro"
   ],
   "hoshino_vento": [
-   "branco",
    "vinho",
+   "branco",
    "azul_meia_noite",
    "branco_perola",
    "preto"
   ],
   "hoshino_horizonte": [
-   "branco",
+   "amarelo",
    "prata",
    "branco_perola",
-   "amarelo",
-   "vermelho"
+   "vermelho",
+   "grafite"
   ],
   "hoshino_prumo": [
-   "branco",
    "turquesa",
    "azul_meia_noite",
    "amarelo",
-   "vinho"
+   "vinho",
+   "branco"
   ],
   "hoshino_cobalto": [
-   "branco",
    "amarelo",
    "prata",
    "branco_perola",
-   "grafite"
+   "grafite",
+   "preto"
   ],
   "hoshino_senda": [
+   "roxo",
    "branco",
    "azul_meia_noite",
    "chumbo",
-   "branco_perola",
-   "roxo"
+   "branco_perola"
   ],
   "sanga_chispa": [
-   "branco",
    "celeste",
    "azul_perolado",
    "branco_perola",
-   "verde_escuro"
+   "verde_escuro",
+   "branco"
   ],
   "sanga_tecido": [
-   "branco",
+   "azul_escuro",
    "chumbo",
    "preto",
    "cinza_claro",
    "azul_meia_noite"
   ],
   "sanga_estopim": [
-   "branco",
+   "vermelho",
    "prata",
    "grafite",
    "champanhe",
-   "vermelho"
+   "chumbo"
   ],
   "sanga_fulcro": [
-   "branco",
    "celeste",
    "azul_perolado",
    "branco_perola",
-   "amarelo"
+   "amarelo",
+   "preto"
   ],
   "sanga_pulsar": [
-   "branco",
    "celeste",
    "grafite",
    "branco_perola",
-   "preto"
+   "preto",
+   "branco"
   ],
   "sanga_lava": [
-   "branco",
    "vermelho",
    "azul_meia_noite",
    "grafite",
-   "prata"
+   "prata",
+   "branco_perola"
   ],
   "sanga_rapina": [
-   "branco",
    "turquesa",
    "vinho",
    "preto",
-   "verde_escuro"
-  ],
-  "cutler_cintila": [
-   "branco",
-   "prata",
-   "vermelho",
-   "amarelo",
-   "azul"
-  ],
-  "sanga_garra": [
-   "branco",
-   "turquesa",
-   "vermelho",
-   "prata",
-   "vinho"
-  ],
-  "kosame_torvelinho": [
-   "branco",
-   "grafite",
-   "prata",
-   "vermelho",
-   "verde_claro"
-  ],
-  "kosame_muda": [
-   "branco",
-   "turquesa",
-   "vinho",
-   "branco_perola",
-   "verde_claro"
-  ],
-  "kosame_fio": [
-   "branco",
-   "azul_perolado",
-   "verde_claro",
    "verde_escuro",
    "branco_perola"
   ],
-  "kosame_alpendre": [
-   "branco",
-   "azul_meia_noite",
-   "celeste",
+  "cutler_cintila": [
+   "vermelho",
    "prata",
-   "grafite"
+   "amarelo",
+   "azul",
+   "vinho"
+  ],
+  "sanga_garra": [
+   "turquesa",
+   "vermelho",
+   "prata",
+   "vinho",
+   "verde_claro"
+  ],
+  "kosame_torvelinho": [
+   "vermelho",
+   "branco",
+   "grafite",
+   "prata",
+   "verde_claro"
+  ],
+  "kosame_muda": [
+   "turquesa",
+   "vinho",
+   "branco_perola",
+   "branco",
+   "verde_claro"
+  ],
+  "kosame_fio": [
+   "azul_perolado",
+   "verde_claro",
+   "verde_escuro",
+   "branco_perola",
+   "prata"
+  ],
+  "kosame_alpendre": [
+   "celeste",
+   "azul_meia_noite",
+   "prata",
+   "grafite",
+   "vermelho"
   ],
   "kosame_ervilha": [
-   "branco",
-   "azul_meia_noite",
    "turquesa",
+   "azul_meia_noite",
    "grafite",
-   "amarelo"
+   "amarelo",
+   "prata"
   ],
   "kosame_musgo": [
-   "branco",
-   "azul_meia_noite",
    "celeste",
+   "azul_meia_noite",
    "vermelho",
-   "grafite"
+   "grafite",
+   "preto"
   ],
   "kosame_xisto": [
-   "branco",
    "vinho",
    "prata",
    "turquesa",
-   "vermelho"
+   "vermelho",
+   "grafite"
   ],
   "kosame_giz": [
-   "branco",
    "celeste",
+   "branco",
    "preto",
    "prata",
    "azul"
   ],
   "vantra_silencio": [
-   "branco",
    "verde_escuro",
    "turquesa",
    "branco_perola",
-   "azul"
+   "azul",
+   "preto"
   ],
   "tomoe_avenca": [
-   "branco",
-   "prata",
    "verde_claro",
+   "prata",
    "preto",
-   "vinho"
+   "vinho",
+   "celeste"
   ],
   "tomoe_mirtilo": [
-   "branco",
    "azul_perolado",
    "grafite",
    "vinho",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "prata"
   ],
   "tomoe_faia": [
-   "branco",
    "turquesa",
    "amarelo",
    "vinho",
-   "branco_perola"
+   "branco_perola",
+   "prata"
   ],
   "tomoe_varanda": [
-   "branco",
    "amarelo",
    "prata",
    "celeste",
-   "preto"
+   "preto",
+   "azul_meia_noite"
   ],
   "tomoe_eco": [
-   "branco",
    "azul",
    "prata",
+   "branco",
    "champanhe",
    "preto"
   ],
   "tomoe_grilo": [
-   "branco",
    "celeste",
    "verde_claro",
    "turquesa",
-   "branco_perola"
+   "branco_perola",
+   "branco"
   ],
   "vantra_tempora": [
-   "branco",
    "amarelo",
    "prata",
    "celeste",
-   "verde_escuro"
+   "verde_escuro",
+   "azul_meia_noite"
   ],
   "ishigumo_dique": [
-   "branco",
-   "grafite",
    "vinho",
+   "grafite",
+   "branco",
    "amarelo",
    "prata"
   ],
   "ishigumo_fronteira": [
-   "branco",
+   "vermelho",
    "azul_meia_noite",
    "grafite",
    "prata",
-   "vermelho"
+   "vinho"
   ],
   "ishigumo_louva": [
-   "branco",
-   "creme",
    "vermelho_classico",
+   "creme",
    "vermelho",
-   "celeste"
+   "celeste",
+   "prata"
   ],
   "ishigumo_ambar": [
-   "branco",
    "vermelho",
    "laranja",
    "amarelo",
-   "verde_escuro"
+   "verde_escuro",
+   "branco"
   ],
   "vantra_onix": [
-   "branco",
+   "azul",
    "grafite",
    "prata",
-   "azul",
-   "roxo"
+   "roxo",
+   "turquesa"
   ],
   "feldhaus_rebento": [
-   "branco",
-   "preto",
    "vermelho_classico",
+   "preto",
    "azul_meia_noite",
-   "creme"
+   "creme",
+   "celeste"
   ],
   "feldhaus_palheta": [
-   "branco",
    "vermelho",
+   "branco",
    "preto",
    "vinho",
    "amarelo"
   ],
   "feldhaus_pevidem": [
-   "branco",
    "vinho",
+   "branco",
    "celeste",
    "champanhe",
    "prata"
   ],
   "feldhaus_cantiga": [
-   "branco",
    "azul_escuro",
+   "branco",
    "vinho",
    "vermelho",
    "grafite"
   ],
   "feldhaus_corisco": [
-   "branco",
-   "branco_perola",
    "vinho",
+   "branco_perola",
    "azul_perolado",
+   "branco",
    "turquesa"
   ],
   "feldhaus_estrado": [
-   "branco",
    "azul",
+   "branco",
    "vinho",
    "preto",
    "champanhe"
   ],
   "feldhaus_andor": [
-   "branco",
-   "prata",
    "amarelo",
+   "prata",
    "creme",
-   "verde_ingles"
+   "verde_ingles",
+   "celeste"
   ],
   "feldhaus_chale": [
-   "branco",
-   "prata",
    "azul",
+   "prata",
    "marrom",
-   "vermelho_classico"
+   "vermelho_classico",
+   "vermelho"
   ],
   "feldhaus_cais": [
-   "branco",
    "vermelho",
    "turquesa",
    "champanhe",
-   "grafite"
+   "grafite",
+   "preto"
   ],
   "feldhaus_fruta": [
-   "branco",
    "verde_claro",
    "turquesa",
    "azul_meia_noite",
-   "verde_escuro"
+   "verde_escuro",
+   "preto"
   ],
   "vorhaus_corda": [
-   "branco",
    "azul",
    "grafite",
    "champanhe",
-   "azul_escuro"
+   "azul_escuro",
+   "prata"
   ],
   "vorhaus_nascente": [
+   "vermelho",
    "branco",
    "preto",
    "chumbo",
-   "azul_meia_noite",
-   "grafite"
+   "azul_meia_noite"
   ],
   "vorhaus_marulho": [
-   "branco",
    "azul_escuro",
    "chumbo",
    "azul_meia_noite",
-   "prata"
+   "prata",
+   "cinza_claro"
   ],
   "vorhaus_bolota": [
-   "branco",
-   "prata",
    "roxo",
+   "prata",
    "turquesa",
-   "azul_perolado"
+   "azul_perolado",
+   "verde_escuro"
   ],
   "vorhaus_lapa": [
-   "branco",
-   "grafite",
    "turquesa",
+   "grafite",
    "azul_meia_noite",
-   "verde_claro"
+   "verde_claro",
+   "preto"
   ],
   "vorhaus_sopro": [
-   "branco",
    "roxo",
    "azul_perolado",
    "preto",
-   "vermelho"
+   "vermelho",
+   "prata"
   ],
   "vorhaus_ameixa": [
-   "branco",
-   "branco_perola",
    "vermelho",
+   "branco_perola",
    "turquesa",
-   "vinho"
+   "vinho",
+   "branco"
   ],
   "vorhaus_ferro": [
-   "branco",
    "vinho",
    "prata",
    "turquesa",
-   "grafite"
+   "grafite",
+   "verde_escuro"
   ],
   "ostwerk_barrao": [
+   "vermelho_classico",
    "branco",
    "preto",
-   "vermelho_classico",
    "vinho",
    "chumbo"
   ],
   "ostwerk_cimbra": [
-   "branco",
+   "vinho",
    "cinza_claro",
    "champanhe",
    "prata",
    "preto"
   ],
   "ostwerk_lastro": [
-   "branco",
    "azul_escuro",
    "chumbo",
    "vermelho",
-   "cinza_claro"
+   "cinza_claro",
+   "branco"
   ],
   "ostwerk_aresta": [
-   "branco",
-   "preto",
    "vinho",
+   "preto",
+   "branco",
    "vermelho",
    "azul_escuro"
   ],
   "ostwerk_pedestal": [
-   "branco",
    "verde_escuro",
    "champanhe",
    "branco_perola",
-   "grafite"
+   "grafite",
+   "branco"
   ],
   "ostwerk_travessa": [
-   "branco",
+   "amarelo",
    "azul_meia_noite",
    "preto",
    "prata",
    "branco_perola"
   ],
   "ostwerk_estaca": [
-   "branco",
    "vermelho_classico",
    "marrom",
    "azul",
-   "vermelho"
+   "vermelho",
+   "preto"
   ],
   "ostwerk_abrigo": [
-   "branco",
-   "branco_perola",
    "azul",
+   "branco_perola",
+   "branco",
    "grafite",
    "amarelo"
   ],
   "keldorf_coluna": [
-   "branco",
    "vermelho_classico",
+   "branco",
    "preto",
    "chumbo",
    "champanhe"
   ],
   "keldorf_borda": [
-   "branco",
    "amarelo",
    "champanhe",
    "azul_perolado",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "branco"
   ],
   "keldorf_azimute": [
+   "vermelho",
    "branco",
    "cinza_claro",
-   "vermelho",
    "champanhe",
    "preto"
   ],
   "keldorf_torre": [
-   "branco",
    "verde_escuro",
    "azul_meia_noite",
    "roxo",
-   "chumbo"
+   "chumbo",
+   "preto"
   ],
   "keldorf_coral": [
-   "branco",
    "celeste",
    "amarelo",
    "laranja",
+   "branco",
    "prata"
   ],
   "keldorf_dardo": [
-   "branco",
    "vinho",
    "verde_escuro",
    "roxo",
-   "celeste"
+   "celeste",
+   "preto"
   ],
   "keldorf_rubi": [
-   "branco",
+   "roxo",
    "grafite",
    "branco_perola",
-   "roxo",
-   "amarelo"
+   "amarelo",
+   "prata"
   ],
   "keldorf_gongora": [
-   "branco",
    "vermelho",
    "azul_perolado",
    "celeste",
-   "amarelo"
+   "amarelo",
+   "preto"
   ],
   "keldorf_porta": [
-   "branco",
+   "mostarda",
    "prata",
    "creme",
-   "mostarda",
-   "marrom"
+   "marrom",
+   "verde_ingles"
   ],
   "keldorf_calha": [
-   "branco",
    "vermelho",
+   "branco",
    "celeste",
    "prata",
    "amarelo"
   ],
   "rauhe_boleia": [
-   "branco",
    "azul",
+   "branco",
    "vermelho",
    "turquesa",
    "roxo"
   ],
   "rauhe_rutilo": [
-   "branco",
-   "prata",
    "azul_perolado",
+   "prata",
    "roxo",
-   "preto"
+   "preto",
+   "amarelo"
   ],
   "rauhe_cursor": [
-   "branco",
    "azul_perolado",
    "celeste",
    "prata",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "roxo"
   ],
   "rauhe_asfalto": [
-   "branco",
+   "roxo",
    "chumbo",
    "preto",
    "branco_perola",
-   "roxo"
+   "champanhe"
   ],
   "rauhe_argila": [
-   "branco",
-   "grafite",
    "amarelo",
+   "grafite",
    "azul_escuro",
-   "cinza_claro"
+   "cinza_claro",
+   "prata"
   ],
   "rauhe_quartzo": [
-   "branco",
-   "prata",
    "amarelo",
+   "prata",
+   "branco",
    "azul",
    "marrom"
   ],
   "rauhe_cachoeira": [
-   "branco",
-   "azul_meia_noite",
    "celeste",
-   "azul",
-   "vinho"
-  ],
-  "lindauer_naco": [
-   "branco",
-   "azul",
-   "preto",
-   "vermelho_classico",
-   "amarelo"
-  ],
-  "lindauer_acorde": [
-   "branco",
-   "grafite",
-   "azul",
-   "prata",
-   "preto"
-  ],
-  "lindauer_esteio": [
-   "branco",
    "azul_meia_noite",
-   "prata",
+   "azul",
    "vinho",
    "preto"
   ],
-  "lindauer_laminar": [
-   "branco",
-   "branco_perola",
+  "lindauer_naco": [
    "azul",
    "preto",
-   "prata"
+   "vermelho_classico",
+   "amarelo",
+   "laranja"
+  ],
+  "lindauer_acorde": [
+   "azul",
+   "grafite",
+   "prata",
+   "branco",
+   "preto"
+  ],
+  "lindauer_esteio": [
+   "vinho",
+   "azul_meia_noite",
+   "branco",
+   "prata",
+   "preto"
+  ],
+  "lindauer_laminar": [
+   "azul",
+   "branco_perola",
+   "preto",
+   "prata",
+   "vinho"
   ],
   "lindauer_friso": [
-   "branco",
    "turquesa",
+   "branco",
    "celeste",
    "amarelo",
    "azul_perolado"
   ],
   "lindauer_aro": [
-   "branco",
    "turquesa",
    "azul_meia_noite",
    "azul_perolado",
-   "verde_claro"
+   "verde_claro",
+   "prata"
   ],
   "lindauer_margem": [
-   "branco",
-   "champanhe",
    "vermelho",
+   "champanhe",
    "azul_meia_noite",
-   "verde_escuro"
+   "verde_escuro",
+   "branco"
   ],
   "ottavo_broto": [
-   "branco",
    "mostarda",
    "preto",
    "amarelo",
-   "prata"
+   "prata",
+   "marrom"
   ],
   "ottavo_tocoalto": [
-   "branco",
    "vinho",
    "cinza_claro",
+   "branco",
    "prata",
    "verde_claro"
   ],
   "ottavo_unoa": [
-   "branco",
    "vinho",
    "preto",
    "vermelho",
-   "celeste"
+   "celeste",
+   "azul_escuro"
   ],
   "ottavo_areia": [
-   "branco",
-   "branco_perola",
    "roxo",
+   "branco_perola",
    "prata",
-   "verde_escuro"
+   "verde_escuro",
+   "turquesa"
   ],
   "ottavo_terra": [
-   "branco",
-   "prata",
    "amarelo",
+   "prata",
    "preto",
-   "verde_claro"
+   "verde_claro",
+   "turquesa"
   ],
   "ottavo_corte": [
-   "branco",
    "celeste",
    "prata",
    "azul_perolado",
-   "vinho"
+   "vinho",
+   "branco"
   ],
   "ottavo_cobre": [
-   "branco",
    "amarelo",
    "creme",
+   "branco",
    "prata",
    "verde_ingles"
   ],
   "ottavo_bruma": [
-   "branco",
-   "prata",
    "azul_perolado",
+   "prata",
    "vinho",
-   "turquesa"
+   "turquesa",
+   "vermelho"
   ],
   "varenna_verso": [
-   "branco",
-   "prata",
    "vermelho",
+   "prata",
+   "branco",
    "vermelho_classico",
    "creme"
   ],
   "varenna_vinco": [
-   "branco",
    "azul_escuro",
+   "branco",
    "preto",
    "vinho",
    "chumbo"
   ],
   "varenna_galho": [
-   "branco",
-   "preto",
    "mostarda",
+   "preto",
    "verde_escuro",
-   "laranja"
+   "laranja",
+   "vermelho"
   ],
   "varenna_pasta": [
-   "branco",
    "amarelo",
    "vermelho",
    "vinho",
+   "branco",
    "roxo"
   ],
   "varenna_paladio": [
-   "branco",
    "turquesa",
    "roxo",
    "vinho",
-   "champanhe"
+   "champanhe",
+   "preto"
   ],
   "varenna_turbina": [
-   "branco",
    "vinho",
    "verde_escuro",
    "branco_perola",
-   "turquesa"
+   "turquesa",
+   "prata"
   ],
   "varenna_sorva": [
-   "branco",
    "amarelo",
    "prata",
+   "branco",
    "vermelho",
    "azul_meia_noite"
   ],
   "castellani_cascalho": [
-   "branco",
    "azul_perolado",
    "grafite",
    "verde_escuro",
-   "turquesa"
+   "turquesa",
+   "branco"
   ],
   "castellani_espinho": [
-   "branco",
    "vinho",
+   "branco",
    "celeste",
    "vermelho",
    "verde_escuro"
   ],
   "castellani_savia": [
-   "branco",
+   "vermelho_classico",
    "prata",
    "preto",
-   "vermelho_classico",
-   "celeste"
+   "celeste",
+   "azul"
   ],
   "castellani_ecoa": [
-   "branco",
-   "prata",
    "vermelho",
+   "prata",
    "verde_escuro",
-   "marrom"
+   "marrom",
+   "mostarda"
   ],
   "castellani_nimboalto": [
-   "branco",
+   "vermelho",
    "cinza_claro",
    "prata",
-   "vermelho",
-   "preto"
+   "preto",
+   "grafite"
   ],
   "castellani_caju": [
-   "branco",
    "vermelho",
    "grafite",
+   "branco",
    "azul",
    "amarelo"
   ],
   "corsalto_pimenta": [
-   "branco",
-   "prata",
    "vermelho_classico",
+   "prata",
    "vermelho",
-   "preto"
+   "preto",
+   "verde_ingles"
   ],
   "corsalto_poeira": [
-   "branco",
    "azul",
    "vermelho",
    "amarelo",
-   "preto"
+   "preto",
+   "laranja"
   ],
   "corsalto_ocre": [
-   "branco",
-   "cinza_claro",
    "vermelho",
+   "cinza_claro",
    "grafite",
+   "branco",
    "champanhe"
   ],
   "corsalto_forja": [
-   "branco",
    "vinho",
    "vermelho",
    "champanhe",
-   "preto"
+   "preto",
+   "amarelo"
   ],
   "corsalto_diadema": [
+   "azul",
    "branco",
    "creme",
    "marrom",
-   "azul",
    "preto"
   ],
   "corsalto_cobalita": [
-   "branco",
-   "prata",
    "amarelo",
+   "prata",
    "celeste",
-   "verde_escuro"
+   "verde_escuro",
+   "azul_meia_noite"
   ],
   "corsalto_malva": [
-   "branco",
    "roxo",
    "prata",
    "amarelo",
-   "branco_perola"
+   "branco_perola",
+   "azul_perolado"
   ],
   "corsalto_aurora": [
-   "branco",
    "vermelho",
    "amarelo",
    "azul",
-   "vinho"
+   "vinho",
+   "preto"
   ],
   "taurenza_lacraia": [
-   "branco",
-   "marrom",
    "azul",
+   "marrom",
    "prata",
-   "vermelho"
+   "vermelho",
+   "amarelo"
   ],
   "taurenza_lasca": [
-   "branco",
    "amarelo",
    "champanhe",
    "azul_escuro",
-   "prata"
+   "prata",
+   "branco"
   ],
   "taurenza_furia": [
-   "branco",
    "turquesa",
    "prata",
    "azul_perolado",
+   "branco",
    "vermelho"
   ],
   "taurenza_basalto": [
-   "branco",
    "verde_escuro",
    "branco_perola",
    "vermelho",
-   "azul"
+   "azul",
+   "preto"
   ],
   "taurenza_pinaculo": [
-   "branco",
-   "preto",
    "amarelo",
+   "preto",
    "vermelho",
-   "turquesa"
+   "turquesa",
+   "roxo"
   ],
   "taurenza_alabastro": [
-   "branco",
    "roxo",
+   "branco",
    "amarelo",
    "celeste",
    "verde_escuro"
   ],
   "taurenza_galeria": [
-   "branco",
    "celeste",
    "preto",
    "laranja",
-   "marrom"
+   "marrom",
+   "amarelo"
   ],
   "tridella_isobara": [
-   "branco",
-   "prata",
    "vermelho_classico",
+   "prata",
    "preto",
-   "verde_escuro"
+   "verde_escuro",
+   "azul"
   ],
   "tridella_rosaferro": [
-   "branco",
    "amarelo",
    "azul_escuro",
    "vermelho",
-   "azul"
+   "azul",
+   "preto"
   ],
   "tridella_tavola": [
-   "branco",
    "celeste",
    "vermelho",
    "azul_perolado",
-   "prata"
+   "prata",
+   "verde_escuro"
   ],
   "tridella_duna": [
-   "branco",
    "celeste",
    "mostarda",
    "vermelho",
-   "verde_ingles"
+   "verde_ingles",
+   "branco"
   ],
   "tridella_cutelo": [
-   "branco",
    "laranja",
    "celeste",
    "azul",
-   "vermelho_classico"
+   "vermelho_classico",
+   "prata"
   ],
   "tridella_martelo": [
-   "branco",
    "amarelo",
    "mostarda",
    "vermelho",
-   "vermelho_classico"
+   "vermelho_classico",
+   "prata"
   ],
   "vallon_ramo": [
-   "branco",
-   "prata",
    "celeste",
+   "prata",
    "verde_ingles",
-   "verde_claro"
+   "verde_claro",
+   "vermelho"
   ],
   "vallon_gema": [
-   "branco",
    "amarelo",
    "verde_claro",
    "prata",
+   "branco",
    "preto"
   ],
   "vallon_cajuina": [
-   "branco",
-   "grafite",
    "vinho",
+   "grafite",
    "verde_escuro",
-   "preto"
+   "preto",
+   "celeste"
   ],
   "vallon_nimbo": [
-   "branco",
-   "prata",
    "roxo",
+   "prata",
    "branco_perola",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "celeste"
   ],
   "vallon_meandro": [
-   "branco",
    "mostarda",
    "vermelho_classico",
    "amarelo",
-   "verde_escuro"
+   "verde_escuro",
+   "preto"
   ],
   "vallon_avenida": [
-   "branco",
-   "branco_perola",
    "roxo",
+   "branco_perola",
+   "branco",
    "preto",
    "prata"
   ],
   "vallon_sarga": [
-   "branco",
-   "grafite",
    "azul",
+   "grafite",
    "roxo",
-   "vinho"
+   "vinho",
+   "branco"
   ],
   "vallon_braseiro": [
-   "branco",
    "vermelho",
    "grafite",
    "prata",
+   "branco",
    "vinho"
   ],
   "vallon_atico": [
-   "branco",
    "amarelo",
    "azul_meia_noite",
+   "branco",
    "vinho",
    "azul"
   ],
   "vallon_serrilha": [
-   "branco",
-   "marrom",
    "vermelho",
+   "marrom",
    "mostarda",
-   "prata"
+   "prata",
+   "laranja"
   ],
   "vallon_ceramica": [
-   "branco",
-   "preto",
    "vermelho_classico",
+   "preto",
    "amarelo",
-   "prata"
+   "prata",
+   "vermelho"
   ],
   "vallon_vazante": [
-   "branco",
    "vinho",
    "grafite",
    "azul_escuro",
-   "champanhe"
+   "champanhe",
+   "preto"
   ],
   "saulieu_arbusto": [
-   "branco",
    "mostarda",
    "verde_claro",
+   "branco",
    "vermelho_classico",
    "verde_escuro"
   ],
   "saulieu_cogumelo": [
-   "branco",
    "vermelho",
    "grafite",
    "vinho",
-   "celeste"
+   "celeste",
+   "prata"
   ],
   "saulieu_pereira": [
-   "branco",
    "verde_escuro",
    "celeste",
    "preto",
-   "vinho"
-  ],
-  "saulieu_alto": [
-   "branco",
-   "azul_meia_noite",
-   "vermelho",
-   "vinho",
-   "champanhe"
-  ],
-  "saulieu_ribeira": [
-   "branco",
-   "mostarda",
-   "vermelho",
-   "marrom",
-   "preto"
-  ],
-  "saulieu_nacara": [
-   "branco",
-   "turquesa",
-   "verde_escuro",
-   "prata",
-   "amarelo"
-  ],
-  "morel_jangada": [
-   "branco",
-   "verde_escuro",
-   "vinho",
-   "prata",
-   "celeste"
-  ],
-  "morel_afluente": [
-   "branco",
-   "chumbo",
-   "verde_ingles",
-   "celeste",
-   "vinho"
-  ],
-  "morel_nave": [
-   "branco",
-   "laranja",
-   "preto",
-   "marrom",
-   "champanhe"
-  ],
-  "morel_colmeia": [
-   "branco",
-   "celeste",
-   "champanhe",
    "vinho",
    "verde_claro"
   ],
-  "morel_feno": [
+  "saulieu_alto": [
+   "vermelho",
+   "azul_meia_noite",
+   "vinho",
+   "champanhe",
+   "branco"
+  ],
+  "saulieu_ribeira": [
+   "mostarda",
+   "vermelho",
+   "marrom",
+   "preto",
+   "laranja"
+  ],
+  "saulieu_nacara": [
+   "turquesa",
+   "verde_escuro",
+   "prata",
    "branco",
-   "grafite",
+   "amarelo"
+  ],
+  "morel_jangada": [
+   "verde_escuro",
+   "vinho",
+   "prata",
    "celeste",
+   "chumbo"
+  ],
+  "morel_afluente": [
+   "celeste",
+   "chumbo",
+   "verde_ingles",
+   "vinho",
+   "prata"
+  ],
+  "morel_nave": [
+   "laranja",
+   "preto",
+   "marrom",
+   "champanhe",
+   "prata"
+  ],
+  "morel_colmeia": [
+   "celeste",
+   "champanhe",
+   "vinho",
+   "verde_claro",
+   "preto"
+  ],
+  "morel_feno": [
+   "celeste",
+   "grafite",
+   "branco",
    "vinho",
    "prata"
   ],
   "morel_jade": [
-   "branco",
    "celeste",
    "roxo",
    "azul_meia_noite",
-   "verde_escuro"
-  ],
-  "morel_odorico": [
-   "branco",
-   "marrom",
-   "amarelo",
-   "prata",
+   "verde_escuro",
    "preto"
   ],
+  "morel_odorico": [
+   "amarelo",
+   "marrom",
+   "prata",
+   "preto",
+   "vermelho"
+  ],
   "morel_talisca": [
-   "branco",
-   "verde_ingles",
    "vinho",
+   "verde_ingles",
    "chumbo",
-   "marrom"
+   "marrom",
+   "preto"
   ],
   "dunmere_menta": [
-   "branco",
    "vermelho",
    "preto",
    "verde_claro",
-   "amarelo"
+   "amarelo",
+   "marrom"
   ],
   "dunmere_lentilha": [
-   "branco",
+   "celeste",
    "champanhe",
    "cinza_claro",
-   "celeste",
+   "branco",
    "prata"
   ],
   "dunmere_carvalho": [
-   "branco",
    "vinho",
    "vermelho",
    "amarelo",
-   "turquesa"
+   "turquesa",
+   "branco"
   ],
   "dunmere_balsa": [
-   "branco",
-   "chumbo",
    "mostarda",
+   "chumbo",
    "preto",
-   "champanhe"
+   "champanhe",
+   "celeste"
   ],
   "halberton_tambor": [
-   "branco",
-   "marrom",
    "vinho",
+   "marrom",
    "mostarda",
-   "laranja"
+   "laranja",
+   "prata"
   ],
   "halberton_violino": [
-   "branco",
    "azul",
+   "branco",
    "vermelho_classico",
    "amarelo",
    "prata"
   ],
   "halberton_casarao": [
-   "branco",
-   "chumbo",
    "vermelho_classico",
+   "chumbo",
    "vinho",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "prata"
   ],
   "halberton_bravio": [
-   "branco",
    "azul_escuro",
+   "branco",
    "grafite",
    "champanhe",
    "vermelho"
   ],
   "halberton_campina": [
-   "branco",
    "vinho",
    "celeste",
    "preto",
+   "branco",
    "azul_perolado"
   ],
   "calderwood_sabre": [
-   "branco",
-   "creme",
    "amarelo",
+   "creme",
    "celeste",
-   "mostarda"
+   "mostarda",
+   "preto"
   ],
   "calderwood_arvoredo": [
-   "branco",
-   "chumbo",
    "turquesa",
+   "chumbo",
    "preto",
-   "verde_escuro"
+   "verde_escuro",
+   "vermelho"
   ],
   "calderwood_cometa": [
-   "branco",
-   "preto",
    "vermelho",
+   "preto",
    "branco_perola",
-   "azul"
+   "azul",
+   "azul_meia_noite"
   ],
   "calderwood_satinado": [
-   "branco",
    "verde_escuro",
    "celeste",
    "preto",
-   "prata"
+   "prata",
+   "branco"
   ],
   "pemberly_crisol": [
-   "branco",
-   "prata",
    "amarelo",
+   "prata",
    "mostarda",
-   "celeste"
+   "celeste",
+   "preto"
   ],
   "pemberly_claustro": [
-   "branco",
    "azul",
    "verde_escuro",
    "preto",
-   "mostarda"
+   "mostarda",
+   "branco"
   ],
   "pemberly_flautista": [
-   "branco",
    "vermelho_classico",
+   "branco",
    "marrom",
    "preto",
    "amarelo"
   ],
   "wexmoor_moenda": [
-   "branco",
-   "verde_ingles",
    "azul",
+   "verde_ingles",
    "vermelho",
+   "branco",
    "mostarda"
   ],
   "wexmoor_escarpa": [
-   "branco",
    "amarelo",
    "preto",
    "mostarda",
-   "celeste"
+   "celeste",
+   "marrom"
   ],
   "wexmoor_carmim": [
-   "branco",
    "vinho",
    "preto",
    "amarelo",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "branco"
   ],
   "ashcombe_arisco": [
-   "branco",
    "vinho",
    "verde_escuro",
+   "branco",
    "celeste",
    "grafite"
   ],
   "ashcombe_assobio": [
-   "branco",
    "turquesa",
    "azul_meia_noite",
    "branco_perola",
-   "grafite"
+   "grafite",
+   "preto"
   ],
   "dunmere_fornada": [
-   "branco",
-   "prata",
    "azul",
+   "prata",
    "mostarda",
-   "verde_ingles"
+   "verde_ingles",
+   "creme"
   ],
   "ashworth_soberano": [
-   "branco",
    "vinho",
    "verde_escuro",
    "azul",
-   "amarelo"
+   "amarelo",
+   "preto"
   ],
   "ashworth_cerimonial": [
-   "branco",
+   "celeste",
    "marrom",
    "champanhe",
-   "celeste",
-   "verde_escuro"
+   "verde_escuro",
+   "prata"
   ],
   "norrvik_gota": [
-   "branco",
    "vinho",
    "amarelo",
    "preto",
-   "champanhe"
+   "champanhe",
+   "grafite"
   ],
   "norrvik_favo": [
-   "branco",
    "vinho",
    "vermelho_classico",
    "celeste",
-   "verde_ingles"
+   "verde_ingles",
+   "prata"
   ],
   "norrvik_vigia": [
-   "branco",
    "vermelho",
    "prata",
    "grafite",
-   "vinho"
+   "vinho",
+   "champanhe"
   ],
   "norrvik_bastion": [
-   "branco",
    "vermelho",
    "azul_meia_noite",
+   "branco",
    "azul_escuro",
    "vinho"
   ],
   "norrvik_corisco": [
-   "branco",
    "amarelo",
+   "branco",
    "vermelho",
    "preto",
    "vinho"
   ],
   "norrvik_anfora": [
-   "branco",
    "mostarda",
    "creme",
    "celeste",
-   "amarelo"
+   "amarelo",
+   "branco"
   ],
   "volnar_nimbus": [
-   "branco",
    "verde_escuro",
    "chumbo",
    "champanhe",
-   "roxo"
+   "roxo",
+   "prata"
   ],
   "volnar_decano": [
-   "branco",
    "vinho",
    "verde_escuro",
    "celeste",
-   "vermelho_classico"
+   "vermelho_classico",
+   "prata"
   ],
   "volnar_dobra": [
-   "branco",
-   "preto",
    "amarelo",
+   "preto",
    "vermelho_classico",
-   "mostarda"
+   "mostarda",
+   "celeste"
   ],
   "feldhaus_zenite": [
+   "vermelho_classico",
    "branco",
    "prata",
    "verde_ingles",
-   "marrom",
-   "preto"
+   "marrom"
   ],
   "volnar_broto": [
-   "branco",
-   "grafite",
    "vinho",
+   "grafite",
    "verde_claro",
+   "branco",
    "preto"
   ],
   "volnar_tijolo": [
-   "branco",
+   "laranja",
    "azul_meia_noite",
    "chumbo",
    "marrom",
    "prata"
   ],
   "volnar_brisa": [
-   "branco",
-   "champanhe",
    "amarelo",
+   "champanhe",
    "vermelho",
-   "cinza_claro"
+   "cinza_claro",
+   "prata"
   ],
   "volnar_bolota": [
-   "branco",
    "vinho",
+   "branco",
    "mostarda",
    "celeste",
    "vermelho_classico"
   ],
   "volnar_pomar": [
-   "branco",
+   "verde_escuro",
    "chumbo",
    "champanhe",
    "preto",
    "marrom"
   ],
   "volnar_caju": [
-   "branco",
-   "prata",
    "amarelo",
+   "prata",
    "preto",
-   "azul_escuro"
+   "azul_escuro",
+   "vinho"
   ],
   "whitlock_cavalo": [
-   "branco",
-   "verde_ingles",
    "vermelho",
+   "verde_ingles",
    "creme",
-   "azul"
+   "azul",
+   "branco"
   ],
   "whitlock_cometa": [
-   "branco",
+   "vermelho",
    "preto",
    "verde_ingles",
    "prata",
-   "vermelho"
+   "amarelo"
   ],
   "whitlock_lamina": [
-   "branco",
    "azul_perolado",
    "azul",
    "preto",
-   "amarelo"
+   "amarelo",
+   "vinho"
   ],
   "whitlock_lavoura": [
-   "branco",
    "celeste",
    "prata",
    "amarelo",
-   "marrom"
+   "marrom",
+   "azul"
   ],
   "whitlock_horizonte": [
-   "branco",
+   "vermelho_classico",
    "preto",
    "marrom",
    "creme",
-   "vermelho_classico"
+   "mostarda"
   ],
   "whitlock_torvelinho": [
-   "branco",
    "verde_escuro",
    "mostarda",
+   "branco",
    "vermelho",
    "prata"
   ],
   "whitlock_seta": [
-   "branco",
    "azul_perolado",
    "branco_perola",
    "verde_escuro",
-   "celeste"
+   "celeste",
+   "branco"
   ],
   "whitlock_amora": [
-   "branco",
-   "champanhe",
    "amarelo",
+   "champanhe",
+   "branco",
    "preto",
    "vermelho"
   ],
   "bancroft_arraia": [
-   "branco",
    "amarelo",
    "azul",
    "prata",
-   "cinza_claro"
+   "cinza_claro",
+   "azul_escuro"
   ],
   "bancroft_rugido": [
-   "branco",
    "celeste",
    "mostarda",
    "verde_ingles",
-   "azul"
+   "azul",
+   "branco"
   ],
   "bancroft_marreta": [
-   "branco",
    "mostarda",
    "prata",
    "vermelho_classico",
-   "marrom"
+   "marrom",
+   "branco"
   ],
   "bancroft_oficina": [
-   "branco",
-   "prata",
    "vermelho_classico",
+   "prata",
    "marrom",
-   "mostarda"
+   "mostarda",
+   "azul"
   ],
   "bancroft_caravela": [
+   "azul",
    "branco",
    "preto",
-   "azul",
    "verde_ingles",
    "mostarda"
   ],
   "bancroft_patamar": [
-   "branco",
+   "vermelho",
    "preto",
    "grafite",
    "cinza_claro",
    "chumbo"
   ],
   "bancroft_miragem": [
-   "branco",
    "laranja",
+   "branco",
    "vermelho",
    "vermelho_classico",
    "preto"
   ],
   "bancroft_vela": [
-   "branco",
    "celeste",
    "vermelho_classico",
    "amarelo",
-   "creme"
+   "creme",
+   "branco"
   ],
   "bancroft_cintila": [
-   "branco",
    "azul",
    "mostarda",
    "marrom",
-   "laranja"
+   "laranja",
+   "prata"
   ],
   "bancroft_festa": [
-   "branco",
    "verde_escuro",
    "branco_perola",
    "turquesa",
-   "azul_perolado"
-  ],
-  "bancroft_grao": [
-   "branco",
-   "prata",
-   "vermelho",
-   "verde_claro",
-   "mostarda"
-  ],
-  "garrison_aster": [
-   "branco",
-   "azul_meia_noite",
-   "prata",
-   "azul",
+   "azul_perolado",
    "preto"
   ],
+  "bancroft_grao": [
+   "vermelho",
+   "prata",
+   "verde_claro",
+   "mostarda",
+   "laranja"
+  ],
+  "garrison_aster": [
+   "azul",
+   "azul_meia_noite",
+   "prata",
+   "preto",
+   "grafite"
+  ],
   "garrison_trovao": [
-   "branco",
    "vermelho",
    "mostarda",
    "creme",
+   "branco",
    "prata"
   ],
   "garrison_vendaval": [
-   "branco",
-   "marrom",
    "amarelo",
+   "marrom",
    "vermelho_classico",
-   "azul"
+   "azul",
+   "branco"
   ],
   "garrison_facao": [
-   "branco",
-   "preto",
    "amarelo",
+   "preto",
    "vermelho",
-   "verde_ingles"
+   "verde_ingles",
+   "marrom"
   ],
   "garrison_ladeira": [
+   "amarelo",
    "branco",
    "cinza_claro",
-   "amarelo",
    "vermelho",
    "prata"
   ],
   "garrison_ciranda": [
-   "branco",
    "turquesa",
    "branco_perola",
    "prata",
+   "branco",
    "verde_escuro"
   ],
   "bancroft_relicario": [
-   "branco",
+   "celeste",
    "preto",
    "verde_ingles",
-   "celeste",
+   "branco",
    "marrom"
   ],
   "ashby_fagulha": [
-   "branco",
-   "preto",
    "laranja",
+   "preto",
    "marrom",
-   "mostarda"
+   "mostarda",
+   "azul"
   ],
   "ashby_estrondo": [
-   "branco",
+   "vermelho",
    "verde_ingles",
    "preto",
    "prata",
-   "vermelho"
-  ],
-  "ashby_condor": [
-   "branco",
-   "mostarda",
-   "vermelho_classico",
-   "azul",
-   "celeste"
-  ],
-  "bancroft_centelha": [
-   "branco",
-   "vermelho_classico",
-   "azul",
-   "mostarda",
-   "prata"
-  ],
-  "bancroft_bigorna": [
-   "branco",
-   "preto",
-   "prata",
-   "creme",
-   "azul"
-  ],
-  "bancroft_seixo": [
-   "branco",
-   "azul_escuro",
-   "vinho",
-   "champanhe",
-   "prata"
-  ],
-  "ridgeway_corrente": [
-   "branco",
-   "marrom",
-   "vermelho_classico",
-   "preto",
-   "prata"
-  ],
-  "ridgeway_pitanga": [
-   "branco",
-   "verde_claro",
-   "vermelho_classico",
-   "amarelo",
    "mostarda"
   ],
-  "ridgeway_casulo": [
-   "branco",
-   "verde_claro",
-   "laranja",
-   "celeste",
-   "amarelo"
-  ],
-  "bancroft_astrolabio": [
-   "branco",
-   "amarelo",
-   "marrom",
-   "vermelho_classico",
-   "creme"
-  ],
-  "feldhaus_riacho": [
-   "branco",
-   "celeste",
-   "preto",
-   "prata",
-   "vinho"
-  ],
-  "feldhaus_campina": [
-   "branco",
-   "preto",
-   "vinho",
-   "grafite",
-   "verde_claro"
-  ],
-  "bancroft_seresta": [
-   "branco",
-   "marrom",
-   "vermelho_classico",
+  "ashby_condor": [
    "mostarda",
-   "verde_escuro"
-  ],
-  "ottavo_miudo": [
-   "branco",
+   "vermelho_classico",
+   "azul",
    "celeste",
+   "preto"
+  ],
+  "bancroft_centelha": [
+   "vermelho_classico",
+   "azul",
    "mostarda",
    "prata",
    "laranja"
   ],
-  "ipora_farol": [
-   "branco",
-   "marrom",
+  "bancroft_bigorna": [
    "azul",
+   "branco",
+   "preto",
+   "prata",
+   "creme"
+  ],
+  "bancroft_seixo": [
+   "azul_escuro",
+   "vinho",
+   "champanhe",
+   "prata",
+   "branco"
+  ],
+  "ridgeway_corrente": [
+   "vermelho_classico",
+   "marrom",
+   "branco",
+   "preto",
+   "prata"
+  ],
+  "ridgeway_pitanga": [
+   "verde_claro",
+   "vermelho_classico",
    "amarelo",
+   "mostarda",
+   "branco"
+  ],
+  "ridgeway_casulo": [
+   "verde_claro",
+   "laranja",
+   "celeste",
+   "amarelo",
+   "prata"
+  ],
+  "bancroft_astrolabio": [
+   "amarelo",
+   "marrom",
+   "vermelho_classico",
+   "creme",
    "preto"
   ],
+  "feldhaus_riacho": [
+   "celeste",
+   "preto",
+   "prata",
+   "vinho",
+   "grafite"
+  ],
+  "feldhaus_campina": [
+   "vinho",
+   "preto",
+   "grafite",
+   "verde_claro",
+   "champanhe"
+  ],
+  "bancroft_seresta": [
+   "vermelho_classico",
+   "marrom",
+   "mostarda",
+   "verde_escuro",
+   "preto"
+  ],
+  "ottavo_miudo": [
+   "celeste",
+   "mostarda",
+   "prata",
+   "laranja",
+   "marrom"
+  ],
+  "ipora_farol": [
+   "azul",
+   "marrom",
+   "amarelo",
+   "preto",
+   "branco"
+  ],
   "ipora_semente": [
-   "branco",
    "verde_claro",
    "grafite",
    "cinza_claro",
+   "branco",
    "prata"
   ],
   "ridgeway_atlas": [
-   "branco",
    "vinho",
+   "branco",
    "branco_perola",
    "azul_meia_noite",
    "celeste"
   ],
   "ridgeway_rochedo": [
-   "branco",
+   "vinho",
    "prata",
    "azul_meia_noite",
    "grafite",
    "preto"
   ],
   "ridgeway_penhasco": [
-   "branco",
    "azul_perolado",
    "turquesa",
    "vinho",
-   "amarelo"
+   "amarelo",
+   "branco"
   ],
   "bancroft_pedreira": [
-   "branco",
    "celeste",
    "branco_perola",
    "preto",
-   "turquesa"
+   "turquesa",
+   "branco"
   ],
   "ridgeway_toco": [
-   "branco",
    "roxo",
    "verde_escuro",
+   "branco",
    "grafite",
    "vinho"
   ],
   "ridgeway_escarpa": [
-   "branco",
-   "grafite",
    "amarelo",
+   "grafite",
    "azul_perolado",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "branco"
   ],
   "ridgeway_mirante": [
-   "branco",
    "vinho",
    "vermelho",
+   "branco",
    "azul_perolado",
    "branco_perola"
   ],
   "ridgeway_sertao": [
-   "branco",
    "roxo",
    "azul_perolado",
    "vinho",
-   "amarelo"
+   "amarelo",
+   "branco"
   ],
   "ridgeway_cordilheira": [
-   "branco",
+   "azul_escuro",
    "prata",
    "cinza_claro",
-   "azul_escuro",
-   "preto"
+   "preto",
+   "grafite"
   ],
   "ridgeway_estiva": [
-   "branco",
    "azul_perolado",
    "branco_perola",
    "verde_escuro",
+   "branco",
    "roxo"
   ],
   "ridgeway_arado": [
-   "branco",
    "vermelho",
    "champanhe",
    "vinho",
-   "cinza_claro"
+   "cinza_claro",
+   "branco"
   ],
   "kanaya_trilha": [
-   "branco",
    "laranja",
    "prata",
    "preto",
-   "celeste"
+   "celeste",
+   "verde_escuro"
   ],
   "kanaya_chapada": [
-   "branco",
-   "grafite",
    "celeste",
+   "grafite",
    "vinho",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "preto"
   ],
   "kanaya_vereda": [
-   "branco",
    "verde_escuro",
    "turquesa",
    "prata",
-   "vinho"
+   "vinho",
+   "branco"
   ],
   "halberton_torrao": [
-   "branco",
-   "azul_meia_noite",
    "vermelho",
+   "azul_meia_noite",
    "azul_perolado",
-   "roxo"
+   "roxo",
+   "prata"
   ],
   "halberton_serrote": [
-   "branco",
    "roxo",
    "verde_escuro",
+   "branco",
    "azul_meia_noite",
    "preto"
   ],
   "halberton_planalto": [
-   "branco",
-   "prata",
    "azul_escuro",
+   "prata",
+   "branco",
    "vermelho",
    "grafite"
   ],
   "keldorf_baluar": [
-   "branco",
-   "preto",
-   "grafite",
    "azul_escuro",
+   "preto",
+   "branco",
+   "grafite",
    "vermelho"
   ],
   "kosame_seiva": [
-   "branco",
+   "celeste",
    "azul_meia_noite",
    "preto",
-   "celeste",
-   "vinho"
+   "vinho",
+   "verde_escuro"
   ],
   "kosame_moita": [
-   "branco",
    "celeste",
    "azul_meia_noite",
    "amarelo",
-   "turquesa"
+   "turquesa",
+   "prata"
   ],
   "sanga_ravina": [
-   "branco",
    "celeste",
+   "branco",
    "roxo",
    "azul_perolado",
    "amarelo"
   ],
   "hayase_desfiladeiro": [
-   "branco",
    "verde_escuro",
    "vinho",
    "amarelo",
-   "preto"
+   "preto",
+   "grafite"
   ],
   "ishigumo_matagal": [
-   "branco",
    "celeste",
    "verde_escuro",
    "preto",
-   "turquesa"
+   "turquesa",
+   "roxo"
   ],
   "tomoe_cipo": [
-   "branco",
+   "azul_perolado",
    "preto",
    "grafite",
-   "azul_meia_noite",
-   "azul_perolado"
+   "branco",
+   "azul_meia_noite"
   ],
   "volnar_taiga": [
-   "branco",
    "vinho",
    "turquesa",
    "grafite",
-   "azul_perolado"
+   "azul_perolado",
+   "branco"
   ],
   "whitlock_campestre": [
-   "branco",
    "celeste",
+   "branco",
    "verde_ingles",
    "marrom",
    "prata"
   ],
   "bancroft_granito": [
-   "branco",
    "vermelho_classico",
    "preto",
    "verde_escuro",
-   "mostarda"
+   "mostarda",
+   "marrom"
   ],
   "ridgeway_ermo": [
-   "branco",
    "vermelho_classico",
+   "branco",
    "verde_escuro",
    "marrom",
    "laranja"
   ],
   "whitlock_ferreiro": [
-   "branco",
    "verde_escuro",
    "roxo",
    "vermelho",
+   "branco",
    "preto"
   ],
   "whitlock_lavrador": [
-   "branco",
    "azul_perolado",
    "prata",
    "branco_perola",
-   "vinho"
+   "vinho",
+   "grafite"
   ],
   "whitlock_carreiro": [
-   "branco",
    "vinho",
    "preto",
    "verde_escuro",
-   "turquesa"
+   "turquesa",
+   "amarelo"
   ],
   "bancroft_terral": [
-   "branco",
+   "celeste",
    "creme",
    "verde_ingles",
-   "celeste",
-   "vermelho_classico"
+   "vermelho_classico",
+   "branco"
   ],
   "bancroft_oleiro": [
-   "branco",
    "roxo",
+   "branco",
    "vinho",
    "azul_meia_noite",
    "azul_perolado"
   ],
   "bancroft_forjador": [
-   "branco",
    "amarelo",
    "vermelho",
    "roxo",
-   "celeste"
+   "celeste",
+   "branco"
   ],
   "garrison_ferrugem": [
-   "branco",
    "vermelho",
    "cinza_claro",
    "prata",
-   "azul_escuro"
+   "azul_escuro",
+   "branco"
   ],
   "garrison_martelo": [
-   "branco",
    "vinho",
+   "branco",
    "preto",
    "celeste",
    "vermelho"
   ],
   "kanaya_sulco": [
-   "branco",
    "vermelho",
    "grafite",
+   "branco",
    "azul_escuro",
    "prata"
   ],
   "kanaya_areia": [
-   "branco",
    "roxo",
+   "branco",
    "preto",
    "vinho",
    "prata"
   ],
   "kanaya_cascalho": [
-   "branco",
-   "preto",
    "celeste",
+   "preto",
    "grafite",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "amarelo"
   ],
   "hayase_barranco": [
-   "branco",
    "azul_perolado",
    "vinho",
+   "branco",
    "preto",
    "roxo"
   ],
   "hayase_canyon": [
-   "branco",
    "azul_perolado",
    "prata",
    "amarelo",
-   "preto"
+   "preto",
+   "verde_escuro"
   ],
   "hayase_muralha_2": [
-   "branco",
    "vinho",
    "branco_perola",
    "verde_escuro",
-   "prata"
+   "prata",
+   "turquesa"
   ],
   "sanga_garimpo": [
-   "branco",
    "azul_perolado",
    "verde_escuro",
    "preto",
-   "vermelho"
+   "vermelho",
+   "grafite"
   ],
   "ishigumo_capataz": [
-   "branco",
-   "grafite",
    "vermelho",
+   "grafite",
    "amarelo",
+   "branco",
    "roxo"
   ],
   "feldhaus_vertente": [
-   "branco",
    "roxo",
    "turquesa",
    "preto",
-   "azul_perolado"
+   "azul_perolado",
+   "branco_perola"
   ],
   "ottavo_batel": [
-   "branco",
-   "azul_meia_noite",
    "celeste",
+   "azul_meia_noite",
    "vinho",
-   "verde_escuro"
+   "verde_escuro",
+   "preto"
   ],
   "ottavo_espora": [
-   "branco",
    "verde_escuro",
    "vinho",
    "celeste",
-   "azul_meia_noite"
+   "azul_meia_noite",
+   "branco"
   ],
   "hoshino_capim": [
-   "branco",
    "vinho",
    "verde_escuro",
    "branco_perola",
-   "roxo"
+   "roxo",
+   "prata"
   ],
   "voltane_aurora": [
-   "branco",
+   "verde_escuro",
    "grafite",
    "branco_perola",
    "preto",
-   "verde_escuro"
+   "amarelo"
   ],
   "voltane_crista": [
-   "branco",
    "vermelho",
+   "branco",
    "preto",
    "grafite",
    "verde_escuro"
   ],
   "brakhaus_coletor": [
-   "branco",
    "amarelo",
    "vinho",
    "branco_perola",
+   "branco",
    "celeste"
   ],
   "brakhaus_sentinela": [
-   "branco",
    "amarelo",
    "vinho",
    "branco_perola",
+   "branco",
    "celeste"
   ],
   "brakhaus_colosso": [
-   "branco",
    "amarelo",
    "vinho",
    "branco_perola",
+   "branco",
    "celeste"
   ],
   "vantra_obsidiana": [
-   "branco",
    "vinho",
    "branco_perola",
+   "branco",
    "vermelho",
    "preto"
   ],
   "vantra_estilete": [
-   "branco",
    "vinho",
+   "branco",
    "azul_perolado",
    "azul",
    "turquesa"
   ],
   "vantra_quimera": [
-   "branco",
-   "branco_perola",
    "roxo",
+   "branco_perola",
+   "branco",
    "verde_escuro",
    "azul"
   ],
   "vantra_orbita": [
-   "branco",
    "vinho",
    "vermelho",
    "grafite",
-   "verde_escuro"
+   "verde_escuro",
+   "prata"
   ],
   "corsalto_helios": [
-   "branco",
    "azul",
    "branco_perola",
    "grafite",
-   "roxo"
+   "roxo",
+   "preto"
   ],
   "taurenza_meteorito": [
-   "branco",
    "roxo",
+   "branco",
    "grafite",
    "celeste",
    "azul_perolado"
   ],
   "keldorf_baluarte": [
-   "branco",
    "verde_escuro",
    "turquesa",
    "vinho",
-   "branco_perola"
+   "branco_perola",
+   "preto"
   ],
   "feldhaus_nimbo": [
-   "branco",
    "celeste",
    "prata",
    "azul_meia_noite",
-   "turquesa"
+   "turquesa",
+   "preto"
   ],
   "norrvik_bastion_2": [
-   "branco",
-   "branco_perola",
    "roxo",
+   "branco_perola",
    "vinho",
-   "grafite"
+   "grafite",
+   "branco"
   ],
   "vantra_aster": [
-   "branco",
    "celeste",
    "vinho",
    "branco_perola",
-   "roxo"
+   "roxo",
+   "prata"
   ]
  }
 }
