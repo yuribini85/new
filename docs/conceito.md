@@ -3,7 +3,8 @@
 ## Princípio central
 
 Preservar a estrutura de carreira, compra, coleção, preparação e progressão de um Gran
-Turismo clássico; substituir a pilotagem por corridas automáticas isométricas; e criar
+Turismo clássico; substituir a pilotagem completa por corridas automáticas, com toques nos pontos
+que decidem a volta quando o jogador assiste (decisão 127); e criar
 carros, fabricantes, pistas, arte e universo próprios.
 
 Não é recriar um jogo de corrida inteiro. Não é Motorsport Manager.
@@ -27,7 +28,8 @@ campeonatos e eventos · restrições de entrada · licenças · dinheiro e prê
 
 ## O que muda: idle
 
-O jogador decide; a IA executa.
+O jogador decide; a IA executa. Quando assiste, o jogador também conduz nos pontos que decidem
+a volta (frenagem, saída de curva, ataque); sem toque, o piloto contratado dirige (decisões 127 e 128).
 
 1. Compra o carro.
 2. Compra as peças.

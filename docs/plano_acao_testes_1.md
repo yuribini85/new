@@ -144,3 +144,6 @@ jogar de verdade. O jogo tem 249 falas no total.
   era da frota antiga); agora é a primeira cor forte da paleta do modelo. Loja e garagem com fundo
   e faixa na cor do carro, logo da loja da marca, selo de categoria e losangos de raridade
   (quartis de preço da frota). Pendente: pintura, número e apelido nos demais cartões.
+- **Controle na corrida (reclamação 1):** pilotagem por toques implementada (decisão 128): régua
+  FREIE antes de cada curva com frenagem, SEGURE na saída, ATACAR colado no rival. Calibrada ao
+  critério do usuário (perfeita +0,5 posição, ruim −0,25). Teste com pessoas no fim da rodada.

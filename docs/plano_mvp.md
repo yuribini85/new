@@ -1168,3 +1168,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     "corridas automáticas" do conceito, com protótipo testado antes; ilustração 2D por carro nos
     cartões, começando pelos ~60 da Club e da Sport; APK Android para os testes; cartões sem frase
     de personalidade; testadores adultos do público-alvo no teste do protótipo.
+128. **Pilotagem por toques: como funciona e quanto vale** (2026-10-21, critério do usuário). Teste
+    com pessoas só no fim da rodada (o usuário pediu para resolver todas as reclamações antes de
+    testar), no lugar do protótipo isolado. Na tela da corrida: a régua FREIE antes de cada curva
+    com frenagem (tocar com o cursor na faixa verde), SEGURE na saída (manter o dedo até a barra
+    encher) e ATACAR colado no rival da frente, com recarga; os cartões de jogada (decisão 117)
+    saem quando a pilotagem está ligada. Cada toque vira uma ordem da simulação gravada na fila, e
+    a corrida termina igual com o jogo fechado (`Pilotagem`, `Fila.pilotar`). Critério de
+    balanceamento: a corrida toda pilotada perfeita rende +0,5 posição; pilotada mal perde metade
+    disso. Medido por `tools/calibrar_pilotagem.gd` (hozuki_catana, 5 provas disputadas, 60
+    corridas): perfeita +0,53, boa +0,30, ruim −0,20, só o ATACAR +0,07; a peça mais barata, +0,12.

@@ -32,11 +32,11 @@
 		}
 	},
 	"pilotagem": {
-		"_nota": "Pilotagem por toques (decisão 127, Pilotagem). Valores provisórios até a calibração por tools/calibrar_pilotagem.gd com o critério que o usuário decidir. frenagem: tolerâncias do toque em relação ao ponto de frenagem (s), curva com frenagem a partir de minimo_m, janela_s antes do ponto em que o toque vale, ritmo de cada nota do toque até a saída da curva. saida: dura_s de saída de curva, aceleração de cada nota. ataque: como a escolha 'atacar' dos momentos (ritmo, agressividade, dura_s), a distância do rival e a recarga.",
+		"_nota": "Pilotagem por toques (decisões 127 e 128, Pilotagem). Critério do usuário (2026-10-21): a corrida toda pilotada perfeita rende +0,5 posição; pilotada mal perde metade disso. Calibrado por tools/calibrar_pilotagem.gd em 2026-10-21 (hozuki_catana, 5 provas disputadas, 60 corridas): perfeita +0,53, boa +0,30, ruim -0,20, só o ATACAR +0,07; a peça mais barata +0,12. frenagem: tolerâncias do toque em relação ao ponto de frenagem (s), curva com frenagem a partir de minimo_m, janela_s antes do ponto em que a régua aparece, ritmo de cada nota do toque até a saída da curva. saida: dura_s de saída de curva, aceleração de cada nota. ataque: distância do rival, recarga, duração, ritmo e agressividade.",
 		"ativa": true,
 		"frenagem": {"janela_s": 1.5, "perfeita_s": 0.15, "boa_s": 0.35, "minimo_m": 15.0,
-			"ritmo": {"perfeita": 1.03, "boa": 1.015, "cedo": 0.985, "tarde": 0.96}},
-		"saida": {"dura_s": 2.0, "acel": {"limpa": 1.08, "soltou": 0.92}},
-		"ataque": {"distancia_m": 20.0, "recarga_s": 12.0, "dura_s": 6.0, "ritmo": 1.005, "agressividade": 1.0}
+			"ritmo": {"perfeita": 1.013, "boa": 1.0065, "cedo": 0.996, "tarde": 0.9935}},
+		"saida": {"dura_s": 2.0, "acel": {"limpa": 1.025, "soltou": 0.984}},
+		"ataque": {"distancia_m": 20.0, "recarga_s": 45.0, "dura_s": 3.0, "ritmo": 1.0, "agressividade": 1.0}
 	}
 }
