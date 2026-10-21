@@ -19,9 +19,9 @@ var modo := ""
 ## Frenagem: segundos até o ponto de frenagem (negativo: já passou) e as
 ## tolerâncias, para desenhar a faixa.
 var faltam_s := 0.0
-var janela_s := 1.5
-var perfeita_s := 0.15
-var boa_s := 0.35
+var janela_s := 2.5
+var perfeita_s := 0.25
+var boa_s := 0.5
 ## Saída: 0..1 do tempo de saída já passado e se o dedo está segurando.
 var fracao := 0.0
 var segurando := false

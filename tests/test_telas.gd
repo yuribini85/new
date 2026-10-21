@@ -272,6 +272,62 @@ func test_camera_isometrica_so_na_ultrapassagem_e_desligada_por_reduzir_animacoe
 	d.free()
 
 
+## Teste com pessoas de 2026-10-21: com os carros colados, nenhum fica dentro
+## do outro na tela (menos de 1,85 m de lado, a largura de um carro), as rodas
+## não passam da zebra e a frente aponta para onde o carro anda: além da deriva
+## de propósito (até DERIVA_MAX), no máximo 4° em 95% do tempo.
+func test_carros_colados_nao_se_atravessam_e_apontam_para_onde_andam() -> void:
+	var d := dados_fixture()
+	for pid in ["oval", "oito_direita"]:
+		var pista: Pista = d.pista(pid)
+		# Seis carros num bolo de 6 m, com velocidades que se cruzam.
+		var amostras := []
+		for k in 401:
+			var t := k * 0.1
+			var s := {}
+			for i in 6:
+				s["c%d" % i if i > 0 else "jogador"] = 20.0 + i * 1.2 + (24.0 + 0.6 * sin(t * 0.7 + i * 1.9)) * t
+			amostras.append({"t": t, "s": s})
+		var fonte := CorridaVisual.new()
+		var v3 := Corrida3D.new()
+		v3.size = Vector2(360, 640)
+		_raiz().add_child(v3)
+		fonte.mostrar(pista, {"amostras": amostras, "voltas": 9, "carros": {}})
+		v3.mostrar(pista, fonte, {})
+		var dentro := 0
+		var fora := 0
+		var erros := []
+		var antes := {}
+		while fonte.tempo < 38.0:
+			fonte.tempo += 1.0 / 30.0
+			v3.atualizar(1.0 / 30.0)
+			var ids: Array = v3._carros.keys()
+			for i in ids.size():
+				var a: String = ids[i]
+				if absf(float(v3._lateral[a])) + 0.9 > Corrida3D.LARGURA_PISTA_M * 0.5 + 1.2:
+					fora += 1
+				for j in range(i + 1, ids.size()):
+					var b: String = ids[j]
+					if absf(v3._ciclo(fonte.distancia(a) - fonte.distancia(b))) < Corrida3D.FIRME_COMPRIMENTO_M \
+							and absf(float(v3._lateral[a]) - float(v3._lateral[b])) < 1.85:
+						dentro += 1
+				var c: Node3D = v3._carros[a]
+				var p := Vector2(c.position.x, -c.position.z)
+				if antes.has(a) and fonte.tempo > 8.0 and float(v3._tranco.get(a, 0.0)) <= 0.0 \
+						and absf(float(v3._giro_batida.get(a, 0.0))) < 0.01:
+					erros.append(absf(rad_to_deg(angle_difference((p - antes[a]).angle(), c.rotation.y))))
+				antes[a] = p
+		erros.sort()
+		var limite := rad_to_deg(Corrida3D.DERIVA_MAX) + 4.0
+		igual(dentro, 0, "%s: nenhum carro dentro do outro" % pid)
+		igual(fora, 0, "%s: rodas até a zebra" % pid)
+		verificar(erros[int(erros.size() * 0.95)] < limite, "%s: a frente aponta para onde o carro anda (95%% abaixo de %.1f°: %.1f°)"
+				% [pid, limite, erros[int(erros.size() * 0.95)]])
+		v3.free()
+		fonte.free()
+	d.free()
+
+
 func test_assets_devolve_arte_ou_null_para_placeholder() -> void:
 	Assets.limpar()
 	igual(Assets.caminho("x", "ui"), "res://arte/ui/x.png", "caminho da interface")

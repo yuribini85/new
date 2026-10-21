@@ -1185,3 +1185,15 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     carro (`CartazCarro`: sol em degradê e faixas de velocidade). Vale para os 363 carros. O
     pedido de ilustrações (`tools/pacote_arte_cartoes.py`) fica como opção: se um dia houver arte,
     `arte/carros/<id>_cartao.png` substitui a foto daquele carro.
+130. **Segundo teste com pessoas: o plano de ação** (2026-10-21, recomendações aprovadas pelo
+    usuário; plano em `docs/plano_acao_testes_2.md`). E1: faixa verde da freada maior (perfeita
+    ±0,25 s, boa ±0,5 s, régua 2,5 s antes), sem mudar o valor de cada nota (a freada tocada antes
+    do ponto vale a partir dele); critério da decisão 128 mantido. E2: mais interações na corrida
+    começando por vácuo e largada, todas dentro do mesmo teto. E3: arquétipos clássicos de carro
+    (muscle, esportivo japonês turbo, besouro, van, picape 4x4, hot hatch, GT europeu) no gerador
+    de formas para a frota inteira, evocando o tipo sem copiar carro real. E4: caixas de pintura
+    só cosméticas, só ganhas correndo, abertas na hora, nunca vendidas. E5: dificuldade dinâmica
+    na ajuda (janela maior para quem trava, desafios opcionais para quem pilota bem), rivais
+    fixos. E6: treinador contratável e evolução do piloto pelo recorde pessoal de volta, no lugar
+    do nível por corridas disputadas. Números novos (custo do treinador, ganho por recorde,
+    conteúdo das caixas) saem do critério da referência ou de calibração, não de estimativa.

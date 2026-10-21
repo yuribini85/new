@@ -45,8 +45,11 @@ static func nota_frenagem(atraso_s: float, p: Dictionary) -> String:
 
 
 ## A ordem da frenagem: do toque até o carro sair da curva, o ritmo da nota.
-static func ordem_frenagem(nota: String, t_toque: float, t_saida: float, p: Dictionary) -> Dictionary:
-	return {"de": t_toque, "ate": maxf(t_saida, t_toque + 0.1), "ritmo": float(p["frenagem"]["ritmo"][nota]),
+## Freada boa ou perfeita tocada antes do ponto de frenagem (t_ponto) vale a
+## partir do ponto: o valor da nota não muda com o lugar do toque na faixa.
+static func ordem_frenagem(nota: String, t_toque: float, t_saida: float, p: Dictionary, t_ponto := -INF) -> Dictionary:
+	var de := maxf(t_toque, t_ponto) if nota in [PERFEITA, BOA] else t_toque
+	return {"de": de, "ate": maxf(t_saida, de + 0.1), "ritmo": float(p["frenagem"]["ritmo"][nota]),
 			"origem": "frenagem"}
 
 

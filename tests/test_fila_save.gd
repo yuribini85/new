@@ -451,6 +451,19 @@ func test_ordem_refaz_a_corrida_e_fica_na_fila() -> void:
 ## ficam na fila; a tela emenda a corrida refeita enquanto ela termina, e a
 ## corrida aplicada (como com o jogo fechado) é a mesma que sairia do zero com
 ## as ordens gravadas.
+## Segundo teste com pessoas: a faixa verde ficou maior; a freada boa ou
+## perfeita tocada antes do ponto vale a partir do ponto (o lugar do toque na
+## faixa não muda o valor da nota). Cedo e tarde valem do toque.
+func test_freada_antes_do_ponto_vale_do_ponto() -> void:
+	var p := {"frenagem": {"perfeita_s": 0.25, "boa_s": 0.5, "ritmo": {"perfeita": 1.01, "boa": 1.005, "cedo": 0.99, "tarde": 0.99}}}
+	igual(Pilotagem.nota_frenagem(-0.24, p), Pilotagem.PERFEITA, "0,24 s antes: perfeita")
+	igual(Pilotagem.nota_frenagem(0.45, p), Pilotagem.BOA, "0,45 s depois: boa")
+	igual(Pilotagem.nota_frenagem(-0.6, p), Pilotagem.CEDO, "0,6 s antes: cedo")
+	igual(Pilotagem.ordem_frenagem(Pilotagem.PERFEITA, 9.8, 15.0, p, 10.0)["de"], 10.0, "perfeita antes do ponto: do ponto")
+	igual(Pilotagem.ordem_frenagem(Pilotagem.BOA, 10.3, 15.0, p, 10.0)["de"], 10.3, "boa depois do ponto: do toque")
+	igual(Pilotagem.ordem_frenagem(Pilotagem.CEDO, 9.4, 15.0, p, 10.0)["de"], 9.4, "cedo: do toque")
+
+
 func test_pilotar_no_meio_vale_como_do_zero() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)

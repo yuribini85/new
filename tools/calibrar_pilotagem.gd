@@ -5,6 +5,7 @@ extends SceneTree
 ## tela: a corrida anda junto e cada toque vale a partir do instante dele):
 ##   base      sem toque (o piloto contratado dirige)
 ##   perfeita  toda freada perfeita, toda saída limpa e ATACAR sempre que puder
+##   beira     como a perfeita, mas tocando no começo da faixa verde (perfeita_s antes)
 ##   boa       toda freada boa, toda saída limpa
 ##   ruim      toda freada tarde e toda saída solta no meio
 ##   ataque    só o ATACAR
@@ -47,7 +48,7 @@ func _rodar() -> void:
 		if media >= 2.0 and media <= total - 1.0:
 			provas.append(ev["id"])
 	print("carro ", carro.id, " · peça de comparação ", com_peca[1], " · provas ", provas)
-	var politicas := ["base", "perfeita", "boa", "ruim", "ataque", "peca"]
+	var politicas := ["base", "perfeita", "beira", "boa", "ruim", "ataque", "peca"]
 	var soma := {}
 	var vit := {}
 	var toques := {}
@@ -102,11 +103,15 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 		var v: float = maxf(est["jogador"][1], 1.0)
 		for c in curvas:
 			var frear := politica != "ataque" and Pilotagem.tem_frenagem(c, comp, p)
-			if frear and _cruzou(s_antes, s, float(c["frenagem"]), comp):
-				var nota := Pilotagem.PERFEITA if politica == "perfeita" else (Pilotagem.BOA if politica == "boa"
+			var ponto := float(c["frenagem"])
+			if politica == "beira":
+				ponto = fposmod(ponto - v * float(p["frenagem"]["perfeita_s"]), comp)
+			if frear and _cruzou(s_antes, s, ponto, comp):
+				var nota := Pilotagem.PERFEITA if politica in ["perfeita", "beira"] else (Pilotagem.BOA if politica == "boa"
 						else Pilotagem.TARDE)
 				var ate := t + fposmod(float(c["fim"]) - float(c["frenagem"]), comp) / v
-				a.ordenar("jogador", Pilotagem.ordem_frenagem(nota, a.tempo(), ate, p))
+				var t_ponto := a.tempo() + (float(p["frenagem"]["perfeita_s"]) if politica == "beira" else 0.0)
+				a.ordenar("jogador", Pilotagem.ordem_frenagem(nota, a.tempo(), ate, p, t_ponto))
 				toques += 1
 			if frear and _cruzou(s_antes, s, float(c["fim"]), comp):
 				saida_ate = a.tempo() + Pilotagem.dura_saida(p)
@@ -115,7 +120,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 		if soltar_em > 0.0 and a.tempo() >= soltar_em:
 			a.ordenar("jogador", Pilotagem.ordem_saida(Pilotagem.SOLTOU, a.tempo(), saida_ate, p))
 			soltar_em = -1.0
-		if politica in ["perfeita", "ataque"]:
+		if politica in ["perfeita", "beira", "ataque"]:
 			var frente := INF
 			for id in est:
 				var dist: float = est[id][0] - s

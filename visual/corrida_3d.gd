@@ -17,8 +17,8 @@ const FAIXAS_M := [0.0, 2.4, -2.4, 4.8, -4.8]
 const PROXIMIDADE_M := 8.0
 const VELOCIDADE_LATERAL := 1.5  # 1/s, aproximação da faixa-alvo
 ## Rapidez (1/s) com que o carro gira até o ângulo do traçado.
-const GIRO_SUAVE := 7.0
-var _giro_vis := {}  # id -> ângulo mostrado (rad)
+const GIRO_SUAVE := 12.0
+var _giro_vis := {}  # id -> desvio mostrado do rumo da pista (rad)
 ## Batida: quanto cada carro é empurrado de lado (m), o giro (rad) e quanto dura.
 const BATIDA_EMPURRAO_M := 0.9
 const BATIDA_GIRO := 0.32
@@ -26,6 +26,7 @@ const BATIDA_S := 0.6
 const BATIDA_INTERVALO_S := 6.0  # um carro não bate de novo antes disso
 ## Deriva nas curvas: ângulo (rad) por g de aceleração lateral, por tração.
 const DERIVA := {"FR": 0.13, "MR": 0.12, "4WD": 0.08, "FF": 0.05}
+const DERIVA_MAX := 0.1  # rad: mais que isso parece que o carro não faz a curva
 const TAMANHO_CAMERA := 28.0
 ## Câmera de perseguição em perspectiva (o jogo se lê como 3D): FOV, altura
 ## (graus acima do chão) no normal e no modo velocidade, quanto ela abre para o
@@ -419,9 +420,13 @@ func atualizar(delta: float) -> void:
 		_off[id] = novo
 		_lateral[id] = clampf(float(base[id]) + float(_off[id]), -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 	_separar(s, base, delta)
+	# Os toques são vistos antes da separação firme (a batida mostra o toque);
+	# depois dela, nenhum carro fica dentro do outro na tela.
+	var toques: Array = [] if Preferencias.reduzir_animacoes or chegada > 0.0 else contatos(ordem, s, _lateral, _pista.comprimento)
+	_separar_firme(s, base)
 	var tocando := {}
 	# Sem batidas depois da chegada (os carros param em fila, ver CorridaVisual).
-	for par in ([] if Preferencias.reduzir_animacoes or chegada > 0.0 else contatos(ordem, s, _lateral, _pista.comprimento)):
+	for par in toques:
 		var chave := "%s|%s" % par
 		tocando[chave] = true
 		if _em_contato.has(chave) or _tempo - float(_ultima_batida.get(par[0], -99.0)) < BATIDA_INTERVALO_S \
@@ -442,11 +447,18 @@ func atualizar(delta: float) -> void:
 		# Esterço visual: ângulo entre o avanço e o deslocamento de lado (o
 		# traçado e as trocas de faixa), mais a deriva da traseira nas curvas.
 		var ds: float = dist - float(_s_anterior.get(id, dist))
-		var dl: float = float(_lateral[id]) - float(antes[id])
-		var esterco := clampf(atan2(dl, maxf(ds, 0.05)), -0.3, 0.3) if delta > 0.0 else 0.0
+		# A direção em que o carro anda de fato: a inclinação da linha (exata,
+		# pelo traçado) mais a troca de faixa do quadro, sobre o avanço no lado
+		# em que ele está (por dentro da curva anda menos que o centro).
+		var lat := float(_lateral[id])
+		var k_centro := _tracado.curvatura(dist)
+		var inclinacao := _tracado.inclinacao(dist)
+		if delta > 0.0 and ds > 0.05:
+			inclinacao = clampf((lat - float(antes[id])) / ds, -0.45, 0.45)
+		var esterco := atan2(inclinacao, maxf(1.0 - k_centro * lat, 0.2))
 		var v: float = float(_v.get(id, 0.0))
-		var g_lateral := v * v * _tracado.curvatura(dist) / 9.8
-		esterco += clampf(g_lateral * float(DERIVA.get(_tracao.get(id, "FF"), 0.06)), -0.22, 0.22)
+		var g_lateral := v * v * k_centro / 9.8
+		esterco += clampf(g_lateral * float(DERIVA.get(_tracao.get(id, "FF"), 0.06)), -DERIVA_MAX, DERIVA_MAX)
 		# Arrancada: a traseira balança (tração traseira e muita potência por peso
 		# mais; tração integral quase nada), amortecendo em BALANCO_S.
 		if _saida.has(id) and not Preferencias.reduzir_animacoes:
@@ -468,12 +480,13 @@ func atualizar(delta: float) -> void:
 			esterco += sin(Time.get_ticks_msec() * 0.09 + i) * 0.015
 		# Giro suave: o rumo do traçado tem quinas e o esterço oscila quadro a
 		# quadro; o carro vira com atraso curto, sem saltos de ângulo.
-		var giro_alvo := rumo + esterco
+		# Só o desvio do traçado é suavizado: o rumo da pista entra exato (girar o
+		# ângulo inteiro com atraso deixava a frente para fora em toda curva).
 		if delta > 0.0 and _giro_vis.has(id) and not Preferencias.reduzir_animacoes:
-			_giro_vis[id] = lerp_angle(float(_giro_vis[id]), giro_alvo, 1.0 - exp(-delta * GIRO_SUAVE))
+			_giro_vis[id] = lerp_angle(float(_giro_vis[id]), esterco, 1.0 - exp(-delta * GIRO_SUAVE))
 		else:
-			_giro_vis[id] = giro_alvo
-		c.rotation.y = float(_giro_vis[id])
+			_giro_vis[id] = esterco
+		c.rotation.y = rumo + float(_giro_vis[id])
 		c.girar_rodas(maxf(ds, 0.0))
 		if delta > 0.0:
 			var v_antes := float(_v.get(id, 0.0))
@@ -1079,9 +1092,9 @@ static func _brilho(so_alfa := false) -> Texture2D:
 ## que SEPARA_COMPRIMENTO_M) e estão mais perto de lado que SEPARA_LADO_M são
 ## empurrados para os lados, suavemente, dentro da pista. Só visual: a posição
 ## na pista (s) é a da simulação.
-const SEPARA_COMPRIMENTO_M := 4.8
+const SEPARA_COMPRIMENTO_M := 7.0
 const SEPARA_LADO_M := 2.3
-const SEPARA_RAPIDEZ := 6.0  # 1/s
+const SEPARA_RAPIDEZ := 10.0  # 1/s
 
 
 func _separar(s: Dictionary, base: Dictionary, delta: float) -> void:
@@ -1112,6 +1125,48 @@ func _separar(s: Dictionary, base: Dictionary, delta: float) -> void:
 			var novo := clampf(float(_lateral[id]) + float(empurra[id]) * k, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
 			_lateral[id] = novo
 			_off[id] = novo - float(base[id])
+
+
+## Separação firme (teste com pessoas de 2026-10-21: "carros muito próximos
+## tinham uns bugs"): dois carros lado a lado no comprimento (Δs menor que
+## FIRME_COMPRIMENTO_M) ficam a FIRME_LADO_M ou mais de lado, na hora. Quem
+## está na beira da pista não sai dela: o outro vai o resto.
+const FIRME_COMPRIMENTO_M := 4.6
+const FIRME_LADO_M := 2.0
+
+
+func _separar_firme(s: Dictionary, base: Dictionary) -> void:
+	if _fonte == null or chegada >= 1.0:
+		return
+	var ids := _carros.keys()
+	for _passo in 24:
+		var mexeu := false
+		for i in ids.size():
+			for j in range(i + 1, ids.size()):
+				var a: String = ids[i]
+				var b: String = ids[j]
+				if absf(_ciclo(float(s[a]) - float(s[b]))) >= FIRME_COMPRIMENTO_M:
+					continue
+				var dl := float(_lateral[a]) - float(_lateral[b])
+				if absf(dl) >= FIRME_LADO_M - 0.001:
+					continue
+				var lado := signf(dl) if absf(dl) > 0.01 else (1.0 if a < b else -1.0)
+				var falta := FIRME_LADO_M - absf(dl)
+				var na := clampf(float(_lateral[a]) + lado * falta * 0.5, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+				var nb := clampf(float(_lateral[b]) - lado * falta * 0.5, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+				# Um deles na beira: o outro completa a distância.
+				if absf(na - nb) < FIRME_LADO_M:
+					if absf(na) >= Tracado.TANGENCIA_M:
+						nb = clampf(na - lado * FIRME_LADO_M, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+					else:
+						na = clampf(nb + lado * FIRME_LADO_M, -Tracado.TANGENCIA_M, Tracado.TANGENCIA_M)
+				_lateral[a] = na
+				_lateral[b] = nb
+				_off[a] = na - float(base[a])
+				_off[b] = nb - float(base[b])
+				mexeu = true
+		if not mexeu:
+			return
 
 
 ## Diferença de distância na volta (para quem está uma volta à frente).

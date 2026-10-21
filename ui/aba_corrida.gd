@@ -1321,7 +1321,7 @@ func _frear() -> void:
 	var t_saida := _visual.tempo_em("jogador", float(_frenagem["fim"]))
 	if t_saida < 0.0:
 		t_saida = t + 5.0
-	if _dar(Pilotagem.ordem_frenagem(nota, t, t_saida, _pil)).is_empty():
+	if _dar(Pilotagem.ordem_frenagem(nota, t, t_saida, _pil, float(_frenagem["t_frenagem"]))).is_empty():
 		return
 	_feitas[_frenagem["chave"]] = nota
 	_frenagem = {}

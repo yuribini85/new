@@ -19,6 +19,10 @@ const GANHO_FORA := 400.0
 ## tangência, as rodas de dentro sobem na zebra.
 const ABERTO_M := 5.0
 const TANGENCIA_M := 5.6
+## Inclinação máxima da linha (m de lado por m andado): mais que isso o carro
+## parece deslizar de lado em vez de seguir o traçado (teste com pessoas de
+## 2026-10-21: "a roda parecia muito para fora ou para dentro").
+const INCLINACAO_MAX := 0.12
 
 static var _cache := {}
 
@@ -50,6 +54,30 @@ func _calcular(pista: Pista) -> void:
 	for i in n:
 		var v := tanh(GANHO_DENTRO * _curta[i] - GANHO_FORA * (larga[i] - _curta[i]))
 		_linha[i] = v * (TANGENCIA_M if signf(v) == signf(_curta[i]) and absf(_curta[i]) > 0.002 else ABERTO_M)
+	_suavizar_inclinacao()
+
+
+## Limita a inclinação da linha a INCLINACAO_MAX: ida e volta pela volta
+## inteira (circular), rebaixando o ponto que muda rápido demais em direção ao
+## vizinho, até ninguém passar do limite. Depois, uma média curta tira a quina.
+func _suavizar_inclinacao() -> void:
+	var n := _linha.size()
+	if n < 3:
+		return
+	var passo := INCLINACAO_MAX * PASSO_M
+	for _volta in 8:
+		var mudou := false
+		for sentido in [1, -1]:
+			for k in n:
+				var i := k if sentido == 1 else n - 1 - k
+				var viz := _linha[posmod(i - sentido, n)]
+				var limitado := clampf(_linha[i], viz - passo, viz + passo)
+				if limitado != _linha[i]:
+					_linha[i] = limitado
+					mudou = true
+		if not mudou:
+			break
+	_linha = _media(_linha, 4.0)
 
 
 ## Média com peso gaussiano, circular (a volta fecha).
@@ -82,6 +110,11 @@ func _amostra(arr: PackedFloat32Array, s: float) -> float:
 ## Deslocamento lateral do traçado ideal em s (m, + = esquerda).
 func lateral(s: float) -> float:
 	return _amostra(_linha, s)
+
+
+## Quanto a linha vai de lado por metro andado em s (+ = para a esquerda).
+func inclinacao(s: float) -> float:
+	return (lateral(s + PASSO_M) - lateral(s - PASSO_M)) / (2.0 * PASSO_M)
 
 
 ## Curvatura média local em s (1/m, + = curva para a esquerda).

@@ -5,7 +5,25 @@ o corte de falas. **O que ele aprovou:** comprar carros, disputar contra as equi
 interações durante a corrida (quer mais delas). **O que ele criticou**, do mais urgente ao maior
 projeto, com o diagnóstico no código, a proposta e o tamanho.
 
-Nada aqui foi implementado: as decisões (seção final) vêm antes do código.
+Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em `docs/plano_mvp.md`).
+
+## Andamento
+
+- **Fase A feita** (2026-10-21):
+  - Freada: faixa perfeita ±0,25 s, boa ±0,5 s, régua 2,5 s antes. A freada boa ou perfeita
+    tocada antes do ponto vale a partir do ponto. Recalibrado (`tools/calibrar_pilotagem.gd`,
+    política nova "beira": toda freada no começo da faixa verde).
+  - Carros colados: separação firme na tela (dois carros lado a lado ficam a 2 m de lado, na
+    hora; quem está na beira não sai da pista) e a separação suave começa mais cedo. Medido por
+    `tools/medir_corrida_visual.gd` em 4 provas reais (23 mil quadros): quadros com carros um
+    dentro do outro de 443 para 19 (os que restam são as batidas de propósito e quinas).
+  - Curvas: a linha não vai de lado mais que 0,12 m por metro andado (antes cruzava a pista em
+    poucos metros e o carro andava de caranguejo); a frente do carro segue o rumo exato da pista
+    mais o desvio da linha (antes girava com atraso e ficava para fora em toda curva); deriva
+    limitada a 0,1 rad. Diferença entre a frente e a direção em que o carro anda: 99% abaixo de
+    4–8° (antes 13–26°).
+  - Teste automático: seis carros num bolo de 6 m em duas pistas, nenhum dentro do outro,
+    rodas até a zebra, frente na direção do movimento.
 
 ## Ordem recomendada
 
