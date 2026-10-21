@@ -3,7 +3,8 @@
 Jogo mobile idle de automobilismo, feito em Godot 4.4.
 
 Preserva a estrutura de carreira de um clássico de corrida — comprar carros novos e usados, preparar, correr eventos, ganhar prêmios,
-colecionar — e substitui a pilotagem por corridas automáticas isométricas.
+colecionar — com pilotagem por toques quando o jogador assiste (frenagem, saída de curva, ataque) e
+corrida automática com o jogo fechado (decisão 127 do plano, 2026-10-21).
 
 ## Estado
 

@@ -65,9 +65,8 @@ quase não aparece nos cartões. Sem marca conhecida, o jogador não tem por que
 - Cartão com a identidade da marca: cor e logo da loja (já existem), fundo na cor do fabricante.
 - Cor de fábrica forte no carro em todas as telas (existe por modelo; hoje a vitrine e o cartão
   apagam).
-- Um traço de personalidade por carro, em uma linha, tirado dos números ("o mais leve da Club",
-  "tração 4x4 de rua", "o mais rápido em reta da loja"); selo de categoria e de raridade pelo preço
-  e pela licença.
+- Selo de categoria e de raridade pelo preço e pela licença (ícone, sem frase: o usuário vetou a
+  frase de personalidade, mais texto para ler era justamente uma das reclamações).
 - Carro do jogador com a pintura, o número e o apelido em todos os cartões.
 
 **Médio (fase 3, arte):** o que cria apego de verdade é silhueta e ilustração. Recomendo (D2)
@@ -118,3 +117,13 @@ jogar de verdade. O jogo tem 249 falas no total.
   só melhorar os modelos 3D.
 - **D3 — Teste no celular:** APK Android para os testadores (recomendada) ou seguir só na web.
 - **Amostra:** incluir 2–3 testadores do público-alvo no teste do protótipo (recomendado).
+
+## Decididas (2026-10-21, usuário)
+
+- D1: **A, pilotagem por toques.** Muda o "corridas automáticas" do conceito: o jogador conduz
+  quando assiste; fechado, segue automático. Protótipo antes da implementação completa.
+- D2: **ilustração 2D por carro**, começando pelos ~60 das licenças Club e Sport.
+- D3: **APK Android** para os testes.
+- Amostra: incluir testadores adultos do público-alvo no teste do protótipo.
+- Cartões: sem frase de personalidade (mais leitura era uma reclamação); só selos e identidade
+  visual.

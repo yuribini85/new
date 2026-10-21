@@ -1160,3 +1160,11 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     da conversa do patrocínio; `Historia.arena_sugerida`). O playtest compra o carro sugerido e
     o reserva para a arena: a arena abre aos 16–21 min de corrida (antes 113–126), sem atrasar
     a Club; a Sport variou de 143–158 para 120–180 min entre os perfis.
+127. **Teste com pessoas: controle na corrida, carros com identidade, desempenho, menos fala**
+    (2026-10-21, decisões do usuário; plano em `docs/plano_acao_testes_1.md`). Três testadores
+    aprovaram o jogo e reclamaram, nesta ordem: querer controlar o carro, carros genéricos, lentidão
+    e falas demais. Decidido: pilotagem por toques (frenagem, saída de curva e ataque no vácuo; sem
+    toque, o piloto contratado dirige; fechado, a sequência continua automática), substituindo
+    "corridas automáticas" do conceito, com protótipo testado antes; ilustração 2D por carro nos
+    cartões, começando pelos ~60 da Club e da Sport; APK Android para os testes; cartões sem frase
+    de personalidade; testadores adultos do público-alvo no teste do protótipo.
