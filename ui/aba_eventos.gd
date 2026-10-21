@@ -302,9 +302,10 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		if tutorial:
 			ancora("DISPUTAR", bc)
 		# Já perdeu aqui: o que no saldo melhora a posição (análise de 2026-10-19).
+		# Em destaque (teste de 2026-10-21: o testador não achou o caminho).
 		if vitorias == 0 and livre_fila and int(hist.get("melhor_pos", 1)) > 1:
 			var ba := Button.new()
-			Tipografia.acao_secundaria(ba, "O que ajuda?", COR_INFO)
+			Tipografia.acao_primaria(ba, "O QUE AJUDA?", COR_INFO, Color(0.05, 0.08, 0.14), 30, Tipografia.ALTURA_SECUNDARIA)
 			ba.pressed.connect(_o_que_ajuda.bind(ev, c))
 			v.add_child(ba)
 	else:

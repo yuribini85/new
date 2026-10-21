@@ -1380,7 +1380,20 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			_aviso_vagas(g, v)
 		_lista_resultado(v, tabela, c)
 		_fechamento_automatico(v, token, fechar)
+		_dica_derrota(g, v, ev, venceu)
 		_botao_fechar(v, fechar, venceu), [], {"caixa": Aba.arte("caixa_resultado" if venceu else "caixa_resultado_cinza"), "tela_cheia": _cabecalho.altura_total() + 8.0})
+
+
+## Perdeu numa prova comum: o próximo passo à vista (teste de 2026-10-21: "melhorei
+## o carro todo e continuo no mesmo lugar, o que eu faço?"). Só texto: a janela
+## tem só o FECHAR (pedido do usuário); o botão O QUE AJUDA? fica na prova.
+func _dica_derrota(g: Aba, v: VBoxContainer, ev: Dictionary, venceu: bool) -> void:
+	if venceu or ev.is_empty() or ev.get("grid_equipe") != null:
+		return
+	var l := g.rotulo("Não passou daqui? Em Corridas, toque em O QUE AJUDA? nesta prova: mostra a peça, o piloto ou o carro que melhora sua posição.",
+			Aba.FONTE_PEQUENA, Color.WHITE, v)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
 ## Garagem acima do limite depois de um carro-prêmio (VagasGaragem.aviso_excesso).

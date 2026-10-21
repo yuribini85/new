@@ -6,8 +6,8 @@ extends Control
 ## régua vira a barra da saída (SEGURE), que enche enquanto o dedo segura.
 ## Só desenha; quem decide é a tela da corrida (Pilotagem).
 
-const LARGURA := 420.0
-const ALTURA := 26.0
+const LARGURA := 560.0
+const ALTURA := 44.0
 const COR_FUNDO := Color(0.05, 0.06, 0.08, 0.55)
 const COR_ALVO := Color(0.36, 0.82, 0.47)
 const COR_BOA := Color(0.36, 0.82, 0.47, 0.35)
@@ -30,12 +30,12 @@ var _rotulo: Label
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(LARGURA, ALTURA + 44)
+	custom_minimum_size = Vector2(LARGURA, ALTURA + 60)
 	_rotulo = Label.new()
 	_rotulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_rotulo.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	_rotulo.offset_bottom = 40
-	Tipografia.rotulo(_rotulo, "semibold", 30)
+	_rotulo.offset_bottom = 56
+	Tipografia.rotulo(_rotulo, "semibold", 40)
 	_rotulo.add_theme_constant_override("outline_size", 6)
 	_rotulo.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
 	_rotulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -48,7 +48,7 @@ func frenagem(faltam: float, janela: float, perfeita: float, boa: float) -> void
 	janela_s = janela
 	perfeita_s = perfeita
 	boa_s = boa
-	_rotulo.text = "FREIE"
+	_rotulo.text = "FREIE NO VERDE"
 	_rotulo.add_theme_color_override("font_color", COR_ALVO if absf(faltam) <= perfeita else Color.WHITE)
 	visible = true
 	queue_redraw()
@@ -58,7 +58,7 @@ func saida(fracao_: float, segurando_: bool) -> void:
 	modo = "saida"
 	fracao = clampf(fracao_, 0.0, 1.0)
 	segurando = segurando_
-	_rotulo.text = "SEGURE"
+	_rotulo.text = "DEDO NA TELA"
 	_rotulo.add_theme_color_override("font_color", COR_SAIDA if segurando else Color.WHITE)
 	visible = true
 	queue_redraw()
