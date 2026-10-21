@@ -67,6 +67,7 @@ var _linhas: Array = []  # [[Rect2, id]] da classificação desenhada (toque esc
 
 
 func _init() -> void:
+	textura_semaforo()  # fora do desenho (ver textura_semaforo)
 	# Só a classificação recebe toque (ver _has_point); o resto passa adiante.
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -377,13 +378,26 @@ func _desenhar_contagem() -> void:
 	semaforo(self, size, contagem)
 
 
+## A arte do semáforo, carregada fora do desenho: carregada pela primeira vez
+## dentro de um _draw, o renderizador de compatibilidade a mostrava como um
+## retângulo branco (relato do teste de 2026-10-21). Quem desenha o semáforo
+## chama isto ao ser criado (HudCorrida, LutaArena).
+static var _tex_semaforo: Texture2D
+
+
+static func textura_semaforo() -> Texture2D:
+	if _tex_semaforo == null:
+		_tex_semaforo = Aba.arte("semaforo")
+	return _tex_semaforo
+
+
 ## As três luzes vermelhas da largada e o número, no alto da área `tam` de
 ## `ci` (a corrida e a arena usam o mesmo). contagem < 0 não desenha.
 static func semaforo(ci: CanvasItem, tam: Vector2, contagem: float, altura := 0.36) -> void:
 	if contagem < 0.0:
 		return
 	var acesas := clampi(4 - ceili(contagem), 1, 3)
-	var tex := Aba.arte("semaforo")
+	var tex := textura_semaforo()
 	var alto := SEMAFORO_ALTURA
 	var largo := alto * tex.get_width() / tex.get_height()
 	var caixa := Rect2(tam.x * 0.5 - largo * 0.5, tam.y * altura - alto * 0.5, largo, alto)

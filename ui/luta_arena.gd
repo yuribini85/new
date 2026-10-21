@@ -78,6 +78,7 @@ func _init(dados_luta: Dictionary, params: Dictionary) -> void:
 	add_child(_pular)
 	add_child(_seletor_cameras())
 	# Semáforo da largada por cima da arena (o mesmo da corrida).
+	HudCorrida.textura_semaforo()
 	_semaforo = Control.new()
 	_semaforo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_semaforo.mouse_filter = Control.MOUSE_FILTER_IGNORE
