@@ -565,6 +565,9 @@ func _modo_teste(v: VBoxContainer) -> void:
 			get_node("/root/SaveManager").salvar()
 			avisar("Compras liberadas (teste).")
 			mudou.emit(), false, true, v)
+	if Desempenho.medindo():
+		for linha in Desempenho.resumo():
+			rotulo(linha, FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var sessoes := RegistroSessao.sessoes()
 	if sessoes.is_empty():
 		return

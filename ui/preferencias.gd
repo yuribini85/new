@@ -13,6 +13,9 @@ static var reduzir_animacoes := false
 ## (aparelhos mais fracos). Vale para as cenas 3D criadas depois da troca.
 ## Na web começa ligado (celulares fracos) até o jogador escolher.
 static var efeitos_leves := OS.has_feature("web")
+## O jogo já ligou os efeitos leves sozinho (Desempenho): não liga de novo se
+## o jogador desligar.
+static var leves_automatico := false
 ## Limita a 30 quadros por segundo (economiza bateria).
 static var limitar_fps := false
 ## Janela do resultado fecha sozinha (30 s); a caixa na própria janela muda.
@@ -41,6 +44,7 @@ static func carregar() -> void:
 		volume = clampf(float(cfg.get_value("som", "volume", volume)), 0.0, 1.0)
 		reduzir_animacoes = bool(cfg.get_value("tela", "reduzir_animacoes", reduzir_animacoes))
 		efeitos_leves = bool(cfg.get_value("tela", "efeitos_leves", efeitos_leves))
+		leves_automatico = bool(cfg.get_value("tela", "leves_automatico", leves_automatico))
 		limitar_fps = bool(cfg.get_value("tela", "limitar_fps", limitar_fps))
 		fechar_resultado = bool(cfg.get_value("tela", "fechar_resultado", fechar_resultado))
 		garagem_lista = bool(cfg.get_value("tela", "garagem_lista", garagem_lista))
@@ -58,6 +62,7 @@ static func salvar() -> void:
 	cfg.set_value("som", "volume", volume)
 	cfg.set_value("tela", "reduzir_animacoes", reduzir_animacoes)
 	cfg.set_value("tela", "efeitos_leves", efeitos_leves)
+	cfg.set_value("tela", "leves_automatico", leves_automatico)
 	cfg.set_value("tela", "limitar_fps", limitar_fps)
 	cfg.set_value("tela", "fechar_resultado", fechar_resultado)
 	cfg.set_value("tela", "garagem_lista", garagem_lista)

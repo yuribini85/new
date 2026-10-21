@@ -745,3 +745,36 @@ func test_glifos_das_telas_existem() -> void:
 		if not tem:
 			faltam[c] = String.chr(c)
 	igual(faltam.values(), [], "glifos sem fonte")
+
+
+## Qualidade automática (Desempenho): FPS baixo com 3D na tela liga os efeitos
+## leves uma vez; sem 3D, ou já ligado sozinho antes, não mexe.
+func test_qualidade_automatica_liga_efeitos_leves() -> void:
+	var antes := [Preferencias.efeitos_leves, Preferencias.leves_automatico, Preferencias.limitar_fps]
+	Preferencias.efeitos_leves = false
+	Preferencias.leves_automatico = false
+	Preferencias.limitar_fps = false
+	var cena := Control.new()
+	Engine.get_main_loop().root.add_child(cena)
+	var ligou := false
+	for i in Desempenho.JANELA:
+		ligou = Desempenho._qualidade_auto(12.0, false) or ligou
+	igual(ligou, false, "sem 3D na tela não mexe")
+	Desempenho.entrou_3d(cena)
+	for i in Desempenho.JANELA:
+		ligou = Desempenho._qualidade_auto(55.0, Desempenho.em_3d()) or ligou
+	igual(ligou, false, "3D liso não mexe")
+	for i in Desempenho.JANELA:
+		ligou = Desempenho._qualidade_auto(12.0, Desempenho.em_3d()) or ligou
+	igual([ligou, Preferencias.efeitos_leves], [true, true], "3D travando liga os efeitos leves")
+	Preferencias.efeitos_leves = false
+	ligou = false
+	for i in Desempenho.JANELA:
+		ligou = Desempenho._qualidade_auto(12.0, true) or ligou
+	igual(ligou, false, "o jogador desligou depois: a escolha dele fica")
+	Desempenho.saiu_3d(cena)
+	cena.free()
+	Preferencias.efeitos_leves = antes[0]
+	Preferencias.leves_automatico = antes[1]
+	Preferencias.limitar_fps = antes[2]
+	Preferencias.salvar()

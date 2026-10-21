@@ -219,6 +219,7 @@ func _ready() -> void:
 	timer.timeout.connect(_foco_corrida)
 	timer.timeout.connect(_registrar_fila)
 	timer.timeout.connect(_atualizar_fps)
+	timer.timeout.connect(_desempenho)
 	timer.timeout.connect(_contar_lembrete)
 	timer.timeout.connect(_atualizar_aceleracao)
 	timer.timeout.connect(_patrocinio)
@@ -1310,6 +1311,14 @@ func _atualizar_fps() -> void:
 	_fps.visible = true
 	_fps.text = "%d fps" % Engine.get_frames_per_second()
 	RegistroSessao.quadros(Engine.get_frames_per_second(), _abas.current_tab == 4)
+
+
+## Uma amostra por segundo para o Desempenho; se ele ligou os efeitos leves,
+## o jogador fica sabendo (e onde desfazer).
+func _desempenho() -> void:
+	Desempenho.abertura()
+	if Desempenho.amostra(Engine.get_frames_per_second(), NOMES_ABA[_abas.current_tab]):
+		_sobre.avisar("Efeitos leves ligados para o jogo rodar mais liso. Dá para mudar em Configurações.")
 
 
 ## Fila nova programada nesta sessão (registro do playtest).

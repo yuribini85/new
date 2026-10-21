@@ -146,11 +146,19 @@ var _pos_cam := Vector3.ZERO
 var _olhar := Vector3.ZERO
 
 
+func _enter_tree() -> void:
+	Desempenho.entrou_3d(self)
+
+
+func _exit_tree() -> void:
+	Desempenho.saiu_3d(self)
+
+
 func _init() -> void:
 	stretch = true
 	var vp := SubViewport.new()
 	vp.own_world_3d = true
-	vp.msaa_3d = Viewport.MSAA_DISABLED if Preferencias.efeitos_leves else Viewport.MSAA_2X
+	Desempenho.preparar_viewport(vp)
 	add_child(vp)
 	_mundo = Node3D.new()
 	vp.add_child(_mundo)
