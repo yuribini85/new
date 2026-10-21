@@ -147,3 +147,9 @@ jogar de verdade. O jogo tem 249 falas no total.
 - **Controle na corrida (reclamação 1):** pilotagem por toques implementada (decisão 128): régua
   FREIE antes de cada curva com frenagem, SEGURE na saída, ATACAR colado no rival. Calibrada ao
   critério do usuário (perfeita +0,5 posição, ruim −0,25). Teste com pessoas no fim da rodada.
+- **Pacote menor:** web de 54 para 30 MB (as WebP eram importadas sem perda; agora WebP 0,85).
+- **Seu carro nos cartões:** apelido (Cabine de pintura, sem custo), número de corrida no topo do
+  cartão e a pintura do carro também no carro-prêmio do relatório.
+- **Arte 2D dos carros (D2):** pedido entregue ao usuário (amostra de 3 carros para aprovar o
+  estilo; lotes de 60 e 36 da Club e da Sport). O jogo já usa `arte/carros/<id>_cartao.png` quando
+  o arquivo existir.
