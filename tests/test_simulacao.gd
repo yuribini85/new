@@ -269,9 +269,9 @@ func test_porta_fechada_segura_o_de_tras() -> void:
 		var r := _correr(d, "sem_ultrapassagem", [a2, b], 2)
 		igual(r["classificacao"], ["a", "b"] if defende else ["b", "a"], "defesa=%s" % defende)
 	var p := {"defesa": {"distancia_m": 20.0, "recarga_s": 45.0, "janela_s": 1.5, "dura_s": 3.0}}
-	igual(Pilotagem.nota_defesa(1, 1, 0.5, p), Pilotagem.PORTA_FECHADA, "lado certo")
-	igual(Pilotagem.nota_defesa(-1, 1, 0.5, p), Pilotagem.LADO_ERRADO, "lado errado")
-	igual(Pilotagem.nota_defesa(1, 1, 2.0, p), "", "tarde demais")
+	igual(Pilotagem.nota_deslize(1, 1, 0.5, p), Pilotagem.PORTA_FECHADA, "lado certo")
+	igual(Pilotagem.nota_deslize(-1, 1, 0.5, p), Pilotagem.LADO_ERRADO, "lado errado")
+	igual(Pilotagem.nota_deslize(1, 1, 2.0, p), "", "tarde demais")
 	verificar(Pilotagem.pode_defender(10.0, 50.0, 0.0, p) and not Pilotagem.pode_defender(10.0, 30.0, 0.0, p),
 			"recarga")
 	verificar(not Pilotagem.pode_defender(30.0, 50.0, 0.0, p), "longe demais")
@@ -294,6 +294,15 @@ func test_forcar_cansa_o_pneu_e_poupar_guarda() -> void:
 	perto(float(cansa[1]["ate"]), 190.0, 1e-6, "por duas voltas")
 	igual(Pilotagem.ordens_forcar(10.0, 70.0, 60.0, true, p).size(), 1, "com o pneu guardado, não cansa")
 	perto(float(Pilotagem.ordem_poupar(10.0, 70.0, p)["ritmo"]), 0.98, 1e-6, "poupar anda menos")
+	# Decisão 131: o modo que fica valendo. POUPAR guarda um pneu (até
+	# voltas_cansado); ATAQUE gasta um (sem nenhum, cansa); NORMAL não muda nada.
+	var r := Pilotagem.ordens_modo(Pilotagem.POUPAR, 0.0, 60.0, 60.0, 2, p)
+	igual([r[0].size(), r[1]], [1, 2], "poupar com o pneu cheio não passa de voltas_cansado")
+	r = Pilotagem.ordens_modo(Pilotagem.ATAQUE, 0.0, 60.0, 60.0, 1, p)
+	igual([r[0].size(), r[1]], [1, 0], "ataque com pneu guardado não cansa")
+	r = Pilotagem.ordens_modo(Pilotagem.ATAQUE, 0.0, 60.0, 60.0, 0, p)
+	igual([r[0].size(), r[1]], [2, 0], "ataque sem pneu guardado cansa")
+	igual(Pilotagem.ordens_modo(Pilotagem.NORMAL, 0.0, 60.0, 60.0, 1, p), [[], 1], "normal não muda nada")
 
 
 ## Decisão 117: a ordem de um momento de decisão só mexe na corrida a partir de

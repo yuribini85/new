@@ -7,24 +7,24 @@ extends RefCounted
 ## gravada na fila: a corrida continua determinística e termina igual com o
 ## jogo fechado. Os números ficam em data/simulacao.json, "pilotagem".
 ##
-## - Frenagem: tocar quando o carro chega ao ponto de frenagem da curva. Na hora
-##   certa a curva sai mais rápida; cedo perde tempo; tarde escapa da linha.
-## - Saída: estar segurando quando o carro sai da curva acelera melhor; soltar
-##   antes do fim da saída perde tração.
+## Revisão da corrida (decisão 131): três gestos.
+## - Segurar na curva: encostar o dedo quando o carro chega ao ponto de
+##   frenagem (a freada: na hora certa a curva sai mais rápida; cedo perde
+##   tempo; tarde escapa da linha) e soltar na saída da curva (a aceleração:
+##   na hora, saída limpa; antes, perde tração; depois, acelera tarde).
 ## - Largada: tocar quando as luzes do semáforo apagam (a espera depois da
 ##   terceira luz varia por corrida). Na hora, o carro arranca melhor; antes,
 ##   queima a largada; tarde, larga atrasado.
-## - Vácuo: colado num rival, segurar enche a barra do vácuo; soltar com ela
-##   cheia é a ultrapassagem (a ordem do ataque); segurar demais perde o vácuo.
-##   Depois recarrega.
-## - Defesa: com um rival colado atrás, ele mostra para que lado vai sair;
-##   deslizar o dedo para esse lado fecha a porta (ele não passa por um tempo).
-##   Lado errado ou demorar não fecha. Depois recarrega.
-## - Forçar / poupar (provas longas, a partir de `forcar.minimo_voltas`): uma
-##   vez por volta. FORÇAR anda mais até o fim da volta, mas o pneu cansa nas
-##   `voltas_cansado` seguintes (anda menos); POUPAR PNEUS anda menos na volta e
-##   guarda o pneu: o próximo FORÇAR não cansa. (Decisão do usuário 2026-10-22:
-##   "pneu que cansa", sem sistema de desgaste.)
+## - Deslizar: colado no carro da frente, a seta mostra o lado livre;
+##   deslizar o dedo para ele é a passagem no vácuo (a ordem do ataque). Com
+##   um rival colado atrás, ele mostra para que lado vai sair; deslizar para
+##   esse lado fecha a porta (ele não passa por um tempo). Lado errado ou
+##   demorar não vale. Depois recarrega.
+## - Modo do pneu (provas longas, a partir de `forcar.minimo_voltas`): um modo
+##   que fica valendo, aplicado a cada volta. ATAQUE anda mais na volta e gasta
+##   um pneu guardado; sem pneu guardado, o pneu cansa nas `voltas_cansado`
+##   seguintes. POUPAR anda menos e guarda um pneu (até `voltas_cansado`).
+##   NORMAL não muda nada. (Decisão do usuário 2026-10-22: "pneu que cansa".)
 
 const PERFEITA := "perfeita"
 const BOA := "boa"
@@ -36,8 +36,8 @@ const LARGADA_PERFEITA := "largada_perfeita"
 const LARGADA_BOA := "largada_boa"
 const QUEIMOU := "queimou"
 const ATRASADA := "atrasada"
+const ACELEROU_TARDE := "acelerou_tarde"
 const VACUO := "vacuo"
-const PERDEU_VACUO := "perdeu_vacuo"
 const PORTA_FECHADA := "porta_fechada"
 const LADO_ERRADO := "lado_errado"
 const FORCOU := "forcou"
@@ -45,13 +45,16 @@ const POUPOU := "poupou"
 
 ## Texto de cada nota na tela (língua do jogador).
 const TEXTOS := {PERFEITA: "FREADA PERFEITA", BOA: "BOA FREADA", CEDO: "FREOU CEDO", TARDE: "FREOU TARDE",
-		LIMPA: "SAÍDA LIMPA", SOLTOU: "PERDEU TRAÇÃO", LARGADA_PERFEITA: "LARGADA PERFEITA",
+		LIMPA: "SAÍDA LIMPA", SOLTOU: "PERDEU TRAÇÃO", ACELEROU_TARDE: "ACELEROU TARDE",
+		LARGADA_PERFEITA: "LARGADA PERFEITA",
 		LARGADA_BOA: "BOA LARGADA", QUEIMOU: "QUEIMOU A LARGADA", ATRASADA: "LARGOU ATRASADO",
-		VACUO: "PASSOU NO VÁCUO", PERDEU_VACUO: "PERDEU O VÁCUO", PORTA_FECHADA: "PORTA FECHADA!",
+		VACUO: "PASSOU NO VÁCUO", PORTA_FECHADA: "PORTA FECHADA!",
 		LADO_ERRADO: "LADO ERRADO", FORCOU: "FORÇANDO", POUPOU: "POUPANDO PNEUS"}
-## Os botões das provas longas.
-const TEXTO_FORCAR := "FORÇAR"
-const TEXTO_POUPAR := "POUPAR PNEUS"
+## Modo do pneu nas provas longas (o texto é o do botão).
+const ATAQUE := "ATAQUE"
+const NORMAL := "NORMAL"
+const POUPAR := "POUPAR"
+const MODOS := [NORMAL, ATAQUE, POUPAR]
 
 
 static func params(dados: Node) -> Dictionary:
@@ -95,15 +98,20 @@ static func ordem_frenagem(nota: String, t_toque: float, t_saida: float, p: Dict
 			"origem": "frenagem"}
 
 
-## A ordem da saída de curva: a aceleração da nota por `dura_s` a partir de t.
-## Soltar no meio: a ordem de SOLTOU vale do instante em que soltou até o fim da
-## saída, por cima da LIMPA (as duas multiplicam: o resultado é o fator de SOLTOU).
+## A ordem da saída de curva: a aceleração da nota de `t` até `ate`.
 static func ordem_saida(nota: String, t: float, ate: float, p: Dictionary) -> Dictionary:
-	var s: Dictionary = p["saida"]
-	var acel := float(s["acel"][nota])
-	if nota == SOLTOU:
-		acel /= float(s["acel"][LIMPA])
+	var acel := float(p["saida"]["acel"][nota])
 	return {"de": t, "ate": maxf(ate, t + 0.1), "acel": acel, "origem": "saida"}
+
+
+## Nota da saída pelo instante em que o dedo soltou, em relação à saída da
+## curva (s de tela; negativo = antes): até a faixa da freada boa, limpa;
+## antes, perdeu tração; depois, acelerou tarde.
+static func nota_saida(atraso_s: float, p: Dictionary) -> String:
+	var j := float(p["frenagem"]["boa_s"])
+	if atraso_s < -j:
+		return SOLTOU
+	return LIMPA if atraso_s <= j else ACELEROU_TARDE
 
 
 ## Segundos de saída de curva (a janela em que segurar conta).
@@ -171,15 +179,6 @@ static func espera_largada(semente: int, p: Dictionary) -> float:
 	return rng.randf_range(float(e[0]), float(e[1]))
 
 
-## Barra do vácuo pelo tempo segurando (s de tela): 0..1 enchendo, 1 cheia
-## (soltar agora passa) até `janela_s` depois; além disso perdeu o vácuo.
-static func nota_vacuo(segurou_s: float, p: Dictionary) -> String:
-	var v: Dictionary = p["vacuo"]
-	if segurou_s < float(v["carga_s"]):
-		return ""
-	return VACUO if segurou_s <= float(v["carga_s"]) + float(v["janela_s"]) else PERDEU_VACUO
-
-
 ## A defesa aparece: um rival a até `distancia_m` atrás e a última defesa já
 ## recarregou.
 static func pode_defender(distancia_tras_m: float, t: float, ultima_defesa: float, p: Dictionary) -> bool:
@@ -194,12 +193,14 @@ static func lado_defesa(semente: int, t: float) -> int:
 	return -1 if hash("defesa:%d:%d" % [semente, roundi(t * 10.0)]) % 2 == 0 else 1
 
 
-## Nota do deslize: no lado do rival, dentro de `janela_s` (s de tela), fecha a
-## porta; do outro lado, lado errado. "" depois da janela (não conta).
-static func nota_defesa(lado_dedo: int, lado_rival: int, demorou_s: float, p: Dictionary) -> String:
+## Nota do deslize: para o lado certo, dentro de `defesa.janela_s` (s de tela),
+## vale `acerto` (PORTA_FECHADA na defesa, VACUO na passagem); do outro lado,
+## lado errado. "" depois da janela (não conta).
+static func nota_deslize(lado_dedo: int, lado_certo: int, demorou_s: float, p: Dictionary,
+		acerto := PORTA_FECHADA) -> String:
 	if demorou_s > float(p["defesa"]["janela_s"]):
 		return ""
-	return PORTA_FECHADA if lado_dedo == lado_rival else LADO_ERRADO
+	return acerto if lado_dedo == lado_certo else LADO_ERRADO
 
 
 ## A ordem da porta fechada: enquanto vale, o carro de trás não passa.
@@ -212,7 +213,7 @@ static func pode_forcar(voltas: int, p: Dictionary) -> bool:
 	return p.has("forcar") and voltas >= int(p["forcar"]["minimo_voltas"])
 
 
-## As ordens do FORÇAR de `t` até o fim da volta (`fim_volta`, s da corrida) e,
+## As ordens do ATAQUE de `t` até o fim da volta (`fim_volta`, s da corrida) e,
 ## sem pneu guardado, o pneu cansado nas `voltas_cansado` seguintes (cada uma
 ## com `volta_s` de duração).
 static func ordens_forcar(t: float, fim_volta: float, volta_s: float, guardado: bool, p: Dictionary) -> Array:
@@ -224,6 +225,19 @@ static func ordens_forcar(t: float, fim_volta: float, volta_s: float, guardado: 
 	return r
 
 
-## A ordem do POUPAR PNEUS: anda menos de `t` até o fim da volta.
+## A ordem do POUPAR: anda menos de `t` até o fim da volta.
 static func ordem_poupar(t: float, fim_volta: float, p: Dictionary) -> Dictionary:
 	return {"de": t, "ate": fim_volta, "ritmo": float(p["forcar"]["ritmo"]["poupar"]), "origem": "poupar"}
+
+
+## A volta no modo `modo`: [ordens, pneus guardados depois]. ATAQUE gasta um
+## pneu guardado (sem nenhum, cansa); POUPAR guarda um, até `voltas_cansado`.
+static func ordens_modo(modo: String, t: float, fim_volta: float, volta_s: float, guardados: int,
+		p: Dictionary) -> Array:
+	match modo:
+		ATAQUE:
+			return [ordens_forcar(t, fim_volta, volta_s, guardados > 0, p), maxi(guardados - 1, 0)]
+		POUPAR:
+			return [[ordem_poupar(t, fim_volta, p)],
+					mini(guardados + 1, int(p["forcar"]["voltas_cansado"]))]
+	return [[], guardados]

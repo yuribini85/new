@@ -155,36 +155,30 @@ var _segurando := false
 ## Largada desta corrida: {espera (s com as três luzes acesas), apagou (s de
 ## tela em que apagaram; -1 antes), nota ("" sem toque)} ou {} sem largada.
 var _largada := {}
-## Vácuo: pronto para segurar (colado no rival, recarregado) e, segurando, o
-## instante (s de tela) em que começou ({} sem).
-var _vacuo_pronto := false
-var _vacuo := {}
 var _feitas := {}  # curva (distância de entrada na corrida, m) -> nota
-## A frenagem esperando o toque: {chave, t_frenagem, fim} ou {}.
+## A frenagem esperando o dedo: {chave, t_frenagem, fim} ou {}.
 var _frenagem := {}
-## A curva em que o carro está (para a saída): {chave, fim, com_frenagem} ou {}.
-var _na_curva := {}
-## A saída em curso: {de, ate, soltou} ou {}.
-var _saida := {}
+## A curva segurada (decisão 131: encosta na freada, solta na saída): {chave,
+## t_fim (s da corrida em que o carro sai da curva), t_freada} ou {}.
+var _curva := {}
 var _s_antes_pil := 0.0
 ## Velocidade do relógio da corrida (1× ou a do ACELERAR): o toque é medido em
 ## tempo de tela.
 var _taxa_pil := 1.0
 var _ultimo_ataque := -INF
-## Defesa: o rival de trás mostrando o lado {lado, desde (s de tela)} ou {}; a
-## última (tempo da corrida) e onde o dedo encostou (o deslize conta dali).
-var _defesa := {}
 var _ultima_defesa := -INF
+## Deslize esperando o dedo: {tipo ("defesa" ou "vacuo"), lado, desde (s de
+## tela)} ou {}; e onde o dedo encostou (o deslize conta dali).
+var _deslize := {}
 var _toque_x := 0.0
-## Quanto o dedo precisa deslizar de lado (px) para valer como defesa.
+## Quanto o dedo precisa deslizar de lado (px) para valer.
 const DESLIZE_PX := 60.0
-## FORÇAR / POUPAR PNEUS (provas longas): os botões, a volta em que já usou e
-## se o pneu está guardado (o próximo FORÇAR não cansa).
-var _ritmo: HBoxContainer
-var _btn_forcar: Button
-var _btn_poupar: Button
-var _ritmo_volta := -1
-var _guardado := false
+## Modo do pneu nas provas longas (decisão 131): o botão, o modo, a última
+## volta em que ele foi aplicado e os pneus guardados.
+var _pneu: Button
+var _modo_pneu := Pilotagem.NORMAL
+var _volta_pneu := -1
+var _guardados := 0
 ## A corrida refeita por um toque, emendada na tela enquanto termina (Fila.parcial).
 var _versao_parcial := 0
 var _emenda_desde := -1.0
@@ -277,19 +271,16 @@ func _init(d: Node, j: Node) -> void:
 	area.add_child(_pedal)
 	_menu_botao = _criar_menu_botao()
 	area.add_child(_menu_botao)
-	# FORÇAR / POUPAR PNEUS no canto de baixo à esquerda (o minimapa fica à direita).
-	_ritmo = HBoxContainer.new()
-	_ritmo.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-	_ritmo.offset_left = 16
-	_ritmo.offset_right = 420
-	_ritmo.offset_top = -16 - Tipografia.ALTURA_SECUNDARIA
-	_ritmo.offset_bottom = -16
-	_ritmo.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_ritmo.add_theme_constant_override("separation", 10)
-	_ritmo.visible = false
-	area.add_child(_ritmo)
-	_btn_forcar = _botao_ritmo(Pilotagem.TEXTO_FORCAR, _forcar)
-	_btn_poupar = _botao_ritmo(Pilotagem.TEXTO_POUPAR, _poupar)
+	# Modo do pneu nas provas longas: um botão embaixo do •••; tocar troca o modo.
+	_pneu = Button.new()
+	_pneu.focus_mode = Control.FOCUS_NONE
+	_pneu.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_pneu.offset_left = -12.0 - 200.0
+	_pneu.offset_right = -12.0
+	_pneu.add_theme_font_size_override("font_size", 20)
+	_pneu.visible = false
+	_pneu.pressed.connect(_trocar_modo_pneu)
+	area.add_child(_pneu)
 	# Nome da prova e da pista no pé da corrida, logo acima das câmeras.
 	_nome_prova = rotulo("", FONTE_PEQUENA, COR_SECUNDARIA)
 	_nome_prova.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -446,9 +437,10 @@ func _input(e: InputEvent) -> void:
 	_pedal_toque(e)
 
 
-## O dedo na área da corrida é o pedal da pilotagem: apertar na marca é a
-## freada; manter apertado na saída da curva é a aceleração. (O toque também
-## chega como clique do mouse: o segundo aviso de apertar é ignorado.)
+## O dedo na área da corrida é o pedal da pilotagem (decisão 131): encostar
+## na freada e soltar na saída da curva; deslizar para os lados na defesa e
+## no vácuo; tocar na largada. (O toque também chega como clique do mouse: o
+## segundo aviso de apertar é ignorado.)
 func _pedal_toque(e: InputEvent) -> void:
 	if _pil.is_empty() or not _pil.get("ativa", false):
 		return
@@ -466,22 +458,20 @@ func _pedal_toque(e: InputEvent) -> void:
 	else:
 		return
 	if not apertou:
-		_segurando = false
-		_soltar_vacuo()
+		if _segurando:
+			_segurando = false
+			_soltar_curva()
 		return
 	if _segurando or not is_visible_in_tree() or not _area.visible or not _area.get_global_rect().has_point(pos) \
-			or (_ritmo.visible and _ritmo.get_global_rect().has_point(pos)):
+			or (_pneu.visible and _pneu.get_global_rect().has_point(pos)) \
+			or (_menu_botao.visible and _menu_botao.get_global_rect().has_point(pos)) or _menu != null:
 		return
 	_segurando = true
 	_toque_x = pos.x
-	if not _defesa.is_empty():
-		return
 	if _largada_aberta():
 		_largar()
 	elif not _frenagem.is_empty():
 		_frear()
-	elif _vacuo_pronto and _vacuo.is_empty():
-		_vacuo = {"desde": _agora_tela()}
 
 
 func atualizar() -> void:
@@ -741,17 +731,15 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_cartao.fechar()
 	_feitas = {}
 	_frenagem = {}
-	_na_curva = {}
-	_saida = {}
+	_curva = {}
 	_ultimo_ataque = -INF
-	_vacuo = {}
-	_defesa = {}
 	_ultima_defesa = -INF
-	_ritmo_volta = -1
-	_guardado = false
-	_ritmo.visible = false
+	_deslize = {}
+	_modo_pneu = Pilotagem.NORMAL
+	_volta_pneu = -1
+	_guardados = 0
+	_pneu.visible = false
 	_largada = {}
-	_vacuo_pronto = false
 	_s_antes_pil = 0.0
 	_versao_parcial = jogador.fila_ctrl.versao_parcial
 	_emenda_desde = -1.0
@@ -854,6 +842,8 @@ func _ajustar_area() -> void:
 		_menu_botao.visible = cheia
 		_menu_botao.offset_top = topo + 10.0
 		_menu_botao.offset_bottom = topo + 10.0 + MENU_BOTAO
+		_pneu.offset_top = _menu_botao.offset_bottom + 8.0 if cheia else topo + 90.0
+		_pneu.offset_bottom = _pneu.offset_top + 44.0
 	_minimapa.visible = not cheia and _camera_modo != "dados"
 	if correndo:
 		var livre := size.y if cheia else size.y - _cameras.get_combined_minimum_size().y \
@@ -1325,8 +1315,9 @@ func _acompanhar_ordem(delta: float) -> void:
 
 
 ## Pilotagem por toques, a cada quadro: leva a corrida ao vivo até o instante
-## mostrado, emenda a corrida refeita pelo último toque e acompanha a curva à
-## frente (a régua FREIE), a saída (DEDO NA TELA), o vácuo e a largada.
+## mostrado, emenda a corrida refeita pelo último toque e mostra uma deixa por
+## vez (decisão 131): largada; a curva (encostar na freada, soltar na saída);
+## o deslize (defesa com alguém colado atrás, vácuo colado no da frente).
 func _pilotar(taxa: float) -> void:
 	if not _pil.get("ativa", false) or _pista == null or _resultado.is_empty():
 		return
@@ -1340,8 +1331,7 @@ func _pilotar(taxa: float) -> void:
 		return
 	if _chegou or taxa <= 0.0 or _contagem > 0.0:
 		_pedal.esconder()
-		_vacuo_pronto = false
-		_ritmo.visible = false
+		_pneu.visible = false
 		return
 	var comp := _pista.comprimento
 	var s := _visual.distancia("jogador")
@@ -1349,106 +1339,74 @@ func _pilotar(taxa: float) -> void:
 	# volta (a régua aparecia na largada, teste de 2026-10-21).
 	if s < 0.0:
 		_pedal.esconder()
-		_vacuo_pronto = false
 		_s_antes_pil = s
 		return
 	_taxa_pil = maxf(taxa, 1.0)
 	var s_volta := fposmod(s, comp)
-	_ritmo.visible = Pilotagem.pode_forcar(_voltas, _pil) and floori(s / comp) < _voltas - 1
-	if _ritmo.visible:
-		var usada := _ritmo_volta == floori(s / comp)
-		_btn_forcar.disabled = usada
-		_btn_poupar.disabled = usada or _guardado
-		_btn_forcar.tooltip_text = "pneu guardado: não cansa" if _guardado else "o pneu cansa nas voltas seguintes"
-	# Saída da curva: começa ao cruzar o fim dela com o dedo na tela.
-	if not _na_curva.is_empty() and _s_antes_pil < float(_na_curva["fim"]) and s >= float(_na_curva["fim"]):
-		if _segurando and _na_curva["com_frenagem"] and _saida.is_empty():
-			var ate := t + Pilotagem.dura_saida(_pil)
-			if not _dar(Pilotagem.ordem_saida(Pilotagem.LIMPA, t, ate, _pil)).is_empty():
-				_saida = {"de": t, "ate": ate, "soltou": false}
-		_na_curva = {}
+	_modo_do_pneu(s)
 	_s_antes_pil = s
 	var mostrou := false
-	if not _saida.is_empty():
-		if not _segurando and not _saida["soltou"]:
-			_saida["soltou"] = true
-			_dar(Pilotagem.ordem_saida(Pilotagem.SOLTOU, t, float(_saida["ate"]), _pil))
-			_nota(Pilotagem.SOLTOU)
-		var fr := (t - float(_saida["de"])) / maxf(float(_saida["ate"]) - float(_saida["de"]), 0.01)
-		if fr >= 1.0:
-			if not _saida["soltou"]:
-				_nota(Pilotagem.LIMPA)
-			_saida = {}
+	var f: Dictionary = _pil["frenagem"]
+	# Segurando na curva: a régua da saída até o fim dela; passou da faixa sem
+	# soltar, acelerou tarde.
+	if not _curva.is_empty():
+		var faltam := (float(_curva["t_fim"]) - t) / _taxa_pil
+		if faltam < -float(f["boa_s"]):
+			_soltar_curva()
 		else:
-			_pedal.saida(fr, _segurando)
+			var janela := maxf((float(_curva["t_fim"]) - float(_curva["t_freada"])) / _taxa_pil, float(f["janela_s"]))
+			_pedal.frenagem(faltam, janela, float(f["boa_s"]), float(f["boa_s"]), "SOLTE NO VERDE")
 			mostrou = true
-	# A curva à frente: a régua da frenagem até o carro entrar nela.
+	# A curva à frente: a régua da freada até o carro entrar nela.
 	_frenagem = {}
 	var prox := Tatica.proxima(_tatica, s_volta, comp)
-	if not prox.is_empty():
+	if _curva.is_empty() and not prox.is_empty():
 		var c: Dictionary = prox["curva"]
 		var inicio_abs := s + fposmod(float(c["inicio"]) - s_volta, comp)
 		if prox["estado"] == "na_curva":
 			inicio_abs = s - fposmod(s_volta - float(c["inicio"]), comp)
 		var chave := roundi(inicio_abs)
-		var com_frenagem := Pilotagem.tem_frenagem(c, comp, _pil)
 		var fim_abs := inicio_abs + fposmod(float(c["fim"]) - float(c["inicio"]), comp)
 		if prox["estado"] == "na_curva":
 			_feitas[chave] = _feitas.get(chave, "")
-			_na_curva = {"chave": chave, "fim": fim_abs, "com_frenagem": com_frenagem}
-		elif com_frenagem and not _feitas.has(chave):
+		elif Pilotagem.tem_frenagem(c, comp, _pil) and not _feitas.has(chave):
 			var fren_abs := inicio_abs - fposmod(float(c["inicio"]) - float(c["frenagem"]), comp)
 			var t_fren := _visual.tempo_em("jogador", fren_abs)
-			var f: Dictionary = _pil["frenagem"]
 			# A janela e as tolerâncias valem em tempo de tela: no ACELERAR (2×)
 			# a corrida anda o dobro e o dedo continua o mesmo.
 			if t_fren >= 0.0 and (t_fren - t) / _taxa_pil <= float(f["janela_s"]):
 				_frenagem = {"chave": chave, "t_frenagem": t_fren, "fim": fim_abs}
-				if not mostrou:
-					_pedal.frenagem((t_fren - t) / _taxa_pil, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]))
-					mostrou = true
-				_dica_pilotagem()
-	# Vácuo: colado no carro da frente, com a passagem recarregada e sem curva
-	# nem saída pedindo o dedo.
+				_pedal.frenagem((t_fren - t) / _taxa_pil, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]))
+				mostrou = true
+				_dica("CURVA", "ENCOSTE NO VERDE E SEGURE", "SOLTE NA SAÍDA DA CURVA")
+	# Deslize: o que está na tela espera o dedo; senão, sem curva nem dedo na
+	# tela, a defesa (alguém colado atrás) e depois o vácuo (colado no da frente).
 	var ordem := _visual.ordem()
 	var i := ordem.find("jogador")
-	var d_frente := INF if i <= 0 else _visual.distancia(ordem[i - 1]) - s
-	_vacuo_pronto = not mostrou and Pilotagem.pode_atacar(d_frente, t, _ultimo_ataque, _pil)
-	if not _vacuo.is_empty():
-		var segurou := _agora_tela() - float(_vacuo["desde"])
-		if Pilotagem.nota_vacuo(segurou, _pil) == Pilotagem.PERDEU_VACUO:
-			_vacuo = {}
-			_ultimo_ataque = t
-			_nota(Pilotagem.PERDEU_VACUO)
-		elif not mostrou:
-			var v: Dictionary = _pil["vacuo"]
-			_pedal.vacuo(segurou / float(v["carga_s"]), true)
+	if not _deslize.is_empty():
+		var passou := _agora_tela() - float(_deslize["desde"])
+		if passou > float(_pil["defesa"]["janela_s"]) or mostrou:
+			_fim_deslize(t)
+		else:
+			_pedal.defesa(int(_deslize["lado"]), passou / float(_pil["defesa"]["janela_s"]),
+					"FECHE A PORTA" if _deslize["tipo"] == "defesa" else "PASSE NO VÁCUO")
 			mostrou = true
-	elif _vacuo_pronto:
-		_pedal.vacuo(0.0, false)
-		mostrou = true
-		_dica_vacuo()
-	# Defesa: alguém colado atrás, sem nada pedindo o dedo; ele mostra o lado.
-	var d_tras := INF if i < 0 or i + 1 >= ordem.size() else s - _visual.distancia(ordem[i + 1])
-	if _defesa.is_empty() and not mostrou and _vacuo.is_empty() and not _segurando \
-			and Pilotagem.pode_defender(d_tras, t, _ultima_defesa, _pil):
-		var lado := Pilotagem.lado_defesa(_semente_mostrada, t)
-		_defesa = {"lado": lado, "desde": _agora_tela()}
-		_visual3d.puxar(ordem[i + 1], lado, float(_pil["defesa"]["janela_s"]) * _taxa_pil + 0.5)
-		_dica_defesa()
-	if not _defesa.is_empty():
-		var passou := _agora_tela() - float(_defesa["desde"])
-		if passou > float(_pil["defesa"]["janela_s"]):
-			_defesa = {}
-			_ultima_defesa = t
-		elif not mostrou:
-			_pedal.defesa(int(_defesa["lado"]), passou / float(_pil["defesa"]["janela_s"]))
-			mostrou = true
+	elif not mostrou and not _segurando and i >= 0:
+		var d_tras := INF if i + 1 >= ordem.size() else s - _visual.distancia(ordem[i + 1])
+		var d_frente := INF if i <= 0 else _visual.distancia(ordem[i - 1]) - s
+		if Pilotagem.pode_defender(d_tras, t, _ultima_defesa, _pil):
+			_deslize = {"tipo": "defesa", "lado": Pilotagem.lado_defesa(_semente_mostrada, t), "desde": _agora_tela()}
+			_visual3d.puxar(ordem[i + 1], int(_deslize["lado"]), float(_pil["defesa"]["janela_s"]) * _taxa_pil + 0.5)
+			_dica("DEFESA", "VAI TE PASSAR", "DESLIZE PARA O LADO DELE")
+		elif Pilotagem.pode_atacar(d_frente, t, _ultimo_ataque, _pil):
+			_deslize = {"tipo": "vacuo", "lado": Pilotagem.lado_defesa(_semente_mostrada + 1, t), "desde": _agora_tela()}
+			_dica("VACUO", "COLADO NELE", "DESLIZE PARA O LADO LIVRE")
 	if not mostrou:
 		_pedal.esconder()
 
 
-## O toque na régua FREIE: a nota pelo atraso em relação ao ponto de frenagem.
+## Encostou na régua da freada: a nota pelo atraso em relação ao ponto de
+## frenagem; o dedo segue na tela até a saída da curva (_soltar_curva).
 func _frear() -> void:
 	if _frenagem.is_empty():
 		return
@@ -1460,66 +1418,93 @@ func _frear() -> void:
 	if _dar(Pilotagem.ordem_frenagem(nota, t, t_saida, _pil, float(_frenagem["t_frenagem"]))).is_empty():
 		return
 	_feitas[_frenagem["chave"]] = nota
+	_curva = {"chave": _frenagem["chave"], "t_fim": t_saida, "t_freada": t}
 	_frenagem = {}
-	_pedal.esconder()
 	_nota(nota)
 
 
-## Soltou o dedo segurando o vácuo: com a barra cheia é a passagem (a ordem do
-## ataque); antes de encher, nada acontece (pode segurar de novo).
-func _soltar_vacuo() -> void:
-	if _vacuo.is_empty():
-		return
-	var nota := Pilotagem.nota_vacuo(_agora_tela() - float(_vacuo["desde"]), _pil)
-	_vacuo = {}
-	if nota != Pilotagem.VACUO:
+## Soltou o dedo (ou passou da saída sem soltar): a nota da saída pelo instante
+## em relação ao fim da curva e a aceleração dela por `saida.dura_s`.
+func _soltar_curva() -> void:
+	if _curva.is_empty():
 		return
 	var t := _visual.tempo
-	if _dar(Pilotagem.ordem_ataque(t, _pil)).is_empty():
+	var nota := Pilotagem.nota_saida((t - float(_curva["t_fim"])) / _taxa_pil, _pil)
+	_curva = {}
+	if _dar(Pilotagem.ordem_saida(nota, t, t + Pilotagem.dura_saida(_pil), _pil)).is_empty():
 		return
-	_ultimo_ataque = t
+	_nota(nota)
+
+
+## O dedo deslizou `dx` px de lado com um deslize na tela: para o lado certo, a
+## ordem (porta fechada ou passagem no vácuo); para o outro, lado errado.
+func _deslizar(dx: float) -> void:
+	if _deslize.is_empty() or absf(dx) < DESLIZE_PX:
+		return
+	var defesa: bool = _deslize["tipo"] == "defesa"
+	var lado := int(_deslize["lado"])
+	var nota := Pilotagem.nota_deslize(int(signf(dx)), lado, _agora_tela() - float(_deslize["desde"]), _pil,
+			Pilotagem.PORTA_FECHADA if defesa else Pilotagem.VACUO)
+	var t := _visual.tempo
+	_fim_deslize(t)
 	_pedal.esconder()
-	_painel_hud.evento(Pilotagem.TEXTOS[Pilotagem.VACUO], "", COR_DESTAQUE, 7, 1.4, true)
-	_clarear(COR_DESTAQUE, 0.22)
-	_visual3d.acionar()
-	Sons.tocar_ui(self, "passagem", -6.0, 1.2)
+	if nota == Pilotagem.PORTA_FECHADA:
+		if _dar(Pilotagem.ordem_defesa(t, _pil)).is_empty():
+			return
+		_visual3d.puxar("jogador", lado, float(_pil["defesa"]["dura_s"]) * _taxa_pil)
+		_visual3d.acionar()
+		Sons.tocar_ui(self, "passagem", -8.0, 0.8)
+	elif nota == Pilotagem.VACUO:
+		if _dar(Pilotagem.ordem_ataque(t, _pil)).is_empty():
+			return
+		_visual3d.puxar("jogador", lado, float(_pil["ataque"]["dura_s"]) * _taxa_pil)
+		_clarear(COR_DESTAQUE, 0.22)
+		_visual3d.acionar()
+		Sons.tocar_ui(self, "passagem", -6.0, 1.2)
+	if nota != "":
+		_nota(nota)
 
 
-func _botao_ritmo(texto: String, acao: Callable) -> Button:
-	var b := Button.new()
-	b.text = texto
-	b.focus_mode = Control.FOCUS_NONE
-	b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.pressed.connect(acao)
-	_ritmo.add_child(b)
-	return b
+## O deslize saiu da tela (feito, errado ou passou o tempo): recarrega.
+func _fim_deslize(t: float) -> void:
+	if _deslize.is_empty():
+		return
+	if _deslize["tipo"] == "defesa":
+		_ultima_defesa = t
+	else:
+		_ultimo_ataque = t
+	_deslize = {}
 
 
-## FORÇAR: anda mais até o fim desta volta; sem pneu guardado, cansa depois.
-func _forcar() -> void:
+## Modo do pneu nas provas longas: o botão mostra o modo e os pneus guardados;
+## a cada volta nova, as ordens do modo valem até o fim dela.
+func _modo_do_pneu(s: float) -> void:
+	var volta := floori(s / _pista.comprimento)
+	_pneu.visible = Pilotagem.pode_forcar(_voltas, _pil) and volta < _voltas
+	if not _pneu.visible:
+		return
+	var cheio := int(_pil["forcar"]["voltas_cansado"])
+	_pneu.text = "PNEU: %s · %d/%d" % [_modo_pneu, _guardados, cheio]
+	if volta == _volta_pneu or volta >= _voltas - 1:
+		return
 	var tempos := _tempos_volta()
 	if tempos.is_empty():
 		return
-	var t := _visual.tempo
-	for o in Pilotagem.ordens_forcar(t, tempos[0], tempos[1], _guardado, _pil):
+	var r := Pilotagem.ordens_modo(_modo_pneu, _visual.tempo, tempos[0], tempos[1], _guardados, _pil)
+	for o in r[0]:
 		if _dar(o).is_empty():
 			return
-	_ritmo_volta = floori(_visual.distancia("jogador") / _pista.comprimento)
-	_painel_hud.evento(Pilotagem.TEXTOS[Pilotagem.FORCOU],
-			"PNEU GUARDADO: NÃO CANSA" if _guardado else "O PNEU CANSA NAS PRÓXIMAS VOLTAS", COR_DESTAQUE, 7, 1.6, true)
-	_guardado = false
-	_visual3d.acionar()
+	_volta_pneu = volta
+	_guardados = int(r[1])
 
 
-## POUPAR PNEUS: anda menos nesta volta e guarda o pneu para o próximo FORÇAR.
-func _poupar() -> void:
-	var tempos := _tempos_volta()
-	if tempos.is_empty() or _dar(Pilotagem.ordem_poupar(_visual.tempo, tempos[0], _pil)).is_empty():
-		return
-	_ritmo_volta = floori(_visual.distancia("jogador") / _pista.comprimento)
-	_guardado = true
-	_painel_hud.evento(Pilotagem.TEXTOS[Pilotagem.POUPOU], "O PRÓXIMO FORÇAR NÃO CANSA", Color.WHITE, 7, 1.6, true)
+## Tocar no botão do pneu: NORMAL → ATAQUE → POUPAR → NORMAL (vale da próxima
+## volta em diante).
+func _trocar_modo_pneu() -> void:
+	var k := Pilotagem.MODOS.find(_modo_pneu)
+	_modo_pneu = Pilotagem.MODOS[(k + 1) % Pilotagem.MODOS.size()]
+	_painel_hud.evento("PNEU: " + _modo_pneu, "VALE A PARTIR DA PRÓXIMA VOLTA",
+			COR_DESTAQUE if _modo_pneu == Pilotagem.ATAQUE else Color.WHITE, 7, 1.4)
 
 
 ## [instante em que o jogador fecha esta volta, duração de uma volta] (s da
@@ -1537,27 +1522,6 @@ func _tempos_volta() -> Array:
 	return [fim, fim - inicio]
 
 
-## O dedo deslizou `dx` px de lado com o rival de trás mostrando o lado: no
-## lado dele fecha a porta (a ordem da defesa); no outro, lado errado.
-func _deslizar(dx: float) -> void:
-	if _defesa.is_empty() or absf(dx) < DESLIZE_PX:
-		return
-	var nota := Pilotagem.nota_defesa(int(signf(dx)), int(_defesa["lado"]), _agora_tela() - float(_defesa["desde"]), _pil)
-	var t := _visual.tempo
-	var lado := int(_defesa["lado"])
-	_defesa = {}
-	_ultima_defesa = t
-	_pedal.esconder()
-	if nota == Pilotagem.PORTA_FECHADA:
-		if _dar(Pilotagem.ordem_defesa(t, _pil)).is_empty():
-			return
-		_visual3d.puxar("jogador", lado, float(_pil["defesa"]["dura_s"]) * _taxa_pil)
-		_visual3d.acionar()
-		Sons.tocar_ui(self, "passagem", -8.0, 0.8)
-	if nota != "":
-		_nota(nota)
-
-
 ## A ordem vai para a corrida (Fila.pilotar); {} se a corrida ao vivo ainda não
 ## chegou ao instante da tela (o toque não conta).
 func _dar(ordem: Dictionary) -> Dictionary:
@@ -1567,7 +1531,7 @@ func _dar(ordem: Dictionary) -> Dictionary:
 func _nota(nota: String) -> void:
 	var boa := nota in [Pilotagem.PERFEITA, Pilotagem.LIMPA, Pilotagem.LARGADA_PERFEITA, Pilotagem.PORTA_FECHADA]
 	var ruim := nota in [Pilotagem.CEDO, Pilotagem.TARDE, Pilotagem.SOLTOU, Pilotagem.QUEIMOU, Pilotagem.ATRASADA,
-			Pilotagem.PERDEU_VACUO, Pilotagem.LADO_ERRADO]
+			Pilotagem.ACELEROU_TARDE, Pilotagem.LADO_ERRADO]
 	var cor := COR_DESTAQUE if boa else (Color(1.0, 0.45, 0.4) if ruim else Color.WHITE)
 	_painel_hud.evento(Pilotagem.TEXTOS[nota], "", cor, 6, 1.1, false, boa)
 	if boa:
@@ -1629,33 +1593,15 @@ func _largar() -> void:
 	_nota(nota)
 
 
-func _dica_vacuo() -> void:
-	var n := int(jogador.flags.get("VACUO_DICA", 0))
-	if n >= 3 or jogador.flags.get("VACUO_DICA_SEMENTE", 0) == _semente_mostrada:
+## Nas primeiras corridas, a primeira deixa de cada gesto vem com a explicação
+## (uma vez por corrida, nas três primeiras). `chave`: CURVA, DEFESA ou VACUO.
+func _dica(chave: String, titulo: String, sub: String) -> void:
+	var n := int(jogador.flags.get(chave + "_DICA", 0))
+	if n >= 3 or jogador.flags.get(chave + "_DICA_SEMENTE", 0) == _semente_mostrada:
 		return
-	jogador.flags["VACUO_DICA_SEMENTE"] = _semente_mostrada
-	jogador.flags["VACUO_DICA"] = n + 1
-	_painel_hud.evento("COLADO NELE: SEGURE O DEDO", "SOLTE QUANDO A BARRA ENCHER", Color.WHITE, 9, 4.0, true)
-
-
-func _dica_defesa() -> void:
-	var n := int(jogador.flags.get("DEFESA_DICA", 0))
-	if n >= 3 or jogador.flags.get("DEFESA_DICA_SEMENTE", 0) == _semente_mostrada:
-		return
-	jogador.flags["DEFESA_DICA_SEMENTE"] = _semente_mostrada
-	jogador.flags["DEFESA_DICA"] = n + 1
-	_painel_hud.evento("VAI TE PASSAR: FECHE A PORTA", "DESLIZE O DEDO PARA O LADO DELE", Color.WHITE, 9, 4.0, true)
-
-
-func _dica_pilotagem() -> void:
-	var n := int(jogador.flags.get("PILOTAGEM_DICA", 0))
-	if n >= 3 or bool(_frenagem.get("dica", false)) or _feitas.size() > 1:
-		return
-	if jogador.flags.get("PILOTAGEM_DICA_SEMENTE", 0) == _semente_mostrada:
-		return
-	jogador.flags["PILOTAGEM_DICA_SEMENTE"] = _semente_mostrada
-	jogador.flags["PILOTAGEM_DICA"] = n + 1
-	_painel_hud.evento("TOQUE QUANDO A BARRA CHEGAR NO VERDE", "NA SAÍDA DA CURVA, DEIXE O DEDO NA TELA", Color.WHITE, 9, 4.0, true)
+	jogador.flags[chave + "_DICA_SEMENTE"] = _semente_mostrada
+	jogador.flags[chave + "_DICA"] = n + 1
+	_painel_hud.evento(titulo, sub, Color.WHITE, 9, 3.0)
 
 
 func _clarear(cor: Color, forca: float) -> void:

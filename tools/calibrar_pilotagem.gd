@@ -8,7 +8,8 @@ extends SceneTree
 ##             passagem no vácuo e a porta fechada sempre que puder
 ##   beira     como a perfeita, mas tocando no começo da faixa verde (perfeita_s antes)
 ##   boa       largada boa, toda freada boa, toda saída limpa
-##   ruim      largada queimada, toda freada tarde e toda saída solta no meio
+##   ruim      largada queimada, toda freada tarde e o dedo solto antes da
+##             saída em toda curva (perdeu tração)
 ##   largada   só a largada perfeita
 ##   ataque    só a passagem no vácuo
 ##   defesa    só a porta fechada (deslize no lado certo sempre que puder)
@@ -115,8 +116,6 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var volta_s := 0.0
 	var guardado := false
 	var forca := Pilotagem.pode_forcar(int(d.evento(ev_id)["voltas"]), p)
-	var saida_ate := -1.0
-	var soltar_em := -1.0
 	# Largada: perfeita, boa ou queimada (ruim); vale do apagar das luzes.
 	var largada := {"perfeita": Pilotagem.LARGADA_PERFEITA, "beira": Pilotagem.LARGADA_PERFEITA,
 			"largada": Pilotagem.LARGADA_PERFEITA, "boa": Pilotagem.LARGADA_BOA, "ruim": Pilotagem.QUEIMOU}
@@ -144,12 +143,8 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				a.ordenar("jogador", Pilotagem.ordem_frenagem(nota, a.tempo(), ate, p, t_ponto))
 				toques += 1
 			if frear and _cruzou(s_antes, s, float(c["fim"]), comp):
-				saida_ate = a.tempo() + Pilotagem.dura_saida(p)
-				a.ordenar("jogador", Pilotagem.ordem_saida(Pilotagem.LIMPA, a.tempo(), saida_ate, p))
-				soltar_em = a.tempo() + Pilotagem.dura_saida(p) * 0.4 if politica == "ruim" else -1.0
-		if soltar_em > 0.0 and a.tempo() >= soltar_em:
-			a.ordenar("jogador", Pilotagem.ordem_saida(Pilotagem.SOLTOU, a.tempo(), saida_ate, p))
-			soltar_em = -1.0
+				var nota_saida := Pilotagem.SOLTOU if politica == "ruim" else Pilotagem.LIMPA
+				a.ordenar("jogador", Pilotagem.ordem_saida(nota_saida, a.tempo(), a.tempo() + Pilotagem.dura_saida(p), p))
 		if politica in ["perfeita", "beira", "ataque"]:
 			var frente := INF
 			for id in est:

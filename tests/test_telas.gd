@@ -673,6 +673,64 @@ func test_largada_pelo_semaforo() -> void:
 	d.free()
 
 
+## Decisão 131: segurar na curva. Encostar o dedo no ponto da freada dá a
+## nota da freada; soltar na saída da curva dá a saída limpa. As duas ordens
+## vão para a fila (valem com o jogo fechado).
+func test_segurar_na_curva_freia_e_solta_na_saida() -> void:
+	var d := dados_fixture()
+	var j: Node = JogadorScript.new()
+	j.novo_jogo(d.economia(), d.pneu)
+	j.economia.creditar(10000)
+	j.carreira = Carreira.new(d, j)
+	j.fila_ctrl = Fila.new(j.carreira, j, 3600.0)
+	var uid: int = j.concessionaria.comprar_carro(d.carro("fraco"))
+	j.carro_ativo = uid
+	var a: Control = preload("res://ui/aba_corrida.gd").new(d, j)
+	var pil := {"ativa": true, "frenagem": {"janela_s": 2.5, "perfeita_s": 0.25, "boa_s": 0.5, "minimo_m": 15.0,
+			"ritmo": {"perfeita": 1.01, "boa": 1.005, "cedo": 0.99, "tarde": 0.99}},
+			"saida": {"dura_s": 2.0, "acel": {"limpa": 1.02, "soltou": 0.98, "acelerou_tarde": 0.97}},
+			"ataque": {"distancia_m": 0.0, "recarga_s": 45.0, "dura_s": 3.0, "ritmo": 1.0, "agressividade": 1.0},
+			"defesa": {"distancia_m": 0.0, "recarga_s": 45.0, "janela_s": 1.5, "dura_s": 3.0}}
+	d.simulacao()["pilotagem"] = pil
+	a.size = Vector2(720, 1100)
+	_raiz().add_child(a)
+	a._pil = pil
+	j.fila_ctrl.iniciar("aberto", uid, 1, Aceleracao.agora(j) - 0.2)
+	a.atualizar()
+	a._process(0.0)
+	j.fila_ctrl.avancar_preparo(INF)
+	for k in 4:
+		a._process(0.0)
+	while a._contagem > 0.0:
+		a._process(0.5)
+	# A corrida anda: o relógio dela é o do sistema, então o início recua; a
+	# corrida refeita pelo toque é resolvida (a principal faz isso a cada quadro).
+	var andar := func(dt: float) -> void:
+		j.fila["inicio"] = float(j.fila["inicio"]) - dt
+		j.fila_ctrl.avancar_preparo(INF)
+		a._process(dt)
+	for k in 4000:
+		if not a._frenagem.is_empty() and float(a._frenagem["t_frenagem"]) - a._visual.tempo <= 0.02:
+			break
+		andar.call(0.02)
+	verificar(not a._frenagem.is_empty(), "a régua da freada apareceu antes de uma curva")
+	a._frear()
+	verificar(not a._curva.is_empty(), "encostou: segurando na curva")
+	for k in 4000:
+		if a._visual.tempo >= float(a._curva["t_fim"]):
+			break
+		andar.call(0.02)
+	a._soltar_curva()
+	verificar(a._curva.is_empty(), "soltou")
+	var ordens: Array = j.fila["piloto"].get("ordens", [])
+	igual(ordens.map(func(o): return o["origem"]), ["frenagem", "saida"], "freada e saída na fila")
+	perto(float(ordens[0]["ritmo"]), 1.01, 1e-6, "freada na hora: perfeita")
+	perto(float(ordens[1]["acel"]), 1.02, 1e-6, "soltou na saída: limpa")
+	a.free()
+	j.free()
+	d.free()
+
+
 func test_tempo_da_corrida_nao_engasga_com_relogio_grosso() -> void:
 	var d := dados_fixture()
 	var j: Node = JogadorScript.new()

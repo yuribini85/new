@@ -166,8 +166,6 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CHAMPIONSHIP_TUTORIAL_DONE` | cena CW_C01 |
 | `CLUB_COMPLETE` | cena CW_R10 |
 | `COLLECTION_FIVE` | cena CW_R11 |
-| `DEFESA_DICA` | ui/aba_corrida.gd |
-| `DEFESA_DICA_SEMENTE` | ui/aba_corrida.gd |
 | `DEX_MET` | cena CW_AR02 |
 | `DRIVER_HIRE_UNLOCKED` | data_model/equipe_jogador.gd |
 | `ELITE_COMPLETE` | cena CW_T03 |
@@ -210,8 +208,6 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `PAINT_TUTORIAL_SEEN` | cena CW_PT01 |
 | `PATROCINIO_INTRO` | cena CW_S00 |
 | `PATROCINIO_LIBERADO` | cena CW_S00 |
-| `PILOTAGEM_DICA` | ui/aba_corrida.gd |
-| `PILOTAGEM_DICA_SEMENTE` | ui/aba_corrida.gd |
 | `PILOT_HIRED` | condição de CW_P03C |
 | `PILOT_MET` | cena CW_P03D |
 | `PRIMEIRO_PILOTO_CONTRATADO` | data_model/equipe_jogador.gd |
@@ -233,8 +229,6 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `TUTORIAL_INTRO_SEEN` | cena CW_P01 |
 | `TUTORIAL_PULADO` | data_model/tutorial.gd |
 | `TWENTY_FIVE_WINS` | cena CW_M05 |
-| `VACUO_DICA` | ui/aba_corrida.gd |
-| `VACUO_DICA_SEMENTE` | ui/aba_corrida.gd |
 
 ## Licenças (`data/licencas.json`)
 

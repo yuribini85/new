@@ -48,19 +48,20 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **O QUE AJUDA?** | o que, no seu saldo, melhora a posição numa prova perdida |
 | **jogada** | a escolha rápida durante a corrida. Botões (o que mandar): ATACAR AGORA, ESPERAR A RETA, FECHAR A PORTA, POUPAR PNEUS; na pista, o que está acontecendo: ATAQUE!, PACIÊNCIA..., PORTA FECHADA!, POUPANDO PNEUS |
 | **INDICAÇÃO DA MARA** | a jogada que a Mara sugere pelo rádio |
-| **FREIE NO VERDE** | a régua antes da curva: tocar na tela quando o cursor chega na faixa verde |
-| **DEDO NA TELA** | a barra da saída da curva: manter o dedo na tela até ela encher |
-| **SEGURE NO VÁCUO / SOLTE!** | a barra que aparece colado no carro da frente: segurar o dedo enche; soltar com ela cheia (verde) é a ultrapassagem; segurar demais perde o vácuo. Depois de usar, demora para voltar |
+| **FREIE NO VERDE** | a régua antes da curva: encostar o dedo na tela quando o cursor chega na faixa verde e segurar |
+| **SOLTE NO VERDE** | a mesma régua, segurando: soltar o dedo quando o cursor chega na faixa verde da saída da curva |
+| **PASSE NO VÁCUO** | colado no carro da frente, a seta mostra o lado livre: deslizar o dedo para esse lado é a ultrapassagem. Depois de usar, demora para voltar |
 | **TOQUE QUANDO APAGAR** | a largada: tocar quando as três luzes do semáforo apagam |
 | **LARGADA PERFEITA / BOA LARGADA / QUEIMOU A LARGADA / LARGOU ATRASADO** | a nota do toque da largada |
-| **PASSOU NO VÁCUO / PERDEU O VÁCUO** | a nota do vácuo |
-| **DESLIZE PARA A ESQUERDA / DIREITA** | a defesa: com um rival colado atrás, ele sai para um lado; deslizar o dedo para esse lado fecha a porta (ele não passa por um tempo). Depois de usar, demora para voltar |
+| **PASSOU NO VÁCUO / LADO ERRADO** | a nota do vácuo |
+| **FECHE A PORTA** | a defesa: com um rival colado atrás, ele sai para um lado (a seta); deslizar o dedo para esse lado fecha a porta (ele não passa por um tempo). Depois de usar, demora para voltar |
 | **PORTA FECHADA! / LADO ERRADO** | a nota da defesa |
-| **FORÇAR / POUPAR PNEUS** | botões das provas longas (resistência), uma vez por volta: FORÇAR anda mais até o fim da volta e o pneu cansa nas seguintes; POUPAR PNEUS anda menos e guarda o pneu, e o próximo FORÇAR não cansa. Na pista: FORÇANDO, POUPANDO PNEUS |
+| **PNEU: NORMAL / ATAQUE / POUPAR** | o botão das provas longas (resistência), embaixo do •••; tocar troca o modo, que vale a partir da próxima volta. ATAQUE anda mais e gasta um pneu guardado (sem nenhum, o pneu cansa nas voltas seguintes); POUPAR anda menos e guarda um pneu. O número mostra os pneus guardados |
+| **•••** | o botão da corrida em tela cheia: CÂMERA, ACELERAR, CONFIGURAÇÕES e SAIR · A CORRIDA CONTINUA |
 | **treinador** | contratado na Equipe por 24 h, pago na hora (um prêmio de 1º lugar da sua maior licença): enquanto está lá, cada recorde de volta do piloto de corrida vale o dobro para subir de nível |
 | **caixa de pintura** | o prêmio das provas difíceis (primeira vitória da National para cima, ou vitória com o carro mais fraco do grid): abre na hora e libera um desenho, logo, aro, acabamento ou família de número da cabine; sem nada novo, vira giros. Nunca à venda |
 | **FREADA PERFEITA / BOA FREADA / FREOU CEDO / FREOU TARDE** | a nota do toque no FREIE |
-| **SAÍDA LIMPA / PERDEU TRAÇÃO** | segurou a saída inteira / soltou antes |
+| **SAÍDA LIMPA / PERDEU TRAÇÃO / ACELEROU TARDE** | soltou o dedo na saída da curva / antes / depois |
 
 ### Dinheiro e tempo
 | Termo | O que é para o jogador |
@@ -106,7 +107,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | provas abertas (`licenca == ""`) | **provas sem licença** (ABERTA no cartão é outra coisa: a prova que o carro pode correr) |
 | grid (os carros da largada) | **rivais** / largada. "Grid" no jogo é só **The Grid** |
 | momento de decisão, `MomentosCorrida`, cartão | **jogada** |
-| pilotagem, ordem, `Pilotagem`, toque, nota | **FREIE NO VERDE** / **DEDO NA TELA** / **SEGURE NO VÁCUO** / **TOQUE QUANDO APAGAR** e o texto da nota |
+| pilotagem, ordem, `Pilotagem`, toque, nota | **FREIE NO VERDE** / **SOLTE NO VERDE** / **PASSE NO VÁCUO** / **FECHE A PORTA** / **TOQUE QUANDO APAGAR** e o texto da nota |
 | `dica_acerto`, rádio | **INDICAÇÃO DA MARA** |
 | `derrotas_seguidas`, travado | nada: a Mara só aponta o O QUE AJUDA? |
 | `carros_minimos` | "a arena abre com dois carros na garagem" |
