@@ -2550,6 +2550,24 @@
   "reativa": true
  },
  {
+  "id": "CW_TR02",
+  "trigger": "TRAVADO",
+  "falas": [
+   {
+    "quem": "mara",
+    "texto": "Bater na mesma parede não muda a parede. Antes da próxima, abre O QUE AJUDA? no cartão da prova.",
+    "pose": "decepcao"
+   }
+  ],
+  "condicao": {"quantidade_min": 2},
+  "requer": [],
+  "proibe": [],
+  "flags": [],
+  "bloqueia": false,
+  "uma_vez": false,
+  "personagem": "dono"
+ },
+ {
   "id": "CW_TR01",
   "trigger": "TRAVADO",
   "falas": [

@@ -280,6 +280,11 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 		if float(hist.get("melhor_tempo", 0.0)) > 0.0:
 			melhor += " · " + _tempo_curto(float(hist["melhor_tempo"]))
 		Tipografia.rotulo(rotulo(melhor, 0, COR_SECUNDARIA, col), "medium", 18)
+	# Caixa de pintura (decisão 130, E4/E5): o desafio opcional fica à vista.
+	var caixa := _texto_caixa(ev, c if pode else null, vitorias)
+	if caixa != "":
+		var lc := rotulo(caixa, FONTE_PEQUENA - 2, COR_INFO.lightened(0.3), col)
+		lc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# Recompensa especial: o carro-prêmio aparece no cartão.
 	if ev.get("carro_premio") != null and vitorias == 0:
 		var cp: Dictionary = dados.carro(ev["carro_premio"])
@@ -310,6 +315,12 @@ func _cartao_evento(c: Carro, ev: Dictionary, motivos: Array) -> void:
 			Tipografia.acao_primaria(ba, "O QUE AJUDA?", COR_INFO, Color(0.05, 0.08, 0.14), 30, Tipografia.ALTURA_SECUNDARIA)
 			ba.pressed.connect(_o_que_ajuda.bind(ev, c))
 			v.add_child(ba)
+			# Travado nesta prova (decisão 130, E5): o botão pulsa até ele vencer.
+			var minimo := int(dados.carreira().get("travado", {}).get("derrotas", 0))
+			if minimo > 0 and int(hist.get("derrotas", 0)) >= minimo and not Preferencias.reduzir_animacoes:
+				var tw := ba.create_tween().set_loops()
+				tw.tween_property(ba, "modulate", Color(1.35, 1.35, 1.35), 0.6).set_trans(Tween.TRANS_SINE)
+				tw.tween_property(ba, "modulate", Color.WHITE, 0.6).set_trans(Tween.TRANS_SINE)
 	else:
 		# Bloqueada: o motivo no lugar do DISPUTAR, num botão vermelho. Tocar
 		# explica a recusa (e a história pode comentar).
@@ -584,6 +595,21 @@ static func _chave(ev: Dictionary, c: Carro) -> String:
 ## que o carro já perdeu, simula a prova com cada peça e pneu que o saldo paga
 ## (Mecanico, as mesmas sementes para todas) e mostra até 3, da que mais melhora
 ## por giro gasto. Se nenhuma resolve, o carro da loja que abre caminho.
+## O que a vitória nesta prova vale em caixa de pintura ("" nada): a primeira
+## vitória de prova difícil, o carro escolhido ser o mais fraco do grid ou,
+## em prova já vencida, o desafio de vencer com o mais fraco.
+func _texto_caixa(ev: Dictionary, c: Carro, vitorias: int) -> String:
+	if CaixaPintura.cfg(dados).is_empty() or ev.get("grid_equipe") != null:
+		return ""
+	if vitorias == 0 and CaixaPintura.ganha(dados, jogador, ev, null, true):
+		return "1ª VITÓRIA DÁ CAIXA DE PINTURA"
+	if c != null and CaixaPintura.mais_fraco(dados, ev, c):
+		return "SEU CARRO É O MAIS FRACO DO GRID: VENCER DÁ CAIXA DE PINTURA"
+	if vitorias > 0 and not ev.get("adversarios", []).is_empty():
+		return "DESAFIO: VENÇA COM O CARRO MAIS FRACO DO GRID E GANHE UMA CAIXA DE PINTURA"
+	return ""
+
+
 func _o_que_ajuda(ev: Dictionary, c: Carro) -> void:
 	painel.emit("O que ajuda?", func(pv: Control): _analisar(ev, c, pv), [["Fechar", func(): pass]])
 

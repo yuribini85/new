@@ -80,7 +80,7 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     rival) correm nela. Exigem o **pneu de terra**, como na referência (aderência 1,0 na terra,
     igual à do pneu de fábrica no asfalto, porque todos correm com ele; preço = mediana do
     estágio da referência). Recomendação aceita pelo usuário.
-- **Fase E, em andamento** (2026-10-22; recomendações aceitas: "Pode seguir"):
+- **Fase E feita** (2026-10-22; recomendações aceitas: "Pode seguir" e "CONTINUA"):
   - Ajuda para quem trava (E5): cada prova guarda as derrotas seguidas; com 4 (o número do
     travado) numa prova não vencida, a faixa da freada boa fica 50% maior até a vitória, sem aviso.
   - Caixa de pintura (E4, `CaixaPintura`): na primeira vitória de cada prova da National para
@@ -103,6 +103,16 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     teto a partir da International (equipe.json → treino.teto); lá, o treinador leva o piloto ao
     teto da licença na metade dos recordes (3 em vez de 6). O ganho total segue limitado pelo
     teto calibrado do treino (até 10% do caminho).
+  - Insistência para quem trava (E5): a Mara volta a apontar o O QUE AJUDA? a cada 4 derrotas
+    seguidas (a partir da segunda vez, com a fala CW_TR02, mais dura), e o botão O QUE AJUDA?
+    pulsa no cartão da prova travada até a vitória.
+  - Desafio opcional à vista (E5): o cartão da prova diz o que vale caixa de pintura (1ª
+    vitória da National para cima; seu carro é o mais fraco do grid; ou, em prova já vencida,
+    o desafio de vencer com o carro mais fraco).
+  - A caixa abre na janela do resultado com animação curta (`CaixaAbrindo`, 1,4 s): treme, a
+    tampa salta com faíscas e o item aparece embaixo.
+  - Ficou de fora, de propósito: o treinador com foco num atributo (o treinador escolhido pelo
+    usuário, recorde em dobro, já cobre o pedido).
 
 ## Ordem recomendada
 

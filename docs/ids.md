@@ -130,6 +130,7 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CW_D13` | `PECA_COMPRADA` | — | — |
 | `CW_R03` | `CAIXA_BAIXO` | — | — |
 | `CW_R04` | `COMPRA_CARRO_CARA` | — | — |
+| `CW_TR02` | `TRAVADO` | — | — |
 | `CW_TR01` | `TRAVADO` | — | — |
 | `CW_SYS01` | `SEM_DINHEIRO` | — | — |
 | `CW_SYS02` | `EVENTO_BLOQUEADO` | — | — |

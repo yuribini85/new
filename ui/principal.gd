@@ -1367,11 +1367,11 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				marcos.append(["+1 H DE RENDA OFFLINE", Aba.COR_BOM])
 		if c.get("recorde_volta", false):
 			marcos.append(["NOVO RECORDE PESSOAL DE VOLTA", Aba.COR_BOM])
-		# Caixa de pintura (decisão 130): já aberta, o que saiu.
-		if not c.get("caixa", {}).is_empty():
-			marcos.append([CaixaPintura.texto(c["caixa"]).to_upper(), Color("ffd34d")])
 		if not marcos.is_empty():
 			g.selos(marcos, v)
+		# Caixa de pintura (decisão 130): abre na hora, com o que saiu embaixo.
+		if not c.get("caixa", {}).is_empty():
+			v.add_child(CaixaAbrindo.new(CaixaPintura.texto(c["caixa"]).to_upper()))
 		# Carro de prêmio: ele girando na vitrine, com o nome.
 		var premiado: Carro = jogador.garagem.carro(c["carro_premio_uid"]) if c.get("carro_premio_uid", -1) > 0 else null
 		if premiado != null:

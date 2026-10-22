@@ -517,6 +517,9 @@ func test_travado_aponta_o_que_ajuda() -> void:
 	igual(c.get("id"), "CW_TR01", "a cena da Mara")
 	h.concluir(c)
 	igual(h.cena_para("TRAVADO", {"posicao": 4}).get("id"), "CW_TR01", "repetível (uma por série de derrotas)")
+	igual(h.cena_para("TRAVADO", {"posicao": 4, "quantidade": 1}).get("id"), "CW_TR01", "a primeira vez")
+	igual(h.cena_para("TRAVADO", {"posicao": 4, "quantidade": 2}).get("id"), "CW_TR02",
+			"insiste a cada N derrotas a mais (decisão 130, E5)")
 	j.free()
 	d.free()
 

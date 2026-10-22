@@ -191,9 +191,15 @@ func disparar_fim(posicao: int, evento_id: String, antes: Dictionary) -> bool:
 	if not sug.is_empty() and disparar("ARENA_SUGERIDA", sug):
 		return true
 	# Travado (análise de 2026-10-19): na N-ésima derrota seguida em provas não
-	# vencidas, a Mara aponta o "O que ajuda?" do cartão da prova (uma vez por série).
-	if posicao != 1 and jogador.derrotas_seguidas == travado_derrotas() and disparar("TRAVADO", ctx):
-		return true
+	# vencidas, a Mara aponta o "O que ajuda?" do cartão da prova; com mais
+	# insistência (decisão 130, E5) a cada N derrotas a mais (contexto
+	# quantidade: 1 na primeira vez, 2 na segunda...).
+	var n := travado_derrotas()
+	if posicao != 1 and n > 0 and jogador.derrotas_seguidas > 0 and jogador.derrotas_seguidas % n == 0:
+		var t := ctx.duplicate()
+		t["quantidade"] = jogador.derrotas_seguidas / n
+		if disparar("TRAVADO", t):
+			return true
 	# Sem cena nem marco: um comentário de contexto (no máximo um a cada
 	# reativa_intervalo_corridas corridas), para a Mara não sumir entre os marcos.
 	return disparar("CORRIDA_FIM", ctx)
