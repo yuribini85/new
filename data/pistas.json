@@ -721,5 +721,148 @@
     "comprimento_m": 263.0211
    }
   ]
+ },
+ {
+  "id": "trilha_do_canion",
+  "funcao": "terra",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 286,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 56,
+    "sentido": "direita",
+    "comprimento_m": 98.5573
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 144
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 50,
+    "comprimento_m": 62.6034
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 78
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 43,
+    "sentido": "direita",
+    "comprimento_m": 42.24
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 299,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 35,
+    "sentido": "direita",
+    "comprimento_m": 98.7108
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 155
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 95,
+    "comprimento_m": 115.4323
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 105
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 42,
+    "sentido": "direita",
+    "comprimento_m": 47.6422
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 122.2472
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 65,
+    "comprimento_m": 65.7984
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 90.0258
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 68,
+    "sentido": "direita",
+    "comprimento_m": 138.2254
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 149
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 101,
+    "sentido": "direita",
+    "comprimento_m": 104.3291
+   }
+  ],
+  "relevo": {
+   "ondulacoes": [
+    [
+     400,
+     515,
+     0.35,
+     5.0
+    ],
+    [
+     1115,
+     1160,
+     0.3,
+     4.5
+    ],
+    [
+     1545,
+     1640,
+     0.4,
+     5.5
+    ]
+   ],
+   "rampas": [
+    [
+     200,
+     2.0,
+     14,
+     20
+    ],
+    [
+     860,
+     2.6,
+     16,
+     24
+    ],
+    [
+     1215,
+     1.8,
+     12,
+     18
+    ],
+    [
+     2050,
+     2.2,
+     14,
+     22
+    ]
+   ]
+  }
  }
 ]

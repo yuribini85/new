@@ -82,3 +82,25 @@ func test_tracado_de_corrida_aberto_tangencia_aberto() -> void:
 	for s in range(0, int(p.comprimento), 7):
 		verificar(absf(t.lateral(s)) <= Tracado.TANGENCIA_M + 0.001, "dentro da pista em %d" % s)
 	d.free()
+
+
+func test_relevo_rampa_lanca_e_ondulacao_sobe_e_desce() -> void:
+	var d := dados_fixture()
+	var p: Pista = d.pista("oval")
+	p.relevo = {"ondulacoes": [[100, 140, 0.4, 5.0]], "rampas": [[300, 2.0, 14, 20]]}
+	var r := Relevo.de(p)
+	verificar(not r.vazio(), "com relevo")
+	perto(r.altura(50.0), 0.0, 1e-6, "plano fora do relevo")
+	perto(r.altura(300.0), 2.0, 1e-6, "topo da rampa")
+	verificar(r.altura(293.0) < r.altura(299.0), "a rampa sobe até o topo")
+	verificar(r.altura(310.0) < 2.0 and r.altura(321.0) < 1e-6, "desce depois do topo")
+	var maior := 0.0
+	for s in range(100, 141):
+		maior = maxf(maior, r.altura(s))
+	verificar(maior > 0.2 and maior <= 0.4 + 1e-6, "costelas até a amplitude: %.2f" % maior)
+	igual(r.rampa_cruzada(299.0, 301.0).size(), 4, "cruzou o topo")
+	igual(r.rampa_cruzada(301.0, 303.0).size(), 0, "já passou")
+	igual(r.rampa_cruzada(299.0 + p.comprimento, 301.0 + p.comprimento).size(), 4, "segunda volta")
+	verificar(r.saida(r.rampa_cruzada(299.0, 301.0), 30.0) > 5.0, "rampa forte lança o carro")
+	verificar(Relevo.de(d.pista("circulo")).vazio(), "pista sem relevo")
+	d.free()

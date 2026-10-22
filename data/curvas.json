@@ -10,5 +10,6 @@
  "circuito_misto": ["Primeira", "Ponte", "Arquibancada", "Curva Longa", "Gancho", "Paddock", "Última"],
  "avenida_noturna": ["Esquina do Cinema", "Praça do Relógio", "Rua do Mercado", "Viaduto", "Curva do Banco", "Contorno da Estação", "Beco do Neon", "Esquina da Chegada"],
  "estrada_das_araucarias": ["Primeiro Grampo", "Pinhal", "Grampo do Mirante", "Volta da Serraria", "Grampo da Capelinha", "Curva do Riacho", "Esse da Mata", "Curva da Neblina", "Descida Final"],
- "mirante_da_costa": ["Curva do Farol", "Pedra Furada", "Enseada", "Curva das Gaivotas", "Rochedo", "Curva da Praia", "Volta do Pôr do Sol"]
+ "mirante_da_costa": ["Curva do Farol", "Pedra Furada", "Enseada", "Curva das Gaivotas", "Rochedo", "Curva da Praia", "Volta do Pôr do Sol"],
+ "trilha_do_canion": ["Curva do Poço", "Pedreira", "Garganta", "Grampo do Cânion", "Curva do Mirante", "Laje", "Curva da Poeira", "Arco Seco", "Volta Final"]
 }

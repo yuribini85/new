@@ -16,6 +16,8 @@ const FORA_DA_VOLTA := ["entrada_box", "saida_box"]
 var id: String
 var funcao: String
 var trechos: Array = []
+## Relevo da pista (só visual, Relevo): ondulações e rampas. Opcional.
+var relevo: Dictionary = {}
 ## Distância acumulada no início de cada trecho de `trechos`.
 var inicios: PackedFloat64Array = []
 var comprimento: float = 0.0
@@ -29,6 +31,7 @@ var _rumo_final: float
 func _init(dados_pista: Dictionary) -> void:
 	id = dados_pista["id"]
 	funcao = dados_pista.get("funcao", "")
+	relevo = dados_pista.get("relevo", {})
 	for t in dados_pista["trechos"]:
 		if t["tipo"] in FORA_DA_VOLTA:
 			continue

@@ -26,7 +26,10 @@ const BATIDA_S := 0.6
 const BATIDA_INTERVALO_S := 6.0  # um carro não bate de novo antes disso
 ## Deriva nas curvas: ângulo (rad) por g de aceleração lateral, por tração.
 const DERIVA := {"FR": 0.13, "MR": 0.12, "4WD": 0.08, "FF": 0.05}
-const DERIVA_MAX := 0.1  # rad: mais que isso parece que o carro não faz a curva
+const DERIVA_MAX := 0.1
+## Relevo: abaixo dessa velocidade (m/s) o carro não sai do chão na rampa; cor da terra.
+const VOO_V_MIN := 8.0
+const COR_TERRA := Color(0.55, 0.4, 0.27)  # rad: mais que isso parece que o carro não faz a curva
 const TAMANHO_CAMERA := 28.0
 ## Câmera de perseguição em perspectiva (o jogo se lê como 3D): FOV, altura
 ## (graus acima do chão) no normal e no modo velocidade, quanto ela abre para o
@@ -68,6 +71,11 @@ const XADREZ_M := 0.8  # lado de cada quadrado da linha de chegada
 const LINHA_CHEGADA_M := MontadorPista.LINHA_CHEGADA_M
 const PORTICO_M := MontadorPista.PORTICO_M
 var _tracado: Tracado
+## Relevo da pista de terra (Relevo): ondulações e rampas; os carros voam na
+## saída das rampas. _voo: id -> {y, vz} enquanto o carro está no ar.
+var _relevo: Relevo
+var _voo := {}
+var _sombras_voo := {}
 var _tracao := {}  # id -> "FF", "FR", "MR", "4WD"
 var _giro_batida := {}  # id -> giro da batida que ainda resta (rad)
 var _em_contato := {}  # "a|b" -> true enquanto os dois se tocam
@@ -134,6 +142,10 @@ const TEMAS := {
 	"estrada_das_araucarias": {"chao": Color(0.24, 0.33, 0.24), "ceu": Color(0.72, 0.8, 0.82), "props": "serra",
 		"luz": Color(0.92, 0.96, 1.0), "energia": 0.8, "sol": Vector3(-0.5, -0.8, 0), "ambiente": Color(0.6, 0.68, 0.66),
 		"asfalto": Color(0.3, 0.31, 0.33), "muro": [Color(0.95, 0.95, 0.92), Color(0.9, 0.55, 0.1)], "fundo": "montanhas", "neblina": 0.0},
+	# Trilha de terra num cânion: terra vermelha, rochas, sol forte da tarde.
+	"trilha_do_canion": {"chao": Color(0.6, 0.38, 0.24), "ceu": Color(0.95, 0.72, 0.5), "props": "deserto",
+		"luz": Color(1.0, 0.88, 0.7), "energia": 1.1, "sol": Vector3(-0.9, 1.1, 0), "ambiente": Color(0.7, 0.6, 0.55),
+		"asfalto": Color(0.5, 0.36, 0.24), "muro": [Color(0.95, 0.93, 0.9), Color(0.85, 0.35, 0.1)], "fundo": "mesas", "neblina": 0.0},
 	# Estrada à beira-mar ao pôr do sol: areia, rochas, mar de um lado.
 	"mirante_da_costa": {"chao": Color(0.55, 0.5, 0.36), "ceu": Color(0.98, 0.6, 0.45), "props": "deserto",
 		"luz": Color(1.0, 0.78, 0.6), "energia": 1.0, "sol": Vector3(-0.45, 1.9, 0), "ambiente": Color(0.7, 0.6, 0.6),
@@ -207,6 +219,14 @@ const KITS := {
 		"tinta": Color(0.86, 0.96, 0.95), "sombra_dir": Vector2(-1.4, -0.8), "sombra_alfa": 0.45,
 		"vinheta": 0.5, "fundo": Color(0.02, 0.04, 0.03), "cor_vazio": Color(0.02, 0.04, 0.03),
 		"escuro": {"perto_m": 40.0, "longe_m": 150.0, "minimo": 0.15}},
+	# Cânion: terra vermelha batida na pista, rochas e pouca vegetação.
+	"trilha_do_canion": {"estilo": "chapado", "kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",
+			"arvores": ["rocha_1", "rocha_2", "rocha_3", "rocha_2"], "densidade": 0.55, "postes": false},
+		"cores": {"areia": Color(0.62, 0.38, 0.24), "brita": Color(0.55, 0.34, 0.22), "rocha": Color(0.5, 0.3, 0.22),
+			"concreto": Color(0.5, 0.42, 0.36), "asfalto": Color(0.48, 0.34, 0.22)},
+		"tinta": Color(1.08, 0.92, 0.82), "sombra_dir": Vector2(1.4, -0.6), "sombra_alfa": 0.45,
+		"vinheta": 0.35, "fundo": Color(0.22, 0.12, 0.07), "cor_vazio": Color(0.22, 0.12, 0.07),
+		"escuro": {"perto_m": 70.0, "longe_m": 260.0, "minimo": 0.45}},
 	# Costa: areia e rochas, o mar ao lado, luz rosada de fim de tarde.
 	"mirante_da_costa": {"estilo": "chapado", "kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",
 			"arvores": ["rocha_1", "rocha_2", "rocha_3", "arvore_1"], "densidade": 0.35, "postes": false,
@@ -307,7 +327,10 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 	_pista = pista
 	_fonte = fonte
 	_tracado = Tracado.de(pista)
+	_relevo = Relevo.de(pista)
 	_construir_pista()
+	if not _relevo.vazio():
+		_cena.add_child(_relevo_malha())
 	for id in fonte.ordem():
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
 		# Modelo 3D (decisão 31) quando existe; senão o sprite antigo; senão o carro em código.
@@ -386,6 +409,8 @@ func limpar() -> void:
 	_giro_batida = {}
 	_em_contato = {}
 	_s_anterior = {}
+	_voo = {}
+	_sombras_voo = {}
 	_tranco = {}
 	_pot_peso = {}
 	_jeito = {}
@@ -483,7 +508,9 @@ func atualizar(delta: float) -> void:
 		var rumo := _pista.rumo_em(dist)
 		var normal := Vector2.from_angle(rumo + PI / 2.0)
 		var p := _pista.posicao_em(dist) + normal * float(_lateral[id])
-		c.position = Vector3(p.x, 0.0, -p.y)
+		c.position = Vector3(p.x, _altura_carro(id, dist, delta), -p.y)
+		if _relevo != null and not _relevo.vazio():
+			_sombra_voo(id, c, dist)
 		# Esterço visual: ângulo entre o avanço e o deslocamento de lado (o
 		# traçado e as trocas de faixa), mais a deriva da traseira nas curvas.
 		var ds: float = dist - float(_s_anterior.get(id, dist))
@@ -537,7 +564,7 @@ func atualizar(delta: float) -> void:
 			# Arfagem: a frente sobe acelerando e mergulha freando.
 			var arf_alvo := 0.0 if Preferencias.reduzir_animacoes else clampf(acel * ARFAGEM_POR_MS2, -ARFAGEM_MAX, ARFAGEM_MAX)
 			_arfagem[id] = lerpf(float(_arfagem.get(id, 0.0)), arf_alvo, 1.0 - exp(-delta * 6.0))
-			c.rotation.z = float(_arfagem[id])
+			c.rotation.z = float(_arfagem[id]) + _arfagem_relevo(id, dist)
 			if _fonte.tempo > 4.0:
 				_v_max[id] = maxf(float(_v_max.get(id, 0.0)), float(_v[id]))
 		_s_anterior[id] = dist
@@ -1207,6 +1234,123 @@ func _separar_firme(s: Dictionary, base: Dictionary) -> void:
 				mexeu = true
 		if not mexeu:
 			return
+
+
+## Altura do carro (m): o chão do relevo ou, no ar depois de uma rampa, a
+## balística a partir da velocidade da simulação; ao tocar o chão, um tranco.
+func _altura_carro(id: String, dist: float, delta: float) -> float:
+	if _relevo == null or _relevo.vazio():
+		return 0.0
+	var chao := _relevo.altura(dist)
+	if delta <= 0.0:
+		_voo.erase(id)
+		return chao
+	var v := float(_v.get(id, 0.0))
+	var dc := delta * taxa if taxa > 0.0 else delta
+	var rampa := _relevo.rampa_cruzada(float(_s_anterior.get(id, dist)), dist)
+	if not rampa.is_empty() and v > VOO_V_MIN and not _voo.has(id):
+		_voo[id] = {"y": float(rampa[1]), "vz": _relevo.saida(rampa, v)}
+	if not _voo.has(id):
+		return chao
+	var voo: Dictionary = _voo[id]
+	voo["vz"] = float(voo["vz"]) - Relevo.G * dc
+	voo["y"] = float(voo["y"]) + float(voo["vz"]) * dc
+	if float(voo["y"]) <= chao:
+		_voo.erase(id)
+		if not Preferencias.reduzir_animacoes:
+			_tranco[id] = BATIDA_S * 0.6  # o pouso sacode o carro
+			if id == (foco if _carros.has(foco) else "jogador"):
+				_tremor = 0.25
+		return chao
+	return float(voo["y"])
+
+
+## Inclinação da carroceria pelo relevo: acompanha a rampa no chão; no ar, o
+## nariz segue a trajetória.
+func _arfagem_relevo(id: String, dist: float) -> float:
+	if _relevo == null or _relevo.vazio() or Preferencias.reduzir_animacoes:
+		return 0.0
+	if _voo.has(id):
+		return clampf(atan2(float(_voo[id]["vz"]), maxf(float(_v.get(id, 1.0)), 1.0)) * 0.6, -0.35, 0.35)
+	return atan(_relevo.inclinacao(dist))
+
+
+## O relevo na tela: a pista de terra levantada nas ondulações e nas rampas, com
+## as laterais de terra até o chão.
+func _relevo_malha() -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var trechos := []
+	for o in _pista.relevo.get("ondulacoes", []):
+		trechos.append([float(o[0]), float(o[1])])
+	for r in _pista.relevo.get("rampas", []):
+		trechos.append([float(r[0]) - float(r[2]) - 1.0, float(r[0]) + float(r[3]) + 1.0])
+	var meia := LARGURA_PISTA_M * 0.5 + 0.6
+	for tr in trechos:
+		var s0: float = tr[0]
+		var s1: float = tr[1]
+		var n := maxi(int((s1 - s0) / 0.8), 2)
+		var antes := []
+		for k in n + 1:
+			var sk := lerpf(s0, s1, float(k) / n)
+			var c := _pista.posicao_em(sk)
+			var nrm := Vector2.from_angle(_pista.rumo_em(sk) + PI / 2.0) * meia
+			var h := _relevo.altura(sk) + 0.03
+			var pts := [Vector3(c.x + nrm.x, 0.0, -(c.y + nrm.y)), Vector3(c.x + nrm.x, h, -(c.y + nrm.y)),
+					Vector3(c.x - nrm.x, h, -(c.y - nrm.y)), Vector3(c.x - nrm.x, 0.0, -(c.y - nrm.y))]
+			if not antes.is_empty():
+				# Faixas claras e escuras a cada 1,6 m no topo (lê-se o desenho da
+				# rampa e das costelas de cima); laterais mais escuras.
+				var faixa := COR_TERRA.lightened(0.12) if int(sk / 1.6) % 2 == 0 else COR_TERRA.darkened(0.08)
+				for f in 3:  # lateral esquerda, topo, lateral direita
+					var a: Vector3 = antes[f]
+					var b: Vector3 = antes[f + 1]
+					var cc: Vector3 = pts[f + 1]
+					var d: Vector3 = pts[f]
+					st.set_color(faixa if f == 1 else COR_TERRA.darkened(0.35))
+					for v in [a, b, cc, a, cc, d]:
+						st.add_vertex(v)
+			antes = pts
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := CarroBloco._material(Color.WHITE)
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = mat
+	return mi
+
+
+## Sombra do carro no chão enquanto ele está no ar: mancha escura que encolhe
+## e clareia com a altura (é ela que mostra o tamanho do salto).
+func _sombra_voo(id: String, c: Node3D, dist: float) -> void:
+	var sombra: MeshInstance3D = _sombras_voo.get(id)
+	if not _voo.has(id):
+		if sombra != null:
+			sombra.visible = false
+		return
+	if sombra == null:
+		sombra = MeshInstance3D.new()
+		var q := QuadMesh.new()
+		q.size = Vector2(4.6, 2.2)
+		q.orientation = PlaneMesh.FACE_Y
+		sombra.mesh = q
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.albedo_texture = _brilho(true)
+		mat.albedo_color = Color(0, 0, 0, 0.5)
+		sombra.material_override = mat
+		sombra.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_cena.add_child(sombra)
+		_sombras_voo[id] = sombra
+	var chao := _relevo.altura(dist)
+	var alto := maxf(c.position.y - chao, 0.0)
+	sombra.visible = true
+	sombra.position = Vector3(c.position.x, chao + 0.05, c.position.z)
+	sombra.rotation.y = c.rotation.y
+	sombra.scale = Vector3.ONE * clampf(1.0 - alto * 0.08, 0.55, 1.0)
+	(sombra.material_override as StandardMaterial3D).albedo_color.a = clampf(0.55 - alto * 0.06, 0.15, 0.55)
 
 
 ## Diferença de distância na volta (para quem está uma volta à frente).
