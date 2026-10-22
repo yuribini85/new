@@ -398,3 +398,18 @@ func test_momento_dica_do_radio() -> void:
 	igual(MomentosCorrida.dica(av, {"dica_acerto": 0.0}, 7, 30.0), "atacar", "erra sempre")
 	var meio := {"dica_acerto": 0.5}
 	igual(MomentosCorrida.dica(av, meio, 7, 30.0), MomentosCorrida.dica(av, meio, 7, 30.0), "mesmo sorteio")
+
+
+## Oval inclinado (decisão 130, fase D): na curva inclinada o limite é o da
+## física da pista inclinada, v² = g r (mu + tg) / (1 - mu tg); plana, sqrt(mu g r).
+func test_curva_inclinada_deixa_passar_mais_rapido() -> void:
+	var raios := PackedFloat64Array([200.0, 200.0])
+	var plana := Simulacao._envelope(raios, 1.0, 1.0, 1.0, INF, 1.0)
+	var tg := tan(deg_to_rad(24.0))
+	var bancos := PackedFloat64Array([tg, tg])
+	var inclinada := Simulacao._envelope(raios, 1.0, 1.0, 1.0, INF, 1.0, bancos)
+	perto(plana[0], sqrt(Simulacao.G * 200.0), 1e-6, "plana")
+	perto(inclinada[0], sqrt(Simulacao.G * 200.0 * (1.0 + tg) / (1.0 - tg)), 1e-6, "inclinada")
+	var d := dados_fixture()
+	verificar(Simulacao.bancos(d.pista("oval"), 10, 1.0).is_empty(), "pista plana sem tabela de inclinação")
+	d.free()

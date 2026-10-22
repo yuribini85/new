@@ -864,5 +864,54 @@
     ]
    ]
   }
+ },
+ {
+  "id": "oval_inclinado",
+  "funcao": "alta_velocidade",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 250,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 400,
+    "inclinacao_graus": 10,
+    "comprimento_m": 139.6263
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 413.8668,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 400,
+    "inclinacao_graus": 10,
+    "comprimento_m": 139.6263
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 250.0
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 230,
+    "inclinacao_graus": 24,
+    "comprimento_m": 642.2812
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 1000,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 230,
+    "inclinacao_graus": 24,
+    "comprimento_m": 642.2812
+   }
+  ]
  }
 ]

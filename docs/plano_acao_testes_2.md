@@ -71,7 +71,11 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
   - Licenças recalibradas pelo fluxo (`tools/calibrar_licencas.gd`): só os tempos de ouro
     mudaram (~1,2 s mais lentos), porque a calibração anterior era de antes de mudanças da
     simulação; os testes de licença continuam nas mesmas pistas.
-  - Fica para depois: o oval inclinado (o Oval do Planalto já faz o papel de retas longas).
+  - **Oval da Usina** (`oval_inclinado`, 3,5 km): tri-oval com as duas dobras da frente (10°)
+    e as duas curvas grandes inclinadas a 24°, retão duplo. Recebe os eventos do oval da
+    referência (s_speed, speed; antes no Anel do Vale) e entra no rodízio das copas de marca
+    (12 provas). A inclinação vale na simulação (física da pista inclinada: a curva sai mais
+    rápida) e na tela (asfalto deitado, carros subindo e inclinando na curva).
   - **Trilha do Cânion** (`trilha_do_canion`, 2,2 km, terra; pedido do usuário: "ondulações e
     rampas fortes para dar adrenalina"): três trechos de costelas e quatro rampas de 1,8 a 2,6 m
     com salto. O relevo é só da tela (`visual/relevo.gd`): o carro voa da boca da rampa com a

@@ -922,7 +922,7 @@
  {
   "id": "ev_018",
   "nome": "Copa Dunmere Menta e Ashcombe Assobio",
-  "pista": "anel_do_vale",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -958,7 +958,7 @@
  {
   "id": "ev_019",
   "nome": "Copa Dunmere Menta e Ashcombe Assobio II",
-  "pista": "parque_das_docas",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -994,7 +994,7 @@
  {
   "id": "ev_020",
   "nome": "Copa Lindauer Friso",
-  "pista": "serra_alta",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -1025,7 +1025,7 @@
  {
   "id": "ev_021",
   "nome": "Copa Lindauer Friso e Laminar",
-  "pista": "circuito_misto",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -1187,7 +1187,7 @@
  {
   "id": "ev_025",
   "nome": "Copa Bancroft",
-  "pista": "anel_curto",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -1235,7 +1235,7 @@
  {
   "id": "ev_026",
   "nome": "Copa Bancroft II",
-  "pista": "docas_curta",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -1300,7 +1300,7 @@
  {
   "id": "ev_027",
   "nome": "Copa Garrison Ciranda",
-  "pista": "serra_curta",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -1335,7 +1335,7 @@
  {
   "id": "ev_028",
   "nome": "Copa Garrison Ciranda II",
-  "pista": "avenida_noturna",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2056,7 +2056,7 @@
  {
   "id": "ev_056",
   "nome": "Copa Garrison Aster",
-  "pista": "estrada_das_araucarias",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2091,7 +2091,7 @@
  {
   "id": "ev_057",
   "nome": "Copa Garrison Aster II",
-  "pista": "mirante_da_costa",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2126,7 +2126,7 @@
  {
   "id": "ev_058",
   "nome": "Copa Whitlock Seta",
-  "pista": "anel_do_vale",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2159,7 +2159,7 @@
  {
   "id": "ev_059",
   "nome": "Copa Whitlock Amora",
-  "pista": "parque_das_docas",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2190,7 +2190,7 @@
  {
   "id": "ev_060",
   "nome": "Copa Whitlock Amora II",
-  "pista": "serra_alta",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2809,7 +2809,7 @@
  {
   "id": "ev_071",
   "nome": "Copa Morel Jade",
-  "pista": "circuito_misto",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -2840,7 +2840,7 @@
  {
   "id": "ev_072",
   "nome": "Copa Morel Jade II",
-  "pista": "anel_curto",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3017,7 +3017,7 @@
  {
   "id": "ev_076",
   "nome": "Copa Saulieu Alto",
-  "pista": "docas_curta",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3056,7 +3056,7 @@
  {
   "id": "ev_077",
   "nome": "Copa Saulieu Cogumelo",
-  "pista": "serra_curta",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3091,7 +3091,7 @@
  {
   "id": "ev_078",
   "nome": "Copa Saulieu Cogumelo II",
-  "pista": "avenida_noturna",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3126,7 +3126,7 @@
  {
   "id": "ev_079",
   "nome": "Copa Saulieu Alto e Nacara",
-  "pista": "estrada_das_araucarias",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3355,7 +3355,7 @@
  {
   "id": "ev_091",
   "nome": "Copa Vallon Vazante",
-  "pista": "mirante_da_costa",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3386,7 +3386,7 @@
  {
   "id": "ev_092",
   "nome": "Copa Vallon Vazante II",
-  "pista": "anel_do_vale",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3421,7 +3421,7 @@
  {
   "id": "ev_095",
   "nome": "Copa Vorhaus Ameixa",
-  "pista": "parque_das_docas",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3452,7 +3452,7 @@
  {
   "id": "ev_096",
   "nome": "Copa Vorhaus Ameixa e Ferro",
-  "pista": "serra_alta",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -3665,7 +3665,7 @@
  {
   "id": "ev_100",
   "nome": "Copa Ostwerk Cimbra e Saulieu Nacara",
-  "pista": "circuito_misto",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -4501,7 +4501,7 @@
  {
   "id": "ev_115",
   "nome": "Copa Keldorf Gongora",
-  "pista": "anel_curto",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -4532,7 +4532,7 @@
  {
   "id": "ev_116",
   "nome": "Copa Keldorf Gongora II",
-  "pista": "docas_curta",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -4559,7 +4559,7 @@
  {
   "id": "ev_117",
   "nome": "Copa Lindauer Friso II",
-  "pista": "serra_curta",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -4590,7 +4590,7 @@
  {
   "id": "ev_118",
   "nome": "Copa Lindauer Friso e Laminar II",
-  "pista": "avenida_noturna",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -4978,7 +4978,7 @@
  {
   "id": "ev_125",
   "nome": "Categoria Ouro — etapa 2",
-  "pista": "anel_do_vale",
+  "pista": "oval_inclinado",
   "voltas": 13,
   "largada_kmh": 80,
   "condicao": "seco",
@@ -5206,7 +5206,7 @@
  {
   "id": "ev_129",
   "nome": "Torneio dos Campeões — etapa 1",
-  "pista": "anel_do_vale",
+  "pista": "oval_inclinado",
   "voltas": 13,
   "condicao": "seco",
   "restricoes": {
@@ -6164,7 +6164,7 @@
  {
   "id": "ev_145",
   "nome": "Copa Feldhaus Zenite",
-  "pista": "estrada_das_araucarias",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6195,7 +6195,7 @@
  {
   "id": "ev_146",
   "nome": "Copa Mizuchi e Halberton",
-  "pista": "mirante_da_costa",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6242,7 +6242,7 @@
  {
   "id": "ev_147",
   "nome": "Copa Mizuchi e Halberton II",
-  "pista": "anel_do_vale",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6308,7 +6308,7 @@
  {
   "id": "ev_148",
   "nome": "Copa Feldhaus Zenite e Norrvik Bastion",
-  "pista": "parque_das_docas",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6337,7 +6337,7 @@
  {
   "id": "ev_149",
   "nome": "Copa Hozuki Catana",
-  "pista": "serra_alta",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6368,7 +6368,7 @@
  {
   "id": "ev_150",
   "nome": "Copa Hozuki Catana II",
-  "pista": "circuito_misto",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6403,7 +6403,7 @@
  {
   "id": "ev_151",
   "nome": "Copa Hozuki Gaivota",
-  "pista": "anel_curto",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6439,7 +6439,7 @@
  {
   "id": "ev_152",
   "nome": "Copa Hozuki",
-  "pista": "docas_curta",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6488,7 +6488,7 @@
  {
   "id": "ev_153",
   "nome": "Copa Hozuki Lince e Moncao",
-  "pista": "serra_curta",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6552,7 +6552,7 @@
  {
   "id": "ev_154",
   "nome": "Copa Hozuki Catana III",
-  "pista": "avenida_noturna",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6597,7 +6597,7 @@
  {
   "id": "ev_155",
   "nome": "Copa Hozuki II",
-  "pista": "estrada_das_araucarias",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6805,7 +6805,7 @@
  {
   "id": "ev_159",
   "nome": "Copa Varenna Paladio e Turbina",
-  "pista": "mirante_da_costa",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6847,7 +6847,7 @@
  {
   "id": "ev_160",
   "nome": "Copa Varenna",
-  "pista": "anel_do_vale",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6892,7 +6892,7 @@
  {
   "id": "ev_161",
   "nome": "Copa Ottavo Miudo e Broto",
-  "pista": "parque_das_docas",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6929,7 +6929,7 @@
  {
   "id": "ev_162",
   "nome": "Copa Ottavo Miudo e Broto II",
-  "pista": "serra_alta",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -6965,7 +6965,7 @@
  {
   "id": "ev_163",
   "nome": "Copa Castellani Cascalho e Nimboalto",
-  "pista": "circuito_misto",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7005,7 +7005,7 @@
  {
   "id": "ev_164",
   "nome": "Copa Castellani Cascalho",
-  "pista": "anel_curto",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7033,7 +7033,7 @@
  {
   "id": "ev_165",
   "nome": "Copa Pemberly Flautista",
-  "pista": "docas_curta",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7072,7 +7072,7 @@
  {
   "id": "ev_166",
   "nome": "Copa Pemberly e Ashcombe",
-  "pista": "serra_curta",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7123,7 +7123,7 @@
  {
   "id": "ev_167",
   "nome": "Copa Pemberly e Ashcombe II",
-  "pista": "avenida_noturna",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7177,7 +7177,7 @@
  {
   "id": "ev_168",
   "nome": "Copa Pemberly Flautista II",
-  "pista": "estrada_das_araucarias",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7212,7 +7212,7 @@
  {
   "id": "ev_169",
   "nome": "Copa Hayase Deriva",
-  "pista": "mirante_da_costa",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7243,7 +7243,7 @@
  {
   "id": "ev_170",
   "nome": "Copa Hayase Deriva II",
-  "pista": "anel_do_vale",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7271,7 +7271,7 @@
  {
   "id": "ev_177",
   "nome": "Copa Sanga Estopim e Hayase Calima",
-  "pista": "parque_das_docas",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7317,7 +7317,7 @@
  {
   "id": "ev_178",
   "nome": "Copa Sanga Chispa",
-  "pista": "serra_alta",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7365,7 +7365,7 @@
  {
   "id": "ev_179",
   "nome": "Copa Sanga Chispa II",
-  "pista": "circuito_misto",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7793,7 +7793,7 @@
  {
   "id": "ev_186",
   "nome": "Copa Hayase",
-  "pista": "anel_curto",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7846,7 +7846,7 @@
  {
   "id": "ev_187",
   "nome": "Copa Hayase II",
-  "pista": "docas_curta",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7914,7 +7914,7 @@
  {
   "id": "ev_188",
   "nome": "Copa Hayase III",
-  "pista": "serra_curta",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -7961,7 +7961,7 @@
  {
   "id": "ev_189",
   "nome": "Copa Hayase III II",
-  "pista": "avenida_noturna",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8028,7 +8028,7 @@
  {
   "id": "ev_190",
   "nome": "Copa Hayase Casulo e Gota",
-  "pista": "estrada_das_araucarias",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8065,7 +8065,7 @@
  {
   "id": "ev_191",
   "nome": "Copa Hayase Casulo e Gota II",
-  "pista": "mirante_da_costa",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8101,7 +8101,7 @@
  {
   "id": "ev_192",
   "nome": "Copa Hayase III III",
-  "pista": "anel_do_vale",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8135,7 +8135,7 @@
  {
   "id": "ev_193",
   "nome": "Copa Hayase Cicatriz e Silex",
-  "pista": "parque_das_docas",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8541,7 +8541,7 @@
  {
   "id": "ev_200",
   "nome": "Copa Tomoe Grilo",
-  "pista": "serra_alta",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8568,7 +8568,7 @@
  {
   "id": "ev_201",
   "nome": "Copa Tomoe Faia e Mirtilo",
-  "pista": "circuito_misto",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8610,7 +8610,7 @@
  {
   "id": "ev_202",
   "nome": "Copa Tomoe Faia e Mirtilo II",
-  "pista": "anel_curto",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8655,7 +8655,7 @@
  {
   "id": "ev_203",
   "nome": "Copa Tomoe Mirtilo e Eco",
-  "pista": "docas_curta",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8696,7 +8696,7 @@
  {
   "id": "ev_204",
   "nome": "Copa Tomoe",
-  "pista": "serra_curta",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8741,7 +8741,7 @@
  {
   "id": "ev_205",
   "nome": "Copa Hoshino Cobalto",
-  "pista": "avenida_noturna",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8777,7 +8777,7 @@
  {
   "id": "ev_206",
   "nome": "Copa Hoshino Cobalto II",
-  "pista": "estrada_das_araucarias",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -8813,7 +8813,7 @@
  {
   "id": "ev_207",
   "nome": "Copa Hoshino Horizonte e Vento",
-  "pista": "mirante_da_costa",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -9479,7 +9479,7 @@
  {
   "id": "ev_219",
   "nome": "Copa Kanaya",
-  "pista": "anel_do_vale",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -9522,7 +9522,7 @@
  {
   "id": "ev_220",
   "nome": "Copa Kanaya II",
-  "pista": "parque_das_docas",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -9817,7 +9817,7 @@
  {
   "id": "ev_225",
   "nome": "Copa Preparados — etapa 2",
-  "pista": "anel_do_vale",
+  "pista": "oval_inclinado",
   "voltas": 8,
   "condicao": "seco",
   "restricoes": {
@@ -9938,7 +9938,7 @@
  {
   "id": "ev_227",
   "nome": "Copa Kanaya III",
-  "pista": "serra_alta",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -9987,7 +9987,7 @@
  {
   "id": "ev_228",
   "nome": "Copa Kanaya III II",
-  "pista": "circuito_misto",
+  "pista": "serra_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10053,7 +10053,7 @@
  {
   "id": "ev_229",
   "nome": "Copa Kanaya Pingo",
-  "pista": "anel_curto",
+  "pista": "avenida_noturna",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10081,7 +10081,7 @@
  {
   "id": "ev_230",
   "nome": "Copa Kanaya III III",
-  "pista": "docas_curta",
+  "pista": "estrada_das_araucarias",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10125,7 +10125,7 @@
  {
   "id": "ev_231",
   "nome": "Copa Kanaya Bago",
-  "pista": "serra_curta",
+  "pista": "mirante_da_costa",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10156,7 +10156,7 @@
  {
   "id": "ev_232",
   "nome": "Copa Kanaya Bago II",
-  "pista": "avenida_noturna",
+  "pista": "oval_inclinado",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10184,7 +10184,7 @@
  {
   "id": "ev_233",
   "nome": "Copa Ashcombe Assobio",
-  "pista": "estrada_das_araucarias",
+  "pista": "anel_do_vale",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10215,7 +10215,7 @@
  {
   "id": "ev_234",
   "nome": "Copa Ashcombe Assobio II",
-  "pista": "mirante_da_costa",
+  "pista": "parque_das_docas",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10305,7 +10305,7 @@
  {
   "id": "ev_236",
   "nome": "Copa das Peruas — etapa 2",
-  "pista": "anel_do_vale",
+  "pista": "oval_inclinado",
   "voltas": 5,
   "condicao": "seco",
   "restricoes": {
@@ -10755,7 +10755,7 @@
  {
   "id": "ev_244",
   "nome": "Copa Kosame Muda",
-  "pista": "anel_do_vale",
+  "pista": "serra_alta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10798,7 +10798,7 @@
  {
   "id": "ev_245",
   "nome": "Copa Kosame Muda II",
-  "pista": "parque_das_docas",
+  "pista": "circuito_misto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10849,7 +10849,7 @@
  {
   "id": "ev_246",
   "nome": "Copa Kosame Muda III",
-  "pista": "serra_alta",
+  "pista": "anel_curto",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {
@@ -10880,7 +10880,7 @@
  {
   "id": "ev_247",
   "nome": "Copa Kosame Muda III II",
-  "pista": "circuito_misto",
+  "pista": "docas_curta",
   "voltas": 2,
   "condicao": "seco",
   "restricoes": {

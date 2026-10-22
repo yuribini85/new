@@ -23,7 +23,7 @@ const FUNDO_PISTA := {"anel_do_vale": Color(0.16, 0.3, 0.18), "parque_das_docas"
 		"serra_alta": Color(0.26, 0.25, 0.17), "pista_de_testes": Color(0.36, 0.3, 0.22),
 		"circuito_misto": Color(0.3, 0.28, 0.16), "avenida_noturna": Color(0.14, 0.13, 0.24),
 		"estrada_das_araucarias": Color(0.15, 0.24, 0.18), "mirante_da_costa": Color(0.32, 0.26, 0.2),
-		"trilha_do_canion": Color(0.36, 0.22, 0.14)}
+		"trilha_do_canion": Color(0.36, 0.22, 0.14), "oval_inclinado": Color(0.2, 0.24, 0.32)}
 
 
 func _init(d: Node, j: Node) -> void:

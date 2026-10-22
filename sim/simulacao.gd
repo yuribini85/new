@@ -70,6 +70,7 @@ class Andamento:
 	var _voltas: int
 	var _com_amostras: bool
 	var _raios := PackedFloat64Array()
+	var _bancos := PackedFloat64Array()  # tangente da inclinação lateral (curva inclinada), 0 = plana
 	var _zonas := PackedInt32Array()
 	var _carros := []
 	## Envelopes ainda por calcular, um por carro e volta, na ordem dos carros:
@@ -114,6 +115,7 @@ class Andamento:
 
 		# Geometria discretizada: raio (0 = sem limite de curva) e zona de ultrapassagem.
 		_raios.resize(_n)
+		_bancos = Simulacao.bancos(pista, _n, _passo)
 		_zonas.resize(_n)
 		for i in _n:
 			var idx := pista.indice_em((i + 0.5) * _passo)
@@ -190,7 +192,7 @@ class Andamento:
 
 		while _calculados < _por_calcular.size():
 			var e: Array = _por_calcular[_calculados]
-			e[0]["envelopes"].append(Simulacao._envelope(_raios, _passo, e[1], e[2], e[3], e[4]))
+			e[0]["envelopes"].append(Simulacao._envelope(_raios, _passo, e[1], e[2], e[3], e[4], _bancos))
 			_por_calcular[_calculados] = null
 			_calculados += 1
 			if not sem_limite and Time.get_ticks_usec() >= prazo:
@@ -393,7 +395,7 @@ class Andamento:
 		a._rng.seed = _rng.seed
 		a._rng.state = _rng.state
 		for campo in ["_comprimento", "_n", "_passo", "_dt", "_k_arrasto", "_dmin", "_voltas", "_com_amostras",
-				"_raios", "_zonas", "_calculados", "_forcas", "_proxima_amostra", "_t", "_tempo_max", "_amostra_dt",
+				"_raios", "_bancos", "_zonas", "_calculados", "_forcas", "_proxima_amostra", "_t", "_tempo_max", "_amostra_dt",
 				"_pronto", "_resultado"]:
 			a.set(campo, get(campo))
 		a._s_arr = _s_arr.duplicate()
@@ -428,15 +430,33 @@ class Andamento:
 
 ## Velocidade máxima em cada ponto considerando a frenagem para os pontos à
 ## frente. A pista é fechada, então a passada para trás dá duas voltas.
+## Tangente da inclinação lateral de cada ponto da pista (trecho
+## "inclinacao_graus", a curva inclinada do oval); vazio se a pista é toda plana.
+static func bancos(pista: Pista, n: int, passo: float) -> PackedFloat64Array:
+	var r := PackedFloat64Array()
+	if not pista.trechos.any(func(t): return float(t.get("inclinacao_graus", 0.0)) > 0.0):
+		return r
+	r.resize(n)
+	for i in n:
+		r[i] = tan(deg_to_rad(float(pista.trechos[pista.indice_em((i + 0.5) * passo)].get("inclinacao_graus", 0.0))))
+	return r
+
+
+## Velocidade limite em cada ponto: na curva, a do atrito (sqrt(mu g r)); na
+## curva inclinada, a da física da pista inclinada: v² = g r (mu + tg) / (1 - mu tg).
 static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio: float,
-		v_max: float, fator: float) -> PackedFloat64Array:
+		v_max: float, fator: float, bancos := PackedFloat64Array()) -> PackedFloat64Array:
 	var n := raios.size()
 	var env := PackedFloat64Array()
 	env.resize(n)
+	var inclinada := bancos.size() == n
 	for i in n:
 		var lim := v_max
 		if raios[i] > 0.0:
-			lim = minf(lim, sqrt(mu * G * raios[i]))
+			var efetivo := mu
+			if inclinada and bancos[i] > 0.0:
+				efetivo = (mu + bancos[i]) / maxf(1.0 - mu * bancos[i], 0.05)
+			lim = minf(lim, sqrt(efetivo * G * raios[i]))
 		env[i] = lim * fator
 	var desacel := freio * mu * G * fator
 	# O ponto de menor limite nunca é rebaixado pela frenagem; partindo dele,

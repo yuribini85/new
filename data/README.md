@@ -175,6 +175,11 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 | `estrada_das_araucarias` (Estrada das Araucárias) | montanha, grampos e descida longa (grupo 5; tahiti_t) | 2.327 m | largada e a reta antes da curva da neblina |
 | `mirante_da_costa` (Mirante da Costa) | montanha, estrada costeira (grupo 5; parma) | 2.600 m | largada e a reta da praia |
 | `trilha_do_canion` (Trilha do Cânion) | terra, rali (todos os eventos de rali) | 2.202 m | largada |
+| `oval_inclinado` (Oval da Usina) | oval inclinado, tri-oval com retão duplo (s_speed e speed) | 3.478 m | as duas retas da frente e o retão oposto |
+
+`inclinacao_graus` (opcional, nas curvas): a curva inclinada. A simulação usa a física da pista
+inclinada (v² = g r (mu + tg) / (1 − mu tg), `Simulacao._envelope`); a tela deita o asfalto e os
+carros (`Corrida3D._banco_malha`). Só o oval tem (10° nas dobras da frente, 24° nas curvas).
 
 `relevo` (só na pista de terra, só visual: `visual/relevo.gd`): `ondulacoes`
 `[[de_m, ate_m, amplitude_m, onda_m]]` e `rampas` `[[topo_m, altura_m, subida_m, descida_m]]`.

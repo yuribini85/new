@@ -74,6 +74,11 @@ var _tracado: Tracado
 ## Relevo da pista de terra (Relevo): ondulações e rampas; os carros voam na
 ## saída das rampas. _voo: id -> {y, vz} enquanto o carro está no ar.
 var _relevo: Relevo
+## Curvas inclinadas (oval): por metro da volta, a tangente da inclinação (já
+## suavizada na entrada e na saída) e o lado de dentro (+1 esquerda, -1 direita).
+var _banco := PackedFloat32Array()
+var _banco_lado := PackedFloat32Array()
+const COR_CONCRETO := Color(0.62, 0.62, 0.64)
 var _voo := {}
 var _sombras_voo := {}
 var _puxar := {}  # id -> {lado, ate}: defesa, só visual
@@ -148,6 +153,10 @@ const TEMAS := {
 		"luz": Color(1.0, 0.88, 0.7), "energia": 1.1, "sol": Vector3(-0.9, 1.1, 0), "ambiente": Color(0.7, 0.6, 0.55),
 		"asfalto": Color(0.5, 0.36, 0.24), "muro": [Color(0.95, 0.93, 0.9), Color(0.85, 0.35, 0.1)], "fundo": "mesas", "neblina": 0.0},
 	# Estrada à beira-mar ao pôr do sol: areia, rochas, mar de um lado.
+	# Oval inclinado ao entardecer: gramado do miolo, concreto, refletores.
+	"oval_inclinado": {"chao": Color(0.3, 0.42, 0.26), "ceu": Color(0.9, 0.62, 0.5), "props": "cidade",
+		"luz": Color(1.0, 0.82, 0.62), "energia": 0.9, "sol": Vector3(-0.35, 0.9, 0), "ambiente": Color(0.62, 0.56, 0.58),
+		"asfalto": Color(0.2, 0.2, 0.23), "muro": [Color(0.96, 0.96, 0.96), Color(0.12, 0.35, 0.8)], "fundo": "colinas", "neblina": 0.0},
 	"mirante_da_costa": {"chao": Color(0.55, 0.5, 0.36), "ceu": Color(0.98, 0.6, 0.45), "props": "deserto",
 		"luz": Color(1.0, 0.78, 0.6), "energia": 1.0, "sol": Vector3(-0.45, 1.9, 0), "ambiente": Color(0.7, 0.6, 0.6),
 		"asfalto": Color(0.24, 0.24, 0.27), "muro": [Color(0.96, 0.96, 0.96), Color(0.1, 0.45, 0.6)], "fundo": "colinas", "neblina": 0.0},
@@ -229,6 +238,14 @@ const KITS := {
 		"vinheta": 0.35, "fundo": Color(0.22, 0.12, 0.07), "cor_vazio": Color(0.22, 0.12, 0.07),
 		"escuro": {"perto_m": 70.0, "longe_m": 260.0, "minimo": 0.45}},
 	# Costa: areia e rochas, o mar ao lado, luz rosada de fim de tarde.
+	# Oval: miolo de grama aparada, faixa de concreto e refletores alinhados.
+	"oval_inclinado": {"estilo": "chapado", "kit": {"chao_a": "grama_a", "chao_b": "grama_b", "escape": "concreto",
+			"arvores": ["conteiner_1", "caminhao_1"], "densidade": 0.12, "postes": true, "alinhado": true},
+		"cores": {"grama_a": Color(0.3, 0.44, 0.26), "grama_b": Color(0.27, 0.4, 0.23), "concreto": Color(0.5, 0.5, 0.52),
+			"asfalto": Color(0.19, 0.19, 0.22), "escape": Color(0.5, 0.5, 0.52)},
+		"tinta": Color(1.05, 0.92, 0.86), "sombra_dir": Vector2(0.8, -1.2), "sombra_alfa": 0.45,
+		"vinheta": 0.45, "fundo": Color(0.08, 0.06, 0.07), "cor_vazio": Color(0.08, 0.06, 0.07),
+		"escuro": {"perto_m": 70.0, "longe_m": 260.0, "minimo": 0.3}},
 	"mirante_da_costa": {"estilo": "chapado", "kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",
 			"arvores": ["rocha_1", "rocha_2", "rocha_3", "arvore_1"], "densidade": 0.35, "postes": false,
 			"agua": {"afastamento_m": 55.0}},
@@ -332,6 +349,9 @@ func mostrar(pista: Pista, fonte: CorridaVisual, modelos: Dictionary, pinturas: 
 	_construir_pista()
 	if not _relevo.vazio():
 		_cena.add_child(_relevo_malha())
+	_preparar_banco()
+	if not _banco.is_empty():
+		_cena.add_child(_banco_malha())
 	for id in fonte.ordem():
 		var base: Dictionary = modelos.get(id, {"id": id, "categoria": "seda"})
 		# Modelo 3D (decisão 31) quando existe; senão o sprite antigo; senão o carro em código.
@@ -516,7 +536,7 @@ func atualizar(delta: float) -> void:
 		var rumo := _pista.rumo_em(dist)
 		var normal := Vector2.from_angle(rumo + PI / 2.0)
 		var p := _pista.posicao_em(dist) + normal * float(_lateral[id])
-		c.position = Vector3(p.x, _altura_carro(id, dist, delta), -p.y)
+		c.position = Vector3(p.x, _altura_carro(id, dist, delta) + _altura_banco(dist, float(_lateral[id])), -p.y)
 		if _relevo != null and not _relevo.vazio():
 			_sombra_voo(id, c, dist)
 		# Esterço visual: ângulo entre o avanço e o deslocamento de lado (o
@@ -575,6 +595,7 @@ func atualizar(delta: float) -> void:
 			c.rotation.z = float(_arfagem[id]) + _arfagem_relevo(id, dist)
 			if _fonte.tempo > 4.0:
 				_v_max[id] = maxf(float(_v_max.get(id, 0.0)), float(_v[id]))
+		c.rotation.x = _rolagem_banco(dist)
 		_s_anterior[id] = dist
 		var r: Label3D = _rotulos[id]
 		# Sem nome, número nem seta sobre os carros: a classificação do HUD e os
@@ -1288,6 +1309,111 @@ func _arfagem_relevo(id: String, dist: float) -> float:
 	if _voo.has(id):
 		return clampf(atan2(float(_voo[id]["vz"]), maxf(float(_v.get(id, 1.0)), 1.0)) * 0.6, -0.35, 0.35)
 	return atan(_relevo.inclinacao(dist))
+
+
+## Curvas inclinadas (trecho "inclinacao_graus", o oval): a tangente por metro,
+## com rampa de 40 m na entrada e na saída para a pista não dar degrau.
+func _preparar_banco() -> void:
+	_banco = PackedFloat32Array()
+	_banco_lado = PackedFloat32Array()
+	if not _pista.trechos.any(func(t): return float(t.get("inclinacao_graus", 0.0)) > 0.0):
+		return
+	var n := maxi(int(_pista.comprimento), 1)
+	var bruto := PackedFloat32Array()
+	bruto.resize(n)
+	_banco_lado.resize(n)
+	for i in n:
+		var t: Dictionary = _pista.trechos[_pista.indice_em(i + 0.5)]
+		bruto[i] = tan(deg_to_rad(float(t.get("inclinacao_graus", 0.0))))
+		_banco_lado[i] = -1.0 if t.get("sentido", "esquerda") == "direita" else 1.0
+	# O lado das retas é o da curva mais perto (a rampa de saída fica do lado certo).
+	for i in n:
+		if bruto[i] == 0.0:
+			for k in range(1, 60):
+				if bruto[(i + k) % n] > 0.0:
+					_banco_lado[i] = _banco_lado[(i + k) % n]
+					break
+				if bruto[(i - k + n) % n] > 0.0:
+					_banco_lado[i] = _banco_lado[(i - k + n) % n]
+					break
+	_banco.resize(n)
+	var meia := 20
+	for i in n:
+		var soma := 0.0
+		for k in range(-meia, meia + 1):
+			soma += bruto[(i + k + n) % n]
+		_banco[i] = soma / (2 * meia + 1)
+
+
+func _banco_em(dist: float) -> Vector2:
+	if _banco.is_empty():
+		return Vector2.ZERO
+	var i := int(fposmod(dist, _banco.size()))
+	return Vector2(_banco[i], _banco_lado[i])
+
+
+## Altura do asfalto inclinado em `dist`, `lateral` m do centro (+ esquerda):
+## zero na borda de dentro, sobe para fora.
+func _altura_banco(dist: float, lateral: float) -> float:
+	var b := _banco_em(dist)
+	if b.x <= 0.0:
+		return 0.0
+	return maxf(LARGURA_PISTA_M * 0.5 - b.y * lateral, 0.0) * b.x
+
+
+## A carroceria deita com a pista inclinada (para dentro da curva).
+func _rolagem_banco(dist: float) -> float:
+	var b := _banco_em(dist)
+	return -b.y * atan(b.x) if b.x > 0.0 else 0.0
+
+
+## As curvas inclinadas na tela: o asfalto deitado de dentro para fora, a faixa
+## de concreto até o muro e a parede de fora até o chão.
+func _banco_malha() -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var tema: Dictionary = TEMAS.get(TEMA_DE.get(_pista.id, _pista.id), TEMA_PADRAO)
+	var asfalto: Color = tema["asfalto"]
+	var meia := LARGURA_PISTA_M * 0.5
+	var n := _banco.size()
+	var antes := []
+	for i in n + 1:
+		var s := float(i % n)
+		var b := _banco_em(s)
+		var c := _pista.posicao_em(s)
+		var nrm := Vector2.from_angle(_pista.rumo_em(s) + PI / 2.0)
+		var lado := b.y
+		# Perfil de dentro para fora: borda de dentro, borda de fora, concreto, topo do muro, chão de fora.
+		var laterais := [lado * meia, -lado * meia, -lado * (meia + 2.5), -lado * (meia + 2.5), -lado * (meia + 2.5)]
+		var pts := []
+		for k in laterais.size():
+			var lat: float = laterais[k]
+			var h := maxf(meia - lado * lat, 0.0) * b.x
+			if k == 3:
+				h += 1.1  # muro
+			elif k == 4:
+				h = 0.0
+			var p := c + nrm * lat
+			pts.append(Vector3(p.x, h + 0.04, -p.y))
+		if b.x > 0.002 and not antes.is_empty():
+			var cores := [asfalto, COR_CONCRETO, Color(0.92, 0.92, 0.94), COR_CONCRETO.darkened(0.3)]
+			for f in 4:
+				var a: Vector3 = antes[f]
+				var bb: Vector3 = antes[f + 1]
+				var cc: Vector3 = pts[f + 1]
+				var d: Vector3 = pts[f]
+				st.set_color(cores[f])
+				for v in [a, bb, cc, a, cc, d]:
+					st.add_vertex(v)
+		antes = pts
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := CarroBloco._material(Color.WHITE)
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = mat
+	return mi
 
 
 ## O relevo na tela: a pista de terra levantada nas ondulações e nas rampas, com

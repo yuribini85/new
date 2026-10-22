@@ -112,7 +112,9 @@ DATA = RAIZ / "data"
 # Pista da referência (id interno) -> nossa pista pela função (docs/pistas_arquetipos.md).
 # As versões curtas da referência vão para a versão curta da nossa pista do mesmo grupo.
 PISTAS = {
-    "highway": "anel_do_vale", "s_speed": "anel_do_vale", "speed": "anel_do_vale", "seattle": "anel_do_vale",
+    "highway": "anel_do_vale", "seattle": "anel_do_vale",
+    # Oval inclinado da referência (s_speed, speed): o nosso Oval da Usina.
+    "s_speed": "oval_inclinado", "speed": "oval_inclinado",
     "circuit": "anel_do_vale", "seatt_s": "anel_curto",
     # Retas muito longas (grupo 1).
     "test_in2": "pista_de_testes", "testline": "pista_de_testes", "maxspeed": "pista_de_testes",
@@ -162,7 +164,8 @@ TESTE_ANTIGO = {k.lower(): v.lower() for k, v in LICENCA_DA_REF.items()}
 # a pista do mesmo grupo que já existe.
 PISTA_DE_RESERVA = {"anel_curto": "anel_do_vale", "serra_curta": "serra_alta", "docas_curta": "parque_das_docas",
                     "circuito_misto": "parque_das_docas", "avenida_noturna": "parque_das_docas",
-                    "estrada_das_araucarias": "serra_alta", "mirante_da_costa": "serra_alta"}
+                    "estrada_das_araucarias": "serra_alta", "mirante_da_costa": "serra_alta",
+                    "oval_inclinado": "anel_do_vale"}
 PISTAS_EXISTENTES: set[str] = set()
 # Acima disso são os testes de licença do disco (255 voltas), que não entram.
 MAX_VOLTAS = 99
@@ -180,7 +183,7 @@ SO_RUA, SO_CORRIDA = 256, 512
 CARACTERES_ID = "-0123456789abcdefghijklmnopqrstuvwxyz"
 # Pistas de corrida para as copas de marca (a referência sorteia; a de testes fica de fora).
 POOL_MARCA = ["anel_do_vale", "parque_das_docas", "serra_alta", "circuito_misto", "anel_curto", "docas_curta",
-              "serra_curta", "avenida_noturna", "estrada_das_araucarias", "mirante_da_costa"]
+              "serra_curta", "avenida_noturna", "estrada_das_araucarias", "mirante_da_costa", "oval_inclinado"]
 
 MOTOR = ["PortPolish", "EngineBalance", "Displacement", "Computer", "Muffler", "Intercooler"]
 NOMES_CATEGORIA = {

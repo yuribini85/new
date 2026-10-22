@@ -39,7 +39,8 @@ static func curvas(pista: Pista, atributos: Dictionary, params: Dictionary, nome
 	for i in n:
 		raios[i] = float(pista.trechos[pista.indice_em((i + 0.5) * passo)].get("raio_m", 0.0))
 	var teto := INF if atributos.get("velocidade_max") == null else float(atributos["velocidade_max"]) * Simulacao.KMH_PARA_MS
-	var env := Simulacao._envelope(raios, passo, float(atributos["aderencia"]), float(atributos["freio"]), teto, 1.0)
+	var env := Simulacao._envelope(raios, passo, float(atributos["aderencia"]), float(atributos["freio"]), teto, 1.0,
+			Simulacao.bancos(pista, n, passo))
 	for c in lista:
 		var i0 := int(floor(c["inicio"] / passo)) % n
 		var i1 := int(floor(c["fim"] / passo)) % n
