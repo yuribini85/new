@@ -104,3 +104,20 @@ func test_relevo_rampa_lanca_e_ondulacao_sobe_e_desce() -> void:
 	verificar(r.saida(r.rampa_cruzada(299.0, 301.0), 30.0) > 5.0, "rampa forte lança o carro")
 	verificar(Relevo.de(d.pista("circulo")).vazio(), "pista sem relevo")
 	d.free()
+
+
+## Segundo teste com pessoas (item 3: "a roda muito para fora ou para dentro"):
+## em todas as pistas do jogo, a linha de corrida deixa as quatro rodas no
+## asfalto ou na zebra (largura do carro 1,75 m, zebra de 1,2 m) em toda a volta.
+func test_rodas_no_asfalto_em_todas_as_pistas() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar(d.DATA_DIR)
+	var limite := Corrida3D.LARGURA_PISTA_M * 0.5 + 1.2 - 1.75 * 0.5
+	for p in d.lista("pistas"):
+		var pista: Pista = d.pista(p["id"])
+		var t := Tracado.de(pista)
+		var pior := 0.0
+		for s in range(0, int(pista.comprimento), 2):
+			pior = maxf(pior, absf(t.lateral(s)))
+		verificar(pior <= limite, "%s: centro do carro a %.2f m do meio (limite %.2f)" % [p["id"], pior, limite])
+	d.free()

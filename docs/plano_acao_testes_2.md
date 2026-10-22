@@ -167,7 +167,8 @@ zebra.
 **Proposta.**
 - Linha ideal desenhada de verdade: entra por fora, tangencia por dentro, sai por fora, com o
   raio de cada curva; deriva menor em curvas lentas.
-- Teste automático: em todas as pistas, as quatro rodas dentro do asfalto em todo o trajeto.
+- Teste automático: em todas as pistas, as quatro rodas dentro do asfalto em todo o trajeto. Feito:
+  `test_rodas_no_asfalto_em_todas_as_pistas` (as 13 pistas, a cada 2 m).
 
 ## 4. "Gostei das interações, quero mais" (fase B)
 
