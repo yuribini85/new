@@ -169,6 +169,9 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 | `docas_curta` | técnico, versão curta | 1.457 m | três retas |
 | `anel_curto` | alta velocidade, versão curta | 2.101 m | reta principal e reta oposta |
 | `serra_curta` | montanha, versão curta | 1.356 m | reta de largada e duas retas finais |
+| `avenida_noturna` (Avenida das Luzes) | técnico, rua à noite (grupo 3; eventos de roma) | 2.101 m | avenida da largada e a reta do meio |
+| `estrada_das_araucarias` (Estrada das Araucárias) | montanha, grampos e descida longa (grupo 5; tahiti_t) | 2.327 m | largada e a reta antes da curva da neblina |
+| `mirante_da_costa` (Mirante da Costa) | montanha, estrada costeira (grupo 5; parma) | 2.600 m | largada e a reta da praia |
 
 As versões curtas recebem os eventos das versões curtas da referência e usam o cenário da
 pista-mãe (`Corrida3D.TEMA_DE`).

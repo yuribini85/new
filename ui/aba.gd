@@ -1428,7 +1428,9 @@ func selos_carro(base: Dictionary) -> Array:
 const NOMES_PISTA := {"anel_do_vale": "Lago Sereno", "anel_curto": "Lago Sereno (curto)",
 	"parque_das_docas": "Cais Velho", "docas_curta": "Cais Velho (curto)",
 	"serra_alta": "Alto da Capela", "serra_curta": "Alto da Capela (curto)",
-	"pista_de_testes": "Oval do Planalto", "circuito_misto": "Colinas do Vinhedo"}
+	"pista_de_testes": "Oval do Planalto", "circuito_misto": "Colinas do Vinhedo",
+	"avenida_noturna": "Avenida das Luzes", "estrada_das_araucarias": "Estrada das Araucárias",
+	"mirante_da_costa": "Mirante da Costa"}
 
 
 ## Nome da prova para a tela: "Copa Primeira Marcha — Etapa 1" (nos dados a

@@ -50,8 +50,23 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
   - GT (cupê europeu forte, 32): cabine recuada (capô longo) em fastback;
   - picape 4x4 (13) e jipe (24): suspensão alta e rodas maiores; perua (1).
   - Folha de comparação: `tools/folha_arquetipos.gd` (antes e depois, precisa de xvfb-run).
-  - Falta: a aprovação do usuário pela folha (decisão 91: o desenho é aprovado antes de valer
-    para todos) e os ajustes que ele pedir.
+  - Aprovado pelo usuário pela folha (2026-10-22: "Aprovado pode seguir").
+- **Fase D feita** (2026-10-22): três traçados novos, cada um para os eventos de uma pista da
+  referência que caía numa pista repetida (mesmo grupo de comportamento, docs/pistas_arquetipos.md):
+  - **Avenida das Luzes** (`avenida_noturna`, 2,1 km): quarteirões de 90°, uma chicane, à
+    noite com luz fria de neon. Recebe os eventos de roma (antes no Cais Velho).
+  - **Estrada das Araucárias** (`estrada_das_araucarias`, 2,3 km): grampos em zigue-zague e a
+    descida longa, entre pinheiros, de manhã. Recebe os de tahiti_t (antes no Alto da Capela).
+  - **Mirante da Costa** (`mirante_da_costa`, 2,6 km): curvas médias e rápidas à beira-mar, ao
+    pôr do sol. Recebe os de parma (antes no Alto da Capela).
+  - As copas de marca giram também pelas três. 54 das 204 provas correm nelas.
+  - Traçados fechados por `tools/fechar_pista.py` (rascunhos em `data/rascunhos_pistas/`), sem
+    trecho a menos de 44 m de outro fora da vizinhança; nomes das curvas em `data/curvas.json`.
+  - Licenças recalibradas pelo fluxo (`tools/calibrar_licencas.gd`): só os tempos de ouro
+    mudaram (~1,2 s mais lentos), porque a calibração anterior era de antes de mudanças da
+    simulação; os testes de licença continuam nas mesmas pistas.
+  - Fica para depois: terra/rali (os eventos de terra da referência estão fora do jogo) e o oval
+    inclinado (o Oval do Planalto já faz o papel de retas longas).
 
 ## Ordem recomendada
 

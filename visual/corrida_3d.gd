@@ -126,6 +126,18 @@ const TEMAS := {
 	"pista_de_testes": {"chao": Color(0.72, 0.62, 0.45), "ceu": Color(0.55, 0.75, 0.95), "props": "deserto",
 		"luz": Color(1.0, 0.98, 0.92), "energia": 1.15, "sol": Vector3(-1.35, 0.3, 0), "ambiente": Color(0.7, 0.68, 0.64),
 		"asfalto": Color(0.25, 0.25, 0.27), "muro": [Color(0.95, 0.95, 0.95), Color(0.1, 0.1, 0.12)], "fundo": "mesas", "neblina": 0.0},
+	# Avenida da cidade à noite: luz fria de neon, concreto, muros magenta.
+	"avenida_noturna": {"chao": Color(0.2, 0.2, 0.24), "ceu": Color(0.1, 0.1, 0.22), "props": "cidade",
+		"luz": Color(0.7, 0.75, 1.0), "energia": 0.7, "sol": Vector3(-0.9, 0.4, 0), "ambiente": Color(0.45, 0.45, 0.62),
+		"asfalto": Color(0.16, 0.16, 0.19), "muro": [Color(0.92, 0.92, 0.96), Color(0.85, 0.18, 0.6)], "fundo": "porto", "neblina": 0.0},
+	# Estrada de serra entre araucárias, de manhã cedo: verde frio e luz baixa.
+	"estrada_das_araucarias": {"chao": Color(0.24, 0.33, 0.24), "ceu": Color(0.72, 0.8, 0.82), "props": "serra",
+		"luz": Color(0.92, 0.96, 1.0), "energia": 0.8, "sol": Vector3(-0.5, -0.8, 0), "ambiente": Color(0.6, 0.68, 0.66),
+		"asfalto": Color(0.3, 0.31, 0.33), "muro": [Color(0.95, 0.95, 0.92), Color(0.9, 0.55, 0.1)], "fundo": "montanhas", "neblina": 0.0},
+	# Estrada à beira-mar ao pôr do sol: areia, rochas, mar de um lado.
+	"mirante_da_costa": {"chao": Color(0.55, 0.5, 0.36), "ceu": Color(0.98, 0.6, 0.45), "props": "deserto",
+		"luz": Color(1.0, 0.78, 0.6), "energia": 1.0, "sol": Vector3(-0.45, 1.9, 0), "ambiente": Color(0.7, 0.6, 0.6),
+		"asfalto": Color(0.24, 0.24, 0.27), "muro": [Color(0.96, 0.96, 0.96), Color(0.1, 0.45, 0.6)], "fundo": "colinas", "neblina": 0.0},
 }
 ## Montagem pelo kit de arte (MontadorPista, docs/arte_pistas.md): texturas do
 ## chão, árvores, luz (tinta), direção e força das sombras, bordas da tela.
@@ -176,6 +188,34 @@ const KITS := {
 		"tinta": Color(1.04, 1.0, 0.94), "sombra_dir": Vector2(0.4, -0.3), "sombra_alfa": 0.35,
 		"vinheta": 0.3, "fundo": Color(0.3, 0.25, 0.18), "cor_vazio": Color(0.3, 0.25, 0.18),
 		"escuro": {"perto_m": 80.0, "longe_m": 300.0, "minimo": 0.55}},
+	# Avenida: noite azulada, concreto escuro, caminhões estacionados, postes.
+	"avenida_noturna": {"estilo": "chapado", "kit": {"chao_a": "concreto", "chao_b": "concreto_b", "escape": "concreto",
+			"areia": "brita", "arvores": ["caminhao_1", "caminhao_2", "caminhao_3", "conteiner_1"], "densidade": 0.6,
+			"postes": true, "alinhado": true, "altura_mata_m": 1.5},
+		"cores": {"concreto": Color(0.24, 0.24, 0.3), "concreto_b": Color(0.21, 0.21, 0.27), "brita": Color(0.3, 0.29, 0.34),
+			"asfalto": Color(0.14, 0.14, 0.17)},
+		"tinta": Color(0.72, 0.78, 1.15), "sombra_dir": Vector2(1.2, -1.2), "sombra_alfa": 0.55,
+		"vinheta": 0.65, "fundo": Color(0.01, 0.01, 0.03),
+		"escuro": {"perto_m": 45.0, "longe_m": 170.0, "minimo": 0.08}},
+	# Araucárias: pinheiros densos e rochas, verde frio, sem postes.
+	"estrada_das_araucarias": {"estilo": "chapado", "kit": {"chao_a": "grama_a", "chao_b": "grama_b", "chao_mata": "mata",
+			"aberto_m": 35.0, "arvores": ["pinheiro_1", "pinheiro_2", "pinheiro_3", "pinheiro_2"], "raras": ["rocha_1", "rocha_3"],
+			"chance_rara": 0.08, "densidade": 1.15, "postes": false},
+		"cores": {"grama_a": Color(0.22, 0.34, 0.24), "grama_b": Color(0.19, 0.3, 0.22), "mata": Color(0.06, 0.11, 0.08),
+			"escape": Color(0.24, 0.33, 0.25), "areia": Color(0.46, 0.42, 0.36), "pinheiro": Color(0.1, 0.21, 0.14),
+			"rocha": Color(0.45, 0.46, 0.44)},
+		"tinta": Color(0.86, 0.96, 0.95), "sombra_dir": Vector2(-1.4, -0.8), "sombra_alfa": 0.45,
+		"vinheta": 0.5, "fundo": Color(0.02, 0.04, 0.03), "cor_vazio": Color(0.02, 0.04, 0.03),
+		"escuro": {"perto_m": 40.0, "longe_m": 150.0, "minimo": 0.15}},
+	# Costa: areia e rochas, o mar ao lado, luz rosada de fim de tarde.
+	"mirante_da_costa": {"estilo": "chapado", "kit": {"chao_a": "areia", "chao_b": "brita", "escape": "areia",
+			"arvores": ["rocha_1", "rocha_2", "rocha_3", "arvore_1"], "densidade": 0.35, "postes": false,
+			"agua": {"afastamento_m": 55.0}},
+		"cores": {"areia": Color(0.74, 0.62, 0.45), "brita": Color(0.66, 0.56, 0.42), "rocha": Color(0.5, 0.42, 0.38),
+			"agua": Color(0.08, 0.3, 0.4), "cais": Color(0.4, 0.34, 0.28), "asfalto": Color(0.22, 0.22, 0.25)},
+		"tinta": Color(1.06, 0.86, 0.8), "sombra_dir": Vector2(2.0, -0.4), "sombra_alfa": 0.45,
+		"vinheta": 0.4, "fundo": Color(0.05, 0.12, 0.16), "cor_vazio": Color(0.05, 0.12, 0.16),
+		"escuro": {"perto_m": 70.0, "longe_m": 260.0, "minimo": 0.35}},
 }
 ## Versões curtas usam o cenário da pista-mãe.
 const TEMA_DE := {"docas_curta": "parque_das_docas", "anel_curto": "anel_do_vale", "serra_curta": "serra_alta"}

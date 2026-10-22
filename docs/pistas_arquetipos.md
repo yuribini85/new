@@ -137,3 +137,9 @@ new_parmaS) ganharam versões curtas das nossas pistas do mesmo grupo (`docas_cu
 `anel_curto`, `serra_curta`), com o começo da pista-mãe e um atalho que fecha a volta.
 Todos os traçados são originais; só o comportamento do grupo vem da referência.
 
+
+## Pistas novas do segundo teste com pessoas (decisão 130)
+
+Os códigos que caíam numa pista repetida ganharam traçado próprio no mesmo grupo:
+roma → Avenida das Luzes (grupo 3), tahiti_t → Estrada das Araucárias e parma → Mirante da
+Costa (grupo 5). Mapeamento em `PISTAS` de `tools/importar_referencia.py`.

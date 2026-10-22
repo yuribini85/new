@@ -471,5 +471,255 @@
     "comprimento_m": 70.6858
    }
   ]
+ },
+ {
+  "id": "avenida_noturna",
+  "funcao": "tecnico",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 571,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 27,
+    "comprimento_m": 42.4115
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 66.8736
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 24,
+    "sentido": "direita",
+    "comprimento_m": 37.6991
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 131
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 22,
+    "comprimento_m": 34.5575
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 167
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 28,
+    "comprimento_m": 43.9823
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 353.3324,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 37,
+    "comprimento_m": 29.0597
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 221
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 47,
+    "sentido": "direita",
+    "comprimento_m": 36.9137
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 184
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 22,
+    "comprimento_m": 34.5575
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 104
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 28,
+    "comprimento_m": 43.9823
+   }
+  ]
+ },
+ {
+  "id": "estrada_das_araucarias",
+  "funcao": "montanha",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 160,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 42,
+    "sentido": "direita",
+    "comprimento_m": 57.7532
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 117
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 26,
+    "comprimento_m": 74.7235
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 103
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 32,
+    "sentido": "direita",
+    "comprimento_m": 102.8199
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 98
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 32,
+    "comprimento_m": 68.8327
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 102
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 43,
+    "sentido": "direita",
+    "comprimento_m": 98.8656
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 91
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 97,
+    "comprimento_m": 69.3655
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 109
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 59,
+    "sentido": "direita",
+    "comprimento_m": 97.9347
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 224.7155,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 61,
+    "sentido": "direita",
+    "comprimento_m": 85.6019
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 568.5156
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 47,
+    "sentido": "direita",
+    "comprimento_m": 97.4157
+   }
+  ]
+ },
+ {
+  "id": "mirante_da_costa",
+  "funcao": "montanha",
+  "trechos": [
+   {
+    "tipo": "reta",
+    "comprimento_m": 660,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 80,
+    "comprimento_m": 97.7384
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 92
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 77,
+    "sentido": "direita",
+    "comprimento_m": 53.7561
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 115
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 58,
+    "comprimento_m": 111.352
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 203
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 139,
+    "comprimento_m": 145.5605
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 579.2553,
+    "ultrapassagem": true
+   },
+   {
+    "tipo": "curva_media",
+    "raio_m": 78,
+    "sentido": "direita",
+    "comprimento_m": 47.6475
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 65.7472
+   },
+   {
+    "tipo": "curva_lenta",
+    "raio_m": 48,
+    "comprimento_m": 71.2094
+   },
+   {
+    "tipo": "reta",
+    "comprimento_m": 95
+   },
+   {
+    "tipo": "curva_rapida",
+    "raio_m": 137,
+    "comprimento_m": 263.0211
+   }
+  ]
  }
 ]

@@ -1,0 +1,73 @@
+{
+ "id": "mirante_da_costa",
+ "funcao": "montanha",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 660,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 80,
+   "angulo_graus": 70
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 92
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 77,
+   "angulo_graus": 40,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 115
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 58,
+   "angulo_graus": 110
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 203
+  },
+  {
+   "tipo": "curva_rapida",
+   "raio_m": 139,
+   "angulo_graus": 60
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 78,
+   "angulo_graus": 35,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 48,
+   "angulo_graus": 85
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 95
+  },
+  {
+   "tipo": "curva_rapida",
+   "raio_m": 137,
+   "angulo_graus": 110
+  }
+ ]
+}

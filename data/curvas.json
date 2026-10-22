@@ -7,5 +7,8 @@
  "serra_alta": ["Primeiro Laço", "Segundo Laço", "Terceiro Laço", "Quarto Laço", "Quinto Laço", "Mirante", "Pinheiros", "Descida do Sino", "Curva da Capela"],
  "serra_curta": ["Primeiro Laço", "Segundo Laço", "Terceiro Laço", "Mirante", "Curva da Capela"],
  "pista_de_testes": ["Inclinada Norte", "Inclinada Sul", "Chicane da Torre", "Retorno"],
- "circuito_misto": ["Primeira", "Ponte", "Arquibancada", "Curva Longa", "Gancho", "Paddock", "Última"]
+ "circuito_misto": ["Primeira", "Ponte", "Arquibancada", "Curva Longa", "Gancho", "Paddock", "Última"],
+ "avenida_noturna": ["Esquina do Cinema", "Praça do Relógio", "Rua do Mercado", "Viaduto", "Curva do Banco", "Contorno da Estação", "Beco do Neon", "Esquina da Chegada"],
+ "estrada_das_araucarias": ["Primeiro Grampo", "Pinhal", "Grampo do Mirante", "Volta da Serraria", "Grampo da Capelinha", "Curva do Riacho", "Esse da Mata", "Curva da Neblina", "Descida Final"],
+ "mirante_da_costa": ["Curva do Farol", "Pedra Furada", "Enseada", "Curva das Gaivotas", "Rochedo", "Curva da Praia", "Volta do Pôr do Sol"]
 }

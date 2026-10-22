@@ -23,17 +23,17 @@ func _rodar() -> void:
 	var d: Node = root.get_node("Dados")
 	var j: Node = root.get_node("Jogador")
 	j.novo_jogo(d.economia(), d.pneu)
-	j.licencas = ["CLUB", "SPORT"]
+	j.licencas = ["CLUB", "SPORT", "NATIONAL", "INTERNATIONAL", "PRO", "ELITE"]  # todas: as pistas novas têm provas só das licenças altas
 	j.economia.creditar(1000000)
 	var feitas := {}
 	for ev in d.lista("eventos"):
 		if feitas.has(ev["pista"]) or (so != "" and ev["pista"] != so):
 			continue
+		# Compra só o primeiro carro que pode correr a prova (comprar todos enchia a garagem).
 		var uid := -1
 		for c in d.lista("carros"):
-			var u: int = j.concessionaria.comprar_carro(c)
-			if u > 0 and Elegibilidade.motivos(j.garagem.carro(u), ev["restricoes"], j.licencas).is_empty():
-				uid = u
+			if Elegibilidade.motivos(Carro.new(c), ev["restricoes"], j.licencas).is_empty():
+				uid = j.concessionaria.comprar_carro(c)
 				break
 		if uid < 0:
 			continue
