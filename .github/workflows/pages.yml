@@ -43,6 +43,40 @@ jobs:
       - name: Testes
         run: tests/rodar.sh godot
 
+      # Modelo web enxuto (decisão 95, item 9): o Godot compilado sem os
+      # módulos que o jogo não usa, guardado em cache. Se a compilação falhar,
+      # a exportação segue com o modelo padrão.
+      - name: Cache do modelo web enxuto
+        id: modelo
+        uses: actions/cache@v4
+        with:
+          path: build/modelo_web
+          key: modelo-web-${{ hashFiles('tools/modelo_web.sh') }}
+
+      - name: Emscripten para o modelo web
+        if: steps.modelo.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.64
+
+      - name: Compilar o modelo web enxuto
+        if: steps.modelo.outputs.cache-hit != 'true'
+        continue-on-error: true
+        run: |
+          pip install scons
+          tools/modelo_web.sh build/modelo_web
+
+      - name: Usar o modelo web enxuto
+        run: |
+          m="$PWD/build/modelo_web/web_nothreads_release.zip"
+          if [ -f "$m" ]; then
+            awk -v m="$m" '/^\[preset\./{p=$0} p=="[preset.0.options]" && /^custom_template\/release=/{$0="custom_template/release=\"" m "\""} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
+            grep -n "custom_template/release" export_presets.cfg
+          else
+            echo "sem modelo enxuto: exporta com o padrão"
+          fi
+
       - name: Exportar para web
         env:
           SELO_CHAVE: ${{ secrets.SELO_CHAVE }}
@@ -54,6 +88,7 @@ jobs:
           if [ -n "$SELO_CHAVE" ]; then printf '%s' "$SELO_CHAVE" > chave_selo.txt; fi
           godot --headless --export-release "Web" build/web/index.html
           test -f build/web/index.pck
+          ls -l build/web/index.wasm build/web/index.pck
           # O Pages manda o navegador guardar os arquivos por 10 min: o pacote
           # do jogo é pedido com a versão no endereço para vir sempre o novo.
           sed -i "s/\"executable\":\"index\",/\"executable\":\"index\",\"mainPack\":\"index.pck?v=$v\",/" build/web/index.html
