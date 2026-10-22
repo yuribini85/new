@@ -82,10 +82,14 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     sem recorde não conta. Medido (`tools/medir_recordes.gd`): 64% das corridas batem recorde;
     um nível a cada 2 recordes ≈ 3,1 corridas, a média de antes (3). "NOVO RECORDE PESSOAL DE
     VOLTA" no resultado; na Equipe, a barra do próximo nível conta recordes.
-  - Treinador (E6): modelo pronto (`GestaoEquipe.treinador_*`), sem botão na tela. Medido com o
-    critério aprovado (20% dos prêmios, recorde em dobro): o caminho fica pior (36 provas vencidas
-    contra 67 no mesmo tempo). De graça dá 67, mas o agente não contrata piloto de corrida,
-    então a experiência em dobro não aparece na medição. Precisa de decisão do usuário.
+  - Treinador (E6): com 20% dos prêmios o caminho ficava pior (36 provas vencidas contra 67 no
+    mesmo tempo). Decisão do usuário ("Sim" à recomendação): contrato de 24 h pago na hora (um
+    prêmio de 1º da maior licença), recorde em dobro, sem parte dos prêmios. Botão na Equipe,
+    no cartão do piloto de corrida. Medido com piloto contratado (`tools/medir_recordes.gd`):
+    em 3 h de campanha o caminho é o mesmo com e sem treinador, porque o nível do piloto só tem
+    teto a partir da International (equipe.json → treino.teto); lá, o treinador leva o piloto ao
+    teto da licença na metade dos recordes (3 em vez de 6). O ganho total segue limitado pelo
+    teto calibrado do treino (até 10% do caminho).
 
 ## Ordem recomendada
 

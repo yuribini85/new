@@ -600,18 +600,21 @@ func test_evolucao_pelo_recorde_de_volta() -> void:
 	j.economia.creditar(1000)
 	d.equipe()["treino"]["xp_por_nivel"] = 3
 	d.equipe()["treino"]["recordes_por_nivel"] = 2
-	d.equipe()["treinador"] = {"fatia_premio": 0.2, "fator_xp": 2, "duracao_h": 24}
+	d.equipe()["treinador"] = {"preco_premios": 1, "fator_xp": 2, "duracao_h": 24}
 	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "contrata")
 	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, false), [], "sem recorde: nada")
 	igual(EquipeJogador.xp(j, "livre_1"), 0, "sem recorde não soma")
 	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, true), [], "um recorde: ainda não")
 	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, true), ["livre_1"], "dois recordes: sobe")
 	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, true, true), ["livre_1"], "com o treinador, um recorde basta")
-	GestaoEquipe.contratar_treinador(d, j, 1000.0)
+	var saldo: int = j.economia.saldo
+	var preco := GestaoEquipe.preco_treinador(d, j)
+	verificar(preco > 0, "o contrato custa um prêmio de 1º da licença")
+	igual(GestaoEquipe.contratar_treinador(d, j, 1000.0), "", "contrata")
+	igual(j.economia.saldo, saldo - preco, "paga na hora")
+	verificar(GestaoEquipe.contratar_treinador(d, j, 2000.0) != "", "já contratado: não paga de novo")
 	verificar(GestaoEquipe.treinador_ativo(j, 1000.0 + 23.0 * 3600.0), "contratado por 24 h")
 	verificar(not GestaoEquipe.treinador_ativo(j, 1000.0 + 25.0 * 3600.0), "depois, não")
-	igual(GestaoEquipe.fatia_treinador(d, j, 1000, 2000.0), 200, "fica com 20% do prêmio")
-	igual(GestaoEquipe.fatia_treinador(d, j, 1000, 1000.0 + 25.0 * 3600.0), 0, "vencido: nada")
 	d.equipe()["treino"].erase("xp_por_nivel")
 	d.equipe()["treino"].erase("recordes_por_nivel")
 	d.equipe().erase("treinador")

@@ -250,7 +250,35 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 		_proximo_nivel(v, EquipeJogador.xp(jogador, id), por_nivel)
 		if vaga == "corrida" and GestaoEquipe.cfg_treino(dados).has("recordes_por_nivel"):
 			rotulo("Sobe batendo o próprio recorde de volta com um carro numa pista.", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	if vaga == "corrida":
+		_treinador(v)
 	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+
+## Treinador (decisão 130): contrato de 24 h pago na hora; cada recorde de
+## volta do piloto de corrida vale mais enquanto ele está na equipe.
+func _treinador(pai: Control) -> void:
+	var cfg := GestaoEquipe.cfg_treinador(dados)
+	if cfg.is_empty():
+		return
+	var agora := Time.get_unix_time_from_system()
+	if GestaoEquipe.treinador_ativo(jogador, agora):
+		var resta := float(jogador.equipe["treinador_ate"]) - agora
+		rotulo("Treinador na equipe por mais %s: cada recorde vale %d." % [horas_min(resta), int(cfg.get("fator_xp", 1))],
+				FONTE_PEQUENA, COR_BOM, pai)
+		return
+	var b := Button.new()
+	Tipografia.acao_neutra(b, "Contratar treinador (%d h) · %s giros" % [int(cfg.get("duracao_h", 24)),
+			dinheiro(GestaoEquipe.preco_treinador(dados, jogador))], 22, 60)
+	b.pressed.connect(func():
+		var motivo := GestaoEquipe.contratar_treinador(dados, jogador, Time.get_unix_time_from_system())
+		if motivo != "":
+			avisar("Não deu: %s." % motivo, false)
+			return
+		Sons.tocar_ui(self, "moeda", -4.0)
+		avisar("Treinador contratado: cada recorde de volta vale %d." % int(cfg.get("fator_xp", 1)))
+		atualizar())
+	pai.add_child(b)
 
 
 ## Atributos (decisão 70) do piloto: ritmo, consistência e agressividade em

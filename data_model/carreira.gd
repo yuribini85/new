@@ -397,9 +397,6 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	if jogador.vitorias.has(evento_id):
 		_contar_repeticao(evento_id, agora_real)
 	premio = roundi(premio * fator)
-	# Treinador (decisão 130): fica com a fatia do prêmio enquanto contratado.
-	var treinador := GestaoEquipe.fatia_treinador(dados, jogador, premio, agora_real)
-	premio -= treinador
 	jogador.economia.creditar(premio)
 
 	var carro_premio_uid := -1
@@ -451,7 +448,6 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"grid": grid,
 		"caixa": caixa,
 		"recorde_volta": recorde_volta,
-		"treinador": treinador,
 	}
 
 

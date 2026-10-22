@@ -143,21 +143,29 @@ static func treinador_ativo(jogador: Node, agora: float) -> bool:
 	return float(jogador.equipe.get("treinador_ate", 0.0)) > agora
 
 
-## Contrata por `duracao_h` horas (sem custo na hora: ele fica com a fatia dos
-## prêmios). Renovar antes do fim soma o prazo a partir de agora.
-static func contratar_treinador(dados: Node, jogador: Node, agora: float) -> void:
+## Preço do contrato: preco_premios × o prêmio de referência da maior licença.
+static func preco_treinador(dados: Node, jogador: Node) -> int:
+	var niveis := ordem(dados)
+	var k := maxi(maior_licenca(dados, jogador), 0)
+	var ref := premio_referencia(dados, niveis[k]) if not niveis.is_empty() else 0
+	return roundi(ref * float(cfg_treinador(dados).get("preco_premios", 0.0)))
+
+
+## Contrata por `duracao_h` horas, pagando na hora. "" ou o motivo.
+static func contratar_treinador(dados: Node, jogador: Node, agora: float) -> String:
+	if cfg_treinador(dados).is_empty():
+		return "sem treinador"
+	if treinador_ativo(jogador, agora):
+		return "o treinador já está contratado"
+	if not jogador.economia.debitar(preco_treinador(dados, jogador)):
+		return "faltam giros"
 	jogador.equipe["treinador_ate"] = agora + float(cfg_treinador(dados).get("duracao_h", 24)) * 3600.0
+	return ""
 
 
 static func dispensar_treinador(jogador: Node) -> void:
 	jogador.equipe.erase("treinador_ate")
 
-
-## A parte do prêmio que fica com o treinador (0 sem treinador).
-static func fatia_treinador(dados: Node, jogador: Node, premio: int, agora: float) -> int:
-	if not treinador_ativo(jogador, agora):
-		return 0
-	return roundi(premio * float(cfg_treinador(dados).get("fatia_premio", 0.0)))
 
 
 ## Renda por hora de um patrocinador.

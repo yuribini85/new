@@ -3,7 +3,8 @@ extends SceneTree
 ## pista), jogando a campanha com o agente (tools/agente.gd), por perfil e
 ## semente. Calibra a evolução do piloto pelo recorde (decisão 130, E6): para a
 ## média não mudar, um nível a cada round(xp_por_nivel × fração) recordes.
-## Com `treinador` (3º argumento): o treinador contratado a campanha toda; o
+## O piloto de corrida entra contratado (o primeiro candidato), para a
+## evolução aparecer. Com `treinador` (3º argumento): o treinador contratado a campanha toda; o
 ## relatório traz as provas vencidas e as licenças no tempo, para comparar o
 ## caminho com e sem ele (meta: ~10% mais curto).
 ## Uso: godot --headless --path . --script tools/medir_recordes.gd -- [minutos=90] [sementes=3] [treinador]
@@ -53,10 +54,24 @@ func _initialize() -> void:
 	quit()
 
 
+## O primeiro candidato de corrida do mercado (sem custo: só para medir).
+func _piloto_corrida(d: Node) -> String:
+	for c in EquipeJogador.candidatos(d):
+		if String(c.get("tipo", "corrida")) == "corrida" and not c.get("premium", false):
+			return String(c["id"])
+	return ""
+
+
 func _acao(acao: String, ctx: Dictionary) -> void:
 	# O jogo novo da campanha zera a equipe: o treinador entra a cada largada.
-	if acao == "largada" and _com_treinador:
-		_ag.j.equipe["treinador_ate"] = 1.0e15
+	if acao == "largada":
+		# Piloto de corrida contratado (o agente não contrata): é quem evolui.
+		if EquipeJogador.piloto_vaga(_ag.j, "corrida") == "":
+			var p: Dictionary = _ag.j.pilotos.duplicate(true)
+			p["corrida"] = _piloto_corrida(_ag.d)
+			_ag.j.pilotos = p
+		if _com_treinador:
+			_ag.j.equipe["treinador_ate"] = 1.0e15
 	if acao == "corrida":
 		_corridas += 1
 		if ctx.get("recorde_volta", false):
