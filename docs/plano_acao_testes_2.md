@@ -84,8 +84,8 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     VOLTA" no resultado; na Equipe, a barra do próximo nível conta recordes.
   - Treinador (E6): modelo pronto (`GestaoEquipe.treinador_*`), sem botão na tela. Medido com o
     critério aprovado (20% dos prêmios, recorde em dobro): o caminho fica pior (36 provas vencidas
-    contra 67 no mesmo tempo); mesmo de graça não muda nada (67), porque o nível do piloto tem
-    teto por licença. Precisa de decisão do usuário.
+    contra 67 no mesmo tempo). De graça dá 67, mas o agente não contrata piloto de corrida,
+    então a experiência em dobro não aparece na medição. Precisa de decisão do usuário.
 
 ## Ordem recomendada
 

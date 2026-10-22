@@ -68,7 +68,7 @@
   }
  },
  "treinador": {
-  "_nota": "Decisão 130 (E6): o treinador seria o patrocínio ao contrário: enquanto contratado (duracao_h horas), fica com fatia_premio do prêmio de cada corrida e cada recorde de volta do piloto de corrida vale fator_xp. Medido (tools/medir_recordes.gd -- 180 2 treinador, 3 perfis × 2 sementes, 180 min de corrida): sem treinador 67 provas vencidas; com fatia 0,2, 36; com fatia 0 (de graça), 67 — a experiência a mais não muda o caminho (o nível do piloto tem teto por licença) e a fatia o encurta pela metade. O critério aprovado (~10% mais curto) não fecha: o treinador fica sem botão na tela até a decisão do usuário.",
+  "_nota": "Decisão 130 (E6): o treinador seria o patrocínio ao contrário: enquanto contratado (duracao_h horas), fica com fatia_premio do prêmio de cada corrida e cada recorde de volta do piloto de corrida vale fator_xp. Medido (tools/medir_recordes.gd -- 180 2 treinador, 3 perfis × 2 sementes, 180 min de corrida): sem treinador 67 provas vencidas; com fatia 0,2, 36; com fatia 0 (de graça), 67. O agente não contrata piloto de corrida, então a experiência não aparece na medição: o que ela mostra é que a fatia de 20% derruba as vitórias quase pela metade. O critério aprovado (~10% mais curto) não fecha: o treinador fica sem botão na tela até a decisão do usuário.",
   "fatia_premio": 0.2,
   "fator_xp": 2,
   "duracao_h": 24
