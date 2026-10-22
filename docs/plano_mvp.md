@@ -871,11 +871,14 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     download). Exige compilar o motor (scons com `profile` de módulos desligados) e
     apontar `custom_template` no preset Web; fazer quando o build Web for para
     lojas/divulgação.
-    **Item 9 em andamento (2026-10-22, "pode continuar"):** `tools/modelo_web.sh` compila o
+    **Item 9 feito (2026-10-22, "pode continuar"):** `tools/modelo_web.sh` compila o
     modelo sem threads e sem os módulos que o jogo não usa (rede, realidade virtual, vídeo, mp3,
     navegação, CSG, mapa em grade, importação de modelos, Jolt), com `lto=full`. Roda no CI
     da demo (`pages.yml`), fica em cache e o preset Web passa a usá-lo; se a compilação
-    falhar, a demo sai com o modelo padrão.
+    falhar, a demo sai com o modelo padrão. Medido na demo publicada: `index.wasm` de 43,7
+    para 38,0 MB (8,2 MB transferidos com gzip); compilação no CI ~26 min só na primeira vez
+    (depois vem do cache). Conferido no Chromium: abre, carrega o cenário completo e mostra o
+    carro 3D, sem erro no console.
 96. **Experiência do jogador** (2026-10-16, análise com o playtest da campanha;
     recomendações aceitas pelo usuário). Mede-se com `tools/playtest_campanha.gd`
     (o agente segue o que a tela sugere).
