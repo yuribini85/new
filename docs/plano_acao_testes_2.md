@@ -44,7 +44,7 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     forçar anda 1% mais até o fim da volta e cansa 1,5% nas duas seguintes; poupar anda 1% menos
     e guarda o pneu, e o próximo forçar não cansa). Com as pistas novas da fase D a corrida
     perfeita tinha subido para +0,72 posição; os bônus da freada e da saída foram recalibrados
-    e ela voltou a +0,55 (boa +0,10, ruim -0,23). Números na nota de `data/simulacao.json`.
+    e ela voltou a +0,55 (ruim -0,23); a freada boa foi a 1,005 para valer metade da perfeita (+0,27). Números na nota de `data/simulacao.json`.
 - **Fase C, primeira passada** (2026-10-22): arquétipos no gerador (`Carroceria.arquetipo`,
   `_arquetipo`), pela ficha do carro, sobre a forma medida:
   - muscle car (cupê americano até 1979, 23 carros): capô longo com tomada de ar, teto baixo
