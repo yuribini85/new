@@ -64,6 +64,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **FREADA PERFEITA / BOA FREADA / FREOU CEDO / FREOU TARDE** | a nota do toque no FREIE |
 | **SAÍDA LIMPA / PERDEU TRAÇÃO / ACELEROU TARDE** | soltou o dedo na saída da curva / antes / depois |
 | **SEQUÊNCIA ×N** | acertos seguidos (nota boa ou perfeita); errar ou deixar a faixa passar zera. No resultado: as perfeitas e a maior sequência |
+| **VOLTA LIMPA** | uma volta inteira sem erro com a sequência andando: a volta seguinte sai um pouco mais rápida |
 
 ### Dinheiro e tempo
 | Termo | O que é para o jogador |

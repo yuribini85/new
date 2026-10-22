@@ -232,6 +232,15 @@ static func ordem_poupar(t: float, fim_volta: float, p: Dictionary) -> Dictionar
 	return {"de": t, "ate": fim_volta, "ritmo": float(p["forcar"]["ritmo"]["poupar"]), "origem": "poupar"}
 
 
+## A sequência fechou uma volta sem erro (decisão 131 C4: volta limpa): ritmo
+## extra de `t` até `fim_volta` (o fim da volta seguinte). {} sem o bloco
+## "sequencia" nos dados.
+static func ordem_sequencia(t: float, fim_volta: float, p: Dictionary) -> Dictionary:
+	if not p.has("sequencia"):
+		return {}
+	return {"de": t, "ate": fim_volta, "ritmo": float(p["sequencia"]["ritmo"]), "origem": "sequencia"}
+
+
 ## A volta no modo `modo`: [ordens, pneus guardados depois]. ATAQUE gasta um
 ## pneu guardado (sem nenhum, cansa); POUPAR guarda um, até `voltas_cansado`.
 static func ordens_modo(modo: String, t: float, fim_volta: float, volta_s: float, guardados: int,

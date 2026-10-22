@@ -115,6 +115,9 @@ gravadas na fila). Os bônus continuam em `data/simulacao.json`, com o mesmo tet
 | R4 | Sequência e resultado com perfeitas; recalibrar ao teto | `calibrar_pilotagem.gd` |
 | R5 | Cartão de ensino antes da corrida; forçar/poupar como estado | roteiro de teste |
 
+Situação (2026-10-22): R1 a R5 feitas. Ficou de fora a placa 3-2-1 ao lado da pista (o semáforo
+do HUD continua sendo a marca da largada). Fotos: `tools/fotos_corrida.gd --deixas=8`.
+
 ## 5. Decisões (com a recomendação)
 
 - **C1 — Gestos:** juntar freada e saída num "segurar na curva" e trocar o vácuo por deslizar

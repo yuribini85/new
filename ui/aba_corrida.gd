@@ -186,6 +186,9 @@ var _perfeitas := 0
 var _seq_evento := ""
 ## A curva cuja faixa da freada apareceu (chave) e ainda não teve toque.
 var _freada_vista := -1
+## Volta limpa: a última volta vista e se houve erro nela.
+var _volta_seq := -1
+var _volta_suja := false
 ## Quanto o dedo precisa deslizar de lado (px) para valer.
 const DESLIZE_PX := 60.0
 ## Modo do pneu nas provas longas (decisão 131): o botão, o modo, a última
@@ -754,6 +757,8 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_perfeitas = 0
 	_seq_evento = String(jogador.fila.get("evento_id", ""))
 	_freada_vista = -1
+	_volta_seq = -1
+	_volta_suja = false
 	_ultimo_ataque = -INF
 	_ultima_defesa = -INF
 	_deslize = {}
@@ -1372,6 +1377,7 @@ func _pilotar(taxa: float) -> void:
 	_taxa_pil = maxf(taxa, 1.0)
 	var s_volta := fposmod(s, comp)
 	_modo_do_pneu(s)
+	_sequencia_volta(s)
 	_s_antes_pil = s
 	var mostrou := false
 	var f: Dictionary = _pil["frenagem"]
@@ -1594,9 +1600,30 @@ func _nota(nota: String) -> void:
 		_clarear(COR_DESTAQUE, 0.15)
 
 
-## Errou ou deixou a deixa passar: a sequência zera.
+## Errou ou deixou a deixa passar: a sequência zera e a volta não é limpa.
 func _errou() -> void:
 	_seq = 0
+	_volta_suja = true
+
+
+## Volta limpa (decisão 131 C4): fechou uma volta sem erro, com a sequência
+## andando, e a volta seguinte ganha ritmo extra (Pilotagem.ordem_sequencia).
+func _sequencia_volta(s: float) -> void:
+	var volta := floori(s / _pista.comprimento)
+	if volta <= _volta_seq:
+		return
+	var limpa := _volta_seq >= 0 and not _volta_suja and _seq > 0
+	_volta_seq = volta
+	_volta_suja = false
+	if not limpa or volta >= _voltas:
+		return
+	var tempos := _tempos_volta()
+	if tempos.is_empty():
+		return
+	var o := Pilotagem.ordem_sequencia(_visual.tempo, tempos[0], _pil)
+	if o.is_empty() or _dar(o).is_empty():
+		return
+	_painel_hud.evento("VOLTA LIMPA", "SEQUÊNCIA ×%d" % _seq, COR_DESTAQUE, 7, 1.4, false, true)
 
 
 ## O que a corrida assistida teve de pilotagem, para a janela do resultado:

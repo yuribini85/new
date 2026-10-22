@@ -303,6 +303,13 @@ func test_forcar_cansa_o_pneu_e_poupar_guarda() -> void:
 	r = Pilotagem.ordens_modo(Pilotagem.ATAQUE, 0.0, 60.0, 60.0, 0, p)
 	igual([r[0].size(), r[1]], [2, 0], "ataque sem pneu guardado cansa")
 	igual(Pilotagem.ordens_modo(Pilotagem.NORMAL, 0.0, 60.0, 60.0, 1, p), [[], 1], "normal não muda nada")
+	# Decisão 131 C4: a volta limpa dá ritmo até o fim da volta seguinte; sem o
+	# bloco nos dados, nada.
+	igual(Pilotagem.ordem_sequencia(0.0, 60.0, p), {}, "sem sequencia nos dados: sem bônus")
+	p["sequencia"] = {"ritmo": 1.002}
+	var vl := Pilotagem.ordem_sequencia(5.0, 60.0, p)
+	igual([vl["de"], vl["ate"], vl["origem"]], [5.0, 60.0, "sequencia"], "a volta seguinte inteira")
+	perto(float(vl["ritmo"]), 1.002, 1e-9, "ritmo da sequência")
 
 
 ## Decisão 117: a ordem de um momento de decisão só mexe na corrida a partir de

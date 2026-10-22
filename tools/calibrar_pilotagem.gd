@@ -5,10 +5,10 @@ extends SceneTree
 ## tela: a corrida anda junto e cada toque vale a partir do instante dele):
 ##   base      sem toque (o piloto contratado dirige)
 ##   perfeita  largada perfeita, toda freada perfeita, toda saída limpa, a
-##             passagem no vácuo e a porta fechada sempre que puder
+##             passagem no vácuo e a porta fechada sempre que puder; volta limpa
 ##   beira     como a perfeita, tocando no começo da faixa verde: a freada boa ou
 ##             perfeita vale do ponto em diante, então dá o mesmo (fora do padrão)
-##   boa       largada boa, toda freada boa, toda saída limpa
+##   boa       largada boa, toda freada boa, toda saída limpa; volta limpa
 ##   ruim      largada queimada, toda freada tarde e o dedo solto antes da
 ##             saída em toda curva (perdeu tração)
 ##   largada   só a largada perfeita
@@ -167,6 +167,11 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 			volta_s = a.tempo() - inicio_volta
 			inicio_volta = a.tempo()
 			volta_antes = volta
+			# Volta limpa (toda deixa acertada): ritmo extra na volta seguinte.
+			if politica in ["perfeita", "boa"] and volta < int(d.evento(ev_id)["voltas"]):
+				var o := Pilotagem.ordem_sequencia(a.tempo(), a.tempo() + volta_s, p)
+				if not o.is_empty():
+					a.ordenar("jogador", o)
 			if forca and volta_s > 0.0 and politica in ["perfeita", "beira", "forcar", "forcou"]:
 				var perto := INF
 				var longe := INF

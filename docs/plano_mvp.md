@@ -1231,3 +1231,10 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     com câmeras, ACELERAR, configurações e sair; o HUD em três lugares (faixa de cima com posição e
     volta; quem está à frente e atrás; notas perto do carro). C4: sequência de acertos com bônus
     pequeno, recalibrada para a corrida toda perfeita continuar no teto da decisão 128.
+    Feito (R1 a R5, 2026-10-22): o ponto da freada é onde o carro começa a perder velocidade na
+    corrida resolvida (CorridaVisual.inicio_freada; a frenagem da Tatica sem velocidade máxima
+    caía no fim da curva anterior). Decisões do usuário no fechamento: a sequência completa o teto;
+    o bônus vale por volta limpa (uma volta sem erro dá sequencia.ritmo na volta seguinte); a
+    freada boa volta a ser metade da perfeita (números em data/simulacao.json, nota da
+    pilotagem). O COMO PILOTAR (cartão dos três gestos) aparece antes da primeira corrida pilotada,
+    com o grid parado, e fica no •••; no meio da corrida não há texto de explicação.
