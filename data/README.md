@@ -12,7 +12,7 @@ sintéticos (só para teste) em `tests/fixtures/`.
 | `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
 | `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` (janelas da referência; o jogo não vende usados, decisão 124: só as ferramentas de calibração e medição leem) |
 | `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos`. O importador grava agrupado por carro (`{nomes, carros: {carro: [{s, preco, efeitos, ...}]}}`, um terço do tamanho; regra no campo `_formato`) e o `Dados` expande para a lista; em Python, `ler_pecas()` de `tools/importar_referencia.py` |
-| `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva}, preco}` |
+| `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva} ou {terra}, preco}` (o pneu de terra só roda na terra) |
 | `pistas.json` | lista de `{id, funcao, trechos}` |
 | `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
 | `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
@@ -100,12 +100,14 @@ recusada.
 
 ## eventos.json
 
-- `condicao`: `seco` ou `chuva`, fixa por evento.
+- `condicao`: `seco`, `chuva` ou `terra` (rali), fixa por evento. Na condição o carro usa o
+  melhor pneu que roda nela (`Carro.escolher_pneu`).
 - `restricoes` (todas opcionais, ver `data_model/elegibilidade.gd`): `potencia_max` (cv
   efetivos, já com peças), `tracao`, `categoria`, `fabricante` (listas), `ano_min`,
   `ano_max`, `licenca`, `carros` (lista de ids: copas de marca da referência, `Regulations`) e
   `corrida` (`true`: só versão de corrida, isto é, carro com a peça `corrida` ou carro
-  `corrida` de fábrica; `false`: só carro de rua sem o kit; `CarRestrictionFlags` 512/256).
+  `corrida` de fábrica; `false`: só carro de rua sem o kit; `CarRestrictionFlags` 512/256) e
+  `terra` (`true`: rali, só com o pneu de terra).
 - `largada_kmh`: largada lançada (`RollingStartSpeed` da referência); sem ela, largada parada.
 - `adversarios`: lista de `{carro, piloto, pecas?, pneus?, potencia_mult?}`; sem `pneus`,
   usa o de fábrica. `potencia_mult` e `pneus` são a preparação do rival na referência
@@ -172,6 +174,12 @@ Carro vendido ou que deixou de ser elegível cancela a fila.
 | `avenida_noturna` (Avenida das Luzes) | técnico, rua à noite (grupo 3; eventos de roma) | 2.101 m | avenida da largada e a reta do meio |
 | `estrada_das_araucarias` (Estrada das Araucárias) | montanha, grampos e descida longa (grupo 5; tahiti_t) | 2.327 m | largada e a reta antes da curva da neblina |
 | `mirante_da_costa` (Mirante da Costa) | montanha, estrada costeira (grupo 5; parma) | 2.600 m | largada e a reta da praia |
+| `trilha_do_canion` (Trilha do Cânion) | terra, rali (todos os eventos de rali) | 2.202 m | largada |
+
+`relevo` (só na pista de terra, só visual: `visual/relevo.gd`): `ondulacoes`
+`[[de_m, ate_m, amplitude_m, onda_m]]` e `rampas` `[[topo_m, altura_m, subida_m, descida_m]]`.
+Na boca da rampa o carro salta (balística com a velocidade da simulação); o tempo é o da
+simulação, que não vê o relevo.
 
 As versões curtas recebem os eventos das versões curtas da referência e usam o cenário da
 pista-mãe (`Corrida3D.TEMA_DE`).
@@ -250,7 +258,9 @@ godot --headless --path . --script res://tools/lista_carros_3d.gd
   `tools/importar_referencia.py`), com voltas, limites, prêmios, adversários (o carro do próprio
   referência) e carros-prêmio do disco. Resistência: as 7 provas da referência (30 a 99 voltas), prova
   única, sem pit stop nem desgaste de pneu. Copas de marca: 94 provas (ver `eventos.json`).
-  Fora: rali e terra e a licença S (sem pista no disco). Pista da referência vira a nossa pela função
+  Rali: os 27 eventos de terra da referência (1 rival, 1 volta ×2,5) vão para a Trilha do Cânion,
+  condição `terra`, exigem o pneu de terra (estágio 7: aderência 1,0 na terra, preço = mediana;
+  decisão do usuário 2026-10-22) e o rival corre com ele. Fora: a licença S (sem pista no disco). Pista da referência vira a nossa pela função
   (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
 - Licenças CLUB a PRO (B, A, IC, IB, IA da referência): restrição = mediana (B) ou mediana e quartis (as outras) dos
   limites dos eventos que abrem. Os tempos dos testes só dão a duração do treino

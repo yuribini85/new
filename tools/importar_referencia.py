@@ -63,8 +63,12 @@ Conversões (todas a partir de valores da referência; ver data/README.md):
                de 10 dias (dia = corridas disputadas)
   pneus        por estágio de TiresFront: o grip é o 1º byte do composto
                (TireCompound); aderência = grip do estágio ÷ o de fábrica
-               (mediana entre os nossos carros); preço = mediana. Sem terra.
-               A referência não tem chuva: chuva = seco.
+               (mediana entre os nossos carros); preço = mediana. A referência
+               não tem chuva: chuva = seco. Pneu de terra (estágio 7, decisão do
+               usuário 2026-10-22): só roda na terra, aderência 1,0 lá (todos
+               correm com ele) e preço = mediana do estágio.
+  rali         eventos de rali (flag rally): todos na Trilha do Cânion, condição
+               "terra", exigem o pneu de terra; o rival corre com ele.
   eventos      voltas, licença, limite de ps, tração, prêmios (×100 fora do
                Japão), carro-prêmio quando é um dos nossos carros. A pista do
                referência vira uma das nossas pela função (PISTAS abaixo).
@@ -187,8 +191,11 @@ NOMES_CATEGORIA = {
     "RacingModify": "Kit de corrida",
 }
 NOMES_PNEU = ["Pneu de fábrica", "Pneu esportivo", "Pneu de corrida duro", "Pneu de corrida médio",
-              "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu econômico"]
+              "Pneu de corrida macio", "Pneu de corrida supermacio", "Pneu econômico", "Pneu de terra"]
 ESTAGIO_TERRA = 7
+# Provas de rali: a nossa pista de terra e o nome da série (por licença).
+PISTA_TERRA = "trilha_do_canion"
+SERIE_RALI = "Rali do Cânion"
 CONSISTENCIA = 0.7
 
 # Frota (decisão 40): sem carros abertos (sem capota o piloto aparece, e nas
@@ -437,7 +444,7 @@ def main() -> int:
     for p in partes["TiresFront"]:
         est = int(n(p["Stage"]))
         base = fabrica_grip.get(p["CarId"], 0)
-        if p["CarId"] not in nosso or est == ESTAGIO_TERRA or base <= 0:
+        if p["CarId"] not in nosso or base <= 0:
             continue
         por_estagio.setdefault(est, []).append((grip_pneu(p) / base, n(p["Price"])))
     pneus = []
@@ -445,7 +452,7 @@ def main() -> int:
         ader = round(statistics.median(a for a, _ in por_estagio[est]), 3)
         pneus.append({"id": f"pneu_{est}", "nome": NOMES_PNEU[est] if est < len(NOMES_PNEU) else f"Pneu {est}",
                       "preco": 0 if est == 0 else preco_loja(statistics.median(pr for _, pr in por_estagio[est])),
-                      "aderencia": {"seco": ader, "chuva": ader}})
+                      "aderencia": {"terra": 1.0} if est == ESTAGIO_TERRA else {"seco": ader, "chuva": ader}})
 
     eventos, pilotos = importar_eventos(nosso, resumo, [c for c in carros if not c.get("chefe")],
                                         {p["id"] for p in pneus}, sem_corrida=frota is not None)
@@ -783,7 +790,12 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             lista_marca = list(dict.fromkeys(nosso[c] for c in codigos if c in nosso))
             if lista_marca:
                 serie = _nome_copa([nomes[c] for c in lista_marca])
-        if serie is None or r["rally"] not in ("", "0") or r["licenca"] not in [""] + LICENCAS_REF \
+        rali = r["rally"] not in ("", "0")
+        if rali and PISTA_TERRA in PISTAS_EXISTENTES and r["licenca"] in LICENCAS_REF:
+            serie = f"{SERIE_RALI} {NOMES_LICENCA[LICENCA_DA_REF[r['licenca']]]}"
+        elif rali:
+            continue
+        if serie is None or r["licenca"] not in [""] + LICENCAS_REF \
                 or int(n(r["voltas"])) > MAX_VOLTAS or (marca > 0 and not lista_marca):
             continue
         restr = {}
@@ -801,6 +813,8 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             restr["potencia_max"] = int(n(r["limite_ps"]))
         if r["tracao"]:
             restr["tracao"] = [r["tracao"]]
+        if rali:
+            restr["terra"] = True
         if r["evento"][:3] in RESISTENCIA:
             restr["licenca"] = "ELITE"
         elif r["licenca"]:
@@ -831,13 +845,15 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             if mult > 0 and abs(mult - 1.0) > 1e-6:
                 adv["potencia_mult"] = round(mult, 3)
             pt = int(n(ini.get("TiresFront")))
-            if pt < len(pneus_ref):
+            if rali:
+                adv["pneus"] = [f"pneu_{ESTAGIO_TERRA}"]
+            elif pt < len(pneus_ref):
                 est = int(n(pneus_ref[pt]["Stage"]))
                 if 0 < est != ESTAGIO_TERRA and f"pneu_{est}" in ids_pneus:
                     adv["pneus"] = [f"pneu_{est}"]
             adversarios.append(adv)
         premio_carros = [nosso[c] for c in r["carros_premio"].split() if c in nosso]
-        pista = PISTAS.get(r["pista"].lower(), PISTA_PADRAO)
+        pista = PISTA_TERRA if rali else PISTAS.get(r["pista"].lower(), PISTA_PADRAO)
         if lista_marca:
             # A referência sorteia a pista das copas de marca; aqui ela gira pelas nossas.
             pool = [p for p in POOL_MARCA if p in PISTAS_EXISTENTES] or [PISTA_PADRAO]
@@ -851,7 +867,7 @@ def importar_eventos(nosso: dict, resumo: dict, carros: list[dict], ids_pneus: s
             "id": f"ev_{k:03d}", "nome": serie if lista_marca or r["evento"][:3] in RESISTENCIA else f"{serie} — etapa {etapas[serie]}", "pista": pista,
             "voltas": VOLTAS_ABERTAS if not restr.get("licenca") and r["evento"][:3] not in RESISTENCIA
             else voltas_jogo(int(n(r["voltas"])) or 2, r["evento"][:3] in RESISTENCIA), **({"largada_kmh": largada} if largada > 0 else {}),
-            "condicao": "seco", "restricoes": restr, "adversarios": adversarios,
+            "condicao": "terra" if rali else "seco", "restricoes": restr, "adversarios": adversarios,
             "premios": [moeda(int(v) * 100) for v in r["premios_x100"].split() if int(v) > 0],
             "carro_premio": premio_carros[0] if premio_carros else None,
         })

@@ -131,7 +131,7 @@ func _tirar_pneus_dominados() -> void:
 	for id in pneus.keys():
 		var p: Dictionary = pneus[id]
 		var pior := ["seco", "chuva"].all(func(k): return float(p["aderencia"].get(k, 0.0)) < float(fabrica.get(k, 0.0)))
-		if int(p.get("preco", 0)) > 0 and pior and not usados.has(id):
+		if int(p.get("preco", 0)) > 0 and pior and not usados.has(id) and not p["aderencia"].has("terra"):
 			pneus.erase(id)
 
 
@@ -233,7 +233,7 @@ func _validar_referencias() -> void:
 		var onde := "eventos.json: '%s'" % ev["id"]
 		_exigir(onde + " pista", "pistas", ev.get("pista"))
 		_exigir(onde + " carro_premio", "carros", ev.get("carro_premio"))
-		if ev.get("condicao") != null and not ev["condicao"] in ["seco", "chuva"]:
+		if ev.get("condicao") != null and not ev["condicao"] in ["seco", "chuva", "terra"]:
 			_erros.append(onde + " condição inválida %s" % ev["condicao"])
 		_validar_restricoes(onde, ev.get("restricoes", {}))
 		for carro_id in ev.get("restricoes", {}).get("carros", []):

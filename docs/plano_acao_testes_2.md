@@ -38,7 +38,13 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     saída de curva) agora conta para saber quem é mais rápido (antes era ignorada).
   - Calibrado com a largada (60 corridas): tudo perfeito +0,52 (teto +0,5), bom +0,35, ruim
     −0,20, só a largada +0,08, só o vácuo +0,07.
-  - Falta da fase B: defesa e poupar/forçar (decisão 130: começar por vácuo e largada).
+  - Fase B, parte 2 (2026-10-22): **defesa** (com um rival colado atrás, ele sai para um lado;
+    deslizar o dedo para esse lado fecha a porta por 3 s: ninguém passa) e **FORÇAR / POUPAR
+    PNEUS** nas resistências (recomendação aceita: "pneu que cansa", sem sistema de desgaste:
+    forçar anda 1% mais até o fim da volta e cansa 1,5% nas duas seguintes; poupar anda 1% menos
+    e guarda o pneu, e o próximo forçar não cansa). Com as pistas novas da fase D a corrida
+    perfeita tinha subido para +0,72 posição; os bônus da freada e da saída foram recalibrados
+    e ela voltou a +0,55 (boa +0,10, ruim -0,23). Números na nota de `data/simulacao.json`.
 - **Fase C, primeira passada** (2026-10-22): arquétipos no gerador (`Carroceria.arquetipo`,
   `_arquetipo`), pela ficha do carro, sobre a forma medida:
   - muscle car (cupê americano até 1979, 23 carros): capô longo com tomada de ar, teto baixo
@@ -65,8 +71,15 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
   - Licenças recalibradas pelo fluxo (`tools/calibrar_licencas.gd`): só os tempos de ouro
     mudaram (~1,2 s mais lentos), porque a calibração anterior era de antes de mudanças da
     simulação; os testes de licença continuam nas mesmas pistas.
-  - Fica para depois: terra/rali (os eventos de terra da referência estão fora do jogo) e o oval
-    inclinado (o Oval do Planalto já faz o papel de retas longas).
+  - Fica para depois: o oval inclinado (o Oval do Planalto já faz o papel de retas longas).
+  - **Trilha do Cânion** (`trilha_do_canion`, 2,2 km, terra; pedido do usuário: "ondulações e
+    rampas fortes para dar adrenalina"): três trechos de costelas e quatro rampas de 1,8 a 2,6 m
+    com salto. O relevo é só da tela (`visual/relevo.gd`): o carro voa da boca da rampa com a
+    velocidade da simulação, cai com tranco e deixa sombra no chão.
+  - Rali: os 27 eventos de terra da referência (licenças National, International e Sport, 1
+    rival) correm nela. Exigem o **pneu de terra**, como na referência (aderência 1,0 na terra,
+    igual à do pneu de fábrica no asfalto, porque todos correm com ele; preço = mediana do
+    estágio da referência). Recomendação aceita pelo usuário.
 - **Fase E, em andamento** (2026-10-22; recomendações aceitas: "Pode seguir"):
   - Ajuda para quem trava (E5): cada prova guarda as derrotas seguidas; com 4 (o número do
     travado) numa prova não vencida, a faixa da freada boa fica 50% maior até a vitória, sem aviso.

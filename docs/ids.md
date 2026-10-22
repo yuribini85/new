@@ -165,6 +165,8 @@ Gerado por `tools/listar_ids.py` a partir de `data/` e do código. Não editar �
 | `CHAMPIONSHIP_TUTORIAL_DONE` | cena CW_C01 |
 | `CLUB_COMPLETE` | cena CW_R10 |
 | `COLLECTION_FIVE` | cena CW_R11 |
+| `DEFESA_DICA` | ui/aba_corrida.gd |
+| `DEFESA_DICA_SEMENTE` | ui/aba_corrida.gd |
 | `DEX_MET` | cena CW_AR02 |
 | `DRIVER_HIRE_UNLOCKED` | data_model/equipe_jogador.gd |
 | `ELITE_COMPLETE` | cena CW_T03 |

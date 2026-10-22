@@ -99,10 +99,13 @@ func adicionar_pneu(pneu: Dictionary) -> void:
 	pneus.append(pneu)
 
 
-## O composto possuído com maior aderência na condição. Vazio se não há pneu.
+## O composto possuído com maior aderência na condição. Vazio se não há pneu
+## que rode nela (o pneu de terra só roda na terra; os outros, fora dela).
 func escolher_pneu(condicao: String) -> Dictionary:
 	var melhor := {}
 	for p in pneus:
+		if not p["aderencia"].has(condicao):
+			continue
 		if melhor.is_empty() or p["aderencia"][condicao] > melhor["aderencia"][condicao]:
 			melhor = p
 	return melhor
@@ -125,9 +128,9 @@ func atributos_efetivos(condicao: String) -> Dictionary:
 				else:
 					attrs[efeito["atributo"]] *= float(efeito["valor"])
 	var pneu := escolher_pneu(condicao)
-	if pneu.is_empty():
+	if pneus.is_empty():
 		push_error("Carro %s sem pneu para correr" % id)
-	else:
+	elif not pneu.is_empty():  # sem pneu para a condição a prova recusa o carro (Elegibilidade)
 		attrs["aderencia"] *= float(pneu["aderencia"][condicao])
 	attrs["tracao"] = base["tracao"]
 	# Fração do peso no eixo dianteiro (dados do carro); a simulação usa o peso

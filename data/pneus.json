@@ -61,5 +61,13 @@
    "seco": 0.793,
    "chuva": 0.793
   }
+ },
+ {
+  "id": "pneu_7",
+  "nome": "Pneu de terra",
+  "preco": 1068,
+  "aderencia": {
+   "terra": 1.0
+  }
  }
 ]

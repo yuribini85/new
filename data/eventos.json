@@ -1368,6 +1368,692 @@
   "carro_premio": null
  },
  {
+  "id": "ev_029",
+  "nome": "Rali do Cânion International — etapa 1",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_cascalho",
+    "piloto": "ia_75",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_030",
+  "nome": "Rali do Cânion National — etapa 1",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "tomoe_eco",
+    "piloto": "ia_75",
+    "potencia_mult": 2.5,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   342
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_031",
+  "nome": "Rali do Cânion Sport — etapa 1",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_cunha",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_032",
+  "nome": "Rali do Cânion International — etapa 2",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_horizonte",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_033",
+  "nome": "Rali do Cânion National — etapa 2",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_acorde",
+    "piloto": "ia_75",
+    "potencia_mult": 2.16,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   342
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_034",
+  "nome": "Rali do Cânion Sport — etapa 2",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_estopim",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   },
+   {
+    "carro": "lindauer_laminar",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_035",
+  "nome": "Rali do Cânion International — etapa 3",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "saulieu_nacara",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_036",
+  "nome": "Rali do Cânion International — etapa 4",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_areia",
+    "piloto": "ia_75",
+    "potencia_mult": 1.63,
+    "pneus": [
+     "pneu_7"
+    ]
+   },
+   {
+    "carro": "hayase_silex",
+    "piloto": "ia_75",
+    "potencia_mult": 1.42,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_037",
+  "nome": "Rali do Cânion Sport — etapa 3",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "kosame_fio",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_038",
+  "nome": "Rali do Cânion International — etapa 5",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kosame_fio",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   1068
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_039",
+  "nome": "Rali do Cânion International — etapa 6",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_cavalo",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   1068
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_040",
+  "nome": "Rali do Cânion Sport — etapa 4",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_estopim",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_041",
+  "nome": "Rali do Cânion International — etapa 7",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "vallon_sarga",
+    "piloto": "ia_75",
+    "potencia_mult": 2.04,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_042",
+  "nome": "Rali do Cânion National — etapa 3",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "morel_jade",
+    "piloto": "ia_75",
+    "potencia_mult": 2.3,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   342
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_043",
+  "nome": "Rali do Cânion Sport — etapa 5",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_cascalho",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_044",
+  "nome": "Rali do Cânion International — etapa 8",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_espinho",
+    "piloto": "ia_75",
+    "potencia_mult": 1.55,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_045",
+  "nome": "Rali do Cânion National — etapa 4",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_vareta",
+    "piloto": "ia_75",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   342
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_046",
+  "nome": "Rali do Cânion Sport — etapa 6",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "whitlock_horizonte",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_047",
+  "nome": "Rali do Cânion International — etapa 9",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "castellani_espinho",
+    "piloto": "ia_75",
+    "potencia_mult": 1.55,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_048",
+  "nome": "Rali do Cânion National — etapa 5",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_acorde",
+    "piloto": "ia_75",
+    "potencia_mult": 1.08,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   342
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_049",
+  "nome": "Rali do Cânion Sport — etapa 7",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "hozuki_gaivota",
+    "piloto": "ia_75",
+    "potencia_mult": 1.25,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_050",
+  "nome": "Rali do Cânion International — etapa 10",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "kanaya_rasante",
+    "piloto": "ia_75",
+    "potencia_mult": 1.27,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_051",
+  "nome": "Rali do Cânion National — etapa 6",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "NATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hayase_vareta",
+    "piloto": "ia_75",
+    "potencia_mult": 1.29,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   342
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_052",
+  "nome": "Rali do Cânion Sport — etapa 8",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "lindauer_laminar",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_053",
+  "nome": "Rali do Cânion International — etapa 11",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "INTERNATIONAL"
+  },
+  "adversarios": [
+   {
+    "carro": "hoshino_vento",
+    "piloto": "ia_75",
+    "potencia_mult": 1.07,
+    "pneus": [
+     "pneu_7"
+    ]
+   },
+   {
+    "carro": "calderwood_nectar",
+    "piloto": "ia_75",
+    "potencia_mult": 1.2,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   427
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_054",
+  "nome": "Rali do Cânion Sport — etapa 9",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "mizuchi_brasa",
+    "piloto": "ia_75",
+    "potencia_mult": 1.43,
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
+  "id": "ev_055",
+  "nome": "Rali do Cânion Sport — etapa 10",
+  "pista": "trilha_do_canion",
+  "voltas": 3,
+  "condicao": "terra",
+  "restricoes": {
+   "terra": true,
+   "licenca": "SPORT"
+  },
+  "adversarios": [
+   {
+    "carro": "sanga_estopim",
+    "piloto": "ia_75",
+    "pneus": [
+     "pneu_7"
+    ]
+   }
+  ],
+  "premios": [
+   214
+  ],
+  "carro_premio": null
+ },
+ {
   "id": "ev_056",
   "nome": "Copa Garrison Aster",
   "pista": "estrada_das_araucarias",

@@ -4,16 +4,21 @@ extends SceneTree
 ## a posição média com cada jeito de pilotar (as ordens dadas na hora, como na
 ## tela: a corrida anda junto e cada toque vale a partir do instante dele):
 ##   base      sem toque (o piloto contratado dirige)
-##   perfeita  largada perfeita, toda freada perfeita, toda saída limpa e a
-##             passagem no vácuo sempre que puder
+##   perfeita  largada perfeita, toda freada perfeita, toda saída limpa, a
+##             passagem no vácuo e a porta fechada sempre que puder
 ##   beira     como a perfeita, mas tocando no começo da faixa verde (perfeita_s antes)
 ##   boa       largada boa, toda freada boa, toda saída limpa
 ##   ruim      largada queimada, toda freada tarde e toda saída solta no meio
 ##   largada   só a largada perfeita
 ##   ataque    só a passagem no vácuo
+##   defesa    só a porta fechada (deslize no lado certo sempre que puder)
+##   forcar    só o FORÇAR / POUPAR PNEUS (provas longas): no começo de cada
+##             volta, forçar com um rival a até ataque.distancia_m à frente, poupar
+##             sozinho (ninguém a 3× isso), senão nada
+##   forcou    forçar toda volta (sem poupar nunca)
 ##   peça      sem toque, com a peça mais barata que o carro aceita
 ## Uso: godot --headless --path . -s tools/calibrar_pilotagem.gd [-- sementes=10 cenario=carro_3d provas=5
-##        politicas=base,largada]
+##        politicas=base,largada voltas_min=30]
 
 var d: Node
 var j: Node
@@ -25,7 +30,7 @@ func _initialize() -> void:
 
 
 func _rodar() -> void:
-	var args := {"sementes": "10", "cenario": "carro_3d", "provas": "5"}
+	var args := {"sementes": "10", "cenario": "carro_3d", "provas": "5", "voltas_min": "0"}
 	for a in OS.get_cmdline_user_args():
 		var kv := a.split("=")
 		if kv.size() == 2:
@@ -41,6 +46,8 @@ func _rodar() -> void:
 	for ev in d.lista("eventos"):
 		if provas.size() >= int(args["provas"]):
 			break
+		if int(ev["voltas"]) < int(args["voltas_min"]):
+			continue
 		var teste: Dictionary = j.carreira.preparar(ev["id"], carro.uid, 1, false)
 		if teste.has("erro"):
 			continue
@@ -51,7 +58,7 @@ func _rodar() -> void:
 		if media >= 2.0 and media <= total - 1.0:
 			provas.append(ev["id"])
 	print("carro ", carro.id, " · peça de comparação ", com_peca[1], " · provas ", provas)
-	var politicas := ["base", "perfeita", "beira", "boa", "ruim", "largada", "ataque", "peca"]
+	var politicas := ["base", "perfeita", "beira", "boa", "ruim", "largada", "ataque", "defesa", "forcar", "forcou", "peca"]
 	if args.has("politicas"):
 		politicas = Array(String(args["politicas"]).split(","))
 		if not "base" in politicas:
@@ -59,7 +66,9 @@ func _rodar() -> void:
 	var soma := {}
 	var vit := {}
 	var toques := {}
+	var tempo := {}
 	for c in politicas:
+		tempo[c] = 0.0
 		soma[c] = 0.0
 		vit[c] = 0
 		toques[c] = 0
@@ -72,15 +81,17 @@ func _rodar() -> void:
 				soma[c] += r[0]
 				vit[c] += 1 if r[0] == 1 else 0
 				toques[c] += r[1]
+				tempo[c] += r[2]
 			n += 1
 	print("corridas ", n)
 	for c in politicas:
-		print("%-8s posição média %.3f  vitórias %5.1f%%  ganho sobre a base %+.3f  toques/corrida %.1f" % [c,
-				soma[c] / n, 100.0 * vit[c] / n, (soma["base"] - soma[c]) / n, float(toques[c]) / n])
+		print("%-8s posição média %.3f  vitórias %5.1f%%  ganho sobre a base %+.3f  toques/corrida %.1f  tempo %+.2f%%" % [c,
+				soma[c] / n, 100.0 * vit[c] / n, (soma["base"] - soma[c]) / n, float(toques[c]) / n,
+				100.0 * (tempo[c] - tempo["base"]) / maxf(tempo["base"], 1e-6)])
 	quit()
 
 
-## [posição final, toques] pilotando com a política, a corrida andando junto.
+## [posição final, toques, tempo de prova] pilotando com a política, a corrida andando junto.
 func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Array:
 	var piloto: Dictionary = EquipeJogador.piloto_do_jogador(d, j).duplicate(true)
 	piloto["ordens"] = []
@@ -88,7 +99,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var a: Simulacao.Andamento = prep["andamento"]
 	if politica == "base":
 		a.avancar(INF)
-		return [_posicao(a.resultado()), 0]
+		return [_posicao(a.resultado()), 0, _tempo(a.resultado())]
 	var ev: Dictionary = d.evento(ev_id)
 	var pista: Pista = d.pista(ev["pista"])
 	var comp := pista.comprimento
@@ -98,6 +109,12 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var s_antes := 0.0
 	var toques := 0
 	var ultimo_ataque := -INF
+	var ultima_defesa := -INF
+	var volta_antes := 0
+	var inicio_volta := 0.0
+	var volta_s := 0.0
+	var guardado := false
+	var forca := Pilotagem.pode_forcar(int(d.evento(ev_id)["voltas"]), p)
 	var saida_ate := -1.0
 	var soltar_em := -1.0
 	# Largada: perfeita, boa ou queimada (ruim); vale do apagar das luzes.
@@ -115,7 +132,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 		var s: float = est["jogador"][0]
 		var v: float = maxf(est["jogador"][1], 1.0)
 		for c in curvas:
-			var frear := not politica in ["ataque", "largada"] and Pilotagem.tem_frenagem(c, comp, p)
+			var frear := not politica in ["ataque", "largada", "defesa", "forcar", "forcou"] and Pilotagem.tem_frenagem(c, comp, p)
 			var ponto := float(c["frenagem"])
 			if politica == "beira":
 				ponto = fposmod(ponto - v * float(p["frenagem"]["perfeita_s"]), comp)
@@ -143,8 +160,42 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				a.ordenar("jogador", Pilotagem.ordem_ataque(a.tempo(), p))
 				ultimo_ataque = a.tempo()
 				toques += 1
+		var volta := floori(s / comp)
+		if volta != volta_antes and s > 0.0:
+			volta_s = a.tempo() - inicio_volta
+			inicio_volta = a.tempo()
+			volta_antes = volta
+			if forca and volta_s > 0.0 and politica in ["perfeita", "beira", "forcar", "forcou"]:
+				var perto := INF
+				var longe := INF
+				for id in est:
+					if id != "jogador":
+						var dist: float = est[id][0] - s
+						if dist > 0.0:
+							perto = minf(perto, dist)
+						longe = minf(longe, absf(dist))
+				var dist_ataque := float(p["ataque"]["distancia_m"])
+				if politica == "forcou" or perto <= dist_ataque:
+					for o in Pilotagem.ordens_forcar(a.tempo(), a.tempo() + volta_s, volta_s, guardado, p):
+						a.ordenar("jogador", o)
+					guardado = false
+					toques += 1
+				elif longe > 3.0 * dist_ataque and not guardado:
+					a.ordenar("jogador", Pilotagem.ordem_poupar(a.tempo(), a.tempo() + volta_s, p))
+					guardado = true
+					toques += 1
+		if politica in ["perfeita", "beira", "defesa"]:
+			var tras := INF
+			for id in est:
+				var dist: float = s - est[id][0]
+				if id != "jogador" and dist > 0.0:
+					tras = minf(tras, dist)
+			if Pilotagem.pode_defender(tras, a.tempo(), ultima_defesa, p):
+				a.ordenar("jogador", Pilotagem.ordem_defesa(a.tempo(), p))
+				ultima_defesa = a.tempo()
+				toques += 1
 		s_antes = s
-	return [_posicao(a.resultado()), toques]
+	return [_posicao(a.resultado()), toques, _tempo(a.resultado())]
 
 
 ## O carro passou pelo ponto `x` da volta entre s_antes e s (distâncias na corrida).
@@ -153,6 +204,10 @@ func _cruzou(s_antes: float, s: float, x: float, comp: float) -> bool:
 		return false
 	var k := floorf((s - x) / comp)
 	return x + k * comp > s_antes and x + k * comp <= s
+
+
+func _tempo(res: Dictionary) -> float:
+	return float(res["carros"]["jogador"].get("tempo_total", 0.0))
 
 
 func _posicao(res: Dictionary) -> int:

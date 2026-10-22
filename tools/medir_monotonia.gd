@@ -25,7 +25,7 @@ func _process(_d: float) -> bool:
 		var cid: String = base["id"]
 		var extras: Array = dados.lista("pecas").filter(func(p): return cid in p.get("carros_permitidos", []))
 		for pn in dados.lista("pneus"):
-			if pn["preco"] > 0 and pn["aderencia"]["seco"] > 1.0: extras.append(pn)
+			if pn["preco"] > 0 and float(pn["aderencia"].get("seco", 0.0)) > 1.0: extras.append(pn)
 		for ev in dados.lista("eventos"):
 			var pos := {}
 			for cfg in [null] + extras:

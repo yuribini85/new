@@ -76,6 +76,7 @@ var _tracado: Tracado
 var _relevo: Relevo
 var _voo := {}
 var _sombras_voo := {}
+var _puxar := {}  # id -> {lado, ate}: defesa, só visual
 var _tracao := {}  # id -> "FF", "FR", "MR", "4WD"
 var _giro_batida := {}  # id -> giro da batida que ainda resta (rad)
 var _em_contato := {}  # "a|b" -> true enquanto os dois se tocam
@@ -411,6 +412,7 @@ func limpar() -> void:
 	_s_anterior = {}
 	_voo = {}
 	_sombras_voo = {}
+	_puxar = {}
 	_tranco = {}
 	_pot_peso = {}
 	_jeito = {}
@@ -467,6 +469,12 @@ func atualizar(delta: float) -> void:
 				_off[id] = alvo[id]
 		elif not _saida.has(id) and delta > 0.0:
 			_saida[id] = _tempo
+	# Defesa: o rival de trás sai para um lado; com a porta fechada, o jogador vai junto.
+	for id in _puxar.keys():
+		if _tempo >= float(_puxar[id]["ate"]) or not _carros.has(id):
+			_puxar.erase(id)
+		else:
+			alvo[id] = -float(_puxar[id]["lado"]) * PUXAR_M - float(base[id])
 	var animar := delta > 0.0 and not Preferencias.reduzir_animacoes
 	var antes := _lateral.duplicate()
 	for id in _carros:
@@ -770,6 +778,13 @@ func _camera_grid(s: Dictionary, ordem: Array, delta: float) -> void:
 func destacar_jogador() -> void:
 	if not Preferencias.reduzir_animacoes:
 		_destaque_jogador = DESTAQUE_S
+
+
+## Defesa (Pilotagem): o carro `id` vai para o lado `lado` (-1 esquerda da
+## tela, 1 direita) por `dura_s` segundos; só a tela.
+const PUXAR_M := 2.6
+func puxar(id: String, lado: int, dura_s: float) -> void:
+	_puxar[id] = {"lado": lado, "ate": _tempo + dura_s}
 
 
 ## Momento de decisão: a escolha foi feita (soco da câmera e o anel no seu carro).

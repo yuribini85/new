@@ -37,3 +37,11 @@ const FUNCAO := {
 	"blindagem": "na arena aguenta mais pancada antes de quebrar; na corrida o peso a mais tira aceleração, freio e curva",
 }
 
+
+
+## Aderência do pneu como o jogador lê: o pneu de terra só roda na terra.
+static func aderencia_pneu(pn: Dictionary) -> String:
+	var ader: Dictionary = pn.get("aderencia", {})
+	if not ader.has("seco") and ader.has("terra"):
+		return "só para provas de terra"
+	return "ader. %d" % roundi(float(ader.get("seco", 1.0)) * 100.0)

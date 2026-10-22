@@ -54,6 +54,9 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **TOQUE QUANDO APAGAR** | a largada: tocar quando as três luzes do semáforo apagam |
 | **LARGADA PERFEITA / BOA LARGADA / QUEIMOU A LARGADA / LARGOU ATRASADO** | a nota do toque da largada |
 | **PASSOU NO VÁCUO / PERDEU O VÁCUO** | a nota do vácuo |
+| **DESLIZE PARA A ESQUERDA / DIREITA** | a defesa: com um rival colado atrás, ele sai para um lado; deslizar o dedo para esse lado fecha a porta (ele não passa por um tempo). Depois de usar, demora para voltar |
+| **PORTA FECHADA! / LADO ERRADO** | a nota da defesa |
+| **FORÇAR / POUPAR PNEUS** | botões das provas longas (resistência), uma vez por volta: FORÇAR anda mais até o fim da volta e o pneu cansa nas seguintes; POUPAR PNEUS anda menos e guarda o pneu, e o próximo FORÇAR não cansa. Na pista: FORÇANDO, POUPANDO PNEUS |
 | **treinador** | contratado na Equipe por 24 h, pago na hora (um prêmio de 1º lugar da sua maior licença): enquanto está lá, cada recorde de volta do piloto de corrida vale o dobro para subir de nível |
 | **caixa de pintura** | o prêmio das provas difíceis (primeira vitória da National para cima, ou vitória com o carro mais fraco do grid): abre na hora e libera um desenho, logo, aro, acabamento ou família de número da cabine; sem nada novo, vira giros. Nunca à venda |
 | **FREADA PERFEITA / BOA FREADA / FREOU CEDO / FREOU TARDE** | a nota do toque no FREIE |

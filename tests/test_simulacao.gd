@@ -254,6 +254,48 @@ func test_ordem_livre_passa_fora_da_zona() -> void:
 	d.free()
 
 
+## Defesa (Pilotagem): enquanto a porta fechada do carro da frente vale, o de
+## trás não passa, nem com a ordem livre.
+func test_porta_fechada_segura_o_de_tras() -> void:
+	var d := dados_fixture()
+	var a := _participante(d, "a", "fraco", "perfeito")
+	var b := _participante(d, "b", "fraco", "perfeito")
+	b["piloto"] = b["piloto"].duplicate()
+	b["piloto"]["ordens"] = [{"de": 0.0, "ate": 5.0, "acel": 1.3, "agressividade": 1.0, "livre": true}]
+	for defende in [false, true]:
+		var a2: Dictionary = a.duplicate(true)
+		a2["piloto"] = a["piloto"].duplicate()
+		a2["piloto"]["ordens"] = [{"de": 0.0, "ate": 6.0, "defesa": true}] if defende else []
+		var r := _correr(d, "sem_ultrapassagem", [a2, b], 2)
+		igual(r["classificacao"], ["a", "b"] if defende else ["b", "a"], "defesa=%s" % defende)
+	var p := {"defesa": {"distancia_m": 20.0, "recarga_s": 45.0, "janela_s": 1.5, "dura_s": 3.0}}
+	igual(Pilotagem.nota_defesa(1, 1, 0.5, p), Pilotagem.PORTA_FECHADA, "lado certo")
+	igual(Pilotagem.nota_defesa(-1, 1, 0.5, p), Pilotagem.LADO_ERRADO, "lado errado")
+	igual(Pilotagem.nota_defesa(1, 1, 2.0, p), "", "tarde demais")
+	verificar(Pilotagem.pode_defender(10.0, 50.0, 0.0, p) and not Pilotagem.pode_defender(10.0, 30.0, 0.0, p),
+			"recarga")
+	verificar(not Pilotagem.pode_defender(30.0, 50.0, 0.0, p), "longe demais")
+	igual(Pilotagem.lado_defesa(7, 12.3), Pilotagem.lado_defesa(7, 12.3), "o mesmo lado na mesma corrida")
+	d.free()
+
+
+## FORÇAR / POUPAR PNEUS (decisão do usuário 2026-10-22, "pneu que cansa"):
+## forçar anda mais até o fim da volta e cansa nas seguintes; com o pneu
+## guardado (poupou antes), não cansa.
+func test_forcar_cansa_o_pneu_e_poupar_guarda() -> void:
+	var p := {"forcar": {"minimo_voltas": 30, "voltas_cansado": 2,
+			"ritmo": {"forcar": 1.02, "poupar": 0.98, "cansado": 0.97}}}
+	verificar(Pilotagem.pode_forcar(30, p) and not Pilotagem.pode_forcar(29, p), "só nas provas longas")
+	verificar(not Pilotagem.pode_forcar(99, {}), "sem os dados, não aparece")
+	var cansa := Pilotagem.ordens_forcar(10.0, 70.0, 60.0, false, p)
+	igual(cansa.size(), 2, "forçar sem pneu guardado cansa")
+	perto(float(cansa[0]["ate"]), 70.0, 1e-6, "forçar até o fim da volta")
+	perto(float(cansa[1]["de"]), 70.0, 1e-6, "cansado depois")
+	perto(float(cansa[1]["ate"]), 190.0, 1e-6, "por duas voltas")
+	igual(Pilotagem.ordens_forcar(10.0, 70.0, 60.0, true, p).size(), 1, "com o pneu guardado, não cansa")
+	perto(float(Pilotagem.ordem_poupar(10.0, 70.0, p)["ritmo"]), 0.98, 1e-6, "poupar anda menos")
+
+
 ## Decisão 117: a ordem de um momento de decisão só mexe na corrida a partir de
 ## "de"; antes, as amostras são as mesmas; mais ritmo, menos tempo.
 func test_ordem_so_vale_depois_de_comecar() -> void:

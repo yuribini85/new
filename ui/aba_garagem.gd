@@ -725,7 +725,7 @@ func _cartao_roleta(c: Carro, it: Array, ir: Callable, i: int) -> Control:
 	else:
 		var ganho := ""
 		if cat == "pneus":
-			ganho = "ader. %d" % roundi(float(prox["aderencia"]["seco"]) * 100.0)
+			ganho = PecasTexto.aderencia_pneu(prox)
 		elif cat != "cambio":
 			var t := c.copiar()
 			t.instalar(prox)
@@ -1027,7 +1027,7 @@ func _janela_pneus(c: Carro, v: VBoxContainer) -> void:
 	var escolhido := _escolhido(c, "pneus")
 	for pn in dados.lista("pneus"):
 		var tem: bool = c.pneus.any(func(x): return x["id"] == pn["id"])
-		var texto := "%s   ader. %d" % [pn["nome"], roundi(pn["aderencia"]["seco"] * 100.0)] + ("   ✓" if tem else "")
+		var texto := "%s   %s" % [pn["nome"], PecasTexto.aderencia_pneu(pn)] + ("   ✓" if tem else "")
 		_item_evolucao(v, c, "pneus", String(pn["id"]), texto, "uso" if tem else "", pn["id"] == escolhido.get("id"))
 	_proibicoes(v, [])
 

@@ -11,6 +11,7 @@ extends RefCounted
 ##   carros        lista de ids de carro aceitos (copas de marca)
 ##   corrida       true: só versão de corrida (kit "corrida" ou carro de corrida
 ##                 de fábrica); false: só carro de rua, sem o kit
+##   terra         true: prova de rali, só com o pneu de terra
 
 const NOMES := {"tracao": "tração", "categoria": "categoria", "fabricante": "fabricante"}
 ## Valores como o jogador os lê (docs/vocabulario.md: sem sigla de tração).
@@ -21,7 +22,7 @@ const LEGIVEL := {
 		"utilitario": "utilitário", "pesado": "pesado"},
 }
 const RESTRICOES := ["potencia_max", "tracao", "categoria", "fabricante", "ano_min", "ano_max", "licenca", "carros",
-	"corrida"]
+	"corrida", "terra"]
 
 
 ## Motivos pelos quais o carro não pode entrar; vazio se pode.
@@ -48,6 +49,8 @@ static func motivos(carro: Carro, restricoes: Dictionary, licencas: Array) -> Ar
 		m.append("só os modelos da copa")
 	if restricoes.has("corrida") and versao_corrida(carro) != bool(restricoes["corrida"]):
 		m.append("só versão de corrida" if restricoes["corrida"] else "só carro de rua (sem kit de corrida)")
+	if restricoes.get("terra", false) and carro.escolher_pneu("terra").is_empty():
+		m.append("precisa de pneu de terra")
 	return m
 
 

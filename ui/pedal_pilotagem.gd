@@ -6,6 +6,8 @@ extends Control
 ## régua vira a barra da saída (SEGURE), que enche enquanto o dedo segura.
 ## Na largada, só o aviso (o semáforo é a marca); colado num rival, a barra do
 ## vácuo enche enquanto o dedo segura e fica verde quando é hora de soltar.
+## Com um rival colado atrás, a seta do lado dele e o tempo que resta para
+## deslizar o dedo (defesa).
 ## Só desenha; quem decide é a tela da corrida (Pilotagem).
 
 const LARGURA := 560.0
@@ -16,7 +18,7 @@ const COR_BOA := Color(0.36, 0.82, 0.47, 0.35)
 const COR_CURSOR := Color(1, 1, 1)
 const COR_SAIDA := Color("d6a23e")
 
-## "" (escondida), "frenagem", "saida", "largada" ou "vacuo".
+## "" (escondida), "frenagem", "saida", "largada", "vacuo" ou "defesa".
 var modo := ""
 ## Frenagem: segundos até o ponto de frenagem (negativo: já passou) e as
 ## tolerâncias, para desenhar a faixa.
@@ -27,6 +29,8 @@ var boa_s := 0.5
 ## Saída: 0..1 do tempo de saída já passado e se o dedo está segurando.
 var fracao := 0.0
 var segurando := false
+## Defesa: o lado do rival (-1 esquerda, 1 direita).
+var lado := 0
 var _rotulo: Label
 
 
@@ -86,6 +90,17 @@ func vacuo(fracao_: float, segurando_: bool) -> void:
 	queue_redraw()
 
 
+## lado_: -1 esquerda, 1 direita; passou: 0..1 do tempo para deslizar.
+func defesa(lado_: int, passou: float) -> void:
+	modo = "defesa"
+	lado = lado_
+	fracao = clampf(1.0 - passou, 0.0, 1.0)
+	_rotulo.text = "DESLIZE PARA A ESQUERDA" if lado < 0 else "DESLIZE PARA A DIREITA"
+	_rotulo.add_theme_color_override("font_color", COR_SAIDA)
+	visible = true
+	queue_redraw()
+
+
 func esconder() -> void:
 	modo = ""
 	visible = false
@@ -108,4 +123,13 @@ func _draw() -> void:
 		draw_rect(Rect2(r.position, Vector2(r.size.x * fracao, r.size.y)), COR_SAIDA if segurando else Color(1, 1, 1, 0.35))
 	elif modo == "vacuo":
 		draw_rect(Rect2(r.position, Vector2(r.size.x * fracao, r.size.y)), COR_ALVO if fracao >= 1.0 else COR_SAIDA)
+	elif modo == "defesa":
+		# O tempo que resta encolhe para o meio; a seta aponta o lado do rival.
+		var meio := r.position.x + r.size.x * 0.5
+		var w := r.size.x * 0.5 * fracao
+		draw_rect(Rect2(meio - w, r.position.y, 2.0 * w, r.size.y), Color(COR_SAIDA, 0.45))
+		var ponta := Vector2(r.position.x + 18.0 if lado < 0 else r.end.x - 18.0, r.get_center().y)
+		var tras := ponta.x + (34.0 if lado < 0 else -34.0)
+		draw_colored_polygon(PackedVector2Array([ponta, Vector2(tras, r.position.y + 4.0),
+				Vector2(tras, r.end.y - 4.0)]), COR_SAIDA)
 	draw_rect(r, Color(1, 1, 1, 0.5), false, 2.0)

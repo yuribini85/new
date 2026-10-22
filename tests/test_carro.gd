@@ -51,3 +51,19 @@ func test_forma_do_ganho_na_curva() -> void:
 	var alto := {"curva_rpm": antes["curva_rpm"], "curva_nm": PackedFloat64Array([100, 130, 140]), "corte": 7500.0}
 	var f := GraficoMotor.forma_do_ganho(antes, alto)
 	verificar(f.contains("rotação alta") and f.contains("rotação máxima sobe 500"), "turbo: giro alto e corte (%s)" % f)
+
+
+func test_pneu_de_terra_so_roda_na_terra_e_a_prova_de_rali_exige() -> void:
+	var d := dados_fixture()
+	var c := _carro(d, "fraco")
+	var terra := {"id": "pneu_terra", "nome": "Pneu de terra", "preco": 10, "aderencia": {"terra": 1.0}}
+	var rali := {"terra": true}
+	igual(Elegibilidade.motivos(c, rali, []), ["precisa de pneu de terra"], "sem pneu de terra")
+	verificar(c.escolher_pneu("terra").is_empty(), "o pneu de asfalto não roda na terra")
+	c.adicionar_pneu(terra)
+	igual(Elegibilidade.motivos(c, rali, []), [], "com pneu de terra")
+	igual(c.escolher_pneu("terra")["id"], "pneu_terra", "na terra")
+	verificar(c.escolher_pneu("seco")["id"] != "pneu_terra", "no asfalto fica o de asfalto")
+	perto(c.atributos_efetivos("terra")["aderencia"], c.atributos_efetivos("seco")["aderencia"]
+			/ float(c.escolher_pneu("seco")["aderencia"]["seco"]), 1e-6, "aderência 1,0 na terra")
+	d.free()

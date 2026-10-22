@@ -17,6 +17,14 @@ extends RefCounted
 ## - Vácuo: colado num rival, segurar enche a barra do vácuo; soltar com ela
 ##   cheia é a ultrapassagem (a ordem do ataque); segurar demais perde o vácuo.
 ##   Depois recarrega.
+## - Defesa: com um rival colado atrás, ele mostra para que lado vai sair;
+##   deslizar o dedo para esse lado fecha a porta (ele não passa por um tempo).
+##   Lado errado ou demorar não fecha. Depois recarrega.
+## - Forçar / poupar (provas longas, a partir de `forcar.minimo_voltas`): uma
+##   vez por volta. FORÇAR anda mais até o fim da volta, mas o pneu cansa nas
+##   `voltas_cansado` seguintes (anda menos); POUPAR PNEUS anda menos na volta e
+##   guarda o pneu: o próximo FORÇAR não cansa. (Decisão do usuário 2026-10-22:
+##   "pneu que cansa", sem sistema de desgaste.)
 
 const PERFEITA := "perfeita"
 const BOA := "boa"
@@ -30,12 +38,20 @@ const QUEIMOU := "queimou"
 const ATRASADA := "atrasada"
 const VACUO := "vacuo"
 const PERDEU_VACUO := "perdeu_vacuo"
+const PORTA_FECHADA := "porta_fechada"
+const LADO_ERRADO := "lado_errado"
+const FORCOU := "forcou"
+const POUPOU := "poupou"
 
 ## Texto de cada nota na tela (língua do jogador).
 const TEXTOS := {PERFEITA: "FREADA PERFEITA", BOA: "BOA FREADA", CEDO: "FREOU CEDO", TARDE: "FREOU TARDE",
 		LIMPA: "SAÍDA LIMPA", SOLTOU: "PERDEU TRAÇÃO", LARGADA_PERFEITA: "LARGADA PERFEITA",
 		LARGADA_BOA: "BOA LARGADA", QUEIMOU: "QUEIMOU A LARGADA", ATRASADA: "LARGOU ATRASADO",
-		VACUO: "PASSOU NO VÁCUO", PERDEU_VACUO: "PERDEU O VÁCUO"}
+		VACUO: "PASSOU NO VÁCUO", PERDEU_VACUO: "PERDEU O VÁCUO", PORTA_FECHADA: "PORTA FECHADA!",
+		LADO_ERRADO: "LADO ERRADO", FORCOU: "FORÇANDO", POUPOU: "POUPANDO PNEUS"}
+## Os botões das provas longas.
+const TEXTO_FORCAR := "FORÇAR"
+const TEXTO_POUPAR := "POUPAR PNEUS"
 
 
 static func params(dados: Node) -> Dictionary:
@@ -162,3 +178,52 @@ static func nota_vacuo(segurou_s: float, p: Dictionary) -> String:
 	if segurou_s < float(v["carga_s"]):
 		return ""
 	return VACUO if segurou_s <= float(v["carga_s"]) + float(v["janela_s"]) else PERDEU_VACUO
+
+
+## A defesa aparece: um rival a até `distancia_m` atrás e a última defesa já
+## recarregou.
+static func pode_defender(distancia_tras_m: float, t: float, ultima_defesa: float, p: Dictionary) -> bool:
+	var d: Dictionary = p.get("defesa", {})
+	return not d.is_empty() and distancia_tras_m <= float(d["distancia_m"]) \
+			and t - ultima_defesa >= float(d["recarga_s"])
+
+
+## O lado (-1 esquerda, 1 direita) para onde o rival de trás sai, sorteado pela
+## semente e pelo instante: a mesma corrida mostra sempre o mesmo lado.
+static func lado_defesa(semente: int, t: float) -> int:
+	return -1 if hash("defesa:%d:%d" % [semente, roundi(t * 10.0)]) % 2 == 0 else 1
+
+
+## Nota do deslize: no lado do rival, dentro de `janela_s` (s de tela), fecha a
+## porta; do outro lado, lado errado. "" depois da janela (não conta).
+static func nota_defesa(lado_dedo: int, lado_rival: int, demorou_s: float, p: Dictionary) -> String:
+	if demorou_s > float(p["defesa"]["janela_s"]):
+		return ""
+	return PORTA_FECHADA if lado_dedo == lado_rival else LADO_ERRADO
+
+
+## A ordem da porta fechada: enquanto vale, o carro de trás não passa.
+static func ordem_defesa(t: float, p: Dictionary) -> Dictionary:
+	return {"de": t, "ate": t + float(p["defesa"]["dura_s"]), "defesa": true, "origem": "defesa"}
+
+
+## A prova tem FORÇAR / POUPAR PNEUS (voltas suficientes).
+static func pode_forcar(voltas: int, p: Dictionary) -> bool:
+	return p.has("forcar") and voltas >= int(p["forcar"]["minimo_voltas"])
+
+
+## As ordens do FORÇAR de `t` até o fim da volta (`fim_volta`, s da corrida) e,
+## sem pneu guardado, o pneu cansado nas `voltas_cansado` seguintes (cada uma
+## com `volta_s` de duração).
+static func ordens_forcar(t: float, fim_volta: float, volta_s: float, guardado: bool, p: Dictionary) -> Array:
+	var f: Dictionary = p["forcar"]
+	var r := [{"de": t, "ate": fim_volta, "ritmo": float(f["ritmo"]["forcar"]), "origem": "forcar"}]
+	if not guardado:
+		r.append({"de": fim_volta, "ate": fim_volta + volta_s * float(f["voltas_cansado"]),
+				"ritmo": float(f["ritmo"]["cansado"]), "origem": "cansado"})
+	return r
+
+
+## A ordem do POUPAR PNEUS: anda menos de `t` até o fim da volta.
+static func ordem_poupar(t: float, fim_volta: float, p: Dictionary) -> Dictionary:
+	return {"de": t, "ate": fim_volta, "ritmo": float(p["forcar"]["ritmo"]["poupar"]), "origem": "poupar"}

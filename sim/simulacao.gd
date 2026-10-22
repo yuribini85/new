@@ -249,6 +249,7 @@ class Andamento:
 					j -= 1
 
 			var frente := -1
+			var frente_defende := false
 			var terminaram := false
 			for idx in ativos:
 				var s_antes := s_arr[idx]
@@ -293,6 +294,9 @@ class Andamento:
 					if zona < 0 and not ordem.is_empty() and ordem[3] > 0.0:
 						zona = ZONA_LIVRE
 					var passa := Simulacao._pode_passar(carros[idx], zona, volta, mais_rapido, rng)
+					# O da frente fechou a porta (defesa): ninguém passa enquanto vale.
+					if frente_defende:
+						passa = false
 					carros[idx]["agressividade"] = agr
 					if not passa:
 						s_novo = maxf(s_antes, s_arr[frente] - dmin)
@@ -304,6 +308,7 @@ class Andamento:
 					Simulacao._registrar_passagem(carros[idx], s_antes, s_novo, t, dt, comprimento, voltas)
 					terminaram = terminaram or carros[idx]["terminou"]
 				frente = idx
+				frente_defende = not ordem.is_empty() and ordem[4] > 0.0
 			if terminaram:
 				ativos = ativos.filter(func(k): return not carros[k]["terminou"])
 			t += dt
@@ -447,16 +452,17 @@ static func _envelope(raios: PackedFloat64Array, passo: float, mu: float, freio:
 
 
 ## Ordem do piloto (dicionário) no formato do laço: [de, ate, ritmo,
-## agressividade, acel, livre]. livre = 1: enquanto vale, o carro pode passar
+## agressividade, acel, livre, defesa]. livre = 1: enquanto vale, o carro pode passar
 ## fora das zonas de ultrapassagem (a largada sai em fila, antes da primeira).
+## defesa = 1: enquanto vale, o carro de trás não passa (porta fechada).
 static func _ordem_interna(o: Dictionary) -> Array:
 	return [float(o["de"]), float(o["ate"]), float(o.get("ritmo", 1.0)), float(o.get("agressividade", -1.0)),
-			float(o.get("acel", 1.0)), 1.0 if o.get("livre", false) else 0.0]
+			float(o.get("acel", 1.0)), 1.0 if o.get("livre", false) else 0.0, 1.0 if o.get("defesa", false) else 0.0]
 
 
 ## Efeito das ordens do carro `idx` valendo no instante t: [ritmo, agressividade,
-## acel, livre] (sobrepostas somam: ritmos e acel multiplicam, vale a maior
-## agressividade; livre se alguma for), ou [] sem nenhuma. As ordens estão por "de" e o tempo só
+## acel, livre, defesa] (sobrepostas somam: ritmos e acel multiplicam, vale a maior
+## agressividade; livre e defesa se alguma for), ou [] sem nenhuma. As ordens estão por "de" e o tempo só
 ## anda: o cursor pula as que já acabaram.
 static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t: float) -> Array:
 	var k := cursor[idx]
@@ -467,6 +473,7 @@ static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t:
 	var agr := -1.0
 	var acel := 1.0
 	var livre := 0.0
+	var defesa := 0.0
 	var alguma := false
 	for j in range(k, ordens.size()):
 		var o: Array = ordens[j]
@@ -478,7 +485,8 @@ static func _efeito_ordens(ordens: Array, cursor: PackedInt32Array, idx: int, t:
 			agr = maxf(agr, o[3])
 			acel *= o[4]
 			livre = maxf(livre, o[5] if o.size() > 5 else 0.0)
-	return [ritmo, agr, acel, livre] if alguma else []
+			defesa = maxf(defesa, o[6] if o.size() > 6 else 0.0)
+	return [ritmo, agr, acel, livre, defesa] if alguma else []
 
 
 ## Na entrada de cada zona, uma vez por volta, a agressividade decide se o
