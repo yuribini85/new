@@ -48,6 +48,8 @@ static func serializar(jogador: Node) -> Dictionary:
 		"identidade": jogador.identidade,
 		"grid": jogador.grid,
 		"historico": jogador.historico,
+		"caixa": jogador.caixa,
+		"recordes_volta": jogador.recordes_volta,
 		"dias": jogador.dias,
 		"fila": jogador.fila,
 		"ultimo_processamento": jogador.ultimo_processamento,
@@ -198,6 +200,12 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 				"melhor_tempo": float(h.get("melhor_tempo", 0.0)), "ultima_pos": int(h.get("ultima_pos", 0)),
 				"ultimo_tempo": float(h.get("ultimo_tempo", 0.0)), "derrotas": int(h.get("derrotas", 0)),
 			}
+	# Opcionais (decisão 130): saves anteriores às caixas e aos recordes de volta.
+	jogador.caixa = Array(s.get("caixa", [])).map(func(x): return String(x)) if s.get("caixa") is Array else []
+	jogador.recordes_volta = {}
+	if s.get("recordes_volta") is Dictionary:
+		for k in s["recordes_volta"]:
+			jogador.recordes_volta[String(k)] = float(s["recordes_volta"][k])
 	# Opcional: saves anteriores aos campeonatos (decisão 35) carregam sem eles.
 	jogador.campeonatos = {}
 	if s.get("campeonatos") is Dictionary:

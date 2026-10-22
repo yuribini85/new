@@ -401,6 +401,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 
 	var carro_premio_uid := -1
 	var grid := {}
+	var caixa := {}
 	if posicao == 1:
 		jogador.derrotas_seguidas = 0
 	elif not jogador.vitorias.has(evento_id):
@@ -411,6 +412,9 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 			grid = TheGrid.registrar(dados, jogador, [String(ev["grid_equipe"])])
 		var primeira: bool = not jogador.vitorias.has(evento_id)
 		jogador.vitorias[evento_id] = jogador.vitorias.get(evento_id, 0) + 1
+		# Caixa de pintura (decisão 130, E4): abre na hora.
+		if CaixaPintura.ganha(dados, jogador, ev, jogador.garagem.carro(int(corrida.get("uid", -1))), primeira):
+			caixa = CaixaPintura.abrir(dados, jogador, ev, int(corrida.get("semente", jogador.dias)))
 		if primeira and ev.get("carro_premio") != null:
 			var premiado := Carro.new(dados.carro(ev["carro_premio"]))
 			premiado.adicionar_pneu(dados.pneu(dados.economia()["pneu_de_fabrica"]))
@@ -440,6 +444,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"resultado": r,
 		"campeonato": campeonato,
 		"grid": grid,
+		"caixa": caixa,
 	}
 
 

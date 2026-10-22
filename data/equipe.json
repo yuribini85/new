@@ -47,5 +47,23 @@
   "fator_cor": null,
   "fator_faixas": null
  },
+ "caixas": {
+  "_nota": "Decisão 130 (E4, recomendação aceita pelo usuário, 2026-10-22): caixa de pintura na primeira vitória de cada prova de licenca_minima para cima e em qualquer vitória com o carro mais fraco do grid (menor potência por peso). Abre na hora: um item da cabine ainda trancado (desenhos e logos que o Grid ainda não liberou e os exclusivos de caixa abaixo); sem nada a liberar, um prêmio de 1º lugar da licença em giros. Só cosmético, nunca à venda.",
+  "licenca_minima": "NATIONAL",
+  "exclusivos": {
+   "rodas": [
+    "turbina",
+    "estrela",
+    "dez"
+   ],
+   "acabamentos": [
+    "metalico"
+   ],
+   "fontes": [
+    "pincel",
+    "serifa"
+   ]
+  }
+ },
  "_nota_patrocinio_teto": "Decisão 85 (usuário): com o app fechado o patrocínio rende até teto_offline_h_base horas na primeira licença e mais teto_offline_h_por_licenca hora a cada licença conquistada depois (o teto das corridas, carreira.teto_offline_s, não vale para ele). Na campanha do dono o patrocínio abre depois da primeira corrida com a licença Club (flag PATROCINIO_LIBERADO); caixa e sede seguem na International."
 }

@@ -24,5 +24,19 @@
   "teto": {
    "b": 1.1
   }
+ },
+ "caixas": {
+  "licenca_minima": "b",
+  "exclusivos": {
+   "rodas": [
+    "turbina"
+   ],
+   "acabamentos": [
+    "metalico"
+   ],
+   "fontes": [
+    "serifa"
+   ]
+  }
  }
 }

@@ -67,6 +67,16 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
     simulação; os testes de licença continuam nas mesmas pistas.
   - Fica para depois: terra/rali (os eventos de terra da referência estão fora do jogo) e o oval
     inclinado (o Oval do Planalto já faz o papel de retas longas).
+- **Fase E, em andamento** (2026-10-22; recomendações aceitas: "Pode seguir"):
+  - Ajuda para quem trava (E5): cada prova guarda as derrotas seguidas; com 4 (o número do
+    travado) numa prova não vencida, a faixa da freada boa fica 50% maior até a vitória, sem aviso.
+  - Caixa de pintura (E4, `CaixaPintura`): na primeira vitória de cada prova da National para
+    cima e em qualquer vitória com o carro mais fraco do grid (menor potência por peso, com
+    peças). Abre na hora e libera um item trancado da cabine: os desenhos e logos que o Grid
+    ainda não liberou e os exclusivos de caixa (aros turbina, estrela e dez; acabamento
+    metálico; números pintado à mão e serifado). Sem nada a liberar, um prêmio de 1º lugar
+    da licença em giros. Aparece como selo na janela do resultado; configuração em
+    `data/equipe.json` → caixas.
 
 ## Ordem recomendada
 

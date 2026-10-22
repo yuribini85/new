@@ -557,3 +557,36 @@ func test_meta_do_dia() -> void:
 	igual(MetaDia.progresso(d, j, String(amanha["tarefas"][0]), agora + 86400.0)[0], 0, "dia novo: contagem zerada")
 	j.free()
 	d.free()
+
+
+## Decisão 130 (E4): caixa de pintura na primeira vitória de prova da licença
+## mínima ou com o carro mais fraco do grid; abre na hora um item trancado e,
+## sem nada a liberar, vira giros. Fixture: licença mínima "b", exclusivos
+## turbina, metálico e serifa.
+func test_caixa_de_pintura() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	var fraco := Carro.new(d.carro("fraco"))
+	var forte := Carro.new(d.carro("forte"))
+	forte.instalar(d.peca("turbo"))  # o mesmo carro do rival da "licenciado"
+	verificar(CaixaPintura.ganha(d, j, d.evento("licenciado"), forte, true), "primeira vitória na licença: caixa")
+	verificar(not CaixaPintura.ganha(d, j, d.evento("licenciado"), forte, false), "repetida, com carro forte: nada")
+	verificar(not CaixaPintura.ganha(d, j, d.evento("aberto"), fraco, true), "prova aberta com o mesmo carro do rival: nada")
+	var aberto_forte: Dictionary = d.evento("serie_1")
+	verificar(not CaixaPintura.ganha(d, j, aberto_forte, forte, true), "carro mais forte que o rival: nada")
+	verificar(CaixaPintura.ganha(d, j, d.evento("licenciado"), Carro.new(d.carro("fraco")), false),
+			"repetida, mas com o carro mais fraco do grid: caixa")
+	verificar(not CaixaPintura.liberado(d, j, "rodas", "turbina"), "aro exclusivo trancado")
+	verificar(CaixaPintura.liberado(d, j, "rodas", "cinco"), "aro comum livre")
+	var n := CaixaPintura.trancados(d, j).size()
+	var item := CaixaPintura.abrir(d, j, d.evento("licenciado"), 7)
+	verificar(item.has("id") and CaixaPintura.liberado(d, j, String(item["tipo"]), String(item["id"])), "o item sai liberado")
+	igual(CaixaPintura.trancados(d, j).size(), n - 1, "um a menos para sair")
+	for k in n:
+		CaixaPintura.abrir(d, j, d.evento("licenciado"), k)
+	var antes: int = j.economia.saldo
+	var giros := CaixaPintura.abrir(d, j, d.evento("licenciado"), 1)
+	verificar(giros.has("giros") and int(giros["giros"]) > 0 and j.economia.saldo == antes + int(giros["giros"]),
+			"nada mais a liberar: um prêmio de 1º da licença em giros")
+	j.free()
+	d.free()

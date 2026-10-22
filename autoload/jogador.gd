@@ -58,6 +58,11 @@ var ultima_loja: String = ""
 ## evento_id -> {corridas, melhor_pos, melhor_tempo, ultima_pos, ultimo_tempo}:
 ## evolução e recorde pessoal por prova.
 var historico: Dictionary = {}
+## Itens da cabine liberados pelas caixas de pintura ("tipo:id", CaixaPintura).
+var caixa: Array = []
+## Recorde pessoal de volta por carro e pista ("carro|pista" -> s): a evolução
+## do piloto (decisão 130, E6).
+var recordes_volta: Dictionary = {}
 ## Corridas disputadas; cada uma conta um dia.
 var dias: int = 0
 ## Fila de repetições (ver data_model/fila.gd).
@@ -113,6 +118,8 @@ func novo_jogo(regras: Dictionary, pneu_por_id: Callable) -> void:
 	ampliacoes_garagem = 0
 	contador_sementes = 0
 	vitorias = {}
+	caixa = []
+	recordes_volta = {}
 	campeonatos = {}
 	titulos = {}
 	treinos = {}

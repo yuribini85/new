@@ -642,6 +642,7 @@ func test_largada_pelo_semaforo() -> void:
 			"largada": {"perfeita_s": 0.35, "boa_s": 0.6, "janela_s": 1.5, "espera_s": [0.5, 0.5], "dura_s": 3.0,
 				"agressividade": 1.0, "acel": {"largada_perfeita": 1.1, "largada_boa": 1.0, "queimou": 0.9, "atrasada": 0.95}},
 			"vacuo": {"carga_s": 1.2, "janela_s": 0.8}}
+	d.simulacao()["pilotagem"] = pil  # a tela lê os parâmetros por prova (Pilotagem.para_prova)
 	a.size = Vector2(720, 1100)
 	_raiz().add_child(a)
 	a._pil = pil

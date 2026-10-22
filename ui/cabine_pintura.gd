@@ -487,12 +487,12 @@ func _aba_grafismos() -> void:
 	g.add_theme_constant_override("h_separation", 10)
 	g.add_theme_constant_override("v_separation", 10)
 	_conteudo.add_child(g)
-	var n_lib := PinturaCarro.liberados(_dados, _jogador, "padroes", PinturaCarro.PADROES.size())
 	for k in PinturaCarro.PADROES.size():
 		var pd: Array = PinturaCarro.PADROES[k]
 		var id := String(pd[0])
-		# Decisão 74: o desenho trancado mostra a posição do Grid que o libera.
-		var trancado: bool = k >= n_lib and id != _estado["padrao"]
+		# Decisão 74: o desenho trancado mostra a posição do Grid que o libera
+		# (ou sai antes numa caixa de pintura, decisão 130).
+		var trancado: bool = not CaixaPintura.liberado(_dados, _jogador, "padroes", id) and id != _estado["padrao"]
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -508,7 +508,7 @@ func _aba_grafismos() -> void:
 		if trancado:
 			b.disabled = true
 			b.modulate = Color(1, 1, 1, 0.45)
-			b.tooltip_text = "Libera na #%d do Grid" % PinturaCarro.posicao_que_libera(_dados, "padroes", k)
+			b.tooltip_text = "Libera na #%d do Grid ou numa caixa de pintura" % PinturaCarro.posicao_que_libera(_dados, "padroes", k)
 		else:
 			b.pressed.connect(func(): _definir("padrao", id))
 		g.add_child(b)
@@ -568,18 +568,17 @@ func _aba_identificacao() -> void:
 			_definir("equipe_nome", nome.text.strip_edges()))
 	_conteudo.add_child(nome)
 	if PinturaCarro.liberados(_dados, _jogador, "logos", IdentidadeEquipe.opcoes().size()) < IdentidadeEquipe.opcoes().size():
-		_nota("Cada equipe vencida no Grid libera um logo novo e um desenho novo.")
+		_nota("Cada equipe vencida no Grid libera um logo novo e um desenho novo. As caixas de pintura das provas difíceis liberam antes.")
 	var g := GridContainer.new()
 	g.columns = COLUNAS_LOGOS
 	g.add_theme_constant_override("h_separation", 8)
 	g.add_theme_constant_override("v_separation", 8)
 	_conteudo.add_child(g)
 	var logos: Array = IdentidadeEquipe.opcoes()
-	var n_logos := PinturaCarro.liberados(_dados, _jogador, "logos", logos.size())
 	for k in logos.size():
 		var o: Dictionary = logos[k]
 		var id := String(o["id"])
-		var logo_trancado: bool = k >= n_logos and id != _estado["equipe_logo"]
+		var logo_trancado: bool = not CaixaPintura.liberado(_dados, _jogador, "logos", id) and id != _estado["equipe_logo"]
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.tooltip_text = String(o["nome"])
@@ -600,7 +599,7 @@ func _aba_identificacao() -> void:
 		if logo_trancado:
 			b.disabled = true
 			b.modulate = Color(0.35, 0.35, 0.38, 0.6)
-			b.tooltip_text = "Libera na #%d do Grid" % PinturaCarro.posicao_que_libera(_dados, "logos", k)
+			b.tooltip_text = "Libera na #%d do Grid ou numa caixa de pintura" % PinturaCarro.posicao_que_libera(_dados, "logos", k)
 		else:
 			b.pressed.connect(func(): _definir("equipe_logo", id))
 		g.add_child(b)
@@ -641,9 +640,14 @@ func _aba_identificacao() -> void:
 		_nota("O carro está sem número. Toque no botão de novo para pôr um.")
 		return
 	_titulo("Família")
-	var fontes := PinturaCarro.FONTES
+	# As famílias exclusivas de caixa (decisão 130) só aparecem depois de sair numa.
+	var atual := String(_estado["fonte_numero"])
+	var fontes := PinturaCarro.FONTES.filter(func(f): return String(f[0]) == atual or CaixaPintura.liberado(_dados, _jogador, "fontes", String(f[0])))
 	_escolhas(fontes.slice(0, 3), _estado["fonte_numero"], func(v): _definir("fonte_numero", v), 56, 20)
-	_escolhas(fontes.slice(3), _estado["fonte_numero"], func(v): _definir("fonte_numero", v), 56, 20)
+	if fontes.size() > 3:
+		_escolhas(fontes.slice(3), _estado["fonte_numero"], func(v): _definir("fonte_numero", v), 56, 20)
+	if fontes.size() < PinturaCarro.FONTES.size():
+		_nota("Outras famílias saem nas caixas de pintura.")
 	_titulo("Tamanho e suporte")
 	_escolhas(PinturaCarro.ESCALAS, float(_estado["escala_numero"]), func(v): _definir("escala_numero", v))
 	_escolhas([[false, "Sem suporte"], [true, "Com círculo"]], bool(_estado["suporte_numero"]),
@@ -678,11 +682,16 @@ func _aba_acabamento() -> void:
 		b.focus_mode = Control.FOCUS_NONE
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var texto := "%s   ·   %s" % [par[1], TEXTOS[id]]
+		var preso: bool = not CaixaPintura.liberado(_dados, _jogador, "acabamentos", id) and id != _estado["acabamento"]
+		if preso:
+			texto = "%s   ·   sai numa caixa de pintura" % par[1]
 		if id == _estado["acabamento"]:
 			Tipografia.acao_primaria(b, texto, Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, Tipografia.ALTURA_SECUNDARIA)
 		else:
 			Tipografia.acao_neutra(b, texto, 22, 70)
-		b.pressed.connect(func(): _definir("acabamento", id))
+		b.disabled = preso
+		if not preso:
+			b.pressed.connect(func(): _definir("acabamento", id))
 		_conteudo.add_child(b)
 	_titulo("Desgaste")
 	_nota("Camada à parte, por cima da pintura: tirar volta à cor limpa.")
@@ -703,13 +712,16 @@ func _aba_rodas() -> void:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var preso: bool = not CaixaPintura.liberado(_dados, _jogador, "rodas", id) and id != _estado["roda"]
 		if id == _estado["roda"]:
 			Tipografia.acao_primaria(b, Rodas.nome(id), Aba.COR_DESTAQUE, Color(0.1, 0.1, 0.1), 22, ALTURA_RODA)
 		else:
-			Tipografia.acao_neutra(b, Rodas.nome(id), 22, ALTURA_RODA)
+			Tipografia.acao_neutra(b, "CAIXA DE PINTURA" if preso else Rodas.nome(id), 22, ALTURA_RODA)
 		Tipografia.area_toque(b, ALTURA_RODA)
+		b.disabled = preso
 		var d: String = id
-		b.pressed.connect(func(): _definir("roda", d))
+		if not preso:
+			b.pressed.connect(func(): _definir("roda", d))
 		g.add_child(b)
 
 
