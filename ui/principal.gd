@@ -1378,6 +1378,11 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 				marcos.append(["+1 H DE RENDA OFFLINE", Aba.COR_BOM])
 		if c.get("recorde_volta", false):
 			marcos.append(["NOVO RECORDE PESSOAL DE VOLTA", Aba.COR_BOM])
+		# Pilotagem da corrida assistida (decisão 131 C4).
+		var pil: Dictionary = _todas[4].resumo_pilotagem(String(c["evento_id"]))
+		if not pil.is_empty():
+			marcos.append(["%d %s · MAIOR SEQUÊNCIA ×%d" % [pil["perfeitas"],
+					"PERFEITA" if int(pil["perfeitas"]) == 1 else "PERFEITAS", pil["maior_sequencia"]], Color.WHITE])
 		if not marcos.is_empty():
 			g.selos(marcos, v)
 		# Caixa de pintura (decisão 130): abre na hora, com o que saiu embaixo.

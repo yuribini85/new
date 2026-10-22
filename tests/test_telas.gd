@@ -652,6 +652,10 @@ func test_largada_pelo_semaforo() -> void:
 	j.fila_ctrl.avancar_preparo(INF)
 	for k in 4:
 		a._process(0.0)
+	verificar(a._gestos != null and a.segurar_largada and a._contagem < 0.0,
+			"primeira corrida pilotada: COMO PILOTAR com o grid parado")
+	a._gestos.fechar()
+	verificar(j.flags.has(a.FLAG_GESTOS), "visto: não abre de novo sozinho")
 	perto(a._contagem, a.CONTAGEM_S + 0.5, 1e-6, "3-2-1 mais a espera com as luzes acesas")
 	perto(a._painel_hud.contagem, a.CONTAGEM_S, 1e-6, "o semáforo não mostra a espera")
 	a._process(1.0)
@@ -695,6 +699,7 @@ func test_segurar_na_curva_freia_e_solta_na_saida() -> void:
 	a.size = Vector2(720, 1100)
 	_raiz().add_child(a)
 	a._pil = pil
+	j.flags[a.FLAG_GESTOS] = 1  # o COMO PILOTAR já visto (test_largada_pelo_semaforo)
 	j.fila_ctrl.iniciar("aberto", uid, 1, Aceleracao.agora(j) - 0.2)
 	a.atualizar()
 	a._process(0.0)
@@ -732,6 +737,11 @@ func test_segurar_na_curva_freia_e_solta_na_saida() -> void:
 	igual(ordens.map(func(o): return o["origem"]), ["frenagem", "saida"], "freada e saída na fila")
 	perto(float(ordens[0]["ritmo"]), 1.01, 1e-6, "freada na hora: perfeita")
 	perto(float(ordens[1]["acel"]), 1.02, 1e-6, "soltou na saída: limpa")
+	igual(a.resumo_pilotagem("aberto"), {"perfeitas": 1, "maior_sequencia": 2}, "freada perfeita e saída limpa: sequência 2")
+	igual(a.resumo_pilotagem("outra"), {}, "outra prova: sem resumo")
+	a._nota(Pilotagem.TARDE)
+	igual(a._seq, 0, "errou: a sequência zera")
+	igual(a.resumo_pilotagem("aberto")["maior_sequencia"], 2, "a maior fica")
 	a.free()
 	j.free()
 	d.free()

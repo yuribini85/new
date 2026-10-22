@@ -57,11 +57,13 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **FECHE A PORTA** | a defesa: com um rival colado atrás, ele sai para um lado (a seta); deslizar o dedo para esse lado fecha a porta (ele não passa por um tempo). Depois de usar, demora para voltar |
 | **PORTA FECHADA! / LADO ERRADO** | a nota da defesa |
 | **PNEU: NORMAL / ATAQUE / POUPAR** | o botão das provas longas (resistência), embaixo do •••; tocar troca o modo, que vale a partir da próxima volta. ATAQUE anda mais e gasta um pneu guardado (sem nenhum, o pneu cansa nas voltas seguintes); POUPAR anda menos e guarda um pneu. O número mostra os pneus guardados |
-| **•••** | o botão da corrida em tela cheia: CÂMERA, ACELERAR, CONFIGURAÇÕES e SAIR · A CORRIDA CONTINUA |
+| **•••** | o botão da corrida em tela cheia: CÂMERA, ACELERAR, COMO PILOTAR, CONFIGURAÇÕES e SAIR · A CORRIDA CONTINUA |
+| **COMO PILOTAR** | o cartão dos três gestos (SEGURE NA FAIXA VERDE, DESLIZE PARA AS SETAS, TOQUE QUANDO APAGAR), antes da primeira corrida pilotada e depois no •••; fecha no ENTENDI |
 | **treinador** | contratado na Equipe por 24 h, pago na hora (um prêmio de 1º lugar da sua maior licença): enquanto está lá, cada recorde de volta do piloto de corrida vale o dobro para subir de nível |
 | **caixa de pintura** | o prêmio das provas difíceis (primeira vitória da National para cima, ou vitória com o carro mais fraco do grid): abre na hora e libera um desenho, logo, aro, acabamento ou família de número da cabine; sem nada novo, vira giros. Nunca à venda |
 | **FREADA PERFEITA / BOA FREADA / FREOU CEDO / FREOU TARDE** | a nota do toque no FREIE |
 | **SAÍDA LIMPA / PERDEU TRAÇÃO / ACELEROU TARDE** | soltou o dedo na saída da curva / antes / depois |
+| **SEQUÊNCIA ×N** | acertos seguidos (nota boa ou perfeita); errar ou deixar a faixa passar zera. No resultado: as perfeitas e a maior sequência |
 
 ### Dinheiro e tempo
 | Termo | O que é para o jogador |

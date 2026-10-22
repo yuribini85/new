@@ -43,6 +43,8 @@ const LADO_ERRADO := "lado_errado"
 const FORCOU := "forcou"
 const POUPOU := "poupou"
 
+## Notas que somam na sequência (decisão 131 C4): as boas e as perfeitas.
+const ACERTOS := [PERFEITA, BOA, LIMPA, LARGADA_PERFEITA, LARGADA_BOA, VACUO, PORTA_FECHADA]
 ## Texto de cada nota na tela (língua do jogador).
 const TEXTOS := {PERFEITA: "FREADA PERFEITA", BOA: "BOA FREADA", CEDO: "FREOU CEDO", TARDE: "FREOU TARDE",
 		LIMPA: "SAÍDA LIMPA", SOLTOU: "PERDEU TRAÇÃO", ACELEROU_TARDE: "ACELEROU TARDE",

@@ -177,6 +177,15 @@ var _deixas_pista := []
 var _seta_lado := 0
 const COR_FAIXA_BOA := Color(0.36, 0.82, 0.47, 0.3)
 const COR_FAIXA_PERFEITA := Color(0.55, 1.0, 0.62, 0.6)
+## Sequência de acertos (decisão 131 C4): cada nota boa ou perfeita soma 1;
+## errar ou deixar a deixa passar zera. O resultado mostra as perfeitas e a
+## maior sequência da corrida assistida (resumo_pilotagem).
+var _seq := 0
+var _seq_maior := 0
+var _perfeitas := 0
+var _seq_evento := ""
+## A curva cuja faixa da freada apareceu (chave) e ainda não teve toque.
+var _freada_vista := -1
 ## Quanto o dedo precisa deslizar de lado (px) para valer.
 const DESLIZE_PX := 60.0
 ## Modo do pneu nas provas longas (decisão 131): o botão, o modo, a última
@@ -470,7 +479,7 @@ func _pedal_toque(e: InputEvent) -> void:
 		return
 	if _segurando or not is_visible_in_tree() or not _area.visible or not _area.get_global_rect().has_point(pos) \
 			or (_pneu.visible and _pneu.get_global_rect().has_point(pos)) \
-			or (_menu_botao.visible and _menu_botao.get_global_rect().has_point(pos)) or _menu != null:
+			or (_menu_botao.visible and _menu_botao.get_global_rect().has_point(pos)) or _menu != null or _gestos != null:
 		return
 	_segurando = true
 	_toque_x = pos.x
@@ -740,6 +749,11 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_feitas = {}
 	_frenagem = {}
 	_curva = {}
+	_seq = 0
+	_seq_maior = 0
+	_perfeitas = 0
+	_seq_evento = String(jogador.fila.get("evento_id", ""))
+	_freada_vista = -1
 	_ultimo_ataque = -INF
 	_ultima_defesa = -INF
 	_deslize = {}
@@ -802,6 +816,9 @@ func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	_semente_largada = f["semente"]
 	if _visual.tempo < 0.5 and not segurar_largada and dialogo_aberto.call():
 		segurar()  # a corrida nova não larga debaixo de uma conversa
+	if _visual.tempo < 0.5 and _pil.get("ativa", false) and not jogador.flags.has(FLAG_GESTOS):
+		segurar()  # a primeira corrida pilotada espera o COMO PILOTAR
+		_abrir_gestos(true)
 	if _visual.tempo < 0.5 and not segurar_largada:
 		# Corrida começando agora com a tela aberta: 3-2-1 no grid.
 		_iniciar_contagem()
@@ -917,7 +934,7 @@ func segurar() -> void:
 
 ## Fim das conversas: o 3-2-1 no grid e a largada.
 func liberar_largada() -> void:
-	if not segurar_largada:
+	if not segurar_largada or _gestos != null:
 		return
 	segurar_largada = false
 	if jogador.fila.is_empty():
@@ -1334,7 +1351,8 @@ func _pilotar(taxa: float) -> void:
 	_seta_lado = 0
 	# Na janela da largada a corrida ao vivo espera no apagar das luzes: o
 	# toque vale desde ali (Pilotagem.ordem_largada).
-	jogador.fila_ctrl.acompanhar(0.0 if _largada_aberta() else t)
+	# Parada no grid (conversa ou COMO PILOTAR), idem: nada anda antes da largada.
+	jogador.fila_ctrl.acompanhar(0.0 if _largada_aberta() or segurar_largada else t)
 	_emendar()
 	if _largada_aberta() and (_contagem <= 0.0 or _contagem - float(_largada["espera"]) <= 1.0):
 		_pedal.largada()
@@ -1378,6 +1396,9 @@ func _pilotar(taxa: float) -> void:
 		var chave := roundi(inicio_abs)
 		var fim_abs := inicio_abs + fposmod(float(c["fim"]) - float(c["inicio"]), comp)
 		if prox["estado"] == "na_curva":
+			if chave == _freada_vista and not _feitas.has(chave):
+				_errou()  # a faixa passou sem toque
+			_freada_vista = -1
 			_feitas[chave] = _feitas.get(chave, "")
 		elif not _feitas.has(chave):
 			var t_ent := _visual.tempo_em("jogador", inicio_abs)
@@ -1392,11 +1413,11 @@ func _pilotar(taxa: float) -> void:
 			if t_fren >= 0.0 and faltam <= float(f["janela_s"]) and faltam >= -float(f["boa_s"]) \
 					and inicio_abs - _visual.distancia_em("jogador", t_fren) >= float(f["minimo_m"]):
 				_frenagem = {"chave": chave, "t_frenagem": t_fren, "fim": fim_abs}
+				_freada_vista = chave
 				_pedal.frenagem((t_fren - t) / _taxa_pil, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]))
 				_deixas_pista = [_faixa(t_fren, float(f["boa_s"]), COR_FAIXA_BOA),
 						_faixa(t_fren, float(f["perfeita_s"]), COR_FAIXA_PERFEITA)]
 				mostrou = true
-				_dica("CURVA", "ENCOSTE NO VERDE E SEGURE", "SOLTE NA SAÍDA DA CURVA")
 	# Deslize: o que está na tela espera o dedo; senão, sem curva nem dedo na
 	# tela, a defesa (alguém colado atrás) e depois o vácuo (colado no da frente).
 	var ordem := _visual.ordem()
@@ -1404,6 +1425,8 @@ func _pilotar(taxa: float) -> void:
 	if not _deslize.is_empty():
 		var passou := _agora_tela() - float(_deslize["desde"])
 		if passou > float(_pil["defesa"]["janela_s"]) or mostrou:
+			if not mostrou:
+				_errou()  # o deslize passou sem o dedo
 			_fim_deslize(t)
 		else:
 			_pedal.defesa(int(_deslize["lado"]), passou / float(_pil["defesa"]["janela_s"]),
@@ -1416,10 +1439,8 @@ func _pilotar(taxa: float) -> void:
 		if Pilotagem.pode_defender(d_tras, t, _ultima_defesa, _pil):
 			_deslize = {"tipo": "defesa", "lado": Pilotagem.lado_defesa(_semente_mostrada, t), "desde": _agora_tela()}
 			_visual3d.puxar(ordem[i + 1], int(_deslize["lado"]), float(_pil["defesa"]["janela_s"]) * _taxa_pil + 0.5)
-			_dica("DEFESA", "VAI TE PASSAR", "DESLIZE PARA O LADO DELE")
 		elif Pilotagem.pode_atacar(d_frente, t, _ultimo_ataque, _pil):
 			_deslize = {"tipo": "vacuo", "lado": Pilotagem.lado_defesa(_semente_mostrada + 1, t), "desde": _agora_tela()}
-			_dica("VACUO", "COLADO NELE", "DESLIZE PARA O LADO LIVRE")
 	if not mostrou:
 		_pedal.esconder()
 
@@ -1555,13 +1576,35 @@ func _dar(ordem: Dictionary) -> Dictionary:
 
 
 func _nota(nota: String) -> void:
-	var boa := nota in [Pilotagem.PERFEITA, Pilotagem.LIMPA, Pilotagem.LARGADA_PERFEITA, Pilotagem.PORTA_FECHADA]
+	var boa := nota in [Pilotagem.PERFEITA, Pilotagem.LIMPA, Pilotagem.LARGADA_PERFEITA, Pilotagem.PORTA_FECHADA,
+			Pilotagem.VACUO]
 	var ruim := nota in [Pilotagem.CEDO, Pilotagem.TARDE, Pilotagem.SOLTOU, Pilotagem.QUEIMOU, Pilotagem.ATRASADA,
 			Pilotagem.ACELEROU_TARDE, Pilotagem.LADO_ERRADO]
+	if ruim:
+		_errou()
+	elif nota in Pilotagem.ACERTOS:
+		_seq += 1
+		_seq_maior = maxi(_seq_maior, _seq)
+		if nota in [Pilotagem.PERFEITA, Pilotagem.LARGADA_PERFEITA]:
+			_perfeitas += 1
 	var cor := COR_DESTAQUE if boa else (Color(1.0, 0.45, 0.4) if ruim else Color.WHITE)
-	_painel_hud.evento(Pilotagem.TEXTOS[nota], "", cor, 6, 1.1, false, boa)
+	_painel_hud.evento(Pilotagem.TEXTOS[nota], "SEQUÊNCIA ×%d" % _seq if _seq >= 2 and not ruim else "",
+			cor, 6, 1.1, false, boa)
 	if boa:
 		_clarear(COR_DESTAQUE, 0.15)
+
+
+## Errou ou deixou a deixa passar: a sequência zera.
+func _errou() -> void:
+	_seq = 0
+
+
+## O que a corrida assistida teve de pilotagem, para a janela do resultado:
+## {perfeitas, maior_sequencia}, ou {} se não foi esta prova ou ninguém tocou.
+func resumo_pilotagem(evento_id: String) -> Dictionary:
+	if evento_id != _seq_evento or _seq_maior == 0:
+		return {}
+	return {"perfeitas": _perfeitas, "maior_sequencia": _seq_maior}
 
 
 ## A corrida refeita pelo último toque entra na tela a partir do toque, à
@@ -1619,15 +1662,23 @@ func _largar() -> void:
 	_nota(nota)
 
 
-## Nas primeiras corridas, a primeira deixa de cada gesto vem com a explicação
-## (uma vez por corrida, nas três primeiras). `chave`: CURVA, DEFESA ou VACUO.
-func _dica(chave: String, titulo: String, sub: String) -> void:
-	var n := int(jogador.flags.get(chave + "_DICA", 0))
-	if n >= 3 or jogador.flags.get(chave + "_DICA_SEMENTE", 0) == _semente_mostrada:
+## COMO PILOTAR (CartaoGestos): antes da primeira corrida pilotada, com a
+## largada esperando no grid; depois, pelo •••.
+var _gestos: CartaoGestos
+const FLAG_GESTOS := "PILOTAGEM_CARTAO"
+
+
+func _abrir_gestos(segura_largada: bool) -> void:
+	if _gestos != null:
 		return
-	jogador.flags[chave + "_DICA_SEMENTE"] = _semente_mostrada
-	jogador.flags[chave + "_DICA"] = n + 1
-	_painel_hud.evento(titulo, sub, Color.WHITE, 9, 3.0)
+	_fechar_menu()
+	_gestos = CartaoGestos.new()
+	_gestos.fechado.connect(func():
+		_gestos = null
+		jogador.flags[FLAG_GESTOS] = 1
+		if segura_largada and not dialogo_aberto.call():
+			liberar_largada())
+	_area.add_child(_gestos)
 
 
 func _clarear(cor: Color, forca: float) -> void:
@@ -1732,6 +1783,13 @@ func _abrir_menu() -> void:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 10)
 	v.add_child(h)
+	if _pil.get("ativa", false):
+		var como := Button.new()
+		como.text = "COMO PILOTAR"
+		como.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
+		como.add_theme_font_size_override("font_size", 20)
+		como.pressed.connect(_abrir_gestos.bind(false))
+		v.add_child(como)
 	for par in [["CONFIGURAÇÕES", configuracoes_pedido], ["SAIR · A CORRIDA CONTINUA", sair_pedido]]:
 		var b := Button.new()
 		b.text = par[0]

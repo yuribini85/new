@@ -6,17 +6,18 @@ extends SceneTree
 ##   base      sem toque (o piloto contratado dirige)
 ##   perfeita  largada perfeita, toda freada perfeita, toda saída limpa, a
 ##             passagem no vácuo e a porta fechada sempre que puder
-##   beira     como a perfeita, mas tocando no começo da faixa verde (perfeita_s antes)
+##   beira     como a perfeita, tocando no começo da faixa verde: a freada boa ou
+##             perfeita vale do ponto em diante, então dá o mesmo (fora do padrão)
 ##   boa       largada boa, toda freada boa, toda saída limpa
 ##   ruim      largada queimada, toda freada tarde e o dedo solto antes da
 ##             saída em toda curva (perdeu tração)
 ##   largada   só a largada perfeita
 ##   ataque    só a passagem no vácuo
 ##   defesa    só a porta fechada (deslize no lado certo sempre que puder)
-##   forcar    só o FORÇAR / POUPAR PNEUS (provas longas): no começo de cada
-##             volta, forçar com um rival a até ataque.distancia_m à frente, poupar
-##             sozinho (ninguém a 3× isso), senão nada
-##   forcou    forçar toda volta (sem poupar nunca)
+##   forcar    só o modo do pneu (provas longas): no começo de cada volta,
+##             ATAQUE com um rival a até ataque.distancia_m à frente, POUPAR
+##             sozinho (ninguém a 3× isso), senão NORMAL
+##   forcou    ATAQUE toda volta
 ##   peça      sem toque, com a peça mais barata que o carro aceita
 ## Uso: godot --headless --path . -s tools/calibrar_pilotagem.gd [-- sementes=10 cenario=carro_3d provas=5
 ##        politicas=base,largada voltas_min=30]
@@ -59,7 +60,7 @@ func _rodar() -> void:
 		if media >= 2.0 and media <= total - 1.0:
 			provas.append(ev["id"])
 	print("carro ", carro.id, " · peça de comparação ", com_peca[1], " · provas ", provas)
-	var politicas := ["base", "perfeita", "beira", "boa", "ruim", "largada", "ataque", "defesa", "forcar", "forcou", "peca"]
+	var politicas := ["base", "perfeita", "boa", "ruim", "largada", "ataque", "defesa", "forcar", "forcou", "peca"]
 	if args.has("politicas"):
 		politicas = Array(String(args["politicas"]).split(","))
 		if not "base" in politicas:
@@ -108,13 +109,15 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var dt := float(d.simulacao()["dt_s"])
 	var t := 0.0
 	var s_antes := 0.0
+	var v_antes := 0.0
+	var freadas := {}  # curva (início na corrida, m) -> true depois do toque
 	var toques := 0
 	var ultimo_ataque := -INF
 	var ultima_defesa := -INF
 	var volta_antes := 0
 	var inicio_volta := 0.0
 	var volta_s := 0.0
-	var guardado := false
+	var guardados := 0
 	var forca := Pilotagem.pode_forcar(int(d.evento(ev_id)["voltas"]), p)
 	# Largada: perfeita, boa ou queimada (ruim); vale do apagar das luzes.
 	var largada := {"perfeita": Pilotagem.LARGADA_PERFEITA, "beira": Pilotagem.LARGADA_PERFEITA,
@@ -132,15 +135,19 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 		var v: float = maxf(est["jogador"][1], 1.0)
 		for c in curvas:
 			var frear := not politica in ["ataque", "largada", "defesa", "forcar", "forcou"] and Pilotagem.tem_frenagem(c, comp, p)
-			var ponto := float(c["frenagem"])
-			if politica == "beira":
-				ponto = fposmod(ponto - v * float(p["frenagem"]["perfeita_s"]), comp)
-			if frear and _cruzou(s_antes, s, ponto, comp):
+			# O ponto da freada é onde o carro começa a perder velocidade antes da
+			# curva, como na tela (CorridaVisual.inicio_freada): a frenagem da
+			# Tatica é só o começo possível (sem velocidade máxima, o fim da curva
+			# anterior). Tocar antes (beira) vale do ponto em diante: o mesmo efeito.
+			var falta := fposmod(float(c["inicio"]) - s, comp)
+			var chave := roundi(s + falta)
+			if frear and not freadas.has(chave) and v < v_antes - 0.01 and falta >= float(p["frenagem"]["minimo_m"]) \
+					and fposmod(s - float(c["frenagem"]), comp) < fposmod(float(c["inicio"]) - float(c["frenagem"]), comp):
+				freadas[chave] = true
 				var nota := Pilotagem.PERFEITA if politica in ["perfeita", "beira"] else (Pilotagem.BOA if politica == "boa"
 						else Pilotagem.TARDE)
-				var ate := t + fposmod(float(c["fim"]) - float(c["frenagem"]), comp) / v
-				var t_ponto := a.tempo() + (float(p["frenagem"]["perfeita_s"]) if politica == "beira" else 0.0)
-				a.ordenar("jogador", Pilotagem.ordem_frenagem(nota, a.tempo(), ate, p, t_ponto))
+				var ate := t + fposmod(float(c["fim"]) - s, comp) / v
+				a.ordenar("jogador", Pilotagem.ordem_frenagem(nota, a.tempo(), ate, p, a.tempo()))
 				toques += 1
 			if frear and _cruzou(s_antes, s, float(c["fim"]), comp):
 				var nota_saida := Pilotagem.SOLTOU if politica == "ruim" else Pilotagem.LIMPA
@@ -169,15 +176,19 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 						if dist > 0.0:
 							perto = minf(perto, dist)
 						longe = minf(longe, absf(dist))
+				# O modo da volta (botão do pneu): ATAQUE com um rival perto, POUPAR
+				# sozinho, senão NORMAL.
 				var dist_ataque := float(p["ataque"]["distancia_m"])
+				var modo := Pilotagem.NORMAL
 				if politica == "forcou" or perto <= dist_ataque:
-					for o in Pilotagem.ordens_forcar(a.tempo(), a.tempo() + volta_s, volta_s, guardado, p):
-						a.ordenar("jogador", o)
-					guardado = false
-					toques += 1
-				elif longe > 3.0 * dist_ataque and not guardado:
-					a.ordenar("jogador", Pilotagem.ordem_poupar(a.tempo(), a.tempo() + volta_s, p))
-					guardado = true
+					modo = Pilotagem.ATAQUE
+				elif longe > 3.0 * dist_ataque:
+					modo = Pilotagem.POUPAR
+				var r := Pilotagem.ordens_modo(modo, a.tempo(), a.tempo() + volta_s, volta_s, guardados, p)
+				for o in r[0]:
+					a.ordenar("jogador", o)
+				guardados = int(r[1])
+				if modo != Pilotagem.NORMAL:
 					toques += 1
 		if politica in ["perfeita", "beira", "defesa"]:
 			var tras := INF
@@ -190,6 +201,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				ultima_defesa = a.tempo()
 				toques += 1
 		s_antes = s
+		v_antes = v
 	return [_posicao(a.resultado()), toques, _tempo(a.resultado())]
 
 
