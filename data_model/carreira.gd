@@ -420,7 +420,7 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var campeonato: Dictionary = Campeonatos.registrar(self, evento_id, r["classificacao"], int(corrida.get("semente", -1)))
 	var tempo: float = r["carros"]["jogador"]["tempo_total"] if r["carros"]["jogador"]["terminou"] else 0.0
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
-	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo)
+	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo, posicao == 1)
 	var patrocinio := GestaoEquipe.bonus_corrida(dados, jogador, ev, posicao, not campeonato.is_empty())
 	var subiram := EquipeJogador.apos_prova(dados, jogador, ["corrida"], posicao == 1)
 
@@ -443,10 +443,15 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	}
 
 
-static func _historico(h: Dictionary, posicao: int, tempo: float) -> Dictionary:
+## "derrotas": derrotas seguidas nesta prova (zera na vitória; a ajuda da
+## pilotagem para quem trava, Pilotagem.para_prova).
+static func _historico(h: Dictionary, posicao: int, tempo: float, venceu := false) -> Dictionary:
+	var derrotas := 0 if venceu else int(h.get("derrotas", 0)) + 1
 	if h.is_empty():
-		return {"corridas": 1, "melhor_pos": posicao, "melhor_tempo": tempo, "ultima_pos": posicao, "ultimo_tempo": tempo}
+		return {"corridas": 1, "melhor_pos": posicao, "melhor_tempo": tempo, "ultima_pos": posicao, "ultimo_tempo": tempo,
+				"derrotas": derrotas}
 	return {
+		"derrotas": derrotas,
 		"corridas": int(h["corridas"]) + 1,
 		"melhor_pos": mini(int(h["melhor_pos"]), posicao),
 		"melhor_tempo": tempo if h["melhor_tempo"] <= 0.0 or (tempo > 0.0 and tempo < h["melhor_tempo"]) else h["melhor_tempo"],

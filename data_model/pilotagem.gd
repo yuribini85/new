@@ -42,6 +42,19 @@ static func params(dados: Node) -> Dictionary:
 	return dados.simulacao().get("pilotagem", {})
 
 
+## Os parâmetros da pilotagem nesta prova. Ajuda para quem trava (decisão 130,
+## E5): com `travado.derrotas` derrotas seguidas numa prova ainda não vencida,
+## a faixa da freada boa cresce `ajuda.fator_boa` até a vitória, sem aviso. O
+## valor de cada nota não muda.
+static func para_prova(dados: Node, jogador: Node, evento_id: String) -> Dictionary:
+	var p: Dictionary = params(dados).duplicate(true)
+	var minimo := int(dados.carreira().get("travado", {}).get("derrotas", 0))
+	var derrotas := int(jogador.historico.get(evento_id, {}).get("derrotas", 0))
+	if p.has("ajuda") and minimo > 0 and derrotas >= minimo and not jogador.vitorias.has(evento_id):
+		p["frenagem"]["boa_s"] = float(p["frenagem"]["boa_s"]) * float(p["ajuda"]["fator_boa"])
+	return p
+
+
 static func ativa(dados: Node) -> bool:
 	return bool(params(dados).get("ativa", false))
 

@@ -486,6 +486,39 @@ func test_largada_e_vacuo() -> void:
 	igual(Pilotagem.nota_vacuo(2.1, p), Pilotagem.PERDEU_VACUO, "segurou demais")
 
 
+class DadosAjuda extends Node:
+	func simulacao() -> Dictionary:
+		return {"pilotagem": {"frenagem": {"boa_s": 0.5, "perfeita_s": 0.25}, "ajuda": {"fator_boa": 1.5}}}
+	func carreira() -> Dictionary:
+		return {"travado": {"derrotas": 4}}
+
+
+class JogadorAjuda extends Node:
+	var historico := {}
+	var vitorias := {}
+
+
+## Decisão 130 (E5): a faixa da freada boa cresce depois de 4 derrotas seguidas
+## na prova ainda não vencida, e volta ao normal com a vitória.
+func test_ajuda_para_quem_trava() -> void:
+	var d := DadosAjuda.new()
+	var j := JogadorAjuda.new()
+	j.historico["ev"] = Carreira._historico({}, 3, 60.0)
+	for k in 2:
+		j.historico["ev"] = Carreira._historico(j.historico["ev"], 2, 60.0)
+	igual(int(j.historico["ev"]["derrotas"]), 3, "três derrotas seguidas")
+	perto(float(Pilotagem.para_prova(d, j, "ev")["frenagem"]["boa_s"]), 0.5, 1e-9, "três: sem ajuda")
+	j.historico["ev"] = Carreira._historico(j.historico["ev"], 4, 60.0)
+	perto(float(Pilotagem.para_prova(d, j, "ev")["frenagem"]["boa_s"]), 0.75, 1e-9, "quatro: faixa boa 50% maior")
+	perto(float(d.simulacao()["pilotagem"]["frenagem"]["boa_s"]), 0.5, 1e-9, "os dados não mudam")
+	j.historico["ev"] = Carreira._historico(j.historico["ev"], 1, 60.0, true)
+	igual(int(j.historico["ev"]["derrotas"]), 0, "a vitória zera")
+	j.vitorias["ev"] = 1
+	perto(float(Pilotagem.para_prova(d, j, "ev")["frenagem"]["boa_s"]), 0.5, 1e-9, "vencida: sem ajuda")
+	d.free()
+	j.free()
+
+
 func test_pilotar_no_meio_vale_como_do_zero() -> void:
 	var d := dados_fixture()
 	var j := _jogador(d)

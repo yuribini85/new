@@ -196,7 +196,7 @@ static func desserializar(s: Variant, jogador: Node, dados: Node) -> String:
 			jogador.historico[k] = {
 				"corridas": int(h.get("corridas", 0)), "melhor_pos": int(h.get("melhor_pos", 0)),
 				"melhor_tempo": float(h.get("melhor_tempo", 0.0)), "ultima_pos": int(h.get("ultima_pos", 0)),
-				"ultimo_tempo": float(h.get("ultimo_tempo", 0.0)),
+				"ultimo_tempo": float(h.get("ultimo_tempo", 0.0)), "derrotas": int(h.get("derrotas", 0)),
 			}
 	# Opcional: saves anteriores aos campeonatos (decisão 35) carregam sem eles.
 	jogador.campeonatos = {}

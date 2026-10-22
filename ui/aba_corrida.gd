@@ -637,6 +637,7 @@ func _tirar_carga() -> void:
 ## Nova corrida na tela: minimapa, 3D, nomes, cabeçalho e diretor do zero.
 func _mostrar_corrida(f: Dictionary, c: Dictionary, agora: float) -> void:
 	var ev: Dictionary = dados.evento(f["evento_id"])
+	_pil = Pilotagem.para_prova(dados, jogador, String(f["evento_id"]))
 	_pista = dados.pista(ev["pista"])
 	_voltas = int(ev["voltas"])
 	var meu: Carro = jogador.garagem.carro(f["uid"])

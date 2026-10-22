@@ -1204,3 +1204,12 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     lugar do botão ATACAR: colado no rival, segurar enche a barra e soltar com ela cheia é a
     ultrapassagem. Medido: tudo perfeito +0,52, bom +0,35, ruim −0,20, só a largada +0,08, só o
     vácuo +0,07.
+    Fase E (usuário: "Pode seguir" às recomendações, 2026-10-22): caixa de pintura na primeira
+    vitória de cada prova da National para cima e em qualquer vitória com o carro mais fraco
+    entre os elegíveis; dentro, um item sorteado da cabine de pintura (desenho, rodas,
+    acabamento, número), repetido vira giros no valor de um prêmio de 1º da licença. Treinador:
+    custo por hora de 20% da renda ativa por hora (o patrocínio ao contrário), efeito no treino
+    medido para encurtar ~10% o caminho até vencer. Evolução do piloto pelo recorde pessoal de
+    volta (carro + pista) no lugar da corrida disputada, calibrada para a média não mudar. Ajuda
+    para quem trava: 4 derrotas seguidas na prova não vencida aumentam 50% a faixa da freada boa
+    até a vitória, sem aviso.
