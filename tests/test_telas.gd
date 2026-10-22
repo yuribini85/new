@@ -479,6 +479,23 @@ func test_janela_garagem_escolhe_e_vende() -> void:
 	d.free()
 
 
+## Decisão 130 (E3): o arquétipo sai da ficha (época, categoria, tração,
+## escola, potência por peso) e muda a silhueta medida.
+func test_arquetipos_de_carro() -> void:
+	igual(Carroceria.arquetipo({"categoria": "cupe", "tracao": "FR", "ano": 1968, "potencia": 300, "peso": 1500}, "us"), "muscle", "cupê americano dos 60")
+	igual(Carroceria.arquetipo({"categoria": "compacto", "tracao": "RR", "ano": 1965, "potencia": 40, "peso": 800}, "de"), "besouro", "compacto de motor atrás")
+	igual(Carroceria.arquetipo({"categoria": "cupe", "tracao": "FR", "ano": 1995, "potencia": 280, "peso": 1300}, "jp"), "jdm", "cupê japonês forte dos 90")
+	igual(Carroceria.arquetipo({"categoria": "picape", "tracao": "4WD", "ano": 2000, "potencia": 150, "peso": 1800}, "us"), "picape_4x4", "picape 4x4")
+	igual(Carroceria.arquetipo({"categoria": "seda", "tracao": "FF", "ano": 1995, "potencia": 90, "peso": 1100}, "jp"), "", "sedã comum: sem arquétipo")
+	var f := {"W": 1.8, "r": 0.3, "low": 0.2, "lo": 0.35, "hi": 0.65, "rows": [[-2.0, 0.8, 0.8], [2.0, 0.8, 0.7]],
+			"roof": [[-1.0, 0.5, 1.2], [0.0, 0.5, 1.25]], "rodas": [["a", 0.8, 0.3, 1.2]], "wind": 0.5, "back": -1.5,
+			"axles": [1.2, -1.2]}
+	Carroceria._elevar(f, 0.2, 1.25)
+	perto(float(f["r"]), 0.375, 1e-6, "4x4: roda maior")
+	perto(float(f["rodas"][0][2]), 0.375, 1e-6, "eixo na altura da roda nova")
+	perto(float(f["low"]), 0.2 + 0.2 + 0.075, 1e-6, "carroceria sobe a suspensão e o pneu")
+
+
 func test_modelo_3d_glb_entra_no_lugar_do_carro_em_codigo() -> void:
 	verificar(CarroBloco.tem_glb("hozuki_catana"), "o Hozuki Catana tem GLB")
 	verificar(CarroBloco.tem_modelo("hozuki_catana"), "e modelo 3D")

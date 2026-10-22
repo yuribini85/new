@@ -39,6 +39,19 @@ Decisões E1–E6 aprovadas pelo usuário com a recomendação (decisão 130 em 
   - Calibrado com a largada (60 corridas): tudo perfeito +0,52 (teto +0,5), bom +0,35, ruim
     −0,20, só a largada +0,08, só o vácuo +0,07.
   - Falta da fase B: defesa e poupar/forçar (decisão 130: começar por vácuo e largada).
+- **Fase C, primeira passada** (2026-10-22): arquétipos no gerador (`Carroceria.arquetipo`,
+  `_arquetipo`), pela ficha do carro, sobre a forma medida:
+  - muscle car (cupê americano até 1979, 23 carros): capô longo com tomada de ar, teto baixo
+    em fastback, quadril largo e alto sobre a roda de trás;
+  - esportivo turbo (cupê japonês forte desde 1985, 14): baixo, para-lamas alargados, asa;
+  - besouro (motor atrás, até 1979, 9): teto em arco, capô e traseira caindo, corpo estreito
+    entre para-lamas que saltam, faróis redondos;
+  - hot hatch (compacto forte desde 1976, 40): largo, baixo, aba no fim do teto;
+  - GT (cupê europeu forte, 32): cabine recuada (capô longo) em fastback;
+  - picape 4x4 (13) e jipe (24): suspensão alta e rodas maiores; perua (1).
+  - Folha de comparação: `tools/folha_arquetipos.gd` (antes e depois, precisa de xvfb-run).
+  - Falta: a aprovação do usuário pela folha (decisão 91: o desenho é aprovado antes de valer
+    para todos) e os ajustes que ele pedir.
 
 ## Ordem recomendada
 
@@ -105,8 +118,9 @@ igual com o jogo fechado):
 
 ## 5. "Carros muito parecidos; gosto de Dodge Charger, GTR, Fusca" (fase C)
 
-**Diagnóstico.** Dos 363 carros, só 1 usa o gerador de formas por época e categoria
-(`Carroceria.ATIVOS`); os outros usam modelos 3D feitos de poucas bases, por isso parecidos. Não
+**Diagnóstico** (corrigido na fase C). Os 363 carros já usam o gerador de formas (as épocas e
+categorias liberadas em `Carroceria.LIBERADOS`), mas a forma de cada um vem das medidas dos
+modelos 3D antigos, feitos de poucas bases: por isso parecidos. Não
 podemos usar carros reais (CLAUDE.md: nada de nomes, marcas ou formas reconhecíveis), mas podemos
 **evocar o tipo**, como já está na regra da arte ("evoca a época e o tipo, sem copiar").
 

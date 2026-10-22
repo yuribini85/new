@@ -54,6 +54,11 @@ const SUAVE_GRAUS := 30.0
 const VIDRO_GRAUS := 25.0
 static var ativos: Array = ATIVOS.duplicate()
 static var regras: Dictionary = LIBERADOS.duplicate(true)
+## Arquétipos de silhueta (decisão 130, E3; segundo teste com pessoas: "os carros
+## têm modelos muito parecidos"): sobre a forma medida, cada tipo clássico ganha
+## o traço que o faz reconhecível, sem copiar carro nenhum. Desligado só para
+## comparar (tools/folha_arquetipos.gd).
+static var arquetipos_ligados := true
 
 
 ## O carro usa o gerado no jogo (tem forma e está nos ativos ou na época e
@@ -111,6 +116,30 @@ static func limpar_cache() -> void:
 
 static func em_cache(id: String) -> bool:
 	return _corpos.has(id)
+
+
+## O arquétipo do carro pela ficha: época, categoria, tração, escola e
+## potência por peso ("" sem arquétipo: fica a forma medida e a época).
+static func arquetipo(carro: Dictionary, esc: String) -> String:
+	var cat := String(carro.get("categoria", ""))
+	var tr := String(carro.get("tracao", ""))
+	var ano := int(carro.get("ano", 1990))
+	var pp: float = float(carro.get("potencia", 100)) / maxf(float(carro.get("peso", 1000)), 1.0)
+	if tr == "RR" and cat in ["compacto", "cupe"] and ano < 1980:
+		return "besouro"
+	if cat == "cupe" and tr == "FR" and esc == "us" and ano < 1980:
+		return "muscle"
+	if cat == "cupe" and tr in ["FR", "4WD"] and esc == "jp" and ano >= 1985 and pp > 0.13:
+		return "jdm"
+	if cat == "compacto" and tr in ["FF", "4WD"] and ano >= 1976 and pp > 0.09:
+		return "hot_hatch"
+	if cat == "cupe" and tr == "FR" and esc in ["uk", "de", "it", "fr"] and pp > 0.13:
+		return "gt"
+	if cat == "picape" and tr == "4WD":
+		return "picape_4x4"
+	if cat == "utilitario":
+		return "jipe" if tr == "4WD" else "van"
+	return ""
 
 
 ## Contexto de design: época, categoria, escola e se é esportivo.
@@ -272,6 +301,9 @@ static func forma_final(id: String, base: Dictionary = {}) -> Dictionary:
 		return {}
 	var carro := _dados_do_carro(id, base)
 	var ctx := contexto(carro, escola(String(carro.get("fabricante", ""))))
+	ctx["arquetipo"] = arquetipo(carro, ctx["escola"]) if arquetipos_ligados else ""
+	if ctx["arquetipo"] == "besouro":
+		ctx["era"] = "classico"  # faróis redondos nos para-lamas, frisos cromados
 	var f := proporcoes(f0, ctx)
 	f["ctx"] = ctx
 	_finais[id] = f
@@ -417,12 +449,148 @@ static func proporcoes(f0: Dictionary, ctx: Dictionary) -> Dictionary:
 			f["coluna_b"] = float(f.get("zb", 0.0)) + 0.05
 	if ctx["cat"] == "pesado":
 		return f
+	_arquetipo(f, ctx)
 	# rodas rentes ao para-lama (a face do pneu quase no alinhamento da lataria)
 	for w in f["rodas"]:
 		var borda: float = _curva(rows, float(w[3])).x + _alarga(f, float(w[3])) - 0.03 - float(f["r"]) * 0.31
 		# no máximo 4 cm para fora: nos de bico baixo o pneu furava o para-lama
 		w[1] = signf(float(w[1])) * clampf(borda, absf(float(w[1])), absf(float(w[1])) + 0.04)
 	return f
+
+
+## O traço de cada arquétipo sobre a forma já na proporção da época (antes das
+## rodas rentes ao para-lama).
+static func _arquetipo(f: Dictionary, ctx: Dictionary) -> void:
+	var meia: float = float(f["W"]) * 0.5
+	match String(ctx.get("arquetipo", "")):
+		"muscle":
+			# capô comprido com tomada de ar, teto baixo em fastback e quadril
+			# largo e alto sobre a roda de trás
+			_recuar_cabine(f, 0.16)
+			_baixar_teto(f, 0.05)
+			_fastback(f, 0.72)
+			_quadril(f, float(f["axles"][1]), 0.06, 0.06)
+			f["sx"] = maxf(float(f.get("sx", meia)), meia + 0.05)
+			f["tomada_capo"] = true
+		"jdm":
+			# baixo, para-lamas alargados e asa
+			_baixar_teto(f, 0.05)
+			f["sx"] = maxf(float(f.get("sx", meia)), meia + 0.1)
+			f["aerofolio"] = true
+		"besouro":
+			_besouro(f)
+		"hot_hatch":
+			# largo e baixo, aba no fim do teto
+			_baixar_teto(f, 0.03)
+			f["sx"] = maxf(float(f.get("sx", meia)), meia + 0.08)
+			f["aba_teto"] = true
+		"gt":
+			# capô longo e cabine recuada em fastback
+			_recuar_cabine(f, 0.24)
+			_baixar_teto(f, 0.04)
+			_fastback(f, 0.7)
+		"picape_4x4":
+			_elevar(f, 0.2, 1.25)
+			f["sx"] = maxf(float(f.get("sx", meia)), meia + 0.07)
+		"jipe":
+			_elevar(f, 0.13, 1.15)
+			f["sx"] = maxf(float(f.get("sx", meia)), meia + 0.06)
+
+
+## Cabine para trás (capô mais comprido): teto, para-brisa e vidros.
+static func _recuar_cabine(f: Dictionary, dz: float) -> void:
+	for r in f["roof"]:
+		r[0] = float(r[0]) - dz
+	f["wind"] = float(f["wind"]) - dz
+	f["back"] = float(f["back"]) - dz * 0.5
+	for k in ["vidro_frente", "vidro_tras", "coluna_b"]:
+		if f.has(k):
+			f[k] = float(f[k]) - dz
+
+
+static func _baixar_teto(f: Dictionary, dy: float) -> void:
+	for r in f["roof"]:
+		r[2] = float(r[2]) - dy
+
+
+## Vidro traseiro longo e deitado até a tampa: o ponto de trás do teto sobe
+## (fração `alto` entre a base e o topo da estufa) e a base desce para trás.
+static func _fastback(f: Dictionary, alto: float) -> void:
+	var roof: Array = f["roof"]
+	if roof.size() < 2:
+		return
+	var zt: float = float(f["back"]) - 0.12
+	var yb: float = _curva(f["rows"], zt).y
+	var yt: float = float(roof[1][2])
+	roof[0] = [lerpf(zt, float(roof[1][0]), 0.5), float(roof[0][1]), lerpf(yb, yt, alto)]
+	f["back"] = zt
+
+
+## Quadril sobre o eixo `z_eixo`: lataria mais larga (`dw`) e cintura mais alta (`dy`).
+static func _quadril(f: Dictionary, z_eixo: float, dw: float, dy: float) -> void:
+	var largura: float = float(f["r"]) * 3.0
+	for r in f["rows"]:
+		var g: float = exp(-pow((float(r[0]) - z_eixo) / largura, 2.0))
+		r[1] = float(r[1]) + dw * g
+		r[2] = float(r[2]) + dy * g
+
+
+## Besouro: teto em arco do capô à tampa, capô e traseira caindo arredondados,
+## corpo estreito entre para-lamas que saltam sobre as rodas.
+static func _besouro(f: Dictionary) -> void:
+	var rows: Array = f["rows"]
+	var zf: float = f["wind"]
+	var zt: float = f["back"]
+	var bico: float = rows[-1][0]
+	var cauda: float = rows[0][0]
+	var cintura: float = _curva(rows, (zf + zt) * 0.5).y
+	var altura := 0.0
+	var larg := 0.0
+	for r in f["roof"]:
+		altura = maxf(altura, float(r[2]))
+		larg = maxf(larg, float(r[1]))
+	var h: float = maxf(altura - cintura, 0.4) + 0.04
+	for r in rows:
+		var z: float = r[0]
+		r[1] = float(r[1]) * 0.9
+		if z > zf:
+			r[2] = lerpf(cintura, cintura - 0.2, pow((z - zf) / maxf(bico - zf, 0.01), 1.6))
+		elif z < zt:
+			r[2] = lerpf(cintura, cintura - 0.24, pow((zt - z) / maxf(zt - cauda, 0.01), 1.4))
+		else:
+			r[2] = cintura
+	var arco := []
+	for u in [0.12, 0.3, 0.5, 0.7, 0.88]:
+		var z: float = lerpf(zt, zf, u)
+		var s: float = pow(sin(PI * u), 0.55)
+		arco.append([z, larg * lerpf(0.82, 1.0, s), cintura + h * s])
+	f["roof"] = arco
+	f["vidro_frente"] = lerpf(zt, zf, 0.76)
+	f["vidro_tras"] = lerpf(zt, zf, 0.2)
+	f["sx"] = float(f["W"]) * 0.5 + 0.1
+	f["hi"] = minf(float(f["hi"]), cintura - 0.1)
+
+
+## Suspensão alta e rodas maiores (fora de estrada): o carro sobe `dy` e o raio
+## da roda cresce `fator`.
+static func _elevar(f: Dictionary, dy: float, fator: float) -> void:
+	var r0: float = f["r"]
+	var r1: float = r0 * fator
+	var sobe: float = dy + (r1 - r0)
+	for r in f["rows"]:
+		r[2] = float(r[2]) + sobe
+	for r in f["roof"]:
+		r[2] = float(r[2]) + sobe
+	for k in ["low", "lo", "hi", "lanterna_vertical"]:
+		if f.has(k):
+			f[k] = float(f[k]) + sobe
+	if f.has("cacamba"):
+		f["cacamba"][2] = float(f["cacamba"][2]) + sobe
+	if f.has("rack"):
+		f["rack"][2] = float(f["rack"][2]) + sobe
+	f["r"] = r1
+	for w in f["rodas"]:
+		w[2] = r1
 
 
 ## Picape (aprovada na Kanaya Sulco): capô de verdade, cabine simples de
@@ -629,7 +797,13 @@ static func _montar(m: MontagemMalha, f: Dictionary, ctx: Dictionary) -> void:
 		_venezianas(m, f)
 	if ctx["cat"] == "utilitario":
 		_fora_de_estrada(m, f, secoes)
-	if ctx["esportivo"] and ctx["era"] in ["setenta", "oitenta"]:
+	if f.get("tomada_capo", false):
+		_tomada_capo(m, f)
+	if f.get("aba_teto", false):
+		_aba_teto(m, f)
+	if f.get("aerofolio", false):
+		_aerofolio(m, f)
+	elif ctx["esportivo"] and ctx["era"] in ["setenta", "oitenta"]:
 		_aba_traseira(m, f)
 	elif ctx["esportivo"] and ctx["era"] == "noventa":
 		_aerofolio(m, f)
@@ -1145,6 +1319,24 @@ static func _aerofolio(m: MontagemMalha, f: Dictionary) -> void:
 	_caixa(m, MontagemMalha.PINTURA, Vector3(c.x * 1.75, 0.025, 0.24), Vector3(0, c.y + 0.13, z), Vector3(-0.08, 0, 0))
 	for lado in [1.0, -1.0]:
 		_caixa(m, "preto", Vector3(0.03, 0.13, 0.08), Vector3(lado * c.x * 0.6, c.y + 0.06, z))
+
+
+## Tomada de ar no capô (muscle): caixa pintada com a boca preta para a frente.
+static func _tomada_capo(m: MontagemMalha, f: Dictionary) -> void:
+	var rows: Array = f["rows"]
+	var zc: float = lerpf(float(f["wind"]), float(rows[-1][0]), 0.4)
+	var y: float = _curva(rows, zc).y
+	var incl: float = atan2(y - _curva(rows, zc + 0.2).y, 0.2)
+	_caixa(m, MontagemMalha.PINTURA, Vector3(0.5, 0.1, 0.7), Vector3(0, y + 0.045, zc), Vector3(incl, 0, 0))
+	_caixa(m, "preto", Vector3(0.42, 0.065, 0.02), Vector3(0, y + 0.055, zc + 0.345), Vector3(incl, 0, 0))
+
+
+## Aba no fim do teto (hot hatch).
+static func _aba_teto(m: MontagemMalha, f: Dictionary) -> void:
+	var roof: Array = f["roof"].duplicate()
+	roof.sort_custom(func(a, b): return a[0] < b[0])
+	var p: Array = roof[1] if roof.size() > 1 else roof[0]
+	_caixa(m, MontagemMalha.PINTURA, Vector3(float(p[1]) * 1.8, 0.022, 0.2), Vector3(0, float(p[2]) + 0.005, float(p[0]) - 0.12), Vector3(0.18, 0, 0))
 
 
 ## Aba traseira (anos 80): uma lâmina pintada na beira da tampa, levemente erguida.
