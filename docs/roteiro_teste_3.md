@@ -6,7 +6,10 @@ minuto e a frase da pessoa.
 
 ## Preparação
 
-- Build com os cenários de teste (a demo web de playtest ou o APK do CI). Celular em retrato.
+- Build com as ferramentas de teste (a demo web de playtest ou um build de depuração; o build
+  da loja não as tem). Celular em retrato.
+- As ferramentas ficam escondidas: em Configurações, tocar 5 vezes na linha da versão, no pé
+  da tela. Aparecem "Modo de playtest" e "Cenários de teste".
 - Duas partes com a mesma pessoa, de 20 a 25 minutos cada, com uma pausa entre elas:
   - **Parte 1, jogo novo:** save zerado. Em Configurações → Modo de playtest, ligar o registro
     e apagar o anterior.
