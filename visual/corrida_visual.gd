@@ -205,6 +205,24 @@ func tempo_em(id: String, s: float) -> float:
 	return lerpf(_tempos[i], _tempos[i + 1], f)
 
 
+## Início da freada do carro para o que vem no instante `t` (s da corrida): o
+## fim do último trecho entre amostras em que ele ainda não perdia velocidade.
+## -1 se ele já perdia desde antes de `desde` ou se a corrida não chegou em `t`.
+func inicio_freada(id: String, t: float, desde: float) -> float:
+	var serie: PackedFloat64Array = _s[id]
+	var i := _tempos.bsearch(t) - 1
+	if i < 1 or i + 1 >= _tempos.size():
+		return -1.0
+	var v := (serie[i + 1] - serie[i]) / maxf(_tempos[i + 1] - _tempos[i], 1e-6)
+	while i >= 1 and _tempos[i] > desde:
+		var antes := (serie[i] - serie[i - 1]) / maxf(_tempos[i] - _tempos[i - 1], 1e-6)
+		if antes <= v + 0.01:
+			return _tempos[i]
+		v = antes
+		i -= 1
+	return -1.0
+
+
 func _bruta(id: String, t: float) -> float:
 	var serie: PackedFloat64Array = _s[id]
 	var i := clampi(_tempos.bsearch(t) - 1, 0, _tempos.size() - 1)

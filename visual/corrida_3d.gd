@@ -460,6 +460,9 @@ func limpar() -> void:
 	_marca_dist = {}
 	_marca_ponto = {}
 	_marcando = {}
+	_deixas_mi = null
+	_deixas_chave = ""
+	_seta = null
 	_pista = null
 
 
@@ -2560,4 +2563,106 @@ static func _faixa(pts: PackedVector2Array, largura: float, y: float, cor: Color
 	var mat := CarroBloco._material(cor)
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = mat
+	return mi
+
+
+## Deixas pintadas no asfalto (decisão 131): faixas de lado a lado da pista,
+## `lista` = [[de_m, ate_m, Color], ...] em distância da corrida. Só refaz a
+## malha quando a lista muda; [] apaga.
+var _deixas_mi: MeshInstance3D
+var _deixas_chave := ""
+func deixas(lista: Array) -> void:
+	if _pista == null:
+		return
+	var chave := str(lista.map(func(f): return [roundi(float(f[0]) * 4.0), roundi(float(f[1]) * 4.0), f[2]]))
+	if chave == _deixas_chave and (lista.is_empty() or is_instance_valid(_deixas_mi)):
+		return
+	_deixas_chave = chave
+	if is_instance_valid(_deixas_mi):
+		_deixas_mi.queue_free()
+	_deixas_mi = null
+	if lista.is_empty():
+		return
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var meia := LARGURA_PISTA_M * 0.5 - 0.3
+	for f in lista:
+		var s0 := float(f[0])
+		var s1 := float(f[1])
+		var n := maxi(int((s1 - s0) / 1.0), 1)
+		var antes := []
+		for k in n + 1:
+			var sk := lerpf(s0, s1, float(k) / n)
+			var c := _pista.posicao_em(sk)
+			var nrm := Vector2.from_angle(_pista.rumo_em(sk) + PI / 2.0)
+			var chao := 0.07 + (_relevo.altura(sk) if _relevo != null and not _relevo.vazio() else 0.0)
+			var pts := []
+			for lat in [meia, -meia]:
+				var p: Vector2 = c + nrm * float(lat)
+				pts.append(Vector3(p.x, chao + _altura_banco(sk, lat), -p.y))
+			if not antes.is_empty():
+				st.set_color(f[2])
+				for v in [antes[0], antes[1], pts[1], antes[0], pts[1], pts[0]]:
+					st.add_vertex(v)
+			antes = pts
+	_deixas_mi = MeshInstance3D.new()
+	_deixas_mi.mesh = st.commit()
+	_deixas_mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_deixas_mi.material_override = mat
+	_cena.add_child(_deixas_mi)
+
+
+## Setas no chão ao lado do seu carro (o deslize): `lado` -1 esquerda da tela,
+## 1 direita; 0 apaga. Pulsam e andam para o lado indicado.
+var _seta: MeshInstance3D
+const SETA_M := 2.4
+func seta(lado: int) -> void:
+	if _seta == null or not is_instance_valid(_seta):
+		_seta = _malha_seta()
+		_cena.add_child(_seta)
+	_seta.visible = lado != 0 and _carros.has("jogador") and _pista != null and not visao_geral
+	if not _seta.visible:
+		return
+	var dist := _fonte.distancia("jogador")
+	var rumo := _pista.rumo_em(dist)
+	# lado da tela → lateral da pista (+ = esquerda do carro): a tela olha por trás.
+	var lat := -float(lado)
+	var onda := fposmod(_tempo * 1.6, 1.0)
+	var c: Vector3 = _carros["jogador"].position
+	var nrm := Vector2.from_angle(rumo + PI / 2.0) * lat * (SETA_M + onda * 1.2)
+	_seta.position = Vector3(c.x + nrm.x, c.y + 0.1, c.z - nrm.y)
+	# A malha aponta para +X local; gira para a normal do lado indicado.
+	_seta.rotation = Vector3(0, rumo + PI / 2.0 * lat, 0)
+	(_seta.material_override as StandardMaterial3D).albedo_color.a = 0.95 - onda * 0.5
+
+
+func _malha_seta() -> MeshInstance3D:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# Três chevrons em fila apontando para +X (no plano do chão).
+	for k in 3:
+		var x0 := float(k) * 0.9
+		var a := Vector3(x0, 0, -1.1)
+		var b := Vector3(x0 + 0.9, 0, 0)
+		var c := Vector3(x0, 0, 1.1)
+		var w := 0.45
+		for v in [a, b, a + Vector3(-w, 0, 0), b, b + Vector3(-w, 0, 0), a + Vector3(-w, 0, 0),
+				b, c, b + Vector3(-w, 0, 0), c, c + Vector3(-w, 0, 0), b + Vector3(-w, 0, 0)]:
+			st.add_vertex(v)
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.no_depth_test = true
+	mat.albedo_color = Color(1.0, 0.85, 0.2)
+	mi.material_override = mat
+	mi.visible = false
 	return mi

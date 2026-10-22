@@ -171,6 +171,12 @@ var _ultima_defesa := -INF
 ## tela)} ou {}; e onde o dedo encostou (o deslize conta dali).
 var _deslize := {}
 var _toque_x := 0.0
+## Deixas pintadas no asfalto neste quadro ([[de_m, ate_m, cor], ...]) e o lado
+## das setas no chão (0 sem setas): decisão 131, o olho fica no carro.
+var _deixas_pista := []
+var _seta_lado := 0
+const COR_FAIXA_BOA := Color(0.36, 0.82, 0.47, 0.3)
+const COR_FAIXA_PERFEITA := Color(0.55, 1.0, 0.62, 0.6)
 ## Quanto o dedo precisa deslizar de lado (px) para valer.
 const DESLIZE_PX := 60.0
 ## Modo do pneu nas provas longas (decisão 131): o botão, o modo, a última
@@ -616,6 +622,8 @@ func _process(delta: float) -> void:
 		var tela := _visual3d.posicao_tela(_visual3d.foco if _visual3d.foco != "" else "jogador")
 		_painel_hud.ancora_carro = _painel_hud.get_global_transform().affine_inverse() * tela if tela.x >= 0.0 \
 				else Vector2(-1, -1)
+		_visual3d.deixas(_deixas_pista)
+		_visual3d.seta(_seta_lado)
 	var s_agora := _visual.distancia("jogador")
 	var meta := _pista.comprimento * _voltas if _pista != null else INF
 	if s_agora >= meta and not _chegou:
@@ -1322,6 +1330,8 @@ func _pilotar(taxa: float) -> void:
 	if not _pil.get("ativa", false) or _pista == null or _resultado.is_empty():
 		return
 	var t := _visual.tempo
+	_deixas_pista = []
+	_seta_lado = 0
 	# Na janela da largada a corrida ao vivo espera no apagar das luzes: o
 	# toque vale desde ali (Pilotagem.ordem_largada).
 	jogador.fila_ctrl.acompanhar(0.0 if _largada_aberta() else t)
@@ -1354,8 +1364,8 @@ func _pilotar(taxa: float) -> void:
 		if faltam < -float(f["boa_s"]):
 			_soltar_curva()
 		else:
-			var janela := maxf((float(_curva["t_fim"]) - float(_curva["t_freada"])) / _taxa_pil, float(f["janela_s"]))
-			_pedal.frenagem(faltam, janela, float(f["boa_s"]), float(f["boa_s"]), "SOLTE NO VERDE")
+			_pedal.frenagem(faltam, 0.0, float(f["boa_s"]), float(f["boa_s"]), "SOLTE NO VERDE")
+			_deixas_pista = [_faixa(float(_curva["t_fim"]), float(f["boa_s"]), COR_FAIXA_BOA)]
 			mostrou = true
 	# A curva à frente: a régua da freada até o carro entrar nela.
 	_frenagem = {}
@@ -1369,14 +1379,22 @@ func _pilotar(taxa: float) -> void:
 		var fim_abs := inicio_abs + fposmod(float(c["fim"]) - float(c["inicio"]), comp)
 		if prox["estado"] == "na_curva":
 			_feitas[chave] = _feitas.get(chave, "")
-		elif Pilotagem.tem_frenagem(c, comp, _pil) and not _feitas.has(chave):
-			var fren_abs := inicio_abs - fposmod(float(c["inicio"]) - float(c["frenagem"]), comp)
-			var t_fren := _visual.tempo_em("jogador", fren_abs)
+		elif not _feitas.has(chave):
+			var t_ent := _visual.tempo_em("jogador", inicio_abs)
+			# O ponto da freada é onde o carro começa a perder velocidade nesta
+			# corrida: a frenagem da Tatica vem do envelope sem o limite de
+			# aceleração (sem velocidade máxima, cai no fim da curva anterior).
+			var t_fren := -1.0 if t_ent < 0.0 else _visual.inicio_freada("jogador", t_ent, t - float(f["boa_s"]) * _taxa_pil)
 			# A janela e as tolerâncias valem em tempo de tela: no ACELERAR (2×)
-			# a corrida anda o dobro e o dedo continua o mesmo.
-			if t_fren >= 0.0 and (t_fren - t) / _taxa_pil <= float(f["janela_s"]):
+			# a corrida anda o dobro e o dedo continua o mesmo. A faixa passou
+			# sem toque: a deixa sai.
+			var faltam := (t_fren - t) / _taxa_pil
+			if t_fren >= 0.0 and faltam <= float(f["janela_s"]) and faltam >= -float(f["boa_s"]) \
+					and inicio_abs - _visual.distancia_em("jogador", t_fren) >= float(f["minimo_m"]):
 				_frenagem = {"chave": chave, "t_frenagem": t_fren, "fim": fim_abs}
 				_pedal.frenagem((t_fren - t) / _taxa_pil, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]))
+				_deixas_pista = [_faixa(t_fren, float(f["boa_s"]), COR_FAIXA_BOA),
+						_faixa(t_fren, float(f["perfeita_s"]), COR_FAIXA_PERFEITA)]
 				mostrou = true
 				_dica("CURVA", "ENCOSTE NO VERDE E SEGURE", "SOLTE NA SAÍDA DA CURVA")
 	# Deslize: o que está na tela espera o dedo; senão, sem curva nem dedo na
@@ -1390,6 +1408,7 @@ func _pilotar(taxa: float) -> void:
 		else:
 			_pedal.defesa(int(_deslize["lado"]), passou / float(_pil["defesa"]["janela_s"]),
 					"FECHE A PORTA" if _deslize["tipo"] == "defesa" else "PASSE NO VÁCUO")
+			_seta_lado = int(_deslize["lado"])
 			mostrou = true
 	elif not mostrou and not _segurando and i >= 0:
 		var d_tras := INF if i + 1 >= ordem.size() else s - _visual.distancia(ordem[i + 1])
@@ -1405,7 +1424,14 @@ func _pilotar(taxa: float) -> void:
 		_pedal.esconder()
 
 
-## Encostou na régua da freada: a nota pelo atraso em relação ao ponto de
+## A faixa no asfalto por onde o carro passa entre `t_centro` ± `tol_s` (s de
+## tela): a tolerância do toque vira metros de pista na velocidade dele.
+func _faixa(t_centro: float, tol_s: float, cor: Color) -> Array:
+	var d := tol_s * _taxa_pil
+	return [_visual.distancia_em("jogador", t_centro - d), _visual.distancia_em("jogador", t_centro + d), cor]
+
+
+## Encostou na faixa da freada: a nota pelo atraso em relação ao ponto de
 ## frenagem; o dedo segue na tela até a saída da curva (_soltar_curva).
 func _frear() -> void:
 	if _frenagem.is_empty():

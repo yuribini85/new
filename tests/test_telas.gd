@@ -713,9 +713,15 @@ func test_segurar_na_curva_freia_e_solta_na_saida() -> void:
 		if not a._frenagem.is_empty() and float(a._frenagem["t_frenagem"]) - a._visual.tempo <= 0.02:
 			break
 		andar.call(0.02)
-	verificar(not a._frenagem.is_empty(), "a régua da freada apareceu antes de uma curva")
+	verificar(not a._frenagem.is_empty(), "a faixa da freada apareceu antes de uma curva")
+	var s_fren: float = a._visual.distancia_em("jogador", float(a._frenagem["t_frenagem"]))
+	verificar(a._deixas_pista.size() == 2 and float(a._deixas_pista[0][0]) < s_fren and s_fren < float(a._deixas_pista[0][1]),
+			"a faixa pintada cobre o ponto da freada")
+	verificar(s_fren < float(a._frenagem["fim"]) - 15.0, "a freada é antes da curva")
 	a._frear()
 	verificar(not a._curva.is_empty(), "encostou: segurando na curva")
+	andar.call(0.02)
+	verificar(a._deixas_pista.size() == 1, "segurando: só a faixa da saída")
 	for k in 4000:
 		if a._visual.tempo >= float(a._curva["t_fim"]):
 			break
