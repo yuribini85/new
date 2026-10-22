@@ -132,6 +132,34 @@ static func vagas(dados: Node, jogador: Node) -> int:
 	return int(config(dados).get("contratos_base", 1)) + int(efeito(dados, jogador, "contratos"))
 
 
+# ------------------------------------------------- Treinador (decisão 130)
+
+static func cfg_treinador(dados: Node) -> Dictionary:
+	return dados.equipe().get("treinador", {})
+
+
+## Contratado e dentro do prazo.
+static func treinador_ativo(jogador: Node, agora: float) -> bool:
+	return float(jogador.equipe.get("treinador_ate", 0.0)) > agora
+
+
+## Contrata por `duracao_h` horas (sem custo na hora: ele fica com a fatia dos
+## prêmios). Renovar antes do fim soma o prazo a partir de agora.
+static func contratar_treinador(dados: Node, jogador: Node, agora: float) -> void:
+	jogador.equipe["treinador_ate"] = agora + float(cfg_treinador(dados).get("duracao_h", 24)) * 3600.0
+
+
+static func dispensar_treinador(jogador: Node) -> void:
+	jogador.equipe.erase("treinador_ate")
+
+
+## A parte do prêmio que fica com o treinador (0 sem treinador).
+static func fatia_treinador(dados: Node, jogador: Node, premio: int, agora: float) -> int:
+	if not treinador_ativo(jogador, agora):
+		return 0
+	return roundi(premio * float(cfg_treinador(dados).get("fatia_premio", 0.0)))
+
+
 ## Renda por hora de um patrocinador.
 static func renda_hora(dados: Node, _jogador: Node, p: Dictionary) -> int:
 	if p.is_empty():  # patrocinador que saiu de patrocinadores.json

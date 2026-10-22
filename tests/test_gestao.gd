@@ -590,3 +590,30 @@ func test_caixa_de_pintura() -> void:
 			"nada mais a liberar: um prêmio de 1º da licença em giros")
 	j.free()
 	d.free()
+
+
+## Decisão 130 (E6): o piloto de corrida sobe pelo recorde pessoal de volta
+## (corrida sem recorde não conta); com o treinador, cada recorde vale fator_xp.
+func test_evolucao_pelo_recorde_de_volta() -> void:
+	var d := dados_fixture()
+	var j := _novo(d)
+	j.economia.creditar(1000)
+	d.equipe()["treino"]["xp_por_nivel"] = 3
+	d.equipe()["treino"]["recordes_por_nivel"] = 2
+	d.equipe()["treinador"] = {"fatia_premio": 0.2, "fator_xp": 2, "duracao_h": 24}
+	igual(EquipeJogador.contratar(d, j, "livre_1", "corrida"), "", "contrata")
+	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, false), [], "sem recorde: nada")
+	igual(EquipeJogador.xp(j, "livre_1"), 0, "sem recorde não soma")
+	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, true), [], "um recorde: ainda não")
+	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, true), ["livre_1"], "dois recordes: sobe")
+	igual(EquipeJogador.apos_prova(d, j, ["corrida"], false, true, true), ["livre_1"], "com o treinador, um recorde basta")
+	GestaoEquipe.contratar_treinador(d, j, 1000.0)
+	verificar(GestaoEquipe.treinador_ativo(j, 1000.0 + 23.0 * 3600.0), "contratado por 24 h")
+	verificar(not GestaoEquipe.treinador_ativo(j, 1000.0 + 25.0 * 3600.0), "depois, não")
+	igual(GestaoEquipe.fatia_treinador(d, j, 1000, 2000.0), 200, "fica com 20% do prêmio")
+	igual(GestaoEquipe.fatia_treinador(d, j, 1000, 1000.0 + 25.0 * 3600.0), 0, "vencido: nada")
+	d.equipe()["treino"].erase("xp_por_nivel")
+	d.equipe()["treino"].erase("recordes_por_nivel")
+	d.equipe().erase("treinador")
+	j.free()
+	d.free()

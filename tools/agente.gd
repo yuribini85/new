@@ -222,7 +222,7 @@ func _correr(evento_id: String, tipo: String) -> Dictionary:
 		log.append("carro-prêmio em %s" % d.evento(evento_id)["nome"])
 	_avisar("corrida", {"evento": evento_id, "posicao": int(r["posicao"]), "tipo": tipo,
 			"campeao": bool(r.get("campeonato", {}).get("campeao", false)),
-			"campeonato": not r.get("campeonato", {}).is_empty()})
+			"campeonato": not r.get("campeonato", {}).is_empty(), "recorde_volta": bool(r.get("recorde_volta", false))})
 	return r
 
 

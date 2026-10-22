@@ -1365,6 +1365,8 @@ func _resultado(c: Dictionary, primeira: bool) -> void:
 			marcos.append(["CAMPEÃO: %s" % camp["serie"], Aba.COR_DESTAQUE])
 			if int(jogador.titulos.get(String(camp["serie"]), 0)) == 1:  # primeiro título da série
 				marcos.append(["+1 H DE RENDA OFFLINE", Aba.COR_BOM])
+		if c.get("recorde_volta", false):
+			marcos.append(["NOVO RECORDE PESSOAL DE VOLTA", Aba.COR_BOM])
 		# Caixa de pintura (decisão 130): já aberta, o que saiu.
 		if not c.get("caixa", {}).is_empty():
 			marcos.append([CaixaPintura.texto(c["caixa"]).to_upper(), Color("ffd34d")])

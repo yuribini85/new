@@ -397,6 +397,9 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	if jogador.vitorias.has(evento_id):
 		_contar_repeticao(evento_id, agora_real)
 	premio = roundi(premio * fator)
+	# Treinador (decisão 130): fica com a fatia do prêmio enquanto contratado.
+	var treinador := GestaoEquipe.fatia_treinador(dados, jogador, premio, agora_real)
+	premio -= treinador
 	jogador.economia.creditar(premio)
 
 	var carro_premio_uid := -1
@@ -426,7 +429,9 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 	var anterior: Dictionary = jogador.historico.get(evento_id, {}).duplicate()
 	jogador.historico[evento_id] = _historico(anterior, posicao_propria, tempo, posicao == 1)
 	var patrocinio := GestaoEquipe.bonus_corrida(dados, jogador, ev, posicao, not campeonato.is_empty())
-	var subiram := EquipeJogador.apos_prova(dados, jogador, ["corrida"], posicao == 1)
+	var recorde_volta := registrar_volta(ev, corrida, r)
+	var subiram := EquipeJogador.apos_prova(dados, jogador, ["corrida"], posicao == 1, recorde_volta,
+			GestaoEquipe.treinador_ativo(jogador, agora_real))
 
 	return {
 		"anterior": anterior,
@@ -445,7 +450,27 @@ func aplicar(corrida: Dictionary) -> Dictionary:
 		"campeonato": campeonato,
 		"grid": grid,
 		"caixa": caixa,
+		"recorde_volta": recorde_volta,
+		"treinador": treinador,
 	}
+
+
+## Recorde pessoal de volta (decisão 130, E6): a melhor volta do jogador nesta
+## corrida contra a melhor já feita com o mesmo modelo de carro na mesma pista.
+## A primeira volta registrada num par carro + pista também é recorde. Guarda e
+## devolve se bateu.
+func registrar_volta(ev: Dictionary, corrida: Dictionary, r: Dictionary) -> bool:
+	var info: Dictionary = r.get("carros", {}).get("jogador", {})
+	var voltas: Array = info.get("voltas", [])
+	var carro: Carro = jogador.garagem.carro(int(corrida.get("uid", -1)))
+	if voltas.is_empty() or carro == null:
+		return false
+	var melhor: float = voltas.min()
+	var chave := "%s|%s" % [carro.id, ev["pista"]]
+	if jogador.recordes_volta.has(chave) and melhor >= float(jogador.recordes_volta[chave]):
+		return false
+	jogador.recordes_volta[chave] = melhor
+	return true
 
 
 ## "derrotas": derrotas seguidas nesta prova (zera na vitória; a ajuda da

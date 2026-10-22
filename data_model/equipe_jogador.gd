@@ -319,8 +319,22 @@ static func migrar(dados: Node, jogador: Node) -> void:
 ## `xp_por_nivel` provas, um nível de ritmo, até o teto da licença (decisão
 ## 124: é o único jeito de subir; o treino pago, a energia e o embalo saíram).
 ## Devolve os ids que subiram de nível.
-static func apos_prova(dados: Node, jogador: Node, vagas: Array, _venceu: bool) -> Array:
-	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
+## Decisão 130 (E6): o piloto de corrida evolui pelo recorde pessoal de volta
+## (`recorde`, Carreira.registrar_volta), não por prova disputada: sem recorde,
+## não soma; com ele, um nível a cada `recordes_por_nivel` recordes. Os de arena
+## seguem por luta.
+## Com o treinador (`treinador`), cada recorde vale treinador.fator_xp.
+static func apos_prova(dados: Node, jogador: Node, vagas: Array, _venceu: bool, recorde := true,
+		treinador := false) -> Array:
+	var cfg := GestaoEquipe.cfg_treino(dados)
+	var por_nivel := int(cfg.get("xp_por_nivel", 0))
+	var ganho := 1
+	if vagas == ["corrida"] and cfg.has("recordes_por_nivel"):
+		if not recorde:
+			return []
+		por_nivel = int(cfg["recordes_por_nivel"])
+		if treinador:
+			ganho = int(GestaoEquipe.cfg_treinador(dados).get("fator_xp", 1))
 	var subiram := []
 	var ids: Array = vagas.map(func(v): return piloto_vaga(jogador, v)).filter(func(x): return x != "")
 	if ids.is_empty():
@@ -329,7 +343,7 @@ static func apos_prova(dados: Node, jogador: Node, vagas: Array, _venceu: bool) 
 	for id in ids:
 		if por_nivel <= 0:
 			break
-		var xp := int(jogador.equipe.get("xp_" + id, 0)) + 1
+		var xp := int(jogador.equipe.get("xp_" + id, 0)) + ganho
 		if xp >= por_nivel and GestaoEquipe.pode_subir(dados, jogador, base, id):
 			var t: Dictionary = jogador.equipe.get("treino_" + id, {})
 			t["nivel"] = int(t.get("nivel", 0)) + 1

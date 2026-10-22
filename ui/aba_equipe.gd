@@ -243,8 +243,13 @@ func _vaga_piloto(vaga: String, pai: Control) -> void:
 	if EquipeJogador.piloto(dados, id).has("equipe"):
 		rotulo("Ex-%s." % EquipeJogador.piloto(dados, id)["equipe"], FONTE_PEQUENA, COR_SECUNDARIA, v)
 	var por_nivel := int(GestaoEquipe.cfg_treino(dados).get("xp_por_nivel", 0))
+	# Decisão 130: o piloto de corrida sobe pelo recorde pessoal de volta.
+	if vaga == "corrida" and GestaoEquipe.cfg_treino(dados).has("recordes_por_nivel"):
+		por_nivel = int(GestaoEquipe.cfg_treino(dados)["recordes_por_nivel"])
 	if por_nivel > 0:
 		_proximo_nivel(v, EquipeJogador.xp(jogador, id), por_nivel)
+		if vaga == "corrida" and GestaoEquipe.cfg_treino(dados).has("recordes_por_nivel"):
+			rotulo("Sobe batendo o próprio recorde de volta com um carro numa pista.", FONTE_PEQUENA, COR_SECUNDARIA, v)
 	botao_texto("Trocar piloto  →", _escolher_segundo.bind(vaga), v).alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 

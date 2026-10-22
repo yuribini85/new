@@ -83,6 +83,8 @@ func test_save_ida_e_volta() -> void:
 	j.licencas.append("b")
 	j.graus_licenca["b1"] = "prata"
 	j.vitorias["aberto"] = 1
+	j.caixa = ["rodas:turbina", "padroes:xadrez"]  # decisão 130: itens das caixas
+	j.recordes_volta = {"forte|oval": 61.25}  # e o recorde de volta
 	igual(f.iniciar("aberto", uid, 1, 0.0), "", "iniciar")
 	f.processar(f.corrida_atual(0.0)["duracao"] * 0.5)  # salva no meio da corrida
 
@@ -91,6 +93,7 @@ func test_save_ida_e_volta() -> void:
 	k.novo_jogo(d.economia(), d.pneu)
 	igual(Save.desserializar(JSON.parse_string(texto), k, d), "", "load")
 	igual(JSON.stringify(Save.serializar(k)), texto, "estado idêntico")
+	igual([k.caixa, k.recordes_volta], [["rodas:turbina", "padroes:xadrez"], {"forte|oval": 61.25}], "caixa e recordes no save")
 	var ck: Carro = k.garagem.carro(uid)
 	igual(ck.atributos_efetivos("chuva"), c.atributos_efetivos("chuva"), "atributos do carro")
 	igual([ck.apelido, ck.nome_mostrado()], ["Relâmpago", "Relâmpago"], "apelido do carro no save")

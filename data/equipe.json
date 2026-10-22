@@ -40,7 +40,9 @@
   "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde).",
   "_passo": "GERADO por tools/calibrar_treino.py: o maior teto dividido em `niveis` (3, decisão do usuário).",
   "xp_por_nivel": 3,
-  "_xp": "Decisão 71 (aprovado): a cada 'xp_por_nivel' provas (corridas do piloto de corrida, lutas dos de arena) o piloto ganha um nível, até o teto da licença; 3 = as etapas de uma série de campeonato. Decisão 124: é o único jeito de subir (sem treino pago, energia nem embalo)."
+  "_xp": "Decisão 71 (aprovado): a cada 'xp_por_nivel' provas (corridas do piloto de corrida, lutas dos de arena) o piloto ganha um nível, até o teto da licença; 3 = as etapas de uma série de campeonato. Decisão 124: é o único jeito de subir (sem treino pago, energia nem embalo).",
+  "recordes_por_nivel": 2,
+  "_recordes": "Decisão 130 (E6, recomendação aceita pelo usuário, 2026-10-22): o piloto de corrida sobe pelo recorde pessoal de volta (carro + pista), não pela prova disputada: um nível a cada recordes_por_nivel recordes. Medido por tools/medir_recordes.gd (campanha, 3 perfis × 2 sementes, 90 min): 64% das corridas batem recorde; round(3 × 0,645) = 2 recordes ≈ 3,1 corridas por nível, a mesma média de antes (xp_por_nivel = 3). Os pilotos de arena seguem por luta."
  },
  "pintura": {
   "_nota": "Oficina → PINTURA (pedido do usuário, 2026-10-11): trocar a cor da carroceria e pintar faixas custa um fator sobre o prêmio de 1º lugar médio da maior licença do jogador (o mesmo critério da Sede e do treino). null = preço a definir (vale 0 até o usuário decidir).",
@@ -64,6 +66,12 @@
     "serifa"
    ]
   }
+ },
+ "treinador": {
+  "_nota": "Decisão 130 (E6): o treinador seria o patrocínio ao contrário: enquanto contratado (duracao_h horas), fica com fatia_premio do prêmio de cada corrida e cada recorde de volta do piloto de corrida vale fator_xp. Medido (tools/medir_recordes.gd -- 180 2 treinador, 3 perfis × 2 sementes, 180 min de corrida): sem treinador 67 provas vencidas; com fatia 0,2, 36; com fatia 0 (de graça), 67 — a experiência a mais não muda o caminho (o nível do piloto tem teto por licença) e a fatia o encurta pela metade. O critério aprovado (~10% mais curto) não fecha: o treinador fica sem botão na tela até a decisão do usuário.",
+  "fatia_premio": 0.2,
+  "fator_xp": 2,
+  "duracao_h": 24
  },
  "_nota_patrocinio_teto": "Decisão 85 (usuário): com o app fechado o patrocínio rende até teto_offline_h_base horas na primeira licença e mais teto_offline_h_por_licenca hora a cada licença conquistada depois (o teto das corridas, carreira.teto_offline_s, não vale para ele). Na campanha do dono o patrocínio abre depois da primeira corrida com a licença Club (flag PATROCINIO_LIBERADO); caixa e sede seguem na International."
 }
