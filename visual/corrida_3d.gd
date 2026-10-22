@@ -672,7 +672,11 @@ func atualizar(delta: float) -> void:
 	if seguido == "":
 		return
 	var disputa_seguida := disputa and foco == "jogador"
-	_mudar_modo(_decidir_modo(seguido, float(s[seguido]), disputa_seguida), delta <= 0.0)
+	var fixa := perseguicao and seguido == "jogador"
+	var novo_modo := _decidir_modo(seguido, float(s[seguido]), disputa_seguida)
+	if fixa and chegada <= 0.0:
+		novo_modo = "normal"
+	_mudar_modo(novo_modo, delta <= 0.0)
 	_animar_modo(delta)
 	# O isométrico só está certo para quem aponta como o carro seguido (a câmera
 	# fica atrás dele); numa reta, os carros próximos também. Os outros seguem
@@ -682,9 +686,9 @@ func atualizar(delta: float) -> void:
 		if _carros[id] is CarroDesenho:
 			var alinhado := smoothstep(0.82, 0.96, cos(angle_difference(_pista.rumo_em(float(s[id])), rumo_seg)))
 			_carros[id].mistura(_mistura_sprite() * alinhado)
-	var tamanho_alvo := TAMANHO_DISPUTA if modo == "foco" else TAMANHO_CAMERA
+	var tamanho_alvo := TAMANHO_PERSEGUICAO if fixa else (TAMANHO_DISPUTA if modo == "foco" else TAMANHO_CAMERA)
 	# Dois carros no quadro (diretor): abre o bastante para os dois.
-	var par := enquadrar_com if _carros.has(enquadrar_com) and enquadrar_com != seguido \
+	var par := enquadrar_com if not fixa and _carros.has(enquadrar_com) and enquadrar_com != seguido \
 			and _carros[seguido].position.distance_to(_carros[enquadrar_com].position) < 45.0 else ""
 	if par != "":
 		tamanho_alvo = maxf(TAMANHO_DISPUTA, _carros[seguido].position.distance_to(_carros[par].position) * 1.5 + 12.0)
@@ -693,8 +697,9 @@ func atualizar(delta: float) -> void:
 	_camera.size = _tamanho_base / _zoom
 	_rumo_seguido = _pista.rumo_em(float(s[seguido]))
 	var v_seg := float(_v.get(seguido, 0.0))
-	# Mais rápido, mais longe: a câmera abre com a velocidade.
-	_camera.size *= 1.0 + 0.22 * clampf(v_seg / V_FORTE, 0.0, 1.0)
+	# Mais rápido, mais longe: a câmera abre com a velocidade (não na perseguição).
+	if not fixa:
+		_camera.size *= 1.0 + 0.22 * clampf(v_seg / V_FORTE, 0.0, 1.0)
 	# Chegada: fecha devagar no carro.
 	_camera.size *= lerpf(1.0, 0.76, smoothstep(0.0, 1.0, chegada))
 	# Soco do toque e da comemoração: fecha e volta.
@@ -706,7 +711,7 @@ func atualizar(delta: float) -> void:
 	# Respiração: a câmera nunca fica parada. Deriva lenta de lado e para a
 	# frente, e um zoom que vai e volta (períodos longos e diferentes, para não
 	# parecer um ciclo).
-	if not Preferencias.reduzir_animacoes:
+	if not Preferencias.reduzir_animacoes and not fixa:
 		var lado := Vector3(-sin(_rumo_seguido), 0.0, -cos(_rumo_seguido))
 		var fr := Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido))
 		novo += lado * sin(_tempo * TAU / 11.0) * 1.3 + fr * sin(_tempo * TAU / 17.0 + 1.0) * 1.1
@@ -722,7 +727,10 @@ func atualizar(delta: float) -> void:
 	var frente := Vector3(cos(_rumo_seguido), 0.0, -sin(_rumo_seguido))
 	# A câmera mira à frente do carro (mais pista livre adiante), mais no modo
 	# velocidade.
-	novo += frente * (minf(v_seg * 0.18, 7.0) * (1.0 - _b) + _camera.size * 0.18 * _b)
+	if fixa:
+		novo += frente * _camera.size * AVANCO_PERSEGUICAO * (1.0 - _b)
+	else:
+		novo += frente * (minf(v_seg * 0.18, 7.0) * (1.0 - _b) + _camera.size * 0.18 * _b)
 	# De cima, a câmera gira com o carro (a frente para o alto da tela), com
 	# atraso: nas curvas o mundo gira em volta dele.
 	var alvo_guinada := _rumo_seguido + PI
@@ -799,6 +807,14 @@ func _camera_grid(s: Dictionary, ordem: Array, delta: float) -> void:
 func destacar_jogador() -> void:
 	if not Preferencias.reduzir_animacoes:
 		_destaque_jogador = DESTAQUE_S
+
+
+## Ponto do carro `id` na tela (coordenadas globais); (-1, -1) sem ele.
+func posicao_tela(id: String) -> Vector2:
+	if not _carros.has(id) or _camera == null or not is_inside_tree():
+		return Vector2(-1, -1)
+	var p := _camera.unproject_position(_carros[id].global_position)
+	return get_global_transform() * (p * float(stretch_shrink))
 
 
 ## Defesa (Pilotagem): o carro `id` vai para o lado `lado` (-1 esquerda da
@@ -878,6 +894,15 @@ func _camera_imediata() -> void:
 ## "normal" (de cima), "foco" (disputa, mais perto) ou "velocidade" (inclinada,
 ## atrás do carro, sprite isométrico e efeito nas bordas).
 var modo := "normal"
+## Câmera de perseguição (revisão da corrida, decisão 131): seguindo o seu
+## carro, sem zoom pela velocidade, sem respiração e sem os planos inclinados;
+## o carro fica sempre no mesmo ponto, no terço de baixo da tela, e a pista à
+## frente aparece — as deixas da pilotagem caem sempre no mesmo lugar.
+var perseguicao := false
+const TAMANHO_PERSEGUICAO := 34.0
+## Quanto a câmera mira à frente do carro, em frações do quadro (põe o carro
+## no terço de baixo).
+const AVANCO_PERSEGUICAO := 0.42
 ## Intensidade do efeito de tela (0..1), lida pela tela da corrida.
 var efeito_velocidade := 0.0
 ## Velocidade do relógio da corrida neste quadro (1×, o fator da aceleração ou 0

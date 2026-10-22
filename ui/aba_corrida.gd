@@ -6,6 +6,10 @@ extends Aba
 
 ## Pede para encerrar a corrida em andamento agora (só no playtest "clareza").
 signal pular
+## Menu ••• da corrida em tela cheia (decisão 131): pedidos para a principal.
+signal acelerar_pedido
+signal configuracoes_pedido
+signal sair_pedido
 
 ## A tela segue a hierarquia: a corrida domina; o estado da corrida (HUD e
 ## eventos) vem em segundo; os controles de câmera em terceiro; meta-jogo e
@@ -96,6 +100,18 @@ var _analisando := false
 var _em_andamento := false
 var _vazio_topo: Control
 var _nome_prova: Label
+## Corrida em tela cheia (decisão 131): a principal esconde a barra de abas e o
+## cabeçalho; aqui somem o nome da prova e as câmeras, que vão para o •••.
+var tela_cheia := false:
+	set(v):
+		if v == tela_cheia:
+			return
+		tela_cheia = v
+		if not v:
+			_fechar_menu()
+		_ajustar_area()
+var _menu_botao: Button
+var _menu: Control
 const ALTURA_MIN_AREA := 720.0
 ## Quadros com a capa depois de montar a pista (o primeiro desenho e o
 ## aquecimento dos efeitos acontecem por trás dela).
@@ -251,15 +267,16 @@ func _init(d: Node, j: Node) -> void:
 	area.add_child(_cartao)
 	_pil = Pilotagem.params(dados)
 	_pedal = PedalPilotagem.new()
-	# No alto, entre a posição e a volta: o carro fica no meio da tela e a
-	# classificação embaixo.
-	_pedal.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	# Na zona do polegar, abaixo do carro (decisão 131: nada sobre o carro).
+	_pedal.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_pedal.offset_left = -300
 	_pedal.offset_right = 300
-	_pedal.offset_top = 70
-	_pedal.offset_bottom = 180
+	_pedal.offset_top = -170
+	_pedal.offset_bottom = -60
 	_pedal.visible = false
 	area.add_child(_pedal)
+	_menu_botao = _criar_menu_botao()
+	area.add_child(_menu_botao)
 	# FORÇAR / POUPAR PNEUS no canto de baixo à esquerda (o minimapa fica à direita).
 	_ritmo = HBoxContainer.new()
 	_ritmo.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
@@ -285,7 +302,10 @@ func _init(d: Node, j: Node) -> void:
 	_painel.add_theme_constant_override("separation", 14)
 	conteudo.add_child(_painel)
 	Preferencias.carregar()
-	_camera_modo = "dados" if Preferencias.vista_corrida == "dados" else "auto"
+	# Decisão 131: a câmera de perseguição é a padrão (as deixas da pilotagem
+	# caem sempre no mesmo lugar); AUTO e as outras ficam no •••.
+	_camera_modo = "dados" if Preferencias.vista_corrida == "dados" else "jogador"
+	_visual3d.perseguicao = _camera_modo == "jogador"
 	_sons = Sons.new()
 	add_child(_sons)
 	resized.connect(_ajustar_area)
@@ -345,7 +365,7 @@ func _seletor_cameras() -> Control:
 			b.add_theme_stylebox_override(estado, marcado)
 		b.pressed.connect(_camera.bind(c[1]))
 		h.add_child(b)
-		if c[1] == "auto":
+		if c[1] == "auto" and _cameras_botoes.size() < CAMERAS.size():  # só o seletor de baixo
 			ancora("CAMERA_AUTO", b)
 		_cameras_botoes.append(b)
 	return p
@@ -355,7 +375,7 @@ var _camera_modo := "auto":
 	set(v):
 		_camera_modo = v
 		for i in _cameras_botoes.size():
-			var marcado: bool = CAMERAS[i][1] == v
+			var marcado: bool = CAMERAS[i % CAMERAS.size()][1] == v
 			_cameras_botoes[i].button_pressed = marcado
 			(_cameras_botoes[i].get_child(0) as TextureRect).modulate = Color(0.1, 0.1, 0.1) if marcado else COR_SECUNDARIA
 			(_cameras_botoes[i].get_child(1) as Label).add_theme_color_override("font_color",
@@ -373,7 +393,7 @@ func _camera(modo: String) -> void:
 	var dados_on := modo == "dados"
 	_vista.visible = dados_on
 	_visual3d.visible = not dados_on
-	_minimapa.visible = not dados_on
+	_minimapa.visible = not dados_on and not tela_cheia
 	_painel_hud.so_eventos = dados_on
 	_painel_hud.queue_redraw()
 	_ajustar_area()
@@ -383,6 +403,7 @@ func _camera(modo: String) -> void:
 	if dados_on:
 		return
 	_visual3d.visao_geral = modo == "geral"
+	_visual3d.perseguicao = modo == "jogador"
 	_visual3d.enquadrar_com = ""
 	if modo == "auto":
 		_diretor.reiniciar()
@@ -483,7 +504,7 @@ func _construir_painel() -> void:
 	for c in _painel.get_children():
 		c.queue_free()
 	_em_andamento = not jogador.fila.is_empty()
-	_cameras.visible = _em_andamento
+	_cameras.visible = _em_andamento and not tela_cheia
 	if _em_andamento and Preferencias.permite_pular():
 		# Só no teste: pular para o resultado (link discreto).
 		var h := HBoxContainer.new()
@@ -602,6 +623,9 @@ func _process(delta: float) -> void:
 	if _visual3d.visible:  # na vista DADOS o 3D não anda (bateria)
 		_visual3d.taxa = taxa
 		_visual3d.atualizar(delta)
+		var tela := _visual3d.posicao_tela(_visual3d.foco if _visual3d.foco != "" else "jogador")
+		_painel_hud.ancora_carro = _painel_hud.get_global_transform().affine_inverse() * tela if tela.x >= 0.0 \
+				else Vector2(-1, -1)
 	var s_agora := _visual.distancia("jogador")
 	var meta := _pista.comprimento * _voltas if _pista != null else INF
 	if s_agora >= meta and not _chegou:
@@ -816,15 +840,24 @@ func _ajustar_area() -> void:
 		_vazio_topo.visible = not correndo
 	_info.visible = not correndo
 	_relogio.visible = not correndo
-	_nome_prova.visible = correndo
+	var cheia := correndo and tela_cheia
+	_nome_prova.visible = correndo and not cheia
+	_cameras.visible = _em_andamento and not cheia
 	# Abaixo do cabeçalho (o HUD 3D desvia do marcador da aceleração à direita;
-	# a vista DADOS, de cima a baixo na largura toda, começa abaixo dele).
-	var topo := topo_livre + (Cabecalho.ALTURA_MARCADOR + 6.0 if _camera_modo == "dados" else 0.0)
+	# a vista DADOS, de cima a baixo na largura toda, começa abaixo dele). Em
+	# tela cheia, abaixo só da área segura do aparelho (o entalhe da câmera).
+	var topo := AreaSegura.topo(size.x) + 6.0 if cheia \
+			else topo_livre + (Cabecalho.ALTURA_MARCADOR + 6.0 if _camera_modo == "dados" else 0.0)
 	_painel_hud.offset_top = topo
 	_vista.offset_top = topo
+	if _menu_botao != null:
+		_menu_botao.visible = cheia
+		_menu_botao.offset_top = topo + 10.0
+		_menu_botao.offset_bottom = topo + 10.0 + MENU_BOTAO
+	_minimapa.visible = not cheia and _camera_modo != "dados"
 	if correndo:
-		var livre := size.y - _cameras.get_combined_minimum_size().y - _nome_prova.get_combined_minimum_size().y \
-				- 2.0 * 14.0 - 10.0
+		var livre := size.y if cheia else size.y - _cameras.get_combined_minimum_size().y \
+				- _nome_prova.get_combined_minimum_size().y - 2.0 * 14.0 - 10.0
 		_area.custom_minimum_size.y = maxf(ALTURA_MIN_AREA, livre)
 
 
@@ -1656,3 +1689,94 @@ static func _mmss(t: float) -> String:
 
 static func _mmss_dec(t: float) -> String:
 	return "%d:%04.1f" % [int(t) / 60, fmod(t, 60.0)]
+
+
+
+## Botão ••• no canto de cima à direita da corrida em tela cheia.
+const MENU_BOTAO := 52.0
+
+
+func _criar_menu_botao() -> Button:
+	var b := Button.new()
+	b.text = "•••"
+	b.focus_mode = Control.FOCUS_NONE
+	b.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	b.offset_left = -12.0 - MENU_BOTAO
+	b.offset_right = -12.0
+	b.offset_top = 10.0
+	b.offset_bottom = 10.0 + MENU_BOTAO
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.03, 0.035, 0.05, 0.62)
+	sb.set_corner_radius_all(int(MENU_BOTAO / 2.0))
+	for estado in ["normal", "hover", "pressed", "hover_pressed", "focus"]:
+		b.add_theme_stylebox_override(estado, sb)
+	b.add_theme_font_size_override("font_size", 22)
+	b.add_theme_color_override("font_color", Color.WHITE)
+	b.visible = false
+	b.pressed.connect(_abrir_menu)
+	Tipografia.area_toque(b, MENU_BOTAO)
+	return b
+
+
+## Menu da corrida: as câmeras, ACELERAR, configurações e sair (a corrida
+## continua). Tocar fora fecha.
+func _abrir_menu() -> void:
+	if _menu != null:
+		_fechar_menu()
+		return
+	_acordar()
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.55)
+	fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fundo.gui_input.connect(func(e: InputEvent):
+		if (e is InputEventMouseButton and e.pressed) or (e is InputEventScreenTouch and e.pressed):
+			_fechar_menu())
+	_area.add_child(fundo)
+	_menu = fundo
+	var caixa := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(COR_CARTAO, 0.96)
+	sb.set_corner_radius_all(14)
+	sb.set_content_margin_all(16)
+	caixa.add_theme_stylebox_override("panel", sb)
+	caixa.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	caixa.offset_left = 14.0
+	caixa.offset_right = -14.0
+	caixa.offset_top = _menu_botao.offset_bottom + 10.0
+	fundo.add_child(caixa)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 12)
+	caixa.add_child(v)
+	rotulo("CÂMERA", FONTE_PEQUENA, COR_SECUNDARIA, v)
+	var cams := _seletor_cameras()
+	v.add_child(cams)
+	_camera_modo = _camera_modo  # marca a escolhida também neste seletor
+	var acel := Button.new()
+	Tipografia.acao_primaria(acel, "ACELERAR", COR_DESTAQUE, Color(0.1, 0.1, 0.1), 28, Tipografia.ALTURA_SECUNDARIA)
+	acel.pressed.connect(func():
+		_fechar_menu()
+		acelerar_pedido.emit())
+	v.add_child(acel)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	v.add_child(h)
+	for par in [["CONFIGURAÇÕES", configuracoes_pedido], ["SAIR · A CORRIDA CONTINUA", sair_pedido]]:
+		var b := Button.new()
+		b.text = par[0]
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.custom_minimum_size = Vector2(0, Tipografia.ALTURA_SECUNDARIA)
+		b.add_theme_font_size_override("font_size", 20)
+		var sinal: Signal = par[1]
+		b.pressed.connect(func():
+			_fechar_menu()
+			sinal.emit())
+		h.add_child(b)
+
+
+func _fechar_menu() -> void:
+	if _menu == null:
+		return
+	# O seletor do menu sai da lista de botões das câmeras junto com ele.
+	_cameras_botoes = _cameras_botoes.slice(0, CAMERAS.size())
+	_menu.queue_free()
+	_menu = null

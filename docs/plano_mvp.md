@@ -1221,3 +1221,13 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     volta (carro + pista) no lugar da corrida disputada, calibrada para a média não mudar. Ajuda
     para quem trava: 4 derrotas seguidas na prova não vencida aumentam 50% a faixa da freada boa
     até a vitória, sem aviso.
+131. **Revisão completa da corrida** (2026-10-22, pedido do usuário: "jogabilidade péssima, muita
+    informação sobrescrita, pouca participação"; estudo e proposta em `docs/revisao_corrida.md`;
+    as quatro recomendações aprovadas). C1: três gestos — segurar na curva (encosta na faixa de
+    freada, solta na de saída), deslizar para os lados (defesa atrás, passagem no vácuo na frente)
+    e tocar na largada; forçar/poupar vira um modo que fica valendo (ATAQUE / NORMAL / POUPAR).
+    C2: as deixas pintadas na pista e setas no chão, perto do carro; sai a régua do meio da tela.
+    C3: corrida em tela cheia, câmera de perseguição fixa (carro no terço de baixo) e um botão •••
+    com câmeras, ACELERAR, configurações e sair; o HUD em três lugares (faixa de cima com posição e
+    volta; quem está à frente e atrás; notas perto do carro). C4: sequência de acertos com bônus
+    pequeno, recalibrada para a corrida toda perfeita continuar no teto da decisão 128.

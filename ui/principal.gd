@@ -13,6 +13,8 @@ const HISTORICO_MAX := 20
 var _meta: Array = []  # saldo e moeda: meta-jogo, somem durante a corrida
 var _nav: Control
 var _modo_corrida := false
+## Faixa ao vivo + barra de abas (some na corrida em tela cheia, decisão 131).
+var _pe: Control
 var _abas: TabContainer
 var _todas: Array = []
 var _botoes: Array = []
@@ -152,6 +154,9 @@ func _ready() -> void:
 			_todas[4].segurar()
 			_quando_dialogo_acabar(_todas[4].liberar_largada)
 		_ir_para(4))
+	_todas[4].acelerar_pedido.connect(_abrir_aceleracao)
+	_todas[4].configuracoes_pedido.connect(_abrir_configuracoes)
+	_todas[4].sair_pedido.connect(func(): _ir_para(3))
 	_todas[4].pular.connect(func():
 		RegistroSessao.pulo()
 		jogador.fila_ctrl.adiantar(Aceleracao.agora(jogador))
@@ -171,6 +176,7 @@ func _ready() -> void:
 	_ao_vivo.pressed.connect(func(): _ir_para(4))
 	# Faixa ao vivo e navegação com a margem lateral (as telas vão até a beira).
 	var pe := MarginContainer.new()
+	_pe = pe
 	pe.add_theme_constant_override("margin_left", 16)
 	pe.add_theme_constant_override("margin_right", 16)
 	raiz.add_child(pe)
@@ -745,6 +751,11 @@ func _foco_corrida() -> void:
 	if assistindo == _modo_corrida:
 		return
 	_modo_corrida = assistindo
+	# Decisão 131: assistindo, a corrida ocupa a tela toda (sem cabeçalho nem
+	# barra de abas; o ••• da corrida tem câmeras, ACELERAR, configurações e sair).
+	_pe.visible = not assistindo
+	_cabecalho.visible = not assistindo
+	_todas[4].tela_cheia = assistindo
 	var t := create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE)
 	for n in _meta:
 		t.tween_property(n, "modulate:a", 0.0 if assistindo else 1.0, 0.5)
