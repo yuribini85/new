@@ -9,6 +9,7 @@ const COR_CARTAO := Color(0.13, 0.145, 0.17)
 const COR_DINHEIRO := Color(0.45, 0.9, 0.5)
 const COR_OURO := Color("d6a23e")
 const PAUSA_CHEGADA_S := 2.5
+const PAUSA_COM_VIDEO_S := 4.0  # tempo para tocar em "VÍDEO: PRÊMIO 2×"
 const SALVAR_A_CADA_S := 5.0
 
 var dados: Node
@@ -30,6 +31,9 @@ var _posicao: Label
 var _relogio: Label
 var _aviso: Label
 var _subir: Button
+var _dobrar: Button
+var _ganho_corrida := 0.0
+var _sem_intersticial := false  # quem acabou de ver o vídeo não vê intersticial
 var _camera: Button
 var _cartoes := {}  # melhoria -> {nivel, efeito, botao}
 
@@ -130,6 +134,16 @@ func _montar() -> void:
 	_subir.offset_bottom = -12
 	_subir.pressed.connect(_subir_liga)
 	corrida.add_child(_subir)
+	_dobrar = Button.new()
+	Tipografia.acao_primaria(_dobrar, "VÍDEO: PRÊMIO 2×", COR_DINHEIRO, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
+	_dobrar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_dobrar.offset_left = -200
+	_dobrar.offset_right = 200
+	_dobrar.offset_top = -100
+	_dobrar.offset_bottom = -12
+	_dobrar.visible = false
+	_dobrar.pressed.connect(_dobrar_premio)
+	corrida.add_child(_dobrar)
 	# Os cartões de melhoria, dois por linha.
 	var grade := GridContainer.new()
 	grade.columns = 2
@@ -227,6 +241,7 @@ func _atualizar_topo() -> void:
 	_renda.text = "$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
+	_dobrar.visible = _dobrar.visible and _pausa >= 0.0
 
 
 # --- corrida ------------------------------------------------------------------
@@ -265,7 +280,9 @@ func _process(delta: float) -> void:
 	if _pausa >= 0.0:
 		_pausa -= delta
 		if _pausa < 0.0:
-			anuncios.intersticial()
+			if not _sem_intersticial:
+				anuncios.intersticial()
+			_sem_intersticial = false
 			_nova_corrida()
 	else:
 		_visual.tempo = minf(_visual.tempo + delta, _visual.duracao())
@@ -289,8 +306,24 @@ func _chegou() -> void:
 	var ganho := estado.concluir(pos)
 	_aviso.text = ("VITÓRIA!\n" if pos == 1 else "%dº LUGAR\n" % pos) + "+$" + curto(ganho)
 	_aviso.add_theme_color_override("font_color", COR_OURO if pos == 1 else COR_DINHEIRO)
-	_pausa = PAUSA_CHEGADA_S
+	_ganho_corrida = ganho
+	_dobrar.visible = anuncios.premiado_disponivel()
+	_pausa = PAUSA_COM_VIDEO_S if _dobrar.visible else PAUSA_CHEGADA_S
 	estado.salvar(Time.get_unix_time_from_system())
+
+
+## O vídeo premiado depois da corrida: assistido até o fim, paga o prêmio de
+## novo.
+func _dobrar_premio() -> void:
+	_dobrar.visible = false
+	var ganho := _ganho_corrida
+	anuncios.premiado(func():
+		estado.dinheiro += ganho
+		_sem_intersticial = true
+		_aviso.text = "PRÊMIO 2×\n+$" + curto(ganho * 2.0)
+		_aviso.add_theme_color_override("font_color", COR_OURO)
+		_pausa = maxf(_pausa, PAUSA_CHEGADA_S)
+		estado.salvar(Time.get_unix_time_from_system()))
 
 
 func _comprar(id: String) -> void:
