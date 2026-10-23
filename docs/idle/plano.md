@@ -48,6 +48,10 @@ pista nova, e os rivais ficam mais fortes.
   arquibancada 30 (print enviado pelo usuário); ultrapassagem e vácuo +4% no 1º nível.
 - Metas de ritmo (estimadas): 1ª vitória em ~3 min de jogo; cada liga ~1,5× mais longa que a
   anterior. Calibradas com `tools/calibrar_idle.gd` (jogador que compra a melhoria mais barata).
+- Medido (calibrador, 2026-10-23): 1ª corrida já em 7º (os rivais vão de 1,3× a 0,7× a potência
+  da liga, do mais forte ao mais fraco, e você sobe um a um), 1ª vitória em ~5 min, ligas
+  seguintes em 1–5 min, corridas de ~65 s. Seu piloto tenta a ultrapassagem em 50% das retas
+  (+4% por nível de ULTRAPASSAGEM).
 - Tudo em `data/idle/idle.json`; o playtest e o teste de mercado ajustam.
 
 ## Monetização

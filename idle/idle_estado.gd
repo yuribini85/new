@@ -141,11 +141,22 @@ func carro_base(dados: Node) -> Dictionary:
 	return IdleEstado._perto_de(dados, float(dados_liga()["potencia"]) * float(cfg["carro_do_jogador"]))[0]
 
 
-## Os rivais da liga: os grid-1 carros mais perto da potência da liga, sem o seu.
+## Os rivais da liga, do mais forte (na frente do grid) ao mais fraco: a
+## potência vai de (1 + espalhar) a (1 - espalhar) × a da liga, para cada
+## melhoria render posições aos poucos (no Race Star você sobe um a um).
 func rivais(dados: Node) -> Array:
-	var meu := String(carro_base(dados)["id"])
-	return IdleEstado._perto_de(dados, float(dados_liga()["potencia"])) \
-			.filter(func(c): return c["id"] != meu).slice(0, int(cfg["grid"]) - 1)
+	var usados := {String(carro_base(dados)["id"]): true}
+	var n := int(cfg["grid"]) - 1
+	var espalhar := float(cfg["rivais"].get("espalhar", 0.0))
+	var r := []
+	for k in n:
+		var alvo := float(dados_liga()["potencia"]) * (1.0 + espalhar * (1.0 - 2.0 * k / maxf(n - 1, 1)))
+		for c in IdleEstado._perto_de(dados, alvo):
+			if not usados.has(String(c["id"])):
+				usados[String(c["id"])] = true
+				r.append(c)
+				break
+	return r
 
 
 static func _atributos(dados: Node, base: Dictionary) -> Dictionary:
