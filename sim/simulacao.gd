@@ -13,6 +13,8 @@ const CV_PARA_W := 735.5
 const KMH_PARA_MS := 1.0 / 3.6
 ## Zona de ultrapassagem das ordens "livre" fora das zonas da pista (a largada).
 const ZONA_LIVRE := 1000000
+## Distância do vácuo (m) quando params não traz "vacuo_m".
+const VACUO_M := 30.0
 
 ## Chaves obrigatórias em data/simulacao.json. Opcionais: "cda_m2" e
 ## "densidade_ar_kg_m3" ligam o arrasto aerodinâmico (velocidade máxima passa a
@@ -31,7 +33,9 @@ const PARAMS := [
 ## envelope do carro é multiplicado por "ritmo", a aceleração por "acel" e, se
 ## >= 0, a agressividade vale a da ordem. Ordens que se sobrepõem somam o efeito
 ## (ritmos e acel multiplicam; vale a maior agressividade). Antes de "de" a
-## corrida é idêntica à sem ordem.
+## corrida é idêntica à sem ordem. O piloto pode trazer "vacuo" (fração, o jogo
+## idle Chrome Racing Team): a até params.vacuo_m (padrão VACUO_M) atrás de
+## outro carro, o envelope e a aceleração crescem nessa fração.
 ## Retorna {"classificacao", "carros", "amostras", "comprimento", "duracao"}.
 ## com_amostras = false (offline) guarda só a amostra final; o resultado é o mesmo.
 ## v_inicial_ms > 0: largada lançada (o grid já parte nessa velocidade).
@@ -67,6 +71,7 @@ class Andamento:
 	var _dt: float
 	var _k_arrasto: float
 	var _dmin: float
+	var _vacuo_m: float
 	var _voltas: int
 	var _com_amostras: bool
 	var _raios := PackedFloat64Array()
@@ -110,6 +115,7 @@ class Andamento:
 		_dt = float(params["dt_s"])
 		_k_arrasto = 0.5 * float(params.get("densidade_ar_kg_m3", 0.0)) * float(params.get("cda_m2", 0.0))
 		_dmin = float(params["distancia_minima_m"])
+		_vacuo_m = float(params.get("vacuo_m", Simulacao.VACUO_M))
 		_tempo_max = float(params["tempo_max_s"])
 		_amostra_dt = float(params["amostra_dt_s"])
 
@@ -131,6 +137,7 @@ class Andamento:
 			var c := {
 				"id": p["id"],
 				"agressividade": float(piloto["agressividade"]),
+				"vacuo": float(piloto.get("vacuo", 0.0)),
 				"potencia_w": float(a["potencia"]) * Simulacao.CV_PARA_W,
 				"forca": Simulacao.forca_por_velocidade(a),
 				"massa": float(a["peso"]),
@@ -207,6 +214,7 @@ class Andamento:
 		var dt := _dt
 		var k_arrasto := _k_arrasto
 		var dmin := _dmin
+		var vacuo_m := _vacuo_m
 		var voltas := _voltas
 		var tempo_max := _tempo_max
 		var carros := _carros
@@ -265,12 +273,19 @@ class Andamento:
 						else Simulacao._efeito_ordens(ordens[idx], cursor_ordens, idx, t)
 				if not ordem.is_empty():
 					limite *= ordem[0]
+				# Vácuo: colado no da frente, anda mais (o carro de trás encosta).
+				var vacuo: float = carros[idx]["vacuo"]
+				var no_vacuo := vacuo > 0.0 and frente >= 0 and s_arr[frente] - s_antes <= vacuo_m
+				if no_vacuo:
+					limite *= 1.0 + vacuo
 				var v := v_arr[idx]
 				var acel := acel_arr[idx]
 				if v > 0.0:
 					acel = Simulacao._acel_livre(acel, pot_arr[idx], massa_arr[idx], v, k_arrasto, forcas[idx])
 				if not ordem.is_empty() and acel > 0.0:
 					acel *= ordem[2]
+				if no_vacuo and acel > 0.0:
+					acel *= 1.0 + vacuo
 				var v_novo := clampf(v + acel * dt, 0.0, limite)
 				var s_novo := s_antes + (v + v_novo) * 0.5 * dt
 				lim_arr[idx] = limite

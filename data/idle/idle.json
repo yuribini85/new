@@ -1,0 +1,36 @@
+{
+	"_nota_custos": "O custo de cada nível também multiplica pelo multiplicador da liga (os prêmios e a renda crescem junto). Motor e pneus (do_carro) voltam a zero no carro novo de cada liga; ultrapassagem, vácuo e renda são da equipe e ficam.",
+	"_nota": "Chrome Racing Team (docs/idle/plano.md). Números estimados (pedido do usuário: pesquisa + chute): custo = base × crescimento^nível (faixa de idle 1,07–1,15), ganho linear por nível; custos iniciais de ultrapassagem/vácuo/patrocínio/arquibancada do anúncio do Race Star. Calibrar com tools/calibrar_idle.gd.",
+	"dinheiro_inicial": 0,
+	"renda_base": 3.0,
+	"offline_max_h": 2.0,
+	"intersticial_min_s": 90.0,
+	"grid": 10,
+	"piloto": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.1},
+	"rivais": {"ritmo": 0.97, "ritmo_por_liga": 0.015, "consistencia": 0.85, "agressividade": 0.35},
+	"carro_do_jogador": 1.0,
+	"premio_por_posicao": "P1 recebe premio_p1 × multiplicador da liga; cada posição abaixo recebe 1/grid a menos",
+	"premio_p1": 200,
+	"expoente_custo_liga": 1.25,
+	"melhorias": [
+		{"id": "motor", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
+		{"id": "pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
+		{"id": "ultrapassagem", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 22},
+		{"id": "vacuo", "nome": "Vácuo", "efeito": "vacuo", "por_nivel": 0.01, "base": 55, "crescimento": 1.15, "max": 15},
+		{"id": "patrocinio", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
+		{"id": "arquibancada", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
+	],
+	"ligas": [
+		{"nome": "Liga das Docas", "pista": "docas_curta", "voltas": 1, "potencia": 120, "multiplicador": 1},
+		{"nome": "Copa da Serra", "pista": "serra_curta", "voltas": 1, "potencia": 150, "multiplicador": 2},
+		{"nome": "Anel Curto", "pista": "anel_curto", "voltas": 1, "potencia": 190, "multiplicador": 4},
+		{"nome": "Parque das Docas", "pista": "parque_das_docas", "voltas": 1, "potencia": 240, "multiplicador": 8},
+		{"nome": "Serra Alta", "pista": "serra_alta", "voltas": 1, "potencia": 300, "multiplicador": 16},
+		{"nome": "Avenida Noturna", "pista": "avenida_noturna", "voltas": 1, "potencia": 380, "multiplicador": 32},
+		{"nome": "Estrada das Araucárias", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 480, "multiplicador": 64},
+		{"nome": "Circuito Misto", "pista": "circuito_misto", "voltas": 1, "potencia": 600, "multiplicador": 128},
+		{"nome": "Mirante da Costa", "pista": "mirante_da_costa", "voltas": 1, "potencia": 750, "multiplicador": 256},
+		{"nome": "Anel do Vale", "pista": "anel_do_vale", "voltas": 1, "potencia": 900, "multiplicador": 512},
+		{"nome": "Oval da Usina", "pista": "oval_inclinado", "voltas": 1, "potencia": 1100, "multiplicador": 1024}
+	]
+}

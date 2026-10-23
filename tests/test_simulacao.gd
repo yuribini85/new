@@ -337,6 +337,23 @@ func test_ordem_so_vale_depois_de_comecar() -> void:
 	d.free()
 
 
+## Chrome Racing Team: o vácuo do piloto (fração) faz o carro de trás andar
+## mais colado no da frente; sem ele (0, o Chrome & Wreckage), nada muda.
+func test_vacuo_opcional_do_piloto() -> void:
+	var d := dados_fixture()
+	var a := _participante(d, "a", "forte", "erratico")
+	var b := _participante(d, "b", "forte", "erratico")
+	var sem := _correr(d, "oval", [a, b], 4, 11)
+	var b0: Dictionary = b.duplicate(true)
+	b0["piloto"]["vacuo"] = 0.0
+	igual(_correr(d, "oval", [a, b0], 4, 11)["amostras"], sem["amostras"], "vácuo 0: a mesma corrida")
+	var b2: Dictionary = b.duplicate(true)
+	b2["piloto"]["vacuo"] = 0.05
+	var com := _correr(d, "oval", [a, b2], 4, 11)
+	verificar(float(com["carros"]["b"]["tempo_total"]) < float(sem["carros"]["b"]["tempo_total"]), "com vácuo, menos tempo")
+	d.free()
+
+
 ## Pilotagem por toques (decisão 127): a ordem dada no meio da corrida que
 ## anda junto com a tela, numa cópia, dá o mesmo resultado que a corrida
 ## refeita do zero com a ordem desde o começo.
