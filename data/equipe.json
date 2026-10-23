@@ -29,13 +29,13 @@
  ],
  "sede_licenca_custo": "INTERNATIONAL",
  "treino": {
-  "passo": 0.00234,
+  "passo": 0.00734,
   "niveis": 3,
   "tempo_base_h": 1.0,
   "teto": {
-   "INTERNATIONAL": 1.007,
-   "PRO": 1.007,
-   "ELITE": 1.007
+   "INTERNATIONAL": 1.022,
+   "PRO": 1.022,
+   "ELITE": 1.022
   },
   "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde).",
   "_passo": "GERADO por tools/calibrar_treino.py: o maior teto dividido em `niveis` (3, decisão do usuário).",

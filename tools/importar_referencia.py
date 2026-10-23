@@ -177,6 +177,9 @@ FATOR_VOLTAS = 2.5
 # Decisão 85 (usuário): as provas abertas (sem licença) têm 2 voltas, para o
 # começo não ficar maçante; as de licença seguem com FATOR_VOLTAS.
 VOLTAS_ABERTAS = 2
+# Teto de voltas das provas de licença (pedido do usuário, 2026-10-22: "5 voltas foi
+# criticado como muito longo"): as de 5, 8 e 13 passam a 3; a resistência fica de fora.
+MAX_VOLTAS_PROVA = 3
 FATOR_PRECO = 2
 # Copas de marca: CarRestrictionFlags da referência.
 SO_RUA, SO_CORRIDA = 256, 512
@@ -743,9 +746,10 @@ def saldo_inicial(carros: list[dict], eventos: list[dict]) -> int:
 
 
 def voltas_jogo(voltas_ref: int, resistencia: bool = False) -> int:
-    """Voltas da prova: as da referência × FATOR_VOLTAS, arredondado (decisão 41). A
-    resistência fica com as da referência: ×2,5 passava do tempo máximo da simulação."""
-    return voltas_ref if resistencia else int(voltas_ref * FATOR_VOLTAS + 0.5)
+    """Voltas da prova: as da referência × FATOR_VOLTAS, arredondado (decisão 41), até
+    MAX_VOLTAS_PROVA. A resistência fica com as da referência: ×2,5 passava do tempo
+    máximo da simulação."""
+    return voltas_ref if resistencia else min(int(voltas_ref * FATOR_VOLTAS + 0.5), MAX_VOLTAS_PROVA)
 
 
 def moeda(cr: float) -> int:

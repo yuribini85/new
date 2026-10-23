@@ -291,7 +291,7 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
 41. **Idle mais longo:** as voltas das provas sobem ×2,5 (as de 2 voltas viram 5; as
     demais na mesma proporção, resistência inclusive) e os preços de compra (carros,
     peças, pneus) dobram em relação aos prêmios. No importador (`FATOR_VOLTAS`,
-    `FATOR_PRECO`); prêmios, bônus e saldo inicial não mudam.
+    `FATOR_PRECO`); prêmios, bônus e saldo inicial não mudam. Voltas limitadas a 3 pela decisão 132.
 42. **Lojas = workshops, sem usados.** As 6 workshops (`data/workshops.json`, logos em
     `arte/ui/workshops/`) seguem as regiões da referência: 4 do Japão (Hayase e Kanaya
     sozinhas, as outras marcas japonesas em dois grupos), 1 dos EUA e 1 da Europa
@@ -1238,3 +1238,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     freada boa volta a ser metade da perfeita (números em data/simulacao.json, nota da
     pilotagem). O COMO PILOTAR (cartão dos três gestos) aparece antes da primeira corrida pilotada,
     com o grid parado, e fica no •••; no meio da corrida não há texto de explicação.
+132. **Provas de no máximo 3 voltas** (2026-10-23, pedido do usuário: "5 voltas foi criticado
+    como muito longo"). As provas de licença que tinham 5, 8 ou 13 voltas passam a 3
+    (`MAX_VOLTAS_PROVA` no importador, sobre o ×2,5 da decisão 41); as abertas continuam em 2 e
+    as resistências da ELITE ficam com as voltas delas. Regerados: `data/eventos.json`, o teto do
+    treino (`calibrar_treino.py`: 1,007 → 1,022, a corrida curta separa menos os carros) e a
+    pilotagem recalibrada ao teto de +0,5 (nota em `data/simulacao.json`).

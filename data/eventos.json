@@ -3,7 +3,7 @@
   "id": "ev_000",
   "nome": "Troféu Tração Integral — etapa 1",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -68,7 +68,7 @@
   "id": "ev_001",
   "nome": "Troféu Tração Integral — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -133,7 +133,7 @@
   "id": "ev_002",
   "nome": "Troféu Tração Integral — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 700,
@@ -268,7 +268,7 @@
   "id": "ev_005",
   "nome": "Encontro Retrô — etapa 1",
   "pista": "serra_alta",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -314,7 +314,7 @@
   "id": "ev_006",
   "nome": "Encontro Retrô — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -376,7 +376,7 @@
   "id": "ev_007",
   "nome": "Encontro Retrô — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -438,7 +438,7 @@
   "id": "ev_008",
   "nome": "Encontro Retrô — etapa 4",
   "pista": "anel_do_vale",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -500,7 +500,7 @@
   "id": "ev_009",
   "nome": "Encontro Retrô — etapa 5",
   "pista": "estrada_das_araucarias",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -1142,7 +1142,7 @@
   "id": "ev_024",
   "nome": "Copa dos Associados — etapa 3",
   "pista": "avenida_noturna",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "CLUB"
@@ -2339,7 +2339,7 @@
   "id": "ev_063",
   "nome": "Copa Continental — etapa 1",
   "pista": "serra_curta",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -2401,7 +2401,7 @@
   "id": "ev_064",
   "nome": "Copa Continental — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -2463,7 +2463,7 @@
   "id": "ev_065",
   "nome": "Copa Continental — etapa 3",
   "pista": "avenida_noturna",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -2868,7 +2868,7 @@
   "id": "ev_073",
   "nome": "Troféu Tração Dianteira — etapa 1",
   "pista": "estrada_das_araucarias",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -2918,7 +2918,7 @@
   "id": "ev_074",
   "nome": "Troféu Tração Dianteira — etapa 2",
   "pista": "mirante_da_costa",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -2968,7 +2968,7 @@
   "id": "ev_075",
   "nome": "Troféu Tração Dianteira — etapa 3",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -3162,7 +3162,7 @@
   "id": "ev_080",
   "nome": "Troféu Tração Traseira — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3226,7 +3226,7 @@
   "id": "ev_081",
   "nome": "Troféu Tração Traseira — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 450,
@@ -3291,7 +3291,7 @@
   "id": "ev_082",
   "nome": "Troféu Tração Traseira — etapa 3",
   "pista": "mirante_da_costa",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -3482,7 +3482,7 @@
   "id": "ev_097",
   "nome": "Liga Regional III — etapa 1",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -3543,7 +3543,7 @@
   "id": "ev_098",
   "nome": "Liga Regional III — etapa 2",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -3605,7 +3605,7 @@
   "id": "ev_099",
   "nome": "Liga Regional III — etapa 3",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -3712,7 +3712,7 @@
   "id": "ev_101",
   "nome": "Liga Regional VII — etapa 1",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -3774,7 +3774,7 @@
   "id": "ev_102",
   "nome": "Liga Regional VII — etapa 2",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -3836,7 +3836,7 @@
   "id": "ev_103",
   "nome": "Liga Regional VII — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -3898,7 +3898,7 @@
   "id": "ev_104",
   "nome": "Liga Regional IV — etapa 1",
   "pista": "estrada_das_araucarias",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -3960,7 +3960,7 @@
   "id": "ev_105",
   "nome": "Liga Regional IV — etapa 2",
   "pista": "estrada_das_araucarias",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -4022,7 +4022,7 @@
   "id": "ev_106",
   "nome": "Liga Regional V — etapa 1",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 220,
@@ -4083,7 +4083,7 @@
   "id": "ev_107",
   "nome": "Liga Regional V — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -4145,7 +4145,7 @@
   "id": "ev_108",
   "nome": "Liga Regional V — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 450,
@@ -4205,7 +4205,7 @@
   "id": "ev_109",
   "nome": "Liga Regional VI — etapa 1",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -4263,7 +4263,7 @@
   "id": "ev_110",
   "nome": "Liga Regional VI — etapa 2",
   "pista": "avenida_noturna",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -4325,7 +4325,7 @@
   "id": "ev_111",
   "nome": "Liga Regional I — etapa 1",
   "pista": "mirante_da_costa",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 200,
@@ -4387,7 +4387,7 @@
   "id": "ev_112",
   "nome": "Liga Regional I — etapa 2",
   "pista": "mirante_da_costa",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -4445,7 +4445,7 @@
   "id": "ev_113",
   "nome": "Liga Regional I — etapa 3",
   "pista": "mirante_da_costa",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -4620,7 +4620,7 @@
   "id": "ev_119",
   "nome": "Categoria Prata — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4681,7 +4681,7 @@
   "id": "ev_120",
   "nome": "Categoria Prata — etapa 2",
   "pista": "circuito_misto",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4741,7 +4741,7 @@
   "id": "ev_121",
   "nome": "Categoria Prata — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4801,7 +4801,7 @@
   "id": "ev_122",
   "nome": "Categoria Prata — etapa 4",
   "pista": "mirante_da_costa",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4861,7 +4861,7 @@
   "id": "ev_123",
   "nome": "Categoria Prata — etapa 5",
   "pista": "serra_curta",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4921,7 +4921,7 @@
   "id": "ev_124",
   "nome": "Categoria Ouro — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -4979,7 +4979,7 @@
   "id": "ev_125",
   "nome": "Categoria Ouro — etapa 2",
   "pista": "oval_inclinado",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -5036,7 +5036,7 @@
   "id": "ev_126",
   "nome": "Categoria Ouro — etapa 3",
   "pista": "avenida_noturna",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -5093,7 +5093,7 @@
   "id": "ev_127",
   "nome": "Categoria Ouro — etapa 4",
   "pista": "serra_alta",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -5150,7 +5150,7 @@
   "id": "ev_128",
   "nome": "Categoria Ouro — etapa 5",
   "pista": "serra_curta",
-  "voltas": 13,
+  "voltas": 3,
   "largada_kmh": 80,
   "condicao": "seco",
   "restricoes": {
@@ -5207,7 +5207,7 @@
   "id": "ev_129",
   "nome": "Torneio dos Campeões — etapa 1",
   "pista": "oval_inclinado",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5267,7 +5267,7 @@
   "id": "ev_130",
   "nome": "Torneio dos Campeões — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5327,7 +5327,7 @@
   "id": "ev_131",
   "nome": "Torneio dos Campeões — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5387,7 +5387,7 @@
   "id": "ev_132",
   "nome": "Torneio dos Campeões — etapa 4",
   "pista": "avenida_noturna",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5447,7 +5447,7 @@
   "id": "ev_133",
   "nome": "Torneio dos Campeões — etapa 5",
   "pista": "circuito_misto",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5507,7 +5507,7 @@
   "id": "ev_134",
   "nome": "Categoria Bronze — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -5569,7 +5569,7 @@
   "id": "ev_135",
   "nome": "Categoria Bronze — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -5631,7 +5631,7 @@
   "id": "ev_136",
   "nome": "Categoria Bronze — etapa 3",
   "pista": "mirante_da_costa",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -5693,7 +5693,7 @@
   "id": "ev_137",
   "nome": "Circuito Mundial — etapa 1",
   "pista": "serra_alta",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5751,7 +5751,7 @@
   "id": "ev_138",
   "nome": "Circuito Mundial — etapa 2",
   "pista": "circuito_misto",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5808,7 +5808,7 @@
   "id": "ev_139",
   "nome": "Circuito Mundial — etapa 3",
   "pista": "serra_curta",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5865,7 +5865,7 @@
   "id": "ev_140",
   "nome": "Circuito Mundial — etapa 4",
   "pista": "avenida_noturna",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5922,7 +5922,7 @@
   "id": "ev_141",
   "nome": "Circuito Mundial — etapa 5",
   "pista": "mirante_da_costa",
-  "voltas": 13,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -5979,7 +5979,7 @@
   "id": "ev_142",
   "nome": "Liga Regional II — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -6041,7 +6041,7 @@
   "id": "ev_143",
   "nome": "Liga Regional II — etapa 2",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -6103,7 +6103,7 @@
   "id": "ev_144",
   "nome": "Liga Regional II — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -6649,7 +6649,7 @@
   "id": "ev_156",
   "nome": "Troféu 250 — etapa 1",
   "pista": "estrada_das_araucarias",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -6695,7 +6695,7 @@
   "id": "ev_157",
   "nome": "Troféu 250 — etapa 2",
   "pista": "avenida_noturna",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 300,
@@ -6745,7 +6745,7 @@
   "id": "ev_158",
   "nome": "Troféu 250 — etapa 3",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -7426,7 +7426,7 @@
   "id": "ev_180",
   "nome": "Troféu Motor Central — etapa 1",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -7490,7 +7490,7 @@
   "id": "ev_181",
   "nome": "Troféu Motor Central — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -7555,7 +7555,7 @@
   "id": "ev_182",
   "nome": "Troféu Motor Central — etapa 3",
   "pista": "parque_das_docas",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -7618,7 +7618,7 @@
   "id": "ev_183",
   "nome": "Copa Livre — etapa 1",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -7677,7 +7677,7 @@
   "id": "ev_184",
   "nome": "Copa Livre — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -7735,7 +7735,7 @@
   "id": "ev_185",
   "nome": "Copa Livre — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -8173,7 +8173,7 @@
   "id": "ev_194",
   "nome": "Série 550 — etapa 1",
   "pista": "mirante_da_costa",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 550,
@@ -8234,7 +8234,7 @@
   "id": "ev_195",
   "nome": "Série 550 — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 550,
@@ -8295,7 +8295,7 @@
   "id": "ev_196",
   "nome": "Série 550 — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 550,
@@ -8356,7 +8356,7 @@
   "id": "ev_197",
   "nome": "Série 400 — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -8418,7 +8418,7 @@
   "id": "ev_198",
   "nome": "Série 400 — etapa 2",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 450,
@@ -8480,7 +8480,7 @@
   "id": "ev_199",
   "nome": "Série 400 — etapa 3",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -8859,7 +8859,7 @@
   "id": "ev_208",
   "nome": "Copa 400 — etapa 1",
   "pista": "avenida_noturna",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -8921,7 +8921,7 @@
   "id": "ev_209",
   "nome": "Copa 400 — etapa 2",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -8983,7 +8983,7 @@
   "id": "ev_210",
   "nome": "Copa 400 — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
@@ -9172,7 +9172,7 @@
   "id": "ev_214",
   "nome": "Série 500 — etapa 1",
   "pista": "serra_curta",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -9234,7 +9234,7 @@
   "id": "ev_215",
   "nome": "Série 500 — etapa 2",
   "pista": "serra_alta",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -9296,7 +9296,7 @@
   "id": "ev_216",
   "nome": "Série 500 — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -9358,7 +9358,7 @@
   "id": "ev_217",
   "nome": "Série 500 — etapa 4",
   "pista": "pista_de_testes",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -9419,7 +9419,7 @@
   "id": "ev_218",
   "nome": "Série 500 — etapa 5",
   "pista": "avenida_noturna",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 500,
@@ -9576,7 +9576,7 @@
   "id": "ev_221",
   "nome": "Copa Turismo — etapa 1",
   "pista": "circuito_misto",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9637,7 +9637,7 @@
   "id": "ev_222",
   "nome": "Copa Turismo — etapa 2",
   "pista": "serra_alta",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9698,7 +9698,7 @@
   "id": "ev_223",
   "nome": "Copa Turismo — etapa 3",
   "pista": "circuito_misto",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9759,7 +9759,7 @@
   "id": "ev_224",
   "nome": "Copa Preparados — etapa 1",
   "pista": "anel_do_vale",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9818,7 +9818,7 @@
   "id": "ev_225",
   "nome": "Copa Preparados — etapa 2",
   "pista": "oval_inclinado",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -9878,7 +9878,7 @@
   "id": "ev_226",
   "nome": "Copa Preparados — etapa 3",
   "pista": "pista_de_testes",
-  "voltas": 8,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "licenca": "PRO"
@@ -10244,7 +10244,7 @@
   "id": "ev_235",
   "nome": "Copa das Peruas — etapa 1",
   "pista": "docas_curta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -10306,7 +10306,7 @@
   "id": "ev_236",
   "nome": "Copa das Peruas — etapa 2",
   "pista": "oval_inclinado",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -10368,7 +10368,7 @@
   "id": "ev_237",
   "nome": "Copa das Peruas — etapa 3",
   "pista": "anel_do_vale",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 400,
@@ -10476,7 +10476,7 @@
   "id": "ev_239",
   "nome": "Copa Peso-Pena — etapa 2",
   "pista": "anel_curto",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 100,
@@ -10523,7 +10523,7 @@
   "id": "ev_240",
   "nome": "Copa Peso-Pena — etapa 3",
   "pista": "estrada_das_araucarias",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 100,
@@ -10570,7 +10570,7 @@
   "id": "ev_241",
   "nome": "Copa Aberta 250 — etapa 1",
   "pista": "estrada_das_araucarias",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 250,
@@ -10632,7 +10632,7 @@
   "id": "ev_242",
   "nome": "Copa Aberta 250 — etapa 2",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 350,
@@ -10694,7 +10694,7 @@
   "id": "ev_243",
   "nome": "Copa Aberta 250 — etapa 3",
   "pista": "serra_alta",
-  "voltas": 5,
+  "voltas": 3,
   "condicao": "seco",
   "restricoes": {
    "potencia_max": 600,
