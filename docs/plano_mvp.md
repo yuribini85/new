@@ -1244,3 +1244,9 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     as resistências da ELITE ficam com as voltas delas. Regerados: `data/eventos.json`, o teto do
     treino (`calibrar_treino.py`: 1,007 → 1,022, a corrida curta separa menos os carros) e a
     pilotagem recalibrada ao teto de +0,5 (nota em `data/simulacao.json`).
+133. **Mais interações na corrida** (2026-10-23, pedido do usuário: "as interações nas corridas
+    estão muito poucas"; critério dele: no máximo ~10 s sem nada para fazer). Toda curva pede o
+    segurar: sem freada que valha (`frenagem.minimo_m`), a faixa verde fica na entrada da curva
+    (SEGURE NO VERDE; notas CURVA PERFEITA, BOA CURVA, ENTROU CEDO, ENTROU TARDE). Vácuo e defesa
+    aparecem de mais longe e com recarga curta (`ataque`/`defesa` em `data/simulacao.json`). Os
+    três gestos da decisão 131 continuam; a corrida perfeita continua no teto (nota da pilotagem).

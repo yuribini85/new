@@ -62,6 +62,7 @@ está escrito no botão ou na aba. A fala que manda tocar em algo usa o texto ex
 | **treinador** | contratado na Equipe por 24 h, pago na hora (um prêmio de 1º lugar da sua maior licença): enquanto está lá, cada recorde de volta do piloto de corrida vale o dobro para subir de nível |
 | **caixa de pintura** | o prêmio das provas difíceis (primeira vitória da National para cima, ou vitória com o carro mais fraco do grid): abre na hora e libera um desenho, logo, aro, acabamento ou família de número da cabine; sem nada novo, vira giros. Nunca à venda |
 | **FREADA PERFEITA / BOA FREADA / FREOU CEDO / FREOU TARDE** | a nota do toque no FREIE |
+| **SEGURE NO VERDE · CURVA PERFEITA / BOA CURVA / ENTROU CEDO / ENTROU TARDE** | a curva sem freada: a faixa verde fica na entrada e a nota é do toque nela |
 | **SAÍDA LIMPA / PERDEU TRAÇÃO / ACELEROU TARDE** | soltou o dedo na saída da curva / antes / depois |
 | **SEQUÊNCIA ×N** | acertos seguidos (nota boa ou perfeita); errar ou deixar a faixa passar zera. No resultado: as perfeitas e a maior sequência |
 | **VOLTA LIMPA** | uma volta inteira sem erro com a sequência andando: a volta seguinte sai um pouco mais rápida |

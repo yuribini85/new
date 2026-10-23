@@ -177,6 +177,8 @@ var _deixas_pista := []
 var _seta_lado := 0
 const COR_FAIXA_BOA := Color(0.36, 0.82, 0.47, 0.3)
 const COR_FAIXA_PERFEITA := Color(0.55, 1.0, 0.62, 0.6)
+## Quanto antes da entrada da curva procurar o começo da freada (s da corrida).
+const FREADA_BUSCA_S := 30.0
 ## Sequência de acertos (decisão 131 C4): cada nota boa ou perfeita soma 1;
 ## errar ou deixar a deixa passar zera. O resultado mostra as perfeitas e a
 ## maior sequência da corrida assistida (resumo_pilotagem).
@@ -1411,16 +1413,21 @@ func _pilotar(taxa: float) -> void:
 			# O ponto da freada é onde o carro começa a perder velocidade nesta
 			# corrida: a frenagem da Tatica vem do envelope sem o limite de
 			# aceleração (sem velocidade máxima, cai no fim da curva anterior).
-			var t_fren := -1.0 if t_ent < 0.0 else _visual.inicio_freada("jogador", t_ent, t - float(f["boa_s"]) * _taxa_pil)
+			# Toda curva pede o toque (decisão 133): sem freada que valha
+			# (minimo_m), a faixa fica na entrada da curva (contorno).
+			var t_fren := -1.0 if t_ent < 0.0 else _visual.inicio_freada("jogador", t_ent, t_ent - FREADA_BUSCA_S)
+			var contorno := t_fren < 0.0 or inicio_abs - _visual.distancia_em("jogador", t_fren) < float(f["minimo_m"])
+			if contorno:
+				t_fren = t_ent
 			# A janela e as tolerâncias valem em tempo de tela: no ACELERAR (2×)
 			# a corrida anda o dobro e o dedo continua o mesmo. A faixa passou
 			# sem toque: a deixa sai.
 			var faltam := (t_fren - t) / _taxa_pil
-			if t_fren >= 0.0 and faltam <= float(f["janela_s"]) and faltam >= -float(f["boa_s"]) \
-					and inicio_abs - _visual.distancia_em("jogador", t_fren) >= float(f["minimo_m"]):
-				_frenagem = {"chave": chave, "t_frenagem": t_fren, "fim": fim_abs}
+			if t_fren >= 0.0 and faltam <= float(f["janela_s"]) and faltam >= -float(f["boa_s"]):
+				_frenagem = {"chave": chave, "t_frenagem": t_fren, "fim": fim_abs, "contorno": contorno}
 				_freada_vista = chave
-				_pedal.frenagem((t_fren - t) / _taxa_pil, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]))
+				_pedal.frenagem((t_fren - t) / _taxa_pil, float(f["janela_s"]), float(f["perfeita_s"]), float(f["boa_s"]),
+						"SEGURE NO VERDE" if contorno else "FREIE NO VERDE")
 				_deixas_pista = [_faixa(t_fren, float(f["boa_s"]), COR_FAIXA_BOA),
 						_faixa(t_fren, float(f["perfeita_s"]), COR_FAIXA_PERFEITA)]
 				mostrou = true
@@ -1472,8 +1479,9 @@ func _frear() -> void:
 		return
 	_feitas[_frenagem["chave"]] = nota
 	_curva = {"chave": _frenagem["chave"], "t_fim": t_saida, "t_freada": t}
+	var contorno: bool = _frenagem.get("contorno", false)
 	_frenagem = {}
-	_nota(nota)
+	_nota(nota, Pilotagem.TEXTOS_CONTORNO.get(nota, "") if contorno else "")
 
 
 ## Soltou o dedo (ou passou da saída sem soltar): a nota da saída pelo instante
@@ -1581,7 +1589,7 @@ func _dar(ordem: Dictionary) -> Dictionary:
 	return jogador.fila_ctrl.pilotar(ordem, _visual.tempo)
 
 
-func _nota(nota: String) -> void:
+func _nota(nota: String, texto := "") -> void:
 	var boa := nota in [Pilotagem.PERFEITA, Pilotagem.LIMPA, Pilotagem.LARGADA_PERFEITA, Pilotagem.PORTA_FECHADA,
 			Pilotagem.VACUO]
 	var ruim := nota in [Pilotagem.CEDO, Pilotagem.TARDE, Pilotagem.SOLTOU, Pilotagem.QUEIMOU, Pilotagem.ATRASADA,
@@ -1594,7 +1602,7 @@ func _nota(nota: String) -> void:
 		if nota in [Pilotagem.PERFEITA, Pilotagem.LARGADA_PERFEITA]:
 			_perfeitas += 1
 	var cor := COR_DESTAQUE if boa else (Color(1.0, 0.45, 0.4) if ruim else Color.WHITE)
-	_painel_hud.evento(Pilotagem.TEXTOS[nota], "SEQUÊNCIA ×%d" % _seq if _seq >= 2 and not ruim else "",
+	_painel_hud.evento(texto if texto != "" else Pilotagem.TEXTOS[nota], "SEQUÊNCIA ×%d" % _seq if _seq >= 2 and not ruim else "",
 			cor, 6, 1.1, false, boa)
 	if boa:
 		_clarear(COR_DESTAQUE, 0.15)

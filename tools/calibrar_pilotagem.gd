@@ -20,7 +20,7 @@ extends SceneTree
 ##   forcou    ATAQUE toda volta
 ##   peça      sem toque, com a peça mais barata que o carro aceita
 ## Uso: godot --headless --path . -s tools/calibrar_pilotagem.gd [-- sementes=10 cenario=carro_3d provas=5
-##        politicas=base,largada voltas_min=30 ids=ev_1,ev_2]
+##        politicas=base,largada voltas_min=30 ids=ev_1,ev_2 abertas=1]
 
 var d: Node
 var j: Node
@@ -42,6 +42,8 @@ func _rodar() -> void:
 	root.get_node("SaveManager").caminho = "user://save_calibrar_pilotagem.json"
 	Cenarios.montar(d, j, String(args["cenario"]))
 	p = Pilotagem.params(d)
+	if j.garagem.carro(j.carro_ativo) == null:  # jogo novo sem carro: o mais barato, como no começo
+		j.carro_ativo = Cenarios._comprar_barato(d, j)
 	var carro: Carro = j.garagem.carro(j.carro_ativo)
 	var com_peca := _com_peca(carro)
 	var provas := []
@@ -52,8 +54,13 @@ func _rodar() -> void:
 			break
 		if int(ev["voltas"]) < int(args["voltas_min"]):
 			continue
+		if args.has("abertas") and ev.get("restricoes", {}).get("licenca") != null:
+			continue
 		var teste: Dictionary = j.carreira.preparar(ev["id"], carro.uid, 1, false)
 		if teste.has("erro"):
+			continue
+		if args.has("abertas"):  # as do começo do jogo, como vierem (sem filtrar pela posição)
+			provas.append(ev["id"])
 			continue
 		var total: int = teste["resultado"]["classificacao"].size()
 		var media := 0.0
@@ -75,7 +82,7 @@ func _rodar() -> void:
 	var parado := {}
 	for c in politicas:
 		duracao[c] = 0.0
-		parado[c] = 0.0
+		parado[c] = []
 		tempo[c] = 0.0
 		soma[c] = 0.0
 		vit[c] = 0
@@ -91,17 +98,20 @@ func _rodar() -> void:
 				toques[c] += r[1]
 				tempo[c] += r[2]
 				duracao[c] += r[3]
-				parado[c] = maxf(parado[c], r[4])
+				parado[c].append(r[4])
 			n += 1
 	print("corridas ", n)
 	for c in politicas:
 		print("%-8s posição média %.3f  vitórias %5.1f%%  ganho sobre a base %+.3f  toques/corrida %.1f  tempo %+.2f%%" % [c,
 				soma[c] / n, 100.0 * vit[c] / n, (soma["base"] - soma[c]) / n, float(toques[c]) / n,
 				100.0 * (tempo[c] - tempo["base"]) / maxf(tempo["base"], 1e-6)])
-	print("ritmo de interação (toques por minuto de corrida · maior intervalo sem toque):")
+	print("ritmo de interação (toques por minuto · maior intervalo sem toque por corrida: mediana / pior):")
 	for c in politicas:
 		if c != "base" and c != "peca":
-			print("  %-8s %.1f/min · %.0f s" % [c, 60.0 * float(toques[c]) / maxf(duracao[c], 1e-6), parado[c]])
+			var lista: Array = parado[c].duplicate()
+			lista.sort()
+			print("  %-8s %.1f/min · %.0f s / %.0f s" % [c, 60.0 * float(toques[c]) / maxf(duracao[c], 1e-6),
+					lista[lista.size() / 2], lista[-1]])
 	quit()
 
 
@@ -110,6 +120,9 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var piloto: Dictionary = EquipeJogador.piloto_do_jogador(d, j).duplicate(true)
 	piloto["ordens"] = []
 	var prep: Dictionary = j.carreira.iniciar_preparo(ev_id, carro.uid, semente, false, carro, null, piloto)
+	if prep.has("erro"):
+		push_error("%s: %s" % [ev_id, prep["erro"]])
+		return [0, 0, 0.0, 0.0, 0.0]
 	var a: Simulacao.Andamento = prep["andamento"]
 	if politica == "base":
 		a.avancar(INF)
@@ -148,15 +161,21 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 		var s: float = est["jogador"][0]
 		var v: float = maxf(est["jogador"][1], 1.0)
 		for c in curvas:
-			var frear := not politica in ["ataque", "largada", "defesa", "forcar", "forcou"] and Pilotagem.tem_frenagem(c, comp, p)
+			var frear := not politica in ["ataque", "largada", "defesa", "forcar", "forcou"]
 			# O ponto da freada é onde o carro começa a perder velocidade antes da
 			# curva, como na tela (CorridaVisual.inicio_freada): a frenagem da
 			# Tatica é só o começo possível (sem velocidade máxima, o fim da curva
 			# anterior). Tocar antes (beira) vale do ponto em diante: o mesmo efeito.
+			# Toda curva pede o toque (decisão 133): sem freada que valha, o toque
+			# é na entrada (contorno).
 			var falta := fposmod(float(c["inicio"]) - s, comp)
 			var chave := roundi(s + falta)
-			if frear and not freadas.has(chave) and v < v_antes - 0.01 and falta >= float(p["frenagem"]["minimo_m"]) \
-					and fposmod(s - float(c["frenagem"]), comp) < fposmod(float(c["inicio"]) - float(c["frenagem"]), comp):
+			var tocar := frear and not freadas.has(chave) and v < v_antes - 0.01 and falta >= float(p["frenagem"]["minimo_m"]) \
+					and fposmod(s - float(c["frenagem"]), comp) < fposmod(float(c["inicio"]) - float(c["frenagem"]), comp)
+			if frear and not tocar and _cruzou(s_antes, s, float(c["inicio"]), comp):
+				chave = roundi(s - fposmod(s - float(c["inicio"]), comp))
+				tocar = not freadas.has(chave)
+			if tocar:
 				freadas[chave] = true
 				var nota := Pilotagem.PERFEITA if politica in ["perfeita", "beira"] else (Pilotagem.BOA if politica == "boa"
 						else Pilotagem.TARDE)
