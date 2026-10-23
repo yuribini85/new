@@ -69,7 +69,11 @@ func _rodar() -> void:
 	var vit := {}
 	var toques := {}
 	var tempo := {}
+	var duracao := {}
+	var parado := {}
 	for c in politicas:
+		duracao[c] = 0.0
+		parado[c] = 0.0
 		tempo[c] = 0.0
 		soma[c] = 0.0
 		vit[c] = 0
@@ -84,12 +88,18 @@ func _rodar() -> void:
 				vit[c] += 1 if r[0] == 1 else 0
 				toques[c] += r[1]
 				tempo[c] += r[2]
+				duracao[c] += r[3]
+				parado[c] = maxf(parado[c], r[4])
 			n += 1
 	print("corridas ", n)
 	for c in politicas:
 		print("%-8s posição média %.3f  vitórias %5.1f%%  ganho sobre a base %+.3f  toques/corrida %.1f  tempo %+.2f%%" % [c,
 				soma[c] / n, 100.0 * vit[c] / n, (soma["base"] - soma[c]) / n, float(toques[c]) / n,
 				100.0 * (tempo[c] - tempo["base"]) / maxf(tempo["base"], 1e-6)])
+	print("ritmo de interação (toques por minuto de corrida · maior intervalo sem toque):")
+	for c in politicas:
+		if c != "base" and c != "peca":
+			print("  %-8s %.1f/min · %.0f s" % [c, 60.0 * float(toques[c]) / maxf(duracao[c], 1e-6), parado[c]])
 	quit()
 
 
@@ -101,7 +111,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var a: Simulacao.Andamento = prep["andamento"]
 	if politica == "base":
 		a.avancar(INF)
-		return [_posicao(a.resultado()), 0, _tempo(a.resultado())]
+		return [_posicao(a.resultado()), 0, _tempo(a.resultado()), _tempo(a.resultado()), _tempo(a.resultado())]
 	var ev: Dictionary = d.evento(ev_id)
 	var pista: Pista = d.pista(ev["pista"])
 	var comp := pista.comprimento
@@ -112,6 +122,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	var v_antes := 0.0
 	var freadas := {}  # curva (início na corrida, m) -> true depois do toque
 	var toques := 0
+	var marcas := []  # instantes de cada toque (ritmo de interação)
 	var ultimo_ataque := -INF
 	var ultima_defesa := -INF
 	var volta_antes := 0
@@ -125,6 +136,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 	if largada.has(politica):
 		a.ordenar("jogador", Pilotagem.ordem_largada(largada[politica], p))
 		toques += 1
+		marcas.append(a.tempo())
 	while not a.pronto():
 		t += dt
 		a.avancar_ate(t)
@@ -149,6 +161,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				var ate := t + fposmod(float(c["fim"]) - s, comp) / v
 				a.ordenar("jogador", Pilotagem.ordem_frenagem(nota, a.tempo(), ate, p, a.tempo()))
 				toques += 1
+				marcas.append(a.tempo())
 			if frear and _cruzou(s_antes, s, float(c["fim"]), comp):
 				var nota_saida := Pilotagem.SOLTOU if politica == "ruim" else Pilotagem.LIMPA
 				a.ordenar("jogador", Pilotagem.ordem_saida(nota_saida, a.tempo(), a.tempo() + Pilotagem.dura_saida(p), p))
@@ -162,6 +175,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				a.ordenar("jogador", Pilotagem.ordem_ataque(a.tempo(), p))
 				ultimo_ataque = a.tempo()
 				toques += 1
+				marcas.append(a.tempo())
 		var volta := floori(s / comp)
 		if volta != volta_antes and s > 0.0:
 			volta_s = a.tempo() - inicio_volta
@@ -195,6 +209,7 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				guardados = int(r[1])
 				if modo != Pilotagem.NORMAL:
 					toques += 1
+					marcas.append(a.tempo())
 		if politica in ["perfeita", "beira", "defesa"]:
 			var tras := INF
 			for id in est:
@@ -205,9 +220,17 @@ func _jogar(ev_id: String, carro: Carro, semente: int, politica: String) -> Arra
 				a.ordenar("jogador", Pilotagem.ordem_defesa(a.tempo(), p))
 				ultima_defesa = a.tempo()
 				toques += 1
+				marcas.append(a.tempo())
 		s_antes = s
 		v_antes = v
-	return [_posicao(a.resultado()), toques, _tempo(a.resultado())]
+	# Maior intervalo sem toque (da largada ao primeiro, entre eles e do último à chegada).
+	var fim := _tempo(a.resultado())
+	var maior := 0.0
+	var antes := 0.0
+	for m in marcas + [fim]:
+		maior = maxf(maior, float(m) - antes)
+		antes = float(m)
+	return [_posicao(a.resultado()), toques, fim, fim, maior]
 
 
 ## O carro passou pelo ponto `x` da volta entre s_antes e s (distâncias na corrida).
