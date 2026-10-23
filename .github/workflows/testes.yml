@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Godot 4.4
+      - name: Setup Godot 4.5
         uses: chickensoft-games/setup-godot@v2
         with:
-          version: 4.4.1
+          version: 4.5.1
           use-dotnet: false
 
       - name: Rodar testes

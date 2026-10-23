@@ -28,10 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Godot 4.4 com templates de exportação
+      - name: Setup Godot 4.5 com templates de exportação
         uses: chickensoft-games/setup-godot@v2
         with:
-          version: 4.4.1
+          version: 4.5.1
           use-dotnet: false
           include-templates: true
 
@@ -137,7 +137,35 @@ jobs:
           ls "$sdk/build-tools" || echo "sem build-tools em $sdk"
           godot --headless --verbose --export-release "Android" build/android/chrome-wreckage.apk 2>&1 | grep -v "savepack: step" | tail -60
           test -f build/android/chrome-wreckage.apk
-          godot --headless --export-release "Android Idle" build/android/chrome-racing-team.apk 2>&1 | grep -v "savepack: step" | tail -20
+          ls -la build/android
+
+      # Chrome Racing Team (docs/idle/plano.md): o APK com o AdMob. O plugin
+      # (godot-sdk-integrations/godot-admob, Godot 4.5.1) entra só aqui, depois
+      # do APK do Chrome & Wreckage, e pede o build Gradle; o id do app vem de
+      # data/idle/idle.json ("admob"). Se falhar, o resto segue publicado.
+      - name: Exportar APK do Chrome Racing Team (AdMob)
+        continue-on-error: true
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ github.workspace }}/android/teste.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: teste
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: chromewreckage
+        run: |
+          curl -sSL -o admob.zip https://github.com/godot-sdk-integrations/godot-admob/releases/download/v5.3/AdmobPlugin-Android-v5.3.zip
+          unzip -o -q admob.zip -d .
+          test -f addons/AdmobPlugin/Admob.gd
+          app_id=$(python3 -c "import json;print(json.load(open('data/idle/idle.json'))['admob']['app_id'])")
+          real=$(python3 -c "import json;print(str(json.load(open('data/idle/idle.json'))['admob']['is_real']).lower())")
+          printf '[General]\nis_real = %s\n\n[Debug]\napp_id = "%s"\n\n[Release]\napp_id = "%s"\n' "$real" "$app_id" "$app_id" > addons/AdmobPlugin/android_export.cfg
+          printf '\n[editor_plugins]\n\nenabled=PackedStringArray("res://addons/AdmobPlugin/plugin.cfg")\n' >> project.godot
+          # Build Gradle só no preset do idle (preset.3).
+          awk '/^\[preset\./{p=$0} p=="[preset.3.options]" && /^gradle_build\/use_gradle_build=/{$0="gradle_build/use_gradle_build=true"} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
+          godot --headless --install-android-build-template || true
+          # Duas importações: na primeira o ícone do plugin ainda não existe e o
+          # script dele não carrega; na segunda carrega limpo.
+          godot --headless --import || true
+          godot --headless --import
+          godot --headless --export-release "Android Idle" build/android/chrome-racing-team.apk 2>&1 | grep -v "savepack: step" | tail -40
+          test -f build/android/chrome-racing-team.apk
           ls -la build/android
 
       # O site oficial (site/) fica na raiz do Pages e a demo do jogo em /demo/.

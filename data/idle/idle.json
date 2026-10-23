@@ -5,6 +5,7 @@
 	"renda_base": 3.0,
 	"offline_max_h": 2.0,
 	"intersticial_min_s": 90.0,
+	"admob": {"_nota": "is_real false usa os ids de teste do Google. Para publicar: is_real true, os ids das unidades da sua conta AdMob aqui e o id do app em addons/AdmobPlugin/android_export.cfg (o CI gera a partir de app_id).", "is_real": false, "app_id": "ca-app-pub-3940256099942544~3347511713", "premiado_id": "", "intersticial_id": ""},
 	"grid": 10,
 	"piloto": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.1},
 	"rivais": {"ritmo": 0.97, "ritmo_por_liga": 0.015, "consistencia": 0.85, "agressividade": 0.35},

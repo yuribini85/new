@@ -39,6 +39,7 @@ func _ready() -> void:
 	estado = IdleEstado.carregar()
 	anuncios = IdleAnuncios.new()
 	anuncios.intersticial_min_s = float(estado.cfg.get("intersticial_min_s", 90.0))
+	anuncios.config = estado.cfg.get("admob", {})
 	add_child(anuncios)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_montar()

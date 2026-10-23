@@ -30,6 +30,8 @@ func _rodar() -> void:
 	var j: Node = root.get_node("Jogador")
 	root.get_node("SaveManager").caminho = "user://save_fotos_corrida.json"
 	Cenarios.montar(d, j, "completo")
+	if deixas > 0:
+		j.flags["PILOTAGEM_CARTAO"] = 1  # o COMO PILOTAR seguraria a largada
 	var tela: Control = load("res://scenes/principal.tscn").instantiate()
 	root.add_child(tela)
 	for k in 10:

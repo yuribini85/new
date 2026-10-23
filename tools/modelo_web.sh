@@ -6,7 +6,7 @@
 # Uso: tools/modelo_web.sh <pasta de saída>
 set -euo pipefail
 saida="$(realpath -m "${1:?pasta de saída}")"
-versao="4.4.1-stable"
+versao="4.5.1-stable"
 mkdir -p "$saida"
 fonte="$(mktemp -d)"
 git clone --depth 1 --branch "$versao" https://github.com/godotengine/godot.git "$fonte/godot"

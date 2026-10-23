@@ -51,7 +51,7 @@ pista nova, e os rivais ficam mais fortes.
 - Tudo em `data/idle/idle.json`; o playtest e o teste de mercado ajustam.
 
 ## Monetização
-AdMob (decisão do usuário): vídeo premiado (dobrar a renda offline, dobrar o prêmio da corrida)
+AdMob (decisão do usuário; plugin godot-admob v5.3, Godot 4.5.1, decisão 134): vídeo premiado (dobrar a renda offline)
 e intersticial entre corridas com intervalo mínimo. Ids de teste do Google até o usuário mandar os
 dele.
 

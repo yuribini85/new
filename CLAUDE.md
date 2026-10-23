@@ -43,6 +43,6 @@ lê o resultado.
 **Nada da referência entra no build:** nem código, modelos, texturas, nomes de carros, marcas
 ou traçados reconhecíveis. Campos de referência guardam o arquétipo, não o nome real.
 
-**Decisões de projeto** estão na seção 8 de `docs/plano_mvp.md` (engine Godot 4.4, offline
+**Decisões de projeto** estão na seção 8 de `docs/plano_mvp.md` (engine Godot 4.5.1, decisão 134, offline
 real, um carro por vez com fila, licença como teste de tempo, usados por número de
 corridas). Não as altere. Para o que não estiver decidido, pergunte.

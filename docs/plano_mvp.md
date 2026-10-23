@@ -131,7 +131,7 @@ técnico real do projeto.
 
 ## 8. Decisões tomadas
 
-1. **Engine: Godot 4.4.** 2D isométrico e exportação mobile resolvidos; código de save e
+1. **Engine: Godot 4.4 (4.5.1 desde a decisão 134).** 2D isométrico e exportação mobile resolvidos; código de save e
    offline de The Way Back (branch `backup/the-way-back`) pode ser adaptado.
 2. **Offline de verdade.** As corridas acontecem com o app fechado e são resolvidas em
    lote na volta, pela simulação headless, com relatório de resultados, dinheiro e
@@ -1250,3 +1250,8 @@ Motorsport, diálogos e licenças CLUB a ELITE. Onde contraria decisões acima, 
     (SEGURE NO VERDE; notas CURVA PERFEITA, BOA CURVA, ENTROU CEDO, ENTROU TARDE). Vácuo e defesa
     aparecem de mais longe e com recarga curta (`ataque`/`defesa` em `data/simulacao.json`). Os
     três gestos da decisão 131 continuam; a corrida perfeita continua no teto (nota da pilotagem).
+134. **Godot 4.5.1** (2026-10-23, decisão do usuário): o projeto sai do 4.4.1 para o 4.5.1 porque o
+    plugin do AdMob do segundo app (Chrome Racing Team, `docs/idle/plano.md`) só existe para 4.5+.
+    Os 198 testes passaram e as fotos da corrida e do idle saíram iguais no 4.5.1. CI, modelo web
+    enxuto (`tools/modelo_web.sh`, Emscripten 3.1.64) e `project.godot` atualizados. O plugin
+    (godot-sdk-integrations/godot-admob v5.3) entra só no APK do idle, com build Gradle.
