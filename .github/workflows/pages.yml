@@ -71,7 +71,7 @@ jobs:
         run: |
           m="$PWD/build/modelo_web/web_nothreads_release.zip"
           if [ -f "$m" ]; then
-            awk -v m="$m" '/^\[preset\./{p=$0} p=="[preset.0.options]" && /^custom_template\/release=/{$0="custom_template/release=\"" m "\""} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
+            awk -v m="$m" '/^\[preset\./{p=$0} (p=="[preset.0.options]" || p=="[preset.2.options]") && /^custom_template\/release=/{$0="custom_template/release=\"" m "\""} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
             grep -n "custom_template/release" export_presets.cfg
           else
             echo "sem modelo enxuto: exporta com o padrão"
@@ -101,6 +101,19 @@ jobs:
           sed -i "s/__VERSAO__/$v/" build/web/index.html
           grep -q "var v = '$v'" build/web/index.html
 
+      # Chrome Racing Team (docs/idle/plano.md): o segundo app do projeto, o
+      # mesmo pacote aberto direto no jogo idle (feature "idle"). Em /idle/.
+      - name: Exportar o Chrome Racing Team para web
+        run: |
+          mkdir -p build/idle_web
+          v="${GITHUB_SHA::7}"
+          godot --headless --export-release "Web Idle" build/idle_web/index.html
+          test -f build/idle_web/index.pck
+          sed -i "s/\"executable\":\"index\",/\"executable\":\"index\",\"mainPack\":\"index.pck?v=$v\",/" build/idle_web/index.html
+          sed -i "s/\"index.pck\":/\"index.pck?v=$v\":/" build/idle_web/index.html
+          echo "$v" > build/idle_web/versao.txt
+          sed -i "s/__VERSAO__/$v/" build/idle_web/index.html
+
       # APK Android para os testes (decisão 127): o mesmo jogo como app nativo,
       # bem mais leve que a web em celular de entrada. Assinado com a chave de
       # teste do repositório (android/LEIA-ME.md), não com a do Google Play.
@@ -124,6 +137,7 @@ jobs:
           ls "$sdk/build-tools" || echo "sem build-tools em $sdk"
           godot --headless --verbose --export-release "Android" build/android/chrome-wreckage.apk 2>&1 | grep -v "savepack: step" | tail -60
           test -f build/android/chrome-wreckage.apk
+          godot --headless --export-release "Android Idle" build/android/chrome-racing-team.apk 2>&1 | grep -v "savepack: step" | tail -20
           ls -la build/android
 
       # O site oficial (site/) fica na raiz do Pages e a demo do jogo em /demo/.
@@ -137,6 +151,10 @@ jobs:
           test -f build/pages/demo/index.pck
           # O APK de teste fica em /demo/chrome-wreckage.apk (quando a exportação deu certo).
           if [ -f build/android/chrome-wreckage.apk ]; then cp build/android/chrome-wreckage.apk build/pages/demo/; fi
+          # Chrome Racing Team em /idle/ (e o APK dele, quando saiu).
+          cp -r build/idle_web build/pages/idle
+          test -f build/pages/idle/index.pck
+          if [ -f build/android/chrome-racing-team.apk ]; then cp build/android/chrome-racing-team.apk build/pages/idle/; fi
 
       - uses: actions/upload-pages-artifact@v3
         with:

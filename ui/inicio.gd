@@ -30,6 +30,10 @@ var _pronto := false
 
 
 func _ready() -> void:
+	# O segundo app do projeto (Chrome Racing Team, docs/idle/plano.md) abre direto no jogo idle.
+	if OS.has_feature("idle"):
+		get_tree().change_scene_to_file.call_deferred("res://idle/idle.tscn")
+		return
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var fundo := ColorRect.new()
 	fundo.color = Color("1b222c")  # o céu da paisagem, enquanto ela carrega
