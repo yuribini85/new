@@ -20,7 +20,7 @@ extends SceneTree
 ##   forcou    ATAQUE toda volta
 ##   peça      sem toque, com a peça mais barata que o carro aceita
 ## Uso: godot --headless --path . -s tools/calibrar_pilotagem.gd [-- sementes=10 cenario=carro_3d provas=5
-##        politicas=base,largada voltas_min=30]
+##        politicas=base,largada voltas_min=30 ids=ev_1,ev_2]
 
 var d: Node
 var j: Node
@@ -45,7 +45,9 @@ func _rodar() -> void:
 	var carro: Carro = j.garagem.carro(j.carro_ativo)
 	var com_peca := _com_peca(carro)
 	var provas := []
-	for ev in d.lista("eventos"):
+	if args.has("ids"):  # provas escolhidas, sem a busca (ex.: as abertas do começo)
+		provas = Array(String(args["ids"]).split(","))
+	for ev in ([] if args.has("ids") else d.lista("eventos")):
 		if provas.size() >= int(args["provas"]):
 			break
 		if int(ev["voltas"]) < int(args["voltas_min"]):
