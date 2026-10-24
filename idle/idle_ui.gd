@@ -171,6 +171,52 @@ static func retrato_piloto(id: String) -> Texture2D:
 	return load(caminho) if ResourceLoader.exists(caminho) else null
 
 
+## Busto do piloto recortado da arte de corpo inteiro (arte/pilotos/corpo/):
+## quadrado com a cabeça inteira no alto, centrado nela. O retrato de rosto vem
+## cortado em cima e à esquerda.
+static var _bustos := {}
+
+static func busto_piloto(id: String) -> Texture2D:
+	if _bustos.has(id):
+		return _bustos[id]
+	var caminho := "res://arte/pilotos/corpo/%s.webp" % id
+	if not ResourceLoader.exists(caminho):
+		return retrato_piloto(id)
+	var tex: Texture2D = load(caminho)
+	var img := tex.get_image()
+	if img.is_compressed():
+		img.decompress()
+	var w := img.get_width()
+	var h := img.get_height()
+	var topo := 0
+	while topo < h - 1 and not _linha_visivel(img, topo):
+		topo += 1
+	# Centro da cabeça: média das colunas visíveis logo abaixo do topo.
+	var soma := 0.0
+	var n := 0
+	for y in range(topo + int(h * 0.03), mini(topo + int(h * 0.12), h)):
+		for x in range(0, w, 2):
+			if img.get_pixel(x, y).a > 0.5:
+				soma += x
+				n += 1
+	var cx := soma / n if n > 0 else w * 0.5
+	var lado := w * 0.5
+	var x0 := clampf(cx - lado * 0.5, 0.0, w - lado)
+	var y0 := maxf(topo - lado * 0.04, 0.0)
+	var at := AtlasTexture.new()
+	at.atlas = tex
+	at.region = Rect2(x0, y0, lado, lado)
+	_bustos[id] = at
+	return at
+
+
+static func _linha_visivel(img: Image, y: int) -> bool:
+	for x in range(0, img.get_width(), 2):
+		if img.get_pixel(x, y).a > 0.5:
+			return true
+	return false
+
+
 ## 1234 -> "1,2 mil"; 3 400 000 -> "3,4 mi" (o jogador lê rápido).
 static func curto(v: float) -> String:
 	var sufixos := ["", " mil", " mi", " bi", " tri", " qua", " qui", " sx"]
