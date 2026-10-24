@@ -474,10 +474,40 @@ func pista(dados: Node) -> Pista:
 	return Pista.new(d)
 
 
-## A corrida da liga, resolvida inteira (a tela mostra as amostras).
+## A corrida da liga, resolvida inteira (a tela mostra as amostras). Na
+## Arena, a luta da simulação de arena do Chrome & Wreckage.
 func correr(dados: Node, semente: int, com_amostras := true, niveis_extra := {}) -> Dictionary:
+	if e_arena():
+		return correr_arena(dados, semente, com_amostras, niveis_extra)
 	return Simulacao.correr(pista(dados), participantes(dados, niveis_extra), int(dados_liga()["voltas"]),
 			dados.simulacao(), semente, com_amostras)
+
+
+func e_arena(mod := "") -> bool:
+	return String(dados_modalidade(mod).get("tipo", "")) == "arena"
+
+
+## Parâmetros da arena do Chrome & Wreckage (data/arena.json) com a forma da
+## arena da liga.
+func params_arena(dados: Node) -> Dictionary:
+	var p: Dictionary = dados.arena().duplicate(true)
+	for a in p.get("arenas", []):
+		if String(a["id"]) == String(dados_liga()["pista"]):
+			p["forma"] = a
+	return p
+
+
+## A luta da liga: todos contra todos (cada carro é a própria equipe); a
+## classificação é a ordem de quem ficou de pé. Na Arena, o Vácuo vira
+## blindagem: o carro mais pesado aguenta mais (Arena: resistência pela massa).
+func correr_arena(dados: Node, semente: int, com_amostras := true, niveis_extra := {}) -> Dictionary:
+	var parts := participantes(dados, niveis_extra)
+	var blindagem := float(dados_modalidade().get("blindagem_por_vacuo", 0.0))
+	for p in parts:
+		p["equipe"] = p["id"]
+		if p["id"] == "jogador":
+			p["atributos"]["peso"] = float(p["atributos"]["peso"]) * (1.0 + blindagem * efeito("vacuo", niveis_extra))
+	return Arena.correr(parts, params_arena(dados), semente, com_amostras)
 
 
 static func posicao(resultado: Dictionary) -> int:

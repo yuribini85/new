@@ -19,7 +19,7 @@
 		{"id": "motor", "icone": "icone_potencia", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
 		{"id": "pneus", "icone": "icone_pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
 		{"id": "ultrapassagem", "icone": "icone_agressividade", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12},
-		{"id": "vacuo", "icone": "icone_trafego", "nome": "Vácuo", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
+		{"id": "vacuo", "icone": "icone_trafego", "nome": "Vácuo", "nome_arena": "Blindagem", "icone_arena": "icone_peso", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
 		{"id": "patrocinio", "icone": "icone_creditos", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
 		{"id": "arquibancada", "icone": "icone_podio", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
 	],
@@ -64,7 +64,7 @@
 			{"nome": "Terra Elite", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 4096},
 			{"nome": "Terra Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 8192}
 		]},
-		{"id": "arena", "nome": "Arena", "icone": "emblema_arena", "tipo": "arena", "categorias": ["pesado", "picape", "utilitario"], "libera": {"modalidade": "terra", "liga": 3}, "forca_rivais": {"patio_pedreira": 1.0, "fosso_docas": 1.0, "anel_ferro_velho": 1.0, "cratera_vale": 1.0}, "ligas": [
+		{"id": "arena", "nome": "Arena", "icone": "emblema_arena", "tipo": "arena", "blindagem_por_vacuo": 10.0, "categorias": ["pesado", "picape", "utilitario"], "libera": {"modalidade": "terra", "liga": 3}, "forca_rivais": {"patio_pedreira": 1.0, "fosso_docas": 1.0, "anel_ferro_velho": 1.0, "cratera_vale": 1.0}, "ligas": [
 			{"nome": "Arena Estreantes", "pista": "patio_pedreira", "voltas": 1, "potencia": 150, "multiplicador": 256},
 			{"nome": "Arena Regional", "pista": "fosso_docas", "voltas": 1, "potencia": 190, "multiplicador": 512},
 			{"nome": "Arena Estadual", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 240, "multiplicador": 1024},

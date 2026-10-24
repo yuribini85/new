@@ -37,14 +37,20 @@ const ABAS := [
 	{"id": "pilotos", "nome": "PILOTOS", "icone": "icone_piloto"},
 ]
 ## Câmeras: "auto" (o diretor do Chrome & Wreckage), "jogador" (atrás do seu
-## carro) ou "geral" (a pista inteira), com os ícones do Chrome & Wreckage.
+## carro) ou "geral" (a pista inteira), com os ícones do Chrome & Wreckage. Na
+## Arena: dinâmica, a sua briga e a arena inteira (Arena3D.modo).
 const CAMERAS := [["auto", "camera"], ["jogador", "frente"], ["geral", "pista"]]
+const CAMERA_ARENA := {"auto": "dinamica", "jogador": "briga", "geral": "geral"}
+## Tempo da luta por segundo de tela na Arena (as lutas de dez carros são longas).
+const VELOCIDADE_ARENA := 2.0
 
 var dados: Node
 var estado: IdleEstado
 var anuncios: IdleAnuncios
 var _visual: CorridaVisual
 var _visual3d: Corrida3D
+var _arena3d: Arena3D  # a vista da modalidade Arena (a arena do Chrome & Wreckage)
+var _na_arena := false
 var _resultado := {}
 var _semente := 1
 var _pausa := -1.0  # > 0: parada depois da chegada, antes da próxima corrida
@@ -226,6 +232,11 @@ func _pagina_corrida() -> Control:
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_visual3d.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	corrida.add_child(_visual3d)
+	_arena3d = Arena3D.new()
+	_arena3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_arena3d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_arena3d.visible = false
+	corrida.add_child(_arena3d)
 	_hud = HudCorrida.new()
 	corrida.add_child(_hud)
 	_sons = Sons.new()
@@ -297,8 +308,7 @@ func _cartao(m: Dictionary) -> Control:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 6)
 	v.add_child(h)
-	if m.has("icone"):
-		IdleUI.icone(String(m["icone"]), 24, h)
+	var ic := IdleUI.icone(String(m.get("icone", "")), 24, h)
 	var nome := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, Color.WHITE, h)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.clip_text = true
@@ -309,7 +319,7 @@ func _cartao(m: Dictionary) -> Control:
 	Tipografia.acao_primaria(b, "", COR_DINHEIRO.darkened(0.15), Color(0.06, 0.08, 0.06), 24, 56)
 	b.pressed.connect(_comprar.bind(String(m["id"])))
 	v.add_child(b)
-	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "botao": b}
+	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "botao": b, "nome": nome, "icone": ic}
 	return p
 
 
@@ -330,6 +340,9 @@ func _abrir(id: String) -> void:
 
 func _efeito_texto(m: Dictionary, nivel: int) -> String:
 	var x := float(m["por_nivel"]) * nivel
+	if _na_arena and m["efeito"] == "vacuo":
+		# Blindagem: o peso a mais do carro na Arena.
+		return "+%d%%" % roundi(x * float(estado.dados_modalidade().get("blindagem_por_vacuo", 0.0)) * 100.0)
 	match String(m["efeito"]):
 		"renda":
 			return "+$%s/s" % curto(x * float(estado.dados_liga()["multiplicador"]))
@@ -345,6 +358,10 @@ func _atualizar_cartoes() -> void:
 	for m in estado.cfg["melhorias"]:
 		var c: Dictionary = _cartoes[m["id"]]
 		var n := estado.nivel(m["id"])
+		# Na Arena, a melhoria pode ter outro nome (o Vácuo vira Blindagem).
+		var arena: bool = _na_arena and m.has("nome_arena")
+		c["nome"].text = String(m["nome_arena"] if arena else m["nome"]).to_upper()
+		c["icone"].texture = Aba.icone_reduzido(String(m["icone_arena"] if arena else m.get("icone", "")), 24)
 		c["nivel"].text = "NV %d" % n
 		var b: Button = c["botao"]
 		if estado.no_maximo(m["id"]):
@@ -372,9 +389,10 @@ func _atualizar_topo() -> void:
 func _nova_corrida() -> void:
 	_semente += 1
 	_resultado = estado.correr(dados, _semente + estado.corridas * 7919)
-	var pista := estado.pista(dados)
-	_pista = pista
-	_visual.mostrar(pista, _resultado, {"jogador": COR_OURO})
+	_na_arena = estado.e_arena()
+	_visual3d.visible = not _na_arena
+	_arena3d.visible = _na_arena
+	_hud.so_eventos = _na_arena
 	var categorias := {}
 	var pinturas := {}
 	var faixas := {}
@@ -395,12 +413,23 @@ func _nova_corrida() -> void:
 			_nomes[id] = escalados[k]["nome"]
 		else:
 			pinturas[id] = Cores.sortear(String(p["carro"]), "%d|%s" % [_semente, id])
-	_visual3d.faixas_pintura = faixas
-	_visual3d.nomes = _nomes
-	_visual3d.chegada = 0.0
-	_visual3d.mostrar(pista, _visual, categorias, pinturas)
-	_visual.tempo = 0.0
-	_fim_jogador = float(_resultado["carros"]["jogador"]["tempo_total"])
+	if _na_arena:
+		_arena3d.faixas_pintura = faixas
+		_arena3d.mostrar(_resultado, estado.params_arena(dados), categorias, pinturas)
+		_arena3d.tempo = 0.0
+		var eu: Dictionary = _resultado["carros"]["jogador"]
+		# Fim para você: quando o seu carro cai ou a luta acaba.
+		_fim_jogador = float(eu["eliminado_em"]) + 1.5 if eu["eliminado"] else _arena3d.duracao()
+		_fim_jogador = minf(_fim_jogador, _arena3d.duracao())
+	else:
+		_pista = estado.pista(dados)
+		_visual.mostrar(_pista, _resultado, {"jogador": COR_OURO})
+		_visual3d.faixas_pintura = faixas
+		_visual3d.nomes = _nomes
+		_visual3d.chegada = 0.0
+		_visual3d.mostrar(_pista, _visual, categorias, pinturas)
+		_visual.tempo = 0.0
+		_fim_jogador = float(_resultado["carros"]["jogador"]["tempo_total"])
 	_pausa = -1.0
 	_chegada = false
 	_t_chegada = 0.0
@@ -434,6 +463,7 @@ func _marcar_camera() -> void:
 
 
 func _aplicar_camera() -> void:
+	_arena3d.modo = CAMERA_ARENA[_camera_modo]
 	_visual3d.visao_geral = _camera_modo == "geral"
 	_visual3d.perseguicao = _camera_modo == "jogador"
 	_visual3d.foco = "jogador"
@@ -464,6 +494,9 @@ func _dirigir() -> void:
 func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
 	_avisos(delta)
+	if _na_arena:
+		_processo_arena(delta)
+		return
 	if _contagem > 0.0:
 		_contar(delta)
 	elif _pausa >= 0.0:
@@ -504,6 +537,57 @@ func _process(delta: float) -> void:
 	if _salvar_em <= 0.0:
 		_salvar_em = SALVAR_A_CADA_S
 		estado.salvar(Time.get_unix_time_from_system())
+
+
+## A luta da Arena: semáforo, a luta acelerada e, quando o seu carro cai ou a
+## luta acaba, o resultado (a ordem de quem ficou de pé).
+func _processo_arena(delta: float) -> void:
+	var vendo: bool = _paginas["corrida"].visible
+	if _contagem > 0.0:
+		_contar(delta)
+	elif _pausa >= 0.0:
+		_pausa -= delta
+		_arena3d.tempo = minf(_arena3d.tempo + delta * VELOCIDADE_ARENA, _arena3d.duracao())
+		if _pausa < 0.0:
+			if not _sem_intersticial:
+				anuncios.intersticial()
+			_sem_intersticial = false
+			_nova_corrida()
+	else:
+		_arena3d.tempo = minf(_arena3d.tempo + delta * VELOCIDADE_ARENA, _arena3d.duracao())
+		_eventos_arena()
+		if _arena3d.tempo >= _fim_jogador:
+			_chegou()
+	if vendo:
+		_arena3d.atualizar(delta)
+		_sons.motor(_contagem <= 0.0 and not _chegada, 20.0)
+	else:
+		_sons.motor(false)
+	_atualizar_topo()
+	if vendo:
+		_atualizar_cartoes()
+	_salvar_em -= delta
+	if _salvar_em <= 0.0:
+		_salvar_em = SALVAR_A_CADA_S
+		estado.salvar(Time.get_unix_time_from_system())
+
+
+## Avisos da Arena: quem você tirou da luta e quantos ainda estão de pé.
+func _eventos_arena() -> void:
+	for e in _resultado["eventos"]:
+		if e["tipo"] != "eliminado" or float(e["t"]) > _arena3d.tempo or _avisado.has(e):
+			continue
+		_avisado[e] = true
+		var vivos := 0
+		for id in _resultado["carros"]:
+			var c: Dictionary = _resultado["carros"][id]
+			if not c["eliminado"] or float(c["eliminado_em"]) > _arena3d.tempo:
+				vivos += 1
+		if String(e.get("por", "")) == "jogador":
+			_hud.evento("ELIMINOU", "%s · %d de pé" % [String(_nomes.get(String(e["carro"]), "")).to_upper(), vivos], COR_OURO, 5)
+			_sons.ultrapassagem(true)
+		elif String(e["carro"]) != "jogador":
+			_hud.evento("%d DE PÉ" % vivos, String(_nomes.get(String(e["carro"]), "")) + " saiu", Color.WHITE, 2)
 
 
 ## 3-2-1 no grid: um bipe por número; no zero, a largada.

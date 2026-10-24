@@ -2,7 +2,7 @@ extends SceneTree
 ## Fotos da tela do Chrome Racing Team (docs/idle/plano.md), como o jogador vê.
 ## Uso (precisa de tela: xvfb-run): godot --resolution 405x720 --script res://tools/fotos_idle.gd -- --saida=/pasta/
 ##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abas=corrida,pistas,pilotos]
-##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0]
+##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena]
 ## --abas: uma foto de cada tela depois dos segundos; --contratos: pilotos a
 ## mais no elenco; --abertas: quantas modalidades abertas (as anteriores na
 ## liga que abre a próxima); --nova_liga: a janela de liga nova na última foto;
@@ -22,6 +22,7 @@ func _rodar() -> void:
 	var abertas := 1
 	var nova_liga := false
 	var fora_h := 0.0
+	var modalidade := ""
 	for arg in OS.get_cmdline_user_args():
 		var kv := arg.trim_prefix("--").split("=")
 		match kv[0]:
@@ -34,6 +35,7 @@ func _rodar() -> void:
 			"abertas": abertas = int(kv[1])
 			"nova_liga": nova_liga = true
 			"fora_h": fora_h = float(kv[1])
+			"modalidade": modalidade = kv[1]
 	DirAccess.make_dir_recursive_absolute(saida)
 	var dados: Node = root.get_node("Dados")
 	# Save de partida: modalidades abertas, pilotos e o tempo fora.
@@ -47,6 +49,8 @@ func _rodar() -> void:
 			e.liga = int(e.cfg["modalidades"][i + 1]["libera"]["liga"])
 	e.trocar_modalidade(String(e.cfg["modalidades"][0]["id"]))
 	e.liga = maxi(liga, e.liga)
+	if modalidade != "":
+		e.trocar_modalidade(modalidade)
 	e.dinheiro = dinheiro
 	for i in contratos:
 		e.contratar(dados, 100 + i)

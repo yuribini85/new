@@ -155,3 +155,16 @@ func test_save_antigo_vira_a_primeira_modalidade() -> void:
 	e.de_save({"dinheiro": 50.0, "liga": 1, "venceu": true, "niveis": {"motor": 2}, "corridas": 9})
 	igual([e.modalidade, e.liga, e.venceu, e.nivel("motor"), e.corridas], ["a", 1, true, 2, 9], "migrou")
 	verificar(e.liberada("b"), "e a segunda já abre")
+
+
+func test_arena_com_a_simulacao_do_chrome_wreckage() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var e := IdleEstado.new()
+	e.mods["arena"] = {"liga": 0, "venceu": false, "niveis": e.niveis.duplicate(), "corridas": 0}
+	e.modalidade = "arena"
+	verificar(e.e_arena(), "a modalidade arena")
+	var r := e.correr(d, 3, false)
+	igual(Array(r["classificacao"]).size(), int(e.cfg["grid"]), "dez carros na luta")
+	verificar(IdleEstado.posicao(r) >= 1, "posição pela ordem de quem ficou de pé")
+	d.free()
