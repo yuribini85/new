@@ -8,11 +8,16 @@ extends Control
 ## câmera fechando no seu carro, os sons e os rivais com piloto e pintura das
 ## equipes rivais; embaixo os cartões de melhoria, três por linha. A corrida
 ## roda sozinha, uma atrás da outra.
+## Identidade visual do Chrome & Wreckage: a abertura com a paisagem em camadas
+## e o botão da tela inicial dele, as cores e fontes da interface, os ícones nos
+## cartões e o banner da pista atrás do topo.
 
-const COR_FUNDO := Color(0.07, 0.08, 0.1)
-const COR_CARTAO := Color(0.13, 0.145, 0.17)
+const COR_FUNDO := Aba.COR_FUNDO
+const COR_CARTAO := Aba.COR_CARTAO
 const COR_DINHEIRO := Color(0.45, 0.9, 0.5)
-const COR_OURO := Color("d6a23e")
+const COR_OURO := Aba.COR_DESTAQUE
+const LOGO := "res://arte/idle/logo.png"  # tools/gerar_logo_crt.py
+const COR_BOTAO := Color("f5b52e")  # o amarelo-ouro do botão da tela inicial do C&W (ui/inicio.gd)
 const PAUSA_CHEGADA_S := 2.5
 const PAUSA_COM_VIDEO_S := 4.0  # tempo para tocar em "VÍDEO: PRÊMIO 2×"
 const SALVAR_A_CADA_S := 5.0
@@ -46,6 +51,8 @@ var _pista: Pista
 var _dinheiro: Label
 var _renda: Label
 var _liga: Label
+var _banner: TextureRect  # banner da pista da liga atrás do topo
+var _abertura_tela: Control
 var _hud: HudCorrida
 var _sons: Sons
 var _nomes := {}  # id -> nome do piloto
@@ -72,10 +79,7 @@ func _ready() -> void:
 	add_child(anuncios)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_montar()
-	var ganho := estado.ganho_offline(Time.get_unix_time_from_system())
-	if ganho >= 1.0:
-		_janela_offline(ganho)
-	_nova_corrida()
+	_abertura()
 
 
 func _notification(what: int) -> void:
@@ -99,13 +103,30 @@ func _montar() -> void:
 	v.offset_bottom = -16
 	v.add_theme_constant_override("separation", 12)
 	add_child(v)
-	# Topo: o nome da liga, o dinheiro e a renda por segundo.
+	# Topo: o nome da liga, o dinheiro e a renda por segundo, sobre o banner da
+	# pista (como os cartões de prova do Chrome & Wreckage).
+	var placa := PanelContainer.new()
+	placa.add_theme_stylebox_override("panel", _caixa(COR_CARTAO, 14))
+	placa.clip_contents = true
+	v.add_child(placa)
+	_banner = TextureRect.new()
+	_banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_banner.modulate = Color(0.45, 0.45, 0.45)
+	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	placa.add_child(_banner)
 	var topo := HBoxContainer.new()
-	v.add_child(topo)
+	placa.add_child(topo)
 	var esq := VBoxContainer.new()
 	esq.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	topo.add_child(esq)
-	_liga = _rotulo("", 24, Color(0.77, 0.79, 0.85), esq)
+	var linha_liga := HBoxContainer.new()
+	esq.add_child(linha_liga)
+	var emblema := TextureRect.new()
+	emblema.texture = Aba.icone_reduzido("emblema_liga", 30)
+	emblema.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	linha_liga.add_child(emblema)
+	_liga = _rotulo("", 24, Color(0.93, 0.91, 0.87), linha_liga)
 	_dinheiro = _rotulo("", 52, Color.WHITE, esq)
 	Tipografia.numero(_dinheiro, 52)
 	var dir := VBoxContainer.new()
@@ -188,11 +209,18 @@ func _cartao(m: Dictionary) -> Control:
 	v.add_theme_constant_override("separation", 2)
 	p.add_child(v)
 	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 6)
 	v.add_child(h)
-	var nome := _rotulo(String(m["nome"]).to_upper(), 20, Color.WHITE, h)
+	var tex := Aba.icone_reduzido(String(m.get("icone", "")), 24) if m.has("icone") else null
+	if tex != null:
+		var ic := TextureRect.new()
+		ic.texture = tex
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		h.add_child(ic)
+	var nome := _rotulo(String(m["nome"]).to_upper(), 17, Color.WHITE, h)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.clip_text = true
-	var nivel := _rotulo("", 18, Color(0.77, 0.79, 0.85), h)
+	var nivel := _rotulo("", 15, Color(0.77, 0.79, 0.85), h)
 	var efeito := _rotulo("", 18, COR_DINHEIRO, v)
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
@@ -268,6 +296,8 @@ func _atualizar_topo() -> void:
 	_dinheiro.text = "$" + curto(estado.dinheiro)
 	_renda.text = "$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
+	var pista_id := String(estado.dados_liga()["pista"])
+	_banner.texture = Aba.arte("banner_" + String(Corrida3D.TEMA_DE.get(pista_id, pista_id)))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
 	_dobrar.visible = _dobrar.visible and _pausa >= 0.0
 
@@ -359,6 +389,8 @@ func _dirigir() -> void:
 
 func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
+	if _pista == null:  # a abertura ainda está na tela
+		return
 	if _contagem > 0.0:
 		_contar(delta)
 	elif _pausa >= 0.0:
@@ -527,13 +559,104 @@ func _comprar(id: String) -> void:
 
 
 func _subir_liga() -> void:
-	if estado.subir_liga():
-		_aviso.text = "%s\nCARRO NOVO: %s" % [String(estado.dados_liga()["nome"]).to_upper(),
-				String(estado.carro_base(dados)["nome"]).to_upper()]
-		_nova_corrida()
-		_aviso.text = "%s\nCARRO NOVO: %s" % [String(estado.dados_liga()["nome"]).to_upper(),
-				String(estado.carro_base(dados)["nome"]).to_upper()]
-		estado.salvar(Time.get_unix_time_from_system())
+	if not estado.subir_liga():
+		return
+	estado.salvar(Time.get_unix_time_from_system())
+	_nova_corrida()
+	_janela_liga()
+
+
+## Liga nova: o banner da pista, o nome da liga e o carro novo da equipe.
+func _janela_liga() -> void:
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.75)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fundo)
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.add_child(centro)
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(600, 0)
+	p.add_theme_stylebox_override("panel", _caixa(COR_CARTAO, 18))
+	centro.add_child(p)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 12)
+	p.add_child(v)
+	var pista_id := String(estado.dados_liga()["pista"])
+	var tex := Aba.arte("banner_" + String(Corrida3D.TEMA_DE.get(pista_id, pista_id)))
+	if tex != null:
+		var b := TextureRect.new()
+		b.texture = tex
+		b.custom_minimum_size = Vector2(0, 220)
+		b.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		b.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		b.clip_contents = true
+		v.add_child(b)
+	var t := _rotulo("NOVA LIGA", 24, COR_OURO, v)
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var n := _rotulo(String(estado.dados_liga()["nome"]).to_upper(), 46, Color.WHITE, v)
+	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var c := _rotulo("CARRO NOVO: " + String(estado.carro_base(dados)["nome"]).to_upper(), 24,
+			Color(0.77, 0.79, 0.85), v)
+	c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var ok := BotaoInicio.new("Correr", true, COR_BOTAO, 40, 88, 360)
+	ok.pressed.connect(fundo.queue_free)
+	v.add_child(ok)
+
+
+# --- abertura -------------------------------------------------------------------
+
+## Abertura como a tela inicial do Chrome & Wreckage: a paisagem em camadas, o
+## logo e o botão. O toque também libera o som no navegador.
+func _abertura() -> void:
+	var tela := Control.new()
+	tela.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(tela)
+	var ceu := ColorRect.new()
+	ceu.color = Color("1b222c")
+	ceu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	tela.add_child(ceu)
+	tela.add_child(PaisagemParallax.new())
+	var logo := TextureRect.new()
+	logo.texture = load(LOGO)
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	logo.anchor_right = 1.0
+	logo.anchor_top = 0.17
+	logo.anchor_bottom = 0.17
+	logo.offset_left = 48
+	logo.offset_right = -48
+	logo.offset_top = AreaSegura.topo(720.0)
+	logo.offset_bottom = AreaSegura.topo(720.0) + 230.0
+	tela.add_child(logo)
+	var botao := BotaoInicio.new("Continuar" if estado.corridas > 0 else "Começar", true, COR_BOTAO, 56,
+			104, 470)
+	botao.anchor_left = 0.5
+	botao.anchor_right = 0.5
+	botao.anchor_top = 0.47
+	botao.anchor_bottom = 0.47
+	botao.offset_left = -235
+	botao.offset_right = 235
+	tela.add_child(botao)
+	botao.pressed.connect(comecar)
+	_abertura_tela = tela
+
+
+## Sai da abertura: a primeira corrida e, se rendeu, a renda de quando o app
+## esteve fechado.
+func comecar() -> void:
+	if _abertura_tela == null:
+		return
+	var tela := _abertura_tela
+	_abertura_tela = null
+	var tw := create_tween()
+	tw.tween_property(tela, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(tela.queue_free)
+	_nova_corrida()
+	var ganho := estado.ganho_offline(Time.get_unix_time_from_system())
+	if ganho >= 1.0:
+		_janela_offline(ganho)
 
 
 # --- renda com o app fechado -------------------------------------------------------

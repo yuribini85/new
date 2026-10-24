@@ -15,12 +15,12 @@
 	"expoente_custo_liga": 2.3,
 	"_nota_forca": "forca_rivais (por liga) multiplica a força dos rivais para que toda liga peça ~12 níveis de motor (com ultrapassagem e vácuo no máximo): pistas com poucas retas são mais difíceis de passar. A 1ª liga fica mais fácil (1ª vitória cedo). aderencia_por_forca: o rival x% mais potente tem 0,6·x% mais aderência (como Pneus × Motor).",
 	"melhorias": [
-		{"id": "motor", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
-		{"id": "pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
-		{"id": "ultrapassagem", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12},
-		{"id": "vacuo", "nome": "Vácuo", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
-		{"id": "patrocinio", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
-		{"id": "arquibancada", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
+		{"id": "motor", "icone": "icone_potencia", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
+		{"id": "pneus", "icone": "icone_pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
+		{"id": "ultrapassagem", "icone": "icone_agressividade", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12},
+		{"id": "vacuo", "icone": "icone_trafego", "nome": "Vácuo", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
+		{"id": "patrocinio", "icone": "icone_creditos", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
+		{"id": "arquibancada", "icone": "icone_podio", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
 	],
 	"ligas": [
 		{"nome": "Liga das Docas", "pista": "docas_curta", "voltas": 1, "potencia": 120, "multiplicador": 1, "forca_rivais": 0.9},

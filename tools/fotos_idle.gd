@@ -1,7 +1,9 @@
 extends SceneTree
 ## Fotos da tela do Chrome Racing Team (docs/idle/plano.md), como o jogador vê.
 ## Uso (precisa de tela: xvfb-run): godot --resolution 405x720 --script res://tools/fotos_idle.gd -- --saida=/pasta/
-##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0]
+##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abertura] [--nova_liga]
+## --abertura: a primeira foto é a abertura (antes de Começar); --nova_liga: a
+## janela de liga nova na última foto.
 
 func _initialize() -> void:
 	_rodar.call_deferred()
@@ -12,6 +14,8 @@ func _rodar() -> void:
 	var tempos := [2.0, 10.0, 30.0]
 	var dinheiro := 0.0
 	var liga := 0
+	var abertura := false
+	var nova_liga := false
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--saida="):
 			saida = arg.trim_prefix("--saida=")
@@ -21,6 +25,10 @@ func _rodar() -> void:
 			dinheiro = float(arg.trim_prefix("--dinheiro="))
 		elif arg.begins_with("--liga="):
 			liga = int(arg.trim_prefix("--liga="))
+		elif arg == "--abertura":
+			abertura = true
+		elif arg == "--nova_liga":
+			nova_liga = true
 	DirAccess.make_dir_recursive_absolute(saida)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(IdleEstado.ARQUIVO_SAVE))
 	var tela: Control = load("res://idle/idle.tscn").instantiate()
@@ -28,13 +36,21 @@ func _rodar() -> void:
 	await process_frame
 	tela.estado.dinheiro = dinheiro
 	tela.estado.liga = liga
-	if liga > 0:
-		tela._nova_corrida()
-	var t := 0.0
 	var k := 0
+	if abertura:
+		for i in 20:
+			await process_frame
+		root.get_texture().get_image().save_png(saida.path_join("idle_%d.png" % k))
+		k += 1
+	tela.comecar()
+	var t := 0.0
+	tempos = ([0.0] if abertura else []) + tempos
 	while k < tempos.size():
 		await process_frame
 		t += 1.0 / 30.0
+		if nova_liga and k == tempos.size() - 1 and t >= float(tempos[k]) - 1.0 and tela.estado.liga == liga:
+			tela.estado.venceu = true
+			tela._subir_liga()
 		if t >= float(tempos[k]):
 			root.get_texture().get_image().save_png(saida.path_join("idle_%d.png" % k))
 			k += 1

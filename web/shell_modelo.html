@@ -285,17 +285,56 @@ const engine = new Engine(GODOT_CONFIG);
 		nota = ' · o navegador fechou o jogo ' + quedas + 'x no carregamento';
 	}
 	mostrarEtapa('Baixando…');
+	// O pacote vai com a versão no endereço e o carregador do Godot não acha o
+	// tamanho dele: o total vem dos tamanhos que a exportação anotou.
+	let previsto = 0;
+	Object.values(GODOT_CONFIG['fileSizes'] || {}).forEach(function (n) { previsto += Number(n) || 0; });
+	// Conexão parada ou celular lento demais para abrir: avisa com o que fazer,
+	// em vez de deixar a barra parada (relato de teste: Galaxy A20s, 22 min).
+	let ultimo = 0;
+	let desde = Date.now();
+	let baixou = false;
+	let aberto = false;
+	function travou(texto) {
+		if (aberto || aviso.style.display === 'block') return;
+		aviso.textContent = texto;
+		const b = document.createElement('button');
+		b.textContent = 'Tentar de novo';
+		b.style.cssText = 'display:block;margin:1.2em auto 0;padding:.6em 1.4em;font:inherit;border:0;border-radius:.5em;background:#d9a441;color:#111';
+		b.onclick = function () { try { sessionStorage.removeItem('sd_carregando'); } catch (e) {} location.reload(); };
+		aviso.appendChild(b);
+		aviso.style.display = 'block';
+	}
+	setInterval(function () {
+		const parado = (Date.now() - desde) / 1000;
+		if (!baixou && parado > 30) {
+			travou('O download parou em ' + (ultimo / 1048576).toFixed(0) + ' MB. Confira a internet (o Wi-Fi é melhor: o jogo tem ~'
+				+ (previsto / 1048576).toFixed(0) + ' MB) e tente de novo.');
+		} else if (baixou && parado > 90) {
+			travou('O celular está demorando para abrir o jogo. Feche as outras abas e aplicativos e tente de novo.');
+		}
+	}, 5000);
 	engine.startGame({
 		'onProgress': function (atual, total) {
+			if (atual !== ultimo) {
+				ultimo = atual;
+				desde = Date.now();
+			}
+			if (!(total > 0)) total = previsto;
 			if (atual > 0 && total > 0) {
 				barra.classList.remove('indeterminada');
-				preenche.style.width = (100 * atual / total).toFixed(1) + '%';
-				mostrarEtapa(atual < total
+				preenche.style.width = Math.min(100, 100 * atual / total).toFixed(1) + '%';
+				if (atual >= total && !baixou) {
+					baixou = true;
+					desde = Date.now();
+				}
+				mostrarEtapa(!baixou
 					? 'Baixando ' + Math.floor(100 * atual / total) + '% (' + (atual / 1048576).toFixed(0) + ' de ' + (total / 1048576).toFixed(0) + ' MB)'
 					: 'Iniciando o jogo…');
 			}
 		},
 	}).then(() => {
+		aberto = true;
 		// O jogo abre na tela inicial com a mesma composição: só some.
 		try {
 			sessionStorage.removeItem('sd_carregando');
