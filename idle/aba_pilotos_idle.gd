@@ -202,8 +202,7 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 	fundir.pressed.connect(func():
 		var nome_sai := _nome(e.piloto(par))
 		if e.fundir(int(p["uid"]), par):
-			Sons.tocar_ui(self, "comemoracao", -6.0)
-			tela.celebrar(false)
+			tela.celebrar(2)
 			mudou.emit()
 			tela.mostrar_aviso("%s EVOLUIU PARA %s!" % [_nome(p).to_upper(), IdleUI.nv(int(p["nivel"])).to_upper()],
 					"%s deixou a equipe" % nome_sai)
@@ -227,8 +226,7 @@ func _par_para_fundir(e: IdleEstado, p: Dictionary) -> int:
 
 ## Contrato novo: o retrato aparece grande, com nome, perfil e nível.
 func _novo(p: Dictionary) -> void:
-	Sons.tocar_ui(self, "comemoracao", -6.0)
-	tela.celebrar(false)
+	tela.celebrar(2)
 	mudou.emit()
 	atualizar()
 	var dp := IdleEstado.dados_piloto(tela.dados, String(p["id"]))

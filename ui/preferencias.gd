@@ -32,6 +32,9 @@ static var camera_arena := "briga"
 static var modo_teste := ""
 ## Avisos do aparelho com o jogo fechado (Notificacoes, decisão 107).
 static var notificacoes := false
+## Música de fundo (Chrome Racing Team: chave MÚSICA, separada dos efeitos, que
+## seguem `volume`). Só vale onde existe o barramento "Musica" (Sons.barramentos).
+static var musica := true
 static var _carregado := false
 
 
@@ -52,6 +55,7 @@ static func carregar() -> void:
 		camera_arena = String(cfg.get_value("tela", "camera_arena", camera_arena))
 		modo_teste = String(cfg.get_value("teste", "modo", modo_teste))
 		notificacoes = bool(cfg.get_value("avisos", "notificacoes", notificacoes))
+		musica = bool(cfg.get_value("som", "musica", musica))
 		if not modo_teste in ["", "clareza", "ritmo"] or not ferramentas_teste():
 			modo_teste = ""
 	aplicar()
@@ -60,6 +64,7 @@ static func carregar() -> void:
 static func salvar() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("som", "volume", volume)
+	cfg.set_value("som", "musica", musica)
 	cfg.set_value("tela", "reduzir_animacoes", reduzir_animacoes)
 	cfg.set_value("tela", "efeitos_leves", efeitos_leves)
 	cfg.set_value("tela", "leves_automatico", leves_automatico)
@@ -81,8 +86,17 @@ static func permite_pular() -> bool:
 
 static func aplicar() -> void:
 	var bus := AudioServer.get_bus_index("Master")
-	AudioServer.set_bus_mute(bus, volume <= 0.001)
-	AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(volume, 0.001)))
+	var efeitos := AudioServer.get_bus_index("Efeitos")
+	if efeitos >= 0:
+		# Barramentos do Chrome Racing Team: EFEITOS (com o ambiente) e MÚSICA à parte.
+		AudioServer.set_bus_mute(bus, false)
+		AudioServer.set_bus_volume_db(bus, 0.0)
+		for nome in ["Efeitos", "Ambiente"]:
+			AudioServer.set_bus_mute(AudioServer.get_bus_index(nome), volume <= 0.001)
+		AudioServer.set_bus_mute(AudioServer.get_bus_index("Musica"), not musica)
+	else:
+		AudioServer.set_bus_mute(bus, volume <= 0.001)
+		AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(volume, 0.001)))
 	Engine.max_fps = 30 if limitar_fps else 0
 
 

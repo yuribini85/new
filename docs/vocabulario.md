@@ -174,4 +174,4 @@ reconhecível, sempre igual, que diz o que o jogador ganha ("x2", "contrato grá
 | **COMPRAR $1,5 mil** / **AGORA NÃO** (oferta de personagem) | pagar / depois |
 | **VOLTE AMANHÃ** (acabou o grátis do dia) | botão apagado sem explicação |
 | aviso do celular: **Cofre cheio!** · **Contrato grátis pronto!** | "renda no máximo", "teto" |
-| **GRÁFICOS LEVES** (Configurações) | visual simples |
+| **MÚSICA** · **EFEITOS** · **GRÁFICOS LEVES** (Configurações) | SOM (uma chave só) · visual simples |

@@ -116,11 +116,24 @@ var _conversa: ConversaIdle
 var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
 var _janela_aberta := false
 var _tv := true  # a transmissão (corrida 3D) já foi comprada
+## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
+## corrida e o combo de compras seguidas.
+const MUSICA_DB := -16.0
+const MUSICA_SOB_MOTOR_DB := -26.0
+const AMBIENTE_DB := -24.0
+const COMBO_S := 1.2
+const COMBO_MAX := 7
+var _musica: AudioStreamPlayer
+var _ambiente: AudioStreamPlayer
+var _combo := 0
+var _ultima_compra_ms := -100000
 
 
 func _ready() -> void:
 	dados = get_node("/root/Dados")
+	Sons.barramentos()
 	Preferencias.carregar()
+	Preferencias.aplicar()
 	estado = IdleEstado.carregar()
 	anuncios = IdleAnuncios.new()
 	anuncios.intersticial_min_s = float(estado.cfg.get("intersticial_min_s", 90.0))
@@ -289,6 +302,8 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_hud)
 	_sons = Sons.new()
 	add_child(_sons)
+	_musica = _fundo("musica_box", "Musica", MUSICA_DB)
+	_ambiente = _fundo("oficina", "Ambiente", -60.0)
 	# Câmeras: três ícones num trilho escuro, a ativa em ocre.
 	var trilho := PanelContainer.new()
 	trilho.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_FUNDO, 0.7), 14, 4, IdleUI.COR_BORDA, 1))
@@ -591,6 +606,7 @@ func _dirigir() -> void:
 func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
 	_avisos(delta)
+	_misturar(delta)
 	_checar_conversa()
 	if _aguardando or _conversa != null or _coleta != null:
 		# Carros no grid (esperando o LARGAR) ou alguém falando: a corrida para.
@@ -789,7 +805,9 @@ func _som(ordem: Array) -> void:
 			gap_min = minf(gap_min, gb)
 	_sons.pelotao(1.0 - smoothstep(0.3, 2.0, gap_min) if gap_min < INF else 0.0)
 	var resto := 1.0 - clampf(_visual.distancia("jogador") / (_pista.comprimento * int(estado.dados_liga()["voltas"])), 0.0, 1.0)
-	_sons.torcida((1.0 - smoothstep(0.1, 0.3, resto)) * 0.6)
+	# A torcida da reta final cresce com a Arquibancada.
+	var arquibancada := clampf(estado.nivel("arquibancada") / 20.0, 0.0, 1.0)
+	_sons.torcida((1.0 - smoothstep(0.1, 0.3, resto)) * (0.5 + 0.5 * arquibancada))
 
 
 func _chegou() -> void:
@@ -824,7 +842,11 @@ func _dobrar_premio() -> void:
 
 func _comprar(id: String) -> void:
 	if estado.comprar(id):
-		Sons.tocar_ui(self, "moeda", -6.0, 1.0 + 0.04 * (estado.nivel(id) % 6))
+		# Combo: cada compra até COMBO_S depois da anterior sobe um semitom.
+		var agora := Time.get_ticks_msec()
+		_combo = mini(_combo + 1, COMBO_MAX) if agora - _ultima_compra_ms <= COMBO_S * 1000.0 else 0
+		_ultima_compra_ms = agora
+		Sons.tocar_ui(self, "moeda", -6.0, pow(2.0, _combo / 12.0))
 		IdleUI.pulsar(_cartoes[id]["cartao"], 1.05)
 		_atualizar_cartoes()
 
@@ -892,7 +914,7 @@ func _janela_liga() -> void:
 	v.add_child(ok)
 	# Marco: a janela entra crescendo com um brilho dourado na borda, e o
 	# aparelho vibra (mais na modalidade nova).
-	celebrar(nova_modalidade)
+	celebrar(4 if nova_modalidade else 3)
 	if not Preferencias.reduzir_animacoes:
 		var sb := IdleUI.caixa(COR_CARTAO, 18, 12, COR_OURO, 3)
 		sb.shadow_color = Color(COR_OURO, 0.55)
@@ -1013,8 +1035,10 @@ func _fechar_bem_vindo(total: float) -> void:
 		return
 	_coleta.queue_free()
 	_coleta = null
-	Sons.tocar_ui(self, "moeda", -2.0, 1.1)
-	celebrar(false)
+	# Cascata: mais moedas quanto mais minutos de renda o valor vale.
+	var minutos := total / maxf(estado.renda_s() * 60.0, 1.0)
+	Sons.cascata(self, clampi(3 + int(log(maxf(minutos, 1.0)) / log(2.0)), 3, 12))
+	celebrar(1)
 	ganho_flutuante(total)
 
 
@@ -1051,9 +1075,14 @@ func _abrir_config() -> void:
 	v.add_theme_constant_override("separation", 16)
 	p.add_child(v)
 	IdleUI.rotulo("CONFIGURAÇÕES", 32, Color.WHITE, v, "display")
-	_linha_chave(v, "som", "SOM", Preferencias.volume > 0.001, func(ligado: bool):
+	_linha_chave(v, "som", "MÚSICA", Preferencias.musica, func(ligado: bool):
+		Preferencias.musica = ligado
+		Preferencias.salvar()
+		Preferencias.aplicar())
+	_linha_chave(v, "som", "EFEITOS", Preferencias.volume > 0.001, func(ligado: bool):
 		Preferencias.volume = 0.7 if ligado else 0.0
-		Preferencias.salvar())
+		Preferencias.salvar()
+		Preferencias.aplicar())
 	_linha_chave(v, "tela", "GRÁFICOS LEVES", Preferencias.efeitos_leves, func(ligado: bool):
 		Preferencias.efeitos_leves = ligado
 		Preferencias.salvar())
@@ -1088,9 +1117,13 @@ func _linha_chave(pai: Control, icone: String, texto: String, ligada: bool, ao_m
 
 # --- marcos e números -------------------------------------------------------------
 
-## Comemoração de um marco (liga nova, modalidade nova, meta, piloto novo): um
-## clarão dourado rápido na tela e o aparelho vibra (`grande`: mais forte).
-func celebrar(grande: bool) -> void:
+## Comemoração de um marco, em quatro tamanhos (docs/idle/sonorizacao.md, 3.2):
+## 1 coleta, 2 piloto novo/evolução/desbloqueio, 3 compra de oferta/liga nova,
+## 4 modalidade nova. O som da família de recompensa, um clarão dourado e o
+## aparelho vibrando, tudo do mesmo tamanho.
+func celebrar(tamanho: int) -> void:
+	Sons.recompensa(self, tamanho)
+	var grande := tamanho >= 3
 	if OS.has_feature("mobile"):
 		Input.vibrate_handheld(120 if grande else 40)
 	if Preferencias.reduzir_animacoes:
@@ -1225,6 +1258,7 @@ func _aplicar_desbloqueios() -> void:
 	if not abas.any(func(a): return _paginas[a["id"]].visible):
 		_abrir("corrida")
 	_tv = estado.tem("camera_tv")
+	Sons.radio(not _tv)  # antes da TV, a corrida soa como rádio de box
 	_visual.pontos = not _tv
 	_visual.com_rotulos = false
 	_visual.visible = not _na_arena and not _tv
@@ -1273,9 +1307,9 @@ func _abrir_conversa(d: Dictionary) -> void:
 		var custo := float(d.get("custo", 0.0))
 		if custo > 0.0 and aceitou and estado.comprar_desbloqueio(id):
 			Sons.tocar_ui(self, "moeda", -4.0)
-			celebrar(true)
+			celebrar(3)
 		elif custo <= 0.0 and not d.get("libera", []).is_empty():
-			celebrar(false)
+			celebrar(2)
 		for coisa in d.get("libera", []):
 			if String(coisa).begins_with("aba:"):
 				_barra.avisar(String(coisa).trim_prefix("aba:"), true)
@@ -1306,3 +1340,25 @@ func _atualizar_ofertas() -> void:
 			var tw := b.create_tween().set_loops()
 			tw.tween_property(b, "modulate", Color(1.25, 1.25, 1.25), 0.8).set_trans(Tween.TRANS_SINE)
 			tw.tween_property(b, "modulate", Color.WHITE, 0.8).set_trans(Tween.TRANS_SINE)
+
+
+# --- som de fundo -----------------------------------------------------------------
+
+func _fundo(nome: String, bus: String, db: float) -> AudioStreamPlayer:
+	var p := AudioStreamPlayer.new()
+	p.stream = Sons._arquivo(nome, true)
+	p.bus = bus
+	p.volume_db = db
+	add_child(p)
+	if p.stream != null:
+		p.play()
+	return p
+
+
+## Música mais baixa sob o motor da TV; o ambiente do box só nas telas sem
+## corrida. Os volumes andam devagar (sem cortes).
+func _misturar(delta: float) -> void:
+	var na_corrida: bool = _paginas.has("corrida") and _paginas["corrida"].visible
+	var correndo := na_corrida and _tv and not _aguardando and _conversa == null
+	_musica.volume_db = move_toward(_musica.volume_db, MUSICA_SOB_MOTOR_DB if correndo else MUSICA_DB, delta * 12.0)
+	_ambiente.volume_db = move_toward(_ambiente.volume_db, -60.0 if na_corrida else AMBIENTE_DB, delta * 30.0)

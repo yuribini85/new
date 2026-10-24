@@ -180,6 +180,12 @@ static func _bisel(fundo: Color, _luz: Color, sombra: Color) -> StyleBoxFlat:
 static func desativado_legivel(b: Button) -> void:
 	b.add_theme_stylebox_override("disabled", caixa(COR_CARTAO_CLARO, 12, 8, COR_BORDA, 2))
 	b.add_theme_color_override("font_disabled_color", COR_CROMO.darkened(0.15))
+	# Tocar no botão apagado dá um "tuc" grave (sem vibrar): o toque foi ouvido.
+	b.gui_input.connect(func(e: InputEvent):
+		var toque: bool = (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) \
+				or (e is InputEventScreenTouch and e.pressed)
+		if toque and b.disabled:
+			Sons.tocar_ui(b, "nao", -10.0))
 
 
 ## Barra de rolagem fina, em ocre apagado (a cinza do Godot destoa).

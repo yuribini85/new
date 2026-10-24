@@ -46,3 +46,22 @@ Da **Kenney**, CC0, pacote Interface Sounds (kenney.nl/assets/interface-sounds):
 
 Bipes da largada, ultrapassagem, chegada e zebra continuam gerados em código
 (`visual/sons.gd`).
+
+Da **Kenney** (kenney.nl), CC0, pacotes *Music Jingles* e *Interface Sounds*
+(docs/idle/sonorizacao.md: família de recompensa, botão desativado e voz de conversa).
+Os quatro jingles de recompensa foram escolhidos pelo contorno de tom que sobe:
+
+| Arquivo | Origem |
+|---|---|
+| recompensa_1.ogg | Music Jingles — Sax jingles/jingles_SAX04 |
+| recompensa_2.ogg | Music Jingles — Sax jingles/jingles_SAX10 |
+| recompensa_3.ogg | Music Jingles — Sax jingles/jingles_SAX02 |
+| recompensa_4.ogg | Music Jingles — Steel jingles/jingles_STEEL02 |
+| nao.ogg | Interface Sounds — error_004 |
+| voz.ogg | Interface Sounds — pluck_001 |
+
+Gerados no projeto (sem fonte externa):
+
+| Arquivo | Origem |
+|---|---|
+| musica_box.ogg | `tools/gerar_musica_crt.py`: laço provisório de funk lo-fi (90 BPM, 21 s), até a trilha definitiva |

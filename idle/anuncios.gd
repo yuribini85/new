@@ -45,7 +45,9 @@ func _ready() -> void:
 		_fim_premiado())
 	_admob.interstitial_ad_loaded.connect(func(_i, _r): _intersticial_carregado = true)
 	_admob.interstitial_ad_failed_to_load.connect(func(_i, _e): _intersticial_carregado = false)
-	_admob.interstitial_ad_dismissed_full_screen_content.connect(func(_i): _admob.load_interstitial_ad())
+	_admob.interstitial_ad_dismissed_full_screen_content.connect(func(_i):
+		Preferencias.aplicar()
+		_admob.load_interstitial_ad())
 	_admob.initialize()
 
 
@@ -67,10 +69,18 @@ func premiado(ao_ganhar: Callable) -> void:
 	_ao_ganhar = ao_ganhar
 	_ganhou = false
 	_premiado_carregado = false
+	_mudo()
 	_admob.show_rewarded_ad()
 
 
+## O som do jogo para enquanto o anúncio toca (docs/idle/sonorizacao.md) e volta
+## no fechamento (Preferencias.aplicar devolve as chaves do jogador).
+func _mudo() -> void:
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), true)
+
+
 func _fim_premiado() -> void:
+	Preferencias.aplicar()
 	if _ganhou and _ao_ganhar.is_valid():
 		_ao_ganhar.call()
 	_ao_ganhar = Callable()
@@ -90,4 +100,5 @@ func intersticial() -> void:
 		return
 	_ultimo_intersticial = agora
 	_intersticial_carregado = false
+	_mudo()
 	_admob.show_interstitial_ad()

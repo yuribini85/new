@@ -12,6 +12,9 @@ extends Node
 ## voltam os gerados (público, oficina) ou não toca nada. Zebra e bipes são
 ## sempre gerados.
 ## Sons de interface curtos (moeda, toque, batida, porta): Sons.tocar_ui().
+## Chrome Racing Team (docs/idle/sonorizacao.md): barramentos Musica, Efeitos,
+## Ambiente e Corrida (Sons.barramentos); sem eles (Chrome & Wreckage) tudo vai
+## ao Master, como sempre.
 
 const TAXA := 22050
 
@@ -73,6 +76,10 @@ static func _arquivo(nome: String, laco: bool) -> AudioStream:
 
 
 func _init() -> void:
+	if AudioServer.get_bus_index("Corrida") >= 0:
+		child_entered_tree.connect(func(n):
+			if n is AudioStreamPlayer:
+				(n as AudioStreamPlayer).bus = "Corrida")
 	var motor := _arquivo("motor", true)
 	_gravado = motor != null
 	_motor = _laco(motor if _gravado else _onda(90.0, 1.0, 0.18, true, true), MOTOR_DB if _gravado else -14.0)
@@ -284,7 +291,7 @@ static var _curtos := {}  # nome -> AudioStream (ou null sem o arquivo)
 
 ## Som curto de arte/sons (moeda, toque, batida, porta) num tocador próprio que some
 ## ao acabar. Sem o arquivo, não toca nada.
-static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0) -> void:
+static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0, variar := true) -> void:
 	if no == null or not no.is_inside_tree():
 		return
 	if not _curtos.has(nome):
@@ -295,10 +302,84 @@ static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0) -> void:
 	var p := AudioStreamPlayer.new()
 	p.stream = s
 	p.volume_db = db
-	p.pitch_scale = tom
+	# ±3% de tom: mil toques não soam iguais.
+	p.pitch_scale = tom * (randf_range(0.97, 1.03) if variar else 1.0)
+	if AudioServer.get_bus_index("Efeitos") >= 0:
+		p.bus = "Efeitos"
 	p.finished.connect(p.queue_free)
-	no.get_tree().root.add_child(p)
-	p.play()
+	# Adiado e com autoplay: funciona também chamado no meio do _ready de uma tela.
+	p.autoplay = true
+	no.get_tree().root.add_child.call_deferred(p)
+
+
+# --- Chrome Racing Team: barramentos, recompensa, rádio ----------------------------
+
+## Cria os barramentos (uma vez): Musica, Efeitos, Ambiente e Corrida (que
+## passa pelos Efeitos e tem o filtro do "rádio de box").
+static func barramentos() -> void:
+	if AudioServer.get_bus_index("Efeitos") >= 0:
+		return
+	for nome in ["Musica", "Efeitos", "Ambiente", "Corrida"]:
+		AudioServer.add_bus()
+		var i := AudioServer.bus_count - 1
+		AudioServer.set_bus_name(i, nome)
+		AudioServer.set_bus_send(i, "Efeitos" if nome == "Corrida" else "Master")
+	var filtro := AudioEffectLowPassFilter.new()
+	filtro.cutoff_hz = 900.0
+	var corrida := AudioServer.get_bus_index("Corrida")
+	AudioServer.add_bus_effect(corrida, filtro)
+	AudioServer.set_bus_effect_enabled(corrida, 0, false)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Musica"), 0.0)
+
+
+## Rádio de box: a corrida abafada (antes da transmissão na TV).
+static func radio(ligado: bool) -> void:
+	var i := AudioServer.get_bus_index("Corrida")
+	if i >= 0:
+		AudioServer.set_bus_effect_enabled(i, 0, ligado)
+		AudioServer.set_bus_volume_db(i, -4.0 if ligado else 0.0)
+
+
+## A família de recompensa (docs/idle/sonorizacao.md, 3.2): o mesmo desenho que
+## sobe, em quatro tamanhos (1 coleta pequena … 4 modalidade nova, com aplauso).
+## A música abaixa por um instante para a recompensa aparecer.
+static func recompensa(no: Node, tamanho: int) -> void:
+	var t := clampi(tamanho, 1, 4)
+	tocar_ui(no, "recompensa_%d" % t, [-6.0, -4.0, -2.0, -2.0][t - 1], 1.0, false)
+	if t == 4:
+		tocar_ui(no, "comemoracao", -12.0)
+	abaixar_musica(no, 0.6 + 0.3 * t)
+
+
+## Cascata de moedas (coletar): `n` moedas em ~0,6 s, subindo de tom.
+static func cascata(no: Node, n: int) -> void:
+	if no == null or not no.is_inside_tree():
+		return
+	var k := clampi(n, 1, 12)
+	for i in k:
+		var atraso := 0.6 * i / maxf(k - 1, 1)
+		var tom := 1.0 + 0.5 * i / maxf(k - 1, 1)
+		if atraso <= 0.0:
+			tocar_ui(no, "moeda", -8.0, tom)
+		else:
+			no.get_tree().create_timer(atraso).timeout.connect(tocar_ui.bind(no, "moeda", -8.0, tom))
+	abaixar_musica(no, 1.0)
+
+
+static var _musica_tw: Tween
+
+## A música cede −6 dB por `segundos` e volta (fanfarra, coleta grande).
+static func abaixar_musica(no: Node, segundos: float) -> void:
+	var i := AudioServer.get_bus_index("Musica")
+	if i < 0 or no == null or not no.is_inside_tree():
+		return
+	if _musica_tw != null and _musica_tw.is_valid():
+		_musica_tw.kill()
+	var f := func(db: float): AudioServer.set_bus_volume_db(i, db)
+	_musica_tw = no.get_tree().create_tween()
+	_musica_tw.tween_method(f, AudioServer.get_bus_volume_db(i), -6.0, 0.08)
+	_musica_tw.tween_interval(segundos)
+	_musica_tw.tween_method(f, -6.0, 0.0, 0.6)
 
 
 static var _impacto_ms := -1000

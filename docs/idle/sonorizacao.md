@@ -152,6 +152,28 @@ O jogo já começa "quase vazio" na tela (`docs/idle/plano.md`); o som pode acom
 
 Os passos 1 a 3 cabem num lote sem nada novo no acervo; o 4 em diante pede baixar os pacotes.
 
+## 6. Feito (2026-10-24)
+
+Todos os itens da seção 3 entraram:
+
+- **Barramentos** Musica, Efeitos, Ambiente e Corrida (`Sons.barramentos`); Configurações com
+  **MÚSICA** e **EFEITOS**; o Master fica mudo enquanto o anúncio está na tela (`idle/anuncios.gd`).
+- **Família de recompensa** (`Sons.recompensa`, `celebrar(tamanho)` na tela): jingles da Kenney
+  (CC0) escolhidos pelo contorno de tom que sobe (medido: +9, +5, +10 e +8 semitons), com a música
+  abaixando −6 dB; o tamanho 4 soma o aplauso.
+- **Cascata de moedas** ao coletar (3 a 12 moedas, pelos minutos de renda que o valor vale).
+- **Combo de compras** (+1 semitom por compra até 1,2 s da anterior, até +7), **±3% de tom** em todo
+  som de interface, **"tuc"** no botão apagado.
+- **Rádio de box** antes da TV (passa-baixa de 900 Hz no barramento da corrida); a torcida da reta
+  final cresce com a Arquibancada.
+- **Música** em laço (−16 dB, −26 dB sob o motor na TV) e **ambiente** do box nas telas sem corrida.
+  A música é **provisória**, gerada por `tools/gerar_musica_crt.py` (funk lo-fi, 90 BPM, 21 s); a
+  trilha definitiva fica para escolher (Kenney não tem laços de música; Mixkit, outra fonte livre ou
+  encomenda).
+- **Voz de conversa**: um "blip" a cada 3 letras, no tom de cada personagem (`idle/conversa_idle.gd`).
+
+Licenças em `arte/sons/LICENCA.md`.
+
 ## Fontes
 
 - [73% dos jogadores de celular jogam com som (TouchArcade, 2013)](https://toucharcade.com/2013/11/05/73-of-mobile-gamers-play-with-the-sound-on/)

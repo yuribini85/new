@@ -10,6 +10,13 @@ signal fechou(aceitou: bool)
 
 const LETRAS_POR_S := 55.0
 const ENTRADA_S := 0.35
+## Voz de conversa (docs/idle/sonorizacao.md, 3.6): um "blip" a cada
+## LETRAS_POR_BLIP letras digitadas, no tom de quem fala (grave a agudo).
+const LETRAS_POR_BLIP := 3
+const VOZES := {"mara_hayes": 0.8, "bianca_sterling": 1.15, "harold_brandt": 0.7, "theo_lane": 0.9,
+		"jade_ryker": 1.2, "roxy_vega": 1.3, "rico_salas": 0.85, "edgar_halloway": 0.75,
+		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72}
+var _letras_faladas := 0
 
 var _d: Dictionary
 var _estado: IdleEstado
@@ -103,11 +110,24 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_falar()
 	if _pagar != null:
 		var custo := float(_d.get("custo", 0.0))
 		_pagar.disabled = _estado.dinheiro < custo
 		_pagar.text = ("COMPRAR $" + IdleUI.curto(custo)) if not _pagar.disabled \
 				else "FALTAM $" + IdleUI.curto(custo - _estado.dinheiro)
+
+
+func _falar() -> void:
+	var visiveis := int(_fala.visible_ratio * _fala.text.length())
+	if _fala.visible_ratio >= 1.0 or visiveis < _letras_faladas + LETRAS_POR_BLIP:
+		return
+	_letras_faladas = visiveis
+	var letra := _fala.text.substr(maxi(visiveis - 1, 0), 1)
+	if letra.strip_edges() == "" or letra in ".,!?":
+		return
+	var tom := float(VOZES.get(String(_d.get("quem", {}).get("id", "")), 1.0))
+	Sons.tocar_ui(self, "voz", -14.0, tom * randf_range(0.94, 1.06), false)
 
 
 func _mostrar_botoes() -> void:

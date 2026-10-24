@@ -117,8 +117,8 @@ func _cartao(e: IdleEstado, id: String, agora: float, coletada: bool) -> void:
 		var v_ := e.coletar_meta(id)
 		if v_ <= 0.0:
 			return
-		Sons.tocar_ui(self, "moeda", -4.0)
-		tela.celebrar(false)
+		Sons.cascata(self, 4)
+		tela.celebrar(1)
 		tela.ganho_flutuante(v_)
 		mudou.emit()
 		atualizar())
