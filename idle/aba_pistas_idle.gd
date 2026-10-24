@@ -50,7 +50,7 @@ func _modalidades(e: IdleEstado) -> void:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.custom_minimum_size = Vector2(0, 132)
 		var cor := IdleUI.COR_CARTAO_CLARO if aberta else IdleUI.COR_CARTAO
-		var borda := IdleUI.COR_OURO if marcada else Color(1, 1, 1, 0.08)
+		var borda := IdleUI.COR_OURO if marcada else IdleUI.COR_BORDA
 		for st in ["normal", "hover", "pressed", "disabled"]:
 			b.add_theme_stylebox_override(st, IdleUI.caixa(cor, 12, 6, borda, 3 if marcada else 1))
 		b.pressed.connect(func():
@@ -64,9 +64,9 @@ func _modalidades(e: IdleEstado) -> void:
 		v.add_theme_constant_override("separation", 2)
 		b.add_child(v)
 		IdleUI.icone(String(m.get("icone", "icone_pista")) if aberta else "icone_cadeado", 44, v,
-				Color.WHITE if aberta else IdleUI.COR_BLOQUEADO)
+				IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO)
 		var n := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, IdleUI.COR_OURO if na_corrida else
-				(Color.WHITE if aberta else IdleUI.COR_BLOQUEADO), v)
+				(IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO), v)
 		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var sub := "LIGA %d/%d" % [int(e._m(id)["liga"]) + 1, m["ligas"].size()] if aberta else "FECHADA"
 		var s := IdleUI.rotulo(sub, 14, IdleUI.COR_SECUNDARIA if aberta else IdleUI.COR_BLOQUEADO, v)
@@ -94,7 +94,7 @@ func _cabecalho(e: IdleEstado) -> void:
 	v.alignment = BoxContainer.ALIGNMENT_END
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	placa.add_child(v)
-	IdleUI.rotulo(String(m["nome"]).to_upper(), 44, Color.WHITE, v, "display")
+	IdleUI.rotulo(String(m["nome"]).to_upper(), 44, IdleUI.COR_TEXTO, v, "display")
 	if not aberta:
 		var lib: Dictionary = m.get("libera", {})
 		var antes := e.dados_modalidade(String(lib.get("modalidade", "")))
@@ -107,7 +107,7 @@ func _cabecalho(e: IdleEstado) -> void:
 	renda.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var p := e.piloto_escalado(_escolhida)
 	var nome_p := String(IdleEstado.dados_piloto(tela.dados, String(p["id"])).get("nome", "")) if not p.is_empty() else "SEM PILOTO"
-	IdleUI.rotulo(nome_p.to_upper(), 22, Color.WHITE if not p.is_empty() else IdleUI.COR_RUIM, linha)
+	IdleUI.rotulo(nome_p.to_upper(), 22, IdleUI.COR_TEXTO if not p.is_empty() else IdleUI.COR_RUIM, linha)
 	if _escolhida != e.modalidade:
 		var b := IdleUI.botao("CORRER AQUI", IdleUI.COR_BOTAO, 26, 64, _lista)
 		b.pressed.connect(func(): correr_em.emit(_escolhida))
@@ -124,14 +124,14 @@ func _escada(e: IdleEstado) -> void:
 		var aqui: bool = i == atual
 		var fechada: bool = i > atual
 		var p := PanelContainer.new()
-		var borda := IdleUI.COR_OURO if aqui else Color(1, 1, 1, 0.06)
+		var borda := IdleUI.COR_OURO if aqui else IdleUI.COR_BORDA
 		p.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_CARTAO_CLARO if aqui else IdleUI.COR_CARTAO, 12, 8,
 				borda, 3 if aqui else 1))
 		_lista.add_child(p)
 		var h := HBoxContainer.new()
 		h.add_theme_constant_override("separation", 12)
 		p.add_child(h)
-		var num := IdleUI.rotulo(str(i + 1), 40, IdleUI.COR_OURO if aqui else (Color.WHITE if feita else IdleUI.COR_BLOQUEADO),
+		var num := IdleUI.rotulo(str(i + 1), 40, IdleUI.COR_OURO if aqui else (IdleUI.COR_TEXTO if feita else IdleUI.COR_BLOQUEADO),
 				h, "display")
 		num.custom_minimum_size = Vector2(44, 0)
 		num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -141,7 +141,7 @@ func _escada(e: IdleEstado) -> void:
 		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		v.alignment = BoxContainer.ALIGNMENT_CENTER
 		h.add_child(v)
-		IdleUI.rotulo(String(l["nome"]).to_upper(), 22, Color.WHITE if not fechada else IdleUI.COR_BLOQUEADO, v)
+		IdleUI.rotulo(String(l["nome"]).to_upper(), 22, IdleUI.COR_TEXTO if not fechada else IdleUI.COR_BLOQUEADO, v)
 		var carro: Array = IdleEstado._perto_de(tela.dados, float(l["potencia"]) * float(e.cfg["carro_do_jogador"]),
 				m.get("categorias", []))
 		var detalhe := "%s · %s" % [_nome_pista(String(l["pista"])), String(carro[0]["nome"]) if not carro.is_empty() else ""]

@@ -68,11 +68,11 @@ func _escalado(e: IdleEstado) -> void:
 	h.add_child(v)
 	IdleUI.rotulo("PILOTO · %s" % String(e.dados_modalidade()["nome"]).to_upper(), 18, IdleUI.COR_OURO, v)
 	if p.is_empty():
-		IdleUI.rotulo("SEM PILOTO", 36, Color.WHITE, v, "display")
+		IdleUI.rotulo("SEM PILOTO", 36, IdleUI.COR_TEXTO, v, "display")
 		IdleUI.rotulo("Contrate um piloto abaixo.", 20, IdleUI.COR_SECUNDARIA, v)
 		return
 	var dp := IdleEstado.dados_piloto(tela.dados, String(p["id"]))
-	var n := IdleUI.rotulo(_nome(p).to_upper(), 38, Color.WHITE, v, "display")
+	var n := IdleUI.rotulo(_nome(p).to_upper(), 38, IdleUI.COR_TEXTO, v, "display")
 	n.clip_text = true
 	var perfil := String(dp.get("perfil", "")).capitalize()
 	IdleUI.rotulo("%s · NÍVEL %d" % [perfil.to_upper(), int(p["nivel"])], 20, IdleUI.COR_SECUNDARIA, v)
@@ -81,7 +81,7 @@ func _escalado(e: IdleEstado) -> void:
 	var base: Dictionary = e.cfg_pilotos().get("base", {})
 	var ritmo := roundi((float(a["ritmo"]) - float(base.get("ritmo", 1.0))) * 100.0)
 	IdleUI.rotulo("%s   Ultrapassa %d%%" % ["Ritmo +%d%%" % ritmo if ritmo > 0 else "Ritmo base",
-			roundi(clampf(float(a["agressividade"]), 0.0, 1.0) * 100.0)], 20, IdleUI.COR_DINHEIRO, v)
+			roundi(clampf(float(a["agressividade"]), 0.0, 1.0) * 100.0)], 20, IdleUI.COR_GANHO, v)
 	var frase := IdleUI.rotulo("“%s”" % String(dp.get("personalidade", "")), 17, IdleUI.COR_SECUNDARIA, v, "regular")
 	frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
@@ -101,7 +101,7 @@ func _contratos(e: IdleEstado) -> void:
 	_texto_gratis()
 	var dia := Time.get_date_string_from_system()
 	var restam := e.contratos_video_restantes(dia)
-	var video := IdleUI.botao("VÍDEO: CONTRATO (%d)" % restam, IdleUI.COR_DINHEIRO, 22, 84, linha)
+	var video := IdleUI.botao("VÍDEO: CONTRATO (%d)" % restam, IdleUI.COR_CROMO, 22, 84, linha)
 	video.icon = Aba.icone_reduzido("icone_ao_vivo", 40)
 	video.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	video.disabled = restam <= 0
@@ -122,7 +122,7 @@ func _texto_gratis() -> void:
 func _elenco(e: IdleEstado) -> void:
 	var titulo := HBoxContainer.new()
 	_lista.add_child(titulo)
-	var t := IdleUI.rotulo("SEUS PILOTOS (%d)" % e.pilotos.size(), 24, Color.WHITE, titulo)
+	var t := IdleUI.rotulo("SEUS PILOTOS (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	IdleUI.rotulo("Dois do mesmo nível fundem num nível acima", 16, IdleUI.COR_SECUNDARIA, titulo)
 	var ordem: Array = e.pilotos.duplicate()
@@ -148,7 +148,7 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 	var marcado := uid == _escolhido
 	for st in ["normal", "hover", "pressed"]:
 		b.add_theme_stylebox_override(st, IdleUI.caixa(IdleUI.COR_CARTAO_CLARO if marcado else IdleUI.COR_CARTAO, 12, 6,
-				IdleUI.COR_OURO if marcado else Color(1, 1, 1, 0.06), 3 if marcado else 1))
+				IdleUI.COR_OURO if marcado else IdleUI.COR_BORDA, 3 if marcado else 1))
 	b.pressed.connect(func():
 		Sons.tocar_ui(self, "toque", -6.0)
 		_escolhido = -1 if _escolhido == uid else uid
@@ -166,7 +166,7 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 	r.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(r)
 	var sobrenome := _nome(p).get_slice(" ", _nome(p).get_slice_count(" ") - 1)
-	var n := IdleUI.rotulo(sobrenome.to_upper(), 18, Color.WHITE, v)
+	var n := IdleUI.rotulo(sobrenome.to_upper(), 18, IdleUI.COR_TEXTO, v)
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	n.clip_text = true
 	var onde := ""
@@ -184,7 +184,7 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	caixa.add_child(v)
-	IdleUI.rotulo("%s · NÍVEL %d" % [_nome(p).to_upper(), int(p["nivel"])], 24, Color.WHITE, v)
+	IdleUI.rotulo("%s · NÍVEL %d" % [_nome(p).to_upper(), int(p["nivel"])], 24, IdleUI.COR_TEXTO, v)
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	v.add_child(linha)
@@ -197,7 +197,7 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 		mudou.emit()
 		atualizar())
 	var par := _par_para_fundir(e, p)
-	var fundir := IdleUI.botao("FUNDIR → NÍVEL %d" % (int(p["nivel"]) + 1), IdleUI.COR_DINHEIRO, 22, 64, linha)
+	var fundir := IdleUI.botao("FUNDIR → NÍVEL %d" % (int(p["nivel"]) + 1), IdleUI.COR_BOTAO, 22, 64, linha)
 	fundir.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	fundir.disabled = par < 0
 	fundir.pressed.connect(func():
@@ -241,7 +241,7 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var fundo := Panel.new()
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fundo.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.08, 0.09, 0.11), 10, 0))
+	fundo.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_FUNDO, 10, 0, IdleUI.COR_BORDA, 1))
 	fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(fundo)
 	if p.is_empty():
@@ -262,7 +262,7 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 	selo.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(selo)
-	var n := IdleUI.rotulo("NV %d" % int(p["nivel"]), 16 if lado < 150 else 20, Color(0.08, 0.07, 0.06), selo)
+	var n := IdleUI.rotulo("NV %d" % int(p["nivel"]), 16 if lado < 150 else 20, IdleUI.COR_TINTA, selo)
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	return c
 
@@ -274,7 +274,7 @@ func _estrelas(nivel: int, maximo: int, lado: float) -> Control:
 	for i in maximo:
 		var r := ColorRect.new()
 		r.custom_minimum_size = Vector2(lado, lado * 0.6)
-		r.color = IdleUI.COR_OURO if i < nivel else Color(1, 1, 1, 0.12)
+		r.color = IdleUI.COR_OURO if i < nivel else IdleUI.COR_BORDA
 		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		h.add_child(r)
 	return h

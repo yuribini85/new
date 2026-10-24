@@ -169,7 +169,7 @@ func _montar() -> void:
 ## da pista; a engrenagem à direita.
 func _topo(pai: Control) -> void:
 	var placa := PanelContainer.new()
-	placa.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 14))
+	placa.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 14, 12, IdleUI.COR_BORDA, 1))
 	placa.clip_contents = true
 	pai.add_child(placa)
 	_banner = TextureRect.new()
@@ -188,8 +188,8 @@ func _topo(pai: Control) -> void:
 	linha_liga.add_theme_constant_override("separation", 6)
 	esq.add_child(linha_liga)
 	_icone_mod = IdleUI.icone("icone_correr", 28, linha_liga)
-	_liga = IdleUI.rotulo("", 22, Color(0.93, 0.91, 0.87), linha_liga)
-	_dinheiro = IdleUI.rotulo("", 52, Color.WHITE, esq)
+	_liga = IdleUI.rotulo("", 22, IdleUI.COR_CROMO, linha_liga)
+	_dinheiro = IdleUI.rotulo("", 52, IdleUI.COR_TEXTO, esq)
 	Tipografia.numero(_dinheiro, 52)
 	var dir := VBoxContainer.new()
 	dir.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -205,7 +205,7 @@ func _topo(pai: Control) -> void:
 	eng.focus_mode = Control.FOCUS_NONE
 	eng.custom_minimum_size = Vector2(72, 72)
 	eng.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var ic := IconeVetor.new("engrenagem", Color(0.9, 0.9, 0.88))
+	var ic := IconeVetor.new("engrenagem", IdleUI.COR_CROMO)
 	ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	ic.offset_left = 14
 	ic.offset_right = -14
@@ -247,7 +247,7 @@ func _pagina_corrida() -> Control:
 	add_child(_sons)
 	# Câmeras: três ícones num trilho escuro, a ativa em ocre.
 	var trilho := PanelContainer.new()
-	trilho.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0, 0, 0, 0.55), 14, 4))
+	trilho.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_FUNDO, 0.7), 14, 4, IdleUI.COR_BORDA, 1))
 	trilho.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	trilho.offset_left = 10
 	trilho.offset_bottom = -10
@@ -273,7 +273,8 @@ func _pagina_corrida() -> Control:
 		_cameras[par[0]] = b
 	_marcar_camera()
 	_subir = Button.new()
-	Tipografia.acao_primaria(_subir, "PRÓXIMA LIGA", COR_OURO, Color(0.1, 0.1, 0.1), 28, Tipografia.ALTURA_SECUNDARIA)
+	Tipografia.acao_primaria(_subir, "PRÓXIMA LIGA", COR_OURO, IdleUI.COR_TINTA, 28, Tipografia.ALTURA_SECUNDARIA)
+	IdleUI.estilo_ouro(_subir)
 	_subir.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_subir.offset_left = -200
 	_subir.offset_right = 200
@@ -282,7 +283,9 @@ func _pagina_corrida() -> Control:
 	_subir.pressed.connect(_subir_liga)
 	corrida.add_child(_subir)
 	_dobrar = Button.new()
-	Tipografia.acao_primaria(_dobrar, "VÍDEO: PRÊMIO 2×", COR_DINHEIRO, Color(0.1, 0.1, 0.1), 26, Tipografia.ALTURA_SECUNDARIA)
+	Tipografia.acao_primaria(_dobrar, "VÍDEO: PRÊMIO 2×", IdleUI.COR_CROMO, IdleUI.COR_TINTA, 26, Tipografia.ALTURA_SECUNDARIA)
+	IdleUI.estilo_cromo(_dobrar)
+	_dobrar.icon = Aba.icone_reduzido("icone_ao_vivo", 36)
 	_dobrar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_dobrar.offset_left = -200
 	_dobrar.offset_right = 200
@@ -305,7 +308,7 @@ func _pagina_corrida() -> Control:
 func _cartao(m: Dictionary) -> Control:
 	var p := PanelContainer.new()
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 14))
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 14, 12, IdleUI.COR_BORDA, 1))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 2)
 	p.add_child(v)
@@ -313,14 +316,15 @@ func _cartao(m: Dictionary) -> Control:
 	h.add_theme_constant_override("separation", 6)
 	v.add_child(h)
 	var ic := IdleUI.icone(String(m.get("icone", "")), 24, h)
-	var nome := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, Color.WHITE, h)
+	var nome := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, IdleUI.COR_TEXTO, h)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.clip_text = true
 	var nivel := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, h)
-	var efeito := IdleUI.rotulo("", 18, COR_DINHEIRO, v)
+	var efeito := IdleUI.rotulo("", 18, IdleUI.COR_GANHO, v)
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, "", COR_DINHEIRO.darkened(0.15), Color(0.06, 0.08, 0.06), 24, 56)
+	Tipografia.acao_primaria(b, "", COR_OURO, IdleUI.COR_TINTA, 24, 56)
+	IdleUI.estilo_ouro(b)
 	IdleUI.desativado_legivel(b)
 	b.pressed.connect(_comprar.bind(String(m["id"])))
 	v.add_child(b)
@@ -468,8 +472,8 @@ func _marcar_camera() -> void:
 		var b: Button = _cameras[modo]
 		var ativa: bool = modo == _camera_modo
 		for st in ["normal", "hover", "pressed"]:
-			b.add_theme_stylebox_override(st, IdleUI.caixa(Color(COR_OURO, 0.9) if ativa else Color(1, 1, 1, 0.06), 10, 0))
-		b.get_child(0).cor = Color(0.08, 0.07, 0.06) if ativa else Color.WHITE
+			b.add_theme_stylebox_override(st, IdleUI.caixa(COR_OURO if ativa else Color(1, 1, 1, 0.05), 10, 0))
+		b.get_child(0).cor = IdleUI.COR_TINTA if ativa else IdleUI.COR_CROMO
 		b.get_child(0).queue_redraw()
 
 
@@ -710,7 +714,7 @@ func _chegou() -> void:
 		Sons.tocar_ui(self, "comemoracao", -8.0)
 	_hud.bandeirada()
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
-			COR_OURO if pos == 1 else COR_DINHEIRO, 10, -1.0, true)
+			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)
 	_ganho_corrida = ganho
 	_dobrar.visible = anuncios.premiado_disponivel()
 	_pausa = PAUSA_COM_VIDEO_S if _dobrar.visible else PAUSA_CHEGADA_S
@@ -774,7 +778,7 @@ func _janela_liga() -> void:
 	for m in estado.cfg["modalidades"]:
 		var lib: Dictionary = m.get("libera", {})
 		if lib.get("modalidade", "") == estado.modalidade and int(lib.get("liga", -1)) == estado.liga:
-			var abriu := IdleUI.rotulo("MODALIDADE NOVA: %s" % String(m["nome"]).to_upper(), 28, COR_DINHEIRO, v)
+			var abriu := IdleUI.rotulo("MODALIDADE NOVA: %s" % String(m["nome"]).to_upper(), 28, IdleUI.COR_GANHO, v)
 			abriu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			_barra.avisar("pistas", true)
 	var ok := BotaoInicio.new("Correr", true, COR_BOTAO, 40, 88, 360)
@@ -790,7 +794,7 @@ func mostrar_aviso(titulo: String, sub := "", tex: Texture2D = null) -> void:
 	if _aviso_caixa != null:
 		_aviso_caixa.queue_free()
 	_aviso_caixa = PanelContainer.new()
-	_aviso_caixa.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.06, 0.07, 0.09, 0.96), 16, 14, COR_OURO, 2))
+	_aviso_caixa.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_CARTAO, 0.97), 16, 14, COR_OURO, 2))
 	_aviso_caixa.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	_aviso_caixa.offset_top = AreaSegura.topo(720.0) + 150
 	_aviso_caixa.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -822,7 +826,7 @@ func mostrar_aviso(titulo: String, sub := "", tex: Texture2D = null) -> void:
 ## que dobra.
 func _faixa_coleta(ganho: float) -> void:
 	_coleta = PanelContainer.new()
-	_coleta.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.06, 0.07, 0.09, 0.96), 16, 12, COR_DINHEIRO, 2))
+	_coleta.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_CARTAO, 0.97), 16, 12, COR_OURO, 2))
 	_coleta.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	_coleta.offset_top = AreaSegura.topo(720.0) + 560
 	_coleta.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -835,7 +839,8 @@ func _faixa_coleta(ganho: float) -> void:
 	h.add_child(v)
 	IdleUI.rotulo("ENQUANTO VOCÊ ESTEVE FORA", 18, IdleUI.COR_SECUNDARIA, v)
 	IdleUI.rotulo("+$" + curto(ganho), 40, COR_DINHEIRO, v)
-	var b := IdleUI.botao("VÍDEO: +$%s" % curto(ganho), COR_BOTAO, 22, 64, h)
+	var b := IdleUI.botao("VÍDEO: +$%s" % curto(ganho), IdleUI.COR_CROMO, 22, 64, h)
+	b.icon = Aba.icone_reduzido("icone_ao_vivo", 32)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	b.pressed.connect(func():
 		_coleta_t = 0.0
@@ -903,10 +908,10 @@ func _linha_chave(pai: Control, icone: String, texto: String, ligada: bool, ao_m
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 14)
 	pai.add_child(h)
-	var ic := IconeVetor.new(icone, Color(0.9, 0.9, 0.88))
+	var ic := IconeVetor.new(icone, IdleUI.COR_CROMO)
 	ic.custom_minimum_size = Vector2(40, 40)
 	h.add_child(ic)
-	var l := IdleUI.rotulo(texto, 26, Color.WHITE, h)
+	var l := IdleUI.rotulo(texto, 26, IdleUI.COR_TEXTO, h)
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var chave := ChaveLiga.new(ligada)
 	chave.toggled.connect(func(x: bool): ao_mudar.call(x))

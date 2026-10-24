@@ -4,15 +4,26 @@ extends RefCounted
 ## identidade do Chrome & Wreckage: cores da interface (Aba), fontes
 ## (Tipografia) e a arte de res://arte/ui/.
 
-const COR_FUNDO := Aba.COR_FUNDO
-const COR_CARTAO := Aba.COR_CARTAO
-const COR_CARTAO_CLARO := Color(0.16, 0.18, 0.21)
-const COR_DINHEIRO := Color(0.45, 0.9, 0.5)
-const COR_OURO := Aba.COR_DESTAQUE
-const COR_SECUNDARIA := Aba.COR_SECUNDARIA
-const COR_BLOQUEADO := Color(0.42, 0.44, 0.5)
-const COR_RUIM := Aba.COR_RUIM
-const COR_BOTAO := Color("f5b52e")  # o amarelo-ouro do botão da tela inicial do C&W (ui/inicio.gd)
+## Paleta "cromo + ouro", tirada do logotipo (decisão do usuário, 2026-10-24):
+## fundo preto azulado, cartões em aço escuro com borda cromada, ações em ouro
+## alaranjado, prata no texto secundário, dinheiro em ouro claro; verde só no
+## ganho de uma melhoria; vermelho só no alerta.
+const COR_FUNDO := Color("0b0e13")
+const COR_CARTAO := Color("161b22")
+const COR_CARTAO_CLARO := Color("1d232c")
+const COR_BORDA := Color("3a4250")  # cromo escuro
+const COR_CROMO := Color("c9ced6")  # prata
+const COR_TEXTO := Color("f2f4f7")
+const COR_OURO := Color("ffc53d")
+const COR_OURO_ESCURO := Color("f08a0c")
+const COR_OURO_CLARO := Color("ffd873")
+const COR_DINHEIRO := COR_OURO_CLARO
+const COR_GANHO := Color("6fd08c")
+const COR_SECUNDARIA := COR_CROMO
+const COR_BLOQUEADO := Color("5a6270")
+const COR_RUIM := Color("e5484d")
+const COR_BOTAO := COR_OURO
+const COR_TINTA := Color("14100a")  # texto sobre ouro e prata
 
 
 static func rotulo(texto: String, tamanho: int, cor: Color, pai: Node = null, peso := "semibold") -> Label:
@@ -39,7 +50,7 @@ static func caixa(cor: Color, raio: int, margem := 12, borda := Color.TRANSPAREN
 
 static func painel(cor := COR_CARTAO, raio := 14, margem := 12, pai: Node = null) -> PanelContainer:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", caixa(cor, raio, margem))
+	p.add_theme_stylebox_override("panel", caixa(cor, raio, margem, COR_BORDA, 1))
 	if pai != null:
 		pai.add_child(p)
 	return p
@@ -75,18 +86,54 @@ static func imagem_cobrindo(tex: Texture2D, altura: float, pai: Node = null, esc
 static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: Node = null) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, texto, cor, Color(0.07, 0.07, 0.06), tamanho, altura)
+	Tipografia.acao_primaria(b, texto, cor, COR_TINTA, tamanho, altura)
+	if cor == COR_CROMO:
+		estilo_cromo(b)
+	else:
+		estilo_ouro(b)
 	desativado_legivel(b)
 	if pai != null:
 		pai.add_child(b)
 	return b
 
 
+## Botão de ação em ouro em relevo (borda de baixo escura), como as letras do
+## logotipo; pressionado, afunda.
+static func estilo_ouro(b: Button) -> void:
+	var meio := COR_OURO.lerp(COR_OURO_ESCURO, 0.45)
+	b.add_theme_stylebox_override("normal", _bisel(meio, COR_OURO_CLARO, Color("b5620a")))
+	b.add_theme_stylebox_override("hover", _bisel(meio, COR_OURO_CLARO, Color("b5620a")))
+	b.add_theme_stylebox_override("pressed", _bisel(meio.darkened(0.12), COR_OURO_CLARO, meio.darkened(0.12)))
+	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(c, COR_TINTA)
+
+
+## Botão cromado (vídeos com recompensa): prata em relevo.
+static func estilo_cromo(b: Button) -> void:
+	b.add_theme_stylebox_override("normal", _bisel(COR_CROMO, Color.WHITE, Color("7b8494")))
+	b.add_theme_stylebox_override("hover", _bisel(COR_CROMO, Color.WHITE, Color("7b8494")))
+	b.add_theme_stylebox_override("pressed", _bisel(COR_CROMO.darkened(0.12), Color.WHITE, COR_CROMO.darkened(0.12)))
+	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(c, COR_TINTA)
+
+
+## Fundo com a borda de baixo mais escura: o botão parece em relevo.
+static func _bisel(fundo: Color, _luz: Color, sombra: Color) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = fundo
+	sb.set_corner_radius_all(12)
+	sb.border_color = sombra
+	sb.border_width_bottom = 5
+	sb.set_content_margin_all(8)
+	sb.anti_aliasing = true
+	return sb
+
+
 ## Desativado (sem dinheiro, relógio do contrato): placa escura com borda e
 ## texto claro, para o preço e o relógio continuarem legíveis.
 static func desativado_legivel(b: Button) -> void:
-	b.add_theme_stylebox_override("disabled", caixa(Color(0.11, 0.12, 0.14), 10, 8, Color(1, 1, 1, 0.1), 2))
-	b.add_theme_color_override("font_disabled_color", Color(0.78, 0.8, 0.85))
+	b.add_theme_stylebox_override("disabled", caixa(COR_CARTAO_CLARO, 12, 8, COR_BORDA, 2))
+	b.add_theme_color_override("font_disabled_color", COR_CROMO.darkened(0.15))
 
 
 ## Barra de rolagem fina, em ocre apagado (a cinza do Godot destoa).

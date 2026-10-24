@@ -10,8 +10,8 @@ signal escolheu(id: String)
 const ALTURA := 112.0
 const ICONE := 48
 const ICONE_ATIVO := 58
-const COR_FAIXA := Color(0.05, 0.06, 0.075)
-const COR_TEXTO := Color(0.62, 0.64, 0.7)
+const COR_FAIXA := Color("07090d")
+const COR_TEXTO := Color("8a93a3")  # prata apagada
 const QUADRO := 8.0  # lado do quadriculado da aba ativa
 
 var abas: Array = []  # [{id, nome, icone}]
@@ -91,7 +91,7 @@ func _draw() -> void:
 		var tex: Texture2D = _texturas.get(a["icone"])
 		if tex != null:
 			var lado := lerpf(ICONE, ICONE_ATIVO, entrada) if ativo else float(ICONE)
-			var cor := Color.WHITE if ativo else Color(0.75, 0.77, 0.82, 0.75)
+			var cor := Color.WHITE if ativo else Color(IdleUI.COR_CROMO, 0.7)
 			draw_texture_rect(tex, Rect2(centro - Vector2(lado, lado) * 0.5 - Vector2(0, 4.0 * entrada if ativo else 0.0),
 					Vector2(lado, lado)), false, cor)
 		var nome := String(a["nome"])
@@ -101,5 +101,5 @@ func _draw() -> void:
 				IdleUI.COR_OURO if ativo else COR_TEXTO)
 		if avisos.get(a["id"], false):
 			var pulso := 0.75 + 0.25 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.2)
-			draw_circle(centro + Vector2(26, -22), 9.0, Color(0.92, 0.25, 0.2, pulso))
+			draw_circle(centro + Vector2(26, -22), 9.0, Color(IdleUI.COR_RUIM, pulso))
 			draw_arc(centro + Vector2(26, -22), 9.0, 0, TAU, 20, Color(0, 0, 0, 0.6), 2.0)

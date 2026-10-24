@@ -32,6 +32,10 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   PISTAS mostra as modalidades e a escada de ligas (pista, carro, prêmio, onde a equipe está);
   PILOTOS mostra o escalado, contratos e o elenco; engrenagem com som e visual simples; câmeras em
   ícones.
+- **Paleta "cromo + ouro"** (decisão do usuário, tirada do logotipo; `IdleUI`): fundo #0B0E13,
+  cartões #161B22 com borda cromada #3A4250, ações em ouro em relevo (#FFC53D→#F08A0C), vídeos em
+  prata #C9CED6, renda em ouro claro #FFD873, verde #6FD08C só no ganho das melhorias, vermelho
+  #E5484D só no alerta.
 
 ## O que reaproveita
 - `Simulacao` (posição real, zonas de ultrapassagem, agressividade e o vácuo novo do piloto).
