@@ -135,5 +135,9 @@ AdMob (decisão do usuário; plugin godot-admob v5.3, Godot 4.5.1, decisão 134)
 e intersticial só ao subir de liga (ver Polimento acima). O APK do idle sai só em arm64-v8a (a Play exige 64 bits; com o build Gradle as duas arquiteturas davam 184 MB, o pacote do jogo tem 30 MB). Ids de teste do Google até o usuário mandar os
 dele.
 
+## Som
+Ver `docs/idle/sonorizacao.md`: como o gênero usa som, o que o CRT toca hoje, o que falta e a
+ordem de implementação.
+
 ## Ordem
 CRT1 plano · CRT2 modelo e testes · CRT3 tela · CRT4 app separado (presets e CI) · CRT5 AdMob.
