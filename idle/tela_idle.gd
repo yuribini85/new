@@ -1,10 +1,13 @@
 extends Control
 ## Chrome Racing Team (docs/idle/plano.md): a tela única do jogo idle. Em cima
 ## o dinheiro e a renda por segundo; no meio, ocupando a maior parte da tela, a
-## corrida 3D do Chrome & Wreckage com a câmera AUTO dele (o diretor alterna
-## entre o seu carro, as disputas de perto e a pista), com a posição e o tempo;
-## embaixo os cartões de melhoria, três por linha. A corrida roda sozinha, uma
-## atrás da outra.
+## corrida 3D do Chrome & Wreckage com o que ela tem de assistir: a câmera AUTO
+## (o diretor alterna entre o seu carro, as disputas de perto e a pista), o
+## painel da corrida (posição, quem está à frente e atrás, a classificação num
+## toque), o semáforo da largada, os avisos de ultrapassagem, a bandeirada com a
+## câmera fechando no seu carro, os sons e os rivais com piloto e pintura das
+## equipes rivais; embaixo os cartões de melhoria, três por linha. A corrida
+## roda sozinha, uma atrás da outra.
 
 const COR_FUNDO := Color(0.07, 0.08, 0.1)
 const COR_CARTAO := Color(0.13, 0.145, 0.17)
@@ -13,6 +16,14 @@ const COR_OURO := Color("d6a23e")
 const PAUSA_CHEGADA_S := 2.5
 const PAUSA_COM_VIDEO_S := 4.0  # tempo para tocar em "VÍDEO: PRÊMIO 2×"
 const SALVAR_A_CADA_S := 5.0
+## Apresentação, como no Chrome & Wreckage: contagem da largada, rival colado
+## que gera o aviso "SE APROXIMA" e o intervalo mínimo entre dois desses avisos.
+const CONTAGEM_S := 3.0
+const APROXIMA_S := 0.6
+const EVENTO_RIVAL_S := 20.0
+const COR_RUIM := Color(1.0, 0.46, 0.4)
+## Pintura do seu carro: o dourado da equipe com faixas escuras e o número 1.
+const EQUIPE_JOGADOR := {"numero": 1, "cores": {"faixa": "#141518", "filete": "#f2f2ee"}}
 
 var dados: Node
 var estado: IdleEstado
@@ -35,8 +46,14 @@ var _pista: Pista
 var _dinheiro: Label
 var _renda: Label
 var _liga: Label
-var _posicao: Label
-var _relogio: Label
+var _hud: HudCorrida
+var _sons: Sons
+var _nomes := {}  # id -> nome do piloto
+var _contagem := -1.0  # s até a largada (< 0: correndo)
+var _chegada := false  # seu carro cruzou a linha
+var _t_chegada := 0.0
+var _pos_antes := 0
+var _avisado := {}  # rival -> quando avisou que se aproximava (tempo da corrida)
 var _aviso: Label
 var _subir: Button
 var _dobrar: Button
@@ -110,24 +127,23 @@ func _montar() -> void:
 	_visual3d = Corrida3D.new()
 	_visual3d.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_visual3d.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_visual3d.sem_rotulos = true
 	corrida.add_child(_visual3d)
-	var faixa := PanelContainer.new()
-	faixa.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	faixa.add_theme_stylebox_override("panel", _caixa(Color(0, 0, 0, 0.55), 0))
-	corrida.add_child(faixa)
-	var hf := HBoxContainer.new()
-	faixa.add_child(hf)
-	_posicao = _rotulo("", 44, COR_OURO, hf)
-	Tipografia.numero(_posicao, 44)
-	_posicao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_relogio = _rotulo("", 30, Color.WHITE, hf)
+	_hud = HudCorrida.new()
+	corrida.add_child(_hud)
+	_sons = Sons.new()
+	add_child(_sons)
 	_camera = Button.new()
 	_camera.text = "CÂMERA: AUTO"
 	_camera.focus_mode = Control.FOCUS_NONE
 	_camera.add_theme_font_size_override("font_size", 20)
+	_camera.add_theme_stylebox_override("normal", _caixa(Color(0, 0, 0, 0.5), 10))
+	_camera.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	_camera.offset_left = 10
+	_camera.offset_bottom = -10
+	_camera.offset_top = -58
+	_camera.offset_right = 190
 	_camera.pressed.connect(_trocar_camera)
-	hf.add_child(_camera)
+	corrida.add_child(_camera)
 	_aviso = _rotulo("", 40, COR_DINHEIRO, corrida)
 	_aviso.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	_aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -266,14 +282,41 @@ func _nova_corrida() -> void:
 	_visual.mostrar(pista, _resultado, {"jogador": COR_OURO})
 	var categorias := {}
 	var pinturas := {}
+	var faixas := {}
+	var escalados := estado.escalacao(dados)
+	_nomes = {"jogador": "Você"}
 	for p in estado.participantes(dados):
-		categorias[p["id"]] = dados.carro(p["carro"])
-		pinturas[p["id"]] = COR_OURO if p["id"] == "jogador" else Cores.sortear(String(p["carro"]), "%d|%s" % [_semente, p["id"]])
+		var id := String(p["id"])
+		categorias[id] = dados.carro(p["carro"])
+		var k := int(id.trim_prefix("r")) if id != "jogador" else -1
+		if id == "jogador":
+			pinturas[id] = COR_OURO
+			faixas[id] = PinturaCarro.da_equipe(EQUIPE_JOGADOR, "crt", 0)
+		elif k < escalados.size():
+			# Rival nas cores da equipe dele, como no Chrome & Wreckage.
+			var eq: Dictionary = escalados[k]["equipe"]
+			pinturas[id] = Color(String(eq["cores"]["carro"]))
+			faixas[id] = PinturaCarro.da_equipe(eq, "%d|%d" % [estado.liga, k], int(escalados[k]["vaga"]))
+			_nomes[id] = escalados[k]["nome"]
+		else:
+			pinturas[id] = Cores.sortear(String(p["carro"]), "%d|%s" % [_semente, id])
+	_visual3d.faixas_pintura = faixas
+	_visual3d.nomes = _nomes
+	_visual3d.chegada = 0.0
 	_visual3d.mostrar(pista, _visual, categorias, pinturas)
 	_visual.tempo = 0.0
 	_fim_jogador = float(_resultado["carros"]["jogador"]["tempo_total"])
 	_pausa = -1.0
 	_aviso.text = ""
+	_chegada = false
+	_t_chegada = 0.0
+	_pos_antes = 0
+	_avisado = {}
+	_hud.limpar_evento()
+	_hud.secundario = 1.0
+	_contagem = CONTAGEM_S
+	_hud.contagem = _contagem
+	_sons.largada(false)
 	_diretor.reiniciar()
 	_aplicar_camera()
 	_visual3d.destacar_jogador()  # o anel no seu carro (o dourado) na largada
@@ -298,9 +341,13 @@ func _aplicar_camera() -> void:
 func _dirigir() -> void:
 	var ordem := _visual.ordem()
 	var i := ordem.find("jogador")
-	_visual3d.alvo = ordem[i - 1] if i > 0 and _pausa < 0.0 else ""
+	_visual3d.alvo = ordem[i - 1] if i > 0 and not _chegada else ""
 	if _camera_modo != "auto":
 		_visual3d.enquadrar_grid = false
+		return
+	if _contagem > 0.0:
+		# No grid, de cima, enquadrando todos (como o Chrome & Wreckage).
+		_visual3d.enquadrar_grid = true
 		return
 	var voltas := int(estado.dados_liga()["voltas"])
 	var plano := _diretor.atualizar(_visual, _pista.comprimento * voltas, _pista.comprimento, voltas)
@@ -312,8 +359,12 @@ func _dirigir() -> void:
 
 func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
-	if _pausa >= 0.0:
+	if _contagem > 0.0:
+		_contar(delta)
+	elif _pausa >= 0.0:
 		_pausa -= delta
+		# Depois da linha os carros seguem, freando, e a câmera fecha no seu.
+		_visual.tempo += delta
 		if _pausa < 0.0:
 			if not _sem_intersticial:
 				anuncios.intersticial()
@@ -323,12 +374,18 @@ func _process(delta: float) -> void:
 		_visual.tempo = minf(_visual.tempo + delta, _visual.duracao())
 		if _visual.tempo >= _fim_jogador:
 			_chegou()
-	_visual3d.taxa = 1.0 if _pausa < 0.0 else 0.0
+	if _chegada:
+		_t_chegada += delta
+		_visual3d.chegada = minf(_t_chegada / 3.0, 1.0)
+	_visual3d.taxa = 0.0 if _contagem > 0.0 else 1.0
 	_dirigir()
 	_visual3d.atualizar(delta)
+	var tela := _visual3d.posicao_tela(_visual3d.foco if _visual3d.foco != "" else "jogador")
+	_hud.ancora_carro = _hud.get_global_transform().affine_inverse() * tela if tela.x >= 0.0 else Vector2(-1, -1)
 	var ordem := _visual.ordem()
-	_posicao.text = "P%d/%d" % [ordem.find("jogador") + 1, ordem.size()]
-	_relogio.text = "%d:%02d" % [int(_visual.tempo) / 60, int(_visual.tempo) % 60]
+	_atualizar_hud(ordem)
+	_eventos(ordem)
+	_som(ordem)
 	_atualizar_topo()
 	_atualizar_cartoes()
 	_salvar_em -= delta
@@ -337,11 +394,114 @@ func _process(delta: float) -> void:
 		estado.salvar(Time.get_unix_time_from_system())
 
 
+## 3-2-1 no grid: um bipe por número; no zero, a largada.
+func _contar(delta: float) -> void:
+	var antes := ceili(_contagem)
+	_contagem = maxf(_contagem - delta, 0.0)
+	_hud.contagem = _contagem if _contagem > 0.0 else -1.0
+	if ceili(_contagem) < antes and _contagem > 0.0:
+		_sons.largada(false)
+	if _contagem <= 0.0:
+		_contagem = -1.0
+		_diretor.reiniciar()
+		_sons.largada(true)
+		_hud.evento("LARGADA", "", COR_OURO, 3)
+
+
+## Diferença em segundos entre quem vai à frente (`a`) e quem vem atrás (`b`):
+## quanto tempo antes `a` passou no ponto onde `b` está (-1 sem dado).
+func _gap(a: String, b: String) -> float:
+	var t := _visual.tempo_em(a, _visual.distancia(b))
+	return maxf(_visual.tempo - t, 0.0) if t >= 0.0 else -1.0
+
+
+## O painel da corrida do Chrome & Wreckage: posição, vizinhos e classificação.
+func _atualizar_hud(ordem: Array) -> void:
+	var i := ordem.find("jogador")
+	var atacante := ""
+	if i + 1 < ordem.size() and not _chegada:
+		var g := _gap("jogador", ordem[i + 1])
+		if g >= 0.0 and g < APROXIMA_S:
+			atacante = ordem[i + 1]
+	var lista := []
+	for id in ordem:
+		lista.append({"id": id, "nome": _nomes.get(id, id), "cor": _visual.cor_de(id), "voce": id == "jogador",
+			"camera": id == _visual3d.foco and not _visual3d.visao_geral,
+			"gap": _gap(ordem[0], id) if id != ordem[0] else -1.0, "ataque": id == atacante})
+	var voltas := int(estado.dados_liga()["voltas"])
+	var volta := clampi(floori(maxf(_visual.distancia("jogador"), 0.0) / _pista.comprimento) + 1, 1, voltas)
+	_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": voltas, "lista": lista,
+		"ultima": false})
+	var perto := atacante != ""
+	if i > 0 and not _chegada:
+		var g := _gap(ordem[i - 1], "jogador")
+		perto = perto or (g >= 0.0 and g < 0.45)
+	_hud.secundario = 0.0 if _chegada else (0.35 if perto else 1.0)
+
+
+## Avisos da corrida, como no Chrome & Wreckage: ultrapassagem, líder, perdeu a
+## posição e rival se aproximando.
+func _eventos(ordem: Array) -> void:
+	var pos := ordem.find("jogador") + 1
+	if pos <= 0 or _chegada or _contagem > 0.0:
+		_pos_antes = pos
+		return
+	if _pos_antes > 0 and pos != _pos_antes and _visual.tempo > 1.0:
+		var ganhou := pos < _pos_antes
+		var outro: String = (ordem[pos] if pos < ordem.size() else "") if ganhou else (ordem[pos - 2] if pos >= 2 else "")
+		var nome := String(_nomes.get(outro, "")).to_upper()
+		if ganhou and pos == 1:
+			_hud.evento("LÍDER", "passou %s" % nome, COR_OURO, 6)
+		elif ganhou:
+			_hud.evento("ULTRAPASSAGEM", "passou %s · %dº" % [nome, pos], COR_OURO, 5)
+		else:
+			_hud.evento("PERDEU A POSIÇÃO", "%s passou · %dº" % [nome, pos], COR_RUIM, 5)
+		_sons.ultrapassagem(ganhou)
+	_pos_antes = pos
+	if pos < ordem.size():
+		var atras: String = ordem[pos]
+		var g := _gap("jogador", atras)
+		if g >= 0.0 and g < APROXIMA_S and _visual.tempo - float(_avisado.get(atras, -INF)) > EVENTO_RIVAL_S:
+			_avisado[atras] = _visual.tempo
+			_hud.evento("%s SE APROXIMA" % String(_nomes.get(atras, "")).to_upper(), "−%.1f s" % g, COR_RUIM, 2)
+
+
+## Som do seu carro: motor pela velocidade, pneu e zebra pelo 3D, o pelotão
+## com rival colado e a torcida no fim (e na chegada).
+func _som(ordem: Array) -> void:
+	if _chegada:
+		_sons.motor(false)
+		_sons.torcida(1.0 - smoothstep(1.5, 4.0, _t_chegada))
+		return
+	var v := 0.0
+	if _contagem <= 0.0:
+		v = maxf(_visual.distancia_em("jogador", _visual.tempo) - _visual.distancia_em("jogador", maxf(_visual.tempo - 0.5, 0.0)), 0.0) \
+				/ minf(0.5, maxf(_visual.tempo, 0.05))
+	_sons.motor(true, v)
+	_sons.pneu(_visual3d.cantando("jogador"), _visual3d.na_zebra("jogador"))
+	var i := ordem.find("jogador")
+	var gap_min := INF
+	if i > 0:
+		var ga := _gap(ordem[i - 1], "jogador")
+		if ga >= 0.0:
+			gap_min = ga
+	if i >= 0 and i + 1 < ordem.size():
+		var gb := _gap("jogador", ordem[i + 1])
+		if gb >= 0.0:
+			gap_min = minf(gap_min, gb)
+	_sons.pelotao(1.0 - smoothstep(0.3, 2.0, gap_min) if gap_min < INF else 0.0)
+	var resto := 1.0 - clampf(_visual.distancia("jogador") / (_pista.comprimento * int(estado.dados_liga()["voltas"])), 0.0, 1.0)
+	_sons.torcida((1.0 - smoothstep(0.1, 0.3, resto)) * 0.6)
+
+
 func _chegou() -> void:
 	var pos := IdleEstado.posicao(_resultado)
 	var ganho := estado.concluir(pos)
-	_aviso.text = ("VITÓRIA!\n" if pos == 1 else "%dº LUGAR\n" % pos) + "+$" + curto(ganho)
-	_aviso.add_theme_color_override("font_color", COR_OURO if pos == 1 else COR_DINHEIRO)
+	_chegada = true
+	_sons.chegada()
+	_hud.bandeirada()
+	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
+			COR_OURO if pos == 1 else COR_DINHEIRO, 10, -1.0, true)
 	_ganho_corrida = ganho
 	_dobrar.visible = anuncios.premiado_disponivel()
 	_pausa = PAUSA_COM_VIDEO_S if _dobrar.visible else PAUSA_CHEGADA_S
@@ -356,8 +516,7 @@ func _dobrar_premio() -> void:
 	anuncios.premiado(func():
 		estado.dinheiro += ganho
 		_sem_intersticial = true
-		_aviso.text = "PRÊMIO 2×\n+$" + curto(ganho * 2.0)
-		_aviso.add_theme_color_override("font_color", COR_OURO)
+		_hud.evento("PRÊMIO 2×", "+$" + curto(ganho * 2.0), COR_OURO, 11, -1.0, true)
 		_pausa = maxf(_pausa, PAUSA_CHEGADA_S)
 		estado.salvar(Time.get_unix_time_from_system()))
 

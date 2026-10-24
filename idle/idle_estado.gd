@@ -141,6 +141,26 @@ func carro_base(dados: Node) -> Dictionary:
 	return IdleEstado._perto_de(dados, float(dados_liga()["potencia"]) * float(cfg["carro_do_jogador"]))[0]
 
 
+## Pilotos e equipes dos rivais da liga (as equipes rivais do Chrome &
+## Wreckage, data/equipes.json): [{nome, equipe, vaga}] na ordem de rivais(),
+## fixos por liga (no Race Star você enfrenta os mesmos rivais até subir).
+func escalacao(dados: Node) -> Array:
+	var equipes := []
+	for e in dados.lista("equipes"):
+		if not e.get("jogador", false) and not Array(e.get("pilotos", [])).is_empty():
+			equipes.append(e)
+	var r := []
+	if equipes.is_empty():
+		return r
+	for k in int(cfg["grid"]) - 1:
+		# Passo primo com a lista: equipes diferentes no mesmo grid.
+		var eq: Dictionary = equipes[(liga * 5 + k * 7) % equipes.size()]
+		var pilotos: Array = eq["pilotos"]
+		var vaga := (liga + k) % pilotos.size()
+		r.append({"nome": String(pilotos[vaga]["nome"]), "equipe": eq, "vaga": vaga})
+	return r
+
+
 ## Força do rival `k` (0 = o mais forte, na frente do grid) em relação ao
 ## carro da liga: de (1 + espalhar) a (1 - espalhar), para cada melhoria render
 ## posições aos poucos (no Race Star você sobe um a um), vezes a forca_rivais da

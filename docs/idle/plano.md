@@ -15,6 +15,13 @@ pista nova, e os rivais ficam mais fortes.
 - `Simulacao` (posição real, zonas de ultrapassagem, agressividade e o vácuo novo do piloto).
 - Pistas (`data/pistas.json`), carros 3D da frota (`data/carros.json`), `Corrida3D` e câmeras.
 - Fonte, cores e componentes de UI (`Aba`, `Tipografia`).
+- A corrida como o Chrome & Wreckage mostra (2026-10-24, pedido do usuário: o CRT recebe o que o
+  C&W já tem e melhora a experiência): câmera AUTO (`DiretorCamera`), painel da corrida
+  (`HudCorrida`: posição que pulsa, vizinhos com diferença, classificação num toque), semáforo
+  3-2-1, avisos de ultrapassagem/líder/perdeu a posição/rival se aproximando, bandeirada com a
+  câmera fechando no seu carro, sons (`Sons`: motor, pneu, pelotão, torcida, bipes) e os rivais
+  com piloto e pintura das equipes rivais (`data/equipes.json`, fixos por liga). Regra: toda
+  melhoria de apresentação do C&W que sirva a quem só assiste entra também aqui.
 - Exportação web/Android e o CI.
 
 ## O que é próprio
