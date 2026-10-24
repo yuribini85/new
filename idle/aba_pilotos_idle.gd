@@ -9,7 +9,7 @@ extends ScrollContainer
 
 signal mudou
 
-const COLUNAS := 4
+const COLUNAS := 3
 
 var tela: Node  # tela_idle.gd: estado, dados, anuncios
 var _lista: VBoxContainer
@@ -87,13 +87,11 @@ func _escalado(e: IdleEstado) -> void:
 
 
 func _contratos(e: IdleEstado) -> void:
-	var linha := HBoxContainer.new()
+	var linha := VBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	_lista.add_child(linha)
 	_botao_gratis = IdleUI.botao("", IdleUI.COR_BOTAO, 24, 84, linha)
 	_botao_gratis.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_botao_gratis.icon = Aba.icone_reduzido("icone_piloto", 40)
-	_botao_gratis.expand_icon = false
 	_botao_gratis.pressed.connect(func():
 		var p := e.usar_contrato_gratis(tela.dados, _agora())
 		if not p.is_empty():
@@ -119,11 +117,11 @@ func _texto_gratis() -> void:
 
 
 func _elenco(e: IdleEstado) -> void:
-	var titulo := HBoxContainer.new()
+	var titulo := VBoxContainer.new()
+	titulo.add_theme_constant_override("separation", 0)
 	_lista.add_child(titulo)
-	var t := IdleUI.rotulo("SEUS PILOTOS (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
-	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	IdleUI.rotulo("2 pilotos do mesmo nível = 1 piloto de nível acima", 16, IdleUI.COR_SECUNDARIA, titulo)
+	IdleUI.rotulo("SEUS PILOTOS (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
+	IdleUI.rotulo("2 pilotos do mesmo nível = 1 piloto de nível acima", 16, IdleUI.COR_SECUNDARIA, titulo, "regular")
 	var ordem: Array = e.pilotos.duplicate()
 	ordem.sort_custom(func(a, b): return int(a["nivel"]) > int(b["nivel"]) if int(a["nivel"]) != int(b["nivel"]) \
 			else int(a["uid"]) < int(b["uid"]))
@@ -143,7 +141,7 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.custom_minimum_size = Vector2(0, 196)
+	b.custom_minimum_size = Vector2(0, 250)
 	var marcado := uid == _escolhido
 	for st in ["normal", "hover", "pressed"]:
 		b.add_theme_stylebox_override(st, IdleUI.caixa(IdleUI.COR_CARTAO_CLARO if marcado else IdleUI.COR_CARTAO, 12, 6,
@@ -161,7 +159,7 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	v.add_theme_constant_override("separation", 2)
 	b.add_child(v)
-	var r := _retrato(p, 118)
+	var r := _retrato(p, 150)
 	r.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(r)
 	var sobrenome := _nome(p).get_slice(" ", _nome(p).get_slice_count(" ") - 1)

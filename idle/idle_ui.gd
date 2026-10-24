@@ -30,10 +30,26 @@ const COR_PREMIO := Color("2fbf6b")
 const COR_PREMIO_ESCURO := Color("1b8a49")
 
 
+## Tamanho de texto legível no celular (docs/idle/interface.md): a base do jogo
+## tem 720 px de largura e cabe em ~360 dp, então 1 px da base vale ~0,5 dp. O
+## mínimo da tela é TEXTO_MIN (24 px ≈ 12 sp, o mínimo do Android); o resto sobe
+## na mesma proporção para o texto corrido ficar em 14–17 sp. Todo texto do jogo
+## passa por aqui (rotulo, botao, botao_premio).
+const TEXTO_MIN := 24
+## Alvo de toque mínimo: 96 px ≈ 48 dp (Android) / 44 pt (iOS).
+const ALTURA_MIN := 96
+
+
+static func legivel(tamanho: int) -> int:
+	if tamanho <= 30:
+		return maxi(TEXTO_MIN, roundi(tamanho * 1.3))
+	return tamanho + 8 if tamanho <= 44 else tamanho + 4
+
+
 static func rotulo(texto: String, tamanho: int, cor: Color, pai: Node = null, peso := "semibold") -> Label:
 	var l := Label.new()
 	l.text = texto
-	Tipografia.rotulo(l, peso, tamanho)
+	Tipografia.rotulo(l, peso, legivel(tamanho))
 	l.add_theme_color_override("font_color", cor)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if pai != null:
@@ -90,7 +106,7 @@ static func imagem_cobrindo(tex: Texture2D, altura: float, pai: Node = null, esc
 static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: Node = null) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, texto, cor, COR_TINTA, tamanho, altura)
+	Tipografia.acao_primaria(b, texto, cor, COR_TINTA, legivel(tamanho), maxi(altura, ALTURA_MIN))
 	if cor == COR_CROMO:
 		estilo_cromo(b)
 	else:
@@ -101,14 +117,14 @@ static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: N
 	return b
 
 
-## Botão de anúncio premiado, no padrão do gênero: verde, com o ícone ▶ da TV e
-## só a recompensa escrita ("x2", "CONTRATAR GRÁTIS"), nunca "vídeo".
+## Botão de anúncio premiado, no padrão do gênero: verde e só a recompensa
+## escrita ("x2", "CONTRATAR GRÁTIS"), nunca "vídeo". Sem ícone pequeno ao lado
+## (docs/idle/interface.md: ícone em botão só se tiver o tamanho do texto ou mais).
 static func botao_premio(texto: String, tamanho := 24, altura := 64, pai: Node = null) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, texto, COR_PREMIO, Color.WHITE, tamanho, altura)
+	Tipografia.acao_primaria(b, texto, COR_PREMIO, Color.WHITE, legivel(tamanho), maxi(altura, ALTURA_MIN))
 	estilo_premio(b)
-	b.icon = icone_video(int(tamanho * 1.4))
 	desativado_legivel(b)
 	if pai != null:
 		pai.add_child(b)

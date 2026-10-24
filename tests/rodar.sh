@@ -20,6 +20,10 @@ if echo "$importacao$saida" | grep -qE 'SCRIPT ERROR|Parse Error|Compile Error';
 	echo "Erro de script durante os testes" >&2
 	exit 1
 fi
+# Chrome Racing Team: texto legível, sem cortes nem sobreposições (docs/idle/interface.md).
+tela="$(timeout 180 "$GODOT" --headless --script res://tools/checar_tela_idle.gd 2>&1)"
+echo "$tela" | grep -E '^(ok|FAIL)|: '| grep -vE 'ALSA|sem pneu|status < 0|resources still|Godot Engine'
+echo "$tela" | grep -q '^ok   tela do idle' || exit 1
 python3 tests/checar_rascunhos.py || exit 1
 python3 tests/checar_vocabulario.py || exit 1
 python3 tests/checar_conversor.py || exit 1

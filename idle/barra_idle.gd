@@ -112,7 +112,7 @@ func _draw() -> void:
 			draw_texture_rect(tex, Rect2(centro - Vector2(lado, lado) * 0.5 - Vector2(0, 4.0 * entrada if ativo else 0.0),
 					Vector2(lado, lado)), false, cor)
 		var nome := String(a["nome"])
-		var tam := 20
+		var tam := IdleUI.legivel(20)
 		var largura := f.get_string_size(nome, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
 		draw_string(f, Vector2(x0 + (w - largura) * 0.5, 92.0), nome, HORIZONTAL_ALIGNMENT_LEFT, -1, tam,
 				IdleUI.COR_OURO if ativo else COR_TEXTO)

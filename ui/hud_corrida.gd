@@ -39,6 +39,9 @@ const VIZINHO_LARGURA := 270.0
 const LISTA_LARGURA := 270.0
 const LISTA_LINHA := 32.0
 const LISTA_ESPACO := 4.0
+## Escala do texto e das faixas dos vizinhos e da classificação (Chrome Racing
+## Team: 1,3, para o texto chegar ao mínimo legível no celular; C&W: 1).
+var escala_texto := 1.0
 const FAIXA := Color(0, 0, 0, 0.42)
 const FAIXA_FORTE := Color(0.03, 0.035, 0.05, 0.72)
 const TEXTO_ESCURO := Color(0.09, 0.09, 0.1)
@@ -277,7 +280,7 @@ func _vizinhos() -> void:
 		linhas.append([lista[eu + 1], false])
 	var a := lerpf(0.75, 1.0, _sec)
 	var fr := Tipografia.fonte("semibold")
-	var area := Rect2(10.0, y, VIZINHO_LARGURA, maxf(linhas.size(), 1) * (VIZINHO_LINHA + 3.0))
+	var area := Rect2(10.0, y, (VIZINHO_LARGURA * escala_texto), maxf(linhas.size(), 1) * ((VIZINHO_LINHA * escala_texto) + 3.0))
 	_linhas.append([area, ""])
 	if linhas.is_empty():
 		return
@@ -285,7 +288,7 @@ func _vizinhos() -> void:
 	for l in linhas:
 		var it: Dictionary = l[0]
 		var frente: bool = l[1]
-		var r := Rect2(10.0, y, VIZINHO_LARGURA, VIZINHO_LINHA)
+		var r := Rect2(10.0, y, (VIZINHO_LARGURA * escala_texto), (VIZINHO_LINHA * escala_texto))
 		draw_rect(r, _a(FAIXA, a))
 		draw_rect(Rect2(r.position, Vector2(4.0, r.size.y)), _a(Color(it["cor"]), a))
 		# Seta: para cima (à frente) ou para baixo (atrás).
@@ -297,7 +300,7 @@ func _vizinhos() -> void:
 				_a(cor_seta, a))
 		var base := r.position.y + r.size.y * 0.5 + 7.0
 		draw_string(fr, Vector2(r.position.x + 34.0, base), String(it["nome"]), HORIZONTAL_ALIGNMENT_LEFT,
-				VIZINHO_LARGURA - 110.0, 19, _a(COR, a))
+				(VIZINHO_LARGURA * escala_texto) - 110.0, int(19 * escala_texto), _a(COR, a))
 		var gap := float(it.get("gap", -1.0))
 		var txt := ""
 		if gap >= 0.0:
@@ -305,9 +308,9 @@ func _vizinhos() -> void:
 			txt = ("%.1f s" % rel).replace(".", ",") if rel < 60.0 else "1 volta"
 		elif frente:
 			txt = "líder"
-		draw_string(fr, Vector2(r.position.x, base), txt, HORIZONTAL_ALIGNMENT_RIGHT, VIZINHO_LARGURA - 10.0, 18,
+		draw_string(fr, Vector2(r.position.x, base), txt, HORIZONTAL_ALIGNMENT_RIGHT, (VIZINHO_LARGURA * escala_texto) - 10.0, int(18 * escala_texto),
 				_a(Color(CORTE) if ataque else SUAVE, a))
-		y += VIZINHO_LINHA + 3.0
+		y += (VIZINHO_LINHA * escala_texto) + 3.0
 
 
 ## Classificação inteira, aberta pelo toque nos vizinhos: faixas escuras, a sua
@@ -323,13 +326,13 @@ func _lista() -> void:
 	var fn := Tipografia.fonte_numero()
 	var fr := Tipografia.fonte("semibold")
 	var x0 := 10.0
-	var y := BANDA + 4.0 + 2.0 * (VIZINHO_LINHA + 3.0) + 8.0
-	var linha := clampf((size.y - y - 20.0) / maxf(lista.size(), 1.0) - LISTA_ESPACO, 22.0, LISTA_LINHA)
-	draw_rect(Rect2(x0 - 6.0, y - 6.0, LISTA_LARGURA + 12.0, lista.size() * (linha + LISTA_ESPACO) + 8.0), FAIXA_FORTE)
+	var y := BANDA + 4.0 + 2.0 * ((VIZINHO_LINHA * escala_texto) + 3.0) + 8.0
+	var linha := clampf((size.y - y - 20.0) / maxf(lista.size(), 1.0) - LISTA_ESPACO, 22.0, (LISTA_LINHA * escala_texto))
+	draw_rect(Rect2(x0 - 6.0, y - 6.0, (LISTA_LARGURA * escala_texto) + 12.0, lista.size() * (linha + LISTA_ESPACO) + 8.0), FAIXA_FORTE)
 	for i in lista.size():
 		var it: Dictionary = lista[i]
 		var voce: bool = it.get("voce", false)
-		var r := Rect2(x0, y, LISTA_LARGURA, linha)
+		var r := Rect2(x0, y, (LISTA_LARGURA * escala_texto), linha)
 		_linhas.append([r, it["id"]])
 		draw_rect(r, AMBAR if voce else FAIXA)
 		draw_rect(Rect2(x0, y, 4.0, linha), Color(it["cor"]))
@@ -337,14 +340,14 @@ func _lista() -> void:
 			draw_rect(Rect2(x0 - 6.0, y + 4.0, 2.0, linha - 8.0), Color(COR, 0.7))
 		var cor := TEXTO_ESCURO if voce else COR
 		var base := y + linha * 0.5 + 7.0
-		draw_string(fn, Vector2(x0 + 8.0, base + 1.0), str(i + 1), HORIZONTAL_ALIGNMENT_RIGHT, 26.0, 20, cor)
-		draw_string(fr, Vector2(x0 + 44.0, base), String(it["nome"]), HORIZONTAL_ALIGNMENT_LEFT, LISTA_LARGURA - 110.0, 19,
+		draw_string(fn, Vector2(x0 + 8.0, base + 1.0), str(i + 1), HORIZONTAL_ALIGNMENT_RIGHT, 26.0, int(20 * escala_texto), cor)
+		draw_string(fr, Vector2(x0 + 44.0, base), String(it["nome"]), HORIZONTAL_ALIGNMENT_LEFT, (LISTA_LARGURA * escala_texto) - 110.0, int(19 * escala_texto),
 				cor)
 		var gap := float(it.get("gap", -1.0))
 		if gap >= 0.0 and not voce:
 			var rel := gap - gap_eu  # negativo: à sua frente
 			var txt := ("%+.1f" % rel).replace(".", ",") if absf(rel) < 60.0 else ("+1 volta" if rel > 0.0 else "-1 volta")
-			draw_string(fr, Vector2(x0, base), txt, HORIZONTAL_ALIGNMENT_RIGHT, LISTA_LARGURA - 10.0, 17,
+			draw_string(fr, Vector2(x0, base), txt, HORIZONTAL_ALIGNMENT_RIGHT, (LISTA_LARGURA * escala_texto) - 10.0, int(17 * escala_texto),
 					Color(CORTE, 0.95) if it.get("ataque", false) else Color(COR, 0.75))
 		y += linha + LISTA_ESPACO
 
@@ -429,9 +432,9 @@ func _centro_evento(grande: bool, ouro: bool) -> float:
 	if grande:
 		return size.y * 0.5
 	if ouro:
-		return BANDA + 2.0 * (VIZINHO_LINHA + 3.0) + 48.0
+		return BANDA + 2.0 * ((VIZINHO_LINHA * escala_texto) + 3.0) + 48.0
 	var y := ancora_carro.y - ACIMA_DO_CARRO if ancora_carro.y >= 0.0 else size.y * 0.62
-	return clampf(y, BANDA + 2.0 * (VIZINHO_LINHA + 3.0) + 60.0, size.y - 90.0)
+	return clampf(y, BANDA + 2.0 * ((VIZINHO_LINHA * escala_texto) + 3.0) + 60.0, size.y - 90.0)
 
 
 ## Acontecimento: texto direto sobre a cena, numa faixa escura muito leve só

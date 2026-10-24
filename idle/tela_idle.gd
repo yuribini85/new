@@ -242,7 +242,7 @@ func _topo(pai: Control) -> void:
 	var linha_liga := HBoxContainer.new()
 	linha_liga.add_theme_constant_override("separation", 6)
 	esq.add_child(linha_liga)
-	_icone_mod = IdleUI.icone("icone_correr", 28, linha_liga)
+	_icone_mod = IdleUI.icone("icone_correr", 40, linha_liga)
 	_liga = IdleUI.rotulo("", 22, IdleUI.COR_CROMO, linha_liga)
 	_dinheiro = IdleUI.rotulo("", 52, IdleUI.COR_TEXTO, esq)
 	Tipografia.numero(_dinheiro, 52)
@@ -302,6 +302,7 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_arena3d)
 	_hud = HudCorrida.new()
 	_hud.sem_volta = true
+	_hud.escala_texto = 1.3  # texto legível no celular (docs/idle/interface.md)
 	corrida.add_child(_hud)
 	_sons = Sons.new()
 	add_child(_sons)
@@ -336,9 +337,8 @@ func _pagina_corrida() -> Control:
 		_cameras[par[0]] = b
 	_marcar_camera()
 	_subir = Button.new()
-	Tipografia.acao_primaria(_subir, "SUBIR DE LIGA", COR_OURO, IdleUI.COR_TINTA, 28, Tipografia.ALTURA_SECUNDARIA)
+	Tipografia.acao_primaria(_subir, "SUBIR DE LIGA", COR_OURO, IdleUI.COR_TINTA, IdleUI.legivel(28), IdleUI.ALTURA_MIN)
 	IdleUI.estilo_ouro(_subir)
-	_subir.icon = Aba.icone_reduzido("icone_melhorar", 40)
 	_subir.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_subir.offset_left = -200
 	_subir.offset_right = 200
@@ -394,21 +394,25 @@ func _cartao(m: Dictionary) -> Control:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 6)
 	v.add_child(h)
-	var ic := IdleUI.icone(String(m.get("icone", "")), 24, h)
 	var nome := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, IdleUI.COR_TEXTO, h)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	nome.clip_text = true
-	var nivel := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, h)
 	var efeito := IdleUI.rotulo("", 18, IdleUI.COR_GANHO, v)
-	var previsao := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, v)
+	efeito.clip_text = true
+	var linha := HBoxContainer.new()
+	v.add_child(linha)
+	var previsao := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, linha)
+	previsao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	previsao.clip_text = true
+	var nivel := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, linha)
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, "", COR_OURO, IdleUI.COR_TINTA, 24, 56)
+	Tipografia.acao_primaria(b, "", COR_OURO, IdleUI.COR_TINTA, IdleUI.legivel(24), 72)
 	IdleUI.estilo_ouro(b)
 	IdleUI.desativado_legivel(b)
 	b.pressed.connect(_comprar.bind(String(m["id"])))
 	v.add_child(b)
-	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "previsao": previsao, "botao": b, "nome": nome, "icone": ic,
+	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "previsao": previsao, "botao": b, "nome": nome,
 			"cartao": p}
 	return p
 
@@ -458,7 +462,6 @@ func _atualizar_cartoes() -> void:
 		# Na Arena, a melhoria pode ter outro nome (o Vácuo vira Blindagem).
 		var arena: bool = _na_arena and m.has("nome_arena")
 		c["nome"].text = String(m["nome_arena"] if arena else m["nome"]).to_upper()
-		c["icone"].texture = Aba.icone_reduzido(String(m["icone_arena"] if arena else m.get("icone", "")), 24)
 		c["nivel"].text = IdleUI.nv(n)
 		var b: Button = c["botao"]
 		if estado.no_maximo(m["id"]):
@@ -482,7 +485,7 @@ func _atualizar_topo(delta := 0.0) -> void:
 	_dinheiro.text = "$" + curto(_dinheiro_mostrado)
 	_renda.text = "+$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
-	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 28)
+	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 40)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
 	if _subir.visible and not "subir" in estado.guias and _conversa == null and not _guia.ativo():
@@ -1340,8 +1343,7 @@ func _atualizar_ofertas() -> void:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.text = "%s  $%s" % [String(d.get("oferta", "")), curto(float(d.get("custo", 0.0)))]
-		b.icon = Aba.icone_reduzido(String(d.get("icone", "icone_ofertas")), 28)
-		Tipografia.rotulo(b, "semibold", 18)
+		Tipografia.rotulo(b, "semibold", IdleUI.legivel(18))
 		for st in ["normal", "hover", "pressed"]:
 			b.add_theme_stylebox_override(st, IdleUI.caixa(Color(IdleUI.COR_FUNDO, 0.85), 12, 8, COR_OURO, 2))
 		for c in ["font_color", "font_hover_color", "font_pressed_color"]:

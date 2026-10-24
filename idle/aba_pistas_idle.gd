@@ -68,8 +68,10 @@ func _modalidades(e: IdleEstado) -> void:
 		var n := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, IdleUI.COR_OURO if na_corrida else
 				(IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO), v)
 		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		n.clip_text = true
 		var sub := "LIGA %d/%d" % [int(e._m(id)["liga"]) + 1, m["ligas"].size()] if aberta else "FECHADA"
 		var s := IdleUI.rotulo(sub, 14, IdleUI.COR_SECUNDARIA if aberta else IdleUI.COR_BLOQUEADO, v)
+		s.clip_text = true
 		s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		grade.add_child(b)
 
@@ -136,24 +138,25 @@ func _escada(e: IdleEstado) -> void:
 		num.custom_minimum_size = Vector2(44, 0)
 		num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var mini := IdleUI.imagem_cobrindo(IdleUI.banner_pista(String(l["pista"])), 84, h, 1.0 if not fechada else 0.35)
-		mini.custom_minimum_size = Vector2(150, 84)
+		mini.custom_minimum_size = Vector2(110, 84)
 		var v := VBoxContainer.new()
 		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		v.alignment = BoxContainer.ALIGNMENT_CENTER
 		h.add_child(v)
-		IdleUI.rotulo(String(l["nome"]).to_upper(), 22, IdleUI.COR_TEXTO if not fechada else IdleUI.COR_BLOQUEADO, v)
+		var nome := IdleUI.rotulo(String(l["nome"]).to_upper(), 22, IdleUI.COR_TEXTO if not fechada else IdleUI.COR_BLOQUEADO, v)
+		nome.clip_text = true
 		var carro: Array = IdleEstado._perto_de(tela.dados, float(l["potencia"]) * float(e.cfg["carro_do_jogador"]),
 				m.get("categorias", []))
-		var detalhe := "%s · %s" % [_nome_pista(String(l["pista"])), String(carro[0]["nome"]) if not carro.is_empty() else ""]
-		var d := IdleUI.rotulo(detalhe, 17, IdleUI.COR_SECUNDARIA, v)
-		d.clip_text = true
+		for detalhe in [_nome_pista(String(l["pista"])), String(carro[0]["nome"]) if not carro.is_empty() else ""]:
+			var d := IdleUI.rotulo(detalhe, 17, IdleUI.COR_SECUNDARIA, v, "regular")
+			d.clip_text = true
 		var dir := VBoxContainer.new()
 		dir.alignment = BoxContainer.ALIGNMENT_CENTER
 		h.add_child(dir)
 		if feita:
 			IdleUI.icone("icone_ok", 34, dir)
 		elif aqui:
-			IdleUI.rotulo("AQUI", 18, IdleUI.COR_OURO, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			IdleUI.rotulo("ATUAL", 18, IdleUI.COR_OURO, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		else:
 			IdleUI.icone("icone_cadeado", 30, dir, IdleUI.COR_BLOQUEADO)
 		var premio := IdleUI.rotulo("1º $%s" % IdleUI.curto(float(e.cfg["premio_p1"]) * float(l["multiplicador"])), 16,

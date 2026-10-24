@@ -162,10 +162,11 @@ reconhecível, sempre igual, que diz o que o jogador ganha ("x2", "contrato grá
 
 | Use | Nunca |
 |---|---|
-| botão **verde com ▶ na TV** + a recompensa: **x2**, **PRÊMIO x2**, **CONTRATAR GRÁTIS (5)** | "VÍDEO: …", "assistir vídeo", prata/cinza para anúncio |
+| botão **verde** com a recompensa escrita: **x2**, **PRÊMIO x2**, **CONTRATAR GRÁTIS (5)** | "VÍDEO: …", "assistir vídeo", prata/cinza para anúncio, ícone pequeno ao lado |
 | **BEM-VINDO DE VOLTA!** · "Sua equipe faturou enquanto você estava fora" · **COLETAR** / **▶ x2** | faixa "enquanto você esteve fora" que some sozinha |
 | **COLETAR** (recompensa pronta) | "receber", "pegar" |
 | **GRÁTIS EM 3:59:48** (relógio do grátis) | "próximo em" |
+| **ATUAL** (a liga em andamento na escada) | "aqui" |
 | **Nv. 3** (nível) · **MÁX.** (no máximo) · **+5% › +10%** (a fonte não tem →) | "NV 3", "MÁXIMO", "+5% > +10%" |
 | **+$5/s** · POR SEGUNDO (renda) | "RENDA $5/s" |
 | **SUBIR DE LIGA** (com o ícone de melhorar) | "PRÓXIMA LIGA" |

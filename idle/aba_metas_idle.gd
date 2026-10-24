@@ -110,7 +110,7 @@ func _cartao(e: IdleEstado, id: String, agora: float, coletada: bool) -> void:
 		ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		return
 	var b := IdleUI.botao("COLETAR\n$" + IdleUI.curto(e.recompensa_meta()), IdleUI.COR_OURO, 20, 72, h)
-	b.custom_minimum_size.x = 150
+	b.custom_minimum_size.x = 200
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	b.disabled = not pronta
 	b.pressed.connect(func():
