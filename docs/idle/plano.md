@@ -7,9 +7,31 @@ rápido para medir custo por instalação e retenção; o Chrome & Wreckage segu
 principal.
 
 ## O jogo em uma frase
-Sua equipe larga em último numa corrida que roda sozinha; o dinheiro da corrida e dos
-patrocinadores compra melhorias; ao vencer, a equipe sobe de liga, ganha um carro melhor e uma
-pista nova, e os rivais ficam mais fortes.
+Sua equipe corre sozinha em cinco modalidades ao mesmo tempo, cada uma com carros, pistas e uma
+escada de ligas; o dinheiro das corridas e dos patrocinadores compra melhorias; pilotos chegam
+por contrato e fundem em níveis mais fortes; ao vencer, a equipe sobe de liga, ganha um carro
+melhor e uma pista nova, e cada modalidade abre a próxima.
+
+## Versão 2 (2026-10-24, pedido do usuário)
+"Um idle simples, mas com interface bonita, opções de pistas e uma escala evolutiva que faça a
+pessoa abrir o jogo por várias semanas." Decisões do usuário: **5 modalidades com Arena** e
+**pilotos por contrato + fusão** (como o Race Star, que tem seis disciplinas, cada uma com
+pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
+- **Abre e já recolhe:** sem tela de entrada; a renda com o app fechado entra sozinha e uma faixa
+  oferece o vídeo que dobra.
+- **Modalidades** (`data/idle/idle.json` → `modalidades`): Compactos (circuitos curtos), Turismo
+  (sedãs, circuitos), GT (cupês, velocidade), Terra (picapes e utilitários: cânion, araucárias,
+  serra) e Arena (a demolição do Chrome & Wreckage, `Arena`/`Arena3D`). 8 ligas cada; a próxima
+  abre na liga 4 da anterior; todas rendem juntas; liga e melhorias são de cada modalidade, o
+  dinheiro é um só. Na Arena o Vácuo vira Blindagem (peso a mais).
+- **Pilotos** (`pilotos`): os 76 pilotos das equipes do C&W, com retrato, perfil (agressivo,
+  equilibrado, cauteloso) e frase. Contrato grátis a cada 4 h e por vídeo (5 ao dia) traz um
+  piloto no nível 1; dois do mesmo nível fundem num nível acima (até 8; +1% de ritmo por nível).
+  Um piloto por modalidade.
+- **Interface:** menu de baixo desenhado (CORRIDA, PISTAS, PILOTOS) com aviso de pendência;
+  PISTAS mostra as modalidades e a escada de ligas (pista, carro, prêmio, onde a equipe está);
+  PILOTOS mostra o escalado, contratos e o elenco; engrenagem com som e visual simples; câmeras em
+  ícones.
 
 ## O que reaproveita
 - `Simulacao` (posição real, zonas de ultrapassagem, agressividade e o vácuo novo do piloto).
@@ -30,7 +52,7 @@ pista nova, e os rivais ficam mais fortes.
 - O app abre direto no jogo idle com a feature de exportação `idle`.
 
 ## Laço
-1. A corrida roda sozinha (10 carros, você larga em último), câmera de cima da pista inteira.
+1. A corrida roda sozinha (10 carros, você larga em último), câmera AUTO do C&W.
 2. Chegou: prêmio pela posição; a próxima corrida começa logo.
 3. Renda por segundo (patrocínio e arquibancada) cai o tempo todo, também com o app fechado
    (até `offline_max_h`; o vídeo dobra).
