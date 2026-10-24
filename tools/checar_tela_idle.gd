@@ -16,6 +16,8 @@ func _initialize() -> void:
 
 func _rodar() -> void:
 	root.size = Vector2i(720, 1280)
+	# Save limpo: um save antigo abriria o BEM-VINDO DE VOLTA! por cima.
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(IdleEstado.ARQUIVO_SAVE))
 	var tela: Control = load("res://idle/idle.tscn").instantiate()
 	_tela = tela
 	root.add_child(tela)
@@ -105,13 +107,14 @@ func _checar(tela: Control, aba: String) -> void:
 				_erros.append("%s: \"%s\" por cima de \"%s\"" % [aba, _texto(a).left(24), _texto(b).left(24)])
 
 
-## Janelas por cima (configurações) cobrem a tela: só compara textos do mesmo
-## lado (dentro ou fora da janela).
+## Janelas por cima (configurações, BEM-VINDO DE VOLTA!, conversa) cobrem a
+## tela: só compara textos do mesmo lado (dentro ou fora da janela).
 func _mesma_camada(a: Control, b: Control) -> bool:
-	var cfg: Node = _tela.get("_config")
-	if cfg == null:
-		return true
-	return cfg.is_ancestor_of(a) == cfg.is_ancestor_of(b)
+	for nome in ["_config", "_coleta", "_conversa"]:
+		var j: Node = _tela.get(nome)
+		if j != null and j.is_ancestor_of(a) != j.is_ancestor_of(b):
+			return false
+	return true
 
 
 func _coletar(n: Node, saida: Array[Control]) -> void:

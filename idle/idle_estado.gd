@@ -79,7 +79,7 @@ func _m(id := "") -> Dictionary:
 		var n := {}
 		for m in cfg["melhorias"]:
 			n[m["id"]] = 0
-		mods[k] = {"liga": 0, "venceu": false, "niveis": n, "corridas": 0}
+		mods[k] = {"liga": 0, "venceu": false, "niveis": n, "corridas": 0, "melhor": 0}
 	return mods[k]
 
 
@@ -189,8 +189,11 @@ func renda_s() -> float:
 	return total
 
 
+## A renda base só corre depois que o jogador conhece a renda (o patrocínio da
+## escada): antes disso o dinheiro vem só das corridas.
 func renda_modalidade(id: String) -> float:
-	return (float(cfg.get("renda_base", 0.0)) + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"])
+	var base := float(cfg.get("renda_base", 0.0)) if tem("renda") else 0.0
+	return (base + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"])
 
 
 ## Prêmio da posição `pos` (1 = vitória) na liga atual.
@@ -205,12 +208,19 @@ func concluir(pos: int, fator := 1.0) -> float:
 	dinheiro += p
 	corridas += 1
 	_m()["corridas"] = int(_m()["corridas"]) + 1
+	if melhor_posicao() == 0 or pos < melhor_posicao():
+		_m()["melhor"] = pos
 	if pos == 1:
 		venceu = true
 	registrar_meta("corridas")
 	if pos == 1:
 		registrar_meta("vitorias")
 	return p
+
+
+## A melhor chegada na liga atual da modalidade (0: ainda não correu nela).
+func melhor_posicao() -> int:
+	return int(_m().get("melhor", 0))
 
 
 func pode_subir() -> bool:
@@ -222,6 +232,7 @@ func subir_liga() -> bool:
 		return false
 	liga += 1
 	venceu = false
+	_m()["melhor"] = 0
 	# Carro novo: as melhorias do carro (motor, pneus) recomeçam; as da equipe ficam.
 	for m in cfg["melhorias"]:
 		if m.get("do_carro", false):
@@ -466,7 +477,7 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 		ficha["aderencia"] = float(ficha["aderencia"]) * (1.0 + float(pr.get("aderencia_por_forca", 0.0)) * (fator_rival(k) - 1.0))
 		r.append({"id": "r%d" % k, "carro": modelos[k]["id"], "atributos": IdleEstado._atributos(dados, ficha),
 				"piloto": {"ritmo": float(pr["ritmo"]) + float(pr.get("ritmo_por_liga", 0.0)) * liga,
-					"consistencia": pr["consistencia"], "agressividade": pr["agressividade"]}})
+					"consistencia": pr["consistencia"], "agressividade": pr["agressividade"], "regular": true}})
 	var base: Dictionary = carro_base(dados).duplicate(true)
 	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra))
 	base["aderencia"] = float(base["aderencia"]) * (1.0 + efeito("aderencia", niveis_extra))
@@ -474,7 +485,8 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 	r.append({"id": "jogador", "carro": carro_base(dados)["id"], "atributos": IdleEstado._atributos(dados, base),
 			"piloto": {"ritmo": pj["ritmo"], "consistencia": clampf(pj["consistencia"], 0.0, 1.0),
 				"agressividade": clampf(float(pj["agressividade"]) + efeito("agressividade", niveis_extra), 0.0, 1.0),
-				"vacuo": efeito("vacuo", niveis_extra)}})
+				"vacuo": efeito("vacuo", niveis_extra), "regular": true,
+				"fase": 0.5}})
 	return r
 
 
@@ -729,6 +741,7 @@ func de_save(s: Dictionary) -> void:
 		m["liga"] = clampi(int(sm.get("liga", 0)), 0, dados_modalidade(String(id))["ligas"].size() - 1)
 		m["venceu"] = bool(sm.get("venceu", false))
 		m["corridas"] = int(sm.get("corridas", 0))
+		m["melhor"] = int(sm.get("melhor", 1 if m["venceu"] else 0))
 		for k in sm.get("niveis", {}):
 			if m["niveis"].has(k):
 				m["niveis"][k] = int(sm["niveis"][k])

@@ -49,14 +49,20 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   (LARGAR). Cada passo (`idle.json` → `desbloqueios`, na ordem) chega com a conversa de um
   personagem do acervo (arte de corpo inteiro): Mara (abertura, pneus, vácuo), Bianca
   (patrocínio e renda, arquibancada), Harold (largada automática, $150), Theo (ultrapassagem,
-  primeira vitória), Jade (menu PILOTOS), Roxy (transmissão na TV: a corrida 3D, $1,5 mil), Rico
-  (METAS), Edgar (PISTAS, quando abre o Turismo), Nora (analista: a previsão nos cartões, $6 mil),
+  depois da 1ª corrida), Jade (menu PILOTOS), Roxy (transmissão na TV: a corrida 3D, $1,5 mil), Rico
+  (METAS), Edgar (PISTAS, quando abre o Turismo), Nora (analista: a previsão com três níveis a mais, $6 mil),
   Kenji (mais câmeras, $15 mil) e Dex (Arena). O que custa o jogador compra; DEPOIS guarda a
   oferta no canto da corrida. Save de antes da escada abre o que a equipe já alcançou.
   **Tutorial leve** (pedido do usuário, no estilo do Destaque do C&W; `idle/guia_idle.gd`):
   depois de cada conversa, a função nova fica destacada (o resto escurece, contorno dourado
   pulsando, seta) com uma frase de onde tocar (`desbloqueios[].guia`); qualquer toque ou 10 s
   fecham. Também na primeira vitória (SUBIR DE LIGA) e na primeira oferta guardada.
+- **O jogador no controle** (análise da experiência, aprovada pelo usuário em 2026-10-24;
+  `docs/idle/analise_experiencia.md`): a faixa entre a corrida e os cartões mostra o objetivo
+  (VENÇA PARA SUBIR DE LIGA) e a melhor chegada na liga; a passagem não tem sorteio (tentativas
+  regulares), então a mesma equipe chega sempre no mesmo lugar e cada compra move a posição; a
+  chegada com um nível a mais ("8º › 7º") aparece de graça desde o começo e o Analista vende a com
+  três níveis; a renda por segundo só corre depois do Patrocínio.
 - **Polimento (cruzamento com as críticas do gênero, aprovado pelo usuário em 2026-10-24):**
   - vídeo que não carrega ou falha ao abrir paga a recompensa igual (a queixa mais comum do Race
     Star é o vídeo que trava e não paga);

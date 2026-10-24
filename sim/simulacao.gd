@@ -151,6 +151,13 @@ class Andamento:
 				"tempo_total": 0.0,
 				"rolagens": {},
 			}
+			# Tentativas regulares (Chrome Racing Team): a agressividade vira uma
+			# taxa sem sorteio (0,5 = uma reta sim, outra não), começando da
+			# "fase" do piloto (sem ela, de um ponto sorteado). O resultado segue
+			# a força do carro.
+			if piloto.get("regular", false):
+				c["regular"] = true
+				c["acumulado"] = float(piloto["fase"]) if piloto.has("fase") else _rng.randf()
 			var ordens := []
 			for o in piloto.get("ordens", []):
 				ordens.append(Simulacao._ordem_interna(o))
@@ -531,6 +538,17 @@ static func _pode_passar(c: Dictionary, zona: int, volta: int, mais_rapido: bool
 	if zona < 0:
 		return false
 	var chave := "%d:%d" % [volta, zona]
+	if c.get("regular", false):
+		# Tentativa regular: só conta nas retas em que dá para passar (mais
+		# rápido), então carro melhor nunca chega pior.
+		if not mais_rapido:
+			return false
+		if not c["rolagens"].has(chave):
+			c["acumulado"] = float(c["acumulado"]) + float(c["agressividade"])
+			c["rolagens"][chave] = c["acumulado"] >= 1.0
+			if c["rolagens"][chave]:
+				c["acumulado"] = float(c["acumulado"]) - 1.0
+		return c["rolagens"][chave]
 	if not c["rolagens"].has(chave):
 		c["rolagens"][chave] = rng.randf() < c["agressividade"]
 	return c["rolagens"][chave] and mais_rapido

@@ -253,3 +253,34 @@ func test_escada_de_desbloqueios() -> void:
 	m.de_save(JSON.parse_string(JSON.stringify(velho)))
 	verificar(m.tem("camera_tv") and m.tem("aba:pilotos"), "save antigo abre o alcançado")
 	verificar(IdleEstado.new(_cfg()).tem("cameras"), "sem escada na configuração, tudo aberto")
+
+
+## A passagem sem sorteio (Simulacao: piloto.regular): a mesma equipe chega no
+## mesmo lugar em qualquer corrida, e a melhor chegada da liga fica guardada.
+func test_mesma_equipe_mesma_chegada_e_melhor_posicao() -> void:
+	var dados: Node = Engine.get_main_loop().root.get_node("Dados")
+	var e := IdleEstado.new()
+	e.usar_contrato_gratis(dados, 0.0)
+	e.niveis["ultrapassagem"] = 4
+	var pos := IdleEstado.posicao(e.correr(dados, 11, false))
+	for s in [22, 33, 44]:
+		igual(IdleEstado.posicao(e.correr(dados, s, false)), pos, "mesma chegada com a semente %d" % s)
+	igual(e.melhor_posicao(), 0, "sem corrida, sem melhor")
+	e.concluir(6)
+	e.concluir(8)
+	igual(e.melhor_posicao(), 6, "a melhor chegada fica")
+	e.concluir(1)
+	e.subir_liga()
+	igual(e.melhor_posicao(), 0, "liga nova zera a melhor")
+
+
+## A renda por segundo só corre depois que o patrocínio entra na escada.
+func test_renda_so_com_o_patrocinio() -> void:
+	var c := _cfg_mods()
+	c["renda_base"] = 5.0
+	c["desbloqueio_inicial"] = ["melhoria:motor"]
+	c["desbloqueios"] = [{"id": "patrocinio", "quando": {}, "libera": ["renda"]}]
+	var e := IdleEstado.new(c)
+	igual(e.renda_s(), 0.0, "antes do patrocínio, nada por segundo")
+	e.oferecer("patrocinio")
+	verificar(e.renda_s() > 0.0, "com o patrocínio, a renda base corre")

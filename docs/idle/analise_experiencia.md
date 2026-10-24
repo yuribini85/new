@@ -71,3 +71,28 @@ oferta quando tem o dinheiro, sobe de liga), com a linha do tempo e uma foto por
 - **Defeito:** o "+$" que sobe ao lado do dinheiro quebrava no fim da corrida (fonte inexistente);
   corrigido.
 - `tools/jogar_idle.gd`: o jogador robô, para medir de novo depois de cada mudança.
+
+## Feito na 2ª etapa (aprovada pelo usuário: itens 1, 2 e 3)
+
+- **Objetivo à vista:** faixa entre a corrida e os cartões com VENÇA PARA SUBIR DE LIGA (VITÓRIA!
+  SUBA DE LIGA depois de vencer) e a MELHOR chegada na liga.
+- **Sem sorte na passagem:** a sorte vinha quase toda do sorteio de cada reta (o piloto tenta ou
+  não passar). No CRT a tentativa virou regular (`Simulacao`: `piloto.regular`, só no CRT; o C&W
+  segue igual) e só conta onde dá para passar. Medido: a mesma equipe chega sempre no mesmo lugar,
+  e Motor e Ultrapassagem movem a posição degrau a degrau (antes: ±2,5 posições de uma corrida
+  para a outra). Resta ±1 em poucos casos (15 de ~240 combinações) pela física da corrida.
+- **Ultrapassagem desde a 1ª corrida** (Theo): sem ela o carro não passa do 7º; antes ela só
+  abria na 1ª vitória, que dependia de sorte.
+- **Previsão de graça:** "8º › 7º" / "CHEGA EM 4º" desde o começo (agora exata); o Analista vende
+  a chegada com três níveis a mais.
+- **Renda só com o Patrocínio.**
+- **Uma conversa por corrida** (Vácuo, Arquibancada e TV chegavam juntas).
+- 1ª liga mais fácil (força dos rivais 0,85 → 0,55).
+
+Medido de novo (robô, 20 min): chegadas 7º, 4º, 4º, 4º, 4º, **1º** (6ª corrida, 8 min; antes 10ª,
+12 min) e na 2ª liga 7º, 4º, 3º, 2º, 1º. A 3ª liga chega aos 14 min (antes 17).
+
+**O que ainda pesa:** cada corrida leva ~80 s (semáforo, uma volta e a pausa), o que faz a 1ª
+vitória levar 8 min mesmo com 6 corridas; e Ultrapassagem muda a posição em degraus de 3–4 níveis
+(entre um degrau e outro a compra só aparece no "CHEGA EM"). Próximos itens da proposta: 4 (vista
+de cima), 5 (cartões na língua da corrida), 6 (PRÊMIO x2 menos frequente) e a duração da corrida.

@@ -117,6 +117,9 @@ var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
 var _janela_aberta := false
 var _tv := true  # a transmissão (corrida 3D) já foi comprada
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
+var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
+var _objetivo: Label  # o alvo da liga, entre a corrida e os cartões
+var _melhor: Label
 ## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
 ## corrida e o combo de compras seguidas.
 const MUSICA_DB := -16.0
@@ -373,6 +376,15 @@ func _pagina_corrida() -> Control:
 	_ofertas.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	_ofertas.add_theme_constant_override("separation", 8)
 	corrida.add_child(_ofertas)
+	# O objetivo sempre à vista: o que sobe de liga e a melhor chegada nela.
+	var alvo := PanelContainer.new()
+	alvo.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 12, 10, IdleUI.COR_BORDA, 1))
+	v.add_child(alvo)
+	var linha_alvo := HBoxContainer.new()
+	alvo.add_child(linha_alvo)
+	_objetivo = IdleUI.rotulo("", 22, COR_OURO, linha_alvo)
+	_objetivo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_melhor = IdleUI.rotulo("", 22, IdleUI.COR_TEXTO, linha_alvo)
 	# Os cartões de melhoria, três por linha.
 	var grade := GridContainer.new()
 	grade.columns = 3
@@ -485,6 +497,11 @@ func _atualizar_topo(delta := 0.0) -> void:
 	_dinheiro.text = "$" + curto(_dinheiro_mostrado)
 	_renda.text = "+$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
+	if estado.venceu:
+		_objetivo.text = "CATEGORIA VENCIDA" if estado.ultima_liga() else "VITÓRIA! SUBA DE LIGA"
+	else:
+		_objetivo.text = "VENÇA PARA SUBIR DE LIGA"
+	_melhor.text = "MELHOR: %dº" % estado.melhor_posicao() if estado.melhor_posicao() > 0 else ""
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 40)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
@@ -1170,16 +1187,14 @@ func ganho_flutuante(valor: float) -> void:
 ## Chave do que muda a previsão: modalidade, liga, níveis, piloto escalado.
 func _chave_previsao() -> String:
 	var p := estado.piloto_escalado()
-	return "%s|%d|%s|%s%s" % [estado.modalidade, estado.liga, str(estado.niveis), str(p.get("nivel", 0)),
-			String(p.get("id", ""))]
+	return "%s|%d|%s|%s%s|%s" % [estado.modalidade, estado.liga, str(estado.niveis), str(p.get("nivel", 0)),
+			String(p.get("id", "")), str(estado.tem("previsao"))]
 
 
-## Recalcula numa thread quando a chave muda. Na Arena não há previsão: a luta
-## simulada é longa demais para isso.
+## Recalcula numa thread quando a chave muda. A chegada com um nível a mais é de
+## graça desde o começo; a com três níveis vem com o Analista (previsao). Na
+## Arena não há previsão: a luta simulada é longa demais para isso.
 func _atualizar_previsao() -> void:
-	if not estado.tem("previsao"):
-		_previsao = {}
-		return
 	if _previsao_tarefa >= 0 and WorkerThreadPool.is_task_completed(_previsao_tarefa):
 		WorkerThreadPool.wait_for_task_completion(_previsao_tarefa)
 		_previsao_tarefa = -1
@@ -1206,6 +1221,8 @@ func _atualizar_previsao() -> void:
 		var id := String(m["id"])
 		if String(m["efeito"]) in EFEITOS_PREVISAO and not estado.no_maximo(id):
 			for n in NIVEIS_PREVISAO:
+				if n > 1 and not estado.tem("previsao"):
+					continue
 				var extra := mini(int(n), int(m["max"]) - estado.nivel(id))
 				variantes["%s|%d" % [id, n]] = estado.participantes(dados, {id: extra})
 	var pista := estado.pista(dados)
@@ -1240,7 +1257,7 @@ func _texto_previsao(l: Label, m: Dictionary, base: float) -> void:
 	if com_um < antes:
 		l.text = "%dº › %dº" % [antes, com_um]
 		l.add_theme_color_override("font_color", COR_OURO)
-	elif com_tres < antes:
+	elif com_tres < antes and estado.tem("previsao"):
 		l.text = "+3 NÍVEIS: %dº" % com_tres
 		l.add_theme_color_override("font_color", IdleUI.COR_OURO_CLARO)
 	else:
@@ -1299,9 +1316,13 @@ func _checar_conversa() -> void:
 		return
 	if not (_aguardando or _pausa >= 0.0):
 		return
+	# Uma conversa por corrida: duas funções novas de uma vez se atropelam.
+	if estado.corridas == _conversa_em:
+		return
 	var d := estado.proxima_conversa()
 	if d.is_empty():
 		return
+	_conversa_em = estado.corridas
 	estado.oferecer(String(d["id"]))
 	estado.salvar(Time.get_unix_time_from_system())
 	_abrir_conversa(d)
