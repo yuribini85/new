@@ -41,6 +41,18 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   cartões #161B22 com borda cromada #3A4250, ações em ouro em relevo (#FFC53D→#F08A0C), vídeos em
   prata #C9CED6, renda em ouro claro #FFD873, verde #6FD08C só no ganho das melhorias, vermelho
   #E5484D só no alerta.
+- **O jogo cresce com o jogador** (pedido do usuário, 2026-10-24: "a pessoa precisa sentir que a
+  evolução acontece por causa dele"; um idle que já abre com tudo rodando sozinho parece não ter
+  propósito). Padrão do gênero (Cookie Clicker, A Dark Room): começar com quase nada, o toque
+  manual antes da automação, a interface que se revela aos poucos. Começo: vista de cima com os
+  carros em pontos, só o cartão do Motor, sem menu de baixo, cada corrida largada no toque
+  (LARGAR). Cada passo (`idle.json` → `desbloqueios`, na ordem) chega com a conversa de um
+  personagem do acervo (arte de corpo inteiro): Mara (abertura, pneus, vácuo), Bianca
+  (patrocínio e renda, arquibancada), Harold (largada automática, $150), Theo (ultrapassagem,
+  primeira vitória), Jade (menu PILOTOS), Roxy (transmissão na TV: a corrida 3D, $1,5 mil), Rico
+  (METAS), Edgar (PISTAS, quando abre o Turismo), Nora (analista: a previsão nos cartões, $6 mil),
+  Kenji (mais câmeras, $15 mil) e Dex (Arena). O que custa o jogador compra; DEPOIS guarda a
+  oferta no canto da corrida. Save de antes da escada abre o que a equipe já alcançou.
 - **Polimento (cruzamento com as críticas do gênero, aprovado pelo usuário em 2026-10-24):**
   - vídeo que não carrega ou falha ao abrir paga a recompensa igual (a queixa mais comum do Race
     Star é o vídeo que trava e não paga);

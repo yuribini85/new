@@ -15,6 +15,14 @@ var sombra := false
 ## Gira o traçado (múltiplos de 90°) para ocupar mais a tela. O minimapa não
 ## gira, para ficar na mesma orientação da vista 3D.
 var girar := true
+## Carros como pontos coloridos (o seu maior, com aro), sem sprite: a vista de
+## cima do começo do Chrome Racing Team, antes da transmissão.
+var pontos := false:
+	set(v):
+		pontos = v
+		if _carros != null:
+			_carros.visible = not v
+		queue_redraw()
 ## Depois da linha de chegada o carro segue rodando e freia, em vez de parar
 ## em cima da linha (a simulação para de mover quem terminou).
 const DESACELERACAO_CHEGADA := 9.0  # m/s²: para em poucos segundos, no escurecer do fim
@@ -284,6 +292,8 @@ func _posicionar() -> void:
 		sp.position = _tela(_pista.posicao_em(s))
 		sp.direcao = Iso.direcao(_pista.rumo_em(s) + _rotacao)
 		sp.rotulo = str(ordem_atual.find(id) + 1) if com_rotulos else ""
+	if pontos:
+		queue_redraw()
 
 
 func _draw() -> void:
@@ -297,6 +307,19 @@ func _draw() -> void:
 	var largada := _tela(_pista.posicao_em(0.0))
 	var normal := Iso.para_tela(Vector2.from_angle(_pista.rumo_em(0.0) + PI / 2.0 + _rotacao), 1.0).normalized() * largura * 0.5
 	draw_line(largada - normal, largada + normal, Color.WHITE, 3.0)
+	if pontos:
+		var r := clampf(largura * 0.32, 6.0, 14.0)
+		for id in _sprites:
+			if id == "jogador":
+				continue
+			var p := _tela(_pista.posicao_em(distancia(id)))
+			draw_circle(p, r, Color(0, 0, 0, 0.5))
+			draw_circle(p, r * 0.8, cor_de(id))
+		if _sprites.has("jogador"):
+			var eu := _tela(_pista.posicao_em(distancia("jogador")))
+			draw_circle(eu, r * 1.5, Color(0, 0, 0, 0.55))
+			draw_circle(eu, r * 1.3, Color.WHITE)
+			draw_circle(eu, r * 1.05, cor_de("jogador"))
 
 
 func _tela(p: Vector2) -> Vector2:

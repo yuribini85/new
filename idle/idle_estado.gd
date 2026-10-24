@@ -30,6 +30,10 @@ var salvo_em := 0.0  # unix (s), para a renda com o app fechado
 ## Metas do dia: {dia, tarefas: [ids], contagem: {tipo: n}, coletadas: [ids]}.
 var metas := {}
 var avisos_oferecidos := false  # a primeira liga nova já ligou os avisos
+## O jogo que cresce com o jogador (idle.json → desbloqueios): o que já abriu e
+## as conversas que já apareceram (oferta recusada fica no canto da corrida).
+var desbloqueados: Array = []
+var oferecidos: Array = []
 
 var liga: int:
 	get:
@@ -607,6 +611,92 @@ func coletar_meta(id: String, agora: float = Time.get_unix_time_from_system()) -
 	return v
 
 
+# --- desbloqueios ----------------------------------------------------------------
+# O jogo começa quase vazio (vista de cima, só o Motor, largada no toque) e cada
+# passo abre com a conversa de um personagem quando a condição se cumpre, na
+# ordem da lista. Sem "desbloqueios" na configuração, tudo está aberto.
+
+func cfg_desbloqueios() -> Array:
+	return cfg.get("desbloqueios", [])
+
+
+func desbloqueio(id: String) -> Dictionary:
+	for d in cfg_desbloqueios():
+		if String(d["id"]) == id:
+			return d
+	return {}
+
+
+## O jogo já tem `coisa` ("melhoria:pneus", "aba:pilotos", "renda",
+## "largada_auto", "camera_tv", "cameras", "previsao")?
+func tem(coisa: String) -> bool:
+	if cfg_desbloqueios().is_empty() or coisa in cfg.get("desbloqueio_inicial", []):
+		return true
+	for d in cfg_desbloqueios():
+		if String(d["id"]) in desbloqueados and coisa in d.get("libera", []):
+			return true
+	return false
+
+
+## Soma das ligas (índice) das modalidades abertas: quanto a equipe já subiu.
+func liga_total() -> int:
+	var n := 0
+	for id in liberadas():
+		n += int(_m(id)["liga"])
+	return n
+
+
+func condicao_ok(d: Dictionary) -> bool:
+	var q: Dictionary = d.get("quando", {})
+	if corridas < int(q.get("corridas", 0)) or liga_total() < int(q.get("liga_total", 0)):
+		return false
+	if q.has("modalidade") and not liberada(String(q["modalidade"])):
+		return false
+	if bool(q.get("vitoria", false)):
+		var ganhou := liga_total() > 0
+		for id in liberadas():
+			ganhou = ganhou or bool(_m(id)["venceu"])
+		if not ganhou:
+			return false
+	return true
+
+
+## A próxima conversa a mostrar: o primeiro item ainda não oferecido, se a
+## condição dele já se cumpriu (um de cada vez, na ordem da lista).
+func proxima_conversa() -> Dictionary:
+	for d in cfg_desbloqueios():
+		if String(d["id"]) in oferecidos:
+			continue
+		return d if condicao_ok(d) else {}
+	return {}
+
+
+## A conversa apareceu: o que é de graça abre na hora; o que tem custo vira
+## oferta até o jogador comprar.
+func oferecer(id: String) -> void:
+	if not id in oferecidos:
+		oferecidos.append(id)
+	if float(desbloqueio(id).get("custo", 0.0)) <= 0.0 and not id in desbloqueados:
+		desbloqueados.append(id)
+
+
+## Ofertas recusadas (DEPOIS), que esperam no canto da corrida.
+func ofertas_abertas() -> Array:
+	return cfg_desbloqueios().filter(func(d): return String(d["id"]) in oferecidos and not String(d["id"]) in desbloqueados)
+
+
+func comprar_desbloqueio(id: String) -> bool:
+	var d := desbloqueio(id)
+	var custo := float(d.get("custo", 0.0))
+	if d.is_empty() or id in desbloqueados or dinheiro < custo:
+		return false
+	dinheiro -= custo
+	desbloqueados.append(id)
+	if not id in oferecidos:
+		oferecidos.append(id)
+	return true
+
+
 static func posicao(resultado: Dictionary) -> int:
 	return Array(resultado["classificacao"]).find("jogador") + 1
 
@@ -617,7 +707,7 @@ func para_save() -> Dictionary:
 	return {"versao": 2, "dinheiro": dinheiro, "modalidade": modalidade, "mods": mods, "corridas": corridas,
 			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
-			"avisos_oferecidos": avisos_oferecidos}
+			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos}
 
 
 func de_save(s: Dictionary) -> void:
@@ -654,6 +744,14 @@ func de_save(s: Dictionary) -> void:
 	videos_dia = String(s.get("videos_dia", ""))
 	videos_usados = int(s.get("videos_usados", 0))
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
+	desbloqueados = Array(s.get("desbloqueados", [])).map(func(x): return String(x))
+	oferecidos = Array(s.get("oferecidos", [])).map(func(x): return String(x))
+	if not s.has("desbloqueados") and corridas > 0:
+		# Save de antes da escada: o que a equipe já alcançou vem aberto.
+		for d in cfg_desbloqueios():
+			if condicao_ok(d):
+				oferecidos.append(String(d["id"]))
+				desbloqueados.append(String(d["id"]))
 	var sm = s.get("metas", {})
 	metas = {}
 	if sm is Dictionary and sm.has("dia"):

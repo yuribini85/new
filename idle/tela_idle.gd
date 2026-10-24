@@ -13,6 +13,13 @@ extends Control
 ##   - METAS: as metas do dia (MetasIdle).
 ## A corrida roda sozinha, uma atrás da outra, também com as outras telas
 ## abertas (o 3D só desenha na CORRIDA).
+##
+## O jogo cresce com o jogador (idle.json → desbloqueios, IdleEstado.tem): no
+## começo, a vista de cima com os carros em pontos, só o cartão do Motor, sem
+## menu de baixo e a largada no toque (LARGAR). Cada passo chega com a conversa
+## de um personagem (ConversaIdle); os que custam ficam como oferta no canto da
+## corrida até o jogador pagar: a largada automática, a transmissão (a corrida
+## 3D), o analista (previsão nos cartões) e as câmeras.
 
 const COR_FUNDO := IdleUI.COR_FUNDO
 const COR_CARTAO := IdleUI.COR_CARTAO
@@ -102,6 +109,14 @@ var _aviso_t := 0.0
 var _coleta: PanelContainer
 var _coleta_t := 0.0
 var _config: Control
+var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocínio)
+var _trilho: Control  # as câmeras
+var _largar: Button
+var _aguardando := false  # carros no grid esperando o LARGAR
+var _conversa: ConversaIdle
+var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
+var _janela_aberta := false
+var _tv := true  # a transmissão (corrida 3D) já foi comprada
 
 
 func _ready() -> void:
@@ -183,6 +198,7 @@ func _montar() -> void:
 	_barra = BarraIdle.new(ABAS)
 	_barra.escolheu.connect(_abrir)
 	raiz.add_child(_barra)
+	_aplicar_desbloqueios()
 	_atualizar_cartoes()
 
 
@@ -215,6 +231,7 @@ func _topo(pai: Control) -> void:
 	var dir := VBoxContainer.new()
 	dir.alignment = BoxContainer.ALIGNMENT_CENTER
 	topo.add_child(dir)
+	_renda_caixa = dir
 	IdleUI.rotulo("RENDA", 18, IdleUI.COR_SECUNDARIA, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_renda = IdleUI.rotulo("", 34, COR_DINHEIRO, dir)
 	_renda.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -250,6 +267,10 @@ func _pagina_corrida() -> Control:
 	v.add_child(corrida)
 	_visual = CorridaVisual.new()
 	_visual.visible = false
+	_visual.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_visual.offset_top = 70  # abaixo da posição do painel
+	_visual.offset_bottom = -20
+	_visual.sombra = true
 	_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	corrida.add_child(_visual)
 	_visual3d = Corrida3D.new()
@@ -274,6 +295,7 @@ func _pagina_corrida() -> Control:
 	trilho.offset_bottom = -10
 	trilho.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	corrida.add_child(trilho)
+	_trilho = trilho
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 4)
 	trilho.add_child(h)
@@ -315,6 +337,24 @@ func _pagina_corrida() -> Control:
 	_dobrar.visible = false
 	_dobrar.pressed.connect(_dobrar_premio)
 	corrida.add_child(_dobrar)
+	# LARGAR: até a largada automática, cada corrida começa no toque.
+	_largar = BotaoInicio.new("Largar", true, COR_BOTAO, 40, 88, 320)
+	_largar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_largar.offset_left = -160
+	_largar.offset_right = 160
+	_largar.offset_top = -118
+	_largar.offset_bottom = -30
+	_largar.visible = false
+	_largar.pressed.connect(_largar_corrida)
+	corrida.add_child(_largar)
+	# Ofertas que o jogador deixou para depois, no canto de cima à direita.
+	_ofertas = VBoxContainer.new()
+	_ofertas.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_ofertas.offset_right = -10
+	_ofertas.offset_top = 10
+	_ofertas.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_ofertas.add_theme_constant_override("separation", 8)
+	corrida.add_child(_ofertas)
 	# Os cartões de melhoria, três por linha.
 	var grade := GridContainer.new()
 	grade.columns = 3
@@ -427,6 +467,9 @@ func _atualizar_topo(delta := 0.0) -> void:
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 28)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
+	# Com o LARGAR na tela, PRÓXIMA LIGA fica logo acima dele.
+	_subir.offset_top = -230.0 if _largar.visible else -170.0
+	_subir.offset_bottom = -142.0 if _largar.visible else -82.0
 	if _subir.visible and not Preferencias.reduzir_animacoes:
 		_subir.pivot_offset = _subir.size * 0.5
 		var k := 1.0 + 0.035 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.1)
@@ -440,7 +483,8 @@ func _nova_corrida() -> void:
 	_semente += 1
 	_resultado = estado.correr(dados, _semente + estado.corridas * 7919)
 	_na_arena = estado.e_arena()
-	_visual3d.visible = not _na_arena
+	_visual3d.visible = not _na_arena and _tv
+	_visual.visible = not _na_arena and not _tv
 	_arena3d.visible = _na_arena
 	_hud.so_eventos = _na_arena
 	var categorias := {}
@@ -488,8 +532,11 @@ func _nova_corrida() -> void:
 	_hud.limpar_evento()
 	_hud.secundario = 1.0
 	_contagem = CONTAGEM_S
-	_hud.contagem = _contagem
-	_sons.largada(false)
+	_aguardando = not estado.tem("largada_auto")
+	_largar.visible = _aguardando
+	_hud.contagem = -1.0 if _aguardando else _contagem
+	if not _aguardando:
+		_sons.largada(false)
 	_diretor.reiniciar()
 	_aplicar_camera()
 	_visual3d.destacar_jogador()  # o anel no seu carro (o dourado) na largada
@@ -544,6 +591,15 @@ func _dirigir() -> void:
 func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
 	_avisos(delta)
+	_checar_conversa()
+	if _aguardando or _conversa != null:
+		# Carros no grid (esperando o LARGAR) ou alguém falando: a corrida para.
+		_atualizar_topo(delta)
+		if _paginas["corrida"].visible:
+			_atualizar_cartoes()
+			if _tv and not _na_arena:
+				_visual3d.atualizar(delta)
+		return
 	if _na_arena:
 		_processo_arena(delta)
 		return
@@ -565,10 +621,12 @@ func _process(delta: float) -> void:
 	_visual3d.taxa = 0.0 if _contagem > 0.0 else 1.0
 	_dirigir()
 	var vendo: bool = _paginas["corrida"].visible
-	if vendo:  # nas outras telas a corrida segue, sem desenhar o 3D
+	if vendo and _tv:  # nas outras telas a corrida segue, sem desenhar o 3D
 		_visual3d.atualizar(delta)
 		var tela := _visual3d.posicao_tela(_visual3d.foco if _visual3d.foco != "" else "jogador")
 		_hud.ancora_carro = _hud.get_global_transform().affine_inverse() * tela if tela.x >= 0.0 else Vector2(-1, -1)
+	elif vendo:
+		_hud.ancora_carro = Vector2(-1, -1)
 	var ordem := _visual.ordem()
 	_atualizar_hud(ordem)
 	_eventos(ordem)
@@ -793,6 +851,7 @@ func _intersticial_da_liga() -> void:
 ## Liga nova: o banner da pista, o nome da liga e o carro novo da equipe; se a
 ## liga abriu outra modalidade, ela vem junto.
 func _janela_liga() -> void:
+	_janela_aberta = true
 	var fundo := ColorRect.new()
 	fundo.color = Color(0, 0, 0, 0.75)
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -827,6 +886,7 @@ func _janela_liga() -> void:
 	var ok := BotaoInicio.new("Correr", true, COR_BOTAO, 40, 88, 360)
 	ok.pressed.connect(func():
 		fundo.queue_free()
+		_janela_aberta = false
 		_oferecer_avisos()
 		_intersticial_da_liga())
 	v.add_child(ok)
@@ -1051,6 +1111,9 @@ func _chave_previsao() -> String:
 ## Recalcula numa thread quando a chave muda. Na Arena não há previsão: a luta
 ## simulada é longa demais para isso.
 func _atualizar_previsao() -> void:
+	if not estado.tem("previsao"):
+		_previsao = {}
+		return
 	if _previsao_tarefa >= 0 and WorkerThreadPool.is_task_completed(_previsao_tarefa):
 		WorkerThreadPool.wait_for_task_completion(_previsao_tarefa)
 		_previsao_tarefa = -1
@@ -1122,3 +1185,100 @@ func _texto_previsao(l: Label, m: Dictionary, base: float) -> void:
 func _exit_tree() -> void:
 	if _previsao_tarefa >= 0:
 		WorkerThreadPool.wait_for_task_completion(_previsao_tarefa)
+
+
+# --- o jogo que cresce com o jogador ------------------------------------------------
+
+## Mostra só o que a equipe já tem: cartões, renda, menu de baixo, vista (pontos
+## ou TV), câmeras e as ofertas guardadas.
+func _aplicar_desbloqueios() -> void:
+	for m in estado.cfg["melhorias"]:
+		_cartoes[m["id"]]["cartao"].visible = estado.tem("melhoria:" + String(m["id"]))
+	_renda_caixa.visible = estado.tem("renda")
+	var abas := ABAS.filter(func(a): return a["id"] == "corrida" or estado.tem("aba:" + String(a["id"])))
+	_barra.definir_abas(abas)
+	_barra.visible = abas.size() > 1
+	if not abas.any(func(a): return _paginas[a["id"]].visible):
+		_abrir("corrida")
+	_tv = estado.tem("camera_tv")
+	_visual.pontos = not _tv
+	_visual.com_rotulos = false
+	_visual.visible = not _na_arena and not _tv
+	_visual3d.visible = not _na_arena and _tv
+	_trilho.visible = estado.tem("cameras")
+	if not _trilho.visible and _camera_modo != "auto":
+		_camera_modo = "auto"  # a TV: a direção escolhe o plano
+		_marcar_camera()
+		_diretor.reiniciar()
+	_aplicar_camera()
+	if _aguardando and estado.tem("largada_auto"):
+		_largar_corrida()
+	_atualizar_ofertas()
+
+
+func _largar_corrida() -> void:
+	if not _aguardando:
+		return
+	_aguardando = false
+	_largar.visible = false
+	_hud.contagem = _contagem
+	_sons.largada(false)
+
+
+## A próxima conversa da escada, quando nada mais está na frente e a corrida
+## está parada (grid ou depois da chegada).
+func _checar_conversa() -> void:
+	if _conversa != null or _janela_aberta or _config != null:
+		return
+	if not (_aguardando or _pausa >= 0.0):
+		return
+	var d := estado.proxima_conversa()
+	if d.is_empty():
+		return
+	estado.oferecer(String(d["id"]))
+	estado.salvar(Time.get_unix_time_from_system())
+	_abrir_conversa(d)
+
+
+func _abrir_conversa(d: Dictionary) -> void:
+	_conversa = ConversaIdle.new(d, estado)
+	add_child(_conversa)
+	_conversa.fechou.connect(func(aceitou: bool):
+		_conversa = null
+		var id := String(d["id"])
+		var custo := float(d.get("custo", 0.0))
+		if custo > 0.0 and aceitou and estado.comprar_desbloqueio(id):
+			Sons.tocar_ui(self, "moeda", -4.0)
+			celebrar(true)
+		elif custo <= 0.0 and not d.get("libera", []).is_empty():
+			celebrar(false)
+		for coisa in d.get("libera", []):
+			if String(coisa).begins_with("aba:"):
+				_barra.avisar(String(coisa).trim_prefix("aba:"), true)
+		_aplicar_desbloqueios()
+		estado.salvar(Time.get_unix_time_from_system()))
+
+
+## As ofertas guardadas (DEPOIS): um botão por oferta, com o ícone, o nome e o
+## preço; tocar abre a conversa de novo.
+func _atualizar_ofertas() -> void:
+	for c in _ofertas.get_children():
+		c.queue_free()
+	for d in estado.ofertas_abertas():
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.text = "%s  $%s" % [String(d.get("oferta", "")), curto(float(d.get("custo", 0.0)))]
+		b.icon = Aba.icone_reduzido(String(d.get("icone", "icone_ofertas")), 28)
+		Tipografia.rotulo(b, "semibold", 18)
+		for st in ["normal", "hover", "pressed"]:
+			b.add_theme_stylebox_override(st, IdleUI.caixa(Color(IdleUI.COR_FUNDO, 0.85), 12, 8, COR_OURO, 2))
+		for c in ["font_color", "font_hover_color", "font_pressed_color"]:
+			b.add_theme_color_override(c, COR_OURO)
+		b.pressed.connect(func():
+			if _conversa == null:
+				_abrir_conversa(d))
+		_ofertas.add_child(b)
+		if not Preferencias.reduzir_animacoes:
+			var tw := b.create_tween().set_loops()
+			tw.tween_property(b, "modulate", Color(1.25, 1.25, 1.25), 0.8).set_trans(Tween.TRANS_SINE)
+			tw.tween_property(b, "modulate", Color.WHITE, 0.8).set_trans(Tween.TRANS_SINE)

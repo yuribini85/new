@@ -2,11 +2,15 @@ extends SceneTree
 ## Fotos da tela do Chrome Racing Team (docs/idle/plano.md), como o jogador vê.
 ## Uso (precisa de tela: xvfb-run): godot --resolution 405x720 --script res://tools/fotos_idle.gd -- --saida=/pasta/
 ##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abas=corrida,pistas,pilotos]
-##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena]
+##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena] [--novo]
+##   [--corridas=0] [--abrir=pneus,patrocinio] [--ofertas=transmissao]
 ## --abas: uma foto de cada tela depois dos segundos ("config": a engrenagem); --contratos: pilotos a
 ## mais no elenco; --abertas: quantas modalidades abertas (as anteriores na
 ## liga que abre a próxima); --nova_liga: a janela de liga nova na última foto;
 ## --fora_h: horas com o app fechado (mostra a faixa da renda).
+## Sem --novo, a escada de desbloqueios vem toda aberta; com --novo, o começo do
+## jogo (vista de cima, só o Motor, LARGAR), mais os passos de --abrir; --corridas
+## põe corridas no total (a próxima conversa aparece se a condição dela cumprir).
 
 func _initialize() -> void:
 	_rodar.call_deferred()
@@ -23,6 +27,10 @@ func _rodar() -> void:
 	var nova_liga := false
 	var fora_h := 0.0
 	var modalidade := ""
+	var novo := false
+	var corridas := 0
+	var abrir := []
+	var ofertas := []
 	for arg in OS.get_cmdline_user_args():
 		var kv := arg.trim_prefix("--").split("=")
 		match kv[0]:
@@ -36,6 +44,10 @@ func _rodar() -> void:
 			"nova_liga": nova_liga = true
 			"fora_h": fora_h = float(kv[1])
 			"modalidade": modalidade = kv[1]
+			"novo": novo = true
+			"corridas": corridas = int(kv[1])
+			"abrir": abrir = Array(kv[1].split(","))
+			"ofertas": ofertas = Array(kv[1].split(","))
 	DirAccess.make_dir_recursive_absolute(saida)
 	var dados: Node = root.get_node("Dados")
 	# Save de partida: modalidades abertas, pilotos e o tempo fora.
@@ -54,6 +66,14 @@ func _rodar() -> void:
 	e.dinheiro = dinheiro
 	for i in contratos:
 		e.contratar(dados, 100 + i)
+	e.corridas = corridas
+	for d in e.cfg_desbloqueios():
+		var id := String(d["id"])
+		if not novo or id in abrir:
+			e.oferecidos.append(id)
+			e.desbloqueados.append(id)
+		elif id in ofertas:
+			e.oferecidos.append(id)
 	e.salvar(agora - fora_h * 3600.0)
 	var tela: Control = load("res://idle/idle.tscn").instantiate()
 	root.add_child(tela)

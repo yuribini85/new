@@ -22,12 +22,20 @@ var _texturas := {}
 
 
 func _init(abas_: Array) -> void:
-	abas = abas_
-	ativa = String(abas[0]["id"]) if not abas.is_empty() else ""
 	custom_minimum_size = Vector2(0, ALTURA + AreaSegura.base(720.0))
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	definir_abas(abas_)
+
+
+## Troca as abas (o menu cresce conforme o jogo abre telas novas).
+func definir_abas(abas_: Array) -> void:
+	abas = abas_
+	if abas.filter(func(a): return String(a["id"]) == ativa).is_empty():
+		ativa = String(abas[0]["id"]) if not abas.is_empty() else ""
 	for a in abas:
-		_texturas[a["icone"]] = Aba.icone_reduzido(String(a["icone"]), ICONE_ATIVO)
+		if not _texturas.has(a["icone"]):
+			_texturas[a["icone"]] = Aba.icone_reduzido(String(a["icone"]), ICONE_ATIVO)
+	queue_redraw()
 
 
 func escolher(id: String) -> void:

@@ -214,3 +214,42 @@ func test_video_sem_anuncio_paga_igual() -> void:
 	a.premiado(func(): pago[0] = true)
 	verificar(pago[0], "sem vídeo para mostrar, a recompensa sai")
 	a.free()
+
+
+func test_escada_de_desbloqueios() -> void:
+	var c := _cfg_mods()
+	c["desbloqueio_inicial"] = ["melhoria:motor"]
+	c["desbloqueios"] = [
+		{"id": "inicio", "quando": {}, "libera": []},
+		{"id": "pneus", "quando": {"corridas": 2}, "libera": ["melhoria:pneus"]},
+		{"id": "tv", "quando": {"corridas": 3}, "custo": 50, "libera": ["camera_tv"]},
+		{"id": "vit", "quando": {"vitoria": true}, "libera": ["aba:pilotos"]}]
+	var e := IdleEstado.new(c)
+	verificar(e.tem("melhoria:motor") and not e.tem("melhoria:pneus") and not e.tem("camera_tv"), "começa só com o motor")
+	igual(String(e.proxima_conversa().get("id", "")), "inicio", "primeira conversa")
+	e.oferecer("inicio")
+	verificar(e.proxima_conversa().is_empty(), "pneus só com 2 corridas")
+	e.corridas = 3
+	igual(String(e.proxima_conversa()["id"]), "pneus", "na ordem da lista")
+	e.oferecer("pneus")
+	verificar(e.tem("melhoria:pneus"), "de graça abre na conversa")
+	e.oferecer("tv")
+	verificar(not e.tem("camera_tv") and e.ofertas_abertas().size() == 1, "com custo vira oferta")
+	e.dinheiro = 10.0
+	verificar(not e.comprar_desbloqueio("tv"), "sem dinheiro não compra")
+	e.dinheiro = 60.0
+	verificar(e.comprar_desbloqueio("tv") and e.tem("camera_tv") and e.dinheiro == 10.0, "compra a oferta")
+	verificar(e.proxima_conversa().is_empty(), "vitória ainda não veio")
+	e.venceu = true
+	igual(String(e.proxima_conversa()["id"]), "vit", "primeira vitória")
+	var s := IdleEstado.new(c)
+	s.de_save(JSON.parse_string(JSON.stringify(e.para_save())))
+	verificar(s.tem("camera_tv") and s.tem("melhoria:pneus") and "inicio" in s.oferecidos, "save guarda a escada")
+	# Save de antes da escada: o que a equipe já alcançou vem aberto.
+	var velho := e.para_save()
+	velho.erase("desbloqueados")
+	velho.erase("oferecidos")
+	var m := IdleEstado.new(c)
+	m.de_save(JSON.parse_string(JSON.stringify(velho)))
+	verificar(m.tem("camera_tv") and m.tem("aba:pilotos"), "save antigo abre o alcançado")
+	verificar(IdleEstado.new(_cfg()).tem("cameras"), "sem escada na configuração, tudo aberto")
