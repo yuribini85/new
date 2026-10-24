@@ -3,30 +3,118 @@ extends RefCounted
 ## Chrome Racing Team (docs/idle/plano.md): o estado do jogo idle e as regras,
 ## sem tela. A corrida é a Simulacao do Chrome & Wreckage; os números vêm de
 ## data/idle/idle.json.
+##
+## Cinco modalidades (Compactos, Turismo, GT, Terra, Arena), cada uma com a
+## categoria de carro, as pistas e a escada de ligas dela, liberadas uma a uma
+## e rendendo ao mesmo tempo. O dinheiro é um só; a liga e os níveis das
+## melhorias são de cada modalidade. `liga`, `venceu` e `niveis` são os da
+## modalidade na tela (`modalidade`). Pilotos do Chrome & Wreckage chegam por
+## contrato; dois do mesmo nível fundem num nível acima; cada modalidade escala
+## um.
 
 const ARQUIVO_CONFIG := "res://data/idle/idle.json"
 const ARQUIVO_SAVE := "user://crt.json"
 
 var cfg: Dictionary
 var dinheiro := 0.0
-var niveis := {}  # melhoria -> nível
-var liga := 0
-var venceu := false  # já venceu nesta liga (libera PRÓXIMA LIGA)
-var corridas := 0
+var modalidade := ""  # a modalidade na tela
+var mods := {}  # modalidade -> {liga, venceu, niveis: {melhoria: nível}, corridas}
+var corridas := 0  # total, todas as modalidades
+var pilotos: Array = []  # [{uid, id, nivel}]; id = piloto de data/equipes.json
+var escalados := {}  # modalidade -> uid do piloto
+var proximo_uid := 1
+var contrato_em := 0.0  # unix (s): quando o próximo contrato grátis fica pronto
+var videos_dia := ""  # dia (AAAA-MM-DD) dos contratos por vídeo contados
+var videos_usados := 0
 var salvo_em := 0.0  # unix (s), para a renda com o app fechado
+
+var liga: int:
+	get:
+		return int(_m()["liga"])
+	set(v):
+		_m()["liga"] = v
+var venceu: bool:
+	get:
+		return bool(_m()["venceu"])
+	set(v):
+		_m()["venceu"] = v
+var niveis: Dictionary:
+	get:
+		return _m()["niveis"]
 
 
 static func config() -> Dictionary:
 	var f := FileAccess.open(ARQUIVO_CONFIG, FileAccess.READ)
-	return JSON.parse_string(f.get_as_text()) if f != null else {}
+	return IdleEstado._normalizar(JSON.parse_string(f.get_as_text()) if f != null else {})
+
+
+## Configuração antiga (uma escada de "ligas" só) vira uma modalidade única.
+static func _normalizar(c: Dictionary) -> Dictionary:
+	if c.has("ligas") and not c.has("modalidades"):
+		c = c.duplicate(true)
+		c["modalidades"] = [{"id": "unica", "nome": "", "ligas": c["ligas"]}]
+		c.erase("ligas")
+	return c
 
 
 func _init(config_: Dictionary = {}) -> void:
-	cfg = config_ if not config_.is_empty() else IdleEstado.config()
+	cfg = IdleEstado._normalizar(config_) if not config_.is_empty() else IdleEstado.config()
 	dinheiro = float(cfg.get("dinheiro_inicial", 0.0))
-	for m in cfg["melhorias"]:
-		niveis[m["id"]] = 0
+	modalidade = String(cfg["modalidades"][0]["id"])
+	_m()
 
+
+## Estado da modalidade `id` (a da tela sem `id`), criado na primeira vez.
+func _m(id := "") -> Dictionary:
+	var k := id if id != "" else modalidade
+	if not mods.has(k):
+		var n := {}
+		for m in cfg["melhorias"]:
+			n[m["id"]] = 0
+		mods[k] = {"liga": 0, "venceu": false, "niveis": n, "corridas": 0}
+	return mods[k]
+
+
+# --- modalidades ----------------------------------------------------------------
+
+func dados_modalidade(id := "") -> Dictionary:
+	var k := id if id != "" else modalidade
+	for m in cfg["modalidades"]:
+		if m["id"] == k:
+			return m
+	return {}
+
+
+## A modalidade já abriu? A primeira sempre; as outras quando a anterior chega
+## à liga de "libera".
+func liberada(id: String) -> bool:
+	var m := dados_modalidade(id)
+	if m.is_empty():
+		return false
+	var lib: Dictionary = m.get("libera", {})
+	if lib.is_empty():
+		return true
+	var antes := String(lib["modalidade"])
+	return liberada(antes) and mods.has(antes) and int(mods[antes]["liga"]) >= int(lib["liga"])
+
+
+func liberadas() -> Array:
+	var r := []
+	for m in cfg["modalidades"]:
+		if liberada(String(m["id"])):
+			r.append(String(m["id"]))
+	return r
+
+
+func trocar_modalidade(id: String) -> bool:
+	if not liberada(id):
+		return false
+	modalidade = id
+	_m()
+	return true
+
+
+# --- melhorias ------------------------------------------------------------------
 
 func melhoria(id: String) -> Dictionary:
 	for m in cfg["melhorias"]:
@@ -35,8 +123,8 @@ func melhoria(id: String) -> Dictionary:
 	return {}
 
 
-func nivel(id: String) -> int:
-	return int(niveis.get(id, 0))
+func nivel(id: String, mod := "") -> int:
+	return int(_m(mod)["niveis"].get(id, 0))
 
 
 func no_maximo(id: String) -> bool:
@@ -44,7 +132,7 @@ func no_maximo(id: String) -> bool:
 
 
 ## Custo do próximo nível: base × crescimento^nível × multiplicador da liga^expoente_custo_liga
-## (um pouco acima de 1: cada liga pede mais tempo que a anterior).
+## (acima de 1: cada liga pede mais tempo que a anterior).
 func custo(id: String) -> float:
 	var m := melhoria(id)
 	return roundf(float(m["base"]) * pow(float(m["crescimento"]), nivel(id))
@@ -63,26 +151,37 @@ func comprar(id: String) -> bool:
 	return true
 
 
-## Soma dos efeitos de um tipo ("potencia", "renda"...) nos níveis comprados.
-func efeito(tipo: String, niveis_extra := {}) -> float:
+## Soma dos efeitos de um tipo ("potencia", "renda"...) nos níveis comprados da
+## modalidade `mod` (a da tela sem `mod`).
+func efeito(tipo: String, niveis_extra := {}, mod := "") -> float:
 	var total := 0.0
 	for m in cfg["melhorias"]:
 		if m["efeito"] == tipo:
-			total += float(m["por_nivel"]) * (nivel(m["id"]) + int(niveis_extra.get(m["id"], 0)))
+			total += float(m["por_nivel"]) * (nivel(m["id"], mod) + int(niveis_extra.get(m["id"], 0)))
 	return total
 
 
-func dados_liga() -> Dictionary:
-	return cfg["ligas"][liga]
+# --- ligas, prêmios e renda -----------------------------------------------------
+
+func dados_liga(mod := "") -> Dictionary:
+	return dados_modalidade(mod)["ligas"][int(_m(mod)["liga"])]
 
 
 func ultima_liga() -> bool:
-	return liga >= cfg["ligas"].size() - 1
+	return liga >= dados_modalidade()["ligas"].size() - 1
 
 
-## Renda por segundo (patrocínio e arquibancada), no tamanho da liga.
+## Renda por segundo: patrocínio e arquibancada de cada modalidade aberta, no
+## tamanho da liga dela.
 func renda_s() -> float:
-	return (float(cfg.get("renda_base", 0.0)) + efeito("renda")) * float(dados_liga()["multiplicador"])
+	var total := 0.0
+	for id in liberadas():
+		total += renda_modalidade(id)
+	return total
+
+
+func renda_modalidade(id: String) -> float:
+	return (float(cfg.get("renda_base", 0.0)) + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"])
 
 
 ## Prêmio da posição `pos` (1 = vitória) na liga atual.
@@ -96,6 +195,7 @@ func concluir(pos: int, fator := 1.0) -> float:
 	var p := premio(pos) * fator
 	dinheiro += p
 	corridas += 1
+	_m()["corridas"] = int(_m()["corridas"]) + 1
 	if pos == 1:
 		venceu = true
 	return p
@@ -125,10 +225,140 @@ func ganho_offline(agora: float) -> float:
 	return renda_s() * dt
 
 
-## Carros da frota ordenados pela distância em potência de `alvo` (só os que
-## têm preço: modelos de loja).
-static func _perto_de(dados: Node, alvo: float) -> Array:
-	var lista: Array = dados.lista("carros").filter(func(c): return c.get("preco") != null)
+# --- pilotos --------------------------------------------------------------------
+
+func cfg_pilotos() -> Dictionary:
+	return cfg.get("pilotos", {})
+
+
+## Pilotos que um contrato pode trazer: os das equipes do Chrome & Wreckage.
+static func pilotos_disponiveis(dados: Node) -> Array:
+	var r := []
+	for e in dados.lista("equipes"):
+		for p in e.get("pilotos", []):
+			r.append(p)
+	return r
+
+
+static func dados_piloto(dados: Node, id: String) -> Dictionary:
+	for p in IdleEstado.pilotos_disponiveis(dados):
+		if String(p["id"]) == id:
+			return p
+	return {}
+
+
+func piloto(uid: int) -> Dictionary:
+	for p in pilotos:
+		if int(p["uid"]) == uid:
+			return p
+	return {}
+
+
+## O piloto escalado na modalidade ({} sem piloto).
+func piloto_escalado(mod := "") -> Dictionary:
+	return piloto(int(escalados.get(mod if mod != "" else modalidade, -1)))
+
+
+func escalar(mod: String, uid: int) -> void:
+	for k in escalados.keys():
+		if int(escalados[k]) == uid:
+			escalados.erase(k)
+	escalados[mod] = uid
+
+
+## Um contrato: um piloto no nível 1, sorteado com `semente`. Sem piloto na
+## modalidade da tela, ele já entra nela.
+func contratar(dados: Node, semente: int) -> Dictionary:
+	var todos := IdleEstado.pilotos_disponiveis(dados)
+	if todos.is_empty():
+		return {}
+	var rng := RandomNumberGenerator.new()
+	rng.seed = semente
+	var p := {"uid": proximo_uid, "id": String(todos[rng.randi() % todos.size()]["id"]), "nivel": 1}
+	proximo_uid += 1
+	pilotos.append(p)
+	if piloto_escalado().is_empty():
+		escalar(modalidade, int(p["uid"]))
+	return p
+
+
+## Contrato grátis pronto agora (`agora`, unix)?
+func contrato_gratis_pronto(agora: float) -> bool:
+	return agora >= contrato_em
+
+
+func usar_contrato_gratis(dados: Node, agora: float) -> Dictionary:
+	if not contrato_gratis_pronto(agora):
+		return {}
+	contrato_em = agora + float(cfg_pilotos().get("contrato_gratis_h", 4.0)) * 3600.0
+	return contratar(dados, int(agora))
+
+
+## Contratos por vídeo que ainda restam hoje (`dia`: AAAA-MM-DD).
+func contratos_video_restantes(dia: String) -> int:
+	var usados := videos_usados if videos_dia == dia else 0
+	return maxi(int(cfg_pilotos().get("contratos_video_dia", 0)) - usados, 0)
+
+
+func usar_contrato_video(dados: Node, dia: String, semente: int) -> Dictionary:
+	if contratos_video_restantes(dia) <= 0:
+		return {}
+	if videos_dia != dia:
+		videos_dia = dia
+		videos_usados = 0
+	videos_usados += 1
+	return contratar(dados, semente)
+
+
+## Dois pilotos do mesmo nível fundem: `fica` sobe um nível e `sai` deixa a
+## equipe (a escalação de `sai` passa para `fica`, se ele estava livre).
+func pode_fundir(fica: int, sai: int) -> bool:
+	var a := piloto(fica)
+	var b := piloto(sai)
+	return fica != sai and not a.is_empty() and not b.is_empty() and int(a["nivel"]) == int(b["nivel"]) \
+			and int(a["nivel"]) < int(cfg_pilotos().get("nivel_max", 1))
+
+
+func fundir(fica: int, sai: int) -> bool:
+	if not pode_fundir(fica, sai):
+		return false
+	var a := piloto(fica)
+	a["nivel"] = int(a["nivel"]) + 1
+	var mod_sai := ""
+	for k in escalados.keys():
+		if int(escalados[k]) == sai:
+			mod_sai = k
+	pilotos.erase(piloto(sai))
+	if mod_sai != "":
+		escalados.erase(mod_sai)
+		if not escalados.values().has(fica):
+			escalados[mod_sai] = fica
+	return true
+
+
+## Atributos de corrida do piloto: a base, o perfil dele (agressivo,
+## equilibrado, cauteloso, como no Chrome & Wreckage) e o ritmo do nível.
+func atributos_piloto(dados: Node, p: Dictionary) -> Dictionary:
+	var cp := cfg_pilotos()
+	var base: Dictionary = cp.get("base", cfg.get("piloto", {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.5}))
+	var r := {"ritmo": float(base["ritmo"]), "consistencia": float(base["consistencia"]),
+			"agressividade": float(base["agressividade"])}
+	if p.is_empty():
+		return r
+	var perfil: Dictionary = cp.get("perfis", {}).get(String(IdleEstado.dados_piloto(dados, String(p["id"])).get("perfil", "")), {})
+	r["agressividade"] += float(perfil.get("agressividade", 0.0))
+	r["consistencia"] += float(perfil.get("consistencia", 0.0))
+	r["ritmo"] += float(cp.get("ritmo_por_nivel", 0.0)) * (int(p["nivel"]) - 1)
+	return r
+
+
+# --- grid e corrida -------------------------------------------------------------
+
+## Carros da frota das `categorias` (todas sem lista), ordenados pela distância
+## em potência de `alvo` (só os que têm preço: modelos de loja).
+static func _perto_de(dados: Node, alvo: float, categorias: Array = []) -> Array:
+	var lista: Array = dados.lista("carros").filter(func(c): return c.get("preco") != null \
+			and (categorias.is_empty() or categorias.has(c.get("categoria"))))
 	lista.sort_custom(func(a, b):
 		var da := absf(log(float(a["potencia"]) / alvo))
 		var db := absf(log(float(b["potencia"]) / alvo))
@@ -136,14 +366,20 @@ static func _perto_de(dados: Node, alvo: float) -> Array:
 	return lista
 
 
-## O carro da equipe nesta liga (decisão: um carro novo a cada liga).
+func _categorias() -> Array:
+	return dados_modalidade().get("categorias", [])
+
+
+## O carro da equipe nesta liga (decisão: um carro novo a cada liga), da
+## categoria da modalidade.
 func carro_base(dados: Node) -> Dictionary:
-	return IdleEstado._perto_de(dados, float(dados_liga()["potencia"]) * float(cfg["carro_do_jogador"]))[0]
+	return IdleEstado._perto_de(dados, float(dados_liga()["potencia"]) * float(cfg["carro_do_jogador"]), _categorias())[0]
 
 
 ## Pilotos e equipes dos rivais da liga (as equipes rivais do Chrome &
 ## Wreckage, data/equipes.json): [{nome, equipe, vaga}] na ordem de rivais(),
-## fixos por liga (no Race Star você enfrenta os mesmos rivais até subir).
+## fixos por modalidade e liga (no Race Star você enfrenta os mesmos rivais até
+## subir).
 func escalacao(dados: Node) -> Array:
 	var equipes := []
 	for e in dados.lista("equipes"):
@@ -152,23 +388,29 @@ func escalacao(dados: Node) -> Array:
 	var r := []
 	if equipes.is_empty():
 		return r
+	var k_mod := 0
+	for i in cfg["modalidades"].size():
+		if cfg["modalidades"][i]["id"] == modalidade:
+			k_mod = i
+	var l := liga + k_mod * 3
 	for k in int(cfg["grid"]) - 1:
 		# Passo primo com a lista: equipes diferentes no mesmo grid.
-		var eq: Dictionary = equipes[(liga * 5 + k * 7) % equipes.size()]
-		var pilotos: Array = eq["pilotos"]
-		var vaga := (liga + k) % pilotos.size()
-		r.append({"nome": String(pilotos[vaga]["nome"]), "equipe": eq, "vaga": vaga})
+		var eq: Dictionary = equipes[(l * 5 + k * 7) % equipes.size()]
+		var lista: Array = eq["pilotos"]
+		var vaga := (l + k) % lista.size()
+		r.append({"nome": String(lista[vaga]["nome"]), "equipe": eq, "vaga": vaga})
 	return r
 
 
 ## Força do rival `k` (0 = o mais forte, na frente do grid) em relação ao
 ## carro da liga: de (1 + espalhar) a (1 - espalhar), para cada melhoria render
 ## posições aos poucos (no Race Star você sobe um a um), vezes a forca_rivais da
-## liga (acerta a pista: com poucas retas é mais difícil passar).
+## pista na modalidade (acerta a pista: com poucas retas é mais difícil passar).
 func fator_rival(k: int) -> float:
 	var n := int(cfg["grid"]) - 1
-	return float(dados_liga().get("forca_rivais", 1.0)) * (1.0 + float(cfg["rivais"].get("espalhar", 0.0))
-			* (1.0 - 2.0 * k / maxf(n - 1, 1)))
+	var forca := float(dados_liga().get("forca_rivais",
+			dados_modalidade().get("forca_rivais", {}).get(String(dados_liga()["pista"]), 1.0)))
+	return forca * (1.0 + float(cfg["rivais"].get("espalhar", 0.0)) * (1.0 - 2.0 * k / maxf(n - 1, 1)))
 
 
 ## Os modelos dos rivais da liga (só a aparência: a ficha de corrida sai do
@@ -179,7 +421,7 @@ func rivais(dados: Node) -> Array:
 	var r := []
 	for k in n:
 		var alvo := float(dados_liga()["potencia"]) * fator_rival(k)
-		for c in IdleEstado._perto_de(dados, alvo):
+		for c in IdleEstado._perto_de(dados, alvo, _categorias()):
 			if not usados.has(String(c["id"])):
 				usados[String(c["id"])] = true
 				r.append(c)
@@ -194,11 +436,11 @@ static func _atributos(dados: Node, base: Dictionary) -> Dictionary:
 
 
 ## Participantes da Simulacao: os rivais na frente, você em último (como no
-## Race Star); as melhorias no seu carro e no seu piloto. A ficha de cada
-## rival é a do carro da equipe com a potência × fator_rival (e a aderência
-## na proporção aderencia_por_forca, como Pneus × Motor): a dificuldade
-## de cada liga fica igual, sem depender do peso e da aderência de cada
-## modelo da frota. `niveis_extra` simula níveis a mais (calibrador).
+## Race Star); as melhorias no seu carro e o seu piloto escalado. A ficha de
+## cada rival é a do carro da equipe com a potência × fator_rival (e a aderência
+## na proporção aderencia_por_forca, como Pneus × Motor): a dificuldade de cada
+## liga fica igual, sem depender do peso e da aderência de cada modelo da
+## frota. `niveis_extra` simula níveis a mais (calibrador).
 func participantes(dados: Node, niveis_extra := {}) -> Array:
 	var r := []
 	var pr: Dictionary = cfg["rivais"]
@@ -213,9 +455,9 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 	var base: Dictionary = carro_base(dados).duplicate(true)
 	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra))
 	base["aderencia"] = float(base["aderencia"]) * (1.0 + efeito("aderencia", niveis_extra))
-	var pj: Dictionary = cfg["piloto"]
+	var pj := atributos_piloto(dados, piloto_escalado())
 	r.append({"id": "jogador", "carro": carro_base(dados)["id"], "atributos": IdleEstado._atributos(dados, base),
-			"piloto": {"ritmo": pj["ritmo"], "consistencia": pj["consistencia"],
+			"piloto": {"ritmo": pj["ritmo"], "consistencia": clampf(pj["consistencia"], 0.0, 1.0),
 				"agressividade": clampf(float(pj["agressividade"]) + efeito("agressividade", niveis_extra), 0.0, 1.0),
 				"vacuo": efeito("vacuo", niveis_extra)}})
 	return r
@@ -242,20 +484,47 @@ static func posicao(resultado: Dictionary) -> int:
 	return Array(resultado["classificacao"]).find("jogador") + 1
 
 
+# --- salvar ---------------------------------------------------------------------
+
 func para_save() -> Dictionary:
-	return {"dinheiro": dinheiro, "niveis": niveis, "liga": liga, "venceu": venceu, "corridas": corridas,
-			"salvo_em": salvo_em}
+	return {"versao": 2, "dinheiro": dinheiro, "modalidade": modalidade, "mods": mods, "corridas": corridas,
+			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
+			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em}
 
 
 func de_save(s: Dictionary) -> void:
 	dinheiro = float(s.get("dinheiro", dinheiro))
-	for id in s.get("niveis", {}):
-		if niveis.has(id):
-			niveis[id] = int(s["niveis"][id])
-	liga = clampi(int(s.get("liga", 0)), 0, cfg["ligas"].size() - 1)
-	venceu = bool(s.get("venceu", false))
 	corridas = int(s.get("corridas", 0))
 	salvo_em = float(s.get("salvo_em", 0.0))
+	var salvos: Dictionary = s.get("mods", {})
+	if not s.has("mods"):
+		# Save da versão de uma modalidade só: vira a primeira.
+		salvos = {String(cfg["modalidades"][0]["id"]): {"liga": s.get("liga", 0), "venceu": s.get("venceu", false),
+				"niveis": s.get("niveis", {}), "corridas": s.get("corridas", 0)}}
+	for id in salvos:
+		if dados_modalidade(String(id)).is_empty():
+			continue
+		var m := _m(String(id))
+		var sm: Dictionary = salvos[id]
+		m["liga"] = clampi(int(sm.get("liga", 0)), 0, dados_modalidade(String(id))["ligas"].size() - 1)
+		m["venceu"] = bool(sm.get("venceu", false))
+		m["corridas"] = int(sm.get("corridas", 0))
+		for k in sm.get("niveis", {}):
+			if m["niveis"].has(k):
+				m["niveis"][k] = int(sm["niveis"][k])
+	var mod := String(s.get("modalidade", modalidade))
+	if liberada(mod):
+		modalidade = mod
+	pilotos = []
+	for p in s.get("pilotos", []):
+		pilotos.append({"uid": int(p["uid"]), "id": String(p["id"]), "nivel": int(p["nivel"])})
+	escalados = {}
+	for k in s.get("escalados", {}):
+		escalados[String(k)] = int(s["escalados"][k])
+	proximo_uid = int(s.get("proximo_uid", 1))
+	contrato_em = float(s.get("contrato_em", 0.0))
+	videos_dia = String(s.get("videos_dia", ""))
+	videos_usados = int(s.get("videos_usados", 0))
 
 
 func salvar(agora: float) -> void:

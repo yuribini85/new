@@ -1,10 +1,12 @@
 extends SceneTree
-## Chrome Racing Team: acha a forca_rivais de cada liga (data/idle/idle.json)
-## que faz o menor nível de motor (= pneus) que vence 3 de 5 corridas ficar em
-## ALVO, com ultrapassagem e vácuo no máximo. Toda liga pede o mesmo, e o tempo
-## de cada uma sai só do custo (expoente_custo_liga). Copie os valores impressos
-## para o JSON; a 1ª liga fica mais fácil à mão (1ª vitória cedo).
-## Uso: godot --headless --path . -s tools/calibrar_forca_idle.gd
+## Chrome Racing Team: acha a forca_rivais de cada pista de cada modalidade
+## (data/idle/idle.json, "forca_rivais" da modalidade) que faz o menor nível de
+## motor (= pneus) que vence 3 de 5 corridas ficar em ALVO, com ultrapassagem e
+## vácuo no máximo e o piloto base. Toda liga pede o mesmo, e o tempo de cada
+## uma sai só do custo (expoente_custo_liga). Copie os valores impressos para o
+## JSON. A arena tem simulação própria e fica de fora.
+## Uso: godot --headless --path . -s tools/calibrar_forca_idle.gd [-- modalidade=gt]
+
 const ALVO := 12
 
 var d: Node
@@ -34,25 +36,37 @@ func nivel_min() -> int:
 
 
 func _r() -> void:
+	var so := ""
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("modalidade="):
+			so = a.trim_prefix("modalidade=")
 	d = root.get_node("Dados")
 	e = IdleEstado.new()
-	e.niveis["ultrapassagem"] = int(e.melhoria("ultrapassagem")["max"])
-	e.niveis["vacuo"] = int(e.melhoria("vacuo")["max"])
-	var saida := []
-	for l in e.cfg["ligas"].size():
-		e.liga = l
-		var lo := 0.5
-		var hi := 1.6
-		for it in 8:
-			var f := (lo + hi) / 2.0
-			e.cfg["ligas"][l]["forca_rivais"] = f
-			if nivel_min() > ALVO:
-				hi = f
-			else:
-				lo = f
-		e.cfg["ligas"][l]["forca_rivais"] = snappedf(lo, 0.01)
-		var n := nivel_min()
-		print("%-24s forca %.2f  nível %d" % [e.dados_liga()["nome"], snappedf(lo, 0.01), n])
-		saida.append(snappedf(lo, 0.01))
-	print(JSON.stringify(saida))
+	for m in e.cfg["modalidades"]:
+		if m.get("tipo", "") == "arena" or (so != "" and m["id"] != so):
+			continue
+		e.mods[m["id"]] = {"liga": 0, "venceu": false, "niveis": e.niveis.duplicate(), "corridas": 0}
+		e.modalidade = m["id"]
+		e.niveis["ultrapassagem"] = int(e.melhoria("ultrapassagem")["max"])
+		e.niveis["vacuo"] = int(e.melhoria("vacuo")["max"])
+		var saida := {}
+		for pista in m["forca_rivais"]:
+			# A primeira liga da modalidade nessa pista.
+			for i in m["ligas"].size():
+				if m["ligas"][i]["pista"] == pista:
+					e.liga = i
+					break
+			var lo := 0.5
+			var hi := 1.6
+			for it in 8:
+				var f := (lo + hi) / 2.0
+				m["forca_rivais"][pista] = f
+				if nivel_min() > ALVO:
+					hi = f
+				else:
+					lo = f
+			m["forca_rivais"][pista] = snappedf(lo, 0.01)
+			saida[pista] = snappedf(lo, 0.01)
+			print("%-10s %-24s forca %.2f  nível %d" % [m["id"], pista, snappedf(lo, 0.01), nivel_min()])
+		print("%s: %s" % [m["id"], JSON.stringify(saida)])
 	quit()

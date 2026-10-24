@@ -87,7 +87,7 @@ func test_rivais_saem_do_carro_da_equipe() -> void:
 	var cfg := _cfg()
 	cfg["rivais"]["espalhar"] = 0.2
 	cfg["rivais"]["aderencia_por_forca"] = 0.5
-	cfg["ligas"][0]["forca_rivais"] = 1.5
+	cfg["ligas"][0]["forca_rivais"] = 1.5  # forca da liga vale sobre a da pista
 	var e := IdleEstado.new(cfg)
 	verificar(is_equal_approx(e.fator_rival(0), 1.8) and is_equal_approx(e.fator_rival(8), 1.2),
 			"do mais forte ao mais fraco, vezes forca_rivais")
@@ -99,3 +99,59 @@ func test_rivais_saem_do_carro_da_equipe() -> void:
 	var ps := e.participantes(d)
 	verificar(ps[0]["carro"] != base["id"], "o modelo na tela é outro carro da frota")
 	d.free()
+
+
+func _cfg_mods() -> Dictionary:
+	var c := _cfg()
+	c.erase("ligas")
+	c["modalidades"] = [
+		{"id": "a", "nome": "A", "ligas": [{"nome": "A1", "pista": "oval", "voltas": 1, "potencia": 100, "multiplicador": 1},
+			{"nome": "A2", "pista": "oval", "voltas": 1, "potencia": 150, "multiplicador": 10}]},
+		{"id": "b", "nome": "B", "libera": {"modalidade": "a", "liga": 1},
+			"ligas": [{"nome": "B1", "pista": "oval", "voltas": 1, "potencia": 100, "multiplicador": 4}]}]
+	c["pilotos"] = {"base": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.5}, "ritmo_por_nivel": 0.01,
+		"nivel_max": 3, "contrato_gratis_h": 4, "contratos_video_dia": 2,
+		"perfis": {"agressivo": {"agressividade": 0.1, "consistencia": -0.05}}}
+	return c
+
+
+func test_modalidades_liberam_e_rendem_juntas() -> void:
+	var e := IdleEstado.new(_cfg_mods())
+	igual(e.liberadas(), ["a"], "só a primeira")
+	verificar(not e.trocar_modalidade("b"), "B fechada")
+	e.dinheiro = 1000.0
+	e.comprar("patrocinio")
+	e.concluir(1)
+	e.subir_liga()
+	igual(e.liberadas(), ["a", "b"], "A na liga 2 abre B")
+	igual(e.renda_s(), 30.0 + 8.0, "A: (2 + 1) × 10; B: 2 × 4")
+	verificar(e.trocar_modalidade("b"), "troca")
+	igual([e.liga, e.nivel("patrocinio"), e.custo("motor")], [0, 0, 40.0], "B tem liga e níveis próprios")
+
+
+func test_contratos_e_fusao() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var e := IdleEstado.new(_cfg_mods())
+	verificar(e.contrato_gratis_pronto(1000.0), "o primeiro é na hora")
+	var p1 := e.usar_contrato_gratis(d, 1000.0)
+	igual([p1["nivel"], e.piloto_escalado()["uid"]], [1, p1["uid"]], "nível 1 e já escalado")
+	verificar(not e.contrato_gratis_pronto(1000.0 + 3600.0), "o próximo espera 4 h")
+	verificar(e.contrato_gratis_pronto(1000.0 + 4 * 3600.0), "depois de 4 h")
+	var p2 := e.usar_contrato_video(d, "2026-10-24", 7)
+	e.usar_contrato_video(d, "2026-10-24", 8)
+	igual(e.contratos_video_restantes("2026-10-24"), 0, "dois vídeos por dia")
+	igual(e.contratos_video_restantes("2026-10-25"), 2, "no dia seguinte voltam")
+	verificar(e.fundir(int(p1["uid"]), int(p2["uid"])), "dois do nível 1 fundem")
+	igual([e.pilotos.size(), int(e.piloto(int(p1["uid"]))["nivel"])], [2, 2], "um sai, o outro sobe")
+	verificar(not e.fundir(int(p1["uid"]), int(e.pilotos[1]["uid"])), "níveis diferentes não fundem")
+	var a := e.atributos_piloto(d, e.piloto_escalado())
+	verificar(is_equal_approx(float(a["ritmo"]), 1.01), "nível 2: +1% de ritmo")
+	d.free()
+
+
+func test_save_antigo_vira_a_primeira_modalidade() -> void:
+	var e := IdleEstado.new(_cfg_mods())
+	e.de_save({"dinheiro": 50.0, "liga": 1, "venceu": true, "niveis": {"motor": 2}, "corridas": 9})
+	igual([e.modalidade, e.liga, e.venceu, e.nivel("motor"), e.corridas], ["a", 1, true, 2, 9], "migrou")
+	verificar(e.liberada("b"), "e a segunda já abre")
