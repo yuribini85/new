@@ -28,7 +28,7 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   equilibrado, cauteloso) e frase. Contrato grátis a cada 4 h e por vídeo (5 ao dia) traz um
   piloto no nível 1; dois do mesmo nível fundem num nível acima (até 8; +1% de ritmo por nível).
   Um piloto por modalidade.
-- **Interface:** menu de baixo desenhado (CORRIDA, PISTAS, PILOTOS) com aviso de pendência;
+- **Interface:** menu de baixo desenhado (CORRIDA, PISTAS, PILOTOS, METAS) com aviso de pendência;
   PISTAS mostra as modalidades e a escada de ligas (pista, carro, prêmio, onde a equipe está);
   PILOTOS mostra o escalado, contratos e o elenco; engrenagem com som e visual simples; câmeras em
   ícones.
@@ -41,6 +41,21 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   cartões #161B22 com borda cromada #3A4250, ações em ouro em relevo (#FFC53D→#F08A0C), vídeos em
   prata #C9CED6, renda em ouro claro #FFD873, verde #6FD08C só no ganho das melhorias, vermelho
   #E5484D só no alerta.
+- **Polimento (cruzamento com as críticas do gênero, aprovado pelo usuário em 2026-10-24):**
+  - vídeo que não carrega ou falha ao abrir paga a recompensa igual (a queixa mais comum do Race
+    Star é o vídeo que trava e não paga);
+  - intersticial só ao fechar a janela da liga nova, a partir da 4ª liga de qualquer modalidade, com
+    5 min entre um e outro; nunca ao abrir o app nem entre corridas;
+  - METAS (4ª aba): 3 metas do dia sorteadas pela data (correr, vencer, comprar melhorias,
+    contratar, fundir, subir de liga), cada uma paga 10 min da renda;
+  - avisos com o app fechado (renda no teto, contrato grátis pronto) pelo plugin Notification
+    Scheduler v5.1; ligam na primeira liga nova, chave AVISOS nas Configurações;
+  - o dinheiro do topo conta até o valor quando entra muito de uma vez e "+$X" sobe ao lado;
+  - liga nova: a janela entra crescendo com brilho dourado e o aparelho vibra (mais forte na
+    modalidade nova); piloto novo, fusão e meta dão um clarão curto;
+  - cartões de motor, pneus, ultrapassagem e vácuo mostram a chegada prevista ("8º → 7º",
+    "+3 NÍVEIS: 7º", "CHEGA EM 8º"), de corridas simuladas numa thread (não na Arena: a luta
+    simulada leva segundos).
 
 ## O que reaproveita
 - `Simulacao` (posição real, zonas de ultrapassagem, agressividade e o vácuo novo do piloto).
@@ -104,8 +119,8 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
 - Tudo em `data/idle/idle.json`; o playtest e o teste de mercado ajustam.
 
 ## Monetização
-AdMob (decisão do usuário; plugin godot-admob v5.3, Godot 4.5.1, decisão 134): vídeo premiado (dobrar a renda offline e, depois de cada corrida, "VÍDEO: PRÊMIO 2×" paga o prêmio de novo; quem viu o vídeo não vê o intersticial seguinte)
-e intersticial entre corridas com intervalo mínimo. O APK do idle sai só em arm64-v8a (a Play exige 64 bits; com o build Gradle as duas arquiteturas davam 184 MB, o pacote do jogo tem 30 MB). Ids de teste do Google até o usuário mandar os
+AdMob (decisão do usuário; plugin godot-admob v5.3, Godot 4.5.1, decisão 134): vídeo premiado (dobrar a renda offline e, depois de cada corrida, "VÍDEO: PRÊMIO 2×" paga o prêmio de novo; vídeo que falha paga igual)
+e intersticial só ao subir de liga (ver Polimento acima). O APK do idle sai só em arm64-v8a (a Play exige 64 bits; com o build Gradle as duas arquiteturas davam 184 MB, o pacote do jogo tem 30 MB). Ids de teste do Google até o usuário mandar os
 dele.
 
 ## Ordem

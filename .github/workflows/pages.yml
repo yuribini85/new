@@ -139,7 +139,7 @@ jobs:
           test -f build/android/chrome-wreckage.apk
           ls -la build/android
 
-      # Chrome Racing Team (docs/idle/plano.md): o APK com o AdMob. O plugin
+      # Chrome Racing Team (docs/idle/plano.md): o APK com o AdMob e os avisos. O plugin
       # (godot-sdk-integrations/godot-admob, Godot 4.5.1) entra só aqui, depois
       # do APK do Chrome & Wreckage, e pede o build Gradle; o id do app vem de
       # data/idle/idle.json ("admob"). Se falhar, o resto segue publicado.
@@ -157,7 +157,20 @@ jobs:
           app_id=$(python3 -c "import json;print(json.load(open('data/idle/idle.json'))['admob']['app_id'])")
           real=$(python3 -c "import json;print(str(json.load(open('data/idle/idle.json'))['admob']['is_real']).lower())")
           printf '[General]\nis_real = %s\n\n[Debug]\napp_id = "%s"\n\n[Release]\napp_id = "%s"\n' "$real" "$app_id" "$app_id" > addons/AdmobPlugin/android_export.cfg
-          printf '\n[editor_plugins]\n\nenabled=PackedStringArray("res://addons/AdmobPlugin/plugin.cfg")\n' >> project.godot
+          # Avisos com o app fechado (idle/avisos_idle.gd): plugin Notification
+          # Scheduler v5.1 (feito para o Godot 4.5.1) e o ícone do aviso. Se não
+          # baixar, o APK sai sem avisos.
+          plugins='"res://addons/AdmobPlugin/plugin.cfg"'
+          if curl -sSfL -o avisos.zip https://github.com/godot-sdk-integrations/godot-notification-scheduler/releases/download/v5.1/NotificationSchedulerPlugin-Android-v5.1.zip \
+              && unzip -o -q avisos.zip -d . && test -f addons/NotificationSchedulerPlugin/plugin.cfg; then
+            mkdir -p assets/NotificationSchedulerPlugin
+            cp -r android/aviso/drawable assets/NotificationSchedulerPlugin/
+            plugins="$plugins, \"res://addons/NotificationSchedulerPlugin/plugin.cfg\""
+          else
+            echo "Plugin de avisos indisponível: APK sem avisos."
+          fi
+          printf '\n[editor_plugins]\n\nenabled=PackedStringArray(%s)\n' "$plugins" >> project.godot
+          ls addons
           # Build Gradle só no preset do idle (preset.3).
           awk '/^\[preset\./{p=$0} p=="[preset.3.options]" && /^gradle_build\/use_gradle_build=/{$0="gradle_build/use_gradle_build=true"} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
           # Duas importações: na primeira o ícone do plugin ainda não existe e o

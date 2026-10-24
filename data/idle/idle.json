@@ -4,7 +4,17 @@
 	"dinheiro_inicial": 100,
 	"renda_base": 5.0,
 	"offline_max_h": 2.0,
-	"intersticial_min_s": 90.0,
+	"intersticial_min_s": 300.0,
+	"_nota_intersticial": "Intersticial só ao subir de liga (nunca ao abrir o app nem no meio da corrida), a partir da liga de índice intersticial_a_partir_liga em qualquer modalidade, com intersticial_min_s entre um e outro. Números estimados.",
+	"intersticial_a_partir_liga": 3,
+	"meta_dia": {"_nota": "Metas do dia (como a Meta do dia do Chrome & Wreckage): por_dia tarefas sorteadas pela data; cada uma paga recompensa_min minutos da renda de todas as modalidades. Números estimados.", "por_dia": 3, "recompensa_min": 10, "tarefas": [
+		{"id": "correr", "tipo": "corridas", "quantidade": 25, "texto": "Corra %d corridas", "icone": "icone_correr"},
+		{"id": "vencer", "tipo": "vitorias", "quantidade": 8, "texto": "Vença %d corridas", "icone": "icone_podio"},
+		{"id": "melhorar", "tipo": "melhorias", "quantidade": 15, "texto": "Compre %d melhorias", "icone": "icone_melhorar"},
+		{"id": "contratar", "tipo": "contratos", "quantidade": 2, "texto": "Contrate %d pilotos", "icone": "icone_piloto"},
+		{"id": "fundir", "tipo": "fusoes", "quantidade": 1, "texto": "Funda dois pilotos", "icone": "icone_estrela"},
+		{"id": "subir", "tipo": "ligas", "quantidade": 1, "texto": "Suba de liga", "icone": "icone_licenca"}
+	]},
 	"admob": {"_nota": "is_real false usa os ids de teste do Google. Para publicar: is_real true, os ids das unidades da sua conta AdMob aqui e o id do app em addons/AdmobPlugin/android_export.cfg (o CI gera a partir de app_id).", "is_real": false, "app_id": "ca-app-pub-3940256099942544~3347511713", "premiado_id": "", "intersticial_id": ""},
 	"grid": 10,
 	"rivais": {"espalhar": 0.3, "ritmo": 0.97, "ritmo_por_liga": 0.0, "consistencia": 0.85, "agressividade": 0.35, "aderencia_por_forca": 0.6},

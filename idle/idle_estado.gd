@@ -27,6 +27,9 @@ var contrato_em := 0.0  # unix (s): quando o próximo contrato grátis fica pron
 var videos_dia := ""  # dia (AAAA-MM-DD) dos contratos por vídeo contados
 var videos_usados := 0
 var salvo_em := 0.0  # unix (s), para a renda com o app fechado
+## Metas do dia: {dia, tarefas: [ids], contagem: {tipo: n}, coletadas: [ids]}.
+var metas := {}
+var avisos_oferecidos := false  # a primeira liga nova já ligou os avisos
 
 var liga: int:
 	get:
@@ -148,6 +151,7 @@ func comprar(id: String) -> bool:
 		return false
 	dinheiro -= custo(id)
 	niveis[id] = nivel(id) + 1
+	registrar_meta("melhorias")
 	return true
 
 
@@ -198,6 +202,9 @@ func concluir(pos: int, fator := 1.0) -> float:
 	_m()["corridas"] = int(_m()["corridas"]) + 1
 	if pos == 1:
 		venceu = true
+	registrar_meta("corridas")
+	if pos == 1:
+		registrar_meta("vitorias")
 	return p
 
 
@@ -214,6 +221,7 @@ func subir_liga() -> bool:
 	for m in cfg["melhorias"]:
 		if m.get("do_carro", false):
 			niveis[m["id"]] = 0
+	registrar_meta("ligas")
 	return true
 
 
@@ -279,6 +287,7 @@ func contratar(dados: Node, semente: int) -> Dictionary:
 	pilotos.append(p)
 	if piloto_escalado().is_empty():
 		escalar(modalidade, int(p["uid"]))
+	registrar_meta("contratos")
 	return p
 
 
@@ -333,6 +342,7 @@ func fundir(fica: int, sai: int) -> bool:
 		escalados.erase(mod_sai)
 		if not escalados.values().has(fica):
 			escalados[mod_sai] = fica
+	registrar_meta("fusoes")
 	return true
 
 
@@ -516,6 +526,87 @@ func correr_arena(dados: Node, semente: int, com_amostras := true, niveis_extra 
 	return Arena.correr(parts, params_arena(dados), semente, com_amostras)
 
 
+# --- metas do dia ---------------------------------------------------------------
+# A cada dia (meia-noite do aparelho, como a Meta do dia do Chrome & Wreckage)
+# saem meta_dia.por_dia tarefas de data/idle/idle.json, sorteadas pela data.
+# Cada uma conta um tipo de ação (corridas, vitórias, melhorias, contratos,
+# fusões, ligas) e, cumprida, paga meta_dia.recompensa_min minutos da renda.
+
+func cfg_metas() -> Dictionary:
+	return cfg.get("meta_dia", {})
+
+
+## As metas de hoje (dia novo: tarefas sorteadas, contagem zerada).
+func metas_do_dia(agora: float = Time.get_unix_time_from_system()) -> Dictionary:
+	var d := MetaDia.dia(agora)
+	if String(metas.get("dia", "")) != d:
+		metas = {"dia": d, "tarefas": _sortear_metas(d), "contagem": {}, "coletadas": []}
+	return metas
+
+
+func _sortear_metas(d: String) -> Array:
+	var pool: Array = cfg_metas().get("tarefas", []).duplicate()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("metas|" + d)
+	for i in range(pool.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var x = pool[i]
+		pool[i] = pool[j]
+		pool[j] = x
+	return pool.slice(0, int(cfg_metas().get("por_dia", 3))).map(func(t): return String(t["id"]))
+
+
+func tarefa_meta(id: String) -> Dictionary:
+	for t in cfg_metas().get("tarefas", []):
+		if String(t["id"]) == id:
+			return t
+	return {}
+
+
+## Conta uma ação do tipo no dia de `agora`.
+func registrar_meta(tipo: String, n := 1, agora: float = Time.get_unix_time_from_system()) -> void:
+	if cfg_metas().is_empty():
+		return
+	var c: Dictionary = metas_do_dia(agora)["contagem"]
+	c[tipo] = int(c.get(tipo, 0)) + n
+
+
+## [feito, meta] da tarefa hoje.
+func progresso_meta(id: String, agora: float = Time.get_unix_time_from_system()) -> Array:
+	var t := tarefa_meta(id)
+	var meta := int(t.get("quantidade", 1))
+	return [mini(int(metas_do_dia(agora)["contagem"].get(String(t.get("tipo", "")), 0)), meta), meta]
+
+
+func recompensa_meta() -> float:
+	return roundf(renda_s() * float(cfg_metas().get("recompensa_min", 0.0)) * 60.0)
+
+
+func meta_pronta(id: String, agora: float = Time.get_unix_time_from_system()) -> bool:
+	var est := metas_do_dia(agora)
+	var p := progresso_meta(id, agora)
+	return id in est["tarefas"] and not id in est["coletadas"] and p[0] >= p[1]
+
+
+## Quantas metas cumpridas esperam a coleta.
+func metas_prontas(agora: float = Time.get_unix_time_from_system()) -> int:
+	var n := 0
+	for id in metas_do_dia(agora)["tarefas"]:
+		if meta_pronta(String(id), agora):
+			n += 1
+	return n
+
+
+## Coleta a recompensa da meta cumprida; devolve o valor (0: não deu).
+func coletar_meta(id: String, agora: float = Time.get_unix_time_from_system()) -> float:
+	if not meta_pronta(id, agora):
+		return 0.0
+	var v := recompensa_meta()
+	metas["coletadas"].append(id)
+	dinheiro += v
+	return v
+
+
 static func posicao(resultado: Dictionary) -> int:
 	return Array(resultado["classificacao"]).find("jogador") + 1
 
@@ -525,7 +616,8 @@ static func posicao(resultado: Dictionary) -> int:
 func para_save() -> Dictionary:
 	return {"versao": 2, "dinheiro": dinheiro, "modalidade": modalidade, "mods": mods, "corridas": corridas,
 			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
-			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em}
+			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
+			"avisos_oferecidos": avisos_oferecidos}
 
 
 func de_save(s: Dictionary) -> void:
@@ -561,6 +653,14 @@ func de_save(s: Dictionary) -> void:
 	contrato_em = float(s.get("contrato_em", 0.0))
 	videos_dia = String(s.get("videos_dia", ""))
 	videos_usados = int(s.get("videos_usados", 0))
+	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
+	var sm = s.get("metas", {})
+	metas = {}
+	if sm is Dictionary and sm.has("dia"):
+		metas = {"dia": String(sm["dia"]), "tarefas": Array(sm.get("tarefas", [])).map(func(x): return String(x)),
+				"contagem": {}, "coletadas": Array(sm.get("coletadas", [])).map(func(x): return String(x))}
+		for k in sm.get("contagem", {}):
+			metas["contagem"][String(k)] = int(sm["contagem"][k])
 
 
 func salvar(agora: float) -> void:

@@ -1,10 +1,13 @@
 class_name IdleAnuncios
 extends Node
 ## Anúncios do Chrome Racing Team (docs/idle/plano.md, AdMob): vídeo premiado e
-## intersticial entre corridas. No Android com o plugin do AdMob
+## intersticial ao subir de liga. No Android com o plugin do AdMob
 ## (addons/AdmobPlugin, instalado pelo CI só no APK do idle) os anúncios são de
 ## verdade; sem ele (editor, web, testes) o vídeo "passa" na hora e o
 ## intersticial não aparece: o jogo funciona igual, só sem anúncio.
+## Vídeo que não carrega ou falha ao abrir paga a recompensa igual (a queixa
+## mais comum do gênero é o vídeo que trava e não paga); só quem fecha o vídeo
+## antes do fim fica sem ela.
 ## Ids de teste do Google até o usuário mandar os dele (data/idle/idle.json,
 ## "admob": is_real e os ids reais).
 
@@ -37,7 +40,9 @@ func _ready() -> void:
 	_admob.rewarded_ad_failed_to_load.connect(func(_i, _e): _premiado_carregado = false)
 	_admob.rewarded_ad_user_earned_reward.connect(func(_i, _r): _ganhou = true)
 	_admob.rewarded_ad_dismissed_full_screen_content.connect(func(_i): _fim_premiado())
-	_admob.rewarded_ad_failed_to_show_full_screen_content.connect(func(_i, _e): _fim_premiado())
+	_admob.rewarded_ad_failed_to_show_full_screen_content.connect(func(_i, _e):
+		_ganhou = true
+		_fim_premiado())
 	_admob.interstitial_ad_loaded.connect(func(_i, _r): _intersticial_carregado = true)
 	_admob.interstitial_ad_failed_to_load.connect(func(_i, _e): _intersticial_carregado = false)
 	_admob.interstitial_ad_dismissed_full_screen_content.connect(func(_i): _admob.load_interstitial_ad())
@@ -51,19 +56,13 @@ func _carregar() -> void:
 		_admob.load_interstitial_ad()
 
 
-## Há vídeo para mostrar agora? (Sem AdMob, sempre: o prêmio sai na hora.)
-func premiado_disponivel() -> bool:
-	return _admob == null or _premiado_carregado
-
-
-## O vídeo premiado: `ao_ganhar` roda só se a pessoa assistiu até o fim.
+## O vídeo premiado: `ao_ganhar` roda se a pessoa assistiu até o fim ou se o
+## vídeo não pôde aparecer (sem AdMob, sem vídeo carregado, falha ao abrir).
 func premiado(ao_ganhar: Callable) -> void:
-	if _admob == null:
-		ao_ganhar.call()
-		return
-	if not _premiado_carregado:
-		if _pronto:
+	if _admob == null or not _premiado_carregado:
+		if _admob != null and _pronto:
 			_admob.load_rewarded_ad()
+		ao_ganhar.call()
 		return
 	_ao_ganhar = ao_ganhar
 	_ganhou = false
@@ -80,7 +79,7 @@ func _fim_premiado() -> void:
 		_admob.load_rewarded_ad()
 
 
-## Intersticial entre corridas, respeitando o intervalo mínimo.
+## Intersticial (só ao subir de liga), respeitando o intervalo mínimo.
 func intersticial() -> void:
 	var agora := Time.get_ticks_msec() / 1000.0
 	if agora - _ultimo_intersticial < intersticial_min_s:

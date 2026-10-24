@@ -204,6 +204,7 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 		var nome_sai := _nome(e.piloto(par))
 		if e.fundir(int(p["uid"]), par):
 			Sons.tocar_ui(self, "comemoracao", -6.0)
+			tela.celebrar(false)
 			mudou.emit()
 			tela.mostrar_aviso("%s SUBIU PARA O NÍVEL %d" % [_nome(p).to_upper(), int(p["nivel"])],
 					"%s deixou a equipe" % nome_sai)
@@ -228,11 +229,12 @@ func _par_para_fundir(e: IdleEstado, p: Dictionary) -> int:
 ## Contrato novo: o retrato aparece grande, com nome, perfil e nível.
 func _novo(p: Dictionary) -> void:
 	Sons.tocar_ui(self, "comemoracao", -6.0)
+	tela.celebrar(false)
 	mudou.emit()
 	atualizar()
 	var dp := IdleEstado.dados_piloto(tela.dados, String(p["id"]))
 	tela.mostrar_aviso("NOVO PILOTO: %s" % _nome(p).to_upper(),
-			"%s · nível 1" % String(dp.get("perfil", "")).capitalize(), IdleUI.retrato_piloto(String(p["id"])))
+			"%s · nível 1" % String(dp.get("perfil", "")).capitalize(), IdleUI.busto_piloto(String(p["id"])))
 
 
 ## Busto do piloto saindo do quadro: a moldura começa abaixo do topo

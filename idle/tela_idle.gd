@@ -9,7 +9,8 @@ extends Control
 ##     rivais com piloto e pintura das equipes rivais), as câmeras em ícones e
 ##     os cartões de melhoria da modalidade;
 ##   - PISTAS: as cinco modalidades e a escada de ligas de cada uma (PistasIdle);
-##   - PILOTOS: contratos, fusão e escalação (PilotosIdle).
+##   - PILOTOS: contratos, fusão e escalação (PilotosIdle);
+##   - METAS: as metas do dia (MetasIdle).
 ## A corrida roda sozinha, uma atrás da outra, também com as outras telas
 ## abertas (o 3D só desenha na CORRIDA).
 
@@ -35,7 +36,14 @@ const ABAS := [
 	{"id": "corrida", "nome": "CORRIDA", "icone": "icone_correr"},
 	{"id": "pistas", "nome": "PISTAS", "icone": "icone_pista"},
 	{"id": "pilotos", "nome": "PILOTOS", "icone": "icone_piloto"},
+	{"id": "metas", "nome": "METAS", "icone": "icone_objetivo"},
 ]
+## Previsão nos cartões de melhoria: corridas simuladas (sementes fixas) com e
+## sem níveis a mais (NIVEIS_PREVISAO), numa thread, para mostrar a posição que
+## a compra traz.
+const SEMENTES_PREVISAO := [101, 202, 303, 404]
+const EFEITOS_PREVISAO := ["potencia", "aderencia", "agressividade", "vacuo"]
+const NIVEIS_PREVISAO := [1, 3]
 ## Câmeras: "auto" (o diretor do Chrome & Wreckage), "jogador" (atrás do seu
 ## carro) ou "geral" (a pista inteira), com os ícones do Chrome & Wreckage. Na
 ## Arena: dinâmica, a sua briga e a arena inteira (Arena3D.modo).
@@ -76,13 +84,19 @@ var _avisado := {}  # rival -> quando avisou que se aproximava (tempo da corrida
 var _subir: Button
 var _dobrar: Button
 var _ganho_corrida := 0.0
-var _sem_intersticial := false  # quem acabou de ver o vídeo não vê intersticial
+var _dinheiro_mostrado := 0.0  # o número do topo, que conta até o dinheiro
 var _cameras := {}  # modo -> botão
 var _cartoes := {}  # melhoria -> {nivel, efeito, botao}
 var _barra: BarraIdle
 var _paginas := {}  # aba -> Control
 var _pistas: PistasIdle
 var _pilotos: PilotosIdle
+var _metas: MetasIdle
+var _previsao := {}  # "melhoria|n" -> posição média com n níveis a mais; "" -> sem
+var _previsao_chave := ""
+var _previsao_tarefa := -1
+var _previsao_resultado := {}
+var _previsao_mutex := Mutex.new()
 var _aviso_caixa: PanelContainer
 var _aviso_t := 0.0
 var _coleta: PanelContainer
@@ -103,6 +117,7 @@ func _ready() -> void:
 	# O primeiro piloto vem com a equipe (o primeiro contrato grátis).
 	if estado.pilotos.is_empty():
 		estado.usar_contrato_gratis(dados, agora)
+	_dinheiro_mostrado = estado.dinheiro
 	_montar()
 	_nova_corrida()
 	# Abriu, recolheu: a renda com o app fechado já entra no caixa.
@@ -117,6 +132,9 @@ func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_WM_CLOSE_REQUEST, NOTIFICATION_APPLICATION_FOCUS_OUT]:
 		if estado != null:
 			estado.salvar(Time.get_unix_time_from_system())
+			IdleAvisos.agendar(estado)
+	elif what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN]:
+		IdleAvisos.cancelar()
 
 
 # --- montagem -----------------------------------------------------------------
@@ -154,6 +172,9 @@ func _montar() -> void:
 	_pilotos = PilotosIdle.new(self)
 	_pilotos.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
 	_paginas["pilotos"] = _pilotos
+	_metas = MetasIdle.new(self)
+	_metas.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
+	_paginas["metas"] = _metas
 	for id in _paginas:
 		var pg: Control = _paginas[id]
 		pg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -321,6 +342,7 @@ func _cartao(m: Dictionary) -> Control:
 	nome.clip_text = true
 	var nivel := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, h)
 	var efeito := IdleUI.rotulo("", 18, IdleUI.COR_GANHO, v)
+	var previsao := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, v)
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	Tipografia.acao_primaria(b, "", COR_OURO, IdleUI.COR_TINTA, 24, 56)
@@ -328,7 +350,8 @@ func _cartao(m: Dictionary) -> Control:
 	IdleUI.desativado_legivel(b)
 	b.pressed.connect(_comprar.bind(String(m["id"])))
 	v.add_child(b)
-	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "botao": b, "nome": nome, "icone": ic, "cartao": p}
+	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "previsao": previsao, "botao": b, "nome": nome, "icone": ic,
+			"cartao": p}
 	return p
 
 
@@ -347,6 +370,8 @@ func _abrir(id: String) -> void:
 		_pistas.atualizar()
 	elif id == "pilotos":
 		_pilotos.atualizar()
+	elif id == "metas":
+		_metas.atualizar()
 
 
 func _efeito_texto(m: Dictionary, nivel: int) -> String:
@@ -366,8 +391,11 @@ func _efeito_texto(m: Dictionary, nivel: int) -> String:
 
 
 func _atualizar_cartoes() -> void:
+	_atualizar_previsao()
+	var base := float(_previsao.get("", 0.0))
 	for m in estado.cfg["melhorias"]:
 		var c: Dictionary = _cartoes[m["id"]]
+		_texto_previsao(c["previsao"], m, base)
 		var n := estado.nivel(m["id"])
 		# Na Arena, a melhoria pode ter outro nome (o Vácuo vira Blindagem).
 		var arena: bool = _na_arena and m.has("nome_arena")
@@ -385,8 +413,15 @@ func _atualizar_cartoes() -> void:
 			b.disabled = not estado.pode_comprar(m["id"])
 
 
-func _atualizar_topo() -> void:
-	_dinheiro.text = "$" + curto(estado.dinheiro)
+func _atualizar_topo(delta := 0.0) -> void:
+	# O número conta até o dinheiro quando entra muito de uma vez (prêmio,
+	# renda com o app fechado, meta); gasto e renda corrente vão direto.
+	if estado.dinheiro < _dinheiro_mostrado or estado.dinheiro - _dinheiro_mostrado < estado.renda_s() * 0.5 \
+			or Preferencias.reduzir_animacoes:
+		_dinheiro_mostrado = estado.dinheiro
+	else:
+		_dinheiro_mostrado = lerpf(_dinheiro_mostrado, estado.dinheiro, 1.0 - exp(-5.0 * delta))
+	_dinheiro.text = "$" + curto(_dinheiro_mostrado)
 	_renda.text = "$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 28)
@@ -519,9 +554,6 @@ func _process(delta: float) -> void:
 		# Depois da linha os carros seguem, freando, e a câmera fecha no seu.
 		_visual.tempo += delta
 		if _pausa < 0.0:
-			if not _sem_intersticial:
-				anuncios.intersticial()
-			_sem_intersticial = false
 			_nova_corrida()
 	else:
 		_visual.tempo = minf(_visual.tempo + delta, _visual.duracao())
@@ -545,7 +577,7 @@ func _process(delta: float) -> void:
 	else:
 		_sons.motor(false)
 		_sons.torcida(0.0)
-	_atualizar_topo()
+	_atualizar_topo(delta)
 	if vendo:
 		_atualizar_cartoes()
 	_salvar_em -= delta
@@ -564,9 +596,6 @@ func _processo_arena(delta: float) -> void:
 		_pausa -= delta
 		_arena3d.tempo = minf(_arena3d.tempo + delta * VELOCIDADE_ARENA, _arena3d.duracao())
 		if _pausa < 0.0:
-			if not _sem_intersticial:
-				anuncios.intersticial()
-			_sem_intersticial = false
 			_nova_corrida()
 	else:
 		_arena3d.tempo = minf(_arena3d.tempo + delta * VELOCIDADE_ARENA, _arena3d.duracao())
@@ -578,7 +607,7 @@ func _processo_arena(delta: float) -> void:
 		_sons.motor(_contagem <= 0.0 and not _chegada, 20.0)
 	else:
 		_sons.motor(false)
-	_atualizar_topo()
+	_atualizar_topo(delta)
 	if vendo:
 		_atualizar_cartoes()
 	_salvar_em -= delta
@@ -716,8 +745,9 @@ func _chegou() -> void:
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
 			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)
 	_ganho_corrida = ganho
-	_dobrar.visible = anuncios.premiado_disponivel()
-	_pausa = PAUSA_COM_VIDEO_S if _dobrar.visible else PAUSA_CHEGADA_S
+	ganho_flutuante(ganho)
+	_dobrar.visible = true
+	_pausa = PAUSA_COM_VIDEO_S
 	estado.salvar(Time.get_unix_time_from_system())
 
 
@@ -728,7 +758,7 @@ func _dobrar_premio() -> void:
 	var ganho := _ganho_corrida
 	anuncios.premiado(func():
 		estado.dinheiro += ganho
-		_sem_intersticial = true
+		ganho_flutuante(ganho)
 		_hud.evento("PRÊMIO 2×", "+$" + curto(ganho * 2.0), COR_OURO, 11, -1.0, true)
 		_pausa = maxf(_pausa, PAUSA_CHEGADA_S)
 		estado.salvar(Time.get_unix_time_from_system()))
@@ -747,6 +777,17 @@ func _subir_liga() -> void:
 	estado.salvar(Time.get_unix_time_from_system())
 	_nova_corrida()
 	_janela_liga()
+
+
+## O intersticial só aparece aqui, ao fechar a janela da liga nova, e só depois
+## das primeiras ligas (intersticial_a_partir_liga); nunca ao abrir o app nem
+## no meio da corrida.
+func _intersticial_da_liga() -> void:
+	var maior := 0
+	for id in estado.liberadas():
+		maior = maxi(maior, int(estado._m(id)["liga"]))
+	if maior >= int(estado.cfg.get("intersticial_a_partir_liga", 0)):
+		anuncios.intersticial()
 
 
 ## Liga nova: o banner da pista, o nome da liga e o carro novo da equipe; se a
@@ -775,15 +816,49 @@ func _janela_liga() -> void:
 	var c := IdleUI.rotulo("CARRO NOVO: " + String(estado.carro_base(dados)["nome"]).to_upper(), 24, IdleUI.COR_SECUNDARIA, v)
 	c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var nova_modalidade := false
 	for m in estado.cfg["modalidades"]:
 		var lib: Dictionary = m.get("libera", {})
 		if lib.get("modalidade", "") == estado.modalidade and int(lib.get("liga", -1)) == estado.liga:
 			var abriu := IdleUI.rotulo("MODALIDADE NOVA: %s" % String(m["nome"]).to_upper(), 28, IdleUI.COR_GANHO, v)
 			abriu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			_barra.avisar("pistas", true)
+			nova_modalidade = true
 	var ok := BotaoInicio.new("Correr", true, COR_BOTAO, 40, 88, 360)
-	ok.pressed.connect(fundo.queue_free)
+	ok.pressed.connect(func():
+		fundo.queue_free()
+		_oferecer_avisos()
+		_intersticial_da_liga())
 	v.add_child(ok)
+	# Marco: a janela entra crescendo com um brilho dourado na borda, e o
+	# aparelho vibra (mais na modalidade nova).
+	celebrar(nova_modalidade)
+	if not Preferencias.reduzir_animacoes:
+		var sb := IdleUI.caixa(COR_CARTAO, 18, 12, COR_OURO, 3)
+		sb.shadow_color = Color(COR_OURO, 0.55)
+		sb.shadow_size = 28
+		p.add_theme_stylebox_override("panel", sb)
+		p.pivot_offset = Vector2(300, 300)
+		p.scale = Vector2(0.8, 0.8)
+		p.modulate.a = 0.0
+		var tw := p.create_tween().set_parallel()
+		tw.tween_property(p, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(p, "modulate:a", 1.0, 0.2)
+		var brilho := p.create_tween().set_loops()
+		brilho.tween_property(sb, "shadow_size", 12, 0.9).set_trans(Tween.TRANS_SINE)
+		brilho.tween_property(sb, "shadow_size", 28, 0.9).set_trans(Tween.TRANS_SINE)
+
+
+## Na primeira liga nova, os avisos com o app fechado ligam (o aparelho pede a
+## permissão); a chave fica nas Configurações.
+func _oferecer_avisos() -> void:
+	if estado.avisos_oferecidos or not Engine.has_singleton(IdleAvisos.PLUGIN):
+		return
+	estado.avisos_oferecidos = true
+	Preferencias.notificacoes = true
+	Preferencias.salvar()
+	IdleAvisos.pedir_permissao()
+	estado.salvar(Time.get_unix_time_from_system())
 
 
 # --- avisos ---------------------------------------------------------------------
@@ -846,10 +921,12 @@ func _faixa_coleta(ganho: float) -> void:
 		_coleta_t = 0.0
 		anuncios.premiado(func():
 			estado.dinheiro += ganho
+			ganho_flutuante(ganho)
 			estado.salvar(Time.get_unix_time_from_system())
 			mostrar_aviso("RENDA DOBRADA", "+$" + curto(ganho))))
 	_coleta_t = COLETA_S
 	Sons.tocar_ui(self, "moeda", -4.0)
+	_dinheiro_mostrado = estado.dinheiro - ganho  # o topo conta a renda que entrou
 
 
 func _avisos(delta: float) -> void:
@@ -863,8 +940,9 @@ func _avisos(delta: float) -> void:
 		if _coleta_t <= 0.0 and _coleta != null:
 			_coleta.queue_free()
 			_coleta = null
-	_barra.avisar("pilotos", estado.contrato_gratis_pronto(Time.get_unix_time_from_system())
-			or estado.piloto_escalado().is_empty())
+	var agora := Time.get_unix_time_from_system()
+	_barra.avisar("pilotos", estado.contrato_gratis_pronto(agora) or estado.piloto_escalado().is_empty())
+	_barra.avisar("metas", estado.metas_prontas(agora) > 0)
 
 
 # --- configurações --------------------------------------------------------------
@@ -895,6 +973,12 @@ func _abrir_config() -> void:
 	_linha_chave(v, "tela", "VISUAL SIMPLES", Preferencias.efeitos_leves, func(ligado: bool):
 		Preferencias.efeitos_leves = ligado
 		Preferencias.salvar())
+	if Engine.has_singleton(IdleAvisos.PLUGIN):
+		_linha_chave(v, "bandeira", "AVISOS", Preferencias.notificacoes, func(ligado: bool):
+			Preferencias.notificacoes = ligado
+			Preferencias.salvar()
+			if ligado:
+				IdleAvisos.pedir_permissao())
 	var nota := IdleUI.rotulo("Visual simples tira sombras, fumaça e efeitos: mais leve em celulares fracos.", 17,
 			IdleUI.COR_SECUNDARIA, v, "regular")
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -916,3 +1000,125 @@ func _linha_chave(pai: Control, icone: String, texto: String, ligada: bool, ao_m
 	var chave := ChaveLiga.new(ligada)
 	chave.toggled.connect(func(x: bool): ao_mudar.call(x))
 	h.add_child(chave)
+
+
+# --- marcos e números -------------------------------------------------------------
+
+## Comemoração de um marco (liga nova, modalidade nova, meta, piloto novo): um
+## clarão dourado rápido na tela e o aparelho vibra (`grande`: mais forte).
+func celebrar(grande: bool) -> void:
+	if OS.has_feature("mobile"):
+		Input.vibrate_handheld(120 if grande else 40)
+	if Preferencias.reduzir_animacoes:
+		return
+	var flash := ColorRect.new()
+	flash.color = Color(COR_OURO, 0.35 if grande else 0.18)
+	flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(flash)
+	var tw := flash.create_tween()
+	tw.tween_property(flash, "color:a", 0.0, 0.6 if grande else 0.4)
+	tw.tween_callback(flash.queue_free)
+
+
+## "+$X" que sobe e some ao lado do dinheiro do topo (prêmio, vídeo, meta).
+func ganho_flutuante(valor: float) -> void:
+	if valor < 1.0:
+		return
+	var l := IdleUI.rotulo("+$" + curto(valor), 30, COR_DINHEIRO, null, "bold")
+	l.top_level = true
+	l.z_index = 10
+	add_child(l)
+	var origem := _dinheiro.get_global_rect()
+	var largura := _dinheiro.get_theme_font("font").get_string_size(_dinheiro.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
+			_dinheiro.get_theme_font_size("font_size")).x
+	l.position = Vector2(origem.position.x + largura + 14.0, origem.position.y + 12.0)
+	var tw := l.create_tween().set_parallel()
+	tw.tween_property(l, "position:y", l.position.y - 46.0, 1.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tw.tween_property(l, "modulate:a", 0.0, 0.5).set_delay(0.6)
+	tw.chain().tween_callback(l.queue_free)
+
+
+# --- previsão nos cartões -------------------------------------------------------------
+
+## Chave do que muda a previsão: modalidade, liga, níveis, piloto escalado.
+func _chave_previsao() -> String:
+	var p := estado.piloto_escalado()
+	return "%s|%d|%s|%s%s" % [estado.modalidade, estado.liga, str(estado.niveis), str(p.get("nivel", 0)),
+			String(p.get("id", ""))]
+
+
+## Recalcula numa thread quando a chave muda. Na Arena não há previsão: a luta
+## simulada é longa demais para isso.
+func _atualizar_previsao() -> void:
+	if _previsao_tarefa >= 0 and WorkerThreadPool.is_task_completed(_previsao_tarefa):
+		WorkerThreadPool.wait_for_task_completion(_previsao_tarefa)
+		_previsao_tarefa = -1
+		_previsao_mutex.lock()
+		var r := _previsao_resultado.duplicate()
+		_previsao_mutex.unlock()
+		if String(r.get("chave", "")) == _chave_previsao():
+			_previsao = r.get("posicoes", {})
+		else:
+			_previsao_chave = ""  # mudou enquanto calculava: de novo
+	if _na_arena:
+		_previsao = {}
+		_previsao_chave = _chave_previsao()
+		return
+	var chave := _chave_previsao()
+	if chave == _previsao_chave or _previsao_tarefa >= 0:
+		return
+	_previsao_chave = chave
+	_previsao = {}
+	# Os participantes de cada variante saem aqui (lêem o estado); só a
+	# simulação, que não lê nada fora dos argumentos, vai para a thread.
+	var variantes := {"": estado.participantes(dados)}
+	for m in estado.cfg["melhorias"]:
+		var id := String(m["id"])
+		if String(m["efeito"]) in EFEITOS_PREVISAO and not estado.no_maximo(id):
+			for n in NIVEIS_PREVISAO:
+				var extra := mini(int(n), int(m["max"]) - estado.nivel(id))
+				variantes["%s|%d" % [id, n]] = estado.participantes(dados, {id: extra})
+	var pista := estado.pista(dados)
+	var voltas := int(estado.dados_liga()["voltas"])
+	var params: Dictionary = dados.simulacao().duplicate(true)
+	_previsao_tarefa = WorkerThreadPool.add_task(_prever.bind(chave, variantes, pista, voltas, params))
+
+
+func _prever(chave: String, variantes: Dictionary, pista: Pista, voltas: int, params: Dictionary) -> void:
+	var posicoes := {}
+	for k in variantes:
+		var soma := 0.0
+		for sem in SEMENTES_PREVISAO:
+			soma += IdleEstado.posicao(Simulacao.correr(pista, variantes[k], voltas, params, int(sem), false))
+		posicoes[k] = soma / SEMENTES_PREVISAO.size()
+	_previsao_mutex.lock()
+	_previsao_resultado = {"chave": chave, "posicoes": posicoes}
+	_previsao_mutex.unlock()
+
+
+## "5º → 4º" no cartão quando um nível a mais melhora a chegada; "+3 NÍVEIS: 4º"
+## quando só três melhoram; "CHEGA EM 5º" quando nem isso muda; nada nas
+## melhorias de renda e enquanto calcula.
+func _texto_previsao(l: Label, m: Dictionary, base: float) -> void:
+	var id := String(m["id"])
+	if not _previsao.has("%s|1" % id) or not _previsao.has(""):
+		l.text = ""
+		return
+	var antes := roundi(base)
+	var com_um := roundi(float(_previsao["%s|1" % id]))
+	var com_tres := roundi(float(_previsao.get("%s|3" % id, base)))
+	if com_um < antes:
+		l.text = "%dº → %dº" % [antes, com_um]
+		l.add_theme_color_override("font_color", COR_OURO)
+	elif com_tres < antes:
+		l.text = "+3 NÍVEIS: %dº" % com_tres
+		l.add_theme_color_override("font_color", IdleUI.COR_OURO_CLARO)
+	else:
+		l.text = "CHEGA EM %dº" % antes
+		l.add_theme_color_override("font_color", IdleUI.COR_SECUNDARIA)
+
+
+func _exit_tree() -> void:
+	if _previsao_tarefa >= 0:
+		WorkerThreadPool.wait_for_task_completion(_previsao_tarefa)

@@ -168,3 +168,49 @@ func test_arena_com_a_simulacao_do_chrome_wreckage() -> void:
 	igual(Array(r["classificacao"]).size(), int(e.cfg["grid"]), "dez carros na luta")
 	verificar(IdleEstado.posicao(r) >= 1, "posição pela ordem de quem ficou de pé")
 	d.free()
+
+
+func test_metas_do_dia() -> void:
+	var c := _cfg()
+	c["meta_dia"] = {"por_dia": 2, "recompensa_min": 10, "tarefas": [
+		{"id": "correr", "tipo": "corridas", "quantidade": 2, "texto": "Corra %d corridas"},
+		{"id": "vencer", "tipo": "vitorias", "quantidade": 1, "texto": "Vença %d corridas"}]}
+	var e := IdleEstado.new(c)
+	var hoje := 1.8e9
+	var est := e.metas_do_dia(hoje)
+	igual(Array(est["tarefas"]).size(), 2, "duas metas sorteadas")
+	e.registrar_meta("corridas", 1, hoje)
+	verificar(not e.meta_pronta("correr", hoje) and e.coletar_meta("correr", hoje) == 0.0, "incompleta não paga")
+	e.registrar_meta("corridas", 1, hoje)
+	igual(e.progresso_meta("correr", hoje), [2, 2], "progresso")
+	igual(e.metas_prontas(hoje), 1, "uma pronta")
+	var antes := e.dinheiro
+	igual(e.coletar_meta("correr", hoje), e.renda_s() * 600.0, "paga 10 min da renda")
+	igual(e.dinheiro - antes, e.renda_s() * 600.0, "o dinheiro entra")
+	igual(e.coletar_meta("correr", hoje), 0.0, "não paga duas vezes")
+	var s := IdleEstado.new(c)
+	s.de_save(JSON.parse_string(JSON.stringify(e.para_save())))
+	igual([s.progresso_meta("correr", hoje), s.meta_pronta("correr", hoje)], [[2, 2], false], "save guarda as metas")
+	igual(s.progresso_meta("correr", hoje + 86400.0), [0, 2], "dia novo zera")
+	# As ações do jogo contam: a vitória conta corrida e vitória.
+	e.concluir(1)
+	igual(e.progresso_meta("vencer", hoje if MetaDia.dia(hoje) == MetaDia.dia(Time.get_unix_time_from_system()) else
+			Time.get_unix_time_from_system())[0], 1, "vitória conta")
+
+
+func test_avisos_com_o_app_fechado() -> void:
+	var e := IdleEstado.new(_cfg())
+	e.contrato_em = 1000.0 + 3600.0
+	var avisos := IdleAvisos.planejar(e, 1000.0)
+	igual(avisos.map(func(a): return [a["id"], a["em_s"]]), [["teto", 3600.0], ["contrato", 3600.0]],
+			"teto da renda e contrato grátis")
+	e.contrato_em = 0.0
+	igual(IdleAvisos.planejar(e, 1000.0).map(func(a): return a["id"]), ["teto"], "contrato já pronto: sem aviso")
+
+
+func test_video_sem_anuncio_paga_igual() -> void:
+	var a := IdleAnuncios.new()
+	var pago := [false]
+	a.premiado(func(): pago[0] = true)
+	verificar(pago[0], "sem vídeo para mostrar, a recompensa sai")
+	a.free()
