@@ -21,6 +21,7 @@ func _init(tela_: Node) -> void:
 	_lista.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_lista.add_theme_constant_override("separation", 12)
 	add_child(_lista)
+	IdleUI.rolagem_fina(self)
 
 
 func atualizar() -> void:
@@ -53,6 +54,7 @@ func _modalidades(e: IdleEstado) -> void:
 		for st in ["normal", "hover", "pressed", "disabled"]:
 			b.add_theme_stylebox_override(st, IdleUI.caixa(cor, 12, 6, borda, 3 if marcada else 1))
 		b.pressed.connect(func():
+			Sons.tocar_ui(self, "toque", -6.0)
 			_escolhida = id
 			atualizar())
 		var v := VBoxContainer.new()

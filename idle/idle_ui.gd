@@ -76,9 +76,38 @@ static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: N
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	Tipografia.acao_primaria(b, texto, cor, Color(0.07, 0.07, 0.06), tamanho, altura)
+	desativado_legivel(b)
 	if pai != null:
 		pai.add_child(b)
 	return b
+
+
+## Desativado (sem dinheiro, relógio do contrato): placa escura com borda e
+## texto claro, para o preço e o relógio continuarem legíveis.
+static func desativado_legivel(b: Button) -> void:
+	b.add_theme_stylebox_override("disabled", caixa(Color(0.11, 0.12, 0.14), 10, 8, Color(1, 1, 1, 0.1), 2))
+	b.add_theme_color_override("font_disabled_color", Color(0.78, 0.8, 0.85))
+
+
+## Barra de rolagem fina, em ocre apagado (a cinza do Godot destoa).
+static func rolagem_fina(sc: ScrollContainer) -> void:
+	var barra := sc.get_v_scroll_bar()
+	barra.custom_minimum_size.x = 6
+	var trilho := StyleBoxEmpty.new()
+	barra.add_theme_stylebox_override("scroll", trilho)
+	barra.add_theme_stylebox_override("scroll_focus", trilho)
+	for st in ["grabber", "grabber_highlight", "grabber_pressed"]:
+		barra.add_theme_stylebox_override(st, caixa(Color(COR_OURO, 0.45), 3, 0))
+
+
+## Pulso curto de escala no controle (compra, contrato): o toque respondeu.
+static func pulsar(c: Control, escala := 1.06) -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	c.pivot_offset = c.size * 0.5
+	var tw := c.create_tween()
+	tw.tween_property(c, "scale", Vector2(escala, escala), 0.07)
+	tw.tween_property(c, "scale", Vector2.ONE, 0.12)
 
 
 ## Banner da pista (arte/ui/banner_*), com o tema da pista longa quando a

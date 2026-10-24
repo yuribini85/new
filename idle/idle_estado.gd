@@ -499,14 +499,20 @@ func params_arena(dados: Node) -> Dictionary:
 
 ## A luta da liga: todos contra todos (cada carro é a própria equipe); a
 ## classificação é a ordem de quem ficou de pé. Na Arena, o Vácuo vira
-## blindagem: o carro mais pesado aguenta mais (Arena: resistência pela massa).
+## blindagem: o carro mais pesado aguenta mais (Arena: resistência pela massa);
+## o rival mais forte ganha peso na mesma proporção da aderência.
 func correr_arena(dados: Node, semente: int, com_amostras := true, niveis_extra := {}) -> Dictionary:
 	var parts := participantes(dados, niveis_extra)
 	var blindagem := float(dados_modalidade().get("blindagem_por_vacuo", 0.0))
-	for p in parts:
+	var peso_forca := float(cfg["rivais"].get("aderencia_por_forca", 0.0))
+	for k in parts.size():
+		var p: Dictionary = parts[k]
 		p["equipe"] = p["id"]
 		if p["id"] == "jogador":
 			p["atributos"]["peso"] = float(p["atributos"]["peso"]) * (1.0 + blindagem * efeito("vacuo", niveis_extra))
+		else:
+			# Rival mais forte também é mais pesado: na arena o peso é a resistência.
+			p["atributos"]["peso"] = float(p["atributos"]["peso"]) * (1.0 + peso_forca * (fator_rival(k) - 1.0))
 	return Arena.correr(parts, params_arena(dados), semente, com_amostras)
 
 

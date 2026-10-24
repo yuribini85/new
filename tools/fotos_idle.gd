@@ -3,7 +3,7 @@ extends SceneTree
 ## Uso (precisa de tela: xvfb-run): godot --resolution 405x720 --script res://tools/fotos_idle.gd -- --saida=/pasta/
 ##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abas=corrida,pistas,pilotos]
 ##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena]
-## --abas: uma foto de cada tela depois dos segundos; --contratos: pilotos a
+## --abas: uma foto de cada tela depois dos segundos ("config": a engrenagem); --contratos: pilotos a
 ## mais no elenco; --abertas: quantas modalidades abertas (as anteriores na
 ## liga que abre a próxima); --nova_liga: a janela de liga nova na última foto;
 ## --fora_h: horas com o app fechado (mostra a faixa da renda).
@@ -70,7 +70,10 @@ func _rodar() -> void:
 			root.get_texture().get_image().save_png(saida.path_join("idle_%d.png" % k))
 			k += 1
 	for aba in abas:
-		tela._abrir(aba)
+		if aba == "config":
+			tela._abrir_config()
+		else:
+			tela._abrir(aba)
 		for i in 10:
 			await process_frame
 		root.get_texture().get_image().save_png(saida.path_join("idle_%s.png" % aba))

@@ -197,6 +197,9 @@ func _topo(pai: Control) -> void:
 	IdleUI.rotulo("RENDA", 18, IdleUI.COR_SECUNDARIA, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_renda = IdleUI.rotulo("", 34, COR_DINHEIRO, dir)
 	_renda.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	var vao := Control.new()
+	vao.custom_minimum_size = Vector2(4, 0)
+	topo.add_child(vao)
 	var eng := Button.new()
 	eng.flat = true
 	eng.focus_mode = Control.FOCUS_NONE
@@ -238,6 +241,7 @@ func _pagina_corrida() -> Control:
 	_arena3d.visible = false
 	corrida.add_child(_arena3d)
 	_hud = HudCorrida.new()
+	_hud.sem_volta = true
 	corrida.add_child(_hud)
 	_sons = Sons.new()
 	add_child(_sons)
@@ -317,9 +321,10 @@ func _cartao(m: Dictionary) -> Control:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	Tipografia.acao_primaria(b, "", COR_DINHEIRO.darkened(0.15), Color(0.06, 0.08, 0.06), 24, 56)
+	IdleUI.desativado_legivel(b)
 	b.pressed.connect(_comprar.bind(String(m["id"])))
 	v.add_child(b)
-	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "botao": b, "nome": nome, "icone": ic}
+	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "botao": b, "nome": nome, "icone": ic, "cartao": p}
 	return p
 
 
@@ -329,6 +334,8 @@ static func curto(v: float) -> String:
 
 ## Troca a tela do meio (menu de baixo).
 func _abrir(id: String) -> void:
+	if not _paginas[id].visible:
+		Sons.tocar_ui(self, "toque", -6.0)
 	_barra.escolher(id)
 	for k in _paginas:
 		_paginas[k].visible = k == id
@@ -381,6 +388,10 @@ func _atualizar_topo() -> void:
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 28)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
+	if _subir.visible and not Preferencias.reduzir_animacoes:
+		_subir.pivot_offset = _subir.size * 0.5
+		var k := 1.0 + 0.035 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.1)
+		_subir.scale = Vector2(k, k)
 	_dobrar.visible = _dobrar.visible and _pausa >= 0.0
 
 
@@ -695,6 +706,8 @@ func _chegou() -> void:
 	var ganho := estado.concluir(pos)
 	_chegada = true
 	_sons.chegada()
+	if pos == 1:
+		Sons.tocar_ui(self, "comemoracao", -8.0)
 	_hud.bandeirada()
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
 			COR_OURO if pos == 1 else COR_DINHEIRO, 10, -1.0, true)
@@ -719,6 +732,8 @@ func _dobrar_premio() -> void:
 
 func _comprar(id: String) -> void:
 	if estado.comprar(id):
+		Sons.tocar_ui(self, "moeda", -6.0, 1.0 + 0.04 * (estado.nivel(id) % 6))
+		IdleUI.pulsar(_cartoes[id]["cartao"], 1.05)
 		_atualizar_cartoes()
 
 
@@ -809,12 +824,13 @@ func _faixa_coleta(ganho: float) -> void:
 	_coleta = PanelContainer.new()
 	_coleta.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.06, 0.07, 0.09, 0.96), 16, 12, COR_DINHEIRO, 2))
 	_coleta.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	_coleta.offset_top = AreaSegura.topo(720.0) + 330
+	_coleta.offset_top = AreaSegura.topo(720.0) + 560
 	_coleta.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	add_child(_coleta)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 14)
 	_coleta.add_child(h)
+	IdleUI.icone("icone_creditos", 56, h)
 	var v := VBoxContainer.new()
 	h.add_child(v)
 	IdleUI.rotulo("ENQUANTO VOCÊ ESTEVE FORA", 18, IdleUI.COR_SECUNDARIA, v)
@@ -828,6 +844,7 @@ func _faixa_coleta(ganho: float) -> void:
 			estado.salvar(Time.get_unix_time_from_system())
 			mostrar_aviso("RENDA DOBRADA", "+$" + curto(ganho))))
 	_coleta_t = COLETA_S
+	Sons.tocar_ui(self, "moeda", -4.0)
 
 
 func _avisos(delta: float) -> void:

@@ -58,6 +58,9 @@ const INTERVALO_PRIO := 3
 var _d := {}
 ## Vista DADOS: só os acontecimentos da corrida (o resto está na vista tática).
 var so_eventos := false
+## Sem o bloco da volta na faixa de cima (corridas de uma volta só: o
+## Chrome Racing Team).
+var sem_volta := false
 ## Alvo de opacidade do que é secundário; _sec segue devagar.
 var secundario := 1.0
 var _sec := 1.0
@@ -240,6 +243,8 @@ func _banda() -> void:
 	_texto("/%d" % _d["total"], Vector2(x + w + 18, base), 26, SUAVE, HORIZONTAL_ALIGNMENT_LEFT, -1.0, f)
 	var direita := size.x - RESERVA_MENU
 	var fr := Tipografia.fonte("semibold")
+	if sem_volta:
+		return
 	if _d.get("ultima", false):
 		var pulso := 0.7 + 0.3 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.4)
 		_texto("ÚLTIMA VOLTA", Vector2(direita - 220.0, base - 6.0), 26, Color(AMBAR, pulso), HORIZONTAL_ALIGNMENT_RIGHT,

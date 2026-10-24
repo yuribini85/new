@@ -5,7 +5,9 @@ extends SceneTree
 ## vácuo no máximo e o piloto base. Toda liga pede o mesmo, e o tempo de cada
 ## uma sai só do custo (expoente_custo_liga). Copie os valores impressos para o
 ## JSON. A arena tem simulação própria e fica de fora.
-## Uso: godot --headless --path . -s tools/calibrar_forca_idle.gd [-- modalidade=gt]
+## Com por_liga=1, acha a força de cada liga (o "forca_rivais" da liga, que
+## vale sobre o da pista): os carros mudam muito de uma liga para outra.
+## Uso: godot --headless --path . -s tools/calibrar_forca_idle.gd [-- modalidade=gt por_liga=1]
 
 const ALVO := 12
 
@@ -37,9 +39,12 @@ func nivel_min() -> int:
 
 func _r() -> void:
 	var so := ""
+	var por_liga := false
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("modalidade="):
 			so = a.trim_prefix("modalidade=")
+		elif a == "por_liga=1":
+			por_liga = true
 	d = root.get_node("Dados")
 	e = IdleEstado.new()
 	for m in e.cfg["modalidades"]:
@@ -49,6 +54,24 @@ func _r() -> void:
 		e.modalidade = m["id"]
 		e.niveis["ultrapassagem"] = int(e.melhoria("ultrapassagem")["max"])
 		e.niveis["vacuo"] = int(e.melhoria("vacuo")["max"])
+		if por_liga:
+			var lista := []
+			for i in m["ligas"].size():
+				e.liga = i
+				var lo := 0.5
+				var hi := 1.6
+				for it in 8:
+					var f := (lo + hi) / 2.0
+					m["ligas"][i]["forca_rivais"] = f
+					if nivel_min() > ALVO:
+						hi = f
+					else:
+						lo = f
+				m["ligas"][i]["forca_rivais"] = snappedf(lo, 0.01)
+				lista.append(snappedf(lo, 0.01))
+				print("%-10s %-28s forca %.2f  nível %d" % [m["id"], m["ligas"][i]["nome"], snappedf(lo, 0.01), nivel_min()])
+			print("%s ligas: %s" % [m["id"], JSON.stringify(lista)])
+			continue
 		var saida := {}
 		for pista in m["forca_rivais"]:
 			# A primeira liga da modalidade nessa pista.

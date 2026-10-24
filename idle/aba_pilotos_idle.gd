@@ -25,6 +25,7 @@ func _init(tela_: Node) -> void:
 	_lista.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_lista.add_theme_constant_override("separation", 14)
 	add_child(_lista)
+	IdleUI.rolagem_fina(self)
 
 
 func atualizar() -> void:
@@ -78,7 +79,8 @@ func _escalado(e: IdleEstado) -> void:
 	v.add_child(_estrelas(int(p["nivel"]), int(e.cfg_pilotos().get("nivel_max", 8)), 22))
 	var a := e.atributos_piloto(tela.dados, p)
 	var base: Dictionary = e.cfg_pilotos().get("base", {})
-	IdleUI.rotulo("Ritmo +%d%%   Ultrapassa %d%%" % [roundi((float(a["ritmo"]) - float(base.get("ritmo", 1.0))) * 100.0),
+	var ritmo := roundi((float(a["ritmo"]) - float(base.get("ritmo", 1.0))) * 100.0)
+	IdleUI.rotulo("%s   Ultrapassa %d%%" % ["Ritmo +%d%%" % ritmo if ritmo > 0 else "Ritmo base",
 			roundi(clampf(float(a["agressividade"]), 0.0, 1.0) * 100.0)], 20, IdleUI.COR_DINHEIRO, v)
 	var frase := IdleUI.rotulo("“%s”" % String(dp.get("personalidade", "")), 17, IdleUI.COR_SECUNDARIA, v, "regular")
 	frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -88,8 +90,10 @@ func _contratos(e: IdleEstado) -> void:
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	_lista.add_child(linha)
-	_botao_gratis = IdleUI.botao("", IdleUI.COR_BOTAO, 24, 72, linha)
+	_botao_gratis = IdleUI.botao("", IdleUI.COR_BOTAO, 24, 84, linha)
 	_botao_gratis.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_botao_gratis.icon = Aba.icone_reduzido("icone_piloto", 40)
+	_botao_gratis.expand_icon = false
 	_botao_gratis.pressed.connect(func():
 		var p := e.usar_contrato_gratis(tela.dados, _agora())
 		if not p.is_empty():
@@ -97,7 +101,8 @@ func _contratos(e: IdleEstado) -> void:
 	_texto_gratis()
 	var dia := Time.get_date_string_from_system()
 	var restam := e.contratos_video_restantes(dia)
-	var video := IdleUI.botao("VÍDEO: CONTRATO (%d)" % restam, IdleUI.COR_DINHEIRO, 22, 72, linha)
+	var video := IdleUI.botao("VÍDEO: CONTRATO (%d)" % restam, IdleUI.COR_DINHEIRO, 22, 84, linha)
+	video.icon = Aba.icone_reduzido("icone_ao_vivo", 40)
 	video.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	video.disabled = restam <= 0
 	video.pressed.connect(func():
@@ -145,6 +150,7 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 		b.add_theme_stylebox_override(st, IdleUI.caixa(IdleUI.COR_CARTAO_CLARO if marcado else IdleUI.COR_CARTAO, 12, 6,
 				IdleUI.COR_OURO if marcado else Color(1, 1, 1, 0.06), 3 if marcado else 1))
 	b.pressed.connect(func():
+		Sons.tocar_ui(self, "toque", -6.0)
 		_escolhido = -1 if _escolhido == uid else uid
 		atualizar())
 	var v := VBoxContainer.new()
@@ -197,6 +203,7 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 	fundir.pressed.connect(func():
 		var nome_sai := _nome(e.piloto(par))
 		if e.fundir(int(p["uid"]), par):
+			Sons.tocar_ui(self, "comemoracao", -6.0)
 			mudou.emit()
 			tela.mostrar_aviso("%s SUBIU PARA O NÍVEL %d" % [_nome(p).to_upper(), int(p["nivel"])],
 					"%s deixou a equipe" % nome_sai)
@@ -220,6 +227,7 @@ func _par_para_fundir(e: IdleEstado, p: Dictionary) -> int:
 
 ## Contrato novo: o retrato aparece grande, com nome, perfil e nível.
 func _novo(p: Dictionary) -> void:
+	Sons.tocar_ui(self, "comemoracao", -6.0)
 	mudou.emit()
 	atualizar()
 	var dp := IdleEstado.dados_piloto(tela.dados, String(p["id"]))
