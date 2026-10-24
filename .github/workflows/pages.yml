@@ -129,7 +129,7 @@ jobs:
           mkdir -p build/android ~/.config/godot
           sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           jdk="${JAVA_HOME_17_X64:-$JAVA_HOME}"
-          for f in ~/.config/godot/editor_settings-4.4.tres ~/.config/godot/editor_settings-4.tres; do
+          for f in ~/.config/godot/editor_settings-4.5.tres ~/.config/godot/editor_settings-4.4.tres ~/.config/godot/editor_settings-4.tres; do
             printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' "$sdk" "$jdk" > "$f"
           done
           sed -i "s/^version\/code=1$/version\/code=${{ github.run_number }}/" export_presets.cfg
@@ -145,6 +145,7 @@ jobs:
       # data/idle/idle.json ("admob"). Se falhar, o resto segue publicado.
       - name: Exportar APK do Chrome Racing Team (AdMob)
         continue-on-error: true
+        timeout-minutes: 40
         env:
           GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ github.workspace }}/android/teste.keystore
           GODOT_ANDROID_KEYSTORE_RELEASE_USER: teste
@@ -159,12 +160,13 @@ jobs:
           printf '\n[editor_plugins]\n\nenabled=PackedStringArray("res://addons/AdmobPlugin/plugin.cfg")\n' >> project.godot
           # Build Gradle só no preset do idle (preset.3).
           awk '/^\[preset\./{p=$0} p=="[preset.3.options]" && /^gradle_build\/use_gradle_build=/{$0="gradle_build/use_gradle_build=true"} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
-          godot --headless --install-android-build-template || true
           # Duas importações: na primeira o ícone do plugin ainda não existe e o
-          # script dele não carrega; na segunda carrega limpo.
-          godot --headless --import || true
-          godot --headless --import
-          godot --headless --export-release "Android Idle" build/android/chrome-racing-team.apk 2>&1 | grep -v "savepack: step" | tail -40
+          # script dele não carrega; na segunda carrega limpo. O modelo de build
+          # Android só se instala junto da exportação (sozinho, o editor abre e
+          # não fecha). timeout: nada aqui pode prender o site.
+          timeout 600 godot --headless --import || true
+          timeout 600 godot --headless --import
+          timeout 1200 godot --headless --install-android-build-template --export-release "Android Idle" build/android/chrome-racing-team.apk 2>&1 | grep -v "savepack: step" | tail -60
           test -f build/android/chrome-racing-team.apk
           ls -la build/android
 

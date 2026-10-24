@@ -79,3 +79,23 @@ func test_corrida_com_a_frota_real() -> void:
 	var forte := e.correr(d, 1, false, {"motor": 20, "pneus": 15, "ultrapassagem": 15, "vacuo": 10})
 	verificar(IdleEstado.posicao(forte) <= IdleEstado.posicao(r), "melhorias ajudam")
 	d.free()
+
+
+func test_rivais_saem_do_carro_da_equipe() -> void:
+	var d: Node = DadosScript.new()
+	d.carregar("res://data/")
+	var cfg := _cfg()
+	cfg["rivais"]["espalhar"] = 0.2
+	cfg["rivais"]["aderencia_por_forca"] = 0.5
+	cfg["ligas"][0]["forca_rivais"] = 1.5
+	var e := IdleEstado.new(cfg)
+	verificar(is_equal_approx(e.fator_rival(0), 1.8) and is_equal_approx(e.fator_rival(8), 1.2),
+			"do mais forte ao mais fraco, vezes forca_rivais")
+	var base: Dictionary = e.carro_base(d)
+	var a: Dictionary = e.participantes(d)[0]["atributos"]
+	var b := IdleEstado._atributos(d, base)
+	verificar(is_equal_approx(a["potencia"], b["potencia"] * 1.8) and is_equal_approx(a["aderencia"], b["aderencia"] * 1.4)
+			and a["peso"] == b["peso"], "ficha do rival = carro da equipe escalado")
+	var ps := e.participantes(d)
+	verificar(ps[0]["carro"] != base["id"], "o modelo na tela é outro carro da frota")
+	d.free()

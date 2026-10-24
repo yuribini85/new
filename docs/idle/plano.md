@@ -48,10 +48,21 @@ pista nova, e os rivais ficam mais fortes.
   arquibancada 30 (print enviado pelo usuário); ultrapassagem e vácuo +4% no 1º nível.
 - Metas de ritmo (estimadas): 1ª vitória em ~3 min de jogo; cada liga ~1,5× mais longa que a
   anterior. Calibradas com `tools/calibrar_idle.gd` (jogador que compra a melhoria mais barata).
-- Medido (calibrador, 2026-10-23): 1ª corrida já em 7º (os rivais vão de 1,3× a 0,7× a potência
-  da liga, do mais forte ao mais fraco, e você sobe um a um), 1ª vitória em ~5 min, ligas
-  seguintes em 1–5 min, corridas de ~65 s. Seu piloto tenta a ultrapassagem em 50% das retas
-  (+4% por nível de ULTRAPASSAGEM).
+- Duração: meta de 2–3 semanas para o jogo inteiro (faixa do gênero), medida em dias de
+  calendário com um jogador de 4 sessões de 8 min por dia (a 1ª de 15 min) e a renda com o app
+  fechado até `offline_max_h` (`tools/calibrar_idle.gd -- sessoes_dia=4`).
+- Dificuldade igual em toda liga: a ficha dos rivais é a do carro da equipe com a potência de
+  1,3× a 0,7× (e a aderência 0,6 disso, como Pneus × Motor) vezes a `forca_rivais` da liga,
+  calibrada por `tools/calibrar_forca_idle.gd` para pedir ~12 níveis de motor com ultrapassagem e
+  vácuo no máximo (pistas com poucas retas pedem rivais mais fracos). Os modelos dos rivais na
+  tela continuam os da frota. Vácuo +0,4%/nível até 10 e Ultrapassagem até 12 (no 12 o piloto já
+  tenta em toda reta): com +15% de vácuo o carro de fábrica passava rival 60% mais potente.
+- O tempo de cada liga sai do custo: `expoente_custo_liga` 2,3 (o custo cresce mais rápido que
+  prêmio e renda, que dobram a cada liga).
+- Medido (2026-10-24): 1ª vitória na 5ª corrida (~5 min); ligas 1–3 na 1ª sessão; ligas 4–7 uma
+  por sessão; Circuito Misto no dia 2, Mirante da Costa no 4, Anel do Vale no 8, Oval da Usina no
+  14. Nas três últimas ligas o 2º lugar vem rápido e a vitória leva dias. Antes (1,25 sem
+  forca_rivais) o jogo acabava em ~2 h de app aberto ou 1 dia de calendário.
 - Tudo em `data/idle/idle.json`; o playtest e o teste de mercado ajustam.
 
 ## Monetização

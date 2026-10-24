@@ -141,16 +141,24 @@ func carro_base(dados: Node) -> Dictionary:
 	return IdleEstado._perto_de(dados, float(dados_liga()["potencia"]) * float(cfg["carro_do_jogador"]))[0]
 
 
-## Os rivais da liga, do mais forte (na frente do grid) ao mais fraco: a
-## potência vai de (1 + espalhar) a (1 - espalhar) × a da liga, para cada
-## melhoria render posições aos poucos (no Race Star você sobe um a um).
+## Força do rival `k` (0 = o mais forte, na frente do grid) em relação ao
+## carro da liga: de (1 + espalhar) a (1 - espalhar), para cada melhoria render
+## posições aos poucos (no Race Star você sobe um a um), vezes a forca_rivais da
+## liga (acerta a pista: com poucas retas é mais difícil passar).
+func fator_rival(k: int) -> float:
+	var n := int(cfg["grid"]) - 1
+	return float(dados_liga().get("forca_rivais", 1.0)) * (1.0 + float(cfg["rivais"].get("espalhar", 0.0))
+			* (1.0 - 2.0 * k / maxf(n - 1, 1)))
+
+
+## Os modelos dos rivais da liga (só a aparência: a ficha de corrida sai do
+## carro da equipe, ver participantes).
 func rivais(dados: Node) -> Array:
 	var usados := {String(carro_base(dados)["id"]): true}
 	var n := int(cfg["grid"]) - 1
-	var espalhar := float(cfg["rivais"].get("espalhar", 0.0))
 	var r := []
 	for k in n:
-		var alvo := float(dados_liga()["potencia"]) * (1.0 + espalhar * (1.0 - 2.0 * k / maxf(n - 1, 1)))
+		var alvo := float(dados_liga()["potencia"]) * fator_rival(k)
 		for c in IdleEstado._perto_de(dados, alvo):
 			if not usados.has(String(c["id"])):
 				usados[String(c["id"])] = true
@@ -166,14 +174,20 @@ static func _atributos(dados: Node, base: Dictionary) -> Dictionary:
 
 
 ## Participantes da Simulacao: os rivais na frente, você em último (como no
-## Race Star); as melhorias no seu carro e no seu piloto. `niveis_extra`
-## simula níveis a mais (calibrador).
+## Race Star); as melhorias no seu carro e no seu piloto. A ficha de cada
+## rival é a do carro da equipe com a potência × fator_rival (e a aderência
+## na proporção aderencia_por_forca, como Pneus × Motor): a dificuldade
+## de cada liga fica igual, sem depender do peso e da aderência de cada
+## modelo da frota. `niveis_extra` simula níveis a mais (calibrador).
 func participantes(dados: Node, niveis_extra := {}) -> Array:
 	var r := []
 	var pr: Dictionary = cfg["rivais"]
-	for k in rivais(dados).size():
-		var rv: Dictionary = rivais(dados)[k]
-		r.append({"id": "r%d" % k, "carro": rv["id"], "atributos": IdleEstado._atributos(dados, rv),
+	var modelos := rivais(dados)
+	for k in modelos.size():
+		var ficha: Dictionary = carro_base(dados).duplicate(true)
+		ficha["potencia"] = float(ficha["potencia"]) * fator_rival(k)
+		ficha["aderencia"] = float(ficha["aderencia"]) * (1.0 + float(pr.get("aderencia_por_forca", 0.0)) * (fator_rival(k) - 1.0))
+		r.append({"id": "r%d" % k, "carro": modelos[k]["id"], "atributos": IdleEstado._atributos(dados, ficha),
 				"piloto": {"ritmo": float(pr["ritmo"]) + float(pr.get("ritmo_por_liga", 0.0)) * liga,
 					"consistencia": pr["consistencia"], "agressividade": pr["agressividade"]}})
 	var base: Dictionary = carro_base(dados).duplicate(true)
