@@ -27,6 +27,8 @@ TERMOS_IDLE = [r"\bv[íi]deo\b", r"\bmetas?\b", r"\bfundir\b", r"\bNV \d", r"\bp
 ARQUIVOS_FORA = {"ui/registro_sessao.gd", "ui/preferencias.gd", "data_model/cenarios.gd", "data_model/save.gd"}
 # Frases permitidas, com o motivo.
 PERMITIDO = {
+	# O selo do botão de anúncio (IdleUI.botao_premio): o AdMob pede que o jogador saiba que é vídeo.
+	"VÍDEO",
 	# Ferramentas de teste (Configurações, só com Preferencias.ferramentas_teste()).
 	"Modo de playtest",
 	"Sessão %d (%s): %.0f min · assistindo %.0f min · %d fila%s (%.0f min) · %d pulo%s · %s→%s · %s→%s giros%s",

@@ -73,6 +73,25 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
     "+3 NÍVEIS: 7º", "CHEGA EM 8º"), de corridas simuladas numa thread (não na Arena: a luta
     simulada leva segundos).
 
+## Pendente para o lançamento (próxima etapa, pedido do usuário em 2026-10-24)
+Fica para depois da etapa de experiência do jogo. Em ordem:
+1. **Pacote da Play Store:** AAB no lugar do APK, target SDK atual, assinatura pela keystore do
+   usuário (segredos do repositório, configurados por ele), ícone adaptativo, capturas, imagem de
+   destaque, descrição, classificação etária e formulário de segurança de dados.
+2. **Consentimento e privacidade:** mensagem de consentimento do AdMob (UMP/GDPR) e política de
+   privacidade numa URL pública.
+3. **Medição do teste de mercado:** eventos (abertura, primeira corrida, primeira vitória, liga,
+   desbloqueios, anúncio, sessão) no GameAnalytics.
+4. **Desempenho em celular fraco:** FPS por aparelho e qualidade automática (como no C&W),
+   tamanho do download.
+5. **Compra real** do "Sem anúncios" (Google Play Billing, como no C&W).
+6. **Idioma** do teste de mercado (tradução, se for fora do Brasil).
+7. Depois do lançamento: salvamento em nuvem e troca de aparelho.
+
+Decisões do usuário em aberto: teto da renda offline (hoje 2 h), recomeço com bônus (prestígio),
+preço do "Sem anúncios", música definitiva. Esperando do usuário: logo oficial, ids do AdMob,
+chaves do GameAnalytics, segredos da keystore.
+
 ## O que reaproveita
 - `Simulacao` (posição real, zonas de ultrapassagem, agressividade e o vácuo novo do piloto).
 - Pistas (`data/pistas.json`), carros 3D da frota (`data/carros.json`), `Corrida3D` e câmeras.

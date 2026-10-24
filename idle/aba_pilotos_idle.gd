@@ -99,7 +99,7 @@ func _contratos(e: IdleEstado) -> void:
 	_texto_gratis()
 	var dia := Time.get_date_string_from_system()
 	var restam := e.contratos_video_restantes(dia)
-	var video := IdleUI.botao_premio("CONTRATAR GRÁTIS (%d)" % restam if restam > 0 else "VOLTE AMANHÃ", 22, 84, linha)
+	var video := IdleUI.botao_premio("CONTRATAR · %d HOJE" % restam if restam > 0 else "VOLTE AMANHÃ", 22, 84, linha)
 	video.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	video.disabled = restam <= 0
 	video.pressed.connect(func():

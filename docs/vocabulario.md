@@ -157,13 +157,14 @@ existe na versão de loja).
 
 Quem joga idle reconhece os botões pelo padrão do gênero (pedido do usuário, 2026-10-24: "usar
 essa mesma nomenclatura, esse mesmo dialeto"). As redes de anúncio recomendam botão de recompensa
-reconhecível, sempre igual, que diz o que o jogador ganha ("x2", "contrato grátis") e é opcional.
+reconhecível, sempre igual, que diz o que o jogador ganha ("x2") e é opcional; o AdMob exige que o
+jogador saiba antes de tocar que vai ver um anúncio (`docs/idle/interface.md`, seção 5).
 `tests/checar_vocabulario.py` barra em `idle/` os termos da coluna da direita.
 
 | Use | Nunca |
 |---|---|
-| botão **verde** com a recompensa escrita: **x2**, **PRÊMIO x2**, **CONTRATAR GRÁTIS (5)** | "VÍDEO: …", "assistir vídeo", prata/cinza para anúncio, ícone pequeno ao lado |
-| **BEM-VINDO DE VOLTA!** · "Sua equipe faturou enquanto você estava fora" · **COLETAR** / **▶ x2** | faixa "enquanto você esteve fora" que some sozinha |
+| botão **verde** em duas partes: selo com o ícone grande de vídeo e **VÍDEO**, e a recompensa: **PRÊMIO x2**, **COLETAR x2**, **CONTRATAR · 5 HOJE** | "VÍDEO: …" como texto do botão, "assistir vídeo", "GRÁTIS" em botão de anúncio, prata/cinza para anúncio, botão de anúncio sem o selo |
+| **BEM-VINDO DE VOLTA!** · "Sua equipe faturou enquanto você estava fora" · **COLETAR** / **COLETAR x2** (anúncio) | faixa "enquanto você esteve fora" que some sozinha |
 | **COLETAR** (recompensa pronta) | "receber", "pegar" |
 | **GRÁTIS EM 3:59:48** (relógio do grátis) | "próximo em" |
 | **ATUAL** (a liga em andamento na escada) | "aqui" |

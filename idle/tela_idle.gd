@@ -1024,7 +1024,7 @@ func _bem_vindo(ganho: float) -> void:
 	v.add_child(botoes)
 	var coletar := IdleUI.botao("COLETAR", COR_OURO, 26, 76, botoes)
 	coletar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var dobro := IdleUI.botao_premio("x2", 30, 76, botoes)
+	var dobro := IdleUI.botao_premio("COLETAR x2", 26, 76, botoes)
 	dobro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	coletar.pressed.connect(_fechar_bem_vindo.bind(ganho))
 	dobro.pressed.connect(func():
@@ -1151,7 +1151,7 @@ func celebrar(tamanho: int) -> void:
 func ganho_flutuante(valor: float) -> void:
 	if valor < 1.0:
 		return
-	var l := IdleUI.rotulo("+$" + curto(valor), 30, COR_DINHEIRO, null, "bold")
+	var l := IdleUI.rotulo("+$" + curto(valor), 30, COR_DINHEIRO, null, "numero")
 	l.top_level = true
 	l.z_index = 10
 	add_child(l)

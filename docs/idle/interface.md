@@ -30,8 +30,8 @@ Botão com no mínimo **96 px** de altura na base (~48 dp; Android pede 48 dp e 
 ## 3. Ícones
 
 - **Nada de ícone pequeno ao lado do texto de botão ou de título de cartão**: no tamanho do texto ou
-  menor ele não se lê, briga com o texto e não acrescenta nada. O botão diz o que faz em palavras;
-  o de anúncio se reconhece pelo verde e pela recompensa escrita.
+  menor ele não se lê, briga com o texto e não acrescenta nada. O botão diz o que faz em palavras.
+  O de anúncio é a exceção da seção 5: o ícone de vídeo entra grande, num selo próprio.
 - Ícone entra **sozinho e grande** (abas do menu de baixo, cadeado das modalidades, moeda do
   BEM-VINDO, ícones das missões), com pelo menos 40 px na base.
 
@@ -43,12 +43,30 @@ Botão com no mínimo **96 px** de altura na base (~48 dp; Android pede 48 dp e 
 - Quando não cabe: mudar o layout (nome numa linha e valores na outra, cartões em menos colunas,
   botões um embaixo do outro), não diminuir a letra abaixo do mínimo.
 
-## 5. Palavras
+## 5. Botão de anúncio (vídeo premiado)
+
+O jogador precisa saber **antes de tocar** que o botão abre um anúncio. É também regra do AdMob:
+o app mostra de forma clara a ação pedida e a recompensa antes de cada vídeo premiado (ícone vale
+se for inequívoco), e o vídeo só abre depois do toque do jogador. As redes recomendam o botão de
+anúncio diferente dos outros (cor, forma, texto) e em duas partes: o "ver vídeo" e a recompensa
+(a Unity cita o botão roxo com uma TV do Subway Surfers).
+
+No CRT (`IdleUI.botao_premio`): botão **verde**; à esquerda um **selo** verde-escuro com o
+**ícone de vídeo grande** (o ▶ na tela, 30–48 px) e a palavra **VÍDEO**; à direita a recompensa
+(**PRÊMIO x2**, **COLETAR x2**, **CONTRATAR · 5 HOJE**). Nunca "GRÁTIS" num botão de anúncio
+(grátis é o do relógio).
+
+## 6. Palavras
 
 O texto segue o dialeto dos idles de `docs/vocabulario.md`, seção 5 (por exemplo, ATUAL na escada
 de ligas, nunca "aqui").
 
 ## Fontes
+
+- [AdMob: política de anúncios premiados](https://support.google.com/admob/answer/7313578)
+- [Unity: fundamentos do posicionamento do vídeo premiado](https://unity.com/blog/the-fundamentals-of-rewarded-video-ad-placements)
+- [Pangle: boas práticas do vídeo premiado](https://www.pangleglobal.com/resource/27805)
+- [Applixir: botão de anúncio](https://www.applixir.com/?p=2993)
 
 - [Material Design 3: tipografia](https://m3.material.io/styles/typography/type-scale-tokens)
 - [Apple HIG: tipografia](https://developer.apple.com/design/human-interface-guidelines/typography)

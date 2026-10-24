@@ -117,18 +117,59 @@ static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: N
 	return b
 
 
-## Botão de anúncio premiado, no padrão do gênero: verde e só a recompensa
-## escrita ("x2", "CONTRATAR GRÁTIS"), nunca "vídeo". Sem ícone pequeno ao lado
-## (docs/idle/interface.md: ícone em botão só se tiver o tamanho do texto ou mais).
+## Botão de anúncio premiado, no padrão do gênero (docs/idle/interface.md, 5): verde, em
+## duas partes. À esquerda um selo mais escuro com o ícone grande do vídeo e a
+## palavra VÍDEO (o jogador sabe que é anúncio antes de tocar, como a política do
+## AdMob pede); à direita a recompensa ("PRÊMIO x2", "COLETAR x2"). O texto da
+## recompensa muda com texto_premio().
 static func botao_premio(texto: String, tamanho := 24, altura := 64, pai: Node = null) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, texto, COR_PREMIO, Color.WHITE, legivel(tamanho), maxi(altura, ALTURA_MIN))
+	var alto := maxi(altura, ALTURA_MIN)
+	Tipografia.acao_primaria(b, "", COR_PREMIO, Color.WHITE, legivel(tamanho), alto)
 	estilo_premio(b)
 	desativado_legivel(b)
+	var h := HBoxContainer.new()
+	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	h.offset_left = 6
+	h.offset_top = 6
+	h.offset_right = -6
+	h.offset_bottom = -10  # o bisel embaixo
+	h.add_theme_constant_override("separation", 10)
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(h)
+	var selo := PanelContainer.new()
+	selo.add_theme_stylebox_override("panel", caixa(COR_PREMIO_ESCURO, 10, 8))
+	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(selo)
+	var sv := VBoxContainer.new()
+	sv.alignment = BoxContainer.ALIGNMENT_CENTER
+	sv.add_theme_constant_override("separation", -2)
+	sv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	selo.add_child(sv)
+	var icone := TextureRect.new()
+	var lado := clampi(alto - 52, 30, 48)
+	icone.texture = icone_video(lado)
+	icone.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	icone.custom_minimum_size = Vector2(lado, lado)
+	icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sv.add_child(icone)
+	var palavra := rotulo("VÍDEO", 18, Color.WHITE, sv, "semibold")
+	palavra.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var r := rotulo(texto, tamanho, Color.WHITE, h, "semibold")
+	r.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	r.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	r.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.set_meta("premio", r)
+	b.set_meta("selo", selo)
 	if pai != null:
 		pai.add_child(b)
 	return b
+
+
+## Troca o texto da recompensa do botão de anúncio (botao_premio).
+static func texto_premio(b: Button, texto: String) -> void:
+	(b.get_meta("premio") as Label).text = texto
 
 
 static func estilo_premio(b: Button) -> void:
