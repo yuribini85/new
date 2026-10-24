@@ -61,6 +61,15 @@ func _process(delta: float) -> void:
 		set_process(false)
 
 
+## Retângulo global da aba `id` (o tutorial leve aponta para ela); vazio se não há.
+func retangulo_aba(id: String) -> Rect2:
+	for i in abas.size():
+		if String(abas[i]["id"]) == id:
+			var w := size.x / abas.size()
+			return Rect2(get_global_rect().position + Vector2(i * w, 0), Vector2(w, ALTURA))
+	return Rect2()
+
+
 func _gui_input(e: InputEvent) -> void:
 	var toque: bool = (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) \
 			or (e is InputEventScreenTouch and e.pressed)

@@ -3,7 +3,7 @@ extends SceneTree
 ## Uso (precisa de tela: xvfb-run): godot --resolution 405x720 --script res://tools/fotos_idle.gd -- --saida=/pasta/
 ##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abas=corrida,pistas,pilotos]
 ##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena] [--novo]
-##   [--corridas=0] [--abrir=pneus,patrocinio] [--ofertas=transmissao]
+##   [--corridas=0] [--abrir=pneus,patrocinio] [--ofertas=transmissao] [--guia=melhoria:pneus]
 ## --abas: uma foto de cada tela depois dos segundos ("config": a engrenagem); --contratos: pilotos a
 ## mais no elenco; --abertas: quantas modalidades abertas (as anteriores na
 ## liga que abre a próxima); --nova_liga: a janela de liga nova na última foto;
@@ -31,6 +31,7 @@ func _rodar() -> void:
 	var corridas := 0
 	var abrir := []
 	var ofertas := []
+	var guia := ""
 	for arg in OS.get_cmdline_user_args():
 		var kv := arg.trim_prefix("--").split("=")
 		match kv[0]:
@@ -48,6 +49,7 @@ func _rodar() -> void:
 			"corridas": corridas = int(kv[1])
 			"abrir": abrir = Array(kv[1].split(","))
 			"ofertas": ofertas = Array(kv[1].split(","))
+			"guia": guia = kv[1]
 	DirAccess.make_dir_recursive_absolute(saida)
 	var dados: Node = root.get_node("Dados")
 	# Save de partida: modalidades abertas, pilotos e o tempo fora.
@@ -89,6 +91,12 @@ func _rodar() -> void:
 		if t >= float(tempos[k]):
 			root.get_texture().get_image().save_png(saida.path_join("idle_%d.png" % k))
 			k += 1
+	if guia != "":
+		# --guia=alvo: a dica do tutorial leve nesse alvo, na foto idle_guia.png.
+		tela._guiar(guia, "Toque aqui para testar a dica do tutorial.")
+		for i in 20:
+			await process_frame
+		root.get_texture().get_image().save_png(saida.path_join("idle_guia.png"))
 	for aba in abas:
 		if aba == "config":
 			tela._abrir_config()

@@ -34,6 +34,7 @@ var avisos_oferecidos := false  # a primeira liga nova já ligou os avisos
 ## as conversas que já apareceram (oferta recusada fica no canto da corrida).
 var desbloqueados: Array = []
 var oferecidos: Array = []
+var guias: Array = []  # dicas avulsas do tutorial leve já mostradas ("subir", "oferta")
 
 var liga: int:
 	get:
@@ -707,7 +708,8 @@ func para_save() -> Dictionary:
 	return {"versao": 2, "dinheiro": dinheiro, "modalidade": modalidade, "mods": mods, "corridas": corridas,
 			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
-			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos}
+			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
+			"guias": guias}
 
 
 func de_save(s: Dictionary) -> void:
@@ -746,6 +748,7 @@ func de_save(s: Dictionary) -> void:
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
 	desbloqueados = Array(s.get("desbloqueados", [])).map(func(x): return String(x))
 	oferecidos = Array(s.get("oferecidos", [])).map(func(x): return String(x))
+	guias = Array(s.get("guias", [])).map(func(x): return String(x))
 	if not s.has("desbloqueados") and corridas > 0:
 		# Save de antes da escada: o que a equipe já alcançou vem aberto.
 		for d in cfg_desbloqueios():

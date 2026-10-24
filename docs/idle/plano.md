@@ -53,6 +53,10 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   (METAS), Edgar (PISTAS, quando abre o Turismo), Nora (analista: a previsão nos cartões, $6 mil),
   Kenji (mais câmeras, $15 mil) e Dex (Arena). O que custa o jogador compra; DEPOIS guarda a
   oferta no canto da corrida. Save de antes da escada abre o que a equipe já alcançou.
+  **Tutorial leve** (pedido do usuário, no estilo do Destaque do C&W; `idle/guia_idle.gd`):
+  depois de cada conversa, a função nova fica destacada (o resto escurece, contorno dourado
+  pulsando, seta) com uma frase de onde tocar (`desbloqueios[].guia`); qualquer toque ou 10 s
+  fecham. Também na primeira vitória (SUBIR DE LIGA) e na primeira oferta guardada.
 - **Polimento (cruzamento com as críticas do gênero, aprovado pelo usuário em 2026-10-24):**
   - vídeo que não carrega ou falha ao abrir paga a recompensa igual (a queixa mais comum do Race
     Star é o vídeo que trava e não paga);

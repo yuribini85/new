@@ -116,6 +116,7 @@ var _conversa: ConversaIdle
 var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
 var _janela_aberta := false
 var _tv := true  # a transmissão (corrida 3D) já foi comprada
+var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 ## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
 ## corrida e o combo de compras seguidas.
 const MUSICA_DB := -16.0
@@ -213,6 +214,8 @@ func _montar() -> void:
 	_barra = BarraIdle.new(ABAS)
 	_barra.escolheu.connect(_abrir)
 	raiz.add_child(_barra)
+	_guia = GuiaIdle.new()
+	add_child(_guia)
 	_aplicar_desbloqueios()
 	_atualizar_cartoes()
 
@@ -482,6 +485,9 @@ func _atualizar_topo(delta := 0.0) -> void:
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 28)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
+	if _subir.visible and not "subir" in estado.guias and _conversa == null and not _guia.ativo():
+		estado.guias.append("subir")
+		_guiar.call_deferred("subir", "Vitória! Toque em SUBIR DE LIGA para correr numa liga nova.")
 	# Com o LARGAR na tela, PRÓXIMA LIGA fica logo acima dele.
 	_subir.offset_top = -230.0 if _largar.visible else -170.0
 	_subir.offset_bottom = -142.0 if _largar.visible else -82.0
@@ -1286,7 +1292,7 @@ func _largar_corrida() -> void:
 ## A próxima conversa da escada, quando nada mais está na frente e a corrida
 ## está parada (grid ou depois da chegada).
 func _checar_conversa() -> void:
-	if _conversa != null or _janela_aberta or _config != null or _coleta != null:
+	if _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
 		return
 	if not (_aguardando or _pausa >= 0.0):
 		return
@@ -1314,6 +1320,14 @@ func _abrir_conversa(d: Dictionary) -> void:
 			if String(coisa).begins_with("aba:"):
 				_barra.avisar(String(coisa).trim_prefix("aba:"), true)
 		_aplicar_desbloqueios()
+		# Tutorial leve: a dica de onde tocar (a oferta guardada, se ficou para depois).
+		if estado.desbloqueio(id).is_empty() or id in estado.desbloqueados:
+			var g: Dictionary = d.get("guia", {})
+			if not g.is_empty():
+				_guiar.call_deferred(String(g.get("alvo", "")), String(g.get("texto", "")))
+		elif not "oferta" in estado.guias:
+			estado.guias.append("oferta")
+			_guiar.call_deferred("oferta:" + id, "A oferta fica guardada aqui. Toque quando quiser comprar.")
 		estado.salvar(Time.get_unix_time_from_system()))
 
 
@@ -1332,6 +1346,7 @@ func _atualizar_ofertas() -> void:
 			b.add_theme_stylebox_override(st, IdleUI.caixa(Color(IdleUI.COR_FUNDO, 0.85), 12, 8, COR_OURO, 2))
 		for c in ["font_color", "font_hover_color", "font_pressed_color"]:
 			b.add_theme_color_override(c, COR_OURO)
+		b.set_meta("id", String(d["id"]))
 		b.pressed.connect(func():
 			if _conversa == null:
 				_abrir_conversa(d))
@@ -1362,3 +1377,44 @@ func _misturar(delta: float) -> void:
 	var correndo := na_corrida and _tv and not _aguardando and _conversa == null
 	_musica.volume_db = move_toward(_musica.volume_db, MUSICA_SOB_MOTOR_DB if correndo else MUSICA_DB, delta * 12.0)
 	_ambiente.volume_db = move_toward(_ambiente.volume_db, -60.0 if na_corrida else AMBIENTE_DB, delta * 30.0)
+
+
+# --- tutorial leve ------------------------------------------------------------------
+
+## Mostra a dica do tutorial leve: o alvo destacado e a frase de onde tocar.
+## Alvos: largar, subir, cameras, previsao, melhoria:<id>, aba:<id>,
+## oferta:<id> ou vazio (só a frase).
+func _guiar(alvo: String, texto: String) -> void:
+	if alvo.begins_with("melhoria:") or alvo in ["largar", "subir", "cameras", "previsao"] or alvo.begins_with("oferta:"):
+		_abrir("corrida")
+	_guia.mostrar(texto, _retangulo_do_alvo.bind(alvo) if alvo != "" else Callable())
+
+
+func _retangulo_do_alvo(alvo: String) -> Rect2:
+	var c: Control = null
+	match alvo:
+		"largar":
+			c = _largar
+		"subir":
+			c = _subir
+		"cameras":
+			c = _trilho
+		"previsao":
+			c = _cartoes["motor"]["previsao"]
+	if alvo.begins_with("melhoria:"):
+		c = _cartoes.get(alvo.trim_prefix("melhoria:"), {}).get("botao")
+	elif alvo.begins_with("aba:"):
+		return _barra.retangulo_aba(alvo.trim_prefix("aba:"))
+	elif alvo.begins_with("oferta:"):
+		for b in _ofertas.get_children():
+			if String(b.get_meta("id", "")) == alvo.trim_prefix("oferta:"):
+				c = b
+	return c.get_global_rect() if c != null and c.is_visible_in_tree() else Rect2()
+
+
+## Qualquer toque fecha a dica (sem segurar: o toque segue para o botão).
+func _input(e: InputEvent) -> void:
+	if _guia != null and _guia.ativo() and _guia.modulate.a >= 0.9:
+		var toque: bool = (e is InputEventMouseButton and e.pressed) or (e is InputEventScreenTouch and e.pressed)
+		if toque:
+			_guia.limpar.call_deferred()
