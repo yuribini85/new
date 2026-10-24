@@ -235,18 +235,28 @@ func _novo(p: Dictionary) -> void:
 			"%s · nível 1" % String(dp.get("perfil", "")).capitalize(), IdleUI.retrato_piloto(String(p["id"])))
 
 
+## Retrato do piloto saindo do quadro: a moldura começa abaixo do topo
+## (SAIDA_CABECA do lado) e o retrato, de fundo transparente, fica por cima, com
+## a cabeça passando da borda.
+const SAIDA_CABECA := 0.26
+
 func _retrato(p: Dictionary, lado: float) -> Control:
 	var c := Control.new()
 	c.custom_minimum_size = Vector2(lado, lado)
 	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var fundo := Panel.new()
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fundo.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_FUNDO, 10, 0, IdleUI.COR_BORDA, 1))
+	fundo.offset_top = lado * SAIDA_CABECA
+	var sb := IdleUI.caixa(IdleUI.COR_FUNDO, 10, 0, IdleUI.COR_BORDA, 1)
+	sb.border_color = IdleUI.COR_OURO.darkened(0.35) if not p.is_empty() else IdleUI.COR_BORDA
+	sb.border_width_top = 3
+	fundo.add_theme_stylebox_override("panel", sb)
 	fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	c.add_child(fundo)
 	if p.is_empty():
-		var vazio := IdleUI.icone("icone_piloto", int(lado * 0.5), c, IdleUI.COR_BLOQUEADO)
+		var vazio := IdleUI.icone("icone_piloto", int(lado * 0.4), c, IdleUI.COR_BLOQUEADO)
 		vazio.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		vazio.offset_top = lado * SAIDA_CABECA
 		return c
 	var t := TextureRect.new()
 	t.texture = IdleUI.retrato_piloto(String(p["id"]))
