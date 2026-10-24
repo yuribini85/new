@@ -1,8 +1,10 @@
 extends Control
 ## Chrome Racing Team (docs/idle/plano.md): a tela única do jogo idle. Em cima
-## o dinheiro e a renda por segundo; no meio a corrida 3D (a pista inteira ou a
-## câmera atrás do seu carro), com a posição e o tempo; embaixo os cartões de
-## melhoria. A corrida roda sozinha, uma atrás da outra.
+## o dinheiro e a renda por segundo; no meio, ocupando a maior parte da tela, a
+## corrida 3D do Chrome & Wreckage com a câmera AUTO dele (o diretor alterna
+## entre o seu carro, as disputas de perto e a pista), com a posição e o tempo;
+## embaixo os cartões de melhoria, três por linha. A corrida roda sozinha, uma
+## atrás da outra.
 
 const COR_FUNDO := Color(0.07, 0.08, 0.1)
 const COR_CARTAO := Color(0.13, 0.145, 0.17)
@@ -22,7 +24,13 @@ var _semente := 1
 var _pausa := -1.0  # > 0: parada depois da chegada, antes da próxima corrida
 var _fim_jogador := INF
 var _salvar_em := 0.0
-var _camera_de_cima := true
+## Câmera: "auto" (o diretor do Chrome & Wreckage), "jogador" (atrás do seu
+## carro) ou "geral" (a pista inteira). O botão CÂMERA passa de uma à outra.
+const CAMERAS := ["auto", "jogador", "geral"]
+const NOMES_CAMERA := {"auto": "AUTO", "jogador": "SEU CARRO", "geral": "PISTA"}
+var _camera_modo := "auto"
+var _diretor := DiretorCamera.new()
+var _pista: Pista
 
 var _dinheiro: Label
 var _renda: Label
@@ -92,6 +100,7 @@ func _montar() -> void:
 	# A corrida.
 	var corrida := Control.new()
 	corrida.custom_minimum_size = Vector2(0, 560)
+	corrida.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	corrida.clip_contents = true
 	v.add_child(corrida)
 	_visual = CorridaVisual.new()
@@ -114,7 +123,7 @@ func _montar() -> void:
 	_posicao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_relogio = _rotulo("", 30, Color.WHITE, hf)
 	_camera = Button.new()
-	_camera.text = "CÂMERA"
+	_camera.text = "CÂMERA: AUTO"
 	_camera.focus_mode = Control.FOCUS_NONE
 	_camera.add_theme_font_size_override("font_size", 20)
 	_camera.pressed.connect(_trocar_camera)
@@ -144,12 +153,11 @@ func _montar() -> void:
 	_dobrar.visible = false
 	_dobrar.pressed.connect(_dobrar_premio)
 	corrida.add_child(_dobrar)
-	# Os cartões de melhoria, dois por linha.
+	# Os cartões de melhoria, três por linha.
 	var grade := GridContainer.new()
-	grade.columns = 2
-	grade.add_theme_constant_override("h_separation", 12)
-	grade.add_theme_constant_override("v_separation", 12)
-	grade.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	grade.columns = 3
+	grade.add_theme_constant_override("h_separation", 10)
+	grade.add_theme_constant_override("v_separation", 10)
 	v.add_child(grade)
 	for m in estado.cfg["melhorias"]:
 		grade.add_child(_cartao(m))
@@ -161,17 +169,18 @@ func _cartao(m: Dictionary) -> Control:
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	p.add_theme_stylebox_override("panel", _caixa(COR_CARTAO, 14))
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 4)
+	v.add_theme_constant_override("separation", 2)
 	p.add_child(v)
 	var h := HBoxContainer.new()
 	v.add_child(h)
-	var nome := _rotulo(String(m["nome"]).to_upper(), 24, Color.WHITE, h)
+	var nome := _rotulo(String(m["nome"]).to_upper(), 20, Color.WHITE, h)
 	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var nivel := _rotulo("", 20, Color(0.77, 0.79, 0.85), h)
-	var efeito := _rotulo("", 22, COR_DINHEIRO, v)
+	nome.clip_text = true
+	var nivel := _rotulo("", 18, Color(0.77, 0.79, 0.85), h)
+	var efeito := _rotulo("", 18, COR_DINHEIRO, v)
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, "", COR_DINHEIRO.darkened(0.15), Color(0.06, 0.08, 0.06), 24, 64)
+	Tipografia.acao_primaria(b, "", COR_DINHEIRO.darkened(0.15), Color(0.06, 0.08, 0.06), 24, 56)
 	b.pressed.connect(_comprar.bind(String(m["id"])))
 	v.add_child(b)
 	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "botao": b}
@@ -234,8 +243,8 @@ func _atualizar_cartoes() -> void:
 			b.text = "MÁXIMO"
 			b.disabled = true
 		else:
-			c["efeito"].text = "%s  >  %s" % [_efeito_texto(m, n), _efeito_texto(m, n + 1)]
-			b.text = "MELHORAR  $%s" % curto(estado.custo(m["id"]))
+			c["efeito"].text = "%s > %s" % [_efeito_texto(m, n), _efeito_texto(m, n + 1)]
+			b.text = "$%s" % curto(estado.custo(m["id"]))
 			b.disabled = not estado.pode_comprar(m["id"])
 
 
@@ -253,6 +262,7 @@ func _nova_corrida() -> void:
 	_semente += 1
 	_resultado = estado.correr(dados, _semente + estado.corridas * 7919)
 	var pista := estado.pista(dados)
+	_pista = pista
 	_visual.mostrar(pista, _resultado, {"jogador": COR_OURO})
 	var categorias := {}
 	var pinturas := {}
@@ -264,18 +274,40 @@ func _nova_corrida() -> void:
 	_fim_jogador = float(_resultado["carros"]["jogador"]["tempo_total"])
 	_pausa = -1.0
 	_aviso.text = ""
+	_diretor.reiniciar()
 	_aplicar_camera()
+	_visual3d.destacar_jogador()  # o anel no seu carro (o dourado) na largada
 
 
 func _trocar_camera() -> void:
-	_camera_de_cima = not _camera_de_cima
+	_camera_modo = CAMERAS[(CAMERAS.find(_camera_modo) + 1) % CAMERAS.size()]
+	_camera.text = "CÂMERA: " + NOMES_CAMERA[_camera_modo]
+	_diretor.reiniciar()
 	_aplicar_camera()
 
 
 func _aplicar_camera() -> void:
-	_visual3d.visao_geral = _camera_de_cima
-	_visual3d.perseguicao = not _camera_de_cima
+	_visual3d.visao_geral = _camera_modo == "geral"
+	_visual3d.perseguicao = _camera_modo == "jogador"
 	_visual3d.foco = "jogador"
+	_visual3d.enquadrar_com = ""
+
+
+## Câmera AUTO: o diretor do Chrome & Wreckage escolhe o plano (abertura de
+## cima no grid, o seu carro, a disputa da frente, a pista inteira).
+func _dirigir() -> void:
+	var ordem := _visual.ordem()
+	var i := ordem.find("jogador")
+	_visual3d.alvo = ordem[i - 1] if i > 0 and _pausa < 0.0 else ""
+	if _camera_modo != "auto":
+		_visual3d.enquadrar_grid = false
+		return
+	var voltas := int(estado.dados_liga()["voltas"])
+	var plano := _diretor.atualizar(_visual, _pista.comprimento * voltas, _pista.comprimento, voltas)
+	_visual3d.enquadrar_grid = plano["motivo"] == "abertura"
+	_visual3d.visao_geral = plano["geral"]
+	_visual3d.foco = plano["foco"]
+	_visual3d.enquadrar_com = plano["com"]
 
 
 func _process(delta: float) -> void:
@@ -292,6 +324,7 @@ func _process(delta: float) -> void:
 		if _visual.tempo >= _fim_jogador:
 			_chegou()
 	_visual3d.taxa = 1.0 if _pausa < 0.0 else 0.0
+	_dirigir()
 	_visual3d.atualizar(delta)
 	var ordem := _visual.ordem()
 	_posicao.text = "P%d/%d" % [ordem.find("jogador") + 1, ordem.size()]
