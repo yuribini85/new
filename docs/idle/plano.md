@@ -32,6 +32,11 @@ pilotos, carros e pistas próprios, recrutamento e fusão de pilotos).
   PISTAS mostra as modalidades e a escada de ligas (pista, carro, prêmio, onde a equipe está);
   PILOTOS mostra o escalado, contratos e o elenco; engrenagem com som e visual simples; câmeras em
   ícones.
+- **Ritmo medido** (`tools/calibrar_idle.gd`, 4 sessões de 8 min por dia, renda com o app fechado
+  até 2 h, contrato grátis e fusões; multiplicador ×1,75 por liga, custo ^2,3): Turismo abre no dia
+  0,3, GT no 0,8, Terra no 1,5, Arena no 3,3; a Arena termina no dia 7; Terra Elite e Lendas são o
+  fim de jogo (dias 12–20); o jogo inteiro em ~23 dias e 600 corridas. Com ×2 por liga eram 54
+  dias, com 40 só em Terra.
 - **Paleta "cromo + ouro"** (decisão do usuário, tirada do logotipo; `IdleUI`): fundo #0B0E13,
   cartões #161B22 com borda cromada #3A4250, ações em ouro em relevo (#FFC53D→#F08A0C), vídeos em
   prata #C9CED6, renda em ouro claro #FFD873, verde #6FD08C só no ganho das melhorias, vermelho
