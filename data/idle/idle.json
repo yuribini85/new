@@ -13,7 +13,7 @@
 	"premio_p1": 300,
 	"expoente_custo_liga": 2.3,
 	"_nota_forca": "forca_rivais (por liga) multiplica a força dos rivais para que toda liga peça ~12 níveis de motor (com ultrapassagem e vácuo no máximo): pistas com poucas retas são mais difíceis de passar. A 1ª liga fica mais fácil (1ª vitória cedo). aderencia_por_forca: o rival x% mais potente tem 0,6·x% mais aderência (como Pneus × Motor).",
-	"_nota_modalidades": "Cinco modalidades (decisão do usuário, 2026-10-24), cada uma com a categoria de carro do Chrome & Wreckage, as pistas dela e 8 ligas; liga 'libera' a próxima quando a anterior chega à liga indicada (índice). Todas rendem ao mesmo tempo. forca_rivais por pista: tools/calibrar_forca_idle.gd. Números estimados (pedido do usuário).",
+	"_nota_modalidades": "Cinco modalidades (decisão do usuário, 2026-10-24), cada uma com a categoria de carro do Chrome & Wreckage, as pistas dela e 8 ligas (multiplicador ×1,75 por liga); liga 'libera' a próxima quando a anterior chega à liga indicada (índice). Todas rendem ao mesmo tempo. forca_rivais por pista: tools/calibrar_forca_idle.gd. Números estimados (pedido do usuário).",
 	"pilotos": {"_nota": "Pilotos do Chrome & Wreckage (data/equipes.json). Contrato traz um piloto no nível 1; dois do mesmo nível fundem num nível acima (decisão do usuário: contratos + fusão, como o Race Star). Cada modalidade escala um piloto. Números estimados.", "base": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.5}, "perfis": {"agressivo": {"agressividade": 0.1, "consistencia": -0.05}, "equilibrado": {}, "cauteloso": {"agressividade": -0.1, "consistencia": 0.05}}, "ritmo_por_nivel": 0.01, "nivel_max": 8, "contrato_gratis_h": 4, "contratos_video_dia": 5},
 	"melhorias": [
 		{"id": "motor", "icone": "icone_potencia", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
@@ -26,53 +26,53 @@
 	"modalidades": [
 		{"id": "compactos", "nome": "Compactos", "icone": "icone_correr", "categorias": ["compacto"], "forca_rivais": {"docas_curta": 0.95, "serra_curta": 0.96, "anel_curto": 1.03}, "ligas": [
 			{"nome": "Compactos Estreantes", "pista": "docas_curta", "voltas": 1, "potencia": 60, "multiplicador": 1, "forca_rivais": 0.85},
-			{"nome": "Compactos Regional", "pista": "serra_curta", "voltas": 1, "potencia": 75, "multiplicador": 2},
-			{"nome": "Compactos Estadual", "pista": "anel_curto", "voltas": 1, "potencia": 90, "multiplicador": 4},
-			{"nome": "Compactos Nacional", "pista": "docas_curta", "voltas": 1, "potencia": 110, "multiplicador": 8},
-			{"nome": "Compactos Continental", "pista": "serra_curta", "voltas": 1, "potencia": 130, "multiplicador": 16},
-			{"nome": "Compactos Mestres", "pista": "anel_curto", "voltas": 1, "potencia": 160, "multiplicador": 32},
-			{"nome": "Compactos Elite", "pista": "docas_curta", "voltas": 1, "potencia": 190, "multiplicador": 64},
-			{"nome": "Compactos Lendas", "pista": "serra_curta", "voltas": 1, "potencia": 230, "multiplicador": 128}
+			{"nome": "Compactos Regional", "pista": "serra_curta", "voltas": 1, "potencia": 75, "multiplicador": 1.8},
+			{"nome": "Compactos Estadual", "pista": "anel_curto", "voltas": 1, "potencia": 90, "multiplicador": 3.1},
+			{"nome": "Compactos Nacional", "pista": "docas_curta", "voltas": 1, "potencia": 110, "multiplicador": 5.4},
+			{"nome": "Compactos Continental", "pista": "serra_curta", "voltas": 1, "potencia": 130, "multiplicador": 9.4},
+			{"nome": "Compactos Mestres", "pista": "anel_curto", "voltas": 1, "potencia": 160, "multiplicador": 16.4},
+			{"nome": "Compactos Elite", "pista": "docas_curta", "voltas": 1, "potencia": 190, "multiplicador": 28.7},
+			{"nome": "Compactos Lendas", "pista": "serra_curta", "voltas": 1, "potencia": 230, "multiplicador": 50.3}
 		]},
 		{"id": "turismo", "nome": "Turismo", "icone": "icone_pista", "categorias": ["seda"], "libera": {"modalidade": "compactos", "liga": 3}, "forca_rivais": {"parque_das_docas": 1.15, "circuito_misto": 1.05, "mirante_da_costa": 1.04}, "ligas": [
 			{"nome": "Turismo Estreantes", "pista": "parque_das_docas", "voltas": 1, "potencia": 100, "multiplicador": 4},
-			{"nome": "Turismo Regional", "pista": "circuito_misto", "voltas": 1, "potencia": 130, "multiplicador": 8},
-			{"nome": "Turismo Estadual", "pista": "mirante_da_costa", "voltas": 1, "potencia": 170, "multiplicador": 16},
-			{"nome": "Turismo Nacional", "pista": "parque_das_docas", "voltas": 1, "potencia": 210, "multiplicador": 32},
-			{"nome": "Turismo Continental", "pista": "circuito_misto", "voltas": 1, "potencia": 260, "multiplicador": 64},
-			{"nome": "Turismo Mestres", "pista": "mirante_da_costa", "voltas": 1, "potencia": 320, "multiplicador": 128},
-			{"nome": "Turismo Elite", "pista": "parque_das_docas", "voltas": 1, "potencia": 400, "multiplicador": 256},
-			{"nome": "Turismo Lendas", "pista": "circuito_misto", "voltas": 1, "potencia": 500, "multiplicador": 512}
+			{"nome": "Turismo Regional", "pista": "circuito_misto", "voltas": 1, "potencia": 130, "multiplicador": 7},
+			{"nome": "Turismo Estadual", "pista": "mirante_da_costa", "voltas": 1, "potencia": 170, "multiplicador": 12.2},
+			{"nome": "Turismo Nacional", "pista": "parque_das_docas", "voltas": 1, "potencia": 210, "multiplicador": 21.4},
+			{"nome": "Turismo Continental", "pista": "circuito_misto", "voltas": 1, "potencia": 260, "multiplicador": 37.5},
+			{"nome": "Turismo Mestres", "pista": "mirante_da_costa", "voltas": 1, "potencia": 320, "multiplicador": 65.7},
+			{"nome": "Turismo Elite", "pista": "parque_das_docas", "voltas": 1, "potencia": 400, "multiplicador": 114.9},
+			{"nome": "Turismo Lendas", "pista": "circuito_misto", "voltas": 1, "potencia": 500, "multiplicador": 201.1}
 		]},
 		{"id": "gt", "nome": "GT", "icone": "icone_potencia", "categorias": ["cupe"], "libera": {"modalidade": "turismo", "liga": 3}, "forca_rivais": {"avenida_noturna": 1.17, "anel_do_vale": 1.15, "oval_inclinado": 0.7}, "ligas": [
 			{"nome": "GT Estreantes", "pista": "avenida_noturna", "voltas": 1, "potencia": 220, "multiplicador": 16},
-			{"nome": "GT Regional", "pista": "anel_do_vale", "voltas": 1, "potencia": 290, "multiplicador": 32},
-			{"nome": "GT Estadual", "pista": "oval_inclinado", "voltas": 1, "potencia": 380, "multiplicador": 64},
-			{"nome": "GT Nacional", "pista": "avenida_noturna", "voltas": 1, "potencia": 490, "multiplicador": 128},
-			{"nome": "GT Continental", "pista": "anel_do_vale", "voltas": 1, "potencia": 630, "multiplicador": 256},
-			{"nome": "GT Mestres", "pista": "oval_inclinado", "voltas": 1, "potencia": 820, "multiplicador": 512},
-			{"nome": "GT Elite", "pista": "avenida_noturna", "voltas": 1, "potencia": 1060, "multiplicador": 1024},
-			{"nome": "GT Lendas", "pista": "anel_do_vale", "voltas": 1, "potencia": 1400, "multiplicador": 2048}
+			{"nome": "GT Regional", "pista": "anel_do_vale", "voltas": 1, "potencia": 290, "multiplicador": 28},
+			{"nome": "GT Estadual", "pista": "oval_inclinado", "voltas": 1, "potencia": 380, "multiplicador": 49},
+			{"nome": "GT Nacional", "pista": "avenida_noturna", "voltas": 1, "potencia": 490, "multiplicador": 85.8},
+			{"nome": "GT Continental", "pista": "anel_do_vale", "voltas": 1, "potencia": 630, "multiplicador": 150.1},
+			{"nome": "GT Mestres", "pista": "oval_inclinado", "voltas": 1, "potencia": 820, "multiplicador": 262.6},
+			{"nome": "GT Elite", "pista": "avenida_noturna", "voltas": 1, "potencia": 1060, "multiplicador": 459.6},
+			{"nome": "GT Lendas", "pista": "anel_do_vale", "voltas": 1, "potencia": 1400, "multiplicador": 804.2}
 		]},
 		{"id": "terra", "nome": "Terra", "icone": "icone_tracao_4x4", "categorias": ["picape", "utilitario"], "libera": {"modalidade": "gt", "liga": 3}, "forca_rivais": {"trilha_do_canion": 1.08, "estrada_das_araucarias": 1.05, "serra_alta": 1.03}, "ligas": [
 			{"nome": "Terra Estreantes", "pista": "trilha_do_canion", "voltas": 1, "potencia": 110, "multiplicador": 64},
-			{"nome": "Terra Regional", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 140, "multiplicador": 128},
-			{"nome": "Terra Estadual", "pista": "serra_alta", "voltas": 1, "potencia": 180, "multiplicador": 256},
-			{"nome": "Terra Nacional", "pista": "trilha_do_canion", "voltas": 1, "potencia": 230, "multiplicador": 512},
-			{"nome": "Terra Continental", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 300, "multiplicador": 1024},
-			{"nome": "Terra Mestres", "pista": "serra_alta", "voltas": 1, "potencia": 390, "multiplicador": 2048},
-			{"nome": "Terra Elite", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 4096},
-			{"nome": "Terra Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 8192}
+			{"nome": "Terra Regional", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 140, "multiplicador": 112},
+			{"nome": "Terra Estadual", "pista": "serra_alta", "voltas": 1, "potencia": 180, "multiplicador": 196},
+			{"nome": "Terra Nacional", "pista": "trilha_do_canion", "voltas": 1, "potencia": 230, "multiplicador": 343},
+			{"nome": "Terra Continental", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 300, "multiplicador": 600.2},
+			{"nome": "Terra Mestres", "pista": "serra_alta", "voltas": 1, "potencia": 390, "multiplicador": 1050.4},
+			{"nome": "Terra Elite", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 1838.3},
+			{"nome": "Terra Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 3217}
 		]},
 		{"id": "arena", "nome": "Arena", "icone": "emblema_arena", "tipo": "arena", "blindagem_por_vacuo": 10.0, "categorias": ["pesado", "picape", "utilitario"], "libera": {"modalidade": "terra", "liga": 3}, "forca_rivais": {"patio_pedreira": 1.15, "fosso_docas": 1.15, "anel_ferro_velho": 1.15, "cratera_vale": 1.15}, "ligas": [
 			{"nome": "Arena Estreantes", "pista": "patio_pedreira", "voltas": 1, "potencia": 150, "multiplicador": 256},
-			{"nome": "Arena Regional", "pista": "fosso_docas", "voltas": 1, "potencia": 190, "multiplicador": 512},
-			{"nome": "Arena Estadual", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 240, "multiplicador": 1024},
-			{"nome": "Arena Nacional", "pista": "cratera_vale", "voltas": 1, "potencia": 300, "multiplicador": 2048},
-			{"nome": "Arena Continental", "pista": "patio_pedreira", "voltas": 1, "potencia": 380, "multiplicador": 4096},
-			{"nome": "Arena Mestres", "pista": "fosso_docas", "voltas": 1, "potencia": 480, "multiplicador": 8192},
-			{"nome": "Arena Elite", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 620, "multiplicador": 16384},
-			{"nome": "Arena Lendas", "pista": "cratera_vale", "voltas": 1, "potencia": 800, "multiplicador": 32768}
+			{"nome": "Arena Regional", "pista": "fosso_docas", "voltas": 1, "potencia": 190, "multiplicador": 448},
+			{"nome": "Arena Estadual", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 240, "multiplicador": 784},
+			{"nome": "Arena Nacional", "pista": "cratera_vale", "voltas": 1, "potencia": 300, "multiplicador": 1372},
+			{"nome": "Arena Continental", "pista": "patio_pedreira", "voltas": 1, "potencia": 380, "multiplicador": 2401},
+			{"nome": "Arena Mestres", "pista": "fosso_docas", "voltas": 1, "potencia": 480, "multiplicador": 4201.8},
+			{"nome": "Arena Elite", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 620, "multiplicador": 7353.1},
+			{"nome": "Arena Lendas", "pista": "cratera_vale", "voltas": 1, "potencia": 800, "multiplicador": 12867.9}
 		]}
 	]
 }
