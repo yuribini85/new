@@ -216,6 +216,9 @@ func _efeito_texto(m: Dictionary, nivel: int) -> String:
 		"renda":
 			return "+$%s/s" % curto(x * float(estado.dados_liga()["multiplicador"]))
 		"vacuo", "potencia", "aderencia", "agressividade":
+			# Efeito de menos de 1% por nível (vácuo) com uma casa: "+0,4%".
+			if not is_equal_approx(fmod(float(m["por_nivel"]) * 100.0, 1.0), 0.0):
+				return ("+%.1f%%" % (x * 100.0)).replace(".", ",")
 			return "+%d%%" % roundi(x * 100.0)
 	return str(x)
 
