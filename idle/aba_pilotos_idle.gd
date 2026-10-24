@@ -235,9 +235,9 @@ func _novo(p: Dictionary) -> void:
 			"%s · nível 1" % String(dp.get("perfil", "")).capitalize(), IdleUI.retrato_piloto(String(p["id"])))
 
 
-## Retrato do piloto saindo do quadro: a moldura começa abaixo do topo
-## (SAIDA_CABECA do lado) e o retrato, de fundo transparente, fica por cima, com
-## a cabeça passando da borda.
+## Busto do piloto saindo do quadro: a moldura começa abaixo do topo
+## (SAIDA_CABECA do lado) e o busto, de fundo transparente, fica por cima, com
+## a cabeça inteira passando da borda.
 const SAIDA_CABECA := 0.26
 
 func _retrato(p: Dictionary, lado: float) -> Control:
@@ -259,7 +259,7 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 		vazio.offset_top = lado * SAIDA_CABECA
 		return c
 	var t := TextureRect.new()
-	t.texture = IdleUI.retrato_piloto(String(p["id"]))
+	t.texture = IdleUI.busto_piloto(String(p["id"]))
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	t.set_anchors_preset(Control.PRESET_FULL_RECT)
