@@ -10,7 +10,7 @@ extends Control
 ##     os cartões de melhoria da modalidade;
 ##   - PISTAS: as cinco modalidades e a escada de ligas de cada uma (PistasIdle);
 ##   - PILOTOS: contratos, fusão e escalação (PilotosIdle);
-##   - METAS: as metas do dia (MetasIdle).
+##   - MISSÕES: as missões do dia (MetasIdle).
 ## A corrida roda sozinha, uma atrás da outra, também com as outras telas
 ## abertas (o 3D só desenha na CORRIDA).
 ##
@@ -28,10 +28,10 @@ const COR_OURO := IdleUI.COR_OURO
 const COR_BOTAO := IdleUI.COR_BOTAO
 const COR_RUIM := IdleUI.COR_RUIM
 const PAUSA_CHEGADA_S := 2.5
-const PAUSA_COM_VIDEO_S := 4.0  # tempo para tocar em "VÍDEO: PRÊMIO 2×"
+const BEM_VINDO_MIN_S := 300.0  # menos tempo fora que isso: a renda entra sem a janela
+const PAUSA_COM_VIDEO_S := 4.0  # tempo para tocar em "▶ PRÊMIO x2"
 const SALVAR_A_CADA_S := 5.0
 const AVISO_S := 3.5
-const COLETA_S := 9.0  # a faixa da renda com o app fechado fica isso na tela
 ## Apresentação, como no Chrome & Wreckage: contagem da largada, rival colado
 ## que gera o aviso "SE APROXIMA" e o intervalo mínimo entre dois desses avisos.
 const CONTAGEM_S := 3.0
@@ -43,7 +43,7 @@ const ABAS := [
 	{"id": "corrida", "nome": "CORRIDA", "icone": "icone_correr"},
 	{"id": "pistas", "nome": "PISTAS", "icone": "icone_pista"},
 	{"id": "pilotos", "nome": "PILOTOS", "icone": "icone_piloto"},
-	{"id": "metas", "nome": "METAS", "icone": "icone_objetivo"},
+	{"id": "metas", "nome": "MISSÕES", "icone": "icone_objetivo"},
 ]
 ## Previsão nos cartões de melhoria: corridas simuladas (sementes fixas) com e
 ## sem níveis a mais (NIVEIS_PREVISAO), numa thread, para mostrar a posição que
@@ -106,8 +106,7 @@ var _previsao_resultado := {}
 var _previsao_mutex := Mutex.new()
 var _aviso_caixa: PanelContainer
 var _aviso_t := 0.0
-var _coleta: PanelContainer
-var _coleta_t := 0.0
+var _coleta: Control  # "BEM-VINDO DE VOLTA!": a renda com o app fechado
 var _config: Control
 var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocínio)
 var _trilho: Control  # as câmeras
@@ -135,11 +134,14 @@ func _ready() -> void:
 	_dinheiro_mostrado = estado.dinheiro
 	_montar()
 	_nova_corrida()
-	# Abriu, recolheu: a renda com o app fechado já entra no caixa.
+	# Abriu, recolheu: a renda com o app fechado já entra no caixa (fica salva
+	# mesmo se o app fechar de novo); o "BEM-VINDO DE VOLTA!" a mostra e o
+	# COLETAR faz o número do topo subir.
 	var ganho := estado.ganho_offline(agora)
 	if ganho >= 1.0:
 		estado.dinheiro += ganho
-		_faixa_coleta(ganho)
+		if agora - estado.salvo_em >= BEM_VINDO_MIN_S:
+			_bem_vindo(ganho)
 	estado.salvar(agora)
 
 
@@ -232,7 +234,7 @@ func _topo(pai: Control) -> void:
 	dir.alignment = BoxContainer.ALIGNMENT_CENTER
 	topo.add_child(dir)
 	_renda_caixa = dir
-	IdleUI.rotulo("RENDA", 18, IdleUI.COR_SECUNDARIA, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	IdleUI.rotulo("POR SEGUNDO", 16, IdleUI.COR_SECUNDARIA, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_renda = IdleUI.rotulo("", 34, COR_DINHEIRO, dir)
 	_renda.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var vao := Control.new()
@@ -316,8 +318,9 @@ func _pagina_corrida() -> Control:
 		_cameras[par[0]] = b
 	_marcar_camera()
 	_subir = Button.new()
-	Tipografia.acao_primaria(_subir, "PRÓXIMA LIGA", COR_OURO, IdleUI.COR_TINTA, 28, Tipografia.ALTURA_SECUNDARIA)
+	Tipografia.acao_primaria(_subir, "SUBIR DE LIGA", COR_OURO, IdleUI.COR_TINTA, 28, Tipografia.ALTURA_SECUNDARIA)
 	IdleUI.estilo_ouro(_subir)
+	_subir.icon = Aba.icone_reduzido("icone_melhorar", 40)
 	_subir.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_subir.offset_left = -200
 	_subir.offset_right = 200
@@ -325,10 +328,7 @@ func _pagina_corrida() -> Control:
 	_subir.offset_bottom = -82
 	_subir.pressed.connect(_subir_liga)
 	corrida.add_child(_subir)
-	_dobrar = Button.new()
-	Tipografia.acao_primaria(_dobrar, "VÍDEO: PRÊMIO 2×", IdleUI.COR_CROMO, IdleUI.COR_TINTA, 26, Tipografia.ALTURA_SECUNDARIA)
-	IdleUI.estilo_cromo(_dobrar)
-	_dobrar.icon = Aba.icone_reduzido("icone_ao_vivo", 36)
+	_dobrar = IdleUI.botao_premio("PRÊMIO x2", 28, Tipografia.ALTURA_SECUNDARIA)
 	_dobrar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_dobrar.offset_left = -200
 	_dobrar.offset_right = 200
@@ -441,14 +441,14 @@ func _atualizar_cartoes() -> void:
 		var arena: bool = _na_arena and m.has("nome_arena")
 		c["nome"].text = String(m["nome_arena"] if arena else m["nome"]).to_upper()
 		c["icone"].texture = Aba.icone_reduzido(String(m["icone_arena"] if arena else m.get("icone", "")), 24)
-		c["nivel"].text = "NV %d" % n
+		c["nivel"].text = IdleUI.nv(n)
 		var b: Button = c["botao"]
 		if estado.no_maximo(m["id"]):
 			c["efeito"].text = _efeito_texto(m, n)
-			b.text = "MÁXIMO"
+			b.text = "MÁX."
 			b.disabled = true
 		else:
-			c["efeito"].text = "%s > %s" % [_efeito_texto(m, n), _efeito_texto(m, n + 1)]
+			c["efeito"].text = "%s › %s" % [_efeito_texto(m, n), _efeito_texto(m, n + 1)]
 			b.text = "$%s" % curto(estado.custo(m["id"]))
 			b.disabled = not estado.pode_comprar(m["id"])
 
@@ -462,7 +462,7 @@ func _atualizar_topo(delta := 0.0) -> void:
 	else:
 		_dinheiro_mostrado = lerpf(_dinheiro_mostrado, estado.dinheiro, 1.0 - exp(-5.0 * delta))
 	_dinheiro.text = "$" + curto(_dinheiro_mostrado)
-	_renda.text = "$%s/s" % curto(estado.renda_s())
+	_renda.text = "+$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 28)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
@@ -592,7 +592,7 @@ func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
 	_avisos(delta)
 	_checar_conversa()
-	if _aguardando or _conversa != null:
+	if _aguardando or _conversa != null or _coleta != null:
 		# Carros no grid (esperando o LARGAR) ou alguém falando: a corrida para.
 		_atualizar_topo(delta)
 		if _paginas["corrida"].visible:
@@ -817,7 +817,7 @@ func _dobrar_premio() -> void:
 	anuncios.premiado(func():
 		estado.dinheiro += ganho
 		ganho_flutuante(ganho)
-		_hud.evento("PRÊMIO 2×", "+$" + curto(ganho * 2.0), COR_OURO, 11, -1.0, true)
+		_hud.evento("PRÊMIO x2!", "+$" + curto(ganho * 2.0), COR_OURO, 11, -1.0, true)
 		_pausa = maxf(_pausa, PAUSA_CHEGADA_S)
 		estado.salvar(Time.get_unix_time_from_system()))
 
@@ -872,14 +872,14 @@ func _janela_liga() -> void:
 	var n := IdleUI.rotulo(String(estado.dados_liga()["nome"]).to_upper(), 46, Color.WHITE, v, "display")
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	n.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var c := IdleUI.rotulo("CARRO NOVO: " + String(estado.carro_base(dados)["nome"]).to_upper(), 24, IdleUI.COR_SECUNDARIA, v)
+	var c := IdleUI.rotulo("SEU CARRO NOVO: " + String(estado.carro_base(dados)["nome"]).to_upper(), 24, IdleUI.COR_SECUNDARIA, v)
 	c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var nova_modalidade := false
 	for m in estado.cfg["modalidades"]:
 		var lib: Dictionary = m.get("libera", {})
 		if lib.get("modalidade", "") == estado.modalidade and int(lib.get("liga", -1)) == estado.liga:
-			var abriu := IdleUI.rotulo("MODALIDADE NOVA: %s" % String(m["nome"]).to_upper(), 28, IdleUI.COR_GANHO, v)
+			var abriu := IdleUI.rotulo("NOVA MODALIDADE: %s" % String(m["nome"]).to_upper(), 28, IdleUI.COR_GANHO, v)
 			abriu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			_barra.avisar("pistas", true)
 			nova_modalidade = true
@@ -957,36 +957,65 @@ func mostrar_aviso(titulo: String, sub := "", tex: Texture2D = null) -> void:
 	_aviso_t = AVISO_S
 
 
-## A renda com o app fechado já entrou: uma faixa diz quanto e oferece o vídeo
-## que dobra.
-func _faixa_coleta(ganho: float) -> void:
-	_coleta = PanelContainer.new()
-	_coleta.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_CARTAO, 0.97), 16, 12, COR_OURO, 2))
-	_coleta.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	_coleta.offset_top = AreaSegura.topo(720.0) + 560
-	_coleta.grow_horizontal = Control.GROW_DIRECTION_BOTH
+## "BEM-VINDO DE VOLTA!": quanto a equipe faturou com o app fechado, como nos
+## idles do gênero. COLETAR faz o topo contar até o novo saldo (o dinheiro já
+## entrou); ▶ x2 paga de novo com o anúncio premiado.
+func _bem_vindo(ganho: float) -> void:
+	_dinheiro_mostrado = estado.dinheiro - ganho  # o topo só conta depois do COLETAR
+	_coleta = ColorRect.new()
+	(_coleta as ColorRect).color = Color(0, 0, 0, 0.72)
+	_coleta.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_coleta)
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 14)
-	_coleta.add_child(h)
-	IdleUI.icone("icone_creditos", 56, h)
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_coleta.add_child(centro)
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(560, 0)
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 20, 24, COR_OURO, 3))
+	centro.add_child(p)
 	var v := VBoxContainer.new()
-	h.add_child(v)
-	IdleUI.rotulo("ENQUANTO VOCÊ ESTEVE FORA", 18, IdleUI.COR_SECUNDARIA, v)
-	IdleUI.rotulo("+$" + curto(ganho), 40, COR_DINHEIRO, v)
-	var b := IdleUI.botao("VÍDEO: +$%s" % curto(ganho), IdleUI.COR_CROMO, 22, 64, h)
-	b.icon = Aba.icone_reduzido("icone_ao_vivo", 32)
-	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	b.pressed.connect(func():
-		_coleta_t = 0.0
+	v.add_theme_constant_override("separation", 14)
+	p.add_child(v)
+	var t := IdleUI.rotulo("BEM-VINDO DE VOLTA!", 34, Color.WHITE, v, "display")
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var sub := IdleUI.rotulo("Sua equipe faturou enquanto você estava fora", 20, IdleUI.COR_SECUNDARIA, v, "regular")
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var linha := HBoxContainer.new()
+	linha.alignment = BoxContainer.ALIGNMENT_CENTER
+	linha.add_theme_constant_override("separation", 12)
+	v.add_child(linha)
+	IdleUI.icone("icone_creditos", 64, linha)
+	var valor := IdleUI.rotulo("$" + curto(ganho), 64, COR_DINHEIRO, linha, "display")
+	valor.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var botoes := HBoxContainer.new()
+	botoes.add_theme_constant_override("separation", 12)
+	v.add_child(botoes)
+	var coletar := IdleUI.botao("COLETAR", COR_OURO, 26, 76, botoes)
+	coletar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var dobro := IdleUI.botao_premio("x2", 30, 76, botoes)
+	dobro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	coletar.pressed.connect(_fechar_bem_vindo.bind(ganho))
+	dobro.pressed.connect(func():
 		anuncios.premiado(func():
 			estado.dinheiro += ganho
-			ganho_flutuante(ganho)
 			estado.salvar(Time.get_unix_time_from_system())
-			mostrar_aviso("RENDA DOBRADA", "+$" + curto(ganho))))
-	_coleta_t = COLETA_S
+			_fechar_bem_vindo(ganho * 2.0)))
 	Sons.tocar_ui(self, "moeda", -4.0)
-	_dinheiro_mostrado = estado.dinheiro - ganho  # o topo conta a renda que entrou
+	if not Preferencias.reduzir_animacoes:
+		p.pivot_offset = Vector2(280, 160)
+		p.scale = Vector2(0.85, 0.85)
+		p.create_tween().tween_property(p, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _fechar_bem_vindo(total: float) -> void:
+	if _coleta == null:
+		return
+	_coleta.queue_free()
+	_coleta = null
+	Sons.tocar_ui(self, "moeda", -2.0, 1.1)
+	celebrar(false)
+	ganho_flutuante(total)
 
 
 func _avisos(delta: float) -> void:
@@ -995,11 +1024,6 @@ func _avisos(delta: float) -> void:
 		if _aviso_t <= 0.0 and _aviso_caixa != null:
 			_aviso_caixa.queue_free()
 			_aviso_caixa = null
-	if _coleta_t > 0.0:
-		_coleta_t -= delta
-		if _coleta_t <= 0.0 and _coleta != null:
-			_coleta.queue_free()
-			_coleta = null
 	var agora := Time.get_unix_time_from_system()
 	_barra.avisar("pilotos", estado.contrato_gratis_pronto(agora) or estado.piloto_escalado().is_empty())
 	_barra.avisar("metas", estado.metas_prontas(agora) > 0)
@@ -1030,7 +1054,7 @@ func _abrir_config() -> void:
 	_linha_chave(v, "som", "SOM", Preferencias.volume > 0.001, func(ligado: bool):
 		Preferencias.volume = 0.7 if ligado else 0.0
 		Preferencias.salvar())
-	_linha_chave(v, "tela", "VISUAL SIMPLES", Preferencias.efeitos_leves, func(ligado: bool):
+	_linha_chave(v, "tela", "GRÁFICOS LEVES", Preferencias.efeitos_leves, func(ligado: bool):
 		Preferencias.efeitos_leves = ligado
 		Preferencias.salvar())
 	if Engine.has_singleton(IdleAvisos.PLUGIN):
@@ -1039,7 +1063,7 @@ func _abrir_config() -> void:
 			Preferencias.salvar()
 			if ligado:
 				IdleAvisos.pedir_permissao())
-	var nota := IdleUI.rotulo("Visual simples tira sombras, fumaça e efeitos: mais leve em celulares fracos.", 17,
+	var nota := IdleUI.rotulo("Gráficos leves tiram sombras, fumaça e efeitos: o jogo roda melhor em celulares simples.", 17,
 			IdleUI.COR_SECUNDARIA, v, "regular")
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var ok := IdleUI.botao("FECHAR", COR_BOTAO, 26, 72, v)
@@ -1160,7 +1184,7 @@ func _prever(chave: String, variantes: Dictionary, pista: Pista, voltas: int, pa
 	_previsao_mutex.unlock()
 
 
-## "5º → 4º" no cartão quando um nível a mais melhora a chegada; "+3 NÍVEIS: 4º"
+## "5º › 4º" no cartão quando um nível a mais melhora a chegada; "+3 NÍVEIS: 4º"
 ## quando só três melhoram; "CHEGA EM 5º" quando nem isso muda; nada nas
 ## melhorias de renda e enquanto calcula.
 func _texto_previsao(l: Label, m: Dictionary, base: float) -> void:
@@ -1172,7 +1196,7 @@ func _texto_previsao(l: Label, m: Dictionary, base: float) -> void:
 	var com_um := roundi(float(_previsao["%s|1" % id]))
 	var com_tres := roundi(float(_previsao.get("%s|3" % id, base)))
 	if com_um < antes:
-		l.text = "%dº → %dº" % [antes, com_um]
+		l.text = "%dº › %dº" % [antes, com_um]
 		l.add_theme_color_override("font_color", COR_OURO)
 	elif com_tres < antes:
 		l.text = "+3 NÍVEIS: %dº" % com_tres
@@ -1228,7 +1252,7 @@ func _largar_corrida() -> void:
 ## A próxima conversa da escada, quando nada mais está na frente e a corrida
 ## está parada (grid ou depois da chegada).
 func _checar_conversa() -> void:
-	if _conversa != null or _janela_aberta or _config != null:
+	if _conversa != null or _janela_aberta or _config != null or _coleta != null:
 		return
 	if not (_aguardando or _pausa >= 0.0):
 		return
@@ -1259,7 +1283,7 @@ func _abrir_conversa(d: Dictionary) -> void:
 		estado.salvar(Time.get_unix_time_from_system()))
 
 
-## As ofertas guardadas (DEPOIS): um botão por oferta, com o ícone, o nome e o
+## As ofertas guardadas (AGORA NÃO): um botão por oferta, com o ícone, o nome e o
 ## preço; tocar abre a conversa de novo.
 func _atualizar_ofertas() -> void:
 	for c in _ofertas.get_children():

@@ -4,7 +4,7 @@ extends Control
 ## desbloqueios): a tela escurece, o personagem do acervo (arte de corpo
 ## inteiro, arte/personagens/corpo/) entra deslizando pela esquerda e a caixa
 ## embaixo traz nome, papel e a fala sendo digitada. Tocar completa o texto. O
-## passo de graça fecha com um botão; o que tem custo oferece PAGAR e DEPOIS.
+## passo de graça fecha com um botão; o que tem custo oferece COMPRAR e AGORA NÃO.
 
 signal fechou(aceitou: bool)
 
@@ -69,10 +69,10 @@ func _init(d: Dictionary, estado: IdleEstado) -> void:
 	v.add_child(_botoes)
 	var custo := float(d.get("custo", 0.0))
 	if custo > 0.0:
-		var depois := IdleUI.botao("DEPOIS", IdleUI.COR_CROMO, 24, 72, _botoes)
+		var depois := IdleUI.botao("AGORA NÃO", IdleUI.COR_CROMO, 24, 72, _botoes)
 		depois.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		depois.pressed.connect(_fechar.bind(false))
-		_pagar = IdleUI.botao("PAGAR $" + IdleUI.curto(custo), IdleUI.COR_OURO, 26, 72, _botoes)
+		_pagar = IdleUI.botao("COMPRAR $" + IdleUI.curto(custo), IdleUI.COR_OURO, 26, 72, _botoes)
 		_pagar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_pagar.size_flags_stretch_ratio = 1.6
 		_pagar.pressed.connect(_fechar.bind(true))
@@ -106,7 +106,7 @@ func _process(_delta: float) -> void:
 	if _pagar != null:
 		var custo := float(_d.get("custo", 0.0))
 		_pagar.disabled = _estado.dinheiro < custo
-		_pagar.text = ("PAGAR $" + IdleUI.curto(custo)) if not _pagar.disabled \
+		_pagar.text = ("COMPRAR $" + IdleUI.curto(custo)) if not _pagar.disabled \
 				else "FALTAM $" + IdleUI.curto(custo - _estado.dinheiro)
 
 

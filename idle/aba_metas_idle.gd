@@ -1,6 +1,6 @@
 class_name MetasIdle
 extends ScrollContainer
-## Tela METAS do Chrome Racing Team (docs/idle/plano.md): as metas do dia, como
+## Tela MISSÕES do Chrome Racing Team (docs/idle/plano.md): as missões do dia, como
 ## a Meta do dia do Chrome & Wreckage. Um cartão por meta com o ícone, o que
 ## fazer, a barra do progresso e o botão COLETAR (minutos da renda) quando
 ## cumprida; no alto, quando chegam as próximas.
@@ -28,7 +28,7 @@ func _process(_delta: float) -> void:
 		return
 	var agora := Time.get_unix_time_from_system()
 	if _relogio != null:
-		_relogio.text = "Novas metas em " + IdleUI.relogio(_meia_noite(agora) - agora)
+		_relogio.text = "Novas missões em " + IdleUI.relogio(_meia_noite(agora) - agora)
 	if _assinatura_de(agora) != _assinatura:
 		atualizar()
 
@@ -58,15 +58,15 @@ func atualizar() -> void:
 		c.queue_free()
 	var topo := HBoxContainer.new()
 	_lista.add_child(topo)
-	var t := IdleUI.rotulo("METAS DO DIA", 30, IdleUI.COR_TEXTO, topo, "display")
+	var t := IdleUI.rotulo("MISSÕES DIÁRIAS", 30, IdleUI.COR_TEXTO, topo, "display")
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_relogio = IdleUI.rotulo("", 18, IdleUI.COR_SECUNDARIA, topo)
 	_relogio.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_relogio.text = "Novas metas em " + IdleUI.relogio(_meia_noite(agora) - agora)
+	_relogio.text = "Novas missões em " + IdleUI.relogio(_meia_noite(agora) - agora)
 	var est := e.metas_do_dia(agora)
 	for id in est["tarefas"]:
 		_cartao(e, String(id), agora, String(id) in est["coletadas"])
-	var nota := IdleUI.rotulo("Cada meta paga %d minutos da renda da equipe." % int(e.cfg_metas().get("recompensa_min", 0)),
+	var nota := IdleUI.rotulo("Cada missão vale %d minutos da renda da equipe." % int(e.cfg_metas().get("recompensa_min", 0)),
 			17, IdleUI.COR_SECUNDARIA, _lista, "regular")
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 

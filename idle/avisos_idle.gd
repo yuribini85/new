@@ -19,11 +19,11 @@ static var _iniciado := false
 ## [{id, em_s, titulo, texto}] dos avisos a partir de `agora` (segundos Unix).
 static func planejar(estado: IdleEstado, agora: float) -> Array:
 	var r := []
-	_somar(r, "teto", float(estado.cfg.get("offline_max_h", 0.0)) * 3600.0, "Equipe no limite",
-			"A renda com o app fechado chegou ao máximo. Abra e recolha.")
+	_somar(r, "teto", float(estado.cfg.get("offline_max_h", 0.0)) * 3600.0, "Cofre cheio!",
+			"Sua equipe parou de faturar. Volte para coletar.")
 	if not estado.contrato_gratis_pronto(agora):
-		_somar(r, "contrato", estado.contrato_em - agora, "Contrato grátis",
-				"Um piloto novo quer correr pela equipe. Abra e contrate.")
+		_somar(r, "contrato", estado.contrato_em - agora, "Contrato grátis pronto!",
+				"Um piloto novo quer correr pela sua equipe. Toque para contratar.")
 	return r
 
 
@@ -40,7 +40,7 @@ static func _plugin() -> Object:
 		_iniciado = true
 		p.call("initialize")
 		p.call("create_notification_channel", {"id": CANAL, "name": "Chrome Racing Team",
-				"description": "Renda no máximo e contrato grátis", "importance": 3})
+				"description": "Cofre cheio e contrato grátis", "importance": 3})
 	return p
 
 

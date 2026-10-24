@@ -2,7 +2,7 @@
 """Termos internos de desenvolvimento não chegam ao jogador (docs/vocabulario.md).
 
 Procura nas falas (tools/historia/cenas.txt) e nos textos de tela (frases entre aspas,
-com espaço, no código de ui/ e data_model/) os termos da seção "Nunca na tela".
+com espaço, no código de ui/, data_model/ e idle/) os termos da seção "Nunca na tela".
 Comentários e chaves de dicionário (sem espaço) ficam de fora.
 """
 import re
@@ -17,6 +17,11 @@ TERMOS = [r"\bfila\b", r"simulad", r"nos testes", r"\bsemente", r"triagem", r"\b
           r"\bteto\b", r"\buid\b", r"\bluvas\b", r"versão final", r"a definir"]
 # Com distinção: "grid" minúsculo é a largada (o jogo só usa "Grid" para o The Grid); XP é sigla interna.
 TERMOS_CASO = [r"\bgrid\b", r"\bXP\b"]
+
+# Chrome Racing Team (docs/vocabulario.md, seção 5): o dialeto dos idles. Anúncio premiado é o
+# botão verde com ▶ e a recompensa ("x2", "CONTRATAR GRÁTIS"), nunca a palavra "vídeo"; missões,
+# não metas; evoluir, não fundir; "Nv." e "MÁX.".
+TERMOS_IDLE = [r"\bv[íi]deo\b", r"\bmetas?\b", r"\bfundir\b", r"\bNV \d", r"\bpróximo em\b"]
 
 # Arquivos que só existem no modo de teste ou no desenvolvimento (não chegam à versão de loja).
 ARQUIVOS_FORA = {"ui/registro_sessao.gd", "ui/preferencias.gd", "data_model/cenarios.gd", "data_model/save.gd"}
@@ -45,7 +50,7 @@ def falas():
 
 
 def textos_de_tela():
-    for pasta in ("ui", "data_model"):
+    for pasta in ("ui", "data_model", "idle"):
         for arq in sorted((RAIZ / pasta).glob("*.gd")):
             rel = f"{pasta}/{arq.name}"
             if rel in ARQUIVOS_FORA:
@@ -67,6 +72,8 @@ def main() -> int:
             if texto in PERMITIDO:
                 continue
             a = achados(texto)
+            if arq.startswith("idle/"):
+                a += [t for t in TERMOS_IDLE if re.search(t, texto, re.IGNORECASE)]
             if "{posicao}º" in texto:
                 a.append("{posicao} já traz o º")
             if a:

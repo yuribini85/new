@@ -7,7 +7,7 @@
 	"intersticial_min_s": 300.0,
 	"_nota_intersticial": "Intersticial só ao subir de liga (nunca ao abrir o app nem no meio da corrida), a partir da liga de índice intersticial_a_partir_liga em qualquer modalidade, com intersticial_min_s entre um e outro. Números estimados.",
 	"intersticial_a_partir_liga": 3,
-	"_nota_desbloqueios": "O jogo começa quase vazio e cresce com o jogador (pedido do usuário, 2026-10-24): vista de cima com os carros em pontos, só o Motor e a largada no toque. Cada item abre quando 'quando' se cumpre (corridas no total, soma das ligas das modalidades abertas, primeira vitória, modalidade aberta), na ordem da lista, com a conversa de um personagem do acervo; os de 'custo' o jogador compra (DEPOIS deixa a oferta no canto da corrida). 'libera': melhoria:<id>, aba:<id>, renda, largada_auto, camera_tv, cameras, previsao. Custos estimados.",
+	"_nota_desbloqueios": "O jogo começa quase vazio e cresce com o jogador (pedido do usuário, 2026-10-24): vista de cima com os carros em pontos, só o Motor e a largada no toque. Cada item abre quando 'quando' se cumpre (corridas no total, soma das ligas das modalidades abertas, primeira vitória, modalidade aberta), na ordem da lista, com a conversa de um personagem do acervo; os de 'custo' o jogador compra (AGORA NÃO deixa a oferta no canto da corrida). 'libera': melhoria:<id>, aba:<id>, renda, largada_auto, camera_tv, cameras, previsao. Custos estimados.",
 	"desbloqueio_inicial": ["melhoria:motor"],
 	"desbloqueios": [
 		{"id": "inicio", "quando": {}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"}, "botao": "VAMOS LÁ",
@@ -29,7 +29,7 @@
 		{"id": "arquibancada", "quando": {"liga_total": 2}, "quem": {"id": "bianca_sterling", "nome": "Bianca Sterling", "papel": "patrocinadora"},
 			"fala": "A torcida cresceu. Construa arquibancadas e cada ingresso vira renda, até com o app fechado.", "libera": ["melhoria:arquibancada"]},
 		{"id": "metas", "quando": {"liga_total": 2, "corridas": 30}, "quem": {"id": "rico_salas", "nome": "Rico Salas", "papel": "gerente da equipe"},
-			"fala": "Todo dia eu deixo três metas no quadro. Cumpriu, eu pago o bônus. Fica no menu METAS.", "libera": ["aba:metas"]},
+			"fala": "Todo dia eu deixo três missões no quadro. Cumpriu, eu pago o bônus. Fica no menu MISSÕES.", "libera": ["aba:metas"]},
 		{"id": "pistas", "quando": {"modalidade": "turismo"}, "quem": {"id": "edgar_halloway", "nome": "Edgar Halloway", "papel": "organizador de campeonatos"},
 			"fala": "O Turismo abriu inscrições para a sua equipe. No menu PISTAS você escolhe onde correr e vê o caminho de cada categoria.", "libera": ["aba:pistas"]},
 		{"id": "analista", "quando": {"liga_total": 4}, "quem": {"id": "nora_lindqvist", "nome": "Nora Lindqvist", "papel": "analista de corrida"}, "custo": 6000, "icone": "icone_prever", "oferta": "ANALISTA",

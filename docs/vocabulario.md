@@ -152,3 +152,26 @@ aspas no código da interface):
 
 Exceções ficam na lista `PERMITIDO` do próprio script, com o motivo (ex.: o modo de teste, que não
 existe na versão de loja).
+
+## 5. Chrome Racing Team: o dialeto dos idles
+
+Quem joga idle reconhece os botões pelo padrão do gênero (pedido do usuário, 2026-10-24: "usar
+essa mesma nomenclatura, esse mesmo dialeto"). As redes de anúncio recomendam botão de recompensa
+reconhecível, sempre igual, que diz o que o jogador ganha ("x2", "contrato grátis") e é opcional.
+`tests/checar_vocabulario.py` barra em `idle/` os termos da coluna da direita.
+
+| Use | Nunca |
+|---|---|
+| botão **verde com ▶ na TV** + a recompensa: **x2**, **PRÊMIO x2**, **CONTRATAR GRÁTIS (5)** | "VÍDEO: …", "assistir vídeo", prata/cinza para anúncio |
+| **BEM-VINDO DE VOLTA!** · "Sua equipe faturou enquanto você estava fora" · **COLETAR** / **▶ x2** | faixa "enquanto você esteve fora" que some sozinha |
+| **COLETAR** (recompensa pronta) | "receber", "pegar" |
+| **GRÁTIS EM 3:59:48** (relógio do grátis) | "próximo em" |
+| **Nv. 3** (nível) · **MÁX.** (no máximo) · **+5% › +10%** (a fonte não tem →) | "NV 3", "MÁXIMO", "+5% > +10%" |
+| **+$5/s** · POR SEGUNDO (renda) | "RENDA $5/s" |
+| **SUBIR DE LIGA** (com o ícone de melhorar) | "PRÓXIMA LIGA" |
+| **MISSÕES** · MISSÕES DIÁRIAS · "Novas missões em …" | metas |
+| **EVOLUIR › Nv. 2** · "2 pilotos do mesmo nível = 1 piloto de nível acima" | fundir |
+| **COMPRAR $1,5 mil** / **AGORA NÃO** (oferta de personagem) | pagar / depois |
+| **VOLTE AMANHÃ** (acabou o grátis do dia) | botão apagado sem explicação |
+| aviso do celular: **Cofre cheio!** · **Contrato grátis pronto!** | "renda no máximo", "teto" |
+| **GRÁFICOS LEVES** (Configurações) | visual simples |

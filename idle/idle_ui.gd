@@ -24,6 +24,10 @@ const COR_BLOQUEADO := Color("5a6270")
 const COR_RUIM := Color("e5484d")
 const COR_BOTAO := COR_OURO
 const COR_TINTA := Color("14100a")  # texto sobre ouro e prata
+## Verde dos botões de anúncio premiado (▶ na TV): o padrão do gênero para
+## "ganhe de graça assistindo", que o jogador reconhece de outros idles.
+const COR_PREMIO := Color("2fbf6b")
+const COR_PREMIO_ESCURO := Color("1b8a49")
 
 
 static func rotulo(texto: String, tamanho: int, cor: Color, pai: Node = null, peso := "semibold") -> Label:
@@ -95,6 +99,48 @@ static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: N
 	if pai != null:
 		pai.add_child(b)
 	return b
+
+
+## Botão de anúncio premiado, no padrão do gênero: verde, com o ícone ▶ da TV e
+## só a recompensa escrita ("x2", "CONTRATAR GRÁTIS"), nunca "vídeo".
+static func botao_premio(texto: String, tamanho := 24, altura := 64, pai: Node = null) -> Button:
+	var b := Button.new()
+	b.focus_mode = Control.FOCUS_NONE
+	Tipografia.acao_primaria(b, texto, COR_PREMIO, Color.WHITE, tamanho, altura)
+	estilo_premio(b)
+	b.icon = icone_video(int(tamanho * 1.4))
+	desativado_legivel(b)
+	if pai != null:
+		pai.add_child(b)
+	return b
+
+
+static func estilo_premio(b: Button) -> void:
+	b.add_theme_stylebox_override("normal", _bisel(COR_PREMIO, Color.WHITE, COR_PREMIO_ESCURO))
+	b.add_theme_stylebox_override("hover", _bisel(COR_PREMIO, Color.WHITE, COR_PREMIO_ESCURO))
+	b.add_theme_stylebox_override("pressed", _bisel(COR_PREMIO.darkened(0.12), Color.WHITE, COR_PREMIO.darkened(0.12)))
+	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(c, Color.WHITE)
+	b.add_theme_color_override("icon_normal_color", Color.WHITE)
+
+
+static var _icones_video := {}
+
+## O ▶ na TV (arte/idle/icone_video.png), no tamanho pedido (escala uniforme).
+static func icone_video(lado: int) -> Texture2D:
+	if not _icones_video.has(lado):
+		var tex: Texture2D = load("res://arte/idle/icone_video.png")
+		var img := tex.get_image()
+		if img.is_compressed():
+			img.decompress()
+		img.resize(lado, lado, Image.INTERPOLATE_LANCZOS)
+		_icones_video[lado] = ImageTexture.create_from_image(img)
+	return _icones_video[lado]
+
+
+## "Nv. 3": o nível, como os idles escrevem.
+static func nv(n: int) -> String:
+	return "Nv. %d" % n
 
 
 ## Botão de ação em ouro em relevo (borda de baixo escura), como as letras do
