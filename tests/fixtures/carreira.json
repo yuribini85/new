@@ -1,0 +1,16 @@
+{
+	"piloto_jogador": "perfeito",
+	"teto_offline_s": 3600,
+	"niveis": ["N1", "N2"],
+	"perfis_piloto": {"cauteloso": {"nome": "Cauteloso", "agressividade": 0.25}},
+	"niveis_licenca": {"": "N1", "b": "N2"},
+	"segundo_piloto": {"chance": 0.3, "perda_consistencia": 0.2},
+	"equipe_jogador": {
+		"segundo_piloto": {"id": "livre_1", "nome": "Livre Um"},
+		"tracos": {"constante": {"nome": "Constante", "treina": false}, "promessa": {"nome": "Promessa", "treina": true, "menos_consistencia": true},
+			"agressivo": {"nome": "Agressivo", "treina": false, "menos_consistencia": true}, "barato": {"nome": "Barato", "treina": false}},
+		"candidatos": [{"id": "livre_1", "nome": "Livre Um", "traco": "constante", "tipo": "corrida", "frase": "Um."},
+			{"id": "livre_2", "nome": "Livre Dois", "traco": "promessa", "tipo": "corrida", "frase": "Dois."},
+			{"id": "livre_3", "nome": "Livre Três", "traco": "agressivo", "tipo": "arena", "frase": "Três."},
+			{"id": "livre_4", "nome": "Livre Quatro", "traco": "barato", "tipo": "arena", "frase": "Quatro."}]}
+}

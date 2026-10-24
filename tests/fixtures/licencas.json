@@ -1,0 +1,12 @@
+[
+	{"id": "b", "nome": "Licença B", "requisito": null, "testes": [
+		{"id": "b1", "pista": "circulo", "voltas": 1, "condicao": "seco", "restricoes": {"tracao": ["FF"]},
+		 "tempos": {"ouro": 30.0, "prata": 35.0, "bronze": 40.0}},
+		{"id": "b2", "pista": "circulo", "voltas": 2, "condicao": "seco", "restricoes": {},
+		 "tempos": {"ouro": 10.0, "prata": 20.0, "bronze": 60.0}}
+	]},
+	{"id": "a", "nome": "Licença A", "requisito": "b", "testes": [
+		{"id": "a1", "pista": "circulo", "voltas": 1, "condicao": "seco", "restricoes": {},
+		 "tempos": {"ouro": 1.0, "prata": 2.0, "bronze": 3.0}}
+	]}
+]

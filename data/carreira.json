@@ -1,0 +1,227 @@
+{
+ "piloto_jogador": "jogador",
+ "teto_offline_s": 28800,
+ "niveis_licenca": {
+  "": "CLUB",
+  "CLUB": "CLUB",
+  "SPORT": "SPORT",
+  "NATIONAL": "NATIONAL",
+  "INTERNATIONAL": "INTERNATIONAL",
+  "PRO": "PRO",
+  "ELITE": "ELITE"
+ },
+ "niveis": [
+  "CLUB",
+  "SPORT",
+  "NATIONAL",
+  "INTERNATIONAL",
+  "PRO",
+  "ELITE"
+ ],
+ "segundo_piloto": {
+  "chance": 0.3,
+  "perda_consistencia": 0.2
+ },
+ "licencas": {
+  "fator_treino": 1.0,
+  "fracao_series": 0.5,
+  "campeonato_desde": "NATIONAL"
+ },
+ "equipe_jogador": {
+  "segundo_piloto": {
+   "id": "jonas_reid",
+   "nome": "Hiro Sakuno",
+   "genero": "m",
+   "retrato": "res://arte/pilotos/jonas_reid.png"
+  },
+  "tracos": {
+   "_nota": "Traço de cada candidato (decisões 56 e 70). 'perfil': a agressividade do piloto, a dos perfis de rival (perfis_piloto). 'menos_consistencia': perde a consistência do segundo piloto (segundo_piloto.perda_consistencia). O ritmo é o do piloto-base mais o treino de cada um. 'treina' não vale mais (cada piloto treina o seu).",
+   "constante": {
+    "nome": "Calculista",
+    "treina": false,
+    "perfil": "cauteloso",
+    "menos_consistencia": false
+   },
+   "agressivo": {
+    "nome": "Destemido",
+    "treina": false,
+    "perfil": "agressivo",
+    "menos_consistencia": true
+   },
+   "barato": {
+    "nome": "Versátil",
+    "treina": false,
+    "perfil": "equilibrado",
+    "menos_consistencia": false
+   },
+   "elite": {
+    "nome": "Elite",
+    "treina": false,
+    "perfil": "agressivo",
+    "menos_consistencia": false
+   },
+   "promessa": {
+    "nome": "Instintivo",
+    "treina": true,
+    "perfil": "equilibrado",
+    "menos_consistencia": true
+   }
+  },
+  "candidatos": [
+   {
+    "id": "jonas_reid",
+    "nome": "Hiro Sakuno",
+    "genero": "m",
+    "traco": "constante",
+    "frase": "Não ganha corrida sozinho, mas não joga ponto fora.",
+    "tipo": "corrida"
+   },
+   {
+    "id": "amir_castell",
+    "nome": "Amir Castell",
+    "genero": "m",
+    "traco": "constante",
+    "frase": "Bate sempre no mesmo lugar, do mesmo jeito. Não erra o alvo.",
+    "tipo": "arena"
+   },
+   {
+    "id": "ayla_moreno",
+    "nome": "Ayla Moreno",
+    "genero": "f",
+    "traco": "agressivo",
+    "frase": "Vê uma brecha onde os outros veem um muro.",
+    "tipo": "arena"
+   },
+   {
+    "id": "axel_brennan",
+    "nome": "Axel Brennan",
+    "genero": "m",
+    "traco": "agressivo",
+    "frase": "Larga para ganhar ou para não chegar. Ainda não decidiu qual.",
+    "tipo": "corrida"
+   },
+   {
+    "id": "bastian_kroll",
+    "nome": "Bastian Kroll",
+    "genero": "m",
+    "traco": "barato",
+    "frase": "Já foi rápido. Hoje conhece todo mundo no paddock e se vira em qualquer carro.",
+    "tipo": "arena"
+   },
+   {
+    "id": "caleb_wynn",
+    "nome": "Caleb Wynn",
+    "genero": "m",
+    "traco": "barato",
+    "frase": "Corre em qualquer carro e agradece a vaga.",
+    "tipo": "corrida"
+   },
+   {
+    "id": "noor_haddad",
+    "nome": "Noor Haddad",
+    "genero": "f",
+    "traco": "promessa",
+    "frase": "Crua, mas sem medo. Cada hora de treino aparece no carro.",
+    "tipo": "corrida"
+   },
+   {
+    "id": "sofia_rinaldi",
+    "nome": "Sofia Rinaldi",
+    "genero": "f",
+    "traco": "promessa",
+    "frase": "Veio do kart com fome. Treina como se a vaga fosse de outra.",
+    "tipo": "arena"
+   },
+   {
+    "id": "enzo_varga",
+    "nome": "Enzo Varga",
+    "genero": "m",
+    "traco": "elite",
+    "frase": "Não freio onde os outros freiam. Freio onde a pista deixa.",
+    "tipo": "corrida",
+    "premium": true
+   },
+   {
+    "id": "gunnar_vale",
+    "nome": "Gunnar Vale",
+    "genero": "m",
+    "traco": "elite",
+    "frase": "Chego por último no pátio e saio sozinho.",
+    "tipo": "arena",
+    "premium": true
+   },
+   {
+    "id": "scarlet_reyes",
+    "nome": "Scarlet Reyes",
+    "genero": "f",
+    "traco": "elite",
+    "frase": "Eu não bato. Eu escolho onde vai doer.",
+    "tipo": "arena",
+    "premium": true
+   }
+  ],
+  "ritmo_premium": 1.023,
+  "_ritmo_premium": "Medido com tools/calibrar_treino.gd --licenca=INTERNATIONAL --meta=0.2 (2026-10-17): o ritmo que encurta em 20% o caminho até vencer as provas, o dobro da meta do treino (10%, decisão do usuário). Na PRO a medida é fraca (carro de fábrica quase não vence); vale a da INTERNATIONAL.",
+  "_nota_premium": "Decisão do usuário (2026-10-16): pack premium com 3 pilotos de elite (1 de corrida, 2 de arena), compra única e permanente; 100% em todos os atributos (ritmo no teto do treino, consistência e agressividade 1), sem cansaço. Vendido só na loja de dinheiro real, uma tela própria (a criar); na seleção aparecem só depois de comprados e ficam sempre no mercado (fora do sorteio). Nomes inventados pelo Claude (pedido do usuário).",
+  "_nota_tipos": "Decisão 69: cada candidato é piloto de corrida ou de arena. A equipe tem 1 de corrida e 2 de arena. Decisão do usuário (2026-10-16): em cada vaga, um candidato de cada traço, para os da tela serem diferentes (os pilotos de uma classe valem o mesmo; a diferença vem do traço).",
+  "mercado": {
+   "por_tipo": 4,
+   "renova_h": 24,
+   "traco_por_perfil": {
+    "cauteloso": "constante",
+    "equilibrado": "barato",
+    "agressivo": "agressivo"
+   }
+  },
+  "_nota_mercado": "Decisão 71 (aprovado): o mercado mostra 'por_tipo' candidatos de corrida e de arena (os 4 de cada que já existiam) e renova a cada 'renova_h' horas (24: a duração de um contrato de patrocínio, equipe.json → patrocinio.duracao_h). Vencer uma equipe do Grid põe os pilotos com retrato dela no mercado; o traço vem do perfil dela ('traco_por_perfil').",
+  "luvas": {
+   "premios": 5,
+   "_nota": "Decisão do usuário (2026-10-17): luvas pagas uma vez ao contratar, sem salário. Custo = premios × prêmio de 1º lugar médio da maior licença × qualidade do piloto (escala 35–100%). Correndo, o jogador ganha ~8,3 desses prêmios por hora (playtest da campanha): 5 prêmios ≈ 15–35 min de corrida. O primeiro piloto e os premium não pagam."
+  }
+ },
+ "variacao_piloto": {
+  "_nota": "Calculadora da variação por piloto (pedido do usuário, 2026-10-16; EquipeJogador.variar): consistência e agressividade de cada piloto ganham um ajuste fixo, sorteado pelo id. As faixas vêm dos dados: agressividade ± metade do menor intervalo entre os perfis_piloto; consistência ± metade da perda do segundo piloto. 'fator' escala as duas faixas (1 = como derivado; 0 desliga); ajustar no playtest.",
+  "fator": 1.0
+ },
+ "perfis_piloto": {
+  "_nota": "Agressividade dos rivais por perfil da equipe (decisão do usuário, 2026-10-11): chance de tentar a ultrapassagem quando está mais rápido. Valores provisórios até o playtest.",
+  "agressivo": {
+   "nome": "Agressivo",
+   "agressividade": 1.0
+  },
+  "equilibrado": {
+   "nome": "Equilibrado",
+   "agressividade": 0.75
+  },
+  "cauteloso": {
+   "nome": "Cauteloso",
+   "agressividade": 0.5
+  }
+ },
+ "repeticao": {
+  "fatores": [
+   0.5,
+   0.25,
+   0.1
+  ],
+  "periodo_h": 24,
+  "_nota": "Decisão do usuário (2026-10-17): repetir prova já vencida paga 50%, depois 25%, depois 10% (piso); volta a 100% a cada 24 h (mesmo período do mercado de pilotos). Medido (playtest da campanha): no caminho normal as repetições são até 25% das corridas por meia hora; a queda pesa só no farm. Não vem do estudo de referência (lá o prêmio se repete inteiro). so_com_licenca (decisão do usuário, 2026-10-17): provas sem licença ficam fora da queda; com ela, 3 dos 11 carros iniciais deixavam de tirar a Club (antes 12-18 min); sem elas na regra, todos tiram em 6-18 min (tests/test_percurso.gd). Decisão 122 (2026-10-19, análise aprovada pelo usuário): a isenção das provas abertas vale só até a primeira licença; depois elas entram na queda como as outras (rendiam 56 giros/km, contra ~20 nas de licença, sem queda).",
+  "so_com_licenca": true
+ },
+ "travado": {
+  "derrotas": 4,
+  "_nota": "Análise do jogo (2026-10-19, aprovada pelo usuário): na N-ésima derrota seguida em provas ainda não vencidas, a Mara aponta o \"O que ajuda?\" do cartão da prova (cena TRAVADO, uma vez por série de derrotas). Critério provisório: o mesmo número de tentativas com que o agente de playtest deixa uma prova de lado (tools/agente.gd MAX_TENTATIVAS); confirmar no playtest com pessoas. 0 desliga."
+ },
+ "meta_dia": {
+  "_nota": "Decisão 109 (sugestão aceita pelo usuário, 2026-10-17): 3 tarefas por dia, sorteadas pela data entre as possíveis. Recompensa: recompensa_premios × o prêmio de referência da maior licença (a média do 1º lugar das provas dela) por tarefa. Critério: 1 = uma vitória a mais por tarefa; perto de 8 vitórias por hora de jogo ativo (playtest da campanha), as 3 somam menos de meia hora de corrida. Ajustar no playtest.",
+  "por_dia": 3,
+  "recompensa_premios": 1,
+  "tarefas": [
+   {"id": "corridas3", "tipo": "corridas", "quantidade": 3, "texto": "Dispute 3 corridas"},
+   {"id": "vitorias2", "tipo": "vitorias", "quantidade": 2, "texto": "Vença 2 provas"},
+   {"id": "podios3", "tipo": "podios", "quantidade": 3, "texto": "Suba ao pódio 3 vezes"},
+   {"id": "arena1", "tipo": "arena", "quantidade": 1, "texto": "Lute 1 vez na arena"},
+   {"id": "peca1", "tipo": "pecas", "quantidade": 1, "texto": "Compre uma peça para um carro"}
+  ]
+ }
+}

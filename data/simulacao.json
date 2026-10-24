@@ -1,0 +1,48 @@
+{
+	"passo_m": 1.0,
+	"dt_s": 0.05,
+	"amostra_dt_s": 0.1,
+	"tempo_max_s": 7200,
+	"distancia_minima_m": 6.0,
+	"sigma_ruido": 0.02,
+	"fator_tracao": {
+		"FF": 0.6,
+		"FR": 0.5,
+		"MR": 0.55,
+		"RR": 0.6,
+		"4WD": 1.0
+	},
+	"cda_m2": 0.6,
+	"densidade_ar_kg_m3": 1.225,
+	"momentos": {
+		"_nota": "Momentos de decisão na corrida (decisão 117, MomentosCorrida). distancia_m: quão colado no rival; inicio_s/fim_s: sem momento logo depois da largada nem perto do fim; intervalo_s e max_por_corrida: espaço entre momentos; janela_s: tempo real para escolher. ritmo das opções: calibrado por tools/calibrar_momentos.gd (corrida toda bem decidida ~ uma peça). Medido em 2026-10-18 (hozuki_catana, 5 provas disputadas, 120 corridas): uma peça +0,11 posição; sempre a escolha imediata +0,14; sempre a de efeito longo +0,17; a melhor de cada momento sabendo o resultado (teto, inalcançável) +0,31.",
+		"distancia_m": 20.0,
+		"inicio_s": 8.0,
+		"fim_s": 6.0,
+		"intervalo_s": 20.0,
+		"max_por_corrida": 4,
+		"janela_s": 4.0,
+		"_nota_dica": "Rádio da Mara no cartão (decisão 117, revisão 2): chance de ela apontar a escolha que muda o duelo. 1.0 = o rádio sempre acerta (o jogador decide se ouve); valor menor a definir no playtest.",
+		"dica_acerto": 1.0,
+		"opcoes": {
+			"atacar": {"tipo": "ataque", "atraso_s": 1.0, "dura_s": 8.0, "ritmo": 1.005, "agressividade": 1.0},
+			"esperar": {"tipo": "ataque", "atraso_s": 9.0, "dura_s": 14.0, "ritmo": 1.002, "agressividade": 1.0},
+			"defender": {"tipo": "defesa", "atraso_s": 1.0, "dura_s": 8.0, "ritmo": 1.005},
+			"poupar": {"tipo": "defesa", "atraso_s": 9.0, "dura_s": 24.0, "ritmo": 1.003}
+		}
+	},
+	"pilotagem": {
+		"_nota": "Pilotagem por toques (decisões 127 e 128, Pilotagem). Critério do usuário (2026-10-21): a corrida toda pilotada perfeita rende +0,5 posição; pilotada mal perde metade disso. Calibrado por tools/calibrar_pilotagem.gd em 2026-10-21 (hozuki_catana, 5 provas disputadas, 60 corridas): perfeita +0,53, boa +0,30, ruim -0,20, só o ATACAR +0,07; a peça mais barata +0,12. Janela alargada em 2026-10-21 (decisão 130, segundo teste com pessoas: \"o tempo de clicar no freio está muito rápido\"): perfeita ±0,25 s, boa ±0,5 s, régua 2,5 s antes; a freada boa ou perfeita tocada antes do ponto vale a partir dele, e o valor de cada nota não muda (recalibrado: perfeita +0,53, toda freada no começo da faixa verde +0,45). Fase B (decisão 130, 2026-10-21): largada (tocar quando as luzes apagam; a espera com as três acesas sorteada pela semente entre espera_s; reação perfeita até perfeita_s, boa até boa_s, atrasada até janela_s, queimou com as luzes acesas; a boa e a perfeita brigam pela posição desde o apagar, mesmo antes da primeira zona de ultrapassagem) e vácuo no lugar do ATACAR (segurar carga_s para encher, soltar em até janela_s depois; a passagem é a ordem do ataque). Recalibrado com a largada (60 corridas): perfeita +0,52 (teto +0,5), boa +0,35, ruim -0,20, só a largada +0,08 (1,073 já dá +0,27: degrau de passar o carro da frente), só o vácuo +0,07. frenagem: tolerâncias do toque em relação ao ponto de frenagem (s), curva com frenagem a partir de minimo_m, janela_s antes do ponto em que a régua aparece, ritmo de cada nota do toque até a saída da curva. saida: dura_s de saída de curva, aceleração de cada nota. ataque: distância do rival, recarga, duração, ritmo e agressividade. Fase B, parte 2 (2026-10-22): defesa (rival a até distancia_m atrás mostra o lado; deslizar para ele em até janela_s fecha a porta por dura_s: ninguém passa; recarga e distância iguais às do ataque, janela igual à da largada) e FORÇAR / POUPAR PNEUS nas provas de minimo_voltas para cima (as resistências; decisão do usuário: pneu que cansa). Com as pistas novas da fase D a corrida perfeita tinha subido para +0,72 (a defesa sozinha não mexe: -0,03); recalibrado (60 corridas, frenagem perfeita 1,007 e boa 1,0035, saída limpa 1,014): perfeita +0,55, boa +0,10, ruim -0,23. Boa depois subida a 1,005 (pedido do usuário: a freada boa valia pouco): boa +0,27, metade da perfeita, espelho da ruim. Revisão da corrida (decisão 131, 2026-10-22): a saída virou uma ordem só (soltar na faixa verde) e o toque da freada passou a valer no ponto em que o carro começa a perder velocidade na corrida resolvida (a frenagem da Tatica, sem velocidade máxima, caía no fim da curva anterior e o ganho da freada valia a reta inteira); com isso a perfeita caiu para +0,42 e a boa para +0,12. Decisão do usuário: a sequência completa o teto, o bônus vale por volta sem erro (sequencia.ritmo na volta seguinte) e a boa volta a ser metade da perfeita. Recalibrado (hozuki_catana, ev_022/023/024/099/105, 60 corridas): sequencia 1,0025 e boa 1,0065 → perfeita +0,52 (a volta limpa responde por ~+0,10), boa +0,27, ruim -0,25, só a largada +0,10, só o vácuo +0,07, só a defesa -0,03, a peça mais barata +0,15. O modo do pneu (ATAQUE / NORMAL / POUPAR) não foi medido de novo: o carro do cenário não tem prova longa. Provas de licença com no máximo 3 voltas (pedido do usuário, 2026-10-23: \"5 voltas foi criticado como muito longo\"; decisão 132): com a corrida curta a largada pesava muito (perfeita +0,70, só a largada +0,42). Recalibrado (mesmas provas, 60 corridas, agora de 3 voltas): largada 1,02 / 1,005, freada boa 1,004 e tarde 0,992, sequencia 1,003 → perfeita +0,50, boa +0,25, ruim -0,25, só a largada +0,17, só o vácuo +0,03, só a defesa -0,02, a peça mais barata +0,05. Mais interações (decisão 133, pedido do usuário: \"as interações nas corridas estão muito poucas\"; critério dele: no máximo ~10 s sem nada para fazer): toda curva pede o toque (sem freada que valha, na entrada da curva) e o vácuo e a defesa aparecem de 40 m com recarga de 8 s; o vácuo vale 1 s (com 3 s e recarga curta, só ele dava +0,30). Medido (mesmas provas, 60 corridas): perfeita +0,55, boa +0,28, ruim -0,28, só a largada +0,17, só o vácuo +0,10, só a defesa +0,03; ritmo da corrida perfeita 18 toques/min, maior intervalo sem toque 8 s na mediana das corridas (16 s no pior caso; antes 8/min e 19 s). No começo do jogo com o carro mais barato, último e sozinho, o intervalo ainda chega a 29 s na mediana (só as curvas). FORÇAR nas resistências (ev_061 e ev_069, 4 corridas): posição igual em todas as políticas (carros separados); tempo de prova: perfeita -0,72%, forçar toda volta +1,08% (o pneu cansado cobra), forçar só colado num rival ~0: não soma ganho fixo, só decide a briga.",
+		"ativa": true,
+		"frenagem": {"janela_s": 2.5, "perfeita_s": 0.25, "boa_s": 0.5, "minimo_m": 15.0,
+			"ritmo": {"perfeita": 1.007, "boa": 1.004, "cedo": 0.996, "tarde": 0.992}},
+		"saida": {"dura_s": 2.0, "acel": {"limpa": 1.014, "soltou": 0.984, "acelerou_tarde": 0.984}},
+		"ataque": {"distancia_m": 40.0, "recarga_s": 8.0, "dura_s": 1.0, "ritmo": 1.0, "agressividade": 1.0},
+		"largada": {"perfeita_s": 0.35, "boa_s": 0.6, "janela_s": 1.5, "espera_s": [0.3, 1.3], "dura_s": 3.0, "agressividade": 1.0,
+			"acel": {"largada_perfeita": 1.02, "largada_boa": 1.005, "queimou": 0.9, "atrasada": 0.95}},
+		"ajuda": {"_nota": "Decisão 130 (E5): quem perde carreira.json travado.derrotas vezes seguidas numa prova ainda não vencida pilota com a faixa da freada boa fator_boa vezes maior, até vencer.", "fator_boa": 1.5},
+		"defesa": {"distancia_m": 40.0, "recarga_s": 8.0, "janela_s": 1.5, "dura_s": 3.0},
+		"forcar": {"minimo_voltas": 30, "voltas_cansado": 2, "ritmo": {"forcar": 1.01, "poupar": 0.99, "cansado": 0.985}},
+		"sequencia": {"ritmo": 1.003}
+	}
+}

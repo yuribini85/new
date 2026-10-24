@@ -1,0 +1,42 @@
+{
+ "_nota": "Fixture sintética da gestão da equipe (não copiar para data/).",
+ "patrocinio": {
+  "duracao_h": 10,
+  "renda_hora_fator": 0.1,
+  "bonus_fator": 0.5,
+  "contratos_base": 1
+ },
+ "sede": [
+  {
+   "id": "escritorio",
+   "nome": "Escritório",
+   "descricao": "x",
+   "efeito": "contratos",
+   "por_nivel": 1,
+   "niveis": 1,
+   "custo_fator": 1.0
+  }
+ ],
+ "sede_licenca_custo": "b",
+ "treino": {
+  "passo": 0.05,
+  "tempo_base_h": 1.0,
+  "teto": {
+   "b": 1.1
+  }
+ },
+ "caixas": {
+  "licenca_minima": "b",
+  "exclusivos": {
+   "rodas": [
+    "turbina"
+   ],
+   "acabamentos": [
+    "metalico"
+   ],
+   "fontes": [
+    "serifa"
+   ]
+  }
+ }
+}

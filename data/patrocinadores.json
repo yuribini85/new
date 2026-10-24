@@ -1,0 +1,17 @@
+[
+ {"id": "brasa", "nome": "Brasa Energético", "ramo": "bebida", "licenca": "CLUB", "condicao": {"tipo": "podio"}},
+ {"id": "pista_facil", "nome": "Pista Fácil Autopeças", "ramo": "autopeças", "licenca": "CLUB", "condicao": {"tipo": "vitoria"}},
+ {"id": "torque", "nome": "Torque Ferramentas", "ramo": "ferramentas", "licenca": "SPORT", "condicao": {"tipo": "podio"}},
+ {"id": "ferro_duarte", "nome": "Ferro-Velho Duarte", "ramo": "sucata", "licenca": "SPORT", "condicao": {"tipo": "etapa"}},
+ {"id": "carbo", "nome": "Carbo Lubrificantes", "ramo": "óleo", "licenca": "NATIONAL", "condicao": {"tipo": "podio"}},
+ {"id": "atlas", "nome": "Atlas Baterias", "ramo": "baterias", "licenca": "NATIONAL", "condicao": {"tipo": "vitoria"}},
+ {"id": "horizonte", "nome": "Horizonte Transportes", "ramo": "transporte", "licenca": "NATIONAL", "condicao": {"tipo": "etapa"}},
+ {"id": "vortex", "nome": "Vortex Pneus", "ramo": "pneus", "licenca": "INTERNATIONAL", "condicao": {"tipo": "podio"}},
+ {"id": "nimbus", "nome": "Nimbus Combustíveis", "ramo": "combustível", "licenca": "INTERNATIONAL", "condicao": {"tipo": "vitoria"}},
+ {"id": "aurora", "nome": "Aurora Seguros", "ramo": "seguros", "licenca": "INTERNATIONAL", "condicao": {"tipo": "licenca", "valor": "INTERNATIONAL"}},
+ {"id": "prisma", "nome": "Prisma Telecom", "ramo": "telefonia", "licenca": "PRO", "condicao": {"tipo": "podio"}},
+ {"id": "meridiano", "nome": "Meridiano Relógios", "ramo": "relógios", "licenca": "PRO", "condicao": {"tipo": "vitoria"}},
+ {"id": "halcyon", "nome": "Halcyon Bebidas", "ramo": "bebida", "licenca": "PRO", "condicao": {"tipo": "licenca", "valor": "PRO"}},
+ {"id": "kestrel", "nome": "Kestrel Óculos", "ramo": "óculos", "licenca": "ELITE", "condicao": {"tipo": "vitoria"}},
+ {"id": "solaris", "nome": "Solaris Aviação", "ramo": "aviação", "licenca": "ELITE", "condicao": {"tipo": "licenca", "valor": "ELITE"}}
+]

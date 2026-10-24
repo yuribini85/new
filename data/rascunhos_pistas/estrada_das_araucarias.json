@@ -1,0 +1,95 @@
+{
+ "id": "estrada_das_araucarias",
+ "funcao": "montanha",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 160,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 42,
+   "angulo_graus": 78.78610362061383,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 117
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 26,
+   "angulo_graus": 164.66686981100207
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 103
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 32,
+   "angulo_graus": 184.09832389602244,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 98
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 32,
+   "angulo_graus": 123.24450975175053
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 102
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 43,
+   "angulo_graus": 131.73450003136074,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 91
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 97,
+   "angulo_graus": 40.972693106905666
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 109
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 59,
+   "angulo_graus": 95.10585997212847,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 61,
+   "angulo_graus": 80.40375995346467,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 47,
+   "angulo_graus": 118.75552519606812,
+   "sentido": "direita"
+  }
+ ]
+}

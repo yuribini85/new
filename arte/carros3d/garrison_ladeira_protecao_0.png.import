@@ -1,0 +1,37 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://1ef2k0b0d1vp"
+path="res://.godot/imported/garrison_ladeira_protecao_0.png-29190174586b635b4f75259030d5bea6.ctex"
+metadata={
+"vram_texture": false
+}
+generator_parameters={
+"md5": "a37458d83a17eff6e3939e57bab695b2"
+}
+
+[deps]
+
+source_file="res://arte/carros3d/garrison_ladeira_protecao_0.png"
+dest_files=["res://.godot/imported/garrison_ladeira_protecao_0.png-29190174586b635b4f75259030d5bea6.ctex"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=1

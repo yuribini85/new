@@ -1,0 +1,82 @@
+{
+ "id": "avenida_noturna",
+ "funcao": "tecnico",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 571,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 27,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 24,
+   "angulo_graus": 90,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 131
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 22,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 167
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 28,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 37,
+   "angulo_graus": 45
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 221
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 47,
+   "angulo_graus": 45,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 184
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 22,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 104
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 28,
+   "angulo_graus": 90
+  }
+ ]
+}

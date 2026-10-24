@@ -1,0 +1,282 @@
+[
+ {
+  "id": "hayase",
+  "nome": "Hayase Motor",
+  "escola": "jp",
+  "pais": "Japão",
+  "historia": "Nasceu em 1952 fazendo motores de motocicleta; ficou conhecida pelos compactos leves e por insistir em motores de alta rotação quando ninguém mais acreditava neles."
+ },
+ {
+  "id": "ashcombe",
+  "nome": "Ashcombe Cars",
+  "escola": "uk",
+  "pais": "Reino Unido",
+  "historia": "Garagem de corrida de fim de semana que começou vendendo kits; até hoje faz poucos carros, leves e barulhentos, e quase faliu três vezes."
+ },
+ {
+  "id": "varenna",
+  "nome": "Varenna",
+  "escola": "it",
+  "pais": "Itália"
+ },
+ {
+  "id": "wexmoor",
+  "nome": "Wexmoor",
+  "escola": "uk",
+  "pais": "Reino Unido"
+ },
+ {
+  "id": "vorhaus",
+  "nome": "Vorhaus",
+  "escola": "de",
+  "pais": "Alemanha"
+ },
+ {
+  "id": "ostwerk",
+  "nome": "Ostwerk",
+  "escola": "de",
+  "pais": "Alemanha"
+ },
+ {
+  "id": "bancroft",
+  "nome": "Bancroft",
+  "escola": "us",
+  "pais": "Estados Unidos"
+ },
+ {
+  "id": "morel",
+  "nome": "Morel",
+  "escola": "fr",
+  "pais": "França"
+ },
+ {
+  "id": "tomoe",
+  "nome": "Tomoe",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "garrison",
+  "nome": "Garrison Motors",
+  "escola": "us",
+  "pais": "Estados Unidos"
+ },
+ {
+  "id": "ottavo",
+  "nome": "Ottavo",
+  "escola": "it",
+  "pais": "Itália"
+ },
+ {
+  "id": "whitlock",
+  "nome": "Whitlock",
+  "escola": "us",
+  "pais": "Estados Unidos"
+ },
+ {
+  "id": "hozuki",
+  "nome": "Hozuki",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "calderwood",
+  "nome": "Calderwood",
+  "escola": "uk",
+  "pais": "Reino Unido"
+ },
+ {
+  "id": "castellani",
+  "nome": "Castellani",
+  "escola": "it",
+  "pais": "Itália"
+ },
+ {
+  "id": "pemberly",
+  "nome": "Pemberly",
+  "escola": "uk",
+  "pais": "Reino Unido"
+ },
+ {
+  "id": "mizuchi",
+  "nome": "Mizuchi",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "keldorf",
+  "nome": "Keldorf",
+  "escola": "de",
+  "pais": "Alemanha"
+ },
+ {
+  "id": "dunmere",
+  "nome": "Dunmere",
+  "escola": "uk",
+  "pais": "Reino Unido"
+ },
+ {
+  "id": "sanga",
+  "nome": "Sanga Motors",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "lindauer",
+  "nome": "Lindauer",
+  "escola": "de",
+  "pais": "Alemanha"
+ },
+ {
+  "id": "saulieu",
+  "nome": "Saulieu",
+  "escola": "fr",
+  "pais": "França"
+ },
+ {
+  "id": "ashby",
+  "nome": "Ashby",
+  "escola": "us",
+  "pais": "Estados Unidos"
+ },
+ {
+  "id": "vallon",
+  "nome": "Vallon",
+  "escola": "fr",
+  "pais": "França"
+ },
+ {
+  "id": "rauhe",
+  "nome": "Rauhe",
+  "escola": "de",
+  "pais": "Alemanha"
+ },
+ {
+  "id": "cutler",
+  "nome": "Cutler",
+  "escola": "us",
+  "pais": "Estados Unidos"
+ },
+ {
+  "id": "hoshino",
+  "nome": "Hoshino",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "kosame",
+  "nome": "Kosame",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "kanaya",
+  "nome": "Kanaya",
+  "escola": "jp",
+  "pais": "Japão"
+ },
+ {
+  "id": "kestrin",
+  "nome": "Kestrin",
+  "escola": "us",
+  "pais": "Estados Unidos"
+ },
+ {
+  "id": "feldhaus",
+  "nome": "Feldhaus",
+  "escola": "de",
+  "pais": "Alemanha",
+  "historia": "Nasceu para pôr o país inteiro sobre rodas: carros simples, baratos de manter e teimosos, que a geração seguinte aprendeu a envenenar na garagem de casa."
+ },
+ {
+  "id": "corsalto",
+  "nome": "Corsalto",
+  "escola": "it",
+  "pais": "Itália",
+  "historia": "Uma equipe de corrida que vendia carros de rua para pagar a temporada; até hoje o motor é desenhado primeiro e a carroceria vem depois."
+ },
+ {
+  "id": "taurenza",
+  "nome": "Taurenza",
+  "escola": "it",
+  "pais": "Itália",
+  "historia": "Começou fazendo tratores e entrou nos esportivos por birra com um cliente; desde então cada modelo tenta ser mais exagerado que o anterior."
+ },
+ {
+  "id": "tridella",
+  "nome": "Tridella",
+  "escola": "it",
+  "pais": "Itália",
+  "historia": "Três irmãos, uma oficina em Módena e o hábito de pôr motores de corrida em grã-turismos de luxo, mesmo quando o dinheiro não fechava a conta."
+ },
+ {
+  "id": "vantra",
+  "nome": "Vantra",
+  "escola": "uk",
+  "pais": "Reino Unido",
+  "historia": "Ateliê de hipercarros: poucas dezenas por ano, cada um montado à mão em torno de um número que nenhum outro carro de rua alcança."
+ },
+ {
+  "id": "norrvik",
+  "nome": "Norrvik",
+  "escola": "se",
+  "pais": "Suécia",
+  "historia": "Feitos para o inverno longo e as estradas de terra do norte: robustos, seguros e com um turbo escondido onde ninguém esperava."
+ },
+ {
+  "id": "halberton",
+  "nome": "Halberton",
+  "escola": "uk",
+  "pais": "Reino Unido",
+  "historia": "Do sedã de diretor ao fora de estrada de fazenda, a mesma marca vestiu a aristocracia e o campo com o mesmo ar de quem não tem pressa."
+ },
+ {
+  "id": "ashworth",
+  "nome": "Ashworth",
+  "escola": "uk",
+  "pais": "Reino Unido",
+  "historia": "Carros feitos sob encomenda para quem não dirige o próprio carro; o silêncio da cabine vale mais que qualquer número de potência."
+ },
+ {
+  "id": "ridgeway",
+  "nome": "Ridgeway",
+  "escola": "us",
+  "pais": "Estados Unidos",
+  "historia": "Nasceu de veículos militares de excedente de guerra e nunca perdeu o jeito: chassi de longarina, tração nas quatro e lama até o para-brisa."
+ },
+ {
+  "id": "voltane",
+  "nome": "Voltane",
+  "escola": "us",
+  "pais": "Estados Unidos",
+  "historia": "A mais nova da lista: motores elétricos, torque de uma vez e uma carroceria que parece ter saído de um desenho técnico."
+ },
+ {
+  "id": "ishigumo",
+  "nome": "Ishigumo",
+  "escola": "jp",
+  "pais": "Japão",
+  "historia": "Fabricante de caminhões que fez alguns carros de passeio ousados, desenhados por estúdios estrangeiros, antes de voltar para os utilitários."
+ },
+ {
+  "id": "volnar",
+  "nome": "Volnar",
+  "escola": "eu",
+  "pais": "Europa Oriental",
+  "historia": "Uma linha de montagem estatal que fazia de tudo, do popular de fila de espera ao sedã de ministro, com peças que se consertavam com arame."
+ },
+ {
+  "id": "ipora",
+  "nome": "Iporã",
+  "escola": "br",
+  "pais": "Brasil",
+  "historia": "Pequena fábrica de esportivos de fibra sobre mecânica de grande série, nascida da vontade de ter um carro nacional que fizesse barulho."
+ },
+ {
+  "id": "brakhaus",
+  "nome": "Brakhaus Industrial",
+  "escola": "us",
+  "pais": "Estados Unidos",
+  "historia": "Não faz carros: faz máquinas de trabalho que pesam o mesmo que um quarteirão de sedãs. Na arena, só aparece para encerrar a conversa."
+ }
+]

@@ -1,0 +1,47 @@
+{
+ "_nota_campanha": "Chrome & Wreckage (a única campanha; a do Adrian/Elena saiu, decisão 87). dono = o jogador é o novo dono da oficina, Mara Hayes guia; decisão 85: começa sem carro, com economia.saldo_inicial (o carro novo mais barato que iguala a prova aberta mais fácil); a primeira peça pedida é a mais barata do carro em uso; o carro da Mara chega na licença de carro_mara.",
+ "dono": {
+  "licencas": [],
+  "peca_demanda": "mais_barata",
+  "piloto": "",
+  "equipe": {
+   "nome": "Wreckage Motorsport",
+   "logo": "res://arte/equipes/wreckage_motorsport.png",
+   "subtitulo": false
+  },
+  "carro_mara": {
+   "carro": "bancroft_arraia",
+   "cor": "creme",
+   "pneu": "pneu_1",
+   "licenca": "NATIONAL"
+  }
+ },
+ "reativa_intervalo_corridas": 3,
+ "carro_caro_percentil": 0.9,
+ "_nota_cena": "Direção das cenas (apresentação, não balanceamento). cenarios: fundo atrás do personagem (arte/cenarios/<id>.webp). ilustracoes: quadro de tela cheia de um momento da história (arte/cenas/<id>.webp). Sem a arte, usa a provisória (arte/ui/<provisorio>.png, ou outro cenário: \"cenario:<id>\") com o tom indicado (noite, vazio, frio). Pedido da arte: tools/pacote_arte_cenas.py. focos (ilustrações): ponto de cada personagem no quadro (0..1, x e y); a câmera do diálogo puxa de leve para quem fala. som (cenários): fundo acústico em laço durante a cena (Sons.ambiente: \"oficina\").",
+ "cenarios": {
+  "oficina_mara": {
+   "nome": "A oficina da Mara, fim de tarde (o carro nos cavaletes)",
+   "som": "oficina"
+  },
+  "vector_academy": {
+   "nome": "Vector Academy",
+   "provisorio": "fundo_carreira"
+  }
+ },
+ "ilustracoes": {
+  "chegada": {
+   "nome": "A chegada à Wreckage, fim de tarde (o jogador em silhueta)",
+   "focos": {
+    "mara": [
+     0.77,
+     0.52
+    ]
+   }
+  },
+  "noite_da_arena": {
+   "nome": "A noite em que a Wreckage perdeu os carros na arena (a mesma da abertura)",
+   "tom": "noite"
+  }
+ }
+}

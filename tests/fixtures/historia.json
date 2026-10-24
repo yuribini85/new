@@ -1,0 +1,13 @@
+{
+ "dono": {
+  "licencas": [],
+  "peca_demanda": "turbo",
+  "piloto": "beto",
+  "equipe": {
+   "nome": "Oficina",
+   "logo": ""
+  }
+ },
+ "reativa_intervalo_corridas": 3,
+ "carro_caro_percentil": 0.5
+}

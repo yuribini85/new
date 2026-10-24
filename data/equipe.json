@@ -1,0 +1,77 @@
+{
+ "_nota": "Gestão da equipe do jogador (Chrome & Wreckage; aba Equipe). Abre com a equipe (licença International, flag SECOND_DRIVER_CREATED). PRÊMIO DE REFERÊNCIA: a média do prêmio de 1º lugar das provas de uma licença (Patrocinio.premio_referencia). Todos os fatores abaixo multiplicam esse prêmio e são PROVISÓRIOS até o playtest (critério aprovado; valores a medir). Patrocínio: renda por hora corrida no relógio real, também com o app fechado, mais um bônus quando a corrida cumpre a condição do patrocinador; a vaga livre assina sozinha o que mais paga por hora (decisão 124). Sede: só o Escritório comercial (decisão 124), comprado com o caixa. Nível de ritmo do piloto (decisão 54): cada nível soma `passo` de ritmo, até o teto da maior licença; sobe só com a experiência (xp_por_nivel provas por nível, decisão 71; o treino pago saiu na decisão 124). tempo_base_h fica como critério do reparo da arena (arena.json → reparo.tempo \"treino\").",
+ "patrocinio": {
+  "renda_hora_fator": 1.66,
+  "_renda_hora_fator": "Decisão do usuário (2026-10-17): cada contrato paga por hora 20% do que o jogador ganha correndo. Medido (playtest da campanha, 3 perfis, 10 h): correndo rende ~8,3 prêmios de 1º lugar da licença por hora (Club ~1.600 giros/h sobre prêmio médio 194; Sport ~2.200 sobre 258). 0,2 × 8,3 = 1,66 × o prêmio de referência.",
+  "bonus_fator": 0.5,
+  "contratos_base": 1,
+  "teto_offline_h_base": 2,
+  "teto_offline_h_por_titulo": 1,
+  "_teto_offline": "Decisão 104 (usuário, 2026-10-17): a capacidade de renda offline começa em teto_offline_h_base e cada título de série soma teto_offline_h_por_titulo; o contrato de patrocínio dura essa capacidade e paga todas as horas dela, com o jogo aberto ou fechado.",
+  "bonus_condicao": {
+   "podio": 1.0,
+   "vitoria": 1.21,
+   "etapa": 1.53,
+   "licenca:INTERNATIONAL": 1.46
+  },
+  "_bonus_condicao": "Gerado por tools/calibrar_bonus.gd (600 min por perfil): frequência do pódio ÷ frequência da condição, medida no playtest automático. Condição ausente vale 1."
+ },
+ "sede": [
+  {
+   "id": "escritorio",
+   "nome": "Escritório comercial",
+   "descricao": "Mais um contrato de patrocínio ao mesmo tempo.",
+   "efeito": "contratos",
+   "por_nivel": 1,
+   "niveis": 2,
+   "custo_fator": 4.0
+  }
+ ],
+ "sede_licenca_custo": "INTERNATIONAL",
+ "treino": {
+  "passo": 0.00734,
+  "niveis": 3,
+  "tempo_base_h": 1.0,
+  "teto": {
+   "INTERNATIONAL": 1.022,
+   "PRO": 1.022,
+   "ELITE": 1.022
+  },
+  "_teto": "GERADO por tools/calibrar_treino.py (não editar à mão): maior ritmo do piloto, por maior licença do jogador, que encurta em até 10% (meta do usuário) o caminho até vencer as provas dessa licença; nunca acima do teto das licenças seguintes (o treino não se perde).",
+  "_passo": "GERADO por tools/calibrar_treino.py: o maior teto dividido em `niveis` (3, decisão do usuário).",
+  "xp_por_nivel": 3,
+  "_xp": "Decisão 71 (aprovado): a cada 'xp_por_nivel' provas (corridas do piloto de corrida, lutas dos de arena) o piloto ganha um nível, até o teto da licença; 3 = as etapas de uma série de campeonato. Decisão 124: é o único jeito de subir (sem treino pago, energia nem embalo).",
+  "recordes_por_nivel": 2,
+  "_recordes": "Decisão 130 (E6, recomendação aceita pelo usuário, 2026-10-22): o piloto de corrida sobe pelo recorde pessoal de volta (carro + pista), não pela prova disputada: um nível a cada recordes_por_nivel recordes. Medido por tools/medir_recordes.gd (campanha, 3 perfis × 2 sementes, 90 min): 64% das corridas batem recorde; round(3 × 0,645) = 2 recordes ≈ 3,1 corridas por nível, a mesma média de antes (xp_por_nivel = 3). Os pilotos de arena seguem por luta."
+ },
+ "pintura": {
+  "_nota": "Oficina → PINTURA (pedido do usuário, 2026-10-11): trocar a cor da carroceria e pintar faixas custa um fator sobre o prêmio de 1º lugar médio da maior licença do jogador (o mesmo critério da Sede e do treino). null = preço a definir (vale 0 até o usuário decidir).",
+  "fator_cor": null,
+  "fator_faixas": null
+ },
+ "caixas": {
+  "_nota": "Decisão 130 (E4, recomendação aceita pelo usuário, 2026-10-22): caixa de pintura na primeira vitória de cada prova de licenca_minima para cima e em qualquer vitória com o carro mais fraco do grid (menor potência por peso). Abre na hora: um item da cabine ainda trancado (desenhos e logos que o Grid ainda não liberou e os exclusivos de caixa abaixo); sem nada a liberar, um prêmio de 1º lugar da licença em giros. Só cosmético, nunca à venda.",
+  "licenca_minima": "NATIONAL",
+  "exclusivos": {
+   "rodas": [
+    "turbina",
+    "estrela",
+    "dez"
+   ],
+   "acabamentos": [
+    "metalico"
+   ],
+   "fontes": [
+    "pincel",
+    "serifa"
+   ]
+  }
+ },
+ "treinador": {
+  "_nota": "Decisão 130 (E6; usuário, 2026-10-22: \"Sim\" à recomendação depois da medição): o treinador não fica com parte dos prêmios (com 20% deles, o agente vencia 36 provas contra 67 no mesmo tempo). Custa preco_premios × o prêmio de 1º lugar médio da maior licença do jogador por contrato de duracao_h horas, pago na contratação; enquanto contratado, cada recorde de volta do piloto de corrida vale fator_xp. Medição com piloto contratado: tools/medir_recordes.gd -- 180 2 treinador.",
+  "preco_premios": 1,
+  "fator_xp": 2,
+  "duracao_h": 24
+ },
+ "_nota_patrocinio_teto": "Decisão 85 (usuário): com o app fechado o patrocínio rende até teto_offline_h_base horas na primeira licença e mais teto_offline_h_por_licenca hora a cada licença conquistada depois (o teto das corridas, carreira.teto_offline_s, não vale para ele). Na campanha do dono o patrocínio abre depois da primeira corrida com a licença Club (flag PATROCINIO_LIBERADO); caixa e sede seguem na International."
+}

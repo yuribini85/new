@@ -1,0 +1,87 @@
+{
+ "id": "serra_alta",
+ "funcao": "montanha",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 250,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 180
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 170,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 180,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 170,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 180
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 140
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 180,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 140
+  },
+  {
+   "tipo": "curva_lenta",
+   "raio_m": 30,
+   "angulo_graus": 180
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 40,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 90,
+   "angulo_graus": 40,
+   "sentido": "direita"
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 90,
+   "angulo_graus": 40
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 45,
+   "angulo_graus": 90
+  }
+ ]
+}

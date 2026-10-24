@@ -1,0 +1,214 @@
+name: Demo web
+
+# Publica no GitHub Pages o site oficial (pasta site/, na raiz) e a demo web do
+# jogo (em /demo/), para testar no navegador
+# do celular. Precisa de Settings → Pages → Source: GitHub Actions.
+# Por padrão o GitHub só publica a partir da main (regra do ambiente
+# github-pages); para publicar de outra branch, inclua-a abaixo e libere-a em
+# Settings → Environments → github-pages.
+
+on:
+  push:
+    # A branch de trabalho publica a demo a cada push (o usuário testa por ela).
+    branches: [main, claude/eloquent-clarke-v7l68k]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Godot 4.5 com templates de exportação
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.5.1
+          use-dotnet: false
+          include-templates: true
+
+      # Os erros "texture_2d_get" da importação sem tela são inofensivos; o
+      # código de saída continua 0.
+      - name: Importar projeto
+        run: godot --headless --import
+
+      - name: Testes
+        run: tests/rodar.sh godot
+
+      # Modelo web enxuto (decisão 95, item 9): o Godot compilado sem os
+      # módulos que o jogo não usa, guardado em cache. Se a compilação falhar,
+      # a exportação segue com o modelo padrão.
+      - name: Cache do modelo web enxuto
+        id: modelo
+        uses: actions/cache@v4
+        with:
+          path: build/modelo_web
+          key: modelo-web-${{ hashFiles('tools/modelo_web.sh') }}
+
+      - name: Emscripten para o modelo web
+        if: steps.modelo.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.64
+
+      - name: Compilar o modelo web enxuto
+        if: steps.modelo.outputs.cache-hit != 'true'
+        continue-on-error: true
+        run: |
+          pip install scons
+          tools/modelo_web.sh build/modelo_web
+
+      - name: Usar o modelo web enxuto
+        run: |
+          m="$PWD/build/modelo_web/web_nothreads_release.zip"
+          if [ -f "$m" ]; then
+            awk -v m="$m" '/^\[preset\./{p=$0} (p=="[preset.0.options]" || p=="[preset.2.options]") && /^custom_template\/release=/{$0="custom_template/release=\"" m "\""} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
+            grep -n "custom_template/release" export_presets.cfg
+          else
+            echo "sem modelo enxuto: exporta com o padrão"
+          fi
+
+      - name: Exportar para web
+        env:
+          SELO_CHAVE: ${{ secrets.SELO_CHAVE }}
+        run: |
+          mkdir -p build/web
+          v="${GITHUB_SHA::7}"
+          echo "$v" > versao.txt
+          # Chave do selo do save (data_model/selo.gd), do segredo do repositório.
+          if [ -n "$SELO_CHAVE" ]; then printf '%s' "$SELO_CHAVE" > chave_selo.txt; fi
+          godot --headless --export-release "Web" build/web/index.html
+          test -f build/web/index.pck
+          ls -l build/web/index.wasm build/web/index.pck
+          # O Pages manda o navegador guardar os arquivos por 10 min: o pacote
+          # do jogo é pedido com a versão no endereço para vir sempre o novo.
+          sed -i "s/\"executable\":\"index\",/\"executable\":\"index\",\"mainPack\":\"index.pck?v=$v\",/" build/web/index.html
+          grep -q "index.pck?v=$v" build/web/index.html
+          # O tamanho do pacote com o mesmo nome do endereço (a barra mostra a porcentagem).
+          sed -i "s/\"index.pck\":/\"index.pck?v=$v\":/" build/web/index.html
+          # A página confere esta versão ao abrir e recarrega se houver outra
+          # mais nova (navegador interno de app guarda cache por muito tempo).
+          echo "$v" > build/web/versao.txt
+          sed -i "s/__VERSAO__/$v/" build/web/index.html
+          grep -q "var v = '$v'" build/web/index.html
+
+      # Chrome Racing Team (docs/idle/plano.md): o segundo app do projeto, o
+      # mesmo pacote aberto direto no jogo idle (feature "idle"). Em /idle/.
+      - name: Exportar o Chrome Racing Team para web
+        run: |
+          mkdir -p build/idle_web
+          v="${GITHUB_SHA::7}"
+          godot --headless --export-release "Web Idle" build/idle_web/index.html
+          test -f build/idle_web/index.pck
+          sed -i "s/\"executable\":\"index\",/\"executable\":\"index\",\"mainPack\":\"index.pck?v=$v\",/" build/idle_web/index.html
+          sed -i "s/\"index.pck\":/\"index.pck?v=$v\":/" build/idle_web/index.html
+          echo "$v" > build/idle_web/versao.txt
+          sed -i "s/__VERSAO__/$v/" build/idle_web/index.html
+
+      # APK Android para os testes (decisão 127): o mesmo jogo como app nativo,
+      # bem mais leve que a web em celular de entrada. Assinado com a chave de
+      # teste do repositório (android/LEIA-ME.md), não com a do Google Play.
+      # Se falhar, a demo web segue publicada.
+      - name: Exportar APK Android
+        id: apk
+        continue-on-error: true
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ github.workspace }}/android/teste.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: teste
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: chromewreckage
+        run: |
+          mkdir -p build/android ~/.config/godot
+          sdk="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          jdk="${JAVA_HOME_17_X64:-$JAVA_HOME}"
+          for f in ~/.config/godot/editor_settings-4.5.tres ~/.config/godot/editor_settings-4.4.tres ~/.config/godot/editor_settings-4.tres; do
+            printf '[gd_resource type="EditorSettings" format=3]\n\n[resource]\nexport/android/android_sdk_path = "%s"\nexport/android/java_sdk_path = "%s"\n' "$sdk" "$jdk" > "$f"
+          done
+          sed -i "s/^version\/code=1$/version\/code=${{ github.run_number }}/" export_presets.cfg
+          ls ~/.local/share/godot/export_templates/*/ | grep -i android || echo "sem template Android"
+          ls "$sdk/build-tools" || echo "sem build-tools em $sdk"
+          godot --headless --verbose --export-release "Android" build/android/chrome-wreckage.apk 2>&1 | grep -v "savepack: step" | tail -60
+          test -f build/android/chrome-wreckage.apk
+          ls -la build/android
+
+      # Chrome Racing Team (docs/idle/plano.md): o APK com o AdMob e os avisos. O plugin
+      # (godot-sdk-integrations/godot-admob, Godot 4.5.1) entra só aqui, depois
+      # do APK do Chrome & Wreckage, e pede o build Gradle; o id do app vem de
+      # data/idle/idle.json ("admob"). Se falhar, o resto segue publicado.
+      - name: Exportar APK do Chrome Racing Team (AdMob)
+        continue-on-error: true
+        timeout-minutes: 40
+        env:
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ github.workspace }}/android/teste.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: teste
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: chromewreckage
+        run: |
+          curl -sSL -o admob.zip https://github.com/godot-sdk-integrations/godot-admob/releases/download/v5.3/AdmobPlugin-Android-v5.3.zip
+          unzip -o -q admob.zip -d .
+          test -f addons/AdmobPlugin/Admob.gd
+          app_id=$(python3 -c "import json;print(json.load(open('data/idle/idle.json'))['admob']['app_id'])")
+          real=$(python3 -c "import json;print(str(json.load(open('data/idle/idle.json'))['admob']['is_real']).lower())")
+          printf '[General]\nis_real = %s\n\n[Debug]\napp_id = "%s"\n\n[Release]\napp_id = "%s"\n' "$real" "$app_id" "$app_id" > addons/AdmobPlugin/android_export.cfg
+          # Avisos com o app fechado (idle/avisos_idle.gd): plugin Notification
+          # Scheduler v5.1 (feito para o Godot 4.5.1) e o ícone do aviso. Se não
+          # baixar, o APK sai sem avisos.
+          plugins='"res://addons/AdmobPlugin/plugin.cfg"'
+          if curl -sSfL -o avisos.zip https://github.com/godot-sdk-integrations/godot-notification-scheduler/releases/download/v5.1/NotificationSchedulerPlugin-Android-v5.1.zip \
+              && unzip -o -q avisos.zip -d . && test -f addons/NotificationSchedulerPlugin/plugin.cfg; then
+            mkdir -p assets/NotificationSchedulerPlugin
+            cp -r android/aviso/drawable assets/NotificationSchedulerPlugin/
+            plugins="$plugins, \"res://addons/NotificationSchedulerPlugin/plugin.cfg\""
+          else
+            echo "Plugin de avisos indisponível: APK sem avisos."
+          fi
+          printf '\n[editor_plugins]\n\nenabled=PackedStringArray(%s)\n' "$plugins" >> project.godot
+          ls addons
+          # Build Gradle só no preset do idle (preset.3).
+          awk '/^\[preset\./{p=$0} p=="[preset.3.options]" && /^gradle_build\/use_gradle_build=/{$0="gradle_build/use_gradle_build=true"} {print}' export_presets.cfg > e.tmp && mv e.tmp export_presets.cfg
+          # Duas importações: na primeira o ícone do plugin ainda não existe e o
+          # script dele não carrega; na segunda carrega limpo. O modelo de build
+          # Android só se instala junto da exportação (sozinho, o editor abre e
+          # não fecha). timeout: nada aqui pode prender o site.
+          timeout 600 godot --headless --import || true
+          timeout 600 godot --headless --import
+          timeout 1200 godot --headless --install-android-build-template --export-release "Android Idle" build/android/chrome-racing-team.apk 2>&1 | grep -v "savepack: step" | tail -60
+          test -f build/android/chrome-racing-team.apk
+          ls -la build/android
+
+      # O site oficial (site/) fica na raiz do Pages e a demo do jogo em /demo/.
+      - name: Montar site e demo
+        run: |
+          mkdir -p build/pages
+          cp -r site/. build/pages/
+          rm -f build/pages/LEIA-ME.md build/pages/.gdignore
+          cp -r build/web build/pages/demo
+          test -f build/pages/index.html
+          test -f build/pages/demo/index.pck
+          # O APK de teste fica em /demo/chrome-wreckage.apk (quando a exportação deu certo).
+          if [ -f build/android/chrome-wreckage.apk ]; then cp build/android/chrome-wreckage.apk build/pages/demo/; fi
+          # Chrome Racing Team em /idle/ (e o APK dele, quando saiu).
+          cp -r build/idle_web build/pages/idle
+          test -f build/pages/idle/index.pck
+          if [ -f build/android/chrome-racing-team.apk ]; then cp build/android/chrome-racing-team.apk build/pages/idle/; fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/pages
+
+  publicar:
+    needs: exportar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

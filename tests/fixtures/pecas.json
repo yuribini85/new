@@ -1,0 +1,49 @@
+[
+ {
+  "id": "turbo",
+  "categoria": "motor",
+  "preco": 200,
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "mult",
+    "valor": 1.5
+   },
+   {
+    "atributo": "peso",
+    "op": "soma",
+    "valor": 20
+   }
+  ],
+  "nome": "Turbo"
+ },
+ {
+  "id": "motor_fr",
+  "categoria": "motor",
+  "preco": 300,
+  "tracao_permitida": [
+   "FR"
+  ],
+  "efeitos": [
+   {
+    "atributo": "potencia",
+    "op": "soma",
+    "valor": 50
+   }
+  ],
+  "nome": "Preparação FR"
+ },
+ {
+  "id": "alivio",
+  "categoria": "peso",
+  "preco": 100,
+  "efeitos": [
+   {
+    "atributo": "peso",
+    "op": "mult",
+    "valor": 0.5
+   }
+  ],
+  "nome": "Alívio de peso"
+ }
+]

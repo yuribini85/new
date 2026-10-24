@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, viewport-fit=cover">
+		<title>$GODOT_PROJECT_NAME</title>
+		<style>
+/* Tela de carregamento da versão web: a mesma composição da tela inicial do
+   jogo (ui/inicio.gd: logo e barra), sobre fundo preto. Gerado por tools/gerar_shell_web.gd a
+   partir de web/shell_modelo.html; não editar web/shell.html à mão. */
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	color: #e8e2d4;
+	background-color: #000;
+	overflow: hidden;
+	touch-action: none;
+}
+
+#canvas {
+	display: block;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+#status {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	/* --u: escala da tela do jogo (720 px de largura, stretch keep_width),
+	   calculada no script abaixo a partir da área visível. Posições iguais às
+	   da tela inicial do jogo (ui/inicio.gd): a troca não dá salto. */
+	--u: 0.5px;
+	background-color: #000;
+	visibility: hidden;
+}
+#status-logo {
+	position: absolute;
+	left: calc(56 * var(--u));
+	right: calc(56 * var(--u));
+	top: calc(env(safe-area-inset-top, 0px) + 17%);
+	width: calc(100% - 112 * var(--u));
+	height: calc(198 * var(--u));
+	object-fit: contain;
+}
+
+#status-barra {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	top: calc(env(safe-area-inset-top, 0px) + 44%);
+	width: calc(460 * var(--u));
+	height: calc(10 * var(--u));
+	border-radius: calc(5 * var(--u));
+	background: rgba(255, 255, 255, 0.12);
+	overflow: hidden;
+}
+
+#status-preenche {
+	height: 100%;
+	width: 0%;
+	border-radius: inherit;
+	background: #c9a054;
+	transition: width 0.25s ease-out;
+}
+
+#status-barra.indeterminada #status-preenche {
+	width: 30%;
+	animation: vai 1.2s ease-in-out infinite;
+}
+
+@keyframes vai {
+	from { transform: translateX(-100%); }
+	to { transform: translateX(340%); }
+}
+
+#status-etapa {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: calc(env(safe-area-inset-top, 0px) + 44% + 24 * var(--u));
+	color: rgba(232, 226, 212, 0.7);
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	font-size: calc(22 * var(--u));
+	text-align: center;
+}
+
+#status-aviso {
+	position: absolute;
+	left: 2rem;
+	right: 2rem;
+	top: 55%;
+	display: none;
+	padding: 1rem;
+	border: 1px solid #b0544a;
+	border-radius: 0.5rem;
+	background: #2a1c1e;
+	color: #e8e2d4;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	line-height: 1.3;
+	text-align: center;
+}
+/* Celular deitado: o jogo é em pé (720 de largura). Pede para girar. A
+   proporção mínima evita cobrir a tela quando o teclado virtual encolhe a
+   área visível do celular em pé. */
+#gire {
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+	background-color: #000;
+	color: #e8e2d4;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	text-align: center;
+}
+
+#gire-aparelho {
+	width: 2.6rem;
+	height: 4.4rem;
+	border: 3px solid #c9a054;
+	border-radius: 0.5rem;
+	animation: gira 2s ease-in-out infinite;
+}
+
+#gire-texto {
+	font-size: 1.2rem;
+}
+
+#gire-nota {
+	color: rgba(232, 226, 212, 0.7);
+	font-size: 0.9rem;
+}
+
+@keyframes gira {
+	0%, 20% { transform: rotate(-90deg); }
+	60%, 100% { transform: rotate(0deg); }
+}
+
+@media (orientation: landscape) and (max-height: 600px) and (min-aspect-ratio: 4/3) {
+	#gire {
+		display: flex;
+	}
+}
+		</style>
+		$GODOT_HEAD_INCLUDE
+	</head>
+	<body>
+		<canvas id="canvas">
+			Seu navegador não suporta canvas.
+		</canvas>
+
+		<noscript>
+			Seu navegador não suporta JavaScript.
+		</noscript>
+
+		<div id="status">
+			<img id="status-logo" src="data:image/png;base64,{{LOGO}}" alt="Chrome &amp; Wreckage">
+			<div id="status-barra" class="indeterminada"><div id="status-preenche"></div></div>
+			<div id="status-etapa"></div>
+			<div id="status-aviso"></div>
+		</div>
+
+		<div id="gire" aria-live="polite">
+			<div id="gire-aparelho"></div>
+			<div id="gire-texto">Gire o aparelho</div>
+			<div id="gire-nota">O jogo é jogado com o celular em pé.</div>
+		</div>
+
+		<script>
+// Versão publicada mais nova que esta página (cache do navegador, ou do
+// navegador interno de outro app): recarrega já na nova. __VERSAO__ é trocado
+// pelo commit na publicação (.github/workflows/pages.yml).
+(function () {
+	var v = '__VERSAO__';
+	if (v.indexOf('__') === 0) return;
+	fetch('versao.txt?t=' + Date.now(), { cache: 'no-store' })
+		.then(function (r) { return r.ok ? r.text() : ''; })
+		.then(function (t) {
+			t = t.trim();
+			if (!t || t === v) return;
+		var q = new URLSearchParams(location.search);
+		if (q.get('v') === t) return;
+		q.set('v', t);  // mantém os outros parâmetros (ex.: ?diag=1)
+		try { sessionStorage.removeItem('sd_carregando'); } catch (e) {}  // recarga nossa, não queda
+		location.replace(location.pathname + '?' + q.toString());
+		})
+		.catch(function () {});
+}());
+// iPhone: o Safari só entrega a inclinação (parallax da tela inicial) depois de
+// uma permissão pedida num toque. Pede no primeiro toque, uma vez.
+window.addEventListener('touchend', function () {
+	if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
+		DeviceOrientationEvent.requestPermission().catch(function () {});
+	}
+}, { once: true, capture: true });
+		</script>
+		<script src="$GODOT_URL"></script>
+		<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+
+(function () {
+	const status = document.getElementById('status');
+	const barra = document.getElementById('status-barra');
+	const preenche = document.getElementById('status-preenche');
+	const aviso = document.getElementById('status-aviso');
+	const etapa = document.getElementById('status-etapa');
+	let nota = '';
+	function mostrarEtapa(texto) {
+		etapa.textContent = texto + nota;
+	}
+	// Erros de script durante o carregamento vão para a tela (no celular não
+	// há console para ver).
+	window.addEventListener('error', function (e) { falha('Erro: ' + (e.message || e)); });
+	window.addEventListener('unhandledrejection', function (e) { falha('Erro: ' + (e.reason && e.reason.message || e.reason)); });
+	// O Safari do iPhone fecha e recarrega a página quando ela passa do limite
+	// de memória: parece um carregamento infinito. Marca o início e, se a
+	// página voltar sem ter terminado, avisa.
+	let quedas = 0;
+	try {
+		quedas = Number(sessionStorage.getItem('sd_quedas') || 0);
+		if (sessionStorage.getItem('sd_carregando')) quedas += 1;
+		sessionStorage.setItem('sd_quedas', String(quedas));
+		sessionStorage.setItem('sd_carregando', '1');
+	} catch (e) {}
+	function escala() {
+		// Mesma regra do jogo: a largura da tela vale 720 unidades.
+		status.style.setProperty('--u', (status.clientWidth / 720) + 'px');
+	}
+	escala();
+	window.addEventListener('resize', escala);
+	status.style.visibility = 'visible';
+
+	function falha(err) {
+		console.error(err);
+		const texto = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'Erro desconhecido.');
+		aviso.textContent = '';
+		texto.split('\n').forEach((linha) => {
+			aviso.appendChild(document.createTextNode(linha));
+			aviso.appendChild(document.createElement('br'));
+		});
+		barra.style.display = 'none';
+		etapa.style.display = 'none';
+		aviso.style.display = 'block';
+		try { sessionStorage.removeItem('sd_carregando'); } catch (e) {}
+	}
+
+	const faltando = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+	if (faltando.length !== 0) {
+		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+			let registro;
+			try {
+				registro = navigator.serviceWorker.getRegistration();
+			} catch (err) {
+				registro = Promise.reject(new Error('Falha ao registrar o service worker.'));
+			}
+			Promise.race([
+				registro.then((r) => (r != null ? Promise.reject(new Error('O service worker já existe.')) : r))
+					.then(() => engine.installServiceWorker()),
+				new Promise((resolve) => setTimeout(() => resolve(), 2000)),
+			]).then(() => window.location.reload()).catch((err) => console.error(err));
+		} else {
+			falha('Este navegador não tem recursos necessários para o jogo:\n' + faltando.join('\n'));
+		}
+		return;
+	}
+	if (quedas > 0) {
+		nota = ' · o navegador fechou o jogo ' + quedas + 'x no carregamento';
+	}
+	mostrarEtapa('Baixando…');
+	// O pacote vai com a versão no endereço e o carregador do Godot não acha o
+	// tamanho dele: o total vem dos tamanhos que a exportação anotou.
+	let previsto = 0;
+	Object.values(GODOT_CONFIG['fileSizes'] || {}).forEach(function (n) { previsto += Number(n) || 0; });
+	// Conexão parada ou celular lento demais para abrir: avisa com o que fazer,
+	// em vez de deixar a barra parada (relato de teste: Galaxy A20s, 22 min).
+	let ultimo = 0;
+	let desde = Date.now();
+	let baixou = false;
+	let aberto = false;
+	function travou(texto) {
+		if (aberto || aviso.style.display === 'block') return;
+		aviso.textContent = texto;
+		const b = document.createElement('button');
+		b.textContent = 'Tentar de novo';
+		b.style.cssText = 'display:block;margin:1.2em auto 0;padding:.6em 1.4em;font:inherit;border:0;border-radius:.5em;background:#d9a441;color:#111';
+		b.onclick = function () { try { sessionStorage.removeItem('sd_carregando'); } catch (e) {} location.reload(); };
+		aviso.appendChild(b);
+		aviso.style.display = 'block';
+	}
+	setInterval(function () {
+		const parado = (Date.now() - desde) / 1000;
+		if (!baixou && parado > 30) {
+			travou('O download parou em ' + (ultimo / 1048576).toFixed(0) + ' MB. Confira a internet (o Wi-Fi é melhor: o jogo tem ~'
+				+ (previsto / 1048576).toFixed(0) + ' MB) e tente de novo.');
+		} else if (baixou && parado > 90) {
+			travou('O celular está demorando para abrir o jogo. Feche as outras abas e aplicativos e tente de novo.');
+		}
+	}, 5000);
+	engine.startGame({
+		'onProgress': function (atual, total) {
+			if (atual !== ultimo) {
+				ultimo = atual;
+				desde = Date.now();
+			}
+			if (!(total > 0)) total = previsto;
+			if (atual > 0 && total > 0) {
+				barra.classList.remove('indeterminada');
+				preenche.style.width = Math.min(100, 100 * atual / total).toFixed(1) + '%';
+				if (atual >= total && !baixou) {
+					baixou = true;
+					desde = Date.now();
+				}
+				mostrarEtapa(!baixou
+					? 'Baixando ' + Math.floor(100 * atual / total) + '% (' + (atual / 1048576).toFixed(0) + ' de ' + (total / 1048576).toFixed(0) + ' MB)'
+					: 'Iniciando o jogo…');
+			}
+		},
+	}).then(() => {
+		aberto = true;
+		// O jogo abre na tela inicial com a mesma composição: só some.
+		try {
+			sessionStorage.removeItem('sd_carregando');
+			sessionStorage.removeItem('sd_quedas');
+		} catch (e) {}
+		status.remove();
+	}, falha);
+}());
+		</script>
+	</body>
+</html>

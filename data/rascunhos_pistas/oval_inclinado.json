@@ -1,0 +1,14 @@
+{
+ "id": "oval_inclinado",
+ "funcao": "alta_velocidade",
+ "trechos": [
+  {"tipo": "reta", "comprimento_m": 250, "ultrapassagem": true},
+  {"tipo": "curva_rapida", "raio_m": 400, "angulo_graus": 20, "inclinacao_graus": 10},
+  {"tipo": "reta", "comprimento_m": null, "ultrapassagem": true},
+  {"tipo": "curva_rapida", "raio_m": 400, "angulo_graus": 20, "inclinacao_graus": 10},
+  {"tipo": "reta", "comprimento_m": null},
+  {"tipo": "curva_rapida", "raio_m": 230, "angulo_graus": 160, "inclinacao_graus": 24},
+  {"tipo": "reta", "comprimento_m": 1000, "ultrapassagem": true},
+  {"tipo": "curva_rapida", "raio_m": 230, "angulo_graus": 160, "inclinacao_graus": 24}
+ ]
+}

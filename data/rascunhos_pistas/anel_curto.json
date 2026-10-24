@@ -1,0 +1,45 @@
+{
+ "id": "anel_curto",
+ "funcao": "alta_velocidade",
+ "trechos": [
+  {
+   "tipo": "reta",
+   "comprimento_m": 560,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_rapida",
+   "raio_m": 120,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": 150,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 60,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null,
+   "ultrapassagem": true
+  },
+  {
+   "tipo": "curva_media",
+   "raio_m": 70,
+   "angulo_graus": 90
+  },
+  {
+   "tipo": "reta",
+   "comprimento_m": null
+  },
+  {
+   "tipo": "curva_rapida",
+   "raio_m": 120,
+   "angulo_graus": 90
+  }
+ ]
+}

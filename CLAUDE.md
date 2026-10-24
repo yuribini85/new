@@ -1,40 +1,48 @@
 # Instruções para o agente
 
 ## O que este repositório é
-Material de design de um jogo idle isométrico para Godot 4.4. O jogo ainda não existe.
+Material de design de um jogo mobile idle de automobilismo inspirado na estrutura de
+progressão do jogo de referência. O jogo ainda não existe.
 
 ## Leia antes de escrever qualquer código
-- `docs/mecanicas_para_godot.md` — especificação de implementação
-- `docs/especificacao_tecnica_v1.md` — decisões técnicas já tomadas
-- `docs/ato1_balanceamento.md` — números do primeiro ato
-- `data/*.json` — balanceamento consumível
+- `docs/conceito.md` — princípios e limites
+- `docs/plano_mvp.md` — escopo do primeiro build, sistemas, dados e ordem de implementação
+
+## Testes
+`tests/rodar.sh` (aceita o caminho do Godot como argumento). Falha também em erro de script.
+Testar antes de avançar de etapa. Fixtures de `tests/fixtures/` são sintéticas — nunca
+copiá-las para `data/`.
 
 ## Regras de trabalho
 
-**Não gere arte.** A direção visual está fechada e há um pipeline próprio com 686 imagens
-catalogadas em `tools/twb-inventario-assets.html`. Use placeholders com a nomenclatura de
-`docs/NOMENCLATURA_ASSETS.md` e nunca invente assets.
+**Não altere as regras do README.** São decisões de design.
 
-**Não invente balanceamento.** Todo número vem de `data/`. Se faltar algum, pergunte em vez
-de estimar.
+**Não invente balanceamento.** Os números virão do estudo da referência e de playtest. Se faltar
+algum, pergunte em vez de estimar.
 
-**Não altere as dez regras do README.** Elas são decisões de design, não preferências.
+**Toda pergunta de decisão vem com sugestão.** Ao precisar que o usuário decida algo,
+apresente as opções já com a recomendada e o motivo, preferindo a solução da referência. Para
+números de balanceamento, sugira o critério ou a fonte (ex.: valor da referência a extrair), não
+o valor inventado.
 
-**Escopo do primeiro build:** apenas o Ato I. Onze edificações, economia, população, tela de
-aldeões, primeira expedição. Sem mina, sem anões, sem maldições, sem monetização.
+**Balanceamento fica em JSON externo** (`data/`), nunca embutido no código. Os números
+vêm do disco da referência pelo fluxo `tools/extrair_referencia.py` → `tools/importar_referencia.py` →
+`tools/calibrar_licencas.gd` (ver `data/README.md`). Não edite à mão os arquivos que o
+importador gera; ajuste a conversão no importador.
 
-**Balanceamento fica em JSON externo**, nunca embutido no código. É ajustado centenas de
-vezes.
+**Fala e texto de tela só na língua do jogador** (`docs/vocabulario.md`): um nome por coisa, o
+texto exato do botão, nada de termo interno (fila, simulação, flag, decisão, ids). Antes de escrever,
+pergunte se quem só jogou entende. `tests/checar_vocabulario.py` barra a lista de termos internos.
 
-**Um nó genérico de edifício** configurado por dado, nunca uma cena por construção.
+**Assets só com escala uniforme.** Nunca esticar nem estreitar uma imagem (mudar a
+proporção); para caber, escalar inteira ou recortar.
 
-## Ordem de implementação
-1. Fundação — autoload de simulação, ciclo do dia, save, offline
-2. Dados — carga dos JSON, modelo de edifício genérico
-3. Mapa — lotes fixos de `data/vila_lotes.json`, ruínas, construção
-4. Economia — recursos, produção, teto, índice de fome, venda
-5. População — órfãos, cicatrizes, alocação, tela de aldeões
-6. Rotas — sprites, colisão por cortesia, floresta e coleta
-7. Expedição — regiões, mochilas, risco, relatório
+**Simulação separada da visualização.** A corrida é resolvida sem renderizar; a tela só
+lê o resultado.
 
-Cada etapa depende só das anteriores. Testar antes de avançar.
+**Nada da referência entra no build:** nem código, modelos, texturas, nomes de carros, marcas
+ou traçados reconhecíveis. Campos de referência guardam o arquétipo, não o nome real.
+
+**Decisões de projeto** estão na seção 8 de `docs/plano_mvp.md` (engine Godot 4.5.1, decisão 134, offline
+real, um carro por vez com fila, licença como teste de tempo, usados por número de
+corridas). Não as altere. Para o que não estiver decidido, pergunte.

@@ -1,0 +1,97 @@
+{
+ "_nota": "Emblemas das equipes (pacote de identidades, sem texto nem número na arte). 'jogador': as 10 opções da equipe do jogador (nome livre, independente do logo). 'rivais': os logos das equipes adversárias, citados em equipes.json → logo. Arte original 1254 px, no jogo 512 px webp (escala uniforme).",
+ "jogador": [
+  {
+   "id": "01_compass_road",
+   "nome": "Bússola e estrada",
+   "arquivo": "res://arte/equipes/emblemas/jogador/01_compass_road.webp"
+  },
+  {
+   "id": "02_garage_horizon",
+   "nome": "Chaves e horizonte",
+   "arquivo": "res://arte/equipes/emblemas/jogador/02_garage_horizon.webp"
+  },
+  {
+   "id": "03_wheel_sprint",
+   "nome": "Roda veloz",
+   "arquivo": "res://arte/equipes/emblemas/jogador/03_wheel_sprint.webp"
+  },
+  {
+   "id": "04_broken_wheel",
+   "nome": "Roda alada rachada",
+   "arquivo": "res://arte/equipes/emblemas/jogador/04_broken_wheel.webp"
+  },
+  {
+   "id": "05_breakaway_arrow",
+   "nome": "Seta no anel",
+   "arquivo": "res://arte/equipes/emblemas/jogador/05_breakaway_arrow.webp"
+  },
+  {
+   "id": "06_phoenix_wheel",
+   "nome": "Fênix e roda",
+   "arquivo": "res://arte/equipes/emblemas/jogador/06_phoenix_wheel.webp"
+  },
+  {
+   "id": "07_gear_star",
+   "nome": "Estrela e engrenagem",
+   "arquivo": "res://arte/equipes/emblemas/jogador/07_gear_star.webp"
+  },
+  {
+   "id": "08_last_horizon",
+   "nome": "Sol na rodovia",
+   "arquivo": "res://arte/equipes/emblemas/jogador/08_last_horizon.webp"
+  },
+  {
+   "id": "09_forge_bolt",
+   "nome": "Martelo e raio",
+   "arquivo": "res://arte/equipes/emblemas/jogador/09_forge_bolt.webp"
+  },
+  {
+   "id": "10_road_wings",
+   "nome": "Estrada com asas",
+   "arquivo": "res://arte/equipes/emblemas/jogador/10_road_wings.webp"
+  }
+ ],
+ "rivais": [
+  {
+   "id": "01_redline_union",
+   "arquivo": "res://arte/equipes/emblemas/rivais/01_redline_union.webp"
+  },
+  {
+   "id": "02_blackwater_racing",
+   "arquivo": "res://arte/equipes/emblemas/rivais/02_blackwater_racing.webp"
+  },
+  {
+   "id": "03_iron_vultures",
+   "arquivo": "res://arte/equipes/emblemas/rivais/03_iron_vultures.webp"
+  },
+  {
+   "id": "04_redemption_county",
+   "arquivo": "res://arte/equipes/emblemas/rivais/04_redemption_county.webp"
+  },
+  {
+   "id": "05_velvet_thunder",
+   "arquivo": "res://arte/equipes/emblemas/rivais/05_velvet_thunder.webp"
+  },
+  {
+   "id": "06_copperhead_motors",
+   "arquivo": "res://arte/equipes/emblemas/rivais/06_copperhead_motors.webp"
+  },
+  {
+   "id": "07_hollow_saints",
+   "arquivo": "res://arte/equipes/emblemas/rivais/07_hollow_saints.webp"
+  },
+  {
+   "id": "08_blue_collar_syndicate",
+   "arquivo": "res://arte/equipes/emblemas/rivais/08_blue_collar_syndicate.webp"
+  },
+  {
+   "id": "09_midnight_relay",
+   "arquivo": "res://arte/equipes/emblemas/rivais/09_midnight_relay.webp"
+  },
+  {
+   "id": "10_last_exit_club",
+   "arquivo": "res://arte/equipes/emblemas/rivais/10_last_exit_club.webp"
+  }
+ ]
+}

@@ -1,24 +1,290 @@
 # data/
 
-JSON de balanceamento, prontos para `res://data/`. Ajustáveis sem recompilar.
+Balanceamento consumido pelo autoload `Dados` (`autoload/dados.gd`). **Nenhum valor aqui é
+inventado:** os números vêm do estudo da referência e de playtest. O que ainda falta aparece em
+`Dados.pendencias()` e como aviso ao abrir o projeto.
 
-| Arquivo | Conteúdo |
+Os campos obrigatórios de cada arquivo estão em `Dados.ESQUEMAS`. Exemplos completos e
+sintéticos (só para teste) em `tests/fixtures/`.
+
+| Arquivo | Formato |
 |---|---|
-| `vila_lotes.json` | 30 lotes com célula, footprint e zona. Grade 68×56, tile 256×128 |
-| `economia.json` | Recursos, produção, curva de custo, índice de fome, preços |
-| `ciclo.json` | Dia/noite, offline, órfãos, aptidões |
-| `expedicoes.json` | 5 regiões com requisito, duração, risco e fôlego |
-| `mina.json` | 7 níveis e o que cada minério destrava |
-| `ato1.json` | Ordem de desbloqueio e custo do primeiro ato |
-| `vila_lotes_maquete.json` | Formato de trabalho da ferramenta de maquete |
-| `orfaos.json` | Nomes (germânicos, masc/fem) e mapa de aptidão → edifícios |
-| `cicatrizes.json` | As 20 cicatrizes de lançamento, transcritas de `design/cicatrizes_orfaos.md` |
-| `floresta.json` | Raio de trabalho, densidade e taxa de regeneração da floresta (placeholder) |
+| `fabricantes.json` | lista de `{id, nome, escola}`, opcionais `pais`, `historia` |
+| `carros.json` | lista de `{id, nome, fabricante, arquetipo_ref, categoria, tracao, potencia, peso, aderencia, freio, velocidade_max, preco, ano}`, opcional `usados: [[dia_inicio, dia_fim, preco], ...]` (janelas da referência; o jogo não vende usados, decisão 124: só as ferramentas de calibração e medição leem) |
+| `pecas.json` | lista de `{id, nome, categoria, efeitos, preco}`, opcionais `tracao_permitida`, `carros_permitidos`. O importador grava agrupado por carro (`{nomes, carros: {carro: [{s, preco, efeitos, ...}]}}`, um terço do tamanho; regra no campo `_formato`) e o `Dados` expande para a lista; em Python, `ler_pecas()` de `tools/importar_referencia.py` |
+| `pneus.json` | lista de `{id, nome, aderencia: {seco, chuva} ou {terra}, preco}` (o pneu de terra só roda na terra) |
+| `pistas.json` | lista de `{id, funcao, trechos}` |
+| `pilotos_ia.json` | lista de `{id, ritmo, consistencia, agressividade}` |
+| `simulacao.json` | objeto com os parâmetros de `Simulacao.PARAMS` |
+| `economia.json` | objeto `{saldo_inicial, fracao_revenda, pneu_de_fabrica}` |
+| `eventos.json` | lista de `{id, nome, pista, voltas, condicao, restricoes, adversarios, premios}`, opcionais `carro_premio`, `largada_kmh` |
+| `licencas.json` | lista de `{id, nome, testes}`, opcionais `requisito` (id de outra licença), `preco` |
+| `equipes.json` | lista de `{id, nome, pilotos: [{id, nome, genero}]}` (`genero`: "m" ou "f", pela arte do piloto; flexiona os textos, ex.: piloto/pilota, contratado/contratada) (retrato do piloto: genérico, decisão 72), opcionais `nivel` (CLUB…ELITE), `numero`, `logo`, `jogador`, `dirigente` (nome), `retrato_dirigente` (arte do dirigente, fundo transparente; ficha do The Grid), `perfil` (chave de `carreira.json` → `perfis_piloto`: a agressividade dos pilotos da equipe) e `personalidade` (uma frase, mostrada quando a equipe vence) |
+| `curvas.json` | objeto `{id_da_pista: [nome da 1ª curva, ...]}` na ordem da volta (curva = trechos com raio seguidos, do mesmo sentido). Opcional; nomes originais para a vista tática da corrida (sem nome: "Curva N"). Não é balanceamento |
+| `carros_removidos.json` | objeto `{id que saiu: id que ficou}` (decisão 40). **Gerado** pelo importador; o save migra carros e peças por ele |
+| `garagem.json` | objeto `{capacidade_inicial, fator_vagas, licenca_do_preco, fator_preco_base, fator_preco}` (decisão 43): vagas da garagem e o preço de cada ampliação (`VagasGaragem`). Opcional (sem ele, sem limite); feito à mão |
+| `workshops.json` | lista de `{id, nome, logo, fabricantes}` (decisão 42): as lojas e as marcas que cada uma vende; `logo` = prefixo dos arquivos em `arte/ui/workshops/`. Feito à mão (não vem da referência) |
+| `monetizacao.json` | objeto `{aceleracao: {fator, duracao_s, teto_s}, combustivel: {tanque, renova_s}}` (decisão 39): corridas aceleradas pelo vídeo com recompensa; combustível (corrida e luta gastam 1, renova 1 a cada `renova_s` em tempo real, o vídeo enche o tanque; `Combustivel`). `teto_s` `null` = sem teto (pendente de playtest). Opcional; feito à mão (não vem da referência) |
+| `equipe.json` | objeto `{patrocinio: {duracao_h, renda_hora_fator, bonus_fator, contratos_base}, sede: [{id, nome, descricao, efeito, por_nivel, niveis, custo_fator}], sede_licenca_custo, treino: {passo, niveis, tempo_base_h, xp_por_nivel, teto: {licença: ritmo}}}` (decisões 51–54 e 124, `GestaoEquipe`; a sede só tem o Escritório, efeito `contratos`; `tempo_base_h` é o critério do reparo da arena). `treino.teto` é GERADO por `tools/calibrar_treino.py` (maior ritmo do piloto que encurta em até 10% o caminho até vencer as provas da licença); não editar à mão. Fatores sobre o prêmio de 1º lugar médio da licença; provisórios até o playtest. Opcional; feito à mão |
+| `patrocinadores.json` | lista de `{id, nome, ramo, licenca, condicao: {tipo: podio\|vitoria\|etapa\|licenca, valor?}}` (decisão 51): marcas fictícias. Opcional; feito à mão |
+| `carreira.json` | objeto `{piloto_jogador, teto_offline_s}` (e `repeticao {fatores, periodo_h, so_com_licenca}`: prêmio de prova já vencida cai a cada repetição no período, `Carreira.fator_repeticao`): piloto dos carros do jogador (id em `pilotos_ia.json`) e máximo de tempo ausente que a fila aproveita |
 
-**Fonte:** `docs/ato1_balanceamento.md` e `design/pendencias_resolvidas.md`.
-Todos os números são chute calibrado — o que importa é a relação entre eles.
+## Unidades e semântica
 
-**Placeholder pendente:** `economia.json#indice_fome.fator_variacao_por_seg` (1.0) — a
-taxa de subida/queda do Índice de Fome está listada em `design/economia.md` como número
-que ainda falta decidir. Implementado como `indice += saldo_comida_por_seg * fator`,
-autorizado como placeholder até ser calibrado por playtest.
+- Dinheiro em **Giros (G)**: todo valor em Cr da referência (preços, usados, prêmios, bônus de campeão,
+  saldo inicial) passa por `moeda()` no importador: × `FATOR_MOEDA` (0,0427), arredondado. As
+  proporções entre valores ficam as da referência; os números (e o padrão de 00/000) não. Preços de
+  compra (carros, peças, pneus, usados) ainda × `FATOR_PRECO` (2, decisão 41): `preco_loja()`.
+- Voltas das provas: as da referência × `FATOR_VOLTAS` (2,5, decisão 41), arredondado.
+
+- `tracao`: `FF`, `FR`, `MR`, `RR` ou `4WD`.
+- `potencia` em cv; `peso` em kg; `velocidade_max` em km/h.
+- `aderencia`: coeficiente de atrito do carro. Multiplicado pela aderência do pneu na
+  condição (`seco`/`chuva`). A curva limita a velocidade a `sqrt(aderência · g · raio)`.
+- `freio`: fração da aderência usada na frenagem (desaceleração = freio · aderência · g).
+- `efeitos` de peça: lista de `{atributo, op, valor}`, `op` = `soma` ou `mult`. Todas as
+  somas são aplicadas antes das multiplicações. Uma peça por `categoria`.
+- `trechos`: `{tipo, comprimento_m, raio_m (curvas), sentido ("esquerda" padrão ou
+  "direita"), ultrapassagem (bool)}`. Tipos em `Pista.TIPOS`. Trechos de box ficam fora
+  da volta no primeiro build. O traçado é derivado dos trechos (reta avança; trecho com
+  raio é arco) e precisa fechar a volta — conferir em `tools/editor_pista.tscn`.
+- `peso_dianteiro` do carro (opcional): fração do peso no eixo dianteiro
+  (Chassis.FrontWeightDistribution ÷ 100). A tração usa o peso sobre o eixo motriz:
+  dianteiro (FF), traseiro (FR, MR, RR) ou todo (4WD). Transferência de carga na
+  aceleração ainda não entra: pede a altura do centro de gravidade, que a referência não guarda.
+- `motor` do carro (opcional): `{rpm, torque_nm, corte}`. Curva da tabela Engine da referência
+  (TorqueCurve × 0,01 kgf·m → N·m; TorqueCurveRPM × 100; RedlineRPM × 100). Na
+  simulação, a curva é escalada para que o pico de potência seja igual a `potencia`
+  com as peças. Usamos só a **forma**: não é o modelo físico da referência.
+- `cambio` do carro: `{relacoes, final}` (tabela Gear, ÷ 1000). `raio_roda` em m, do
+  TireSize dianteiro (diâmetro do aro + 2 × largura × perfil; leitura a confirmar).
+  Com os três, a força na roda é torque × relação × diferencial ÷ raio na melhor marcha,
+  e no corte da última marcha o carro não acelera mais. Sem eles, a simulação usa
+  potência ÷ velocidade (câmbio ideal).
+- Peça `motor` (opcional): `faixa_rpm` e `corte` (rpm a somar, NATune) ou
+  `turbo_baixa`/`turbo_alta` (multiplicadores do torque no giro baixo e alto,
+  TurbineKit). Peça de categoria `cambio`: `{final_min, final_max}` (estágio 3 do Gear).
+Peça de categoria `corrida` (kit de corrida, `RacingModify` estágio 1): preço e peso do
+referência; muda a elegibilidade (copas "Corrida"). Pressão aerodinâmica e arrasto do kit ficam
+de fora: a simulação não tem esses termos por carro.
+  Os ajustes curto/longo andam `Carro.PASSO_CAMBIO` (0,5, **provisório**, decisão de
+  interface) do diferencial de fábrica até esses limites.
+- Piloto: `ritmo` é a fração do limite que o piloto usa; `consistencia` (0–1) reduz o
+  ruído por volta; `agressividade` (0–1) é a chance de tentar ultrapassar em cada zona.
+
+## simulacao.json
+
+| Chave | Tipo | Estado |
+|---|---|---|
+| `passo_m` | precisão da discretização da pista | definido (técnico) |
+| `dt_s` | passo de tempo | definido (técnico) |
+| `amostra_dt_s` | intervalo das amostras para a visualização | definido (técnico) |
+| `tempo_max_s` | trava de segurança da corrida | definido (técnico) |
+| `distancia_minima_m` | distância de cortesia entre carros e espaço do grid | 6,0 (comprimento de um carro + margem; confirmar em playtest) |
+| `sigma_ruido` | desvio do ruído por volta para consistência 0 | 0,02 — **a confirmar** (a referência não tem) |
+| `cda_m2` | área frontal × coeficiente de arrasto, igual para todos | 0,6 — **a confirmar** (a referência não guarda arrasto de carro de rua) |
+| `densidade_ar_kg_m3` | densidade do ar | 1,225 (nível do mar) |
+| `fator_tracao` | `{FF, FR, MR, RR, 4WD}`: fração do peso nas rodas de tração, **só para carro sem `peso_dianteiro`** (fixtures) | FF 0,6 · FR 0,5 · MR 0,55 · RR 0,6 · 4WD 1,0 |
+
+## economia.json
+
+| Chave | O que é | Estado |
+|---|---|---|
+| `saldo_inicial` | dinheiro no começo do jogo | 658 |
+| `fracao_revenda` | venda = preço de tabela (novo) × fração, seja qual for o preço pago; peças não entram no valor | 0,25 — medido na referência (3 carros: 8.000→2.000, 6.400→1.600, 2.800→700) |
+| `pneu_de_fabrica` | id em `pneus.json` com que todo carro novo chega | `pneu_0` |
+
+Regras fixas no código (`data_model/concessionaria.gd`): peça comprada fica com o carro e
+reinstalá-la é grátis; um pneu de cada composto por carro; nada é cobrado se a compra é
+recusada.
+
+## eventos.json
+
+- `condicao`: `seco`, `chuva` ou `terra` (rali), fixa por evento. Na condição o carro usa o
+  melhor pneu que roda nela (`Carro.escolher_pneu`).
+- `restricoes` (todas opcionais, ver `data_model/elegibilidade.gd`): `potencia_max` (cv
+  efetivos, já com peças), `tracao`, `categoria`, `fabricante` (listas), `ano_min`,
+  `ano_max`, `licenca`, `carros` (lista de ids: copas de marca da referência, `Regulations`) e
+  `corrida` (`true`: só versão de corrida, isto é, carro com a peça `corrida` ou carro
+  `corrida` de fábrica; `false`: só carro de rua sem o kit; `CarRestrictionFlags` 512/256) e
+  `terra` (`true`: rali, só com o pneu de terra).
+- `largada_kmh`: largada lançada (`RollingStartSpeed` da referência); sem ela, largada parada.
+- `adversarios`: lista de `{carro, piloto, pecas?, pneus?, potencia_mult?}`; sem `pneus`,
+  usa o de fábrica. `potencia_mult` e `pneus` são a preparação do rival na referência
+  (`EnemyCars.PowerMultiplier` ÷ 100 e o estágio de `TiresFront`).
+- Copas de marca: prova única por modelo (nome sem "etapa"); a referência sorteia a pista, aqui
+  ela gira pelas pistas de corrida (`POOL_MARCA` no importador).
+- `premios`: dinheiro por posição (índice 0 = 1º). Posições além da lista não recebem.
+
+Regras fixas no código (`data_model/carreira.gd`), seguindo a referência: o jogador larga em
+último; o prêmio em dinheiro é pago a cada disputa; o carro-prêmio só na primeira vitória;
+cada corrida disputada conta um dia.
+
+## licencas.json
+
+Licenças CLUB, SPORT, NATIONAL, INTERNATIONAL, PRO e ELITE (decisão 33): CLUB=B, SPORT=A,
+NATIONAL=IC, INTERNATIONAL=IB, PRO=IA da referência; ELITE (a S, sem dados no
+disco) libera as 7 resistências e não tem testes. Sem avaliação (decisão 99): o treino terminado concede a licença. Estados e
+regras em `data_model/licencas.gd`: requisitos (anterior; vencer em `fracao_series` das
+séries da anterior; a partir de `campeonato_desde`, um título da anterior quando ela tem
+campeonato), treino com duração = soma dos bronzes dos testes × `fator_treino` (**a
+confirmar** no playtest; sem testes, a da anterior), começado pelo jogador, contado pelo
+relógio (offline também), e a avaliação só depois do treino. Configuração em
+`carreira.json` → `licencas`. Preço 0 (na referência a licença é grátis).
+
+Equipe do jogador (decisão 38, `carreira.json` → `equipe_jogador`): caixa único (o
+saldo); a cada corrida entra `patrocinio` e sai `custo_staff`. Valores em G;
+**pendentes do playtest** (`null` = 0 até lá; a aba Equipe mostra "a definir").
+`segundo_piloto`: quem entra na equipe na cena que libera, sem contrato nem salário.
+`candidatos` (`{id, nome, retrato, traco, frase}`) e `tracos` (`{nome, treina}`): os 8
+candidatos a segundo piloto e o traço de cada um (decisão 56, `docs/pilotos_candidatos.md`);
+a arte entra por `tools/preparar_piloto.py`.
+
+Cada teste: `{id, pista, voltas, condicao, restricoes, tempos: {ouro, prata, bronze}}`,
+tempos em segundos. O jogador usa o próprio carro dentro da restrição. Licença concedida
+quando todos os testes têm ao menos bronze; o melhor grau de cada teste fica guardado.
+Testes não contam dia.
+
+## Usados
+
+Cada carro lista as janelas em que aparecia na concessionária de usados da referência e o
+preço de cada uma (`usados`; 60 períodos de 10 dias). O jogo não vende usados (decisões 42 e
+124); o campo fica porque o importador o gera e a calibração das licenças usa os usados do dia 0
+como "carro inicial" da referência.
+
+## Fila e offline
+
+Um carro por vez, com número de repetições. Cada corrida dura em tempo real o mesmo que
+dura simulada. Ao abrir o jogo, as corridas concluídas durante a ausência são aplicadas
+em lote, até `teto_offline_s`; o excesso é descartado e a fila continua de onde parou.
+Carro vendido ou que deixou de ser elegível cancela a fila.
+
+## Pistas do primeiro build
+
+| id | função | comprimento | ultrapassagem |
+|---|---|---|---|
+| `anel_do_vale` | alta velocidade | 2.941 m | reta principal e reta oposta |
+| `parque_das_docas` | técnico | 2.085 m | reta principal e reta antes da última curva |
+| `serra_alta` | montanha | 1.913 m | só a reta de largada |
+| `pista_de_testes` | velocidade máxima (retas muito longas) | 4.112 m | reta principal e reta oposta |
+| `circuito_misto` (Colinas do Vinhedo) | misto permanente (grupo 4) | 2.600 m | reta principal e reta oposta |
+| `docas_curta` | técnico, versão curta | 1.457 m | três retas |
+| `anel_curto` | alta velocidade, versão curta | 2.101 m | reta principal e reta oposta |
+| `serra_curta` | montanha, versão curta | 1.356 m | reta de largada e duas retas finais |
+| `avenida_noturna` (Avenida das Luzes) | técnico, rua à noite (grupo 3; eventos de roma) | 2.101 m | avenida da largada e a reta do meio |
+| `estrada_das_araucarias` (Estrada das Araucárias) | montanha, grampos e descida longa (grupo 5; tahiti_t) | 2.327 m | largada e a reta antes da curva da neblina |
+| `mirante_da_costa` (Mirante da Costa) | montanha, estrada costeira (grupo 5; parma) | 2.600 m | largada e a reta da praia |
+| `trilha_do_canion` (Trilha do Cânion) | terra, rali (todos os eventos de rali) | 2.202 m | largada |
+| `oval_inclinado` (Oval da Usina) | oval inclinado, tri-oval com retão duplo (s_speed e speed) | 3.478 m | as duas retas da frente e o retão oposto |
+
+`inclinacao_graus` (opcional, nas curvas): a curva inclinada. A simulação usa a física da pista
+inclinada (v² = g r (mu + tg) / (1 − mu tg), `Simulacao._envelope`); a tela deita o asfalto e os
+carros (`Corrida3D._banco_malha`). Só o oval tem (10° nas dobras da frente, 24° nas curvas).
+
+`relevo` (só na pista de terra, só visual: `visual/relevo.gd`): `ondulacoes`
+`[[de_m, ate_m, amplitude_m, onda_m]]` e `rampas` `[[topo_m, altura_m, subida_m, descida_m]]`.
+Na boca da rampa o carro salta (balística com a velocidade da simulação); o tempo é o da
+simulação, que não vê o relevo.
+
+As versões curtas recebem os eventos das versões curtas da referência e usam o cenário da
+pista-mãe (`Corrida3D.TEMA_DE`).
+
+Os rascunhos ficam em `data/rascunhos_pistas/`: curvas descritas por raio e ângulo, com
+duas retas de comprimento `null`. `tools/fechar_pista.py rascunho.json` calcula essas
+duas retas para a volta fechar e imprime a pista pronta para `pistas.json`.
+
+## Fabricantes do primeiro build
+
+`hayase` (Hayase Motor, Japão), `hartwig` (Hartwig, Alemanha), `ashcombe` (Ashcombe Cars,
+Reino Unido). Nomes fictícios; **busca de marca pendente** antes do lançamento, como o
+título do jogo.
+
+## Carros a partir da referência
+
+1. Monte a tabela CSV descrita em `tools/converter_carros.py` (exemplo em
+   `tests/referencia/exemplo.csv`). Guarde em `referencia/` ou como
+   `referencia*.csv` na raiz — os dois estão no `.gitignore`. Dentro do projeto, ponha um
+   arquivo `.gdignore` vazio na pasta para o Godot não importar o CSV como tradução.
+2. `tools/converter_carros.py referencia/carros.csv > data/carros.json`
+3. A coluna `ref_real` é descartada; só nome fictício e arquétipo entram no jogo.
+
+## Dados da referência (fonte de todo o balanceamento)
+
+Fluxo, a partir de uma cópia legítima do disco (Simulation Disc, SCUS-94488):
+
+```
+python3 tools/extrair_referencia.py --disco "disco.bin"   # -> referencia/extraido/
+python3 tools/importar_referencia.py --sugerir      # liga cada carro nosso a um carro da referência (revise)
+python3 tools/importar_referencia.py                # -> data/carros, pecas, pneus, pilotos_ia, eventos, licencas...
+godot --headless --script res://tools/calibrar_licencas.gd   # tempos das licenças
+```
+
+`referencia/` nunca vai para o Git. O que entra em `data/` são os números convertidos
+para os carros fictícios.
+
+### Frota 360 (decisão 80)
+
+A frota atual vem do pacote "Veículos 360" (modelos 3D) e não mais da tabela
+`referencia/carros.csv`. Fontes em `referencia/frota360/` (fora do Git): `mapa_parte*.json`
+(referência real de cada modelo), `marcas.json` (marca real → fabricante fictício),
+`casados.json` (carros casados com a referência, revisados à mão), `fichas.json` (fichas reais
+pesquisadas, com fontes) e `pacote/` (model-info, car.glb e protection.glb de cada modelo).
+
+```
+python3 tools/frota360.py --instalar                      # -> referencia/frota360/frota.json, antigos.json; GLBs
+python3 tools/importar_referencia.py --frota referencia/frota360/frota.json   # -> data/
+godot --headless --path . --script res://tools/calibrar_licencas.gd
+python3 tools/gerar_cores.py
+godot --headless --path . --script res://tools/lista_carros_3d.gd
+``` As conversões estão no topo de `tools/importar_referencia.py`.
+
+**A confirmar** (não vêm da referência): `teto_offline_s` (8 h, decisão de design),
+`sigma_ruido`, `cda_m2`, consistência e agressividade dos pilotos (1,0).
+
+## Estado atual de data/ (importado da referência americano, SCUS-94488 v1.2)
+
+- **386 carros** (319 de rua e 67 versões de corrida), dos 618 do disco menos os
+  abertos e os repetidos (decisão 40, `reduzir_frota` no importador): sai todo carro sem
+  capota (46) e, de cada grupo do mesmo modelo, mesma tração, de rua ou de corrida, com
+  potência ±10% e peso ±5%, fica um (186 saem). Fica o que tem arte ou está na história;
+  senão um vendido novo; senão o mais novo; senão o mais potente. Rivais, carros-prêmio e
+  copas de marca usam o substituto; `carros_removidos.json` (gerado) leva cada id que saiu
+  ao que ficou, e o save migra por ele (`Save.migrar_frota`). Nome e fabricante
+  fictícios: `tools/gerar_referencia_carros.py` monta `referencia/carros.csv` (fora do Git)
+  com um fabricante inventado por fabricante da referência (36) e um nome por família de modelo,
+  no idioma da escola do fabricante; as versões da família vão por potência (base, S, GT,
+  GTS, R, SR, GX, SX; corrida = "Corrida") e levam o ano quando preciso. Os 17 do primeiro
+  build mantêm id, nome e fabricante. **Busca de marca pendente** antes do lançamento.
+- 4.701 peças com preço e efeito da referência (por carro); 7 compostos de pneu (medianas sobre os
+  618 do disco. como antes da redução).
+- Usados: janelas e preços dos 60 períodos de 10 dias da referência (~140 por período). Novos:
+  os 313 que nunca aparecem no usado.
+- 103 eventos de 31 séries sem licença, B, A, IC, IB e IA (`SERIES` em
+  `tools/importar_referencia.py`), com voltas, limites, prêmios, adversários (o carro do próprio
+  referência) e carros-prêmio do disco. Resistência: as 7 provas da referência (30 a 99 voltas), prova
+  única, sem pit stop nem desgaste de pneu. Copas de marca: 94 provas (ver `eventos.json`).
+  Rali: os 27 eventos de terra da referência (1 rival, 1 volta ×2,5) vão para a Trilha do Cânion,
+  condição `terra`, exigem o pneu de terra (estágio 7: aderência 1,0 na terra, preço = mediana;
+  decisão do usuário 2026-10-22) e o rival corre com ele. Fora: a licença S (sem pista no disco). Pista da referência vira a nossa pela função
+  (`PISTAS` no importador; grupos em `docs/pistas_arquetipos.md`).
+- Licenças CLUB a PRO (B, A, IC, IB, IA da referência): restrição = mediana (B) ou mediana e quartis (as outras) dos
+  limites dos eventos que abrem. Os tempos dos testes só dão a duração do treino
+  (decisão 99), calibrados pela simulação (`tools/calibrar_licencas.gd`,
+  20 sementes, carro de fábrica): bronze = pior tempo de qualquer carro elegível,
+  prata = percentil 75 do melhor carro inicial, ouro = percentil 25 do mesmo carro.
+- Lojas (como na referência): uma concessionária de novos por fabricante, agrupadas por região
+  (Japão, Estados Unidos, Europa, pela escola do fabricante); usados em lotes por
+  fabricante (na referência só as marcas japonesas têm lote). As versões de corrida ficam na
+  concessionária do fabricante.
+- `tools/simular_progressao.gd` imprime a posição de cada carro de fábrica em cada evento.
+
+## Como conferir a fração de revenda na referência
+
+No DuckStation, num save de teste (nunca nos saves existentes; copie o memory card antes):
+
+1. Anote o preço de tabela de 3 a 5 carros (novo na concessionária ou no usado).
+2. Compre, vá à garagem, escolha vender e anote o valor oferecido, sem peças instaladas.
+3. Repita com um carro com peças, para confirmar que peças não entram no valor.
+4. Fração = valor de venda ÷ preço de tabela. Se for igual em todos, ela vai para
+   `tools/importar_referencia.py` (não editar `economia.json` à mão); se variar (por exemplo, com
+   a quilometragem), anote os casos e o critério muda.

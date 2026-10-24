@@ -1,0 +1,2163 @@
+{
+ "_nota": "Arena de destruição (sim/arena.gd; decisões 49-50). Limites do estudo de referência: eliminação com uma região da frente a 100%, ré para proteger a frente a 90% (referência: 3684/4096), cinco estágios visuais (referência: dano/820). Os demais valores são provisórios até o playtest: raio da arena, velocidade de referência do dano (v_ref_kmh: batida de frente no muro nessa velocidade destrói a frente), velocidade mínima que causa dano, tempos da IA e restituição/atrito do contato. IA: ataca até v_ataque_kmh alinhada e reduz até v_curva_kmh quanto maior o erro de rumo; olha olhar_muro_s à frente e vira para o centro com margem_muro_m; mira a quina traseira do alvo (mira_traseira, fração do comprimento); encostado por travado_s recua recuperacao_s. Carreira (ArenaCarreira): abre com licenca_minima; rivais de potência parecida; pontos por giro provocado (pelo maior giro de cada golpe), eliminação e vitória; o prêmio de referência (média do 1º lugar das corridas da licença mínima) paga pontos_referencia pontos. Pontos e pontos_referencia provisórios até o playtest. perfis: jeito de cada piloto, sorteado por luta (alvo: acaso/perto/fraco; mira_traseira; v_mult sobre v_ataque; limite_re próprio; alvo_s_mult; imprecisao_m: erro de mira; impaciencia_s: sem acertar ninguém por esse tempo (metade com 2 vivos), esquece a ré e vai no meio do alvo 20% mais rápido; impaciencia_recua_s: ainda sem acertar, recua a cada tanto para sair da órbita). Valores provisórios. largada_raio_frac: a roda da largada, em fração do raio (0,85: nas extremidades, perto do muro, decisão do usuário). subida_perda: na rampa, a força do motor é multiplicada por 1 − subida_perda × inclinação contra o carro (mínimo 40%), além da gravidade; com 0,5, a encosta mais íngreme (0,6) ainda se sobe devagar (pedido do usuário: os carros não sentiam a subida). Provisório.",
+ "raio_m": 45.0,
+ "largada_raio_frac": 0.85,
+ "dt_s": 0.0333333,
+ "amostra_dt_s": 0.1,
+ "tempo_max_s": 180.0,
+ "restituicao": 0.25,
+ "atrito_contato": 0.35,
+ "subida_perda": 2.0,
+ "v_ref_kmh": 70.0,
+ "v_min_dano_kmh": 6.0,
+ "limite_eliminacao": 1.0,
+ "limite_re": 0.9,
+ "estagios": 5,
+ "alvo_s": 4.0,
+ "antecedencia_max_s": 1.5,
+ "travado_s": 1.0,
+ "recuperacao_s": 2.6,
+ "v_travado_kmh": 4.0,
+ "giros_graus": [
+  90,
+  180,
+  360
+ ],
+ "licenca_minima": "NATIONAL",
+ "rivais": 14,
+ "pontos": {
+  "giro_90": 1,
+  "giro_180": 2,
+  "giro_360": 4,
+  "eliminacao": 3,
+  "vencer": 5
+ },
+ "pontos_referencia": 8,
+ "v_ataque_kmh": 55.0,
+ "v_curva_kmh": 18.0,
+ "olhar_muro_s": 1.0,
+ "margem_muro_m": 5.0,
+ "impaciencia_recua_s": 6,
+ "mira_traseira": 0.35,
+ "perfis": {
+  "cacador": {
+   "nome": "Caçador",
+   "alvo": "acaso",
+   "mira_traseira": 0.4,
+   "v_mult": 1.0,
+   "limite_re": 0.9,
+   "alvo_s_mult": 1.0,
+   "imprecisao_m": 0.8,
+   "impaciencia_s": 9.0
+  },
+  "carneiro": {
+   "nome": "Carneiro",
+   "alvo": "perto",
+   "mira_traseira": 0.0,
+   "v_mult": 1.15,
+   "limite_re": 0.97,
+   "alvo_s_mult": 1.6,
+   "imprecisao_m": 1.4,
+   "impaciencia_s": 6.0
+  },
+  "oportunista": {
+   "nome": "Oportunista",
+   "alvo": "fraco",
+   "mira_traseira": 0.25,
+   "v_mult": 1.05,
+   "limite_re": 0.88,
+   "alvo_s_mult": 0.7,
+   "imprecisao_m": 0.6,
+   "impaciencia_s": 8.0
+  },
+  "cauteloso": {
+   "nome": "Cauteloso",
+   "alvo": "acaso",
+   "mira_traseira": 0.4,
+   "v_mult": 0.85,
+   "limite_re": 0.7,
+   "alvo_s_mult": 1.2,
+   "imprecisao_m": 1.0,
+   "impaciencia_s": 12.0
+  }
+ },
+ "arenas": [
+  {
+   "id": "patio_pedreira",
+   "nome": "Pátio da Pedreira",
+   "licenca": "NATIONAL",
+   "muro": [
+    [
+     49.22,
+     0.0
+    ],
+    [
+     37.41,
+     29.53
+    ],
+    [
+     7.88,
+     43.32
+    ],
+    [
+     -29.53,
+     39.38
+    ],
+    [
+     -47.25,
+     11.81
+    ],
+    [
+     -43.32,
+     -23.63
+    ],
+    [
+     -13.78,
+     -45.29
+    ],
+    [
+     25.6,
+     -37.41
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       26.82,
+       -16.47
+      ],
+      [
+       28.66,
+       -10.43
+      ],
+      [
+       28.1,
+       -3.77
+      ],
+      [
+       25.17,
+       2.87
+      ],
+      [
+       20.17,
+       8.84
+      ],
+      [
+       13.59,
+       13.55
+      ],
+      [
+       6.07,
+       16.54
+      ],
+      [
+       -1.65,
+       17.53
+      ],
+      [
+       -8.82,
+       16.4
+      ],
+      [
+       -14.74,
+       13.28
+      ],
+      [
+       -18.82,
+       8.47
+      ],
+      [
+       -20.66,
+       2.43
+      ],
+      [
+       -20.1,
+       -4.23
+      ],
+      [
+       -17.17,
+       -10.87
+      ],
+      [
+       -12.17,
+       -16.84
+      ],
+      [
+       -5.59,
+       -21.55
+      ],
+      [
+       1.93,
+       -24.54
+      ],
+      [
+       9.65,
+       -25.53
+      ],
+      [
+       16.82,
+       -24.4
+      ],
+      [
+       22.74,
+       -21.28
+      ]
+     ],
+     "encosta": 4,
+     "h": -1.54
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       22.04,
+       -15.67
+      ],
+      [
+       23.13,
+       -12.04
+      ],
+      [
+       22.74,
+       -8.02
+      ],
+      [
+       20.91,
+       -3.99
+      ],
+      [
+       17.81,
+       -0.35
+      ],
+      [
+       13.75,
+       2.53
+      ],
+      [
+       9.13,
+       4.39
+      ],
+      [
+       4.4,
+       5.03
+      ],
+      [
+       0.02,
+       4.4
+      ],
+      [
+       -3.58,
+       2.55
+      ],
+      [
+       -6.04,
+       -0.33
+      ],
+      [
+       -7.13,
+       -3.96
+      ],
+      [
+       -6.74,
+       -7.98
+      ],
+      [
+       -4.91,
+       -12.01
+      ],
+      [
+       -1.81,
+       -15.65
+      ],
+      [
+       2.25,
+       -18.53
+      ],
+      [
+       6.87,
+       -20.39
+      ],
+      [
+       11.6,
+       -21.03
+      ],
+      [
+       15.98,
+       -20.4
+      ],
+      [
+       19.58,
+       -18.55
+      ]
+     ],
+     "encosta": 3.85,
+     "h": -1.54
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       17.14,
+       -14.36
+      ],
+      [
+       17.58,
+       -12.84
+      ],
+      [
+       17.38,
+       -11.14
+      ],
+      [
+       16.55,
+       -9.42
+      ],
+      [
+       15.18,
+       -7.86
+      ],
+      [
+       13.4,
+       -6.61
+      ],
+      [
+       11.38,
+       -5.79
+      ],
+      [
+       9.33,
+       -5.48
+      ],
+      [
+       7.44,
+       -5.71
+      ],
+      [
+       5.9,
+       -6.45
+      ],
+      [
+       4.86,
+       -7.64
+      ],
+      [
+       4.42,
+       -9.16
+      ],
+      [
+       4.62,
+       -10.86
+      ],
+      [
+       5.45,
+       -12.58
+      ],
+      [
+       6.82,
+       -14.14
+      ],
+      [
+       8.6,
+       -15.39
+      ],
+      [
+       10.62,
+       -16.21
+      ],
+      [
+       12.67,
+       -16.52
+      ],
+      [
+       14.56,
+       -16.29
+      ],
+      [
+       16.1,
+       -15.55
+      ]
+     ],
+     "encosta": 3.85,
+     "h": -1.54
+    },
+    {
+     "c": [
+      -22,
+      22
+     ],
+     "r": 12,
+     "h": 1.68
+    },
+    {
+     "c": [
+      -32,
+      -6
+     ],
+     "r": 9,
+     "h": 1.26
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -24,
+      7
+     ],
+     "b": [
+      -15,
+      3
+     ],
+     "largura": 8,
+     "h": 1.12,
+     "queda": 3,
+     "encosta": 2.8
+    }
+   ],
+   "borda": {
+    "largura": 7.0,
+    "altura": 2.56
+   },
+   "tema": "pedreira"
+  },
+  {
+   "id": "fosso_docas",
+   "nome": "Fosso das Docas",
+   "licenca": "INTERNATIONAL",
+   "muro": [
+    [
+     48.62,
+     -21.14
+    ],
+    [
+     54.96,
+     -6.34
+    ],
+    [
+     54.96,
+     16.91
+    ],
+    [
+     42.28,
+     31.71
+    ],
+    [
+     10.57,
+     31.71
+    ],
+    [
+     4.23,
+     23.25
+    ],
+    [
+     -4.23,
+     23.25
+    ],
+    [
+     -10.57,
+     31.71
+    ],
+    [
+     -42.28,
+     31.71
+    ],
+    [
+     -54.96,
+     16.91
+    ],
+    [
+     -54.96,
+     -16.91
+    ],
+    [
+     -42.28,
+     -31.71
+    ],
+    [
+     31.71,
+     -31.71
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "vala",
+     "a": [
+      -38,
+      0
+     ],
+     "b": [
+      -16,
+      0
+     ],
+     "largura": 13.1,
+     "fundo": 4,
+     "h": -1.82
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -5,
+      0
+     ],
+     "b": [
+      5,
+      0
+     ],
+     "largura": 13.1,
+     "fundo": 4,
+     "h": -1.82
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      16,
+      0
+     ],
+     "b": [
+      38,
+      0
+     ],
+     "largura": 13.1,
+     "fundo": 4,
+     "h": -1.82
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       26,
+       12
+      ],
+      [
+       44,
+       12
+      ],
+      [
+       44,
+       24
+      ],
+      [
+       26,
+       24
+      ]
+     ],
+     "encosta": 3.5,
+     "h": 1.4,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      12,
+      18
+     ],
+     "b": [
+      26,
+      18
+     ],
+     "largura": 8,
+     "h": 1.4,
+     "max": true,
+     "encosta": 3.5,
+     "queda": 3.5
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -24,
+      -20
+     ],
+     "b": [
+      -24,
+      -10
+     ],
+     "largura": 7,
+     "h": 1.26,
+     "queda": 3.15,
+     "encosta": 3.15
+    }
+   ],
+   "borda": {
+    "largura": 5.0,
+    "altura": 1.6
+   },
+   "tema": "docas"
+  },
+  {
+   "id": "anel_ferro_velho",
+   "nome": "Anel do Ferro-Velho",
+   "licenca": "PRO",
+   "muro": [
+    [
+     49.0,
+     0.0
+    ],
+    [
+     39.2,
+     24.95
+    ],
+    [
+     17.82,
+     40.98
+    ],
+    [
+     -8.91,
+     44.55
+    ],
+    [
+     -33.85,
+     32.07
+    ],
+    [
+     -48.11,
+     7.13
+    ],
+    [
+     -44.55,
+     -19.6
+    ],
+    [
+     -24.95,
+     -39.2
+    ],
+    [
+     3.56,
+     -44.55
+    ],
+    [
+     30.29,
+     -33.85
+    ]
+   ],
+   "obstaculos": [
+    {
+     "c": [
+      0,
+      0
+     ],
+     "r": 8
+    }
+   ],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "c": [
+      0,
+      0
+     ],
+     "r": 11,
+     "encosta": 5,
+     "h": 1.26
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      17.75,
+      10.25
+     ],
+     "b": [
+      10.25,
+      17.75
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      10.25,
+      17.75
+     ],
+     "b": [
+      0.0,
+      20.5
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      0.0,
+      20.5
+     ],
+     "b": [
+      -10.25,
+      17.75
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -17.75,
+      10.25
+     ],
+     "b": [
+      -20.5,
+      0.0
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -20.5,
+      0.0
+     ],
+     "b": [
+      -17.75,
+      -10.25
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -17.75,
+      -10.25
+     ],
+     "b": [
+      -10.25,
+      -17.75
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -0.0,
+      -20.5
+     ],
+     "b": [
+      10.25,
+      -17.75
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      10.25,
+      -17.75
+     ],
+     "b": [
+      17.75,
+      -10.25
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      17.75,
+      -10.25
+     ],
+     "b": [
+      20.5,
+      -0.0
+     ],
+     "largura": 8.3,
+     "fundo": 2,
+     "h": -1.26,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      21.57,
+      21.57
+     ],
+     "b": [
+      14.79,
+      26.68
+     ],
+     "largura": 4,
+     "h": 1.19,
+     "queda": 3,
+     "encosta": 2.97
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -29.46,
+      7.89
+     ],
+     "b": [
+      -30.5,
+      -0.53
+     ],
+     "largura": 4,
+     "h": 1.19,
+     "queda": 3,
+     "encosta": 2.97
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      7.89,
+      -29.46
+     ],
+     "b": [
+      15.71,
+      -26.14
+     ],
+     "largura": 4,
+     "h": 1.19,
+     "queda": 3,
+     "encosta": 2.97
+    }
+   ],
+   "borda": {
+    "largura": 6.0,
+    "altura": 2.24
+   },
+   "tema": "ferro_velho"
+  },
+  {
+   "id": "cratera_vale",
+   "nome": "Cratera do Vale",
+   "licenca": "ELITE",
+   "muro": [
+    [
+     49.59,
+     -7.63
+    ],
+    [
+     47.69,
+     17.17
+    ],
+    [
+     32.43,
+     34.33
+    ],
+    [
+     7.63,
+     38.15
+    ],
+    [
+     -5.72,
+     24.8
+    ],
+    [
+     -20.98,
+     38.15
+    ],
+    [
+     -43.87,
+     28.61
+    ],
+    [
+     -53.41,
+     3.81
+    ],
+    [
+     -43.87,
+     -24.8
+    ],
+    [
+     -17.17,
+     -38.15
+    ],
+    [
+     17.17,
+     -40.06
+    ],
+    [
+     40.06,
+     -28.61
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "c": [
+      -2,
+      0
+     ],
+     "r": 15,
+     "encosta": 7.0,
+     "h": 2.8
+    },
+    {
+     "tipo": "plato",
+     "c": [
+      -2,
+      0
+     ],
+     "r": 6,
+     "encosta": 5.95,
+     "h": -2.38
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      27.0,
+      0.0
+     ],
+     "b": [
+      15.0,
+      0.0
+     ],
+     "largura": 9,
+     "h": 2.8,
+     "max": true,
+     "encosta": 7.0,
+     "queda": 7.0
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -27.11,
+      14.5
+     ],
+     "b": [
+      -16.72,
+      8.5
+     ],
+     "largura": 9,
+     "h": 2.8,
+     "max": true,
+     "encosta": 7.0,
+     "queda": 7.0
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -16.5,
+      -25.11
+     ],
+     "b": [
+      -10.5,
+      -14.72
+     ],
+     "largura": 9,
+     "h": 2.8,
+     "max": true,
+     "encosta": 7.0,
+     "queda": 7.0
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      11.0,
+      22.52
+     ],
+     "b": [
+      13.0,
+      25.98
+     ],
+     "largura": 10.4,
+     "fundo": 2,
+     "h": -1.68
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -28.0,
+      0.0
+     ],
+     "b": [
+      -32.0,
+      0.0
+     ],
+     "largura": 10.4,
+     "fundo": 2,
+     "h": -1.68
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      11.0,
+      -22.52
+     ],
+     "b": [
+      13.0,
+      -25.98
+     ],
+     "largura": 10.4,
+     "fundo": 2,
+     "h": -1.68
+    }
+   ],
+   "borda": {
+    "largura": 8.0,
+    "altura": 3.2
+   },
+   "tema": "montanha"
+  },
+  {
+   "id": "varzea_galpao",
+   "nome": "Várzea do Galpão",
+   "licenca": "CLUB",
+   "tema": "galpao",
+   "borda": {
+    "largura": 4.0,
+    "altura": 1.2
+   },
+   "muro": [
+    [
+     48.86,
+     0.0
+    ],
+    [
+     41.53,
+     26.87
+    ],
+    [
+     19.55,
+     41.53
+    ],
+    [
+     -14.66,
+     43.0
+    ],
+    [
+     -41.53,
+     26.87
+    ],
+    [
+     -48.86,
+     -2.44
+    ],
+    [
+     -39.09,
+     -29.32
+    ],
+    [
+     -9.77,
+     -42.02
+    ],
+    [
+     24.43,
+     -38.11
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "vala",
+     "a": [
+      -24,
+      -19
+     ],
+     "b": [
+      -5,
+      -4
+     ],
+     "largura": 7,
+     "fundo": 2,
+     "h": -0.91
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      5,
+      4
+     ],
+     "b": [
+      24,
+      19
+     ],
+     "largura": 7,
+     "fundo": 2,
+     "h": -0.91
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -26,
+      18
+     ],
+     "b": [
+      -17,
+      11
+     ],
+     "largura": 7,
+     "h": 0.98,
+     "queda": 3,
+     "encosta": 2.45
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      26,
+      -18
+     ],
+     "b": [
+      17,
+      -11
+     ],
+     "largura": 7,
+     "h": 0.98,
+     "queda": 3,
+     "encosta": 2.45
+    }
+   ]
+  },
+  {
+   "id": "curral_fardos",
+   "nome": "Curral dos Fardos",
+   "licenca": "SPORT",
+   "tema": "fardos",
+   "borda": {
+    "largura": 5.0,
+    "altura": 1.5
+   },
+   "muro": [
+    [
+     49.48,
+     0.0
+    ],
+    [
+     24.74,
+     42.85
+    ],
+    [
+     -24.74,
+     42.85
+    ],
+    [
+     -49.48,
+     0.0
+    ],
+    [
+     -24.74,
+     -42.85
+    ],
+    [
+     24.74,
+     -42.85
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "vala",
+     "a": [
+      -26,
+      -15
+     ],
+     "b": [
+      26,
+      15
+     ],
+     "largura": 8.25,
+     "fundo": 3,
+     "h": -1.05,
+     "max": true
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -26,
+      15
+     ],
+     "b": [
+      26,
+      -15
+     ],
+     "largura": 8.25,
+     "fundo": 3,
+     "h": -1.05,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      0,
+      30
+     ],
+     "b": [
+      0,
+      19
+     ],
+     "largura": 8,
+     "h": 1.26,
+     "queda": 3.15,
+     "encosta": 3.15
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      0,
+      -30
+     ],
+     "b": [
+      0,
+      -19
+     ],
+     "largura": 8,
+     "h": 1.26,
+     "queda": 3.15,
+     "encosta": 3.15
+    }
+   ]
+  },
+  {
+   "id": "patio_fundicao",
+   "nome": "Pátio da Fundição",
+   "licenca": "SPORT",
+   "grid": true,
+   "tema": "fundicao",
+   "borda": {
+    "largura": 5.0,
+    "altura": 1.8
+   },
+   "muro": [
+    [
+     52.22,
+     -30.46
+    ],
+    [
+     52.22,
+     30.46
+    ],
+    [
+     21.76,
+     30.46
+    ],
+    [
+     21.76,
+     21.76
+    ],
+    [
+     4.35,
+     21.76
+    ],
+    [
+     4.35,
+     30.46
+    ],
+    [
+     -52.22,
+     30.46
+    ],
+    [
+     -52.22,
+     -30.46
+    ],
+    [
+     -4.35,
+     -30.46
+    ],
+    [
+     -4.35,
+     -21.76
+    ],
+    [
+     -21.76,
+     -21.76
+    ],
+    [
+     -21.76,
+     -30.46
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       -38,
+       -11
+      ],
+      [
+       -24,
+       -11
+      ],
+      [
+       -24,
+       11
+      ],
+      [
+       -38,
+       11
+      ]
+     ],
+     "encosta": 3.85,
+     "h": 1.54,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -10,
+      0
+     ],
+     "b": [
+      -24,
+      0
+     ],
+     "largura": 8,
+     "h": 1.54,
+     "max": true,
+     "encosta": 3.85,
+     "queda": 3.85
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       4,
+       -13
+      ],
+      [
+       16,
+       -13
+      ],
+      [
+       16,
+       1
+      ],
+      [
+       4,
+       1
+      ]
+     ],
+     "encosta": 3.5,
+     "h": -1.4
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       28,
+       -1
+      ],
+      [
+       40,
+       -1
+      ],
+      [
+       40,
+       13
+      ],
+      [
+       28,
+       13
+      ]
+     ],
+     "encosta": 3.5,
+     "h": -1.4
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      22,
+      -12
+     ],
+     "b": [
+      22,
+      12
+     ],
+     "largura": 4.5,
+     "fundo": 1,
+     "h": 0.7
+    }
+   ]
+  },
+  {
+   "id": "estacionamento_saida",
+   "nome": "Estacionamento da Última Saída",
+   "licenca": "NATIONAL",
+   "grid": true,
+   "tema": "estacionamento",
+   "borda": {
+    "largura": 6.0,
+    "altura": 2.2
+   },
+   "muro": [
+    [
+     47.62,
+     -38.96
+    ],
+    [
+     47.62,
+     8.66
+    ],
+    [
+     25.97,
+     8.66
+    ],
+    [
+     12.99,
+     21.64
+    ],
+    [
+     12.99,
+     43.29
+    ],
+    [
+     -43.29,
+     43.29
+    ],
+    [
+     -43.29,
+     -38.96
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       -26,
+       6
+      ],
+      [
+       -4,
+       6
+      ],
+      [
+       -4,
+       29
+      ],
+      [
+       -26,
+       29
+      ]
+     ],
+     "encosta": 4.2,
+     "h": 1.68,
+     "max": true
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       -24,
+       19
+      ],
+      [
+       -15,
+       19
+      ],
+      [
+       -15,
+       27
+      ],
+      [
+       -24,
+       27
+      ]
+     ],
+     "encosta": 8.05,
+     "h": 3.22,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -17,
+      -10
+     ],
+     "b": [
+      -17,
+      6
+     ],
+     "largura": 8,
+     "h": 1.68,
+     "max": true,
+     "encosta": 4.2,
+     "queda": 4.2
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -2,
+      23
+     ],
+     "b": [
+      -15,
+      23
+     ],
+     "largura": 6,
+     "h": 3.22,
+     "max": true,
+     "encosta": 8.05,
+     "queda": 8.05
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      40,
+      -2
+     ],
+     "b": [
+      28,
+      -2
+     ],
+     "largura": 8,
+     "h": 1.4,
+     "queda": 3.5,
+     "encosta": 3.5
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       16,
+       -24
+      ],
+      [
+       30,
+       -24
+      ],
+      [
+       30,
+       -14
+      ],
+      [
+       16,
+       -14
+      ]
+     ],
+     "encosta": 3.15,
+     "h": -1.26
+    }
+   ]
+  },
+  {
+   "id": "bacia_blackwater",
+   "nome": "Bacia de Blackwater",
+   "licenca": "PRO",
+   "grid": true,
+   "tema": "lago",
+   "borda": {
+    "largura": 7.0,
+    "altura": 3.0
+   },
+   "muro": [
+    [
+     56.59,
+     0.0
+    ],
+    [
+     50.97,
+     16.06
+    ],
+    [
+     35.3,
+     28.95
+    ],
+    [
+     12.58,
+     36.08
+    ],
+    [
+     -12.58,
+     36.08
+    ],
+    [
+     -35.3,
+     28.95
+    ],
+    [
+     -50.97,
+     16.06
+    ],
+    [
+     -56.59,
+     0.0
+    ],
+    [
+     -50.97,
+     -16.06
+    ],
+    [
+     -35.3,
+     -28.95
+    ],
+    [
+     -12.58,
+     -36.08
+    ],
+    [
+     12.58,
+     -36.08
+    ],
+    [
+     35.3,
+     -28.95
+    ],
+    [
+     50.97,
+     -16.06
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       38.0,
+       0.0
+      ],
+      [
+       36.14,
+       6.8
+      ],
+      [
+       30.74,
+       12.93
+      ],
+      [
+       22.34,
+       17.8
+      ],
+      [
+       11.74,
+       20.92
+      ],
+      [
+       0.0,
+       22.0
+      ],
+      [
+       -11.74,
+       20.92
+      ],
+      [
+       -22.34,
+       17.8
+      ],
+      [
+       -30.74,
+       12.93
+      ],
+      [
+       -36.14,
+       6.8
+      ],
+      [
+       -38.0,
+       0.0
+      ],
+      [
+       -36.14,
+       -6.8
+      ],
+      [
+       -30.74,
+       -12.93
+      ],
+      [
+       -22.34,
+       -17.8
+      ],
+      [
+       -11.74,
+       -20.92
+      ],
+      [
+       -0.0,
+       -22.0
+      ],
+      [
+       11.74,
+       -20.92
+      ],
+      [
+       22.34,
+       -17.8
+      ],
+      [
+       30.74,
+       -12.93
+      ],
+      [
+       36.14,
+       -6.8
+      ]
+     ],
+     "encosta": 4,
+     "h": -1.4
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       25.0,
+       0.0
+      ],
+      [
+       23.78,
+       4.33
+      ],
+      [
+       20.23,
+       8.23
+      ],
+      [
+       14.69,
+       11.33
+      ],
+      [
+       7.73,
+       13.31
+      ],
+      [
+       0.0,
+       14.0
+      ],
+      [
+       -7.73,
+       13.31
+      ],
+      [
+       -14.69,
+       11.33
+      ],
+      [
+       -20.23,
+       8.23
+      ],
+      [
+       -23.78,
+       4.33
+      ],
+      [
+       -25.0,
+       0.0
+      ],
+      [
+       -23.78,
+       -4.33
+      ],
+      [
+       -20.23,
+       -8.23
+      ],
+      [
+       -14.69,
+       -11.33
+      ],
+      [
+       -7.73,
+       -13.31
+      ],
+      [
+       -0.0,
+       -14.0
+      ],
+      [
+       7.73,
+       -13.31
+      ],
+      [
+       14.69,
+       -11.33
+      ],
+      [
+       20.23,
+       -8.23
+      ],
+      [
+       23.78,
+       -4.33
+      ]
+     ],
+     "encosta": 3.5,
+     "h": -1.4
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       12.0,
+       0.0
+      ],
+      [
+       11.41,
+       2.01
+      ],
+      [
+       9.71,
+       3.82
+      ],
+      [
+       7.05,
+       5.26
+      ],
+      [
+       3.71,
+       6.18
+      ],
+      [
+       0.0,
+       6.5
+      ],
+      [
+       -3.71,
+       6.18
+      ],
+      [
+       -7.05,
+       5.26
+      ],
+      [
+       -9.71,
+       3.82
+      ],
+      [
+       -11.41,
+       2.01
+      ],
+      [
+       -12.0,
+       0.0
+      ],
+      [
+       -11.41,
+       -2.01
+      ],
+      [
+       -9.71,
+       -3.82
+      ],
+      [
+       -7.05,
+       -5.26
+      ],
+      [
+       -3.71,
+       -6.18
+      ],
+      [
+       -0.0,
+       -6.5
+      ],
+      [
+       3.71,
+       -6.18
+      ],
+      [
+       7.05,
+       -5.26
+      ],
+      [
+       9.71,
+       -3.82
+      ],
+      [
+       11.41,
+       -2.01
+      ]
+     ],
+     "encosta": 3.5,
+     "h": -1.4
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      12,
+      7
+     ],
+     "b": [
+      29,
+      19
+     ],
+     "largura": 10.2,
+     "fundo": 2.5,
+     "h": -1.54,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -35,
+      0
+     ],
+     "b": [
+      -31.5,
+      0
+     ],
+     "largura": 7,
+     "h": 0.91,
+     "queda": 3,
+     "encosta": 2.27
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      35,
+      -6
+     ],
+     "b": [
+      31.5,
+      -5.5
+     ],
+     "largura": 7,
+     "h": 0.91,
+     "queda": 3,
+     "encosta": 2.27
+    }
+   ]
+  },
+  {
+   "id": "claustro_vazio",
+   "nome": "Claustro Vazio",
+   "licenca": "PRO",
+   "grid": true,
+   "tema": "claustro",
+   "borda": {
+    "largura": 8.0,
+    "altura": 3.4
+   },
+   "muro": [
+    [
+     51.7,
+     -18.8
+    ],
+    [
+     51.7,
+     18.8
+    ],
+    [
+     18.8,
+     18.8
+    ],
+    [
+     18.8,
+     51.7
+    ],
+    [
+     -18.8,
+     51.7
+    ],
+    [
+     -18.8,
+     18.8
+    ],
+    [
+     -51.7,
+     18.8
+    ],
+    [
+     -51.7,
+     -18.8
+    ],
+    [
+     -18.8,
+     -18.8
+    ],
+    [
+     -18.8,
+     -51.7
+    ],
+    [
+     18.8,
+     -51.7
+    ],
+    [
+     18.8,
+     -18.8
+    ]
+   ],
+   "obstaculos": [],
+   "relevo": [
+    {
+     "tipo": "plato",
+     "c": [
+      0,
+      0
+     ],
+     "r": 7,
+     "encosta": 4.9,
+     "h": 1.96,
+     "max": true
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      22,
+      0
+     ],
+     "b": [
+      7,
+      0
+     ],
+     "largura": 8,
+     "h": 1.96,
+     "max": true,
+     "encosta": 4.9,
+     "queda": 4.9
+    },
+    {
+     "tipo": "rampa",
+     "a": [
+      -22,
+      0
+     ],
+     "b": [
+      -7,
+      0
+     ],
+     "largura": 8,
+     "h": 1.96,
+     "max": true,
+     "encosta": 4.9,
+     "queda": 4.9
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -22,
+      29
+     ],
+     "b": [
+      22,
+      29
+     ],
+     "largura": 11.4,
+     "fundo": 3,
+     "h": -1.68
+    },
+    {
+     "tipo": "vala",
+     "a": [
+      -22,
+      -29
+     ],
+     "b": [
+      22,
+      -29
+     ],
+     "largura": 11.4,
+     "fundo": 3,
+     "h": -1.68
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       -10,
+       14
+      ],
+      [
+       10,
+       14
+      ],
+      [
+       10,
+       22
+      ],
+      [
+       -10,
+       22
+      ]
+     ],
+     "encosta": 2.5,
+     "h": -0.98
+    },
+    {
+     "tipo": "plato",
+     "pontos": [
+      [
+       -10,
+       -22
+      ],
+      [
+       10,
+       -22
+      ],
+      [
+       10,
+       -14
+      ],
+      [
+       -10,
+       -14
+      ]
+     ],
+     "encosta": 2.5,
+     "h": -0.98
+    }
+   ]
+  }
+ ],
+ "_nota_arenas": "Arenas (decisão 59, aprovadas pelo usuário em 2026-10-11): 4 originais, sem copiar nenhuma arena existente: muro em polígono irregular (m), obstáculos (ilhas: c, r em m), chão irregular (relevo: lombada h>0 ou cratera h<0, gaussiana de raio r) e a borda que sobe junto ao muro (largura, altura em m). Mesma área do círculo de raio_m (45 m). Cada uma abre na sua licença; a luta sorteia entre as abertas. Alturas e formas são desenho, não balanceamento; ajustar no playtest. Decisão 75 (2026-10-12, aprovada pelo usuário): mais seis, geradas por tools/arenas_novas.py: Várzea do Galpão (Club) e Curral dos Fardos (Sport), para quem ainda não tem National; e quatro exclusivas dos desafios do The Grid (grid: true, o campeonato não sorteia): Pátio da Fundição (#8), Estacionamento da Última Saída (#5), Bacia de Blackwater (#3) e Claustro Vazio (#1, o confronto). Decisão 78 (2026-10-13, pedido do usuário): as arenas se diferenciam pelo chão, desenhado como curvas de nível; relevo com valas/diques (vala), rampas (rampa), platôs e poços em degraus (plato) além de montes e crateras; ilhas só a do Ferro-Velho. O chão das dez vem de tools/terreno_arenas.py (o muro das seis novas, de tools/arenas_novas.py).",
+ "campeonato": {
+  "equipes_min": 2,
+  "equipes_max": 10,
+  "parceiro_casa": "Piloto da casa"
+ },
+ "_nota_campeonato": "Arena em duplas (decisão 61, pedido do usuário): cada equipe entra com dois carros e os colegas não se miram; a luta acaba quando sobra uma equipe. Campeonato escalonado: começa em 2×2 (2 equipes, 4 carros) e cada vitória da equipe sobe um nível (2×2×2, …) até equipes_max (10 equipes, 20 carros). A dupla do jogador: o segundo piloto no carro dele (se livre) ou o piloto da casa num carro emprestado, que não se perde.",
+ "blindagem": {
+  "referencia": "lightweight",
+  "niveis": 3,
+  "nomes": [
+   "Blindagem leve",
+   "Blindagem média",
+   "Blindagem pesada"
+  ]
+ },
+ "_nota_blindagem": "Blindagem (pedido do usuário; números a confirmar): espelho da redução de peso do próprio carro. O nível k pesa o inverso do estágio k da redução (×0,95 vira ×1/0,95) e custa o mesmo. Na arena a resistência é ½·m·v_ref², então cresce na mesma razão do peso; na corrida o peso tira desempenho. Ver data_model/blindagem.gd.",
+ "incendio": {
+  "fogo_s": 2.0,
+  "fuga_s": 1.5,
+  "explosao_s": 3.5,
+  "piloto_longe_m": 7.0,
+  "raio_m": 12.0,
+  "queda": 2.0
+ },
+ "piloto_fuga": {
+  "v_ms": 2.8,
+  "raio_m": 0.18,
+  "saida_m": 0.5,
+  "v_atropelo_ms": 1.0,
+  "voo_k": 0.42,
+  "voo_vy": 0.58,
+  "caido_s": 3.0,
+  "levantar_s": 1.68
+ },
+ "_nota_incendio": "Fogo, fuga e explosão (pacote de dano aprovado pelo usuário, 2026-10-13; sim/arena.gd → _incendios). Pega fogo o carro eliminado com o motor destruído: a outra metade da frente também no limite da ré (decisão do usuário: nem todo carro pega fogo). Tempos e distâncias são os da bancada do pacote (vehicle_damage.gd: motor para → fogo em 2 s → piloto sai 1,5 s depois → explode 3,5 s depois da saída com o piloto a 7 m; raio 12 m, força (1 − d/12)²). Dano da explosão (decisão do usuário): a força × a energia de uma batida a v_ref contra o carro que explodiu, na região virada para ela; pode eliminar. Depois do fim da luta, a explosão é só visual. piloto_fuga: corre a 2,8 m/s até o muro mais perto (pedestrian.gd, modo fuga); carro andando acima de 1 m/s o atropela e o lança (horizontal × 0,42, subida × 0,58 da velocidade); caído 3 s, levanta em 1,68 s (LayToIdle) e continua. O atropelamento é só da luta: o piloto não fica fora depois dela (o carro eliminado já vai para o reparo, decisão 118).",
+ "capota_dano": 0.2,
+ "carros_minimos": 2,
+	"_carros_minimos": "Decisão 121 (análise de 2026-10-19 aprovada pelo usuário): a arena abre com 2 carros (1 de corrida e 1 de arena); sem o carro ou o piloto da ARENA 2, a casa empresta os dois. Antes eram 3 (decisão 69), quando o carro eliminado se perdia; com o reparo (decisão 118) o motivo caiu, e no playtest nenhum perfil chegou ao 3º carro em 4 h de corrida.",
+	"reparo": {"tempo": "treino", "custo": "revenda"},
+	"_nota_reparo": "Revisão da decisão 49 (pedido do usuário, 2026-10-18): carro eliminado não se perde; vai para o reparo. tempo \"treino\" = um nível do treino de piloto (equipe.json treino.tempo_base_h), relógio real; custo \"revenda\" = consertar na hora pelo valor de revenda do carro (o que ele custava quando era perdido). Critérios provisórios, a confirmar no playtest.",
+ "_nota_capota": "Capotagem (decisão do usuário, 2026-10-13): batida de lado com dano ≥ capota_dano numa região do lado vira o carro, que cai de teto para baixo e sai da luta (eliminado; o golpe conta para quem bateu). 0,2 é o limite que a tela já usava para capotar (~20% dos carros por luta). Provisório até o playtest.",
+ "canhao": {
+  "carros": [
+   "brakhaus_sentinela"
+  ],
+  "forca_n": 10000.0,
+  "alcance_m": 20.0,
+  "giro_graus_s": 143.0,
+  "alinhamento_graus": 15.0
+ },
+ "_nota_canhao": "Canhão d'água dos pesados que têm um (pedido do usuário: o jato empurra os carros). Mira o rival vivo mais perto de outra equipe a até alcance_m, gira a torre a giro_graus_s e, alinhado (alinhamento_graus), empurra o alvo com forca_n na direção do jato. forca_n = 10.000 N, decisão do usuário (2026-10-16): ~10x um canhão de bombeiro real (~1.000 N = 50 kg/s a 20 m/s); arrasta de frente/trás um carro parado (vence o arrasto de 0,15 g) e, de lado, quase vence a aderência (~12.000 N num carro de 1,3 t). O alcance e o giro são os do visual.",
+ "_nota_tema": "arenas[].tema: cenário em volta da arena (visual/temas_arena.gd; só tela, a simulação não usa). Nas arenas de tools/arenas_novas.py o tema vem de lá.",
+ "descida_sobra": 3.0,
+ "_nota_relevo": "Relevo na velocidade (pedido do usuário, 2026-10-16: subida e descida não se sentiam; medido 28/32/32 km/h subindo/plano/descendo na Cratera do Vale). subida_perda: na rampa, a força do motor vezes 1 − subida_perda × inclinação contra o carro (mínimo 40%), além da gravidade (era 0,5). descida_sobra: descendo, a IA deixa embalar sem frear até o alvo × (1 + descida_sobra × declive). Provisórios até o playtest."
+}

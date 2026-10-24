@@ -1,0 +1,28 @@
+{
+ "_nota": "Abertura do jogo (ui/abertura_cinema.gd), tempos em s. Pedido do usuário (2026-10-14): mais rápida e sem a cena da chegada antes do logo (ela já é o fundo do diálogo GAME_START, ilustração chegada). 4 cenas paradas, sem música; cada uma entra do preto em 'fusao', fica e volta ao preto antes da próxima. 'logo' quando o logo aparece; 'fim' quando a abertura acaba. Cena 1: a corrida noturna; 2: a arena destruindo os carros; 3: a Mara vendo o guincho levar o carro; 4: a Mara com as contas. Depois do logo, o diálogo abre na chegada (arte/cenas/chegada.webp).",
+ "planos": [
+  {
+   "img": "cena_1",
+   "ini": 0.0,
+   "dur": 3.5
+  },
+  {
+   "img": "cena_2",
+   "ini": 3.8,
+   "dur": 3.5
+  },
+  {
+   "img": "cenas/noite_da_arena",
+   "ini": 7.6,
+   "dur": 3.5
+  },
+  {
+   "img": "cena_4",
+   "ini": 11.4,
+   "dur": 3.5
+  }
+ ],
+ "fusao": 0.6,
+ "logo": 15.2,
+ "fim": 18.7
+}
