@@ -72,6 +72,11 @@ func _rodar() -> void:
 			args[kv[0]] = kv[1]
 	d = root.get_node("Dados")
 	e = IdleEstado.new()
+	# O jogador aceita toda a escada de desbloqueios (a renda abre na 4ª
+	# corrida, as melhorias logo no começo): mede a economia, não a escada.
+	for dd in e.cfg_desbloqueios():
+		e.oferecidos.append(String(dd["id"]))
+		e.desbloqueados.append(String(dd["id"]))
 	var sessoes := int(args["sessoes_dia"])
 	var intervalo := 86400.0 / maxf(sessoes, 1)
 	var duracao_sessao := float(args["primeira_min"]) * 60.0

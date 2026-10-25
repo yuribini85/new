@@ -92,6 +92,11 @@ oferta quando tem o dinheiro, sobe de liga), com a linha do tempo e uma foto por
 Medido de novo (robô, 20 min): chegadas 7º, 4º, 4º, 4º, 4º, **1º** (6ª corrida, 8 min; antes 10ª,
 12 min) e na 2ª liga 7º, 4º, 3º, 2º, 1º. A 3ª liga chega aos 14 min (antes 17).
 
+**Duração do jogo inteiro:** sem a sorte, o fim do Terra virou parede (o calibrador deu 41 dias).
+Com Terra Mestres, Elite e Lendas mais fáceis volta a 22 dias (antes 23), com Terra Elite no dia
+12 e Lendas no 19. O calibrador também passou a aceitar a escada de desbloqueios (sem isso o
+jogador simulado nunca ganhava a renda base).
+
 **O que ainda pesa:** cada corrida leva ~80 s (semáforo, uma volta e a pausa), o que faz a 1ª
 vitória levar 8 min mesmo com 6 corridas; e Ultrapassagem muda a posição em degraus de 3–4 níveis
 (entre um degrau e outro a compra só aparece no "CHEGA EM"). Próximos itens da proposta: 4 (vista

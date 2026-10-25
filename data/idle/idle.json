@@ -54,7 +54,7 @@
 	"premio_por_posicao": "P1 recebe premio_p1 × multiplicador da liga; cada posição abaixo recebe 1/grid a menos",
 	"premio_p1": 300,
 	"expoente_custo_liga": 2.3,
-	"_nota_forca": "forca_rivais (por liga) multiplica a força dos rivais para que toda liga peça ~12 níveis de motor (com ultrapassagem e vácuo no máximo): pistas com poucas retas são mais difíceis de passar. A 1ª liga fica mais fácil (1ª vitória cedo). aderencia_por_forca: o rival x% mais potente tem 0,6·x% mais aderência (como Pneus × Motor). A passagem não tem sorteio (tentativas regulares, Simulacao: piloto.regular): a mesma equipe chega sempre no mesmo lugar e cada compra move a posição. Compactos Estreantes 0,55 (medido 2026-10-24: 4º com Ultrapassagem 4, vitória com Ultrapassagem 8 e Motor 6).",
+	"_nota_forca": "forca_rivais (por liga) multiplica a força dos rivais para que toda liga peça ~12 níveis de motor (com ultrapassagem e vácuo no máximo): pistas com poucas retas são mais difíceis de passar. A 1ª liga fica mais fácil (1ª vitória cedo). aderencia_por_forca: o rival x% mais potente tem 0,6·x% mais aderência (como Pneus × Motor). A passagem não tem sorteio (tentativas regulares, Simulacao: piloto.regular): a mesma equipe chega sempre no mesmo lugar e cada compra move a posição. Compactos Estreantes 0,55 (medido 2026-10-24: 4º com Ultrapassagem 4, vitória com Ultrapassagem 8 e Motor 6). Sem a sorte, o fim do Terra virou parede (jogo inteiro em 41 dias): Terra Mestres 0,93, Elite 0,96 e Lendas 0,85 trazem de volta 22 dias (tools/calibrar_idle.gd sessoes_dia=4).",
 	"_nota_modalidades": "Cinco modalidades (decisão do usuário, 2026-10-24), cada uma com a categoria de carro do Chrome & Wreckage, as pistas dela e 8 ligas (multiplicador ×1,75 por liga); liga 'libera' a próxima quando a anterior chega à liga indicada (índice). Todas rendem ao mesmo tempo. forca_rivais por pista: tools/calibrar_forca_idle.gd. Números estimados (pedido do usuário).",
 	"pilotos": {"_nota": "Pilotos do Chrome & Wreckage (data/equipes.json). Contrato traz um piloto no nível 1; dois do mesmo nível fundem num nível acima (decisão do usuário: contratos + fusão, como o Race Star). Cada modalidade escala um piloto. Números estimados.", "base": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.5}, "perfis": {"agressivo": {"agressividade": 0.1, "consistencia": -0.05}, "equilibrado": {}, "cauteloso": {"agressividade": -0.1, "consistencia": 0.05}}, "ritmo_por_nivel": 0.01, "nivel_max": 8, "contrato_gratis_h": 4, "contratos_video_dia": 5},
 	"melhorias": [
@@ -102,9 +102,9 @@
 			{"nome": "Terra Estadual", "pista": "serra_alta", "voltas": 1, "potencia": 180, "multiplicador": 196},
 			{"nome": "Terra Nacional", "pista": "trilha_do_canion", "voltas": 1, "potencia": 230, "multiplicador": 343},
 			{"nome": "Terra Continental", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 300, "multiplicador": 600.2},
-			{"nome": "Terra Mestres", "pista": "serra_alta", "voltas": 1, "potencia": 390, "multiplicador": 1050.4},
-			{"nome": "Terra Elite", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 1838.3},
-			{"nome": "Terra Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 3217}
+			{"nome": "Terra Mestres", "pista": "serra_alta", "voltas": 1, "potencia": 390, "multiplicador": 1050.4, "forca_rivais": 0.93},
+			{"nome": "Terra Elite", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 1838.3, "forca_rivais": 0.96},
+			{"nome": "Terra Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 3217, "forca_rivais": 0.85}
 		]},
 		{"id": "arena", "nome": "Arena", "icone": "emblema_arena", "tipo": "arena", "blindagem_por_vacuo": 10.0, "categorias": ["pesado", "picape", "utilitario"], "libera": {"modalidade": "terra", "liga": 3}, "forca_rivais": {"patio_pedreira": 1.15, "fosso_docas": 1.15, "anel_ferro_velho": 1.15, "cratera_vale": 1.15}, "ligas": [
 			{"nome": "Arena Estreantes", "pista": "patio_pedreira", "voltas": 1, "potencia": 150, "multiplicador": 256},

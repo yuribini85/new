@@ -7,9 +7,9 @@ extends SceneTree
 ## JSON. A arena tem simulação própria e fica de fora.
 ## Com por_liga=1, acha a força de cada liga (o "forca_rivais" da liga, que
 ## vale sobre o da pista): os carros mudam muito de uma liga para outra.
-## Uso: godot --headless --path . -s tools/calibrar_forca_idle.gd [-- modalidade=gt por_liga=1]
+## Uso: godot --headless --path . -s tools/calibrar_forca_idle.gd [-- modalidade=gt por_liga=1 alvo=12]
 
-const ALVO := 12
+var ALVO := 12  # alvo=N na linha de comando
 
 var d: Node
 var e: IdleEstado
@@ -45,6 +45,8 @@ func _r() -> void:
 			so = a.trim_prefix("modalidade=")
 		elif a == "por_liga=1":
 			por_liga = true
+		elif a.begins_with("alvo="):
+			ALVO = int(a.trim_prefix("alvo="))
 	d = root.get_node("Dados")
 	e = IdleEstado.new()
 	for m in e.cfg["modalidades"]:
