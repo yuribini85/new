@@ -8,26 +8,26 @@ extends RefCounted
 ## fundo preto azulado, cartões em aço escuro com borda cromada, ações em ouro
 ## alaranjado, prata no texto secundário, dinheiro em ouro claro; verde só no
 ## ganho de uma melhoria; vermelho só no alerta.
-const COR_FUNDO := Color("0b0e13")
-const COR_CARTAO := Color("161b22")
-const COR_CARTAO_CLARO := Color("1d232c")
-const COR_BORDA := Color("3a4250")  # cromo escuro
-const COR_CROMO := Color("c9ced6")  # prata
-const COR_TEXTO := Color("f2f4f7")
-const COR_OURO := Color("ffc53d")
-const COR_OURO_ESCURO := Color("f08a0c")
-const COR_OURO_CLARO := Color("ffd873")
+const COR_FUNDO := Color("0f0d0b")
+const COR_CARTAO := Color("1a1612")
+const COR_CARTAO_CLARO := Color("241e18")
+const COR_BORDA := Color("4a3f30")  # latão escuro
+const COR_CROMO := Color("d8cdb4")  # creme envelhecido
+const COR_TEXTO := Color("f1e9d8")
+const COR_OURO := Color("d4a24c")
+const COR_OURO_ESCURO := Color("9a6f2c")
+const COR_OURO_CLARO := Color("ecd398")
 const COR_DINHEIRO := COR_OURO_CLARO
-const COR_GANHO := Color("6fd08c")
+const COR_GANHO := Color("74b08a")
 const COR_SECUNDARIA := COR_CROMO
-const COR_BLOQUEADO := Color("5a6270")
-const COR_RUIM := Color("e5484d")
+const COR_BLOQUEADO := Color("5e5548")
+const COR_RUIM := Color("b23a32")
 const COR_BOTAO := COR_OURO
 const COR_TINTA := Color("14100a")  # texto sobre ouro e prata
 ## Verde dos botões de anúncio premiado (▶ na TV): o padrão do gênero para
 ## "ganhe de graça assistindo", que o jogador reconhece de outros idles.
-const COR_PREMIO := Color("2fbf6b")
-const COR_PREMIO_ESCURO := Color("1b8a49")
+const COR_PREMIO := Color("2f7a52")
+const COR_PREMIO_ESCURO := Color("1f5236")
 
 
 ## Tamanho de texto legível no celular (docs/idle/interface.md): a base do jogo
@@ -204,8 +204,8 @@ static func nv(n: int) -> String:
 ## logotipo; pressionado, afunda.
 static func estilo_ouro(b: Button) -> void:
 	var meio := COR_OURO.lerp(COR_OURO_ESCURO, 0.45)
-	b.add_theme_stylebox_override("normal", _bisel(meio, COR_OURO_CLARO, Color("b5620a")))
-	b.add_theme_stylebox_override("hover", _bisel(meio, COR_OURO_CLARO, Color("b5620a")))
+	b.add_theme_stylebox_override("normal", _bisel(meio, COR_OURO_CLARO, Color("6e4f1e")))
+	b.add_theme_stylebox_override("hover", _bisel(meio, COR_OURO_CLARO, Color("6e4f1e")))
 	b.add_theme_stylebox_override("pressed", _bisel(meio.darkened(0.12), COR_OURO_CLARO, meio.darkened(0.12)))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c, COR_TINTA)

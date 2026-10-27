@@ -1,18 +1,17 @@
 class_name TituloIdle
 extends Control
-## Tela de título do Chrome Racing Team (docs/idle/direcao.md): a oficina da Mara
-## com o portão aceso, embaixo do outdoor da Moretti Speedway, o logotipo e
-## "TOQUE PARA COMEÇAR". Aparece ao abrir o app; um toque fecha com um fade.
+## Tela de título do Chrome Racing Team (docs/idle/conversao_mafia.md): uma rua de
+## Nova York em 1948, com o cartaz da corrida clandestina e o carro de época, o
+## logotipo e "TOQUE PARA COMEÇAR". Aparece ao abrir o app; um toque fecha.
 
 signal fechou
 
 ## Apresentação, não balanceamento.
 const SAIDA_S := 0.35
-const CEU_ALTO := Color("141a26")
-const CEU_BAIXO := Color("1b2333")
-const PREDIO := Color("0d1118")
-const VERMELHO := Color("e5484d")
-const LUZ := Color("ffc53d")
+const CEU_ALTO := Color("10141c")
+const CEU_BAIXO := Color("2a2a30")
+const TIJOLO := Color("4a2a20")
+const LUZ := Color("f3d27a")
 
 var _toque: Label
 var _t := 0.0
@@ -69,56 +68,79 @@ func fechar() -> void:
 
 
 func _draw() -> void:
-	TituloIdle.cena(self, size.x, size.y, _t, 1.0, true)
+	var chao := size.y * 0.58
+	TituloIdle.rua(self, size.x, size.y, _t, chao)
+	TituloIdle.carro_antigo(self, Vector2(size.x * 0.08, chao + 90), Color("8e2a26"), 330.0)
 
 
-## A rua da oficina (título e abertura): céu em faixas, prédios em planos, o
-## outdoor da Moretti Speedway e a oficina da Mara. `porta` de 0 (portão de aço
-## fechado) a 1 (aberto e aceso); `silhueta` desenha a Mara no portão.
-static func cena(ci: CanvasItem, w: float, h: float, t: float, porta: float, silhueta: bool, chao_frac := 0.58) -> void:
-	var chao := h * chao_frac
+## Rua de Nova York em 1948 (título e abertura): céu em faixas, prédios de
+## tijolo com janelas acesas, poste de luz e o cartaz da corrida clandestina.
+static func rua(ci: CanvasItem, w: float, h: float, t: float, chao: float) -> void:
 	for k in 6:
 		ci.draw_rect(Rect2(0, chao * k / 6.0, w, chao / 6.0 + 1), CEU_ALTO.lerp(CEU_BAIXO, k / 5.0))
-	ci.draw_colored_polygon(PackedVector2Array([Vector2(w * 0.3, chao), Vector2(w * 0.3, chao * 0.41), Vector2(w * 0.6, chao * 0.34),
-			Vector2(w * 0.78, chao * 0.43), Vector2(w * 0.78, chao)]), PREDIO)
-	ci.draw_colored_polygon(PackedVector2Array([Vector2(w * 0.74, chao), Vector2(w * 0.74, chao * 0.2), Vector2(w, chao * 0.17),
-			Vector2(w, chao)]), PREDIO.darkened(0.2))
-	# Outdoor da Moretti Speedway, inclinado, com brilho vermelho.
-	var o := Vector2(w * 0.38, chao * 0.47)
-	var ow := w * 0.56
-	var oh := 120.0
-	var brilho := 0.35 + 0.1 * sin(t * 3.0)
-	ci.draw_colored_polygon(PackedVector2Array([o + Vector2(-14, -10), o + Vector2(ow + 14, -24), o + Vector2(ow + 14, oh + 4),
-			o + Vector2(-14, oh + 18)]), Color(VERMELHO, brilho * 0.4))
-	ci.draw_colored_polygon(PackedVector2Array([o, o + Vector2(ow, -14), o + Vector2(ow, oh - 6), o + Vector2(0, oh + 8)]),
-			Color("1a0f10"))
-	ci.draw_polyline(PackedVector2Array([o, o + Vector2(ow, -14), o + Vector2(ow, oh - 6), o + Vector2(0, oh + 8), o]),
-			VERMELHO, 4.0)
+	# Prédios de tijolo, em planos, com janelas.
+	var predios := [[0.0, 0.34, 0.3], [0.3, 0.22, 0.26], [0.56, 0.3, 0.22], [0.78, 0.22, 0.12]]
+	for p in predios:
+		var x := w * float(p[0])
+		var largura := w * float(p[2])
+		var topo := chao * float(p[1])
+		ci.draw_rect(Rect2(x, topo, largura, chao - topo), TIJOLO.darkened(0.15 * (int(p[0] * 10) % 3)))
+		ci.draw_rect(Rect2(x, topo, largura, 10), TIJOLO.lightened(0.15))
+		var y := topo + 40.0
+		var linha := 0
+		while y < chao - 60.0:
+			var jx := x + 22.0
+			var coluna := 0
+			while jx < x + largura - 40.0:
+				var acesa := (linha * 7 + coluna * 3 + int(p[0] * 13)) % 5 == 0
+				ci.draw_rect(Rect2(jx, y, 26, 36), Color("e9c46a", 0.85) if acesa else Color("0d0b09"))
+				jx += 52.0
+				coluna += 1
+			y += 70.0
+			linha += 1
+	# Cartaz da corrida, colado no prédio do meio.
+	var o := Vector2(w * 0.36, chao * 0.48)
+	ci.draw_rect(Rect2(o, Vector2(w * 0.5, 150)), Color("eadfc4"))
+	ci.draw_rect(Rect2(o + Vector2(8, 8), Vector2(w * 0.5 - 16, 134)), Color("8e2a26"), false, 4.0)
 	var fonte := Tipografia.fonte("display")
-	ci.draw_string(fonte, o + Vector2(18, 52), "MORETTI", HORIZONTAL_ALIGNMENT_LEFT, -1, 46, Color("ffdcdc"))
-	ci.draw_string(fonte, o + Vector2(18, 98), "SPEEDWAY", HORIZONTAL_ALIGNMENT_LEFT, -1, 46, Color("ffdcdc"))
-	ci.draw_rect(Rect2(0, chao + 120, w, h - chao - 120), Color("090c11"))
-	ci.draw_rect(Rect2(0, chao, w, 120), Color("0c1016"))
-	# A oficina da Mara: telhado facetado, o vão do portão e a luz no chão.
-	var g := Vector2(w * 0.05, chao)
-	ci.draw_colored_polygon(PackedVector2Array([g, g + Vector2(0, -150), g + Vector2(110, -190), g + Vector2(230, -150),
-			g + Vector2(230, 0)]), Color("151b24"))
-	ci.draw_colored_polygon(PackedVector2Array([g + Vector2(40, 0), g + Vector2(40, -96), g + Vector2(190, -102),
-			g + Vector2(190, 0)]), LUZ.lerp(Color("f08a0c"), 0.4).darkened(0.75 * (1.0 - porta)))
-	if porta > 0.0:
-		ci.draw_colored_polygon(PackedVector2Array([g + Vector2(40, 0), g + Vector2(190, 0), g + Vector2(300, 120),
-				g + Vector2(-40, 120)]), Color(LUZ, 0.16 * porta))
-	# Portão de aço: desce do alto até cobrir o vão (porta 0) ou some no alto (1).
-	var alto := 100.0 * (1.0 - porta)
-	if alto > 1.0:
-		ci.draw_rect(Rect2(g.x + 40, g.y - 100, 150, alto), Color("3a4250"))
-		var k := 0.0
-		while k < alto:
-			ci.draw_line(Vector2(g.x + 40, g.y - 100 + k), Vector2(g.x + 190, g.y - 100 + k), Color("262c36"), 2.0)
-			k += 10.0
-	if silhueta:
-		var m := g + Vector2(118, 0)
-		ci.draw_colored_polygon(PackedVector2Array([m + Vector2(-16, 0), m + Vector2(-12, -46), m + Vector2(-18, -80),
-				m + Vector2(-7, -94), m + Vector2(7, -94), m + Vector2(18, -80), m + Vector2(12, -46), m + Vector2(16, 0)]),
-				Color("0b0e13"))
-		ci.draw_circle(m + Vector2(0, -106), 12, Color("0b0e13"))
+	ci.draw_string(fonte, o + Vector2(22, 56), "GRANDE CORRIDA", HORIZONTAL_ALIGNMENT_LEFT, -1, 40, Color("8e2a26"))
+	ci.draw_string(fonte, o + Vector2(22, 104), "SÁBADO · 1948", HORIZONTAL_ALIGNMENT_LEFT, -1, 34, Color("15120e"))
+	ci.draw_string(fonte, o + Vector2(22, 136), "CAIS 17 · À MEIA-NOITE", HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("3a3226"))
+	# Calçada, rua e o poste com a luz no chão.
+	ci.draw_rect(Rect2(0, chao, w, 30), Color("2a2620"))
+	ci.draw_rect(Rect2(0, chao + 30, w, h - chao - 30), Color("0e0d0b"))
+	var px := w * 0.9
+	ci.draw_rect(Rect2(px - 5, chao - 300, 10, 300), Color("15120e"))
+	ci.draw_rect(Rect2(px - 30, chao - 312, 50, 14), Color("15120e"))
+	var pulso := 0.9 + 0.1 * sin(t * 7.0)
+	ci.draw_colored_polygon(PackedVector2Array([Vector2(px - 30, chao - 298), Vector2(px + 20, chao - 298),
+			Vector2(px + 110, chao + 30), Vector2(px - 150, chao + 30)]), Color(LUZ, 0.10 * pulso))
+	ci.draw_circle(Vector2(px - 5, chao - 296), 10, Color(LUZ, pulso))
+
+
+## Carro de passeio dos anos 1940 em planos chapados, de perfil: para-lamas
+## destacados e arredondados, cabine alta, estribo, grade vertical e faróis
+## separados. Sem emblema de fabricante.
+static func carro_antigo(ci: CanvasItem, pe: Vector2, cor: Color, a: float) -> void:
+	var escuro := cor.darkened(0.35)
+	# Para-lamas (arcos sobre as rodas).
+	for x in [a * 0.2, a * 0.8]:
+		ci.draw_circle(pe + Vector2(x, -18), a * 0.13, cor)
+	# Corpo baixo e capô comprido.
+	ci.draw_colored_polygon(PackedVector2Array([pe + Vector2(a * 0.02, -16), pe + Vector2(a * 0.04, -54),
+			pe + Vector2(a * 0.32, -62), pe + Vector2(a * 0.98, -56), pe + Vector2(a, -20), pe + Vector2(a * 0.96, -10),
+			pe + Vector2(a * 0.04, -10)]), cor)
+	# Cabine alta e arredondada.
+	ci.draw_colored_polygon(PackedVector2Array([pe + Vector2(a * 0.12, -60), pe + Vector2(a * 0.2, -108),
+			pe + Vector2(a * 0.3, -122), pe + Vector2(a * 0.52, -122), pe + Vector2(a * 0.62, -104), pe + Vector2(a * 0.66, -60)]), cor)
+	ci.draw_colored_polygon(PackedVector2Array([pe + Vector2(a * 0.22, -66), pe + Vector2(a * 0.27, -106),
+			pe + Vector2(a * 0.39, -112), pe + Vector2(a * 0.39, -66)]), Color(0.08, 0.1, 0.12, cor.a))
+	ci.draw_colored_polygon(PackedVector2Array([pe + Vector2(a * 0.42, -66), pe + Vector2(a * 0.42, -112),
+			pe + Vector2(a * 0.51, -112), pe + Vector2(a * 0.6, -66)]), Color(0.08, 0.1, 0.12, cor.a))
+	# Estribo, grade e farol.
+	ci.draw_rect(Rect2(pe + Vector2(a * 0.3, -14), Vector2(a * 0.42, 6)), escuro)
+	ci.draw_rect(Rect2(pe + Vector2(a * 0.95, -54), Vector2(a * 0.04, 34)), Color("c8b07a", cor.a))
+	ci.draw_circle(pe + Vector2(a * 0.9, -62), a * 0.03, Color("f3e3b0", cor.a))
+	for x in [a * 0.2, a * 0.8]:
+		ci.draw_circle(pe + Vector2(x, 0), a * 0.085, Color(0.06, 0.06, 0.06, cor.a))
+		ci.draw_circle(pe + Vector2(x, 0), a * 0.045, Color("eadfc4", cor.a))

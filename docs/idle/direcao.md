@@ -1,5 +1,9 @@
 # Chrome Racing Team: direção (fantasia, tom e linguagem visual)
 
+> **2026-10-27:** a fantasia (item 1) e a paleta (item 3) foram substituídas pela conversão máfia
+> americana 1946–1955 (`docs/idle/conversao_mafia.md`). Seguem valendo a transmissão como linguagem,
+> o complexo da equipe e os números que pipocam.
+
 Aprovado pelo usuário em 2026-10-27 (`docs/idle/comparacao_white_foot.md`). Este documento é a
 referência da reconstrução da camada de apresentação. A simulação, a economia por ligas, o save, o
 som e as ferramentas continuam.

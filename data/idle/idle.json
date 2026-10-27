@@ -10,36 +10,23 @@
 	"_nota_desbloqueios": "O jogo começa quase vazio e cresce com o jogador (pedido do usuário, 2026-10-24): vista de cima com os carros em pontos, só o Motor e a largada no toque. Cada item abre quando 'quando' se cumpre (corridas no total, soma das ligas das modalidades abertas, primeira vitória, modalidade aberta), na ordem da lista, com a conversa de um personagem do acervo; os de 'custo' o jogador compra (AGORA NÃO deixa a oferta no canto da corrida). 'libera': melhoria:<id>, aba:<id>, renda, largada_auto, camera_tv, cameras, previsao. 'guia': a dica do tutorial leve depois da conversa (alvo: largar, subir, melhoria:<id>, aba:<id>, previsao, cameras ou vazio; texto: onde tocar). Custos estimados.",
 	"desbloqueio_inicial": ["melhoria:motor"],
 	"desbloqueios": [
-		{"id": "rival", "quando": {}, "quem": {"id": "sal_moretti", "nome": "Sal Moretti", "papel": "dono da Moretti Speedway"}, "botao": "NÃO ESTÁ À VENDA",
-			"fala": "Comprei a pista da cidade, querida. Agora assina aqui e a sua oficina vira estacionamento.", "libera": []},
-		{"id": "inicio", "guia": {"alvo": "largar", "texto": "Toque em LARGAR para começar a corrida."}, "quando": {}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"}, "botao": "VAMOS LÁ",
-			"fala": "Ouviu, chefe? Temos um carro, um piloto e cem dólares. Toque em LARGAR e vamos mostrar pro Sal do que esse carro é capaz.", "libera": []},
-		{"id": "ultrapassagem", "guia": {"alvo": "melhoria:ultrapassagem", "texto": "Ultrapassagem: o piloto tenta passar em mais retas. Toque no preço."}, "quando": {"corridas": 1}, "quem": {"id": "theo_lane", "nome": "Theo Lane", "papel": "piloto veterano"},
-			"fala": "Vi a corrida: o seu piloto ficou preso atrás de carro mais lento. Eu ensino ele a arriscar a passagem nas retas.", "libera": ["melhoria:ultrapassagem"]},
-		{"id": "pneus", "guia": {"alvo": "melhoria:pneus", "texto": "Pneus novos: toque no preço para melhorar."}, "quando": {"corridas": 2}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"},
-			"fala": "Esses pneus estão no fim. Achei um fornecedor: a partir de agora dá para comprar pneus melhores.", "libera": ["melhoria:pneus"]},
-		{"id": "patrocinio", "guia": {"alvo": "melhoria:patrocinio", "texto": "O patrocínio rende por segundo, até com o app fechado. Toque no preço."}, "quando": {"corridas": 4}, "quem": {"id": "bianca_sterling", "nome": "Bianca Sterling", "papel": "patrocinadora"},
-			"fala": "Vi o seu carro na pista. Pago por segundo para ter a minha marca nele, e pago mais conforme você investir no acordo.", "libera": ["melhoria:patrocinio", "renda"]},
-		{"id": "largada", "guia": {"alvo": "", "texto": "Pronto: agora as corridas largam sozinhas."}, "quando": {"corridas": 6}, "quem": {"id": "harold_brandt", "nome": "Harold Brandt", "papel": "diretor de prova"}, "custo": 150, "icone": "icone_cronometro", "oferta": "LARGADA AUTOMÁTICA",
-			"fala": "Cansei de esperar a sua equipe na largada. Pague a inscrição da temporada e o seu carro entra em todas as corridas sozinho.", "libera": ["largada_auto"]},
-		{"id": "pilotos", "guia": {"alvo": "aba:pilotos", "texto": "Toque em PILOTOS para contratar e evoluir pilotos."}, "quando": {"liga_total": 1}, "quem": {"id": "jade_ryker", "nome": "Jade Ryker", "papel": "agente de pilotos"},
-			"fala": "Liga nova, pilotos novos. Eu trago contratos, e dois pilotos do mesmo nível viram um piloto melhor. Fica no menu PILOTOS.", "libera": ["aba:pilotos"]},
-		{"id": "transmissao", "guia": {"alvo": "", "texto": "Agora a corrida passa na TV."}, "quando": {"liga_total": 1, "corridas": 12}, "quem": {"id": "roxy_vega", "nome": "Roxy Vega", "papel": "diretora da emissora"}, "custo": 1500, "icone": "icone_ao_vivo", "oferta": "TRANSMISSÃO NA TV",
-			"fala": "A emissora quer mostrar a sua equipe. Pague a instalação das câmeras e assista às corridas como na TV, com os carros de verdade.", "libera": ["camera_tv"]},
-		{"id": "vacuo", "guia": {"alvo": "melhoria:vacuo", "texto": "Vácuo: mais velocidade colado no carro da frente."}, "quando": {"liga_total": 2}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"},
-			"fala": "Colado no carro da frente, a reta rende mais: é o vácuo. Agora dá para acertar o carro para isso.", "libera": ["melhoria:vacuo"]},
-		{"id": "arquibancada", "guia": {"alvo": "melhoria:arquibancada", "texto": "Arquibancada: mais renda por segundo."}, "quando": {"liga_total": 2}, "quem": {"id": "bianca_sterling", "nome": "Bianca Sterling", "papel": "patrocinadora"},
-			"fala": "A torcida cresceu. Construa arquibancadas e cada ingresso vira renda, até com o app fechado.", "libera": ["melhoria:arquibancada"]},
-		{"id": "metas", "guia": {"alvo": "aba:metas", "texto": "Toque em MISSÕES: três por dia, cada uma com bônus."}, "quando": {"liga_total": 2, "corridas": 30}, "quem": {"id": "rico_salas", "nome": "Rico Salas", "papel": "gerente da equipe"},
-			"fala": "Todo dia eu deixo três missões no quadro. Cumpriu, eu pago o bônus. Fica no menu MISSÕES.", "libera": ["aba:metas"]},
-		{"id": "pistas", "guia": {"alvo": "aba:pistas", "texto": "Toque em PISTAS para escolher onde correr."}, "quando": {"modalidade": "turismo"}, "quem": {"id": "edgar_halloway", "nome": "Edgar Halloway", "papel": "organizador de campeonatos"},
-			"fala": "O Turismo abriu inscrições para a sua equipe. No menu PISTAS você escolhe onde correr e vê o caminho de cada categoria.", "libera": ["aba:pistas"]},
-		{"id": "analista", "guia": {"alvo": "previsao", "texto": "O cartão agora mostra onde o carro chega com três níveis a mais."}, "quando": {"liga_total": 4}, "quem": {"id": "nora_lindqvist", "nome": "Nora Lindqvist", "papel": "analista de corrida"}, "custo": 6000, "icone": "icone_prever", "oferta": "ANALISTA",
-			"fala": "Eu simulo mais longe que a sua equipe. O cartão passa a mostrar onde o carro chega com três níveis a mais.", "libera": ["previsao"]},
-		{"id": "cameras", "guia": {"alvo": "cameras", "texto": "Toque nas câmeras para escolher a vista."}, "quando": {"liga_total": 5}, "quem": {"id": "kenji_arata", "nome": "Kenji Arata", "papel": "cinegrafista"}, "custo": 15000, "icone": "icone_camera", "oferta": "MAIS CÂMERAS",
-			"fala": "Com mais câmeras você escolhe o que ver: a direção da TV, atrás do seu carro ou a pista inteira.", "libera": ["cameras"]},
-		{"id": "arena", "quando": {"modalidade": "arena"}, "quem": {"id": "dex_kane", "nome": "Dex Kane", "papel": "mecânico da Arena"},
-			"fala": "Na Arena não tem chegada: ganha quem ficar de pé. Aqui o vácuo vira blindagem, e blindagem salva carro.", "libera": []}
+		{"id": "rival", "quando": {}, "quem": {"id": "edgar_halloway", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "botao": "SIM, SENHOR", "fala": "Meu sobrinho vai ser campeão.", "libera": [], "capitulo": "1 · O Favor"},
+		{"id": "inicio", "quando": {"corridas": 1}, "quem": {"id": "edgar_halloway", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "botao": "SIM, SENHOR", "fala": "Que vergonha. Você vai fazer esse idiota vencer. E não me faça repetir.", "libera": []},
+		{"id": "ultrapassagem", "guia": {"alvo": "melhoria:ultrapassagem", "texto": "Toque em +1 na Ultrapassagem. A próxima corrida larga em seguida."}, "quando": {"corridas": 1}, "quem": {"id": "theo_lane", "nome": "Theo Lane", "papel": "piloto aposentado"}, "fala": "O garoto fica atrás de carro mais lento e reza. Eu ensino ele a arriscar a passagem nas retas.", "libera": ["melhoria:ultrapassagem"]},
+		{"id": "pneus", "guia": {"alvo": "melhoria:pneus", "texto": "Pneus novos: toque em +1 para melhorar."}, "quando": {"corridas": 2}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"}, "fala": "Esses pneus são da época da Lei Seca. Achei um fornecedor que não faz perguntas.", "libera": ["melhoria:pneus"]},
+		{"id": "patrocinio", "guia": {"alvo": "melhoria:patrocinio", "texto": "O patrocínio rende por segundo, até com o app fechado. Toque em +1."}, "quando": {"corridas": 4}, "quem": {"id": "bianca_sterling", "nome": "Bianca Sterling", "papel": "viúva rica"}, "fala": "O falecido deixou dinheiro demais. Pago por segundo para pôr o nome dele no seu carro.", "libera": ["melhoria:patrocinio", "renda"]},
+		{"id": "largada", "guia": {"alvo": "", "texto": "Pronto: agora as corridas largam sozinhas."}, "quando": {"corridas": 6}, "quem": {"id": "harold_brandt", "nome": "Harold Brandt", "papel": "comissário de prova"}, "custo": 150, "icone": "icone_cronometro", "oferta": "LARGADA AUTOMÁTICA", "fala": "Cansei de esperar o sobrinho do Bellucci na largada. Pague a inscrição da temporada e o carro entra em todas as corridas.", "libera": ["largada_auto"]},
+		{"id": "familia", "quando": {"liga_total": 1}, "quem": {"id": "sal_moretti", "nome": "Sal Moretti", "papel": "chefe da família Moretti"}, "capitulo": "2 · A Família", "botao": "VEREMOS", "fala": "O Bellucci mandou um menino de terno correr? A família Moretti manda lembranças.", "libera": []},
+		{"id": "pilotos", "guia": {"alvo": "aba:pilotos", "texto": "Toque em PILOTOS para contratar e evoluir pilotos."}, "quando": {"liga_total": 1}, "quem": {"id": "jade_ryker", "nome": "Jade Ryker", "papel": "agenciadora de pilotos"}, "fala": "Se o sobrinho cansar, eu arranjo reservas. Dois pilotos do mesmo nível viram um melhor. Fica no menu PILOTOS.", "libera": ["aba:pilotos"]},
+		{"id": "transmissao", "guia": {"alvo": "", "texto": "Agora a corrida passa na TV."}, "quando": {"liga_total": 1, "corridas": 12}, "quem": {"id": "roxy_vega", "nome": "Roxy Vega", "papel": "diretora da emissora"}, "custo": 1500, "icone": "icone_ao_vivo", "oferta": "TRANSMISSÃO NA TV", "fala": "A televisão chegou e a cidade quer ver o sobrinho apanhar. Pague as câmeras e assista às corridas na TV.", "libera": ["camera_tv"]},
+		{"id": "vacuo", "guia": {"alvo": "melhoria:vacuo", "texto": "Vácuo: mais velocidade colado no carro da frente."}, "quando": {"liga_total": 2}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"}, "fala": "Colado no carro da frente, a reta rende mais: é o vácuo. O chefe disse que quer resultados, então acertei o carro para isso.", "libera": ["melhoria:vacuo"], "capitulo": "3 · Os Negócios"},
+		{"id": "arquibancada", "guia": {"alvo": "melhoria:arquibancada", "texto": "Arquibancada: mais renda por segundo."}, "quando": {"liga_total": 2}, "quem": {"id": "edgar_halloway", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "fala": "Gente paga para ver o meu sobrinho. Construa arquibancadas: cada ingresso é dinheiro limpo. Quase limpo.", "libera": ["melhoria:arquibancada"]},
+		{"id": "metas", "guia": {"alvo": "aba:metas", "texto": "Toque em MISSÕES: três por dia, cada uma com bônus."}, "quando": {"liga_total": 2, "corridas": 30}, "quem": {"id": "rico_salas", "nome": "Rico Salas", "papel": "gerente da equipe"}, "fala": "O chefe deixa três serviços por dia no quadro. Cumpriu, ele paga. Fica no menu MISSÕES.", "libera": ["aba:metas"]},
+		{"id": "pistas", "guia": {"alvo": "aba:pistas", "texto": "Toque em PISTAS para escolher onde correr."}, "quando": {"modalidade": "turismo"}, "quem": {"id": "edgar_halloway", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "fala": "O Circuito Clandestino abriu vaga para a família Bellucci. No menu PISTAS você escolhe onde o garoto corre.", "libera": ["aba:pistas"]},
+		{"id": "analista", "guia": {"alvo": "previsao", "texto": "O cartão agora mostra onde o carro chega com três níveis a mais."}, "quando": {"liga_total": 4}, "quem": {"id": "nora_lindqvist", "nome": "Nora Lindqvist", "papel": "contadora da família"}, "custo": 6000, "icone": "icone_prever", "oferta": "ANALISTA", "fala": "O Sindicato compra resultados. Eu faço as contas antes: o cartão mostra onde o carro chega com três níveis a mais.", "libera": ["previsao"], "capitulo": "4 · O Sindicato"},
+		{"id": "cameras", "guia": {"alvo": "cameras", "texto": "Toque nas câmeras para escolher a vista."}, "quando": {"liga_total": 5}, "quem": {"id": "kenji_arata", "nome": "Kenji Arata", "papel": "cinegrafista"}, "custo": 15000, "icone": "icone_camera", "oferta": "MAIS CÂMERAS", "fala": "As grandes famílias vão disputar o título nacional. Com mais câmeras você escolhe o que ver.", "libera": ["cameras"], "capitulo": "5 · O Campeonato"},
+		{"id": "arena", "quando": {"modalidade": "arena"}, "quem": {"id": "sal_moretti", "nome": "Sal Moretti", "papel": "chefe da família Moretti"}, "fala": "Pista é coisa de criança. Na arena das famílias ganha quem fica de pé. Traga o seu carro, Bellucci.", "libera": [], "capitulo": "6 · Ferro e Sangue"},
+		{"id": "herdeiro", "quando": {"liga_total": 16}, "quem": {"id": "walt_pruitt", "nome": "Frankie Bellucci", "papel": "o sobrinho"}, "capitulo": "7 · O Herdeiro", "botao": "CLARO, FRANKIE", "fala": "Viu, tio? Eu disse que era talento. Ninguém me ajudou, nem aquele mecânico, nem ninguém.", "libera": []}
 	],
 	"meta_dia": {"_nota": "Metas do dia (como a Meta do dia do Chrome & Wreckage): por_dia tarefas sorteadas pela data; cada uma paga recompensa_min minutos da renda de todas as modalidades. Números estimados.", "por_dia": 3, "recompensa_min": 10, "tarefas": [
 		{"id": "correr", "tipo": "corridas", "quantidade": 25, "texto": "Corra %d corridas", "icone": "icone_correr"},
@@ -61,62 +48,62 @@
 	"pilotos": {"_nota": "Pilotos do Chrome & Wreckage (data/equipes.json). Contrato traz um piloto no nível 1; dois do mesmo nível fundem num nível acima (decisão do usuário: contratos + fusão, como o Race Star). Cada modalidade escala um piloto. Números estimados.", "base": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.5}, "perfis": {"agressivo": {"agressividade": 0.1, "consistencia": -0.05}, "equilibrado": {}, "cauteloso": {"agressividade": -0.1, "consistencia": 0.05}}, "ritmo_por_nivel": 0.01, "nivel_max": 8, "contrato_gratis_h": 4, "contratos_video_dia": 5},
 	"melhorias": [
 		{"id": "motor", "estacao": "Oficina de motores", "chefe": "harold_brandt", "icone": "icone_potencia", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
-		{"id": "pneus", "estacao": "Banco de pneus", "chefe": "theo_lane", "icone": "icone_pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
-		{"id": "ultrapassagem", "estacao": "Simulador do piloto", "chefe": "jade_ryker", "icone": "icone_agressividade", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12},
+		{"id": "pneus", "estacao": "Banco de pneus", "chefe": "theo_lane", "icone": "icone_pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40, "quando": {"corridas": 2}},
+		{"id": "ultrapassagem", "estacao": "Simulador do piloto", "chefe": "jade_ryker", "icone": "icone_agressividade", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12, "quando": {"corridas": 1}, "guia": {"alvo": "melhoria:ultrapassagem", "texto": "Toque em +1 na Ultrapassagem. A próxima corrida larga em seguida."}},
 		{"id": "vacuo", "estacao": "Túnel de vento", "chefe": "nora_lindqvist", "icone": "icone_trafego", "nome": "Vácuo", "nome_arena": "Blindagem", "icone_arena": "icone_peso", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
 		{"id": "patrocinio", "estacao": "Sala dos patrocinadores", "chefe": "bianca_sterling", "icone": "icone_creditos", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
 		{"id": "arquibancada", "estacao": "Arquibancada", "chefe": "rico_salas", "icone": "icone_podio", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
 	],
 	"modalidades": [
-		{"id": "compactos", "nome": "Compactos", "icone": "icone_correr", "categorias": ["compacto"], "forca_rivais": {"docas_curta": 0.95, "serra_curta": 0.96, "anel_curto": 1.03}, "ligas": [
-			{"nome": "Compactos Estreantes", "pista": "docas_curta", "voltas": 1, "potencia": 60, "multiplicador": 1, "forca_rivais": 0.55},
-			{"nome": "Compactos Regional", "pista": "serra_curta", "voltas": 1, "potencia": 75, "multiplicador": 1.8},
-			{"nome": "Compactos Estadual", "pista": "anel_curto", "voltas": 1, "potencia": 90, "multiplicador": 3.1},
-			{"nome": "Compactos Nacional", "pista": "docas_curta", "voltas": 1, "potencia": 110, "multiplicador": 5.4},
-			{"nome": "Compactos Continental", "pista": "serra_curta", "voltas": 1, "potencia": 130, "multiplicador": 9.4},
-			{"nome": "Compactos Mestres", "pista": "anel_curto", "voltas": 1, "potencia": 160, "multiplicador": 16.4},
-			{"nome": "Compactos Elite", "pista": "docas_curta", "voltas": 1, "potencia": 190, "multiplicador": 28.7},
-			{"nome": "Compactos Lendas", "pista": "serra_curta", "voltas": 1, "potencia": 230, "multiplicador": 50.3}
+		{"id": "compactos", "nome": "Corridas de Bairro", "curto": "Bairro", "icone": "icone_correr", "categorias": ["compacto"], "forca_rivais": {"docas_curta": 0.95, "serra_curta": 0.96, "anel_curto": 1.03}, "ligas": [
+			{"nome": "Bairro · Novatos", "pista": "docas_curta", "voltas": 1, "potencia": 60, "multiplicador": 1, "forca_rivais": 0.55},
+			{"nome": "Bairro · Regional", "pista": "serra_curta", "voltas": 1, "potencia": 75, "multiplicador": 1.8},
+			{"nome": "Bairro · Estadual", "pista": "anel_curto", "voltas": 1, "potencia": 90, "multiplicador": 3.1},
+			{"nome": "Bairro · Nacional", "pista": "docas_curta", "voltas": 1, "potencia": 110, "multiplicador": 5.4},
+			{"nome": "Bairro · Interestadual", "pista": "serra_curta", "voltas": 1, "potencia": 130, "multiplicador": 9.4},
+			{"nome": "Bairro · Copa das Famílias", "pista": "anel_curto", "voltas": 1, "potencia": 160, "multiplicador": 16.4},
+			{"nome": "Bairro · Grande Campeonato", "pista": "docas_curta", "voltas": 1, "potencia": 190, "multiplicador": 28.7},
+			{"nome": "Bairro · Lendas", "pista": "serra_curta", "voltas": 1, "potencia": 230, "multiplicador": 50.3}
 		]},
-		{"id": "turismo", "nome": "Turismo", "icone": "icone_pista", "categorias": ["seda"], "libera": {"modalidade": "compactos", "liga": 3}, "forca_rivais": {"parque_das_docas": 1.15, "circuito_misto": 1.05, "mirante_da_costa": 1.04}, "ligas": [
-			{"nome": "Turismo Estreantes", "pista": "parque_das_docas", "voltas": 1, "potencia": 100, "multiplicador": 4},
-			{"nome": "Turismo Regional", "pista": "circuito_misto", "voltas": 1, "potencia": 130, "multiplicador": 7},
-			{"nome": "Turismo Estadual", "pista": "mirante_da_costa", "voltas": 1, "potencia": 170, "multiplicador": 12.2},
-			{"nome": "Turismo Nacional", "pista": "parque_das_docas", "voltas": 1, "potencia": 210, "multiplicador": 21.4},
-			{"nome": "Turismo Continental", "pista": "circuito_misto", "voltas": 1, "potencia": 260, "multiplicador": 37.5},
-			{"nome": "Turismo Mestres", "pista": "mirante_da_costa", "voltas": 1, "potencia": 320, "multiplicador": 65.7},
-			{"nome": "Turismo Elite", "pista": "parque_das_docas", "voltas": 1, "potencia": 400, "multiplicador": 114.9},
-			{"nome": "Turismo Lendas", "pista": "circuito_misto", "voltas": 1, "potencia": 500, "multiplicador": 201.1}
+		{"id": "turismo", "nome": "Circuito Clandestino", "curto": "Circuito", "icone": "icone_pista", "categorias": ["seda"], "libera": {"modalidade": "compactos", "liga": 3}, "forca_rivais": {"parque_das_docas": 1.15, "circuito_misto": 1.05, "mirante_da_costa": 1.04}, "ligas": [
+			{"nome": "Clandestino · Novatos", "pista": "parque_das_docas", "voltas": 1, "potencia": 100, "multiplicador": 4},
+			{"nome": "Clandestino · Regional", "pista": "circuito_misto", "voltas": 1, "potencia": 130, "multiplicador": 7},
+			{"nome": "Clandestino · Estadual", "pista": "mirante_da_costa", "voltas": 1, "potencia": 170, "multiplicador": 12.2},
+			{"nome": "Clandestino · Nacional", "pista": "parque_das_docas", "voltas": 1, "potencia": 210, "multiplicador": 21.4},
+			{"nome": "Clandestino · Interestadual", "pista": "circuito_misto", "voltas": 1, "potencia": 260, "multiplicador": 37.5},
+			{"nome": "Clandestino · Copa das Famílias", "pista": "mirante_da_costa", "voltas": 1, "potencia": 320, "multiplicador": 65.7},
+			{"nome": "Clandestino · Grande Campeonato", "pista": "parque_das_docas", "voltas": 1, "potencia": 400, "multiplicador": 114.9},
+			{"nome": "Clandestino · Lendas", "pista": "circuito_misto", "voltas": 1, "potencia": 500, "multiplicador": 201.1}
 		]},
-		{"id": "gt", "nome": "GT", "icone": "icone_potencia", "categorias": ["cupe"], "libera": {"modalidade": "turismo", "liga": 3}, "forca_rivais": {"avenida_noturna": 1.17, "anel_do_vale": 1.15, "oval_inclinado": 0.7}, "ligas": [
-			{"nome": "GT Estreantes", "pista": "avenida_noturna", "voltas": 1, "potencia": 220, "multiplicador": 16},
-			{"nome": "GT Regional", "pista": "anel_do_vale", "voltas": 1, "potencia": 290, "multiplicador": 28},
-			{"nome": "GT Estadual", "pista": "oval_inclinado", "voltas": 1, "potencia": 380, "multiplicador": 49},
-			{"nome": "GT Nacional", "pista": "avenida_noturna", "voltas": 1, "potencia": 490, "multiplicador": 85.8},
-			{"nome": "GT Continental", "pista": "anel_do_vale", "voltas": 1, "potencia": 630, "multiplicador": 150.1},
-			{"nome": "GT Mestres", "pista": "oval_inclinado", "voltas": 1, "potencia": 820, "multiplicador": 262.6},
-			{"nome": "GT Elite", "pista": "avenida_noturna", "voltas": 1, "potencia": 1060, "multiplicador": 459.6},
-			{"nome": "GT Lendas", "pista": "anel_do_vale", "voltas": 1, "potencia": 1400, "multiplicador": 804.2}
+		{"id": "gt", "nome": "Liga dos Hot Rods", "curto": "Hot Rods", "icone": "icone_potencia", "categorias": ["cupe"], "libera": {"modalidade": "turismo", "liga": 3}, "forca_rivais": {"avenida_noturna": 1.17, "anel_do_vale": 1.15, "oval_inclinado": 0.7}, "ligas": [
+			{"nome": "Hot Rods · Novatos", "pista": "avenida_noturna", "voltas": 1, "potencia": 220, "multiplicador": 16},
+			{"nome": "Hot Rods · Regional", "pista": "anel_do_vale", "voltas": 1, "potencia": 290, "multiplicador": 28},
+			{"nome": "Hot Rods · Estadual", "pista": "oval_inclinado", "voltas": 1, "potencia": 380, "multiplicador": 49},
+			{"nome": "Hot Rods · Nacional", "pista": "avenida_noturna", "voltas": 1, "potencia": 490, "multiplicador": 85.8},
+			{"nome": "Hot Rods · Interestadual", "pista": "anel_do_vale", "voltas": 1, "potencia": 630, "multiplicador": 150.1},
+			{"nome": "Hot Rods · Copa das Famílias", "pista": "oval_inclinado", "voltas": 1, "potencia": 820, "multiplicador": 262.6},
+			{"nome": "Hot Rods · Grande Campeonato", "pista": "avenida_noturna", "voltas": 1, "potencia": 1060, "multiplicador": 459.6},
+			{"nome": "Hot Rods · Lendas", "pista": "anel_do_vale", "voltas": 1, "potencia": 1400, "multiplicador": 804.2}
 		]},
-		{"id": "terra", "nome": "Terra", "icone": "icone_tracao_4x4", "categorias": ["picape", "utilitario"], "libera": {"modalidade": "gt", "liga": 3}, "forca_rivais": {"trilha_do_canion": 1.08, "estrada_das_araucarias": 1.05, "serra_alta": 1.03}, "ligas": [
-			{"nome": "Terra Estreantes", "pista": "trilha_do_canion", "voltas": 1, "potencia": 110, "multiplicador": 64},
-			{"nome": "Terra Regional", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 140, "multiplicador": 112},
-			{"nome": "Terra Estadual", "pista": "serra_alta", "voltas": 1, "potencia": 180, "multiplicador": 196},
-			{"nome": "Terra Nacional", "pista": "trilha_do_canion", "voltas": 1, "potencia": 230, "multiplicador": 343},
-			{"nome": "Terra Continental", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 300, "multiplicador": 600.2},
-			{"nome": "Terra Mestres", "pista": "serra_alta", "voltas": 1, "potencia": 390, "multiplicador": 1050.4, "forca_rivais": 0.93},
-			{"nome": "Terra Elite", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 1838.3, "forca_rivais": 0.96},
-			{"nome": "Terra Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 3217, "forca_rivais": 0.85}
+		{"id": "terra", "nome": "Stock Cars", "curto": "Stock Cars", "icone": "icone_tracao_4x4", "categorias": ["picape", "utilitario"], "libera": {"modalidade": "gt", "liga": 3}, "forca_rivais": {"trilha_do_canion": 1.08, "estrada_das_araucarias": 1.05, "serra_alta": 1.03}, "ligas": [
+			{"nome": "Stock Cars · Novatos", "pista": "trilha_do_canion", "voltas": 1, "potencia": 110, "multiplicador": 64},
+			{"nome": "Stock Cars · Regional", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 140, "multiplicador": 112},
+			{"nome": "Stock Cars · Estadual", "pista": "serra_alta", "voltas": 1, "potencia": 180, "multiplicador": 196},
+			{"nome": "Stock Cars · Nacional", "pista": "trilha_do_canion", "voltas": 1, "potencia": 230, "multiplicador": 343},
+			{"nome": "Stock Cars · Interestadual", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 300, "multiplicador": 600.2},
+			{"nome": "Stock Cars · Copa das Famílias", "pista": "serra_alta", "voltas": 1, "potencia": 390, "multiplicador": 1050.4, "forca_rivais": 0.93},
+			{"nome": "Stock Cars · Grande Campeonato", "pista": "trilha_do_canion", "voltas": 1, "potencia": 520, "multiplicador": 1838.3, "forca_rivais": 0.96},
+			{"nome": "Stock Cars · Lendas", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 700, "multiplicador": 3217, "forca_rivais": 0.85}
 		]},
-		{"id": "arena", "nome": "Arena", "icone": "emblema_arena", "tipo": "arena", "blindagem_por_vacuo": 10.0, "categorias": ["pesado", "picape", "utilitario"], "libera": {"modalidade": "terra", "liga": 3}, "forca_rivais": {"patio_pedreira": 1.15, "fosso_docas": 1.15, "anel_ferro_velho": 1.15, "cratera_vale": 1.15}, "ligas": [
-			{"nome": "Arena Estreantes", "pista": "patio_pedreira", "voltas": 1, "potencia": 150, "multiplicador": 256},
-			{"nome": "Arena Regional", "pista": "fosso_docas", "voltas": 1, "potencia": 190, "multiplicador": 448},
-			{"nome": "Arena Estadual", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 240, "multiplicador": 784},
-			{"nome": "Arena Nacional", "pista": "cratera_vale", "voltas": 1, "potencia": 300, "multiplicador": 1372},
-			{"nome": "Arena Continental", "pista": "patio_pedreira", "voltas": 1, "potencia": 380, "multiplicador": 2401},
-			{"nome": "Arena Mestres", "pista": "fosso_docas", "voltas": 1, "potencia": 480, "multiplicador": 4201.8},
-			{"nome": "Arena Elite", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 620, "multiplicador": 7353.1},
-			{"nome": "Arena Lendas", "pista": "cratera_vale", "voltas": 1, "potencia": 800, "multiplicador": 12867.9}
+		{"id": "arena", "nome": "Guerra das Famílias", "curto": "Guerra", "icone": "emblema_arena", "tipo": "arena", "blindagem_por_vacuo": 10.0, "categorias": ["pesado", "picape", "utilitario"], "libera": {"modalidade": "terra", "liga": 3}, "forca_rivais": {"patio_pedreira": 1.15, "fosso_docas": 1.15, "anel_ferro_velho": 1.15, "cratera_vale": 1.15}, "ligas": [
+			{"nome": "Guerra · Novatos", "pista": "patio_pedreira", "voltas": 1, "potencia": 150, "multiplicador": 256},
+			{"nome": "Guerra · Regional", "pista": "fosso_docas", "voltas": 1, "potencia": 190, "multiplicador": 448},
+			{"nome": "Guerra · Estadual", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 240, "multiplicador": 784},
+			{"nome": "Guerra · Nacional", "pista": "cratera_vale", "voltas": 1, "potencia": 300, "multiplicador": 1372},
+			{"nome": "Guerra · Interestadual", "pista": "patio_pedreira", "voltas": 1, "potencia": 380, "multiplicador": 2401},
+			{"nome": "Guerra · Copa das Famílias", "pista": "fosso_docas", "voltas": 1, "potencia": 480, "multiplicador": 4201.8},
+			{"nome": "Guerra · Grande Campeonato", "pista": "anel_ferro_velho", "voltas": 1, "potencia": 620, "multiplicador": 7353.1},
+			{"nome": "Guerra · Lendas", "pista": "cratera_vale", "voltas": 1, "potencia": 800, "multiplicador": 12867.9}
 		]}
 	]
 }

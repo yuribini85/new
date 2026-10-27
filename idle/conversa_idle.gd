@@ -16,10 +16,10 @@ const ENTRADA_S := 0.35
 ## LETRAS_POR_BLIP letras digitadas, no tom de quem fala (grave a agudo).
 const LETRAS_POR_BLIP := 3
 const VOZES := {"mara_hayes": 0.8, "bianca_sterling": 1.15, "harold_brandt": 0.7, "theo_lane": 0.9,
-		"jade_ryker": 1.2, "roxy_vega": 1.3, "rico_salas": 0.85, "edgar_halloway": 0.75,
-		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72, "sal_moretti": 0.62}
+		"jade_ryker": 1.2, "roxy_vega": 1.3, "rico_salas": 0.85, "edgar_halloway": 0.6,
+		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72, "sal_moretti": 0.62, "walt_pruitt": 1.1}
 var _letras_faladas := 0
-const VERMELHO := Color("e5484d")  # a cor da emissora (docs/idle/direcao.md)
+const VERMELHO := Color("8e2a26")  # vinho da época (docs/idle/conversao_mafia.md)
 
 var _d: Dictionary
 var _estado: IdleEstado
@@ -67,6 +67,13 @@ func _init(d: Dictionary, estado: IdleEstado) -> void:
 	terco.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	terco.add_theme_constant_override("separation", 0)
 	add_child(terco)
+	# Capítulo novo da história: uma tarja creme acima do nome.
+	if d.has("capitulo"):
+		var cap := PanelContainer.new()
+		cap.add_theme_stylebox_override("panel", IdleUI.caixa(Color("eadfc4"), 0, 8))
+		cap.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		terco.add_child(cap)
+		IdleUI.rotulo("CAPÍTULO " + String(d["capitulo"]).to_upper(), 20, Color("15120e"), cap, "display")
 	var cab := HBoxContainer.new()
 	cab.add_theme_constant_override("separation", 0)
 	terco.add_child(cab)

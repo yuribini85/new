@@ -119,7 +119,8 @@ var _tv := true  # a transmissão (corrida 3D) já foi comprada
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
 var _titulo: TituloIdle  # tela de título, ao abrir o app
-var _abertura: AberturaIdle  # a cena do Sal, no jogo novo
+var _abertura: AberturaIdle  # a cena do chefe e do sobrinho, no jogo novo
+var _largar_na_compra := false  # depois da bronca do chefe, o 1º +1 larga a corrida
 var _ao_vivo: Control  # selo AO VIVO no canto da corrida (com a TV)
 var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
@@ -185,15 +186,14 @@ func _depois_do_titulo() -> void:
 		_abertura.fechou.connect(_fim_da_abertura)
 
 
+## Fim da abertura: corte seco para a primeira corrida, que larga sozinha
+## (briefing: a corrida começa em até 15 s, sem o jogador conduzir).
 func _fim_da_abertura() -> void:
 	_abertura = null
-	for id in ["rival", "inicio"]:
-		if not id in estado.oferecidos and not estado.desbloqueio(id).is_empty():
-			estado.oferecer(id)
+	if not "rival" in estado.oferecidos:
+		estado.oferecer("rival")
 	_aplicar_desbloqueios()
-	var g: Dictionary = estado.desbloqueio("inicio").get("guia", {})
-	if not g.is_empty():
-		_guiar.call_deferred(String(g.get("alvo", "")), String(g.get("texto", "")))
+	_largar_corrida()
 	estado.salvar(Time.get_unix_time_from_system())
 
 
@@ -420,7 +420,7 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_largar)
 	# Selo AO VIVO da emissora (com a transmissão comprada).
 	_ao_vivo = PanelContainer.new()
-	_ao_vivo.add_theme_stylebox_override("panel", IdleUI.caixa(Color("e5484d"), 2, 8))
+	_ao_vivo.add_theme_stylebox_override("panel", IdleUI.caixa(Color("8e2a26"), 2, 8))
 	_ao_vivo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	_ao_vivo.offset_right = -10
 	_ao_vivo.offset_top = 10
@@ -942,6 +942,10 @@ func _dobrar_premio() -> void:
 func _comprar(id: String, quantos := 1) -> void:
 	var n := estado.niveis_pagaveis(id) if quantos < 0 else quantos
 	if estado.comprar_varios(id, n) > 0:
+		if _largar_na_compra and _aguardando:
+			# Cena 4 do briefing: o primeiro +1 e a próxima corrida começa.
+			_largar_na_compra = false
+			_largar_corrida.call_deferred()
 		# Combo: cada compra até COMBO_S depois da anterior sobe um semitom.
 		var agora := Time.get_ticks_msec()
 		_combo = mini(_combo + 1, COMBO_MAX) if agora - _ultima_compra_ms <= COMBO_S * 1000.0 else 0
@@ -1416,7 +1420,8 @@ func _checar_conversa() -> void:
 	if not (_aguardando or _pausa >= 0.0):
 		return
 	# Uma conversa por corrida: duas funções novas de uma vez se atropelam.
-	if estado.corridas == _conversa_em and estado.corridas > 0:
+	# (Na volta da 1ª corrida vêm duas seguidas: a bronca do chefe e o Theo.)
+	if estado.corridas == _conversa_em and estado.corridas > 1:
 		return
 	var d := estado.proxima_conversa()
 	if d.is_empty():
@@ -1433,6 +1438,8 @@ func _abrir_conversa(d: Dictionary) -> void:
 	_conversa.fechou.connect(func(aceitou: bool):
 		_conversa = null
 		var id := String(d["id"])
+		if id in ["inicio", "ultrapassagem"]:
+			_largar_na_compra = true
 		var custo := float(d.get("custo", 0.0))
 		if custo > 0.0 and aceitou and estado.comprar_desbloqueio(id):
 			Sons.tocar_ui(self, "moeda", -4.0)

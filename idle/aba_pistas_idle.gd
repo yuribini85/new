@@ -65,7 +65,7 @@ func _modalidades(e: IdleEstado) -> void:
 		b.add_child(v)
 		IdleUI.icone(String(m.get("icone", "icone_pista")) if aberta else "icone_cadeado", 44, v,
 				IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO)
-		var n := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, IdleUI.COR_OURO if na_corrida else
+		var n := IdleUI.rotulo(String(m.get("curto", m["nome"])).to_upper(), 17, IdleUI.COR_OURO if na_corrida else
 				(IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO), v)
 		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		n.clip_text = true

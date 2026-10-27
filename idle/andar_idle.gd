@@ -11,11 +11,11 @@ signal comprar(quantos: int)  # 1, 10 ou -1 (MÁX.)
 ## Apresentação, não balanceamento.
 const ALTURA := 300.0
 const FASES := [10, 25, 50]
-const PAREDE := Color("141a23")
-const PAREDE_ESCURA := Color("10151c")
-const PISO := Color("0b0e13")
+const PAREDE := Color("221813")
+const PAREDE_ESCURA := Color("1a120e")
+const PISO := Color("0f0c0a")
 const LUZ := Color(1.0, 0.77, 0.24)
-const VERMELHO := Color("e5484d")
+const VERMELHO := Color("8e2a26")
 
 var id: String
 var tipo: String  # o efeito da melhoria: desenha os objetos da estação
@@ -113,7 +113,7 @@ func _draw() -> void:
 				Vector2(cx + abertura * 0.55, piso_y), Vector2(cx - abertura * 0.55, piso_y)]), Color(LUZ, 0.08))
 		draw_rect(Rect2(cx - 16, 0, 32, 6), Color(LUZ, 0.9))
 	draw_rect(Rect2(0, piso_y, w, h - piso_y), PISO)
-	draw_line(Vector2(0, piso_y), Vector2(w, piso_y), Color("2b3340"), 2.0)
+	draw_line(Vector2(0, piso_y), Vector2(w, piso_y), Color("3a3024"), 2.0)
 	_objetos(w, piso_y)
 	# Mecânicos a mais (um por fase), em silhueta ao fundo.
 	for k in fase:
@@ -125,7 +125,7 @@ func _draw() -> void:
 				Vector2(bx, 62), Vector2(bx - 18, 74)]), VERMELHO)
 	if fase >= 3:
 		draw_rect(Rect2(w * 0.36, 4, 64, 10), Color("ffc53d"))
-	draw_line(Vector2(0, 0), Vector2(w, 0), Color("232b37"), 2.0)
+	draw_line(Vector2(0, 0), Vector2(w, 0), Color("3a3024"), 2.0)
 
 
 ## Os objetos da estação, em polígonos chapados com aresta de luz.
