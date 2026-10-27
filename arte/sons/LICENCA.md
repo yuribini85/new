@@ -65,3 +65,25 @@ Gerados no projeto (sem fonte externa):
 | Arquivo | Origem |
 |---|---|
 | musica_box.ogg | `tools/gerar_musica_crt.py`: laço provisório de funk lo-fi (90 BPM, 21 s), até a trilha definitiva |
+
+## Música (The Fastfather)
+
+Gravações de 1924 da **Wolverine Orchestra** (com Bix Beiderbecke), Gennett, gravadas em
+6 de maio de 1924. Domínio público nos EUA desde 1º/1/2025 (Music Modernization Act:
+gravações publicadas em 1924 entram 100 anos depois); as composições, de 1924, desde 2020.
+Transferências dos discos de 78 rpm do Great 78 Project (archive.org). Cortadas no
+silêncio, volume normalizado, mono 64 kbps.
+
+| Arquivo | Faixa | Origem |
+|---|---|---|
+| jazz_1.ogg | Riverboat Shuffle (Carmichael) | archive.org/details/78_riverbeat-shuffle_wolverine-orchestra-carmichael_gbia0009181a |
+| jazz_2.ogg | Copenhagen (Davis) | archive.org/details/78_copenhagen_wolverine-orchestra-davis_gbia0009180b |
+| jazz_3.ogg | Oh! Baby (De Sylva, Donaldson) | archive.org/details/78_oh-baby_wolverine-orchestra-de-sylva-donaldson_gbia0009180a |
+
+`musica_box.ogg` saiu da trilha do idle (fica para o outro jogo).
+
+## Locutor de rádio (a gravar)
+
+Se existirem, a corrida toca estes arquivos com o filtro de rádio: `locutor_largada.ogg`
+(na largada), `locutor_vitoria.ogg` (vitória), `locutor_chegada.ogg` (chegada sem vitória).
+Texto sugerido em `docs/idle/identidade_fastfather.md`.

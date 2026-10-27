@@ -33,6 +33,11 @@ const POSTE_M := 3.0  # entre os mourões
 
 
 ## Monta o cenário em `cena`; ajusta céu e luz. `largura`: da pista (m).
+const TERNOS := [Color("2b2b2e"), Color("3b3026"), Color("2a3346"), Color("4a4036"), Color("1f1f22"), Color("5b4a3a")]
+const PELES := [Color("d9b08c"), Color("c69a74"), Color("a97a55"), Color("8a5d3b")]
+const CHAPEUS := [Color("1c1a18"), Color("5a4a38"), Color("3a3a3a"), Color("c9b27a")]
+
+
 static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environment, luz: DirectionalLight3D) -> void:
 	ambiente.background_color = CEU
 	ambiente.ambient_light_color = AMBIENTE
@@ -58,7 +63,7 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 		_faixa(st, pts, lado * (largura * 0.5 - 1.4), lado * largura * 0.5, 0.005, TERRA_BORDA)
 		_cerca(st, pts, lado * (largura * 0.5 + CERCA_M))
 	_largada(st, pista, largura)
-	_arquibancada(st, pista, amostra, largura)
+	var torre := _arquibancada(st, pista, amostra, largura)
 	_fenos(st, pista, largura)
 	_celeiro(st, rng, caixa, amostra, largura)
 	_arvores(st, rng, pista, amostra, largura)
@@ -70,6 +75,40 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	mat.roughness = 0.95
 	mi.material_override = mat
 	cena.add_child(mi)
+	_fumaca(cena, torre)
+
+
+## Fumaça de charuto saindo da janela da torre dos fiscais (fiapos lentos).
+static func _fumaca(cena: Node3D, onde: Vector3) -> void:
+	var p := CPUParticles3D.new()
+	p.position = onde
+	p.amount = 10
+	p.lifetime = 4.0
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = 0.3
+	p.direction = Vector3(0.3, 1, 0)
+	p.spread = 15.0
+	p.initial_velocity_min = 0.25
+	p.initial_velocity_max = 0.5
+	p.gravity = Vector3(0.15, 0.05, 0)
+	p.scale_amount_min = 0.6
+	p.scale_amount_max = 1.2
+	var curva := Curve.new()
+	curva.add_point(Vector2(0, 0.3))
+	curva.add_point(Vector2(1, 1.6))
+	p.scale_amount_curve = curva
+	var esfera := SphereMesh.new()
+	esfera.radius = 0.35
+	esfera.height = 0.7
+	esfera.radial_segments = 6
+	esfera.rings = 3
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.albedo_color = Color(0.85, 0.83, 0.8, 0.22)
+	esfera.material = m
+	p.mesh = esfera
+	cena.add_child(p)
 
 
 # --- primitivas ---------------------------------------------------------------
@@ -252,7 +291,7 @@ static func _largada(st: SurfaceTool, pista: Pista, largura: float) -> void:
 
 ## Arquibancada de madeira coberta por fora da reta da largada, com
 ## bandeirolas no telhado, e a torre dos fiscais do outro lado.
-static func _arquibancada(st: SurfaceTool, pista: Pista, amostra: PackedVector2Array, largura: float) -> void:
+static func _arquibancada(st: SurfaceTool, pista: Pista, amostra: PackedVector2Array, largura: float) -> Vector3:
 	var rumo := pista.rumo_em(0.0)
 	var f := Vector2.from_angle(rumo)
 	var l := Vector2.from_angle(rumo + PI / 2.0)
@@ -287,6 +326,45 @@ static func _arquibancada(st: SurfaceTool, pista: Pista, amostra: PackedVector2A
 	_caixa(st, CREME, t, rumo, Vector3(3.2, 2.2, 3.2), 4.0)
 	_caixa(st, Color(0.12, 0.11, 0.1), t + l * 1.62, rumo, Vector3(2.4, 0.9, 0.02), 5.0)
 	_telhado(st, VERMELHO, t, rumo, Vector2(3.8, 3.8), 6.2, 1.2, CREME)
+	_torcida(st, base, f, l, comp)
+	_apostador(st, pista.posicao_em(-6.0) + l * (largura * 0.5 + CERCA_M + 1.4), rumo, l)
+	return _v3(t + l * 1.8, 5.6)
+
+
+## O público da arquibancada: ternos escuros, chapéus (fedora e palheta) e um
+## ou outro lugar vazio, sentado em cada degrau.
+static func _torcida(st: SurfaceTool, base: Vector2, f: Vector2, l: Vector2, comp: float) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1932
+	var rumo := f.angle()
+	for k in 5:
+		var y := 0.6 + k * 0.7
+		var n := 26
+		for i in n:
+			if rng.randf() < 0.15:
+				continue  # lugar vazio
+			var x := -comp * 0.5 + 0.8 + (comp - 1.6) * (i + rng.randf_range(-0.3, 0.3)) / (n - 1)
+			var p := base + f * x + l * (k * 1.6 + 0.9)
+			var terno: Color = TERNOS[rng.randi() % TERNOS.size()]
+			_caixa(st, terno, p, rumo, Vector3(0.42, 0.55, 0.32), y)
+			_caixa(st, PELES[rng.randi() % PELES.size()], p, rumo, Vector3(0.2, 0.22, 0.2), y + 0.58)
+			if rng.randf() < 0.8:
+				var chapeu: Color = CHAPEUS[rng.randi() % CHAPEUS.size()]
+				_caixa(st, chapeu, p, rumo, Vector3(0.36, 0.035, 0.36), y + 0.78)
+				_caixa(st, chapeu, p, rumo, Vector3(0.22, 0.12, 0.22), y + 0.8)
+
+
+## O apostador encostado na cerca: de pé, de chapéu, com o quadro-negro das apostas.
+static func _apostador(st: SurfaceTool, p: Vector2, rumo: float, l: Vector2) -> void:
+	_caixa(st, Color("3a3026"), p, rumo, Vector3(0.48, 1.1, 0.34), 0.0)
+	_caixa(st, Color("c69a74"), p, rumo, Vector3(0.22, 0.24, 0.22), 1.12)
+	_caixa(st, Color("1c1a18"), p, rumo, Vector3(0.4, 0.04, 0.4), 1.36)
+	_caixa(st, Color("1c1a18"), p, rumo, Vector3(0.24, 0.14, 0.24), 1.38)
+	var q := p + Vector2.from_angle(rumo) * 1.0 + l * 0.2
+	_caixa(st, MADEIRA, q, rumo, Vector3(0.08, 1.0, 0.08), 0.0)
+	_caixa(st, Color("1e2a22"), q - l * 0.05, rumo, Vector3(1.1, 0.8, 0.05), 0.9)
+	for k in 4:  # as linhas de giz das cotações
+		_caixa(st, Color("e8e4da"), q - l * 0.09, rumo, Vector3(0.8, 0.04, 0.02), 1.05 + k * 0.15)
 
 
 ## Celeiro vermelho com silo, num canto do terreno longe da pista.

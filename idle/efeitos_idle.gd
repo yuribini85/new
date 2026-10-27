@@ -11,9 +11,11 @@ const GRAVIDADE := 700.0
 const SUBIDA := 90.0
 const VIDA_NUMERO_S := 1.1
 const MAX_FAISCAS := 160
+const NOTA := Color("9fae86")  # verde-acinzentado das notas de dólar da época
 
 var _faiscas: Array = []
 var _numeros: Array = []
+var _notas: Array = []  # notas de dólar voando até o dinheiro do alto
 var _rng := RandomNumberGenerator.new()
 
 
@@ -54,8 +56,22 @@ func pipoca(onde: Vector2, texto: String, cor: Color = IdleUI.COR_DINHEIRO, tama
 	queue_redraw()
 
 
+## O prêmio em notas de dólar: `n` notas saem de `de` e voam em curva até
+## `para` (globais), girando e balançando, umas depois das outras.
+func notas(de: Vector2, para: Vector2, n := 8) -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	var o := get_global_rect().position
+	for i in n:
+		var meio := (de + para) * 0.5 + Vector2(_rng.randf_range(-260.0, 260.0), _rng.randf_range(-160.0, 40.0))
+		_notas.append({"a": de - o + Vector2(_rng.randf_range(-40, 40), _rng.randf_range(-20, 20)), "b": meio - o,
+				"c": para - o, "t0": _agora() + i * 0.06, "vida": _rng.randf_range(0.7, 0.95),
+				"giro": _rng.randf_range(-6.0, 6.0), "fase": _rng.randf() * TAU})
+	queue_redraw()
+
+
 func _process(_delta: float) -> void:
-	if not _faiscas.is_empty() or not _numeros.is_empty():
+	if not _faiscas.is_empty() or not _numeros.is_empty() or not _notas.is_empty():
 		queue_redraw()
 
 
@@ -73,7 +89,7 @@ func _draw() -> void:
 		draw_colored_polygon(PackedVector2Array([p + Vector2(0, -r), p + Vector2(r * 0.6, 0), p + Vector2(0, r),
 				p + Vector2(-r * 0.6, 0)]), Color(s["cor"], 1.0 - k))
 	_faiscas = vivas
-	var fonte := Tipografia.fonte_numero()
+	var fonte := Tipografia.fonte("deco")  # dinheiro em letreiro art déco
 	var vivos := []
 	for q in _numeros:
 		var k := (t - float(q["t0"])) / VIDA_NUMERO_S
@@ -91,3 +107,22 @@ func _draw() -> void:
 		draw_string(fonte, p + Vector2(2, 3), q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color(0, 0, 0, 0.6 * a))
 		draw_string(fonte, p, q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color(q["cor"], a))
 	_numeros = vivos
+	var voando := []
+	for q in _notas:
+		var k := (t - float(q["t0"])) / float(q["vida"])
+		if k >= 1.0:
+			continue
+		voando.append(q)
+		if k < 0.0:
+			continue
+		var e := k * k * (3.0 - 2.0 * k)
+		var p: Vector2 = (q["a"] as Vector2).lerp(q["b"], e).lerp((q["b"] as Vector2).lerp(q["c"], e), e)
+		var ang := float(q["giro"]) * k + sin(t * 9.0 + float(q["fase"])) * 0.4
+		var esc := 1.0 - 0.45 * e
+		draw_set_transform(p, ang, Vector2(esc, esc * (0.75 + 0.25 * cos(t * 11.0 + float(q["fase"])))))
+		draw_rect(Rect2(-26, -12, 52, 24), NOTA)
+		draw_rect(Rect2(-26, -12, 52, 24), NOTA.darkened(0.45), false, 2.0)
+		draw_circle(Vector2.ZERO, 7.0, NOTA.lightened(0.25))
+		draw_string(fonte, Vector2(-5, 6), "$", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, NOTA.darkened(0.55))
+		draw_set_transform(Vector2.ZERO)
+	_notas = voando

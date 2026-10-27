@@ -330,6 +330,28 @@ static func barramentos() -> void:
 	AudioServer.add_bus_effect(corrida, filtro)
 	AudioServer.set_bus_effect_enabled(corrida, 0, false)
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Musica"), 0.0)
+	# Rádio AM da garagem: a música só nos médios, com um pouco de saturação.
+	var musica := AudioServer.get_bus_index("Musica")
+	var am := AudioEffectBandPassFilter.new()
+	am.cutoff_hz = 1400.0
+	am.resonance = 0.6
+	AudioServer.add_bus_effect(musica, am)
+	var sat := AudioEffectDistortion.new()
+	sat.mode = AudioEffectDistortion.MODE_OVERDRIVE
+	sat.drive = 0.35
+	sat.post_gain = -4.0
+	AudioServer.add_bus_effect(musica, sat)
+	for k in 2:
+		AudioServer.set_bus_effect_enabled(musica, k, false)
+
+
+## The Fastfather: a música tocando num rádio AM (na garagem do Tony).
+static func radio_musica(ligado: bool) -> void:
+	var i := AudioServer.get_bus_index("Musica")
+	if i < 0 or AudioServer.get_bus_effect_count(i) < 2:
+		return
+	for k in 2:
+		AudioServer.set_bus_effect_enabled(i, k, ligado)
 
 
 ## Rádio de box: a corrida abafada (antes da transmissão na TV).

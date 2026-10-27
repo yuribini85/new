@@ -4,7 +4,7 @@ extends ScrollContainer
 ## e o caminho de cada uma. No alto, uma placa por modalidade (aberta, a da
 ## corrida em ocre, fechada com o cadeado e o que falta para abrir); embaixo, a
 ## escada das ligas da modalidade escolhida, da primeira à última, com a pista,
-## o carro, o prêmio do 1º lugar e onde a equipe está. CORRER AQUI leva a
+## o carro (fora das divisões de época), o prêmio do 1º lugar e onde a equipe está. CORRER AQUI leva a
 ## corrida para a modalidade escolhida.
 
 signal correr_em(modalidade: String)
@@ -22,6 +22,40 @@ func _init(tela_: Node) -> void:
 	_lista.add_theme_constant_override("separation", 12)
 	add_child(_lista)
 	IdleUI.rolagem_fina(self)
+
+
+## Mural de cartazes de corrida colados na parede de tijolo, atrás da lista
+## (data/idle/cenas.json → "cartazes"): papel creme e vinho, letreiro art
+## déco, cada um levemente torto; apagados para a lista ler bem por cima.
+func _draw() -> void:
+	draw_rect(Rect2(Vector2.ZERO, size), Color("1a110d"))
+	for y in range(0, int(size.y), 26):
+		var desloc := 0.0 if (y / 26) % 2 == 0 else 34.0
+		for x in range(-68, int(size.x), 68):
+			draw_rect(Rect2(x + desloc + 2, y + 2, 64, 22), Color("2a1912"))
+	var textos: Array = CenaQuadrinho.carregar("cartazes").get("textos", [])
+	if textos.is_empty():
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1931
+	var deco := Tipografia.fonte("deco")
+	var faixa := Tipografia.fonte("display")
+	var k := 0
+	var y := 30.0
+	while y < size.y:
+		for coluna in 2:
+			var t: Array = textos[k % textos.size()]
+			k += 1
+			var c := Vector2(size.x * (0.27 + 0.46 * coluna) + rng.randf_range(-30, 30), y + rng.randf_range(0, 60))
+			var papel := Color("e3d6b4") if k % 3 != 0 else Color("7e2522")
+			var tinta := Color("6e1a1d") if k % 3 != 0 else Color("e9dfc4")
+			draw_set_transform(c, deg_to_rad(rng.randf_range(-6.0, 6.0)))
+			draw_rect(Rect2(-150, -100, 300, 200), Color(papel, 0.42))
+			draw_rect(Rect2(-140, -90, 280, 180), Color(tinta, 0.35), false, 3.0)
+			draw_string(deco, Vector2(-130, -20), String(t[0]), HORIZONTAL_ALIGNMENT_CENTER, 260, 30, Color(tinta, 0.5))
+			draw_string(faixa, Vector2(-130, 40), String(t[1]), HORIZONTAL_ALIGNMENT_CENTER, 260, 22, Color(tinta, 0.45))
+			draw_set_transform(Vector2.ZERO)
+		y += 260.0
 
 
 func atualizar() -> void:
@@ -145,9 +179,13 @@ func _escada(e: IdleEstado) -> void:
 		h.add_child(v)
 		var nome := IdleUI.rotulo(String(l["nome"]).to_upper(), 22, IdleUI.COR_TEXTO if not fechada else IdleUI.COR_BLOQUEADO, v)
 		nome.clip_text = true
-		var carro: Array = IdleEstado._perto_de(tela.dados, float(l["potencia"]) * float(e.cfg["carro_do_jogador"]),
-				m.get("categorias", []))
-		for detalhe in [_nome_pista(String(l["pista"])), String(carro[0]["nome"]) if not carro.is_empty() else ""]:
+		# Divisão de época: o carro é o da garagem (o mesmo em todas as ligas).
+		var detalhes := [_nome_pista(String(l["pista"]))]
+		if not m.has("epoca"):
+			var carro: Array = IdleEstado._perto_de(tela.dados, float(l["potencia"]) * float(e.cfg["carro_do_jogador"]),
+					m.get("categorias", []))
+			detalhes.append(String(carro[0]["nome"]) if not carro.is_empty() else "")
+		for detalhe in detalhes:
 			var d := IdleUI.rotulo(detalhe, 17, IdleUI.COR_SECUNDARIA, v, "regular")
 			d.clip_text = true
 		var dir := VBoxContainer.new()

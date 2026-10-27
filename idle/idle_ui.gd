@@ -228,6 +228,7 @@ static func _bisel(fundo: Color, _luz: Color, sombra: Color) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = fundo
 	sb.set_corner_radius_all(12)
+	sb.corner_detail = 1  # chanfro de latão (art déco)
 	sb.border_color = sombra
 	sb.border_width_bottom = 5
 	sb.set_content_margin_all(8)

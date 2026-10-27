@@ -58,10 +58,15 @@ func _init(m: Dictionary) -> void:
 	var placa := HBoxContainer.new()
 	placa.add_theme_constant_override("separation", 10)
 	lado.add_child(placa)
-	nome = IdleUI.rotulo(String(m.get("estacao", m["nome"])).to_upper(), 20, IdleUI.COR_CROMO, placa)
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# A placa de latão com o nome da estação (art déco).
+	var latao := PanelContainer.new()
+	latao.add_theme_stylebox_override("panel", IdleUI.caixa(Color("b88f45"), 4, 4, Color("6e4f1e"), 2))
+	latao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	placa.add_child(latao)
+	nome = IdleUI.rotulo(String(m.get("estacao", m["nome"])).to_upper(), 17, IdleUI.COR_TINTA, latao)
 	nome.clip_text = true
-	nivel = IdleUI.rotulo("", 20, IdleUI.COR_OURO_CLARO, placa)
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nivel = IdleUI.rotulo("", 20, IdleUI.COR_OURO_CLARO, placa, "deco")
 	efeito = IdleUI.rotulo("", 22, IdleUI.COR_GANHO, lado)
 	efeito.clip_text = true
 	previsao = IdleUI.rotulo("", 18, IdleUI.COR_SECUNDARIA, lado)
@@ -75,10 +80,13 @@ func _init(m: Dictionary) -> void:
 	botao = _botao(trio, 1)
 	dez = _botao(trio, 10)
 	maximo = _botao(trio, -1)
+	add_child(MolduraDeco.new(5.0))
 
 
 func _botao(pai: Control, quantos: int) -> Button:
 	var b := IdleUI.botao("", IdleUI.COR_OURO, 18, 96, pai)
+	# Preço em letreiro art déco.
+	b.add_theme_font_override("font", Tipografia.fonte("deco"))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.pressed.connect(func(): comprar.emit(quantos))
 	return b

@@ -115,6 +115,7 @@ var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocí
 var _trilho: Control  # as câmeras
 var _largar: Button
 var _aguardando := false  # carros no grid esperando o LARGAR
+var _quadro_corrida: Control  # o telão da corrida (a foto da vitória sai dele)
 var _conversa: Control  # ConversaIdle, ou CenaQuadrinho nas cenas do Tony
 var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
 var _janela_aberta := false
@@ -363,6 +364,7 @@ func _topo(pai: Control) -> void:
 	eng.add_child(ic)
 	eng.pressed.connect(_abrir_config)
 	topo.add_child(eng)
+	placa.add_child(MolduraDeco.new(4.0))
 
 
 ## A tela CORRIDA: a corrida 3D com o painel do Chrome & Wreckage, as câmeras e,
@@ -371,6 +373,7 @@ func _pagina_corrida() -> Control:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 12)
 	var corrida := Control.new()
+	_quadro_corrida = corrida
 	corrida.custom_minimum_size = Vector2(0, 480)
 	corrida.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	corrida.clip_contents = true
@@ -395,10 +398,16 @@ func _pagina_corrida() -> Control:
 	_hud = HudCorrida.new()
 	_hud.sem_volta = true
 	_hud.escala_texto = 1.3  # texto legível no celular (docs/idle/interface.md)
+	_hud.peso_numero = "deco"
 	corrida.add_child(_hud)
 	_sons = Sons.new()
 	add_child(_sons)
-	_musica = _fundo("musica_box", "Musica", MUSICA_DB)
+	# Trilha da época: jazz de 1924 em domínio público (arte/sons/LICENCA.md),
+	# uma faixa depois da outra.
+	_musica = _fundo(MUSICAS[0], "Musica", MUSICA_DB)
+	if _musica.stream is AudioStreamOggVorbis:
+		(_musica.stream as AudioStreamOggVorbis).loop = false
+	_musica.finished.connect(_proxima_musica)
 	_ambiente = _fundo("oficina", "Ambiente", -60.0)
 	# Câmeras: três ícones num trilho escuro, a ativa em ocre.
 	var trilho := PanelContainer.new()
@@ -467,13 +476,14 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_ofertas)
 	# O objetivo sempre à vista: o que sobe de liga e a melhor chegada nela.
 	var alvo := PanelContainer.new()
-	alvo.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 12, 10, IdleUI.COR_BORDA, 1))
+	alvo.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 12, 14, IdleUI.COR_BORDA, 1))
 	v.add_child(alvo)
 	var linha_alvo := HBoxContainer.new()
 	alvo.add_child(linha_alvo)
 	_objetivo = IdleUI.rotulo("", 22, COR_OURO, linha_alvo)
 	_objetivo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_melhor = IdleUI.rotulo("", 22, IdleUI.COR_TEXTO, linha_alvo)
+	alvo.add_child(MolduraDeco.new(3.0))
 	# O complexo da equipe (docs/idle/direcao.md, 4): um andar por melhoria,
 	# rolando na vertical abaixo do telão da corrida.
 	corrida.custom_minimum_size = Vector2(0, 390)
@@ -506,12 +516,29 @@ static func curto(v: float) -> String:
 
 
 ## Troca a tela do meio (menu de baixo).
+const MUSICAS := ["jazz_1", "jazz_2", "jazz_3"]
+var _faixa := 0
+
+
+func _proxima_musica() -> void:
+	_faixa = (_faixa + 1) % MUSICAS.size()
+	var s := Sons._arquivo(String(MUSICAS[_faixa]), false)
+	if s == null:
+		return
+	if s is AudioStreamOggVorbis:
+		(s as AudioStreamOggVorbis).loop = false
+	_musica.stream = s
+	_musica.play()
+
+
 func _abrir(id: String) -> void:
 	if not _paginas[id].visible:
 		Sons.tocar_ui(self, "toque", -6.0)
 	_barra.escolher(id)
 	for k in _paginas:
 		_paginas[k].visible = k == id
+	# Na garagem do Tony a música vem do rádio AM da bancada.
+	Sons.radio_musica(id == "garagem")
 	if id == "pistas":
 		_pistas.atualizar()
 	elif id == "pilotos":
@@ -619,6 +646,20 @@ func _atualizar_topo(delta := 0.0) -> void:
 
 # --- corrida ------------------------------------------------------------------
 
+## A família rival de uma equipe (data/idle/cenas.json → "familias"): o nome
+## na plaquinha de posição. Uma por equipe, na ordem da lista de equipes.
+var _familias := {}
+func _familia(eq: Dictionary) -> String:
+	if _familias.is_empty():
+		var nomes: Array = CenaQuadrinho.carregar("familias").get("nomes", [])
+		var i := 0
+		for e in dados.lista("equipes"):
+			if not e.get("jogador", false) and not Array(e.get("pilotos", [])).is_empty() and not nomes.is_empty():
+				_familias[String(e["nome"])] = String(nomes[i % nomes.size()])
+				i += 1
+	return String(_familias.get(String(eq.get("nome", "")), eq.get("nome", "")))
+
+
 func _nova_corrida() -> void:
 	_semente += 1
 	_resultado = estado.correr(dados, _semente + estado.corridas * 7919)
@@ -650,7 +691,7 @@ func _nova_corrida() -> void:
 				var eq: Dictionary = escalados[k]["equipe"]
 				var num := int(eq["numero"]) * 4 - 3 + int(escalados[k]["vaga"]) if eq.get("numero") != null else -1
 				pe = PinturaEpoca.do_rival(fam, String(eq.get("nome", k)), "%d|%d" % [estado.liga, k], num)
-				_nomes[id] = escalados[k]["nome"]
+				_nomes[id] = _familia(eq)
 			else:
 				pe = PinturaEpoca.do_rival(fam, id, "%d|%s" % [_semente, id])
 			pinturas[id] = pe[0]
@@ -663,7 +704,7 @@ func _nova_corrida() -> void:
 			var eq: Dictionary = escalados[k]["equipe"]
 			pinturas[id] = Color(String(eq["cores"]["carro"]))
 			faixas[id] = PinturaCarro.da_equipe(eq, "%d|%d" % [estado.liga, k], int(escalados[k]["vaga"]))
-			_nomes[id] = escalados[k]["nome"]
+			_nomes[id] = _familia(eq)
 		else:
 			pinturas[id] = Cores.sortear(String(p["carro"]), "%d|%s" % [_semente, id])
 	if _na_arena:
@@ -866,6 +907,7 @@ func _contar(delta: float) -> void:
 		_contagem = -1.0
 		_diretor.reiniciar()
 		_sons.largada(true)
+		_locutor("locutor_largada")
 		_hud.evento("LARGADA", "", COR_OURO, 3)
 
 
@@ -962,13 +1004,18 @@ func _chegou() -> void:
 	var ganho := estado.concluir(pos)
 	_chegada = true
 	_sons.chegada()
+	_locutor("locutor_vitoria" if pos == 1 else "locutor_chegada")
 	if pos == 1:
 		Sons.tocar_ui(self, "comemoracao", -8.0)
+		_foto_vitoria.call_deferred()
 	_hud.bandeirada()
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
 			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)
 	_ganho_corrida = ganho
 	ganho_flutuante(ganho)
+	# O prêmio em notas voando até o dinheiro do alto (mais na vitória).
+	_efeitos.notas(_paginas["corrida"].get_global_rect().get_center() + Vector2(0, -120),
+			_dinheiro.get_global_rect().get_center(), 14 if pos == 1 else (8 if pos <= 3 else 4))
 	if pos <= 3:
 		# Pódio: faíscas do meio da corrida (mais na vitória).
 		var meio: Vector2 = _paginas["corrida"].get_global_rect().get_center() + Vector2(0, -160)
@@ -1048,54 +1095,43 @@ func _janela_liga() -> void:
 	var centro := CenterContainer.new()
 	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fundo.add_child(centro)
-	var p := PanelContainer.new()
-	p.custom_minimum_size = Vector2(600, 0)
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18))
-	centro.add_child(p)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 12)
-	p.add_child(v)
-	IdleUI.imagem_cobrindo(IdleUI.banner_pista(String(estado.dados_liga()["pista"])), 220, v)
-	var t := IdleUI.rotulo("NOVA LIGA", 24, COR_OURO, v)
-	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var n := IdleUI.rotulo(String(estado.dados_liga()["nome"]).to_upper(), 46, Color.WHITE, v, "deco")
-	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	n.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var c := IdleUI.rotulo("SEU CARRO NOVO: " + String(estado.carro_base(dados)["nome"]).to_upper(), 24, IdleUI.COR_SECUNDARIA, v)
-	c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# A primeira página do jornal do bairro (data/idle/cenas.json → "jornal").
+	var j: Dictionary = CenaQuadrinho.carregar("jornal")
+	var liga := String(estado.dados_liga()["nome"]).to_upper()
+	var manchetes: Array = j.get("manchetes", ["{liga}"])
+	var manchete := String(manchetes[estado.liga_total() % manchetes.size()]).format({"liga": liga})
+	var notas := []
 	var nova_modalidade := false
 	for m in estado.cfg["modalidades"]:
 		var lib: Dictionary = m.get("libera", {})
 		if lib.get("modalidade", "") == estado.modalidade and int(lib.get("liga", -1)) == estado.liga:
-			var abriu := IdleUI.rotulo("NOVA MODALIDADE: %s" % String(m["nome"]).to_upper(), 28, IdleUI.COR_GANHO, v)
-			abriu.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			notas.append(String(j.get("divisao", "{divisao}")).format({"divisao": String(m["nome"]).to_upper()}))
 			_barra.avisar("pistas", true)
 			nova_modalidade = true
+	var p := JornalIdle.new(manchete, IdleUI.banner_pista(String(estado.dados_liga()["pista"])),
+			String(j.get("legenda", "")).format({"liga": String(estado.dados_liga()["nome"])}), notas)
+	p.custom_minimum_size = Vector2(620, 0)
+	centro.add_child(p)
 	var ok := BotaoInicio.new("Correr", true, COR_BOTAO, 40, 88, 360)
 	ok.pressed.connect(func():
 		fundo.queue_free()
 		_janela_aberta = false
 		_oferecer_avisos()
 		_intersticial_da_liga())
-	v.add_child(ok)
-	# Marco: a janela entra crescendo com um brilho dourado na borda, e o
-	# aparelho vibra (mais na modalidade nova).
+	p.corpo.add_child(ok)
+	# Marco: o jornal entra girando, como nas manchetes dos filmes da época, e o
+	# aparelho vibra (mais na divisão nova).
 	celebrar(4 if nova_modalidade else 3)
+	Sons.tocar_ui(self, "passagem", -6.0, 0.8)
 	if not Preferencias.reduzir_animacoes:
-		var sb := IdleUI.caixa(COR_CARTAO, 18, 12, COR_OURO, 3)
-		sb.shadow_color = Color(COR_OURO, 0.55)
-		sb.shadow_size = 28
-		p.add_theme_stylebox_override("panel", sb)
-		p.pivot_offset = Vector2(300, 300)
-		p.scale = Vector2(0.8, 0.8)
-		p.modulate.a = 0.0
+		p.pivot_offset = Vector2(310, 420)
+		p.scale = Vector2(0.15, 0.15)
+		p.rotation = -TAU * 2.0
 		var tw := p.create_tween().set_parallel()
-		tw.tween_property(p, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		tw.tween_property(p, "modulate:a", 1.0, 0.2)
-		var brilho := p.create_tween().set_loops()
-		brilho.tween_property(sb, "shadow_size", 12, 0.9).set_trans(Tween.TRANS_SINE)
-		brilho.tween_property(sb, "shadow_size", 28, 0.9).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(p, "scale", Vector2.ONE, 0.7).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+		tw.tween_property(p, "rotation", deg_to_rad(-2.5), 0.7).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	else:
+		p.rotation = deg_to_rad(-2.5)
 
 
 ## Na primeira liga nova, os avisos com o app fechado ligam (o aparelho pede a
@@ -1158,28 +1194,28 @@ func _bem_vindo(ganho: float) -> void:
 	var centro := CenterContainer.new()
 	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_coleta.add_child(centro)
-	var p := PanelContainer.new()
-	p.custom_minimum_size = Vector2(560, 0)
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 20, 24, COR_OURO, 3))
+	# A página do livro-caixa do chefão: papel pautado, margem vermelha, uma
+	# linha por divisão (a parte de cada uma na renda) e o total sublinhado.
+	var lv: Dictionary = CenaQuadrinho.carregar("livro")
+	var p := LivroCaixa.new()
+	p.custom_minimum_size = Vector2(640, 0)
 	centro.add_child(p)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 14)
-	p.add_child(v)
-	var t := IdleUI.rotulo("BEM-VINDO DE VOLTA!", 34, Color.WHITE, v, "deco")
+	var t := IdleUI.rotulo(String(lv.get("titulo", "LIVRO-CAIXA")), 36, LivroCaixa.TINTA, p.corpo, "deco")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var sub := IdleUI.rotulo("Sua equipe faturou enquanto você estava fora", 20, IdleUI.COR_SECUNDARIA, v, "regular")
-	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var linha := HBoxContainer.new()
-	linha.alignment = BoxContainer.ALIGNMENT_CENTER
-	linha.add_theme_constant_override("separation", 12)
-	v.add_child(linha)
-	IdleUI.icone("icone_creditos", 64, linha)
-	var valor := IdleUI.rotulo("$" + curto(ganho), 64, COR_DINHEIRO, linha, "deco")
-	valor.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var fora := maxf(Time.get_unix_time_from_system() - estado.salvo_em, 0.0)
+	var tempo := "%d h %02d min" % [int(fora / 3600.0), int(fmod(fora, 3600.0) / 60.0)] if fora >= 3600.0 \
+			else "%d min" % maxi(int(fora / 60.0), 1)
+	IdleUI.rotulo(String(lv.get("fora", "{tempo}")).format({"tempo": tempo}), 20, LivroCaixa.TINTA, p.corpo, "fala")
+	var total_renda := maxf(estado.renda_s(), 0.0001)
+	for id in estado.liberadas():
+		var parte := ganho * estado.renda_modalidade(id) / total_renda
+		if parte < 1.0:
+			continue
+		p.linha(String(estado.dados_modalidade(id).get("nome", id)), "$" + curto(parte))
+	p.total(String(lv.get("total", "TOTAL")), "$" + curto(ganho))
 	var botoes := HBoxContainer.new()
 	botoes.add_theme_constant_override("separation", 12)
-	v.add_child(botoes)
+	p.corpo.add_child(botoes)
 	var coletar := IdleUI.botao("COLETAR", COR_OURO, 26, 76, botoes)
 	coletar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var dobro := IdleUI.botao_premio("COLETAR x2", 26, 76, botoes)
@@ -1192,9 +1228,12 @@ func _bem_vindo(ganho: float) -> void:
 			_fechar_bem_vindo(ganho * 2.0)))
 	Sons.tocar_ui(self, "moeda", -4.0)
 	if not Preferencias.reduzir_animacoes:
-		p.pivot_offset = Vector2(280, 160)
+		p.pivot_offset = Vector2(320, 200)
+		p.rotation = deg_to_rad(4.0)
 		p.scale = Vector2(0.85, 0.85)
-		p.create_tween().tween_property(p, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		var tw := p.create_tween().set_parallel()
+		tw.tween_property(p, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(p, "rotation", deg_to_rad(-1.0), 0.3)
 
 
 func _fechar_bem_vindo(total: float) -> void:
@@ -1511,9 +1550,15 @@ func _abrir_conversa(d: Dictionary) -> void:
 func _conversa_fechou(d: Dictionary, aceitou: bool) -> void:
 	_conversa = null
 	var id := String(d["id"])
-	if "pintura_nova" in d.get("libera", []):
-		# Depois da primeira vitória o Tony pinta o carro do ferro-velho.
+	if "pintura_nova" in d.get("libera", []) and estado.ferro_velho:
+		# Depois da primeira vitória o Tony pinta o carro do ferro-velho, na frente do jogador.
 		estado.ferro_velho = false
+		var carro := estado.carro_da_modalidade()
+		if not carro.is_empty():
+			var rp := RepinturaIdle.new(estado, carro)
+			_conversa = rp
+			rp.fechou.connect(func(): _conversa = null)
+			add_child(rp)
 		_nova_pintura_jogador()
 	if id in ["inicio", "ultrapassagem"]:
 		_largar_na_compra = true
@@ -1641,3 +1686,66 @@ func _atualizar_dinheiro_garagem() -> void:
 func _nova_pintura_jogador() -> void:
 	if _garagem != null:
 		_garagem.mostrar_divisao()
+
+
+## Vitória: o flash do fotógrafo e a foto da chegada em sépia, num papel de
+## jornal com a legenda, que fica um instante no canto do telão e some.
+func _foto_vitoria() -> void:
+	if Preferencias.reduzir_animacoes or _quadro_corrida == null or not _quadro_corrida.is_visible_in_tree():
+		return
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	var r := get_viewport().get_final_transform() * _quadro_corrida.get_global_rect()
+	r = r.intersection(Rect2(Vector2.ZERO, img.get_size()))
+	if r.size.x < 8.0 or r.size.y < 8.0:
+		return
+	var foto := ImageTexture.create_from_image(img.get_region(Rect2i(r)))
+	var flash := ColorRect.new()
+	flash.color = Color(1, 1, 0.95, 0.95)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_quadro_corrida.add_child(flash)
+	Sons.tocar_ui(self, "toque", -2.0, 2.2)
+	var tw := flash.create_tween()
+	tw.tween_property(flash, "color:a", 0.0, 0.35)
+	tw.tween_callback(flash.queue_free)
+	var papel := PanelContainer.new()
+	papel.add_theme_stylebox_override("panel", IdleUI.caixa(JornalIdle.PAPEL, 2, 10, Color("8a7a5a"), 1))
+	papel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var v := VBoxContainer.new()
+	papel.add_child(v)
+	var tr := TextureRect.new()
+	tr.texture = foto
+	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme, recorta
+	tr.custom_minimum_size = Vector2(300, 190)
+	var sm := ShaderMaterial.new()
+	sm.shader = preload("res://idle/sepia.gdshader")
+	sm.set_shader_parameter("passo", 3.0)
+	tr.material = sm
+	v.add_child(tr)
+	var leg := IdleUI.rotulo("VITÓRIA · " + String(estado.dados_liga()["nome"]).to_upper(), 16, JornalIdle.TINTA, v, "display")
+	leg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_quadro_corrida.add_child(papel)
+	papel.position = Vector2(_quadro_corrida.size.x - 340, 70)
+	papel.pivot_offset = Vector2(160, 120)
+	papel.rotation = deg_to_rad(8.0)
+	papel.scale = Vector2(1.6, 1.6)
+	papel.modulate.a = 0.0
+	var t2 := papel.create_tween()
+	t2.tween_interval(0.25)
+	t2.set_parallel()
+	t2.tween_property(papel, "modulate:a", 1.0, 0.2)
+	t2.tween_property(papel, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t2.tween_property(papel, "rotation", deg_to_rad(-4.0), 0.35)
+	t2.set_parallel(false)
+	t2.tween_interval(2.6)
+	t2.tween_property(papel, "modulate:a", 0.0, 0.4)
+	t2.tween_callback(papel.queue_free)
+
+
+## O locutor de rádio (arte/sons/locutor_*.ogg, quando gravados): a voz passa
+## pelo filtro de rádio do barramento da corrida. Sem o arquivo, nada toca.
+func _locutor(nome: String) -> void:
+	if ResourceLoader.exists(Sons.PASTA + nome + ".ogg"):
+		Sons.tocar_ui(self, nome, -2.0, 1.0, false)

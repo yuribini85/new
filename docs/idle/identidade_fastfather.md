@@ -72,3 +72,43 @@ sugestões acima ficam para a decisão do usuário.
 O laço do jogo já é esse: a mesma corrida se repete sem fim, o prêmio cai pela posição, o
 dinheiro entra também parado (patrocínio, arquibancada, com o app fechado) e as melhorias
 sobem a posição até o primeiro lugar, que abre a liga seguinte. Não mudou nada aqui.
+
+## 5. Melhorias aprovadas (2026-10-27)
+
+O usuário aprovou a lista de melhorias, menos o redesenho do elenco antigo: **Mara, Theo,
+Bianca, Harold e o resto do elenco antigo saem; a história é outra.** Até a história nova:
+
+- **Elenco:** as funções que eles entregavam (ultrapassagem, pneus, patrocínio, largada
+  automática, pilotos, vácuo, missões, contador, olheiros) agora vêm do Tony ou do chefão, com
+  falas provisórias; nas estações de melhoria, o Tony (oficina, pneus, túnel de vento), o
+  sobrinho (simulador, arquibancada) e o chefão (patrocinadores). As conversas do Moretti e o
+  camarote saíram.
+- **1. Corrida em 3D desde a primeira** (a vista de cima saiu; `camera_tv` vem de saída).
+- **3. Interface art déco:** moldura dupla de latão com cantos em degrau (`MolduraDeco`) no
+  topo, no objetivo, nas estações e na ficha da garagem; placa de latão com o nome da estação;
+  botões de latão chanfrados com o preço em Limelight; a barra de baixo como balcão de madeira;
+  números da corrida e o dinheiro que pipoca em Limelight.
+- **4. Jornal na subida de liga** (`JornalIdle`, "GAZETA DO CAIS"): manchete que muda a cada
+  liga, foto da pista em sépia com retícula, a divisão nova como EXTRA; entra girando.
+- **5. Livro-caixa** no BEM-VINDO DE VOLTA (`LivroCaixa`): papel pautado, margem vermelha, uma
+  linha por divisão e o TOTAL sublinhado.
+- **6. Notas de dólar** voando da corrida até o dinheiro do alto no prêmio.
+- **7. Cenas de marco** (`data/idle/cenas.json`): o rival Moretti aparece (escritório), a
+  divisão nova abre (escritório), o segundo carro chega (galpão). Falas provisórias.
+- **8. Famílias rivais:** a plaquinha de posição mostra o sobrenome da família (Moretti,
+  Calabrese, Greco...), uma por equipe, sempre a mesma cor.
+- **9. Público da época:** torcida de terno e chapéu na arquibancada, o apostador com o
+  quadro-negro das cotações na cerca e fumaça de charuto na torre dos fiscais.
+- **10. Flash e foto da vitória:** clarão branco e a foto da chegada em sépia num papel de
+  jornal, por 3 s no canto do telão.
+- **11. Trilha da época:** três gravações de 1924 da Wolverine Orchestra (domínio público,
+  `arte/sons/LICENCA.md`), uma depois da outra; na garagem a música passa por um rádio AM.
+- **12. Locutor:** pronto para tocar `locutor_largada`, `locutor_vitoria` e `locutor_chegada`
+  (arte/sons/), com o filtro de rádio, assim que forem gravados. Texto sugerido:
+  - largada: "Estão na linha... e lá vão eles! O carro 13 dos Bellucci larga atrás!"
+  - vitória: "Inacreditável, senhoras e senhores! O sobrinho dos Bellucci cruza em primeiro!"
+  - chegada: "Fim de corrida! O 13 dos Bellucci ainda tem muito o que aprender."
+- **13. PULAR ›** nas cenas em quadrinho, a partir da segunda fala.
+- **14. Repintura:** depois da cena da vitória, a oficina do Tony: a ferrugem some, a lataria
+  escurece e entra a pintura da família com o 13.
+- **15. Mural de cartazes** de corrida no fundo da aba PISTAS.

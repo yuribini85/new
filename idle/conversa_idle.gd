@@ -14,10 +14,8 @@ const ENTRADA_S := 0.35
 ## Voz de conversa (docs/idle/sonorizacao.md, 3.6): um "blip" a cada
 ## LETRAS_POR_BLIP letras digitadas, no tom de quem fala (grave a agudo).
 const LETRAS_POR_BLIP := 3
-const VOZES := {"mara_hayes": 0.8, "bianca_sterling": 1.15, "harold_brandt": 0.7, "theo_lane": 0.9,
-		"jade_ryker": 1.2, "roxy_vega": 1.3, "rico_salas": 0.85, "edgar_halloway": 0.6,
-		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72, "sal_moretti": 0.62, "walt_pruitt": 1.1,
-		"chefao": 0.6, "sobrinho": 1.15}
+const VOZES := {"chefao": 0.6, "chefao_busto": 0.6, "sobrinho": 1.15, "tony": 0.82, "tony_caixa": 0.82,
+		"tony_explica": 0.82}
 var _letras_faladas := 0
 const VERMELHO := Color("8e2a26")  # vinho da época (docs/idle/conversao_mafia.md)
 

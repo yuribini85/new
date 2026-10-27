@@ -1,75 +1,436 @@
 {
-  "_nota": "Cenas em quadrinho do The Fastfather (pacote de arte do usuário, 2026-10-27: 1. Abertura, 2. Loja, 3. Corrida). Apresentação, não balanceamento. Cada cena: 'fundo' (arte/fastfather/<fundo>.webp, cobre a tela; sem fundo a cena vem por cima da tela do jogo), 'atores' (id -> nome no balão, x = centro na largura 0..1, pe = altura dos pés 0..1, alt = altura da figura em fração da tela, entra = esquerda/direita/'' para quem já está em cena) e 'falas' em ordem (quem, pose = arquivo em arte/fastfather/, fala; 'move' leva atores a outro x; 'acao' avisa a tela, ex. 'pulsar:<carro>'; 'zoom' aproxima a câmera de quem fala). As falas das cenas 'largada', 'ultimo' e 'vitoria' são proposta (o arquivo SEQUÊNCIA 3 do pacote repete o texto da loja).",
+  "_nota": "Cenas em quadrinho do The Fastfather (pacote de arte do usuário, 2026-10-27: 1. Abertura, 2. Loja, 3. Corrida). Apresentação, não balanceamento. Cada cena: 'fundo' (arte/fastfather/<fundo>.webp, cobre a tela; sem fundo a cena vem por cima da tela do jogo), 'atores' (id -> nome no balão, x = centro na largura 0..1, pe = altura dos pés 0..1, alt = altura da figura em fração da tela, entra = esquerda/direita/'' para quem já está em cena) e 'falas' em ordem (quem, pose = arquivo em arte/fastfather/, fala; 'move' leva atores a outro x; 'acao' avisa a tela, ex. 'pulsar:<carro>'; 'zoom' aproxima a câmera de quem fala). As falas das cenas 'largada', 'ultimo' e 'vitoria' são proposta (o arquivo SEQUÊNCIA 3 do pacote repete o texto da loja). Cenas de marco (item 7, falas provisórias até a história nova): moretti (o rival aparece), divisao_nova (a segunda divisão abre), carro_novo (o segundo carro da garagem).",
   "abertura": {
     "fundo": "abertura/fundo",
     "atores": {
-      "chefe": {"nome": "O CHEFÃO", "x": 0.6, "pe": 0.8, "alt": 0.44, "entra": "", "pose": "abertura/chefe_1"},
-      "sobrinho": {"nome": "SOBRINHO", "x": 0.2, "pe": 1.02, "alt": 0.66, "entra": "esquerda", "pose": "abertura/sobrinho_1"},
-      "tony": {"nome": "TONY", "x": 0.36, "pe": 0.99, "alt": 0.6, "entra": "esquerda", "pose": "abertura/tony_1"}
+      "chefe": {
+        "nome": "O CHEFÃO",
+        "x": 0.6,
+        "pe": 0.8,
+        "alt": 0.44,
+        "entra": "",
+        "pose": "abertura/chefe_1"
+      },
+      "sobrinho": {
+        "nome": "SOBRINHO",
+        "x": 0.2,
+        "pe": 1.02,
+        "alt": 0.66,
+        "entra": "esquerda",
+        "pose": "abertura/sobrinho_1"
+      },
+      "tony": {
+        "nome": "TONY",
+        "x": 0.36,
+        "pe": 0.99,
+        "alt": 0.6,
+        "entra": "esquerda",
+        "pose": "abertura/tony_1"
+      }
     },
-    "inicio": ["chefe"],
+    "inicio": [
+      "chefe"
+    ],
     "falas": [
-      {"quem": "sobrinho", "pose": "abertura/sobrinho_1", "fala": "Tio, vou ser piloto de corrida!"},
-      {"quem": "chefe", "pose": "abertura/chefe_1", "fala": "Você sabe dirigir?"},
-      {"quem": "sobrinho", "pose": "abertura/sobrinho_2", "fala": "Desde ontem!"},
-      {"quem": "chefe", "pose": "abertura/chefe_2", "fala": "Tony! Venha aqui."},
-      {"quem": "tony", "pose": "abertura/tony_1", "fala": "", "move": {"sobrinho": 0.07}},
-      {"quem": "chefe", "pose": "abertura/chefe_3", "fala": "Meu sobrinho vai ser campeão."},
-      {"quem": "tony", "pose": "abertura/tony_2", "fala": "Esse idiota?"},
-      {"quem": "chefe", "pose": "abertura/chefe_2", "fala": "Um idiota da família, Tony."},
-      {"quem": "tony", "pose": "abertura/tony_3", "fala": "Ele nem tem carro!"},
-      {"quem": "chefe", "pose": "abertura/chefe_5", "fala": "Então compre um.", "zoom": 1.25}
+      {
+        "quem": "sobrinho",
+        "pose": "abertura/sobrinho_1",
+        "fala": "Tio, vou ser piloto de corrida!"
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_1",
+        "fala": "Você sabe dirigir?"
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "abertura/sobrinho_2",
+        "fala": "Desde ontem!"
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_2",
+        "fala": "Tony! Venha aqui."
+      },
+      {
+        "quem": "tony",
+        "pose": "abertura/tony_1",
+        "fala": "",
+        "move": {
+          "sobrinho": 0.07
+        }
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_3",
+        "fala": "Meu sobrinho vai ser campeão."
+      },
+      {
+        "quem": "tony",
+        "pose": "abertura/tony_2",
+        "fala": "Esse idiota?"
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_2",
+        "fala": "Um idiota da família, Tony."
+      },
+      {
+        "quem": "tony",
+        "pose": "abertura/tony_3",
+        "fala": "Ele nem tem carro!"
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_5",
+        "fala": "Então compre um.",
+        "zoom": 1.25
+      }
     ]
   },
   "loja": {
     "fundo": "",
     "atores": {
-      "sobrinho": {"nome": "SOBRINHO", "x": 0.26, "pe": 1.03, "alt": 0.6, "entra": "esquerda", "pose": "loja/sobrinho_1"},
-      "tony": {"nome": "TONY", "x": 0.76, "pe": 1.02, "alt": 0.58, "entra": "direita", "pose": "loja/tony_1"}
+      "sobrinho": {
+        "nome": "SOBRINHO",
+        "x": 0.26,
+        "pe": 1.03,
+        "alt": 0.6,
+        "entra": "esquerda",
+        "pose": "loja/sobrinho_1"
+      },
+      "tony": {
+        "nome": "TONY",
+        "x": 0.76,
+        "pe": 1.02,
+        "alt": 0.58,
+        "entra": "direita",
+        "pose": "loja/tony_1"
+      }
     },
     "inicio": [],
     "falas": [
-      {"quem": "sobrinho", "pose": "loja/sobrinho_1", "fala": "Tony, cadê meus carros de corrida?"},
-      {"quem": "tony", "pose": "loja/tony_1", "fala": "Você sabe que é ridículo estar vestido de piloto antes de ter um carro, né?"},
-      {"quem": "sobrinho", "pose": "loja/sobrinho_2", "fala": "Estou pronto pra correr!"},
-      {"quem": "tony", "pose": "loja/tony_1", "fala": "Ótimo. Só falta o carro e saber pilotar."},
-      {"quem": "sobrinho", "pose": "loja/sobrinho_2", "fala": "E aquele ali?", "acao": "pulsar:cupe_1940"},
-      {"quem": "tony", "pose": "loja/tony_3", "fala": "Nem sonhe. Seu dinheiro só compra esse ferro-velho. Agora compre!", "acao": "pulsar:cupe_1928"}
+      {
+        "quem": "sobrinho",
+        "pose": "loja/sobrinho_1",
+        "fala": "Tony, cadê meus carros de corrida?"
+      },
+      {
+        "quem": "tony",
+        "pose": "loja/tony_1",
+        "fala": "Você sabe que é ridículo estar vestido de piloto antes de ter um carro, né?"
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "loja/sobrinho_2",
+        "fala": "Estou pronto pra correr!"
+      },
+      {
+        "quem": "tony",
+        "pose": "loja/tony_1",
+        "fala": "Ótimo. Só falta o carro e saber pilotar."
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "loja/sobrinho_2",
+        "fala": "E aquele ali?",
+        "acao": "pulsar:cupe_1940"
+      },
+      {
+        "quem": "tony",
+        "pose": "loja/tony_3",
+        "fala": "Nem sonhe. Seu dinheiro só compra esse ferro-velho. Agora compre!",
+        "acao": "pulsar:cupe_1928"
+      }
     ]
   },
   "largada": {
     "fundo": "",
     "atores": {
-      "tony": {"nome": "TONY", "x": 0.72, "pe": 1.02, "alt": 0.6, "entra": "direita", "pose": "corrida/tony_1"},
-      "sobrinho": {"nome": "SOBRINHO", "x": 0.26, "pe": 1.03, "alt": 0.6, "entra": "esquerda", "pose": "corrida/sobrinho_1"}
+      "tony": {
+        "nome": "TONY",
+        "x": 0.72,
+        "pe": 1.02,
+        "alt": 0.6,
+        "entra": "direita",
+        "pose": "corrida/tony_1"
+      },
+      "sobrinho": {
+        "nome": "SOBRINHO",
+        "x": 0.26,
+        "pe": 1.03,
+        "alt": 0.6,
+        "entra": "esquerda",
+        "pose": "corrida/sobrinho_1"
+      }
     },
     "inicio": [],
     "falas": [
-      {"quem": "tony", "pose": "corrida/tony_1", "fala": "O motor pega no tranco. Não encoste em ninguém."},
-      {"quem": "sobrinho", "pose": "corrida/sobrinho_1", "fala": "Relaxa, Tony. Hoje eu ganho."}
+      {
+        "quem": "tony",
+        "pose": "corrida/tony_1",
+        "fala": "O motor pega no tranco. Não encoste em ninguém."
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "corrida/sobrinho_1",
+        "fala": "Relaxa, Tony. Hoje eu ganho."
+      }
     ]
   },
   "ultimo": {
     "fundo": "",
     "atores": {
-      "tony": {"nome": "TONY", "x": 0.62, "pe": 1.02, "alt": 0.62, "entra": "direita", "pose": "corrida/tony_2"}
+      "tony": {
+        "nome": "TONY",
+        "x": 0.62,
+        "pe": 1.02,
+        "alt": 0.62,
+        "entra": "direita",
+        "pose": "corrida/tony_2"
+      }
     },
     "inicio": [],
     "falas": [
-      {"quem": "tony", "pose": "corrida/tony_2", "fala": "Último. Até a carroça do leiteiro passava você."}
+      {
+        "quem": "tony",
+        "pose": "corrida/tony_2",
+        "fala": "Último. Até a carroça do leiteiro passava você."
+      }
     ]
   },
   "vitoria": {
     "fundo": "",
     "atores": {
-      "tony": {"nome": "TONY", "x": 0.7, "pe": 1.02, "alt": 0.62, "entra": "direita", "pose": "corrida/tony_3"},
-      "sobrinho": {"nome": "SOBRINHO", "x": 0.26, "pe": 1.03, "alt": 0.6, "entra": "esquerda", "pose": "corrida/sobrinho_1"}
+      "tony": {
+        "nome": "TONY",
+        "x": 0.7,
+        "pe": 1.02,
+        "alt": 0.62,
+        "entra": "direita",
+        "pose": "corrida/tony_3"
+      },
+      "sobrinho": {
+        "nome": "SOBRINHO",
+        "x": 0.26,
+        "pe": 1.03,
+        "alt": 0.6,
+        "entra": "esquerda",
+        "pose": "corrida/sobrinho_1"
+      }
     },
-    "inicio": ["tony"],
+    "inicio": [
+      "tony"
+    ],
     "falas": [
-      {"quem": "tony", "pose": "corrida/tony_3", "fala": "Ganhou! O idiota da família ganhou!"},
-      {"quem": "sobrinho", "pose": "corrida/sobrinho_1", "fala": "Eu disse, Tony. É talento."},
-      {"quem": "tony", "pose": "corrida/tony_3", "fala": "Amanhã eu tiro a ferrugem dessa lata. Com tinta preta e o 13 da família."}
+      {
+        "quem": "tony",
+        "pose": "corrida/tony_3",
+        "fala": "Ganhou! O idiota da família ganhou!"
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "corrida/sobrinho_1",
+        "fala": "Eu disse, Tony. É talento."
+      },
+      {
+        "quem": "tony",
+        "pose": "corrida/tony_3",
+        "fala": "Amanhã eu tiro a ferrugem dessa lata. Com tinta preta e o 13 da família."
+      }
+    ]
+  },
+  "jornal": {
+    "_nota": "Página do jornal na subida de liga (JornalIdle). {liga} = nome da liga, {divisao} = divisão nova. A manchete troca a cada liga, na ordem.",
+    "manchetes": [
+      "SOBRINHO DO BELLUCCI VENCE E SOBE PARA {liga}",
+      "O 13 DOS BELLUCCI CRUZA NA FRENTE: AGORA É {liga}",
+      "NINGUÉM SEGURA O SOBRINHO: BELLUCCI EM {liga}",
+      "BELLUCCI VENCEM DE NOVO E A FAMÍLIA COMEMORA",
+      "APOSTADORES PERDEM TUDO: O SOBRINHO GANHOU"
+    ],
+    "legenda": "Na foto: a pista da liga {liga}.",
+    "divisao": "EXTRA! Nova divisão aberta: {divisao}."
+  },
+  "livro": {
+    "_nota": "Livro-caixa do BEM-VINDO DE VOLTA. {tempo} = quanto tempo fora.",
+    "titulo": "LIVRO-CAIXA",
+    "fora": "Enquanto você esteve fora ({tempo}):",
+    "total": "TOTAL"
+  },
+  "familias": {
+    "_nota": "Famílias rivais (item 8): o nome que aparece na plaquinha de posição no lugar do piloto. Uma por equipe rival, na ordem de data/equipes.json; nomes inventados, sem família real nem de filme.",
+    "nomes": [
+      "Moretti",
+      "Calabrese",
+      "Ferrante",
+      "Lombardi",
+      "Santoro",
+      "Gallo",
+      "De Luca",
+      "Rinaldi",
+      "Marchetti",
+      "Caruso",
+      "Esposito",
+      "Vitale",
+      "Bellini",
+      "Fontana",
+      "Greco",
+      "Mancini",
+      "Palumbo",
+      "Sorrentino",
+      "Amato"
+    ]
+  },
+  "moretti": {
+    "fundo": "abertura/fundo",
+    "atores": {
+      "chefe": {
+        "nome": "O CHEFÃO",
+        "x": 0.6,
+        "pe": 0.8,
+        "alt": 0.44,
+        "entra": "",
+        "pose": "abertura/chefe_3"
+      },
+      "tony": {
+        "nome": "TONY",
+        "x": 0.3,
+        "pe": 0.99,
+        "alt": 0.6,
+        "entra": "esquerda",
+        "pose": "abertura/tony_1"
+      }
+    },
+    "inicio": [
+      "chefe"
+    ],
+    "falas": [
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_3",
+        "fala": "Os Moretti estão rindo do meu sobrinho na cidade inteira."
+      },
+      {
+        "quem": "tony",
+        "pose": "abertura/tony_2",
+        "fala": "Eles têm motivo, chefe."
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_5",
+        "fala": "Então tire o motivo deles, Tony.",
+        "zoom": 1.25
+      }
+    ]
+  },
+  "divisao_nova": {
+    "fundo": "abertura/fundo",
+    "atores": {
+      "chefe": {
+        "nome": "O CHEFÃO",
+        "x": 0.6,
+        "pe": 0.8,
+        "alt": 0.44,
+        "entra": "",
+        "pose": "abertura/chefe_2"
+      },
+      "sobrinho": {
+        "nome": "SOBRINHO",
+        "x": 0.2,
+        "pe": 1.02,
+        "alt": 0.66,
+        "entra": "esquerda",
+        "pose": "abertura/sobrinho_1"
+      }
+    },
+    "inicio": [
+      "chefe"
+    ],
+    "falas": [
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_2",
+        "fala": "O Circuito Clandestino abriu vaga para a família Bellucci."
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "abertura/sobrinho_1",
+        "fala": "Eu sabia que o senhor confiava em mim, tio!"
+      },
+      {
+        "quem": "chefe",
+        "pose": "abertura/chefe_1",
+        "fala": "Eu confio no Tony."
+      }
+    ]
+  },
+  "carro_novo": {
+    "fundo": "loja/fundo",
+    "atores": {
+      "sobrinho": {
+        "nome": "SOBRINHO",
+        "x": 0.26,
+        "pe": 1.03,
+        "alt": 0.6,
+        "entra": "esquerda",
+        "pose": "loja/sobrinho_2"
+      },
+      "tony": {
+        "nome": "TONY",
+        "x": 0.76,
+        "pe": 1.02,
+        "alt": 0.58,
+        "entra": "direita",
+        "pose": "loja/tony_3"
+      }
+    },
+    "inicio": [],
+    "falas": [
+      {
+        "quem": "tony",
+        "pose": "loja/tony_3",
+        "fala": "Esse não veio do ferro-velho. Se arranhar, eu arranho você."
+      },
+      {
+        "quem": "sobrinho",
+        "pose": "loja/sobrinho_2",
+        "fala": "Relaxa, Tony. Eu cuido dele melhor que do outro."
+      },
+      {
+        "quem": "tony",
+        "pose": "loja/tony_1",
+        "fala": "É isso que me preocupa."
+      }
+    ]
+  },
+  "cartazes": {
+    "_nota": "Mural de cartazes de corrida no fundo da aba PISTAS (item 15).",
+    "textos": [
+      [
+        "GRANDE CORRIDA",
+        "SÁBADO · À MEIA-NOITE"
+      ],
+      [
+        "CAIS 17",
+        "CORRIDA DE BAIRRO"
+      ],
+      [
+        "PRÊMIO EM DINHEIRO",
+        "SÓ OS CORAJOSOS"
+      ],
+      [
+        "APOSTAS",
+        "NO BALCÃO DO BAR"
+      ],
+      [
+        "CIRCUITO CLANDESTINO",
+        "A POLÍCIA NÃO SABE"
+      ],
+      [
+        "HOT RODS",
+        "ESTRADA VELHA · 1932"
+      ]
     ]
   }
 }

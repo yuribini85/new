@@ -42,6 +42,9 @@ const LISTA_ESPACO := 4.0
 ## Escala do texto e das faixas dos vizinhos e da classificação (Chrome Racing
 ## Team: 1,3, para o texto chegar ao mínimo legível no celular; C&W: 1).
 var escala_texto := 1.0
+## Fonte dos números (posição, tempos); "" = a do jogo (Racing Sans One). O
+## The Fastfather usa "deco" (letreiro art déco).
+var peso_numero := ""
 const FAIXA := Color(0, 0, 0, 0.42)
 const FAIXA_FORTE := Color(0.03, 0.035, 0.05, 0.72)
 const TEXTO_ESCURO := Color(0.09, 0.09, 0.1)
@@ -223,7 +226,7 @@ func _banda() -> void:
 	var fim := Color(0.02, 0.025, 0.035, 0.0)
 	draw_polygon(PackedVector2Array([Vector2(0, 0), Vector2(size.x, 0), Vector2(size.x, BANDA + 18.0),
 			Vector2(0, BANDA + 18.0)]), PackedColorArray([topo, topo, fim, fim]))
-	var f := Tipografia.fonte_numero()
+	var f := _fonte_numero()
 	var x := 16.0
 	var base := BANDA - 14.0
 	var pos := str(_d["posicao"])
@@ -323,7 +326,7 @@ func _lista() -> void:
 	for it in lista:
 		if it.get("voce", false):
 			gap_eu = float(it.get("gap", 0.0))
-	var fn := Tipografia.fonte_numero()
+	var fn := _fonte_numero()
 	var fr := Tipografia.fonte("semibold")
 	var x0 := 10.0
 	var y := BANDA + 4.0 + 2.0 * ((VIZINHO_LINHA * escala_texto) + 3.0) + 8.0
@@ -501,7 +504,7 @@ func _desenhar_evento() -> void:
 	if grande:
 		# Chegada: a linha pequena em cima, a posição enorme embaixo (as duas
 		# encolhem para caber na largura).
-		var fn := Tipografia.fonte_numero()
+		var fn := _fonte_numero()
 		_texto(String(_evento["titulo"]), o + Vector2(0, cy - 44), _cabe(String(_evento["titulo"]), ft, tam_t), Color(COR, a),
 				HORIZONTAL_ALIGNMENT_CENTER, size.x, ft)
 		_texto(String(_evento["sub"]), o + Vector2(0, cy + 52), _cabe(String(_evento["sub"]), fn, tam_s), Color(cor, a),
@@ -572,3 +575,7 @@ static func linhas_relativas(lista: Array) -> Array:
 
 static func _tempo(t: float) -> String:
 	return "%d:%04.1f" % [int(t) / 60, fmod(maxf(t, 0.0), 60.0)]
+
+
+func _fonte_numero() -> Font:
+	return Tipografia.fonte(peso_numero) if peso_numero != "" else Tipografia.fonte_numero()

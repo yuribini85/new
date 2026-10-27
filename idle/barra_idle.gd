@@ -12,6 +12,7 @@ const ICONE := 48
 const ICONE_ATIVO := 58
 const COR_FAIXA := Color("07090d")
 const COR_TEXTO := Color("8a93a3")  # prata apagada
+const MADEIRA := Color("2b1a10")
 const QUADRO := 8.0  # lado do quadriculado da aba ativa
 
 var abas: Array = []  # [{id, nome, icone}]
@@ -83,8 +84,21 @@ func _gui_input(e: InputEvent) -> void:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size), COR_FAIXA)
-	draw_rect(Rect2(0, 0, size.x, 3), Color(IdleUI.COR_OURO, 0.85))
+	# Balcão de madeira escura (The Fastfather): tábuas com veio e o friso de
+	# latão em cima, com a moldura art déco.
+	draw_rect(Rect2(Vector2.ZERO, size), MADEIRA)
+	var tabua := size.y / 4.0
+	for k in 4:
+		draw_rect(Rect2(0, k * tabua, size.x, tabua), MADEIRA.lightened(0.04 * (k % 2)))
+		draw_line(Vector2(0, k * tabua), Vector2(size.x, k * tabua), MADEIRA.darkened(0.35), 1.0)
+		for j in 5:
+			# Veio: traços finos que não se repetem de tábua para tábua.
+			var x := fposmod(k * 173.0 + j * 151.0, size.x)
+			draw_line(Vector2(x, k * tabua + tabua * 0.35), Vector2(x + 90.0, k * tabua + tabua * 0.55),
+					MADEIRA.darkened(0.2), 1.0)
+	draw_rect(Rect2(0, 0, size.x, 5), Color("6e4f1e"))
+	draw_rect(Rect2(0, 0, size.x, 3), Color(IdleUI.COR_OURO, 0.9))
+	MolduraDeco.desenhar(self, Rect2(Vector2(6, 10), size - Vector2(12, 16)), Color(MolduraDeco.LATAO, 0.35), 8.0)
 	if abas.is_empty():
 		return
 	var w := size.x / abas.size()

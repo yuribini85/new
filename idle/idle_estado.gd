@@ -761,6 +761,8 @@ func condicao_ok(d: Dictionary) -> bool:
 	var q: Dictionary = d.get("quando", {})
 	if corridas < int(q.get("corridas", 0)) or liga_total() < int(q.get("liga_total", 0)):
 		return false
+	if garagem.size() < int(q.get("carros", 0)):
+		return false
 	if q.has("modalidade") and not liberada(String(q["modalidade"])):
 		return false
 	if bool(q.get("vitoria", false)):

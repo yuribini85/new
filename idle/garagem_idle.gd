@@ -116,6 +116,7 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 	_palco()
 	var ficha := IdleUI.painel(Color(IdleUI.COR_CARTAO, 0.94), 14, 16, v)
 	_ficha = ficha
+	ficha.add_child(MolduraDeco.new(5.0))
 	var f := VBoxContainer.new()
 	f.add_theme_constant_override("separation", 6)
 	ficha.add_child(f)
@@ -368,7 +369,11 @@ func _palco() -> void:
 	_mundo.add_child(_giro)
 	_carro = CarroBloco.new()
 	_giro.add_child(_carro)
-	# Sombra no chão: um disco escuro que some nas bordas.
+	_giro.add_child(GaragemIdle.sombra_chao())
+
+
+## Sombra no chão: um disco escuro que some nas bordas (gira com o carro).
+static func sombra_chao() -> MeshInstance3D:
 	var chao := MeshInstance3D.new()
 	var plano := PlaneMesh.new()
 	plano.size = Vector2(2.6, 5.4)
@@ -387,7 +392,7 @@ func _palco() -> void:
 	mat.albedo_texture = tex
 	chao.material_override = mat
 	chao.position.y = 0.01
-	_giro.add_child(chao)
+	return chao
 
 
 ## Mostra o carro da divisão na tela (a que pediu a garagem).

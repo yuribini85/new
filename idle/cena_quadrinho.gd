@@ -43,6 +43,8 @@ var _tinta: _Tinta
 var _cam_o := Vector2.ZERO
 var _cam_z := 1.0
 var _toque := false
+var _pulou := false
+var _botao_pular: Button
 var _t := 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -245,8 +247,15 @@ func _rodar() -> void:
 	for i in falas.size():
 		var f: Dictionary = falas[i]
 		var quem := String(f["quem"])
+		if _pulou:
+			# PULAR: as ações que faltam ainda chegam à tela (a loja precisa do último pulso).
+			if f.has("acao"):
+				acao.emit(String(f["acao"]))
+			continue
 		if f.has("acao"):
 			acao.emit(String(f["acao"]))
+		if i == 1 and parar_em < 0:
+			_mostrar_pular()
 		for outro in f.get("move", {}):
 			var tw := create_tween()
 			tw.tween_property(_atores[outro], "position:x", _x_alvo(outro, float(f["move"][outro])), 0.4 * _r + 0.01) \
@@ -273,10 +282,36 @@ func _rodar() -> void:
 	queue_free()
 
 
+## PULAR ›: aparece a partir da segunda fala, discreto no canto de cima.
+func _mostrar_pular() -> void:
+	if _botao_pular != null:
+		return
+	_botao_pular = Button.new()
+	_botao_pular.text = "PULAR ›"
+	_botao_pular.flat = true
+	_botao_pular.focus_mode = Control.FOCUS_NONE
+	Tipografia.rotulo(_botao_pular, "display", IdleUI.legivel(22))
+	for c in ["font_color", "font_hover_color", "font_pressed_color"]:
+		_botao_pular.add_theme_color_override(c, Color(PAPEL, 0.85))
+	_botao_pular.add_theme_constant_override("outline_size", 6)
+	_botao_pular.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+	_botao_pular.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_botao_pular.offset_left = -190
+	_botao_pular.offset_right = -24
+	_botao_pular.offset_top = AreaSegura.topo(720.0) + 28
+	_botao_pular.offset_bottom = _botao_pular.offset_top + 64
+	_botao_pular.pressed.connect(func():
+		_pulou = true
+		_toque = true
+		_botao_pular.visible = false)
+	add_child(_botao_pular)
+	move_child(_botao_pular, _tinta.get_index())
+
+
 func _esperar(s: float) -> void:
 	var t := 0.0
 	_toque = false
-	while t < s and not _toque:
+	while t < s and not _toque and not _pulou:
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	_toque = false
