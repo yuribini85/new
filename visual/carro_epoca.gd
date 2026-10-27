@@ -202,6 +202,7 @@ static func _montar_1928(m: MontagemMalha, f: Dictionary) -> void:
 	_chassi(m, f)
 	_detalhes(m, f)
 	_estepe(m, f)
+	_det_1928(m, f)
 
 
 # --- primitivas ---------------------------------------------------------------
@@ -861,8 +862,12 @@ static func _farol_redondo(m: MontagemMalha, c: Vector3, r: float, incl := 0.0, 
 	var rot := Vector3(PI / 2 - incl, 0, 0)
 	if pintado:
 		m.cilindro(MontagemMalha.PINTURA, r * 1.15, 0.22, 14, MontagemMalha.xf(c - Vector3(0, 0, 0.1), rot))
-	m.cilindro("cromo_epoca", r * 1.05, 0.04, 16, MontagemMalha.xf(c, rot))
-	m.cilindro("lente", r * 0.88, 0.02, 16, MontagemMalha.xf(c + Vector3(0, sin(incl) * 0.02, cos(incl) * 0.02), rot))
+	var frente := Vector3(0, sin(incl), cos(incl))
+	# aro cromado, refletor no fundo e a lente abaulada com o vinco do meio
+	m.cilindro("cromo_epoca", r * 1.08, 0.045, 18, MontagemMalha.xf(c, rot))
+	m.cilindro("cromo_epoca", r * 0.9, 0.01, 16, MontagemMalha.xf(c + frente * 0.012, rot))
+	m.esfera("lente", r * 0.86, r * 0.5, 16, 6, MontagemMalha.xf(c + frente * 0.02, rot))
+	m.caixa("cromo_epoca", Vector3(r * 1.6, 0.006, 0.006), MontagemMalha.xf(c + frente * (0.02 + r * 0.25)))
 
 
 ## 1940: corpo com capô comprido, proa em V com barras, grades laterais
@@ -898,7 +903,6 @@ static func _montar_1940(m: MontagemMalha, f: Dictionary) -> void:
 	_barra_choque(m, float(pc["tras"]), float(pc["meia"]) * 0.95, float(pc["y"]) + 0.02, 0.08, true)
 	# Lanternas nos para-lamas de trás, maçanetas, linhas das portas, chassi.
 	for lado: float in [-1.0, 1.0]:
-		m.cilindro("lanterna", 0.05, 0.05, 10, MontagemMalha.xf(Vector3(lado * 0.80, 0.80, -2.04), Vector3(PI / 2 + 0.6, 0, 0)))
 		var l := _linha_em(f["corpo"], 0.0)
 		var x := lado * (float(l[1]) + 0.004)
 		for z in f["portas"]:
@@ -906,6 +910,7 @@ static func _montar_1940(m: MontagemMalha, f: Dictionary) -> void:
 		_bloco(m, "cromo_epoca", Vector3(minf(x, x + lado * 0.03), 0.96, -0.50), Vector3(maxf(x, x + lado * 0.03), 0.98, -0.40))
 	for z in f["eixos"]:
 		_barra(m, "preto", Vector3(-0.6, 0.36, z), Vector3(0.6, 0.36, z), 0.035, 6)
+	_det_1940(m, f)
 
 
 ## Frente e traseira maciças dos para-lamas em gota (na frente o farol assenta
@@ -995,11 +1000,11 @@ static func _montar_hotrod(m: MontagemMalha, f: Dictionary) -> void:
 			_barra(m, "cromo_epoca", Vector3(lado * 0.30, 0.44, zt), Vector3(lado * 0.30, 0.62, zt), 0.02, 6)
 			_barra(m, "cromo_epoca", Vector3(lado * 0.36, 0.46, zt), Vector3(lado * 0.36, 0.46, zt - signf(zt) * 0.2), 0.02, 6)
 	for lado: float in [-1.0, 1.0]:
-		m.cilindro("lanterna", 0.04, 0.04, 10, MontagemMalha.xf(Vector3(lado * 0.42, 0.70, -1.86), Vector3(PI / 2, 0, 0)))
 		var l := _linha_em(f["corpo"], -0.2)
 		var x := lado * (float(l[1]) + 0.004)
 		for z in f["portas"]:
 			_bloco(m, "interno", Vector3(minf(x, x + lado * 0.004), 0.56, float(z) - 0.004), Vector3(maxf(x, x + lado * 0.004), 1.04, float(z) + 0.004))
+	_det_hotrod(m, f)
 
 
 ## 1951: carroceria envelope com as caixas de roda (a de trás com saia),
@@ -1037,7 +1042,6 @@ static func _montar_1951(m: MontagemMalha, f: Dictionary) -> void:
 		for i in pts.size() - 1:
 			if pts[i] != null and pts[i + 1] != null:
 				_barra(m, "cromo_epoca", pts[i], pts[i + 1], 0.012, 6)
-		_bloco(m, "lanterna", Vector3(lado * 0.80 - 0.05, 0.56, -2.62), Vector3(lado * 0.80 + 0.05, 0.80, -2.58))
 		for z in f["portas"]:
 			var l := _linha_em(rows, float(z))
 			var x := lado * (_x_lado(l, 0.6) + 0.004)
@@ -1046,6 +1050,7 @@ static func _montar_1951(m: MontagemMalha, f: Dictionary) -> void:
 		var xm := lado * (_x_lado(lm, 0.88) + 0.004)
 		_bloco(m, "cromo_epoca", Vector3(minf(xm, xm + lado * 0.03), 0.87, 0.40), Vector3(maxf(xm, xm + lado * 0.03), 0.89, 0.52))
 	_bloco(m, "cromo_epoca", Vector3(-0.012, 0.95, 1.2), Vector3(0.012, 0.975, 2.6))
+	_det_1951(m, f, rows)
 
 
 ## Rodas de disco: aço pintado com calota (1940), cromada (hot rod) ou com a
@@ -1066,6 +1071,8 @@ static func _roda_disco(m: MontagemMalha, rd: Dictionary, xf: Transform3D) -> vo
 			_torno(m, "aro_roda_escuro", [[0.0, face - 0.02], [aro, face - 0.02], [aro, face + 0.01]], 20, xf)
 			_torno(m, "cromo_epoca", [[aro * 0.98, face + 0.012], [aro * 1.04, face + 0.012]], 20, xf)
 			_torno(m, "cromo_epoca", [[0.0, face + 0.07], [aro * 0.45, face + 0.06], [aro * 0.75, face + 0.025], [aro * 0.8, face]], 16, xf)
+			_torno(m, "aro_roda_escuro", [[aro * 0.16, face + 0.072], [aro * 0.2, face + 0.072]], 12, xf)
+			_torno(m, "pinca", [[aro * 0.86, face + 0.003], [aro * 0.9, face + 0.003]], 20, xf)
 		"cromada":
 			_torno(m, "cromo_epoca", [[0.0, face - 0.03], [aro, face - 0.03], [aro * 1.03, face + 0.01]], 20, xf)
 			for k in 6:
@@ -1073,6 +1080,252 @@ static func _roda_disco(m: MontagemMalha, rd: Dictionary, xf: Transform3D) -> vo
 				var c := Vector3(face - 0.025, cos(a) * aro * 0.6, sin(a) * aro * 0.6)
 				m.cilindro("interno", aro * 0.12, 0.012, 10, xf * MontagemMalha.xf(c, Vector3(0, 0, PI / 2)))
 			_torno(m, "cromo_epoca", [[0.0, face + 0.03], [aro * 0.25, face + 0.02], [aro * 0.3, face - 0.02]], 12, xf)
+			for k in 5:
+				var a := TAU * k / 5.0 + 0.3
+				var c := Vector3(face + 0.0, cos(a) * aro * 0.38, sin(a) * aro * 0.38)
+				m.cilindro("aro_roda_escuro", aro * 0.05, 0.03, 6, xf * MontagemMalha.xf(c, Vector3(0, 0, PI / 2)))
 		_:
 			_torno(m, "cromo_epoca", [[0.0, face + 0.05], [aro * 0.5, face + 0.045], [aro * 0.95, face + 0.01], [aro * 1.02, face - 0.01]], 20, xf)
 			_torno(m, "aro_roda_escuro", [[aro * 0.22, face + 0.052], [aro * 0.26, face + 0.052]], 16, xf)
+			for k in 10:
+				var a := TAU * k / 10.0
+				var c := Vector3(face + 0.035, cos(a) * aro * 0.62, sin(a) * aro * 0.62)
+				m.caixa("aro_roda_escuro", Vector3(0.012, aro * 0.42, 0.012), xf * MontagemMalha.xf(c, Vector3(a, 0, 0)))
+			_torno(m, "cromo_epoca", [[0.0, face + 0.07], [aro * 0.14, face + 0.06], [aro * 0.18, face + 0.05]], 12, xf)
+
+
+# --- detalhes -----------------------------------------------------------------
+
+## Peça colada na lateral em (z, y) da tabela `rows`: caixa de `tam`
+## (comprimento em z, altura, saliência para fora).
+static func _na_lateral(m: MontagemMalha, estilo: String, rows: Array, z: float, y: float, tam: Vector3, lado: float) -> void:
+	var l := _linha_em(rows, z)
+	var x := _x_lado(l, y) + tam.z * 0.5 - 0.002
+	m.caixa(estilo, Vector3(tam.z, tam.y, tam.x), MontagemMalha.xf(Vector3(lado * x, y, z)))
+
+
+## Faixa de largura `h` sobre a lateral seguindo a linha [[z, y], ...]
+## (friso, moldura de janela, vinco de porta).
+static func _friso(m: MontagemMalha, estilo: String, rows: Array, pts: Array, h: float, lado: float, afasta := 0.007) -> void:
+	var amostras := []
+	for i in pts.size() - 1:
+		var a := Vector2(pts[i][0], pts[i][1])
+		var b := Vector2(pts[i + 1][0], pts[i + 1][1])
+		var n := maxi(int(a.distance_to(b) / 0.07), 1)
+		for k in n:
+			amostras.append(a.lerp(b, float(k) / n))
+	amostras.append(Vector2(pts[-1][0], pts[-1][1]))
+	for i in amostras.size() - 1:
+		var a: Vector2 = amostras[i]
+		var b: Vector2 = amostras[i + 1]
+		if a.distance_to(b) < 1e-4:
+			continue
+		var d := (b - a).normalized()
+		var perp := Vector2(-d.y, d.x) * h * 0.5
+		var q := []
+		for p: Vector2 in [a - perp, b - perp, b + perp, a + perp]:
+			var l := _linha_em(rows, p.x)
+			q.append(Vector3(lado * (_x_lado(l, p.y) + afasta), p.y, p.x))
+		_face(m, estilo, q, Vector3(0, (a.y + b.y) * 0.5, (a.x + b.x) * 0.5))
+
+
+## Moldura cromada em volta de uma janela (polígono [z, y]).
+static func _moldura(m: MontagemMalha, rows: Array, pol: Array, lado: float) -> void:
+	var fechado := pol.duplicate()
+	fechado.append(pol[0])
+	_friso(m, "cromo_epoca", rows, fechado, 0.024, lado, 0.009)
+
+
+## Calha cromada do teto, na quina de cima da cabine, de z0 a z1.
+static func _calha(m: MontagemMalha, cab: Array, z0: float, z1: float, lado: float) -> void:
+	var pts := []
+	for k in 13:
+		var z := lerpf(z0, z1, float(k) / 12.0)
+		var l := _linha_em(cab, z)
+		pts.append([z, float(l[4]) - float(l[5]) - 0.01])
+	_friso(m, "cromo_epoca", cab, pts, 0.02, lado, 0.012)
+
+
+## Lanterna de aro cromado assentada na superfície em `c`, virada para `normal`
+## (`alto` > 1 alonga em gota).
+static func _lanterna(m: MontagemMalha, c: Vector3, normal: Vector3, r: float, alto := 1.0) -> void:
+	var y := normal.normalized()
+	var x := y.cross(Vector3.FORWARD if absf(y.dot(Vector3.FORWARD)) < 0.9 else Vector3.RIGHT).normalized()
+	var z := x.cross(y)
+	var b := Basis(x, y, z) * Basis.from_scale(Vector3(1, 1, alto))
+	m.cilindro("cromo_epoca", r * 1.2, 0.03, 12, Transform3D(b, c))
+	m.cilindro("lanterna", r, 0.05, 12, Transform3D(b, c + y * 0.012))
+
+
+## Placa em branco de moldura escura, virada para +z (sentido 1) ou -z.
+static func _placa(m: MontagemMalha, c: Vector3, sentido: float) -> void:
+	m.caixa("preto", Vector3(0.34, 0.17, 0.012), MontagemMalha.xf(c))
+	m.caixa("placa", Vector3(0.31, 0.145, 0.014), MontagemMalha.xf(c + Vector3(0, 0, sentido * 0.002)))
+	m.caixa("interno", Vector3(0.22, 0.045, 0.016), MontagemMalha.xf(c + Vector3(0, -0.005, sentido * 0.003)))
+
+
+## Retrovisor redondo num braço cromado a partir de `base`.
+static func _retrovisor(m: MontagemMalha, base: Vector3, lado: float) -> void:
+	var topo := base + Vector3(lado * 0.1, 0.13, -0.02)
+	_barra(m, "cromo_epoca", base, topo, 0.009, 6)
+	m.esfera("cromo_epoca", 0.05, 0.1, 10, 6, MontagemMalha.xf(topo + Vector3(lado * 0.015, 0.02, 0), Vector3.ZERO, Vector3(0.5, 1, 1)))
+
+
+## Ponto do alto do para-lama (perfil da frente ou de trás) em z, e a normal
+## da superfície ali: [ponto, normal].
+static func _alto_paralama(f: Dictionary, z: float, lado: float) -> Array:
+	var perfil: Array = (f["paralama_frente"] if z > 0.0 else f["paralama_tras"]).duplicate()
+	perfil.sort_custom(func(a, b): return float(a[0]) < float(b[0]))
+	var l := _linha_em(perfil, z)
+	var a := _linha_em(perfil, z - 0.03)
+	var b := _linha_em(perfil, z + 0.03)
+	var t := Vector2(0.06, float(b[1]) + float(b[2]) - float(a[1]) - float(a[2])).normalized()
+	var n := Vector2(-t.y, t.x)
+	if n.y < 0.0:
+		n = -n
+	var larg: Array = f["paralama_largura"]
+	var x := lado * (float(larg[0]) + float(larg[1])) * 0.5
+	return [Vector3(x, float(l[1]) + float(l[2]) - 0.005, z), Vector3(0, n.y, n.x)]
+
+
+## Cupê 1928: placas, tampa do tanque no torpedo, limpador, retrovisor,
+## buzina, dobradiças das portas e o puxador da tampa de trás.
+static func _det_1928(m: MontagemMalha, f: Dictionary) -> void:
+	var zf := float(f["paralama_frente"][0][0]) + 0.10
+	_placa(m, Vector3(0, 0.475, zf + 0.03), 1.0)
+	_placa(m, Vector3(-0.50, 0.66, -1.87), -1.0)
+	_barra(m, "preto", Vector3(-0.50, 0.58, -1.86), Vector3(-0.62, 0.62, -1.62), 0.012, 6)
+	m.cilindro("cromo_epoca", 0.04, 0.04, 12, MontagemMalha.xf(Vector3(0, 1.18, 0.39)))
+	var zp := float(f["cabine"][-1][0]) + 0.012
+	_barra(m, "preto", Vector3(-0.32, 1.63, zp), Vector3(-0.08, 1.56, zp), 0.008, 6)
+	_retrovisor(m, Vector3(-(_meia_corpo(f, 0.36) + 0.01), 1.12, 0.36), -1.0)
+	m.cilindro("cromo_epoca", 0.05, 0.16, 10, MontagemMalha.xf(Vector3(-0.22, 0.82, 1.50), Vector3(PI / 2, 0, 0)))
+	m.cilindro("preto", 0.055, 0.02, 10, MontagemMalha.xf(Vector3(-0.22, 0.82, 1.58), Vector3(PI / 2, 0, 0)))
+	for lado: float in [-1.0, 1.0]:
+		var x := lado * (_meia_corpo(f, 0.20) + 0.008)
+		for y: float in [0.74, 0.98]:
+			_bloco(m, "cromo_epoca", Vector3(x - 0.01, y - 0.03, 0.19), Vector3(x + 0.01, y + 0.03, 0.235))
+	_bloco(m, "cromo_epoca", Vector3(-0.07, 1.02, -1.32), Vector3(0.07, 1.04, -1.29))
+
+
+## Cupê 1940: molduras cromadas das janelas, calha do teto, frisos do capô,
+## lanternas em gota nos para-lamas, placas, puxador da tampa, retrovisor,
+## limpadores, enfeite do capô e o escapamento.
+static func _det_1940(m: MontagemMalha, f: Dictionary) -> void:
+	var corpo := _linhas(f["corpo"], [])
+	var cab := _linhas(f["cabine"], [], 0.05)
+	for lado: float in [-1.0, 1.0]:
+		for pol in f["janelas"]:
+			_moldura(m, cab, pol, lado)
+		_calha(m, cab, -1.0, 0.30, lado)
+		for k in 3:
+			var y := 0.80 + k * 0.04
+			_friso(m, "cromo_epoca", corpo, [[1.55 + k * 0.03, y], [1.98, y - 0.01]], 0.014, lado)
+		var a: Array = _alto_paralama(f, -1.92, lado)
+		_lanterna(m, a[0], a[1] + Vector3(0, 0, -0.6), 0.045, 1.7)
+		if lado < 0.0:
+			_retrovisor(m, Vector3(lado * (_x_lado(_linha_em(corpo, 0.55), 1.0) + 0.01), 1.02, 0.55), lado)
+	var pc: Dictionary = f["para_choque"]
+	_placa(m, Vector3(0, 0.62, -2.42), -1.0)
+	m.cilindro("cromo_epoca", 0.03, 0.05, 10, MontagemMalha.xf(Vector3(0, 0.72, -2.38), Vector3(PI / 2 - 0.4, 0, 0)))
+	_bloco(m, "cromo_epoca", Vector3(-0.08, 0.80, -2.34), Vector3(0.08, 0.83, -2.31))
+	_placa(m, Vector3(0, float(pc["y"]) - 0.12, float(pc["frente"]) - 0.02), 1.0)
+	var pb: Array = f["para_brisa"]
+	for lado: float in [-1.0, 1.0]:
+		_barra(m, "preto", Vector3(lado * 0.05, float(pb[2]) + 0.03, float(pb[0]) + 0.01),
+				Vector3(lado * 0.30, float(pb[2]) + 0.09, float(pb[0]) - 0.04), 0.007, 6)
+	m.esfera("cromo_epoca", 0.035, 0.07, 10, 6, MontagemMalha.xf(Vector3(0, 0.92, 2.10), Vector3(PI / 2, 0, 0), Vector3(1, 2.2, 0.7)))
+	_barra(m, "cromo_epoca", Vector3(0.42, 0.30, -2.10), Vector3(0.42, 0.30, -2.52), 0.03, 8)
+
+
+## Hot rod: lanternas na traseira, painel de trás com a placa, braços do eixo
+## da frente, amortecedores, barra de direção, ventoinha, cabos de vela,
+## mangueira e tampa do radiador, moldura do para-brisa, calha, maçaneta,
+## retrovisor, tampa do tanque e o diferencial cromado.
+static func _det_hotrod(m: MontagemMalha, f: Dictionary) -> void:
+	var corpo := _linhas(f["corpo"], f["arcos"])
+	var cab := _linhas(f["cabine"], [], 0.05)
+	var zt := float(f["corpo"][0][0])
+	for lado: float in [-1.0, 1.0]:
+		_lanterna(m, Vector3(lado * 0.26, 0.68, zt - 0.004), Vector3(0, 0, -1), 0.04)
+		for pol in f["janelas"]:
+			_moldura(m, cab, pol, lado)
+		_calha(m, cab, -0.85, 0.18, lado)
+		_na_lateral(m, "cromo_epoca", corpo, -0.52, 0.94, Vector3(0.10, 0.02, 0.03), lado)
+		# braços do eixo da frente (em V até o meio do chassi), amortecedores
+		var ze := float(f["eixos"][0])
+		_barra(m, "cromo_epoca", Vector3(lado * 0.55, 0.30, ze), Vector3(lado * 0.10, 0.42, 0.75), 0.018, 8)
+		_barra(m, "preto", Vector3(lado * 0.52, 0.32, ze + 0.06), Vector3(lado * 0.40, 0.52, ze - 0.04), 0.02, 6)
+		# cabos de vela vermelhos do distribuidor às cabeças
+		for k in 4:
+			_barra(m, "pinca", Vector3(0, 0.90, 0.48), Vector3(lado * 0.21, 0.76, 0.56 + k * 0.17), 0.006, 4)
+	_barra(m, "cromo_epoca", Vector3(-0.36, 0.55, 1.0), Vector3(-0.52, 0.33, float(f["eixos"][0])), 0.016, 6)
+	# painel de trás (cobre o tanque) com a placa e a luz dela
+	_bloco(m, MontagemMalha.PINTURA, Vector3(-0.42, 0.42, zt + 0.02), Vector3(0.42, 0.57, zt + 0.10))
+	_placa(m, Vector3(0, 0.50, zt + 0.005), -1.0)
+	m.cilindro("cromo_epoca", 0.025, 0.04, 10, MontagemMalha.xf(Vector3(0, 0.60, zt + 0.01), Vector3(PI / 2, 0, 0)))
+	# ventoinha e polia na frente do bloco; mangueira e tampa do radiador
+	m.cilindro("aro_escuro", 0.17, 0.02, 12, MontagemMalha.xf(Vector3(0, 0.66, 1.23), Vector3(PI / 2, 0, 0)))
+	m.cilindro("cromo_epoca", 0.06, 0.05, 10, MontagemMalha.xf(Vector3(0, 0.56, 1.22), Vector3(PI / 2, 0, 0)))
+	_barra(m, "preto", Vector3(0, 0.95, 1.30), Vector3(0, 0.83, 1.18), 0.03, 8)
+	var r: Dictionary = f["radiador"]
+	m.cilindro("cromo_epoca", 0.04, 0.04, 10, MontagemMalha.xf(Vector3(0, float(r["topo"]) + 0.02, float(r["z"]) + 0.04)))
+	# moldura cromada do para-brisa em pé
+	var pb: Array = f["para_brisa"]
+	var zf := float(f["cabine"][-1][0]) + 0.012
+	var lb := _linha_em(cab, float(f["cabine"][-1][0]))
+	var xb := _x_lado(lb, float(pb[2])) - float(pb[4]) + 0.02
+	var xt := _x_lado(lb, float(pb[3])) - float(pb[4]) + 0.02
+	var cantos := [Vector3(-xb, float(pb[2]) - 0.02, zf), Vector3(xb, float(pb[2]) - 0.02, zf), Vector3(xt, float(pb[3]) + 0.02, zf),
+			Vector3(-xt, float(pb[3]) + 0.02, zf)]
+	for i in 4:
+		_barra(m, "cromo_epoca", cantos[i], cantos[(i + 1) % 4], 0.012, 6)
+	_retrovisor(m, Vector3(-(xb + 0.02), 1.10, zf - 0.02), -1.0)
+	m.cilindro("cromo_epoca", 0.045, 0.03, 12, MontagemMalha.xf(Vector3(0.28, 1.0, -1.45)))
+	# diferencial cromado e o eixo de trás
+	var zr := float(f["eixos"][1])
+	m.esfera("cromo_epoca", 0.13, 0.24, 12, 8, MontagemMalha.xf(Vector3(0, 0.40, zr)))
+	_barra(m, "preto", Vector3(-0.6, 0.40, zr), Vector3(0.6, 0.40, zr), 0.04, 8)
+
+
+## Sedã 1951: lanternas em pé nos cantos de trás, molduras e calha, friso da
+## soleira, protetor cromado antes da roda de trás, maçanetas das quatro
+## portas, enfeite do capô, luzes de posição, placas, puxador da tampa,
+## retrovisor, limpadores, antena e o escapamento.
+static func _det_1951(m: MontagemMalha, f: Dictionary, rows: Array) -> void:
+	var cab := _linhas(f["cabine"], [], 0.05)
+	for lado: float in [-1.0, 1.0]:
+		var lanterna := [[-2.40, 0.56], [-2.53, 0.56], [-2.53, 0.82], [-2.40, 0.82]]
+		_sobre_lado(m, "lanterna", rows, lanterna, lado, 0.009)
+		_moldura(m, rows, lanterna, lado)
+		_lanterna(m, Vector3(lado * 0.52, 0.60, -2.625), Vector3(0, 0, -1), 0.045, 1.6)
+		for pol in f["janelas"]:
+			_moldura(m, cab, pol, lado)
+		_calha(m, cab, -0.95, 0.55, lado)
+		# soleira cromada só fora das caixas de roda
+		var trecho := []
+		for i in 61:
+			var z := lerpf(-2.35, 2.40, float(i) / 60.0)
+			if float(_linha_em(rows, z)[3]) < 0.37:
+				trecho.append([z, 0.39])
+			elif trecho.size() > 1:
+				_friso(m, "cromo_epoca", rows, trecho, 0.03, lado)
+				trecho = []
+			else:
+				trecho = []
+		if trecho.size() > 1:
+			_friso(m, "cromo_epoca", rows, trecho, 0.03, lado)
+		_sobre_lado(m, "cromo_epoca", rows, [[-1.0, 0.40], [-1.12, 0.40], [-1.12, 0.60], [-1.0, 0.56]], lado, 0.01)
+		for z: float in [0.04, -0.80]:
+			_na_lateral(m, "cromo_epoca", rows, z, 0.89, Vector3(0.12, 0.022, 0.03), lado)
+		m.cilindro("seta", 0.04, 0.03, 10, MontagemMalha.xf(Vector3(lado * 0.70, 0.56, 2.665), Vector3(PI / 2, 0, 0)))
+		_barra(m, "preto", Vector3(lado * 0.06, 1.00, 0.79), Vector3(lado * 0.42, 1.05, 0.72), 0.007, 6)
+	m.esfera("cromo_epoca", 0.035, 0.07, 10, 6, MontagemMalha.xf(Vector3(0, 0.98, 2.52), Vector3(PI / 2, 0, 0), Vector3(1, 2.4, 0.7)))
+	var pc: Dictionary = f["para_choque"]
+	_placa(m, Vector3(0, float(pc["y"]) + 0.10, float(pc["frente"]) + 0.04), 1.0)
+	_placa(m, Vector3(0, 0.56, -2.628), -1.0)
+	_bloco(m, "cromo_epoca", Vector3(-0.09, 0.74, -2.60), Vector3(0.09, 0.765, -2.57))
+	var lr := _linha_em(rows, 0.62)
+	_retrovisor(m, Vector3(-(_x_lado(lr, 0.95) + 0.01), 0.96, 0.62), -1.0)
+	_barra(m, "cromo_epoca", Vector3(0.86, 0.94, 1.70), Vector3(0.90, 1.65, 1.45), 0.006, 4)
+	_barra(m, "cromo_epoca", Vector3(0.55, 0.27, -2.40), Vector3(0.55, 0.27, -2.80), 0.035, 8)
