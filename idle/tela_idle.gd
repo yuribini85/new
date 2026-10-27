@@ -119,6 +119,7 @@ var _tv := true  # a transmissão (corrida 3D) já foi comprada
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
 var _titulo: TituloIdle  # tela de título, ao abrir o app
+var _abertura: AberturaIdle  # a cena do Sal, no jogo novo
 var _ao_vivo: Control  # selo AO VIVO no canto da corrida (com a TV)
 var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
@@ -168,14 +169,45 @@ func _ready() -> void:
 	estado.salvar(agora)
 	_titulo = TituloIdle.new()
 	add_child(_titulo)
-	_titulo.fechou.connect(func(): _titulo = null)
+	_titulo.fechou.connect(_depois_do_titulo)
 
 
-## Fecha a tela de título sem animação (ferramentas de fotos e testes).
+## Jogo novo: a abertura com o Sal (no lugar das conversas "rival" e "inicio").
+func _precisa_abertura() -> bool:
+	return estado.corridas == 0 and not "rival" in estado.oferecidos and not estado.desbloqueio("rival").is_empty()
+
+
+func _depois_do_titulo() -> void:
+	_titulo = null
+	if _precisa_abertura():
+		_abertura = AberturaIdle.new()
+		add_child(_abertura)
+		_abertura.fechou.connect(_fim_da_abertura)
+
+
+func _fim_da_abertura() -> void:
+	_abertura = null
+	for id in ["rival", "inicio"]:
+		if not id in estado.oferecidos and not estado.desbloqueio(id).is_empty():
+			estado.oferecer(id)
+	_aplicar_desbloqueios()
+	var g: Dictionary = estado.desbloqueio("inicio").get("guia", {})
+	if not g.is_empty():
+		_guiar.call_deferred(String(g.get("alvo", "")), String(g.get("texto", "")))
+	estado.salvar(Time.get_unix_time_from_system())
+
+
+## Fecha a tela de título e pula a abertura, sem animação (ferramentas de fotos
+## e testes; a abertura conta como vista).
 func pular_titulo() -> void:
 	if _titulo != null:
 		_titulo.queue_free()
 		_titulo = null
+	if _abertura != null:
+		_abertura.queue_free()
+		_abertura = null
+	if _precisa_abertura():
+		_fim_da_abertura()
 
 
 func _notification(what: int) -> void:
@@ -1379,7 +1411,7 @@ func _largar_corrida() -> void:
 ## A próxima conversa da escada, quando nada mais está na frente e a corrida
 ## está parada (grid ou depois da chegada).
 func _checar_conversa() -> void:
-	if _titulo != null or _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
+	if _titulo != null or _abertura != null or _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
 		return
 	if not (_aguardando or _pausa >= 0.0):
 		return

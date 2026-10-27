@@ -69,42 +69,56 @@ func fechar() -> void:
 
 
 func _draw() -> void:
-	var w := size.x
-	var h := size.y
-	var chao := h * 0.58
-	# Céu em faixas (sem degradê difuso) e prédios em planos.
+	TituloIdle.cena(self, size.x, size.y, _t, 1.0, true)
+
+
+## A rua da oficina (título e abertura): céu em faixas, prédios em planos, o
+## outdoor da Moretti Speedway e a oficina da Mara. `porta` de 0 (portão de aço
+## fechado) a 1 (aberto e aceso); `silhueta` desenha a Mara no portão.
+static func cena(ci: CanvasItem, w: float, h: float, t: float, porta: float, silhueta: bool, chao_frac := 0.58) -> void:
+	var chao := h * chao_frac
 	for k in 6:
-		draw_rect(Rect2(0, chao * k / 6.0, w, chao / 6.0 + 1), CEU_ALTO.lerp(CEU_BAIXO, k / 5.0))
-	draw_colored_polygon(PackedVector2Array([Vector2(w * 0.3, chao), Vector2(w * 0.3, h * 0.24), Vector2(w * 0.6, h * 0.2),
-			Vector2(w * 0.78, h * 0.25), Vector2(w * 0.78, chao)]), PREDIO)
-	draw_colored_polygon(PackedVector2Array([Vector2(w * 0.74, chao), Vector2(w * 0.74, h * 0.12), Vector2(w, h * 0.1),
+		ci.draw_rect(Rect2(0, chao * k / 6.0, w, chao / 6.0 + 1), CEU_ALTO.lerp(CEU_BAIXO, k / 5.0))
+	ci.draw_colored_polygon(PackedVector2Array([Vector2(w * 0.3, chao), Vector2(w * 0.3, chao * 0.41), Vector2(w * 0.6, chao * 0.34),
+			Vector2(w * 0.78, chao * 0.43), Vector2(w * 0.78, chao)]), PREDIO)
+	ci.draw_colored_polygon(PackedVector2Array([Vector2(w * 0.74, chao), Vector2(w * 0.74, chao * 0.2), Vector2(w, chao * 0.17),
 			Vector2(w, chao)]), PREDIO.darkened(0.2))
 	# Outdoor da Moretti Speedway, inclinado, com brilho vermelho.
-	var o := Vector2(w * 0.38, h * 0.27)
+	var o := Vector2(w * 0.38, chao * 0.47)
 	var ow := w * 0.56
 	var oh := 120.0
-	var brilho := 0.35 + 0.1 * sin(_t * 3.0)
-	draw_colored_polygon(PackedVector2Array([o + Vector2(-14, -10), o + Vector2(ow + 14, -24), o + Vector2(ow + 14, oh + 4),
+	var brilho := 0.35 + 0.1 * sin(t * 3.0)
+	ci.draw_colored_polygon(PackedVector2Array([o + Vector2(-14, -10), o + Vector2(ow + 14, -24), o + Vector2(ow + 14, oh + 4),
 			o + Vector2(-14, oh + 18)]), Color(VERMELHO, brilho * 0.4))
-	draw_colored_polygon(PackedVector2Array([o, o + Vector2(ow, -14), o + Vector2(ow, oh - 6), o + Vector2(0, oh + 8)]),
+	ci.draw_colored_polygon(PackedVector2Array([o, o + Vector2(ow, -14), o + Vector2(ow, oh - 6), o + Vector2(0, oh + 8)]),
 			Color("1a0f10"))
-	draw_polyline(PackedVector2Array([o, o + Vector2(ow, -14), o + Vector2(ow, oh - 6), o + Vector2(0, oh + 8), o]), VERMELHO, 4.0)
+	ci.draw_polyline(PackedVector2Array([o, o + Vector2(ow, -14), o + Vector2(ow, oh - 6), o + Vector2(0, oh + 8), o]),
+			VERMELHO, 4.0)
 	var fonte := Tipografia.fonte("display")
-	draw_string(fonte, o + Vector2(18, 52), "MORETTI", HORIZONTAL_ALIGNMENT_LEFT, -1, 46, Color("ffdcdc"))
-	draw_string(fonte, o + Vector2(18, 98), "SPEEDWAY", HORIZONTAL_ALIGNMENT_LEFT, -1, 46, Color("ffdcdc"))
-	draw_rect(Rect2(0, chao + 120, w, h - chao - 120), Color("090c11"))
-	draw_rect(Rect2(0, chao, w, 120), Color("0c1016"))
-	# A oficina da Mara: telhado facetado, portão aceso e a luz no chão.
+	ci.draw_string(fonte, o + Vector2(18, 52), "MORETTI", HORIZONTAL_ALIGNMENT_LEFT, -1, 46, Color("ffdcdc"))
+	ci.draw_string(fonte, o + Vector2(18, 98), "SPEEDWAY", HORIZONTAL_ALIGNMENT_LEFT, -1, 46, Color("ffdcdc"))
+	ci.draw_rect(Rect2(0, chao + 120, w, h - chao - 120), Color("090c11"))
+	ci.draw_rect(Rect2(0, chao, w, 120), Color("0c1016"))
+	# A oficina da Mara: telhado facetado, o vão do portão e a luz no chão.
 	var g := Vector2(w * 0.05, chao)
-	draw_colored_polygon(PackedVector2Array([g, g + Vector2(0, -150), g + Vector2(110, -190), g + Vector2(230, -150),
+	ci.draw_colored_polygon(PackedVector2Array([g, g + Vector2(0, -150), g + Vector2(110, -190), g + Vector2(230, -150),
 			g + Vector2(230, 0)]), Color("151b24"))
-	draw_colored_polygon(PackedVector2Array([g + Vector2(40, 0), g + Vector2(40, -96), g + Vector2(190, -102),
-			g + Vector2(190, 0)]), LUZ.lerp(Color("f08a0c"), 0.4))
-	draw_colored_polygon(PackedVector2Array([g + Vector2(40, 0), g + Vector2(190, 0), g + Vector2(300, 120),
-			g + Vector2(-40, 120)]), Color(LUZ, 0.16))
-	# A Mara em silhueta no portão.
-	var m := g + Vector2(118, 0)
-	draw_colored_polygon(PackedVector2Array([m + Vector2(-16, 0), m + Vector2(-12, -46), m + Vector2(-18, -80),
-			m + Vector2(-7, -94), m + Vector2(7, -94), m + Vector2(18, -80), m + Vector2(12, -46), m + Vector2(16, 0)]),
-			Color("0b0e13"))
-	draw_circle(m + Vector2(0, -106), 12, Color("0b0e13"))
+	ci.draw_colored_polygon(PackedVector2Array([g + Vector2(40, 0), g + Vector2(40, -96), g + Vector2(190, -102),
+			g + Vector2(190, 0)]), LUZ.lerp(Color("f08a0c"), 0.4).darkened(0.75 * (1.0 - porta)))
+	if porta > 0.0:
+		ci.draw_colored_polygon(PackedVector2Array([g + Vector2(40, 0), g + Vector2(190, 0), g + Vector2(300, 120),
+				g + Vector2(-40, 120)]), Color(LUZ, 0.16 * porta))
+	# Portão de aço: desce do alto até cobrir o vão (porta 0) ou some no alto (1).
+	var alto := 100.0 * (1.0 - porta)
+	if alto > 1.0:
+		ci.draw_rect(Rect2(g.x + 40, g.y - 100, 150, alto), Color("3a4250"))
+		var k := 0.0
+		while k < alto:
+			ci.draw_line(Vector2(g.x + 40, g.y - 100 + k), Vector2(g.x + 190, g.y - 100 + k), Color("262c36"), 2.0)
+			k += 10.0
+	if silhueta:
+		var m := g + Vector2(118, 0)
+		ci.draw_colored_polygon(PackedVector2Array([m + Vector2(-16, 0), m + Vector2(-12, -46), m + Vector2(-18, -80),
+				m + Vector2(-7, -94), m + Vector2(7, -94), m + Vector2(18, -80), m + Vector2(12, -46), m + Vector2(16, 0)]),
+				Color("0b0e13"))
+		ci.draw_circle(m + Vector2(0, -106), 12, Color("0b0e13"))

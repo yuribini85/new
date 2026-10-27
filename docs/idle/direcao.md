@@ -84,10 +84,18 @@ carro e o box ficam no térreo, e a corrida passa num telão da emissora no alto
 
 ## 6. Ordem de construção
 1. Maquetes destas telas (`docs/idle/maquetes/`): título, abertura, complexo e corrida na TV. Aprovação do usuário.
-2. Título e abertura (Sal compra a pista; Mara recusa vender; um toque do jogador é o primeiro
-   ato).
-3. Complexo com box e duas estações vivas (motor, pneus), compra +1/+10/MÁX, marcos a cada 25
-   níveis e toque antes da automação.
+2. Título e abertura. **Feito** (`idle/titulo_idle.gd`, `idle/abertura_idle.gd`). Pedido do
+   usuário: abertura dinâmica e rápida como a do White Foot. Uma cena desenhada de ~12 s com um
+   toque:
+   - o carrão do Sal derrapa na porta da oficina (tremor e fumaça) e ele pede a assinatura;
+   - o contrato espera o toque; o toque rasga o contrato e o papel voa;
+   - "Você vai se arrepender!", e ele arranca;
+   - o portão da oficina sobe aos trancos, a Mara aparece ao lado do carro velho: "Chefe, é com
+     você";
+   - corte para a corrida, com o LARGAR destacado.
+3. Complexo: andares com chefe, cenário facetado, +1/+10/MÁX. e fases visuais nos níveis
+   10/25/50. **Feito** (`idle/andar_idle.gd`). Falta: box no térreo, toque antes da automação e o
+   ×2 de produção nos marcos (pede economia sem teto, a rebalancear).
 4. Corrida na TV: torre de tempos, lower third e vinhetas.
 5. O resto das estações, chefes com traço, retenção (baú, encomendas, evento tocável), anúncio na
    história e Nova Temporada.

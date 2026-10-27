@@ -23,6 +23,8 @@ func _rodar() -> void:
 	root.add_child(tela)
 	await process_frame
 	tela.pular_titulo()
+	await process_frame
+	tela._guia.limpar()  # a dica do LARGAR (tutorial) não entra na conferência
 	var e: IdleEstado = tela.estado
 	# Tudo aberto, pilotos para encher a grade, as cinco modalidades abertas.
 	for d in e.cfg_desbloqueios():
