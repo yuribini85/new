@@ -99,7 +99,23 @@ corrida continua a da liga.
   raios cruzados. Sem emblema.
 - **Ligação:** a modalidade com `"epoca"` em `data/idle/idle.json` põe todo o grid nesse carro
   (cores e faixas das equipes por cima). Folha de vistas: `tools/folha_carro_epoca.gd`.
-- **Próximos:** um carro por divisão, na ordem da tabela, cada um aprovado antes do seguinte.
+- **Feito: os carros das outras três divisões de pista** (pedido do usuário: "continue desenhando os
+  carros"), conferidos com fotos de época:
+  - **Circuito Clandestino — cupê comercial de 1940** (`cupe_1940`): entre-eixos de 2,84 m, capô
+    comprido de proa em V com barras em pé e grades baixas dos lados, para-lamas em gota da cor do
+    carro com a frente maciça e o farol nela, estribo curto, para-brisa bipartido, traseira em gota,
+    para-choques com garras, rodas de aço com calota grande.
+  - **Liga dos Hot Rods — hot rod de 1932** (`hotrod_1932`): cupê de três janelas com teto rebaixado,
+    sem para-lamas nem capô, motor à mostra (tampas cromadas, compressor com cornetas, quatro escapes
+    de cada lado), grade em pé, faróis em bala numa barra, eixo da frente rebaixado, para-choques de
+    tubo, caixas de roda recortadas, pneus de trás largos e rodas cromadas.
+  - **Stock Cars — sedã de 1951** (`seda_1951`): carroceria envelope rebaixada, entre-eixos de 3,15 m,
+    cabine baixa, friso cromado de ponta a ponta, grade larga de barras deitadas com moldura em V,
+    faróis nos cantos, para-choques maciços com garras, roda de trás meio coberta pela saia, pneus de
+    faixa branca com calota inteira.
+  - O gerador ganhou um estilo por "tipo" com peças comuns: seções de laterais inclinadas, caixas de
+    roda recortadas na lataria, vidros projetados na curva da cabine e rodas de disco.
+- **Ainda sem carro de época:** a arena (Guerra das Famílias) segue com os carros dela.
 
 **Pista de época (pedido do usuário):** nas divisões com `"epoca"`, a corrida troca o cenário do
 tema por um **autódromo rural** do fim dos anos 1920 à tarde (`visual/cenario_epoca.gd`,

@@ -69,7 +69,7 @@
 			{"nome": "Bairro · Grande Campeonato", "pista": "docas_curta", "voltas": 1, "potencia": 190, "multiplicador": 28.7},
 			{"nome": "Bairro · Lendas", "pista": "serra_curta", "voltas": 1, "potencia": 230, "multiplicador": 50.3}
 		]},
-		{"id": "turismo", "nome": "Circuito Clandestino", "curto": "Circuito", "icone": "icone_pista", "categorias": ["seda"], "libera": {"modalidade": "compactos", "liga": 3}, "forca_rivais": {"parque_das_docas": 1.15, "circuito_misto": 1.05, "mirante_da_costa": 1.04}, "ligas": [
+		{"id": "turismo", "epoca": "cupe_1940", "nome": "Circuito Clandestino", "curto": "Circuito", "icone": "icone_pista", "categorias": ["seda"], "libera": {"modalidade": "compactos", "liga": 3}, "forca_rivais": {"parque_das_docas": 1.15, "circuito_misto": 1.05, "mirante_da_costa": 1.04}, "ligas": [
 			{"nome": "Clandestino · Novatos", "pista": "parque_das_docas", "voltas": 1, "potencia": 100, "multiplicador": 4},
 			{"nome": "Clandestino · Regional", "pista": "circuito_misto", "voltas": 1, "potencia": 130, "multiplicador": 7},
 			{"nome": "Clandestino · Estadual", "pista": "mirante_da_costa", "voltas": 1, "potencia": 170, "multiplicador": 12.2},
@@ -79,7 +79,7 @@
 			{"nome": "Clandestino · Grande Campeonato", "pista": "parque_das_docas", "voltas": 1, "potencia": 400, "multiplicador": 114.9},
 			{"nome": "Clandestino · Lendas", "pista": "circuito_misto", "voltas": 1, "potencia": 500, "multiplicador": 201.1}
 		]},
-		{"id": "gt", "nome": "Liga dos Hot Rods", "curto": "Hot Rods", "icone": "icone_potencia", "categorias": ["cupe"], "libera": {"modalidade": "turismo", "liga": 3}, "forca_rivais": {"avenida_noturna": 1.17, "anel_do_vale": 1.15, "oval_inclinado": 0.7}, "ligas": [
+		{"id": "gt", "epoca": "hotrod_1932", "nome": "Liga dos Hot Rods", "curto": "Hot Rods", "icone": "icone_potencia", "categorias": ["cupe"], "libera": {"modalidade": "turismo", "liga": 3}, "forca_rivais": {"avenida_noturna": 1.17, "anel_do_vale": 1.15, "oval_inclinado": 0.7}, "ligas": [
 			{"nome": "Hot Rods · Novatos", "pista": "avenida_noturna", "voltas": 1, "potencia": 220, "multiplicador": 16},
 			{"nome": "Hot Rods · Regional", "pista": "anel_do_vale", "voltas": 1, "potencia": 290, "multiplicador": 28},
 			{"nome": "Hot Rods · Estadual", "pista": "oval_inclinado", "voltas": 1, "potencia": 380, "multiplicador": 49},
@@ -89,7 +89,7 @@
 			{"nome": "Hot Rods · Grande Campeonato", "pista": "avenida_noturna", "voltas": 1, "potencia": 1060, "multiplicador": 459.6},
 			{"nome": "Hot Rods · Lendas", "pista": "anel_do_vale", "voltas": 1, "potencia": 1400, "multiplicador": 804.2}
 		]},
-		{"id": "terra", "nome": "Stock Cars", "curto": "Stock Cars", "icone": "icone_tracao_4x4", "categorias": ["picape", "utilitario"], "libera": {"modalidade": "gt", "liga": 3}, "forca_rivais": {"trilha_do_canion": 1.08, "estrada_das_araucarias": 1.05, "serra_alta": 1.03}, "ligas": [
+		{"id": "terra", "epoca": "seda_1951", "nome": "Stock Cars", "curto": "Stock Cars", "icone": "icone_tracao_4x4", "categorias": ["picape", "utilitario"], "libera": {"modalidade": "gt", "liga": 3}, "forca_rivais": {"trilha_do_canion": 1.08, "estrada_das_araucarias": 1.05, "serra_alta": 1.03}, "ligas": [
 			{"nome": "Stock Cars · Novatos", "pista": "trilha_do_canion", "voltas": 1, "potencia": 110, "multiplicador": 64},
 			{"nome": "Stock Cars · Regional", "pista": "estrada_das_araucarias", "voltas": 1, "potencia": 140, "multiplicador": 112},
 			{"nome": "Stock Cars · Estadual", "pista": "serra_alta", "voltas": 1, "potencia": 180, "multiplicador": 196},

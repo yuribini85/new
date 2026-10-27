@@ -1,10 +1,17 @@
 class_name CarroEpoca
 extends RefCounted
 ## Carros de época gerados em código (conversão máfia 1930–1950,
-## docs/idle/conversao_mafia.md, 6): carroceria de peças separadas como nos
-## carros de 1928–1950 — capô estreito entre para-lamas soltos, estribo, grade
-## de radiador em pé, faróis em tigela numa barra, para-choque de lâminas,
-## estepe atrás e rodas de raios de arame. Nenhum emblema nem nome de fábrica.
+## docs/idle/conversao_mafia.md, 6), um estilo por divisão, cada um montado peça
+## por peça como os carros eram construídos ("tipo" em MODELOS):
+## - "1928": capô estreito entre para-lamas soltos, estribo, grade de radiador em
+##   pé, faróis em tigela numa barra, estepe atrás, rodas de raios de arame;
+## - "1940": capô comprido de proa em V, faróis nos para-lamas em gota, estribo
+##   curto, para-brisa bipartido, traseira em gota, rodas de aço com calota;
+## - "hotrod": cupê de 1932 rebaixado e sem para-lamas, motor à mostra, grade em
+##   pé, caixas de roda recortadas, pneus de trás largos;
+## - "1951": carroceria envelope rebaixada, laterais lisas com friso cromado,
+##   rodas de trás meio cobertas, grade larga e para-choque maciço, faixa branca.
+## Nenhum emblema nem nome de fábrica.
 ##
 ## Mesmo sistema de eixos e nós dos carros gerados (Carroceria): frente em +Z,
 ## chão em y = 0, malha "Carroceria" com a pintura numa superfície (meta
@@ -43,6 +50,85 @@ const MODELOS := {
 			"para_brisa": [0.54, 1.17, 1.62], "vigia": [0.24, 1.30, 1.48]},
 		"portas": [0.215, -0.335],
 	},
+	## Cupê comercial de 1940 (Circuito Clandestino): entre-eixos de 2,84 m,
+	## pneus aro 16", 1,68 m de altura. Corpo e cabine: [z, meia largura em
+	## baixo, meia largura em cima, base, topo, raio de cima, raio de baixo].
+	"cupe_1940": {
+		"tipo": "1940", "eixos": [1.42, -1.42], "bitola": 1.45,
+		"roda": {"tipo": "aco", "r": 0.356, "aro": 0.205, "pneu": 0.16},
+		"corpo": [[-2.40, 0.40, 0.30, 0.50, 0.70, 0.12, 0.05], [-2.28, 0.60, 0.50, 0.44, 0.86, 0.20, 0.06],
+			[-2.05, 0.72, 0.62, 0.42, 0.97, 0.24, 0.06], [-1.70, 0.78, 0.68, 0.42, 1.03, 0.22, 0.06],
+			[-1.20, 0.80, 0.72, 0.42, 1.06, 0.16, 0.06], [-0.40, 0.80, 0.73, 0.42, 1.07, 0.12, 0.06],
+			[0.40, 0.80, 0.73, 0.42, 1.07, 0.12, 0.06], [0.68, 0.74, 0.66, 0.45, 1.07, 0.14, 0.06],
+			[0.95, 0.56, 0.48, 0.52, 1.05, 0.18, 0.05], [1.40, 0.44, 0.38, 0.55, 1.01, 0.18, 0.05],
+			[1.80, 0.36, 0.30, 0.56, 0.96, 0.16, 0.05], [2.02, 0.30, 0.25, 0.56, 0.91, 0.14, 0.05]],
+		"proa": [[2.02, 0.28, 0.23, 0.56, 0.90, 0.12, 0.04], [2.16, 0.16, 0.13, 0.57, 0.87, 0.08, 0.03],
+			[2.27, 0.03, 0.025, 0.58, 0.82, 0.02, 0.01]],
+		"cabine": [[-1.50, 0.70, 0.62, 1.03, 1.06, 0.03, 0.0], [-1.25, 0.72, 0.60, 1.03, 1.32, 0.14, 0.0],
+			[-0.95, 0.73, 0.58, 1.03, 1.52, 0.18, 0.0], [-0.60, 0.73, 0.58, 1.03, 1.63, 0.18, 0.0],
+			[-0.10, 0.73, 0.58, 1.03, 1.66, 0.17, 0.0], [0.25, 0.73, 0.58, 1.03, 1.63, 0.15, 0.0],
+			[0.50, 0.72, 0.60, 1.03, 1.36, 0.10, 0.0], [0.62, 0.70, 0.62, 1.03, 1.08, 0.03, 0.0]],
+		"janelas": [[[0.40, 1.11], [-0.50, 1.11], [-0.50, 1.55], [0.24, 1.55]],
+			[[-0.62, 1.11], [-1.08, 1.11], [-0.96, 1.40], [-0.62, 1.53]]],
+		"para_brisa": [0.56, 0.30, 1.10, 1.59, 0.08, true],
+		"vigia": [-1.30, -1.00, 1.12, 1.47, 0.22],
+		"paralama_frente": [[2.20, 0.56, 0.04], [2.08, 0.72, 0.09], [1.90, 0.84, 0.12], [1.62, 0.92, 0.13],
+			[1.40, 0.94, 0.13], [1.15, 0.88, 0.12], [0.95, 0.74, 0.09], [0.80, 0.56, 0.05], [0.62, 0.44, 0.01]],
+		"estribo": [0.62, -0.92, 0.43],
+		"paralama_tras": [[-0.92, 0.44, 0.01], [-1.02, 0.58, 0.06], [-1.12, 0.76, 0.11], [-1.30, 0.88, 0.13],
+			[-1.52, 0.90, 0.13], [-1.76, 0.83, 0.12], [-1.98, 0.68, 0.09], [-2.12, 0.54, 0.04]],
+		"paralama_largura": [0.58, 0.96], "paralama_saia": 0.16, "paralama_estilo": "pintura",
+		"paralama_cheio": [[1.78, 2.20, 0.46], [-2.12, -1.86, 0.44]],
+		"farol": {"z": 2.19, "x": 0.77, "y": 0.64, "r": 0.10},
+		"para_choque": {"frente": 2.34, "tras": -2.48, "meia": 0.86, "y": 0.42},
+		"portas": [0.56, -0.56],
+	},
+	## Hot rod de 1932 (Liga dos Hot Rods): cupê de três janelas com teto
+	## rebaixado, sem para-lamas nem capô, motor V8 à mostra, eixo dianteiro
+	## rebaixado; entre-eixos de 2,69 m, pneus de trás largos.
+	"hotrod_1932": {
+		"tipo": "hotrod", "eixos": [1.42, -1.27], "bitola": 1.36, "bitola_tras": 1.42,
+		"roda": {"tipo": "cromada", "r": 0.33, "aro": 0.19, "pneu": 0.13},
+		"roda_tras": {"tipo": "cromada", "r": 0.40, "aro": 0.20, "pneu": 0.26},
+		"corpo": [[-1.85, 0.52, 0.40, 0.55, 0.78, 0.16, 0.04], [-1.70, 0.64, 0.54, 0.52, 0.95, 0.20, 0.04],
+			[-1.30, 0.69, 0.60, 0.52, 1.03, 0.16, 0.04], [-0.60, 0.70, 0.62, 0.52, 1.06, 0.10, 0.04],
+			[0.10, 0.70, 0.62, 0.52, 1.07, 0.08, 0.04], [0.25, 0.62, 0.55, 0.56, 1.08, 0.10, 0.04],
+			[0.32, 0.50, 0.45, 0.60, 1.06, 0.12, 0.04]],
+		"arcos": [[-1.27, 0.40, 0.09, 9.0]],
+		"cabine": [[-0.95, 0.66, 0.60, 1.04, 1.40, 0.10, 0.0], [-0.75, 0.68, 0.60, 1.04, 1.44, 0.12, 0.0],
+			[0.00, 0.68, 0.60, 1.04, 1.45, 0.10, 0.0], [0.20, 0.66, 0.60, 1.04, 1.42, 0.06, 0.0],
+			[0.26, 0.64, 0.60, 1.04, 1.37, 0.03, 0.0]],
+		"janelas": [[[0.17, 1.10], [-0.58, 1.10], [-0.58, 1.37], [0.16, 1.38]]],
+		"para_brisa": [0.25, 0.21, 1.09, 1.36, 0.05, false],
+		"vigia": [-0.93, -0.86, 1.12, 1.34, 0.26],
+		"radiador": {"z": 1.30, "fundo": 0.08, "meia": 0.26, "base": 0.50, "topo": 1.08},
+		"farol": {"z": 1.46, "x": 0.34, "y": 0.84, "r": 0.085},
+		"portas": [0.20, -0.62],
+	},
+	## Sedã de 1951 (Stock Cars): carroceria envelope rebaixada (o piso abaixo
+	## das longarinas), entre-eixos de 3,15 m, 1,53 m de altura, rodas de trás
+	## meio cobertas pela saia, pneus de faixa branca.
+	"seda_1951": {
+		"tipo": "1951", "eixos": [1.575, -1.575], "bitola": 1.48,
+		"roda": {"tipo": "faixa_branca", "r": 0.36, "aro": 0.19, "pneu": 0.18},
+		"corpo": [[-2.62, 0.70, 0.60, 0.38, 0.72, 0.15, 0.08], [-2.50, 0.90, 0.80, 0.33, 0.86, 0.22, 0.10],
+			[-2.20, 0.97, 0.88, 0.31, 0.93, 0.24, 0.10], [-1.60, 0.98, 0.90, 0.31, 0.95, 0.22, 0.10],
+			[0.00, 0.98, 0.90, 0.31, 0.96, 0.20, 0.10], [1.60, 0.98, 0.90, 0.31, 0.96, 0.22, 0.10],
+			[2.40, 0.96, 0.88, 0.33, 0.92, 0.22, 0.10], [2.60, 0.90, 0.82, 0.36, 0.86, 0.20, 0.10],
+			[2.66, 0.84, 0.76, 0.40, 0.80, 0.16, 0.08]],
+		"arcos": [[1.575, 0.36, 0.08, 9.0], [-1.575, 0.36, 0.08, 0.58]],
+		"cabine": [[-1.45, 0.86, 0.70, 0.93, 0.97, 0.04, 0.0], [-1.15, 0.87, 0.70, 0.93, 1.25, 0.18, 0.0],
+			[-0.80, 0.87, 0.68, 0.93, 1.45, 0.22, 0.0], [-0.40, 0.87, 0.68, 0.93, 1.53, 0.22, 0.0],
+			[0.30, 0.87, 0.68, 0.93, 1.53, 0.20, 0.0], [0.60, 0.86, 0.70, 0.93, 1.40, 0.15, 0.0],
+			[0.85, 0.84, 0.74, 0.93, 1.00, 0.04, 0.0]],
+		"janelas": [[[0.66, 1.00], [-0.05, 1.00], [-0.05, 1.45], [0.47, 1.45]],
+			[[-0.12, 1.00], [-0.88, 1.00], [-0.80, 1.36], [-0.12, 1.46]]],
+		"para_brisa": [0.80, 0.52, 0.99, 1.46, 0.10, false],
+		"vigia": [-1.24, -0.86, 1.00, 1.40, 0.16],
+		"farol": {"z": 2.64, "x": 0.70, "y": 0.72, "r": 0.10},
+		"para_choque": {"frente": 2.74, "tras": -2.70, "meia": 0.96, "y": 0.30},
+		"portas": [0.70, -0.08, -0.90],
+	},
 }
 
 static var _corpos := {}  # modelo -> ArrayMesh
@@ -71,13 +157,14 @@ static func construir(modelo: String, cor: Color, faixas: Dictionary = {}) -> No
 		sm.set_shader_parameter("cor_base", cor)
 		mi.set_surface_override_material(k, sm)
 		CarroBloco._parametros_faixas(sm, mi, faixas)
-	var r := float(f["r"])
-	var meia := float(f["bitola"]) * 0.5
 	for p in [["Mount_FrontLeft", -1.0, 0], ["Mount_FrontRight", 1.0, 0], ["Mount_RearLeft", -1.0, 1],
 			["Mount_RearRight", 1.0, 1]]:
+		var rd := _roda_spec(f, int(p[2]))
+		var r := float(rd["r"])
+		var meia := float(f.get("bitola_tras", f["bitola"]) if int(p[2]) == 1 else f["bitola"]) * 0.5
 		var roda := MeshInstance3D.new()
 		roda.name = String(p[0])
-		roda.mesh = roda_malha(modelo, float(p[1]))
+		roda.mesh = roda_malha(modelo, float(p[1]), int(p[2]))
 		roda.position = Vector3(meia * float(p[1]), r, float(f["eixos"][p[2]]))
 		roda.set_meta("lado", float(p[1]))
 		roda.set_meta("raio", r)
@@ -94,6 +181,18 @@ static func corpo(modelo: String) -> ArrayMesh:
 
 
 static func _montar(m: MontagemMalha, f: Dictionary) -> void:
+	match String(f.get("tipo", "1928")):
+		"1940":
+			_montar_1940(m, f)
+		"hotrod":
+			_montar_hotrod(m, f)
+		"1951":
+			_montar_1951(m, f)
+		_:
+			_montar_1928(m, f)
+
+
+static func _montar_1928(m: MontagemMalha, f: Dictionary) -> void:
 	_lataria(m, f)
 	_cabine(m, f)
 	_paralamas(m, f)
@@ -287,26 +386,28 @@ static func _paralamas(m: MontagemMalha, f: Dictionary) -> void:
 			var n := Vector2(-t.y, t.x)
 			if n.y < 0.0:
 				n = -n
-			secoes.append(_secao_paralama(lado, float(larg[0]), float(larg[1]), Vector2(p[0], p[1]), n, float(p[2])))
-		_loft(m, "paralama", secoes)
+			secoes.append(_secao_paralama(lado, float(larg[0]), float(larg[1]), Vector2(p[0], p[1]), n, float(p[2]),
+					float(f.get("paralama_saia", 0.06))))
+		_loft(m, String(f.get("paralama_estilo", "paralama")), secoes)
 	# Estribo: tapete de borracha com friso.
 	for lado: float in [-1.0, 1.0]:
 		var x0 := lado * (float(larg[0]) + 0.02)
 		var x1 := lado * (float(larg[1]) - 0.02)
 		_bloco(m, "borracha", Vector3(minf(x0, x1), est[2] + 0.004, est[1] - 0.02), Vector3(maxf(x0, x1), est[2] + 0.012, est[0] + 0.02))
-		_bloco(m, "cromo", Vector3(lado * float(larg[1]) - 0.008, est[2] - 0.02, est[1]), Vector3(lado * float(larg[1]) + 0.008, est[2] + 0.004, est[0]))
+		_bloco(m, "cromo_epoca", Vector3(lado * float(larg[1]) - 0.008, est[2] - 0.02, est[1]), Vector3(lado * float(larg[1]) + 0.008, est[2] + 0.004, est[0]))
 
 
 ## Seção do para-lama: arco abaulado de dentro (x0) para fora (x1), espessura
 ## pequena; `n` é a normal do perfil (z, y) no ponto.
-static func _secao_paralama(lado: float, x0: float, x1: float, o: Vector2, n: Vector2, abaulado: float) -> PackedVector3Array:
+static func _secao_paralama(lado: float, x0: float, x1: float, o: Vector2, n: Vector2, abaulado: float,
+		saia := 0.06) -> PackedVector3Array:
 	var p := PackedVector3Array()
 	var q := 8
 	var esp := 0.025
 	var cima := []
 	for i in q + 1:
 		var s := float(i) / q
-		var h := abaulado * sin(PI * minf(s * 1.15, 1.0)) - (0.06 * pow(s, 6.0) if abaulado > 0.02 else 0.0)
+		var h := abaulado * sin(PI * minf(s * 1.15, 1.0)) - (saia * pow(s, 6.0) if abaulado > 0.02 else 0.0)
 		cima.append([lerpf(x0, x1, s), h])
 	for c in cima:
 		p.append(Vector3(lado * float(c[0]), o.y + n.y * float(c[1]), o.x + n.x * float(c[1])))
@@ -326,7 +427,7 @@ static func _radiador(m: MontagemMalha, f: Dictionary) -> void:
 	var meia := float(r["meia"])
 	var base := float(r["base"])
 	var topo := float(r["topo"])
-	_loft(m, "cromo", [_secao(z0, meia, base, topo, 0.09), _secao(z1, meia, base, topo, 0.09)])
+	_loft(m, "cromo_epoca", [_secao(z0, meia, base, topo, 0.09), _secao(z1, meia, base, topo, 0.09)])
 	# colmeia (um pouco para dentro da moldura)
 	var zc := z1 + 0.002
 	_painel_frente(m, "interno", zc, meia - 0.05, base + 0.06, topo - 0.07)
@@ -335,8 +436,8 @@ static func _radiador(m: MontagemMalha, f: Dictionary) -> void:
 		var x := lerpf(-meia + 0.07, meia - 0.07, float(i) / (n - 1))
 		_bloco(m, "aro_escuro", Vector3(x - 0.004, base + 0.06, zc), Vector3(x + 0.004, topo - 0.07, zc + 0.006))
 	# tampa do radiador e enfeite
-	_barra(m, "cromo", Vector3(0, topo - 0.01, z0 + 0.035), Vector3(0, topo + 0.05, z0 + 0.035), 0.035, 10)
-	_barra(m, "cromo", Vector3(0, topo + 0.05, z0 + 0.035), Vector3(0, topo + 0.07, z0 + 0.07), 0.012, 6)
+	_barra(m, "cromo_epoca", Vector3(0, topo - 0.01, z0 + 0.035), Vector3(0, topo + 0.05, z0 + 0.035), 0.035, 10)
+	_barra(m, "cromo_epoca", Vector3(0, topo + 0.05, z0 + 0.035), Vector3(0, topo + 0.07, z0 + 0.07), 0.012, 6)
 	# avental embaixo da grade
 	_bloco(m, "paralama", Vector3(-meia + 0.02, 0.44, z0 - 0.02), Vector3(meia - 0.02, base, z1 - 0.01))
 
@@ -347,12 +448,12 @@ static func _farois(m: MontagemMalha, f: Dictionary) -> void:
 	var z := float(fa["z"])
 	var y := float(fa["y"])
 	var r := float(fa["r"])
-	_barra(m, "cromo", Vector3(-float(fa["x"]) - 0.08, y - r - 0.06, z - 0.03), Vector3(float(fa["x"]) + 0.08, y - r - 0.06, z - 0.03), 0.018, 8)
+	_barra(m, "cromo_epoca", Vector3(-float(fa["x"]) - 0.08, y - r - 0.06, z - 0.03), Vector3(float(fa["x"]) + 0.08, y - r - 0.06, z - 0.03), 0.018, 8)
 	for lado: float in [-1.0, 1.0]:
 		var x := lado * float(fa["x"])
 		# tigela: meia esfera virada para trás + aro e lente na frente
-		m.esfera("cromo", r, r * 2.0, 12, 8, MontagemMalha.xf(Vector3(x, y, z - 0.02), Vector3(PI / 2, 0, 0), Vector3(1, 0.9, 1)))
-		m.cilindro("cromo", r * 1.04, 0.03, 14, MontagemMalha.xf(Vector3(x, y, z + 0.06), Vector3(PI / 2, 0, 0)))
+		m.esfera("cromo_epoca", r, r * 2.0, 12, 8, MontagemMalha.xf(Vector3(x, y, z - 0.02), Vector3(PI / 2, 0, 0), Vector3(1, 0.9, 1)))
+		m.cilindro("cromo_epoca", r * 1.04, 0.03, 14, MontagemMalha.xf(Vector3(x, y, z + 0.06), Vector3(PI / 2, 0, 0)))
 		m.cilindro("lente", r * 0.9, 0.012, 14, MontagemMalha.xf(Vector3(x, y, z + 0.08), Vector3(PI / 2, 0, 0)))
 		# haste até a barra
 		_barra(m, "preto", Vector3(x, y - r * 0.8, z - 0.02), Vector3(x, y - r - 0.06, z - 0.03), 0.014, 6)
@@ -362,15 +463,15 @@ static func _farois(m: MontagemMalha, f: Dictionary) -> void:
 static func _para_choques(m: MontagemMalha, f: Dictionary) -> void:
 	var zf := float(f["paralama_frente"][0][0]) + 0.10
 	for y: float in [0.42, 0.53]:
-		_bloco(m, "cromo", Vector3(-0.80, y - 0.022, zf - 0.012), Vector3(0.80, y + 0.022, zf + 0.012))
+		_bloco(m, "cromo_epoca", Vector3(-0.80, y - 0.022, zf - 0.012), Vector3(0.80, y + 0.022, zf + 0.012))
 	for lado: float in [-1.0, 1.0]:
 		# braçadeiras nas pontas e os braços até o chassi
-		_bloco(m, "cromo", Vector3(lado * 0.74 - 0.02, 0.40, zf - 0.02), Vector3(lado * 0.74 + 0.02, 0.555, zf + 0.02))
+		_bloco(m, "cromo_epoca", Vector3(lado * 0.74 - 0.02, 0.40, zf - 0.02), Vector3(lado * 0.74 + 0.02, 0.555, zf + 0.02))
 		_barra(m, "preto", Vector3(lado * 0.42, 0.47, zf - 0.01), Vector3(lado * 0.42, 0.50, zf - 0.40), 0.018, 6)
 	var zt := float(f["paralama_tras"][-1][0]) - 0.12
 	for lado: float in [-1.0, 1.0]:
 		for y: float in [0.44, 0.55]:
-			_bloco(m, "cromo", Vector3(minf(lado * 0.36, lado * 0.80), y - 0.02, zt - 0.012),
+			_bloco(m, "cromo_epoca", Vector3(minf(lado * 0.36, lado * 0.80), y - 0.02, zt - 0.012),
 					Vector3(maxf(lado * 0.36, lado * 0.80), y + 0.02, zt + 0.012))
 		_barra(m, "preto", Vector3(lado * 0.42, 0.49, zt + 0.01), Vector3(lado * 0.42, 0.52, zt + 0.35), 0.018, 6)
 
@@ -420,10 +521,10 @@ static func _detalhes(m: MontagemMalha, f: Dictionary) -> void:
 		var xc := lado * (float(f["cabine"][3][1]) + 0.003)
 		for z in f["portas"]:
 			_bloco(m, "interno", Vector3(minf(xc, xc + lado * 0.004), 1.10, z - 0.004), Vector3(maxf(xc, xc + lado * 0.004), 1.62, z + 0.004))
-		_bloco(m, "cromo", Vector3(minf(xp, xp + lado * 0.03), 1.04, float(f["portas"][1]) + 0.04),
+		_bloco(m, "cromo_epoca", Vector3(minf(xp, xp + lado * 0.03), 1.04, float(f["portas"][1]) + 0.04),
 				Vector3(maxf(xp, xp + lado * 0.03), 1.06, float(f["portas"][1]) + 0.13))
 	# dobradiça do capô no meio
-	_bloco(m, "cromo", Vector3(-0.012, 1.162, 0.34), Vector3(0.012, 1.175, 1.30))
+	_bloco(m, "cromo_epoca", Vector3(-0.012, 1.162, 0.34), Vector3(0.012, 1.175, 1.30))
 	# lanterna
 	m.cilindro("lanterna", 0.045, 0.06, 10, MontagemMalha.xf(Vector3(-0.72, 0.88, -1.62), Vector3(PI / 2, 0, 0)))
 	_barra(m, "preto", Vector3(-0.72, 0.84, -1.62), Vector3(-0.72, 0.80, -1.56), 0.01, 6)
@@ -456,27 +557,40 @@ static func _cintura(z: float) -> float:
 
 # --- rodas --------------------------------------------------------------------
 
-## Roda de raios de arame (malha guardada por modelo e lado).
-static func roda_malha(modelo: String, lado: float) -> ArrayMesh:
-	var chave := "%s|%d" % [modelo, 1 if lado >= 0.0 else -1]
+## A roda do eixo (0 frente, 1 trás): a do modelo, ou "roda_tras" atrás. O
+## cupê de 1928 guarda as medidas soltas (raios de arame).
+static func _roda_spec(f: Dictionary, eixo: int) -> Dictionary:
+	if f.has("roda"):
+		return f["roda_tras"] if eixo == 1 and f.has("roda_tras") else f["roda"]
+	return {"tipo": "arame", "r": f["r"], "aro": f["aro"], "pneu": f["pneu"], "raios": f["raios"]}
+
+
+## A malha da roda (guardada por modelo, lado e eixo).
+static func roda_malha(modelo: String, lado: float, eixo := 0) -> ArrayMesh:
+	var chave := "%s|%d|%d" % [modelo, 1 if lado >= 0.0 else -1, eixo]
 	if not _rodas.has(chave):
 		var m := MontagemMalha.new()
-		_roda(m, MODELOS[modelo], 1.0 if lado >= 0.0 else -1.0)
+		_roda(m, _roda_spec(MODELOS[modelo], eixo), 1.0 if lado >= 0.0 else -1.0)
 		_rodas[chave] = CarroBloco.suavizar_por_angulo(m.malha(), 30.0, true)
 	return _rodas[chave]
 
 
-static func _roda(m: MontagemMalha, f: Dictionary, lado: float) -> void:
-	_roda_em(m, f, Transform3D(Basis.from_scale(Vector3(lado, 1, 1)), Vector3.ZERO), lado)
+static func _roda(m: MontagemMalha, rd: Dictionary, lado: float) -> void:
+	_roda_em(m, rd, Transform3D(Basis.from_scale(Vector3(lado, 1, 1)), Vector3.ZERO), lado)
 
 
 ## A roda em `xf` (eixo de giro em X): pneu alto e fino de flanco arredondado,
 ## aro, raios de arame cruzados e a calota pequena.
 static func _roda_em(m: MontagemMalha, f: Dictionary, xf: Transform3D, lado := 1.0) -> void:
+	if f.has("eixos"):
+		f = _roda_spec(f, 0)
 	var r := float(f["r"])
 	var aro := float(f["aro"])
 	var larg := float(f["pneu"])
 	var lados := 24
+	if String(f.get("tipo", "arame")) != "arame":
+		_roda_disco(m, f, xf)
+		return
 	# pneu: seção arredondada (6 pontos) girada em volta do eixo
 	var perfil := [[aro * 0.98, -larg * 0.42], [r * 0.9, -larg * 0.5], [r * 0.985, -larg * 0.34], [r, 0.0],
 			[r * 0.985, larg * 0.34], [r * 0.9, larg * 0.5], [aro * 0.98, larg * 0.42]]
@@ -497,7 +611,7 @@ static func _roda_em(m: MontagemMalha, f: Dictionary, xf: Transform3D, lado := 1
 		_barra_xf(m, "raio", xf * p0, xf * p1, 0.0045)
 	# cubo e calota
 	_torno(m, "raio", [[0.0, -0.06], [cubo, -0.06], [cubo, 0.05], [0.0, 0.05]], 12, xf, true)
-	_torno(m, "cromo", [[0.0, 0.05], [0.08, 0.05], [0.075, 0.085], [0.045, 0.105], [0.0, 0.11]], 12, xf)
+	_torno(m, "cromo_epoca", [[0.0, 0.05], [0.08, 0.05], [0.075, 0.085], [0.045, 0.105], [0.0, 0.11]], 12, xf)
 
 
 ## Sólido de revolução em volta do eixo X: perfil de pontos [raio, x].
@@ -534,3 +648,389 @@ static func _centro_x(pts: Array) -> float:
 
 static func _barra_xf(m: MontagemMalha, estilo: String, a: Vector3, b: Vector3, raio: float) -> void:
 	_barra(m, estilo, a, b, raio, 4)
+
+
+# --- peças dos estilos 1940, hot rod e 1951 -----------------------------------
+
+## Seção arredondada com laterais inclinadas (meia largura `mb` embaixo e `mt`
+## em cima), raio `r` nas quinas de cima e `rb` nas de baixo. Sempre 20 pontos.
+static func _secao2(z: float, mb: float, mt: float, base: float, topo: float, r: float, rb: float) -> PackedVector3Array:
+	var p := PackedVector3Array()
+	r = minf(r, minf(mt, (topo - base) * 0.5) * 0.95)
+	rb = minf(rb, minf(mb, (topo - base) * 0.5) * 0.95)
+	var q := 4
+	var cantos := [[Vector2(mb - rb, base + rb), rb, -PI * 0.5], [Vector2(mt - r, topo - r), r, 0.0],
+			[Vector2(-mt + r, topo - r), r, PI * 0.5], [Vector2(-mb + rb, base + rb), rb, PI]]
+	for c in cantos:
+		for i in q + 1:
+			var a: float = float(c[2]) + PI * 0.5 * i / q
+			var o: Vector2 = c[0] + Vector2(cos(a), sin(a)) * float(c[1])
+			p.append(Vector3(o.x, o.y, z))
+	return p
+
+
+## Linhas da tabela [z, mb, mt, base, topo, r, rb] reamostradas a cada `passo`
+## m (curva suave), com as caixas de roda: em cada arco [z do eixo, raio da
+## roda, folga, saia] a base sobe até o círculo da caixa (limitada pela saia).
+static func _linhas(rows: Array, arcos: Array, passo := 0.06) -> Array:
+	var densas := _suave(rows, 4)
+	var out := []
+	var z0 := float(densas[0][0])
+	var z1 := float(densas[-1][0])
+	var n := maxi(int((z1 - z0) / passo), 2)
+	for k in n + 1:
+		var z := lerpf(z0, z1, float(k) / n)
+		var l := _linha_em(densas, z)
+		for a in arcos:
+			var dz := z - float(a[0])
+			var raio := float(a[1]) + float(a[2])
+			if absf(dz) < raio:
+				var y := float(a[1]) + sqrt(raio * raio - dz * dz)
+				l[3] = maxf(float(l[3]), minf(y, float(a[3])))
+		out.append(l)
+	return out
+
+
+## A linha da tabela em z (interpolação linear entre as vizinhas).
+static func _linha_em(rows: Array, z: float) -> Array:
+	if z <= float(rows[0][0]):
+		return rows[0].duplicate()
+	for i in rows.size() - 1:
+		var a: Array = rows[i]
+		var b: Array = rows[i + 1]
+		if z <= float(b[0]):
+			var t := inverse_lerp(float(a[0]), float(b[0]), z)
+			var l := []
+			for c in a.size():
+				l.append(lerpf(float(a[c]), float(b[c]), t))
+			l[0] = z
+			return l
+	return rows[-1].duplicate()
+
+
+static func _loft_linhas(m: MontagemMalha, estilo: String, linhas: Array) -> void:
+	var secoes := []
+	for l in linhas:
+		secoes.append(_secao2(l[0], l[1], l[2], l[3], l[4], l[5], l[6]))
+	_loft(m, estilo, secoes)
+
+
+## x da lateral na altura y da linha (a reta entre a base e o começo da quina).
+static func _x_lado(l: Array, y: float) -> float:
+	var t := clampf((y - float(l[3])) / maxf(float(l[4]) - float(l[5]) - float(l[3]), 0.01), 0.0, 1.0)
+	return lerpf(float(l[1]), float(l[2]), t)
+
+
+## Vidro (ou peça) desenhado sobre a lateral: polígono [z, y] projetado na
+## superfície da tabela, `afasta` m para fora.
+static func _sobre_lado(m: MontagemMalha, estilo: String, rows: Array, pol: Array, lado: float, afasta := 0.006) -> void:
+	# Grade de 6 × 6 dentro do quadrilátero, cada ponto na superfície: o vidro
+	# acompanha a curva da cabine (um plano só entrava nela no meio).
+	var n := 6
+	var g := []
+	for i in n + 1:
+		var linha := []
+		for j in n + 1:
+			var u := float(i) / n
+			var w := float(j) / n
+			var a: Vector2 = Vector2(pol[0][0], pol[0][1]).lerp(Vector2(pol[1][0], pol[1][1]), u)
+			var b: Vector2 = Vector2(pol[3][0], pol[3][1]).lerp(Vector2(pol[2][0], pol[2][1]), u)
+			var q := a.lerp(b, w)
+			var l := _linha_em(rows, q.x)
+			linha.append(Vector3(lado * (_x_lado(l, q.y) + afasta), q.y, q.x))
+		g.append(linha)
+	for i in n:
+		for j in n:
+			var v: Array = [g[i][j], g[i + 1][j], g[i + 1][j + 1], g[i][j + 1]]
+			var c: Vector3 = (v[0] + v[2]) * 0.5
+			_face(m, estilo, v, Vector3(0, c.y, c.z))
+
+
+## Para-brisa (ou vigia) inclinado entre a borda de baixo (z0, y0) e a de cima
+## (z1, y1), com `margem` das laterais; `meio` põe a coluna do centro.
+static func _vidro_inclinado(m: MontagemMalha, rows: Array, z0: float, z1: float, y0: float, y1: float, margem: float, meio := false) -> void:
+	var l0 := _linha_em(rows, z0)
+	var l1 := _linha_em(rows, z1)
+	var x0 := _x_lado(l0, y0) - margem
+	var x1 := _x_lado(l1, y1) - margem - float(l1[5]) * 0.6
+	var fora := Vector3(0, 0.4, signf(z0 - z1))
+	var v := [Vector3(-x0, y0, z0), Vector3(x0, y0, z0), Vector3(x1, y1, z1), Vector3(-x1, y1, z1)]
+	var d := fora.normalized() * 0.008
+	_face(m, "vidro_epoca", v.map(func(q): return q + d), (v[0] + v[2]) * 0.5 - fora)
+	if meio:
+		var e := fora.normalized() * 0.014
+		_face(m, "cromo_epoca", [Vector3(-0.015, y0, z0) + e, Vector3(0.015, y0, z0) + e, Vector3(0.015, y1, z1) + e,
+				Vector3(-0.015, y1, z1) + e], (v[0] + v[2]) * 0.5 - fora)
+
+
+## Cabine (estufa) de qualquer estilo: loft pintada, janelas laterais,
+## para-brisa e vigia.
+static func _estufa(m: MontagemMalha, f: Dictionary) -> void:
+	var rows: Array = _linhas(f["cabine"], [], 0.05)
+	_loft_linhas(m, MontagemMalha.PINTURA, rows)
+	for lado: float in [-1.0, 1.0]:
+		for pol in f["janelas"]:
+			_sobre_lado(m, "preto", rows, _engordar(pol, 0.02), lado, 0.004)
+			_sobre_lado(m, "vidro_epoca", rows, pol, lado, 0.007)
+	var pb: Array = f["para_brisa"]
+	_vidro_inclinado(m, rows, pb[0], pb[1], pb[2], pb[3], pb[4], bool(pb[5]))
+	var vg: Array = f["vigia"]
+	_vidro_inclinado(m, rows, vg[0], vg[1], vg[2], vg[3], vg[4])
+
+
+## Polígono [z, y] alargado `d` para fora do centro (moldura).
+static func _engordar(pol: Array, d: float) -> Array:
+	var c := Vector2.ZERO
+	for p in pol:
+		c += Vector2(p[0], p[1])
+	c /= pol.size()
+	return pol.map(func(p): return [float(p[0]) + signf(float(p[0]) - c.x) * d, float(p[1]) + signf(float(p[1]) - c.y) * d])
+
+
+## Caixas de roda escuras por dentro dos arcos (não se vê o outro lado).
+static func _caixas(m: MontagemMalha, f: Dictionary) -> void:
+	for a in f.get("arcos", []):
+		var eixo := 0 if float(a[0]) > 0.0 else 1
+		var rd := _roda_spec(f, eixo)
+		var meia := float(f.get("bitola_tras", f["bitola"]) if eixo == 1 else f["bitola"]) * 0.5
+		var dentro := meia - float(rd["pneu"]) * 0.5 - 0.03
+		var raio := float(a[1]) + float(a[2])
+		_bloco(m, "interno", Vector3(-dentro, 0.2, float(a[0]) - raio), Vector3(dentro, float(a[1]) + raio, float(a[0]) + raio))
+
+
+## Para-choque de barra cromada arredondada com duas garras em pé.
+static func _barra_choque(m: MontagemMalha, z: float, meia: float, y: float, alto: float, garras: bool) -> void:
+	var sentido := signf(z)
+	var pts := []
+	for i in 9:
+		var t := float(i) / 8.0
+		var x := lerpf(-meia, meia, t)
+		pts.append(Vector3(x, y, z - sentido * 0.22 * pow(absf(x) / meia, 3.0)))
+	for i in pts.size() - 1:
+		_barra(m, "cromo_epoca", pts[i], pts[i + 1], alto * 0.5, 10)
+	if garras:
+		for lado: float in [-1.0, 1.0]:
+			_barra(m, "cromo_epoca", Vector3(lado * meia * 0.38, y - alto * 0.3, z + sentido * 0.03),
+					Vector3(lado * meia * 0.38, y + alto * 1.9, z + sentido * 0.02), 0.035, 8)
+
+
+## Farol redondo de aro cromado virado para a frente (ou inclinado `incl` rad).
+static func _farol_redondo(m: MontagemMalha, c: Vector3, r: float, incl := 0.0, pintado := false) -> void:
+	var rot := Vector3(PI / 2 - incl, 0, 0)
+	if pintado:
+		m.cilindro(MontagemMalha.PINTURA, r * 1.15, 0.22, 14, MontagemMalha.xf(c - Vector3(0, 0, 0.1), rot))
+	m.cilindro("cromo_epoca", r * 1.05, 0.04, 16, MontagemMalha.xf(c, rot))
+	m.cilindro("lente", r * 0.88, 0.02, 16, MontagemMalha.xf(c + Vector3(0, sin(incl) * 0.02, cos(incl) * 0.02), rot))
+
+
+## 1940: corpo com capô comprido, proa em V com barras, grades laterais
+## baixas, para-lamas em gota com os faróis em cima, estribo curto.
+static func _montar_1940(m: MontagemMalha, f: Dictionary) -> void:
+	_loft_linhas(m, MontagemMalha.PINTURA, _linhas(f["corpo"], []))
+	_estufa(m, f)
+	_paralamas(m, f)
+	_paralamas_cheios(m, f)
+	# Proa: cunha escura com barras cromadas em pé e o friso no alto.
+	var proa: Array = f["proa"]
+	_loft_linhas(m, "interno", _linhas(proa, [], 0.04))
+	for lado: float in [-1.0, 1.0]:
+		for i in 8:
+			var t := (float(i) + 0.5) / 8.0
+			var z := lerpf(float(proa[0][0]), float(proa[-1][0]), t)
+			var l := _linha_em(proa, z)
+			var x := lado * (lerpf(float(l[1]), float(l[2]), 0.5) + 0.004)
+			_bloco(m, "cromo_epoca", Vector3(x - 0.006, float(l[3]) + 0.03, z - 0.008), Vector3(x + 0.006, float(l[4]) - 0.04, z + 0.008))
+		# grades baixas dos lados da proa
+		var zg := 2.06
+		for k in 4:
+			var y := 0.58 + k * 0.045
+			_bloco(m, "cromo_epoca", Vector3(minf(lado * 0.30, lado * 0.52), y, zg - 0.01), Vector3(maxf(lado * 0.30, lado * 0.52), y + 0.018, zg + 0.01))
+		_bloco(m, "interno", Vector3(minf(lado * 0.30, lado * 0.52), 0.56, zg - 0.03), Vector3(maxf(lado * 0.30, lado * 0.52), 0.75, zg - 0.01))
+	_bloco(m, "cromo_epoca", Vector3(-0.012, 0.86, 1.0), Vector3(0.012, 0.92, 2.27))
+	# Faróis nos para-lamas, inclinados com a curva.
+	var fa: Dictionary = f["farol"]
+	for lado: float in [-1.0, 1.0]:
+		_farol_redondo(m, Vector3(lado * float(fa["x"]), float(fa["y"]), float(fa["z"])), float(fa["r"]), 0.45, true)
+	var pc: Dictionary = f["para_choque"]
+	_barra_choque(m, float(pc["frente"]), float(pc["meia"]), float(pc["y"]), 0.09, true)
+	_barra_choque(m, float(pc["tras"]), float(pc["meia"]) * 0.95, float(pc["y"]) + 0.02, 0.08, true)
+	# Lanternas nos para-lamas de trás, maçanetas, linhas das portas, chassi.
+	for lado: float in [-1.0, 1.0]:
+		m.cilindro("lanterna", 0.05, 0.05, 10, MontagemMalha.xf(Vector3(lado * 0.80, 0.80, -2.04), Vector3(PI / 2 + 0.6, 0, 0)))
+		var l := _linha_em(f["corpo"], 0.0)
+		var x := lado * (float(l[1]) + 0.004)
+		for z in f["portas"]:
+			_bloco(m, "interno", Vector3(minf(x, x + lado * 0.004), 0.48, float(z) - 0.004), Vector3(maxf(x, x + lado * 0.004), 1.04, float(z) + 0.004))
+		_bloco(m, "cromo_epoca", Vector3(minf(x, x + lado * 0.03), 0.96, -0.50), Vector3(maxf(x, x + lado * 0.03), 0.98, -0.40))
+	for z in f["eixos"]:
+		_barra(m, "preto", Vector3(-0.6, 0.36, z), Vector3(0.6, 0.36, z), 0.035, 6)
+
+
+## Frente e traseira maciças dos para-lamas em gota (na frente o farol assenta
+## nela): lofts entre z0 e z1, do chão `base` até o topo do perfil do para-lama.
+static func _paralamas_cheios(m: MontagemMalha, f: Dictionary) -> void:
+	var larg: Array = f["paralama_largura"]
+	var meio := (float(larg[0]) + float(larg[1])) * 0.5
+	var meia := (float(larg[1]) - float(larg[0])) * 0.5
+	for faixa in f.get("paralama_cheio", []):
+		var perfil: Array = f["paralama_frente"] if float(faixa[0]) > 0.0 else f["paralama_tras"]
+		var ordenado := perfil.duplicate()
+		ordenado.sort_custom(func(a, b): return float(a[0]) < float(b[0]))
+		var rows := []
+		for k in 9:
+			var z := lerpf(float(faixa[0]), float(faixa[1]), float(k) / 8.0)
+			var l := _linha_em(ordenado, z)
+			var topo := float(l[1]) + float(l[2]) - 0.02
+			var ponta := sin(PI * float(k) / 8.0) if (k == 0 or k == 8) else 1.0
+			var largura := meia * (0.55 + 0.45 * ponta) * (0.92 if (z > 0.0 and k == 8) or (z < 0.0 and k == 0) else 1.0)
+			var base := float(faixa[2])
+			rows.append([z, largura, largura * 0.82, base, maxf(topo, base + 0.06), minf(0.14, (topo - base) * 0.45), 0.04])
+		for lado: float in [-1.0, 1.0]:
+			var secoes := []
+			for r in rows:
+				var sec := _secao2(r[0], r[1], r[2], r[3], r[4], r[5], r[6])
+				for i in sec.size():
+					sec[i].x += lado * meio
+				secoes.append(sec)
+			_loft(m, String(f.get("paralama_estilo", "paralama")), secoes)
+
+
+## Hot rod: corpo de 1932 em cima das longarinas, caixas de roda recortadas
+## atrás, motor à mostra com tampas cromadas e escapes, grade em pé, faróis em
+## bala numa barra, eixo da frente rebaixado e para-choques de tubo.
+static func _montar_hotrod(m: MontagemMalha, f: Dictionary) -> void:
+	_loft_linhas(m, MontagemMalha.PINTURA, _linhas(f["corpo"], f["arcos"]))
+	_caixas(m, f)
+	_estufa(m, f)
+	# Longarinas da frente ao fundo, subindo sobre o eixo de trás.
+	for lado: float in [-1.0, 1.0]:
+		var x := lado * 0.36
+		_bloco(m, "preto", Vector3(x - 0.04, 0.36, 0.2), Vector3(x + 0.04, 0.50, 1.55))
+		_bloco(m, "preto", Vector3(x - 0.04, 0.42, -1.9), Vector3(x + 0.04, 0.54, 0.25))
+	# Motor: bloco, tampas de válvula cromadas, compressor e três cornetas.
+	_bloco(m, "aro_escuro", Vector3(-0.24, 0.48, 0.42), Vector3(0.24, 0.80, 1.20))
+	for lado: float in [-1.0, 1.0]:
+		var tampa := MontagemMalha.xf(Vector3(lado * 0.17, 0.86, 0.81), Vector3(0, 0, lado * 0.5))
+		m.caixa("cromo_epoca", Vector3(0.14, 0.07, 0.74), tampa)
+		# escapes: quatro tubos saindo do bloco e descendo para trás
+		for k in 4:
+			var z := 0.55 + k * 0.18
+			var a := Vector3(lado * 0.25, 0.70, z)
+			var b := Vector3(lado * 0.46, 0.62, z - 0.05)
+			var c := Vector3(lado * 0.50, 0.40, z - 0.25)
+			_barra(m, "cromo_epoca", a, b, 0.024, 8)
+			_barra(m, "cromo_epoca", b, c, 0.024, 8)
+		_barra(m, "cromo_epoca", Vector3(lado * 0.50, 0.38, 1.20), Vector3(lado * 0.52, 0.36, 0.0), 0.04, 8)
+	_bloco(m, "cromo_epoca", Vector3(-0.13, 0.86, 0.62), Vector3(0.13, 1.00, 1.00))
+	for k in 3:
+		_barra(m, "cromo_epoca", Vector3(0, 1.0, 0.68 + k * 0.13), Vector3(0, 1.12, 0.68 + k * 0.13), 0.045, 10)
+	# Grade do radiador em pé.
+	var r: Dictionary = f["radiador"]
+	var z0 := float(r["z"])
+	var z1 := z0 + float(r["fundo"])
+	var meia := float(r["meia"])
+	_loft(m, MontagemMalha.PINTURA, [_secao2(z0, meia, meia * 0.92, float(r["base"]), float(r["topo"]), 0.12, 0.04),
+			_secao2(z1, meia, meia * 0.92, float(r["base"]), float(r["topo"]), 0.12, 0.04)])
+	_painel_frente(m, "interno", z1 + 0.002, meia - 0.05, float(r["base"]) + 0.05, float(r["topo"]) - 0.06)
+	for i in 11:
+		var x := lerpf(-meia + 0.07, meia - 0.07, float(i) / 10.0)
+		_bloco(m, "cromo_epoca", Vector3(x - 0.005, float(r["base"]) + 0.05, z1), Vector3(x + 0.005, float(r["topo"]) - 0.06, z1 + 0.008))
+	# Faróis em bala numa barra; eixo rebaixado e para-choques de tubo.
+	var fa: Dictionary = f["farol"]
+	_barra(m, "cromo_epoca", Vector3(-float(fa["x"]), 0.70, float(fa["z"]) - 0.06), Vector3(float(fa["x"]), 0.70, float(fa["z"]) - 0.06), 0.016, 8)
+	for lado: float in [-1.0, 1.0]:
+		var c := Vector3(lado * float(fa["x"]), float(fa["y"]), float(fa["z"]))
+		m.esfera("cromo_epoca", float(fa["r"]), float(fa["r"]) * 2.4, 12, 8, MontagemMalha.xf(c - Vector3(0, 0, 0.04), Vector3(PI / 2, 0, 0)))
+		m.cilindro("lente", float(fa["r"]) * 0.85, 0.02, 14, MontagemMalha.xf(c + Vector3(0, 0, 0.06), Vector3(PI / 2, 0, 0)))
+		_barra(m, "cromo_epoca", c - Vector3(0, float(fa["r"]), 0.04), Vector3(lado * float(fa["x"]), 0.70, float(fa["z"]) - 0.06), 0.012, 6)
+	var ze := float(f["eixos"][0])
+	_barra(m, "cromo_epoca", Vector3(-0.62, 0.33, ze), Vector3(-0.3, 0.26, ze), 0.03, 8)
+	_barra(m, "cromo_epoca", Vector3(-0.3, 0.26, ze), Vector3(0.3, 0.26, ze), 0.03, 8)
+	_barra(m, "cromo_epoca", Vector3(0.3, 0.26, ze), Vector3(0.62, 0.33, ze), 0.03, 8)
+	for zt: float in [1.62, -1.98]:
+		_barra(m, "cromo_epoca", Vector3(-0.42, 0.44, zt), Vector3(0.42, 0.44, zt), 0.025, 8)
+		for lado: float in [-1.0, 1.0]:
+			_barra(m, "cromo_epoca", Vector3(lado * 0.30, 0.44, zt), Vector3(lado * 0.30, 0.62, zt), 0.02, 6)
+			_barra(m, "cromo_epoca", Vector3(lado * 0.36, 0.46, zt), Vector3(lado * 0.36, 0.46, zt - signf(zt) * 0.2), 0.02, 6)
+	for lado: float in [-1.0, 1.0]:
+		m.cilindro("lanterna", 0.04, 0.04, 10, MontagemMalha.xf(Vector3(lado * 0.42, 0.70, -1.86), Vector3(PI / 2, 0, 0)))
+		var l := _linha_em(f["corpo"], -0.2)
+		var x := lado * (float(l[1]) + 0.004)
+		for z in f["portas"]:
+			_bloco(m, "interno", Vector3(minf(x, x + lado * 0.004), 0.56, float(z) - 0.004), Vector3(maxf(x, x + lado * 0.004), 1.04, float(z) + 0.004))
+
+
+## 1951: carroceria envelope com as caixas de roda (a de trás com saia),
+## cabine baixa, friso cromado de ponta a ponta, grade larga de barras
+## deitadas, faróis nos cantos e para-choques maciços com garras.
+static func _montar_1951(m: MontagemMalha, f: Dictionary) -> void:
+	var rows := _linhas(f["corpo"], f["arcos"], 0.05)
+	_loft_linhas(m, MontagemMalha.PINTURA, rows)
+	_caixas(m, f)
+	_estufa(m, f)
+	var frente := float(f["corpo"][-1][0])
+	# Grade: fundo escuro, barras deitadas e a moldura em V por cima.
+	_painel_frente(m, "interno", frente + 0.004, 0.62, 0.46, 0.70)
+	for k in 4:
+		var y := 0.49 + k * 0.055
+		_bloco(m, "cromo_epoca", Vector3(-0.60, y, frente), Vector3(0.60, y + 0.022, frente + 0.03))
+	for lado: float in [-1.0, 1.0]:
+		_barra(m, "cromo_epoca", Vector3(0, 0.76, frente + 0.03), Vector3(lado * 0.64, 0.70, frente + 0.02), 0.022, 8)
+	var fa: Dictionary = f["farol"]
+	for lado: float in [-1.0, 1.0]:
+		_farol_redondo(m, Vector3(lado * float(fa["x"]), float(fa["y"]), float(fa["z"])), float(fa["r"]))
+	var pc: Dictionary = f["para_choque"]
+	_barra_choque(m, float(pc["frente"]), float(pc["meia"]), float(pc["y"]) + 0.07, 0.14, true)
+	_barra_choque(m, float(pc["tras"]), float(pc["meia"]) * 0.96, float(pc["y"]) + 0.08, 0.12, true)
+	# Friso cromado na lateral, lanternas, linhas das portas e maçanetas.
+	for lado: float in [-1.0, 1.0]:
+		var pts := []
+		for i in 25:
+			var z := lerpf(-2.40, 2.45, float(i) / 24.0)
+			var l := _linha_em(rows, z)
+			if float(l[3]) > 0.74:
+				pts.append(null)
+				continue
+			pts.append(Vector3(lado * (_x_lado(l, 0.74) + 0.006), 0.74, z))
+		for i in pts.size() - 1:
+			if pts[i] != null and pts[i + 1] != null:
+				_barra(m, "cromo_epoca", pts[i], pts[i + 1], 0.012, 6)
+		_bloco(m, "lanterna", Vector3(lado * 0.80 - 0.05, 0.56, -2.62), Vector3(lado * 0.80 + 0.05, 0.80, -2.58))
+		for z in f["portas"]:
+			var l := _linha_em(rows, float(z))
+			var x := lado * (_x_lado(l, 0.6) + 0.004)
+			_bloco(m, "interno", Vector3(minf(x, x + lado * 0.004), 0.36, float(z) - 0.004), Vector3(maxf(x, x + lado * 0.004), 0.93, float(z) + 0.004))
+		var lm := _linha_em(rows, 0.55)
+		var xm := lado * (_x_lado(lm, 0.88) + 0.004)
+		_bloco(m, "cromo_epoca", Vector3(minf(xm, xm + lado * 0.03), 0.87, 0.40), Vector3(maxf(xm, xm + lado * 0.03), 0.89, 0.52))
+	_bloco(m, "cromo_epoca", Vector3(-0.012, 0.95, 1.2), Vector3(0.012, 0.975, 2.6))
+
+
+## Rodas de disco: aço pintado com calota (1940), cromada (hot rod) ou com a
+## faixa branca e a calota inteira (1951).
+static func _roda_disco(m: MontagemMalha, rd: Dictionary, xf: Transform3D) -> void:
+	var r := float(rd["r"])
+	var aro := float(rd["aro"])
+	var larg := float(rd["pneu"])
+	var tipo := String(rd["tipo"])
+	var perfil := [[aro * 0.98, -larg * 0.45], [r * 0.92, -larg * 0.5], [r * 0.99, -larg * 0.36], [r, 0.0],
+			[r * 0.99, larg * 0.36], [r * 0.92, larg * 0.5], [aro * 0.98, larg * 0.45]]
+	_torno(m, "pneu", perfil, 24, xf)
+	if tipo == "faixa_branca":
+		_torno(m, "re", [[aro * 1.12, larg * 0.505], [lerpf(aro, r, 0.62), larg * 0.505]], 24, xf)
+	var face := larg * 0.42
+	match tipo:
+		"aco":
+			_torno(m, "aro_roda_escuro", [[0.0, face - 0.02], [aro, face - 0.02], [aro, face + 0.01]], 20, xf)
+			_torno(m, "cromo_epoca", [[aro * 0.98, face + 0.012], [aro * 1.04, face + 0.012]], 20, xf)
+			_torno(m, "cromo_epoca", [[0.0, face + 0.07], [aro * 0.45, face + 0.06], [aro * 0.75, face + 0.025], [aro * 0.8, face]], 16, xf)
+		"cromada":
+			_torno(m, "cromo_epoca", [[0.0, face - 0.03], [aro, face - 0.03], [aro * 1.03, face + 0.01]], 20, xf)
+			for k in 6:
+				var a := TAU * k / 6.0
+				var c := Vector3(face - 0.025, cos(a) * aro * 0.6, sin(a) * aro * 0.6)
+				m.cilindro("interno", aro * 0.12, 0.012, 10, xf * MontagemMalha.xf(c, Vector3(0, 0, PI / 2)))
+			_torno(m, "cromo_epoca", [[0.0, face + 0.03], [aro * 0.25, face + 0.02], [aro * 0.3, face - 0.02]], 12, xf)
+		_:
+			_torno(m, "cromo_epoca", [[0.0, face + 0.05], [aro * 0.5, face + 0.045], [aro * 0.95, face + 0.01], [aro * 1.02, face - 0.01]], 20, xf)
+			_torno(m, "aro_roda_escuro", [[aro * 0.22, face + 0.052], [aro * 0.26, face + 0.052]], 16, xf)
