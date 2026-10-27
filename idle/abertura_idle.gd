@@ -23,6 +23,7 @@ var _pular := false  # toque fora do contrato: completa a fala / pula a pausa
 var _tremor := 0.0
 var _papeis: Array = []
 var _fumaca: Array = []
+var _frente: Control
 var _sal: TextureRect
 var _mara: TextureRect
 var _balao: PanelContainer
@@ -36,6 +37,12 @@ func _init() -> void:
 	_rng.randomize()
 	_sal = _corpo("sal_moretti")
 	_mara = _corpo("mara_hayes_cruzados")
+	# Camada da frente (acima dos personagens): contrato, anel de TOQUE e papel voando.
+	_frente = Control.new()
+	_frente.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_frente.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_frente.draw.connect(_desenhar_frente)
+	add_child(_frente)
 	_balao = PanelContainer.new()
 	_balao.add_theme_stylebox_override("panel", IdleUI.caixa(Color("f4f1ea"), 4, 16))
 	_balao.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -192,6 +199,7 @@ func _gui_input(e: InputEvent) -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	_tremor = maxf(_tremor - delta * 3.0, 0.0)
+	_frente.queue_redraw()
 	position = Vector2(sin(_t * 90.0), cos(_t * 77.0)) * 10.0 * _tremor if not Preferencias.reduzir_animacoes else Vector2.ZERO
 	queue_redraw()
 
@@ -211,16 +219,19 @@ func _draw() -> void:
 		var k := (_t - float(f["t0"])) / 1.2
 		if k < 1.0:
 			draw_circle(f["p"] + f["v"] * (_t - float(f["t0"])), float(f["r"]) * (1.0 + k), Color(0.55, 0.57, 0.6, 0.4 * (1.0 - k)))
+
+
+func _desenhar_frente() -> void:
 	# O contrato na mão do Sal, com o anel de TOQUE pulsando.
 	if _contrato:
 		var c := _ponto_contrato()
-		draw_rect(Rect2(c - Vector2(34, 44), Vector2(68, 88)), Color("f4f1ea"))
+		_frente.draw_rect(Rect2(c - Vector2(34, 44), Vector2(68, 88)), Color("f4f1ea"))
 		for i in 5:
-			draw_line(c + Vector2(-24, -30 + i * 14), c + Vector2(24, -30 + i * 14), Color("9aa0a8"), 2.0)
+			_frente.draw_line(c + Vector2(-24, -30 + i * 14), c + Vector2(24, -30 + i * 14), Color("9aa0a8"), 2.0)
 		var p := 0.5 + 0.5 * sin(_t * TAU / 0.9)
-		draw_arc(c, 70.0 + 10.0 * p, 0, TAU, 40, Color(OURO, 0.6 + 0.4 * p), 5.0)
+		_frente.draw_arc(c, 70.0 + 10.0 * p, 0, TAU, 40, Color(OURO, 0.6 + 0.4 * p), 5.0)
 		var fonte := Tipografia.fonte("display")
-		draw_string(fonte, c + Vector2(-48, -96), "TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, 36, OURO)
+		_frente.draw_string(fonte, c + Vector2(-48, -96), "TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, 36, OURO)
 	# Pedaços do contrato voando.
 	for pa in _papeis:
 		var dt := _t - float(pa["t0"])
@@ -231,7 +242,7 @@ func _draw() -> void:
 		var s := float(pa["tam"])
 		var ponta := Vector2(cos(a), sin(a)) * s
 		var lado := Vector2(-sin(a), cos(a)) * s * 0.6
-		draw_colored_polygon(PackedVector2Array([p2 + ponta, p2 + lado, p2 - ponta, p2 - lado]),
+		_frente.draw_colored_polygon(PackedVector2Array([p2 + ponta, p2 + lado, p2 - ponta, p2 - lado]),
 				Color(0.96, 0.95, 0.92, clampf(2.0 - dt, 0.0, 1.0)))
 
 
