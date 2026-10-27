@@ -154,6 +154,35 @@ float ruido(vec3 x) {
 			mix(mix(h2.x, h2.y, f.x), mix(h2.z, h2.w, f.x), f.y), f.z);
 }
 
+// Riscos soltos: em cada quadrado de 20 cm da lataria, às vezes um traço reto e
+// curto, quase no sentido do carro (às vezes cruzado), de comprimento e
+// inclinação sorteados. Duas grades deslocadas para não alinhar. O plano
+// (comprimento, altura + largura) serve nas laterais e em cima.
+float riscos(vec3 pm) {
+	vec2 q = vec2(pm.z, pm.y + pm.x) * 5.0;
+	float r = 0.0;
+	for (int k = 0; k < 2; k++) {
+		vec2 qq = q + float(k) * vec2(0.43, 0.71);
+		vec2 cel = floor(qq);
+		vec2 loc = fract(qq) - 0.5;
+		vec4 h = fract(sin(vec4(dot(cel, vec2(127.1, 311.7)), dot(cel, vec2(269.5, 183.3)),
+				dot(cel, vec2(419.2, 371.9)), dot(cel, vec2(91.7, 47.3))) + float(k) * 13.0) * 43758.5453);
+		if (h.x > 0.3) {
+			continue;
+		}
+		float ang = (h.y - 0.5) * (h.w > 0.85 ? 2.4 : 0.6);
+		vec2 dir = vec2(cos(ang), sin(ang));
+		vec2 d = loc - (vec2(h.z, h.w) - 0.5) * 0.3;
+		float ao_longo = abs(dot(d, dir));
+		float de_lado = abs(dot(d, vec2(-dir.y, dir.x)));
+		float meio = 0.12 + 0.3 * h.z;
+		float w = fwidth(de_lado);
+		float traco = (1.0 - smoothstep(0.008, 0.008 + w * 1.5, de_lado)) * (1.0 - smoothstep(meio * 0.7, meio, ao_longo));
+		r = max(r, traco);
+	}
+	return r;
+}
+
 // Poeira (mais embaixo) e arranhões (riscos finos que mostram o primer), por cima de tudo.
 vec3 aplicar_desgaste(vec3 c, vec3 p) {
 	if (poeira <= 0.0 && arranhoes <= 0.0 && ferrugem <= 0.0) {
@@ -175,9 +204,7 @@ vec3 aplicar_desgaste(vec3 c, vec3 p) {
 	float baixo = 1.0 - smoothstep(0.1, 0.85, p.y);
 	float d = poeira * clamp(baixo * 1.4 + n * 0.6 - 0.2, 0.0, 1.0);
 	c = mix(c, vec3(0.47, 0.4, 0.31), d * 0.85);
-	// Riscos: linhas finas e compridas no sentido do carro, em manchas.
-	float faixa_r = abs(fract(pm.y * 9.0 + pm.z * 0.8 + ruido(pm * 1.7) * 2.0) - 0.5);
-	float r = arranhoes * (1.0 - smoothstep(0.02, 0.06, faixa_r)) * smoothstep(0.45, 0.6, ruido(pm * 1.1 + 7.0));
+	float r = arranhoes * riscos(pm) * smoothstep(0.3, 0.55, ruido(pm * 1.1 + 7.0));
 	return mix(c, vec3(0.7, 0.7, 0.68), clamp(r, 0.0, 1.0) * 0.85);
 }
 
