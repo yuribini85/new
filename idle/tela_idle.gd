@@ -175,6 +175,7 @@ func _ready() -> void:
 	estado.salvar(agora)
 	_titulo = TituloIdle.new()
 	add_child(_titulo)
+	_titulo.saindo.connect(_saindo_do_titulo)
 	_titulo.fechou.connect(_depois_do_titulo)
 
 
@@ -183,12 +184,19 @@ func _precisa_abertura() -> bool:
 	return estado.corridas == 0 and not "rival" in estado.oferecidos and not estado.desbloqueio("rival").is_empty()
 
 
-func _depois_do_titulo() -> void:
-	_titulo = null
-	if _precisa_abertura():
+## A abertura entra por baixo do título enquanto ele some: a tinta dela cobre
+## a tela, e a corrida atrás não aparece no meio da passagem.
+func _saindo_do_titulo() -> void:
+	if _precisa_abertura() and _abertura == null:
 		_abertura = CenaQuadrinho.new("abertura")
 		_abertura.fechou.connect(_fim_da_abertura)
 		add_child(_abertura)
+		move_child(_abertura, _titulo.get_index())
+
+
+func _depois_do_titulo() -> void:
+	_titulo = null
+	_saindo_do_titulo()
 
 
 ## Fim da abertura: corte seco para a primeira corrida, que larga sozinha

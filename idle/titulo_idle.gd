@@ -4,6 +4,7 @@ extends Control
 ## preto, o logo e "TOQUE PARA COMEÇAR". Aparece ao abrir o app; um toque fecha.
 
 signal fechou
+signal saindo  # começou a sumir: o que vem depois já pode entrar por baixo
 
 ## Apresentação, não balanceamento.
 const SAIDA_S := 0.35
@@ -62,6 +63,7 @@ func fechar() -> void:
 		return
 	_saindo = true
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	saindo.emit()
 	Sons.tocar_ui(self, "toque", -6.0)
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 0.0, 0.0 if Preferencias.reduzir_animacoes else SAIDA_S)
