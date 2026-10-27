@@ -80,6 +80,7 @@ func _rodar() -> void:
 	var tela: Control = load("res://idle/idle.tscn").instantiate()
 	root.add_child(tela)
 	await process_frame
+	tela.pular_titulo()
 	var k := 0
 	var t := 0.0
 	while k < tempos.size():

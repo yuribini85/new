@@ -59,6 +59,7 @@ func _rodar() -> void:
 	var tela: Control = load("res://idle/idle.tscn").instantiate()
 	root.add_child(tela)
 	await process_frame
+	tela.pular_titulo()
 	var e: IdleEstado = tela.estado
 	var corridas := e.corridas
 	var liga := e.liga_total()

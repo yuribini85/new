@@ -1,9 +1,11 @@
 class_name ConversaIdle
 extends Control
 ## Conversa de um passo da escada do Chrome Racing Team (idle.json →
-## desbloqueios): a tela escurece, o personagem do acervo (arte de corpo
-## inteiro, arte/personagens/corpo/) entra deslizando pela esquerda e a caixa
-## embaixo traz nome, papel e a fala sendo digitada. Tocar completa o texto. O
+## desbloqueios), no formato da transmissão (docs/idle/direcao.md, 3): a tela
+## escurece, o personagem do acervo (arte de corpo inteiro,
+## arte/personagens/corpo/) entra deslizando pela esquerda e embaixo vem o
+## lower third da emissora: tarja vermelha com o nome, tarja branca com o papel
+## e o painel com a fala sendo digitada; selo AO VIVO no canto. Tocar completa o texto. O
 ## passo de graça fecha com um botão; o que tem custo oferece COMPRAR e AGORA NÃO.
 
 signal fechou(aceitou: bool)
@@ -15,8 +17,9 @@ const ENTRADA_S := 0.35
 const LETRAS_POR_BLIP := 3
 const VOZES := {"mara_hayes": 0.8, "bianca_sterling": 1.15, "harold_brandt": 0.7, "theo_lane": 0.9,
 		"jade_ryker": 1.2, "roxy_vega": 1.3, "rico_salas": 0.85, "edgar_halloway": 0.75,
-		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72}
+		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72, "sal_moretti": 0.62}
 var _letras_faladas := 0
+const VERMELHO := Color("e5484d")  # a cor da emissora (docs/idle/direcao.md)
 
 var _d: Dictionary
 var _estado: IdleEstado
@@ -49,23 +52,42 @@ func _init(d: Dictionary, estado: IdleEstado) -> void:
 	_corpo.anchor_right = 0.8
 	_corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_corpo)
+	var selo := PanelContainer.new()
+	selo.add_theme_stylebox_override("panel", IdleUI.caixa(VERMELHO, 2, 8))
+	selo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	selo.offset_right = -16
+	selo.offset_top = 16 + AreaSegura.topo(720.0)
+	selo.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	IdleUI.rotulo("AO VIVO", 22, Color.WHITE, selo, "display")
+	add_child(selo)
+	var terco := VBoxContainer.new()
+	terco.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	terco.offset_bottom = -AreaSegura.base(720.0)
+	terco.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	terco.add_theme_constant_override("separation", 0)
+	add_child(terco)
+	var cab := HBoxContainer.new()
+	cab.add_theme_constant_override("separation", 0)
+	terco.add_child(cab)
+	var tarja := PanelContainer.new()
+	tarja.add_theme_stylebox_override("panel", IdleUI.caixa(VERMELHO, 0, 10))
+	cab.add_child(tarja)
+	IdleUI.rotulo(String(quem.get("nome", "")).to_upper(), 28, Color.WHITE, tarja, "display")
+	var papel_caixa := PanelContainer.new()
+	papel_caixa.add_theme_stylebox_override("panel", IdleUI.caixa(Color("eef0f3"), 0, 8))
+	papel_caixa.size_flags_vertical = Control.SIZE_SHRINK_END
+	cab.add_child(papel_caixa)
+	IdleUI.rotulo(String(quem.get("papel", "")), 18, Color("111418"), papel_caixa)
 	_caixa = PanelContainer.new()
-	_caixa.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_CARTAO, 0.97), 18, 18, IdleUI.COR_OURO, 2))
-	_caixa.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	_caixa.offset_left = 16
-	_caixa.offset_right = -16
-	_caixa.offset_bottom = -16 - AreaSegura.base(720.0)
-	_caixa.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	add_child(_caixa)
+	var painel := IdleUI.caixa(Color(IdleUI.COR_CARTAO, 0.97), 0, 18)
+	painel.border_width_top = 4
+	painel.border_color = VERMELHO
+	_caixa.add_theme_stylebox_override("panel", painel)
+	terco.add_child(_caixa)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	_caixa.add_child(v)
-	var cab := HBoxContainer.new()
-	cab.add_theme_constant_override("separation", 10)
-	v.add_child(cab)
-	IdleUI.rotulo(String(quem.get("nome", "")).to_upper(), 26, IdleUI.COR_OURO, cab, "display")
-	var papel := IdleUI.rotulo(String(quem.get("papel", "")), 18, IdleUI.COR_SECUNDARIA, cab)
-	papel.size_flags_vertical = Control.SIZE_SHRINK_END
 	_fala = IdleUI.rotulo(String(d.get("fala", "")), 24, IdleUI.COR_TEXTO, v, "regular")
 	_fala.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_fala.custom_minimum_size = Vector2(0, 96)

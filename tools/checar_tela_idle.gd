@@ -22,6 +22,7 @@ func _rodar() -> void:
 	_tela = tela
 	root.add_child(tela)
 	await process_frame
+	tela.pular_titulo()
 	var e: IdleEstado = tela.estado
 	# Tudo aberto, pilotos para encher a grade, as cinco modalidades abertas.
 	for d in e.cfg_desbloqueios():

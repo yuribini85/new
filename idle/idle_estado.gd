@@ -142,9 +142,7 @@ func no_maximo(id: String) -> bool:
 ## Custo do próximo nível: base × crescimento^nível × multiplicador da liga^expoente_custo_liga
 ## (acima de 1: cada liga pede mais tempo que a anterior).
 func custo(id: String) -> float:
-	var m := melhoria(id)
-	return roundf(float(m["base"]) * pow(float(m["crescimento"]), nivel(id))
-			* pow(float(dados_liga()["multiplicador"]), float(cfg.get("expoente_custo_liga", 1.0))))
+	return custo_no_nivel(id, nivel(id))
 
 
 func pode_comprar(id: String) -> bool:
@@ -158,6 +156,46 @@ func comprar(id: String) -> bool:
 	niveis[id] = nivel(id) + 1
 	registrar_meta("melhorias")
 	return true
+
+
+## Custo do nível `k` (o que se paga para ir de k a k+1).
+func custo_no_nivel(id: String, k: int) -> float:
+	var m := melhoria(id)
+	return roundf(float(m["base"]) * pow(float(m["crescimento"]), k)
+			* pow(float(dados_liga()["multiplicador"]), float(cfg.get("expoente_custo_liga", 1.0))))
+
+
+## Custo de `n` níveis seguidos a partir do atual (para +10). Passa do máximo: INF.
+func custo_varios(id: String, n: int) -> float:
+	if nivel(id) + n > int(melhoria(id)["max"]):
+		return INF
+	var total := 0.0
+	for k in n:
+		total += custo_no_nivel(id, nivel(id) + k)
+	return total
+
+
+## Quantos níveis o dinheiro paga agora, até o máximo (para MÁX.).
+func niveis_pagaveis(id: String) -> int:
+	var maximo := int(melhoria(id)["max"])
+	var resto := dinheiro
+	var n := 0
+	while nivel(id) + n < maximo:
+		var c := custo_no_nivel(id, nivel(id) + n)
+		if c > resto:
+			break
+		resto -= c
+		n += 1
+	return n
+
+
+## Compra `n` níveis de uma vez (só se pagar todos); devolve quantos comprou.
+func comprar_varios(id: String, n: int) -> int:
+	if n <= 0 or dinheiro < custo_varios(id, n):
+		return 0
+	for k in n:
+		comprar(id)
+	return n
 
 
 ## Soma dos efeitos de um tipo ("potencia", "renda"...) nos níveis comprados da
@@ -775,6 +813,10 @@ func de_save(s: Dictionary) -> void:
 				"contagem": {}, "coletadas": Array(sm.get("coletadas", [])).map(func(x): return String(x))}
 		for k in sm.get("contagem", {}):
 			metas["contagem"][String(k)] = int(sm["contagem"][k])
+	# Save de antes da abertura com o Sal: quem já correu não a vê.
+	if corridas > 0 and not "rival" in oferecidos and not desbloqueio("rival").is_empty():
+		oferecidos.append("rival")
+		desbloqueados.append("rival")
 
 
 func salvar(agora: float) -> void:

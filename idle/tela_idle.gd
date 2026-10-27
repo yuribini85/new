@@ -118,6 +118,9 @@ var _janela_aberta := false
 var _tv := true  # a transmissão (corrida 3D) já foi comprada
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
+var _titulo: TituloIdle  # tela de título, ao abrir o app
+var _ao_vivo: Control  # selo AO VIVO no canto da corrida (com a TV)
+var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
 var _renda_acumulada := 0.0  # renda desde o último "+$" que pipocou no topo
 var _renda_t := 0.0
@@ -163,6 +166,16 @@ func _ready() -> void:
 		if agora - estado.salvo_em >= BEM_VINDO_MIN_S:
 			_bem_vindo(ganho)
 	estado.salvar(agora)
+	_titulo = TituloIdle.new()
+	add_child(_titulo)
+	_titulo.fechou.connect(func(): _titulo = null)
+
+
+## Fecha a tela de título sem animação (ferramentas de fotos e testes).
+func pular_titulo() -> void:
+	if _titulo != null:
+		_titulo.queue_free()
+		_titulo = null
 
 
 func _notification(what: int) -> void:
@@ -373,11 +386,21 @@ func _pagina_corrida() -> Control:
 	_largar.visible = false
 	_largar.pressed.connect(_largar_corrida)
 	corrida.add_child(_largar)
+	# Selo AO VIVO da emissora (com a transmissão comprada).
+	_ao_vivo = PanelContainer.new()
+	_ao_vivo.add_theme_stylebox_override("panel", IdleUI.caixa(Color("e5484d"), 2, 8))
+	_ao_vivo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_ao_vivo.offset_right = -10
+	_ao_vivo.offset_top = 10
+	_ao_vivo.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_ao_vivo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	IdleUI.rotulo("AO VIVO", 20, Color.WHITE, _ao_vivo, "display")
+	corrida.add_child(_ao_vivo)
 	# Ofertas que o jogador deixou para depois, no canto de cima à direita.
 	_ofertas = VBoxContainer.new()
 	_ofertas.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	_ofertas.offset_right = -10
-	_ofertas.offset_top = 10
+	_ofertas.offset_top = 64
 	_ofertas.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	_ofertas.add_theme_constant_override("separation", 8)
 	corrida.add_child(_ofertas)
@@ -390,48 +413,31 @@ func _pagina_corrida() -> Control:
 	_objetivo = IdleUI.rotulo("", 22, COR_OURO, linha_alvo)
 	_objetivo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_melhor = IdleUI.rotulo("", 22, IdleUI.COR_TEXTO, linha_alvo)
-	# Os cartões de melhoria, três por linha.
-	var grade := GridContainer.new()
-	grade.columns = 3
-	grade.add_theme_constant_override("h_separation", 10)
-	grade.add_theme_constant_override("v_separation", 10)
-	v.add_child(grade)
+	# O complexo da equipe (docs/idle/direcao.md, 4): um andar por melhoria,
+	# rolando na vertical abaixo do telão da corrida.
+	corrida.custom_minimum_size = Vector2(0, 390)
+	corrida.size_flags_vertical = Control.SIZE_FILL
+	_complexo = ScrollContainer.new()
+	_complexo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_complexo.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	IdleUI.rolagem_fina(_complexo)
+	v.add_child(_complexo)
+	var andares := VBoxContainer.new()
+	andares.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	andares.add_theme_constant_override("separation", 6)
+	_complexo.add_child(andares)
 	for m in estado.cfg["melhorias"]:
-		grade.add_child(_cartao(m))
+		andares.add_child(_cartao(m))
 	return v
 
 
 func _cartao(m: Dictionary) -> Control:
-	var p := PanelContainer.new()
-	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 14, 12, IdleUI.COR_BORDA, 1))
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 2)
-	p.add_child(v)
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 6)
-	v.add_child(h)
-	var nome := IdleUI.rotulo(String(m["nome"]).to_upper(), 17, IdleUI.COR_TEXTO, h)
-	nome.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	nome.clip_text = true
-	var efeito := IdleUI.rotulo("", 18, IdleUI.COR_GANHO, v)
-	efeito.clip_text = true
-	var linha := HBoxContainer.new()
-	v.add_child(linha)
-	var previsao := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, linha)
-	previsao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	previsao.clip_text = true
-	var nivel := IdleUI.rotulo("", 15, IdleUI.COR_SECUNDARIA, linha)
-	var b := Button.new()
-	b.focus_mode = Control.FOCUS_NONE
-	Tipografia.acao_primaria(b, "", COR_OURO, IdleUI.COR_TINTA, IdleUI.legivel(24), 72)
-	IdleUI.estilo_ouro(b)
-	IdleUI.desativado_legivel(b)
-	b.pressed.connect(_comprar.bind(String(m["id"])))
-	v.add_child(b)
-	_cartoes[m["id"]] = {"nivel": nivel, "efeito": efeito, "previsao": previsao, "botao": b, "nome": nome,
-			"cartao": p}
-	return p
+	var a := AndarIdle.new(m)
+	var id := String(m["id"])
+	a.comprar.connect(func(quantos: int): _comprar(id, quantos))
+	_cartoes[id] = {"nivel": a.nivel, "efeito": a.efeito, "previsao": a.previsao, "botao": a.botao, "dez": a.dez,
+			"maximo": a.maximo, "nome": a.nome, "cartao": a}
+	return a
 
 
 static func curto(v: float) -> String:
@@ -473,26 +479,47 @@ func _atualizar_cartoes() -> void:
 	_atualizar_previsao()
 	var base := float(_previsao.get("", 0.0))
 	for m in estado.cfg["melhorias"]:
-		var c: Dictionary = _cartoes[m["id"]]
+		var id := String(m["id"])
+		var c: Dictionary = _cartoes[id]
 		_texto_previsao(c["previsao"], m, base)
-		var n := estado.nivel(m["id"])
+		var n := estado.nivel(id)
 		# Na Arena, a melhoria pode ter outro nome (o Vácuo vira Blindagem).
 		var arena: bool = _na_arena and m.has("nome_arena")
-		c["nome"].text = String(m["nome_arena"] if arena else m["nome"]).to_upper()
+		var nome_melhoria := String(m["nome_arena"] if arena else m["nome"]).to_upper()
 		c["nivel"].text = IdleUI.nv(n)
+		var a: AndarIdle = c["cartao"]
+		var f := AndarIdle.fase_do_nivel(n)
+		if f != a.fase:
+			if f > a.fase and a.is_visible_in_tree() and _efeitos != null:
+				# Marco: a estação muda de fase (mais luz, mais gente).
+				_efeitos.pipoca(a.get_global_rect().get_center(), "NOVA FASE!", COR_OURO, 40, 0.9)
+				celebrar(2)
+			a.fase = f
+			a.queue_redraw()
 		var b: Button = c["botao"]
-		if estado.no_maximo(m["id"]):
-			c["efeito"].text = _efeito_texto(m, n)
+		var dez: Button = c["dez"]
+		var maximo: Button = c["maximo"]
+		if estado.no_maximo(id):
+			c["efeito"].text = "%s %s" % [nome_melhoria, _efeito_texto(m, n)]
 			b.text = "MÁX."
-			b.disabled = true
-		else:
-			c["efeito"].text = "%s › %s" % [_efeito_texto(m, n), _efeito_texto(m, n + 1)]
-			b.text = "$%s" % curto(estado.custo(m["id"]))
-			var antes := b.disabled
-			b.disabled = not estado.pode_comprar(m["id"])
-			# Botão que passa a poder ser tocado pulsa uma vez.
-			if antes and not b.disabled and c["cartao"].is_visible_in_tree():
-				IdleUI.pulsar(b, 1.08)
+			for x in [b, dez, maximo]:
+				x.disabled = true
+			dez.text = "+10"
+			maximo.text = "MÁX."
+			continue
+		c["efeito"].text = "%s %s › %s" % [nome_melhoria, _efeito_texto(m, n), _efeito_texto(m, n + 1)]
+		b.text = "+1\n$%s" % curto(estado.custo(id))
+		var antes := b.disabled
+		b.disabled = not estado.pode_comprar(id)
+		# Botão que passa a poder ser tocado pulsa uma vez.
+		if antes and not b.disabled and a.is_visible_in_tree():
+			IdleUI.pulsar(b, 1.08)
+		var c10 := estado.custo_varios(id, 10)
+		dez.text = "+10\n$%s" % curto(c10) if is_finite(c10) else "+10"
+		dez.disabled = not is_finite(c10) or estado.dinheiro < c10
+		var pagaveis := estado.niveis_pagaveis(id)
+		maximo.text = "MÁX. +%d\n$%s" % [pagaveis, curto(estado.custo_varios(id, pagaveis))] if pagaveis > 0 else "MÁX."
+		maximo.disabled = pagaveis <= 0
 
 
 func _atualizar_topo(delta := 0.0) -> void:
@@ -880,8 +907,9 @@ func _dobrar_premio() -> void:
 		estado.salvar(Time.get_unix_time_from_system()))
 
 
-func _comprar(id: String) -> void:
-	if estado.comprar(id):
+func _comprar(id: String, quantos := 1) -> void:
+	var n := estado.niveis_pagaveis(id) if quantos < 0 else quantos
+	if estado.comprar_varios(id, n) > 0:
 		# Combo: cada compra até COMBO_S depois da anterior sobe um semitom.
 		var agora := Time.get_ticks_msec()
 		_combo = mini(_combo + 1, COMBO_MAX) if agora - _ultima_compra_ms <= COMBO_S * 1000.0 else 0
@@ -891,12 +919,13 @@ func _comprar(id: String) -> void:
 		# dele, o nível novo pipoca acima do cartão (maior a cada compra seguida)
 		# e o dinheiro do topo afunda.
 		var c: Dictionary = _cartoes[id]
-		var b: Button = c["botao"]
+		var b: Button = c["botao"] if quantos == 1 else (c["dez"] if quantos == 10 else c["maximo"])
 		IdleUI.premiar(b)
 		IdleUI.pulsar(c["cartao"], 1.05)
 		_efeitos.faiscas(b.get_global_rect().get_center(), IdleUI.COR_OURO_CLARO, 14 + 3 * _combo)
 		var texto := IdleUI.nv(estado.nivel(id)) + ("  ×%d" % (_combo + 1) if _combo > 0 else "")
-		_efeitos.pipoca(c["cartao"].get_global_rect().get_center() + Vector2(0, -40), texto, COR_OURO, 32, 0.5 + 0.12 * _combo)
+		_efeitos.pipoca(b.get_global_rect().get_center() + Vector2(0, -110), texto, COR_OURO, 32,
+				0.5 + 0.12 * _combo + (0.3 if n > 1 else 0.0))
 		IdleUI.saltar(_dinheiro, 0.92)
 		_atualizar_cartoes()
 
@@ -1321,6 +1350,7 @@ func _aplicar_desbloqueios() -> void:
 	if not abas.any(func(a): return _paginas[a["id"]].visible):
 		_abrir("corrida")
 	_tv = estado.tem("camera_tv")
+	_ao_vivo.visible = _tv
 	Sons.radio(not _tv)  # antes da TV, a corrida soa como rádio de box
 	_visual.pontos = not _tv
 	_visual.com_rotulos = false
@@ -1349,12 +1379,12 @@ func _largar_corrida() -> void:
 ## A próxima conversa da escada, quando nada mais está na frente e a corrida
 ## está parada (grid ou depois da chegada).
 func _checar_conversa() -> void:
-	if _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
+	if _titulo != null or _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
 		return
 	if not (_aguardando or _pausa >= 0.0):
 		return
 	# Uma conversa por corrida: duas funções novas de uma vez se atropelam.
-	if estado.corridas == _conversa_em:
+	if estado.corridas == _conversa_em and estado.corridas > 0:
 		return
 	var d := estado.proxima_conversa()
 	if d.is_empty():
@@ -1447,6 +1477,10 @@ func _misturar(delta: float) -> void:
 func _guiar(alvo: String, texto: String) -> void:
 	if alvo.begins_with("melhoria:") or alvo in ["largar", "subir", "cameras", "previsao"] or alvo.begins_with("oferta:"):
 		_abrir("corrida")
+	var andar: Dictionary = _cartoes.get(alvo.trim_prefix("melhoria:"), {}) if alvo.begins_with("melhoria:") else \
+			(_cartoes.get("motor", {}) if alvo == "previsao" else {})
+	if not andar.is_empty():
+		_complexo.ensure_control_visible(andar["cartao"])
 	_guia.mostrar(texto, _retangulo_do_alvo.bind(alvo) if alvo != "" else Callable())
 
 

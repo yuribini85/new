@@ -284,3 +284,24 @@ func test_renda_so_com_o_patrocinio() -> void:
 	igual(e.renda_s(), 0.0, "antes do patrocínio, nada por segundo")
 	e.oferecer("patrocinio")
 	verificar(e.renda_s() > 0.0, "com o patrocínio, a renda base corre")
+
+
+## Compra em quantidade (+10 e MÁX. do complexo): só compra se pagar tudo, e o
+## MÁX. leva o que o dinheiro paga sem passar do máximo.
+func test_compra_em_quantidade() -> void:
+	var c := _cfg()
+	c["melhorias"][0]["max"] = 40
+	c["melhorias"][0]["crescimento"] = 1.15
+	var e := IdleEstado.new(c)
+	e.dinheiro = 0.0
+	var dez := e.custo_varios("motor", 10)
+	verificar(dez > e.custo("motor") * 10.0, "dez níveis custam mais que dez vezes o primeiro")
+	igual(e.comprar_varios("motor", 10), 0, "sem dinheiro não compra")
+	e.dinheiro = dez
+	igual(e.comprar_varios("motor", 10), 10, "compra os dez")
+	igual(e.nivel("motor"), 10, "nível 10")
+	verificar(absf(e.dinheiro) < 0.001, "gastou exatamente o custo dos dez")
+	e.dinheiro = 1.0e12
+	var n := e.niveis_pagaveis("motor")
+	igual(n, int(e.melhoria("motor")["max"]) - 10, "MÁX. para no máximo")
+	verificar(not is_finite(e.custo_varios("motor", n + 1)), "passar do máximo não tem preço")

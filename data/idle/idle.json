@@ -10,8 +10,10 @@
 	"_nota_desbloqueios": "O jogo começa quase vazio e cresce com o jogador (pedido do usuário, 2026-10-24): vista de cima com os carros em pontos, só o Motor e a largada no toque. Cada item abre quando 'quando' se cumpre (corridas no total, soma das ligas das modalidades abertas, primeira vitória, modalidade aberta), na ordem da lista, com a conversa de um personagem do acervo; os de 'custo' o jogador compra (AGORA NÃO deixa a oferta no canto da corrida). 'libera': melhoria:<id>, aba:<id>, renda, largada_auto, camera_tv, cameras, previsao. 'guia': a dica do tutorial leve depois da conversa (alvo: largar, subir, melhoria:<id>, aba:<id>, previsao, cameras ou vazio; texto: onde tocar). Custos estimados.",
 	"desbloqueio_inicial": ["melhoria:motor"],
 	"desbloqueios": [
+		{"id": "rival", "quando": {}, "quem": {"id": "sal_moretti", "nome": "Sal Moretti", "papel": "dono da Moretti Speedway"}, "botao": "NÃO ESTÁ À VENDA",
+			"fala": "Comprei a pista da cidade, querida. Agora assina aqui e a sua oficina vira estacionamento.", "libera": []},
 		{"id": "inicio", "guia": {"alvo": "largar", "texto": "Toque em LARGAR para começar a corrida."}, "quando": {}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"}, "botao": "VAMOS LÁ",
-			"fala": "Chefe, a equipe é isto: um carro, um piloto e cem dólares no caixa. Toque em LARGAR e vamos ver do que esse carro é capaz.", "libera": []},
+			"fala": "Ouviu, chefe? Temos um carro, um piloto e cem dólares. Toque em LARGAR e vamos mostrar pro Sal do que esse carro é capaz.", "libera": []},
 		{"id": "ultrapassagem", "guia": {"alvo": "melhoria:ultrapassagem", "texto": "Ultrapassagem: o piloto tenta passar em mais retas. Toque no preço."}, "quando": {"corridas": 1}, "quem": {"id": "theo_lane", "nome": "Theo Lane", "papel": "piloto veterano"},
 			"fala": "Vi a corrida: o seu piloto ficou preso atrás de carro mais lento. Eu ensino ele a arriscar a passagem nas retas.", "libera": ["melhoria:ultrapassagem"]},
 		{"id": "pneus", "guia": {"alvo": "melhoria:pneus", "texto": "Pneus novos: toque no preço para melhorar."}, "quando": {"corridas": 2}, "quem": {"id": "mara_hayes", "nome": "Mara Hayes", "papel": "chefe dos mecânicos"},
@@ -58,12 +60,12 @@
 	"_nota_modalidades": "Cinco modalidades (decisão do usuário, 2026-10-24), cada uma com a categoria de carro do Chrome & Wreckage, as pistas dela e 8 ligas (multiplicador ×1,75 por liga); liga 'libera' a próxima quando a anterior chega à liga indicada (índice). Todas rendem ao mesmo tempo. forca_rivais por pista: tools/calibrar_forca_idle.gd. Números estimados (pedido do usuário).",
 	"pilotos": {"_nota": "Pilotos do Chrome & Wreckage (data/equipes.json). Contrato traz um piloto no nível 1; dois do mesmo nível fundem num nível acima (decisão do usuário: contratos + fusão, como o Race Star). Cada modalidade escala um piloto. Números estimados.", "base": {"ritmo": 1.0, "consistencia": 0.9, "agressividade": 0.5}, "perfis": {"agressivo": {"agressividade": 0.1, "consistencia": -0.05}, "equilibrado": {}, "cauteloso": {"agressividade": -0.1, "consistencia": 0.05}}, "ritmo_por_nivel": 0.01, "nivel_max": 8, "contrato_gratis_h": 4, "contratos_video_dia": 5},
 	"melhorias": [
-		{"id": "motor", "icone": "icone_potencia", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
-		{"id": "pneus", "icone": "icone_pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
-		{"id": "ultrapassagem", "icone": "icone_agressividade", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12},
-		{"id": "vacuo", "icone": "icone_trafego", "nome": "Vácuo", "nome_arena": "Blindagem", "icone_arena": "icone_peso", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
-		{"id": "patrocinio", "icone": "icone_creditos", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
-		{"id": "arquibancada", "icone": "icone_podio", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
+		{"id": "motor", "estacao": "Oficina de motores", "chefe": "harold_brandt", "icone": "icone_potencia", "nome": "Motor", "efeito": "potencia", "do_carro": true, "por_nivel": 0.05, "base": 20, "crescimento": 1.15, "max": 60},
+		{"id": "pneus", "estacao": "Banco de pneus", "chefe": "theo_lane", "icone": "icone_pneus", "nome": "Pneus", "efeito": "aderencia", "do_carro": true, "por_nivel": 0.03, "base": 35, "crescimento": 1.15, "max": 40},
+		{"id": "ultrapassagem", "estacao": "Simulador do piloto", "chefe": "jade_ryker", "icone": "icone_agressividade", "nome": "Ultrapassagem", "efeito": "agressividade", "por_nivel": 0.04, "base": 40, "crescimento": 1.15, "max": 12},
+		{"id": "vacuo", "estacao": "Túnel de vento", "chefe": "nora_lindqvist", "icone": "icone_trafego", "nome": "Vácuo", "nome_arena": "Blindagem", "icone_arena": "icone_peso", "efeito": "vacuo", "por_nivel": 0.004, "base": 55, "crescimento": 1.15, "max": 10},
+		{"id": "patrocinio", "estacao": "Sala dos patrocinadores", "chefe": "bianca_sterling", "icone": "icone_creditos", "nome": "Patrocínio", "efeito": "renda", "por_nivel": 1.0, "base": 25, "crescimento": 1.15, "max": 200},
+		{"id": "arquibancada", "estacao": "Arquibancada", "chefe": "rico_salas", "icone": "icone_podio", "nome": "Arquibancada", "efeito": "renda", "por_nivel": 0.6, "base": 30, "crescimento": 1.15, "max": 200}
 	],
 	"modalidades": [
 		{"id": "compactos", "nome": "Compactos", "icone": "icone_correr", "categorias": ["compacto"], "forca_rivais": {"docas_curta": 0.95, "serra_curta": 0.96, "anel_curto": 1.03}, "ligas": [
