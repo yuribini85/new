@@ -19,6 +19,7 @@ var _carro_vis := true
 var _velho := 0.0  # o carro velho da equipe aparecendo (0 a 1)
 var _contrato := false  # o contrato na mão do Sal, esperando o toque
 var _rasgou := false
+var _pular := false  # toque fora do contrato: completa a fala / pula a pausa
 var _tremor := 0.0
 var _papeis: Array = []
 var _fumaca: Array = []
@@ -135,6 +136,9 @@ func _rodar() -> void:
 
 
 ## Balão acima da cabeça de quem fala, com a fala digitada e a voz em blips.
+## Anda quadro a quadro (sem esperar sinal de tween, que no navegador podia
+## chegar antes da espera e travar a cena). Um toque completa a fala e pula a
+## pausa.
 func _dizer(texto: String, quem: TextureRect, espera: float) -> void:
 	_fala.text = texto
 	_fala.visible_ratio = 0.0
@@ -142,14 +146,25 @@ func _dizer(texto: String, quem: TextureRect, espera: float) -> void:
 	_balao.reset_size()
 	var x := clampf(quem.position.x + quem.size.x * 0.5 - 210.0, 16.0, size.x - 446.0)
 	_balao.position = Vector2(x, quem.position.y - 30.0)
-	var tw := create_tween()
-	tw.tween_property(_fala, "visible_ratio", 1.0, 0.0 if espera <= 0.0 else texto.length() / 60.0)
-	for k in int(texto.length() / 4):
-		Sons.tocar_ui(self, "voz", -16.0, (0.62 if quem == _sal else 0.85) * _rng.randf_range(0.94, 1.06), false)
-		await get_tree().create_timer(4.0 / 60.0).timeout
-	await tw.finished
-	if espera > 0.0:
-		await get_tree().create_timer(espera).timeout
+	_pular = false
+	var duracao := 0.0 if espera <= 0.0 else texto.length() / 60.0
+	var t := 0.0
+	var falou := 0
+	while t < duracao and not _pular:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		_fala.visible_ratio = t / duracao
+		var letras := int(_fala.visible_ratio * texto.length())
+		if letras >= falou + 4:
+			falou = letras
+			Sons.tocar_ui(self, "voz", -16.0, (0.62 if quem == _sal else 0.85) * _rng.randf_range(0.94, 1.06), false)
+	_fala.visible_ratio = 1.0
+	_pular = false
+	t = 0.0
+	while t < espera and not _pular:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	_pular = false
 
 
 func _ponto_contrato() -> Vector2:
@@ -165,9 +180,13 @@ func _soltar_fumaca(onde: Vector2, n: int) -> void:
 func _gui_input(e: InputEvent) -> void:
 	var toque: bool = (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) \
 			or (e is InputEventScreenTouch and e.pressed)
-	if toque and _contrato:
+	if not toque:
+		return
+	accept_event()
+	if _contrato:
 		_rasgou = true
-		accept_event()
+	else:
+		_pular = true  # completa a fala ou pula a pausa
 
 
 func _process(delta: float) -> void:
