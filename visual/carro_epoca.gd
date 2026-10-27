@@ -829,9 +829,15 @@ static func _caixas(m: MontagemMalha, f: Dictionary) -> void:
 		var eixo := 0 if float(a[0]) > 0.0 else 1
 		var rd := _roda_spec(f, eixo)
 		var meia := float(f.get("bitola_tras", f["bitola"]) if eixo == 1 else f["bitola"]) * 0.5
-		var dentro := meia - float(rd["pneu"]) * 0.5 - 0.03
 		var raio := float(a[1]) + float(a[2])
-		_bloco(m, "interno", Vector3(-dentro, 0.2, float(a[0]) - raio), Vector3(dentro, float(a[1]) + raio, float(a[0]) + raio))
+		var z := float(a[0])
+		# Só dentro do vão: da base da lataria ao alto do arco, sem passar da
+		# largura da carroceria nas pontas do vão (a traseira do hot rod afina).
+		var l0 := _linha_em(f["corpo"], z - raio * 0.8)
+		var l1 := _linha_em(f["corpo"], z + raio * 0.8)
+		var dentro := minf(meia - float(rd["pneu"]) * 0.5 - 0.03, minf(float(l0[1]), float(l1[1])) - 0.06)
+		var base := minf(float(l0[3]), float(l1[3])) + 0.02
+		_bloco(m, "interno", Vector3(-dentro, base, z - raio * 0.8), Vector3(dentro, float(a[1]) + raio - 0.04, z + raio * 0.8))
 
 
 ## Para-choque de barra cromada arredondada com duas garras em pé.
