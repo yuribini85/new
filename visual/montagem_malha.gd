@@ -35,6 +35,12 @@ const ESTILOS := {
 	"cromo_roda": [Color(0.9, 0.91, 0.93), 0.75, 0.22, 0.0, 0.5],
 	"freio": [Color(0.32, 0.31, 0.3), 0.6, 0.5, 0.0, 0.5],
 	"pinca": [Color(0.7, 0.12, 0.1), 0.0, 0.4, 0.0, 0.5],
+	# carros de época (CarroEpoca)
+	"paralama": [Color(0.035, 0.035, 0.04), 0.2, 0.16, 0.0, 0.7],
+	"lona": [Color(0.05, 0.05, 0.05), 0.0, 0.95, 0.0, 0.3],
+	"raio": [Color(0.82, 0.76, 0.6), 0.1, 0.35, 0.0, 0.5],
+	"vidro_epoca": [Color(0.24, 0.27, 0.3), 0.5, 0.04, 0.0, 1.0],
+	"lente": [Color(0.8, 0.82, 0.84), 0.6, 0.05, 0.15, 0.8],
 }
 
 static var _material: ShaderMaterial

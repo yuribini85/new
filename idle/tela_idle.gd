@@ -18,7 +18,7 @@ extends Control
 ## começo, a vista de cima com os carros em pontos, só o cartão do Motor, sem
 ## menu de baixo e a largada no toque (LARGAR). Cada passo chega com a conversa
 ## de um personagem (ConversaIdle); os que custam ficam como oferta no canto da
-## corrida até o jogador pagar: a largada automática, a transmissão (a corrida
+## corrida até o jogador pagar: a largada automática, o camarote (a corrida
 ## 3D), o analista (previsão nos cartões) e as câmeras.
 
 const COR_FUNDO := IdleUI.COR_FUNDO
@@ -115,13 +115,12 @@ var _aguardando := false  # carros no grid esperando o LARGAR
 var _conversa: ConversaIdle
 var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
 var _janela_aberta := false
-var _tv := true  # a transmissão (corrida 3D) já foi comprada
+var _tv := true  # o camarote (a corrida em 3D) já foi comprado
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
 var _titulo: TituloIdle  # tela de título, ao abrir o app
 var _abertura: AberturaIdle  # a cena do chefe e do sobrinho, no jogo novo
 var _largar_na_compra := false  # depois da bronca do chefe, o 1º +1 larga a corrida
-var _ao_vivo: Control  # selo AO VIVO no canto da corrida (com a TV)
 var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
 var _renda_acumulada := 0.0  # renda desde o último "+$" que pipocou no topo
@@ -418,16 +417,6 @@ func _pagina_corrida() -> Control:
 	_largar.visible = false
 	_largar.pressed.connect(_largar_corrida)
 	corrida.add_child(_largar)
-	# Selo AO VIVO da emissora (com a transmissão comprada).
-	_ao_vivo = PanelContainer.new()
-	_ao_vivo.add_theme_stylebox_override("panel", IdleUI.caixa(Color("8e2a26"), 2, 8))
-	_ao_vivo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	_ao_vivo.offset_right = -10
-	_ao_vivo.offset_top = 10
-	_ao_vivo.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	_ao_vivo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	IdleUI.rotulo("AO VIVO", 20, Color.WHITE, _ao_vivo, "display")
-	corrida.add_child(_ao_vivo)
 	# Ofertas que o jogador deixou para depois, no canto de cima à direita.
 	_ofertas = VBoxContainer.new()
 	_ofertas.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
@@ -604,6 +593,10 @@ func _nova_corrida() -> void:
 	for p in estado.participantes(dados):
 		var id := String(p["id"])
 		categorias[id] = dados.carro(p["carro"])
+		# Divisão de época: todos correm com o carro do período (só a aparência).
+		if estado.dados_modalidade().has("epoca"):
+			categorias[id] = categorias[id].duplicate()
+			categorias[id]["epoca"] = estado.dados_modalidade()["epoca"]
 		var k := int(id.trim_prefix("r")) if id != "jogador" else -1
 		if id == "jogador":
 			pinturas[id] = COR_OURO
@@ -628,6 +621,7 @@ func _nova_corrida() -> void:
 		_pista = estado.pista(dados)
 		_visual.mostrar(_pista, _resultado, {"jogador": COR_OURO})
 		_visual3d.faixas_pintura = faixas
+		_visual3d.epoca = String(estado.dados_modalidade().get("epoca", ""))
 		_visual3d.nomes = _nomes
 		_visual3d.chegada = 0.0
 		_visual3d.mostrar(_pista, _visual, categorias, pinturas)
@@ -1375,7 +1369,7 @@ func _exit_tree() -> void:
 # --- o jogo que cresce com o jogador ------------------------------------------------
 
 ## Mostra só o que a equipe já tem: cartões, renda, menu de baixo, vista (pontos
-## ou TV), câmeras e as ofertas guardadas.
+## ou camarote), câmeras e as ofertas guardadas.
 func _aplicar_desbloqueios() -> void:
 	for m in estado.cfg["melhorias"]:
 		_cartoes[m["id"]]["cartao"].visible = estado.tem("melhoria:" + String(m["id"]))
@@ -1386,15 +1380,14 @@ func _aplicar_desbloqueios() -> void:
 	if not abas.any(func(a): return _paginas[a["id"]].visible):
 		_abrir("corrida")
 	_tv = estado.tem("camera_tv")
-	_ao_vivo.visible = _tv
-	Sons.radio(not _tv)  # antes da TV, a corrida soa como rádio de box
+	Sons.radio(not _tv)  # antes do camarote, a corrida soa como rádio de box
 	_visual.pontos = not _tv
 	_visual.com_rotulos = false
 	_visual.visible = not _na_arena and not _tv
 	_visual3d.visible = not _na_arena and _tv
 	_trilho.visible = estado.tem("cameras")
 	if not _trilho.visible and _camera_modo != "auto":
-		_camera_modo = "auto"  # a TV: a direção escolhe o plano
+		_camera_modo = "auto"  # sem olheiros: a direção escolhe o plano
 		_marcar_camera()
 		_diretor.reiniciar()
 	_aplicar_camera()
@@ -1499,7 +1492,7 @@ func _fundo(nome: String, bus: String, db: float) -> AudioStreamPlayer:
 	return p
 
 
-## Música mais baixa sob o motor da TV; o ambiente do box só nas telas sem
+## Música mais baixa sob o motor da corrida; o ambiente do box só nas telas sem
 ## corrida. Os volumes andam devagar (sem cortes).
 func _misturar(delta: float) -> void:
 	var na_corrida: bool = _paginas.has("corrida") and _paginas["corrida"].visible

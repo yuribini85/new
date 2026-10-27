@@ -1,11 +1,10 @@
 class_name ConversaIdle
 extends Control
 ## Conversa de um passo da escada do Chrome Racing Team (idle.json →
-## desbloqueios), no formato da transmissão (docs/idle/direcao.md, 3): a tela
-## escurece, o personagem do acervo (arte de corpo inteiro,
-## arte/personagens/corpo/) entra deslizando pela esquerda e embaixo vem o
-## lower third da emissora: tarja vermelha com o nome, tarja branca com o papel
-## e o painel com a fala sendo digitada; selo AO VIVO no canto. Tocar completa o texto. O
+## desbloqueios): a tela escurece, o personagem do acervo (arte de corpo
+## inteiro, arte/personagens/corpo/) entra deslizando pela esquerda e embaixo
+## vem a faixa da fala: tarja vinho com o nome, tarja creme com o papel e o
+## painel com a fala sendo digitada. Tocar completa o texto. O
 ## passo de graça fecha com um botão; o que tem custo oferece COMPRAR e AGORA NÃO.
 
 signal fechou(aceitou: bool)
@@ -52,15 +51,6 @@ func _init(d: Dictionary, estado: IdleEstado) -> void:
 	_corpo.anchor_right = 0.8
 	_corpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_corpo)
-	var selo := PanelContainer.new()
-	selo.add_theme_stylebox_override("panel", IdleUI.caixa(VERMELHO, 2, 8))
-	selo.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	selo.offset_right = -16
-	selo.offset_top = 16 + AreaSegura.topo(720.0)
-	selo.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	IdleUI.rotulo("AO VIVO", 22, Color.WHITE, selo, "display")
-	add_child(selo)
 	var terco := VBoxContainer.new()
 	terco.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	terco.offset_bottom = -AreaSegura.base(720.0)

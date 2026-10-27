@@ -115,6 +115,8 @@ var faixas_pintura := {}
 var visao_geral := false
 ## Estilo de cenário forçado ("chapado"), para comparar sem mudar o tema.
 var estilo_forcado := ""
+## Cenário de época (CenarioEpoca) no lugar do tema da pista: "" desliga.
+var epoca := ""
 var _centro_pista := Vector3.ZERO
 var _ambiente: Environment
 
@@ -1981,6 +1983,11 @@ func _construir_pista() -> void:
 	_luz.light_energy = tema["energia"]
 	_luz.rotation = tema["sol"]
 	_cores_muro = tema["muro"]
+	if epoca != "":
+		CenarioEpoca.montar(_cena, _pista, LARGURA_PISTA_M, _ambiente, _luz)
+		efeito_vinheta(0.2)
+		_marcadores()
+		return
 	var montado: Dictionary = KITS.get(TEMA_DE.get(_pista.id, _pista.id), {}).duplicate()
 	if estilo_forcado != "" and not montado.is_empty():
 		montado["estilo"] = estilo_forcado
@@ -2017,6 +2024,10 @@ func _construir_pista() -> void:
 
 
 ## Anéis do jogador e do alvo, traço de disputa e linha de largada.
+func efeito_vinheta(v: float) -> void:
+	(material as ShaderMaterial).set_shader_parameter("vinheta", v)
+
+
 func _marcadores() -> void:
 	_anel_alvo = MeshInstance3D.new()
 	var tor := TorusMesh.new()

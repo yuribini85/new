@@ -114,6 +114,8 @@ func configurar_modelo(base: Dictionary, cor: Color, faixas: Dictionary = {}) ->
 	_rodas_glb = []
 	_modelo = null
 	_roda = ""
+	if CarroEpoca.tem(String(base.get("epoca", ""))):
+		return _epoca(String(base["epoca"]), cor, faixas)
 	if Carroceria.tem(String(base.get("id", ""))):
 		return _gerado(String(base["id"]), base, cor, faixas)
 	if tem_glb(String(base.get("id", ""))):
@@ -405,6 +407,24 @@ func _gerado(id: String, base: Dictionary, cor: Color, faixas: Dictionary) -> Ca
 		if no.has_meta("lado"):
 			var r := float(no.get_meta("raio"))
 			caixa = caixa.merge(AABB(no.position - Vector3(r * Rodas.LARGURA * 0.5, r, r), Vector3(r * Rodas.LARGURA, r * 2.0, r * 2.0)))
+			_rodas_glb.append([no, r])
+	comprimento = caixa.size.z
+	largura = caixa.size.x
+	_sombra(comprimento * 0.92, largura * 0.78, 0.3)
+	return self
+
+
+## Carro de época (CarroEpoca): mesmos nós de roda do gerado; o aro não troca.
+func _epoca(modelo: String, cor: Color, faixas: Dictionary) -> CarroBloco:
+	var m := CarroEpoca.construir(modelo, cor, faixas)
+	m.rotation.y = PI / 2.0  # +Z do arquivo -> +X do jogo
+	add_child(m)
+	_modelo = m
+	var caixa := (m.get_node("Carroceria") as MeshInstance3D).get_aabb()
+	for no in m.get_children():
+		if no.has_meta("lado"):
+			var r := float(no.get_meta("raio"))
+			caixa = caixa.merge(AABB(no.position - Vector3(0.06, r, r), Vector3(0.12, r * 2.0, r * 2.0)))
 			_rodas_glb.append([no, r])
 	comprimento = caixa.size.z
 	largura = caixa.size.x

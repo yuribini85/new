@@ -305,3 +305,19 @@ func test_compra_em_quantidade() -> void:
 	var n := e.niveis_pagaveis("motor")
 	igual(n, int(e.melhoria("motor")["max"]) - 10, "MÁX. para no máximo")
 	verificar(not is_finite(e.custo_varios("motor", n + 1)), "passar do máximo não tem preço")
+
+
+## Carro de época: carroceria pintada e quatro rodas no eixo, com o centro na
+## altura do raio (chão em y = 0), como os carros gerados.
+func test_carro_de_epoca() -> void:
+	var carro := CarroEpoca.construir("cupe_1928", Color.DARK_RED)
+	verificar(carro != null, "o cupê de 1928 existe")
+	var corpo := carro.get_node("Carroceria") as MeshInstance3D
+	verificar(int(corpo.mesh.get_meta("pintura", -1)) >= 0, "a lataria tem a superfície pintada")
+	var rodas := carro.get_children().filter(func(n): return n.has_meta("lado"))
+	igual(rodas.size(), 4, "quatro rodas")
+	for r in rodas:
+		perto((r as Node3D).position.y, float(r.get_meta("raio")), 0.001, "roda apoiada no chão")
+	perto(corpo.get_aabb().position.y, 0.0, 0.5, "carroceria perto do chão")
+	carro.free()
+	verificar(CarroEpoca.construir("nao_existe", Color.RED) == null, "modelo desconhecido não monta")

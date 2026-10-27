@@ -1,9 +1,11 @@
-# Chrome Racing Team: conversão máfia americana e automobilismo clássico (1946–1955)
+# Chrome Racing Team: conversão máfia americana e automobilismo clássico (1930–1950)
 
-Briefing de conversão v1.0 do usuário (2026-10-27). **Escopo fechado:** narrativa, visual e
+Briefing de conversão v1.0 do usuário (2026-10-27). Ajustes do usuário no mesmo dia: o período é
+**1930–1950** e **a temática de evento de TV acabou** — o jogo é um idle de tema mafioso, sem
+emissora, selo AO VIVO nem faixa de TV. **Escopo fechado:** narrativa, visual e
 nomenclatura. Não muda corrida, progressão, economia, melhorias, colisão nem arena (matriz do
-briefing, item 9). Substitui a fantasia da Mara contra o Sal de `docs/idle/direcao.md`; a linguagem
-da transmissão e o complexo da equipe continuam, com a cara da época.
+briefing, item 9). Substitui a fantasia da Mara contra o Sal e a linguagem da transmissão de
+`docs/idle/direcao.md`; o complexo da equipe continua, com a cara da época.
 
 ## 1. Elenco (arquétipos originais; a arte do acervo é provisória até o usuário trocar)
 
@@ -17,10 +19,10 @@ da transmissão e o complexo da equipe continuam, com a cara da época.
 | Bianca Sterling | viúva rica (patrocínio) | `bianca_sterling` |
 | Harold Brandt | comissário de prova (largada automática) | `harold_brandt` |
 | Jade Ryker | agenciadora de pilotos | `jade_ryker` |
-| Roxy Vega | diretora da emissora (TV) | `roxy_vega` |
+| Roxy Vega | dona do camarote na torre (a corrida em 3D) | `roxy_vega` |
 | Rico Salas | gerente (missões) | `rico_salas` |
 | Nora Lindqvist | contadora da família (analista) | `nora_lindqvist` |
-| Kenji Arata | cinegrafista (câmeras) | `kenji_arata` |
+| Kenji Arata | olheiro da família (escolher de onde ver a corrida) | `kenji_arata` |
 
 Nenhum nome ou fala vem de filme; os nomes são originais.
 
@@ -81,12 +83,33 @@ as modalidades (1–4) e os nomes das ligas de topo (5–7):
   sem emblema).
 - **Andares do complexo:** paredes de tijolo escuro, latão nos detalhes.
 
-## 6. Carros históricos (próxima etapa)
-O CRT desenha a corrida com os modelos 3D da frota do C&W, não com um gerador procedural. A
-conversão pedida (silhuetas de 1928–1955 por divisão) pede um gerador de carrocerias de época em 3D
-(distância entre eixos, altura, capô, para-brisa, para-lamas, grade, faróis, para-choques) ligado
-ao carro de cada liga, sem tocar nos atributos. Fica para a próxima etapa, com a lista de
-referência abaixo.
+## 6. Carros históricos (em andamento, um por vez)
+Nenhum modelo da frota do C&W serve para a época: cada carro é convertido em código
+(`visual/carro_epoca.gd`, `CarroEpoca`), peça por peça, como os carros de 1928–1955 eram
+construídos: capô estreito entre para-lamas soltos, estribo, grade em pé, faróis em tigela numa
+barra, para-choque de lâminas, estepe atrás e rodas de raios de arame. Só a aparência: a ficha de
+corrida continua a da liga.
+
+- **Feito: o cupê de 1928 (Corridas de Bairro).** Medidas do arquétipo (entre-eixos 2,63 m, bitola
+  1,42 m, pneu alto e fino de aro 21", 1,73 m de altura) e conferido lado a lado com fotos de
+  época. Peças: corpo e torpedo numa loft, cabine alta com teto de lona, pala, vidros planos em
+  moldura, para-lamas abaulados em preto brilhante ligados ao estribo, grade alta e estreita com
+  colmeia e tampa, faróis, para-choques de duas lâminas, longarinas e eixos à vista, venezianas na
+  traseira do capô, faixa preta da cintura até a grade, maçaneta, lanterna, estepe e rodas de 30
+  raios cruzados. Sem emblema.
+- **Ligação:** a modalidade com `"epoca"` em `data/idle/idle.json` põe todo o grid nesse carro
+  (cores e faixas das equipes por cima). Folha de vistas: `tools/folha_carro_epoca.gd`.
+- **Próximos:** um carro por divisão, na ordem da tabela, cada um aprovado antes do seguinte.
+
+**Pista de época (pedido do usuário):** nas divisões com `"epoca"`, a corrida troca o cenário do
+tema por um **autódromo rural** do fim dos anos 1920 à tarde (`visual/cenario_epoca.gd`,
+`CenarioEpoca`), em cores chapadas e poucas peças: pista de terra batida, cerca de madeira branca dos
+dois lados, gramado e retalhos de plantação, árvores, celeiro vermelho com silo, arquibancada de
+madeira coberta com bandeirolas e a torre dos fiscais na largada, fardos de feno por fora das curvas
+e a largada quadriculada com a faixa de pano. A primeira tentativa (rua de bairro com prédios) foi
+descartada pelo usuário: os prédios não davam imersão. O **traçado** continua o das pistas da
+divisão: traçado novo mudaria a força dos rivais calibrada por pista (`forca_rivais`), que o
+briefing não deixa mexer. Um traçado novo, mais simples, fica como opção com recalibração.
 
 **Nomes:** a regra do projeto é que nome e marca de carro real não entram no build (CLAUDE.md), e
 o briefing pede nomes visíveis configuráveis e verificação jurídica. Por isso a lista de modelos
@@ -104,14 +127,22 @@ original.
 | Grande Campeonato (ligas) | Chevrolet Bel Air 1955, Ford Thunderbird 1955, Chrysler C-300 1955 |
 
 ## 7. Pendente (próximas etapas)
-1. Gerador de carros de época (item 6) e nomes neutros dos carros por liga.
+1. Carros de época das outras divisões (item 6) e nomes neutros dos carros por liga.
 2. Arte definitiva do chefe, do sobrinho e do elenco em roupas da época (o usuário sugere os assets).
 3. Arena "Guerra das Famílias": cartaz de luta de carros na apresentação; sedãs e coupés de época.
 4. Som: trilha swing/jazz/jump blues (a atual é provisória), locutor de corrida, motores de 6 e 8 cilindros.
-5. Fundo das pistas (fotos do C&W no topo) por cenários de época.
+5. Fundo do topo (foto do porto do C&W) por cenário de época; cenário de época nas outras divisões.
 6. Verificação de direitos antes de publicar (briefing, item 8).
 
 ## 8. Regressão
 - Testes do jogo, robô e calibrador rodam sobre a mesma economia: os números de `data/idle/idle.json`
   só mudaram em textos e nomes.
 - A arena não foi tocada.
+
+## 9. Sem TV (ajuste do usuário)
+- O passo `transmissao` da escada continua no mesmo lugar e libera o mesmo (a corrida em 3D), mas
+  é o **camarote na torre**: antes dele a corrida é ouvida pelo rádio do box (a vista de cima com
+  pontos); a Roxy é a dona do camarote. Oferta: CAMAROTE NA TORRE.
+- O passo `cameras` são os **olheiros nas curvas** do Kenji (o mesmo seletor de vista).
+- Saíram o selo AO VIVO da corrida e da conversa; a conversa é a faixa da fala em vinho e creme.
+- **Autódromo rural** (pedido do usuário, no lugar da rua com prédios): ver item 6.
