@@ -17,8 +17,22 @@ signal correr(id: String)
 ## Apresentação, não balanceamento.
 const GIRO := 0.4  # rad/s
 const LUZ := Color(1.0, 0.84, 0.6)
-const CAMERA := Vector3(5.0, 2.1, 6.4)
+const CAMERA := Vector3(5.0, 2.1, 6.4)  # repintura (RepinturaIdle)
 const ALVO := Vector3(0, 0.7, 0)
+## A perspectiva do galpão (arte/fastfather/loja/fundo.webp, 941×1672, em
+## pixels da imagem): o horizonte é onde a cidade encontra o chão lá fora,
+## pela porta; o ponto de fuga das linhas da parede da esquerda (corrimão e
+## mezanino) fica nesse horizonte, à direita, fora do quadro. O carro na
+## garagem é visto dali: câmera na altura do horizonte e o carro alinhado
+## com o galpão.
+const FUNDO_TAM := Vector2(941, 1672)
+const FUNDO_HORIZONTE := 918.0
+const FUNDO_FUGA_X := 1210.0
+const OLHO := Vector2(0.6, 1.6)  # altura da câmera (m), mínima e máxima
+const CARRO_LARGURA := 4.6  # o carro ocupa a largura da tela como se tivesse isso (m) de lado a lado
+const CARRO_FOLGA := 100.0  # do chão do carro até o fim do espaço dele (px)
+## As duas luminárias do galpão: centro da boca e meia largura, em pixels da imagem.
+const LUMINARIAS := [Vector3(286, 356, 62), Vector3(859, 376, 34)]
 const MINIATURA := Vector2i(240, 140)
 const SILHUETA := Color(0.02, 0.02, 0.02)
 const PAPEL_SILHUETA := Color("b9a47c")
@@ -35,6 +49,8 @@ var _mundo: Node3D
 var _vp: SubViewport
 var _arrastando := false
 var _girou_em := -10.0
+var _girou := false  # o jogador já mexeu no carro
+var _espaco: Control  # o espaço livre do carro, entre a vitrine e a ficha
 var _nome: Label
 var _divisao: Label
 var _preco: Label
@@ -82,8 +98,32 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 	sombra.set_anchors_preset(Control.PRESET_FULL_RECT)
 	sombra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(sombra)
+	var luzes := _LuzLuminarias.new()
+	luzes.set_anchors_preset(Control.PRESET_FULL_RECT)
+	luzes.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(luzes)
+	# O carro escolhido, em 3D, na tela inteira: a câmera usa a perspectiva do
+	# fundo e o carro fica no chão do galpão, no espaço livre entre a vitrine e
+	# a ficha.
+	var cont := SubViewportContainer.new()
+	cont.stretch = true
+	cont.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cont.mouse_filter = Control.MOUSE_FILTER_STOP
+	cont.gui_input.connect(_arrastar)
+	add_child(cont)
+	_vp = SubViewport.new()
+	_vp.own_world_3d = true
+	_vp.transparent_bg = true
+	_vp.msaa_3d = Viewport.MSAA_DISABLED if Preferencias.efeitos_leves else Viewport.MSAA_4X
+	cont.add_child(_vp)
+	_seta = _SetaGiro.new()
+	_seta.size = Vector2(220, 56)
+	_seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_seta)
+	_palco()
 	var v := VBoxContainer.new()
 	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE  # o toque fora da vitrine e da ficha gira o carro
 	v.add_theme_constant_override("separation", 10)
 	v.offset_left = 16
 	v.offset_right = -16
@@ -101,28 +141,12 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 		verba.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_contorno(verba)
 	_montar_vitrine(v)
-	# O carro escolhido, em 3D, sobre o chão do galpão.
-	var cont := SubViewportContainer.new()
-	cont.stretch = true
-	cont.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	cont.custom_minimum_size = Vector2(0, 300)
-	cont.mouse_filter = Control.MOUSE_FILTER_STOP
-	cont.gui_input.connect(_arrastar)
-	v.add_child(cont)
-	_seta = _SetaGiro.new()
-	_seta.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	_seta.offset_left = -110
-	_seta.offset_right = 110
-	_seta.offset_top = -64
-	_seta.offset_bottom = -8
-	_seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_vp = SubViewport.new()
-	_vp.own_world_3d = true
-	_vp.transparent_bg = true
-	_vp.msaa_3d = Viewport.MSAA_DISABLED if Preferencias.efeitos_leves else Viewport.MSAA_4X
-	cont.add_child(_vp)
-	cont.add_child(_seta)
-	_palco()
+	_espaco = Control.new()
+	_espaco.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_espaco.custom_minimum_size = Vector2(0, 300)
+	_espaco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_espaco.resized.connect(_enquadrar)
+	v.add_child(_espaco)
 	var ficha := IdleUI.painel(Color(IdleUI.COR_CARTAO, 0.94), 14, 16, v)
 	_ficha = ficha
 	ficha.add_child(MolduraDeco.new(5.0))
@@ -372,9 +396,7 @@ func _palco() -> void:
 	cam.keep_aspect = Camera3D.KEEP_WIDTH  # o carro inteiro na largura, em tela alta ou baixa
 	cam.fov = 30.0
 	_mundo.add_child(cam)
-	cam.look_at_from_position(CAMERA, ALVO)
 	_giro = Node3D.new()
-	_giro.rotation.y = -0.6
 	_mundo.add_child(_giro)
 	_carro = CarroBloco.new()
 	_giro.add_child(_carro)
@@ -426,10 +448,35 @@ func _mostrar() -> void:
 	_divisao.text = "Divisão: %s" % String(mod.get("nome", ""))
 	if c.has("ferro_velho") and not estado.tem_carro(String(c["id"])):
 		_divisao.text += " · do ferro-velho"
-	# Carro comprido (o sedã de 1951 tem 5,3 m): a câmera se afasta para caber.
-	var escala := maxf(1.0, _carro.comprimento / 4.0)
-	_camera.look_at_from_position(CAMERA * escala + Vector3(0, 0.7, 0) * (1.0 - escala), ALVO)
+	_enquadrar()
 	atualizar()
+
+
+## A câmera na perspectiva do fundo: inclinada para o horizonte da arte cair
+## onde ele está na tela e longe o bastante para o chão do carro ficar no fim
+## do espaço livre. Antes do primeiro toque, o carro fica alinhado com o
+## galpão (apontando para o ponto de fuga da parede).
+func _enquadrar() -> void:
+	if _camera == null or _espaco == null or size.x <= 0.0 or size.y <= 0.0:
+		return
+	var s := maxf(size.x / FUNDO_TAM.x, size.y / FUNDO_TAM.y)
+	var dentro := (size - FUNDO_TAM * s) * 0.5  # STRETCH_KEEP_ASPECT_COVERED: centralizado
+	var horizonte := dentro.y + FUNDO_HORIZONTE * s
+	var fuga_x := dentro.x + FUNDO_FUGA_X * s
+	var foco := size.x * 0.5 / tan(deg_to_rad(_camera.fov * 0.5))  # KEEP_WIDTH
+	var fim := _espaco.global_position.y - global_position.y + _espaco.size.y
+	# O carro do mesmo tamanho em qualquer tela; a altura do olho é a que põe
+	# o chão do carro no fim do espaço livre (tela baixa: câmera rente ao chão).
+	var dist := foco * CARRO_LARGURA / size.x
+	var olho := clampf(dist * (fim - CARRO_FOLGA - horizonte) / foco, OLHO.x, OLHO.y)
+	# Carro comprido (o sedã de 1951 tem 5,3 m): a câmera se afasta para caber,
+	# subindo junto para o chão do carro não sair do lugar.
+	var escala := maxf(1.0, _carro.comprimento / 4.0)
+	_camera.position = Vector3(0, olho, dist) * escala
+	_camera.rotation = Vector3(atan((horizonte - size.y * 0.5) / foco), 0, 0)  # horizonte abaixo do meio: olha para cima
+	if not _girou:
+		_giro.rotation.y = -PI / 2.0 - atan((fuga_x - size.x * 0.5) / foco)  # a frente para quem olha
+	_seta.position = Vector2((size.x - _seta.size.x) * 0.5, fim - _seta.size.y + 4.0)
 
 
 ## Preço e botão pelo dinheiro e pelo que já é seu.
@@ -491,6 +538,7 @@ func _arrastar(e: InputEvent) -> void:
 		_arrastando = e.pressed
 	elif _arrastando and (e is InputEventMouseMotion or e is InputEventScreenDrag):
 		_giro.rotation.y += e.relative.x * 0.012
+		_girou = true
 		_girou_em = Time.get_ticks_msec() / 1000.0
 
 
@@ -508,6 +556,55 @@ func _process(delta: float) -> void:
 	# O carro só gira no dedo do jogador; a seta curva embaixo pisca devagar.
 	if _seta != null:
 		_seta.modulate.a = 0.35 + 0.5 * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 3.0))
+
+
+## Luz das luminárias do galpão (a arte ao fundo): um cone de facetas, como
+## a arte low poly, saindo da boca de cada uma e abrindo até o chão, com a
+## mancha de luz no piso; somada à imagem e respirando bem devagar.
+class _LuzLuminarias extends Control:
+	const COR := Color(1.0, 0.82, 0.5)
+
+	func _init() -> void:
+		var m := CanvasItemMaterial.new()
+		m.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		material = m
+
+	func _process(_delta: float) -> void:
+		if not Preferencias.reduzir_animacoes:
+			queue_redraw()
+
+	func _draw() -> void:
+		var s := maxf(size.x / FUNDO_TAM.x, size.y / FUNDO_TAM.y)
+		var dentro := (size - FUNDO_TAM * s) * 0.5
+		var chao_y := dentro.y + 1040.0 * s
+		var t := Time.get_ticks_msec() / 1000.0
+		for i in LUMINARIAS.size():
+			var l: Vector3 = LUMINARIAS[i]
+			var boca := dentro + Vector2(l.x, l.y) * s
+			var meia := l.z * s
+			var forca := (0.85 + 0.15 * sin(t * TAU / 7.0 + i * 2.1)) * (1.0 if i == 0 else 0.7)
+			var abre := meia * 3.2
+			# Três faixas do cone, da de fora (larga e fraca) à de dentro (forte).
+			for k in 3:
+				var f := 1.0 - k * 0.3
+				var topo := meia * f
+				var base := abre * f
+				var cima := Color(COR, (0.07 + 0.05 * k) * forca)
+				var baixo := Color(COR, 0.0)
+				var torto := (k - 1) * meia * 0.25  # faceta fora de esquadro
+				draw_polygon(PackedVector2Array([boca + Vector2(-topo, 0), boca + Vector2(topo, 0),
+						Vector2(boca.x + base + torto, chao_y), Vector2(boca.x - base + torto, chao_y)]),
+						PackedColorArray([cima, cima, baixo, baixo]))
+			# A mancha no chão: um losango achatado de facetas.
+			var c := Vector2(boca.x, chao_y)
+			var r := Vector2(abre * 1.1, abre * 0.22)
+			var meio := Color(COR, 0.16 * forca)
+			var borda := Color(COR, 0.0)
+			var pts := [c + Vector2(-r.x, 0), c + Vector2(-r.x * 0.35, -r.y), c + Vector2(r.x * 0.45, -r.y * 0.9),
+					c + Vector2(r.x, r.y * 0.1), c + Vector2(r.x * 0.3, r.y), c + Vector2(-r.x * 0.5, r.y * 0.85)]
+			for j in pts.size():
+				draw_polygon(PackedVector2Array([c, pts[j], pts[(j + 1) % pts.size()]]),
+						PackedColorArray([meio, borda, borda]))
 
 
 ## Seta curva de "arraste para girar": um arco achatado de ponta a ponta, com

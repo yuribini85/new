@@ -26,6 +26,12 @@ idle (antes Chrome Racing Team) passa a se chamar **The Fastfather**: máfia, 19
   (os mesmos US$ 100 de sobra de antes; o resto do jogo não muda). No "E aquele ali?" o carro do
   meio pulsa como se desse para comprar; no "Agora compre!" pulsa o ferro-velho, e então aparece
   a compra com o botão pulsando.
+- **Carro na garagem (2026-10-27):** a câmera 3D segue a perspectiva da arte do galpão —
+  o horizonte na linha em que a cidade encontra o chão lá fora e o carro, antes do primeiro
+  toque, alinhado com o ponto de fuga da parede; o chão do carro fica logo acima da ficha, do
+  mesmo tamanho em qualquer tela (em tela baixa a câmera desce). Só gira com o dedo; a seta
+  curva embaixo pisca devagar. Das duas luminárias sai um cone de luz em facetas, somado à
+  arte, com a mancha no chão, respirando devagar.
 - **SEQUÊNCIA 3 (corrida):** o arquivo do pacote repete o texto da loja, então as falas são
   **proposta** (trocar em `data/idle/cenas.json`): antes da largada (Tony com a caixa de
   ferramentas, o sobrinho de braços cruzados), depois da primeira corrida (Tony na cerca:
