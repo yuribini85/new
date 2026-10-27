@@ -1,5 +1,5 @@
 extends "res://tests/base_teste.gd"
-## Chrome Racing Team (docs/idle/plano.md): regras do jogo idle.
+## The Fastfather (docs/idle/plano.md): regras do jogo idle.
 
 
 func _cfg() -> Dictionary:
@@ -352,6 +352,43 @@ func test_garagem_um_carro_por_divisao() -> void:
 	var pobre := IdleEstado.new(c)
 	pobre.dinheiro = 100.0
 	verificar(not pobre.comprar_carro("cupe"), "sem dinheiro não compra")
+
+
+## Ferro-velho (The Fastfather, SEQUÊNCIA 2): o primeiro carro sai por 1/3 do
+## preço e fica velho até a primeira vitória; divisão fechada vira silhueta;
+## a cena da vitória passa na frente da fila de conversas; os dados reais
+## dão o mesmo troco de antes (US$ 100).
+func test_ferro_velho() -> void:
+	var c := _cfg_mods()
+	c["garagem"] = [{"id": "cupe", "nome": "Cupê", "ano": 1928, "modelo": "cupe_1928", "modalidade": "a", "preco": 525,
+			"ferro_velho": {"preco": 175}},
+		{"id": "cupe2", "nome": "Cupê 2", "ano": 1940, "modelo": "cupe_1940", "modalidade": "b", "preco": 12000}]
+	var e := IdleEstado.new(c)
+	e.dinheiro = 275.0
+	perto(e.preco_carro(e.carro_garagem("cupe")), 175.0, 0.001, "preço de sucata")
+	verificar(not e.carro_bloqueado(e.carro_garagem("cupe")), "a divisão de largada está aberta")
+	verificar(e.carro_bloqueado(e.carro_garagem("cupe2")), "divisão fechada: silhueta")
+	verificar(e.comprar_carro("cupe") and e.ferro_velho, "comprado, sai do ferro-velho")
+	perto(e.dinheiro, 100.0, 0.001, "sobra o troco")
+	var pe := GaragemIdle.pintura(e, e.carro_garagem("cupe"))
+	verificar(float(pe[1].get("ferrugem", 0.0)) > 0.0 and int(pe[1].get("numero", -1)) == PinturaEpoca.NUMERO_JOGADOR,
+			"enferrujado, com o 13 à mão")
+	var e2 := IdleEstado.new(c)
+	e2.de_save(JSON.parse_string(JSON.stringify(e.para_save())))
+	verificar(e2.ferro_velho, "o ferro-velho fica no save")
+	e.ferro_velho = false
+	verificar(float(GaragemIdle.pintura(e, e.carro_garagem("cupe"))[1].get("ferrugem", 0.0)) == 0.0, "pintado: sem ferrugem")
+	var real := IdleEstado.new()
+	var primeiro: Dictionary = real.carros_garagem()[0]
+	perto(real.dinheiro - real.preco_carro(primeiro), 100.0, 0.001, "jogo de verdade: US$ 100 de troco")
+	perto(real.preco_carro(primeiro) * 3.0, float(primeiro["preco"]), 0.001, "1/3 do preço")
+	# A cena da vitória passa na frente da fila.
+	c["desbloqueios"] = [{"id": "x", "quando": {"corridas": 9}, "quem": {}}, {"id": "v", "avulsa": true,
+			"quando": {"vitoria": true}, "cena": "vitoria", "quem": {}}]
+	var e3 := IdleEstado.new(c)
+	e3._m()["venceu"] = true
+	igual(String(e3.proxima_conversa().get("id", "")), "v", "avulsa não espera a fila")
+	verificar(not CenaQuadrinho.carregar("vitoria").is_empty(), "as cenas estão em cenas.json")
 
 
 ## Pinturas de época: só cor única, filete lateral, capô ou teto; a cor do

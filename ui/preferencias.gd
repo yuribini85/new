@@ -32,7 +32,7 @@ static var camera_arena := "briga"
 static var modo_teste := ""
 ## Avisos do aparelho com o jogo fechado (Notificacoes, decisão 107).
 static var notificacoes := false
-## Música de fundo (Chrome Racing Team: chave MÚSICA, separada dos efeitos, que
+## Música de fundo (The Fastfather: chave MÚSICA, separada dos efeitos, que
 ## seguem `volume`). Só vale onde existe o barramento "Musica" (Sons.barramentos).
 static var musica := true
 static var _carregado := false
@@ -88,7 +88,7 @@ static func aplicar() -> void:
 	var bus := AudioServer.get_bus_index("Master")
 	var efeitos := AudioServer.get_bus_index("Efeitos")
 	if efeitos >= 0:
-		# Barramentos do Chrome Racing Team: EFEITOS (com o ambiente) e MÚSICA à parte.
+		# Barramentos do The Fastfather: EFEITOS (com o ambiente) e MÚSICA à parte.
 		AudioServer.set_bus_mute(bus, false)
 		AudioServer.set_bus_volume_db(bus, 0.0)
 		for nome in ["Efeitos", "Ambiente"]:

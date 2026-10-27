@@ -34,6 +34,8 @@ uniform bool espelhar = false;
 // Desgaste em camada separada (0..1): poeira embaixo e arranhões; não muda a cor salva.
 uniform float poeira = 0.0;
 uniform float arranhoes = 0.0;
+// Ferro-velho (0..1): tinta desbotada e manchas de ferrugem (o primeiro carro da loja).
+uniform float ferrugem = 0.0;
 
 varying vec3 p_carro;
 
@@ -154,11 +156,22 @@ float ruido(vec3 x) {
 
 // Poeira (mais embaixo) e arranhões (riscos finos que mostram o primer), por cima de tudo.
 vec3 aplicar_desgaste(vec3 c, vec3 p) {
-	if (poeira <= 0.0 && arranhoes <= 0.0) {
+	if (poeira <= 0.0 && arranhoes <= 0.0 && ferrugem <= 0.0) {
 		return c;
 	}
 	vec3 pm = p * tamanho_carro();
 	float n = ruido(pm * 3.0) * 0.6 + ruido(pm * 9.0) * 0.4;
+	if (ferrugem > 0.0) {
+		// Tinta queimada de sol (mais clara e sem cor) e ferrugem em manchas,
+		// mais forte embaixo e nas bordas das manchas.
+		float cinza = dot(c, vec3(0.3, 0.59, 0.11));
+		c = mix(c, vec3(cinza) * 0.8 + vec3(0.1, 0.09, 0.07), ferrugem * 0.6);
+		float m = ruido(pm * 2.2 + 3.0) * 0.55 + ruido(pm * 7.0) * 0.3 + ruido(pm * 21.0) * 0.15;
+		float onde = m + (1.0 - smoothstep(0.05, 0.6, p.y)) * 0.25;
+		float f = ferrugem * smoothstep(0.5, 0.62, onde);
+		vec3 oxido = mix(vec3(0.42, 0.18, 0.07), vec3(0.6, 0.3, 0.12), ruido(pm * 30.0));
+		c = mix(c, oxido, clamp(f, 0.0, 1.0) * 0.9);
+	}
 	float baixo = 1.0 - smoothstep(0.1, 0.85, p.y);
 	float d = poeira * clamp(baixo * 1.4 + n * 0.6 - 0.2, 0.0, 1.0);
 	c = mix(c, vec3(0.47, 0.4, 0.31), d * 0.85);

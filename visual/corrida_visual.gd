@@ -16,7 +16,7 @@ var sombra := false
 ## gira, para ficar na mesma orientação da vista 3D.
 var girar := true
 ## Carros como pontos coloridos (o seu maior, com aro), sem sprite: a vista de
-## cima do começo do Chrome Racing Team, antes da transmissão.
+## cima do começo do The Fastfather, antes da transmissão.
 var pontos := false:
 	set(v):
 		pontos = v

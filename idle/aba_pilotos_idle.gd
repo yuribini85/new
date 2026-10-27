@@ -1,6 +1,6 @@
 class_name PilotosIdle
 extends ScrollContainer
-## Tela PILOTOS do Chrome Racing Team (docs/idle/plano.md; decisão do usuário:
+## Tela PILOTOS do The Fastfather (docs/idle/plano.md; decisão do usuário:
 ## contratos + fusão, como o Race Star). No alto, o piloto da modalidade da
 ## corrida: retrato, nome, perfil, nível e o que ele soma. Embaixo, os
 ## contratos (grátis a cada poucas horas e por vídeo) e o elenco em retratos:

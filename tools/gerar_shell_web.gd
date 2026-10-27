@@ -2,7 +2,7 @@ extends SceneTree
 ## Gera as telas de carregamento da versão web a partir de
 ## web/shell_modelo.html, com a logo do jogo embutida (o navegador mostra a
 ## tela antes de baixar o jogo), sobre fundo preto: web/shell.html (Chrome &
-## Wreckage) e web/shell_idle.html (Chrome Racing Team, docs/idle/plano.md, com
+## Wreckage) e web/shell_idle.html (The Fastfather, docs/idle/plano.md, com
 ## a logo de tools/gerar_logo_crt.py e o nome dele na aba do navegador).
 ## Uso: godot --headless --path . --script res://tools/gerar_shell_web.gd
 
@@ -10,7 +10,7 @@ const MODELO := "res://web/shell_modelo.html"
 const LARGURA_LOGO := 720
 const SAIDAS := [
 	{"saida": "res://web/shell.html", "logo": "res://arte/ui/logo.png", "nome": ""},
-	{"saida": "res://web/shell_idle.html", "logo": "res://arte/idle/logo.png", "nome": "Chrome Racing Team"},
+	{"saida": "res://web/shell_idle.html", "logo": "res://arte/idle/logo.png", "nome": "The Fastfather"},
 ]
 
 

@@ -337,7 +337,7 @@ func test_ordem_so_vale_depois_de_comecar() -> void:
 	d.free()
 
 
-## Chrome Racing Team: o vácuo do piloto (fração) faz o carro de trás andar
+## The Fastfather: o vácuo do piloto (fração) faz o carro de trás andar
 ## mais colado no da frente; sem ele (0, o Chrome & Wreckage), nada muda.
 func test_vacuo_opcional_do_piloto() -> void:
 	var d := dados_fixture()

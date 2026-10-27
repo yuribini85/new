@@ -1,5 +1,5 @@
 extends SceneTree
-## Fotos da tela do Chrome Racing Team (docs/idle/plano.md), como o jogador vê.
+## Fotos da tela do The Fastfather (docs/idle/plano.md), como o jogador vê.
 ## Uso (precisa de tela: xvfb-run): godot --resolution 405x720 --script res://tools/fotos_idle.gd -- --saida=/pasta/
 ##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abas=corrida,pistas,pilotos]
 ##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena] [--novo]

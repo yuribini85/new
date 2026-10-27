@@ -1,6 +1,6 @@
 class_name GuiaIdle
 extends Control
-## Tutorial leve do Chrome Racing Team, no estilo do Destaque do Chrome &
+## Tutorial leve do The Fastfather, no estilo do Destaque do Chrome &
 ## Wreckage: depois da conversa que abre uma função, o resto da tela escurece,
 ## um contorno dourado pulsa em volta do que tocar, uma seta balança apontando
 ## para lá e uma frase curta diz onde tocar (a voz do TUTORIAL: o texto exato do

@@ -1,5 +1,5 @@
 extends Control
-## Chrome Racing Team (docs/idle/plano.md): a tela do jogo idle. Abre direto
+## The Fastfather (docs/idle/plano.md): a tela do jogo idle. Abre direto
 ## na corrida e já recolhe o que a equipe ganhou com o app fechado. Em cima, a
 ## placa da liga sobre o banner da pista, o dinheiro, a renda de todas as
 ## modalidades e a engrenagem (som e visual simples). No meio, uma de três
@@ -115,14 +115,14 @@ var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocí
 var _trilho: Control  # as câmeras
 var _largar: Button
 var _aguardando := false  # carros no grid esperando o LARGAR
-var _conversa: ConversaIdle
+var _conversa: Control  # ConversaIdle, ou CenaQuadrinho nas cenas do Tony
 var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
 var _janela_aberta := false
 var _tv := true  # o camarote (a corrida em 3D) já foi comprado
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
 var _titulo: TituloIdle  # tela de título, ao abrir o app
-var _abertura: AberturaIdle  # a cena do chefe e do sobrinho, no jogo novo
+var _abertura: CenaQuadrinho  # a cena do chefão, do sobrinho e do Tony, no jogo novo
 var _largar_na_compra := false  # depois da bronca do chefe, o 1º +1 larga a corrida
 var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
@@ -183,9 +183,9 @@ func _precisa_abertura() -> bool:
 func _depois_do_titulo() -> void:
 	_titulo = null
 	if _precisa_abertura():
-		_abertura = AberturaIdle.new()
-		add_child(_abertura)
+		_abertura = CenaQuadrinho.new("abertura")
 		_abertura.fechou.connect(_fim_da_abertura)
+		add_child(_abertura)
 
 
 ## Fim da abertura: corte seco para a primeira corrida, que larga sozinha
@@ -336,14 +336,14 @@ func _topo(pai: Control) -> void:
 	esq.add_child(linha_liga)
 	_icone_mod = IdleUI.icone("icone_correr", 40, linha_liga)
 	_liga = IdleUI.rotulo("", 22, IdleUI.COR_CROMO, linha_liga)
-	_dinheiro = IdleUI.rotulo("", 52, IdleUI.COR_TEXTO, esq)
-	Tipografia.numero(_dinheiro, 52)
+	# Dinheiro em letreiro art déco (cartaz e nota de banco dos anos 1930).
+	_dinheiro = IdleUI.rotulo("", 46, IdleUI.COR_OURO_CLARO, esq, "deco")
 	var dir := VBoxContainer.new()
 	dir.alignment = BoxContainer.ALIGNMENT_CENTER
 	topo.add_child(dir)
 	_renda_caixa = dir
 	IdleUI.rotulo("POR SEGUNDO", 16, IdleUI.COR_SECUNDARIA, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_renda = IdleUI.rotulo("", 34, COR_DINHEIRO, dir)
+	_renda = IdleUI.rotulo("", 30, COR_DINHEIRO, dir, "deco")
 	_renda.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	var vao := Control.new()
 	vao.custom_minimum_size = Vector2(4, 0)
@@ -645,7 +645,7 @@ func _nova_corrida() -> void:
 			# Pintura de época: cor da equipe e número pintado (PinturaEpoca).
 			var pe: Array
 			if id == "jogador":
-				pe = PinturaEpoca.do_jogador(fam)
+				pe = GaragemIdle.pintura(estado, estado.carro_da_modalidade(), fam)
 			elif k < escalados.size():
 				var eq: Dictionary = escalados[k]["equipe"]
 				var num := int(eq["numero"]) * 4 - 3 + int(escalados[k]["vaga"]) if eq.get("numero") != null else -1
@@ -1058,7 +1058,7 @@ func _janela_liga() -> void:
 	IdleUI.imagem_cobrindo(IdleUI.banner_pista(String(estado.dados_liga()["pista"])), 220, v)
 	var t := IdleUI.rotulo("NOVA LIGA", 24, COR_OURO, v)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var n := IdleUI.rotulo(String(estado.dados_liga()["nome"]).to_upper(), 46, Color.WHITE, v, "display")
+	var n := IdleUI.rotulo(String(estado.dados_liga()["nome"]).to_upper(), 46, Color.WHITE, v, "deco")
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	n.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var c := IdleUI.rotulo("SEU CARRO NOVO: " + String(estado.carro_base(dados)["nome"]).to_upper(), 24, IdleUI.COR_SECUNDARIA, v)
@@ -1165,7 +1165,7 @@ func _bem_vindo(ganho: float) -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 14)
 	p.add_child(v)
-	var t := IdleUI.rotulo("BEM-VINDO DE VOLTA!", 34, Color.WHITE, v, "display")
+	var t := IdleUI.rotulo("BEM-VINDO DE VOLTA!", 34, Color.WHITE, v, "deco")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var sub := IdleUI.rotulo("Sua equipe faturou enquanto você estava fora", 20, IdleUI.COR_SECUNDARIA, v, "regular")
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -1175,7 +1175,7 @@ func _bem_vindo(ganho: float) -> void:
 	linha.add_theme_constant_override("separation", 12)
 	v.add_child(linha)
 	IdleUI.icone("icone_creditos", 64, linha)
-	var valor := IdleUI.rotulo("$" + curto(ganho), 64, COR_DINHEIRO, linha, "display")
+	var valor := IdleUI.rotulo("$" + curto(ganho), 64, COR_DINHEIRO, linha, "deco")
 	valor.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var botoes := HBoxContainer.new()
 	botoes.add_theme_constant_override("separation", 12)
@@ -1241,7 +1241,7 @@ func _abrir_config() -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 16)
 	p.add_child(v)
-	IdleUI.rotulo("CONFIGURAÇÕES", 32, Color.WHITE, v, "display")
+	IdleUI.rotulo("CONFIGURAÇÕES", 32, Color.WHITE, v, "deco")
 	_linha_chave(v, "som", "MÚSICA", Preferencias.musica, func(ligado: bool):
 		Preferencias.musica = ligado
 		Preferencias.salvar()
@@ -1483,10 +1483,10 @@ func _checar_conversa() -> void:
 		return
 	# Uma conversa por corrida: duas funções novas de uma vez se atropelam.
 	# (Na volta da 1ª corrida vêm duas seguidas: a bronca do chefe e o Theo.)
-	if estado.corridas == _conversa_em and estado.corridas > 1:
-		return
 	var d := estado.proxima_conversa()
 	if d.is_empty():
+		return
+	if estado.corridas == _conversa_em and estado.corridas > 1 and not bool(d.get("avulsa", false)):
 		return
 	_conversa_em = estado.corridas
 	estado.oferecer(String(d["id"]))
@@ -1495,32 +1495,47 @@ func _checar_conversa() -> void:
 
 
 func _abrir_conversa(d: Dictionary) -> void:
-	_conversa = ConversaIdle.new(d, estado)
-	add_child(_conversa)
-	_conversa.fechou.connect(func(aceitou: bool):
-		_conversa = null
-		var id := String(d["id"])
-		if id in ["inicio", "ultrapassagem"]:
-			_largar_na_compra = true
-		var custo := float(d.get("custo", 0.0))
-		if custo > 0.0 and aceitou and estado.comprar_desbloqueio(id):
-			Sons.tocar_ui(self, "moeda", -4.0)
-			celebrar(3)
-		elif custo <= 0.0 and not d.get("libera", []).is_empty():
-			celebrar(2)
-		for coisa in d.get("libera", []):
-			if String(coisa).begins_with("aba:"):
-				_barra.avisar(String(coisa).trim_prefix("aba:"), true)
-		_aplicar_desbloqueios()
-		# Tutorial leve: a dica de onde tocar (a oferta guardada, se ficou para depois).
-		if estado.desbloqueio(id).is_empty() or id in estado.desbloqueados:
-			var g: Dictionary = d.get("guia", {})
-			if not g.is_empty():
-				_guiar.call_deferred(String(g.get("alvo", "")), String(g.get("texto", "")))
-		elif not "oferta" in estado.guias:
-			estado.guias.append("oferta")
-			_guiar.call_deferred("oferta:" + id, "A oferta fica guardada aqui. Toque quando quiser comprar.")
-		estado.salvar(Time.get_unix_time_from_system()))
+	if d.has("cena"):
+		# Cena em quadrinho (o Tony e o sobrinho, data/idle/cenas.json).
+		var q := CenaQuadrinho.new(String(d["cena"]))
+		_conversa = q
+		q.fechou.connect(func(): _conversa_fechou(d, true))
+		add_child(q)
+		return
+	var c := ConversaIdle.new(d, estado)
+	_conversa = c
+	add_child(c)
+	c.fechou.connect(func(aceitou: bool): _conversa_fechou(d, aceitou))
+
+
+func _conversa_fechou(d: Dictionary, aceitou: bool) -> void:
+	_conversa = null
+	var id := String(d["id"])
+	if "pintura_nova" in d.get("libera", []):
+		# Depois da primeira vitória o Tony pinta o carro do ferro-velho.
+		estado.ferro_velho = false
+		_nova_pintura_jogador()
+	if id in ["inicio", "ultrapassagem"]:
+		_largar_na_compra = true
+	var custo := float(d.get("custo", 0.0))
+	if custo > 0.0 and aceitou and estado.comprar_desbloqueio(id):
+		Sons.tocar_ui(self, "moeda", -4.0)
+		celebrar(3)
+	elif custo <= 0.0 and not d.get("libera", []).is_empty():
+		celebrar(2)
+	for coisa in d.get("libera", []):
+		if String(coisa).begins_with("aba:"):
+			_barra.avisar(String(coisa).trim_prefix("aba:"), true)
+	_aplicar_desbloqueios()
+	# Tutorial leve: a dica de onde tocar (a oferta guardada, se ficou para depois).
+	if estado.desbloqueio(id).is_empty() or id in estado.desbloqueados:
+		var g: Dictionary = d.get("guia", {})
+		if not g.is_empty():
+			_guiar.call_deferred(String(g.get("alvo", "")), String(g.get("texto", "")))
+	elif not "oferta" in estado.guias:
+		estado.guias.append("oferta")
+		_guiar.call_deferred("oferta:" + id, "A oferta fica guardada aqui. Toque quando quiser comprar.")
+	estado.salvar(Time.get_unix_time_from_system())
 
 
 ## As ofertas guardadas (AGORA NÃO): um botão por oferta, com o ícone, o nome e o
@@ -1619,3 +1634,10 @@ func _input(e: InputEvent) -> void:
 func _atualizar_dinheiro_garagem() -> void:
 	_dinheiro_mostrado = estado.dinheiro
 	_garagem.atualizar()
+
+
+## O carro pintado (fim do ferro-velho): a garagem mostra na hora; a corrida,
+## a partir da próxima largada.
+func _nova_pintura_jogador() -> void:
+	if _garagem != null:
+		_garagem.mostrar_divisao()

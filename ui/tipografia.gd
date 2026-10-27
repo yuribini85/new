@@ -6,7 +6,7 @@ extends RefCounted
 ## tokens (acao_primaria, acao_secundaria).
 ## Números (giros, prêmios, atributos, posição, velocidade): Racing Sans One.
 ## Intro do Grid: Big Shoulders (Display e Stencil) e IBM Plex Mono.
-## Licenças das fontes (OFL): ui/fontes/LICENCA-*.txt.
+## Licenças das fontes (OFL; Special Elite: Apache 2.0): ui/fontes/LICENCA-*.txt.
 
 const ARQUIVOS := {
 	"semibold": "res://ui/fontes/BarlowCondensed-SemiBold.ttf",
@@ -19,10 +19,17 @@ const ARQUIVOS := {
 	"carimbo": "res://ui/fontes/BigShouldersStencil-Black.woff2",
 	"mono": "res://ui/fontes/IBMPlexMono-Regular.woff2",
 	"mono_sb": "res://ui/fontes/IBMPlexMono-SemiBold.woff2",
+	# The Fastfather (máfia, 1930–1950): letreiro art déco dos cartazes de
+	# cinema da época nos títulos e no dinheiro; máquina de escrever nas falas.
+	"deco": "res://ui/fontes/Limelight-Regular.woff2",
+	"maquina": "res://ui/fontes/SpecialElite-Regular.woff2",
+	# Falas dos balões: letreiro de gibi pulp dos anos 1940, anguloso como a
+	# arte em facetas dos personagens.
+	"fala": "res://ui/fontes/Bangers-Regular.woff2",
 }
 ## Espaço extra entre letras (px), proporcional à caixa alta condensada.
 const ESPACO_LETRAS := {"semibold": 2, "medium": 2, "regular": 1, "numero": 1, "display": 0, "display_eb": 2,
-		"carimbo": 2, "mono": 1, "mono_sb": 1}
+		"carimbo": 2, "mono": 1, "mono_sb": 1, "deco": 1, "maquina": 0, "fala": 1}
 const TAMANHO_PRIMARIA := 50
 const TAMANHO_SECUNDARIA := 30
 const ALTURA_PRIMARIA := 108  # área de toque confortável (>= 88)

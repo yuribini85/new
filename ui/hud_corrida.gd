@@ -62,7 +62,7 @@ var _d := {}
 ## Vista DADOS: só os acontecimentos da corrida (o resto está na vista tática).
 var so_eventos := false
 ## Sem o bloco da volta na faixa de cima (corridas de uma volta só: o
-## Chrome Racing Team).
+## The Fastfather).
 var sem_volta := false
 ## Alvo de opacidade do que é secundário; _sec segue devagar.
 var secundario := 1.0

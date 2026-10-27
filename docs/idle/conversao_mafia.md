@@ -1,4 +1,4 @@
-# Chrome Racing Team: conversão máfia americana e automobilismo clássico (1930–1950)
+# The Fastfather (antes Chrome Racing Team): conversão máfia americana e automobilismo clássico (1930–1950)
 
 Briefing de conversão v1.0 do usuário (2026-10-27). Ajustes do usuário no mesmo dia: o período é
 **1930–1950** e **a temática de evento de TV acabou** — o jogo é um idle de tema mafioso, sem
@@ -6,6 +6,11 @@ emissora, selo AO VIVO nem faixa de TV. **Escopo fechado:** narrativa, visual e
 nomenclatura. Não muda corrida, progressão, economia, melhorias, colisão nem arena (matriz do
 briefing, item 9). Substitui a fantasia da Mara contra o Sal e a linguagem da transmissão de
 `docs/idle/direcao.md`; o complexo da equipe continua, com a cara da época.
+
+> **The Fastfather** (pacote do usuário, 2026-10-27): nome, logo, a abertura nova (chefão,
+> sobrinho e Tony), a loja com o ferro-velho, as falas da primeira corrida e a tipografia estão
+> em `docs/idle/identidade_fastfather.md`, que vale por cima deste quando divergem (a abertura
+> da seção 2 foi substituída pela SEQUÊNCIA 1).
 
 ## 1. Elenco (arquétipos originais; a arte do acervo é provisória até o usuário trocar)
 

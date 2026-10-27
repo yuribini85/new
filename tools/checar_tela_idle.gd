@@ -1,5 +1,5 @@
 extends SceneTree
-## Chrome Racing Team (docs/idle/interface.md): abre as telas com tudo aberto e
+## The Fastfather (docs/idle/interface.md): abre as telas com tudo aberto e
 ## confere o texto que o jogador lê: tamanho mínimo (IdleUI.TEXTO_MIN), texto que
 ## cabe na própria caixa (nem cortado nem vazando), nada saindo da tela pela
 ## lateral e nenhum texto por cima de outro. Sai com código 1 se achar algo.

@@ -1,5 +1,5 @@
 extends SceneTree
-## Chrome Racing Team: em que dia de calendário um jogador vence cada liga de
+## The Fastfather: em que dia de calendário um jogador vence cada liga de
 ## cada modalidade (docs/idle/plano.md, metas de ritmo). O jogador abre o app
 ## `sessoes_dia` vezes por dia e joga `sessao_min` minutos (a primeira sessão,
 ## `primeira_min`); entre as sessões entra a renda com o app fechado, até
@@ -52,7 +52,7 @@ func _escolher_modalidade() -> void:
 			if not e.comprar_carro(String(c["id"])):
 				esperando_carro = alvo
 				return
-			print("        comprou %s por $%d (caixa $%d)" % [c["id"], int(c["preco"]), int(caixa)])
+			print("        comprou %s por $%d (caixa $%d)" % [c["id"], int(e.preco_carro(c)), int(caixa)])
 		esperando_carro = ""
 		e.trocar_modalidade(alvo)
 

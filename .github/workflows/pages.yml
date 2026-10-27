@@ -101,9 +101,9 @@ jobs:
           sed -i "s/__VERSAO__/$v/" build/web/index.html
           grep -q "var v = '$v'" build/web/index.html
 
-      # Chrome Racing Team (docs/idle/plano.md): o segundo app do projeto, o
+      # The Fastfather (docs/idle/plano.md): o segundo app do projeto, o
       # mesmo pacote aberto direto no jogo idle (feature "idle"). Em /idle/.
-      - name: Exportar o Chrome Racing Team para web
+      - name: Exportar o The Fastfather para web
         run: |
           mkdir -p build/idle_web
           v="${GITHUB_SHA::7}"
@@ -139,11 +139,11 @@ jobs:
           test -f build/android/chrome-wreckage.apk
           ls -la build/android
 
-      # Chrome Racing Team (docs/idle/plano.md): o APK com o AdMob e os avisos. O plugin
+      # The Fastfather (docs/idle/plano.md): o APK com o AdMob e os avisos. O plugin
       # (godot-sdk-integrations/godot-admob, Godot 4.5.1) entra só aqui, depois
       # do APK do Chrome & Wreckage, e pede o build Gradle; o id do app vem de
       # data/idle/idle.json ("admob"). Se falhar, o resto segue publicado.
-      - name: Exportar APK do Chrome Racing Team (AdMob)
+      - name: Exportar APK do The Fastfather (AdMob)
         continue-on-error: true
         timeout-minutes: 40
         env:
@@ -194,7 +194,7 @@ jobs:
           test -f build/pages/demo/index.pck
           # O APK de teste fica em /demo/chrome-wreckage.apk (quando a exportação deu certo).
           if [ -f build/android/chrome-wreckage.apk ]; then cp build/android/chrome-wreckage.apk build/pages/demo/; fi
-          # Chrome Racing Team em /idle/ (e o APK dele, quando saiu).
+          # The Fastfather em /idle/ (e o APK dele, quando saiu).
           cp -r build/idle_web build/pages/idle
           test -f build/pages/idle/index.pck
           if [ -f build/android/chrome-racing-team.apk ]; then cp build/android/chrome-racing-team.apk build/pages/idle/; fi

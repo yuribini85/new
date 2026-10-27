@@ -1,6 +1,6 @@
 class_name MetasIdle
 extends ScrollContainer
-## Tela MISSÕES do Chrome Racing Team (docs/idle/plano.md): as missões do dia, como
+## Tela MISSÕES do The Fastfather (docs/idle/plano.md): as missões do dia, como
 ## a Meta do dia do Chrome & Wreckage. Um cartão por meta com o ícone, o que
 ## fazer, a barra do progresso e o botão COLETAR (minutos da renda) quando
 ## cumprida; no alto, quando chegam as próximas.
@@ -58,7 +58,7 @@ func atualizar() -> void:
 		c.queue_free()
 	var topo := HBoxContainer.new()
 	_lista.add_child(topo)
-	var t := IdleUI.rotulo("MISSÕES DIÁRIAS", 30, IdleUI.COR_TEXTO, topo, "display")
+	var t := IdleUI.rotulo("MISSÕES DIÁRIAS", 30, IdleUI.COR_TEXTO, topo, "deco")
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_relogio = IdleUI.rotulo("", 18, IdleUI.COR_SECUNDARIA, topo)
 	_relogio.size_flags_vertical = Control.SIZE_SHRINK_CENTER

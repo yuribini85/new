@@ -1,6 +1,6 @@
 class_name IdleAnuncios
 extends Node
-## Anúncios do Chrome Racing Team (docs/idle/plano.md, AdMob): vídeo premiado e
+## Anúncios do The Fastfather (docs/idle/plano.md, AdMob): vídeo premiado e
 ## intersticial ao subir de liga. No Android com o plugin do AdMob
 ## (addons/AdmobPlugin, instalado pelo CI só no APK do idle) os anúncios são de
 ## verdade; sem ele (editor, web, testes) o vídeo "passa" na hora e o

@@ -1,6 +1,6 @@
 class_name EfeitosIdle
 extends Control
-## Números que pipocam e faíscas por cima da tela do Chrome Racing Team
+## Números que pipocam e faíscas por cima da tela do The Fastfather
 ## (docs/idle/comparacao_white_foot.md, item 4: "a compra tem peso"). Uma camada
 ## só, que não pega toque: `faiscas` estoura losangos dourados de um ponto e
 ## `pipoca` faz um número nascer grande, quicar, tremer e subir sumindo. Com

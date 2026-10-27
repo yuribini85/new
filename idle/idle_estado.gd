@@ -1,6 +1,6 @@
 class_name IdleEstado
 extends RefCounted
-## Chrome Racing Team (docs/idle/plano.md): o estado do jogo idle e as regras,
+## The Fastfather (docs/idle/plano.md): o estado do jogo idle e as regras,
 ## sem tela. A corrida é a Simulacao do Chrome & Wreckage; os números vêm de
 ## data/idle/idle.json.
 ##
@@ -36,6 +36,9 @@ var desbloqueados: Array = []
 var oferecidos: Array = []
 var guias: Array = []  # dicas avulsas do tutorial leve já mostradas ("subir", "oferta")
 var garagem: Array = []  # ids dos carros comprados (cfg "garagem")
+## O primeiro carro saiu do ferro-velho (cfg "garagem" → "ferro_velho") e ainda
+## não foi pintado: o Tony pinta depois da primeira vitória.
+var ferro_velho := false
 
 var liga: int:
 	get:
@@ -156,12 +159,26 @@ func pode_correr() -> bool:
 	return c.is_empty() or tem_carro(String(c["id"]))
 
 
+## Preço na loja: o carro do ferro-velho sai pelo preço de sucata.
+func preco_carro(c: Dictionary) -> float:
+	if c.has("ferro_velho"):
+		return float(c["ferro_velho"]["preco"])
+	return float(c["preco"])
+
+
+## Carro bloqueado na loja: a divisão dele ainda não abriu (vira silhueta).
+func carro_bloqueado(c: Dictionary) -> bool:
+	return not tem_carro(String(c["id"])) and not liberada(String(c["modalidade"]))
+
+
 func comprar_carro(id: String) -> bool:
 	var c := carro_garagem(id)
-	if c.is_empty() or tem_carro(id) or dinheiro < float(c["preco"]):
+	if c.is_empty() or tem_carro(id) or dinheiro < preco_carro(c):
 		return false
-	dinheiro -= float(c["preco"])
+	dinheiro -= preco_carro(c)
 	garagem.append(id)
+	if c.has("ferro_velho"):
+		ferro_velho = true
 	return true
 
 
@@ -756,9 +773,17 @@ func condicao_ok(d: Dictionary) -> bool:
 
 
 ## A próxima conversa a mostrar: o primeiro item ainda não oferecido, se a
-## condição dele já se cumpriu (um de cada vez, na ordem da lista).
+## condição dele já se cumpriu (um de cada vez, na ordem da lista; as avulsas
+## passam na frente).
 func proxima_conversa() -> Dictionary:
+	# As avulsas ("avulsa": true) não esperam a fila: aparecem quando a condição
+	# delas se cumpre (a cena da primeira vitória).
 	for d in cfg_desbloqueios():
+		if bool(d.get("avulsa", false)) and not String(d["id"]) in oferecidos and condicao_ok(d):
+			return d
+	for d in cfg_desbloqueios():
+		if bool(d.get("avulsa", false)):
+			continue
 		if String(d["id"]) in oferecidos:
 			continue
 		return d if condicao_ok(d) else {}
@@ -802,7 +827,7 @@ func para_save() -> Dictionary:
 			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
 			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
-			"guias": guias, "garagem": garagem}
+			"guias": guias, "garagem": garagem, "ferro_velho": ferro_velho}
 
 
 func de_save(s: Dictionary) -> void:
@@ -842,7 +867,13 @@ func de_save(s: Dictionary) -> void:
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
 	desbloqueados = Array(s.get("desbloqueados", [])).map(func(x): return String(x))
 	oferecidos = Array(s.get("oferecidos", [])).map(func(x): return String(x))
+	if not s.has("ferro_velho") and corridas > 0:
+		# Save de antes do The Fastfather: as cenas do Tony do começo já passaram.
+		for id in ["tony_ultimo", "tony_vitoria"]:
+			if not id in oferecidos:
+				oferecidos.append(id)
 	guias = Array(s.get("guias", [])).map(func(x): return String(x))
+	ferro_velho = bool(s.get("ferro_velho", false))
 	garagem = Array(s.get("garagem", [])).map(func(x): return String(x)).filter(func(x): return not carro_garagem(x).is_empty())
 	if not s.has("garagem") and corridas > 0:
 		# Save de antes da garagem: as divisões em que a equipe já correu vêm com o carro.

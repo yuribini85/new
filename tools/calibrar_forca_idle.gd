@@ -1,5 +1,5 @@
 extends SceneTree
-## Chrome Racing Team: acha a forca_rivais de cada pista de cada modalidade
+## The Fastfather: acha a forca_rivais de cada pista de cada modalidade
 ## (data/idle/idle.json, "forca_rivais" da modalidade) que faz o menor nível de
 ## motor (= pneus) que vence 3 de 5 corridas ficar em ALVO, com ultrapassagem e
 ## vácuo no máximo e o piloto base. Toda liga pede o mesmo, e o tempo de cada

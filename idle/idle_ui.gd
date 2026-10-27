@@ -1,6 +1,6 @@
 class_name IdleUI
 extends RefCounted
-## Peças de interface do Chrome Racing Team (docs/idle/plano.md), com a
+## Peças de interface do The Fastfather (docs/idle/plano.md), com a
 ## identidade do Chrome & Wreckage: cores da interface (Aba), fontes
 ## (Tipografia) e a arte de res://arte/ui/.
 
@@ -61,6 +61,9 @@ static func caixa(cor: Color, raio: int, margem := 12, borda := Color.TRANSPAREN
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = cor
 	sb.set_corner_radius_all(raio)
+	# Cantos chanfrados, como as placas e molduras art déco dos anos 1930
+	# (The Fastfather, docs/idle/identidade_fastfather.md).
+	sb.corner_detail = 1
 	sb.set_content_margin_all(margem)
 	if largura_borda > 0:
 		sb.border_color = borda

@@ -1,6 +1,6 @@
 class_name IdleAvisos
 extends RefCounted
-## Avisos do aparelho com o Chrome Racing Team fechado (docs/idle/plano.md):
+## Avisos do aparelho com o The Fastfather fechado (docs/idle/plano.md):
 ## quando o app sai de foco, agenda o que vai acontecer longe dele (a renda com
 ## o app fechado chega ao teto, o contrato grátis fica pronto); ao voltar,
 ## cancela tudo. A chave AVISOS fica nas Configurações (Preferencias.notificacoes).
@@ -39,7 +39,7 @@ static func _plugin() -> Object:
 	if not _iniciado:
 		_iniciado = true
 		p.call("initialize")
-		p.call("create_notification_channel", {"id": CANAL, "name": "Chrome Racing Team",
+		p.call("create_notification_channel", {"id": CANAL, "name": "The Fastfather",
 				"description": "Cofre cheio e contrato grátis", "importance": 3})
 	return p
 

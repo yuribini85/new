@@ -1,6 +1,6 @@
 class_name BarraIdle
 extends Control
-## Menu de baixo do Chrome Racing Team (docs/idle/plano.md): uma aba por tela,
+## Menu de baixo do The Fastfather (docs/idle/plano.md): uma aba por tela,
 ## ícone grande e nome curto. A aba ativa sobe em ocre com um brilho e a faixa
 ## quadriculada de bandeirada embaixo; um ponto vermelho avisa que há o que
 ## fazer ali (contrato pronto, liga nova aberta). Só desenho e toque.

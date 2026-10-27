@@ -1,6 +1,6 @@
 class_name PistasIdle
 extends ScrollContainer
-## Tela PISTAS do Chrome Racing Team (docs/idle/plano.md): as cinco modalidades
+## Tela PISTAS do The Fastfather (docs/idle/plano.md): as cinco modalidades
 ## e o caminho de cada uma. No alto, uma placa por modalidade (aberta, a da
 ## corrida em ocre, fechada com o cadeado e o que falta para abrir); embaixo, a
 ## escada das ligas da modalidade escolhida, da primeira à última, com a pista,
@@ -96,7 +96,7 @@ func _cabecalho(e: IdleEstado) -> void:
 	v.alignment = BoxContainer.ALIGNMENT_END
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	placa.add_child(v)
-	IdleUI.rotulo(String(m["nome"]).to_upper(), 44, IdleUI.COR_TEXTO, v, "display")
+	IdleUI.rotulo(String(m["nome"]).to_upper(), 40, IdleUI.COR_TEXTO, v, "deco")
 	if not aberta:
 		var lib: Dictionary = m.get("libera", {})
 		var antes := e.dados_modalidade(String(lib.get("modalidade", "")))

@@ -131,3 +131,18 @@ static func do_rival(fam: String, chave: String, semente: String, numero := -1) 
 	if String(fm["acabamento"]) != "":
 		f["acabamento"] = fm["acabamento"]
 	return [cor, f]
+
+
+## O carro do ferro-velho (o primeiro da loja, até o Tony pintar depois da
+## primeira vitória): tinta verde queimada de sol, ferrugem, poeira e riscos;
+## depois de comprado, o 13 da família pintado à mão em giz.
+const FERRO_VELHO := {"cor": "#56604f", "ferrugem": 0.85, "poeira": 0.45, "arranhoes": 0.55, "numero": "#e9e2cf"}
+
+
+static func ferro_velho(com_numero: bool) -> Array:
+	var f := {"ferrugem": FERRO_VELHO["ferrugem"], "poeira": FERRO_VELHO["poeira"], "arranhoes": FERRO_VELHO["arranhoes"],
+			"acabamento": "fosco", "roda_epoca": "roda_preta"}
+	if com_numero:
+		f.merge({"numero": NUMERO_JOGADOR, "locais_numero": 1, "fonte_numero": "pincel", "escala_numero": 0.9,
+				"cor_numero": FERRO_VELHO["numero"], "cor_contorno": FERRO_VELHO["cor"]})
+	return [Color(String(FERRO_VELHO["cor"])), f]

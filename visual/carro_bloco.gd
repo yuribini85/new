@@ -343,6 +343,7 @@ static func _parametros_faixas(sm: ShaderMaterial, mi: MeshInstance3D, faixas: D
 	sm.set_shader_parameter("espelhar", bool(faixas.get("espelhar", false)))
 	sm.set_shader_parameter("poeira", float(faixas.get("poeira", 0.0)))
 	sm.set_shader_parameter("arranhoes", float(faixas.get("arranhoes", 0.0)))
+	sm.set_shader_parameter("ferrugem", float(faixas.get("ferrugem", 0.0)))
 	sm.set_shader_parameter("numero", int(faixas.get("numero", -1)))
 	sm.set_shader_parameter("locais_numero", int(faixas.get("locais_numero", PinturaCarro.LOCAIS_PADRAO)))
 	sm.set_shader_parameter("cor_numero", Color(String(faixas.get("cor_numero", "#141518"))))

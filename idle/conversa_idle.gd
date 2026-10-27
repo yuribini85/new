@@ -1,6 +1,6 @@
 class_name ConversaIdle
 extends Control
-## Conversa de um passo da escada do Chrome Racing Team (idle.json →
+## Conversa de um passo da escada do The Fastfather (idle.json →
 ## desbloqueios): a tela escurece, o personagem do acervo (arte de corpo
 ## inteiro, arte/personagens/corpo/) entra deslizando pela esquerda e embaixo
 ## vem a faixa da fala: tarja vinho com o nome, tarja creme com o papel e o
@@ -16,7 +16,8 @@ const ENTRADA_S := 0.35
 const LETRAS_POR_BLIP := 3
 const VOZES := {"mara_hayes": 0.8, "bianca_sterling": 1.15, "harold_brandt": 0.7, "theo_lane": 0.9,
 		"jade_ryker": 1.2, "roxy_vega": 1.3, "rico_salas": 0.85, "edgar_halloway": 0.6,
-		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72, "sal_moretti": 0.62, "walt_pruitt": 1.1}
+		"nora_lindqvist": 1.25, "kenji_arata": 1.0, "dex_kane": 0.72, "sal_moretti": 0.62, "walt_pruitt": 1.1,
+		"chefao": 0.6, "sobrinho": 1.15}
 var _letras_faladas := 0
 const VERMELHO := Color("8e2a26")  # vinho da época (docs/idle/conversao_mafia.md)
 
@@ -63,7 +64,7 @@ func _init(d: Dictionary, estado: IdleEstado) -> void:
 		cap.add_theme_stylebox_override("panel", IdleUI.caixa(Color("eadfc4"), 0, 8))
 		cap.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		terco.add_child(cap)
-		IdleUI.rotulo("CAPÍTULO " + String(d["capitulo"]).to_upper(), 20, Color("15120e"), cap, "display")
+		IdleUI.rotulo("CAPÍTULO " + String(d["capitulo"]).to_upper(), 20, Color("15120e"), cap, "deco")
 	var cab := HBoxContainer.new()
 	cab.add_theme_constant_override("separation", 0)
 	terco.add_child(cab)
@@ -85,7 +86,7 @@ func _init(d: Dictionary, estado: IdleEstado) -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	_caixa.add_child(v)
-	_fala = IdleUI.rotulo(String(d.get("fala", "")), 24, IdleUI.COR_TEXTO, v, "regular")
+	_fala = IdleUI.rotulo(String(d.get("fala", "")), 26, IdleUI.COR_TEXTO, v, "fala")  # a mesma letra dos balões
 	_fala.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_fala.custom_minimum_size = Vector2(0, 96)
 	_fala.visible_ratio = 0.0

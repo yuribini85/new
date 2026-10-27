@@ -1,5 +1,5 @@
 extends SceneTree
-## Jogador robô do Chrome Racing Team: começa um save novo e joga como uma pessoa
+## Jogador robô do The Fastfather: começa um save novo e joga como uma pessoa
 ## atenta (lê a conversa, larga no toque, compra a melhoria mais barata, aceita a
 ## oferta quando tem o dinheiro, sobe de liga). Registra a linha do tempo (o que
 ## aconteceu e quando, em tempo de jogo) e tira fotos a cada marco e a cada

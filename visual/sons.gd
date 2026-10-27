@@ -12,7 +12,7 @@ extends Node
 ## voltam os gerados (público, oficina) ou não toca nada. Zebra e bipes são
 ## sempre gerados.
 ## Sons de interface curtos (moeda, toque, batida, porta): Sons.tocar_ui().
-## Chrome Racing Team (docs/idle/sonorizacao.md): barramentos Musica, Efeitos,
+## The Fastfather (docs/idle/sonorizacao.md): barramentos Musica, Efeitos,
 ## Ambiente e Corrida (Sons.barramentos); sem eles (Chrome & Wreckage) tudo vai
 ## ao Master, como sempre.
 
@@ -312,7 +312,7 @@ static func tocar_ui(no: Node, nome: String, db := 0.0, tom := 1.0, variar := tr
 	no.get_tree().root.add_child.call_deferred(p)
 
 
-# --- Chrome Racing Team: barramentos, recompensa, rádio ----------------------------
+# --- The Fastfather: barramentos, recompensa, rádio ----------------------------
 
 ## Cria os barramentos (uma vez): Musica, Efeitos, Ambiente e Corrida (que
 ## passa pelos Efeitos e tem o filtro do "rádio de box").
