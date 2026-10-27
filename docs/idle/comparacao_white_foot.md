@@ -64,6 +64,14 @@ vai ao carro no box. A corrida fica no alto ou num painel de TV. Estações que 
 - **Compra:** +1, +10 e MÁX, segurar para comprar em sequência, marco a cada 25 níveis (×2 e um
   mecânico a mais na estação) e notação K/M/B.
 
+### 4b. Números que pipocam e saltam (pedido do usuário na aprovação)
+Como o White Foot faz: a compra afunda e salta o botão com clarão dourado, faíscas estouram dele e
+o nível novo pipoca acima ("Nv. 13", e "×3" nas compras seguidas, cada vez maior e mais tremido,
+com o tom subindo); o dinheiro do topo salta quando entra prêmio ("+$300" pipoca ao lado) e afunda
+quando gasta; a renda pipoca de leve no topo a cada poucos segundos; o botão que passa a poder ser
+tocado pulsa uma vez; pódio solta faíscas. Feito no CRT atual (`idle/efeitos_idle.gd`,
+`IdleUI.premiar` e `IdleUI.saltar`), reaproveitável na reconstrução.
+
 ### 5. Personagens que vivem na tela
 Os chefes de estação com traço e tique, vindos dos personagens que o CRT já tem: Mara, Harold,
 Kenji… Pilotos que andam no box, ficha no toque longo, disputa pela vaga de titular (a fusão vira
@@ -90,6 +98,11 @@ Trocar o PRÊMIO x2 a cada corrida por:
 - **Laboratório:** um build que salta para cada momento do jogo, de 1x a 10x.
 - **Métrica de "tempo sem compra > 3 min"** no robô e no calibrador.
 - **Uma página "versão atual"** como fonte única do que o jogo é.
+
+## Aprovado pelo usuário (2026-10-27)
+Tudo, mais o item 4b. A fantasia de exemplo (Mara, a oficina falida e o rival dono da pista), a
+transmissão de TV como linguagem e o complexo da equipe no lugar dos cartões viram o ponto de
+partida do documento de direção e das maquetes.
 
 ## Ordem recomendada
 1. Fantasia, tom e direção de arte (itens 1 e 2): decisões do usuário, um documento curto e uma

@@ -118,6 +118,9 @@ var _janela_aberta := false
 var _tv := true  # a transmissão (corrida 3D) já foi comprada
 var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
+var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
+var _renda_acumulada := 0.0  # renda desde o último "+$" que pipocou no topo
+var _renda_t := 0.0
 var _objetivo: Label  # o alvo da liga, entre a corrida e os cartões
 var _melhor: Label
 ## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
@@ -219,6 +222,8 @@ func _montar() -> void:
 	raiz.add_child(_barra)
 	_guia = GuiaIdle.new()
 	add_child(_guia)
+	_efeitos = EfeitosIdle.new()
+	add_child(_efeitos)
 	_aplicar_desbloqueios()
 	_atualizar_cartoes()
 
@@ -483,7 +488,11 @@ func _atualizar_cartoes() -> void:
 		else:
 			c["efeito"].text = "%s › %s" % [_efeito_texto(m, n), _efeito_texto(m, n + 1)]
 			b.text = "$%s" % curto(estado.custo(m["id"]))
+			var antes := b.disabled
 			b.disabled = not estado.pode_comprar(m["id"])
+			# Botão que passa a poder ser tocado pulsa uma vez.
+			if antes and not b.disabled and c["cartao"].is_visible_in_tree():
+				IdleUI.pulsar(b, 1.08)
 
 
 func _atualizar_topo(delta := 0.0) -> void:
@@ -633,6 +642,7 @@ func _process(delta: float) -> void:
 	estado.dinheiro += estado.renda_s() * delta
 	_avisos(delta)
 	_misturar(delta)
+	_pipocar_renda(delta)
 	_checar_conversa()
 	if _aguardando or _conversa != null or _coleta != null:
 		# Carros no grid (esperando o LARGAR) ou alguém falando: a corrida para.
@@ -848,6 +858,10 @@ func _chegou() -> void:
 			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)
 	_ganho_corrida = ganho
 	ganho_flutuante(ganho)
+	if pos <= 3:
+		# Pódio: faíscas do meio da corrida (mais na vitória).
+		var meio: Vector2 = _paginas["corrida"].get_global_rect().get_center() + Vector2(0, -160)
+		_efeitos.faiscas(meio, COR_OURO, 40 if pos == 1 else 20)
 	_dobrar.visible = true
 	_pausa = PAUSA_COM_VIDEO_S
 	estado.salvar(Time.get_unix_time_from_system())
@@ -873,7 +887,17 @@ func _comprar(id: String) -> void:
 		_combo = mini(_combo + 1, COMBO_MAX) if agora - _ultima_compra_ms <= COMBO_S * 1000.0 else 0
 		_ultima_compra_ms = agora
 		Sons.tocar_ui(self, "moeda", -6.0, pow(2.0, _combo / 12.0))
-		IdleUI.pulsar(_cartoes[id]["cartao"], 1.05)
+		# A compra tem peso: o botão afunda e salta com clarão, faíscas estouram
+		# dele, o nível novo pipoca acima do cartão (maior a cada compra seguida)
+		# e o dinheiro do topo afunda.
+		var c: Dictionary = _cartoes[id]
+		var b: Button = c["botao"]
+		IdleUI.premiar(b)
+		IdleUI.pulsar(c["cartao"], 1.05)
+		_efeitos.faiscas(b.get_global_rect().get_center(), IdleUI.COR_OURO_CLARO, 14 + 3 * _combo)
+		var texto := IdleUI.nv(estado.nivel(id)) + ("  ×%d" % (_combo + 1) if _combo > 0 else "")
+		_efeitos.pipoca(c["cartao"].get_global_rect().get_center() + Vector2(0, -40), texto, COR_OURO, 32, 0.5 + 0.12 * _combo)
+		IdleUI.saltar(_dinheiro, 0.92)
 		_atualizar_cartoes()
 
 
@@ -1164,22 +1188,35 @@ func celebrar(tamanho: int) -> void:
 	tw.tween_callback(flash.queue_free)
 
 
-## "+$X" que sobe e some ao lado do dinheiro do topo (prêmio, vídeo, meta).
+## "+$X" que pipoca ao lado do dinheiro do topo (prêmio, vídeo, meta) e o
+## número do topo salta.
 func ganho_flutuante(valor: float) -> void:
 	if valor < 1.0:
 		return
-	var l := IdleUI.rotulo("+$" + curto(valor), 30, COR_DINHEIRO, null, "numero")
-	l.top_level = true
-	l.z_index = 10
-	add_child(l)
 	var origem := _dinheiro.get_global_rect()
 	var largura := _dinheiro.get_theme_font("font").get_string_size(_dinheiro.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
 			_dinheiro.get_theme_font_size("font_size")).x
-	l.position = Vector2(origem.position.x + largura + 14.0, origem.position.y + 12.0)
-	var tw := l.create_tween().set_parallel()
-	tw.tween_property(l, "position:y", l.position.y - 46.0, 1.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_property(l, "modulate:a", 0.0, 0.5).set_delay(0.6)
-	tw.chain().tween_callback(l.queue_free)
+	_efeitos.pipoca(Vector2(origem.position.x + largura + 70.0, origem.get_center().y), "+$" + curto(valor),
+			COR_DINHEIRO, 34, 0.7)
+	IdleUI.saltar(_dinheiro, 1.15)
+
+
+## A renda por segundo pipoca de leve no topo a cada RENDA_POP_S: "+$X" sobe
+## do POR SEGUNDO e o número salta (o dinheiro anda junto, sem esperar a corrida).
+const RENDA_POP_S := 2.5
+func _pipocar_renda(delta: float) -> void:
+	if not _renda_caixa.visible or estado.renda_s() <= 0.0:
+		return
+	_renda_acumulada += estado.renda_s() * delta
+	_renda_t += delta
+	if _renda_t < RENDA_POP_S or _renda_acumulada < 1.0 or _conversa != null:
+		return
+	var r := _renda.get_global_rect()
+	_efeitos.pipoca(Vector2(r.get_center().x, r.position.y - 6.0), "+$" + curto(_renda_acumulada),
+			COR_DINHEIRO, 22, 0.25)
+	IdleUI.saltar(_renda, 1.08)
+	_renda_acumulada = 0.0
+	_renda_t = 0.0
 
 
 # --- previsão nos cartões -------------------------------------------------------------

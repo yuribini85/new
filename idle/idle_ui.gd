@@ -257,6 +257,38 @@ static func rolagem_fina(sc: ScrollContainer) -> void:
 
 
 ## Pulso curto de escala no controle (compra, contrato): o toque respondeu.
+## Compra feita: o botão afunda e salta, com um clarão dourado por cima.
+static func premiar(b: Control) -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	b.pivot_offset = b.size * 0.5
+	var clarao: ColorRect = b.get_node_or_null("Clarao")
+	if clarao == null:
+		clarao = ColorRect.new()
+		clarao.name = "Clarao"
+		clarao.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		clarao.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(clarao)
+	clarao.color = Color(1.0, 0.86, 0.5, 0.55)
+	var tw := b.create_tween()
+	tw.tween_property(b, "scale", Vector2(0.9, 0.9), 0.06)
+	tw.tween_property(b, "scale", Vector2(1.12, 1.12), 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(b, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(clarao, "color:a", 0.0, 0.45)
+
+
+## Número que salta no lugar (o dinheiro do topo quando entra ou sai valor):
+## escala > 1 cresce e volta com um quique; < 1 afunda e volta.
+static func saltar(l: Control, escala := 1.15) -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	l.pivot_offset = Vector2(0.0, l.size.y * 0.5) if l is Label and (l as Label).horizontal_alignment == HORIZONTAL_ALIGNMENT_LEFT \
+			else l.size * 0.5
+	var tw := l.create_tween()
+	tw.tween_property(l, "scale", Vector2(escala, escala), 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(l, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
 static func pulsar(c: Control, escala := 1.06) -> void:
 	if Preferencias.reduzir_animacoes:
 		return
