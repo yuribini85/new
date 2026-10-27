@@ -1,6 +1,9 @@
 {
   "_nota": "Cenas em quadrinho do The Fastfather (pacote de arte do usuário, 2026-10-27: 1. Abertura, 2. Loja, 3. Corrida). Apresentação, não balanceamento. Cada cena: 'fundo' (arte/fastfather/<fundo>.webp, cobre a tela; sem fundo a cena vem por cima da tela do jogo), 'atores' (id -> nome no balão, x = centro na largura 0..1, pe = altura dos pés 0..1, alt = altura da figura em fração da tela, entra = esquerda/direita/'' para quem já está em cena) e 'falas' em ordem (quem, pose = arquivo em arte/fastfather/, fala; 'move' leva atores a outro x; 'acao' avisa a tela, ex. 'pulsar:<carro>'; 'zoom' aproxima a câmera de quem fala). As falas das cenas 'largada', 'ultimo' e 'vitoria' são proposta (o arquivo SEQUÊNCIA 3 do pacote repete o texto da loja). Cenas de marco (item 7, falas provisórias até a história nova): moretti (o rival aparece), divisao_nova (a segunda divisão abre), carro_novo (o segundo carro da garagem).",
   "abertura": {
+    "cartao": {"lugar": "Brooklyn, Nova York", "ano": "1937"},
+    "entrada": "fade",
+    "pausa": 1.0,
     "fundo": "abertura/fundo",
     "atores": {
       "chefe": {

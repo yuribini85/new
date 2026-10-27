@@ -17,6 +17,11 @@ idle (antes Chrome Racing Team) passa a se chamar **The Fastfather**: máfia, 19
   fala e anda o fundo menos que as figuras; a passada de tinta abrindo e fechando o quadro; a
   retícula de impressão nas bordas; balões facetados e tortos como a arte low poly dos
   personagens, com sombra dura, tarja do nome e letra de gibi pulp (Bangers).
+- **Lugar e ano (2026-10-27):** depois do título, preto e o cartão "BROOKLYN, NOVA YORK — 1937"
+  (`cenas.json` → abertura → "cartao"); a cena do chefão sobe do preto e espera 1 s antes da
+  primeira fala. 1937: o Ford Model A de 1928 já é carro de ferro-velho, e as divisões seguintes
+  chegam com o tempo (Ford De Luxe 1940, Hudson Hornet 1951). Brooklyn: o cais da GAZETA DO CAIS e
+  do porto no alto da tela, e a Nova York das famílias.
 - **SEQUÊNCIA 1 (abertura):** as nove falas do roteiro, na ordem, com o Tony entrando no
   "Tony! Venha aqui." e o sobrinho abrindo espaço.
 - **SEQUÊNCIA 2 (loja):** a garagem nova (também a aba GARAGEM): o galpão do Tony ao fundo, a

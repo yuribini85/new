@@ -235,7 +235,16 @@ func _na_tela(p: Vector2) -> Vector2:
 # --- roteiro --------------------------------------------------------------------
 
 func _rodar() -> void:
-	if _com_fundo:
+	if _com_fundo and String(_cena.get("entrada", "")) == "fade":
+		# Sobe do preto (a abertura, depois do lugar e do ano) e espera um respiro.
+		_tinta.moldura = true
+		_tinta._set_p(0.0)
+		modulate.a = 0.0
+		var tw := create_tween()
+		tw.tween_property(self, "modulate:a", 1.0, 1.2 * _r + 0.01)
+		await tw.finished
+		await _esperar(float(_cena.get("pausa", 0.0)) * _r)
+	elif _com_fundo:
 		_tinta.moldura = true
 		await _tinta.abrir(_r)
 	else:

@@ -22,6 +22,7 @@ extends Control
 ## 3D), o analista (previsão nos cartões) e as câmeras.
 
 const COR_FUNDO := IdleUI.COR_FUNDO
+const CARTAO_S := 2.4  # o lugar e o ano na tela, antes da abertura (apresentação)
 const COR_CARTAO := IdleUI.COR_CARTAO
 const COR_DINHEIRO := IdleUI.COR_DINHEIRO
 const COR_OURO := IdleUI.COR_OURO
@@ -126,6 +127,7 @@ var _guia: GuiaIdle  # tutorial leve depois de cada função nova
 var _conversa_em := -1  # corridas no total quando a última conversa abriu (uma por corrida)
 var _titulo: TituloIdle  # tela de título, ao abrir o app
 var _abertura: CenaQuadrinho  # a cena do chefão, do sobrinho e do Tony, no jogo novo
+var _cartao_epoca: Control  # o lugar e o ano, no preto entre o título e a abertura
 var _largar_na_compra := false  # depois da bronca do chefe, o 1º +1 larga a corrida
 var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
@@ -184,14 +186,72 @@ func _precisa_abertura() -> bool:
 	return estado.corridas == 0 and not "rival" in estado.oferecidos and not estado.desbloqueio("rival").is_empty()
 
 
-## A abertura entra por baixo do título enquanto ele some: a tinta dela cobre
-## a tela, e a corrida atrás não aparece no meio da passagem.
+## Jogo novo: o título some para o preto, entra o cartão com o lugar e o ano
+## (cenas.json → abertura → "cartao") e a cena do chefão sobe do preto. O
+## cartão entra por baixo do título enquanto ele some, e o preto dele fica
+## atrás da cena até ela fechar: a corrida atrás nunca aparece na passagem.
 func _saindo_do_titulo() -> void:
-	if _precisa_abertura() and _abertura == null:
-		_abertura = CenaQuadrinho.new("abertura")
-		_abertura.fechou.connect(_fim_da_abertura)
-		add_child(_abertura)
-		move_child(_abertura, _titulo.get_index())
+	if not _precisa_abertura() or _abertura != null:
+		return
+	_abertura = CenaQuadrinho.new("abertura")
+	_abertura.fechou.connect(_fim_da_abertura)
+	_cartao_epoca = _cartao_de_epoca()
+	add_child(_cartao_epoca)
+	if _titulo != null:
+		move_child(_cartao_epoca, _titulo.get_index())
+
+
+func _cartao_de_epoca() -> Control:
+	var c := ColorRect.new()
+	c.color = Color.BLACK
+	c.set_anchors_preset(Control.PRESET_FULL_RECT)
+	c.mouse_filter = Control.MOUSE_FILTER_STOP
+	var v := VBoxContainer.new()
+	v.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	v.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	v.grow_vertical = Control.GROW_DIRECTION_BOTH
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 14)
+	v.modulate.a = 0.0
+	c.add_child(v)
+	var dados: Dictionary = CenaQuadrinho.carregar("abertura").get("cartao", {})
+	var lugar := IdleUI.rotulo(String(dados.get("lugar", "")).to_upper(), 30, IdleUI.COR_CROMO, v, "deco")
+	lugar.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var traco := ColorRect.new()
+	traco.color = MolduraDeco.LATAO
+	traco.custom_minimum_size = Vector2(220, 3)
+	traco.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	v.add_child(traco)
+	var ano := IdleUI.rotulo(String(dados.get("ano", "")), 96, IdleUI.COR_OURO_CLARO, v, "deco")
+	ano.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var r := 0.0 if Preferencias.reduzir_animacoes else 1.0
+	var tw := c.create_tween()
+	tw.tween_interval(0.5 * r)  # o preto do título, um respiro antes
+	tw.tween_property(v, "modulate:a", 1.0, 0.9 * r + 0.01)
+	tw.tween_interval(CARTAO_S)
+	tw.tween_property(v, "modulate:a", 0.0, 0.7 * r + 0.01)
+	tw.tween_interval(0.3 * r)
+	tw.tween_callback(_cena_da_abertura)
+	# Um toque passa o cartão.
+	c.gui_input.connect(func(e: InputEvent):
+		if (e is InputEventMouseButton or e is InputEventScreenTouch) and e.pressed and tw.is_valid():
+			tw.kill()
+			v.modulate.a = 0.0
+			_cena_da_abertura())
+	return c
+
+
+## Depois do cartão: a cena por cima do preto (ela sobe em fade, ver cenas.json).
+func _cena_da_abertura() -> void:
+	if _abertura == null or _abertura.is_inside_tree():
+		return
+	_cartao_epoca.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_abertura)
+	move_child(_abertura, _cartao_epoca.get_index() + 1)
+	_abertura.fechou.connect(func():
+		if _cartao_epoca != null:
+			_cartao_epoca.queue_free()
+			_cartao_epoca = null)
 
 
 func _depois_do_titulo() -> void:
@@ -233,6 +293,9 @@ func pular_titulo() -> void:
 	if _abertura != null:
 		_abertura.queue_free()
 		_abertura = null
+	if _cartao_epoca != null:
+		_cartao_epoca.queue_free()
+		_cartao_epoca = null
 	if _precisa_abertura():
 		_fim_da_abertura()
 	if _loja_abertura != null:
