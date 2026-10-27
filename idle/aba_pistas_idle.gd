@@ -141,9 +141,15 @@ func _cabecalho(e: IdleEstado) -> void:
 	v.add_child(linha)
 	var renda := IdleUI.rotulo("RENDA $%s/s" % IdleUI.curto(e.renda_modalidade(_escolhida)), 24, IdleUI.COR_DINHEIRO, linha)
 	renda.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var p := e.piloto_escalado(_escolhida)
-	var nome_p := String(IdleEstado.dados_piloto(tela.dados, String(p["id"])).get("nome", "")) if not p.is_empty() else "SEM PILOTO"
-	IdleUI.rotulo(nome_p.to_upper(), 22, IdleUI.COR_TEXTO if not p.is_empty() else IdleUI.COR_RUIM, linha)
+	if e.e_arena(_escolhida):
+		# A Rinha roda sozinha ao lado da corrida, com o melhor dos rapazes.
+		var r := e.melhor_rapaz()
+		IdleUI.rotulo(PilotosIdle.nome_rapaz(r).to_upper() if not r.is_empty() else "SEM RAPAZES", 22,
+				IdleUI.COR_TEXTO if not r.is_empty() else IdleUI.COR_RUIM, linha)
+		IdleUI.rotulo("Luta sozinha o tempo todo: assista na aba RINHA.", 20, IdleUI.COR_OURO, _lista)
+		return
+	# Quem corre é sempre o sobrinho.
+	IdleUI.rotulo("O SOBRINHO", 22, IdleUI.COR_TEXTO, linha)
 	if _escolhida != e.modalidade:
 		var b := IdleUI.botao("CORRER AQUI", IdleUI.COR_BOTAO, 26, 64, _lista)
 		b.pressed.connect(func(): correr_em.emit(_escolhida))

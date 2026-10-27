@@ -1,11 +1,12 @@
 class_name PilotosIdle
 extends ScrollContainer
-## Tela PILOTOS do The Fastfather (docs/idle/plano.md; decisão do usuário:
-## contratos + fusão, como o Race Star). No alto, o piloto da modalidade da
-## corrida: retrato, nome, perfil, nível e o que ele soma. Embaixo, os
-## contratos (grátis a cada poucas horas e por vídeo) e o elenco em retratos:
-## tocar num piloto mostra ESCALAR e FUNDIR (com outro do mesmo nível, que sai
-## da equipe e leva o escolhido um nível acima). Pilotos do Chrome & Wreckage.
+## Tela RAPAZES do The Fastfather (pedido do usuário, 2026-10-27: quem corre é
+## sempre o sobrinho; os rapazes da família lutam na Rinha, que roda ao lado da
+## corrida). Mesma mecânica de antes (contratos + fusão, como o Race Star): no
+## alto, o rapaz que está na Rinha (o de nível mais alto, sozinho); embaixo, os
+## contratos (grátis a cada poucas horas e por vídeo) e os rapazes em silhueta:
+## tocar num mostra EVOLUIR (com outro do mesmo nível, que sai da família e leva
+## o escolhido um nível acima). Nomes em data/idle/cenas.json → "rapazes".
 
 signal mudou
 
@@ -52,11 +53,22 @@ static func _agora() -> float:
 
 
 func _nome(p: Dictionary) -> String:
-	return String(IdleEstado.dados_piloto(tela.dados, String(p["id"])).get("nome", ""))
+	return PilotosIdle.nome_rapaz(p)
+
+
+## "Rocco Martelo": nome e apelido pela ordem de contratação (fixos por rapaz).
+static func nome_rapaz(p: Dictionary) -> String:
+	if p.is_empty():
+		return ""
+	var r: Dictionary = CenaQuadrinho.carregar("rapazes")
+	var nomes: Array = r.get("nomes", ["Rapaz"])
+	var apelidos: Array = r.get("apelidos", [""])
+	var uid := int(p["uid"])
+	return ("%s %s" % [nomes[uid % nomes.size()], apelidos[(uid * 7 + uid / nomes.size()) % apelidos.size()]]).strip_edges()
 
 
 func _escalado(e: IdleEstado) -> void:
-	var p := e.piloto_escalado()
+	var p := e.melhor_rapaz()
 	var cartao := IdleUI.painel(IdleUI.COR_CARTAO_CLARO, 16, 14, _lista)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 16)
@@ -66,24 +78,16 @@ func _escalado(e: IdleEstado) -> void:
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	h.add_child(v)
-	IdleUI.rotulo("PILOTO · %s" % String(e.dados_modalidade()["nome"]).to_upper(), 18, IdleUI.COR_OURO, v)
+	IdleUI.rotulo("NA RINHA", 18, IdleUI.COR_OURO, v)
 	if p.is_empty():
-		IdleUI.rotulo("SEM PILOTO", 36, IdleUI.COR_TEXTO, v, "display")
-		IdleUI.rotulo("Contrate um piloto abaixo.", 20, IdleUI.COR_SECUNDARIA, v)
+		IdleUI.rotulo("SEM RAPAZES", 36, IdleUI.COR_TEXTO, v, "display")
+		IdleUI.rotulo("Contrate um rapaz abaixo.", 20, IdleUI.COR_SECUNDARIA, v)
 		return
-	var dp := IdleEstado.dados_piloto(tela.dados, String(p["id"]))
 	var n := IdleUI.rotulo(_nome(p).to_upper(), 38, IdleUI.COR_TEXTO, v, "display")
 	n.clip_text = true
-	var perfil := String(dp.get("perfil", "")).capitalize()
-	IdleUI.rotulo("%s · %s" % [perfil.to_upper(), IdleUI.nv(int(p["nivel"]))], 20, IdleUI.COR_SECUNDARIA, v)
+	IdleUI.rotulo(IdleUI.nv(int(p["nivel"])).to_upper(), 20, IdleUI.COR_SECUNDARIA, v)
 	v.add_child(_estrelas(int(p["nivel"]), int(e.cfg_pilotos().get("nivel_max", 8)), 22))
-	var a := e.atributos_piloto(tela.dados, p)
-	var base: Dictionary = e.cfg_pilotos().get("base", {})
-	var ritmo := roundi((float(a["ritmo"]) - float(base.get("ritmo", 1.0))) * 100.0)
-	IdleUI.rotulo("%s   Ultrapassa %d%%" % ["Ritmo +%d%%" % ritmo if ritmo > 0 else "Ritmo base",
-			roundi(clampf(float(a["agressividade"]), 0.0, 1.0) * 100.0)], 20, IdleUI.COR_GANHO, v)
-	var frase := IdleUI.rotulo("“%s”" % String(dp.get("personalidade", "")), 17, IdleUI.COR_SECUNDARIA, v, "regular")
-	frase.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	IdleUI.rotulo("O mais forte da família vai para a Rinha.", 17, IdleUI.COR_SECUNDARIA, v, "regular")
 
 
 func _contratos(e: IdleEstado) -> void:
@@ -120,8 +124,8 @@ func _elenco(e: IdleEstado) -> void:
 	var titulo := VBoxContainer.new()
 	titulo.add_theme_constant_override("separation", 0)
 	_lista.add_child(titulo)
-	IdleUI.rotulo("SEUS PILOTOS (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
-	IdleUI.rotulo("2 pilotos do mesmo nível = 1 piloto de nível acima", 16, IdleUI.COR_SECUNDARIA, titulo, "regular")
+	IdleUI.rotulo("SEUS RAPAZES (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
+	IdleUI.rotulo("2 rapazes do mesmo nível = 1 rapaz de nível acima", 16, IdleUI.COR_SECUNDARIA, titulo, "regular")
 	var ordem: Array = e.pilotos.duplicate()
 	ordem.sort_custom(func(a, b): return int(a["nivel"]) > int(b["nivel"]) if int(a["nivel"]) != int(b["nivel"]) \
 			else int(a["uid"]) < int(b["uid"]))
@@ -166,16 +170,13 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 	var n := IdleUI.rotulo(sobrenome.to_upper(), 18, IdleUI.COR_TEXTO, v)
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	n.clip_text = true
-	var onde := ""
-	for k in e.escalados:
-		if int(e.escalados[k]) == uid:
-			onde = String(e.dados_modalidade(k).get("nome", "")).to_upper()
+	var onde := "NA RINHA" if int(e.melhor_rapaz().get("uid", -1)) == uid else ""
 	var s := IdleUI.rotulo(onde if onde != "" else "RESERVA", 14, IdleUI.COR_OURO if onde != "" else IdleUI.COR_SECUNDARIA, v)
 	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	return b
 
 
-## ESCALAR e EVOLUIR (dois do mesmo nível viram um acima) para o piloto escolhido.
+## EVOLUIR (dois do mesmo nível viram um acima) para o rapaz escolhido.
 func _acoes(e: IdleEstado, p: Dictionary) -> void:
 	var caixa := IdleUI.painel(IdleUI.COR_CARTAO_CLARO, 14, 12, _lista)
 	var v := VBoxContainer.new()
@@ -185,14 +186,6 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	v.add_child(linha)
-	var mod := String(e.dados_modalidade()["nome"]).to_upper()
-	var escalar := IdleUI.botao("ESCALAR EM %s" % mod, IdleUI.COR_BOTAO, 22, 64, linha)
-	escalar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	escalar.disabled = int(e.escalados.get(e.modalidade, -1)) == int(p["uid"])
-	escalar.pressed.connect(func():
-		e.escalar(e.modalidade, int(p["uid"]))
-		mudou.emit()
-		atualizar())
 	var par := _par_para_fundir(e, p)
 	var fundir := IdleUI.botao("EVOLUIR › %s" % IdleUI.nv(int(p["nivel"]) + 1), IdleUI.COR_BOTAO, 22, 64, linha)
 	fundir.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -203,10 +196,10 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 			tela.celebrar(2)
 			mudou.emit()
 			tela.mostrar_aviso("%s EVOLUIU PARA %s!" % [_nome(p).to_upper(), IdleUI.nv(int(p["nivel"])).to_upper()],
-					"%s deixou a equipe" % nome_sai)
+					"%s deixou a família" % nome_sai)
 			atualizar())
 	if par < 0:
-		IdleUI.rotulo("Para evoluir, contrate outro piloto %s." % IdleUI.nv(int(p["nivel"])), 17, IdleUI.COR_SECUNDARIA, v)
+		IdleUI.rotulo("Para evoluir, contrate outro rapaz %s." % IdleUI.nv(int(p["nivel"])), 17, IdleUI.COR_SECUNDARIA, v)
 
 
 ## O parceiro da fusão: outro piloto do mesmo nível, de preferência um reserva.
@@ -227,9 +220,7 @@ func _novo(p: Dictionary) -> void:
 	tela.celebrar(2)
 	mudou.emit()
 	atualizar()
-	var dp := IdleEstado.dados_piloto(tela.dados, String(p["id"]))
-	tela.mostrar_aviso("NOVO PILOTO: %s" % _nome(p).to_upper(),
-			"%s · Nv. 1" % String(dp.get("perfil", "")).capitalize(), IdleUI.busto_piloto(String(p["id"])))
+	tela.mostrar_aviso("NOVO RAPAZ: %s" % _nome(p).to_upper(), "Nv. 1 · entrou para a família")
 
 
 ## Busto do piloto saindo do quadro: a moldura começa abaixo do topo
@@ -244,7 +235,7 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 	var fundo := Panel.new()
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fundo.offset_top = lado * SAIDA_CABECA
-	var sb := IdleUI.caixa(IdleUI.COR_FUNDO, 10, 0, IdleUI.COR_BORDA, 1)
+	var sb := IdleUI.caixa(GaragemIdle.PAPEL_SILHUETA, 10, 0, IdleUI.COR_BORDA, 1)
 	sb.border_color = IdleUI.COR_OURO.darkened(0.35) if not p.is_empty() else IdleUI.COR_BORDA
 	sb.border_width_top = 3
 	fundo.add_theme_stylebox_override("panel", sb)
@@ -257,6 +248,7 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 		return c
 	var t := TextureRect.new()
 	t.texture = IdleUI.busto_piloto(String(p["id"]))
+	t.self_modulate = Color(0.06, 0.05, 0.05)  # silhueta: a arte da época ainda não chegou
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	t.set_anchors_preset(Control.PRESET_FULL_RECT)

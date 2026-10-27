@@ -119,8 +119,8 @@ func liberadas() -> Array:
 
 
 func trocar_modalidade(id: String) -> bool:
-	if not liberada(id):
-		return false
+	if not liberada(id) or e_arena(id):
+		return false  # a Rinha roda em paralelo, nunca no lugar da corrida
 	modalidade = id
 	_m()
 	return true
@@ -579,7 +579,9 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 	var base: Dictionary = carro_base(dados).duplicate(true)
 	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra))
 	base["aderencia"] = float(base["aderencia"]) * (1.0 + efeito("aderencia", niveis_extra))
-	var pj := atributos_piloto(dados, piloto_escalado())
+	# The Fastfather: quem corre é sempre o sobrinho (o piloto base); os rapazes
+	# contratados lutam na Rinha.
+	var pj := atributos_piloto(dados, piloto_escalado() if e_arena() else {})
 	r.append({"id": "jogador", "carro": carro_base(dados)["id"], "atributos": IdleEstado._atributos(dados, base),
 			"piloto": {"ritmo": pj["ritmo"], "consistencia": clampf(pj["consistencia"], 0.0, 1.0),
 				"agressividade": clampf(float(pj["agressividade"]) + efeito("agressividade", niveis_extra), 0.0, 1.0),
@@ -639,6 +641,82 @@ func correr_arena(dados: Node, semente: int, com_amostras := true, niveis_extra 
 			# Rival mais forte também é mais pesado: na arena o peso é a resistência.
 			p["atributos"]["peso"] = float(p["atributos"]["peso"]) * (1.0 + peso_forca * (fator_rival(k) - 1.0))
 	return Arena.correr(parts, params_arena(dados), semente, com_amostras)
+
+
+# --- Rinha das Famílias (a arena, em paralelo com a corrida) ----------------------
+# The Fastfather (pedido do usuário, 2026-10-27): quem corre é sempre o
+# sobrinho; os rapazes contratados lutam na Rinha, que roda o tempo todo ao lado
+# da corrida (a corrida é o idle, assistir à Rinha é o tempero). Sem compras
+# próprias: o carro dos rapazes leva as melhorias da corrida, a liga da Rinha
+# acompanha a liga mais alta das corridas e luta o rapaz de nível mais alto.
+
+## A modalidade da Rinha ("" se não houver).
+func id_rinha() -> String:
+	for m in cfg["modalidades"]:
+		if String(m.get("tipo", "")) == "arena":
+			return String(m["id"])
+	return ""
+
+
+func rinha_aberta() -> bool:
+	var r := id_rinha()
+	return r != "" and liberada(r)
+
+
+## A liga da Rinha: a mais alta entre as corridas abertas.
+func liga_rinha() -> int:
+	var r := id_rinha()
+	var maior := 0
+	for id in liberadas():
+		if id != r:
+			maior = maxi(maior, int(_m(id)["liga"]))
+	return mini(maior, dados_modalidade(r)["ligas"].size() - 1)
+
+
+## O rapaz de nível mais alto (o que vai para a Rinha).
+func melhor_rapaz() -> Dictionary:
+	var melhor := {}
+	for p in pilotos:
+		if melhor.is_empty() or int(p["nivel"]) > int(melhor["nivel"]):
+			melhor = p
+	return melhor
+
+
+## Roda `f` com a Rinha no lugar da corrida (liga, melhorias e rapaz arrumados)
+## e volta tudo como estava.
+func _na_rinha(f: Callable) -> Variant:
+	var r := id_rinha()
+	var corrida := modalidade
+	var niveis_corrida: Dictionary = _m()["niveis"].duplicate()
+	modalidade = r
+	_m()["liga"] = liga_rinha()
+	_m()["niveis"] = niveis_corrida
+	var rapaz := melhor_rapaz()
+	if not rapaz.is_empty():
+		escalados[r] = int(rapaz["uid"])
+	var v = f.call()
+	modalidade = corrida
+	return v
+
+
+## Uma luta da Rinha, resolvida inteira (a aba RINHA mostra as amostras).
+func lutar_rinha(dados: Node, semente: int, com_amostras := true) -> Dictionary:
+	if not rinha_aberta():
+		return {}
+	return _na_rinha(func(): return correr_arena(dados, semente, com_amostras))
+
+
+## O prêmio da luta pela posição (não conta como corrida do sobrinho).
+func pagar_rinha(pos: int) -> float:
+	if not rinha_aberta():
+		return 0.0
+	return float(_na_rinha(func():
+		var p := premio(pos)
+		dinheiro += p
+		_m()["corridas"] = int(_m()["corridas"]) + 1
+		if melhor_posicao() == 0 or pos < melhor_posicao():
+			_m()["melhor"] = pos
+		return p))
 
 
 # --- metas do dia ---------------------------------------------------------------
@@ -854,7 +932,7 @@ func de_save(s: Dictionary) -> void:
 			if m["niveis"].has(k):
 				m["niveis"][k] = int(sm["niveis"][k])
 	var mod := String(s.get("modalidade", modalidade))
-	if liberada(mod):
+	if liberada(mod) and not e_arena(mod):  # quem estava na arena volta para a corrida
 		modalidade = mod
 	pilotos = []
 	for p in s.get("pilotos", []):

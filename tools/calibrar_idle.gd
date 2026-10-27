@@ -6,7 +6,8 @@ extends SceneTree
 ## offline_max_h (data/idle/idle.json). Ele corre na modalidade aberta mais
 ## nova que ainda tem liga para vencer, compra a melhoria mais barata dela
 ## enquanto der, usa o contrato grátis (e `videos` contratos por vídeo ao dia),
-## funde pilotos do mesmo nível e escala o melhor na modalidade da corrida.
+## funde rapazes do mesmo nível (o melhor luta na Rinha, que roda ao lado da
+## corrida enquanto o app está aberto; quem corre é sempre o sobrinho).
 ## Divisão nova com carro na garagem: junta o dinheiro (sem comprar melhorias)
 ## correndo onde está, compra o carro e só então troca.
 ## Uso: godot --headless --path . -s tools/calibrar_idle.gd [-- sessoes_dia=4 sessao_min=8
@@ -41,6 +42,8 @@ func _comprar_tudo() -> void:
 func _escolher_modalidade() -> void:
 	var alvo := ""
 	for id in e.liberadas():
+		if e.e_arena(id):
+			continue  # a Rinha roda em paralelo, não é escolhida
 		var m := e._m(id)
 		var fim: bool = int(m["liga"]) >= e.dados_modalidade(id)["ligas"].size() - 1 and bool(m["venceu"])
 		if not fim:
@@ -107,6 +110,9 @@ func _rodar() -> void:
 	var na_sessao := 0.0
 	var semente := 1
 	var corridas_liga := 0
+	var rinha_t := 0.0
+	var rinha_ganho := 0.0
+	var lutas := 0
 	var abertas := e.liberadas()
 	print("dia     modalidade liga                         corridas  níveis do piloto")
 	_pilotos(inicio, "d0", 0)
@@ -131,6 +137,14 @@ func _rodar() -> void:
 		e.dinheiro += e.renda_s() * dur
 		e.concluir(IdleEstado.posicao(r))
 		corridas_liga += 1
+		# A Rinha luta ao lado: lutas (de ~duracao/2 s, mais a pausa) cabem nesse tempo.
+		if e.rinha_aberta():
+			rinha_t += dur
+			while rinha_t > 0.0:
+				var l := e.lutar_rinha(d, semente * 31 + 7, false)
+				rinha_t -= float(l["duracao"]) / 2.0 + 5.0
+				rinha_ganho += e.pagar_rinha(IdleEstado.posicao(l))
+				lutas += 1
 		_comprar_tudo()
 		if e.venceu and esperando_carro != "" and not e.subir_liga():
 			continue  # na última liga, juntando para o carro da divisão nova
@@ -151,4 +165,5 @@ func _rodar() -> void:
 				print("        abriu %s" % abertas.back())
 				_escolher_modalidade()
 	print("total %.1f min de app aberto, %.1f dias, %d corridas" % [ativo / 60.0, relogio / 86400.0, e.corridas])
+	print("rinha: %d lutas, $%d em prêmios" % [lutas, int(rinha_ganho)])
 	quit()

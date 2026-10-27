@@ -112,3 +112,22 @@ Bianca, Harold e o resto do elenco antigo saem; a história é outra.** Até a h
 - **14. Repintura:** depois da cena da vitória, a oficina do Tony: a ferrugem some, a lataria
   escurece e entra a pintura da família com o 13.
 - **15. Mural de cartazes** de corrida no fundo da aba PISTAS.
+
+## 6. O sobrinho corre; os rapazes vão para a Rinha (2026-10-27)
+
+Pedido do usuário: o piloto é sempre o sobrinho; a mecânica de pilotos (contratar
+grátis, contratar com vídeo, juntar dois do mesmo nível) vira **os rapazes da família**,
+que lutam na **Rinha das Famílias** — a arena do Chrome & Wreckage com outro nome —
+rodando o tempo todo ao lado da corrida. A corrida é o idle; assistir à Rinha de vez em
+quando é o tempero.
+
+- A corrida usa sempre o piloto base (o sobrinho); o nível dos rapazes não muda a corrida.
+- A Rinha (`IdleEstado.lutar_rinha`/`pagar_rinha`, aba RINHA) abre junto com os rapazes
+  (2ª liga dos Bairros) e luta sem parar enquanto o app está aberto: o rapaz de nível mais
+  alto, num cupê 1940, contra carros de época das famílias rivais. Não tem compras
+  próprias: o carro leva as melhorias da corrida, a liga acompanha a corrida mais alta e
+  o prêmio usa a escada dos Bairros (multiplicador 1 a 50,3). Luta não conta como corrida.
+- Vitória dos rapazes com o jogador em outra aba: aviso no alto e o prêmio sobe.
+- Aba RAPAZES: nomes da época (`data/idle/cenas.json` → "rapazes"), retratos em silhueta
+  até a arte chegar, o mais forte vai sozinho para a Rinha (sem ESCALAR).
+- PISTAS mostra a Rinha como "luta sozinha"; a corrida não pode ir para lá.

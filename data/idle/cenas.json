@@ -432,5 +432,46 @@
         "ESTRADA VELHA · 1932"
       ]
     ]
+  },
+  "rapazes": {
+    "_nota": "Os rapazes da família (aba RAPAZES): nome e apelido de cada um, pela ordem de contratação. Lutam na Rinha; quem corre é sempre o sobrinho.",
+    "nomes": [
+      "Rocco",
+      "Paulie",
+      "Nicky",
+      "Joey",
+      "Tommy",
+      "Enzo",
+      "Dino",
+      "Gino",
+      "Bruno",
+      "Aldo",
+      "Nino",
+      "Benny",
+      "Louie",
+      "Tito",
+      "Mickey",
+      "Ralphie",
+      "Sal",
+      "Vinnie"
+    ],
+    "apelidos": [
+      "Martelo",
+      "Dedos",
+      "Mudo",
+      "Bigode",
+      "Gravata",
+      "Sorriso",
+      "Navalha",
+      "Fumaça",
+      "Ferrolho",
+      "Trovão",
+      "Cicatriz",
+      "Chapéu",
+      "Faísca",
+      "Muralha",
+      "Ligeiro",
+      "Pneu"
+    ]
   }
 }

@@ -42,7 +42,8 @@ const EQUIPE_JOGADOR := {"numero": 1, "cores": {"faixa": "#141518", "filete": "#
 const ABAS := [
 	{"id": "corrida", "nome": "CORRIDA", "icone": "icone_correr"},
 	{"id": "pistas", "nome": "PISTAS", "icone": "icone_pista"},
-	{"id": "pilotos", "nome": "PILOTOS", "icone": "icone_piloto"},
+	{"id": "pilotos", "nome": "RAPAZES", "icone": "icone_piloto"},
+	{"id": "rinha", "nome": "RINHA", "icone": "emblema_arena"},
 	{"id": "metas", "nome": "MISSÕES", "icone": "icone_objetivo"},
 	{"id": "garagem", "nome": "GARAGEM", "icone": "icone_montagem"},
 ]
@@ -115,6 +116,7 @@ var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocí
 var _trilho: Control  # as câmeras
 var _largar: Button
 var _aguardando := false  # carros no grid esperando o LARGAR
+var _rinha: RinhaIdle  # aba RINHA (a luta corre sempre, a aba só mostra)
 var _quadro_corrida: Control  # o telão da corrida (a foto da vitória sai dele)
 var _conversa: Control  # ConversaIdle, ou CenaQuadrinho nas cenas do Tony
 var _ofertas: VBoxContainer  # ofertas recusadas, no canto da corrida
@@ -281,6 +283,10 @@ func _montar() -> void:
 	_pilotos = PilotosIdle.new(self)
 	_pilotos.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
 	_paginas["pilotos"] = _pilotos
+	# A Rinha: luta sozinha ao lado da corrida; a aba só mostra.
+	_rinha = RinhaIdle.new(self)
+	_rinha.terminou.connect(_rinha_terminou)
+	_paginas["rinha"] = _rinha
 	_metas = MetasIdle.new(self)
 	_metas.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
 	_paginas["metas"] = _metas
@@ -543,6 +549,8 @@ func _abrir(id: String) -> void:
 		_pistas.atualizar()
 	elif id == "pilotos":
 		_pilotos.atualizar()
+	elif id == "rinha":
+		_rinha.atualizar()
 	elif id == "metas":
 		_metas.atualizar()
 	elif id == "garagem":
@@ -1470,6 +1478,8 @@ func _exit_tree() -> void:
 func _aba_aberta(a: Dictionary) -> bool:
 	if a["id"] == "garagem":
 		return not estado.garagem.is_empty()  # depois do primeiro carro
+	if a["id"] == "rinha":
+		return estado.rinha_aberta()
 	return a["id"] == "corrida" or estado.tem("aba:" + String(a["id"]))
 
 
@@ -1749,3 +1759,14 @@ func _foto_vitoria() -> void:
 func _locutor(nome: String) -> void:
 	if ResourceLoader.exists(Sons.PASTA + nome + ".ogg"):
 		Sons.tocar_ui(self, nome, -2.0, 1.0, false)
+
+
+## Fim de uma luta da Rinha: o prêmio sobe para o dinheiro; a vitória dos
+## rapazes avisa mesmo com o jogador em outra aba.
+func _rinha_terminou(pos: int, premio: float) -> void:
+	_dinheiro_mostrado = minf(_dinheiro_mostrado, estado.dinheiro)
+	if premio >= 1.0:
+		ganho_flutuante(premio)
+	if pos == 1 and not _rinha.is_visible_in_tree() and _conversa == null:
+		mostrar_aviso("RINHA: OS RAPAZES VENCERAM", "+$" + curto(premio))
+	estado.salvar(Time.get_unix_time_from_system())

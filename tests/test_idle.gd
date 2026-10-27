@@ -391,6 +391,34 @@ func test_ferro_velho() -> void:
 	verificar(not CenaQuadrinho.carregar("vitoria").is_empty(), "as cenas estão em cenas.json")
 
 
+## Rinha das Famílias (pedido do usuário, 2026-10-27): roda ao lado da corrida,
+## nunca no lugar dela; abre com a 2ª liga dos Bairros; quem corre é o
+## sobrinho (os rapazes não mexem na corrida); a luta paga sem contar corrida
+## e devolve a modalidade como estava.
+func test_rinha_em_paralelo() -> void:
+	var dados: Node = Engine.get_main_loop().root.get_node("Dados")
+	var e := IdleEstado.new()
+	verificar(not e.rinha_aberta(), "fechada no começo")
+	e.liga = 1
+	verificar(e.rinha_aberta(), "abre na 2ª liga dos Bairros")
+	verificar(not e.trocar_modalidade(e.id_rinha()), "a corrida não vai para a Rinha")
+	var antes := IdleEstado.posicao(e.correr(dados, 5, false))
+	e.usar_contrato_gratis(dados, 0.0)
+	e.pilotos[0]["nivel"] = 6
+	igual(IdleEstado.posicao(e.correr(dados, 5, false)), antes, "rapaz não muda a corrida do sobrinho")
+	var mod := e.modalidade
+	var corridas := e.corridas
+	var r := e.lutar_rinha(dados, 3, false)
+	verificar(not r.is_empty() and r.has("classificacao"), "a luta sai inteira")
+	var dinheiro := e.dinheiro
+	var p := e.pagar_rinha(IdleEstado.posicao(r))
+	perto(e.dinheiro, dinheiro + p, 0.001, "o prêmio entra")
+	verificar(p > 0.0, "paga pela posição")
+	igual(e.modalidade, mod, "a corrida continua onde estava")
+	igual(e.corridas, corridas, "luta não conta como corrida")
+	igual(e.liga_rinha(), 1, "a liga acompanha a corrida mais alta")
+
+
 ## Pinturas de época: só cor única, filete lateral, capô ou teto; a cor do
 ## rival sai da paleta da família e nunca é a do jogador; número de 1 a 99;
 ## mesma equipe, mesma cor; o jogador leva o 13.
