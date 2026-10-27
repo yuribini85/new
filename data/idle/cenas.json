@@ -6,7 +6,7 @@
       "chefe": {
         "nome": "O CHEFÃO",
         "x": 0.6,
-        "pe": 0.8,
+        "pe": 0.85,
         "alt": 0.44,
         "entra": "",
         "pose": "abertura/chefe_1"
@@ -14,7 +14,7 @@
       "sobrinho": {
         "nome": "SOBRINHO",
         "x": 0.2,
-        "pe": 1.02,
+        "pe": 0.98,
         "alt": 0.66,
         "entra": "esquerda",
         "pose": "abertura/sobrinho_1"
@@ -23,7 +23,7 @@
         "nome": "TONY",
         "x": 0.36,
         "pe": 0.99,
-        "alt": 0.6,
+        "alt": 0.68,
         "entra": "esquerda",
         "pose": "abertura/tony_1"
       }
@@ -102,8 +102,8 @@
       "tony": {
         "nome": "TONY",
         "x": 0.76,
-        "pe": 1.02,
-        "alt": 0.58,
+        "pe": 0.92,
+        "alt": 0.48,
         "entra": "direita",
         "pose": "loja/tony_1"
       }
@@ -150,8 +150,8 @@
       "tony": {
         "nome": "TONY",
         "x": 0.72,
-        "pe": 1.02,
-        "alt": 0.6,
+        "pe": 0.92,
+        "alt": 0.48,
         "entra": "direita",
         "pose": "corrida/tony_1"
       },
@@ -379,8 +379,8 @@
       "tony": {
         "nome": "TONY",
         "x": 0.76,
-        "pe": 1.02,
-        "alt": 0.58,
+        "pe": 0.92,
+        "alt": 0.48,
         "entra": "direita",
         "pose": "loja/tony_3"
       }

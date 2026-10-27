@@ -30,6 +30,7 @@ var _faixas: Dictionary
 var _indice := 0
 var _carro: CarroBloco
 var _giro: Node3D  # o carro e a sombra dele, girando juntos
+var _seta: Control  # a seta curva de "arraste para girar"
 var _mundo: Node3D
 var _vp: SubViewport
 var _arrastando := false
@@ -108,11 +109,19 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 	cont.mouse_filter = Control.MOUSE_FILTER_STOP
 	cont.gui_input.connect(_arrastar)
 	v.add_child(cont)
+	_seta = _SetaGiro.new()
+	_seta.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_seta.offset_left = -110
+	_seta.offset_right = 110
+	_seta.offset_top = -64
+	_seta.offset_bottom = -8
+	_seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vp = SubViewport.new()
 	_vp.own_world_3d = true
 	_vp.transparent_bg = true
 	_vp.msaa_3d = Viewport.MSAA_DISABLED if Preferencias.efeitos_leves else Viewport.MSAA_4X
 	cont.add_child(_vp)
+	cont.add_child(_seta)
 	_palco()
 	var ficha := IdleUI.painel(Color(IdleUI.COR_CARTAO, 0.94), 14, 16, v)
 	_ficha = ficha
@@ -474,7 +483,7 @@ func _acao() -> void:
 	correr.emit(id)
 
 
-## Arrastar gira o carro; solto, ele volta a girar sozinho depois de um tempo.
+## Arrastar gira o carro (ele não gira sozinho).
 func _arrastar(e: InputEvent) -> void:
 	if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
 		_arrastando = e.pressed
@@ -496,5 +505,26 @@ func _process(delta: float) -> void:
 	if _relogio >= 0.5:
 		_relogio = 0.0
 		atualizar()
-	if not _arrastando and Time.get_ticks_msec() / 1000.0 - _girou_em > 2.0 and not Preferencias.reduzir_animacoes:
-		_giro.rotation.y += GIRO * delta
+	# O carro só gira no dedo do jogador; a seta curva embaixo pisca devagar.
+	if _seta != null:
+		_seta.modulate.a = 0.35 + 0.5 * (0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 3.0))
+
+
+## Seta curva de "arraste para girar": um arco achatado de ponta a ponta, com
+## as duas pontas de seta, em latão.
+class _SetaGiro extends Control:
+	func _draw() -> void:
+		var c := Vector2(size.x * 0.5, size.y * 0.2)
+		var r := Vector2(size.x * 0.45, size.y * 0.6)
+		var pts := PackedVector2Array()
+		for k in 25:
+			var a := PI * (0.12 + 0.76 * k / 24.0)
+			pts.append(c + Vector2(cos(a) * r.x, sin(a) * r.y))
+		var cor := MolduraDeco.LATAO
+		draw_polyline(pts, Color(0, 0, 0, 0.6), 9.0)
+		draw_polyline(pts, cor, 5.0)
+		for ponta in [[pts[0], pts[1]], [pts[pts.size() - 1], pts[pts.size() - 2]]]:
+			var p: Vector2 = ponta[0]
+			var d := (p - (ponta[1] as Vector2)).normalized()
+			var n := Vector2(-d.y, d.x)
+			draw_colored_polygon(PackedVector2Array([p + d * 14.0, p + n * 10.0, p - n * 10.0]), cor)

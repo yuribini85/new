@@ -1,8 +1,7 @@
 class_name TituloIdle
 extends Control
-## Tela de título do The Fastfather (docs/idle/identidade_fastfather.md): o
-## escritório do chefão (a arte da abertura) com a luz da persiana passando, o
-## logo e "TOQUE PARA COMEÇAR". Aparece ao abrir o app; um toque fecha.
+## Tela de título do The Fastfather (docs/idle/identidade_fastfather.md): fundo
+## preto, o logo e "TOQUE PARA COMEÇAR". Aparece ao abrir o app; um toque fecha.
 
 signal fechou
 
@@ -10,7 +9,7 @@ signal fechou
 const SAIDA_S := 0.35
 
 var _toque: Label
-var _fundo: TextureRect
+var _fundo: Control
 var _t := 0.0
 var _saindo := false
 
@@ -18,18 +17,12 @@ var _saindo := false
 func _init() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	_fundo = TextureRect.new()
-	_fundo.texture = load("res://arte/fastfather/abertura/fundo.webp")
-	_fundo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_fundo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED  # escala uniforme, recorta
+	# Fundo preto liso (pedido do usuário): só o logo.
+	_fundo = ColorRect.new()
+	(_fundo as ColorRect).color = Color.BLACK
 	_fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_fundo)
-	var escuro := ColorRect.new()
-	escuro.color = Color(0, 0, 0, 0.35)
-	escuro.set_anchors_preset(Control.PRESET_FULL_RECT)
-	escuro.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(escuro)
 	var logo := TextureRect.new()
 	logo.texture = load("res://arte/idle/logo.png")
 	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -54,9 +47,6 @@ func _init() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	_toque.modulate.a = 0.55 + 0.45 * absf(sin(_t * 1.6))
-	# A luz da persiana respira devagar.
-	var luz := 0.92 + 0.08 * sin(_t * 0.7)
-	_fundo.modulate = Color(luz, luz, luz)
 
 
 func _gui_input(e: InputEvent) -> void:

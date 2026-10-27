@@ -15,9 +15,9 @@ signal acao(nome: String)
 
 const CENAS := "res://data/idle/cenas.json"
 ## Apresentação, não balanceamento.
-const LETRAS_POR_S := 42.0
-const ESPERA_S := 1.4  # fala inteira na tela: passa sozinha depois disso (+ tempo de leitura)
-const LEITURA_S_POR_LETRA := 0.035
+const LETRAS_POR_S := 34.0
+const ESPERA_S := 2.2  # fala inteira na tela: passa sozinha depois disso (+ tempo de leitura)
+const LEITURA_S_POR_LETRA := 0.05
 const CAMERA_S := 0.6
 const ZOOM := 1.14
 const PAPEL := Color("f4ecd8")
