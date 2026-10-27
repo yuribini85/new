@@ -7,11 +7,14 @@ extends SceneTree
 ## nova que ainda tem liga para vencer, compra a melhoria mais barata dela
 ## enquanto der, usa o contrato grátis (e `videos` contratos por vídeo ao dia),
 ## funde pilotos do mesmo nível e escala o melhor na modalidade da corrida.
+## Divisão nova com carro na garagem: junta o dinheiro (sem comprar melhorias)
+## correndo onde está, compra o carro e só então troca.
 ## Uso: godot --headless --path . -s tools/calibrar_idle.gd [-- sessoes_dia=4 sessao_min=8
 ##        primeira_min=15 limite_dias=60 videos=0]
 
 var e: IdleEstado
 var d: Node
+var esperando_carro := ""  # divisão nova à espera do dinheiro do carro
 
 
 func _initialize() -> void:
@@ -19,6 +22,12 @@ func _initialize() -> void:
 
 
 func _comprar_tudo() -> void:
+	if esperando_carro != "":
+		var c := e.carro_da_modalidade(esperando_carro)
+		if e.comprar_carro(String(c["id"])):
+			esperando_carro = ""
+			_escolher_modalidade()
+		return
 	while true:
 		var mais_barata := ""
 		for m in e.cfg["melhorias"]:
@@ -37,6 +46,14 @@ func _escolher_modalidade() -> void:
 		if not fim:
 			alvo = id
 	if alvo != "" and alvo != e.modalidade:
+		var c := e.carro_da_modalidade(alvo)
+		if not c.is_empty() and not e.tem_carro(String(c["id"])):
+			var caixa := e.dinheiro
+			if not e.comprar_carro(String(c["id"])):
+				esperando_carro = alvo
+				return
+			print("        comprou %s por $%d (caixa $%d)" % [c["id"], int(c["preco"]), int(caixa)])
+		esperando_carro = ""
 		e.trocar_modalidade(alvo)
 
 
@@ -115,6 +132,8 @@ func _rodar() -> void:
 		e.concluir(IdleEstado.posicao(r))
 		corridas_liga += 1
 		_comprar_tudo()
+		if e.venceu and esperando_carro != "" and not e.subir_liga():
+			continue  # na última liga, juntando para o carro da divisão nova
 		if e.venceu:
 			var niveis := e.pilotos.map(func(p): return int(p["nivel"]))
 			print("%6.2f  %-10s %-28s %8d  %s" % [relogio / 86400.0, e.modalidade, e.dados_liga()["nome"], corridas_liga,
@@ -124,7 +143,7 @@ func _rodar() -> void:
 				# Última liga da modalidade: segue na próxima aberta, se houver.
 				var antes := e.modalidade
 				_escolher_modalidade()
-				if e.modalidade == antes:
+				if e.modalidade == antes and esperando_carro == "":
 					break
 			_pilotos(inicio + relogio, "d%d" % int(relogio / 86400.0), 0)
 			if e.liberadas().size() > abertas.size():

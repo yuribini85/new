@@ -181,5 +181,11 @@ tabela da época + sobra** no dinheiro inicial; garagem **na abertura e numa aba
   para o carro."); comprado, a 1ª corrida larga. Depois disso a aba GARAGEM fica na barra. Sem o
   carro da divisão, LARGAR leva à garagem.
 - **Save antigo:** quem já correu na divisão recebe o carro dela.
-- **Próximo:** o carro de cada divisão nova entra na lista quando o modelo dele for aprovado; os
-  preços desses (economia já em centenas de milhares) ficam para decidir com o usuário.
+- **Divisões 2 a 4** (decisão do usuário: preço medido pela economia): o carro custa 10 prêmios de
+  1º lugar na primeira liga da divisão (o carro se paga em 10 vitórias): Cupê 1940 US$ 12 mil,
+  Hot Rod 1932 US$ 48 mil, Sedã 1951 US$ 192 mil. Mostrado em dólares, mas não é preço de época.
+- **Sem o carro:** a corrida da divisão espera no grid (mesmo com a largada automática); LARGAR e a
+  troca em PISTAS levam à garagem, aberta no carro que falta; comprado, a corrida larga. O FALTAM
+  acompanha o dinheiro entrando.
+- **Calibrador:** o jogador simulado junta o dinheiro do carro (sem comprar melhorias) correndo onde
+  está, compra e troca de divisão.

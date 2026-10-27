@@ -271,7 +271,11 @@ func _montar() -> void:
 	_pistas.correr_em.connect(func(mod: String):
 		if estado.trocar_modalidade(mod):
 			_nova_corrida()
-			_abrir("corrida"))
+			if estado.pode_correr():
+				_abrir("corrida")
+			else:
+				_garagem.mostrar_divisao()
+				_abrir("garagem"))
 	_paginas["pistas"] = _pistas
 	_pilotos = PilotosIdle.new(self)
 	_pilotos.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
@@ -282,7 +286,11 @@ func _montar() -> void:
 	_garagem = GaragemIdle.new(estado, COR_OURO, PinturaCarro.da_equipe(EQUIPE_JOGADOR, "crt", 0))
 	_garagem.comprou.connect(func(_id: String):
 		_atualizar_dinheiro_garagem()
-		estado.salvar(Time.get_unix_time_from_system()))
+		estado.salvar(Time.get_unix_time_from_system())
+		# Comprou o carro da divisão na tela: a corrida que esperava larga.
+		if estado.pode_correr() and _aguardando and estado.tem("largada_auto"):
+			_abrir("corrida")
+			_largar_corrida())
 	_garagem.correr.connect(func(id: String):
 		if estado.trocar_modalidade(String(estado.carro_garagem(id)["modalidade"])):
 			_nova_corrida()
@@ -669,7 +677,8 @@ func _nova_corrida() -> void:
 	_hud.limpar_evento()
 	_hud.secundario = 1.0
 	_contagem = CONTAGEM_S
-	_aguardando = not estado.tem("largada_auto")
+	# Sem o carro da divisão a corrida espera no grid (LARGAR leva à garagem).
+	_aguardando = not estado.tem("largada_auto") or not estado.pode_correr()
 	_largar.visible = _aguardando
 	_hud.contagem = -1.0 if _aguardando else _contagem
 	if not _aguardando:
@@ -1441,6 +1450,7 @@ func _largar_corrida() -> void:
 		return
 	if not estado.pode_correr():
 		# Divisão sem o carro dela: a garagem mostra o que falta comprar.
+		_garagem.mostrar_divisao()
 		_abrir("garagem")
 		return
 	_aguardando = false

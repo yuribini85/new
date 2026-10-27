@@ -31,6 +31,9 @@ var _divisao: Label
 var _preco: Label
 var _botao: Button
 var _setas: Array = []
+var _camera: Camera3D
+const CAMERA := Vector3(5.0, 2.1, 6.4)
+const ALVO := Vector3(0, 0.7, 0)
 
 
 func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := false) -> void:
@@ -177,10 +180,11 @@ func _oficina() -> void:
 	bulbo.position = Vector3(0, 3.55, 0.6)
 	_mundo.add_child(bulbo)
 	var cam := Camera3D.new()
+	_camera = cam
 	cam.keep_aspect = Camera3D.KEEP_WIDTH  # o carro inteiro na largura, em tela alta ou baixa
 	cam.fov = 30.0
 	_mundo.add_child(cam)
-	cam.look_at_from_position(Vector3(5.0, 2.1, 6.4), Vector3(0, 0.7, 0))
+	cam.look_at_from_position(CAMERA, ALVO)
 	_carro = CarroBloco.new()
 	_carro.rotation.y = -0.6
 	_mundo.add_child(_carro)
@@ -194,6 +198,16 @@ func _bloco(tam: Vector3, pos: Vector3, cor: Color) -> void:
 	mi.material_override = CarroBloco._material(cor)
 	mi.position = pos
 	_mundo.add_child(mi)
+
+
+## Mostra o carro da divisão na tela (a que pediu a garagem).
+func mostrar_divisao() -> void:
+	var atual := estado.carro_da_modalidade()
+	var lista := estado.carros_garagem()
+	for k in lista.size():
+		if not atual.is_empty() and String(lista[k]["id"]) == String(atual["id"]):
+			_indice = k
+	_mostrar()
 
 
 func _atual() -> Dictionary:
@@ -219,7 +233,10 @@ func _mostrar() -> void:
 	_carro.configurar_modelo({"id": String(c["id"]), "epoca": String(c["modelo"])}, _cor, _faixas)
 	_nome.text = String(c["nome"]).to_upper()
 	var mod := estado.dados_modalidade(String(c["modalidade"]))
-	_divisao.text = "Corre nas %s." % String(mod.get("nome", ""))
+	_divisao.text = "Divisão: %s" % String(mod.get("nome", ""))
+	# Carro comprido (o sedã de 1951 tem 5,3 m): a câmera se afasta para caber.
+	var escala := maxf(1.0, _carro.comprimento / 4.0)
+	_camera.look_at_from_position(CAMERA * escala + Vector3(0, 0.7, 0) * (1.0 - escala), ALVO)
 	atualizar()
 
 
@@ -271,8 +288,16 @@ func _arrastar(e: InputEvent) -> void:
 		_girou_em = Time.get_ticks_msec() / 1000.0
 
 
+var _relogio := 0.0
+
+
 func _process(delta: float) -> void:
 	if not is_visible_in_tree():
 		return
+	# O dinheiro entra enquanto a garagem está aberta: o FALTAM acompanha.
+	_relogio += delta
+	if _relogio >= 0.5:
+		_relogio = 0.0
+		atualizar()
 	if not _arrastando and Time.get_ticks_msec() / 1000.0 - _girou_em > 2.0 and not Preferencias.reduzir_animacoes:
 		_carro.rotation.y += GIRO * delta
