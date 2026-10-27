@@ -132,10 +132,13 @@ descartada pelo usuário: os prédios não davam imersão. O **traçado** contin
 divisão: traçado novo mudaria a força dos rivais calibrada por pista (`forca_rivais`), que o
 briefing não deixa mexer. Um traçado novo, mais simples, fica como opção com recalibração.
 
-**Nomes:** a regra do projeto é que nome e marca de carro real não entram no build (CLAUDE.md), e
-o briefing pede nomes visíveis configuráveis e verificação jurídica. Por isso a lista de modelos
-reais fica **só aqui**, como referência de silhueta; no jogo, cada carro tem nome neutro e
-original.
+**Nomes:** a regra do CLAUDE.md barra nomes da *referência*; estes carros não vêm dela. O usuário
+decidiu (2026-10-27) mostrar o nome do modelo real em que cada carro da garagem é medido
+(`data/idle/idle.json` → "garagem" → "nome"): Ford Model A 1928 (entre-eixos de 2,63 m),
+Ford De Luxe 1940 (2,84 m), Ford Deuce Coupé 1932 (o hot rod de três janelas) e Hudson Hornet
+1951 (3,15 m). Nenhum emblema nem logotipo nos modelos 3D. **Antes de publicar:** Ford e Hudson
+(hoje da Stellantis) ainda são marcas registradas; jogos de corrida costumam licenciar os nomes
+das montadoras. Trocar de volta para nomes neutros é só editar esses quatro campos.
 
 | Divisão | Referência de silhueta (só documento) |
 |---|---|
