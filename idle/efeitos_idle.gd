@@ -99,13 +99,17 @@ func _draw() -> void:
 		# Nasce grande e encolhe com um quique; treme só no começo.
 		var e := clampf(k * 6.0, 0.0, 1.0)
 		var imp := float(q["impacto"])
-		var tam := int(float(q["tam"]) * (1.0 + imp * (1.0 - e) * (1.0 - e)) * (1.0 + 0.08 * sin(e * PI)))
+		# Tamanho de letra fixo e escala no desenho: um tamanho novo por quadro
+		# faria a fonte desenhar as letras de novo a cada quadro (trava na web).
+		var tam := int(q["tam"])
+		var esc := (1.0 + imp * (1.0 - e) * (1.0 - e)) * (1.0 + 0.08 * sin(e * PI))
 		var tremor := Vector2(sin(k * 90.0), cos(k * 77.0)) * 3.0 * imp * (1.0 - e)
 		var w := fonte.get_string_size(q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
-		var p: Vector2 = q["p"] + tremor - Vector2(w * 0.5, SUBIDA * k)
 		var a := 1.0 - smoothstep(0.65, 1.0, k)
-		draw_string(fonte, p + Vector2(2, 3), q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color(0, 0, 0, 0.6 * a))
-		draw_string(fonte, p, q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color(q["cor"], a))
+		draw_set_transform(q["p"] + tremor - Vector2(0, SUBIDA * k), 0.0, Vector2(esc, esc))
+		draw_string(fonte, Vector2(-w * 0.5 + 2, 3), q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color(0, 0, 0, 0.6 * a))
+		draw_string(fonte, Vector2(-w * 0.5, 0), q["texto"], HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color(q["cor"], a))
+		draw_set_transform(Vector2.ZERO)
 	_numeros = vivos
 	var voando := []
 	for q in _notas:

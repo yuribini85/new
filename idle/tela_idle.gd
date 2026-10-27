@@ -107,6 +107,11 @@ var _loja_abertura: GaragemIdle  # a compra do primeiro carro, depois da abertur
 var _previsao := {}  # "melhoria|n" -> posição média com n níveis a mais; "" -> sem
 var _previsao_chave := ""
 var _previsao_tarefa := -1
+## Sem threads (a versão web): a previsão anda aos poucos, umas simulações por
+## quadro, em vez de travar a tela na compra (_passo_previsao).
+var _previsao_aos_poucos := {}
+const PREVISAO_MS_POR_QUADRO := 4
+var previsao_sem_threads := not OS.has_feature("threads")  # ferramentas forçam o caminho da web
 var _previsao_resultado := {}
 var _previsao_mutex := Mutex.new()
 var _aviso_caixa: PanelContainer
@@ -1467,6 +1472,7 @@ func _chave_previsao() -> String:
 ## graça desde o começo; a com três níveis vem com o Analista (previsao). Na
 ## Arena não há previsão: a luta simulada é longa demais para isso.
 func _atualizar_previsao() -> void:
+	_passo_previsao()
 	if _previsao_tarefa >= 0 and WorkerThreadPool.is_task_completed(_previsao_tarefa):
 		WorkerThreadPool.wait_for_task_completion(_previsao_tarefa)
 		_previsao_tarefa = -1
@@ -1482,7 +1488,7 @@ func _atualizar_previsao() -> void:
 		_previsao_chave = _chave_previsao()
 		return
 	var chave := _chave_previsao()
-	if chave == _previsao_chave or _previsao_tarefa >= 0:
+	if chave == _previsao_chave or _previsao_tarefa >= 0 or not _previsao_aos_poucos.is_empty():
 		return
 	_previsao_chave = chave
 	_previsao = {}
@@ -1500,7 +1506,44 @@ func _atualizar_previsao() -> void:
 	var pista := estado.pista(dados)
 	var voltas := int(estado.dados_liga()["voltas"])
 	var params: Dictionary = dados.simulacao().duplicate(true)
-	_previsao_tarefa = WorkerThreadPool.add_task(_prever.bind(chave, variantes, pista, voltas, params))
+	if not previsao_sem_threads:
+		_previsao_tarefa = WorkerThreadPool.add_task(_prever.bind(chave, variantes, pista, voltas, params))
+	else:
+		_previsao_aos_poucos = {"chave": chave, "variantes": variantes, "chaves": variantes.keys(), "i": 0, "s": 0,
+				"soma": 0.0, "posicoes": {}, "corrida": null, "pista": pista, "voltas": voltas, "params": params}
+
+
+## Um pedaço da previsão sem threads: a corrida da vez anda até gastar
+## PREVISAO_MS_POR_QUADRO (Simulacao.iniciar/avancar, resultado igual ao de
+## correr); no fim de todas, o resultado entra como o da thread.
+func _passo_previsao() -> void:
+	var j := _previsao_aos_poucos
+	if j.is_empty():
+		return
+	var ate := Time.get_ticks_msec() + PREVISAO_MS_POR_QUADRO
+	while Time.get_ticks_msec() < ate:
+		var k = j["chaves"][j["i"]]
+		if j.get("corrida") == null:
+			j["corrida"] = Simulacao.iniciar(j["pista"], j["variantes"][k], j["voltas"], j["params"],
+					int(SEMENTES_PREVISAO[j["s"]]), false)
+		var corrida: Simulacao.Andamento = j["corrida"]
+		if not corrida.avancar(maxf(1.0, ate - Time.get_ticks_msec())):
+			return
+		j["soma"] += IdleEstado.posicao(corrida.resultado())
+		j["corrida"] = null
+		j["s"] += 1
+		if j["s"] >= SEMENTES_PREVISAO.size():
+			j["posicoes"][k] = j["soma"] / SEMENTES_PREVISAO.size()
+			j["soma"] = 0.0
+			j["s"] = 0
+			j["i"] += 1
+			if j["i"] >= j["chaves"].size():
+				_previsao_aos_poucos = {}
+				if String(j["chave"]) == _chave_previsao():
+					_previsao = j["posicoes"]
+				else:
+					_previsao_chave = ""  # mudou enquanto calculava: de novo
+				return
 
 
 func _prever(chave: String, variantes: Dictionary, pista: Pista, voltas: int, params: Dictionary) -> void:
