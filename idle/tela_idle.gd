@@ -44,6 +44,7 @@ const ABAS := [
 	{"id": "pistas", "nome": "PISTAS", "icone": "icone_pista"},
 	{"id": "pilotos", "nome": "PILOTOS", "icone": "icone_piloto"},
 	{"id": "metas", "nome": "MISSÕES", "icone": "icone_objetivo"},
+	{"id": "garagem", "nome": "GARAGEM", "icone": "icone_montagem"},
 ]
 ## Previsão nos cartões de melhoria: corridas simuladas (sementes fixas) com e
 ## sem níveis a mais (NIVEIS_PREVISAO), numa thread, para mostrar a posição que
@@ -99,6 +100,8 @@ var _paginas := {}  # aba -> Control
 var _pistas: PistasIdle
 var _pilotos: PilotosIdle
 var _metas: MetasIdle
+var _garagem: GaragemIdle  # aba GARAGEM
+var _loja_abertura: GaragemIdle  # a compra do primeiro carro, depois da abertura
 var _previsao := {}  # "melhoria|n" -> posição média com n níveis a mais; "" -> sem
 var _previsao_chave := ""
 var _previsao_tarefa := -1
@@ -189,6 +192,20 @@ func _depois_do_titulo() -> void:
 ## (briefing: a corrida começa em até 15 s, sem o jogador conduzir).
 func _fim_da_abertura() -> void:
 	_abertura = null
+	# Primeiro a garagem: o carro do sobrinho, comprado com o dinheiro do chefe.
+	if not estado.pode_correr():
+		_loja_abertura = GaragemIdle.new(estado, COR_OURO, PinturaCarro.da_equipe(EQUIPE_JOGADOR, "crt", 0), true)
+		add_child(_loja_abertura)
+		_loja_abertura.comprou.connect(func(_id: String):
+			_atualizar_dinheiro_garagem()
+			var tw := _loja_abertura.create_tween()
+			tw.tween_interval(0.0 if Preferencias.reduzir_animacoes else 0.6)
+			tw.tween_property(_loja_abertura, "modulate:a", 0.0, 0.0 if Preferencias.reduzir_animacoes else 0.25)
+			tw.tween_callback(func():
+				_loja_abertura.queue_free()
+				_loja_abertura = null
+				_fim_da_abertura()))
+		return
 	if not "rival" in estado.oferecidos:
 		estado.oferecer("rival")
 	_aplicar_desbloqueios()
@@ -206,6 +223,12 @@ func pular_titulo() -> void:
 		_abertura.queue_free()
 		_abertura = null
 	if _precisa_abertura():
+		_fim_da_abertura()
+	if _loja_abertura != null:
+		# Ferramentas: o primeiro carro comprado direto.
+		estado.comprar_carro(String(estado.carro_da_modalidade()["id"]))
+		_loja_abertura.queue_free()
+		_loja_abertura = null
 		_fim_da_abertura()
 
 
@@ -256,6 +279,15 @@ func _montar() -> void:
 	_metas = MetasIdle.new(self)
 	_metas.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
 	_paginas["metas"] = _metas
+	_garagem = GaragemIdle.new(estado, COR_OURO, PinturaCarro.da_equipe(EQUIPE_JOGADOR, "crt", 0))
+	_garagem.comprou.connect(func(_id: String):
+		_atualizar_dinheiro_garagem()
+		estado.salvar(Time.get_unix_time_from_system()))
+	_garagem.correr.connect(func(id: String):
+		if estado.trocar_modalidade(String(estado.carro_garagem(id)["modalidade"])):
+			_nova_corrida()
+			_abrir("corrida"))
+	_paginas["garagem"] = _garagem
 	for id in _paginas:
 		var pg: Control = _paginas[id]
 		pg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -478,6 +510,8 @@ func _abrir(id: String) -> void:
 		_pilotos.atualizar()
 	elif id == "metas":
 		_metas.atualizar()
+	elif id == "garagem":
+		_garagem.atualizar()
 
 
 func _efeito_texto(m: Dictionary, nivel: int) -> String:
@@ -1370,11 +1404,17 @@ func _exit_tree() -> void:
 
 ## Mostra só o que a equipe já tem: cartões, renda, menu de baixo, vista (pontos
 ## ou camarote), câmeras e as ofertas guardadas.
+func _aba_aberta(a: Dictionary) -> bool:
+	if a["id"] == "garagem":
+		return not estado.garagem.is_empty()  # depois do primeiro carro
+	return a["id"] == "corrida" or estado.tem("aba:" + String(a["id"]))
+
+
 func _aplicar_desbloqueios() -> void:
 	for m in estado.cfg["melhorias"]:
 		_cartoes[m["id"]]["cartao"].visible = estado.tem("melhoria:" + String(m["id"]))
 	_renda_caixa.visible = estado.tem("renda")
-	var abas := ABAS.filter(func(a): return a["id"] == "corrida" or estado.tem("aba:" + String(a["id"])))
+	var abas := ABAS.filter(_aba_aberta)
 	_barra.definir_abas(abas)
 	_barra.visible = abas.size() > 1
 	if not abas.any(func(a): return _paginas[a["id"]].visible):
@@ -1399,6 +1439,10 @@ func _aplicar_desbloqueios() -> void:
 func _largar_corrida() -> void:
 	if not _aguardando:
 		return
+	if not estado.pode_correr():
+		# Divisão sem o carro dela: a garagem mostra o que falta comprar.
+		_abrir("garagem")
+		return
 	_aguardando = false
 	_largar.visible = false
 	_hud.contagem = _contagem
@@ -1408,7 +1452,7 @@ func _largar_corrida() -> void:
 ## A próxima conversa da escada, quando nada mais está na frente e a corrida
 ## está parada (grid ou depois da chegada).
 func _checar_conversa() -> void:
-	if _titulo != null or _abertura != null or _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
+	if _titulo != null or _abertura != null or _loja_abertura != null or _conversa != null or _janela_aberta or _config != null or _coleta != null or _guia.ativo():
 		return
 	if not (_aguardando or _pausa >= 0.0):
 		return
@@ -1544,3 +1588,9 @@ func _input(e: InputEvent) -> void:
 		var toque: bool = (e is InputEventMouseButton and e.pressed) or (e is InputEventScreenTouch and e.pressed)
 		if toque:
 			_guia.limpar.call_deferred()
+
+
+## Dinheiro do topo depois de comprar um carro (cai na hora).
+func _atualizar_dinheiro_garagem() -> void:
+	_dinheiro_mostrado = estado.dinheiro
+	_garagem.atualizar()

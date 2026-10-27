@@ -35,6 +35,7 @@ var avisos_oferecidos := false  # a primeira liga nova já ligou os avisos
 var desbloqueados: Array = []
 var oferecidos: Array = []
 var guias: Array = []  # dicas avulsas do tutorial leve já mostradas ("subir", "oferta")
+var garagem: Array = []  # ids dos carros comprados (cfg "garagem")
 
 var liga: int:
 	get:
@@ -119,6 +120,48 @@ func trocar_modalidade(id: String) -> bool:
 		return false
 	modalidade = id
 	_m()
+	return true
+
+
+# --- garagem --------------------------------------------------------------------
+
+## Os carros à venda (um de época por divisão), na ordem das divisões.
+func carros_garagem() -> Array:
+	return cfg.get("garagem", [])
+
+
+func carro_garagem(id: String) -> Dictionary:
+	for c in carros_garagem():
+		if String(c["id"]) == id:
+			return c
+	return {}
+
+
+## O carro que a divisão pede ({} se a divisão corre sem comprar carro).
+func carro_da_modalidade(mod := "") -> Dictionary:
+	var m := modalidade if mod == "" else mod
+	for c in carros_garagem():
+		if String(c["modalidade"]) == m:
+			return c
+	return {}
+
+
+func tem_carro(id: String) -> bool:
+	return id in garagem
+
+
+## A divisão na tela pode correr (tem o carro dela, ou não pede carro).
+func pode_correr() -> bool:
+	var c := carro_da_modalidade()
+	return c.is_empty() or tem_carro(String(c["id"]))
+
+
+func comprar_carro(id: String) -> bool:
+	var c := carro_garagem(id)
+	if c.is_empty() or tem_carro(id) or dinheiro < float(c["preco"]):
+		return false
+	dinheiro -= float(c["preco"])
+	garagem.append(id)
 	return true
 
 
@@ -759,7 +802,7 @@ func para_save() -> Dictionary:
 			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
 			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
-			"guias": guias}
+			"guias": guias, "garagem": garagem}
 
 
 func de_save(s: Dictionary) -> void:
@@ -800,6 +843,12 @@ func de_save(s: Dictionary) -> void:
 	desbloqueados = Array(s.get("desbloqueados", [])).map(func(x): return String(x))
 	oferecidos = Array(s.get("oferecidos", [])).map(func(x): return String(x))
 	guias = Array(s.get("guias", [])).map(func(x): return String(x))
+	garagem = Array(s.get("garagem", [])).map(func(x): return String(x)).filter(func(x): return not carro_garagem(x).is_empty())
+	if not s.has("garagem") and corridas > 0:
+		# Save de antes da garagem: as divisões em que a equipe já correu vêm com o carro.
+		for c in carros_garagem():
+			if mods.has(String(c["modalidade"])) and int(mods[String(c["modalidade"])].get("corridas", 0)) > 0:
+				garagem.append(String(c["id"]))
 	if not s.has("desbloqueados") and corridas > 0:
 		# Save de antes da escada: o que a equipe já alcançou vem aberto.
 		for d in cfg_desbloqueios():

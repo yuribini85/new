@@ -146,3 +146,24 @@ original.
 - O passo `cameras` são os **olheiros nas curvas** do Kenji (o mesmo seletor de vista).
 - Saíram o selo AO VIVO da corrida e da conversa; a conversa é a faixa da fala em vinho e creme.
 - **Autódromo rural** (pedido do usuário, no lugar da rua com prédios): ver item 6.
+
+## 10. Garagem (pedido do usuário, 2026-10-27)
+Decisões do usuário (opções recomendadas): **um carro por divisão**, comprado uma vez; **preço de
+tabela da época + sobra** no dinheiro inicial; garagem **na abertura e numa aba**.
+
+- **Dados:** `garagem` em `data/idle/idle.json` (id, nome no jogo, ano, `modelo` de CarroEpoca,
+  divisão e preço). Divisão sem carro na lista corre como antes.
+- **Preço:** cupê de 1928 a **US$ 525** (cupê comercial, ficha da ConceptCarz:
+  https://www.conceptcarz.com/s1618/ford-model-a.aspx — fonte secundária; trocar se houver tabela
+  de concessionária). **Dinheiro inicial US$ 625** = o carro + os US$ 100 do começo de antes: depois
+  da compra a 1ª corrida é igual à de antes.
+- **Só aparência:** o carro não mexe na ficha da corrida; a velocidade vem das melhorias.
+- **Tela** (`idle/garagem_idle.gd`): oficina de tijolo e tábuas com luminária, o carro girando (o
+  dedo gira), nome, divisão, preço e COMPRAR · $X / FALTAM $X / NA PISTA / CORRER COM ESTE; setas
+  quando houver mais de um carro.
+- **Fluxo:** depois da cena do chefe e do sobrinho vem "O CARRO DO SOBRINHO" ("O chefe deu $625
+  para o carro."); comprado, a 1ª corrida larga. Depois disso a aba GARAGEM fica na barra. Sem o
+  carro da divisão, LARGAR leva à garagem.
+- **Save antigo:** quem já correu na divisão recebe o carro dela.
+- **Próximo:** o carro de cada divisão nova entra na lista quando o modelo dele for aprovado; os
+  preços desses (economia já em centenas de milhares) ficam para decidir com o usuário.

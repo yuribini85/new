@@ -321,3 +321,30 @@ func test_carro_de_epoca() -> void:
 	perto(corpo.get_aabb().position.y, 0.0, 0.5, "carroceria perto do chão")
 	carro.free()
 	verificar(CarroEpoca.construir("nao_existe", Color.RED) == null, "modelo desconhecido não monta")
+
+
+## Garagem: um carro por divisão; sem ele a divisão não corre; comprado uma
+## vez, fica no save; save antigo de quem já correu vem com o carro.
+func test_garagem_um_carro_por_divisao() -> void:
+	var c := _cfg_mods()
+	c["garagem"] = [{"id": "cupe", "nome": "Cupê", "ano": 1928, "modelo": "cupe_1928", "modalidade": "a", "preco": 525}]
+	var e := IdleEstado.new(c)
+	e.dinheiro = 600.0
+	verificar(not e.pode_correr(), "divisão com carro na garagem pede o carro")
+	verificar(e.carro_da_modalidade("b").is_empty(), "divisão sem carro na lista não pede nada")
+	verificar(e.comprar_carro("cupe"), "compra com dinheiro")
+	perto(e.dinheiro, 75.0, 0.001, "paga o preço")
+	verificar(e.pode_correr() and not e.comprar_carro("cupe"), "comprado uma vez")
+	var e2 := IdleEstado.new(c)
+	e2.de_save(JSON.parse_string(JSON.stringify(e.para_save())))
+	verificar(e2.tem_carro("cupe"), "o carro fica no save")
+	var antigo := e.para_save()
+	antigo.erase("garagem")
+	antigo["corridas"] = 3
+	antigo["mods"]["a"]["corridas"] = 3
+	var e3 := IdleEstado.new(c)
+	e3.de_save(antigo)
+	verificar(e3.tem_carro("cupe"), "save de antes da garagem: quem já correu tem o carro")
+	var pobre := IdleEstado.new(c)
+	pobre.dinheiro = 100.0
+	verificar(not pobre.comprar_carro("cupe"), "sem dinheiro não compra")

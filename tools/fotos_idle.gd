@@ -66,6 +66,8 @@ func _rodar() -> void:
 	if modalidade != "":
 		e.trocar_modalidade(modalidade)
 	e.dinheiro = dinheiro
+	for c in e.carros_garagem():  # os carros da garagem, já comprados
+		e.garagem.append(String(c["id"]))
 	for i in contratos:
 		e.contratar(dados, 100 + i)
 	e.corridas = corridas

@@ -1,13 +1,17 @@
 {
 	"_nota_custos": "O custo de cada nível também multiplica pelo multiplicador da liga (os prêmios e a renda crescem junto). Motor e pneus (do_carro) voltam a zero no carro novo de cada liga; ultrapassagem, vácuo e renda são da equipe e ficam.",
 	"_nota": "Chrome Racing Team (docs/idle/plano.md). Números estimados (pedido do usuário: pesquisa + chute): custo = base × crescimento^nível (faixa de idle 1,07–1,15), ganho linear por nível; custos iniciais de ultrapassagem/vácuo/patrocínio/arquibancada do anúncio do Race Star. Calibrar com tools/calibrar_idle.gd (sessoes_dia=4 mede em dias de calendário; meta 2–3 semanas para o jogo inteiro).",
-	"dinheiro_inicial": 100,
+	"dinheiro_inicial": 625,
 	"renda_base": 5.0,
 	"offline_max_h": 2.0,
 	"intersticial_min_s": 300.0,
 	"_nota_intersticial": "Intersticial só ao subir de liga (nunca ao abrir o app nem no meio da corrida), a partir da liga de índice intersticial_a_partir_liga em qualquer modalidade, com intersticial_min_s entre um e outro. Números estimados.",
 	"intersticial_a_partir_liga": 3,
 	"_nota_desbloqueios": "O jogo começa quase vazio e cresce com o jogador (pedido do usuário, 2026-10-24): vista de cima com os carros em pontos, só o Motor e a largada no toque. Cada item abre quando 'quando' se cumpre (corridas no total, soma das ligas das modalidades abertas, primeira vitória, modalidade aberta), na ordem da lista, com a conversa de um personagem do acervo; os de 'custo' o jogador compra (AGORA NÃO deixa a oferta no canto da corrida). 'libera': melhoria:<id>, aba:<id>, renda, largada_auto, camera_tv, cameras, previsao. 'guia': a dica do tutorial leve depois da conversa (alvo: largar, subir, melhoria:<id>, aba:<id>, previsao, cameras ou vazio; texto: onde tocar). Custos estimados.",
+	"_nota_garagem": "Garagem (pedido do usuário, 2026-10-27): um carro de época por divisão, comprado uma vez; sem ele a divisão não corre. Só a aparência: a velocidade vem das melhorias, a dificuldade não muda. Preço em dólares da época: o cupê de 1928 a US$ 525 (cupê comercial, ConceptCarz, https://www.conceptcarz.com/s1618/ford-model-a.aspx). O dinheiro inicial é o preço do carro mais os US$ 100 do começo de antes, para a 1ª corrida ser a mesma. Divisão sem carro na lista corre como antes. 'nome' é o nome no jogo (neutro, sem marca); 'modelo' é o desenho de CarroEpoca.",
+	"garagem": [
+		{"id": "cupe_1928", "nome": "Cupê 1928", "ano": 1928, "modelo": "cupe_1928", "modalidade": "compactos", "preco": 525}
+	],
 	"desbloqueio_inicial": ["melhoria:motor"],
 	"desbloqueios": [
 		{"id": "rival", "quando": {}, "quem": {"id": "edgar_halloway", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "botao": "SIM, SENHOR", "fala": "Meu sobrinho vai ser campeão.", "libera": [], "capitulo": "1 · O Favor"},

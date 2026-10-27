@@ -72,6 +72,10 @@ func _rodar() -> void:
 			args[kv[0]] = kv[1]
 	d = root.get_node("Dados")
 	e = IdleEstado.new()
+	# O primeiro carro sai da garagem logo no começo (o dinheiro inicial o paga).
+	var primeiro := e.carro_da_modalidade()
+	if not primeiro.is_empty():
+		e.comprar_carro(String(primeiro["id"]))
 	# O jogador aceita toda a escada de desbloqueios (a renda abre na 4ª
 	# corrida, as melhorias logo no começo): mede a economia, não a escada.
 	for dd in e.cfg_desbloqueios():
