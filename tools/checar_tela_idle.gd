@@ -135,7 +135,9 @@ func _coletar(n: Node, saida: Array[Control]) -> void:
 ## Dentro de uma rolagem, só o que está na parte visível na vertical (o que
 ## passa pela lateral conta: é o que vaza da tela).
 func _na_vertical(area: Rect2, r: Rect2) -> bool:
-	return r.position.y >= area.position.y - 1.0 and r.end.y <= area.end.y + 1.0
+	# Inteiro dentro da área visível da rolagem (vertical ou de lado).
+	return r.position.y >= area.position.y - 1.0 and r.end.y <= area.end.y + 1.0 \
+			and r.position.x >= area.position.x - 1.0 and r.end.x <= area.end.x + 1.0
 
 
 ## Dentro de uma rolagem, só o que está na parte visível.

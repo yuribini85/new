@@ -12,8 +12,7 @@ const ICONE := 48
 const ICONE_ATIVO := 58
 const COR_FAIXA := Color("07090d")
 const COR_TEXTO := Color("8a93a3")  # prata apagada
-const MADEIRA := Color("2b1a10")
-const QUADRO := 8.0  # lado do quadriculado da aba ativa
+const FUNDO := Color("1b1713")  # o da faixa do alto
 
 var abas: Array = []  # [{id, nome, icone}]
 var ativa := ""
@@ -84,21 +83,10 @@ func _gui_input(e: InputEvent) -> void:
 
 
 func _draw() -> void:
-	# Balcão de madeira escura (The Fastfather): tábuas com veio e o friso de
-	# latão em cima, com a moldura art déco.
-	draw_rect(Rect2(Vector2.ZERO, size), MADEIRA)
-	var tabua := size.y / 4.0
-	for k in 4:
-		draw_rect(Rect2(0, k * tabua, size.x, tabua), MADEIRA.lightened(0.04 * (k % 2)))
-		draw_line(Vector2(0, k * tabua), Vector2(size.x, k * tabua), MADEIRA.darkened(0.35), 1.0)
-		for j in 5:
-			# Veio: traços finos que não se repetem de tábua para tábua.
-			var x := fposmod(k * 173.0 + j * 151.0, size.x)
-			draw_line(Vector2(x, k * tabua + tabua * 0.35), Vector2(x + 90.0, k * tabua + tabua * 0.55),
-					MADEIRA.darkened(0.2), 1.0)
-	draw_rect(Rect2(0, 0, size.x, 5), Color("6e4f1e"))
-	draw_rect(Rect2(0, 0, size.x, 3), Color(IdleUI.COR_OURO, 0.9))
-	MolduraDeco.desenhar(self, Rect2(Vector2(6, 10), size - Vector2(12, 16)), Color(MolduraDeco.LATAO, 0.35), 8.0)
+	# O mesmo fundo da faixa do alto (layout do usuário, 2026-10-27), com o
+	# filete fino de latão em cima.
+	draw_rect(Rect2(Vector2.ZERO, size), FUNDO)
+	draw_rect(Rect2(0, 0, size.x, 1), IdleUI.COR_BORDA)
 	if abas.is_empty():
 		return
 	var w := size.x / abas.size()
@@ -110,15 +98,9 @@ func _draw() -> void:
 		var ativo := String(a["id"]) == ativa
 		var centro := Vector2(x0 + w * 0.5, 44.0)
 		if ativo:
-			# Brilho ocre atrás do ícone e a faixa quadriculada no pé da aba.
-			draw_circle(centro, 40.0 * (0.8 + 0.2 * entrada), Color(IdleUI.COR_OURO, 0.16))
-			var n := int((w - 24.0) / QUADRO)
-			var x := x0 + (w - n * QUADRO) * 0.5
-			for k in n:
-				for linha in 2:
-					if (k + linha) % 2 == 0:
-						draw_rect(Rect2(x + k * QUADRO, ALTURA - 14.0 + linha * QUADRO * 0.5, QUADRO, QUADRO * 0.5),
-								Color(IdleUI.COR_OURO, 0.9 * entrada))
+			# Só um traço dourado no pé da aba (sem fundo atrás do ícone).
+			var tw := (w - 48.0) * entrada
+			draw_rect(Rect2(x0 + (w - tw) * 0.5, ALTURA - 8.0, tw, 4.0), IdleUI.COR_OURO)
 		var tex: Texture2D = _texturas.get(a["icone"])
 		if tex != null:
 			var lado := lerpf(ICONE, ICONE_ATIVO, entrada) if ativo else float(ICONE)

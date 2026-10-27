@@ -67,6 +67,9 @@ var so_eventos := false
 ## Sem o bloco da volta na faixa de cima (corridas de uma volta só: o
 ## The Fastfather).
 var sem_volta := false
+## Sem a faixa da posição e os vizinhos (o The Fastfather mostra a posição na
+## faixa acima da corrida): só a contagem, a bandeira e os avisos.
+var sem_banda := false
 ## Alvo de opacidade do que é secundário; _sec segue devagar.
 var secundario := 1.0
 var _sec := 1.0
@@ -211,8 +214,9 @@ func _draw() -> void:
 		return
 	if _d.is_empty():
 		return
-	_banda()
-	_vizinhos()
+	if not sem_banda:
+		_banda()
+		_vizinhos()
 	if expandida:
 		_lista()
 	_desenhar_evento()

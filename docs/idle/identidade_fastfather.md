@@ -40,7 +40,7 @@ idle (antes Chrome Racing Team) passa a se chamar **The Fastfather**: máfia, 19
 - **SEQUÊNCIA 3 (corrida):** o arquivo do pacote repete o texto da loja. As falas que eu tinha
   proposto (antes da largada, último lugar, primeira vitória) saíram a pedido do usuário; a
   corrida começa logo depois da compra e as falas esperam o texto dele. Depois da primeira
-  vitória o carro ainda sai do ferro-velho e ganha a pintura da família (preto, o 13).
+  vitória o carro ainda sai do ferro-velho e ganha a pintura da família (preto, o 7).
 - O Don e o sobrinho das conversas da escada usam a arte nova (`corpo/chefao`, `corpo/sobrinho`).
 
 ## 2. Tipografia
@@ -115,12 +115,12 @@ Bianca, Harold e o resto do elenco antigo saem; a história é outra.** Até a h
   `arte/sons/LICENCA.md`), uma depois da outra; na garagem a música passa por um rádio AM.
 - **12. Locutor:** pronto para tocar `locutor_largada`, `locutor_vitoria` e `locutor_chegada`
   (arte/sons/), com o filtro de rádio, assim que forem gravados. Texto sugerido:
-  - largada: "Estão na linha... e lá vão eles! O carro 13 dos Bellucci larga atrás!"
+  - largada: "Estão na linha... e lá vão eles! O carro 7 dos Bellucci larga atrás!"
   - vitória: "Inacreditável, senhoras e senhores! O sobrinho dos Bellucci cruza em primeiro!"
-  - chegada: "Fim de corrida! O 13 dos Bellucci ainda tem muito o que aprender."
+  - chegada: "Fim de corrida! O 7 dos Bellucci ainda tem muito o que aprender."
 - **13. PULAR ›** nas cenas em quadrinho, a partir da segunda fala.
 - **14. Repintura:** depois da cena da vitória, a oficina do Tony: a ferrugem some, a lataria
-  escurece e entra a pintura da família com o 13.
+  escurece e entra a pintura da família com o 7.
 - **15. Mural de cartazes** de corrida no fundo da aba PISTAS.
 
 ## 6. O sobrinho corre; os rapazes vão para a Rinha (2026-10-27)
@@ -141,3 +141,16 @@ quando é o tempero.
 - Aba RAPAZES: nomes da época (`data/idle/cenas.json` → "rapazes"), retratos em silhueta
   até a arte chegar, o mais forte vai sozinho para a Rinha (sem ESCALAR).
 - PISTAS mostra a Rinha como "luta sozinha"; a corrida não pode ir para lá.
+
+## 7. Tela da corrida no layout do usuário (2026-10-27)
+
+Imagem de referência do usuário: faixa do alto (CAIXA DA FAMÍLIA, LUCRO POR SEGUNDO, engrenagem);
+a corrida do cabeçalho até a oficina, com a liga (objetivo e corrida da vez, posição com os pontos
+do pelotão, volta) e o PRÊMIO ATUAL com as câmeras por cima, em faixas translúcidas; a OFICINA DO
+TONY com MELHORIAS (a lista completa, com +10 e MÁX.) e os cartões de melhoria rolando de lado; o
+COMBUSTÍVEL ADULTERADO (vídeo, 2 por dia; bônus e duração provisórios em `idle.json` →
+"combustivel"); as TRAPAÇAS DA FAMÍLIA (Ultrapassagem = Corrida arranjada, Vácuo = Sabotagem; Fiscal
+comprado fechado até ter efeito). Pedidos do usuário na mesma rodada: a letra ornamentada (Limelight)
+só no caixa e no prêmio; a barra de baixo com o fundo da de cima; bordas finas e cantos pequenos;
+sem ícones pequenos nem placas atrás da posição, da volta e da aba escolhida; sem o Tony e a fala
+na oficina; sem barra de andamento. As abas continuam as de antes.

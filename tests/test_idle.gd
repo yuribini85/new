@@ -429,7 +429,7 @@ func test_pinturas_de_epoca() -> void:
 	igual(PinturaEpoca.familia("arena", 0), "", "arena fora")
 	for fam in PinturaEpoca.FAMILIAS:
 		var eu: Array = PinturaEpoca.do_jogador(fam)
-		igual(int(eu[1]["numero"]), 13, "%s: o jogador é o 13" % fam)
+		igual(int(eu[1]["numero"]), 7, "%s: o sobrinho é o 7" % fam)
 		var paleta: Array = PinturaEpoca.FAMILIAS[fam]["cores"]
 		for k in 30:
 			var r: Array = PinturaEpoca.do_rival(fam, "equipe%d" % k, "s%d" % k)

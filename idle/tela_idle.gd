@@ -138,8 +138,16 @@ var _complexo: ScrollContainer  # os andares da equipe, abaixo da corrida
 var _efeitos: EfeitosIdle  # números que pipocam e faíscas, por cima de tudo
 var _renda_acumulada := 0.0  # renda desde o último "+$" que pipocou no topo
 var _renda_t := 0.0
-var _objetivo: Label  # o alvo da liga, entre a corrida e os cartões
-var _melhor: Label
+var _divisao: Label  # o objetivo da liga e a corrida, embaixo da liga
+var _posicao: Label  # "5º LUGAR" na faixa da liga
+var _pelotao: Control  # _Pelotao
+var _volta: Label
+var _premio: Label  # o prêmio da posição atual
+var _ladrilhos := {}  # melhoria -> LadrilhoIdle (oficina e trapaças)
+var _trapacas_caixa: Control
+var _combustivel_texto: Label
+var _combustivel_botao: Button
+var _painel_lista: Control  # MELHORIAS: a lista completa por cima da tela
 ## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
 ## corrida e o combo de compras seguidas.
 const MUSICA_DB := -16.0
@@ -395,68 +403,79 @@ func _montar() -> void:
 	_atualizar_cartoes()
 
 
-## Placa do alto: ícone da modalidade e liga, dinheiro e renda sobre o banner
-## da pista; a engrenagem à direita.
+## Faixa do alto (layout do usuário, 2026-10-27): o maço de notas e o CAIXA DA
+## FAMÍLIA, o LUCRO POR SEGUNDO em verde e a engrenagem.
 func _topo(pai: Control) -> void:
 	var placa := PanelContainer.new()
-	placa.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 14, 12, IdleUI.COR_BORDA, 1))
-	placa.clip_contents = true
+	placa.add_theme_stylebox_override("panel", IdleUI.caixa(Color("1b1713"), 6, 6, IdleUI.COR_BORDA, 1))
 	pai.add_child(placa)
-	_banner = TextureRect.new()
-	_banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	_banner.modulate = Color(0.45, 0.45, 0.45)
-	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_banner = TextureRect.new()  # o banner da pista fica na faixa da liga (abaixo)
+	_banner.visible = false
 	placa.add_child(_banner)
 	var topo := HBoxContainer.new()
 	topo.add_theme_constant_override("separation", 12)
 	placa.add_child(topo)
+	var notas := _MacoNotas.new()
+	notas.custom_minimum_size = Vector2(76, 52)
+	notas.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	topo.add_child(notas)
 	var esq := VBoxContainer.new()
+	esq.add_theme_constant_override("separation", 0)
 	esq.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	topo.add_child(esq)
-	var linha_liga := HBoxContainer.new()
-	linha_liga.add_theme_constant_override("separation", 6)
-	esq.add_child(linha_liga)
-	_icone_mod = IdleUI.icone("icone_correr", 40, linha_liga)
-	_liga = IdleUI.rotulo("", 22, IdleUI.COR_CROMO, linha_liga)
+	IdleUI.rotulo("CAIXA DA FAMÍLIA", 17, IdleUI.COR_CROMO, esq)
 	# Dinheiro em letreiro art déco (cartaz e nota de banco dos anos 1930).
-	_dinheiro = IdleUI.rotulo("", 46, IdleUI.COR_OURO_CLARO, esq, "deco")
+	_dinheiro = IdleUI.rotulo("", 40, IdleUI.COR_OURO_CLARO, esq, "deco")
 	var dir := VBoxContainer.new()
+	dir.add_theme_constant_override("separation", 0)
 	dir.alignment = BoxContainer.ALIGNMENT_CENTER
 	topo.add_child(dir)
 	_renda_caixa = dir
-	IdleUI.rotulo("POR SEGUNDO", 16, IdleUI.COR_SECUNDARIA, dir).horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_renda = IdleUI.rotulo("", 30, COR_DINHEIRO, dir, "deco")
-	_renda.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	var vao := Control.new()
-	vao.custom_minimum_size = Vector2(4, 0)
-	topo.add_child(vao)
+	IdleUI.rotulo("LUCRO POR SEGUNDO", 17, IdleUI.COR_CROMO, dir)
+	_renda = IdleUI.rotulo("", 34, LadrilhoIdle.VERDE, dir, "display")
 	var eng := Button.new()
 	eng.flat = true
 	eng.focus_mode = Control.FOCUS_NONE
-	eng.custom_minimum_size = Vector2(72, 72)
+	eng.custom_minimum_size = Vector2(64, 64)
 	eng.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var ic := IconeVetor.new("engrenagem", IdleUI.COR_CROMO)
 	ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	ic.offset_left = 14
-	ic.offset_right = -14
-	ic.offset_top = 14
-	ic.offset_bottom = -14
+	ic.offset_left = 12
+	ic.offset_right = -12
+	ic.offset_top = 12
+	ic.offset_bottom = -12
 	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	eng.add_child(ic)
 	eng.pressed.connect(_abrir_config)
 	topo.add_child(eng)
-	placa.add_child(MolduraDeco.new(4.0))
 
 
-## A tela CORRIDA: a corrida 3D com o painel do Chrome & Wreckage, as câmeras e,
-## embaixo, os cartões de melhoria da modalidade.
+## Maço de notas de dólar desenhado (as notas que voam no prêmio, EfeitosIdle).
+class _MacoNotas extends Control:
+	func _draw() -> void:
+		var c := size * 0.5
+		for k in 3:
+			var o := c + Vector2(-6 + k * 6, 8 - k * 7)
+			draw_set_transform(o, -0.12 + k * 0.08)
+			draw_rect(Rect2(-30, -14, 60, 28), EfeitosIdle.NOTA.darkened(0.15 - k * 0.07))
+			draw_rect(Rect2(-30, -14, 60, 28), EfeitosIdle.NOTA.darkened(0.5), false, 2.0)
+			draw_circle(Vector2.ZERO, 8.0, EfeitosIdle.NOTA.lightened(0.2))
+			draw_string(Tipografia.fonte("deco"), Vector2(-5, 6), "$", HORIZONTAL_ALIGNMENT_LEFT, -1, 16,
+					EfeitosIdle.NOTA.darkened(0.55))
+		draw_set_transform(Vector2.ZERO)
+
+
+## A tela CORRIDA (layout do usuário, 2026-10-27): a faixa da liga com a
+## posição e a volta, a corrida 3D, o prêmio da corrida com o andamento e o
+## objetivo, a Oficina do Tony (melhorias do carro e da renda, e o combustível
+## adulterado por vídeo) e as Trapaças da família. MELHORIAS abre a lista
+## completa (os andares, com +10 e MÁX.).
 func _pagina_corrida() -> Control:
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 12)
+	v.add_theme_constant_override("separation", 8)
 	var corrida := Control.new()
 	_quadro_corrida = corrida
-	corrida.custom_minimum_size = Vector2(0, 480)
+	corrida.custom_minimum_size = Vector2(0, 420)
 	corrida.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	corrida.clip_contents = true
 	v.add_child(corrida)
@@ -479,6 +498,7 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_arena3d)
 	_hud = HudCorrida.new()
 	_hud.sem_volta = true
+	_hud.sem_banda = true  # a posição e a volta estão na faixa da liga
 	_hud.escala_texto = 1.3  # texto legível no celular (docs/idle/interface.md)
 	_hud.peso_numero = "deco"
 	corrida.add_child(_hud)
@@ -496,7 +516,7 @@ func _pagina_corrida() -> Control:
 	trilho.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_FUNDO, 0.7), 14, 4, IdleUI.COR_BORDA, 1))
 	trilho.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	trilho.offset_left = 10
-	trilho.offset_bottom = -10
+	trilho.offset_bottom = -112  # acima da faixa do prêmio
 	trilho.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	corrida.add_child(trilho)
 	_trilho = trilho
@@ -525,16 +545,16 @@ func _pagina_corrida() -> Control:
 	_subir.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_subir.offset_left = -200
 	_subir.offset_right = 200
-	_subir.offset_top = -170
-	_subir.offset_bottom = -82
+	_subir.offset_top = -270
+	_subir.offset_bottom = -182
 	_subir.pressed.connect(_subir_liga)
 	corrida.add_child(_subir)
 	_dobrar = IdleUI.botao_premio("PRÊMIO x2", 28, Tipografia.ALTURA_SECUNDARIA)
 	_dobrar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_dobrar.offset_left = -200
 	_dobrar.offset_right = 200
-	_dobrar.offset_top = -170
-	_dobrar.offset_bottom = -82
+	_dobrar.offset_top = -270
+	_dobrar.offset_bottom = -182
 	_dobrar.visible = false
 	_dobrar.pressed.connect(_dobrar_premio)
 	corrida.add_child(_dobrar)
@@ -543,8 +563,8 @@ func _pagina_corrida() -> Control:
 	_largar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_largar.offset_left = -160
 	_largar.offset_right = 160
-	_largar.offset_top = -118
-	_largar.offset_bottom = -30
+	_largar.offset_top = -218
+	_largar.offset_bottom = -130
 	_largar.visible = false
 	_largar.pressed.connect(_largar_corrida)
 	corrida.add_child(_largar)
@@ -552,24 +572,254 @@ func _pagina_corrida() -> Control:
 	_ofertas = VBoxContainer.new()
 	_ofertas.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	_ofertas.offset_right = -10
-	_ofertas.offset_top = 64
+	_ofertas.offset_top = 104  # abaixo da faixa da liga
 	_ofertas.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	_ofertas.add_theme_constant_override("separation", 8)
 	corrida.add_child(_ofertas)
-	# O objetivo sempre à vista: o que sobe de liga e a melhor chegada nela.
-	var alvo := PanelContainer.new()
-	alvo.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 12, 14, IdleUI.COR_BORDA, 1))
-	v.add_child(alvo)
-	var linha_alvo := HBoxContainer.new()
-	alvo.add_child(linha_alvo)
-	_objetivo = IdleUI.rotulo("", 22, COR_OURO, linha_alvo)
-	_objetivo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_melhor = IdleUI.rotulo("", 22, IdleUI.COR_TEXTO, linha_alvo)
-	alvo.add_child(MolduraDeco.new(3.0))
-	# O complexo da equipe (docs/idle/direcao.md, 4): um andar por melhoria,
-	# rolando na vertical abaixo do telão da corrida.
-	corrida.custom_minimum_size = Vector2(0, 390)
-	corrida.size_flags_vertical = Control.SIZE_FILL
+	# As faixas da liga e do prêmio por cima da corrida, com fundo translúcido
+	# (a corrida vai do cabeçalho até a oficina).
+	var em_cima := _faixa_liga(corrida)
+	em_cima.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	var embaixo := _faixa_premio(corrida)
+	embaixo.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	embaixo.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_oficina(v)
+	_trapacas(v)
+	_lista_melhorias()
+	return v
+
+
+## Liga e divisão à esquerda; a posição com os pontos do pelotão e a volta à
+## direita.
+func _faixa_liga(pai: Control) -> Control:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.07, 0.06, 0.05, 0.62), 0, 8))
+	pai.add_child(p)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 10)
+	p.add_child(h)
+	var esq := VBoxContainer.new()
+	esq.add_theme_constant_override("separation", 0)
+	esq.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	esq.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_child(esq)
+	var l1 := HBoxContainer.new()
+	l1.add_theme_constant_override("separation", 6)
+	esq.add_child(l1)
+	_icone_mod = TextureRect.new()  # sem ícone pequeno na faixa (pedido do usuário)
+	_icone_mod.visible = false
+	l1.add_child(_icone_mod)
+	_liga = IdleUI.rotulo("", 24, IdleUI.COR_TEXTO, l1, "display")
+	_liga.clip_text = true
+	_liga.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_divisao = IdleUI.rotulo("", 18, IdleUI.COR_CROMO, esq)
+	_divisao.clip_text = true
+	var pos := MarginContainer.new()  # sem placa atrás da posição e da volta
+	h.add_child(pos)
+	var hp := HBoxContainer.new()
+	hp.add_theme_constant_override("separation", 10)
+	pos.add_child(hp)
+	var vp := VBoxContainer.new()
+	vp.add_theme_constant_override("separation", 0)
+	hp.add_child(vp)
+	_posicao = IdleUI.rotulo("", 30, IdleUI.COR_TEXTO, vp, "display")
+	_pelotao = _Pelotao.new()
+	_pelotao.custom_minimum_size = Vector2(150, 14)
+	vp.add_child(_pelotao)
+	var sep := ColorRect.new()
+	sep.color = IdleUI.COR_BORDA
+	sep.custom_minimum_size = Vector2(2, 0)
+	hp.add_child(sep)
+	var vv := VBoxContainer.new()
+	vv.add_theme_constant_override("separation", 0)
+	vv.alignment = BoxContainer.ALIGNMENT_CENTER
+	hp.add_child(vv)
+	IdleUI.rotulo("VOLTA", 15, IdleUI.COR_CROMO, vv).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_volta = IdleUI.rotulo("", 26, IdleUI.COR_TEXTO, vv, "display")
+	_volta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	return p
+
+
+## O prêmio da posição em que o carro está, o andamento da corrida (com o
+## objetivo da liga em cima) e a melhor chegada na liga.
+func _faixa_premio(pai: Control) -> Control:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.07, 0.06, 0.05, 0.62), 0, 8))
+	pai.add_child(p)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 14)
+	p.add_child(h)
+	var esq := VBoxContainer.new()
+	esq.add_theme_constant_override("separation", 0)
+	h.add_child(esq)
+	IdleUI.rotulo("PRÊMIO ATUAL", 16, IdleUI.COR_CROMO, esq)
+	_premio = IdleUI.rotulo("", 36, IdleUI.COR_OURO_CLARO, esq, "deco")
+	var vao := Control.new()
+	vao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(vao)
+	# As câmeras no canto direito da faixa (no lugar do MELHOR).
+	_trilho.get_parent().remove_child(_trilho)
+	_trilho.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(_trilho)
+	return p
+
+
+## A Oficina do Tony: o Tony com a fala, MELHORIAS (a lista completa) e os
+## cartões das melhorias que não são trapaça, rolando de lado, com o
+## combustível adulterado fixo à direita.
+func _oficina(pai: Control) -> void:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color("17130f"), 6, 8, IdleUI.COR_BORDA, 1))
+	pai.add_child(p)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	p.add_child(v)
+	var cab := HBoxContainer.new()
+	cab.add_theme_constant_override("separation", 10)
+	v.add_child(cab)
+	var linha := HBoxContainer.new()
+	cab.add_child(linha)
+	linha.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var t := IdleUI.rotulo("OFICINA DO TONY", 26, IdleUI.COR_TEXTO, linha, "display")
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var lista := Button.new()
+	lista.focus_mode = Control.FOCUS_NONE
+	lista.text = "MELHORIAS"
+	lista.custom_minimum_size = Vector2(170, 48)
+	lista.add_theme_font_override("font", Tipografia.fonte("display"))
+	lista.add_theme_font_size_override("font_size", 24)
+	for e in ["normal", "hover", "focus"]:
+		lista.add_theme_stylebox_override(e, IdleUI.caixa(Color("2a2016"), 5, 6, IdleUI.COR_OURO_ESCURO, 1))
+	lista.add_theme_stylebox_override("pressed", IdleUI.caixa(Color("3a2c1e"), 5, 6, IdleUI.COR_OURO_ESCURO, 1))
+	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		lista.add_theme_color_override(c, IdleUI.COR_OURO)
+	lista.pressed.connect(func(): _lista_aberta(true))
+	linha.add_child(lista)
+	var linha_cartoes := HBoxContainer.new()
+	linha_cartoes.add_theme_constant_override("separation", 8)
+	v.add_child(linha_cartoes)
+	var rolo := ScrollContainer.new()
+	rolo.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	rolo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rolo.custom_minimum_size = Vector2(0, 152)
+	linha_cartoes.add_child(rolo)
+	var fila := HBoxContainer.new()
+	fila.add_theme_constant_override("separation", 8)
+	fila.size_flags_vertical = Control.SIZE_EXPAND_FILL  # cartões da altura da linha (a do combustível)
+	rolo.add_child(fila)
+	for m in estado.cfg["melhorias"]:
+		if m.has("trapaca"):
+			continue
+		var l := LadrilhoIdle.new(String(m["id"]), String(m.get("icone", "icone_melhorar")), String(m["nome"]))
+		l.custom_minimum_size = Vector2(168, 0)
+		l.size_flags_horizontal = Control.SIZE_FILL
+		var id := String(m["id"])
+		l.comprar.connect(func(): _comprar(id))
+		fila.add_child(l)
+		_ladrilhos[id] = l
+	_combustivel_cartao(linha_cartoes)
+
+
+## Combustível adulterado: um vídeo dá potência a mais por um tempo, com usos
+## por dia (idle.json → "combustivel").
+func _combustivel_cartao(pai: Control) -> void:
+	var c := PanelContainer.new()
+	c.add_theme_stylebox_override("panel", IdleUI.caixa(LadrilhoIdle.FUNDO, 6, 8, IdleUI.COR_BORDA, 1))
+	c.custom_minimum_size = Vector2(150, 0)
+	pai.add_child(c)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 2)
+	c.add_child(v)
+	var n := IdleUI.rotulo("COMBUSTÍVEL\nADULTERADO", 17, IdleUI.COR_TEXTO, v, "display")
+	n.add_theme_constant_override("line_spacing", -6)
+	_combustivel_texto = IdleUI.rotulo("", 15, IdleUI.COR_CROMO, v)
+	_combustivel_texto.clip_text = true
+	var vao := Control.new()  # o botão no pé, alinhado com os das melhorias
+	vao.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	v.add_child(vao)
+	_combustivel_botao = Button.new()
+	_combustivel_botao.focus_mode = Control.FOCUS_NONE
+	_combustivel_botao.custom_minimum_size = Vector2(0, 46)
+	_combustivel_botao.add_theme_font_override("font", Tipografia.fonte("display"))
+	_combustivel_botao.add_theme_font_size_override("font_size", 24)
+	for e in ["normal", "hover", "focus"]:
+		_combustivel_botao.add_theme_stylebox_override(e, IdleUI.caixa(IdleUI.COR_OURO, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
+	_combustivel_botao.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_OURO.darkened(0.15), 5, 4, IdleUI.COR_OURO_ESCURO, 1))
+	_combustivel_botao.add_theme_stylebox_override("disabled", IdleUI.caixa(Color("2b2621"), 5, 4, Color("3a332b"), 1))
+	for c2 in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		_combustivel_botao.add_theme_color_override(c2, IdleUI.COR_TINTA)
+	_combustivel_botao.add_theme_color_override("font_disabled_color", IdleUI.COR_BLOQUEADO.lightened(0.25))
+	v.add_child(_combustivel_botao)
+	_combustivel_botao.pressed.connect(_usar_combustivel)
+
+
+func _usar_combustivel() -> void:
+	var dia := Time.get_date_string_from_system()
+	if estado.combustivel_restantes(dia) <= 0:
+		return
+	anuncios.premiado(func():
+		if estado.usar_combustivel(Time.get_unix_time_from_system(), dia):
+			_hud.evento("COMBUSTÍVEL ADULTERADO!", "+%d%% de potência" % roundi(estado.bonus_combustivel() * 100.0),
+					COR_OURO, 11, -1.0, true)
+			celebrar(2)
+			estado.salvar(Time.get_unix_time_from_system()))
+
+
+## As Trapaças da família: as melhorias marcadas "trapaca" em idle.json (com o
+## nome e o que fazem) e as que ainda não têm efeito ("trapacas_fechadas").
+func _trapacas(pai: Control) -> void:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	pai.add_child(v)
+	_trapacas_caixa = v
+	IdleUI.rotulo("TRAPAÇAS DA FAMÍLIA", 20, IdleUI.COR_OURO, v, "display")
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 8)
+	v.add_child(h)
+	for m in estado.cfg["melhorias"]:
+		if not m.has("trapaca"):
+			continue
+		var t: Dictionary = m["trapaca"]
+		var id := String(m["id"])
+		var l := LadrilhoIdle.new(id, String(t.get("icone", m.get("icone", ""))), String(t["nome"]), true)
+		l.comprar.connect(func(): _comprar(id))
+		h.add_child(l)
+		_ladrilhos[id] = l
+	for t in estado.cfg.get("trapacas_fechadas", []):
+		var l := LadrilhoIdle.new(String(t["id"]), String(t.get("icone", "")), String(t["nome"]), true)
+		l.fechar(String(t.get("sub", "")))
+		h.add_child(l)
+
+
+## A lista completa de melhorias (os andares, com +10 e MÁX.), por cima da
+## tela, aberta pelo MELHORIAS da oficina.
+func _lista_melhorias() -> void:
+	var fundo := ColorRect.new()
+	fundo.color = Color(0.04, 0.035, 0.03, 0.97)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.visible = false
+	fundo.z_index = 5
+	add_child(fundo)
+	_painel_lista = fundo
+	var m := MarginContainer.new()
+	m.set_anchors_preset(Control.PRESET_FULL_RECT)
+	m.add_theme_constant_override("margin_left", 16)
+	m.add_theme_constant_override("margin_right", 16)
+	m.add_theme_constant_override("margin_top", int(AreaSegura.topo(720.0)) + 16)
+	m.add_theme_constant_override("margin_bottom", int(AreaSegura.base(720.0)) + 16)
+	fundo.add_child(m)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 10)
+	m.add_child(v)
+	var cab := HBoxContainer.new()
+	v.add_child(cab)
+	var t := IdleUI.rotulo("MELHORIAS", 34, IdleUI.COR_OURO_CLARO, cab, "deco")
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var fechar := IdleUI.botao("FECHAR", IdleUI.COR_OURO, 22, 64, cab)
+	fechar.custom_minimum_size.x = 160
+	fechar.pressed.connect(func(): _lista_aberta(false))
 	_complexo = ScrollContainer.new()
 	_complexo.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_complexo.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -579,9 +829,41 @@ func _pagina_corrida() -> Control:
 	andares.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	andares.add_theme_constant_override("separation", 6)
 	_complexo.add_child(andares)
-	for m in estado.cfg["melhorias"]:
-		andares.add_child(_cartao(m))
-	return v
+	for mm in estado.cfg["melhorias"]:
+		andares.add_child(_cartao(mm))
+
+
+func _lista_aberta(sim: bool) -> void:
+	_painel_lista.visible = sim
+	if sim:
+		_atualizar_cartoes()
+
+
+## Busto: o alto da figura (`proporcao` da largura em altura), sem esticar.
+static func _busto(tex: Texture2D, proporcao: float) -> Texture2D:
+	if tex == null:
+		return null
+	var a := AtlasTexture.new()
+	a.atlas = tex
+	var w := float(tex.get_width())
+	a.region = Rect2(w * 0.1, 0, w * 0.8, w * 0.8 * proporcao)
+	return a
+
+
+## Os pontos do pelotão: um por carro, o seu em ouro.
+class _Pelotao extends Control:
+	var total := 0
+	var posicao := 0
+
+	func _draw() -> void:
+		if total <= 0:
+			return
+		var y := size.y * 0.5
+		draw_line(Vector2(4, y), Vector2(size.x - 4, y), IdleUI.COR_BORDA, 2.0)
+		for k in total:
+			var x := 4.0 + (size.x - 8.0) * (float(k) / maxf(total - 1, 1))
+			var meu := k == posicao - 1
+			draw_circle(Vector2(x, y), 6.0 if meu else 3.5, IdleUI.COR_OURO_CLARO if meu else LadrilhoIdle.VERDE.darkened(0.2))
 
 
 func _cartao(m: Dictionary) -> Control:
@@ -670,6 +952,7 @@ func _atualizar_cartoes() -> void:
 				celebrar(2)
 			a.fase = f
 			a.queue_redraw()
+		_atualizar_ladrilho(m, n, c["previsao"].text)
 		var b: Button = c["botao"]
 		var dez: Button = c["dez"]
 		var maximo: Button = c["maximo"]
@@ -696,6 +979,24 @@ func _atualizar_cartoes() -> void:
 		maximo.disabled = pagaveis <= 0
 
 
+## O cartão compacto da melhoria (oficina ou trapaça): nível, efeito com a
+## previsão e o preço de +1.
+func _atualizar_ladrilho(m: Dictionary, n: int, previsao: String) -> void:
+	var l: LadrilhoIdle = _ladrilhos.get(String(m["id"]))
+	if l == null or l.esta_fechado():
+		return
+	var ef := _efeito_texto(m, n)
+	if m.has("trapaca"):
+		ef = String(m["trapaca"].get("sub", ef))
+	elif "›" in previsao:
+		ef += " · " + previsao.replace(" ", "")
+	var id := String(m["id"])
+	if estado.no_maximo(id):
+		l.definir("NV. %d" % n, ef, "MÁX.", false)
+	else:
+		l.definir("NV. %d" % n, ef, "$" + curto(estado.custo(id)), estado.pode_comprar(id))
+
+
 func _atualizar_topo(delta := 0.0) -> void:
 	# O número conta até o dinheiro quando entra muito de uma vez (prêmio,
 	# renda com o app fechado, meta); gasto e renda corrente vão direto.
@@ -707,11 +1008,12 @@ func _atualizar_topo(delta := 0.0) -> void:
 	_dinheiro.text = "$" + curto(_dinheiro_mostrado)
 	_renda.text = "+$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
+	# Embaixo da liga, o objetivo dela e a corrida da vez.
+	var alvo := "VENÇA PARA SUBIR"
 	if estado.venceu:
-		_objetivo.text = "CATEGORIA VENCIDA" if estado.ultima_liga() else "VITÓRIA! SUBA DE LIGA"
-	else:
-		_objetivo.text = "VENÇA PARA SUBIR DE LIGA"
-	_melhor.text = "MELHOR: %dº" % estado.melhor_posicao() if estado.melhor_posicao() > 0 else ""
+		alvo = "CATEGORIA VENCIDA" if estado.ultima_liga() else "VITÓRIA! SUBA DE LIGA"
+	_divisao.text = "%s · CORRIDA %d" % [alvo, int(estado._m().get("corridas", 0)) + 1]
+	_atualizar_combustivel()
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 40)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
@@ -719,8 +1021,8 @@ func _atualizar_topo(delta := 0.0) -> void:
 		estado.guias.append("subir")
 		_guiar.call_deferred("subir", "Vitória! Toque em SUBIR DE LIGA para correr numa liga nova.")
 	# Com o LARGAR na tela, PRÓXIMA LIGA fica logo acima dele.
-	_subir.offset_top = -230.0 if _largar.visible else -170.0
-	_subir.offset_bottom = -142.0 if _largar.visible else -82.0
+	_subir.offset_top = -330.0 if _largar.visible else -270.0
+	_subir.offset_bottom = -242.0 if _largar.visible else -182.0
 	if _subir.visible and not Preferencias.reduzir_animacoes:
 		_subir.pivot_offset = _subir.size * 0.5
 		var k := 1.0 + 0.035 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.1)
@@ -1019,11 +1321,31 @@ func _atualizar_hud(ordem: Array) -> void:
 	var volta := clampi(floori(maxf(_visual.distancia("jogador"), 0.0) / _pista.comprimento) + 1, 1, voltas)
 	_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": voltas, "lista": lista,
 		"ultima": false})
+	_posicao.text = "%dº LUGAR" % (i + 1)
+	_pelotao.total = ordem.size()
+	_pelotao.posicao = i + 1
+	_pelotao.queue_redraw()
+	_volta.text = "%d/%d" % [volta, voltas]
+	_premio.text = "$" + curto(estado.premio(i + 1))
+
 	var perto := atacante != ""
 	if i > 0 and not _chegada:
 		var g := _gap(ordem[i - 1], "jogador")
 		perto = perto or (g >= 0.0 and g < 0.45)
 	_hud.secundario = 0.0 if _chegada else (0.35 if perto else 1.0)
+
+
+func _atualizar_combustivel() -> void:
+	var agora := Time.get_unix_time_from_system()
+	var restam := estado.combustivel_restantes(Time.get_date_string_from_system())
+	var total := int(estado.cfg_combustivel().get("usos_dia", 0))
+	if estado.combustivel_ativo(agora):
+		_combustivel_texto.text = "No tanque: %s" % IdleUI.relogio(estado.combustivel_ate - agora)
+	else:
+		_combustivel_texto.text = "+%d%%·%dmin" % [roundi(estado.bonus_combustivel() * 100.0),
+				roundi(float(estado.cfg_combustivel().get("duracao_s", 0.0)) / 60.0)]
+	_combustivel_botao.text = "USAR %d/%d" % [restam, total] if restam > 0 else "AMANHÃ"
+	_combustivel_botao.disabled = restam <= 0
 
 
 ## Avisos da corrida, como no Chrome & Wreckage: ultrapassagem, líder, perdeu a
@@ -1139,8 +1461,13 @@ func _comprar(id: String, quantos := 1) -> void:
 		# e o dinheiro do topo afunda.
 		var c: Dictionary = _cartoes[id]
 		var b: Button = c["botao"] if quantos == 1 else (c["dez"] if quantos == 10 else c["maximo"])
+		var cartao: Control = c["cartao"]
+		var lad: LadrilhoIdle = _ladrilhos.get(id)
+		if lad != null and not _painel_lista.visible:
+			b = lad.botao
+			cartao = lad
 		IdleUI.premiar(b)
-		IdleUI.pulsar(c["cartao"], 1.05)
+		IdleUI.pulsar(cartao, 1.05)
 		_efeitos.faiscas(b.get_global_rect().get_center(), IdleUI.COR_OURO_CLARO, 14 + 3 * _combo)
 		var texto := IdleUI.nv(estado.nivel(id)) + ("  ×%d" % (_combo + 1) if _combo > 0 else "")
 		_efeitos.pipoca(b.get_global_rect().get_center() + Vector2(0, -110), texto, COR_OURO, 32,
@@ -1599,7 +1926,14 @@ func _aba_aberta(a: Dictionary) -> bool:
 
 func _aplicar_desbloqueios() -> void:
 	for m in estado.cfg["melhorias"]:
-		_cartoes[m["id"]]["cartao"].visible = estado.tem("melhoria:" + String(m["id"]))
+		var aberta := estado.tem("melhoria:" + String(m["id"]))
+		_cartoes[m["id"]]["cartao"].visible = aberta
+		var l: LadrilhoIdle = _ladrilhos.get(String(m["id"]))
+		if l != null:
+			if aberta:
+				l.abrir()
+			elif not l.esta_fechado():
+				l.fechar("Abre em breve")
 	_renda_caixa.visible = estado.tem("renda")
 	var abas := ABAS.filter(_aba_aberta)
 	_barra.definir_abas(abas)
@@ -1768,7 +2102,10 @@ func _guiar(alvo: String, texto: String) -> void:
 		_abrir("corrida")
 	var andar: Dictionary = _cartoes.get(alvo.trim_prefix("melhoria:"), {}) if alvo.begins_with("melhoria:") else \
 			(_cartoes.get("motor", {}) if alvo == "previsao" else {})
-	if not andar.is_empty():
+	var lad: Control = _ladrilhos.get(alvo.trim_prefix("melhoria:")) if alvo.begins_with("melhoria:") else null
+	if lad != null and lad.get_parent().get_parent() is ScrollContainer:
+		(lad.get_parent().get_parent() as ScrollContainer).ensure_control_visible(lad)
+	elif not andar.is_empty() and _painel_lista.visible:
 		_complexo.ensure_control_visible(andar["cartao"])
 	_guia.mostrar(texto, _retangulo_do_alvo.bind(alvo) if alvo != "" else Callable())
 
@@ -1783,9 +2120,10 @@ func _retangulo_do_alvo(alvo: String) -> Rect2:
 		"cameras":
 			c = _trilho
 		"previsao":
-			c = _cartoes["motor"]["previsao"]
+			c = _ladrilhos["motor"].efeito if _ladrilhos.has("motor") else _cartoes["motor"]["previsao"]
 	if alvo.begins_with("melhoria:"):
-		c = _cartoes.get(alvo.trim_prefix("melhoria:"), {}).get("botao")
+		var lad: LadrilhoIdle = _ladrilhos.get(alvo.trim_prefix("melhoria:"))
+		c = lad.botao if lad != null else _cartoes.get(alvo.trim_prefix("melhoria:"), {}).get("botao")
 	elif alvo.begins_with("aba:"):
 		return _barra.retangulo_aba(alvo.trim_prefix("aba:"))
 	elif alvo.begins_with("oferta:"):

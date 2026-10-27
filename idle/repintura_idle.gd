@@ -3,7 +3,7 @@ extends Control
 ## Depois da primeira vitória o Tony pinta o carro do ferro-velho (The
 ## Fastfather): no galpão, o carro gira enquanto a ferrugem, a poeira e os
 ## riscos somem e a lataria escurece até o preto da família; no fim entra a
-## pintura nova (o 13), com faíscas e o letreiro. Toque fecha depois disso;
+## pintura nova (o 7), com faíscas e o letreiro. Toque fecha depois disso;
 ## sozinha, fecha em alguns segundos.
 
 signal fechou

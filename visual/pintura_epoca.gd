@@ -50,8 +50,9 @@ const FAMILIAS := {
 ## Família por divisão (as ligas de LIGA_FAMILIAS em diante viram "familias").
 const POR_DIVISAO := {"compactos": "bairro", "turismo": "hot_rod", "gt": "hot_rod", "terra": "stock"}
 const LIGA_FAMILIAS := 5  # Copa das Famílias, Grande Campeonato, Lendas
-## O carro do jogador (a família Bellucci): o número 13 em todas.
-const NUMERO_JOGADOR := 13
+## O carro do jogador (o sobrinho, família Bellucci): o número 7 em todas
+## (pedido do usuário, 2026-10-27).
+const NUMERO_JOGADOR := 7
 const JOGADOR := {
 	"bairro": {"cor": "#151414", "numero": "#efe9da", "contorno": "#151414", "roda": "roda_vinho"},
 	"hot_rod": {"cor": "#151414", "segunda": "lateral", "segunda_cor": "#6e1a1d", "numero": "#efe9da",
@@ -110,7 +111,9 @@ static func do_rival(fam: String, chave: String, semente: String, numero := -1) 
 	var f := {}
 	var escuro := cor.get_luminance() < 0.45
 	if rng.randf() < float(fm["chance_numero"]):
-		f["numero"] = numero if numero > 0 else rng.randi_range(1, 99)
+		# Sorteio de 1 a 99 sem o número do sobrinho.
+		var n := rng.randi_range(1, 98)
+		f["numero"] = numero if numero > 0 else (n + 1 if n >= NUMERO_JOGADOR else n)
 		f["locais_numero"] = int(fm["locais"])
 		f["fonte_numero"] = String(fm["fontes"][rng.randi() % fm["fontes"].size()])
 		f["escala_numero"] = float(fm["escala"])
@@ -135,7 +138,7 @@ static func do_rival(fam: String, chave: String, semente: String, numero := -1) 
 
 ## O carro do ferro-velho (o primeiro da loja, até o Tony pintar depois da
 ## primeira vitória): tinta verde queimada de sol, ferrugem, poeira e riscos;
-## depois de comprado, o 13 da família pintado à mão em giz.
+## depois de comprado, o 7 do sobrinho pintado à mão em giz.
 const FERRO_VELHO := {"cor": "#56604f", "ferrugem": 0.85, "poeira": 0.45, "arranhoes": 0.55, "numero": "#e9e2cf"}
 
 

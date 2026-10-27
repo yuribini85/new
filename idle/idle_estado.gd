@@ -26,6 +26,11 @@ var proximo_uid := 1
 var contrato_em := 0.0  # unix (s): quando o próximo contrato grátis fica pronto
 var videos_dia := ""  # dia (AAAA-MM-DD) dos contratos por vídeo contados
 var videos_usados := 0
+## Combustível adulterado (cfg "combustivel"): um vídeo dá potência a mais até
+## `combustivel_ate` (unix, s), com usos contados por dia.
+var combustivel_ate := 0.0
+var combustivel_dia := ""
+var combustivel_usos := 0
 var salvo_em := 0.0  # unix (s), para a renda com o app fechado
 ## Metas do dia: {dia, tarefas: [ids], contagem: {tipo: n}, coletadas: [ids]}.
 var metas := {}
@@ -417,6 +422,38 @@ func usar_contrato_gratis(dados: Node, agora: float) -> Dictionary:
 	return contratar(dados, int(agora))
 
 
+# --- combustível adulterado (bônus por vídeo) -----------------------------------
+
+func cfg_combustivel() -> Dictionary:
+	return cfg.get("combustivel", {})
+
+
+func bonus_combustivel() -> float:
+	return float(cfg_combustivel().get("potencia", 0.0))
+
+
+func combustivel_ativo(agora: float) -> bool:
+	return agora < combustivel_ate
+
+
+## Usos que ainda restam hoje (`dia`: AAAA-MM-DD).
+func combustivel_restantes(dia: String) -> int:
+	var usados := combustivel_usos if combustivel_dia == dia else 0
+	return maxi(int(cfg_combustivel().get("usos_dia", 0)) - usados, 0)
+
+
+## Depois do vídeo: liga o bônus por "duracao_s" (somando ao que ainda resta).
+func usar_combustivel(agora: float, dia: String) -> bool:
+	if combustivel_restantes(dia) <= 0:
+		return false
+	if combustivel_dia != dia:
+		combustivel_dia = dia
+		combustivel_usos = 0
+	combustivel_usos += 1
+	combustivel_ate = maxf(combustivel_ate, agora) + float(cfg_combustivel().get("duracao_s", 0.0))
+	return true
+
+
 ## Contratos por vídeo que ainda restam hoje (`dia`: AAAA-MM-DD).
 func contratos_video_restantes(dia: String) -> int:
 	var usados := videos_usados if videos_dia == dia else 0
@@ -577,7 +614,8 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 				"piloto": {"ritmo": float(pr["ritmo"]) + float(pr.get("ritmo_por_liga", 0.0)) * liga,
 					"consistencia": pr["consistencia"], "agressividade": pr["agressividade"], "regular": true}})
 	var base: Dictionary = carro_base(dados).duplicate(true)
-	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra))
+	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra)
+			+ (bonus_combustivel() if combustivel_ativo(Time.get_unix_time_from_system()) else 0.0))
 	base["aderencia"] = float(base["aderencia"]) * (1.0 + efeito("aderencia", niveis_extra))
 	# The Fastfather: quem corre é sempre o sobrinho (o piloto base); os rapazes
 	# contratados lutam na Rinha.
@@ -907,7 +945,8 @@ func para_save() -> Dictionary:
 			"pilotos": pilotos, "escalados": escalados, "proximo_uid": proximo_uid, "contrato_em": contrato_em,
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
 			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
-			"guias": guias, "garagem": garagem, "ferro_velho": ferro_velho}
+			"guias": guias, "garagem": garagem, "ferro_velho": ferro_velho, "combustivel_ate": combustivel_ate,
+			"combustivel_dia": combustivel_dia, "combustivel_usos": combustivel_usos}
 
 
 func de_save(s: Dictionary) -> void:
@@ -944,6 +983,9 @@ func de_save(s: Dictionary) -> void:
 	contrato_em = float(s.get("contrato_em", 0.0))
 	videos_dia = String(s.get("videos_dia", ""))
 	videos_usados = int(s.get("videos_usados", 0))
+	combustivel_ate = float(s.get("combustivel_ate", 0.0))
+	combustivel_dia = String(s.get("combustivel_dia", ""))
+	combustivel_usos = int(s.get("combustivel_usos", 0))
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
 	desbloqueados = Array(s.get("desbloqueados", [])).map(func(x): return String(x))
 	oferecidos = Array(s.get("oferecidos", [])).map(func(x): return String(x))
