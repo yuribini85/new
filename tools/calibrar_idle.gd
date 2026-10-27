@@ -138,13 +138,20 @@ func _rodar() -> void:
 		e.concluir(IdleEstado.posicao(r))
 		corridas_liga += 1
 		# A Rinha luta ao lado: lutas (de ~duracao/2 s, mais a pausa) cabem nesse tempo.
+		# Para andar rápido, uma luta simulada por corrida vale por todas as que cabem nela.
 		if e.rinha_aberta():
 			rinha_t += dur
-			while rinha_t > 0.0:
-				var l := e.lutar_rinha(d, semente * 31 + 7, false)
-				rinha_t -= float(l["duracao"]) / 2.0 + 5.0
-				rinha_ganho += e.pagar_rinha(IdleEstado.posicao(l))
-				lutas += 1
+			var l := e.lutar_rinha(d, semente * 31 + 7, false)
+			var cada := float(l["duracao"]) / 2.0 + 5.0
+			var n := int(rinha_t / cada)
+			if n > 0:
+				rinha_t -= n * cada
+				var antes := e.dinheiro
+				e.pagar_rinha(IdleEstado.posicao(l))
+				var p := e.dinheiro - antes
+				e.dinheiro += p * (n - 1)
+				rinha_ganho += p * n
+				lutas += n
 		_comprar_tudo()
 		if e.venceu and esperando_carro != "" and not e.subir_liga():
 			continue  # na última liga, juntando para o carro da divisão nova
