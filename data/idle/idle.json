@@ -18,8 +18,7 @@
 	"desbloqueio_inicial": ["melhoria:motor", "camera_tv"],
 	"desbloqueios": [
 		{"id": "rival", "quando": {}, "quem": {"id": "chefao", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "botao": "SIM, SENHOR", "fala": "Meu sobrinho vai ser campeão.", "libera": [], "capitulo": "1 · O Favor"},
-		{"id": "tony_ultimo", "quando": {"corridas": 1}, "cena": "ultimo", "quem": {"id": "tony", "nome": "Tony", "papel": "o mecânico"}, "libera": []},
-		{"id": "tony_vitoria", "avulsa": true, "quando": {"vitoria": true}, "cena": "vitoria", "quem": {"id": "tony", "nome": "Tony", "papel": "o mecânico"}, "libera": ["pintura_nova"]},
+		{"id": "tony_vitoria", "avulsa": true, "quando": {"vitoria": true}, "quem": {"id": "tony", "nome": "Tony", "papel": "o mecânico"}, "libera": ["pintura_nova"]},
 		{"id": "carro_novo", "avulsa": true, "quando": {"carros": 2}, "cena": "carro_novo", "quem": {"id": "tony", "nome": "Tony", "papel": "o mecânico"}, "libera": []},
 		{"id": "inicio", "quando": {"corridas": 1}, "quem": {"id": "chefao", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "botao": "SIM, SENHOR", "fala": "Que vergonha. Você vai fazer esse idiota vencer. E não me faça repetir.", "libera": []},
 		{"id": "ultrapassagem", "guia": {"alvo": "melhoria:ultrapassagem", "texto": "Toque em +1 na Ultrapassagem. A próxima corrida larga em seguida."}, "quando": {"corridas": 1}, "quem": {"id": "tony_explica", "nome": "Tony", "papel": "o mecânico"}, "fala": "O garoto fica atrás de carro lento e reza. Vou ensinar ele a passar nas retas.", "libera": ["melhoria:ultrapassagem"]},

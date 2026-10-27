@@ -1658,6 +1658,10 @@ func _checar_conversa() -> void:
 
 
 func _abrir_conversa(d: Dictionary) -> void:
+	if not d.has("cena") and String(d.get("fala", "")) == "":
+		# Sem fala (a primeira vitória, até o texto do usuário): só o que ela libera.
+		_conversa_fechou(d, true)
+		return
 	if d.has("cena"):
 		# Cena em quadrinho (o Tony e o sobrinho, data/idle/cenas.json).
 		var q := CenaQuadrinho.new(String(d["cena"]))

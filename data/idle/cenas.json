@@ -1,7 +1,10 @@
 {
   "_nota": "Cenas em quadrinho do The Fastfather (pacote de arte do usuário, 2026-10-27: 1. Abertura, 2. Loja, 3. Corrida). Apresentação, não balanceamento. Cada cena: 'fundo' (arte/fastfather/<fundo>.webp, cobre a tela; sem fundo a cena vem por cima da tela do jogo), 'atores' (id -> nome no balão, x = centro na largura 0..1, pe = altura dos pés 0..1, alt = altura da figura em fração da tela, entra = esquerda/direita/'' para quem já está em cena) e 'falas' em ordem (quem, pose = arquivo em arte/fastfather/, fala; 'move' leva atores a outro x; 'acao' avisa a tela, ex. 'pulsar:<carro>'; 'zoom' aproxima a câmera de quem fala). As falas das cenas 'largada', 'ultimo' e 'vitoria' são proposta (o arquivo SEQUÊNCIA 3 do pacote repete o texto da loja). Cenas de marco (item 7, falas provisórias até a história nova): moretti (o rival aparece), divisao_nova (a segunda divisão abre), carro_novo (o segundo carro da garagem).",
   "abertura": {
-    "cartao": {"lugar": "Brooklyn, Nova York", "ano": "1937"},
+    "cartao": {
+      "lugar": "Brooklyn, Nova York",
+      "ano": "1937"
+    },
     "entrada": "fade",
     "pausa": 1.0,
     "fundo": "abertura/fundo",
@@ -144,102 +147,6 @@
         "pose": "loja/tony_3",
         "fala": "Nem sonhe. Seu dinheiro só compra esse ferro-velho. Agora compre!",
         "acao": "pulsar:cupe_1928"
-      }
-    ]
-  },
-  "largada": {
-    "fundo": "",
-    "atores": {
-      "tony": {
-        "nome": "TONY",
-        "x": 0.72,
-        "pe": 0.92,
-        "alt": 0.48,
-        "entra": "direita",
-        "pose": "corrida/tony_1"
-      },
-      "sobrinho": {
-        "nome": "SOBRINHO",
-        "x": 0.26,
-        "pe": 1.03,
-        "alt": 0.6,
-        "entra": "esquerda",
-        "pose": "corrida/sobrinho_1"
-      }
-    },
-    "inicio": [],
-    "falas": [
-      {
-        "quem": "tony",
-        "pose": "corrida/tony_1",
-        "fala": "O motor pega no tranco. Não encoste em ninguém."
-      },
-      {
-        "quem": "sobrinho",
-        "pose": "corrida/sobrinho_1",
-        "fala": "Relaxa, Tony. Hoje eu ganho."
-      }
-    ]
-  },
-  "ultimo": {
-    "fundo": "",
-    "atores": {
-      "tony": {
-        "nome": "TONY",
-        "x": 0.62,
-        "pe": 1.02,
-        "alt": 0.62,
-        "entra": "direita",
-        "pose": "corrida/tony_2"
-      }
-    },
-    "inicio": [],
-    "falas": [
-      {
-        "quem": "tony",
-        "pose": "corrida/tony_2",
-        "fala": "Último. Até a carroça do leiteiro passava você."
-      }
-    ]
-  },
-  "vitoria": {
-    "fundo": "",
-    "atores": {
-      "tony": {
-        "nome": "TONY",
-        "x": 0.7,
-        "pe": 1.02,
-        "alt": 0.62,
-        "entra": "direita",
-        "pose": "corrida/tony_3"
-      },
-      "sobrinho": {
-        "nome": "SOBRINHO",
-        "x": 0.26,
-        "pe": 1.03,
-        "alt": 0.6,
-        "entra": "esquerda",
-        "pose": "corrida/sobrinho_1"
-      }
-    },
-    "inicio": [
-      "tony"
-    ],
-    "falas": [
-      {
-        "quem": "tony",
-        "pose": "corrida/tony_3",
-        "fala": "Ganhou! O idiota da família ganhou!"
-      },
-      {
-        "quem": "sobrinho",
-        "pose": "corrida/sobrinho_1",
-        "fala": "Eu disse, Tony. É talento."
-      },
-      {
-        "quem": "tony",
-        "pose": "corrida/tony_3",
-        "fala": "Amanhã eu tiro a ferrugem dessa lata. Com tinta preta e o 13 da família."
       }
     ]
   },

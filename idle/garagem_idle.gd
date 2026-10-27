@@ -9,7 +9,7 @@ extends Control
 ## Na abertura (SEQUÊNCIA 2) vem em tela cheia com a conversa do sobrinho e do
 ## Tony por cima (CenaQuadrinho "loja"): o carro do meio pulsa no "E aquele
 ## ali?", o ferro-velho pulsa no "Agora compre!" e só então aparece a compra;
-## comprado, o Tony fala antes da largada (cena "largada").
+## comprada, a corrida começa (as falas da corrida esperam o texto do usuário).
 
 signal comprou(id: String)
 signal correr(id: String)
@@ -518,14 +518,7 @@ func _acao() -> void:
 				_botao.scale = Vector2.ONE
 			_parar_pulsos()
 			_mostrar()
-			if _abertura:
-				# O Tony entrega o carro antes da primeira largada.
-				_ficha.modulate.a = 0.0
-				var cena := CenaQuadrinho.new("largada")
-				cena.fechou.connect(func(): comprou.emit(id))
-				add_child(cena)
-			else:
-				comprou.emit(id)
+			comprou.emit(id)
 		return
 	correr.emit(id)
 

@@ -388,7 +388,7 @@ func test_ferro_velho() -> void:
 	var e3 := IdleEstado.new(c)
 	e3._m()["venceu"] = true
 	igual(String(e3.proxima_conversa().get("id", "")), "v", "avulsa não espera a fila")
-	verificar(not CenaQuadrinho.carregar("vitoria").is_empty(), "as cenas estão em cenas.json")
+	verificar(not CenaQuadrinho.carregar("loja").is_empty(), "as cenas estão em cenas.json")
 
 
 ## Rinha das Famílias (pedido do usuário, 2026-10-27): roda ao lado da corrida,

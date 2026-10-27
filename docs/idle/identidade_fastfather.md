@@ -37,11 +37,10 @@ idle (antes Chrome Racing Team) passa a se chamar **The Fastfather**: máfia, 19
   mesmo tamanho em qualquer tela (em tela baixa a câmera desce). Só gira com o dedo; a seta
   curva embaixo pisca devagar. Das duas luminárias sai um cone de luz em facetas, somado à
   arte, com a mancha no chão, respirando devagar.
-- **SEQUÊNCIA 3 (corrida):** o arquivo do pacote repete o texto da loja, então as falas são
-  **proposta** (trocar em `data/idle/cenas.json`): antes da largada (Tony com a caixa de
-  ferramentas, o sobrinho de braços cruzados), depois da primeira corrida (Tony na cerca:
-  "Último..."), e na primeira vitória (Tony comemorando; ele promete pintar o carro). Depois da
-  vitória o carro sai do ferro-velho e ganha a pintura da família (preto, o 13).
+- **SEQUÊNCIA 3 (corrida):** o arquivo do pacote repete o texto da loja. As falas que eu tinha
+  proposto (antes da largada, último lugar, primeira vitória) saíram a pedido do usuário; a
+  corrida começa logo depois da compra e as falas esperam o texto dele. Depois da primeira
+  vitória o carro ainda sai do ferro-velho e ganha a pintura da família (preto, o 13).
 - O Don e o sobrinho das conversas da escada usam a arte nova (`corpo/chefao`, `corpo/sobrinho`).
 
 ## 2. Tipografia
