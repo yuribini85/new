@@ -747,20 +747,56 @@ static func _sobre_lado(m: MontagemMalha, estilo: String, rows: Array, pol: Arra
 
 
 ## Para-brisa (ou vigia) inclinado entre a borda de baixo (z0, y0) e a de cima
-## (z1, y1), com `margem` das laterais; `meio` põe a coluna do centro.
+## (z1, y1), com `margem` das laterais; `meio` põe a coluna do centro. Em
+## grade de 8 × 6, cada ponto assentado na curva de cima da cabine (um plano
+## só ficava por baixo da lataria no meio e o vidro saía da cor do carro).
 static func _vidro_inclinado(m: MontagemMalha, rows: Array, z0: float, z1: float, y0: float, y1: float, margem: float, meio := false) -> void:
-	var l0 := _linha_em(rows, z0)
-	var l1 := _linha_em(rows, z1)
-	var x0 := _x_lado(l0, y0) - margem
-	var x1 := _x_lado(l1, y1) - margem - float(l1[5]) * 0.6
-	var fora := Vector3(0, 0.4, signf(z0 - z1))
-	var v := [Vector3(-x0, y0, z0), Vector3(x0, y0, z0), Vector3(x1, y1, z1), Vector3(-x1, y1, z1)]
-	var d := fora.normalized() * 0.008
-	_face(m, "vidro_epoca", v.map(func(q): return q + d), (v[0] + v[2]) * 0.5 - fora)
+	if absf(z1 - z0) < 0.12:
+		# Vidro quase em pé (hot rod): fica na face da frente (ou de trás) da cabine.
+		var ponta: Array = rows[-1] if z0 > 0.0 else rows[0]
+		var zf := float(ponta[0]) + signf(z0) * 0.006
+		var lb := _linha_em(rows, float(ponta[0]))
+		var xb := _x_lado(lb, y0) - margem
+		var xt := _x_lado(lb, y1) - margem
+		var q := [Vector3(-xb, y0, zf), Vector3(xb, y0, zf), Vector3(xt, y1, zf), Vector3(-xt, y1, zf)]
+		_face(m, "preto", q.map(func(p): return p + Vector3(signf(p.x) * 0.02, 0, -signf(z0) * 0.002)), Vector3(0, (y0 + y1) * 0.5, zf - signf(z0)))
+		_face(m, "vidro_epoca", q, Vector3(0, (y0 + y1) * 0.5, zf - signf(z0)))
+		return
+	var nu := 8
+	var nv := 6
+	var g := []
+	for j in nv + 1:
+		var v := float(j) / nv
+		var z := lerpf(z0, z1, v)
+		var l := _linha_em(rows, z)
+		var meia := maxf(_x_lado(l, lerpf(y0, y1, v)) - margem - float(l[5]) * 0.4 * v, 0.05)
+		var linha := []
+		for i in nu + 1:
+			var x := lerpf(-meia, meia, float(i) / nu)
+			linha.append(Vector3(x, _y_cima(l, x) + 0.008, z))
+		g.append(linha)
+	var dentro := Vector3(0, 0.5, (z0 + z1) * 0.5)
+	for j in nv:
+		for i in nu:
+			_face(m, "vidro_epoca", [g[j][i], g[j][i + 1], g[j + 1][i + 1], g[j + 1][i]], dentro)
 	if meio:
-		var e := fora.normalized() * 0.014
-		_face(m, "cromo_epoca", [Vector3(-0.015, y0, z0) + e, Vector3(0.015, y0, z0) + e, Vector3(0.015, y1, z1) + e,
-				Vector3(-0.015, y1, z1) + e], (v[0] + v[2]) * 0.5 - fora)
+		for j in nv:
+			var a: Vector3 = g[j][nu / 2] + Vector3(0, 0.006, 0)
+			var b: Vector3 = g[j + 1][nu / 2] + Vector3(0, 0.006, 0)
+			_face(m, "cromo_epoca", [a - Vector3(0.015, 0, 0), a + Vector3(0.015, 0, 0), b + Vector3(0.015, 0, 0),
+					b - Vector3(0.015, 0, 0)], dentro)
+
+
+## Altura da superfície de cima da linha em x (o teto e as quinas arredondadas).
+static func _y_cima(l: Array, x: float) -> float:
+	var mt := float(l[2])
+	var topo := float(l[4])
+	var r := minf(float(l[5]), minf(mt, (topo - float(l[3])) * 0.5) * 0.95)
+	var ax := absf(x)
+	if ax <= mt - r:
+		return topo
+	var dx := minf(ax - (mt - r), r)
+	return topo - r + sqrt(maxf(r * r - dx * dx, 0.0))
 
 
 ## Cabine (estufa) de qualquer estilo: loft pintada, janelas laterais,
