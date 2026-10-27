@@ -11,7 +11,7 @@ const PADROES := [["", "Sem faixas"], ["dupla", "Dupla central"], ["larga", "Lar
 		["lateral", "Lateral"], ["dois_tons", "Dois tons"], ["tripla", "Tripla fina"], ["assimetrica", "Assimétrica"],
 		["capo", "Capô"], ["diagonal", "Diagonal"], ["chevron", "Chevron"], ["xadrez", "Xadrez"],
 		["degrade", "Degradê"], ["ziguezague", "Zigue-zague"], ["serrilha", "Serrilha"], ["circulo", "Círculo"],
-		["tres_tons", "Três tons"]]
+		["tres_tons", "Três tons"], ["teto", "Teto"]]
 
 ## Acabamentos da lataria [id, nome] (índice = o do shader; "" = acetinado, o de fábrica).
 const ACABAMENTOS := [["fosco", "Fosco"], ["", "Acetinado"], ["brilhante", "Brilhante"], ["metalico", "Metálico"]]

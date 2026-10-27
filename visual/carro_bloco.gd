@@ -339,6 +339,7 @@ static func _parametros_faixas(sm: ShaderMaterial, mi: MeshInstance3D, faixas: D
 	sm.set_shader_parameter("locais_logo", int(faixas.get("locais_logo", 0)) if logo != null else 0)
 	sm.set_shader_parameter("escala_logo", float(faixas.get("escala_logo", 1.0)))
 	sm.set_shader_parameter("largura_faixas", float(faixas.get("largura", 1.0)))
+	sm.set_shader_parameter("corte_teto", float(faixas.get("corte_teto", 0.64)))
 	sm.set_shader_parameter("espelhar", bool(faixas.get("espelhar", false)))
 	sm.set_shader_parameter("poeira", float(faixas.get("poeira", 0.0)))
 	sm.set_shader_parameter("arranhoes", float(faixas.get("arranhoes", 0.0)))

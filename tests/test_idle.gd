@@ -352,3 +352,28 @@ func test_garagem_um_carro_por_divisao() -> void:
 	var pobre := IdleEstado.new(c)
 	pobre.dinheiro = 100.0
 	verificar(not pobre.comprar_carro("cupe"), "sem dinheiro não compra")
+
+
+## Pinturas de época: só cor única, filete lateral, capô ou teto; a cor do
+## rival sai da paleta da família e nunca é a do jogador; número de 1 a 99;
+## mesma equipe, mesma cor; o jogador leva o 13.
+func test_pinturas_de_epoca() -> void:
+	igual(PinturaEpoca.familia("compactos", 0), "bairro", "1ª divisão: garagem de bairro")
+	igual(PinturaEpoca.familia("terra", 2), "stock", "Stock Cars")
+	igual(PinturaEpoca.familia("gt", 6), "familias", "ligas de cima: Copa das Famílias")
+	igual(PinturaEpoca.familia("arena", 0), "", "arena fora")
+	for fam in PinturaEpoca.FAMILIAS:
+		var eu: Array = PinturaEpoca.do_jogador(fam)
+		igual(int(eu[1]["numero"]), 13, "%s: o jogador é o 13" % fam)
+		var paleta: Array = PinturaEpoca.FAMILIAS[fam]["cores"]
+		for k in 30:
+			var r: Array = PinturaEpoca.do_rival(fam, "equipe%d" % k, "s%d" % k)
+			var f: Dictionary = r[1]
+			verificar(String(f.get("padrao", "")) in PinturaEpoca.PADROES_EPOCA, "%s: padrão de época" % fam)
+			verificar(paleta.any(func(c): return Color(String(c)).is_equal_approx(r[0])), "%s: cor da paleta" % fam)
+			verificar(not PinturaEpoca._perto(r[0], eu[0]), "%s: rival não usa a cor do jogador" % fam)
+			if f.has("numero"):
+				verificar(int(f["numero"]) >= 1 and int(f["numero"]) <= 99, "%s: número de 1 a 99" % fam)
+		var a: Array = PinturaEpoca.do_rival(fam, "mesma", "corrida1")
+		var b: Array = PinturaEpoca.do_rival(fam, "mesma", "corrida2")
+		verificar((a[0] as Color).is_equal_approx(b[0]), "%s: mesma equipe, mesma cor" % fam)

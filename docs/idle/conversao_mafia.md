@@ -189,3 +189,27 @@ tabela da época + sobra** no dinheiro inicial; garagem **na abertura e numa aba
   acompanha o dinheiro entrando.
 - **Calibrador:** o jogador simulado junta o dinheiro do carro (sem comprar melhorias) correndo onde
   está, compra e troca de divisão.
+
+## 11. Pinturas de época (briefing de pinturas do usuário, 2026-10-27)
+Entre 1930 e 1950 a identidade do carro era a cor da carroceria e o número pintado; publicidade
+pouca e pequena. `visual/pintura_epoca.gd` (`PinturaEpoca`) gera as pinturas por família:
+
+| Família | Onde | Cores (aproximações para a tela) | Regra |
+|---|---|---|---|
+| Garagem de bairro | Corridas de Bairro | preto, vinho, creme, verde, azul | cor única, número opcional pintado à mão, rodas escuras ou creme |
+| Hot rod clandestino | Circuito Clandestino, Hot Rods | vermelho, preto, azul, branco, amarelo | contraste, número sempre, filete lateral em segunda cor, rodas vermelhas/pretas |
+| Stock car | Stock Cars | azul, vermelho, branco, verde, amarelo | cor sólida, número grande nas portas e no teto, teto ou capô em segunda cor às vezes |
+| Copa das Famílias | ligas Copa das Famílias, Grande Campeonato e Lendas de qualquer divisão | preto, bordô, esmeralda, marfim, prata | brilhante, teto em segunda cor, número serifado discreto num círculo |
+
+- **Regras:** a cor principal cobre quase toda a lataria; no máximo uma segunda cor (teto, capô ou
+  filete); nada de degradê, zigue-zague, xadrez nem padrão moderno (teste `test_pinturas_de_epoca`).
+- **Equipes:** a cor sai da equipe (a mesma equipe tem a mesma cor de uma corrida para outra); o
+  número é o do piloto na equipe; nenhum rival usa a cor do carro do jogador.
+- **O carro do jogador (família Bellucci), sempre o 13:** bairro preto com o 13 branco pintado à mão
+  e rodas vinho; hot rod preto com filete vinho; stock car creme com teto azul e o 13 azul; Copa das
+  Famílias preto com teto marfim e o 13 serifado no círculo.
+- **Peças novas:** o padrão "teto" (segunda cor da base da cabine para cima) e as rodas pintadas
+  (`roda_epoca`: creme, vinho, vermelha, preta, marfim, azul, verde).
+- **Ainda não:** o nome pequeno da oficina ou do patrocinador na lateral (pede letras na pintura);
+  a arena segue com as cores das equipes de antes.
+- Folha para conferir: `tools/folha_pinturas_epoca.gd`.

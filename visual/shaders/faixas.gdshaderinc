@@ -28,6 +28,8 @@ uniform int locais_logo = 0;
 uniform float escala_logo = 1.0;
 // Desenho: largura das faixas (multiplica) e espelhado (troca os lados).
 uniform float largura_faixas = 1.0;
+// Teto em segunda cor (padrão "teto"): altura relativa onde a cabine começa.
+uniform float corte_teto = 0.64;
 uniform bool espelhar = false;
 // Desgaste em camada separada (0..1): poeira embaixo e arranhões; não muda a cor salva.
 uniform float poeira = 0.0;
@@ -249,6 +251,9 @@ vec3 aplicar_faixas(vec3 c, vec3 p_orig) {
 	} else if (padrao == 15) {  // três tons (embaixo a faixa, no meio o filete)
 		f = 1.0 - smoothstep(0.27, 0.28, v);
 		fil = faixa(v, 0.28, 0.44);
+} else if (padrao == 16) {  // teto em segunda cor (anos 1940–1950), filete na linha
+		f = smoothstep(corte_teto, corte_teto + 0.01, v);
+		fil = faixa(v, corte_teto - 0.012, corte_teto);
 	}
 	c = mix(c, cor_faixa.rgb, clamp(f, 0.0, 1.0));
 	c = mix(c, cor_filete.rgb, clamp(fil, 0.0, 1.0));

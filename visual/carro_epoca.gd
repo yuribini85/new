@@ -156,7 +156,12 @@ static func construir(modelo: String, cor: Color, faixas: Dictionary = {}) -> No
 		sm.shader = CarroBloco.SHADER_LATARIA
 		sm.set_shader_parameter("cor_base", cor)
 		mi.set_surface_override_material(k, sm)
-		CarroBloco._parametros_faixas(sm, mi, faixas)
+		# O teto em segunda cor começa na base da cabine (fração da altura da malha).
+		var p := faixas.duplicate()
+		var caixa := mi.get_aabb()
+		p["corte_teto"] = (_base_cabine(f) + 0.015 - caixa.position.y) / maxf(caixa.size.y, 0.01)
+		CarroBloco._parametros_faixas(sm, mi, p)
+	var cor_roda := String(faixas.get("roda_epoca", ""))
 	for p in [["Mount_FrontLeft", -1.0, 0], ["Mount_FrontRight", 1.0, 0], ["Mount_RearLeft", -1.0, 1],
 			["Mount_RearRight", 1.0, 1]]:
 		var rd := _roda_spec(f, int(p[2]))
@@ -164,7 +169,7 @@ static func construir(modelo: String, cor: Color, faixas: Dictionary = {}) -> No
 		var meia := float(f.get("bitola_tras", f["bitola"]) if int(p[2]) == 1 else f["bitola"]) * 0.5
 		var roda := MeshInstance3D.new()
 		roda.name = String(p[0])
-		roda.mesh = roda_malha(modelo, float(p[1]), int(p[2]))
+		roda.mesh = roda_malha(modelo, float(p[1]), int(p[2]), cor_roda)
 		roda.position = Vector3(meia * float(p[1]), r, float(f["eixos"][p[2]]))
 		roda.set_meta("lado", float(p[1]))
 		roda.set_meta("raio", r)
@@ -558,6 +563,12 @@ static func _cintura(z: float) -> float:
 
 # --- rodas --------------------------------------------------------------------
 
+## Altura da base da cabine (onde o teto em segunda cor começa).
+static func _base_cabine(f: Dictionary) -> float:
+	var c: Array = f["cabine"]
+	return float(c[2][2]) if c[2].size() == 5 else float(c[2][3])
+
+
 ## A roda do eixo (0 frente, 1 trás): a do modelo, ou "roda_tras" atrás. O
 ## cupê de 1928 guarda as medidas soltas (raios de arame).
 static func _roda_spec(f: Dictionary, eixo: int) -> Dictionary:
@@ -567,11 +578,14 @@ static func _roda_spec(f: Dictionary, eixo: int) -> Dictionary:
 
 
 ## A malha da roda (guardada por modelo, lado e eixo).
-static func roda_malha(modelo: String, lado: float, eixo := 0) -> ArrayMesh:
-	var chave := "%s|%d|%d" % [modelo, 1 if lado >= 0.0 else -1, eixo]
+static func roda_malha(modelo: String, lado: float, eixo := 0, cor_roda := "") -> ArrayMesh:
+	var chave := "%s|%d|%d|%s" % [modelo, 1 if lado >= 0.0 else -1, eixo, cor_roda]
 	if not _rodas.has(chave):
 		var m := MontagemMalha.new()
-		_roda(m, _roda_spec(MODELOS[modelo], eixo), 1.0 if lado >= 0.0 else -1.0)
+		var rd := _roda_spec(MODELOS[modelo], eixo).duplicate()
+		if cor_roda != "":
+			rd["cor"] = cor_roda
+		_roda(m, rd, 1.0 if lado >= 0.0 else -1.0)
 		_rodas[chave] = CarroBloco.suavizar_por_angulo(m.malha(), 30.0, true)
 	return _rodas[chave]
 
@@ -592,12 +606,13 @@ static func _roda_em(m: MontagemMalha, f: Dictionary, xf: Transform3D, lado := 1
 	if String(f.get("tipo", "arame")) != "arame":
 		_roda_disco(m, f, xf)
 		return
+	var tinta := String(f.get("cor", "raio"))
 	# pneu: seção arredondada (6 pontos) girada em volta do eixo
 	var perfil := [[aro * 0.98, -larg * 0.42], [r * 0.9, -larg * 0.5], [r * 0.985, -larg * 0.34], [r, 0.0],
 			[r * 0.985, larg * 0.34], [r * 0.9, larg * 0.5], [aro * 0.98, larg * 0.42]]
 	_torno(m, "pneu", perfil, lados, xf)
 	# aro
-	_torno(m, "raio", [[aro, -larg * 0.38], [aro * 1.02, 0.0], [aro, larg * 0.38], [aro * 0.94, larg * 0.3],
+	_torno(m, tinta, [[aro, -larg * 0.38], [aro * 1.02, 0.0], [aro, larg * 0.38], [aro * 0.94, larg * 0.3],
 			[aro * 0.94, -larg * 0.3]], lados, xf, true)
 	# raios: metade presa na face de fora do cubo, metade na de dentro, cruzados
 	var n := int(f["raios"])
@@ -609,9 +624,9 @@ static func _roda_em(m: MontagemMalha, f: Dictionary, xf: Transform3D, lado := 1
 		var a0 := a + (0.25 if i % 4 < 2 else -0.25)
 		var p0 := Vector3(x0, cubo * cos(a0), cubo * sin(a0))
 		var p1 := Vector3(x0 * 0.3, aro * 0.95 * cos(a), aro * 0.95 * sin(a))
-		_barra_xf(m, "raio", xf * p0, xf * p1, 0.0045)
+		_barra_xf(m, tinta, xf * p0, xf * p1, 0.0045)
 	# cubo e calota
-	_torno(m, "raio", [[0.0, -0.06], [cubo, -0.06], [cubo, 0.05], [0.0, 0.05]], 12, xf, true)
+	_torno(m, tinta, [[0.0, -0.06], [cubo, -0.06], [cubo, 0.05], [0.0, 0.05]], 12, xf, true)
 	_torno(m, "cromo_epoca", [[0.0, 0.05], [0.08, 0.05], [0.075, 0.085], [0.045, 0.105], [0.0, 0.11]], 12, xf)
 
 
@@ -1066,15 +1081,16 @@ static func _roda_disco(m: MontagemMalha, rd: Dictionary, xf: Transform3D) -> vo
 	if tipo == "faixa_branca":
 		_torno(m, "re", [[aro * 1.12, larg * 0.505], [lerpf(aro, r, 0.62), larg * 0.505]], 24, xf)
 	var face := larg * 0.42
+	var tinta := String(rd.get("cor", ""))
 	match tipo:
 		"aco":
-			_torno(m, "aro_roda_escuro", [[0.0, face - 0.02], [aro, face - 0.02], [aro, face + 0.01]], 20, xf)
+			_torno(m, tinta if tinta != "" else "aro_roda_escuro", [[0.0, face - 0.02], [aro, face - 0.02], [aro, face + 0.01]], 20, xf)
 			_torno(m, "cromo_epoca", [[aro * 0.98, face + 0.012], [aro * 1.04, face + 0.012]], 20, xf)
 			_torno(m, "cromo_epoca", [[0.0, face + 0.07], [aro * 0.45, face + 0.06], [aro * 0.75, face + 0.025], [aro * 0.8, face]], 16, xf)
 			_torno(m, "aro_roda_escuro", [[aro * 0.16, face + 0.072], [aro * 0.2, face + 0.072]], 12, xf)
 			_torno(m, "pinca", [[aro * 0.86, face + 0.003], [aro * 0.9, face + 0.003]], 20, xf)
 		"cromada":
-			_torno(m, "cromo_epoca", [[0.0, face - 0.03], [aro, face - 0.03], [aro * 1.03, face + 0.01]], 20, xf)
+			_torno(m, tinta if tinta != "" else "cromo_epoca", [[0.0, face - 0.03], [aro, face - 0.03], [aro * 1.03, face + 0.01]], 20, xf)
 			for k in 6:
 				var a := TAU * k / 6.0
 				var c := Vector3(face - 0.025, cos(a) * aro * 0.6, sin(a) * aro * 0.6)

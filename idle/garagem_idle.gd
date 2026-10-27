@@ -230,7 +230,10 @@ func _mostrar() -> void:
 		s.visible = estado.carros_garagem().size() > 1 and not _abertura
 	if c.is_empty():
 		return
-	_carro.configurar_modelo({"id": String(c["id"]), "epoca": String(c["modelo"])}, _cor, _faixas)
+	# A pintura de época do jogador na família da divisão do carro.
+	var fam := PinturaEpoca.familia(String(c["modalidade"]), estado.liga if String(c["modalidade"]) == estado.modalidade else 0)
+	var pe := PinturaEpoca.do_jogador(fam) if fam != "" else [_cor, _faixas]
+	_carro.configurar_modelo({"id": String(c["id"]), "epoca": String(c["modelo"])}, pe[0], pe[1])
 	_nome.text = String(c["nome"]).to_upper()
 	var mod := estado.dados_modalidade(String(c["modalidade"]))
 	_divisao.text = "Divisão: %s" % String(mod.get("nome", ""))

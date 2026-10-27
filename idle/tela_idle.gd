@@ -640,7 +640,22 @@ func _nova_corrida() -> void:
 			categorias[id] = categorias[id].duplicate()
 			categorias[id]["epoca"] = estado.dados_modalidade()["epoca"]
 		var k := int(id.trim_prefix("r")) if id != "jogador" else -1
-		if id == "jogador":
+		var fam := PinturaEpoca.familia(estado.modalidade, estado.liga) if estado.dados_modalidade().has("epoca") else ""
+		if fam != "":
+			# Pintura de época: cor da equipe e número pintado (PinturaEpoca).
+			var pe: Array
+			if id == "jogador":
+				pe = PinturaEpoca.do_jogador(fam)
+			elif k < escalados.size():
+				var eq: Dictionary = escalados[k]["equipe"]
+				var num := int(eq["numero"]) * 4 - 3 + int(escalados[k]["vaga"]) if eq.get("numero") != null else -1
+				pe = PinturaEpoca.do_rival(fam, String(eq.get("nome", k)), "%d|%d" % [estado.liga, k], num)
+				_nomes[id] = escalados[k]["nome"]
+			else:
+				pe = PinturaEpoca.do_rival(fam, id, "%d|%s" % [_semente, id])
+			pinturas[id] = pe[0]
+			faixas[id] = pe[1]
+		elif id == "jogador":
 			pinturas[id] = COR_OURO
 			faixas[id] = PinturaCarro.da_equipe(EQUIPE_JOGADOR, "crt", 0)
 		elif k < escalados.size():
