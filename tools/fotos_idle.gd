@@ -125,6 +125,15 @@ func _rodar() -> void:
 				if not String(tr["pista"]) in tela.estado.trofeus:
 					tela.estado.trofeus.append(String(tr["pista"]))
 			tela._abrir("garagem")
+		elif aba == "missoes_fds":  # MISSÕES num sábado, com o presente de hoje e o desafio quase feito
+			var bias := float(Time.get_time_zone_from_system().get("bias", 0)) * 60.0
+			tela.estado.agora_fixo = float(Time.get_unix_time_from_datetime_string("2026-10-31T15:00:00")) - bias
+			tela.estado.presente = {"dia": MetaDia.dia(tela.estado.agora_fixo - 86400.0), "seq": 3}
+			tela.estado.estado_desafio()["vitorias"] = 11
+			tela.estado.tacas = ["Calabrese"]
+			tela._abrir("metas")
+		elif aba == "fundadora":
+			tela._abrir_fundadora()
 		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
 			for tr in tela.estado.lista_trofeus().slice(0, 3):
 				if not String(tr["pista"]) in tela.estado.trofeus:

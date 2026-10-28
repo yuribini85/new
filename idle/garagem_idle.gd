@@ -76,7 +76,10 @@ static func pintura(e: IdleEstado, c: Dictionary, fam := "") -> Array:
 	if fam == "" and not c.is_empty():
 		var m := String(c["modalidade"])
 		fam = PinturaEpoca.familia(m, e.liga if m == e.modalidade else 0)
-	return PinturaEpoca.do_jogador(fam)
+	var p := PinturaEpoca.do_jogador(fam)
+	if e.fundadora:
+		p[0] = Color(String(e.cfg.get("fundadora", {}).get("cor", "c9a24a")))  # o carro dourado da Família Fundadora
+	return p
 
 
 func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := false) -> void:
@@ -178,6 +181,7 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 	_preco.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_divisao = IdleUI.rotulo("", 22, IdleUI.COR_SECUNDARIA, f)
 	_divisao.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_colecao = IdleUI.rotulo("", 22, IdleUI.COR_GANHO, f)
 	_botao = IdleUI.botao("", IdleUI.COR_OURO, 26, 96, f)
 	_botao.pressed.connect(_acao)
 	# Abre no carro da divisão na tela.
@@ -186,6 +190,7 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 
 
 var _estante: Control
+var _colecao: Label  # o bônus do carro na coleção
 
 
 ## A estante de troféus na parede da garagem (sugestão aprovada, 2026-10-28):
@@ -561,6 +566,12 @@ func atualizar() -> void:
 	_preco.text = "SEU" if seu else "$" + IdleUI.curto(preco)
 	_preco_cheio.text = "$" + IdleUI.curto(float(c["preco"])) if not seu and preco < float(c["preco"]) else ""
 	_preco_cheio.visible = _preco_cheio.text != ""
+	var col: Dictionary = c.get("colecao", {})
+	_colecao.visible = not col.is_empty()
+	if _colecao.visible:
+		var b := MetasIdle.texto_bonus(String(col["efeito"]), float(col["bonus"]))
+		_colecao.text = ("Na coleção: %s para sempre" if seu else "Na coleção dá %s para sempre") % b
+		_colecao.add_theme_color_override("font_color", IdleUI.COR_GANHO if seu else IdleUI.COR_SECUNDARIA)
 	if not seu:
 		_botao.text = "COMPRAR · $" + IdleUI.curto(preco)
 		_botao.disabled = estado.dinheiro < preco

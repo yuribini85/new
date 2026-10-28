@@ -566,3 +566,82 @@ func test_nuvem_escolhe_o_jogo_mais_adiantado() -> void:
 	verificar(not n.disponivel(), "fora do Android sem o plugin a nuvem fica desligada")
 	n.enviar(adiantado, true)  # sem conta: não faz nada nem quebra
 	n.free()
+
+
+## Sexta 2026-10-30 12:00 no fuso do aparelho (unix): base dos relógios dos testes.
+func _sexta() -> float:
+	var bias := float(Time.get_time_zone_from_system().get("bias", 0)) * 60.0
+	return float(Time.get_unix_time_from_datetime_string("2026-10-30T12:00:00")) - bias
+
+
+func test_presente_do_chefao_em_sequencia() -> void:
+	var c := _cfg()
+	c["presente_diario"] = {"minutos": [10, 20, 30, 40, 50, 60], "capanga_nivel": 3}
+	var e := IdleEstado.new(c)
+	var dados: Node = Engine.get_main_loop().root.get_node("Dados")
+	var t := _sexta()
+	verificar(e.presente_pronto(t) and e.dia_do_presente(t) == 1, "primeiro dia pronto")
+	var r := e.coletar_presente(dados, t)
+	igual([r["dia"], e.presente_pronto(t)], [1, false], "coleta uma vez por dia")
+	verificar(float(r["dinheiro"]) >= e.premio(1), "no mínimo o prêmio de uma vitória")
+	igual(e.dia_do_presente(t + 86400.0), 2, "dia seguinte avança")
+	igual(e.dia_do_presente(t + 2 * 86400.0), 1, "pulou um dia: volta ao 1º")
+	e.presente = {"dia": MetaDia.dia(t), "seq": 6}
+	igual(e.dia_do_presente(t + 86400.0), 7, "o 7º depois do 6º")
+	var f := IdleEstado.new(c)
+	f.de_save(e.para_save())
+	igual(f.presente, e.presente, "a sequência volta do save")
+
+
+func test_manchete_fiscal_e_fim_de_semana_mexem_no_premio() -> void:
+	var c := _cfg()
+	var e := IdleEstado.new(c)
+	var t := _sexta()
+	e.agora_fixo = t
+	var base := e.premio(1)
+	e.cfg["jornal_dia"] = {"lista": [{"manchete": "X", "efeito": "premio", "bonus": 0.25}]}
+	igual(e.premio(1), roundf(base * 1.25), "manchete do dia: +25% no prêmio")
+	e.cfg["jornal_dia"] = {}
+	e.cfg["fiscal"] = {"usos_dia": 1, "duracao_s": 3600, "efeito": "premio", "bonus": 0.5}
+	verificar(e.usar_fiscal(t, "d") and not e.usar_fiscal(t, "d"), "um uso por dia")
+	igual(e.premio(1), roundf(base * 1.5), "fiscal comprado: +50% por uma hora")
+	e.agora_fixo = t + 3601.0
+	igual(e.premio(1), base, "passou a hora, acabou")
+	e.cfg["fim_de_semana"] = {"dias": [6, 0], "premio": 0.5, "vitorias": 2, "recompensa_min": 1, "taca_bonus": 0.1}
+	e.agora_fixo = t
+	verificar(not e.fim_de_semana(), "sexta não é fim de semana")
+	e.concluir(1)
+	e.agora_fixo = t + 86400.0
+	verificar(e.fim_de_semana(), "sábado é")
+	igual(e.premio(1), roundf(base * 1.5), "prêmios maiores no fim de semana")
+	e.concluir(1)
+	verificar(not e.desafio_pronto(), "a vitória de sexta não conta")
+	e.concluir(1)
+	verificar(e.desafio_pronto(), "duas vitórias no fim de semana: taça pronta")
+	verificar(e.coletar_desafio("Moretti") > 0.0 and not e.desafio_pronto(), "coleta uma vez")
+	igual(e.tacas, ["Moretti"], "a taça da família fica")
+	e.agora_fixo = t + 8 * 86400.0
+	igual(e.estado_desafio()["vitorias"], 0, "outro fim de semana recomeça")
+	e.agora_fixo = t
+	e.fiscal_ate = 0.0
+	igual(e.premio(1), roundf(base * 1.1), "taça: +10% no prêmio para sempre")
+	var fam := ["A", "B", "C"]
+	igual(e.familia_do_desafio(fam, t + 86400.0), e.familia_do_desafio(fam, t + 2 * 86400.0), "mesma família no sábado e no domingo")
+	verificar(e.familia_do_desafio(fam, t + 86400.0) != e.familia_do_desafio(fam, t + 8 * 86400.0), "outra família na semana seguinte")
+
+
+func test_colecao_de_carros_e_familia_fundadora() -> void:
+	var c := _cfg()
+	c["garagem"] = [{"id": "a", "modalidade": "x", "preco": 1, "colecao": {"efeito": "renda", "bonus": 0.1}},
+			{"id": "b", "modalidade": "y", "preco": 1, "colecao": {"efeito": "oficina", "bonus": 0.25}}]
+	var e := IdleEstado.new(c)
+	igual(e.bonus_carros("renda"), 0.0, "sem carro, sem bônus")
+	e.garagem = ["a", "b"]
+	igual([e.bonus_carros("renda"), e.bonus_carros("oficina")], [0.1, 0.25], "cada carro soma o seu")
+	e.cfg["fundadora"] = {"capanga_nivel": 5}
+	var dados: Node = Engine.get_main_loop().root.get_node("Dados")
+	verificar(e.conceder_fundadora(dados) and not e.conceder_fundadora(dados), "compra única")
+	verificar(e.fundadora and e.pilotos.any(func(p): return int(p["nivel"]) == 5), "capanga de nível alto")
+	var f := IdleEstado.new(c)
+	f.de_save(e.para_save())
+	verificar(f.fundadora, "volta do save")

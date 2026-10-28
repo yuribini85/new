@@ -72,6 +72,7 @@ var dados: Node
 var estado: IdleEstado
 var anuncios: IdleAnuncios
 var nuvem: NuvemIdle
+var loja: LojaIdle
 var _visual: CorridaVisual
 var _visual3d: Corrida3D
 var _arena3d: Arena3D  # a vista da modalidade Arena (a arena do Chrome & Wreckage)
@@ -156,6 +157,8 @@ var _ladrilhos := {}  # melhoria -> LadrilhoIdle (oficina e trapaças)
 var _trapacas_caixa: Control
 var _combustivel_texto: Label
 var _combustivel_botao: Button
+var _fiscal_texto: Label
+var _fiscal_botao: Button
 var _painel_lista: Control  # MELHORIAS: a lista completa por cima da tela
 var _painel_trofeus: Control  # TROFÉUS: a coleção, um por pista
 var _grade_trofeus: GridContainer
@@ -216,6 +219,10 @@ func _ready() -> void:
 	add_child(nuvem)
 	nuvem.achou.connect(_nuvem_achou)
 	nuvem.iniciar(estado.progresso())
+	loja = LojaIdle.new()
+	loja.skus = PackedStringArray([String(estado.cfg.get("fundadora", {}).get("sku", ""))])
+	loja.concedido.connect(_comprou)
+	add_child(loja)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var agora := Time.get_unix_time_from_system()
 	# O primeiro piloto vem com a equipe (o primeiro contrato grátis).
@@ -894,6 +901,15 @@ func _oficina(pai: Control) -> void:
 ## Combustível adulterado: um vídeo dá potência a mais por um tempo, com usos
 ## por dia (idle.json → "combustivel").
 func _combustivel_cartao(pai: Control) -> void:
+	var r := _cartao_por_video(pai, "COMBUSTÍVEL\nADULTERADO")
+	_combustivel_texto = r[0]
+	_combustivel_botao = r[1]
+	_combustivel_botao.pressed.connect(_usar_combustivel)
+
+
+## Cartão de bônus por vídeo (combustível, fiscal): o nome, uma linha de
+## situação e o botão USAR no pé. Devolve [situação, botão].
+func _cartao_por_video(pai: Control, nome: String, cor_nome := IdleUI.COR_TEXTO) -> Array:
 	var c := PanelContainer.new()
 	c.add_theme_stylebox_override("panel", IdleUI.caixa(LadrilhoIdle.FUNDO, 6, 8, IdleUI.COR_BORDA, 1))
 	c.custom_minimum_size = Vector2(150, 0)
@@ -901,27 +917,27 @@ func _combustivel_cartao(pai: Control) -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 2)
 	c.add_child(v)
-	var n := IdleUI.rotulo("COMBUSTÍVEL\nADULTERADO", 17, IdleUI.COR_TEXTO, v, "display")
+	var n := IdleUI.rotulo(nome, 17, cor_nome, v, "display")
 	n.add_theme_constant_override("line_spacing", -6)
-	_combustivel_texto = IdleUI.rotulo("", 15, IdleUI.COR_CROMO, v)
-	_combustivel_texto.clip_text = true
+	var texto := IdleUI.rotulo("", 15, IdleUI.COR_CROMO, v)
+	texto.clip_text = true
 	var vao := Control.new()  # o botão no pé, alinhado com os das melhorias
 	vao.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(vao)
-	_combustivel_botao = Button.new()
-	_combustivel_botao.focus_mode = Control.FOCUS_NONE
-	_combustivel_botao.custom_minimum_size = Vector2(0, 46)
-	_combustivel_botao.add_theme_font_override("font", Tipografia.fonte("display"))
-	_combustivel_botao.add_theme_font_size_override("font_size", 24)
+	var b := Button.new()
+	b.focus_mode = Control.FOCUS_NONE
+	b.custom_minimum_size = Vector2(0, 46)
+	b.add_theme_font_override("font", Tipografia.fonte("display"))
+	b.add_theme_font_size_override("font_size", 24)
 	for e in ["normal", "hover", "focus"]:
-		_combustivel_botao.add_theme_stylebox_override(e, IdleUI.caixa(IdleUI.COR_OURO, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
-	_combustivel_botao.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_OURO.darkened(0.15), 5, 4, IdleUI.COR_OURO_ESCURO, 1))
-	_combustivel_botao.add_theme_stylebox_override("disabled", IdleUI.caixa(LadrilhoIdle.DESLIGADO, 5, 4, LadrilhoIdle.DESLIGADO_BORDA, 1))
+		b.add_theme_stylebox_override(e, IdleUI.caixa(IdleUI.COR_OURO, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
+	b.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_OURO.darkened(0.15), 5, 4, IdleUI.COR_OURO_ESCURO, 1))
+	b.add_theme_stylebox_override("disabled", IdleUI.caixa(LadrilhoIdle.DESLIGADO, 5, 4, LadrilhoIdle.DESLIGADO_BORDA, 1))
 	for c2 in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		_combustivel_botao.add_theme_color_override(c2, IdleUI.COR_TINTA)
-	_combustivel_botao.add_theme_color_override("font_disabled_color", IdleUI.COR_BLOQUEADO.lightened(0.25))
-	v.add_child(_combustivel_botao)
-	_combustivel_botao.pressed.connect(_usar_combustivel)
+		b.add_theme_color_override(c2, IdleUI.COR_TINTA)
+	b.add_theme_color_override("font_disabled_color", IdleUI.COR_BLOQUEADO.lightened(0.25))
+	v.add_child(b)
+	return [texto, b]
 
 
 func _usar_combustivel() -> void:
@@ -934,6 +950,35 @@ func _usar_combustivel() -> void:
 					COR_OURO, 11, -1.0, true)
 			celebrar(2)
 			estado.salvar(Time.get_unix_time_from_system()))
+
+
+## Fiscal comprado: um vídeo e o fiscal fecha os olhos por um tempo (idle.json → "fiscal").
+func _usar_fiscal() -> void:
+	var dia := Time.get_date_string_from_system()
+	if estado.fiscal_restantes(dia) <= 0:
+		return
+	anuncios.premiado(func():
+		if estado.usar_fiscal(Time.get_unix_time_from_system(), dia):
+			var f := estado.cfg_fiscal()
+			_hud.evento("FISCAL COMPRADO!", MetasIdle.texto_bonus(String(f.get("efeito", "")), float(f.get("bonus", 0.0))).to_lower(),
+					IdleUI.COR_VINHO_CLARO, 11, -1.0, true)
+			celebrar(2)
+			estado.salvar(Time.get_unix_time_from_system()))
+
+
+func _atualizar_fiscal() -> void:
+	if _fiscal_botao == null:
+		return
+	var agora := Time.get_unix_time_from_system()
+	var f := estado.cfg_fiscal()
+	var restam := estado.fiscal_restantes(Time.get_date_string_from_system())
+	if estado.fiscal_ativo(agora):
+		_fiscal_texto.text = "Comprado: %s" % IdleUI.relogio(estado.fiscal_ate - agora)
+	else:
+		_fiscal_texto.text = "%s·%dmin" % [MetasIdle.texto_bonus(String(f.get("efeito", "")), float(f.get("bonus", 0.0))).split(" ")[-1],
+				roundi(float(f.get("duracao_s", 0.0)) / 60.0)]
+	_fiscal_botao.text = "USAR %d/%d" % [restam, int(f.get("usos_dia", 0))] if restam > 0 else "AMANHÃ"
+	_fiscal_botao.disabled = restam <= 0
 
 
 ## As Trapaças da família: as melhorias marcadas "trapaca" em idle.json (com o
@@ -960,6 +1005,12 @@ func _trapacas(pai: Control) -> void:
 		var l := LadrilhoIdle.new(String(t["id"]), String(t.get("icone", "")), String(t["nome"]), true)
 		l.fechar(String(t.get("sub", "")))
 		h.add_child(l)
+	if not estado.cfg_fiscal().is_empty():
+		var r := _cartao_por_video(h, String(estado.cfg_fiscal().get("nome", "Fiscal comprado")).to_upper().replace(" ", "\n"),
+				IdleUI.COR_VINHO_CLARO)
+		_fiscal_texto = r[0]
+		_fiscal_botao = r[1]
+		_fiscal_botao.pressed.connect(_usar_fiscal)
 
 
 ## A lista completa de melhorias (os andares, com +10 e MÁX.), por cima da
@@ -1431,6 +1482,7 @@ func _atualizar_topo(delta := 0.0) -> void:
 	else:
 		_divisao.text = "CHEGUE EM 1º PARA SUBIR"
 	_atualizar_combustivel()
+	_atualizar_fiscal()
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 40)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
 	_subir.visible = estado.pode_subir() and _pausa < 0.0
@@ -2066,6 +2118,8 @@ func _subir_liga() -> void:
 ## das primeiras ligas (intersticial_a_partir_liga); nunca ao abrir o app nem
 ## no meio da corrida.
 func _intersticial_da_liga() -> void:
+	if estado.fundadora:
+		return  # Família Fundadora: sem anúncio entre as ligas
 	var maior := 0
 	for id in estado.liberadas():
 		maior = maxi(maior, int(estado._m(id)["liga"]))
@@ -2245,7 +2299,64 @@ func _avisos(delta: float) -> void:
 			_aviso_caixa = null
 	var agora := Time.get_unix_time_from_system()
 	_barra.avisar("pilotos", estado.contrato_gratis_pronto(agora) or estado.piloto_escalado().is_empty())
-	_barra.avisar("metas", estado.metas_prontas(agora) > 0)
+	_barra.avisar("metas", estado.metas_prontas(agora) > 0 or estado.presente_pronto(agora) or estado.desafio_pronto())
+
+
+# --- Família Fundadora ----------------------------------------------------------
+
+## A compra chegou (ou já era da conta): o pacote entra uma vez.
+func _comprou(sku: String) -> void:
+	if sku != String(estado.cfg.get("fundadora", {}).get("sku", "")):
+		return
+	if estado.conceder_fundadora(dados):
+		estado.salvar(Time.get_unix_time_from_system())
+		_pilotos.atualizar()
+		_garagem.mostrar_divisao()
+		_hud.evento("FAMÍLIA FUNDADORA!", "bem-vindo à mesa do chefe", COR_OURO, 11, -1.0, true)
+		celebrar(3)
+
+
+## O pacote: o que vem nele e o preço da loja (sem a loja, só a vitrine).
+func _abrir_fundadora() -> void:
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.78)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fundo)
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.add_child(centro)
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(600, 0)
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18, 26, COR_OURO, 2))
+	centro.add_child(p)
+	p.add_child(MolduraDeco.new(6.0))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 14)
+	p.add_child(v)
+	var t := IdleUI.rotulo("FAMÍLIA FUNDADORA", 36, COR_OURO, v, "deco")
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var f: Dictionary = estado.cfg.get("fundadora", {})
+	for item in ["Sem anúncio entre as ligas", "O carro dourado da família",
+			"Um capanga de nível %d" % int(f.get("capanga_nivel", 1)), "Compra única, para sempre"]:
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 12)
+		v.add_child(h)
+		IdleUI.icone("icone_ok", 32, h, IdleUI.COR_GANHO)
+		IdleUI.rotulo(item, 24, IdleUI.COR_TEXTO, h)
+	var sku := String(f.get("sku", ""))
+	if estado.fundadora:
+		var j := IdleUI.rotulo("JÁ É DA FAMÍLIA", 26, IdleUI.COR_GANHO, v, "display")
+		j.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	elif loja.disponivel():
+		var b := IdleUI.botao("ENTRAR · " + String(loja.precos.get(sku, "")), COR_OURO, 26, 76, v)
+		b.pressed.connect(func():
+			loja.comprar(sku)
+			fundo.queue_free())
+	else:
+		var n := IdleUI.rotulo("A compra abre na versão da loja.", 20, IdleUI.COR_SECUNDARIA, v, "regular")
+		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var fechar := IdleUI.botao("FECHAR", COR_BOTAO, 24, 64, v)
+	fechar.pressed.connect(fundo.queue_free)
 
 
 # --- save na nuvem ---------------------------------------------------------------
@@ -2344,6 +2455,8 @@ func _abrir_config() -> void:
 		else:
 			var entrar := IdleUI.botao("ENTRAR", COR_BOTAO, 22, 56, h)
 			entrar.pressed.connect(nuvem.entrar)
+	var fund := IdleUI.botao("FAMÍLIA FUNDADORA", COR_OURO, 24, 64, v)
+	fund.pressed.connect(_abrir_fundadora)
 	var nota := IdleUI.rotulo("Gráficos leves tiram sombras, fumaça e efeitos: o jogo roda melhor em celulares simples.", 17,
 			IdleUI.COR_SECUNDARIA, v, "regular")
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

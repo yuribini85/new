@@ -33,6 +33,18 @@ var combustivel_dia := ""
 var combustivel_usos := 0
 var trofeus: Array = []  # pistas com troféu (cfg "trofeus")
 var cidade := 0  # prestígio Nova Cidade (cfg "cidades"): 0 = Brooklyn
+## Presente do chefão (cfg "presente_diario"): o último dia coletado (AAAA-MM-DD)
+## e em que dia da sequência de 7 ele estava.
+var presente := {"dia": "", "seq": 0}
+## Desafio de fim de semana (cfg "fim_de_semana"): {semana, vitorias, coletado}.
+var desafio := {}
+var tacas: Array = []  # famílias rivais vencidas no desafio (uma taça cada)
+## Fiscal comprado (cfg "fiscal"): um vídeo liga o bônus até `fiscal_ate`.
+var fiscal_ate := 0.0
+var fiscal_dia := ""
+var fiscal_usos := 0
+var fundadora := false  # pacote Família Fundadora (compra única)
+var agora_fixo := -1.0  # testes e ferramentas: o relógio do jogo (unix); < 0 = o do aparelho
 var trofeu_novo := ""  # o último troféu ganho, até a tela mostrar
 var salvo_em := 0.0  # unix (s), para a renda com o app fechado
 ## Metas do dia: {dia, tarefas: [ids], contagem: {tipo: n}, coletadas: [ids]}.
@@ -231,7 +243,7 @@ func custo_no_nivel(id: String, k: int) -> float:
 	var m := melhoria(id)
 	return roundf(float(m["base"]) * pow(float(m["crescimento"]), k)
 			* pow(float(dados_liga()["multiplicador"]), float(cfg.get("expoente_custo_liga", 1.0)))
-			/ (1.0 + bonus_capangas("oficina")))
+			/ (1.0 + bonus_capangas("oficina")) / (1.0 + bonus_carros("oficina")) / (1.0 + bonus_do_momento("oficina")))
 
 
 ## Custo de `n` níveis seguidos a partir do atual (para +10). Passa do máximo: INF.
@@ -326,7 +338,8 @@ func cfg_jornaleiro() -> Dictionary:
 func gorjeta_jornaleiro() -> float:
 	var j := cfg_jornaleiro()
 	return roundf(maxf(renda_s() * float(j.get("segundos_de_lucro", 0.0)),
-			premio(1) * float(j.get("fracao_premio", 0.0))) * (1.0 + bonus_capangas("gorjeta")))
+			premio(1) * float(j.get("fracao_premio", 0.0))) * (1.0 + bonus_capangas("gorjeta"))
+			* (1.0 + bonus_carros("gorjeta")) * (1.0 + bonus_do_momento("gorjeta")))
 
 
 # --- prestígio Nova Cidade (cfg "cidades") -----------------------------------------
@@ -455,14 +468,16 @@ func renda_s() -> float:
 func renda_modalidade(id: String) -> float:
 	var base := float(cfg.get("renda_base", 0.0)) if tem("renda") else 0.0
 	return (base + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"]) * (1.0 + bonus_trofeus("renda")) \
-			* (1.0 + bonus_capangas("renda")) * multiplicador_cidade()
+			* (1.0 + bonus_capangas("renda")) * (1.0 + bonus_carros("renda")) * (1.0 + bonus_do_momento("renda")) \
+			* multiplicador_cidade()
 
 
 ## Prêmio da posição `pos` (1 = vitória) na liga atual.
 func premio(pos: int) -> float:
 	var n := int(cfg["grid"])
 	return roundf(float(cfg["premio_p1"]) * float(dados_liga()["multiplicador"]) * float(n + 1 - pos) / n
-			* (1.0 + bonus_trofeus("premio")) * (1.0 + bonus_capangas("premio")) * multiplicador_cidade())
+			* (1.0 + bonus_trofeus("premio") + bonus_tacas()) * (1.0 + bonus_capangas("premio"))
+			* (1.0 + bonus_carros("premio")) * (1.0 + bonus_do_momento("premio")) * multiplicador_cidade())
 
 
 ## A corrida terminou em `pos`: o prêmio entra e a vitória libera a próxima liga.
@@ -479,6 +494,7 @@ func concluir(pos: int, fator := 1.0) -> float:
 	registrar_meta("corridas")
 	if pos == 1:
 		registrar_meta("vitorias")
+		vitoria_no_desafio()
 	return p
 
 
@@ -776,7 +792,8 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 					"consistencia": pr["consistencia"], "agressividade": pr["agressividade"], "regular": true}})
 	var base: Dictionary = carro_base(dados).duplicate(true)
 	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra) + bonus_trofeus("potencia")
-			+ (bonus_combustivel() if combustivel_ativo(Time.get_unix_time_from_system()) else 0.0))
+			+ bonus_carros("potencia") + bonus_do_momento("potencia")
+			+ (bonus_combustivel() if combustivel_ativo(relogio()) else 0.0))
 	base["aderencia"] = float(base["aderencia"]) * (1.0 + efeito("aderencia", niveis_extra))
 	# The Fastfather: quem corre é sempre o sobrinho (o piloto base); os rapazes
 	# contratados lutam na Rinha.
@@ -918,6 +935,234 @@ func pagar_rinha(pos: int) -> float:
 		if pos == 1:
 			ganhar_trofeu()
 		return p))
+
+
+# --- o relógio do jogo -----------------------------------------------------------
+
+func relogio() -> float:
+	return agora_fixo if agora_fixo >= 0.0 else Time.get_unix_time_from_system()
+
+
+## Segundos Unix na hora do aparelho (com o fuso).
+static func _local(t: float) -> float:
+	return t + float(Time.get_time_zone_from_system().get("bias", 0)) * 60.0
+
+
+## Bônus que valem agora: a manchete do dia, o fiscal comprado e o fim de semana.
+func bonus_do_momento(tipo: String) -> float:
+	var t := relogio()
+	# Chamado a cada prêmio e a cada quadro: o resultado vale pelo segundo.
+	var chave := "%d|%s|%f|%d" % [int(t), tipo, fiscal_ate, cfg.size()]
+	if _momento_cache.has(chave):
+		return _momento_cache[chave]
+	if _momento_cache.size() > 32:
+		_momento_cache.clear()
+	var b := _bonus_do_momento(tipo, t)
+	_momento_cache[chave] = b
+	return b
+
+
+var _momento_cache := {}
+
+
+func _bonus_do_momento(tipo: String, t: float) -> float:
+	var b := 0.0
+	var m := manchete_do_dia(t)
+	if String(m.get("efeito", "")) == tipo:
+		b += float(m.get("bonus", 0.0))
+	if fiscal_ativo(t) and String(cfg_fiscal().get("efeito", "")) == tipo:
+		b += float(cfg_fiscal().get("bonus", 0.0))
+	if tipo == "premio" and fim_de_semana(t):
+		b += float(cfg_fim_de_semana().get("premio", 0.0))
+	return b
+
+
+# --- manchete do dia (cfg "jornal_dia") -------------------------------------------
+# A Gazeta do Cais de hoje: uma manchete por dia, sorteada pela data, com um
+# bônus que vale o dia inteiro.
+
+func manchete_do_dia(t: float = -1.0) -> Dictionary:
+	var lista: Array = cfg.get("jornal_dia", {}).get("lista", [])
+	if lista.is_empty():
+		return {}
+	var d := MetaDia.dia(relogio() if t < 0.0 else t)
+	return lista[absi(hash("manchete|" + d)) % lista.size()]
+
+
+# --- presente do chefão (cfg "presente_diario") -----------------------------------
+# Um presente por dia, numa sequência de 7: dias seguidos avançam, um dia sem
+# entrar volta ao 1º. Dias 1 a 6 pagam minutos da renda (no mínimo um prêmio de
+# vitória); o 7º traz um capanga de nível alto.
+
+func cfg_presente() -> Dictionary:
+	return cfg.get("presente_diario", {})
+
+
+## O dia da sequência (1 a 7) do presente de hoje ou do próximo.
+func dia_do_presente(t: float = -1.0) -> int:
+	var tt := relogio() if t < 0.0 else t
+	var hoje := MetaDia.dia(tt)
+	var seq := int(presente.get("seq", 0))
+	if String(presente.get("dia", "")) == hoje:
+		return seq
+	if String(presente.get("dia", "")) == MetaDia.dia(tt - 86400.0):
+		return seq % 7 + 1
+	return 1
+
+
+func presente_pronto(t: float = -1.0) -> bool:
+	return not cfg_presente().is_empty() and String(presente.get("dia", "")) != MetaDia.dia(relogio() if t < 0.0 else t)
+
+
+func valor_presente(n: int) -> float:
+	var mins: Array = cfg_presente().get("minutos", [])
+	if n < 1 or n > mins.size():
+		return 0.0
+	return roundf(maxf(renda_s() * float(mins[n - 1]) * 60.0, premio(1)))
+
+
+## Coleta o presente de hoje. {dia, dinheiro} ou {dia, capanga}; vazio: não deu.
+func coletar_presente(dados: Node, t: float = -1.0) -> Dictionary:
+	var tt := relogio() if t < 0.0 else t
+	if not presente_pronto(tt):
+		return {}
+	var n := dia_do_presente(tt)
+	presente = {"dia": MetaDia.dia(tt), "seq": n}
+	if n >= 7:
+		return {"dia": n, "capanga": dar_capanga(dados, int(cfg_presente().get("capanga_nivel", 1)), int(tt))}
+	var v := valor_presente(n)
+	dinheiro += v
+	return {"dia": n, "dinheiro": v}
+
+
+## Um capanga já no nível `nivel` (presente, pacote): entra como os contratados.
+func dar_capanga(dados: Node, nivel: int, semente: int) -> Dictionary:
+	var p := contratar(dados, semente)
+	if not p.is_empty():
+		p["nivel"] = maxi(nivel, 1)
+	return p
+
+
+# --- desafio de fim de semana (cfg "fim_de_semana") ---------------------------------
+# Sábado e domingo uma família rival desafia os Bellucci: os prêmios sobem e
+# quem vence `vitorias` corridas no fim de semana leva a taça da família (um
+# bônus de prêmio para sempre) e uma bolada.
+
+func cfg_fim_de_semana() -> Dictionary:
+	return cfg.get("fim_de_semana", {})
+
+
+func fim_de_semana(t: float = -1.0) -> bool:
+	if cfg_fim_de_semana().is_empty():
+		return false
+	var wd := int(Time.get_datetime_dict_from_unix_time(int(_local(relogio() if t < 0.0 else t)))["weekday"])
+	return wd in cfg_fim_de_semana().get("dias", [6, 0]).map(func(x): return int(x))
+
+
+## O sábado do fim de semana de `t` (AAAA-MM-DD): a chave do desafio.
+func _semana(t: float) -> String:
+	var l := _local(t)
+	var wd := int(Time.get_datetime_dict_from_unix_time(int(l))["weekday"])
+	var desde_sabado := (wd + 1) % 7  # sábado 0, domingo 1, ...
+	return Time.get_date_string_from_unix_time(int(l) - desde_sabado * 86400)
+
+
+## A família rival do fim de semana (gira pela lista de cenas.json "familias").
+func familia_do_desafio(familias: Array, t: float = -1.0) -> String:
+	if familias.is_empty():
+		return ""
+	var dias := int(Time.get_unix_time_from_datetime_string(_semana(relogio() if t < 0.0 else t)) / 86400)
+	return String(familias[(dias / 7) % familias.size()])
+
+
+func estado_desafio(t: float = -1.0) -> Dictionary:
+	var k := _semana(relogio() if t < 0.0 else t)
+	if String(desafio.get("semana", "")) != k:
+		desafio = {"semana": k, "vitorias": 0, "coletado": false}
+	return desafio
+
+
+func vitoria_no_desafio() -> void:
+	if fim_de_semana():
+		var d := estado_desafio()
+		d["vitorias"] = int(d["vitorias"]) + 1
+
+
+func desafio_pronto() -> bool:
+	var d := estado_desafio()
+	return fim_de_semana() and not bool(d["coletado"]) \
+			and int(d["vitorias"]) >= int(cfg_fim_de_semana().get("vitorias", 1))
+
+
+func recompensa_desafio() -> float:
+	return roundf(maxf(renda_s() * float(cfg_fim_de_semana().get("recompensa_min", 0.0)) * 60.0, premio(1)))
+
+
+## Coleta a taça da `familia` e a bolada; devolve a bolada (0: não deu).
+func coletar_desafio(familia: String) -> float:
+	if not desafio_pronto():
+		return 0.0
+	desafio["coletado"] = true
+	if familia != "" and not familia in tacas:
+		tacas.append(familia)
+	var v := recompensa_desafio()
+	dinheiro += v
+	return v
+
+
+func bonus_tacas() -> float:
+	return float(cfg_fim_de_semana().get("taca_bonus", 0.0)) * tacas.size()
+
+
+# --- coleção de carros (cfg "garagem" → "colecao") --------------------------------
+# Cada carro da época na garagem dá um bônus pequeno para sempre (fica na Nova
+# Cidade, como os carros).
+
+func bonus_carros(tipo: String) -> float:
+	var b := 0.0
+	for c in cfg.get("garagem", []):
+		var col: Dictionary = c.get("colecao", {})
+		if String(col.get("efeito", "")) == tipo and String(c["id"]) in garagem:
+			b += float(col.get("bonus", 0.0))
+	return b
+
+
+# --- fiscal comprado (cfg "fiscal") -------------------------------------------------
+# Um vídeo compra o fiscal: o bônus vale por "duracao_s", com usos por dia.
+
+func cfg_fiscal() -> Dictionary:
+	return cfg.get("fiscal", {})
+
+
+func fiscal_ativo(t: float = -1.0) -> bool:
+	return (relogio() if t < 0.0 else t) < fiscal_ate
+
+
+func fiscal_restantes(dia: String) -> int:
+	var usados := fiscal_usos if fiscal_dia == dia else 0
+	return maxi(int(cfg_fiscal().get("usos_dia", 0)) - usados, 0)
+
+
+func usar_fiscal(t: float, dia: String) -> bool:
+	if fiscal_restantes(dia) <= 0:
+		return false
+	if fiscal_dia != dia:
+		fiscal_dia = dia
+		fiscal_usos = 0
+	fiscal_usos += 1
+	fiscal_ate = maxf(fiscal_ate, t) + float(cfg_fiscal().get("duracao_s", 0.0))
+	return true
+
+
+# --- Família Fundadora (compra única, cfg "fundadora") ------------------------------
+# Sem anúncio entre as ligas, o carro dourado e um capanga de nível alto.
+
+func conceder_fundadora(dados: Node) -> bool:
+	if fundadora:
+		return false
+	fundadora = true
+	dar_capanga(dados, int(cfg.get("fundadora", {}).get("capanga_nivel", 1)), 1937)
+	return true
 
 
 # --- metas do dia ---------------------------------------------------------------
@@ -1110,7 +1355,8 @@ func para_save() -> Dictionary:
 			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
 			"guias": guias, "garagem": garagem, "ferro_velho": ferro_velho, "combustivel_ate": combustivel_ate,
 			"combustivel_dia": combustivel_dia, "combustivel_usos": combustivel_usos, "trofeus": trofeus,
-			"cidade": cidade}
+			"cidade": cidade, "presente": presente, "desafio": desafio, "tacas": tacas, "fiscal_ate": fiscal_ate,
+			"fiscal_dia": fiscal_dia, "fiscal_usos": fiscal_usos, "fundadora": fundadora}
 
 
 ## Quão adiantado o jogo está, para escolher entre o save do aparelho e o da
@@ -1169,6 +1415,17 @@ func de_save(s: Dictionary) -> void:
 	combustivel_usos = int(s.get("combustivel_usos", 0))
 	trofeus = Array(s.get("trofeus", [])).map(func(x): return String(x))
 	cidade = int(s.get("cidade", 0))
+	var pr = s.get("presente", {})
+	if pr is Dictionary:
+		presente = {"dia": String(pr.get("dia", "")), "seq": int(pr.get("seq", 0))}
+	var de = s.get("desafio", {})
+	if de is Dictionary and de.has("semana"):
+		desafio = {"semana": String(de["semana"]), "vitorias": int(de.get("vitorias", 0)), "coletado": bool(de.get("coletado", false))}
+	tacas = Array(s.get("tacas", [])).map(func(x): return String(x))
+	fiscal_ate = float(s.get("fiscal_ate", 0.0))
+	fiscal_dia = String(s.get("fiscal_dia", ""))
+	fiscal_usos = int(s.get("fiscal_usos", 0))
+	fundadora = bool(s.get("fundadora", false))
 	if not s.has("trofeus"):
 		_trofeus_do_progresso()
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
