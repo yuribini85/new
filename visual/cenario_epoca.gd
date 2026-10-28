@@ -47,6 +47,36 @@ const LAMPADA := Color(1.0, 0.82, 0.5)
 const LUZES_MAX := 14  # luzes de verdade (o resto só brilha): celular simples aguenta
 ## Ferramentas e testes: "dia", "tarde" ou "noite" fixos; "" segue o relógio.
 static var fase_forcada := ""
+## A cidade do prestígio (IdleEstado.cidade): cada uma pinta o cenário com a
+## cor dela e põe a peça que a identifica (sugestão 8 aprovada, 2026-10-28).
+static var cidade := 0
+## Chuva de hoje (a tela sorteia pela data): céu fechado e gotas.
+static var chuva := false
+static var chuva_forcada := -1  # ferramentas: 1 chove, 0 não; -1 pela data
+## Letreiros de madeira na cerca: anúncios da época com nomes do próprio jogo.
+static var letreiros: Array = []
+const CIDADES := [
+	{},  # Brooklyn: o autódromo rural de sempre
+	{"ceu": Color(0.86, 0.9, 1.0), "grama": Color(0.3, 0.37, 0.22), "extra": "trilhos"},  # Chicago: trem elevado
+	{"ceu": Color(0.86, 0.8, 0.74), "grama": Color(0.3, 0.33, 0.2), "folhas": [Color(0.2, 0.26, 0.14)],
+		"extra": "chamines"},  # Detroit: fábricas
+	{"ceu": Color(0.95, 0.97, 1.0), "grama": Color(0.74, 0.67, 0.48),
+		"campos": [Color(0.8, 0.72, 0.52), Color(0.7, 0.62, 0.44)], "extra": "mar"},  # Atlantic City: areia e mar
+	{"campos": [Color(0.8, 0.66, 0.3), Color(0.74, 0.6, 0.26), Color(0.68, 0.56, 0.24)], "extra": "silos"},  # Kansas City: trigo
+	{"grama": Color(0.24, 0.34, 0.18), "folhas": [Color(0.16, 0.26, 0.12), Color(0.2, 0.3, 0.14)],
+		"extra": "pantano"},  # Nova Orleans: brejo
+	{"ceu": Color(1.0, 0.92, 0.82), "grama": Color(0.72, 0.56, 0.38),
+		"campos": [Color(0.76, 0.6, 0.42), Color(0.66, 0.5, 0.34)], "folhas": [Color(0.36, 0.42, 0.22)],
+		"extra": "neon"},  # Las Vegas: deserto e neon
+]
+
+
+static func _cid() -> Dictionary:
+	return CIDADES[posmod(cidade, CIDADES.size())]
+
+
+static func _cor_cidade(chave: String, padrao):
+	return _cid().get(chave, padrao)
 
 
 ## A fase da hora `h` (0–23): dia das 6 às 16, fim de tarde até as 19, noite.
@@ -71,14 +101,17 @@ const CHAPEUS := [Color("1c1a18"), Color("5a4a38"), Color("3a3a3a"), Color("c9b2
 
 static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environment, luz: DirectionalLight3D) -> void:
 	var f: Dictionary = FASES[fase()]
-	ambiente.background_color = f["ceu"]
+	var ceu: Color = f["ceu"] * (_cor_cidade("ceu", Color.WHITE) as Color)
+	if chuva:
+		ceu = ceu.lerp(Color(0.38, 0.4, 0.44), 0.6)
+	ambiente.background_color = ceu
 	ambiente.ambient_light_color = f["ambiente"]
 	ambiente.fog_enabled = true
-	ambiente.fog_light_color = f["ceu"]
-	ambiente.fog_density = 0.0012
+	ambiente.fog_light_color = ceu
+	ambiente.fog_density = 0.0028 if chuva else 0.0012
 	ambiente.fog_sky_affect = 0.0
 	luz.light_color = f["luz"]
-	luz.light_energy = f["energia"]
+	luz.light_energy = float(f["energia"]) * (0.6 if chuva else 1.0)
 	luz.rotation = f["sol"]  # no fim da tarde, sol baixo: sombras compridas
 	luz.shadow_enabled = not Preferencias.efeitos_leves
 	luz.shadow_opacity = 0.7
@@ -127,6 +160,139 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	_fumaca(cena, torre)
 	if fase() == "noite":
 		_postes(cena, pts, largura)
+	_letreiros(cena, pts, largura)
+	_extra_da_cidade(cena, rng, pista, caixa, amostra, largura)
+	if chuva:
+		_chover(cena, caixa)
+
+
+## Placas de madeira de pé por fora da cerca, com os anúncios da época. Em Las
+## Vegas acendem em neon.
+static func _letreiros(cena: Node3D, pts: PackedVector2Array, largura: float) -> void:
+	if letreiros.is_empty():
+		return
+	var neon := String(_cid().get("extra", "")) == "neon"
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var n := pts.size()
+	var passo := maxi(n / (letreiros.size() + 1), 8)
+	var dist := largura * 0.5 + CERCA_M + 2.6
+	var k := 0
+	for i in range(passo, n - 1, passo):
+		if k >= letreiros.size():
+			break
+		var dir := (pts[i + 1] - pts[i - 1]).normalized()
+		var fora := dir.orthogonal()
+		var lado := -1.0 if k % 2 == 0 else 1.0
+		var p := pts[i] + fora * dist * lado
+		var rumo := dir.angle()
+		var placa := Color("1c1a18") if neon else CREME
+		_caixa(st, MADEIRA, p - dir * 3.4, rumo, Vector3(0.24, 3.8, 0.24))
+		_caixa(st, MADEIRA, p + dir * 3.4, rumo, Vector3(0.24, 3.8, 0.24))
+		_caixa(st, placa, p, rumo, Vector3(8.4, 2.4, 0.16), 1.5)
+		# O texto na face virada para a pista, um pouco à frente da tábua.
+		var para_pista := -fora * lado
+		var n3 := Vector3(para_pista.x, 0.0, -para_pista.y)
+		var l := Label3D.new()
+		l.text = String(letreiros[k])
+		l.font = Tipografia.fonte("display")
+		l.font_size = 96
+		l.pixel_size = 0.011
+		l.outline_size = 0
+		l.modulate = IdleUI.COR_NEON if neon else Color("2a1f17")
+		l.shaded = not neon
+		l.position = _v3(p + para_pista * 0.12, 2.7)
+		l.rotation.y = atan2(n3.x, n3.z)
+		l.width = 700.0
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		cena.add_child(l)
+		k += 1
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 0.95
+	mi.material_override = mat
+	cena.add_child(mi)
+
+
+## A peça que identifica a cidade, longe da pista.
+static func _extra_da_cidade(cena: Node3D, rng: RandomNumberGenerator, pista: Pista, caixa: Rect2,
+		amostra: PackedVector2Array, largura: float) -> void:
+	var extra := String(_cid().get("extra", ""))
+	if extra == "" or extra == "neon":
+		return
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var c := caixa.get_center()
+	var borda := caixa.size * 0.5 + Vector2(70, 70)
+	match extra:
+		"trilhos":  # trem elevado de Chicago numa reta ao longo de um lado
+			var y := c.y - borda.y
+			var x := c.x - borda.x - 60.0
+			while x < c.x + borda.x + 60.0:
+				_caixa(st, Color(0.28, 0.27, 0.26), Vector2(x, y), 0.0, Vector3(0.8, 9.0, 0.8))
+				x += 16.0
+			_caixa(st, Color(0.32, 0.3, 0.28), Vector2(c.x, y), 0.0, Vector3(borda.x * 2.0 + 140.0, 1.2, 4.0), 9.0)
+			for k in 3:
+				_caixa(st, Color(0.45, 0.2, 0.16), Vector2(c.x - 60.0 + k * 14.0, y), 0.0, Vector3(13.0, 3.0, 3.0), 10.2)
+		"chamines":  # fábricas de Detroit no horizonte
+			for k in 5:
+				var p := Vector2(c.x - borda.x + k * borda.x * 0.5, c.y + borda.y + 30.0 + (k % 2) * 25.0)
+				_caixa(st, Color(0.36, 0.22, 0.18), p, 0.0, Vector3(30.0, 14.0, 18.0))
+				_caixa(st, Color(0.3, 0.2, 0.17), p + Vector2(8, 0), 0.0, Vector3(3.0, 34.0, 3.0))
+				_fumaca(cena, _v3(p + Vector2(8, 0), 34.0))
+		"mar":  # Atlantic City: o mar de um lado e o calçadão de tábuas
+			var y := c.y + borda.y + 10.0
+			_quad_para(st, Color(0.22, 0.42, 0.52), [_v3(Vector2(c.x - 3000, y), -0.03), _v3(Vector2(c.x + 3000, y), -0.03),
+					_v3(Vector2(c.x + 3000, y + 3000), -0.03), _v3(Vector2(c.x - 3000, y + 3000), -0.03)], Vector3.UP)
+			_caixa(st, MADEIRA_CLARA, Vector2(c.x, y - 6.0), 0.0, Vector3(borda.x * 2.0 + 200.0, 0.6, 10.0), 0.3)
+		"silos":  # Kansas City: silos de grão
+			for k in 4:
+				var p := Vector2(c.x + borda.x + 20.0, c.y - borda.y * 0.6 + k * 14.0)
+				_caixa(st, Color(0.72, 0.7, 0.66), p, 0.0, Vector3(9.0, 22.0, 9.0), 0.0, Color(0.5, 0.48, 0.45))
+		"pantano":  # Nova Orleans: poças de brejo entre as árvores
+			for k in 14:
+				var p := c + Vector2(rng.randf_range(-borda.x, borda.x), rng.randf_range(-borda.y, borda.y))
+				if _longe(p, amostra) < largura + 30.0:
+					continue
+				var r := rng.randf_range(8.0, 22.0)
+				_quad_para(st, Color(0.2, 0.28, 0.24), [_v3(p + Vector2(-r, -r * 0.6), -0.02), _v3(p + Vector2(r, -r * 0.6), -0.02),
+						_v3(p + Vector2(r, r * 0.6), -0.02), _v3(p + Vector2(-r, r * 0.6), -0.02)], Vector3.UP)
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 0.9
+	mi.material_override = mat
+	cena.add_child(mi)
+
+
+## Chuva: riscos finos caindo sobre a pista inteira.
+static func _chover(cena: Node3D, caixa: Rect2) -> void:
+	var p := CPUParticles3D.new()
+	p.amount = 400 if Preferencias.efeitos_leves else 1400  # gráficos leves: chuva rala
+	p.lifetime = 1.2
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	var c := caixa.get_center()
+	p.position = Vector3(c.x, 40.0, -c.y)
+	p.emission_box_extents = Vector3(caixa.size.x * 0.5 + 40.0, 1.0, caixa.size.y * 0.5 + 40.0)
+	p.direction = Vector3(0.15, -1, 0)
+	p.spread = 3.0
+	p.initial_velocity_min = 36.0
+	p.initial_velocity_max = 44.0
+	p.gravity = Vector3.ZERO
+	var gota := BoxMesh.new()
+	gota.size = Vector3(0.12, 2.2, 0.12)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.albedo_color = Color(0.82, 0.88, 1.0, 0.55)
+	gota.material = m
+	p.mesh = gota
+	cena.add_child(p)
 
 
 static var _halo: QuadMesh
@@ -383,7 +549,8 @@ static func _telhado(st: SurfaceTool, cor: Color, p: Vector2, rumo: float, tam: 
 ## Copa de árvore facetada (octaedro achatado) sobre um tronco.
 static func _arvore(st: SurfaceTool, rng: RandomNumberGenerator, p: Vector2, escala: float) -> void:
 	_caixa(st, MADEIRA, p, 0.0, Vector3(0.5, 2.4, 0.5) * escala)
-	var cor: Color = FOLHAS[rng.randi() % FOLHAS.size()]
+	var folhas: Array = _cor_cidade("folhas", FOLHAS)
+	var cor: Color = folhas[rng.randi() % folhas.size()]
 	var c := _v3(p, 4.4 * escala)
 	var r := 2.6 * escala * rng.randf_range(0.85, 1.2)
 	var h := 2.4 * escala
@@ -413,7 +580,7 @@ static func _longe(p: Vector2, amostra: PackedVector2Array) -> float:
 static func _campos(st: SurfaceTool, rng: RandomNumberGenerator, caixa: Rect2, amostra: PackedVector2Array, largura: float) -> void:
 	var c := caixa.get_center()
 	var meia := caixa.size * 0.5 + Vector2(500, 500)
-	_quad_para(st, GRAMA, [_v3(c + Vector2(-meia.x, -meia.y), -0.06), _v3(c + Vector2(meia.x, -meia.y), -0.06),
+	_quad_para(st, _cor_cidade("grama", GRAMA), [_v3(c + Vector2(-meia.x, -meia.y), -0.06), _v3(c + Vector2(meia.x, -meia.y), -0.06),
 			_v3(c + Vector2(meia.x, meia.y), -0.06), _v3(c + Vector2(-meia.x, meia.y), -0.06)], Vector3.UP)
 	var lote := 60.0
 	var x := c.x - meia.x
@@ -422,7 +589,8 @@ static func _campos(st: SurfaceTool, rng: RandomNumberGenerator, caixa: Rect2, a
 		while y < c.y + meia.y:
 			var centro := Vector2(x + lote * 0.5, y + lote * 0.5)
 			if _longe(centro, amostra) > largura + lote * 0.75 and rng.randf() < 0.55:
-				var cor: Color = CAMPOS[rng.randi() % CAMPOS.size()]
+				var campos: Array = _cor_cidade("campos", CAMPOS)
+				var cor: Color = campos[rng.randi() % campos.size()]
 				var m := lote * 0.5 - 1.5
 				_quad_para(st, cor, [_v3(centro + Vector2(-m, -m), -0.04), _v3(centro + Vector2(m, -m), -0.04),
 						_v3(centro + Vector2(m, m), -0.04), _v3(centro + Vector2(-m, m), -0.04)], Vector3.UP)

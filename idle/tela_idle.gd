@@ -132,6 +132,7 @@ var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocí
 var _trilho: Control  # as câmeras
 var _pagina_corrida_v: VBoxContainer
 var _fundo_2d: ColorRect
+var _chuva_tela: Control
 var _largar: Button
 var _aguardando := false  # carros no grid esperando o LARGAR
 var _rinha: RinhaIdle  # aba RINHA (a luta corre sempre, a aba só mostra)
@@ -600,6 +601,11 @@ func _pagina_corrida() -> Control:
 	_arena3d.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_arena3d.visible = false
 	corrida.add_child(_arena3d)
+	_chuva_tela = _Chuva.new()  # a chuva na frente da lente (o 3D chove junto, mais fino)
+	_chuva_tela.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_chuva_tela.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_chuva_tela.visible = false
+	corrida.add_child(_chuva_tela)
 	_hud = HudCorrida.new()
 	_hud.sem_volta = true
 	_hud.sem_banda = true  # a posição e a volta estão na faixa da liga
@@ -1387,6 +1393,33 @@ class _MedidorToque extends Control:
 		draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
+## A chuva na lente: riscos inclinados caindo por cima da corrida, poucos e
+## finos (o dia de chuva é sorteado pela data, CenarioEpoca.chuva).
+class _Chuva extends Control:
+	const GOTAS := 70
+	var _gotas: Array = []
+
+	func _ready() -> void:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 1937
+		for i in GOTAS:
+			_gotas.append(Vector3(rng.randf(), rng.randf(), rng.randf_range(0.6, 1.0)))
+
+	func _process(_d: float) -> void:
+		if is_visible_in_tree():
+			queue_redraw()
+
+	func _draw() -> void:
+		var t := Time.get_ticks_msec() / 1000.0
+		if Preferencias.reduzir_animacoes:
+			t = 0.0
+		for g in _gotas:
+			var y := fmod(g.y + t * 1.6 * g.z, 1.0) * (size.y + 60.0) - 30.0
+			var x := fmod(g.x + t * 0.18 * g.z, 1.0) * size.x
+			var p := Vector2(x, y)
+			draw_line(p, p + Vector2(-6.0, 26.0) * g.z, Color(0.85, 0.9, 1.0, 0.35 * g.z), 2.0, true)
+
+
 ## Os pontos do pelotão: um por carro, o seu em ouro.
 class _Pelotao extends Control:
 	var total := 0
@@ -1658,6 +1691,12 @@ func _nova_corrida() -> void:
 		_visual.mostrar(_pista, _resultado, {"jogador": COR_OURO})
 		_visual3d.faixas_pintura = faixas
 		_visual3d.epoca = String(estado.dados_modalidade().get("epoca", ""))
+		CenarioEpoca.cidade = estado.cidade
+		CenarioEpoca.letreiros = CenaQuadrinho.carregar("letreiros").get("lista", [])
+		# Chuva em cerca de um dia a cada sete, pela data (o dia inteiro igual).
+		CenarioEpoca.chuva = absi(hash("chuva|" + MetaDia.dia(estado.relogio()))) % 7 == 0 \
+				if CenarioEpoca.chuva_forcada < 0 else CenarioEpoca.chuva_forcada == 1
+		_chuva_tela.visible = CenarioEpoca.chuva
 		_visual3d.nomes = _nomes
 		_visual3d.chegada = 0.0
 		_visual3d.mostrar(_pista, _visual, categorias, pinturas)
@@ -2072,9 +2111,9 @@ func _eventos(ordem: Array) -> void:
 		var outro: String = (ordem[pos] if pos < ordem.size() else "") if ganhou else (ordem[pos - 2] if pos >= 2 else "")
 		var nome := String(_nomes.get(outro, "")).to_upper()
 		if ganhou and pos == 1:
-			_hud.evento("LÍDER!", "passou %s" % nome, IdleUI.COR_NEON, 6, -1.0, true)
+			_hud.evento("LÍDER!", "passou %s" % nome, IdleUI.COR_NEON, 6)
 		elif ganhou:
-			_hud.evento("ULTRAPASSAGEM!", "passou %s · %dº" % [nome, pos], IdleUI.COR_NEON_VERDE, 5, -1.0, true)
+			_hud.evento("ULTRAPASSAGEM!", "passou %s · %dº" % [nome, pos], IdleUI.COR_NEON_VERDE, 5)
 		if ganhou:
 			_estourar_posicao(_pos_antes - pos)
 			_agitar_torcida()

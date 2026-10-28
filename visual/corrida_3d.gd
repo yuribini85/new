@@ -1923,8 +1923,14 @@ func _levantar_poeira(id: String, v: float) -> void:
 		esfera.material = m
 		p.mesh = esfera
 		var cores := Gradient.new()
-		cores.set_color(0, Color(0.74, 0.62, 0.44, 0.22))
-		cores.set_color(1, Color(0.78, 0.68, 0.52, 0.0))
+		# A cor da poeira segue a hora (CenarioEpoca.fase): clara de dia, dourada
+		# no fim da tarde, azulada à noite; com chuva vira respingo de lama.
+		var tom := {"dia": Color(0.8, 0.72, 0.58), "tarde": Color(0.86, 0.66, 0.4), "noite": Color(0.42, 0.44, 0.52)}
+		var base: Color = tom.get(CenarioEpoca.fase(), Color(0.74, 0.62, 0.44))
+		if CenarioEpoca.chuva:
+			base = Color(0.3, 0.24, 0.18)
+		cores.set_color(0, Color(base, 0.22))
+		cores.set_color(1, Color(base.lightened(0.08), 0.0))
 		p.color_ramp = cores
 		p.position = Vector3(-dim.x * 0.5, 0.2, 0.0)
 		c.add_child(p)

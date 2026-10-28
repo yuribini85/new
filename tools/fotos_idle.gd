@@ -32,6 +32,7 @@ func _rodar() -> void:
 	var abrir := []
 	var ofertas := []
 	var guia := ""
+	var cidade_foto := 0
 	for arg in OS.get_cmdline_user_args():
 		var kv := arg.trim_prefix("--").split("=")
 		match kv[0]:
@@ -49,6 +50,8 @@ func _rodar() -> void:
 			"corridas": corridas = int(kv[1])
 			"abrir": abrir = Array(kv[1].split(","))
 			"fase": CenarioEpoca.fase_forcada = kv[1]  # dia, tarde ou noite
+			"chuva": CenarioEpoca.chuva_forcada = int(kv[1])
+			"cidade": cidade_foto = int(kv[1])
 			"ofertas": ofertas = Array(kv[1].split(","))
 			"guia": guia = kv[1]
 	DirAccess.make_dir_recursive_absolute(saida)
@@ -72,6 +75,7 @@ func _rodar() -> void:
 	for i in contratos:
 		e.contratar(dados, 100 + i)
 	e.corridas = corridas
+	e.cidade = cidade_foto
 	for d in e.cfg_desbloqueios():
 		var id := String(d["id"])
 		if not novo or id in abrir:
@@ -139,6 +143,11 @@ func _rodar() -> void:
 			for i in 30:
 				await process_frame
 			tela._abrir("corrida")
+		elif aba == "geral":  # a pista inteira de cima (cenário da cidade)
+			tela._abrir("corrida")
+			tela._trocar_camera("geral")
+			for i in 60:
+				await process_frame
 		elif aba == "dupla":  # a câmera dupla: 3D em cima, a pista em 2D embaixo, sem a oficina
 			tela._abrir("corrida")
 			tela._trocar_camera("dupla")
