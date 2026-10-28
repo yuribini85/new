@@ -71,7 +71,6 @@ const FILEIRA_M := 10.0  # de uma fileira para a outra
 const LADOS_3 := [3.6, 0.0, -3.6]
 const LADOS_2 := [1.8, -1.8]
 const VAGA_LARGURA_M := 3.0
-const VAGA_FUNDO_M := 1.6
 const VAGA_TRACO_M := 0.22
 const XADREZ_M := 0.8  # lado de cada quadrado da linha de chegada
 ## Linha de chegada e pórtico: MontadorPista.LINHA_CHEGADA_M e PORTICO_M.
@@ -918,7 +917,7 @@ var modo := "normal"
 ## o carro fica sempre no mesmo ponto, no terço de baixo da tela, e a pista à
 ## frente aparece — as deixas da pilotagem caem sempre no mesmo lugar.
 var perseguicao := false
-const TAMANHO_PERSEGUICAO := 34.0
+const TAMANHO_PERSEGUICAO := 46.0  # mais longe: mais pista à vista (pedido do usuário, 2026-10-28)
 ## Quanto a câmera mira à frente do carro, em frações do quadro (põe o carro
 ## no terço de baixo).
 const AVANCO_PERSEGUICAO := 0.42
@@ -2209,8 +2208,8 @@ func _recuo_grid(id: String, s_agora: float) -> float:
 
 
 ## Grid de largada: fileiras de três e de dois alternadas (3-2-3-2...), a pole
-## na frente à esquerda; cada vaga é um colchete branco pintado (traço na
-## frente e dois para trás).
+## na frente à esquerda, marcado como em 1940 (pedido do usuário): linhas
+## brancas simples, traços curtos e o número de cada posição pintado no chão.
 func _grid() -> void:
 	_vagas = {}
 	var ordem := _fonte.ordem()
@@ -2223,28 +2222,45 @@ func _grid() -> void:
 		var s_sim := _fonte.distancia_em(id, 0.0)
 		var s0 := _fonte.distancia_em(ordem[0], 0.0) - fileira * FILEIRA_M
 		_vagas[id] = {"s": s0, "s_sim": s_sim, "lateral": lateral}
-		na_fileira += 1
-		if na_fileira >= lados.size():
-			na_fileira = 0
-			fileira += 1
 		var sv := fposmod(s0, _pista.comprimento)
 		var rumo := _pista.rumo_em(sv)
 		var frente := Vector2.from_angle(rumo)
 		var lado := Vector2.from_angle(rumo + PI / 2.0)
 		var centro := _pista.posicao_em(sv) + lado * lateral
 		var bico := centro + frente * 2.7  # à frente do carro (que tem ~4,3 m)
-		var tracos := [
-			[bico, Vector3(VAGA_TRACO_M, 0.02, VAGA_LARGURA_M)],
-			[bico - frente * (VAGA_FUNDO_M * 0.5) + lado * (VAGA_LARGURA_M * 0.5 - VAGA_TRACO_M * 0.5),
-					Vector3(VAGA_FUNDO_M, 0.02, VAGA_TRACO_M)],
-			[bico - frente * (VAGA_FUNDO_M * 0.5) - lado * (VAGA_LARGURA_M * 0.5 - VAGA_TRACO_M * 0.5),
-					Vector3(VAGA_FUNDO_M, 0.02, VAGA_TRACO_M)],
-		]
-		for t in tracos:
-			var b := _bloco(t[1], Color(0.92, 0.92, 0.9))
-			b.position = Vector3(t[0].x, 0.012, -t[0].y)
-			b.rotation.y = rumo
-			_cena.add_child(b)
+		# Grid de 1940: linhas brancas simples. Fileira de três, uma linha de
+		# borda a borda (pintada uma vez, com o primeiro carro dela); de dois,
+		# um traço curto na frente de cada carro.
+		if lados.size() == 3 and na_fileira == 0:
+			var meio := _pista.posicao_em(sv) + frente * 2.7
+			_pintar(meio, Vector3(VAGA_TRACO_M, 0.02, LARGURA_PISTA_M - 1.0), rumo)
+		elif lados.size() == 2:
+			_pintar(bico, Vector3(VAGA_TRACO_M, 0.02, VAGA_LARGURA_M * 0.8), rumo)
+		# O número da posição pintado no chão, à frente da linha.
+		var n := Label3D.new()
+		n.text = str(g + 1)
+		n.font = Tipografia.fonte("display")
+		n.font_size = 64
+		n.pixel_size = 0.018
+		n.outline_size = 0
+		n.modulate = Color(0.92, 0.9, 0.84, 0.9)
+		n.shaded = false
+		n.double_sided = true
+		var pn := bico + frente * 1.1
+		n.position = Vector3(pn.x, 0.03, -pn.y)
+		n.rotation = Vector3(-PI / 2.0, rumo - PI / 2.0, 0.0)  # deitado, lido de quem vem atrás
+		_cena.add_child(n)
+		na_fileira += 1
+		if na_fileira >= lados.size():
+			na_fileira = 0
+			fileira += 1
+
+
+func _pintar(p: Vector2, tam: Vector3, rumo: float) -> void:
+	var b := _bloco(tam, Color(0.92, 0.92, 0.9))
+	b.position = Vector3(p.x, 0.012, -p.y)
+	b.rotation.y = rumo
+	_cena.add_child(b)
 
 
 ## Pórtico de largada e chegada sobre a pista, com faixa quadriculada.
@@ -2603,11 +2619,14 @@ static func _bloco(tam: Vector3, cor: Color) -> MeshInstance3D:
 	return mi
 
 
+const GERAL_FOLGA := 1.55
 ## Visão geral: o traçado inteiro cabe na tela, qualquer que seja o tamanho
 ## dela agora (recalculado: a tela pode ter mudado desde a montagem).
 func _enquadrar_geral() -> void:
 	var aspecto := size.x / size.y if size.y > 1.0 else 1.2
-	_tamanho_geral = maxf(_proj.size.y, _proj.size.x / aspecto) / sqrt(2.0) * 1.12 + 24.0
+	# GERAL_FOLGA: as faixas da tela cobrem o alto e o pé; a pista inteira fica
+	# no meio, com folga (pedido do usuário, 2026-10-28).
+	_tamanho_geral = (maxf(_proj.size.y, _proj.size.x / aspecto) / sqrt(2.0) * 1.12 + 24.0) * GERAL_FOLGA
 
 
 ## Zebras vermelhas e brancas nas bordas das curvas.

@@ -213,7 +213,9 @@ fiscal de terno e chapéu na beira da largada com a bandeira de pano no alto da 
 
 Entre 1930 e 1940 não havia grid padrão: os carros largavam em fileiras de três, muitas vezes
 alternadas com fileiras de dois, conforme o circuito e o regulamento. A corrida desenha o grid em
-fileiras 3-2-3-2 (`Corrida3D._grid`, 10 m entre fileiras, pole na frente à esquerda). A simulação
+fileiras 3-2-3-2 (`Corrida3D._grid`, 10 m entre fileiras, pole na frente à esquerda), marcado como
+em 1940: linha branca simples de borda a borda nas fileiras de três, traço curto na frente de cada
+carro nas de dois e o número da posição pintado no chão. A simulação
 continua com a fila dela (nada muda no resultado); cada carro sai da vaga desenhada e se funde à
 posição da simulação nos primeiros metros (`Corrida3D._recuo_grid`, só visual).
 
@@ -223,3 +225,6 @@ Quarto botão no trilho das câmeras, o primeiro e o padrão: alterna sozinho en
 carro e a pista inteira, uma a cada 8 s (`TelaIdle.CICLO_CAMERA_S`, apresentação); no grid fica no
 plano de cima. A câmera da vez acende em ouro no trilho. Na visão geral a neblina do cenário sai
 (a câmera fica longe e a neblina cobria a pista).
+
+Visão geral e câmera do seu carro mais afastadas (`Corrida3D.GERAL_FOLGA` 1,55, a pista inteira
+entre as faixas da tela; `TAMANHO_PERSEGUICAO` 46 m).
