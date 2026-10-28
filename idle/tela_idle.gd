@@ -30,8 +30,6 @@ const COR_BOTAO := IdleUI.COR_BOTAO
 const COR_RUIM := IdleUI.COR_RUIM
 const PAUSA_CHEGADA_S := 1.2  # ciclo sem fim (usuário, 2026-10-28): a próxima larga logo
 const BEM_VINDO_MIN_S := 300.0  # menos tempo fora que isso: a renda entra sem a janela
-const PAUSA_COM_VIDEO_S := 1.6  # o PRÊMIO x2 fica na tela por DOBRAR_S, mesmo com a próxima andando
-const DOBRAR_S := 8.0
 const SALVAR_A_CADA_S := 5.0
 const AVISO_S := 3.5
 ## Apresentação, como no Chrome & Wreckage: contagem da largada, rival colado
@@ -102,7 +100,6 @@ var _t_chegada := 0.0
 var _pos_antes := 0
 var _avisado := {}  # rival -> quando avisou que se aproximava (tempo da corrida)
 var _subir: Button
-var _dobrar: Button
 var _ganho_corrida := 0.0
 var _dinheiro_mostrado := 0.0  # o número do topo, que conta até o dinheiro
 var _cameras := {}  # modo -> botão
@@ -165,17 +162,15 @@ var _grade_trofeus: GridContainer
 var _conta_trofeus: Label
 var _botao_trofeus: Button
 var _jornaleiro: JornaleiroIdle
-var _jornal_x2: Button  # o vídeo que dobra a gorjeta do jornaleiro
-var _jornal_x2_ate := 0.0
 var _jornaleiro_em := 0.0  # quando ele aparece de novo (relógio do app, s)
 var _gorjeta := 0.0
-const JORNAL_X2_S := 6.0  # apresentação: quanto o botão fica
 var _multiplo := 1  # ×1, ×10, PRÓX. (-2: até o próximo marco) ou MÁX (-1) nos cartões
 const PROXIMO_MARCO := -2
 var _seletor := {}  # 1/10/-1 -> botão
 ## Segurar a corrida acelera (cfg "toque"): a carga gasta enquanto segura e
 ## volta sozinha.
 var _toque_carga := 1.0
+var _avisou_vazio := false
 ## O prêmio pinga durante a corrida (análise de engajamento): a corrida já está
 ## resolvida na largada, então a parte do prêmio da chegada entra conforme o
 ## carro anda; na chegada entra só o que falta. O total não muda.
@@ -183,7 +178,6 @@ var _pago_corrida := 0.0
 ## Câmera lenta curta nos momentos fortes (golpes visuais): até quando (s do
 ## relógio) a corrida anda devagar.
 var _lento_ate := 0.0
-var _dobrar_ate := 0.0  # até quando (s do relógio) o PRÊMIO x2 fica na tela
 var _ja_correu := false  # nesta abertura do app: as seguintes largam com um bipe só
 const LENTO_S := 0.5
 const LENTO_VELOCIDADE := 0.3
@@ -653,15 +647,6 @@ func _pagina_corrida() -> Control:
 	_subir.offset_bottom = -182
 	_subir.pressed.connect(_subir_liga)
 	corrida.add_child(_subir)
-	_dobrar = IdleUI.botao_premio("PRÊMIO x2", 28, Tipografia.ALTURA_SECUNDARIA)
-	_dobrar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	_dobrar.offset_left = -200
-	_dobrar.offset_right = 200
-	_dobrar.offset_top = -270
-	_dobrar.offset_bottom = -182
-	_dobrar.visible = false
-	_dobrar.pressed.connect(_dobrar_premio)
-	corrida.add_child(_dobrar)
 	# LARGAR: até a largada automática, cada corrida começa no toque.
 	_largar = BotaoInicio.new("Largar", true, COR_BOTAO, 40, 88, 320)
 	_largar.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -722,18 +707,6 @@ func _pagina_corrida() -> Control:
 	_jornaleiro.offset_right = tam_j.x
 	_jornaleiro.offset_bottom = 0.0
 	_jornaleiro.offset_top = -tam_j.y
-	_jornal_x2 = IdleUI.botao_premio("GORJETA x2", 26, Tipografia.ALTURA_SECUNDARIA)
-	_jornal_x2.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-	_jornal_x2.visible = false
-	_jornal_x2.pressed.connect(_dobrar_gorjeta)
-	corrida.add_child(_jornal_x2)
-	var encaixar_x2 := func():
-		_jornal_x2.offset_left = 16.0
-		_jornal_x2.offset_right = 336.0
-		_jornal_x2.offset_bottom = -embaixo.size.y - 12.0
-		_jornal_x2.offset_top = _jornal_x2.offset_bottom - float(Tipografia.ALTURA_SECUNDARIA)
-	embaixo.resized.connect(encaixar_x2)
-	encaixar_x2.call()
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()
@@ -805,7 +778,7 @@ func _faixa_premio(pai: Control) -> Control:
 	esq.add_theme_constant_override("separation", 0)
 	h.add_child(esq)
 	IdleUI.rotulo("PRÊMIO ATUAL", 16, IdleUI.COR_CROMO, esq)
-	_premio = IdleUI.rotulo("", 36, IdleUI.COR_OURO_CLARO, esq, "deco")
+	_premio = IdleUI.rotulo("", 36, IdleUI.COR_NEON, esq, "deco")
 	var vao := Control.new()
 	vao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(vao)
@@ -839,7 +812,7 @@ func _oficina(pai: Control) -> void:
 	lista.focus_mode = Control.FOCUS_NONE
 	lista.text = "TROFÉUS"
 	_botao_trofeus = lista
-	lista.custom_minimum_size = Vector2(170, 48)
+	lista.custom_minimum_size = Vector2(150, 48)  # depois, a largura do combustível
 	lista.add_theme_font_override("font", Tipografia.fonte("display"))
 	lista.add_theme_font_size_override("font_size", 24)
 	for e in ["normal", "hover", "focus"]:
@@ -895,6 +868,15 @@ func _oficina(pai: Control) -> void:
 		l.comprar.connect(func(): _comprar(id, _multiplo))
 		fila.add_child(l)
 		_ladrilhos[id] = l
+	# Três cartões inteiros na faixa (o terceiro não fica cortado rente ao
+	# combustível); com mais, a faixa rola.
+	rolo.resized.connect(func():
+		var n := mini(fila.get_child_count(), 3)
+		if n <= 0 or rolo.size.x <= 0.0:
+			return
+		var w := floorf((rolo.size.x - 8.0 * (n - 1)) / n)
+		for c in fila.get_children():
+			(c as Control).custom_minimum_size.x = w)
 	_combustivel_cartao(linha_cartoes)
 
 
@@ -902,6 +884,11 @@ func _oficina(pai: Control) -> void:
 ## por dia (idle.json → "combustivel").
 func _combustivel_cartao(pai: Control) -> void:
 	var r := _cartao_por_video(pai, "COMBUSTÍVEL\nADULTERADO")
+	# O TROFÉUS, no alto da oficina, com a largura deste cartão.
+	var cartao: Control = r[1].get_parent().get_parent()
+	cartao.resized.connect(func():
+		if _botao_trofeus != null:
+			_botao_trofeus.custom_minimum_size.x = cartao.size.x)
 	_combustivel_texto = r[0]
 	_combustivel_botao = r[1]
 	_combustivel_botao.pressed.connect(_usar_combustivel)
@@ -930,8 +917,8 @@ func _cartao_por_video(pai: Control, nome: String, cor_nome := IdleUI.COR_TEXTO)
 	b.add_theme_font_override("font", Tipografia.fonte("display"))
 	b.add_theme_font_size_override("font_size", 24)
 	for e in ["normal", "hover", "focus"]:
-		b.add_theme_stylebox_override(e, IdleUI.caixa(IdleUI.COR_OURO, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
-	b.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_OURO.darkened(0.15), 5, 4, IdleUI.COR_OURO_ESCURO, 1))
+		b.add_theme_stylebox_override(e, IdleUI.brilho(IdleUI.caixa(IdleUI.COR_NEON, 5, 4, IdleUI.COR_NEON_ESCURO, 1), IdleUI.COR_NEON))
+	b.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_NEON.darkened(0.15), 5, 4, IdleUI.COR_NEON_ESCURO, 1))
 	b.add_theme_stylebox_override("disabled", IdleUI.caixa(LadrilhoIdle.DESLIGADO, 5, 4, LadrilhoIdle.DESLIGADO_BORDA, 1))
 	for c2 in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c2, IdleUI.COR_TINTA)
@@ -1168,8 +1155,6 @@ func _passo_jornaleiro() -> void:
 	if j.is_empty() or _jornaleiro == null:
 		return
 	var agora := Time.get_ticks_msec() / 1000.0
-	if _jornal_x2.visible and agora >= _jornal_x2_ate:
-		_jornal_x2.visible = false
 	var intervalo: Array = j.get("intervalo_s", [120, 120])
 	if _jornaleiro_em <= 0.0:
 		_jornaleiro_em = agora + randf_range(float(intervalo[0]), float(intervalo[1]))
@@ -1177,7 +1162,7 @@ func _passo_jornaleiro() -> void:
 	if agora < _jornaleiro_em or _jornaleiro.ativo():
 		return
 	var pode: bool = _paginas["corrida"].visible and _conversa == null and not _guia.ativo() \
-			and not _aguardando and _toque_medidor.visible and not _jornal_x2.visible \
+			and not _aguardando and _toque_medidor.visible and _janela_jornaleiro == null \
 			and estado.corridas >= int(j.get("a_partir_corridas", 0))
 	if not pode:
 		_jornaleiro_em = agora + 5.0  # tenta de novo daqui a pouco
@@ -1186,26 +1171,84 @@ func _passo_jornaleiro() -> void:
 	_jornaleiro_em = agora + randf_range(float(intervalo[0]), float(intervalo[1]))
 
 
+## O toque no jornaleiro abre a janela dele: a gorjeta, o quanto capangas e
+## troféus já somam nela, FECHAR (leva a gorjeta) e o anúncio que a multiplica.
 func _pagar_jornaleiro() -> void:
+	if _janela_jornaleiro != null:
+		return
 	_gorjeta = estado.gorjeta_jornaleiro()
-	estado.dinheiro += _gorjeta
-	ganho_flutuante(_gorjeta)
 	Sons.tocar_ui(self, "caixa_registradora", -4.0)
-	_efeitos.pipoca(_jornaleiro.get_global_rect().get_center() + Vector2(0, -60), "+$" + curto(_gorjeta), COR_DINHEIRO, 40, 0.8)
-	_jornal_x2.visible = true
-	_jornal_x2_ate = Time.get_ticks_msec() / 1000.0 + JORNAL_X2_S
-	IdleUI.pulsar(_jornal_x2, 1.08)
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.72)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(fundo)
+	_janela_jornaleiro = fundo
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.add_child(centro)
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(600, 0)
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18, 26, IdleUI.COR_BORDA, 1))
+	centro.add_child(p)
+	p.add_child(MolduraDeco.new(6.0))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 12)
+	p.add_child(v)
+	var t := IdleUI.rotulo("JORNALEIRO", 40, IdleUI.COR_OURO_CLARO, v, "deco")
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var figura := TextureRect.new()
+	figura.texture = load(JornaleiroIdle.quadro(0))
+	figura.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	figura.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	figura.custom_minimum_size = Vector2(0, 220)
+	v.add_child(figura)
+	var l := IdleUI.rotulo("Extra! O menino trouxe o jornal e a gorjeta da banca:", 22, IdleUI.COR_TEXTO, v, "regular")
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size.x = 540
+	var valor := IdleUI.rotulo("+$" + curto(_gorjeta), 56, IdleUI.COR_NEON, v, "deco")
+	valor.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var extra := estado.bonus_gorjeta()
+	if extra > 0.0:
+		var b := IdleUI.rotulo("Gorjeta +%d%% pelos capangas e troféus" % roundi(extra * 100.0), 20, IdleUI.COR_GANHO, v)
+		b.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var mult := estado.multiplicador_anuncio_gorjeta()
+	var a := IdleUI.rotulo("Assista a um anúncio e a gorjeta vale ×%d." % mult, 20, IdleUI.COR_SECUNDARIA, v, "regular")
+	a.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var x := IdleUI.botao_premio("GORJETA ×%d · $%s" % [mult, curto(_gorjeta * mult)], 26, 80, v)
+	x.pressed.connect(_dobrar_gorjeta)
+	var fechar := IdleUI.botao("FECHAR", IdleUI.COR_CROMO, 24, 64, v)  # o anúncio é o destaque
+	fechar.pressed.connect(_receber_gorjeta.bind(1))
+	if not Preferencias.reduzir_animacoes:
+		p.pivot_offset = Vector2(300, 300)
+		p.scale = Vector2(0.85, 0.85)
+		p.create_tween().tween_property(p, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+var _janela_jornaleiro: Control
+
+
+## Fecha a janela e paga a gorjeta `vezes` vezes.
+func _receber_gorjeta(vezes: int) -> void:
+	if _janela_jornaleiro == null:
+		return
+	_janela_jornaleiro.queue_free()
+	_janela_jornaleiro = null
+	var g := _gorjeta * vezes
+	estado.dinheiro += g
+	ganho_flutuante(g)
+	_efeitos.pipoca(_paginas["corrida"].get_global_rect().get_center() + Vector2(0, -60), "+$" + curto(g),
+			IdleUI.COR_NEON, 44, 0.9)
+	Sons.cascata(self, 4 if vezes == 1 else 7)
+	if vezes > 1:
+		_hud.evento("GORJETA ×%d!" % vezes, "+$" + curto(g), IdleUI.COR_NEON, 11, -1.0, true)
 	estado.salvar(Time.get_unix_time_from_system())
 
 
 func _dobrar_gorjeta() -> void:
-	_jornal_x2.visible = false
-	var g := _gorjeta
-	anuncios.premiado(func():
-		estado.dinheiro += g
-		ganho_flutuante(g)
-		_hud.evento("GORJETA x2!", "+$" + curto(g * 2.0), COR_OURO, 11, -1.0, true)
-		estado.salvar(Time.get_unix_time_from_system()))
+	var mult := estado.multiplicador_anuncio_gorjeta()
+	anuncios.premiado(func(): _receber_gorjeta(mult))
 
 
 ## Troféu novo na chegada: estouro sobre a corrida e o botão pulsa.
@@ -1225,7 +1268,7 @@ func _marcar_seletor() -> void:
 	for q in _seletor:
 		var b: Button = _seletor[q]
 		var ativo: bool = q == _multiplo
-		var cor := IdleUI.COR_OURO if ativo else IdleUI.COR_CARTAO
+		var cor := IdleUI.COR_NEON if ativo else IdleUI.COR_CARTAO
 		for e in ["normal", "hover", "focus", "pressed"]:
 			b.add_theme_stylebox_override(e, IdleUI.caixa(cor, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
 		for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
@@ -1262,43 +1305,68 @@ class _MedidorToque extends Control:
 	const PONTEIRO_COMPRIMENTO := 320.25
 	var carga := 1.0
 	var acelerando := false
+	var segurando := false  # o dedo na corrida (com ou sem carga)
 	var _ponteiro := 0.0
 	var _mostrador: Texture2D = load("res://arte/fastfather/corrida/velocimetro.png")
 	var _agulha: Texture2D = load("res://arte/fastfather/corrida/ponteiro.png")
+
+	func vazio() -> bool:
+		return segurando and carga <= 0.0
 
 	func _process(delta: float) -> void:
 		if not is_visible_in_tree():
 			return
 		var t := Time.get_ticks_msec() / 1000.0
-		var alvo := 0.9 + 0.03 * sin(t * 23.0) if acelerando else 0.4 + 0.02 * sin(t * 3.1)
-		_ponteiro = move_toward(_ponteiro, alvo, delta * (2.2 if acelerando else 0.8))
+		var alvo := 0.4 + 0.02 * sin(t * 3.1)
+		if acelerando:
+			alvo = 0.9 + 0.03 * sin(t * 23.0)
+		elif vazio():
+			alvo = 0.06  # sem carga o ponteiro despenca: o acelerador parou
+		_ponteiro = move_toward(_ponteiro, alvo, delta * (2.2 if acelerando or vazio() else 0.8))
 		queue_redraw()
 
 	func _angulo(f: float) -> float:
 		return INICIO + VARRE * clampf(f, 0.0, 1.0)
+
+	func _texto(t: String, cor: Color, tam: int, y: float) -> void:
+		var c := size * 0.5
+		var fonte := Tipografia.fonte("display")
+		var w := fonte.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+		var p := c + Vector2(-w * 0.5, y)
+		draw_string_outline(fonte, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, 6, IdleUI.COR_CARVAO)
+		draw_string(fonte, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, cor)
 
 	func _draw() -> void:
 		var c := size * 0.5
 		var r := minf(size.x, size.y) * 0.5
 		var cheio := carga >= 0.99 and not acelerando
 		var k := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 0.9)
+		var k_rapido := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 0.35)
 		if Preferencias.reduzir_animacoes:
 			k = 1.0
-		# Carregado: um aro de ouro que respira em volta do mostrador.
+			k_rapido = 1.0
+		# Carregado: um aro de neon que respira em volta do mostrador.
 		if cheio:
-			draw_arc(c, r + 1.0 + 3.0 * k, 0.0, TAU, 64, Color(IdleUI.COR_OURO, 0.25 + 0.5 * k), 3.0, true)
+			draw_arc(c, r + 1.0 + 3.0 * k, 0.0, TAU, 64, Color(IdleUI.COR_NEON, 0.3 + 0.55 * k), 4.0, true)
+		elif vazio():
+			draw_arc(c, r + 2.0, 0.0, TAU, 64, Color(IdleUI.COR_VINHO_CLARO, 0.35 + 0.6 * k_rapido), 5.0, true)
 		# O mostrador inteiro no quadrado (escala uniforme).
 		draw_texture_rect(_mostrador, Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false)
-		# A carga: arco por dentro das marcas (verde enquanto acelera).
+		# A barra da carga por dentro das marcas: o trilho escuro inteiro e,
+		# por cima, o que resta — verde acendendo enquanto acelera, âmbar cheia,
+		# aço enquanto recarrega. Vazia segurando, o trilho fica vinho.
+		var raio := r * 0.58
+		draw_arc(c, raio, _angulo(0.0), _angulo(1.0), 48,
+				Color(IdleUI.COR_VINHO, 0.9) if vazio() else Color(IdleUI.COR_CARVAO, 0.85), 7.0, true)
 		if carga > 0.0:
-			var cor := IdleUI.COR_GANHO if acelerando else IdleUI.COR_OURO
-			draw_arc(c, r * 0.58, _angulo(0.0), _angulo(carga), 48, cor, 3.0, true)
+			var cor := IdleUI.COR_NEON_VERDE if acelerando else (IdleUI.COR_NEON if cheio else IdleUI.COR_ACO_CLARO)
+			draw_arc(c, raio, _angulo(0.0), _angulo(carga), 48, cor, 5.0, true)
 		if cheio:
-			var fonte := Tipografia.fonte("display")
-			var tam := 26
-			var w := fonte.get_string_size("TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
-			var p := c + Vector2(-w * 0.5, r * 0.5)
-			draw_string(fonte, p, "TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam, IdleUI.COR_MARFIM.lerp(IdleUI.COR_VINHO_CLARO, k))
+			_texto("TOQUE", IdleUI.COR_MARFIM.lerp(IdleUI.COR_NEON, k), 26, r * 0.5)
+		elif vazio():
+			_texto("VAZIO", IdleUI.COR_VINHO_CLARO.lerp(IdleUI.COR_MARFIM, k_rapido), 26, r * 0.5)
+		elif not acelerando:
+			_texto("%d%%" % roundi(carga * 100.0), IdleUI.COR_ACO_CLARO, 22, r * 0.5)
 		# O ponteiro: eixo no centro, a ponta até as marcas.
 		var e := r * 0.76 / PONTEIRO_COMPRIMENTO
 		draw_set_transform(c, _angulo(_ponteiro), Vector2(e, e))
@@ -1496,7 +1564,6 @@ func _atualizar_topo(delta := 0.0) -> void:
 		_subir.pivot_offset = _subir.size * 0.5
 		var k := 1.0 + 0.035 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.1)
 		_subir.scale = Vector2(k, k)
-	_dobrar.visible = _dobrar.visible and Time.get_ticks_msec() / 1000.0 < _dobrar_ate
 
 
 # --- corrida ------------------------------------------------------------------
@@ -1805,6 +1872,14 @@ func _passo_toque(delta: float) -> float:
 		_toque_carga = minf(_toque_carga + delta / maxf(float(t.get("recarga_s", 1.0)), 0.01), 1.0)
 	_toque_medidor.carga = _toque_carga
 	_toque_medidor.acelerando = vel > 1.0
+	_toque_medidor.segurando = _segurando and _paginas["corrida"].visible
+	# A carga acabou com o dedo ainda na tela: avisa uma vez que parou de acelerar.
+	if _toque_medidor.vazio() and not _avisou_vazio:
+		_avisou_vazio = true
+		_hud.evento("ACELERADOR VAZIO", "solte e espere encher", IdleUI.COR_VINHO_CLARO, 4)
+		Sons.tocar_ui(self, "nao", -6.0)
+	elif not _segurando:
+		_avisou_vazio = false
 	_toque_medidor.queue_redraw()
 	# Segurando: o 3D mostra o empurrão (borrão de velocidade e rastro).
 	_visual3d.impulso = move_toward(_visual3d.impulso, 1.0 if vel > 1.0 else 0.0, delta * 4.0)
@@ -1918,9 +1993,9 @@ func _eventos(ordem: Array) -> void:
 		var outro: String = (ordem[pos] if pos < ordem.size() else "") if ganhou else (ordem[pos - 2] if pos >= 2 else "")
 		var nome := String(_nomes.get(outro, "")).to_upper()
 		if ganhou and pos == 1:
-			_hud.evento("LÍDER", "passou %s" % nome, COR_OURO, 6)
+			_hud.evento("LÍDER!", "passou %s" % nome, IdleUI.COR_NEON, 6, -1.0, true)
 		elif ganhou:
-			_hud.evento("ULTRAPASSAGEM", "passou %s · %dº" % [nome, pos], COR_OURO, 5)
+			_hud.evento("ULTRAPASSAGEM!", "passou %s · %dº" % [nome, pos], IdleUI.COR_NEON_VERDE, 5, -1.0, true)
 		if ganhou:
 			_estourar_posicao(_pos_antes - pos)
 		else:
@@ -1953,13 +2028,14 @@ func _estourar_posicao(quantas: int) -> void:
 	var onde := _quadro_corrida.get_global_rect().get_center()
 	if _hud.ancora_carro.x >= 0.0:
 		onde = _hud.get_global_transform() * _hud.ancora_carro + Vector2(0, -60)
-	_efeitos.pipoca(onde, "+%d POSIÇÃO" % quantas if quantas == 1 else "+%d POSIÇÕES" % quantas,
-			IdleUI.COR_GANHO, 34, 0.8)
+	_efeitos.pipoca(onde, "+%d POSIÇÃO!" % quantas if quantas == 1 else "+%d POSIÇÕES!" % quantas,
+			IdleUI.COR_NEON_VERDE, 52, 1.3)
+	_efeitos.faiscas(onde, IdleUI.COR_NEON_VERDE, 26)
 	IdleUI.saltar(_premio, 1.2)
 	var tw := _premio.create_tween()
-	_premio.add_theme_color_override("font_color", IdleUI.COR_GANHO)
-	tw.tween_interval(0.35)
-	tw.tween_callback(func(): _premio.add_theme_color_override("font_color", IdleUI.COR_OURO_CLARO))
+	_premio.add_theme_color_override("font_color", IdleUI.COR_NEON_VERDE)
+	tw.tween_interval(0.5)
+	tw.tween_callback(func(): _premio.add_theme_color_override("font_color", IdleUI.COR_NEON))
 
 
 ## Som do seu carro: motor pela velocidade, pneu e zebra pelo 3D, o pelotão
@@ -2018,25 +2094,9 @@ func _chegou() -> void:
 		# Pódio: faíscas do meio da corrida (mais na vitória).
 		var meio: Vector2 = _paginas["corrida"].get_global_rect().get_center() + Vector2(0, -160)
 		_efeitos.faiscas(meio, COR_OURO, 40 if pos == 1 else 20)
-	_dobrar.visible = true
-	_dobrar_ate = Time.get_ticks_msec() / 1000.0 + DOBRAR_S
 	_ja_correu = true
-	_pausa = PAUSA_COM_VIDEO_S
+	_pausa = PAUSA_CHEGADA_S
 	estado.salvar(Time.get_unix_time_from_system())
-
-
-## O vídeo premiado depois da corrida: assistido até o fim, paga o prêmio de
-## novo.
-func _dobrar_premio() -> void:
-	_dobrar.visible = false
-	var ganho := _ganho_corrida
-	anuncios.premiado(func():
-		estado.dinheiro += ganho
-		ganho_flutuante(ganho)
-		_hud.evento("PRÊMIO x2!", "+$" + curto(ganho * 2.0), COR_OURO, 11, -1.0, true)
-		if _pausa >= 0.0:
-			_pausa = maxf(_pausa, PAUSA_CHEGADA_S)  # só segura se ainda está na pausa
-		estado.salvar(Time.get_unix_time_from_system()))
 
 
 ## Quantos níveis o toque compra: MÁX (-1) o que dá para pagar; PRÓX. até o

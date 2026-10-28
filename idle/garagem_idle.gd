@@ -373,7 +373,8 @@ func _atualizar_vitrine() -> void:
 		var seu := estado.tem_carro(String(c["id"]))
 		(cartao["mini"] as TextureRect).self_modulate = SILHUETA if bloqueado else Color.WHITE
 		var rot: Label = cartao["rotulo"]
-		rot.text = "?" if bloqueado else ("SEU" if seu else "$" + IdleUI.curto(estado.preco_carro(c)))
+		# Já na garagem: o ano do carro (sem "SEU"); à venda, o preço.
+		rot.text = "?" if bloqueado else (str(int(c.get("ano", 0))) if seu else "$" + IdleUI.curto(estado.preco_carro(c)))
 		rot.add_theme_color_override("font_color", Color("2a2118") if bloqueado else (IdleUI.COR_GANHO if seu else IdleUI.COR_OURO_CLARO))
 		var destaque := k == _indice or _pulsos.has(k)
 		var borda := IdleUI.COR_OURO_CLARO if _pulsos.has(k) else (IdleUI.COR_OURO if k == _indice else IdleUI.COR_BORDA)
@@ -563,7 +564,7 @@ func atualizar() -> void:
 		return
 	var preco := estado.preco_carro(c)
 	var seu := estado.tem_carro(String(c["id"]))
-	_preco.text = "SEU" if seu else "$" + IdleUI.curto(preco)
+	_preco.text = "" if seu else "$" + IdleUI.curto(preco)  # já é da família: o botão diz o resto
 	_preco_cheio.text = "$" + IdleUI.curto(float(c["preco"])) if not seu and preco < float(c["preco"]) else ""
 	_preco_cheio.visible = _preco_cheio.text != ""
 	var col: Dictionary = c.get("colecao", {})

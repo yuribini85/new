@@ -44,6 +44,15 @@ const COR_TINTA := COR_CARVAO  # texto sobre latão e verde
 ## Botão de anúncio premiado (▶ na TV): verde militar com texto em marfim,
 ## diferente do verde claro do botão de compra.
 const COR_PREMIO := COR_VERDE_MILITAR
+## Fluorescente (pedido do usuário, 2026-10-28): o jogo é dessaturado, então o
+## que se toca e o que importa acende como letreiro de neon da época — âmbar
+## para botões de ação e o prêmio, verde para o que dá para comprar e o que se
+## ganha na pista. Texto em carvão por cima (contraste ≥ 10:1). Usar pouco: só
+## o que é clicável ou decisivo.
+const COR_NEON := Color("ffc933")
+const COR_NEON_ESCURO := Color("a8781a")
+const COR_NEON_VERDE := Color("a8ff5e")
+const COR_NEON_VERDE_ESCURO := Color("5c9a2c")
 const COR_PREMIO_ESCURO := Color("3b4d3c")
 
 
@@ -247,10 +256,9 @@ static func nv(n: int) -> String:
 ## Botão de ação em ouro em relevo (borda de baixo escura), como as letras do
 ## logotipo; pressionado, afunda.
 static func estilo_ouro(b: Button) -> void:
-	var meio := COR_OURO.lerp(COR_OURO_ESCURO, 0.45)
-	b.add_theme_stylebox_override("normal", _bisel(meio, COR_OURO_CLARO, Color("5e4c30")))
-	b.add_theme_stylebox_override("hover", _bisel(meio, COR_OURO_CLARO, Color("5e4c30")))
-	b.add_theme_stylebox_override("pressed", _bisel(meio.darkened(0.12), COR_OURO_CLARO, meio.darkened(0.12)))
+	b.add_theme_stylebox_override("normal", brilho(_bisel(COR_NEON, COR_OURO_CLARO, COR_NEON_ESCURO), COR_NEON))
+	b.add_theme_stylebox_override("hover", brilho(_bisel(COR_NEON, COR_OURO_CLARO, COR_NEON_ESCURO), COR_NEON))
+	b.add_theme_stylebox_override("pressed", _bisel(COR_NEON.darkened(0.15), COR_OURO_CLARO, COR_NEON.darkened(0.15)))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c, COR_TINTA)
 
@@ -262,6 +270,13 @@ static func estilo_cromo(b: Button) -> void:
 	b.add_theme_stylebox_override("pressed", _bisel(COR_CROMO.darkened(0.12), Color.WHITE, COR_CROMO.darkened(0.12)))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c, COR_TINTA)
+
+
+## O halo de neon em volta de um botão aceso.
+static func brilho(sb: StyleBoxFlat, cor: Color) -> StyleBoxFlat:
+	sb.shadow_color = Color(cor, 0.38)
+	sb.shadow_size = 9
+	return sb
 
 
 ## Fundo com a borda de baixo mais escura: o botão parece em relevo.

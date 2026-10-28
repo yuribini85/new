@@ -8,8 +8,8 @@ extends PanelContainer
 signal comprar
 
 ## Apresentação, não balanceamento.
-const VERDE := IdleUI.COR_VERDE_BOTAO
-const VERDE_ESCURO := IdleUI.COR_VERDE_MILITAR
+const VERDE := IdleUI.COR_NEON_VERDE  # dá para comprar: acende (fluorescente)
+const VERDE_ESCURO := IdleUI.COR_NEON_VERDE_ESCURO
 const FUNDO := IdleUI.COR_CARTAO
 const FUNDO_FECHADO := Color("202627")
 const DESLIGADO := Color("2a3536")  # o botão sem dinheiro: petróleo apagado
@@ -76,7 +76,8 @@ func _init(id_: String, icone: String, texto: String, pequeno := false) -> void:
 	var cor := IdleUI.COR_VINHO if pequeno else VERDE
 	var borda := IdleUI.COR_VINHO.darkened(0.3) if pequeno else VERDE_ESCURO
 	for estado_botao in ["normal", "hover", "focus"]:
-		botao.add_theme_stylebox_override(estado_botao, IdleUI.caixa(cor, 5, 4, borda, 1))
+		var sb := IdleUI.caixa(cor, 5, 4, borda, 1)
+		botao.add_theme_stylebox_override(estado_botao, sb if pequeno else IdleUI.brilho(sb, cor))
 	botao.add_theme_stylebox_override("pressed", IdleUI.caixa(cor.darkened(0.15), 5, 4, borda, 1))
 	botao.add_theme_stylebox_override("disabled", IdleUI.caixa(DESLIGADO, 5, 4, DESLIGADO_BORDA, 1))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:

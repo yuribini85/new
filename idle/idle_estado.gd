@@ -338,8 +338,19 @@ func cfg_jornaleiro() -> Dictionary:
 func gorjeta_jornaleiro() -> float:
 	var j := cfg_jornaleiro()
 	return roundf(maxf(renda_s() * float(j.get("segundos_de_lucro", 0.0)),
-			premio(1) * float(j.get("fracao_premio", 0.0))) * (1.0 + bonus_capangas("gorjeta"))
+			premio(1) * float(j.get("fracao_premio", 0.0))) * (1.0 + bonus_gorjeta())
 			* (1.0 + bonus_carros("gorjeta")) * (1.0 + bonus_do_momento("gorjeta")))
+
+
+## O que a gorjeta cresce para sempre: os capangas da gorjeta e cada troféu
+## da coleção ("por_trofeu").
+func bonus_gorjeta() -> float:
+	return bonus_capangas("gorjeta") + float(cfg_jornaleiro().get("por_trofeu", 0.0)) * trofeus.size()
+
+
+## Quantas vezes a gorjeta vale com o anúncio.
+func multiplicador_anuncio_gorjeta() -> int:
+	return maxi(int(cfg_jornaleiro().get("anuncio_mult", 2)), 1)
 
 
 # --- prestígio Nova Cidade (cfg "cidades") -----------------------------------------

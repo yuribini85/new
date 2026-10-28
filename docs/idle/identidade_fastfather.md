@@ -343,3 +343,17 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
 - Textos: "lucro" é a palavra do jogador para a renda (HUD, Nova Cidade, missões); capangas, não
   pilotos, nas missões e nos avisos do celular.
 - Todos os números novos estão marcados PROVISÓRIO em `idle.json`.
+
+## 23. Neon, acelerador, janela do jornaleiro e ajustes (2026-10-28, pedidos do usuário)
+
+- Fluorescente (`IdleUI.COR_NEON` âmbar e `COR_NEON_VERDE`, com halo): botões de ação, o que dá para
+  comprar, o prêmio atual e as ultrapassagens ("ULTRAPASSAGEM!" e "+1 POSIÇÃO!" grandes em verde
+  neon, com faíscas). O resto da tela segue dessaturado.
+- Acelerador: o trilho da carga aparece inteiro dentro do velocímetro; segurando com a carga no fim o
+  ponteiro despenca, o aro e o trilho ficam vinho, o mostrador diz VAZIO e o aviso "ACELERADOR VAZIO ·
+  solte e espere encher" aparece uma vez; recarregando, mostra a porcentagem.
+- Jornaleiro: o toque abre a janela JORNALEIRO com a gorjeta, o quanto capangas e troféus somam nela
+  (cada troféu +5%, PROVISÓRIO), o anúncio que a multiplica (×2) e FECHAR.
+- Fim da corrida sem o PRÊMIO x2. Câmeras abertas desde o começo. Carros sem o nome da montadora
+  (MODEL A 1928). Na garagem, o carro da família mostra o ano no lugar de "SEU". O TROFÉUS tem a
+  largura do combustível e os três cartões da oficina cabem inteiros.

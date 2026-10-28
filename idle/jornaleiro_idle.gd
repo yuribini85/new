@@ -16,6 +16,11 @@ const FOLGA_TOPO := 0.22  # o alto do quadro sem o menino (espaço do jornal erg
 const SOBE_S := 0.35
 
 var _quadros: Array[Texture2D] = []
+
+
+## O caminho do quadro `i` (0 a QUADROS-1) da folha do menino.
+static func quadro(i: int) -> String:
+	return "res://arte/fastfather/jornaleiro/jornaleiro_%02d.png" % (i + 1)
 var _imagem: TextureRect
 var _t := 0.0
 var _ate := 0.0

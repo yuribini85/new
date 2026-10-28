@@ -133,6 +133,12 @@ func _rodar() -> void:
 			tela.estado.estado_desafio()["vitorias"] = 11
 			tela.estado.tacas = ["Calabrese"]
 			tela._abrir("metas")
+		elif aba == "vazio":  # o dedo na corrida com a carga do acelerador no fim
+			tela._segurando = true
+			tela._toque_carga = 0.0
+			for i in 30:
+				await process_frame
+			tela._abrir("corrida")
 		elif aba == "fundadora":
 			tela._abrir_fundadora()
 		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
