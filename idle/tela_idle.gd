@@ -166,7 +166,8 @@ var _jornal_x2_ate := 0.0
 var _jornaleiro_em := 0.0  # quando ele aparece de novo (relógio do app, s)
 var _gorjeta := 0.0
 const JORNAL_X2_S := 6.0  # apresentação: quanto o botão fica
-var _multiplo := 1  # ×1, ×10 ou MÁX (-1) nos cartões da oficina e das trapaças
+var _multiplo := 1  # ×1, ×10, PRÓX. (-2: até o próximo marco) ou MÁX (-1) nos cartões
+const PROXIMO_MARCO := -2
 var _seletor := {}  # 1/10/-1 -> botão
 ## Segurar a corrida acelera (cfg "toque"): a carga gasta enquanto segura e
 ## volta sozinha.
@@ -783,15 +784,16 @@ func _oficina(pai: Control) -> void:
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		lista.add_theme_color_override(c, IdleUI.COR_OURO)
 	lista.pressed.connect(func(): _trofeus_abertos(true))
-	# Quanto cada toque compra: ×1, ×10 ou MÁX (como nos idles de referência).
+	# Quanto cada toque compra: ×1, ×10, PRÓX. (até o próximo marco) ou MÁX
+	# (como nos idles de referência: x1, x10, Next, Max).
 	var sel := HBoxContainer.new()
 	sel.add_theme_constant_override("separation", 0)
 	linha.add_child(sel)
-	for par in [[1, "×1"], [10, "×10"], [-1, "MÁX"]]:
+	for par in [[1, "×1"], [10, "×10"], [PROXIMO_MARCO, "PRÓX."], [-1, "MÁX"]]:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.text = String(par[1])
-		b.custom_minimum_size = Vector2(66, 48)
+		b.custom_minimum_size = Vector2(60, 48)
 		b.add_theme_font_override("font", Tipografia.fonte("display"))
 		b.add_theme_font_size_override("font_size", 24)
 		var q: int = par[0]
@@ -1341,9 +1343,7 @@ func _atualizar_ladrilho(m: Dictionary, n: int, previsao: String) -> void:
 	if estado.no_maximo(id):
 		l.definir("NV. %d" % n, ef, "MÁX.", false)
 		return
-	var q := _multiplo
-	if q < 0:
-		q = maxi(estado.niveis_pagaveis(id), 1)
+	var q := _quantos(id, _multiplo)
 	var custo := estado.custo_varios(id, q)
 	if not is_finite(custo):
 		l.definir("NV. %d" % n, ef, "MÁX.", false)
@@ -1927,8 +1927,21 @@ func _dobrar_premio() -> void:
 		estado.salvar(Time.get_unix_time_from_system()))
 
 
+## Quantos níveis o toque compra: MÁX (-1) o que dá para pagar; PRÓX. até o
+## próximo marco (ou até o fim, sem mais marcos); ×10 para no máximo da melhoria.
+func _quantos(id: String, modo: int) -> int:
+	var n := estado.nivel(id)
+	var resta := int(estado.melhoria(id)["max"]) - n
+	if modo == -1:
+		return maxi(estado.niveis_pagaveis(id), 1)
+	if modo == PROXIMO_MARCO:
+		var alvo := estado.proximo_marco(n).y
+		return clampi(alvo - n if alvo > 0 else resta, 1, maxi(resta, 1))
+	return clampi(modo, 1, maxi(resta, 1))
+
+
 func _comprar(id: String, quantos := 1) -> void:
-	var n := estado.niveis_pagaveis(id) if quantos < 0 else quantos
+	var n := estado.niveis_pagaveis(id) if quantos == -1 else _quantos(id, quantos)
 	var marcos_antes := estado.marcos_alcancados(estado.nivel(id))
 	if estado.comprar_varios(id, n) > 0:
 		_comemorar_marco(id, marcos_antes)

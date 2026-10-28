@@ -250,3 +250,9 @@ O toque nele paga na hora a gorjeta (`IdleEstado.gorjeta_jornaleiro`: o maior en
 lucro por segundo e uma parte do prêmio de 1º) e mostra GORJETA x2 por 6 s: o vídeo paga de novo.
 Ele é o próprio botão: nada de texto explicando. Só aparece com a corrida na tela, sem conversa,
 dica, bandeira ou grid esperando.
+
+## 15. Seletor de compra ×1 · ×10 · PRÓX. · MÁX (2026-10-28)
+
+Como nos melhores idles (x1, x10, Next, Max; pedido do usuário): PRÓX. compra até o próximo marco
+da melhoria (`idle.json` → "marcos"; sem marco à frente, até o fim) — "Next" em português, pela
+regra do texto de tela na língua do jogador. ×10 e PRÓX. param no máximo da melhoria.
