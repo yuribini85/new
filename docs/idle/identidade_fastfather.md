@@ -163,7 +163,8 @@ implementação aprovada pelo usuário ("implemente tudo"):
 - **Segurar a corrida acelera** (`idle.json` → "toque", provisório): a corrida já resolvida passa
   mais rápido enquanto há carga; a carga volta sozinha. O resultado não muda. Velocímetro
   analógico no canto de baixo à direita, acima da faixa do prêmio: o ponteiro sobe enquanto
-  segura, a carga em ouro no aro e, carregado, "TOQUE" pulsando; dica na primeira vez.
+  segura, a carga em ouro num arco por dentro das marcas e, carregado, "TOQUE" pulsando; dica na
+  primeira vez. Arte do usuário: `arte/fastfather/corrida/velocimetro.png` e `ponteiro.png`.
 - **Marcos por melhoria** (`idle.json` → "marcos", provisório): níveis 10, 25, 50 e 100; nas
   melhorias de renda o efeito dobra a cada marco; nas outras, só a fase nova. Barrinha até o próximo
   marco em cada cartão; ao passar, "×2 PATROCÍNIO!" com faíscas.

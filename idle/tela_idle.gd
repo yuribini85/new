@@ -934,21 +934,28 @@ static func _busto(tex: Texture2D, proporcao: float) -> Texture2D:
 	return a
 
 
-## Velocímetro do toque, de mostrador analógico da época: o ponteiro sobe
-## enquanto segura, a carga em ouro no aro e, carregado, TOQUE pulsando.
+## Velocímetro do toque (arte do usuário, 2026-10-28: mostrador e ponteiro em
+## arte/fastfather/corrida): o ponteiro sobe enquanto segura, a carga em ouro
+## num arco por dentro das marcas e, carregado, TOQUE pulsando.
 class _MedidorToque extends Control:
-	const LADO := 150.0
-	const INICIO := deg_to_rad(135.0)  # o ponteiro varre 270 graus
-	const VARRE := deg_to_rad(270.0)
+	const LADO := 160.0
+	## A escala do mostrador: da primeira marca (157°) até o fim do vermelho (40°).
+	const INICIO := deg_to_rad(157.0)
+	const VARRE := deg_to_rad(243.0)
+	## O ponteiro na arte: o eixo em x = 102 (meio da altura) e a ponta 320 px adiante.
+	const PONTEIRO_EIXO := Vector2(102.25, 40.0)
+	const PONTEIRO_COMPRIMENTO := 320.25
 	var carga := 1.0
 	var acelerando := false
 	var _ponteiro := 0.0
+	var _mostrador: Texture2D = load("res://arte/fastfather/corrida/velocimetro.png")
+	var _agulha: Texture2D = load("res://arte/fastfather/corrida/ponteiro.png")
 
 	func _process(delta: float) -> void:
 		if not is_visible_in_tree():
 			return
 		var t := Time.get_ticks_msec() / 1000.0
-		var alvo := 0.88 + 0.03 * sin(t * 23.0) if acelerando else 0.42 + 0.02 * sin(t * 3.1)
+		var alvo := 0.9 + 0.03 * sin(t * 23.0) if acelerando else 0.4 + 0.02 * sin(t * 3.1)
 		_ponteiro = move_toward(_ponteiro, alvo, delta * (2.2 if acelerando else 0.8))
 		queue_redraw()
 
@@ -957,49 +964,31 @@ class _MedidorToque extends Control:
 
 	func _draw() -> void:
 		var c := size * 0.5
-		var r := minf(size.x, size.y) * 0.5 - 2.0
-		var tinta := Color(0.07, 0.06, 0.05)
-		# Caixa de latão e o mostrador creme.
-		draw_circle(c + Vector2(0, 4), r, Color(0, 0, 0, 0.35))
-		draw_circle(c, r, MolduraDeco.LATAO.darkened(0.35))
-		draw_circle(c, r - 4.0, MolduraDeco.LATAO)
-		draw_circle(c, r - 9.0, tinta)
-		draw_circle(c, r - 13.0, Color("ece3cc"))
-		# A carga: arco de ouro no aro escuro (verde enquanto acelera).
+		var r := minf(size.x, size.y) * 0.5
+		var cheio := carga >= 0.99 and not acelerando
+		var k := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 0.9)
+		if Preferencias.reduzir_animacoes:
+			k = 1.0
+		# Carregado: um aro de ouro que respira em volta do mostrador.
+		if cheio:
+			draw_arc(c, r + 1.0 + 3.0 * k, 0.0, TAU, 64, Color(IdleUI.COR_OURO, 0.25 + 0.5 * k), 3.0, true)
+		# O mostrador inteiro no quadrado (escala uniforme).
+		draw_texture_rect(_mostrador, Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false)
+		# A carga: arco por dentro das marcas (verde enquanto acelera).
 		if carga > 0.0:
 			var cor := LadrilhoIdle.VERDE if acelerando else IdleUI.COR_OURO
-			draw_arc(c, r - 9.0 - 0.5, _angulo(0.0), _angulo(carga), 48, cor, 6.0, true)
-		# Marcas: 11 grandes, as do fim em vermelho (a faixa do giro alto).
-		for k in 31:
-			var f := k / 30.0
-			var grande := k % 3 == 0
-			var a := _angulo(f)
-			var dentro := r - (30.0 if grande else 22.0)
-			var cor_marca := Color("9e2b25") if f > 0.78 else tinta
-			draw_line(c + Vector2.from_angle(a) * dentro, c + Vector2.from_angle(a) * (r - 16.0), cor_marca,
-					3.0 if grande else 1.5, true)
-		# TOQUE pulsando quando a carga está cheia; senão, nada no mostrador.
-		if carga >= 0.99 and not acelerando:
-			var k := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 0.9)
-			if Preferencias.reduzir_animacoes:
-				k = 1.0
+			draw_arc(c, r * 0.58, _angulo(0.0), _angulo(carga), 48, cor, 3.0, true)
+		if cheio:
 			var fonte := Tipografia.fonte("display")
 			var tam := 26
-			var texto := "TOQUE"
-			var w := fonte.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+			var w := fonte.get_string_size("TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
 			var p := c + Vector2(-w * 0.5, r * 0.5)
-			var cor_texto := Color("9e2b25").lerp(Color("d23a2f"), k)
-			draw_string(fonte, p, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, cor_texto)
-			# Um aro que respira em volta do mostrador.
-			draw_arc(c, r + 1.0 + 3.0 * k, 0.0, TAU, 64, Color(IdleUI.COR_OURO, 0.25 + 0.5 * k), 3.0, true)
-		# O ponteiro vermelho com o miolo de latão.
-		var a := _angulo(_ponteiro)
-		var ponta := c + Vector2.from_angle(a) * (r - 22.0)
-		var cauda := c - Vector2.from_angle(a) * 14.0
-		var lado := Vector2.from_angle(a + PI * 0.5) * 3.5
-		draw_colored_polygon(PackedVector2Array([cauda + lado, ponta, cauda - lado]), Color("b8322a"))
-		draw_circle(c, 8.0, tinta)
-		draw_circle(c, 5.5, MolduraDeco.LATAO)
+			draw_string(fonte, p, "TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color("ecd9b8").lerp(Color("d23a2f"), k))
+		# O ponteiro: eixo no centro, a ponta até as marcas.
+		var e := r * 0.76 / PONTEIRO_COMPRIMENTO
+		draw_set_transform(c, _angulo(_ponteiro), Vector2(e, e))
+		draw_texture(_agulha, -PONTEIRO_EIXO)
+		draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 ## Os pontos do pelotão: um por carro, o seu em ouro.
