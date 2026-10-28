@@ -115,7 +115,7 @@ func _modalidades(e: IdleEstado) -> void:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.custom_minimum_size = Vector2(0, 132)
+		b.custom_minimum_size = Vector2(0, 88)  # só o nome e a liga (sem ícone, pedido do usuário)
 		var cor := IdleUI.COR_CARTAO_CLARO if aberta else IdleUI.COR_CARTAO
 		var borda := IdleUI.COR_OURO if marcada else IdleUI.COR_BORDA
 		for st in ["normal", "hover", "pressed", "disabled"]:
@@ -130,8 +130,6 @@ func _modalidades(e: IdleEstado) -> void:
 		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		v.add_theme_constant_override("separation", 2)
 		b.add_child(v)
-		IdleUI.icone(String(m.get("icone", "icone_pista")) if aberta else "icone_cadeado", 44, v,
-				IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO)
 		var n := IdleUI.rotulo(String(m.get("curto", m["nome"])).to_upper(), 17, IdleUI.COR_OURO if na_corrida else
 				(IdleUI.COR_TEXTO if aberta else IdleUI.COR_BLOQUEADO), v)
 		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

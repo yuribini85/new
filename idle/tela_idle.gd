@@ -1551,6 +1551,9 @@ class _MedidorToque extends Control:
 	const MARCA_MENOR := Color("2c2c31")
 	const BRANCO := Color("f2f2f2")
 	const CINZA := Color("8a8a93")
+	## Enquanto a carga enche (nem cheio nem acelerando), o medidor todo em tom pastel.
+	const PASTEL := Color("e6c99f")
+	const PASTEL_CLARO := Color("e9ddcb")
 	var carga := 1.0
 	var acelerando := false
 	var segurando := false  # o dedo na corrida (com ou sem carga)
@@ -1578,7 +1581,7 @@ class _MedidorToque extends Control:
 	func _draw() -> void:
 		var c := size * 0.5
 		var r := minf(size.x, size.y) * 0.5
-		var cheio := carga >= 0.99 and not acelerando
+		var cheio := carga >= 0.9999 and not acelerando  # TOQUE só com a carga em 100%
 		var k := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 0.9)
 		var k_rapido := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 0.35)
 		if Preferencias.reduzir_animacoes:
@@ -1591,7 +1594,8 @@ class _MedidorToque extends Control:
 		draw_arc(c, raio, _angulo(FAIXA / MAXIMO), _angulo(1.0), 24, Color(IdleUI.COR_NEON, 0.6), 2.0, true)
 		# A velocidade: traço branco (neon na faixa final) e a ponta acesa.
 		var fv := _mostrado / MAXIMO
-		var cor_v := IdleUI.COR_NEON if _mostrado >= FAIXA else BRANCO
+		var carregando := not cheio and not acelerando and not vazio()
+		var cor_v := IdleUI.COR_NEON if _mostrado >= FAIXA else (PASTEL_CLARO if carregando else BRANCO)
 		if fv > 0.002:
 			draw_arc(c, raio, _angulo(0.0), _angulo(fv), 48, cor_v, 2.0, true)
 			draw_circle(c + Vector2.from_angle(_angulo(fv)) * raio, 4.0, cor_v)
@@ -1600,7 +1604,7 @@ class _MedidorToque extends Control:
 		draw_arc(c, raio_c, _angulo(0.0), _angulo(1.0), 48,
 				Color(IdleUI.COR_VINHO, 0.9) if vazio() else TRILHO, 3.0, true)
 		if carga > 0.0:
-			var cor_c := IdleUI.COR_NEON_VERDE if acelerando else (IdleUI.COR_NEON if cheio else IdleUI.COR_ACO_CLARO)
+			var cor_c := IdleUI.COR_NEON_VERDE if acelerando else (IdleUI.COR_NEON if cheio else PASTEL)
 			draw_arc(c, raio_c, _angulo(0.0), _angulo(carga), 48, cor_c, 3.0, true)
 		if cheio:
 			draw_arc(c, r - 1.5, 0.0, TAU, 64, Color(IdleUI.COR_NEON, 0.25 + 0.6 * k), 2.5, true)
@@ -1613,7 +1617,7 @@ class _MedidorToque extends Control:
 		elif cheio:
 			_texto("TOQUE", BRANCO.lerp(IdleUI.COR_NEON, k), 20, r * 0.62)
 		elif not acelerando:
-			_texto("%d%%" % roundi(carga * 100.0), CINZA, 18, r * 0.62)  # enchendo: só a carga, sem TOQUE
+			_texto("%d%%" % floori(carga * 100.0), PASTEL, 18, r * 0.62)  # enchendo: só a carga, sem TOQUE
 
 
 ## A chuva na lente: riscos inclinados caindo por cima da corrida, poucos e
