@@ -13,6 +13,7 @@ extends Control
 
 signal comprou(id: String)
 signal correr(id: String)
+signal abrir_trofeus
 
 ## Apresentação, não balanceamento.
 const GIRO := 0.4  # rad/s
@@ -141,6 +142,10 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 		verba.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_contorno(verba)
 	_montar_vitrine(v)
+	if not abertura:
+		_estante = _Estante.new(estado)
+		_estante.tocou.connect(func(): abrir_trofeus.emit())
+		v.add_child(_estante)
 	_espaco = Control.new()
 	_espaco.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_espaco.custom_minimum_size = Vector2(0, 300)
@@ -178,6 +183,72 @@ func _init(estado_: IdleEstado, cor: Color, faixas: Dictionary, abertura := fals
 	# Abre no carro da divisão na tela.
 	_indice = _indice_de(String(estado.carro_da_modalidade().get("id", "")))
 	_mostrar()
+
+
+var _estante: Control
+
+
+## A estante de troféus na parede da garagem (sugestão aprovada, 2026-10-28):
+## prateleira de madeira com os troféus ganhos de pé, o mais novo por último; o
+## toque abre a coleção. Vazia, mostra só a madeira com os encaixes.
+class _Estante extends Control:
+	signal tocou
+	const ALTURA := 100.0
+	const LADO := 84.0  # a arte é quadrada, com o troféu no meio e o pé no fundo
+	const PASSO := 42.0  # de um troféu ao outro: 16 cabem na prateleira
+	var _e: IdleEstado
+	var _vistos := -1
+	var _caixa: HBoxContainer
+
+	func _init(e: IdleEstado) -> void:
+		_e = e
+		custom_minimum_size = Vector2(0, ALTURA)
+		mouse_filter = Control.MOUSE_FILTER_STOP
+		_caixa = HBoxContainer.new()
+		_caixa.alignment = BoxContainer.ALIGNMENT_CENTER
+		_caixa.add_theme_constant_override("separation", int(PASSO - LADO))  # as bordas vazias se sobrepõem
+		_caixa.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_caixa.offset_bottom = -5
+		_caixa.offset_left = 10
+		_caixa.offset_right = -10
+		_caixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_caixa)
+
+	func _process(_d: float) -> void:
+		if _e.trofeus.size() != _vistos:
+			_vistos = _e.trofeus.size()
+			_montar()
+
+	func _montar() -> void:
+		for c in _caixa.get_children():
+			c.queue_free()
+		for tr in _e.lista_trofeus():
+			if not String(tr["pista"]) in _e.trofeus:
+				continue
+			var t := TextureRect.new()
+			t.texture = load("res://arte/fastfather/trofeus/trofeu_%02d.png" % int(tr["arte"]))
+			t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+			t.custom_minimum_size = Vector2(LADO, LADO)
+			t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_caixa.add_child(t)
+		queue_redraw()
+
+	func _draw() -> void:
+		# A tábua de couro com a borda de latão, a sombra embaixo e os suportes.
+		var y := size.y - 16.0
+		draw_rect(Rect2(6, y + 12, size.x - 12, 6), Color(0, 0, 0, 0.35))
+		draw_rect(Rect2(0, y, size.x, 14), IdleUI.COR_COURO)
+		draw_rect(Rect2(0, y, size.x, 3), IdleUI.COR_COURO.lightened(0.25))
+		draw_rect(Rect2(0, y + 12, size.x, 2), IdleUI.COR_OURO_ESCURO)
+		for x in [size.x * 0.18, size.x * 0.82]:
+			draw_colored_polygon(PackedVector2Array([Vector2(x - 8, y + 14), Vector2(x + 8, y + 14), Vector2(x, y + 26)]),
+					IdleUI.COR_COURO.darkened(0.3))
+
+	func _gui_input(ev: InputEvent) -> void:
+		if (ev is InputEventMouseButton or ev is InputEventScreenTouch) and ev.pressed:
+			tocou.emit()
+			accept_event()
 
 
 static func _contorno(l: Label) -> void:

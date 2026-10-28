@@ -109,6 +109,11 @@ func _rodar() -> void:
 				await process_frame
 			root.get_texture().get_image().save_png(saida.path_join("idle_jornaleiro_antes.png"))
 			tela._pagar_jornaleiro()
+		elif aba == "estante":  # a garagem com cinco troféus na estante
+			for tr in tela.estado.lista_trofeus().slice(0, 5):
+				if not String(tr["pista"]) in tela.estado.trofeus:
+					tela.estado.trofeus.append(String(tr["pista"]))
+			tela._abrir("garagem")
 		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
 			for tr in tela.estado.lista_trofeus().slice(0, 3):
 				if not String(tr["pista"]) in tela.estado.trofeus:

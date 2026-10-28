@@ -414,6 +414,7 @@ func _montar() -> void:
 	_metas.mudou.connect(func(): estado.salvar(Time.get_unix_time_from_system()))
 	_paginas["metas"] = _metas
 	_garagem = GaragemIdle.new(estado, COR_OURO, PinturaCarro.da_equipe(EQUIPE_JOGADOR, "crt", 0))
+	_garagem.abrir_trofeus.connect(func(): _trofeus_abertos(true))
 	_garagem.comprou.connect(func(_id: String):
 		_atualizar_dinheiro_garagem()
 		estado.salvar(Time.get_unix_time_from_system())
