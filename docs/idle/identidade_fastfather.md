@@ -196,3 +196,12 @@ Downhill (profundidade), Burnout (câmera lenta), Crossy Road (tudo reage). Impl
 
 No navegador (efeitos leves ligados por padrão) tudo vale menos as sombras; "reduzir animações"
 para o grão, a poeira, o balanço e a câmera lenta.
+
+## 10. Bandeira do fiscal no lugar do semáforo (2026-10-28)
+
+Nos anos 1930 a largada era dada na bandeira. Na corrida, por cima da imagem, a bandeira de
+pano (`BandeiraIdle`, malha subdividida que ondula em `visual/shaders/bandeira.gdshader`): a verde
+entra e tremula na contagem e desce num golpe na largada; a quadriculada tremula na chegada. O
+semáforo e a faixa quadriculada do painel ficam desligados (`HudCorrida.sem_semaforo`). No 3D, o
+fiscal de terno e chapéu na beira da largada com a bandeira de pano no alto da haste
+(`visual/shaders/bandeira_3d.gdshader`), verde até a chegada e quadriculada nela.

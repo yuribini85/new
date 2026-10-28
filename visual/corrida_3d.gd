@@ -2084,6 +2084,13 @@ func _construir_pista() -> void:
 
 
 ## Anéis do jogador e do alvo, traço de disputa e linha de largada.
+## A bandeira do fiscal no cenário de época: verde (largada) ou
+## quadriculada (chegada).
+func bandeira_fiscal(quadriculada: bool) -> void:
+	if CenarioEpoca.material_bandeira != null:
+		CenarioEpoca.material_bandeira.set_shader_parameter("quadriculada", quadriculada)
+
+
 ## Clarão branco-quente na tela (ultrapassagem, bandeirada), que some sozinho.
 func clarao(forca := 0.6) -> void:
 	if Preferencias.reduzir_animacoes:

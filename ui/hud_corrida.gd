@@ -70,6 +70,9 @@ var sem_volta := false
 ## Sem a faixa da posição e os vizinhos (o The Fastfather mostra a posição na
 ## faixa acima da corrida): só a contagem, a bandeira e os avisos.
 var sem_banda := false
+## Sem o semáforo nem a faixa quadriculada (The Fastfather: a bandeira de pano
+## do fiscal faz a largada e a chegada, BandeiraIdle).
+var sem_semaforo := false
 ## Alvo de opacidade do que é secundário; _sec segue devagar.
 var secundario := 1.0
 var _sec := 1.0
@@ -206,8 +209,9 @@ static func _a(c: Color, a: float) -> Color:
 
 
 func _draw() -> void:
-	_desenhar_contagem()
-	_desenhar_bandeira()
+	if not sem_semaforo:
+		_desenhar_contagem()
+		_desenhar_bandeira()
 	_linhas = []
 	if so_eventos:
 		_desenhar_evento()

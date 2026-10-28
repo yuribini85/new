@@ -91,7 +91,56 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	cena.add_child(mi)
 	cena.add_child(_vivo(_st_torcida, 0))
 	cena.add_child(_vivo(_st_bandeiras, 1))
+	cena.add_child(_bandeira_fiscal(pista, largura))
 	_fumaca(cena, torre)
+
+
+## A bandeira do fiscal (Corrida3D.bandeira_fiscal troca verde/quadriculada).
+static var material_bandeira: ShaderMaterial
+
+
+## O fiscal da largada na beira da pista, de terno e chapéu, com a bandeira de
+## pano no alto da haste (golpes visuais, 2026-10-28; no lugar do semáforo).
+static func _bandeira_fiscal(pista: Pista, largura: float) -> Node3D:
+	var rumo := pista.rumo_em(0.0)
+	var f := Vector2.from_angle(rumo)
+	var l := Vector2.from_angle(rumo + PI / 2.0)
+	var p := pista.posicao_em(3.0) + l * (largura * 0.5 + 0.9)
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_caixa(st, Color("2b2b2e"), p, rumo, Vector3(0.5, 1.15, 0.36))  # terno
+	_caixa(st, Color("d9b08c"), p, rumo, Vector3(0.24, 0.26, 0.24), 1.17)  # rosto
+	_caixa(st, Color("1c1a18"), p, rumo, Vector3(0.44, 0.04, 0.44), 1.42)  # aba do chapéu
+	_caixa(st, Color("1c1a18"), p, rumo, Vector3(0.26, 0.16, 0.26), 1.45)
+	var mao := p - l * 0.3
+	_caixa(st, Color("2b2b2e"), mao, rumo, Vector3(0.14, 0.5, 0.14), 0.9)  # braço erguido
+	_caixa(st, MADEIRA, mao, rumo, Vector3(0.07, 2.2, 0.07), 1.2)  # haste
+	st.generate_normals()
+	var corpo := MeshInstance3D.new()
+	corpo.mesh = st.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 0.95
+	corpo.material_override = mat
+	# O pano: plano subdividido em pé, preso na haste pela borda esquerda.
+	var pano := MeshInstance3D.new()
+	var plano := PlaneMesh.new()
+	plano.orientation = PlaneMesh.FACE_Z
+	plano.size = Vector2(1.5, 1.0)
+	plano.subdivide_width = 14
+	plano.subdivide_depth = 8
+	pano.mesh = plano
+	material_bandeira = ShaderMaterial.new()
+	material_bandeira.shader = preload("res://visual/shaders/bandeira_3d.gdshader")
+	material_bandeira.set_shader_parameter("parado", Preferencias.reduzir_animacoes)
+	pano.material_override = material_bandeira
+	var topo := _v3(mao, 3.0)
+	pano.position = topo + _v3(-l * 0.75, 0.0)
+	pano.rotation.y = rumo + PI / 2.0  # o pano ao longo da beira da pista, de frente para ela
+	var no := Node3D.new()
+	no.add_child(corpo)
+	no.add_child(pano)
+	return no
 
 
 static var _st_torcida: SurfaceTool

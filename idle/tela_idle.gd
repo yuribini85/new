@@ -169,6 +169,7 @@ const LENTO_VELOCIDADE := 0.3
 var _pingado := 0.0  # pingado desde o último "+$" do caixa
 var _segurando := false
 var _toque_medidor: Control  # _MedidorToque
+var _bandeira: BandeiraIdle
 ## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
 ## corrida e o combo de compras seguidas.
 const MUSICA_DB := -16.0
@@ -520,6 +521,7 @@ func _pagina_corrida() -> Control:
 	_hud = HudCorrida.new()
 	_hud.sem_volta = true
 	_hud.sem_banda = true  # a posição e a volta estão na faixa da liga
+	_hud.sem_semaforo = true  # a bandeira do fiscal no lugar do semáforo
 	_hud.escala_texto = 1.3  # texto legível no celular (docs/idle/interface.md)
 	_hud.peso_numero = "deco"
 	corrida.add_child(_hud)
@@ -615,6 +617,10 @@ func _pagina_corrida() -> Control:
 	_toque_medidor.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	corrida.add_child(_toque_medidor)
 	corrida.gui_input.connect(_toque_corrida)
+	# A bandeira do fiscal: verde na largada, quadriculada na chegada.
+	_bandeira = BandeiraIdle.new()
+	_bandeira.position = Vector2(24, 200)
+	corrida.add_child(_bandeira)
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()
@@ -1230,8 +1236,12 @@ func _nova_corrida() -> void:
 	_aguardando = not estado.tem("largada_auto") or not estado.pode_correr()
 	_largar.visible = _aguardando
 	_hud.contagem = -1.0 if _aguardando else _contagem
+	_visual3d.bandeira_fiscal(false)
 	if not _aguardando:
 		_sons.largada(false)
+		_bandeira.largada(_contagem)
+	else:
+		_bandeira.esconder()
 	_diretor.reiniciar()
 	_aplicar_camera()
 	_visual3d.destacar_jogador()  # o anel no seu carro (o dourado) na largada
@@ -1603,7 +1613,8 @@ func _chegou() -> void:
 	if pos == 1:
 		Sons.tocar_ui(self, "comemoracao", -8.0)
 		_foto_vitoria.call_deferred()
-	_hud.bandeirada()
+	_bandeira.chegada()
+	_visual3d.bandeira_fiscal(true)
 	_momento_forte(0.8 if pos == 1 else 0.5)
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
 			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)
@@ -2181,6 +2192,7 @@ func _largar_corrida() -> void:
 	_aguardando = false
 	_largar.visible = false
 	_hud.contagem = _contagem
+	_bandeira.largada(_contagem)
 	_sons.largada(false)
 
 
