@@ -821,7 +821,7 @@ func _faixa_premio(pai: Control) -> Control:
 
 ## A Oficina do Tony: o Tony com a fala, MELHORIAS (a lista completa) e os
 ## cartões das melhorias que não são trapaça, rolando de lado, com o
-## combustível adulterado fixo à direita.
+## Mistura do Tony fixa à direita.
 func _oficina(pai: Control) -> void:
 	var p := PanelContainer.new()
 	_painel_oficina = p
@@ -861,7 +861,8 @@ func _oficina(pai: Control) -> void:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.text = String(par[1])
-		b.custom_minimum_size = Vector2(60, 48)
+		b.custom_minimum_size = Vector2(70, 48)  # todos da mesma largura, o texto centrado com folga
+		b.alignment = HORIZONTAL_ALIGNMENT_CENTER
 		b.add_theme_font_override("font", Tipografia.fonte("display"))
 		b.add_theme_font_size_override("font_size", 24)
 		var q: int = par[0]
@@ -914,10 +915,11 @@ func _oficina(pai: Control) -> void:
 	_combustivel_cartao(linha_cartoes)
 
 
-## Combustível adulterado: um vídeo dá potência a mais por um tempo, com usos
+## Mistura do Tony (gasolina melhorada; antes "combustível adulterado"): um
+## vídeo dá potência a mais por um tempo, com usos
 ## por dia (idle.json → "combustivel").
 func _combustivel_cartao(pai: Control) -> void:
-	var r := _cartao_por_video(pai, "COMBUSTÍVEL\nADULTERADO")
+	var r := _cartao_por_video(pai, "MISTURA\nDO TONY")
 	# O TROFÉUS, no alto da oficina, com a largura deste cartão.
 	var cartao: Control = r[1].get_parent().get_parent()
 	cartao.resized.connect(func():
@@ -967,7 +969,7 @@ func _usar_combustivel() -> void:
 		return
 	anuncios.premiado(func():
 		if estado.usar_combustivel(Time.get_unix_time_from_system(), dia):
-			_hud.evento("COMBUSTÍVEL ADULTERADO!", "+%d%% de potência" % roundi(estado.bonus_combustivel() * 100.0),
+			_hud.evento("MISTURA DO TONY!", "+%d%% de potência" % roundi(estado.bonus_combustivel() * 100.0),
 					COR_OURO, 11, -1.0, true)
 			celebrar(2)
 			estado.salvar(Time.get_unix_time_from_system()))
@@ -1011,9 +1013,9 @@ func _janela_bonus(tipo: String) -> void:
 		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		l.custom_minimum_size.x = 540
 		return l
-	centrado.call(IdleUI.rotulo("COMBUSTÍVEL ADULTERADO" if combustivel else String(cfg.get("nome", "Fiscal comprado")).to_upper(),
+	centrado.call(IdleUI.rotulo("MISTURA DO TONY" if combustivel else String(cfg.get("nome", "Fiscal comprado")).to_upper(),
 			34, IdleUI.COR_OURO_CLARO if combustivel else IdleUI.COR_VINHO_CLARO, v, "deco"))
-	centrado.call(IdleUI.rotulo("O Tony mistura um aditivo no tanque: o carro anda mais forte por um tempo." if combustivel
+	centrado.call(IdleUI.rotulo("Uma gasolina melhorada que o Tony prepara na oficina: com ela no tanque, o carro anda mais forte por um tempo." if combustivel
 			else "Um envelope para o fiscal da prova: ele fecha os olhos por um tempo.", 22, IdleUI.COR_TEXTO, v, "regular"))
 	centrado.call(IdleUI.rotulo(beneficio, 46, IdleUI.COR_NEON, v, "deco"))
 	centrado.call(IdleUI.rotulo("por %d minutos" % minutos, 22, IdleUI.COR_TEXTO, v))
@@ -1278,11 +1280,11 @@ func _texto_bonus(tr: Dictionary) -> String:
 		"anuncio":  # bonus: o multiplicador do anúncio
 			return "Anúncio paga %s" % IdleUI.vezes(float(tr["bonus"]))
 		"combustivel_usos":
-			return "+%d uso de combustível por dia" % roundi(float(tr["bonus"]))
+			return "+%d uso da Mistura do Tony por dia" % roundi(float(tr["bonus"]))
 		"fiscal_usos":
 			return "+%d uso do fiscal por dia" % roundi(float(tr["bonus"]))
 		"combustivel_duracao":
-			return "Combustível dura %s" % IdleUI.vezes(1.0 + float(tr["bonus"]))
+			return "Mistura do Tony dura %s" % IdleUI.vezes(1.0 + float(tr["bonus"]))
 		"oficina":
 			return "Oficina %d%% mais barata" % roundi(100.0 - 100.0 / (1.0 + float(tr["bonus"])))
 		"contrato":
