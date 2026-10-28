@@ -1350,20 +1350,28 @@ static func _busto(tex: Texture2D, proporcao: float) -> Texture2D:
 ## arte/fastfather/corrida): o ponteiro sobe enquanto segura, a carga em ouro
 ## num arco por dentro das marcas e, carregado, TOQUE pulsando.
 class _MedidorToque extends Control:
-	const LADO := 160.0
-	## A escala do mostrador: da primeira marca (157°) até o fim do vermelho (40°).
-	const INICIO := deg_to_rad(157.0)
-	const VARRE := deg_to_rad(243.0)
-	## O ponteiro na arte: o eixo em x = 102 (meio da altura) e a ponta 320 px adiante.
-	const PONTEIRO_EIXO := Vector2(102.25, 40.0)
-	const PONTEIRO_COMPRIMENTO := 320.25
+	## Velocímetro minimalista (referência do usuário, 2026-10-28): arco fino
+	## de 270°, marcas, a faixa final em neon, o número grande no meio e a
+	## velocidade como um traço branco com a ponta acesa. Por dentro, um
+	## segundo arco fino é a carga do acelerador (âmbar cheia, verde acelerando,
+	## aço enchendo, vinho vazia com o dedo na tela).
+	const LADO := 180.0
+	const INICIO := deg_to_rad(135.0)
+	const VARRE := deg_to_rad(270.0)
+	const MAXIMO := 200.0  # km/h no fim da escala (apresentação)
+	const FAIXA := 160.0  # onde começa a faixa final em neon
 	const CARGA_MIN_TOQUE := 0.15  # apresentação: abaixo disso ainda não vale tocar
+	const FUNDO := Color(0.055, 0.055, 0.063, 0.86)
+	const TRILHO := Color("232327")
+	const MARCA := Color("4a4a52")
+	const MARCA_MENOR := Color("2c2c31")
+	const BRANCO := Color("f2f2f2")
+	const CINZA := Color("8a8a93")
 	var carga := 1.0
 	var acelerando := false
 	var segurando := false  # o dedo na corrida (com ou sem carga)
-	var _ponteiro := 0.0
-	var _mostrador: Texture2D = load("res://arte/fastfather/corrida/velocimetro.png")
-	var _agulha: Texture2D = load("res://arte/fastfather/corrida/ponteiro.png")
+	var kmh := 0.0  # a velocidade do seu carro, que a tela passa
+	var _mostrado := 0.0
 
 	func vazio() -> bool:
 		return segurando and carga <= 0.0
@@ -1371,25 +1379,17 @@ class _MedidorToque extends Control:
 	func _process(delta: float) -> void:
 		if not is_visible_in_tree():
 			return
-		var t := Time.get_ticks_msec() / 1000.0
-		var alvo := 0.4 + 0.02 * sin(t * 3.1)
-		if acelerando:
-			alvo = 0.9 + 0.03 * sin(t * 23.0)
-		elif vazio():
-			alvo = 0.06  # sem carga o ponteiro despenca: o acelerador parou
-		_ponteiro = move_toward(_ponteiro, alvo, delta * (2.2 if acelerando or vazio() else 0.8))
+		_mostrado = lerpf(_mostrado, clampf(kmh, 0.0, MAXIMO), minf(delta * 6.0, 1.0))
 		queue_redraw()
 
 	func _angulo(f: float) -> float:
 		return INICIO + VARRE * clampf(f, 0.0, 1.0)
 
-	func _texto(t: String, cor: Color, tam: int, y: float) -> void:
+	func _texto(t: String, cor: Color, tam: int, y: float, peso := "semibold") -> void:
 		var c := size * 0.5
-		var fonte := Tipografia.fonte("display")
+		var fonte := Tipografia.fonte(peso)
 		var w := fonte.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
-		var p := c + Vector2(-w * 0.5, y)
-		draw_string_outline(fonte, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, 6, IdleUI.COR_CARVAO)
-		draw_string(fonte, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, cor)
+		draw_string(fonte, c + Vector2(-w * 0.5, y), t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, cor)
 
 	func _draw() -> void:
 		var c := size * 0.5
@@ -1400,38 +1400,54 @@ class _MedidorToque extends Control:
 		if Preferencias.reduzir_animacoes:
 			k = 1.0
 			k_rapido = 1.0
-		# Carregado: um aro de neon que respira em volta do mostrador.
-		if cheio:
-			draw_arc(c, r + 1.0 + 3.0 * k, 0.0, TAU, 64, Color(IdleUI.COR_NEON, 0.3 + 0.55 * k), 4.0, true)
-		elif vazio():
-			draw_arc(c, r + 2.0, 0.0, TAU, 64, Color(IdleUI.COR_VINHO_CLARO, 0.35 + 0.6 * k_rapido), 5.0, true)
-		# O mostrador inteiro no quadrado (escala uniforme).
-		draw_texture_rect(_mostrador, Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false)
-		# A barra da carga por dentro das marcas: o trilho escuro inteiro e,
-		# por cima, o que resta — verde acendendo enquanto acelera, âmbar cheia,
-		# aço enquanto recarrega. Vazia segurando, o trilho fica vinho.
-		var raio := r * 0.58
-		draw_arc(c, raio, _angulo(0.0), _angulo(1.0), 48,
-				Color(IdleUI.COR_VINHO, 0.9) if vazio() else Color(IdleUI.COR_CARVAO, 0.85), 7.0, true)
+		draw_circle(c, r, FUNDO)
+		var raio := r * 0.86
+		# O arco da escala e a faixa final.
+		draw_arc(c, raio, _angulo(0.0), _angulo(1.0), 64, TRILHO, 2.0, true)
+		draw_arc(c, raio, _angulo(FAIXA / MAXIMO), _angulo(1.0), 24, Color(IdleUI.COR_NEON, 0.6), 2.0, true)
+		# Marcas a cada 10 km/h (maiores a cada 20) e os números a cada 40.
+		var v := 0.0
+		while v <= MAXIMO + 0.1:
+			var a := _angulo(v / MAXIMO)
+			var maior := int(v) % 20 == 0
+			var d := Vector2.from_angle(a)
+			var cor := IdleUI.COR_NEON if v >= FAIXA else (MARCA if maior else MARCA_MENOR)
+			draw_line(c + d * (raio - 6.0), c + d * (raio - (12.0 if maior else 9.0)), cor, 1.5, true)
+			if int(v) % 40 == 0:
+				var f := Tipografia.fonte("regular")
+				var t := str(int(v))
+				var tam := 13
+				var w := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+				draw_string(f, c + d * (raio - 24.0) + Vector2(-w * 0.5, tam * 0.35), t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, CINZA)
+			v += 10.0
+		# A velocidade: traço branco (neon na faixa final) e a ponta acesa.
+		var fv := _mostrado / MAXIMO
+		var cor_v := IdleUI.COR_NEON if _mostrado >= FAIXA else BRANCO
+		if fv > 0.002:
+			draw_arc(c, raio, _angulo(0.0), _angulo(fv), 48, cor_v, 2.0, true)
+			draw_circle(c + Vector2.from_angle(_angulo(fv)) * raio, 4.0, cor_v)
+		# A carga do acelerador, num arco fino por dentro.
+		var raio_c := raio - 34.0
+		draw_arc(c, raio_c, _angulo(0.0), _angulo(1.0), 48,
+				Color(IdleUI.COR_VINHO, 0.9) if vazio() else TRILHO, 3.0, true)
 		if carga > 0.0:
-			var cor := IdleUI.COR_NEON_VERDE if acelerando else (IdleUI.COR_NEON if cheio else IdleUI.COR_ACO_CLARO)
-			draw_arc(c, raio, _angulo(0.0), _angulo(carga), 48, cor, 5.0, true)
-		# TOQUE sempre que há carga para usar (pedido do usuário, 2026-10-28):
-		# cheio pulsa em neon; pela metade fica firme, com a carga embaixo.
+			var cor_c := IdleUI.COR_NEON_VERDE if acelerando else (IdleUI.COR_NEON if cheio else IdleUI.COR_ACO_CLARO)
+			draw_arc(c, raio_c, _angulo(0.0), _angulo(carga), 48, cor_c, 3.0, true)
+		if cheio:
+			draw_arc(c, r - 1.5, 0.0, TAU, 64, Color(IdleUI.COR_NEON, 0.25 + 0.6 * k), 2.5, true)
+		elif vazio():
+			draw_arc(c, r - 1.5, 0.0, TAU, 64, Color(IdleUI.COR_VINHO_CLARO, 0.3 + 0.6 * k_rapido), 3.0, true)
+		# O número grande e, embaixo, o que o toque faz agora.
+		_texto(str(roundi(_mostrado)), cor_v, 44, 10.0, "regular")
+		_texto("KM/H", CINZA, 14, 28.0)
 		if vazio():
-			_texto("VAZIO", IdleUI.COR_VINHO_CLARO.lerp(IdleUI.COR_MARFIM, k_rapido), 26, r * 0.5)
+			_texto("VAZIO", IdleUI.COR_VINHO_CLARO.lerp(BRANCO, k_rapido), 20, r * 0.62)
 		elif cheio:
-			_texto("TOQUE", IdleUI.COR_MARFIM.lerp(IdleUI.COR_NEON, k), 26, r * 0.5)
+			_texto("TOQUE", BRANCO.lerp(IdleUI.COR_NEON, k), 20, r * 0.62)
 		elif not acelerando and carga >= CARGA_MIN_TOQUE:
-			_texto("TOQUE", IdleUI.COR_MARFIM, 24, r * 0.42)
-			_texto("%d%%" % roundi(carga * 100.0), IdleUI.COR_ACO_CLARO, 18, r * 0.7)
+			_texto("TOQUE · %d%%" % roundi(carga * 100.0), BRANCO, 18, r * 0.62)
 		elif not acelerando:
-			_texto("ENCHENDO", IdleUI.COR_ACO_CLARO, 18, r * 0.5)
-		# O ponteiro: eixo no centro, a ponta até as marcas.
-		var e := r * 0.76 / PONTEIRO_COMPRIMENTO
-		draw_set_transform(c, _angulo(_ponteiro), Vector2(e, e))
-		draw_texture(_agulha, -PONTEIRO_EIXO)
-		draw_set_transform_matrix(Transform2D.IDENTITY)
+			_texto("ENCHENDO", CINZA, 18, r * 0.62)
 
 
 ## A chuva na lente: riscos inclinados caindo por cima da corrida, poucos e
@@ -2217,6 +2233,7 @@ func _som(ordem: Array) -> void:
 		v = maxf(_visual.distancia_em("jogador", _visual.tempo) - _visual.distancia_em("jogador", maxf(_visual.tempo - 0.5, 0.0)), 0.0) \
 				/ minf(0.5, maxf(_visual.tempo, 0.05))
 	_sons.motor(true, v)
+	_toque_medidor.kmh = v * 3.6
 	_sons.pneu(_visual3d.cantando("jogador"), _visual3d.na_zebra("jogador"))
 	var i := ordem.find("jogador")
 	var gap_min := INF

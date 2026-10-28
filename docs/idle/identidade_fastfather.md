@@ -378,3 +378,7 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
 - SUBIR DE LIGA com o neon falhando de vez em quando; missões em papel do livro-caixa; o troféu
   recém-ganho gira e brilha na coleção; gráficos leves tiram o halo dos botões e deixam a chuva rala.
 - Pendente de arte do usuário: o mapa desenhado de cada cidade para a aba PISTAS (item 14).
+- Velocímetro minimalista (referência do usuário, 2026-10-28): arco fino de 270°, marcas a cada 10 km/h,
+  números a cada 40, faixa final (160–200) em neon, a velocidade do seu carro em traço branco com a ponta
+  acesa e o número grande no meio; por dentro, o arco fino da carga do acelerador; embaixo TOQUE, TOQUE ·
+  55%, ENCHENDO ou VAZIO. Sem a arte do mostrador antigo.
