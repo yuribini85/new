@@ -3,7 +3,10 @@
 Estilo de tudo: o da pasta `arte/fastfather/` (anos 30, sépia/carvão, traço de quadrinho). Basta salvar o
 arquivo com o nome indicado na pasta indicada: o jogo passa a usar sozinho, sem mudar código.
 
-## 1. Fotos das pistas (13)
+## 1. Fotos das pistas (13) — ENTREGUES (2026-10-28)
+
+As 13 chegaram aprovadas (16:9) e estão em `arte/fastfather/pistas/` a 1200×675 (escala uniforme; o jogo
+recorta cobrindo cada moldura). Nenhuma pista do Fastfather usa mais as fotos do C&W.
 
 Pasta `arte/fastfather/pistas/`, **1200×500 webp**, nome `banner_<id>.webp`. Aparecem no cabeçalho e na
 lista de PISTAS, na faixa da corrida e na foto do jornal (em sépia). A versão "(curto)" usa a mesma foto.
