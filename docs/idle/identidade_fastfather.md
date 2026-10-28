@@ -357,3 +357,23 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
 - Fim da corrida sem o PRÊMIO x2. Câmeras abertas desde o começo. Carros sem o nome da montadora
   (MODEL A 1928). Na garagem, o carro da família mostra o ano no lugar de "SEU". O TROFÉUS tem a
   largura do combustível e os três cartões da oficina cabem inteiros.
+
+## 24. Câmera dupla e a leva visual aprovada (2026-10-28)
+
+- Câmera dupla (5º botão, ícone do mapa): a oficina e as trapaças recolhem; a transmissão 3D fica em
+  cima (58%) e a pista inteira em 2D, com os carros em pontos, embaixo.
+- Corrida: placa de posição que vira como placar de estação; o maço do caixa engorda a cada ganho; a
+  torcida fica de pé nas ultrapassagens, na chegada e quando o seu carro passa na reta; a foto da
+  vitória com o flash de magnésio e o cabeçalho da Gazeta; trava de projetor na largada e na chegada.
+- Cenário por cidade (`CenarioEpoca.CIDADES`): cor do céu e do chão e uma peça — trem elevado
+  (Chicago), fábricas com fumaça (Detroit), mar e calçadão (Atlantic City), silos (Kansas City), brejo
+  (Nova Orleans), deserto com as placas em neon (Las Vegas).
+- Placas de anúncio de madeira na cerca (`cenas.json` → "letreiros"), com nomes do próprio jogo.
+- Chuva em cerca de um dia a cada sete (pela data): riscos na lente, chuva no 3D, céu fechado e
+  poeira virando lama. A poeira segue a hora (clara de dia, dourada à tarde, azulada à noite).
+- Os três capangas mais fortes de pé na beira da reta antes da largada; o Tony espia por cima da
+  oficina numa compra (no máximo a cada 30 s); o chefão aprova na mesa ao fechar o jornal da liga
+  nova (`cenas.json` → "chefao_aprova").
+- SUBIR DE LIGA com o neon falhando de vez em quando; missões em papel do livro-caixa; o troféu
+  recém-ganho gira e brilha na coleção; gráficos leves tiram o halo dos botões e deixam a chuva rala.
+- Pendente de arte do usuário: o mapa desenhado de cada cidade para a aba PISTAS (item 14).

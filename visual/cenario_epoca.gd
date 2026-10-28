@@ -53,6 +53,8 @@ static var cidade := 0
 ## Chuva de hoje (a tela sorteia pela data): céu fechado e gotas.
 static var chuva := false
 static var chuva_forcada := -1  # ferramentas: 1 chove, 0 não; -1 pela data
+## Os capangas da família de pé na beira da reta da largada (até 3 artes).
+static var capangas_arte: Array = []
 ## Letreiros de madeira na cerca: anúncios da época com nomes do próprio jogo.
 static var letreiros: Array = []
 const CIDADES := [
@@ -161,6 +163,7 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	if fase() == "noite":
 		_postes(cena, pts, largura)
 	_letreiros(cena, pts, largura)
+	_capangas(cena, pista, largura)
 	_extra_da_cidade(cena, rng, pista, caixa, amostra, largura)
 	if chuva:
 		_chover(cena, caixa)
@@ -215,6 +218,26 @@ static func _letreiros(cena: Node3D, pts: PackedVector2Array, largura: float) ->
 	mat.roughness = 0.95
 	mi.material_override = mat
 	cena.add_child(mi)
+
+
+## Os capangas da família assistindo de pé, por fora da cerca antes da largada,
+## sempre virados para a câmera (a arte de corpo inteiro).
+static func _capangas(cena: Node3D, pista: Pista, largura: float) -> void:
+	for k in mini(capangas_arte.size(), 3):
+		var caminho := String(capangas_arte[k])
+		if caminho == "" or not ResourceLoader.exists(caminho):
+			continue
+		var tex: Texture2D = load(caminho)
+		var s := pista.comprimento - 18.0 - k * 2.6
+		var p := pista.posicao_em(s) + Vector2.from_angle(pista.rumo_em(s) - PI / 2.0) * (largura * 0.5 + CERCA_M + 1.6)
+		var sp := Sprite3D.new()
+		sp.texture = tex
+		sp.pixel_size = 1.85 / float(tex.get_height())
+		sp.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		sp.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		sp.shaded = false
+		sp.position = _v3(p, 0.925)
+		cena.add_child(sp)
 
 
 ## A peça que identifica a cidade, longe da pista.

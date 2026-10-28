@@ -274,6 +274,8 @@ static func estilo_cromo(b: Button) -> void:
 
 ## O halo de neon em volta de um botão aceso.
 static func brilho(sb: StyleBoxFlat, cor: Color) -> StyleBoxFlat:
+	if Preferencias.efeitos_leves:
+		return sb  # gráficos leves: sem o halo
 	sb.shadow_color = Color(cor, 0.38)
 	sb.shadow_size = 9
 	return sb

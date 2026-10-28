@@ -83,9 +83,11 @@ func _cartao(e: IdleEstado, id: String, agora: float, coletada: bool) -> void:
 	var t := e.tarefa_meta(id)
 	var p := e.progresso_meta(id, agora)
 	var pronta := e.meta_pronta(id, agora)
+	# Papel pautado do livro-caixa, preso na prancheta (sugestão 15 da lista visual).
 	var cartao := PanelContainer.new()
-	var borda := IdleUI.COR_OURO if pronta else IdleUI.COR_BORDA
-	cartao.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_CARTAO, 14, 14, borda, 2 if pronta else 1))
+	var borda := IdleUI.COR_NEON if pronta else Color("8a7a5a")
+	cartao.add_theme_stylebox_override("panel", IdleUI.caixa(LivroCaixa.PAPEL if not coletada else LivroCaixa.PAPEL.darkened(0.25),
+			4, 14, borda, 3 if pronta else 1))
 	_lista.add_child(cartao)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 14)
@@ -104,7 +106,7 @@ func _cartao(e: IdleEstado, id: String, agora: float, coletada: bool) -> void:
 	var texto := String(t.get("texto", ""))
 	if texto.contains("%d"):
 		texto = texto % int(p[1])
-	IdleUI.rotulo(texto.to_upper(), 22, IdleUI.COR_TEXTO if not coletada else IdleUI.COR_BLOQUEADO, v)
+	IdleUI.rotulo(texto.to_upper(), 22, LivroCaixa.TINTA if not coletada else LivroCaixa.TINTA.lightened(0.35), v)
 	var linha := HBoxContainer.new()
 	linha.add_theme_constant_override("separation", 10)
 	v.add_child(linha)
@@ -115,12 +117,12 @@ func _cartao(e: IdleEstado, id: String, agora: float, coletada: bool) -> void:
 	barra.custom_minimum_size = Vector2(0, 14)
 	barra.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	barra.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	barra.add_theme_stylebox_override("background", IdleUI.caixa(IdleUI.COR_FUNDO, 7, 0, IdleUI.COR_BORDA, 1))
-	barra.add_theme_stylebox_override("fill", IdleUI.caixa(IdleUI.COR_OURO if not coletada else IdleUI.COR_BLOQUEADO, 7, 0))
+	barra.add_theme_stylebox_override("background", IdleUI.caixa(LivroCaixa.PAPEL.darkened(0.15), 7, 0, Color("8a7a5a"), 1))
+	barra.add_theme_stylebox_override("fill", IdleUI.caixa(IdleUI.COR_VERDE_MILITAR if not coletada else IdleUI.COR_ACO, 7, 0))
 	linha.add_child(barra)
-	IdleUI.rotulo("%d/%d" % [p[0], p[1]], 18, IdleUI.COR_SECUNDARIA, linha)
+	IdleUI.rotulo("%d/%d" % [p[0], p[1]], 18, LivroCaixa.TINTA, linha)
 	if coletada:
-		var ok := IdleUI.icone("icone_ok", 44, h, IdleUI.COR_GANHO)
+		var ok := IdleUI.icone("icone_ok", 44, h, IdleUI.COR_VERDE_MILITAR)
 		ok.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		return
 	var b := IdleUI.botao("COLETAR\n$" + IdleUI.curto(e.recompensa_meta()), IdleUI.COR_OURO, 20, 72, h)

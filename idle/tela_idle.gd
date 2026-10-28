@@ -813,6 +813,7 @@ func _faixa_premio(pai: Control) -> Control:
 ## combustível adulterado fixo à direita.
 func _oficina(pai: Control) -> void:
 	var p := PanelContainer.new()
+	_painel_oficina = p
 	p.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_CARVAO, 6, 8, IdleUI.COR_BORDA, 1))
 	pai.add_child(p)
 	var v := VBoxContainer.new()
@@ -1112,7 +1113,10 @@ func _trofeus_abertos(sim: bool) -> void:
 	for tr in lista:
 		var ganho: bool = String(tr["pista"]) in estado.trofeus
 		ganhos += 1 if ganho else 0
-		_grade_trofeus.add_child(_cartao_trofeu(tr, ganho))
+		var cartao := _cartao_trofeu(tr, ganho)
+		_grade_trofeus.add_child(cartao)
+		if ganho and String(tr["pista"]) == _trofeu_recente:
+			_girar_trofeu.call_deferred(cartao)
 	_conta_trofeus.text = "%d DE %d CONQUISTADOS" % [ganhos, lista.size()]
 
 
@@ -1148,6 +1152,26 @@ func _cartao_trofeu(tr: Dictionary, ganho: bool) -> Control:
 	return c
 
 
+var _trofeu_recente := ""
+
+
+## O troféu recém-ganho, na coleção: gira uma vez no lugar e brilha.
+func _girar_trofeu(cartao: Control) -> void:
+	_trofeu_recente = ""
+	if Preferencias.reduzir_animacoes or cartao.get_child_count() == 0:
+		return
+	var img := cartao.get_child(0).get_child(0) as Control
+	if img == null:
+		return
+	img.pivot_offset = img.size * 0.5
+	var tw := img.create_tween()
+	tw.tween_property(img, "scale:x", -1.0, 0.35).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(img, "scale:x", 1.0, 0.35).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(img, "modulate", Color(1.6, 1.4, 0.9), 0.12)
+	tw.tween_property(img, "modulate", Color.WHITE, 0.4)
+	_efeitos.faiscas(img.get_global_rect().get_center(), IdleUI.COR_OURO_CLARO, 24)
+
+
 func _texto_bonus(tr: Dictionary) -> String:
 	var pct := "+%d%%" % roundi(float(tr["bonus"]) * 100.0)
 	match String(tr["efeito"]):
@@ -1157,6 +1181,8 @@ func _texto_bonus(tr: Dictionary) -> String:
 			return pct + " no lucro"
 		"potencia":
 			return pct + " no motor"
+		"gorjeta":
+			return pct + " na gorjeta"
 	return pct
 
 
@@ -1274,6 +1300,7 @@ func _dobrar_gorjeta() -> void:
 func _comemorar_trofeu() -> void:
 	if estado.trofeu_novo == "":
 		return
+	_trofeu_recente = estado.trofeu_novo
 	estado.trofeu_novo = ""
 	var onde: Vector2 = _paginas["corrida"].get_global_rect().get_center()
 	_efeitos.pipoca(onde + Vector2(0, -60), "TROFÉU NOVO!", COR_OURO, 44, 1.4)
@@ -1610,6 +1637,9 @@ func _atualizar_topo(delta := 0.0) -> void:
 		_subir.pivot_offset = _subir.size * 0.5
 		var k := 1.0 + 0.035 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.1)
 		_subir.scale = Vector2(k, k)
+		# Letreiro de neon da época: de vez em quando o tubo falha duas vezes.
+		var ms := Time.get_ticks_msec() % 7000
+		_subir.self_modulate = Color(1, 1, 1, 0.45) if (ms > 6700 and ms < 6760) or (ms > 6830 and ms < 6880) else Color.WHITE
 
 
 # --- corrida ------------------------------------------------------------------
@@ -1692,6 +1722,9 @@ func _nova_corrida() -> void:
 		_visual3d.faixas_pintura = faixas
 		_visual3d.epoca = String(estado.dados_modalidade().get("epoca", ""))
 		CenarioEpoca.cidade = estado.cidade
+		var fortes := estado.pilotos.duplicate()
+		fortes.sort_custom(func(a, b): return int(a["nivel"]) > int(b["nivel"]))
+		CenarioEpoca.capangas_arte = fortes.slice(0, 3).map(func(p): return PilotosIdle.arte_rapaz(p))
 		CenarioEpoca.letreiros = CenaQuadrinho.carregar("letreiros").get("lista", [])
 		# Chuva em cerca de um dia a cada sete, pela data (o dia inteiro igual).
 		CenarioEpoca.chuva = absi(hash("chuva|" + MetaDia.dia(estado.relogio()))) % 7 == 0 \
@@ -1718,6 +1751,7 @@ func _nova_corrida() -> void:
 	if not _aguardando:
 		_sons.largada(false)
 		_bandeira.largada(_contagem)
+		_trava_projetor()
 	else:
 		_bandeira.esconder()
 	_diretor.reiniciar()
@@ -2199,6 +2233,7 @@ func _chegou() -> void:
 		Sons.tocar_ui(self, "comemoracao", -8.0)
 		_foto_vitoria.call_deferred()
 	_bandeira.chegada()
+	_trava_projetor()
 	_agitar_torcida(1.0 if pos <= 3 else 0.5)
 	_visual3d.bandeira_fiscal(true)
 	_comemorar_trofeu.call_deferred()
@@ -2236,6 +2271,7 @@ func _comprar(id: String, quantos := 1) -> void:
 	var n := estado.niveis_pagaveis(id) if quantos == -1 else _quantos(id, quantos)
 	var marcos_antes := estado.marcos_alcancados(estado.nivel(id))
 	if estado.comprar_varios(id, n) > 0:
+		_tony_espia()
 		_comemorar_marco(id, marcos_antes)
 		if _largar_na_compra and _aguardando:
 			# Cena 4 do briefing: o primeiro +1 e a próxima corrida começa.
@@ -2339,6 +2375,7 @@ func _janela_liga() -> void:
 	ok.pressed.connect(func():
 		fundo.queue_free()
 		_janela_aberta = false
+		_chefao_aprova()
 		_oferecer_avisos()
 		_intersticial_da_liga())
 	p.corpo.add_child(ok)
@@ -2480,6 +2517,86 @@ func _avisos(delta: float) -> void:
 	var agora := Time.get_unix_time_from_system()
 	_barra.avisar("pilotos", estado.contrato_gratis_pronto(agora) or estado.piloto_escalado().is_empty())
 	_barra.avisar("metas", estado.metas_prontas(agora) > 0 or estado.presente_pronto(agora) or estado.desafio_pronto())
+
+
+# --- personagens de passagem ------------------------------------------------------
+
+var _painel_oficina: Control
+var _tony_em := -INF
+const TONY_INTERVALO_S := 30.0  # apresentação, não balanceamento
+
+
+## O Tony espia por cima da oficina quando uma melhoria é comprada (no máximo
+## uma vez a cada TONY_INTERVALO_S).
+func _tony_espia() -> void:
+	var agora := Time.get_ticks_msec() / 1000.0
+	if agora - _tony_em < TONY_INTERVALO_S or _painel_oficina == null or Preferencias.reduzir_animacoes \
+			or not _painel_oficina.is_visible_in_tree():
+		return
+	_tony_em = agora
+	var t := TextureRect.new()
+	t.texture = IdleUI.busto_de("res://arte/fastfather/abertura/tony_1.webp", 1.0)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT  # escala uniforme
+	t.size = Vector2(110, 110)
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	t.z_index = 2
+	var base := _painel_oficina.global_position + Vector2(_painel_oficina.size.x - 300.0, 0.0)
+	t.position = base
+	add_child(t)
+	var tw := t.create_tween()
+	tw.tween_property(t, "position:y", base.y - 96.0, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(0.8)
+	tw.tween_property(t, "position:y", base.y, 0.2).set_ease(Tween.EASE_IN)
+	tw.tween_callback(t.queue_free)
+
+
+## Liga nova: o chefão aparece na mesa por um instante, aprovando.
+func _chefao_aprova() -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	var falas: Array = CenaQuadrinho.carregar("chefao_aprova").get("falas", [])
+	var c := Control.new()
+	c.set_anchors_preset(Control.PRESET_FULL_RECT)
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(c)
+	var img := TextureRect.new()
+	img.texture = load("res://arte/fastfather/abertura/chefe_3.webp")
+	img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT  # escala uniforme
+	img.size = Vector2(440, 393)  # a proporção da arte (1096 × 978)
+	img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var corrida_r: Rect2 = _paginas["corrida"].get_global_rect()
+	img.position = Vector2(corrida_r.position.x + 12.0, corrida_r.get_center().y + 60.0)
+	c.add_child(img)
+	if not falas.is_empty():
+		var b := PanelContainer.new()
+		b.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_MARFIM, 14, 12, IdleUI.COR_CARVAO, 3))
+		b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		IdleUI.rotulo(String(falas[randi() % falas.size()]), 28, IdleUI.COR_CARVAO, b, "fala")
+		b.position = img.position + Vector2(300, -10)
+		c.add_child(b)
+	c.modulate.a = 0.0
+	var tw := c.create_tween()
+	tw.tween_property(c, "modulate:a", 1.0, 0.2)
+	tw.tween_interval(1.6)
+	tw.tween_property(c, "modulate:a", 0.0, 0.3)
+	tw.tween_callback(c.queue_free)
+
+
+## Trava de projetor, como nos cinejornais da época: a imagem pula dois quadros
+## e escurece um instante (largada e chegada).
+func _trava_projetor() -> void:
+	if Preferencias.reduzir_animacoes or _quadro_corrida == null or not _quadro_corrida.is_visible_in_tree():
+		return
+	var alvo := _visual3d
+	var y0 := alvo.position.y
+	var tw := alvo.create_tween()
+	tw.tween_property(alvo, "position:y", y0 - 14.0, 0.03)
+	tw.parallel().tween_property(alvo, "modulate", Color(0.7, 0.7, 0.7), 0.03)
+	tw.tween_property(alvo, "position:y", y0 + 6.0, 0.04)
+	tw.tween_property(alvo, "position:y", y0, 0.05)
+	tw.parallel().tween_property(alvo, "modulate", Color.WHITE, 0.08)
 
 
 # --- Família Fundadora ----------------------------------------------------------

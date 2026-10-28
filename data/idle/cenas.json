@@ -489,5 +489,6 @@
       }
     ]
   },
-	"letreiros": {"_nota": "Placas de madeira na cerca da pista (sugestão 7 aprovada, 2026-10-28): anúncios da época com nomes do próprio jogo (famílias e lugares), sem marca real.", "lista": ["ÓLEO BELLUCCI", "GAZETA DO CAIS", "CHARUTOS CALABRESE", "GRAXA MORETTI", "CAFÉ FERRANTE", "PNEUS LOMBARDI", "BARBEARIA DO TONY"]}
+	"letreiros": {"_nota": "Placas de madeira na cerca da pista (sugestão 7 aprovada, 2026-10-28): anúncios da época com nomes do próprio jogo (famílias e lugares), sem marca real.", "lista": ["ÓLEO BELLUCCI", "GAZETA DO CAIS", "CHARUTOS CALABRESE", "GRAXA MORETTI", "CAFÉ FERRANTE", "PNEUS LOMBARDI", "BARBEARIA DO TONY"]},
+	"chefao_aprova": {"_nota": "O chefão na mesa por um instante ao fechar o jornal da liga nova (sugestão 13 da lista visual, aprovada em 2026-10-28).", "falas": ["Bom garoto.", "A família está orgulhosa.", "Continue assim.", "É assim que se faz."]}
 }
