@@ -66,7 +66,7 @@ static func nome_rapaz(p: Dictionary) -> String:
 	var elenco: Array = r.get("elenco", [])
 	var uid := int(p["uid"])
 	if elenco.is_empty():
-		return "Rapaz %d" % uid
+		return "Capanga %d" % uid
 	var i := (uid - 1) % elenco.size()
 	var volta := (uid - 1) / elenco.size()
 	var apelido := String(elenco[i]["apelido"])
@@ -97,8 +97,8 @@ func _escalado(e: IdleEstado) -> void:
 	h.add_child(v)
 	IdleUI.rotulo("NA RINHA", 18, IdleUI.COR_OURO, v)
 	if p.is_empty():
-		IdleUI.rotulo("SEM RAPAZES", 36, IdleUI.COR_TEXTO, v, "display")
-		IdleUI.rotulo("Contrate um rapaz abaixo.", 20, IdleUI.COR_SECUNDARIA, v)
+		IdleUI.rotulo("SEM CAPANGAS", 36, IdleUI.COR_TEXTO, v, "display")
+		IdleUI.rotulo("Contrate um capanga abaixo.", 20, IdleUI.COR_SECUNDARIA, v)
 		return
 	var n := IdleUI.rotulo(_nome(p).to_upper(), 38, IdleUI.COR_TEXTO, v, "display")
 	n.clip_text = true
@@ -141,8 +141,8 @@ func _elenco(e: IdleEstado) -> void:
 	var titulo := VBoxContainer.new()
 	titulo.add_theme_constant_override("separation", 0)
 	_lista.add_child(titulo)
-	IdleUI.rotulo("SEUS RAPAZES (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
-	IdleUI.rotulo("2 rapazes do mesmo nível = 1 rapaz de nível acima", 16, IdleUI.COR_SECUNDARIA, titulo, "regular")
+	IdleUI.rotulo("SEUS CAPANGAS (%d)" % e.pilotos.size(), 24, IdleUI.COR_TEXTO, titulo)
+	IdleUI.rotulo("2 capangas do mesmo nível = 1 capanga de nível acima", 16, IdleUI.COR_SECUNDARIA, titulo, "regular")
 	var ordem: Array = e.pilotos.duplicate()
 	ordem.sort_custom(func(a, b): return int(a["nivel"]) > int(b["nivel"]) if int(a["nivel"]) != int(b["nivel"]) \
 			else int(a["uid"]) < int(b["uid"]))
@@ -216,7 +216,7 @@ func _acoes(e: IdleEstado, p: Dictionary) -> void:
 					"%s deixou a família" % nome_sai)
 			atualizar())
 	if par < 0:
-		IdleUI.rotulo("Para evoluir, contrate outro rapaz %s." % IdleUI.nv(int(p["nivel"])), 17, IdleUI.COR_SECUNDARIA, v)
+		IdleUI.rotulo("Para evoluir, contrate outro capanga %s." % IdleUI.nv(int(p["nivel"])), 17, IdleUI.COR_SECUNDARIA, v)
 
 
 ## O parceiro da fusão: outro piloto do mesmo nível, de preferência um reserva.
@@ -237,7 +237,7 @@ func _novo(p: Dictionary) -> void:
 	tela.celebrar(2)
 	mudou.emit()
 	atualizar()
-	tela.mostrar_aviso("NOVO RAPAZ: %s" % _nome(p).to_upper(), "Nv. 1 · entrou para a família")
+	tela.mostrar_aviso("NOVO CAPANGA: %s" % _nome(p).to_upper(), "Nv. 1 · entrou para a família")
 
 
 ## Busto do piloto saindo do quadro: a moldura começa abaixo do topo

@@ -45,7 +45,7 @@ const EQUIPE_JOGADOR := {"numero": 1, "cores": {"faixa": "#141518", "filete": "#
 const ABAS := [
 	{"id": "corrida", "nome": "CORRIDA", "icone": "icone_correr"},
 	{"id": "pistas", "nome": "PISTAS", "icone": "icone_pista"},
-	{"id": "pilotos", "nome": "RAPAZES", "icone": "icone_piloto"},
+	{"id": "pilotos", "nome": "CAPANGAS", "icone": "icone_piloto"},
 	{"id": "rinha", "nome": "RINHA", "icone": "emblema_arena"},
 	{"id": "metas", "nome": "MISSÕES", "icone": "icone_objetivo"},
 	{"id": "garagem", "nome": "GARAGEM", "icone": "icone_montagem"},
@@ -2741,5 +2741,5 @@ func _rinha_terminou(pos: int, premio: float) -> void:
 	if premio >= 1.0:
 		ganho_flutuante(premio)
 	if pos == 1 and not _rinha.is_visible_in_tree() and _conversa == null:
-		mostrar_aviso("RINHA: OS RAPAZES VENCERAM", "+$" + curto(premio))
+		mostrar_aviso("RINHA: OS CAPANGAS VENCERAM", "+$" + curto(premio))
 	estado.salvar(Time.get_unix_time_from_system())

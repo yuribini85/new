@@ -138,7 +138,7 @@ quando é o tempero.
   próprias: o carro leva as melhorias da corrida, a liga acompanha a corrida mais alta e
   o prêmio usa a escada dos Bairros (multiplicador 1 a 50,3). Luta não conta como corrida.
 - Vitória dos rapazes com o jogador em outra aba: aviso no alto e o prêmio sobe.
-- Aba RAPAZES: nomes da época (`data/idle/cenas.json` → "rapazes"), retratos em silhueta
+- Aba RAPAZES (hoje CAPANGAS, seção 18): nomes da época (`data/idle/cenas.json` → "rapazes"), retratos em silhueta
   até a arte chegar, o mais forte vai sozinho para a Rinha (sem ESCALAR).
 - PISTAS mostra a Rinha como "luta sozinha"; a corrida não pode ir para lá.
 
@@ -277,3 +277,10 @@ apelido casados com ela (Nicky Gravata, Paulie Fumaça, Rosie Brasa, Tommy Ferro
 Bruno Muralha, Benny Ligeiro, Aldo Contas, Nino Cicatriz, Mei Seda, Enzo Bigode, Tito Trovão,
 Vinnie Navalha, Lola Raposa). Do 15º em diante o elenco volta com outro apelido. O retrato na aba
 RAPAZES é o busto recortado da figura (`IdleUI.busto_de`), no lugar da silhueta provisória.
+
+## 18. RAPAZES vira CAPANGAS (2026-10-28)
+
+Com mulheres no elenco, a aba e os textos passam a dizer CAPANGAS ("o/a capanga", vocabulário da
+máfia da época; escolha do usuário entre CAPANGAS, COMPARSAS, BANDO e GANGUE): SEUS CAPANGAS,
+NOVO CAPANGA, "2 capangas do mesmo nível = 1 capanga de nível acima", a fala do Tony e o aviso
+da Rinha. As chaves internas ("rapazes", `arte/fastfather/rapazes`) continuam.

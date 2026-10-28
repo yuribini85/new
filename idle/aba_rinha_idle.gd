@@ -72,7 +72,7 @@ func atualizar() -> void:
 	_liga.text = String(ligas[e.liga_rinha()]["nome"]).to_upper()
 	var rapaz := e.melhor_rapaz()
 	_quem.text = ("Na Rinha: %s · %s" % [PilotosIdle.nome_rapaz(rapaz), IdleUI.nv(int(rapaz["nivel"]))]) if not rapaz.is_empty() \
-			else "Sem rapazes: luta o motorista do Tony. Contrate na aba RAPAZES."
+			else "Sem capangas: luta o motorista do Tony. Contrate na aba CAPANGAS."
 
 
 func _process(delta: float) -> void:

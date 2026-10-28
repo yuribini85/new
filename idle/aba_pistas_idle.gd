@@ -144,7 +144,7 @@ func _cabecalho(e: IdleEstado) -> void:
 	if e.e_arena(_escolhida):
 		# A Rinha roda sozinha ao lado da corrida, com o melhor dos rapazes.
 		var r := e.melhor_rapaz()
-		IdleUI.rotulo(PilotosIdle.nome_rapaz(r).to_upper() if not r.is_empty() else "SEM RAPAZES", 22,
+		IdleUI.rotulo(PilotosIdle.nome_rapaz(r).to_upper() if not r.is_empty() else "SEM CAPANGAS", 22,
 				IdleUI.COR_TEXTO if not r.is_empty() else IdleUI.COR_RUIM, linha)
 		IdleUI.rotulo("Luta sozinha o tempo todo: assista na aba RINHA.", 20, IdleUI.COR_OURO, _lista)
 		return
