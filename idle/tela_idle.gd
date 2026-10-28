@@ -1244,20 +1244,61 @@ func _pagar_jornaleiro() -> void:
 	fundo.add_child(centro)
 	var p := PanelContainer.new()
 	p.custom_minimum_size = Vector2(600, 0)
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18, 26, IdleUI.COR_BORDA, 1))
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18, 0, IdleUI.COR_BORDA, 1))
+	p.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW  # o fundo nos cantos arredondados
 	centro.add_child(p)
+	# A esquina da banca (dia ou noite, pela hora) ocupando o cartão inteiro,
+	# escala uniforme recortando as sobras; embaixo, um véu escuro sob o texto.
+	var rua := TextureRect.new()
+	rua.texture = load("res://arte/fastfather/jornaleiro/fundo_%s.webp" % ("noite" if CenarioEpoca.fase() == "noite" else "dia"))
+	rua.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rua.stretch_mode = TextureRect.STRETCH_SCALE
+	var fundo_rua := Control.new()  # o fundo fora do layout do cartão (posição à mão)
+	fundo_rua.clip_contents = true
+	p.add_child(fundo_rua)
+	fundo_rua.add_child(rua)
+	var veu := TextureRect.new()
+	var grad := Gradient.new()
+	var gt := GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill_from = Vector2(0, 0)
+	gt.fill_to = Vector2(0, 1)
+	veu.texture = gt
+	veu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	veu.stretch_mode = TextureRect.STRETCH_SCALE
+	p.add_child(veu)
+	var margem := MarginContainer.new()
+	for lado in ["left", "right", "top", "bottom"]:
+		margem.add_theme_constant_override("margin_" + lado, 26)
+	p.add_child(margem)
 	p.add_child(MolduraDeco.new(6.0))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 12)
-	p.add_child(v)
+	margem.add_child(v)
 	var t := IdleUI.rotulo("JORNALEIRO", 40, IdleUI.COR_OURO_CLARO, v, "deco")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var figura := TextureRect.new()
-	figura.texture = load(JornaleiroIdle.quadro(0))
-	figura.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	figura.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
-	figura.custom_minimum_size = Vector2(0, 220)
-	v.add_child(figura)
+	t.add_theme_constant_override("outline_size", 10)
+	t.add_theme_color_override("font_outline_color", Color(IdleUI.COR_CARVAO, 0.9))
+	# O menino no meio da calçada, trocando de quadro devagar (um funde no outro).
+	var menino := _MeninoLento.new()
+	menino.custom_minimum_size = Vector2(0, 300)
+	v.add_child(menino)
+	# A calçada da arte embaixo dos pés do menino: a imagem na largura do cartão
+	# (escala uniforme), descida até o chão dela bater no pé dele; daí para baixo
+	# o véu escurece até a cor do cartão, sob o texto e os botões.
+	var encaixar := func():
+		var w := p.size.x
+		var alto := w * rua.texture.get_height() / rua.texture.get_width()
+		var pe := 26.0 + menino.position.y + menino.size.y
+		fundo_rua.size = p.size
+		rua.size = Vector2(w, alto)
+		rua.position = Vector2(0, pe - alto * CHAO_DA_RUA)
+		var k := clampf(pe / maxf(p.size.y, 1.0), 0.05, 0.9)
+		grad.offsets = PackedFloat32Array([0.0, k - 0.03, k + 0.08, clampf((rua.position.y + alto) / p.size.y, k + 0.1, 1.0)])
+		grad.colors = PackedColorArray([Color(COR_CARTAO, 0.0), Color(COR_CARTAO, 0.0), Color(COR_CARTAO, 0.86),
+				Color(COR_CARTAO, 1.0)])
+	p.resized.connect(encaixar)
+	menino.resized.connect(encaixar)
 	var l := IdleUI.rotulo("Extra! O menino trouxe o jornal e a gorjeta da banca:", 22, IdleUI.COR_TEXTO, v, "regular")
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1282,6 +1323,54 @@ func _pagar_jornaleiro() -> void:
 
 
 var _janela_jornaleiro: Control
+## Altura do chão da calçada nas artes de fundo do jornaleiro (fração da imagem).
+const CHAO_DA_RUA := 0.76
+
+
+## O menino da janela do jornaleiro: os 12 quadros da arte em vaivém, cada um
+## parado um tempo e fundindo no seguinte (lento, sem o aceno rápido da corrida).
+class _MeninoLento extends Control:
+	const PARADO_S := 0.55
+	const FUNDE_S := 0.5
+	var _a: TextureRect
+	var _b: TextureRect
+	var _i := 0
+	var _passo := 1
+
+	func _init() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_a = _camada()
+		_b = _camada()
+		_a.texture = load(JornaleiroIdle.quadro(0))
+		_b.modulate.a = 0.0
+
+	func _camada() -> TextureRect:
+		var r := TextureRect.new()
+		r.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(r)
+		return r
+
+	func _ready() -> void:
+		if not Preferencias.reduzir_animacoes:
+			_proximo()
+
+	func _proximo() -> void:
+		if not is_inside_tree():
+			return
+		if _i + _passo < 0 or _i + _passo >= JornaleiroIdle.QUADROS:
+			_passo = -_passo
+		_i += _passo
+		_b.texture = load(JornaleiroIdle.quadro(_i))
+		var tw := create_tween()
+		tw.tween_interval(PARADO_S)
+		tw.tween_property(_b, "modulate:a", 1.0, FUNDE_S).set_trans(Tween.TRANS_SINE)
+		tw.tween_callback(func():
+			_a.texture = _b.texture
+			_b.modulate.a = 0.0
+			_proximo())
 
 
 ## Fecha a janela e paga a gorjeta `vezes` vezes.
