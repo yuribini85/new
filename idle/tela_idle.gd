@@ -637,7 +637,7 @@ func _pagina_corrida() -> Control:
 	for par in CAMERAS:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(64, 56)
+		b.custom_minimum_size = Vector2(58, 56)
 		# Ícones da arte do usuário (arte/fastfather/icones/cameras), em tom só:
 		# a cor vem do modulate (tinta no ativo, ouro na câmera da vez).
 		var ic := TextureRect.new()
@@ -1351,16 +1351,15 @@ static func _busto(tex: Texture2D, proporcao: float) -> Texture2D:
 ## num arco por dentro das marcas e, carregado, TOQUE pulsando.
 class _MedidorToque extends Control:
 	## Velocímetro minimalista (referência do usuário, 2026-10-28): arco fino
-	## de 270°, marcas, a faixa final em neon, o número grande no meio e a
+	## de 270°, sem marcas nem números de escala, a faixa final em neon, o número grande no meio e a
 	## velocidade como um traço branco com a ponta acesa. Por dentro, um
 	## segundo arco fino é a carga do acelerador (âmbar cheia, verde acelerando,
 	## aço enchendo, vinho vazia com o dedo na tela).
-	const LADO := 180.0
+	const LADO := 150.0
 	const INICIO := deg_to_rad(135.0)
 	const VARRE := deg_to_rad(270.0)
 	const MAXIMO := 200.0  # km/h no fim da escala (apresentação)
 	const FAIXA := 160.0  # onde começa a faixa final em neon
-	const CARGA_MIN_TOQUE := 0.15  # apresentação: abaixo disso ainda não vale tocar
 	const FUNDO := Color(0.055, 0.055, 0.063, 0.86)
 	const TRILHO := Color("232327")
 	const MARCA := Color("4a4a52")
@@ -1405,21 +1404,6 @@ class _MedidorToque extends Control:
 		# O arco da escala e a faixa final.
 		draw_arc(c, raio, _angulo(0.0), _angulo(1.0), 64, TRILHO, 2.0, true)
 		draw_arc(c, raio, _angulo(FAIXA / MAXIMO), _angulo(1.0), 24, Color(IdleUI.COR_NEON, 0.6), 2.0, true)
-		# Marcas a cada 10 km/h (maiores a cada 20) e os números a cada 40.
-		var v := 0.0
-		while v <= MAXIMO + 0.1:
-			var a := _angulo(v / MAXIMO)
-			var maior := int(v) % 20 == 0
-			var d := Vector2.from_angle(a)
-			var cor := IdleUI.COR_NEON if v >= FAIXA else (MARCA if maior else MARCA_MENOR)
-			draw_line(c + d * (raio - 6.0), c + d * (raio - (12.0 if maior else 9.0)), cor, 1.5, true)
-			if int(v) % 40 == 0:
-				var f := Tipografia.fonte("regular")
-				var t := str(int(v))
-				var tam := 13
-				var w := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
-				draw_string(f, c + d * (raio - 24.0) + Vector2(-w * 0.5, tam * 0.35), t, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, CINZA)
-			v += 10.0
 		# A velocidade: traço branco (neon na faixa final) e a ponta acesa.
 		var fv := _mostrado / MAXIMO
 		var cor_v := IdleUI.COR_NEON if _mostrado >= FAIXA else BRANCO
@@ -1444,10 +1428,8 @@ class _MedidorToque extends Control:
 			_texto("VAZIO", IdleUI.COR_VINHO_CLARO.lerp(BRANCO, k_rapido), 20, r * 0.62)
 		elif cheio:
 			_texto("TOQUE", BRANCO.lerp(IdleUI.COR_NEON, k), 20, r * 0.62)
-		elif not acelerando and carga >= CARGA_MIN_TOQUE:
-			_texto("TOQUE · %d%%" % roundi(carga * 100.0), BRANCO, 18, r * 0.62)
 		elif not acelerando:
-			_texto("ENCHENDO", CINZA, 18, r * 0.62)
+			_texto("%d%%" % roundi(carga * 100.0), CINZA, 18, r * 0.62)  # enchendo: só a carga, sem TOQUE
 
 
 ## A chuva na lente: riscos inclinados caindo por cima da corrida, poucos e
@@ -1854,7 +1836,7 @@ func _aplicar_dupla() -> void:
 	var d := dupla()
 	for c in _pagina_corrida_v.get_children():
 		if c != _quadro_corrida:
-			(c as Control).visible = not d
+			(c as Control).visible = not d and (c != _trapacas_caixa or _trapacas_liberadas())
 	_visual3d.anchor_bottom = DUPLA_3D if d else 1.0
 	_visual3d.offset_bottom = 0.0
 	_fundo_2d.visible = d
@@ -3029,6 +3011,10 @@ func _aba_aberta(a: Dictionary) -> bool:
 	return a["id"] == "corrida" or estado.tem("aba:" + String(a["id"]))
 
 
+func _trapacas_liberadas() -> bool:
+	return estado.cfg["melhorias"].any(func(m): return m.has("trapaca") and estado.tem("melhoria:" + String(m["id"])))
+
+
 func _aplicar_desbloqueios() -> void:
 	for m in estado.cfg["melhorias"]:
 		var aberta := estado.tem("melhoria:" + String(m["id"]))
@@ -3040,6 +3026,9 @@ func _aplicar_desbloqueios() -> void:
 			elif not l.esta_fechado():
 				l.fechar("Abre em breve")
 	_renda_caixa.visible = estado.tem("renda")
+	# As trapaças só aparecem quando a primeira abre (depois da bronca do chefão).
+	if _trapacas_caixa != null:
+		_trapacas_caixa.visible = _trapacas_liberadas() and not dupla()
 	var abas := ABAS.filter(_aba_aberta)
 	_barra.definir_abas(abas)
 	_barra.visible = abas.size() > 1
@@ -3202,6 +3191,9 @@ func _misturar(delta: float) -> void:
 ## Alvos: largar, subir, cameras, previsao, melhoria:<id>, aba:<id>,
 ## oferta:<id> ou vazio (só a frase).
 func _guiar(alvo: String, texto: String) -> void:
+	# A câmera dupla recolhe a oficina: a dica volta para a câmera padrão.
+	if dupla() and alvo != "" and alvo != "cameras":
+		_trocar_camera("ciclo")
 	if alvo.begins_with("melhoria:") or alvo in ["largar", "subir", "cameras", "previsao"] or alvo.begins_with("oferta:"):
 		_abrir("corrida")
 	var andar: Dictionary = _cartoes.get(alvo.trim_prefix("melhoria:"), {}) if alvo.begins_with("melhoria:") else \
