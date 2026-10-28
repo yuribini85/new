@@ -442,3 +442,40 @@ func test_pinturas_de_epoca() -> void:
 		var a: Array = PinturaEpoca.do_rival(fam, "mesma", "corrida1")
 		var b: Array = PinturaEpoca.do_rival(fam, "mesma", "corrida2")
 		verificar((a[0] as Color).is_equal_approx(b[0]), "%s: mesma equipe, mesma cor" % fam)
+
+
+## Marcos por melhoria (análise de engajamento, 2026-10-28): o efeito das
+## melhorias listadas dobra a cada nível-marco; as outras não mudam.
+func test_marcos_dobram_a_renda() -> void:
+	var c := _cfg()
+	c["marcos"] = {"niveis": [10, 25], "multiplicador": 2.0, "efeitos": ["renda"]}
+	var e := IdleEstado.new(c)
+	var renda: Dictionary = {}
+	var outra: Dictionary = {}
+	for m in c["melhorias"]:
+		if String(m["efeito"]) == "renda" and renda.is_empty():
+			renda = m
+		elif String(m["efeito"]) != "renda" and outra.is_empty():
+			outra = m
+	verificar(not renda.is_empty() and not outra.is_empty(), "a config de teste tem as duas")
+	perto(e.multiplicador_marcos(renda, 9), 1.0, 0.001, "antes do marco: x1")
+	perto(e.multiplicador_marcos(renda, 10), 2.0, 0.001, "no 10: x2")
+	perto(e.multiplicador_marcos(renda, 30), 4.0, 0.001, "depois do 25: x4")
+	perto(e.multiplicador_marcos(outra, 30), 1.0, 0.001, "fora da lista: sem multiplicar")
+	igual(e.proximo_marco(12), Vector2i(10, 25), "entre o 10 e o 25")
+	igual(e.proximo_marco(30).y, 0, "depois do último, não há próximo")
+
+
+## Combustível adulterado: usos por dia, o bônus vale até a hora marcada e
+## soma tempo se usado de novo.
+func test_combustivel_por_dia() -> void:
+	var c := _cfg()
+	c["combustivel"] = {"usos_dia": 2, "potencia": 0.2, "duracao_s": 600}
+	var e := IdleEstado.new(c)
+	igual(e.combustivel_restantes("2026-01-01"), 2, "dois por dia")
+	verificar(e.usar_combustivel(1000.0, "2026-01-01"), "primeiro uso")
+	verificar(e.combustivel_ativo(1500.0) and not e.combustivel_ativo(1700.0), "vale 600 s")
+	verificar(e.usar_combustivel(1100.0, "2026-01-01"), "segundo uso soma ao que resta")
+	verificar(e.combustivel_ativo(2100.0), "1000 + 600 + 600")
+	verificar(not e.usar_combustivel(1200.0, "2026-01-01"), "acabou o do dia")
+	igual(e.combustivel_restantes("2026-01-02"), 2, "o dia seguinte volta a dois")

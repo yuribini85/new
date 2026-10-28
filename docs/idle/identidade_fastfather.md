@@ -154,3 +154,24 @@ comprado fechado até ter efeito). Pedidos do usuário na mesma rodada: a letra 
 só no caixa e no prêmio; a barra de baixo com o fundo da de cima; bordas finas e cantos pequenos;
 sem ícones pequenos nem placas atrás da posição, da volta e da aba escolhida; sem o Tony e a fala
 na oficina; sem barra de andamento. As abas continuam as de antes.
+
+## 8. Engajamento da tela da corrida (2026-10-28)
+
+Análise pelos idles de referência (AdVenture Capitalist, Egg Inc, Idle Miner, Idle Racing GO) e
+implementação aprovada pelo usuário ("implemente tudo"):
+
+- **Segurar a corrida acelera** (`idle.json` → "toque", provisório): a corrida já resolvida passa
+  mais rápido enquanto há carga; a carga volta sozinha. O resultado não muda. Medidor translúcido
+  abaixo da faixa da liga ("SEGURE PARA ACELERAR"); dica na primeira vez.
+- **Marcos por melhoria** (`idle.json` → "marcos", provisório): níveis 10, 25, 50 e 100; nas
+  melhorias de renda o efeito dobra a cada marco; nas outras, só a fase nova. Barrinha até o próximo
+  marco em cada cartão; ao passar, "×2 PATROCÍNIO!" com faíscas.
+- **Prêmio pingando**: a corrida está resolvida na largada, então a parte do prêmio entra conforme o
+  carro anda (o total não muda). Medido (`tools/medir_primeiros_minutos.gd`): a primeira corrida dura
+  84 s; antes, 4 compras e nada até 1:40; agora 5 compras até 30 s e 6 no primeiro minuto.
+- **Cada ultrapassagem estoura**: "+1 POSIÇÃO" sobre o carro e o PRÊMIO ATUAL salta em verde.
+- **Comprar tem peso**: o botão que dá para pagar respira; seletor ×1 / ×10 / MÁX na oficina.
+- **Meta concreta**: "CHEGUE EM 1º · MELHOR: 6º".
+- Para o primeiro minuto ficar no alvo dos idles de referência (primeira compra em < 10 s e ~5 no
+  primeiro minuto, já alcançado), o que mais pesa agora é a duração da corrida da 1ª liga (84 s) e o
+  prêmio dela; mexer nisso é balanceamento e fica para o playtest.

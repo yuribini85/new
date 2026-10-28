@@ -148,6 +148,18 @@ var _trapacas_caixa: Control
 var _combustivel_texto: Label
 var _combustivel_botao: Button
 var _painel_lista: Control  # MELHORIAS: a lista completa por cima da tela
+var _multiplo := 1  # ×1, ×10 ou MÁX (-1) nos cartões da oficina e das trapaças
+var _seletor := {}  # 1/10/-1 -> botão
+## Segurar a corrida acelera (cfg "toque"): a carga gasta enquanto segura e
+## volta sozinha.
+var _toque_carga := 1.0
+## O prêmio pinga durante a corrida (análise de engajamento): a corrida já está
+## resolvida na largada, então a parte do prêmio da chegada entra conforme o
+## carro anda; na chegada entra só o que falta. O total não muda.
+var _pago_corrida := 0.0
+var _pingado := 0.0  # pingado desde o último "+$" do caixa
+var _segurando := false
+var _toque_medidor: Control  # _MedidorToque
 ## Som (docs/idle/sonorizacao.md): música de fundo, ambiente do box nas telas sem
 ## corrida e o combo de compras seguidas.
 const MUSICA_DB := -16.0
@@ -583,6 +595,17 @@ func _pagina_corrida() -> Control:
 	var embaixo := _faixa_premio(corrida)
 	embaixo.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	embaixo.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	# Segurar a corrida acelera: o medidor da carga logo abaixo da faixa da liga.
+	_toque_medidor = _MedidorToque.new()
+	_toque_medidor.custom_minimum_size = Vector2(340, 48)
+	_toque_medidor.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	_toque_medidor.offset_left = -170
+	_toque_medidor.offset_right = 170
+	_toque_medidor.offset_top = 108  # logo abaixo da faixa da liga, longe do seu carro
+	_toque_medidor.offset_bottom = 156
+	_toque_medidor.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	corrida.add_child(_toque_medidor)
+	corrida.gui_input.connect(_toque_corrida)
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()
@@ -695,6 +718,28 @@ func _oficina(pai: Control) -> void:
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		lista.add_theme_color_override(c, IdleUI.COR_OURO)
 	lista.pressed.connect(func(): _lista_aberta(true))
+	# Quanto cada toque compra: ×1, ×10 ou MÁX (como nos idles de referência).
+	var sel := HBoxContainer.new()
+	sel.add_theme_constant_override("separation", 0)
+	linha.add_child(sel)
+	for par in [[1, "×1"], [10, "×10"], [-1, "MÁX"]]:
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.text = String(par[1])
+		b.custom_minimum_size = Vector2(66, 48)
+		b.add_theme_font_override("font", Tipografia.fonte("display"))
+		b.add_theme_font_size_override("font_size", 24)
+		var q: int = par[0]
+		b.pressed.connect(func():
+			_multiplo = q
+			_marcar_seletor()
+			_atualizar_cartoes())
+		sel.add_child(b)
+		_seletor[q] = b
+	_marcar_seletor()
+	var vao_sel := Control.new()
+	vao_sel.custom_minimum_size = Vector2(10, 0)
+	linha.add_child(vao_sel)
 	linha.add_child(lista)
 	var linha_cartoes := HBoxContainer.new()
 	linha_cartoes.add_theme_constant_override("separation", 8)
@@ -716,7 +761,7 @@ func _oficina(pai: Control) -> void:
 		l.custom_minimum_size = Vector2(168, 0)
 		l.size_flags_horizontal = Control.SIZE_FILL
 		var id := String(m["id"])
-		l.comprar.connect(func(): _comprar(id))
+		l.comprar.connect(func(): _comprar(id, _multiplo))
 		fila.add_child(l)
 		_ladrilhos[id] = l
 	_combustivel_cartao(linha_cartoes)
@@ -784,7 +829,7 @@ func _trapacas(pai: Control) -> void:
 		var t: Dictionary = m["trapaca"]
 		var id := String(m["id"])
 		var l := LadrilhoIdle.new(id, String(t.get("icone", m.get("icone", ""))), String(t["nome"]), true)
-		l.comprar.connect(func(): _comprar(id))
+		l.comprar.connect(func(): _comprar(id, _multiplo))
 		h.add_child(l)
 		_ladrilhos[id] = l
 	for t in estado.cfg.get("trapacas_fechadas", []):
@@ -833,6 +878,17 @@ func _lista_melhorias() -> void:
 		andares.add_child(_cartao(mm))
 
 
+func _marcar_seletor() -> void:
+	for q in _seletor:
+		var b: Button = _seletor[q]
+		var ativo: bool = q == _multiplo
+		var cor := IdleUI.COR_OURO if ativo else Color("2a2016")
+		for e in ["normal", "hover", "focus", "pressed"]:
+			b.add_theme_stylebox_override(e, IdleUI.caixa(cor, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
+		for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+			b.add_theme_color_override(c, IdleUI.COR_TINTA if ativo else IdleUI.COR_OURO)
+
+
 func _lista_aberta(sim: bool) -> void:
 	_painel_lista.visible = sim
 	if sim:
@@ -848,6 +904,34 @@ static func _busto(tex: Texture2D, proporcao: float) -> Texture2D:
 	var w := float(tex.get_width())
 	a.region = Rect2(w * 0.1, 0, w * 0.8, w * 0.8 * proporcao)
 	return a
+
+
+## Medidor do toque: a carga em ouro dentro de uma pílula translúcida, com
+## SEGURE PARA ACELERAR (ou ACELERANDO!) por cima.
+class _MedidorToque extends Control:
+	var carga := 1.0
+	var acelerando := false
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		var fundo := StyleBoxFlat.new()
+		fundo.bg_color = Color(0.07, 0.06, 0.05, 0.62)
+		fundo.set_corner_radius_all(int(size.y * 0.5))
+		fundo.corner_detail = 8
+		draw_style_box(fundo, r)
+		if carga > 0.0:
+			var cheio := StyleBoxFlat.new()
+			cheio.bg_color = Color(LadrilhoIdle.VERDE if acelerando else IdleUI.COR_OURO, 0.55)
+			cheio.set_corner_radius_all(int(size.y * 0.5))
+			cheio.corner_detail = 8
+			draw_style_box(cheio, Rect2(r.position, Vector2(maxf(r.size.x * carga, size.y), r.size.y)))
+		var f := Tipografia.fonte("display")
+		var tam := 24
+		var texto := "ACELERANDO!" if acelerando else ("SEGURE PARA ACELERAR" if carga >= 0.99 else "RECARREGANDO")
+		var w := f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+		var p := Vector2((size.x - w) * 0.5, size.y * 0.5 + tam * 0.35)
+		draw_string_outline(f, p, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, 5, Color(0, 0, 0, 0.6))
+		draw_string(f, p, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, IdleUI.COR_TEXTO)
 
 
 ## Os pontos do pelotão: um por carro, o seu em ouro.
@@ -916,7 +1000,7 @@ func _abrir(id: String) -> void:
 
 
 func _efeito_texto(m: Dictionary, nivel: int) -> String:
-	var x := float(m["por_nivel"]) * nivel
+	var x := float(m["por_nivel"]) * nivel * estado.multiplicador_marcos(m, nivel)
 	if _na_arena and m["efeito"] == "vacuo":
 		# Blindagem: o peso a mais do carro na Arena.
 		return "+%d%%" % roundi(x * float(estado.dados_modalidade().get("blindagem_por_vacuo", 0.0)) * 100.0)
@@ -991,10 +1075,20 @@ func _atualizar_ladrilho(m: Dictionary, n: int, previsao: String) -> void:
 	elif "›" in previsao:
 		ef += " · " + previsao.replace(" ", "")
 	var id := String(m["id"])
+	var pm := estado.proximo_marco(n)
+	l.definir_marco(float(n - pm.x) / float(pm.y - pm.x) if pm.y > 0 else -1.0)
 	if estado.no_maximo(id):
 		l.definir("NV. %d" % n, ef, "MÁX.", false)
-	else:
-		l.definir("NV. %d" % n, ef, "$" + curto(estado.custo(id)), estado.pode_comprar(id))
+		return
+	var q := _multiplo
+	if q < 0:
+		q = maxi(estado.niveis_pagaveis(id), 1)
+	var custo := estado.custo_varios(id, q)
+	if not is_finite(custo):
+		l.definir("NV. %d" % n, ef, "MÁX.", false)
+		return
+	var preco := "$" + curto(custo) if q == 1 else "+%d · $%s" % [q, curto(custo)]
+	l.definir("NV. %d" % n, ef, preco, estado.dinheiro >= custo)
 
 
 func _atualizar_topo(delta := 0.0) -> void:
@@ -1009,10 +1103,12 @@ func _atualizar_topo(delta := 0.0) -> void:
 	_renda.text = "+$%s/s" % curto(estado.renda_s())
 	_liga.text = String(estado.dados_liga()["nome"]).to_upper()
 	# Embaixo da liga, o objetivo dela e a corrida da vez.
-	var alvo := "VENÇA PARA SUBIR"
 	if estado.venceu:
-		alvo = "CATEGORIA VENCIDA" if estado.ultima_liga() else "VITÓRIA! SUBA DE LIGA"
-	_divisao.text = "%s · CORRIDA %d" % [alvo, int(estado._m().get("corridas", 0)) + 1]
+		_divisao.text = "CATEGORIA VENCIDA" if estado.ultima_liga() else "VITÓRIA! SUBA DE LIGA"
+	elif estado.melhor_posicao() > 0:
+		_divisao.text = "CHEGUE EM 1º · MELHOR: %dº" % estado.melhor_posicao()
+	else:
+		_divisao.text = "CHEGUE EM 1º PARA SUBIR"
 	_atualizar_combustivel()
 	_icone_mod.texture = Aba.icone_reduzido(String(estado.dados_modalidade().get("icone", "icone_correr")), 40)
 	_banner.texture = IdleUI.banner_pista(String(estado.dados_liga()["pista"]))
@@ -1047,6 +1143,8 @@ func _familia(eq: Dictionary) -> String:
 
 
 func _nova_corrida() -> void:
+	_pago_corrida = 0.0
+	_pingado = 0.0
 	_semente += 1
 	_resultado = estado.correr(dados, _semente + estado.corridas * 7919)
 	_na_arena = estado.e_arena()
@@ -1202,7 +1300,8 @@ func _process(delta: float) -> void:
 		if _pausa < 0.0:
 			_nova_corrida()
 	else:
-		_visual.tempo = minf(_visual.tempo + delta, _visual.duracao())
+		_visual.tempo = minf(_visual.tempo + delta * _passo_toque(delta), _visual.duracao())
+		_pingar_premio()
 		if _visual.tempo >= _fim_jogador:
 			_chegou()
 	if _chegada:
@@ -1262,6 +1361,52 @@ func _processo_arena(delta: float) -> void:
 	if _salvar_em <= 0.0:
 		_salvar_em = SALVAR_A_CADA_S
 		estado.salvar(Time.get_unix_time_from_system())
+
+
+## O prêmio da chegada entra aos poucos, conforme o carro anda; de tempos em
+## tempos um "+$" pipoca sobre o caixa.
+func _pingar_premio() -> void:
+	if _resultado.is_empty() or not is_finite(_fim_jogador) or _fim_jogador <= 0.0 or _chegada:
+		return
+	var alvo := estado.premio(IdleEstado.posicao(_resultado)) * clampf(_visual.tempo / _fim_jogador, 0.0, 1.0)
+	var dif := alvo - _pago_corrida
+	if dif <= 0.0:
+		return
+	estado.dinheiro += dif
+	_pago_corrida = alvo
+	_pingado += dif
+	if _pingado >= maxf(1.0, estado.premio(1) * 0.05) and _paginas["corrida"].visible and _conversa == null:
+		var r := _dinheiro.get_global_rect()
+		_efeitos.pipoca(Vector2(r.get_center().x, r.end.y), "+$" + curto(_pingado), COR_DINHEIRO, 22, 0.25)
+		IdleUI.saltar(_dinheiro, 1.05)
+		_pingado = 0.0
+
+
+## Segurar a corrida acelera: devolve o quanto o tempo da corrida anda
+## neste quadro e gasta (ou recarrega) a carga (cfg "toque").
+func _passo_toque(delta: float) -> float:
+	var t: Dictionary = estado.cfg.get("toque", {})
+	if t.is_empty():
+		return 1.0
+	var vel := 1.0
+	if _segurando and _toque_carga > 0.0 and _paginas["corrida"].visible:
+		vel = float(t.get("velocidade", 1.0))
+		_toque_carga = maxf(_toque_carga - delta / maxf(float(t.get("carga_s", 1.0)), 0.01), 0.0)
+	else:
+		_toque_carga = minf(_toque_carga + delta / maxf(float(t.get("recarga_s", 1.0)), 0.01), 1.0)
+	_toque_medidor.carga = _toque_carga
+	_toque_medidor.acelerando = vel > 1.0
+	_toque_medidor.queue_redraw()
+	if not "toque" in estado.guias and estado.corridas >= 1 and _conversa == null and not _guia.ativo() \
+			and _paginas["corrida"].visible:
+		estado.guias.append("toque")
+		_guiar.call_deferred("toque", "Segure a corrida para acelerar.")
+	return vel
+
+
+func _toque_corrida(e: InputEvent) -> void:
+	if e is InputEventScreenTouch or (e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT):
+		_segurando = e.pressed
 
 
 ## Avisos da Arena: quem você tirou da luta e quantos ainda estão de pé.
@@ -1363,6 +1508,8 @@ func _eventos(ordem: Array) -> void:
 			_hud.evento("LÍDER", "passou %s" % nome, COR_OURO, 6)
 		elif ganhou:
 			_hud.evento("ULTRAPASSAGEM", "passou %s · %dº" % [nome, pos], COR_OURO, 5)
+		if ganhou:
+			_estourar_posicao(_pos_antes - pos)
 		else:
 			_hud.evento("PERDEU A POSIÇÃO", "%s passou · %dº" % [nome, pos], COR_RUIM, 5)
 		_sons.ultrapassagem(ganhou)
@@ -1373,6 +1520,23 @@ func _eventos(ordem: Array) -> void:
 		if g >= 0.0 and g < APROXIMA_S and _visual.tempo - float(_avisado.get(atras, -INF)) > EVENTO_RIVAL_S:
 			_avisado[atras] = _visual.tempo
 			_hud.evento("%s SE APROXIMA" % String(_nomes.get(atras, "")).to_upper(), "−%.1f s" % g, COR_RUIM, 2)
+
+
+## Cada posição ganha estoura: "+1 POSIÇÃO" sobre o carro e o PRÊMIO ATUAL
+## salta e acende.
+func _estourar_posicao(quantas: int) -> void:
+	if not _paginas["corrida"].visible:
+		return
+	var onde := _quadro_corrida.get_global_rect().get_center()
+	if _hud.ancora_carro.x >= 0.0:
+		onde = _hud.get_global_transform() * _hud.ancora_carro + Vector2(0, -60)
+	_efeitos.pipoca(onde, "+%d POSIÇÃO" % quantas if quantas == 1 else "+%d POSIÇÕES" % quantas,
+			LadrilhoIdle.VERDE, 34, 0.8)
+	IdleUI.saltar(_premio, 1.2)
+	var tw := _premio.create_tween()
+	_premio.add_theme_color_override("font_color", LadrilhoIdle.VERDE)
+	tw.tween_interval(0.35)
+	tw.tween_callback(func(): _premio.add_theme_color_override("font_color", IdleUI.COR_OURO_CLARO))
 
 
 ## Som do seu carro: motor pela velocidade, pneu e zebra pelo 3D, o pelotão
@@ -1408,6 +1572,8 @@ func _som(ordem: Array) -> void:
 func _chegou() -> void:
 	var pos := IdleEstado.posicao(_resultado)
 	var ganho := estado.concluir(pos)
+	estado.dinheiro -= _pago_corrida  # a parte que já pingou na corrida
+	_pago_corrida = 0.0
 	_chegada = true
 	_sons.chegada()
 	_locutor("locutor_vitoria" if pos == 1 else "locutor_chegada")
@@ -1446,7 +1612,9 @@ func _dobrar_premio() -> void:
 
 func _comprar(id: String, quantos := 1) -> void:
 	var n := estado.niveis_pagaveis(id) if quantos < 0 else quantos
+	var marcos_antes := estado.marcos_alcancados(estado.nivel(id))
 	if estado.comprar_varios(id, n) > 0:
+		_comemorar_marco(id, marcos_antes)
 		if _largar_na_compra and _aguardando:
 			# Cena 4 do briefing: o primeiro +1 e a próxima corrida começa.
 			_largar_na_compra = false
@@ -1474,6 +1642,24 @@ func _comprar(id: String, quantos := 1) -> void:
 				0.5 + 0.12 * _combo + (0.3 if n > 1 else 0.0))
 		IdleUI.saltar(_dinheiro, 0.92)
 		_atualizar_cartoes()
+
+
+## Passou de um nível-marco: estoura na tela; nas melhorias que multiplicam,
+## o efeito dobra (cfg "marcos").
+func _comemorar_marco(id: String, antes: int) -> void:
+	var depois := estado.marcos_alcancados(estado.nivel(id))
+	if depois <= antes:
+		return
+	var m := estado.melhoria(id)
+	var texto := "MARCO!"
+	if estado.marco_multiplica(m):
+		texto = "×%s %s!" % [str(float(estado.cfg_marcos().get("multiplicador", 2.0))).trim_suffix(".0"),
+				String(m["nome"]).to_upper()]
+	var lad: Control = _ladrilhos.get(id)
+	var onde := lad.get_global_rect().get_center() if lad != null and lad.is_visible_in_tree() else get_global_rect().get_center()
+	_efeitos.pipoca(onde + Vector2(0, -90), texto, COR_OURO, 40, 1.0)
+	_efeitos.faiscas(onde, IdleUI.COR_OURO_CLARO, 40)
+	celebrar(3)
 
 
 func _subir_liga() -> void:
@@ -2119,6 +2305,8 @@ func _retangulo_do_alvo(alvo: String) -> Rect2:
 			c = _subir
 		"cameras":
 			c = _trilho
+		"toque":
+			c = _toque_medidor
 		"previsao":
 			c = _ladrilhos["motor"].efeito if _ladrilhos.has("motor") else _cartoes["motor"]["previsao"]
 	if alvo.begins_with("melhoria:"):

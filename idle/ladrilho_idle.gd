@@ -21,6 +21,7 @@ var botao: Button
 var _icone: TextureRect
 var _fechado := false
 var _pequeno := false
+var _marco: _BarraMarco
 
 
 ## `pequeno`: a linha das trapaças (ícone à esquerda, sem a peça grande).
@@ -53,6 +54,10 @@ func _init(id_: String, icone: String, texto: String, pequeno := false) -> void:
 		efeito.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		efeito.clip_text = true
 		nivel = IdleUI.rotulo("", 13, IdleUI.COR_CROMO, h)
+	# Barrinha até o próximo marco (cfg "marcos").
+	_marco = _BarraMarco.new()
+	_marco.custom_minimum_size = Vector2(0, 8)
+	v.add_child(_marco)
 	_icone.visible = false  # sem ícones nos cartões (pedido do usuário)
 	v.add_child(_icone)
 	# O botão no pé do cartão: na mesma altura em toda a linha.
@@ -76,6 +81,23 @@ func _init(id_: String, icone: String, texto: String, pequeno := false) -> void:
 
 
 ## Preço no botão e se dá para pagar; o efeito e o nível no cartão.
+## Quanto falta para o próximo marco (0..1; < 0 esconde a barra).
+func definir_marco(fracao: float) -> void:
+	_marco.visible = fracao >= 0.0
+	if absf(_marco.fracao - fracao) > 0.001:
+		_marco.fracao = fracao
+		_marco.queue_redraw()
+
+
+## O botão que já dá para pagar respira (brilho que vai e volta).
+func _process(_delta: float) -> void:
+	if botao.disabled or _fechado or Preferencias.reduzir_animacoes:
+		botao.self_modulate = Color.WHITE
+		return
+	var k := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.4)
+	botao.self_modulate = Color(1, 1, 1).lerp(Color(1.25, 1.25, 1.1), k)
+
+
 func definir(texto_nivel: String, texto_efeito: String, preco: String, pode: bool) -> void:
 	nivel.text = texto_nivel
 	efeito.text = texto_efeito
@@ -95,6 +117,7 @@ func fechar(texto: String) -> void:
 	efeito.text = texto
 	efeito.add_theme_color_override("font_color", IdleUI.COR_BLOQUEADO)
 	nivel.text = ""
+	_marco.visible = false
 	botao.text = "FECHADO"
 	botao.disabled = true
 
@@ -111,3 +134,13 @@ func abrir() -> void:
 	_icone.modulate = Color.WHITE
 	nome.remove_theme_color_override("font_color")
 	efeito.add_theme_color_override("font_color", IdleUI.COR_CROMO if _pequeno else VERDE)
+
+
+class _BarraMarco extends Control:
+	var fracao := 0.0
+
+	func _draw() -> void:
+		var r := Rect2(Vector2(0, 1), Vector2(size.x, size.y - 2))
+		draw_rect(r, Color("0c0a08"))
+		if fracao > 0.0:
+			draw_rect(Rect2(r.position, Vector2(r.size.x * clampf(fracao, 0.0, 1.0), r.size.y)), IdleUI.COR_OURO)

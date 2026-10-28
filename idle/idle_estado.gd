@@ -269,8 +269,47 @@ func efeito(tipo: String, niveis_extra := {}, mod := "") -> float:
 	var total := 0.0
 	for m in cfg["melhorias"]:
 		if m["efeito"] == tipo:
-			total += float(m["por_nivel"]) * (nivel(m["id"], mod) + int(niveis_extra.get(m["id"], 0)))
+			var n := nivel(m["id"], mod) + int(niveis_extra.get(m["id"], 0))
+			total += float(m["por_nivel"]) * n * multiplicador_marcos(m, n)
 	return total
+
+
+# --- marcos por melhoria (cfg "marcos") ----------------------------------------
+# Como nos idles de referência (AdVenture Capitalist): níveis-marco em que o
+# efeito da melhoria multiplica. Só nos efeitos listados em "efeitos"; nos
+# outros o marco é só a fase nova da estação.
+
+func cfg_marcos() -> Dictionary:
+	return cfg.get("marcos", {})
+
+
+## Marcos já alcançados com `n` níveis.
+func marcos_alcancados(n: int) -> int:
+	var k := 0
+	for alvo in cfg_marcos().get("niveis", []):
+		if n >= int(alvo):
+			k += 1
+	return k
+
+
+## O próximo nível-marco depois de `n` (0: não há mais) e o anterior (0 no começo).
+func proximo_marco(n: int) -> Vector2i:
+	var antes := 0
+	for alvo in cfg_marcos().get("niveis", []):
+		if n < int(alvo):
+			return Vector2i(antes, int(alvo))
+		antes = int(alvo)
+	return Vector2i(antes, 0)
+
+
+func marco_multiplica(m: Dictionary) -> bool:
+	return String(m["efeito"]) in cfg_marcos().get("efeitos", [])
+
+
+func multiplicador_marcos(m: Dictionary, n: int) -> float:
+	if not marco_multiplica(m):
+		return 1.0
+	return pow(float(cfg_marcos().get("multiplicador", 1.0)), marcos_alcancados(n))
 
 
 # --- ligas, prêmios e renda -----------------------------------------------------
