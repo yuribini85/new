@@ -31,6 +31,35 @@ const TELHADO := Color(0.24, 0.22, 0.21)
 const FOLHAS := [Color(0.22, 0.32, 0.14), Color(0.27, 0.36, 0.16), Color(0.33, 0.38, 0.17)]
 const FENO := Color(0.78, 0.64, 0.34)
 const CERCA_M := 1.6  # da borda da pista à cerca
+## Hora do dia pelo relógio do aparelho (sugestão 9 aprovada, 2026-10-28): de
+## dia o céu claro, no fim da tarde o dourado de sempre, à noite céu azul-escuro,
+## luar e postes de luz acesos ao longo da pista.
+const FASES := {
+	"dia": {"ceu": Color(0.72, 0.78, 0.8), "ambiente": Color(0.7, 0.7, 0.68), "luz": Color(1.0, 0.95, 0.85), "energia": 1.25,
+		"sol": Vector3(-0.95, 0.6, 0)},
+	"tarde": {"ceu": Color(0.84, 0.74, 0.58), "ambiente": Color(0.66, 0.62, 0.56), "luz": Color(1.0, 0.8, 0.56), "energia": 1.3,
+		"sol": Vector3(-0.42, 0.95, 0)},
+	"noite": {"ceu": Color(0.1, 0.12, 0.2), "ambiente": Color(0.24, 0.26, 0.36), "luz": Color(0.62, 0.7, 0.95), "energia": 0.35,
+		"sol": Vector3(-0.8, 0.4, 0)},
+}
+const POSTE_LUZ_M := 34.0  # entre os postes de luz, à noite
+const LAMPADA := Color(1.0, 0.82, 0.5)
+const LUZES_MAX := 14  # luzes de verdade (o resto só brilha): celular simples aguenta
+## Ferramentas e testes: "dia", "tarde" ou "noite" fixos; "" segue o relógio.
+static var fase_forcada := ""
+
+
+## A fase da hora `h` (0–23): dia das 6 às 16, fim de tarde até as 19, noite.
+static func fase(h: int = -1) -> String:
+	if fase_forcada != "":
+		return fase_forcada
+	if h < 0:
+		h = int(Time.get_datetime_dict_from_system()["hour"])
+	if h >= 6 and h < 16:
+		return "dia"
+	if h >= 16 and h < 19:
+		return "tarde"
+	return "noite"
 const POSTE_M := 3.0  # entre os mourões
 
 
@@ -41,15 +70,16 @@ const CHAPEUS := [Color("1c1a18"), Color("5a4a38"), Color("3a3a3a"), Color("c9b2
 
 
 static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environment, luz: DirectionalLight3D) -> void:
-	ambiente.background_color = CEU
-	ambiente.ambient_light_color = AMBIENTE
+	var f: Dictionary = FASES[fase()]
+	ambiente.background_color = f["ceu"]
+	ambiente.ambient_light_color = f["ambiente"]
 	ambiente.fog_enabled = true
-	ambiente.fog_light_color = CEU
+	ambiente.fog_light_color = f["ceu"]
 	ambiente.fog_density = 0.0012
 	ambiente.fog_sky_affect = 0.0
-	luz.light_color = LUZ
-	luz.light_energy = 1.3
-	luz.rotation = Vector3(-0.42, 0.95, 0)  # sol baixo: sombras compridas
+	luz.light_color = f["luz"]
+	luz.light_energy = f["energia"]
+	luz.rotation = f["sol"]  # no fim da tarde, sol baixo: sombras compridas
 	luz.shadow_enabled = not Preferencias.efeitos_leves
 	luz.shadow_opacity = 0.7
 	luz.directional_shadow_max_distance = 600.0
@@ -93,6 +123,92 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	cena.add_child(_vivo(_st_bandeiras, 1))
 	cena.add_child(_bandeira_fiscal(pista, largura))
 	_fumaca(cena, torre)
+	if fase() == "noite":
+		_postes(cena, pts, largura)
+
+
+static var _halo: QuadMesh
+
+
+## O brilho em volta da lâmpada: um disco que sempre olha a câmera, somando luz.
+static func _malha_halo() -> QuadMesh:
+	if _halo != null:
+		return _halo
+	var g := Gradient.new()
+	g.set_color(0, Color(LAMPADA, 0.85))
+	g.set_color(1, Color(LAMPADA, 0.0))
+	var tex := GradientTexture2D.new()
+	tex.gradient = g
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(0.5, 0.0)
+	tex.width = 64
+	tex.height = 64
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	m.albedo_texture = tex
+	m.no_depth_test = false
+	_halo = QuadMesh.new()
+	_halo.size = Vector2(5.0, 5.0)
+	_halo.material = m
+	return _halo
+
+
+## Postes de luz de madeira por fora da cerca, a lâmpada acesa (brilho próprio)
+## e, nos primeiros, uma luz de verdade no chão.
+static func _postes(cena: Node3D, pts: PackedVector2Array, largura: float) -> void:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var lampadas := SurfaceTool.new()
+	lampadas.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var dist := largura * 0.5 + CERCA_M + 1.4
+	var desde := POSTE_LUZ_M
+	var luzes := 0
+	var n := pts.size()
+	for i in n - 1:
+		desde += pts[i].distance_to(pts[i + 1])
+		if desde < POSTE_LUZ_M:
+			continue
+		desde = 0.0
+		var dir := (pts[mini(i + 1, n - 1)] - pts[maxi(i - 1, 0)]).normalized()
+		var fora := dir.orthogonal()
+		var lado := 1.0 if (i / 7) % 2 == 0 else -1.0  # alterna os lados da pista
+		var p := pts[i] + fora * dist * lado
+		var rumo := dir.angle()
+		_caixa(st, MADEIRA, p, rumo, Vector3(0.22, 6.2, 0.22))
+		var braco := p - fora * lado * 0.9
+		_caixa(st, MADEIRA, p.lerp(braco, 0.5), (braco - p).angle(), Vector3(1.0, 0.14, 0.14), 6.0)
+		_caixa(lampadas, LAMPADA, braco, rumo, Vector3(0.7, 0.5, 0.7), 5.5)
+		var halo := MeshInstance3D.new()
+		halo.mesh = _malha_halo()
+		halo.position = _v3(braco, 5.75)
+		cena.add_child(halo)
+		if luzes < LUZES_MAX and not Preferencias.efeitos_leves:
+			var l := OmniLight3D.new()
+			l.light_color = LAMPADA
+			l.light_energy = 4.0
+			l.omni_range = 26.0
+			l.position = _v3(braco, 5.2)
+			cena.add_child(l)
+			luzes += 1
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.roughness = 0.95
+	mi.material_override = mat
+	cena.add_child(mi)
+	var ml := MeshInstance3D.new()
+	ml.mesh = lampadas.commit()
+	var brilho := StandardMaterial3D.new()
+	brilho.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	brilho.albedo_color = LAMPADA
+	ml.material_override = brilho
+	cena.add_child(ml)
 
 
 ## A bandeira do fiscal (Corrida3D.bandeira_fiscal troca verde/quadriculada).

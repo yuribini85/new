@@ -48,6 +48,7 @@ func _rodar() -> void:
 			"novo": novo = true
 			"corridas": corridas = int(kv[1])
 			"abrir": abrir = Array(kv[1].split(","))
+			"fase": CenarioEpoca.fase_forcada = kv[1]  # dia, tarde ou noite
 			"ofertas": ofertas = Array(kv[1].split(","))
 			"guia": guia = kv[1]
 	DirAccess.make_dir_recursive_absolute(saida)
