@@ -169,6 +169,17 @@ jobs:
           else
             echo "Plugin de avisos indisponível: APK sem avisos."
           fi
+          # Save na nuvem (idle/nuvem_idle.gd): plugin Play Games Services v3.4.0
+          # (Godot 4.5), só com o game_id de data/idle/idle.json ("play_games");
+          # sem ele o jogo do Play Games não abre, então o APK sai sem nuvem.
+          game_id=$(python3 -c "import json;print(json.load(open('data/idle/idle.json'))['play_games']['game_id'])")
+          if [ -n "$game_id" ] && curl -sSfL -o pgs.zip https://github.com/godot-sdk-integrations/godot-play-game-services/releases/download/v3.4.0/addons.zip \
+              && unzip -o -q pgs.zip -d . && test -f addons/GodotPlayGameServices/plugin.cfg; then
+            plugins="$plugins, \"res://addons/GodotPlayGameServices/plugin.cfg\""
+            GAME_ID="$game_id" python3 tools/ci_play_games.py
+          else
+            echo "Sem game_id do Play Games (ou plugin indisponível): APK salva só no aparelho."
+          fi
           printf '\n[editor_plugins]\n\nenabled=PackedStringArray(%s)\n' "$plugins" >> project.godot
           ls addons
           # Build Gradle só no preset do idle (preset.3).

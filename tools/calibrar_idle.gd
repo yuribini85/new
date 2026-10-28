@@ -10,8 +10,11 @@ extends SceneTree
 ## corrida enquanto o app está aberto; quem corre é sempre o sobrinho).
 ## Divisão nova com carro na garagem: junta o dinheiro (sem comprar melhorias)
 ## correndo onde está, compra o carro e só então troca.
+## Com o app aberto, toca o jornaleiro sempre que ele aparece (no meio do
+## intervalo_s, a partir de a_partir_corridas; `jornaleiro=0` desliga). Ao vencer
+## o Grande Campeonato muda de cidade, até `cidades` cidades.
 ## Uso: godot --headless --path . -s tools/calibrar_idle.gd [-- sessoes_dia=4 sessao_min=8
-##        primeira_min=15 limite_dias=60 videos=0]
+##        primeira_min=15 limite_dias=60 videos=0 jornaleiro=1 cidades=1]
 
 var e: IdleEstado
 var d: Node
@@ -85,7 +88,7 @@ func _pilotos(agora: float, dia: String, videos: int) -> void:
 
 
 func _rodar() -> void:
-	var args := {"sessoes_dia": "4", "sessao_min": "8", "primeira_min": "15", "limite_dias": "60", "videos": "0"}
+	var args := {"sessoes_dia": "4", "sessao_min": "8", "primeira_min": "15", "limite_dias": "60", "videos": "0", "jornaleiro": "1", "cidades": "1"}
 	for a in OS.get_cmdline_user_args():
 		var kv := a.split("=")
 		if kv.size() == 2:
@@ -114,6 +117,12 @@ func _rodar() -> void:
 	var rinha_ganho := 0.0
 	var lutas := 0
 	var abertas := e.liberadas()
+	var cj := e.cfg_jornaleiro()
+	var jorn_cada := (float(cj["intervalo_s"][0]) + float(cj["intervalo_s"][1])) * 0.5
+	var jorn_t := 0.0
+	var jorn_n := 0
+	var jorn_ganho := 0.0
+	var cidade_inicio := 0.0
 	print("dia     modalidade liga                         corridas  níveis do piloto")
 	_pilotos(inicio, "d0", 0)
 	while relogio < float(args["limite_dias"]) * 86400.0:
@@ -137,6 +146,14 @@ func _rodar() -> void:
 		e.dinheiro += e.renda_s() * dur
 		e.concluir(IdleEstado.posicao(r))
 		corridas_liga += 1
+		if args["jornaleiro"] != "0" and e.corridas >= int(cj["a_partir_corridas"]):
+			jorn_t += dur
+			if jorn_t >= jorn_cada:
+				jorn_t -= jorn_cada
+				var g := e.gorjeta_jornaleiro()
+				e.dinheiro += g
+				jorn_ganho += g
+				jorn_n += 1
 		# A Rinha luta ao lado: lutas (de ~duracao/2 s, mais a pausa) cabem nesse tempo.
 		# Para andar rápido, uma luta simulada por corrida vale por todas as que cabem nela.
 		if e.rinha_aberta():
@@ -165,7 +182,14 @@ func _rodar() -> void:
 				var antes := e.modalidade
 				_escolher_modalidade()
 				if e.modalidade == antes and esperando_carro == "":
-					break
+					if e.cidade + 1 >= int(args["cidades"]) or not e.mudar_de_cidade():
+						break
+					print("        NOVA CIDADE %d (×%.0f) após %.2f dias nesta cidade" % [e.cidade + 1,
+							e.multiplicador_cidade(), (relogio - cidade_inicio) / 86400.0])
+					cidade_inicio = relogio
+					abertas = e.liberadas()
+					esperando_carro = ""
+					_escolher_modalidade()
 			_pilotos(inicio + relogio, "d%d" % int(relogio / 86400.0), 0)
 			if e.liberadas().size() > abertas.size():
 				abertas = e.liberadas()
@@ -173,4 +197,5 @@ func _rodar() -> void:
 				_escolher_modalidade()
 	print("total %.1f min de app aberto, %.1f dias, %d corridas" % [ativo / 60.0, relogio / 86400.0, e.corridas])
 	print("rinha: %d lutas, $%d em prêmios" % [lutas, int(rinha_ganho)])
+	print("jornaleiro: %d gorjetas, $%d; troféus %d; cidade %d" % [jorn_n, int(jorn_ganho), e.trofeus.size(), e.cidade + 1])
 	quit()

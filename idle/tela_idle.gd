@@ -71,6 +71,7 @@ const VELOCIDADE_ARENA := 2.0
 var dados: Node
 var estado: IdleEstado
 var anuncios: IdleAnuncios
+var nuvem: NuvemIdle
 var _visual: CorridaVisual
 var _visual3d: Corrida3D
 var _arena3d: Arena3D  # a vista da modalidade Arena (a arena do Chrome & Wreckage)
@@ -210,6 +211,11 @@ func _ready() -> void:
 	anuncios.intersticial_min_s = float(estado.cfg.get("intersticial_min_s", 90.0))
 	anuncios.config = estado.cfg.get("admob", {})
 	add_child(anuncios)
+	nuvem = NuvemIdle.new()
+	nuvem.config = estado.cfg.get("play_games", {})
+	add_child(nuvem)
+	nuvem.achou.connect(_nuvem_achou)
+	nuvem.iniciar(estado.progresso())
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var agora := Time.get_unix_time_from_system()
 	# O primeiro piloto vem com a equipe (o primeiro contrato grátis).
@@ -414,6 +420,7 @@ func _notification(what: int) -> void:
 	if what in [NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_WM_CLOSE_REQUEST, NOTIFICATION_APPLICATION_FOCUS_OUT]:
 		if estado != null:
 			estado.salvar(Time.get_unix_time_from_system())
+			nuvem.enviar(estado, true)
 			IdleAvisos.agendar(estado)
 	elif what in [NOTIFICATION_APPLICATION_RESUMED, NOTIFICATION_APPLICATION_FOCUS_IN]:
 		IdleAvisos.cancelar()
@@ -1679,6 +1686,7 @@ func _process(delta: float) -> void:
 	if _salvar_em <= 0.0:
 		_salvar_em = SALVAR_A_CADA_S
 		estado.salvar(Time.get_unix_time_from_system())
+		nuvem.enviar(estado)
 
 
 ## A luta da Arena: semáforo, a luta acelerada e, quando o seu carro cai ou a
@@ -1709,6 +1717,7 @@ func _processo_arena(delta: float) -> void:
 	if _salvar_em <= 0.0:
 		_salvar_em = SALVAR_A_CADA_S
 		estado.salvar(Time.get_unix_time_from_system())
+		nuvem.enviar(estado)
 
 
 ## O prêmio da chegada entra aos poucos, conforme o carro anda; de tempos em
@@ -2239,6 +2248,52 @@ func _avisos(delta: float) -> void:
 	_barra.avisar("metas", estado.metas_prontas(agora) > 0)
 
 
+# --- save na nuvem ---------------------------------------------------------------
+
+## A conta Google tem um jogo mais adiantado que o do aparelho: aparelho sem
+## progresso (reinstalou, trocou de celular) carrega direto; com progresso,
+## pergunta.
+func _nuvem_achou(save: Dictionary) -> void:
+	if estado.corridas == 0:
+		_restaurar(save)
+		return
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.72)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fundo)
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.add_child(centro)
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(580, 0)
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18, 24))
+	centro.add_child(p)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 16)
+	p.add_child(v)
+	var t := IdleUI.rotulo("JOGO SALVO NA SUA CONTA", 32, COR_OURO, v, "deco")
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var c := cidade(int(save.get("cidade", 0)))
+	var texto := IdleUI.rotulo("Sua conta Google tem um jogo mais adiantado que o deste celular: %s, %d corridas." % [
+			String(c["lugar"]), int(save.get("corridas", 0))], 22, IdleUI.COR_TEXTO, v, "regular")
+	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	texto.custom_minimum_size.x = 532
+	var carregar := IdleUI.botao("CARREGAR", COR_OURO, 26, 76, v)
+	carregar.pressed.connect(_restaurar.bind(save))
+	var ficar := IdleUI.botao("FICAR COM ESTE", COR_BOTAO, 24, 68, v)
+	ficar.pressed.connect(fundo.queue_free)
+
+
+func _restaurar(save: Dictionary) -> void:
+	var f := FileAccess.open(IdleEstado.ARQUIVO_SAVE, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(JSON.stringify(save))
+	f.close()
+	set_process(false)  # o salvamento automático não grava o jogo antigo por cima
+	get_tree().reload_current_scene()
+
+
 # --- configurações --------------------------------------------------------------
 
 ## Engrenagem: som e visual simples (efeitos leves do 3D, como no Chrome &
@@ -2278,6 +2333,17 @@ func _abrir_config() -> void:
 			Preferencias.salvar()
 			if ligado:
 				IdleAvisos.pedir_permissao())
+	if nuvem.disponivel():
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 14)
+		v.add_child(h)
+		var l := IdleUI.rotulo("CONTA GOOGLE", 26, IdleUI.COR_TEXTO, h)
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if nuvem.conectado:
+			IdleUI.rotulo("SALVANDO", 22, IdleUI.COR_GANHO, h)
+		else:
+			var entrar := IdleUI.botao("ENTRAR", COR_BOTAO, 22, 56, h)
+			entrar.pressed.connect(nuvem.entrar)
 	var nota := IdleUI.rotulo("Gráficos leves tiram sombras, fumaça e efeitos: o jogo roda melhor em celulares simples.", 17,
 			IdleUI.COR_SECUNDARIA, v, "regular")
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -1113,6 +1113,23 @@ func para_save() -> Dictionary:
 			"cidade": cidade}
 
 
+## Quão adiantado o jogo está, para escolher entre o save do aparelho e o da
+## nuvem: cidade, depois ligas vencidas, depois corridas.
+func progresso() -> int:
+	return IdleEstado.progresso_de({"cidade": cidade, "mods": mods, "corridas": corridas})
+
+
+## O mesmo, direto de um save (o da nuvem, antes de carregar).
+static func progresso_de(s: Dictionary) -> int:
+	var ligas := 0
+	var ms = s.get("mods", {})
+	if ms is Dictionary:
+		for id in ms:
+			if ms[id] is Dictionary:
+				ligas += int(ms[id].get("liga", 0)) + (1 if bool(ms[id].get("venceu", false)) else 0)
+	return int(s.get("cidade", 0)) * 10000000 + ligas * 10000 + mini(int(s.get("corridas", 0)), 9999)
+
+
 func de_save(s: Dictionary) -> void:
 	dinheiro = float(s.get("dinheiro", dinheiro))
 	corridas = int(s.get("corridas", 0))

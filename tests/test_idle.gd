@@ -547,3 +547,22 @@ func test_nova_cidade_zera_o_progresso_e_multiplica() -> void:
 	var f := IdleEstado.new(c)
 	f.de_save(e.para_save())
 	igual(f.cidade, 1, "a cidade volta do save")
+
+
+func test_nuvem_escolhe_o_jogo_mais_adiantado() -> void:
+	var c := _cfg()
+	var novo := IdleEstado.new(c)
+	var adiantado := IdleEstado.new(c)
+	adiantado.corridas = 40
+	adiantado.venceu = true
+	adiantado.subir_liga()
+	var outra_cidade := IdleEstado.new(c)
+	outra_cidade.cidade = 1
+	verificar(novo.progresso() < adiantado.progresso() and adiantado.progresso() < outra_cidade.progresso(),
+			"cidade pesa mais que liga, liga mais que corridas")
+	igual(IdleEstado.progresso_de(adiantado.para_save()), adiantado.progresso(), "o save lido dá o mesmo progresso")
+	var n := NuvemIdle.new()
+	n.config = {"game_id": "123"}
+	verificar(not n.disponivel(), "fora do Android sem o plugin a nuvem fica desligada")
+	n.enviar(adiantado, true)  # sem conta: não faz nada nem quebra
+	n.free()
