@@ -644,33 +644,31 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_bandeira)
 	# Por baixo das faixas e do painel.
 	corrida.move_child(_bandeira, _hud.get_index())
-	# O menino jornaleiro sobe de trás do velocímetro (opaco: o corte dele fica
-	# escondido atrás do mostrador; atrás de uma faixa translúcida pareceria erro).
+	# O menino jornaleiro sobe de trás da faixa do prêmio, à esquerda. O corte
+	# dele fica no pé da corrida, escondido pela Oficina (opaca) logo abaixo:
+	# pela faixa translúcida ele aparece inteiro, nunca cortado.
 	_jornaleiro = JornaleiroIdle.new()
-	_jornaleiro.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	_jornaleiro.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	corrida.add_child(_jornaleiro)
-	corrida.move_child(_jornaleiro, _toque_medidor.get_index())
+	corrida.move_child(_jornaleiro, _bandeira.get_index())
 	_jornaleiro.tocado.connect(_pagar_jornaleiro)
+	var tam_j := _jornaleiro.custom_minimum_size
+	_jornaleiro.offset_left = 0.0
+	_jornaleiro.offset_right = tam_j.x
+	_jornaleiro.offset_bottom = 0.0
+	_jornaleiro.offset_top = -tam_j.y
 	_jornal_x2 = IdleUI.botao_premio("GORJETA x2", 26, Tipografia.ALTURA_SECUNDARIA)
 	_jornal_x2.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	_jornal_x2.visible = false
 	_jornal_x2.pressed.connect(_dobrar_gorjeta)
 	corrida.add_child(_jornal_x2)
-	var encaixar_jornal := func():
-		# A base dele no meio do mostrador, o corpo centrado atrás dele.
-		var cx := (_toque_medidor.offset_left + _toque_medidor.offset_right) * 0.5
-		var cy := (_toque_medidor.offset_top + _toque_medidor.offset_bottom) * 0.5
-		var tam := _jornaleiro.custom_minimum_size
-		_jornaleiro.offset_left = cx - tam.x * 0.5
-		_jornaleiro.offset_right = cx + tam.x * 0.5
-		_jornaleiro.offset_bottom = cy
-		_jornaleiro.offset_top = cy - tam.y
+	var encaixar_x2 := func():
 		_jornal_x2.offset_left = 16.0
 		_jornal_x2.offset_right = 336.0
 		_jornal_x2.offset_bottom = -embaixo.size.y - 12.0
 		_jornal_x2.offset_top = _jornal_x2.offset_bottom - float(Tipografia.ALTURA_SECUNDARIA)
-	embaixo.resized.connect(encaixar_jornal)
-	encaixar_jornal.call()
+	embaixo.resized.connect(encaixar_x2)
+	encaixar_x2.call()
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()

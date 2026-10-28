@@ -11,7 +11,8 @@ signal tocado
 const QUADROS := 12
 const QUADRO_S := 0.16
 const ALTURA := 380.0  # o sprite inteiro na tela, do pé ao boné
-const VISIVEL := 2.0 / 3.0  # nunca mostra mais que isto: o resto fica atrás da faixa
+const VISIVEL := 2.0 / 3.0  # do corpo dele, nunca mais que isto à mostra
+const FOLGA_TOPO := 0.22  # o alto do quadro sem o menino (espaço do jornal erguido)
 const SOBE_S := 0.35
 
 var _quadros: Array[Texture2D] = []
@@ -27,7 +28,7 @@ func _init() -> void:
 		_quadros.append(load("res://arte/fastfather/jornaleiro/jornaleiro_%02d.png" % (i + 1)))
 	var tam: Vector2 = _quadros[0].get_size()
 	var inteiro := Vector2(tam.x * ALTURA / tam.y, ALTURA)
-	custom_minimum_size = Vector2(inteiro.x, ALTURA * VISIVEL)
+	custom_minimum_size = Vector2(inteiro.x, ALTURA * (FOLGA_TOPO + (1.0 - FOLGA_TOPO) * VISIVEL))
 	size = custom_minimum_size
 	clip_contents = true  # o terço de baixo nunca aparece
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
