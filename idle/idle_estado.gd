@@ -349,8 +349,15 @@ func bonus_gorjeta() -> float:
 
 
 ## Quantas vezes a gorjeta vale com o anúncio.
-func multiplicador_anuncio_gorjeta() -> int:
-	return maxi(int(cfg_jornaleiro().get("anuncio_mult", 2)), 1)
+func multiplicador_anuncio_gorjeta() -> float:
+	return multiplicador_anuncio(float(cfg_jornaleiro().get("anuncio_mult", 2)))
+
+
+## Quantas vezes vale uma recompensa em dinheiro com o anúncio (gorjeta, coletar):
+## a base de cada uma ou, com o troféu de efeito "anuncio", o multiplicador dele
+## (o maior entre os dois; o terceiro troféu dá ×2,5, pedido do usuário 2026-10-28).
+func multiplicador_anuncio(base := 2.0) -> float:
+	return maxf(maxf(base, 1.0), bonus_trofeus("anuncio"))
 
 
 # --- prestígio Nova Cidade (cfg "cidades") -----------------------------------------
@@ -532,11 +539,17 @@ func subir_liga() -> bool:
 	return true
 
 
-## Renda acumulada com o app fechado desde `salvo_em` (até offline_max_h).
+## Teto do lucro com o app fechado (s): offline_max_h mais as horas dos troféus
+## de efeito "offline" (o primeiro troféu, pedido do usuário 2026-10-28).
+func offline_max_s() -> float:
+	return (float(cfg["offline_max_h"]) + bonus_trofeus("offline")) * 3600.0
+
+
+## Renda acumulada com o app fechado desde `salvo_em` (até offline_max_s).
 func ganho_offline(agora: float) -> float:
 	if salvo_em <= 0.0:
 		return 0.0
-	var dt := clampf(agora - salvo_em, 0.0, float(cfg["offline_max_h"]) * 3600.0)
+	var dt := clampf(agora - salvo_em, 0.0, offline_max_s())
 	return renda_s() * dt
 
 

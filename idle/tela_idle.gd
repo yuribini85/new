@@ -1273,6 +1273,10 @@ func _texto_bonus(tr: Dictionary) -> String:
 			return pct + " no motor"
 		"gorjeta":
 			return pct + " na gorjeta"
+		"offline":  # bonus em horas
+			return "+%dh de lucro fora do jogo" % roundi(float(tr["bonus"]))
+		"anuncio":  # bonus: o multiplicador do anúncio
+			return "Anúncio paga %s" % IdleUI.vezes(float(tr["bonus"]))
 	return pct
 
 
@@ -1390,12 +1394,12 @@ func _pagar_jornaleiro() -> void:
 		var b := IdleUI.rotulo("Gorjeta +%d%% pelos capangas e troféus" % roundi(extra * 100.0), 20, IdleUI.COR_GANHO, v)
 		b.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var mult := estado.multiplicador_anuncio_gorjeta()
-	var a := IdleUI.rotulo("Assista a um anúncio e a gorjeta vale ×%d." % mult, 20, IdleUI.COR_SECUNDARIA, v, "regular")
+	var a := IdleUI.rotulo("Assista a um anúncio e a gorjeta vale %s." % IdleUI.vezes(mult), 20, IdleUI.COR_SECUNDARIA, v, "regular")
 	a.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var x := IdleUI.botao_premio("GORJETA ×%d · $%s" % [mult, curto(_gorjeta * mult)], 26, 80, v)
+	var x := IdleUI.botao_premio("GORJETA %s · $%s" % [IdleUI.vezes(mult), curto(_gorjeta * mult)], 26, 80, v)
 	x.pressed.connect(_dobrar_gorjeta)
 	v.add_child(_vao(26))  # o anúncio longe do FECHAR: nada de toque errado
-	_botao_fechar("FECHAR", v).pressed.connect(_receber_gorjeta.bind(1))
+	_botao_fechar("FECHAR", v).pressed.connect(_receber_gorjeta.bind(1.0))
 	if not Preferencias.reduzir_animacoes:
 		p.pivot_offset = Vector2(300, 300)
 		p.scale = Vector2(0.85, 0.85)
@@ -1454,7 +1458,7 @@ class _MeninoLento extends Control:
 
 
 ## Fecha a janela e paga a gorjeta `vezes` vezes.
-func _receber_gorjeta(vezes: int) -> void:
+func _receber_gorjeta(vezes: float) -> void:
 	if _janela_jornaleiro == null:
 		return
 	_janela_jornaleiro.queue_free()
@@ -1464,9 +1468,9 @@ func _receber_gorjeta(vezes: int) -> void:
 	ganho_flutuante(g)
 	_efeitos.pipoca(_paginas["corrida"].get_global_rect().get_center() + Vector2(0, -60), "+$" + curto(g),
 			IdleUI.COR_NEON, 44, 0.9)
-	Sons.cascata(self, 4 if vezes == 1 else 7)
-	if vezes > 1:
-		_hud.evento("GORJETA ×%d!" % vezes, "+$" + curto(g), IdleUI.COR_NEON, 11, -1.0, true)
+	Sons.cascata(self, 4 if vezes <= 1.0 else 7)
+	if vezes > 1.0:
+		_hud.evento("GORJETA %s!" % IdleUI.vezes(vezes), "+$" + curto(g), IdleUI.COR_NEON, 11, -1.0, true)
 	estado.salvar(Time.get_unix_time_from_system())
 
 
@@ -2670,14 +2674,15 @@ func _bem_vindo(ganho: float) -> void:
 	var botoes := VBoxContainer.new()
 	botoes.add_theme_constant_override("separation", 26)
 	p.corpo.add_child(botoes)
-	var dobro := IdleUI.botao_premio("COLETAR x2 · $%s" % curto(ganho * 2.0), 26, 80, botoes)
+	var mult := estado.multiplicador_anuncio()
+	var dobro := IdleUI.botao_premio("COLETAR %s · $%s" % [IdleUI.vezes(mult), curto(ganho * mult)], 26, 80, botoes)
 	var coletar := _botao_fechar("COLETAR $%s" % curto(ganho), botoes)
 	coletar.pressed.connect(_fechar_bem_vindo.bind(ganho))
 	dobro.pressed.connect(func():
 		anuncios.premiado(func():
-			estado.dinheiro += ganho
+			estado.dinheiro += ganho * (mult - 1.0)
 			estado.salvar(Time.get_unix_time_from_system())
-			_fechar_bem_vindo(ganho * 2.0)))
+			_fechar_bem_vindo(ganho * mult)))
 	Sons.tocar_ui(self, "moeda", -4.0)
 	if not Preferencias.reduzir_animacoes:
 		p.pivot_offset = Vector2(320, 200)

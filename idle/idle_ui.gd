@@ -303,6 +303,11 @@ class _BrilhoPremio extends Control:
 		draw_colored_polygon(faixa, Color(1, 1, 0.92, 0.32))
 
 
+## "×2" ou "×2,5": o multiplicador do anúncio na língua do jogador.
+static func vezes(m: float) -> String:
+	return "×%d" % roundi(m) if is_equal_approx(m, roundf(m)) else ("×%.1f" % m).replace(".", ",")
+
+
 ## Troca o texto da recompensa do botão de anúncio (botao_premio).
 static func texto_premio(b: Button, texto: String) -> void:
 	(b.get_meta("premio") as Label).text = texto

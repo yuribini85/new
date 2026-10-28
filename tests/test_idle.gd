@@ -35,6 +35,14 @@ func test_premio_renda_e_offline() -> void:
 	e.salvo_em = 1000.0
 	igual(e.ganho_offline(1000.0 + 600.0), 1800.0, "10 min fechado")
 	igual(e.ganho_offline(1000.0 + 99999.0), 3.0 * 3600.0, "até offline_max_h")
+	e.cfg["trofeus"] = {"lista": [{"pista": "p1", "arte": 1, "efeito": "offline", "bonus": 1.0}]}
+	e.trofeus = ["p1"]
+	igual(e.ganho_offline(1000.0 + 99999.0), 3.0 * 7200.0, "troféu offline: +1h no teto")
+	igual(e.multiplicador_anuncio(), 2.0, "anúncio dobra sem o troféu")
+	e.cfg["trofeus"]["lista"].append({"pista": "p3", "arte": 1, "efeito": "anuncio", "bonus": 2.5})
+	e.trofeus = ["p1", "p3"]
+	igual(e.multiplicador_anuncio(), 2.5, "troféu do anúncio: ×2,5")
+	e.trofeus = []
 	igual(e.ganho_offline(500.0), 0.0, "relógio para trás não rende")
 
 

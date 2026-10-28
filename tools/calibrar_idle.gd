@@ -129,7 +129,7 @@ func _rodar() -> void:
 		if na_sessao >= duracao_sessao:
 			# Fecha o app até a próxima sessão; a renda entra até o teto.
 			var fora := intervalo - na_sessao
-			e.dinheiro += e.renda_s() * minf(fora, float(e.cfg["offline_max_h"]) * 3600.0)
+			e.dinheiro += e.renda_s() * minf(fora, e.offline_max_s())
 			relogio += fora
 			na_sessao = 0.0
 			duracao_sessao = float(args["sessao_min"]) * 60.0

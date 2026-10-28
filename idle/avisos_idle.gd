@@ -19,7 +19,7 @@ static var _iniciado := false
 ## [{id, em_s, titulo, texto}] dos avisos a partir de `agora` (segundos Unix).
 static func planejar(estado: IdleEstado, agora: float) -> Array:
 	var r := []
-	_somar(r, "teto", float(estado.cfg.get("offline_max_h", 0.0)) * 3600.0, "Cofre cheio!",
+	_somar(r, "teto", estado.offline_max_s(), "Cofre cheio!",
 			"O cofre da família encheu. Volte para coletar.")
 	if not estado.contrato_gratis_pronto(agora):
 		_somar(r, "contrato", estado.contrato_em - agora, "Contrato grátis pronto!",
