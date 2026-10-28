@@ -461,32 +461,25 @@ class _Balao extends Control:
 	func _base_x(alvo_x: float) -> float:
 		return clampf(alvo_x, CHANFRO + RABO_BASE + 10.0, size.x - CHANFRO - RABO_BASE - 10.0)
 
-	## O corpo: retângulo de cantos chanfrados.
-	func _corpo() -> PackedVector2Array:
+	## O balão inteiro num contorno só: retângulo de cantos chanfrados com o
+	## rabo saindo da borda de baixo (sem linha entre o corpo e o rabo). A base
+	## do rabo fica sempre entre os cantos, então o contorno nunca se cruza.
+	func _forma() -> PackedVector2Array:
 		var w := size.x
 		var h := size.y
 		var c := CHANFRO
+		var bx := _base_x(ponta.x)
 		return PackedVector2Array([Vector2(c, 0), Vector2(w - c, 0), Vector2(w, c), Vector2(w, h - c),
-				Vector2(w - c, h), Vector2(c, h), Vector2(0, h - c), Vector2(0, c)])
+				Vector2(w - c, h), Vector2(bx + RABO_BASE, h), ponta, Vector2(bx - RABO_BASE, h),
+				Vector2(c, h), Vector2(0, h - c), Vector2(0, c)])
 
 	func _draw() -> void:
-		var corpo := _corpo()
-		var bx := _base_x(ponta.x)
-		var rabo := PackedVector2Array([Vector2(bx - RABO_BASE, size.y - 1.0), ponta, Vector2(bx + RABO_BASE, size.y - 1.0)])
-		# Sombra dura de tinta (corpo e rabo), o papel e o contorno; o rabo cobre
-		# o trecho do contorno de baixo onde ele nasce.
-		var sombra := Vector2(7, 8)
-		var c_sombra := Color(CenaQuadrinho.TINTA, 0.55)
-		draw_colored_polygon(_mover(corpo, sombra), c_sombra)
-		draw_colored_polygon(_mover(rabo, sombra), c_sombra)
-		draw_colored_polygon(corpo, CenaQuadrinho.PAPEL)
-		var fechado := corpo.duplicate()
-		fechado.append(corpo[0])
+		var forma := _forma()
+		draw_colored_polygon(_mover(forma, Vector2(7, 8)), Color(CenaQuadrinho.TINTA, 0.55))
+		draw_colored_polygon(forma, CenaQuadrinho.PAPEL)
+		var fechado := forma.duplicate()
+		fechado.append(forma[0])
 		draw_polyline(fechado, CenaQuadrinho.TINTA, 5.0, true)
-		draw_colored_polygon(rabo, CenaQuadrinho.PAPEL)
-		draw_line(rabo[0], rabo[1], CenaQuadrinho.TINTA, 5.0, true)
-		draw_line(rabo[1], rabo[2], CenaQuadrinho.TINTA, 5.0, true)
-		draw_circle(rabo[1], 2.5, CenaQuadrinho.TINTA)
 		if seta > 0.0:
 			var s := Vector2(size.x - 26, size.y - 14)
 			draw_colored_polygon(PackedVector2Array([s + Vector2(-9, -6), s + Vector2(9, -6), s + Vector2(0, 5)]),
