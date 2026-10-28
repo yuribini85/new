@@ -243,7 +243,7 @@ func custo_no_nivel(id: String, k: int) -> float:
 	var m := melhoria(id)
 	return roundf(float(m["base"]) * pow(float(m["crescimento"]), k)
 			* pow(float(dados_liga()["multiplicador"]), float(cfg.get("expoente_custo_liga", 1.0)))
-			/ (1.0 + bonus_capangas("oficina")) / (1.0 + bonus_carros("oficina")) / (1.0 + bonus_do_momento("oficina")))
+			/ (1.0 + bonus_capangas("oficina")) / (1.0 + bonus_carros("oficina")) / (1.0 + bonus_do_momento("oficina")) / (1.0 + bonus_trofeus("oficina")))
 
 
 ## Custo de `n` níveis seguidos a partir do atual (para +10). Passa do máximo: INF.
@@ -345,7 +345,8 @@ func gorjeta_jornaleiro() -> float:
 ## O que a gorjeta cresce para sempre: os capangas da gorjeta e cada troféu
 ## da coleção ("por_trofeu").
 func bonus_gorjeta() -> float:
-	return bonus_capangas("gorjeta") + float(cfg_jornaleiro().get("por_trofeu", 0.0)) * trofeus.size()
+	return bonus_capangas("gorjeta") + float(cfg_jornaleiro().get("por_trofeu", 0.0)) * trofeus.size() \
+			+ bonus_trofeus("gorjeta")
 
 
 ## Quantas vezes a gorjeta vale com o anúncio.
@@ -357,7 +358,11 @@ func multiplicador_anuncio_gorjeta() -> float:
 ## a base de cada uma ou, com o troféu de efeito "anuncio", o multiplicador dele
 ## (o maior entre os dois; o terceiro troféu dá ×2,5, pedido do usuário 2026-10-28).
 func multiplicador_anuncio(base := 2.0) -> float:
-	return maxf(maxf(base, 1.0), bonus_trofeus("anuncio"))
+	var m := maxf(base, 1.0)
+	for t in lista_trofeus():  # o maior dos troféus do anúncio (não somam)
+		if String(t["efeito"]) == "anuncio" and String(t["pista"]) in trofeus:
+			m = maxf(m, float(t["bonus"]))
+	return m
 
 
 # --- prestígio Nova Cidade (cfg "cidades") -----------------------------------------
@@ -619,7 +624,7 @@ func contrato_gratis_pronto(agora: float) -> bool:
 func usar_contrato_gratis(dados: Node, agora: float) -> Dictionary:
 	if not contrato_gratis_pronto(agora):
 		return {}
-	contrato_em = agora + float(cfg_pilotos().get("contrato_gratis_h", 4.0)) * 3600.0
+	contrato_em = agora + float(cfg_pilotos().get("contrato_gratis_h", 4.0)) * 3600.0 / (1.0 + bonus_trofeus("contrato"))
 	return contratar(dados, int(agora))
 
 
@@ -640,7 +645,16 @@ func combustivel_ativo(agora: float) -> bool:
 ## Usos que ainda restam hoje (`dia`: AAAA-MM-DD).
 func combustivel_restantes(dia: String) -> int:
 	var usados := combustivel_usos if combustivel_dia == dia else 0
-	return maxi(int(cfg_combustivel().get("usos_dia", 0)) - usados, 0)
+	return maxi(combustivel_usos_dia() - usados, 0)
+
+
+## Usos por dia e duração (s) do combustível, com os troféus que os aumentam.
+func combustivel_usos_dia() -> int:
+	return int(cfg_combustivel().get("usos_dia", 0)) + roundi(bonus_trofeus("combustivel_usos"))
+
+
+func combustivel_duracao_s() -> float:
+	return float(cfg_combustivel().get("duracao_s", 0.0)) * (1.0 + bonus_trofeus("combustivel_duracao"))
 
 
 ## Depois do vídeo: liga o bônus por "duracao_s" (somando ao que ainda resta).
@@ -651,7 +665,7 @@ func usar_combustivel(agora: float, dia: String) -> bool:
 		combustivel_dia = dia
 		combustivel_usos = 0
 	combustivel_usos += 1
-	combustivel_ate = maxf(combustivel_ate, agora) + float(cfg_combustivel().get("duracao_s", 0.0))
+	combustivel_ate = maxf(combustivel_ate, agora) + combustivel_duracao_s()
 	return true
 
 
@@ -1180,7 +1194,11 @@ func fiscal_ativo(t: float = -1.0) -> bool:
 
 func fiscal_restantes(dia: String) -> int:
 	var usados := fiscal_usos if fiscal_dia == dia else 0
-	return maxi(int(cfg_fiscal().get("usos_dia", 0)) - usados, 0)
+	return maxi(fiscal_usos_dia() - usados, 0)
+
+
+func fiscal_usos_dia() -> int:
+	return int(cfg_fiscal().get("usos_dia", 0)) + roundi(bonus_trofeus("fiscal_usos"))
 
 
 func usar_fiscal(t: float, dia: String) -> bool:

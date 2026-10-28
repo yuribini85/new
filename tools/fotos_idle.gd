@@ -161,8 +161,8 @@ func _rodar() -> void:
 			tela._abrir("corrida")
 		elif aba == "fundadora":
 			tela._abrir_fundadora()
-		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
-			for tr in tela.estado.lista_trofeus().slice(0, 3):
+		elif aba in ["trofeus", "trofeus_todos"]:  # a coleção, com os três primeiros (ou todos) ganhos
+			for tr in tela.estado.lista_trofeus().slice(0, 3 if aba == "trofeus" else 99):
 				if not String(tr["pista"]) in tela.estado.trofeus:
 					tela.estado.trofeus.append(String(tr["pista"]))
 			tela._trofeus_abertos(true)

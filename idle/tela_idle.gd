@@ -983,8 +983,8 @@ func _janela_bonus(tipo: String) -> void:
 	var dia := Time.get_date_string_from_system()
 	var combustivel := tipo == "combustivel"
 	var cfg := estado.cfg_combustivel() if combustivel else estado.cfg_fiscal()
-	var minutos := roundi(float(cfg.get("duracao_s", 0.0)) / 60.0)
-	var total := int(cfg.get("usos_dia", 0))
+	var minutos := roundi((estado.combustivel_duracao_s() if combustivel else float(cfg.get("duracao_s", 0.0))) / 60.0)
+	var total := estado.combustivel_usos_dia() if combustivel else estado.fiscal_usos_dia()
 	var restam := estado.combustivel_restantes(dia) if combustivel else estado.fiscal_restantes(dia)
 	var ate := estado.combustivel_ate if combustivel else estado.fiscal_ate
 	var beneficio := "+%d%% DE POTÊNCIA" % roundi(estado.bonus_combustivel() * 100.0) if combustivel \
@@ -1277,6 +1277,16 @@ func _texto_bonus(tr: Dictionary) -> String:
 			return "+%dh de lucro fora do jogo" % roundi(float(tr["bonus"]))
 		"anuncio":  # bonus: o multiplicador do anúncio
 			return "Anúncio paga %s" % IdleUI.vezes(float(tr["bonus"]))
+		"combustivel_usos":
+			return "+%d uso de combustível por dia" % roundi(float(tr["bonus"]))
+		"fiscal_usos":
+			return "+%d uso do fiscal por dia" % roundi(float(tr["bonus"]))
+		"combustivel_duracao":
+			return "Combustível dura %s" % IdleUI.vezes(1.0 + float(tr["bonus"]))
+		"oficina":
+			return "Oficina %d%% mais barata" % roundi(100.0 - 100.0 / (1.0 + float(tr["bonus"])))
+		"contrato":
+			return "Capanga grátis %s mais rápido" % IdleUI.vezes(1.0 + float(tr["bonus"]))
 	return pct
 
 

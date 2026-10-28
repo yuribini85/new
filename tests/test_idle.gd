@@ -42,6 +42,9 @@ func test_premio_renda_e_offline() -> void:
 	e.cfg["trofeus"]["lista"].append({"pista": "p3", "arte": 1, "efeito": "anuncio", "bonus": 2.5})
 	e.trofeus = ["p1", "p3"]
 	igual(e.multiplicador_anuncio(), 2.5, "troféu do anúncio: ×2,5")
+	e.cfg["trofeus"]["lista"].append({"pista": "p15", "arte": 1, "efeito": "anuncio", "bonus": 3.0})
+	e.trofeus = ["p3", "p15"]
+	igual(e.multiplicador_anuncio(), 3.0, "troféus do anúncio não somam: vale o maior")
 	e.trofeus = []
 	igual(e.ganho_offline(500.0), 0.0, "relógio para trás não rende")
 
