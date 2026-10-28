@@ -498,3 +498,29 @@ func test_trofeu_na_primeira_vitoria_com_bonus_e_save() -> void:
 	var g := IdleEstado.new(c)
 	g.de_save(s)
 	igual(g.trofeus, ["oval"], "save antigo: a liga vencida dá o troféu")
+
+
+## Contraste da paleta Noir Industrial (WCAG): texto ≥ 4,5:1 sobre o carvão e
+## os cartões; texto grande dos botões (fonte ≥ 24) ≥ 3:1.
+static func _luminancia(c: Color) -> float:
+	var f := func(x: float) -> float: return x / 12.92 if x <= 0.03928 else pow((x + 0.055) / 1.055, 2.4)
+	return 0.2126 * f.call(c.r) + 0.7152 * f.call(c.g) + 0.0722 * f.call(c.b)
+
+
+static func _contraste(a: Color, b: Color) -> float:
+	var la := _luminancia(a)
+	var lb := _luminancia(b)
+	return (maxf(la, lb) + 0.05) / (minf(la, lb) + 0.05)
+
+
+func test_paleta_tem_contraste_para_texto() -> void:
+	var textos := {"texto": IdleUI.COR_TEXTO, "secundário": IdleUI.COR_CROMO, "dinheiro": IdleUI.COR_DINHEIRO,
+			"ganho": IdleUI.COR_GANHO, "trapaça": IdleUI.COR_VINHO_CLARO, "latão": IdleUI.COR_OURO}
+	for nome in textos:
+		var cor: Color = textos[nome]
+		for fundo in [IdleUI.COR_FUNDO, IdleUI.COR_CARTAO]:
+			verificar(_contraste(cor, fundo) >= 4.5, "%s legível sobre %s (%.1f)" % [nome, fundo.to_html(false), _contraste(cor, fundo)])
+	verificar(_contraste(IdleUI.COR_TINTA, LadrilhoIdle.VERDE) >= 4.5, "texto do botão de compra")
+	verificar(_contraste(IdleUI.COR_TINTA, IdleUI.COR_OURO) >= 4.5, "texto sobre latão")
+	verificar(_contraste(IdleUI.COR_MARFIM, IdleUI.COR_VINHO) >= 3.0, "texto grande da trapaça")
+	verificar(_contraste(IdleUI.COR_MARFIM, IdleUI.COR_PREMIO) >= 3.0, "texto grande do vídeo")

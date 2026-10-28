@@ -8,10 +8,12 @@ extends PanelContainer
 signal comprar
 
 ## Apresentação, não balanceamento.
-const VERDE := Color("7fcf7a")
-const VERDE_ESCURO := Color("3f8a45")
-const FUNDO := Color("1f1a15")
-const FUNDO_FECHADO := Color("15120f")
+const VERDE := IdleUI.COR_VERDE_BOTAO
+const VERDE_ESCURO := IdleUI.COR_VERDE_MILITAR
+const FUNDO := IdleUI.COR_CARTAO
+const FUNDO_FECHADO := Color("202627")
+const DESLIGADO := Color("2a3536")  # o botão sem dinheiro: petróleo apagado
+const DESLIGADO_BORDA := Color("3a4748")
 
 var id: String
 var nome: Label
@@ -50,7 +52,7 @@ func _init(id_: String, icone: String, texto: String, pequeno := false) -> void:
 		nome.clip_text = true
 		var h := HBoxContainer.new()
 		v.add_child(h)
-		efeito = IdleUI.rotulo("", 17, VERDE, h)
+		efeito = IdleUI.rotulo("", 17, IdleUI.COR_GANHO, h)
 		efeito.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		efeito.clip_text = true
 		nivel = IdleUI.rotulo("", 13, IdleUI.COR_CROMO, h)
@@ -69,12 +71,16 @@ func _init(id_: String, icone: String, texto: String, pequeno := false) -> void:
 	botao.custom_minimum_size = Vector2(0, 40 if pequeno else 46)
 	botao.add_theme_font_override("font", Tipografia.fonte("display"))
 	botao.add_theme_font_size_override("font_size", 24 if pequeno else 26)
+	# Melhoria em verde (texto carvão); trapaça em vinho (texto marfim): a
+	# paleta Noir Industrial dá o vinho à corrupção.
+	var cor := IdleUI.COR_VINHO if pequeno else VERDE
+	var borda := IdleUI.COR_VINHO.darkened(0.3) if pequeno else VERDE_ESCURO
 	for estado_botao in ["normal", "hover", "focus"]:
-		botao.add_theme_stylebox_override(estado_botao, IdleUI.caixa(VERDE, 5, 4, VERDE_ESCURO, 1))
-	botao.add_theme_stylebox_override("pressed", IdleUI.caixa(VERDE.darkened(0.15), 5, 4, VERDE_ESCURO, 1))
-	botao.add_theme_stylebox_override("disabled", IdleUI.caixa(Color("2b2621"), 5, 4, Color("3a332b"), 1))
+		botao.add_theme_stylebox_override(estado_botao, IdleUI.caixa(cor, 5, 4, borda, 1))
+	botao.add_theme_stylebox_override("pressed", IdleUI.caixa(cor.darkened(0.15), 5, 4, borda, 1))
+	botao.add_theme_stylebox_override("disabled", IdleUI.caixa(DESLIGADO, 5, 4, DESLIGADO_BORDA, 1))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		botao.add_theme_color_override(c, IdleUI.COR_TINTA)
+		botao.add_theme_color_override(c, IdleUI.COR_MARFIM if pequeno else IdleUI.COR_TINTA)
 	botao.add_theme_color_override("font_disabled_color", IdleUI.COR_BLOQUEADO.lightened(0.25))
 	botao.pressed.connect(func(): comprar.emit())
 	v.add_child(botao)
@@ -111,7 +117,7 @@ func definir(texto_nivel: String, texto_efeito: String, preco: String, pode: boo
 ## Ainda não aberto: escuro, com a linha de quando abre no lugar do efeito.
 func fechar(texto: String) -> void:
 	_fechado = true
-	add_theme_stylebox_override("panel", IdleUI.caixa(FUNDO_FECHADO, 6, 8, Color("2b2621"), 1))
+	add_theme_stylebox_override("panel", IdleUI.caixa(FUNDO_FECHADO, 6, 8, DESLIGADO, 1))
 	_icone.modulate = Color(0.12, 0.11, 0.1)
 	nome.add_theme_color_override("font_color", IdleUI.COR_BLOQUEADO)
 	efeito.text = texto
@@ -133,7 +139,7 @@ func abrir() -> void:
 	add_theme_stylebox_override("panel", IdleUI.caixa(FUNDO, 6, 8, IdleUI.COR_BORDA, 1))
 	_icone.modulate = Color.WHITE
 	nome.remove_theme_color_override("font_color")
-	efeito.add_theme_color_override("font_color", IdleUI.COR_CROMO if _pequeno else VERDE)
+	efeito.add_theme_color_override("font_color", IdleUI.COR_CROMO if _pequeno else IdleUI.COR_GANHO)
 
 
 class _BarraMarco extends Control:
@@ -141,6 +147,6 @@ class _BarraMarco extends Control:
 
 	func _draw() -> void:
 		var r := Rect2(Vector2(0, 1), Vector2(size.x, size.y - 2))
-		draw_rect(r, Color("0c0a08"))
+		draw_rect(r, Color("151819"))
 		if fracao > 0.0:
 			draw_rect(Rect2(r.position, Vector2(r.size.x * clampf(fracao, 0.0, 1.0), r.size.y)), IdleUI.COR_OURO)

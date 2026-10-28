@@ -446,7 +446,7 @@ func _montar() -> void:
 ## FAMÍLIA, o LUCRO POR SEGUNDO em verde e a engrenagem.
 func _topo(pai: Control) -> void:
 	var placa := PanelContainer.new()
-	placa.add_theme_stylebox_override("panel", IdleUI.caixa(Color("1b1713"), 6, 6, IdleUI.COR_BORDA, 1))
+	placa.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_CARVAO, 6, 6, IdleUI.COR_BORDA, 1))
 	pai.add_child(placa)
 	_banner = TextureRect.new()  # o banner da pista fica na faixa da liga (abaixo)
 	_banner.visible = false
@@ -471,7 +471,7 @@ func _topo(pai: Control) -> void:
 	topo.add_child(dir)
 	_renda_caixa = dir
 	IdleUI.rotulo("LUCRO POR SEGUNDO", 17, IdleUI.COR_CROMO, dir)
-	_renda = IdleUI.rotulo("", 34, LadrilhoIdle.VERDE, dir, "display")
+	_renda = IdleUI.rotulo("", 34, IdleUI.COR_GANHO, dir, "display")
 	var eng := Button.new()
 	eng.flat = true
 	eng.focus_mode = Control.FOCUS_NONE
@@ -681,7 +681,7 @@ func _pagina_corrida() -> Control:
 ## direita.
 func _faixa_liga(pai: Control) -> Control:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.07, 0.06, 0.05, 0.62), 0, 8))
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_CARVAO, 0.62), 0, 8))
 	pai.add_child(p)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 10)
@@ -732,7 +732,7 @@ func _faixa_liga(pai: Control) -> Control:
 ## objetivo da liga em cima) e a melhor chegada na liga.
 func _faixa_premio(pai: Control) -> Control:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color(0.07, 0.06, 0.05, 0.62), 0, 8))
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color(IdleUI.COR_CARVAO, 0.62), 0, 8))
 	pai.add_child(p)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 14)
@@ -757,7 +757,7 @@ func _faixa_premio(pai: Control) -> Control:
 ## combustível adulterado fixo à direita.
 func _oficina(pai: Control) -> void:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", IdleUI.caixa(Color("17130f"), 6, 8, IdleUI.COR_BORDA, 1))
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_CARVAO, 6, 8, IdleUI.COR_BORDA, 1))
 	pai.add_child(p)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 8)
@@ -779,8 +779,8 @@ func _oficina(pai: Control) -> void:
 	lista.add_theme_font_override("font", Tipografia.fonte("display"))
 	lista.add_theme_font_size_override("font_size", 24)
 	for e in ["normal", "hover", "focus"]:
-		lista.add_theme_stylebox_override(e, IdleUI.caixa(Color("2a2016"), 5, 6, IdleUI.COR_OURO_ESCURO, 1))
-	lista.add_theme_stylebox_override("pressed", IdleUI.caixa(Color("3a2c1e"), 5, 6, IdleUI.COR_OURO_ESCURO, 1))
+		lista.add_theme_stylebox_override(e, IdleUI.caixa(IdleUI.COR_CARTAO, 5, 6, IdleUI.COR_OURO_ESCURO, 1))
+	lista.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_PETROLEO, 5, 6, IdleUI.COR_OURO_ESCURO, 1))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		lista.add_theme_color_override(c, IdleUI.COR_OURO)
 	lista.pressed.connect(func(): _trofeus_abertos(true))
@@ -859,7 +859,7 @@ func _combustivel_cartao(pai: Control) -> void:
 	for e in ["normal", "hover", "focus"]:
 		_combustivel_botao.add_theme_stylebox_override(e, IdleUI.caixa(IdleUI.COR_OURO, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
 	_combustivel_botao.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_OURO.darkened(0.15), 5, 4, IdleUI.COR_OURO_ESCURO, 1))
-	_combustivel_botao.add_theme_stylebox_override("disabled", IdleUI.caixa(Color("2b2621"), 5, 4, Color("3a332b"), 1))
+	_combustivel_botao.add_theme_stylebox_override("disabled", IdleUI.caixa(LadrilhoIdle.DESLIGADO, 5, 4, LadrilhoIdle.DESLIGADO_BORDA, 1))
 	for c2 in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		_combustivel_botao.add_theme_color_override(c2, IdleUI.COR_TINTA)
 	_combustivel_botao.add_theme_color_override("font_disabled_color", IdleUI.COR_BLOQUEADO.lightened(0.25))
@@ -886,7 +886,7 @@ func _trapacas(pai: Control) -> void:
 	v.add_theme_constant_override("separation", 6)
 	pai.add_child(v)
 	_trapacas_caixa = v
-	IdleUI.rotulo("TRAPAÇAS DA FAMÍLIA", 20, IdleUI.COR_OURO, v, "display")
+	IdleUI.rotulo("TRAPAÇAS DA FAMÍLIA", 20, IdleUI.COR_VINHO_CLARO, v, "display")
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 8)
 	v.add_child(h)
@@ -909,7 +909,7 @@ func _trapacas(pai: Control) -> void:
 ## tela, aberta pelo MELHORIAS da oficina.
 func _lista_melhorias() -> void:
 	var fundo := ColorRect.new()
-	fundo.color = Color(0.04, 0.035, 0.03, 0.97)
+	fundo.color = Color(IdleUI.COR_CARVAO, 0.97)
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fundo.visible = false
 	fundo.z_index = 5
@@ -950,7 +950,7 @@ func _lista_melhorias() -> void:
 ## aparece depois de ganhar.
 func _tela_trofeus() -> void:
 	var fundo := ColorRect.new()
-	fundo.color = Color(0.04, 0.035, 0.03)
+	fundo.color = IdleUI.COR_CARVAO
 	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
 	fundo.visible = false
 	fundo.z_index = 5
@@ -1008,8 +1008,8 @@ const LARGURA_TEXTO_TROFEU := 196.0  # três cartões lado a lado em 720 px
 func _cartao_trofeu(tr: Dictionary, ganho: bool) -> Control:
 	var c := PanelContainer.new()
 	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	c.add_theme_stylebox_override("panel", IdleUI.caixa(Color("1f1a15") if ganho else Color("15120f"), 6, 8,
-			IdleUI.COR_OURO_ESCURO if ganho else Color("2b2621"), 1))
+	c.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_CARTAO if ganho else LadrilhoIdle.FUNDO_FECHADO, 6, 8,
+			IdleUI.COR_OURO_ESCURO if ganho else LadrilhoIdle.DESLIGADO, 1))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 2)
 	c.add_child(v)
@@ -1027,7 +1027,7 @@ func _cartao_trofeu(tr: Dictionary, ganho: bool) -> Control:
 	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	nome.custom_minimum_size.x = LARGURA_TEXTO_TROFEU  # largura fixa: quebra sem laço de layout
 	var b := IdleUI.rotulo(_texto_bonus(tr) if ganho else "VENÇA EM 1º", 20,
-			LadrilhoIdle.VERDE if ganho else IdleUI.COR_BLOQUEADO, v)
+			IdleUI.COR_GANHO if ganho else IdleUI.COR_BLOQUEADO, v)
 	b.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	b.custom_minimum_size.x = LARGURA_TEXTO_TROFEU
@@ -1116,7 +1116,7 @@ func _marcar_seletor() -> void:
 	for q in _seletor:
 		var b: Button = _seletor[q]
 		var ativo: bool = q == _multiplo
-		var cor := IdleUI.COR_OURO if ativo else Color("2a2016")
+		var cor := IdleUI.COR_OURO if ativo else IdleUI.COR_CARTAO
 		for e in ["normal", "hover", "focus", "pressed"]:
 			b.add_theme_stylebox_override(e, IdleUI.caixa(cor, 5, 4, IdleUI.COR_OURO_ESCURO, 1))
 		for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
@@ -1182,14 +1182,14 @@ class _MedidorToque extends Control:
 		draw_texture_rect(_mostrador, Rect2(c - Vector2(r, r), Vector2(r, r) * 2.0), false)
 		# A carga: arco por dentro das marcas (verde enquanto acelera).
 		if carga > 0.0:
-			var cor := LadrilhoIdle.VERDE if acelerando else IdleUI.COR_OURO
+			var cor := IdleUI.COR_GANHO if acelerando else IdleUI.COR_OURO
 			draw_arc(c, r * 0.58, _angulo(0.0), _angulo(carga), 48, cor, 3.0, true)
 		if cheio:
 			var fonte := Tipografia.fonte("display")
 			var tam := 26
 			var w := fonte.get_string_size("TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
 			var p := c + Vector2(-w * 0.5, r * 0.5)
-			draw_string(fonte, p, "TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color("ecd9b8").lerp(Color("d23a2f"), k))
+			draw_string(fonte, p, "TOQUE", HORIZONTAL_ALIGNMENT_LEFT, -1, tam, IdleUI.COR_MARFIM.lerp(IdleUI.COR_VINHO_CLARO, k))
 		# O ponteiro: eixo no centro, a ponta até as marcas.
 		var e := r * 0.76 / PONTEIRO_COMPRIMENTO
 		draw_set_transform(c, _angulo(_ponteiro), Vector2(e, e))
@@ -1210,7 +1210,7 @@ class _Pelotao extends Control:
 		for k in total:
 			var x := 4.0 + (size.x - 8.0) * (float(k) / maxf(total - 1, 1))
 			var meu := k == posicao - 1
-			draw_circle(Vector2(x, y), 6.0 if meu else 3.5, IdleUI.COR_OURO_CLARO if meu else LadrilhoIdle.VERDE.darkened(0.2))
+			draw_circle(Vector2(x, y), 6.0 if meu else 3.5, IdleUI.COR_OURO_CLARO if meu else IdleUI.COR_GANHO.darkened(0.2))
 
 
 func _cartao(m: Dictionary) -> Control:
@@ -1842,10 +1842,10 @@ func _estourar_posicao(quantas: int) -> void:
 	if _hud.ancora_carro.x >= 0.0:
 		onde = _hud.get_global_transform() * _hud.ancora_carro + Vector2(0, -60)
 	_efeitos.pipoca(onde, "+%d POSIÇÃO" % quantas if quantas == 1 else "+%d POSIÇÕES" % quantas,
-			LadrilhoIdle.VERDE, 34, 0.8)
+			IdleUI.COR_GANHO, 34, 0.8)
 	IdleUI.saltar(_premio, 1.2)
 	var tw := _premio.create_tween()
-	_premio.add_theme_color_override("font_color", LadrilhoIdle.VERDE)
+	_premio.add_theme_color_override("font_color", IdleUI.COR_GANHO)
 	tw.tween_interval(0.35)
 	tw.tween_callback(func(): _premio.add_theme_color_override("font_color", IdleUI.COR_OURO_CLARO))
 

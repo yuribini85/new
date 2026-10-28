@@ -4,30 +4,47 @@ extends RefCounted
 ## identidade do Chrome & Wreckage: cores da interface (Aba), fontes
 ## (Tipografia) e a arte de res://arte/ui/.
 
-## Paleta "cromo + ouro", tirada do logotipo (decisão do usuário, 2026-10-24):
-## fundo preto azulado, cartões em aço escuro com borda cromada, ações em ouro
-## alaranjado, prata no texto secundário, dinheiro em ouro claro; verde só no
-## ganho de uma melhoria; vermelho só no alerta.
-const COR_FUNDO := Color("0f0d0b")
-const COR_CARTAO := Color("1a1612")
-const COR_CARTAO_CLARO := Color("241e18")
-const COR_BORDA := Color("4a3f30")  # latão escuro
-const COR_CROMO := Color("d8cdb4")  # creme envelhecido
-const COR_TEXTO := Color("f1e9d8")
-const COR_OURO := Color("d4a24c")
-const COR_OURO_ESCURO := Color("9a6f2c")
-const COR_OURO_CLARO := Color("ecd398")
+## Paleta "Noir Industrial 1937" (aprovada pelo usuário, 2026-10-28;
+## docs/idle/identidade_fastfather.md, seção 16): carvão nos fundos (72%),
+## petróleo nos painéis e aço nos neutros (16%), destaques (12%) em latão
+## (dinheiro e conquistas), vinho (trapaças e alerta) e verde militar
+## (melhorias). Os tons "claro" são os mesmos com contraste ≥ 4,5:1 sobre o
+## carvão, para texto e números; o verde do botão de compra é o militar
+## clareado, com texto em carvão (5,9:1).
+const COR_CARVAO := Color("1c2021")
+const COR_PETROLEO := Color("303f40")
+const COR_ACO := Color("69716b")
+const COR_MARFIM := Color("e0d6bc")
+const COR_COURO := Color("76543e")
+const COR_LATAO := Color("b4945d")
+const COR_VINHO := Color("a7463a")
+const COR_VERDE_MILITAR := Color("546c55")
+const COR_ACO_CLARO := Color("98a099")  # 6,1:1
+const COR_LATAO_CLARO := Color("d9c08c")  # 9,3:1
+const COR_VINHO_CLARO := Color("d88577")  # 5,9:1 (4,7 no cartão)
+const COR_VERDE_CLARO := Color("9cb896")  # 7,6:1
+const COR_VERDE_BOTAO := Color("86a382")  # texto em carvão: 5,9:1
+
+const COR_FUNDO := COR_CARVAO
+const COR_CARTAO := Color("263234")  # entre o carvão e o petróleo
+const COR_CARTAO_CLARO := COR_PETROLEO
+const COR_BORDA := Color("4a5a5b")  # petróleo clareado: separa painel e fundo
+const COR_CROMO := COR_ACO_CLARO  # texto secundário
+const COR_TEXTO := COR_MARFIM
+const COR_OURO := COR_LATAO
+const COR_OURO_ESCURO := Color("7d6640")
+const COR_OURO_CLARO := COR_LATAO_CLARO
 const COR_DINHEIRO := COR_OURO_CLARO
-const COR_GANHO := Color("74b08a")
+const COR_GANHO := COR_VERDE_CLARO
 const COR_SECUNDARIA := COR_CROMO
-const COR_BLOQUEADO := Color("5e5548")
-const COR_RUIM := Color("b23a32")
+const COR_BLOQUEADO := COR_ACO
+const COR_RUIM := COR_VINHO
 const COR_BOTAO := COR_OURO
-const COR_TINTA := Color("14100a")  # texto sobre ouro e prata
-## Verde dos botões de anúncio premiado (▶ na TV): o padrão do gênero para
-## "ganhe de graça assistindo", que o jogador reconhece de outros idles.
-const COR_PREMIO := Color("2f7a52")
-const COR_PREMIO_ESCURO := Color("1f5236")
+const COR_TINTA := COR_CARVAO  # texto sobre latão e verde
+## Botão de anúncio premiado (▶ na TV): verde militar com texto em marfim,
+## diferente do verde claro do botão de compra.
+const COR_PREMIO := COR_VERDE_MILITAR
+const COR_PREMIO_ESCURO := Color("3b4d3c")
 
 
 ## Tamanho de texto legível no celular (docs/idle/interface.md): a base do jogo
@@ -207,8 +224,8 @@ static func nv(n: int) -> String:
 ## logotipo; pressionado, afunda.
 static func estilo_ouro(b: Button) -> void:
 	var meio := COR_OURO.lerp(COR_OURO_ESCURO, 0.45)
-	b.add_theme_stylebox_override("normal", _bisel(meio, COR_OURO_CLARO, Color("6e4f1e")))
-	b.add_theme_stylebox_override("hover", _bisel(meio, COR_OURO_CLARO, Color("6e4f1e")))
+	b.add_theme_stylebox_override("normal", _bisel(meio, COR_OURO_CLARO, Color("5e4c30")))
+	b.add_theme_stylebox_override("hover", _bisel(meio, COR_OURO_CLARO, Color("5e4c30")))
 	b.add_theme_stylebox_override("pressed", _bisel(meio.darkened(0.12), COR_OURO_CLARO, meio.darkened(0.12)))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c, COR_TINTA)
@@ -216,8 +233,8 @@ static func estilo_ouro(b: Button) -> void:
 
 ## Botão cromado (vídeos com recompensa): prata em relevo.
 static func estilo_cromo(b: Button) -> void:
-	b.add_theme_stylebox_override("normal", _bisel(COR_CROMO, Color.WHITE, Color("7b8494")))
-	b.add_theme_stylebox_override("hover", _bisel(COR_CROMO, Color.WHITE, Color("7b8494")))
+	b.add_theme_stylebox_override("normal", _bisel(COR_CROMO, Color.WHITE, COR_ACO))
+	b.add_theme_stylebox_override("hover", _bisel(COR_CROMO, Color.WHITE, COR_ACO))
 	b.add_theme_stylebox_override("pressed", _bisel(COR_CROMO.darkened(0.12), Color.WHITE, COR_CROMO.darkened(0.12)))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c, COR_TINTA)

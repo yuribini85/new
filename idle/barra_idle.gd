@@ -10,9 +10,9 @@ signal escolheu(id: String)
 const ALTURA := 112.0
 const ICONE := 48
 const ICONE_ATIVO := 58
-const COR_FAIXA := Color("07090d")
-const COR_TEXTO := Color("8a93a3")  # prata apagada
-const FUNDO := Color("1b1713")  # o da faixa do alto
+const COR_FAIXA := Color("141819")
+const COR_TEXTO := IdleUI.COR_ACO_CLARO
+const FUNDO := IdleUI.COR_CARVAO  # o da faixa do alto
 
 var abas: Array = []  # [{id, nome, icone}]
 var ativa := ""

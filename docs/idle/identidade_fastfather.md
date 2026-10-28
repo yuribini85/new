@@ -256,3 +256,15 @@ dica, bandeira ou grid esperando.
 Como nos melhores idles (x1, x10, Next, Max; pedido do usuário): PRÓX. compra até o próximo marco
 da melhoria (`idle.json` → "marcos"; sem marco à frente, até o fim) — "Next" em português, pela
 regra do texto de tela na língua do jogador. ×10 e PRÓX. param no máximo da melhoria.
+
+## 16. Paleta Noir Industrial 1937 (aprovada pelo usuário, 2026-10-28)
+
+Carvão #1C2021 nos fundos (72%), petróleo #303F40 nos painéis e aço #69716B nos neutros (16%);
+destaques (12%): latão #B4945D (dinheiro e conquistas), vinho #A7463A (trapaças e alerta), verde
+militar #546C55 (melhorias), couro #76543E (garagem e madeira), marfim #E0D6BC no texto. Ajustes
+de contraste (WCAG, medidos): tons claros para texto e números — verde #9CB896, latão #D9C08C,
+vinho #D88577, aço #98A099 —; botão de compra no verde militar clareado #86A382 com texto em
+carvão (5,9:1), apagado em petróleo sem dinheiro; vídeo em verde militar com marfim; trapaças em
+vinho com marfim. Tudo em `IdleUI` (COR_CARVAO … COR_VERDE_BOTAO); `test_paleta_tem_contraste_para_texto`
+barra texto abaixo de 4,5:1. A arte (garagem, quadrinhos, jornal, livro-caixa) e o filtro de filme
+da corrida não mudam.

@@ -6,7 +6,7 @@ extends Control
 ## recebe toque; cobre o pai inteiro.
 
 ## Apresentação, não balanceamento.
-const LATAO := Color("c9a050")
+const LATAO := IdleUI.COR_LATAO
 var recuo := 6.0
 var degrau := 10.0
 var cor := LATAO

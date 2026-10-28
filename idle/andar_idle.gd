@@ -15,7 +15,7 @@ const PAREDE := Color("221813")
 const PAREDE_ESCURA := Color("1a120e")
 const PISO := Color("0f0c0a")
 const LUZ := Color(1.0, 0.77, 0.24)
-const VERMELHO := Color("8e2a26")
+const VERMELHO := IdleUI.COR_VINHO
 
 var id: String
 var tipo: String  # o efeito da melhoria: desenha os objetos da estação
@@ -60,7 +60,7 @@ func _init(m: Dictionary) -> void:
 	lado.add_child(placa)
 	# A placa de latão com o nome da estação (art déco).
 	var latao := PanelContainer.new()
-	latao.add_theme_stylebox_override("panel", IdleUI.caixa(Color("b88f45"), 4, 4, Color("6e4f1e"), 2))
+	latao.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_LATAO, 4, 4, Color("5e4c30"), 2))
 	latao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	placa.add_child(latao)
 	nome = IdleUI.rotulo(String(m.get("estacao", m["nome"])).to_upper(), 17, IdleUI.COR_TINTA, latao)

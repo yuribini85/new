@@ -17,7 +17,7 @@ const LETRAS_POR_BLIP := 3
 const VOZES := {"chefao": 0.6, "chefao_busto": 0.6, "sobrinho": 1.15, "tony": 0.82, "tony_caixa": 0.82,
 		"tony_explica": 0.82}
 var _letras_faladas := 0
-const VERMELHO := Color("8e2a26")  # vinho da época (docs/idle/conversao_mafia.md)
+const VERMELHO := IdleUI.COR_VINHO  # vinho da época (docs/idle/conversao_mafia.md)
 
 var _d: Dictionary
 var _estado: IdleEstado
