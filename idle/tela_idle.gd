@@ -28,14 +28,16 @@ const COR_DINHEIRO := IdleUI.COR_DINHEIRO
 const COR_OURO := IdleUI.COR_OURO
 const COR_BOTAO := IdleUI.COR_BOTAO
 const COR_RUIM := IdleUI.COR_RUIM
-const PAUSA_CHEGADA_S := 2.5
+const PAUSA_CHEGADA_S := 1.2  # ciclo sem fim (usuário, 2026-10-28): a próxima larga logo
 const BEM_VINDO_MIN_S := 300.0  # menos tempo fora que isso: a renda entra sem a janela
-const PAUSA_COM_VIDEO_S := 4.0  # tempo para tocar em "▶ PRÊMIO x2"
+const PAUSA_COM_VIDEO_S := 1.6  # o PRÊMIO x2 fica na tela por DOBRAR_S, mesmo com a próxima andando
+const DOBRAR_S := 8.0
 const SALVAR_A_CADA_S := 5.0
 const AVISO_S := 3.5
 ## Apresentação, como no Chrome & Wreckage: contagem da largada, rival colado
 ## que gera o aviso "SE APROXIMA" e o intervalo mínimo entre dois desses avisos.
 const CONTAGEM_S := 3.0
+const CONTAGEM_SEGUIDA_S := 1.0  # da segunda corrida em diante, um bipe e já larga
 const APROXIMA_S := 0.6
 const EVENTO_RIVAL_S := 20.0
 ## Pintura do seu carro: o dourado da equipe com faixas escuras e o número 1.
@@ -160,6 +162,8 @@ var _pago_corrida := 0.0
 ## Câmera lenta curta nos momentos fortes (golpes visuais): até quando (s do
 ## relógio) a corrida anda devagar.
 var _lento_ate := 0.0
+var _dobrar_ate := 0.0  # até quando (s do relógio) o PRÊMIO x2 fica na tela
+var _ja_correu := false  # nesta abertura do app: as seguintes largam com um bipe só
 const LENTO_S := 0.5
 const LENTO_VELOCIDADE := 0.3
 var _pingado := 0.0  # pingado desde o último "+$" do caixa
@@ -1128,7 +1132,7 @@ func _atualizar_topo(delta := 0.0) -> void:
 		_subir.pivot_offset = _subir.size * 0.5
 		var k := 1.0 + 0.035 * sin(Time.get_ticks_msec() / 1000.0 * TAU / 1.1)
 		_subir.scale = Vector2(k, k)
-	_dobrar.visible = _dobrar.visible and _pausa >= 0.0
+	_dobrar.visible = _dobrar.visible and Time.get_ticks_msec() / 1000.0 < _dobrar_ate
 
 
 # --- corrida ------------------------------------------------------------------
@@ -1221,7 +1225,7 @@ func _nova_corrida() -> void:
 	_avisado = {}
 	_hud.limpar_evento()
 	_hud.secundario = 1.0
-	_contagem = CONTAGEM_S
+	_contagem = CONTAGEM_SEGUIDA_S if _ja_correu else CONTAGEM_S
 	# Sem o carro da divisão a corrida espera no grid (LARGAR leva à garagem).
 	_aguardando = not estado.tem("largada_auto") or not estado.pode_correr()
 	_largar.visible = _aguardando
@@ -1613,6 +1617,8 @@ func _chegou() -> void:
 		var meio: Vector2 = _paginas["corrida"].get_global_rect().get_center() + Vector2(0, -160)
 		_efeitos.faiscas(meio, COR_OURO, 40 if pos == 1 else 20)
 	_dobrar.visible = true
+	_dobrar_ate = Time.get_ticks_msec() / 1000.0 + DOBRAR_S
+	_ja_correu = true
 	_pausa = PAUSA_COM_VIDEO_S
 	estado.salvar(Time.get_unix_time_from_system())
 
@@ -1626,7 +1632,8 @@ func _dobrar_premio() -> void:
 		estado.dinheiro += ganho
 		ganho_flutuante(ganho)
 		_hud.evento("PRÊMIO x2!", "+$" + curto(ganho * 2.0), COR_OURO, 11, -1.0, true)
-		_pausa = maxf(_pausa, PAUSA_CHEGADA_S)
+		if _pausa >= 0.0:
+			_pausa = maxf(_pausa, PAUSA_CHEGADA_S)  # só segura se ainda está na pausa
 		estado.salvar(Time.get_unix_time_from_system()))
 
 

@@ -15,7 +15,7 @@
 		{"id": "hotrod_1932", "nome": "Ford Deuce Coupé 1932", "ano": 1932, "modelo": "hotrod_1932", "modalidade": "gt", "preco": 48000},
 		{"id": "seda_1951", "nome": "Hudson Hornet 1951", "ano": 1951, "modelo": "seda_1951", "modalidade": "terra", "preco": 192000}
 	],
-	"desbloqueio_inicial": ["melhoria:motor", "camera_tv"],
+	"desbloqueio_inicial": ["melhoria:motor", "camera_tv", "largada_auto"],
 	"desbloqueios": [
 		{"id": "rival", "quando": {}, "quem": {"id": "chefao", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "botao": "SIM, SENHOR", "fala": "Meu sobrinho vai ser campeão.", "libera": [], "capitulo": "1 · O Favor"},
 		{"id": "tony_vitoria", "avulsa": true, "quando": {"vitoria": true}, "quem": {"id": "tony", "nome": "Tony", "papel": "o mecânico"}, "libera": ["pintura_nova"]},
@@ -24,7 +24,6 @@
 		{"id": "ultrapassagem", "guia": {"alvo": "melhoria:ultrapassagem", "texto": "Toque em +1 na Ultrapassagem. A próxima corrida larga em seguida."}, "quando": {"corridas": 1}, "quem": {"id": "tony_explica", "nome": "Tony", "papel": "o mecânico"}, "fala": "O garoto fica atrás de carro lento e reza. Vou ensinar ele a passar nas retas.", "libera": ["melhoria:ultrapassagem"]},
 		{"id": "pneus", "guia": {"alvo": "melhoria:pneus", "texto": "Pneus novos: toque em +1 para melhorar."}, "quando": {"corridas": 2}, "quem": {"id": "tony_caixa", "nome": "Tony", "papel": "o mecânico"}, "fala": "Esses pneus são da época da Lei Seca. Achei um fornecedor que não faz perguntas.", "libera": ["melhoria:pneus"]},
 		{"id": "patrocinio", "guia": {"alvo": "melhoria:patrocinio", "texto": "O patrocínio rende por segundo, até com o app fechado. Toque em +1."}, "quando": {"corridas": 4}, "quem": {"id": "chefao", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "fala": "Os comerciantes do bairro pagam por segundo para pôr o nome deles no carro. Ninguém recusa.", "libera": ["melhoria:patrocinio", "renda"]},
-		{"id": "largada", "guia": {"alvo": "", "texto": "Pronto: agora as corridas largam sozinhas."}, "quando": {"corridas": 6}, "quem": {"id": "tony", "nome": "Tony", "papel": "o mecânico"}, "custo": 150, "icone": "icone_cronometro", "oferta": "LARGADA AUTOMÁTICA", "fala": "Cansei de empurrar esse carro até a largada. Pague a inscrição da temporada e ele entra em todas as corridas.", "libera": ["largada_auto"]},
 		{"id": "moretti", "quando": {"liga_total": 1}, "cena": "moretti", "quem": {"id": "chefao", "nome": "Don Carmine Bellucci", "papel": "o chefe"}, "libera": []},
 		{"id": "pilotos", "guia": {"alvo": "aba:pilotos", "texto": "Toque em RAPAZES para contratar e evoluir os rapazes."}, "quando": {"liga_total": 1}, "quem": {"id": "tony_explica", "nome": "Tony", "papel": "o mecânico"}, "fala": "Se precisar de braços, eu arranjo rapazes. Eles brigam pela família na Rinha, ao lado da corrida. Dois do mesmo nível viram um melhor. Fica no menu RAPAZES.", "libera": ["aba:pilotos", "aba:rinha"]},
 		{"id": "vacuo", "guia": {"alvo": "melhoria:vacuo", "texto": "Vácuo: mais velocidade colado no carro da frente."}, "quando": {"liga_total": 2}, "quem": {"id": "tony_explica", "nome": "Tony", "papel": "o mecânico"}, "fala": "Colado no carro da frente, a reta rende mais: é o vácuo. O chefe quer resultado, então acertei o carro para isso.", "libera": ["melhoria:vacuo"], "capitulo": "3 · Os Negócios"},

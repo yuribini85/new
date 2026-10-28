@@ -130,7 +130,7 @@ func _rodar() -> void:
 		var r := e.correr(d, semente, false)
 		semente += 1
 		var dur: float = float(r["duracao"]) / 2.0 if e.e_arena() else float(r["carros"]["jogador"]["tempo_total"])
-		dur += 6.0  # semáforo e chegada
+		dur += 2.2  # chegada e o bipe da largada seguinte (ciclo sem fim, 2026-10-28)
 		ativo += dur
 		relogio += dur
 		na_sessao += dur

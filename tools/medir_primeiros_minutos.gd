@@ -9,7 +9,7 @@ extends SceneTree
 ## Uso: godot --headless --path . --script res://tools/medir_primeiros_minutos.gd
 
 const MARCAS_S := [10.0, 30.0, 60.0, 120.0, 300.0, 600.0]
-const PAUSA_S := 6.0  # semáforo e chegada, como no calibrador
+const PAUSA_S := 2.2  # chegada (1,2 s) e o bipe da largada seguinte (1 s): o ciclo sem fim
 
 
 func _initialize() -> void:
