@@ -32,6 +32,7 @@ var combustivel_ate := 0.0
 var combustivel_dia := ""
 var combustivel_usos := 0
 var trofeus: Array = []  # pistas com troféu (cfg "trofeus")
+var cidade := 0  # prestígio Nova Cidade (cfg "cidades"): 0 = Brooklyn
 var trofeu_novo := ""  # o último troféu ganho, até a tela mostrar
 var salvo_em := 0.0  # unix (s), para a renda com o app fechado
 ## Metas do dia: {dia, tarefas: [ids], contagem: {tipo: n}, coletadas: [ids]}.
@@ -229,7 +230,8 @@ func comprar(id: String) -> bool:
 func custo_no_nivel(id: String, k: int) -> float:
 	var m := melhoria(id)
 	return roundf(float(m["base"]) * pow(float(m["crescimento"]), k)
-			* pow(float(dados_liga()["multiplicador"]), float(cfg.get("expoente_custo_liga", 1.0))))
+			* pow(float(dados_liga()["multiplicador"]), float(cfg.get("expoente_custo_liga", 1.0)))
+			/ (1.0 + bonus_capangas("oficina")))
 
 
 ## Custo de `n` níveis seguidos a partir do atual (para +10). Passa do máximo: INF.
@@ -324,7 +326,68 @@ func cfg_jornaleiro() -> Dictionary:
 func gorjeta_jornaleiro() -> float:
 	var j := cfg_jornaleiro()
 	return roundf(maxf(renda_s() * float(j.get("segundos_de_lucro", 0.0)),
-			premio(1) * float(j.get("fracao_premio", 0.0))))
+			premio(1) * float(j.get("fracao_premio", 0.0))) * (1.0 + bonus_capangas("gorjeta")))
+
+
+# --- prestígio Nova Cidade (cfg "cidades") -----------------------------------------
+# Ao vencer o Grande Campeonato de qualquer categoria, a família muda de cidade:
+# dinheiro, melhorias e ligas recomeçam; troféus, capangas e carros ficam; renda
+# e prêmios multiplicam por cidade.
+
+func cfg_cidades() -> Dictionary:
+	return cfg.get("cidades", {})
+
+
+func multiplicador_cidade() -> float:
+	return pow(float(cfg_cidades().get("multiplicador", 1.0)), cidade)
+
+
+func pode_mudar_de_cidade() -> bool:
+	var alvo := String(cfg_cidades().get("libera_liga", ""))
+	if alvo == "":
+		return false
+	for m in cfg["modalidades"]:
+		var id := String(m["id"])
+		if not mods.has(id):
+			continue
+		var ligas: Array = m["ligas"]
+		for k in ligas.size():
+			if String(ligas[k]["nome"]).ends_with(alvo):
+				var liga_m := int(mods[id]["liga"])
+				if liga_m > k or (liga_m == k and bool(mods[id]["venceu"])):
+					return true
+				break
+	return false
+
+
+func mudar_de_cidade() -> bool:
+	if not pode_mudar_de_cidade():
+		return false
+	cidade += 1
+	dinheiro = float(cfg.get("dinheiro_inicial", 0.0))
+	mods = {}
+	modalidade = String(cfg["modalidades"][0]["id"])
+	_m()
+	escalados = {}
+	return true
+
+
+# --- especialidades dos capangas (cfg "capangas") ----------------------------------
+
+func especialidade(p: Dictionary) -> String:
+	var lista: Array = cfg.get("capangas", {}).get("especialidades", [])
+	if p.is_empty() or lista.is_empty():
+		return ""
+	return String(lista[(int(p["uid"]) - 1) % lista.size()])
+
+
+## O bônus da especialidade: só o capanga de nível mais alto dela conta.
+func bonus_capangas(tipo: String) -> float:
+	var melhor := 0
+	for p in pilotos:
+		if especialidade(p) == tipo:
+			melhor = maxi(melhor, int(p["nivel"]))
+	return float(cfg.get("capangas", {}).get("por_nivel", 0.0)) * melhor
 
 
 # --- troféus (cfg "trofeus") ------------------------------------------------------
@@ -391,14 +454,15 @@ func renda_s() -> float:
 ## escada): antes disso o dinheiro vem só das corridas.
 func renda_modalidade(id: String) -> float:
 	var base := float(cfg.get("renda_base", 0.0)) if tem("renda") else 0.0
-	return (base + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"]) * (1.0 + bonus_trofeus("renda"))
+	return (base + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"]) * (1.0 + bonus_trofeus("renda")) \
+			* (1.0 + bonus_capangas("renda")) * multiplicador_cidade()
 
 
 ## Prêmio da posição `pos` (1 = vitória) na liga atual.
 func premio(pos: int) -> float:
 	var n := int(cfg["grid"])
 	return roundf(float(cfg["premio_p1"]) * float(dados_liga()["multiplicador"]) * float(n + 1 - pos) / n
-			* (1.0 + bonus_trofeus("premio")))
+			* (1.0 + bonus_trofeus("premio")) * (1.0 + bonus_capangas("premio")) * multiplicador_cidade())
 
 
 ## A corrida terminou em `pos`: o prêmio entra e a vitória libera a próxima liga.
@@ -1045,7 +1109,8 @@ func para_save() -> Dictionary:
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
 			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
 			"guias": guias, "garagem": garagem, "ferro_velho": ferro_velho, "combustivel_ate": combustivel_ate,
-			"combustivel_dia": combustivel_dia, "combustivel_usos": combustivel_usos, "trofeus": trofeus}
+			"combustivel_dia": combustivel_dia, "combustivel_usos": combustivel_usos, "trofeus": trofeus,
+			"cidade": cidade}
 
 
 func de_save(s: Dictionary) -> void:
@@ -1086,6 +1151,7 @@ func de_save(s: Dictionary) -> void:
 	combustivel_dia = String(s.get("combustivel_dia", ""))
 	combustivel_usos = int(s.get("combustivel_usos", 0))
 	trofeus = Array(s.get("trofeus", [])).map(func(x): return String(x))
+	cidade = int(s.get("cidade", 0))
 	if not s.has("trofeus"):
 		_trofeus_do_progresso()
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))

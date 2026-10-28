@@ -76,6 +76,22 @@ static func nome_rapaz(p: Dictionary) -> String:
 	return "%s %s" % [elenco[i]["nome"], apelido]
 
 
+## "LUCRO +10%": a especialidade do capanga e o quanto ele dá no nível dele
+## (só o melhor de cada especialidade conta, IdleEstado.bonus_capangas).
+static func texto_especialidade(e: IdleEstado, p: Dictionary) -> String:
+	var b := float(e.cfg.get("capangas", {}).get("por_nivel", 0.0)) * int(p.get("nivel", 0))
+	match e.especialidade(p):
+		"renda":
+			return "LUCRO +%d%%" % roundi(b * 100.0)
+		"premio":
+			return "PRÊMIO +%d%%" % roundi(b * 100.0)
+		"oficina":
+			return "OFICINA −%d%%" % roundi((1.0 - 1.0 / (1.0 + b)) * 100.0)
+		"gorjeta":
+			return "GORJETA +%d%%" % roundi(b * 100.0)
+	return ""
+
+
 ## A arte de corpo inteiro do rapaz (a figura do elenco dele).
 static func arte_rapaz(p: Dictionary) -> String:
 	var elenco: Array = CenaQuadrinho.carregar("rapazes").get("elenco", [])
@@ -104,6 +120,7 @@ func _escalado(e: IdleEstado) -> void:
 	n.clip_text = true
 	IdleUI.rotulo(IdleUI.nv(int(p["nivel"])).to_upper(), 20, IdleUI.COR_SECUNDARIA, v)
 	v.add_child(_estrelas(int(p["nivel"]), int(e.cfg_pilotos().get("nivel_max", 8)), 22))
+	IdleUI.rotulo(PilotosIdle.texto_especialidade(e, p), 20, IdleUI.COR_GANHO, v)
 	IdleUI.rotulo("O mais forte da família vai para a Rinha.", 17, IdleUI.COR_SECUNDARIA, v, "regular")
 
 
@@ -187,8 +204,10 @@ func _cartao(e: IdleEstado, p: Dictionary) -> Control:
 	var n := IdleUI.rotulo(sobrenome.to_upper(), 18, IdleUI.COR_TEXTO, v)
 	n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	n.clip_text = true
-	var onde := "NA RINHA" if int(e.melhor_rapaz().get("uid", -1)) == uid else ""
-	var s := IdleUI.rotulo(onde if onde != "" else "RESERVA", 14, IdleUI.COR_OURO if onde != "" else IdleUI.COR_SECUNDARIA, v)
+	# A especialidade (cfg "capangas"); o da Rinha fica com o nome em ouro.
+	if int(e.melhor_rapaz().get("uid", -1)) == uid:
+		n.add_theme_color_override("font_color", IdleUI.COR_OURO)
+	var s := IdleUI.rotulo(PilotosIdle.texto_especialidade(e, p), 14, IdleUI.COR_GANHO, v)
 	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	return b
 

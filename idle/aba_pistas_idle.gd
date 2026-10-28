@@ -64,9 +64,40 @@ func atualizar() -> void:
 		_escolhida = e.modalidade
 	for c in _lista.get_children():
 		c.queue_free()
+	_nova_cidade(e)
 	_modalidades(e)
 	_cabecalho(e)
 	_escada(e)
+
+
+## Prestígio: depois do Grande Campeonato, a família pode mudar de cidade
+## (cfg "cidades"). Primeiro toque arma, o segundo confirma.
+func _nova_cidade(e: IdleEstado) -> void:
+	if not e.pode_mudar_de_cidade():
+		return
+	var proxima: Dictionary = tela.cidade(e.cidade + 1)
+	var mult := float(e.cfg_cidades().get("multiplicador", 1.0))
+	var p := IdleUI.painel(IdleUI.COR_CARTAO, 12, 16, _lista)
+	p.add_child(MolduraDeco.new(5.0))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	p.add_child(v)
+	IdleUI.rotulo("NOVA CIDADE", 34, IdleUI.COR_OURO_CLARO, v, "deco")
+	IdleUI.rotulo("%s · %s" % [String(proxima["lugar"]).to_upper(), proxima["ano"]], 26, IdleUI.COR_TEXTO, v, "display")
+	IdleUI.rotulo("Renda e prêmios ×%s para sempre" % IdleUI.curto(e.multiplicador_cidade() * mult), 22, IdleUI.COR_GANHO, v)
+	var aviso := IdleUI.rotulo("Ficam: troféus, capangas e carros. Recomeçam: dinheiro, melhorias e ligas.",
+			20, IdleUI.COR_SECUNDARIA, v)
+	aviso.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	aviso.custom_minimum_size.x = 600
+	var b := IdleUI.botao("MUDAR PARA %s" % String(proxima["lugar"]).get_slice(",", 0).to_upper(), IdleUI.COR_OURO, 26, 96, v)
+	var armado := [false]
+	b.pressed.connect(func():
+		if not armado[0]:
+			armado[0] = true
+			b.text = "CONFIRMAR MUDANÇA"
+			IdleUI.pulsar(b, 1.06)
+			return
+		tela.mudar_de_cidade())
 
 
 func _modalidades(e: IdleEstado) -> void:

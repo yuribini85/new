@@ -524,3 +524,26 @@ func test_paleta_tem_contraste_para_texto() -> void:
 	verificar(_contraste(IdleUI.COR_TINTA, IdleUI.COR_OURO) >= 4.5, "texto sobre latão")
 	verificar(_contraste(IdleUI.COR_MARFIM, IdleUI.COR_VINHO) >= 3.0, "texto grande da trapaça")
 	verificar(_contraste(IdleUI.COR_MARFIM, IdleUI.COR_PREMIO) >= 3.0, "texto grande do vídeo")
+
+
+func test_nova_cidade_zera_o_progresso_e_multiplica() -> void:
+	var c := _cfg()
+	c["ligas"][1]["nome"] = "Grande Campeonato"
+	c["cidades"] = {"libera_liga": "Grande Campeonato", "multiplicador": 2.0}
+	c["capangas"] = {"por_nivel": 0.05, "especialidades": ["premio"]}
+	var e := IdleEstado.new(c)
+	verificar(not e.pode_mudar_de_cidade(), "antes do Grande Campeonato não muda")
+	e.venceu = true
+	e.subir_liga()
+	e.venceu = true
+	e.dinheiro = 999.0
+	e.niveis["motor"] = 2
+	e.trofeus = ["oval"]
+	e.pilotos = [{"uid": 1, "id": "x", "nivel": 2}]
+	verificar(e.pode_mudar_de_cidade() and e.mudar_de_cidade(), "vencido o Grande Campeonato, muda")
+	igual([e.cidade, e.liga, e.nivel("motor"), e.dinheiro], [1, 0, 0, 0.0], "dinheiro, melhorias e ligas recomeçam")
+	igual([e.trofeus, e.pilotos.size()], [["oval"], 1], "troféus e capangas ficam")
+	igual(e.premio(1), roundf(100.0 * 2.0 * 1.1), "prêmio ×2 da cidade e +10% do capanga do prêmio (nv. 2)")
+	var f := IdleEstado.new(c)
+	f.de_save(e.para_save())
+	igual(f.cidade, 1, "a cidade volta do save")

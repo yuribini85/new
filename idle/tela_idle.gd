@@ -293,6 +293,58 @@ func _cartao_de_epoca() -> Control:
 	return c
 
 
+## A cidade `n` do prestígio (cenas.json → cidades): {lugar, ano}. Depois da
+## última, a última com o ano seguinte.
+static func cidade(n: int) -> Dictionary:
+	var lista: Array = CenaQuadrinho.carregar("cidades").get("lista", [])
+	if lista.is_empty():
+		return {"lugar": "", "ano": ""}
+	if n < lista.size():
+		return lista[n]
+	var ultima: Dictionary = lista[-1]
+	return {"lugar": ultima["lugar"], "ano": str(int(ultima["ano"]) + n - lista.size() + 1)}
+
+
+## Muda a família de cidade (prestígio): o cartão de época da cidade nova no
+## preto e a corrida recomeça na primeira liga.
+func mudar_de_cidade() -> void:
+	if not estado.mudar_de_cidade():
+		return
+	estado.salvar(Time.get_unix_time_from_system())
+	Sons.tocar_ui(self, "sino", -4.0, 0.9, false)
+	_abrir("corrida")
+	_nova_corrida()
+	_atualizar_cartoes()
+	var dados := cidade(estado.cidade)
+	var c := ColorRect.new()
+	c.color = Color.BLACK
+	c.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	c.z_index = 20
+	add_child(c)
+	var v := VBoxContainer.new()
+	v.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	v.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	v.grow_vertical = Control.GROW_DIRECTION_BOTH
+	v.add_theme_constant_override("separation", 14)
+	c.add_child(v)
+	var lugar := IdleUI.rotulo(String(dados["lugar"]).to_upper(), 30, IdleUI.COR_CROMO, v, "deco")
+	lugar.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var traco := ColorRect.new()
+	traco.color = MolduraDeco.LATAO
+	traco.custom_minimum_size = Vector2(220, 3)
+	traco.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	v.add_child(traco)
+	var ano := IdleUI.rotulo(String(dados["ano"]), 96, IdleUI.COR_OURO_CLARO, v, "deco")
+	ano.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var mult := IdleUI.rotulo("RENDA E PRÊMIOS ×%s" % IdleUI.curto(estado.multiplicador_cidade()), 28, IdleUI.COR_GANHO, v, "display")
+	mult.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var r := 0.0 if Preferencias.reduzir_animacoes else 1.0
+	var tw := c.create_tween()
+	tw.tween_interval(CARTAO_S + 0.6)
+	tw.tween_property(c, "modulate:a", 0.0, 0.8 * r + 0.01)
+	tw.tween_callback(c.queue_free)
+
+
 ## Depois do cartão: a cena por cima do preto (ela sobe em fade, ver cenas.json).
 func _cena_da_abertura() -> void:
 	if _abertura == null or _abertura.is_inside_tree():

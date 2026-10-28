@@ -109,6 +109,17 @@ func _rodar() -> void:
 				await process_frame
 			root.get_texture().get_image().save_png(saida.path_join("idle_jornaleiro_antes.png"))
 			tela._pagar_jornaleiro()
+		elif aba == "cidade":  # o Grande Campeonato vencido: o cartão NOVA CIDADE em Pistas
+			var ligas: Array = tela.estado.dados_modalidade()["ligas"]
+			for gc in ligas.size():
+				if String(ligas[gc]["nome"]).ends_with("Grande Campeonato"):
+					tela.estado.liga = gc
+					tela.estado.venceu = true
+			tela.estado.guias.append("subir")  # sem a dica de subir de liga por cima
+			tela._abrir("pistas")
+			for i in 20:
+				await process_frame
+			tela._abrir("pistas")
 		elif aba == "estante":  # a garagem com cinco troféus na estante
 			for tr in tela.estado.lista_trofeus().slice(0, 5):
 				if not String(tr["pista"]) in tela.estado.trofeus:

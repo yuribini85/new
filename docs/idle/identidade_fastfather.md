@@ -305,3 +305,16 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
   coleção.
 - Sons sintetizados (`tools/sintetizar_sons_epoca.py`): caixa registradora no toque do jornaleiro,
   flash de magnésio no troféu novo, sino de bonde no marco de melhoria e na liga nova.
+
+## 21. Prestígio Nova Cidade e especialidades dos capangas (2026-10-28, escolhas do usuário)
+
+- Nova Cidade (`idle.json` → "cidades", `cenas.json` → "cidades"): ao vencer o Grande Campeonato de
+  qualquer categoria, o cartão NOVA CIDADE aparece no alto de PISTAS (Brooklyn 1937 → Chicago 1938 →
+  Detroit 1939 → Atlantic City 1940 → Kansas City 1941 → Nova Orleans 1942 → Las Vegas 1943). O
+  primeiro toque arma ("CONFIRMAR MUDANÇA"), o segundo muda: dinheiro, melhorias e ligas recomeçam;
+  troféus, capangas e carros ficam; renda e prêmios ×2 por cidade (PROVISÓRIO). Na chegada, o cartão
+  de época da cidade nova no preto, com o sino de bonde.
+- Especialidades (`idle.json` → "capangas"): cada figura do elenco tem uma — lucro (Nicky, Paulie,
+  Aldo), prêmio (Bruno, Benny, Tito, Vinnie), oficina mais barata (Tommy, Rocco, Nino, Enzo) e
+  gorjeta do jornaleiro (Rosie, Mei, Lola). Vale só o capanga de nível mais alto de cada uma: +5% por
+  nível (PROVISÓRIO). O cartão de cada capanga mostra a dele ("LUCRO +5%").

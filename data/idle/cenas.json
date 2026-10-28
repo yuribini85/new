@@ -455,5 +455,38 @@
         "arte": "rapaz_14"
       }
     ]
+  },
+  "cidades": {
+    "_nota": "As cidades do prestígio Nova Cidade (idle.json → cidades), com o cartão de época da chegada. Depois da última, a última se repete com o ano seguinte.",
+    "lista": [
+      {
+        "lugar": "Brooklyn, Nova York",
+        "ano": "1937"
+      },
+      {
+        "lugar": "Chicago, Illinois",
+        "ano": "1938"
+      },
+      {
+        "lugar": "Detroit, Michigan",
+        "ano": "1939"
+      },
+      {
+        "lugar": "Atlantic City, Nova Jersey",
+        "ano": "1940"
+      },
+      {
+        "lugar": "Kansas City, Missouri",
+        "ano": "1941"
+      },
+      {
+        "lugar": "Nova Orleans, Luisiana",
+        "ano": "1942"
+      },
+      {
+        "lugar": "Las Vegas, Nevada",
+        "ano": "1943"
+      }
+    ]
   }
 }
