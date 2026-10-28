@@ -16,6 +16,9 @@ const FEED := 5
 ## Carros de época na Rinha: o dos rapazes e os das famílias rivais.
 const MODELO_RAPAZES := "cupe_1940"
 const MODELOS := ["cupe_1928", "cupe_1940", "hotrod_1932", "seda_1951"]
+## Antes de cada luta, o seu capanga de corpo inteiro contra o da família rival
+## (em sombra), com o VS no meio (sugestão aprovada, 2026-10-28).
+const APRESENTACAO_S := 2.4
 
 var tela: Node  # tela_idle.gd: estado, dados
 var _arena: Arena3D
@@ -27,6 +30,12 @@ var _liga: Label
 var _quem: Label
 var _feed: VBoxContainer
 var _vista: Control
+var _vs: Control
+var _vs_eu: TextureRect
+var _vs_rival: TextureRect
+var _vs_nome_eu: Label
+var _vs_nome_rival: Label
+var _apres := 0.0
 
 
 func _init(tela_: Node) -> void:
@@ -55,12 +64,88 @@ func _init(tela_: Node) -> void:
 	_arena.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_arena.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_vista.add_child(_arena)
+	_montar_vs()
 	var caixa := IdleUI.painel(IdleUI.COR_CARTAO, 12, 14, v)
 	_feed = VBoxContainer.new()
 	_feed.add_theme_constant_override("separation", 2)
 	caixa.add_child(_feed)
 	IdleUI.rotulo("ÚLTIMAS LUTAS", 20, IdleUI.COR_OURO, _feed)
 	caixa.add_child(MolduraDeco.new(4.0))
+
+
+func _montar_vs() -> void:
+	_vs = Control.new()
+	_vs.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_vs.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_vs.visible = false
+	_vista.add_child(_vs)
+	var fundo := ColorRect.new()
+	fundo.color = Color(IdleUI.COR_CARVAO, 0.78)
+	fundo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fundo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_vs.add_child(fundo)
+	_vs_eu = _figura(Control.PRESET_LEFT_WIDE)
+	_vs_rival = _figura(Control.PRESET_RIGHT_WIDE)
+	_vs_rival.flip_h = true
+	_vs_rival.self_modulate = Color(0.05, 0.05, 0.06)  # o rival em sombra
+	var vs := IdleUI.rotulo("VS", 72, IdleUI.COR_OURO_CLARO, _vs, "deco")
+	vs.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	vs.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	vs.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_vs_nome_eu = _nome_vs(HORIZONTAL_ALIGNMENT_LEFT, IdleUI.COR_TEXTO)
+	_vs_nome_rival = _nome_vs(HORIZONTAL_ALIGNMENT_RIGHT, IdleUI.COR_VINHO_CLARO)
+
+
+func _figura(lado: int) -> TextureRect:
+	var t := TextureRect.new()
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	t.set_anchors_and_offsets_preset(lado)
+	t.anchor_right = 0.45 if lado == Control.PRESET_LEFT_WIDE else 1.0
+	t.anchor_left = 0.55 if lado == Control.PRESET_RIGHT_WIDE else 0.0
+	t.offset_top = 16
+	t.offset_bottom = -64
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_vs.add_child(t)
+	return t
+
+
+func _nome_vs(alin: int, cor: Color) -> Label:
+	var l := IdleUI.rotulo("", 24, cor, _vs, "display")
+	l.horizontal_alignment = alin
+	l.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	l.offset_left = 16
+	l.offset_right = -16
+	l.offset_top = -58
+	l.offset_bottom = -14
+	return l
+
+
+## O seu capanga contra o da família rival antes da luta: entram dos lados.
+func _apresentar() -> void:
+	var e: IdleEstado = tela.estado
+	var rapaz := e.melhor_rapaz()
+	var elenco: Array = CenaQuadrinho.carregar("rapazes").get("elenco", [])
+	var familias: Array = CenaQuadrinho.carregar("familias").get("nomes", ["Rival"])
+	if rapaz.is_empty() or elenco.is_empty() or not is_visible_in_tree() or Preferencias.reduzir_animacoes:
+		_apres = 0.0
+		_vs.visible = false
+		return
+	_vs_eu.texture = load(PilotosIdle.arte_rapaz(rapaz))
+	var meu := (int(rapaz["uid"]) - 1) % elenco.size()
+	var outro := (meu + 1 + _semente % (elenco.size() - 1)) % elenco.size()
+	_vs_rival.texture = load("res://arte/fastfather/rapazes/%s.png" % elenco[outro]["arte"])
+	_vs_nome_eu.text = "%s · %s" % [PilotosIdle.nome_rapaz(rapaz).to_upper(), IdleUI.nv(int(rapaz["nivel"])).to_upper()]
+	_vs_nome_rival.text = "FAMÍLIA %s" % String(familias[_semente % familias.size()]).to_upper()
+	_apres = APRESENTACAO_S
+	_vs.visible = true
+	_vs.modulate.a = 1.0
+	var tw := create_tween().set_parallel()
+	_vs_eu.position.x -= 260.0
+	_vs_rival.position.x += 260.0
+	tw.tween_property(_vs_eu, "position:x", _vs_eu.position.x + 260.0, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_vs_rival, "position:x", _vs_rival.position.x - 260.0, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	Sons.tocar_ui(self, "passagem", -6.0)
 
 
 func atualizar() -> void:
@@ -83,6 +168,13 @@ func _process(delta: float) -> void:
 		_pausa -= delta
 		if _pausa <= 0.0:
 			_nova()
+		return
+	if _apres > 0.0:
+		# A apresentação segura a luta parada no começo e some no fim.
+		_apres -= delta
+		_vs.modulate.a = clampf(_apres / 0.35, 0.0, 1.0)
+		if _apres <= 0.0:
+			_vs.visible = false
 		return
 	_t += delta * VELOCIDADE
 	if is_visible_in_tree():
@@ -117,6 +209,7 @@ func _nova() -> void:
 	_arena.mostrar(_res, e._na_rinha(func(): return e.params_arena(tela.dados)), categorias, pinturas)
 	_arena.tempo = 0.0
 	atualizar()
+	_apresentar()
 
 
 func _fim() -> void:

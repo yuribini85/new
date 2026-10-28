@@ -116,6 +116,13 @@ func _rodar() -> void:
 			tela._trofeus_abertos(true)
 		else:
 			tela._abrir(aba)
+		if aba == "rinha":  # a próxima luta começa com a tela aberta: a apresentação do VS
+			var rinha = tela._paginas["rinha"]
+			rinha._res = {}
+			rinha._pausa = 0.0
+			for i in 12:
+				await process_frame
+			root.get_texture().get_image().save_png(saida.path_join("idle_rinha_vs.png"))
 		for i in 10:
 			await process_frame
 		root.get_texture().get_image().save_png(saida.path_join("idle_%s.png" % aba))
