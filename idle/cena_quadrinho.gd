@@ -373,52 +373,77 @@ func _process(delta: float) -> void:
 
 # --- balão e tinta ----------------------------------------------------------------
 
-## Balão de quadrinho no traço da arte (personagens em facetas, low poly):
-## um polígono torto de papel creme, em facetas de tons vizinhos, contorno de
-## tinta, sombra dura e o rabo em ponta até quem fala; a tarja do nome, torta.
+## Balão de quadrinho: papel creme liso com cantos chanfrados (o art déco da
+## interface), contorno de tinta, sombra dura e o rabo em ponta até quem fala,
+## desenhado à parte para nunca dobrar. O texto quebra em linhas equilibradas
+## (sem uma palavra sozinha na última) e fica centrado; o nome vai numa tarja
+## escura com letra clara, para ler de relance (pedido do usuário, 2026-10-28).
 class _Balao extends Control:
+	const MARGEM := Vector2(34, 30)  # papel em volta do texto
+	const TOPO_NOME := 14.0  # o texto desce um pouco por causa da tarja
+	const CHANFRO := 14.0
+	const RABO_BASE := 22.0  # meia largura da base do rabo
+	const RESPIRO_SETA := 12.0  # o ▼ de continuar fica abaixo do texto, sem encostar
 	var texto: Label
 	var nome: Label
 	var _tarja: PanelContainer
 	var ponta := Vector2.ZERO  # ponta do rabo, em coordenadas do balão
 	var seta := 0.0  # o ▼ de "toque para continuar", piscando
-	var _semente := 0
 
 	func _init() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		texto = Label.new()
 		texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		texto.uppercase = true  # letreiro de gibi
 		Tipografia.rotulo(texto, "fala", IdleUI.legivel(28))
 		texto.add_theme_color_override("font_color", CenaQuadrinho.TINTA)
 		add_child(texto)
 		_tarja = PanelContainer.new()
-		_tarja.add_theme_stylebox_override("panel", IdleUI.caixa(CenaQuadrinho.TARJA, 0, 6, CenaQuadrinho.TINTA, 3))
-		_tarja.rotation = deg_to_rad(-4.0)
+		var sb := IdleUI.caixa(CenaQuadrinho.TINTA, 3, 0, CenaQuadrinho.TARJA, 2)
+		sb.content_margin_left = 14
+		sb.content_margin_right = 14
+		sb.content_margin_top = 4
+		sb.content_margin_bottom = 4
+		_tarja.add_theme_stylebox_override("panel", sb)
+		_tarja.rotation = deg_to_rad(-2.0)
 		add_child(_tarja)
 		nome = Label.new()
-		Tipografia.rotulo(nome, "display", 24)
-		nome.add_theme_color_override("font_color", CenaQuadrinho.TINTA)
+		Tipografia.rotulo(nome, "semibold", IdleUI.legivel(26))
+		nome.uppercase = true
+		nome.add_theme_color_override("font_color", CenaQuadrinho.TARJA)
 		_tarja.add_child(nome)
+
+	## Linhas equilibradas: a menor largura que mantém o mesmo número de linhas
+	## da largura máxima (a última linha não fica com uma palavra só).
+	static func _largura_equilibrada(fonte: Font, caixa: String, tam: int, maxima: float) -> float:
+		var alto := fonte.get_multiline_string_size(caixa, HORIZONTAL_ALIGNMENT_LEFT, maxima, tam).y
+		var w := maxima
+		while w > 120.0:
+			var prova := w - 8.0
+			if fonte.get_multiline_string_size(caixa, HORIZONTAL_ALIGNMENT_LEFT, prova, tam).y > alto + 0.5:
+				break
+			w = prova
+		return w
 
 	func montar(quem: String, fala: String, largura_tela: float) -> void:
 		nome.text = quem
 		_tarja.visible = quem != ""
 		texto.text = fala
-		_semente = hash(fala)
-		var largura := minf(560.0, largura_tela - 48.0)
 		var fonte := texto.get_theme_font("font")
 		var tam := texto.get_theme_font_size("font_size")
 		var caixa := fala.to_upper()
-		var medida := fonte.get_multiline_string_size(caixa, HORIZONTAL_ALIGNMENT_LEFT, largura - 72.0, tam)
-		# Fala curta: balão mais estreito.
-		largura = clampf(medida.x + 80.0, 240.0, largura)
-		medida = fonte.get_multiline_string_size(caixa, HORIZONTAL_ALIGNMENT_LEFT, largura - 72.0, tam)
-		size = Vector2(largura, medida.y + 70.0)
-		texto.position = Vector2(36, 38)
-		texto.size = Vector2(largura - 72.0, medida.y + 4.0)
-		_tarja.position = Vector2(22, -20)
+		var maxima := minf(560.0, largura_tela - 48.0) - MARGEM.x * 2.0
+		# Folga de 16 px: a quebra do Label arredonda diferente da medida.
+		var w := minf(_largura_equilibrada(fonte, caixa, tam, maxima) + 16.0, maxima)
+		var medida := fonte.get_multiline_string_size(caixa, HORIZONTAL_ALIGNMENT_LEFT, w - 16.0, tam)
+		var topo := MARGEM.y + (TOPO_NOME if _tarja.visible else 0.0)
+		var largura := maxf(w + MARGEM.x * 2.0, 220.0)
+		size = Vector2(largura, medida.y + topo + MARGEM.y + RESPIRO_SETA)
+		texto.position = Vector2((largura - w) * 0.5, topo)
+		texto.size = Vector2(w, medida.y + 4.0)
 		_tarja.reset_size()
+		_tarja.position = Vector2(18, -_tarja.size.y * 0.55)
 
 	## Bem acima da cabeça (o rabo desce até ela), sem sair da tela.
 	func apontar(cabeca: Vector2, tela: Vector2, topo: float) -> void:
@@ -427,50 +452,51 @@ class _Balao extends Control:
 		y = clampf(y, topo + 24.0, tela.y - size.y - 20.0)
 		position = Vector2(x, y)
 		var alvo := cabeca - position
-		var base := Vector2(clampf(alvo.x, 50.0, size.x - 50.0), size.y)
+		var base := Vector2(_base_x(alvo.x), size.y)
 		var d := alvo - base
-		ponta = base + d.limit_length(maxf(d.length() - 34.0, 40.0)) if d.y > 0.0 else base + Vector2(0, 46)
+		ponta = base + d.limit_length(clampf(d.length() - 34.0, 40.0, 120.0)) if d.y > 0.0 else base + Vector2(0, 46)
 		pivot_offset = Vector2(clampf(alvo.x, 0.0, size.x), size.y)
 
-	## O contorno torto: cantos chanfrados e lados quebrados, sempre o mesmo
-	## para a mesma fala; o rabo entra no lado de baixo.
-	func _forma() -> PackedVector2Array:
-		var rng := RandomNumberGenerator.new()
-		rng.seed = _semente
+	## Onde o rabo sai da borda de baixo: perto de quem fala, longe dos cantos.
+	func _base_x(alvo_x: float) -> float:
+		return clampf(alvo_x, CHANFRO + RABO_BASE + 10.0, size.x - CHANFRO - RABO_BASE - 10.0)
+
+	## O corpo: retângulo de cantos chanfrados.
+	func _corpo() -> PackedVector2Array:
 		var w := size.x
 		var h := size.y
-		var j := func(v: float) -> float: return rng.randf_range(-v, v)
-		var base_x := clampf(ponta.x, 50.0, w - 50.0)
-		var pts := PackedVector2Array([
-			Vector2(0, 18 + j.call(6)), Vector2(20 + j.call(6), j.call(5)),
-			Vector2(w * 0.45 + j.call(20), -6 + j.call(5)), Vector2(w - 22 + j.call(6), 2 + j.call(5)),
-			Vector2(w + 4 + j.call(3), 22 + j.call(6)), Vector2(w - 2 + j.call(4), h * 0.55 + j.call(8)),
-			Vector2(w - 14 + j.call(5), h + 2 + j.call(4)),
-		])
-		pts.append_array([Vector2(base_x + 22, h + j.call(3)), ponta, Vector2(base_x - 24, h + 4 + j.call(3))])
-		pts.append_array([Vector2(16 + j.call(6), h - 2 + j.call(4)), Vector2(-4 + j.call(3), h * 0.5 + j.call(8))])
-		return pts
+		var c := CHANFRO
+		return PackedVector2Array([Vector2(c, 0), Vector2(w - c, 0), Vector2(w, c), Vector2(w, h - c),
+				Vector2(w - c, h), Vector2(c, h), Vector2(0, h - c), Vector2(0, c)])
 
 	func _draw() -> void:
-		var pts := _forma()
-		# Sombra dura de tinta, depois o papel em facetas e o contorno.
-		var sombra := PackedVector2Array()
-		for p in pts:
-			sombra.append(p + Vector2(7, 8))
-		draw_colored_polygon(sombra, Color(CenaQuadrinho.TINTA, 0.55))
-		var meio := size * Vector2(0.42, 0.46)
-		var rng := RandomNumberGenerator.new()
-		rng.seed = _semente + 7
-		for i in pts.size():
-			var tom := CenaQuadrinho.PAPEL.darkened(rng.randf_range(0.0, 0.07))
-			draw_colored_polygon(PackedVector2Array([meio, pts[i], pts[(i + 1) % pts.size()]]), tom)
-		var contorno := pts.duplicate()
-		contorno.append(pts[0])
-		draw_polyline(contorno, CenaQuadrinho.TINTA, 5.0)
+		var corpo := _corpo()
+		var bx := _base_x(ponta.x)
+		var rabo := PackedVector2Array([Vector2(bx - RABO_BASE, size.y - 1.0), ponta, Vector2(bx + RABO_BASE, size.y - 1.0)])
+		# Sombra dura de tinta (corpo e rabo), o papel e o contorno; o rabo cobre
+		# o trecho do contorno de baixo onde ele nasce.
+		var sombra := Vector2(7, 8)
+		var c_sombra := Color(CenaQuadrinho.TINTA, 0.55)
+		draw_colored_polygon(_mover(corpo, sombra), c_sombra)
+		draw_colored_polygon(_mover(rabo, sombra), c_sombra)
+		draw_colored_polygon(corpo, CenaQuadrinho.PAPEL)
+		var fechado := corpo.duplicate()
+		fechado.append(corpo[0])
+		draw_polyline(fechado, CenaQuadrinho.TINTA, 5.0, true)
+		draw_colored_polygon(rabo, CenaQuadrinho.PAPEL)
+		draw_line(rabo[0], rabo[1], CenaQuadrinho.TINTA, 5.0, true)
+		draw_line(rabo[1], rabo[2], CenaQuadrinho.TINTA, 5.0, true)
+		draw_circle(rabo[1], 2.5, CenaQuadrinho.TINTA)
 		if seta > 0.0:
-			var s := Vector2(size.x - 38, size.y - 22)
-			draw_colored_polygon(PackedVector2Array([s + Vector2(-10, -7), s + Vector2(9, -5), s + Vector2(-1, 6)]),
+			var s := Vector2(size.x - 26, size.y - 14)
+			draw_colored_polygon(PackedVector2Array([s + Vector2(-9, -6), s + Vector2(9, -6), s + Vector2(0, 5)]),
 					Color(CenaQuadrinho.TINTA, seta))
+
+	static func _mover(pts: PackedVector2Array, d: Vector2) -> PackedVector2Array:
+		var r := PackedVector2Array()
+		for p in pts:
+			r.append(p + d)
+		return r
 
 
 ## A passada de tinta que abre e fecha a cena (quadro de quadrinho virando).

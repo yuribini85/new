@@ -382,3 +382,6 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
   números a cada 40, faixa final (160–200) em neon, a velocidade do seu carro em traço branco com a ponta
   acesa e o número grande no meio; por dentro, o arco fino da carga do acelerador; embaixo TOQUE, TOQUE ·
   55%, ENCHENDO ou VAZIO. Sem a arte do mostrador antigo.
+- Balões dos quadrinhos (pedido do usuário, 2026-10-28): papel liso com cantos chanfrados (sem as facetas que
+  pareciam erro), o rabo desenhado à parte (nunca dobra), texto centrado em linhas equilibradas (sem palavra
+  sozinha na última linha), respiro para o ▼ de continuar e o nome numa tarja escura com letra âmbar.
