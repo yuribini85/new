@@ -56,15 +56,32 @@ func _nome(p: Dictionary) -> String:
 	return PilotosIdle.nome_rapaz(p)
 
 
-## "Rocco Martelo": nome e apelido pela ordem de contratação (fixos por rapaz).
+## "Paulie Fumaça": pela ordem de contratação, cada rapaz é uma figura do
+## elenco (nome, apelido e arte casados); depois do último, o elenco volta com
+## outro apelido.
 static func nome_rapaz(p: Dictionary) -> String:
 	if p.is_empty():
 		return ""
 	var r: Dictionary = CenaQuadrinho.carregar("rapazes")
-	var nomes: Array = r.get("nomes", ["Rapaz"])
-	var apelidos: Array = r.get("apelidos", [""])
+	var elenco: Array = r.get("elenco", [])
 	var uid := int(p["uid"])
-	return ("%s %s" % [nomes[uid % nomes.size()], apelidos[(uid * 7 + uid / nomes.size()) % apelidos.size()]]).strip_edges()
+	if elenco.is_empty():
+		return "Rapaz %d" % uid
+	var i := (uid - 1) % elenco.size()
+	var volta := (uid - 1) / elenco.size()
+	var apelido := String(elenco[i]["apelido"])
+	var apelidos: Array = r.get("apelidos", [])
+	if volta > 0 and not apelidos.is_empty():
+		apelido = String(apelidos[(i * 3 + volta * 5) % apelidos.size()])
+	return "%s %s" % [elenco[i]["nome"], apelido]
+
+
+## A arte de corpo inteiro do rapaz (a figura do elenco dele).
+static func arte_rapaz(p: Dictionary) -> String:
+	var elenco: Array = CenaQuadrinho.carregar("rapazes").get("elenco", [])
+	if p.is_empty() or elenco.is_empty():
+		return ""
+	return "res://arte/fastfather/rapazes/%s.png" % elenco[(int(p["uid"]) - 1) % elenco.size()]["arte"]
 
 
 func _escalado(e: IdleEstado) -> void:
@@ -247,8 +264,7 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 		vazio.offset_top = lado * SAIDA_CABECA
 		return c
 	var t := TextureRect.new()
-	t.texture = IdleUI.busto_piloto(String(p["id"]))
-	t.self_modulate = Color(0.06, 0.05, 0.05)  # silhueta: a arte da época ainda não chegou
+	t.texture = IdleUI.busto_de(PilotosIdle.arte_rapaz(p))
 	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	t.set_anchors_preset(Control.PRESET_FULL_RECT)

@@ -268,3 +268,12 @@ carvão (5,9:1), apagado em petróleo sem dinheiro; vídeo em verde militar com 
 vinho com marfim. Tudo em `IdleUI` (COR_CARVAO … COR_VERDE_BOTAO); `test_paleta_tem_contraste_para_texto`
 barra texto abaixo de 4,5:1. A arte (garagem, quadrinhos, jornal, livro-caixa) e o filtro de filme
 da corrida não mudam.
+
+## 17. Os rapazes com arte (2026-10-28)
+
+14 figuras da arte do usuário (`arte/fastfather/rapazes`, recortadas da folha) formam o elenco em
+`cenas.json` → "rapazes" → "elenco": pela ordem de contratação, cada rapaz é uma figura, com nome e
+apelido casados com ela (Nicky Gravata, Paulie Fumaça, Rosie Brasa, Tommy Ferrolho, Rocco Martelo,
+Bruno Muralha, Benny Ligeiro, Aldo Contas, Nino Cicatriz, Mei Seda, Enzo Bigode, Tito Trovão,
+Vinnie Navalha, Lola Raposa). Do 15º em diante o elenco volta com outro apelido. O retrato na aba
+RAPAZES é o busto recortado da figura (`IdleUI.busto_de`), no lugar da silhueta provisória.

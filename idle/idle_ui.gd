@@ -339,11 +339,18 @@ static func retrato_piloto(id: String) -> Texture2D:
 static var _bustos := {}
 
 static func busto_piloto(id: String) -> Texture2D:
-	if _bustos.has(id):
-		return _bustos[id]
 	var caminho := "res://arte/pilotos/corpo/%s.webp" % id
 	if not ResourceLoader.exists(caminho):
 		return retrato_piloto(id)
+	return busto_de(caminho)
+
+
+## O mesmo recorte para qualquer arte de corpo inteiro (os rapazes da família).
+static func busto_de(caminho: String) -> Texture2D:
+	if _bustos.has(caminho):
+		return _bustos[caminho]
+	if caminho == "" or not ResourceLoader.exists(caminho):
+		return null
 	var tex: Texture2D = load(caminho)
 	var img := tex.get_image()
 	if img.is_compressed():
@@ -368,7 +375,7 @@ static func busto_piloto(id: String) -> Texture2D:
 	var at := AtlasTexture.new()
 	at.atlas = tex
 	at.region = Rect2(x0, y0, lado, lado)
-	_bustos[id] = at
+	_bustos[caminho] = at
 	return at
 
 

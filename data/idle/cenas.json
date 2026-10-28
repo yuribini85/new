@@ -344,7 +344,7 @@
     ]
   },
   "rapazes": {
-    "_nota": "Os rapazes da família (aba RAPAZES): nome e apelido de cada um, pela ordem de contratação. Lutam na Rinha; quem corre é sempre o sobrinho.",
+    "_nota": "Os rapazes da família (aba RAPAZES): pela ordem de contratação, cada um é uma figura do elenco (arte do usuário em arte/fastfather/rapazes, nome e apelido casados com a arte). Depois do 14º o elenco volta com outro apelido (\"apelidos\"). Lutam na Rinha; quem corre é sempre o sobrinho.",
     "nomes": [
       "Rocco",
       "Paulie",
@@ -382,6 +382,78 @@
       "Muralha",
       "Ligeiro",
       "Pneu"
+    ],
+    "elenco": [
+      {
+        "nome": "Nicky",
+        "apelido": "Gravata",
+        "arte": "rapaz_01"
+      },
+      {
+        "nome": "Paulie",
+        "apelido": "Fumaça",
+        "arte": "rapaz_02"
+      },
+      {
+        "nome": "Rosie",
+        "apelido": "Brasa",
+        "arte": "rapaz_03"
+      },
+      {
+        "nome": "Tommy",
+        "apelido": "Ferrolho",
+        "arte": "rapaz_04"
+      },
+      {
+        "nome": "Rocco",
+        "apelido": "Martelo",
+        "arte": "rapaz_05"
+      },
+      {
+        "nome": "Bruno",
+        "apelido": "Muralha",
+        "arte": "rapaz_06"
+      },
+      {
+        "nome": "Benny",
+        "apelido": "Ligeiro",
+        "arte": "rapaz_07"
+      },
+      {
+        "nome": "Aldo",
+        "apelido": "Contas",
+        "arte": "rapaz_08"
+      },
+      {
+        "nome": "Nino",
+        "apelido": "Cicatriz",
+        "arte": "rapaz_09"
+      },
+      {
+        "nome": "Mei",
+        "apelido": "Seda",
+        "arte": "rapaz_10"
+      },
+      {
+        "nome": "Enzo",
+        "apelido": "Bigode",
+        "arte": "rapaz_11"
+      },
+      {
+        "nome": "Tito",
+        "apelido": "Trovão",
+        "arte": "rapaz_12"
+      },
+      {
+        "nome": "Vinnie",
+        "apelido": "Navalha",
+        "arte": "rapaz_13"
+      },
+      {
+        "nome": "Lola",
+        "apelido": "Raposa",
+        "arte": "rapaz_14"
+      }
     ]
   }
 }
