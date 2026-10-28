@@ -284,3 +284,11 @@ Com mulheres no elenco, a aba e os textos passam a dizer CAPANGAS ("o/a capanga"
 máfia da época; escolha do usuário entre CAPANGAS, COMPARSAS, BANDO e GANGUE): SEUS CAPANGAS,
 NOVO CAPANGA, "2 capangas do mesmo nível = 1 capanga de nível acima", a fala do Tony e o aviso
 da Rinha. As chaves internas ("rapazes", `arte/fastfather/rapazes`) continuam.
+
+## 19. Ícones do HUD (2026-10-28)
+
+A folha de ícones do usuário (69 ícones, `arte/fastfather/icones/hud`, nomes descritivos) entra no
+HUD por `IdleUI.icone_hud`: no alto, o maço de notas (CAIXA DA FAMÍLIA) e a engrenagem; no menu de
+baixo, CORRIDA = carro de corrida, PISTAS = estrada, CAPANGAS = chapéu fedora, RINHA = escudo,
+MISSÕES = prancheta, GARAGEM = garagem. A aba fora de uso fica apagada sem perder a cor. Os outros
+ícones ficam prontos para as próximas telas.

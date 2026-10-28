@@ -34,7 +34,9 @@ func definir_abas(abas_: Array) -> void:
 		ativa = String(abas[0]["id"]) if not abas.is_empty() else ""
 	for a in abas:
 		if not _texturas.has(a["icone"]):
-			_texturas[a["icone"]] = Aba.icone_reduzido(String(a["icone"]), ICONE_ATIVO)
+			# Os ícones do HUD da arte do usuário; sem eles, os antigos de arte/ui.
+			var hud := IdleUI.icone_hud(String(a["icone"]))
+			_texturas[a["icone"]] = hud if hud != null else Aba.icone_reduzido(String(a["icone"]), ICONE_ATIVO)
 	queue_redraw()
 
 
@@ -104,7 +106,7 @@ func _draw() -> void:
 		var tex: Texture2D = _texturas.get(a["icone"])
 		if tex != null:
 			var lado := lerpf(ICONE, ICONE_ATIVO, entrada) if ativo else float(ICONE)
-			var cor := Color.WHITE if ativo else Color(IdleUI.COR_CROMO, 0.7)
+			var cor := Color.WHITE if ativo else Color(0.62, 0.62, 0.62, 0.8)  # apagado, sem perder a cor
 			draw_texture_rect(tex, Rect2(centro - Vector2(lado, lado) * 0.5 - Vector2(0, 4.0 * entrada if ativo else 0.0),
 					Vector2(lado, lado)), false, cor)
 		var nome := String(a["nome"])

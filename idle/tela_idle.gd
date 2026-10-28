@@ -43,12 +43,12 @@ const EVENTO_RIVAL_S := 20.0
 ## Pintura do seu carro: o dourado da equipe com faixas escuras e o número 1.
 const EQUIPE_JOGADOR := {"numero": 1, "cores": {"faixa": "#141518", "filete": "#f2f2ee"}}
 const ABAS := [
-	{"id": "corrida", "nome": "CORRIDA", "icone": "icone_correr"},
-	{"id": "pistas", "nome": "PISTAS", "icone": "icone_pista"},
-	{"id": "pilotos", "nome": "CAPANGAS", "icone": "icone_piloto"},
-	{"id": "rinha", "nome": "RINHA", "icone": "emblema_arena"},
-	{"id": "metas", "nome": "MISSÕES", "icone": "icone_objetivo"},
-	{"id": "garagem", "nome": "GARAGEM", "icone": "icone_montagem"},
+	{"id": "corrida", "nome": "CORRIDA", "icone": "carro_corrida"},
+	{"id": "pistas", "nome": "PISTAS", "icone": "estrada"},
+	{"id": "pilotos", "nome": "CAPANGAS", "icone": "chapeu_fedora"},
+	{"id": "rinha", "nome": "RINHA", "icone": "escudo"},
+	{"id": "metas", "nome": "MISSÕES", "icone": "prancheta"},
+	{"id": "garagem", "nome": "GARAGEM", "icone": "garagem"},
 ]
 ## Previsão nos cartões de melhoria: corridas simuladas (sementes fixas) com e
 ## sem níveis a mais (NIVEIS_PREVISAO), numa thread, para mostrar a posição que
@@ -454,8 +454,12 @@ func _topo(pai: Control) -> void:
 	var topo := HBoxContainer.new()
 	topo.add_theme_constant_override("separation", 12)
 	placa.add_child(topo)
-	var notas := _MacoNotas.new()
-	notas.custom_minimum_size = Vector2(76, 52)
+	var notas := TextureRect.new()  # o maço de notas (ícone do HUD)
+	notas.texture = IdleUI.icone_hud("notas")
+	notas.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	notas.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	notas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	notas.custom_minimum_size = Vector2(76, 64)
 	notas.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	topo.add_child(notas)
 	var esq := VBoxContainer.new()
@@ -477,31 +481,19 @@ func _topo(pai: Control) -> void:
 	eng.focus_mode = Control.FOCUS_NONE
 	eng.custom_minimum_size = Vector2(64, 64)
 	eng.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var ic := IconeVetor.new("engrenagem", IdleUI.COR_CROMO)
+	var ic := TextureRect.new()  # a engrenagem (ícone do HUD)
+	ic.texture = IdleUI.icone_hud("engrenagem")
+	ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	ic.offset_left = 12
-	ic.offset_right = -12
-	ic.offset_top = 12
-	ic.offset_bottom = -12
+	ic.offset_left = 8
+	ic.offset_right = -8
+	ic.offset_top = 8
+	ic.offset_bottom = -8
 	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	eng.add_child(ic)
 	eng.pressed.connect(_abrir_config)
 	topo.add_child(eng)
-
-
-## Maço de notas de dólar desenhado (as notas que voam no prêmio, EfeitosIdle).
-class _MacoNotas extends Control:
-	func _draw() -> void:
-		var c := size * 0.5
-		for k in 3:
-			var o := c + Vector2(-6 + k * 6, 8 - k * 7)
-			draw_set_transform(o, -0.12 + k * 0.08)
-			draw_rect(Rect2(-30, -14, 60, 28), EfeitosIdle.NOTA.darkened(0.15 - k * 0.07))
-			draw_rect(Rect2(-30, -14, 60, 28), EfeitosIdle.NOTA.darkened(0.5), false, 2.0)
-			draw_circle(Vector2.ZERO, 8.0, EfeitosIdle.NOTA.lightened(0.2))
-			draw_string(Tipografia.fonte("deco"), Vector2(-5, 6), "$", HORIZONTAL_ALIGNMENT_LEFT, -1, 16,
-					EfeitosIdle.NOTA.darkened(0.55))
-		draw_set_transform(Vector2.ZERO)
 
 
 ## A tela CORRIDA (layout do usuário, 2026-10-27): a faixa da liga com a

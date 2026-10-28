@@ -338,6 +338,13 @@ static func retrato_piloto(id: String) -> Texture2D:
 ## cortado em cima e à esquerda.
 static var _bustos := {}
 
+## Ícone do HUD da arte do usuário (arte/fastfather/icones/hud, recortados da
+## folha "ícones para atualizar todo o HUD"); null se não houver.
+static func icone_hud(nome: String) -> Texture2D:
+	var caminho := "res://arte/fastfather/icones/hud/%s.png" % nome
+	return load(caminho) if ResourceLoader.exists(caminho) else null
+
+
 static func busto_piloto(id: String) -> Texture2D:
 	var caminho := "res://arte/pilotos/corpo/%s.webp" % id
 	if not ResourceLoader.exists(caminho):
