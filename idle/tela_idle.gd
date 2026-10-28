@@ -59,8 +59,11 @@ const NIVEIS_PREVISAO := [1, 3]
 ## Arena: dinâmica, a sua briga e a arena inteira (Arena3D.modo).
 ## "ciclo" (o padrão, pedido do usuário em 2026-10-28) passa sozinho pelas
 ## outras três, uma a cada CICLO_CAMERA_S.
-const CAMERAS := [["ciclo", "ciclo"], ["auto", "camera"], ["jogador", "frente"], ["geral", "pista"]]
-const CAMERA_ARENA := {"auto": "dinamica", "jogador": "briga", "geral": "geral"}
+const CAMERAS := [["ciclo", "ciclo"], ["auto", "camera"], ["jogador", "frente"], ["geral", "pista"], ["dupla", "dupla"]]
+## A câmera dupla (pedido do usuário, 2026-10-28): a oficina recolhe e a corrida
+## ocupa a página, a transmissão 3D em cima e a pista inteira em 2D embaixo.
+const DUPLA_3D := 0.58  # fração da altura da corrida para o 3D
+const CAMERA_ARENA := {"auto": "dinamica", "jogador": "briga", "geral": "geral", "dupla": "dinamica"}
 const CICLO := ["auto", "jogador", "geral"]
 const CICLO_CAMERA_S := 8.0  # apresentação, não balanceamento
 ## Tempo da luta por segundo de tela na Arena (as lutas de dez carros são longas).
@@ -127,6 +130,8 @@ var _coleta: Control  # "BEM-VINDO DE VOLTA!": a renda com o app fechado
 var _config: Control
 var _renda_caixa: Control  # "RENDA" e o valor, no topo (aparecem com o patrocínio)
 var _trilho: Control  # as câmeras
+var _pagina_corrida_v: VBoxContainer
+var _fundo_2d: ColorRect
 var _largar: Button
 var _aguardando := false  # carros no grid esperando o LARGAR
 var _rinha: RinhaIdle  # aba RINHA (a luta corre sempre, a aba só mostra)
@@ -564,6 +569,7 @@ func _topo(pai: Control) -> void:
 ## completa (os andares, com +10 e MÁX.).
 func _pagina_corrida() -> Control:
 	var v := VBoxContainer.new()
+	_pagina_corrida_v = v
 	v.add_theme_constant_override("separation", 8)
 	var corrida := Control.new()
 	_quadro_corrida = corrida
@@ -571,6 +577,11 @@ func _pagina_corrida() -> Control:
 	corrida.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	corrida.clip_contents = true
 	v.add_child(corrida)
+	_fundo_2d = ColorRect.new()  # a "segunda tela" da câmera dupla
+	_fundo_2d.color = IdleUI.COR_CARVAO
+	_fundo_2d.visible = false
+	_fundo_2d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	corrida.add_child(_fundo_2d)
 	_visual = CorridaVisual.new()
 	_visual.visible = false
 	_visual.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -623,7 +634,8 @@ func _pagina_corrida() -> Control:
 		# Ícones da arte do usuário (arte/fastfather/icones/cameras), em tom só:
 		# a cor vem do modulate (tinta no ativo, ouro na câmera da vez).
 		var ic := TextureRect.new()
-		ic.texture = load("res://arte/fastfather/icones/cameras/%s.png" % par[0])
+		var arte := "res://arte/fastfather/icones/cameras/%s.png" % par[0]
+		ic.texture = load(arte) if ResourceLoader.exists(arte) else IdleUI.icone_hud("mapa")
 		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -1591,6 +1603,7 @@ func _nova_corrida() -> void:
 	_visual3d.visible = not _na_arena and _tv
 	_visual.visible = not _na_arena and not _tv
 	_arena3d.visible = _na_arena
+	_aplicar_dupla()
 	_hud.so_eventos = _na_arena
 	var categorias := {}
 	var pinturas := {}
@@ -1682,8 +1695,8 @@ func _trocar_camera(modo: String) -> void:
 
 ## A câmera em uso: a escolhida ou, no "ciclo", a da vez; sem o trilho, o diretor.
 func _camera_efetiva() -> String:
-	if not _trilho.visible:
-		return "auto"
+	if not _trilho.visible or _camera_modo == "dupla":
+		return "auto"  # na dupla, o 3D fica com o diretor
 	return String(CICLO[_ciclo_i]) if _camera_modo == "ciclo" else _camera_modo
 
 
@@ -1722,6 +1735,45 @@ func _aplicar_camera() -> void:
 	_visual3d.perseguicao = efetiva == "jogador"
 	_visual3d.foco = "jogador"
 	_visual3d.enquadrar_com = ""
+	_aplicar_dupla()
+
+
+func dupla() -> bool:
+	return _camera_modo == "dupla" and _trilho.visible and _tv and not _na_arena
+
+
+## Câmera dupla: some o que fica abaixo da corrida (oficina e trapaças), o 3D
+## vai para a parte de cima e a vista 2D da pista inteira ocupa a de baixo.
+func _aplicar_dupla() -> void:
+	if _pagina_corrida_v == null:
+		return
+	var d := dupla()
+	for c in _pagina_corrida_v.get_children():
+		if c != _quadro_corrida:
+			(c as Control).visible = not d
+	_visual3d.anchor_bottom = DUPLA_3D if d else 1.0
+	_visual3d.offset_bottom = 0.0
+	_fundo_2d.visible = d
+	_fundo_2d.anchor_left = 0.0
+	_fundo_2d.anchor_right = 1.0
+	_fundo_2d.anchor_top = DUPLA_3D
+	_fundo_2d.anchor_bottom = 1.0
+	_fundo_2d.offset_left = 0.0
+	_fundo_2d.offset_right = 0.0
+	_fundo_2d.offset_top = 0.0
+	_fundo_2d.offset_bottom = 0.0
+	if d:
+		_visual.visible = true
+		_visual.pontos = true
+		_visual.anchor_top = DUPLA_3D
+		_visual.offset_top = 26.0
+		_visual.offset_bottom = -110.0  # acima da faixa do prêmio
+	else:
+		_visual.visible = not _na_arena and not _tv
+		_visual.pontos = not _tv
+		_visual.anchor_top = 0.0
+		_visual.offset_top = 70.0
+		_visual.offset_bottom = -20.0
 
 
 ## Câmera AUTO: o diretor do Chrome & Wreckage escolhe o plano (abertura de

@@ -139,6 +139,11 @@ func _rodar() -> void:
 			for i in 30:
 				await process_frame
 			tela._abrir("corrida")
+		elif aba == "dupla":  # a câmera dupla: 3D em cima, a pista em 2D embaixo, sem a oficina
+			tela._abrir("corrida")
+			tela._trocar_camera("dupla")
+			for i in 60:
+				await process_frame
 		elif aba == "fundadora":
 			tela._abrir_fundadora()
 		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
