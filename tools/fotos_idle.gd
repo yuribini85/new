@@ -153,6 +153,10 @@ func _rodar() -> void:
 			tela._trocar_camera("dupla")
 			for i in 60:
 				await process_frame
+		elif aba == "meia":  # o acelerador pela metade, sem o dedo
+			tela._segurando = false
+			tela._toque_carga = 0.5
+			tela._abrir("corrida")
 		elif aba == "fundadora":
 			tela._abrir_fundadora()
 		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos

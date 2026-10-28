@@ -1357,6 +1357,7 @@ class _MedidorToque extends Control:
 	## O ponteiro na arte: o eixo em x = 102 (meio da altura) e a ponta 320 px adiante.
 	const PONTEIRO_EIXO := Vector2(102.25, 40.0)
 	const PONTEIRO_COMPRIMENTO := 320.25
+	const CARGA_MIN_TOQUE := 0.15  # apresentação: abaixo disso ainda não vale tocar
 	var carga := 1.0
 	var acelerando := false
 	var segurando := false  # o dedo na corrida (com ou sem carga)
@@ -1415,12 +1416,17 @@ class _MedidorToque extends Control:
 		if carga > 0.0:
 			var cor := IdleUI.COR_NEON_VERDE if acelerando else (IdleUI.COR_NEON if cheio else IdleUI.COR_ACO_CLARO)
 			draw_arc(c, raio, _angulo(0.0), _angulo(carga), 48, cor, 5.0, true)
-		if cheio:
-			_texto("TOQUE", IdleUI.COR_MARFIM.lerp(IdleUI.COR_NEON, k), 26, r * 0.5)
-		elif vazio():
+		# TOQUE sempre que há carga para usar (pedido do usuário, 2026-10-28):
+		# cheio pulsa em neon; pela metade fica firme, com a carga embaixo.
+		if vazio():
 			_texto("VAZIO", IdleUI.COR_VINHO_CLARO.lerp(IdleUI.COR_MARFIM, k_rapido), 26, r * 0.5)
+		elif cheio:
+			_texto("TOQUE", IdleUI.COR_MARFIM.lerp(IdleUI.COR_NEON, k), 26, r * 0.5)
+		elif not acelerando and carga >= CARGA_MIN_TOQUE:
+			_texto("TOQUE", IdleUI.COR_MARFIM, 24, r * 0.42)
+			_texto("%d%%" % roundi(carga * 100.0), IdleUI.COR_ACO_CLARO, 18, r * 0.7)
 		elif not acelerando:
-			_texto("%d%%" % roundi(carga * 100.0), IdleUI.COR_ACO_CLARO, 22, r * 0.5)
+			_texto("ENCHENDO", IdleUI.COR_ACO_CLARO, 18, r * 0.5)
 		# O ponteiro: eixo no centro, a ponta até as marcas.
 		var e := r * 0.76 / PONTEIRO_COMPRIMENTO
 		draw_set_transform(c, _angulo(_ponteiro), Vector2(e, e))
