@@ -559,12 +559,17 @@ func _pagina_corrida() -> Control:
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.custom_minimum_size = Vector2(64, 56)
-		var ic := IconeVetor.new(String(par[1]), Color.WHITE)
+		# Ícones da arte do usuário (arte/fastfather/icones/cameras), em tom só:
+		# a cor vem do modulate (tinta no ativo, ouro na câmera da vez).
+		var ic := TextureRect.new()
+		ic.texture = load("res://arte/fastfather/icones/cameras/%s.png" % par[0])
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		ic.offset_left = 16
-		ic.offset_right = -16
-		ic.offset_top = 12
-		ic.offset_bottom = -12
+		ic.offset_left = 12
+		ic.offset_right = -12
+		ic.offset_top = 8
+		ic.offset_bottom = -8
 		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		b.add_child(ic)
 		b.pressed.connect(_trocar_camera.bind(String(par[0])))
@@ -1526,8 +1531,8 @@ func _marcar_camera() -> void:
 			b.add_theme_stylebox_override(st, IdleUI.caixa(COR_OURO if ativa else Color(1, 1, 1, 0.05), 10, 0))
 		# No "ciclo", a câmera da vez acende em ouro.
 		var da_vez: bool = _camera_modo == "ciclo" and modo == efetiva
-		b.get_child(0).cor = IdleUI.COR_TINTA if ativa else (COR_OURO if da_vez else IdleUI.COR_CROMO)
-		b.get_child(0).queue_redraw()
+		# A arte é creme: o modulate escurece no ativo e doura a câmera da vez.
+		b.get_child(0).self_modulate = Color(0.16, 0.17, 0.17) if ativa else (Color(1.25, 1.05, 0.7) if da_vez else Color(0.85, 0.85, 0.85))
 
 
 func _aplicar_camera() -> void:

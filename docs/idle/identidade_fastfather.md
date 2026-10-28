@@ -292,3 +292,7 @@ HUD por `IdleUI.icone_hud`: no alto, o maço de notas (CAIXA DA FAMÍLIA) e a en
 baixo, CORRIDA = carro de corrida, PISTAS = estrada, CAPANGAS = chapéu fedora, RINHA = escudo,
 MISSÕES = prancheta, GARAGEM = garagem. A aba fora de uso fica apagada sem perder a cor. Os outros
 ícones ficam prontos para as próximas telas.
+
+Câmeras (folha de ícones de câmera do usuário, `arte/fastfather/icones/cameras`): ALTERNAR = câmera
+com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa de afastar. A arte
+é creme; o botão ativo escurece o ícone sobre o latão e, no alternar, a câmera da vez fica dourada.
