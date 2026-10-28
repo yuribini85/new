@@ -1,49 +1,84 @@
 class_name BandeiraIdle
 extends Control
 ## A bandeira do fiscal por cima da corrida, no lugar do semáforo (pedido do
-## usuário, 2026-10-28; nos anos 1930 a largada era dada na bandeira): a verde
-## entra e tremula durante a contagem e desce num golpe na largada; a
-## quadriculada tremula na chegada. Pano numa malha subdividida que ondula no
-## shader (visual/shaders/bandeira.gdshader), haste de madeira.
+## usuário, 2026-10-28; nos anos 1930 a largada era dada na bandeira), no estilo
+## da arte do jogo: pano facetado low poly com contorno de tinta de quadrinho
+## (visual/shaders/bandeira.gdshader), haste de latão art déco e o braço do
+## fiscal (manga de terno, punho branco, luva) segurando, como num quadro de
+## gibi. A verde entra e tremula na contagem e desce num golpe na largada, com
+## o estouro "VAI!" (raios e retícula); a quadriculada agita na chegada, com
+## "CHEGADA!".
 
 ## Apresentação, não balanceamento.
 const PANO := Vector2(230, 150)
-const DIVISOES := Vector2i(24, 10)
-const HASTE := Color("5b3d22")
+const DIVISOES := Vector2i(10, 5)  # poucas faces: o facetado da arte
+const HASTE_X := 26.0
+const ALTURA_HASTE := 300.0
+const MAO_Y := 262.0
+const TINTA := Color(0.07, 0.05, 0.04)
+const MANGA := Color("2b2b2e")
+const PUNHO := Color("ece3cc")
+const LUVA := Color("d9b08c")
 
 var _pano: MeshInstance2D
+var _contorno: MeshInstance2D
 var _mat: ShaderMaterial
+var _mat_contorno: ShaderMaterial
 var _tw: Tween
 
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(PANO.x + 40, PANO.y + 140)
+	custom_minimum_size = Vector2(PANO.x + 70, ALTURA_HASTE + 120)
 	size = custom_minimum_size
-	pivot_offset = Vector2(14, PANO.y + 130)  # a mão do fiscal, no pé da haste
-	_mat = ShaderMaterial.new()
-	_mat.shader = preload("res://visual/shaders/bandeira.gdshader")
+	pivot_offset = Vector2(HASTE_X, MAO_Y)  # a mão do fiscal
+	var malha := _malha()
+	_mat_contorno = _material(true)
+	_contorno = MeshInstance2D.new()
+	_contorno.mesh = malha
+	_contorno.material = _mat_contorno
+	_contorno.position = Vector2(HASTE_X + 4, 10)
+	add_child(_contorno)
+	_mat = _material(false)
 	_pano = MeshInstance2D.new()
-	_pano.mesh = _malha()
+	_pano.mesh = malha
 	_pano.material = _mat
-	_pano.position = Vector2(14, 6)
+	_pano.position = _contorno.position
 	add_child(_pano)
 	visible = false
+
+
+func _material(silhueta: bool) -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = preload("res://visual/shaders/bandeira.gdshader")
+	m.set_shader_parameter("silhueta", silhueta)
+	m.set_shader_parameter("centro", PANO * 0.5)
+	return m
 
 
 func _malha() -> ArrayMesh:
 	var v := PackedVector2Array()
 	var uv := PackedVector2Array()
 	var idx := PackedInt32Array()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
 	for j in DIVISOES.y + 1:
 		for i in DIVISOES.x + 1:
 			var u := Vector2(float(i) / DIVISOES.x, float(j) / DIVISOES.y)
-			v.append(u * PANO)
+			var p := u * PANO
+			# Vértices de dentro um pouco fora do lugar: faces tortas como a arte.
+			if i > 0 and i < DIVISOES.x and j > 0 and j < DIVISOES.y:
+				p += Vector2(rng.randf_range(-6, 6), rng.randf_range(-5, 5))
+			v.append(p)
 			uv.append(u)
 	for j in DIVISOES.y:
 		for i in DIVISOES.x:
 			var a := j * (DIVISOES.x + 1) + i
-			idx.append_array([a, a + 1, a + DIVISOES.x + 2, a, a + DIVISOES.x + 2, a + DIVISOES.x + 1])
+			# A diagonal alterna: o triângulo facetado não fica em fila.
+			if (i + j) % 2 == 0:
+				idx.append_array([a, a + 1, a + DIVISOES.x + 2, a, a + DIVISOES.x + 2, a + DIVISOES.x + 1])
+			else:
+				idx.append_array([a, a + 1, a + DIVISOES.x + 1, a + 1, a + DIVISOES.x + 2, a + DIVISOES.x + 1])
 	var arr := []
 	arr.resize(Mesh.ARRAY_MAX)
 	arr[Mesh.ARRAY_VERTEX] = v
@@ -55,10 +90,43 @@ func _malha() -> ArrayMesh:
 
 
 func _draw() -> void:
-	# Haste de madeira com a ponta de latão.
-	draw_rect(Rect2(8, 0, 7, PANO.y + 132), HASTE)
-	draw_rect(Rect2(10, 0, 2, PANO.y + 132), HASTE.lightened(0.25))
-	draw_circle(Vector2(11.5, 0), 7.0, IdleUI.COR_OURO)
+	# O braço do fiscal entrando por baixo: manga de terno, punho e luva, em
+	# facetas chapadas com contorno de tinta.
+	var mao := Vector2(HASTE_X, MAO_Y)
+	# A manga vem na diagonal de baixo à esquerda, com duas dobras de tecido.
+	var ombro_a := mao + Vector2(-62, 104)
+	var ombro_b := mao + Vector2(-16, 112)
+	var punho_a := mao + Vector2(-20, 16)
+	var punho_b := mao + Vector2(14, 14)
+	_faceta(PackedVector2Array([punho_a, punho_b, ombro_b, ombro_a]), MANGA)
+	_faceta(PackedVector2Array([punho_a, punho_a.lerp(punho_b, 0.45), ombro_a.lerp(ombro_b, 0.35), ombro_a]),
+			MANGA.lightened(0.14))
+	_faceta(PackedVector2Array([punho_a.lerp(ombro_a, 0.45), punho_b.lerp(ombro_b, 0.4),
+			punho_b.lerp(ombro_b, 0.55), punho_a.lerp(ombro_a, 0.62)]), MANGA.darkened(0.25))
+	# Punho branco da camisa com a abotoadura de latão.
+	_faceta(PackedVector2Array([mao + Vector2(-22, 6), mao + Vector2(16, 2), mao + Vector2(16, 18), mao + Vector2(-21, 22)]), PUNHO)
+	draw_circle(mao + Vector2(-2, 13), 3.0, MolduraDeco.LATAO)
+	# Haste de latão com anéis e o remate art déco em degraus.
+	var topo := 4.0
+	draw_rect(Rect2(HASTE_X - 4, topo, 8, ALTURA_HASTE), TINTA)
+	draw_rect(Rect2(HASTE_X - 2.5, topo, 5, ALTURA_HASTE), MolduraDeco.LATAO)
+	draw_rect(Rect2(HASTE_X - 2.5, topo, 2, ALTURA_HASTE), MolduraDeco.LATAO.lightened(0.3))
+	for k in 3:
+		var w := 10.0 - k * 3.0
+		_faceta(PackedVector2Array([Vector2(HASTE_X - w, topo - k * 6), Vector2(HASTE_X + w, topo - k * 6),
+				Vector2(HASTE_X + w, topo - k * 6 - 6), Vector2(HASTE_X - w, topo - k * 6 - 6)]), MolduraDeco.LATAO)
+	_faceta(PackedVector2Array([Vector2(HASTE_X - 3, topo - 18), Vector2(HASTE_X + 3, topo - 18), Vector2(HASTE_X, topo - 28)]),
+			MolduraDeco.LATAO.lightened(0.2))
+	# A luva fechada na haste (por cima dela).
+	_faceta(PackedVector2Array([mao + Vector2(-12, -14), mao + Vector2(13, -12), mao + Vector2(14, 6), mao + Vector2(-13, 8)]), LUVA)
+	_faceta(PackedVector2Array([mao + Vector2(-12, -14), mao + Vector2(0, -16), mao + Vector2(-13, 8)]), LUVA.darkened(0.15))
+
+
+func _faceta(pts: PackedVector2Array, cor: Color) -> void:
+	draw_colored_polygon(pts, cor)
+	var fechado := pts.duplicate()
+	fechado.append(pts[0])
+	draw_polyline(fechado, TINTA, 3.0)
 
 
 func _parar() -> void:
@@ -66,46 +134,51 @@ func _parar() -> void:
 		_tw.kill()
 
 
+func _pano_de(quadriculada: bool, amplitude: float) -> void:
+	for m in [_mat, _mat_contorno]:
+		m.set_shader_parameter("quadriculada", quadriculada)
+		m.set_shader_parameter("amplitude", amplitude)
+
+
 ## A verde entra pela esquerda e tremula; em `contagem` segundos desce num
-## golpe e sai (a largada).
+## golpe, com o estouro "VAI!".
 func largada(contagem: float) -> void:
 	_parar()
-	_mat.set_shader_parameter("quadriculada", false)
-	_mat.set_shader_parameter("amplitude", 10.0)
+	_pano_de(false, 10.0)
 	visible = true
 	modulate.a = 1.0
-	rotation = deg_to_rad(-8.0)
+	rotation = deg_to_rad(-6.0)
 	if Preferencias.reduzir_animacoes:
 		_tw = create_tween()
 		_tw.tween_interval(contagem)
 		_tw.tween_callback(func(): visible = false)
 		return
 	var x := position.x
-	position.x = x - 320.0
+	position.x = x - 360.0
 	_tw = create_tween()
 	_tw.tween_property(self, "position:x", x, minf(0.35, contagem * 0.4)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_tw.tween_interval(maxf(contagem - 0.55, 0.05))
-	# O golpe: a bandeira sobe um pouco e desce cortando o ar.
-	_tw.tween_property(self, "rotation", deg_to_rad(-24.0), 0.12)
-	_tw.tween_property(self, "rotation", deg_to_rad(70.0), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	_tw.parallel().tween_property(self, "modulate:a", 0.0, 0.25).set_delay(0.08)
+	# O golpe: sobe um pouco e desce cortando o ar.
+	_tw.tween_property(self, "rotation", deg_to_rad(-22.0), 0.12)
+	_tw.tween_callback(func(): _estourar("VAI!", Color("e8b84a")))
+	_tw.tween_property(self, "rotation", deg_to_rad(75.0), 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_tw.parallel().tween_property(self, "modulate:a", 0.0, 0.22).set_delay(0.08)
 	_tw.tween_callback(func():
 		visible = false
 		position.x = x
 		rotation = 0.0)
 
 
-## A quadriculada na chegada: entra agitando forte e some sozinha.
+## A quadriculada na chegada: entra agitando forte, com "CHEGADA!".
 func chegada(dura := 2.2) -> void:
 	_parar()
-	_mat.set_shader_parameter("quadriculada", true)
-	_mat.set_shader_parameter("amplitude", 18.0)
+	_pano_de(true, 18.0)
 	visible = true
 	modulate.a = 1.0
 	rotation = deg_to_rad(-10.0)
+	_estourar("CHEGADA!", Color("ece3cc"))
 	_tw = create_tween()
 	if not Preferencias.reduzir_animacoes:
-		# Agitando: a haste vai e volta.
 		for k in 4:
 			_tw.tween_property(self, "rotation", deg_to_rad(-26.0), 0.18).set_trans(Tween.TRANS_SINE)
 			_tw.tween_property(self, "rotation", deg_to_rad(4.0), 0.18).set_trans(Tween.TRANS_SINE)
@@ -117,3 +190,64 @@ func chegada(dura := 2.2) -> void:
 func esconder() -> void:
 	_parar()
 	visible = false
+
+
+## O estouro de gibi no meio da corrida: raios, retícula e a palavra.
+func _estourar(texto: String, cor: Color) -> void:
+	var pai := get_parent() as Control
+	if pai == null or Preferencias.reduzir_animacoes:
+		return
+	var e := _Estouro.new(texto, cor)
+	e.size = Vector2(520, 300)
+	e.position = (pai.size - e.size) * 0.5 + Vector2(0, -20)
+	e.pivot_offset = e.size * 0.5
+	pai.add_child(e)
+
+
+class _Estouro extends Control:
+	var texto: String
+	var cor: Color
+	var _t := 0.0
+	const DURA := 0.8
+
+	func _init(texto_: String, cor_: Color) -> void:
+		texto = texto_
+		cor = cor_
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		rotation = deg_to_rad(-4.0)
+
+	func _process(delta: float) -> void:
+		_t += delta
+		if _t >= DURA:
+			queue_free()
+			return
+		var k := _t / DURA
+		scale = Vector2.ONE * (0.6 + 0.5 * (1.0 - pow(1.0 - minf(k * 3.0, 1.0), 3.0)))
+		modulate.a = 1.0 - smoothstep(0.6, 1.0, k)
+		queue_redraw()
+
+	func _draw() -> void:
+		var c := size * 0.5
+		# Raios do estouro, alternando duas cores, com pontas irregulares.
+		var n := 18
+		for i in n:
+			var a0 := TAU * i / n
+			var a1 := TAU * (i + 1) / n
+			var r := 250.0 if i % 2 == 0 else 200.0
+			var pts := PackedVector2Array([c, c + Vector2.from_angle(a0) * Vector2(r, r * 0.55),
+					c + Vector2.from_angle(a1) * Vector2(r * 0.9, r * 0.5)])
+			draw_colored_polygon(pts, Color(cor, 0.85) if i % 2 == 0 else Color(cor.darkened(0.35), 0.85))
+		# Retícula de pontos no anel do meio.
+		for i in 60:
+			var a := TAU * i / 60.0
+			for j in 3:
+				var p := c + Vector2.from_angle(a) * Vector2(110 + j * 22, (110 + j * 22) * 0.55)
+				draw_circle(p, 5.0 - j * 1.2, Color(0.07, 0.05, 0.04, 0.5))
+		# A palavra na letra dos balões, com contorno grosso.
+		var f := Tipografia.fonte("fala")
+		var tam := 84
+		var w := f.get_string_size(texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam).x
+		var p0 := c + Vector2(-w * 0.5, tam * 0.35)
+		draw_string_outline(f, p0 + Vector2(4, 5), texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, 14, Color(0.07, 0.05, 0.04))
+		draw_string_outline(f, p0, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, 10, Color(0.07, 0.05, 0.04))
+		draw_string(f, p0, texto, HORIZONTAL_ALIGNMENT_LEFT, -1, tam, Color("fff4d6"))

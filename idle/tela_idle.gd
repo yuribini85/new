@@ -619,8 +619,10 @@ func _pagina_corrida() -> Control:
 	corrida.gui_input.connect(_toque_corrida)
 	# A bandeira do fiscal: verde na largada, quadriculada na chegada.
 	_bandeira = BandeiraIdle.new()
-	_bandeira.position = Vector2(24, 200)
+	_bandeira.position = Vector2(24, 120)
 	corrida.add_child(_bandeira)
+	# Por baixo das faixas e do painel: o braço do fiscal vem de trás da faixa do prêmio.
+	corrida.move_child(_bandeira, _hud.get_index())
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()
@@ -1107,6 +1109,8 @@ func _atualizar_ladrilho(m: Dictionary, n: int, previsao: String) -> void:
 
 
 func _atualizar_topo(delta := 0.0) -> void:
+	if _toque_medidor != null:
+		_toque_medidor.visible = not _bandeira.visible  # a bandeira do fiscal tem a vez
 	# O número conta até o dinheiro quando entra muito de uma vez (prêmio,
 	# renda com o app fechado, meta); gasto e renda corrente vão direto.
 	if estado.dinheiro < _dinheiro_mostrado or estado.dinheiro - _dinheiro_mostrado < estado.renda_s() * 0.5 \

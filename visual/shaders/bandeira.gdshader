@@ -1,30 +1,49 @@
 shader_type canvas_item;
-// Bandeira de pano (largada e chegada do The Fastfather, 2026-10-28): uma
-// malha subdividida presa na haste à esquerda (UV.x = 0); as ondas correm da
-// haste para a ponta, mais fortes longe dela, e as dobras escurecem.
+// Bandeira do fiscal (The Fastfather, 2026-10-28), no estilo da arte: pano
+// facetado como os personagens low poly (cada triângulo num tom chapado, três
+// tons de luz) e, numa segunda malha por trás, o contorno grosso de tinta dos
+// quadrinhos. Presa na haste à esquerda (UV.x = 0); as ondas correm para a ponta.
 
 uniform float amplitude = 14.0;  // px na ponta
 uniform float velocidade = 7.0;
 uniform bool quadriculada = false;
-uniform vec4 cor : source_color = vec4(0.2, 0.4, 0.23, 1.0);  // verde de pano gasto
-uniform float casas = 8.0;  // colunas do xadrez
-varying float dobra;
+uniform vec4 cor : source_color = vec4(0.2, 0.42, 0.24, 1.0);
+uniform float casas = 6.0;  // colunas do xadrez
+uniform bool silhueta = false;  // a malha de trás: só o contorno
+uniform float contorno = 5.0;  // px
+uniform vec2 centro = vec2(115.0, 75.0);
+varying flat float dobra;
+varying vec2 uv_pano;
 
 void vertex() {
-	float solto = UV.x;  // 0 na haste, 1 na ponta
-	float fase = UV.x * 7.0 - TIME * velocidade;
+	float solto = UV.x;
+	float fase = UV.x * 6.0 - TIME * velocidade;
 	VERTEX.y += sin(fase) * amplitude * solto;
-	VERTEX.x -= (1.0 - cos(fase)) * amplitude * 0.25 * solto;
-	dobra = cos(fase) * solto;
+	VERTEX.x -= (1.0 - cos(fase)) * amplitude * 0.22 * solto;
+	if (silhueta) {
+		VERTEX += normalize(VERTEX - centro) * contorno;
+	}
+	dobra = cos(fase + UV.y * 1.3) * (0.35 + solto);
+	uv_pano = UV;
 }
 
 void fragment() {
-	vec3 c = cor.rgb;
-	if (quadriculada) {
-		float linhas = casas * 0.66;
-		float xadrez = mod(floor(UV.x * casas) + floor(UV.y * linhas), 2.0);
-		c = mix(vec3(0.07, 0.07, 0.08), vec3(0.95, 0.94, 0.9), xadrez);
+	if (silhueta) {
+		COLOR = vec4(0.07, 0.05, 0.04, COLOR.a);
+	} else {
+		vec3 c = cor.rgb;
+		if (quadriculada) {
+			float xadrez = mod(floor(uv_pano.x * casas) + floor(uv_pano.y * casas * 0.66), 2.0);
+			c = mix(vec3(0.1, 0.09, 0.08), vec3(0.95, 0.92, 0.84), xadrez);
+		} else {
+			// Barra art déco: dois filetes creme junto da haste e na barra de baixo.
+			float filete = step(0.08, uv_pano.x) * step(uv_pano.x, 0.11) + step(0.14, uv_pano.x) * step(uv_pano.x, 0.155);
+			filete += step(0.84, uv_pano.y) * step(uv_pano.y, 0.88);
+			c = mix(c, vec3(0.93, 0.86, 0.7), clamp(filete, 0.0, 1.0));
+		}
+		// Três tons chapados por face: sombra, meio, luz.
+		float tom = floor(clamp(dobra * 0.5 + 0.5, 0.0, 0.999) * 3.0) / 2.0;
+		c *= mix(0.68, 1.12, tom);
+		COLOR = vec4(c, COLOR.a);
 	}
-	c *= 0.82 + 0.25 * dobra;  // dobras: luz de um lado, sombra do outro
-	COLOR = vec4(c, COLOR.a);
 }
