@@ -346,9 +346,11 @@ static func busto_piloto(id: String) -> Texture2D:
 
 
 ## O mesmo recorte para qualquer arte de corpo inteiro (os rapazes da família).
-static func busto_de(caminho: String) -> Texture2D:
-	if _bustos.has(caminho):
-		return _bustos[caminho]
+## `alto`: a altura do recorte em lados (1 = quadrado; mais, desce pelo corpo).
+static func busto_de(caminho: String, alto := 1.0) -> Texture2D:
+	var chave := "%s|%s" % [caminho, alto]
+	if _bustos.has(chave):
+		return _bustos[chave]
 	if caminho == "" or not ResourceLoader.exists(caminho):
 		return null
 	var tex: Texture2D = load(caminho)
@@ -374,8 +376,8 @@ static func busto_de(caminho: String) -> Texture2D:
 	var y0 := maxf(topo - lado * 0.04, 0.0)
 	var at := AtlasTexture.new()
 	at.atlas = tex
-	at.region = Rect2(x0, y0, lado, lado)
-	_bustos[caminho] = at
+	at.region = Rect2(x0, y0, lado, minf(lado * alto, h - y0))
+	_bustos[chave] = at
 	return at
 
 

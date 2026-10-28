@@ -244,6 +244,18 @@ func _novo(p: Dictionary) -> void:
 ## (SAIDA_CABECA do lado) e o busto, de fundo transparente, fica por cima, com
 ## a cabeça inteira passando da borda.
 const SAIDA_CABECA := 0.26
+const ALTO_BUSTO := 1.3  # o recorte desce além do quadro: o corpo some na borda
+
+
+func _camada(tex: Texture2D, lado: float, pos: Vector2) -> TextureRect:
+	var t := TextureRect.new()
+	t.texture = tex
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	t.size = Vector2(lado, lado * ALTO_BUSTO)
+	t.position = pos
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return t
 
 func _retrato(p: Dictionary, lado: float) -> Control:
 	var c := Control.new()
@@ -263,13 +275,17 @@ func _retrato(p: Dictionary, lado: float) -> Control:
 		vazio.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		vazio.offset_top = lado * SAIDA_CABECA
 		return c
-	var t := TextureRect.new()
-	t.texture = IdleUI.busto_de(PilotosIdle.arte_rapaz(p))
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	t.set_anchors_preset(Control.PRESET_FULL_RECT)
-	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	c.add_child(t)
+	# O corpo recortado pela moldura (cantos arredondados incluídos) e a cabeça
+	# passando por cima dela: a mesma imagem em duas camadas que se encaixam.
+	var tex := IdleUI.busto_de(PilotosIdle.arte_rapaz(p), ALTO_BUSTO)
+	fundo.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	fundo.add_child(_camada(tex, lado, Vector2(0, -lado * SAIDA_CABECA)))
+	var topo := Control.new()
+	topo.clip_contents = true
+	topo.size = Vector2(lado, lado * SAIDA_CABECA + 2.0)
+	topo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	topo.add_child(_camada(tex, lado, Vector2.ZERO))
+	c.add_child(topo)
 	var selo := PanelContainer.new()
 	selo.add_theme_stylebox_override("panel", IdleUI.caixa(IdleUI.COR_OURO, 8, 4))
 	selo.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
