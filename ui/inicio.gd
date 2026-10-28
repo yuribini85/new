@@ -30,9 +30,10 @@ var _pronto := false
 
 
 func _ready() -> void:
-	# O segundo app do projeto (The Fastfather, docs/idle/plano.md) abre direto no jogo idle.
+	# O segundo app do projeto (The Fastfather, docs/idle/plano.md) abre na intro do estúdio
+	# (intro/studio_intro.tscn), que segue para o jogo idle.
 	if OS.has_feature("idle"):
-		get_tree().change_scene_to_file.call_deferred("res://idle/idle.tscn")
+		get_tree().change_scene_to_file.call_deferred("res://intro/studio_intro.tscn")
 		return
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	var fundo := ColorRect.new()

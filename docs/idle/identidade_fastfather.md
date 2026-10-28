@@ -399,3 +399,6 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
   valendo e USAR (ou AMANHÃ). O toque abre a janela que explica o bônus, a duração e os usos de hoje; o
   anúncio só começa no ASSISTIR ANÚNCIO dessa janela. Contra toque errado: o botão de anúncio só aceita toque
   0,6 s depois de aparecer e no soltar do dedo; há um vão entre ele e o FECHAR.
+- Intro do estúdio Bini Forge (arte e código do usuário, 2026-10-28): `intro/studio_intro.tscn` abre antes do
+  jogo (completa ~6 s na 1ª vez, curta 2,4 s depois; um toque pula) e segue para `idle/idle.tscn`. Ajuste
+  local: o relógio da intro anda sozinho mesmo sem som, porque no navegador o som só toca depois do 1º toque.
