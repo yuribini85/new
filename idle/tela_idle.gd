@@ -698,7 +698,7 @@ func _pagina_corrida() -> Control:
 	_toque_medidor.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var encaixar := func():
 		var lado := _MedidorToque.LADO
-		var base := embaixo.size.y + 6.0
+		var base := 8.0  # no canto direito da faixa do prêmio (as câmeras foram para o centro)
 		_toque_medidor.offset_left = -lado - 14.0
 		_toque_medidor.offset_right = -14.0
 		_toque_medidor.offset_top = -base - lado
@@ -798,13 +798,21 @@ func _faixa_premio(pai: Control) -> Control:
 	h.add_child(esq)
 	IdleUI.rotulo("PRÊMIO ATUAL", 16, IdleUI.COR_CROMO, esq)
 	_premio = IdleUI.rotulo("", 36, IdleUI.COR_NEON, esq, "deco")
-	var vao := Control.new()
-	vao.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	h.add_child(vao)
-	# As câmeras no canto direito da faixa (no lugar do MELHOR).
+	# As câmeras no centro da faixa (pedido do usuário, 2026-10-28), por cima
+	# dela; o velocímetro desce para o canto direito da faixa.
 	_trilho.get_parent().remove_child(_trilho)
-	_trilho.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	h.add_child(_trilho)
+	pai.add_child(_trilho)
+	_trilho.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_trilho.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_trilho.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	var centrar := func():
+		var alto := _trilho.get_combined_minimum_size().y
+		_trilho.offset_bottom = -(p.size.y - alto) * 0.5
+		_trilho.offset_top = _trilho.offset_bottom - alto
+		_trilho.offset_left = -_trilho.get_combined_minimum_size().x * 0.5
+		_trilho.offset_right = -_trilho.offset_left
+	p.resized.connect(centrar)
+	centrar.call()
 	return p
 
 

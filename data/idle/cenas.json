@@ -489,6 +489,6 @@
       }
     ]
   },
-	"letreiros": {"_nota": "Placas de madeira na cerca da pista (sugestão 7 aprovada, 2026-10-28): anúncios da época com nomes do próprio jogo (famílias e lugares), sem marca real.", "lista": ["ÓLEO BELLUCCI", "GAZETA DO CAIS", "CHARUTOS CALABRESE", "GRAXA MORETTI", "CAFÉ FERRANTE", "PNEUS LOMBARDI", "BARBEARIA DO TONY"]},
+	"letreiros": {"_nota": "Placas de madeira na cerca da pista (sugestão 7 aprovada, 2026-10-28): anúncios da época com nomes do próprio jogo (famílias e lugares), sem marca real. Em inglês: são texto desenhado no 3D e não passam pela tradução do jogo (pedido do usuário, 2026-10-28).", "lista": ["BELLUCCI MOTOR OIL", "DOCK GAZETTE", "CALABRESE CIGARS", "MORETTI GREASE", "FERRANTE COFFEE", "LOMBARDI TIRES", "TONY'S BARBER SHOP"]},
 	"chefao_aprova": {"_nota": "O chefão na mesa por um instante ao fechar o jornal da liga nova (sugestão 13 da lista visual, aprovada em 2026-10-28).", "falas": ["Bom garoto.", "A família está orgulhosa.", "Continue assim.", "É assim que se faz."]}
 }

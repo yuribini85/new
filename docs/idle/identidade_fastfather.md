@@ -368,7 +368,8 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
 - Cenário por cidade (`CenarioEpoca.CIDADES`): cor do céu e do chão e uma peça — trem elevado
   (Chicago), fábricas com fumaça (Detroit), mar e calçadão (Atlantic City), silos (Kansas City), brejo
   (Nova Orleans), deserto com as placas em neon (Las Vegas).
-- Placas de anúncio de madeira na cerca (`cenas.json` → "letreiros"), com nomes do próprio jogo.
+- Placas de anúncio de madeira na cerca (`cenas.json` → "letreiros"), com nomes do próprio jogo, em inglês (texto desenhado no 3D não passa pela tradução).
+- Câmeras no centro da faixa do prêmio; o velocímetro no canto direito dela.
 - Chuva em cerca de um dia a cada sete (pela data): riscos na lente, chuva no 3D, céu fechado e
   poeira virando lama. A poeira segue a hora (clara de dia, dourada à tarde, azulada à noite).
 - Os três capangas mais fortes de pé na beira da reta antes da largada; o Tony espia por cima da
