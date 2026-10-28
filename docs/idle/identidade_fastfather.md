@@ -296,3 +296,12 @@ MISSÕES = prancheta, GARAGEM = garagem. A aba fora de uso fica apagada sem perd
 Câmeras (folha de ícones de câmera do usuário, `arte/fastfather/icones/cameras`): ALTERNAR = câmera
 com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa de afastar. A arte
 é creme; o botão ativo escurece o ícone sobre o latão e, no alternar, a câmera da vez fica dourada.
+
+## 20. Rinha com VS, estante de troféus e sons de época (2026-10-28, sugestões aprovadas)
+
+- Rinha: antes de cada luta, o seu capanga de corpo inteiro (esquerda) contra a figura de outro do
+  elenco em sombra, espelhada (direita), com VS e "FAMÍLIA <rival>"; a luta fica parada 2,4 s.
+- Garagem: estante de couro e latão abaixo dos carros com os troféus ganhos de pé; o toque abre a
+  coleção.
+- Sons sintetizados (`tools/sintetizar_sons_epoca.py`): caixa registradora no toque do jornaleiro,
+  flash de magnésio no troféu novo, sino de bonde no marco de melhoria e na liga nova.

@@ -1080,7 +1080,7 @@ func _pagar_jornaleiro() -> void:
 	_gorjeta = estado.gorjeta_jornaleiro()
 	estado.dinheiro += _gorjeta
 	ganho_flutuante(_gorjeta)
-	Sons.tocar_ui(self, "moeda", -4.0)
+	Sons.tocar_ui(self, "caixa_registradora", -4.0)
 	_efeitos.pipoca(_jornaleiro.get_global_rect().get_center() + Vector2(0, -60), "+$" + curto(_gorjeta), COR_DINHEIRO, 40, 0.8)
 	_jornal_x2.visible = true
 	_jornal_x2_ate = Time.get_ticks_msec() / 1000.0 + JORNAL_X2_S
@@ -1105,6 +1105,7 @@ func _comemorar_trofeu() -> void:
 	estado.trofeu_novo = ""
 	var onde: Vector2 = _paginas["corrida"].get_global_rect().get_center()
 	_efeitos.pipoca(onde + Vector2(0, -60), "TROFÉU NOVO!", COR_OURO, 44, 1.4)
+	Sons.tocar_ui(self, "flash", -4.0)  # o flash de magnésio da foto do troféu
 	_efeitos.faiscas(onde, IdleUI.COR_OURO_CLARO, 50)
 	if _botao_trofeus != null:
 		IdleUI.pulsar(_botao_trofeus, 1.12)
@@ -1987,12 +1988,14 @@ func _comemorar_marco(id: String, antes: int) -> void:
 	var onde := lad.get_global_rect().get_center() if lad != null and lad.is_visible_in_tree() else get_global_rect().get_center()
 	_efeitos.pipoca(onde + Vector2(0, -90), texto, COR_OURO, 40, 1.0)
 	_efeitos.faiscas(onde, IdleUI.COR_OURO_CLARO, 40)
+	Sons.tocar_ui(self, "sino", -8.0)  # o sino de bonde do marco
 	celebrar(3)
 
 
 func _subir_liga() -> void:
 	if not estado.subir_liga():
 		return
+	Sons.tocar_ui(self, "sino", -6.0, 1.0, false)
 	estado.salvar(Time.get_unix_time_from_system())
 	_nova_corrida()
 	_janela_liga()

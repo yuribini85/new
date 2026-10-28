@@ -87,3 +87,12 @@ silêncio, volume normalizado, mono 64 kbps.
 Se existirem, a corrida toca estes arquivos com o filtro de rádio: `locutor_largada.ogg`
 (na largada), `locutor_vitoria.ogg` (vitória), `locutor_chegada.ogg` (chegada sem vitória).
 Texto sugerido em `docs/idle/identidade_fastfather.md`.
+
+Sons originais do projeto, sintetizados (sem amostra de terceiros) por
+`tools/sintetizar_sons_epoca.py` (2026-10-28):
+
+| Arquivo | O que é |
+|---|---|
+| caixa_registradora.ogg | cliques da alavanca, gaveta e o "plim" (toque no jornaleiro) |
+| flash.ogg | estalo e o "puf" do flash de magnésio (troféu novo) |
+| sino.ogg | dois toques de sino de bonde (marco de melhoria, liga nova) |
