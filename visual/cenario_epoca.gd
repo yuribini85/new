@@ -12,9 +12,11 @@ extends RefCounted
 ## rivais por pista não mudam). Tudo numa malha só (cores por vértice).
 
 ## Apresentação, não balanceamento.
-const CEU := Color(0.66, 0.72, 0.76)
-const AMBIENTE := Color(0.74, 0.72, 0.66)
-const LUZ := Color(1.0, 0.86, 0.66)
+## Fim de tarde (golpes visuais, 2026-10-28): céu de poeira dourada, sol baixo
+## e quente, sombras compridas e névoa no horizonte na cor do céu.
+const CEU := Color(0.84, 0.74, 0.58)
+const AMBIENTE := Color(0.66, 0.62, 0.56)
+const LUZ := Color(1.0, 0.8, 0.56)
 const GRAMA := Color(0.36, 0.42, 0.2)
 const ACOSTAMENTO := Color(0.46, 0.46, 0.26)
 const TERRA := Color(0.5, 0.36, 0.23)
@@ -41,10 +43,16 @@ const CHAPEUS := [Color("1c1a18"), Color("5a4a38"), Color("3a3a3a"), Color("c9b2
 static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environment, luz: DirectionalLight3D) -> void:
 	ambiente.background_color = CEU
 	ambiente.ambient_light_color = AMBIENTE
-	ambiente.fog_enabled = false
+	ambiente.fog_enabled = true
+	ambiente.fog_light_color = CEU
+	ambiente.fog_density = 0.0012
+	ambiente.fog_sky_affect = 0.0
 	luz.light_color = LUZ
-	luz.light_energy = 1.15
-	luz.rotation = Vector3(-0.75, 0.9, 0)
+	luz.light_energy = 1.3
+	luz.rotation = Vector3(-0.42, 0.95, 0)  # sol baixo: sombras compridas
+	luz.shadow_enabled = not Preferencias.efeitos_leves
+	luz.shadow_opacity = 0.7
+	luz.directional_shadow_max_distance = 600.0
 	var pts := pista.pontos(3.0)
 	var amostra := PackedVector2Array()
 	for i in range(0, pts.size(), 2):
@@ -53,6 +61,12 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	rng.seed = hash(pista.id + "|rural")
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# O que se mexe (torcida e bandeirolas) vai em malhas à parte, com o
+	# vento e o balanço no shader; o alfa da cor de cada peça é a fase.
+	_st_torcida = SurfaceTool.new()
+	_st_torcida.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_st_bandeiras = SurfaceTool.new()
+	_st_bandeiras.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var caixa := Rect2(pts[0], Vector2.ZERO)
 	for p in pts:
 		caixa = caixa.expand(p)
@@ -75,7 +89,27 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	mat.roughness = 0.95
 	mi.material_override = mat
 	cena.add_child(mi)
+	cena.add_child(_vivo(_st_torcida, 0))
+	cena.add_child(_vivo(_st_bandeiras, 1))
 	_fumaca(cena, torre)
+
+
+static var _st_torcida: SurfaceTool
+static var _st_bandeiras: SurfaceTool
+
+
+## Malha que se mexe: modo 0 a torcida balançando no lugar, modo 1 as
+## bandeirolas no vento.
+static func _vivo(st: SurfaceTool, modo: int) -> MeshInstance3D:
+	st.generate_normals()
+	var mi := MeshInstance3D.new()
+	mi.mesh = st.commit()
+	var m := ShaderMaterial.new()
+	m.shader = preload("res://visual/shaders/vida_epoca.gdshader")
+	m.set_shader_parameter("modo", modo)
+	m.set_shader_parameter("parado", Preferencias.reduzir_animacoes)
+	mi.material_override = m
+	return mi
 
 
 ## Fumaça de charuto saindo da janela da torre dos fiscais (fiapos lentos).
@@ -287,6 +321,15 @@ static func _largada(st: SurfaceTool, pista: Pista, largura: float) -> void:
 		_quad_para(st, CREME, pano, _v3(f * s, 0.0))
 		var d := _v3(f * s * 0.02, 0.0)
 		_quad_para(st, VERMELHO, [_v3(a, 5.75) + d, _v3(b, 5.75) + d, _v3(b, 5.95) + d, _v3(a, 5.95) + d], d)
+	# Cordão de bandeirolas por cima do pano, de mourão a mourão.
+	var n_band := 14
+	for k in n_band:
+		var x0 := a.lerp(b, (k + 0.1) / n_band)
+		var x1 := a.lerp(b, (k + 0.9) / n_band)
+		var cor := Color(VERMELHO if k % 2 == 0 else CREME, fposmod(k * 0.29, 1.0))
+		var tri := [_v3(x0, 7.4), _v3(x1, 7.4), _v3(x0.lerp(x1, 0.5), 6.85)]
+		_quad_para(_st_bandeiras, cor, tri, _v3(f, 0.0))
+		_quad_para(_st_bandeiras, cor, tri, _v3(-f, 0.0))
 
 
 ## Arquibancada de madeira coberta por fora da reta da largada, com
@@ -315,9 +358,9 @@ static func _arquibancada(st: SurfaceTool, pista: Pista, amostra: PackedVector2A
 		var x := -comp * 0.5 + comp * k / 6.0
 		var q := meio + f * x
 		_caixa(st, MADEIRA, q, rumo, Vector3(0.1, 2.2, 0.1), 6.8)
-		var cor := VERMELHO if k % 2 == 0 else CREME
-		_quad_para(st, cor, [_v3(q, 8.4), _v3(q + f * 1.1, 8.15), _v3(q, 7.8)], _v3(l, 0.0))
-		_quad_para(st, cor, [_v3(q, 8.4), _v3(q + f * 1.1, 8.15), _v3(q, 7.8)], _v3(-l, 0.0))
+		var cor := Color(VERMELHO if k % 2 == 0 else CREME, fposmod(k * 0.37, 1.0))
+		_quad_para(_st_bandeiras, cor, [_v3(q, 8.4), _v3(q + f * 1.1, 8.15), _v3(q, 7.8)], _v3(l, 0.0))
+		_quad_para(_st_bandeiras, cor, [_v3(q, 8.4), _v3(q + f * 1.1, 8.15), _v3(q, 7.8)], _v3(-l, 0.0))
 	# torre dos fiscais, do outro lado, na linha
 	var t := pista.posicao_em(4.0) - l * (largura * 0.5 + CERCA_M + 3.5)
 	for dx: float in [-1.2, 1.2]:
@@ -345,13 +388,14 @@ static func _torcida(st: SurfaceTool, base: Vector2, f: Vector2, l: Vector2, com
 				continue  # lugar vazio
 			var x := -comp * 0.5 + 0.8 + (comp - 1.6) * (i + rng.randf_range(-0.3, 0.3)) / (n - 1)
 			var p := base + f * x + l * (k * 1.6 + 0.9)
+			var fase := rng.randf()  # cada um balança no seu tempo
 			var terno: Color = TERNOS[rng.randi() % TERNOS.size()]
-			_caixa(st, terno, p, rumo, Vector3(0.42, 0.55, 0.32), y)
-			_caixa(st, PELES[rng.randi() % PELES.size()], p, rumo, Vector3(0.2, 0.22, 0.2), y + 0.58)
+			_caixa(_st_torcida, Color(terno, fase), p, rumo, Vector3(0.42, 0.55, 0.32), y)
+			_caixa(_st_torcida, Color(PELES[rng.randi() % PELES.size()], fase), p, rumo, Vector3(0.2, 0.22, 0.2), y + 0.58)
 			if rng.randf() < 0.8:
-				var chapeu: Color = CHAPEUS[rng.randi() % CHAPEUS.size()]
-				_caixa(st, chapeu, p, rumo, Vector3(0.36, 0.035, 0.36), y + 0.78)
-				_caixa(st, chapeu, p, rumo, Vector3(0.22, 0.12, 0.22), y + 0.8)
+				var chapeu: Color = Color(CHAPEUS[rng.randi() % CHAPEUS.size()], fase)
+				_caixa(_st_torcida, chapeu, p, rumo, Vector3(0.36, 0.035, 0.36), y + 0.78)
+				_caixa(_st_torcida, chapeu, p, rumo, Vector3(0.22, 0.12, 0.22), y + 0.8)
 
 
 ## O apostador encostado na cerca: de pé, de chapéu, com o quadro-negro das apostas.

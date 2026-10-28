@@ -457,6 +457,7 @@ func limpar() -> void:
 	_pontos = {}
 	_v_max = {}
 	_rastros = {}
+	_poeira = {}
 	_marcas = null
 	_marca_i = 0
 	_marca_dist = {}
@@ -1711,6 +1712,7 @@ const VACUO_MIN_M := 3.0
 const VACUO_MAX_M := 14.0
 const VACUO_LADO_M := 1.4
 var _rastros := {}  # id -> CPUParticles3D
+var _poeira := {}  # id -> CPUParticles3D: a terra levantada atrás de cada carro (época)
 var _na_zebra := {}  # id -> rodas sobre a zebra (para o som)
 
 
@@ -1859,6 +1861,8 @@ func _efeitos_pista(id: String, a: float, v: float, delta: float) -> void:
 	if id == "jogador" and impulso > 0.0:
 		luz = maxf(luz, impulso * (0.65 + 0.35 * sin(_tempo * 30.0)))
 	(_luzes[id] as StandardMaterial3D).albedo_color.a = luz
+	if epoca != "" and not Preferencias.reduzir_animacoes:
+		_levantar_poeira(id, v)
 	if _esteira.has(id):
 		var forte := (-a > FUMACA_FREADA and v > 8.0) or (a > FUMACA_ARRANCADA and v < FUMACA_V_MAX and v > 0.5)
 		_fumaca[id] = forte
@@ -1870,6 +1874,52 @@ func _efeitos_pista(id: String, a: float, v: float, delta: float) -> void:
 		# Sobe e desce devagar: sem degraus de densidade ao longo da fita.
 		_intensidade[id] = move_toward(float(_intensidade.get(id, 0.0)), alvo, delta * (1.8 if alvo > float(_intensidade.get(id, 0.0)) else 0.9))
 		_atualizar_esteira(id)
+
+
+## Terra batida: uma nuvem baixa de poeira atrás de cada carro, mais densa
+## quanto mais rápido (golpes visuais, 2026-10-28; Art of Rally).
+func _levantar_poeira(id: String, v: float) -> void:
+	if not _poeira.has(id):
+		var c: Node3D = _carros[id]
+		var dim: Vector2 = c.dimensoes() if c.has_method("dimensoes") else Vector2(4.4, 1.75)
+		var p := CPUParticles3D.new()
+		p.amount = 34
+		p.lifetime = 1.8
+		p.local_coords = false
+		p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+		p.emission_box_extents = Vector3(0.3, 0.1, dim.y * 0.45)
+		p.direction = Vector3(-1, 0.35, 0)
+		p.spread = 35.0
+		p.initial_velocity_min = 0.6
+		p.initial_velocity_max = 2.0
+		p.gravity = Vector3(0, 0.25, 0)
+		p.damping_min = 0.8
+		p.damping_max = 1.6
+		var curva := Curve.new()
+		curva.add_point(Vector2(0, 0.7))
+		curva.add_point(Vector2(1, 3.4))
+		p.scale_amount_curve = curva
+		var esfera := SphereMesh.new()
+		esfera.radius = 0.8
+		esfera.height = 0.9
+		esfera.radial_segments = 6
+		esfera.rings = 3
+		var m := StandardMaterial3D.new()
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.vertex_color_use_as_albedo = true
+		esfera.material = m
+		p.mesh = esfera
+		var cores := Gradient.new()
+		cores.set_color(0, Color(0.74, 0.62, 0.44, 0.22))
+		cores.set_color(1, Color(0.78, 0.68, 0.52, 0.0))
+		p.color_ramp = cores
+		p.position = Vector3(-dim.x * 0.5, 0.2, 0.0)
+		c.add_child(p)
+		_poeira[id] = p
+	var poeira: CPUParticles3D = _poeira[id]
+	poeira.emitting = v > 4.0 and chegada < 1.0
+	poeira.speed_scale = clampf(0.6 + v / 40.0, 0.6, 1.6)
 
 
 func _faiscas(onde: Vector3, cor := Color(1.0, 0.35, 0.05), quantas := 28, forca := 1.0) -> void:
@@ -1983,9 +2033,19 @@ func _construir_pista() -> void:
 	_luz.light_energy = tema["energia"]
 	_luz.rotation = tema["sol"]
 	_cores_muro = tema["muro"]
+	var efeito_tela := material as ShaderMaterial
+	efeito_tela.set_shader_parameter("filme", 0.0)
+	efeito_tela.set_shader_parameter("grao", 0.0)
+	efeito_tela.set_shader_parameter("tilt", 0.0)
 	if epoca != "":
 		CenarioEpoca.montar(_cena, _pista, LARGURA_PISTA_M, _ambiente, _luz)
-		efeito_vinheta(0.2)
+		# Golpes visuais (2026-10-28): filme de 1937, grão e tilt-shift (a
+		# pista em maquete), baratos o bastante para os efeitos leves; o grão
+		# para com "reduzir animações".
+		efeito_vinheta(0.32)
+		efeito_tela.set_shader_parameter("filme", 1.0)
+		efeito_tela.set_shader_parameter("grao", 0.0 if Preferencias.reduzir_animacoes else 1.0)
+		efeito_tela.set_shader_parameter("tilt", 1.0)
 		_marcadores()
 		return
 	var montado: Dictionary = KITS.get(TEMA_DE.get(_pista.id, _pista.id), {}).duplicate()
@@ -2024,6 +2084,20 @@ func _construir_pista() -> void:
 
 
 ## Anéis do jogador e do alvo, traço de disputa e linha de largada.
+## Clarão branco-quente na tela (ultrapassagem, bandeirada), que some sozinho.
+func clarao(forca := 0.6) -> void:
+	if Preferencias.reduzir_animacoes:
+		return
+	var m := material as ShaderMaterial
+	var tw := create_tween()
+	tw.tween_method(func(v: float): m.set_shader_parameter("clarao", v), forca, 0.0, 0.35)
+
+
+## Câmera tremendo por `s` segundos (contato, momentos fortes).
+func tremer(s := 0.25) -> void:
+	_tremor = maxf(_tremor, s)
+
+
 func efeito_vinheta(v: float) -> void:
 	(material as ShaderMaterial).set_shader_parameter("vinheta", v)
 

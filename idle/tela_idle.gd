@@ -157,6 +157,11 @@ var _toque_carga := 1.0
 ## resolvida na largada, então a parte do prêmio da chegada entra conforme o
 ## carro anda; na chegada entra só o que falta. O total não muda.
 var _pago_corrida := 0.0
+## Câmera lenta curta nos momentos fortes (golpes visuais): até quando (s do
+## relógio) a corrida anda devagar.
+var _lento_ate := 0.0
+const LENTO_S := 0.5
+const LENTO_VELOCIDADE := 0.3
 var _pingado := 0.0  # pingado desde o último "+$" do caixa
 var _segurando := false
 var _toque_medidor: Control  # _MedidorToque
@@ -1397,6 +1402,10 @@ func _passo_toque(delta: float) -> float:
 	_toque_medidor.carga = _toque_carga
 	_toque_medidor.acelerando = vel > 1.0
 	_toque_medidor.queue_redraw()
+	# Segurando: o 3D mostra o empurrão (borrão de velocidade e rastro).
+	_visual3d.impulso = move_toward(_visual3d.impulso, 1.0 if vel > 1.0 else 0.0, delta * 4.0)
+	if Time.get_ticks_msec() / 1000.0 < _lento_ate:
+		vel *= LENTO_VELOCIDADE
 	if not "toque" in estado.guias and estado.corridas >= 1 and _conversa == null and not _guia.ativo() \
 			and _paginas["corrida"].visible:
 		estado.guias.append("toque")
@@ -1522,11 +1531,21 @@ func _eventos(ordem: Array) -> void:
 			_hud.evento("%s SE APROXIMA" % String(_nomes.get(atras, "")).to_upper(), "−%.1f s" % g, COR_RUIM, 2)
 
 
+## Câmera lenta de meio segundo, clarão e tremor (ultrapassagem, chegada).
+func _momento_forte(forca: float) -> void:
+	if Preferencias.reduzir_animacoes or not _tv or not _paginas["corrida"].visible:
+		return
+	_lento_ate = Time.get_ticks_msec() / 1000.0 + LENTO_S
+	_visual3d.clarao(forca * 0.6)
+	_visual3d.tremer(0.15 + forca * 0.2)
+
+
 ## Cada posição ganha estoura: "+1 POSIÇÃO" sobre o carro e o PRÊMIO ATUAL
 ## salta e acende.
 func _estourar_posicao(quantas: int) -> void:
 	if not _paginas["corrida"].visible:
 		return
+	_momento_forte(0.45)
 	var onde := _quadro_corrida.get_global_rect().get_center()
 	if _hud.ancora_carro.x >= 0.0:
 		onde = _hud.get_global_transform() * _hud.ancora_carro + Vector2(0, -60)
@@ -1581,6 +1600,7 @@ func _chegou() -> void:
 		Sons.tocar_ui(self, "comemoracao", -8.0)
 		_foto_vitoria.call_deferred()
 	_hud.bandeirada()
+	_momento_forte(0.8 if pos == 1 else 0.5)
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
 			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)
 	_ganho_corrida = ganho

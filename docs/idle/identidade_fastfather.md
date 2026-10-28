@@ -175,3 +175,24 @@ implementação aprovada pelo usuário ("implemente tudo"):
 - Para o primeiro minuto ficar no alvo dos idles de referência (primeira compra em < 10 s e ~5 no
   primeiro minuto, já alcançado), o que mais pesa agora é a duração da corrida da 1ª liga (84 s) e o
   prêmio dela; mexer nisso é balanceamento e fica para o playtest.
+
+## 9. Golpes visuais na corrida de época (2026-10-28)
+
+Referências: Art of Rally (tilt-shift, poeira), Firewatch (cor e névoa), Lonely Mountains:
+Downhill (profundidade), Burnout (câmera lenta), Crossy Road (tudo reage). Implementado:
+
+1. **Filme de 1937** (`visual/shaders/velocidade.gdshader`): parte sépia, pretos levantados,
+   luz quente, vinheta, grão de filme e o tremor de brilho do projetor.
+2. **Tilt-shift**: o alto e o pé da tela desfocados (cruz de 5 leituras), a pista vira maquete.
+3. **Poeira de terra batida** atrás de cada carro, mais densa quanto mais rápido.
+4. **Fim de tarde** (`CenarioEpoca`): céu de poeira dourada, sol baixo e quente, névoa na cor do
+   céu; sombras compridas fora dos efeitos leves.
+5. **Momentos fortes**: meio segundo de câmera lenta, clarão e tremor na ultrapassagem e na
+   bandeirada; segurando para acelerar, o borrão de velocidade e o rastro.
+6. **Vida**: a torcida balança no lugar (de vez em quando alguém se levanta) e as bandeirolas
+   (telhado da arquibancada e cordão novo sobre a largada) tremulam no vento
+   (`visual/shaders/vida_epoca.gdshader`).
+7. **Coerência**: a mesma paleta sépia e ouro da interface.
+
+No navegador (efeitos leves ligados por padrão) tudo vale menos as sombras; "reduzir animações"
+para o grão, a poeira, o balanço e a câmera lenta.
