@@ -1691,6 +1691,11 @@ func _nova_corrida() -> void:
 		if estado.dados_modalidade().has("epoca"):
 			categorias[id] = categorias[id].duplicate()
 			categorias[id]["epoca"] = estado.dados_modalidade()["epoca"]
+		elif _na_arena:
+			# A Rinha também é da época: os mesmos carros da aba RINHA, nada do Chrome & Wreckage.
+			categorias[id] = categorias[id].duplicate()
+			categorias[id]["epoca"] = RinhaIdle.MODELO_RAPAZES if id == "jogador" else \
+					String(RinhaIdle.MODELOS[posmod(hash(id + str(_semente)), RinhaIdle.MODELOS.size())])
 		var k := int(id.trim_prefix("r")) if id != "jogador" else -1
 		var fam := PinturaEpoca.familia(estado.modalidade, estado.liga) if estado.dados_modalidade().has("epoca") else ""
 		if fam != "":
