@@ -120,6 +120,7 @@ var foco := "jogador"
 var faixas_pintura := {}
 ## Pista inteira na tela em vez de seguir um carro.
 var visao_geral := false
+var _com_neblina := false  # a neblina do tema (sai na visão geral: a câmera fica longe)
 ## Estilo de cenário forçado ("chapado"), para comparar sem mudar o tema.
 var estilo_forcado := ""
 ## Cenário de época (CenarioEpoca) no lugar do tema da pista: "" desliga.
@@ -672,6 +673,8 @@ func atualizar(delta: float) -> void:
 			_traco.position = (a + b) * 0.5 + Vector3(0, 0.08, 0)
 			_traco.scale = Vector3(a.distance_to(b), 1, 1)
 			_traco.rotation.y = atan2(-(b.z - a.z), b.x - a.x)
+	# Na visão geral a câmera fica longe: a neblina cobriria a pista inteira.
+	_ambiente.fog_enabled = _com_neblina and not visao_geral
 	if enquadrar_grid and not visao_geral and not _carros.is_empty():
 		_camera_grid(s, ordem, delta)
 		return
@@ -2049,6 +2052,8 @@ func _construir_pista() -> void:
 	efeito_tela.set_shader_parameter("tilt", 0.0)
 	if epoca != "":
 		CenarioEpoca.montar(_cena, _pista, LARGURA_PISTA_M, _ambiente, _luz)
+	_com_neblina = _ambiente.fog_enabled
+	if epoca != "":
 		# Golpes visuais (2026-10-28): filme de 1937, grão e tilt-shift (a
 		# pista em maquete), baratos o bastante para os efeitos leves; o grão
 		# para com "reduzir animações".

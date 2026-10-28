@@ -215,3 +215,10 @@ alternadas com fileiras de dois, conforme o circuito e o regulamento. A corrida 
 fileiras 3-2-3-2 (`Corrida3D._grid`, 10 m entre fileiras, pole na frente à esquerda). A simulação
 continua com a fila dela (nada muda no resultado); cada carro sai da vaga desenhada e se funde à
 posição da simulação nos primeiros metros (`Corrida3D._recuo_grid`, só visual).
+
+## 12. Câmera que alterna (2026-10-28)
+
+Quarto botão no trilho das câmeras, o primeiro e o padrão: alterna sozinho entre AUTO, o seu
+carro e a pista inteira, uma a cada 8 s (`TelaIdle.CICLO_CAMERA_S`, apresentação); no grid fica no
+plano de cima. A câmera da vez acende em ouro no trilho. Na visão geral a neblina do cenário sai
+(a câmera fica longe e a neblina cobria a pista).

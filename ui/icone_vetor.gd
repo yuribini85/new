@@ -3,7 +3,7 @@ extends Control
 ## Ícone desenhado por código (provisório até a arte do pack): "engrenagem"
 ## (configurações), "acelerar" (corridas aceleradas, dois triângulos), "bandeira"
 ## (voltar à corrida, quadriculada) e os das
-## câmeras da corrida: "camera" (AUTO, o diretor), "seta" (o seu carro, a
+## câmeras da corrida: "ciclo" (alterna sozinha), "camera" (AUTO, o diretor), "seta" (o seu carro, a
 ## mesma seta que fica sobre ele), "coroa" (líder), "frente" (o carro à
 ## frente), "losango" (selo de raridade do carro), "pista" (visão geral) e "dados" (vista tática). Escala com o
 ## tamanho, sem esticar: o desenho usa o menor lado.
@@ -34,6 +34,8 @@ func _draw() -> void:
 			_acelerar(c, lado * 0.5)
 		"camera":
 			_camera(c, lado * 0.5)
+		"ciclo":
+			_ciclo(c, lado * 0.5)
 		"seta":
 			_poligono(c, lado * 0.5, [[-0.62, -0.42], [0.62, -0.42], [0.0, 0.58]])
 		"coroa":
@@ -215,6 +217,24 @@ func _traco(r: float) -> float:
 func _camera(c: Vector2, r: float) -> void:
 	draw_rect(Rect2(c + Vector2(-0.95, -0.5) * r, Vector2(1.2, 1.0) * r), cor)
 	_poligono(c, r, [[0.32, 0.0], [0.95, -0.48], [0.95, 0.48]])
+
+
+## Duas setas em círculo: troca sozinha (o ciclo das câmeras).
+func _ciclo(c: Vector2, r: float) -> void:
+	var raio := r * 0.68
+	var w := _traco(r)
+	for k in 2:
+		var a0 := PI * k + 0.35
+		var a1 := a0 + PI - 0.7
+		draw_arc(c, raio, a0, a1, 16, cor, w, true)
+		var ponta := c + Vector2.from_angle(a1) * raio
+		var tang := Vector2.from_angle(a1 + PI * 0.5)
+		var fora := Vector2.from_angle(a1)
+		_tri(ponta + tang * r * 0.32, ponta - fora * r * 0.3, ponta + fora * r * 0.3)
+
+
+func _tri(a: Vector2, b: Vector2, c2: Vector2) -> void:
+	draw_colored_polygon(PackedVector2Array([a, b, c2]), cor)
 
 
 func _frente(c: Vector2, r: float) -> void:

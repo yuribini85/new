@@ -59,8 +59,12 @@ const NIVEIS_PREVISAO := [1, 3]
 ## Câmeras: "auto" (o diretor do Chrome & Wreckage), "jogador" (atrás do seu
 ## carro) ou "geral" (a pista inteira), com os ícones do Chrome & Wreckage. Na
 ## Arena: dinâmica, a sua briga e a arena inteira (Arena3D.modo).
-const CAMERAS := [["auto", "camera"], ["jogador", "frente"], ["geral", "pista"]]
+## "ciclo" (o padrão, pedido do usuário em 2026-10-28) passa sozinho pelas
+## outras três, uma a cada CICLO_CAMERA_S.
+const CAMERAS := [["ciclo", "ciclo"], ["auto", "camera"], ["jogador", "frente"], ["geral", "pista"]]
 const CAMERA_ARENA := {"auto": "dinamica", "jogador": "briga", "geral": "geral"}
+const CICLO := ["auto", "jogador", "geral"]
+const CICLO_CAMERA_S := 8.0  # apresentação, não balanceamento
 ## Tempo da luta por segundo de tela na Arena (as lutas de dez carros são longas).
 const VELOCIDADE_ARENA := 2.0
 
@@ -76,7 +80,9 @@ var _semente := 1
 var _pausa := -1.0  # > 0: parada depois da chegada, antes da próxima corrida
 var _fim_jogador := INF
 var _salvar_em := 0.0
-var _camera_modo := "auto"
+var _camera_modo := "ciclo"
+var _ciclo_i := 0  # a câmera da vez no "ciclo"
+var _ciclo_troca := 0.0  # quando o "ciclo" passa para a próxima
 var _diretor := DiretorCamera.new()
 var _pista: Pista
 
@@ -1298,25 +1304,52 @@ func _nova_corrida() -> void:
 
 func _trocar_camera(modo: String) -> void:
 	_camera_modo = modo
+	_ciclo_troca = 0.0
 	_marcar_camera()
 	_diretor.reiniciar()
 	_aplicar_camera()
 
 
+## A câmera em uso: a escolhida ou, no "ciclo", a da vez; sem o trilho, o diretor.
+func _camera_efetiva() -> String:
+	if not _trilho.visible:
+		return "auto"
+	return String(CICLO[_ciclo_i]) if _camera_modo == "ciclo" else _camera_modo
+
+
+## No "ciclo", passa para a próxima câmera de tempo em tempo (no grid, não).
+func _passo_ciclo() -> void:
+	if _camera_modo != "ciclo" or not _trilho.visible or _contagem > 0.0:
+		return
+	var agora := Time.get_ticks_msec() / 1000.0
+	if _ciclo_troca <= 0.0:
+		_ciclo_troca = agora + CICLO_CAMERA_S
+	elif agora >= _ciclo_troca:
+		_ciclo_troca = agora + CICLO_CAMERA_S
+		_ciclo_i = (_ciclo_i + 1) % CICLO.size()
+		_marcar_camera()
+		_diretor.reiniciar()
+		_aplicar_camera()
+
+
 func _marcar_camera() -> void:
+	var efetiva := _camera_efetiva()
 	for modo in _cameras:
 		var b: Button = _cameras[modo]
 		var ativa: bool = modo == _camera_modo
 		for st in ["normal", "hover", "pressed"]:
 			b.add_theme_stylebox_override(st, IdleUI.caixa(COR_OURO if ativa else Color(1, 1, 1, 0.05), 10, 0))
-		b.get_child(0).cor = IdleUI.COR_TINTA if ativa else IdleUI.COR_CROMO
+		# No "ciclo", a câmera da vez acende em ouro.
+		var da_vez: bool = _camera_modo == "ciclo" and modo == efetiva
+		b.get_child(0).cor = IdleUI.COR_TINTA if ativa else (COR_OURO if da_vez else IdleUI.COR_CROMO)
 		b.get_child(0).queue_redraw()
 
 
 func _aplicar_camera() -> void:
-	_arena3d.modo = CAMERA_ARENA[_camera_modo]
-	_visual3d.visao_geral = _camera_modo == "geral"
-	_visual3d.perseguicao = _camera_modo == "jogador"
+	var efetiva := _camera_efetiva()
+	_arena3d.modo = CAMERA_ARENA[efetiva]
+	_visual3d.visao_geral = efetiva == "geral"
+	_visual3d.perseguicao = efetiva == "jogador"
 	_visual3d.foco = "jogador"
 	_visual3d.enquadrar_com = ""
 
@@ -1327,7 +1360,8 @@ func _dirigir() -> void:
 	var ordem := _visual.ordem()
 	var i := ordem.find("jogador")
 	_visual3d.alvo = ordem[i - 1] if i > 0 and not _chegada else ""
-	if _camera_modo != "auto":
+	_passo_ciclo()
+	if _camera_efetiva() != "auto":
 		_visual3d.enquadrar_grid = false
 		return
 	if _contagem > 0.0:
@@ -1357,6 +1391,7 @@ func _process(delta: float) -> void:
 				_visual3d.atualizar(delta)
 		return
 	if _na_arena:
+		_passo_ciclo()
 		_processo_arena(delta)
 		return
 	if _contagem > 0.0:
@@ -2220,10 +2255,8 @@ func _aplicar_desbloqueios() -> void:
 	_visual.visible = not _na_arena and not _tv
 	_visual3d.visible = not _na_arena and _tv
 	_trilho.visible = estado.tem("cameras")
-	if not _trilho.visible and _camera_modo != "auto":
-		_camera_modo = "auto"  # sem olheiros: a direção escolhe o plano
-		_marcar_camera()
-		_diretor.reiniciar()
+	# Sem olheiros, _camera_efetiva() devolve "auto": a direção escolhe o plano.
+	_marcar_camera()
 	_aplicar_camera()
 	if _aguardando and estado.tem("largada_auto"):
 		_largar_corrida()
