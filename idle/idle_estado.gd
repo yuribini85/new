@@ -123,6 +123,9 @@ func liberada(id: String) -> bool:
 	var m := dados_modalidade(id)
 	if m.is_empty():
 		return false
+	# A Rinha só abre quando o Tony apresenta os capangas (aba:rinha), não antes.
+	if String(m.get("tipo", "")) == "arena" and not tem("aba:rinha"):
+		return false
 	var lib: Dictionary = m.get("libera", {})
 	if lib.is_empty():
 		return true

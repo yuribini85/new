@@ -3318,7 +3318,7 @@ func _conversa_fechou(d: Dictionary, aceitou: bool) -> void:
 			rp.fechou.connect(func(): _conversa = null)
 			add_child(rp)
 		_nova_pintura_jogador()
-	if id in ["inicio", "ultrapassagem"]:
+	if id == "inicio":
 		_largar_na_compra = true
 	var custo := float(d.get("custo", 0.0))
 	if custo > 0.0 and aceitou and estado.comprar_desbloqueio(id):

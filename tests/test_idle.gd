@@ -411,7 +411,9 @@ func test_rinha_em_paralelo() -> void:
 	var e := IdleEstado.new()
 	verificar(not e.rinha_aberta(), "fechada no começo")
 	e.liga = 1
-	verificar(e.rinha_aberta(), "abre na 2ª liga dos Bairros")
+	verificar(not e.rinha_aberta(), "na 2ª liga ainda fechada: o Tony não apresentou os capangas")
+	e.desbloqueados.append("pilotos")
+	verificar(e.rinha_aberta(), "abre com os capangas, a partir da 2ª liga dos Bairros")
 	verificar(not e.trocar_modalidade(e.id_rinha()), "a corrida não vai para a Rinha")
 	var antes := IdleEstado.posicao(e.correr(dados, 5, false))
 	e.usar_contrato_gratis(dados, 0.0)
