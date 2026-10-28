@@ -161,8 +161,9 @@ Análise pelos idles de referência (AdVenture Capitalist, Egg Inc, Idle Miner, 
 implementação aprovada pelo usuário ("implemente tudo"):
 
 - **Segurar a corrida acelera** (`idle.json` → "toque", provisório): a corrida já resolvida passa
-  mais rápido enquanto há carga; a carga volta sozinha. O resultado não muda. Medidor translúcido
-  abaixo da faixa da liga ("SEGURE PARA ACELERAR"); dica na primeira vez.
+  mais rápido enquanto há carga; a carga volta sozinha. O resultado não muda. Velocímetro
+  analógico no canto de baixo à direita, acima da faixa do prêmio: o ponteiro sobe enquanto
+  segura, a carga em ouro no aro e, carregado, "TOQUE" pulsando; dica na primeira vez.
 - **Marcos por melhoria** (`idle.json` → "marcos", provisório): níveis 10, 25, 50 e 100; nas
   melhorias de renda o efeito dobra a cada marco; nas outras, só a fase nova. Barrinha até o próximo
   marco em cada cartão; ao passar, "×2 PATROCÍNIO!" com faíscas.
@@ -200,7 +201,8 @@ para o grão, a poeira, o balanço e a câmera lenta.
 ## 10. Bandeira do fiscal no lugar do semáforo (2026-10-28)
 
 Nos anos 1930 a largada era dada na bandeira. Na corrida, por cima da imagem, a bandeira de
-pano (`BandeiraIdle`, malha subdividida que ondula em `visual/shaders/bandeira.gdshader`): a verde
+pano (`BandeiraIdle`, malha facetada que ondula em `visual/shaders/bandeira.gdshader`; só o pano,
+sem haste, mão nem contorno, pedido do usuário): a verde
 entra e tremula na contagem e desce num golpe na largada; a quadriculada tremula na chegada. O
 semáforo e a faixa quadriculada do painel ficam desligados (`HudCorrida.sem_semaforo`). No 3D, o
 fiscal de terno e chapéu na beira da largada com a bandeira de pano no alto da haste

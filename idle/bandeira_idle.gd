@@ -2,57 +2,38 @@ class_name BandeiraIdle
 extends Control
 ## A bandeira do fiscal por cima da corrida, no lugar do semáforo (pedido do
 ## usuário, 2026-10-28; nos anos 1930 a largada era dada na bandeira), no estilo
-## da arte do jogo: pano facetado low poly com contorno de tinta de quadrinho
-## (visual/shaders/bandeira.gdshader), haste de latão art déco e o braço do
-## fiscal (manga de terno, punho branco, luva) segurando, como num quadro de
-## gibi. A verde entra e tremula na contagem e desce num golpe na largada, com
+## da arte do jogo: só o pano facetado low poly (visual/shaders/bandeira.gdshader),
+## sem haste, mão nem contorno (pedido do usuário). A verde entra e tremula na contagem e desce num golpe na largada, com
 ## o estouro "VAI!" (raios e retícula); a quadriculada agita na chegada, com
 ## "CHEGADA!".
 
 ## Apresentação, não balanceamento.
 const PANO := Vector2(230, 150)
 const DIVISOES := Vector2i(10, 5)  # poucas faces: o facetado da arte
-const HASTE_X := 26.0
-const ALTURA_HASTE := 300.0
-const MAO_Y := 262.0
-const TINTA := Color(0.07, 0.05, 0.04)
-const MANGA := Color("2b2b2e")
-const PUNHO := Color("ece3cc")
-const LUVA := Color("d9b08c")
+const MARGEM := 10.0
 
 var _pano: MeshInstance2D
-var _contorno: MeshInstance2D
 var _mat: ShaderMaterial
-var _mat_contorno: ShaderMaterial
 var _tw: Tween
 
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(PANO.x + 70, ALTURA_HASTE + 120)
+	custom_minimum_size = PANO + Vector2.ONE * MARGEM * 2.0
 	size = custom_minimum_size
-	pivot_offset = Vector2(HASTE_X, MAO_Y)  # a mão do fiscal
-	var malha := _malha()
-	_mat_contorno = _material(true)
-	_contorno = MeshInstance2D.new()
-	_contorno.mesh = malha
-	_contorno.material = _mat_contorno
-	_contorno.position = Vector2(HASTE_X + 4, 10)
-	add_child(_contorno)
-	_mat = _material(false)
+	pivot_offset = Vector2(MARGEM, MARGEM + PANO.y * 0.5)  # a borda presa do pano
+	_mat = _material()
 	_pano = MeshInstance2D.new()
-	_pano.mesh = malha
+	_pano.mesh = _malha()
 	_pano.material = _mat
-	_pano.position = _contorno.position
+	_pano.position = Vector2.ONE * MARGEM
 	add_child(_pano)
 	visible = false
 
 
-func _material(silhueta: bool) -> ShaderMaterial:
+func _material() -> ShaderMaterial:
 	var m := ShaderMaterial.new()
 	m.shader = preload("res://visual/shaders/bandeira.gdshader")
-	m.set_shader_parameter("silhueta", silhueta)
-	m.set_shader_parameter("centro", PANO * 0.5)
 	return m
 
 
@@ -89,55 +70,14 @@ func _malha() -> ArrayMesh:
 	return m
 
 
-func _draw() -> void:
-	# O braço do fiscal entrando por baixo: manga de terno, punho e luva, em
-	# facetas chapadas com contorno de tinta.
-	var mao := Vector2(HASTE_X, MAO_Y)
-	# A manga vem na diagonal de baixo à esquerda, com duas dobras de tecido.
-	var ombro_a := mao + Vector2(-62, 104)
-	var ombro_b := mao + Vector2(-16, 112)
-	var punho_a := mao + Vector2(-20, 16)
-	var punho_b := mao + Vector2(14, 14)
-	_faceta(PackedVector2Array([punho_a, punho_b, ombro_b, ombro_a]), MANGA)
-	_faceta(PackedVector2Array([punho_a, punho_a.lerp(punho_b, 0.45), ombro_a.lerp(ombro_b, 0.35), ombro_a]),
-			MANGA.lightened(0.14))
-	_faceta(PackedVector2Array([punho_a.lerp(ombro_a, 0.45), punho_b.lerp(ombro_b, 0.4),
-			punho_b.lerp(ombro_b, 0.55), punho_a.lerp(ombro_a, 0.62)]), MANGA.darkened(0.25))
-	# Punho branco da camisa com a abotoadura de latão.
-	_faceta(PackedVector2Array([mao + Vector2(-22, 6), mao + Vector2(16, 2), mao + Vector2(16, 18), mao + Vector2(-21, 22)]), PUNHO)
-	draw_circle(mao + Vector2(-2, 13), 3.0, MolduraDeco.LATAO)
-	# Haste de latão com anéis e o remate art déco em degraus.
-	var topo := 4.0
-	draw_rect(Rect2(HASTE_X - 4, topo, 8, ALTURA_HASTE), TINTA)
-	draw_rect(Rect2(HASTE_X - 2.5, topo, 5, ALTURA_HASTE), MolduraDeco.LATAO)
-	draw_rect(Rect2(HASTE_X - 2.5, topo, 2, ALTURA_HASTE), MolduraDeco.LATAO.lightened(0.3))
-	for k in 3:
-		var w := 10.0 - k * 3.0
-		_faceta(PackedVector2Array([Vector2(HASTE_X - w, topo - k * 6), Vector2(HASTE_X + w, topo - k * 6),
-				Vector2(HASTE_X + w, topo - k * 6 - 6), Vector2(HASTE_X - w, topo - k * 6 - 6)]), MolduraDeco.LATAO)
-	_faceta(PackedVector2Array([Vector2(HASTE_X - 3, topo - 18), Vector2(HASTE_X + 3, topo - 18), Vector2(HASTE_X, topo - 28)]),
-			MolduraDeco.LATAO.lightened(0.2))
-	# A luva fechada na haste (por cima dela).
-	_faceta(PackedVector2Array([mao + Vector2(-12, -14), mao + Vector2(13, -12), mao + Vector2(14, 6), mao + Vector2(-13, 8)]), LUVA)
-	_faceta(PackedVector2Array([mao + Vector2(-12, -14), mao + Vector2(0, -16), mao + Vector2(-13, 8)]), LUVA.darkened(0.15))
-
-
-func _faceta(pts: PackedVector2Array, cor: Color) -> void:
-	draw_colored_polygon(pts, cor)
-	var fechado := pts.duplicate()
-	fechado.append(pts[0])
-	draw_polyline(fechado, TINTA, 3.0)
-
-
 func _parar() -> void:
 	if _tw != null and _tw.is_valid():
 		_tw.kill()
 
 
 func _pano_de(quadriculada: bool, amplitude: float) -> void:
-	for m in [_mat, _mat_contorno]:
-		m.set_shader_parameter("quadriculada", quadriculada)
-		m.set_shader_parameter("amplitude", amplitude)
+	_mat.set_shader_parameter("quadriculada", quadriculada)
+	_mat.set_shader_parameter("amplitude", amplitude)
 
 
 ## A verde entra pela esquerda e tremula; em `contagem` segundos desce num
