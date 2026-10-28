@@ -477,13 +477,21 @@ static var _arte := {}
 ## reaproveita a mesma), e sai junto com a tela. Guardar as texturas
 ## acumulava todos os fundos de cartão já vistos na memória de vídeo, e o
 ## navegador do celular fechava o jogo ao montar a corrida seguinte.
+## Pastas olhadas antes de PASTA_ARTE (o The Fastfather põe a arte própria
+## dele aqui; o que faltar ainda sai da pasta comum).
+static var pastas_antes: Array = []
+
+
 static func arte(nome: String) -> Texture2D:
 	if not _arte.has(nome):
 		_arte[nome] = ""
-		for ext: String in [".png", ".webp"]:
-			var caminho := PASTA_ARTE + nome + ext
-			if ResourceLoader.exists(caminho):
-				_arte[nome] = caminho
+		for pasta: String in pastas_antes + [PASTA_ARTE]:
+			for ext: String in [".png", ".webp"]:
+				var caminho := pasta + nome + ext
+				if ResourceLoader.exists(caminho):
+					_arte[nome] = caminho
+					break
+			if _arte[nome] != "":
 				break
 	return load(_arte[nome]) if _arte[nome] != "" else null
 

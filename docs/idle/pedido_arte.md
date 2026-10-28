@@ -1,44 +1,78 @@
 # The Fastfather — pedido de arte (2026-10-28)
 
-Levantamento do que o jogo carrega de fato hoje. Ordem de prioridade: o que o jogador vê mais cedo e
-mais vezes vem primeiro. Estilo de tudo: o da pasta `arte/fastfather/` (anos 30, sépia/carvão, traço de
-quadrinho, neon âmbar só no que é tocável). Medidas iguais às dos arquivos que cada peça substitui.
+Estilo de tudo: o da pasta `arte/fastfather/` (anos 30, sépia/carvão, traço de quadrinho). Basta salvar o
+arquivo com o nome indicado na pasta indicada: o jogo passa a usar sozinho, sem mudar código.
 
-## A. Substituir: arte do Chrome & Wreckage ainda em uso
+## 1. Fotos das pistas (13)
 
-| # | O quê | Onde aparece | Arquivos hoje | Medida | Qtd |
-|---|---|---|---|---|---|
-| A1 | Fotos das pistas | Cabeçalho e lista de PISTAS, faixa da corrida, foto do jornal | `arte/ui/banner_parque_das_docas`, `banner_circuito_misto`, `banner_anel_do_vale`, `banner_serra_alta`, `banner_arena_patio_pedreira`, `banner_arena_fosso_docas`, `banner_arena_anel_ferro_velho`, `banner_arena_cratera_vale`, `fundo_competicoes` | 1200×500 webp | 9 |
-| A2 | Ícones das modalidades | Selo da modalidade na corrida e botões de PISTAS | `arte/ui/icone_correr`, `icone_pista`, `icone_potencia`, `icone_tracao_4x4`, `emblema_arena` | 256×256 png transparente | 5 |
-| A3 | Ícones soltos | Visto (Missões, Pistas, fim da corrida); vaga vazia de capanga | `arte/ui/icone_ok`, `icone_piloto` (o `icone_cadeado` saiu de cena) | 256×256 png | 2 |
-| A4 | Folhas de números pintados | Número na lataria de todos os carros | `arte/ui/pintura/digitos_{condensado,bloco,estencil,pincel,serifa}` | 1280×192 png, dígitos 0–9 em linha | 5 (podem virar 2–3 da época: estêncil, pincel, letreiro de placa) |
-| A5 | Objetos da Rinha | Cones, barris, pneus, troncos, blocos de concreto na arena | `arte/dano/*.glb` | modelos low-poly | 12 → trocar por fardos de feno, barris de madeira, caixotes, pneus de época, mourões |
-| A6 | Sons de antes | Motor, pneu, torcida, batida, moeda, toque, ultrapassagem, chegada, impactos da Rinha | `arte/sons/` motor, motor_grave, pneu, torcida, batida, moeda, toque, passagem, comemoracao, impacto, raspagem, explosao, ofegante, porta_abre | ogg | 14 (prioridade: motor e motor_grave — carro de 4 cilindros dos anos 30 —, torcida com chapéu e apito, moeda → caixa de lata) |
-| A7 | Fontes | Rótulos e números de toda a interface | Barlow Condensed, Big Shoulders Display, Racing Sans One | — | decisão sua (ver nota) |
+Pasta `arte/fastfather/pistas/`, **1200×500 webp**, nome `banner_<id>.webp`. Aparecem no cabeçalho e na
+lista de PISTAS, na faixa da corrida e na foto do jornal (em sépia). A versão "(curto)" usa a mesma foto.
+O texto da tela fica por cima no canto inferior esquerdo: deixe essa área mais calma.
 
-Já resolvido em código, sem arte: a modalidade Rinha das Famílias usava os caminhões e picapes modernos do
-C&W (`arte/carros3d/*.glb`); agora usa os mesmos carros da época da aba RINHA.
+| Arquivo | Nome na tela | Categoria | Sugestão de cena (anos 30, EUA) |
+|---|---|---|---|
+| `banner_parque_das_docas` | Cais Velho | Corridas de Bairro, Circuito Clandestino | cais com guindastes, armazéns de tijolo, paralelepípedo molhado |
+| `banner_serra_alta` | Alto da Capela | Corridas de Bairro, Stock Cars | estrada de serra com uma capela branca no alto |
+| `banner_anel_do_vale` | Lago Sereno | Corridas de Bairro, Liga dos Hot Rods | oval de terra à beira de um lago, arquibancada de madeira |
+| `banner_circuito_misto` | Colinas do Vinhedo | Circuito Clandestino | estradas entre vinhedos e casas de fazenda |
+| `banner_mirante_da_costa` | Mirante da Costa | Circuito Clandestino | estrada no penhasco sobre o mar, farol |
+| `banner_avenida_noturna` | Avenida das Luzes | Liga dos Hot Rods | avenida da cidade à noite, letreiros de neon, bondes |
+| `banner_oval_inclinado` | Oval da Usina | Liga dos Hot Rods | oval inclinado de tábuas ao lado de uma usina com chaminés |
+| `banner_trilha_do_canion` | Trilha do Cânion | Stock Cars | estrada de terra no cânion vermelho |
+| `banner_estrada_das_araucarias` | Estrada das Araucárias | Stock Cars | estrada de terra num pinheiral (ver nota) |
+| `banner_arena_patio_pedreira` | Pátio da Pedreira | Rinha das Famílias | fundo de pedreira, paredes de rocha cortada, guindaste de madeira |
+| `banner_arena_fosso_docas` | Fosso das Docas | Rinha das Famílias | doca seca cercada de contêineres de madeira e correntes |
+| `banner_arena_anel_ferro_velho` | Anel do Ferro-Velho | Rinha das Famílias | círculo de carcaças empilhadas, guincho, fogueira em tambor |
+| `banner_arena_cratera_vale` | Cratera do Vale | Rinha das Famílias | cratera de terra no campo, carros de plateia em volta |
 
-Nota sobre A7: Barlow/Big Shoulders são neutras e leem bem no celular; a troca é de identidade, não de defeito.
-Sugestão: manter Barlow nos números pequenos e trocar só a "display" (títulos) por uma art déco condensada
-da mesma família da Limelight já em uso.
+Nota: araucária é árvore do Sul do Brasil e destoa de um jogo nos EUA dos anos 30. Sugestão: renomear
+para **Estrada dos Pinheiros** antes de gerar a foto (só o nome na tela muda; o arquivo continua
+`banner_estrada_das_araucarias`).
 
-## B. Criar: arte que falta (hoje o jogo usa um substituto)
+## 2. Ícones (8)
 
-| # | O quê | Onde | Substituto atual | Medida |
-|---|---|---|---|---|
-| B1 | Fotos de 5 pistas | PISTAS e corrida | `fundo_competicoes` genérico | 1200×500 — `mirante_da_costa`, `avenida_noturna`, `oval_inclinado`, `trilha_do_canion`, `estrada_das_araucarias` |
-| B2 | Ícone da câmera dupla | Barra de câmeras | ícone do mapa | 160×160 `arte/fastfather/icones/cameras/dupla.png` |
-| B3 | Voz do locutor | Largada, chegada, vitória | silêncio | ogg `arte/sons/locutor_largada`, `locutor_chegada`, `locutor_vitoria` (rádio AM, 2–4 s) |
-| B4 | Mapa de cada cidade | PISTAS (troca de cidade) | só texto | a definir junto (1 por cidade) |
-| B5 | 16º troféu | Estante de troféus | — | 256×256 `trofeu_16.png` |
-| B6 | Loja à noite | Garagem quando a corrida é noturna | fundo do dia | 941×1672 `arte/fastfather/loja/fundo_noite.webp` |
-| B7 | Capanga exclusivo da Família Fundadora (opcional) | Capangas | dourado por pintura | 204×387 como `rapazes/rapaz_XX.png` |
+Os 7 primeiros vão na pasta `arte/fastfather/icones/`, **256×256 png** com fundo transparente, desenho em
+**branco chapado**: o jogo pinta na cor de cada lugar (creme, verde, cinza).
 
-## C. Arrumação (sem pedido de arte)
+| Arquivo | Uso |
+|---|---|
+| `icone_correr.png` | Corridas de Bairro: selo da categoria na corrida e botão em PISTAS |
+| `icone_pista.png` | Circuito Clandestino: idem |
+| `icone_potencia.png` | Liga dos Hot Rods: idem |
+| `icone_tracao_4x4.png` | Stock Cars: idem |
+| `emblema_arena.png` | Rinha das Famílias: idem (hoje um escudo com estrela) |
+| `icone_ok.png` | Visto de feito: missão completa, liga vencida em PISTAS, linha do fim da corrida |
+| `icone_piloto.png` | Vaga de capanga ainda vazia em CAPANGAS (silhueta de capanga) |
 
-- `arte/personagens/corpo/` (chefão, sobrinho, Tony) já é arte nova; só está na pasta antiga. Mover para
-  `arte/fastfather/personagens/` quando houver uma rodada de limpeza.
-- Arte nova que nenhum código usa: `arte/fastfather/corrida/*` (ponteiro, velocímetro, poses do Tony e do
-  sobrinho) e `arte/fastfather/icones/atlas_*.png`. As poses podem virar a reação do Tony na chegada.
-- Pastas do C&W que o Fastfather não carrega (pilotos, pistas/kit, cenários, cenas): ficam para o outro jogo.
+O oitavo é diferente:
+
+| Arquivo | Uso |
+|---|---|
+| `arte/fastfather/icones/cameras/dupla.png`, **160×160**, no estilo dos 4 de câmera que já existem | 5º botão de câmera: corrida 3D em cima e o mapa da pista embaixo |
+
+## 3. Objetos da Rinha — feito em 3D no código
+
+Fardos de feno (no lugar das barreiras de concreto; se espalham quando um carro bate), cavaletes de
+madeira listrados (no lugar dos cones), barris de madeira com aros de ferro (no lugar dos tambores de
+óleo) e pilhas de pneus estreitos da época. Os modelos antigos seguem só no Chrome & Wreckage.
+
+## 4. Sons — fica para a imersão final
+
+## 5. Criar depois
+
+- Ícone da câmera dupla e fotos que faltavam: incluídos nas listas acima.
+- Voz do locutor (largada, chegada, vitória): depois.
+- Mapa de cada cidade: proposta abaixo, aguardando decisão.
+- 16º troféu, loja à noite, capanga da Família Fundadora: sem pressa.
+
+### O mapa de cada cidade (proposta)
+
+Hoje a aba PISTAS é uma lista. A ideia (inspirada em Empire of Sin) é trocar o topo dela por um **mapa da
+cidade desenhado à mão, visto de cima, como mapa de gângster aberto na mesa**: cada pista é um alfinete
+no lugar dela (o Cais Velho no porto, a Avenida das Luzes no centro). O alfinete da liga atual pulsa e
+os das pistas ainda fechadas não aparecem, seguindo a regra de entrega aos poucos: o mapa vai se
+enchendo de alfinetes conforme o jogador avança, e cada pista nova "aparece na cidade". Ao mudar de cidade
+(Brooklyn → Chicago → … → Las Vegas), o mapa troca, e essa troca vira o grande momento visual da mudança.
+
+O que pediria: 7 mapas (um por cidade), **1080×900**, papel envelhecido com ruas, rio ou mar e bairros,
+sem nomes escritos (o jogo escreve por cima). O jogo põe os alfinetes nas posições que eu marcar.

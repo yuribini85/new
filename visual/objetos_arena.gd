@@ -22,6 +22,12 @@ const CONES_POR_FILA := 5
 const BARRIS := 6
 const ARVORES := 0  # os pinheiros agora são do CenarioArena
 
+## The Fastfather (anos 30): os mesmos lugares e a mesma física, com objetos da
+## época feitos aqui mesmo (fardos de feno no lugar do concreto, cavaletes de
+## madeira no lugar dos cones, barril de madeira, pneus estreitos), sem os
+## modelos do Chrome & Wreckage. Ligado pelo jogo idle.
+static var epoca := false
+
 var _forma: ArenaForma
 var _rng := RandomNumberGenerator.new()
 ## Trechos do muro com barreira: [a, b] (2D, simulação), para o muro de pneus pular.
@@ -115,6 +121,9 @@ func _forma_convexa(pai: Node3D, pontos: PackedVector3Array) -> void:
 
 
 func _cone(q: Vector2) -> void:
+	if epoca:
+		_cavalete(q)
+		return
 	var b := _corpo(1.2, .35, .08)
 	b.center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
 	b.center_of_mass = Vector3(0, .24, 0)
@@ -131,7 +140,7 @@ func _cone(q: Vector2) -> void:
 
 func _barril(q: Vector2) -> void:
 	var b := _corpo(30.0, .55, .05)
-	b.add_child(load(PASTA + "barril_oleo/model.glb").instantiate())
+	b.add_child(_barril_madeira() if epoca else load(PASTA + "barril_oleo/model.glb").instantiate())
 	var pts := PackedVector3Array()
 	for y in [.01, .878]:
 		for k in 12:
@@ -165,6 +174,9 @@ func _arvore(q: Vector2) -> void:
 ## Barreira de concreto no muro: sólida (camada 2) até quebrar; a frente dela
 ## é a linha do muro.
 func _concreto(meio: Vector2, dir: Vector2) -> void:
+	if epoca:
+		_fardos(meio, dir)
+		return
 	var raiz := Node3D.new()
 	add_child(raiz)
 	raiz.global_position = _em(meio)
@@ -193,15 +205,15 @@ func _pneus(meio: Vector2, dir: Vector2) -> void:
 	raiz.global_position = _em(meio)
 	raiz.rotation.y = _rumo(dir)
 	var pecas := []
-	var malha: PackedScene = load(PASTA + "pneu_individual/model.glb")
+	var malha: PackedScene = null if epoca else load(PASTA + "pneu_individual/model.glb")
 	for x in [-.73, 0.0, .73]:
 		for y in [0.0, .31]:
 			var b := _corpo(22.0, .9, .05)
 			b.freeze = true
 			b.linear_damp = .7
 			b.angular_damp = .35
-			var m: Node3D = malha.instantiate()
-			m.position.y = -.15
+			var m: Node3D = _pneu_epoca() if epoca else malha.instantiate()
+			m.position.y = 0.0 if epoca else -.15
 			b.add_child(m)
 			for setor in 12:
 				var pts := PackedVector3Array()
@@ -245,6 +257,10 @@ func _physics_process(_delta: float) -> void:
 			if q["tipo"] == "pneus":
 				if v.length() >= SOLTA_PNEU_MS:
 					_soltar_pneus(q, v)
+				break
+			if q["tipo"] == "fardos":
+				if normal >= RACHA_MS:
+					_espalhar_fardos(q, v)
 				break
 			if normal >= QUEBRA_MS:
 				_quebrar(q, v)
@@ -311,3 +327,160 @@ func _quebrar(q: Dictionary, _v: Vector3) -> void:
 			_forma_convexa(b, pts)
 		no.add_child(b)
 		b.position = centro
+
+
+# --- Objetos da época (The Fastfather) -------------------------------------------
+
+static var _mats := {}
+
+
+static func _mat(cor: Color, aspereza := 0.9) -> StandardMaterial3D:
+	var k := cor.to_html() + str(aspereza)
+	if not _mats.has(k):
+		var m := StandardMaterial3D.new()
+		m.albedo_color = cor
+		m.roughness = aspereza
+		_mats[k] = m
+	return _mats[k]
+
+
+static func _caixa(pai: Node3D, tam: Vector3, pos: Vector3, cor: Color) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = tam
+	mi.mesh = bm
+	mi.material_override = _mat(cor)
+	mi.position = pos
+	pai.add_child(mi)
+	return mi
+
+
+static func _cilindro(pai: Node3D, r_cima: float, r_baixo: float, alto: float, y: float, cor: Color,
+		aspereza := 0.9) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = r_cima
+	cm.bottom_radius = r_baixo
+	cm.height = alto
+	cm.radial_segments = 14
+	cm.rings = 1
+	mi.mesh = cm
+	mi.material_override = _mat(cor, aspereza)
+	mi.position.y = y
+	pai.add_child(mi)
+	return mi
+
+
+const PALHA := Color("c9a457")
+const BARBANTE := Color("6b4f2a")
+const MADEIRA := Color("7a5634")
+const MADEIRA_ESCURA := Color("4e3520")
+const FERRO := Color("2e2c2a")
+const BORRACHA := Color("1e1d1c")
+const TINTA_VERMELHA := Color("8c2f24")
+const TINTA_CREME := Color("e6dcc3")
+const FARDO := Vector3(0.8, 0.4, 0.55)
+
+
+## Um fardo de feno com os dois amarrilhos; o centro no meio dele.
+static func _fardo_visual(pai: Node3D) -> void:
+	_caixa(pai, FARDO, Vector3.ZERO, PALHA)
+	for x in [-0.2, 0.2]:
+		_caixa(pai, Vector3(0.03, FARDO.y + 0.01, FARDO.z + 0.01), Vector3(x, 0, 0), BARBANTE)
+
+
+## Barril de madeira com três aros de ferro; a base no chão (y 0 a 0,878).
+static func _barril_madeira() -> Node3D:
+	var n := Node3D.new()
+	_cilindro(n, .25, .25, .878, .439, MADEIRA)
+	_cilindro(n, .285, .285, .5, .439, MADEIRA)  # a barriga
+	for y in [.1, .439, .78]:
+		_cilindro(n, .292 if y == .439 else .262, .292 if y == .439 else .262, .04, y, FERRO, 0.5)
+	return n
+
+
+## Pneu estreito deitado, do tamanho da pilha de antes (raio .19 a .355, .3 de alto).
+static func _pneu_epoca() -> Node3D:
+	var n := Node3D.new()
+	var mi := MeshInstance3D.new()
+	var t := TorusMesh.new()
+	t.inner_radius = .19
+	t.outer_radius = .355
+	t.rings = 16
+	t.ring_segments = 8
+	mi.mesh = t
+	mi.material_override = _mat(BORRACHA, 0.95)
+	mi.scale = Vector3(1, 1.8, 1)
+	n.add_child(mi)
+	return n
+
+
+## Cavalete de madeira listrado (vermelho e creme), no lugar do cone.
+func _cavalete(q: Vector2) -> void:
+	var b := _corpo(6.0, .5, .05)
+	b.center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
+	b.center_of_mass = Vector3(0, .3, 0)
+	for k in 4:
+		var x := -0.3 + 0.2 * k
+		_caixa(b, Vector3(0.2, 0.12, 0.04), Vector3(x, 0.55, 0), TINTA_VERMELHA if k % 2 == 0 else TINTA_CREME)
+	for x in [-0.36, 0.36]:
+		for z in [-1.0, 1.0]:
+			var perna := _caixa(b, Vector3(0.04, 0.6, 0.04), Vector3(x, 0.3, z * 0.1), MADEIRA_ESCURA)
+			perna.rotation.x = -z * 0.32
+	_forma_convexa(b, PackedVector3Array([Vector3(-.4, 0, -.2), Vector3(.4, 0, -.2), Vector3(.4, 0, .2), Vector3(-.4, 0, .2),
+		Vector3(-.4, .61, -.03), Vector3(.4, .61, -.03), Vector3(.4, .61, .03), Vector3(-.4, .61, .03)]))
+	add_child(b)
+	b.global_position = _em(q)
+	b.rotation.y = _rng.randf() * TAU
+
+
+## Barreira de fardos no muro (três embaixo, dois em cima): sólida até um carro
+## bater a RACHA_MS; aí os fardos viram corpos soltos e se espalham.
+func _fardos(meio: Vector2, dir: Vector2) -> void:
+	var raiz := Node3D.new()
+	add_child(raiz)
+	raiz.global_position = _em(meio)
+	raiz.rotation.y = _rumo(dir)
+	var posicoes := [Vector3(-0.8, 0.2, 0), Vector3(0, 0.2, 0), Vector3(0.8, 0.2, 0), Vector3(-0.4, 0.6, 0),
+			Vector3(0.4, 0.6, 0)]
+	var visuais := []
+	for p in posicoes:
+		var f := Node3D.new()
+		f.position = p
+		f.rotation.y = _rng.randf_range(-0.05, 0.05)
+		_fardo_visual(f)
+		raiz.add_child(f)
+		visuais.append(f)
+	var solido := StaticBody3D.new()
+	solido.collision_layer = 2
+	solido.collision_mask = 0
+	_forma_convexa(solido, PackedVector3Array([Vector3(-1.2, 0, -.28), Vector3(1.2, 0, -.28), Vector3(1.2, 0, .28),
+		Vector3(-1.2, 0, .28), Vector3(-1.2, .4, -.28), Vector3(1.2, .4, -.28), Vector3(1.2, .4, .28), Vector3(-1.2, .4, .28),
+		Vector3(-.8, .8, -.28), Vector3(.8, .8, -.28), Vector3(.8, .8, .28), Vector3(-.8, .8, .28)]))
+	raiz.add_child(solido)
+	_quebraveis.append({"tipo": "fardos", "no": raiz, "visuais": visuais, "solido": solido,
+			"area": _area(raiz, Vector3(2.8, 1.1, 1.8)), "quebrou": false})
+
+
+func _espalhar_fardos(q: Dictionary, v: Vector3) -> void:
+	q["quebrou"] = true
+	(q["solido"] as StaticBody3D).collision_layer = 0
+	var no: Node3D = q["no"]
+	var meia := FARDO * 0.5
+	for f: Node3D in q["visuais"]:
+		var b := _corpo(25.0, 1.0, .02)
+		b.linear_damp = 1.2
+		b.angular_damp = 1.0
+		var pts := PackedVector3Array()
+		for sx in [-1, 1]:
+			for sy in [-1, 1]:
+				for sz in [-1, 1]:
+					pts.append(Vector3(sx * meia.x, sy * meia.y, sz * meia.z))
+		_forma_convexa(b, pts)
+		var t := f.transform
+		no.remove_child(f)
+		f.transform = Transform3D.IDENTITY
+		b.add_child(f)
+		no.add_child(b)
+		b.transform = t
+		b.apply_central_impulse(v * b.mass * (0.05 + 0.04 * _rng.randf()) + Vector3.UP * b.mass * 0.6)

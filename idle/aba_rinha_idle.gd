@@ -61,7 +61,7 @@ func _init(tela_: Node) -> void:
 	_feed = VBoxContainer.new()
 	_feed.add_theme_constant_override("separation", 2)
 	caixa.add_child(_feed)
-	IdleUI.rotulo("ÚLTIMAS LUTAS", 20, IdleUI.COR_OURO, _feed)
+	IdleUI.rotulo("ÚLTIMAS DISPUTAS", 20, IdleUI.COR_OURO, _feed)
 	caixa.add_child(MolduraDeco.new(4.0))
 
 

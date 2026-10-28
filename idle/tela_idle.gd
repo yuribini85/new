@@ -206,6 +206,9 @@ var _ultima_compra_ms := -100000
 
 func _ready() -> void:
 	dados = get_node("/root/Dados")
+	ObjetosArena.epoca = true  # a Rinha com fardos, cavaletes e barris de madeira
+	# Fotos das pistas e ícones da época, quando existirem (docs/idle/pedido_arte.md).
+	Aba.pastas_antes = ["res://arte/fastfather/pistas/", "res://arte/fastfather/icones/"]
 	Sons.barramentos()
 	Preferencias.carregar()
 	Preferencias.aplicar()
