@@ -156,6 +156,10 @@ var _trapacas_caixa: Control
 var _combustivel_texto: Label
 var _combustivel_botao: Button
 var _painel_lista: Control  # MELHORIAS: a lista completa por cima da tela
+var _painel_trofeus: Control  # TROFÉUS: a coleção, um por pista
+var _grade_trofeus: GridContainer
+var _conta_trofeus: Label
+var _botao_trofeus: Button
 var _multiplo := 1  # ×1, ×10 ou MÁX (-1) nos cartões da oficina e das trapaças
 var _seletor := {}  # 1/10/-1 -> botão
 ## Segurar a corrida acelera (cfg "toque"): a carga gasta enquanto segura e
@@ -637,6 +641,7 @@ func _pagina_corrida() -> Control:
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()
+	_tela_trofeus()
 	return v
 
 
@@ -736,7 +741,8 @@ func _oficina(pai: Control) -> void:
 	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var lista := Button.new()
 	lista.focus_mode = Control.FOCUS_NONE
-	lista.text = "MELHORIAS"
+	lista.text = "TROFÉUS"
+	_botao_trofeus = lista
 	lista.custom_minimum_size = Vector2(170, 48)
 	lista.add_theme_font_override("font", Tipografia.fonte("display"))
 	lista.add_theme_font_size_override("font_size", 24)
@@ -745,7 +751,7 @@ func _oficina(pai: Control) -> void:
 	lista.add_theme_stylebox_override("pressed", IdleUI.caixa(Color("3a2c1e"), 5, 6, IdleUI.COR_OURO_ESCURO, 1))
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		lista.add_theme_color_override(c, IdleUI.COR_OURO)
-	lista.pressed.connect(func(): _lista_aberta(true))
+	lista.pressed.connect(func(): _trofeus_abertos(true))
 	# Quanto cada toque compra: ×1, ×10 ou MÁX (como nos idles de referência).
 	var sel := HBoxContainer.new()
 	sel.add_theme_constant_override("separation", 0)
@@ -904,6 +910,126 @@ func _lista_melhorias() -> void:
 	_complexo.add_child(andares)
 	for mm in estado.cfg["melhorias"]:
 		andares.add_child(_cartao(mm))
+
+
+## TROFÉUS (pedido do usuário, 2026-10-28): a coleção, um por pista, ganho na
+## primeira vitória nela. Os ainda não ganhos ficam em sombra preta e o bônus só
+## aparece depois de ganhar.
+func _tela_trofeus() -> void:
+	var fundo := ColorRect.new()
+	fundo.color = Color(0.04, 0.035, 0.03)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.visible = false
+	fundo.z_index = 5
+	add_child(fundo)
+	_painel_trofeus = fundo
+	var m := MarginContainer.new()
+	m.set_anchors_preset(Control.PRESET_FULL_RECT)
+	m.add_theme_constant_override("margin_left", 16)
+	m.add_theme_constant_override("margin_right", 16)
+	m.add_theme_constant_override("margin_top", int(AreaSegura.topo(720.0)) + 16)
+	m.add_theme_constant_override("margin_bottom", int(AreaSegura.base(720.0)) + 16)
+	fundo.add_child(m)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 10)
+	m.add_child(v)
+	var cab := HBoxContainer.new()
+	v.add_child(cab)
+	var t := IdleUI.rotulo("TROFÉUS", 34, IdleUI.COR_OURO_CLARO, cab, "deco")
+	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var fechar := IdleUI.botao("FECHAR", IdleUI.COR_OURO, 22, 64, cab)
+	fechar.custom_minimum_size.x = 160
+	fechar.pressed.connect(func(): _trofeus_abertos(false))
+	_conta_trofeus = IdleUI.rotulo("", 24, IdleUI.COR_CROMO, v)
+	var rolagem := ScrollContainer.new()
+	rolagem.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	rolagem.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	IdleUI.rolagem_fina(rolagem)
+	v.add_child(rolagem)
+	_grade_trofeus = GridContainer.new()
+	_grade_trofeus.columns = 3
+	_grade_trofeus.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_grade_trofeus.add_theme_constant_override("h_separation", 8)
+	_grade_trofeus.add_theme_constant_override("v_separation", 8)
+	rolagem.add_child(_grade_trofeus)
+
+
+func _trofeus_abertos(sim: bool) -> void:
+	_painel_trofeus.visible = sim
+	if not sim:
+		return
+	for c in _grade_trofeus.get_children():
+		c.queue_free()
+	var lista := estado.lista_trofeus()
+	var ganhos := 0
+	for tr in lista:
+		var ganho: bool = String(tr["pista"]) in estado.trofeus
+		ganhos += 1 if ganho else 0
+		_grade_trofeus.add_child(_cartao_trofeu(tr, ganho))
+	_conta_trofeus.text = "%d DE %d CONQUISTADOS" % [ganhos, lista.size()]
+
+
+const LARGURA_TEXTO_TROFEU := 196.0  # três cartões lado a lado em 720 px
+
+
+func _cartao_trofeu(tr: Dictionary, ganho: bool) -> Control:
+	var c := PanelContainer.new()
+	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	c.add_theme_stylebox_override("panel", IdleUI.caixa(Color("1f1a15") if ganho else Color("15120f"), 6, 8,
+			IdleUI.COR_OURO_ESCURO if ganho else Color("2b2621"), 1))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 2)
+	c.add_child(v)
+	var img := TextureRect.new()
+	img.texture = load("res://arte/fastfather/trofeus/trofeu_%02d.png" % int(tr["arte"]))
+	img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	img.custom_minimum_size = Vector2(0, 150)
+	# Ainda não ganho: a sombra preta do troféu.
+	img.self_modulate = Color.WHITE if ganho else Color(0, 0, 0, 0.92)
+	v.add_child(img)
+	var nome := IdleUI.rotulo(_nome_da_pista(String(tr["pista"])).to_upper(), 20,
+			IdleUI.COR_TEXTO if ganho else IdleUI.COR_BLOQUEADO, v, "display")
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nome.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	nome.custom_minimum_size.x = LARGURA_TEXTO_TROFEU  # largura fixa: quebra sem laço de layout
+	var b := IdleUI.rotulo(_texto_bonus(tr) if ganho else "VENÇA EM 1º", 20,
+			LadrilhoIdle.VERDE if ganho else IdleUI.COR_BLOQUEADO, v)
+	b.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	b.custom_minimum_size.x = LARGURA_TEXTO_TROFEU
+	return c
+
+
+func _texto_bonus(tr: Dictionary) -> String:
+	var pct := "+%d%%" % roundi(float(tr["bonus"]) * 100.0)
+	match String(tr["efeito"]):
+		"premio":
+			return pct + " no prêmio"
+		"renda":
+			return pct + " no lucro"
+		"potencia":
+			return pct + " no motor"
+	return pct
+
+
+func _nome_da_pista(id: String) -> String:
+	for a in dados.arena().get("arenas", []):
+		if String(a["id"]) == id:
+			return String(a["nome"])
+	return Aba.nome_pista(id)
+
+
+## Troféu novo na chegada: estouro sobre a corrida e o botão pulsa.
+func _comemorar_trofeu() -> void:
+	if estado.trofeu_novo == "":
+		return
+	estado.trofeu_novo = ""
+	var onde: Vector2 = _paginas["corrida"].get_global_rect().get_center()
+	_efeitos.pipoca(onde + Vector2(0, -60), "TROFÉU NOVO!", COR_OURO, 44, 1.4)
+	_efeitos.faiscas(onde, IdleUI.COR_OURO_CLARO, 50)
+	if _botao_trofeus != null:
+		IdleUI.pulsar(_botao_trofeus, 1.12)
 
 
 func _marcar_seletor() -> void:
@@ -1688,6 +1814,7 @@ func _chegou() -> void:
 		_foto_vitoria.call_deferred()
 	_bandeira.chegada()
 	_visual3d.bandeira_fiscal(true)
+	_comemorar_trofeu.call_deferred()
 	_momento_forte(0.8 if pos == 1 else 0.5)
 	_hud.evento("VITÓRIA!" if pos == 1 else "%dº LUGAR" % pos, "+$" + curto(ganho),
 			COR_OURO if pos == 1 else IdleUI.COR_TEXTO, 10, -1.0, true)

@@ -479,3 +479,22 @@ func test_combustivel_por_dia() -> void:
 	verificar(e.combustivel_ativo(2100.0), "1000 + 600 + 600")
 	verificar(not e.usar_combustivel(1200.0, "2026-01-01"), "acabou o do dia")
 	igual(e.combustivel_restantes("2026-01-02"), 2, "o dia seguinte volta a dois")
+
+
+func test_trofeu_na_primeira_vitoria_com_bonus_e_save() -> void:
+	var c := _cfg()
+	c["trofeus"] = {"lista": [{"pista": "oval", "arte": 1, "efeito": "premio", "bonus": 0.1}]}
+	var e := IdleEstado.new(c)
+	e.concluir(2)
+	igual(e.trofeus, [], "segundo lugar não ganha troféu")
+	e.concluir(1)
+	igual([e.trofeus, e.trofeu_novo], [["oval"], "oval"], "a vitória ganha o troféu da pista")
+	igual(e.premio(1), 110.0, "o bônus entra no prêmio")
+	var f := IdleEstado.new(c)
+	f.de_save(e.para_save())
+	igual(f.trofeus, ["oval"], "o troféu volta do save")
+	var s := e.para_save()
+	s.erase("trofeus")
+	var g := IdleEstado.new(c)
+	g.de_save(s)
+	igual(g.trofeus, ["oval"], "save antigo: a liga vencida dá o troféu")

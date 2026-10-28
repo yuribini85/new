@@ -4,7 +4,7 @@ extends SceneTree
 ##   [--segundos=2,10,30] [--dinheiro=5000] [--liga=0] [--abas=corrida,pistas,pilotos]
 ##   [--contratos=0] [--abertas=1] [--nova_liga] [--fora_h=0] [--modalidade=arena] [--novo]
 ##   [--corridas=0] [--abrir=pneus,patrocinio] [--ofertas=transmissao] [--guia=melhoria:pneus]
-## --abas: uma foto de cada tela depois dos segundos ("config": a engrenagem); --contratos: pilotos a
+## --abas: uma foto de cada tela depois dos segundos ("config": a engrenagem; "trofeus": a coleção); --contratos: pilotos a
 ## mais no elenco; --abertas: quantas modalidades abertas (as anteriores na
 ## liga que abre a próxima); --nova_liga: a janela de liga nova na última foto;
 ## --fora_h: horas com o app fechado (mostra a faixa da renda).
@@ -103,6 +103,11 @@ func _rodar() -> void:
 	for aba in abas:
 		if aba == "config":
 			tela._abrir_config()
+		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
+			for tr in tela.estado.lista_trofeus().slice(0, 3):
+				if not String(tr["pista"]) in tela.estado.trofeus:
+					tela.estado.trofeus.append(String(tr["pista"]))
+			tela._trofeus_abertos(true)
 		else:
 			tela._abrir(aba)
 		for i in 10:

@@ -129,6 +129,11 @@ func _fim() -> void:
 			IdleUI.COR_OURO_CLARO if pos == 1 else IdleUI.COR_TEXTO, null, "regular")
 	_feed.add_child(l)
 	_feed.move_child(l, 1)
+	if e.trofeu_novo != "":  # troféu da arena ganho na luta
+		e.trofeu_novo = ""
+		var t := IdleUI.rotulo("TROFÉU NOVO!", 18, IdleUI.COR_OURO, null, "display")
+		_feed.add_child(t)
+		_feed.move_child(t, 1)
 	while _feed.get_child_count() > FEED + 1:
 		_feed.get_child(_feed.get_child_count() - 1).free()
 	terminou.emit(pos, premio)

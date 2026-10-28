@@ -31,6 +31,8 @@ var videos_usados := 0
 var combustivel_ate := 0.0
 var combustivel_dia := ""
 var combustivel_usos := 0
+var trofeus: Array = []  # pistas com troféu (cfg "trofeus")
+var trofeu_novo := ""  # o último troféu ganho, até a tela mostrar
 var salvo_em := 0.0  # unix (s), para a renda com o app fechado
 ## Metas do dia: {dia, tarefas: [ids], contagem: {tipo: n}, coletadas: [ids]}.
 var metas := {}
@@ -312,6 +314,47 @@ func multiplicador_marcos(m: Dictionary, n: int) -> float:
 	return pow(float(cfg_marcos().get("multiplicador", 1.0)), marcos_alcancados(n))
 
 
+# --- troféus (cfg "trofeus") ------------------------------------------------------
+# Um por pista, ganho na primeira vitória numa liga dela; cada um soma um bônus.
+
+func lista_trofeus() -> Array:
+	return cfg.get("trofeus", {}).get("lista", [])
+
+
+## O troféu da pista da liga atual, se ainda não ganho (vira `trofeu_novo`).
+func ganhar_trofeu() -> void:
+	var pista_id := String(dados_liga().get("pista", ""))
+	if pista_id in trofeus:
+		return
+	for t in lista_trofeus():
+		if String(t["pista"]) == pista_id:
+			trofeus.append(pista_id)
+			trofeu_novo = pista_id
+			return
+
+
+func bonus_trofeus(tipo: String) -> float:
+	var total := 0.0
+	for t in lista_trofeus():
+		if String(t["efeito"]) == tipo and String(t["pista"]) in trofeus:
+			total += float(t["bonus"])
+	return total
+
+
+## Save sem troféus: as pistas das ligas já vencidas.
+func _trofeus_do_progresso() -> void:
+	for m in cfg["modalidades"]:
+		var id := String(m["id"])
+		if not mods.has(id):
+			continue
+		var ligas: Array = m["ligas"]
+		var ate := int(mods[id]["liga"]) + (1 if bool(mods[id]["venceu"]) else 0)
+		for k in mini(ate, ligas.size()):
+			var p := String(ligas[k]["pista"])
+			if not p in trofeus and lista_trofeus().any(func(t): return String(t["pista"]) == p):
+				trofeus.append(p)
+
+
 # --- ligas, prêmios e renda -----------------------------------------------------
 
 func dados_liga(mod := "") -> Dictionary:
@@ -335,13 +378,14 @@ func renda_s() -> float:
 ## escada): antes disso o dinheiro vem só das corridas.
 func renda_modalidade(id: String) -> float:
 	var base := float(cfg.get("renda_base", 0.0)) if tem("renda") else 0.0
-	return (base + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"])
+	return (base + efeito("renda", {}, id)) * float(dados_liga(id)["multiplicador"]) * (1.0 + bonus_trofeus("renda"))
 
 
 ## Prêmio da posição `pos` (1 = vitória) na liga atual.
 func premio(pos: int) -> float:
 	var n := int(cfg["grid"])
-	return roundf(float(cfg["premio_p1"]) * float(dados_liga()["multiplicador"]) * float(n + 1 - pos) / n)
+	return roundf(float(cfg["premio_p1"]) * float(dados_liga()["multiplicador"]) * float(n + 1 - pos) / n
+			* (1.0 + bonus_trofeus("premio")))
 
 
 ## A corrida terminou em `pos`: o prêmio entra e a vitória libera a próxima liga.
@@ -354,6 +398,7 @@ func concluir(pos: int, fator := 1.0) -> float:
 		_m()["melhor"] = pos
 	if pos == 1:
 		venceu = true
+		ganhar_trofeu()
 	registrar_meta("corridas")
 	if pos == 1:
 		registrar_meta("vitorias")
@@ -653,7 +698,7 @@ func participantes(dados: Node, niveis_extra := {}) -> Array:
 				"piloto": {"ritmo": float(pr["ritmo"]) + float(pr.get("ritmo_por_liga", 0.0)) * liga,
 					"consistencia": pr["consistencia"], "agressividade": pr["agressividade"], "regular": true}})
 	var base: Dictionary = carro_base(dados).duplicate(true)
-	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra)
+	base["potencia"] = float(base["potencia"]) * (1.0 + efeito("potencia", niveis_extra) + bonus_trofeus("potencia")
 			+ (bonus_combustivel() if combustivel_ativo(Time.get_unix_time_from_system()) else 0.0))
 	base["aderencia"] = float(base["aderencia"]) * (1.0 + efeito("aderencia", niveis_extra))
 	# The Fastfather: quem corre é sempre o sobrinho (o piloto base); os rapazes
@@ -793,6 +838,8 @@ func pagar_rinha(pos: int) -> float:
 		_m()["corridas"] = int(_m()["corridas"]) + 1
 		if melhor_posicao() == 0 or pos < melhor_posicao():
 			_m()["melhor"] = pos
+		if pos == 1:
+			ganhar_trofeu()
 		return p))
 
 
@@ -985,7 +1032,7 @@ func para_save() -> Dictionary:
 			"videos_dia": videos_dia, "videos_usados": videos_usados, "salvo_em": salvo_em, "metas": metas,
 			"avisos_oferecidos": avisos_oferecidos, "desbloqueados": desbloqueados, "oferecidos": oferecidos,
 			"guias": guias, "garagem": garagem, "ferro_velho": ferro_velho, "combustivel_ate": combustivel_ate,
-			"combustivel_dia": combustivel_dia, "combustivel_usos": combustivel_usos}
+			"combustivel_dia": combustivel_dia, "combustivel_usos": combustivel_usos, "trofeus": trofeus}
 
 
 func de_save(s: Dictionary) -> void:
@@ -1025,6 +1072,9 @@ func de_save(s: Dictionary) -> void:
 	combustivel_ate = float(s.get("combustivel_ate", 0.0))
 	combustivel_dia = String(s.get("combustivel_dia", ""))
 	combustivel_usos = int(s.get("combustivel_usos", 0))
+	trofeus = Array(s.get("trofeus", [])).map(func(x): return String(x))
+	if not s.has("trofeus"):
+		_trofeus_do_progresso()
 	avisos_oferecidos = bool(s.get("avisos_oferecidos", false))
 	desbloqueados = Array(s.get("desbloqueados", [])).map(func(x): return String(x))
 	oferecidos = Array(s.get("oferecidos", [])).map(func(x): return String(x))

@@ -228,3 +228,13 @@ plano de cima. A câmera da vez acende em ouro no trilho. Na visão geral a nebl
 
 Visão geral e câmera do seu carro mais afastadas (`Corrida3D.GERAL_FOLGA` 1,55, a pista inteira
 entre as faixas da tela; `TAMANHO_PERSEGUICAO` 46 m).
+
+## 13. Troféus (2026-10-28)
+
+O botão MELHORIAS da Oficina do Tony virou TROFÉUS (pedido do usuário). Abre a coleção: um troféu
+por pista (16), ganho na primeira vitória numa liga dela (`IdleEstado.ganhar_trofeu`, também na
+Rinha). Os ainda não ganhos ficam em sombra preta, com "VENÇA EM 1º"; o bônus só aparece depois de
+ganhar. Bônus em `idle.json` → "trofeus" (prêmio das corridas, lucro por segundo ou motor; 10% cada,
+PROVISÓRIO). Na chegada, "TROFÉU NOVO!" e o botão pulsa. Save antigo: as ligas já vencidas dão os
+troféus. Arte do usuário: 15 troféus recortados em `arte/fastfather/trofeus` (a 16ª pista repete
+o 13). Os atlas de ícones enviados estão em `arte/fastfather/icones` para uso futuro.
