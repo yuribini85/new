@@ -108,6 +108,8 @@ func _modalidades(e: IdleEstado) -> void:
 	for m in e.cfg["modalidades"]:
 		var id := String(m["id"])
 		var aberta := e.liberada(id)
+		if not aberta:
+			continue  # o que ainda não abriu não aparece: a descoberta fica para quando abrir
 		var marcada := id == _escolhida
 		var na_corrida := id == e.modalidade
 		var b := Button.new()
@@ -191,7 +193,8 @@ func _escada(e: IdleEstado) -> void:
 	var aberta := e.liberada(_escolhida)
 	var atual := int(e._m(_escolhida)["liga"]) if aberta else -1
 	var venceu := bool(e._m(_escolhida)["venceu"]) if aberta else false
-	for i in m["ligas"].size():
+	# As ligas feitas, a atual e só a próxima (o alvo); as de depois não aparecem.
+	for i in mini(m["ligas"].size(), atual + 2):
 		var l: Dictionary = m["ligas"][i]
 		var feita: bool = i < atual or (i == atual and venceu)
 		var aqui: bool = i == atual

@@ -898,13 +898,16 @@ func _oficina(pai: Control) -> void:
 		_ladrilhos[id] = l
 	# Três cartões inteiros na faixa (o terceiro não fica cortado rente ao
 	# combustível); com mais, a faixa rola.
-	rolo.resized.connect(func():
-		var n := mini(fila.get_child_count(), 3)
+	var ajustar := func():
+		var n := mini(fila.get_children().filter(func(c): return c.visible).size(), 3)
 		if n <= 0 or rolo.size.x <= 0.0:
 			return
 		var w := floorf((rolo.size.x - 8.0 * (n - 1)) / n)
 		for c in fila.get_children():
-			(c as Control).custom_minimum_size.x = w)
+			(c as Control).custom_minimum_size.x = w
+	rolo.resized.connect(ajustar)
+	for c in fila.get_children():
+		c.visibility_changed.connect(ajustar)
 	_combustivel_cartao(linha_cartoes)
 
 
@@ -997,7 +1000,7 @@ func _atualizar_fiscal() -> void:
 
 
 ## As Trapaças da família: as melhorias marcadas "trapaca" em idle.json (com o
-## nome e o que fazem) e as que ainda não têm efeito ("trapacas_fechadas").
+## nome e o que fazem); cada uma só aparece quando abre.
 func _trapacas(pai: Control) -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 6)
@@ -1016,10 +1019,6 @@ func _trapacas(pai: Control) -> void:
 		l.comprar.connect(func(): _comprar(id, _multiplo))
 		h.add_child(l)
 		_ladrilhos[id] = l
-	for t in estado.cfg.get("trapacas_fechadas", []):
-		var l := LadrilhoIdle.new(String(t["id"]), String(t.get("icone", "")), String(t["nome"]), true)
-		l.fechar(String(t.get("sub", "")))
-		h.add_child(l)
 	if not estado.cfg_fiscal().is_empty():
 		var r := _cartao_por_video(h, String(estado.cfg_fiscal().get("nome", "Fiscal comprado")).to_upper().replace(" ", "\n"),
 				IdleUI.COR_VINHO_CLARO)
@@ -1422,8 +1421,7 @@ class _MedidorToque extends Control:
 		elif vazio():
 			draw_arc(c, r - 1.5, 0.0, TAU, 64, Color(IdleUI.COR_VINHO_CLARO, 0.3 + 0.6 * k_rapido), 3.0, true)
 		# O número grande e, embaixo, o que o toque faz agora.
-		_texto(str(roundi(_mostrado)), cor_v, 44, 10.0, "regular")
-		_texto("KM/H", CINZA, 14, 28.0)
+		_texto(str(roundi(_mostrado)), cor_v, 44, 14.0, "regular")
 		if vazio():
 			_texto("VAZIO", IdleUI.COR_VINHO_CLARO.lerp(BRANCO, k_rapido), 20, r * 0.62)
 		elif cheio:
@@ -3019,12 +3017,15 @@ func _aplicar_desbloqueios() -> void:
 	for m in estado.cfg["melhorias"]:
 		var aberta := estado.tem("melhoria:" + String(m["id"]))
 		_cartoes[m["id"]]["cartao"].visible = aberta
+		# O que ainda não abriu não aparece; ao abrir, o cartão entra pulsando.
 		var l: LadrilhoIdle = _ladrilhos.get(String(m["id"]))
 		if l != null:
-			if aberta:
-				l.abrir()
-			elif not l.esta_fechado():
-				l.fechar("Abre em breve")
+			if aberta and not l.visible:
+				l.visible = true
+				if is_inside_tree():
+					IdleUI.pulsar.call_deferred(l, 1.08)
+			l.visible = aberta
+			l.abrir()
 	_renda_caixa.visible = estado.tem("renda")
 	# As trapaças só aparecem quando a primeira abre (depois da bronca do chefão).
 	if _trapacas_caixa != null:

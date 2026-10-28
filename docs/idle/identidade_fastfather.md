@@ -385,3 +385,8 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
 - Balões dos quadrinhos (pedido do usuário, 2026-10-28): papel liso com cantos chanfrados (sem as facetas que
   pareciam erro), o rabo desenhado à parte (nunca dobra), texto centrado em linhas equilibradas (sem palavra
   sozinha na última linha), respiro para o ▼ de continuar e o nome numa tarja escura com letra âmbar.
+- Entrega aos poucos (pedido do usuário, 2026-10-28): o que ainda não abriu não aparece, sem "Abre em breve",
+  cadeado ou FECHADA. Melhorias e trapaças surgem pulsando quando abrem; em PISTAS só aparecem as modalidades
+  abertas, e da escada, as ligas feitas, a atual e a próxima. A descoberta de um sistema novo vale tanto quanto
+  o resto. Exceção: troféus e coleção de carros seguem em silhueta, porque ali a sombra puxa o desejo. O
+  velocímetro mostra só o número, sem unidade.
