@@ -349,7 +349,7 @@ func mudar_de_cidade() -> void:
 	v.add_child(traco)
 	var ano := IdleUI.rotulo(String(dados["ano"]), 96, IdleUI.COR_OURO_CLARO, v, "deco")
 	ano.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var mult := IdleUI.rotulo("RENDA E PRÊMIOS ×%s" % IdleUI.curto(estado.multiplicador_cidade()), 28, IdleUI.COR_GANHO, v, "display")
+	var mult := IdleUI.rotulo("LUCRO E PRÊMIOS ×%s" % IdleUI.curto(estado.multiplicador_cidade()), 28, IdleUI.COR_GANHO, v, "display")
 	mult.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var r := 0.0 if Preferencias.reduzir_animacoes else 1.0
 	var tw := c.create_tween()

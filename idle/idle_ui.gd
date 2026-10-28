@@ -96,6 +96,30 @@ static func painel(cor := COR_CARTAO, raio := 14, margem := 12, pai: Node = null
 	return p
 
 
+## O cabeçalho comum das abas (coesão das telas, sugestão 5 aprovada,
+## 2026-10-28): painel com a moldura art déco, o ícone da folha à esquerda e o
+## título no letreiro. Devolve a coluna do texto, para o subtítulo.
+static func cabecalho(titulo: String, icone_nome: String, pai: Node) -> VBoxContainer:
+	var p := painel(COR_CARTAO, 12, 14, pai)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 14)
+	p.add_child(h)
+	var ic := TextureRect.new()
+	ic.texture = icone_hud(icone_nome)
+	ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	ic.custom_minimum_size = Vector2(60, 60)
+	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(ic)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(v)
+	rotulo(titulo, 32, COR_OURO_CLARO, v, "deco")
+	p.add_child(MolduraDeco.new(4.0))
+	return v
+
+
 static func icone(nome: String, tamanho: int, pai: Node = null, cor := Color.WHITE) -> TextureRect:
 	var t := TextureRect.new()
 	t.texture = Aba.icone_reduzido(nome, tamanho)

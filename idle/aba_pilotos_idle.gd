@@ -35,6 +35,10 @@ func atualizar() -> void:
 		_escolhido = -1
 	for c in _lista.get_children():
 		c.queue_free()
+	var cab := IdleUI.cabecalho("CAPANGAS", "chapeu_fedora", _lista)
+	var sub := IdleUI.rotulo("%d na família · de cada especialidade, vale o mais forte" % e.pilotos.size(), 18,
+			IdleUI.COR_SECUNDARIA, cab, "regular")
+	sub.clip_text = true
 	_escalado(e)
 	_contratos(e)
 	_elenco(e)

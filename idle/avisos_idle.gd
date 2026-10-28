@@ -20,10 +20,10 @@ static var _iniciado := false
 static func planejar(estado: IdleEstado, agora: float) -> Array:
 	var r := []
 	_somar(r, "teto", float(estado.cfg.get("offline_max_h", 0.0)) * 3600.0, "Cofre cheio!",
-			"Sua equipe parou de faturar. Volte para coletar.")
+			"O cofre da família encheu. Volte para coletar.")
 	if not estado.contrato_gratis_pronto(agora):
 		_somar(r, "contrato", estado.contrato_em - agora, "Contrato grátis pronto!",
-				"Um piloto novo quer correr pela sua equipe. Toque para contratar.")
+				"Um capanga novo quer entrar para a família. Toque para contratar.")
 	return r
 
 

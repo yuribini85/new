@@ -44,17 +44,9 @@ func _init(tela_: Node) -> void:
 	v.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	v.add_theme_constant_override("separation", 10)
 	add_child(v)
-	var cab := IdleUI.painel(IdleUI.COR_CARTAO, 12, 14, v)
-	var c := VBoxContainer.new()
-	c.add_theme_constant_override("separation", 2)
-	cab.add_child(c)
-	var t := IdleUI.rotulo("RINHA DAS FAMÍLIAS", 34, IdleUI.COR_OURO_CLARO, c, "deco")
-	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var c := IdleUI.cabecalho("RINHA DAS FAMÍLIAS", "escudo", v)
 	_liga = IdleUI.rotulo("", 20, IdleUI.COR_CROMO, c)
-	_liga.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_quem = IdleUI.rotulo("", 20, IdleUI.COR_TEXTO, c)
-	_quem.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cab.add_child(MolduraDeco.new(4.0))
 	_vista = Control.new()
 	_vista.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_vista.custom_minimum_size = Vector2(0, 420)

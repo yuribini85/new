@@ -65,12 +65,8 @@ func atualizar() -> void:
 	_assinatura = _assinatura_de(agora)
 	for c in _lista.get_children():
 		c.queue_free()
-	var topo := HBoxContainer.new()
-	_lista.add_child(topo)
-	var t := IdleUI.rotulo("MISSÕES DIÁRIAS", 30, IdleUI.COR_TEXTO, topo, "deco")
-	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_relogio = IdleUI.rotulo("", 18, IdleUI.COR_SECUNDARIA, topo)
-	_relogio.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var cab := IdleUI.cabecalho("MISSÕES", "prancheta", _lista)
+	_relogio = IdleUI.rotulo("", 18, IdleUI.COR_SECUNDARIA, cab)
 	_relogio.text = "Novas missões em " + IdleUI.relogio(_meia_noite(agora) - agora)
 	_gazeta(e)
 	_presente(e, agora)
@@ -78,7 +74,7 @@ func atualizar() -> void:
 	var est := e.metas_do_dia(agora)
 	for id in est["tarefas"]:
 		_cartao(e, String(id), agora, String(id) in est["coletadas"])
-	var nota := IdleUI.rotulo("Cada missão vale %d minutos da renda da equipe." % int(e.cfg_metas().get("recompensa_min", 0)),
+	var nota := IdleUI.rotulo("Cada missão vale %d minutos do lucro da família." % int(e.cfg_metas().get("recompensa_min", 0)),
 			17, IdleUI.COR_SECUNDARIA, _lista, "regular")
 	nota.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
@@ -94,7 +90,13 @@ func _cartao(e: IdleEstado, id: String, agora: float, coletada: bool) -> void:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 14)
 	cartao.add_child(h)
-	IdleUI.icone(String(t.get("icone", "icone_objetivo")), 48, h, IdleUI.COR_OURO if not coletada else IdleUI.COR_BLOQUEADO)
+	var ic := TextureRect.new()
+	ic.texture = IdleUI.icone_hud(String(t.get("icone_hud", "prancheta")))
+	ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED  # escala uniforme
+	ic.custom_minimum_size = Vector2(52, 52)
+	ic.modulate = Color(1, 1, 1, 0.4) if coletada else Color.WHITE
+	h.add_child(ic)
 	var v := VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_theme_constant_override("separation", 6)

@@ -84,7 +84,7 @@ func _nova_cidade(e: IdleEstado) -> void:
 	p.add_child(v)
 	IdleUI.rotulo("NOVA CIDADE", 34, IdleUI.COR_OURO_CLARO, v, "deco")
 	IdleUI.rotulo("%s · %s" % [String(proxima["lugar"]).to_upper(), proxima["ano"]], 26, IdleUI.COR_TEXTO, v, "display")
-	IdleUI.rotulo("Renda e prêmios ×%s para sempre" % IdleUI.curto(e.multiplicador_cidade() * mult), 22, IdleUI.COR_GANHO, v)
+	IdleUI.rotulo("Lucro e prêmios ×%s para sempre" % IdleUI.curto(e.multiplicador_cidade() * mult), 22, IdleUI.COR_GANHO, v)
 	var aviso := IdleUI.rotulo("Ficam: troféus, capangas e carros. Recomeçam: dinheiro, melhorias e ligas.",
 			20, IdleUI.COR_SECUNDARIA, v)
 	aviso.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

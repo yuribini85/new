@@ -318,3 +318,28 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
   Aldo), prêmio (Bruno, Benny, Tito, Vinnie), oficina mais barata (Tommy, Rocco, Nino, Enzo) e
   gorjeta do jornaleiro (Rosie, Mei, Lola). Vale só o capanga de nível mais alto de cada uma: +5% por
   nível (PROVISÓRIO). O cartão de cada capanga mostra a dele ("LUCRO +5%").
+
+## 22. Save na nuvem, retenção diária e semanal, coleção e monetização (2026-10-28, sugestões aprovadas)
+
+- Save na nuvem (`idle/nuvem_idle.gd`, `idle.json` → "play_games"): jogos salvos do Google Play
+  Games. Envia ao sair e a cada 5 min; aparelho sem progresso carrega direto o da conta; com
+  progresso, o cartão "JOGO SALVO NA SUA CONTA" pergunta. Só entra no APK com o `game_id`.
+- MISSÕES: no alto a Gazeta do Cais de hoje (uma manchete por dia, com bônus o dia inteiro:
+  prêmios, lucro, oficina, gorjeta ou motor), o PRESENTE DO CHEFÃO (7 dias seguidos, ícones do
+  dinheiro crescendo e o chapéu no 7º, que traz um capanga; dia perdido volta ao 1º) e o DESAFIO DA
+  FAMÍLIA do fim de semana (sábado e domingo: prêmios maiores; N vitórias dão a taça da família, um
+  bônus de prêmio para sempre, e uma bolada). Ícones das missões são os da folha do HUD.
+- Coleção de carros (`idle.json` → "garagem" → "colecao"): cada carro da garagem dá um bônus para
+  sempre; a ficha mostra "Na coleção: LUCRO +5% para sempre".
+- Fiscal comprado: a trapaça fechada vira o cartão por vídeo ao lado das outras (prêmios +50% por
+  1 h, 1 uso por dia).
+- Família Fundadora (`idle.json` → "fundadora", Configurações): compra única, sem anúncio entre as
+  ligas, carro dourado e capanga de nível alto. Ponte da cobrança em `idle/loja_idle.gd`; sem o
+  plugin, a vitrine diz que a compra abre na versão da loja.
+- Corrida pelo relógio do aparelho: dia (6–16 h), fim de tarde (16–19 h) e noite com postes de luz
+  acesos ao longo da pista (`CenarioEpoca.fase`).
+- Cabeçalho comum das abas (`IdleUI.cabecalho`): moldura art déco, ícone da folha e letreiro —
+  CAPANGAS (chapéu), RINHA (escudo), MISSÕES (prancheta).
+- Textos: "lucro" é a palavra do jogador para a renda (HUD, Nova Cidade, missões); capangas, não
+  pilotos, nas missões e nos avisos do celular.
+- Todos os números novos estão marcados PROVISÓRIO em `idle.json`.
