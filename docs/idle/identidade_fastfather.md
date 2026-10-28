@@ -390,3 +390,12 @@ com setas girando, AUTO = rolo de filme, SEU CARRO = mira, PISTA INTEIRA = lupa 
   abertas, e da escada, as ligas feitas, a atual e a próxima. A descoberta de um sistema novo vale tanto quanto
   o resto. Exceção: troféus e coleção de carros seguem em silhueta, porque ali a sombra puxa o desejo. O
   velocímetro mostra só o número, sem unidade.
+- Botão padrão de anúncio (pedido do usuário, 2026-10-28; `IdleUI.botao_premio`): placa dourada quase quadrada
+  (360×176) em relevo, a claquete grande em cima, a recompensa em tinta escura e "ASSISTIR ANÚNCIO" embaixo;
+  um reflexo atravessa a placa e ela respira devagar (sem isso com animações reduzidas). Versão compacta
+  (claquete ao lado, "ANÚNCIO") para cartões estreitos. O mesmo em gorjeta, combustível, fiscal, contratar capanga e coletar ×2. Política
+  do AdMob para premiado: o jogador escolhe tocar, sabe que é anúncio e sabe a recompensa antes.
+- Combustível e fiscal (pedido do usuário, 2026-10-28): o cartão mostra só o nome, o relógio quando está
+  valendo e USAR (ou AMANHÃ). O toque abre a janela que explica o bônus, a duração e os usos de hoje; o
+  anúncio só começa no ASSISTIR ANÚNCIO dessa janela. Contra toque errado: o botão de anúncio só aceita toque
+  0,6 s depois de aparecer e no soltar do dedo; há um vão entre ele e o FECHAR.

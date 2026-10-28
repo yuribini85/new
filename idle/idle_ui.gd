@@ -54,6 +54,8 @@ const COR_NEON_ESCURO := Color("a8781a")
 const COR_NEON_VERDE := Color("a8ff5e")
 const COR_NEON_VERDE_ESCURO := Color("5c9a2c")
 const COR_PREMIO_ESCURO := Color("3b4d3c")
+## Tempo depois de aparecer em que o botão de anúncio ainda não aceita toque (s).
+const TRAVA_ANUNCIO_S := 0.6
 
 
 ## Tamanho de texto legível no celular (docs/idle/interface.md): a base do jogo
@@ -170,54 +172,135 @@ static func botao(texto: String, cor: Color, tamanho := 24, altura := 64, pai: N
 	return b
 
 
-## Botão de anúncio premiado, no padrão do gênero (docs/idle/interface.md, 5): verde, em
-## duas partes. À esquerda um selo mais escuro com o ícone grande do vídeo e a
-## palavra VÍDEO (o jogador sabe que é anúncio antes de tocar, como a política do
-## AdMob pede); à direita a recompensa ("PRÊMIO x2", "COLETAR x2"). O texto da
-## recompensa muda com texto_premio().
+## O botão padrão de anúncio premiado (pedido do usuário, 2026-10-28), o mesmo
+## em todo o jogo. Política do AdMob para anúncio premiado: o jogador escolhe
+## assistir (nada abre sozinho), sabe que é anúncio antes de tocar ("ASSISTIR
+## ANÚNCIO" escrito no botão, com o ícone da claquete) e sabe o que ganha (a
+## recompensa em destaque). Visual da época: placa dourada (neon âmbar) em relevo,
+## a claquete à esquerda (sem moldura), a recompensa em tinta escura e, embaixo, a
+## linha do anúncio. Com altura < 60 (cartões estreitos), a versão compacta:
+## a linha de baixo vira só "ANÚNCIO". O texto muda com texto_premio() e o
+## estado com estado_premio().
 static func botao_premio(texto: String, tamanho := 24, altura := 64, pai: Node = null) -> Button:
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
-	var alto := maxi(altura, ALTURA_MIN)
-	Tipografia.acao_primaria(b, "", COR_PREMIO, Color.WHITE, legivel(tamanho), alto)
+	var compacto := altura < 60
+	var alto := altura if compacto else maxi(altura, ALTURA_MIN)
 	estilo_premio(b)
-	desativado_legivel(b)
-	var h := HBoxContainer.new()
-	h.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	h.offset_left = 6
-	h.offset_top = 6
-	h.offset_right = -6
-	h.offset_bottom = -10  # o bisel embaixo
-	h.add_theme_constant_override("separation", 10)
-	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	b.add_child(h)
-	var selo := PanelContainer.new()
-	selo.add_theme_stylebox_override("panel", caixa(COR_PREMIO_ESCURO, 10, 8))
-	selo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(selo)
-	var sv := VBoxContainer.new()
-	sv.alignment = BoxContainer.ALIGNMENT_CENTER
-	sv.add_theme_constant_override("separation", -2)
-	sv.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	selo.add_child(sv)
-	var icone := TextureRect.new()
-	var lado := clampi(alto - 52, 30, 48)
-	icone.texture = icone_video(lado)
-	icone.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
-	icone.custom_minimum_size = Vector2(lado, lado)
-	icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	sv.add_child(icone)
-	var palavra := rotulo("VÍDEO", 18, Color.WHITE, sv, "semibold")
-	palavra.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var r := rotulo(texto, tamanho, Color.WHITE, h, "semibold")
-	r.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	r.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var h: BoxContainer
+	var r: Label
+	if compacto:
+		# Cartão estreito: a claquete à esquerda e as duas linhas ao lado.
+		b.custom_minimum_size = Vector2(0, alto)
+		h = HBoxContainer.new()
+		h.add_theme_constant_override("separation", 6)
+		_preencher(h, 3.0)
+		b.add_child(h)
+		_claquete(h, 30)
+		var v := VBoxContainer.new()
+		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		v.add_theme_constant_override("separation", -9)
+		v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.add_child(v)
+		r = rotulo(texto, mini(tamanho, 18), COR_TINTA, v, "display")
+		r.add_theme_constant_override("line_spacing", -6)
+		var l := rotulo("ANÚNCIO", 12, Color(COR_TINTA, 0.72), v, "semibold")
+		l.add_theme_constant_override("line_spacing", -6)
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	else:
+		# O padrão: placa quase quadrada, a claquete grande em cima, a recompensa
+		# no meio e ASSISTIR ANÚNCIO embaixo; brilho que passa e respiração lenta.
+		b.custom_minimum_size = Vector2(PREMIO_LARGURA, PREMIO_ALTURA)
+		b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		b.clip_contents = true
+		h = VBoxContainer.new()
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		h.add_theme_constant_override("separation", 2)
+		_preencher(h, 10.0)
+		b.add_child(h)
+		_claquete(h, 64).size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		r = rotulo(texto, tamanho, COR_TINTA, h, "display")
+		var l := rotulo("ASSISTIR ANÚNCIO", 17, Color(COR_TINTA, 0.75), h, "semibold")
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if not Preferencias.reduzir_animacoes:
+			b.add_child(_BrilhoPremio.new())
+			b.resized.connect(func(): b.pivot_offset = b.size * 0.5)
+			b.ready.connect(func():
+				var tw := b.create_tween().set_loops()
+				tw.tween_property(b, "scale", Vector2.ONE * 1.035, 0.8).set_trans(Tween.TRANS_SINE)
+				tw.tween_property(b, "scale", Vector2.ONE, 0.8).set_trans(Tween.TRANS_SINE))
 	r.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	r.clip_text = true
 	b.set_meta("premio", r)
-	b.set_meta("selo", selo)
+	b.set_meta("conteudo", h)
+	# Contra o toque sem querer: o botão só aceita toque um instante depois de
+	# aparecer (uma janela que abre sob o dedo não dispara anúncio) e só no soltar
+	# do dedo em cima dele (arrastar para fora cancela).
+	b.action_mode = BaseButton.ACTION_MODE_BUTTON_RELEASE
+	var travar := func():
+		if not b.is_visible_in_tree():
+			return
+		b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.get_tree().create_timer(TRAVA_ANUNCIO_S).timeout.connect(func():
+			if is_instance_valid(b):
+				b.mouse_filter = Control.MOUSE_FILTER_STOP)
+	b.tree_entered.connect(func(): travar.call_deferred())
+	b.visibility_changed.connect(travar)
 	if pai != null:
 		pai.add_child(b)
 	return b
+
+
+const PREMIO_LARGURA := 360.0
+const PREMIO_ALTURA := 176.0
+
+
+static func _preencher(c: Control, folga: float) -> void:
+	c.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	c.offset_left = folga
+	c.offset_top = folga
+	c.offset_right = -folga
+	c.offset_bottom = -folga - 4.0  # o relevo embaixo
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+static func _claquete(pai: Control, lado: int) -> TextureRect:
+	var icone := TextureRect.new()
+	icone.texture = icone_video(lado)
+	icone.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	icone.custom_minimum_size = Vector2(lado, lado)
+	icone.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icone.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pai.add_child(icone)
+	return icone
+
+
+## O reflexo que atravessa a placa dourada de tempos em tempos (como luz em latão).
+class _BrilhoPremio extends Control:
+	const CICLO_S := 2.6
+	const PASSA_S := 0.7
+	var _t := 0.0
+
+	func _init() -> void:
+		set_anchors_preset(Control.PRESET_FULL_RECT)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _process(delta: float) -> void:
+		_t = fmod(_t + delta, CICLO_S)
+		queue_redraw()
+
+	func _draw() -> void:
+		var p := (get_parent() as Button)
+		if p != null and p.disabled:
+			return
+		var k := _t / PASSA_S
+		if k > 1.0:
+			return
+		var x := lerpf(-size.y, size.x + size.y, k)
+		var faixa := PackedVector2Array([Vector2(x, 0), Vector2(x + 34, 0), Vector2(x + 34 - size.y * 0.6, size.y),
+				Vector2(x - size.y * 0.6, size.y)])
+		draw_colored_polygon(faixa, Color(1, 1, 0.92, 0.32))
 
 
 ## Troca o texto da recompensa do botão de anúncio (botao_premio).
@@ -225,13 +308,29 @@ static func texto_premio(b: Button, texto: String) -> void:
 	(b.get_meta("premio") as Label).text = texto
 
 
+## Texto e estado de uma vez: sem uso disponível o botão apaga (e não abre anúncio).
+static func estado_premio(b: Button, texto: String, pode: bool) -> void:
+	texto_premio(b, texto)
+	b.disabled = not pode
+	(b.get_meta("conteudo") as Control).modulate = Color.WHITE if pode else Color(1, 1, 1, 0.45)
+
+
 static func estilo_premio(b: Button) -> void:
-	b.add_theme_stylebox_override("normal", _bisel(COR_PREMIO, Color.WHITE, COR_PREMIO_ESCURO))
-	b.add_theme_stylebox_override("hover", _bisel(COR_PREMIO, Color.WHITE, COR_PREMIO_ESCURO))
-	b.add_theme_stylebox_override("pressed", _bisel(COR_PREMIO.darkened(0.12), Color.WHITE, COR_PREMIO.darkened(0.12)))
-	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		b.add_theme_color_override(c, Color.WHITE)
-	b.add_theme_color_override("icon_normal_color", Color.WHITE)
+	# Placa dourada em relevo (borda de baixo mais funda): cara de prêmio, não de aviso.
+	var placa := func(fundo: Color, fundo_baixo: Color) -> StyleBoxFlat:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = fundo
+		sb.set_corner_radius_all(8)
+		sb.corner_detail = 1  # cantos chanfrados (art déco)
+		sb.set_border_width_all(2)
+		sb.border_width_bottom = 6
+		sb.border_color = fundo_baixo
+		return sb
+	b.add_theme_stylebox_override("normal", brilho(placa.call(COR_NEON, COR_NEON_ESCURO), COR_NEON))
+	b.add_theme_stylebox_override("hover", brilho(placa.call(COR_NEON, COR_NEON_ESCURO), COR_NEON))
+	b.add_theme_stylebox_override("pressed", placa.call(COR_NEON.darkened(0.12), COR_NEON_ESCURO.darkened(0.2)))
+	b.add_theme_stylebox_override("disabled", placa.call(COR_ACO, COR_ACO.darkened(0.3)))
+	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 
 
 static var _icones_video := {}

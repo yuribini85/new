@@ -108,6 +108,8 @@ func _rodar() -> void:
 	for aba in abas:
 		if aba == "config":
 			tela._abrir_config()
+		elif aba in ["combustivel", "fiscal"]:  # a janela que explica o bônus antes do anúncio
+			tela._janela_bonus(aba)
 		elif aba == "jornaleiro":  # o menino de pé e, na foto seguinte, o x2
 			tela._jornaleiro.aparecer(30.0)
 			for i in 40:

@@ -455,7 +455,7 @@ func _montar() -> void:
 	margem.add_theme_constant_override("margin_bottom", 12)
 	raiz.add_child(margem)
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 12)
+	v.add_theme_constant_override("separation", 18)
 	margem.add_child(v)
 	_topo(v)
 	var conteudo := Control.new()
@@ -925,7 +925,7 @@ func _combustivel_cartao(pai: Control) -> void:
 			_botao_trofeus.custom_minimum_size.x = cartao.size.x)
 	_combustivel_texto = r[0]
 	_combustivel_botao = r[1]
-	_combustivel_botao.pressed.connect(_usar_combustivel)
+	_combustivel_botao.pressed.connect(_janela_bonus.bind("combustivel"))
 
 
 ## Cartão de bônus por vídeo (combustível, fiscal): o nome, uma linha de
@@ -945,6 +945,8 @@ func _cartao_por_video(pai: Control, nome: String, cor_nome := IdleUI.COR_TEXTO)
 	var vao := Control.new()  # o botão no pé, alinhado com os das melhorias
 	vao.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(vao)
+	# O botão abre a janela que explica o bônus; o anúncio só começa lá, no
+	# ASSISTIR ANÚNCIO (o cartão não promete nada sozinho).
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	b.custom_minimum_size = Vector2(0, 46)
@@ -953,10 +955,8 @@ func _cartao_por_video(pai: Control, nome: String, cor_nome := IdleUI.COR_TEXTO)
 	for e in ["normal", "hover", "focus"]:
 		b.add_theme_stylebox_override(e, IdleUI.brilho(IdleUI.caixa(IdleUI.COR_NEON, 5, 4, IdleUI.COR_NEON_ESCURO, 1), IdleUI.COR_NEON))
 	b.add_theme_stylebox_override("pressed", IdleUI.caixa(IdleUI.COR_NEON.darkened(0.15), 5, 4, IdleUI.COR_NEON_ESCURO, 1))
-	b.add_theme_stylebox_override("disabled", IdleUI.caixa(LadrilhoIdle.DESLIGADO, 5, 4, LadrilhoIdle.DESLIGADO_BORDA, 1))
 	for c2 in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(c2, IdleUI.COR_TINTA)
-	b.add_theme_color_override("font_disabled_color", IdleUI.COR_BLOQUEADO.lightened(0.25))
 	v.add_child(b)
 	return [texto, b]
 
@@ -971,6 +971,91 @@ func _usar_combustivel() -> void:
 					COR_OURO, 11, -1.0, true)
 			celebrar(2)
 			estado.salvar(Time.get_unix_time_from_system()))
+
+
+## A janela do bônus por anúncio (combustível, fiscal), no molde da do
+## jornaleiro: o que o bônus faz e por quanto tempo, quantos usos restam hoje e,
+## só se o jogador confirmar, o anúncio (ASSISTIR ANÚNCIO). FECHAR não gasta nada.
+func _janela_bonus(tipo: String) -> void:
+	if _janela_jornaleiro != null:
+		return
+	var agora := Time.get_unix_time_from_system()
+	var dia := Time.get_date_string_from_system()
+	var combustivel := tipo == "combustivel"
+	var cfg := estado.cfg_combustivel() if combustivel else estado.cfg_fiscal()
+	var minutos := roundi(float(cfg.get("duracao_s", 0.0)) / 60.0)
+	var total := int(cfg.get("usos_dia", 0))
+	var restam := estado.combustivel_restantes(dia) if combustivel else estado.fiscal_restantes(dia)
+	var ate := estado.combustivel_ate if combustivel else estado.fiscal_ate
+	var beneficio := "+%d%% DE POTÊNCIA" % roundi(estado.bonus_combustivel() * 100.0) if combustivel \
+			else MetasIdle.texto_bonus(String(cfg.get("efeito", "")), float(cfg.get("bonus", 0.0)))
+	var fundo := ColorRect.new()
+	fundo.color = Color(0, 0, 0, 0.72)
+	fundo.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(fundo)
+	_janela_jornaleiro = fundo  # uma janela por vez (a mesma vaga da do jornaleiro)
+	var centro := CenterContainer.new()
+	centro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fundo.add_child(centro)
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(600, 0)
+	p.add_theme_stylebox_override("panel", IdleUI.caixa(COR_CARTAO, 18, 26, IdleUI.COR_BORDA, 1))
+	centro.add_child(p)
+	p.add_child(MolduraDeco.new(6.0))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 18)
+	p.add_child(v)
+	var centrado := func(l: Label) -> Label:
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size.x = 540
+		return l
+	centrado.call(IdleUI.rotulo("COMBUSTÍVEL ADULTERADO" if combustivel else String(cfg.get("nome", "Fiscal comprado")).to_upper(),
+			34, IdleUI.COR_OURO_CLARO if combustivel else IdleUI.COR_VINHO_CLARO, v, "deco"))
+	centrado.call(IdleUI.rotulo("O Tony mistura um aditivo no tanque: o carro anda mais forte por um tempo." if combustivel
+			else "Um envelope para o fiscal da prova: ele fecha os olhos por um tempo.", 22, IdleUI.COR_TEXTO, v, "regular"))
+	centrado.call(IdleUI.rotulo(beneficio, 46, IdleUI.COR_NEON, v, "deco"))
+	centrado.call(IdleUI.rotulo("por %d minutos" % minutos, 22, IdleUI.COR_TEXTO, v))
+	var usos := "Restam hoje: %d de %d. Renova amanhã." % [restam, total]
+	if agora < ate:
+		usos += "\nValendo agora: faltam %s. Usar de novo soma mais %d minutos." % [IdleUI.relogio(ate - agora), minutos]
+	centrado.call(IdleUI.rotulo(usos, 20, IdleUI.COR_SECUNDARIA, v, "regular"))
+	var ver := IdleUI.botao_premio("", 26, 80, v)
+	IdleUI.estado_premio(ver, beneficio if restam > 0 else "VOLTE AMANHÃ", restam > 0)
+	ver.pressed.connect(func():
+		_fechar_janela()
+		if combustivel:
+			_usar_combustivel()
+		else:
+			_usar_fiscal())
+	v.add_child(_vao(26))  # o anúncio longe do FECHAR: nada de toque errado
+	_botao_fechar("FECHAR", v).pressed.connect(_fechar_janela)
+	if not Preferencias.reduzir_animacoes:
+		p.pivot_offset = Vector2(300, 260)
+		p.scale = Vector2(0.85, 0.85)
+		p.create_tween().tween_property(p, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## O FECHAR das janelas com anúncio: 30% menor que o botão de anúncio (largura e
+## altura), centrado e cromado; o anúncio é o destaque, o FECHAR não compete.
+func _botao_fechar(texto: String, pai: Control) -> Button:
+	var b := IdleUI.botao(texto, IdleUI.COR_CROMO, 20, 64, pai)
+	b.custom_minimum_size = Vector2(540.0 * 0.7, IdleUI.ALTURA_MIN * 0.7)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	return b
+
+
+func _vao(alto: float) -> Control:
+	var c := Control.new()
+	c.custom_minimum_size = Vector2(0, alto)
+	return c
+
+
+func _fechar_janela() -> void:
+	if _janela_jornaleiro != null:
+		_janela_jornaleiro.queue_free()
+		_janela_jornaleiro = null
 
 
 ## Fiscal comprado: um vídeo e o fiscal fecha os olhos por um tempo (idle.json → "fiscal").
@@ -991,15 +1076,10 @@ func _atualizar_fiscal() -> void:
 	if _fiscal_botao == null:
 		return
 	var agora := Time.get_unix_time_from_system()
-	var f := estado.cfg_fiscal()
 	var restam := estado.fiscal_restantes(Time.get_date_string_from_system())
-	if estado.fiscal_ativo(agora):
-		_fiscal_texto.text = "Comprado: %s" % IdleUI.relogio(estado.fiscal_ate - agora)
-	else:
-		_fiscal_texto.text = "%s·%dmin" % [MetasIdle.texto_bonus(String(f.get("efeito", "")), float(f.get("bonus", 0.0))).split(" ")[-1],
-				roundi(float(f.get("duracao_s", 0.0)) / 60.0)]
-	_fiscal_botao.text = "USAR %d/%d" % [restam, int(f.get("usos_dia", 0))] if restam > 0 else "AMANHÃ"
-	_fiscal_botao.disabled = restam <= 0
+	# No cartão só o relógio quando está valendo; o que o bônus faz fica na janela.
+	_fiscal_texto.text = "Comprado: %s" % IdleUI.relogio(estado.fiscal_ate - agora) if estado.fiscal_ativo(agora) else ""
+	_fiscal_botao.text = "USAR" if restam > 0 else "AMANHÃ"
 
 
 ## As Trapaças da família: as melhorias marcadas "trapaca" em idle.json (com o
@@ -1027,7 +1107,7 @@ func _trapacas(pai: Control) -> void:
 				IdleUI.COR_VINHO_CLARO)
 		_fiscal_texto = r[0]
 		_fiscal_botao = r[1]
-		_fiscal_botao.pressed.connect(_usar_fiscal)
+		_fiscal_botao.pressed.connect(_janela_bonus.bind("fiscal"))
 
 
 ## A lista completa de melhorias (os andares, com +10 e MÁX.), por cima da
@@ -1314,8 +1394,8 @@ func _pagar_jornaleiro() -> void:
 	a.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var x := IdleUI.botao_premio("GORJETA ×%d · $%s" % [mult, curto(_gorjeta * mult)], 26, 80, v)
 	x.pressed.connect(_dobrar_gorjeta)
-	var fechar := IdleUI.botao("FECHAR", IdleUI.COR_CROMO, 24, 64, v)  # o anúncio é o destaque
-	fechar.pressed.connect(_receber_gorjeta.bind(1))
+	v.add_child(_vao(26))  # o anúncio longe do FECHAR: nada de toque errado
+	_botao_fechar("FECHAR", v).pressed.connect(_receber_gorjeta.bind(1))
 	if not Preferencias.reduzir_animacoes:
 		p.pivot_offset = Vector2(300, 300)
 		p.scale = Vector2(0.85, 0.85)
@@ -2239,14 +2319,9 @@ func _atualizar_hud(ordem: Array) -> void:
 func _atualizar_combustivel() -> void:
 	var agora := Time.get_unix_time_from_system()
 	var restam := estado.combustivel_restantes(Time.get_date_string_from_system())
-	var total := int(estado.cfg_combustivel().get("usos_dia", 0))
-	if estado.combustivel_ativo(agora):
-		_combustivel_texto.text = "No tanque: %s" % IdleUI.relogio(estado.combustivel_ate - agora)
-	else:
-		_combustivel_texto.text = "+%d%%·%dmin" % [roundi(estado.bonus_combustivel() * 100.0),
-				roundi(float(estado.cfg_combustivel().get("duracao_s", 0.0)) / 60.0)]
-	_combustivel_botao.text = "USAR %d/%d" % [restam, total] if restam > 0 else "AMANHÃ"
-	_combustivel_botao.disabled = restam <= 0
+	_combustivel_texto.text = "No tanque: %s" % IdleUI.relogio(estado.combustivel_ate - agora) \
+			if estado.combustivel_ativo(agora) else ""
+	_combustivel_botao.text = "USAR" if restam > 0 else "AMANHÃ"
 
 
 ## Avisos da corrida, como no Chrome & Wreckage: ultrapassagem, líder, perdeu a
@@ -2590,13 +2665,13 @@ func _bem_vindo(ganho: float) -> void:
 			continue
 		p.linha(String(estado.dados_modalidade(id).get("nome", id)), "$" + curto(parte))
 	p.total(String(lv.get("total", "TOTAL")), "$" + curto(ganho))
-	var botoes := HBoxContainer.new()
-	botoes.add_theme_constant_override("separation", 12)
+	# O anúncio em cima, inteiro; COLETAR menor embaixo, longe dele (nunca lado a
+	# lado: toque errado no anúncio irrita e derruba a nota).
+	var botoes := VBoxContainer.new()
+	botoes.add_theme_constant_override("separation", 26)
 	p.corpo.add_child(botoes)
-	var coletar := IdleUI.botao("COLETAR", COR_OURO, 26, 76, botoes)
-	coletar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var dobro := IdleUI.botao_premio("COLETAR x2", 26, 76, botoes)
-	dobro.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var dobro := IdleUI.botao_premio("COLETAR x2 · $%s" % curto(ganho * 2.0), 26, 80, botoes)
+	var coletar := _botao_fechar("COLETAR $%s" % curto(ganho), botoes)
 	coletar.pressed.connect(_fechar_bem_vindo.bind(ganho))
 	dobro.pressed.connect(func():
 		anuncios.premiado(func():
