@@ -119,7 +119,9 @@ static func montar(cena: Node3D, pista: Pista, largura: float, ambiente: Environ
 	mat.roughness = 0.95
 	mi.material_override = mat
 	cena.add_child(mi)
-	cena.add_child(_vivo(_st_torcida, 0))
+	var torcida := _vivo(_st_torcida, 0)
+	material_torcida = torcida.material_override
+	cena.add_child(torcida)
 	cena.add_child(_vivo(_st_bandeiras, 1))
 	cena.add_child(_bandeira_fiscal(pista, largura))
 	_fumaca(cena, torre)
@@ -209,6 +211,10 @@ static func _postes(cena: Node3D, pts: PackedVector2Array, largura: float) -> vo
 	brilho.albedo_color = LAMPADA
 	ml.material_override = brilho
 	cena.add_child(ml)
+
+
+## A torcida (a tela sobe "euforia" nas ultrapassagens e na chegada).
+static var material_torcida: ShaderMaterial
 
 
 ## A bandeira do fiscal (Corrida3D.bandeira_fiscal troca verde/quadriculada).

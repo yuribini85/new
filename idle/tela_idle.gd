@@ -528,6 +528,7 @@ func _topo(pai: Control) -> void:
 	notas.custom_minimum_size = Vector2(76, 64)
 	notas.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	topo.add_child(notas)
+	_maco = notas
 	var esq := VBoxContainer.new()
 	esq.add_theme_constant_override("separation", 0)
 	esq.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1776,9 +1777,35 @@ func _aplicar_dupla() -> void:
 		_visual.offset_bottom = -20.0
 
 
+var _euforia := 0.0
+var _maco: TextureRect  # o maço de notas do caixa, no alto
+var _euforia_t := 0.0
+
+
+## A torcida reage: fica de pé nas ultrapassagens e na chegada e quando o seu
+## carro passa na reta da largada, em frente à arquibancada.
+func _passo_torcida() -> void:
+	var agora := Time.get_ticks_msec() / 1000.0
+	var dt := clampf(agora - _euforia_t, 0.0, 0.1)
+	_euforia_t = agora
+	var alvo := 0.0
+	if _pista != null and not _chegada and _contagem <= 0.0:
+		var s := fmod(_visual.distancia_em("jogador", _visual.tempo), _pista.comprimento)
+		if s < 70.0 or s > _pista.comprimento - 40.0:
+			alvo = 0.6
+	_euforia = maxf(alvo, move_toward(_euforia, 0.0, dt * 0.7))
+	if CenarioEpoca.material_torcida != null:
+		CenarioEpoca.material_torcida.set_shader_parameter("euforia", _euforia)
+
+
+func _agitar_torcida(forca := 1.0) -> void:
+	_euforia = maxf(_euforia, forca)
+
+
 ## Câmera AUTO: o diretor do Chrome & Wreckage escolhe o plano (abertura de
 ## cima no grid, o seu carro, a disputa da frente, a pista inteira).
 func _dirigir() -> void:
+	_passo_torcida()
 	var ordem := _visual.ordem()
 	var i := ordem.find("jogador")
 	_visual3d.alvo = ordem[i - 1] if i > 0 and not _chegada else ""
@@ -2006,7 +2033,7 @@ func _atualizar_hud(ordem: Array) -> void:
 	var volta := clampi(floori(maxf(_visual.distancia("jogador"), 0.0) / _pista.comprimento) + 1, 1, voltas)
 	_hud.definir({"posicao": i + 1, "total": ordem.size(), "volta": volta, "voltas": voltas, "lista": lista,
 		"ultima": false})
-	_posicao.text = "%dº LUGAR" % (i + 1)
+	_virar_placa(_posicao, "%dº LUGAR" % (i + 1))
 	_pelotao.total = ordem.size()
 	_pelotao.posicao = i + 1
 	_pelotao.queue_redraw()
@@ -2050,6 +2077,7 @@ func _eventos(ordem: Array) -> void:
 			_hud.evento("ULTRAPASSAGEM!", "passou %s · %dº" % [nome, pos], IdleUI.COR_NEON_VERDE, 5, -1.0, true)
 		if ganhou:
 			_estourar_posicao(_pos_antes - pos)
+			_agitar_torcida()
 		else:
 			_hud.evento("PERDEU A POSIÇÃO", "%s passou · %dº" % [nome, pos], COR_RUIM, 5)
 		_sons.ultrapassagem(ganhou)
@@ -2132,6 +2160,7 @@ func _chegou() -> void:
 		Sons.tocar_ui(self, "comemoracao", -8.0)
 		_foto_vitoria.call_deferred()
 	_bandeira.chegada()
+	_agitar_torcida(1.0 if pos <= 3 else 0.5)
 	_visual3d.bandeira_fiscal(true)
 	_comemorar_trofeu.call_deferred()
 	_momento_forte(0.8 if pos == 1 else 0.5)
@@ -2617,6 +2646,28 @@ func celebrar(tamanho: int) -> void:
 
 ## "+$X" que pipoca ao lado do dinheiro do topo (prêmio, vídeo, meta) e o
 ## número do topo salta.
+## O número troca como placar de estação: a placa fecha na vertical, troca o
+## texto e abre (só quando muda).
+func _virar_placa(l: Label, texto: String) -> void:
+	if l.text == texto:
+		return
+	if l.text == "" or Preferencias.reduzir_animacoes or not l.is_visible_in_tree():
+		l.text = texto
+		return
+	if l.has_meta("virando"):
+		l.set_meta("proximo", texto)
+		return
+	l.set_meta("virando", true)
+	l.pivot_offset = l.size * 0.5
+	var tw := l.create_tween()
+	tw.tween_property(l, "scale:y", 0.0, 0.08).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func():
+		l.text = String(l.get_meta("proximo", texto))
+		l.remove_meta("proximo"))
+	tw.tween_property(l, "scale:y", 1.0, 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_callback(func(): l.remove_meta("virando"))
+
+
 func ganho_flutuante(valor: float) -> void:
 	if valor < 1.0:
 		return
@@ -2626,6 +2677,13 @@ func ganho_flutuante(valor: float) -> void:
 	_efeitos.pipoca(Vector2(origem.position.x + largura + 70.0, origem.get_center().y), "+$" + curto(valor),
 			COR_DINHEIRO, 34, 0.7)
 	IdleUI.saltar(_dinheiro, 1.15)
+	# O maço do caixa engorda e solta uma poeirinha de notas.
+	if _maco != null and not Preferencias.reduzir_animacoes:
+		_maco.pivot_offset = _maco.size * 0.5
+		var tw := _maco.create_tween()
+		tw.tween_property(_maco, "scale", Vector2(1.18, 1.12), 0.08)
+		tw.tween_property(_maco, "scale", Vector2.ONE, 0.25).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		_efeitos.faiscas(_maco.get_global_rect().get_center(), IdleUI.COR_LATAO_CLARO, 8)
 
 
 ## A renda por segundo pipoca de leve no topo a cada RENDA_POP_S: "+$X" sobe
@@ -3032,7 +3090,7 @@ func _foto_vitoria() -> void:
 	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_quadro_corrida.add_child(flash)
-	Sons.tocar_ui(self, "toque", -2.0, 2.2)
+	Sons.tocar_ui(self, "flash", -3.0)  # o flash de magnésio
 	var tw := flash.create_tween()
 	tw.tween_property(flash, "color:a", 0.0, 0.35)
 	tw.tween_callback(flash.queue_free)
@@ -3041,6 +3099,8 @@ func _foto_vitoria() -> void:
 	papel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var v := VBoxContainer.new()
 	papel.add_child(v)
+	var cab := IdleUI.rotulo(JornalIdle.NOME + " · EXTRA!", 15, JornalIdle.TINTA, v, "deco")
+	cab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var tr := TextureRect.new()
 	tr.texture = foto
 	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
