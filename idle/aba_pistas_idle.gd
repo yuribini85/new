@@ -246,4 +246,4 @@ func _nome_pista(id: String) -> String:
 	for a in tela.dados.arena().get("arenas", []):
 		if String(a["id"]) == id:
 			return String(a["nome"])
-	return Aba.nome_pista(id)
+	return IdleUI.nome_pista(id)

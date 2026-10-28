@@ -2111,6 +2111,39 @@ func bandeira_fiscal(quadriculada: bool) -> void:
 		CenarioEpoca.material_bandeira.set_shader_parameter("quadriculada", quadriculada)
 
 
+## A largada dada pelo fiscal no cenário: ergue a verde e tremula na contagem
+## e, no fim dela, baixa num golpe (no lugar da bandeira por cima da tela).
+var _tw_fiscal: Tween
+
+
+func largada_fiscal(contagem: float) -> void:
+	var pivo := CenarioEpoca.pivo_bandeira
+	var fiscal := CenarioEpoca.no_fiscal
+	if pivo == null or not is_instance_valid(pivo) or not is_instance_valid(fiscal):
+		return
+	if _tw_fiscal != null and _tw_fiscal.is_valid():
+		_tw_fiscal.kill()
+	var eixo := CenarioEpoca.eixo_bandeira
+	var girar := func(a: float): pivo.basis = Basis(eixo, a)
+	girar.call(0.0)
+	fiscal.position = Vector3.ZERO
+	_tw_fiscal = create_tween()
+	if Preferencias.reduzir_animacoes:
+		_tw_fiscal.tween_interval(contagem)
+		_tw_fiscal.tween_property(fiscal, "position", CenarioEpoca.desvio_fiscal, 0.01)
+		return
+	_tw_fiscal.tween_method(girar, 0.0, ERGUIDA, minf(0.3, contagem * 0.3)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_tw_fiscal.tween_interval(maxf(contagem - 0.45, 0.05))
+	_tw_fiscal.tween_method(girar, ERGUIDA, BAIXADA, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	# E sai da frente dos carros, para a beira.
+	_tw_fiscal.tween_property(fiscal, "position", CenarioEpoca.desvio_fiscal, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_tw_fiscal.tween_method(girar, BAIXADA, 0.0, 0.6).set_trans(Tween.TRANS_SINE)
+
+
+const ERGUIDA := 0.55  # rad: a verde no alto, na contagem
+const BAIXADA := -1.25  # rad: o golpe da largada, a bandeira rente ao chão
+
+
 ## Clarão branco-quente na tela (ultrapassagem, bandeirada), que some sozinho.
 func clarao(forca := 0.6) -> void:
 	if Preferencias.reduzir_animacoes:

@@ -3,9 +3,8 @@ extends Control
 ## A bandeira do fiscal por cima da corrida, no lugar do semáforo (pedido do
 ## usuário, 2026-10-28; nos anos 1930 a largada era dada na bandeira), no estilo
 ## da arte do jogo: só o pano facetado low poly (visual/shaders/bandeira.gdshader),
-## sem haste, mão nem contorno (pedido do usuário). A verde entra e tremula na contagem e desce num golpe na largada, com
-## o estouro "VAI!" (raios e retícula); a quadriculada agita na chegada, com
-## "CHEGADA!".
+## sem haste, mão nem contorno (pedido do usuário). Só a quadriculada da chegada,
+## com "CHEGADA!": a largada é do fiscal no cenário 3D (Corrida3D.largada_fiscal).
 
 ## Apresentação, não balanceamento.
 const PANO := Vector2(230, 150)
@@ -78,35 +77,6 @@ func _parar() -> void:
 func _pano_de(quadriculada: bool, amplitude: float) -> void:
 	_mat.set_shader_parameter("quadriculada", quadriculada)
 	_mat.set_shader_parameter("amplitude", amplitude)
-
-
-## A verde entra pela esquerda e tremula; em `contagem` segundos desce num
-## golpe, com o estouro "VAI!".
-func largada(contagem: float) -> void:
-	_parar()
-	_pano_de(false, 10.0)
-	visible = true
-	modulate.a = 1.0
-	rotation = deg_to_rad(-6.0)
-	if Preferencias.reduzir_animacoes:
-		_tw = create_tween()
-		_tw.tween_interval(contagem)
-		_tw.tween_callback(func(): visible = false)
-		return
-	var x := position.x
-	position.x = x - 360.0
-	_tw = create_tween()
-	_tw.tween_property(self, "position:x", x, minf(0.35, contagem * 0.4)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	_tw.tween_interval(maxf(contagem - 0.55, 0.05))
-	# O golpe: sobe um pouco e desce cortando o ar.
-	_tw.tween_property(self, "rotation", deg_to_rad(-22.0), 0.12)
-	_tw.tween_callback(func(): _estourar("VAI!", Color("e8b84a")))
-	_tw.tween_property(self, "rotation", deg_to_rad(75.0), 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	_tw.parallel().tween_property(self, "modulate:a", 0.0, 0.22).set_delay(0.08)
-	_tw.tween_callback(func():
-		visible = false
-		position.x = x
-		rotation = 0.0)
 
 
 ## A quadriculada na chegada: entra agitando forte, com "CHEGADA!".

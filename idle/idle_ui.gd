@@ -362,6 +362,14 @@ static func pulsar(c: Control, escala := 1.06) -> void:
 
 ## Banner da pista (arte/ui/banner_*), com o tema da pista longa quando a
 ## curta não tem o dela.
+## Nomes de pista próprios do The Fastfather (EUA, anos 30); o resto vem do Aba.
+const NOMES_PISTA := {"estrada_das_araucarias": "Estrada dos Pinheiros"}
+
+
+static func nome_pista(id: String) -> String:
+	return String(NOMES_PISTA.get(id, Aba.nome_pista(id)))
+
+
 static func banner_pista(pista_id: String) -> Texture2D:
 	var tex := Aba.arte("banner_" + String(Corrida3D.TEMA_DE.get(pista_id, pista_id)))
 	if tex == null:

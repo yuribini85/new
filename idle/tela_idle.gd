@@ -1200,7 +1200,7 @@ func _nome_da_pista(id: String) -> String:
 	for a in dados.arena().get("arenas", []):
 		if String(a["id"]) == id:
 			return String(a["nome"])
-	return Aba.nome_pista(id)
+	return IdleUI.nome_pista(id)
 
 
 ## O jornaleiro aparece de vez em quando, só com a corrida na tela e ninguém
@@ -1768,13 +1768,22 @@ func _nova_corrida() -> void:
 	_visual3d.bandeira_fiscal(false)
 	if not _aguardando:
 		_sons.largada(false)
-		_bandeira.largada(_contagem)
+		_largada_fiscal()
 		_trava_projetor()
-	else:
-		_bandeira.esconder()
+	_bandeira.esconder()
 	_diretor.reiniciar()
 	_aplicar_camera()
 	_visual3d.destacar_jogador()  # o anel no seu carro (o dourado) na largada
+
+
+## A largada é do fiscal na beira da pista (3D), nada por cima da tela; na vista
+## de cima, que não mostra o fiscal, só o aviso curto no fim da contagem.
+func _largada_fiscal() -> void:
+	_visual3d.largada_fiscal(_contagem)
+	if not _tv:
+		get_tree().create_timer(_contagem).timeout.connect(func():
+			if not _aguardando:
+				_hud.evento("LARGADA!", "", IdleUI.COR_NEON_VERDE, 5, 1.0))
 
 
 func _trocar_camera(modo: String) -> void:
@@ -3069,7 +3078,7 @@ func _largar_corrida() -> void:
 	_aguardando = false
 	_largar.visible = false
 	_hud.contagem = _contagem
-	_bandeira.largada(_contagem)
+	_largada_fiscal()
 	_sons.largada(false)
 
 

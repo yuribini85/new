@@ -408,36 +408,46 @@ static var material_torcida: ShaderMaterial
 
 ## A bandeira do fiscal (Corrida3D.bandeira_fiscal troca verde/quadriculada).
 static var material_bandeira: ShaderMaterial
+## O braço da bandeira: gira em `eixo_bandeira` (Corrida3D.largada_fiscal ergue e baixa).
+static var pivo_bandeira: Node3D
+static var eixo_bandeira := Vector3.RIGHT
 
 
-## O fiscal da largada na beira da pista, de terno e chapéu, com a bandeira de
-## pano no alto da haste (golpes visuais, 2026-10-28; no lugar do semáforo).
+## O fiscal da largada, de terno e chapéu, de pé no meio da pista à frente do
+## grid com a verde no alto (como nos anos 30); no golpe da largada ele baixa a
+## bandeira e sai para a beira (Corrida3D.largada_fiscal). Na chegada, a mesma
+## bandeira vira a quadriculada.
 static func _bandeira_fiscal(pista: Pista, largura: float) -> Node3D:
 	var rumo := pista.rumo_em(0.0)
 	var f := Vector2.from_angle(rumo)
 	var l := Vector2.from_angle(rumo + PI / 2.0)
-	var p := pista.posicao_em(3.0) + l * (largura * 0.5 + 0.9)
+	var p := pista.posicao_em(FISCAL_A_FRENTE_M)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_caixa(st, Color("2b2b2e"), p, rumo, Vector3(0.5, 1.15, 0.36))  # terno
+	_caixa(st, Color("2b2b2e"), p, rumo, Vector3(0.36, 1.15, 0.5))  # terno
 	_caixa(st, Color("d9b08c"), p, rumo, Vector3(0.24, 0.26, 0.24), 1.17)  # rosto
 	_caixa(st, Color("1c1a18"), p, rumo, Vector3(0.44, 0.04, 0.44), 1.42)  # aba do chapéu
 	_caixa(st, Color("1c1a18"), p, rumo, Vector3(0.26, 0.16, 0.26), 1.45)
-	var mao := p - l * 0.3
-	_caixa(st, Color("2b2b2e"), mao, rumo, Vector3(0.14, 0.5, 0.14), 0.9)  # braço erguido
-	_caixa(st, MADEIRA, mao, rumo, Vector3(0.07, 2.2, 0.07), 1.2)  # haste
 	st.generate_normals()
-	var corpo := MeshInstance3D.new()
-	corpo.mesh = st.commit()
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
 	mat.roughness = 0.95
+	var corpo := MeshInstance3D.new()
+	corpo.mesh = st.commit()
 	corpo.material_override = mat
-	# O pano: plano subdividido em pé, preso na haste pela borda esquerda.
+	# O braço com a haste e o pano: um pivô no ombro, que ergue e baixa tudo junto.
+	var sb := SurfaceTool.new()
+	sb.begin(Mesh.PRIMITIVE_TRIANGLES)
+	_caixa(sb, Color("2b2b2e"), Vector2.ZERO, rumo, Vector3(0.14, 0.55, 0.14), -0.05)  # braço erguido
+	_caixa(sb, MADEIRA, Vector2.ZERO, rumo, Vector3(0.06, 1.9, 0.06), 0.35)  # haste
+	sb.generate_normals()
+	var braco := MeshInstance3D.new()
+	braco.mesh = sb.commit()
+	braco.material_override = mat
 	var pano := MeshInstance3D.new()
 	var plano := PlaneMesh.new()
 	plano.orientation = PlaneMesh.FACE_Z
-	plano.size = Vector2(1.5, 1.0)
+	plano.size = Vector2(1.8, 1.2)
 	plano.subdivide_width = 14
 	plano.subdivide_depth = 8
 	pano.mesh = plano
@@ -445,13 +455,24 @@ static func _bandeira_fiscal(pista: Pista, largura: float) -> Node3D:
 	material_bandeira.shader = preload("res://visual/shaders/bandeira_3d.gdshader")
 	material_bandeira.set_shader_parameter("parado", Preferencias.reduzir_animacoes)
 	pano.material_override = material_bandeira
-	var topo := _v3(mao, 3.0)
-	pano.position = topo + _v3(-l * 0.75, 0.0)
-	pano.rotation.y = rumo + PI / 2.0  # o pano ao longo da beira da pista, de frente para ela
-	var no := Node3D.new()
-	no.add_child(corpo)
-	no.add_child(pano)
-	return no
+	pano.position = _v3(-l * 0.9, 1.65)  # preso no alto da haste
+	pano.rotation.y = rumo + PI / 2.0  # o pano de través na pista, de frente para o grid
+	pivo_bandeira = Node3D.new()
+	pivo_bandeira.position = _v3(p - l * 0.24, 1.0)  # o ombro
+	eixo_bandeira = _v3(f, 0.0).normalized()
+	pivo_bandeira.add_child(braco)
+	pivo_bandeira.add_child(pano)
+	no_fiscal = Node3D.new()
+	no_fiscal.add_child(corpo)
+	no_fiscal.add_child(pivo_bandeira)
+	desvio_fiscal = _v3(l * (largura * 0.5 + 1.3), 0.0)
+	return no_fiscal
+
+
+## O fiscal: o nó inteiro (sai para a beira com `desvio_fiscal` depois da largada).
+static var no_fiscal: Node3D
+static var desvio_fiscal := Vector3.ZERO
+const FISCAL_A_FRENTE_M := 7.0
 
 
 static var _st_torcida: SurfaceTool

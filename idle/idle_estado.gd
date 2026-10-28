@@ -825,7 +825,23 @@ func pista(dados: Node) -> Pista:
 	for t in d["trechos"]:
 		if float(t.get("raio_m", 0.0)) <= 0.0:
 			t["ultrapassagem"] = true
+	# A linha de largada no meio da primeira reta, não no começo dela: o grid
+	# (atrás da linha) e a arquibancada ficam na reta, não na curva de antes.
+	# Só muda onde a volta começa; o traçado e o comprimento são os mesmos.
+	var tr: Array = d["trechos"]
+	var i := tr.find_custom(func(t): return not t["tipo"] in Pista.FORA_DA_VOLTA)
+	if i >= 0 and tr[i]["tipo"] == "reta":
+		var compr := float(tr[i]["comprimento_m"])
+		var antes := minf(compr * 0.5, LARGADA_NA_RETA_M)
+		var fim: Dictionary = tr[i].duplicate()
+		fim["comprimento_m"] = antes
+		tr[i]["comprimento_m"] = compr - antes
+		tr.append(fim)
 	return Pista.new(d)
+
+
+## Metros da primeira reta que ficam antes da linha de largada (apresentação).
+const LARGADA_NA_RETA_M := 150.0
 
 
 ## A corrida da liga, resolvida inteira (a tela mostra as amostras). Na

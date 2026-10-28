@@ -26,11 +26,6 @@ void fragment() {
 	if (quadriculada) {
 		float xadrez = mod(floor(uv_pano.x * casas) + floor(uv_pano.y * casas * 0.66), 2.0);
 		c = mix(vec3(0.1, 0.09, 0.08), vec3(0.95, 0.92, 0.84), xadrez);
-	} else {
-		// Barra art déco: dois filetes creme junto da borda presa e na barra de baixo.
-		float filete = step(0.08, uv_pano.x) * step(uv_pano.x, 0.11) + step(0.14, uv_pano.x) * step(uv_pano.x, 0.155);
-		filete += step(0.84, uv_pano.y) * step(uv_pano.y, 0.88);
-		c = mix(c, vec3(0.93, 0.86, 0.7), clamp(filete, 0.0, 1.0));
 	}
 	// Três tons chapados por face: sombra, meio, luz.
 	float tom = floor(clamp(dobra * 0.5 + 0.5, 0.0, 0.999) * 3.0) / 2.0;

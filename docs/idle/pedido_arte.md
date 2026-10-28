@@ -19,15 +19,14 @@ O texto da tela fica por cima no canto inferior esquerdo: deixe essa área mais 
 | `banner_avenida_noturna` | Avenida das Luzes | Liga dos Hot Rods | avenida da cidade à noite, letreiros de neon, bondes |
 | `banner_oval_inclinado` | Oval da Usina | Liga dos Hot Rods | oval inclinado de tábuas ao lado de uma usina com chaminés |
 | `banner_trilha_do_canion` | Trilha do Cânion | Stock Cars | estrada de terra no cânion vermelho |
-| `banner_estrada_das_araucarias` | Estrada das Araucárias | Stock Cars | estrada de terra num pinheiral (ver nota) |
+| `banner_estrada_das_araucarias` | Estrada dos Pinheiros | Stock Cars | estrada de terra num pinheiral |
 | `banner_arena_patio_pedreira` | Pátio da Pedreira | Rinha das Famílias | fundo de pedreira, paredes de rocha cortada, guindaste de madeira |
 | `banner_arena_fosso_docas` | Fosso das Docas | Rinha das Famílias | doca seca cercada de contêineres de madeira e correntes |
 | `banner_arena_anel_ferro_velho` | Anel do Ferro-Velho | Rinha das Famílias | círculo de carcaças empilhadas, guincho, fogueira em tambor |
 | `banner_arena_cratera_vale` | Cratera do Vale | Rinha das Famílias | cratera de terra no campo, carros de plateia em volta |
 
-Nota: araucária é árvore do Sul do Brasil e destoa de um jogo nos EUA dos anos 30. Sugestão: renomear
-para **Estrada dos Pinheiros** antes de gerar a foto (só o nome na tela muda; o arquivo continua
-`banner_estrada_das_araucarias`).
+Estrada das Araucárias virou **Estrada dos Pinheiros** na tela (decisão do usuário, tema EUA); o arquivo
+mantém o nome `banner_estrada_das_araucarias`.
 
 ## 2. Ícones (8)
 
