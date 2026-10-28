@@ -160,6 +160,12 @@ var _painel_trofeus: Control  # TROFÉUS: a coleção, um por pista
 var _grade_trofeus: GridContainer
 var _conta_trofeus: Label
 var _botao_trofeus: Button
+var _jornaleiro: JornaleiroIdle
+var _jornal_x2: Button  # o vídeo que dobra a gorjeta do jornaleiro
+var _jornal_x2_ate := 0.0
+var _jornaleiro_em := 0.0  # quando ele aparece de novo (relógio do app, s)
+var _gorjeta := 0.0
+const JORNAL_X2_S := 6.0  # apresentação: quanto o botão fica
 var _multiplo := 1  # ×1, ×10 ou MÁX (-1) nos cartões da oficina e das trapaças
 var _seletor := {}  # 1/10/-1 -> botão
 ## Segurar a corrida acelera (cfg "toque"): a carga gasta enquanto segura e
@@ -638,6 +644,33 @@ func _pagina_corrida() -> Control:
 	corrida.add_child(_bandeira)
 	# Por baixo das faixas e do painel.
 	corrida.move_child(_bandeira, _hud.get_index())
+	# O menino jornaleiro sobe de trás do velocímetro (opaco: o corte dele fica
+	# escondido atrás do mostrador; atrás de uma faixa translúcida pareceria erro).
+	_jornaleiro = JornaleiroIdle.new()
+	_jornaleiro.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	corrida.add_child(_jornaleiro)
+	corrida.move_child(_jornaleiro, _toque_medidor.get_index())
+	_jornaleiro.tocado.connect(_pagar_jornaleiro)
+	_jornal_x2 = IdleUI.botao_premio("GORJETA x2", 26, Tipografia.ALTURA_SECUNDARIA)
+	_jornal_x2.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	_jornal_x2.visible = false
+	_jornal_x2.pressed.connect(_dobrar_gorjeta)
+	corrida.add_child(_jornal_x2)
+	var encaixar_jornal := func():
+		# A base dele no meio do mostrador, o corpo centrado atrás dele.
+		var cx := (_toque_medidor.offset_left + _toque_medidor.offset_right) * 0.5
+		var cy := (_toque_medidor.offset_top + _toque_medidor.offset_bottom) * 0.5
+		var tam := _jornaleiro.custom_minimum_size
+		_jornaleiro.offset_left = cx - tam.x * 0.5
+		_jornaleiro.offset_right = cx + tam.x * 0.5
+		_jornaleiro.offset_bottom = cy
+		_jornaleiro.offset_top = cy - tam.y
+		_jornal_x2.offset_left = 16.0
+		_jornal_x2.offset_right = 336.0
+		_jornal_x2.offset_bottom = -embaixo.size.y - 12.0
+		_jornal_x2.offset_top = _jornal_x2.offset_bottom - float(Tipografia.ALTURA_SECUNDARIA)
+	embaixo.resized.connect(encaixar_jornal)
+	encaixar_jornal.call()
 	_oficina(v)
 	_trapacas(v)
 	_lista_melhorias()
@@ -1018,6 +1051,53 @@ func _nome_da_pista(id: String) -> String:
 		if String(a["id"]) == id:
 			return String(a["nome"])
 	return Aba.nome_pista(id)
+
+
+## O jornaleiro aparece de vez em quando, só com a corrida na tela e ninguém
+## falando (cfg "jornaleiro").
+func _passo_jornaleiro() -> void:
+	var j := estado.cfg_jornaleiro()
+	if j.is_empty() or _jornaleiro == null:
+		return
+	var agora := Time.get_ticks_msec() / 1000.0
+	if _jornal_x2.visible and agora >= _jornal_x2_ate:
+		_jornal_x2.visible = false
+	var intervalo: Array = j.get("intervalo_s", [120, 120])
+	if _jornaleiro_em <= 0.0:
+		_jornaleiro_em = agora + randf_range(float(intervalo[0]), float(intervalo[1]))
+		return
+	if agora < _jornaleiro_em or _jornaleiro.ativo():
+		return
+	var pode: bool = _paginas["corrida"].visible and _conversa == null and not _guia.ativo() \
+			and not _aguardando and _toque_medidor.visible and not _jornal_x2.visible \
+			and estado.corridas >= int(j.get("a_partir_corridas", 0))
+	if not pode:
+		_jornaleiro_em = agora + 5.0  # tenta de novo daqui a pouco
+		return
+	_jornaleiro.aparecer(float(j.get("fica_s", 10.0)))
+	_jornaleiro_em = agora + randf_range(float(intervalo[0]), float(intervalo[1]))
+
+
+func _pagar_jornaleiro() -> void:
+	_gorjeta = estado.gorjeta_jornaleiro()
+	estado.dinheiro += _gorjeta
+	ganho_flutuante(_gorjeta)
+	Sons.tocar_ui(self, "moeda", -4.0)
+	_efeitos.pipoca(_jornaleiro.get_global_rect().get_center() + Vector2(0, -60), "+$" + curto(_gorjeta), COR_DINHEIRO, 40, 0.8)
+	_jornal_x2.visible = true
+	_jornal_x2_ate = Time.get_ticks_msec() / 1000.0 + JORNAL_X2_S
+	IdleUI.pulsar(_jornal_x2, 1.08)
+	estado.salvar(Time.get_unix_time_from_system())
+
+
+func _dobrar_gorjeta() -> void:
+	_jornal_x2.visible = false
+	var g := _gorjeta
+	anuncios.premiado(func():
+		estado.dinheiro += g
+		ganho_flutuante(g)
+		_hud.evento("GORJETA x2!", "+$" + curto(g * 2.0), COR_OURO, 11, -1.0, true)
+		estado.salvar(Time.get_unix_time_from_system()))
 
 
 ## Troféu novo na chegada: estouro sobre a corrida e o botão pulsa.
@@ -1527,6 +1607,7 @@ func _process(delta: float) -> void:
 		_visual3d.chegada = minf(_t_chegada / 3.0, 1.0)
 	_visual3d.taxa = 0.0 if _contagem > 0.0 else 1.0
 	_dirigir()
+	_passo_jornaleiro()
 	var vendo: bool = _paginas["corrida"].visible
 	if vendo and _tv:  # nas outras telas a corrida segue, sem desenhar o 3D
 		_visual3d.atualizar(delta)

@@ -238,3 +238,14 @@ ganhar. Bônus em `idle.json` → "trofeus" (prêmio das corridas, lucro por seg
 PROVISÓRIO). Na chegada, "TROFÉU NOVO!" e o botão pulsa. Save antigo: as ligas já vencidas dão os
 troféus. Arte do usuário: 15 troféus recortados em `arte/fastfather/trofeus` (a 16ª pista repete
 o 13). Os atlas de ícones enviados estão em `arte/fastfather/icones` para uso futuro.
+
+## 14. O menino jornaleiro (2026-10-28)
+
+De vez em quando (`idle.json` → "jornaleiro", números PROVISÓRIOS) o menino jornaleiro (380 px, nunca
+mais que 2/3 à mostra) sobe de trás do velocímetro (opaco: o corte fica escondido atrás do
+mostrador; atrás de faixa translúcida pareceria erro), gritando e acenando com o jornal (12 quadros da arte do
+usuário em `arte/fastfather/jornaleiro`, a segunda fileira da folha ampliada para o mesmo tamanho).
+O toque nele paga na hora a gorjeta (`IdleEstado.gorjeta_jornaleiro`: o maior entre um tempo de
+lucro por segundo e uma parte do prêmio de 1º) e mostra GORJETA x2 por 6 s: o vídeo paga de novo.
+Ele é o próprio botão: nada de texto explicando. Só aparece com a corrida na tela, sem conversa,
+dica, bandeira ou grid esperando.

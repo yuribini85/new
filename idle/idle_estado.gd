@@ -314,6 +314,19 @@ func multiplicador_marcos(m: Dictionary, n: int) -> float:
 	return pow(float(cfg_marcos().get("multiplicador", 1.0)), marcos_alcancados(n))
 
 
+# --- o menino jornaleiro (cfg "jornaleiro") ---------------------------------------
+
+func cfg_jornaleiro() -> Dictionary:
+	return cfg.get("jornaleiro", {})
+
+
+## A gorjeta do jornaleiro: tempo de lucro ou parte do prêmio de 1º, o maior.
+func gorjeta_jornaleiro() -> float:
+	var j := cfg_jornaleiro()
+	return roundf(maxf(renda_s() * float(j.get("segundos_de_lucro", 0.0)),
+			premio(1) * float(j.get("fracao_premio", 0.0))))
+
+
 # --- troféus (cfg "trofeus") ------------------------------------------------------
 # Um por pista, ganho na primeira vitória numa liga dela; cada um soma um bônus.
 

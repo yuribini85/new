@@ -103,6 +103,12 @@ func _rodar() -> void:
 	for aba in abas:
 		if aba == "config":
 			tela._abrir_config()
+		elif aba == "jornaleiro":  # o menino de pé e, na foto seguinte, o x2
+			tela._jornaleiro.aparecer(30.0)
+			for i in 40:
+				await process_frame
+			root.get_texture().get_image().save_png(saida.path_join("idle_jornaleiro_antes.png"))
+			tela._pagar_jornaleiro()
 		elif aba == "trofeus":  # a coleção, com os três primeiros ganhos
 			for tr in tela.estado.lista_trofeus().slice(0, 3):
 				if not String(tr["pista"]) in tela.estado.trofeus:
