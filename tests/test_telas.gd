@@ -308,7 +308,8 @@ func test_carros_colados_nao_se_atravessam_e_apontam_para_onde_andam() -> void:
 					fora += 1
 				for j in range(i + 1, ids.size()):
 					var b: String = ids[j]
-					if absf(v3._ciclo(fonte.distancia(a) - fonte.distancia(b))) < Corrida3D.FIRME_COMPRIMENTO_M \
+					# Na distância desenhada (o grid 3-2 se funde à da simulação).
+					if absf(v3._ciclo(float(v3._s_vis[a]) - float(v3._s_vis[b]))) < Corrida3D.FIRME_COMPRIMENTO_M \
 							and absf(float(v3._lateral[a]) - float(v3._lateral[b])) < 1.85:
 						dentro += 1
 				var c: Node3D = v3._carros[a]

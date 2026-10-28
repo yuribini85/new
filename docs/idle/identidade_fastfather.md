@@ -207,3 +207,11 @@ entra e tremula na contagem e desce num golpe na largada; a quadriculada tremula
 semáforo e a faixa quadriculada do painel ficam desligados (`HudCorrida.sem_semaforo`). No 3D, o
 fiscal de terno e chapéu na beira da largada com a bandeira de pano no alto da haste
 (`visual/shaders/bandeira_3d.gdshader`), verde até a chegada e quadriculada nela.
+
+## 11. Grid de largada dos anos 1930 (2026-10-28)
+
+Entre 1930 e 1940 não havia grid padrão: os carros largavam em fileiras de três, muitas vezes
+alternadas com fileiras de dois, conforme o circuito e o regulamento. A corrida desenha o grid em
+fileiras 3-2-3-2 (`Corrida3D._grid`, 10 m entre fileiras, pole na frente à esquerda). A simulação
+continua com a fila dela (nada muda no resultado); cada carro sai da vaga desenhada e se funde à
+posição da simulação nos primeiros metros (`Corrida3D._recuo_grid`, só visual).

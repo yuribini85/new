@@ -61,8 +61,15 @@ var _off := {}  # id -> afastamento do traçado de corrida (m), suavizado
 ## um atrás do outro a cada distancia_minima_m, em lados alternados). Parado
 ## na vaga, o carro fica nela; ao andar, vai para o traçado.
 var _vagas := {}
-## Vagas do grid: lado de cada coluna (m) e marcação (colchete branco).
-const GRID_LADO_M := 2.4
+## Distância desenhada de cada carro (a da simulação mais o recuo do grid).
+var _s_vis := {}
+## Vagas do grid: fileiras de três e de dois alternadas, como nos grids dos
+## anos 1930 (3-2-3-2...), e a marcação (colchete branco). A simulação põe os
+## carros em fila; o grid desenhado fica mais curto, e cada carro sai da vaga
+## e se funde à posição da simulação nos primeiros metros (só visual).
+const FILEIRA_M := 10.0  # de uma fileira para a outra
+const LADOS_3 := [3.6, 0.0, -3.6]
+const LADOS_2 := [1.8, -1.8]
 const VAGA_LARGURA_M := 3.0
 const VAGA_FUNDO_M := 1.6
 const VAGA_TRACO_M := 0.22
@@ -476,8 +483,11 @@ func atualizar(delta: float) -> void:
 	_tremor = maxf(_tremor - delta, 0.0)
 	_tempo += delta
 	var s := {}
+	var s_sim := {}
 	for id in _carros:
-		s[id] = _fonte.distancia(id)
+		s_sim[id] = _fonte.distancia(id)
+		s[id] = float(s_sim[id]) + _recuo_grid(id, float(s_sim[id]))
+	_s_vis = s
 	var ordem := _fonte.ordem()
 	# Traçado de corrida de cada carro e, para quem ataca, o lado de dentro da
 	# próxima curva.
@@ -489,7 +499,7 @@ func atualizar(delta: float) -> void:
 	var alvo := faixas(ordem, s, _off, _pista.comprimento, base, ataque)
 	for id in _vagas:
 		# Ainda parado na vaga do grid: fica nela (sem deslizar de lado).
-		if absf(float(s[id]) - float(_vagas[id]["s"])) < 0.5:
+		if absf(float(s_sim[id]) - float(_vagas[id]["s_sim"])) < 0.5:
 			alvo[id] = float(_vagas[id]["lateral"]) - float(base[id])
 			if delta <= 0.0 or float(_off[id]) == 0.0:
 				_off[id] = alvo[id]
@@ -2179,17 +2189,39 @@ func _marcadores() -> void:
 			_cena.add_child(quadro)
 
 
-## Grid de largada: uma vaga por carro onde a simulação o põe (s = -g ·
-## distancia_minima_m), em lados alternados como num grid de verdade; cada
-## vaga é um colchete branco pintado (traço na frente e dois para trás).
+## Quanto o carro está à frente da sua posição na simulação: tudo na vaga
+## do grid e nada depois de andar o bastante (a curva suave não deixa o carro
+## parecer andar para trás: o trecho é pelo menos 2,5 vezes a diferença).
+func _recuo_grid(id: String, s_agora: float) -> float:
+	if not _vagas.has(id):
+		return 0.0
+	var v: Dictionary = _vagas[id]
+	var dif := float(v["s"]) - float(v["s_sim"])
+	if dif == 0.0:
+		return 0.0
+	var andou := s_agora - float(v["s_sim"])
+	return dif * (1.0 - smoothstep(0.0, maxf(30.0, absf(dif) * 2.5), andou))
+
+
+## Grid de largada: fileiras de três e de dois alternadas (3-2-3-2...), a pole
+## na frente à esquerda; cada vaga é um colchete branco pintado (traço na
+## frente e dois para trás).
 func _grid() -> void:
 	_vagas = {}
 	var ordem := _fonte.ordem()
+	var fileira := 0
+	var na_fileira := 0
 	for g in ordem.size():
 		var id: String = ordem[g]
-		var s0 := _fonte.distancia_em(id, 0.0)
-		var lateral := GRID_LADO_M if g % 2 == 0 else -GRID_LADO_M
-		_vagas[id] = {"s": s0, "lateral": lateral}
+		var lados: Array = LADOS_3 if fileira % 2 == 0 else LADOS_2
+		var lateral := float(lados[na_fileira])
+		var s_sim := _fonte.distancia_em(id, 0.0)
+		var s0 := _fonte.distancia_em(ordem[0], 0.0) - fileira * FILEIRA_M
+		_vagas[id] = {"s": s0, "s_sim": s_sim, "lateral": lateral}
+		na_fileira += 1
+		if na_fileira >= lados.size():
+			na_fileira = 0
+			fileira += 1
 		var sv := fposmod(s0, _pista.comprimento)
 		var rumo := _pista.rumo_em(sv)
 		var frente := Vector2.from_angle(rumo)
